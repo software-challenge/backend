@@ -5,20 +5,15 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.LinkedList;
 import java.util.Set;
 
-import sc.api.plugins.protocol.IPluginPacket;
+import sc.server.RescueableClientException;
 import sc.server.network.interfaces.INetworkInterface;
-import sc.server.protocol.InboundPacket;
-import sc.server.protocol.OutboundPacket;
-
 import com.thoughtworks.xstream.XStream;
-
 
 /**
  * A generic client.
@@ -28,48 +23,49 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Client implements Runnable
 {
-	private final INetworkInterface						networkInterface;
-	private final ObjectOutputStream			outputStream;
-	private final ObjectInputStream				inputStream;
-	private boolean								zombie			= false;
-	private Set<IClientListener>				clientListeners	= new HashSet<IClientListener>();
-	private Map<Class<?>, IClientRole>	roles			= new HashMap<Class<?>, IClientRole>();
+	private final INetworkInterface		networkInterface;
+	private final ObjectOutputStream	outputStream;
+	private final ObjectInputStream		inputStream;
+	private boolean						zombie			= false;
+	private Set<IClientListener>		clientListeners	= new HashSet<IClientListener>();
+	private Collection<IClientRole>		roles			= new LinkedList<IClientRole>();
 
-	public Client(INetworkInterface networkInterface, XStream configuredXStream) throws IOException
+	public Client(INetworkInterface networkInterface, XStream configuredXStream)
+			throws IOException
 	{
-		if(networkInterface == null)
+		if (networkInterface == null)
 		{
-			throw new IllegalArgumentException("networkInterface must not be null.");
+			throw new IllegalArgumentException(
+					"networkInterface must not be null.");
 		}
-		
-		if(configuredXStream == null)
+
+		if (configuredXStream == null)
 		{
-			throw new IllegalArgumentException("configuredXStream must not be null.");
+			throw new IllegalArgumentException(
+					"configuredXStream must not be null.");
 		}
-		
+
 		this.networkInterface = networkInterface;
 		this.outputStream = configuredXStream
-				.createObjectOutputStream(new OutputStreamWriter(networkInterface
-						.getOutputStream()));
+				.createObjectOutputStream(new OutputStreamWriter(
+						networkInterface.getOutputStream()));
 		this.inputStream = configuredXStream
 				.createObjectInputStream(new InputStreamReader(networkInterface
 						.getInputStream()));
 	}
 
-	public IClientRole getRole(Class<?> role)
+	public Collection<IClientRole> getRoles()
 	{
-		return this.roles.get(role);
+		return Collections.unmodifiableCollection(this.roles);
 	}
 
-	public Collection<IClientRole> getRoles(Socket socket)
+	public void addRole(IClientRole role)
 	{
-		return this.roles.values();
+		this.roles.add(role);
 	}
 
-	public synchronized void send(IPluginPacket message)
+	public synchronized void send(Object packet)
 	{
-        OutboundPacket packet = new OutboundPacket(message);
-
 		try
 		{
 			outputStream.writeObject(packet);
@@ -92,15 +88,15 @@ public class Client implements Runnable
 	{
 		while (!zombie)
 		{
-            try
-            {
-                this.receive();
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-                this.close();
-            }
+			try
+			{
+				this.receive();
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				this.close();
+			}
 		}
 	}
 
@@ -112,48 +108,59 @@ public class Client implements Runnable
 					"Zombie-Clients can't receive any data.");
 		}
 
-		InboundPacket packet = null;
+		Object packet = null;
 
 		try
 		{
-			packet = InboundPacket.readFromStream(inputStream);
+			packet = readFromStream();
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 
-        if(packet != null)
-        {
-            notifyOnPacket(packet);
-        }
-        else
-        {
-            close();
-        }
+		if (packet != null)
+		{
+			notifyOnPacket(packet);
+		}
+		else
+		{
+			close();
+		}
 	}
 
-    public void close()
-    {
-        this.zombie = true;
-        notifyOnDisconnect();
-    }
-    
-    private void notifyOnPacket(InboundPacket packet)
-    {
-        for (IClientListener listener : clientListeners)
-		{
-			listener.onPacketReceived(this, packet);
-		}
-    }
+	public void close()
+	{
+		this.zombie = true;
+		notifyOnDisconnect();
+	}
 
-    private void notifyOnDisconnect()
-    {
-        for(IClientListener listener : clientListeners)
-        {
-            listener.onClientDisconnected(this);
-        }
-    }
+	private void notifyOnPacket(Object packet)
+	{
+		Set<RescueableClientException> errors = new HashSet<RescueableClientException>();
+
+		for (IClientListener listener : clientListeners)
+		{
+			try
+			{
+				listener.onRequest(this, packet);
+			}
+			catch (RescueableClientException e)
+			{
+				errors.add(e);
+			}
+		}
+
+		// TODO: send errors back to client
+	}
+
+	private void notifyOnDisconnect()
+	{
+		for (IClientListener listener : clientListeners)
+		{
+			listener.onClientDisconnected(this);
+		}
+	}
 
 	public void addClientListener(IClientListener listener)
 	{
@@ -163,5 +170,18 @@ public class Client implements Runnable
 	public void removeClientListener(IClientListener listener)
 	{
 		this.clientListeners.remove(listener);
+	}
+
+	public Object readFromStream() throws IOException
+	{
+		try
+		{
+			return inputStream.readObject();
+		}
+		catch (Exception e)
+		{
+			// make sure only ONE type of exception is thrown
+			throw new IOException("Could not read data from socket.", e);
+		}
 	}
 }

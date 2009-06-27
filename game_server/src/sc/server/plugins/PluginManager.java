@@ -136,7 +136,11 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 					}
 					catch (ClassNotFoundException e)
 					{
-						e.printStackTrace();
+						logger.error("Failed to load plugin.", e);
+					}
+					catch (NoClassDefFoundError e)
+					{
+						logger.error("Failed to load plugin.", e);
 					}
 				}
 			}
@@ -161,5 +165,11 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	public Collection<PluginInstanceType> getActivePlugins()
 	{
 		return this.activePlugins;
+	}
+	
+	protected void addPlugin(PluginInstanceType type)
+	{
+		this.availablePlugins.add(type);
+		this.activePlugins.add(type);
 	}
 }

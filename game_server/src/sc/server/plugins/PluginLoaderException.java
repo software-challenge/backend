@@ -11,4 +11,9 @@ public class PluginLoaderException extends Exception
 	{
 		super(e);
 	}
+
+	public PluginLoaderException(String message, InstantiationException e)
+	{
+		super(message, e);
+	}
 }

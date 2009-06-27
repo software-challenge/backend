@@ -1,7 +1,7 @@
 package sc.server;
 
-import sc.server.protocol.InboundPacket;
-import sc.server.protocol.OutboundPacket;
+import sc.server.protocol.JoinPreparedRoomRequest;
+import sc.server.protocol.JoinRoomRequest;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -21,8 +21,8 @@ public class Configuration
 	static
 	{
 		xStream = new XStream();
-		xStream.alias("clientpacket", InboundPacket.class);
-		xStream.alias("serverpacket", OutboundPacket.class);
+		xStream.alias("Join", JoinRoomRequest.class);
+		xStream.alias("JoinPrepared", JoinPreparedRoomRequest.class);
 	}
 	
 	public static int getPort()
@@ -32,7 +32,6 @@ public class Configuration
 
 	public static XStream getXStream()
 	{
-		// TODO: configure
 		return xStream;
 	}
 }

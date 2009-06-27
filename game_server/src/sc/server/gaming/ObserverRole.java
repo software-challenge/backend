@@ -11,9 +11,18 @@ public class ObserverRole implements IClientRole
 
 	}
 
-    @Override
-    public void setClient(Client client) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	@Override
+	public void onClientDisconnected(Client source)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRequest(Client source, Object packet)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 }

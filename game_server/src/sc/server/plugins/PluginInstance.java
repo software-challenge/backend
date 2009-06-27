@@ -34,7 +34,7 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 
 	public void load(HostType host) throws PluginLoaderException
 	{
-		instanciate();
+		this.instanciate();
 		this.instance.initialize(host);
 	}
 
@@ -56,7 +56,12 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 		}
 		catch (InstantiationException e)
 		{
-			throw new PluginLoaderException(e);
+			throw new PluginLoaderException(
+					"Could not instanciate the plugin ("
+							+ definition.getCanonicalName()
+							+ "). "
+							+ "Plugin must be a class with a public parameterless constructor and must not be nested.",
+					e);
 		}
 		catch (ClassCastException e)
 		{

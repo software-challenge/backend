@@ -3,18 +3,32 @@ package sc.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.IGamePluginHost;
-
-
-public class Server implements IGamePluginHost, Runnable
+public class Server implements Runnable
 {
-	protected static final Logger	logger				= LoggerFactory
-																.getLogger(Server.class);
-	
+	protected static final Logger	logger	= LoggerFactory
+													.getLogger(Server.class);
+	Lobby							lobby	= new Lobby();
+
 	@Override
 	public void run()
 	{
-		Lobby lobby = new Lobby();
 		lobby.start();
+
+		while (true)
+		{
+			try
+			{
+				Thread.sleep(50);
+			}
+			catch (InterruptedException e)
+			{
+				logger.warn("Failed to sleep.", e);
+			}
+		}
+	}
+
+	public void close()
+	{
+		lobby.close();
 	}
 }
