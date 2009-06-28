@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import sc.api.plugins.IGame;
+import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
 
 
-public class GameInstance implements IGame
+public class GameInstance implements IGameInstance
 {
 	// the actual gameboard
 	private Board				gameBoard;
@@ -169,5 +169,4 @@ public class GameInstance implements IGame
 	{
 		this.gameListeners.remove(listener);
 	}
-
 }

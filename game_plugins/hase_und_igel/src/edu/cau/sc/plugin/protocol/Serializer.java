@@ -33,16 +33,4 @@ public class Serializer
 		}
 		return instance;
 	}
-	
-	public static ByteBuffer serialize(AbstractPacket obj)
-	{
-		XStream xstream = getInstance();
-		return ByteBuffer.wrap(xstream.toXML(obj).getBytes());
-	}
-	
-	public static AbstractPacket deserialize(ByteBuffer data)
-	{
-		XStream xstream = getInstance();
-		return (AbstractPacket)xstream.fromXML(new ByteArrayInputStream(data.array()));
-	}
 }

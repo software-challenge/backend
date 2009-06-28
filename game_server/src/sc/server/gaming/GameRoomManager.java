@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.server.ServiceManager;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.GamePluginManager;
@@ -86,9 +87,7 @@ public class GameRoomManager implements Runnable
 
 	public void start()
 	{
-		Thread thread = new Thread(this);
-		thread.setDaemon(true);
-		thread.start();
+		ServiceManager.createService(this).start();
 	}
 
 	@Override

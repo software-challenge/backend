@@ -3,6 +3,7 @@ package sc.server.gaming;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import sc.server.ServiceManager;
 import sc.server.plugins.GamePluginManager;
 
 
@@ -38,14 +39,13 @@ public class GameManager implements Runnable
 
 	public void start()
 	{
-		Thread thread = new Thread(this);
-		thread.start();
+		ServiceManager.createService(this, false).start();
 	}
 
 	@Override
 	public void run()
 	{
-		while(true)
+		while(!Thread.interrupted())
 		{
 			for(GameInstance game : games)
 			{

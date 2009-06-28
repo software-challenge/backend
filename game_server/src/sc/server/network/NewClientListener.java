@@ -61,7 +61,7 @@ public class NewClientListener implements Runnable
 	{
 		start();
 
-		while (!serverSocket.isClosed())
+		while (!serverSocket.isClosed() && !Thread.interrupted())
 		{
 			acceptClient();
 			Thread.yield();

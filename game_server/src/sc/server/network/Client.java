@@ -86,7 +86,7 @@ public class Client implements Runnable
 	@Override
 	public void run()
 	{
-		while (!zombie)
+		while (!zombie && !Thread.interrupted())
 		{
 			try
 			{

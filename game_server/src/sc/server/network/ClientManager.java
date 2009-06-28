@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.server.IClientManagerListener;
+import sc.server.ServiceManager;
 
 /**
  * The ClientManager serves as a lookup table for all active connections.
@@ -52,7 +53,7 @@ public class ClientManager implements Runnable
 
 		logger.info("ClientManager running.");
 		
-		while (running)
+		while (running && !Thread.interrupted())
 		{
 			for (Client client : this.clientListener.fetchNewClients())
 			{
@@ -79,9 +80,7 @@ public class ClientManager implements Runnable
 	 */
 	public void start()
 	{
-		Thread thread = new Thread(this);
-		thread.setDaemon(true);
-		thread.start();
+		ServiceManager.createService(this).start();
 	}
 
 	public void addListener(IClientManagerListener listener)

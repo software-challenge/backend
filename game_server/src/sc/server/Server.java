@@ -7,14 +7,14 @@ public class Server implements Runnable
 {
 	protected static final Logger	logger	= LoggerFactory
 													.getLogger(Server.class);
-	Lobby							lobby	= new Lobby();
+	private Lobby					lobby	= new Lobby();
 
 	@Override
 	public void run()
 	{
 		lobby.start();
 
-		while (true)
+		while (!Thread.interrupted())
 		{
 			try
 			{
