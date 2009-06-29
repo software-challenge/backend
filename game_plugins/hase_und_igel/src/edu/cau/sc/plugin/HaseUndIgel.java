@@ -5,9 +5,9 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.IGamePluginHost;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
+import sc.api.plugins.IGamePluginHost;
 import sc.api.plugins.PluginDescriptor;
 
 /**

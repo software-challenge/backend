@@ -1,10 +1,18 @@
 package sc.server;
 
-import sc.server.protocol.JoinPreparedRoomRequest;
-import sc.server.protocol.JoinRoomRequest;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Properties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.protocol.ErrorResponse;
+import sc.protocol.requests.JoinPreparedRoomRequest;
+import sc.protocol.requests.JoinRoomRequest;
+import sc.server.plugins.PluginManager;
 
 import com.thoughtworks.xstream.XStream;
-
 
 /**
  * Server configuration.
@@ -12,26 +20,107 @@ import com.thoughtworks.xstream.XStream;
  * @author mja
  * @author rra
  * 
- * TODO load values at startup from a properties file
+ *         TODO load values at startup from a properties file
  */
 public class Configuration
 {
-	private static XStream xStream;
-	
+	public static final String	PASSWORD_KEY	= "password";
+	public static final String	PORT_KEY		= "port";
+	public static final String	PLUGIN_PATH_KEY	= "plugins";
+
+	private static Logger		logger			= LoggerFactory
+														.getLogger(Configuration.class);
+	private static XStream		xStream;
+	private static Properties	properties		= new Properties();
+
 	static
 	{
 		xStream = new XStream();
 		xStream.alias("Join", JoinRoomRequest.class);
 		xStream.alias("JoinPrepared", JoinPreparedRoomRequest.class);
+		xStream.alias("Error", ErrorResponse.class);
 	}
-	
+
+	public static void load(Reader reader) throws IOException
+	{
+		properties.load(reader);
+	}
+
 	public static int getPort()
 	{
-		return 3000;
+		return get(PORT_KEY, Integer.class, 3000);
 	}
 
 	public static XStream getXStream()
 	{
 		return xStream;
+	}
+
+	public static String getPluginPath()
+	{
+		return get(PLUGIN_PATH_KEY, String.class, "./plugins");
+	}
+
+	public static String getAdministrativePassword()
+	{
+		return get(PASSWORD_KEY);
+	}
+
+	/**
+	 * Modifies a property within the configuration.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public static void set(final String key, final String value)
+	{
+		properties.setProperty(key, value);
+	}
+
+	public static void setIfNotNull(final String key, final String value)
+	{
+		if (value != null)
+		{
+			set(key, value);
+		}
+	}
+
+	public static String get(final String key)
+	{
+		return get(key, String.class, null);
+	}
+
+	public static <T> T get(String key, Class<T> type, T defaultValue)
+	{
+		String stringValue = properties.getProperty(key);
+
+		if (stringValue == null)
+		{
+			return defaultValue;
+		}
+		else
+		{
+			try
+			{
+				if (type == String.class)
+				{
+					return type.cast(stringValue);
+				}
+				else if (type == Integer.class)
+				{
+					return type.cast(Integer.parseInt(stringValue));
+				}
+				else
+				{
+					logger.warn("Could not convert String to {} ", type);
+					return defaultValue;
+				}
+			}
+			catch (Exception e)
+			{
+				logger.warn("Failed to retrieve key from configuration.", e);
+				return defaultValue;
+			}
+		}
 	}
 }

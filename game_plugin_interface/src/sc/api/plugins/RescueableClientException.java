@@ -1,4 +1,4 @@
-package sc.server;
+package sc.api.plugins;
 
 public class RescueableClientException extends Exception
 {

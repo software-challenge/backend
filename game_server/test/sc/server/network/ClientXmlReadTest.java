@@ -11,15 +11,12 @@ import sc.server.helpers.StringNetworkInterface;
 import sc.server.network.Client;
 import sc.server.network.IClientListener;
 
-
-
-
 public class ClientXmlReadTest
 {
 	private class StupidClientListener implements IClientListener
 	{
-		public Object LastPacket = null;
-		
+		public Object	LastPacket	= null;
+
 		@Override
 		public void onRequest(Client source, Object packet)
 		{
@@ -33,17 +30,22 @@ public class ClientXmlReadTest
 		}
 	}
 
+	/**
+	 * Denotes an empty ObjectStream (to be used with XStream).
+	 */
 	private static final String	EMPTY_OBJECT_STREAM	= "<object-stream></object-stream>";
-	
+
 	@Before
-	public void setup() {
+	public void setup()
+	{
 		Configuration.getXStream().alias("example", ExamplePacket.class);
 	}
-	
+
 	@Test
 	public void clientReceivePacketTest() throws IOException
 	{
-		StringNetworkInterface stringInterface = new StringNetworkInterface("<object-stream><example /></object-stream>");
+		StringNetworkInterface stringInterface = new StringNetworkInterface(
+				"<object-stream><example /></object-stream>");
 		StupidClientListener clientListener = new StupidClientListener();
 		Client client = new Client(stringInterface, Configuration.getXStream());
 		client.addClientListener(clientListener);
@@ -51,15 +53,15 @@ public class ClientXmlReadTest
 		Assert.assertNotNull(clientListener.LastPacket);
 		Assert.assertTrue(clientListener.LastPacket instanceof ExamplePacket);
 	}
-	
+
 	@Test
 	public void clientSendPacketTest() throws IOException
 	{
-		StringNetworkInterface stringInterface = new StringNetworkInterface(EMPTY_OBJECT_STREAM);
+		StringNetworkInterface stringInterface = new StringNetworkInterface(
+				EMPTY_OBJECT_STREAM);
 		Client client = new Client(stringInterface, Configuration.getXStream());
 		client.send(new ExamplePacket());
 		String data = stringInterface.getData();
-		Assert.assertTrue(data.startsWith("<object-stream>\n"+
-				"  <example"));
+		Assert.assertTrue(data.startsWith("<object-stream>\n  <example"));
 	}
 }

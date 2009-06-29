@@ -13,6 +13,7 @@
 	<property name="plugin.dir" value="${jar.dir}/plugins" />
 
 	<path id="classpath.base">
+		<pathelement location="${classes.dir}" />
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 	</path>
 
@@ -80,7 +81,15 @@
 		</java>
 	</target>
 
-	<target name="run" depends="jar">
+	<target name="run" depends="compile, plugins">
+		<java classname="${main-class}" >
+			<arg value="--plugins"/>
+			<arg value="${plugin.dir}" />
+			<classpath refid="classpath.base" />
+		</java>
+	</target>
+
+	<target name="run-jar" depends="jar">
 		<java jar="${jar.dir}/${ant.project.name}.jar" dir="${jar.dir}" fork="true">
 			<jvmarg value="-Xnoagent" />
 			<jvmarg value="-Djava.compiler=NONE" />

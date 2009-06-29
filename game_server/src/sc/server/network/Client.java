@@ -11,8 +11,14 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import sc.server.RescueableClientException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.api.plugins.RescueableClientException;
+import sc.protocol.ErrorResponse;
+import sc.server.Configuration;
 import sc.server.network.interfaces.INetworkInterface;
+
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -29,6 +35,8 @@ public class Client implements Runnable
 	private boolean						zombie			= false;
 	private Set<IClientListener>		clientListeners	= new HashSet<IClientListener>();
 	private Collection<IClientRole>		roles			= new LinkedList<IClientRole>();
+	private static Logger				logger			= LoggerFactory
+																.getLogger(Client.class);
 
 	public Client(INetworkInterface networkInterface, XStream configuredXStream)
 			throws IOException
@@ -131,8 +139,11 @@ public class Client implements Runnable
 
 	public void close()
 	{
-		this.zombie = true;
-		notifyOnDisconnect();
+		if (!this.zombie)
+		{
+			this.zombie = true;
+			notifyOnDisconnect();
+		}
 	}
 
 	private void notifyOnPacket(Object packet)
@@ -151,7 +162,11 @@ public class Client implements Runnable
 			}
 		}
 
-		// TODO: send errors back to client
+		for (RescueableClientException error : errors)
+		{
+			logger.warn("An error occured: ", error);
+			this.send(new ErrorResponse(packet, error.getMessage()));
+		}
 	}
 
 	private void notifyOnDisconnect()
@@ -172,6 +187,12 @@ public class Client implements Runnable
 		this.clientListeners.remove(listener);
 	}
 
+	/**
+	 * Deserializes a new Object from the source stream.
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public Object readFromStream() throws IOException
 	{
 		try
@@ -183,5 +204,61 @@ public class Client implements Runnable
 			// make sure only ONE type of exception is thrown
 			throw new IOException("Could not read data from socket.", e);
 		}
+	}
+
+	/**
+	 * 
+	 * @return true, if this client has an AdministratorRole
+	 */
+	public boolean isAdministrator()
+	{
+		for (IClientRole role : roles)
+		{
+			if (role instanceof AdministratorRole)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Authenticates a Client as Administrator
+	 * 
+	 * @param password
+	 *            The secret which is required to gain administrative rights.
+	 * @throws AuthenticationFailedException
+	 */
+	public void authenticate(String password)
+			throws AuthenticationFailedException
+	{
+		String correctPassword = Configuration.getAdministrativePassword();
+
+		if (correctPassword != null && correctPassword.equals(password))
+		{
+			if (!isAdministrator())
+			{
+				this.addRole(new AdministratorRole(this));
+				logger.info("Client authenticated as administrator");
+			}
+			else
+			{
+				logger
+						.warn("Client tried to authenticate as administrator twice.");
+			}
+		}
+		else
+		{
+			logger.warn("Client failed to authenticate as administrator.");
+
+			throw new AuthenticationFailedException();
+		}
+	}
+
+	@Override
+	public String toString()
+	{
+		return String.format("Client(interface=%s)", networkInterface);
 	}
 }

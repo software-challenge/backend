@@ -7,12 +7,12 @@ import sc.server.network.IClientRole;
 
 public class PlayerRole implements IClientRole, IPlayerListener
 {
-	private Client client;
-	
-	private IPlayer player;
-	
-	private PlayerSlot playerSlot;
-	
+	private Client		client;
+
+	private IPlayer		player;
+
+	private PlayerSlot	playerSlot;
+
 	public PlayerRole(Client owner, PlayerSlot slot)
 	{
 		this.client = owner;
@@ -23,13 +23,18 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	public void onClientDisconnected(Client source)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onRequest(Client source, Object packet)
 	{
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public Client getClient()
+	{
+		return this.client;
 	}
 }

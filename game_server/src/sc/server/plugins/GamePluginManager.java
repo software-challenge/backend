@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.server.Configuration;
 import sc.server.gaming.GamePluginApi;
 
 public class GamePluginManager extends PluginManager<GamePluginInstance>
@@ -92,5 +93,11 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	public boolean supportsGame(String uuid)
 	{
 		return getPlugin(uuid) != null;
+	}
+	
+	@Override
+	public String getPluginFolder()
+	{
+		return Configuration.getPluginPath();
 	}
 }

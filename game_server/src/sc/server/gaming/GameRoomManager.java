@@ -3,104 +3,122 @@ package sc.server.gaming;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.api.plugins.TooManyPlayersException;
 import sc.server.ServiceManager;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.GamePluginManager;
 import sc.server.plugins.UnknownGameTypeException;
 
-
 /**
- * The GameManager is responsible to keep all games alive and kill
- * them once they are done. Additionally the GameManger has to detect
- * and kill games, which seem to be dead-locked or have caused
- * a timeout.
+ * The GameManager is responsible to keep all games alive and kill them once
+ * they are done. Additionally the GameManger has to detect and kill games,
+ * which seem to be dead-locked or have caused a timeout.
  * 
  * @author mja
  * @author rra
  */
 public class GameRoomManager implements Runnable
 {
-	private static Logger logger = LoggerFactory.getLogger(GameRoomManager.class);
-	private Collection<GameRoom> games = new LinkedList<GameRoom>();
+	private static Logger			logger				= LoggerFactory
+																.getLogger(GameRoomManager.class);
+	private Collection<GameRoom>	games				= new LinkedList<GameRoom>();
 	private final GamePluginManager	gamePluginManager	= new GamePluginManager();
-	private GamePluginApi pluginApi = new GamePluginApi();
-	
+	private GamePluginApi			pluginApi			= new GamePluginApi();
+	private Thread					serviceThread		= null;
+
 	public GameRoomManager()
 	{
 		gamePluginManager.reload();
 		gamePluginManager.activateAllPlugins(this.pluginApi);
 	}
-	
+
 	/**
 	 * Adds an active game to the <code>GameManager</code>
+	 * 
 	 * @param game
 	 */
 	private void add(GameRoom game)
 	{
 		this.games.add(game);
 	}
-	
-	public boolean createGame(Client client, String gameType) throws UnknownGameTypeException {
+
+	public GameRoom createGame(String gameType)
+	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 		logger.info("Created new game of type " + gameType);
-		
+
 		GameRoom room = new GameRoom(plugin, plugin.createGame());
-		boolean result = room.join(client);
-		
-		assert result; // a "newly" created game should always permit the initial join
-		
-		// allow other players to join now
+
 		this.add(room);
-		
-		return result;
+
+		return room;
 	}
-	
-	public boolean joinOrCreateGame(Client client, String gameType) throws UnknownGameTypeException
+
+	public boolean createAndJoinGame(Client client, String gameType)
+			throws UnknownGameTypeException
 	{
-		for(GameRoom game : games)
+		GameRoom room = createGame(gameType);
+		return room.join(client);
+	}
+
+	public boolean joinOrCreateGame(Client client, String gameType)
+			throws UnknownGameTypeException
+	{
+		for (GameRoom game : games)
 		{
-			if(game.join(client)) {
+			if (game.join(client))
+			{
 				return true;
 			}
 		}
-		
-		return createGame(client, gameType);
+
+		return createAndJoinGame(client, gameType);
 	}
-	
+
 	public boolean joinGame(Client client, int id)
 	{
-		for(GameRoom game : games)
+		for (GameRoom game : games)
 		{
-			if(game.getId() == id) {
+			if (game.getId() == id)
+			{
 				return game.join(client);
 			}
 		}
-		
+
 		return false;
 	}
 
 	public void start()
 	{
-		ServiceManager.createService(this).start();
+		if (serviceThread == null)
+		{
+			serviceThread = ServiceManager.createService(this.getClass()
+					.getSimpleName(), this);
+			serviceThread.start();
+		}
 	}
 
 	@Override
 	public void run()
 	{
 		logger.info("GameRoomManager running.");
-		
+
 		// Nothing to do yet.
 	}
 
 	public void close()
 	{
-		// Nothing to do yet.
+		if (serviceThread != null)
+		{
+			serviceThread.interrupt();
+		}
 	}
 
 	public Collection<GameRoom> getGames()
@@ -116,5 +134,15 @@ public class GameRoomManager implements Runnable
 	public GamePluginApi getPluginApi()
 	{
 		return this.pluginApi;
+	}
+
+	public GamePreparationResponse prepareGame(String gameType, int playerCount)
+			throws TooManyPlayersException
+	{
+		GameRoom room = createGame(gameType);
+		room.setSize(playerCount);
+		List<String> reservations = room.reserveAllSlots();
+		
+		return new GamePreparationResponse(reservations);
 	}
 }

@@ -1,8 +1,8 @@
 package sc.server.plugins;
 
-import sc.api.IGamePluginHost;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
+import sc.api.plugins.IGamePluginHost;
 import sc.api.plugins.PluginDescriptor;
 
 @PluginDescriptor(author="Chuck", name="TestPlugin", uuid=TestPlugin.TEST_PLUGIN_UUID)
@@ -18,15 +18,14 @@ public class TestPlugin implements IGamePlugin
 	@Override
 	public IGameInstance createGame()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new TestGame();
 	}
 
 	@Override
 	public void initialize(IGamePluginHost host)
 	{
-		// TODO Auto-generated method stub
-		
+		host.registerProtocolClass(TestPlayer.class);
+		host.registerProtocolClass(TestMove.class);
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package sc.api;
+package sc.api.plugins;
 
 public interface IGamePluginHost {
 	public void registerProtocolClass(Class<?> clazz);

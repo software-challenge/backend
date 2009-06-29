@@ -17,32 +17,31 @@ public class ClientManager implements Runnable
 {
 	private static Logger					logger			= LoggerFactory
 																	.getLogger(ClientManager.class);
-	protected Collection<Client>			clients;
+	protected Collection<Client>			clients			= new LinkedList<Client>();
 	private NewClientListener				clientListener	= new NewClientListener();
 	private List<IClientManagerListener>	listeners		= new LinkedList<IClientManagerListener>();
 	private boolean							running			= false;
 
 	public ClientManager()
 	{
-		clients = new LinkedList<Client>();
 		this.clientListener = new NewClientListener();
 	}
 
 	public void add(Client newClient)
 	{
 		clients.add(newClient);
-	}
 
-	public void remove(Client client)
-	{
-		clients.remove(client);
+		for (IClientManagerListener listener : listeners)
+		{
+			listener.onClientConnected(newClient);
+		}
 	}
 
 	public void addAll(Collection<Client> newClients)
 	{
 		for (Client client : newClients)
 		{
-			add(client);
+			this.add(client);
 		}
 	}
 
@@ -52,16 +51,10 @@ public class ClientManager implements Runnable
 		running = true;
 
 		logger.info("ClientManager running.");
-		
+
 		while (running && !Thread.interrupted())
 		{
-			for (Client client : this.clientListener.fetchNewClients())
-			{
-				for (IClientManagerListener listener : listeners)
-				{
-					listener.onClientConnected(client);
-				}
-			}
+			this.addAll(this.clientListener.fetchNewClients());
 
 			try
 			{
@@ -69,7 +62,7 @@ public class ClientManager implements Runnable
 			}
 			catch (InterruptedException e)
 			{
-				logger.warn("Failed to sleep.", e);
+				// Interrupts are not critical at this point
 			}
 		}
 
@@ -80,7 +73,7 @@ public class ClientManager implements Runnable
 	 */
 	public void start()
 	{
-		ServiceManager.createService(this).start();
+		ServiceManager.createService(this.getClass().getSimpleName(), this).start();
 	}
 
 	public void addListener(IClientManagerListener listener)
@@ -90,6 +83,11 @@ public class ClientManager implements Runnable
 
 	public void close()
 	{
+		for(Client client : clients)
+		{
+			client.close();
+		}
+		
 		this.running = false;
 	}
 }

@@ -1,5 +1,6 @@
 package sc.server;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,14 +10,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
+import sc.api.plugins.RescueableClientException;
+import sc.protocol.requests.AuthenticateRequest;
+import sc.protocol.requests.ILobbyRequest;
+import sc.protocol.requests.JoinPreparedRoomRequest;
+import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.PrepareGameRequest;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
+import sc.server.gaming.ReservationManager;
 import sc.server.network.Client;
 import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
-import sc.server.protocol.ILobbyRequest;
-import sc.server.protocol.JoinPreparedRoomRequest;
-import sc.server.protocol.JoinRoomRequest;
 
 /**
  * The lobby will help clients find a open game or create new games to play with
@@ -33,25 +38,14 @@ public class Lobby implements IClientManagerListener, IClientListener
 	private GameRoomManager			gameManager		= new GameRoomManager();
 	private ClientManager			clientManager	= new ClientManager();
 
-	public Collection<GameRoom> listOpenGames()
+	public Lobby()
 	{
-		return listOpenGames(null);
-	}
-
-	public Collection<GameRoom> listOpenGames(String pluginName)
-	{
-		return new ArrayList<GameRoom>(0);
-	}
-
-	public Client resolvePlayer(IPlayer player)
-	{
-		return this.players.get(player);
+		clientManager.addListener(this);
 	}
 
 	public void start()
 	{
 		gameManager.start();
-		clientManager.addListener(this);
 		clientManager.start();
 	}
 
@@ -64,26 +58,41 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onClientDisconnected(Client source)
 	{
-		// I don't care
+		logger.info("{} disconnected.", source);
 	}
 
 	@Override
-	public void onRequest(Client source, Object packet) throws RescueableClientException
+	public void onRequest(Client source, Object packet)
+			throws RescueableClientException
 	{
 		if (packet instanceof ILobbyRequest)
 		{
 			if (packet instanceof JoinPreparedRoomRequest)
 			{
-				// TODO: implement
-				gameManager.joinGame(source, 0);
+				ReservationManager
+						.claimReservation(source,
+								((JoinPreparedRoomRequest) packet)
+										.getReservationCode());
 			}
 			else if (packet instanceof JoinRoomRequest)
 			{
-				gameManager.joinOrCreateGame(source, ((JoinRoomRequest)packet).getGameType());
+				gameManager.joinOrCreateGame(source, ((JoinRoomRequest) packet)
+						.getGameType());
+			}
+			else if (packet instanceof AuthenticateRequest)
+			{
+				source.authenticate(((AuthenticateRequest) packet)
+						.getPassword());
+			}
+			else if (packet instanceof PrepareGameRequest)
+			{
+				PrepareGameRequest prepared = (PrepareGameRequest) packet;
+				source.send(gameManager.prepareGame(prepared.getGameType(),
+						prepared.getPlayerCount()));
 			}
 			else
 			{
-				logger.warn("Unhandled Packet of type: " + packet.getClass());
+				logger.error("Unhandled Packet of type: " + packet.getClass());
 			}
 		}
 	}
@@ -97,5 +106,10 @@ public class Lobby implements IClientManagerListener, IClientListener
 	public GameRoomManager getGameManager()
 	{
 		return this.gameManager;
+	}
+
+	public ClientManager getClientManager()
+	{
+		return this.clientManager;
 	}
 }

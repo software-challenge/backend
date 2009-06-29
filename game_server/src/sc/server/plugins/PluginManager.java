@@ -44,7 +44,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	{
 		unload();
 		
-		for (URI jarURI : findPluginArchives())
+		for (URI jarURI : findPluginArchives(this.getPluginFolder()))
 		{
 			for (Class<?> definition : findGameDefinitionsInJar(jarURI))
 			{
@@ -75,13 +75,15 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 		return this.availablePlugins;
 	}
 
-	private static Collection<URI> findPluginArchives()
+	private static Collection<URI> findPluginArchives(String path)
 	{
 		Collection<URI> pluginArchives = new LinkedList<URI>();
-		File moduleDirectory = new File(PLUGIN_DIRECTORY);
+		File moduleDirectory = new File(path);
 
 		if (moduleDirectory.exists() && moduleDirectory.isDirectory())
 		{
+			logger.info("Loading plugins from: {}", moduleDirectory.getAbsoluteFile());
+			
 			for (String file : moduleDirectory.list())
 			{
 				if (file.endsWith(JAR_FILE_IDENTIFIER))
@@ -171,5 +173,10 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	{
 		this.availablePlugins.add(type);
 		this.activePlugins.add(type);
+	}
+	
+	public String getPluginFolder()
+	{
+		return PLUGIN_DIRECTORY;
 	}
 }

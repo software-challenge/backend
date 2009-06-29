@@ -1,6 +1,6 @@
 package sc.server.plugins;
 
-import sc.server.RescueableClientException;
+import sc.api.plugins.RescueableClientException;
 
 public class UnknownGameTypeException extends RescueableClientException
 {

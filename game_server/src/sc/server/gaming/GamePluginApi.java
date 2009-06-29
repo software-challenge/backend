@@ -1,7 +1,7 @@
 package sc.server.gaming;
 
 
-import sc.api.IGamePluginHost;
+import sc.api.plugins.IGamePluginHost;
 import sc.server.Configuration;
 
 public class GamePluginApi implements IGamePluginHost

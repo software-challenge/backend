@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public interface IGameInstance
 {
-	public IPlayer playerJoined();
+	public IPlayer playerJoined() throws TooManyPlayersException;
 
 	public void playerLeft(IPlayer player);
 

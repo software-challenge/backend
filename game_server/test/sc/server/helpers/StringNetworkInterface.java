@@ -43,4 +43,10 @@ public class StringNetworkInterface implements INetworkInterface
 		outputStream.flush();
 		return outputStream.toString();
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "String@" + this.hashCode();
+	}
 }
