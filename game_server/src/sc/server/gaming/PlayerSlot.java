@@ -4,8 +4,6 @@ import sc.server.network.Client;
 
 public class PlayerSlot
 {
-	private String			magicAuthorizationKey;
-	private Integer			position;
 	private PlayerRole		role;
 	private final GameRoom	room;
 	private boolean			reserved;

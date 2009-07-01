@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.RescueableClientException;
-import sc.network.INetworkInterface;
+import sc.networking.INetworkInterface;
 import sc.protocol.ErrorResponse;
 import sc.protocol.XStreamClient;
 import sc.server.Configuration;

@@ -13,7 +13,7 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.network.TcpNetwork;
+import sc.networking.TcpNetwork;
 import sc.server.Configuration;
 import sc.server.ServiceManager;
 
