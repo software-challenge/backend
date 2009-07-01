@@ -14,6 +14,7 @@ import sc.server.gaming.GamePreparationResponse;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.PlayerSlot;
 import sc.server.network.Client;
+import sc.server.network.MockClient;
 import sc.server.plugins.TestPlugin;
 
 public class ContestTest extends AdministratorTest
@@ -21,7 +22,7 @@ public class ContestTest extends AdministratorTest
 	@Test
 	public void shouldBeAbleToPrepareGame() throws RescueableClientException
 	{
-		MyClient admin = connectAsAdmin();
+		MockClient admin = connectAsAdmin();
 		Client player1 = connectClient();
 		Client player2 = connectClient();
 
@@ -31,22 +32,27 @@ public class ContestTest extends AdministratorTest
 		Assert.assertEquals(1, gameMgr.getGames().size());
 		GameRoom room = gameMgr.getGames().iterator().next();
 
-		GamePreparationResponse response = admin.seekMessage(GamePreparationResponse.class);
-		
+		GamePreparationResponse response = admin
+				.seekMessage(GamePreparationResponse.class);
+
 		Assert.assertEquals(2, room.getSlots().size());
 
-		lobby.onRequest(player1, new JoinPreparedRoomRequest(response.getReservations().get(1)));
-		lobby.onRequest(player2, new JoinPreparedRoomRequest(response.getReservations().get(0)));
-		
+		lobby.onRequest(player1, new JoinPreparedRoomRequest(response
+				.getReservations().get(1)));
+		lobby.onRequest(player2, new JoinPreparedRoomRequest(response
+				.getReservations().get(0)));
+
 		Assert.assertEquals(2, room.getSlots().size());
-		
-		for(PlayerSlot slot : room.getSlots())
+
+		for (PlayerSlot slot : room.getSlots())
 		{
 			Assert.assertFalse(slot.isEmpty());
 		}
-		
+
 		// Ordering should match the defined ordering
-		Assert.assertEquals(player1, room.getSlots().get(1).getRole().getClient());
-		Assert.assertEquals(player2, room.getSlots().get(0).getRole().getClient());
+		Assert.assertEquals(player1, room.getSlots().get(1).getRole()
+				.getClient());
+		Assert.assertEquals(player2, room.getSlots().get(0).getRole()
+				.getClient());
 	}
 }

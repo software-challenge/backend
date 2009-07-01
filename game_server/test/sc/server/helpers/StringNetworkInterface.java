@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import sc.server.network.interfaces.INetworkInterface;
+import sc.network.INetworkInterface;
 
 
 public class StringNetworkInterface implements INetworkInterface

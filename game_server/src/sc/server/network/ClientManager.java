@@ -1,5 +1,6 @@
 package sc.server.network;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,17 +49,25 @@ public class ClientManager implements Runnable
 	@Override
 	public void run()
 	{
+		clientListener.start();
+
 		running = true;
 
 		logger.info("ClientManager running.");
 
 		while (running && !Thread.interrupted())
 		{
-			this.addAll(this.clientListener.fetchNewClients());
+			Collection<Client> clients = this.clientListener.fetchNewClients();
+
+			if (!clients.isEmpty())
+			{
+				logger.info("Delegating new clients to ClientManager.");
+				this.addAll(clients);
+			}
 
 			try
 			{
-				Thread.sleep(10);
+				Thread.sleep(1);
 			}
 			catch (InterruptedException e)
 			{
@@ -73,7 +82,8 @@ public class ClientManager implements Runnable
 	 */
 	public void start()
 	{
-		ServiceManager.createService(this.getClass().getSimpleName(), this).start();
+		ServiceManager.createService(this.getClass().getSimpleName(), this)
+				.start();
 	}
 
 	public void addListener(IClientManagerListener listener)
@@ -83,11 +93,20 @@ public class ClientManager implements Runnable
 
 	public void close()
 	{
-		for(Client client : clients)
-		{
-			client.close();
-		}
-		
 		this.running = false;
+
+		clientListener.close();
+
+		for (Client client : clients)
+		{
+			try
+			{
+				client.close();
+			}
+			catch (IOException e)
+			{
+				logger.error("Couldn't close client.", e);
+			}
+		}
 	}
 }

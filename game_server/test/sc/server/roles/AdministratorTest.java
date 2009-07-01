@@ -10,6 +10,7 @@ import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.server.Configuration;
 import sc.server.network.Client;
+import sc.server.network.MockClient;
 import sc.server.plugins.TestPlugin;
 
 public class AdministratorTest extends AbstractRoleTest
@@ -48,9 +49,9 @@ public class AdministratorTest extends AbstractRoleTest
 		Assert.assertEquals(false, client.isAdministrator());
 	}
 
-	protected MyClient connectAsAdmin()
+	protected MockClient connectAsAdmin()
 	{
-		MyClient client = null;
+		MockClient client = null;
 		client = connectClient();
 
 

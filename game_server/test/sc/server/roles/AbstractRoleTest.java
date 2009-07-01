@@ -14,58 +14,19 @@ import sc.server.gaming.GameRoomManager;
 import sc.server.helpers.StringNetworkInterface;
 import sc.server.network.Client;
 import sc.server.network.ClientManager;
+import sc.server.network.MockClient;
 import sc.server.plugins.GamePluginManager;
 import sc.server.plugins.PluginLoaderException;
 import sc.server.plugins.TestPlugin;
 
 public abstract class AbstractRoleTest
 {
-	protected class MyClient extends Client
-	{
-		private Queue<Object>	outgoingMessages	= new LinkedList<Object>();
-
-		public MyClient() throws IOException
-		{
-			super(new StringNetworkInterface("<object-stream>"), Configuration
-					.getXStream());
-		}
-
-		@Override
-		public synchronized void send(Object packet)
-		{
-			outgoingMessages.add(packet);
-			super.send(packet);
-		}
-
-		public Object popMessage()
-		{
-			return outgoingMessages.poll();
-		}
-
-		@SuppressWarnings("unchecked")
-		public <T> T seekMessage(Class<T> type)
-		{
-			Object current = null;
-			do
-			{
-				current = popMessage();
-			} while (current != null && current.getClass() != type);
-
-			if (current == null)
-			{
-				throw new RuntimeException(
-						"Could not find a message of the specified type");
-			}
-			else
-			{
-				return (T) current;
-			}
-		}
-	}
-
 	@Before
 	public void setup() throws PluginLoaderException
 	{
+		// Random PortAllocation
+		Configuration.set(Configuration.PORT_KEY, "0");
+
 		lobby = new Lobby();
 		clientMgr = lobby.getClientManager();
 		gameMgr = lobby.getGameManager();
@@ -73,12 +34,14 @@ public abstract class AbstractRoleTest
 
 		pluginMgr.loadPlugin(TestPlugin.class, gameMgr.getPluginApi());
 		Assert.assertTrue(pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
+
+		lobby.start();
 	}
 
 	@After
 	public void tearDown()
 	{
-		clientMgr.close();
+		lobby.close();
 	}
 
 	protected Lobby				lobby;
@@ -86,12 +49,12 @@ public abstract class AbstractRoleTest
 	protected GameRoomManager	gameMgr;
 	protected GamePluginManager	pluginMgr;
 
-	protected MyClient connectClient()
+	protected MockClient connectClient()
 	{
-		MyClient client;
+		MockClient client;
 		try
 		{
-			client = new MyClient();
+			client = new MockClient();
 			clientMgr.add(client);
 			return client;
 		}

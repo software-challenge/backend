@@ -15,9 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.RescueableClientException;
+import sc.network.INetworkInterface;
 import sc.protocol.ErrorResponse;
+import sc.protocol.XStreamClient;
 import sc.server.Configuration;
-import sc.server.network.interfaces.INetworkInterface;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -27,39 +28,18 @@ import com.thoughtworks.xstream.XStream;
  * @author mja
  * @author rra
  */
-public class Client implements Runnable
+public class Client extends XStreamClient
 {
-	private final INetworkInterface		networkInterface;
-	private final ObjectOutputStream	outputStream;
-	private final ObjectInputStream		inputStream;
-	private boolean						zombie			= false;
-	private Set<IClientListener>		clientListeners	= new HashSet<IClientListener>();
-	private Collection<IClientRole>		roles			= new LinkedList<IClientRole>();
-	private static Logger				logger			= LoggerFactory
-																.getLogger(Client.class);
+	private boolean					zombie			= false;
+	private Set<IClientListener>	clientListeners	= new HashSet<IClientListener>();
+	private Collection<IClientRole>	roles			= new LinkedList<IClientRole>();
+	private static Logger			logger			= LoggerFactory
+															.getLogger(Client.class);
 
 	public Client(INetworkInterface networkInterface, XStream configuredXStream)
 			throws IOException
 	{
-		if (networkInterface == null)
-		{
-			throw new IllegalArgumentException(
-					"networkInterface must not be null.");
-		}
-
-		if (configuredXStream == null)
-		{
-			throw new IllegalArgumentException(
-					"configuredXStream must not be null.");
-		}
-
-		this.networkInterface = networkInterface;
-		this.outputStream = configuredXStream
-				.createObjectOutputStream(new OutputStreamWriter(
-						networkInterface.getOutputStream()));
-		this.inputStream = configuredXStream
-				.createObjectInputStream(new InputStreamReader(networkInterface
-						.getInputStream()));
+		super(configuredXStream, networkInterface);
 	}
 
 	public Collection<IClientRole> getRoles()
@@ -72,18 +52,10 @@ public class Client implements Runnable
 		this.roles.add(role);
 	}
 
+	@Override
 	public synchronized void send(Object packet)
 	{
-		try
-		{
-			outputStream.writeObject(packet);
-			outputStream.flush();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			this.zombie = true;
-		}
+		super.send(packet);
 	}
 
 	public boolean isZombie()
@@ -92,53 +64,9 @@ public class Client implements Runnable
 	}
 
 	@Override
-	public void run()
+	public void close() throws IOException
 	{
-		while (!zombie && !Thread.interrupted())
-		{
-			try
-			{
-				this.receive();
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				this.close();
-			}
-		}
-	}
-
-	void receive()
-	{
-		if (this.zombie)
-		{
-			throw new IllegalStateException(
-					"Zombie-Clients can't receive any data.");
-		}
-
-		Object packet = null;
-
-		try
-		{
-			packet = readFromStream();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		if (packet != null)
-		{
-			notifyOnPacket(packet);
-		}
-		else
-		{
-			close();
-		}
-	}
-
-	public void close()
-	{
+		super.close();
 		if (!this.zombie)
 		{
 			this.zombie = true;
@@ -185,25 +113,6 @@ public class Client implements Runnable
 	public void removeClientListener(IClientListener listener)
 	{
 		this.clientListeners.remove(listener);
-	}
-
-	/**
-	 * Deserializes a new Object from the source stream.
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	public Object readFromStream() throws IOException
-	{
-		try
-		{
-			return inputStream.readObject();
-		}
-		catch (Exception e)
-		{
-			// make sure only ONE type of exception is thrown
-			throw new IOException("Could not read data from socket.", e);
-		}
 	}
 
 	/**
@@ -260,5 +169,21 @@ public class Client implements Runnable
 	public String toString()
 	{
 		return String.format("Client(interface=%s)", networkInterface);
+	}
+
+	@Override
+	public void onDisconnect(DisconnectCause cause)
+	{
+		super.onDisconnect(cause);
+
+		logger.info("{} disconnected.", this);
+
+		notifyOnDisconnect();
+	}
+
+	@Override
+	protected void onObject(Object o)
+	{
+		this.notifyOnPacket(o);
 	}
 }

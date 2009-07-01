@@ -1,0 +1,141 @@
+package sc.server.network;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import sc.helpers.Action;
+import sc.protocol.XStreamClient.DisconnectCause;
+import sc.protocol.requests.JoinRoomRequest;
+import sc.server.Configuration;
+import sc.server.Lobby;
+import sc.server.gaming.GameRoomManager;
+import sc.server.helpers.TestHelper;
+import sc.server.plugins.GamePluginManager;
+import sc.server.plugins.PluginLoaderException;
+import sc.server.plugins.TestPlugin;
+
+public class ConnectionTest
+{
+	@Before
+	public void setup() throws PluginLoaderException
+	{
+		// Random PortAllocation
+		Configuration.set(Configuration.PORT_KEY, "0");
+
+		lobby = new Lobby();
+		clientMgr = lobby.getClientManager();
+		gameMgr = lobby.getGameManager();
+		pluginMgr = gameMgr.getPluginManager();
+
+		pluginMgr.loadPlugin(TestPlugin.class, gameMgr.getPluginApi());
+		Assert.assertTrue(pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
+
+		NewClientListener.lastUsedPort = 0;
+		lobby.start();
+		waitForServer();
+	}
+
+	@After
+	public void tearDown()
+	{
+		lobby.close();
+	}
+
+	private class DontYouKnowJack
+	{
+
+	}
+
+	protected Lobby				lobby;
+	protected ClientManager		clientMgr;
+	protected GameRoomManager	gameMgr;
+	protected GamePluginManager	pluginMgr;
+
+	private void waitForServer()
+	{
+		while (NewClientListener.lastUsedPort == 0)
+		{
+			Thread.yield();
+		}
+	}
+
+	@Test
+	public void connectionTest() throws IOException, InterruptedException
+	{
+		TestTcpClient client = TestTcpClient.connect();
+		waitForConnect(1);
+
+		client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
+		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+			@Override
+			public Integer operate()
+			{
+				return lobby.getGameManager().getGames().size();
+			}
+		}, 1, TimeUnit.SECONDS);
+	}
+
+	private void waitForConnect(int count)
+	{
+		TestHelper.assertEqualsWithTimeout(count, new Action<Integer>() {
+			@Override
+			public Integer operate()
+			{
+				return lobby.getClientManager().clients.size();
+			}
+		}, 1, TimeUnit.SECONDS);
+	}
+
+	@Test
+	public void protocolViolationTestWithCorruptedXml() throws IOException,
+			InterruptedException
+	{
+		TestTcpClient client = TestTcpClient.connect();
+		waitForConnect(1);
+
+		client.sendCustomData("<>/I-do/>NOT<CARE".getBytes("utf-8"));
+
+		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
+				new Action<DisconnectCause>() {
+					@Override
+					public DisconnectCause operate()
+					{
+						return lobby.getClientManager().clients.iterator()
+								.next().getDisconnectCause();
+					}
+				}, 1, TimeUnit.SECONDS);
+		// Assert.assertEquals(DisconnectCause.PROTOCOL_ERROR, lobby
+		// .getClientManager().clients.iterator().next()
+		// .getDisconnectCause());
+	}
+
+	@Test
+	public void protocolViolationTestWithUnknownClasses() throws IOException,
+			InterruptedException
+	{
+		TestTcpClient client = TestTcpClient.connect();
+		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+			@Override
+			public Integer operate()
+			{
+				return lobby.getClientManager().clients.size();
+			}
+		}, 1, TimeUnit.SECONDS);
+
+		client.send(new DontYouKnowJack());
+		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
+				new Action<DisconnectCause>() {
+					@Override
+					public DisconnectCause operate()
+					{
+						return lobby.getClientManager().clients.iterator()
+								.next().getDisconnectCause();
+					}
+				}, 1, TimeUnit.SECONDS);
+	}
+}

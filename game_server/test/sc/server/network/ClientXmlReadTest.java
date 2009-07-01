@@ -33,7 +33,7 @@ public class ClientXmlReadTest
 	/**
 	 * Denotes an empty ObjectStream (to be used with XStream).
 	 */
-	private static final String	EMPTY_OBJECT_STREAM	= "<object-stream></object-stream>";
+	private static final String	EMPTY_OBJECT_STREAM	= "<protocol></protocol>";
 
 	@Before
 	public void setup()
@@ -45,11 +45,11 @@ public class ClientXmlReadTest
 	public void clientReceivePacketTest() throws IOException
 	{
 		StringNetworkInterface stringInterface = new StringNetworkInterface(
-				"<object-stream><example /></object-stream>");
+				"<protocol><example /></protocol>");
 		StupidClientListener clientListener = new StupidClientListener();
-		Client client = new Client(stringInterface, Configuration.getXStream());
+		MockClient client = new MockClient(stringInterface, Configuration.getXStream());
 		client.addClientListener(clientListener);
-		client.receive();
+		Assert.assertNotNull(client.receive());
 		Assert.assertNotNull(clientListener.LastPacket);
 		Assert.assertTrue(clientListener.LastPacket instanceof ExamplePacket);
 	}
@@ -62,6 +62,6 @@ public class ClientXmlReadTest
 		Client client = new Client(stringInterface, Configuration.getXStream());
 		client.send(new ExamplePacket());
 		String data = stringInterface.getData();
-		Assert.assertTrue(data.startsWith("<object-stream>\n  <example"));
+		Assert.assertTrue(data.startsWith("<protocol>\n  <example"));
 	}
 }

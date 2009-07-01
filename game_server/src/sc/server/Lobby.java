@@ -92,7 +92,8 @@ public class Lobby implements IClientManagerListener, IClientListener
 			}
 			else
 			{
-				logger.error("Unhandled Packet of type: " + packet.getClass());
+				throw new RescueableClientException(
+						"Unhandled Packet of type: " + packet.getClass());
 			}
 		}
 	}
