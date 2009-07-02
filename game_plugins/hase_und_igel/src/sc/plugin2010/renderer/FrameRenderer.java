@@ -3,12 +3,18 @@
  */
 package sc.plugin2010.renderer;
 
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * @author ffi
@@ -24,6 +30,13 @@ public class FrameRenderer extends JFrame implements Renderer
 
 	private void createInitFrame(JFrame frame)
 	{
+
+		setContentPane(new BackGroundPane("resource/test3.png"));
+
+		BackGroundButton test = new BackGroundButton("resource/test.png", 150,
+				150);
+		test.setSize(150, 150);
+
 		ChatBar chat = new ChatBar(200, 200);
 		InformationBar info = new InformationBar(100, 400);
 		ActionBar action = new ActionBar(300, 100);
@@ -58,6 +71,8 @@ public class FrameRenderer extends JFrame implements Renderer
 		c.gridy = 4;
 		this.add(chat, c);
 
+		this.add(test);
+
 		this.setSize(700, 500);
 		this.setVisible(true);
 
@@ -86,4 +101,66 @@ public class FrameRenderer extends JFrame implements Renderer
 			}
 		});
 	}
+
+	class BackGroundButton extends JButton
+	{
+		Image	img	= null;
+
+		BackGroundButton(String imagefile, int width, int height)
+		{
+			if (imagefile != null)
+			{
+				this.setSize(width, height);
+				MediaTracker mt = new MediaTracker(this);
+				img = Toolkit.getDefaultToolkit().getImage(imagefile);
+				mt.addImage(img, 0);
+				try
+				{
+					mt.waitForAll();
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+			g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+		}
+	}
+
+	class BackGroundPane extends JPanel
+	{
+		Image	img	= null;
+
+		BackGroundPane(String imagefile)
+		{
+			if (imagefile != null)
+			{
+				MediaTracker mt = new MediaTracker(this);
+				img = Toolkit.getDefaultToolkit().getImage(imagefile);
+				mt.addImage(img, 0);
+				try
+				{
+					mt.waitForAll();
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+		}
+
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+			g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+		}
+	}
+
 }
