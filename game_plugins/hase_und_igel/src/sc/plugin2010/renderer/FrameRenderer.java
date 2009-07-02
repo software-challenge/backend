@@ -33,9 +33,8 @@ public class FrameRenderer extends JFrame implements Renderer
 
 		setContentPane(new BackGroundPane("resource/test3.png"));
 
-		BackGroundButton test = new BackGroundButton("resource/test.png", 150,
-				150);
-		test.setSize(150, 150);
+		BackGroundButton test = new BackGroundButton("resource/test.png");
+		test.setIcon("resource/test2.png");
 
 		ChatBar chat = new ChatBar(200, 200);
 		InformationBar info = new InformationBar(100, 400);
@@ -71,7 +70,17 @@ public class FrameRenderer extends JFrame implements Renderer
 		c.gridy = 4;
 		this.add(chat, c);
 
-		this.add(test);
+		c.fill = 0;
+		c.anchor = GridBagConstraints.CENTER;
+		c.weightx = 0.9;
+		c.weighty = 0.9;
+		c.gridheight = 1;
+		c.gridx = 0;
+		c.gridy = 2;
+		c.ipady = 100; // make this component tall
+		c.ipadx = 100; // make this component tall
+
+		this.add(test, c);
 
 		this.setSize(700, 500);
 		this.setVisible(true);
@@ -104,13 +113,14 @@ public class FrameRenderer extends JFrame implements Renderer
 
 	class BackGroundButton extends JButton
 	{
-		Image	img	= null;
+		Image	img		= null;
+		Image	icon	= null;
 
-		BackGroundButton(String imagefile, int width, int height)
+		BackGroundButton(String imagefile)
 		{
+			super();
 			if (imagefile != null)
 			{
-				this.setSize(width, height);
 				MediaTracker mt = new MediaTracker(this);
 				img = Toolkit.getDefaultToolkit().getImage(imagefile);
 				mt.addImage(img, 0);
@@ -125,11 +135,31 @@ public class FrameRenderer extends JFrame implements Renderer
 			}
 		}
 
+		protected void setIcon(String iconimagefile)
+		{
+			MediaTracker mt = new MediaTracker(this);
+			icon = Toolkit.getDefaultToolkit().getImage(iconimagefile);
+			mt.addImage(icon, 0);
+			try
+			{
+				mt.waitForAll();
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
 		@Override
 		protected void paintComponent(Graphics g)
 		{
 			super.paintComponent(g);
 			g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+			if (!(icon == null))
+			{
+				g.drawImage(icon, 10, 10, this.getWidth() - 20, this
+						.getHeight() - 20, this);
+			}
 		}
 	}
 
