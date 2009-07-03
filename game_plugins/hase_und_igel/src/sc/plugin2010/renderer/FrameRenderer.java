@@ -3,86 +3,116 @@
  */
 package sc.plugin2010.renderer;
 
-import java.awt.Graphics;
+import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Toolkit;
+import java.awt.ScrollPane;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+import sc.plugin2010.gui.EViewerMode;
 
 /**
  * @author ffi
  * 
  */
-public class FrameRenderer extends JFrame implements Renderer
+public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 {
+	private InformationBar			info;
+	private ChatBar					chat;
+	private ActionBar				actionb;
+	private ArrayList<FieldButton>	fbuttons	= new ArrayList<FieldButton>();
+	private EViewerMode				viewerMode;
+	private JFrame					frame;
 
-	public FrameRenderer(JFrame frame)
+	public FrameRenderer(JFrame frame, EViewerMode mode)
 	{
-		createInitFrame(frame);
+		this.viewerMode = mode;
+		this.frame = frame;
+		createInitFrame();
 	}
 
-	private void createInitFrame(JFrame frame)
+	private void createInitFrame()
 	{
 
-		setContentPane(new BackGroundPane("resource/test3.png"));
+		this.setSize(800, 600);
 
-		BackGroundButton test = new BackGroundButton("resource/test.png");
-		test.setIcon("resource/test2.png");
+		BackgoundPane bg = new BackgoundPane("resource/background.png");
 
-		ChatBar chat = new ChatBar(200, 200);
-		InformationBar info = new InformationBar(100, 400);
-		ActionBar action = new ActionBar(300, 100);
+		GridBagLayout paneLayout = new GridBagLayout();
+		GridBagConstraints c1 = new GridBagConstraints();
 
-		GridBagLayout mylayout = new GridBagLayout();
-		GridBagConstraints c = new GridBagConstraints();
+		bg.setLayout(paneLayout);
 
-		this.setLayout(mylayout);
+		int MAXROW = 5;
 
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.8;
-		c.weighty = 1.0;
-		c.gridwidth = 3;
-		c.gridheight = 1;
-		c.gridx = 0;
-		c.gridy = 0;
-		this.add(info, c);
+		for (int i = 0; i < MAXROW * MAXROW; i++)
+		{
 
-		c.fill = GridBagConstraints.VERTICAL;
-		c.weightx = 1.0;
-		c.weighty = 1.0;
-		c.gridheight = 4;
-		c.gridx = 3;
-		c.gridy = 0;
-		this.add(action, c);
+			c1.weightx = 1.0;
+			c1.weighty = 1.0;
+			c1.gridx = i % MAXROW;
+			c1.gridy = i / MAXROW;
+			c1.ipadx = 50; // make this component tall
+			c1.ipady = 50; // make this component tall
 
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.9;
-		c.weighty = 0.9;
-		c.gridwidth = 3;
-		c.gridx = 0;
-		c.gridy = 4;
-		this.add(chat, c);
+			String back = "resource/igel.png";
 
-		c.fill = 0;
-		c.anchor = GridBagConstraints.CENTER;
-		c.weightx = 0.9;
-		c.weighty = 0.9;
-		c.gridheight = 1;
-		c.gridx = 0;
-		c.gridy = 2;
-		c.ipady = 100; // make this component tall
-		c.ipadx = 100; // make this component tall
+			if (i % MAXROW == 0)
+			{
+				back = "resource/igel.png";
+			}
+			else if (i % MAXROW == 1)
+			{
+				back = "resource/rabbit.png";
+			}
+			else if (i % MAXROW == 2)
+			{
+				back = "resource/carrots.png";
+			}
+			else if (i % MAXROW == 3)
+			{
+				back = "resource/salad.png";
+			}
+			else if (i % MAXROW == 4)
+			{
+				back = "resource/position_2.png";
+			}
 
-		this.add(test, c);
+			fbuttons.add(new FieldButton(back, i + 1, this));
+			bg.add(fbuttons.get(i), c1);
+		}
 
-		this.setSize(700, 500);
+		info = new InformationBar(true);
+		chat = new ChatBar();
+		actionb = new ActionBar();
+		ScrollPane action = new ScrollPane();
+		action.add(actionb);
+
+		JPanel leftPanel = new JPanel();
+
+		BorderLayout layout = new BorderLayout();
+		leftPanel.setLayout(layout);
+
+		leftPanel.add(info, BorderLayout.NORTH);
+		leftPanel.add(bg, BorderLayout.CENTER);
+		leftPanel.add(chat, BorderLayout.SOUTH);
+
+		BorderLayout framelayout = new BorderLayout();
+		this.setLayout(framelayout);
+
+		this.add(leftPanel, BorderLayout.CENTER);
+		this.add(action, BorderLayout.EAST);
+
+		actionb.addRow("Aktionen: ");
+		chat.addRow("Chat: ");
+		chat.addRow("Prototyp: 0.1alpha :)");
+
 		this.setVisible(true);
 
 		this.addWindowListener(new WindowAdapter() {
@@ -97,8 +127,31 @@ public class FrameRenderer extends JFrame implements Renderer
 	@Override
 	public void updateData()
 	{
-		// TODO Auto-generated method stub
+		// TODO 2 spieler und observer...
+		info.setTurn(0);
+		info.setRound(0);
 
+		info.setCarrots(0);
+	}
+
+	public void updatePlayer(int playerid)
+	{
+
+	}
+
+	public void updateBoard()
+	{
+
+	}
+
+	public void updateAction(String doneAction)
+	{
+		actionb.addRow(doneAction);
+	}
+
+	public void askQuestion(String question, List<String> answers)
+	{
+		new QuestionDialog(question, answers);
 	}
 
 	public static void main(String[] args)
@@ -106,91 +159,25 @@ public class FrameRenderer extends JFrame implements Renderer
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run()
 			{
-				new FrameRenderer(null).setVisible(true);
+				new FrameRenderer(null, null).setVisible(true);
 			}
 		});
 	}
 
-	class BackGroundButton extends JButton
+	@Override
+	public void updateClicked(int fieldNumber)
 	{
-		Image	img		= null;
-		Image	icon	= null;
+		int index = fieldNumber - 1;
 
-		BackGroundButton(String imagefile)
+		for (int i = 0; i < fbuttons.size(); i++)
 		{
-			super();
-			if (imagefile != null)
+			if (fbuttons.get(i).wasColorOn("blue"))
 			{
-				MediaTracker mt = new MediaTracker(this);
-				img = Toolkit.getDefaultToolkit().getImage(imagefile);
-				mt.addImage(img, 0);
-				try
-				{
-					mt.waitForAll();
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
+				fbuttons.get(i).setFree();
+				fbuttons.get(i).repaint();
 			}
 		}
 
-		protected void setIcon(String iconimagefile)
-		{
-			MediaTracker mt = new MediaTracker(this);
-			icon = Toolkit.getDefaultToolkit().getImage(iconimagefile);
-			mt.addImage(icon, 0);
-			try
-			{
-				mt.waitForAll();
-			}
-			catch (InterruptedException e)
-			{
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		protected void paintComponent(Graphics g)
-		{
-			super.paintComponent(g);
-			g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
-			if (!(icon == null))
-			{
-				g.drawImage(icon, 10, 10, this.getWidth() - 20, this
-						.getHeight() - 20, this);
-			}
-		}
+		fbuttons.get(index).setOccupied("blue");
 	}
-
-	class BackGroundPane extends JPanel
-	{
-		Image	img	= null;
-
-		BackGroundPane(String imagefile)
-		{
-			if (imagefile != null)
-			{
-				MediaTracker mt = new MediaTracker(this);
-				img = Toolkit.getDefaultToolkit().getImage(imagefile);
-				mt.addImage(img, 0);
-				try
-				{
-					mt.waitForAll();
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-
-		@Override
-		protected void paintComponent(Graphics g)
-		{
-			super.paintComponent(g);
-			g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
-		}
-	}
-
 }

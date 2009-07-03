@@ -13,16 +13,17 @@ import javax.swing.JList;
 public class ActionBar extends JList
 {
 
-	public ActionBar(int width, int height)
+	public ActionBar()
 	{
 		DefaultListModel defModel = new DefaultListModel();
 
-		defModel.add(0, "String");
-
 		setModel(defModel);
-
-		setSize(width, height);
 		setVisible(true);
+	}
+
+	public void addRow(String val)
+	{
+		((DefaultListModel) getModel()).addElement(val);
 	}
 
 }

@@ -44,9 +44,11 @@ public class GUIFacade
 	 * @param frame
 	 *            jframe instance on which the game should display
 	 */
-	public void setRenderContext(JFrame frame, boolean threeDimensional)
+	public void setRenderContext(JFrame frame, boolean threeDimensional,
+			EViewerMode viewerMode)
 	{
-		RenderFacade.getInstance().createInitFrame(frame, threeDimensional);
+		RenderFacade.getInstance().createInitFrame(frame, threeDimensional,
+				viewerMode);
 	}
 
 	/**

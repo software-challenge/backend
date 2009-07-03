@@ -7,6 +7,8 @@ import java.awt.Image;
 
 import javax.swing.JFrame;
 
+import sc.plugin2010.gui.EViewerMode;
+
 /**
  * @author ffi
  * 
@@ -39,15 +41,16 @@ public class RenderFacade
 		return instance;
 	}
 
-	public void createInitFrame(JFrame frame, boolean threeDimensional)
+	public void createInitFrame(JFrame frame, boolean threeDimensional,
+			EViewerMode mode)
 	{
 		if (threeDimensional)
 		{
-			currentRenderer = new ThreeDimRenderer(frame);
+			currentRenderer = new ThreeDimRenderer(frame, mode);
 		}
 		else
 		{
-			currentRenderer = new FrameRenderer(frame);
+			currentRenderer = new FrameRenderer(frame, mode);
 		}
 	}
 
