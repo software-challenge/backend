@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010.renderer;
+package sc.plugin2010.renderer.twodimensional;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -10,6 +10,7 @@ import javax.swing.JList;
  * @author ffi
  * 
  */
+@SuppressWarnings("serial")
 public class ActionBar extends JList
 {
 

@@ -12,14 +12,33 @@ public class GameUtil
 	 */
 	public static int calculateCarrots(int moveCount)
 	{
-		// TODO make iterativ...
-		if (moveCount > 0)
+		int res = 0;
+
+		for (int i = 1; i <= moveCount; i++)
 		{
-			return moveCount + calculateCarrots(moveCount - 1);
+			res += i;
 		}
-		else
+
+		return res;
+	}
+
+	/**
+	 * returns how many moves can be made with <code>carrots</code>
+	 * 
+	 * @param carrots
+	 *            the carrots you want to spend
+	 * @return moves that you can do maximal
+	 */
+
+	public static int calculateMoveableFields(int carrots)
+	{
+		int moves = 0;
+
+		while (calculateCarrots(moves) <= carrots)
 		{
-			return 0;
+			moves++;
 		}
+
+		return moves;
 	}
 }

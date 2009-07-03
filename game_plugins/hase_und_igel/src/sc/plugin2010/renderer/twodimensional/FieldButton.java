@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010.renderer;
+package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -16,6 +16,7 @@ import javax.swing.JButton;
  * @author ffi
  * 
  */
+@SuppressWarnings("serial")
 public class FieldButton extends JButton
 {
 	private Image			img			= null;

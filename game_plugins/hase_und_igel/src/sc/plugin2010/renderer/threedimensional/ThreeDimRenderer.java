@@ -1,11 +1,12 @@
 /**
  * 
  */
-package sc.plugin2010.renderer;
+package sc.plugin2010.renderer.threedimensional;
 
 import javax.swing.JFrame;
 
 import sc.plugin2010.gui.EViewerMode;
+import sc.plugin2010.renderer.Renderer;
 
 /**
  * @author ffi

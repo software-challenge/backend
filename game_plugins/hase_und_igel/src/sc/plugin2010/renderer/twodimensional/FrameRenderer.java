@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010.renderer;
+package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
@@ -12,15 +12,18 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import sc.plugin2010.gui.EViewerMode;
+import sc.plugin2010.renderer.Renderer;
 
 /**
  * @author ffi
  * 
  */
+@SuppressWarnings("serial")
 public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 {
 	private InformationBar			info;
@@ -39,6 +42,9 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 	private void createInitFrame()
 	{
+
+		setIconImage(new ImageIcon("resource/hase_und_igel_icon.png")
+				.getImage());
 
 		this.setSize(800, 600);
 
@@ -110,8 +116,8 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		this.add(action, BorderLayout.EAST);
 
 		actionb.addRow("Aktionen: ");
-		chat.addRow("Chat: ");
-		chat.addRow("Prototyp: 0.1alpha :)");
+		chat.addOtherMessage("Chat: ");
+		chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
 		this.setVisible(true);
 
@@ -149,9 +155,19 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		actionb.addRow(doneAction);
 	}
 
+	public void updateChat(String chatMsg)
+	{
+		chat.addOtherMessage(chatMsg);
+	}
+
 	public void askQuestion(String question, List<String> answers)
 	{
 		new QuestionDialog(question, answers);
+	}
+
+	public void answerQuestion(String answer)
+	{
+
 	}
 
 	public static void main(String[] args)

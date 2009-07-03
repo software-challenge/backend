@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010.renderer;
+package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -14,6 +14,7 @@ import javax.swing.JPanel;
  * @author ffi
  * 
  */
+@SuppressWarnings("serial")
 public class BackgoundPane extends JPanel
 {
 	private Image	img	= null;
