@@ -4,6 +4,10 @@ import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGamePluginHost;
 import sc.api.plugins.PluginDescriptor;
+import sc.plugin2010.shared.Board;
+import sc.plugin2010.shared.Game;
+import sc.plugin2010.shared.Move;
+import sc.plugin2010.shared.Player;
 
 /**
  * Die Beschreibung des Hase- und Igel Plugins der Software-Challenge 2010.
@@ -11,17 +15,19 @@ import sc.api.plugins.PluginDescriptor;
  * @author rra
  * @since Jul 4, 2009
  */
-@PluginDescriptor(name = "Hase und Igel", uuid = "swc_2010_hase_und_igel")
+@PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID)
 public class GamePlugin implements IGamePlugin
 {
+	public static final String PLUGIN_UUID = "swc_2010_hase_und_igel";
+	
 	// 2 Computer (default), 2 Menschen
 	public static final int MAX_PLAYER_COUNT = 4;
 	
 	@Override
 	public IGameInstance createGame()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Game g = new Game();
+		return g;
 	}
 
 	@Override
@@ -33,8 +39,9 @@ public class GamePlugin implements IGamePlugin
 	@Override
 	public void initialize(IGamePluginHost host)
 	{
-		// TODO Auto-generated method stub
-		
+		host.registerProtocolClass(Player.class);
+		host.registerProtocolClass(Move.class);		
+		host.registerProtocolClass(Board.class);		
 	}
 
 	@Override
