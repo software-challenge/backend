@@ -78,16 +78,25 @@ public class Client extends XStreamClient
 	{
 		Set<RescueableClientException> errors = new HashSet<RescueableClientException>();
 
+		PacketCallback callback = new PacketCallback(packet);
+
 		for (IClientListener listener : clientListeners)
 		{
 			try
 			{
-				listener.onRequest(this, packet);
+				listener.onRequest(this, callback);
 			}
 			catch (RescueableClientException e)
 			{
 				errors.add(e);
 			}
+		}
+
+		if (!callback.isProcessed())
+		{
+			logger.warn("Packet {} wasn't processed.", packet);
+			errors.add(new RescueableClientException(
+					"The packet wasn't processed/recognized."));
 		}
 
 		for (RescueableClientException error : errors)

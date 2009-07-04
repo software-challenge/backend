@@ -98,29 +98,27 @@ public class Configuration
 		{
 			return defaultValue;
 		}
-		else
+
+		try
 		{
-			try
+			if (type == String.class)
 			{
-				if (type == String.class)
-				{
-					return type.cast(stringValue);
-				}
-				else if (type == Integer.class)
-				{
-					return type.cast(Integer.parseInt(stringValue));
-				}
-				else
-				{
-					logger.warn("Could not convert String to {} ", type);
-					return defaultValue;
-				}
+				return type.cast(stringValue);
 			}
-			catch (Exception e)
+			else if (type == Integer.class)
 			{
-				logger.warn("Failed to retrieve key from configuration.", e);
+				return type.cast(Integer.parseInt(stringValue));
+			}
+			else
+			{
+				logger.warn("Could not convert String to {} ", type);
 				return defaultValue;
 			}
+		}
+		catch (Exception e)
+		{
+			logger.warn("Failed to retrieve key from configuration.", e);
+			return defaultValue;
 		}
 	}
 }

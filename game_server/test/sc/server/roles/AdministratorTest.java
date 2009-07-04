@@ -11,6 +11,7 @@ import sc.protocol.requests.PrepareGameRequest;
 import sc.server.Configuration;
 import sc.server.network.Client;
 import sc.server.network.MockClient;
+import sc.server.network.PacketCallback;
 import sc.server.plugins.TestPlugin;
 
 public class AdministratorTest extends AbstractRoleTest
@@ -37,7 +38,8 @@ public class AdministratorTest extends AbstractRoleTest
 
 		try
 		{
-			lobby.onRequest(client, new AuthenticateRequest(WRONG_PASSWORD));
+			lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
+					WRONG_PASSWORD)));
 			Assert.fail("No exception was thrown");
 		}
 		catch (RescueableClientException e)
@@ -54,12 +56,12 @@ public class AdministratorTest extends AbstractRoleTest
 		MockClient client = null;
 		client = connectClient();
 
-
 		Configuration.set(Configuration.PASSWORD_KEY, CORRECT_PASSWORD);
 
 		try
 		{
-			lobby.onRequest(client, new AuthenticateRequest(CORRECT_PASSWORD));
+			lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
+					CORRECT_PASSWORD)));
 		}
 		catch (RescueableClientException e)
 		{
@@ -73,10 +75,10 @@ public class AdministratorTest extends AbstractRoleTest
 	public void shouldBeAbleToPrepareGame() throws RescueableClientException
 	{
 		Client client = connectAsAdmin();
-		
-		lobby.onRequest(client, new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2));
-		
+
+		lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
+				TestPlugin.TEST_PLUGIN_UUID, 2)));
+
 		Assert.assertEquals(1, gameMgr.getGames().size());
 	}
 }

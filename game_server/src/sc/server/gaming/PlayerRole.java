@@ -4,6 +4,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.IPlayerListener;
 import sc.server.network.Client;
 import sc.server.network.IClientRole;
+import sc.server.network.PacketCallback;
 
 public class PlayerRole implements IClientRole, IPlayerListener
 {
@@ -27,7 +28,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	}
 
 	@Override
-	public void onRequest(Client source, Object packet)
+	public void onRequest(Client source, PacketCallback callback)
 	{
 		// TODO Auto-generated method stub
 	}

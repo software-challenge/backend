@@ -17,7 +17,7 @@ public class AdministratorRole implements IClientRole
 	}
 
 	@Override
-	public void onRequest(Client source, Object packet)
+	public void onRequest(Client source, PacketCallback callback)
 	{
 		// TODO Auto-generated method stub
 

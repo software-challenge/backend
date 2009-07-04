@@ -18,9 +18,10 @@ public class ClientXmlReadTest
 		public Object	LastPacket	= null;
 
 		@Override
-		public void onRequest(Client source, Object packet)
+		public void onRequest(Client source, PacketCallback callback)
 		{
-			LastPacket = packet;
+			callback.setProcessed();
+			LastPacket = callback.getPacket();
 		}
 
 		@Override

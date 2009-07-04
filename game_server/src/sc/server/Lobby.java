@@ -23,6 +23,7 @@ import sc.server.gaming.ReservationManager;
 import sc.server.network.Client;
 import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
+import sc.server.network.PacketCallback;
 
 /**
  * The lobby will help clients find a open game or create new games to play with
@@ -63,9 +64,11 @@ public class Lobby implements IClientManagerListener, IClientListener
 	}
 
 	@Override
-	public void onRequest(Client source, Object packet)
+	public void onRequest(Client source, PacketCallback callback)
 			throws RescueableClientException
 	{
+		Object packet = callback.getPacket();
+		
 		if (packet instanceof ILobbyRequest)
 		{
 			if (packet instanceof JoinPreparedRoomRequest)
@@ -104,6 +107,8 @@ public class Lobby implements IClientManagerListener, IClientListener
 				throw new RescueableClientException(
 						"Unhandled Packet of type: " + packet.getClass());
 			}
+			
+			callback.setProcessed();
 		}
 	}
 

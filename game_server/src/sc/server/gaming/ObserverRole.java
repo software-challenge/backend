@@ -2,6 +2,7 @@ package sc.server.gaming;
 
 import sc.server.network.Client;
 import sc.server.network.IClientRole;
+import sc.server.network.PacketCallback;
 
 public class ObserverRole implements IClientRole
 {
@@ -20,7 +21,7 @@ public class ObserverRole implements IClientRole
 	}
 
 	@Override
-	public void onRequest(Client source, Object packet)
+	public void onRequest(Client source, PacketCallback callback)
 	{
 		// TODO Auto-generated method stub
 

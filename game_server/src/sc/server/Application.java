@@ -1,10 +1,10 @@
 package sc.server;
 
-import java.io.File;
-
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
+
+import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

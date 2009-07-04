@@ -15,6 +15,7 @@ import sc.server.gaming.GameRoom;
 import sc.server.gaming.PlayerSlot;
 import sc.server.network.Client;
 import sc.server.network.MockClient;
+import sc.server.network.PacketCallback;
 import sc.server.plugins.TestPlugin;
 
 public class ContestTest extends AdministratorTest
@@ -26,8 +27,8 @@ public class ContestTest extends AdministratorTest
 		Client player1 = connectClient();
 		Client player2 = connectClient();
 
-		lobby.onRequest(admin, new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2));
+		lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
+				TestPlugin.TEST_PLUGIN_UUID, 2)));
 
 		Assert.assertEquals(1, gameMgr.getGames().size());
 		GameRoom room = gameMgr.getGames().iterator().next();
@@ -37,10 +38,10 @@ public class ContestTest extends AdministratorTest
 
 		Assert.assertEquals(2, room.getSlots().size());
 
-		lobby.onRequest(player1, new JoinPreparedRoomRequest(response
-				.getReservations().get(1)));
-		lobby.onRequest(player2, new JoinPreparedRoomRequest(response
-				.getReservations().get(0)));
+		lobby.onRequest(player1, new PacketCallback(new JoinPreparedRoomRequest(response
+				.getReservations().get(1))));
+		lobby.onRequest(player2, new PacketCallback(new JoinPreparedRoomRequest(response
+				.getReservations().get(0))));
 
 		Assert.assertEquals(2, room.getSlots().size());
 
