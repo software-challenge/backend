@@ -33,6 +33,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	@Override
 	protected GamePluginInstance createPluginInstance(Class<?> definition)
 	{
+		logger.info("Loading GamePlugin {}", definition);
 		return new GamePluginInstance(definition);
 	}
 

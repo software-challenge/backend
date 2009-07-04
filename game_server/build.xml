@@ -11,10 +11,30 @@
 
 	<property name="lib.dir" value="lib" />
 	<property name="plugin.dir" value="${jar.dir}/plugins" />
+	<property name="api.dir" value="./../game_plugin_interface" />
+
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<fileset dir="${api.dir}" includes="lib/**/*.jar" />
+		<pathelement location="${api.dir}/build/jar/GamePluginInterface.jar" />
+	</path>
+
+	<pathconvert property="jar.classpath" pathsep="">
+		<mapper>
+			<chainedmapper>
+				<!-- remove absolute path -->
+				<flattenmapper />
+				<!-- add lib/ prefix -->
+				<globmapper from="*" to="lib/* " />
+			</chainedmapper>
+		</mapper>
+
+		<path refid="classpath.libs" />
+	</pathconvert>
 
 	<path id="classpath.base">
+		<path refid="classpath.libs" />
 		<pathelement location="${classes.dir}" />
-		<fileset dir="${lib.dir}" includes="**/*.jar" />
 	</path>
 
 	<path id="classpath.test">
@@ -36,7 +56,6 @@
 	<target name="dependencies">
 		<ant dir="./../game_plugin_interface" inheritAll="false" />
 		<ant dir="./../game_plugins/hase_und_igel" inheritAll="false" />
-		<copy todir="${lib.dir}" file="./../game_plugin_interface/build/jar/GamePluginInterface.jar" />
 	</target>
 
 	<target name="compile" depends="dependencies">
@@ -55,18 +74,22 @@
 
 	<target name="plugins">
 		<mkdir dir="${jar.dir}" />
-		<copydir dest="${jar.dir}" src="${lib.dir}" />
+		<mkdir dir="${jar.dir}/lib" />
+		<copy todir="${jar.dir}/lib" flatten="true">
+			<path refid="classpath.libs" />
+		</copy>
+
 		<mkdir dir="${plugin.dir}" />
-		<copy todir="${plugin.dir}" file="./../game_plugins/hase_und_igel/build/jar/HaseUndIgel.jar" />
+		<copy todir="${plugin.dir}" flatten="true">
+			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
+		</copy>
 	</target>
 
 	<target name="jar" depends="compile, plugins">
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
-				<attribute name="Class-Path" value="GamePluginInterface.jar testng-5.9-jdk15.jar
-					logback-access-0.9.15.jar logback-classic-0.9.15.jar logback-core-0.9.15.jar
-					slf4j-api-1.5.6.jar" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
 		</jar>
 	</target>
@@ -82,8 +105,8 @@
 	</target>
 
 	<target name="run" depends="compile, plugins">
-		<java classname="${main-class}" >
-			<arg value="--plugins"/>
+		<java classname="${main-class}">
+			<arg value="--plugins" />
 			<arg value="${plugin.dir}" />
 			<classpath refid="classpath.base" />
 		</java>
@@ -100,7 +123,6 @@
 		<junit printsummary="yes">
 			<formatter extension="log" type="plain" usefile="true" />
 			<classpath>
-				<path refid="classpath.base" />
 				<path refid="classpath.test" />
 			</classpath>
 
