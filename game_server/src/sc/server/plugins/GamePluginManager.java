@@ -33,8 +33,10 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	@Override
 	protected GamePluginInstance createPluginInstance(Class<?> definition)
 	{
-		logger.info("Loading GamePlugin {}", definition);
-		return new GamePluginInstance(definition);
+		GamePluginInstance instance = new GamePluginInstance(definition);
+		logger.info("GamePlugin '{}' {{}} was loaded.", instance
+				.getDescription().name(), instance.getDescription().uuid());
+		return instance;
 	}
 
 	public IGameInstance createGameOf(String gameType)
@@ -63,15 +65,15 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	public Collection<String> supportedGames()
 	{
 		Collection<String> result = new HashSet<String>();
-		
+
 		for (GamePluginInstance plugin : getAvailablePlugins())
 		{
 			result.add(plugin.getDescription().uuid());
 		}
-		
+
 		return result;
 	}
-	
+
 	public GamePluginInstance getPlugin(String uuid)
 	{
 		for (GamePluginInstance plugin : getAvailablePlugins())
@@ -81,10 +83,10 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 				return plugin;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	/**
 	 * Checks whether the plugin manager has a plugin of the specified UUID.
 	 * 
@@ -95,7 +97,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	{
 		return getPlugin(uuid) != null;
 	}
-	
+
 	@Override
 	public String getPluginFolder()
 	{

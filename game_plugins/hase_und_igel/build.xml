@@ -18,21 +18,16 @@
 
 	<target name="dependencies">
 		<ant dir="./../../game_plugin_interface" inheritAll="false" />
-		<copy todir="${lib.dir}" file="./../../game_plugin_interface/build/jar/GamePluginInterface.jar" />
 	</target>
 
 	<target name="compile" depends="dependencies">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" debug="true" debuglevel="lines,vars,source" />
 	</target>
 
 	<target name="jar" depends="compile">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
-			<manifest>
-				<attribute name="Class-Path" value="GamePluginInterface.jar" />
-			</manifest>
-		</jar>
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
 	</target>
 
 	<target name="clean-build" depends="clean,jar" />
