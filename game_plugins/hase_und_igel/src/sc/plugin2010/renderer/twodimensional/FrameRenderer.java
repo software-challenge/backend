@@ -130,7 +130,6 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		});
 	}
 
-	@Override
 	public void updateData()
 	{
 		// TODO 2 spieler und observer...
@@ -180,7 +179,6 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		});
 	}
 
-	@Override
 	public void updateClicked(int fieldNumber)
 	{
 		int index = fieldNumber - 1;
