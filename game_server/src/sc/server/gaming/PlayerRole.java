@@ -30,11 +30,20 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	public void onRequest(Client source, Object packet)
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	public Client getClient()
 	{
 		return this.client;
+	}
+
+	public IPlayer getPlayer()
+	{
+		return this.player;
+	}
+
+	public PlayerSlot getPlayerSlot()
+	{
+		return this.playerSlot;
 	}
 }

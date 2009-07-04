@@ -3,11 +3,13 @@ package sc.server.gaming;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
+import sc.api.plugins.RescueableClientException;
 import sc.api.plugins.TooManyPlayersException;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -18,24 +20,25 @@ import sc.server.plugins.GamePluginInstance;
  */
 public class GameRoom implements IGameListener
 {
-	private int					id;
+	private final String		id;
 	private GamePluginInstance	provider;
 	private IGameInstance		game;
 	private List<ObserverRole>	observers;
 	private List<PlayerSlot>	playerSlots	= new ArrayList<PlayerSlot>(2);
 
-	public GameRoom(GamePluginInstance provider)
+	public GameRoom(String id, GamePluginInstance provider)
 	{
-		this(provider, null);
+		this(id, provider, null);
 	}
 
-	public GameRoom(GamePluginInstance provider, IGameInstance game)
+	public GameRoom(String id, GamePluginInstance provider, IGameInstance game)
 	{
 		if (provider == null)
 		{
 			throw new IllegalArgumentException("Provider must not be null");
 		}
 
+		this.id = id;
 		this.provider = provider;
 		this.game = game;
 	}
@@ -71,7 +74,7 @@ public class GameRoom implements IGameListener
 
 	}
 
-	public int getId()
+	public String getId()
 	{
 		return this.id;
 	}
@@ -135,5 +138,69 @@ public class GameRoom implements IGameListener
 		}
 
 		return result;
+	}
+
+	public void onEvent(Client source, Object data)
+			throws RescueableClientException
+	{
+		this.game.actionReceived(resolvePlayer(source), data);
+	}
+
+	private IPlayer resolvePlayer(Client source)
+			throws RescueableClientException
+	{
+		for (PlayerRole role : getPlayers())
+		{
+			if (role.getClient().equals(source))
+			{
+				IPlayer resolvedPlayer = role.getPlayer();
+
+				if (resolvedPlayer == null)
+				{
+					throw new RescueableClientException(
+							"Game isn't ready. Please wait before sending messages.");
+				}
+
+				return resolvedPlayer;
+			}
+		}
+
+		throw new RescueableClientException("Client is not a member of game "
+				+ id);
+	}
+
+	private Collection<PlayerSlot> getOccupiedPlayerSlots()
+	{
+		LinkedList<PlayerSlot> occupiedSlots = new LinkedList<PlayerSlot>();
+
+		for (PlayerSlot slot : this.playerSlots)
+		{
+			if (!slot.isEmpty())
+			{
+				occupiedSlots.add(slot);
+			}
+		}
+
+		return occupiedSlots;
+	}
+
+	private Collection<PlayerRole> getPlayers()
+	{
+		LinkedList<PlayerRole> clients = new LinkedList<PlayerRole>();
+		for (PlayerSlot slot : getOccupiedPlayerSlots())
+		{
+			clients.add(slot.getRole());
+		}
+		return clients;
+	}
+
+	public Collection<Client> getClients()
+	{
+		LinkedList<Client> clients = new LinkedList<Client>();
+		for (PlayerRole slot : getPlayers())
+		{
+			clients.add(slot.getClient());
+		}
+		return clients;
 	}
 }

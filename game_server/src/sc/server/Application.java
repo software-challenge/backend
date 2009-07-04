@@ -36,6 +36,21 @@ public final class Application
 		}
 	}
 
+	/**
+	 * Starts a new Server. This is meant to be used by the GUI Application,
+	 * which comes with an internal server for offline-play. TODO: use this in
+	 * GUI app
+	 * 
+	 * @param port
+	 * @return
+	 */
+	public static void startServer(final Integer port, boolean timeout)
+	{
+		Configuration.set(Configuration.PORT_KEY, port.toString());
+		final Lobby server = new Lobby();
+		server.start();
+	}
+
 	public static void parseArguments(String[] params)
 			throws IllegalOptionValueException, UnknownOptionException
 	{
@@ -57,7 +72,8 @@ public final class Application
 			}
 			else
 			{
-				logger.warn("Could not find {} to load plugins from", f.getAbsoluteFile());
+				logger.warn("Could not find {} to load plugins from", f
+						.getAbsoluteFile());
 			}
 		}
 	}

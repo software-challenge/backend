@@ -1,6 +1,6 @@
 package sc.server.gaming;
 
-import sc.api.plugins.IGame;
+import sc.api.plugins.IGameInstance;
 import sc.server.plugins.GamePluginInstance;
 
 /**
@@ -10,9 +10,9 @@ import sc.server.plugins.GamePluginInstance;
 public class GameInstance
 {
 	private GamePluginInstance	provider;
-	private IGame				game;
+	private IGameInstance		game;
 
-	public GameInstance(GamePluginInstance provider, IGame game)
+	public GameInstance(GamePluginInstance provider, IGameInstance game)
 	{
 		this.provider = provider;
 		this.game = game;
@@ -23,7 +23,7 @@ public class GameInstance
 		return provider;
 	}
 
-	public IGame getGame()
+	public IGameInstance getGame()
 	{
 		return game;
 	}

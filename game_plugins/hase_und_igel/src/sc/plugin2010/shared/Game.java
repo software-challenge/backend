@@ -41,7 +41,7 @@ public class Game implements IGameInstance
 	}
 	
 	@Override
-	public void actionReceived(IPlayer fromPlayer, Serializable data)
+	public void actionReceived(IPlayer fromPlayer, Object data)
 	{
 		// TODO Auto-generated method stub
 	}

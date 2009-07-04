@@ -2,13 +2,17 @@ package sc.server.gaming;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.api.plugins.RescueableClientException;
 import sc.api.plugins.TooManyPlayersException;
 import sc.server.ServiceManager;
 import sc.server.network.Client;
@@ -28,7 +32,7 @@ public class GameRoomManager implements Runnable
 {
 	private static Logger			logger				= LoggerFactory
 																.getLogger(GameRoomManager.class);
-	private Collection<GameRoom>	games				= new LinkedList<GameRoom>();
+	private Map<String, GameRoom>	rooms				= new HashMap<String, GameRoom>();
 	private final GamePluginManager	gamePluginManager	= new GamePluginManager();
 	private GamePluginApi			pluginApi			= new GamePluginApi();
 	private Thread					serviceThread		= null;
@@ -42,11 +46,11 @@ public class GameRoomManager implements Runnable
 	/**
 	 * Adds an active game to the <code>GameManager</code>
 	 * 
-	 * @param game
+	 * @param room
 	 */
-	private void add(GameRoom game)
+	private void add(GameRoom room)
 	{
-		this.games.add(game);
+		this.rooms.put(room.getId(), room);
 	}
 
 	public GameRoom createGame(String gameType)
@@ -54,11 +58,17 @@ public class GameRoomManager implements Runnable
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 		logger.info("Created new game of type " + gameType);
 
-		GameRoom room = new GameRoom(plugin, plugin.createGame());
+		String roomId = generateRoomId();
+		GameRoom room = new GameRoom(roomId, plugin, plugin.createGame());
 
 		this.add(room);
 
 		return room;
+	}
+
+	private String generateRoomId()
+	{
+		return UUID.randomUUID().toString();
 	}
 
 	public boolean createAndJoinGame(Client client, String gameType)
@@ -71,7 +81,7 @@ public class GameRoomManager implements Runnable
 	public boolean joinOrCreateGame(Client client, String gameType)
 			throws UnknownGameTypeException
 	{
-		for (GameRoom game : games)
+		for (GameRoom game : getGames())
 		{
 			if (game.join(client))
 			{
@@ -82,11 +92,11 @@ public class GameRoomManager implements Runnable
 		return createAndJoinGame(client, gameType);
 	}
 
-	public boolean joinGame(Client client, int id)
+	public boolean joinGame(Client client, String id)
 	{
-		for (GameRoom game : games)
+		for (GameRoom game : getGames())
 		{
-			if (game.getId() == id)
+			if (game.getId().equals(id))
 			{
 				return game.join(client);
 			}
@@ -123,7 +133,7 @@ public class GameRoomManager implements Runnable
 
 	public Collection<GameRoom> getGames()
 	{
-		return Collections.unmodifiableCollection(this.games);
+		return Collections.unmodifiableCollection(this.rooms.values());
 	}
 
 	public GamePluginManager getPluginManager()
@@ -142,7 +152,20 @@ public class GameRoomManager implements Runnable
 		GameRoom room = createGame(gameType);
 		room.setSize(playerCount);
 		List<String> reservations = room.reserveAllSlots();
-		
+
 		return new GamePreparationResponse(reservations);
+	}
+
+	public GameRoom findRoom(String roomId) throws RescueableClientException
+	{
+		GameRoom room = this.rooms.get(roomId);
+
+		if (room == null)
+		{
+			throw new RescueableClientException("Couldn't find a room with id "
+					+ roomId);
+		}
+
+		return room;
 	}
 }
