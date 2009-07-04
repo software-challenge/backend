@@ -1,5 +1,6 @@
 package sc.plugin2010.shared;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,10 +53,49 @@ public class Board
 	private List<FieldTyp>	track;
 	protected List<Player>	players;
 
-	public Board()
+	protected Board()
 	{
 		track = new LinkedList<FieldTyp>();
 		players = new LinkedList<Player>();
+	}
+	
+	/**
+	 * Erstellt und initialisiert ein Spielbrett
+	 * @param length
+	 * @return
+	 */
+	protected static Board create(final int length)
+	{
+		Board b = new Board();
+		b.initialize(length);
+		return b;
+	}
+
+	/**
+	 * Erstellt eine zufällige Rennstrecke
+	 * 
+	 * @param length
+	 *            Die Länge der Rennstrecke, inklusive Start- und Zielfeld
+	 */
+	protected void initialize(final int length)
+	{
+		// TODO Algorithmus
+		track.add(FieldTyp.START);
+		for (int i = 2; i < length; i++)
+		{
+			track.add(FieldTyp.CARROT);
+		}
+		track.add(FieldTyp.GOAL);
+	}
+
+	protected void addPlayer(final Player player)
+	{
+		players.add(player);
+	}
+
+	protected void addPlayers(final Player[] players)
+	{
+		this.players.addAll(Arrays.asList(players));
 	}
 
 	/**

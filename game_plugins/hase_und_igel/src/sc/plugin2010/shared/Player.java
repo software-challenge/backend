@@ -8,6 +8,8 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.IPlayerListener;
 
 /**
+ * Ein Spieler aus Hase- und Igel.
+ * 
  * @author rra
  * @since Jul 4, 2009
  * 
@@ -61,7 +63,7 @@ public class Player implements IPlayer
 		 */
 		HURRY_AHEAD
 	}
-	
+
 	/**
 	 * Alle Spielfiguren aus dem Hase und Igel Original
 	 */
@@ -69,12 +71,12 @@ public class Player implements IPlayer
 	{
 		RED, BLUE, YELLOW, WHITE, GREEN, ORANGE,
 	}
-	
+
 	// Farbe der Spielfigure
-	private final FigureColor	color;
-	
+	private FigureColor		color;
+
 	// Position auf dem Spielbrett
-	private int				position;
+	private int						position;
 
 	// Anzahl der Karotten des Spielers
 	private int						carrots;
@@ -91,12 +93,25 @@ public class Player implements IPlayer
 	// Beim Spieler registrierte Beobachter
 	private Set<IPlayerListener>	listeners;
 
-	public Player(FigureColor color)
+	protected Player(FigureColor color)
 	{
-		this.color = color;
-		listeners = new HashSet<IPlayerListener>();
+		initialize(color, 0);
+	}
+	
+	protected Player(FigureColor color, int position)
+	{
+		initialize(color, position);
 	}
 
+	private void initialize(FigureColor c, int p)
+	{
+		position = p;
+		color = c;
+		carrots = 60;
+		suspended = false;
+		listeners = new HashSet<IPlayerListener>();
+	}
+	
 	/**
 	 * Die Anzahl an Karotten die der Spieler zur Zeit auf der Hand hat.
 	 * 
@@ -118,10 +133,12 @@ public class Player implements IPlayer
 	{
 		return saladsEaten;
 	}
-	
+
 	/**
 	 * Eine Hasenkarte kann den Spieler eine Runde aussetzen lassen.
-	 * <code>TRUE</code>, falls der Spieler in der kommenden Runde aussetzen muss.
+	 * <code>TRUE</code>, falls der Spieler in der kommenden Runde aussetzen
+	 * muss.
+	 * 
 	 * @return
 	 */
 	public boolean isSuspended()
@@ -149,9 +166,15 @@ public class Player implements IPlayer
 	{
 		return this.position;
 	}
-	
+
+	protected final void setPosition(final int pos)
+	{
+		this.position = pos;
+	}
+
 	/**
 	 * Die Farbe dieses Spielers auf dem Spielbrett
+	 * 
 	 * @return
 	 */
 	public final FigureColor getColor()

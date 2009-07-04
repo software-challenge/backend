@@ -34,11 +34,8 @@ public class GameUtil
 	{
 		int moves = 0;
 
-		while (calculateCarrots(moves) <= carrots)
-		{
-			moves++;
-		}
+		while (calculateCarrots(++moves) <= carrots);
 
-		return moves;
+		return moves-1;
 	}
 }
