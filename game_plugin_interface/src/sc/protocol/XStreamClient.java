@@ -127,6 +127,8 @@ public abstract class XStreamClient
 
 	public void send(Object o)
 	{
+		logger.debug("Sending {}...", o);
+		
 		try
 		{
 			this.out.writeObject(o);

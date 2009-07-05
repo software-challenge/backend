@@ -18,28 +18,6 @@ public class TestTcpClient extends XStreamClient
 		super(xstream, new TcpNetwork(socket));
 	}
 
-	public static TestTcpClient connect()
-	{
-		try
-		{
-			if (NewClientListener.lastUsedPort == 0)
-			{
-				throw new RuntimeException(
-						"Could not find an open port to connect to.");
-			}
-
-			Socket mySocket = new Socket("localhost",
-					NewClientListener.lastUsedPort);
-			return new TestTcpClient(Configuration.getXStream(), mySocket);
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			Assert.fail("Could not connect to server.");
-			return null;
-		}
-	}
-
 	@Override
 	public void onDisconnect(DisconnectCause cause)
 	{

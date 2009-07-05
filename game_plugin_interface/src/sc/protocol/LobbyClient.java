@@ -2,14 +2,18 @@ package sc.protocol;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.responses.JoinedGame;
+
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -20,9 +24,10 @@ import com.thoughtworks.xstream.XStream;
  */
 public abstract class LobbyClient extends XStreamClient
 {
-	final String				gameType;
-	private static final Logger	logger	= LoggerFactory
-												.getLogger(LobbyClient.class);
+	final String						gameType;
+	private static final Logger			logger	= LoggerFactory
+														.getLogger(LobbyClient.class);
+	private static final List<String>	rooms	= new LinkedList<String>();
 
 	public LobbyClient(String gameType, XStream xstream, String host, int port)
 			throws IOException
@@ -36,6 +41,11 @@ public abstract class LobbyClient extends XStreamClient
 		LobbyProtocol.registerMessages(xStream);
 	}
 
+	public List<String> getRooms()
+	{
+		return Collections.unmodifiableList(rooms);
+	}
+
 	@Override
 	protected final void onObject(Object o)
 	{
@@ -43,6 +53,10 @@ public abstract class LobbyClient extends XStreamClient
 		{
 			onRoomMessage(((RoomPacket) o).getRoomId(), ((RoomPacket) o)
 					.getData());
+		}
+		else if (o instanceof JoinedGame)
+		{
+			rooms.add(((JoinedGame) o).getRoomId());
 		}
 		else
 		{
