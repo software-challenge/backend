@@ -119,4 +119,11 @@ public class Game implements IGameInstance
 	{
 		listeners.remove(listener);
 	}
+
+	@Override
+	public void start()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
