@@ -1,4 +1,4 @@
-package sc.network;
+package sc.server.network.interfaces;
 
 import java.io.IOException;
 import java.io.InputStream;
