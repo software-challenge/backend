@@ -2,11 +2,13 @@ package sc.server;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.helpers.RuntimeJarLoader;
 import sc.protocol.LobbyProtocol;
 import com.thoughtworks.xstream.XStream;
 
@@ -20,18 +22,22 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Configuration
 {
-	public static final String	PASSWORD_KEY	= "password";
-	public static final String	PORT_KEY		= "port";
-	public static final String	PLUGIN_PATH_KEY	= "plugins";
+	public static final String				PASSWORD_KEY	= "password";
+	public static final String				PORT_KEY		= "port";
+	public static final String				PLUGIN_PATH_KEY	= "plugins";
 
-	private static Logger		logger			= LoggerFactory
-														.getLogger(Configuration.class);
-	private static XStream		xStream;
-	private static Properties	properties		= new Properties();
+	private static final Logger				logger			= LoggerFactory
+																	.getLogger(Configuration.class);
+	private static final XStream			xStream;
+	private static final RuntimeJarLoader	xStreamClassLoader;
+	private static final Properties			properties		= new Properties();
 
 	static
 	{
 		xStream = new XStream();
+		xStreamClassLoader = new RuntimeJarLoader(xStream.getClassLoader());
+
+		xStream.setClassLoader(xStreamClassLoader);
 		LobbyProtocol.registerMessages(xStream);
 	}
 
@@ -48,6 +54,11 @@ public class Configuration
 	public static XStream getXStream()
 	{
 		return xStream;
+	}
+
+	public static void addXStreamClassloaderURL(URL url)
+	{
+		xStreamClassLoader.addURL(url);
 	}
 
 	public static String getPluginPath()

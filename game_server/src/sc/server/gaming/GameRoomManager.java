@@ -51,9 +51,15 @@ public class GameRoomManager implements Runnable
 		this.rooms.put(room.getId(), room);
 	}
 
-	public GameRoom createGame(String gameType)
+	public GameRoom createGame(String gameType) throws RescueableClientException
 	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
+		if(plugin == null)
+		{
+			logger.info("Couldn't find a gae of type " + gameType);
+			throw new UnknownGameTypeException(gameType);
+		}
+		
 		logger.info("Created new game of type " + gameType);
 
 		String roomId = generateRoomId();
@@ -70,14 +76,14 @@ public class GameRoomManager implements Runnable
 	}
 
 	public boolean createAndJoinGame(Client client, String gameType)
-			throws UnknownGameTypeException
+			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
 		return room.join(client);
 	}
 
 	public boolean joinOrCreateGame(Client client, String gameType)
-			throws UnknownGameTypeException
+			throws RescueableClientException
 	{
 		for (GameRoom game : getGames())
 		{
@@ -145,7 +151,7 @@ public class GameRoomManager implements Runnable
 	}
 
 	public GamePreparationResponse prepareGame(String gameType, int playerCount)
-			throws TooManyPlayersException
+			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
 		room.setSize(playerCount);

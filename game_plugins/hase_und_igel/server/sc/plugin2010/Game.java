@@ -63,7 +63,7 @@ public class Game implements IGameInstance
 	}
 
 	@Override
-	public void actionReceived(IPlayer author, Object data)
+	public void onAction(IPlayer author, Object data)
 	{
 		if (!active)
 			return;
@@ -118,7 +118,7 @@ public class Game implements IGameInstance
 	}
 
 	@Override
-	public synchronized IPlayer playerJoined() throws TooManyPlayersException
+	public synchronized IPlayer onPlayerJoined() throws TooManyPlayersException
 	{
 		Player player = null;
 		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT)
@@ -137,7 +137,7 @@ public class Game implements IGameInstance
 	}
 
 	@Override
-	public void playerLeft(IPlayer player)
+	public void onPlayerLeft(IPlayer player)
 	{
 		players.remove(player);
 

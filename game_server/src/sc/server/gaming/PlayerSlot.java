@@ -63,7 +63,7 @@ public class PlayerSlot
 		IPlayer player;
 		try
 		{
-			player = getRoom().getGame().playerJoined();
+			player = getRoom().getGame().onPlayerJoined();
 		}
 		catch (TooManyPlayersException e)
 		{

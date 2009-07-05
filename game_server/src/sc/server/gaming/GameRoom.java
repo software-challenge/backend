@@ -153,7 +153,7 @@ public class GameRoom implements IGameListener
 	public void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
-		this.game.actionReceived(resolvePlayer(source), data);
+		this.game.onAction(resolvePlayer(source), data);
 	}
 
 	private IPlayer resolvePlayer(Client source)

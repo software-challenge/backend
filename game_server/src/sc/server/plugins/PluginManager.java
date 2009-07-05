@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.PluginDescriptor;
-
+import sc.server.Configuration;
 
 /**
  * The <code>PluginManager</code> loads all available plugins from the plugin-
@@ -43,7 +43,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	public synchronized void reload()
 	{
 		unload();
-		
+
 		for (URI jarURI : findPluginArchives(this.getPluginFolder()))
 		{
 			for (Class<?> definition : findGameDefinitionsInJar(jarURI))
@@ -62,9 +62,9 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 		{
 			plugin.unload();
 		}
-		
+
 		this.activePlugins.clear();
-		this.availablePlugins.clear();	
+		this.availablePlugins.clear();
 	}
 
 	protected abstract PluginInstanceType createPluginInstance(
@@ -82,8 +82,9 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 		if (moduleDirectory.exists() && moduleDirectory.isDirectory())
 		{
-			logger.info("Loading plugins from: {}", moduleDirectory.getAbsoluteFile());
-			
+			logger.info("Loading plugins from: {}", moduleDirectory
+					.getAbsoluteFile());
+
 			for (String file : moduleDirectory.list())
 			{
 				if (file.endsWith(JAR_FILE_IDENTIFIER))
@@ -115,9 +116,9 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 		try
 		{
-			URLClassLoader loader = new URLClassLoader(new URL[] { jarURI
-					.toURL() }, PluginManager.class.getClassLoader());
-
+			Configuration.addXStreamClassloaderURL(jarURI.toURL());
+			ClassLoader loader = Configuration.getXStream().getClassLoader();
+			
 			JarFile jarArchive = new JarFile(new File(jarURI));
 			Enumeration<JarEntry> jarEntries = jarArchive.entries();
 
@@ -168,13 +169,13 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	{
 		return this.activePlugins;
 	}
-	
+
 	protected void addPlugin(PluginInstanceType type)
 	{
 		this.availablePlugins.add(type);
 		this.activePlugins.add(type);
 	}
-	
+
 	public String getPluginFolder()
 	{
 		return PLUGIN_DIRECTORY;

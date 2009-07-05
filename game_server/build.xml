@@ -49,8 +49,9 @@
 	<target name="dependencies">
 		<echo message="Compiling API Library..." />
 		<ant dir="./../game_plugin_interface" inheritAll="false" />
-		<echo message="Compiling Plugin..." />
+		<echo message="Compiling Plugins..." />
 		<ant dir="./../game_plugins/hase_und_igel" inheritAll="false" />
+		<ant dir="./../game_plugins/tic_tac_toe" inheritAll="false" />
 		<echo message="Dependencies have been compiled." />
 	</target>
 

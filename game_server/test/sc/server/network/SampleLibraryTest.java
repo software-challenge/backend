@@ -47,4 +47,22 @@ public class SampleLibraryTest extends RealServerTest
 			}
 		}, 1, TimeUnit.SECONDS);
 	}
+
+	@Test
+	public void shouldBeAbleToPlayTheGame() throws IOException
+	{
+		final TestLobbyClient client = new TestLobbyClient(
+				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
+				"localhost", getServerPort());
+
+		client.joinAnyGame();
+
+		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+			@Override
+			public Integer operate()
+			{
+				return client.getRooms().size();
+			}
+		}, 1, TimeUnit.SECONDS);
+	}
 }

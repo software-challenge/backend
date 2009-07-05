@@ -16,7 +16,7 @@ public class TestGame implements IGameInstance
 	private int					activePlayerId	= 0;
 
 	@Override
-	public void actionReceived(IPlayer fromPlayer, Object data)
+	public void onAction(IPlayer fromPlayer, Object data)
 	{
 		if (fromPlayer.equals(players.get(activePlayerId)))
 		{
@@ -65,7 +65,7 @@ public class TestGame implements IGameInstance
 	}
 
 	@Override
-	public IPlayer playerJoined() throws TooManyPlayersException
+	public IPlayer onPlayerJoined() throws TooManyPlayersException
 	{
 		if (players.size() < 2)
 		{
@@ -80,7 +80,7 @@ public class TestGame implements IGameInstance
 	}
 
 	@Override
-	public void playerLeft(IPlayer player)
+	public void onPlayerLeft(IPlayer player)
 	{
 		// TODO Auto-generated method stub
 

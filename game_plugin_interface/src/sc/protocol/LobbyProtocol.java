@@ -19,6 +19,7 @@ public abstract class LobbyProtocol
 			xStream.alias("Join", JoinRoomRequest.class);
 			xStream.alias("JoinPrepared", JoinPreparedRoomRequest.class);
 			xStream.alias("Error", ErrorResponse.class);
+			xStream.alias("Room", RoomPacket.class);
 
 			alreadyProcessed.add(xStream);
 		}

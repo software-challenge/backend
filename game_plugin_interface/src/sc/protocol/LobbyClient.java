@@ -33,6 +33,7 @@ public abstract class LobbyClient extends XStreamClient
 			throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
+		LobbyClient.register(xstream);
 		this.gameType = gameType;
 	}
 
