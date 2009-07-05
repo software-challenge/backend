@@ -14,9 +14,14 @@ import sc.plugin2010.core.GamePlugin;
 import sc.plugin2010.shared.Player.FigureColor;
 
 /**
+ * Die Spiellogik von Hase- und Igel.
+ * 
+ * Die Spieler spielen in genau der Reihenfolge in der sie das Spiel betreten
+ * haben.
+ * 
  * @author rra
  * @since Jul 4, 2009
- *
+ * 
  */
 public class Game implements IGameInstance
 {
@@ -27,16 +32,29 @@ public class Game implements IGameInstance
 	private int					activePlayerId;
 
 	private Set<IGameListener>	listeners;
-	
+
 	private List<FigureColor>	availableColors;
+
+	private boolean				active;
 
 	public Game()
 	{
 		players = new LinkedList<Player>();
 		listeners = new HashSet<IGameListener>();
-		
+
 		availableColors = new LinkedList<FigureColor>();
+		initialize();
+	}
+
+	private void initialize()
+	{
 		availableColors.addAll(Arrays.asList(FigureColor.values()));
+
+		// TODO entgültige Länge der Rennstrecke bestimmen
+		board = Board.create(20);
+
+		active = false;
+		activePlayerId = 0;
 	}
 	
 	@Override
@@ -55,27 +73,46 @@ public class Game implements IGameInstance
 	public void destroy()
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public synchronized IPlayer playerJoined() throws TooManyPlayersException
 	{
-		Player p = null;
+		Player player = null;
 		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
 
-		p = new Player(availableColors.remove(0));
-		players.add(p);
-		
-		return p;
+		player = new Player(availableColors.remove(0));
+		players.add(player);
+
+		// Informiere alle Beobachter von dem neuen Spieler
+		for (final IGameListener listener : listeners)
+		{
+			listener.onPlayerJoined(player);
+		}
+
+		return player;
 	}
 
 	@Override
 	public void playerLeft(IPlayer player)
 	{
-		// TODO Auto-generated method stub
+		players.remove(player);
 
+		for (final IGameListener listener : listeners)
+		{
+			listener.onPlayerLeft(player);
+		}
+
+		if (active)
+		{
+			active = false;
+			for (final IGameListener listener : listeners)
+			{
+				// TODO das Endergebnis kann noch nicht übergeben werden.
+				listener.onGameOver();
+			}
+		}
 	}
 
 	@Override
@@ -83,12 +120,4 @@ public class Game implements IGameInstance
 	{
 		listeners.remove(listener);
 	}
-
-	@Override
-	public void start()
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
 }
