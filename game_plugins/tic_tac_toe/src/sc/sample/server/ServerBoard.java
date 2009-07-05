@@ -9,12 +9,12 @@ public class ServerBoard extends Board
 {
 	public void apply(Player p, Move m) throws RescueableClientException
 	{
-		if (this.getOwner(m.X, m.Y) != null)
+		if (this.getOwner(m.getX(), m.getY()) != null)
 		{
 			throw new RescueableClientException("Field already occupied");
 		}
-		
-		this.setOwner(p, m.X, m.Y);
+
+		this.setOwner(p, m.getX(), m.getY());
 	}
 
 	private void setOwner(Player p, int x, int y)

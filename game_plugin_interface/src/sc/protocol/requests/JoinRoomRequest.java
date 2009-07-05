@@ -1,8 +1,15 @@
 package sc.protocol.requests;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+@XStreamAlias("join")
 public class JoinRoomRequest implements ILobbyRequest
 {
+	@XStreamAsAttribute
 	private String	roomId		= null;
+	
+	@XStreamAsAttribute
 	private String	gameType	= null;
 
 	protected JoinRoomRequest()

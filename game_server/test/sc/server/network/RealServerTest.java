@@ -73,7 +73,7 @@ public abstract class RealServerTest
 	{
 		return NewClientListener.lastUsedPort;
 	}
-	
+
 	protected TestTcpClient connectClient()
 	{
 		try

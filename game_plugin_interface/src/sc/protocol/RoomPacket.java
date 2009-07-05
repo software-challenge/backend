@@ -1,10 +1,16 @@
 package sc.protocol;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import sc.protocol.requests.ILobbyRequest;
 
+@XStreamAlias("room")
 public class RoomPacket implements ILobbyRequest
 {
+	@XStreamAsAttribute
 	private String	roomId;
+	
 	private Object	data;
 
 	public RoomPacket(String roomId, Object o)

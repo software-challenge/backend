@@ -2,6 +2,7 @@ package sc.protocol;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,13 +34,13 @@ public abstract class LobbyClient extends XStreamClient
 			throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
-		LobbyClient.register(xstream);
+		prepareXStream(xstream);
 		this.gameType = gameType;
 	}
 
-	public static void register(XStream xStream)
+	private void prepareXStream(XStream xStream)
 	{
-		LobbyProtocol.registerMessages(xStream);
+		LobbyProtocol.registerMessages(xStream, getProtocolClasses());
 	}
 
 	public List<String> getRooms()
@@ -81,4 +82,6 @@ public abstract class LobbyClient extends XStreamClient
 	}
 
 	protected abstract void onRoomMessage(String roomId, Object data);
+
+	protected abstract Collection<Class<? extends Object>> getProtocolClasses();
 }

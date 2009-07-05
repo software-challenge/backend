@@ -1,6 +1,7 @@
 package sc.server.network;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
@@ -15,7 +16,7 @@ import sc.server.plugins.TestPlugin;
 
 public class SampleLibraryTest extends RealServerTest
 {
-	class TestLobbyClient extends LobbyClient
+	static class TestLobbyClient extends LobbyClient
 	{
 		public TestLobbyClient(String gameType, XStream xstream, String host,
 				int port) throws IOException
@@ -27,6 +28,13 @@ public class SampleLibraryTest extends RealServerTest
 		protected void onRoomMessage(String roomId, Object data)
 		{
 			// TODO Auto-generated method stub
+		}
+
+		@Override
+		protected Collection<Class<? extends Object>> getProtocolClasses()
+		{
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

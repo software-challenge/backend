@@ -13,7 +13,7 @@ import sc.server.network.IClientListener;
 
 public class ClientXmlReadTest
 {
-	private class StupidClientListener implements IClientListener
+	private static class StupidClientListener implements IClientListener
 	{
 		public Object	LastPacket	= null;
 

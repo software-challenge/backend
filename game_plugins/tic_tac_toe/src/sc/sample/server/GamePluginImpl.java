@@ -4,6 +4,7 @@ import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGamePluginHost;
 import sc.api.plugins.PluginDescriptor;
+import sc.sample.protocol.ProtocolDefinition;
 
 @PluginDescriptor(name = "Tic Tac Toe (Sample)", uuid = GamePluginImpl.PLUGIN_UUID)
 public class GamePluginImpl implements IGamePlugin
@@ -24,7 +25,7 @@ public class GamePluginImpl implements IGamePlugin
 	@Override
 	public void initialize(IGamePluginHost host)
 	{
-		// nothing to do
+		host.registerProtocolClasses(ProtocolDefinition.getProtocolClasses());
 	}
 
 	@Override

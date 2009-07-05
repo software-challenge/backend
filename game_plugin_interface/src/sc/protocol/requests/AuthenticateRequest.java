@@ -1,9 +1,12 @@
 package sc.protocol.requests;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("authenticate")
 public class AuthenticateRequest implements ILobbyRequest
 {
-	private String password;
-	
+	private String	password;
+
 	public AuthenticateRequest(String password)
 	{
 		this.password = password;

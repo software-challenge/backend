@@ -14,7 +14,6 @@ public class MockClient extends Client
 {
 	private Queue<Object>	outgoingMessages	= new LinkedList<Object>();
 	private Object			object				= null;
-	private Object			objectLock			= new Object();
 
 	public MockClient(StringNetworkInterface stringInterface, XStream xStream)
 			throws IOException

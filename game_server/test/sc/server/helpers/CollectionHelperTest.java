@@ -14,7 +14,7 @@ import sc.helpers.Function;
 public class CollectionHelperTest
 {
 	@Test
-	public void MapTest()
+	public void mapTest()
 	{
 		Integer[] ints = new Integer[] { 0, 1, 2, 3 };
 		List<Integer> list = Arrays.asList(ints);

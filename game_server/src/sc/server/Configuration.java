@@ -3,6 +3,8 @@ package sc.server;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -35,8 +37,14 @@ public class Configuration
 	static
 	{
 		xStream = new XStream();
-		xStreamClassLoader = new RuntimeJarLoader(xStream.getClassLoader());
-
+		xStreamClassLoader = AccessController
+				.doPrivileged(new PrivilegedAction<RuntimeJarLoader>() {
+					@Override
+					public RuntimeJarLoader run()
+					{
+						return new RuntimeJarLoader(xStream.getClassLoader());
+					}
+				});
 		xStream.setClassLoader(xStreamClassLoader);
 		LobbyProtocol.registerMessages(xStream);
 	}

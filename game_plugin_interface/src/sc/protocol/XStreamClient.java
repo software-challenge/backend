@@ -22,6 +22,7 @@ public abstract class XStreamClient
 	private final Thread				thread;
 	private DisconnectCause				disconnectCause	= null;
 	private boolean						closing			= false;
+	private final XStream				xStream;
 
 	public enum DisconnectCause
 	{
@@ -46,6 +47,8 @@ public abstract class XStreamClient
 		{
 			throw new IllegalArgumentException("xstream must not be null.");
 		}
+
+		this.xStream = xstream;
 
 		this.networkInterface = networkInterface;
 		this.out = xstream.createObjectOutputStream(networkInterface
@@ -131,6 +134,7 @@ public abstract class XStreamClient
 		
 		try
 		{
+			logger.debug(this.xStream.toXML(o));
 			this.out.writeObject(o);
 			this.out.flush();
 		}

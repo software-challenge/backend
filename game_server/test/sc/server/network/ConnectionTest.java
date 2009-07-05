@@ -21,7 +21,7 @@ import sc.server.plugins.TestPlugin;
 
 public class ConnectionTest extends RealServerTest
 {
-	private class DontYouKnowJack
+	private static class DontYouKnowJack
 	{
 		// nothing here
 	}
@@ -78,7 +78,10 @@ public class ConnectionTest extends RealServerTest
 			}
 		}, 1, TimeUnit.SECONDS);
 
-		client.send(new DontYouKnowJack());
+		client.send(new DontYouKnowJack() {
+			// create a class that isn't in the class loader
+		});
+
 		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
 				new Action<DisconnectCause>() {
 					@Override
