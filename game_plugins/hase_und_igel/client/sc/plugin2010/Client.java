@@ -8,7 +8,7 @@ import sc.networking.INetworkInterface;
 import sc.protocol.LobbyClient;
 
 /**
- * Der Client für das Hase- und Igel Plugin
+ * Der Client für das Hase- und Igel Plugin. 
  * 
  * @author rra
  * @since Jul 5, 2009
