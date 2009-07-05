@@ -73,16 +73,23 @@ public class Game implements IGameInstance
 			// TODO den Zug des Spielers verarbeiten
 			
 			// TODO überprüfen, ob das Spiel vorbei ist
+			boolean gameOver = false;
+			if (gameOver)
+			{
+				
+			} else 
+			{
+				// Aktuellen Spielstand übertragen
+				updatePlayers();
+				
+				// Nächsten Spieler benachrichtigen
+				activePlayerId = (activePlayerId + 1) % players.size();
+				if (players.get(activePlayerId).isSuspended())
+					activePlayerId = (activePlayerId + 1) % players.size();
+				
+				players.get(activePlayerId).update(new MoveRequested());	
+			}
 			// TODO Beobachter benachrichtigen
-			
-			// Nächsten Spieler benachrichtigen
-			activePlayerId++;
-			if (players.get(activePlayerId).isSuspended())
-				activePlayerId++;
-			
-			activePlayerId = activePlayerId % players.size();
-			
-			players.get(activePlayerId).update(new MoveRequested());
 		}
 		else
 		{
@@ -148,13 +155,8 @@ public class Game implements IGameInstance
 		listeners.remove(listener);
 	}
 
-	@Override
-	public void start()
+	private void updatePlayers()
 	{
-		active = true;
-		activePlayerId = 0;
-
-		// Initialisiere alle Spieler
 		for (final Player player : players)
 		{
 			player.update(new BoardUpdated(board));
@@ -167,6 +169,16 @@ public class Game implements IGameInstance
 
 			player.update(new PlayerUpdated(player, true));
 		}
+	}
+	
+	@Override
+	public void start()
+	{
+		active = true;
+		activePlayerId = 0;
+
+		// Initialisiere alle Spieler
+		updatePlayers();
 		
 		// Fordere vom ersten Spieler einen Zug an
 		players.get(activePlayerId).update(new MoveRequested());
