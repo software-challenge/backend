@@ -1,8 +1,10 @@
-package sc.plugin2010.shared.util;
+package sc.plugin2010.util;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
+
+import sc.plugin2010.util.GameUtil;
 
 /**
  * @author rra

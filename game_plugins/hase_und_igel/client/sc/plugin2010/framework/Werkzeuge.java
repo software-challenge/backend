@@ -1,6 +1,6 @@
 package sc.plugin2010.framework;
 
-import sc.plugin2010.shared.util.GameUtil;
+import sc.plugin2010.util.GameUtil;
 
 /**
  * Eine Werkzeug Klasse, um nützliche und häufig gebrauchte Funktionen zur

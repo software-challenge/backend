@@ -1,4 +1,4 @@
-package sc.plugin2010.shared;
+package sc.plugin2010;
 
 /**
  * @author rra

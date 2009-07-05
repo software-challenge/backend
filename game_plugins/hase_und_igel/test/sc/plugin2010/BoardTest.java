@@ -1,10 +1,12 @@
-package sc.plugin2010.shared;
+package sc.plugin2010;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import sc.plugin2010.shared.Board.FieldTyp;
-import sc.plugin2010.shared.Player.FigureColor;
+import sc.plugin2010.Board;
+import sc.plugin2010.Player;
+import sc.plugin2010.Board.FieldTyp;
+import sc.plugin2010.Player.FigureColor;
 
 /**
  * @author rra

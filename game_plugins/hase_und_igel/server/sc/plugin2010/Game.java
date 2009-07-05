@@ -1,4 +1,4 @@
-package sc.plugin2010.shared;
+package sc.plugin2010;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,8 +10,7 @@ import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.TooManyPlayersException;
-import sc.plugin2010.core.GamePlugin;
-import sc.plugin2010.shared.Player.FigureColor;
+import sc.plugin2010.Player.FigureColor;
 
 /**
  * Die Spiellogik von Hase- und Igel.

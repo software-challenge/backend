@@ -11,7 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import sc.plugin2010.shared.util.GameUtil;
+import sc.plugin2010.util.GameUtil;
 
 /**
  * An class to display the information about the current game and the current

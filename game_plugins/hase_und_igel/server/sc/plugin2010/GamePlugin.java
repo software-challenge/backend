@@ -1,13 +1,9 @@
-package sc.plugin2010.core;
+package sc.plugin2010;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.IGamePluginHost;
 import sc.api.plugins.PluginDescriptor;
-import sc.plugin2010.shared.Board;
-import sc.plugin2010.shared.Game;
-import sc.plugin2010.shared.Move;
-import sc.plugin2010.shared.Player;
 
 /**
  * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge 2010.

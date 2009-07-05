@@ -1,4 +1,4 @@
-package sc.plugin2010.shared;
+package sc.plugin2010;
 
 import java.util.Arrays;
 import java.util.LinkedList;

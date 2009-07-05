@@ -1,10 +1,11 @@
-package sc.plugin2010.shared;
+package sc.plugin2010;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import sc.plugin2010.shared.Player.FigureColor;
+import sc.plugin2010.Player;
+import sc.plugin2010.Player.FigureColor;
 
 /**
  * @author rra

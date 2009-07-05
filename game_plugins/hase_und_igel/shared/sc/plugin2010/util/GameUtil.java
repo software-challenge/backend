@@ -1,4 +1,4 @@
-package sc.plugin2010.shared.util;
+package sc.plugin2010.util;
 
 public class GameUtil
 {
