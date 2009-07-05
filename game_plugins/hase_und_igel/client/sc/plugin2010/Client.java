@@ -37,6 +37,8 @@ public abstract class Client extends LobbyClient
 		if (data instanceof BoardUpdated)
 		{
 			board = ((BoardUpdated)data).getBoard();
+			
+			onUpdate();
 		}
 		else if (data instanceof PlayerUpdated)
 		{
@@ -58,6 +60,8 @@ public abstract class Client extends LobbyClient
 				
 				players.add(p);
 			}
+			
+			onUpdate();
 		}
 		else if (data instanceof MoveRequested)
 		{
@@ -91,4 +95,9 @@ public abstract class Client extends LobbyClient
 	 * @return
 	 */
 	abstract Move doMove();
+	
+	/**
+	 * Spieler oder Spielbrett aktualisiert.
+	 */
+	abstract void onUpdate();
 }
