@@ -1,12 +1,10 @@
 package sc.server.helpers;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 
 import sc.helpers.Action;
-import sc.helpers.Function;
 
 public class TestHelper
 {

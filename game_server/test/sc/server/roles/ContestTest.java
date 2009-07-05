@@ -1,8 +1,5 @@
 package sc.server.roles;
 
-import java.util.Collections;
-import java.util.List;
-
 import junit.framework.Assert;
 
 import org.junit.Test;

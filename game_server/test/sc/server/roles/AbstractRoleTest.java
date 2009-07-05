@@ -1,9 +1,6 @@
 package sc.server.roles;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Queue;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,8 +8,6 @@ import org.junit.Before;
 import sc.server.Configuration;
 import sc.server.Lobby;
 import sc.server.gaming.GameRoomManager;
-import sc.server.helpers.StringNetworkInterface;
-import sc.server.network.Client;
 import sc.server.network.ClientManager;
 import sc.server.network.MockClient;
 import sc.server.plugins.GamePluginManager;

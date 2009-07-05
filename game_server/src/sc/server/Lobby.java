@@ -1,8 +1,5 @@
 package sc.server;
 
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,12 +8,12 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.RescueableClientException;
+import sc.protocol.RoomPacket;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.ILobbyRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.RoomRequest;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
 import sc.server.gaming.ReservationManager;
@@ -94,9 +91,9 @@ public class Lobby implements IClientManagerListener, IClientListener
 				source.send(gameManager.prepareGame(prepared.getGameType(),
 						prepared.getPlayerCount()));
 			}
-			else if (packet instanceof RoomRequest)
+			else if (packet instanceof RoomPacket)
 			{
-				RoomRequest casted = (RoomRequest) packet;
+				RoomPacket casted = (RoomPacket) packet;
 				GameRoom room = gameManager.findRoom(casted
 						.getRoomId());
 				room.onEvent(source, casted.getData());

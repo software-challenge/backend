@@ -1,7 +1,5 @@
 package sc.api.plugins;
 
-import java.io.Serializable;
-
 public interface IGameInstance
 {
 	public IPlayer playerJoined() throws TooManyPlayersException;
@@ -10,4 +8,5 @@ public interface IGameInstance
 	public void destroy();
 	public void addGameListener(IGameListener listener);
 	public void removeGameListener(IGameListener listener);
+	public void start();
 }

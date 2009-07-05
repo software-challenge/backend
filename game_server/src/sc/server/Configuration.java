@@ -7,12 +7,7 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.protocol.ErrorResponse;
 import sc.protocol.LobbyProtocol;
-import sc.protocol.requests.JoinPreparedRoomRequest;
-import sc.protocol.requests.JoinRoomRequest;
-import sc.server.plugins.PluginManager;
-
 import com.thoughtworks.xstream.XStream;
 
 /**

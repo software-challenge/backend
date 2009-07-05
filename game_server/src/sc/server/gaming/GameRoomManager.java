@@ -3,7 +3,6 @@ package sc.server.gaming;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -11,7 +10,6 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IGameInstance;
 import sc.api.plugins.RescueableClientException;
 import sc.api.plugins.TooManyPlayersException;
 import sc.server.ServiceManager;

@@ -1,6 +1,5 @@
 package sc.plugin2010.shared;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -83,6 +82,13 @@ public class Game implements IGameInstance
 	public void removeGameListener(IGameListener listener)
 	{
 		listeners.remove(listener);
+	}
+
+	@Override
+	public void start()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

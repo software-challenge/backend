@@ -1,23 +1,34 @@
 package sc.server.plugins;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.IPlayerListener;
 
 public class TestPlayer implements IPlayer
 {
+	List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 
 	@Override
 	public void addPlayerListener(IPlayerListener listener)
 	{
-		// TODO Auto-generated method stub
-		
+		listeners.add(listener);
 	}
 
 	@Override
 	public void removePlayerListener(IPlayerListener listener)
 	{
-		// TODO Auto-generated method stub
-		
+		listeners.remove(listener);
 	}
 
+	public void requestMove()
+	{
+		TestTurnRequest request = new TestTurnRequest();
+		
+		for (IPlayerListener listener : listeners)
+		{
+			listener.onPlayerEvent(request);
+		}
+	}
 }

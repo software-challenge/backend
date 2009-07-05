@@ -1,15 +1,15 @@
 package sc.protocol;
 
 import java.io.IOException;
+import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.networking.INetworkInterface;
+import sc.networking.TcpNetwork;
+import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.requests.RoomRequest;
-import sc.protocol.responses.RoomResponse;
-
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -24,10 +24,10 @@ public abstract class LobbyClient extends XStreamClient
 	private static final Logger	logger	= LoggerFactory
 												.getLogger(LobbyClient.class);
 
-	public LobbyClient(String gameType, XStream xstream,
-			INetworkInterface networkInterface) throws IOException
+	public LobbyClient(String gameType, XStream xstream, String host, int port)
+			throws IOException
 	{
-		super(xstream, networkInterface);
+		super(xstream, new TcpNetwork(new Socket(host, port)));
 		this.gameType = gameType;
 	}
 
@@ -39,9 +39,9 @@ public abstract class LobbyClient extends XStreamClient
 	@Override
 	protected final void onObject(Object o)
 	{
-		if (o instanceof RoomResponse)
+		if (o instanceof RoomPacket)
 		{
-			onRoomMessage(((RoomResponse) o).getRoomId(), ((RoomResponse) o)
+			onRoomMessage(((RoomPacket) o).getRoomId(), ((RoomPacket) o)
 					.getData());
 		}
 		else
@@ -52,7 +52,12 @@ public abstract class LobbyClient extends XStreamClient
 
 	public void sendMessageToRoom(String roomId, Object o)
 	{
-		this.send(new RoomRequest(roomId, o));
+		this.send(new RoomPacket(roomId, o));
+	}
+
+	public void joinPreparedGame(String reservation)
+	{
+		this.send(new JoinPreparedRoomRequest(reservation));
 	}
 
 	public void joinAnyGame()

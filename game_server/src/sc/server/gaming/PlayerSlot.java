@@ -1,5 +1,8 @@
 package sc.server.gaming;
 
+import sc.api.plugins.IPlayer;
+import sc.api.plugins.TooManyPlayersException;
+import sc.protocol.responses.JoinedGame;
 import sc.server.network.Client;
 
 public class PlayerSlot
@@ -57,7 +60,20 @@ public class PlayerSlot
 			throw new IllegalStateException("This slot is already occupied.");
 		}
 
+		IPlayer player;
+		try
+		{
+			player = getRoom().getGame().playerJoined();
+		}
+		catch (TooManyPlayersException e)
+		{
+			// not expected to happen
+			throw new RuntimeException(e);
+		}
+
 		this.role = new PlayerRole(client, this);
 		client.addRole(this.role);
+		client.send(new JoinedGame(getRoom().getId()));
+		this.role.setPlayer(player);
 	}
 }

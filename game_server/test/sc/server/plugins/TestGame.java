@@ -1,6 +1,7 @@
 package sc.server.plugins;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import sc.api.plugins.IGameInstance;
@@ -10,20 +11,50 @@ import sc.api.plugins.TooManyPlayersException;
 
 public class TestGame implements IGameInstance
 {
-	private List<TestPlayer>	players	= new ArrayList<TestPlayer>(2);
+	private List<IGameListener>	listeners		= new LinkedList<IGameListener>();
+	private List<TestPlayer>	players			= new ArrayList<TestPlayer>(2);
+	private int					activePlayerId	= 0;
 
 	@Override
 	public void actionReceived(IPlayer fromPlayer, Object data)
 	{
-		// TODO Auto-generated method stub
+		if (fromPlayer.equals(players.get(activePlayerId)))
+		{
+			if (data instanceof TestMove)
+			{
+				nextRound();
+				if (activePlayerId == 0)
+				{
+					notifyOnGameOver();
+				}
+				else
+				{
+					notifyActivePlayer();
+				}
+			}
+			else
+			{
+				throw new RuntimeException("aaa");
+			}
+		}
+		else
+		{
+			throw new RuntimeException("aaa");
+		}
+	}
 
+	private void notifyOnGameOver()
+	{
+		for (IGameListener listener : listeners)
+		{
+			listener.onGameOver();
+		}
 	}
 
 	@Override
 	public void addGameListener(IGameListener listener)
 	{
-		// TODO Auto-generated method stub
-
+		listeners.add(listener);
 	}
 
 	@Override
@@ -62,4 +93,22 @@ public class TestGame implements IGameInstance
 
 	}
 
+	@Override
+	public void start()
+	{
+		if (this.players.size() == 2)
+		{
+			notifyActivePlayer();
+		}
+	}
+
+	public void notifyActivePlayer()
+	{
+		players.get(this.activePlayerId).requestMove();
+	}
+
+	public void nextRound()
+	{
+		this.activePlayerId = (this.activePlayerId + 1) % 2;
+	}
 }

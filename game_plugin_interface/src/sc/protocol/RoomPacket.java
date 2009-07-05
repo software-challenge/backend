@@ -1,11 +1,13 @@
-package sc.protocol.requests;
+package sc.protocol;
 
-public class RoomRequest implements ILobbyRequest
+import sc.protocol.requests.ILobbyRequest;
+
+public class RoomPacket implements ILobbyRequest
 {
 	private String	roomId;
 	private Object	data;
 
-	public RoomRequest(String roomId, Object o)
+	public RoomPacket(String roomId, Object o)
 	{
 		this.roomId = roomId;
 		this.data = o;

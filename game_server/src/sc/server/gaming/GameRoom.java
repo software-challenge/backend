@@ -81,23 +81,33 @@ public class GameRoom implements IGameListener
 
 	public boolean join(Client client)
 	{
+		PlayerSlot openSlot = null;
+		
 		for (PlayerSlot slot : playerSlots)
 		{
 			if (slot.isEmpty() && !slot.isReserved())
 			{
-				slot.setClient(client);
-				return true;
+				openSlot = slot;
+				break;
 			}
 		}
 
 		if (playerSlots.size() < getMaximumPlayerCount())
 		{
-			PlayerSlot slot = new PlayerSlot(this);
-			slot.setClient(client);
+			openSlot = new PlayerSlot(this);
+			this.playerSlots.add(openSlot);
+		}
+		
+		if(openSlot != null)
+		{
+			openSlot.setClient(client);
+			game.start();
 			return true;
 		}
-
-		return false;
+		else
+		{			
+			return false;
+		}
 	}
 
 	private int getMaximumPlayerCount()

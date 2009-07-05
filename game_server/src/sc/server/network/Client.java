@@ -1,10 +1,6 @@
 package sc.server.network;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
