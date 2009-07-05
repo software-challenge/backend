@@ -2,7 +2,7 @@ package sc.protocol.requests;
 
 public class JoinRoomRequest implements ILobbyRequest
 {
-	private int		roomId		= -1;
+	private String	roomId		= null;
 	private String	gameType	= null;
 
 	protected JoinRoomRequest()
@@ -15,7 +15,7 @@ public class JoinRoomRequest implements ILobbyRequest
 		this.gameType = gameType;
 	}
 
-	public JoinRoomRequest(String gameType, int roomId)
+	public JoinRoomRequest(String gameType, String roomId)
 	{
 		this.roomId = roomId;
 	}

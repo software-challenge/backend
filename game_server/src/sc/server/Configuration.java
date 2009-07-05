@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.protocol.ErrorResponse;
+import sc.protocol.LobbyProtocol;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.server.plugins.PluginManager;
@@ -36,9 +37,7 @@ public class Configuration
 	static
 	{
 		xStream = new XStream();
-		xStream.alias("Join", JoinRoomRequest.class);
-		xStream.alias("JoinPrepared", JoinPreparedRoomRequest.class);
-		xStream.alias("Error", ErrorResponse.class);
+		LobbyProtocol.registerMessages(xStream);
 	}
 
 	public static void load(Reader reader) throws IOException
