@@ -1,8 +1,8 @@
 package sc.plugin2010;
 
 import java.io.IOException;
+import java.util.List;
 
-import sc.networking.INetworkInterface;
 import sc.protocol.LobbyClient;
 
 import com.thoughtworks.xstream.XStream;
@@ -14,8 +14,17 @@ import com.thoughtworks.xstream.XStream;
  * @since Jul 5, 2009
  * 
  */
-public class Client extends LobbyClient
+public abstract class Client extends LobbyClient
 {
+	// Das aktuelle Spielbrett
+	private Board			board;
+	
+	// Der eigene Spieler
+	private Player			player;
+	
+	// Alle anderen Spieler
+	private List<Player>	players;
+
 	public Client(String gameType, XStream xstream, String host, int port)
 			throws IOException
 	{
@@ -25,7 +34,61 @@ public class Client extends LobbyClient
 	@Override
 	protected void onRoomMessage(String roomId, Object data)
 	{
-		// TODO Auto-generated method stub
-
+		if (data instanceof BoardUpdated)
+		{
+			board = ((BoardUpdated)data).getBoard();
+		}
+		else if (data instanceof PlayerUpdated)
+		{
+			final Player p = ((PlayerUpdated) data).getPlayer();
+			
+			if (((PlayerUpdated) data).isOwnPlayer())
+			{
+				// Aktualisiere den eigenen Spieler
+				player = p;
+			} else {
+				// Aktualisiere einen anderen Spieler
+				for(final Player pl : players)
+				{
+					if (pl.getColor().equals(p.getColor()))
+					{
+						players.remove(pl);
+					}
+				}
+				
+				players.add(p);
+			}
+		}
+		else if (data instanceof MoveRequested)
+		{
+			this.sendMessageToRoom(roomId, doMove());
+		}
 	}
+
+	/**
+	 * Das für die aktuelle Runde gültige Spielbrett
+	 * 
+	 * @return
+	 */
+	public final Board getBoard()
+	{
+		return board;
+	}
+
+	/**
+	 * Der aktuelle Zustand des eigenen Spielers
+	 * 
+	 * @return
+	 */
+	public final Player getPlayer()
+	{
+		return player;
+	}
+
+	/**
+	 * Berechnet den Zug des Clienten.
+	 * 
+	 * @return
+	 */
+	abstract Move doMove();
 }
