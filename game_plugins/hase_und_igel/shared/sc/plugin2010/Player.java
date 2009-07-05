@@ -73,7 +73,7 @@ public class Player implements IPlayer
 	}
 
 	// Farbe der Spielfigure
-	private FigureColor		color;
+	private FigureColor				color;
 
 	// Position auf dem Spielbrett
 	private int						position;
@@ -97,7 +97,7 @@ public class Player implements IPlayer
 	{
 		initialize(color, 0);
 	}
-	
+
 	protected Player(FigureColor color, int position)
 	{
 		initialize(color, position);
@@ -111,7 +111,7 @@ public class Player implements IPlayer
 		suspended = false;
 		listeners = new HashSet<IPlayerListener>();
 	}
-	
+
 	/**
 	 * Die Anzahl an Karotten die der Spieler zur Zeit auf der Hand hat.
 	 * 
@@ -180,6 +180,13 @@ public class Player implements IPlayer
 	public final FigureColor getColor()
 	{
 		return this.color;
+	}
+	
+	protected void update(Object o) {
+		for (final IPlayerListener listener : listeners)
+		{
+			listener.onPlayerEvent(o);
+		}	
 	}
 
 	@Override

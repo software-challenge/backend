@@ -6,10 +6,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.TooManyPlayersException;
+import sc.networking.TcpNetwork;
 import sc.plugin2010.Player.FigureColor;
 
 /**
@@ -24,6 +28,8 @@ import sc.plugin2010.Player.FigureColor;
  */
 public class Game implements IGameInstance
 {
+	private static final Logger	logger	= LoggerFactory.getLogger(Game.class);
+
 	private Board				board;
 
 	private List<Player>		players;
@@ -55,11 +61,33 @@ public class Game implements IGameInstance
 		active = false;
 		activePlayerId = 0;
 	}
-	
+
 	@Override
-	public void actionReceived(IPlayer fromPlayer, Object data)
+	public void actionReceived(IPlayer author, Object data)
 	{
-		// TODO Auto-generated method stub
+		if (data instanceof Move)
+		{
+			logger.info("Spieler '{}' hat einen Zug gemacht.", author);
+			final Move move = (Move) data;
+
+			// TODO den Zug des Spielers verarbeiten
+			
+			// TODO überprüfen, ob das Spiel vorbei ist
+			// TODO Beobachter benachrichtigen
+			
+			// Nächsten Spieler benachrichtigen
+			activePlayerId++;
+			if (players.get(activePlayerId).isSuspended())
+				activePlayerId++;
+			
+			activePlayerId = activePlayerId % players.size();
+			
+			players.get(activePlayerId).update(new MoveRequested());
+		}
+		else
+		{
+			logger.error("Unerwartet Antwort von Spieler '{}'", author);
+		}
 	}
 
 	@Override
@@ -123,7 +151,24 @@ public class Game implements IGameInstance
 	@Override
 	public void start()
 	{
-		// TODO Auto-generated method stub
+		active = true;
+		activePlayerId = 0;
+
+		// Initialisiere alle Spieler
+		for (final Player player : players)
+		{
+			player.update(new BoardUpdated(board));
+			for (final Player other : players)
+			{
+				if (other.equals(player))
+					continue;
+				player.update(new PlayerUpdated(other, false));
+			}
+
+			player.update(new PlayerUpdated(player, true));
+		}
 		
+		// Fordere vom ersten Spieler einen Zug an
+		players.get(activePlayerId).update(new MoveRequested());
 	}
 }
