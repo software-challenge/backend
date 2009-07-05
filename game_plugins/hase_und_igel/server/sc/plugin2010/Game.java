@@ -76,7 +76,11 @@ public class Game implements IGameInstance
 			boolean gameOver = false;
 			if (gameOver)
 			{
-				
+				for(final Player player : players)
+				{
+					// TODO result spielerspezifisch umbauen
+					player.update(new GameOver());
+				}
 			} else 
 			{
 				// Aktuellen Spielstand übertragen
@@ -89,7 +93,8 @@ public class Game implements IGameInstance
 				
 				players.get(activePlayerId).update(new MoveRequested());	
 			}
-			// TODO Beobachter benachrichtigen
+			
+			updateObservers();
 		}
 		else
 		{
@@ -155,6 +160,11 @@ public class Game implements IGameInstance
 		listeners.remove(listener);
 	}
 
+	private void updateObservers()
+	{
+		// TODO
+	}
+	
 	private void updatePlayers()
 	{
 		for (final Player player : players)
