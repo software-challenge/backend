@@ -65,6 +65,9 @@ public class Game implements IGameInstance
 	@Override
 	public void actionReceived(IPlayer author, Object data)
 	{
+		if (!active)
+			return;
+		
 		if (data instanceof Move)
 		{
 			logger.info("Spieler '{}' hat einen Zug gemacht.", author);
@@ -79,7 +82,7 @@ public class Game implements IGameInstance
 				for(final Player player : players)
 				{
 					// TODO result spielerspezifisch umbauen
-					player.update(new GameOver());
+					player.update(new GameOver(0));
 				}
 			} else 
 			{
