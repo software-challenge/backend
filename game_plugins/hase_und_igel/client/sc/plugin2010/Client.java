@@ -1,6 +1,7 @@
 package sc.plugin2010;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import sc.framework.plugins.protocol.MoveRequest;
@@ -15,16 +16,10 @@ import com.thoughtworks.xstream.XStream;
  * @since Jul 5, 2009
  * 
  */
-public abstract class Client extends LobbyClient
+public class Client extends LobbyClient
 {
-	// Das aktuelle Spielbrett
-	private Board			board;
-	
-	// Der eigene Spieler
-	private Player			player;
-	
-	// Alle anderen Spieler
-	private List<Player>	players;
+	// Die Strategie
+	private IGameHandler	handler;
 
 	public Client(String gameType, XStream xstream, String host, int port)
 			throws IOException
@@ -32,73 +27,36 @@ public abstract class Client extends LobbyClient
 		super(gameType, xstream, host, port);
 	}
 
+	public void setHandler(IGameHandler handler)
+	{
+		this.handler = handler;
+	}
+	
+	public IGameHandler getHandler()
+	{
+		return handler;
+	}
+	
 	@Override
 	protected void onRoomMessage(String roomId, Object data)
 	{
 		if (data instanceof BoardUpdated)
 		{
-			board = ((BoardUpdated)data).getBoard();
-			
-			onUpdate();
+			handler.onUpdate((BoardUpdated) data);
 		}
 		else if (data instanceof PlayerUpdated)
 		{
-			final Player p = ((PlayerUpdated) data).getPlayer();
-			
-			if (((PlayerUpdated) data).isOwnPlayer())
-			{
-				// Aktualisiere den eigenen Spieler
-				player = p;
-			} else {
-				// Aktualisiere einen anderen Spieler
-				for(final Player pl : players)
-				{
-					if (pl.getColor().equals(p.getColor()))
-					{
-						players.remove(pl);
-					}
-				}
-				
-				players.add(p);
-			}
-			
-			onUpdate();
+			handler.onUpdate((PlayerUpdated) data);
 		}
 		else if (data instanceof MoveRequest)
 		{
-			this.sendMessageToRoom(roomId, doMove());
+			this.sendMessageToRoom(roomId, handler.onAction());
 		}
 	}
 
-	/**
-	 * Das für die aktuelle Runde gültige Spielbrett
-	 * 
-	 * @return
-	 */
-	public final Board getBoard()
+	@Override
+	protected Collection<Class<? extends Object>> getProtocolClasses()
 	{
-		return board;
+		return null;
 	}
-
-	/**
-	 * Der aktuelle Zustand des eigenen Spielers
-	 * 
-	 * @return
-	 */
-	public final Player getPlayer()
-	{
-		return player;
-	}
-
-	/**
-	 * Berechnet den Zug des Clienten.
-	 * 
-	 * @return
-	 */
-	abstract Move doMove();
-	
-	/**
-	 * Spieler oder Spielbrett aktualisiert.
-	 */
-	abstract void onUpdate();
 }
