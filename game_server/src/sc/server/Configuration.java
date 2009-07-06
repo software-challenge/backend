@@ -10,9 +10,11 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.helpers.PerspectiveAwareConverter;
 import sc.helpers.RuntimeJarLoader;
 import sc.protocol.LobbyProtocol;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.core.JVM;
 
 /**
  * Server configuration.
@@ -46,6 +48,8 @@ public class Configuration
 					}
 				});
 		xStream.setClassLoader(xStreamClassLoader);
+		xStream.registerConverter(new PerspectiveAwareConverter(xStream
+				.getMapper(), xStream.getReflectionProvider()));
 		LobbyProtocol.registerMessages(xStream);
 	}
 
