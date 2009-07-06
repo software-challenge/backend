@@ -6,6 +6,7 @@ import java.util.Set;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.IPlayerListener;
+import sc.framework.plugins.SimplePlayer;
 
 /**
  * Ein Spieler aus Hase- und Igel.
@@ -14,7 +15,7 @@ import sc.api.plugins.IPlayerListener;
  * @since Jul 4, 2009
  * 
  */
-public class Player implements IPlayer
+public class Player extends SimplePlayer
 {
 	/**
 	 * Mögliche Aktionen, die durch das Ausspielen einer Hasenkarte ausgelöst
@@ -90,9 +91,6 @@ public class Player implements IPlayer
 	// Muss der Spieler in der kommenden Runde aussetzen?
 	private boolean					suspended;
 
-	// Beim Spieler registrierte Beobachter
-	private Set<IPlayerListener>	listeners;
-
 	protected Player(FigureColor color)
 	{
 		initialize(color, 0);
@@ -109,7 +107,6 @@ public class Player implements IPlayer
 		color = c;
 		carrots = 60;
 		suspended = false;
-		listeners = new HashSet<IPlayerListener>();
 	}
 
 	/**
@@ -180,24 +177,5 @@ public class Player implements IPlayer
 	public final FigureColor getColor()
 	{
 		return this.color;
-	}
-	
-	protected void update(Object o) {
-		for (final IPlayerListener listener : listeners)
-		{
-			listener.onPlayerEvent(o);
-		}	
-	}
-
-	@Override
-	public void addPlayerListener(IPlayerListener listener)
-	{
-		this.listeners.add(listener);
-	}
-
-	@Override
-	public void removePlayerListener(IPlayerListener listener)
-	{
-		this.listeners.remove(listener);
 	}
 }

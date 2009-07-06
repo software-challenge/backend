@@ -9,11 +9,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.TooManyPlayersException;
-import sc.networking.TcpNetwork;
+import sc.framework.plugins.SimpleGameInstance;
 import sc.plugin2010.Player.FigureColor;
 
 /**
@@ -26,17 +25,13 @@ import sc.plugin2010.Player.FigureColor;
  * @since Jul 4, 2009
  * 
  */
-public class Game implements IGameInstance
+public class Game extends SimpleGameInstance<Player>
 {
 	private static final Logger	logger	= LoggerFactory.getLogger(Game.class);
 
 	private Board				board;
 
-	private List<Player>		players;
-
 	private int					activePlayerId;
-
-	private Set<IGameListener>	listeners;
 
 	private List<FigureColor>	availableColors;
 
@@ -44,9 +39,6 @@ public class Game implements IGameInstance
 
 	public Game()
 	{
-		players = new LinkedList<Player>();
-		listeners = new HashSet<IGameListener>();
-
 		availableColors = new LinkedList<FigureColor>();
 		initialize();
 	}
@@ -82,7 +74,7 @@ public class Game implements IGameInstance
 				for(final Player player : players)
 				{
 					// TODO result spielerspezifisch umbauen
-					player.update(new GameOver(0));
+					player.notifyListeners(new GameOver(0));
 				}
 			} else 
 			{
@@ -94,7 +86,7 @@ public class Game implements IGameInstance
 				if (players.get(activePlayerId).isSuspended())
 					activePlayerId = (activePlayerId + 1) % players.size();
 				
-				players.get(activePlayerId).update(new MoveRequested());	
+				players.get(activePlayerId).requestMove();	
 			}
 			
 			updateObservers();
@@ -103,12 +95,6 @@ public class Game implements IGameInstance
 		{
 			logger.error("Unerwartet Antwort von Spieler '{}'", author);
 		}
-	}
-
-	@Override
-	public void addGameListener(IGameListener listener)
-	{
-		listeners.add(listener);
 	}
 
 	@Override
@@ -149,18 +135,8 @@ public class Game implements IGameInstance
 		if (active)
 		{
 			active = false;
-			for (final IGameListener listener : listeners)
-			{
-				// TODO das Endergebnis kann noch nicht übergeben werden.
-				listener.onGameOver();
-			}
+			notifyOnGameOver();
 		}
-	}
-
-	@Override
-	public void removeGameListener(IGameListener listener)
-	{
-		listeners.remove(listener);
 	}
 
 	private void updateObservers()
@@ -172,15 +148,15 @@ public class Game implements IGameInstance
 	{
 		for (final Player player : players)
 		{
-			player.update(new BoardUpdated(board));
+			player.notifyListeners(new BoardUpdated(board));
 			for (final Player other : players)
 			{
 				if (other.equals(player))
 					continue;
-				player.update(new PlayerUpdated(other, false));
+				player.notifyListeners(new PlayerUpdated(other, false));
 			}
 
-			player.update(new PlayerUpdated(player, true));
+			player.notifyListeners(new PlayerUpdated(player, true));
 		}
 	}
 	
@@ -194,6 +170,6 @@ public class Game implements IGameInstance
 		updatePlayers();
 		
 		// Fordere vom ersten Spieler einen Zug an
-		players.get(activePlayerId).update(new MoveRequested());
+		players.get(activePlayerId).requestMove();
 	}
 }

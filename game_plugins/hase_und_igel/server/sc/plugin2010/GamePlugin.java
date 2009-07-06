@@ -44,7 +44,6 @@ public class GamePlugin implements IGamePlugin
 		host.registerProtocolClass(Player.class);
 		host.registerProtocolClass(PlayerUpdated.class);
 		host.registerProtocolClass(Move.class);
-		host.registerProtocolClass(MoveRequested.class);
 		host.registerProtocolClass(Board.class);
 		host.registerProtocolClass(BoardUpdated.class);
 		// TODO evtl. fehlende Klassen registrieren

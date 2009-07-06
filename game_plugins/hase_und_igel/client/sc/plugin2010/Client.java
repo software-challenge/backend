@@ -3,6 +3,7 @@ package sc.plugin2010;
 import java.io.IOException;
 import java.util.List;
 
+import sc.framework.plugins.protocol.MoveRequest;
 import sc.protocol.LobbyClient;
 
 import com.thoughtworks.xstream.XStream;
@@ -63,7 +64,7 @@ public abstract class Client extends LobbyClient
 			
 			onUpdate();
 		}
-		else if (data instanceof MoveRequested)
+		else if (data instanceof MoveRequest)
 		{
 			this.sendMessageToRoom(roomId, doMove());
 		}
