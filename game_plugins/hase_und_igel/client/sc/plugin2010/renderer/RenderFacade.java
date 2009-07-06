@@ -7,6 +7,8 @@ import java.awt.Image;
 
 import javax.swing.JFrame;
 
+import sc.plugin2010.Board;
+import sc.plugin2010.Player;
 import sc.plugin2010.gui.EViewerMode;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
 import sc.plugin2010.renderer.twodimensional.FrameRenderer;
@@ -43,8 +45,8 @@ public class RenderFacade
 		return instance;
 	}
 
-	public void createInitFrame(JFrame frame, boolean threeDimensional,
-			EViewerMode mode)
+	public void createInitFrame(final JFrame frame,
+			final boolean threeDimensional, final EViewerMode mode)
 	{
 		if (threeDimensional)
 		{
@@ -56,9 +58,24 @@ public class RenderFacade
 		}
 	}
 
-	public void updateFrame()
+	public void updatePlayer(final Player myplayer, final boolean own)
 	{
-		getCurrentRenderer().updateData();
+		getCurrentRenderer().updatePlayer(myplayer, own);
+	}
+
+	public void updateBoard(final Board board)
+	{
+		getCurrentRenderer().updateBoard(board);
+	}
+
+	public void updateChat(final String chatMsg)
+	{
+		getCurrentRenderer().updateChat(chatMsg);
+	}
+
+	public void updateAction(final String doneAction)
+	{
+		getCurrentRenderer().updateAction(doneAction);
 	}
 
 	public Image getImage()
@@ -67,7 +84,7 @@ public class RenderFacade
 
 	}
 
-	private void setCurrentRenderer(Renderer currentRenderer)
+	private void setCurrentRenderer(final Renderer currentRenderer)
 	{
 		this.currentRenderer = currentRenderer;
 	}

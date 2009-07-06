@@ -16,6 +16,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import sc.plugin2010.Board;
+import sc.plugin2010.Player;
 import sc.plugin2010.gui.EViewerMode;
 import sc.plugin2010.renderer.Renderer;
 
@@ -26,16 +28,16 @@ import sc.plugin2010.renderer.Renderer;
 @SuppressWarnings("serial")
 public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 {
-	private InformationBar			info;
-	private ChatBar					chat;
-	private ActionBar				actionb;
-	private ArrayList<FieldButton>	fbuttons	= new ArrayList<FieldButton>();
-	private EViewerMode				viewerMode;
-	private JFrame					frame;
+	private InformationBar					info;
+	private ChatBar							chat;
+	private ActionBar						actionb;
+	private final ArrayList<FieldButton>	fbuttons	= new ArrayList<FieldButton>();
+	private final EViewerMode				viewerMode;
+	private final JFrame					frame;
 
-	public FrameRenderer(JFrame frame, EViewerMode mode)
+	public FrameRenderer(final JFrame frame, final EViewerMode mode)
 	{
-		this.viewerMode = mode;
+		viewerMode = mode;
 		this.frame = frame;
 		createInitFrame();
 	}
@@ -48,14 +50,14 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		this.setSize(800, 600);
 
-		BackgoundPane bg = new BackgoundPane("resource/background.png");
+		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
-		GridBagLayout paneLayout = new GridBagLayout();
-		GridBagConstraints c1 = new GridBagConstraints();
+		final GridBagLayout paneLayout = new GridBagLayout();
+		final GridBagConstraints c1 = new GridBagConstraints();
 
 		bg.setLayout(paneLayout);
 
-		int MAXROW = 5;
+		final int MAXROW = 5;
 
 		for (int i = 0; i < MAXROW * MAXROW; i++)
 		{
@@ -97,20 +99,20 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		info = new InformationBar(true);
 		chat = new ChatBar();
 		actionb = new ActionBar();
-		ScrollPane action = new ScrollPane();
+		final ScrollPane action = new ScrollPane();
 		action.add(actionb);
 
-		JPanel leftPanel = new JPanel();
+		final JPanel leftPanel = new JPanel();
 
-		BorderLayout layout = new BorderLayout();
+		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
 
 		leftPanel.add(info, BorderLayout.NORTH);
 		leftPanel.add(bg, BorderLayout.CENTER);
 		leftPanel.add(chat, BorderLayout.SOUTH);
 
-		BorderLayout framelayout = new BorderLayout();
-		this.setLayout(framelayout);
+		final BorderLayout framelayout = new BorderLayout();
+		setLayout(framelayout);
 
 		this.add(leftPanel, BorderLayout.CENTER);
 		this.add(action, BorderLayout.EAST);
@@ -119,57 +121,58 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		chat.addOtherMessage("Chat: ");
 		chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
-		this.setVisible(true);
+		setVisible(true);
 
-		this.addWindowListener(new WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosing(WindowEvent e)
+			public void windowClosing(final WindowEvent e)
 			{
 				System.exit(0);
 			}
 		});
 	}
 
-	public void updateData()
-	{
-		// TODO 2 spieler und observer...
-		info.setTurn(0);
-		info.setRound(0);
-
-		info.setCarrots(0);
-	}
-
-	public void updatePlayer(int playerid)
+	@Override
+	public void updatePlayer(final Player player, final boolean own)
 	{
 
 	}
 
-	public void updateBoard()
+	@Override
+	public void updateBoard(final Board bo)
 	{
 
 	}
 
-	public void updateAction(String doneAction)
+	@Override
+	public void updateInfos(final int round)
+	{
+
+	}
+
+	@Override
+	public void updateAction(final String doneAction)
 	{
 		actionb.addRow(doneAction);
 	}
 
-	public void updateChat(String chatMsg)
+	@Override
+	public void updateChat(final String chatMsg)
 	{
 		chat.addOtherMessage(chatMsg);
 	}
 
-	public void askQuestion(String question, List<String> answers)
+	public void askQuestion(final String question, final List<String> answers)
 	{
 		new QuestionDialog(question, answers);
 	}
 
-	public void answerQuestion(String answer)
+	public String answerQuestion(final String answer)
 	{
-
+		return answer;
 	}
 
-	public static void main(String[] args)
+	public static void main(final String[] args)
 	{
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run()
@@ -179,9 +182,9 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		});
 	}
 
-	public void updateClicked(int fieldNumber)
+	public void updateClicked(final int fieldNumber)
 	{
-		int index = fieldNumber - 1;
+		final int index = fieldNumber - 1;
 
 		for (int i = 0; i < fbuttons.size(); i++)
 		{

@@ -3,27 +3,23 @@
  */
 package sc.plugin2010.framework;
 
+import sc.plugin2010.Player;
+
 /**
  * @author ffi
  * 
  */
 public class Spieler
 {
+	private Player	player;
+
 	/**
 	 * die Hasen Karten, welche man im Spiel bekommen kann
 	 * 
 	 */
 	public enum HasenKarte
 	{
-		AUSSETZEN,
-		NAECHSTES_HASEN_FELD,
-		LETZTES_HASEN_FELD,
-		ZIEHE_NOCH_EINMAL,
-		LETZTER_ZUG_OHNE_KOSTEN,
-		NIMM_10_KAROTTEN,
-		GEBE_10_KAROTTEN_AB,
-		FRISS_SALAT,
-		FALLE_ZURUECK,
+		AUSSETZEN, NIMM_GIB_20_KAROTTEN, FRISS_SALAT, FALLE_ZURUECK,
 		/**
 		 * Rücke eine Position vor
 		 */
@@ -37,7 +33,7 @@ public class Spieler
 
 	public int holeKarottenAnzahl()
 	{
-		return 0; // TODO
+		return player.getCarrots();
 	}
 
 	public int holeSpielerNummer()
@@ -47,15 +43,10 @@ public class Spieler
 
 	public int holeAktuellesFeld()
 	{
-		return 0; // TODO
+		return player.getPosition(); // TODO
 	}
 
-	public int holeXXX()
-	{
-		return 0; // TODO
-	}
-
-	public void setzeFigur(int feldNummer)
+	public void setzeFigur(final int feldNummer)
 	{
 
 	}
@@ -70,7 +61,7 @@ public class Spieler
 
 	}
 
-	public void frissKarotten()
+	public void gibKarottenAb()
 	{
 
 	}
@@ -80,7 +71,7 @@ public class Spieler
 
 	}
 
-	public HasenKarte holeNeueHasenKarte()
+	public HasenKarte holeNeusteHasenKarte() // TODO
 	{
 		return HasenKarte.FRISS_SALAT;
 	}

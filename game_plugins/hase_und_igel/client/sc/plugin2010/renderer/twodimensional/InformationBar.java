@@ -30,21 +30,21 @@ public class InformationBar extends JPanel
 	private final String	TURNCOUNT	= "An der Reihe: Spieler ";
 	private final String	PLAYER		= "Spieler ";
 
-	private JLabel			carrots		= new JLabel();
-	private JLabel			rounds		= new JLabel();
-	private JLabel			maxmoves	= new JLabel();
-	private JLabel			turn		= new JLabel();
-	private JLabel			player		= new JLabel();
+	private final JLabel	carrots		= new JLabel();
+	private final JLabel	rounds		= new JLabel();
+	private final JLabel	maxmoves	= new JLabel();
+	private final JLabel	turn		= new JLabel();
+	private final JLabel	player		= new JLabel();
 
-	public InformationBar(boolean showcarrots)
+	public InformationBar(final boolean showcarrots)
 	{
-		this.setBorder(BorderFactory.createEtchedBorder());
-		this.setLayout(new GridLayout(1, 1));
+		setBorder(BorderFactory.createEtchedBorder());
+		setLayout(new GridLayout(1, 1));
 
-		JPanel left = new JPanel();
+		final JPanel left = new JPanel();
 		left.setLayout(new BorderLayout());
 
-		JPanel right = new JPanel();
+		final JPanel right = new JPanel();
 		right.setLayout(new BorderLayout());
 
 		player.setForeground(Color.BLUE);
@@ -70,7 +70,7 @@ public class InformationBar extends JPanel
 		this.add(left);
 		this.add(right);
 
-		setCarrots(60);
+		setCarrots(68);
 		setRound(1);
 		setTurn(1);
 		setPlayer(1);
@@ -78,24 +78,24 @@ public class InformationBar extends JPanel
 		setVisible(true);
 	}
 
-	public void setPlayer(int id)
+	public void setPlayer(final int id)
 	{
 		player.setText(PLAYER + String.valueOf(id));
 	}
 
-	public void setCarrots(int count)
+	public void setCarrots(final int count)
 	{
 		carrots.setText(CARROTCOUNT + String.valueOf(count));
 		maxmoves.setText(MOVESCOUNT + GameUtil.calculateMoveableFields(count));
 	}
 
-	public void setRound(int count)
+	public void setRound(final int count)
 	{
 		rounds.setText(ROUNDCOUNT + String.valueOf(count));
 
 	}
 
-	public void setTurn(int playerid)
+	public void setTurn(final int playerid)
 	{
 		turn.setText(TURNCOUNT + String.valueOf(playerid));
 	}

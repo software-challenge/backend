@@ -1,5 +1,7 @@
 package sc.plugin2010.framework;
 
+import sc.plugin2010.Player;
+
 /**
  * Diese Klassen repräsentiert den gegnerischen Spieler. Über sie können
  * Abfragen, wie die Position des Gegners, gemacht werden.
@@ -9,6 +11,8 @@ package sc.plugin2010.framework;
  */
 public class Gegner
 {
+	private Player	player;
+
 	public Gegner()
 	{
 
@@ -16,17 +20,27 @@ public class Gegner
 
 	public int holeKarottenAnzahl()
 	{
-		return 0; // TODO
+		return player.getCarrots();
 	}
 
-	public int holeSpielerNummer()
+	public int holeSalatAnzahl()
 	{
-		return 0; // TODO
+		return player.getSaladsEaten(); // TODO give salatsToEat
+	}
+
+	public int holeSpielerFarbe()
+	{
+		/*
+		 * public enum FigureColor { RED, BLUE, YELLOW, WHITE, GREEN, ORANGE, }
+		 * 
+		 * return player.getColor();
+		 */// TODO
+		return 0;
 	}
 
 	public int holeAktuellesFeld()
 	{
-		return 0; // TODO
+		return player.getPosition(); // TODO
 	}
 
 	public int holeLetztenZug()
