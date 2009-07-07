@@ -3,8 +3,8 @@ package sc.plugin2010.util;
 public class GameUtil
 {
 	/**
-	 * returns the count of carrots needed to do the move by
-	 * <code>moveCount</code> fields
+	 * Berechnet wie viele Karotten für einen Zug der länge <code>moveCount</code>
+	 * benötigt werden. Entspricht den Veränderungen des Spieleabends der CAU.
 	 * 
 	 * @param moveCount
 	 *            how many fields to move (must be positive)
@@ -12,14 +12,7 @@ public class GameUtil
 	 */
 	public static int calculateCarrots(int moveCount)
 	{
-		int res = 0;
-
-		for (int i = 1; i <= moveCount; i++)
-		{
-			res += i;
-		}
-
-		return res;
+		return (moveCount * (moveCount + 1)) / 2;
 	}
 
 	/**

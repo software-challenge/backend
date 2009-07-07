@@ -20,8 +20,7 @@ public class TestGameUtil
 	public void testCalculateCarrots()
 	{
 		Assert.assertEquals(1, GameUtil.calculateCarrots(1));
-		Assert.assertEquals(253, GameUtil.calculateCarrots(22));
-		Assert.assertEquals(990, GameUtil.calculateCarrots(44));
+		Assert.assertEquals(55, GameUtil.calculateCarrots(10));
 	}
 	
 	/**
