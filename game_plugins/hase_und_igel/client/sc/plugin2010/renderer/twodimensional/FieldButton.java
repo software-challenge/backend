@@ -3,6 +3,7 @@
  */
 package sc.plugin2010.renderer.twodimensional;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
@@ -10,7 +11,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.border.Border;
 
 /**
  * @author ffi
@@ -19,29 +22,32 @@ import javax.swing.JButton;
 @SuppressWarnings("serial")
 public class FieldButton extends JButton
 {
-	private Image			img			= null;
-	private Image			icon		= null;
-	private int				fieldNumber	= 0;
-	private IClickObserver	obs;
-	private String			mycolor		= "";
+	private Image					img			= null;
+	private Image					icon		= null;
+	private int						fieldNumber	= 0;
+	private final IClickObserver	obs;
+	private String					mycolor		= "";
+	private Border					bord;
+	private boolean					reachable	= false;
 
-	public FieldButton(String imagefile, int fieldNumber, IClickObserver obs)
+	public FieldButton(final String imagefile, final int fieldNumber,
+			final IClickObserver obs)
 	{
 		super();
 		// this.setBorder(BorderFactory.createLineBorder(Color.BLUE, 1));
 		this.fieldNumber = fieldNumber;
 		this.obs = obs;
-		this.addMouseListener(new ClickListener());
+		addMouseListener(new ClickListener());
 		if (imagefile != null)
 		{
-			MediaTracker mt = new MediaTracker(this);
+			final MediaTracker mt = new MediaTracker(this);
 			img = Toolkit.getDefaultToolkit().getImage(imagefile);
 			mt.addImage(img, 0);
 			try
 			{
 				mt.waitForAll();
 			}
-			catch (InterruptedException e)
+			catch (final InterruptedException e)
 			{
 				e.printStackTrace();
 			}
@@ -53,11 +59,11 @@ public class FieldButton extends JButton
 		return fieldNumber;
 	}
 
-	public void setOccupied(String color)
+	public void setOccupied(final String color)
 	{
 		if (color != null)
 		{
-			MediaTracker mt = new MediaTracker(this);
+			final MediaTracker mt = new MediaTracker(this);
 			icon = Toolkit.getDefaultToolkit().getImage(
 					"resource/" + color + ".png");
 			mt.addImage(icon, 0);
@@ -66,10 +72,24 @@ public class FieldButton extends JButton
 			{
 				mt.waitForAll();
 			}
-			catch (InterruptedException e)
+			catch (final InterruptedException e)
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public void setReachable(final boolean reachable)
+	{
+		this.reachable = reachable;
+
+		if (reachable)
+		{
+			bord = BorderFactory.createLineBorder(Color.BLUE, 2);
+		}
+		else
+		{
+			bord = null;
 		}
 	}
 
@@ -79,7 +99,7 @@ public class FieldButton extends JButton
 		mycolor = "";
 	}
 
-	public boolean wasColorOn(String color)
+	public boolean wasColorOn(final String color)
 	{
 		return mycolor.equals(color);
 	}
@@ -87,38 +107,45 @@ public class FieldButton extends JButton
 	class ClickListener extends MouseAdapter
 	{
 		@Override
-		public void mouseEntered(MouseEvent e)
+		public void mouseEntered(final MouseEvent e)
 		{
-			// setBorder(BorderFactory.createLineBorder(Color.RED, 2));
+			bord = BorderFactory.createLineBorder(Color.RED, 2);
 		}
 
 		@Override
-		public void mouseExited(MouseEvent e)
+		public void mouseExited(final MouseEvent e)
 		{
-			// setBorder(BorderFactory.createLineBorder(Color.BLUE, 1));
+			if (reachable)
+			{
+				bord = BorderFactory.createLineBorder(Color.BLUE, 2);
+			}
+			else
+			{
+				bord = null;
+			}
 		}
 
 		@Override
-		public void mouseReleased(MouseEvent e)
+		public void mouseReleased(final MouseEvent e)
 		{
 			if (e.getButton() == MouseEvent.BUTTON1)
 			{
-				obs.updateClicked(FieldButton.this.getFieldnumber());
+				obs.updateClicked(getFieldnumber());
 			}
 		}
 	}
 
 	@Override
-	protected void paintComponent(Graphics g)
+	protected void paintComponent(final Graphics g)
 	{
 		super.paintComponent(g);
-		g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 		if (icon != null)
 		{
-			g.drawImage(icon, 5, 5, this.getWidth() - 20,
-					this.getHeight() - 20, this);
+			g.drawImage(icon, 5, 5, getWidth() - 20, getHeight() - 15, this);
 		}
-		String text = String.valueOf(fieldNumber);
-		g.drawString(text, this.getWidth() - 15, this.getHeight() - 5);
+		final String text = String.valueOf(fieldNumber);
+		g.drawString(text, getWidth() - 15, getHeight() - 5);
+		setBorder(bord);
 	}
 }

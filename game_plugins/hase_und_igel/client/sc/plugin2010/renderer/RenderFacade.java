@@ -5,7 +5,7 @@ package sc.plugin2010.renderer;
 
 import java.awt.Image;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Player;
@@ -45,16 +45,16 @@ public class RenderFacade
 		return instance;
 	}
 
-	public void createInitFrame(final JFrame frame,
+	public void createInitFrame(final JPanel panel,
 			final boolean threeDimensional, final EViewerMode mode)
 	{
 		if (threeDimensional)
 		{
-			setCurrentRenderer(new ThreeDimRenderer(frame, mode));
+			setCurrentRenderer(new ThreeDimRenderer(panel, mode));
 		}
 		else
 		{
-			setCurrentRenderer(new FrameRenderer(frame, mode));
+			setCurrentRenderer(new FrameRenderer(panel, mode));
 		}
 	}
 

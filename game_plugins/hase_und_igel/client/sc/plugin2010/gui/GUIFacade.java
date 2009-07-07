@@ -2,7 +2,7 @@ package sc.plugin2010.gui;
 
 import java.awt.Image;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import sc.plugin2010.renderer.RenderFacade;
 
@@ -41,13 +41,13 @@ public class GUIFacade
 	 * sets the rendercontext. So that the game can be displayed on
 	 * <code>frame</code>.
 	 * 
-	 * @param frame
-	 *            jframe instance on which the game should display
+	 * @param panel
+	 *            JPanel instance on which the game should display
 	 */
-	public void setRenderContext(JFrame frame, boolean threeDimensional,
-			EViewerMode viewerMode)
+	public void setRenderContext(final JPanel panel,
+			final boolean threeDimensional, final EViewerMode viewerMode)
 	{
-		RenderFacade.getInstance().createInitFrame(frame, threeDimensional,
+		RenderFacade.getInstance().createInitFrame(panel, threeDimensional,
 				viewerMode);
 	}
 
@@ -69,18 +69,9 @@ public class GUIFacade
 	}
 
 	/**
-	 * 
-	 * @return the magic hash that is used to start a game with this plugin
-	 */
-	public String getPluginMagicHash()
-	{
-		return ""; // TODO
-	}
-
-	/**
 	 * starts a game on the server
 	 */
-	public void startGame(int playercount)
+	public void startGame(final int playercount)
 	{
 
 	}
@@ -95,7 +86,7 @@ public class GUIFacade
 
 	}
 
-	public boolean connectToServer(String ip, int port)
+	public boolean connectToServer(final String ip, final int port)
 	{
 		return false; // TODO
 	}

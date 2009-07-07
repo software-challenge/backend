@@ -28,6 +28,7 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
@@ -54,13 +55,13 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 	/* Anzuzeigende Meldung spezifizieren */
 	private final String		txtStr	= "Willkommen";
 
-	private final JFrame		frame;
+	private final JPanel		panel;
 	private final EViewerMode	viewerMode;
 
-	public ThreeDimRenderer(final JFrame frame, final EViewerMode mode)
+	public ThreeDimRenderer(final JPanel panel, final EViewerMode mode)
 	{
 		super();
-		this.frame = frame;
+		this.panel = panel;
 		viewerMode = mode;
 		createInitFrame();
 	}

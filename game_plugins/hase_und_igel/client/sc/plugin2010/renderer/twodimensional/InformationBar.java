@@ -5,6 +5,7 @@ package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
@@ -36,6 +37,9 @@ public class InformationBar extends JPanel
 	private final JLabel	turn		= new JLabel();
 	private final JLabel	player		= new JLabel();
 
+	private final String	FONTTYPE	= "Times New Roman";
+	private final int		SIZE		= 14;
+
 	public InformationBar(final boolean showcarrots)
 	{
 		setBorder(BorderFactory.createEtchedBorder());
@@ -48,14 +52,22 @@ public class InformationBar extends JPanel
 		right.setLayout(new BorderLayout());
 
 		player.setForeground(Color.BLUE);
+		player.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
 		carrots.setForeground(Color.BLUE);
+		carrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
 		maxmoves.setForeground(Color.BLUE);
+		maxmoves.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		rounds.setHorizontalAlignment(JLabel.RIGHT);
 		turn.setHorizontalAlignment(JLabel.RIGHT);
 
 		rounds.setForeground(Color.RED);
+		rounds.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
 		turn.setForeground(Color.RED);
+		turn.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		left.add(player, BorderLayout.NORTH);
 
