@@ -1,8 +1,9 @@
-package sc;
+package sc.common;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 
+import sc.IPresentationFacade;
 import sc.contextframe.ContextDisplay;
 
 /**

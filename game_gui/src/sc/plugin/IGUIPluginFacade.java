@@ -1,17 +1,14 @@
 package sc.plugin;
 
 import java.awt.Image;
-import javax.swing.JFrame;
-import sc.api.plugins.IPlugin;
+
+import javax.swing.JPanel;
 
 public interface IGUIPluginFacade {
 
-	void setRenderContext(JFrame frame);
+	void setRenderContext(JPanel panel);
 	Image getCurrentStateImage();
-	String getPluginVersion(IPlugin plugin);
-	//TODO IPlugin correct type for working with it?
-	void startGame(IPlugin plugin, int playerCount);
-	void stopGame();
-	void pauseGame();
-	void connectToServer(String ip, int port);
+	String getPluginVersion();
+	IGamePreparation prepareGame(String ip, int port);
+	
 }

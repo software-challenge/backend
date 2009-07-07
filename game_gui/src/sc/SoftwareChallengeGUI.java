@@ -8,6 +8,8 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
+import sc.common.PresentationFacade;
+
 /**
  * The executable application of the Software Challenge GUI.
  * 
@@ -42,7 +44,7 @@ public class SoftwareChallengeGUI extends JFrame {
 		this.add(presFac.getStatusBar());
 
 		// set window preferences
-		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle("Server GUI");
 		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
 				.getImage());
@@ -62,11 +64,17 @@ public class SoftwareChallengeGUI extends JFrame {
 	}
 
 	/**
+	 * Starts this application.
+	 * 
 	 * @param args
+	 *            nothing expected
 	 */
 	public static void main(String[] args) {
-		SoftwareChallengeGUI gui = new SoftwareChallengeGUI();
-		gui.setVisible(true);
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				new SoftwareChallengeGUI().setVisible(true);
+			}
+		});
 	}
 
 }
