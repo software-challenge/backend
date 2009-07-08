@@ -19,7 +19,7 @@ public class HaseUndIgelLayout implements LayoutManager
 	private final Vector<Component>	comps;
 	private final int				BORDER	= 5;
 	private final double			SIZEX	= 10;
-	private final double			SIZEY	= 11.1;
+	private final double			SIZEY	= 11;
 
 	public HaseUndIgelLayout()
 	{
@@ -64,7 +64,6 @@ public class HaseUndIgelLayout implements LayoutManager
 	public Dimension minimumLayoutSize(final Container parent)
 	{
 		Component c;
-		final int indent;
 		final Dimension d = new Dimension();
 		Dimension componentDim;
 
@@ -78,39 +77,14 @@ public class HaseUndIgelLayout implements LayoutManager
 		return d;
 	}
 
-	private Dimension getCenterPosition(final Container parent)
+	private boolean between(final int i, final int x, final int y)
 	{
-		final Dimension result = new Dimension(0, 0);
-		result.setSize(parent.getWidth() / 2, parent.getHeight() / 2);
-		return result;
-	}
-
-	private Dimension getSpiralCoord(final double phi, final double a)
-	{
-		return new Dimension((int) Math.round(phi * a * Math.cos(phi)),
-				(int) Math.round(phi * a * Math.sin(phi)));
+		return (x <= i && y > i);
 	}
 
 	@Override
 	public void layoutContainer(final Container parent)
 	{
-		/*
-		 * Component c; double degrees = 0; double a = 0; int beforeWidth = 0;
-		 * int beforeHeight = 0; final Dimension centerSpiral =
-		 * getCenterPosition(parent);
-		 * 
-		 * for (int i = 1; i <= parent.getComponentCount(); i++) { c =
-		 * parent.getComponent(i - 1); c.setBounds(centerSpiral.width +
-		 * getSpiralCoord(degrees, a).width, centerSpiral.height +
-		 * getSpiralCoord(degrees, a).height, c .getPreferredSize().width,
-		 * c.getPreferredSize().height);
-		 * 
-		 * degrees = degrees + 0.3; a = 20; beforeWidth =
-		 * c.getPreferredSize().width; beforeHeight =
-		 * c.getPreferredSize().height;
-		 * 
-		 * }
-		 */
 
 		Component c;
 
@@ -123,148 +97,32 @@ public class HaseUndIgelLayout implements LayoutManager
 		{
 			c = parent.getComponent(i);
 			c.setPreferredSize(new Dimension(compWidth, compHeight));
-		}
 
-		for (int i = 0; i < 9; i++)
-		{
-			c = parent.getComponent(i);
-
-			if (i % 2 == 0)
+			if (i == 0)
 			{
-				y = parent.getHeight() - c.getPreferredSize().height - BORDER
-						- 5;
-			}
-			else
-			{
-				y = parent.getHeight() - c.getPreferredSize().height - BORDER;
+				y = parent.getHeight() - BORDER - c.getPreferredSize().height;
 			}
 
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
 
-			x += c.getPreferredSize().width;
-		}
-
-		final int tempx = x;
-
-		for (int i = 9; i < 19; i++)
-		{
-			c = parent.getComponent(i);
-
-			if (i % 2 == 0)
+			if (between(i, 0, 9) || between(i, 36, 43) || between(i, 58, 61))
 			{
-				x = tempx - 5;
+				x += c.getPreferredSize().width;
 			}
-			else
+			else if (between(i, 9, 19) || between(i, 43, 49)
+					|| between(i, 61, 63))
 			{
-				x = tempx;
+				y -= c.getPreferredSize().height;
 			}
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			y -= c.getPreferredSize().height;
-		}
-
-		final int tempy = y;
-
-		for (int i = 19; i < 28; i++)
-		{
-			c = parent.getComponent(i);
-
-			if (i % 2 == 0)
+			if (between(i, 19, 28) || between(i, 49, 54) || between(i, 63, 65))
 			{
-				y = tempy - 5;
+				x -= c.getPreferredSize().width;
 			}
-			else
+			else if (between(i, 28, 36) || between(i, 54, 58))
 			{
-				y = tempy;
+				y += c.getPreferredSize().height;
 			}
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			x -= c.getPreferredSize().width;
-		}
-
-		for (int i = 28; i < 36; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			y += c.getPreferredSize().height;
-		}
-
-		for (int i = 36; i < 43; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			x += c.getPreferredSize().width;
-		}
-
-		for (int i = 43; i < 49; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			y -= c.getPreferredSize().height;
-		}
-
-		for (int i = 49; i < 54; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			x -= c.getPreferredSize().width;
-		}
-
-		for (int i = 54; i < 58; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			y += c.getPreferredSize().height;
-		}
-
-		for (int i = 58; i < 61; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			x += c.getPreferredSize().width;
-		}
-
-		for (int i = 61; i < 63; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			y -= c.getPreferredSize().height;
-		}
-
-		for (int i = 63; i <= 64; i++)
-		{
-			c = parent.getComponent(i);
-
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
-			x -= c.getPreferredSize().width;
 		}
 	}
 }

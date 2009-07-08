@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Player;
-import sc.plugin2010.gui.EViewerMode;
 import sc.plugin2010.renderer.Renderer;
 import sc.plugin2010.util.GameUtil;
 
@@ -32,13 +31,11 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	private ChatBar							chat;
 	private ActionBar						actionb;
 	private final ArrayList<FieldButton>	fbuttons	= new ArrayList<FieldButton>();
-	private final EViewerMode				viewerMode;
 	private final JPanel					panel;
 	private Player							player;
 
-	public FrameRenderer(final JPanel panel, final EViewerMode mode)
+	public FrameRenderer(final JPanel panel)
 	{
-		viewerMode = mode;
 		this.panel = panel;
 		createInitFrame();
 	}
@@ -51,7 +48,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		this.setSize(800, 600);
 
-		final BackgoundPane bg = new BackgoundPane("resource/background2.png");
+		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
 		final HaseUndIgelLayout paneLayout = new HaseUndIgelLayout();
 
@@ -61,8 +58,8 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		for (int i = 0; i <= MAXROW * MAXROW; i++)
 		{
-			Board.FieldTyp type = Board.FieldTyp.RABBIT;
-			String back = "resource/rabbit.png";
+			Board.FieldTyp type = Board.FieldTyp.CARROT;
+			String back = "resource/carrots.png";
 
 			if (i % MAXROW == 0)
 			{
@@ -108,7 +105,6 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 			}
 
 			fbuttons.add(new FieldButton(back, i, type, this));
-			fbuttons.get(i).setMinimumSize(new Dimension(40, 40));
 			fbuttons.get(i).setPreferredSize(new Dimension(40, 40));
 			bg.add("1", fbuttons.get(i));
 		}
@@ -132,6 +128,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		setLayout(framelayout);
 
 		this.add(leftPanel, BorderLayout.CENTER);
+		action.setPreferredSize(new Dimension(180, 800));
 		this.add(action, BorderLayout.EAST);
 
 		actionb.addRow("Aktionen: ");
@@ -194,42 +191,46 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run()
 			{
-				new FrameRenderer(null, null).setVisible(true);
+				new FrameRenderer(null).setVisible(true);
 			}
 		});
 	}
 
 	private void setReachableFields(final int pos, final int carrots)
 	{
-		final int moveable = GameUtil.calculateMoveableFields(carrots);
-
-		int max = pos + moveable;
-
-		if (max > 65)
+		// if not in finish
+		if (pos != 64)
 		{
-			max = 65;
-		}
+			final int moveable = GameUtil.calculateMoveableFields(carrots);
 
-		for (int i = pos; i < max; i++)
-		{
-			if (fbuttons.get(i).getType() != Board.FieldTyp.HEDGEHOG)
+			int max = pos + moveable;
+
+			if (max > 65)
 			{
-				fbuttons.get(i).setReachable(true);
-				fbuttons.get(i).repaint();
+				max = 65;
 			}
-		}
 
-		// if not on hedgehog
-		if (fbuttons.get(pos).getType() != Board.FieldTyp.HEDGEHOG)
-		{
-			// seek for last hedgehog
-			for (int i = pos - 1; i >= 0; i--)
+			for (int i = pos; i < max; i++)
 			{
-				if (fbuttons.get(i).getType() == Board.FieldTyp.HEDGEHOG)
+				if (fbuttons.get(i).getType() != Board.FieldTyp.HEDGEHOG)
 				{
 					fbuttons.get(i).setReachable(true);
 					fbuttons.get(i).repaint();
-					break;
+				}
+			}
+
+			// if not on hedgehog
+			if (fbuttons.get(pos).getType() != Board.FieldTyp.HEDGEHOG)
+			{
+				// seek for last hedgehog
+				for (int i = pos - 1; i >= 0; i--)
+				{
+					if (fbuttons.get(i).getType() == Board.FieldTyp.HEDGEHOG)
+					{
+						fbuttons.get(i).setReachable(true);
+						fbuttons.get(i).repaint();
+						break;
+					}
 				}
 			}
 		}

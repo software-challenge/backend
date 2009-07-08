@@ -1,12 +1,16 @@
 package sc.plugin2010.gui;
 
 import java.awt.Image;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
-import sc.IGUIPluginFacade;
-import sc.IGamePreparation;
+import sc.guiplugin.interfaces.IGUIPluginFacade;
+import sc.guiplugin.interfaces.IGamePreparation;
+import sc.plugin2010.Client;
 import sc.plugin2010.renderer.RenderFacade;
+
+import com.thoughtworks.xstream.XStream;
 
 /**
  * 
@@ -39,27 +43,13 @@ public class GUIPluginFacade implements IGUIPluginFacade
 		return instance;
 	}
 
-	/**
-	 * sets the rendercontext. So that the game can be displayed on
-	 * <code>panel</code>.
-	 * 
-	 * @param panel
-	 *            JPanel instance on which the game should display
-	 */
 	@Override
-	public void setRenderContext(final JPanel panel,
-			final boolean threeDimensional)
+	public void setRenderContext(JPanel panel, boolean threeDimensional)
 	{
-		RenderFacade.getInstance().createInitFrame(panel, threeDimensional,
-				null); // TODO
+		RenderFacade.getInstance().createInitFrame(panel, threeDimensional);
 	}
 
-	/**
-	 * gets an Image of the current game state. External viewers that can not
-	 * display jframes need this.
-	 * 
-	 * @return Image of the current game state.
-	 */
+	@Override
 	public Image getCurrentStateImage()
 	{
 		return RenderFacade.getInstance().getImage();
@@ -71,33 +61,16 @@ public class GUIPluginFacade implements IGUIPluginFacade
 		return "0.1 alpha"; // TODO
 	}
 
-	/**
-	 * starts a game on the server
-	 */
-	public void startGame(final int playercount)
-	{
-
-	}
-
-	public void endGame()
-	{
-
-	}
-
-	public void pauseGame()
-	{
-
-	}
-
 	public boolean connectToServer(final String ip, final int port)
 	{
 		return false; // TODO
 	}
 
-	@Override
 	public IGamePreparation prepareGame(final String ip, final int port)
+			throws IOException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Client client = new Client("Hase und Igel", new XStream(), ip, port);
+		client.setHandler(new GameHandler());
+		return new GamePreparation(client);
 	}
 }

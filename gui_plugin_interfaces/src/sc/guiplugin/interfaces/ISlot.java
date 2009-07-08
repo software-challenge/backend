@@ -1,4 +1,4 @@
-package sc;
+package sc.guiplugin.interfaces;
 
 public interface ISlot {
 

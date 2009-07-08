@@ -36,7 +36,6 @@ import javax.vecmath.Vector3f;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Player;
-import sc.plugin2010.gui.EViewerMode;
 import sc.plugin2010.renderer.Renderer;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
@@ -53,16 +52,14 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 public class ThreeDimRenderer extends JFrame implements Renderer
 {
 	/* Anzuzeigende Meldung spezifizieren */
-	private final String		txtStr	= "Willkommen";
+	private final String	txtStr	= "Willkommen";
 
-	private final JPanel		panel;
-	private final EViewerMode	viewerMode;
+	private final JPanel	panel;
 
-	public ThreeDimRenderer(final JPanel panel, final EViewerMode mode)
+	public ThreeDimRenderer(final JPanel panel)
 	{
 		super();
 		this.panel = panel;
-		viewerMode = mode;
 		createInitFrame();
 	}
 
@@ -311,7 +308,7 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 
 	public static void main(final String args[])
 	{
-		final ThreeDimRenderer frame = new ThreeDimRenderer(null, null);
+		final ThreeDimRenderer frame = new ThreeDimRenderer(null);
 
 		/* WindowListener hinzufuegen */
 		frame.addWindowListener(new WindowAdapter() {
