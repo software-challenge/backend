@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/j3dcore.jar"/>
 	<classpathentry kind="lib" path="lib/j3dutils.jar"/>
 	<classpathentry kind="lib" path="lib/vecmath.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/gui_plugin_interfaces"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -4,6 +4,8 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
+import sc.IGUIPluginFacade;
+import sc.IGamePreparation;
 import sc.plugin2010.renderer.RenderFacade;
 
 /**
@@ -11,7 +13,7 @@ import sc.plugin2010.renderer.RenderFacade;
  * @author ffi
  * 
  */
-public class GUIFacade
+public class GUIFacade implements IGUIPluginFacade
 {
 	/**
 	 * Singleton instance
@@ -39,16 +41,17 @@ public class GUIFacade
 
 	/**
 	 * sets the rendercontext. So that the game can be displayed on
-	 * <code>frame</code>.
+	 * <code>panel</code>.
 	 * 
 	 * @param panel
 	 *            JPanel instance on which the game should display
 	 */
+	@Override
 	public void setRenderContext(final JPanel panel,
-			final boolean threeDimensional, final EViewerMode viewerMode)
+			final boolean threeDimensional)
 	{
 		RenderFacade.getInstance().createInitFrame(panel, threeDimensional,
-				viewerMode);
+				null); // TODO
 	}
 
 	/**
@@ -89,5 +92,12 @@ public class GUIFacade
 	public boolean connectToServer(final String ip, final int port)
 	{
 		return false; // TODO
+	}
+
+	@Override
+	public IGamePreparation prepareGame(final String ip, final int port)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
