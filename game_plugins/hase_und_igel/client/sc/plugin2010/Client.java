@@ -2,7 +2,6 @@ package sc.plugin2010;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.protocol.LobbyClient;
@@ -31,12 +30,12 @@ public class Client extends LobbyClient
 	{
 		this.handler = handler;
 	}
-	
+
 	public IGameHandler getHandler()
 	{
 		return handler;
 	}
-	
+
 	@Override
 	protected void onRoomMessage(String roomId, Object data)
 	{
@@ -50,7 +49,7 @@ public class Client extends LobbyClient
 		}
 		else if (data instanceof MoveRequest)
 		{
-			this.sendMessageToRoom(roomId, handler.onAction());
+			sendMessageToRoom(roomId, handler.onAction());
 		}
 	}
 

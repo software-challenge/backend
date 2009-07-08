@@ -14,12 +14,18 @@ import sc.plugin2010.PlayerUpdated;
  */
 public class Logik implements IGameHandler
 {
+	private IGameUpdateObserver	obs;
+
+	public Logik(IGameUpdateObserver obs)
+	{
+
+	}
 
 	@Override
 	public Move onAction()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		obs.zugAngefordert();
+		return null;// TODO
 	}
 
 	@Override
