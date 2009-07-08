@@ -1,4 +1,4 @@
-package sc.plugin;
+package sc;
 
 public interface ISlot {
 
