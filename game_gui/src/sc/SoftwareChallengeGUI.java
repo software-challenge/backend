@@ -17,18 +17,19 @@ import sc.common.PresentationFacade;
  * @since SC'09
  */
 @SuppressWarnings("serial")
-public class SoftwareChallengeGUI extends JFrame {
+public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 	/**
 	 * The presentation facade to be used
 	 */
-	private final IPresentationFacade presFac = new PresentationFacade();
+	private final IPresentationFacade presFac;
 
 	/**
 	 * Constructs a new Software Challenge GUI
 	 */
 	public SoftwareChallengeGUI() {
 		super();
+		this.presFac = new PresentationFacade(this);
 		createGUI();
 	}
 
@@ -41,26 +42,32 @@ public class SoftwareChallengeGUI extends JFrame {
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setJMenuBar(presFac.getMenuBar());
 		this.add(presFac.getContextDisplay());
-		this.add(presFac.getStatusBar());
+		// this.add(presFac.getStatusBar());
 
 		// set window preferences
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle("Server GUI");
-		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
-				.getImage());
+		// this.setIconImage(new
+		// ImageIcon(getClass().getResource(presFac.getClientIcon
+		// ())).getImage());
 		// this.setMinimumSize(this.getPreferredSize());
 		this.pack();
 		this.setPreferredSize(new Dimension(1024, 768));
 		this.setSize(this.getPreferredSize());
 		this.setLocationRelativeTo(null);
-		// before closing this application
+		// before closing this frame
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				presFac.shutdown();
-				System.exit(0);
+				closeGUI();
 			}
 		});
+	}
+
+	@Override
+	public void closeGUI() {
+		presFac.shutdown();
+		System.exit(0);
 	}
 
 	/**

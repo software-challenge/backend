@@ -3,6 +3,7 @@ package sc.common;
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 
+import sc.IGUIApplication;
 import sc.IPresentationFacade;
 import sc.contextframe.ContextDisplay;
 
@@ -14,16 +15,39 @@ import sc.contextframe.ContextDisplay;
  */
 public class PresentationFacade implements IPresentationFacade {
 
+	/**
+	 * The menu bar
+	 */
+	private final SCMenuBar menuBar;
+	/**
+	 * The context display where to let render a game
+	 */
+	private final ContextDisplay contextDisplay;
+	/**
+	 * The status bar
+	 */
+	private final StatusBar statusBar;
+
+	/**
+	 * Constructs a new presentation facade
+	 * 
+	 * @param root
+	 *            the main GUI application
+	 */
+	public PresentationFacade(IGUIApplication root) {
+		contextDisplay = new ContextDisplay();
+		menuBar = new SCMenuBar(root);
+		statusBar = new StatusBar();
+	}
+
 	@Override
 	public JComponent getContextDisplay() {
-		// TODO Auto-generated method stub
-		return new ContextDisplay();
+		return contextDisplay;
 	}
 
 	@Override
 	public JMenuBar getMenuBar() {
-		// TODO Auto-generated method stub
-		return null;
+		return menuBar;
 	}
 
 	@Override
@@ -34,14 +58,12 @@ public class PresentationFacade implements IPresentationFacade {
 
 	@Override
 	public JComponent getStatusBar() {
-		// TODO Auto-generated method stub
-		return null;
+		return statusBar;
 	}
 
 	@Override
 	public void shutdown() {
 		// TODO Auto-generated method stub
-
 	}
 
 }
