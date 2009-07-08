@@ -13,26 +13,26 @@ import sc.plugin2010.renderer.RenderFacade;
  * @author ffi
  * 
  */
-public class GUIFacade implements IGUIPluginFacade
+public class GUIPluginFacade implements IGUIPluginFacade
 {
 	/**
 	 * Singleton instance
 	 */
-	private static volatile GUIFacade	instance;
+	private static volatile GUIPluginFacade	instance;
 
-	private GUIFacade()
+	private GUIPluginFacade()
 	{ // Singleton
 	}
 
-	public static GUIFacade getInstance()
+	public static GUIPluginFacade getInstance()
 	{
 		if (null == instance)
 		{
-			synchronized (GUIFacade.class)
+			synchronized (GUIPluginFacade.class)
 			{
 				if (null == instance)
 				{
-					instance = new GUIFacade();
+					instance = new GUIPluginFacade();
 				}
 			}
 		}

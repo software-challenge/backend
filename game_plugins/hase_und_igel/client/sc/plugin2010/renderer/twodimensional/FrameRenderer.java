@@ -19,6 +19,7 @@ import sc.plugin2010.Board;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.EViewerMode;
 import sc.plugin2010.renderer.Renderer;
+import sc.plugin2010.util.GameUtil;
 
 /**
  * @author ffi
@@ -50,7 +51,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		this.setSize(800, 600);
 
-		final BackgoundPane bg = new BackgoundPane("resource/background.png");
+		final BackgoundPane bg = new BackgoundPane("resource/background2.png");
 
 		final HaseUndIgelLayout paneLayout = new HaseUndIgelLayout();
 
@@ -60,44 +61,53 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		for (int i = 0; i <= MAXROW * MAXROW; i++)
 		{
-			String back = "resource/igel.png";
+			Board.FieldTyp type = Board.FieldTyp.RABBIT;
+			String back = "resource/rabbit.png";
 
 			if (i % MAXROW == 0)
 			{
-				back = "resource/igel.png";
+				back = "resource/hedgehog.png";
+				type = Board.FieldTyp.HEDGEHOG;
 			}
 			else if (i % MAXROW == 1)
 			{
 				back = "resource/rabbit.png";
+				type = Board.FieldTyp.RABBIT;
 			}
 			else if (i % MAXROW == 2)
 			{
 				back = "resource/carrots.png";
+				type = Board.FieldTyp.CARROT;
 			}
 			else if (i % MAXROW == 3)
 			{
 				back = "resource/salad.png";
+				type = Board.FieldTyp.SALAD;
 			}
 			else if (i % MAXROW == 4)
 			{
-				back = "resource/position_2.png";
+				back = "resource/position_1.png";
+				type = Board.FieldTyp.POSITION_1;
 			}
 			else if (i % MAXROW == 5)
 			{
 				back = "resource/position_2.png";
+				type = Board.FieldTyp.POSITION_2;
 			}
 
 			if (i == 0)
 			{
-				back = "resource/test.png";
+				back = "resource/start.png";
+				type = Board.FieldTyp.START;
 			}
 
 			if (i == MAXROW * MAXROW)
 			{
-				back = "resource/test3.png";
+				back = "resource/finish.png";
+				type = Board.FieldTyp.GOAL;
 			}
 
-			fbuttons.add(new FieldButton(back, i, this));
+			fbuttons.add(new FieldButton(back, i, type, this));
 			fbuttons.get(i).setMinimumSize(new Dimension(40, 40));
 			fbuttons.get(i).setPreferredSize(new Dimension(40, 40));
 			bg.add("1", fbuttons.get(i));
@@ -189,24 +199,58 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		});
 	}
 
+	private void setReachableFields(final int pos, final int carrots)
+	{
+		final int moveable = GameUtil.calculateMoveableFields(carrots);
+
+		int max = pos + moveable;
+
+		if (max > 65)
+		{
+			max = 65;
+		}
+
+		for (int i = pos; i < max; i++)
+		{
+			if (fbuttons.get(i).getType() != Board.FieldTyp.HEDGEHOG)
+			{
+				fbuttons.get(i).setReachable(true);
+				fbuttons.get(i).repaint();
+			}
+		}
+
+		// if not on hedgehog
+		if (fbuttons.get(pos).getType() != Board.FieldTyp.HEDGEHOG)
+		{
+			// seek for last hedgehog
+			for (int i = pos - 1; i >= 0; i--)
+			{
+				if (fbuttons.get(i).getType() == Board.FieldTyp.HEDGEHOG)
+				{
+					fbuttons.get(i).setReachable(true);
+					fbuttons.get(i).repaint();
+					break;
+				}
+			}
+		}
+	}
+
 	public void updateClicked(final int fieldNumber)
 	{
 		final int index = fieldNumber;
 
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
-			if (fbuttons.get(i).wasColorOn("blue"))
+			if (fbuttons.get(i).needRepaint("blue"))
 			{
 				fbuttons.get(i).setFree();
+				fbuttons.get(i).setReachable(false);
+				fbuttons.get(i).repaint();
 			}
-			fbuttons.get(i).setReachable(false);
-			fbuttons.get(i).repaint();
 		}
 
 		fbuttons.get(index).setOccupied("blue");
-		fbuttons.get(index + 1).setReachable(true); // TODO
-		fbuttons.get(index + 1).repaint();
-		fbuttons.get(index + 2).setReachable(true); // TODO
-		fbuttons.get(index + 2).repaint();
+		setReachableFields(index, 68); // TODO
 	}
+
 }

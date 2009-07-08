@@ -14,6 +14,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.border.Border;
+import javax.swing.border.EtchedBorder;
+
+import sc.plugin2010.Board;
 
 /**
  * @author ffi
@@ -24,19 +27,29 @@ public class FieldButton extends JButton
 {
 	private Image					img			= null;
 	private Image					icon		= null;
-	private int						fieldNumber	= 0;
+
 	private final IClickObserver	obs;
+
+	private Border					border;
+	private final Border			defaultBorder;
+
+	private int						fieldNumber	= 0;
 	private String					mycolor		= "";
-	private Border					bord;
 	private boolean					reachable	= false;
+	private boolean					occupied	= false;
+	private Board.FieldTyp			type;
 
 	public FieldButton(final String imagefile, final int fieldNumber,
-			final IClickObserver obs)
+			final Board.FieldTyp type, final IClickObserver obs)
 	{
 		super();
-		// this.setBorder(BorderFactory.createLineBorder(Color.BLUE, 1));
+		setType(type);
 		this.fieldNumber = fieldNumber;
 		this.obs = obs;
+		defaultBorder = BorderFactory.createLineBorder(
+				new Color(20, 20, 20, 40), 1);
+		border = defaultBorder;
+
 		addMouseListener(new ClickListener());
 		if (imagefile != null)
 		{
@@ -63,11 +76,13 @@ public class FieldButton extends JButton
 	{
 		if (color != null)
 		{
+			border = createBorder(Color.RED);
 			final MediaTracker mt = new MediaTracker(this);
 			icon = Toolkit.getDefaultToolkit().getImage(
 					"resource/" + color + ".png");
 			mt.addImage(icon, 0);
 			mycolor = color;
+			occupied = true;
 			try
 			{
 				mt.waitForAll();
@@ -79,29 +94,41 @@ public class FieldButton extends JButton
 		}
 	}
 
+	private Border createBorder(final Color col)
+	{
+		return BorderFactory.createCompoundBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.LOWERED, new Color(col
+						.getRed(), col.getGreen(), col.getBlue(), 150),
+						new Color(col.getRed(), col.getGreen(), col.getBlue(),
+								70)), BorderFactory.createEtchedBorder(
+				EtchedBorder.LOWERED, new Color(col.getRed(), col.getGreen(),
+						col.getBlue(), 70), new Color(col.getRed(), col
+						.getGreen(), col.getBlue(), 150)));
+	}
+
 	public void setReachable(final boolean reachable)
 	{
 		this.reachable = reachable;
 
 		if (reachable)
 		{
-			bord = BorderFactory.createLineBorder(Color.BLUE, 2);
+			border = createBorder(Color.BLUE);
 		}
 		else
 		{
-			bord = null;
+			border = defaultBorder;
 		}
 	}
 
 	public void setFree()
 	{
 		icon = null;
-		mycolor = "";
+		occupied = false;
 	}
 
-	public boolean wasColorOn(final String color)
+	public boolean needRepaint(final String color)
 	{
-		return mycolor.equals(color);
+		return (mycolor.equals(color) || reachable || occupied);
 	}
 
 	class ClickListener extends MouseAdapter
@@ -109,19 +136,23 @@ public class FieldButton extends JButton
 		@Override
 		public void mouseEntered(final MouseEvent e)
 		{
-			bord = BorderFactory.createLineBorder(Color.RED, 2);
+			border = createBorder(Color.RED);
 		}
 
 		@Override
 		public void mouseExited(final MouseEvent e)
 		{
-			if (reachable)
+			if (occupied)
 			{
-				bord = BorderFactory.createLineBorder(Color.BLUE, 2);
+				border = createBorder(Color.ORANGE);
+			}
+			else if (reachable)
+			{
+				border = createBorder(Color.BLUE);
 			}
 			else
 			{
-				bord = null;
+				border = defaultBorder;
 			}
 		}
 
@@ -138,7 +169,6 @@ public class FieldButton extends JButton
 	@Override
 	protected void paintComponent(final Graphics g)
 	{
-		super.paintComponent(g);
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 		if (icon != null)
 		{
@@ -146,6 +176,16 @@ public class FieldButton extends JButton
 		}
 		final String text = String.valueOf(fieldNumber);
 		g.drawString(text, getWidth() - 15, getHeight() - 5);
-		setBorder(bord);
+		setBorder(border);
+	}
+
+	public void setType(final Board.FieldTyp type)
+	{
+		this.type = type;
+	}
+
+	public Board.FieldTyp getType()
+	{
+		return type;
 	}
 }

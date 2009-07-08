@@ -145,9 +145,20 @@ public class HaseUndIgelLayout implements LayoutManager
 			x += c.getPreferredSize().width;
 		}
 
+		final int tempx = x;
+
 		for (int i = 9; i < 19; i++)
 		{
 			c = parent.getComponent(i);
+
+			if (i % 2 == 0)
+			{
+				x = tempx - 5;
+			}
+			else
+			{
+				x = tempx;
+			}
 
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
@@ -155,9 +166,20 @@ public class HaseUndIgelLayout implements LayoutManager
 			y -= c.getPreferredSize().height;
 		}
 
+		final int tempy = y;
+
 		for (int i = 19; i < 28; i++)
 		{
 			c = parent.getComponent(i);
+
+			if (i % 2 == 0)
+			{
+				y = tempy - 5;
+			}
+			else
+			{
+				y = tempy;
+			}
 
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
