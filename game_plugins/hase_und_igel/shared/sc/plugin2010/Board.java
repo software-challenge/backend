@@ -59,7 +59,7 @@ public class Board
 	}
 
 	private List<FieldTyp>	track;
-	
+
 	protected Player		red;
 	protected Player		blue;
 
@@ -97,18 +97,21 @@ public class Board
 				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_1,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.SALAD);
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.POSITION_1,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.POSITION_2 }));
@@ -122,38 +125,44 @@ public class Board
 				FieldTyp.CARROT, FieldTyp.CARROT, FieldTyp.CARROT,
 				FieldTyp.POSITION_2 }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.POSITION_1, FieldTyp.CARROT, FieldTyp.RABBIT,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.RABBIT, FieldTyp.CARROT, FieldTyp.POSITION_2 }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.SALAD);
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_2,
 				FieldTyp.POSITION_1, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.POSITION_2, FieldTyp.CARROT,
 				FieldTyp.CARROT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		track.add(FieldTyp.SALAD);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.POSITION_1, FieldTyp.CARROT,
 				FieldTyp.RABBIT, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
-		track.addAll(segment); segment.clear();
+		track.addAll(segment);
+		segment.clear();
 		track.add(FieldTyp.GOAL);
 	}
 
@@ -239,91 +248,21 @@ public class Board
 		switch (move.getTyp())
 		{
 			case MOVE:
-			{
-				int requiredCarrots = GameUtil.calculateCarrots(move.getN());
-				valid = valid && move.getN() > 0;
-				valid = valid
-						&& (requiredCarrots <= player.getCarrotsAvailable());
-
-				int newPosition = player.getPosition() + move.getN();
-				valid = valid && !isOccupied(newPosition);
-				switch (getTypeAt(newPosition))
-				{
-					case INVALID:
-						valid = false;
-						break;
-					case SALAD:
-						valid = valid && player.getSaladsToEat() > 0;
-						break;
-					case RABBIT:
-						valid = valid && player.getActions().size() > 0;
-						break;
-					case GOAL:
-						int carrotsLeft = player.getCarrotsAvailable()
-								- requiredCarrots;
-						valid = valid && carrotsLeft <= 10;
-						valid = valid && player.getSaladsToEat() == 0;
-						break;
-				}
+				valid = GameUtil.isValidToMove(this, player, move.getN());
 				break;
-			}
 			case EAT:
-			{
-				FieldTyp currentField = getTypeAt(player.getPosition());
-				valid = valid && (currentField.equals(FieldTyp.SALAD));
-				valid = valid && (player.getSaladsToEat() > 0);
+				valid = GameUtil.isValidToEat(this, player);
 				break;
-			}
 			case FALL_BACK:
-			{
-				int newPosition = getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
-						player.getPosition());
-				valid = valid && (newPosition != -1);
-				valid = valid && !isOccupied(newPosition);
+				valid = GameUtil.isValidToFallBack(this, player);
 				break;
-			}
 			case PLAY_CARD_DROP_20_CARROTS:
-			{
-				valid = valid && player.ownsCardOfTyp(Action.DROP_20_CARROTS);
-				valid = valid && (move.getN() == 0 || move.getN() == 20);
-			}
 			case PLAY_CARD_TAKE_20_CARROTS:
-			{
-				valid = valid && player.ownsCardOfTyp(Action.TAKE_20_CARROTS);
-				valid = valid && (move.getN() == 0 || move.getN() == 20);
-			}
 			case PLAY_CARD_EAT_SALAD:
-			{
-				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);
-				valid = valid && player.getSaladsToEat() > 0;
-				break;
-			}
 			case PLAY_CARD_FALL_BACK:
-			{
-				valid = valid && player.ownsCardOfTyp(Action.FALL_BACK);
-				valid = valid && isFirst(player);
-				final Player o = getOtherPlayer(player);
-				valid = valid && o.getPosition() != 0;
-				int previousHedgehog = getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
-						o.getPosition());
-				valid = valid && ((o.getPosition() - previousHedgehog) != 1);
-				break;
-			}
 			case PLAY_CARD_HURRY_AHEAD:
-			{
-				valid = valid && player.ownsCardOfTyp(Action.HURRY_AHEAD);
-				valid = valid && !isFirst(player);
-				final Player o = getOtherPlayer(player);
-				valid = valid && o.getPosition() != 64;
-				int nextHedgehog = getNextFieldByTyp(FieldTyp.HEDGEHOG, o
-						.getPosition());
-				valid = valid && ((nextHedgehog - o.getPosition()) != 1);
-
-				if (o.getPosition() == 63)
-				{
-					valid = valid && canEnterGoal(player);
-				}
-			}
+				valid = GameUtil.isValidToPlayCard(this, player, move.getTyp(),
+						move.getN());
 				break;
 			default:
 				valid = false;
@@ -390,7 +329,7 @@ public class Board
 				&& player.getSaladsToEat() == 0;
 	}
 
-	protected final Player getOtherPlayer(final Player player)
+	public final Player getOtherPlayer(final Player player)
 	{
 		assert blue != null;
 		assert red != null;
