@@ -59,65 +59,92 @@ public class BoardTest
 	}
 
 	/**
-	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf den 
-	 * Verzehr von Salaten.
+	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf das
+	 * Zurückfallen.
 	 */
 	@Test
-	public void testIsValidEat()
+	public void testIsValidToFallBack()
 	{
 		Board b = Board.create();
 		Player p = new Player(FigureColor.RED);
 		b.addPlayer(p);
 		
+		// Fallback vom Start (es gibt keinen Igel dahinter!)
+		p.setPosition(0);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.FALL_BACK), p));
+		
+		// Fallback auf freies Igelfeld
+		p.setPosition(12);
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.FALL_BACK), p));
+		
+		// Fallback auf besetzes Igelfeld
+		Player p2 = new Player(FigureColor.BLUE);
+		p2.setPosition(11);
+		b.addPlayer(p2);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.FALL_BACK), p));
+	}
+
+	/**
+	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf den
+	 * Verzehr von Salaten.
+	 */
+	@Test
+	public void testIsValidToEat()
+	{
+		Board b = Board.create();
+		Player p = new Player(FigureColor.RED);
+		b.addPlayer(p);
+
 		// Verzehre Salat auf nicht-Salatfeld
 		int nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, 1);
 		p.setPosition(nextCarrot);
-		
+
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.EAT), p));
-		
+
 		// Verzehre Salat auf Salatfeld
 		int nextSaladField = b.getNextFieldByTyp(FieldTyp.SALAD, 1);
 		p.setPosition(nextSaladField);
-		
+
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.EAT), p));
-		
+
 		// Verzehre zu viele Salate
 		p.setSaladsToEat(0);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.EAT), p));
 	}
-	
+
 	/**
-	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf Bewegungen
+	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf
+	 * Bewegungen
 	 */
 	@Test
-	public void testIsValidMove()
+	public void testIsValidToMove()
 	{
 		Board b = Board.create();
 		Player p = new Player(FigureColor.RED);
 		b.addPlayer(p);
-		
+
 		// Ein Zug über 10 Felder, der Spieler hat genug Karotten
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 10), p));
-		
+
 		// Ein Zug über 25 Felder, dem Spieler fehlen Karotten
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 25), p));
-		
+
 		// Ein Zug auf ein belegtes Feld
 		Player p2 = new Player(FigureColor.BLUE);
 		p2.setPosition(10);
 		b.addPlayer(p2);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 10), p));
-		
+
 		// Ein Zug ins Ziel mit mehr als 10 Karotten
 		p.setPosition(62);
 		p.setSaladsToEat(0);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 2), p));
 		p.setSaladsToEat(1);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 2), p));
-		
+
 		// Ein Zug hinter das Ziel
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 3), p));
-		
+
 		// Ein Zug ins Ziel mit genau 10 Karotten
 		p.setPosition(63);
 		p.setSaladsToEat(0);
@@ -125,38 +152,38 @@ public class BoardTest
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 1), p));
 		p.setSaladsToEat(1);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 1), p));
-		
+
 		// Ein Zug ins Ziel mit < 10 Karotten
 		p.setCarrotsAvailable(10);
 		p.setSaladsToEat(0);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 1), p));
 		p.setSaladsToEat(1);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 1), p));
-		
+
 		// Ein Zug mit negativem Wert
 		p.setPosition(1);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, -1), p));
-		
+
 		// Ein Zug ohne Wert
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 0), p));
-		
+
 		// Ein Zug auf ein Salatfeld mit > 0 Salaten übrig
 		p.setSaladsToEat(1);
 		p.setPosition(20);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 2), p));
-		
+
 		// Ein Zug auf ein Salatfeld mit = 0 Salaten übrig
 		p.setSaladsToEat(0);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 2), p));
-		
+
 		// Ein Zug auf ein Hasenfeld mit > 1 Hasenkarten übrig
-		p.setActions(Arrays.asList(new Action []{Action.TAKE_20_CARROTS}));
+		p.setActions(Arrays.asList(new Action[] { Action.TAKE_20_CARROTS }));
 		int nextRabbitField = b.getNextFieldByTyp(FieldTyp.RABBIT, 1);
-		p.setPosition(nextRabbitField-1);
+		p.setPosition(nextRabbitField - 1);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 1), p));
-		
+
 		// Ein Zug auf ein Hasenfeld mit = 0 Hasenkarten übrig
-		p.setActions(Arrays.asList(new Action []{}));
+		p.setActions(Arrays.asList(new Action[] {}));
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 1), p));
 	}
 

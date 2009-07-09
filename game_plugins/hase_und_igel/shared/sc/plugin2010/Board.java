@@ -275,7 +275,6 @@ public class Board
 				FieldTyp currentField = getTypeAt(player.getPosition());
 				valid = valid && (currentField.equals(FieldTyp.SALAD));
 				valid = valid && (player.getSaladsToEat() > 0);
-				// TODO tests!
 				break;
 			}
 			case FALL_BACK:
@@ -284,7 +283,6 @@ public class Board
 						player.getPosition());
 				valid = valid && (newPosition != -1);
 				valid = valid && !isOccupied(newPosition);
-				// TODO tests!
 				break;
 			}
 			case PLAY_CARD:
