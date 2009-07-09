@@ -30,13 +30,10 @@ public class BoardTest
 
 		Board b = Board.create();
 		b.addPlayer(p);
+		b.addPlayer(new Player(FigureColor.RED));
 
 		// Der Spieler belegt das angegebene Spielfeld
 		Assert.assertTrue(b.isOccupied(p.getPosition()));
-
-		// Alle anderen Felder sind frei
-		Assert.assertFalse(b.isOccupied(0));
-		Assert.assertFalse(b.isOccupied(2));
 	}
 
 	/**
@@ -175,6 +172,7 @@ public class BoardTest
 		Board b = Board.create();
 		Player p = new Player(FigureColor.RED);
 		b.addPlayer(p);
+		b.addPlayer(new Player(FigureColor.BLUE));
 
 		// Fallback vom Start (es gibt keinen Igel dahinter!)
 		p.setPosition(0);
@@ -228,7 +226,9 @@ public class BoardTest
 	{
 		Board b = Board.create();
 		Player p = new Player(FigureColor.RED);
+		Player p2 = new Player(FigureColor.BLUE);
 		b.addPlayer(p);
+		b.addPlayer(p2);
 
 		// Ein Zug über 10 Felder, der Spieler hat genug Karotten
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 10), p));
@@ -237,9 +237,7 @@ public class BoardTest
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 25), p));
 
 		// Ein Zug auf ein belegtes Feld
-		Player p2 = new Player(FigureColor.BLUE);
 		p2.setPosition(10);
-		b.addPlayer(p2);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 10), p));
 
 		// Ein Zug ins Ziel mit mehr als 10 Karotten

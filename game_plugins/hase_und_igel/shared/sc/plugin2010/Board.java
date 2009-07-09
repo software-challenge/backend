@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2010.Player.Action;
+import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.util.GameUtil;
 
 /**
@@ -57,12 +58,12 @@ public class Board
 	}
 
 	private List<FieldTyp>	track;
-	protected List<Player>	players;
+	protected Player		red;
+	protected Player		blue;
 
 	private Board()
 	{
 		track = new LinkedList<FieldTyp>();
-		players = new LinkedList<Player>();
 	}
 
 	/**
@@ -163,9 +164,22 @@ public class Board
 		}
 	}
 
-	protected void addPlayer(final Player player)
+	protected final void addPlayer(final Player player)
 	{
-		players.add(player);
+		if (player.getColor().equals(FigureColor.RED))
+			red = player;
+		else
+			blue = player;
+	}
+
+	protected final void setPlayerRed(final Player player)
+	{
+		red = player;
+	}
+
+	protected final void setPlayerBlue(final Player player)
+	{
+		blue = player;
 	}
 
 	/**
@@ -177,12 +191,7 @@ public class Board
 	 */
 	public final boolean isOccupied(final int pos)
 	{
-		boolean occupied = false;
-		for (final Player f : players)
-		{
-			occupied = occupied || f.getPosition() == pos;
-		}
-		return occupied;
+		return red.getPosition() == pos || blue.getPosition() == pos;
 	}
 
 	/**
@@ -216,11 +225,10 @@ public class Board
 	public final Player getPlayerAt(final int pos)
 	{
 		Player player = null;
-		for (final Player f : players)
-		{
-			if (f.getPosition() == pos)
-				player = f;
-		}
+		if (red.getPosition() == pos)
+			player = red;
+		if (blue.getPosition() == pos)
+			player = blue;
 		return player;
 	}
 
@@ -301,38 +309,26 @@ public class Board
 			{
 				valid = valid && player.ownsCardOfTyp(Action.FALL_BACK);
 				valid = valid && isFirst(player);
-				for (final Player o : players)
-				{
-					if (!o.equals(player))
-					{
-						valid = valid && o.getPosition() != 0;
-						int previousHedgehog = getPreviousFieldByTyp(
-								FieldTyp.HEDGEHOG, o.getPosition());
-						valid = valid
-								&& ((o.getPosition() - previousHedgehog) != 1);
-					}
-				}
+				final Player o = getOtherPlayer(player);
+				valid = valid && o.getPosition() != 0;
+				int previousHedgehog = getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
+						o.getPosition());
+				valid = valid && ((o.getPosition() - previousHedgehog) != 1);
 				break;
 			}
 			case PLAY_CARD_HURRY_AHEAD:
 			{
 				valid = valid && player.ownsCardOfTyp(Action.HURRY_AHEAD);
 				valid = valid && !isFirst(player);
-				for (final Player o : players)
-				{
-					if (!o.equals(player))
-					{
-						valid = valid && o.getPosition() != 64;
-						int nextHedgehog = getNextFieldByTyp(FieldTyp.HEDGEHOG,
-								o.getPosition());
-						valid = valid
-								&& ((nextHedgehog - o.getPosition()) != 1);
+				final Player o = getOtherPlayer(player);
+				valid = valid && o.getPosition() != 64;
+				int nextHedgehog = getNextFieldByTyp(FieldTyp.HEDGEHOG, o
+						.getPosition());
+				valid = valid && ((nextHedgehog - o.getPosition()) != 1);
 
-						if (o.getPosition() == 63)
-						{
-							valid = valid && canEnterGoal(player);
-						}
-					}
+				if (o.getPosition() == 63)
+				{
+					valid = valid && canEnterGoal(player);
 				}
 			}
 				break;
@@ -392,17 +388,17 @@ public class Board
 	 */
 	public final boolean isFirst(final Player player)
 	{
-		boolean isFirst = true;
-		for (final Player o : players)
-		{
-			isFirst = isFirst && o.getPosition() <= player.getPosition();
-		}
-		return isFirst;
+		return getOtherPlayer(player).getPosition() < player.getPosition();
 	}
 
 	public final boolean canEnterGoal(final Player player)
 	{
 		return player.getCarrotsAvailable() <= 10
 				&& player.getSaladsToEat() == 0;
+	}
+
+	protected final Player getOtherPlayer(final Player player)
+	{
+		return player.getColor().equals(FigureColor.RED) ? blue : red;
 	}
 }
