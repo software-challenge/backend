@@ -399,6 +399,8 @@ public class Board
 
 	protected final Player getOtherPlayer(final Player player)
 	{
+		assert blue != null;
+		assert red != null;
 		return player.getColor().equals(FigureColor.RED) ? blue : red;
 	}
 }
