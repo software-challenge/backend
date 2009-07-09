@@ -47,8 +47,7 @@ public class Game extends SimpleGameInstance<Player>
 	{
 		availableColors.addAll(Arrays.asList(FigureColor.values()));
 
-		// TODO entgültige Länge der Rennstrecke bestimmen
-		board = Board.create(20);
+		board = Board.create();
 
 		active = false;
 		activePlayerId = 0;

@@ -23,7 +23,7 @@ public class BoardTest
 		Player p = new Player(FigureColor.WHITE);
 		p.setPosition(1);
 
-		Board b = Board.create(3);
+		Board b = Board.create();
 		b.addPlayer(p);
 
 		// Der Spieler belegt das angegebene Spielfeld
@@ -45,7 +45,7 @@ public class BoardTest
 		Player r = new Player(FigureColor.RED, 1);
 		Player g = new Player(FigureColor.GREEN, 2);
 		
-		Board b = Board.create(3);
+		Board b = Board.create();
 		b.addPlayer(w);
 		b.addPlayers(new Player[]{r,g});
 		
@@ -61,14 +61,14 @@ public class BoardTest
 	@Test
 	public void testInitialize()
 	{
-		Board b = Board.create(5);
+		Board b = Board.create();
 
 		// Die Länge ist richtig
 		Assert.assertEquals(FieldTyp.INVALID, b.getTypeAt(-1));
-		Assert.assertEquals(FieldTyp.INVALID, b.getTypeAt(5));
+		Assert.assertEquals(FieldTyp.INVALID, b.getTypeAt(66));
 
 		// Das Spielfeld beginnt und endet korrekt
 		Assert.assertEquals(FieldTyp.START, b.getTypeAt(0));
-		Assert.assertEquals(FieldTyp.GOAL, b.getTypeAt(4));
+		Assert.assertEquals(FieldTyp.GOAL, b.getTypeAt(64));
 	}
 }

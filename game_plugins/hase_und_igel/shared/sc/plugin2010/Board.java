@@ -20,7 +20,7 @@ public class Board
 	{
 		/**
 		 * Zahl- und Flaggenfelder
-		 * Die veränderten Spielregeln sehen nur noch die Felder 1,2 vor. 
+		 * Die veränderten Spielregeln sehen nur noch die Felder 1,2 vor.
 		 * Die Positionsfelder 3 und 4 wurden in Möhrenfelder umgewandelt,
 		 * und (1,5,6) sind jetzt Position-1-Felder.
 		 */
@@ -65,33 +65,101 @@ public class Board
 	}
 
 	/**
-	 * Erstellt und initialisiert ein Spielbrett
+	 * Erstellt ein neues Spielfeld
 	 * 
-	 * @param length
 	 * @return
 	 */
-	protected static Board create(final int length)
+	protected static Board create()
 	{
 		Board b = new Board();
-		b.initialize(length);
+		b.initialize();
 		return b;
 	}
 
 	/**
-	 * Erstellt eine zufällige Rennstrecke
-	 * 
-	 * @param length
-	 *            Die Länge der Rennstrecke, inklusive Start- und Zielfeld
+	 * Erstellt eine zufällige Rennstrecke. Die Positionen der Salat- und
+	 * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
+	 * werden permutiert.
+	 * Außerdem werden auch die Abschnitte zwischen Start- und Ziel und dem
+	 * ersten bzw. letzten Igelfeld permutiert.
 	 */
-	private void initialize(final int length)
+	private void initialize()
 	{
-		// TODO Algorithmus
-		track.add(FieldTyp.START);
-		for (int i = 2; i < length; i++)
+		FieldTyp[] t = new FieldTyp[65];
+		List<FieldTyp> segment = new LinkedList<FieldTyp>();
+
+		t[0] = FieldTyp.START;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
+				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.CARROT,
+				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_1,
+				FieldTyp.POSITION_2, FieldTyp.CARROT }));
+		addRandom(t, segment, 1, 10);
+		t[10] = FieldTyp.SALAD;
+		t[11] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
+				FieldTyp.CARROT, FieldTyp.RABBIT }));
+		addRandom(t, segment, 12, 15);
+		t[15] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.POSITION_1,
+				FieldTyp.POSITION_2, FieldTyp.CARROT }));
+		addRandom(t, segment, 16, 19);
+		t[19] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
+				FieldTyp.CARROT, FieldTyp.POSITION_2 }));
+		addRandom(t, segment, 20, 22);
+		t[22] = FieldTyp.SALAD;
+		t[23] = segment.remove(0);
+		t[24] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
+				FieldTyp.CARROT, FieldTyp.CARROT, FieldTyp.CARROT,
+				FieldTyp.POSITION_2 }));
+		addRandom(t, segment, 25, 30);
+		t[30] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
+				FieldTyp.POSITION_1, FieldTyp.CARROT, FieldTyp.RABBIT,
+				FieldTyp.POSITION_2, FieldTyp.CARROT }));
+		addRandom(t, segment, 31, 37);
+		t[37] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
+				FieldTyp.RABBIT, FieldTyp.CARROT, FieldTyp.POSITION_2 }));
+		addRandom(t, segment, 38, 42);
+		t[42] = FieldTyp.SALAD;
+		t[43] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
+				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_2,
+				FieldTyp.POSITION_1, FieldTyp.CARROT }));
+		addRandom(t, segment, 44, 50);
+		t[50] = FieldTyp.HEDGEHOG;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
+				FieldTyp.CARROT, FieldTyp.POSITION_2, FieldTyp.CARROT,
+				FieldTyp.CARROT }));
+		addRandom(t, segment, 51, 56);
+		t[56] = FieldTyp.HEDGEHOG;
+		t[57] = FieldTyp.SALAD;
+		assert segment.size() == 0;
+		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
+				FieldTyp.CARROT, FieldTyp.POSITION_1, FieldTyp.CARROT,
+				FieldTyp.RABBIT, FieldTyp.CARROT }));
+		addRandom(t, segment, 58, 64);
+		t[64] = FieldTyp.GOAL;
+
+		track.addAll(Arrays.asList(t));
+	}
+
+	private void addRandom(FieldTyp[] a, List<FieldTyp> ll, int l, int r)
+	{
+		for (int i = l; i < r; i++)
 		{
-			track.add(FieldTyp.CARROT);
+			a[i] = ll.remove((int) (Math.random() * ll.size()));
 		}
-		track.add(FieldTyp.GOAL);
 	}
 
 	protected void addPlayer(final Player player)
@@ -161,7 +229,8 @@ public class Board
 	}
 
 	/**
-	 * Ist ein Zug auf diesem Spielbrett möglich?
+	 * Ist ein Zug auf diesem Spielbrett möglich? Validiert einen Zug unter der
+	 * Annahme, das der angegebene Spieler am Zug ist.
 	 * 
 	 * @param move
 	 * @param player
