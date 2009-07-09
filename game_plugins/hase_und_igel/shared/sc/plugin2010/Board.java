@@ -1,6 +1,7 @@
 package sc.plugin2010;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class Board
 	}
 
 	private List<FieldTyp>	track;
+	
 	protected Player		red;
 	protected Player		blue;
 
@@ -85,83 +87,84 @@ public class Board
 	 * Außerdem werden auch die Abschnitte zwischen Start- und Ziel und dem
 	 * ersten bzw. letzten Igelfeld permutiert.
 	 */
-	private void initialize()
+	private final void initialize()
 	{
-		FieldTyp[] t = new FieldTyp[65];
 		List<FieldTyp> segment = new LinkedList<FieldTyp>();
 
-		t[0] = FieldTyp.START;
+		track.add(FieldTyp.START);
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_1,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
-		addRandom(t, segment, 1, 10);
-		t[10] = FieldTyp.SALAD;
-		t[11] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.SALAD);
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT }));
-		addRandom(t, segment, 12, 15);
-		t[15] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.POSITION_1,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
-		addRandom(t, segment, 16, 19);
-		t[19] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.POSITION_2 }));
-		addRandom(t, segment, 20, 22);
-		t[22] = FieldTyp.SALAD;
-		t[23] = segment.remove(0);
-		t[24] = FieldTyp.HEDGEHOG;
+		for (int i = 0; i < 2; i++)
+		{
+			track.add(segment.remove((int) (Math.random() * segment.size())));
+		}
+		track.add(FieldTyp.SALAD);
+		track.add(segment.remove(0));
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.CARROT, FieldTyp.CARROT,
 				FieldTyp.POSITION_2 }));
-		addRandom(t, segment, 25, 30);
-		t[30] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.POSITION_1, FieldTyp.CARROT, FieldTyp.RABBIT,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
-		addRandom(t, segment, 31, 37);
-		t[37] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.RABBIT, FieldTyp.CARROT, FieldTyp.POSITION_2 }));
-		addRandom(t, segment, 38, 42);
-		t[42] = FieldTyp.SALAD;
-		t[43] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.SALAD);
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_2,
 				FieldTyp.POSITION_1, FieldTyp.CARROT }));
-		addRandom(t, segment, 44, 50);
-		t[50] = FieldTyp.HEDGEHOG;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.HEDGEHOG);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.POSITION_2, FieldTyp.CARROT,
 				FieldTyp.CARROT }));
-		addRandom(t, segment, 51, 56);
-		t[56] = FieldTyp.HEDGEHOG;
-		t[57] = FieldTyp.SALAD;
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.HEDGEHOG);
+		track.add(FieldTyp.SALAD);
 		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.POSITION_1, FieldTyp.CARROT,
 				FieldTyp.RABBIT, FieldTyp.CARROT }));
-		addRandom(t, segment, 58, 64);
-		t[64] = FieldTyp.GOAL;
-
-		track.addAll(Arrays.asList(t));
-	}
-
-	private void addRandom(FieldTyp[] a, List<FieldTyp> ll, int l, int r)
-	{
-		for (int i = l; i < r; i++)
-		{
-			a[i] = ll.remove((int) (Math.random() * ll.size()));
-		}
+		Collections.shuffle(segment);
+		track.addAll(segment); segment.clear();
+		track.add(FieldTyp.GOAL);
 	}
 
 	protected final void addPlayer(final Player player)
