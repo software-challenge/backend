@@ -9,7 +9,8 @@ import java.io.ObjectOutputStream;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import sc.common.CouldNotFindAnyLanguageFile;
+import sc.common.CouldNotFindAnyLanguageFileException;
+import sc.common.CouldNotFindAnyPluginException;
 import sc.common.IConfiguration;
 import sc.common.IConfiguration.ELanguage;
 import sc.plugin.GUIPluginManager;
@@ -28,13 +29,20 @@ public class LogicFacade implements ILogicFacade {
 	 * Holds all vailable plugins
 	 */
 	private final GUIPluginManager pluginMan;
+	private IConfiguration config;
+	/**
+	 * For multi-language support
+	 */
+	private ResourceBundle languageData;
+
 	/**
 	 * Singleton instance
 	 */
 	private static volatile LogicFacade instance;
 
 	private LogicFacade() { // Singleton
-		this.pluginMan = new GUIPluginManager();
+		this.pluginMan = GUIPluginManager.getInstance();
+		this.config = this.loadConfiguration();
 	}
 
 	public static LogicFacade getInstance() {
@@ -48,8 +56,7 @@ public class LogicFacade implements ILogicFacade {
 		return instance;
 	}
 
-	@Override
-	public IConfiguration loadConfiguration() {
+	private IConfiguration loadConfiguration() {
 		IConfiguration result;
 		ObjectInputStream in = null;
 		try {
@@ -99,8 +106,7 @@ public class LogicFacade implements ILogicFacade {
 	}
 
 	@Override
-	public ResourceBundle loadLanguageData(IConfiguration config)
-			throws CouldNotFindAnyLanguageFile {
+	public void loadLanguageData() throws CouldNotFindAnyLanguageFileException {
 		ELanguage language = config.getLanguage();
 		Locale locale;
 		switch (language) {
@@ -111,14 +117,33 @@ public class LogicFacade implements ILogicFacade {
 			locale = new Locale("en", "EN");
 			break;
 		default:
-			throw new CouldNotFindAnyLanguageFile();
+			throw new CouldNotFindAnyLanguageFileException();
 		}
 
-		return ResourceBundle.getBundle(BASENAME, locale);
+		this.languageData = ResourceBundle.getBundle(BASENAME, locale);
 	}
 
-	public GUIPluginManager getPluginMan() {
+	@Override
+	public GUIPluginManager getPluginManager() {
 		return pluginMan;
+	}
+
+	@Override
+	public void loadPlugins() throws CouldNotFindAnyPluginException {
+		this.pluginMan.reload();
+		if (this.pluginMan.getAvailablePlugins().size() == 0) {
+			throw new CouldNotFindAnyPluginException();
+		}
+	}
+
+	@Override
+	public ResourceBundle getLanguageData() {
+		return languageData;
+	}
+
+	@Override
+	public IConfiguration getConfiguration() {
+		return config;
 	}
 
 }

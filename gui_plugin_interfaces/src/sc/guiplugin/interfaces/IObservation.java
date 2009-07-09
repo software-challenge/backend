@@ -1,6 +1,7 @@
 package sc.guiplugin.interfaces;
 
 public interface IObservation {
+	
 	void start();
 
 	void pause();
@@ -8,4 +9,6 @@ public interface IObservation {
 	void unpause();
 
 	void cancel();
+	
+	void saveReplayToFile();
 }

@@ -1,15 +1,11 @@
 package sc.gui;
 
-import java.util.ResourceBundle;
-
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 
 import sc.IGUIApplication;
 import sc.IPresentationFacade;
-import sc.common.CouldNotFindAnyLanguageFile;
 import sc.common.IConfiguration;
 import sc.gui.dialogs.ContextDisplay;
 import sc.logic.ILogicFacade;
@@ -34,10 +30,6 @@ public class PresentationFacade implements IPresentationFacade {
 	 * The status bar
 	 */
 	private StatusBar statusBar;
-	/**
-	 * For multi-language support
-	 */
-	private ResourceBundle languageData;
 	/**
 	 * The logic facade
 	 */
@@ -83,17 +75,6 @@ public class PresentationFacade implements IPresentationFacade {
 
 		// create instance
 		getInstance();
-
-		// load configuration
-		instance.config = logic.loadConfiguration();
-		// load language data
-		try {
-			instance.languageData = logic.loadLanguageData(instance.config);
-		} catch (CouldNotFindAnyLanguageFile e) {
-			JOptionPane.showMessageDialog(frame, "Could not load any language file.",
-					"Missing language file", JOptionPane.ERROR_MESSAGE);
-			root.closeGUI();
-		}
 		
 		instance.frame = frame;
 		instance.logic = logic;
@@ -128,10 +109,6 @@ public class PresentationFacade implements IPresentationFacade {
 	@Override
 	public void shutdown() {
 		logic.saveConfiguration(config);
-	}
-
-	public ResourceBundle getLanguageData() {
-		return languageData;
 	}
 
 	public ILogicFacade getLogicFacade() {

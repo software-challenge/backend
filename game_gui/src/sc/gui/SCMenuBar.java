@@ -5,13 +5,11 @@ import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import sc.IGUIApplication;
-import sc.IPresentationFacade;
 import sc.gui.dialogs.CreateGameDialog;
 import sc.gui.dialogs.InfoDialog;
 import sc.gui.dialogs.TestRangeDialog;
@@ -46,7 +44,7 @@ public class SCMenuBar extends JMenuBar {
 	 */
 	private void createMenuBar() {
 
-		ResourceBundle lang = PresentationFacade.getInstance().getLanguageData();
+		ResourceBundle lang = presFac.getLogicFacade().getLanguageData();
 
 		// create menus
 		JMenu data = new JMenu(lang.getString("menu_program"));
@@ -66,7 +64,7 @@ public class SCMenuBar extends JMenuBar {
 		createGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new CreateGameDialog(presFac.getFrame()).setVisible(true);
+					new CreateGameDialog(presFac.getFrame()).setVisible(true);
 			}
 		});
 

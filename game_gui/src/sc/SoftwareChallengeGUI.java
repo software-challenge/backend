@@ -6,9 +6,12 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import sc.common.CouldNotFindAnyLanguageFileException;
+import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.PresentationFacade;
 import sc.logic.GUIConfiguration;
 import sc.logic.LogicFacade;
@@ -34,6 +37,19 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		super();
 		// get logic facade
 		LogicFacade logicFac = LogicFacade.getInstance();
+		try {
+			logicFac.loadLanguageData();
+			logicFac.loadPlugins();
+		} catch (CouldNotFindAnyLanguageFileException e) {
+			JOptionPane.showMessageDialog(this, "Could not load any language file.",
+					"Missing any language file.", JOptionPane.ERROR_MESSAGE);
+			closeGUI();
+		} catch (CouldNotFindAnyPluginException e) {
+			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getString(
+					"main_error_plugin_msg"), logicFac.getLanguageData().getString(
+					"main_error_plugin_title"), JOptionPane.ERROR_MESSAGE);
+			closeGUI();
+		}
 		// get presentation facade
 		this.presFac = PresentationFacade.init(this, this, logicFac);
 		createGUI();
@@ -51,9 +67,9 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		// this.add(presFac.getStatusBar());
 
 		// set window preferences
-		this
-				.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		this.setTitle("Server GUI");
+		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		this.setTitle(presFac.getLogicFacade().getLanguageData()
+				.getString("window_title"));
 		// this.setIconImage(new
 		// ImageIcon(getClass().getResource(presFac.getClientIcon
 		// ())).getImage());
@@ -84,9 +100,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 *            nothing expected
 	 */
 	public static void main(String[] args) {
-		if(args.length > 0)
-		{
-			System.out.println("Setting Pluginfolder to " +args[0]);
+		if (args.length > 0) {
+			System.out.println("Setting Pluginfolder to " + args[0]);
 			GUIConfiguration.setPluginFolder(args[0]);
 		}
 		setSystemLookAndFeel();
