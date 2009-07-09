@@ -72,22 +72,22 @@ public class Player extends SimplePlayer
 	}
 
 	// Farbe der Spielfigure
-	private FigureColor				color;
+	private FigureColor		color;
 
 	// Position auf dem Spielbrett
-	private int						position;
+	private int				position;
 
 	// Anzahl der Karotten des Spielers
-	private int						carrots;
+	private int				carrots;
 
 	// Anzahl der bisher verspeisten Salate
-	private int						saladsToEat;
+	private int				saladsToEat;
 
 	// verfügbare Hasenkarten
-	private List<Action>			actions;
+	private List<Action>	actions;
 
 	// Muss der Spieler in der kommenden Runde aussetzen?
-	private boolean					suspended;
+	private boolean			suspended;
 
 	protected Player(FigureColor color)
 	{
@@ -106,13 +106,22 @@ public class Player extends SimplePlayer
 		carrots = 68;
 		saladsToEat = 5;
 		suspended = false;
-		
+
 		actions = new LinkedList<Action>();
 		actions.add(Action.DROP_20_CARROTS);
 		actions.add(Action.TAKE_20_CARROTS);
 		actions.add(Action.EAT_SALAD);
 		actions.add(Action.HURRY_AHEAD);
 		actions.add(Action.FALL_BACK);
+	}
+
+	/**
+	 * @param typ
+	 * @return
+	 */
+	public boolean ownsCardOfTyp(Action typ)
+	{
+		return actions.contains(typ);
 	}
 
 	/**
@@ -124,14 +133,14 @@ public class Player extends SimplePlayer
 	{
 		return carrots;
 	}
-	
+
 	protected final void setCarrotsAvailable(int carrots)
 	{
 		this.carrots = carrots;
 	}
 
 	/**
-	 * Die Anzahl der Salate, die dieser Spieler noch verspeisen muss. 
+	 * Die Anzahl der Salate, die dieser Spieler noch verspeisen muss.
 	 * 
 	 * @return
 	 */
@@ -139,7 +148,7 @@ public class Player extends SimplePlayer
 	{
 		return saladsToEat;
 	}
-	
+
 	protected final void setSaladsToEat(int saladsToEat)
 	{
 		this.saladsToEat = saladsToEat;
@@ -166,7 +175,7 @@ public class Player extends SimplePlayer
 	{
 		return actions;
 	}
-	
+
 	protected void setActions(List<Action> actions)
 	{
 		this.actions = actions;

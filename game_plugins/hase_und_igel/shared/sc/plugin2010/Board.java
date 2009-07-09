@@ -281,57 +281,49 @@ public class Board
 				valid = valid && !isOccupied(newPosition);
 				break;
 			}
-			case PLAY_CARD:
+			case PLAY_CARD_EAT_SALAD:
 			{
-				if (move.getN() >= 0
-						&& move.getN() < player.getActions().size())
+				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);
+				valid = valid && player.getSaladsToEat() > 0;
+				break;
+			}
+			case PLAY_CARD_FALL_BACK:
+			{
+				valid = valid && player.ownsCardOfTyp(Action.FALL_BACK);
+				valid = valid && isFirst(player);
+				for (final Player o : players)
 				{
-					Action action = player.getActions().get(move.getN());
-					switch (action)
+					if (!o.equals(player))
 					{
-						case EAT_SALAD:
-							valid = valid && player.getSaladsToEat() > 0;
-							break;
-						case FALL_BACK:
-							valid = valid && isFirst(player);
-							for (final Player o : players)
-							{
-								if (!o.equals(player))
-								{
-									valid = valid && o.getPosition() != 0;
-									int previousHedgehog = getPreviousFieldByTyp(
-											FieldTyp.HEDGEHOG, o.getPosition());
-									valid = valid
-											&& ((o.getPosition() - previousHedgehog) != 1);
-								}
-							}
-							break;
-						case HURRY_AHEAD:
-							valid = valid && !isFirst(player);
-							for (final Player o : players)
-							{
-								if (!o.equals(player))
-								{
-									valid = valid && o.getPosition() != 64;
-									int nextHedgehog = getNextFieldByTyp(
-											FieldTyp.HEDGEHOG, o.getPosition());
-									valid = valid
-											&& ((nextHedgehog - o.getPosition()) != 1);
-
-									if (o.getPosition() == 63)
-									{
-										valid = valid && canEnterGoal(player);
-									}
-								}
-							}
-							break;
+						valid = valid && o.getPosition() != 0;
+						int previousHedgehog = getPreviousFieldByTyp(
+								FieldTyp.HEDGEHOG, o.getPosition());
+						valid = valid
+								&& ((o.getPosition() - previousHedgehog) != 1);
 					}
 				}
-				else
+				break;
+			}
+			case PLAY_CARD_HURRY_AHEAD:
+			{
+				valid = valid && player.ownsCardOfTyp(Action.HURRY_AHEAD);
+				valid = valid && !isFirst(player);
+				for (final Player o : players)
 				{
-					valid = false;
+					if (!o.equals(player))
+					{
+						valid = valid && o.getPosition() != 64;
+						int nextHedgehog = getNextFieldByTyp(FieldTyp.HEDGEHOG,
+								o.getPosition());
+						valid = valid
+								&& ((nextHedgehog - o.getPosition()) != 1);
+
+						if (o.getPosition() == 63)
+						{
+							valid = valid && canEnterGoal(player);
+						}
+					}
 				}
-				// TODO tests!
 			}
 				break;
 			default:

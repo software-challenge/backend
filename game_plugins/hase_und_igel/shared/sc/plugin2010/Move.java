@@ -34,10 +34,14 @@ public final class Move
 		 */
 		FALL_BACK,
 		/**
-		 * Spielt die <code>n</code>. Hasenkarte von der Hand aus 
-		 * EXPERIMENTAL Erweiterung der CAU-Kiel
+		 * Spielt eine der 4 Hasenkarten von der Hand des Spielers 
+		 * Veränderung der CAU Kiel
 		 */
-		PLAY_CARD,
+		PLAY_CARD_EAT_SALAD,
+		PLAY_CARD_FALL_BACK,
+		PLAY_CARD_HURRY_AHEAD,
+		PLAY_CARD_DROP_20_CARROTS,
+		PLAY_CARD_TAKE_20_CARROTS
 	}
 	
 	private final int n;
