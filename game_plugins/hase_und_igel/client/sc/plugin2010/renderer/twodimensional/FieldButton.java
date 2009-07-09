@@ -105,14 +105,8 @@ public class FieldButton extends JButton
 				case BLUE:
 					colorString = "blue";
 					break;
-				case GREEN:
-					colorString = "green";
-					break;
 				case RED:
 					colorString = "red";
-					break;
-				case YELLOW:
-					colorString = "yellow";
 					break;
 			}
 

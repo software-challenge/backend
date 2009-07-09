@@ -265,6 +265,7 @@ public class Board
 						int carrotsLeft = player.getCarrotsAvailable()
 								- requiredCarrots;
 						valid = valid && carrotsLeft <= 10;
+						valid = valid && player.getSaladsToEat() == 0;
 						break;
 				}
 				break;
@@ -273,7 +274,7 @@ public class Board
 			{
 				FieldTyp currentField = getTypeAt(player.getPosition());
 				valid = valid && (currentField.equals(FieldTyp.SALAD));
-				valid = valid && (player.getSaladsToEat() < 4);
+				valid = valid && (player.getSaladsToEat() > 0);
 				// TODO tests!
 				break;
 			}
@@ -296,6 +297,14 @@ public class Board
 		return valid;
 	}
 
+	/**
+	 * Findet das nächste Spielfeld vom Typ <code>field</code> beginnend an Position
+	 * <code>pos</code> auf diesem Spielbrett.
+	 * 
+	 * @param field
+	 * @param pos
+	 * @return
+	 */
 	public final int getNextFieldByTyp(FieldTyp field, int pos)
 	{
 		int ret = -1;
@@ -310,8 +319,22 @@ public class Board
 		return ret;
 	}
 
+	/**
+	 * @param field
+	 * @param pos
+	 * @return
+	 */
 	public final int getPreviousFieldByTyp(FieldTyp field, int pos)
 	{
-		return -1;
+		int ret = -1;
+		for (int i = pos - 1; i >= 0; i--)
+		{
+			if (track.get(i).equals(field))
+			{
+				ret = i;
+				break;
+			}
+		}
+		return ret;
 	}
 }

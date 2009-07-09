@@ -59,6 +59,34 @@ public class BoardTest
 	}
 
 	/**
+	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf den 
+	 * Verzehr von Salaten.
+	 */
+	@Test
+	public void testIsValidEat()
+	{
+		Board b = Board.create();
+		Player p = new Player(FigureColor.RED);
+		b.addPlayer(p);
+		
+		// Verzehre Salat auf nicht-Salatfeld
+		int nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, 1);
+		p.setPosition(nextCarrot);
+		
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.EAT), p));
+		
+		// Verzehre Salat auf Salatfeld
+		int nextSaladField = b.getNextFieldByTyp(FieldTyp.SALAD, 1);
+		p.setPosition(nextSaladField);
+		
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.EAT), p));
+		
+		// Verzehre zu viele Salate
+		p.setSaladsToEat(0);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.EAT), p));
+	}
+	
+	/**
 	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf Bewegungen
 	 */
 	@Test
@@ -82,6 +110,9 @@ public class BoardTest
 		
 		// Ein Zug ins Ziel mit mehr als 10 Karotten
 		p.setPosition(62);
+		p.setSaladsToEat(0);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 2), p));
+		p.setSaladsToEat(1);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 2), p));
 		
 		// Ein Zug hinter das Ziel
@@ -89,12 +120,18 @@ public class BoardTest
 		
 		// Ein Zug ins Ziel mit genau 10 Karotten
 		p.setPosition(63);
+		p.setSaladsToEat(0);
 		p.setCarrotsAvailable(11);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 1), p));
+		p.setSaladsToEat(1);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 1), p));
 		
 		// Ein Zug ins Ziel mit < 10 Karotten
 		p.setCarrotsAvailable(10);
+		p.setSaladsToEat(0);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 1), p));
+		p.setSaladsToEat(1);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 1), p));
 		
 		// Ein Zug mit negativem Wert
 		p.setPosition(1);
