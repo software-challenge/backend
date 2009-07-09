@@ -244,15 +244,29 @@ public class Board
 			case MOVE:
 			{
 				int requiredCarrots = GameUtil.calculateCarrots(move.getN());
+				valid = valid && move.getN() > 0;
 				valid = valid
 						&& (requiredCarrots <= player.getCarrotsAvailable());
 
 				int newPosition = player.getPosition() + move.getN();
 				valid = valid && !isOccupied(newPosition);
-
-				// TODO Salatfeld => muss der Spieler noch Salate haben
-				// TODO Hasenfeld => muss der Spieler Hasenjoker haben.
-				// TODO tests!
+				switch (getTypeAt(newPosition))
+				{
+					case INVALID:
+						valid = false;
+						break;
+					case SALAD:
+						valid = valid && player.getSaladsToEat() > 0;
+						break;
+					case RABBIT:
+						valid = valid && player.getActions().size() > 0;
+						break;
+					case GOAL:
+						int carrotsLeft = player.getCarrotsAvailable()
+								- requiredCarrots;
+						valid = valid && carrotsLeft <= 10;
+						break;
+				}
 				break;
 			}
 			case EAT:
@@ -284,7 +298,16 @@ public class Board
 
 	public final int getNextFieldByTyp(FieldTyp field, int pos)
 	{
-		return -1;
+		int ret = -1;
+		for (int i = pos + 1; i < track.size(); i++)
+		{
+			if (track.get(i).equals(field))
+			{
+				ret = i;
+				break;
+			}
+		}
+		return ret;
 	}
 
 	public final int getPreviousFieldByTyp(FieldTyp field, int pos)

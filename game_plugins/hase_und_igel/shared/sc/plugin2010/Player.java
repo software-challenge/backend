@@ -1,12 +1,8 @@
 package sc.plugin2010;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import sc.api.plugins.IPlayer;
-import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.SimplePlayer;
 
 /**
@@ -68,10 +64,11 @@ public class Player extends SimplePlayer
 
 	/**
 	 * Alle Spielfiguren aus dem Hase und Igel Original
+	 * Mit Veränderungen der CAU
 	 */
 	public enum FigureColor
 	{
-		RED, BLUE, YELLOW, WHITE, GREEN, ORANGE,
+		RED, BLUE
 	}
 
 	// Farbe der Spielfigure
@@ -123,9 +120,14 @@ public class Player extends SimplePlayer
 	 * 
 	 * @return
 	 */
-	public int getCarrotsAvailable()
+	public final int getCarrotsAvailable()
 	{
 		return carrots;
+	}
+	
+	protected final void setCarrotsAvailable(int carrots)
+	{
+		this.carrots = carrots;
 	}
 
 	/**
@@ -133,9 +135,14 @@ public class Player extends SimplePlayer
 	 * 
 	 * @return
 	 */
-	public int getSaladsToEat()
+	public final int getSaladsToEat()
 	{
 		return saladsToEat;
+	}
+	
+	protected final void setSaladsToEat(int saladsToEat)
+	{
+		this.saladsToEat = saladsToEat;
 	}
 
 	/**
@@ -158,6 +165,11 @@ public class Player extends SimplePlayer
 	public List<Action> getActions()
 	{
 		return actions;
+	}
+	
+	protected void setActions(List<Action> actions)
+	{
+		this.actions = actions;
 	}
 
 	/**
