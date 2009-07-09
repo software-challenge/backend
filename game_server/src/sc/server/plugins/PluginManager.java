@@ -119,7 +119,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 		{
 			Configuration.addXStreamClassloaderURL(jarURI.toURL());
 			ClassLoader loader = Configuration.getXStream().getClassLoader();
-			
+
 			JarFile jarArchive = new JarFile(new File(jarURI));
 			Enumeration<JarEntry> jarEntries = jarArchive.entries();
 
@@ -128,9 +128,10 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 				JarEntry entry = jarEntries.nextElement();
 				if (entry.getName().endsWith(COMPILED_CLASS_IDENTIFIER))
 				{
+					String className = getClassNameFromJarEntry(entry);
+
 					try
 					{
-						String className = getClassNameFromJarEntry(entry);
 						Class<?> clazz = loader.loadClass(className);
 
 						if (isValidPlugin(clazz))
@@ -140,11 +141,17 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 					}
 					catch (ClassNotFoundException e)
 					{
-						logger.error("Failed to load plugin.", e);
+						logger
+								.error(
+										"Failed to load class {} from Jar (missing dependencies?): {}",
+										className, e.getMessage());
 					}
 					catch (NoClassDefFoundError e)
 					{
-						logger.error("Failed to load plugin.", e);
+						logger
+								.error(
+										"Failed to load class {} from Jar (missing dependencies?): {}",
+										className, e.getMessage());
 					}
 				}
 			}

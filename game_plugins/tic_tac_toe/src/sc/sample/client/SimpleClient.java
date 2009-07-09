@@ -3,6 +3,7 @@ package sc.sample.client;
 import java.io.IOException;
 import java.util.Collection;
 
+import sc.protocol.ErrorResponse;
 import sc.protocol.LobbyClient;
 import sc.sample.protocol.ProtocolDefinition;
 import sc.sample.server.GamePluginImpl;
@@ -29,5 +30,17 @@ public class SimpleClient extends LobbyClient
 	protected Collection<Class<? extends Object>> getProtocolClasses()
 	{
 		return ProtocolDefinition.getProtocolClasses();
+	}
+
+	@Override
+	protected void onError(ErrorResponse response)
+	{
+		System.err.println(response);
+	}
+
+	@Override
+	protected void onNewState(String roomId, Object state)
+	{
+		System.out.println("new state received" + state);
 	}
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import sc.framework.plugins.protocol.MoveRequest;
+import sc.protocol.ErrorResponse;
 import sc.protocol.LobbyClient;
 
 import com.thoughtworks.xstream.XStream;
@@ -57,5 +58,17 @@ public class Client extends LobbyClient
 	protected Collection<Class<? extends Object>> getProtocolClasses()
 	{
 		return null;
+	}
+
+	@Override
+	protected void onError(ErrorResponse response)
+	{
+		System.err.println(response.getMessage());
+	}
+
+	@Override
+	protected void onNewState(String roomId, Object state)
+	{
+		// TODO Auto-generated method stub
 	}
 }

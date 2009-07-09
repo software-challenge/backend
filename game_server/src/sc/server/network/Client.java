@@ -89,7 +89,7 @@ public class Client extends XStreamClient
 			}
 		}
 
-		if (!callback.isProcessed())
+		if (errors.isEmpty() && !callback.isProcessed())
 		{
 			logger.warn("Packet {} wasn't processed.", packet);
 			errors.add(new RescueableClientException(

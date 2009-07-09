@@ -57,8 +57,8 @@ public class GameRoomManager implements Runnable
 		
 		if(plugin == null)
 		{
-			logger.info("Couldn't find a gae of type " + gameType);
-			throw new UnknownGameTypeException(gameType);
+			logger.warn("Couldn't find a game of type " + gameType);
+			throw new UnknownGameTypeException(gameType, this.gamePluginManager.getPluginUUIDs());
 		}
 		
 		logger.info("Created new game of type " + gameType);

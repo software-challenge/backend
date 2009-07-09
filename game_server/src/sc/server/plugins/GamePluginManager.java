@@ -2,11 +2,15 @@ package sc.server.plugins;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.helpers.CollectionHelper;
+import sc.helpers.Function;
 import sc.server.Configuration;
 import sc.server.gaming.GamePluginApi;
 
@@ -51,7 +55,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 		}
 
 		throw new UnknownGameTypeException("Could not create a game of type: "
-				+ gameType);
+				+ gameType, getPluginUUIDs());
 	}
 
 	public void loadPlugin(Class<?> type, GamePluginApi context)
@@ -102,5 +106,17 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	public String getPluginFolder()
 	{
 		return Configuration.getPluginPath();
+	}
+
+	public Iterable<String> getPluginUUIDs()
+	{
+		return CollectionHelper.map(this.getAvailablePlugins(),
+				new Function<GamePluginInstance, String>() {
+					@Override
+					public String operate(GamePluginInstance val)
+					{
+						return val.getDescription().uuid();
+					}
+				});
 	}
 }

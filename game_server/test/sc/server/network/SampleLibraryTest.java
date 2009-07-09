@@ -9,6 +9,7 @@ import org.junit.Test;
 import com.thoughtworks.xstream.XStream;
 
 import sc.helpers.Action;
+import sc.protocol.ErrorResponse;
 import sc.protocol.LobbyClient;
 import sc.server.Configuration;
 import sc.server.helpers.TestHelper;
@@ -35,6 +36,20 @@ public class SampleLibraryTest extends RealServerTest
 		{
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		protected void onError(ErrorResponse response)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void onNewState(String roomId, Object state)
+		{
+			// TODO Auto-generated method stub
+			
 		}
 	}
 

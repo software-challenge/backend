@@ -14,6 +14,7 @@ import sc.networking.TcpNetwork;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.responses.JoinedGame;
+import sc.protocol.responses.RoomLeft;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -53,18 +54,42 @@ public abstract class LobbyClient extends XStreamClient
 	{
 		if (o instanceof RoomPacket)
 		{
-			onRoomMessage(((RoomPacket) o).getRoomId(), ((RoomPacket) o)
-					.getData());
+			RoomPacket packet = (RoomPacket) o;
+			if (packet.getData() instanceof MementoPacket)
+			{
+				MementoPacket statePacket = (MementoPacket) packet.getData();
+				onNewState(packet.getRoomId(), statePacket.getState());
+			}
+			else
+			{
+				onRoomMessage(packet.getRoomId(), packet.getData());
+			}
 		}
 		else if (o instanceof JoinedGame)
 		{
 			rooms.add(((JoinedGame) o).getRoomId());
+		}
+		else if (o instanceof RoomLeft)
+		{
+			rooms.remove(((RoomLeft) o).getRoomId());
+		}
+		else if (o instanceof ErrorResponse)
+		{
+			ErrorResponse response = (ErrorResponse) o;
+			logger
+					.warn("{} caused the following error: {}", response,
+							response);
+			onError(response);
 		}
 		else
 		{
 			logger.warn("Couldn't process message {}.", o);
 		}
 	}
+
+	protected abstract void onNewState(String roomId, Object state);
+
+	protected abstract void onError(ErrorResponse response);
 
 	public void sendMessageToRoom(String roomId, Object o)
 	{
