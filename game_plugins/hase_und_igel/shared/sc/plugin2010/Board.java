@@ -281,6 +281,16 @@ public class Board
 				valid = valid && !isOccupied(newPosition);
 				break;
 			}
+			case PLAY_CARD_DROP_20_CARROTS:
+			{
+				valid = valid && player.ownsCardOfTyp(Action.DROP_20_CARROTS);
+				valid = valid && (move.getN() == 0 || move.getN() == 20);
+			}
+			case PLAY_CARD_TAKE_20_CARROTS:
+			{
+				valid = valid && player.ownsCardOfTyp(Action.TAKE_20_CARROTS);
+				valid = valid && (move.getN() == 0 || move.getN() == 20);
+			}
 			case PLAY_CARD_EAT_SALAD:
 			{
 				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);
