@@ -1,6 +1,7 @@
 package sc.plugin2010;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -44,13 +45,13 @@ public class Player extends SimplePlayer
 		 */
 		FREE_MOVEMENT,
 		/**
-		 * Nehme 10 Karotten auf
+		 * Nehme 20 Karotten auf (Veränderung CAU)
 		 */
-		TAKE_10_CARROTS,
+		TAKE_20_CARROTS,
 		/**
-		 * Gebe 10 Karotten ab
+		 * Gebe 20 Karotten ab (Veränderung CAU)
 		 */
-		DROP_10_CARROTS,
+		DROP_20_CARROTS,
 		/**
 		 * Iß sofort einen Salat
 		 */
@@ -108,6 +109,13 @@ public class Player extends SimplePlayer
 		carrots = 68;
 		saladsToEat = 5;
 		suspended = false;
+		
+		actions = new LinkedList<Action>();
+		actions.add(Action.DROP_20_CARROTS);
+		actions.add(Action.TAKE_20_CARROTS);
+		actions.add(Action.EAT_SALAD);
+		actions.add(Action.HURRY_AHEAD);
+		actions.add(Action.FALL_BACK);
 	}
 
 	/**
