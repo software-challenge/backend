@@ -190,7 +190,7 @@ public class Board
 			{
 				FieldTyp currentField = getTypeAt(player.getPosition());
 				valid = valid && (currentField.equals(FieldTyp.SALAD));
-				valid = valid && (player.getSaladsEaten() < 4);
+				valid = valid && (player.getSaladsToEat() < 4);
 				// TODO tests!
 				break;
 			}

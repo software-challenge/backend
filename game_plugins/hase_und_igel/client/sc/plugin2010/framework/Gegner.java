@@ -25,7 +25,7 @@ public class Gegner
 
 	public int holeSalatAnzahl()
 	{
-		return player.getSaladsEaten(); // TODO give salatsToEat
+		return player.getSaladsToEat(); // TODO give salatsToEat
 	}
 
 	public int holeSpielerFarbe()

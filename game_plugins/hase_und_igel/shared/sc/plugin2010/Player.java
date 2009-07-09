@@ -83,7 +83,7 @@ public class Player extends SimplePlayer
 	private int						carrots;
 
 	// Anzahl der bisher verspeisten Salate
-	private int						saladsEaten;
+	private int						saladsToEat;
 
 	// verfügbare Hasenkarten
 	private List<Action>			actions;
@@ -106,6 +106,7 @@ public class Player extends SimplePlayer
 		position = p;
 		color = c;
 		carrots = 68;
+		saladsToEat = 5;
 		suspended = false;
 	}
 
@@ -120,15 +121,13 @@ public class Player extends SimplePlayer
 	}
 
 	/**
-	 * Die Anzahl der von diesem Spieler verspeisten Salate. Um das Ziel
-	 * betreten zu dürfen, muss der Spieler mindestens drei Salate gegessen
-	 * haben.
+	 * Die Anzahl der Salate, die dieser Spieler noch verspeisen muss. 
 	 * 
 	 * @return
 	 */
-	public int getSaladsEaten()
+	public int getSaladsToEat()
 	{
-		return saladsEaten;
+		return saladsToEat;
 	}
 
 	/**

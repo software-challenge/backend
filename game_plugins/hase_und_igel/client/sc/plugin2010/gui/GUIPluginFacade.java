@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
-import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGamePreparation;
+import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
@@ -85,14 +85,14 @@ public class GUIPluginFacade implements IGuiPlugin
 	}
 
 	@Override
-	public void initialize(IGuiPluginHost host)
+	public void unload()
 	{
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void unload()
+	public void initialize(IGuiPluginHost host)
 	{
 		// TODO Auto-generated method stub
 		
