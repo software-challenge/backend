@@ -1,6 +1,8 @@
 package sc.common;
 
-public interface IConfiguration {
+import java.io.Serializable;
+
+public interface IConfiguration extends Serializable {
 
 	public enum ELanguage {
 		DE, EN

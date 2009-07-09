@@ -4,6 +4,8 @@ import java.awt.CardLayout;
 
 import javax.swing.JPanel;
 
+import sc.gui.PresentationFacade;
+
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel {
 	

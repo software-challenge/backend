@@ -46,6 +46,10 @@ public class PresentationFacade implements IPresentationFacade {
 	 * Contains the current configuration data
 	 */
 	private IConfiguration config;
+	/**
+	 * The main frame
+	 */
+	private JFrame frame;
 
 	/**
 	 * Singleton instance
@@ -80,11 +84,6 @@ public class PresentationFacade implements IPresentationFacade {
 		// create instance
 		getInstance();
 
-		instance.logic = logic;
-		instance.contextDisplay = new ContextDisplay();
-		instance.menuBar = new SCMenuBar(root);
-		instance.statusBar = new StatusBar();
-
 		// load configuration
 		instance.config = logic.loadConfiguration();
 		// load language data
@@ -95,6 +94,12 @@ public class PresentationFacade implements IPresentationFacade {
 					"Missing language file", JOptionPane.ERROR_MESSAGE);
 			root.closeGUI();
 		}
+		
+		instance.frame = frame;
+		instance.logic = logic;
+		instance.contextDisplay = new ContextDisplay();
+		instance.menuBar = new SCMenuBar(root);
+		instance.statusBar = new StatusBar();
 
 		return instance;
 	}
@@ -131,6 +136,10 @@ public class PresentationFacade implements IPresentationFacade {
 
 	public ILogicFacade getLogicFacade() {
 		return logic;
+	}
+
+	public JFrame getFrame() {
+		return frame;
 	}
 
 }
