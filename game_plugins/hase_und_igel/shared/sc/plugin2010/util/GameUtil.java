@@ -1,5 +1,10 @@
 package sc.plugin2010.util;
 
+import sc.plugin2010.Board;
+import sc.plugin2010.Move;
+import sc.plugin2010.Player;
+import sc.plugin2010.Board.FieldTyp;
+
 public class GameUtil
 {
 	/**
@@ -17,7 +22,7 @@ public class GameUtil
 	}
 
 	/**
-	 * returns how many moves can be made with <code>carrots</code>
+	 * Berechnet, wieviele Züge mit <code>carrots</code> Karotten möglich sind.
 	 * 
 	 * @param carrots
 	 *            the carrots you want to spend

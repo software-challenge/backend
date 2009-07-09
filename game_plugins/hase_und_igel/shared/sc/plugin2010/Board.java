@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.plugin2010.util.GameUtil;
+
 /**
  * @author rra
  * @since Jul 1, 2009
@@ -58,9 +60,10 @@ public class Board
 		track = new LinkedList<FieldTyp>();
 		players = new LinkedList<Player>();
 	}
-	
+
 	/**
 	 * Erstellt und initialisiert ein Spielbrett
+	 * 
 	 * @param length
 	 * @return
 	 */
@@ -152,5 +155,68 @@ public class Board
 				player = f;
 		}
 		return player;
+	}
+
+	/**
+	 * Ist ein Zug auf diesem Spielbrett möglich?
+	 * 
+	 * @param move
+	 * @param player
+	 * @return
+	 */
+	public final boolean isValid(Move move, Player player)
+	{
+		boolean valid = true;
+		switch (move.getTyp())
+		{
+			case MOVE:
+			{
+				int requiredCarrots = GameUtil.calculateCarrots(move.getN());
+				valid = valid
+						&& (requiredCarrots <= player.getCarrotsAvailable());
+
+				int newPosition = player.getPosition() + move.getN();
+				valid = valid && !isOccupied(newPosition);
+
+				// TODO Salatfeld => muss der Spieler noch Salate haben
+				// TODO Hasenfeld => muss der Spieler Hasenjoker haben.
+				// TODO tests!
+				break;
+			}
+			case EAT:
+			{
+				FieldTyp currentField = getTypeAt(player.getPosition());
+				valid = valid && (currentField.equals(FieldTyp.SALAD));
+				valid = valid && (player.getSaladsEaten() < 4);
+				// TODO tests!
+				break;
+			}
+			case FALL_BACK:
+			{
+				int newPosition = getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
+						player.getPosition());
+				valid = valid && (newPosition != -1);
+				valid = valid && !isOccupied(newPosition);
+				// TODO tests!
+				break;
+			}
+			case PLAY_CARD:
+			{
+				// TODO implement
+				// TODO tests!
+			}
+				break;
+		}
+		return valid;
+	}
+
+	public final int getNextFieldByTyp(FieldTyp field, int pos)
+	{
+		return -1;
+	}
+
+	public final int getPreviousFieldByTyp(FieldTyp field, int pos)
+	{
+		return -1;
 	}
 }

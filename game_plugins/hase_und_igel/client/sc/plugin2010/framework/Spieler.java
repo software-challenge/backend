@@ -33,7 +33,7 @@ public class Spieler
 
 	public int holeKarottenAnzahl()
 	{
-		return player.getCarrots();
+		return player.getCarrotsAvailable();
 	}
 
 	public int holeSpielerNummer()

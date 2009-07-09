@@ -114,7 +114,7 @@ public class Player extends SimplePlayer
 	 * 
 	 * @return
 	 */
-	public int getCarrots()
+	public int getCarrotsAvailable()
 	{
 		return carrots;
 	}

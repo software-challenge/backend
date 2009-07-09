@@ -20,7 +20,7 @@ public class Gegner
 
 	public int holeKarottenAnzahl()
 	{
-		return player.getCarrots();
+		return player.getCarrotsAvailable();
 	}
 
 	public int holeSalatAnzahl()
