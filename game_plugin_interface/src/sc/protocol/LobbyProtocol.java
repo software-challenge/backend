@@ -27,6 +27,7 @@ public abstract class LobbyProtocol
 		xStream.processAnnotations(JoinPreparedRoomRequest.class);
 		xStream.processAnnotations(JoinRoomRequest.class);
 		xStream.processAnnotations(PrepareGameRequest.class);
+		xStream.processAnnotations(MementoPacket.class);
 
 		if (additionClasses != null)
 		{

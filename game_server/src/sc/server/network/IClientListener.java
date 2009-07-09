@@ -1,6 +1,6 @@
 package sc.server.network;
 
-import sc.api.plugins.RescueableClientException;
+import sc.api.plugins.exceptions.RescueableClientException;
 
 public interface IClientListener
 {

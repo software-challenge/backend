@@ -1,10 +1,12 @@
 package sc.protocol;
 
+import sc.framework.plugins.IPerspectiveProvider;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @XStreamAlias("memento")
-public final class MementoPacket
+public final class MementoPacket implements IPerspectiveProvider
 {
 	private Object	state;
 
@@ -14,6 +16,7 @@ public final class MementoPacket
 	public MementoPacket(Object state, Object perspective)
 	{
 		this.state = state;
+		this.perspective = perspective;
 	}
 
 	public MementoPacket()
@@ -26,8 +29,9 @@ public final class MementoPacket
 		return this.state;
 	}
 
-	public void setState(Object state)
+	@Override
+	public Object getPerspective()
 	{
-		this.state = state;
+		return this.perspective;
 	}
 }

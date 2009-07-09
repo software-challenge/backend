@@ -1,5 +1,7 @@
 package sc.api.plugins;
 
+import sc.api.plugins.host.IPlayerListener;
+
 
 public interface IPlayer
 {

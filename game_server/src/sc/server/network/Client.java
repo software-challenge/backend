@@ -10,9 +10,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.RescueableClientException;
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
 import sc.protocol.ErrorResponse;
+import sc.protocol.RoomPacket;
 import sc.protocol.XStreamClient;
 import sc.server.Configuration;
 
@@ -190,5 +191,11 @@ public class Client extends XStreamClient
 	protected void onObject(Object o)
 	{
 		this.notifyOnPacket(o);
+	}
+
+	public void sendAsynchronous(Object packet)
+	{
+		// TODO make it async
+		this.send(packet);
 	}
 }

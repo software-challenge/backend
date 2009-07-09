@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.RescueableClientException;
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.protocol.RoomPacket;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.ILobbyRequest;

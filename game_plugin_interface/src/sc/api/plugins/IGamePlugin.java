@@ -1,5 +1,7 @@
 package sc.api.plugins;
 
+import sc.api.plugins.host.IGamePluginHost;
+
 public interface IGamePlugin extends IPlugin<IGamePluginHost>
 {
 	/**

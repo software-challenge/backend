@@ -1,4 +1,4 @@
-package sc.api.plugins;
+package sc.api.plugins.host;
 
 import java.util.Collection;
 

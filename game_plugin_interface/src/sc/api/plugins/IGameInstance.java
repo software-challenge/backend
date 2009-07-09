@@ -1,5 +1,9 @@
 package sc.api.plugins;
 
+import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.IGameListener;
+
 public interface IGameInstance
 {
 	/**
@@ -42,4 +46,6 @@ public interface IGameInstance
 	 * method has been called.
 	 */
 	public void destroy();
+
+	public boolean ready();
 }

@@ -1,16 +1,14 @@
 package sc.sample.client;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 
-import com.thoughtworks.xstream.XStream;
-
 import sc.protocol.LobbyClient;
-import sc.protocol.LobbyProtocol;
 import sc.sample.protocol.ProtocolDefinition;
 import sc.sample.server.GamePluginImpl;
 import sc.sample.shared.Move;
+
+import com.thoughtworks.xstream.XStream;
 
 public class SimpleClient extends LobbyClient
 {
@@ -19,7 +17,7 @@ public class SimpleClient extends LobbyClient
 		super(GamePluginImpl.PLUGIN_UUID, xStream, "localhost", PORT);
 	}
 
-	private static final int	PORT	= 3000;
+	private static final int	PORT	= 13050;
 
 	@Override
 	protected void onRoomMessage(String roomId, Object data)

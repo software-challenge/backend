@@ -1,6 +1,6 @@
 package sc.sample.server;
 
-import sc.api.plugins.RescueableClientException;
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.sample.shared.Board;
 import sc.sample.shared.Move;
 import sc.sample.shared.Player;

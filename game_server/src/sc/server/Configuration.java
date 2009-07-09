@@ -60,7 +60,7 @@ public class Configuration
 
 	public static int getPort()
 	{
-		return get(PORT_KEY, Integer.class, 3000);
+		return get(PORT_KEY, Integer.class, 13050);
 	}
 
 	public static XStream getXStream()

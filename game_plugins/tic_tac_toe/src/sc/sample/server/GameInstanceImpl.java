@@ -1,8 +1,8 @@
 package sc.sample.server;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.RescueableClientException;
-import sc.api.plugins.TooManyPlayersException;
+import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.sample.shared.Board;
 import sc.sample.shared.Move;
@@ -11,13 +11,6 @@ import sc.sample.shared.Player;
 public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 {
 	private ServerBoard	board	= new ServerBoard();
-
-	@Override
-	public void destroy()
-	{
-		// TODO Auto-generated method stub
-
-	}
 
 	@Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException
@@ -35,19 +28,14 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	public void start()
-	{
-		super.start();
-	}
-
-	@Override
 	protected boolean checkGameOverCondition()
 	{
 		return board.isGameOver();
 	}
 
 	@Override
-	protected void onRoundBasedAction(IPlayer fromPlayer, Object data) throws RescueableClientException
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+			throws RescueableClientException
 	{
 		if (data instanceof Move)
 		{
@@ -55,9 +43,21 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 			next();
 		}
 	}
-	
+
 	protected Player resolve(IPlayer player)
 	{
-		return ((PlayerImpl)player).getData();
+		return ((PlayerImpl) player).getData();
+	}
+
+	@Override
+	protected Object getCurrentState()
+	{
+		return this.board;
+	}
+
+	@Override
+	public boolean ready()
+	{
+		return this.players.size() == GamePluginImpl.MAXIMUM_PLAYER_SIZE;
 	}
 }

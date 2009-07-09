@@ -1,67 +1,44 @@
 package sc.server.plugins;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import sc.api.plugins.IGameInstance;
-import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.TooManyPlayersException;
+import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.framework.plugins.RoundBasedGameInstance;
 
-public class TestGame implements IGameInstance
+public class TestGame extends RoundBasedGameInstance<TestPlayer>
 {
-	private List<IGameListener>	listeners		= new LinkedList<IGameListener>();
-	private List<TestPlayer>	players			= new ArrayList<TestPlayer>(2);
-	private int					activePlayerId	= 0;
+	private TestGameState	state	= new TestGameState();
+
+	public TestGame()
+	{
+		state.setController(this);
+	}
 
 	@Override
-	public void onAction(IPlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+			throws RescueableClientException
 	{
-		if (fromPlayer.equals(players.get(activePlayerId)))
+		if (data instanceof TestMove)
 		{
-			if (data instanceof TestMove)
+			int newSecret = ((TestMove) data).value;
+
+			if (fromPlayer == players.get(0))
 			{
-				nextRound();
-				if (activePlayerId == 0)
-				{
-					notifyOnGameOver();
-				}
-				else
-				{
-					notifyActivePlayer();
-				}
+				state.secret0 = newSecret;
+			}
+			else if (fromPlayer == players.get(1))
+			{
+				state.secret1 = newSecret;
 			}
 			else
 			{
-				throw new RuntimeException("aaa");
+				throw new RuntimeException("Unknown Player");
 			}
 		}
-		else
-		{
-			throw new RuntimeException("aaa");
-		}
-	}
-
-	private void notifyOnGameOver()
-	{
-		for (IGameListener listener : listeners)
-		{
-			listener.onGameOver();
-		}
-	}
-
-	@Override
-	public void addGameListener(IGameListener listener)
-	{
-		listeners.add(listener);
-	}
-
-	@Override
-	public void destroy()
-	{
-		// TODO Auto-generated method stub
-
+		state.round++;
+		next();
 	}
 
 	@Override
@@ -80,35 +57,31 @@ public class TestGame implements IGameInstance
 	}
 
 	@Override
+	protected boolean checkGameOverCondition()
+	{
+		return (this.state.round == 4);
+	}
+
+	public List<TestPlayer> getPlayers()
+	{
+		return this.players;
+	}
+
+	@Override
+	protected Object getCurrentState()
+	{
+		return this.state;
+	}
+
+	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void removeGameListener(IGameListener listener)
+	public boolean ready()
 	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void start()
-	{
-		if (this.players.size() == 2)
-		{
-			notifyActivePlayer();
-		}
-	}
-
-	public void notifyActivePlayer()
-	{
-		players.get(this.activePlayerId).requestMove();
-	}
-
-	public void nextRound()
-	{
-		this.activePlayerId = (this.activePlayerId + 1) % 2;
+		return this.players.size() == TestPlugin.MAXIMUM_PLAYER_SIZE;
 	}
 }

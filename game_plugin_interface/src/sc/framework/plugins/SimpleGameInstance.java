@@ -1,15 +1,19 @@
 package sc.framework.plugins;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import sc.api.plugins.IGameInstance;
-import sc.api.plugins.IGameListener;
+import sc.api.plugins.IPlayer;
+import sc.api.plugins.host.IGameListener;
+import sc.api.plugins.host.IPlayerScore;
 
-public abstract class SimpleGameInstance<P extends SimplePlayer> implements IGameInstance
+public abstract class SimpleGameInstance<P extends SimplePlayer> implements
+		IGameInstance
 {
-	protected List<IGameListener>	listeners	= new LinkedList<IGameListener>();
-	protected List<P>				players		= new LinkedList<P>();
+	protected final List<IGameListener>	listeners	= new LinkedList<IGameListener>();
+	protected final List<P>				players		= new LinkedList<P>();
 
 	@Override
 	public void addGameListener(IGameListener listener)
@@ -23,19 +27,19 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements IGam
 		this.listeners.remove(listener);
 	}
 
-	protected void notifyListeners(Object o)
-	{
-		for (IGameListener listener : this.listeners)
-		{
-			// todo
-		}
-	}
-
 	protected void notifyOnGameOver()
 	{
 		for (IGameListener listener : this.listeners)
 		{
-			listener.onGameOver();
+			listener.onGameOver(new HashMap<IPlayer, IPlayerScore>());
+		}
+	}
+
+	protected void notifyOnNewState(Object mementoState)
+	{
+		for (IGameListener listener : this.listeners)
+		{
+			listener.onStateChanged(mementoState);
 		}
 	}
 }

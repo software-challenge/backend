@@ -9,9 +9,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.TooManyPlayersException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.SimpleGameInstance;
 import sc.plugin2010.Player.FigureColor;
 
@@ -171,5 +171,11 @@ public class Game extends SimpleGameInstance<Player>
 		
 		// Fordere vom ersten Spieler einen Zug an
 		players.get(activePlayerId).requestMove();
+	}
+
+	@Override
+	public boolean ready()
+	{
+		return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
 	}
 }

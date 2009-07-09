@@ -5,12 +5,14 @@ import org.junit.Test;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.helpers.IPerspectiveProvider;
+import sc.framework.plugins.IPerspectiveAware;
+import sc.framework.plugins.IPerspectiveProvider;
 import sc.server.Configuration;
 
 public class ConverterTest
 {
-	public static class HasSecrets implements IPerspectiveProvider
+	public static class HasSecrets implements IPerspectiveProvider,
+			IPerspectiveAware
 	{
 		public static final Object	hacker		= new Object();
 

@@ -1,4 +1,4 @@
-package sc.helpers;
+package sc.framework.plugins;
 
 public interface IPerspectiveAware
 {

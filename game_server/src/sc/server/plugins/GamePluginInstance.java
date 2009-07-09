@@ -2,7 +2,7 @@ package sc.server.plugins;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.IGamePluginHost;
+import sc.api.plugins.host.IGamePluginHost;
 
 public class GamePluginInstance extends PluginInstance<IGamePluginHost, IGamePlugin>
 {

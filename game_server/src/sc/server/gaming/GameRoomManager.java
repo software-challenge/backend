@@ -10,8 +10,8 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.RescueableClientException;
-import sc.api.plugins.TooManyPlayersException;
+import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.server.ServiceManager;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -54,6 +54,7 @@ public class GameRoomManager implements Runnable
 	public GameRoom createGame(String gameType) throws RescueableClientException
 	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
+		
 		if(plugin == null)
 		{
 			logger.info("Couldn't find a gae of type " + gameType);

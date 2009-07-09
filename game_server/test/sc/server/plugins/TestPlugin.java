@@ -1,14 +1,17 @@
 package sc.server.plugins;
 
+import org.slf4j.Logger;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.IGamePluginHost;
 import sc.api.plugins.PluginDescriptor;
+import sc.api.plugins.host.IGamePluginHost;
 
 @PluginDescriptor(author="Chuck", name="TestPlugin", uuid=TestPlugin.TEST_PLUGIN_UUID)
 public class TestPlugin implements IGamePlugin
 {
 	public static final String TEST_PLUGIN_UUID = "012345-norris";
+	public static final int MAXIMUM_PLAYER_SIZE = 2;
 	
 	public TestPlugin()
 	{
@@ -24,6 +27,8 @@ public class TestPlugin implements IGamePlugin
 	@Override
 	public void initialize(IGamePluginHost host)
 	{
+		host.registerProtocolClass(TestTurnRequest.class);
+		host.registerProtocolClass(TestGameState.class);
 		host.registerProtocolClass(TestPlayer.class);
 		host.registerProtocolClass(TestMove.class);
 	}
@@ -38,7 +43,7 @@ public class TestPlugin implements IGamePlugin
 	@Override
 	public int getMaximumPlayerCount()
 	{
-		return 2;
+		return MAXIMUM_PLAYER_SIZE;
 	}
 
 }

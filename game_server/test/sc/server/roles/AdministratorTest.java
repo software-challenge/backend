@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sc.api.plugins.RescueableClientException;
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.server.Configuration;

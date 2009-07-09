@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import sc.api.plugins.RescueableClientException;
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.server.gaming.GamePreparationResponse;

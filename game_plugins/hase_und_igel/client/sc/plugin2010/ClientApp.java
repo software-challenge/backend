@@ -8,7 +8,7 @@ public class ClientApp
 {
 	public static void main(String[] args) throws IOException
 	{
-		Client client = new Client("Hase und Igel", new XStream(), "localhost", 3000);
+		Client client = new Client("Hase und Igel", new XStream(), "localhost", 13050);
 		client.joinAnyGame();
 	}
 }

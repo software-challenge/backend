@@ -1,7 +1,7 @@
 package sc.server.gaming;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.TooManyPlayersException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.protocol.responses.JoinedGame;
 import sc.server.network.Client;
 

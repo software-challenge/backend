@@ -4,9 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.IPlayerListener;
+import sc.api.plugins.host.IPlayerListener;
+import sc.framework.plugins.SimplePlayer;
 
-public class TestPlayer implements IPlayer
+public class TestPlayer extends SimplePlayer
 {
 	List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 

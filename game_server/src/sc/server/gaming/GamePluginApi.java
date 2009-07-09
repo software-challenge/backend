@@ -2,11 +2,17 @@ package sc.server.gaming;
 
 import java.util.Collection;
 
-import sc.api.plugins.IGamePluginHost;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.api.plugins.host.IGamePluginHost;
 import sc.server.Configuration;
 
 public class GamePluginApi implements IGamePluginHost
 {
+	private static Logger	logger	= LoggerFactory
+											.getLogger(GamePluginApi.class);
+
 	@Override
 	public void registerProtocolClass(Class<?> clazz, String alias)
 	{
@@ -17,6 +23,7 @@ public class GamePluginApi implements IGamePluginHost
 	@Override
 	public void registerProtocolClass(Class<?> clazz)
 	{
+		logger.info("Processing XStream annotations for {}", clazz);
 		Configuration.getXStream().processAnnotations(clazz);
 	}
 

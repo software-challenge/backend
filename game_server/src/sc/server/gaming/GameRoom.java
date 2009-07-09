@@ -5,12 +5,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import sc.api.plugins.IGameInstance;
-import sc.api.plugins.IGameListener;
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.RescueableClientException;
-import sc.api.plugins.TooManyPlayersException;
+import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.IGameListener;
+import sc.api.plugins.host.IPlayerScore;
+import sc.protocol.MementoPacket;
+import sc.protocol.RoomPacket;
+import sc.protocol.responses.RoomLeft;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 
@@ -20,16 +25,13 @@ import sc.server.plugins.GamePluginInstance;
  */
 public class GameRoom implements IGameListener
 {
-	private final String		id;
-	private GamePluginInstance	provider;
-	private IGameInstance		game;
-	private List<ObserverRole>	observers;
-	private List<PlayerSlot>	playerSlots	= new ArrayList<PlayerSlot>(2);
-
-	public GameRoom(String id, GamePluginInstance provider)
-	{
-		this(id, provider, null);
-	}
+	private final String				id;
+	private final GamePluginInstance	provider;
+	private final IGameInstance			game;
+	private List<ObserverRole>			observers	= new LinkedList<ObserverRole>();
+	private List<PlayerSlot>			playerSlots	= new ArrayList<PlayerSlot>(
+															2);
+	private boolean						isOver		= false;
 
 	public GameRoom(String id, GamePluginInstance provider, IGameInstance game)
 	{
@@ -41,6 +43,7 @@ public class GameRoom implements IGameListener
 		this.id = id;
 		this.provider = provider;
 		this.game = game;
+		game.addGameListener(this);
 	}
 
 	public GamePluginInstance getProvider()
@@ -54,10 +57,46 @@ public class GameRoom implements IGameListener
 	}
 
 	@Override
-	public void onGameOver()
+	public void onGameOver(Map<IPlayer, IPlayerScore> results)
 	{
-		// TODO Auto-generated method stub
+		isOver = true;
 
+		for (PlayerRole player : getPlayers())
+		{
+			player.getClient().send(new RoomLeft(this.getId()));
+		}
+	}
+
+	@Override
+	public void onStateChanged(Object data)
+	{
+		sendStateToObservers(data);
+		sendStateToPlayers(data);
+	}
+
+	private void sendStateToPlayers(Object data)
+	{
+		for (PlayerRole player : getPlayers())
+		{
+			RoomPacket packet = createRoomPacket(new MementoPacket(data, player
+					.getPlayer()));
+			player.getClient().sendAsynchronous(packet);
+		}
+	}
+
+	private void sendStateToObservers(Object data)
+	{
+		RoomPacket packet = createRoomPacket(new MementoPacket(data, null));
+
+		for (ObserverRole observer : observers)
+		{
+			observer.getClient().sendAsynchronous(packet);
+		}
+	}
+
+	public RoomPacket createRoomPacket(Object data)
+	{
+		return new RoomPacket(this.getId(), data);
 	}
 
 	@Override
@@ -82,7 +121,7 @@ public class GameRoom implements IGameListener
 	public boolean join(Client client)
 	{
 		PlayerSlot openSlot = null;
-		
+
 		for (PlayerSlot slot : playerSlots)
 		{
 			if (slot.isEmpty() && !slot.isReserved())
@@ -97,17 +136,19 @@ public class GameRoom implements IGameListener
 			openSlot = new PlayerSlot(this);
 			this.playerSlots.add(openSlot);
 		}
-		
-		if(openSlot != null)
+
+		if (openSlot == null)
 		{
-			openSlot.setClient(client);
-			game.start();
-			return true;
-		}
-		else
-		{			
 			return false;
 		}
+
+		openSlot.setClient(client);
+
+		if (game.ready())
+		{
+			game.start();
+		}
+		return true;
 	}
 
 	private int getMaximumPlayerCount()
@@ -153,7 +194,14 @@ public class GameRoom implements IGameListener
 	public void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
-		this.game.onAction(resolvePlayer(source), data);
+		if (isOver)
+		{
+			throw new RescueableClientException("Game is already over.");
+		}
+		else
+		{
+			this.game.onAction(resolvePlayer(source), data);
+		}
 	}
 
 	private IPlayer resolvePlayer(Client source)

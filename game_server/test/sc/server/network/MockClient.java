@@ -4,34 +4,43 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.thoughtworks.xstream.XStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sc.protocol.RoomPacket;
 import sc.server.Configuration;
 import sc.server.helpers.StringNetworkInterface;
 
+import com.thoughtworks.xstream.XStream;
+
 public class MockClient extends Client
 {
-	private Queue<Object>	outgoingMessages	= new LinkedList<Object>();
-	private Object			object				= null;
+	private final static Logger	logger				= LoggerFactory
+															.getLogger(MockClient.class);
+	private final Queue<Object>	outgoingMessages	= new LinkedList<Object>();
+	private Object				object				= null;
+	private final XStream		xStream;
 
 	public MockClient(StringNetworkInterface stringInterface, XStream xStream)
 			throws IOException
 	{
 		super(stringInterface, xStream);
+		this.xStream = xStream;
 	}
 
 	public MockClient() throws IOException
 	{
-		super(new StringNetworkInterface("<protocol>"), Configuration
+		this(new StringNetworkInterface("<protocol>"), Configuration
 				.getXStream());
 	}
 
 	@Override
 	public synchronized void send(Object packet)
 	{
-		outgoingMessages.add(packet);
 		super.send(packet);
+
+		Object parsedPacket = xStream.fromXML(xStream.toXML(packet));
+		outgoingMessages.add(parsedPacket);
 	}
 
 	public Object popMessage()
@@ -42,9 +51,11 @@ public class MockClient extends Client
 	@SuppressWarnings("unchecked")
 	public <T> T seekMessage(Class<T> type)
 	{
+		int i = -1;
 		Object current = null;
 		do
 		{
+			i++;
 			current = popMessage();
 		} while (current != null && current.getClass() != type);
 
@@ -55,6 +66,10 @@ public class MockClient extends Client
 		}
 		else
 		{
+			if (i > 0)
+			{
+				logger.info("Skipped {} messages.", i);
+			}
 			return (T) current;
 		}
 	}
@@ -62,9 +77,11 @@ public class MockClient extends Client
 	@SuppressWarnings("unchecked")
 	public <T> T seekRoomMessage(String roomId, Class<T> type)
 	{
+		int i = -1;
 		Object current = null;
 		do
 		{
+			i++;
 			RoomPacket response = seekMessage(RoomPacket.class);
 			if (roomId.equals(response.getRoomId()))
 			{
@@ -79,6 +96,10 @@ public class MockClient extends Client
 		}
 		else
 		{
+			if (i > 0)
+			{
+				logger.info("Skipped {} messages.", i);
+			}
 			return (T) current;
 		}
 	}

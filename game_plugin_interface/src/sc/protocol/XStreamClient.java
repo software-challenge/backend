@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MarkerFactory;
 
 import sc.networking.INetworkInterface;
 
@@ -130,11 +131,12 @@ public abstract class XStreamClient
 
 	public void send(Object o)
 	{
-		logger.debug("Sending {}...", o);
+		logger.debug("Sending {} via {}", o, this.networkInterface);
 		
 		try
 		{
-			logger.debug(this.xStream.toXML(o));
+			logger.debug("DataDump:\n{}", this.xStream.toXML(o));
+			//this.xStream.toXML(o, this.networkInterface.getOutputStream());
 			this.out.writeObject(o);
 			this.out.flush();
 		}

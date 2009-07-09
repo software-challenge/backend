@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.IPlayerListener;
+import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.SimplePlayer;
 
 /**
