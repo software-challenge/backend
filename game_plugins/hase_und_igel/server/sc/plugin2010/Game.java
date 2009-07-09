@@ -37,6 +37,8 @@ public class Game extends SimpleGameInstance<Player>
 
 	private boolean				active;
 
+	private int					turn;
+
 	public Game()
 	{
 		availableColors = new LinkedList<FigureColor>();
@@ -50,6 +52,7 @@ public class Game extends SimpleGameInstance<Player>
 		board = Board.create();
 
 		active = false;
+		turn = 0;
 		activePlayerId = 0;
 	}
 
@@ -58,36 +61,37 @@ public class Game extends SimpleGameInstance<Player>
 	{
 		if (!active)
 			return;
-		
+
 		if (data instanceof Move)
 		{
 			logger.info("Spieler '{}' hat einen Zug gemacht.", author);
 			final Move move = (Move) data;
 
 			// TODO den Zug des Spielers verarbeiten
-			
+
 			// TODO überprüfen, ob das Spiel vorbei ist
 			boolean gameOver = false;
 			if (gameOver)
 			{
-				for(final Player player : players)
+				for (final Player player : players)
 				{
 					// TODO result spielerspezifisch umbauen
 					player.notifyListeners(new GameOver(0));
 				}
-			} else 
+			}
+			else
 			{
 				// Aktuellen Spielstand übertragen
 				updatePlayers();
-				
+
 				// Nächsten Spieler benachrichtigen
 				activePlayerId = (activePlayerId + 1) % players.size();
 				if (players.get(activePlayerId).isSuspended())
 					activePlayerId = (activePlayerId + 1) % players.size();
-				
-				players.get(activePlayerId).requestMove();	
+
+				players.get(activePlayerId).requestMove();
 			}
-			
+
 			updateObservers();
 		}
 		else
@@ -142,12 +146,12 @@ public class Game extends SimpleGameInstance<Player>
 	{
 		// TODO
 	}
-	
+
 	private void updatePlayers()
 	{
 		for (final Player player : players)
 		{
-			player.notifyListeners(new BoardUpdated(board));
+			player.notifyListeners(new BoardUpdated(board, turn));
 			for (final Player other : players)
 			{
 				if (other.equals(player))
@@ -158,7 +162,7 @@ public class Game extends SimpleGameInstance<Player>
 			player.notifyListeners(new PlayerUpdated(player, true));
 		}
 	}
-	
+
 	@Override
 	public void start()
 	{
@@ -167,7 +171,7 @@ public class Game extends SimpleGameInstance<Player>
 
 		// Initialisiere alle Spieler
 		updatePlayers();
-		
+
 		// Fordere vom ersten Spieler einen Zug an
 		players.get(activePlayerId).requestMove();
 	}

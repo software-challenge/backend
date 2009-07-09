@@ -21,13 +21,13 @@ public final class Move
 		 */
 		EAT,
 		/**
-		 * Nehme 20 Karotten auf einem Karottenfeld auf
+		 * Nehme 10 Karotten auf einem Karottenfeld auf
 		 */
-		TAKE_20_CARROTS,
+		TAKE_10_CARROTS,
 		/**
-		 * Lege 20 Karotten auf einem Karottenfeld ab
+		 * Lege 10 Karotten auf einem Karottenfeld ab
 		 */
-		DROP_20_CARROTS,
+		DROP_10_CARROTS,
 		/**
 		 * Falle zum letzten Igelfeld zurück. Nur verfügbar, wenn ein unbesetztes 
 		 * Igelfeld hinter dem Spieler vorhanden ist.
