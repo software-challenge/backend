@@ -50,7 +50,7 @@ public class Client extends LobbyClient
 		}
 		else if (data instanceof MoveRequest)
 		{
-			sendMessageToRoom(roomId, handler.onAction());
+			handler.onRequestAction(roomId);
 		}
 	}
 
@@ -58,6 +58,12 @@ public class Client extends LobbyClient
 	protected Collection<Class<? extends Object>> getProtocolClasses()
 	{
 		return null;
+	}
+
+	// TODO call it
+	public void sendMove(String roomId, Move move)
+	{
+		sendMessageToRoom(roomId, move);
 	}
 
 	@Override

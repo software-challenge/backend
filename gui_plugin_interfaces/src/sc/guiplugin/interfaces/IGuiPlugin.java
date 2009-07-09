@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 
 import edu.cau.plugins.IPlugin;
 
-
 public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 
 	/**
@@ -49,4 +48,11 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * @return an IGamePreparation instance with an empty list of slots.
 	 */
 	IObservation loadReplay(final String filename);
+
+	/**
+	 * displays info text of the plugin. like "created by..."
+	 * 
+	 * @return
+	 */
+	String getPluginInfoText();
 }

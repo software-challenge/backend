@@ -9,7 +9,6 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,21 +21,14 @@ import javax.swing.JPanel;
  * 
  */
 @SuppressWarnings("serial")
-public class QuestionDialog extends JDialog
+public class ErrorDialog extends JDialog
 {
 	private static final int	DEFAULTHEIGHT	= 100;
 	private static final int	DEFAULTWIDTH	= 300;
-	private FrameRenderer		obs;
-	private String				type;
 
-	public QuestionDialog(String question, List<String> answers,
-			FrameRenderer obs, String type)
+	public ErrorDialog(String message)
 	{
-		setTitle("?");
-
-		this.type = type;
-
-		this.obs = obs;
+		setTitle("Fehler");
 
 		setIconImage(new ImageIcon("resource/hase_und_igel_icon.png")
 				.getImage());
@@ -53,7 +45,7 @@ public class QuestionDialog extends JDialog
 
 		setSize(DEFAULTWIDTH, DEFAULTHEIGHT);
 
-		AnswerListener awListener = new AnswerListener();
+		OkayListener awListener = new OkayListener();
 
 		JPanel buttonPanel = new JPanel();
 
@@ -61,33 +53,28 @@ public class QuestionDialog extends JDialog
 
 		buttonPanel.setLayout(buttonLayout);
 
-		// add Buttons with answers
-		for (int i = 0; i < answers.size(); i++)
-		{
-			JButton jbut = new JButton(answers.get(i));
-			jbut.setName(answers.get(i));
-			jbut.addMouseListener(awListener);
-			buttonPanel.add(jbut);
-		}
+		// add okay Button
+		JButton jbut = new JButton("OK");
+		jbut.addMouseListener(awListener);
+		buttonPanel.add(jbut);
 
 		BorderLayout dialogLayout = new BorderLayout();
 		setLayout(dialogLayout);
 
-		this.add(new JLabel(question, JLabel.CENTER), BorderLayout.CENTER);
+		this.add(new JLabel(message, JLabel.CENTER), BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 
 		setModal(true);
 		setVisible(true);
 	}
 
-	public class AnswerListener extends MouseAdapter
+	public class OkayListener extends MouseAdapter
 	{
 		@Override
 		public void mouseReleased(MouseEvent e)
 		{
 			if (e.getButton() == MouseEvent.BUTTON1)
 			{
-				obs.answerQuestion(e.getComponent().getName(), type);
 				dispose();
 			}
 		}

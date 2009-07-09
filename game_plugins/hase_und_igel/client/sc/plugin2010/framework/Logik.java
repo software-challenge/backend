@@ -5,7 +5,6 @@ package sc.plugin2010.framework;
 
 import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.IGameHandler;
-import sc.plugin2010.Move;
 import sc.plugin2010.PlayerUpdated;
 
 /**
@@ -22,13 +21,6 @@ public class Logik implements IGameHandler
 	}
 
 	@Override
-	public Move onAction()
-	{
-		obs.zugAngefordert();
-		return null;// TODO
-	}
-
-	@Override
 	public void onUpdate(final BoardUpdated bu)
 	{
 		// TODO Auto-generated method stub
@@ -37,6 +29,19 @@ public class Logik implements IGameHandler
 
 	@Override
 	public void onUpdate(final PlayerUpdated pu)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onRequestAction(String roomid)
+	{
+		obs.zugAngefordert();
+	}
+
+	@Override
+	public void sendAction(String action)
 	{
 		// TODO Auto-generated method stub
 

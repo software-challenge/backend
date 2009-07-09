@@ -23,12 +23,11 @@ public class GamePreparation implements IGamePreparation
 		this.client = client;
 	}
 
-
 	@Override
 	public List<ISlot> getSlots()
 	{
+		// TODO
 		return null;
-
 	}
 
 	@Override

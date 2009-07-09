@@ -3,6 +3,8 @@
  */
 package sc.plugin2010.renderer;
 
+import java.awt.Image;
+
 import sc.plugin2010.Board;
 import sc.plugin2010.Player;
 
@@ -16,9 +18,9 @@ public interface Renderer
 
 	void updateBoard(Board bo);
 
-	void updateInfos(int round);
-
 	void updateAction(String doneAction);
 
 	void updateChat(String chatMsg);
+
+	Image getImage();
 }

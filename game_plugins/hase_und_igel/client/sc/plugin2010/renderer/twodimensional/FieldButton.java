@@ -17,6 +17,7 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.Player.FigureColor;
 
 /**
  * @author ffi
@@ -34,7 +35,7 @@ public class FieldButton extends JButton
 	private final Border			defaultBorder;
 
 	private int						fieldNumber	= 0;
-	private String					mycolor		= "";
+	private FigureColor				mycolor;
 	private boolean					reachable	= false;
 	private boolean					occupied	= false;
 	private Board.FieldTyp			type;
@@ -72,14 +73,51 @@ public class FieldButton extends JButton
 		return fieldNumber;
 	}
 
-	public void setOccupied(final String color)
+	public void setBackground(final String bg)
+	{
+		if (bg != null)
+		{
+			final MediaTracker mt = new MediaTracker(this);
+			img = Toolkit.getDefaultToolkit().getImage(
+					"resource/" + bg + ".png");
+			mt.addImage(icon, 0);
+			try
+			{
+				mt.waitForAll();
+			}
+			catch (final InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void setOccupied(final FigureColor color)
 	{
 		if (color != null)
 		{
 			border = createBorder(Color.RED);
 			final MediaTracker mt = new MediaTracker(this);
+			String colorString = "blue";
+
+			switch (color)
+			{
+				case BLUE:
+					colorString = "blue";
+					break;
+				case GREEN:
+					colorString = "green";
+					break;
+				case RED:
+					colorString = "red";
+					break;
+				case YELLOW:
+					colorString = "yellow";
+					break;
+			}
+
 			icon = Toolkit.getDefaultToolkit().getImage(
-					"resource/" + color + ".png");
+					"resource/" + colorString + ".png");
 			mt.addImage(icon, 0);
 			mycolor = color;
 			occupied = true;
@@ -126,9 +164,10 @@ public class FieldButton extends JButton
 		occupied = false;
 	}
 
-	public boolean needRepaint(final String color)
+	public boolean needRepaint(final FigureColor color)
 	{
-		return (mycolor.equals(color) || reachable || occupied);
+		// return (mycolor == color || reachable || occupied);
+		return true; // TODO
 	}
 
 	class ClickListener extends MouseAdapter

@@ -6,6 +6,7 @@ package sc.plugin2010.renderer.threedimensional;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GraphicsConfiguration;
+import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -288,15 +289,7 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 	@Override
 	public void updateChat(final String chatMsg)
 	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void updateInfos(final int round)
-	{
-		// TODO Auto-generated method stub
-
+		//
 	}
 
 	@Override
@@ -325,5 +318,17 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 
 		/* Frame anzeigen */
 		frame.setVisible(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sc.plugin2010.renderer.Renderer#getImage()
+	 */
+	@Override
+	public Image getImage()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

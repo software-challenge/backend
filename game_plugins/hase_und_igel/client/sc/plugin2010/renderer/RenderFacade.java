@@ -79,8 +79,7 @@ public class RenderFacade
 
 	public Image getImage()
 	{
-		return null;
-
+		return getCurrentRenderer().getImage();
 	}
 
 	private void setCurrentRenderer(final Renderer currentRenderer)

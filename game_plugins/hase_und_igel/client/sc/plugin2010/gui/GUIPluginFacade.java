@@ -58,20 +58,21 @@ public class GUIPluginFacade implements IGuiPlugin
 
 	}
 
+	@Override
 	public String getPluginVersion()
 	{
-		return "0.1 alpha"; // TODO
+		return "1.0"; // TODO
 	}
 
-	public boolean connectToServer(final String ip, final int port)
+	public String getPluginInfoText()
 	{
-		return false; // TODO
+		return "Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.";
 	}
 
-	public IGamePreparation prepareGame(final String ip, final int port, final String replayFilename)
-			throws IOException
+	public IGamePreparation prepareGame(final String ip, final int port,
+			final String replayFilename) throws IOException
 	{
-		//TODO start replay observer
+		// TODO start replay observer
 		Client client = new Client("Hase und Igel", new XStream(), ip, port);
 		client.setHandler(new GameHandler());
 		return new GamePreparation(client);
@@ -88,13 +89,13 @@ public class GUIPluginFacade implements IGuiPlugin
 	public void unload()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void initialize(IGuiPluginHost host)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 }
