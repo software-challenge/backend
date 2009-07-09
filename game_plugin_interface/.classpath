@@ -9,5 +9,6 @@
 	<classpathentry kind="lib" path="lib/logback-classic-0.9.15.jar"/>
 	<classpathentry kind="lib" path="lib/logback-access-0.9.15.jar"/>
 	<classpathentry kind="lib" path="lib/logback-core-0.9.15.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/plugin_loader"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

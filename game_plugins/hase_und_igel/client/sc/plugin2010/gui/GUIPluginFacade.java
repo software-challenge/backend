@@ -5,8 +5,10 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
-import sc.guiplugin.interfaces.IGUIPluginFacade;
+import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGamePreparation;
+import sc.guiplugin.interfaces.IGuiPluginHost;
+import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
 import sc.plugin2010.renderer.RenderFacade;
 
@@ -17,7 +19,7 @@ import com.thoughtworks.xstream.XStream;
  * @author ffi
  * 
  */
-public class GUIPluginFacade implements IGUIPluginFacade
+public class GUIPluginFacade implements IGuiPlugin
 {
 	/**
 	 * Singleton instance
@@ -76,9 +78,23 @@ public class GUIPluginFacade implements IGUIPluginFacade
 	}
 
 	@Override
-	public IGamePreparation loadReplay(String filename)
+	public IObservation loadReplay(String filename)
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void initialize(IGuiPluginHost host)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unload()
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

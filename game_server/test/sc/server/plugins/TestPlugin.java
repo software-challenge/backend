@@ -2,9 +2,10 @@ package sc.server.plugins;
 
 import org.slf4j.Logger;
 
+import edu.cau.plugins.PluginDescriptor;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.PluginDescriptor;
 import sc.api.plugins.host.IGamePluginHost;
 
 @PluginDescriptor(author="Chuck", name="TestPlugin", uuid=TestPlugin.TEST_PLUGIN_UUID)

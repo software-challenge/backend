@@ -1,8 +1,8 @@
 package sc.plugin2010;
 
+import edu.cau.plugins.PluginDescriptor;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.PluginDescriptor;
 import sc.api.plugins.host.IGamePluginHost;
 
 /**

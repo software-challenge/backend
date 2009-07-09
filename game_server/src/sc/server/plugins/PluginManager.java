@@ -16,7 +16,8 @@ import java.util.jar.JarFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.PluginDescriptor;
+import edu.cau.plugins.PluginDescriptor;
+
 import sc.server.Configuration;
 
 /**

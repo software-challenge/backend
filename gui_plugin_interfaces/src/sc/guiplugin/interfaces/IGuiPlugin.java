@@ -5,7 +5,10 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
-public interface IGUIPluginFacade {
+import edu.cau.plugins.IPlugin;
+
+
+public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 
 	/**
 	 * 
@@ -36,8 +39,8 @@ public interface IGUIPluginFacade {
 	 * @return
 	 * @throws IOException
 	 */
-	IGamePreparation prepareGame(final String ip, int port, final String replayFilename)
-			throws IOException;
+	IGamePreparation prepareGame(final String ip, int port,
+			final String replayFilename) throws IOException;
 
 	/**
 	 * Loads the replay given by <code>filename</code>.
@@ -45,5 +48,5 @@ public interface IGUIPluginFacade {
 	 * @param filename
 	 * @return an IGamePreparation instance with an empty list of slots.
 	 */
-	IGamePreparation loadReplay(final String filename);
+	IObservation loadReplay(final String filename);
 }

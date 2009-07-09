@@ -1,7 +1,7 @@
 package sc.server.plugins;
 
-import sc.api.plugins.IPlugin;
-import sc.api.plugins.PluginDescriptor;
+import edu.cau.plugins.IPlugin;
+import edu.cau.plugins.PluginDescriptor;
 
 public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 {

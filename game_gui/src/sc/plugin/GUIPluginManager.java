@@ -1,5 +1,7 @@
 package sc.plugin;
 
+import sc.server.plugins.PluginManager;
+
 public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
 
 	@Override

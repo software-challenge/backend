@@ -6,6 +6,7 @@ package sc.plugin2010.gui;
 import java.util.List;
 
 import sc.guiplugin.interfaces.IGamePreparation;
+import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
 import sc.plugin2010.Client;
 
@@ -22,11 +23,6 @@ public class GamePreparation implements IGamePreparation
 		this.client = client;
 	}
 
-	@Override
-	public void cancel()
-	{
-
-	}
 
 	@Override
 	public List<ISlot> getSlots()
@@ -36,16 +32,9 @@ public class GamePreparation implements IGamePreparation
 	}
 
 	@Override
-	public void pause()
+	public IObservation observe()
 	{
 		// TODO Auto-generated method stub
-
+		return null;
 	}
-
-	@Override
-	public void start()
-	{
-		client.joinAnyGame(); // TODO
-	}
-
 }

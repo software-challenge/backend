@@ -1,5 +1,6 @@
 package sc.api.plugins;
 
+import edu.cau.plugins.IPlugin;
 import sc.api.plugins.host.IGamePluginHost;
 
 public interface IGamePlugin extends IPlugin<IGamePluginHost>
