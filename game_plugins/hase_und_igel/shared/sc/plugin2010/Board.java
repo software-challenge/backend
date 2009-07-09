@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.plugin2010.Player.Action;
 import sc.plugin2010.util.GameUtil;
 
 /**
@@ -167,11 +168,6 @@ public class Board
 		players.add(player);
 	}
 
-	protected void addPlayers(final Player[] players)
-	{
-		this.players.addAll(Arrays.asList(players));
-	}
-
 	/**
 	 * Überprüft ob ein Feld durch einen anderen Spieler belegt ist.
 	 * 
@@ -287,17 +283,67 @@ public class Board
 			}
 			case PLAY_CARD:
 			{
-				// TODO implement
+				if (move.getN() >= 0
+						&& move.getN() < player.getActions().size())
+				{
+					Action action = player.getActions().get(move.getN());
+					switch (action)
+					{
+						case EAT_SALAD:
+							valid = valid && player.getSaladsToEat() > 0;
+							break;
+						case FALL_BACK:
+							valid = valid && isFirst(player);
+							for (final Player o : players)
+							{
+								if (!o.equals(player))
+								{
+									valid = valid && o.getPosition() != 0;
+									int previousHedgehog = getPreviousFieldByTyp(
+											FieldTyp.HEDGEHOG, o.getPosition());
+									valid = valid
+											&& ((o.getPosition() - previousHedgehog) != 1);
+								}
+							}
+							break;
+						case HURRY_AHEAD:
+							valid = valid && !isFirst(player);
+							for (final Player o : players)
+							{
+								if (!o.equals(player))
+								{
+									valid = valid && o.getPosition() != 64;
+									int nextHedgehog = getNextFieldByTyp(
+											FieldTyp.HEDGEHOG, o.getPosition());
+									valid = valid
+											&& ((nextHedgehog - o.getPosition()) != 1);
+
+									if (o.getPosition() == 63)
+									{
+										valid = valid && canEnterGoal(player);
+									}
+								}
+							}
+							break;
+					}
+				}
+				else
+				{
+					valid = false;
+				}
 				// TODO tests!
 			}
+				break;
+			default:
+				valid = false;
 				break;
 		}
 		return valid;
 	}
 
 	/**
-	 * Findet das nächste Spielfeld vom Typ <code>field</code> beginnend an Position
-	 * <code>pos</code> auf diesem Spielbrett.
+	 * Findet das nächste Spielfeld vom Typ <code>field</code> beginnend an
+	 * Position <code>pos</code> auf diesem Spielbrett.
 	 * 
 	 * @param field
 	 * @param pos
@@ -334,5 +380,27 @@ public class Board
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Überprüft ob der angegebene Spieler an erster Stelle ist
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public final boolean isFirst(final Player player)
+	{
+		boolean isFirst = true;
+		for (final Player o : players)
+		{
+			isFirst = isFirst && o.getPosition() <= player.getPosition();
+		}
+		return isFirst;
+	}
+
+	public final boolean canEnterGoal(final Player player)
+	{
+		return player.getCarrotsAvailable() <= 10
+				&& player.getSaladsToEat() == 0;
 	}
 }

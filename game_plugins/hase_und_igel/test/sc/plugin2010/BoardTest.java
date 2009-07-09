@@ -60,6 +60,89 @@ public class BoardTest
 
 	/**
 	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf das
+	 * Ausspielen einer Karte
+	 */
+	@Test
+	public void testIsValidToPlayCard()
+	{
+		Board b = Board.create();
+		Player p = new Player(FigureColor.RED);
+		b.addPlayer(p);
+
+		// 0 - Action.DROP_20_CARROTS
+		// 1 - Action.TAKE_20_CARROTS
+		// 2 - Action.EAT_SALAD
+		// 3 - Action.HURRY_AHEAD
+		// 4 - Action.FALL_BACK
+
+		// Ausspielen einer Karte, die nicht auf der Hand ist
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, -1), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, 6), p));
+
+		// "Friß sofort einen Salat"
+		// == 0 Salate
+		p.setSaladsToEat(0);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, 2), p));
+
+		// > 0 Salate
+		p.setSaladsToEat(1);
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, 2), p));
+
+		// "Falle Zurück"-Karte
+		// anderer Spieler am Start
+		Player p2 = new Player(FigureColor.BLUE);
+		b.addPlayer(p2);
+		p.setPosition(5);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, 4), p));
+
+		// anderer Spieler auf 1. Feld
+		p2.setPosition(1);
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, 4), p));
+
+		// anderer Spieler direkt hinter Igelfeld
+		p2.setPosition(12);
+		p.setPosition(14);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, 4), p));
+
+		// anderer Spieler weiter hinter Igelfeld
+		p2.setPosition(13);
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, 4), p));
+		
+		
+		// "Rücke vor"-Karte
+		// als erster
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD,3), p));
+
+		// als zweiter, erster im Ziel
+		p.setPosition(64);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, 3), p2));
+		
+		// als zweiter, erster vor Igelfeld
+		p.setPosition(14);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, 3), p2));
+		
+		// anderer direkt vorm Ziel, mehr als 10 Karotten, 0 Salaten
+		p2.setCarrotsAvailable(11);
+		p2.setSaladsToEat(0);
+		p.setPosition(63);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD,3), p2));
+		
+		// anderer direkt vorm Ziel, mehr als 10 Karotten, mehr als 0 Salate
+		p2.setSaladsToEat(1);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD,3), p2));
+		
+		// anderer direkt vorm Ziel, weniger als oder genau 10 Karotten, 0 Salate
+		p2.setCarrotsAvailable(10);
+		p2.setSaladsToEat(0);
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD,3), p2));
+		
+		// anderer direkt vorm Ziel, weniger als oder genau 10 Karotten, mehr als 0 Salate
+		p2.setSaladsToEat(1);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD,3), p2));
+	}
+
+	/**
+	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf das
 	 * Zurückfallen.
 	 */
 	@Test
@@ -68,15 +151,15 @@ public class BoardTest
 		Board b = Board.create();
 		Player p = new Player(FigureColor.RED);
 		b.addPlayer(p);
-		
+
 		// Fallback vom Start (es gibt keinen Igel dahinter!)
 		p.setPosition(0);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.FALL_BACK), p));
-		
+
 		// Fallback auf freies Igelfeld
 		p.setPosition(12);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.FALL_BACK), p));
-		
+
 		// Fallback auf besetzes Igelfeld
 		Player p2 = new Player(FigureColor.BLUE);
 		p2.setPosition(11);
@@ -225,5 +308,49 @@ public class BoardTest
 
 		for (int i = 0; i < 65; i++)
 			Assert.assertNotSame(FieldTyp.INVALID, b.getTypeAt(i));
+	}
+
+	/**
+	 * Überprüft die <code>getNextFieldByTyp()</code>-Methode des Spielbretts
+	 */
+	@Test
+	public void testGetNextFieldByTyp()
+	{
+		Board b = Board.create();
+		Assert.assertNotSame(-1, b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0));
+		Assert.assertEquals(-1, b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 63));
+	}
+
+	/**
+	 * Überprüft die <code>getPreviousFieldByTyp()</code>-Methode des
+	 * Spielbretts
+	 */
+	@Test
+	public void testGetPreviousFieldByTyp()
+	{
+		Board b = Board.create();
+		Assert
+				.assertNotSame(-1, b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
+						12));
+		Assert.assertEquals(-1, b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, 11));
+	}
+
+	/**
+	 * Überprüft die <code>isFirst()</code>-Methode des Spielbretts
+	 */
+	@Test
+	public void testIsFirstPlayer()
+	{
+		Board b = Board.create();
+		Player p1 = new Player(FigureColor.RED);
+		p1.setPosition(10);
+		b.addPlayer(p1);
+
+		Player p2 = new Player(FigureColor.BLUE);
+		p2.setPosition(5);
+		b.addPlayer(p2);
+
+		Assert.assertTrue(b.isFirst(p1));
+		Assert.assertFalse(b.isFirst(p2));
 	}
 }
