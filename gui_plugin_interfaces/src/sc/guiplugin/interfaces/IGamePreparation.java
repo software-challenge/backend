@@ -7,4 +7,7 @@ public interface IGamePreparation {
 	List<ISlot> getSlots();
 	
 	IObservation observe();
+	
+	void addReadyListener(IReadyListener listener);
+	void removeReadyListener(IReadyListener listener);
 }
