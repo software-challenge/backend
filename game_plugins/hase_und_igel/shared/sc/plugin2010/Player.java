@@ -105,7 +105,7 @@ public class Player extends SimplePlayer
 	{
 		position = p;
 		color = c;
-		carrots = 60;
+		carrots = 68;
 		suspended = false;
 	}
 

@@ -20,8 +20,11 @@ public class Board
 	{
 		/**
 		 * Zahl- und Flaggenfelder
+		 * Die veränderten Spielregeln sehen nur noch die Felder 1,2 vor. 
+		 * Die Positionsfelder 3 und 4 wurden in Möhrenfelder umgewandelt,
+		 * und (1,5,6) sind jetzt Position-1-Felder.
 		 */
-		POSITION_1, POSITION_2, POSITION_3, POSITION_4, POSITION_5, POSITION_6,
+		POSITION_1, POSITION_2,
 		/**
 		 * Igelfeld
 		 */

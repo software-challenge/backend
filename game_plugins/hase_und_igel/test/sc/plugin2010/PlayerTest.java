@@ -25,6 +25,6 @@ public class PlayerTest
 		Assert.assertEquals(FigureColor.WHITE, p.getColor());
 		Assert.assertEquals(0, p.getPosition());
 		Assert.assertEquals(0, p.getSaladsEaten());
-		Assert.assertEquals(60, p.getCarrotsAvailable());
+		Assert.assertEquals(68, p.getCarrotsAvailable());
 	}
 }
