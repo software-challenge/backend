@@ -27,6 +27,9 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
 import sc.gui.PresentationFacade;
+import sc.plugin.GUIPluginInstance;
+import sc.plugin.GUIPluginManager;
+import sc.server.plugins.GamePluginManager;
 
 @SuppressWarnings("serial")
 public class CreateGameDialog extends JDialog {
@@ -40,10 +43,16 @@ public class CreateGameDialog extends JDialog {
 	private JTextField txfPort;
 	private JTextField txfFile;
 
+	private GUIPluginManager pluginManager;
+
 	private final ResourceBundle lang;
 
 	public CreateGameDialog(JFrame frame) {
 		super();
+		
+		pluginManager = new GUIPluginManager();
+		pluginManager.reload();
+		
 		this.presFac = PresentationFacade.getInstance();
 		this.lang = presFac.getLanguageData();
 		createGUI(frame);
@@ -98,7 +107,8 @@ public class CreateGameDialog extends JDialog {
 		loadPlugins(pluginModel);
 
 		// Buttons
-		JButton addButton = new JButton(lang.getString("dialog_create_add_client"));
+		JButton addButton = new JButton(lang
+				.getString("dialog_create_add_client"));
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -110,7 +120,8 @@ public class CreateGameDialog extends JDialog {
 			}
 		});
 
-		JButton addHumanButton = new JButton(lang.getString("dialog_create_add_human"));
+		JButton addHumanButton = new JButton(lang
+				.getString("dialog_create_add_human"));
 		addHumanButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -160,7 +171,8 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang.getString("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang
+				.getString("dialog_create_cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -223,10 +235,12 @@ public class CreateGameDialog extends JDialog {
 	}
 
 	private void loadPlugins(DefaultTableModel pluginModel) {
-		for () {
+		System.out.println("Loading Plugins...");
+		for (GUIPluginInstance plugin : pluginManager.getAvailablePlugins()) {
 			Vector<String> rowData = new Vector<String>();
-			rowData.add(p.getName());
+			rowData.add(plugin.getDescription().name());
 			pluginModel.addRow(rowData);
+			System.out.println("Loaded " + plugin.getDescription().name());
 		}
 	}
 

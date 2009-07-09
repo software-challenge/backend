@@ -6,8 +6,11 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import sc.gui.PresentationFacade;
+import sc.logic.GUIConfiguration;
 import sc.logic.LogicFacade;
 
 /**
@@ -48,7 +51,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		// this.add(presFac.getStatusBar());
 
 		// set window preferences
-		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		this
+				.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle("Server GUI");
 		// this.setIconImage(new
 		// ImageIcon(getClass().getResource(presFac.getClientIcon
@@ -80,11 +84,32 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 *            nothing expected
 	 */
 	public static void main(String[] args) {
+		if(args.length > 0)
+		{
+			System.out.println("Setting Pluginfolder to " +args[0]);
+			GUIConfiguration.setPluginFolder(args[0]);
+		}
+		setSystemLookAndFeel();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				new SoftwareChallengeGUI().setVisible(true);
 			}
 		});
+	}
+
+	private static void setSystemLookAndFeel() {
+		try {
+			// Set System L&F
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (UnsupportedLookAndFeelException e) {
+			// handle exception
+		} catch (ClassNotFoundException e) {
+			// handle exception
+		} catch (InstantiationException e) {
+			// handle exception
+		} catch (IllegalAccessException e) {
+			// handle exception
+		}
 	}
 
 }

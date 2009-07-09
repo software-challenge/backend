@@ -38,8 +38,8 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 	private static final Class<? extends Annotation>	PLUGIN_ANNOTATION			= PluginDescriptor.class;
 
-	private Collection<PluginInstanceType>				availablePlugins			= new LinkedList<PluginInstanceType>();
-	private Collection<PluginInstanceType>				activePlugins				= new LinkedList<PluginInstanceType>();
+	private final Collection<PluginInstanceType>		availablePlugins			= new LinkedList<PluginInstanceType>();
+	private final Collection<PluginInstanceType>		activePlugins				= new LinkedList<PluginInstanceType>();
 
 	public synchronized void reload()
 	{
