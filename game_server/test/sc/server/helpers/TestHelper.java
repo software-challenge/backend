@@ -4,16 +4,16 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
 
-import sc.helpers.Action;
+import sc.helpers.Generator;
 
 public class TestHelper
 {
-	public static <T> boolean waitUntilEqual(T expected, Action<T> action)
+	public static <T> boolean waitUntilEqual(T expected, Generator<T> action)
 	{
 		return waitUntilEqual(expected, action, 1, TimeUnit.SECONDS);
 	}
 
-	public static <T> boolean waitUntilEqual(T expected, Action<T> action,
+	public static <T> boolean waitUntilEqual(T expected, Generator<T> action,
 			long maxDuration, TimeUnit unit)
 	{
 		long timeout = System.currentTimeMillis() + unit.toMillis(maxDuration);
@@ -32,7 +32,7 @@ public class TestHelper
 	}
 
 	public static <T> void assertEqualsWithTimeout(T expected,
-			Action<T> action, long maxDuration, TimeUnit unit)
+			Generator<T> action, long maxDuration, TimeUnit unit)
 	{
 		waitUntilEqual(expected, action, maxDuration, unit);
 		Assert.assertEquals(expected, action.operate());

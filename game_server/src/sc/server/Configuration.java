@@ -10,9 +10,10 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.helpers.PerspectiveAwareConverter;
 import sc.helpers.RuntimeJarLoader;
 import sc.protocol.LobbyProtocol;
+import sc.server.network.PerspectiveAwareConverter;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.core.JVM;
 

@@ -10,9 +10,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.helpers.IAsyncResult;
 import sc.networking.TcpNetwork;
+import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.responses.GamePrepared;
 import sc.protocol.responses.JoinedGame;
 import sc.protocol.responses.RoomLeft;
 
@@ -26,7 +30,7 @@ import com.thoughtworks.xstream.XStream;
  */
 public abstract class LobbyClient extends XStreamClient
 {
-	final String						gameType;
+	protected final String				defaultGameType;
 	private static final Logger			logger	= LoggerFactory
 														.getLogger(LobbyClient.class);
 	private static final List<String>	rooms	= new LinkedList<String>();
@@ -36,7 +40,7 @@ public abstract class LobbyClient extends XStreamClient
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
 		prepareXStream(xstream);
-		this.gameType = gameType;
+		this.defaultGameType = gameType;
 	}
 
 	private void prepareXStream(XStream xStream)
@@ -65,6 +69,11 @@ public abstract class LobbyClient extends XStreamClient
 				onRoomMessage(packet.getRoomId(), packet.getData());
 			}
 		}
+		else if (o instanceof GamePrepared)
+		{
+			GamePrepared preparation = (GamePrepared) o;
+			onGamePrepared(preparation.getGameId());
+		}
 		else if (o instanceof JoinedGame)
 		{
 			rooms.add(((JoinedGame) o).getRoomId());
@@ -83,8 +92,33 @@ public abstract class LobbyClient extends XStreamClient
 		}
 		else
 		{
-			logger.warn("Couldn't process message {}.", o);
+			onCustomObject(o);
 		}
+	}
+
+	protected void onGamePrepared(String gameId)
+	{
+		// can be overridden
+	}
+
+	public void authenticate(String password)
+	{
+		send(new AuthenticateRequest(password));
+	}
+
+	public void observeGame(String gameId, String passphrase)
+	{
+		send(new ObservationRequest(gameId, passphrase));
+	}
+
+	public void prepareGame(String gameType, int playerCount)
+	{
+		send(new PrepareGameRequest(gameType, playerCount));
+	}
+
+	protected void onCustomObject(Object o)
+	{
+		logger.warn("Couldn't process message {}.", o);
 	}
 
 	protected abstract void onNewState(String roomId, Object state);
@@ -96,6 +130,10 @@ public abstract class LobbyClient extends XStreamClient
 		this.send(new RoomPacket(roomId, o));
 	}
 
+	protected abstract void onRoomMessage(String roomId, Object data);
+
+	protected abstract Collection<Class<? extends Object>> getProtocolClasses();
+
 	public void joinPreparedGame(String reservation)
 	{
 		this.send(new JoinPreparedRoomRequest(reservation));
@@ -103,10 +141,6 @@ public abstract class LobbyClient extends XStreamClient
 
 	public void joinAnyGame()
 	{
-		this.send(new JoinRoomRequest(this.gameType));
+		this.send(new JoinRoomRequest(this.defaultGameType));
 	}
-
-	protected abstract void onRoomMessage(String roomId, Object data);
-
-	protected abstract Collection<Class<? extends Object>> getProtocolClasses();
 }

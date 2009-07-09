@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 
-import sc.helpers.Action;
+import sc.helpers.Generator;
 import sc.server.Configuration;
 import sc.server.Lobby;
 import sc.server.gaming.GameRoomManager;
@@ -60,7 +60,7 @@ public abstract class RealServerTest
 
 	protected void waitForConnect(int count)
 	{
-		TestHelper.assertEqualsWithTimeout(count, new Action<Integer>() {
+		TestHelper.assertEqualsWithTimeout(count, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{

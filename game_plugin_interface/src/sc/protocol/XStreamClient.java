@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.XStreamException;
 
 public abstract class XStreamClient
 {
-	static Logger						logger			= LoggerFactory
+	private static Logger				logger			= LoggerFactory
 																.getLogger(XStreamClient.class);
 	protected final INetworkInterface	networkInterface;
 	private final ObjectOutputStream	out;
@@ -55,10 +55,13 @@ public abstract class XStreamClient
 		this.out = xstream.createObjectOutputStream(networkInterface
 				.getOutputStream(), "protocol");
 		this.thread = new Thread(new Runnable() {
+			private Logger	threadLogger	= LoggerFactory
+											.getLogger(XStreamClient.class);
 
 			@Override
 			public void run()
 			{
+
 				try
 				{
 					XStreamClient.this.in = xstream
@@ -83,7 +86,7 @@ public abstract class XStreamClient
 				catch (ClassNotFoundException e)
 				{
 					onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-					logger
+					this.threadLogger
 							.error(
 									"Client violated against the protocol (ClassNotFound).",
 									e);
@@ -91,11 +94,11 @@ public abstract class XStreamClient
 				catch (XStreamException e)
 				{
 					onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-					logger.error("Client violated against the protocol.", e);
+					this.threadLogger.error("Client violated against the protocol.", e);
 				}
 				catch (Exception e)
 				{
-					logger.error(
+					this.threadLogger.error(
 							"An error occured while trying to read an object.",
 							e);
 					onDisconnect(DisconnectCause.UNKNOWN);
@@ -132,11 +135,11 @@ public abstract class XStreamClient
 	public void send(Object o)
 	{
 		logger.debug("Sending {} via {}", o, this.networkInterface);
-		
+
 		try
 		{
 			logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-			//this.xStream.toXML(o, this.networkInterface.getOutputStream());
+			// this.xStream.toXML(o, this.networkInterface.getOutputStream());
 			this.out.writeObject(o);
 			this.out.flush();
 		}

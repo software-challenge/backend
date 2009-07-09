@@ -6,14 +6,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import com.thoughtworks.xstream.XStream;
-
-import sc.helpers.Action;
+import sc.helpers.Generator;
 import sc.protocol.ErrorResponse;
 import sc.protocol.LobbyClient;
 import sc.server.Configuration;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
+
+import com.thoughtworks.xstream.XStream;
 
 public class SampleLibraryTest extends RealServerTest
 {
@@ -23,12 +23,6 @@ public class SampleLibraryTest extends RealServerTest
 				int port) throws IOException
 		{
 			super(gameType, xstream, host, port);
-		}
-
-		@Override
-		protected void onRoomMessage(String roomId, Object data)
-		{
-			// TODO Auto-generated method stub
 		}
 
 		@Override
@@ -51,6 +45,15 @@ public class SampleLibraryTest extends RealServerTest
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		protected void onRoomMessage(String roomId, Object data)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		
 	}
 
 	@Test
@@ -62,7 +65,7 @@ public class SampleLibraryTest extends RealServerTest
 
 		client.joinAnyGame();
 
-		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{
@@ -80,7 +83,7 @@ public class SampleLibraryTest extends RealServerTest
 
 		client.joinAnyGame();
 
-		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{

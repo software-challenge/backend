@@ -1,4 +1,4 @@
-package sc.helpers;
+package sc.server.network;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -63,7 +63,7 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 		final Map defaultFieldDefinition = new HashMap();
 
 		// Attributes might be preferred to child elements ...
-		reflectionProvider.visitSerializableFields(source,
+		this.reflectionProvider.visitSerializableFields(source,
 				new ReflectionProvider.Visitor() {
 					public void visit(String fieldName, Class type,
 							Class definedIn, Object value)

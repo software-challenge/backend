@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import sc.helpers.Action;
+import sc.helpers.Generator;
 import sc.protocol.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.server.Configuration;
@@ -33,7 +33,7 @@ public class ConnectionTest extends RealServerTest
 		waitForConnect(1);
 
 		client.send(new JoinRoomRequest(TestPlugin.TEST_PLUGIN_UUID));
-		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{
@@ -52,7 +52,7 @@ public class ConnectionTest extends RealServerTest
 		client.sendCustomData("<>/I-do/>NOT<CARE".getBytes("utf-8"));
 
 		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-				new Action<DisconnectCause>() {
+				new Generator<DisconnectCause>() {
 					@Override
 					public DisconnectCause operate()
 					{
@@ -70,7 +70,7 @@ public class ConnectionTest extends RealServerTest
 			InterruptedException
 	{
 		TestTcpClient client = connectClient();
-		TestHelper.assertEqualsWithTimeout(1, new Action<Integer>() {
+		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{
@@ -83,7 +83,7 @@ public class ConnectionTest extends RealServerTest
 		});
 
 		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
-				new Action<DisconnectCause>() {
+				new Generator<DisconnectCause>() {
 					@Override
 					public DisconnectCause operate()
 					{

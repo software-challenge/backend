@@ -1,6 +1,6 @@
 package sc.helpers;
 
-public interface Action<TO>
+public interface Generator<TO>
 {
 	TO operate();
 }
