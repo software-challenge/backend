@@ -100,57 +100,48 @@ public class Board
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.SALAD);
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT }));
 		Collections.shuffle(segment);
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.POSITION_1,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.POSITION_2 }));
-		for (int i = 0; i < 2; i++)
-		{
-			track.add(segment.remove((int) (Math.random() * segment.size())));
-		}
+		Collections.shuffle(segment);
+		track.add(segment.remove(0));
+		track.add(segment.remove(0));
 		track.add(FieldTyp.SALAD);
 		track.add(segment.remove(0));
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.CARROT, FieldTyp.CARROT,
 				FieldTyp.POSITION_2 }));
 		Collections.shuffle(segment);
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.POSITION_1, FieldTyp.CARROT, FieldTyp.RABBIT,
 				FieldTyp.POSITION_2, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.RABBIT, FieldTyp.CARROT, FieldTyp.POSITION_2 }));
 		Collections.shuffle(segment);
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.SALAD);
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.CARROT,
 				FieldTyp.CARROT, FieldTyp.RABBIT, FieldTyp.POSITION_2,
 				FieldTyp.POSITION_1, FieldTyp.CARROT }));
 		Collections.shuffle(segment);
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.POSITION_2, FieldTyp.CARROT,
 				FieldTyp.CARROT }));
@@ -158,7 +149,6 @@ public class Board
 		track.addAll(segment); segment.clear();
 		track.add(FieldTyp.HEDGEHOG);
 		track.add(FieldTyp.SALAD);
-		assert segment.size() == 0;
 		segment.addAll(Arrays.asList(new FieldTyp[] { FieldTyp.RABBIT,
 				FieldTyp.CARROT, FieldTyp.POSITION_1, FieldTyp.CARROT,
 				FieldTyp.RABBIT, FieldTyp.CARROT }));
