@@ -18,7 +18,7 @@ public class GameHandler implements IGameHandler
 	@Override
 	public void onUpdate(BoardUpdated bu)
 	{
-		RenderFacade.getInstance().updateBoard(bu.getBoard());
+		RenderFacade.getInstance().updateBoard(bu);
 	}
 
 	@Override

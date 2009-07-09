@@ -48,7 +48,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public void setRenderContext(JPanel panel, boolean threeDimensional)
 	{
-		RenderFacade.getInstance().createInitFrame(panel, threeDimensional);
+		RenderFacade.getInstance().setRenderContext(panel, threeDimensional);
 	}
 
 	@Override
@@ -96,6 +96,5 @@ public class GUIPluginFacade implements IGuiPlugin
 	public void initialize(IGuiPluginHost host)
 	{
 		// TODO Auto-generated method stub
-
 	}
 }

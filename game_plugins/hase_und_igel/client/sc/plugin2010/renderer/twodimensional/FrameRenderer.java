@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.renderer.Renderer;
@@ -31,6 +32,7 @@ import sc.plugin2010.util.GameUtil;
 @SuppressWarnings("serial")
 public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 {
+
 	// GUI Components
 	private InformationBar			info;
 	private ChatBar					chat;
@@ -66,6 +68,8 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		this.setSize(800, 600);
 
+		setTitle("Hase und Igel");
+
 		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
 		final int MAXROW = 8;
@@ -81,7 +85,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		bg.setLayout(paneLayout);
 
-		info = new InformationBar(true);
+		info = new InformationBar();
 		// chat = new ChatBar();
 		actionb = new ActionBar();
 		final ScrollPane action = new ScrollPane();
@@ -154,7 +158,6 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 			}
 
 			info.setCarrots(player.getCarrotsAvailable());
-			// TODO update roundcounter
 		}
 		else
 		{
@@ -163,9 +166,11 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	}
 
 	@Override
-	public void updateBoard(final Board bo)
+	public void updateBoard(BoardUpdated bu)
 	{
-		board = bo;
+		board = bu.getBoard();
+
+		info.setTurn(bu.getRound());
 
 		if (!boardWasCreated)
 		{

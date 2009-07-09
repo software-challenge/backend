@@ -5,7 +5,7 @@ package sc.plugin2010.renderer;
 
 import java.awt.Image;
 
-import sc.plugin2010.Board;
+import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Player;
 
 /**
@@ -16,7 +16,7 @@ public interface Renderer
 {
 	void updatePlayer(Player player, boolean own);
 
-	void updateBoard(Board bo);
+	void updateBoard(BoardUpdated bu);
 
 	void updateAction(String doneAction);
 

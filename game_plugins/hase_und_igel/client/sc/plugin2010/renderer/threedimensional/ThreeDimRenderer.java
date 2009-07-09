@@ -35,7 +35,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import sc.plugin2010.Board;
+import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Player;
 import sc.plugin2010.renderer.Renderer;
 
@@ -280,7 +280,7 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 	}
 
 	@Override
-	public void updateBoard(final Board bo)
+	public void updateBoard(BoardUpdated bu)
 	{
 		// TODO Auto-generated method stub
 
