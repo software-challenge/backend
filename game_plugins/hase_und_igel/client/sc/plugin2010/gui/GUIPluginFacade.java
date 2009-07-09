@@ -66,11 +66,19 @@ public class GUIPluginFacade implements IGUIPluginFacade
 		return false; // TODO
 	}
 
-	public IGamePreparation prepareGame(final String ip, final int port)
+	public IGamePreparation prepareGame(final String ip, final int port, final String replayFilename)
 			throws IOException
 	{
+		//TODO start replay observer
 		Client client = new Client("Hase und Igel", new XStream(), ip, port);
 		client.setHandler(new GameHandler());
 		return new GamePreparation(client);
+	}
+
+	@Override
+	public IGamePreparation loadReplay(String filename)
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

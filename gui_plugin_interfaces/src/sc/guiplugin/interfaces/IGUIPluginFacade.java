@@ -8,11 +8,13 @@ import javax.swing.JPanel;
 public interface IGUIPluginFacade {
 
 	/**
+	 * 
 	 * sets the rendercontext. So that the game can be displayed on
 	 * <code>panel</code>.
 	 * 
 	 * @param panel
 	 *            JPanel instance on which the game should display
+	 * @param threeDimensional
 	 */
 	void setRenderContext(JPanel panel, boolean threeDimensional);
 
@@ -26,6 +28,22 @@ public interface IGUIPluginFacade {
 
 	String getPluginVersion();
 
-	IGamePreparation prepareGame(String ip, int port) throws IOException;
+	/**
+	 * 
+	 * @param ip
+	 * @param port
+	 * @param replayFilename
+	 * @return
+	 * @throws IOException
+	 */
+	IGamePreparation prepareGame(final String ip, int port, final String replayFilename)
+			throws IOException;
 
+	/**
+	 * Loads the replay given by <code>filename</code>.
+	 * 
+	 * @param filename
+	 * @return an IGamePreparation instance with an empty list of slots.
+	 */
+	IGamePreparation loadReplay(final String filename);
 }

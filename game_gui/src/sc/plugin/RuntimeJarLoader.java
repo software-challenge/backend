@@ -1,4 +1,4 @@
-package sc.helpers;
+package sc.plugin;
 
 import java.net.URL;
 import java.net.URLClassLoader;
