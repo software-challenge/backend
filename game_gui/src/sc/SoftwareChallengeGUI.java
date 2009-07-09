@@ -5,10 +5,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
-import sc.common.PresentationFacade;
+import sc.gui.PresentationFacade;
+import sc.logic.LogicFacade;
 
 /**
  * The executable application of the Software Challenge GUI.
@@ -22,14 +22,17 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	/**
 	 * The presentation facade to be used
 	 */
-	private final IPresentationFacade presFac;
+	private final PresentationFacade presFac;
 
 	/**
 	 * Constructs a new Software Challenge GUI
 	 */
 	public SoftwareChallengeGUI() {
 		super();
-		this.presFac = new PresentationFacade(this);
+		// get logic facade
+		LogicFacade logicFac = LogicFacade.getInstance();
+		// get presentation facade
+		this.presFac = PresentationFacade.init(this, this, logicFac);
 		createGUI();
 	}
 

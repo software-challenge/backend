@@ -1,4 +1,4 @@
-package sc.testrange;
+package sc.gui.dialogs;
 
 import javax.swing.JFrame;
 

@@ -1,4 +1,4 @@
-package sc.contextframe;
+package sc.gui.dialogs;
 
 import java.awt.CardLayout;
 

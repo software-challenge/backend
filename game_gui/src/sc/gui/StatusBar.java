@@ -1,4 +1,4 @@
-package sc.common;
+package sc.gui;
 
 import javax.swing.JPanel;
 
