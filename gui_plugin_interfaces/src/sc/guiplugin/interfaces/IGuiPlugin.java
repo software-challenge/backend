@@ -31,6 +31,14 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	String getPluginVersion();
 
 	/**
+	 * Returns the statistics information descriptions, e.g. "Eisschollen" or
+	 * "Brücken"
+	 * 
+	 * @return the statistics information descriptions
+	 */
+	String[] getStatisticsInfo();
+
+	/**
 	 * 
 	 * @param ip
 	 * @param port
