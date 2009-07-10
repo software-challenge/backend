@@ -69,7 +69,8 @@ public class GUIPluginFacade implements IGuiPlugin
 		return "Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.";
 	}
 
-	public IGamePreparation prepareGame(final String ip, final int port, String filename) throws IOException
+	public IGamePreparation prepareGame(final String ip, final int port,
+			String filename) throws IOException
 	{
 		Client client = new Client("Hase und Igel", new XStream(), ip, port);
 		client.setHandler(new GameHandler());
@@ -94,5 +95,30 @@ public class GUIPluginFacade implements IGuiPlugin
 	public void initialize(IGuiPluginHost host)
 	{
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public String[] getStatisticsInfo()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getMinimalPlayerCount()
+	{
+		return 2;
+	}
+
+	@Override
+	public int getMaximalPlayerCount()
+	{
+		return 2;
+	}
+
+	@Override
+	public int getPluginYear()
+	{
+		return 2010;
 	}
 }

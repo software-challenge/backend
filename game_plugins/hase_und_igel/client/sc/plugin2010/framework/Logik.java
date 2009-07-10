@@ -17,7 +17,7 @@ public class Logik implements IGameHandler
 
 	public Logik(IGameUpdateObserver obs)
 	{
-
+		this.obs = obs;
 	}
 
 	@Override

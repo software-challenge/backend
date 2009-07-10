@@ -1,6 +1,8 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.BoardUpdated;
+import sc.plugin2010.Player;
 
 /**
  * @author ffi
@@ -10,9 +12,22 @@ public class Spielbrett
 {
 	private Board	brett;
 
+	private int		runde;
+
 	public Spielbrett()
 	{
 
+	}
+
+	/**
+	 * interne Methode um das Spielbrett zu aktualisieren
+	 * 
+	 * @param board
+	 */
+	public void update(BoardUpdated bu)
+	{
+		brett = bu.getBoard();
+		runde = bu.getRound();
 	}
 
 	public SpielfeldTyp holeSpielfeldType(final int feldNummer)
@@ -37,9 +52,9 @@ public class Spielbrett
 				return SpielfeldTyp.ZIEL;
 			case START:
 				return SpielfeldTyp.START;
+			default:
+				return SpielfeldTyp.INVALIDE;
 		}
-
-		return null;
 	}
 
 	public boolean istSpielfeldBesetzt(final int feldNummer)
@@ -47,9 +62,21 @@ public class Spielbrett
 		return (brett.getPlayerAt(feldNummer) != null);
 	}
 
-	public Spieler werStehtAufFeld(final int feldNummer)
+	public boolean stehtGegnerAufFeld(final int feldNummer, Gegner gegner)
 	{
-		// return brett.getPlayerAt(feldNummer); // TODO
-		return null;
+		if (brett.getPlayerAt(feldNummer).getColor() == Player.FigureColor.BLUE
+				&& gegner.holeFarbe() == Farbe.BLAU)
+		{ // TODO
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	public int holeRunde()
+	{
+		return runde;
 	}
 }

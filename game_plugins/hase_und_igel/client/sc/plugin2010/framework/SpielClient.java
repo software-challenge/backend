@@ -5,8 +5,9 @@ package sc.plugin2010.framework;
 
 import java.io.IOException;
 
-import sc.plugin2010.Board;
+import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Client;
+import sc.plugin2010.PlayerUpdated;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -16,6 +17,9 @@ import com.thoughtworks.xstream.XStream;
  */
 public abstract class SpielClient implements IGameUpdateObserver
 {
+	private Spielbrett	spielbrett;
+	private Spieler		spieler;
+	private Gegner		gegner;
 
 	public SpielClient(String ip, int port)
 	{
@@ -34,9 +38,13 @@ public abstract class SpielClient implements IGameUpdateObserver
 	}
 
 	@Override
-	public void spiellbrettAktualisiert(Board board)
+	public void spiellbrettAktualisiert(BoardUpdated bu)
 	{
-		// TODO Auto-generated method stub
+		spielbrett.update(bu);
+	}
 
+	public void spielerAktualisiert(PlayerUpdated pu)
+	{
+		spieler.update(pu);
 	}
 }

@@ -4,6 +4,7 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Player;
+import sc.plugin2010.PlayerUpdated;
 
 /**
  * @author ffi
@@ -31,19 +32,31 @@ public class Spieler
 
 	}
 
+	public boolean mussNaechsteRundeAussetzen()
+	{
+		return player.isSuspended();
+	}
+
 	public int holeKarottenAnzahl()
 	{
 		return player.getCarrotsAvailable();
 	}
 
-	public int holeSpielerNummer()
+	public Farbe holeSpielerFarbe()
 	{
-		return 0; // TODO
+		if (player.getColor() == Player.FigureColor.BLUE)
+		{
+			return Farbe.BLAU;
+		}
+		else
+		{
+			return Farbe.ROT;
+		}
 	}
 
-	public int holeAktuellesFeld()
+	public int holeFeldnummer()
 	{
-		return player.getPosition(); // TODO
+		return player.getPosition();
 	}
 
 	public void setzeFigur(final int feldNummer)
@@ -71,8 +84,12 @@ public class Spieler
 
 	}
 
-	public HasenKarte holeNeusteHasenKarte() // TODO
+	/**
+	 * @param pu
+	 */
+	public void update(PlayerUpdated pu)
 	{
-		return HasenKarte.FRISS_SALAT;
+		// TODO Auto-generated method stub
+
 	}
 }

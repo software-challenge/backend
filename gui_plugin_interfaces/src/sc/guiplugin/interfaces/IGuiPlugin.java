@@ -72,9 +72,17 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	int getMinimalPlayerCount();
 
 	/**
-	 * Returns the year when the plugin has been played.
+	 * Returns the year when the plugin has been played. SC2010 without SC for
+	 * example
 	 * 
 	 * @return
 	 */
 	int getPluginYear();
+
+	/**
+	 * Returns the maximal number of players to play the game.
+	 * 
+	 * @return
+	 */
+	int getMaximalPlayerCount();
 }

@@ -3,7 +3,7 @@
  */
 package sc.plugin2010.framework;
 
-import sc.plugin2010.Board;
+import sc.plugin2010.BoardUpdated;
 
 /**
  * @author ffi
@@ -13,5 +13,5 @@ public interface IGameUpdateObserver
 {
 	public void zugAngefordert();
 
-	public void spiellbrettAktualisiert(Board board);
+	public void spiellbrettAktualisiert(BoardUpdated bu);
 }

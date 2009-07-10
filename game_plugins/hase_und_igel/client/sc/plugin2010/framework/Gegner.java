@@ -25,7 +25,7 @@ public class Gegner
 
 	public int holeSalatAnzahl()
 	{
-		return player.getSaladsToEat(); // TODO give salatsToEat
+		return player.getSaladsToEat();
 	}
 
 	public int holeSpielerFarbe()
@@ -46,5 +46,14 @@ public class Gegner
 	public int holeLetztenZug()
 	{
 		return 0; // TODO
+	}
+
+	/**
+	 * @return
+	 */
+	public Farbe holeFarbe()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
