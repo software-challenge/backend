@@ -1,8 +1,8 @@
 package sc.protocol.responses;
 
-public class JoinedGame
+public class JoinGameResponse
 {
-	public JoinedGame(String id)
+	public JoinGameResponse(String id)
 	{
 		this.roomId = id;
 	}

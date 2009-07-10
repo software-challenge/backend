@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.protocol.responses.PrepareGameResponse;
 import sc.server.ServiceManager;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -51,16 +52,18 @@ public class GameRoomManager implements Runnable
 		this.rooms.put(room.getId(), room);
 	}
 
-	public GameRoom createGame(String gameType) throws RescueableClientException
+	public GameRoom createGame(String gameType)
+			throws RescueableClientException
 	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
-		
-		if(plugin == null)
+
+		if (plugin == null)
 		{
 			logger.warn("Couldn't find a game of type " + gameType);
-			throw new UnknownGameTypeException(gameType, this.gamePluginManager.getPluginUUIDs());
+			throw new UnknownGameTypeException(gameType, this.gamePluginManager
+					.getPluginUUIDs());
 		}
-		
+
 		logger.info("Created new game of type " + gameType);
 
 		String roomId = generateRoomId();
@@ -151,14 +154,12 @@ public class GameRoomManager implements Runnable
 		return this.pluginApi;
 	}
 
-	public GamePreparationResponse prepareGame(String gameType, int playerCount)
+	public PrepareGameResponse prepareGame(String gameType, int playerCount)
 			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
 		room.setSize(playerCount);
-		List<String> reservations = room.reserveAllSlots();
-
-		return new GamePreparationResponse(reservations);
+		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 
 	public GameRoom findRoom(String roomId) throws RescueableClientException

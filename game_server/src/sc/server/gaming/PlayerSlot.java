@@ -2,7 +2,7 @@ package sc.server.gaming;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.TooManyPlayersException;
-import sc.protocol.responses.JoinedGame;
+import sc.protocol.responses.JoinGameResponse;
 import sc.server.network.Client;
 
 public class PlayerSlot
@@ -73,7 +73,7 @@ public class PlayerSlot
 
 		this.role = new PlayerRole(client, this);
 		client.addRole(this.role);
-		client.send(new JoinedGame(getRoom().getId()));
+		client.send(new JoinGameResponse(getRoom().getId()));
 		this.role.setPlayer(player);
 	}
 }

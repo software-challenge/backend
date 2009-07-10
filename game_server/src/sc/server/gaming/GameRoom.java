@@ -15,7 +15,7 @@ import sc.api.plugins.host.IGameListener;
 import sc.api.plugins.host.IPlayerScore;
 import sc.protocol.MementoPacket;
 import sc.protocol.RoomPacket;
-import sc.protocol.responses.RoomLeft;
+import sc.protocol.responses.LeftGameEvent;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 
@@ -63,7 +63,7 @@ public class GameRoom implements IGameListener
 
 		for (PlayerRole player : getPlayers())
 		{
-			player.getClient().send(new RoomLeft(this.getId()));
+			player.getClient().send(new LeftGameEvent(this.getId()));
 		}
 	}
 
@@ -144,11 +144,17 @@ public class GameRoom implements IGameListener
 
 		openSlot.setClient(client);
 
+		startIfReady();
+
+		return true;
+	}
+
+	private void startIfReady()
+	{
 		if (game.ready())
 		{
 			game.start();
 		}
-		return true;
 	}
 
 	private int getMaximumPlayerCount()
@@ -260,5 +266,17 @@ public class GameRoom implements IGameListener
 			clients.add(slot.getClient());
 		}
 		return clients;
+	}
+
+	public void addObserver(Client source)
+	{
+		ObserverRole role = new ObserverRole(source, this);
+		source.addRole(role);
+		this.observers.add(role);
+	}
+
+	public void onReservationClaimed()
+	{
+		startIfReady();
 	}
 }

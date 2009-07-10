@@ -6,11 +6,13 @@ import sc.server.network.PacketCallback;
 
 public class ObserverRole implements IClientRole
 {
-	private Client	client;
+	private Client		client;
+	private GameRoom	gameRoom;
 
-	public ObserverRole(Client owner)
+	public ObserverRole(Client owner, GameRoom gameRoom)
 	{
 		this.client = owner;
+		this.gameRoom = gameRoom;
 	}
 
 	@Override

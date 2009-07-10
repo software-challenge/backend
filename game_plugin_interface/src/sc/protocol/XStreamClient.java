@@ -23,7 +23,7 @@ public abstract class XStreamClient
 	private final Thread				thread;
 	private DisconnectCause				disconnectCause	= null;
 	private boolean						closing			= false;
-	private final XStream				xStream;
+	protected final XStream				xStream;
 
 	public enum DisconnectCause
 	{
@@ -56,7 +56,7 @@ public abstract class XStreamClient
 				.getOutputStream(), "protocol");
 		this.thread = new Thread(new Runnable() {
 			private Logger	threadLogger	= LoggerFactory
-											.getLogger(XStreamClient.class);
+													.getLogger(XStreamClient.class);
 
 			@Override
 			public void run()
@@ -94,7 +94,8 @@ public abstract class XStreamClient
 				catch (XStreamException e)
 				{
 					onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-					this.threadLogger.error("Client violated against the protocol.", e);
+					this.threadLogger.error(
+							"Client violated against the protocol.", e);
 				}
 				catch (Exception e)
 				{

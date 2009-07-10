@@ -22,6 +22,7 @@ public abstract class ReservationManager
 		else
 		{
 			result.setClient(client);
+			result.getRoom().onReservationClaimed();
 			return result;
 		}
 	}

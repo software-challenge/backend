@@ -1,8 +1,8 @@
 package sc.protocol.responses;
 
-public class RoomLeft
+public class LeftGameEvent
 {
-	public RoomLeft(String id)
+	public LeftGameEvent(String id)
 	{
 		this.roomId = id;
 	}

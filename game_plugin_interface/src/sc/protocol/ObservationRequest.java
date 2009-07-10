@@ -12,5 +12,15 @@ public class ObservationRequest implements ILobbyRequest
 		this.gameId = gameId;
 		this.passphrase = passphrase;
 	}
+	
+	public String getGameId()
+	{
+		return this.gameId;
+	}
+	
+	public String getPassphrase()
+	{
+		return this.passphrase;
+	}
 
 }
