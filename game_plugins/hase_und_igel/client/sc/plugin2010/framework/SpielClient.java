@@ -19,7 +19,7 @@ public abstract class SpielClient implements IGameUpdateObserver
 {
 	private Spielbrett	spielbrett;
 	private Spieler		spieler;
-	private Gegner		gegner;
+	private Spieler		gegner;
 
 	public SpielClient(String ip, int port)
 	{
@@ -43,8 +43,40 @@ public abstract class SpielClient implements IGameUpdateObserver
 		spielbrett.update(bu);
 	}
 
+	@Override
 	public void spielerAktualisiert(PlayerUpdated pu)
 	{
-		spieler.update(pu);
+		if (pu.isOwnPlayer())
+		{
+			spieler.update(pu.getPlayer());
+		}
+		else
+		{
+			gegner.update(pu.getPlayer());
+		}
+	}
+
+	/**
+	 * @param gegner
+	 */
+	public void setzeGegner(Spieler gegner)
+	{
+		this.gegner = gegner;
+	}
+
+	/**
+	 * @param spieler
+	 */
+	public void setzeSpieler(Spieler spieler)
+	{
+		this.spieler = spieler;
+	}
+
+	/**
+	 * @param spielbrett
+	 */
+	public void setzeSpielbrett(Spielbrett spielbrett)
+	{
+		this.spielbrett = spielbrett;
 	}
 }

@@ -3,60 +3,21 @@
  */
 package sc.plugin2010.framework;
 
-import sc.plugin2010.Player;
-import sc.plugin2010.PlayerUpdated;
-
 /**
  * @author ffi
  * 
  */
-public class Spieler
+public class Spieler extends AllgemeinerSpieler
 {
-	private Player	player;
-
-	/**
-	 * die Hasen Karten, welche man im Spiel bekommen kann
-	 * 
-	 */
-	public enum HasenKarte
-	{
-		AUSSETZEN, NIMM_GIB_20_KAROTTEN, FRISS_SALAT, FALLE_ZURUECK,
-		/**
-		 * Rücke eine Position vor
-		 */
-		RUECKE_VOR
-	}
 
 	public Spieler()
 	{
 
 	}
 
-	public boolean mussNaechsteRundeAussetzen()
+	public void setzeHasenjoker(Hasenjoker joker)
 	{
-		return player.isSuspended();
-	}
 
-	public int holeKarottenAnzahl()
-	{
-		return player.getCarrotsAvailable();
-	}
-
-	public Farbe holeSpielerFarbe()
-	{
-		if (player.getColor() == Player.FigureColor.BLUE)
-		{
-			return Farbe.BLAU;
-		}
-		else
-		{
-			return Farbe.ROT;
-		}
-	}
-
-	public int holeFeldnummer()
-	{
-		return player.getPosition();
 	}
 
 	public void setzeFigur(final int feldNummer)
@@ -81,15 +42,6 @@ public class Spieler
 
 	public void nimmKarotten()
 	{
-
-	}
-
-	/**
-	 * @param pu
-	 */
-	public void update(PlayerUpdated pu)
-	{
-		// TODO Auto-generated method stub
 
 	}
 }
