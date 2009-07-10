@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -109,7 +110,8 @@ public class CreateGameDialog extends JDialog {
 		plugins.setModel(pluginModel);
 
 		// Buttons
-		JButton addButton = new JButton(lang.getString("dialog_create_add_client"));
+		JButton addButton = new JButton(lang
+				.getString("dialog_create_add_client"));
 		addButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -121,7 +123,8 @@ public class CreateGameDialog extends JDialog {
 			}
 		});
 
-		JButton addHumanButton = new JButton(lang.getString("dialog_create_add_human"));
+		JButton addHumanButton = new JButton(lang
+				.getString("dialog_create_add_human"));
 		addHumanButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -171,7 +174,8 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang.getString("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang
+				.getString("dialog_create_cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -257,7 +261,7 @@ public class CreateGameDialog extends JDialog {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		// get selected plugin
 		int pluginRow = plugins.getSelectedRow();
 		int dataRow = plugins.convertColumnIndexToModel(pluginRow);
@@ -273,15 +277,22 @@ public class CreateGameDialog extends JDialog {
 				break;
 			}
 		}
-		
+
+		String host = "localhost";
+
 		// prepare game
 		String replayFilename = String.valueOf(new Date().getTime());
-		IGamePreparation prep = selPlugin.getPlugin().prepareGame(ip, port,
-				replayFilename);
+		IGamePreparation prep;
+		
+		try {
+			prep = selPlugin.getPlugin().prepareGame(host, port, replayFilename);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
-			//slot.
+			// slot.
 		}
 
 		for (int row = 0; row < dataModel.getRowCount(); row++) {
