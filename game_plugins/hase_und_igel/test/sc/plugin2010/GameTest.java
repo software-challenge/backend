@@ -1,7 +1,6 @@
 package sc.plugin2010;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import junit.framework.Assert;
 
@@ -11,6 +10,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
+import sc.plugin2010.util.GameUtil;
 
 public class GameTest
 {
@@ -28,10 +28,17 @@ public class GameTest
 		Player p2 = (Player) g.onPlayerJoined();
 		g.start();
 
-		Assert.assertTrue(g.playerCanMove(p1));
-		Assert.assertTrue(g.playerCanMove(p2));
+		Assert.assertTrue(GameUtil.canMove(p1, g.getBoard()));
+		Assert.assertTrue(GameUtil.canMove(p2, g.getBoard()));
 
-		// TODO mehr tests!
+		p2.setPosition(11);
+		p1.setPosition(12);
+		p1.setCarrotsAvailable(0);
+		
+		Assert.assertTrue(GameUtil.canMove(p1, g.getBoard()));
+		
+		p1.setActions(new LinkedList<Action>());
+		Assert.assertFalse(GameUtil.canMove(p1, g.getBoard()));
 	}
 
 	/**

@@ -183,16 +183,10 @@ public class Game extends SimpleGameInstance<Player>
 	private Player fetchNextPlayer()
 	{
 		Player next = players.get(activePlayerId);
-		if (!playerCanMove(next))
+		if (!GameUtil.canMove(next, board))
 			activePlayerId = (activePlayerId + 1) % players.size();
 
 		return players.get(activePlayerId);
-	}
-
-	protected boolean playerCanMove(Player next)
-	{
-		// TODO Auto-generated method stub
-		return true;
 	}
 
 	protected void updateBoardWith(Move move, Player player)

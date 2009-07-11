@@ -112,7 +112,7 @@ public class GameUtil
 
 		return valid;
 	}
-	
+
 	public static boolean playerMustMove(Player p)
 	{
 		int lastSaladAt = -1;
@@ -121,7 +121,7 @@ public class GameUtil
 			if (m.getTyp().equals(MoveTyp.EAT))
 				lastSaladAt = m.getTurn();
 		}
-		return  !((lastSaladAt == -1) || (p.getHistory().size() - lastSaladAt > 1));
+		return !((lastSaladAt == -1) || (p.getHistory().size() - lastSaladAt > 1));
 	}
 
 	public static boolean isValidToTakeOrDrop10Carrots(Board b, Player p, int n)
@@ -203,5 +203,20 @@ public class GameUtil
 				break;
 		}
 		return valid;
+	}
+
+	public static boolean canMove(Player player, Board board)
+	{
+		boolean canMove = true;
+		if (player.getCarrotsAvailable() == 0)
+		{
+			canMove = player.getActions().size() > 0;
+			// TODO sauber implementieren!
+		}
+		else
+		{
+			// TODO true!
+		}
+		return canMove;
 	}
 }
