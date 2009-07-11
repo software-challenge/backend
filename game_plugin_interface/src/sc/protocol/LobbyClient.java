@@ -370,4 +370,11 @@ public final class LobbyClient extends XStreamClient
 	{
 		this.listeners.remove(listener);
 	}
+
+	public void saveReplayTo(OutputStream out) throws IOException
+	{
+		ObjectOutputStream objectOut = this.xStream.createObjectOutputStream(out);
+		
+		objectOut.flush();
+	}
 }

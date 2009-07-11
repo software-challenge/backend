@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IGameListener;
@@ -12,7 +14,10 @@ import sc.api.plugins.host.IPlayerScore;
 public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		IGameInstance
 {
+	@XStreamOmitField
 	protected final List<IGameListener>	listeners	= new LinkedList<IGameListener>();
+	
+	@XStreamOmitField
 	protected final List<P>				players		= new LinkedList<P>();
 
 	@Override

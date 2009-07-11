@@ -2,6 +2,9 @@ package sc.protocol;
 
 import java.util.Collection;
 
+import sc.framework.plugins.RoundBasedGameInstance;
+import sc.framework.plugins.SimpleGameInstance;
+import sc.framework.plugins.SimplePlayer;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
@@ -26,6 +29,9 @@ public abstract class LobbyProtocol
 		xStream.processAnnotations(JoinRoomRequest.class);
 		xStream.processAnnotations(PrepareGameRequest.class);
 		xStream.processAnnotations(MementoPacket.class);
+		xStream.processAnnotations(SimplePlayer.class);
+		xStream.processAnnotations(SimpleGameInstance.class);
+		xStream.processAnnotations(RoundBasedGameInstance.class);
 
 		if (additionClasses != null)
 		{
@@ -34,7 +40,7 @@ public abstract class LobbyProtocol
 				xStream.processAnnotations(cls);
 			}
 		}
-		
+
 		return xStream;
 	}
 }

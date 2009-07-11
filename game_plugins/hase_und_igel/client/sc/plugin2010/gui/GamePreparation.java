@@ -56,5 +56,4 @@ public class GamePreparation implements IGamePreparation
 	{
 		return new GameObservation(administrativeClient);
 	}
-
 }

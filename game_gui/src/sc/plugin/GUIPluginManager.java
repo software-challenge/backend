@@ -1,6 +1,12 @@
 package sc.plugin;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.logic.GUIConfiguration;
+import sc.server.gaming.GamePluginApi;
+import sc.server.plugins.GamePluginInstance;
+import sc.server.plugins.PluginLoaderException;
 import sc.server.plugins.PluginManager;
 
 public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
@@ -23,7 +29,20 @@ public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
 		}
 		return instance;
 	}
-	
+
+	protected static Logger logger = LoggerFactory
+			.getLogger(GamePluginInstance.class);
+
+	public void activateAllPlugins() {
+		for (GUIPluginInstance plugins : getAvailablePlugins()) {
+			try {
+				plugins.load(null);
+			} catch (PluginLoaderException e) {
+				logger.error("Failed to load plugin.", e);
+			}
+		}
+	}
+
 	@Override
 	protected GUIPluginInstance createPluginInstance(Class<?> definition) {
 		GUIPluginInstance instance = new GUIPluginInstance(definition);

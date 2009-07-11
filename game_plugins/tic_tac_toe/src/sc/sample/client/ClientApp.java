@@ -1,5 +1,7 @@
 package sc.sample.client;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -48,9 +50,10 @@ public class ClientApp
 					{
 						reservation = reservations.poll();
 					}
-					
+
 					SimpleClient client = new SimpleClient() {
-						public void onGameLeft(String roomId) {
+						public void onGameLeft(String roomId)
+						{
 							super.onGameLeft(roomId);
 							sem.release();
 							System.out.println("Released.");
@@ -69,9 +72,13 @@ public class ClientApp
 		Thread t2 = new Thread(automaticClient);
 		t1.start();
 		t2.start();
-		
+
 		System.out.println("Waiting.");
 		sem.acquire(2);
+
 		System.out.println("Done.");
+		admin.close();
+		observer.close();
+		observer.saveReplayTo(new FileOutputStream("./replay.xml"));
 	}
 }

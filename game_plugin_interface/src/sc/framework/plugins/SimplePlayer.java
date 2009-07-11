@@ -3,12 +3,15 @@ package sc.framework.plugins;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.protocol.MoveRequest;
 
 public abstract class SimplePlayer implements IPlayer
 {
+	@XStreamOmitField
 	private List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 
 	@Override
