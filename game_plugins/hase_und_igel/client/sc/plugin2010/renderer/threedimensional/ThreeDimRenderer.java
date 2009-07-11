@@ -286,12 +286,12 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 			// setReachableFields(player.getPosition(), player
 			// .getCarrotsAvailable());
 
-			if (GameUtil.isValidToTakeCarrots(board, player))
+			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 			{
 				List<String> answers = new LinkedList<String>();
 				answers.add(moveForward);
 				answers.add(takeCarrots);
-				if (GameUtil.isValidToDropCarrots(board, player))
+				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
 				{
 					answers.add(dropCarrots);
 				}

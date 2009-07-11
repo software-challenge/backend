@@ -55,6 +55,11 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 	private String					take20carrots	= "Nimm 20 Karotten";
 	private String					doNothing		= "Nichts";
+	private String					give20carrots	= "Gib 20 Karotten ab";
+	private String					eatsalad		= "Friss sofort einen Salat";
+	private String					hurryahead		= "Rücke eine Position vor";
+	private String					fallback		= "Rücke eine Position vor";
+	private String					jokerAnswer		= "joker";
 
 	public FrameRenderer()
 	{
@@ -145,34 +150,44 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 				actionb.addRow("Spieler " + currentColor + " setzt auf "
 						+ String.valueOf(player.getLastMove().getN()));
 				break;
-			case TAKE_10_CARROTS:
-				actionb
-						.addRow("Spieler " + currentColor
-								+ " nimmt 10 Karotten");
-				break;
-			case DROP_10_CARROTS:
-				actionb.addRow("Spieler " + currentColor
-						+ " gibt 10 Karotten ab");
+			case TAKE_OR_DROP_CARROTS:
+				if (player.getLastMove().getN() == 10)
+				{
+					actionb.addRow("Spieler " + currentColor
+							+ " nimmt 10 Karotten");
+				}
+				else if (player.getLastMove().getN() == -10)
+				{
+					actionb.addRow("Spieler " + currentColor
+							+ " gibt 10 Karotten ab");
+				}
 				break;
 			case FALL_BACK:
 				actionb.addRow("Spieler " + currentColor
 						+ " lässt sich auf Igel zurückfallen");
 				break;
-			case PLAY_CARD_CHANGE_CARROTS:
-				actionb.addRow("Spieler " + currentColor
-						+ " spielt 'Nimm oder gib 20 Karotten'");
-				break;
-			case PLAY_CARD_EAT_SALAD:
-				actionb.addRow("Spieler " + currentColor
-						+ " spielt 'Friss sofort einen Salat'");
-				break;
-			case PLAY_CARD_FALL_BACK:
-				actionb.addRow("Spieler " + currentColor
-						+ " spielt 'Falle eine Position zurück'");
-				break;
-			case PLAY_CARD_HURRY_AHEAD:
-				actionb.addRow("Spieler " + currentColor
-						+ " spielt 'Rücke eine Position vor'");
+			case PLAY_CARD:
+				switch (player.getLastMove().getCard())
+				{
+					case TAKE_OR_DROP_CARROTS:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Nimm oder gib 20 Karotten'");
+						break;
+					case EAT_SALAD:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Friss sofort einen Salat'");
+						break;
+					case FALL_BACK:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Falle eine Position zurück'");
+						break;
+					case HURRY_AHEAD:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Rücke eine Position vor'");
+						break;
+					default:
+						break;
+				}
 				break;
 			default:
 				break;
@@ -198,20 +213,20 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 			setReachableFields(player.getPosition(), player
 					.getCarrotsAvailable());
 
-			if (GameUtil.isValidToTakeCarrots(board, player))
+			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 			{
 				List<String> answers = new LinkedList<String>();
 				answers.add(moveForward);
 				answers.add(takeCarrots);
-				if (GameUtil.isValidToDropCarrots(board, player))
+				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
 				{
 					answers.add(dropCarrots);
 				}
-				askQuestion("Was wollen Sie tun?", answers, "carrots");
+				askQuestion("Was wollen Sie tun?", answers, carrotAnswer);
 			}
 			else if (GameUtil.isValidToEat(board, player))
 			{
-				handler.sendAction(new Move(Move.MoveTyp.EAT));
+				sendMove(new Move(Move.MoveTyp.EAT));
 			}
 			else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
 					&& (player.getActions().size() > 0))
@@ -219,37 +234,38 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 				List<String> answers = new LinkedList<String>();
 				answers.add(moveForward);
 				if (GameUtil.isValidToPlayCard(board, player,
-						Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 1))
+						Player.Action.TAKE_OR_DROP_CARROTS, 1))
 				{
 					answers.add(take20carrots);
 				}
 				if (GameUtil.isValidToPlayCard(board, player,
-						Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0))
+						Player.Action.TAKE_OR_DROP_CARROTS, 0))
 				{
 					answers.add(doNothing);
 				}
 				if (GameUtil.isValidToPlayCard(board, player,
-						Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, -1))
+						Player.Action.TAKE_OR_DROP_CARROTS, -1))
 				{
-					answers.add("Gib 20 Karotten ab");
+					answers.add(give20carrots);
 				}
 				if (GameUtil.isValidToPlayCard(board, player,
-						Move.MoveTyp.PLAY_CARD_EAT_SALAD, 0))
+						Player.Action.EAT_SALAD, 0))
 				{
-					answers.add("Friss sofort einen Salat");
+					answers.add(eatsalad);
 				}
 				if (GameUtil.isValidToPlayCard(board, player,
-						Move.MoveTyp.PLAY_CARD_HURRY_AHEAD, 0))
+						Player.Action.HURRY_AHEAD, 0))
 				{
-					answers.add("Rücke eine Position vor");
+					answers.add(hurryahead);
 				}
 				if (GameUtil.isValidToPlayCard(board, player,
-						Move.MoveTyp.PLAY_CARD_FALL_BACK, 0))
+						Player.Action.FALL_BACK, 0))
 				{
-					answers.add("Rücke eine Position vor");
+					answers.add(fallback);
 				}
 
-				askQuestion("Was wollen Sie tun?", answers, "joker");
+				askQuestion("Welchen Hasenjoker wollen Sie spielen?", answers,
+						jokerAnswer);
 			}
 
 			info.setCarrots(player.getCarrotsAvailable());
@@ -333,11 +349,22 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		{
 			if (answer.equals(takeCarrots))
 			{
-				handler.sendAction(new Move(Move.MoveTyp.TAKE_10_CARROTS));
+				sendMove(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, 10));
 			}
 			else if (answer.equals(dropCarrots))
 			{
-				handler.sendAction(new Move(Move.MoveTyp.DROP_10_CARROTS));
+				sendMove(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, -10));
+			}
+		}
+		if (type.equals(jokerAnswer))
+		{ // TODO
+			if (answer.equals(takeCarrots))
+			{
+				// sendMove(new Move(Move.MoveTyp.TAKE_10_CARROTS));
+			}
+			else if (answer.equals(dropCarrots))
+			{
+				// sendMove(new Move(Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0));
 			}
 		}
 	}
@@ -420,5 +447,14 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 				BufferedImage.TYPE_INT_RGB);
 		paint(img.getGraphics());
 		return img;
+	}
+
+	private void sendMove(Move move)
+	{
+		if (myturn)
+		{
+			handler.sendAction(move);
+			myturn = false;
+		}
 	}
 }
