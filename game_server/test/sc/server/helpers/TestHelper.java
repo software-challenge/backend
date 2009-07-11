@@ -8,9 +8,13 @@ import sc.helpers.Generator;
 
 public class TestHelper
 {
+	private static final long		DEFAULT_DURATION	= 1;
+	private static final TimeUnit	DEFAULT_TIME_UNIT	= TimeUnit.SECONDS;
+
 	public static <T> boolean waitUntilEqual(T expected, Generator<T> action)
 	{
-		return waitUntilEqual(expected, action, 1, TimeUnit.SECONDS);
+		return waitUntilEqual(expected, action, DEFAULT_DURATION,
+				DEFAULT_TIME_UNIT);
 	}
 
 	public static <T> boolean waitUntilEqual(T expected, Generator<T> action,
@@ -29,6 +33,13 @@ public class TestHelper
 		}
 
 		return isEqual(expected, action.operate());
+	}
+
+	public static <T> void assertEqualsWithTimeout(T expected,
+			Generator<T> action)
+	{
+		assertEqualsWithTimeout(expected, action, DEFAULT_DURATION,
+				DEFAULT_TIME_UNIT);
 	}
 
 	public static <T> void assertEqualsWithTimeout(T expected,

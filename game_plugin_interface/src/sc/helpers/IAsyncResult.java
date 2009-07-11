@@ -1,6 +1,6 @@
 package sc.helpers;
 
-public interface IAsyncResult<Input>
+public interface IAsyncResult<T>
 {
-	public void operate(Input input);
+	public void operate(T result);
 }

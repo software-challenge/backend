@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
+import junit.framework.Assert;
+
 import org.junit.Test;
 
 import sc.helpers.Generator;
 import sc.protocol.ErrorResponse;
 import sc.protocol.LobbyClient;
+import sc.protocol.RequestResult;
+import sc.protocol.responses.PrepareGameResponse;
 import sc.server.Configuration;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
@@ -36,24 +40,23 @@ public class SampleLibraryTest extends RealServerTest
 		protected void onError(ErrorResponse response)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		protected void onNewState(String roomId, Object state)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
 		protected void onRoomMessage(String roomId, Object data)
 		{
 			// TODO Auto-generated method stub
-			
+
 		}
-		
-		
+
 	}
 
 	@Test
@@ -71,7 +74,7 @@ public class SampleLibraryTest extends RealServerTest
 			{
 				return client.getRooms().size();
 			}
-		}, 1, TimeUnit.SECONDS);
+		});
 	}
 
 	@Test
@@ -89,6 +92,21 @@ public class SampleLibraryTest extends RealServerTest
 			{
 				return client.getRooms().size();
 			}
-		}, 1, TimeUnit.SECONDS);
+		});
+	}
+
+	@Test
+	public void shouldSupportBlockingHandlers() throws IOException,
+			InterruptedException
+	{
+		final TestLobbyClient client = new TestLobbyClient(
+				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
+				"localhost", getServerPort());
+
+		RequestResult<PrepareGameResponse> result = client.prepareGameAndWait(
+				TestPlugin.TEST_PLUGIN_UUID, 2);
+		
+		Assert.assertTrue(result.hasValidContents());
+		Assert.assertTrue(result.isSuccessful());
 	}
 }

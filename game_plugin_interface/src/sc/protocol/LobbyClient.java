@@ -10,10 +10,15 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
+
+import javax.management.monitor.Monitor;
+import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.helpers.IRequestResult;
 import sc.networking.TcpNetwork;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
@@ -23,6 +28,7 @@ import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.PrepareGameResponse;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -39,6 +45,7 @@ public abstract class LobbyClient extends XStreamClient
 	private static final List<String>	rooms			= new LinkedList<String>();
 	private ClientType					type			= ClientType.UNDEFINED;
 	private Map<String, List<Object>>	observations	= new HashMap<String, List<Object>>();
+	private AsyncResultManager			asyncManager	= new AsyncResultManager();
 
 	public LobbyClient(String gameType, XStream xstream, String host, int port)
 			throws IOException
@@ -83,6 +90,14 @@ public abstract class LobbyClient extends XStreamClient
 	@Override
 	protected final void onObject(Object o)
 	{
+		if (o == null)
+		{
+			logger.warn("Received null object.");
+			return;
+		}
+
+		invokeHandlers(o);
+
 		if (o instanceof RoomPacket)
 		{
 			RoomPacket packet = (RoomPacket) o;
@@ -121,6 +136,34 @@ public abstract class LobbyClient extends XStreamClient
 		else
 		{
 			onCustomObject(o);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> void invokeHandlers(T o)
+	{
+		if (o == null)
+		{
+			throw new IllegalArgumentException("o was null");
+		}
+
+		if (o instanceof ErrorResponse)
+		{
+			Object originalRequest = ((ErrorResponse) o).getOriginalRequest();
+			if (originalRequest != null)
+			{
+				this.asyncManager.invokeHandlers(originalRequest.getClass(),
+						null, (ErrorResponse) o);
+			}
+			else
+			{
+				logger
+						.warn("Couldn't invoke Handlers because OriginalRequest was null.");
+			}
+		}
+		else
+		{
+			this.asyncManager.invokeHandlers((Class<T>) o.getClass(), o, null);
 		}
 	}
 
@@ -178,6 +221,13 @@ public abstract class LobbyClient extends XStreamClient
 		send(new ObservationRequest(gameId, passphrase));
 	}
 
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(
+			String gameType, int playerCount) throws InterruptedException
+	{
+		return blockingRequest(new PrepareGameRequest(gameType, playerCount),
+				PrepareGameResponse.class);
+	}
+
 	public void prepareGame(String gameType, int playerCount)
 	{
 		setType(ClientType.ADMINISTRATOR);
@@ -212,5 +262,49 @@ public abstract class LobbyClient extends XStreamClient
 	{
 		setType(ClientType.PLAYER);
 		this.send(new JoinRoomRequest(this.defaultGameType));
+	}
+
+	protected <T> void request(IRequest<T> request, Class<T> response,
+			IRequestResult<T> handler)
+	{
+		this.asyncManager.addHandler(response, handler);
+		send(request);
+	}
+
+	protected <T> RequestResult<T> blockingRequest(
+			IRequest<T> request, Class<T> response) throws InterruptedException
+	{
+		final RequestResult<T> requestResult = new RequestResult<T>();
+		final Object beacon = new Object();
+		synchronized (beacon)
+		{
+			IRequestResult<T> blockingHandler = new IRequestResult<T>() {
+
+				@Override
+				public void handleError(ErrorResponse e)
+				{
+					requestResult.setError(e);
+					notifySemaphore();
+				}
+
+				public void operate(T result)
+				{
+					requestResult.setResult(result);
+					notifySemaphore();
+				}
+
+				private void notifySemaphore()
+				{
+					synchronized (beacon)
+					{
+						beacon.notify();
+					}
+				}
+			};
+			request(request, response, blockingHandler);
+			beacon.wait();
+		}
+		
+		return requestResult;
 	}
 }

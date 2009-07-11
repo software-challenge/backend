@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 
+import sc.helpers.IAsyncResult;
+import sc.helpers.IRequestResult;
 import sc.networking.INetworkInterface;
 
 import com.thoughtworks.xstream.XStream;
@@ -170,5 +172,4 @@ public abstract class XStreamClient
 			this.networkInterface.close();
 		}
 	}
-
 }

@@ -1,10 +1,13 @@
 package sc.protocol.requests;
 
+import sc.protocol.IRequest;
+import sc.protocol.responses.PrepareGameResponse;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("prepare")
-public class PrepareGameRequest implements ILobbyRequest
+public class PrepareGameRequest implements ILobbyRequest, IRequest<PrepareGameResponse>
 {
 	@XStreamAsAttribute
 	private int		playerCount;
