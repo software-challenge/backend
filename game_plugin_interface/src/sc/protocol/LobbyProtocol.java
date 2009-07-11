@@ -1,8 +1,6 @@
 package sc.protocol;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
@@ -13,12 +11,12 @@ import com.thoughtworks.xstream.XStream;
 
 public abstract class LobbyProtocol
 {
-	public static void registerMessages(XStream xStream)
+	public static XStream registerMessages(XStream xStream)
 	{
-		registerMessages(xStream, null);
+		return registerMessages(xStream, null);
 	}
 
-	public static void registerMessages(XStream xStream,
+	public static XStream registerMessages(XStream xStream,
 			Collection<Class<?>> additionClasses)
 	{
 		xStream.processAnnotations(ErrorResponse.class);
@@ -36,5 +34,7 @@ public abstract class LobbyProtocol
 				xStream.processAnnotations(cls);
 			}
 		}
+		
+		return xStream;
 	}
 }

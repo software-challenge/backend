@@ -45,6 +45,7 @@ public final class LobbyClient extends XStreamClient
 			throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
+		LobbyProtocol.registerMessages(xstream);
 	}
 
 	public List<String> getRooms()
