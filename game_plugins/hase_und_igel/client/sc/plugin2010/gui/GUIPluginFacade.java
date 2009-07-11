@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import sc.guiplugin.interfaces.IGamePreparation;
@@ -27,28 +28,9 @@ import edu.cau.plugins.PluginDescriptor;
 @PluginDescriptor(author = "Florian Fittkau", uuid = "hui", version = "1.0", name = "Hase und Igel (GUI)")
 public class GUIPluginFacade implements IGuiPlugin
 {
-	/**
-	 * Singleton instance
-	 */
-	private static volatile GUIPluginFacade	instance;
-
-	private GUIPluginFacade()
-	{ // Singleton
-	}
-
-	public static GUIPluginFacade getInstance()
+	public GUIPluginFacade()
 	{
-		if (null == instance)
-		{
-			synchronized (GUIPluginFacade.class)
-			{
-				if (null == instance)
-				{
-					instance = new GUIPluginFacade();
-				}
-			}
-		}
-		return instance;
+
 	}
 
 	@Override
@@ -67,13 +49,18 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public String getPluginVersion()
 	{
-		return "1.0"; // TODO
+		return "1.0";
 	}
 
 	@Override
 	public String getPluginInfoText()
 	{
 		return "Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.";
+	}
+
+	public Image getPluginIcon()
+	{
+		return new ImageIcon("resource/hase_und_igel_icon.png").getImage();
 	}
 
 	@Override
@@ -96,7 +83,6 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public String[] getStatisticsInfo()
 	{
-		// TODO Auto-generated method stub
 		return null;
 	}
 
