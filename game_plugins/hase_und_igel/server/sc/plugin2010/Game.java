@@ -89,10 +89,11 @@ public class Game extends SimpleGameInstance<Player>
 			return;
 		}
 
-		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL) ||
-				board.getTypeAt(players.get(1).getPosition()).equals(FieldTyp.GOAL))
+		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
+				|| board.getTypeAt(players.get(1).getPosition()).equals(
+						FieldTyp.GOAL))
 			actionsSinceFirstPlayerEnteredGoal++;
-		
+
 		final Player player = players.get(activePlayerId);
 
 		activePlayerId = (activePlayerId + 1) % players.size();
@@ -123,11 +124,18 @@ public class Game extends SimpleGameInstance<Player>
 			if (gameOver())
 			{
 				active = false;
+				for (final Player p : players)
+				{
+					p.notifyListeners(new GameOver(board.isFirst(p)));
+				}
+				updateObservers();
 			}
-
-			updatePlayers();
-			next.requestMove();
-			updateObservers();
+			else
+			{
+				updatePlayers();
+				next.requestMove();
+				updateObservers();
+			}
 		}
 		else
 		{

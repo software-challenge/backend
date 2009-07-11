@@ -10,15 +10,15 @@ package sc.plugin2010;
 public class GameOver
 {
 	// Platzierung des Spielers im Rennen
-	private int position;
+	private boolean isFirst;
 	
-	public GameOver( int position)
+	public GameOver(boolean isFirst)
 	{
-		this.position = position;
+		this.isFirst = isFirst;
 	}
 	
-	public int getPosition()
+	public boolean isFirst()
 	{
-		return position;
+		return isFirst;
 	}
 }
