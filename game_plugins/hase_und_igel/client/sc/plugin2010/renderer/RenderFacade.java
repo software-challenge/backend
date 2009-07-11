@@ -73,10 +73,8 @@ public class RenderFacade
 		panel.setLayout(new CardLayout());
 		// create components
 		ConnectingPanel con = new ConnectingPanel();
-		FrameRenderer obs = new FrameRenderer();
 		// add components
 		panel.add(con, connectString);
-		panel.add(obs, observerString);
 
 		setGUIMode(GUIMode.CONNECT);
 	}
@@ -119,56 +117,111 @@ public class RenderFacade
 	 *            if asPlayer1 is true than panel will be created for player 1
 	 *            else it is created for player2
 	 */
-	public void createPanel(GUIGameHandler handler)
+	public void createPanel(GUIGameHandler handler, EPlayerId target)
 	{
 		if (threeDimensional)
 		{
-			if (!alreadyCreatedPlayerOne)
+			if (target == EPlayerId.OBSERVER)
 			{
-				player1 = new ThreeDimRenderer(handler);
+				observer = new ThreeDimRenderer(handler, true);
+				panel.add((ThreeDimRenderer) observer, observerString);
+			}
+			else if (target == EPlayerId.PLAYER_ONE)
+			{
+				player1 = new ThreeDimRenderer(handler, false);
 				panel.add((ThreeDimRenderer) player1, player1String);
 				setAlreadyCreatedPlayerOne(true);
 			}
-			else
+			else if (target == EPlayerId.PLAYER_TWO)
 			{
-				player2 = new ThreeDimRenderer(handler);
+				player2 = new ThreeDimRenderer(handler, false);
 				panel.add((ThreeDimRenderer) player2, player2String);
 			}
 		}
 		else
 		{
-			if (!alreadyCreatedPlayerOne)
+			if (target == EPlayerId.OBSERVER)
 			{
-				player1 = new FrameRenderer(handler);
+				observer = new FrameRenderer(handler, true);
+				panel.add((FrameRenderer) observer, observerString);
+			}
+			else if (target == EPlayerId.PLAYER_ONE)
+			{
+				player1 = new FrameRenderer(handler, false);
 				panel.add((FrameRenderer) player1, player1String);
 				setAlreadyCreatedPlayerOne(true);
 			}
-			else
+			else if (target == EPlayerId.PLAYER_TWO)
 			{
-				player2 = new FrameRenderer(handler);
+				player2 = new FrameRenderer(handler, false);
 				panel.add((FrameRenderer) player2, player2String);
 			}
 		}
 	}
 
-	public void updatePlayer(final Player myplayer, final boolean own)
+	public void updatePlayer(final Player myplayer, final boolean own,
+			final EPlayerId target)
 	{
-		observer.updatePlayer(myplayer, own);
+		if (target == EPlayerId.OBSERVER)
+		{
+			observer.updatePlayer(myplayer, own);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player1.updatePlayer(myplayer, own);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player2.updatePlayer(myplayer, own);
+		}
 	}
 
-	public void updateBoard(final BoardUpdated board)
+	public void updateBoard(final BoardUpdated board, final EPlayerId target)
 	{
-		observer.updateBoard(board);
+		if (target == EPlayerId.OBSERVER)
+		{
+			observer.updateBoard(board);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player1.updateBoard(board);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player2.updateBoard(board);
+		}
 	}
 
-	public void updateChat(final String chatMsg)
+	public void updateChat(final String chatMsg, final EPlayerId target)
 	{
-		observer.updateChat(chatMsg);
+		if (target == EPlayerId.OBSERVER)
+		{
+			observer.updateChat(chatMsg);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player1.updateChat(chatMsg);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player2.updateChat(chatMsg);
+		}
 	}
 
-	public void updateAction(final String doneAction)
+	public void updateAction(final String doneAction, final EPlayerId target)
 	{
-		observer.updateAction(doneAction);
+		if (target == EPlayerId.OBSERVER)
+		{
+			observer.updateAction(doneAction);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player1.updateAction(doneAction);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player2.updateAction(doneAction);
+		}
 	}
 
 	public Image getImage()

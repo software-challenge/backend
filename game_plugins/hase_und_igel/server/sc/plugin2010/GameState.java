@@ -8,4 +8,9 @@ public class GameState
 	{
 		this.game = game;
 	}
+
+	public Game getGame()
+	{
+		return game;
+	}
 }

@@ -68,7 +68,9 @@ public class GUIPluginFacade implements IGuiPlugin
 			int playerCount, String filename) throws IOException
 	{
 		Client client = new Client(ip, port, EPlayerId.OBSERVER);
-		client.setHandler(new GUIGameHandler(client));
+		GUIGameHandler handler = new GUIGameHandler(client);
+		client.setHandler(handler);
+		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
 		return new GamePreparation(client, playerCount);
 	}
 

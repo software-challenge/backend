@@ -51,7 +51,7 @@ public class Slot implements ISlot
 
 		GUIGameHandler handler = new GUIGameHandler(humanClient);
 		humanClient.setHandler(handler);
-		RenderFacade.getInstance().createPanel(handler);
+		RenderFacade.getInstance().createPanel(handler, humanClient.getID());
 		humanClient.joinPreparedGame(reservation);
 	}
 }

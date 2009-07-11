@@ -58,17 +58,19 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 
 	// only draw the board the first time it updates
 	private boolean					boardWasCreated	= false;
-
+	private boolean					myturn			= false;
+	private boolean					onlyObserving	= false;
 	// Strings used for asking Questions to the user
 	private String					moveForward		= "Weiter ziehen";
 	private String					takeCarrots		= "10 Karotten nehmen";
 	private String					dropCarrots		= "10 Karotten abgeben";
 	private String					carrotAnswer	= "carrots";
 
-	public ThreeDimRenderer(GUIGameHandler handler)
+	public ThreeDimRenderer(GUIGameHandler handler, boolean onlyObserving)
 	{
 		super();
 		this.handler = handler;
+		this.onlyObserving = onlyObserving;
 		createInitFrame();
 	}
 

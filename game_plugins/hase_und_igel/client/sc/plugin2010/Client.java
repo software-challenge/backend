@@ -70,7 +70,6 @@ public class Client implements ILobbyClientListener
 		this.roomId = roomId;
 	}
 
-	// TODO call it
 	public void sendMove(Move move)
 	{
 		client.sendMessageToRoom(roomId, move);
@@ -85,7 +84,10 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		// TODO Auto-generated method stub
+		// GameState gameState = (GameState) state;
+		// gameState.getGame().getActivePlayer()
+
+		// TODO
 	}
 
 	public void joinAnyGame()
@@ -133,8 +135,7 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGamePrepared(PrepareGameResponse response)
 	{
-		// TODO Auto-generated method stub
-
+		// not needed
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(int playerCount)

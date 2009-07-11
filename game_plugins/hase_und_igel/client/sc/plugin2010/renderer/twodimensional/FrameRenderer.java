@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
@@ -28,7 +27,7 @@ import sc.plugin2010.util.GameUtil;
  * 
  */
 @SuppressWarnings("serial")
-public class FrameRenderer extends JFrame implements Renderer, IClickObserver
+public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 {
 
 	// GUI Components
@@ -46,6 +45,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	// only draw the board the first time it updates
 	private boolean					boardWasCreated	= false;
 	private boolean					myturn			= false;
+	private boolean					onlyObserving	= false;
 
 	// Strings used for asking Questions to the user
 	private String					moveForward		= "Weiter ziehen";
@@ -67,11 +67,12 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		createInitFrame();
 	}
 
-	public FrameRenderer(final GUIGameHandler handler)
+	public FrameRenderer(final GUIGameHandler handler,
+			final boolean onlyObserving)
 	{
 		this.handler = handler; // TODO when game is over, block input...
+		this.onlyObserving = onlyObserving;
 		createInitFrame();
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
 	private void createInitFrame()
@@ -360,23 +361,14 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		{ // TODO
 			if (answer.equals(takeCarrots))
 			{
-				// sendMove(new Move(Move.MoveTyp.TAKE_10_CARROTS));
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.TAKE_OR_DROP_CARROTS, 1));
 			}
 			else if (answer.equals(dropCarrots))
 			{
 				// sendMove(new Move(Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0));
-			}
+			} // TODO more cases
 		}
-	}
-
-	public static void main(final String[] args)
-	{
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run()
-			{
-				new FrameRenderer(null).setVisible(true);
-			}
-		});
 	}
 
 	private void setReachableFields(final int pos, final int carrots)
@@ -427,7 +419,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	 */
 	public void updateClicked(final int fieldNumber)
 	{
-		if ((handler != null) && (myturn))
+		if ((!onlyObserving) && (myturn))
 		{
 			if (GameUtil.isValidToMove(board, player, fieldNumber))
 			{

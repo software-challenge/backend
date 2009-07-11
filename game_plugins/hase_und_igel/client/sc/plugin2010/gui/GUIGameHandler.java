@@ -27,14 +27,19 @@ public class GUIGameHandler implements IGameHandler
 	@Override
 	public void onUpdate(BoardUpdated bu)
 	{
-		RenderFacade.getInstance().updateBoard(bu);
+		RenderFacade.getInstance().updateBoard(bu, client.getID());
 	}
 
 	@Override
 	public void onUpdate(PlayerUpdated pu)
 	{
 		RenderFacade.getInstance().updatePlayer(pu.getPlayer(),
-				pu.isOwnPlayer());
+				pu.isOwnPlayer(), client.getID());
+	}
+
+	public void onUpdate(String chat)
+	{
+		RenderFacade.getInstance().updateChat(chat, client.getID());
 	}
 
 	@Override
