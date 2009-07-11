@@ -15,33 +15,13 @@ import sc.framework.plugins.SimplePlayer;
 public class Player extends SimplePlayer
 {
 	/**
-	 * Mögliche Aktionen, die durch das Ausspielen einer Hasenkarte ausgelöst
+	 * Mögliche Aktionen, die durch das Ausspielen eines Hasenjokers ausgelöst
 	 * werden können.
 	 */
 	public enum Action // TODO only 4 cards...
 	{
 		/**
-		 * Einmal aussetzen
-		 */
-		SUSPENDED,
-		/**
-		 * Ziehe ein Hasenfeld vor
-		 */
-		NEXT_RABBIT_FIELD,
-		/**
-		 * Falle ein Hasenfeld zurück
-		 */
-		LAST_RABBIT_FIELD,
-		/**
-		 * Ziehe gleich noch einmal
-		 */
-		MOVE_AGAIN,
-		/**
-		 * Der Zug war kostenlos
-		 */
-		FREE_MOVEMENT,
-		/**
-		 * Nehme 20 Karotten auf (Veränderung CAU)
+		 * Nehme Karotten auf, oder leg sie ab
 		 */
 		TAKE_OR_DROP_CARROTS,
 		/**
@@ -137,6 +117,11 @@ public class Player extends SimplePlayer
 	{
 		this.carrots = carrots;
 	}
+	
+	protected final void changeCarrotsAvailableBy(int amount) 
+	{
+		this.carrots = Math.max(0, this.carrots + amount);
+	}
 
 	/**
 	 * Die Anzahl der Salate, die dieser Spieler noch verspeisen muss.
@@ -152,6 +137,11 @@ public class Player extends SimplePlayer
 	{
 		this.saladsToEat = saladsToEat;
 	}
+	
+	protected final void eatSalad()
+	{
+		this.saladsToEat = Math.max(0, this.saladsToEat - 1);
+	}
 
 	/**
 	 * Eine Hasenkarte kann den Spieler eine Runde aussetzen lassen.
@@ -163,6 +153,11 @@ public class Player extends SimplePlayer
 	public boolean isSuspended()
 	{
 		return suspended;
+	}
+	
+	protected void setSuspended(boolean suspended)
+	{
+		this.suspended = suspended;
 	}
 
 	/**

@@ -70,36 +70,36 @@ public class BoardTest
 		// Action.DROP_20_CARROTS
 		//
 		// drop 20
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, -20), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, -20), p));
 		
 		// drop 15
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, -15), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, -15), p));
 		
 		// drop 0
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 0), p));
 		
 		//
 		// Action.TAKE_20_CARROTS
 		//
 		// take 20
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 20), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20), p));
 		
 		// take 15
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 15), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 15), p));
 		
 		// take 0
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 20), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20), p));
 
 		//
 		// Action.EAT_SALAD
 		//
 		// == 0 Salate
 		p.setSaladsToEat(0);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_EAT_SALAD), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD), p));
 
 		// > 0 Salate
 		p.setSaladsToEat(1);
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_EAT_SALAD), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD), p));
 
 		//
 		// Action.FALL_BACK
@@ -108,58 +108,58 @@ public class BoardTest
 		Player p2 = new Player(FigureColor.BLUE);
 		b.addPlayer(p2);
 		p.setPosition(5);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_FALL_BACK), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler auf 1. Feld
 		p2.setPosition(1);
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_FALL_BACK), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler direkt hinter Igelfeld
 		p2.setPosition(12);
 		p.setPosition(14);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_FALL_BACK), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler weiter hinter Igelfeld
 		p2.setPosition(13);
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_FALL_BACK), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 		
 		//
 		// Action.HURRY_AHEAD
 		//
 		// als erster
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p));
 
 		// als zweiter, erster im Ziel
 		p.setPosition(64);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p2));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// als zweiter, erster vor Igelfeld
 		p.setPosition(14);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p2));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// anderer direkt vorm Ziel, mehr als 10 Karotten, 0 Salaten
 		p2.setCarrotsAvailable(11);
 		p2.setSaladsToEat(0);
 		p.setPosition(63);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p2));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// anderer direkt vorm Ziel, mehr als 10 Karotten, mehr als 0 Salate
 		p2.setSaladsToEat(1);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p2));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// anderer direkt vorm Ziel, weniger als oder genau 10 Karotten, 0 Salate
 		p2.setCarrotsAvailable(10);
 		p2.setSaladsToEat(0);
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p2));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// anderer direkt vorm Ziel, weniger als oder genau 10 Karotten, mehr als 0 Salate
 		p2.setSaladsToEat(1);
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p2));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// Ausspielen einer Karte, die nicht auf der Hand ist
 		p.setActions(Arrays.asList(new Action[]{Action.EAT_SALAD}));
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_FALL_BACK), p));
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_HURRY_AHEAD), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p));
 	}
 
 	/**
@@ -219,7 +219,7 @@ public class BoardTest
 
 	/**
 	 * Überprüft die <code>isValid()</code> Methode des Spielbretts auf
-	 * Bewegungen
+	 * Bewegungen.
 	 */
 	@Test
 	public void testIsValidToMove()

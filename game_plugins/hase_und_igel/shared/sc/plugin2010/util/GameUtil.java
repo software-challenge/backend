@@ -1,6 +1,7 @@
 package sc.plugin2010.util;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
@@ -42,7 +43,16 @@ public class GameUtil
 	}
 
 	/**
-	 * Überprüft <code>MoveTyp.MOVE</code> Züge auf ihre Korrektheit
+	 * Überprüft <code>MoveTyp.MOVE</code> Züge auf ihre Korrektheit. Folgende
+	 * Spielregeln werden beachtet:
+	 * 
+	 * - Der Spieler muss genügend Karotten für den Zug besitzen
+	 * - Wenn das Ziel erreicht wird, darf der Spieler nach dem Zug maximal 10
+	 * Karotten übrig haben
+	 * - Man darf nicht auf Igelfelder ziehen
+	 * - Salatfelder dürfen nur betreten werden, wenn man noch Salate essen muss
+	 * - Hasenfelder dürfen nur betreten werden, wenn man noch Hasenkarten
+	 * ausspielen kann
 	 * 
 	 * @param b
 	 * @param l
@@ -74,12 +84,18 @@ public class GameUtil
 				valid = valid && carrotsLeft <= 10;
 				valid = valid && p.getSaladsToEat() == 0;
 				break;
+			case HEDGEHOG:
+				valid = false;
 		}
 		return valid;
 	}
 
 	/**
-	 * Überprüft <code>MoveTyp.EAT</code> Züge auf Korrektheit
+	 * Überprüft <code>MoveTyp.EAT</code> Züge auf Korrektheit. Um einen Salat
+	 * zu verzehren muss der Spieler sich:
+	 * 
+	 * - auf einem Salatfeld befinden
+	 * - noch mindestens einen Salat besitzen
 	 * 
 	 * @param b
 	 * @param p
@@ -87,8 +103,6 @@ public class GameUtil
 	 */
 	public static boolean isValidToEat(Board b, Player p)
 	{
-		// TODO es fehlt die Überprüfung, ob der Spieler schon einmal einen
-		// Salat auf dem Feld gefressen hat
 		boolean valid = true;
 		FieldTyp currentField = b.getTypeAt(p.getPosition());
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
@@ -96,6 +110,11 @@ public class GameUtil
 		return valid;
 	}
 
+	public static boolean isValidToTakeOrDrop10Carrots(Board b, Player p, int n)
+	{
+		return b.getTypeAt(p.getPosition()).equals(FieldTyp.CARROT) && (n == 10 || n == -10);
+	}
+	
 	/**
 	 * Überprüft <code>MoveTyp.FALL_BACK</code> Züge auf Korrektheit
 	 * 
@@ -114,39 +133,6 @@ public class GameUtil
 	}
 
 	/**
-	 * Überprüft <code>MoveTyp.TAKE_10_CARROTS</code> Züge auf Korrektheit
-	 * 
-	 * @param b
-	 * @param p
-	 * @return
-	 */
-	public static boolean isValidToTakeCarrots(Board b, Player p)
-	{
-		// TODO correct?
-		boolean valid = true;
-		FieldTyp currentField = b.getTypeAt(p.getPosition());
-		valid = valid && (currentField.equals(FieldTyp.CARROT));
-		return valid;
-	}
-
-	/**
-	 * Überprüft <code>MoveTyp.DROP_10_CARROTS</code> Züge auf Korrektheit
-	 * 
-	 * @param b
-	 * @param p
-	 * @return
-	 */
-	public static boolean isValidToDropCarrots(Board b, Player p)
-	{
-		// TODO correct?
-		boolean valid = true;
-		FieldTyp currentField = b.getTypeAt(p.getPosition());
-		valid = valid && (currentField.equals(FieldTyp.CARROT));
-		valid = valid && (p.getCarrotsAvailable() >= 10);
-		return valid;
-	}
-
-	/**
 	 * Überprüft <code>MoveTyp.PLAY_CARD</code>_X Züge auf Korrektheit
 	 * 
 	 * @param board
@@ -156,21 +142,21 @@ public class GameUtil
 	 * @return
 	 */
 	public static boolean isValidToPlayCard(Board board, Player player,
-			MoveTyp typ, int l)
+			Action typ, int l)
 	{
 		Boolean valid = true;
 		switch (typ)
 		{
-			case PLAY_CARD_CHANGE_CARROTS:
+			case TAKE_OR_DROP_CARROTS:
 				valid = valid
 						&& player.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
 				valid = valid && (l == 0 || l == 20 || l == -20);
 				break;
-			case PLAY_CARD_EAT_SALAD:
+			case EAT_SALAD:
 				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);
 				valid = valid && player.getSaladsToEat() > 0;
 				break;
-			case PLAY_CARD_FALL_BACK:
+			case FALL_BACK:
 			{
 				valid = valid && player.ownsCardOfTyp(Action.FALL_BACK);
 				valid = valid && board.isFirst(player);
@@ -181,7 +167,7 @@ public class GameUtil
 				valid = valid && ((o.getPosition() - previousHedgehog) != 1);
 				break;
 			}
-			case PLAY_CARD_HURRY_AHEAD:
+			case HURRY_AHEAD:
 			{
 				valid = valid && player.ownsCardOfTyp(Action.HURRY_AHEAD);
 				valid = valid && !board.isFirst(player);
@@ -192,9 +178,7 @@ public class GameUtil
 				valid = valid && ((nextHedgehog - o.getPosition()) != 1);
 
 				if (o.getPosition() == 63)
-				{
 					valid = valid && board.canEnterGoal(player);
-				}
 				break;
 			}
 			default:

@@ -33,6 +33,12 @@ public class Client implements ILobbyClientListener
 		client = new LobbyClient(xstream, host, port);
 		client.addListener(this);
 		this.id = id;
+		
+		xstream.processAnnotations(Player.class);
+		xstream.processAnnotations(PlayerUpdated.class);
+		xstream.processAnnotations(Move.class);
+		xstream.processAnnotations(Board.class);
+		xstream.processAnnotations(BoardUpdated.class);
 	}
 
 	public void setHandler(IGameHandler handler)

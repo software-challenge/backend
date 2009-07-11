@@ -79,7 +79,7 @@ public class Game extends SimpleGameInstance<Player>
 
 			if (board.isValid(move, active))
 			{
-				updateBoard(move, active);
+				updateBoardWith(move, active);
 			}
 			else
 			{
@@ -87,15 +87,12 @@ public class Game extends SimpleGameInstance<Player>
 						.getColor(), move.getTyp());
 			}
 
-			if (!playerCanMove(players.get(activePlayerId)))
-			{
-				activePlayerId = (activePlayerId + 1) % players.size();
-			}
-
+			Player next = fetchNextPlayer();
+			updatePlayer(next);
 			// TODO gameOver ??
 
 			updatePlayers();
-			players.get(activePlayerId).requestMove();
+			next.requestMove();
 			updateObservers();
 		}
 		else
@@ -105,73 +102,111 @@ public class Game extends SimpleGameInstance<Player>
 		}
 	}
 
+	/**
+	 * Aktualisierungen vor dem Beginn einer neuen Runde werden ausgeführt:
+	 * - Positionsfelder werden ausgewertet
+	 * -
+	 * 
+	 * @param player
+	 */
+	private void updatePlayer(Player player)
+	{
+		FieldTyp current = board.getTypeAt(player.getPosition());
+		switch (current)
+		{
+			case POSITION_1:
+				if (board.isFirst(player))
+					player.changeCarrotsAvailableBy(10);
+				break;
+			case POSITION_2:
+				if (!board.isFirst(player))
+					player.changeCarrotsAvailableBy(20);
+				break;
+		}
+	}
+
+	/**
+	 * Berechnet den nächsten Spieler der an die Reihe kommt. Spieler die noch
+	 * aus
+	 * der letzten Runde aussetzen müssen, werden wieder freigeschaltet.
+	 * Sollte ein Spieler keine Zugmöglichkeit haben, so wird er übersprungen.
+	 * 
+	 * @return
+	 */
+	private Player fetchNextPlayer()
+	{
+		Player next = players.get(activePlayerId);
+		if (next.isSuspended())
+			next.setSuspended(false);
+		if (!playerCanMove(next))
+			activePlayerId = (activePlayerId + 1) % players.size();
+
+		return players.get(activePlayerId);
+	}
+
 	protected boolean playerCanMove(Player next)
 	{
 		// TODO Auto-generated method stub
 		return true;
 	}
 
-	protected void updateBoard(Move move, Player player)
+	protected void updateBoardWith(Move move, Player player)
 	{
 		switch (move.getTyp())
 		{
-			case DROP_10_CARROTS:
-				player.setCarrotsAvailable(Math.max(0, player
-						.getCarrotsAvailable()
-						- move.getN()));
+			case TAKE_OR_DROP_CARROTS:
+				player.changeCarrotsAvailableBy(move.getN());
 				break;
-			case TAKE_10_CARROTS:
-				player.setCarrotsAvailable(player.getCarrotsAvailable() + 10);
-				break;
-			case PLAY_CARD_EAT_SALAD:
-			{
-				List<Action> remaining = player.getActions();
-				remaining.remove(Action.EAT_SALAD);
-				player.setActions(remaining);
-			}
 			case EAT:
-				player.setSaladsToEat(Math.max(0, player.getSaladsToEat() - 1));
+				player.eatSalad();
+				if (board.isFirst(player))
+					player.changeCarrotsAvailableBy(10);
+				else
+					player.changeCarrotsAvailableBy(30);
+				player.setSuspended(true);
 				break;
 			case MOVE:
 				player.setPosition(player.getPosition() + move.getN());
-				player.setCarrotsAvailable(player.getCarrotsAvailable()
-						- GameUtil.calculateCarrots(move.getN()));
+				player.changeCarrotsAvailableBy(-GameUtil.calculateCarrots(move
+						.getN()));
 				break;
-			case PLAY_CARD_FALL_BACK:
-			{
-				List<Action> remaining = player.getActions();
-				remaining.remove(Action.FALL_BACK);
-				player.setActions(remaining);
-			}
 			case FALL_BACK:
 			{
 				int nextField = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
 						player.getPosition());
 				int diff = player.getPosition() - nextField;
-				// TODO increase carrot count
+				player.changeCarrotsAvailableBy(diff * 10);
 				player.setPosition(nextField);
 				break;
 			}
-			case PLAY_CARD_HURRY_AHEAD:
+			case PLAY_CARD:
 			{
+				final Action action = move.getCard();
 				List<Action> remaining = player.getActions();
-				remaining.remove(Action.HURRY_AHEAD);
+				remaining.remove(action);
 				player.setActions(remaining);
 
-				int nextField = board.getOtherPlayer(player).getPosition() + 1;
-				player.setPosition(nextField);
-				break;
-			}
-			case PLAY_CARD_CHANGE_CARROTS:
-			{
-				List<Action> remaining = player.getActions();
-				remaining.remove(Action.TAKE_OR_DROP_CARROTS);
-				player.setActions(remaining);
-
-				player.setCarrotsAvailable(Math.max(0, player
-						.getCarrotsAvailable()
-						+ move.getN()));
-				break;
+				switch (action)
+				{
+					case EAT_SALAD:
+						player.eatSalad();
+						if (board.isFirst(player))
+							player.changeCarrotsAvailableBy(10);
+						else
+							player.changeCarrotsAvailableBy(30);
+						player.setSuspended(true);
+					case FALL_BACK:
+						player.setPosition(board.getOtherPlayer(player)
+								.getPosition() - 1);
+						break;
+					case HURRY_AHEAD:
+						player.setPosition(board.getOtherPlayer(player)
+								.getPosition() + 1);
+						break;
+					case TAKE_OR_DROP_CARROTS:
+						player.changeCarrotsAvailableBy(move.getN());
+						break;
+				}
 			}
 			default:
 				break;

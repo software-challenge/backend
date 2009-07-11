@@ -251,14 +251,14 @@ public class Board
 			case EAT:
 				valid = GameUtil.isValidToEat(this, player);
 				break;
+			case TAKE_OR_DROP_CARROTS:
+				valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player, move.getN());
+				break;
 			case FALL_BACK:
 				valid = GameUtil.isValidToFallBack(this, player);
 				break;
-			case PLAY_CARD_CHANGE_CARROTS:
-			case PLAY_CARD_EAT_SALAD:
-			case PLAY_CARD_FALL_BACK:
-			case PLAY_CARD_HURRY_AHEAD:
-				valid = GameUtil.isValidToPlayCard(this, player, move.getTyp(),
+			case PLAY_CARD:
+				valid = GameUtil.isValidToPlayCard(this, player, move.getCard(),
 						move.getN());
 				break;
 			default:
