@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.util.GameUtil;
 
@@ -196,6 +195,25 @@ public class Board
 		return red.getPosition() == pos || blue.getPosition() == pos;
 	}
 
+	public final int nextFreeField(int from)
+	{
+		int offset = 1;
+		while(!isMoveable(from+offset))
+			offset++;
+		return offset;
+	}
+
+	/**
+	 * Überprüft ob man auf ein Feld mit <code>MoveTyp.MOVE</code> ziehen darf.
+	 * 
+	 * @param pos
+	 * @return
+	 */
+	public final boolean isMoveable(final int pos)
+	{
+		return !isOccupied(pos) && !getTypeAt(pos).equals(FieldTyp.HEDGEHOG);
+	}
+
 	/**
 	 * Gibt den Feldtypen an einer bestimmten Position zurück. Liegt die
 	 * gewählte Position vor dem Startpunkt oder hinter dem Ziel, so wird
@@ -252,14 +270,15 @@ public class Board
 				valid = GameUtil.isValidToEat(this, player);
 				break;
 			case TAKE_OR_DROP_CARROTS:
-				valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player, move.getN());
+				valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player,
+						move.getN());
 				break;
 			case FALL_BACK:
 				valid = GameUtil.isValidToFallBack(this, player);
 				break;
 			case PLAY_CARD:
-				valid = GameUtil.isValidToPlayCard(this, player, move.getCard(),
-						move.getN());
+				valid = GameUtil.isValidToPlayCard(this, player,
+						move.getCard(), move.getN());
 				break;
 			default:
 				valid = false;

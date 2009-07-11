@@ -96,6 +96,7 @@ public class GameUtil
 	 * 
 	 * - auf einem Salatfeld befinden
 	 * - noch mindestens einen Salat besitzen
+	 * - vorher kein Salat auf diesem Feld verzehrt wurde
 	 * 
 	 * @param b
 	 * @param p
@@ -107,14 +108,28 @@ public class GameUtil
 		FieldTyp currentField = b.getTypeAt(p.getPosition());
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
 		valid = valid && (p.getSaladsToEat() > 0);
+		valid = valid && !playerMustMove(p);
+
 		return valid;
+	}
+	
+	public static boolean playerMustMove(Player p)
+	{
+		int lastSaladAt = -1;
+		for (final Move m : p.getHistory())
+		{
+			if (m.getTyp().equals(MoveTyp.EAT))
+				lastSaladAt = m.getTurn();
+		}
+		return  !((lastSaladAt == -1) || (p.getHistory().size() - lastSaladAt > 1));
 	}
 
 	public static boolean isValidToTakeOrDrop10Carrots(Board b, Player p, int n)
 	{
-		return b.getTypeAt(p.getPosition()).equals(FieldTyp.CARROT) && (n == 10 || n == -10);
+		return b.getTypeAt(p.getPosition()).equals(FieldTyp.CARROT)
+				&& (n == 10 || n == -10);
 	}
-	
+
 	/**
 	 * Überprüft <code>MoveTyp.FALL_BACK</code> Züge auf Korrektheit
 	 * 
@@ -151,10 +166,12 @@ public class GameUtil
 				valid = valid
 						&& player.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
 				valid = valid && (l == 0 || l == 20 || l == -20);
+				valid = valid && !playerMustMove(player);
 				break;
 			case EAT_SALAD:
 				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);
 				valid = valid && player.getSaladsToEat() > 0;
+				valid = valid && !playerMustMove(player);
 				break;
 			case FALL_BACK:
 			{

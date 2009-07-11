@@ -62,12 +62,19 @@ public class Player extends SimplePlayer
 	// verfügbare Hasenkarten
 	private List<Action>	actions;
 
-	// Muss der Spieler in der kommenden Runde aussetzen?
-	private boolean			suspended;
-
 	private Move			lastMove;
 
-	// TODO save last action for the player
+	private List<Move>		history;
+
+	protected void addToHistory(final Move m)
+	{
+		history.add(m);
+	}
+	
+	public List<Move> getHistory()
+	{
+		return history;
+	}
 
 	protected Player(FigureColor color)
 	{
@@ -85,8 +92,8 @@ public class Player extends SimplePlayer
 		color = c;
 		carrots = 68;
 		saladsToEat = 5;
-		suspended = false;
 
+		history = new LinkedList<Move>();
 		actions = new LinkedList<Action>();
 		actions.add(Action.TAKE_OR_DROP_CARROTS);
 		actions.add(Action.EAT_SALAD);
@@ -117,8 +124,8 @@ public class Player extends SimplePlayer
 	{
 		this.carrots = carrots;
 	}
-	
-	protected final void changeCarrotsAvailableBy(int amount) 
+
+	protected final void changeCarrotsAvailableBy(int amount)
 	{
 		this.carrots = Math.max(0, this.carrots + amount);
 	}
@@ -137,27 +144,10 @@ public class Player extends SimplePlayer
 	{
 		this.saladsToEat = saladsToEat;
 	}
-	
+
 	protected final void eatSalad()
 	{
 		this.saladsToEat = Math.max(0, this.saladsToEat - 1);
-	}
-
-	/**
-	 * Eine Hasenkarte kann den Spieler eine Runde aussetzen lassen.
-	 * <code>TRUE</code>, falls der Spieler in der kommenden Runde aussetzen
-	 * muss.
-	 * 
-	 * @return
-	 */
-	public boolean isSuspended()
-	{
-		return suspended;
-	}
-	
-	protected void setSuspended(boolean suspended)
-	{
-		this.suspended = suspended;
 	}
 
 	/**

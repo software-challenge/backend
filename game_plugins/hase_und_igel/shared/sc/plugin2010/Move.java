@@ -24,7 +24,8 @@ public final class Move
 		 */
 		EAT,
 		/**
-		 * Nehme 10 Karotten auf oder gib 10 Karotten ab - auf einem Karottenfeld
+		 * Nehme 10 Karotten auf oder gib 10 Karotten ab - auf einem
+		 * Karottenfeld
 		 */
 		TAKE_OR_DROP_CARROTS,
 		/**
@@ -37,9 +38,20 @@ public final class Move
 		PLAY_CARD
 	}
 
+	private transient int	turn;
 	private final int		n;
 	private final MoveTyp	typ;
 	private final Action	card;
+	
+	protected void setTurn(int turn)
+	{
+		this.turn = turn;
+	}
+	
+	public int getTurn()
+	{
+		return turn;
+	}
 
 	public Move(final MoveTyp t)
 	{
@@ -47,14 +59,14 @@ public final class Move
 		card = null;
 		n = 0;
 	}
-	
+
 	public Move(final MoveTyp t, int val)
 	{
 		typ = t;
 		card = null;
 		n = val;
 	}
-	
+
 	public Move(final MoveTyp t, final Action a)
 	{
 		typ = t;
@@ -78,7 +90,7 @@ public final class Move
 	{
 		return typ;
 	}
-	
+
 	public Action getCard()
 	{
 		return card;

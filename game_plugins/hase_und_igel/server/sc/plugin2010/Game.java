@@ -45,6 +45,26 @@ public class Game extends SimpleGameInstance<Player>
 		availableColors = new LinkedList<FigureColor>();
 		initialize();
 	}
+	
+	protected Board getBoard()
+	{
+		return board;
+	}
+	
+	protected final int getTurn()
+	{
+		return turn;
+	}
+	
+	protected final boolean isActive()
+	{
+		return active;
+	}
+	
+	protected final Player getActivePlayer()
+	{
+		return players.get(activePlayerId);
+	}
 
 	protected void initialize()
 	{
@@ -66,26 +86,32 @@ public class Game extends SimpleGameInstance<Player>
 			return;
 		}
 
-		final Player active = players.get(activePlayerId);
+		final Player player = players.get(activePlayerId);
+		
 		activePlayerId = (activePlayerId + 1) % players.size();
 
 		if (activePlayerId == 0)
 			turn++;
-
+		
+		if (turn > GamePlugin.MAX_TURN_COUNT) 
+			active = false;
+		
 		if (data instanceof Move)
 		{
-			logger.info("Player '{}' has made a move.", author);
 			final Move move = (Move) data;
+			move.setTurn(getTurn());
 
-			if (board.isValid(move, active))
+			if (board.isValid(move, player))
 			{
-				updateBoardWith(move, active);
+				updateBoardWith(move, player);
 			}
 			else
 			{
-				logger.error("Received invalid move from '{}': '{}'", active
+				logger.error("Received invalid move from '{}': '{}'", player
 						.getColor(), move.getTyp());
+				active = false;
 			}
+			player.addToHistory(move);
 
 			Player next = fetchNextPlayer();
 			updatePlayer(next);
@@ -97,7 +123,7 @@ public class Game extends SimpleGameInstance<Player>
 		}
 		else
 		{
-			logger.error("Unknown message received from '{}': '{}'", active
+			logger.error("Unknown message received from '{}': '{}'", player
 					.getColor(), data.getClass().getName());
 		}
 	}
@@ -136,8 +162,6 @@ public class Game extends SimpleGameInstance<Player>
 	private Player fetchNextPlayer()
 	{
 		Player next = players.get(activePlayerId);
-		if (next.isSuspended())
-			next.setSuspended(false);
 		if (!playerCanMove(next))
 			activePlayerId = (activePlayerId + 1) % players.size();
 
@@ -163,7 +187,6 @@ public class Game extends SimpleGameInstance<Player>
 					player.changeCarrotsAvailableBy(10);
 				else
 					player.changeCarrotsAvailableBy(30);
-				player.setSuspended(true);
 				break;
 			case MOVE:
 				player.setPosition(player.getPosition() + move.getN());
@@ -194,7 +217,6 @@ public class Game extends SimpleGameInstance<Player>
 							player.changeCarrotsAvailableBy(10);
 						else
 							player.changeCarrotsAvailableBy(30);
-						player.setSuspended(true);
 					case FALL_BACK:
 						player.setPosition(board.getOtherPlayer(player)
 								.getPosition() - 1);
