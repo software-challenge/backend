@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import sc.framework.plugins.protocol.MoveRequest;
+import sc.plugin2010.gui.GameObservation;
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
@@ -21,6 +22,7 @@ public class Client implements ILobbyClientListener
 {
 	private IGameHandler	handler;
 	private LobbyClient		client;
+	private GameObservation	obs;
 	private String			gameType;
 	// current id to identifiy the client instance internal
 	private EPlayerId		id;
@@ -51,6 +53,16 @@ public class Client implements ILobbyClientListener
 		return handler;
 	}
 
+	public void setObservation(GameObservation obs)
+	{
+		this.obs = obs;
+	}
+
+	public GameObservation getObservation()
+	{
+		return obs;
+	}
+
 	@Override
 	public void onRoomMessage(String roomId, Object data)
 	{
@@ -61,6 +73,8 @@ public class Client implements ILobbyClientListener
 		else if (data instanceof PlayerUpdated)
 		{
 			handler.onUpdate((PlayerUpdated) data);
+			obs.newTurn("new turn"
+					+ ((PlayerUpdated) data).getPlayer().getCarrotsAvailable());
 		}
 		else if (data instanceof MoveRequest)
 		{
@@ -121,15 +135,13 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGameJoined(String roomId)
 	{
-		// TODO Auto-generated method stub
-
+		obs.ready();
 	}
 
 	@Override
 	public void onGameLeft(String roomId)
 	{
-		// TODO Auto-generated method stub
-
+		obs.gameEnded();
 	}
 
 	@Override

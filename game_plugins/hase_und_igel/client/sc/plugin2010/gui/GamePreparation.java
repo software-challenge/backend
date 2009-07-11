@@ -19,16 +19,16 @@ import sc.protocol.responses.PrepareGameResponse;
  */
 public class GamePreparation implements IGamePreparation
 {
-	private Client		administrativeClient;
-	private List<ISlot>	slots	= new LinkedList<ISlot>();
+	private List<ISlot>		slots	= new LinkedList<ISlot>();
+	private IObservation	obs;
 
-	public GamePreparation(Client client, int playerCount)
+	public GamePreparation(Client client, int playerCount, IObservation obs)
 	{
-		administrativeClient = client;
+		this.obs = obs;
 		RequestResult<PrepareGameResponse> results = null;
 		try
 		{
-			results = administrativeClient.prepareGameAndWait(playerCount);
+			results = client.prepareGameAndWait(playerCount);
 		}
 		catch (InterruptedException e)
 		{
@@ -39,7 +39,7 @@ public class GamePreparation implements IGamePreparation
 
 		for (String singleResp : response.getReservations())
 		{
-			slots.add(new Slot(singleResp, administrativeClient));
+			slots.add(new Slot(singleResp, client));
 		}
 	}
 
@@ -52,6 +52,6 @@ public class GamePreparation implements IGamePreparation
 	@Override
 	public IObservation getObserver()
 	{
-		return new GameObservation(administrativeClient);
+		return obs;
 	}
 }

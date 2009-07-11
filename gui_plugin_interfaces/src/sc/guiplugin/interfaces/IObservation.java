@@ -46,11 +46,14 @@ public interface IObservation {
 	void next();
 
 	void addReadyListener(IReadyListener listener);
+
 	void removeReadyListener(IReadyListener listener);
 
 	void addNewTurnListener(INewTurnListener listener);
+
 	void removeNewTurnListener(INewTurnListener listener);
-	
+
 	void addGameEndedListener(IGameEndedListener listener);
+
 	void removeGameEndedListener(IGameEndedListener listener);
 }
