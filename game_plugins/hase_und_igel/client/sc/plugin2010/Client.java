@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import sc.framework.plugins.protocol.MoveRequest;
+import sc.plugin2010.gui.GamePreparation;
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
+import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 
 import com.thoughtworks.xstream.XStream;
@@ -127,5 +129,11 @@ public class Client implements ILobbyClientListener
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(int playerCount)
+			throws InterruptedException
+	{
+		return client.prepareGameAndWait(gameType, playerCount);
 	}
 }
