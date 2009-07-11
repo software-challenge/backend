@@ -17,11 +17,14 @@ import sc.protocol.ReplayClient;
 
 import com.thoughtworks.xstream.XStream;
 
+import edu.cau.plugins.PluginDescriptor;
+
 /**
  * 
  * @author ffi
  * 
  */
+@PluginDescriptor(author = "Florian Fittkau", uuid = "hui", version = "1.0", name = "Hase und Igel (GUI)")
 public class GUIPluginFacade implements IGuiPlugin
 {
 	/**

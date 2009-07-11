@@ -111,7 +111,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 				- COMPILED_CLASS_IDENTIFIER.length());
 	}
 
-	private static Collection<Class<?>> findGameDefinitionsInJar(URI jarURI)
+	private Collection<Class<?>> findGameDefinitionsInJar(URI jarURI)
 	{
 		Collection<Class<?>> gameDefinitions = new LinkedList<Class<?>>();
 
@@ -168,10 +168,13 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 		return gameDefinitions;
 	}
 
-	private static boolean isValidPlugin(Class<?> clazz)
+	private boolean isValidPlugin(Class<?> clazz)
 	{
-		return (clazz.getAnnotation(PLUGIN_ANNOTATION) != null);
+		return (clazz.getAnnotation(PLUGIN_ANNOTATION) != null)
+				&& getPluginInterface().isAssignableFrom(clazz);
 	}
+
+	protected abstract Class<?> getPluginInterface();
 
 	public Collection<PluginInstanceType> getActivePlugins()
 	{

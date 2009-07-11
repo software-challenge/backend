@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
+import sc.api.plugins.IGamePlugin;
 import sc.helpers.CollectionHelper;
 import sc.helpers.Function;
 import sc.server.Configuration;
@@ -118,5 +119,11 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 						return val.getDescription().uuid();
 					}
 				});
+	}
+
+	@Override
+	protected Class<?> getPluginInterface()
+	{
+		return IGamePlugin.class;
 	}
 }

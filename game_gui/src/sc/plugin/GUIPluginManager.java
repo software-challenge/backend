@@ -3,6 +3,7 @@ package sc.plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.logic.GUIConfiguration;
 import sc.server.gaming.GamePluginApi;
 import sc.server.plugins.GamePluginInstance;
@@ -58,5 +59,10 @@ public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
 		} else {
 			return GUIConfiguration.getPluginFolder();
 		}
+	}
+
+	@Override
+	protected Class<?> getPluginInterface() {
+		return IGuiPlugin.class;
 	}
 }
