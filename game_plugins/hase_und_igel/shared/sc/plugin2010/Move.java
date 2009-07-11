@@ -20,23 +20,19 @@ public final class Move
 		 */
 		MOVE,
 		/**
-		 * Iß einen Salat. Nur verfügbar wenn der Spieler auf einem Salatfeld
-		 * steht
+		 * Iß einen Salat - auf einem Salatfeld
 		 */
 		EAT,
 		/**
-		 * Nehme 10 Karotten auf einem Karottenfeld auf
+		 * Nehme 10 Karotten auf oder gib 10 Karotten ab - auf einem Karottenfeld
 		 */
 		TAKE_OR_DROP_CARROTS,
 		/**
-		 * Falle zum letzten Igelfeld zurück. Nur verfügbar, wenn ein
-		 * unbesetztes
-		 * Igelfeld hinter dem Spieler vorhanden ist.
+		 * Falle zum letzten Igelfeld zurück.
 		 */
 		FALL_BACK,
 		/**
-		 * Spielt eine der 4 Hasenkarten von der Hand des Spielers
-		 * Veränderung der CAU Kiel
+		 * Spielt einen Hasenjoker aus - auf einem Hasenfeld
 		 */
 		PLAY_CARD
 	}

@@ -18,7 +18,7 @@ public class Player extends SimplePlayer
 	 * Mögliche Aktionen, die durch das Ausspielen eines Hasenjokers ausgelöst
 	 * werden können.
 	 */
-	public enum Action // TODO only 4 cards...
+	public enum Action
 	{
 		/**
 		 * Nehme Karotten auf, oder leg sie ab
