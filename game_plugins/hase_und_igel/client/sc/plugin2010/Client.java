@@ -31,6 +31,7 @@ public class Client implements ILobbyClientListener
 	private String			host;
 	private int				port;
 
+	@SuppressWarnings("unchecked")
 	public Client(String host, int port, EPlayerId id) throws IOException
 	{
 		gameType = GamePlugin.PLUGIN_UUID;
@@ -61,6 +62,11 @@ public class Client implements ILobbyClientListener
 	public GameObservation getObservation()
 	{
 		return obs;
+	}
+
+	public void observeGame(String passphrase)
+	{
+		client.observeGame(gameType, passphrase);
 	}
 
 	@Override
