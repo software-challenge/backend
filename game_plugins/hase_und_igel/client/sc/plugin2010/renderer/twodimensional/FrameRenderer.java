@@ -72,13 +72,11 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	private void createInitFrame()
 	{
 
-		this.setSize(800, 600); // TODO get default size?
+		this.setSize(800, 600);
 
 		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
-		final int MAXROW = 8;
-
-		for (int i = 0; i <= MAXROW * MAXROW; i++)
+		for (int i = 0; i < 65; i++)
 		{
 			fbuttons.add(new FieldButton("", i, Board.FieldTyp.INVALID, this));
 			fbuttons.get(i).setPreferredSize(new Dimension(40, 40));
@@ -140,20 +138,41 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		switch (player.getLastMove().getTyp())
 		{
 			case EAT:
-				actionb
-						.addRow("Spieler " + currentColor
-								+ "frisst einen Salat");
+				actionb.addRow("Spieler " + currentColor
+						+ " frisst einen Salat");
 				break;
 			case MOVE:
-				actionb.addRow("Spieler " + currentColor + "setzt auf "
+				actionb.addRow("Spieler " + currentColor + " setzt auf "
 						+ String.valueOf(player.getLastMove().getN()));
 				break;
 			case TAKE_10_CARROTS:
-				actionb.addRow("Spieler " + currentColor + "nimmt 10 Karotten");
+				actionb
+						.addRow("Spieler " + currentColor
+								+ " nimmt 10 Karotten");
 				break;
 			case DROP_10_CARROTS:
 				actionb.addRow("Spieler " + currentColor
-						+ "gibt 10 Karotten ab");
+						+ " gibt 10 Karotten ab");
+				break;
+			case FALL_BACK:
+				actionb.addRow("Spieler " + currentColor
+						+ " lässt sich auf Igel zurückfallen");
+				break;
+			case PLAY_CARD_CHANGE_CARROTS:
+				actionb.addRow("Spieler " + currentColor
+						+ " spielt 'Nimm oder gib 20 Karotten'");
+				break;
+			case PLAY_CARD_EAT_SALAD:
+				actionb.addRow("Spieler " + currentColor
+						+ " spielt 'Friss sofort einen Salat'");
+				break;
+			case PLAY_CARD_FALL_BACK:
+				actionb.addRow("Spieler " + currentColor
+						+ " spielt 'Falle eine Position zurück'");
+				break;
+			case PLAY_CARD_HURRY_AHEAD:
+				actionb.addRow("Spieler " + currentColor
+						+ " spielt 'Rücke eine Position vor'");
 				break;
 			default:
 				break;

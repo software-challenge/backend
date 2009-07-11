@@ -18,8 +18,8 @@ public class HaseUndIgelLayout implements LayoutManager
 	private final Vector<Integer>	levels;
 	private final Vector<Component>	comps;
 	private final int				BORDER	= 5;
-	private final double			SIZEX	= 10;
-	private final double			SIZEY	= 11;
+	private final int				SIZEX	= 10;
+	private final int				SIZEY	= 11;
 
 	public HaseUndIgelLayout()
 	{
@@ -63,17 +63,12 @@ public class HaseUndIgelLayout implements LayoutManager
 	@Override
 	public Dimension minimumLayoutSize(final Container parent)
 	{
-		Component c;
 		final Dimension d = new Dimension();
-		Dimension componentDim;
 
-		for (int i = 0; i < parent.getComponentCount(); i++)
-		{
-			c = parent.getComponent(i);
-			componentDim = c.getMinimumSize();
-			d.width = Math.max(d.width, componentDim.width);
-			d.height += componentDim.height;
-		}
+		d.width = parent.getComponent(0).getPreferredSize().width * SIZEX + 2
+				* BORDER;
+		d.height = parent.getComponent(0).getPreferredSize().height * SIZEY + 2
+				* BORDER;
 		return d;
 	}
 
