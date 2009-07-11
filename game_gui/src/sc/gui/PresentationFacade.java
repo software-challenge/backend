@@ -3,6 +3,7 @@ package sc.gui;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 
 import sc.IGUIApplication;
 import sc.IPresentationFacade;
@@ -86,7 +87,7 @@ public class PresentationFacade implements IPresentationFacade {
 	}
 
 	@Override
-	public JComponent getContextDisplay() {
+	public JPanel getContextDisplay() {
 		return contextDisplay;
 	}
 

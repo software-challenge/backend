@@ -42,13 +42,14 @@ public final class Application
 	 * GUI app
 	 * 
 	 * @param port
-	 * @return
+	 * @return the lobby
 	 */
-	public static void startServer(final Integer port, boolean timeout)
+	public static Lobby startServer(final Integer port, boolean timeout)
 	{
 		Configuration.set(Configuration.PORT_KEY, port.toString());
 		final Lobby server = new Lobby();
 		server.start();
+		return server;
 	}
 
 	public static void parseArguments(String[] params)

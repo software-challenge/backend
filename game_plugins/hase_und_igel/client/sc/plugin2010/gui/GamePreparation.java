@@ -9,6 +9,7 @@ import java.util.List;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
+import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.plugin2010.Client;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;

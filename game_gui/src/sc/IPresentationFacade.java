@@ -2,6 +2,7 @@ package sc;
 
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 
 /**
  * Defines the common structure of the Software Challenge GUI.
@@ -16,7 +17,7 @@ public interface IPresentationFacade {
 
 	JMenuBar getMenuBar();
 
-	JComponent getContextDisplay();
+	JPanel getContextDisplay();
 
 	JComponent getStatusBar();
 

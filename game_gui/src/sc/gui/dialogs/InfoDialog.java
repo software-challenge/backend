@@ -4,6 +4,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import sc.gui.PresentationFacade;
+
 @SuppressWarnings("serial")
 public class InfoDialog extends JDialog {
 

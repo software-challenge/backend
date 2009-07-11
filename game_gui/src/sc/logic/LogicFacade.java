@@ -13,7 +13,9 @@ import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.common.IConfiguration;
 import sc.common.IConfiguration.ELanguage;
+import sc.guiplugin.interfaces.IObservation;
 import sc.plugin.GUIPluginManager;
+import sc.server.Application;
 
 public class LogicFacade implements ILogicFacade {
 
@@ -34,6 +36,7 @@ public class LogicFacade implements ILogicFacade {
 	 * For multi-language support
 	 */
 	private ResourceBundle languageData;
+	private IObservation observation;
 
 	/**
 	 * Singleton instance
@@ -66,10 +69,10 @@ public class LogicFacade implements ILogicFacade {
 			result = new GUIConfiguration();
 		} catch (IOException e) {
 			result = new GUIConfiguration();
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			result = new GUIConfiguration();
-			e.printStackTrace();
+			//e.printStackTrace();
 		} finally {
 			if (null != in) {
 				try {
@@ -144,6 +147,21 @@ public class LogicFacade implements ILogicFacade {
 	@Override
 	public IConfiguration getConfiguration() {
 		return config;
+	}
+
+	@Override
+	public IObservation getObservation() {
+		return observation;
+	}
+
+	@Override
+	public void setObservation(IObservation observer) {
+		this.observation = observer;
+	}
+
+	@Override
+	public void startServer(Integer port) {
+		Application.startServer(port, false);
 	}
 
 }

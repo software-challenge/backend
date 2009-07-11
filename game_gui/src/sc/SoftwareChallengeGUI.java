@@ -43,12 +43,12 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		} catch (CouldNotFindAnyLanguageFileException e) {
 			JOptionPane.showMessageDialog(this, "Could not load any language file.",
 					"Missing any language file.", JOptionPane.ERROR_MESSAGE);
-			closeGUI();
+			System.exit(-1);
 		} catch (CouldNotFindAnyPluginException e) {
 			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getString(
 					"main_error_plugin_msg"), logicFac.getLanguageData().getString(
 					"main_error_plugin_title"), JOptionPane.ERROR_MESSAGE);
-			closeGUI();
+			System.exit(-2);
 		}
 		// get presentation facade
 		this.presFac = PresentationFacade.init(this, this, logicFac);
@@ -64,7 +64,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setJMenuBar(presFac.getMenuBar());
 		this.add(presFac.getContextDisplay());
-		// this.add(presFac.getStatusBar());
+		this.add(presFac.getStatusBar());
 
 		// set window preferences
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
