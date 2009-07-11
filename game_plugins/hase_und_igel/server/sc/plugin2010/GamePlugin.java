@@ -21,8 +21,7 @@ public class GamePlugin implements IGamePlugin
 	public static final String	PLUGIN_AUTHOR		= "Raphael Randschau <rra@informatik.uni-kiel.de>";
 	public static final String	PLUGIN_UUID			= "swc_2010_hase_und_igel";
 
-	// 2 Computer (default), 2 Menschen
-	public static final int		MAX_PLAYER_COUNT	= 4;
+	public static final int		MAX_PLAYER_COUNT	= 2;
 
 	@Override
 	public IGameInstance createGame()

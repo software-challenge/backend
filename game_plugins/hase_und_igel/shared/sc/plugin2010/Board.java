@@ -209,9 +209,7 @@ public class Board
 	{
 		FieldTyp field = FieldTyp.INVALID;
 		if (pos >= 0 && pos < track.size())
-		{
 			field = track.get(pos);
-		}
 		return field;
 	}
 
@@ -229,7 +227,7 @@ public class Board
 		Player player = null;
 		if (red.getPosition() == pos)
 			player = red;
-		if (blue.getPosition() == pos)
+		else if (blue.getPosition() == pos)
 			player = blue;
 		return player;
 	}
@@ -283,13 +281,11 @@ public class Board
 	{
 		int ret = -1;
 		for (int i = pos + 1; i < track.size(); i++)
-		{
 			if (track.get(i).equals(field))
 			{
 				ret = i;
 				break;
 			}
-		}
 		return ret;
 	}
 
@@ -302,13 +298,11 @@ public class Board
 	{
 		int ret = -1;
 		for (int i = pos - 1; i >= 0; i--)
-		{
 			if (track.get(i).equals(field))
 			{
 				ret = i;
 				break;
 			}
-		}
 		return ret;
 	}
 
