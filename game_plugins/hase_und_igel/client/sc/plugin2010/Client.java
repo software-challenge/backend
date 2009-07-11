@@ -93,6 +93,11 @@ public class Client implements ILobbyClientListener
 		client.joinAnyGame(gameType);
 	}
 
+	public void joinPreparedGame(String reservation)
+	{
+		client.joinPreparedGame(reservation);
+	}
+
 	/**
 	 * @return
 	 */

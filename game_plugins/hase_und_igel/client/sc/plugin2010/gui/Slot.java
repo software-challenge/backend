@@ -18,7 +18,6 @@ public class Slot implements ISlot
 {
 	private String	reservation;
 	private Client	adminclient;
-	private int		id;
 
 	public Slot(String reservation, Client adminclient)
 	{
@@ -53,5 +52,6 @@ public class Slot implements ISlot
 		GUIGameHandler handler = new GUIGameHandler(humanClient);
 		humanClient.setHandler(handler);
 		RenderFacade.getInstance().createPanel(handler);
+		humanClient.joinPreparedGame(reservation);
 	}
 }
