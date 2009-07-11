@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.IPlayerListener;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;

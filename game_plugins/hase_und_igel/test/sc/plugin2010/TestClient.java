@@ -26,12 +26,22 @@ public class TestClient implements ILobbyClientListener
 
 	private static final int	PORT	= 13050;
 
+	private Board board;
+	private Player own;
+	
 	@Override
 	public void onRoomMessage(String roomId, Object data)
 	{
-		if (data instanceof MoveRequest)
+		if (data instanceof BoardUpdated)
 		{
-			client.sendMessageToRoom(roomId, new Move(MoveTyp.MOVE, 1));
+			this.board = ((BoardUpdated)data).getBoard();
+		} else if (data instanceof PlayerUpdated)
+		{
+			if (((PlayerUpdated)data).isOwnPlayer())
+				this.own = ((PlayerUpdated)data).getPlayer();
+		} if (data instanceof MoveRequest)
+		{
+			client.sendMessageToRoom(roomId, new Move(MoveTyp.MOVE, board.nextFreeFieldFor(own)));
 		}
 	}
 

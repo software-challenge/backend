@@ -88,7 +88,8 @@ public class Game extends SimpleGameInstance<Player>
 			logger.debug("Game not active!");
 			return;
 		}
-		logger.debug("Turn #{}: recv. Data!", getTurn());
+		logger.debug("Turn #{}: recv. data from '{}'", getTurn(),
+				((Player) author).getColor());
 
 		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
 				|| board.getTypeAt(players.get(1).getPosition()).equals(
@@ -195,6 +196,8 @@ public class Game extends SimpleGameInstance<Player>
 		if (!GameUtil.canMove(next, board))
 			activePlayerId = (activePlayerId + 1) % players.size();
 
+		logger.debug("next player is '{}'", players.get(activePlayerId).getColor());
+		
 		return players.get(activePlayerId);
 	}
 
@@ -281,7 +284,7 @@ public class Game extends SimpleGameInstance<Player>
 		{
 			listener.onPlayerJoined(player);
 		}
-		
+
 		logger.debug("New player joined '{}'", player.getColor());
 
 		return player;
@@ -306,11 +309,14 @@ public class Game extends SimpleGameInstance<Player>
 
 	private void updateObservers()
 	{
-		GameState currentState = new GameState(this);
-		
-		for (final IGameListener l : listeners)
+		if (false)
 		{
-			l.onStateChanged(currentState);
+			GameState currentState = new GameState(this);
+
+			for (final IGameListener l : listeners)
+			{
+				l.onStateChanged(currentState);
+			}
 		}
 	}
 
@@ -340,7 +346,9 @@ public class Game extends SimpleGameInstance<Player>
 		updatePlayers();
 
 		// Fordere vom ersten Spieler einen Zug an
-		players.get(activePlayerId).requestMove();
+		final Player current = players.get(activePlayerId);
+		logger.debug("Active Player is '{}'", current.getColor());
+		current.requestMove();
 	}
 
 	@Override
