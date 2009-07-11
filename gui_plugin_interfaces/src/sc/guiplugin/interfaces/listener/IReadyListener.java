@@ -1,4 +1,4 @@
-package sc.guiplugin.interfaces;
+package sc.guiplugin.interfaces.listener;
 
 public interface IReadyListener {
 

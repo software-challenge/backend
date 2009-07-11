@@ -4,10 +4,18 @@ import java.util.List;
 
 public interface IGamePreparation {
 
+	/**
+	 * Returns the slots of a prepared game. The size of the slots is the number
+	 * of players passed to the prepareGame()-Method.
+	 * 
+	 * @return
+	 */
 	List<ISlot> getSlots();
-	
-	IObservation observe();
-	
-	void addReadyListener(IReadyListener listener);
-	void removeReadyListener(IReadyListener listener);
+
+	/**
+	 * Returns the observation object to control a game.
+	 * 
+	 * @return
+	 */
+	IObservation getObserver();
 }
