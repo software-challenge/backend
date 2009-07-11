@@ -68,7 +68,6 @@ public class GameObservation implements IObservation
 	@Override
 	public void pause()
 	{
-		// TODO Auto-generated method stub
 
 	}
 

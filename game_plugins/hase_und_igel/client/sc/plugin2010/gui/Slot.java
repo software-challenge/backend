@@ -16,14 +16,13 @@ import sc.plugin2010.renderer.RenderFacade;
  */
 public class Slot implements ISlot
 {
-	private String	roomId;
 	private String	reservation;
 	private Client	adminclient;
+	private int		id;
 
-	public Slot(String roomId, String reservation, Client adminclient)
+	public Slot(String reservation, Client adminclient)
 	{
 		this.reservation = reservation;
-		this.roomId = roomId;
 		this.adminclient = adminclient;
 	}
 
@@ -39,10 +38,20 @@ public class Slot implements ISlot
 	@Override
 	public void asHuman() throws IOException
 	{
-		Client humanClient = new Client(adminclient.getHost(), adminclient
-				.getPort(), EPlayerId.PLAYER_ONE);
+		Client humanClient;
+		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne())
+		{
+			humanClient = new Client(adminclient.getHost(), adminclient
+					.getPort(), EPlayerId.PLAYER_ONE);
+		}
+		else
+		{
+			humanClient = new Client(adminclient.getHost(), adminclient
+					.getPort(), EPlayerId.PLAYER_TWO);
+		}
+
 		GUIGameHandler handler = new GUIGameHandler(humanClient);
 		humanClient.setHandler(handler);
-		RenderFacade.getInstance().createPanel(true, handler);
+		RenderFacade.getInstance().createPanel(handler);
 	}
 }

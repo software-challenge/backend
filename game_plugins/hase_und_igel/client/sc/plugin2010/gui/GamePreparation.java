@@ -9,7 +9,6 @@ import java.util.List;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
-import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.plugin2010.Client;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
@@ -37,11 +36,10 @@ public class GamePreparation implements IGamePreparation
 		}
 
 		PrepareGameResponse response = results.getResult();
-		String roomId = response.getRoomId();
 
 		for (String singleResp : response.getReservations())
 		{
-			slots.add(new Slot(roomId, singleResp, administrativeClient));
+			slots.add(new Slot(singleResp, administrativeClient));
 		}
 	}
 

@@ -27,12 +27,13 @@ public class RenderFacade
 	private Renderer						player2;
 	private JPanel							panel;
 
-	private String							connectString	= "connectingPanel";
-	private String							observerString	= "observerPanel";
-	private String							player1String	= "player1Panel";
-	private String							player2String	= "player2Panel";
+	private String							connectString			= "connectingPanel";
+	private String							observerString			= "observerPanel";
+	private String							player1String			= "player1Panel";
+	private String							player2String			= "player2Panel";
 
 	private boolean							threeDimensional;
+	private boolean							alreadyCreatedPlayerOne	= false;
 
 	/**
 	 * Singleton instance
@@ -118,14 +119,15 @@ public class RenderFacade
 	 *            if asPlayer1 is true than panel will be created for player 1
 	 *            else it is created for player2
 	 */
-	public void createPanel(boolean asPlayer1, GUIGameHandler handler)
+	public void createPanel(GUIGameHandler handler)
 	{
 		if (threeDimensional)
 		{
-			if (asPlayer1)
+			if (!alreadyCreatedPlayerOne)
 			{
 				player1 = new ThreeDimRenderer(handler);
 				panel.add((ThreeDimRenderer) player1, player1String);
+				setAlreadyCreatedPlayerOne(true);
 			}
 			else
 			{
@@ -135,10 +137,11 @@ public class RenderFacade
 		}
 		else
 		{
-			if (asPlayer1)
+			if (!alreadyCreatedPlayerOne)
 			{
 				player1 = new FrameRenderer(handler);
 				panel.add((FrameRenderer) player1, player1String);
+				setAlreadyCreatedPlayerOne(true);
 			}
 			else
 			{
@@ -193,5 +196,15 @@ public class RenderFacade
 				break;
 		}
 
+	}
+
+	public void setAlreadyCreatedPlayerOne(boolean alreadyCreatedPlayerOne)
+	{
+		this.alreadyCreatedPlayerOne = alreadyCreatedPlayerOne;
+	}
+
+	public boolean getAlreadyCreatedPlayerOne()
+	{
+		return alreadyCreatedPlayerOne;
 	}
 }
