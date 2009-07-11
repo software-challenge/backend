@@ -21,42 +21,20 @@ import com.thoughtworks.xstream.XStream;
 
 public class SampleLibraryTest extends RealServerTest
 {
-	static class TestLobbyClient extends LobbyClient
+	static class TestLobbyClient
 	{
+		private LobbyClient	client;
+
 		public TestLobbyClient(String gameType, XStream xstream, String host,
 				int port) throws IOException
 		{
-			super(gameType, xstream, host, port);
+			client = new LobbyClient(xstream, host, port);
 		}
 
-		@Override
-		protected Collection<Class<? extends Object>> getProtocolClasses()
+		public LobbyClient getClient()
 		{
-			// TODO Auto-generated method stub
-			return null;
+			return client;
 		}
-
-		@Override
-		protected void onError(ErrorResponse response)
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		protected void onNewState(String roomId, Object state)
-		{
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		protected void onRoomMessage(String roomId, Object data)
-		{
-			// TODO Auto-generated method stub
-
-		}
-
 	}
 
 	@Test
@@ -66,13 +44,13 @@ public class SampleLibraryTest extends RealServerTest
 				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
 				"localhost", getServerPort());
 
-		client.joinAnyGame();
+		client.getClient().joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
 
 		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{
-				return client.getRooms().size();
+				return client.client.getRooms().size();
 			}
 		});
 	}
@@ -84,13 +62,13 @@ public class SampleLibraryTest extends RealServerTest
 				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
 				"localhost", getServerPort());
 
-		client.joinAnyGame();
+		client.getClient().joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
 
 		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
 			public Integer operate()
 			{
-				return client.getRooms().size();
+				return client.getClient().getRooms().size();
 			}
 		});
 	}
@@ -103,9 +81,9 @@ public class SampleLibraryTest extends RealServerTest
 				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
 				"localhost", getServerPort());
 
-		RequestResult<PrepareGameResponse> result = client.prepareGameAndWait(
+		RequestResult<PrepareGameResponse> result = client.client.prepareGameAndWait(
 				TestPlugin.TEST_PLUGIN_UUID, 2);
-		
+
 		Assert.assertTrue(result.hasValidContents());
 		Assert.assertTrue(result.isSuccessful());
 	}

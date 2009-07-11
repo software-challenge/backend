@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import sc.protocol.ErrorResponse;
+import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 import sc.sample.protocol.ProtocolDefinition;
 import sc.sample.server.GamePluginImpl;
@@ -11,36 +12,38 @@ import sc.sample.shared.Move;
 
 import com.thoughtworks.xstream.XStream;
 
-public class SimpleClient extends LobbyClient
+public class SimpleClient implements ILobbyClientListener
 {
+	private LobbyClient	client;
+
 	public SimpleClient(XStream xStream) throws IOException
 	{
-		super(GamePluginImpl.PLUGIN_UUID, xStream, "localhost", PORT);
+		client = new LobbyClient(xStream, "localhost", PORT);
+		this.client.addListener(this);
 	}
 
 	private static final int	PORT	= 13050;
 
 	@Override
-	protected void onRoomMessage(String roomId, Object data)
+	public void onRoomMessage(String roomId, Object data)
 	{
-		this.sendMessageToRoom(roomId, new Move(1, 1));
+		client.sendMessageToRoom(roomId, new Move(1, 1));
 	}
 
 	@Override
-	protected Collection<Class<? extends Object>> getProtocolClasses()
-	{
-		return ProtocolDefinition.getProtocolClasses();
-	}
-
-	@Override
-	protected void onError(ErrorResponse response)
+	public void onError(ErrorResponse response)
 	{
 		System.err.println(response);
 	}
 
 	@Override
-	protected void onNewState(String roomId, Object state)
+	public void onNewState(String roomId, Object state)
 	{
 		System.out.println("new state received" + state);
+	}
+
+	public void joinAnyGame()
+	{
+		client.joinAnyGame(GamePluginImpl.PLUGIN_UUID);
 	}
 }

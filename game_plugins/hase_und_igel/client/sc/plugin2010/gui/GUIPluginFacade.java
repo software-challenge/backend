@@ -75,7 +75,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	public IGamePreparation prepareGame(final String ip, final int port,
 			int playerCount, String filename) throws IOException
 	{
-		Client client = new Client("Hase und Igel", new XStream(), ip, port,
+		Client client = new Client(new XStream(), ip, port,
 				EPlayerId.OBSERVER);
 		client.setHandler(new GUIGameHandler(client));
 		return new GamePreparation(client, playerCount);

@@ -27,8 +27,7 @@ public abstract class SpielClient implements IGameUpdateObserver
 		// verbinde beim starten
 		try
 		{
-			Client client = new Client("Hase und Igel", new XStream(), ip,
-					port, EPlayerId.PLAYER_ONE);
+			Client client = new Client(new XStream(), ip, port, EPlayerId.PLAYER_ONE);
 			Logik logik = new Logik(this);
 			client.setHandler(logik);
 			client.joinAnyGame();

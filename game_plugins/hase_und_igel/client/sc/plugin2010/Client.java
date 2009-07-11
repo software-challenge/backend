@@ -1,10 +1,10 @@
 package sc.plugin2010;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.protocol.ErrorResponse;
+import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 
 import com.thoughtworks.xstream.XStream;
@@ -16,19 +16,22 @@ import com.thoughtworks.xstream.XStream;
  * @since Jul 5, 2009
  * 
  */
-public class Client extends LobbyClient
+public class Client implements ILobbyClientListener
 {
 	private IGameHandler	handler;
+	private LobbyClient		client;
 	private String			gameType;
 	// current id to identifiy the client instance internal
 	private EPlayerId		id;
 	// the current room in which the player is
 	private String			roomId;
 
-	public Client(String gameType, XStream xstream, String host, int port,
-			EPlayerId id) throws IOException
+	public Client(XStream xstream, String host, int port, EPlayerId id)
+			throws IOException
 	{
-		super(gameType, xstream, host, port);
+		this.gameType = "";
+		client = new LobbyClient(xstream, host, port);
+		client.addListener(this);
 		this.id = id;
 	}
 
@@ -43,7 +46,7 @@ public class Client extends LobbyClient
 	}
 
 	@Override
-	protected void onRoomMessage(String roomId, Object data)
+	public void onRoomMessage(String roomId, Object data)
 	{
 		if (data instanceof BoardUpdated)
 		{
@@ -61,28 +64,27 @@ public class Client extends LobbyClient
 		this.roomId = roomId;
 	}
 
-	@Override
-	protected Collection<Class<? extends Object>> getProtocolClasses()
-	{
-		return null;
-	}
-
 	// TODO call it
 	public void sendMove(Move move)
 	{
-		sendMessageToRoom(roomId, move);
+		client.sendMessageToRoom(roomId, move);
 	}
 
 	@Override
-	protected void onError(ErrorResponse response)
+	public void onError(ErrorResponse response)
 	{
 		System.err.println(response.getMessage());
 	}
 
 	@Override
-	protected void onNewState(String roomId, Object state)
+	public void onNewState(String roomId, Object state)
 	{
 		// TODO Auto-generated method stub
+	}
+
+	public void joinAnyGame()
+	{
+		client.joinAnyGame(gameType);
 	}
 
 	/**
@@ -96,5 +98,10 @@ public class Client extends LobbyClient
 	public EPlayerId getID()
 	{
 		return id;
+	}
+
+	public void prepareGame(int playerCount)
+	{
+		client.prepareGame(gameType, playerCount);
 	}
 }

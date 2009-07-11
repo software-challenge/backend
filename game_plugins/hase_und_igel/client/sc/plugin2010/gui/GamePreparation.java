@@ -24,8 +24,7 @@ public class GamePreparation implements IGamePreparation
 	public GamePreparation(Client client, int playerCount)
 	{
 		administrativeClient = client;
-		administrativeClient.prepareGame(administrativeClient.getGameType(),
-				playerCount);
+		administrativeClient.prepareGame(playerCount);
 	}
 
 	@Override

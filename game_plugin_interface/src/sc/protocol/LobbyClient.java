@@ -4,16 +4,11 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
-
-import javax.management.monitor.Monitor;
-import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +23,6 @@ import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.PrepareGameResponse;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import com.thoughtworks.xstream.XStream;
 
 /**
@@ -37,27 +31,20 @@ import com.thoughtworks.xstream.XStream;
  * @author Marcel
  * 
  */
-public abstract class LobbyClient extends XStreamClient
+public final class LobbyClient extends XStreamClient
 {
-	protected final String				defaultGameType;
-	private static final Logger			logger			= LoggerFactory
-																.getLogger(LobbyClient.class);
-	private static final List<String>	rooms			= new LinkedList<String>();
-	private ClientType					type			= ClientType.UNDEFINED;
-	private Map<String, List<Object>>	observations	= new HashMap<String, List<Object>>();
-	private AsyncResultManager			asyncManager	= new AsyncResultManager();
+	private static final Logger					logger			= LoggerFactory
+																		.getLogger(LobbyClient.class);
+	private static final List<String>			rooms			= new LinkedList<String>();
+	private ClientType							type			= ClientType.UNDEFINED;
+	private final Map<String, List<Object>>		observations	= new HashMap<String, List<Object>>();
+	private final AsyncResultManager			asyncManager	= new AsyncResultManager();
+	private final List<ILobbyClientListener>	listeners		= new LinkedList<ILobbyClientListener>();
 
-	public LobbyClient(String gameType, XStream xstream, String host, int port)
+	public LobbyClient(XStream xstream, String host, int port)
 			throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
-		prepareXStream(xstream);
-		this.defaultGameType = gameType;
-	}
-
-	private void prepareXStream(XStream toConfigure)
-	{
-		LobbyProtocol.registerMessages(toConfigure, getProtocolClasses());
 	}
 
 	public List<String> getRooms()
@@ -104,8 +91,8 @@ public abstract class LobbyClient extends XStreamClient
 			if (packet.getData() instanceof MementoPacket)
 			{
 				MementoPacket statePacket = (MementoPacket) packet.getData();
-				onNewState(packet.getRoomId(), statePacket.getState());
 				addObservationIfObserver(packet.getRoomId(), statePacket);
+				onNewState(packet.getRoomId(), statePacket.getState());
 			}
 			else
 			{
@@ -239,18 +226,34 @@ public abstract class LobbyClient extends XStreamClient
 		logger.warn("Couldn't process message {}.", o);
 	}
 
-	protected abstract void onNewState(String roomId, Object state);
+	protected void onNewState(String roomId, Object state)
+	{
+		for(ILobbyClientListener listener : this.listeners)
+		{
+			listener.onNewState(roomId, state);
+		}
+	}
 
-	protected abstract void onError(ErrorResponse response);
+	protected void onError(ErrorResponse error)
+	{
+		for(ILobbyClientListener listener : this.listeners)
+		{
+			listener.onError(error);
+		}
+	}
 
 	public void sendMessageToRoom(String roomId, Object o)
 	{
 		this.send(new RoomPacket(roomId, o));
 	}
 
-	protected abstract void onRoomMessage(String roomId, Object data);
-
-	protected abstract Collection<Class<? extends Object>> getProtocolClasses();
+	protected void onRoomMessage(String roomId, Object data)
+	{
+		for(ILobbyClientListener listener : this.listeners)
+		{
+			listener.onRoomMessage(roomId, data);
+		}
+	}
 
 	public void joinPreparedGame(String reservation)
 	{
@@ -258,10 +261,10 @@ public abstract class LobbyClient extends XStreamClient
 		this.send(new JoinPreparedRoomRequest(reservation));
 	}
 
-	public void joinAnyGame()
+	public void joinAnyGame(String gameType)
 	{
 		setType(ClientType.PLAYER);
-		this.send(new JoinRoomRequest(this.defaultGameType));
+		this.send(new JoinRoomRequest(gameType));
 	}
 
 	protected <T> void request(IRequest<T> request, Class<T> response,
@@ -271,8 +274,8 @@ public abstract class LobbyClient extends XStreamClient
 		send(request);
 	}
 
-	protected <T> RequestResult<T> blockingRequest(
-			IRequest<T> request, Class<T> response) throws InterruptedException
+	protected <T> RequestResult<T> blockingRequest(IRequest<T> request,
+			Class<T> response) throws InterruptedException
 	{
 		final RequestResult<T> requestResult = new RequestResult<T>();
 		final Object beacon = new Object();
@@ -304,7 +307,17 @@ public abstract class LobbyClient extends XStreamClient
 			request(request, response, blockingHandler);
 			beacon.wait();
 		}
-		
+
 		return requestResult;
+	}
+
+	public void addListener(ILobbyClientListener listener)
+	{
+		this.listeners.add(listener);
+	}
+	
+	public void removeListener(ILobbyClientListener listener)
+	{
+		this.listeners.remove(listener);
 	}
 }
