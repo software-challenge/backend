@@ -127,13 +127,9 @@ public class GameUtil
 		Boolean valid = true;
 		switch (typ)
 		{
-			case PLAY_CARD_DROP_20_CARROTS:
-				valid = valid && player.ownsCardOfTyp(Action.DROP_20_CARROTS);
-				valid = valid && (l == 0 || l == 20);
-				break;
-			case PLAY_CARD_TAKE_20_CARROTS:
-				valid = valid && player.ownsCardOfTyp(Action.TAKE_20_CARROTS);
-				valid = valid && (l == 0 || l == 20);
+			case PLAY_CARD_CHANGE_CARROTS:
+				valid = valid && player.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
+				valid = valid && (l == 0 || l == 20 || l == -20);
 				break;
 			case PLAY_CARD_EAT_SALAD:
 				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);

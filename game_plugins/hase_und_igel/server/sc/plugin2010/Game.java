@@ -69,6 +69,9 @@ public class Game extends SimpleGameInstance<Player>
 		final Player active = players.get(activePlayerId);
 		activePlayerId = (activePlayerId + 1) % players.size();
 
+		if (activePlayerId == 0)
+			turn++;
+
 		if (data instanceof Move)
 		{
 			logger.info("Player '{}' has made a move.", author);
@@ -88,6 +91,8 @@ public class Game extends SimpleGameInstance<Player>
 			{
 				activePlayerId = (activePlayerId + 1) % players.size();
 			}
+
+			// TODO gameOver ??
 
 			updatePlayers();
 			players.get(activePlayerId).requestMove();
@@ -157,27 +162,15 @@ public class Game extends SimpleGameInstance<Player>
 				player.setPosition(nextField);
 				break;
 			}
-			case PLAY_CARD_DROP_20_CARROTS:
+			case PLAY_CARD_CHANGE_CARROTS:
 			{
 				List<Action> remaining = player.getActions();
-				remaining.remove(Action.DROP_20_CARROTS);
-				remaining.remove(Action.TAKE_20_CARROTS);
+				remaining.remove(Action.TAKE_OR_DROP_CARROTS);
 				player.setActions(remaining);
 
 				player.setCarrotsAvailable(Math.max(0, player
 						.getCarrotsAvailable()
-						- move.getN()));
-				break;
-			}
-			case PLAY_CARD_TAKE_20_CARROTS:
-			{
-				List<Action> remaining = player.getActions();
-				remaining.remove(Action.DROP_20_CARROTS);
-				remaining.remove(Action.TAKE_20_CARROTS);
-				player.setActions(remaining);
-
-				player.setCarrotsAvailable(player.getCarrotsAvailable()
-						+ move.getN());
+						+ move.getN()));
 				break;
 			}
 			default:

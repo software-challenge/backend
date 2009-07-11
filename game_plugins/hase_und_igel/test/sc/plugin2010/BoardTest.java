@@ -70,25 +70,25 @@ public class BoardTest
 		// Action.DROP_20_CARROTS
 		//
 		// drop 20
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_DROP_20_CARROTS, 20), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, -20), p));
 		
 		// drop 15
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_DROP_20_CARROTS, 15), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, -15), p));
 		
 		// drop 0
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_DROP_20_CARROTS, 0), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0), p));
 		
 		//
 		// Action.TAKE_20_CARROTS
 		//
 		// take 20
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_TAKE_20_CARROTS, 20), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 20), p));
 		
 		// take 15
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_TAKE_20_CARROTS, 15), p));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 15), p));
 		
 		// take 0
-		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_TAKE_20_CARROTS, 20), p));
+		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD_CHANGE_CARROTS, 20), p));
 
 		//
 		// Action.EAT_SALAD
@@ -282,7 +282,7 @@ public class BoardTest
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.MOVE, 2), p));
 
 		// Ein Zug auf ein Hasenfeld mit > 1 Hasenkarten übrig
-		p.setActions(Arrays.asList(new Action[] { Action.TAKE_20_CARROTS }));
+		p.setActions(Arrays.asList(new Action[] { Action.TAKE_OR_DROP_CARROTS }));
 		int nextRabbitField = b.getNextFieldByTyp(FieldTyp.RABBIT, 1);
 		p.setPosition(nextRabbitField - 1);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.MOVE, 1), p));

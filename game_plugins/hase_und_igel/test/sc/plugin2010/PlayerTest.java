@@ -34,7 +34,6 @@ public class PlayerTest
 		Assert.assertTrue(actions.contains(Action.EAT_SALAD));
 		Assert.assertTrue(actions.contains(Action.HURRY_AHEAD));
 		Assert.assertTrue(actions.contains(Action.FALL_BACK));
-		Assert.assertTrue(actions.contains(Action.TAKE_20_CARROTS));
-		Assert.assertTrue(actions.contains(Action.DROP_20_CARROTS));
+		Assert.assertTrue(actions.contains(Action.TAKE_OR_DROP_CARROTS));
 	}
 }

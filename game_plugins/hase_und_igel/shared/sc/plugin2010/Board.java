@@ -254,8 +254,7 @@ public class Board
 			case FALL_BACK:
 				valid = GameUtil.isValidToFallBack(this, player);
 				break;
-			case PLAY_CARD_DROP_20_CARROTS:
-			case PLAY_CARD_TAKE_20_CARROTS:
+			case PLAY_CARD_CHANGE_CARROTS:
 			case PLAY_CARD_EAT_SALAD:
 			case PLAY_CARD_FALL_BACK:
 			case PLAY_CARD_HURRY_AHEAD:

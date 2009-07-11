@@ -93,7 +93,7 @@ public abstract class AllgemeinerSpieler
 				case EAT_SALAD:
 					result.add(Hasenjoker.FRISS_SALAT);
 					break;
-				case TAKE_20_CARROTS: // TODO richtigen Typ hierfür
+				case TAKE_OR_DROP_CARROTS: // TODO richtigen Typ hierfür
 					result.add(Hasenjoker.NIMM_ODER_GIB_20_KAROTTEN);
 					break;
 				case HURRY_AHEAD:

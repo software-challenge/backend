@@ -43,11 +43,7 @@ public class Player extends SimplePlayer
 		/**
 		 * Nehme 20 Karotten auf (Veränderung CAU)
 		 */
-		TAKE_20_CARROTS,
-		/**
-		 * Gebe 20 Karotten ab (Veränderung CAU)
-		 */
-		DROP_20_CARROTS,
+		TAKE_OR_DROP_CARROTS,
 		/**
 		 * Iß sofort einen Salat
 		 */
@@ -108,8 +104,7 @@ public class Player extends SimplePlayer
 		suspended = false;
 
 		actions = new LinkedList<Action>();
-		actions.add(Action.DROP_20_CARROTS);
-		actions.add(Action.TAKE_20_CARROTS);
+		actions.add(Action.TAKE_OR_DROP_CARROTS);
 		actions.add(Action.EAT_SALAD);
 		actions.add(Action.HURRY_AHEAD);
 		actions.add(Action.FALL_BACK);
