@@ -9,6 +9,8 @@ import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
+import sc.protocol.clients.ControllingClient;
+import sc.protocol.clients.ObservingClient;
 import sc.protocol.responses.PrepareGameResponse;
 
 /**
@@ -64,9 +66,14 @@ public class Client implements ILobbyClientListener
 		return obs;
 	}
 
-	public void observeGame(String passphrase)
+	public ObservingClient observeGame(PrepareGameResponse handle)
 	{
-		client.observeGame(gameType, passphrase);
+		return client.observe(handle);
+	}
+
+	public ControllingClient observeAndControl(PrepareGameResponse handle)
+	{
+		return client.observeAndControl(handle);
 	}
 
 	@Override

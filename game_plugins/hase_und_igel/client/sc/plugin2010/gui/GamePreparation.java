@@ -42,7 +42,7 @@ public class GamePreparation implements IGamePreparation
 			slots.add(new Slot(singleResp, client));
 		}
 
-		client.observeGame("");
+		client.observeGame(response);
 	}
 
 	@Override

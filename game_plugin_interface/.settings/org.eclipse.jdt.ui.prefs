@@ -1,4 +1,4 @@
-#Tue Apr 07 23:46:38 CEST 2009
+#Sun Jul 12 01:12:05 CEST 2009
 cleanup.add_default_serial_version_id=true
 cleanup.add_generated_serial_version_id=false
 cleanup.add_missing_annotations=true
@@ -54,4 +54,3 @@ cleanup_settings_version=2
 eclipse.preferences.version=1
 formatter_profile=_enhanced_formatter
 formatter_settings_version=11
-org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?><templates/>

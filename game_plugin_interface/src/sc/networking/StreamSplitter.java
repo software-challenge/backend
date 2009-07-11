@@ -222,9 +222,9 @@ public class StreamSplitter extends Thread
 	 * output streams. The <code>out</code> parameter may be empty.
 	 */
 
-	public StreamSplitter(InputStream in, Collection outs)
+	public StreamSplitter(InputStream in, Collection<OutputStream> outs)
 	{
-		this(in, (OutputStream[]) outs.toArray(new OutputStream[outs.size()]));
+		this(in, outs.toArray(new OutputStream[outs.size()]));
 	}
 
 	/**

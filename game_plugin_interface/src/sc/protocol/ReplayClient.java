@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.XStream;
  * @author Marcel
  * 
  */
-public final class ReplayClient extends XStreamClient
+public final class ReplayClient extends XStreamClient implements IControllableGame
 {
 	private static Logger	logger			= LoggerFactory
 													.getLogger(ReplayClient.class);
@@ -55,6 +55,9 @@ public final class ReplayClient extends XStreamClient
 		this.listeners.remove(listener);
 	}
 
+	/* (non-Javadoc)
+	 * @see sc.protocol.IControllableGame#next()
+	 */
 	public void next()
 	{
 		assertCurrent();
@@ -68,6 +71,9 @@ public final class ReplayClient extends XStreamClient
 		setCurrent(this.mementi.get(i));
 	}
 
+	/* (non-Javadoc)
+	 * @see sc.protocol.IControllableGame#previous()
+	 */
 	public void previous()
 	{
 		assertCurrent();
@@ -81,11 +87,17 @@ public final class ReplayClient extends XStreamClient
 		setCurrent(this.mementi.get(i));
 	}
 
+	/* (non-Javadoc)
+	 * @see sc.protocol.IControllableGame#pause()
+	 */
 	public void pause()
 	{
 		// TODO:
 	}
 
+	/* (non-Javadoc)
+	 * @see sc.protocol.IControllableGame#unpause()
+	 */
 	public void unpause()
 	{
 		// TODO:

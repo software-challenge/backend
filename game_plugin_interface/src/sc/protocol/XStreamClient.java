@@ -172,4 +172,9 @@ public abstract class XStreamClient
 			this.networkInterface.close();
 		}
 	}
+	
+	public XStream getXStream()
+	{
+		return this.xStream;
+	}
 }

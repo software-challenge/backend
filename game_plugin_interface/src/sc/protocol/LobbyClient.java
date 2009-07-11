@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import sc.helpers.IRequestResult;
 import sc.networking.TcpNetwork;
+import sc.protocol.clients.ControllingClient;
+import sc.protocol.clients.ObservingClient;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
@@ -37,8 +39,6 @@ public final class LobbyClient extends XStreamClient
 	private static final Logger					logger			= LoggerFactory
 																		.getLogger(LobbyClient.class);
 	private static final List<String>			rooms			= new LinkedList<String>();
-	private ClientType							type			= ClientType.UNDEFINED;
-	private final Map<String, List<Object>>		observations	= new HashMap<String, List<Object>>();
 	private final AsyncResultManager			asyncManager	= new AsyncResultManager();
 	private final List<ILobbyClientListener>	listeners		= new LinkedList<ILobbyClientListener>();
 
@@ -49,19 +49,21 @@ public final class LobbyClient extends XStreamClient
 	{
 		this(null);
 	}
-	
+
 	public LobbyClient(Collection<Class<?>> protocolClasses) throws IOException
 	{
 		this(DEFAULT_HOST, DEFAULT_PORT, protocolClasses);
 	}
 
-	public LobbyClient(String host, int port, Collection<Class<?>> protocolClasses) throws IOException
+	public LobbyClient(String host, int port,
+			Collection<Class<?>> protocolClasses) throws IOException
 	{
 		this(host, port, protocolClasses, new XStream());
 	}
 
-	public LobbyClient(String host, int port, Collection<Class<?>> protocolClasses,
-			XStream xstream) throws IOException
+	public LobbyClient(String host, int port,
+			Collection<Class<?>> protocolClasses, XStream xstream)
+			throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
 		LobbyProtocol.registerMessages(xstream, protocolClasses);
@@ -70,28 +72,6 @@ public final class LobbyClient extends XStreamClient
 	public List<String> getRooms()
 	{
 		return Collections.unmodifiableList(rooms);
-	}
-
-	private void setType(ClientType newType)
-	{
-		if (newType == null || newType == ClientType.UNDEFINED)
-		{
-			throw new IllegalArgumentException();
-		}
-
-		if (this.type == ClientType.UNDEFINED)
-		{
-			this.type = newType;
-		}
-		else
-		{
-			// can't switch type lateron
-			if (this.type != newType)
-			{
-				throw new IllegalStateException(
-						"Can't switch types during execution.");
-			}
-		}
 	}
 
 	@Override
@@ -111,7 +91,6 @@ public final class LobbyClient extends XStreamClient
 			if (packet.getData() instanceof MementoPacket)
 			{
 				MementoPacket statePacket = (MementoPacket) packet.getData();
-				addObservationIfObserver(packet.getRoomId(), statePacket);
 				onNewState(packet.getRoomId(), statePacket.getState());
 			}
 			else
@@ -201,43 +180,6 @@ public final class LobbyClient extends XStreamClient
 		}
 	}
 
-	private void addObservationIfObserver(String roomId, Object observation)
-	{
-		if (this.type == ClientType.OBSERVER)
-		{
-			List<Object> states = this.observations.get(roomId);
-
-			if (states == null)
-			{
-				states = new LinkedList<Object>();
-				this.observations.put(roomId, states);
-			}
-
-			states.add(observation);
-		}
-	}
-
-	private void writeObservationsToStream(String roomId, OutputStream to)
-			throws IOException
-	{
-		List<Object> states = this.observations.get(roomId);
-
-		if (states == null)
-		{
-			logger.warn("No observations available for roomId={}", roomId);
-		}
-		else
-		{
-			ObjectOutputStream output = this.xStream
-					.createObjectOutputStream(to);
-
-			for (Object state : states)
-			{
-				output.writeObject(state);
-			}
-		}
-	}
-
 	protected void onGamePrepared(PrepareGameResponse response)
 	{
 		for (ILobbyClientListener listener : this.listeners)
@@ -248,14 +190,7 @@ public final class LobbyClient extends XStreamClient
 
 	public void authenticate(String password)
 	{
-		setType(ClientType.ADMINISTRATOR);
 		send(new AuthenticateRequest(password));
-	}
-
-	public void observeGame(String gameId, String passphrase)
-	{
-		setType(ClientType.OBSERVER);
-		send(new ObservationRequest(gameId, passphrase));
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
@@ -267,7 +202,6 @@ public final class LobbyClient extends XStreamClient
 
 	public void prepareGame(String gameType, int playerCount)
 	{
-		setType(ClientType.ADMINISTRATOR);
 		send(new PrepareGameRequest(gameType, playerCount));
 	}
 
@@ -307,13 +241,11 @@ public final class LobbyClient extends XStreamClient
 
 	public void joinPreparedGame(String reservation)
 	{
-		setType(ClientType.PLAYER);
 		this.send(new JoinPreparedRoomRequest(reservation));
 	}
 
 	public void joinAnyGame(String gameType)
 	{
-		setType(ClientType.PLAYER);
 		this.send(new JoinRoomRequest(gameType));
 	}
 
@@ -370,11 +302,14 @@ public final class LobbyClient extends XStreamClient
 	{
 		this.listeners.remove(listener);
 	}
-
-	public void saveReplayTo(OutputStream out) throws IOException
+	
+	public ControllingClient observeAndControl(PrepareGameResponse handle)
 	{
-		ObjectOutputStream objectOut = this.xStream.createObjectOutputStream(out);
-		
-		objectOut.flush();
+		return new ControllingClient(this, handle.getRoomId());
+	}
+
+	public ObservingClient observe(PrepareGameResponse handle)
+	{
+		return new ObservingClient(this, handle.getRoomId());
 	}
 }

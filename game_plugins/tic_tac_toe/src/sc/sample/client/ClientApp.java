@@ -9,6 +9,7 @@ import java.util.concurrent.Semaphore;
 
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
+import sc.protocol.clients.ObservingClient;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.sample.protocol.ProtocolDefinition;
 import sc.sample.server.GamePluginImpl;
@@ -30,9 +31,9 @@ public class ClientApp
 			throw new RuntimeException("Couldn't prepare the game.");
 		}
 
-		LobbyClient observer = new LobbyClient(ProtocolDefinition
+		LobbyClient observerClient = new LobbyClient(ProtocolDefinition
 				.getProtocolClasses());
-		observer.observeGame(preparation.getResult().getRoomId(), "");
+		ObservingClient observer = observerClient.observe(preparation.getResult());
 
 		final Semaphore sem = new Semaphore(0);
 		final Object lock = new Object();
@@ -78,7 +79,8 @@ public class ClientApp
 
 		System.out.println("Done.");
 		admin.close();
-		observer.close();
-		observer.saveReplayTo(new FileOutputStream("./replay.xml"));
+		observerClient.close();
+		observer.saveReplayTo(preparation.getResult().getRoomId(),
+				new FileOutputStream("./replay.xml"));
 	}
 }

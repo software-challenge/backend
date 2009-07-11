@@ -54,6 +54,7 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 
 	// original source code taken from
 	// http://svn.xstream.codehaus.org/browse/~raw,r=1681/xstream/trunk/xstream/src/java/com/thoughtworks/xstream/converters/reflection/AbstractReflectionConverter.java
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doMarshal(final Object source,
 			final HierarchicalStreamWriter writer,
@@ -244,6 +245,7 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean canConvert(Class type)
 	{
