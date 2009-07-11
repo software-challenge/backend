@@ -13,7 +13,7 @@ import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
-import sc.plugin2010.renderer.twodimensional.ConnectingPanel;
+import sc.plugin2010.renderer.twodimensional.DefaultPanel;
 import sc.plugin2010.renderer.twodimensional.FrameRenderer;
 
 /**
@@ -72,7 +72,7 @@ public class RenderFacade
 
 		panel.setLayout(new CardLayout());
 		// create components
-		ConnectingPanel con = new ConnectingPanel();
+		DefaultPanel con = new DefaultPanel();
 		// add components
 		panel.add(con, connectString);
 

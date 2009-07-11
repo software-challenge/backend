@@ -6,7 +6,6 @@ package sc.plugin2010.renderer.twodimensional;
 import java.awt.BorderLayout;
 import java.awt.LayoutManager;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -14,15 +13,15 @@ import javax.swing.JPanel;
  * 
  */
 @SuppressWarnings("serial")
-public class ConnectingPanel extends JPanel
+public class DefaultPanel extends JPanel
 {
-	private JLabel	status	= new JLabel("Connecting...");
+	// private JLabel status = new JLabel("Bitte ein Spiel starten");
 
-	public ConnectingPanel()
+	public DefaultPanel()
 	{
 		LayoutManager layout = new BorderLayout();
 		setLayout(layout);
 
-		add(status, BorderLayout.CENTER);
+		// add(status, BorderLayout.CENTER);
 	}
 }

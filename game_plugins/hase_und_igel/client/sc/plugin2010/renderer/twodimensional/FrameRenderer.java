@@ -358,16 +358,37 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			}
 		}
 		if (type.equals(jokerAnswer))
-		{ // TODO
+		{
 			if (answer.equals(takeCarrots))
 			{
 				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.TAKE_OR_DROP_CARROTS, 1));
+						Player.Action.TAKE_OR_DROP_CARROTS, 20));
+			}
+			else if (answer.equals(doNothing))
+			{
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.TAKE_OR_DROP_CARROTS, 0));
 			}
 			else if (answer.equals(dropCarrots))
 			{
-				// sendMove(new Move(Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0));
-			} // TODO more cases
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.TAKE_OR_DROP_CARROTS, -20));
+			}
+			else if (answer.equals(eatsalad))
+			{
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.EAT_SALAD));
+			}
+			else if (answer.equals(hurryahead))
+			{
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.HURRY_AHEAD));
+			}
+			else if (answer.equals(fallback))
+			{
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.FALL_BACK));
+			}
 		}
 	}
 

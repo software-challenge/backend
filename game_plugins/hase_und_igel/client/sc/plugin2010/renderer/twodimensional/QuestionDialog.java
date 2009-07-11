@@ -70,6 +70,8 @@ public class QuestionDialog extends JDialog
 			buttonPanel.add(jbut);
 		}
 
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
 		BorderLayout dialogLayout = new BorderLayout();
 		setLayout(dialogLayout);
 
@@ -80,7 +82,7 @@ public class QuestionDialog extends JDialog
 		setVisible(true);
 	}
 
-	public class AnswerListener extends MouseAdapter
+	private class AnswerListener extends MouseAdapter
 	{
 		@Override
 		public void mouseReleased(MouseEvent e)
