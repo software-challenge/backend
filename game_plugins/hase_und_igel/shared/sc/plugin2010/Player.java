@@ -85,6 +85,10 @@ public class Player extends SimplePlayer
 	// Muss der Spieler in der kommenden Runde aussetzen?
 	private boolean			suspended;
 
+	private Move			lastMove;
+
+	// TODO save last action for the player
+
 	protected Player(FigureColor color)
 	{
 		initialize(color, 0);
@@ -202,5 +206,15 @@ public class Player extends SimplePlayer
 	public final FigureColor getColor()
 	{
 		return color;
+	}
+
+	protected void setLastMove(Move lastMove)
+	{
+		this.lastMove = lastMove;
+	}
+
+	public Move getLastMove()
+	{
+		return lastMove;
 	}
 }

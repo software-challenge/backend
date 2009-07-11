@@ -64,8 +64,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 	public FrameRenderer(final GUIGameHandler handler)
 	{
-		this.handler = handler; // TODO block input while enemy plays
-		// TODO when game is over, block input...
+		this.handler = handler; // TODO when game is over, block input...
 		createInitFrame();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
@@ -123,13 +122,38 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	public void updatePlayer(final Player player, final boolean own)
 	{
 
+		String currentColor = "";
 		switch (player.getColor())
 		{
 			case BLUE:
-				info.setTurn("blue");
+				currentColor = "blue";
 				break;
 			case RED:
-				info.setTurn("red");
+				currentColor = "red";
+				break;
+			default:
+				break;
+		}
+
+		info.setTurn(currentColor);
+
+		switch (player.getLastMove().getTyp())
+		{
+			case EAT:
+				actionb
+						.addRow("Spieler " + currentColor
+								+ "frisst einen Salat");
+				break;
+			case MOVE:
+				actionb.addRow("Spieler " + currentColor + "setzt auf "
+						+ String.valueOf(player.getLastMove().getN()));
+				break;
+			case TAKE_10_CARROTS:
+				actionb.addRow("Spieler " + currentColor + "nimmt 10 Karotten");
+				break;
+			case DROP_10_CARROTS:
+				actionb.addRow("Spieler " + currentColor
+						+ "gibt 10 Karotten ab");
 				break;
 			default:
 				break;
