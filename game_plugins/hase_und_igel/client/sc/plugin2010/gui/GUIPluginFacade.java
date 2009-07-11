@@ -1,6 +1,7 @@
 package sc.plugin2010.gui;
 
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -12,6 +13,7 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
+import sc.protocol.ReplayClient;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -81,23 +83,11 @@ public class GUIPluginFacade implements IGuiPlugin
 	}
 
 	@Override
-	public IObservation loadReplay(String filename)
+	public IObservation loadReplay(String filename) throws IOException
 	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void unload()
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void initialize(IGuiPluginHost host)
-	{
-		// TODO what to do her?!
+		ReplayClient rep = new ReplayClient(new XStream(), new File(filename));
+		IObservation obs = new ReplayObservation(rep);
+		return obs;
 	}
 
 	@Override
@@ -123,5 +113,17 @@ public class GUIPluginFacade implements IGuiPlugin
 	public int getPluginYear()
 	{
 		return 2010;
+	}
+
+	@Override
+	public void initialize(IGuiPluginHost host)
+	{
+		// not needed
+	}
+
+	@Override
+	public void unload()
+	{
+		// not needed
 	}
 }

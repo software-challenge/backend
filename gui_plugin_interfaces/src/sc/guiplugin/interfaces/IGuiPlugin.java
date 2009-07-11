@@ -55,7 +55,7 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * @param filename
 	 * @return an IGamePreparation instance with an empty list of slots.
 	 */
-	IObservation loadReplay(final String filename);
+	IObservation loadReplay(final String filename) throws IOException;
 
 	/**
 	 * displays info text of the plugin. like "created by..."

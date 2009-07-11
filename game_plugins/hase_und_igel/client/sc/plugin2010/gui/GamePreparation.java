@@ -8,9 +8,10 @@ import java.util.List;
 
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
-import sc.guiplugin.interfaces.IReadyListener;
 import sc.guiplugin.interfaces.ISlot;
 import sc.plugin2010.Client;
+import sc.protocol.RequestResult;
+import sc.protocol.responses.PrepareGameResponse;
 
 /**
  * @author ffi
@@ -24,7 +25,23 @@ public class GamePreparation implements IGamePreparation
 	public GamePreparation(Client client, int playerCount)
 	{
 		administrativeClient = client;
-		administrativeClient.prepareGame(playerCount);
+		RequestResult<PrepareGameResponse> results = null;
+		try
+		{
+			results = administrativeClient.prepareGameAndWait(playerCount);
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
+		}
+
+		PrepareGameResponse response = results.getResult();
+		String roomId = response.getRoomId();
+
+		for (String singleResp : response.getReservations())
+		{
+			slots.add(new Slot(roomId, singleResp));
+		}
 	}
 
 	@Override
@@ -34,23 +51,9 @@ public class GamePreparation implements IGamePreparation
 	}
 
 	@Override
-	public IObservation observe()
+	public IObservation getObserver()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return new GameObservation(administrativeClient);
 	}
 
-	@Override
-	public void addReadyListener(IReadyListener listener)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeReadyListener(IReadyListener listener)
-	{
-		// TODO Auto-generated method stub
-
-	}
 }
