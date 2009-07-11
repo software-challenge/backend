@@ -18,13 +18,18 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Client extends LobbyClient
 {
-	// Die Strategie
 	private IGameHandler	handler;
+	private String			gameType;
+	// current id to identifiy the client instance internal
+	private EPlayerId		id;
+	// the current room in which the player is
+	private String			roomId;
 
-	public Client(String gameType, XStream xstream, String host, int port)
-			throws IOException
+	public Client(String gameType, XStream xstream, String host, int port,
+			EPlayerId id) throws IOException
 	{
 		super(gameType, xstream, host, port);
+		this.id = id;
 	}
 
 	public void setHandler(IGameHandler handler)
@@ -50,8 +55,10 @@ public class Client extends LobbyClient
 		}
 		else if (data instanceof MoveRequest)
 		{
-			handler.onRequestAction(roomId);
+			handler.onRequestAction();
 		}
+
+		this.roomId = roomId;
 	}
 
 	@Override
@@ -61,7 +68,7 @@ public class Client extends LobbyClient
 	}
 
 	// TODO call it
-	public void sendMove(String roomId, Move move)
+	public void sendMove(Move move)
 	{
 		sendMessageToRoom(roomId, move);
 	}
@@ -76,5 +83,18 @@ public class Client extends LobbyClient
 	protected void onNewState(String roomId, Object state)
 	{
 		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @return
+	 */
+	public String getGameType()
+	{
+		return gameType;
+	}
+
+	public EPlayerId getID()
+	{
+		return id;
 	}
 }

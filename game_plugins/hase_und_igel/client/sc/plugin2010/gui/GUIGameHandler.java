@@ -4,7 +4,9 @@
 package sc.plugin2010.gui;
 
 import sc.plugin2010.BoardUpdated;
+import sc.plugin2010.Client;
 import sc.plugin2010.IGameHandler;
+import sc.plugin2010.Move;
 import sc.plugin2010.PlayerUpdated;
 import sc.plugin2010.renderer.RenderFacade;
 
@@ -12,8 +14,15 @@ import sc.plugin2010.renderer.RenderFacade;
  * @author ffi
  * 
  */
-public class GameHandler implements IGameHandler
+public class GUIGameHandler implements IGameHandler
 {
+
+	private Client	client;
+
+	public GUIGameHandler(Client client)
+	{
+		this.client = client;
+	}
 
 	@Override
 	public void onUpdate(BoardUpdated bu)
@@ -29,17 +38,14 @@ public class GameHandler implements IGameHandler
 	}
 
 	@Override
-	public void onRequestAction(String roomid)
+	public void onRequestAction()
 	{
-		// TODO Auto-generated method stub
-
+		RenderFacade.getInstance().switchToPlayer(client.getID());
 	}
 
 	@Override
-	public void sendAction(String action)
+	public void sendAction(Move move)
 	{
-		// TODO Auto-generated method stub
-
+		client.sendMove(move);
 	}
-
 }

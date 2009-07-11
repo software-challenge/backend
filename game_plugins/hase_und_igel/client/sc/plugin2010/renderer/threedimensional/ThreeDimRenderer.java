@@ -4,11 +4,11 @@
 package sc.plugin2010.renderer.threedimensional;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GraphicsConfiguration;
 import java.awt.Image;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
@@ -16,28 +16,24 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.DirectionalLight;
-import javax.media.j3d.Font3D;
-import javax.media.j3d.FontExtrusion;
 import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.Material;
 import javax.media.j3d.RotationInterpolator;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Text3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import sc.plugin2010.Board;
 import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Player;
+import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
+import sc.plugin2010.util.GameUtil;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.Primitive;
@@ -50,17 +46,29 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
  * @author ffi
  * 
  */
-public class ThreeDimRenderer extends JFrame implements Renderer
+public class ThreeDimRenderer extends JPanel implements Renderer
 {
-	/* Anzuzeigende Meldung spezifizieren */
-	private final String	txtStr	= "Willkommen";
+	// GUI Components
+	private final GUIGameHandler	handler;
 
-	private final JPanel	panel;
+	// local instances of current players and board
+	private Player					player;
+	private Player					enemy;
+	private Board					board;
 
-	public ThreeDimRenderer(final JPanel panel)
+	// only draw the board the first time it updates
+	private boolean					boardWasCreated	= false;
+
+	// Strings used for asking Questions to the user
+	private String					moveForward		= "Weiter ziehen";
+	private String					takeCarrots		= "10 Karotten nehmen";
+	private String					dropCarrots		= "10 Karotten abgeben";
+	private String					carrotAnswer	= "carrots";
+
+	public ThreeDimRenderer(GUIGameHandler handler)
 	{
 		super();
-		this.panel = panel;
+		this.handler = handler;
 		createInitFrame();
 	}
 
@@ -144,29 +152,7 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 		final TransformGroup objScale = new TransformGroup();
 		final Transform3D t3d = new Transform3D();
 		/* Skalierungsmatrix setzen (abhaengig von der Laenge des Textes) */
-		t3d.setScale(1.2 / txtStr.length());
-
-		/* Erzeugung eines Font3D-Objektes von einem AWT-Font */
-		final Font3D font3d = new Font3D(new Font("Arial", Font.PLAIN, 2),
-				new FontExtrusion());
-
-		/**
-		 * Erzeugung eines Text3D-Objektes fuer einen String, der mit Font3D an
-		 * einem Referenzpunkt erzeugt wird
-		 **/
-		final Text3D text3d = new Text3D(font3d, txtStr, new Point3f(-txtStr
-				.length() / 2.0f - 1, 10.f, 15.0f));
-
-		/* Appearance- und Material-Objekt fuer Text3D erzeugen */
-		final Appearance fontAppear = new Appearance();
-		final Material fontMaterial = new Material();
-		fontAppear.setMaterial(fontMaterial);
-
-		/**
-		 * Shape3D-Objekt erzeugen, dass das Text3D- und das Appearance-Objekt
-		 * uebergeben bekommt
-		 **/
-		final Shape3D fontShape = new Shape3D(text3d, fontAppear);
+		t3d.setScale(1.2);
 
 		/* Bounds der Lichtquellen festlegen */
 		final BoundingSphere bounds = new BoundingSphere(new Point3d(), 100.0);
@@ -184,7 +170,6 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 
 		/* Alle Komponenten zu SceneGraph hinzufuegen */
 		objScale.setTransform(t3d);
-		objScale.addChild(fontShape);
 		objText.addChild(objScale);
 		objText.addChild(directionalLight1);
 		objText.addChild(directionalLight2);
@@ -282,8 +267,7 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 	@Override
 	public void updateBoard(BoardUpdated bu)
 	{
-		// TODO Auto-generated method stub
-
+		board = bu.getBoard();
 	}
 
 	@Override
@@ -295,40 +279,41 @@ public class ThreeDimRenderer extends JFrame implements Renderer
 	@Override
 	public void updatePlayer(final Player player, final boolean own)
 	{
-		// TODO Auto-generated method stub
+		if (own)
+		{
+			this.player = player;
 
-	}
+			// setReachableFields(player.getPosition(), player
+			// .getCarrotsAvailable());
 
-	public static void main(final String args[])
-	{
-		final ThreeDimRenderer frame = new ThreeDimRenderer(null);
-
-		/* WindowListener hinzufuegen */
-		frame.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(final WindowEvent e)
+			if (GameUtil.isValidToTakeCarrots(board, player))
 			{
-				/* Beim Schliessen des Fenster beenden */
-				System.exit(0);
-			};
-		});
-
-		/* Groesse des Frames setzen */
-		frame.setSize(600, 600);
-
-		/* Frame anzeigen */
-		frame.setVisible(true);
+				List<String> answers = new LinkedList<String>();
+				answers.add(moveForward);
+				answers.add(takeCarrots);
+				if (GameUtil.isValidToDropCarrots(board, player))
+				{
+					answers.add(dropCarrots);
+				}
+				// askQuestion("Was wollen Sie tun?", answers, "carrots");
+			}
+			else if (GameUtil.isValidToEat(board, player))
+			{
+				// TODO send move
+			}
+		}
+		else
+		{
+			enemy = player;
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sc.plugin2010.renderer.Renderer#getImage()
-	 */
 	@Override
 	public Image getImage()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		BufferedImage img = new BufferedImage(getWidth(), getHeight(),
+				BufferedImage.TYPE_INT_RGB);
+		paint(img.getGraphics());
+		return img;
 	}
 }

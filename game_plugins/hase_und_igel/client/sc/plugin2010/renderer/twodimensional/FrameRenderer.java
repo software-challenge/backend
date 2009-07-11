@@ -7,14 +7,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.ScrollPane;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -22,6 +19,7 @@ import sc.plugin2010.Board;
 import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
+import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
 import sc.plugin2010.util.GameUtil;
 
@@ -38,7 +36,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	private ChatBar					chat;
 	private ActionBar				actionb;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
-	private final JPanel			panel;
+	private final GUIGameHandler	handler;
 
 	// local instances of current players and board
 	private Player					player;
@@ -47,6 +45,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 	// only draw the board the first time it updates
 	private boolean					boardWasCreated	= false;
+	private boolean					myturn			= false;
 
 	// Strings used for asking Questions to the user
 	private String					moveForward		= "Weiter ziehen";
@@ -54,21 +53,27 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	private String					dropCarrots		= "10 Karotten abgeben";
 	private String					carrotAnswer	= "carrots";
 
-	public FrameRenderer(final JPanel panel)
+	private String					take20carrots	= "Nimm 20 Karotten";
+	private String					doNothing		= "Nichts";
+
+	public FrameRenderer()
 	{
-		this.panel = panel;
+		handler = null;
 		createInitFrame();
+	}
+
+	public FrameRenderer(final GUIGameHandler handler)
+	{
+		this.handler = handler; // TODO block input while enemy plays
+		// TODO when game is over, block input...
+		createInitFrame();
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
 	private void createInitFrame()
 	{
 
-		setIconImage(new ImageIcon("resource/hase_und_igel_icon.png")
-				.getImage());
-
-		this.setSize(800, 600);
-
-		setTitle("Hase und Igel");
+		this.setSize(800, 600); // TODO get default size?
 
 		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
@@ -112,19 +117,24 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		// chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
 		setVisible(true);
-
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(final WindowEvent e)
-			{
-				System.exit(0);
-			}
-		});
 	}
 
 	@Override
 	public void updatePlayer(final Player player, final boolean own)
 	{
+
+		switch (player.getColor())
+		{
+			case BLUE:
+				info.setTurn("blue");
+				break;
+			case RED:
+				info.setTurn("red");
+				break;
+			default:
+				break;
+		}
+
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
 			if (fbuttons.get(i).needRepaint(player.getColor()))
@@ -139,29 +149,75 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 
 		if (own)
 		{
+			myturn = true;
 			this.player = player;
 
 			setReachableFields(player.getPosition(), player
 					.getCarrotsAvailable());
 
-			if (board.getTypeAt(player.getPosition()) == Board.FieldTyp.CARROT)
+			if (GameUtil.isValidToTakeCarrots(board, player))
 			{
 				List<String> answers = new LinkedList<String>();
 				answers.add(moveForward);
 				answers.add(takeCarrots);
-				answers.add(dropCarrots);
+				if (GameUtil.isValidToDropCarrots(board, player))
+				{
+					answers.add(dropCarrots);
+				}
 				askQuestion("Was wollen Sie tun?", answers, "carrots");
 			}
-			else if (board.isValid(new Move(Move.MoveTyp.EAT), player))
+			else if (GameUtil.isValidToEat(board, player))
 			{
-				// TODO send move
+				handler.sendAction(new Move(Move.MoveTyp.EAT));
+			}
+			else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
+					&& (player.getActions().size() > 0))
+			{
+				List<String> answers = new LinkedList<String>();
+				answers.add(moveForward);
+				if (GameUtil.isValidToPlayCard(board, player,
+						Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 1))
+				{
+					answers.add(take20carrots);
+				}
+				if (GameUtil.isValidToPlayCard(board, player,
+						Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, 0))
+				{
+					answers.add(doNothing);
+				}
+				if (GameUtil.isValidToPlayCard(board, player,
+						Move.MoveTyp.PLAY_CARD_CHANGE_CARROTS, -1))
+				{
+					answers.add("Gib 20 Karotten ab");
+				}
+				if (GameUtil.isValidToPlayCard(board, player,
+						Move.MoveTyp.PLAY_CARD_EAT_SALAD, 0))
+				{
+					answers.add("Friss sofort einen Salat");
+				}
+				if (GameUtil.isValidToPlayCard(board, player,
+						Move.MoveTyp.PLAY_CARD_HURRY_AHEAD, 0))
+				{
+					answers.add("Rücke eine Position vor");
+				}
+				if (GameUtil.isValidToPlayCard(board, player,
+						Move.MoveTyp.PLAY_CARD_FALL_BACK, 0))
+				{
+					answers.add("Rücke eine Position vor");
+				}
+
+				askQuestion("Was wollen Sie tun?", answers, "joker");
 			}
 
 			info.setCarrots(player.getCarrotsAvailable());
+			info.setHasenjoker(player.getActions());
 		}
 		else
 		{
+			myturn = false;
 			enemy = player;
+			info.setEnemyCarrots(enemy.getCarrotsAvailable());
+			info.setEnemyHasenjoker(enemy.getActions());
 		}
 	}
 
@@ -170,7 +226,7 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	{
 		board = bu.getBoard();
 
-		info.setTurn(bu.getRound());
+		info.setRound(bu.getRound());
 
 		if (!boardWasCreated)
 		{
@@ -234,11 +290,11 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 		{
 			if (answer.equals(takeCarrots))
 			{
-				// new Move(type); TODO
+				handler.sendAction(new Move(Move.MoveTyp.TAKE_10_CARROTS));
 			}
 			else if (answer.equals(dropCarrots))
 			{
-				// new Move(type); TODO
+				handler.sendAction(new Move(Move.MoveTyp.DROP_10_CARROTS));
 			}
 		}
 	}
@@ -301,24 +357,25 @@ public class FrameRenderer extends JFrame implements Renderer, IClickObserver
 	 */
 	public void updateClicked(final int fieldNumber)
 	{
-		Move move = new Move(Move.MoveTyp.MOVE, fieldNumber);
-
-		if (board.isValid(move, player))
+		if ((handler != null) && (myturn))
 		{
-			// send answer TODO
-		}
-		else
-		{
-			new ErrorDialog("Dies ist kein valider Zug.");
+			if (GameUtil.isValidToMove(board, player, fieldNumber))
+			{
+				handler.sendAction(new Move(Move.MoveTyp.MOVE, fieldNumber));
+			}
+			else
+			{
+				new ErrorDialog("Dies ist kein valider Zug.");
+			}
 		}
 	}
 
 	@Override
 	public Image getImage()
 	{
-		BufferedImage img = new BufferedImage(panel.getWidth(), panel
-				.getHeight(), BufferedImage.TYPE_INT_RGB);
-		panel.paint(img.getGraphics());
+		BufferedImage img = new BufferedImage(getWidth(), getHeight(),
+				BufferedImage.TYPE_INT_RGB);
+		paint(img.getGraphics());
 		return img;
 	}
 }

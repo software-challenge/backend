@@ -6,7 +6,7 @@ public interface IGameHandler
 
 	void onUpdate(PlayerUpdated pu);
 
-	void onRequestAction(String roomid);
+	void onRequestAction();
 
-	void sendAction(String action);
+	void sendAction(Move move);
 }

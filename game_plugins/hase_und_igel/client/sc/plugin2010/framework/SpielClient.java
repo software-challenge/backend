@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Client;
+import sc.plugin2010.EPlayerId;
 import sc.plugin2010.PlayerUpdated;
 
 import com.thoughtworks.xstream.XStream;
@@ -26,7 +27,8 @@ public abstract class SpielClient implements IGameUpdateObserver
 		// verbinde beim starten
 		try
 		{
-			Client client = new Client("Hase und Igel", new XStream(), ip, port);
+			Client client = new Client("Hase und Igel", new XStream(), ip,
+					port, EPlayerId.PLAYER_ONE);
 			Logik logik = new Logik(this);
 			client.setHandler(logik);
 			client.joinAnyGame();

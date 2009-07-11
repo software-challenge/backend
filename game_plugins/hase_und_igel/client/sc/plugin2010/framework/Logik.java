@@ -4,7 +4,9 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.BoardUpdated;
+import sc.plugin2010.Client;
 import sc.plugin2010.IGameHandler;
+import sc.plugin2010.Move;
 import sc.plugin2010.PlayerUpdated;
 
 /**
@@ -14,6 +16,7 @@ import sc.plugin2010.PlayerUpdated;
 public class Logik implements IGameHandler
 {
 	private IGameUpdateObserver	obs;
+	private Client				client;
 
 	public Logik(IGameUpdateObserver obs)
 	{
@@ -23,28 +26,24 @@ public class Logik implements IGameHandler
 	@Override
 	public void onUpdate(final BoardUpdated bu)
 	{
-		// TODO Auto-generated method stub
-
+		obs.spiellbrettAktualisiert(bu);
 	}
 
 	@Override
 	public void onUpdate(final PlayerUpdated pu)
 	{
-		// TODO Auto-generated method stub
-
+		obs.spielerAktualisiert(pu);
 	}
 
 	@Override
-	public void onRequestAction(String roomid)
+	public void onRequestAction()
 	{
 		obs.zugAngefordert();
 	}
 
 	@Override
-	public void sendAction(String action)
+	public void sendAction(Move move)
 	{
-		// TODO Auto-generated method stub
-
+		client.sendMove(move);
 	}
-
 }

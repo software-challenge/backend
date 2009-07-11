@@ -21,15 +21,17 @@ public class GamePreparation implements IGamePreparation
 	private Client		administrativeClient;
 	private List<ISlot>	slots	= new LinkedList<ISlot>();
 
-	public GamePreparation(Client client)
+	public GamePreparation(Client client, int playerCount)
 	{
-		this.administrativeClient = client;
+		administrativeClient = client;
+		administrativeClient.prepareGame(administrativeClient.getGameType(),
+				playerCount);
 	}
 
 	@Override
 	public List<ISlot> getSlots()
 	{
-		return this.slots;
+		return slots;
 	}
 
 	@Override

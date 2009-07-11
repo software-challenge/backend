@@ -10,6 +10,7 @@ import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
+import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
 
 import com.thoughtworks.xstream.XStream;
@@ -64,17 +65,20 @@ public class GUIPluginFacade implements IGuiPlugin
 		return "1.0"; // TODO
 	}
 
+	@Override
 	public String getPluginInfoText()
 	{
 		return "Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.";
 	}
 
+	@Override
 	public IGamePreparation prepareGame(final String ip, final int port,
-			String filename) throws IOException
+			int playerCount, String filename) throws IOException
 	{
-		Client client = new Client("Hase und Igel", new XStream(), ip, port);
-		client.setHandler(new GameHandler());
-		return new GamePreparation(client);
+		Client client = new Client("Hase und Igel", new XStream(), ip, port,
+				EPlayerId.OBSERVER);
+		client.setHandler(new GUIGameHandler(client));
+		return new GamePreparation(client, playerCount);
 	}
 
 	@Override
@@ -94,7 +98,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public void initialize(IGuiPluginHost host)
 	{
-		// TODO Auto-generated method stub
+		// TODO what to do her?!
 	}
 
 	@Override

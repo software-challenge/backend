@@ -18,7 +18,7 @@ public class Player extends SimplePlayer
 	 * Mögliche Aktionen, die durch das Ausspielen einer Hasenkarte ausgelöst
 	 * werden können.
 	 */
-	public enum Action
+	public enum Action // TODO only 4 cards...
 	{
 		/**
 		 * Einmal aussetzen
@@ -59,8 +59,8 @@ public class Player extends SimplePlayer
 	}
 
 	/**
-	 * Alle Spielfiguren aus dem Hase und Igel Original
-	 * Mit Veränderungen der CAU
+	 * Alle Spielfiguren aus dem Hase und Igel Original Mit Veränderungen der
+	 * CAU
 	 */
 	public enum FigureColor
 	{
@@ -182,14 +182,16 @@ public class Player extends SimplePlayer
 	 * 
 	 * @return
 	 */
-	public final int getPosition()
+	public final int getPosition() // TODO not position, it's fieldnumber
 	{
-		return this.position;
+		return position;
 	}
+
+	// TODO getPosition (if the player is first or second)
 
 	protected final void setPosition(final int pos)
 	{
-		this.position = pos;
+		position = pos;
 	}
 
 	/**
@@ -199,6 +201,6 @@ public class Player extends SimplePlayer
 	 */
 	public final FigureColor getColor()
 	{
-		return this.color;
+		return color;
 	}
 }

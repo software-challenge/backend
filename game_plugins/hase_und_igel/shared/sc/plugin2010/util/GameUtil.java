@@ -1,7 +1,6 @@
 package sc.plugin2010.util;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
@@ -88,6 +87,8 @@ public class GameUtil
 	 */
 	public static boolean isValidToEat(Board b, Player p)
 	{
+		// TODO es fehlt die Überprüfung, ob der Spieler schon einmal einen
+		// Salat auf dem Feld gefressen hat
 		boolean valid = true;
 		FieldTyp currentField = b.getTypeAt(p.getPosition());
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
@@ -113,6 +114,39 @@ public class GameUtil
 	}
 
 	/**
+	 * Überprüft <code>MoveTyp.TAKE_10_CARROTS</code> Züge auf Korrektheit
+	 * 
+	 * @param b
+	 * @param p
+	 * @return
+	 */
+	public static boolean isValidToTakeCarrots(Board b, Player p)
+	{
+		// TODO correct?
+		boolean valid = true;
+		FieldTyp currentField = b.getTypeAt(p.getPosition());
+		valid = valid && (currentField.equals(FieldTyp.CARROT));
+		return valid;
+	}
+
+	/**
+	 * Überprüft <code>MoveTyp.DROP_10_CARROTS</code> Züge auf Korrektheit
+	 * 
+	 * @param b
+	 * @param p
+	 * @return
+	 */
+	public static boolean isValidToDropCarrots(Board b, Player p)
+	{
+		// TODO correct?
+		boolean valid = true;
+		FieldTyp currentField = b.getTypeAt(p.getPosition());
+		valid = valid && (currentField.equals(FieldTyp.CARROT));
+		valid = valid && (p.getCarrotsAvailable() >= 10);
+		return valid;
+	}
+
+	/**
 	 * Überprüft <code>MoveTyp.PLAY_CARD</code>_X Züge auf Korrektheit
 	 * 
 	 * @param board
@@ -128,7 +162,8 @@ public class GameUtil
 		switch (typ)
 		{
 			case PLAY_CARD_CHANGE_CARROTS:
-				valid = valid && player.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
+				valid = valid
+						&& player.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
 				valid = valid && (l == 0 || l == 20 || l == -20);
 				break;
 			case PLAY_CARD_EAT_SALAD:
@@ -157,7 +192,9 @@ public class GameUtil
 				valid = valid && ((nextHedgehog - o.getPosition()) != 1);
 
 				if (o.getPosition() == 63)
+				{
 					valid = valid && board.canEnterGoal(player);
+				}
 				break;
 			}
 			default:

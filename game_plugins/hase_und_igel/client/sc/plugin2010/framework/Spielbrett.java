@@ -32,7 +32,7 @@ public class Spielbrett
 		runde = bu.getRound();
 	}
 
-	public boolean istDerZugValide(Zug zug, int feldNummer)
+	public boolean istZugValide(Zug zug, int feldNummer)
 	{
 		return false;
 		// brett.isValid(move, player)
