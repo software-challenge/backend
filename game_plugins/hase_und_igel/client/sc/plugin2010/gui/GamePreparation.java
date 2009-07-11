@@ -41,7 +41,7 @@ public class GamePreparation implements IGamePreparation
 
 		for (String singleResp : response.getReservations())
 		{
-			slots.add(new Slot(roomId, singleResp));
+			slots.add(new Slot(roomId, singleResp, administrativeClient));
 		}
 	}
 

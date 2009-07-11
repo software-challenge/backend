@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import sc.framework.plugins.protocol.MoveRequest;
-import sc.plugin2010.gui.GamePreparation;
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Der Client für das Hase- und Igel Plugin.
@@ -29,15 +26,19 @@ public class Client implements ILobbyClientListener
 	private EPlayerId		id;
 	// the current room in which the player is
 	private String			roomId;
+	private String			host;
+	private int				port;
 
 	public Client(String host, int port, EPlayerId id) throws IOException
 	{
-		this.gameType = "";
+		gameType = "";
 		client = new LobbyClient(host, port, Arrays.asList(Player.class,
 				PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class));
 		client.addListener(this);
 		this.id = id;
+		this.port = port;
+		this.host = host;
 	}
 
 	public void setHandler(IGameHandler handler)
@@ -135,5 +136,15 @@ public class Client implements ILobbyClientListener
 			throws InterruptedException
 	{
 		return client.prepareGameAndWait(gameType, playerCount);
+	}
+
+	public String getHost()
+	{
+		return host;
+	}
+
+	public int getPort()
+	{
+		return port;
 	}
 }
