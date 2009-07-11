@@ -195,12 +195,17 @@ public class Board
 		return red.getPosition() == pos || blue.getPosition() == pos;
 	}
 
-	public final int nextFreeField(int from)
+	public final int nextFreeFieldFor(Player player, int off)
 	{
-		int offset = 1;
-		while(!isMoveable(from+offset))
+		int offset = off;
+		while (!isMoveable(player.getPosition() + offset, player))
 			offset++;
 		return offset;
+	}
+	
+	public final int nextFreeFieldFor(Player player)
+	{
+		return nextFreeFieldFor(player, 1);
 	}
 
 	/**
@@ -209,9 +214,27 @@ public class Board
 	 * @param pos
 	 * @return
 	 */
-	public final boolean isMoveable(final int pos)
+	public final boolean isMoveable(final int pos, Player p)
 	{
-		return !isOccupied(pos) && !getTypeAt(pos).equals(FieldTyp.HEDGEHOG);
+		boolean moveable = !isOccupied(pos);
+		final FieldTyp ft = getTypeAt(pos);
+		switch (ft)
+		{
+			case HEDGEHOG:
+				moveable = false;
+				break;
+			case RABBIT:
+				moveable = moveable && p.getActions().size() > 0;
+				break;
+			case SALAD:
+				moveable = moveable && p.getSaladsToEat() > 0;
+				break;
+			case GOAL:
+				moveable = moveable && p.getSaladsToEat() == 0
+						&& p.getCarrotsAvailable() <= 10;
+				break;
+		}
+		return moveable;
 	}
 
 	/**

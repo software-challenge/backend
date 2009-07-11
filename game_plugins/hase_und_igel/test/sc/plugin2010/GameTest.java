@@ -1,5 +1,8 @@
 package sc.plugin2010;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -100,19 +103,55 @@ public class GameTest
 		Move toSalad = new Move(MoveTyp.MOVE, nextSalatAt);
 		Assert.assertTrue(b.isValid(toSalad, p1));
 		g.onAction(p1, toSalad);
-		
+
 		g.onAction(p2, new Move(MoveTyp.MOVE, 1));
-		
+
 		Move eatSalad = new Move(MoveTyp.EAT);
 		Assert.assertTrue(b.isValid(eatSalad, p1));
 		g.onAction(p1, eatSalad);
+
+		g.onAction(p2, new Move(MoveTyp.MOVE, 1));
+
+		// Spieler muss sich jetzt bewegen!
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.EAT), p1));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD,
+				Action.EAT_SALAD), p1));
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD,
+				Action.TAKE_OR_DROP_CARROTS), p1));
+	}
+
+	/**
+	 * Überprüft dass ein Spieler das Ziel nur betreten darf, nachdem er alle
+	 * Salate gefressen hat. Außerdem 
+	 * 
+	 * @throws TooManyPlayersException
+	 */
+	@Test
+	public void testEnterGoal() throws TooManyPlayersException
+	{
+		Game g = new Game();
+		g.initialize();
+		Board b = g.getBoard();
+
+		Player p1 = (Player) g.onPlayerJoined();
+		Player p2 = (Player) g.onPlayerJoined();
+
+		g.start();
+		p1.setPosition(62);
+		
+		Move toGoal = new Move(MoveTyp.MOVE, 2);
+		Assert.assertFalse(b.isValid(toGoal, p1));
+		
+		p1.setCarrotsAvailable(10);
+		Assert.assertFalse(b.isValid(toGoal, p1));
+		
+		p1.setSaladsToEat(0);
+		Assert.assertTrue(b.isValid(toGoal, p1));
+		g.onAction(p1, toGoal);
 		
 		g.onAction(p2, new Move(MoveTyp.MOVE, 1));
 		
-		// Spieler muss sich jetzt bewegen!
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.EAT), p1));
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD), p1));
-		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS), p1));
+		Assert.assertFalse(g.isActive());
 	}
 
 	/**
@@ -136,16 +175,14 @@ public class GameTest
 		{
 			Assert.assertEquals(p1, g.getActivePlayer());
 			Move m11 = new Move(MoveTyp.FALL_BACK);
-			Move m12 = new Move(MoveTyp.MOVE, b.nextFreeField(p1
-					.getPosition()));
+			Move m12 = new Move(MoveTyp.MOVE, b.nextFreeFieldFor(p1));
 			if (b.isValid(m11, p1))
 				g.onAction(p1, m11);
 			else
 				g.onAction(p1, m12);
 			Assert.assertEquals(p2, g.getActivePlayer());
 			Move m21 = new Move(MoveTyp.FALL_BACK);
-			Move m22 = new Move(MoveTyp.MOVE, b.nextFreeField(p2
-					.getPosition()));
+			Move m22 = new Move(MoveTyp.MOVE, b.nextFreeFieldFor(p2));
 			if (b.isValid(m21, p2))
 				g.onAction(p2, m21);
 			else

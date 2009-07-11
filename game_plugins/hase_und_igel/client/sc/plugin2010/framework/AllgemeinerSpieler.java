@@ -18,16 +18,6 @@ public abstract class AllgemeinerSpieler
 	private Player	player;
 
 	/**
-	 * Gibt true zurück, falls der Spieler in der nächsten Runde aussetzen muss.
-	 * 
-	 * @return muss der Spieler in der nächsten Runde aussetzen?
-	 */
-	public boolean mussNaechsteRundeAussetzen()
-	{
-		return player.isSuspended();
-	}
-
-	/**
 	 * Holt die Karotten, die der Spieler besitzt
 	 * 
 	 * @return Karottenvorrat des Spielers

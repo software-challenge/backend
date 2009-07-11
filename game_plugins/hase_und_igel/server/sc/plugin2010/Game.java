@@ -40,27 +40,29 @@ public class Game extends SimpleGameInstance<Player>
 
 	private int					turn;
 
+	private int					actionsSinceFirstPlayerEnteredGoal;
+
 	public Game()
 	{
 		availableColors = new LinkedList<FigureColor>();
 		initialize();
 	}
-	
+
 	protected Board getBoard()
 	{
 		return board;
 	}
-	
+
 	protected final int getTurn()
 	{
 		return turn;
 	}
-	
+
 	protected final boolean isActive()
 	{
 		return active;
 	}
-	
+
 	protected final Player getActivePlayer()
 	{
 		return players.get(activePlayerId);
@@ -74,6 +76,7 @@ public class Game extends SimpleGameInstance<Player>
 
 		active = false;
 		turn = 0;
+		actionsSinceFirstPlayerEnteredGoal = 0;
 		activePlayerId = 0;
 	}
 
@@ -86,16 +89,17 @@ public class Game extends SimpleGameInstance<Player>
 			return;
 		}
 
-		final Player player = players.get(activePlayerId);
+		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL) ||
+				board.getTypeAt(players.get(1).getPosition()).equals(FieldTyp.GOAL))
+			actionsSinceFirstPlayerEnteredGoal++;
 		
+		final Player player = players.get(activePlayerId);
+
 		activePlayerId = (activePlayerId + 1) % players.size();
 
 		if (activePlayerId == 0)
 			turn++;
-		
-		if (turn > GamePlugin.MAX_TURN_COUNT) 
-			active = false;
-		
+
 		if (data instanceof Move)
 		{
 			final Move move = (Move) data;
@@ -115,7 +119,11 @@ public class Game extends SimpleGameInstance<Player>
 
 			Player next = fetchNextPlayer();
 			updatePlayer(next);
-			// TODO gameOver ??
+
+			if (gameOver())
+			{
+				active = false;
+			}
 
 			updatePlayers();
 			next.requestMove();
@@ -126,6 +134,19 @@ public class Game extends SimpleGameInstance<Player>
 			logger.error("Unknown message received from '{}': '{}'", player
 					.getColor(), data.getClass().getName());
 		}
+	}
+
+	private boolean gameOver()
+	{
+		boolean gameOver = false;
+
+		if (turn > GamePlugin.MAX_TURN_COUNT)
+			gameOver = true;
+
+		if (actionsSinceFirstPlayerEnteredGoal >= 1)
+			gameOver = true;
+
+		return gameOver;
 	}
 
 	/**
