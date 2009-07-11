@@ -31,7 +31,7 @@ public class Client implements ILobbyClientListener
 
 	public Client(String host, int port, EPlayerId id) throws IOException
 	{
-		gameType = "";
+		gameType = GamePlugin.PLUGIN_UUID;
 		client = new LobbyClient(host, port, Arrays.asList(Player.class,
 				PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class));
