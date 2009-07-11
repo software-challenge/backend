@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
@@ -15,6 +18,7 @@ import sc.api.plugins.host.IGameListener;
 import sc.api.plugins.host.IPlayerScore;
 import sc.protocol.MementoPacket;
 import sc.protocol.RoomPacket;
+import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -25,6 +29,8 @@ import sc.server.plugins.GamePluginInstance;
  */
 public class GameRoom implements IGameListener
 {
+	private static final Logger			logger		= LoggerFactory
+															.getLogger(GameRoom.class);
 	private final String				id;
 	private final GamePluginInstance	provider;
 	private final IGameInstance			game;
@@ -102,15 +108,13 @@ public class GameRoom implements IGameListener
 	@Override
 	public void onPlayerJoined(IPlayer player)
 	{
-		// TODO Auto-generated method stub
-
+		// not interesting
 	}
 
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
-		// TODO Auto-generated method stub
-
+		// not interesting
 	}
 
 	public String getId()
@@ -118,7 +122,7 @@ public class GameRoom implements IGameListener
 		return this.id;
 	}
 
-	public boolean join(Client client)
+	public synchronized boolean join(Client client)
 	{
 		PlayerSlot openSlot = null;
 
@@ -142,11 +146,27 @@ public class GameRoom implements IGameListener
 			return false;
 		}
 
-		openSlot.setClient(client);
-
-		startIfReady();
+		fillSlot(openSlot, client);
 
 		return true;
+	}
+
+	private synchronized void fillSlot(PlayerSlot openSlot, Client client)
+	{
+		openSlot.setClient(client);
+		IPlayer player;
+		try
+		{
+			player = getGame().onPlayerJoined();
+		}
+		catch (TooManyPlayersException e)
+		{
+			// should't happen
+			throw new RuntimeException(e);
+		}
+		openSlot.setPlayer(player);
+		client.send(new JoinGameResponse(getId()));
+		startIfReady();
 	}
 
 	private void startIfReady()
@@ -154,6 +174,11 @@ public class GameRoom implements IGameListener
 		if (game.ready())
 		{
 			game.start();
+			logger.info("Started the game.");
+		}
+		else
+		{
+			logger.info("Game isn't ready yet.");
 		}
 	}
 
@@ -172,7 +197,7 @@ public class GameRoom implements IGameListener
 		return Collections.unmodifiableList(this.playerSlots);
 	}
 
-	public void setSize(int playerCount) throws TooManyPlayersException
+	public synchronized void setSize(int playerCount) throws TooManyPlayersException
 	{
 		if (playerCount > getMaximumPlayerCount())
 		{
@@ -185,7 +210,7 @@ public class GameRoom implements IGameListener
 		}
 	}
 
-	public List<String> reserveAllSlots()
+	public synchronized List<String> reserveAllSlots()
 	{
 		List<String> result = new ArrayList<String>(playerSlots.size());
 
@@ -197,7 +222,7 @@ public class GameRoom implements IGameListener
 		return result;
 	}
 
-	public void onEvent(Client source, Object data)
+	public synchronized void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
 		if (isOver)
@@ -275,8 +300,8 @@ public class GameRoom implements IGameListener
 		this.observers.add(role);
 	}
 
-	public void onReservationClaimed()
+	public synchronized void onReservationClaimed(Client source, PlayerSlot result)
 	{
-		startIfReady();
+		fillSlot(result, source);
 	}
 }

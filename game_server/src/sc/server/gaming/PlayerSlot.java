@@ -60,20 +60,18 @@ public class PlayerSlot
 			throw new IllegalStateException("This slot is already occupied.");
 		}
 
-		IPlayer player;
-		try
-		{
-			player = getRoom().getGame().onPlayerJoined();
-		}
-		catch (TooManyPlayersException e)
-		{
-			// not expected to happen
-			throw new RuntimeException(e);
-		}
-
 		this.role = new PlayerRole(client, this);
 		client.addRole(this.role);
-		client.send(new JoinGameResponse(getRoom().getId()));
+	}
+
+	public void setPlayer(IPlayer player)
+	{
+		if (this.role == null)
+		{
+			throw new IllegalStateException(
+					"Slot isn't linked to a Client yet.");
+		}
+
 		this.role.setPlayer(player);
 	}
 }

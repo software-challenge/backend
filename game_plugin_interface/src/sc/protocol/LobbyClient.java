@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,11 +42,29 @@ public final class LobbyClient extends XStreamClient
 	private final AsyncResultManager			asyncManager	= new AsyncResultManager();
 	private final List<ILobbyClientListener>	listeners		= new LinkedList<ILobbyClientListener>();
 
-	public LobbyClient(XStream xstream, String host, int port)
-			throws IOException
+	public static final int						DEFAULT_PORT	= 13050;
+	public static final String					DEFAULT_HOST	= "localhost";
+
+	public LobbyClient() throws IOException
+	{
+		this(null);
+	}
+	
+	public LobbyClient(Collection<Class<?>> protocolClasses) throws IOException
+	{
+		this(DEFAULT_HOST, DEFAULT_PORT, protocolClasses);
+	}
+
+	public LobbyClient(String host, int port, Collection<Class<?>> protocolClasses) throws IOException
+	{
+		this(host, port, protocolClasses, new XStream());
+	}
+
+	public LobbyClient(String host, int port, Collection<Class<?>> protocolClasses,
+			XStream xstream) throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
-		LobbyProtocol.registerMessages(xstream);
+		LobbyProtocol.registerMessages(xstream, protocolClasses);
 	}
 
 	public List<String> getRooms()
@@ -103,27 +122,54 @@ public final class LobbyClient extends XStreamClient
 		else if (o instanceof PrepareGameResponse)
 		{
 			PrepareGameResponse preparation = (PrepareGameResponse) o;
-			onGamePrepared(preparation.getRoomId());
+			onGamePrepared(preparation);
 		}
 		else if (o instanceof JoinGameResponse)
 		{
-			rooms.add(((JoinGameResponse) o).getRoomId());
+			String roomId = ((JoinGameResponse) o).getRoomId();
+			rooms.add(roomId);
+			onGameJoined(roomId);
 		}
 		else if (o instanceof LeftGameEvent)
 		{
-			rooms.remove(((LeftGameEvent) o).getRoomId());
+			String roomId = ((LeftGameEvent) o).getRoomId();
+			rooms.remove(roomId);
+			onGameLeft(roomId);
 		}
 		else if (o instanceof ErrorResponse)
 		{
 			ErrorResponse response = (ErrorResponse) o;
-			logger
-					.warn("{} caused the following error: {}", response,
-							response);
+			if (response.getOriginalRequest() != null)
+			{
+				logger.warn("The request {} caused the following error: {}",
+						response.getOriginalRequest().getClass(), response
+								.getMessage());
+			}
+			else
+			{
+				logger.warn("An error occured: {}", response.getMessage());
+			}
 			onError(response);
 		}
 		else
 		{
 			onCustomObject(o);
+		}
+	}
+
+	private void onGameLeft(String roomId)
+	{
+		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGameLeft(roomId);
+		}
+	}
+
+	private void onGameJoined(String roomId)
+	{
+		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGameJoined(roomId);
 		}
 	}
 
@@ -192,9 +238,12 @@ public final class LobbyClient extends XStreamClient
 		}
 	}
 
-	protected void onGamePrepared(String roomId)
+	protected void onGamePrepared(PrepareGameResponse response)
 	{
-		// can be overridden
+		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGamePrepared(response);
+		}
 	}
 
 	public void authenticate(String password)
@@ -229,7 +278,7 @@ public final class LobbyClient extends XStreamClient
 
 	protected void onNewState(String roomId, Object state)
 	{
-		for(ILobbyClientListener listener : this.listeners)
+		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onNewState(roomId, state);
 		}
@@ -237,7 +286,7 @@ public final class LobbyClient extends XStreamClient
 
 	protected void onError(ErrorResponse error)
 	{
-		for(ILobbyClientListener listener : this.listeners)
+		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onError(error);
 		}
@@ -250,7 +299,7 @@ public final class LobbyClient extends XStreamClient
 
 	protected void onRoomMessage(String roomId, Object data)
 	{
-		for(ILobbyClientListener listener : this.listeners)
+		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onRoomMessage(roomId, data);
 		}
@@ -316,7 +365,7 @@ public final class LobbyClient extends XStreamClient
 	{
 		this.listeners.add(listener);
 	}
-	
+
 	public void removeListener(ILobbyClientListener listener)
 	{
 		this.listeners.remove(listener);

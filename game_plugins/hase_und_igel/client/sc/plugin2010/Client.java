@@ -1,11 +1,13 @@
 package sc.plugin2010;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
+import sc.protocol.responses.PrepareGameResponse;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -26,19 +28,14 @@ public class Client implements ILobbyClientListener
 	// the current room in which the player is
 	private String			roomId;
 
-	public Client(XStream xstream, String host, int port, EPlayerId id)
-			throws IOException
+	public Client(String host, int port, EPlayerId id) throws IOException
 	{
 		this.gameType = "";
-		client = new LobbyClient(xstream, host, port);
+		client = new LobbyClient(host, port, Arrays.asList(Player.class,
+				PlayerUpdated.class, Move.class, Board.class,
+				BoardUpdated.class));
 		client.addListener(this);
 		this.id = id;
-		
-		xstream.processAnnotations(Player.class);
-		xstream.processAnnotations(PlayerUpdated.class);
-		xstream.processAnnotations(Move.class);
-		xstream.processAnnotations(Board.class);
-		xstream.processAnnotations(BoardUpdated.class);
 	}
 
 	public void setHandler(IGameHandler handler)
@@ -109,5 +106,26 @@ public class Client implements ILobbyClientListener
 	public void prepareGame(int playerCount)
 	{
 		client.prepareGame(gameType, playerCount);
+	}
+
+	@Override
+	public void onGameJoined(String roomId)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onGameLeft(String roomId)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onGamePrepared(PrepareGameResponse response)
+	{
+		// TODO Auto-generated method stub
+
 	}
 }

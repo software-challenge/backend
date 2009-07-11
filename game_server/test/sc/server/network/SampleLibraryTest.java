@@ -25,10 +25,11 @@ public class SampleLibraryTest extends RealServerTest
 	{
 		private LobbyClient	client;
 
-		public TestLobbyClient(String gameType, XStream xstream, String host,
-				int port) throws IOException
+		public TestLobbyClient(String gameType, String host, int port)
+				throws IOException
 		{
-			client = new LobbyClient(xstream, host, port);
+			client = new LobbyClient(host, port, null, Configuration
+					.getXStream());
 		}
 
 		public LobbyClient getClient()
@@ -41,8 +42,7 @@ public class SampleLibraryTest extends RealServerTest
 	public void shouldConnectToServer() throws IOException
 	{
 		final TestLobbyClient client = new TestLobbyClient(
-				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
-				"localhost", getServerPort());
+				TestPlugin.TEST_PLUGIN_UUID, "localhost", getServerPort());
 
 		client.getClient().joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
 
@@ -59,8 +59,7 @@ public class SampleLibraryTest extends RealServerTest
 	public void shouldBeAbleToPlayTheGame() throws IOException
 	{
 		final TestLobbyClient client = new TestLobbyClient(
-				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
-				"localhost", getServerPort());
+				TestPlugin.TEST_PLUGIN_UUID, "localhost", getServerPort());
 
 		client.getClient().joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
 
@@ -78,11 +77,10 @@ public class SampleLibraryTest extends RealServerTest
 			InterruptedException
 	{
 		final TestLobbyClient client = new TestLobbyClient(
-				TestPlugin.TEST_PLUGIN_UUID, Configuration.getXStream(),
-				"localhost", getServerPort());
+				TestPlugin.TEST_PLUGIN_UUID, "localhost", getServerPort());
 
-		RequestResult<PrepareGameResponse> result = client.client.prepareGameAndWait(
-				TestPlugin.TEST_PLUGIN_UUID, 2);
+		RequestResult<PrepareGameResponse> result = client.client
+				.prepareGameAndWait(TestPlugin.TEST_PLUGIN_UUID, 2);
 
 		Assert.assertTrue(result.hasValidContents());
 		Assert.assertTrue(result.isSuccessful());

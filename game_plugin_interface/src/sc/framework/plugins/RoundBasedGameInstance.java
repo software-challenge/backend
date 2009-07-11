@@ -23,7 +23,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 		else
 		{
-			throw new RuntimeException("aaa");
+			throw new RescueableClientException("It's not your turn yet.");
 		}
 	}
 
@@ -45,7 +45,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		{
 			logger.warn("Couldn't find any listeners. Is this intended?");
 		}
-		
+
 		this.activePlayer = this.players.get(0);
 		onActivePlayerChanged(this.activePlayer);
 		notifyOnNewState(getCurrentState());

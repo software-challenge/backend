@@ -4,16 +4,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.server.network.Client;
 
-public abstract class ReservationManager
+public final class ReservationManager
 {
+
+	private static Logger					logger			= LoggerFactory
+																	.getLogger(ReservationManager.class);
 	private static Map<String, PlayerSlot>	reservations	= new HashMap<String, PlayerSlot>();
 
-	public static PlayerSlot claimReservation(Client client, String reservation)
-			throws UnknownReservationException
+	private ReservationManager()
 	{
-		PlayerSlot result = reservations.get(reservation);
+		// singleton
+	}
+
+	public static PlayerSlot redeemReservationCode(Client client,
+			String reservation) throws UnknownReservationException
+	{
+		PlayerSlot result = reservations.remove(reservation);
 
 		if (result == null)
 		{
@@ -21,14 +32,19 @@ public abstract class ReservationManager
 		}
 		else
 		{
-			result.setClient(client);
-			result.getRoom().onReservationClaimed();
+			logger.info("Reservation {} was redeemed.", reservation);
+			result.getRoom().onReservationClaimed(client, result);
 			return result;
 		}
 	}
 
 	public synchronized static String reserve(PlayerSlot playerSlot)
 	{
+		if (reservations.containsValue(playerSlot))
+		{
+			throw new RuntimeException("This slot is already reserved.");
+		}
+		
 		String key = generateUniqueId();
 		reservations.put(key, playerSlot);
 		return key;

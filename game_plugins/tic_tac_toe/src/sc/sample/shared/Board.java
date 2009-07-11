@@ -1,24 +1,43 @@
 package sc.sample.shared;
 
-
 public class Board
 {
-	protected Field[][]	fields	= new Field[3][];
-	
-    public Board()
-    {
-    	for(int i=0; i<fields.length; i++)
-    	{
-    		fields[i] = new Field[fields.length];
-    		for(int j=0; j<fields.length; j++) {
-    			fields[i][j] = new Field();
-    		}
-    	}
-    }
-	
+	public static final int	WIDTH	= 3;
+	public static final int	HEIGHT	= 3;
+
+	protected Field[][]		fields	= new Field[HEIGHT][];
+
+	public Board()
+	{
+		for (int y = 0; y < HEIGHT; y++)
+		{
+			fields[y] = new Field[WIDTH];
+			for (int x = 0; x < WIDTH; x++)
+			{
+				fields[y][x] = new Field();
+			}
+		}
+	}
+
 	public boolean isGameOver()
 	{
-		return getWinner() != null;
+		return getWinner() != null || !hasFreeFields();
+	}
+
+	private boolean hasFreeFields()
+	{
+		for (int x = 0; x < Board.WIDTH; x++)
+		{
+			for (int y = 0; y < Board.HEIGHT; y++)
+			{
+				if (getOwner(x, y) == null)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private Player getWinner()
@@ -72,13 +91,13 @@ public class Board
 				&& isSamePlayer(p, newX, newY, stepX, stepY);
 	}
 
-	protected Player getOwner(int x, int y)
+	public Player getOwner(int x, int y)
 	{
 		return fields[y][x].getOwner();
 	}
 
 	private boolean validCoordinate(int x, int y)
 	{
-		return (x >= 0 && x < 3 && y >= 0 && y < 3);
+		return (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT);
 	}
 }

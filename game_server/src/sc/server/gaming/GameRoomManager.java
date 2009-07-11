@@ -52,7 +52,7 @@ public class GameRoomManager implements Runnable
 		this.rooms.put(room.getId(), room);
 	}
 
-	public GameRoom createGame(String gameType)
+	public synchronized GameRoom createGame(String gameType)
 			throws RescueableClientException
 	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
@@ -74,19 +74,19 @@ public class GameRoomManager implements Runnable
 		return room;
 	}
 
-	private String generateRoomId()
+	private synchronized static String generateRoomId()
 	{
 		return UUID.randomUUID().toString();
 	}
 
-	public boolean createAndJoinGame(Client client, String gameType)
+	public synchronized boolean createAndJoinGame(Client client, String gameType)
 			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
 		return room.join(client);
 	}
 
-	public boolean joinOrCreateGame(Client client, String gameType)
+	public synchronized boolean joinOrCreateGame(Client client, String gameType)
 			throws RescueableClientException
 	{
 		for (GameRoom game : getGames())
@@ -100,7 +100,7 @@ public class GameRoomManager implements Runnable
 		return createAndJoinGame(client, gameType);
 	}
 
-	public boolean joinGame(Client client, String id)
+	public synchronized boolean joinGame(Client client, String id)
 	{
 		for (GameRoom game : getGames())
 		{
@@ -139,7 +139,7 @@ public class GameRoomManager implements Runnable
 		}
 	}
 
-	public Collection<GameRoom> getGames()
+	public synchronized Collection<GameRoom> getGames()
 	{
 		return Collections.unmodifiableCollection(this.rooms.values());
 	}
@@ -154,7 +154,7 @@ public class GameRoomManager implements Runnable
 		return this.pluginApi;
 	}
 
-	public PrepareGameResponse prepareGame(String gameType, int playerCount)
+	public synchronized PrepareGameResponse prepareGame(String gameType, int playerCount)
 			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
@@ -162,7 +162,7 @@ public class GameRoomManager implements Runnable
 		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 
-	public GameRoom findRoom(String roomId) throws RescueableClientException
+	public synchronized GameRoom findRoom(String roomId) throws RescueableClientException
 	{
 		GameRoom room = this.rooms.get(roomId);
 

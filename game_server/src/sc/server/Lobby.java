@@ -73,7 +73,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 			if (packet instanceof JoinPreparedRoomRequest)
 			{
 				ReservationManager
-						.claimReservation(source,
+						.redeemReservationCode(source,
 								((JoinPreparedRoomRequest) packet)
 										.getReservationCode());
 

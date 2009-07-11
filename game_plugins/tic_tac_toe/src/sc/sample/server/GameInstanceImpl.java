@@ -4,13 +4,21 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.sample.shared.Board;
+import sc.sample.shared.GameState;
 import sc.sample.shared.Move;
 import sc.sample.shared.Player;
 
 public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 {
-	private ServerBoard	board	= new ServerBoard();
+	private GameState	gameState;
+	private ServerBoard	board;
+
+	public GameInstanceImpl()
+	{
+		board = new ServerBoard();
+		gameState = new GameState();
+		gameState.board = board;
+	}
 
 	@Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException
@@ -52,7 +60,7 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	@Override
 	protected Object getCurrentState()
 	{
-		return this.board;
+		return this.gameState;
 	}
 
 	@Override
