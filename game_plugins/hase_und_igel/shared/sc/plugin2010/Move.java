@@ -38,10 +38,10 @@ public final class Move
 		PLAY_CARD
 	}
 
-	private transient int	turn;
-	private final int		n;
-	private final MoveTyp	typ;
-	private final Action	card;
+	private int	turn;
+	private int		n;
+	private MoveTyp	typ;
+	private Action	card;
 	
 	protected void setTurn(int turn)
 	{

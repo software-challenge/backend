@@ -85,9 +85,10 @@ public class Game extends SimpleGameInstance<Player>
 	{
 		if (!active)
 		{
-			logger.info("Game not active!");
+			logger.debug("Game not active!");
 			return;
 		}
+		logger.debug("Turn #{}: recv. Data!", getTurn());
 
 		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
 				|| board.getTypeAt(players.get(1).getPosition()).equals(
@@ -280,6 +281,8 @@ public class Game extends SimpleGameInstance<Player>
 		{
 			listener.onPlayerJoined(player);
 		}
+		
+		logger.debug("New player joined '{}'", player.getColor());
 
 		return player;
 	}
@@ -303,10 +306,11 @@ public class Game extends SimpleGameInstance<Player>
 
 	private void updateObservers()
 	{
+		GameState currentState = new GameState(this);
+		
 		for (final IGameListener l : listeners)
 		{
-			// TODO get Momento
-			l.onStateChanged(null);
+			l.onStateChanged(currentState);
 		}
 	}
 
