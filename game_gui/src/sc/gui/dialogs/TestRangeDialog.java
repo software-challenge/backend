@@ -5,12 +5,16 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,10 +26,15 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
 import sc.gui.PresentationFacade;
+import sc.guiplugin.interfaces.IGamePreparation;
+import sc.guiplugin.interfaces.IObservation;
+import sc.plugin.GUIPluginInstance;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
 
+	private static final Integer INTERN_PORT = 10500;
+	private static final String HOST_IP = "localhost";
 	private JLabel lblclient2;
 	private JTextField txfclient2;
 	private JLabel lblclient1;
@@ -43,6 +52,7 @@ public class TestRangeDialog extends JDialog {
 	private final ResourceBundle lang;
 	private final PresentationFacade presFac;
 	private JComboBox cmbGameType;
+	private List<GUIPluginInstance> plugins;
 
 	public TestRangeDialog(JFrame frame) {
 		super();
@@ -58,8 +68,9 @@ public class TestRangeDialog extends JDialog {
 
 		this.setLayout(new BorderLayout());
 		
-		cmbGameType = new JComboBox();
-		//TODO
+		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
+		Vector<String> items = presFac.getLogicFacade().getPluginNames(plugins);
+		cmbGameType = new JComboBox(items);
 
 		txfclient1 = new JTextField(10);
 		lblclient1 = new JLabel(lang.getString("dialog_test_lbl_ki1"));
@@ -163,7 +174,24 @@ public class TestRangeDialog extends JDialog {
 			return;
 		}
 		
+		GUIPluginInstance selPlugin = getSelectedPlugin();
 		
+		// start server
+		presFac.getLogicFacade().startServer(INTERN_PORT);
+		
+		String filename = "";
+		int playerCount = 2;//TODO
+		try {
+			IGamePreparation prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT, playerCount, filename);
+			// get observer
+			IObservation obs = prep.getObserver();
+			
+			//prep.getSlots()
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
 		// TODO
 	}
 
@@ -172,7 +200,15 @@ public class TestRangeDialog extends JDialog {
 	}
 
 	private void loadClient(JTextField txf) {
-
+		JFileChooser chooser = new JFileChooser();
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			File f = chooser.getSelectedFile();
+			txf.setText(f.getAbsolutePath());
+		}
+	}
+	
+	private GUIPluginInstance getSelectedPlugin() {
+		return plugins.get(cmbGameType.getSelectedIndex());
 	}
 
 }

@@ -130,7 +130,8 @@ public class CreateGameDialog extends JDialog {
 
 		Vector<String> cmbItems = new Vector<String>();
 		cmbItems.add(lang.getString("dialog_create_plyType_human"));
-		cmbItems.add(lang.getString("dialog_create_plyType_ki"));
+		cmbItems.add(lang.getString("dialog_create_plyType_ki_intern"));
+		cmbItems.add(lang.getString("dialog_create_plyType_ki_extern"));
 		cmbItems.add(lang.getString("dialog_create_plyType_observer"));
 		cmbItems.add(lang.getString("dialog_create_plyType_closed"));
 
@@ -238,6 +239,29 @@ public class CreateGameDialog extends JDialog {
 			cancelGameCreation();
 			return;
 		}
+		
+		// set observation
+		final IObservation observer = prep.getObserver();
+		presFac.getLogicFacade().setObservation(observer);
+
+		final ConnectingDialog connDial = new ConnectingDialog();
+
+		observer.addReadyListener(new IReadyListener() {
+			@Override
+			public void ready() {
+				System.out.println("ready");
+				contextPanel.updateButtonBar(false);
+				connDial.dispose();
+			}
+		});
+
+		observer.addGameEndedListener(new IGameEndedListener() {
+			@Override
+			public void gameEnded() {
+				//presFac.getLogicFacade().stopServer();
+				contextPanel.updateButtonBar(true);
+			}
+		});
 
 		List<KIInformation> KIs = new ArrayList<KIInformation>();
 
@@ -256,7 +280,7 @@ public class CreateGameDialog extends JDialog {
 					return;
 				}
 				break;
-			case 1:
+			case 1: // KI intern
 				String path = (String) model.getValueAt(i, 3);
 				// check path
 				if (path == null || path.equals("")) {
@@ -270,9 +294,12 @@ public class CreateGameDialog extends JDialog {
 
 				KIs.add(new KIInformation(slot.asClient(), path));
 				break;
-			case 2: // nothing to do
+			case 2: // KI extern
+				slot.asRemote();
 				break;
 			case 3: // nothing to do
+				break;
+			case 4: // nothing to do
 				break;
 			default:
 				cancelGameCreation();
@@ -281,45 +308,20 @@ public class CreateGameDialog extends JDialog {
 			}
 		}
 
-		// set observation
-		final IObservation observer = prep.getObserver();
-		presFac.getLogicFacade().setObservation(observer);
-
-		final ConnectingDialog connDial = new ConnectingDialog();
-
-		observer.addReadyListener(new IReadyListener() {
-			@Override
-			public void ready() {
-				contextPanel.updateButtonBar(false);
-				connDial.dispose();
-				CreateGameDialog.this.requestFocus();
-			}
-		});
-
-		observer.addGameEndedListener(new IGameEndedListener() {
-			@Override
-			public void gameEnded() {
-				presFac.getLogicFacade().stopServer();
-				contextPanel.updateButtonBar(true);
-			}
-		});
-
 		// start clients
 		for (KIInformation kinfo : KIs) {
 			StringBuilder params = new StringBuilder();
 			for (String p : kinfo.getParameters()) {
 				params.append(p);
 			}
-			/*try {
-				Process process = Runtime.getRuntime().exec(kinfo.getPath() + " " + params);
-			} catch (IOException e) {
-				JOptionPane.showMessageDialog(this, lang
-						.getString("dialog_create_error_client_msg"), lang
-						.getString("dialog_create_error_client_title"),
-						JOptionPane.ERROR_MESSAGE);
-				cancelGameCreation();
-				return;
-			}*/
+			/*
+			 * try { Process process = Runtime.getRuntime().exec(kinfo.getPath()
+			 * + " " + params); } catch (IOException e) {
+			 * JOptionPane.showMessageDialog(this, lang
+			 * .getString("dialog_create_error_client_msg"), lang
+			 * .getString("dialog_create_error_client_title"),
+			 * JOptionPane.ERROR_MESSAGE); cancelGameCreation(); return; }
+			 */
 		}
 
 		// show connecting dialog
@@ -341,12 +343,14 @@ public class CreateGameDialog extends JDialog {
 	private int extractIndex(String plyType) {
 		if (plyType.equals(lang.getString("dialog_create_plyType_human"))) {
 			return 0;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki"))) {
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_intern"))) {
 			return 1;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_observer"))) {
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_extern"))) {
 			return 2;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_closed"))) {
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_observer"))) {
 			return 3;
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_closed"))) {
+			return 4;
 		}
 		return -1;
 	}
