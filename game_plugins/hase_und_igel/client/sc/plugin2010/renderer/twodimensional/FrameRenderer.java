@@ -17,6 +17,7 @@ import javax.swing.JPanel;
 import sc.plugin2010.Board;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
+import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
 import sc.plugin2010.util.GameUtil;
@@ -233,73 +234,85 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			}
 		}
 
-		fbuttons.get(player.getPosition()).setOccupied(player.getColor());
-
 		if (enemy != null)
 		{
 			fbuttons.get(enemy.getPosition()).setOccupied(enemy.getColor());
 		}
 
+		fbuttons.get(player.getPosition()).setOccupied(player.getColor());
+
 		if (own)
 		{
 			this.player = player;
-
-			setReachableFields(player.getPosition(), player
-					.getCarrotsAvailable());
-
-			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
+			if (myturn)
 			{
-				List<String> answers = new LinkedList<String>();
-				answers.add(moveForward);
-				answers.add(takeCarrots);
-				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
+				if (player.getColor() == FigureColor.RED)
 				{
-					answers.add(dropCarrots);
+					info.setColor(true);
 				}
-				askQuestion("Was wollen Sie tun?", answers, carrotAnswer);
-			}
-			else if (GameUtil.isValidToEat(board, player))
-			{
-				sendMove(new Move(Move.MoveTyp.EAT));
-			}
-			else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
-					&& (player.getActions().size() > 0))
-			{
-				List<String> answers = new LinkedList<String>();
-				answers.add(moveForward);
-				if (GameUtil.isValidToPlayCard(board, player,
-						Player.Action.TAKE_OR_DROP_CARROTS, 1))
+				else
 				{
-					answers.add(take20carrots);
-				}
-				if (GameUtil.isValidToPlayCard(board, player,
-						Player.Action.TAKE_OR_DROP_CARROTS, 0))
-				{
-					answers.add(doNothing);
-				}
-				if (GameUtil.isValidToPlayCard(board, player,
-						Player.Action.TAKE_OR_DROP_CARROTS, -1))
-				{
-					answers.add(give20carrots);
-				}
-				if (GameUtil.isValidToPlayCard(board, player,
-						Player.Action.EAT_SALAD, 0))
-				{
-					answers.add(eatsalad);
-				}
-				if (GameUtil.isValidToPlayCard(board, player,
-						Player.Action.HURRY_AHEAD, 0))
-				{
-					answers.add(hurryahead);
-				}
-				if (GameUtil.isValidToPlayCard(board, player,
-						Player.Action.FALL_BACK, 0))
-				{
-					answers.add(fallback);
+					info.setColor(false);
 				}
 
-				askQuestion("Welchen Hasenjoker wollen Sie spielen?", answers,
-						jokerAnswer);
+				setReachableFields(player.getPosition(), player
+						.getCarrotsAvailable());
+
+				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
+				{
+					List<String> answers = new LinkedList<String>();
+					answers.add(takeCarrots);
+					if (GameUtil.isValidToTakeOrDrop10Carrots(board, player,
+							-10))
+					{
+						answers.add(dropCarrots);
+					}
+					answers.add(moveForward);
+					askQuestion("Was wollen Sie tun?", answers, carrotAnswer);
+				}
+				else if (GameUtil.isValidToEat(board, player))
+				{
+					sendMove(new Move(Move.MoveTyp.EAT));
+				}
+				else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
+						&& (player.getActions().size() > 0))
+				{
+					List<String> answers = new LinkedList<String>();
+					if (GameUtil.isValidToPlayCard(board, player,
+							Player.Action.TAKE_OR_DROP_CARROTS, 20))
+					{
+						answers.add(take20carrots);
+					}
+					if (GameUtil.isValidToPlayCard(board, player,
+							Player.Action.TAKE_OR_DROP_CARROTS, 0))
+					{
+						answers.add(doNothing);
+					}
+					if (GameUtil.isValidToPlayCard(board, player,
+							Player.Action.TAKE_OR_DROP_CARROTS, -20))
+					{
+						answers.add(give20carrots);
+					}
+					if (GameUtil.isValidToPlayCard(board, player,
+							Player.Action.EAT_SALAD, 0))
+					{
+						answers.add(eatsalad);
+					}
+					if (GameUtil.isValidToPlayCard(board, player,
+							Player.Action.HURRY_AHEAD, 0))
+					{
+						answers.add(hurryahead);
+					}
+					if (GameUtil.isValidToPlayCard(board, player,
+							Player.Action.FALL_BACK, 0))
+					{
+						answers.add(fallback);
+					}
+
+					answers.add(moveForward);
+					askQuestion("Welchen Hasenjoker wollen Sie spielen?",
+							answers, jokerAnswer);
+				}
 			}
 
 			info.setAttributes(player.getCarrotsAvailable(), player
@@ -355,6 +368,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 						break;
 				}
 				fbuttons.get(i).setBackground(back);
+				fbuttons.get(i).setType(board.getTypeAt(i));
 			}
 			boardWasCreated = true;
 		}

@@ -41,18 +41,6 @@ public class QuestionDialog extends JDialog
 
 		setIconImage(RendererUtil.getImage("resource/hase_und_igel_icon.png"));
 
-		// Size of Screen
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-		// Position to show in center
-		int top = (screenSize.height - DEFAULTHEIGHT) / 2;
-		int left = (screenSize.width - DEFAULTWIDTH) / 2;
-
-		// set position
-		setLocation(left, top);
-
-		setSize(DEFAULTWIDTH, DEFAULTHEIGHT);
-
 		AnswerListener awListener = new AnswerListener();
 
 		JPanel buttonPanel = new JPanel();
@@ -61,6 +49,8 @@ public class QuestionDialog extends JDialog
 
 		buttonPanel.setLayout(buttonLayout);
 
+		int width = 50;
+
 		// add Buttons with answers
 		for (int i = 0; i < answers.size(); i++)
 		{
@@ -68,6 +58,7 @@ public class QuestionDialog extends JDialog
 			jbut.setName(answers.get(i));
 			jbut.addMouseListener(awListener);
 			buttonPanel.add(jbut);
+			width += jbut.getPreferredSize().width;
 		}
 
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -77,6 +68,18 @@ public class QuestionDialog extends JDialog
 
 		this.add(new JLabel(question, JLabel.CENTER), BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
+
+		setSize(width, DEFAULTHEIGHT);
+
+		// Size of Screen
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+		// Position to show in center
+		int top = (screenSize.height - DEFAULTHEIGHT) / 2;
+		int left = (screenSize.width - DEFAULTWIDTH) / 2;
+
+		// set position
+		setLocation(left, top);
 
 		setModal(true);
 		setVisible(true);
