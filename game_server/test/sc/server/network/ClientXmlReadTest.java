@@ -62,6 +62,7 @@ public class ClientXmlReadTest
 		StringNetworkInterface stringInterface = new StringNetworkInterface(
 				EMPTY_OBJECT_STREAM);
 		Client client = new Client(stringInterface, Configuration.getXStream());
+		client.start();
 		client.send(new ExamplePacket());
 		String data = stringInterface.getData();
 		Assert.assertTrue(data.startsWith("<protocol>\n  <example"));

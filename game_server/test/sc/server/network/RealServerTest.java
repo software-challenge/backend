@@ -85,7 +85,10 @@ public abstract class RealServerTest
 			}
 			Socket mySocket = new Socket("localhost",
 					NewClientListener.lastUsedPort);
-			return new TestTcpClient(Configuration.getXStream(), mySocket);
+			TestTcpClient result = new TestTcpClient(Configuration.getXStream(),
+					mySocket);
+			result.start();
+			return result;
 		}
 		catch (IOException e)
 		{

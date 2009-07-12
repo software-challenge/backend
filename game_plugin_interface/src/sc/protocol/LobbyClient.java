@@ -319,7 +319,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public IControllableGame observeAndControl(PrepareGameResponse handle)
 	{
-		return new ControllingClient(this, handle.getRoomId());
+		IControllableGame result = new ControllingClient(this, handle.getRoomId());
+		this.start();
+		this.send(new ObservationRequest(handle.getRoomId(), ""));
+		result.pause();
+		return result;
 	}
 
 	public IControllableGame observe(PrepareGameResponse handle)
