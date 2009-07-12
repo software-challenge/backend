@@ -36,7 +36,12 @@
 
 	<target name="jar" depends="compile">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar">
+			<fileset dir="${classes.dir}" />
+			<fileset dir=".">
+				<include name="resource/**/*" />
+			</fileset>
+		</jar>
 	</target>
 
 	<target name="clean-build" depends="clean,jar" />

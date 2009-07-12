@@ -10,6 +10,7 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,6 +19,7 @@ import javax.swing.border.EtchedBorder;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.renderer.RendererUtil;
 
 /**
  * @author ffi
@@ -78,8 +80,7 @@ public class FieldButton extends JButton
 		if (bg != null)
 		{
 			final MediaTracker mt = new MediaTracker(this);
-			img = Toolkit.getDefaultToolkit().getImage(
-					"resource/" + bg + ".png");
+			img = RendererUtil.getImage(bg);
 			mt.addImage(icon, 0);
 			try
 			{

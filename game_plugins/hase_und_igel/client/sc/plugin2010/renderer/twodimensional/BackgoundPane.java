@@ -10,6 +10,8 @@ import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
+import sc.plugin2010.renderer.RendererUtil;
+
 /**
  * @author ffi
  * 
@@ -24,7 +26,7 @@ public class BackgoundPane extends JPanel
 		if (imagefile != null)
 		{
 			MediaTracker mt = new MediaTracker(this);
-			img = Toolkit.getDefaultToolkit().getImage(imagefile);
+			img = RendererUtil.getImage(imagefile);
 			mt.addImage(img, 0);
 			try
 			{
