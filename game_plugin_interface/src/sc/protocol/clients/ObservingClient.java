@@ -18,6 +18,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public ObservingClient(XStream xStream, File file) throws IOException
 	{
 		this(new ReplayClient(xStream, file), null);
+		this.mode = PlayMode.PAUSED;
+		this.poller.start();
 	}
 
 	public ObservingClient(IPollsHistory client, String roomId)
