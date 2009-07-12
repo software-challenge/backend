@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import sc.guiplugin.interfaces.IGamePreparation;
@@ -14,11 +13,9 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
+import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.Configuration;
 import sc.protocol.clients.ObservingClient;
-
-import com.thoughtworks.xstream.XStream;
-
 import edu.cau.plugins.PluginDescriptor;
 
 /**
@@ -61,7 +58,7 @@ public class GUIPluginFacade implements IGuiPlugin
 
 	public Image getPluginIcon()
 	{
-		return new ImageIcon("resource/hase_und_igel_icon.png").getImage();
+		return RendererUtil.getImage("resource/hase_und_igel_icon.png");
 	}
 
 	@Override

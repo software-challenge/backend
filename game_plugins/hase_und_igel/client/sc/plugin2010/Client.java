@@ -48,7 +48,7 @@ public class Client implements ILobbyClientListener
 				Player.class, PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class), host, port);
 		client.addListener(this);
-		this.client.start();
+		client.start();
 		this.id = id;
 		this.port = port;
 		this.host = host;
@@ -114,7 +114,18 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		logger.info("New State received");
+		if (id == EPlayerId.PLAYER_ONE)
+		{
+			logger.info("New State received by Player 1");
+		}
+		else if (id == EPlayerId.OBSERVER)
+		{
+			logger.info("New State received by Observer");
+		}
+		else if (id == EPlayerId.PLAYER_TWO)
+		{
+			logger.info("New State received by Player 2");
+		}
 
 		GameState gameState = (GameState) state;
 		Game game = gameState.getGame();
