@@ -28,6 +28,8 @@ import javax.swing.table.DefaultTableModel;
 import sc.gui.PresentationFacade;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
+import sc.guiplugin.interfaces.ISlot;
+import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.plugin.GUIPluginInstance;
 
 @SuppressWarnings("serial")
@@ -67,7 +69,7 @@ public class TestRangeDialog extends JDialog {
 				.getLanguageData();
 
 		this.setLayout(new BorderLayout());
-		
+
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
 		Vector<String> items = presFac.getLogicFacade().getPluginNames(plugins);
 		cmbGameType = new JComboBox(items);
@@ -167,26 +169,40 @@ public class TestRangeDialog extends JDialog {
 		File f1 = new File(txfclient1.getText());
 		File f2 = new File(txfclient2.getText());
 		if (!f1.exists() || !f2.exists()) {
-			JOptionPane.showMessageDialog(this,
+			JOptionPane
+					.showMessageDialog(this,
 							lang.getString("dialog_test_error_file_msg"), lang
 									.getString("dialog_test_error_file_title"),
 							JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		
+
 		GUIPluginInstance selPlugin = getSelectedPlugin();
-		
+
 		// start server
 		presFac.getLogicFacade().startServer(INTERN_PORT);
-		
+
 		String filename = "";
-		int playerCount = 2;//TODO
+		int playerCount = 2;// TODO
 		try {
-			IGamePreparation prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT, playerCount, filename);
+			IGamePreparation prep = selPlugin.getPlugin().prepareGame(HOST_IP,
+					INTERN_PORT, playerCount, filename);
 			// get observer
 			IObservation obs = prep.getObserver();
-			
-			//prep.getSlots()
+			obs.addGameEndedListener(new IGameEndedListener() {
+				@Override
+				public void gameEnded() {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+			//TODO
+
+			for (int i = 0; i < prep.getSlots().size(); i++) {
+				ISlot slot = prep.getSlots().get(i);
+				//TODO
+				slot.asClient();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -206,7 +222,7 @@ public class TestRangeDialog extends JDialog {
 			txf.setText(f.getAbsolutePath());
 		}
 	}
-	
+
 	private GUIPluginInstance getSelectedPlugin() {
 		return plugins.get(cmbGameType.getSelectedIndex());
 	}
