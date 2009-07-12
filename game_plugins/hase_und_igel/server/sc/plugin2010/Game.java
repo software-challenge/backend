@@ -265,12 +265,15 @@ public class Game extends SimpleGameInstance<Player>
 						{
 							player.changeCarrotsAvailableBy(30);
 						}
+						break;
 					case FALL_BACK:
-						player.setPosition(board.getOtherPlayer(player)
+						if (board.isFirst(player))
+							player.setPosition(board.getOtherPlayer(player)
 								.getPosition() - 1);
 						break;
 					case HURRY_AHEAD:
-						player.setPosition(board.getOtherPlayer(player)
+						if (!board.isFirst(player))
+							player.setPosition(board.getOtherPlayer(player)
 								.getPosition() + 1);
 						break;
 					case TAKE_OR_DROP_CARROTS:

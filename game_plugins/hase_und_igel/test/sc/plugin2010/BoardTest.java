@@ -123,10 +123,17 @@ public class BoardTest
 		p2.setPosition(13);
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 		
+		// ich bin letzter
+		p.setPosition(5);
+		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
+
+		
 		//
 		// Action.HURRY_AHEAD
 		//
 		// als erster
+		p.setPosition(13);
+		p2.setPosition(5);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p));
 
 		// als zweiter, erster im Ziel
