@@ -36,6 +36,7 @@ public class InformationBar extends JPanel
 	private final String	TURNCOUNT		= "An der Reihe:";
 	private final String	PLAYER			= "Spieler:";
 	private final String	ENEMY			= "Gegner:";
+	private final String	SALADCOUNT		= "Salatanzahl: ";
 	private final String	HASENJOKER		= "Hasenjoker:";
 
 	private final JLabel	carrots			= new JLabel(CARROTCOUNT);
@@ -73,13 +74,13 @@ public class InformationBar extends JPanel
 		right.setLayout(new BorderLayout());
 		right.setBackground(Color.WHITE);
 
-		player.setHorizontalAlignment(JLabel.CENTER);
-		carrots.setHorizontalAlignment(JLabel.CENTER);
-		hasenjoker.setHorizontalAlignment(JLabel.CENTER);
+		player.setHorizontalAlignment(JLabel.LEFT);
+		carrots.setHorizontalAlignment(JLabel.LEFT);
+		hasenjoker.setHorizontalAlignment(JLabel.LEFT);
 
-		enemy.setHorizontalAlignment(JLabel.CENTER);
-		enemycarrots.setHorizontalAlignment(JLabel.CENTER);
-		enemyhasenjoker.setHorizontalAlignment(JLabel.CENTER);
+		enemy.setHorizontalAlignment(JLabel.LEFT);
+		enemycarrots.setHorizontalAlignment(JLabel.LEFT);
+		enemyhasenjoker.setHorizontalAlignment(JLabel.LEFT);
 
 		rounds.setHorizontalAlignment(JLabel.LEFT);
 		turn.setHorizontalAlignment(JLabel.LEFT);
@@ -142,21 +143,21 @@ public class InformationBar extends JPanel
 		enemyhasenjoker.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 	}
 
-	public void setCarrots(final int count)
+	public void setAttributes(final int car, final int salads)
 	{
-		setMyCarrots(carrots, count);
+		setMyAttributes(carrots, car, salads);
 	}
 
-	public void setEnemyCarrots(final int count)
+	public void setEnemyAttributes(final int car, final int salads)
 	{
-		setMyCarrots(enemycarrots, count);
+		setMyAttributes(enemycarrots, car, salads);
 	}
 
-	private void setMyCarrots(JLabel carrots, final int count)
+	private void setMyAttributes(JLabel carrots, final int car, final int sal)
 	{
-		carrots.setText("<html><center>" + CARROTCOUNT + String.valueOf(count)
-				+ "</center><center>" + MOVESCOUNT
-				+ GameUtil.calculateMoveableFields(count) + "</center></html>");
+		carrots.setText("<html>" + CARROTCOUNT + String.valueOf(car) + "<BR>"
+				+ MOVESCOUNT + GameUtil.calculateMoveableFields(car) + "<BR>"
+				+ SALADCOUNT + String.valueOf(sal) + "</html>");
 	}
 
 	public void setHasenjoker(final List<Action> joker)
@@ -171,22 +172,22 @@ public class InformationBar extends JPanel
 
 	private void setMyHasenjoker(JLabel label, final List<Action> joker)
 	{
-		String text = "<html><center>" + HASENJOKER + "</center>";
+		String text = "<html>" + HASENJOKER;
 		for (Action jo : joker)
 		{
 			switch (jo)
 			{
 				case TAKE_OR_DROP_CARROTS:
-					text += "<center>Du kannst 20 Karotten nehmen oder abgeben</center>";
+					text += "<BR>Du kannst 20 Karotten nehmen oder abgeben";
 					break;
 				case EAT_SALAD:
-					text += "<center>Friss sofort einen Salat</center>";
+					text += "<BR>Friss sofort einen Salat";
 					break;
 				case FALL_BACK:
-					text += "<center>Gehe eine Position zurück</center>";
+					text += "<BR>Gehe eine Position zurück";
 					break;
 				case HURRY_AHEAD:
-					text += "<center>Rücke eine Position vor</center>";
+					text += "<BR>Rücke eine Position vor";
 					break;
 				default:
 					break;

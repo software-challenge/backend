@@ -27,4 +27,12 @@ public class ActionBar extends JList
 		((DefaultListModel) getModel()).addElement(val);
 	}
 
+	/**
+	 * 
+	 */
+	public void removeAllRows()
+	{
+		((DefaultListModel) getModel()).removeAllElements();
+	}
+
 }

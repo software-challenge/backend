@@ -77,8 +77,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	private void createInitFrame()
 	{
 
-		this.setSize(800, 600);
-
 		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
 		for (int i = 0; i < 65; i++)
@@ -114,11 +112,66 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		action.setPreferredSize(new Dimension(180, 800));
 		this.add(action, BorderLayout.EAST);
 
-		actionb.addRow("Aktionen: ");
 		// chat.addOtherMessage("Chat: ");
 		// chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
 		setVisible(true);
+	}
+
+	private void displayAction(Move mov, String currentColor)
+	{
+		switch (mov.getTyp())
+		{
+			case EAT:
+				actionb.addRow("Spieler " + currentColor
+						+ " frisst einen Salat");
+				break;
+			case MOVE:
+				actionb.addRow("Spieler " + currentColor + " setzt auf "
+						+ String.valueOf(mov.getN()));
+				break;
+			case TAKE_OR_DROP_CARROTS:
+				if (mov.getN() == 10)
+				{
+					actionb.addRow("Spieler " + currentColor
+							+ " nimmt 10 Karotten");
+				}
+				else if (mov.getN() == -10)
+				{
+					actionb.addRow("Spieler " + currentColor
+							+ " gibt 10 Karotten ab");
+				}
+				break;
+			case FALL_BACK:
+				actionb.addRow("Spieler " + currentColor
+						+ " lässt sich auf Igel zurückfallen");
+				break;
+			case PLAY_CARD:
+				switch (mov.getCard())
+				{
+					case TAKE_OR_DROP_CARROTS:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Nimm oder gib 20 Karotten'");
+						break;
+					case EAT_SALAD:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Friss sofort einen Salat'");
+						break;
+					case FALL_BACK:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Falle eine Position zurück'");
+						break;
+					case HURRY_AHEAD:
+						actionb.addRow("Spieler " + currentColor
+								+ " spielt 'Rücke eine Position vor'");
+						break;
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
@@ -126,73 +179,47 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	{
 
 		String currentColor = "";
+		String currentOthersColor = "";
+		String currentColorPath = "";
 		switch (player.getColor())
 		{
 			case BLUE:
-				currentColor = "blue";
+				currentColor = "Blau";
+				currentColorPath = "blue";
+				currentOthersColor = "Rot";
 				break;
 			case RED:
-				currentColor = "red";
+				currentColor = "Rot";
+				currentColorPath = "red";
+				currentOthersColor = "Blau";
 				break;
 			default:
 				break;
 		}
 
-		info.setTurn(currentColor);
-		actionb.removeAll();
-		for (Move mov : player.getHistory())// TODO log others history too
+		info.setTurn(currentColorPath);
+		actionb.removeAllRows();
+		actionb.addRow("Aktionen: ");
+		if (enemy != null)
 		{
-			switch (mov.getTyp())
+			for (int i = 0; i < player.getHistory().size(); i++)
 			{
-				case EAT:
-					actionb.addRow("Spieler " + currentColor
-							+ " frisst einen Salat");
-					break;
-				case MOVE:
-					actionb.addRow("Spieler " + currentColor + " setzt auf "
-							+ String.valueOf(mov.getN()));
-					break;
-				case TAKE_OR_DROP_CARROTS:
-					if (mov.getN() == 10)
+				displayAction(player.getHistory().get(i), currentColor);
+				for (int j = 0; j < enemy.getHistory().size(); j++)
+				{
+					if (i == j)
 					{
-						actionb.addRow("Spieler " + currentColor
-								+ " nimmt 10 Karotten");
+						displayAction(enemy.getHistory().get(j),
+								currentOthersColor);
 					}
-					else if (mov.getN() == -10)
-					{
-						actionb.addRow("Spieler " + currentColor
-								+ " gibt 10 Karotten ab");
-					}
-					break;
-				case FALL_BACK:
-					actionb.addRow("Spieler " + currentColor
-							+ " lässt sich auf Igel zurückfallen");
-					break;
-				case PLAY_CARD:
-					switch (mov.getCard())
-					{
-						case TAKE_OR_DROP_CARROTS:
-							actionb.addRow("Spieler " + currentColor
-									+ " spielt 'Nimm oder gib 20 Karotten'");
-							break;
-						case EAT_SALAD:
-							actionb.addRow("Spieler " + currentColor
-									+ " spielt 'Friss sofort einen Salat'");
-							break;
-						case FALL_BACK:
-							actionb.addRow("Spieler " + currentColor
-									+ " spielt 'Falle eine Position zurück'");
-							break;
-						case HURRY_AHEAD:
-							actionb.addRow("Spieler " + currentColor
-									+ " spielt 'Rücke eine Position vor'");
-							break;
-						default:
-							break;
-					}
-					break;
-				default:
-					break;
+				}
+			}
+		}
+		else
+		{
+			for (int i = 0; i < player.getHistory().size(); i++)
+			{
+				displayAction(player.getHistory().get(i), currentColor);
 			}
 		}
 
@@ -207,6 +234,11 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 
 		fbuttons.get(player.getPosition()).setOccupied(player.getColor());
+
+		if (enemy != null)
+		{
+			fbuttons.get(enemy.getPosition()).setOccupied(enemy.getColor());
+		}
 
 		if (own)
 		{
@@ -270,13 +302,15 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 						jokerAnswer);
 			}
 
-			info.setCarrots(player.getCarrotsAvailable());
+			info.setAttributes(player.getCarrotsAvailable(), player
+					.getSaladsToEat());
 			info.setHasenjoker(player.getActions());
 		}
 		else
 		{
 			enemy = player;
-			info.setEnemyCarrots(enemy.getCarrotsAvailable());
+			info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
+					.getSaladsToEat());
 			info.setEnemyHasenjoker(enemy.getActions());
 		}
 	}
@@ -442,9 +476,10 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	{
 		if ((!onlyObserving) && (myturn))
 		{
-			if (GameUtil.isValidToMove(board, player, fieldNumber))
+			int relativeFieldsToMove = fieldNumber - player.getPosition();
+			if (GameUtil.isValidToMove(board, player, relativeFieldsToMove))
 			{
-				sendMove(new Move(Move.MoveTyp.MOVE, fieldNumber));
+				sendMove(new Move(Move.MoveTyp.MOVE, relativeFieldsToMove));
 			}
 			else
 			{
