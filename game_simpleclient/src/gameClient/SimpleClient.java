@@ -44,10 +44,21 @@ public class SimpleClient extends SpielClient {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		@SuppressWarnings("unused")
-		SimpleClient simpleClient = new SimpleClient(args[0], Integer
-				.valueOf(args[1]), args[2]); // TODO convert them to real
-		// parameters
+		String host = "";
+		int port = 0;
+		String reservierung = "";
+
+		for (String arg : args) {
+			if (arg.contains("--host")) {
+				host = arg.substring(arg.indexOf(" ") + 1);
+			} else if (arg.contains("-port")) {
+				port = Integer.valueOf(arg.substring(arg.indexOf(" ") + 1));
+			} else if (arg.contains("--reservation")) {
+				reservierung = arg.substring(arg.indexOf(" ") + 1);
+			}
+		}
+
+		new SimpleClient(host, port, reservierung);
 	}
 
 	public void macheStandardAktion() {
