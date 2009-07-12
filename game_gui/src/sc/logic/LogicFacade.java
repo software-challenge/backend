@@ -6,14 +6,21 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.common.IConfiguration;
+import sc.gui.stuff.YearComparator;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
+import sc.plugin.GUIPluginInstance;
 import sc.plugin.GUIPluginManager;
 import sc.server.Application;
 import sc.server.Lobby;
@@ -177,7 +184,39 @@ public class LogicFacade implements ILogicFacade {
 
 	@Override
 	public void unloadPlugins() {
-		pluginMan.reload();// TODO unload instead of reload
+		pluginMan.reload();
+	}
+
+	/**
+	 * Returns available plugins in sorted order.
+	 * 
+	 * @return plugins
+	 */
+	public List<GUIPluginInstance> getAvailablePluginsSorted() {
+		Collection<GUIPluginInstance> plugins = pluginMan.getAvailablePlugins();
+		// sort by plugin's year
+		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(plugins);
+		Collections.sort(sortedPlugins, new YearComparator());
+		return sortedPlugins;
+	}
+
+	/**
+	 * Returns all available plugin names in a sorted order.
+	 * 
+	 * @param plugins
+	 * @return
+	 */
+	public Vector<String> getPluginNames(List<GUIPluginInstance> plugins) {
+		Vector<String> result = new Vector<String>();
+		int last = 0;
+		for (int i = 0; i < plugins.size(); i++) {
+			GUIPluginInstance pluginInstance = plugins.get(i);
+			if (pluginInstance.getPlugin().getPluginYear() > last) {
+				result.add(pluginInstance.getDescription().name());
+			}
+		}
+
+		return result;
 	}
 
 }

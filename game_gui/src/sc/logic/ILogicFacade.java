@@ -1,11 +1,14 @@
 package sc.logic;
 
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.common.IConfiguration;
 import sc.guiplugin.interfaces.IObservation;
+import sc.plugin.GUIPluginInstance;
 import sc.plugin.GUIPluginManager;
 
 public interface ILogicFacade {
@@ -34,4 +37,7 @@ public interface ILogicFacade {
 
 	void startServer(Integer port);
 	void stopServer();
+	
+	List<GUIPluginInstance> getAvailablePluginsSorted();
+	Vector<String> getPluginNames(List<GUIPluginInstance> plugins);
 }

@@ -9,10 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
@@ -37,8 +34,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
 import sc.gui.PresentationFacade;
+import sc.gui.SCMenuBar;
 import sc.gui.stuff.KIInformation;
-import sc.gui.stuff.YearComparator;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
@@ -83,8 +80,8 @@ public class CreateGameDialog extends JDialog {
 
 	private void createGUI() {
 
-		plugins = getAvailablePlugins();
-		Vector<String> pluginNames = getPluginNames(plugins);
+		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
+		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(plugins);
 
 		// ---------------------------------------------------
 
@@ -92,7 +89,6 @@ public class CreateGameDialog extends JDialog {
 
 		pnlTable = new JPanel();
 		pnlBottom = new JPanel();
-		pnlBottom.setName("Panel Bottom");// TODO test
 		pnlBottom.setBorder(BorderFactory.createEtchedBorder());
 		pnlBottom.setLayout(new BoxLayout(pnlBottom, BoxLayout.PAGE_AXIS));
 
@@ -313,6 +309,11 @@ public class CreateGameDialog extends JDialog {
 		 * if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
 		 * observer.cancel(); cancelGameCreation(); } else
 		 */{
+			// add game specific info item in menu bar
+			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
+					.getDescription().name(), selPlugin.getPlugin()
+					.getCurrentStateImage(), selPlugin.getPlugin().getPluginInfoText(),
+					selPlugin.getDescription().author());
 			// close dialog
 			this.dispose();
 		}
@@ -337,33 +338,6 @@ public class CreateGameDialog extends JDialog {
 	 */
 	void cancelGameCreation() {
 		presFac.getLogicFacade().stopServer();
-	}
-
-	/**
-	 * Returns available plugins in sorted order.
-	 * 
-	 * @return plugins
-	 */
-	private List<GUIPluginInstance> getAvailablePlugins() {
-		Collection<GUIPluginInstance> plugins = presFac.getLogicFacade()
-				.getPluginManager().getAvailablePlugins();
-		// sort by plugin's year
-		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(plugins);
-		Collections.sort(sortedPlugins, new YearComparator());
-		return sortedPlugins;
-	}
-
-	private Vector<String> getPluginNames(List<GUIPluginInstance> plugins) {
-		Vector<String> result = new Vector<String>();
-		int last = 0;
-		for (int i = 0; i < plugins.size(); i++) {
-			GUIPluginInstance pluginInstance = plugins.get(i);
-			if (pluginInstance.getPlugin().getPluginYear() > last) {
-				result.add(pluginInstance.getDescription().name());
-			}
-		}
-
-		return result;
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {

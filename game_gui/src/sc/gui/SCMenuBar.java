@@ -1,17 +1,19 @@
 package sc.gui;
 
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ResourceBundle;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import sc.IGUIApplication;
 import sc.gui.dialogs.CreateGameDialog;
+import sc.gui.dialogs.GameInfoDialog;
 import sc.gui.dialogs.InfoDialog;
+import sc.gui.dialogs.ReplayDialog;
 import sc.gui.dialogs.TestRangeDialog;
 
 /**
@@ -29,6 +31,12 @@ public class SCMenuBar extends JMenuBar {
 	 */
 	private final IGUIApplication root;
 	private final PresentationFacade presFac = PresentationFacade.getInstance();
+	private JMenu help;
+	/**
+	 * Specific game info menu item
+	 */
+	private JMenuItem specificInfo;
+	private ResourceBundle lang;
 
 	/**
 	 * Constructs the SC menu bar.
@@ -36,6 +44,7 @@ public class SCMenuBar extends JMenuBar {
 	public SCMenuBar(IGUIApplication root) {
 		super();
 		this.root = root;
+		this.lang = presFac.getLogicFacade().getLanguageData();
 		createMenuBar();
 	}
 
@@ -44,12 +53,10 @@ public class SCMenuBar extends JMenuBar {
 	 */
 	private void createMenuBar() {
 
-		ResourceBundle lang = presFac.getLogicFacade().getLanguageData();
-
 		// create menus
 		JMenu data = new JMenu(lang.getString("menu_program"));
 		JMenu game = new JMenu(lang.getString("menu_game"));
-		JMenu help = new JMenu(lang.getString("menu_help"));
+		help = new JMenu(lang.getString("menu_help"));
 
 		// create menu items
 		JMenuItem close = new JMenuItem(lang.getString("menu_items_close"));
@@ -64,7 +71,7 @@ public class SCMenuBar extends JMenuBar {
 		createGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-					new CreateGameDialog(presFac.getFrame()).setVisible(true);
+				new CreateGameDialog(presFac.getFrame()).setVisible(true);
 			}
 		});
 
@@ -72,9 +79,7 @@ public class SCMenuBar extends JMenuBar {
 		loadReplay.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (new JFileChooser().showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
-					presFac.getLogicFacade();// TODO
-				}
+				new ReplayDialog().setVisible(true);
 			}
 		});
 
@@ -107,5 +112,28 @@ public class SCMenuBar extends JMenuBar {
 		this.add(data);
 		this.add(game);
 		this.add(help);
+	}
+
+	public void setGameSpecificInfo(final String gameTypeName, final Image image,
+			final String infoText, final String author) {
+
+		// remove old info item
+		if (null != specificInfo) {
+			help.remove(specificInfo);
+		}
+
+		// add new info item
+		specificInfo = new JMenuItem(gameTypeName);
+		specificInfo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				new GameInfoDialog(gameTypeName, image, infoText, author)
+						.setVisible(true);
+			}
+		});
+		help.add(specificInfo);
+
+		// redraw
+		this.validate();
 	}
 }
