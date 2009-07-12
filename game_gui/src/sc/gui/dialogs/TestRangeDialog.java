@@ -1,16 +1,18 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
-import java.util.Vector;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -30,6 +32,11 @@ public class TestRangeDialog extends JDialog {
 	private JTable logTable;
 	private JPanel pnlTop;
 	private JTable statTable;
+	private JPanel pnlBottom;
+	private JButton testStart;
+	private JButton testCancel;
+	private JButton btnclient1;
+	private JButton btnclient2;
 
 	public TestRangeDialog(JFrame frame) {
 		super();
@@ -38,13 +45,15 @@ public class TestRangeDialog extends JDialog {
 
 	private void createGUI(JFrame frame) {
 		
-		ResourceBundle lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		final ResourceBundle lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
 		
 		this.setLayout(new BorderLayout());
 		
 		txfclient1 = new JTextField();
 		lblclient1 = new JLabel();
 		lblclient1.setLabelFor(txfclient1);
+		btnclient1 = new JButton();
+		
 		pnlclient1 = new JPanel();
 		pnlclient1.add(lblclient1);
 		pnlclient1.add(txfclient1);
@@ -52,6 +61,8 @@ public class TestRangeDialog extends JDialog {
 		txfclient2 = new JTextField();
 		lblclient2 = new JLabel();
 		lblclient2.setLabelFor(txfclient2);
+		btnclient2 = new JButton();
+		
 		pnlclient2 = new JPanel();
 		pnlclient2.add(lblclient2);
 		pnlclient2.add(txfclient2);
@@ -70,25 +81,57 @@ public class TestRangeDialog extends JDialog {
 		pnlTop.add(new JScrollPane(statTable));
 		
 		DefaultTableModel logModel = new DefaultTableModel();
-		logModel.addColumn(lang.getString("dialog_test_tbl_slot"));
-		logModel.addColumn(lang.getString("dialog_test_tbl_name"));
-		logModel.addColumn(lang.getString("dialog_test_tbl_type"));
-		logModel.addColumn(lang.getString("dialog_test_tbl_path"));
-		// add 2 rows TODO
-		logModel.addRow(new Vector<String>());
-		logModel.addRow(new Vector<String>());
 		logTable = new JTable(logModel);
 		//TODO
+		
+		testStart = new JButton(lang.getString("dialog_test_btn_start"));
+		testStart.addActionListener(new ActionListener(){
+			private boolean testing = false;
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (testing) {
+					stopTest();
+					testStart.setText(lang.getString("dialog_test_btn_start"));
+					testStart.setEnabled(true);
+				} else {
+					startTest();
+					testStart.setText(lang.getString("dialog_test_btn_stop"));
+					testStart.setEnabled(false);
+				}
+			}
+		});
+		
+		testCancel = new JButton(lang.getString("dialog_test_btn_cancel"));
+		testCancel.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				stopTest();
+				TestRangeDialog.this.dispose();
+			}
+		});
+		
+		pnlBottom = new JPanel();
+		pnlBottom.add(testStart, FlowLayout.RIGHT);
+		pnlBottom.add(testCancel, FlowLayout.RIGHT);
 		
 		//add components
 		this.add(pnlTop, BorderLayout.PAGE_START);
 		this.add(new JScrollPane(logTable), BorderLayout.CENTER);
+		this.add(pnlBottom, BorderLayout.PAGE_END);
 		
 		// set dialog preferences
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);
+	}
+	
+	private void startTest() {
+		//TODO
+	}
+	
+	private void stopTest() {
+		//TODO
 	}
 
 }

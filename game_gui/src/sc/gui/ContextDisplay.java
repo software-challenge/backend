@@ -8,8 +8,6 @@ import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel {
@@ -43,26 +41,43 @@ public class ContextDisplay extends JPanel {
 		btn_spGame = new JButton(lang.getString("context_start"));
 		btn_next = new JButton(lang.getString("context_next"));
 
+		// disable by default
+		btn_back.setEnabled(false);
+		btn_cancel.setEnabled(false);
+		btn_spGame.setEnabled(false);
+		btn_next.setEnabled(false);
+
 		btn_back.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
+				if (presFac.getLogicFacade().getObservation().hasPrevious()) {
+					presFac.getLogicFacade().getObservation().back();
+				}
 			}
 		});
 
 		btn_spGame.addActionListener(new ActionListener() {
+			private boolean started = false;
 			private boolean playing = false;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (playing) {
-					presFac.getLogicFacade().getObservation().pause();
-					btn_spGame.setText(lang.getString("context_pause"));
-				} else {
+				if (!started) {
 					presFac.getLogicFacade().getObservation().start();
 					btn_spGame.setText(lang.getString("context_start"));
 					btn_cancel.setEnabled(true);
+					started = true;
+					playing = true;
+				} else if (playing) {
+					presFac.getLogicFacade().getObservation().pause();
+					btn_spGame.setText(lang.getString("context_unpause"));
+					playing = false;
+				} else {
+					presFac.getLogicFacade().getObservation().unpause();
+					btn_spGame.setText(lang.getString("context_pause"));
+					playing = true;
 				}
+				// ContextDisplay.this.validate();
 			}
 		});
 
@@ -77,12 +92,13 @@ public class ContextDisplay extends JPanel {
 		btn_next.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-
+				if (presFac.getLogicFacade().getObservation().hasNext()) {
+					presFac.getLogicFacade().getObservation().next();
+				}
 			}
 		});
 
-		buttonBar.add(new JSeparator(JSeparator.HORIZONTAL));
+		// buttonBar.add(new JSeparator(JSeparator.HORIZONTAL));
 		buttonBar.add(btn_back);
 		buttonBar.add(btn_spGame);
 		buttonBar.add(btn_cancel);
@@ -109,9 +125,9 @@ public class ContextDisplay extends JPanel {
 		if (presFac.getLogicFacade().getObservation() != null) {
 			// TODO
 			if (ended) {
-				
+
 			} else {
-				
+				btn_spGame.setEnabled(true);
 			}
 			buttonBar.setVisible(true);
 		} else { // if no game is selected (at startup)
