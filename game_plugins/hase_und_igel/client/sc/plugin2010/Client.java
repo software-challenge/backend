@@ -3,9 +3,12 @@ package sc.plugin2010;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.Observation;
+import sc.plugin2010.util.Configuration;
 import sc.protocol.ErrorResponse;
 import sc.protocol.IControllableGame;
 import sc.protocol.ILobbyClientListener;
@@ -38,9 +41,9 @@ public class Client implements ILobbyClientListener
 	public Client(String host, int port, EPlayerId id) throws IOException
 	{
 		gameType = GamePlugin.PLUGIN_UUID;
-		client = new LobbyClient(host, port, Arrays.asList(Player.class,
+		client = new LobbyClient(Configuration.getXStream(), Arrays.asList(Player.class,
 				PlayerUpdated.class, Move.class, Board.class,
-				BoardUpdated.class));
+				BoardUpdated.class), host, port);
 		client.addListener(this);
 		this.id = id;
 		this.port = port;

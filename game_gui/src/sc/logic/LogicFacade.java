@@ -12,6 +12,7 @@ import java.util.ResourceBundle;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.common.IConfiguration;
+import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
 import sc.plugin.GUIPluginManager;
 import sc.server.Application;
@@ -138,7 +139,9 @@ public class LogicFacade implements ILogicFacade {
 		if (this.pluginMan.getAvailablePlugins().size() == 0) {
 			throw new CouldNotFindAnyPluginException();
 		}
-		this.pluginMan.activateAllPlugins();
+		this.pluginMan.activateAllPlugins(new IGuiPluginHost() {
+			
+		});
 	}
 
 	@Override

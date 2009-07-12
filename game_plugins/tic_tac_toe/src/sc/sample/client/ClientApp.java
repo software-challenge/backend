@@ -23,7 +23,8 @@ public class ClientApp
 	public static void main(String[] args) throws IOException,
 			InterruptedException
 	{
-		LobbyClient admin = new LobbyClient(ProtocolDefinition
+		final XStream xStream = new XStream();
+		LobbyClient admin = new LobbyClient(xStream, ProtocolDefinition
 				.getProtocolClasses());
 		RequestResult<PrepareGameResponse> preparation = admin
 				.prepareGameAndWait(GamePluginImpl.PLUGIN_UUID, 2);
@@ -33,7 +34,7 @@ public class ClientApp
 			throw new RuntimeException("Couldn't prepare the game.");
 		}
 
-		LobbyClient observerClient = new LobbyClient(ProtocolDefinition
+		LobbyClient observerClient = new LobbyClient(xStream, ProtocolDefinition
 				.getProtocolClasses());
 		IControllableGame observer = observerClient.observe(preparation.getResult());
 
@@ -54,7 +55,7 @@ public class ClientApp
 						reservation = reservations.poll();
 					}
 
-					SimpleClient client = new SimpleClient() {
+					SimpleClient client = new SimpleClient(xStream) {
 						public void onGameLeft(String roomId)
 						{
 							super.onGameLeft(roomId);

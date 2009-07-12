@@ -117,7 +117,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 		try
 		{
-			Configuration.addXStreamClassloaderURL(jarURI.toURL());
+			addJarToClassloader(jarURI.toURL());
 			ClassLoader loader = Configuration.getXStream().getClassLoader();
 
 			JarFile jarArchive = new JarFile(new File(jarURI));
@@ -167,6 +167,8 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 		return gameDefinitions;
 	}
+
+	protected abstract void addJarToClassloader(URL url);
 
 	private boolean isValidPlugin(Class<?> clazz)
 	{

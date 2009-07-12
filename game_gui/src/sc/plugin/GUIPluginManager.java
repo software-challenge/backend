@@ -1,10 +1,14 @@
 package sc.plugin;
 
+import java.net.URL;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.guiplugin.interfaces.IGuiPlugin;
+import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.logic.GUIConfiguration;
+import sc.server.Configuration;
 import sc.server.gaming.GamePluginApi;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.PluginLoaderException;
@@ -34,10 +38,10 @@ public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
 	protected static Logger logger = LoggerFactory
 			.getLogger(GamePluginInstance.class);
 
-	public void activateAllPlugins() {
+	public void activateAllPlugins(IGuiPluginHost host) {
 		for (GUIPluginInstance plugins : getAvailablePlugins()) {
 			try {
-				plugins.load(null);
+				plugins.load(host);
 			} catch (PluginLoaderException e) {
 				logger.error("Failed to load plugin.", e);
 			}
@@ -64,5 +68,10 @@ public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
 	@Override
 	protected Class<?> getPluginInterface() {
 		return IGuiPlugin.class;
+	}
+
+	@Override
+	protected void addJarToClassloader(URL url) {
+		Configuration.addXStreamClassloaderURL(url);
 	}
 }

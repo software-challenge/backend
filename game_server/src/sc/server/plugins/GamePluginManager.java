@@ -1,5 +1,7 @@
 package sc.server.plugins;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -125,5 +127,11 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	protected Class<?> getPluginInterface()
 	{
 		return IGamePlugin.class;
+	}
+
+	@Override
+	protected void addJarToClassloader(URL url)
+	{
+		Configuration.addXStreamClassloaderURL(url);
 	}
 }

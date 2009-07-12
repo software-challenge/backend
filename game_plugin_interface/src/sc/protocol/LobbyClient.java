@@ -46,24 +46,17 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public static final int						DEFAULT_PORT		= 13050;
 	public static final String					DEFAULT_HOST		= "localhost";
 
-	public LobbyClient() throws IOException
+	public LobbyClient(XStream xStream) throws IOException
 	{
-		this(null);
+		this(xStream, null);
 	}
 
-	public LobbyClient(Collection<Class<?>> protocolClasses) throws IOException
+	public LobbyClient(XStream xStream, Collection<Class<?>> protocolClasses) throws IOException
 	{
-		this(DEFAULT_HOST, DEFAULT_PORT, protocolClasses);
+		this(xStream, protocolClasses, DEFAULT_HOST, DEFAULT_PORT);
 	}
 
-	public LobbyClient(String host, int port,
-			Collection<Class<?>> protocolClasses) throws IOException
-	{
-		this(host, port, protocolClasses, new XStream());
-	}
-
-	public LobbyClient(String host, int port,
-			Collection<Class<?>> protocolClasses, XStream xstream)
+	public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses, String host, int port)
 			throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));

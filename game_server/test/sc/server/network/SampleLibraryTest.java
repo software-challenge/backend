@@ -28,8 +28,8 @@ public class SampleLibraryTest extends RealServerTest
 		public TestLobbyClient(String gameType, String host, int port)
 				throws IOException
 		{
-			client = new LobbyClient(host, port, null, Configuration
-					.getXStream());
+			client = new LobbyClient(Configuration.getXStream(), null, host,
+					port);
 		}
 
 		public LobbyClient getClient()

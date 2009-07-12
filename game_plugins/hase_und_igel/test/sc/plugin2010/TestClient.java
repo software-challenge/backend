@@ -18,30 +18,31 @@ public class TestClient implements ILobbyClientListener
 
 	public TestClient() throws IOException
 	{
-		client = new LobbyClient("localhost", PORT, Arrays.asList(Player.class,
+		client = new LobbyClient(new XStream(), Arrays.asList(Player.class,
 				PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class));
 		this.client.addListener(this);
 	}
 
-	private static final int	PORT	= 13050;
+	private Board				board;
+	private Player				own;
 
-	private Board board;
-	private Player own;
-	
 	@Override
 	public void onRoomMessage(String roomId, Object data)
 	{
 		if (data instanceof BoardUpdated)
 		{
-			this.board = ((BoardUpdated)data).getBoard();
-		} else if (data instanceof PlayerUpdated)
+			this.board = ((BoardUpdated) data).getBoard();
+		}
+		else if (data instanceof PlayerUpdated)
 		{
-			if (((PlayerUpdated)data).isOwnPlayer())
-				this.own = ((PlayerUpdated)data).getPlayer();
-		} if (data instanceof MoveRequest)
+			if (((PlayerUpdated) data).isOwnPlayer())
+				this.own = ((PlayerUpdated) data).getPlayer();
+		}
+		if (data instanceof MoveRequest)
 		{
-			client.sendMessageToRoom(roomId, new Move(MoveTyp.MOVE, board.nextFreeFieldFor(own)));
+			client.sendMessageToRoom(roomId, new Move(MoveTyp.MOVE, board
+					.nextFreeFieldFor(own)));
 		}
 	}
 

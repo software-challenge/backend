@@ -2,6 +2,8 @@ package sc.sample.client;
 
 import java.io.IOException;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
@@ -16,9 +18,9 @@ public class SimpleClient implements ILobbyClientListener
 	private LobbyClient	client;
 	private GameState	state;
 
-	public SimpleClient() throws IOException
+	public SimpleClient(XStream xStream) throws IOException
 	{
-		this.client = new LobbyClient();
+		this.client = new LobbyClient(xStream);
 		this.client.addListener(this);
 	}
 
