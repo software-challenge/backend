@@ -16,6 +16,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	private boolean			paused				= false;
 	private Runnable		afterPauseAction	= null;
 	private Object			afterPauseLock		= new Object();
+	private boolean			moveRequested		= false;
 
 	@Override
 	public final void onAction(IPlayer fromPlayer, Object data)
@@ -23,7 +24,15 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	{
 		if (fromPlayer.equals(this.activePlayer))
 		{
-			onRoundBasedAction(fromPlayer, data);
+			if (this.moveRequested)
+			{
+				this.moveRequested = false;
+				onRoundBasedAction(fromPlayer, data);
+			}
+			else
+			{
+				throw new RescueableClientException("We didn't request a move from you yet.");
+			}
 		}
 		else
 		{
@@ -84,9 +93,18 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 	}
 
+	/**
+	 * Gets the current state representation.
+	 * 
+	 * @return
+	 */
 	protected abstract Object getCurrentState();
 
-	public void notifyActivePlayer()
+	/**
+	 * Notifies the active player that it's his/her time to make a move. If the
+	 * game is paused, the request will be hold back.
+	 */
+	protected final void notifyActivePlayer()
 	{
 		final P currentActivePlayer = this.activePlayer;
 
@@ -100,11 +118,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 					@Override
 					public void run()
 					{
-						currentActivePlayer.requestMove();
+						requestMove(currentActivePlayer);
 					}
 				};
-				
-				for(IGameListener listener : this.listeners)
+
+				for (IGameListener listener : this.listeners)
 				{
 					listener.onPaused();
 				}
@@ -112,8 +130,20 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 		else
 		{
-			currentActivePlayer.requestMove();
+			requestMove(currentActivePlayer);
 		}
+	}
+
+	/**
+	 * Sends a MoveRequest directly to the player (does not take PAUSE into
+	 * account)
+	 * 
+	 * @param player
+	 */
+	protected final void requestMove(P player)
+	{
+		this.moveRequested = true;
+		player.requestMove();
 	}
 
 	@Override

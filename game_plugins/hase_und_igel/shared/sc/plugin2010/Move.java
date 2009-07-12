@@ -38,16 +38,16 @@ public final class Move
 		PLAY_CARD
 	}
 
-	private int	turn;
+	private int		turn;
 	private int		n;
 	private MoveTyp	typ;
 	private Action	card;
-	
+
 	protected void setTurn(int turn)
 	{
 		this.turn = turn;
 	}
-	
+
 	public int getTurn()
 	{
 		return turn;
@@ -94,5 +94,12 @@ public final class Move
 	public Action getCard()
 	{
 		return card;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "type=" + this.getTyp() + ", card=" + getCard() + ", n="
+				+ getN();
 	}
 }

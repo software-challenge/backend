@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.IPauseable;
@@ -45,6 +46,8 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 	private int					actionsSinceFirstPlayerEnteredGoal;
 
 	private boolean				paused;
+
+	private boolean				moveRequested		= false;
 
 	private Runnable			afterPauseAction	= null;
 	private Object				afterPauseLock		= new Object();
@@ -89,34 +92,43 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 	}
 
 	@Override
-	public void onAction(IPlayer author, Object data)
+	public void onAction(IPlayer author, Object data) throws RescueableClientException
 	{
 		if (!active)
 		{
 			logger.debug("Game not active!");
 			return;
 		}
+
 		logger.debug("Turn #{}: recv. data from '{}'", getTurn(),
 				((Player) author).getColor());
+		logger.debug("{}: {}", ((Player) author).getColor(), data);
 
-		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
-				|| board.getTypeAt(players.get(1).getPosition()).equals(
-						FieldTyp.GOAL))
-		{
-			actionsSinceFirstPlayerEnteredGoal++;
-		}
-
-		final Player player = players.get(activePlayerId);
-
-		activePlayerId = (activePlayerId + 1) % players.size();
-
-		if (activePlayerId == 0)
-		{
-			turn++;
-		}
 
 		if (data instanceof Move)
 		{
+			if(!moveRequested)
+			{
+				throw new RescueableClientException("We didn't request a move from you yet.");
+			}
+			
+			this.moveRequested = false;
+			
+			if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
+					|| board.getTypeAt(players.get(1).getPosition()).equals(
+							FieldTyp.GOAL))
+			{
+				actionsSinceFirstPlayerEnteredGoal++;
+			}
+			
+			final Player player = players.get(activePlayerId);
+			
+			activePlayerId = (activePlayerId + 1) % players.size();
+			
+			if (activePlayerId == 0)
+			{
+				turn++;
+			}
 			final Move move = (Move) data;
 			move.setTurn(getTurn());
 
@@ -154,7 +166,7 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 		}
 		else
 		{
-			logger.error("Unknown message received from '{}': '{}'", player
+			logger.error("Unknown message received from '{}': '{}'", ((Player)author)
 					.getColor(), data.getClass().getName());
 		}
 	}
@@ -171,6 +183,7 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 					@Override
 					public void run()
 					{
+						moveRequested = true;
 						next.requestMove();
 					}
 				};
@@ -183,6 +196,7 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 		}
 		else
 		{
+			moveRequested = true;
 			next.requestMove();
 		}
 	}

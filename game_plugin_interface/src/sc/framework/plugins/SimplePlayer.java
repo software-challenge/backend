@@ -3,6 +3,9 @@ package sc.framework.plugins;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.IPlayer;
@@ -12,6 +15,8 @@ import sc.framework.plugins.protocol.MoveRequest;
 
 public abstract class SimplePlayer implements IPlayer
 {
+	public static final Logger logger = LoggerFactory.getLogger(SimplePlayer.class);
+	
 	@XStreamOmitField
 	private List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 
@@ -43,6 +48,8 @@ public abstract class SimplePlayer implements IPlayer
 		{
 			listener.onPlayerEvent(request);
 		}
+		
+		logger.debug("Move requested.");
 	}
 	
 	public abstract PlayerScore getScore();

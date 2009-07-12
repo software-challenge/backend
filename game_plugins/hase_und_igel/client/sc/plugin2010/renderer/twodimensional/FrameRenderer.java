@@ -248,76 +248,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		if (own)
 		{
 			this.player = player;
-
-			if (myturn)
-			{
-				setReachableFields(player.getPosition(), player
-						.getCarrotsAvailable());
-
-				if (player.getColor() == FigureColor.RED)
-				{
-					info.setColor(true);
-				}
-				else
-				{
-					info.setColor(false);
-				}
-
-				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
-				{
-					List<String> answers = new LinkedList<String>();
-					answers.add(takeCarrots);
-					if (GameUtil.isValidToTakeOrDrop10Carrots(board, player,
-							-10))
-					{
-						answers.add(dropCarrots);
-					}
-					answers.add(moveForward);
-					askQuestion("Was wollen Sie tun?", answers, carrotAnswer);
-				}
-				else if (GameUtil.isValidToEat(board, player))
-				{
-					sendMove(new Move(Move.MoveTyp.EAT));
-				}
-				else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
-						&& (player.getActions().size() > 0))
-				{
-					List<String> answers = new LinkedList<String>();
-					if (GameUtil.isValidToPlayCard(board, player,
-							Player.Action.TAKE_OR_DROP_CARROTS, 20))
-					{
-						answers.add(take20carrots);
-					}
-					if (GameUtil.isValidToPlayCard(board, player,
-							Player.Action.TAKE_OR_DROP_CARROTS, 0))
-					{
-						answers.add(doNothing);
-					}
-					if (GameUtil.isValidToPlayCard(board, player,
-							Player.Action.TAKE_OR_DROP_CARROTS, -20))
-					{
-						answers.add(give20carrots);
-					}
-					if (GameUtil.isValidToPlayCard(board, player,
-							Player.Action.EAT_SALAD, 0))
-					{
-						answers.add(eatsalad);
-					}
-					if (GameUtil.isValidToPlayCard(board, player,
-							Player.Action.HURRY_AHEAD, 0))
-					{
-						answers.add(hurryahead);
-					}
-					if (GameUtil.isValidToPlayCard(board, player,
-							Player.Action.FALL_BACK, 0))
-					{
-						answers.add(fallback);
-					}
-					askQuestion("Welchen Hasenjoker wollen Sie spielen?",
-							answers, jokerAnswer);
-				}
-			}
-
 			info.setAttributes(player.getCarrotsAvailable(), player
 					.getSaladsToEat());
 			info.setHasenjoker(player.getActions());
@@ -328,6 +258,75 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
 					.getSaladsToEat());
 			info.setEnemyHasenjoker(enemy.getActions());
+		}
+	}
+
+	private void askForAction(final Player player)
+	{
+		setReachableFields(player.getPosition(), player
+				.getCarrotsAvailable());
+
+		if (player.getColor() == FigureColor.RED)
+		{
+			info.setColor(true);
+		}
+		else
+		{
+			info.setColor(false);
+		}
+
+		if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
+		{
+			List<String> answers = new LinkedList<String>();
+			answers.add(takeCarrots);
+			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player,
+					-10))
+			{
+				answers.add(dropCarrots);
+			}
+			answers.add(moveForward);
+			askQuestion("Was wollen Sie tun?", answers, carrotAnswer);
+		}
+		else if (GameUtil.isValidToEat(board, player))
+		{
+			sendMove(new Move(Move.MoveTyp.EAT));
+		}
+		else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
+				&& (player.getActions().size() > 0))
+		{
+			List<String> answers = new LinkedList<String>();
+			if (GameUtil.isValidToPlayCard(board, player,
+					Player.Action.TAKE_OR_DROP_CARROTS, 20))
+			{
+				answers.add(take20carrots);
+			}
+			if (GameUtil.isValidToPlayCard(board, player,
+					Player.Action.TAKE_OR_DROP_CARROTS, 0))
+			{
+				answers.add(doNothing);
+			}
+			if (GameUtil.isValidToPlayCard(board, player,
+					Player.Action.TAKE_OR_DROP_CARROTS, -20))
+			{
+				answers.add(give20carrots);
+			}
+			if (GameUtil.isValidToPlayCard(board, player,
+					Player.Action.EAT_SALAD, 0))
+			{
+				answers.add(eatsalad);
+			}
+			if (GameUtil.isValidToPlayCard(board, player,
+					Player.Action.HURRY_AHEAD, 0))
+			{
+				answers.add(hurryahead);
+			}
+			if (GameUtil.isValidToPlayCard(board, player,
+					Player.Action.FALL_BACK, 0))
+			{
+				answers.add(fallback);
+			}
+			askQuestion("Welchen Hasenjoker wollen Sie spielen?",
+					answers, jokerAnswer);
 		}
 	}
 
@@ -542,5 +541,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	{
 		myturn = true;
 		setReachableFields(player.getPosition(), player.getCarrotsAvailable());
+		
+		askForAction(player);
 	}
 }

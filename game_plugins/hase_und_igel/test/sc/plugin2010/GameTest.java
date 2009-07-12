@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IPlayerListener;
 import sc.plugin2010.Board.FieldTyp;
@@ -65,7 +66,7 @@ public class GameTest
 	 * @throws TooManyPlayersException
 	 */
 	@Test
-	public void testUpdateBoardWithMove() throws TooManyPlayersException
+	public void testUpdateBoardWithMove() throws RescueableClientException
 	{
 		Game g = new Game();
 		g.initialize();
@@ -96,7 +97,7 @@ public class GameTest
 	 * @throws TooManyPlayersException
 	 */
 	@Test
-	public void testEatSalatLogic() throws TooManyPlayersException
+	public void testEatSalatLogic() throws RescueableClientException
 	{
 		Game g = new Game();
 		g.initialize();
@@ -135,7 +136,7 @@ public class GameTest
 	 * @throws TooManyPlayersException
 	 */
 	@Test
-	public void testEnterGoal() throws TooManyPlayersException
+	public void testEnterGoal() throws RescueableClientException
 	{
 		Game g = new Game();
 		g.initialize();
@@ -168,7 +169,7 @@ public class GameTest
 	 * @throws TooManyPlayersException
 	 */
 	@Test
-	public void testRoundLimit() throws TooManyPlayersException
+	public void testRoundLimit() throws RescueableClientException
 	{
 		Game g = new Game();
 		g.initialize();
