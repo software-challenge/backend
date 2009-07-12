@@ -282,7 +282,7 @@ public class CreateGameDialog extends JDialog {
 		}
 
 		// set observation
-		IObservation observer = prep.getObserver();
+		final IObservation observer = prep.getObserver();
 		presFac.getLogicFacade().setObservation(observer);
 
 		final ConnectingDialog connDial = new ConnectingDialog();
@@ -310,7 +310,7 @@ public class CreateGameDialog extends JDialog {
 			for (String p : kinfo.getParameters()) {
 				params.append(p);
 			}
-			try {
+			/*try {
 				Process process = Runtime.getRuntime().exec(kinfo.getPath() + " " + params);
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(this, lang
@@ -319,7 +319,7 @@ public class CreateGameDialog extends JDialog {
 						JOptionPane.ERROR_MESSAGE);
 				cancelGameCreation();
 				return;
-			}
+			}*/
 		}
 
 		// show connecting dialog
