@@ -28,6 +28,10 @@ public interface IObservation {
 	 */
 	void cancel();
 
+	boolean hasNext();
+
+	boolean hasPrevious();
+
 	/**
 	 * Saves the replay of the last ended game to the given
 	 * <code>filename</code>.

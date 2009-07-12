@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import sc.framework.plugins.protocol.MoveRequest;
+import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.Observation;
 import sc.protocol.ErrorResponse;
 import sc.protocol.IControllableGame;
@@ -31,6 +32,7 @@ public class Client implements ILobbyClientListener
 	private String			roomId;
 	private String			host;
 	private int				port;
+	private FigureColor		mycolor;
 
 	@SuppressWarnings("unchecked")
 	public Client(String host, int port, EPlayerId id) throws IOException
@@ -82,7 +84,11 @@ public class Client implements ILobbyClientListener
 		{
 			handler.onRequestAction();
 		}
-
+		else if (data instanceof WelcomeMessage)
+		{
+			WelcomeMessage welc = (WelcomeMessage) data;
+			mycolor = welc.getMyColor();
+		}
 		this.roomId = roomId;
 	}
 
@@ -103,7 +109,14 @@ public class Client implements ILobbyClientListener
 		GameState gameState = (GameState) state;
 		Game game = gameState.getGame();
 		handler.onUpdate(game.getBoard(), game.getTurn());
-		handler.onUpdate(game.getActivePlayer(), false); // TODO not false!
+		if (game.getActivePlayer().getColor() == mycolor)
+		{
+			handler.onUpdate(game.getActivePlayer(), true);
+		}
+		else
+		{
+			handler.onUpdate(game.getActivePlayer(), false);
+		}
 		obs.newTurn("new turn Karotten:"
 				+ game.getActivePlayer().getCarrotsAvailable());
 	}

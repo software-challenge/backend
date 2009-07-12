@@ -3,40 +3,35 @@
  */
 package sc.plugin2010.framework;
 
-import sc.plugin2010.Move;
-
 /**
  * @author ffi
  * 
  */
 public class Zug
 {
-	private Move	move;
+	private Zugtyp		typ;
+	private Hasenjoker	joker;
+	private int			n;
 
 	public Zug(Zugtyp typ)
 	{
-		initialize(typ, 0);
+		initialize(typ, null, 0);
 	}
 
-	public Zug(Zugtyp typ, int felderVorwaerts)
+	public Zug(Zugtyp typ, int n)
 	{
-		initialize(typ, felderVorwaerts);
+		initialize(typ, null, n);
 	}
 
-	private void initialize(Zugtyp typ, int felderVorwaerts)
+	public Zug(Zugtyp typ, Hasenjoker joker, int n)
 	{
-		Move.MoveTyp movetyp;
+		initialize(typ, joker, n);
+	}
 
-		switch (typ)
-		{
-			case FRISS_SALAT:
-				movetyp = Move.MoveTyp.EAT;
-				break;
-			case ZIEHE_VORWAERTS:
-				movetyp = Move.MoveTyp.MOVE;
-				break;
-			default:
-				break;
-		}
+	private void initialize(Zugtyp typ, Hasenjoker joker, int n)
+	{
+		this.typ = typ;
+		this.joker = joker;
+		this.n = n;
 	}
 }

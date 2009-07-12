@@ -147,6 +147,7 @@ public class Werkzeuge
 	 */
 	protected static Move convertZug(Zug zug)
 	{
+
 		// TODO Auto-generated method stub
 		return null;
 	}

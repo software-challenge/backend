@@ -45,6 +45,7 @@ public class GUIGameHandler implements IGameHandler
 	public void onRequestAction()
 	{
 		RenderFacade.getInstance().switchToPlayer(client.getID());
+		RenderFacade.getInstance().requestMove(client.getID());
 	}
 
 	@Override

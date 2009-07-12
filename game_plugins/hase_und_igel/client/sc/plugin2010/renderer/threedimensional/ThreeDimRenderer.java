@@ -317,4 +317,16 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 		paint(img.getGraphics());
 		return img;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sc.plugin2010.renderer.Renderer#requestMove()
+	 */
+	@Override
+	public void requestMove()
+	{
+		// TODO Auto-generated method stub
+
+	}
 }

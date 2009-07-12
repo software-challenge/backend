@@ -69,7 +69,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	public FrameRenderer(final GUIGameHandler handler,
 			final boolean onlyObserving)
 	{
-		this.handler = handler; // TODO when game is over, block input...
+		this.handler = handler;
 		this.onlyObserving = onlyObserving;
 		createInitFrame();
 	}
@@ -139,58 +139,61 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 
 		info.setTurn(currentColor);
-
-		switch (player.getLastMove().getTyp())
+		actionb.removeAll();
+		for (Move mov : player.getHistory())// TODO log others history too
 		{
-			case EAT:
-				actionb.addRow("Spieler " + currentColor
-						+ " frisst einen Salat");
-				break;
-			case MOVE:
-				actionb.addRow("Spieler " + currentColor + " setzt auf "
-						+ String.valueOf(player.getLastMove().getN()));
-				break;
-			case TAKE_OR_DROP_CARROTS:
-				if (player.getLastMove().getN() == 10)
-				{
+			switch (mov.getTyp())
+			{
+				case EAT:
 					actionb.addRow("Spieler " + currentColor
-							+ " nimmt 10 Karotten");
-				}
-				else if (player.getLastMove().getN() == -10)
-				{
+							+ " frisst einen Salat");
+					break;
+				case MOVE:
+					actionb.addRow("Spieler " + currentColor + " setzt auf "
+							+ String.valueOf(mov.getN()));
+					break;
+				case TAKE_OR_DROP_CARROTS:
+					if (mov.getN() == 10)
+					{
+						actionb.addRow("Spieler " + currentColor
+								+ " nimmt 10 Karotten");
+					}
+					else if (mov.getN() == -10)
+					{
+						actionb.addRow("Spieler " + currentColor
+								+ " gibt 10 Karotten ab");
+					}
+					break;
+				case FALL_BACK:
 					actionb.addRow("Spieler " + currentColor
-							+ " gibt 10 Karotten ab");
-				}
-				break;
-			case FALL_BACK:
-				actionb.addRow("Spieler " + currentColor
-						+ " lässt sich auf Igel zurückfallen");
-				break;
-			case PLAY_CARD:
-				switch (player.getLastMove().getCard())
-				{
-					case TAKE_OR_DROP_CARROTS:
-						actionb.addRow("Spieler " + currentColor
-								+ " spielt 'Nimm oder gib 20 Karotten'");
-						break;
-					case EAT_SALAD:
-						actionb.addRow("Spieler " + currentColor
-								+ " spielt 'Friss sofort einen Salat'");
-						break;
-					case FALL_BACK:
-						actionb.addRow("Spieler " + currentColor
-								+ " spielt 'Falle eine Position zurück'");
-						break;
-					case HURRY_AHEAD:
-						actionb.addRow("Spieler " + currentColor
-								+ " spielt 'Rücke eine Position vor'");
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
+							+ " lässt sich auf Igel zurückfallen");
+					break;
+				case PLAY_CARD:
+					switch (mov.getCard())
+					{
+						case TAKE_OR_DROP_CARROTS:
+							actionb.addRow("Spieler " + currentColor
+									+ " spielt 'Nimm oder gib 20 Karotten'");
+							break;
+						case EAT_SALAD:
+							actionb.addRow("Spieler " + currentColor
+									+ " spielt 'Friss sofort einen Salat'");
+							break;
+						case FALL_BACK:
+							actionb.addRow("Spieler " + currentColor
+									+ " spielt 'Falle eine Position zurück'");
+							break;
+						case HURRY_AHEAD:
+							actionb.addRow("Spieler " + currentColor
+									+ " spielt 'Rücke eine Position vor'");
+							break;
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
 		}
 
 		for (int i = 0; i < fbuttons.size(); i++)
@@ -207,7 +210,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 		if (own)
 		{
-			myturn = true;
 			this.player = player;
 
 			setReachableFields(player.getPosition(), player
@@ -273,7 +275,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 		else
 		{
-			myturn = false;
 			enemy = player;
 			info.setEnemyCarrots(enemy.getCarrotsAvailable());
 			info.setEnemyHasenjoker(enemy.getActions());
@@ -468,5 +469,11 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			handler.sendAction(move);
 			myturn = false;
 		}
+	}
+
+	@Override
+	public void requestMove()
+	{
+		myturn = true;
 	}
 }

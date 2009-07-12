@@ -9,5 +9,5 @@ package sc.plugin2010.framework;
  */
 public enum Zugtyp
 {
-	FRISS_SALAT, ZIEHE_VORWAERTS
+	FRISS_SALAT, ZIEHE_VORWAERTS, FALLE_ZURUECK, SPIELE_HASENJOKER
 }

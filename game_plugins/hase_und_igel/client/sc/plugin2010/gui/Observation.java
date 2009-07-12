@@ -12,7 +12,9 @@ import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.helpers.ReplayBuilder;
+import sc.plugin2010.EPlayerId;
 import sc.plugin2010.GameState;
+import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.clients.IUpdateListener;
 
@@ -61,7 +63,7 @@ public class Observation implements IObservation, IUpdateListener
 	@Override
 	public void cancel()
 	{
-		// conGame.; TODO
+		conGame.cancel();
 	}
 
 	@Override
@@ -110,7 +112,7 @@ public class Observation implements IObservation, IUpdateListener
 	public void unpause()
 	{
 		conGame.unpause();
-		// TODO switch in rendererfacade
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 	}
 
 	/**
@@ -150,8 +152,19 @@ public class Observation implements IObservation, IUpdateListener
 	public void onUpdate(Object sender)
 	{
 		assert sender == conGame;
-		GameState state = (GameState)conGame.getCurrentState();
-		
-		// TODO: propagate state to listeners
+		GameState state = (GameState) conGame.getCurrentState();
+		// not needed
+	}
+
+	@Override
+	public boolean hasNext()
+	{
+		return conGame.hasNext();
+	}
+
+	@Override
+	public boolean hasPrevious()
+	{
+		return conGame.hasPrevious();
 	}
 }

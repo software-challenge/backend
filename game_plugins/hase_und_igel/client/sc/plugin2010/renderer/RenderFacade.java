@@ -260,4 +260,22 @@ public class RenderFacade
 	{
 		return alreadyCreatedPlayerOne;
 	}
+
+	/**
+	 * @param id
+	 */
+	public void requestMove(EPlayerId id)
+	{
+		switch (id)
+		{
+			case PLAYER_ONE:
+				player1.requestMove();
+				break;
+			case PLAYER_TWO:
+				player2.requestMove();
+				break;
+			default:
+				break;
+		}
+	}
 }

@@ -23,4 +23,6 @@ public interface Renderer
 	void updateChat(String chatMsg);
 
 	Image getImage();
+
+	void requestMove();
 }

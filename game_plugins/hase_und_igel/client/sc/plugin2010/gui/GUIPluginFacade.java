@@ -14,7 +14,6 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
-import sc.protocol.ReplayClient;
 import sc.protocol.clients.ObservingClient;
 
 import com.thoughtworks.xstream.XStream;
@@ -87,7 +86,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public String[] getStatisticsInfo()
 	{
-		return null;
+		return null; // TODO
 	}
 
 	@Override
