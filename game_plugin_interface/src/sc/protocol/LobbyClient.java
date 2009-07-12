@@ -302,13 +302,13 @@ public final class LobbyClient extends XStreamClient
 	{
 		this.listeners.remove(listener);
 	}
-	
-	public ControllingClient observeAndControl(PrepareGameResponse handle)
+
+	public IControllableGame observeAndControl(PrepareGameResponse handle)
 	{
 		return new ControllingClient(this, handle.getRoomId());
 	}
 
-	public ObservingClient observe(PrepareGameResponse handle)
+	public IControllableGame observe(PrepareGameResponse handle)
 	{
 		this.send(new ObservationRequest(handle.getRoomId(), ""));
 		return new ObservingClient(this, handle.getRoomId());

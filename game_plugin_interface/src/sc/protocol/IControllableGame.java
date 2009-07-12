@@ -1,6 +1,6 @@
 package sc.protocol;
 
-public interface IControllableGame
+public interface IControllableGame extends IPollsUpdates
 {
 
 	public abstract void next();

@@ -1,10 +1,11 @@
 package sc.protocol.clients;
 
-import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.thoughtworks.xstream.XStream;
 
 import sc.protocol.ErrorResponse;
 import sc.protocol.IControllableGame;
@@ -44,20 +45,6 @@ public class ObservingClient extends SingleRoomClient implements
 		{
 			setPosition(this.history.size() - 1);
 		}
-	}
-
-	public void saveReplayTo(String gameId, OutputStream out)
-			throws IOException
-	{
-		ObjectOutputStream objectOut = this.client.getXStream()
-				.createObjectOutputStream(out);
-
-		for (Object state : this.history)
-		{
-			objectOut.writeObject(state);
-		}
-
-		objectOut.flush();
 	}
 
 	@Override
@@ -105,10 +92,22 @@ public class ObservingClient extends SingleRoomClient implements
 
 	protected void notifyOnUpdate()
 	{
-		for (IUpdateListener listner : this.listeners)
+		for (IUpdateListener listener : this.listeners)
 		{
-			listner.onUpdate(this);
+			listener.onUpdate(this);
 		}
+	}
+
+	@Override
+	public void removeListener(IUpdateListener u)
+	{
+		this.listeners.add(u);
+	}
+
+	@Override
+	public void addListener(IUpdateListener u)
+	{
+		this.listeners.remove(u);
 	}
 
 	@Override
@@ -159,5 +158,15 @@ public class ObservingClient extends SingleRoomClient implements
 	public boolean atEnd()
 	{
 		return this.position >= this.history.size() - 1;
+	}
+
+	public List<Object> getHistory()
+	{
+		return Collections.unmodifiableList(this.history);
+	}
+
+	public XStream getXStream()
+	{
+		return this.client.getXStream();
 	}
 }

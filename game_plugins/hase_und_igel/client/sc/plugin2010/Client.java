@@ -6,6 +6,7 @@ import java.util.Arrays;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.gui.GameObservation;
 import sc.protocol.ErrorResponse;
+import sc.protocol.IControllableGame;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
@@ -66,12 +67,12 @@ public class Client implements ILobbyClientListener
 		return obs;
 	}
 
-	public ObservingClient observeGame(PrepareGameResponse handle)
+	public IControllableGame observeGame(PrepareGameResponse handle)
 	{
 		return client.observe(handle);
 	}
 
-	public ControllingClient observeAndControl(PrepareGameResponse handle)
+	public IControllableGame observeAndControl(PrepareGameResponse handle)
 	{
 		return client.observeAndControl(handle);
 	}

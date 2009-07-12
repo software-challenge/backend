@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.networking.FileSystemInterface;
+import sc.protocol.clients.IUpdateListener;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -19,13 +20,14 @@ import com.thoughtworks.xstream.XStream;
  * @author Marcel
  * 
  */
-public final class ReplayClient extends XStreamClient implements IControllableGame
+public final class ReplayClient extends XStreamClient implements
+		IControllableGame
 {
-	private static Logger	logger			= LoggerFactory
-													.getLogger(ReplayClient.class);
-	List<MementoPacket>		mementi			= new LinkedList<MementoPacket>();
-	List<StateListener>		listeners		= new LinkedList<StateListener>();
-	MementoPacket			currentMemento	= null;
+	private static Logger				logger			= LoggerFactory
+																.getLogger(ReplayClient.class);
+	List<MementoPacket>					history			= new LinkedList<MementoPacket>();
+	private final List<IUpdateListener>	listeners		= new LinkedList<IUpdateListener>();
+	MementoPacket						currentMemento	= null;
 
 	public ReplayClient(XStream xstream, File file) throws IOException
 	{
@@ -37,7 +39,7 @@ public final class ReplayClient extends XStreamClient implements IControllableGa
 	{
 		if (o instanceof MementoPacket)
 		{
-			this.mementi.add((MementoPacket) o);
+			this.history.add((MementoPacket) o);
 		}
 		else
 		{
@@ -45,49 +47,45 @@ public final class ReplayClient extends XStreamClient implements IControllableGa
 		}
 	}
 
-	public void addListener(StateListener listener)
-	{
-		this.listeners.add(listener);
-	}
-
-	public void removeListener(StateListener listener)
-	{
-		this.listeners.remove(listener);
-	}
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see sc.protocol.IControllableGame#next()
 	 */
 	public void next()
 	{
 		assertCurrent();
-		int i = this.mementi.indexOf(this.currentMemento) + 1;
+		int i = this.history.indexOf(this.currentMemento) + 1;
 
-		if (i >= this.mementi.size())
+		if (i >= this.history.size())
 		{
-			i = this.mementi.size() - 1;
+			i = this.history.size() - 1;
 		}
 
-		setCurrent(this.mementi.get(i));
+		setCurrent(this.history.get(i));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see sc.protocol.IControllableGame#previous()
 	 */
 	public void previous()
 	{
 		assertCurrent();
-		int i = this.mementi.indexOf(this.currentMemento) - 1;
+		int i = this.history.indexOf(this.currentMemento) - 1;
 
 		if (i < 0)
 		{
 			i = 0;
 		}
 
-		setCurrent(this.mementi.get(i));
+		setCurrent(this.history.get(i));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see sc.protocol.IControllableGame#pause()
 	 */
 	public void pause()
@@ -95,7 +93,9 @@ public final class ReplayClient extends XStreamClient implements IControllableGa
 		// TODO:
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see sc.protocol.IControllableGame#unpause()
 	 */
 	public void unpause()
@@ -106,7 +106,7 @@ public final class ReplayClient extends XStreamClient implements IControllableGa
 	public boolean atEnd()
 	{
 		assertCurrent();
-		return this.mementi.indexOf(this.currentMemento) > this.mementi.size();
+		return this.history.indexOf(this.currentMemento) > this.history.size();
 	}
 
 	public Object getCurrentState()
@@ -121,9 +121,9 @@ public final class ReplayClient extends XStreamClient implements IControllableGa
 		{
 			this.currentMemento = p;
 
-			for (StateListener listener : this.listeners)
+			for (IUpdateListener listener : this.listeners)
 			{
-				listener.onNewState(p.getState());
+				listener.onUpdate(this);
 			}
 		}
 		else
@@ -136,14 +136,26 @@ public final class ReplayClient extends XStreamClient implements IControllableGa
 	{
 		if (this.currentMemento == null)
 		{
-			if (this.mementi.size() > 0)
+			if (this.history.size() > 0)
 			{
-				setCurrent(this.mementi.get(0));
+				setCurrent(this.history.get(0));
 			}
 			else
 			{
 				throw new RuntimeException("No Memento available");
 			}
 		}
+	}
+
+	@Override
+	public void removeListener(IUpdateListener u)
+	{
+		this.listeners.add(u);
+	}
+
+	@Override
+	public void addListener(IUpdateListener u)
+	{
+		this.listeners.remove(u);
 	}
 }

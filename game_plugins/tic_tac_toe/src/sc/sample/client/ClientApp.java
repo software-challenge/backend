@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
+import sc.helpers.ReplayBuilder;
+import sc.protocol.IControllableGame;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
 import sc.protocol.clients.ObservingClient;
@@ -33,7 +35,7 @@ public class ClientApp
 
 		LobbyClient observerClient = new LobbyClient(ProtocolDefinition
 				.getProtocolClasses());
-		ObservingClient observer = observerClient.observe(preparation.getResult());
+		IControllableGame observer = observerClient.observe(preparation.getResult());
 
 		final Semaphore sem = new Semaphore(0);
 		final Object lock = new Object();
@@ -80,7 +82,6 @@ public class ClientApp
 		System.out.println("Done.");
 		admin.close();
 		observerClient.close();
-		observer.saveReplayTo(preparation.getResult().getRoomId(),
-				new FileOutputStream("./replay.xml"));
+		ReplayBuilder.saveReplay(observer, new FileOutputStream("./replay.xml"));
 	}
 }
