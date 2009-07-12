@@ -1,6 +1,7 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +15,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
+import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -28,24 +32,30 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import sc.gui.PresentationFacade;
 import sc.gui.stuff.KIInformation;
+import sc.gui.stuff.MyCombobox;
 import sc.gui.stuff.YearComparator;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
+import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.ILogicFacade;
 import sc.plugin.GUIPluginInstance;
-import sc.server.Application;
-import sc.server.Lobby;
 
 @SuppressWarnings("serial")
 public class CreateGameDialog extends JDialog {
 
-	private static final String HOST_IP = null;
+	private static final String HOST_IP = "localhost";
+
+	private static final String DEFAULT_PORT = "10500";
+
 	private final PresentationFacade presFac;
 	private final ResourceBundle lang;
 	private JPanel pnlTable;
@@ -62,6 +72,7 @@ public class CreateGameDialog extends JDialog {
 	private JFrame frame;
 	private JTextField txfPort;
 	private JLabel lblPort;
+	private MyTableModel playersModel;
 
 	public CreateGameDialog(JFrame frame) {
 		super();
@@ -83,6 +94,8 @@ public class CreateGameDialog extends JDialog {
 
 		pnlTable = new JPanel();
 		pnlBottom = new JPanel();
+		pnlBottom.setName("Panel Bottom");// TODO test
+		pnlBottom.setBorder(BorderFactory.createEtchedBorder());
 		pnlBottom.setLayout(new BoxLayout(pnlBottom, BoxLayout.PAGE_AXIS));
 
 		// ---------------------------------------------------
@@ -97,7 +110,7 @@ public class CreateGameDialog extends JDialog {
 		ckbDim = new JCheckBox(lang.getString("dialog_create_pref_dim"));
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
 		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
-		txfPort = new JTextField(5);
+		txfPort = new JTextField(DEFAULT_PORT);
 		lblPort = new JLabel();
 		lblPort.setLabelFor(txfPort);
 		// pnlPref.add(ckbDim); TODO for future
@@ -120,15 +133,27 @@ public class CreateGameDialog extends JDialog {
 
 		// ---------------------------------------------------
 
+		Vector<String> cmbItems = new Vector<String>();
+		cmbItems.add(lang.getString("dialog_create_plyType_human"));
+		cmbItems.add(lang.getString("dialog_create_plyType_ki"));
+		cmbItems.add(lang.getString("dialog_create_plyType_observer"));
+		cmbItems.add(lang.getString("dialog_create_plyType_closed"));
+
 		// add columns
-		final DefaultTableModel playersModel = new DefaultTableModel();
+		playersModel = new MyTableModel();
 		playersModel.addColumn(lang.getString("dialog_create_tbl_pos"));
 		playersModel.addColumn(lang.getString("dialog_create_tbl_name"));
 		playersModel.addColumn(lang.getString("dialog_create_tbl_plytype"));
 		playersModel.addColumn(lang.getString("dialog_create_tbl_filename"));
-		// add rows (default)
-		addRows(playersModel);
+
 		tblPlayers = new JTable(playersModel);
+		// add rows (default)
+		addRows(tblPlayers);
+
+		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
+				new MyComboBoxEditor(cmbItems));
+		tblPlayers.getColumnModel().getColumn(2).setCellRenderer(
+				new MyComboBoxRenderer(cmbItems));
 
 		pnlTable.add(new JScrollPane(tblPlayers));
 
@@ -171,6 +196,11 @@ public class CreateGameDialog extends JDialog {
 		this.setSize(800, 480);
 	}
 
+	/**
+	 * Creates a game with the selected options and players.
+	 * 
+	 * @param model
+	 */
 	protected void createGame(final DefaultTableModel model) {
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 
@@ -187,6 +217,16 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
+		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
+
+		// start server
+		presFac.getLogicFacade().startServer(port);
+
+		// set render context
+		boolean threeDimensional = false; // TODO for future
+		selPlugin.getPlugin().setRenderContext(contextPanel.getGameField(),
+				threeDimensional);
+
 		int playerCount = model.getRowCount();
 
 		// prepare game
@@ -201,6 +241,7 @@ public class CreateGameDialog extends JDialog {
 					.getString("dialog_create_error_network_msg"), lang
 					.getString("dialog_create_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
+			cancelGameCreation();
 			return;
 		}
 
@@ -209,30 +250,42 @@ public class CreateGameDialog extends JDialog {
 		// configure slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
-			JComboBox cmbPlyType = (JComboBox) model.getValueAt(i, 2);
+
 			String path = (String) model.getValueAt(i, 3);
-			int index = cmbPlyType.getSelectedIndex();
+			// check path
+			if (path == null || path.equals("")) {
+				JOptionPane.showMessageDialog(this, lang
+						.getString("dialog_create_error_path_msg"), lang
+						.getString("dialog_create_error_path_title"),
+						JOptionPane.ERROR_MESSAGE);
+				cancelGameCreation();
+				return;
+			}
+			// set slot
+			int index = extractIndex((String) model.getValueAt(i, 2));
 			switch (index) {
 			case 0:
-				slot.asHuman();
+				try {
+					slot.asHuman();
+				} catch (IOException e) {
+					e.printStackTrace();
+					cancelGameCreation();
+					return;
+				}
 				break;
 			case 1:
 				KIs.add(new KIInformation(slot.asClient(), path));
 				break;
 			case 2: // nothing to do
+				break;
 			case 3: // nothing to do
+				break;
 			default:
+				cancelGameCreation();
 				throw new RuntimeException("Selection range out of bounds (" + index
 						+ ")");
 			}
 		}
-
-		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
-
-		// set render context
-		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(contextPanel.getGameField(),
-				threeDimensional);
 
 		// set observation
 		IObservation observer = prep.getObserver();
@@ -241,12 +294,17 @@ public class CreateGameDialog extends JDialog {
 		observer.addReadyListener(new IReadyListener() {
 			@Override
 			public void ready() {
-				contextPanel.updateButtonBar();
+				contextPanel.updateButtonBar(false);
 			}
 		});
-		
-		// start server
-		presFac.getLogicFacade().startServer(port);
+
+		observer.addGameEndedListener(new IGameEndedListener() {
+			@Override
+			public void gameEnded() {
+				presFac.getLogicFacade().stopServer();
+				contextPanel.updateButtonBar(true);
+			}
+		});
 
 		// show connecting dialog
 		String message = lang.getString("dialog_create_waiting");
@@ -255,6 +313,24 @@ public class CreateGameDialog extends JDialog {
 			observer.cancel();
 		}
 
+	}
+
+	private int extractIndex(String plyType) {
+		System.out.println("TEST " + plyType);
+		if (plyType.equals(lang.getString("dialog_create_plyType_human"))) {
+			return 0;
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki"))) {
+			return 1;
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_observer"))) {
+			return 2;
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_closed"))) {
+			return 3;
+		}
+		return -1;
+	}
+
+	void cancelGameCreation() {
+		presFac.getLogicFacade().stopServer();
 	}
 
 	/**
@@ -288,80 +364,119 @@ public class CreateGameDialog extends JDialog {
 		return plugins.get(combPlugins.getSelectedIndex());
 	}
 
-	private void addRows(final DefaultTableModel playersModel) {
+	private void addRows(final JTable table) {
 		GUIPluginInstance selPlugin = getSelectedPlugin();
+		MyTableModel model = (MyTableModel) table.getModel();
 
 		for (int i = 0; i < selPlugin.getPlugin().getMinimalPlayerCount(); i++) {
-			Vector<String> cmbItems = new Vector<String>();
-			cmbItems.add(lang.getString("dialog_create_plyType_human"));
-			cmbItems.add(lang.getString("dialog_create_plyType_ki"));
-			cmbItems.add(lang.getString("dialog_create_plyType_observer"));
-			cmbItems.add(lang.getString("dialog_create_plyType_closed"));
-			final JComboBox cmbPlyTypes = new JComboBox(cmbItems);
-			cmbPlyTypes.addActionListener(new PlayerTypeActionListener(playersModel, i));
-
 			Vector<Object> rowData = new Vector<Object>();
 			rowData.add(new Integer(i + 1));
-			rowData.add("Player " + i + 1);
-			rowData.add(cmbPlyTypes);
+			rowData.add("Player " + (i + 1));
+			rowData.add(null);// TODO std. player type
 			rowData.add("");
-			playersModel.addRow(rowData);
+			model.addRow(rowData);
 		}
 	}
 
-	/**
-	 * Checkbox action listener for selecting the player type for each slot.
-	 * 
-	 * @author chw
-	 * 
-	 */
-	private class PlayerTypeActionListener implements ActionListener {
+	private class MyTableModel extends DefaultTableModel {
 
-		private DefaultTableModel playersModel;
-		private int rowIndex;
+		/*
+		 * JTable uses this method to determine the default renderer/ editor for
+		 * each cell. If we didn't implement this method, then the last column
+		 * would contain text ("true"/"false"), rather than a check box.
+		 */
 
-		public PlayerTypeActionListener(DefaultTableModel model, int index) {
-			this.playersModel = model;
-			this.rowIndex = index;
+		public Class getColumnClass(int c) {
+			return getValueAt(0, c).getClass();
+		}
+
+		public boolean isCellEditable(int row, int col) {
+			return (col > 0);
+		}
+
+	}
+
+	public class MyComboBoxRenderer extends JComboBox implements TableCellRenderer {
+		public MyComboBoxRenderer(Vector<String> items) {
+			super(items);
+		}
+
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) {
+			if (isSelected) {
+				setForeground(table.getSelectionForeground());
+				super.setBackground(table.getSelectionBackground());
+			} else {
+				setForeground(table.getForeground());
+				setBackground(table.getBackground());
+			}
+
+			// Select the current value
+			setSelectedItem(value);
+			return this;
+		}
+	}
+
+	public class MyComboBoxEditor extends DefaultCellEditor implements ActionListener {
+		public MyComboBoxEditor(Vector<String> items) {
+			super(new JComboBox(items));
+
+			JComboBox cbox = (JComboBox) getComponent();
+			cbox.addActionListener(this);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			JComboBox cmbPlyTypes = (JComboBox) e.getSource();
-			int index = cmbPlyTypes.getSelectedIndex();
-			switch (index) {
-			case 0:// human
-				// set path
-				playersModel.setValueAt("-", rowIndex, 3);
-				break;
-			case 1:// KI
-				String currentDirectoryPath = "."; // TODO load config
-				JFileChooser chooser = new JFileChooser(currentDirectoryPath);
-				// chooser.setDialogTitle(dialogTitle); TODO
-				if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
-					// set name
-					playersModel.setValueAt(chooser.getSelectedFile().getName(),
-							rowIndex, 1);
-					// set path
-					playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(),
-							rowIndex, 3);
-				}
-				break;
-			case 2:// observer
-				// set path
-				playersModel.setValueAt("-", rowIndex, 3);
-				break;
-			case 3: // closed
-				// set path
-				playersModel.setValueAt("-", rowIndex, 1);
-				// set path
-				playersModel.setValueAt("-", rowIndex, 3);
-				break;
-			default:
-				throw new RuntimeException("Selection range out of bounds (" + index
-						+ ")");
-			}
-
+			JComboBox cbox = (JComboBox) getComponent();
+			int row = tblPlayers.getSelectedRow();
+			updatePlayerTable(cbox, row);
 		}
 	}
+
+	/**
+	 * Updates the player table at the given <code>row</code> according to the
+	 * selected index of the given combobox.
+	 * 
+	 * @param cbox
+	 * @param row
+	 */
+	public void updatePlayerTable(JComboBox cbox, int row) {
+
+		// String cell1 = (String) playersModel.getValueAt(row, 1);
+		// String cell3 = (String) playersModel.getValueAt(row, 3);
+
+		int index = cbox.getSelectedIndex();
+		switch (index) {
+		case 0:// human
+			// set path
+			playersModel.setValueAt("-", row, 3);
+			break;
+		case 1:// KI
+			String currentDirectoryPath = "."; // TODO load config
+			JFileChooser chooser = new JFileChooser(currentDirectoryPath);
+			// chooser.setDialogTitle(dialogTitle); TODO
+			if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+				// set name
+				playersModel.setValueAt(chooser.getSelectedFile().getName(), row, 1);
+				// set path
+				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
+						3);
+			}
+			break;
+		case 2:// observer
+			// set path
+			playersModel.setValueAt("-", row, 3);
+			break;
+		case 3: // closed
+			// set path
+			playersModel.setValueAt("-", row, 1);
+			// set path
+			playersModel.setValueAt("-", row, 3);
+			break;
+		default:
+			// throw new RuntimeException("Selection range out of bounds (" +
+			// index + ")");
+		}
+	}
+
 }

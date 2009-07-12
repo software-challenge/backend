@@ -1,12 +1,19 @@
 package sc.logic;
 
+import java.io.Serializable;
+
 import sc.common.IConfiguration;
 
-public class GUIConfiguration implements IConfiguration {
+@SuppressWarnings("serial")
+public class GUIConfiguration implements IConfiguration, Serializable {
 
 	private static String pluginFolder = null;
-	private ELanguage lang = ELanguage.DE;
-	
+	private ELanguage lang;
+
+	public GUIConfiguration() {
+		this.lang = ELanguage.DE;
+	}
+
 	@Override
 	public ELanguage getLanguage() {
 		return lang;
@@ -20,9 +27,9 @@ public class GUIConfiguration implements IConfiguration {
 	public static void setPluginFolder(String string) {
 		pluginFolder = string;
 	}
-	
+
 	public static String getPluginFolder() {
-		return pluginFolder ;
+		return pluginFolder;
 	}
 
 }

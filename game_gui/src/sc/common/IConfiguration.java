@@ -1,13 +1,9 @@
 package sc.common;
 
-import java.io.Serializable;
+import sc.logic.ELanguage;
 
-public interface IConfiguration extends Serializable {
+public interface IConfiguration {
 
-	public enum ELanguage {
-		DE, EN
-	}
-	
 	ELanguage getLanguage();
 	void setLanguage(ELanguage language);
 }

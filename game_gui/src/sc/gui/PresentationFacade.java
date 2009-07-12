@@ -7,8 +7,8 @@ import javax.swing.JPanel;
 
 import sc.IGUIApplication;
 import sc.IPresentationFacade;
-import sc.common.IConfiguration;
 import sc.gui.dialogs.ContextDisplay;
+import sc.logic.GUIConfiguration;
 import sc.logic.ILogicFacade;
 
 /**
@@ -38,7 +38,7 @@ public class PresentationFacade implements IPresentationFacade {
 	/**
 	 * Contains the current configuration data
 	 */
-	private IConfiguration config;
+	private GUIConfiguration config;
 	/**
 	 * The main frame
 	 */
@@ -98,8 +98,7 @@ public class PresentationFacade implements IPresentationFacade {
 
 	@Override
 	public String getClientIcon() {
-		// TODO Auto-generated method stub
-		return null;
+		return "/sc/resource/guilogo.png";
 	}
 
 	@Override
@@ -109,7 +108,7 @@ public class PresentationFacade implements IPresentationFacade {
 
 	@Override
 	public void shutdown() {
-		logic.saveConfiguration(config);
+		//logic.saveConfiguration(config);
 	}
 
 	public ILogicFacade getLogicFacade() {

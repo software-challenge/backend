@@ -12,17 +12,17 @@ import java.util.ResourceBundle;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.common.IConfiguration;
-import sc.common.IConfiguration.ELanguage;
 import sc.guiplugin.interfaces.IObservation;
 import sc.plugin.GUIPluginManager;
 import sc.server.Application;
+import sc.server.Lobby;
 
 public class LogicFacade implements ILogicFacade {
 
 	/**
 	 * Folder of all language files
 	 */
-	private static final String BASENAME = "sc/resources/game_gui";
+	private static final String BASENAME = "sc/resource/game_gui";
 	/**
 	 * Configuration file name
 	 */
@@ -37,6 +37,7 @@ public class LogicFacade implements ILogicFacade {
 	 */
 	private ResourceBundle languageData;
 	private IObservation observation;
+	private Lobby server;
 
 	/**
 	 * Singleton instance
@@ -69,10 +70,10 @@ public class LogicFacade implements ILogicFacade {
 			result = new GUIConfiguration();
 		} catch (IOException e) {
 			result = new GUIConfiguration();
-			//e.printStackTrace();
+			// e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			result = new GUIConfiguration();
-			//e.printStackTrace();
+			// e.printStackTrace();
 		} finally {
 			if (null != in) {
 				try {
@@ -86,7 +87,7 @@ public class LogicFacade implements ILogicFacade {
 	}
 
 	@Override
-	public void saveConfiguration(IConfiguration config) {
+	public void saveConfiguration(GUIConfiguration config) {
 		ObjectOutputStream out = null;
 		try {
 			out = new ObjectOutputStream(new FileOutputStream(CONFIG_FILENAME));
@@ -137,6 +138,7 @@ public class LogicFacade implements ILogicFacade {
 		if (this.pluginMan.getAvailablePlugins().size() == 0) {
 			throw new CouldNotFindAnyPluginException();
 		}
+		this.pluginMan.activateAllPlugins();
 	}
 
 	@Override
@@ -161,7 +163,17 @@ public class LogicFacade implements ILogicFacade {
 
 	@Override
 	public void startServer(Integer port) {
-		Application.startServer(port, false);
+		server = Application.startServer(port, false);
+	}
+
+	@Override
+	public void stopServer() {
+		server.close();
+	}
+
+	@Override
+	public void unloadPlugins() {
+		pluginMan.reload();// TODO unload instead of reload
 	}
 
 }

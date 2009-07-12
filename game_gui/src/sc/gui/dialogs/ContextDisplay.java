@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
@@ -34,7 +35,9 @@ public class ContextDisplay extends JPanel {
 		this.setLayout(new BorderLayout());
 
 		gameField = new JPanel();
+		gameField.setBorder(BorderFactory.createEtchedBorder());
 		buttonBar = new JPanel();
+		buttonBar.setBorder(BorderFactory.createEtchedBorder());
 
 		btn_back = new JButton(lang.getString("context_back"));
 		btn_cancel = new JButton(lang.getString("context_cancel"));
@@ -103,13 +106,19 @@ public class ContextDisplay extends JPanel {
 	 * Updates (enables/disables or shows/hides) the buttons, e.g. start game or
 	 * next turn.
 	 */
-	public void updateButtonBar() {
+	public void updateButtonBar(boolean ended) {
 		if (presFac.getLogicFacade().getObservation() != null) {
-			buttonBar.setVisible(true);
 			// TODO
+			if (ended) {
+				
+			} else {
+				
+			}
+			buttonBar.setVisible(true);
 		} else { // if no game is selected (at startup)
 			buttonBar.setVisible(false);
 		}
 		buttonBar.validate();
 	}
+
 }

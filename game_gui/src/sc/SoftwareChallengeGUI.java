@@ -5,8 +5,10 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JSeparator;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -15,6 +17,7 @@ import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.PresentationFacade;
 import sc.logic.GUIConfiguration;
 import sc.logic.LogicFacade;
+import sc.server.Configuration;
 
 /**
  * The executable application of the Software Challenge GUI.
@@ -43,6 +46,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		} catch (CouldNotFindAnyLanguageFileException e) {
 			JOptionPane.showMessageDialog(this, "Could not load any language file.",
 					"Missing any language file.", JOptionPane.ERROR_MESSAGE);
+			logicFac.unloadPlugins();
 			System.exit(-1);
 		} catch (CouldNotFindAnyPluginException e) {
 			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getString(
@@ -64,15 +68,15 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setJMenuBar(presFac.getMenuBar());
 		this.add(presFac.getContextDisplay());
+		this.add(new JSeparator());
 		this.add(presFac.getStatusBar());
 
 		// set window preferences
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle(presFac.getLogicFacade().getLanguageData()
 				.getString("window_title"));
-		// this.setIconImage(new
-		// ImageIcon(getClass().getResource(presFac.getClientIcon
-		// ())).getImage());
+		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
+				.getImage());
 		// this.setMinimumSize(this.getPreferredSize());
 		this.pack();
 		this.setPreferredSize(new Dimension(1024, 768));
@@ -101,8 +105,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 */
 	public static void main(String[] args) {
 		if (args.length > 0) {
-			System.out.println("Setting Pluginfolder to " + args[0]);
-			GUIConfiguration.setPluginFolder(args[0]);
+			String path = args[0];
+			System.out.println("Setting Pluginfolder to " + path);
+			GUIConfiguration.setPluginFolder(path);
+			Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
 		}
 		setSystemLookAndFeel();
 		java.awt.EventQueue.invokeLater(new Runnable() {

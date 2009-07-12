@@ -21,9 +21,10 @@ public interface ILogicFacade {
 
 	IConfiguration getConfiguration();
 
-	void saveConfiguration(IConfiguration config);
+	void saveConfiguration(GUIConfiguration config);
 
 	void loadPlugins() throws CouldNotFindAnyPluginException;
+	void unloadPlugins();
 
 	GUIPluginManager getPluginManager();
 
@@ -32,4 +33,5 @@ public interface ILogicFacade {
 	IObservation getObservation();
 
 	void startServer(Integer port);
+	void stopServer();
 }
