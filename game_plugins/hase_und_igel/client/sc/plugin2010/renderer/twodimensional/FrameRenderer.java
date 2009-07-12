@@ -15,7 +15,6 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
@@ -282,11 +281,11 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	}
 
 	@Override
-	public void updateBoard(BoardUpdated bu)
+	public void updateBoard(Board board, int round)
 	{
-		board = bu.getBoard();
+		this.board = board;
 
-		info.setRound(bu.getRound());
+		info.setRound(round);
 
 		if (!boardWasCreated)
 		{
@@ -444,7 +443,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		{
 			if (GameUtil.isValidToMove(board, player, fieldNumber))
 			{
-				handler.sendAction(new Move(Move.MoveTyp.MOVE, fieldNumber));
+				sendMove(new Move(Move.MoveTyp.MOVE, fieldNumber));
 			}
 			else
 			{

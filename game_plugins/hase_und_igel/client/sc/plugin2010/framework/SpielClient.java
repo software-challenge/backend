@@ -5,12 +5,10 @@ package sc.plugin2010.framework;
 
 import java.io.IOException;
 
-import sc.plugin2010.BoardUpdated;
+import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
-import sc.plugin2010.PlayerUpdated;
-
-import com.thoughtworks.xstream.XStream;
+import sc.plugin2010.Player;
 
 /**
  * @author ffi
@@ -20,17 +18,19 @@ public abstract class SpielClient implements IGameUpdateObserver
 {
 	private Spielbrett	spielbrett;
 	private Spieler		spieler;
-	private Spieler		gegner;
+	private Spieler		gegner;	// TODO evtl doch Gegner...
 
-	public SpielClient(String ip, int port)
+	public SpielClient(String ip, int port, String spielreservierung)
 	{
-		// verbinde beim starten
+
 		try
 		{
+			// verbinde beim starten
 			Client client = new Client(ip, port, EPlayerId.PLAYER_ONE);
-			Logik logik = new Logik(this);
+			Logik logik = new Logik(this, client);
+			spieler.setLogik(logik);
 			client.setHandler(logik);
-			client.joinAnyGame();
+			client.joinPreparedGame(spielreservierung);
 		}
 		catch (IOException e)
 		{
@@ -39,21 +39,21 @@ public abstract class SpielClient implements IGameUpdateObserver
 	}
 
 	@Override
-	public void spiellbrettAktualisiert(BoardUpdated bu)
+	public void spiellbrettAktualisiert(Board board, int round)
 	{
-		spielbrett.update(bu);
+		spielbrett.update(board, round);
 	}
 
 	@Override
-	public void spielerAktualisiert(PlayerUpdated pu)
+	public void spielerAktualisiert(Player player, boolean own)
 	{
-		if (pu.isOwnPlayer())
+		if (own)
 		{
-			spieler.update(pu.getPlayer());
+			spieler.update(player);
 		}
 		else
 		{
-			gegner.update(pu.getPlayer());
+			gegner.update(player);
 		}
 	}
 

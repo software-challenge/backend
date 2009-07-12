@@ -8,7 +8,7 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
-import sc.plugin2010.BoardUpdated;
+import sc.plugin2010.Board;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
@@ -176,19 +176,19 @@ public class RenderFacade
 		}
 	}
 
-	public void updateBoard(final BoardUpdated board, final EPlayerId target)
+	public void updateBoard(final Board board, int round, final EPlayerId target)
 	{
 		if (target == EPlayerId.OBSERVER)
 		{
-			observer.updateBoard(board);
+			observer.updateBoard(board, round);
 		}
 		else if (target == EPlayerId.PLAYER_ONE)
 		{
-			player1.updateBoard(board);
+			player1.updateBoard(board, round);
 		}
 		else if (target == EPlayerId.PLAYER_ONE)
 		{
-			player2.updateBoard(board);
+			player2.updateBoard(board, round);
 		}
 	}
 

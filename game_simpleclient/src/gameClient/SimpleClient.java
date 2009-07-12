@@ -19,19 +19,19 @@ import sc.plugin2010.framework.Werkzeuge;
  */
 public class SimpleClient extends SpielClient {
 
-	private Spielbrett spielbrett;
-	private Spieler spieler;
-	private Spieler gegner;
+	private final Spielbrett spielbrett;
+	private final Spieler spieler;
+	private final Spieler gegner;
 
-	public SimpleClient(String ip, int port) {
+	public SimpleClient(String ip, int port, String spielreservierung) {
 		// verbinde zum Spiel
-		super(ip, port);
+		super(ip, port, spielreservierung);
 
 		spieler = new Spieler();
 		gegner = new Spieler();
 		spielbrett = new Spielbrett(spieler, gegner);
 
-		// gib interne Referenz der Logik
+		// gib interne Referenzen der Logik
 		super.setzeSpielbrett(spielbrett);
 		super.setzeSpieler(spieler);
 		super.setzeGegner(gegner);
@@ -46,7 +46,8 @@ public class SimpleClient extends SpielClient {
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
 		SimpleClient simpleClient = new SimpleClient(args[0], Integer
-				.valueOf(args[1]));
+				.valueOf(args[1]), args[2]); // TODO convert them to real
+		// parameters
 	}
 
 	public void macheStandardAktion() {

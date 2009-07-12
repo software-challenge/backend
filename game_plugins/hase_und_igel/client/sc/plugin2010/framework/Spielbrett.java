@@ -1,7 +1,6 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.BoardUpdated;
 
 /**
  * @author ffi
@@ -26,10 +25,10 @@ public class Spielbrett
 	 * 
 	 * @param board
 	 */
-	public void update(BoardUpdated bu)
+	protected void update(Board board, int round)
 	{
-		brett = bu.getBoard();
-		runde = bu.getRound();
+		brett = board;
+		runde = round;
 	}
 
 	public boolean istZugValide(Zug zug, int feldNummer)

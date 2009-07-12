@@ -29,7 +29,6 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.BoardUpdated;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
@@ -267,9 +266,9 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 	}
 
 	@Override
-	public void updateBoard(BoardUpdated bu)
+	public void updateBoard(Board board, int round)
 	{
-		board = bu.getBoard();
+		this.board = board;
 	}
 
 	@Override

@@ -28,7 +28,7 @@ public abstract class AllgemeinerSpieler
 	}
 
 	/**
-	 * Holt die Salat, welche vom dem Spieler noch gefressen werden müssen,
+	 * Holt die Salate, welche vom dem Spieler noch gefressen werden müssen,
 	 * damit dieser ins Ziel darf.
 	 * 
 	 * @return Salatanzahl, welche noch zu fressen ist
@@ -65,13 +65,16 @@ public abstract class AllgemeinerSpieler
 		return player.getPosition();
 	}
 
-	// holeLetztenZug TODO
+	public Zug holeLetztenZug()
+	{
+		player.getLastMove(); // TODO
+		return null;
+	}
 
 	/**
 	 * Holt die Hasenjoker, welche dieser Spieler noch besitzt.
 	 */
-	public List<Hasenjoker> holeHasenjoker() // TODO evtl nicht für Gegner
-	// offen?
+	public List<Hasenjoker> holeHasenjoker()
 	{
 		List<Action> actions = player.getActions();
 		List<Hasenjoker> result = new LinkedList<Hasenjoker>();
@@ -83,7 +86,7 @@ public abstract class AllgemeinerSpieler
 				case EAT_SALAD:
 					result.add(Hasenjoker.FRISS_SALAT);
 					break;
-				case TAKE_OR_DROP_CARROTS: // TODO richtigen Typ hierfür
+				case TAKE_OR_DROP_CARROTS:
 					result.add(Hasenjoker.NIMM_ODER_GIB_20_KAROTTEN);
 					break;
 				case HURRY_AHEAD:

@@ -3,11 +3,11 @@
  */
 package sc.plugin2010.gui;
 
-import sc.plugin2010.BoardUpdated;
+import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Move;
-import sc.plugin2010.PlayerUpdated;
+import sc.plugin2010.Player;
 import sc.plugin2010.renderer.RenderFacade;
 
 /**
@@ -25,16 +25,15 @@ public class GUIGameHandler implements IGameHandler
 	}
 
 	@Override
-	public void onUpdate(BoardUpdated bu)
+	public void onUpdate(Board board, int turn)
 	{
-		RenderFacade.getInstance().updateBoard(bu, client.getID());
+		RenderFacade.getInstance().updateBoard(board, turn, client.getID());
 	}
 
 	@Override
-	public void onUpdate(PlayerUpdated pu)
+	public void onUpdate(Player player, boolean own)
 	{
-		RenderFacade.getInstance().updatePlayer(pu.getPlayer(),
-				pu.isOwnPlayer(), client.getID());
+		RenderFacade.getInstance().updatePlayer(player, own, client.getID());
 	}
 
 	public void onUpdate(String chat)

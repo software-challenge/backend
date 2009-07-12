@@ -81,13 +81,16 @@ public class Client implements ILobbyClientListener
 	{
 		if (data instanceof BoardUpdated)
 		{
-			handler.onUpdate((BoardUpdated) data);
+			Board board = ((BoardUpdated) data).getBoard();
+			int round = ((BoardUpdated) data).getRound();
+			handler.onUpdate(board, round);
 		}
 		else if (data instanceof PlayerUpdated)
 		{
-			handler.onUpdate((PlayerUpdated) data);
-			obs.newTurn("new turn"
-					+ ((PlayerUpdated) data).getPlayer().getCarrotsAvailable());
+			Player player = ((PlayerUpdated) data).getPlayer();
+			boolean own = ((PlayerUpdated) data).isOwnPlayer();
+			handler.onUpdate(player, own);
+			obs.newTurn("new turn" + (player.getCarrotsAvailable()));
 		}
 		else if (data instanceof MoveRequest)
 		{
@@ -111,10 +114,16 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		// GameState gameState = (GameState) state;
-		// gameState.getGame().getActivePlayer()
-
-		// TODO
+		/*
+		 * GameState gameState = (GameState) state; gameState.getGame().g
+		 * 
+		 * handler.onUpdate((BoardUpdated) data);
+		 * handler.onUpdate((PlayerUpdated) data); obs.newTurn("new turn" +
+		 * ((PlayerUpdated) data).getPlayer().getCarrotsAvailable());
+		 * handler.onRequestAction();
+		 * 
+		 * this.roomId = roomId;
+		 */// TODO
 	}
 
 	public void joinAnyGame()
