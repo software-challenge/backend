@@ -1,8 +1,5 @@
 package sc.protocol.clients;
 
-import com.sun.corba.se.spi.activation.Server;
-
-import sc.protocol.IControllableGame;
 import sc.protocol.LobbyClient;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
