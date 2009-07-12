@@ -18,7 +18,6 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 	@XStreamOmitField
 	protected final List<IGameListener>	listeners	= new LinkedList<IGameListener>();
 	
-	@XStreamOmitField
 	protected final List<P>				players		= new LinkedList<P>();
 
 	@Override

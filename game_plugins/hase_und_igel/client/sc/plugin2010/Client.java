@@ -3,7 +3,8 @@ package sc.plugin2010;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.thoughtworks.xstream.XStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Player.FigureColor;
@@ -25,24 +26,25 @@ import sc.protocol.responses.PrepareGameResponse;
  */
 public class Client implements ILobbyClientListener
 {
-	private IGameHandler	handler;
-	private LobbyClient		client;
-	private Observation		obs;
-	private String			gameType;
+	private static final Logger	logger	= LoggerFactory.getLogger(Client.class);
+	private IGameHandler		handler;
+	private LobbyClient			client;
+	private Observation			obs;
+	private String				gameType;
 	// current id to identify the client instance internal
-	private EPlayerId		id;
+	private EPlayerId			id;
 	// the current room in which the player is
-	private String			roomId;
-	private String			host;
-	private int				port;
-	private FigureColor		mycolor;
+	private String				roomId;
+	private String				host;
+	private int					port;
+	private FigureColor			mycolor;
 
 	@SuppressWarnings("unchecked")
 	public Client(String host, int port, EPlayerId id) throws IOException
 	{
 		gameType = GamePlugin.PLUGIN_UUID;
-		client = new LobbyClient(Configuration.getXStream(), Arrays.asList(Player.class,
-				PlayerUpdated.class, Move.class, Board.class,
+		client = new LobbyClient(Configuration.getXStream(), Arrays.asList(
+				Player.class, PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class), host, port);
 		client.addListener(this);
 		this.id = id;
@@ -109,6 +111,8 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
+		logger.info("New State received");
+
 		GameState gameState = (GameState) state;
 		Game game = gameState.getGame();
 		handler.onUpdate(game.getBoard(), game.getTurn());
