@@ -18,7 +18,7 @@ public abstract class SpielClient implements IGameUpdateObserver
 {
 	private Spielbrett	spielbrett;
 	private Spieler		spieler;
-	private Spieler		gegner;	// TODO evtl doch Gegner...
+	private Spieler		gegner;	// TODO kara wegkapseln?
 
 	public SpielClient(String ip, int port, String spielreservierung)
 	{

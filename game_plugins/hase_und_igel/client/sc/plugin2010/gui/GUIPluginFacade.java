@@ -68,21 +68,17 @@ public class GUIPluginFacade implements IGuiPlugin
 			int playerCount, String filename) throws IOException
 	{
 		Client client = new Client(ip, port, EPlayerId.OBSERVER);
-		GameObservation obs = new GameObservation(client);
 		GUIGameHandler handler = new GUIGameHandler(client);
-
 		client.setHandler(handler);
-		client.setObservation(obs);
-
 		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
-		return new GamePreparation(client, playerCount, obs);
+		return new GamePreparation(client, playerCount);
 	}
 
 	@Override
 	public IObservation loadReplay(String filename) throws IOException
 	{
 		ReplayClient rep = new ReplayClient(new XStream(), new File(filename));
-		IObservation obs = new ReplayObservation(rep);
+		IObservation obs = new Observation(rep);
 		return obs;
 	}
 

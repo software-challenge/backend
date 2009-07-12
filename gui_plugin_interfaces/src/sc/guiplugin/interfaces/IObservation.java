@@ -1,5 +1,7 @@
 package sc.guiplugin.interfaces;
 
+import java.io.IOException;
+
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
@@ -32,7 +34,7 @@ public interface IObservation {
 	 * 
 	 * @param filename
 	 */
-	void saveReplayToFile(String filename);
+	void saveReplayToFile(String filename) throws IOException;
 
 	/**
 	 * Moves back a turn of a replay.

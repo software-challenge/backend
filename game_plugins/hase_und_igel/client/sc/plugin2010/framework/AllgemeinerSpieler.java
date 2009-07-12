@@ -6,6 +6,7 @@ package sc.plugin2010.framework;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.Player.Action;
 
@@ -90,8 +91,20 @@ public abstract class AllgemeinerSpieler
 
 	public Zug holeLetztenZug()
 	{
-		player.getLastMove(); // TODO
-		return null;
+		return Werkzeuge.convertMove(player.getLastMove());
+	}
+
+	public List<Zug> holeZugHistory()
+	{
+		List<Zug> res = new LinkedList<Zug>();
+
+		for (Move mov : player.getHistory())
+		{
+
+			res.add(Werkzeuge.convertMove(mov));
+		}
+
+		return res;
 	}
 
 	/**

@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import sc.framework.plugins.protocol.MoveRequest;
-import sc.plugin2010.gui.GameObservation;
+import sc.plugin2010.gui.Observation;
 import sc.protocol.ErrorResponse;
 import sc.protocol.IControllableGame;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
-import sc.protocol.clients.ControllingClient;
-import sc.protocol.clients.ObservingClient;
 import sc.protocol.responses.PrepareGameResponse;
 
 /**
@@ -25,9 +23,9 @@ public class Client implements ILobbyClientListener
 {
 	private IGameHandler	handler;
 	private LobbyClient		client;
-	private GameObservation	obs;
+	private Observation		obs;
 	private String			gameType;
-	// current id to identifiy the client instance internal
+	// current id to identify the client instance internal
 	private EPlayerId		id;
 	// the current room in which the player is
 	private String			roomId;
@@ -57,12 +55,12 @@ public class Client implements ILobbyClientListener
 		return handler;
 	}
 
-	public void setObservation(GameObservation obs)
+	public void setObservation(Observation obs)
 	{
 		this.obs = obs;
 	}
 
-	public GameObservation getObservation()
+	public Observation getObservation()
 	{
 		return obs;
 	}
@@ -80,20 +78,7 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onRoomMessage(String roomId, Object data)
 	{
-		if (data instanceof BoardUpdated)
-		{
-			Board board = ((BoardUpdated) data).getBoard();
-			int round = ((BoardUpdated) data).getRound();
-			handler.onUpdate(board, round);
-		}
-		else if (data instanceof PlayerUpdated)
-		{
-			Player player = ((PlayerUpdated) data).getPlayer();
-			boolean own = ((PlayerUpdated) data).isOwnPlayer();
-			handler.onUpdate(player, own);
-			obs.newTurn("new turn" + (player.getCarrotsAvailable()));
-		}
-		else if (data instanceof MoveRequest)
+		if (data instanceof MoveRequest)
 		{
 			handler.onRequestAction();
 		}
@@ -115,16 +100,12 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		/*
-		 * GameState gameState = (GameState) state; gameState.getGame().g
-		 * 
-		 * handler.onUpdate((BoardUpdated) data);
-		 * handler.onUpdate((PlayerUpdated) data); obs.newTurn("new turn" +
-		 * ((PlayerUpdated) data).getPlayer().getCarrotsAvailable());
-		 * handler.onRequestAction();
-		 * 
-		 * this.roomId = roomId;
-		 */// TODO
+		GameState gameState = (GameState) state;
+		Game game = gameState.getGame();
+		handler.onUpdate(game.getBoard(), game.getTurn());
+		handler.onUpdate(game.getActivePlayer(), false); // TODO not false!
+		obs.newTurn("new turn Karotten:"
+				+ game.getActivePlayer().getCarrotsAvailable());
 	}
 
 	public void joinAnyGame()

@@ -10,6 +10,7 @@ import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
 import sc.plugin2010.Client;
+import sc.protocol.IControllableGame;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 
@@ -19,12 +20,11 @@ import sc.protocol.responses.PrepareGameResponse;
  */
 public class GamePreparation implements IGamePreparation
 {
-	private List<ISlot>		slots	= new LinkedList<ISlot>();
-	private IObservation	obs;
+	private List<ISlot>	slots	= new LinkedList<ISlot>();
+	private Observation	obs;
 
-	public GamePreparation(Client client, int playerCount, IObservation obs)
+	public GamePreparation(Client client, int playerCount)
 	{
-		this.obs = obs;
 		RequestResult<PrepareGameResponse> results = null;
 		try
 		{
@@ -42,7 +42,9 @@ public class GamePreparation implements IGamePreparation
 			slots.add(new Slot(singleResp, client));
 		}
 
-		client.observeGame(response);
+		IControllableGame conGame = client.observeAndControl(response);
+		obs = new Observation(conGame);
+		client.setObservation(obs);
 	}
 
 	@Override

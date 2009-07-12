@@ -17,13 +17,15 @@ import sc.plugin2010.framework.Werkzeuge;
  * @author ffi
  * 
  */
-public class SimpleClient extends SpielClient {
+public class SimpleClient extends SpielClient
+{
 
-	private final Spielbrett spielbrett;
-	private final Spieler eigenerSpieler;
-	private final Spieler gegner;
+	private final Spielbrett	spielbrett;
+	private final Spieler		eigenerSpieler;
+	private final Spieler		gegner;
 
-	public SimpleClient(String ip, int port, String spielreservierung) {
+	public SimpleClient(String ip, int port, String spielreservierung)
+	{
 		// verbinde zum Spiel
 		super(ip, port, spielreservierung);
 
@@ -43,17 +45,24 @@ public class SimpleClient extends SpielClient {
 	 * 
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		String host = "";
 		int port = 0;
 		String reservierung = "";
 
-		for (String arg : args) {
-			if (arg.contains("--host")) {
+		for (String arg : args)
+		{
+			if (arg.contains("--host"))
+			{
 				host = arg.substring(arg.indexOf(" ") + 1);
-			} else if (arg.contains("-port")) {
+			}
+			else if (arg.contains("-port"))
+			{
 				port = Integer.valueOf(arg.substring(arg.indexOf(" ") + 1));
-			} else if (arg.contains("--reservation")) {
+			}
+			else if (arg.contains("--reservation"))
+			{
 				reservierung = arg.substring(arg.indexOf(" ") + 1);
 			}
 		}
@@ -61,31 +70,41 @@ public class SimpleClient extends SpielClient {
 		new SimpleClient(host, port, reservierung);
 	}
 
-	public boolean macheStandardAktion() {
+	public boolean macheStandardAktion()
+	{
 		boolean zugGemacht = false;
 
 		// Wenn auf einem Salatfeld, dann Salat fressen
-		if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler)) {
+		if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler))
+		{
 			eigenerSpieler.frissSalat();
 			zugGemacht = true;
-		} else if (eigenerSpieler.holeHasenjoker().size() > 0) {
+		}
+		else if (eigenerSpieler.holeHasenjoker().size() > 0)
+		{
 			if (Werkzeuge.istValideHasenjokerSpielen(spielbrett,
-					eigenerSpieler, eigenerSpieler.holeHasenjoker().get(0), 0)) {
+					eigenerSpieler, eigenerSpieler.holeHasenjoker().get(0), 0))
+			{
 				eigenerSpieler.spieleHasenjoker(eigenerSpieler.holeHasenjoker()
 						.get(0));
 				zugGemacht = true;
 			}
 			// Wenn auf einem Karottenfeld, dann nimm Karotten oder gib Karotten
 			// ab
-		} else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
-				eigenerSpieler, 10)) {
+		}
+		else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
+				eigenerSpieler, 10))
+		{
 
-			if (eigenerSpieler.holeFeldnummer() < 50) {
+			if (eigenerSpieler.holeFeldnummer() < 50)
+			{
 				eigenerSpieler.nimmKarotten();
 				zugGemacht = true;
 
-			} else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
-					eigenerSpieler, -10)) {
+			}
+			else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
+					eigenerSpieler, -10))
+			{
 				eigenerSpieler.gibKarottenAb();
 				zugGemacht = true;
 			}
@@ -94,31 +113,40 @@ public class SimpleClient extends SpielClient {
 	}
 
 	@Override
-	public void zugAngefordert() {
-		if (macheStandardAktion() == false) {
+	public void zugAngefordert()
+	{
+		if (macheStandardAktion() == false)
+		{
 
 			int feldNummer = -1;
 
 			// Suche erst nach dem nächsten Salat
-			if (eigenerSpieler.holeSalatAnzahl() > 0) {
+			if (eigenerSpieler.holeSalatAnzahl() > 0)
+			{
 				feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
 						Spielfeldtyp.SALAT, eigenerSpieler.holeFeldnummer());
 			}
 
 			// Wenn ein Salat gefunden wurde
-			if (feldNummer > 0) {
+			if (feldNummer > 0)
+			{
 				if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
 						- eigenerSpieler.holeFeldnummer()) <= eigenerSpieler
-						.holeKarottenAnzahl()) {
+						.holeKarottenAnzahl())
+				{
 					eigenerSpieler.setzeFigur(feldNummer);
-				} else {
+				}
+				else
+				{
 					feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
 							Spielfeldtyp.KAROTTEN, eigenerSpieler
 									.holeFeldnummer());
-					if (feldNummer > 0) {
+					if (feldNummer > 0)
+					{
 						if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
 								- eigenerSpieler.holeFeldnummer()) <= eigenerSpieler
-								.holeKarottenAnzahl()) {
+								.holeKarottenAnzahl())
+						{
 							eigenerSpieler.setzeFigur(feldNummer);
 						}
 					}

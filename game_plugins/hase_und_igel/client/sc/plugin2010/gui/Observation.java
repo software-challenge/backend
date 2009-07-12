@@ -3,6 +3,7 @@
  */
 package sc.plugin2010.gui;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,23 +11,24 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
-import sc.plugin2010.Client;
+import sc.helpers.ReplayBuilder;
+import sc.protocol.IControllableGame;
 
 /**
  * @author ffi
  * 
  */
-public class GameObservation implements IObservation
+public class Observation implements IObservation
 {
-	private Client						client;
+	private IControllableGame			conGame;
 
 	private List<IGameEndedListener>	gameEndedListeners	= new LinkedList<IGameEndedListener>();
 	private List<INewTurnListener>		newTurnListeners	= new LinkedList<INewTurnListener>();
 	private List<IReadyListener>		readyListeners		= new LinkedList<IReadyListener>();
 
-	public GameObservation(Client administrativeClient)
+	public Observation(IControllableGame conGame)
 	{
-		client = administrativeClient;
+		this.conGame = conGame;
 	}
 
 	@Override
@@ -50,28 +52,25 @@ public class GameObservation implements IObservation
 	@Override
 	public void back()
 	{
-		// TODO Auto-generated method stub
-
+		conGame.previous();
 	}
 
 	@Override
 	public void cancel()
 	{
-		// TODO Auto-generated method stub
-
+		// conGame.; TODO
 	}
 
 	@Override
 	public void next()
 	{
-		// TODO Auto-generated method stub
-
+		conGame.next();
 	}
 
 	@Override
 	public void pause()
 	{
-
+		conGame.pause();
 	}
 
 	@Override
@@ -93,23 +92,22 @@ public class GameObservation implements IObservation
 	}
 
 	@Override
-	public void saveReplayToFile(String filename)
+	public void saveReplayToFile(String filename) throws IOException
 	{
-		// TODO Auto-generated method stub
-
+		ReplayBuilder.saveReplay(conGame, filename);
 	}
 
 	@Override
 	public void start()
 	{
-		// TODO Auto-generated method stub
-
+		conGame.unpause();
 	}
 
 	@Override
 	public void unpause()
 	{
-		// TODO
+		conGame.unpause();
+		// TODO switch in rendererfacade
 	}
 
 	/**
