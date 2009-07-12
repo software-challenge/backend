@@ -225,6 +225,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		{
 			listener.onNewState(roomId, state);
 		}
+
+		for (IHistoryListener listener : this.historyListeners)
+		{
+			listener.onNewState(roomId, state);
+		}
 	}
 
 	protected void onError(ErrorResponse error)
@@ -319,8 +324,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public IControllableGame observe(PrepareGameResponse handle)
 	{
+		IControllableGame result = new ObservingClient(this, handle.getRoomId());
+		this.start();
 		this.send(new ObservationRequest(handle.getRoomId(), ""));
-		return new ObservingClient(this, handle.getRoomId());
+		return result;
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
+import sc.protocol.LobbyClient;
 
 /**
  * @author ffi
@@ -22,6 +23,15 @@ public abstract class SpielClient implements IGameUpdateObserver
 
 	public SpielClient(String ip, int port, String spielreservierung)
 	{
+		if (ip == null || ip.isEmpty())
+		{
+			ip = LobbyClient.DEFAULT_HOST;
+		}
+
+		if (port == 0)
+		{
+			port = LobbyClient.DEFAULT_PORT;
+		}
 
 		try
 		{
@@ -30,7 +40,15 @@ public abstract class SpielClient implements IGameUpdateObserver
 			Logik logik = new Logik(this, client);
 			spieler.setLogik(logik);
 			client.setHandler(logik);
-			client.joinPreparedGame(spielreservierung);
+			
+			if(spielreservierung == null || spielreservierung.isEmpty())
+			{
+				client.joinAnyGame();
+			}
+			else
+			{
+				client.joinPreparedGame(spielreservierung);
+			}
 		}
 		catch (IOException e)
 		{

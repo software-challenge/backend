@@ -55,6 +55,7 @@ public class ReplayBuilder
 			}
 
 			objectOut.flush();
+			objectOut.close();
 		}
 		else
 		{

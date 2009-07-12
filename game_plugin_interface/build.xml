@@ -6,8 +6,6 @@
 	<property name="lib.dir" value="lib" />
 	<property name="plugin_loader.dir" value="./../plugin_loader/bin" />
 
-	<echo message="${plugin_loader.dir}" />
-
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<pathelement location="${plugin_loader.dir}" />
