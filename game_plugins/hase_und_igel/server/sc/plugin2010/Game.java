@@ -348,6 +348,11 @@ public class Game extends SimpleGameInstance<Player>
 		// Fordere vom ersten Spieler einen Zug an
 		final Player current = players.get(activePlayerId);
 		logger.debug("Active Player is '{}'", current.getColor());
+		
+		for(final Player p: players) {
+			p.notifyListeners(new WelcomeMessage(p.getColor()));
+		}
+		
 		current.requestMove();
 	}
 
