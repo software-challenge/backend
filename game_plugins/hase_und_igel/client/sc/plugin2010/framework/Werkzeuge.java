@@ -2,6 +2,7 @@ package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Move;
+import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.util.GameUtil;
 
@@ -134,7 +135,7 @@ public class Werkzeuge
 
 	public static boolean mussSpielerSichBewegen(Spieler spieler)
 	{
-		return GameUtil.playerMustMove(spieler.getPlayer());
+		return GameUtil.playerMustMove(spieler.getPlayer(), MoveTyp.EAT);
 	}
 
 	// /////////////////////////////////////

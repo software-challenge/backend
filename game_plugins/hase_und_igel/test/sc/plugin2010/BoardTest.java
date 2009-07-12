@@ -66,6 +66,7 @@ public class BoardTest
 		Player p = new Player(FigureColor.RED);
 		b.addPlayer(p);
 
+		p.setPosition(b.getNextFieldByTyp(FieldTyp.RABBIT, 0));
 		//
 		// Action.DROP_20_CARROTS
 		//
@@ -107,7 +108,6 @@ public class BoardTest
 		// anderer Spieler am Start
 		Player p2 = new Player(FigureColor.BLUE);
 		b.addPlayer(p2);
-		p.setPosition(5);
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler auf 1. Feld
@@ -115,12 +115,13 @@ public class BoardTest
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler direkt hinter Igelfeld
-		p2.setPosition(12);
-		p.setPosition(14);
+		p2.setPosition(b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0)+1);
+		p.setPosition(b.getNextFieldByTyp(FieldTyp.RABBIT, p2.getPosition()));
 		Assert.assertFalse(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler weiter hinter Igelfeld
-		p2.setPosition(13);
+		p2.setPosition(p2.getPosition()+1);
+		p.setPosition(b.getNextFieldByTyp(FieldTyp.RABBIT, p2.getPosition()));
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 		
 		// ich bin letzter
@@ -157,6 +158,7 @@ public class BoardTest
 		// anderer direkt vorm Ziel, weniger als oder genau 10 Karotten, 0 Salate
 		p2.setCarrotsAvailable(10);
 		p2.setSaladsToEat(0);
+		p2.setPosition(b.getPreviousFieldByTyp(FieldTyp.RABBIT, p.getPosition()));
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD), p2));
 		
 		// anderer direkt vorm Ziel, weniger als oder genau 10 Karotten, mehr als 0 Salate

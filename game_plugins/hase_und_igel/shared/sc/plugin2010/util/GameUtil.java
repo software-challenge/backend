@@ -106,19 +106,20 @@ public class GameUtil
 	{
 		boolean valid = true;
 		FieldTyp currentField = b.getTypeAt(p.getPosition());
+		
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
 		valid = valid && (p.getSaladsToEat() > 0);
-		valid = valid && !playerMustMove(p);
+		valid = valid && !playerMustMove(p, MoveTyp.EAT);
 
 		return valid;
 	}
 
-	public static boolean playerMustMove(Player p)
+	public static boolean playerMustMove(Player p, MoveTyp t)
 	{
 		int lastSaladAt = -1;
 		for (final Move m : p.getHistory())
 		{
-			if (m.getTyp().equals(MoveTyp.EAT))
+			if (m.getTyp().equals(t))
 				lastSaladAt = m.getTurn();
 		}
 		return !((lastSaladAt == -1) || (p.getHistory().size() - lastSaladAt > 1));
@@ -159,19 +160,18 @@ public class GameUtil
 	public static boolean isValidToPlayCard(Board board, Player player,
 			Action typ, int l)
 	{
-		Boolean valid = true;
+		Boolean valid = board.getTypeAt(player.getPosition()).equals(FieldTyp.RABBIT);
+		valid = valid && !playerMustMove(player, MoveTyp.PLAY_CARD) && !playerMustMove(player, MoveTyp.EAT);
 		switch (typ)
 		{
 			case TAKE_OR_DROP_CARROTS:
 				valid = valid
 						&& player.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
 				valid = valid && (l == 0 || l == 20 || l == -20);
-				valid = valid && !playerMustMove(player);
 				break;
 			case EAT_SALAD:
 				valid = valid && player.ownsCardOfTyp(Action.EAT_SALAD);
 				valid = valid && player.getSaladsToEat() > 0;
-				valid = valid && !playerMustMove(player);
 				break;
 			case FALL_BACK:
 			{
