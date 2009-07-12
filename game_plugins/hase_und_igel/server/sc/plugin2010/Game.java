@@ -160,9 +160,8 @@ public class Game extends SimpleGameInstance<Player>
 	}
 
 	/**
-	 * Aktualisierungen vor dem Beginn einer neuen Runde werden ausgeführt:
-	 * - Positionsfelder werden ausgewertet
-	 * -
+	 * Aktualisierungen vor dem Beginn einer neuen Runde werden ausgeführt: -
+	 * Positionsfelder werden ausgewertet -
 	 * 
 	 * @param player
 	 */
@@ -184,8 +183,7 @@ public class Game extends SimpleGameInstance<Player>
 
 	/**
 	 * Berechnet den nächsten Spieler der an die Reihe kommt. Spieler die noch
-	 * aus
-	 * der letzten Runde aussetzen müssen, werden wieder freigeschaltet.
+	 * aus der letzten Runde aussetzen müssen, werden wieder freigeschaltet.
 	 * Sollte ein Spieler keine Zugmöglichkeit haben, so wird er übersprungen.
 	 * 
 	 * @return
@@ -196,8 +194,9 @@ public class Game extends SimpleGameInstance<Player>
 		if (!GameUtil.canMove(next, board))
 			activePlayerId = (activePlayerId + 1) % players.size();
 
-		logger.debug("next player is '{}'", players.get(activePlayerId).getColor());
-		
+		logger.debug("next player is '{}'", players.get(activePlayerId)
+				.getColor());
+
 		return players.get(activePlayerId);
 	}
 
@@ -309,14 +308,11 @@ public class Game extends SimpleGameInstance<Player>
 
 	private void updateObservers()
 	{
-		if (false)
-		{
-			GameState currentState = new GameState(this);
+		GameState currentState = new GameState(this);
 
-			for (final IGameListener l : listeners)
-			{
-				l.onStateChanged(currentState);
-			}
+		for (final IGameListener l : listeners)
+		{
+			l.onStateChanged(currentState);
 		}
 	}
 
@@ -344,15 +340,17 @@ public class Game extends SimpleGameInstance<Player>
 
 		// Initialisiere alle Spieler
 		updatePlayers();
+		updateObservers();
 
 		// Fordere vom ersten Spieler einen Zug an
 		final Player current = players.get(activePlayerId);
 		logger.debug("Active Player is '{}'", current.getColor());
-		
-		for(final Player p: players) {
+
+		for (final Player p : players)
+		{
 			p.notifyListeners(new WelcomeMessage(p.getColor()));
 		}
-		
+
 		current.requestMove();
 	}
 

@@ -291,7 +291,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		if (!boardWasCreated)
 		{
 			String back = "";
-			for (int i = 0; i <= fbuttons.size(); i++)
+			for (int i = 0; i < fbuttons.size(); i++)
 			{
 				switch (board.getTypeAt(i))
 				{
