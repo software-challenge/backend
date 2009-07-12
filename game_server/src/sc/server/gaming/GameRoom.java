@@ -21,6 +21,7 @@ import sc.api.plugins.host.PlayerScore;
 import sc.framework.plugins.IPauseable;
 import sc.protocol.MementoPacket;
 import sc.protocol.RoomPacket;
+import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.server.network.Client;
@@ -115,6 +116,11 @@ public class GameRoom implements IGameListener
 			player.getClient().send(toSend);
 		}
 
+		observerBroadcast(toSend);
+	}
+
+	private void observerBroadcast(Object toSend)
+	{
 		for (ObserverRole observer : observers)
 		{
 			observer.getClient().send(toSend);
@@ -413,5 +419,11 @@ public class GameRoom implements IGameListener
 		logger.warn("Game couldn't be canceled.");
 		// TODO:
 		// this.game.destroy();
+	}
+
+	@Override
+	public void onPaused()
+	{
+		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent()));
 	}
 }

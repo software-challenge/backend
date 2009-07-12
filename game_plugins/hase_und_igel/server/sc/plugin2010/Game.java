@@ -148,7 +148,7 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 			{
 				updatePlayers();
 				updateObservers();
-				
+
 				requestMove(next);
 			}
 		}
@@ -174,6 +174,11 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 						next.requestMove();
 					}
 				};
+
+				for (IGameListener listener : this.listeners)
+				{
+					listener.onPaused();
+				}
 			}
 		}
 		else

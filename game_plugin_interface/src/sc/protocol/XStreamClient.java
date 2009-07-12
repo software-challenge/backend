@@ -172,7 +172,7 @@ public abstract class XStreamClient
 
 		try
 		{
-			logger.debug("DataDump:\n{}", this.xStream.toXML(o));
+			// logger.debug("DataDump:\n{}", this.xStream.toXML(o));
 			// this.xStream.toXML(o, this.networkInterface.getOutputStream());
 			this.out.writeObject(o);
 			this.out.flush();

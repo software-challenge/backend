@@ -92,4 +92,11 @@ public class TestClient implements ILobbyClientListener
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void onGamePaused(String roomId)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

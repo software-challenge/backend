@@ -20,4 +20,6 @@ public interface ILobbyClientListener
 
 	void onGameOver(String roomId, GameResult data);
 
+	void onGamePaused(String roomId);
+
 }

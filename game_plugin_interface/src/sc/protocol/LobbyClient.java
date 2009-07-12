@@ -24,6 +24,7 @@ import sc.protocol.requests.FreeReservationRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.PrepareGameResponse;
@@ -95,6 +96,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			{
 				onGameOver(roomId, (GameResult) packet.getData());
 			}
+			else if (packet.getData() instanceof GamePausedEvent)
+			{
+				onGamePaused(roomId);
+			}
 			else
 			{
 				onRoomMessage(roomId, packet.getData());
@@ -135,6 +140,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		else
 		{
 			onCustomObject(o);
+		}
+	}
+
+	private void onGamePaused(String roomId)
+	{
+		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGamePaused(roomId);
 		}
 	}
 

@@ -10,4 +10,5 @@ public interface IGameListener
 	public void onPlayerLeft(IPlayer player);
 	public void onPlayerJoined(IPlayer player);
 	public void onStateChanged(Object data);
+	public void onPaused();
 }

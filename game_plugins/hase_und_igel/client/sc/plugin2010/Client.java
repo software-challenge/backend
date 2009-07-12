@@ -239,4 +239,10 @@ public class Client implements ILobbyClientListener
 	{
 		client.freeReservation(reservation);
 	}
+
+	@Override
+	public void onGamePaused(String roomId)
+	{
+		// TODO Auto-generated method stub
+	}
 }

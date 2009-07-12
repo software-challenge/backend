@@ -114,4 +114,11 @@ public class SimpleClient implements ILobbyClientListener
 			System.out.println();
 		}
 	}
+
+	@Override
+	public void onGamePaused(String roomId)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
