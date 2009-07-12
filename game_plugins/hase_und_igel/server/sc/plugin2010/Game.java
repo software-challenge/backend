@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
+import sc.framework.plugins.IPauseable;
 import sc.framework.plugins.SimpleGameInstance;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.Action;
@@ -26,9 +27,10 @@ import sc.plugin2010.util.GameUtil;
  * @since Jul 4, 2009
  * 
  */
-public class Game extends SimpleGameInstance<Player>
+public class Game extends SimpleGameInstance<Player> implements IPauseable
 {
-	private static final Logger	logger	= LoggerFactory.getLogger(Game.class);
+	private static final Logger	logger				= LoggerFactory
+															.getLogger(Game.class);
 
 	private Board				board;
 
@@ -41,6 +43,11 @@ public class Game extends SimpleGameInstance<Player>
 	private int					turn;
 
 	private int					actionsSinceFirstPlayerEnteredGoal;
+
+	private boolean				paused;
+
+	private Runnable			afterPauseAction	= null;
+	private Object				afterPauseLock		= new Object();
 
 	public Game()
 	{
@@ -76,6 +83,7 @@ public class Game extends SimpleGameInstance<Player>
 
 		active = false;
 		turn = 0;
+		paused = false;
 		actionsSinceFirstPlayerEnteredGoal = 0;
 		activePlayerId = 0;
 	}
@@ -124,7 +132,7 @@ public class Game extends SimpleGameInstance<Player>
 			}
 			player.addToHistory(move);
 
-			Player next = fetchNextPlayer();
+			final Player next = fetchNextPlayer();
 			updatePlayer(next);
 
 			if (gameOver())
@@ -139,7 +147,25 @@ public class Game extends SimpleGameInstance<Player>
 			else
 			{
 				updatePlayers();
-				next.requestMove();
+				if (this.paused)
+				{
+					synchronized (this.afterPauseLock)
+					{
+						logger.debug("Setting AfterPauseAction");
+
+						this.afterPauseAction = new Runnable() {
+							@Override
+							public void run()
+							{
+								next.requestMove();
+							}
+						};
+					}
+				}
+				else
+				{
+					next.requestMove();
+				}
 				updateObservers();
 			}
 		}
@@ -269,12 +295,12 @@ public class Game extends SimpleGameInstance<Player>
 					case FALL_BACK:
 						if (board.isFirst(player))
 							player.setPosition(board.getOtherPlayer(player)
-								.getPosition() - 1);
+									.getPosition() - 1);
 						break;
 					case HURRY_AHEAD:
 						if (!board.isFirst(player))
 							player.setPosition(board.getOtherPlayer(player)
-								.getPosition() + 1);
+									.getPosition() + 1);
 						break;
 					case TAKE_OR_DROP_CARROTS:
 						player.changeCarrotsAvailableBy(move.getN());
@@ -387,5 +413,30 @@ public class Game extends SimpleGameInstance<Player>
 	public boolean ready()
 	{
 		return players.size() == GamePlugin.MAX_PLAYER_COUNT;
+	}
+
+	@Override
+	public void afterPause()
+	{
+		synchronized (this.afterPauseLock)
+		{
+			if (this.afterPauseAction == null)
+			{
+				logger
+						.error("AfterPauseAction was null. Might cause a deadlock.");
+			}
+			else
+			{
+				Runnable action = this.afterPauseAction;
+				this.afterPauseAction = null;
+				action.run();
+			}
+		}
+	}
+
+	@Override
+	public void setPauseMode(boolean pause)
+	{
+		this.paused = pause;
 	}
 }
