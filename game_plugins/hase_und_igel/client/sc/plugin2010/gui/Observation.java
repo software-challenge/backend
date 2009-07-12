@@ -12,13 +12,15 @@ import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.helpers.ReplayBuilder;
+import sc.plugin2010.GameState;
 import sc.protocol.IControllableGame;
+import sc.protocol.clients.IUpdateListener;
 
 /**
  * @author ffi
  * 
  */
-public class Observation implements IObservation
+public class Observation implements IObservation, IUpdateListener
 {
 	private IControllableGame			conGame;
 
@@ -29,6 +31,7 @@ public class Observation implements IObservation
 	public Observation(IControllableGame conGame)
 	{
 		this.conGame = conGame;
+		conGame.addListener(this);
 	}
 
 	@Override
@@ -141,5 +144,14 @@ public class Observation implements IObservation
 		{
 			list.newTurn(info);
 		}
+	}
+
+	@Override
+	public void onUpdate(Object sender)
+	{
+		assert sender == conGame;
+		GameState state = (GameState)conGame.getCurrentState();
+		
+		// TODO: propagate state to listeners
 	}
 }
