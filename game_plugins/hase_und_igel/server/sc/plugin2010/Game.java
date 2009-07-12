@@ -94,14 +94,18 @@ public class Game extends SimpleGameInstance<Player>
 		if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
 				|| board.getTypeAt(players.get(1).getPosition()).equals(
 						FieldTyp.GOAL))
+		{
 			actionsSinceFirstPlayerEnteredGoal++;
+		}
 
 		final Player player = players.get(activePlayerId);
 
 		activePlayerId = (activePlayerId + 1) % players.size();
 
 		if (activePlayerId == 0)
+		{
 			turn++;
+		}
 
 		if (data instanceof Move)
 		{
@@ -151,10 +155,14 @@ public class Game extends SimpleGameInstance<Player>
 		boolean gameOver = false;
 
 		if (turn > GamePlugin.MAX_TURN_COUNT)
+		{
 			gameOver = true;
+		}
 
 		if (actionsSinceFirstPlayerEnteredGoal >= 1)
+		{
 			gameOver = true;
+		}
 
 		return gameOver;
 	}
@@ -172,11 +180,15 @@ public class Game extends SimpleGameInstance<Player>
 		{
 			case POSITION_1:
 				if (board.isFirst(player))
+				{
 					player.changeCarrotsAvailableBy(10);
+				}
 				break;
 			case POSITION_2:
 				if (!board.isFirst(player))
+				{
 					player.changeCarrotsAvailableBy(20);
+				}
 				break;
 		}
 	}
@@ -192,7 +204,9 @@ public class Game extends SimpleGameInstance<Player>
 	{
 		Player next = players.get(activePlayerId);
 		if (!GameUtil.canMove(next, board))
+		{
 			activePlayerId = (activePlayerId + 1) % players.size();
+		}
 
 		logger.debug("next player is '{}'", players.get(activePlayerId)
 				.getColor());
@@ -210,9 +224,13 @@ public class Game extends SimpleGameInstance<Player>
 			case EAT:
 				player.eatSalad();
 				if (board.isFirst(player))
+				{
 					player.changeCarrotsAvailableBy(10);
+				}
 				else
+				{
 					player.changeCarrotsAvailableBy(30);
+				}
 				break;
 			case MOVE:
 				player.setPosition(player.getPosition() + move.getN());
@@ -240,9 +258,13 @@ public class Game extends SimpleGameInstance<Player>
 					case EAT_SALAD:
 						player.eatSalad();
 						if (board.isFirst(player))
+						{
 							player.changeCarrotsAvailableBy(10);
+						}
 						else
+						{
 							player.changeCarrotsAvailableBy(30);
+						}
 					case FALL_BACK:
 						player.setPosition(board.getOtherPlayer(player)
 								.getPosition() - 1);
@@ -272,7 +294,9 @@ public class Game extends SimpleGameInstance<Player>
 	{
 		Player player = null;
 		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT)
+		{
 			throw new TooManyPlayersException();
+		}
 
 		player = new Player(availableColors.remove(0));
 		players.add(player);
@@ -324,7 +348,9 @@ public class Game extends SimpleGameInstance<Player>
 			for (final Player other : players)
 			{
 				if (other.equals(player))
+				{
 					continue;
+				}
 				player.notifyListeners(new PlayerUpdated(other, false));
 			}
 
@@ -338,6 +364,11 @@ public class Game extends SimpleGameInstance<Player>
 		active = true;
 		activePlayerId = 0;
 
+		for (final Player p : players)
+		{
+			p.notifyListeners(new WelcomeMessage(p.getColor()));
+		}
+
 		// Initialisiere alle Spieler
 		updatePlayers();
 		updateObservers();
@@ -346,17 +377,12 @@ public class Game extends SimpleGameInstance<Player>
 		final Player current = players.get(activePlayerId);
 		logger.debug("Active Player is '{}'", current.getColor());
 
-		for (final Player p : players)
-		{
-			p.notifyListeners(new WelcomeMessage(p.getColor()));
-		}
-
 		current.requestMove();
 	}
 
 	@Override
 	public boolean ready()
 	{
-		return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
+		return players.size() == GamePlugin.MAX_PLAYER_COUNT;
 	}
 }

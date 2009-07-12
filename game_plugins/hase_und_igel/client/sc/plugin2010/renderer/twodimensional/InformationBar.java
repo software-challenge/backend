@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import sc.plugin2010.Player.Action;
+import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.GameUtil;
 
 /**
@@ -176,16 +177,16 @@ public class InformationBar extends JPanel
 			switch (jo)
 			{
 				case TAKE_OR_DROP_CARROTS:
-					text = "<center>Du kannst 20 Karotten nehmen oder abgeben</center>";
+					text += "<center>Du kannst 20 Karotten nehmen oder abgeben</center>";
 					break;
 				case EAT_SALAD:
-					text = "<center>Friss sofort einen Salat</center>";
+					text += "<center>Friss sofort einen Salat</center>";
 					break;
 				case FALL_BACK:
-					text = "<center>Gehe eine Position zurück</center>";
+					text += "<center>Gehe eine Position zurück</center>";
 					break;
 				case HURRY_AHEAD:
-					text = "<center>Rücke eine Position vor</center>";
+					text += "<center>Rücke eine Position vor</center>";
 					break;
 				default:
 					break;
@@ -202,9 +203,9 @@ public class InformationBar extends JPanel
 
 	public void setTurn(final String color)
 	{
-		ImageIcon icon = new ImageIcon("resource/" + color + ".png");
-		icon.setImage(icon.getImage().getScaledInstance(40, 40,
-				Image.SCALE_SMOOTH));
+		ImageIcon icon = new ImageIcon();
+		icon.setImage(RendererUtil.getImage("resource/" + color + ".png")
+				.getScaledInstance(40, 40, Image.SCALE_SMOOTH));
 		turnicon.setIcon(icon);
 	}
 }

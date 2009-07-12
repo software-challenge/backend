@@ -11,11 +11,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import sc.plugin2010.renderer.RendererUtil;
 
 /**
  * @author ffi
@@ -38,8 +39,7 @@ public class QuestionDialog extends JDialog
 
 		this.obs = obs;
 
-		setIconImage(new ImageIcon("resource/hase_und_igel_icon.png")
-				.getImage());
+		setIconImage(RendererUtil.getImage("resource/hase_und_igel_icon.png"));
 
 		// Size of Screen
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

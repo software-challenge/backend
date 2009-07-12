@@ -10,7 +10,6 @@ import java.awt.MediaTracker;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -81,7 +80,7 @@ public class FieldButton extends JButton
 		{
 			final MediaTracker mt = new MediaTracker(this);
 			img = RendererUtil.getImage(bg);
-			mt.addImage(icon, 0);
+			mt.addImage(img, 0);
 			try
 			{
 				mt.waitForAll();
@@ -111,8 +110,7 @@ public class FieldButton extends JButton
 					break;
 			}
 
-			icon = Toolkit.getDefaultToolkit().getImage(
-					"resource/" + colorString + ".png");
+			icon = RendererUtil.getImage("resource/" + colorString + ".png");
 			mt.addImage(icon, 0);
 			mycolor = color;
 			occupied = true;
