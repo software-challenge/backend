@@ -7,6 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
+import sc.api.plugins.host.PlayerScore;
 import sc.framework.plugins.protocol.MoveRequest;
 
 public abstract class SimplePlayer implements IPlayer
@@ -43,4 +44,6 @@ public abstract class SimplePlayer implements IPlayer
 			listener.onPlayerEvent(request);
 		}
 	}
+	
+	public abstract PlayerScore getScore();
 }

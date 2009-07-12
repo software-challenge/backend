@@ -3,6 +3,8 @@ package sc.plugin2010;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.api.plugins.host.PlayerScore;
+import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.SimplePlayer;
 
 /**
@@ -201,5 +203,12 @@ public class Player extends SimplePlayer
 	public Move getLastMove()
 	{
 		return lastMove;
+	}
+	
+	@Override
+	public PlayerScore getScore()
+	{
+		// TODO: get correct playerscore
+		return new PlayerScore(true);
 	}
 }

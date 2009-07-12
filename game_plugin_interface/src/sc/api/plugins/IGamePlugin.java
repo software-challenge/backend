@@ -18,4 +18,6 @@ public interface IGamePlugin extends IPlugin<IGamePluginHost>
 	 *         join from the lobby.
 	 */
 	public int getMaximumPlayerCount();
+
+	public ScoreDefinition getScoreDefinition();
 }

@@ -3,15 +3,24 @@ package sc.sample.server;
 import edu.cau.plugins.PluginDescriptor;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
+import sc.api.plugins.ScoreDefinition;
 import sc.api.plugins.host.IGamePluginHost;
 import sc.sample.protocol.ProtocolDefinition;
 
 @PluginDescriptor(name = "Tic Tac Toe (Sample)", uuid = GamePluginImpl.PLUGIN_UUID)
 public class GamePluginImpl implements IGamePlugin
 {
-	public static final String PLUGIN_UUID = "sc_sample_plugin";
-	public static final int MAXIMUM_PLAYER_SIZE = 2;
-	
+	public static final String			PLUGIN_UUID			= "sc_sample_plugin";
+	public static final int				MAXIMUM_PLAYER_SIZE	= 2;
+	public static final ScoreDefinition	SCORE_DEFINITION;
+
+	static
+	{
+		SCORE_DEFINITION = new ScoreDefinition();
+		SCORE_DEFINITION.add("winner");
+		SCORE_DEFINITION.add("moves");
+	}
+
 	@Override
 	public IGameInstance createGame()
 	{
@@ -37,4 +46,9 @@ public class GamePluginImpl implements IGamePlugin
 
 	}
 
+	@Override
+	public ScoreDefinition getScoreDefinition()
+	{
+		return SCORE_DEFINITION;
+	}
 }

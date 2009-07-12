@@ -10,12 +10,15 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry.Entry;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
+import sc.api.plugins.ScoreDefinition;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.api.plugins.host.IPlayerScore;
+import sc.api.plugins.host.PlayerScore;
 import sc.framework.plugins.IPauseable;
 import sc.protocol.MementoPacket;
 import sc.protocol.RoomPacket;
@@ -65,14 +68,63 @@ public class GameRoom implements IGameListener
 	}
 
 	@Override
-	public void onGameOver(Map<IPlayer, IPlayerScore> results)
+	public void onGameOver(Map<IPlayer, PlayerScore> results)
 	{
 		isOver = true;
 
+		ScoreDefinition definition = getProvider().getPlugin()
+				.getScoreDefinition();
+		List<PlayerScore> scores = new LinkedList<PlayerScore>();
+
+		// restore order
 		for (PlayerRole player : getPlayers())
 		{
-			player.getClient().send(new LeftGameEvent(this.getId()));
+			PlayerScore score = results.get(player.getPlayer());
+
+			if (score == null)
+			{
+				throw new RuntimeException("GameScore was not complete!");
+			}
+
+			if (score.size() != definition.size())
+			{
+				throw new RuntimeException("ScoreSize did not match Definition");
+			}
+
+			scores.add(score);
 		}
+
+		broadcast(new GameResult(definition, scores));
+		kickAllClients();
+	}
+
+	private void broadcast(Object o)
+	{
+		broadcast(o, true);
+	}
+
+	private void broadcast(Object o, boolean roomSpecific)
+	{
+		Object toSend = o;
+		if (roomSpecific)
+		{
+			toSend = new RoomPacket(getId(), o);
+		}
+
+		for (PlayerRole player : getPlayers())
+		{
+			player.getClient().send(toSend);
+		}
+
+		for (ObserverRole observer : observers)
+		{
+			observer.getClient().send(toSend);
+		}
+	}
+
+	private void kickAllClients()
+	{
+		broadcast(new LeftGameEvent(getId()), false);
 	}
 
 	@Override

@@ -3,13 +3,14 @@ package sc.framework.plugins;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IGameListener;
-import sc.api.plugins.host.IPlayerScore;
+import sc.api.plugins.host.PlayerScore;
 
 public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		IGameInstance
@@ -34,9 +35,16 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 
 	protected void notifyOnGameOver()
 	{
+		Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
+		
+		for(P player : this.players)
+		{
+			map.put(player, player.getScore());
+		}
+		
 		for (IGameListener listener : this.listeners)
 		{
-			listener.onGameOver(new HashMap<IPlayer, IPlayerScore>());
+			listener.onGameOver(map);
 		}
 	}
 

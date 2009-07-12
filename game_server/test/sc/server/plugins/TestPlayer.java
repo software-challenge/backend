@@ -3,8 +3,8 @@ package sc.server.plugins;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
+import sc.api.plugins.host.PlayerScore;
 import sc.framework.plugins.SimplePlayer;
 
 public class TestPlayer extends SimplePlayer
@@ -31,5 +31,11 @@ public class TestPlayer extends SimplePlayer
 		{
 			listener.onPlayerEvent(request);
 		}
+	}
+	
+	@Override
+	public PlayerScore getScore()
+	{
+		return new PlayerScore(true);
 	}
 }

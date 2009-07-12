@@ -6,6 +6,7 @@ import edu.cau.plugins.PluginDescriptor;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
+import sc.api.plugins.ScoreDefinition;
 import sc.api.plugins.host.IGamePluginHost;
 
 @PluginDescriptor(author="Chuck", name="TestPlugin", uuid=TestPlugin.TEST_PLUGIN_UUID)
@@ -13,6 +14,14 @@ public class TestPlugin implements IGamePlugin
 {
 	public static final String TEST_PLUGIN_UUID = "012345-norris";
 	public static final int MAXIMUM_PLAYER_SIZE = 2;
+	
+	public static final ScoreDefinition	SCORE_DEFINITION;
+
+	static
+	{
+		SCORE_DEFINITION = new ScoreDefinition();
+		SCORE_DEFINITION.add("winner");
+	}
 	
 	public TestPlugin()
 	{
@@ -45,6 +54,12 @@ public class TestPlugin implements IGamePlugin
 	public int getMaximumPlayerCount()
 	{
 		return MAXIMUM_PLAYER_SIZE;
+	}
+	
+	@Override
+	public ScoreDefinition getScoreDefinition()
+	{
+		return SCORE_DEFINITION;
 	}
 
 }

@@ -1,6 +1,11 @@
 package sc.helpers;
 
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public abstract class CollectionHelper
 {
@@ -35,5 +40,27 @@ public abstract class CollectionHelper
 				};
 			}
 		};
+	}
+
+	public static <T> Collection<T> iterableToColleciton(Iterable<T> values)
+	{
+		Collection<T> result = new LinkedList<T>();
+		for(T value : values)
+		{
+			result.add(value);
+		}
+		return result;
+	}
+	
+	public static Iterable<BigInteger> intArrayToBigIntArray(Integer[] integers)
+	{
+		return CollectionHelper.map(Arrays.asList(integers),
+				new Function<Integer, BigInteger>() {
+					@Override
+					public BigInteger operate(Integer val)
+					{
+						return BigInteger.valueOf(val);
+					}
+				});
 	}
 }
