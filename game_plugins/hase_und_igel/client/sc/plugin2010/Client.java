@@ -118,11 +118,16 @@ public class Client implements ILobbyClientListener
 		handler.onUpdate(game.getBoard(), game.getTurn());
 		if (game.getActivePlayer().getColor() == mycolor)
 		{
+			handler.onUpdate(game.getBoard().getOtherPlayer(
+					game.getActivePlayer()), false);
 			handler.onUpdate(game.getActivePlayer(), true);
 		}
 		else
 		{
 			handler.onUpdate(game.getActivePlayer(), false);
+			handler.onUpdate(game.getBoard().getOtherPlayer(
+					game.getActivePlayer()), true);
+
 		}
 		if (obs != null)
 		{
