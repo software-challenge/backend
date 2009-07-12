@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -250,17 +248,6 @@ public class CreateGameDialog extends JDialog {
 		// configure slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
-
-			String path = (String) model.getValueAt(i, 3);
-			// check path
-			if (path == null || path.equals("")) {
-				JOptionPane.showMessageDialog(this, lang
-						.getString("dialog_create_error_path_msg"), lang
-						.getString("dialog_create_error_path_title"),
-						JOptionPane.ERROR_MESSAGE);
-				cancelGameCreation();
-				return;
-			}
 			// set slot
 			int index = extractIndex((String) model.getValueAt(i, 2));
 			switch (index) {
@@ -274,6 +261,17 @@ public class CreateGameDialog extends JDialog {
 				}
 				break;
 			case 1:
+				String path = (String) model.getValueAt(i, 3);
+				// check path
+				if (path == null || path.equals("")) {
+					JOptionPane.showMessageDialog(this, lang
+							.getString("dialog_create_error_path_msg"), lang
+							.getString("dialog_create_error_path_title"),
+							JOptionPane.ERROR_MESSAGE);
+					cancelGameCreation();
+					return;
+				}
+
 				KIs.add(new KIInformation(slot.asClient(), path));
 				break;
 			case 2: // nothing to do
@@ -311,10 +309,10 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		// show connecting dialog
-		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
-			observer.cancel();
-			cancelGameCreation();
-		} else {
+		/*
+		 * if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
+		 * observer.cancel(); cancelGameCreation(); } else
+		 */{
 			// close dialog
 			this.dispose();
 		}
@@ -380,7 +378,7 @@ public class CreateGameDialog extends JDialog {
 			Vector<Object> rowData = new Vector<Object>();
 			rowData.add(new Integer(i + 1));
 			rowData.add("Player " + (i + 1));
-			rowData.add(null);// TODO std. player type
+			rowData.add(lang.getString("dialog_create_plyType_human")); // default
 			rowData.add("");
 			model.addRow(rowData);
 		}
@@ -465,7 +463,7 @@ public class CreateGameDialog extends JDialog {
 						3);
 				break;
 			case JFileChooser.CANCEL_OPTION:
-				cbox.setSelectedIndex(0);	//set back to default (here: index 0)
+				cbox.setSelectedIndex(0); // set back to default (here: index 0)
 				break;
 			}
 			break;

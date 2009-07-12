@@ -109,6 +109,7 @@ public class PresentationFacade implements IPresentationFacade {
 	@Override
 	public void shutdown() {
 		//logic.saveConfiguration(config);
+		logic.stopServer();
 	}
 
 	public ILogicFacade getLogicFacade() {

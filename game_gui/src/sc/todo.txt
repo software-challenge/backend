@@ -1,0 +1,3 @@
+-replay laden als dialog mit spieltyp auswählen
+-testrange
+-infofenster vom spieltyp

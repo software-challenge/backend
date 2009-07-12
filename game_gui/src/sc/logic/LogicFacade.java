@@ -168,7 +168,8 @@ public class LogicFacade implements ILogicFacade {
 
 	@Override
 	public void stopServer() {
-		server.close();
+		if (server != null)
+			server.close();
 	}
 
 	@Override
