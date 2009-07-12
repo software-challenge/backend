@@ -14,7 +14,11 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.plugin2010.Board;
+import sc.plugin2010.Client;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.Player.FigureColor;
@@ -29,6 +33,8 @@ import sc.plugin2010.util.GameUtil;
 @SuppressWarnings("serial")
 public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 {
+	private static final Logger		logger			= LoggerFactory
+															.getLogger(Client.class);
 
 	// GUI Components
 	private InformationBar			info;
@@ -201,7 +207,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		info.setTurn(currentColorPath);
 		actionb.removeAllRows();
 		actionb.addRow("Aktionen: ");
-		if (enemy != null)
+		if (enemy != null) // TODO correct action adding
 		{
 			for (int i = 0; i < player.getHistory().size(); i++)
 			{
@@ -244,8 +250,12 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		if (own)
 		{
 			this.player = player;
+
 			if (myturn)
 			{
+				setReachableFields(player.getPosition(), player
+						.getCarrotsAvailable());
+
 				if (player.getColor() == FigureColor.RED)
 				{
 					info.setColor(true);
@@ -254,9 +264,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 				{
 					info.setColor(false);
 				}
-
-				setReachableFields(player.getPosition(), player
-						.getCarrotsAvailable());
 
 				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 				{
@@ -491,13 +498,27 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		if ((!onlyObserving) && (myturn))
 		{
 			int relativeFieldsToMove = fieldNumber - player.getPosition();
-			if (GameUtil.isValidToMove(board, player, relativeFieldsToMove))
+			if (relativeFieldsToMove < 0)
 			{
-				sendMove(new Move(Move.MoveTyp.MOVE, relativeFieldsToMove));
+				if (GameUtil.isValidToFallBack(board, player))
+				{
+					sendMove(new Move(Move.MoveTyp.FALL_BACK));
+				}
+				else
+				{
+					new ErrorDialog("Dies ist kein valider Zug.");
+				}
 			}
 			else
 			{
-				new ErrorDialog("Dies ist kein valider Zug.");
+				if (GameUtil.isValidToMove(board, player, relativeFieldsToMove))
+				{
+					sendMove(new Move(Move.MoveTyp.MOVE, relativeFieldsToMove));
+				}
+				else
+				{
+					new ErrorDialog("Dies ist kein valider Zug.");
+				}
 			}
 		}
 	}
@@ -524,5 +545,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	public void requestMove()
 	{
 		myturn = true;
+		setReachableFields(player.getPosition(), player.getCarrotsAvailable());
 	}
 }
