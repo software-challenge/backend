@@ -117,7 +117,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		setLayout(framelayout);
 
 		this.add(leftPanel, BorderLayout.CENTER);
-		action.setPreferredSize(new Dimension(180, 800));
+		action.setPreferredSize(new Dimension(180, getHeight() - 100));
 		this.add(action, BorderLayout.EAST);
 
 		// chat.addOtherMessage("Chat: ");

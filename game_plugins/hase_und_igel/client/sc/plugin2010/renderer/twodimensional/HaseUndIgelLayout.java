@@ -65,10 +65,9 @@ public class HaseUndIgelLayout implements LayoutManager
 	{
 		final Dimension d = new Dimension();
 
-		d.width = parent.getComponent(0).getPreferredSize().width * SIZEX + 2
-				* BORDER;
-		d.height = parent.getComponent(0).getPreferredSize().height * SIZEY + 2
-				* BORDER;
+		d.width = 100;
+		d.height = 100;
+
 		return d;
 	}
 

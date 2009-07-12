@@ -206,8 +206,9 @@ public class InformationBar extends JPanel
 	public void setTurn(final String color)
 	{
 		ImageIcon icon = new ImageIcon();
+		int scaleValue = 70;
 		icon.setImage(RendererUtil.getImage("resource/" + color + ".png")
-				.getScaledInstance(40, 40, Image.SCALE_SMOOTH));
+				.getScaledInstance(scaleValue, scaleValue, Image.SCALE_SMOOTH));
 		turnicon.setIcon(icon);
 	}
 }
