@@ -5,6 +5,10 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,7 +19,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
-import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
@@ -32,14 +35,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import sc.gui.PresentationFacade;
 import sc.gui.stuff.KIInformation;
-import sc.gui.stuff.MyCombobox;
 import sc.gui.stuff.YearComparator;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
@@ -165,8 +165,6 @@ public class CreateGameDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				createGame(playersModel);
-				// close dialog
-				CreateGameDialog.this.dispose();
 			}
 		});
 
@@ -190,10 +188,12 @@ public class CreateGameDialog extends JDialog {
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 		// set dialog preferences
 		// this.getRootPane().setDefaultButton(okButton);
+		this.setResizable(false);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setModal(true);
-		this.setSize(800, 480);
+		// this.setSize(800, 480);
+		this.pack();
 	}
 
 	/**
@@ -291,10 +291,14 @@ public class CreateGameDialog extends JDialog {
 		IObservation observer = prep.getObserver();
 		presFac.getLogicFacade().setObservation(observer);
 
+		final ConnectingDialog connDial = new ConnectingDialog();
+
 		observer.addReadyListener(new IReadyListener() {
 			@Override
 			public void ready() {
 				contextPanel.updateButtonBar(false);
+				connDial.dispose();
+				CreateGameDialog.this.requestFocus();
 			}
 		});
 
@@ -307,16 +311,17 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		// show connecting dialog
-		String message = lang.getString("dialog_create_waiting");
-		String title = "";
-		if (JOptionPane.showInputDialog(message) == null) {
+		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
 			observer.cancel();
+			cancelGameCreation();
+		} else {
+			// close dialog
+			this.dispose();
 		}
 
 	}
 
 	private int extractIndex(String plyType) {
-		System.out.println("TEST " + plyType);
 		if (plyType.equals(lang.getString("dialog_create_plyType_human"))) {
 			return 0;
 		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki"))) {
@@ -329,6 +334,9 @@ public class CreateGameDialog extends JDialog {
 		return -1;
 	}
 
+	/**
+	 * Closes the server.
+	 */
 	void cancelGameCreation() {
 		presFac.getLogicFacade().stopServer();
 	}
@@ -380,16 +388,6 @@ public class CreateGameDialog extends JDialog {
 
 	private class MyTableModel extends DefaultTableModel {
 
-		/*
-		 * JTable uses this method to determine the default renderer/ editor for
-		 * each cell. If we didn't implement this method, then the last column
-		 * would contain text ("true"/"false"), rather than a check box.
-		 */
-
-		public Class getColumnClass(int c) {
-			return getValueAt(0, c).getClass();
-		}
-
 		public boolean isCellEditable(int row, int col) {
 			return (col > 0);
 		}
@@ -417,19 +415,22 @@ public class CreateGameDialog extends JDialog {
 		}
 	}
 
-	public class MyComboBoxEditor extends DefaultCellEditor implements ActionListener {
+	public class MyComboBoxEditor extends DefaultCellEditor implements ItemListener {
 		public MyComboBoxEditor(Vector<String> items) {
 			super(new JComboBox(items));
 
 			JComboBox cbox = (JComboBox) getComponent();
-			cbox.addActionListener(this);
+			cbox.setEditable(false);
+			cbox.addItemListener(this);
 		}
 
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			JComboBox cbox = (JComboBox) getComponent();
-			int row = tblPlayers.getSelectedRow();
-			updatePlayerTable(cbox, row);
+		public void itemStateChanged(ItemEvent e) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				JComboBox cbox = (JComboBox) getComponent();
+				int row = tblPlayers.getSelectedRow();
+				updatePlayerTable(cbox, row);
+			}
 		}
 	}
 
@@ -455,12 +456,17 @@ public class CreateGameDialog extends JDialog {
 			String currentDirectoryPath = "."; // TODO load config
 			JFileChooser chooser = new JFileChooser(currentDirectoryPath);
 			// chooser.setDialogTitle(dialogTitle); TODO
-			if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
+			switch (chooser.showOpenDialog(frame)) {
+			case JFileChooser.APPROVE_OPTION:
 				// set name
 				playersModel.setValueAt(chooser.getSelectedFile().getName(), row, 1);
 				// set path
 				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
 						3);
+				break;
+			case JFileChooser.CANCEL_OPTION:
+				cbox.setSelectedIndex(0);	//set back to default (here: index 0)
+				break;
 			}
 			break;
 		case 2:// observer

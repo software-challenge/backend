@@ -1,13 +1,71 @@
 package sc.gui.dialogs;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import sc.gui.PresentationFacade;
 
 @SuppressWarnings("serial")
-public class ConnectingDialog extends JDialog {
+public class ConnectingDialog extends JDialog implements ActionListener {
 
-	public static int showDialog() {
-		new ConnectingDialog();
-		//TODO
-		return 0;
+	private int returnValue = JOptionPane.DEFAULT_OPTION;
+	private ResourceBundle lang;
+	
+	public ConnectingDialog() {
+		super();
+		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		createGUI();
 	}
+	
+	private void createGUI() {
+		
+		this.setLayout(new BorderLayout());
+		
+		JPanel pnlConnecting = new JPanel();
+		JPanel pnlButtonBar = new JPanel();
+		
+		this.add(pnlConnecting, BorderLayout.CENTER);
+		this.add(pnlButtonBar, BorderLayout.PAGE_END);
+		
+		//------------------------------------------
+		
+		JLabel lblConnecting = new JLabel(lang.getString("dialog_connecting_msg"));
+		pnlConnecting.add(lblConnecting);
+		
+		JButton btnCancel = new JButton(lang.getString("dialog_connecting_cancel"));//TODO
+		btnCancel.addActionListener(this);
+		pnlButtonBar.add(btnCancel);
+		
+		//------------------------------------------
+		
+		this.setResizable(false);
+		this.setModal(true);
+		this.setLocationRelativeTo(null);
+		this.pack();
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		returnValue = JOptionPane.CANCEL_OPTION;
+		this.setVisible(false);
+		this.dispose();
+	}
+
+	public int showDialog() {
+		this.setVisible(true);
+		return this.getReturnValue();
+	}
+
+	public int getReturnValue() {
+		return returnValue;
+	}
+
 }
