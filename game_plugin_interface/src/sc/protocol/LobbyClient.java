@@ -14,6 +14,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.api.plugins.GameResult;
 import sc.helpers.IRequestResult;
 import sc.networking.TcpNetwork;
 import sc.protocol.clients.ControllingClient;
@@ -51,13 +52,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		this(xStream, null);
 	}
 
-	public LobbyClient(XStream xStream, Collection<Class<?>> protocolClasses) throws IOException
+	public LobbyClient(XStream xStream, Collection<Class<?>> protocolClasses)
+			throws IOException
 	{
 		this(xStream, protocolClasses, DEFAULT_HOST, DEFAULT_PORT);
 	}
 
-	public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses, String host, int port)
-			throws IOException
+	public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses,
+			String host, int port) throws IOException
 	{
 		super(xstream, new TcpNetwork(new Socket(host, port)));
 		LobbyProtocol.registerMessages(xstream, protocolClasses);
@@ -82,14 +84,19 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		if (o instanceof RoomPacket)
 		{
 			RoomPacket packet = (RoomPacket) o;
+			String roomId = packet.getRoomId();
 			if (packet.getData() instanceof MementoPacket)
 			{
 				MementoPacket statePacket = (MementoPacket) packet.getData();
-				onNewState(packet.getRoomId(), statePacket.getState());
+				onNewState(roomId, statePacket.getState());
+			}
+			else if (packet.getData() instanceof GameResult)
+			{
+				onGameOver(roomId, (GameResult) packet.getData());
 			}
 			else
 			{
-				onRoomMessage(packet.getRoomId(), packet.getData());
+				onRoomMessage(roomId, packet.getData());
 			}
 		}
 		else if (o instanceof PrepareGameResponse)
@@ -127,6 +134,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		else
 		{
 			onCustomObject(o);
+		}
+	}
+
+	private void onGameOver(String roomId, GameResult data)
+	{
+		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGameOver(roomId, data);
 		}
 	}
 

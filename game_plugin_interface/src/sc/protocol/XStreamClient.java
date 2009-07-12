@@ -4,12 +4,10 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MarkerFactory;
 
-import sc.helpers.IAsyncResult;
-import sc.helpers.IRequestResult;
 import sc.networking.INetworkInterface;
 
 import com.thoughtworks.xstream.XStream;
@@ -26,6 +24,8 @@ public abstract class XStreamClient
 	private DisconnectCause				disconnectCause	= null;
 	private boolean						closing			= false;
 	protected final XStream				xStream;
+	private boolean						ready			= false;
+	private final Object				readyLock		= new Object();
 
 	public enum DisconnectCause
 	{
@@ -35,6 +35,23 @@ public abstract class XStreamClient
 		 * Connection was closed from this side.
 		 */
 		DISCONNECTED
+	}
+
+	public boolean isReady()
+	{
+		return this.ready;
+	}
+
+	public void start()
+	{
+		synchronized (this.readyLock)
+		{
+			if (!this.ready)
+			{
+				this.ready = true;
+				this.readyLock.notifyAll();
+			}
+		}
 	}
 
 	public XStreamClient(final XStream xstream,
@@ -51,8 +68,8 @@ public abstract class XStreamClient
 			throw new IllegalArgumentException("xstream must not be null.");
 		}
 
+		final Object theReadyLock = this.readyLock;
 		this.xStream = xstream;
-
 		this.networkInterface = networkInterface;
 		this.out = xstream.createObjectOutputStream(networkInterface
 				.getOutputStream(), "protocol");
@@ -69,6 +86,14 @@ public abstract class XStreamClient
 					XStreamClient.this.in = xstream
 							.createObjectInputStream(networkInterface
 									.getInputStream());
+
+					synchronized (theReadyLock)
+					{
+						if (!isReady())
+						{
+							theReadyLock.wait();
+						}
+					}
 
 					while (!Thread.interrupted())
 					{
@@ -137,6 +162,12 @@ public abstract class XStreamClient
 
 	public void send(Object o)
 	{
+		if (!isReady())
+		{
+			throw new RuntimeException(
+					"Please call start() before sending any messages.");
+		}
+
 		logger.debug("Sending {} via {}", o, this.networkInterface);
 
 		try
@@ -172,7 +203,7 @@ public abstract class XStreamClient
 			this.networkInterface.close();
 		}
 	}
-	
+
 	public XStream getXStream()
 	{
 		return this.xStream;

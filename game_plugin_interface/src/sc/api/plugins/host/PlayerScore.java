@@ -38,22 +38,23 @@ public final class PlayerScore
 	{
 		return this.bigIntegers.length;
 	}
-	
+
 	public ScoreCause getCause()
 	{
 		return this.cause;
 	}
 
-	public Iterable<String> toStrings()
+	public String[] toStrings()
 	{
-		return CollectionHelper.map(Arrays.asList(this.bigIntegers),
-				new Function<BigInteger, String>() {
-					@Override
-					public String operate(BigInteger val)
-					{
-						return val.toString();
-					}
-				});
+		return CollectionHelper.iterableToColleciton(
+				CollectionHelper.map(Arrays.asList(this.bigIntegers),
+						new Function<BigInteger, String>() {
+							@Override
+							public String operate(BigInteger val)
+							{
+								return val.toString();
+							}
+						})).toArray(new String[this.bigIntegers.length]);
 	}
 
 }

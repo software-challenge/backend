@@ -57,6 +57,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 	public void onClientConnected(Client client)
 	{
 		client.addClientListener(this);
+		client.start();
 	}
 
 	@Override

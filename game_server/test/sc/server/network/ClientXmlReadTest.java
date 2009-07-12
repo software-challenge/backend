@@ -50,6 +50,7 @@ public class ClientXmlReadTest
 		StupidClientListener clientListener = new StupidClientListener();
 		MockClient client = new MockClient(stringInterface, Configuration.getXStream());
 		client.addClientListener(clientListener);
+		client.start();
 		Assert.assertNotNull(client.receive());
 		Assert.assertNotNull(clientListener.LastPacket);
 		Assert.assertTrue(clientListener.LastPacket instanceof ExamplePacket);

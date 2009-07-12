@@ -1,5 +1,6 @@
 package sc.protocol;
 
+import sc.api.plugins.GameResult;
 import sc.protocol.responses.PrepareGameResponse;
 
 public interface ILobbyClientListener
@@ -16,5 +17,7 @@ public interface ILobbyClientListener
 	void onGameLeft(String roomId);
 
 	void onGameJoined(String roomId);
+
+	void onGameOver(String roomId, GameResult data);
 
 }

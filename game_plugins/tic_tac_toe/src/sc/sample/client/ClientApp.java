@@ -26,6 +26,7 @@ public class ClientApp
 		final XStream xStream = new XStream();
 		LobbyClient admin = new LobbyClient(xStream, ProtocolDefinition
 				.getProtocolClasses());
+		admin.start();
 		RequestResult<PrepareGameResponse> preparation = admin
 				.prepareGameAndWait(GamePluginImpl.PLUGIN_UUID, 2);
 
@@ -37,6 +38,7 @@ public class ClientApp
 		LobbyClient observerClient = new LobbyClient(xStream, ProtocolDefinition
 				.getProtocolClasses());
 		IControllableGame observer = observerClient.observe(preparation.getResult());
+		observerClient.start();
 
 		final Semaphore sem = new Semaphore(0);
 		final Object lock = new Object();
@@ -63,6 +65,7 @@ public class ClientApp
 							System.out.println("Released.");
 						};
 					};
+					client.start();
 					client.joinPreparedGame(reservation);
 				}
 				catch (Exception e)

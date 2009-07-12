@@ -18,4 +18,14 @@ public abstract class StringHelper
 
 		return buffer.toString();
 	}
+
+	public static String pad(String name, int length)
+	{
+		StringBuilder builder = new StringBuilder(name);
+		for (int i = 0; i < length - name.length(); i++)
+		{
+			builder.append(" ");
+		}
+		return builder.toString();
+	}
 }

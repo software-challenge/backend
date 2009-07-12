@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.api.plugins.GameResult;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.Observation;
@@ -47,6 +48,7 @@ public class Client implements ILobbyClientListener
 				Player.class, PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class), host, port);
 		client.addListener(this);
+		this.client.start();
 		this.id = id;
 		this.port = port;
 		this.host = host;
@@ -65,6 +67,7 @@ public class Client implements ILobbyClientListener
 	public void setObservation(Observation obs)
 	{
 		this.obs = obs;
+		// this.client.start();
 	}
 
 	public Observation getObservation()
@@ -202,5 +205,11 @@ public class Client implements ILobbyClientListener
 	public int getPort()
 	{
 		return port;
+	}
+
+	@Override
+	public void onGameOver(String roomId, GameResult data)
+	{
+		// TODO
 	}
 }

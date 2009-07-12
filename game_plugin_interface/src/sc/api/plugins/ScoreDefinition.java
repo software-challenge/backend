@@ -21,4 +21,9 @@ public class ScoreDefinition
 	{
 		return size() > 0;
 	}
+
+	public ScoreFragment get(int i)
+	{
+		return this.fragments.get(i);
+	}
 }

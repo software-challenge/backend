@@ -30,6 +30,7 @@ public class SampleLibraryTest extends RealServerTest
 		{
 			client = new LobbyClient(Configuration.getXStream(), null, host,
 					port);
+			client.start();
 		}
 
 		public LobbyClient getClient()

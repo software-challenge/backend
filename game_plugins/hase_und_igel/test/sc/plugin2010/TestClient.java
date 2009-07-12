@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import com.thoughtworks.xstream.XStream;
 
+import sc.api.plugins.GameResult;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Move.MoveTyp;
 import sc.protocol.ErrorResponse;
@@ -22,6 +23,7 @@ public class TestClient implements ILobbyClientListener
 				PlayerUpdated.class, Move.class, Board.class,
 				BoardUpdated.class));
 		this.client.addListener(this);
+		this.client.start();
 	}
 
 	private Board				board;
@@ -82,5 +84,12 @@ public class TestClient implements ILobbyClientListener
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void onGameOver(String roomId, GameResult data)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

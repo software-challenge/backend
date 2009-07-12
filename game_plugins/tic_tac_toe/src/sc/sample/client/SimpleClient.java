@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import com.thoughtworks.xstream.XStream;
 
+import sc.api.plugins.GameResult;
+import sc.helpers.StringHelper;
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
@@ -15,13 +17,19 @@ import sc.sample.shared.Move;
 
 public class SimpleClient implements ILobbyClientListener
 {
-	private LobbyClient	client;
-	private GameState	state;
+	private static Object	consoleLock	= new Object();
+	private LobbyClient		client;
+	private GameState		state;
 
 	public SimpleClient(XStream xStream) throws IOException
 	{
 		this.client = new LobbyClient(xStream);
 		this.client.addListener(this);
+	}
+
+	public void start()
+	{
+		this.client.start();
 	}
 
 	@Override
@@ -73,15 +81,18 @@ public class SimpleClient implements ILobbyClientListener
 	@Override
 	public void onGameLeft(String roomId)
 	{
-		System.out.println("Game is over. Good night.");
+		synchronized (consoleLock)
+		{
+			System.out.println("Game is over. Good night.");
 
-		try
-		{
-			this.client.close();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
+			try
+			{
+				this.client.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -89,5 +100,18 @@ public class SimpleClient implements ILobbyClientListener
 	public void onGamePrepared(PrepareGameResponse response)
 	{
 
+	}
+
+	@Override
+	public void onGameOver(String roomId, GameResult data)
+	{
+		synchronized (consoleLock)
+		{
+			System.out.println("--------------------------");
+			System.out.println("-      RESULTS           -");
+			System.out.print(data.toString());
+			System.out.println("--------------------------");
+			System.out.println();
+		}
 	}
 }
