@@ -149,6 +149,7 @@ public class Client implements ILobbyClientListener
 		{ // TODO send round text
 			obs.newTurn("new turn Karotten:"
 					+ game.getActivePlayer().getCarrotsAvailable());
+
 			if (!alreadyReady)
 			{
 				alreadyReady = true;
@@ -236,6 +237,6 @@ public class Client implements ILobbyClientListener
 
 	public void freeReservation(String reservation)
 	{
-		this.client.freeReservation(reservation);
+		client.freeReservation(reservation);
 	}
 }

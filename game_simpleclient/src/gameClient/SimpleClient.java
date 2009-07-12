@@ -84,7 +84,7 @@ public class SimpleClient extends SpielClient
 	@Override
 	public void zugAngefordert()
 	{
-		System.out.println("zug angeford");
+		eigenerSpieler.frissSalat(); // TODO
 		if (macheStandardAktion() == false)
 		{
 

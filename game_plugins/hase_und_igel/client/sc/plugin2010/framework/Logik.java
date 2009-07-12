@@ -3,6 +3,9 @@
  */
 package sc.plugin2010.framework;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.IGameHandler;
@@ -15,6 +18,8 @@ import sc.plugin2010.Player;
  */
 public class Logik implements IGameHandler
 {
+	private static final Logger	logger	= LoggerFactory.getLogger(Client.class);
+
 	private IGameUpdateObserver	obs;
 	private Client				client;
 
@@ -28,17 +33,20 @@ public class Logik implements IGameHandler
 	public void onUpdate(final Board board, int round)
 	{
 		obs.spiellbrettAktualisiert(board, round);
+		logger.info("board update");
 	}
 
 	@Override
 	public void onUpdate(final Player player, boolean own)
 	{
 		obs.spielerAktualisiert(player, own);
+		logger.info("player update");
 	}
 
 	@Override
 	public void onRequestAction()
 	{
+		logger.info("zug anford");
 		obs.zugAngefordert();
 	}
 
