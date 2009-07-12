@@ -25,9 +25,9 @@ public class SimpleClient implements ILobbyClientListener
 	@Override
 	public void onRoomMessage(String roomId, Object data)
 	{
-		for (int x = 0; x < Board.WIDTH; x++)
+		for (int y = 0; y < Board.HEIGHT; y++)
 		{
-			for (int y = 0; y < Board.HEIGHT; y++)
+			for (int x = 0; x < Board.WIDTH; x++)
 			{
 				if (state.board.getOwner(x, y) == null)
 				{

@@ -126,8 +126,9 @@ public class ObservingClient extends SingleRoomClient implements
 	@Override
 	public void previous()
 	{
-		if (this.mode == PlayMode.PLAYING) {
-			pause();			
+		if (this.mode == PlayMode.PLAYING)
+		{
+			pause();
 		}
 		this.setPosition(Math.max(this.position - 1, 0));
 	}

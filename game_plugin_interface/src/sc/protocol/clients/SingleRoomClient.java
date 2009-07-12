@@ -12,5 +12,6 @@ public abstract class SingleRoomClient implements ILobbyClientListener
 	{
 		this.client = client;
 		this.roomId = roomId;
+		client.addListener(this);
 	}
 }

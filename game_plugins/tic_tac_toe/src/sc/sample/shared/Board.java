@@ -63,7 +63,7 @@ public class Board
 				continue;
 			}
 
-			if (isSamePlayer(firstOwner, x, y, stepX, stepY))
+			if (isSamePlayer(firstOwner, x, y, stepX, stepY) == 3)
 			{
 				winner = firstOwner;
 			}
@@ -72,23 +72,21 @@ public class Board
 		return winner;
 	}
 
-	private boolean isSamePlayer(Player p, int x, int y, int stepX, int stepY)
+	private int isSamePlayer(Player p, int x, int y, int stepX, int stepY)
 	{
-		if (p == null)
+		if (p == null || !validCoordinate(x, y))
 		{
-			return false;
+			return 0;
 		}
 
-		int newX = x + stepX;
-		int newY = y + stepY;
-
-		if (!validCoordinate(newX, newY))
+		if (p.equals(getOwner(x, y)))
 		{
-			return true;
+			return 1 + isSamePlayer(p, x + stepX, y + stepY, stepX, stepY);
 		}
-
-		return p.equals(getOwner(x, y))
-				&& isSamePlayer(p, newX, newY, stepX, stepY);
+		else
+		{
+			return 0;
+		}
 	}
 
 	public Player getOwner(int x, int y)

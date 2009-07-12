@@ -310,6 +310,7 @@ public final class LobbyClient extends XStreamClient
 
 	public ObservingClient observe(PrepareGameResponse handle)
 	{
+		this.send(new ObservationRequest(handle.getRoomId(), ""));
 		return new ObservingClient(this, handle.getRoomId());
 	}
 }
