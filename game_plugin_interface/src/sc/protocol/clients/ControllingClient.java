@@ -1,52 +1,39 @@
 package sc.protocol.clients;
 
+import com.sun.corba.se.spi.activation.Server;
+
 import sc.protocol.IControllableGame;
 import sc.protocol.LobbyClient;
+import sc.protocol.requests.PauseGameRequest;
+import sc.protocol.requests.StepRequest;
 
-public class ControllingClient extends ObservingClient implements
-		IControllableGame
+public class ControllingClient extends ObservingClient
 {
 	public ControllingClient(LobbyClient client, String roomId)
 	{
 		super(client, roomId);
 	}
 
-	int			position	= 0;
-	PlayMode	mode		= PlayMode.PAUSED;
-
-	enum PlayMode
-	{
-		PLAYING, PAUSED
-	}
-
-	@Override
-	protected void addObservation(Object observation)
-	{
-		super.addObservation(observation);
-	}
-
-	@Override
-	public void next()
-	{
-		this.position = Math.min(this.position + 1, this.history.size() - 1);
-	}
-
 	@Override
 	public void pause()
 	{
-		this.mode = PlayMode.PAUSED;
-	}
-
-	@Override
-	public void previous()
-	{
-		this.position = Math.max(this.position - 1, 0);
+		this.client.send(new PauseGameRequest(this.roomId, true));
+		super.pause();
 	}
 
 	@Override
 	public void unpause()
 	{
-		this.mode = PlayMode.PLAYING;
+		this.client.send(new PauseGameRequest(this.roomId, false));
+		super.unpause();
 	}
 
+	@Override
+	public void next()
+	{
+		if(atEnd()) {
+			this.client.send(new StepRequest(this.roomId));			
+		}
+		super.next();
+	}
 }

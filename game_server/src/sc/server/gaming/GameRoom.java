@@ -16,6 +16,7 @@ import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.api.plugins.host.IPlayerScore;
+import sc.framework.plugins.IPauseable;
 import sc.protocol.MementoPacket;
 import sc.protocol.RoomPacket;
 import sc.protocol.responses.JoinGameResponse;
@@ -38,6 +39,7 @@ public class GameRoom implements IGameListener
 	private List<PlayerSlot>			playerSlots	= new ArrayList<PlayerSlot>(
 															2);
 	private boolean						isOver		= false;
+	private boolean						paused		= false;
 
 	public GameRoom(String id, GamePluginInstance provider, IGameInstance game)
 	{
@@ -197,7 +199,8 @@ public class GameRoom implements IGameListener
 		return Collections.unmodifiableList(this.playerSlots);
 	}
 
-	public synchronized void setSize(int playerCount) throws TooManyPlayersException
+	public synchronized void setSize(int playerCount)
+			throws TooManyPlayersException
 	{
 		if (playerCount > getMaximumPlayerCount())
 		{
@@ -300,8 +303,57 @@ public class GameRoom implements IGameListener
 		this.observers.add(role);
 	}
 
-	public synchronized void onReservationClaimed(Client source, PlayerSlot result)
+	public synchronized void onReservationClaimed(Client source,
+			PlayerSlot result)
 	{
 		fillSlot(result, source);
+	}
+
+	public synchronized void pause(boolean pause)
+	{
+		if (game instanceof IPauseable)
+		{
+			IPauseable pausableGame = (IPauseable) game;
+			if (pause == paused)
+			{
+				logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
+						paused, pause);
+			}
+			else
+			{
+				logger.info("Switching PAUSE from {} to {}.", paused, pause);
+				this.paused = pause;
+				pausableGame.setPauseMode(pause);
+
+				if (!pause) // continue execution
+				{
+					pausableGame.afterPause();
+				}
+			}
+		}
+		else
+		{
+			logger.warn("Game isn't pausable.");
+		}
+	}
+
+	public synchronized void step()
+	{
+		if (game instanceof IPauseable)
+		{
+			if (paused)
+			{
+				logger.info("Stepping.");
+				((IPauseable) game).afterPause();
+			}
+			else
+			{
+				logger.warn("Can't step if the game is not paused.");
+			}
+		}
+		else
+		{
+			logger.warn("Game isn't pausable.");
+		}
 	}
 }

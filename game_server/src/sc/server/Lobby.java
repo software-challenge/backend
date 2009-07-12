@@ -14,7 +14,9 @@ import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.ILobbyRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.requests.StepRequest;
 import sc.protocol.responses.JoinGameResponse;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
@@ -34,10 +36,10 @@ import sc.server.network.PacketCallback;
  */
 public class Lobby implements IClientManagerListener, IClientListener
 {
-	private Logger					logger			= LoggerFactory
-															.getLogger(Lobby.class);
-	private GameRoomManager			gameManager		= new GameRoomManager();
-	private ClientManager			clientManager	= new ClientManager();
+	private Logger			logger			= LoggerFactory
+													.getLogger(Lobby.class);
+	private GameRoomManager	gameManager		= new GameRoomManager();
+	private ClientManager	clientManager	= new ClientManager();
 
 	public Lobby()
 	{
@@ -107,6 +109,18 @@ public class Lobby implements IClientManagerListener, IClientListener
 				ObservationRequest observe = (ObservationRequest) packet;
 				GameRoom room = gameManager.findRoom(observe.getGameId());
 				room.addObserver(source);
+			}
+			else if (packet instanceof PauseGameRequest)
+			{
+				PauseGameRequest pause = (PauseGameRequest) packet;
+				GameRoom room = gameManager.findRoom(pause.roomId);
+				room.pause(pause.pause);
+			}
+			else if (packet instanceof StepRequest)
+			{
+				StepRequest pause = (StepRequest) packet;
+				GameRoom room = gameManager.findRoom(pause.roomId);
+				room.step();
 			}
 			else
 			{

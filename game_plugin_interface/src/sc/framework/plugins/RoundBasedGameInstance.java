@@ -7,11 +7,14 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
-		SimpleGameInstance<P>
+		SimpleGameInstance<P> implements IPauseable
 {
-	private static Logger	logger			= LoggerFactory
-													.getLogger(RoundBasedGameInstance.class);
-	private P				activePlayer	= null;
+	private static Logger	logger				= LoggerFactory
+														.getLogger(RoundBasedGameInstance.class);
+	private P				activePlayer		= null;
+	private boolean			paused				= false;
+	private Runnable		afterPauseAction	= null;
+	private Object			afterPauseLock		= new Object();
 
 	@Override
 	public final void onAction(IPlayer fromPlayer, Object data)
@@ -84,6 +87,51 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	public void notifyActivePlayer()
 	{
-		this.activePlayer.requestMove();
+		final P currentActivePlayer = this.activePlayer;
+
+		if (this.paused)
+		{
+			synchronized (this.afterPauseLock)
+			{
+				logger.debug("Setting AfterPauseAction");
+
+				this.afterPauseAction = new Runnable() {
+					@Override
+					public void run()
+					{
+						currentActivePlayer.requestMove();
+					}
+				};
+			}
+		}
+		else
+		{
+			currentActivePlayer.requestMove();
+		}
+	}
+
+	@Override
+	public void afterPause()
+	{
+		synchronized (this.afterPauseLock)
+		{
+			if (this.afterPauseAction == null)
+			{
+				logger
+						.error("AfterPauseAction was null. Might cause a deadlock.");
+			}
+			else
+			{
+				Runnable action = this.afterPauseAction;
+				this.afterPauseAction = null;
+				action.run();
+			}
+		}
+	}
+
+	@Override
+	public void setPauseMode(boolean pause)
+	{
+		this.paused = pause;
 	}
 }

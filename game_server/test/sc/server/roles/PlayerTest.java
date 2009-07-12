@@ -11,7 +11,9 @@ import sc.protocol.ObservationRequest;
 import sc.protocol.RoomPacket;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.requests.StepRequest;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
@@ -60,6 +62,78 @@ public class PlayerTest extends AbstractRoleTest
 		msg = player2.seekMessage(JoinGameResponse.class); // did we receive it?
 
 		Assert.assertNotNull(msg.getRoomId());
+	}
+
+	@Test
+	public void shouldSupportGamePausing() throws RescueableClientException
+	{
+		MockClient admin = connectClient();
+		MockClient player1 = connectClient();
+		MockClient player2 = connectClient();
+
+		lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
+				TestPlugin.TEST_PLUGIN_UUID, 2)));
+		PrepareGameResponse prepared = admin
+				.seekMessage(PrepareGameResponse.class);
+
+		// PAUSE
+		lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(prepared
+				.getRoomId(), true)));
+
+		lobby
+				.onRequest(player1, new PacketCallback(
+						new JoinPreparedRoomRequest(prepared.getReservations()
+								.get(0))));
+		lobby
+				.onRequest(player2, new PacketCallback(
+						new JoinPreparedRoomRequest(prepared.getReservations()
+								.get(1))));
+
+		player1.seekMessage(JoinGameResponse.class);
+		player2.seekMessage(JoinGameResponse.class);
+
+		String roomId = prepared.getRoomId();
+
+		try
+		{
+			player1.seekRoomMessage(roomId, TestTurnRequest.class);
+			Assert.fail();
+		}
+		catch (Exception e)
+		{
+			// ok
+		}
+
+		// STEP
+		lobby.onRequest(admin, new PacketCallback(new StepRequest(roomId)));
+		player1.seekRoomMessage(prepared.getRoomId(), TestTurnRequest.class);
+		lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
+				new TestMove(mySecret1))));
+
+		try
+		{
+			player2.seekRoomMessage(roomId, TestTurnRequest.class);
+			Assert.fail();
+		}
+		catch (Exception e)
+		{
+			// ok
+		}
+
+		// UNPAUSE
+		lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(roomId,
+				false)));
+
+		player2.seekRoomMessage(roomId, TestTurnRequest.class);
+		lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
+				new TestMove(mySecret1))));
+
+		player1.seekRoomMessage(roomId, TestTurnRequest.class);
+
+		lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
+				new TestMove(mySecret1))));
+
+		player2.seekRoomMessage(roomId, TestTurnRequest.class);
 	}
 
 	@Test

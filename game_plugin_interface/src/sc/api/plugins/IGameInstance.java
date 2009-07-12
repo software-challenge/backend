@@ -24,7 +24,8 @@ public interface IGameInstance
 	 *            The plugin-secific data.
 	 * @throws RescueableClientException
 	 */
-	public void onAction(IPlayer fromPlayer, Object data) throws RescueableClientException;
+	public void onAction(IPlayer fromPlayer, Object data)
+			throws RescueableClientException;
 
 	/**
 	 * Extends the set of listeners.
@@ -47,5 +48,10 @@ public interface IGameInstance
 	 */
 	public void destroy();
 
+	/**
+	 * start() will only be called once this method returns true.
+	 * 
+	 * @return
+	 */
 	public boolean ready();
 }

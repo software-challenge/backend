@@ -7,26 +7,43 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.protocol.ErrorResponse;
+import sc.protocol.IControllableGame;
 import sc.protocol.LobbyClient;
 import sc.protocol.responses.PrepareGameResponse;
 
-public class ObservingClient extends SingleRoomClient
+public class ObservingClient extends SingleRoomClient implements
+		IControllableGame
 {
 	public ObservingClient(LobbyClient client, String roomId)
 	{
 		super(client, roomId);
 	}
 
-	protected final List<Object>	history	= new LinkedList<Object>();
+	protected final List<Object>		history		= new LinkedList<Object>();
+
+	private final List<IUpdateListener>	listeners	= new LinkedList<IUpdateListener>();
 
 	public void close()
 	{
 		this.history.clear();
 	}
 
+	int			position	= 0;
+	PlayMode	mode		= PlayMode.PAUSED;
+
+	enum PlayMode
+	{
+		PLAYING, PAUSED
+	}
+
 	protected void addObservation(Object observation)
 	{
 		this.history.add(observation);
+
+		if (this.mode == PlayMode.PLAYING)
+		{
+			setPosition(this.history.size() - 1);
+		}
 	}
 
 	public void saveReplayTo(String gameId, OutputStream out)
@@ -84,5 +101,62 @@ public class ObservingClient extends SingleRoomClient
 	public void onRoomMessage(String roomId, Object data)
 	{
 
+	}
+
+	protected void notifyOnUpdate()
+	{
+		for (IUpdateListener listner : this.listeners)
+		{
+			listner.onUpdate(this);
+		}
+	}
+
+	@Override
+	public void next()
+	{
+		this.position = Math.min(this.position + 1, this.history.size() - 1);
+	}
+
+	@Override
+	public void pause()
+	{
+		this.mode = PlayMode.PAUSED;
+	}
+
+	@Override
+	public void previous()
+	{
+		if (this.mode == PlayMode.PLAYING) {
+			pause();			
+		}
+		this.setPosition(Math.max(this.position - 1, 0));
+	}
+
+	@Override
+	public void unpause()
+	{
+		this.mode = PlayMode.PLAYING;
+		this.setPosition(this.history.size() - 1);
+	}
+
+	private void setPosition(int i)
+	{
+		this.position = i;
+		notifyOnUpdate();
+	}
+
+	public Object getCurrentState()
+	{
+		if (this.history.size() == 0)
+		{
+			return null;
+		}
+
+		return this.history.get(this.position);
+	}
+
+	public boolean atEnd()
+	{
+		return this.position >= this.history.size() - 1;
 	}
 }
