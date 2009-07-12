@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 @SuppressWarnings("serial")
 public class GameInfoDialog extends JDialog {
@@ -53,8 +54,9 @@ public class GameInfoDialog extends JDialog {
 		// set pref
 		this.setTitle(gameTypeName);
 		this.setModal(true);
-		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
 }

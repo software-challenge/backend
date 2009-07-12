@@ -7,7 +7,6 @@ import javax.swing.JPanel;
 
 import sc.IGUIApplication;
 import sc.IPresentationFacade;
-import sc.gui.dialogs.ContextDisplay;
 import sc.logic.GUIConfiguration;
 import sc.logic.ILogicFacade;
 

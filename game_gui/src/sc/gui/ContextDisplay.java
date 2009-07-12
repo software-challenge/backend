@@ -1,4 +1,4 @@
-package sc.gui.dialogs;
+package sc.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
-import sc.gui.PresentationFacade;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel {

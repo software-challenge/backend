@@ -63,9 +63,9 @@ public class InfoDialog extends JDialog {
 		this.setPreferredSize(new Dimension(400,300));
 		this.setResizable(false);
 		this.setModal(true);
-		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
+		this.setLocationRelativeTo(null);
 	}
 
 }

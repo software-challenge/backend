@@ -2,7 +2,9 @@ package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -33,6 +35,7 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
 import sc.gui.stuff.KIInformation;
@@ -184,10 +187,9 @@ public class CreateGameDialog extends JDialog {
 		// this.getRootPane().setDefaultButton(okButton);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		this.setLocationRelativeTo(null);
 		this.setModal(true);
-		// this.setSize(800, 480);
 		this.pack();
+		this.setLocationRelativeTo(null);
 	}
 
 	/**
@@ -303,6 +305,24 @@ public class CreateGameDialog extends JDialog {
 				contextPanel.updateButtonBar(true);
 			}
 		});
+
+		// start clients
+		for (KIInformation kinfo : KIs) {
+			StringBuilder params = new StringBuilder();
+			for (String p : kinfo.getParameters()) {
+				params.append(p);
+			}
+			try {
+				Process process = Runtime.getRuntime().exec(kinfo.getPath() + " " + params);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(this, lang
+						.getString("dialog_create_error_client_msg"), lang
+						.getString("dialog_create_error_client_title"),
+						JOptionPane.ERROR_MESSAGE);
+				cancelGameCreation();
+				return;
+			}
+		}
 
 		// show connecting dialog
 		/*

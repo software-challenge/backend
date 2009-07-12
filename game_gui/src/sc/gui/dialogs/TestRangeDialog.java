@@ -2,6 +2,7 @@ package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.util.ResourceBundle;
+import java.util.Vector;
 
 import javax.swing.BoxLayout;
 import javax.swing.JDialog;
@@ -73,19 +74,21 @@ public class TestRangeDialog extends JDialog {
 		logModel.addColumn(lang.getString("dialog_test_tbl_name"));
 		logModel.addColumn(lang.getString("dialog_test_tbl_type"));
 		logModel.addColumn(lang.getString("dialog_test_tbl_path"));
+		// add 2 rows TODO
+		logModel.addRow(new Vector<String>());
+		logModel.addRow(new Vector<String>());
 		logTable = new JTable(logModel);
 		//TODO
 		
 		//add components
 		this.add(pnlTop, BorderLayout.PAGE_START);
-		this.add(new JSeparator(), BorderLayout.CENTER);
 		this.add(new JScrollPane(logTable), BorderLayout.CENTER);
 		
 		// set dialog preferences
 		this.setModal(true);
-		this.setLocationRelativeTo(frame);
-		this.setSize(800, 480);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.pack();
+		this.setLocationRelativeTo(null);
 	}
 
 }

@@ -19,8 +19,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 
+import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.guiplugin.interfaces.IObservation;
 import sc.plugin.GUIPluginInstance;
@@ -105,8 +107,9 @@ public class ReplayDialog extends JDialog {
 		this.setResizable(false);
 		this.setTitle(lang.getString("dialog_replay_title"));
 		this.setModal(true);
-		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
 	protected void loadReplay(File f) {

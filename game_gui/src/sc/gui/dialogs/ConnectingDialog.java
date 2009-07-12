@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import sc.gui.PresentationFacade;
 
@@ -48,8 +49,9 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 		
 		this.setResizable(false);
 		this.setModal(true);
-		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
 	@Override
