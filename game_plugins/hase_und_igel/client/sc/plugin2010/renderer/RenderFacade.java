@@ -76,6 +76,7 @@ public class RenderFacade
 	{
 		this.threeDimensional = threeDimensional;
 		this.panel = panel;
+		panel.setDoubleBuffered(true);
 
 		panel.setLayout(new CardLayout());
 		// create components

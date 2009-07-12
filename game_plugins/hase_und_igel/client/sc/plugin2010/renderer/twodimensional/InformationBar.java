@@ -33,9 +33,9 @@ public class InformationBar extends JPanel
 	private final String	CARROTCOUNT		= "Karottenanzahl: ";
 	private final String	ROUNDCOUNT		= "Runde: ";
 	private final String	MOVESCOUNT		= "Zuganzahl möglich: ";
-	private final String	TURNCOUNT		= "An der Reihe:";
-	private final String	PLAYER			= "Spieler:";
-	private final String	ENEMY			= "Gegner:";
+	private final String	TURNCOUNT		= "An der Reihe: ";
+	private final String	PLAYER			= "Spieler: ";
+	private final String	ENEMY			= "Gegner: ";
 	private final String	SALADCOUNT		= "Salatanzahl: ";
 	private final String	HASENJOKER		= "Hasenjoker:";
 
@@ -54,6 +54,7 @@ public class InformationBar extends JPanel
 
 	public InformationBar()
 	{
+		setDoubleBuffered(true);
 
 		setBorder(BorderFactory.createEtchedBorder());
 		setLayout(new GridLayout(1, 1));

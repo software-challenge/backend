@@ -4,9 +4,7 @@
 package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -71,15 +69,7 @@ public class QuestionDialog extends JDialog
 
 		setSize(width, DEFAULTHEIGHT);
 
-		// Size of Screen
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-		// Position to show in center
-		int top = (screenSize.height - DEFAULTHEIGHT) / 2;
-		int left = (screenSize.width - DEFAULTWIDTH) / 2;
-
-		// set position
-		setLocation(left, top);
+		setLocationRelativeTo(null);
 
 		setModal(true);
 		setVisible(true);

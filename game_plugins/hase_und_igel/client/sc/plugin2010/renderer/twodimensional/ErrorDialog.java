@@ -4,9 +4,7 @@
 package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -33,16 +31,6 @@ public class ErrorDialog extends JDialog
 
 		setIconImage(RendererUtil.getImage("resource/hase_und_igel_icon.png"));
 
-		// Size of Screen
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-		// Position to show in center
-		int top = (screenSize.height - DEFAULTHEIGHT) / 2;
-		int left = (screenSize.width - DEFAULTWIDTH) / 2;
-
-		// set position
-		setLocation(left, top);
-
 		setSize(DEFAULTWIDTH, DEFAULTHEIGHT);
 
 		OkayListener awListener = new OkayListener();
@@ -63,6 +51,8 @@ public class ErrorDialog extends JDialog
 
 		this.add(new JLabel(message, JLabel.CENTER), BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
+
+		setLocationRelativeTo(null);
 
 		setModal(true);
 		setVisible(true);

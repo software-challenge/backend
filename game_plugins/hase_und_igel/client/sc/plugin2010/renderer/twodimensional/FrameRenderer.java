@@ -83,6 +83,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 	private void createInitFrame()
 	{
+		setDoubleBuffered(true);
 
 		final BackgoundPane bg = new BackgoundPane("resource/background.png");
 
@@ -130,46 +131,43 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		switch (mov.getTyp())
 		{
 			case EAT:
-				actionb.addRow("Spieler " + currentColor
-						+ " frisst einen Salat");
+				actionb.addRow(currentColor + " frisst einen Salat");
 				break;
 			case MOVE:
-				actionb.addRow("Spieler " + currentColor + " setzt auf "
+				actionb.addRow(currentColor + " setzt auf "
 						+ String.valueOf(mov.getN()));
 				break;
 			case TAKE_OR_DROP_CARROTS:
 				if (mov.getN() == 10)
 				{
-					actionb.addRow("Spieler " + currentColor
-							+ " nimmt 10 Karotten");
+					actionb.addRow(currentColor + " nimmt 10 Karotten");
 				}
 				else if (mov.getN() == -10)
 				{
-					actionb.addRow("Spieler " + currentColor
-							+ " gibt 10 Karotten ab");
+					actionb.addRow(currentColor + " gibt 10 Karotten ab");
 				}
 				break;
 			case FALL_BACK:
-				actionb.addRow("Spieler " + currentColor
+				actionb.addRow(currentColor
 						+ " lässt sich auf Igel zurückfallen");
 				break;
 			case PLAY_CARD:
 				switch (mov.getCard())
 				{
 					case TAKE_OR_DROP_CARROTS:
-						actionb.addRow("Spieler " + currentColor
+						actionb.addRow(currentColor
 								+ " spielt 'Nimm oder gib 20 Karotten'");
 						break;
 					case EAT_SALAD:
-						actionb.addRow("Spieler " + currentColor
+						actionb.addRow(currentColor
 								+ " spielt 'Friss sofort einen Salat'");
 						break;
 					case FALL_BACK:
-						actionb.addRow("Spieler " + currentColor
+						actionb.addRow(currentColor
 								+ " spielt 'Falle eine Position zurück'");
 						break;
 					case HURRY_AHEAD:
-						actionb.addRow("Spieler " + currentColor
+						actionb.addRow(currentColor
 								+ " spielt 'Rücke eine Position vor'");
 						break;
 					default:
@@ -340,7 +338,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	{
 		this.board = board;
 
-		info.setRound(round);
+		info.setRound(round + 1);
 
 		if (!boardWasCreated)
 		{
