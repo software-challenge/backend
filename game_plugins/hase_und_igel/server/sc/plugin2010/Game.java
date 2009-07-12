@@ -147,32 +147,38 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 			else
 			{
 				updatePlayers();
-				if (this.paused)
-				{
-					synchronized (this.afterPauseLock)
-					{
-						logger.debug("Setting AfterPauseAction");
-
-						this.afterPauseAction = new Runnable() {
-							@Override
-							public void run()
-							{
-								next.requestMove();
-							}
-						};
-					}
-				}
-				else
-				{
-					next.requestMove();
-				}
 				updateObservers();
+				
+				requestMove(next);
 			}
 		}
 		else
 		{
 			logger.error("Unknown message received from '{}': '{}'", player
 					.getColor(), data.getClass().getName());
+		}
+	}
+
+	private void requestMove(final Player next)
+	{
+		if (this.paused)
+		{
+			synchronized (this.afterPauseLock)
+			{
+				logger.debug("Setting AfterPauseAction");
+
+				this.afterPauseAction = new Runnable() {
+					@Override
+					public void run()
+					{
+						next.requestMove();
+					}
+				};
+			}
+		}
+		else
+		{
+			next.requestMove();
 		}
 	}
 
@@ -406,7 +412,7 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 		final Player current = players.get(activePlayerId);
 		logger.debug("Active Player is '{}'", current.getColor());
 
-		current.requestMove();
+		requestMove(current);
 	}
 
 	@Override
