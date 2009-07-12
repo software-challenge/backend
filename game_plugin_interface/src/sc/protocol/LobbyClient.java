@@ -20,6 +20,7 @@ import sc.networking.TcpNetwork;
 import sc.protocol.clients.ControllingClient;
 import sc.protocol.clients.ObservingClient;
 import sc.protocol.requests.AuthenticateRequest;
+import sc.protocol.requests.FreeReservationRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.PrepareGameRequest;
@@ -344,5 +345,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public void removeListener(IHistoryListener listener)
 	{
 		this.historyListeners.remove(listener);
+	}
+
+	public void freeReservation(String reservation)
+	{
+		this.send(new FreeReservationRequest(reservation));
 	}
 }

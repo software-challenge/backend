@@ -15,4 +15,9 @@ public interface ISlot {
 	 * @return the necessary command-line arguments to be passed
 	 */
 	String[] asClient();
+
+	/**
+	 * Free's this slot for another client to connect.
+	 */
+	void asRemote();
 }

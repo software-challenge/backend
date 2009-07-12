@@ -41,11 +41,15 @@ public class PlayerSlot
 		return this.reserved;
 	}
 
-	public String reserve()
+	public synchronized String reserve()
 	{
 		if (isReserved())
 		{
-			throw new RuntimeException("Slot already reserved.");
+			throw new IllegalStateException("Slot already reserved.");
+		}
+		else if(!isEmpty())
+		{
+			throw new IllegalStateException("This slot is already occupied.");
 		}
 		else
 		{
@@ -55,7 +59,7 @@ public class PlayerSlot
 
 	public void setClient(Client client)
 	{
-		if (this.role != null)
+		if (!isEmpty())
 		{
 			throw new IllegalStateException("This slot is already occupied.");
 		}
@@ -73,5 +77,15 @@ public class PlayerSlot
 		}
 
 		this.role.setPlayer(player);
+	}
+
+	public synchronized void free()
+	{
+		if (!this.reserved)
+		{
+			throw new IllegalStateException("This slot isn't reserved.");
+		}
+
+		this.reserved = false;
 	}
 }

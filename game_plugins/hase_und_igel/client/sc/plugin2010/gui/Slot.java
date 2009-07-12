@@ -54,4 +54,10 @@ public class Slot implements ISlot
 		RenderFacade.getInstance().createPanel(handler, humanClient.getID());
 		humanClient.joinPreparedGame(reservation);
 	}
+
+	@Override
+	public void asRemote()
+	{
+		adminclient.freeReservation(reservation);
+	}
 }

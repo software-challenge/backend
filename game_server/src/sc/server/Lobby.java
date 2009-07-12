@@ -12,6 +12,7 @@ import sc.protocol.ObservationRequest;
 import sc.protocol.RoomPacket;
 import sc.protocol.clients.CancelRequest;
 import sc.protocol.requests.AuthenticateRequest;
+import sc.protocol.requests.FreeReservationRequest;
 import sc.protocol.requests.ILobbyRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
@@ -97,6 +98,11 @@ public class Lobby implements IClientManagerListener, IClientListener
 				PrepareGameRequest prepared = (PrepareGameRequest) packet;
 				source.send(gameManager.prepareGame(prepared.getGameType(),
 						prepared.getPlayerCount()));
+			}
+			else if (packet instanceof FreeReservationRequest)
+			{
+				FreeReservationRequest request = (FreeReservationRequest)packet;
+				ReservationManager.freeReservation(request.getReservation());
 			}
 			else if (packet instanceof RoomPacket)
 			{

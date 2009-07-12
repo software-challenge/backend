@@ -223,4 +223,9 @@ public class Client implements ILobbyClientListener
 	{
 		// TODO
 	}
+
+	public void freeReservation(String reservation)
+	{
+		this.client.freeReservation(reservation);
+	}
 }

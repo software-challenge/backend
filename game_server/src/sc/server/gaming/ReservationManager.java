@@ -21,7 +21,7 @@ public final class ReservationManager
 		// singleton
 	}
 
-	public static PlayerSlot redeemReservationCode(Client client,
+	public static synchronized PlayerSlot redeemReservationCode(Client client,
 			String reservation) throws UnknownReservationException
 	{
 		PlayerSlot result = reservations.remove(reservation);
@@ -60,5 +60,11 @@ public final class ReservationManager
 		}
 
 		return key;
+	}
+
+	public static synchronized void freeReservation(String reservation)
+	{
+		PlayerSlot slot = reservations.remove(reservation);
+		slot.free();
 	}
 }
