@@ -1,6 +1,6 @@
 package gameClient;
 
-public class Launcher
+public class Start
 {
 	/**
 	 * Diese Methode wird beim Start des Programmes aufgerufen. Die Parameter

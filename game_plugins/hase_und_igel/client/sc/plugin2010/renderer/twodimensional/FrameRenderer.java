@@ -313,8 +313,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 					{
 						answers.add(fallback);
 					}
-
-					answers.add(moveForward);
 					askQuestion("Welchen Hasenjoker wollen Sie spielen?",
 							answers, jokerAnswer);
 				}

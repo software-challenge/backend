@@ -20,6 +20,7 @@ public abstract class SpielClient implements IGameUpdateObserver
 	private Spielbrett	spielbrett;
 	private Spieler		spieler;
 	private Spieler		gegner;	// TODO kara wegkapseln?
+	private Logik		logik;
 
 	public SpielClient(String ip, int port, String spielreservierung)
 	{
@@ -37,11 +38,10 @@ public abstract class SpielClient implements IGameUpdateObserver
 		{
 			// verbinde beim starten
 			Client client = new Client(ip, port, EPlayerId.PLAYER_ONE);
-			Logik logik = new Logik(this, client);
-			spieler.setLogik(logik);
+			logik = new Logik(this, client);
 			client.setHandler(logik);
-			
-			if(spielreservierung == null || spielreservierung.isEmpty())
+
+			if (spielreservierung == null || spielreservierung.isEmpty())
 			{
 				client.joinAnyGame();
 			}
@@ -89,6 +89,7 @@ public abstract class SpielClient implements IGameUpdateObserver
 	public void setzeSpieler(Spieler spieler)
 	{
 		this.spieler = spieler;
+		spieler.setLogik(logik);
 	}
 
 	/**

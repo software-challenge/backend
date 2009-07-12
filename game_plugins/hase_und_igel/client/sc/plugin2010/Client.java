@@ -27,7 +27,8 @@ import sc.protocol.responses.PrepareGameResponse;
  */
 public class Client implements ILobbyClientListener
 {
-	private static final Logger	logger	= LoggerFactory.getLogger(Client.class);
+	private static final Logger	logger			= LoggerFactory
+														.getLogger(Client.class);
 	private IGameHandler		handler;
 	private LobbyClient			client;
 	private Observation			obs;
@@ -39,6 +40,7 @@ public class Client implements ILobbyClientListener
 	private String				host;
 	private int					port;
 	private FigureColor			mycolor;
+	private boolean				alreadyReady	= false;
 
 	@SuppressWarnings("unchecked")
 	public Client(String host, int port, EPlayerId id) throws IOException
@@ -144,9 +146,15 @@ public class Client implements ILobbyClientListener
 
 		}
 		if (obs != null)
-		{
+		{ // TODO send round text
 			obs.newTurn("new turn Karotten:"
 					+ game.getActivePlayer().getCarrotsAvailable());
+			if (!alreadyReady)
+			{
+				alreadyReady = true;
+				obs.ready();
+				logger.info("sent ready!");
+			}
 		}
 	}
 
@@ -195,6 +203,8 @@ public class Client implements ILobbyClientListener
 			obs.gameEnded();
 		}
 	}
+
+	// TODO onGameOver?
 
 	@Override
 	public void onGamePrepared(PrepareGameResponse response)
