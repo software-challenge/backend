@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.protocol.IControllableGame;
 import sc.protocol.clients.ObservingClient;
 
@@ -44,7 +46,7 @@ public class ReplayBuilder
 		if (game instanceof ObservingClient)
 		{
 			ObservingClient client = (ObservingClient) game;
-			ObjectOutputStream objectOut = client.getXStream()
+			ObjectOutputStream objectOut = new XStream()
 					.createObjectOutputStream(out);
 
 			for (Object state : client.getHistory())

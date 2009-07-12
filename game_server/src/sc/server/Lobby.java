@@ -10,6 +10,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.protocol.ObservationRequest;
 import sc.protocol.RoomPacket;
+import sc.protocol.clients.CancelRequest;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.ILobbyRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
@@ -121,6 +122,12 @@ public class Lobby implements IClientManagerListener, IClientListener
 				StepRequest pause = (StepRequest) packet;
 				GameRoom room = gameManager.findRoom(pause.roomId);
 				room.step();
+			}
+			else if (packet instanceof CancelRequest)
+			{
+				CancelRequest cancel = (CancelRequest) packet;
+				GameRoom room = gameManager.findRoom(cancel.roomId);
+				room.cancel();
 			}
 			else
 			{

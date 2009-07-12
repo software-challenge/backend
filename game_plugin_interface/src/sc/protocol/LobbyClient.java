@@ -34,16 +34,17 @@ import com.thoughtworks.xstream.XStream;
  * @author Marcel
  * 
  */
-public final class LobbyClient extends XStreamClient
+public final class LobbyClient extends XStreamClient implements IPollsHistory
 {
-	private static final Logger					logger			= LoggerFactory
-																		.getLogger(LobbyClient.class);
-	private static final List<String>			rooms			= new LinkedList<String>();
-	private final AsyncResultManager			asyncManager	= new AsyncResultManager();
-	private final List<ILobbyClientListener>	listeners		= new LinkedList<ILobbyClientListener>();
+	private static final Logger					logger				= LoggerFactory
+																			.getLogger(LobbyClient.class);
+	private static final List<String>			rooms				= new LinkedList<String>();
+	private final AsyncResultManager			asyncManager		= new AsyncResultManager();
+	private final List<ILobbyClientListener>	listeners			= new LinkedList<ILobbyClientListener>();
+	private final List<IHistoryListener>		historyListeners	= new LinkedList<IHistoryListener>();
 
-	public static final int						DEFAULT_PORT	= 13050;
-	public static final String					DEFAULT_HOST	= "localhost";
+	public static final int						DEFAULT_PORT		= 13050;
+	public static final String					DEFAULT_HOST		= "localhost";
 
 	public LobbyClient() throws IOException
 	{
@@ -312,5 +313,17 @@ public final class LobbyClient extends XStreamClient
 	{
 		this.send(new ObservationRequest(handle.getRoomId(), ""));
 		return new ObservingClient(this, handle.getRoomId());
+	}
+
+	@Override
+	public void addListener(IHistoryListener listener)
+	{
+		this.historyListeners.add(listener);
+	}
+
+	@Override
+	public void removeListener(IHistoryListener listener)
+	{
+		this.historyListeners.remove(listener);
 	}
 }

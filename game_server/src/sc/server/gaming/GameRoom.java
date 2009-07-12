@@ -356,4 +356,11 @@ public class GameRoom implements IGameListener
 			logger.warn("Game isn't pausable.");
 		}
 	}
+
+	public void cancel()
+	{
+		logger.warn("Game couldn't be canceled.");
+		// TODO:
+		// this.game.destroy();
+	}
 }

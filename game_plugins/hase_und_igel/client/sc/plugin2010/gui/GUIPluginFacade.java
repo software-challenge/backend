@@ -15,6 +15,7 @@ import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.ReplayClient;
+import sc.protocol.clients.ObservingClient;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -77,7 +78,8 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public IObservation loadReplay(String filename) throws IOException
 	{
-		ReplayClient rep = new ReplayClient(new XStream(), new File(filename));
+		ObservingClient rep = new ObservingClient(new XStream(), new File(
+				filename));
 		IObservation obs = new Observation(rep);
 		return obs;
 	}

@@ -1,36 +1,45 @@
 package sc.protocol.clients;
 
-import java.io.ObjectOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.protocol.IControllableGame;
+import sc.protocol.IHistoryListener;
+import sc.protocol.IPollsHistory;
+import sc.protocol.ReplayClient;
+
 import com.thoughtworks.xstream.XStream;
 
-import sc.protocol.ErrorResponse;
-import sc.protocol.IControllableGame;
-import sc.protocol.LobbyClient;
-import sc.protocol.responses.PrepareGameResponse;
-
-public class ObservingClient extends SingleRoomClient implements
-		IControllableGame
+public class ObservingClient implements IControllableGame, IHistoryListener
 {
-	public ObservingClient(LobbyClient client, String roomId)
+	public ObservingClient(XStream xStream, File file) throws IOException
 	{
-		super(client, roomId);
+		this(new ReplayClient(xStream, file), null);
 	}
 
-	protected final List<Object>		history		= new LinkedList<Object>();
+	public ObservingClient(IPollsHistory client, String roomId)
+	{
+		this.poller = client;
+		this.roomId = roomId;
+		client.addListener(this);
+	}
+
+	protected final IPollsHistory		poller;
+
+	protected final String				roomId;
+
+	private boolean						gameOver	= false;
+
+	private final List<Object>			history		= new LinkedList<Object>();
 
 	private final List<IUpdateListener>	listeners	= new LinkedList<IUpdateListener>();
 
-	public void close()
-	{
-		this.history.clear();
-	}
+	protected int						position	= 0;
 
-	int			position	= 0;
-	PlayMode	mode		= PlayMode.PAUSED;
+	protected PlayMode					mode		= PlayMode.PAUSED;
 
 	enum PlayMode
 	{
@@ -48,46 +57,12 @@ public class ObservingClient extends SingleRoomClient implements
 	}
 
 	@Override
-	public void onError(ErrorResponse error)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onGameJoined(String roomId)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onGameLeft(String roomId)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onGamePrepared(PrepareGameResponse response)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void onNewState(String roomId, Object state)
 	{
 		if (this.roomId.equals(roomId))
 		{
 			addObservation(state);
 		}
-	}
-
-	@Override
-	public void onRoomMessage(String roomId, Object data)
-	{
-
 	}
 
 	protected void notifyOnUpdate()
@@ -165,8 +140,43 @@ public class ObservingClient extends SingleRoomClient implements
 		return Collections.unmodifiableList(this.history);
 	}
 
-	public XStream getXStream()
+	@Override
+	public boolean hasNext()
 	{
-		return this.client.getXStream();
+		return (this.position + 1) < this.history.size();
+	}
+
+	@Override
+	public boolean hasPrevious()
+	{
+		return this.position > 0;
+	}
+
+	@Override
+	public boolean isPaused()
+	{
+		return this.mode == PlayMode.PAUSED;
+	}
+
+	public boolean isGameOver()
+	{
+		return this.gameOver;
+	}
+
+	public void close()
+	{
+		this.history.clear();
+	}
+
+	@Override
+	public void onGameOver(String roomId, Object o)
+	{
+		// TODO:
+	}
+
+	@Override
+	public void cancel()
+	{
+		// TODO:
 	}
 }

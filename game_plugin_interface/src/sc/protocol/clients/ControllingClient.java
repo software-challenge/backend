@@ -6,9 +6,12 @@ import sc.protocol.requests.StepRequest;
 
 public class ControllingClient extends ObservingClient
 {
+	final LobbyClient	client;
+
 	public ControllingClient(LobbyClient client, String roomId)
 	{
 		super(client, roomId);
+		this.client = client;
 	}
 
 	@Override
@@ -28,9 +31,33 @@ public class ControllingClient extends ObservingClient
 	@Override
 	public void next()
 	{
-		if(atEnd()) {
-			this.client.send(new StepRequest(this.roomId));			
+		if (atEnd())
+		{
+			this.client.send(new StepRequest(this.roomId));
 		}
+
 		super.next();
+	}
+
+	@Override
+	public boolean hasNext()
+	{
+		if (isGameOver())
+		{
+			return super.hasNext();
+		}
+
+		return isPaused();
+	}
+	
+	@Override
+	public void cancel()
+	{
+		if(!isGameOver()) 
+		{
+			this.client.send(new CancelRequest(this.roomId));
+		}
+		
+		super.cancel();
 	}
 }

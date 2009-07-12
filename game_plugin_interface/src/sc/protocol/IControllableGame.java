@@ -2,13 +2,19 @@ package sc.protocol;
 
 public interface IControllableGame extends IPollsUpdates
 {
+	public void next();
 
-	public abstract void next();
+	public void previous();
 
-	public abstract void previous();
+	public void pause();
 
-	public abstract void pause();
+	public void unpause();
 
-	public abstract void unpause();
+	public boolean hasNext();
 
+	public boolean hasPrevious();
+
+	public boolean isPaused();
+	
+	public void cancel();
 }
