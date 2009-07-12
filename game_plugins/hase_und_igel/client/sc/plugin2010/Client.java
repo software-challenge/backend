@@ -117,8 +117,11 @@ public class Client implements ILobbyClientListener
 		{
 			handler.onUpdate(game.getActivePlayer(), false);
 		}
-		obs.newTurn("new turn Karotten:"
-				+ game.getActivePlayer().getCarrotsAvailable());
+		if (obs != null)
+		{
+			obs.newTurn("new turn Karotten:"
+					+ game.getActivePlayer().getCarrotsAvailable());
+		}
 	}
 
 	public void joinAnyGame()
@@ -152,13 +155,19 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGameJoined(String roomId)
 	{
-		obs.ready();
+		if (obs != null)
+		{
+			obs.ready();
+		}
 	}
 
 	@Override
 	public void onGameLeft(String roomId)
 	{
-		obs.gameEnded();
+		if (obs != null)
+		{
+			obs.gameEnded();
+		}
 	}
 
 	@Override
