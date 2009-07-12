@@ -19,7 +19,7 @@ public class Spieler extends AllgemeinerSpieler
 
 	}
 
-	private void internHasenjoker(Hasenjoker joker, int karrotenAnzahl)
+	public void spieleHasenjoker(Hasenjoker joker, int karottenAnzahl)
 	{
 		switch (joker)
 		{
@@ -33,7 +33,7 @@ public class Spieler extends AllgemeinerSpieler
 				break;
 			case NIMM_ODER_GIB_20_KAROTTEN:
 				logik.sendAction(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.TAKE_OR_DROP_CARROTS, karrotenAnzahl));
+						Player.Action.TAKE_OR_DROP_CARROTS, karottenAnzahl));
 				break;
 			case RUECKE_VOR:
 				logik.sendAction(new Move(Move.MoveTyp.PLAY_CARD,
@@ -44,14 +44,9 @@ public class Spieler extends AllgemeinerSpieler
 		}
 	}
 
-	public void setzeHasenjoker(Hasenjoker joker, int karottenAnzahl)
+	public void spieleHasenjoker(Hasenjoker joker)
 	{
-		internHasenjoker(joker, karottenAnzahl);
-	}
-
-	public void setzeHasenjoker(Hasenjoker joker)
-	{
-		internHasenjoker(joker, 0);
+		spieleHasenjoker(joker, 0);
 	}
 
 	public void setzeFigur(final int feldNummer)
@@ -77,6 +72,16 @@ public class Spieler extends AllgemeinerSpieler
 	public void nimmKarotten()
 	{
 		logik.sendAction(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, 10));
+	}
+
+	/**
+	 * Die nicht Kara-Variante. Für erfahrenere Schüler.
+	 * 
+	 * @param zug
+	 */
+	public void sendeZug(Zug zug)
+	{
+		logik.sendAction(Werkzeuge.convertZug(zug));
 	}
 
 	/**

@@ -20,20 +20,20 @@ import sc.plugin2010.framework.Werkzeuge;
 public class SimpleClient extends SpielClient {
 
 	private final Spielbrett spielbrett;
-	private final Spieler spieler;
+	private final Spieler eigenerSpieler;
 	private final Spieler gegner;
 
 	public SimpleClient(String ip, int port, String spielreservierung) {
 		// verbinde zum Spiel
 		super(ip, port, spielreservierung);
 
-		spieler = new Spieler();
+		eigenerSpieler = new Spieler();
 		gegner = new Spieler();
-		spielbrett = new Spielbrett(spieler, gegner);
+		spielbrett = new Spielbrett(eigenerSpieler, gegner);
 
 		// gib interne Referenzen der Logik
 		super.setzeSpielbrett(spielbrett);
-		super.setzeSpieler(spieler);
+		super.setzeSpieler(eigenerSpieler);
 		super.setzeGegner(gegner);
 	}
 
@@ -61,35 +61,68 @@ public class SimpleClient extends SpielClient {
 		new SimpleClient(host, port, reservierung);
 	}
 
-	public void macheStandardAktion() {
-		// TODO
+	public boolean macheStandardAktion() {
+		boolean zugGemacht = false;
+
 		// Wenn auf einem Salatfeld, dann Salat fressen
-		spieler.frissSalat(); // TODO danach die Prozedur abbrechen?
-		// Wenn auf einem Hasenfeld, dann setze zufällig ersten Hasenjoker ein
-		if (spieler.holeHasenjoker().size() > 0) {
-			spieler.setzeHasenjoker(spieler.holeHasenjoker().get(0));
+		if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler)) {
+			eigenerSpieler.frissSalat();
+			zugGemacht = true;
+		} else if (eigenerSpieler.holeHasenjoker().size() > 0) {
+			if (Werkzeuge.istValideHasenjokerSpielen(spielbrett,
+					eigenerSpieler, eigenerSpieler.holeHasenjoker().get(0), 0)) {
+				eigenerSpieler.spieleHasenjoker(eigenerSpieler.holeHasenjoker()
+						.get(0));
+				zugGemacht = true;
+			}
+			// Wenn auf einem Karottenfeld, dann nimm Karotten oder gib Karotten
+			// ab
+		} else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
+				eigenerSpieler, 10)) {
+
+			if (eigenerSpieler.holeFeldnummer() < 50) {
+				eigenerSpieler.nimmKarotten();
+				zugGemacht = true;
+
+			} else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
+					eigenerSpieler, -10)) {
+				eigenerSpieler.gibKarottenAb();
+				zugGemacht = true;
+			}
 		}
-		// Wenn auf einem Karottenfeld, dann nimm Karotten
-		spieler.nimmKarotten();
+		return zugGemacht;
 	}
 
 	@Override
 	public void zugAngefordert() {
-		macheStandardAktion();
+		if (macheStandardAktion() == false) {
 
-		int feldNummer = -1;
+			int feldNummer = -1;
 
-		// Suche erst nach dem nächsten Salat
-		if (spieler.holeSalatAnzahl() > 0) {
-			feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
-					Spielfeldtyp.SALAT, spieler.holeFeldnummer());
-		}
+			// Suche erst nach dem nächsten Salat
+			if (eigenerSpieler.holeSalatAnzahl() > 0) {
+				feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
+						Spielfeldtyp.SALAT, eigenerSpieler.holeFeldnummer());
+			}
 
-		// Wenn ein Salat gefunden wurde, dann
-		if (feldNummer > 0) {
-			if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
-					- spieler.holeFeldnummer()) <= spieler.holeKarottenAnzahl()) {
-				spieler.setzeFigur(feldNummer);
+			// Wenn ein Salat gefunden wurde
+			if (feldNummer > 0) {
+				if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
+						- eigenerSpieler.holeFeldnummer()) <= eigenerSpieler
+						.holeKarottenAnzahl()) {
+					eigenerSpieler.setzeFigur(feldNummer);
+				} else {
+					feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
+							Spielfeldtyp.KAROTTEN, eigenerSpieler
+									.holeFeldnummer());
+					if (feldNummer > 0) {
+						if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
+								- eigenerSpieler.holeFeldnummer()) <= eigenerSpieler
+								.holeKarottenAnzahl()) {
+							eigenerSpieler.setzeFigur(feldNummer);
+						}
+					}
+				}
 			}
 		}
 	}

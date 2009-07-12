@@ -1,6 +1,7 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.Player.FigureColor;
 
 /**
  * @author ffi
@@ -31,12 +32,6 @@ public class Spielbrett
 		runde = round;
 	}
 
-	public boolean istZugValide(Zug zug, int feldNummer)
-	{
-		return false;
-		// brett.isValid(move, player)
-	}
-
 	public boolean kannSpielerInsZiel()
 	{
 		return brett.canEnterGoal(spieler.getPlayer());
@@ -45,11 +40,28 @@ public class Spielbrett
 	public boolean kannGegnerInsZiel()
 	{
 		return brett.canEnterGoal(gegner.getPlayer());
+
+	}
+
+	public boolean istErster(Spieler spieler)
+	{
+		return brett.isFirst(spieler.getPlayer());
+
+	}
+
+	public boolean darfSpielerAufFeld(Spieler spieler, int feldNummer)
+	{
+		return brett.isMoveable(feldNummer, spieler.getPlayer());
+	}
+
+	public int naechstesFreiesFeld(Spieler spieler, int feldbegin)
+	{
+		return brett.nextFreeFieldFor(spieler.getPlayer(), feldbegin);
 	}
 
 	public Spielfeldtyp holeSpielfeldtyp(final int feldNummer)
 	{
-		return convertFieldtype(brett.getTypeAt(feldNummer));
+		return Werkzeuge.convertFieldtype(brett.getTypeAt(feldNummer));
 	}
 
 	public boolean istSpielfeldBesetzt(final int feldNummer)
@@ -60,21 +72,44 @@ public class Spielbrett
 	public int holeNaechstesSpielfeldNachTyp(Spielfeldtyp typ,
 			int startFeldNummer)
 	{
-		return brett.getNextFieldByTyp(convertSpielfeldtyp(typ),
+		return brett.getNextFieldByTyp(Werkzeuge.convertSpielfeldtyp(typ),
 				startFeldNummer);
 	}
 
-	public boolean stehtGegnerAufFeld(final int feldNummer, Gegner gegner)
+	public int holeVorherigesSpielfeldNachTyp(Spielfeldtyp typ,
+			int startFeldNummer)
 	{
-		if (brett.getPlayerAt(feldNummer).getColor() == gegner.getPlayer()
-				.getColor())
-		{ // TODO
-			return true;
-		}
-		else
+		return brett.getPreviousFieldByTyp(Werkzeuge.convertSpielfeldtyp(typ),
+				startFeldNummer);
+	}
+
+	public Spieler holeSpielerAufFeld(int feldNummer)
+	{
+		if (brett.getPlayerAt(feldNummer).getColor() == FigureColor.BLUE)
 		{
-			return false;
+			if (spieler.holeSpielerfarbe() == Spielerfarbe.BLAU)
+			{
+				return spieler;
+			}
+			else
+			{
+				return gegner;
+			}
 		}
+		else if (brett.getPlayerAt(feldNummer).getColor() == FigureColor.RED)
+		{
+			if (spieler.holeSpielerfarbe() == Spielerfarbe.ROT)
+			{
+				return spieler;
+			}
+			else
+			{
+				return gegner;
+			}
+		}
+
+		// not found TODO Exception IllegalArgument?
+		return null;
 	}
 
 	public int holeRunde()
@@ -82,61 +117,8 @@ public class Spielbrett
 		return runde;
 	}
 
-	// ///////////////////////////////////
-	// einige interne Konvertierungen
-	// ///////////////////////////////////
-
-	private Board.FieldTyp convertSpielfeldtyp(Spielfeldtyp typ)
+	protected Board getBoard()
 	{
-		switch (typ)
-		{
-			case SALAT:
-				return Board.FieldTyp.SALAD;
-			case KAROTTEN:
-				return Board.FieldTyp.CARROT;
-			case HASE:
-				return Board.FieldTyp.RABBIT;
-			case IGEL:
-				return Board.FieldTyp.HEDGEHOG;
-			case POSITION_1:
-				return Board.FieldTyp.POSITION_1;
-			case POSITION_2:
-				return Board.FieldTyp.POSITION_2;
-			case INVALIDE:
-				return Board.FieldTyp.INVALID;
-			case ZIEL:
-				return Board.FieldTyp.GOAL;
-			case START:
-				return Board.FieldTyp.START;
-			default:
-				return Board.FieldTyp.INVALID;
-		}
-	}
-
-	private Spielfeldtyp convertFieldtype(Board.FieldTyp typ)
-	{
-		switch (typ)
-		{
-			case SALAD:
-				return Spielfeldtyp.SALAT;
-			case CARROT:
-				return Spielfeldtyp.KAROTTEN;
-			case RABBIT:
-				return Spielfeldtyp.HASE;
-			case HEDGEHOG:
-				return Spielfeldtyp.IGEL;
-			case POSITION_1:
-				return Spielfeldtyp.POSITION_1;
-			case POSITION_2:
-				return Spielfeldtyp.POSITION_2;
-			case INVALID:
-				return Spielfeldtyp.INVALIDE;
-			case GOAL:
-				return Spielfeldtyp.ZIEL;
-			case START:
-				return Spielfeldtyp.START;
-			default:
-				return Spielfeldtyp.INVALIDE;
-		}
+		return brett;
 	}
 }

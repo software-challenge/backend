@@ -38,12 +38,35 @@ public abstract class AllgemeinerSpieler
 		return player.getSaladsToEat();
 	}
 
+	public boolean hatHasenjokerTyp(Hasenjoker joker)
+	{
+		Action type;
+		switch (joker)
+		{
+			case FALLE_ZURUECK:
+				type = Action.FALL_BACK;
+				break;
+			case FRISS_SALAT:
+				type = Action.EAT_SALAD;
+				break;
+			case NIMM_ODER_GIB_20_KAROTTEN:
+				type = Action.TAKE_OR_DROP_CARROTS;
+				break;
+			case RUECKE_VOR:
+				type = Action.HURRY_AHEAD;
+				break;
+			default:
+				return false;
+		}
+		return player.ownsCardOfTyp(type);
+	}
+
 	/**
 	 * Holt die aktuelle Spielerfarbe des Spielers.
 	 * 
 	 * @return
 	 */
-	public Spielerfarbe holeSpielerFarbe()
+	public Spielerfarbe holeSpielerfarbe()
 	{
 		if (player.getColor() == Player.FigureColor.BLUE)
 		{
