@@ -216,9 +216,8 @@ public class Player extends SimplePlayer
 		return lastMove;
 	}
 
-	@Override
-	public PlayerScore getScore()
+	public PlayerScore getScore(ScoreCause cause)
 	{
-		return new PlayerScore(ScoreCause.UNKNOWN, getPosition(), getFieldNumber());
+		return new PlayerScore(cause, getPosition(), getFieldNumber());
 	}
 }

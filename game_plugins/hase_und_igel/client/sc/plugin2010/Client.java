@@ -96,7 +96,7 @@ public class Client implements ILobbyClientListener
 		else if (data instanceof WelcomeMessage)
 		{
 			WelcomeMessage welc = (WelcomeMessage) data;
-			mycolor = welc.getMyColor();
+			mycolor = welc.getYourColor();
 		}
 		this.roomId = roomId;
 	}

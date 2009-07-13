@@ -11,7 +11,7 @@ public class WelcomeMessage
 		myColor = c;
 	}
 	
-	public FigureColor getMyColor()
+	public FigureColor getYourColor()
 	{
 		return myColor;
 	}
