@@ -42,6 +42,11 @@ public class GameUtil
 		return moves - 1;
 	}
 
+	public static boolean isValidToMove(Board b, Player p, int l)
+	{
+		return isValidToMove(b, p, l, true);
+	}
+	
 	/**
 	 * Überprüft <code>MoveTyp.MOVE</code> Züge auf ihre Korrektheit. Folgende
 	 * Spielregeln werden beachtet:
@@ -59,12 +64,14 @@ public class GameUtil
 	 * @param p
 	 * @return
 	 */
-	public static boolean isValidToMove(Board b, Player p, int l)
+	public static boolean isValidToMove(Board b, Player p, int l, boolean checkCarrots)
 	{
 		boolean valid = true;
 		int requiredCarrots = GameUtil.calculateCarrots(l);
 		valid = valid && l > 0;
-		valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
+		
+		if (checkCarrots)
+			valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
 
 		int newPosition = p.getPosition() + l;
 		valid = valid && !b.isOccupied(newPosition);
@@ -179,6 +186,8 @@ public class GameUtil
 				valid = valid && board.isFirst(player);
 				final Player o = board.getOtherPlayer(player);
 				valid = valid && o.getPosition() != 0;
+				int nextPos = o.getPosition() - 1;
+				valid = valid && isValidToMove(board, player, player.getPosition()-nextPos, false);
 				int previousHedgehog = board.getPreviousFieldByTyp(
 						FieldTyp.HEDGEHOG, o.getPosition());
 				valid = valid && ((o.getPosition() - previousHedgehog) != 1);
@@ -190,6 +199,8 @@ public class GameUtil
 				valid = valid && !board.isFirst(player);
 				final Player o = board.getOtherPlayer(player);
 				valid = valid && o.getPosition() != 64;
+				int nextPos = o.getPosition() - 1;
+				valid = valid && isValidToMove(board, player, nextPos-player.getPosition(), false);
 				int nextHedgehog = board.getNextFieldByTyp(FieldTyp.HEDGEHOG, o
 						.getPosition());
 				valid = valid && ((nextHedgehog - o.getPosition()) != 1);
