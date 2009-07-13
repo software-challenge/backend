@@ -19,12 +19,6 @@ public class TestTcpClient extends XStreamClient
 	}
 
 	@Override
-	public void onDisconnect(DisconnectCause cause)
-	{
-		super.onDisconnect(cause);
-	}
-
-	@Override
 	protected void onObject(Object o)
 	{
 		// ignore

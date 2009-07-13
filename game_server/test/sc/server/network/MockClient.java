@@ -111,11 +111,11 @@ public class MockClient extends Client
 		this.object = o;
 	}
 
-	public Object receive()
+	public Object receive() throws InterruptedException
 	{
 		while (object == null)
 		{
-			Thread.yield();
+			Thread.sleep(10);
 		}
 
 		return object;

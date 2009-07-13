@@ -12,11 +12,11 @@ import sc.networking.INetworkInterface;
 public class StringNetworkInterface implements INetworkInterface
 {
 	private ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	private ByteArrayInputStream inputStream;
+	private InputStream inputStream;
 		
 	public StringNetworkInterface(String data)
 	{
-		inputStream = new ByteArrayInputStream(data.getBytes());
+		inputStream = new NonEndingByteArrayInputStream(data.getBytes());
 	}
 	
 	@Override

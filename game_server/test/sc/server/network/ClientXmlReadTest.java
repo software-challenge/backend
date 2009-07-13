@@ -42,11 +42,11 @@ public class ClientXmlReadTest
 		Configuration.getXStream().alias("example", ExamplePacket.class);
 	}
 
-	@Test
-	public void clientReceivePacketTest() throws IOException
+	@Test//(timeout=2000)
+	public void clientReceivePacketTest() throws IOException, InterruptedException
 	{
 		StringNetworkInterface stringInterface = new StringNetworkInterface(
-				"<protocol><example /></protocol>");
+				"<protocol>\n<example />");
 		StupidClientListener clientListener = new StupidClientListener();
 		MockClient client = new MockClient(stringInterface, Configuration.getXStream());
 		client.addClientListener(clientListener);

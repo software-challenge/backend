@@ -4,11 +4,13 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.networking.INetworkInterface;
+import sun.awt.windows.ThemeReader;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
@@ -22,8 +24,8 @@ public abstract class XStreamClient
 	ObjectInputStream					in;
 	private final Thread				thread;
 	private DisconnectCause				disconnectCause	= null;
-	private boolean						closing			= false;
 	protected final XStream				xStream;
+	private boolean						closed			= false;
 	private boolean						ready			= false;
 	private final Object				readyLock		= new Object();
 
@@ -120,9 +122,34 @@ public abstract class XStreamClient
 				}
 				catch (XStreamException e)
 				{
-					onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-					this.threadLogger.error(
-							"Client violated against the protocol.", e);
+					if (e.getCause() != null)
+					{
+						if (e.getCause() instanceof SocketException)
+						{
+							onDisconnect(DisconnectCause.LOST_CONNECTION);
+						}
+						else if (e.getCause() instanceof EOFException)
+						{
+							onDisconnect(DisconnectCause.LOST_CONNECTION);
+						}
+						else if (e.getCause() instanceof IOException
+								&& e.getCause().getCause() instanceof InterruptedException)
+						{
+							onDisconnect(DisconnectCause.LOST_CONNECTION);
+						}
+						else
+						{
+							onDisconnect(DisconnectCause.PROTOCOL_ERROR);
+							this.threadLogger.error(
+									"Client violated against the protocol.", e);
+						}
+					}
+					else
+					{
+						onDisconnect(DisconnectCause.PROTOCOL_ERROR);
+						this.threadLogger.error(
+								"Client violated against the protocol.", e);
+					}
 				}
 				catch (Exception e)
 				{
@@ -135,6 +162,8 @@ public abstract class XStreamClient
 				return;
 			}
 		});
+		this.thread.setDaemon(true);
+		this.thread.setName("XStreamClient Reader");
 		this.thread.start();
 	}
 
@@ -142,6 +171,8 @@ public abstract class XStreamClient
 
 	public void onDisconnect(DisconnectCause cause)
 	{
+		logger.info("Client {} disconnected. Cause: {}", this, cause);
+
 		try
 		{
 			this.close();
@@ -164,8 +195,13 @@ public abstract class XStreamClient
 	{
 		if (!isReady())
 		{
-			throw new RuntimeException(
+			throw new IllegalStateException(
 					"Please call start() before sending any messages.");
+		}
+
+		if (this.closed)
+		{
+			throw new IllegalStateException("Writing on a closed xStream.");
 		}
 
 		logger.debug("Sending {} via {}", o, this.networkInterface);
@@ -194,13 +230,45 @@ public abstract class XStreamClient
 		return this.disconnectCause;
 	}
 
-	public void close() throws IOException
+	public synchronized void close() throws IOException
 	{
-		if (!this.closing)
+		if (!this.closed)
 		{
-			this.closing = true;
-			this.thread.interrupt();
-			this.networkInterface.close();
+			this.closed = true;
+
+			// unlock waiting threads
+			synchronized (this.readyLock)
+			{
+				this.readyLock.notifyAll();
+			}
+
+			//
+			if (this.thread != null)
+			{
+				this.thread.interrupt();
+			}
+
+			try
+			{
+				if (this.out != null)
+				{
+					this.out.close();
+				}
+			}
+			finally
+			{
+				try
+				{
+					if (this.in != null)
+					{
+						this.in.close();
+					}
+				}
+				finally
+				{
+					this.networkInterface.close();
+				}
+			}
 		}
 	}
 

@@ -181,9 +181,6 @@ public class Client extends XStreamClient
 	public void onDisconnect(DisconnectCause cause)
 	{
 		super.onDisconnect(cause);
-
-		logger.info("{} disconnected.", this);
-
 		notifyOnDisconnect();
 	}
 
