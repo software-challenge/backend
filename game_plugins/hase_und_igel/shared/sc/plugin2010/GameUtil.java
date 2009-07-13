@@ -125,9 +125,11 @@ public class GameUtil
 
 	public static boolean playerMustMove(Player p, MoveTyp t)
 	{
-		if (p.getHistory().size() > 0)
+		Move lastMove = p.getLastMove();
+
+		if (lastMove != null)
 		{
-			return p.getHistory().get(p.getHistory().size() - 1).getTyp() == t;
+			return lastMove.getTyp() == t;
 		}
 
 		return false;

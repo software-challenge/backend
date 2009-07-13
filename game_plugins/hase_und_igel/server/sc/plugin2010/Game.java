@@ -212,10 +212,22 @@ public class Game extends RoundBasedGameInstance<Player>
 		switch (board.getTypeAt(active.getFieldNumber()))
 		{
 			case RABBIT:
-				if (last.getTyp().equals(MoveTyp.MOVE)
-						|| last.getTyp().equals(MoveTyp.PLAY_CARD))
+				if (last != null)
 				{
-					nextPlayer = active; // again
+					// regular move onto rabbit-field
+					if (last.getTyp() == MoveTyp.MOVE)
+					{
+						nextPlayer = active;
+					}
+					else if (last.getTyp() == MoveTyp.PLAY_CARD)
+					{
+						// warp-move onto rabbit-field
+						if (last.getCard() == Action.FALL_BACK
+								|| last.getCard() == Action.HURRY_AHEAD)
+						{
+							nextPlayer = active;
+						}
+					}
 				}
 				break;
 		}
