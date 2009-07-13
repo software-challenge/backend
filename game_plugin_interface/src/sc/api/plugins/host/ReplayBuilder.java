@@ -23,7 +23,7 @@ public class ReplayBuilder
 			throws IOException
 	{
 		File file = new File(pathname);
-		
+
 		logger.info("Saving Replay to {} ({})", pathname, file
 				.getAbsoluteFile());
 
@@ -37,7 +37,12 @@ public class ReplayBuilder
 			file.delete();
 		}
 
-		file.mkdirs();
+		File dir = file.getParentFile();
+		if(dir != null)
+		{
+			dir.mkdirs();
+		}
+		
 		file.createNewFile();
 
 		if (!file.isDirectory())
