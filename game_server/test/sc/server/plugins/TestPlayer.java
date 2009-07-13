@@ -5,6 +5,7 @@ import java.util.List;
 
 import sc.api.plugins.host.IPlayerListener;
 import sc.api.plugins.host.PlayerScore;
+import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.SimplePlayer;
 
 public class TestPlayer extends SimplePlayer
@@ -34,7 +35,7 @@ public class TestPlayer extends SimplePlayer
 	}
 	
 	@Override
-	public PlayerScore getScore()
+	public PlayerScore getScore(ScoreCause cause)
 	{
 		return new PlayerScore(true);
 	}
