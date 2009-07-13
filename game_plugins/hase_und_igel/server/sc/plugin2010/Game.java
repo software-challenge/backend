@@ -56,7 +56,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected boolean checkGameOverCondition()
 	{
-		boolean gameOver = turn >= GamePlugin.MAX_TURN_COUNT;
+		boolean gameOver = getTurn() >= GamePlugin.MAX_TURN_COUNT;
 
 		for (final Player p : this.players)
 		{
@@ -231,7 +231,7 @@ public class Game extends RoundBasedGameInstance<Player>
 				}
 				break;
 		}
-
+		
 		next(nextPlayer);
 	}
 

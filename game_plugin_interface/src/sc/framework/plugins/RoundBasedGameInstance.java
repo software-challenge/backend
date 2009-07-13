@@ -22,7 +22,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	private Runnable		afterPauseAction	= null;
 	private Object			afterPauseLock		= new Object();
 	private boolean			moveRequested		= false;
-	protected int			turn				= 0;
+	private int				turn				= 0;
 
 	public int getTurn()
 	{
@@ -101,9 +101,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	protected final void next(P nextPlayer)
 	{
-		notifyOnNewState(getCurrentState());
+		if (increaseTurnIfNecessary(nextPlayer))
+		{
+			this.turn++;
+		}
 
 		this.activePlayer = nextPlayer;
+		notifyOnNewState(getCurrentState());
 
 		if (checkGameOverCondition())
 		{
@@ -120,6 +124,12 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		{
 			notifyActivePlayer();
 		}
+	}
+
+	protected boolean increaseTurnIfNecessary(P nextPlayer)
+	{
+		return (this.activePlayer != nextPlayer && this.players
+				.indexOf(nextPlayer) == 0);
 	}
 
 	/**
