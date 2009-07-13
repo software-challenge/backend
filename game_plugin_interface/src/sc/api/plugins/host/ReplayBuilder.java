@@ -37,6 +37,7 @@ public class ReplayBuilder
 			file.delete();
 		}
 
+		file.mkdirs();
 		file.createNewFile();
 
 		if (!file.isDirectory())
