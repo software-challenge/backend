@@ -4,7 +4,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import sc.plugin2010.util.GameUtil;
+import sc.plugin2010.GameUtil;
 
 /**
  * @author rra

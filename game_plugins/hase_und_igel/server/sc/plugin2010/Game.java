@@ -18,7 +18,6 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.util.GameUtil;
 
 /**
  * Die Spiellogik von Hase- und Igel.

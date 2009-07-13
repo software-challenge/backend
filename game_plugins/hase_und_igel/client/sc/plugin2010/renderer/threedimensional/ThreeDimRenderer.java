@@ -29,10 +29,10 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.GameUtil;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
-import sc.plugin2010.util.GameUtil;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.Primitive;

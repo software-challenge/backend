@@ -19,12 +19,12 @@ import org.slf4j.LoggerFactory;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Client;
+import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
-import sc.plugin2010.util.GameUtil;
 
 /**
  * @author ffi

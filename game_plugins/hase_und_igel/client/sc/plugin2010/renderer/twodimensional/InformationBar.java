@@ -15,9 +15,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import sc.plugin2010.GameUtil;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.renderer.RendererUtil;
-import sc.plugin2010.util.GameUtil;
 
 /**
  * An class to display the information about the current game and the current

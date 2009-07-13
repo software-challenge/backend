@@ -1,10 +1,10 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
 import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
-import sc.plugin2010.util.GameUtil;
 
 /**
  * Eine Werkzeug Klasse, um nützliche und häufig gebrauchte Funktionen zur

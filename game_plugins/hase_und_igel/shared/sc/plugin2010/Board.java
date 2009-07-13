@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.util.GameUtil;
 
 /**
  * @author rra
