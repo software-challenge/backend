@@ -52,6 +52,11 @@ public class InformationBar extends JPanel
 	private final String	FONTTYPE		= "New Courier";
 	private final int		SIZE			= 12;
 
+	private final Image		blue			= RendererUtil
+													.getImage("resource/blue.png");
+	private final Image		red				= RendererUtil
+													.getImage("resource/red.png");
+
 	public InformationBar()
 	{
 		setDoubleBuffered(true);
@@ -207,8 +212,16 @@ public class InformationBar extends JPanel
 	{
 		ImageIcon icon = new ImageIcon();
 		int scaleValue = 70;
-		icon.setImage(RendererUtil.getImage("resource/" + color + ".png")
-				.getScaledInstance(scaleValue, scaleValue, Image.SCALE_SMOOTH));
+		if (color.equals("blue"))
+		{
+			icon.setImage(blue.getScaledInstance(scaleValue, scaleValue,
+					Image.SCALE_SMOOTH));
+		}
+		else
+		{
+			icon.setImage(red.getScaledInstance(scaleValue, scaleValue,
+					Image.SCALE_SMOOTH));
+		}
 		turnicon.setIcon(icon);
 	}
 }

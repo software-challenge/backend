@@ -55,27 +55,39 @@ public class Werkzeuge
 			Spieler spieler, int feldAnzahl)
 	{
 		return GameUtil.isValidToMove(brett.getBoard(), spieler.getPlayer(),
-				feldAnzahl);
+				feldAnzahl - spieler.getPlayer().getFieldNumber());
 	}
 
 	/**
-	 * Überprüft, ob der Spieler <code>spieler</code> 10 Karotten nehmen oder
-	 * abgeben darf. Bei <code>karottenAnzahl</code> wird beim Nehmen 10 und
-	 * beim Abgeben -10 angegeben.
+	 * Überprüft, ob der Spieler <code>spieler</code> 10 Karotten abgeben darf.
 	 * 
 	 * @param brett
 	 *            das aktuelle Spielbrett
 	 * @param spieler
 	 *            der Spieler für den die Aktion überprüft werden soll
-	 * @param karottenAnzahl
-	 *            Nehmen: 10, Abgeben: -10
 	 * @return falls valide, dann true sonst false
 	 */
-	public static boolean istValide10KarrotenNehmenAbgeben(Spielbrett brett,
-			Spieler spieler, int karottenAnzahl)
+	public static boolean istValide10KarrotenAbgeben(Spielbrett brett,
+			Spieler spieler)
 	{
 		return GameUtil.isValidToTakeOrDrop10Carrots(brett.getBoard(), spieler
-				.getPlayer(), karottenAnzahl);
+				.getPlayer(), -10);
+	}
+
+	/**
+	 * Überprüft, ob der Spieler <code>spieler</code> 10 Karotten nehmen darf.
+	 * 
+	 * @param brett
+	 *            das aktuelle Spielbrett
+	 * @param spieler
+	 *            der Spieler für den die Aktion überprüft werden soll
+	 * @return falls valide, dann true sonst false
+	 */
+	public static boolean istValide10KarrotenNehmen(Spielbrett brett,
+			Spieler spieler)
+	{
+		return GameUtil.isValidToTakeOrDrop10Carrots(brett.getBoard(), spieler
+				.getPlayer(), 10);
 	}
 
 	/**

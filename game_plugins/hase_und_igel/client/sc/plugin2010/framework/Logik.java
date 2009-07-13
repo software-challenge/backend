@@ -34,20 +34,17 @@ public class Logik implements IGameHandler
 	public void onUpdate(final Board board, int round)
 	{
 		obs.spiellbrettAktualisiert(board, round);
-		logger.info("board update");
 	}
 
 	@Override
 	public void onUpdate(final Player player, boolean own)
 	{
 		obs.spielerAktualisiert(player, own);
-		logger.info("player update");
 	}
 
 	@Override
 	public void onRequestAction()
 	{
-		logger.info("zug anford");
 		obs.zugAngefordert();
 	}
 

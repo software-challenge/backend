@@ -51,7 +51,8 @@ public class Spieler extends AllgemeinerSpieler
 
 	public void setzeFigur(final int feldNummer)
 	{
-		logik.sendAction(new Move(Move.MoveTyp.MOVE, feldNummer));
+		logik.sendAction(new Move(Move.MoveTyp.MOVE, feldNummer
+				- holeFeldnummer()));
 	}
 
 	public void frissSalat()

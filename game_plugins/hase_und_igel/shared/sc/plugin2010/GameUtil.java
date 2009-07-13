@@ -138,8 +138,23 @@ public class GameUtil
 
 	public static boolean isValidToTakeOrDrop10Carrots(Board b, Player p, int n)
 	{
-		return b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.CARROT)
-				&& (n == 10 || n == -10);
+		boolean valid = b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.CARROT);
+		if (n == 10)
+		{
+			return valid;
+		}
+		if (n == -10)
+		{
+			if (p.getCarrotsAvailable() >= 10)
+			{
+				return valid;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -320,42 +335,46 @@ public class GameUtil
 
 	public static String displayMoveAction(Move mov)
 	{
-		switch (mov.getTyp())
+		if (mov != null)
 		{
-			case EAT:
-				return "frisst einen Salat";
-			case MOVE:
-				return "setzt auf " + String.valueOf(mov.getN());
-			case TAKE_OR_DROP_CARROTS:
-				String res = "";
-				if (mov.getN() == 10)
-				{
-					res = "nimmt 10 Karotten";
-				}
-				else if (mov.getN() == -10)
-				{
-					res = "gibt 10 Karotten ab";
-				}
-				return res;
-			case FALL_BACK:
-				return "lässt sich auf Igel zurückfallen";
-			case PLAY_CARD:
-				switch (mov.getCard())
-				{
-					case TAKE_OR_DROP_CARROTS:
-						return "spielt 'Nimm oder gib 20 Karotten'";
-					case EAT_SALAD:
-						return "spielt 'Friss sofort einen Salat'";
-					case FALL_BACK:
-						return "spielt 'Falle eine Position zurück'";
-					case HURRY_AHEAD:
-						return "spielt 'Rücke eine Position vor'";
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
+			switch (mov.getTyp())
+			{
+				case EAT:
+					return "frisst einen Salat";
+				case MOVE:
+					return "setzt "
+							+ String.valueOf(mov.getN() + " Felder vorwärts");
+				case TAKE_OR_DROP_CARROTS:
+					String res = "";
+					if (mov.getN() == 10)
+					{
+						res = "nimmt 10 Karotten";
+					}
+					else if (mov.getN() == -10)
+					{
+						res = "gibt 10 Karotten ab";
+					}
+					return res;
+				case FALL_BACK:
+					return "lässt sich auf Igel zurückfallen";
+				case PLAY_CARD:
+					switch (mov.getCard())
+					{
+						case TAKE_OR_DROP_CARROTS:
+							return "spielt 'Nimm oder gib 20 Karotten'";
+						case EAT_SALAD:
+							return "spielt 'Friss sofort einen Salat'";
+						case FALL_BACK:
+							return "spielt 'Falle eine Position zurück'";
+						case HURRY_AHEAD:
+							return "spielt 'Rücke eine Position vor'";
+						default:
+							break;
+					}
+					break;
+				default:
+					break;
+			}
 		}
 		return "";
 	}

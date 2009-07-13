@@ -117,18 +117,10 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		if (id == EPlayerId.PLAYER_ONE)
+
+		if (id == EPlayerId.OBSERVER)
 		{
-			logger.info("New State received by Player 1");
-		}
-		else if (id == EPlayerId.OBSERVER)
-		{
-			logger.info("New State received by Observer");
 			mycolor = FigureColor.RED; // set Red as first Player
-		}
-		else if (id == EPlayerId.PLAYER_TWO)
-		{
-			logger.info("New State received by Player 2");
 		}
 
 		GameState gameState = (GameState) state;
@@ -163,8 +155,11 @@ public class Client implements ILobbyClientListener
 			}
 			;
 
-			obs.newTurn(playerid, GameUtil.displayMoveAction(game.getBoard()
-					.getOtherPlayer(game.getActivePlayer()).getLastMove()));
+			Player oldPlayer = game.getBoard().getOtherPlayer(
+					game.getActivePlayer());
+			// TODO sent 2 moves if 2 moves were made
+			obs.newTurn(playerid, GameUtil.displayMoveAction(oldPlayer
+					.getLastMove()));
 
 			if (!alreadyReady)
 			{
@@ -205,7 +200,10 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGameJoined(String roomId)
 	{
-		// not needed
+		if (obs != null)
+		{
+			obs.ready();
+		}
 	}
 
 	@Override

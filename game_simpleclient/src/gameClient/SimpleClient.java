@@ -23,6 +23,7 @@ public class SimpleClient extends SpielClient
 	private final Spielbrett	spielbrett;
 	private final Spieler		eigenerSpieler;
 	private final Spieler		gegner;
+	private boolean				bereitsKarottenGenommen	= false;
 
 	public SimpleClient(String ip, int port, String spielreservierung)
 	{
@@ -47,7 +48,32 @@ public class SimpleClient extends SpielClient
 		if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler))
 		{
 			eigenerSpieler.frissSalat();
+			System.out.println("Salat gefressen");
 			zugGemacht = true;
+		}
+		// Wenn auf einem Karottenfeld, dann nimm Karotten oder gib Karotten
+		// ab
+		else if (Werkzeuge
+				.istValide10KarrotenNehmen(spielbrett, eigenerSpieler)
+				&& !bereitsKarottenGenommen)
+		{
+
+			if (eigenerSpieler.holeFeldnummer() < 50)
+			{
+				eigenerSpieler.nimmKarotten();
+				bereitsKarottenGenommen = true;
+				System.out.println("Karotten genommen");
+				zugGemacht = true;
+
+			}
+			else if (Werkzeuge.istValide10KarrotenAbgeben(spielbrett,
+					eigenerSpieler))
+			{
+				eigenerSpieler.gibKarottenAb();
+				bereitsKarottenGenommen = true;
+				System.out.println("Karotten abgegeben");
+				zugGemacht = true;
+			}
 		}
 		else if (eigenerSpieler.holeHasenjoker().size() > 0)
 		{
@@ -56,28 +82,11 @@ public class SimpleClient extends SpielClient
 			{
 				eigenerSpieler.spieleHasenjoker(eigenerSpieler.holeHasenjoker()
 						.get(0));
-				zugGemacht = true;
-			}
-			// Wenn auf einem Karottenfeld, dann nimm Karotten oder gib Karotten
-			// ab
-		}
-		else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
-				eigenerSpieler, 10))
-		{
-
-			if (eigenerSpieler.holeFeldnummer() < 50)
-			{
-				eigenerSpieler.nimmKarotten();
-				zugGemacht = true;
-
-			}
-			else if (Werkzeuge.istValide10KarrotenNehmenAbgeben(spielbrett,
-					eigenerSpieler, -10))
-			{
-				eigenerSpieler.gibKarottenAb();
+				System.out.println("Hasenjoker");
 				zugGemacht = true;
 			}
 		}
+
 		return zugGemacht;
 	}
 
@@ -86,24 +95,26 @@ public class SimpleClient extends SpielClient
 	{
 		if (macheStandardAktion() == false)
 		{
+			System.out.println("Keine Standardaktion");
+
+			boolean zugGemacht = false;
+			bereitsKarottenGenommen = false;
 
 			int feldNummer = -1;
 
-			// Suche erst nach dem nächsten Salat
-			if (eigenerSpieler.holeSalatAnzahl() > 0)
-			{
-				feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
-						Spielfeldtyp.SALAT, eigenerSpieler.holeFeldnummer());
-			}
+			// Suche nach dem nächsten Salat
+			feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
+					Spielfeldtyp.SALAT, eigenerSpieler.holeFeldnummer());
 
 			// Wenn ein Salat gefunden wurde
 			if (feldNummer > 0)
 			{
-				if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
-						- eigenerSpieler.holeFeldnummer()) <= eigenerSpieler
-						.holeKarottenAnzahl())
+				if (Werkzeuge.istValideFeldZiehen(spielbrett, eigenerSpieler,
+						feldNummer))
 				{
+					System.out.println("Salatfeld");
 					eigenerSpieler.setzeFigur(feldNummer);
+					zugGemacht = true;
 				}
 				else
 				{
@@ -112,16 +123,54 @@ public class SimpleClient extends SpielClient
 									.holeFeldnummer());
 					if (feldNummer > 0)
 					{
-						if (Werkzeuge.berechneBenoetigteKarotten(feldNummer
-								- eigenerSpieler.holeFeldnummer()) <= eigenerSpieler
-								.holeKarottenAnzahl())
+						if (Werkzeuge.istValideFeldZiehen(spielbrett,
+								eigenerSpieler, feldNummer))
 						{
 							eigenerSpieler.setzeFigur(feldNummer);
+							System.out.println("Karottenfeld");
+							zugGemacht = true;
+						}
+						else if (Werkzeuge.istValideIgelZurueckfallen(
+								spielbrett, eigenerSpieler))
+						{
+							eigenerSpieler.zurueckAufLetztenIgel();
+							System.out.println("Igelfeld1");
+							zugGemacht = true;
 						}
 					}
 					else
 					{
-						eigenerSpieler.zurueckAufLetztenIgel();
+						if (Werkzeuge.istValideIgelZurueckfallen(spielbrett,
+								eigenerSpieler))
+						{
+							eigenerSpieler.zurueckAufLetztenIgel();
+							System.out.println("Igelfeld2");
+							zugGemacht = true;
+						}
+					}
+				}
+			}
+			else
+			{
+				if (Werkzeuge.istValideIgelZurueckfallen(spielbrett,
+						eigenerSpieler))
+				{
+					eigenerSpieler.zurueckAufLetztenIgel();
+					System.out.println("Igelfeld3");
+					zugGemacht = true;
+				}
+			}
+
+			if (!zugGemacht)
+			{
+				for (int i = eigenerSpieler.holeFeldnummer() + 1; i < 65; i++)
+				{
+					if (Werkzeuge.istValideFeldZiehen(spielbrett,
+							eigenerSpieler, i))
+					{
+						System.out.println("Zufall");
+						eigenerSpieler.setzeFigur(i);
+						break;
 					}
 				}
 			}

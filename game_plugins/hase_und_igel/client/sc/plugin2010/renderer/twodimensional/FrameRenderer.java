@@ -41,6 +41,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	// GUI Components
 	private InformationBar			info;
 	private ChatBar					chat;
+	private ScrollPane				action;
 	private ActionBar				actionb;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
 	private final GUIGameHandler	handler;
@@ -105,7 +106,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		info = new InformationBar();
 		// chat = new ChatBar();
 		actionb = new ActionBar();
-		final ScrollPane action = new ScrollPane();
+		action = new ScrollPane();
 		action.add(actionb);
 
 		final JPanel leftPanel = new JPanel();
@@ -121,7 +122,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		setLayout(framelayout);
 
 		this.add(leftPanel, BorderLayout.CENTER);
-		action.setPreferredSize(new Dimension(180, getHeight() - 100));
+		action.setPreferredSize(new Dimension(200, getHeight() - 100));
 		this.add(action, BorderLayout.EAST);
 
 		// chat.addOtherMessage("Chat: ");
@@ -211,6 +212,8 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 								.displayMoveAction(player.getHistory().get(i)));
 			}
 		}
+
+		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
@@ -522,13 +525,30 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	@Override
 	public void gameEnded(GameResult data)
 	{
-		for (int i = 0; i < data.getScores().size(); i++)
+		String[] results = data.getScores().get(0).toStrings();
+		if (results[0].equals("1"))
 		{
-			String[] results = data.getScores().get(i).toStrings();
-			for (String result : results)
-			{
-				actionb.addRow(result);
-			}
+			actionb.addRow("Gewinner: Rot");
 		}
+		else if (results[0].equals("0"))
+		{
+			actionb.addRow("Verlierer: Rot");
+		}
+
+		actionb.addRow("Position Rot: " + results[1]);
+
+		results = data.getScores().get(1).toStrings();
+		if (results[0].equals("1"))
+		{
+			actionb.addRow("Gewinner: Blau");
+		}
+		else if (results[0].equals("0"))
+		{
+			actionb.addRow("Verlierer: Blau");
+		}
+
+		actionb.addRow("Position Blau: " + results[1]);
+
+		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 	}
 }
