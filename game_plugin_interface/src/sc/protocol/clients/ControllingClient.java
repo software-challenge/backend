@@ -55,7 +55,9 @@ public class ControllingClient extends ObservingClient
 	{
 		if(!isGameOver()) 
 		{
-			this.client.send(new CancelRequest(this.roomId));
+			if(!this.client.isClosed()) {
+				this.client.send(new CancelRequest(this.roomId));				
+			}
 		}
 		
 		super.cancel();

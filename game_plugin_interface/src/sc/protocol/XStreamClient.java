@@ -162,7 +162,6 @@ public abstract class XStreamClient
 				return;
 			}
 		});
-		this.thread.setDaemon(true);
 		this.thread.setName("XStreamClient Reader");
 		this.thread.start();
 	}
@@ -275,5 +274,10 @@ public abstract class XStreamClient
 	public XStream getXStream()
 	{
 		return this.xStream;
+	}
+
+	public boolean isClosed()
+	{
+		return this.closed;
 	}
 }
