@@ -68,8 +68,6 @@ public class Player extends SimplePlayer implements Cloneable
 	// Die Position des Spielers (1., 2., ..)
 	private int				position;
 
-	private Move			lastMove;
-
 	private List<Move>		history;
 
 	protected void addToHistory(final Move m)
@@ -82,6 +80,14 @@ public class Player extends SimplePlayer implements Cloneable
 		return history;
 	}
 
+	public Move getLastMove()
+	{
+		Move ret = null;
+		if (history.size() > 0)
+			ret =  history.get(history.size()-1);
+		return ret;
+	}
+	
 	protected Player(FigureColor color)
 	{
 		initialize(color, 0);
@@ -100,7 +106,7 @@ public class Player extends SimplePlayer implements Cloneable
 		saladsToEat = 5;
 
 		history = new LinkedList<Move>();
-		actions = new LinkedList<Action>();
+		actions = new ArrayList<Action>(4);
 		actions.add(Action.TAKE_OR_DROP_CARROTS);
 		actions.add(Action.EAT_SALAD);
 		actions.add(Action.HURRY_AHEAD);
@@ -215,16 +221,6 @@ public class Player extends SimplePlayer implements Cloneable
 	public final FigureColor getColor()
 	{
 		return color;
-	}
-
-	protected void setLastMove(Move lastMove)
-	{
-		this.lastMove = lastMove;
-	}
-
-	public Move getLastMove()
-	{
-		return lastMove;
 	}
 
 	public Player clone() 

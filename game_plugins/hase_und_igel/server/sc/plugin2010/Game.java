@@ -14,6 +14,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2010.Board.FieldTyp;
+import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
 import sc.shared.PlayerScore;
@@ -191,6 +192,30 @@ public class Game extends RoundBasedGameInstance<Player>
 		return player;
 	}
 
+	@Override
+	protected void next()
+	{
+		final Player active = getActivePlayer();
+		Move last = active.getLastMove();
+		int activePlayerId = this.players.indexOf(this.activePlayer);
+		switch (board.getTypeAt(active.getFieldNumber()))
+		{
+			case RABBIT:
+				if (last.getTyp().equals(MoveTyp.MOVE) ||
+						last.getTyp().equals(MoveTyp.PLAY_CARD))
+				{
+					
+				} else {
+					activePlayerId = (activePlayerId + 1) % this.players.size();
+				}
+				break;
+			default:
+				activePlayerId = (activePlayerId + 1) % this.players.size();
+				break;
+		}
+		next(this.players.get(activePlayerId));
+	}
+	
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
