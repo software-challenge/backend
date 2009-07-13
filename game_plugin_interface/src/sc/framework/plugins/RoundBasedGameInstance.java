@@ -22,8 +22,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	private Runnable		afterPauseAction	= null;
 	private Object			afterPauseLock		= new Object();
 	private boolean			moveRequested		= false;
-	protected int 			turn				= 0;
-	
+	protected int			turn				= 0;
+
 	public int getTurn()
 	{
 		return this.turn;
@@ -42,7 +42,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			}
 			else
 			{
-				throw new RescueableClientException("We didn't request a move from you yet.");
+				throw new RescueableClientException(
+						"We didn't request a move from you yet.");
 			}
 		}
 		else
@@ -83,12 +84,22 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	protected void next()
 	{
-		int activePlayerId = this.players.indexOf(this.activePlayer);
-		activePlayerId = (activePlayerId + 1) % this.players.size();
-		next(this.players.get(activePlayerId));
+		next(getPlayerAfter(this.activePlayer));
 	}
 
-	protected void next(P nextPlayer)
+	protected final P getPlayerAfter(P player)
+	{
+		return getPlayerAfter(player, 1);
+	}
+
+	protected final P getPlayerAfter(P player, int step)
+	{
+		int playerPos = this.players.indexOf(player);
+		playerPos = (playerPos + step) % this.players.size();
+		return this.players.get(playerPos);
+	}
+
+	protected final void next(P nextPlayer)
 	{
 		notifyOnNewState(getCurrentState());
 
@@ -97,9 +108,12 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		if (checkGameOverCondition())
 		{
 			Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
-			for(final P p : this.players)
-				map.put(p, p.getScore(ScoreCause.REGULAR));
-			
+
+			for (final P p : this.players)
+			{
+				map.put(p, p.getScore());
+			}
+
 			notifyOnGameOver(map);
 		}
 		else

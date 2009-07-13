@@ -16,8 +16,9 @@ import sc.shared.ScoreCause;
 
 public abstract class SimplePlayer implements IPlayer
 {
-	public static final Logger logger = LoggerFactory.getLogger(SimplePlayer.class);
-	
+	public static final Logger		logger		= LoggerFactory
+														.getLogger(SimplePlayer.class);
+
 	@XStreamOmitField
 	private List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 
@@ -49,14 +50,9 @@ public abstract class SimplePlayer implements IPlayer
 		{
 			listener.onPlayerEvent(request);
 		}
-		
+
 		logger.debug("Move requested.");
 	}
-	
-	public PlayerScore getScore()
-	{
-		return getScore(ScoreCause.REGULAR);
-	}
-	
-	public abstract PlayerScore getScore(ScoreCause cause);
+
+	public abstract PlayerScore getScore();
 }

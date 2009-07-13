@@ -35,7 +35,7 @@ public class TestPlayer extends SimplePlayer
 	}
 	
 	@Override
-	public PlayerScore getScore(ScoreCause cause)
+	public PlayerScore getScore()
 	{
 		return new PlayerScore(true);
 	}

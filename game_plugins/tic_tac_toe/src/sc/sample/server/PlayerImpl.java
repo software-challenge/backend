@@ -20,8 +20,8 @@ public class PlayerImpl extends SimplePlayer
 	}
 
 	@Override
-	public PlayerScore getScore(ScoreCause cause)
+	public PlayerScore getScore()
 	{
-		return new PlayerScore(cause, 1, 0);
+		return new PlayerScore(ScoreCause.REGULAR, 1, 0);
 	}
 }

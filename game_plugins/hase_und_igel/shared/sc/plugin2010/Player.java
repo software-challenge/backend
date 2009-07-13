@@ -84,10 +84,10 @@ public class Player extends SimplePlayer implements Cloneable
 	{
 		Move ret = null;
 		if (history.size() > 0)
-			ret =  history.get(history.size()-1);
+			ret = history.get(history.size() - 1);
 		return ret;
 	}
-	
+
 	protected Player(FigureColor color)
 	{
 		initialize(color, 0);
@@ -171,11 +171,12 @@ public class Player extends SimplePlayer implements Cloneable
 	{
 		return actions;
 	}
-	
+
 	public List<Action> getActionsWithout(Action a)
 	{
 		List<Action> res = new ArrayList<Action>(4);
-		for(Action b:actions) {
+		for (Action b : actions)
+		{
 			if (!b.equals(a))
 				res.add(b);
 		}
@@ -207,12 +208,12 @@ public class Player extends SimplePlayer implements Cloneable
 	{
 		return position;
 	}
-	
+
 	protected void setPosition(int position)
 	{
 		this.position = position;
 	}
-	
+
 	/**
 	 * Die Farbe dieses Spielers auf dem Spielbrett
 	 * 
@@ -223,7 +224,7 @@ public class Player extends SimplePlayer implements Cloneable
 		return color;
 	}
 
-	public Player clone() 
+	public Player clone()
 	{
 		Player ret = null;
 		try
@@ -238,9 +239,10 @@ public class Player extends SimplePlayer implements Cloneable
 	}
 
 	@Override
-	public PlayerScore getScore(ScoreCause cause)
+	public PlayerScore getScore()
 	{
-		return new PlayerScore(cause, getPosition(), getFieldNumber());
+		return new PlayerScore(ScoreCause.REGULAR, this.inGoal() ? 1 : 0,
+				getFieldNumber());
 	}
 
 	public boolean inGoal()

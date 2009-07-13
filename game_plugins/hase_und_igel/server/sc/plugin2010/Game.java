@@ -93,8 +93,14 @@ public class Game extends RoundBasedGameInstance<Player>
 						.getColor());
 
 				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
+
 				for (final Player p : players)
-					res.put(p, p.getScore(ScoreCause.RULE_VIOLATION));
+				{
+					PlayerScore score = p.getScore();
+					score.setCause(ScoreCause.RULE_VIOLATION);
+					score.set(0, (p == fromPlayer) ? 0 : 1);
+					res.put(p, score);
+				}
 
 				notifyOnGameOver(res);
 			}
@@ -201,33 +207,34 @@ public class Game extends RoundBasedGameInstance<Player>
 	{
 		final Player active = getActivePlayer();
 		Move last = active.getLastMove();
-		int activePlayerId = this.players.indexOf(this.activePlayer);
+		Player nextPlayer = getPlayerAfter(active);
+
 		switch (board.getTypeAt(active.getFieldNumber()))
 		{
 			case RABBIT:
 				if (last.getTyp().equals(MoveTyp.MOVE)
 						|| last.getTyp().equals(MoveTyp.PLAY_CARD))
 				{
-
+					nextPlayer = active; // again
 				}
-				else
-				{
-					activePlayerId = (activePlayerId + 1) % this.players.size();
-				}
-				break;
-			default:
-				activePlayerId = (activePlayerId + 1) % this.players.size();
 				break;
 		}
-		next(this.players.get(activePlayerId));
+
+		next(nextPlayer);
 	}
 
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
 		HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
+
 		for (final Player p : players)
-			res.put(p, p.getScore(ScoreCause.LEFT));
+		{
+			PlayerScore score = p.getScore();
+			score.setCause(ScoreCause.LEFT);
+			score.set(0, (p == player) ? 0 : 1);
+			res.put(p, score);
+		}
 
 		players.remove(player);
 		notifyOnGameOver(res);

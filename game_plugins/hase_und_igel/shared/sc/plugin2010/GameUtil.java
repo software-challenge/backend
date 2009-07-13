@@ -125,15 +125,12 @@ public class GameUtil
 
 	public static boolean playerMustMove(Player p, MoveTyp t)
 	{
-		int lastSaladAt = -1;
-		for (final Move m : p.getHistory())
+		if (p.getHistory().size() > 0)
 		{
-			if (m.getTyp().equals(t))
-			{
-				lastSaladAt = m.getTurn();
-			}
+			return p.getHistory().get(p.getHistory().size() - 1).getTyp() == t;
 		}
-		return !((lastSaladAt == -1) || (p.getHistory().size() - lastSaladAt > 1));
+
+		return false;
 	}
 
 	public static boolean isValidToTakeOrDrop10Carrots(Board b, Player p, int n)
