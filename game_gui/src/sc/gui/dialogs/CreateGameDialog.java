@@ -132,8 +132,8 @@ public class CreateGameDialog extends JDialog {
 		cmbItems.add(lang.getString("dialog_create_plyType_human"));
 		cmbItems.add(lang.getString("dialog_create_plyType_ki_intern"));
 		cmbItems.add(lang.getString("dialog_create_plyType_ki_extern"));
-		cmbItems.add(lang.getString("dialog_create_plyType_observer"));
-		cmbItems.add(lang.getString("dialog_create_plyType_closed"));
+		//cmbItems.add(lang.getString("dialog_create_plyType_observer"));
+		//cmbItems.add(lang.getString("dialog_create_plyType_closed"));
 
 		// add columns
 		playersModel = new MyTableModel();
@@ -255,9 +255,9 @@ public class CreateGameDialog extends JDialog {
 		observer.addReadyListener(new IReadyListener() {
 			@Override
 			public void ready() {
-				System.out.println("ready");
-				contextPanel.updateButtonBar(false);
+				System.out.println(">>> ready");
 				connDial.close();
+				contextPanel.updateButtonBar(false);
 			}
 		});
 

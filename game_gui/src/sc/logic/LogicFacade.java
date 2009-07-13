@@ -173,6 +173,9 @@ public class LogicFacade implements ILogicFacade {
 
 	@Override
 	public void startServer(Integer port, boolean timeout) {
+		if (null != server) {
+			this.stopServer();
+		}
 		server = Application.startServer(port, timeout);
 	}
 

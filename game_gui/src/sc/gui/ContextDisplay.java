@@ -20,6 +20,8 @@ public class ContextDisplay extends JPanel {
 	private JButton btn_back;
 	private JButton btn_next;
 	private JButton btn_cancel;
+	private boolean started;
+	private boolean playing;
 
 	public ContextDisplay() {
 		super();
@@ -42,11 +44,11 @@ public class ContextDisplay extends JPanel {
 		btn_next = new JButton(lang.getString("context_next"));
 
 		// disable by default
-		//btn_back.setEnabled(false);
-		//btn_cancel.setEnabled(false);
-		//btn_spGame.setEnabled(false);
-		//btn_next.setEnabled(false);
-//FIXME
+		btn_back.setEnabled(false);
+		btn_cancel.setEnabled(false);
+		btn_spGame.setEnabled(false);
+		btn_next.setEnabled(false);
+
 		btn_back.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -57,8 +59,6 @@ public class ContextDisplay extends JPanel {
 		});
 
 		btn_spGame.addActionListener(new ActionListener() {
-			private boolean started = false;
-			private boolean playing = false;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -77,7 +77,6 @@ public class ContextDisplay extends JPanel {
 					btn_spGame.setText(lang.getString("context_pause"));
 					playing = true;
 				}
-				// ContextDisplay.this.validate();
 			}
 		});
 
@@ -86,6 +85,8 @@ public class ContextDisplay extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().cancel();
 				btn_cancel.setEnabled(false);
+				btn_next.setEnabled(false);
+				btn_spGame.setText(lang.getString("context_start"));
 			}
 		});
 

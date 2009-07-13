@@ -19,6 +19,13 @@ import sc.logic.LogicFacade;
 import sc.server.Configuration;
 
 /**
+ * TODO
+ * button icons
+ * test range gameEnded(), newTurn()
+ * button enabled/disabled
+ */
+
+/**
  * The executable application of the Software Challenge GUI.
  * 
  * @author chw

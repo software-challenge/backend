@@ -24,6 +24,7 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 	public ConnectingDialog() {
 		super();
 		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		this.closed = false;
 		createGUI();
 	}
 
@@ -59,7 +60,7 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		returnValue = JOptionPane.CANCEL_OPTION;
 		this.setVisible(false);
-		this.dispose();
+		this.close();
 	}
 
 	/**
