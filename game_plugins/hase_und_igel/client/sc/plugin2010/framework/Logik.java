@@ -37,9 +37,9 @@ public class Logik implements IGameHandler
 	}
 
 	@Override
-	public void onUpdate(final Player player, boolean own)
+	public void onUpdate(final Player player, final Player otherPlayer)
 	{
-		obs.spielerAktualisiert(player, own);
+		obs.spielerAktualisiert(player, otherPlayer);
 	}
 
 	@Override

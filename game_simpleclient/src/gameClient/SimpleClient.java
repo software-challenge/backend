@@ -7,24 +7,36 @@ import sc.plugin2010.framework.Spielfeldtyp;
 import sc.plugin2010.framework.Werkzeuge;
 
 /**
- * Ein SimpleClient für das Spiel Hase und Igel. Zu beachten ist, 
- * dass sobald eine Aktion, wie "frissSalat", auf einem Spieler aufgerufen wurde. 
- * Sämtliche Anweisungen, wie "setzeFigur", für diese Runde ignoriert werden, 
- * da der Spieler seinen Zug bereits gemacht hat.
- */
-
-/**
+ * Ein SimpleClient für das Spiel Hase und Igel. Zu beachten ist, dass sobald
+ * eine Aktion, wie "frissSalat", auf einem Spieler aufgerufen wurde, sämtliche
+ * Anweisungen, wie "setzeFigur", zum Beenden des Spiels führen.
+ * 
  * @author ffi
  * 
  */
 public class SimpleClient extends SpielClient
 {
 
+	// interne Zustaende
 	private final Spielbrett	spielbrett;
 	private final Spieler		eigenerSpieler;
 	private final Spieler		gegner;
+
+	// zeigt an, ob in der letzten Runde schon karotten genommen / abgegeben
+	// wurden
 	private boolean				bereitsKarottenGenommen	= false;
 
+	/**
+	 * wird beim Spielstart aufgerufen
+	 * 
+	 * @param ip
+	 *            die IP mit welcher der Client verbinden soll
+	 * @param port
+	 *            der Port mit welchem der Client verbinden soll
+	 * @param spielreservierung
+	 *            falls eine Spielreservierung beim Server für den Client
+	 *            vorliegt
+	 */
 	public SimpleClient(String ip, int port, String spielreservierung)
 	{
 		// verbinde zum Spiel
@@ -40,8 +52,15 @@ public class SimpleClient extends SpielClient
 		super.setzeGegner(gegner);
 	}
 
+	/**
+	 * diese Methode arbeitet die Standardaktion, wie "Friss Salat" oder
+	 * "Friss Karotten" ab
+	 * 
+	 * @return true, falls eine Standardaktion ausgeführt wurde sonst false
+	 */
 	public boolean macheStandardAktion()
 	{
+		// zeigt an, ob eine Standardaktion ausgeführt wurde
 		boolean zugGemacht = false;
 
 		// Wenn auf einem Salatfeld, dann Salat fressen
@@ -58,14 +77,15 @@ public class SimpleClient extends SpielClient
 				&& !bereitsKarottenGenommen)
 		{
 
-			if (eigenerSpieler.holeFeldnummer() < 50)
+			// wenn unter Feldnummer 45, dann nimm 10 Karotten
+			if (eigenerSpieler.holeFeldnummer() < 45)
 			{
 				eigenerSpieler.nimmKarotten();
 				bereitsKarottenGenommen = true;
 				System.out.println("Karotten genommen");
 				zugGemacht = true;
 
-			}
+			} // sonst gib Karotten ab (wenn möglich)
 			else if (Werkzeuge.istValide10KarrotenAbgeben(spielbrett,
 					eigenerSpieler))
 			{
@@ -74,15 +94,15 @@ public class SimpleClient extends SpielClient
 				System.out.println("Karotten abgegeben");
 				zugGemacht = true;
 			}
-		}
+		} // falls wir noch Hasenjoker haben
 		else if (eigenerSpieler.holeHasenjoker().size() > 0)
-		{
+		{ // spiele den ersten Hasenjoker auf der Hand
 			if (Werkzeuge.istValideHasenjokerSpielen(spielbrett,
 					eigenerSpieler, eigenerSpieler.holeHasenjoker().get(0), 0))
 			{
 				eigenerSpieler.spieleHasenjoker(eigenerSpieler.holeHasenjoker()
 						.get(0));
-				System.out.println("Hasenjoker");
+				System.out.println("Hasenjoker gespielt");
 				zugGemacht = true;
 			}
 		}
@@ -90,13 +110,15 @@ public class SimpleClient extends SpielClient
 		return zugGemacht;
 	}
 
+	/**
+	 * Diese Methode wird aufgerufen, wenn der Server von dem Client einen Zug
+	 * erwartet
+	 */
 	@Override
 	public void zugAngefordert()
 	{
 		if (macheStandardAktion() == false)
 		{
-			System.out.println("Keine Standardaktion");
-
 			boolean zugGemacht = false;
 			bereitsKarottenGenommen = false;
 
@@ -108,7 +130,7 @@ public class SimpleClient extends SpielClient
 
 			// Wenn ein Salat gefunden wurde
 			if (feldNummer > 0)
-			{
+			{ // wenn es möglich ist auf den Salat zu ziehen
 				if (Werkzeuge.istValideFeldZiehen(spielbrett, eigenerSpieler,
 						feldNummer))
 				{
@@ -117,19 +139,20 @@ public class SimpleClient extends SpielClient
 					zugGemacht = true;
 				}
 				else
-				{
+				{ // suchen nächstes Karottenfeld
 					feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(
 							Spielfeldtyp.KAROTTEN, eigenerSpieler
 									.holeFeldnummer());
 					if (feldNummer > 0)
-					{
+					{ // wenn man auf das Karottenfeld ziehen darf, setze dort
+						// hin
 						if (Werkzeuge.istValideFeldZiehen(spielbrett,
 								eigenerSpieler, feldNummer))
 						{
 							eigenerSpieler.setzeFigur(feldNummer);
 							System.out.println("Karottenfeld");
 							zugGemacht = true;
-						}
+						} // sonst falle auf letzten Igel zurück
 						else if (Werkzeuge.istValideIgelZurueckfallen(
 								spielbrett, eigenerSpieler))
 						{
@@ -139,7 +162,7 @@ public class SimpleClient extends SpielClient
 						}
 					}
 					else
-					{
+					{ // sonst falle auf letzten Igel zurück
 						if (Werkzeuge.istValideIgelZurueckfallen(spielbrett,
 								eigenerSpieler))
 						{
@@ -151,7 +174,7 @@ public class SimpleClient extends SpielClient
 				}
 			}
 			else
-			{
+			{// sonst falle auf letzten Igel zurück
 				if (Werkzeuge.istValideIgelZurueckfallen(spielbrett,
 						eigenerSpieler))
 				{
@@ -161,6 +184,7 @@ public class SimpleClient extends SpielClient
 				}
 			}
 
+			// wenn bis hier hin noch kein Zug gemacht wurd, wähle zufällig
 			if (!zugGemacht)
 			{
 				for (int i = eigenerSpieler.holeFeldnummer() + 1; i < 65; i++)
@@ -180,6 +204,6 @@ public class SimpleClient extends SpielClient
 	@Override
 	public void spielBeendet()
 	{
-		// Spiel wurde beendet
+		// Spiel wurde beendet TODO
 	}
 }

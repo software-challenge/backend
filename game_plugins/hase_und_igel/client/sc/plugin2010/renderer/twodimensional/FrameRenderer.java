@@ -132,8 +132,10 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	}
 
 	@Override
-	public void updatePlayer(final Player player, final boolean own)
+	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
+		this.player = player;
+		enemy = otherPlayer;
 
 		String currentColor = "";
 		String currentOthersColor = "";
@@ -232,20 +234,65 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 		fbuttons.get(player.getFieldNumber()).setOccupied(player.getColor());
 
-		if (own)
+		info.setAttributes(player.getCarrotsAvailable(), player
+				.getSaladsToEat());
+		info.setHasenjoker(player.getActions());
+
+		info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
+				.getSaladsToEat());
+		info.setEnemyHasenjoker(enemy.getActions());
+	}
+
+	@Override
+	public void updateBoard(Board board, int round)
+	{
+		this.board = board;
+
+		info.setRound(round + 1);
+
+		if (!boardWasCreated)
 		{
-			this.player = player;
-			info.setAttributes(player.getCarrotsAvailable(), player
-					.getSaladsToEat());
-			info.setHasenjoker(player.getActions());
+			String back = "";
+			for (int i = 0; i < fbuttons.size(); i++)
+			{
+				switch (board.getTypeAt(i))
+				{
+					case CARROT:
+						back = "resource/carrots.png";
+						break;
+					case HEDGEHOG:
+						back = "resource/hedgehog.png";
+						break;
+					case RABBIT:
+						back = "resource/rabbit.png";
+						break;
+					case SALAD:
+						back = "resource/salad.png";
+						break;
+					case POSITION_1:
+						back = "resource/position_1.png";
+						break;
+					case POSITION_2:
+						back = "resource/position_2.png";
+						break;
+					case START:
+						back = "resource/start.png";
+						break;
+					case GOAL:
+						back = "resource/finish.png";
+						break;
+				}
+				fbuttons.get(i).setBackground(back);
+				fbuttons.get(i).setType(board.getTypeAt(i));
+			}
+			boardWasCreated = true;
 		}
-		else
-		{
-			enemy = player;
-			info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
-					.getSaladsToEat());
-			info.setEnemyHasenjoker(enemy.getActions());
-		}
+	}
+
+	public void askQuestion(final String question, final List<String> answers,
+			String type)
+	{
+		new QuestionDialog(question, answers, this, type);
 	}
 
 	private void askForAction(final Player player)
@@ -318,70 +365,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 	}
 
-	@Override
-	public void updateBoard(Board board, int round)
-	{
-		this.board = board;
-
-		info.setRound(round + 1);
-
-		if (!boardWasCreated)
-		{
-			String back = "";
-			for (int i = 0; i < fbuttons.size(); i++)
-			{
-				switch (board.getTypeAt(i))
-				{
-					case CARROT:
-						back = "resource/carrots.png";
-						break;
-					case HEDGEHOG:
-						back = "resource/hedgehog.png";
-						break;
-					case RABBIT:
-						back = "resource/rabbit.png";
-						break;
-					case SALAD:
-						back = "resource/salad.png";
-						break;
-					case POSITION_1:
-						back = "resource/position_1.png";
-						break;
-					case POSITION_2:
-						back = "resource/position_2.png";
-						break;
-					case START:
-						back = "resource/start.png";
-						break;
-					case GOAL:
-						back = "resource/finish.png";
-						break;
-				}
-				fbuttons.get(i).setBackground(back);
-				fbuttons.get(i).setType(board.getTypeAt(i));
-			}
-			boardWasCreated = true;
-		}
-	}
-
-	@Override
-	public void updateAction(final String doneAction)
-	{
-		actionb.addRow(doneAction);
-	}
-
-	@Override
-	public void updateChat(final String chatMsg)
-	{
-		chat.addOtherMessage(chatMsg);
-	}
-
-	public void askQuestion(final String question, final List<String> answers,
-			String type)
-	{
-		new QuestionDialog(question, answers, this, type);
-	}
-
 	public void answerQuestion(final String answer, String type)
 	{
 		if (type.equals(carrotAnswer))
@@ -397,7 +380,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 		if (type.equals(jokerAnswer))
 		{
-			if (answer.equals(takeCarrots))
+			if (answer.equals(take20carrots))
 			{
 				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
 						Player.Action.TAKE_OR_DROP_CARROTS, 20));
@@ -407,7 +390,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
 						Player.Action.TAKE_OR_DROP_CARROTS, 0));
 			}
-			else if (answer.equals(dropCarrots))
+			else if (answer.equals(give20carrots))
 			{
 				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
 						Player.Action.TAKE_OR_DROP_CARROTS, -20));
@@ -428,6 +411,18 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 						Player.Action.FALL_BACK));
 			}
 		}
+	}
+
+	@Override
+	public void updateAction(final String doneAction)
+	{
+		actionb.addRow(doneAction);
+	}
+
+	@Override
+	public void updateChat(final String chatMsg)
+	{
+		chat.addOtherMessage(chatMsg);
 	}
 
 	private void setReachableFields(final int pos)
@@ -535,7 +530,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			actionb.addRow("Verlierer: Rot");
 		}
 
-		actionb.addRow("Position Rot: " + results[1]);
+		actionb.addRow("Erreichtes Feld Rot: " + results[1]);
 
 		results = data.getScores().get(1).toStrings();
 		if (results[0].equals("1"))
@@ -547,7 +542,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			actionb.addRow("Verlierer: Blau");
 		}
 
-		actionb.addRow("Position Blau: " + results[1]);
+		actionb.addRow("Erreichtes Feld Blau: " + results[1]);
 
 		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 	}

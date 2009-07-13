@@ -6,7 +6,6 @@ package sc.plugin2010.renderer.twodimensional;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import java.awt.Toolkit;
 
 import javax.swing.JPanel;
 
@@ -43,6 +42,6 @@ public class BackgoundPane extends JPanel
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
+		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 	}
 }

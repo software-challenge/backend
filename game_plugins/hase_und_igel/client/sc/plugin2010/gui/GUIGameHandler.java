@@ -32,9 +32,10 @@ public class GUIGameHandler implements IGameHandler
 	}
 
 	@Override
-	public void onUpdate(Player player, boolean own)
+	public void onUpdate(Player player, Player otherPlayer)
 	{
-		RenderFacade.getInstance().updatePlayer(player, own, client.getID());
+		RenderFacade.getInstance().updatePlayer(player, otherPlayer,
+				client.getID());
 	}
 
 	public void onUpdate(String chat)

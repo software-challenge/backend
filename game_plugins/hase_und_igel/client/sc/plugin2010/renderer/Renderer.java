@@ -15,7 +15,7 @@ import sc.shared.GameResult;
  */
 public interface Renderer
 {
-	void updatePlayer(Player player, boolean own);
+	void updatePlayer(Player player, Player otherPlayer);
 
 	void updateBoard(Board board, int round);
 

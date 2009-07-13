@@ -3,9 +3,6 @@ package sc.plugin2010;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Player.FigureColor;
@@ -28,20 +25,24 @@ import sc.shared.GameResult;
  */
 public class Client implements ILobbyClientListener
 {
-	private static final Logger	logger			= LoggerFactory
-														.getLogger(Client.class);
-	private IGameHandler		handler;
-	private LobbyClient			client;
-	private Observation			obs;
-	private String				gameType;
+
+	private IGameHandler	handler;
+	private LobbyClient		client;
+	private Observation		obs;
+	private String			gameType;
+
 	// current id to identify the client instance internal
-	private EPlayerId			id;
+	private EPlayerId		id;
 	// the current room in which the player is
-	private String				roomId;
-	private String				host;
-	private int					port;
-	private FigureColor			mycolor;
-	private boolean				alreadyReady	= false;
+	private String			roomId;
+	// the current host
+	private String			host;
+	// the current port
+	private int				port;
+	// current figurecolor to identify which client belongs to which player
+	private FigureColor		mycolor;
+	// set to true when ready was sent to ReadyListeners
+	private boolean			alreadyReady	= false;
 
 	@SuppressWarnings("unchecked")
 	public Client(String host, int port, EPlayerId id) throws IOException
@@ -83,6 +84,13 @@ public class Client implements ILobbyClientListener
 		return client.observe(handle);
 	}
 
+	/**
+	 * start observation with control over the game (pause etc)
+	 * 
+	 * @param handle
+	 *            comes from prepareGame()
+	 * @return controllinstance to do pause, unpause etc
+	 */
 	public IControllableGame observeAndControl(PrepareGameResponse handle)
 	{
 		return client.observeAndControl(handle);
@@ -103,6 +111,12 @@ public class Client implements ILobbyClientListener
 		this.roomId = roomId;
 	}
 
+	/**
+	 * sends the <code>move</code> to the server
+	 * 
+	 * @param move
+	 *            the move you want to do
+	 */
 	public void sendMove(Move move)
 	{
 		client.sendMessageToRoom(roomId, move);
@@ -117,7 +131,6 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-
 		if (id == EPlayerId.OBSERVER)
 		{
 			mycolor = FigureColor.RED; // set Red as first Player
@@ -128,17 +141,15 @@ public class Client implements ILobbyClientListener
 		handler.onUpdate(game.getBoard(), game.getTurn());
 
 		if (game.getActivePlayer().getColor() == mycolor)
-		{
-			handler.onUpdate(game.getBoard().getOtherPlayer( // TODO do it in
-					// one procedure
-					game.getActivePlayer()), false);
-			handler.onUpdate(game.getActivePlayer(), true);
+		{ // activeplayer is own
+			handler.onUpdate(game.getActivePlayer(), game.getBoard()
+					.getOtherPlayer(game.getActivePlayer()));
 		}
 		else
+		// activeplayer is the enemy
 		{
-			handler.onUpdate(game.getActivePlayer(), false);
 			handler.onUpdate(game.getBoard().getOtherPlayer(
-					game.getActivePlayer()), true);
+					game.getActivePlayer()), game.getActivePlayer());
 
 		}
 
@@ -253,7 +264,7 @@ public class Client implements ILobbyClientListener
 		}
 		catch (IOException e)
 		{
-			// not needed
+			// only disconnect...
 		}
 	}
 

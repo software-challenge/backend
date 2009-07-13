@@ -175,20 +175,20 @@ public class RenderFacade
 		}
 	}
 
-	public void updatePlayer(final Player myplayer, final boolean own,
+	public void updatePlayer(final Player myplayer, final Player otherPlayer,
 			final EPlayerId target)
 	{
 		if (target == EPlayerId.OBSERVER)
 		{
-			observer.updatePlayer(myplayer, own);
+			observer.updatePlayer(myplayer, otherPlayer);
 		}
 		else if (target == EPlayerId.PLAYER_ONE)
 		{
-			player1.updatePlayer(myplayer, own);
+			player1.updatePlayer(myplayer, otherPlayer);
 		}
 		else if (target == EPlayerId.PLAYER_TWO)
 		{
-			player2.updatePlayer(myplayer, own);
+			player2.updatePlayer(myplayer, otherPlayer);
 		}
 	}
 

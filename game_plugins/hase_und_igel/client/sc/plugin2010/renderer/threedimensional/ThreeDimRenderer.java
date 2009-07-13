@@ -279,35 +279,30 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 	}
 
 	@Override
-	public void updatePlayer(final Player player, final boolean own)
+	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
-		if (own)
-		{
-			this.player = player;
+		this.player = player;
 
-			// setReachableFields(player.getPosition(), player
-			// .getCarrotsAvailable());
+		// setReachableFields(player.getPosition(), player
+		// .getCarrotsAvailable());
 
-			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
-			{
-				List<String> answers = new LinkedList<String>();
-				answers.add(moveForward);
-				answers.add(takeCarrots);
-				if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
-				{
-					answers.add(dropCarrots);
-				}
-				// askQuestion("Was wollen Sie tun?", answers, "carrots");
-			}
-			else if (GameUtil.isValidToEat(board, player))
-			{
-				// TODO send move
-			}
-		}
-		else
+		if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 		{
-			enemy = player;
+			List<String> answers = new LinkedList<String>();
+			answers.add(moveForward);
+			answers.add(takeCarrots);
+			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
+			{
+				answers.add(dropCarrots);
+			}
+			// askQuestion("Was wollen Sie tun?", answers, "carrots");
 		}
+		else if (GameUtil.isValidToEat(board, player))
+		{
+			// TODO send move
+		}
+
+		enemy = otherPlayer;
 	}
 
 	@Override

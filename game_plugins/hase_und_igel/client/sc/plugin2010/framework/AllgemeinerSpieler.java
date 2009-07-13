@@ -11,11 +11,17 @@ import sc.plugin2010.Player;
 import sc.plugin2010.Player.Action;
 
 /**
+ * Diese Klasse repräsentiert einen allgemeinen abstrakten Spieler. Dieser
+ * bietet Funktionen wie "holeSalatAnzahl" an.
+ * 
  * @author ffi
  * 
  */
 public abstract class AllgemeinerSpieler
 {
+	/**
+	 * internes Spieler Objekt zur Kompatibilität
+	 */
 	private Player	player;
 
 	/**

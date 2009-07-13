@@ -160,9 +160,22 @@ public class Werkzeuge
 	 */
 	protected static Move convertZug(Zug zug)
 	{
+		Move result = null;
 
-		// TODO Auto-generated method stub
-		return null;
+		if (zug != null)
+		{
+			switch (zug.holeZugTyp())
+			{
+				case FALLE_ZURUECK:
+					result = new Move(Move.MoveTyp.FALL_BACK);
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		return result;
 	}
 
 	/**
@@ -171,8 +184,22 @@ public class Werkzeuge
 	 */
 	protected static Zug convertMove(Move move)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		Zug result = null;
+
+		if (move != null)
+		{
+			switch (move.getTyp())
+			{
+				case FALL_BACK:
+					result = new Zug(Zugtyp.FALLE_ZURUECK);
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		return result;
 	}
 
 	protected static Board.FieldTyp convertSpielfeldtyp(Spielfeldtyp typ)

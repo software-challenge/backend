@@ -1,9 +1,8 @@
-/**
- * 
- */
 package sc.plugin2010;
 
 /**
+ * To identify clients, which role they have
+ * 
  * @author ffi
  * 
  */

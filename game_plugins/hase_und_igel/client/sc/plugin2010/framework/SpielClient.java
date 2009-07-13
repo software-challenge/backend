@@ -63,16 +63,10 @@ public abstract class SpielClient implements IGameUpdateObserver
 	}
 
 	@Override
-	public void spielerAktualisiert(Player player, boolean own)
+	public void spielerAktualisiert(Player player, Player otherPlayer)
 	{
-		if (own)
-		{
-			spieler.update(player);
-		}
-		else
-		{
-			gegner.update(player);
-		}
+		spieler.update(player);
+		gegner.update(otherPlayer);
 	}
 
 	/**
