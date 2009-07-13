@@ -160,7 +160,7 @@ public class FieldButton extends JButton
 	public boolean needRepaint(final FigureColor color)
 	{
 		// return (mycolor == color || reachable || occupied);
-		return true; // TODO
+		return true;
 	}
 
 	class ClickListener extends MouseAdapter

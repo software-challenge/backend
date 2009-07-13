@@ -46,6 +46,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
  * @author ffi
  * 
  */
+@SuppressWarnings("serial")
 public class ThreeDimRenderer extends JPanel implements Renderer
 {
 	// GUI Components
@@ -314,11 +315,6 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 		return img;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sc.plugin2010.renderer.Renderer#requestMove()
-	 */
 	@Override
 	public void requestMove()
 	{
@@ -326,11 +322,6 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see sc.plugin2010.renderer.Renderer#gameEnded(sc.shared.GameResult)
-	 */
 	@Override
 	public void gameEnded(GameResult data)
 	{

@@ -55,7 +55,8 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public String getPluginInfoText()
 	{
-		return "Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.";
+		return "<html>Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) "
+				+ "<BR> erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.</html>";
 	}
 
 	public Image getPluginIcon()

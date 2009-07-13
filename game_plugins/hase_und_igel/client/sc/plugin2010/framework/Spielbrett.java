@@ -85,6 +85,11 @@ public class Spielbrett
 
 	public Spieler holeSpielerAufFeld(int feldNummer)
 	{
+		if (feldNummer < 0 && feldNummer > 64)
+		{
+			throw new IllegalArgumentException();
+		}
+
 		if (brett.getPlayerAt(feldNummer).getColor() == FigureColor.BLUE)
 		{
 			if (spieler.holeSpielerfarbe() == Spielerfarbe.BLAU)
@@ -108,7 +113,6 @@ public class Spielbrett
 			}
 		}
 
-		// not found TODO Exception IllegalArgument?
 		return null;
 	}
 

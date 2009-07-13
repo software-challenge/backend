@@ -169,7 +169,19 @@ public class Werkzeuge
 				case FALLE_ZURUECK:
 					result = new Move(Move.MoveTyp.FALL_BACK);
 					break;
-
+				case FRISS_SALAT:
+					result = new Move(Move.MoveTyp.EAT);
+					break;
+				case ZIEHE_VORWAERTS:
+					result = new Move(Move.MoveTyp.MOVE, zug.holeN());
+					break;
+				case NIMM_ODER_GIB_KAROTTEN:
+					result = new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, zug
+							.holeN());
+					break;
+				case SPIELE_HASENJOKER: // TODO
+					result = new Move(Move.MoveTyp.PLAY_CARD, zug.holeN());
+					break;
 				default:
 					break;
 			}
@@ -193,7 +205,18 @@ public class Werkzeuge
 				case FALL_BACK:
 					result = new Zug(Zugtyp.FALLE_ZURUECK);
 					break;
-
+				case EAT:
+					result = new Zug(Zugtyp.FRISS_SALAT);
+					break;
+				case TAKE_OR_DROP_CARROTS:
+					result = new Zug(Zugtyp.NIMM_ODER_GIB_KAROTTEN);
+					break;
+				case MOVE:
+					result = new Zug(Zugtyp.ZIEHE_VORWAERTS, move.getN());
+					break;
+				case PLAY_CARD: // TODO
+					result = new Zug(Zugtyp.SPIELE_HASENJOKER, move.getN());
+					break;
 				default:
 					break;
 			}
@@ -205,6 +228,7 @@ public class Werkzeuge
 	protected static Board.FieldTyp convertSpielfeldtyp(Spielfeldtyp typ)
 	{
 		switch (typ)
+		// TODO
 		{
 			case SALAT:
 				return Board.FieldTyp.SALAD;

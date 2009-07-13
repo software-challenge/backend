@@ -3,9 +3,6 @@
  */
 package sc.plugin2010.framework;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.IGameHandler;
@@ -19,8 +16,6 @@ import sc.shared.GameResult;
  */
 public class Logik implements IGameHandler
 {
-	private static final Logger	logger	= LoggerFactory.getLogger(Client.class);
-
 	private IGameUpdateObserver	obs;
 	private Client				client;
 

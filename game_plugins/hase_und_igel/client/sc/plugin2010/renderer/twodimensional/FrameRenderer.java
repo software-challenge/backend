@@ -14,11 +14,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sc.plugin2010.Board;
-import sc.plugin2010.Client;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
@@ -35,9 +31,6 @@ import sc.shared.GameResult;
 @SuppressWarnings("serial")
 public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 {
-	private static final Logger		logger			= LoggerFactory
-															.getLogger(Client.class);
-
 	// GUI Components
 	private InformationBar			info;
 	private ChatBar					chat;
@@ -163,6 +156,10 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 		if (enemy != null) // TODO correct action adding
 		{
+			int max = Math.max(player.getHistory().size(), enemy.getHistory()
+					.size());
+			// while (i < max)
+
 			if (player.getColor() == FigureColor.RED)
 			{
 				for (int i = 0; i < player.getHistory().size(); i++)

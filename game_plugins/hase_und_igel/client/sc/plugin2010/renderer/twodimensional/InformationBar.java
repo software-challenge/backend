@@ -65,8 +65,6 @@ public class InformationBar extends JPanel
 		setLayout(new GridLayout(1, 1));
 
 		Color light_black = new Color(0, 0, 0, 180);
-		Color mycolor = new Color(0, 0, 255, 180);
-		Color enemycolor = new Color(255, 0, 0, 180);
 
 		final JPanel left = new JPanel();
 		left.setLayout(new BorderLayout());

@@ -51,6 +51,11 @@ public class Spieler extends AllgemeinerSpieler
 
 	public void setzeFigur(final int feldNummer)
 	{
+		if (feldNummer < 0 && feldNummer > 64)
+		{
+			throw new IllegalArgumentException();
+		}
+
 		logik.sendAction(new Move(Move.MoveTyp.MOVE, feldNummer
 				- holeFeldnummer()));
 	}
@@ -82,6 +87,11 @@ public class Spieler extends AllgemeinerSpieler
 	 */
 	public void sendeZug(Zug zug)
 	{
+		if (zug == null)
+		{
+			throw new IllegalArgumentException();
+		}
+
 		logik.sendAction(Werkzeuge.convertZug(zug));
 	}
 

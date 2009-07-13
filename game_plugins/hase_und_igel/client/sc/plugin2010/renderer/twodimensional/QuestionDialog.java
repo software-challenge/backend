@@ -24,7 +24,6 @@ import sc.plugin2010.renderer.RendererUtil;
 public class QuestionDialog extends JDialog
 {
 	private static final int	DEFAULTHEIGHT	= 100;
-	private static final int	DEFAULTWIDTH	= 300;
 	private FrameRenderer		obs;
 	private String				type;
 

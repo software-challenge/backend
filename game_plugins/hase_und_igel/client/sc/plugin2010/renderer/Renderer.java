@@ -27,8 +27,5 @@ public interface Renderer
 
 	void requestMove();
 
-	/**
-	 * @param data
-	 */
 	void gameEnded(GameResult data);
 }

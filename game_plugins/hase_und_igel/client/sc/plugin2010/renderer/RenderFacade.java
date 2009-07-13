@@ -8,11 +8,7 @@ import java.awt.Image;
 
 import javax.swing.JPanel;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import sc.plugin2010.Board;
-import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
@@ -27,9 +23,6 @@ import sc.shared.GameResult;
  */
 public class RenderFacade
 {
-	private static final Logger				logger					= LoggerFactory
-																			.getLogger(Client.class);
-
 	private Renderer						observer;
 	private Renderer						player1;
 	private Renderer						player2;

@@ -100,7 +100,7 @@ public abstract class AllgemeinerSpieler
 		return Werkzeuge.convertMove(player.getLastMove());
 	}
 
-	public List<Zug> holeZugHistory()
+	public List<Zug> holeZugHistorie()
 	{
 		List<Zug> res = new LinkedList<Zug>();
 

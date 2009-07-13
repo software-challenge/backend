@@ -276,6 +276,6 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
-		// TODO Auto-generated method stub
+		// not needed
 	}
 }
