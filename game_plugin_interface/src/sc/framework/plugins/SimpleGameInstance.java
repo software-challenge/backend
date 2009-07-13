@@ -32,15 +32,8 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		this.listeners.remove(listener);
 	}
 
-	protected void notifyOnGameOver()
+	protected void notifyOnGameOver(Map<IPlayer, PlayerScore> map)
 	{
-		Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
-		
-		for(P player : this.players)
-		{
-			map.put(player, player.getScore());
-		}
-		
 		for (IGameListener listener : this.listeners)
 		{
 			listener.onGameOver(map);

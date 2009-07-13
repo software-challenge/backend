@@ -1,22 +1,33 @@
 package sc.framework.plugins;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.host.IGameListener;
+import sc.api.plugins.host.PlayerScore;
+import sc.api.plugins.host.ScoreCause;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		SimpleGameInstance<P> implements IPauseable
 {
 	private static Logger	logger				= LoggerFactory
 														.getLogger(RoundBasedGameInstance.class);
-	private P				activePlayer		= null;
+	protected P				activePlayer		= null;
 	private boolean			paused				= false;
 	private Runnable		afterPauseAction	= null;
 	private Object			afterPauseLock		= new Object();
 	private boolean			moveRequested		= false;
+	protected int 			turn				= 0;
+	
+	public int getTurn()
+	{
+		return this.turn;
+	}
 
 	@Override
 	public final void onAction(IPlayer fromPlayer, Object data)
@@ -85,7 +96,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 		if (checkGameOverCondition())
 		{
-			notifyOnGameOver();
+			Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
+			for(final P p : this.players)
+				map.put(p, p.getScore(ScoreCause.REGULAR));
+			
+			notifyOnGameOver(map);
 		}
 		else
 		{
