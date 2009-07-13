@@ -22,6 +22,7 @@ import sc.plugin2010.Client;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
+import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
@@ -86,6 +87,8 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		setDoubleBuffered(true);
 
 		final BackgoundPane bg = new BackgoundPane("resource/background.png");
+		int scale = Math.min(bg.getWidth(), bg.getHeight());
+		bg.setPreferredSize(new Dimension(scale, scale));
 
 		for (int i = 0; i < 65; i++)
 		{
@@ -263,7 +266,8 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 	private void askForAction(final Player player)
 	{
-		setReachableFields(player.getFieldNumber(), player.getCarrotsAvailable());
+		setReachableFields(player.getFieldNumber(), player
+				.getCarrotsAvailable());
 
 		if (player.getColor() == FigureColor.RED)
 		{
@@ -448,36 +452,24 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		// if not in finish
 		if (pos != 64)
 		{
-			final int moveable = GameUtil.calculateMoveableFields(carrots);
-
-			int max = pos + moveable;
-
-			if (max > 65)
+			for (int i = 0; i < fbuttons.size(); i++)
 			{
-				max = 65;
-			}
-
-			for (int i = pos; i < max; i++)
-			{
-				if (fbuttons.get(i).getType() != Board.FieldTyp.HEDGEHOG)
+				if (GameUtil.isValidToMove(board, player, i - pos))
 				{
 					fbuttons.get(i).setReachable(true);
 					fbuttons.get(i).repaint();
 				}
 			}
 
-			// if not on hedgehog
-			if (fbuttons.get(pos).getType() != Board.FieldTyp.HEDGEHOG)
+			// if fall back is valid
+			if (GameUtil.isValidToFallBack(board, player))
 			{
 				// seek for last hedgehog
-				for (int i = pos - 1; i >= 0; i--)
+				int index = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, pos);
+				if (index > 0 && index < fbuttons.size())
 				{
-					if (fbuttons.get(i).getType() == Board.FieldTyp.HEDGEHOG)
-					{
-						fbuttons.get(i).setReachable(true);
-						fbuttons.get(i).repaint();
-						break;
-					}
+					fbuttons.get(index).setReachable(true);
+					fbuttons.get(index).repaint();
 				}
 			}
 		}
@@ -496,7 +488,8 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			int relativeFieldsToMove = fieldNumber - player.getFieldNumber();
 			if (relativeFieldsToMove < 0)
 			{
-				if (GameUtil.isValidToFallBack(board, player))
+				if (GameUtil.isValidToFallBack(board, player)
+						&& board.getTypeAt(fieldNumber) == FieldTyp.HEDGEHOG)
 				{
 					sendMove(new Move(Move.MoveTyp.FALL_BACK));
 				}
@@ -541,7 +534,8 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	public void requestMove()
 	{
 		myturn = true;
-		setReachableFields(player.getFieldNumber(), player.getCarrotsAvailable());
+		setReachableFields(player.getFieldNumber(), player
+				.getCarrotsAvailable());
 
 		askForAction(player);
 	}

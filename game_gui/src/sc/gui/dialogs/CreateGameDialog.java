@@ -75,8 +75,8 @@ public class CreateGameDialog extends JDialog {
 	public CreateGameDialog(JFrame frame) {
 		super();
 
-		this.presFac = PresentationFacade.getInstance();
-		this.lang = presFac.getLogicFacade().getLanguageData();
+		presFac = PresentationFacade.getInstance();
+		lang = presFac.getLogicFacade().getLanguageData();
 		this.frame = frame;
 		createGUI();
 	}
@@ -89,7 +89,7 @@ public class CreateGameDialog extends JDialog {
 
 		// ---------------------------------------------------
 
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
 		pnlTable = new JPanel();
 		pnlBottom = new JPanel();
@@ -194,11 +194,11 @@ public class CreateGameDialog extends JDialog {
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 		// set dialog preferences
 		// this.getRootPane().setDefaultButton(okButton);
-		this.setResizable(false);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		this.setModal(true);
-		this.pack();
-		this.setLocationRelativeTo(null);
+		setResizable(false);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setModal(true);
+		pack();
+		setLocationRelativeTo(null);
 	}
 
 	/**
@@ -356,7 +356,7 @@ public class CreateGameDialog extends JDialog {
 					.getDescription().name(), null, selPlugin.getPlugin()
 					.getPluginInfoText(), selPlugin.getDescription().author());
 			// close dialog
-			this.dispose();
+			dispose();
 		}
 
 	}
@@ -407,6 +407,7 @@ public class CreateGameDialog extends JDialog {
 
 	private class MyTableModel extends DefaultTableModel {
 
+		@Override
 		public boolean isCellEditable(int row, int col) {
 			return (col > 0);
 		}

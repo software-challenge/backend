@@ -82,10 +82,14 @@ public class HaseUndIgelLayout implements LayoutManager
 
 		Component c;
 
-		int x = BORDER, y = BORDER;
-		final int compWidth = (int) (Math.round(parent.getWidth() - BORDER * 2) / SIZEX);
-		final int compHeight = (int) (Math.round(parent.getHeight() - BORDER
-				* 2) / SIZEY);
+		int height = Math.min(parent.getWidth(), parent.getHeight());
+		int width = height;
+
+		int y = BORDER;
+		int compWidth = (int) (Math.round(height - BORDER * 2) / SIZEX);
+		int compHeight = (int) (Math.round(width - BORDER * 2) / SIZEY);
+
+		int x = (parent.getWidth() - compWidth * SIZEX) / 2;
 
 		for (int i = 0; i <= 64; i++)
 		{

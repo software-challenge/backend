@@ -76,15 +76,22 @@ public class RenderFacade
 	{
 		this.threeDimensional = threeDimensional;
 		this.panel = panel;
-		panel.setDoubleBuffered(true);
+		observer = null;
+		player1 = null;
+		player2 = null;
 
-		panel.setLayout(new CardLayout());
-		// create components
-		DefaultPanel con = new DefaultPanel();
-		// add components
-		panel.add(con, connectString);
+		if (panel != null)
+		{
+			panel.setDoubleBuffered(true);
 
-		setGUIMode(GUIMode.CONNECT);
+			panel.setLayout(new CardLayout());
+			// create components
+			DefaultPanel con = new DefaultPanel();
+			// add components
+			panel.add(con, connectString);
+
+			setGUIMode(GUIMode.CONNECT);
+		}
 	}
 
 	/**
