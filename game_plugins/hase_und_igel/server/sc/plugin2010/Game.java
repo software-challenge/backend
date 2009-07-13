@@ -124,13 +124,6 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 			}
 			
 			final Player player = players.get(activePlayerId);
-			
-			activePlayerId = (activePlayerId + 1) % players.size();
-			
-			if (activePlayerId == 0)
-			{
-				turn++;
-			}
 			final Move move = (Move) data;
 			move.setTurn(getTurn());
 
@@ -266,12 +259,27 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 	 */
 	private Player fetchNextPlayer()
 	{
-		Player next = players.get(activePlayerId);
-		if (!GameUtil.canMove(next, board))
+		FieldTyp t = board.getTypeAt(players.get(activePlayerId).getFieldNumber());
+		switch(t)
 		{
-			activePlayerId = (activePlayerId + 1) % players.size();
+			case RABBIT:
+				// Gleich noch einmal!
+				logger.debug("Another round for '{}'", players.get(activePlayerId).getColor());
+				break;
+			default:
+			{
+				activePlayerId = (activePlayerId + 1) % players.size();
+				if (activePlayerId == 0)
+				{
+					turn++;
+				}
+				Player next = players.get(activePlayerId);
+				if (!GameUtil.canMove(next, board))
+				{
+					activePlayerId = (activePlayerId + 1) % players.size();
+				}
+			}
 		}
-
 		logger.debug("next player is '{}'", players.get(activePlayerId)
 				.getColor());
 
