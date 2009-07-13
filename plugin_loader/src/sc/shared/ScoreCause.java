@@ -1,4 +1,4 @@
-package sc.api.plugins.host;
+package sc.shared;
 
 public enum ScoreCause
 {

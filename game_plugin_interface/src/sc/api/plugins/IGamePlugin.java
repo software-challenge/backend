@@ -2,6 +2,7 @@ package sc.api.plugins;
 
 import edu.cau.plugins.IPlugin;
 import sc.api.plugins.host.IGamePluginHost;
+import sc.shared.ScoreDefinition;
 
 public interface IGamePlugin extends IPlugin<IGamePluginHost>
 {

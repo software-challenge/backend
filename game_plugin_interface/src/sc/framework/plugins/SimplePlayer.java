@@ -10,9 +10,9 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
-import sc.api.plugins.host.PlayerScore;
-import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.protocol.MoveRequest;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 public abstract class SimplePlayer implements IPlayer
 {

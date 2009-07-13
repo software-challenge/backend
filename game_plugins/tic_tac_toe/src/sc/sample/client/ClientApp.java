@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
-import sc.helpers.ReplayBuilder;
+import sc.api.plugins.host.ReplayBuilder;
 import sc.protocol.IControllableGame;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;

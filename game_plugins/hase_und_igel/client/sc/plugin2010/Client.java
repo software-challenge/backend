@@ -6,7 +6,7 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.GameResult;
+import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.Observation;
@@ -17,6 +17,7 @@ import sc.protocol.ILobbyClientListener;
 import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.shared.GameResult;
 
 /**
  * Der Client für das Hase- und Igel Plugin.
@@ -200,11 +201,9 @@ public class Client implements ILobbyClientListener
 	{
 		if (obs != null)
 		{
-			obs.gameEnded();
+			obs.gameEnded(null);
 		}
 	}
-
-	// TODO onGameOver?
 
 	@Override
 	public void onGamePrepared(PrepareGameResponse response)
@@ -231,7 +230,10 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGameOver(String roomId, GameResult data)
 	{
-		// TODO
+		if(obs != null)
+		{
+			obs.gameEnded(data);			
+		}
 	}
 
 	public void freeReservation(String reservation)
@@ -240,7 +242,7 @@ public class Client implements ILobbyClientListener
 	}
 
 	@Override
-	public void onGamePaused(String roomId)
+	public void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
 		// TODO Auto-generated method stub
 	}

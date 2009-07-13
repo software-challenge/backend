@@ -10,14 +10,11 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.GameResult;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.ScoreDefinition;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.api.plugins.host.PlayerScore;
 import sc.framework.plugins.IPauseable;
 import sc.protocol.MementoPacket;
 import sc.protocol.RoomPacket;
@@ -26,6 +23,9 @@ import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
+import sc.shared.GameResult;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreDefinition;
 
 /**
  * A wrapper for an actual <code>GameInstance</code>. GameInstances are provided
@@ -422,8 +422,8 @@ public class GameRoom implements IGameListener
 	}
 
 	@Override
-	public void onPaused()
+	public void onPaused(IPlayer nextPlayer)
 	{
-		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent()));
+		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
 	}
 }

@@ -5,6 +5,8 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import sc.shared.ScoreDefinition;
+
 import edu.cau.plugins.IPlugin;
 
 public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
@@ -36,7 +38,7 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * 
 	 * @return the statistics information descriptions
 	 */
-	String[] getStatisticsInfo();
+	ScoreDefinition getScoreDefinition();
 
 	/**
 	 * 

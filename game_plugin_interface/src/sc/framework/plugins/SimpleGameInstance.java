@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IGameListener;
-import sc.api.plugins.host.PlayerScore;
+import sc.shared.PlayerScore;
 
 public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		IGameInstance

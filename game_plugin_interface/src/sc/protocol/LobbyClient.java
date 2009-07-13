@@ -14,8 +14,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.GameResult;
-import sc.helpers.IRequestResult;
+import sc.api.plugins.IPlayer;
+import sc.api.plugins.host.IRequestResult;
 import sc.networking.TcpNetwork;
 import sc.protocol.clients.ControllingClient;
 import sc.protocol.clients.ObservingClient;
@@ -28,6 +28,7 @@ import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.shared.GameResult;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -98,7 +99,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			}
 			else if (packet.getData() instanceof GamePausedEvent)
 			{
-				onGamePaused(roomId);
+				onGamePaused(roomId, ((GamePausedEvent) packet.getData()).getNextPlayer());
 			}
 			else
 			{
@@ -143,11 +144,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		}
 	}
 
-	private void onGamePaused(String roomId)
+	private void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
 		for (ILobbyClientListener listener : this.listeners)
 		{
-			listener.onGamePaused(roomId);
+			listener.onGamePaused(roomId, nextPlayer);
 		}
 	}
 

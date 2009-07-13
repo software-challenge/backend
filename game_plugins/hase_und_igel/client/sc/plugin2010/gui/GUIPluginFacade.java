@@ -12,10 +12,12 @@ import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
+import sc.plugin2010.GamePlugin;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.Configuration;
 import sc.protocol.clients.ObservingClient;
+import sc.shared.ScoreDefinition;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
@@ -82,12 +84,6 @@ public class GUIPluginFacade implements IGuiPlugin
 	}
 
 	@Override
-	public String[] getStatisticsInfo()
-	{
-		return null; // TODO
-	}
-
-	@Override
 	public int getMinimalPlayerCount()
 	{
 		return 2;
@@ -115,5 +111,11 @@ public class GUIPluginFacade implements IGuiPlugin
 	public void unload()
 	{
 		// not needed
+	}
+
+	@Override
+	public ScoreDefinition getScoreDefinition()
+	{
+		return GamePlugin.SCORE_DEFINITION;
 	}
 }

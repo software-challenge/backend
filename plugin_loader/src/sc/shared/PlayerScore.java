@@ -1,4 +1,4 @@
-package sc.api.plugins.host;
+package sc.shared;
 
 import java.math.BigInteger;
 import java.util.Arrays;

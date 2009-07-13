@@ -1,9 +1,10 @@
-package sc.api.plugins;
+package sc.shared;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ScoreDefinition
+public class ScoreDefinition implements Iterable<ScoreFragment>
 {
 	private List<ScoreFragment>	fragments	= new LinkedList<ScoreFragment>();
 
@@ -25,5 +26,10 @@ public class ScoreDefinition
 	public ScoreFragment get(int i)
 	{
 		return this.fragments.get(i);
+	}
+
+	@Override
+	public Iterator<ScoreFragment> iterator() {
+		return fragments.iterator();
 	}
 }

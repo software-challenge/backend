@@ -43,6 +43,9 @@ import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.plugin.GUIPluginInstance;
+import sc.shared.GameResult;
+import sc.shared.ScoreDefinition;
+import sc.shared.ScoreFragment;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
@@ -203,9 +206,10 @@ public class TestRangeDialog extends JDialog {
 		model.addColumn(lang.getString("dialog_test_stats_name"));
 		model.addColumn(lang.getString("dialog_test_stats_wins"));
 		model.addColumn(lang.getString("dialog_test_stats_losses"));
-		String[] statColumns = selPlugin.getPlugin().getStatisticsInfo();
-		for (int i = 0; i < statColumns.length; i++) {
-			model.addColumn(statColumns[i]);
+		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
+		for(ScoreFragment column : statColumns)
+		{
+			model.addColumn(column.getName());
 		}
 		model.addColumn(lang.getString("dialog_test_stats_invalid"));
 		model.addColumn(lang.getString("dialog_test_stats_crashes"));
@@ -329,7 +333,7 @@ public class TestRangeDialog extends JDialog {
 		final IObservation obs = prep.getObserver();
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
-			public void gameEnded() {
+			public void gameEnded(GameResult result) {
 				// display wins/losses etc.
 				// TODO
 				// start new test if number of tests is not still reached

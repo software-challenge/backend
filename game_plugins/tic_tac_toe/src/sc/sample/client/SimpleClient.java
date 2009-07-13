@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.api.plugins.GameResult;
+import sc.api.plugins.IPlayer;
 import sc.helpers.StringHelper;
 import sc.protocol.ErrorResponse;
 import sc.protocol.ILobbyClientListener;
@@ -14,6 +14,7 @@ import sc.sample.server.GamePluginImpl;
 import sc.sample.shared.Board;
 import sc.sample.shared.GameState;
 import sc.sample.shared.Move;
+import sc.shared.GameResult;
 
 public class SimpleClient implements ILobbyClientListener
 {
@@ -116,7 +117,7 @@ public class SimpleClient implements ILobbyClientListener
 	}
 
 	@Override
-	public void onGamePaused(String roomId)
+	public void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
 		// TODO Auto-generated method stub
 		

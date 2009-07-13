@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import sc.helpers.IRequestResult;
+import sc.api.plugins.host.IRequestResult;
 
 public class AsyncResultManager
 {

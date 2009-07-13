@@ -3,9 +3,9 @@ package sc.plugin2010;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.api.plugins.host.PlayerScore;
-import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.SimplePlayer;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 /**
  * Ein Spieler aus Hase- und Igel.
@@ -219,5 +219,10 @@ public class Player extends SimplePlayer
 	public PlayerScore getScore(ScoreCause cause)
 	{
 		return new PlayerScore(cause, getPosition(), getFieldNumber());
+	}
+
+	public boolean isInGoal()
+	{
+		return this.fieldNumber == 64;
 	}
 }

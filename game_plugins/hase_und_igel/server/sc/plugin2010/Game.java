@@ -12,12 +12,12 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.api.plugins.host.PlayerScore;
-import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 /**
  * Die Spiellogik von Hase- und Igel.
@@ -31,34 +31,36 @@ import sc.plugin2010.Player.FigureColor;
  */
 public class Game extends RoundBasedGameInstance<Player>
 {
-	private static Logger	logger				= LoggerFactory
-	.getLogger(Game.class);
-	
-	private List<FigureColor> availableColors = new LinkedList<FigureColor>();
-	private Board board = Board.create();
-	
+	private static Logger		logger			= LoggerFactory
+														.getLogger(Game.class);
+
+	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
+	private Board				board			= Board.create();
+
 	protected Board getBoard()
 	{
 		return board;
 	}
-	
-	public Player getActivePlayer() 
+
+	public Player getActivePlayer()
 	{
 		return activePlayer;
 	}
-	
+
 	public Game()
 	{
 		availableColors.addAll(Arrays.asList(FigureColor.values()));
 	}
-	
+
 	@Override
 	protected boolean checkGameOverCondition()
 	{
 		boolean gameOver = turn >= GamePlugin.MAX_TURN_COUNT;
-		
-		for(final Player p : this.players)
-			gameOver = gameOver || p.getPosition() == 64; 
+
+		for (final Player p : this.players)
+		{
+			gameOver = gameOver || p.isInGoal();
+		}
 
 		return gameOver;
 	}
@@ -89,12 +91,14 @@ public class Game extends RoundBasedGameInstance<Player>
 				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
 				for (final Player p : players)
 					res.put(p, p.getScore(ScoreCause.RULE_VIOLATION));
-				
+
 				notifyOnGameOver(res);
 			}
-			
+
 			next();
-		} else {
+		}
+		else
+		{
 			logger.warn("Ungültiger Zug von '{}'", author.getColor());
 		}
 	}
@@ -176,7 +180,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	{
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
-		
+
 		final Player player = new Player(this.availableColors.remove(0));
 		this.players.add(player);
 		this.board.addPlayer(player);
@@ -193,7 +197,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
 		for (final Player p : players)
 			res.put(p, p.getScore(ScoreCause.LEFT));
-		
+
 		players.remove(player);
 		notifyOnGameOver(res);
 	}
@@ -203,7 +207,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	{
 		return players.size() == GamePlugin.MAX_PLAYER_COUNT;
 	}
-	
+
 	@Override
 	public void start()
 	{

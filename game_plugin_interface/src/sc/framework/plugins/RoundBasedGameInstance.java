@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.host.IGameListener;
-import sc.api.plugins.host.PlayerScore;
-import sc.api.plugins.host.ScoreCause;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		SimpleGameInstance<P> implements IPauseable
@@ -139,7 +139,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 				for (IGameListener listener : this.listeners)
 				{
-					listener.onPaused();
+					listener.onPaused(currentActivePlayer);
 				}
 			}
 		}

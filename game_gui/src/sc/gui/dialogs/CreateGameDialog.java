@@ -45,6 +45,7 @@ import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.ILogicFacade;
 import sc.plugin.GUIPluginInstance;
+import sc.shared.GameResult;
 
 @SuppressWarnings("serial")
 public class CreateGameDialog extends JDialog {
@@ -83,7 +84,8 @@ public class CreateGameDialog extends JDialog {
 	private void createGUI() {
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
-		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(plugins);
+		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(
+				plugins);
 
 		// ---------------------------------------------------
 
@@ -105,7 +107,8 @@ public class CreateGameDialog extends JDialog {
 
 		ckbDim = new JCheckBox(lang.getString("dialog_create_pref_dim"));
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDebug
+				.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
 		txfPort = new JTextField(DEFAULT_PORT);
 		lblPort = new JLabel(lang.getString("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);
@@ -171,7 +174,8 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang.getString("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang
+				.getString("dialog_create_cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -218,7 +222,8 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
-		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
+		final ContextDisplay contextPanel = (ContextDisplay) presFac
+				.getContextDisplay();
 
 		// start server
 		presFac.getLogicFacade().startServer(port, !ckbDebug.isSelected());
@@ -263,9 +268,16 @@ public class CreateGameDialog extends JDialog {
 
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
-			public void gameEnded() {
+			public void gameEnded(GameResult result) {
 				// presFac.getLogicFacade().stopServer();
 				contextPanel.updateButtonBar(true);
+				try {
+					observer.saveReplayToFile("./replays/replay-"
+							+ System.currentTimeMillis() + ".xml");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
 			}
 		});
 
@@ -309,8 +321,8 @@ public class CreateGameDialog extends JDialog {
 				break;
 			default:
 				cancelGameCreation();
-				throw new RuntimeException("Selection range out of bounds (" + index
-						+ ")");
+				throw new RuntimeException("Selection range out of bounds ("
+						+ index + ")");
 			}
 		}
 
@@ -333,7 +345,7 @@ public class CreateGameDialog extends JDialog {
 				return;
 			}
 		}
-		
+
 		// show connecting dialog
 		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
 			observer.cancel();
@@ -352,13 +364,17 @@ public class CreateGameDialog extends JDialog {
 	private int extractIndex(String plyType) {
 		if (plyType.equals(lang.getString("dialog_create_plyType_human"))) {
 			return 0;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_intern"))) {
+		} else if (plyType.equals(lang
+				.getString("dialog_create_plyType_ki_intern"))) {
 			return 1;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_extern"))) {
+		} else if (plyType.equals(lang
+				.getString("dialog_create_plyType_ki_extern"))) {
 			return 2;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_observer"))) {
+		} else if (plyType.equals(lang
+				.getString("dialog_create_plyType_observer"))) {
 			return 3;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_closed"))) {
+		} else if (plyType.equals(lang
+				.getString("dialog_create_plyType_closed"))) {
 			return 4;
 		}
 		return -1;
@@ -397,13 +413,15 @@ public class CreateGameDialog extends JDialog {
 
 	}
 
-	public class MyComboBoxRenderer extends JComboBox implements TableCellRenderer {
+	public class MyComboBoxRenderer extends JComboBox implements
+			TableCellRenderer {
 		public MyComboBoxRenderer(Vector<String> items) {
 			super(items);
 		}
 
-		public Component getTableCellRendererComponent(JTable table, Object value,
-				boolean isSelected, boolean hasFocus, int row, int column) {
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
 			if (isSelected) {
 				setForeground(table.getSelectionForeground());
 				super.setBackground(table.getSelectionBackground());
@@ -418,7 +436,8 @@ public class CreateGameDialog extends JDialog {
 		}
 	}
 
-	public class MyComboBoxEditor extends DefaultCellEditor implements ItemListener {
+	public class MyComboBoxEditor extends DefaultCellEditor implements
+			ItemListener {
 		public MyComboBoxEditor(Vector<String> items) {
 			super(new JComboBox(items));
 
@@ -459,17 +478,18 @@ public class CreateGameDialog extends JDialog {
 			switch (chooser.showOpenDialog(frame)) {
 			case JFileChooser.APPROVE_OPTION:
 				// set name
-				playersModel.setValueAt(chooser.getSelectedFile().getName(), row, 1);
+				playersModel.setValueAt(chooser.getSelectedFile().getName(),
+						row, 1);
 				// set path
-				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
-						3);
+				playersModel.setValueAt(chooser.getSelectedFile()
+						.getAbsolutePath(), row, 3);
 				break;
 			case JFileChooser.CANCEL_OPTION:
 				cbox.setSelectedIndex(0); // set back to default (here: index 0)
 				break;
 			}
 			break;
-		case 2:	// KI extern
+		case 2: // KI extern
 			playersModel.setValueAt("-", row, 3);
 			break;
 		case 3:// observer

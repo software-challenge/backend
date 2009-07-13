@@ -1,4 +1,4 @@
-package sc.api.plugins;
+package sc.shared;
 
 public class ScoreFragment
 {

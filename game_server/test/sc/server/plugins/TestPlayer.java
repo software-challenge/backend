@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.api.plugins.host.IPlayerListener;
-import sc.api.plugins.host.PlayerScore;
-import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.SimplePlayer;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 public class TestPlayer extends SimplePlayer
 {

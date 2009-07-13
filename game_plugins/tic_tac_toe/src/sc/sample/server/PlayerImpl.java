@@ -1,9 +1,9 @@
 package sc.sample.server;
 
-import sc.api.plugins.host.PlayerScore;
-import sc.api.plugins.host.ScoreCause;
 import sc.framework.plugins.SimplePlayer;
 import sc.sample.shared.Player;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 public class PlayerImpl extends SimplePlayer
 {

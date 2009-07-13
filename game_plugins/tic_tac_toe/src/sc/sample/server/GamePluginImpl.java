@@ -3,9 +3,9 @@ package sc.sample.server;
 import edu.cau.plugins.PluginDescriptor;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
-import sc.api.plugins.ScoreDefinition;
 import sc.api.plugins.host.IGamePluginHost;
 import sc.sample.protocol.ProtocolDefinition;
+import sc.shared.ScoreDefinition;
 
 @PluginDescriptor(name = "Tic Tac Toe (Sample)", uuid = GamePluginImpl.PLUGIN_UUID)
 public class GamePluginImpl implements IGamePlugin

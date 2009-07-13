@@ -7,16 +7,17 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
-import sc.helpers.ReplayBuilder;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.GameState;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.clients.IUpdateListener;
+import sc.shared.GameResult;
 
 /**
  * @author ffi
@@ -127,13 +128,14 @@ public class Observation implements IObservation, IUpdateListener
 	}
 
 	/**
+	 * @param data 
 	 * 
 	 */
-	public void gameEnded()
+	public void gameEnded(GameResult data)
 	{
 		for (IGameEndedListener list : gameEndedListeners)
 		{
-			list.gameEnded();
+			list.gameEnded(data);
 		}
 	}
 

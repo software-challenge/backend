@@ -1,7 +1,8 @@
 package sc.protocol;
 
-import sc.api.plugins.GameResult;
+import sc.api.plugins.IPlayer;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.shared.GameResult;
 
 public interface ILobbyClientListener
 {
@@ -20,6 +21,6 @@ public interface ILobbyClientListener
 
 	void onGameOver(String roomId, GameResult data);
 
-	void onGamePaused(String roomId);
+	void onGamePaused(String roomId, IPlayer nextPlayer);
 
 }

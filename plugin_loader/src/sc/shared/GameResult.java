@@ -1,8 +1,7 @@
-package sc.api.plugins;
+package sc.shared;
 
 import java.util.List;
 
-import sc.api.plugins.host.PlayerScore;
 import sc.helpers.StringHelper;
 
 public class GameResult
