@@ -287,7 +287,8 @@ public class GameRoom implements IGameListener
 	{
 		if (isOver)
 		{
-			throw new RescueableClientException("Game is already over.");
+			throw new RescueableClientException(
+					"Game is already over, but got data: " + data.getClass());
 		}
 		else
 		{
@@ -424,6 +425,7 @@ public class GameRoom implements IGameListener
 	@Override
 	public void onPaused(IPlayer nextPlayer)
 	{
-		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
+		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(
+				nextPlayer)));
 	}
 }

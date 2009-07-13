@@ -4,7 +4,7 @@
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="lib.dir" value="lib" />
-	<property name="main-class" value="gameClient.Launcher" />
+	<property name="main-class" value="gameClient.Start" />
 	<property name="gameApi.dir" value="./../game_plugin_interface" />
 	<property name="guiApi.dir" value="./../gui_plugin_interfaces" />
 	<property name="pluginLoader.dir" value="./../plugin_loader" />
@@ -15,6 +15,7 @@
 		<fileset dir="${gameApi.dir}" includes="**/*.jar" />
 		<fileset dir="${guiApi.dir}" includes="**/*.jar" />
 		<fileset dir="${game.dir}" includes="**/*.jar" />
+		<fileset dir="${pluginLoader.dir}" includes="**/*.jar" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${guiApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />
@@ -45,6 +46,7 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
+		<ant dir="${pluginLoader.dir}" inheritAll="false" />
 		<ant dir="${gameApi.dir}" inheritAll="false" />
 		<ant dir="${guiApi.dir}" inheritAll="false" />
 		<ant dir="${game.dir}" inheritAll="false" />
