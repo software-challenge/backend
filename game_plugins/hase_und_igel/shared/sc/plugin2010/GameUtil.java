@@ -9,6 +9,12 @@ import sc.plugin2010.Player.Action;
 
 public class GameUtil
 {
+	public static final int HEDGEHOG_CARROT_MULTIPLIER = 10;
+	public static final int CARROT_BONUS_ON_POSITION_1_FIELD = 10;
+	public static final int CARROT_BONUS_ON_POSITION_2_FIELD = 30;
+	public static final int CARROT_BONUS_ON_POSITION_1_SALAD = 10;
+	public static final int CARROT_BONUS_ON_POSITION_2_SALAD = 30;
+	
 	/**
 	 * Berechnet wie viele Karotten für einen Zug der länge
 	 * <code>moveCount</code> benötigt werden. Entspricht den Veränderungen des
@@ -118,18 +124,28 @@ public class GameUtil
 
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
 		valid = valid && (p.getSaladsToEat() > 0);
-		valid = valid && !playerMustMove(p, MoveTyp.EAT);
+		valid = valid && !playerMustMove(p);
 
 		return valid;
 	}
 
-	public static boolean playerMustMove(Player p, MoveTyp t)
+	public static boolean playerMustMove(Player p)
 	{
 		Move lastMove = p.getLastMove();
 
 		if (lastMove != null)
 		{
-			return lastMove.getTyp() == t;
+			if (lastMove.getTyp() == MoveTyp.EAT)
+			{
+				return true;
+			}
+			else if (lastMove.getTyp() == MoveTyp.PLAY_CARD)
+			{
+				if (lastMove.getCard() == Player.Action.EAT_SALAD)
+				{
+					return true;
+				}
+			}
 		}
 
 		return false;
@@ -197,7 +213,8 @@ public class GameUtil
 
 	public static boolean isValidToPlayFallBack(Board b, Player p)
 	{
-		boolean valid = b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		boolean valid = !playerMustMove(p)
+				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
 				&& b.isFirst(p);
 		valid = valid && p.ownsCardOfTyp(Action.FALL_BACK);
 
@@ -228,7 +245,8 @@ public class GameUtil
 
 	public static boolean isValidToPlayHurryAhead(final Board b, final Player p)
 	{
-		boolean valid = b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		boolean valid = !playerMustMove(p)
+				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
 				&& !b.isFirst(p);
 		valid = valid && p.ownsCardOfTyp(Action.HURRY_AHEAD);
 
@@ -259,19 +277,22 @@ public class GameUtil
 
 	public static boolean isValidToPlayTakeOrDropCarrots(Board b, Player p)
 	{
-		return b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		return !playerMustMove(p)
+				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
 				&& p.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
 	}
 
 	public static boolean isValidToPlayEatSalad(Board b, Player p)
 	{
-		return b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		return !playerMustMove(p)
+				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
 				&& p.ownsCardOfTyp(Action.EAT_SALAD) && p.getSaladsToEat() > 0;
 	}
 
 	public static boolean isValidToPlayCard(Board b, Player p)
 	{
 		boolean valid = false;
+
 		for (final Action a : p.getActions())
 		{
 			switch (a)
@@ -291,8 +312,7 @@ public class GameUtil
 			}
 		}
 
-		return valid && b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
-				&& p.getActions().size() > 0;
+		return valid;
 	}
 
 	public static boolean canMove(Player player, Board board)

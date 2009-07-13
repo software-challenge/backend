@@ -147,7 +147,7 @@ public class Werkzeuge
 
 	public static boolean mussSpielerSichBewegen(Spieler spieler)
 	{
-		return GameUtil.playerMustMove(spieler.getPlayer(), MoveTyp.EAT);
+		return GameUtil.playerMustMove(spieler.getPlayer());
 	}
 
 	// /////////////////////////////////////

@@ -50,6 +50,15 @@ public class Player extends SimplePlayer implements Cloneable
 		RED, BLUE
 	}
 
+	public enum Position
+	{
+		FIRST, SECOND,
+		/**
+		 * In the rare case where both players are on the same spot (START).
+		 */
+		TIE
+	}
+
 	// Farbe der Spielfigure
 	private FigureColor		color;
 
@@ -64,9 +73,6 @@ public class Player extends SimplePlayer implements Cloneable
 
 	// verfügbare Hasenkarten
 	private List<Action>	actions;
-
-	// Die Position des Spielers (1., 2., ..)
-	private int				position;
 
 	private List<Move>		history;
 
@@ -204,16 +210,6 @@ public class Player extends SimplePlayer implements Cloneable
 		fieldNumber = pos;
 	}
 
-	public int getPosition()
-	{
-		return position;
-	}
-
-	protected void setPosition(int position)
-	{
-		this.position = position;
-	}
-
 	/**
 	 * Die Farbe dieses Spielers auf dem Spielbrett
 	 * 
@@ -248,5 +244,24 @@ public class Player extends SimplePlayer implements Cloneable
 	public boolean inGoal()
 	{
 		return fieldNumber == 64;
+	}
+
+	/**
+	 * Get's the position (1. or 2.) compared to another player.
+	 * 
+	 * @param other
+	 * @return
+	 */
+	public Position getPosition(Player other)
+	{
+		if (this == other)
+		{
+			throw new IllegalArgumentException(
+					"Can't compare with the same instance.");
+		}
+
+		int fieldDifference = this.getFieldNumber() - other.getFieldNumber();
+
+		return (fieldDifference > 0) ? Position.FIRST : Position.SECOND;
 	}
 }

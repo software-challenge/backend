@@ -17,6 +17,7 @@ import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.Player.Position;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -125,11 +126,13 @@ public class Game extends RoundBasedGameInstance<Player>
 				player.eatSalad();
 				if (board.isFirst(player))
 				{
-					player.changeCarrotsAvailableBy(10);
+					player
+							.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_SALAD);
 				}
 				else
 				{
-					player.changeCarrotsAvailableBy(30);
+					player
+							.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_SALAD);
 				}
 				break;
 			case MOVE:
@@ -142,7 +145,8 @@ public class Game extends RoundBasedGameInstance<Player>
 				int nextField = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
 						player.getFieldNumber());
 				int diff = player.getFieldNumber() - nextField;
-				player.changeCarrotsAvailableBy(diff * 10);
+				player.changeCarrotsAvailableBy(diff
+						* GameUtil.HEDGEHOG_CARROT_MULTIPLIER);
 				player.setFieldNumber(nextField);
 				break;
 			}
@@ -159,11 +163,13 @@ public class Game extends RoundBasedGameInstance<Player>
 						player.eatSalad();
 						if (board.isFirst(player))
 						{
-							player.changeCarrotsAvailableBy(10);
+							player
+									.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_SALAD);
 						}
 						else
 						{
-							player.changeCarrotsAvailableBy(30);
+							player
+									.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_SALAD);
 						}
 						break;
 					case FALL_BACK:
@@ -205,8 +211,15 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void next()
 	{
+		Player nextPlayer = determineNextPlayer();
+		applyTakeoffBonus(nextPlayer);
+		next(nextPlayer);
+	}
+
+	private Player determineNextPlayer()
+	{
 		final Player active = getActivePlayer();
-		Move last = active.getLastMove();
+		final Move last = active.getLastMove();
 		Player nextPlayer = getPlayerAfter(active);
 
 		switch (board.getTypeAt(active.getFieldNumber()))
@@ -231,8 +244,36 @@ public class Game extends RoundBasedGameInstance<Player>
 				}
 				break;
 		}
-		
-		next(nextPlayer);
+
+		return nextPlayer;
+	}
+
+	/**
+	 * Add Carrots on [1] and [2] fields
+	 * 
+	 * @param nextPlayer
+	 */
+	private void applyTakeoffBonus(Player nextPlayer)
+	{
+		final Player active = getActivePlayer();
+
+		if (nextPlayer != active)
+		{
+			FieldTyp typ = board.getTypeAt(nextPlayer.getFieldNumber());
+
+			if (typ == FieldTyp.POSITION_1
+					&& nextPlayer.getPosition(active) == Position.FIRST)
+			{
+				nextPlayer
+						.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_FIELD);
+			}
+			else if (typ == FieldTyp.POSITION_2
+					&& nextPlayer.getPosition(active) == Position.SECOND)
+			{
+				nextPlayer
+						.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_FIELD);
+			}
+		}
 	}
 
 	@Override

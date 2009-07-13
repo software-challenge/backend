@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.Player.Position;
 
 /**
  * @author rra
@@ -354,7 +355,7 @@ public class Board
 	 */
 	public final boolean isFirst(final Player player)
 	{
-		return getOtherPlayer(player).getFieldNumber() < player.getFieldNumber();
+		return player.getPosition(getOtherPlayer(player)) == Position.FIRST;
 	}
 
 	public final boolean canEnterGoal(final Player player)

@@ -70,24 +70,24 @@ public class GamePlayTest
 	@Test
 	public void takeOrDropCarrots()
 	{
-		red.setPosition(0);
+		red.setFieldNumber(0);
 		Move m = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10);
 		Assert.assertEquals(false, b.isValid(m, red));
 		
 		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-		red.setPosition(rabbitAt);
+		red.setFieldNumber(rabbitAt);
 		Assert.assertEquals(false, b.isValid(m, red));
 		
 		int saladAt = b.getNextFieldByTyp(FieldTyp.SALAD, 0);
-		red.setPosition(saladAt);
+		red.setFieldNumber(saladAt);
 		Assert.assertEquals(false, b.isValid(m, red));
 		
 		int pos1 = b.getNextFieldByTyp(FieldTyp.POSITION_1, 0);
-		red.setPosition(pos1);
+		red.setFieldNumber(pos1);
 		Assert.assertEquals(false, b.isValid(m, red));
 		
 		int pos2 = b.getNextFieldByTyp(FieldTyp.POSITION_2, 0);
-		red.setPosition(pos2);
+		red.setFieldNumber(pos2);
 		Assert.assertEquals(false, b.isValid(m, red));
 	}
 	
@@ -164,7 +164,7 @@ public class GamePlayTest
 		Move m1 = new Move(MoveTyp.MOVE, carrotsAt);
 		g.onAction(red, m1);
 
-		Move m2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, red.getPosition()));
+		Move m2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, red.getFieldNumber()));
 		g.onAction(blue, m2);
 
 		Move m3 = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10);
@@ -189,7 +189,7 @@ public class GamePlayTest
 		Move m1 = new Move(MoveTyp.MOVE, carrotsAt);
 		g.onAction(red, m1);
 
-		Move m2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, red.getPosition()));
+		Move m2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, red.getFieldNumber()));
 		g.onAction(blue, m2);
 
 		Move m3 = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, -10);
@@ -207,7 +207,7 @@ public class GamePlayTest
 	public void actioncardOnFieldTypCarrot()
 	{
 		int field = b.getNextFieldByTyp(FieldTyp.CARROT, 0);
-		red.setPosition(field);
+		red.setFieldNumber(field);
 
 		Move m1 = new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD);
 		Assert.assertEquals(false, b.isValid(m1, red));
@@ -233,15 +233,15 @@ public class GamePlayTest
 		Move m1 = new Move(MoveTyp.MOVE, hedgehog);
 		Assert.assertEquals(false, b.isValid(m1, red));
 
-		blue.setPosition(hedgehog + 1);
-		red.setPosition(hedgehog + 2);
+		blue.setFieldNumber(hedgehog + 1);
+		red.setFieldNumber(hedgehog + 2);
 
 		Move m2 = new Move(MoveTyp.FALL_BACK);
 		Assert.assertEquals(false, b.isValid(m2, red));
 
-		blue.setPosition(hedgehog - 1);
+		blue.setFieldNumber(hedgehog - 1);
 		int rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-		red.setPosition(rabbit);
+		red.setFieldNumber(rabbit);
 
 		Move m3 = new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD);
 		Assert.assertEquals(false, b.isValid(m3, red));
@@ -266,7 +266,7 @@ public class GamePlayTest
 	public void indirectHurryAheadOntoHedgehog()
 	{
 		int hedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0);
-		blue.setPosition(hedgehog);
+		blue.setFieldNumber(hedgehog);
 
 		int rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
 		red.setActions(Arrays.asList(Action.HURRY_AHEAD));
@@ -286,7 +286,7 @@ public class GamePlayTest
 		int secondRabbit = b
 				.getNextFieldByTyp(FieldTyp.RABBIT, firstRabbit + 1);
 
-		blue.setPosition(secondRabbit - 1);
+		blue.setFieldNumber(secondRabbit - 1);
 		red.setActions(Arrays.asList(Action.HURRY_AHEAD));
 
 		Move m1 = new Move(MoveTyp.MOVE, firstRabbit);
