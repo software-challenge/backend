@@ -49,4 +49,17 @@ public class GameResult
 
 		return builder.toString();
 	}
+	
+	public boolean isRegular()
+	{
+		for(PlayerScore score : this.scores)
+		{
+			if(score.getCause() != ScoreCause.REGULAR)
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }

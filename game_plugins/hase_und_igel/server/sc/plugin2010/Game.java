@@ -89,6 +89,9 @@ public class Game extends RoundBasedGameInstance<Player>
 			}
 			else
 			{
+				logger.warn("Ungültiger Zug {} von Spieler '{}'", move, author
+						.getColor());
+
 				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
 				for (final Player p : players)
 					res.put(p, p.getScore(ScoreCause.RULE_VIOLATION));
@@ -100,7 +103,8 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 		else
 		{
-			logger.warn("Ungültiger Zug von '{}'", author.getColor());
+			logger.warn("Ungültige Aktion {} von Spieler '{}'",
+					data.getClass(), author.getColor());
 		}
 	}
 
@@ -201,11 +205,13 @@ public class Game extends RoundBasedGameInstance<Player>
 		switch (board.getTypeAt(active.getFieldNumber()))
 		{
 			case RABBIT:
-				if (last.getTyp().equals(MoveTyp.MOVE) ||
-						last.getTyp().equals(MoveTyp.PLAY_CARD))
+				if (last.getTyp().equals(MoveTyp.MOVE)
+						|| last.getTyp().equals(MoveTyp.PLAY_CARD))
 				{
-					
-				} else {
+
+				}
+				else
+				{
 					activePlayerId = (activePlayerId + 1) % this.players.size();
 				}
 				break;
@@ -215,7 +221,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 		next(this.players.get(activePlayerId));
 	}
-	
+
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{

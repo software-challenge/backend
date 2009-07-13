@@ -46,6 +46,8 @@ public final class Application
 	 */
 	public static Lobby startServer(final Integer port, boolean timeout)
 	{
+		logger.info("Starting the Server on port {} (timeout = {})", port,
+				timeout);
 		Configuration.set(Configuration.PORT_KEY, port.toString());
 		final Lobby server = new Lobby();
 		server.start();

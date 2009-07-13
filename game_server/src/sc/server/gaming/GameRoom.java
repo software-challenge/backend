@@ -94,7 +94,10 @@ public class GameRoom implements IGameListener
 			scores.add(score);
 		}
 
-		broadcast(new GameResult(definition, scores));
+		GameResult result = new GameResult(definition, scores);
+		logger.info("The game {} is over. (regular={})", getId(), result
+				.isRegular());
+		broadcast(result);
 		kickAllClients();
 	}
 
