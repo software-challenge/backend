@@ -112,6 +112,7 @@ public class BoardTest
 
 		// anderer Spieler auf 1. Feld
 		p2.setPosition(1);
+		p.setPosition(b.getNextFieldByTyp(FieldTyp.RABBIT, p2.getPosition()));
 		Assert.assertTrue(b.isValid(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK), p));
 
 		// anderer Spieler direkt hinter Igelfeld

@@ -152,13 +152,12 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 				active = false;
 				for (final Player p : players)
 				{
-					p.notifyListeners(new GameOver(board.isFirst(p)));
+					p.notifyListeners(new GameOver(board.isFirst(p), p.getPosition()));
 				}
 				updateObservers();
 			}
 			else
 			{
-				updatePlayers();
 				updateObservers();
 
 				requestMove(next);
@@ -394,24 +393,6 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 		}
 	}
 
-	private void updatePlayers()
-	{
-		for (final Player player : players)
-		{
-			player.notifyListeners(new BoardUpdated(board, turn));
-			for (final Player other : players)
-			{
-				if (other.equals(player))
-				{
-					continue;
-				}
-				player.notifyListeners(new PlayerUpdated(other, false));
-			}
-
-			player.notifyListeners(new PlayerUpdated(player, true));
-		}
-	}
-
 	@Override
 	public void start()
 	{
@@ -424,7 +405,6 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 		}
 
 		// Initialisiere alle Spieler
-		updatePlayers();
 		updateObservers();
 
 		// Fordere vom ersten Spieler einen Zug an

@@ -47,8 +47,7 @@ public class Client implements ILobbyClientListener
 	{
 		gameType = GamePlugin.PLUGIN_UUID;
 		client = new LobbyClient(Configuration.getXStream(), Arrays.asList(
-				Player.class, PlayerUpdated.class, Move.class, Board.class,
-				BoardUpdated.class), host, port);
+				Player.class, Move.class, Board.class, GameState.class), host, port);
 		client.addListener(this);
 		client.start();
 		this.id = id;
