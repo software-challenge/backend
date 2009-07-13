@@ -85,7 +85,9 @@ public class GameUtil
 				valid = valid && p.getSaladsToEat() > 0;
 				break;
 			case RABBIT:
-				valid = valid && isValidToPlayCard(b, p);
+				Player p2 = p.clone();
+				p2.setFieldNumber(newPosition);
+				valid = valid && isValidToPlayCard(b, p2);
 				break;
 			case GOAL:
 				int carrotsLeft = p.getCarrotsAvailable() - requiredCarrots;
@@ -200,10 +202,8 @@ public class GameUtil
 				valid = valid && p.getSaladsToEat() > 0;
 				break;
 			case RABBIT:
-				Player p2 = new Player(p.getColor());
-				List<Action> remaining = p.getActions();
-				remaining.remove(Action.FALL_BACK);
-				p2.setActions(remaining);
+				Player p2 = (Player) p.clone();
+				p2.setActions(p.getActionsWithout(Action.FALL_BACK));
 				valid = valid && isValidToPlayCard(b, p2);
 				break;
 		}
@@ -230,10 +230,8 @@ public class GameUtil
 				valid = valid && p.getSaladsToEat() > 0;
 				break;
 			case RABBIT:
-				Player p2 = new Player(p.getColor());
-				List<Action> remaining = p.getActions();
-				remaining.remove(Action.HURRY_AHEAD);
-				p2.setActions(remaining);
+				Player p2 = p.clone();
+				p2.setActions(p.getActionsWithout(Action.HURRY_AHEAD));
 				valid = valid && isValidToPlayCard(b, p2);
 				break;
 			case GOAL:
@@ -258,28 +256,28 @@ public class GameUtil
 
 	public static boolean isValidToPlayCard(Board b, Player p)
 	{
-		boolean valid = b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT);
-
+		boolean valid = false;
 		for (final Action a : p.getActions())
 		{
 			switch (a)
 			{
 				case EAT_SALAD:
-					valid = valid && isValidToPlayEatSalad(b, p);
+					valid = valid || isValidToPlayEatSalad(b, p);
 					break;
 				case FALL_BACK:
-					valid = valid && isValidToPlayFallBack(b, p);
+					valid = valid || isValidToPlayFallBack(b, p);
 					break;
 				case HURRY_AHEAD:
-					valid = valid && isValidToPlayHurryAhead(b, p);
+					valid = valid || isValidToPlayHurryAhead(b, p);
 					break;
 				case TAKE_OR_DROP_CARROTS:
-					valid = valid && isValidToPlayTakeOrDropCarrots(b, p);
+					valid = valid || isValidToPlayTakeOrDropCarrots(b, p);
 					break;
 			}
 		}
 
-		return valid;
+		return valid && b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+				&& p.getActions().size() > 0;
 	}
 
 	public static boolean canMove(Player player, Board board)

@@ -1,5 +1,6 @@
 package sc.plugin2010;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import sc.shared.ScoreCause;
  * @since Jul 4, 2009
  * 
  */
-public class Player extends SimplePlayer
+public class Player extends SimplePlayer implements Cloneable
 {
 	/**
 	 * Mögliche Aktionen, die durch das Ausspielen eines Hasenjokers ausgelöst
@@ -164,6 +165,16 @@ public class Player extends SimplePlayer
 	{
 		return actions;
 	}
+	
+	public List<Action> getActionsWithout(Action a)
+	{
+		List<Action> res = new ArrayList<Action>(4);
+		for(Action b:actions) {
+			if (!b.equals(a))
+				res.add(b);
+		}
+		return res;
+	}
 
 	protected void setActions(List<Action> actions)
 	{
@@ -216,13 +227,28 @@ public class Player extends SimplePlayer
 		return lastMove;
 	}
 
+	public Player clone() 
+	{
+		Player ret = null;
+		try
+		{
+			ret = (Player) super.clone();
+		}
+		catch (CloneNotSupportedException e)
+		{
+			e.printStackTrace();
+		}
+		return ret;
+	}
+
+	@Override
 	public PlayerScore getScore(ScoreCause cause)
 	{
 		return new PlayerScore(cause, getPosition(), getFieldNumber());
 	}
 
-	public boolean isInGoal()
+	public boolean inGoal()
 	{
-		return this.fieldNumber == 64;
+		return fieldNumber == 64;
 	}
 }

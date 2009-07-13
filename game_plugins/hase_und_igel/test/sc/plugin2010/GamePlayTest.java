@@ -58,7 +58,7 @@ public class GamePlayTest
 		Move m3 = new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD);
 		Assert.assertEquals(false, b.isValid(m3, red));
 		
-		Move m4 = new Move(MoveTyp.MOVE, 2);
+		Move m4 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
 		Assert.assertEquals(true, b.isValid(m4, red));
 	}
 	
@@ -135,6 +135,26 @@ public class GamePlayTest
 		
 		Move m = new Move(MoveTyp.MOVE, rabbit);
 		Assert.assertEquals(false, b.isValid(m, red));
+	}
+	
+	/**
+	 * Indirekte Züge auf einen Hasen sind nur erlaubt, wenn man danach noch
+	 * einen Hasenjoker anwenden kann.
+	 */
+	@Test
+	public void indirectHurryAheadOntoRabbit()
+	{
+		int firstRabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
+		int secondRabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, firstRabbit+1);
+		
+		blue.setPosition(secondRabbit-1);
+		red.setActions(Arrays.asList(Action.HURRY_AHEAD));
+		
+		Move m1 = new Move(MoveTyp.MOVE, firstRabbit);
+		Assert.assertEquals(false, b.isValid(m1, red));
+		
+		red.setActions(Arrays.asList(new Action[]{Action.HURRY_AHEAD, Action.EAT_SALAD}));
+		Assert.assertEquals(true, b.isValid(m1, red));
 	}
 	
 	/**

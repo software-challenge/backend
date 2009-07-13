@@ -59,7 +59,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
 		for (final Player p : this.players)
 		{
-			gameOver = gameOver || p.isInGoal();
+			gameOver = gameOver || p.inGoal();
 		}
 
 		return gameOver;
