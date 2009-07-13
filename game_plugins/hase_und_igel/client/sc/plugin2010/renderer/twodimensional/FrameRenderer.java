@@ -263,8 +263,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 	private void askForAction(final Player player)
 	{
-		setReachableFields(player.getPosition(), player
-				.getCarrotsAvailable());
+		setReachableFields(player.getPosition(), player.getCarrotsAvailable());
 
 		if (player.getColor() == FigureColor.RED)
 		{
@@ -279,8 +278,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		{
 			List<String> answers = new LinkedList<String>();
 			answers.add(takeCarrots);
-			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player,
-					-10))
+			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
 			{
 				answers.add(dropCarrots);
 			}
@@ -325,8 +323,11 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 			{
 				answers.add(fallback);
 			}
-			askQuestion("Welchen Hasenjoker wollen Sie spielen?",
-					answers, jokerAnswer);
+			if (answers.size() > 0)
+			{
+				askQuestion("Welchen Hasenjoker wollen Sie spielen?", answers,
+						jokerAnswer);
+			}
 		}
 	}
 
@@ -541,7 +542,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	{
 		myturn = true;
 		setReachableFields(player.getPosition(), player.getCarrotsAvailable());
-		
+
 		askForAction(player);
 	}
 }
