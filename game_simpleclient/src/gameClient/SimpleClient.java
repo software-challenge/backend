@@ -84,7 +84,6 @@ public class SimpleClient extends SpielClient
 	@Override
 	public void zugAngefordert()
 	{
-		eigenerSpieler.frissSalat(); // TODO
 		if (macheStandardAktion() == false)
 		{
 
@@ -120,8 +119,18 @@ public class SimpleClient extends SpielClient
 							eigenerSpieler.setzeFigur(feldNummer);
 						}
 					}
+					else
+					{
+						eigenerSpieler.zurueckAufLetztenIgel();
+					}
 				}
 			}
 		}
+	}
+
+	@Override
+	public void spielBeendet()
+	{
+		// Spiel wurde beendet
 	}
 }

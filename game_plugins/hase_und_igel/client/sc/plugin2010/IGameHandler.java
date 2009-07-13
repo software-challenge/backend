@@ -1,5 +1,7 @@
 package sc.plugin2010;
 
+import sc.shared.GameResult;
+
 public interface IGameHandler
 {
 	void onUpdate(Player player, boolean own);
@@ -9,4 +11,6 @@ public interface IGameHandler
 	void onRequestAction();
 
 	void sendAction(Move move);
+
+	void gameEnded(GameResult data);
 }

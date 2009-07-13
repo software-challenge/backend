@@ -7,6 +7,7 @@ import java.awt.Image;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.Player;
+import sc.shared.GameResult;
 
 /**
  * @author ffi
@@ -25,4 +26,9 @@ public interface Renderer
 	Image getImage();
 
 	void requestMove();
+
+	/**
+	 * @param data
+	 */
+	void gameEnded(GameResult data);
 }

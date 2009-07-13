@@ -19,6 +19,7 @@ import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
 import sc.plugin2010.renderer.twodimensional.DefaultPanel;
 import sc.plugin2010.renderer.twodimensional.FrameRenderer;
+import sc.shared.GameResult;
 
 /**
  * @author ffi
@@ -291,6 +292,26 @@ public class RenderFacade
 				break;
 			default:
 				break;
+		}
+	}
+
+	/**
+	 * @param data
+	 * @param id
+	 */
+	public void gameEnded(GameResult data, EPlayerId target)
+	{
+		if (target == EPlayerId.OBSERVER)
+		{
+			observer.gameEnded(data);
+		}
+		else if (target == EPlayerId.PLAYER_ONE)
+		{
+			player1.gameEnded(data);
+		}
+		else if (target == EPlayerId.PLAYER_TWO)
+		{
+			player2.gameEnded(data);
 		}
 	}
 }

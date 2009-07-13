@@ -33,6 +33,7 @@ import sc.plugin2010.GameUtil;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
+import sc.shared.GameResult;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
 import com.sun.j3d.utils.geometry.Primitive;
@@ -325,6 +326,18 @@ public class ThreeDimRenderer extends JPanel implements Renderer
 	 */
 	@Override
 	public void requestMove()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sc.plugin2010.renderer.Renderer#gameEnded(sc.shared.GameResult)
+	 */
+	@Override
+	public void gameEnded(GameResult data)
 	{
 		// TODO Auto-generated method stub
 

@@ -48,7 +48,8 @@ public class Client implements ILobbyClientListener
 	{
 		gameType = GamePlugin.PLUGIN_UUID;
 		client = new LobbyClient(Configuration.getXStream(), Arrays.asList(
-				Player.class, Move.class, Board.class, GameState.class), host, port);
+				Player.class, Move.class, Board.class, GameState.class), host,
+				port);
 		client.addListener(this);
 		client.start();
 		this.id = id;
@@ -123,6 +124,7 @@ public class Client implements ILobbyClientListener
 		else if (id == EPlayerId.OBSERVER)
 		{
 			logger.info("New State received by Observer");
+			mycolor = FigureColor.RED; // set Red as first Player
 		}
 		else if (id == EPlayerId.PLAYER_TWO)
 		{
@@ -132,9 +134,11 @@ public class Client implements ILobbyClientListener
 		GameState gameState = (GameState) state;
 		Game game = gameState.getGame();
 		handler.onUpdate(game.getBoard(), game.getTurn());
+
 		if (game.getActivePlayer().getColor() == mycolor)
 		{
-			handler.onUpdate(game.getBoard().getOtherPlayer(
+			handler.onUpdate(game.getBoard().getOtherPlayer( // TODO do it in
+					// one procedure
 					game.getActivePlayer()), false);
 			handler.onUpdate(game.getActivePlayer(), true);
 		}
@@ -145,16 +149,27 @@ public class Client implements ILobbyClientListener
 					game.getActivePlayer()), true);
 
 		}
+
 		if (obs != null)
-		{ // TODO send round text
-			obs.newTurn("new turn Karotten:"
-					+ game.getActivePlayer().getCarrotsAvailable());
+		{
+			int playerid = 0;
+			if (game.getActivePlayer().getColor() == FigureColor.RED)
+			{
+				playerid = 0;
+			}
+			else
+			{
+				playerid = 1;
+			}
+			;
+
+			obs.newTurn(playerid, GameUtil.displayMoveAction(game.getBoard()
+					.getOtherPlayer(game.getActivePlayer()).getLastMove()));
 
 			if (!alreadyReady)
 			{
 				alreadyReady = true;
 				obs.ready();
-				logger.info("sent ready!");
 			}
 		}
 	}
@@ -190,10 +205,7 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGameJoined(String roomId)
 	{
-		if (obs != null)
-		{
-			obs.ready();
-		}
+		// not needed
 	}
 
 	@Override
@@ -230,9 +242,20 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onGameOver(String roomId, GameResult data)
 	{
-		if(obs != null)
+		handler.gameEnded(data);
+
+		if (obs != null)
 		{
-			obs.gameEnded(data);			
+			obs.gameEnded(data);
+		}
+
+		try
+		{
+			client.close();
+		}
+		catch (IOException e)
+		{
+			// not needed
 		}
 	}
 

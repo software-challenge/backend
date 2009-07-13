@@ -51,13 +51,11 @@ public class GameUtil
 	 * Überprüft <code>MoveTyp.MOVE</code> Züge auf ihre Korrektheit. Folgende
 	 * Spielregeln werden beachtet:
 	 * 
-	 * - Der Spieler muss genügend Karotten für den Zug besitzen
-	 * - Wenn das Ziel erreicht wird, darf der Spieler nach dem Zug maximal 10
-	 * Karotten übrig haben
-	 * - Man darf nicht auf Igelfelder ziehen
-	 * - Salatfelder dürfen nur betreten werden, wenn man noch Salate essen muss
-	 * - Hasenfelder dürfen nur betreten werden, wenn man noch Hasenkarten
-	 * ausspielen kann
+	 * - Der Spieler muss genügend Karotten für den Zug besitzen - Wenn das Ziel
+	 * erreicht wird, darf der Spieler nach dem Zug maximal 10 Karotten übrig
+	 * haben - Man darf nicht auf Igelfelder ziehen - Salatfelder dürfen nur
+	 * betreten werden, wenn man noch Salate essen muss - Hasenfelder dürfen nur
+	 * betreten werden, wenn man noch Hasenkarten ausspielen kann
 	 * 
 	 * @param b
 	 * @param l
@@ -72,7 +70,9 @@ public class GameUtil
 		valid = valid && l > 0;
 
 		if (checkCarrots)
+		{
 			valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
+		}
 
 		int newPosition = p.getFieldNumber() + l;
 		valid = valid && !b.isOccupied(newPosition);
@@ -104,9 +104,8 @@ public class GameUtil
 	 * Überprüft <code>MoveTyp.EAT</code> Züge auf Korrektheit. Um einen Salat
 	 * zu verzehren muss der Spieler sich:
 	 * 
-	 * - auf einem Salatfeld befinden
-	 * - noch mindestens einen Salat besitzen
-	 * - vorher kein Salat auf diesem Feld verzehrt wurde
+	 * - auf einem Salatfeld befinden - noch mindestens einen Salat besitzen -
+	 * vorher kein Salat auf diesem Feld verzehrt wurde
 	 * 
 	 * @param b
 	 * @param p
@@ -130,7 +129,9 @@ public class GameUtil
 		for (final Move m : p.getHistory())
 		{
 			if (m.getTyp().equals(t))
+			{
 				lastSaladAt = m.getTurn();
+			}
 		}
 		return !((lastSaladAt == -1) || (p.getHistory().size() - lastSaladAt > 1));
 	}
@@ -315,5 +316,47 @@ public class GameUtil
 				break;
 		}
 		return valid;
+	}
+
+	public static String displayMoveAction(Move mov)
+	{
+		switch (mov.getTyp())
+		{
+			case EAT:
+				return "frisst einen Salat";
+			case MOVE:
+				return "setzt auf " + String.valueOf(mov.getN());
+			case TAKE_OR_DROP_CARROTS:
+				String res = "";
+				if (mov.getN() == 10)
+				{
+					res = "nimmt 10 Karotten";
+				}
+				else if (mov.getN() == -10)
+				{
+					res = "gibt 10 Karotten ab";
+				}
+				return res;
+			case FALL_BACK:
+				return "lässt sich auf Igel zurückfallen";
+			case PLAY_CARD:
+				switch (mov.getCard())
+				{
+					case TAKE_OR_DROP_CARROTS:
+						return "spielt 'Nimm oder gib 20 Karotten'";
+					case EAT_SALAD:
+						return "spielt 'Friss sofort einen Salat'";
+					case FALL_BACK:
+						return "spielt 'Falle eine Position zurück'";
+					case HURRY_AHEAD:
+						return "spielt 'Rücke eine Position vor'";
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+		return "";
 	}
 }

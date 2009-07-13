@@ -77,14 +77,14 @@ public class TestRangeDialog extends JDialog {
 
 	public TestRangeDialog(JFrame frame) {
 		super();
-		this.presFac = PresentationFacade.getInstance();
-		this.lang = presFac.getLogicFacade().getLanguageData();
+		presFac = PresentationFacade.getInstance();
+		lang = presFac.getLogicFacade().getLanguageData();
 		createGUI(frame);
 	}
 
 	private void createGUI(JFrame frame) {
 
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
 		Vector<String> items = presFac.getLogicFacade().getPluginNames(plugins);
@@ -101,11 +101,13 @@ public class TestRangeDialog extends JDialog {
 
 		txfNumTest = new JTextField(5);
 		txfNumTest.setText("100"); // default
-		JLabel lblNumTest = new JLabel(lang.getString("dialog_test_lbl_numtest"));
+		JLabel lblNumTest = new JLabel(lang
+				.getString("dialog_test_lbl_numtest"));
 		lblNumTest.setLabelFor(lblNumTest);
 
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDebug
+				.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
 
 		pnlPref = new JPanel();
 		pnlPref.add(cmbGameType);
@@ -131,7 +133,8 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		txtarea = new JTextArea();
-		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
+		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"),
+				JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
@@ -149,7 +152,8 @@ public class TestRangeDialog extends JDialog {
 					testStart.setEnabled(true);
 				} else {
 					if (prepareTest()) {
-						testStart.setText(lang.getString("dialog_test_btn_stop"));
+						testStart.setText(lang
+								.getString("dialog_test_btn_stop"));
 						testStart.setEnabled(false);
 						// first game with first player at the first position
 						startTest(true);
@@ -184,21 +188,22 @@ public class TestRangeDialog extends JDialog {
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 
 		// set dialog preferences
-		this.setTitle(lang.getString("dialog_test_title"));
-		this.setModal(true);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		this.setPreferredSize(new Dimension(500, 500));
-		this.setMinimumSize(this.getPreferredSize());
-		this.pack();
-		this.setLocationRelativeTo(null);
+		setTitle(lang.getString("dialog_test_title"));
+		setModal(true);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		setPreferredSize(new Dimension(500, 500));
+		setMinimumSize(getPreferredSize());
+		pack();
+		setLocationRelativeTo(null);
 	}
 
 	protected void drawSelectedPluginView(GUIPluginInstance selPlugin) {
 
 		// remove old rows
 		DefaultTableModel model = (DefaultTableModel) statTable.getModel();
-		while (model.getRowCount() > 0)
+		while (model.getRowCount() > 0) {
 			model.removeRow(0);
+		}
 
 		// -------------------------------------------------------------
 
@@ -206,9 +211,9 @@ public class TestRangeDialog extends JDialog {
 		model.addColumn(lang.getString("dialog_test_stats_name"));
 		model.addColumn(lang.getString("dialog_test_stats_wins"));
 		model.addColumn(lang.getString("dialog_test_stats_losses"));
-		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
-		for(ScoreFragment column : statColumns)
-		{
+		ScoreDefinition statColumns = selPlugin.getPlugin()
+				.getScoreDefinition();
+		for (ScoreFragment column : statColumns) {
 			model.addColumn(column.getName());
 		}
 		model.addColumn(lang.getString("dialog_test_stats_invalid"));
@@ -240,7 +245,8 @@ public class TestRangeDialog extends JDialog {
 			txfclient[i] = new JTextField(20);
 			final JTextField txfClient = txfclient[i];
 
-			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki") + " " + i);
+			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki")
+					+ " " + i);
 			lblclient[i].setLabelFor(txfclient[i]);
 
 			btnclient[i] = new JButton(lang.getString("dialog_test_btn_file"));
@@ -266,7 +272,8 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
+		statTable.setPreferredScrollableViewportSize(statTable
+				.getPreferredSize());
 
 		// display
 		pnlTop.removeAll();
@@ -289,8 +296,8 @@ public class TestRangeDialog extends JDialog {
 		curTest = 0;
 		numTest = new Integer(txfNumTest.getText());
 
-		for (int i = 0; i < txfclient.length; i++) {
-			File file = new File(txfclient[i].getText());
+		for (JTextField element : txfclient) {
+			File file = new File(element.getText());
 			if (!file.exists()) {
 				JOptionPane.showMessageDialog(this, lang
 						.getString("dialog_test_error_path_msg"), lang
@@ -301,7 +308,8 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// start server
-		presFac.getLogicFacade().startServer(INTERN_PORT, !ckbDebug.isSelected());
+		presFac.getLogicFacade().startServer(INTERN_PORT,
+				!ckbDebug.isSelected());
 
 		return true;
 	}
@@ -316,8 +324,8 @@ public class TestRangeDialog extends JDialog {
 		int playerCount = txfclient.length;
 		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT, playerCount,
-					filename);
+			prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT,
+					playerCount, filename);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_test_error_network_msg"), lang
@@ -347,8 +355,9 @@ public class TestRangeDialog extends JDialog {
 		});
 		obs.addNewTurnListener(new INewTurnListener() {
 			@Override
-			public void newTurn(String info) {
-				DefaultTableModel model = (DefaultTableModel) statTable.getModel();
+			public void newTurn(int playerid, String info) {
+				DefaultTableModel model = (DefaultTableModel) statTable
+						.getModel();
 				// model.addRow(rowData); TODO
 				// add log
 				txtarea.append(info);
@@ -449,6 +458,7 @@ public class TestRangeDialog extends JDialog {
 	 */
 	private class MyTableModel extends DefaultTableModel {
 
+		@Override
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}

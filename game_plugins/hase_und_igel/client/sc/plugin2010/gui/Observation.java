@@ -128,7 +128,7 @@ public class Observation implements IObservation, IUpdateListener
 	}
 
 	/**
-	 * @param data 
+	 * @param data
 	 * 
 	 */
 	public void gameEnded(GameResult data)
@@ -142,11 +142,11 @@ public class Observation implements IObservation, IUpdateListener
 	/**
 	 * 
 	 */
-	public void newTurn(String info)
+	public void newTurn(int id, String info)
 	{
 		for (INewTurnListener list : newTurnListeners)
 		{
-			list.newTurn(info);
+			list.newTurn(id, info);
 		}
 	}
 

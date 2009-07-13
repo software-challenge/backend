@@ -26,6 +26,7 @@ import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.Renderer;
+import sc.shared.GameResult;
 
 /**
  * @author ffi
@@ -129,59 +130,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		setVisible(true);
 	}
 
-	private void displayAction(Move mov, String currentColor)
-	{
-		switch (mov.getTyp())
-		{
-			case EAT:
-				actionb.addRow(currentColor + " frisst einen Salat");
-				break;
-			case MOVE:
-				actionb.addRow(currentColor + " setzt auf "
-						+ String.valueOf(mov.getN()));
-				break;
-			case TAKE_OR_DROP_CARROTS:
-				if (mov.getN() == 10)
-				{
-					actionb.addRow(currentColor + " nimmt 10 Karotten");
-				}
-				else if (mov.getN() == -10)
-				{
-					actionb.addRow(currentColor + " gibt 10 Karotten ab");
-				}
-				break;
-			case FALL_BACK:
-				actionb.addRow(currentColor
-						+ " lässt sich auf Igel zurückfallen");
-				break;
-			case PLAY_CARD:
-				switch (mov.getCard())
-				{
-					case TAKE_OR_DROP_CARROTS:
-						actionb.addRow(currentColor
-								+ " spielt 'Nimm oder gib 20 Karotten'");
-						break;
-					case EAT_SALAD:
-						actionb.addRow(currentColor
-								+ " spielt 'Friss sofort einen Salat'");
-						break;
-					case FALL_BACK:
-						actionb.addRow(currentColor
-								+ " spielt 'Falle eine Position zurück'");
-						break;
-					case HURRY_AHEAD:
-						actionb.addRow(currentColor
-								+ " spielt 'Rücke eine Position vor'");
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-	}
-
 	@Override
 	public void updatePlayer(final Player player, final boolean own)
 	{
@@ -206,19 +154,49 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 
 		info.setTurn(currentColorPath);
+
 		actionb.removeAllRows();
 		actionb.addRow("Aktionen: ");
+
 		if (enemy != null) // TODO correct action adding
 		{
-			for (int i = 0; i < player.getHistory().size(); i++)
+			if (player.getColor() == FigureColor.RED)
 			{
-				displayAction(player.getHistory().get(i), currentColor);
-				for (int j = 0; j < enemy.getHistory().size(); j++)
+				for (int i = 0; i < player.getHistory().size(); i++)
 				{
-					if (i == j)
+					actionb.addRow(currentColor
+							+ " "
+							+ GameUtil.displayMoveAction(player.getHistory()
+									.get(i)));
+					for (int j = 0; j < enemy.getHistory().size(); j++)
 					{
-						displayAction(enemy.getHistory().get(j),
-								currentOthersColor);
+						if (i == j)
+						{
+							actionb.addRow(currentOthersColor
+									+ " "
+									+ GameUtil.displayMoveAction(enemy
+											.getHistory().get(j)));
+						}
+					}
+				}
+			}
+			else
+			{
+				for (int i = 0; i < enemy.getHistory().size(); i++)
+				{
+					actionb.addRow(currentColor
+							+ " "
+							+ GameUtil.displayMoveAction(enemy.getHistory()
+									.get(i)));
+					for (int j = 0; j < player.getHistory().size(); j++)
+					{
+						if (i == j)
+						{
+							actionb.addRow(currentOthersColor
+									+ " "
+									+ GameUtil.displayMoveAction(player
+											.getHistory().get(j)));
+						}
 					}
 				}
 			}
@@ -227,7 +205,10 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		{
 			for (int i = 0; i < player.getHistory().size(); i++)
 			{
-				displayAction(player.getHistory().get(i), currentColor);
+				actionb.addRow(currentColor
+						+ " "
+						+ GameUtil
+								.displayMoveAction(player.getHistory().get(i)));
 			}
 		}
 
@@ -266,8 +247,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 	private void askForAction(final Player player)
 	{
-		setReachableFields(player.getFieldNumber(), player
-				.getCarrotsAvailable());
+		setReachableFields(player.getFieldNumber());
 
 		if (player.getColor() == FigureColor.RED)
 		{
@@ -447,7 +427,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		}
 	}
 
-	private void setReachableFields(final int pos, final int carrots)
+	private void setReachableFields(final int pos)
 	{
 		// if not in finish
 		if (pos != 64)
@@ -534,9 +514,21 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	public void requestMove()
 	{
 		myturn = true;
-		setReachableFields(player.getFieldNumber(), player
-				.getCarrotsAvailable());
+		setReachableFields(player.getFieldNumber());
 
 		askForAction(player);
+	}
+
+	@Override
+	public void gameEnded(GameResult data)
+	{
+		for (int i = 0; i < data.getScores().size(); i++)
+		{
+			String[] results = data.getScores().get(i).toStrings();
+			for (String result : results)
+			{
+				actionb.addRow(result);
+			}
+		}
 	}
 }

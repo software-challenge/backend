@@ -7,5 +7,5 @@ public interface INewTurnListener {
 	 * 
 	 * @param info
 	 */
-	void newTurn(String info);
+	void newTurn(int id, String info);
 }

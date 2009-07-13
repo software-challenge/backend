@@ -17,4 +17,9 @@ public interface IGameUpdateObserver
 	public void spiellbrettAktualisiert(Board board, int round);
 
 	public void spielerAktualisiert(Player player, boolean own);
+
+	/**
+	 * 
+	 */
+	public void spielBeendet();
 }

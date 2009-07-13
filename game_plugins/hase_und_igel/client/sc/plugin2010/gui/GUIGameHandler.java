@@ -9,6 +9,7 @@ import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.renderer.RenderFacade;
+import sc.shared.GameResult;
 
 /**
  * @author ffi
@@ -52,5 +53,11 @@ public class GUIGameHandler implements IGameHandler
 	public void sendAction(Move move)
 	{
 		client.sendMove(move);
+	}
+
+	@Override
+	public void gameEnded(GameResult data)
+	{
+		RenderFacade.getInstance().gameEnded(data, client.getID());
 	}
 }
