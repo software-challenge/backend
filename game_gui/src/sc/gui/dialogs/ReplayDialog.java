@@ -130,7 +130,7 @@ public class ReplayDialog extends JDialog {
 		}
 
 		// start server
-		presFac.getLogicFacade().startServer(REPLAY_PORT);
+		presFac.getLogicFacade().startServer(REPLAY_PORT, false);
 
 		JPanel gameField = ((ContextDisplay) presFac.getContextDisplay()).getGameField();
 

@@ -19,41 +19,42 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 
 	private int returnValue = JOptionPane.DEFAULT_OPTION;
 	private ResourceBundle lang;
-	
+	private boolean closed;
+
 	public ConnectingDialog() {
 		super();
 		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
 		createGUI();
 	}
-	
+
 	private void createGUI() {
-		
+
 		this.setLayout(new BorderLayout());
-		
+
 		JPanel pnlConnecting = new JPanel();
 		JPanel pnlButtonBar = new JPanel();
-		
+
 		this.add(pnlConnecting, BorderLayout.CENTER);
 		this.add(pnlButtonBar, BorderLayout.PAGE_END);
-		
-		//------------------------------------------
-		
+
+		// ------------------------------------------
+
 		JLabel lblConnecting = new JLabel(lang.getString("dialog_connecting_msg"));
 		pnlConnecting.add(lblConnecting);
-		
-		JButton btnCancel = new JButton(lang.getString("dialog_connecting_cancel"));//TODO
+
+		JButton btnCancel = new JButton(lang.getString("dialog_connecting_cancel"));// TODO
 		btnCancel.addActionListener(this);
 		pnlButtonBar.add(btnCancel);
-		
-		//------------------------------------------
-		
+
+		// ------------------------------------------
+
 		this.setResizable(false);
 		this.setModal(true);
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		returnValue = JOptionPane.CANCEL_OPTION;
@@ -61,13 +62,27 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 		this.dispose();
 	}
 
+	/**
+	 * Shows the connection dialog.
+	 * 
+	 * @return
+	 */
 	public int showDialog() {
-		this.setVisible(true);
+		if (!closed) {			
+			this.setVisible(true);
+		}
 		return this.getReturnValue();
 	}
 
 	public int getReturnValue() {
 		return returnValue;
+	}
+
+	public void close() {
+		if (!closed) {
+			dispose();
+		}
+		this.closed = true;
 	}
 
 }

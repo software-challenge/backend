@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -106,7 +107,7 @@ public class CreateGameDialog extends JDialog {
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
 		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
 		txfPort = new JTextField(DEFAULT_PORT);
-		lblPort = new JLabel();
+		lblPort = new JLabel(lang.getString("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);
 		// pnlPref.add(ckbDim); TODO for future
 		pnlPref.add(ckbDebug);
@@ -123,7 +124,6 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		combPlugins = new JComboBox(pluginNames);
-
 		pnlLeft.add(combPlugins);
 
 		// ---------------------------------------------------
@@ -143,6 +143,12 @@ public class CreateGameDialog extends JDialog {
 		playersModel.addColumn(lang.getString("dialog_create_tbl_filename"));
 
 		tblPlayers = new JTable(playersModel);
+		tblPlayers.setRowHeight(25);
+		// set single selection on one cell
+		tblPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// don't let the user change the columns' order or width
+		tblPlayers.getTableHeader().setReorderingAllowed(false);
+		tblPlayers.getTableHeader().setResizingAllowed(false);
 		// add rows (default)
 		addRows(tblPlayers);
 
@@ -215,7 +221,7 @@ public class CreateGameDialog extends JDialog {
 		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
 
 		// start server
-		presFac.getLogicFacade().startServer(port);
+		presFac.getLogicFacade().startServer(port, !ckbDebug.isSelected());
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
@@ -239,7 +245,7 @@ public class CreateGameDialog extends JDialog {
 			cancelGameCreation();
 			return;
 		}
-		
+
 		// set observation
 		final IObservation observer = prep.getObserver();
 		presFac.getLogicFacade().setObservation(observer);
@@ -251,14 +257,14 @@ public class CreateGameDialog extends JDialog {
 			public void ready() {
 				System.out.println("ready");
 				contextPanel.updateButtonBar(false);
-				connDial.dispose();
+				connDial.close();
 			}
 		});
 
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded() {
-				//presFac.getLogicFacade().stopServer();
+				// presFac.getLogicFacade().stopServer();
 				contextPanel.updateButtonBar(true);
 			}
 		});
@@ -308,32 +314,35 @@ public class CreateGameDialog extends JDialog {
 			}
 		}
 
-		// start clients
+		// start KI (intern) clients
 		for (KIInformation kinfo : KIs) {
 			StringBuilder params = new StringBuilder();
 			for (String p : kinfo.getParameters()) {
 				params.append(p);
 			}
-			/*
-			 * try { Process process = Runtime.getRuntime().exec(kinfo.getPath()
-			 * + " " + params); } catch (IOException e) {
-			 * JOptionPane.showMessageDialog(this, lang
-			 * .getString("dialog_create_error_client_msg"), lang
-			 * .getString("dialog_create_error_client_title"),
-			 * JOptionPane.ERROR_MESSAGE); cancelGameCreation(); return; }
-			 */
-		}
 
+			try {
+				Process process = Runtime.getRuntime().exec(
+						kinfo.getPath() + " " + params);
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(this, lang
+						.getString("dialog_create_error_client_msg"), lang
+						.getString("dialog_create_error_client_title"),
+						JOptionPane.ERROR_MESSAGE);
+				cancelGameCreation();
+				return;
+			}
+		}
+		
 		// show connecting dialog
-		/*
-		 * if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
-		 * observer.cancel(); cancelGameCreation(); } else
-		 */{
+		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
+			observer.cancel();
+			cancelGameCreation();
+		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getPlugin()
-					.getCurrentStateImage(), selPlugin.getPlugin().getPluginInfoText(),
-					selPlugin.getDescription().author());
+					.getDescription().name(), null, selPlugin.getPlugin()
+					.getPluginInfoText(), selPlugin.getDescription().author());
 			// close dialog
 			this.dispose();
 		}
@@ -358,7 +367,7 @@ public class CreateGameDialog extends JDialog {
 	/**
 	 * Closes the server.
 	 */
-	void cancelGameCreation() {
+	private void cancelGameCreation() {
 		presFac.getLogicFacade().stopServer();
 	}
 
@@ -375,7 +384,7 @@ public class CreateGameDialog extends JDialog {
 			rowData.add(new Integer(i + 1));
 			rowData.add("Player " + (i + 1));
 			rowData.add(lang.getString("dialog_create_plyType_human")); // default
-			rowData.add("");
+			rowData.add("-");
 			model.addRow(rowData);
 		}
 	}
@@ -437,16 +446,13 @@ public class CreateGameDialog extends JDialog {
 	 */
 	public void updatePlayerTable(JComboBox cbox, int row) {
 
-		// String cell1 = (String) playersModel.getValueAt(row, 1);
-		// String cell3 = (String) playersModel.getValueAt(row, 3);
-
 		int index = cbox.getSelectedIndex();
 		switch (index) {
 		case 0:// human
 			// set path
 			playersModel.setValueAt("-", row, 3);
 			break;
-		case 1:// KI
+		case 1:// KI intern
 			String currentDirectoryPath = "."; // TODO load config
 			JFileChooser chooser = new JFileChooser(currentDirectoryPath);
 			// chooser.setDialogTitle(dialogTitle); TODO
@@ -463,14 +469,14 @@ public class CreateGameDialog extends JDialog {
 				break;
 			}
 			break;
-		case 2:// observer
-			// set path
+		case 2:	// KI extern
 			playersModel.setValueAt("-", row, 3);
 			break;
-		case 3: // closed
-			// set path
+		case 3:// observer
+			playersModel.setValueAt("-", row, 3);
+			break;
+		case 4: // closed
 			playersModel.setValueAt("-", row, 1);
-			// set path
 			playersModel.setValueAt("-", row, 3);
 			break;
 		default:

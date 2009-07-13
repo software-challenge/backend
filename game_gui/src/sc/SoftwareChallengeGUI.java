@@ -8,7 +8,6 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JSeparator;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -68,7 +67,6 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setJMenuBar(presFac.getMenuBar());
 		this.add(presFac.getContextDisplay());
-		this.add(new JSeparator());
 		this.add(presFac.getStatusBar());
 
 		// set window preferences
@@ -77,11 +75,11 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 				.getString("window_title"));
 		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
 				.getImage());
-		// this.setMinimumSize(this.getPreferredSize());
-		this.pack();
 		this.setPreferredSize(new Dimension(1024, 768));
-		this.setSize(this.getPreferredSize());
+		this.pack();
+		this.setMinimumSize(new Dimension(600,480));
 		this.setLocationRelativeTo(null);
+		
 		// before closing this frame
 		this.addWindowListener(new WindowAdapter() {
 			@Override

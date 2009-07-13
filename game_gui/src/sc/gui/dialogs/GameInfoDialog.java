@@ -39,7 +39,8 @@ public class GameInfoDialog extends JDialog {
 		
 		//------------------------------------------
 		
-		JLabel lblImage = new JLabel(new ImageIcon(image));
+		//JLabel lblImage = new JLabel(new ImageIcon(image));
+		JLabel lblImage = new JLabel();
 		pnlImage.add(lblImage);
 		
 		JLabel lblText = new JLabel(infoText);

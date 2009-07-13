@@ -35,7 +35,7 @@ public interface ILogicFacade {
 
 	IObservation getObservation();
 
-	void startServer(Integer port);
+	void startServer(Integer port, boolean timeout);
 	void stopServer();
 	
 	List<GUIPluginInstance> getAvailablePluginsSorted();
