@@ -53,6 +53,7 @@ public class PlayerSlot
 		}
 		else
 		{
+			this.reserved = true;
 			return ReservationManager.reserve(this);
 		}
 	}
