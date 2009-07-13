@@ -240,10 +240,10 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 		if (enemy != null)
 		{
-			fbuttons.get(enemy.getPosition()).setOccupied(enemy.getColor());
+			fbuttons.get(enemy.getFieldNumber()).setOccupied(enemy.getColor());
 		}
 
-		fbuttons.get(player.getPosition()).setOccupied(player.getColor());
+		fbuttons.get(player.getFieldNumber()).setOccupied(player.getColor());
 
 		if (own)
 		{
@@ -263,7 +263,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 	private void askForAction(final Player player)
 	{
-		setReachableFields(player.getPosition(), player.getCarrotsAvailable());
+		setReachableFields(player.getFieldNumber(), player.getCarrotsAvailable());
 
 		if (player.getColor() == FigureColor.RED)
 		{
@@ -289,7 +289,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		{
 			sendMove(new Move(Move.MoveTyp.EAT));
 		}
-		else if ((board.getTypeAt(player.getPosition()) == Board.FieldTyp.RABBIT)
+		else if ((board.getTypeAt(player.getFieldNumber()) == Board.FieldTyp.RABBIT)
 				&& (player.getActions().size() > 0))
 		{
 			List<String> answers = new LinkedList<String>();
@@ -493,7 +493,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	{
 		if ((!onlyObserving) && (myturn))
 		{
-			int relativeFieldsToMove = fieldNumber - player.getPosition();
+			int relativeFieldsToMove = fieldNumber - player.getFieldNumber();
 			if (relativeFieldsToMove < 0)
 			{
 				if (GameUtil.isValidToFallBack(board, player))
@@ -541,7 +541,7 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	public void requestMove()
 	{
 		myturn = true;
-		setReachableFields(player.getPosition(), player.getCarrotsAvailable());
+		setReachableFields(player.getFieldNumber(), player.getCarrotsAvailable());
 
 		askForAction(player);
 	}

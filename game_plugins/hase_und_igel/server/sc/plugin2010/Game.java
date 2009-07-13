@@ -1,6 +1,7 @@
 package sc.plugin2010;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
+import sc.api.plugins.host.PlayerScore;
 import sc.framework.plugins.IPauseable;
 import sc.framework.plugins.SimpleGameInstance;
 import sc.plugin2010.Board.FieldTyp;
@@ -114,8 +116,8 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 			
 			this.moveRequested = false;
 			
-			if (board.getTypeAt(players.get(0).getPosition()).equals(FieldTyp.GOAL)
-					|| board.getTypeAt(players.get(1).getPosition()).equals(
+			if (board.getTypeAt(players.get(0).getFieldNumber()).equals(FieldTyp.GOAL)
+					|| board.getTypeAt(players.get(1).getFieldNumber()).equals(
 							FieldTyp.GOAL))
 			{
 				actionsSinceFirstPlayerEnteredGoal++;
@@ -143,16 +145,22 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 				active = false;
 			}
 			player.addToHistory(move);
-
+			
 			final Player next = fetchNextPlayer();
 			updatePlayer(next);
 
 			if (gameOver())
 			{
-				active = false;
+				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
 				for (final Player p : players)
 				{
-					p.notifyListeners(new GameOver(board.isFirst(p), p.getPosition()));
+					res.put(p, p.getScore());
+				}
+				
+				active = false;
+				for(final IGameListener l: listeners)
+				{
+					l.onGameOver(res);
 				}
 				updateObservers();
 			}
@@ -225,7 +233,13 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 	 */
 	private void updatePlayer(Player player)
 	{
-		FieldTyp current = board.getTypeAt(player.getPosition());
+		FieldTyp current = board.getTypeAt(player.getFieldNumber());
+		if (board.isFirst(player))
+		{
+			player.setPosition(0);
+		} else {
+			player.setPosition(1);
+		}
 		switch (current)
 		{
 			case POSITION_1:
@@ -283,17 +297,17 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 				}
 				break;
 			case MOVE:
-				player.setPosition(player.getPosition() + move.getN());
+				player.setFieldNumber(player.getFieldNumber() + move.getN());
 				player.changeCarrotsAvailableBy(-GameUtil.calculateCarrots(move
 						.getN()));
 				break;
 			case FALL_BACK:
 			{
 				int nextField = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
-						player.getPosition());
-				int diff = player.getPosition() - nextField;
+						player.getFieldNumber());
+				int diff = player.getFieldNumber() - nextField;
 				player.changeCarrotsAvailableBy(diff * 10);
-				player.setPosition(nextField);
+				player.setFieldNumber(nextField);
 				break;
 			}
 			case PLAY_CARD:
@@ -318,13 +332,13 @@ public class Game extends SimpleGameInstance<Player> implements IPauseable
 						break;
 					case FALL_BACK:
 						if (board.isFirst(player))
-							player.setPosition(board.getOtherPlayer(player)
-									.getPosition() - 1);
+							player.setFieldNumber(board.getOtherPlayer(player)
+									.getFieldNumber() - 1);
 						break;
 					case HURRY_AHEAD:
 						if (!board.isFirst(player))
-							player.setPosition(board.getOtherPlayer(player)
-									.getPosition() + 1);
+							player.setFieldNumber(board.getOtherPlayer(player)
+									.getFieldNumber() + 1);
 						break;
 					case TAKE_OR_DROP_CARROTS:
 						player.changeCarrotsAvailableBy(move.getN());

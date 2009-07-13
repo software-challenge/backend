@@ -86,7 +86,7 @@ public abstract class AllgemeinerSpieler
 	 */
 	public int holeFeldnummer()
 	{
-		return player.getPosition();
+		return player.getFieldNumber();
 	}
 
 	public Zug holeLetztenZug()

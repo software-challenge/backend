@@ -33,8 +33,8 @@ public class GameTest
 		Assert.assertTrue(GameUtil.canMove(p1, g.getBoard()));
 		Assert.assertTrue(GameUtil.canMove(p2, g.getBoard()));
 
-		p2.setPosition(11);
-		p1.setPosition(12);
+		p2.setFieldNumber(11);
+		p1.setFieldNumber(12);
 		p1.setCarrotsAvailable(0);
 		
 		Assert.assertTrue(GameUtil.canMove(p1, g.getBoard()));
@@ -77,18 +77,18 @@ public class GameTest
 		g.start();
 		Assert.assertTrue(g.isActive());
 
-		Assert.assertEquals(0, p1.getPosition());
-		Assert.assertEquals(0, p2.getPosition());
+		Assert.assertEquals(0, p1.getFieldNumber());
+		Assert.assertEquals(0, p2.getFieldNumber());
 
 		g.onAction(p1, new Move(MoveTyp.MOVE, 10));
 
-		Assert.assertEquals(10, p1.getPosition());
-		Assert.assertEquals(0, p2.getPosition());
+		Assert.assertEquals(10, p1.getFieldNumber());
+		Assert.assertEquals(0, p2.getFieldNumber());
 
 		g.onAction(p2, new Move(MoveTyp.MOVE, 9));
 
-		Assert.assertEquals(10, p1.getPosition());
-		Assert.assertEquals(9, p2.getPosition());
+		Assert.assertEquals(10, p1.getFieldNumber());
+		Assert.assertEquals(9, p2.getFieldNumber());
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class GameTest
 
 		g.start();
 		// Bewege dich zu einem Salatfeld, Iß einen Salat
-		int nextSalatAt = b.getNextFieldByTyp(FieldTyp.SALAD, p1.getPosition());
+		int nextSalatAt = b.getNextFieldByTyp(FieldTyp.SALAD, p1.getFieldNumber());
 		Move toSalad = new Move(MoveTyp.MOVE, nextSalatAt);
 		Assert.assertTrue(b.isValid(toSalad, p1));
 		g.onAction(p1, toSalad);
@@ -146,7 +146,7 @@ public class GameTest
 		Player p2 = (Player) g.onPlayerJoined();
 
 		g.start();
-		p1.setPosition(62);
+		p1.setFieldNumber(62);
 		
 		Move toGoal = new Move(MoveTyp.MOVE, 2);
 		Assert.assertFalse(b.isValid(toGoal, p1));

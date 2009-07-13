@@ -30,6 +30,7 @@ public class GamePlugin implements IGamePlugin
 	{
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("winner");
+		SCORE_DEFINITION.add("position");
 	}
 
 	@Override

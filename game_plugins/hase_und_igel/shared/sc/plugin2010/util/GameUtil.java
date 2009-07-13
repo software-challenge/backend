@@ -73,7 +73,7 @@ public class GameUtil
 		if (checkCarrots)
 			valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
 
-		int newPosition = p.getPosition() + l;
+		int newPosition = p.getFieldNumber() + l;
 		valid = valid && !b.isOccupied(newPosition);
 		switch (b.getTypeAt(newPosition))
 		{
@@ -112,7 +112,7 @@ public class GameUtil
 	public static boolean isValidToEat(Board b, Player p)
 	{
 		boolean valid = true;
-		FieldTyp currentField = b.getTypeAt(p.getPosition());
+		FieldTyp currentField = b.getTypeAt(p.getFieldNumber());
 		
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
 		valid = valid && (p.getSaladsToEat() > 0);
@@ -134,7 +134,7 @@ public class GameUtil
 
 	public static boolean isValidToTakeOrDrop10Carrots(Board b, Player p, int n)
 	{
-		return b.getTypeAt(p.getPosition()).equals(FieldTyp.CARROT)
+		return b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.CARROT)
 				&& (n == 10 || n == -10);
 	}
 
@@ -149,7 +149,7 @@ public class GameUtil
 	{
 		boolean valid = true;
 		int newPosition = b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, p
-				.getPosition());
+				.getFieldNumber());
 		valid = valid && (newPosition != -1);
 		valid = valid && !b.isOccupied(newPosition);
 		return valid;
@@ -167,7 +167,7 @@ public class GameUtil
 	public static boolean isValidToPlayCard(Board board, Player player,
 			Action typ, int l)
 	{
-		Boolean valid = board.getTypeAt(player.getPosition()).equals(FieldTyp.RABBIT);
+		Boolean valid = board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT);
 		valid = valid && !playerMustMove(player, MoveTyp.PLAY_CARD) && !playerMustMove(player, MoveTyp.EAT);
 		switch (typ)
 		{
@@ -185,12 +185,12 @@ public class GameUtil
 				valid = valid && player.ownsCardOfTyp(Action.FALL_BACK);
 				valid = valid && board.isFirst(player);
 				final Player o = board.getOtherPlayer(player);
-				valid = valid && o.getPosition() != 0;
-				int nextPos = o.getPosition() - 1;
-				valid = valid && isValidToMove(board, player, player.getPosition()-nextPos, false);
+				valid = valid && o.getFieldNumber() != 0;
+				int nextPos = o.getFieldNumber() - 1;
+				valid = valid && isValidToMove(board, player, player.getFieldNumber()-nextPos, false);
 				int previousHedgehog = board.getPreviousFieldByTyp(
-						FieldTyp.HEDGEHOG, o.getPosition());
-				valid = valid && ((o.getPosition() - previousHedgehog) != 1);
+						FieldTyp.HEDGEHOG, o.getFieldNumber());
+				valid = valid && ((o.getFieldNumber() - previousHedgehog) != 1);
 				break;
 			}
 			case HURRY_AHEAD:
@@ -198,14 +198,14 @@ public class GameUtil
 				valid = valid && player.ownsCardOfTyp(Action.HURRY_AHEAD);
 				valid = valid && !board.isFirst(player);
 				final Player o = board.getOtherPlayer(player);
-				valid = valid && o.getPosition() != 64;
-				int nextPos = o.getPosition() - 1;
-				valid = valid && isValidToMove(board, player, nextPos-player.getPosition(), false);
+				valid = valid && o.getFieldNumber() != 64;
+				int nextPos = o.getFieldNumber() - 1;
+				valid = valid && isValidToMove(board, player, nextPos-player.getFieldNumber(), false);
 				int nextHedgehog = board.getNextFieldByTyp(FieldTyp.HEDGEHOG, o
-						.getPosition());
-				valid = valid && ((nextHedgehog - o.getPosition()) != 1);
+						.getFieldNumber());
+				valid = valid && ((nextHedgehog - o.getFieldNumber()) != 1);
 
-				if (o.getPosition() == 63)
+				if (o.getFieldNumber() == 63)
 					valid = valid && board.canEnterGoal(player);
 				break;
 			}

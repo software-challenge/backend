@@ -192,13 +192,13 @@ public class Board
 	 */
 	public final boolean isOccupied(final int pos)
 	{
-		return red.getPosition() == pos || blue.getPosition() == pos;
+		return red.getFieldNumber() == pos || blue.getFieldNumber() == pos;
 	}
 
 	public final int nextFreeFieldFor(Player player, int off)
 	{
 		int offset = off;
-		while (!isMoveable(player.getPosition() + offset, player))
+		while (!isMoveable(player.getFieldNumber() + offset, player))
 			offset++;
 		return offset;
 	}
@@ -266,9 +266,9 @@ public class Board
 	public final Player getPlayerAt(final int pos)
 	{
 		Player player = null;
-		if (red.getPosition() == pos)
+		if (red.getFieldNumber() == pos)
 			player = red;
-		else if (blue.getPosition() == pos)
+		else if (blue.getFieldNumber() == pos)
 			player = blue;
 		return player;
 	}
@@ -355,7 +355,7 @@ public class Board
 	 */
 	public final boolean isFirst(final Player player)
 	{
-		return getOtherPlayer(player).getPosition() < player.getPosition();
+		return getOtherPlayer(player).getFieldNumber() < player.getFieldNumber();
 	}
 
 	public final boolean canEnterGoal(final Player player)

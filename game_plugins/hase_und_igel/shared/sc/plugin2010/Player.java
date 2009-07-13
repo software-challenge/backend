@@ -53,7 +53,7 @@ public class Player extends SimplePlayer
 	private FigureColor		color;
 
 	// Position auf dem Spielbrett
-	private int				position;
+	private int				fieldNumber;
 
 	// Anzahl der Karotten des Spielers
 	private int				carrots;
@@ -64,6 +64,9 @@ public class Player extends SimplePlayer
 	// verfügbare Hasenkarten
 	private List<Action>	actions;
 
+	// Die Position des Spielers (1., 2., ..)
+	private int				position;
+
 	private Move			lastMove;
 
 	private List<Move>		history;
@@ -72,7 +75,7 @@ public class Player extends SimplePlayer
 	{
 		history.add(m);
 	}
-	
+
 	public List<Move> getHistory()
 	{
 		return history;
@@ -90,7 +93,7 @@ public class Player extends SimplePlayer
 
 	private void initialize(FigureColor c, int p)
 	{
-		position = p;
+		fieldNumber = p;
 		color = c;
 		carrots = 68;
 		saladsToEat = 5;
@@ -173,18 +176,26 @@ public class Player extends SimplePlayer
 	 * 
 	 * @return
 	 */
-	public final int getPosition() // TODO not position, it's fieldnumber
+	public final int getFieldNumber()
+	{
+		return fieldNumber;
+	}
+
+	protected final void setFieldNumber(final int pos)
+	{
+		fieldNumber = pos;
+	}
+
+	public int getPosition()
 	{
 		return position;
 	}
-
-	// TODO getPosition (if the player is first or second)
-
-	protected final void setPosition(final int pos)
+	
+	protected void setPosition(int position)
 	{
-		position = pos;
+		this.position = position;
 	}
-
+	
 	/**
 	 * Die Farbe dieses Spielers auf dem Spielbrett
 	 * 
@@ -204,11 +215,10 @@ public class Player extends SimplePlayer
 	{
 		return lastMove;
 	}
-	
+
 	@Override
 	public PlayerScore getScore()
 	{
-		// TODO: get correct playerscore
-		return new PlayerScore(true);
+		return new PlayerScore(ScoreCause.UNKNOWN, getPosition(), getFieldNumber());
 	}
 }
