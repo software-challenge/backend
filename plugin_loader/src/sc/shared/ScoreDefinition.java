@@ -12,6 +12,11 @@ public class ScoreDefinition implements Iterable<ScoreFragment>
 	{
 		this.fragments.add(new ScoreFragment(name));
 	}
+	
+	public void add(ScoreFragment fragment)
+	{
+		this.fragments.add(fragment);
+	}
 
 	public int size()
 	{
