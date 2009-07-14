@@ -63,7 +63,7 @@ public class QuestionDialog extends JPanel
 		this.add(new JLabel(question, JLabel.CENTER), BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 
-		setSize(width, DEFAULTHEIGHT);
+		setSize(width, 200);
 
 		// setLocationRelativeTo(null);
 

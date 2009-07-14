@@ -79,6 +79,7 @@ public class Observation implements IObservation, IUpdateListener
 	public void pause()
 	{
 		conGame.pause();
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 	}
 
 	@Override
@@ -120,7 +121,6 @@ public class Observation implements IObservation, IUpdateListener
 	public void unpause()
 	{
 		conGame.unpause();
-		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 	}
 
 	/**

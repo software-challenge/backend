@@ -180,6 +180,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		this.player = player;
 		enemy = otherPlayer;
 
+		if (player.getColor() == FigureColor.RED)
+		{
+			info.setColor(true);
+		}
+		else
+		{
+			info.setColor(false);
+		}
+
 		String currentColorPath = "";
 		switch (player.getColor())
 		{
@@ -274,21 +283,24 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void askQuestion(final String question, final List<String> answers,
 			String type)
 	{
+		myturn = false;
 		leftPanel.add(new QuestionDialog(question, answers, this, type),
 				BorderLayout.AFTER_LAST_LINE);
 	}
 
 	private void askForAction(final Player player)
 	{
-		setReachableFields(player.getFieldNumber());
-
-		if (player.getColor() == FigureColor.RED)
+		String color = "";
+		switch (player.getColor())
 		{
-			info.setColor(true);
-		}
-		else
-		{
-			info.setColor(false);
+			case RED:
+				color = "<font color='#ff0000'>Rot</font>";
+				break;
+			case BLUE:
+				color = "<font color='#0000ff'>Blau</font>";
+				break;
+			default:
+				break;
 		}
 
 		if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
@@ -300,7 +312,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				answers.add(dropCarrots);
 			}
 			answers.add(moveForward);
-			askQuestion("Was wollen Sie tun?", answers, carrotAnswer);
+			askQuestion("<html>Was wollen Sie tun, " + color + " ?</html>",
+					answers, carrotAnswer);
+
 		}
 		else if (GameUtil.isValidToEat(board, player))
 		{
@@ -342,14 +356,17 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			if (answers.size() > 0)
 			{
-				askQuestion("Welchen Hasenjoker wollen Sie spielen?", answers,
-						jokerAnswer);
+				askQuestion("Welchen Hasenjoker möchten Sie spielen, " + color
+						+ " ?", answers, jokerAnswer);
 			}
 		}
 	}
 
 	public void answerQuestion(final String answer, String type)
 	{
+		leftPanel.remove(leftPanel.getComponentCount() - 1);
+		myturn = true;
+
 		if (type.equals(carrotAnswer))
 		{
 			if (answer.equals(takeCarrots))
@@ -359,6 +376,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			else if (answer.equals(dropCarrots))
 			{
 				sendMove(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, -10));
+			}
+			else if (answer.equals(moveForward))
+			{
+				setReachableFields(player.getFieldNumber());
 			}
 		}
 		if (type.equals(jokerAnswer))
@@ -495,9 +516,13 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void requestMove()
 	{
 		myturn = true;
-		setReachableFields(player.getFieldNumber());
 
 		askForAction(player);
+
+		if (myturn)
+		{
+			setReachableFields(player.getFieldNumber());
+		}
 	}
 
 	@Override

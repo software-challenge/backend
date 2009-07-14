@@ -166,7 +166,8 @@ public class Client implements ILobbyClientListener
 
 			Player oldPlayer = game.getBoard().getOtherPlayer(
 					game.getActivePlayer());
-			// TODO sent 2 moves if 2 moves were made
+
+			// TODO display 3 actions if last move was a card not only one
 			obs.newTurn(playerid, GameUtil.displayMoveAction(oldPlayer
 					.getLastMove()));
 
