@@ -355,7 +355,10 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void gameEnded(GameResult result) {
 				updateStatistics(offset, result);
+				// spaltenbeschreibungen:
+				// selPlugin.getPlugin().getScoreDefinition().
 				// add log message
+				// results[0].equals("1") -> spieler 0 ist sieger//TODO
 				String clientName = "";
 				txtarea.append(clientName + " " + lang.getString("dialog_test_win"));
 				// start new test if number of tests is not still reached
@@ -402,15 +405,23 @@ public class TestRangeDialog extends JDialog {
 
 		// start KI (intern) clients
 		for (KIInformation kinfo : KIs) {
-			StringBuilder params = new StringBuilder();
-			for (String p : kinfo.getParameters()) {
-				params.append(p);
+			String file = kinfo.getPath();
+			String[] params = kinfo.getParameters();
+			/*
+			 * have to parse on my own because exec() split after each white
+			 * space
+			 */
+			String[] command = new String[1 + params.length];
+			// command[0] = file.replace("\\", "\\\\");
+			command[0] = file;
+			for (int i = 0; i < params.length; i++) {
+				command[i + 1] = params[i];
 			}
 
 			try {
-				Process process = Runtime.getRuntime().exec(
-						kinfo.getPath() + " " + params);
+				Runtime.getRuntime().exec(kinfo.getPath() + " " + params);
 			} catch (IOException e) {
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(this, lang
 						.getString("dialog_test_error_client_msg"), lang
 						.getString("dialog_test_error_client_title"),
@@ -446,7 +457,7 @@ public class TestRangeDialog extends JDialog {
 
 			String[] stats = result.getScores().get(playerId).toStrings();
 			for (int j = 0; j < stats.length; j++) {
-				model.setValueAt(clientName, playerId, j+2);
+				model.setValueAt(clientName, playerId, j + 2);
 			}
 		}
 	}

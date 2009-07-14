@@ -3,3 +3,6 @@
 -infofenster vom spieltyp
 -config save/load
 -TestRange: parallel testing (3-5 games at once -> new code architecture)
+-status: selektierte plugin version
+-info: plugin version
+-
