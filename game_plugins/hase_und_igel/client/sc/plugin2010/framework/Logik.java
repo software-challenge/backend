@@ -52,7 +52,13 @@ public class Logik implements IGameHandler
 	@Override
 	public void gameEnded(GameResult data)
 	{
-		// data.get TODO
-		obs.spielBeendet();
+		String[] redResults = data.getScores().get(0).toStrings();
+		String[] blueResults = data.getScores().get(1).toStrings();
+
+		String[] stats = { redResults[0], redResults[1], blueResults[0],
+				blueResults[1] };
+
+		Boolean reg = !data.isRegular();
+		obs.spielBeendet(stats, reg);
 	}
 }

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.gui.Observation;
 import sc.plugin2010.util.Configuration;
 import sc.protocol.ErrorResponse;
 import sc.protocol.IControllableGame;

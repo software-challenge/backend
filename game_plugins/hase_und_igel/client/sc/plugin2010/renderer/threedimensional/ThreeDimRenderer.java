@@ -32,7 +32,7 @@ import sc.plugin2010.Board;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.GUIGameHandler;
-import sc.plugin2010.renderer.Renderer;
+import sc.plugin2010.renderer.IRenderer;
 import sc.shared.GameResult;
 
 import com.sun.j3d.utils.behaviors.vp.OrbitBehavior;
@@ -47,7 +47,7 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
  * 
  */
 @SuppressWarnings("serial")
-public class ThreeDimRenderer extends JPanel implements Renderer
+public class ThreeDimRenderer extends JPanel implements IRenderer
 {
 	// GUI Components
 	private final GUIGameHandler	handler;

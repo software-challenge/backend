@@ -1,13 +1,12 @@
 /**
  * 
  */
-package sc.plugin2010.gui;
+package sc.plugin2010;
 
 import java.io.IOException;
 
 import sc.guiplugin.interfaces.ISlot;
-import sc.plugin2010.Client;
-import sc.plugin2010.EPlayerId;
+import sc.plugin2010.gui.GUIGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
 
 /**

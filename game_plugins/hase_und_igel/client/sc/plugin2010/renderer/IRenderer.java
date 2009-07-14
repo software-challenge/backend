@@ -13,7 +13,7 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-public interface Renderer
+public interface IRenderer
 {
 	void updatePlayer(Player player, Player otherPlayer);
 

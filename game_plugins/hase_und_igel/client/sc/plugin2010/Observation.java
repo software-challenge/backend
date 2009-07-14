@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010.gui;
+package sc.plugin2010;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -12,7 +12,6 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
-import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.clients.IUpdateListener;

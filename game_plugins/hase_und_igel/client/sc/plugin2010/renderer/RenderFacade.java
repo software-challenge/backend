@@ -23,9 +23,9 @@ import sc.shared.GameResult;
  */
 public class RenderFacade
 {
-	private Renderer						observer;
-	private Renderer						player1;
-	private Renderer						player2;
+	private IRenderer						observer;
+	private IRenderer						player1;
+	private IRenderer						player2;
 	private JPanel							panel;
 
 	private String							connectString			= "connectingPanel";

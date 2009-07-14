@@ -202,8 +202,38 @@ public class SimpleClient extends SpielClient
 	}
 
 	@Override
-	public void spielBeendet()
+	public void spielBeendet(String[] statistik, boolean abgebrochen)
 	{
-		// Spiel wurde beendet TODO
+		// Spiel wurde abgeschlossen
+		if (abgebrochen)
+		{
+			System.out.println("Spiel wurde abgebrochen!");
+		}
+		else
+		{
+			System.out.println(statistik[0]);
+			if (statistik[0].equals("1"))
+			{
+				System.out.println("Gewinner: Rot");
+			}
+			else if (statistik[0].equals("0"))
+			{
+				System.out.println("Verlierer: Rot");
+			}
+
+			System.out.println("Erreichtes Feld Rot: " + statistik[1]);
+
+			if (statistik[2].equals("1"))
+			{
+				System.out.println("Gewinner: Blau");
+			}
+			else if (statistik[2].equals("0"))
+			{
+				System.out.println("Verlierer: Blau");
+			}
+
+			System.out.println("Erreichtes Feld Blau: " + statistik[3]);
+		}
+
 	}
 }

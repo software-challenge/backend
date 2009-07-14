@@ -21,7 +21,7 @@ import sc.plugin2010.Player;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.GUIGameHandler;
-import sc.plugin2010.renderer.Renderer;
+import sc.plugin2010.renderer.IRenderer;
 import sc.shared.GameResult;
 
 /**
@@ -29,7 +29,7 @@ import sc.shared.GameResult;
  * 
  */
 @SuppressWarnings("serial")
-public class FrameRenderer extends JPanel implements Renderer, IClickObserver
+public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 {
 	// GUI Components
 	private InformationBar			info;
@@ -62,12 +62,6 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 	private String					hurryahead		= "Rücke eine Position vor";
 	private String					fallback		= "Rücke eine Position vor";
 	private String					jokerAnswer		= "joker";
-
-	public FrameRenderer()
-	{
-		handler = null;
-		createInitFrame();
-	}
 
 	public FrameRenderer(final GUIGameHandler handler,
 			final boolean onlyObserving)
@@ -124,26 +118,53 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 		setVisible(true);
 	}
 
+	private int printHistroyTillNewTurn(final Player player, int i,
+			final String color)
+	{
+		actionb.addRow(color + " "
+				+ GameUtil.displayMoveAction(player.getHistory().get(i)));
+
+		return i;
+	}
+
+	private void addHistory(final Player redPlayer, final Player bluePlayer)
+	{
+		String red = "red";
+		String blue = "blue";
+
+		actionb.removeAllRows();
+		actionb.addRow("Aktionen: ");
+
+		int max = Math.max(redPlayer.getHistory().size(), bluePlayer
+				.getHistory().size());
+		int i = 0;
+		int j = 0;
+
+		while (i < max || j < max)
+		{
+			i = printHistroyTillNewTurn(redPlayer, i, red);
+			j = printHistroyTillNewTurn(bluePlayer, j, blue);
+		}
+
+		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
+	}
+
 	@Override
 	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
 		this.player = player;
 		enemy = otherPlayer;
 
-		String currentColor = "";
-		String currentOthersColor = "";
 		String currentColorPath = "";
 		switch (player.getColor())
 		{
 			case BLUE:
-				currentColor = "Blau";
+				addHistory(enemy, player);
 				currentColorPath = "blue";
-				currentOthersColor = "Rot";
 				break;
 			case RED:
-				currentColor = "Rot";
+				addHistory(player, enemy);
 				currentColorPath = "red";
-				currentOthersColor = "Blau";
 				break;
 			default:
 				break;
@@ -151,72 +172,9 @@ public class FrameRenderer extends JPanel implements Renderer, IClickObserver
 
 		info.setTurn(currentColorPath);
 
-		actionb.removeAllRows();
-		actionb.addRow("Aktionen: ");
-
-		if (enemy != null) // TODO correct action adding
-		{
-			int max = Math.max(player.getHistory().size(), enemy.getHistory()
-					.size());
-			// while (i < max)
-
-			if (player.getColor() == FigureColor.RED)
-			{
-				for (int i = 0; i < player.getHistory().size(); i++)
-				{
-					actionb.addRow(currentColor
-							+ " "
-							+ GameUtil.displayMoveAction(player.getHistory()
-									.get(i)));
-					for (int j = 0; j < enemy.getHistory().size(); j++)
-					{
-						if (i == j)
-						{
-							actionb.addRow(currentOthersColor
-									+ " "
-									+ GameUtil.displayMoveAction(enemy
-											.getHistory().get(j)));
-						}
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < enemy.getHistory().size(); i++)
-				{
-					actionb.addRow(currentColor
-							+ " "
-							+ GameUtil.displayMoveAction(enemy.getHistory()
-									.get(i)));
-					for (int j = 0; j < player.getHistory().size(); j++)
-					{
-						if (i == j)
-						{
-							actionb.addRow(currentOthersColor
-									+ " "
-									+ GameUtil.displayMoveAction(player
-											.getHistory().get(j)));
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			for (int i = 0; i < player.getHistory().size(); i++)
-			{
-				actionb.addRow(currentColor
-						+ " "
-						+ GameUtil
-								.displayMoveAction(player.getHistory().get(i)));
-			}
-		}
-
-		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
-
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
-			if (fbuttons.get(i).needRepaint(player.getColor()))
+			if (fbuttons.get(i).needRepaint())
 			{
 				fbuttons.get(i).setFree();
 				fbuttons.get(i).setReachable(false);

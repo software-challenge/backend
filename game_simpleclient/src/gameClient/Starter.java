@@ -59,7 +59,7 @@ public class Starter
 		System.err.println();
 		System.err
 				.println("Beispiel: \n"
-						+ "java -jar HaseUndIgelSC.jar --host 127.0.0.1 --port 13050 --reservation HASEUNDIGEL");
+						+ "java -jar HaseUndIgelSC.jar --host 127.0.0.1 --port 10500 --reservation HASEUNDIGEL");
 		System.err.println();
 	}
 }

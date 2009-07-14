@@ -18,5 +18,5 @@ public interface IGameUpdateObserver
 
 	public void spielerAktualisiert(Player player, Player otherPlayer);
 
-	public void spielBeendet();
+	public void spielBeendet(String[] statistik, boolean abgebrochen);
 }

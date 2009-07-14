@@ -7,7 +7,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -36,7 +35,6 @@ public class FieldButton extends JButton
 	private final Border			defaultBorder;
 
 	private int						fieldNumber	= 0;
-	private FigureColor				mycolor;
 	private boolean					reachable	= false;
 	private boolean					occupied	= false;
 	private Board.FieldTyp			type;
@@ -56,7 +54,7 @@ public class FieldButton extends JButton
 		if (imagefile != null)
 		{
 			final MediaTracker mt = new MediaTracker(this);
-			img = Toolkit.getDefaultToolkit().getImage(imagefile);
+			img = RendererUtil.getImage(imagefile);
 			mt.addImage(img, 0);
 			try
 			{
@@ -112,7 +110,6 @@ public class FieldButton extends JButton
 
 			icon = RendererUtil.getImage("resource/" + colorString + ".png");
 			mt.addImage(icon, 0);
-			mycolor = color;
 			occupied = true;
 			try
 			{
@@ -157,10 +154,9 @@ public class FieldButton extends JButton
 		occupied = false;
 	}
 
-	public boolean needRepaint(final FigureColor color)
+	public boolean needRepaint()
 	{
-		// return (mycolor == color || reachable || occupied);
-		return true;
+		return (reachable || occupied);
 	}
 
 	class ClickListener extends MouseAdapter
