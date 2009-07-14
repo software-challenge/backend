@@ -1,7 +1,6 @@
 package sc.plugin2010.gui;
 
 import java.awt.Image;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -77,7 +76,8 @@ public class GUIPluginFacade implements IGuiPlugin
 	{
 		ObservingClient rep = new ObservingClient(Configuration.getXStream(),
 				ReplayBuilder.loadReplay(filename));
-		IObservation obs = new Observation(rep);
+		ObserverGameHandler handler = new ObserverGameHandler();
+		IObservation obs = new Observation(rep, handler);
 		return obs;
 	}
 

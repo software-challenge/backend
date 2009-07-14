@@ -9,12 +9,12 @@ import sc.plugin2010.Player.Action;
 
 public class GameUtil
 {
-	public static final int HEDGEHOG_CARROT_MULTIPLIER = 10;
-	public static final int CARROT_BONUS_ON_POSITION_1_FIELD = 10;
-	public static final int CARROT_BONUS_ON_POSITION_2_FIELD = 30;
-	public static final int CARROT_BONUS_ON_POSITION_1_SALAD = 10;
-	public static final int CARROT_BONUS_ON_POSITION_2_SALAD = 30;
-	
+	public static final int	HEDGEHOG_CARROT_MULTIPLIER			= 10;
+	public static final int	CARROT_BONUS_ON_POSITION_1_FIELD	= 10;
+	public static final int	CARROT_BONUS_ON_POSITION_2_FIELD	= 30;
+	public static final int	CARROT_BONUS_ON_POSITION_1_SALAD	= 10;
+	public static final int	CARROT_BONUS_ON_POSITION_2_SALAD	= 30;
+
 	/**
 	 * Berechnet wie viele Karotten für einen Zug der länge
 	 * <code>moveCount</code> benötigt werden. Entspricht den Veränderungen des
@@ -216,6 +216,7 @@ public class GameUtil
 		boolean valid = !playerMustMove(p)
 				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
 				&& b.isFirst(p);
+
 		valid = valid && p.ownsCardOfTyp(Action.FALL_BACK);
 
 		final Player o = b.getOtherPlayer(p);
@@ -228,7 +229,6 @@ public class GameUtil
 				valid = false;
 				break;
 			case START:
-				valid = true;
 				break;
 			case SALAD:
 				valid = valid && p.getSaladsToEat() > 0;

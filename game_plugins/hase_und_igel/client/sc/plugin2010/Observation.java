@@ -12,6 +12,7 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
+import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.clients.IUpdateListener;
@@ -25,13 +26,17 @@ public class Observation implements IObservation, IUpdateListener
 {
 	private IControllableGame			conGame;
 
+	private IGameHandler				handler;
+
 	private List<IGameEndedListener>	gameEndedListeners	= new LinkedList<IGameEndedListener>();
 	private List<INewTurnListener>		newTurnListeners	= new LinkedList<INewTurnListener>();
 	private List<IReadyListener>		readyListeners		= new LinkedList<IReadyListener>();
 
-	public Observation(IControllableGame conGame)
+	public Observation(IControllableGame conGame, IGameHandler handler)
 	{
 		this.conGame = conGame;
+		this.handler = handler;
+		RenderFacade.getInstance().createPanel(null, EPlayerId.OBSERVER);
 		conGame.addListener(this);
 	}
 
@@ -152,8 +157,26 @@ public class Observation implements IObservation, IUpdateListener
 	public void onUpdate(Object sender)
 	{
 		assert sender == conGame;
-		// GameState state = (GameState) conGame.getCurrentState();
-		// not needed
+		GameState gameState = (GameState) conGame.getCurrentState();
+
+		if (gameState != null)
+		{
+			Game game = gameState.getGame();
+			handler.onUpdate(game.getBoard(), game.getTurn());
+
+			if (game.getActivePlayer().getColor() == FigureColor.RED)
+			{ // active player is own
+				handler.onUpdate(game.getActivePlayer(), game.getBoard()
+						.getOtherPlayer(game.getActivePlayer()));
+			}
+			else
+			// active player is the enemy
+			{
+				handler.onUpdate(game.getBoard().getOtherPlayer(
+						game.getActivePlayer()), game.getActivePlayer());
+
+			}
+		}
 	}
 
 	@Override

@@ -129,7 +129,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	{
 		// actionb.addRow(color + " "
 		// + GameUtil.displayMoveAction(player.getHistory().get(i)));
-
+		i++;
 		return i;
 	}
 
@@ -161,20 +161,16 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		this.player = player;
 		enemy = otherPlayer;
 
-		String currentColor = "";
-		String currentOthersColor = "";
 		String currentColorPath = "";
 		switch (player.getColor())
 		{
 			case BLUE:
-				currentColor = "Blau";
+				addHistory(enemy, player);
 				currentColorPath = "blue";
-				currentOthersColor = "Rot";
 				break;
 			case RED:
-				currentColor = "Rot";
+				addHistory(player, enemy);
 				currentColorPath = "red";
-				currentOthersColor = "Blau";
 				break;
 			default:
 				break;
@@ -184,64 +180,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		actionb.removeAllRows();
 		actionb.addRow("Aktionen: ");
-
-		if (enemy != null) // TODO correct action adding
-		{
-			int max = Math.max(player.getHistory().size(), enemy.getHistory()
-					.size());
-			// while (i < max)
-
-			if (player.getColor() == FigureColor.RED)
-			{
-				for (int i = 0; i < player.getHistory().size(); i++)
-				{
-					actionb.addRow(currentColor
-							+ " "
-							+ GameUtil.displayMoveAction(player.getHistory()
-									.get(i)));
-					for (int j = 0; j < enemy.getHistory().size(); j++)
-					{
-						if (i == j)
-						{
-							actionb.addRow(currentOthersColor
-									+ " "
-									+ GameUtil.displayMoveAction(enemy
-											.getHistory().get(j)));
-						}
-					}
-				}
-			}
-			else
-			{
-				for (int i = 0; i < enemy.getHistory().size(); i++)
-				{
-					actionb.addRow(currentColor
-							+ " "
-							+ GameUtil.displayMoveAction(enemy.getHistory()
-									.get(i)));
-					for (int j = 0; j < player.getHistory().size(); j++)
-					{
-						if (i == j)
-						{
-							actionb.addRow(currentOthersColor
-									+ " "
-									+ GameUtil.displayMoveAction(player
-											.getHistory().get(j)));
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			for (int i = 0; i < player.getHistory().size(); i++)
-			{
-				actionb.addRow(currentColor
-						+ " "
-						+ GameUtil
-								.displayMoveAction(player.getHistory().get(i)));
-			}
-		}
 
 		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 

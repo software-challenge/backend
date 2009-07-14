@@ -9,6 +9,7 @@ import java.util.List;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
+import sc.plugin2010.gui.ObserverGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.RequestResult;
@@ -43,7 +44,8 @@ public class GamePreparation implements IGamePreparation
 		}
 
 		IControllableGame conGame = client.observeAndControl(response);
-		obs = new Observation(conGame);
+		ObserverGameHandler handler = new ObserverGameHandler();
+		obs = new Observation(conGame, handler);
 		client.setObservation(obs);
 		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 	}
