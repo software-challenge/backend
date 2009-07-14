@@ -54,6 +54,7 @@ public class ContextDisplay extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (presFac.getLogicFacade().getObservation().hasPrevious()) {
 					presFac.getLogicFacade().getObservation().back();
+					btn_next.setEnabled(true);
 				}
 			}
 		});
@@ -64,17 +65,19 @@ public class ContextDisplay extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (!started) {
 					presFac.getLogicFacade().getObservation().start();
-					btn_spGame.setText(lang.getString("context_start"));
+					btn_spGame.setText(lang.getString("context_pause"));
 					btn_cancel.setEnabled(true);
 					started = true;
 					playing = true;
 				} else if (playing) {
 					presFac.getLogicFacade().getObservation().pause();
 					btn_spGame.setText(lang.getString("context_unpause"));
+					btn_back.setEnabled(true);
 					playing = false;
 				} else {
 					presFac.getLogicFacade().getObservation().unpause();
 					btn_spGame.setText(lang.getString("context_pause"));
+					btn_back.setEnabled(false);
 					playing = true;
 				}
 			}
@@ -84,6 +87,7 @@ public class ContextDisplay extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().cancel();
+				started = false;
 				btn_cancel.setEnabled(false);
 				btn_next.setEnabled(false);
 				btn_spGame.setText(lang.getString("context_start"));
@@ -95,6 +99,7 @@ public class ContextDisplay extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (presFac.getLogicFacade().getObservation().hasNext()) {
 					presFac.getLogicFacade().getObservation().next();
+					btn_back.setEnabled(true);
 				}
 			}
 		});
@@ -124,17 +129,13 @@ public class ContextDisplay extends JPanel {
 	 */
 	public void updateButtonBar(boolean ended) {
 		if (presFac.getLogicFacade().getObservation() != null) {
-			// TODO
 			if (ended) {
-
+				btn_cancel.setEnabled(false);
 			} else {
 				btn_spGame.setEnabled(true);
 			}
 			buttonBar.setVisible(true);
-		} else { // if no game is selected (at startup)
-			buttonBar.setVisible(false);
 		}
-		buttonBar.validate();
 	}
 
 }

@@ -132,18 +132,20 @@ public class ReplayDialog extends JDialog {
 		// start server
 		presFac.getLogicFacade().startServer(REPLAY_PORT, false);
 
-		JPanel gameField = ((ContextDisplay) presFac.getContextDisplay()).getGameField();
+		ContextDisplay contextPanel = ((ContextDisplay) presFac.getContextDisplay());
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(gameField, threeDimensional);
+		selPlugin.getPlugin().setRenderContext(contextPanel.getGameField(),
+				threeDimensional);
 
 		// load replay and set observation
 		try {
 			IObservation observation = selPlugin.getPlugin().loadReplay(filename);
 			presFac.getLogicFacade().setObservation(observation);
+			contextPanel.updateButtonBar(false);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			// path check is done before, i.e. this exception should not happen
 			e.printStackTrace();
 		}
 	}

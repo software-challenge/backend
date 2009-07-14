@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,6 +77,7 @@ public class TestRangeDialog extends JDialog {
 	private JTextArea txtarea;
 	private JPanel pnlCenter;
 	private JLabel lblCenter;
+	private IObservation obs;
 
 	public TestRangeDialog(JFrame frame) {
 		super();
@@ -101,13 +105,11 @@ public class TestRangeDialog extends JDialog {
 
 		txfNumTest = new JTextField(5);
 		txfNumTest.setText("100"); // default
-		JLabel lblNumTest = new JLabel(lang
-				.getString("dialog_test_lbl_numtest"));
+		JLabel lblNumTest = new JLabel(lang.getString("dialog_test_lbl_numtest"));
 		lblNumTest.setLabelFor(lblNumTest);
 
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug
-				.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
 
 		pnlPref = new JPanel();
 		pnlPref.add(cmbGameType);
@@ -133,8 +135,7 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		txtarea = new JTextArea();
-		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"),
-				JLabel.CENTER);
+		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
@@ -147,17 +148,18 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (testing) {
-					stopTest();
+					cancelTest();
 					testStart.setText(lang.getString("dialog_test_btn_start"));
 					testStart.setEnabled(true);
+					cmbGameType.setEnabled(true);
+					txtarea.append(lang.getString("dialog_test_msg_cancel"));
 				} else {
 					if (prepareTest()) {
-						testStart.setText(lang
-								.getString("dialog_test_btn_stop"));
+						testStart.setText(lang.getString("dialog_test_btn_stop"));
 						testStart.setEnabled(false);
+						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
 						startTest(true);
-						cmbGameType.setEnabled(false);
 					}
 				}
 			}
@@ -167,7 +169,6 @@ public class TestRangeDialog extends JDialog {
 		testCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				stopTest();
 				TestRangeDialog.this.dispose();
 			}
 		});
@@ -195,6 +196,13 @@ public class TestRangeDialog extends JDialog {
 		setMinimumSize(getPreferredSize());
 		pack();
 		setLocationRelativeTo(null);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				cancelTest();
+				super.windowClosing(e);
+			}
+		});
 	}
 
 	protected void drawSelectedPluginView(GUIPluginInstance selPlugin) {
@@ -211,8 +219,7 @@ public class TestRangeDialog extends JDialog {
 		model.addColumn(lang.getString("dialog_test_stats_name"));
 		model.addColumn(lang.getString("dialog_test_stats_wins"));
 		model.addColumn(lang.getString("dialog_test_stats_losses"));
-		ScoreDefinition statColumns = selPlugin.getPlugin()
-				.getScoreDefinition();
+		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
 		for (ScoreFragment column : statColumns) {
 			model.addColumn(column.getName());
 		}
@@ -245,8 +252,7 @@ public class TestRangeDialog extends JDialog {
 			txfclient[i] = new JTextField(20);
 			final JTextField txfClient = txfclient[i];
 
-			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki")
-					+ " " + i);
+			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki") + " " + i);
 			lblclient[i].setLabelFor(txfclient[i]);
 
 			btnclient[i] = new JButton(lang.getString("dialog_test_btn_file"));
@@ -272,8 +278,7 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable
-				.getPreferredSize());
+		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
 
 		// display
 		pnlTop.removeAll();
@@ -308,8 +313,7 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// start server
-		presFac.getLogicFacade().startServer(INTERN_PORT,
-				!ckbDebug.isSelected());
+		presFac.getLogicFacade().startServer(INTERN_PORT, !ckbDebug.isSelected());
 
 		return true;
 	}
@@ -324,30 +328,41 @@ public class TestRangeDialog extends JDialog {
 		int playerCount = txfclient.length;
 		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT,
-					playerCount, filename);
+			prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT, playerCount,
+					filename);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_test_error_network_msg"), lang
 					.getString("dialog_test_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
-			cancelGameCreation();
+			stopServer();
 			return;
+		}
+
+		// switch slot declaration
+		final int offset;
+		if (ascending) {
+			offset = 0;
+		} else {
+			offset = prep.getSlots().size() - 1;
 		}
 
 		final ConnectingDialog connDial = new ConnectingDialog();
 
 		// get observer
-		final IObservation obs = prep.getObserver();
+		obs = prep.getObserver();
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded(GameResult result) {
-				// display wins/losses etc.
-				// TODO
+				updateStatistics(offset, result);
+				// add log message
+				String clientName = "";
+				txtarea.append(clientName + " " + lang.getString("dialog_test_win"));
 				// start new test if number of tests is not still reached
 				if (curTest < numTest) {
 					startTest(!ascending);
 				} else {
+					stopServer();
 					cmbGameType.setEnabled(true);
 					testStart.setEnabled(true);
 				}
@@ -356,11 +371,10 @@ public class TestRangeDialog extends JDialog {
 		obs.addNewTurnListener(new INewTurnListener() {
 			@Override
 			public void newTurn(int playerid, String info) {
-				DefaultTableModel model = (DefaultTableModel) statTable
-						.getModel();
-				// model.addRow(rowData); TODO
+				String path = txfclient[offset - playerid].getText();
+				String clientName = new File(path).getName() + " " + (playerid + 1);
 				// add log
-				txtarea.append(info);
+				txtarea.append(clientName + ": " + info);
 			}
 		});
 		obs.addReadyListener(new IReadyListener() {
@@ -373,25 +387,15 @@ public class TestRangeDialog extends JDialog {
 
 		List<KIInformation> KIs = new ArrayList<KIInformation>();
 
-		int offset;
-		if (ascending) {
-			offset = 0;
-		} else {
-			offset = prep.getSlots().size() - 1;
-		}
-
+		txtarea.append(">>> " + lang.getString("dialog_test_switch"));
 		// add slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
 			String path = txfclient[offset - i].getText();
-			// check path
-			/*
-			 * if (path == null || path.equals("")) {
-			 * JOptionPane.showMessageDialog(this, lang
-			 * .getString("dialog_test_error_path_msg"), lang
-			 * .getString("dialog_test_error_path_title"),
-			 * JOptionPane.ERROR_MESSAGE); cancelGameCreation(); return; }
-			 */
+
+			String clientName = new File(path).getName() + " " + (i + 1);
+			txtarea.append(clientName + " " + lang.getString("dialog_test_switchpos")
+					+ " " + (i + 1));
 
 			KIs.add(new KIInformation(slot.asClient(), path));
 		}
@@ -411,24 +415,49 @@ public class TestRangeDialog extends JDialog {
 						.getString("dialog_test_error_client_msg"), lang
 						.getString("dialog_test_error_client_title"),
 						JOptionPane.ERROR_MESSAGE);
-				cancelGameCreation();
+				stopServer();
 				return;
 			}
 		}
 
 		// show connecting dialog
 		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
-			obs.cancel();
-			cancelGameCreation();
+			cancelTest();
 		}
 
 	}
 
 	/**
-	 * Stops the test range.
+	 * Updates the statistics table
+	 * 
+	 * @param offset
+	 * @param result
 	 */
-	private void stopTest() {
-		// TODO
+	protected void updateStatistics(int offset, GameResult result) {
+		// display wins/losses etc.
+		for (int i = 0; i < result.getScores().size(); i++) {
+			int playerId = offset - i;
+			String path = txfclient[playerId].getText();
+			String clientName = new File(path).getName() + " " + (i + 1);
+
+			MyTableModel model = (MyTableModel) statTable.getModel();
+			model.setValueAt(playerId, playerId, 0);
+			model.setValueAt(clientName, playerId, 1);
+
+			String[] stats = result.getScores().get(playerId).toStrings();
+			for (int j = 0; j < stats.length; j++) {
+				model.setValueAt(clientName, playerId, j+2);
+			}
+		}
+	}
+
+	/**
+	 * Cancels the active test range.
+	 */
+	private void cancelTest() {
+		curTest = numTest;
+		obs.cancel();
+		stopServer();
 	}
 
 	private void loadClient(JTextField txf) {
@@ -446,7 +475,7 @@ public class TestRangeDialog extends JDialog {
 	/**
 	 * Closes the server.
 	 */
-	private void cancelGameCreation() {
+	private void stopServer() {
 		presFac.getLogicFacade().stopServer();
 	}
 

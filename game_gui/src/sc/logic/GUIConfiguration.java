@@ -9,9 +9,11 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	private static String pluginFolder = null;
 	private ELanguage lang;
+	private String createGameDialogPath;
 
 	public GUIConfiguration() {
 		this.lang = ELanguage.DE;
+		this.createGameDialogPath = ".";
 	}
 
 	@Override
@@ -30,6 +32,16 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	public static String getPluginFolder() {
 		return pluginFolder;
+	}
+
+	@Override
+	public void setCreateGameDialogPath(String createGameDialogPath) {
+		this.createGameDialogPath = createGameDialogPath;
+	}
+
+	@Override
+	public String getCreateGameDialogPath() {
+		return createGameDialogPath;
 	}
 
 }
