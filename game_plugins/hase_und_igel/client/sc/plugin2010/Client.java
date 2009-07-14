@@ -133,7 +133,8 @@ public class Client implements ILobbyClientListener
 	{
 		if (id == EPlayerId.OBSERVER)
 		{
-			mycolor = FigureColor.RED; // set Red as first Player
+			mycolor = FigureColor.RED; // set Red as first Player in Observer
+										// mode
 		}
 
 		GameState gameState = (GameState) state;
@@ -141,12 +142,12 @@ public class Client implements ILobbyClientListener
 		handler.onUpdate(game.getBoard(), game.getTurn());
 
 		if (game.getActivePlayer().getColor() == mycolor)
-		{ // activeplayer is own
+		{ // active player is own
 			handler.onUpdate(game.getActivePlayer(), game.getBoard()
 					.getOtherPlayer(game.getActivePlayer()));
 		}
 		else
-		// activeplayer is the enemy
+		// active player is the enemy
 		{
 			handler.onUpdate(game.getBoard().getOtherPlayer(
 					game.getActivePlayer()), game.getActivePlayer());

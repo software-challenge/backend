@@ -25,7 +25,7 @@ import edu.cau.plugins.PluginDescriptor;
  * @author ffi
  * 
  */
-@PluginDescriptor(author = "Florian Fittkau", uuid = "hui", version = "1.0", name = "Hase und Igel (GUI)")
+@PluginDescriptor(author = "Florian Fittkau", uuid = "hui", version = "1.0", name = "Hase und Igel")
 public class GUIPluginFacade implements IGuiPlugin
 {
 	public GUIPluginFacade()
@@ -44,12 +44,6 @@ public class GUIPluginFacade implements IGuiPlugin
 	{
 		return RenderFacade.getInstance().getImage();
 
-	}
-
-	@Override
-	public String getPluginVersion()
-	{
-		return "1.0";
 	}
 
 	@Override
