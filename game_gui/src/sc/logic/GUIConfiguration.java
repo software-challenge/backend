@@ -15,7 +15,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -4635852675167221186L;
 
 	private static final String CONFIG_FILENAME = "game_gui.conf";
 
