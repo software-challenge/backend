@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
@@ -75,7 +76,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	public IObservation loadReplay(String filename) throws IOException
 	{
 		ObservingClient rep = new ObservingClient(Configuration.getXStream(),
-				new File(filename));
+				ReplayBuilder.loadReplay(filename));
 		IObservation obs = new Observation(rep);
 		return obs;
 	}

@@ -2,6 +2,7 @@ package sc.protocol;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,10 +28,10 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 														.getLogger(ReplayClient.class);
 	private List<IHistoryListener>	listeners	= new LinkedList<IHistoryListener>();
 
-	public ReplayClient(XStream xstream, File file) throws IOException
+	public ReplayClient(XStream xstream, InputStream inputStream) throws IOException
 	{
-		super(xstream, new FileSystemInterface(file));
-		logger.info("Loading Replay from {}", file);
+		super(xstream, new FileSystemInterface(inputStream));
+		logger.info("Loading Replay from {}", inputStream);
 	}
 
 	@Override

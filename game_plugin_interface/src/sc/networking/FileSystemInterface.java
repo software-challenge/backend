@@ -10,15 +10,18 @@ import java.io.OutputStream;
 
 public class FileSystemInterface implements INetworkInterface
 {
-
-	private File			file;
-	private InputStream		inputStream;
-	private OutputStream	outputStream;
+	private final InputStream	inputStream;
+	private final OutputStream	outputStream;
 
 	public FileSystemInterface(File file) throws FileNotFoundException
 	{
-		this.file = file;
 		this.inputStream = new FileInputStream(file);
+		this.outputStream = new NullOutputStream(true);
+	}
+
+	public FileSystemInterface(InputStream in) throws FileNotFoundException
+	{
+		this.inputStream = in;
 		this.outputStream = new NullOutputStream(true);
 	}
 
@@ -40,5 +43,4 @@ public class FileSystemInterface implements INetworkInterface
 	{
 		return this.outputStream;
 	}
-
 }

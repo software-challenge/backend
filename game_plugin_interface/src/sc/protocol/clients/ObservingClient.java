@@ -1,10 +1,13 @@
 package sc.protocol.clients;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sc.protocol.IControllableGame;
 import sc.protocol.IHistoryListener;
@@ -15,9 +18,11 @@ import com.thoughtworks.xstream.XStream;
 
 public class ObservingClient implements IControllableGame, IHistoryListener
 {
-	public ObservingClient(XStream xStream, File file) throws IOException
+	public ObservingClient(XStream xStream, InputStream inputStream)
+			throws IOException
 	{
-		this(new ReplayClient(xStream, file), null);
+		this(new ReplayClient(xStream, inputStream), null);
+		this.isReplay = true;
 		this.mode = PlayMode.PAUSED;
 		this.poller.start();
 	}
@@ -32,6 +37,11 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	protected final IPollsHistory		poller;
 
 	protected final String				roomId;
+
+	private static final Logger			logger		= LoggerFactory
+															.getLogger(ObservingClient.class);
+
+	private boolean						isReplay	= false;
 
 	private boolean						gameOver	= false;
 
@@ -50,9 +60,11 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	protected void addObservation(Object observation)
 	{
+		boolean firstObservation = this.history.isEmpty();
+
 		this.history.add(observation);
 
-		if (this.mode == PlayMode.PLAYING)
+		if (this.mode == PlayMode.PLAYING || firstObservation)
 		{
 			setPosition(this.history.size() - 1);
 		}
@@ -61,10 +73,15 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		if (this.roomId.equals(roomId))
+		if (isAffected(roomId))
 		{
 			addObservation(state);
 		}
+	}
+
+	private boolean isAffected(String roomId)
+	{
+		return this.isReplay || this.roomId.equals(roomId);
 	}
 
 	protected void notifyOnUpdate()
@@ -118,6 +135,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	private void setPosition(int i)
 	{
+		logger.debug("Setting Position to {}", i);
 		this.position = i;
 		notifyOnUpdate();
 	}
