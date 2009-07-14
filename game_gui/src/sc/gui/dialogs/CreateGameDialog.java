@@ -34,6 +34,8 @@ import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import sc.common.HelperMethods;
+import sc.common.UnsupportedFileExtensionException;
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
@@ -327,28 +329,25 @@ public class CreateGameDialog extends JDialog {
 
 		// start KI (intern) clients
 		for (KIInformation kinfo : KIs) {
-			String file = kinfo.getPath();
+			String filename = kinfo.getPath();
 			String[] params = kinfo.getParameters();
-			/*
-			 * have to parse on my own because exec() split after each white
-			 * space
-			 */
-			String[] command = new String[1 + params.length];
-			//command[0] = file.replace("\\", "\\\\");
-			command[0] = file;
-			for (int i = 0; i < params.length; i++) {
-				command[i + 1] = params[i];
-			}
-
 			try {
-				Runtime.getRuntime().exec(command);
+				HelperMethods.exec(filename, params);
 			} catch (IOException e) {
 				e.printStackTrace();
+				cancelGameCreation(observer);
 				JOptionPane.showMessageDialog(this, lang
 						.getString("dialog_create_error_client_msg"), lang
 						.getString("dialog_create_error_client_title"),
 						JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (UnsupportedFileExtensionException e) {
+				e.printStackTrace();
 				cancelGameCreation(observer);
+				JOptionPane.showMessageDialog(this, lang
+						.getString("dialog_error_fileext_msg"), lang
+						.getString("dialog_error_fileext_title"),
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -360,8 +359,9 @@ public class CreateGameDialog extends JDialog {
 		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), null, selPlugin.getPlugin()
-					.getPluginInfoText(), selPlugin.getDescription().author());
+					.getDescription().name(), selPlugin.getDescription().version(), null,
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
+							.author());
 			// close dialog
 			dispose();
 		}

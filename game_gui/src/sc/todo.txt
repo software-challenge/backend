@@ -1,8 +1,11 @@
--replay laden als dialog mit spieltyp auswählen
 -testrange
--infofenster vom spieltyp
 -config save/load
+ok-status: selektierte plugin version
+ok-info: plugin version
+ok-next: disabled
+-back: set pause to unpause
+ok-cancel: disable all buttons
+-statusbar: iwas anzeigen
+
+FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)
--status: selektierte plugin version
--info: plugin version
--

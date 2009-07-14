@@ -16,7 +16,8 @@ public interface ILogicFacade {
 	/**
 	 * Replay file extension.
 	 */
-	static final String EXT_REPLAY = ".rpl";
+	public static final String EXT_REPLAY = ".rpl";
+	public static final String APP_DIR = System.getProperty("user.dir");
 
 	void loadLanguageData() throws CouldNotFindAnyLanguageFileException;
 

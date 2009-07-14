@@ -6,11 +6,23 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel {
+
+	private static final String PATH_ICON_CANCEL = "/sc/resource/cancel.png";
+	private static final String PATH_ICON_START = "/sc/resource/start.png";
+	private static final String PATH_ICON_PAUSE = "/sc/resource/pause.png";
+
+	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class.getResource(
+			PATH_ICON_CANCEL));
+	private static final ImageIcon ICON_START = new ImageIcon(ContextDisplay.class.getResource(
+			PATH_ICON_START));
+	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class.getResource(
+			PATH_ICON_PAUSE));
 
 	private final PresentationFacade presFac;
 	private final ResourceBundle lang;
@@ -39,9 +51,12 @@ public class ContextDisplay extends JPanel {
 		buttonBar.setBorder(BorderFactory.createEtchedBorder());
 
 		btn_back = new JButton(lang.getString("context_back"));
-		btn_cancel = new JButton(lang.getString("context_cancel"));
-		btn_spGame = new JButton(lang.getString("context_start"));
+		// btn_cancel = new JButton(lang.getString("context_cancel"));
+		// btn_spGame = new JButton(lang.getString("context_start"));
 		btn_next = new JButton(lang.getString("context_next"));
+
+		btn_cancel = new JButton(ICON_CANCEL);
+		btn_spGame = new JButton(ICON_START);
 
 		// disable by default
 		btn_back.setEnabled(false);
@@ -65,18 +80,21 @@ public class ContextDisplay extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				if (!started) {
 					presFac.getLogicFacade().getObservation().start();
-					btn_spGame.setText(lang.getString("context_pause"));
+					// btn_spGame.setText(lang.getString("context_pause"));
+					btn_spGame.setIcon(ICON_PAUSE);
 					btn_cancel.setEnabled(true);
 					started = true;
 					playing = true;
 				} else if (playing) {
 					presFac.getLogicFacade().getObservation().pause();
-					btn_spGame.setText(lang.getString("context_unpause"));
+					//btn_spGame.setText(lang.getString("context_unpause"));
+					btn_spGame.setIcon(ICON_START);
 					btn_back.setEnabled(true);
 					playing = false;
 				} else {
 					presFac.getLogicFacade().getObservation().unpause();
-					btn_spGame.setText(lang.getString("context_pause"));
+					//btn_spGame.setText(lang.getString("context_pause"));
+					btn_spGame.setIcon(ICON_PAUSE);
 					btn_back.setEnabled(false);
 					playing = true;
 				}
@@ -88,9 +106,12 @@ public class ContextDisplay extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().cancel();
 				started = false;
+				btn_back.setEnabled(false);
 				btn_cancel.setEnabled(false);
+				btn_spGame.setEnabled(false);
 				btn_next.setEnabled(false);
-				btn_spGame.setText(lang.getString("context_start"));
+				//btn_spGame.setText(lang.getString("context_start"));
+				btn_spGame.setIcon(ICON_START);
 			}
 		});
 
@@ -134,7 +155,7 @@ public class ContextDisplay extends JPanel {
 			} else {
 				btn_spGame.setEnabled(true);
 				btn_back.setEnabled(true);
-				btn_next.setEnabled(true);
+				// btn_next.setEnabled(true);
 			}
 			buttonBar.setVisible(true);
 		}

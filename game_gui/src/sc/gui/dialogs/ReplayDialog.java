@@ -25,6 +25,7 @@ import javax.swing.border.BevelBorder;
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.guiplugin.interfaces.IObservation;
+import sc.logic.ILogicFacade;
 import sc.plugin.GUIPluginInstance;
 
 @SuppressWarnings("serial")
@@ -68,7 +69,8 @@ public class ReplayDialog extends JDialog {
 		btnReplay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser();
+				File startDir = new File(ILogicFacade.APP_DIR);// default
+				JFileChooser chooser = new JFileChooser(startDir);
 				if (chooser.showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
 					loadReplay(chooser.getSelectedFile());
 				}
@@ -147,6 +149,7 @@ public class ReplayDialog extends JDialog {
 		} catch (IOException e) {
 			// path check is done before, i.e. this exception should not happen
 			e.printStackTrace();
+			return;
 		}
 	}
 

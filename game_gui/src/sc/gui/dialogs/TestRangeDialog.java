@@ -37,6 +37,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
+import sc.common.HelperMethods;
+import sc.common.UnsupportedFileExtensionException;
 import sc.gui.PresentationFacade;
 import sc.gui.stuff.KIInformation;
 import sc.guiplugin.interfaces.IGamePreparation;
@@ -407,26 +409,23 @@ public class TestRangeDialog extends JDialog {
 		for (KIInformation kinfo : KIs) {
 			String file = kinfo.getPath();
 			String[] params = kinfo.getParameters();
-			/*
-			 * have to parse on my own because exec() split after each white
-			 * space
-			 */
-			String[] command = new String[1 + params.length];
-			// command[0] = file.replace("\\", "\\\\");
-			command[0] = file;
-			for (int i = 0; i < params.length; i++) {
-				command[i + 1] = params[i];
-			}
-
 			try {
-				Runtime.getRuntime().exec(kinfo.getPath() + " " + params);
+				HelperMethods.exec(file, params);
 			} catch (IOException e) {
 				e.printStackTrace();
+				stopServer();
 				JOptionPane.showMessageDialog(this, lang
 						.getString("dialog_test_error_client_msg"), lang
 						.getString("dialog_test_error_client_title"),
 						JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (UnsupportedFileExtensionException e) {
+				e.printStackTrace();
 				stopServer();
+				JOptionPane.showMessageDialog(this, lang
+						.getString("dialog_error_fileext_msg"), lang
+						.getString("dialog_error_fileext_msg"),
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -435,7 +434,6 @@ public class TestRangeDialog extends JDialog {
 		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
 			cancelTest();
 		}
-
 	}
 
 	/**
