@@ -1,9 +1,22 @@
 package sc.common;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.helpers.StringHelper;
 
 public class HelperMethods {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(HelperMethods.class);
 
 	/**
 	 * Executes a file indicated by <code>filename</code> with the given
@@ -23,27 +36,39 @@ public class HelperMethods {
 		 * you must not add additional white spaces in the command array. the
 		 * processbuilder will add it automatically.
 		 */
-		String[] command;
-		int offset;
+		List<String> commandFragments = new LinkedList<String>();
+
 		if (ext.equals(".jar")) {
-			command = new String[3 + parameters.length];
-			command[0] = "java";
-			command[1] = "-jar";
-			offset = 2;
+			commandFragments.add("java");
+			commandFragments.add("-jar");
 		} else {
 			throw new UnsupportedFileExtensionException();// TODO remove?
 		}
-		command[offset] = filename;
-		for (int i = 0; i < parameters.length; i++) {
-			command[i + offset + 1] = parameters[i];
-		}
+		commandFragments.add(filename);
+		commandFragments.addAll(Arrays.asList(parameters));
 
-		// only for test purpose
-		// for (int i = 0; i < command.length; i++)
-		// System.out.print(command[i]);
-		// System.out.println();
+		logger.debug("Executing {}", StringHelper.join(commandFragments, " "));
+		ProcessBuilder builder = new ProcessBuilder(commandFragments);
+		builder.redirectErrorStream();
+		final Process proc = builder.start();
 
-		Runtime.getRuntime().exec(command);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				BufferedReader input = new BufferedReader(
+						new InputStreamReader(proc.getInputStream()));
+				String line = "";
+				try {
+					while ((line = input.readLine()) != null) {
+						System.out.println(line);
+					}
+				} catch (IOException e) {
+					System.err.println("Failed to redirect STDOUT.");
+				}
+				
+				System.out.println("Process exited with ExitCode=" + proc.exitValue());
+			}
+		}).start();
 	}
 
 	public static String getFileExtension(File file) {

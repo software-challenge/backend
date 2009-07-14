@@ -27,9 +27,9 @@ public class Slot implements ISlot
 	@Override
 	public String[] asClient()
 	{
-		String[] res = { "--host " + adminclient.getHost(),
-				"--port " + String.valueOf(adminclient.getPort()),
-				"--reservation " + reservation };
+		String[] res = { "--host", adminclient.getHost(),
+				"--port", String.valueOf(adminclient.getPort()),
+				"--reservation", reservation };
 		return res;
 	}
 
