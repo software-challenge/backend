@@ -133,6 +133,8 @@ public class ContextDisplay extends JPanel {
 				btn_cancel.setEnabled(false);
 			} else {
 				btn_spGame.setEnabled(true);
+				btn_back.setEnabled(true);
+				btn_next.setEnabled(true);
 			}
 			buttonBar.setVisible(true);
 		}
