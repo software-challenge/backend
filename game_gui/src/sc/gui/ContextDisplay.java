@@ -23,16 +23,16 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private static final String PATH_ICON_BACK = "/sc/resource/back.png";
 	private static final String PATH_ICON_NEXT = "/sc/resource/next.png";
 
-	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_CANCEL));
-	private static final ImageIcon ICON_START = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_START));
-	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_PAUSE));
-	private static final ImageIcon ICON_BACK = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_BACK));
-	private static final ImageIcon ICON_NEXT = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_NEXT));
+	private static final ImageIcon ICON_CANCEL = new ImageIcon(
+			ContextDisplay.class.getResource(PATH_ICON_CANCEL));
+	private static final ImageIcon ICON_START = new ImageIcon(
+			ContextDisplay.class.getResource(PATH_ICON_START));
+	private static final ImageIcon ICON_PAUSE = new ImageIcon(
+			ContextDisplay.class.getResource(PATH_ICON_PAUSE));
+	private static final ImageIcon ICON_BACK = new ImageIcon(
+			ContextDisplay.class.getResource(PATH_ICON_BACK));
+	private static final ImageIcon ICON_NEXT = new ImageIcon(
+			ContextDisplay.class.getResource(PATH_ICON_NEXT));
 
 	private final PresentationFacade presFac;
 	private final ResourceBundle lang;
@@ -59,10 +59,10 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		buttonBar = new JPanel();
 		buttonBar.setBorder(BorderFactory.createEtchedBorder());
 
-		//btn_back = new JButton(lang.getString("context_back"));
+		// btn_back = new JButton(lang.getString("context_back"));
 		// btn_cancel = new JButton(lang.getString("context_cancel"));
 		// btn_spGame = new JButton(lang.getString("context_start"));
-		//btn_next = new JButton(lang.getString("context_next"));
+		// btn_next = new JButton(lang.getString("context_next"));
 
 		btn_back = new JButton(ICON_BACK);
 		btn_back.setToolTipText(lang.getString("context_back"));
@@ -84,7 +84,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				if (presFac.getLogicFacade().getObservation().hasPrevious()) {
 					presFac.getLogicFacade().getObservation().back();
 					btn_next.setEnabled(true);
-					if (!presFac.getLogicFacade().getObservation().hasPrevious()) {
+					if (!presFac.getLogicFacade().getObservation()
+							.hasPrevious()) {
 						btn_back.setEnabled(false);
 					}
 				}
@@ -158,9 +159,10 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			if (ended) {
 				btn_cancel.setEnabled(false);
 			} else {
+				btn_cancel.setEnabled(true);
 				btn_spGame.setEnabled(true);
-				btn_back.setEnabled(true);
-				// btn_next.setEnabled(true);
+				btn_back.setEnabled(false);
+				btn_next.setEnabled(false);
 			}
 			buttonBar.setVisible(true);
 		}
@@ -171,7 +173,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		IObservation obs = presFac.getLogicFacade().getObservation();
 		if (obs != null) {
 			btn_back.setEnabled(obs.hasPrevious());
-			btn_next.setEnabled(obs.hasNext());			
+			btn_next.setEnabled(obs.hasNext());
 			btn_spGame.setIcon(obs.isPaused() ? ICON_START : ICON_PAUSE);
 		}
 	}
