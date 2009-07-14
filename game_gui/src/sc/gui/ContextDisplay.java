@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
@@ -69,6 +70,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		btn_cancel = new JButton(ICON_CANCEL);
 		btn_cancel.setToolTipText(lang.getString("context_cancel"));
 		btn_spGame = new JButton(ICON_START);
+		btn_spGame.setToolTipText(lang.getString("context_start"));
 		btn_next = new JButton(ICON_NEXT);
 		btn_next.setToolTipText(lang.getString("context_next"));
 
@@ -116,7 +118,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				btn_cancel.setEnabled(false);
 				btn_spGame.setEnabled(false);
 				btn_next.setEnabled(false);
-				// btn_spGame.setText(lang.getString("context_start"));
+				btn_spGame.setToolTipText(lang.getString("context_start"));
 				btn_spGame.setIcon(ICON_START);
 			}
 		});
@@ -131,11 +133,19 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			}
 		});
 
-		// buttonBar.add(new JSeparator(JSeparator.HORIZONTAL));
-		buttonBar.add(btn_back);
-		buttonBar.add(btn_spGame);
-		buttonBar.add(btn_cancel);
-		buttonBar.add(btn_next);
+		buttonBar.setLayout(new BorderLayout( 30, 30 ));
+		
+		JPanel regularButtonBar = new JPanel();		
+		regularButtonBar.add(btn_back);
+		regularButtonBar.add(btn_spGame);
+		regularButtonBar.add(btn_next);
+		//regularButtonBar.add(new JSeparator(JSeparator.VERTICAL));
+		
+		JPanel cancelButtonBar = new JPanel();
+		cancelButtonBar.add(btn_cancel);
+		
+		buttonBar.add(regularButtonBar, BorderLayout.CENTER);
+		buttonBar.add(cancelButtonBar, BorderLayout.LINE_END);
 
 		this.add(gameField, BorderLayout.CENTER);
 		this.add(buttonBar, BorderLayout.PAGE_END);
@@ -174,6 +184,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		if (obs != null) {
 			btn_back.setEnabled(obs.hasPrevious());
 			btn_next.setEnabled(obs.hasNext());
+			btn_spGame.setToolTipText(obs.isPaused() ? lang.getString("context_start") : lang.getString("context_pause"));
 			btn_spGame.setIcon(obs.isPaused() ? ICON_START : ICON_PAUSE);
 		}
 	}

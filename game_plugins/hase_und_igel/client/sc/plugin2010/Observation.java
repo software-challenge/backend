@@ -120,6 +120,7 @@ public class Observation implements IObservation, IUpdateListener
 	@Override
 	public void unpause()
 	{
+		RenderFacade.getInstance().switchToPlayer(RenderFacade.getInstance().getActivePlayer());
 		conGame.unpause();
 	}
 
