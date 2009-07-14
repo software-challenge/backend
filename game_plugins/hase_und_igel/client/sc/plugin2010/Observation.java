@@ -36,7 +36,6 @@ public class Observation implements IObservation, IUpdateListener
 	{
 		this.conGame = conGame;
 		this.handler = handler;
-		RenderFacade.getInstance().createPanel(null, EPlayerId.OBSERVER);
 		conGame.addListener(this);
 	}
 
@@ -161,6 +160,7 @@ public class Observation implements IObservation, IUpdateListener
 
 		if (gameState != null)
 		{
+			// ready();
 			Game game = gameState.getGame();
 			handler.onUpdate(game.getBoard(), game.getTurn());
 

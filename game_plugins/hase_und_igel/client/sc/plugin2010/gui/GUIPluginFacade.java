@@ -77,6 +77,8 @@ public class GUIPluginFacade implements IGuiPlugin
 		ObservingClient rep = new ObservingClient(Configuration.getXStream(),
 				ReplayBuilder.loadReplay(filename));
 		ObserverGameHandler handler = new ObserverGameHandler();
+		RenderFacade.getInstance().createPanel(null, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		IObservation obs = new Observation(rep, handler);
 		return obs;
 	}
