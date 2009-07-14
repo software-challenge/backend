@@ -121,8 +121,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private int printHistroyTillNewTurn(final Player player, int i,
 			final String color)
 	{
-		actionb.addRow(color + " "
-				+ GameUtil.displayMoveAction(player.getHistory().get(i)));
+		// actionb.addRow(color + " "
+		// + GameUtil.displayMoveAction(player.getHistory().get(i)));
 
 		return i;
 	}
