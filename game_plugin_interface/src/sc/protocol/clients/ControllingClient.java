@@ -1,17 +1,31 @@
 package sc.protocol.clients;
 
 import sc.protocol.LobbyClient;
+import sc.protocol.clients.ObservingClient.PlayMode;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
 
 public class ControllingClient extends ObservingClient
 {
 	final LobbyClient	client;
+	private boolean	allowOneStep = false;
 
 	public ControllingClient(LobbyClient client, String roomId)
 	{
 		super(client, roomId);
 		this.client = client;
+	}
+	
+	@Override
+	protected void addObservation(Object observation)
+	{
+		super.addObservation(observation);
+		
+		if(this.allowOneStep)
+		{
+			changePosition(+1);
+			this.allowOneStep = false;
+		}
 	}
 
 	@Override
@@ -34,6 +48,7 @@ public class ControllingClient extends ObservingClient
 		if (atEnd())
 		{
 			this.client.send(new StepRequest(this.roomId));
+			this.allowOneStep = true;
 		}
 
 		super.next();

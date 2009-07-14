@@ -129,7 +129,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		this.changePosition(-1);
 	}
 
-	private void changePosition(int i)
+	protected void changePosition(int i)
 	{
 		this.setPosition(this.getPosition() + i);
 	}
