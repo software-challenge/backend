@@ -107,7 +107,7 @@ public class PresentationFacade implements IPresentationFacade {
 
 	@Override
 	public void shutdown() {
-		//logic.saveConfiguration(config);//FIXME
+		GUIConfiguration.instance().save();
 		logic.stopServer();
 	}
 

@@ -34,12 +34,11 @@ public class LogicFacade implements ILogicFacade {
 	/**
 	 * Configuration file name
 	 */
-	private static final String CONFIG_FILENAME = "game_gui.conf";
+	
 	/**
 	 * Holds all vailable plugins
 	 */
 	private final GUIPluginManager pluginMan;
-	private IConfiguration config;
 	/**
 	 * For multi-language support
 	 */
@@ -54,7 +53,6 @@ public class LogicFacade implements ILogicFacade {
 
 	private LogicFacade() { // Singleton
 		this.pluginMan = GUIPluginManager.getInstance();
-		this.config = this.loadConfiguration();
 	}
 
 	public static LogicFacade getInstance() {
@@ -68,58 +66,9 @@ public class LogicFacade implements ILogicFacade {
 		return instance;
 	}
 
-	private IConfiguration loadConfiguration() {
-		IConfiguration result;
-		ObjectInputStream in = null;
-		try {
-			in = new ObjectInputStream(new FileInputStream(CONFIG_FILENAME));
-			result = (IConfiguration) in.readObject();
-		} catch (FileNotFoundException e) {
-			result = new GUIConfiguration();
-		} catch (IOException e) {
-			result = new GUIConfiguration();
-			// e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			result = new GUIConfiguration();
-			// e.printStackTrace();
-		} finally {
-			if (null != in) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public void saveConfiguration(GUIConfiguration config) {
-		ObjectOutputStream out = null;
-		try {
-			out = new ObjectOutputStream(new FileOutputStream(CONFIG_FILENAME));
-			out.writeObject(config);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			if (null != out) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					// ignore
-				}
-			}
-		}
-	}
-
 	@Override
 	public void loadLanguageData() throws CouldNotFindAnyLanguageFileException {
-		ELanguage language = config.getLanguage();
+		ELanguage language = GUIConfiguration.instance().getLanguage();
 		Locale locale;
 		switch (language) {
 		case DE:
@@ -147,7 +96,7 @@ public class LogicFacade implements ILogicFacade {
 			throw new CouldNotFindAnyPluginException();
 		}
 		this.pluginMan.activateAllPlugins(new IGuiPluginHost() {
-			
+
 		});
 	}
 
@@ -158,7 +107,7 @@ public class LogicFacade implements ILogicFacade {
 
 	@Override
 	public IConfiguration getConfiguration() {
-		return config;
+		return GUIConfiguration.instance();
 	}
 
 	@Override
@@ -201,7 +150,8 @@ public class LogicFacade implements ILogicFacade {
 	public List<GUIPluginInstance> getAvailablePluginsSorted() {
 		Collection<GUIPluginInstance> plugins = pluginMan.getAvailablePlugins();
 		// sort by plugin's year
-		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(plugins);
+		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(
+				plugins);
 		Collections.sort(sortedPlugins, new YearComparator());
 		return sortedPlugins;
 	}

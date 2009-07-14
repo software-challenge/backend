@@ -25,8 +25,6 @@ public interface ILogicFacade {
 
 	IConfiguration getConfiguration();
 
-	void saveConfiguration(GUIConfiguration config);
-
 	void loadPlugins() throws CouldNotFindAnyPluginException;
 	void unloadPlugins();
 
