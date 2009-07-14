@@ -38,6 +38,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private ActionBar				actionb;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
 	private final GUIGameHandler	handler;
+	private final JPanel			leftPanel		= new JPanel();
 
 	// local instances of current players and board
 	private Player					player;
@@ -62,12 +63,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private String					hurryahead		= "Rücke eine Position vor";
 	private String					fallback		= "Rücke eine Position vor";
 	private String					jokerAnswer		= "joker";
-
-	public FrameRenderer()
-	{
-		handler = null;
-		createInitFrame();
-	}
 
 	public FrameRenderer(final GUIGameHandler handler,
 			final boolean onlyObserving)
@@ -102,8 +97,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		action = new ScrollPane();
 		action.add(actionb);
 
-		final JPanel leftPanel = new JPanel();
-
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
 
@@ -127,16 +120,42 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private int printHistroyTillNewTurn(final Player player, int i,
 			final String color)
 	{
-		// actionb.addRow(color + " "
-		// + GameUtil.displayMoveAction(player.getHistory().get(i)));
-		i++;
+		if (i < player.getHistory().size())
+		{
+			actionb.addRow(color + " "
+					+ GameUtil.displayMoveAction(player.getHistory().get(i)));
+			i++;
+			if (i < player.getHistory().size()
+					&& player.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
+			{
+				actionb.addRow(color
+						+ " "
+						+ GameUtil
+								.displayMoveAction(player.getHistory().get(i)));
+				i++;
+				if (i < player.getHistory().size()
+						&& player.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
+				{
+					actionb.addRow(color
+							+ " "
+							+ GameUtil.displayMoveAction(player.getHistory()
+									.get(i)));
+					i++;
+				}
+			}
+		}
+		else
+		{
+			i++;
+		}
+
 		return i;
 	}
 
 	private void addHistory(final Player redPlayer, final Player bluePlayer)
 	{
-		String red = "red";
-		String blue = "blue";
+		String red = "Rot";
+		String blue = "Blau";
 
 		actionb.removeAllRows();
 		actionb.addRow("Aktionen: ");
@@ -177,9 +196,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		}
 
 		info.setTurn(currentColorPath);
-
-		actionb.removeAllRows();
-		actionb.addRow("Aktionen: ");
 
 		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 
@@ -258,7 +274,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void askQuestion(final String question, final List<String> answers,
 			String type)
 	{
-		new QuestionDialog(question, answers, this, type);
+		leftPanel.add(new QuestionDialog(question, answers, this, type),
+				BorderLayout.AFTER_LAST_LINE);
 	}
 
 	private void askForAction(final Player player)

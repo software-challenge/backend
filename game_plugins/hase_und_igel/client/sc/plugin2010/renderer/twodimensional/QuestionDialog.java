@@ -10,18 +10,15 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import sc.plugin2010.renderer.RendererUtil;
 
 /**
  * @author ffi
  * 
  */
 @SuppressWarnings("serial")
-public class QuestionDialog extends JDialog
+public class QuestionDialog extends JPanel
 {
 	private static final int	DEFAULTHEIGHT	= 100;
 	private FrameRenderer		obs;
@@ -30,13 +27,13 @@ public class QuestionDialog extends JDialog
 	public QuestionDialog(String question, List<String> answers,
 			FrameRenderer obs, String type)
 	{
-		setTitle("?");
+		// setTitle("?");
 
 		this.type = type;
 
 		this.obs = obs;
 
-		setIconImage(RendererUtil.getImage("resource/hase_und_igel_icon.png"));
+		// setIconImage(RendererUtil.getImage("resource/hase_und_igel_icon.png"));
 
 		AnswerListener awListener = new AnswerListener();
 
@@ -58,7 +55,7 @@ public class QuestionDialog extends JDialog
 			width += jbut.getPreferredSize().width;
 		}
 
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		// setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		BorderLayout dialogLayout = new BorderLayout();
 		setLayout(dialogLayout);
@@ -68,9 +65,9 @@ public class QuestionDialog extends JDialog
 
 		setSize(width, DEFAULTHEIGHT);
 
-		setLocationRelativeTo(null);
+		// setLocationRelativeTo(null);
 
-		setModal(true);
+		// setModal(true);
 		setVisible(true);
 	}
 
@@ -82,7 +79,7 @@ public class QuestionDialog extends JDialog
 			if (e.getButton() == MouseEvent.BUTTON1)
 			{
 				obs.answerQuestion(e.getComponent().getName(), type);
-				dispose();
+				// dispose();
 			}
 		}
 	}

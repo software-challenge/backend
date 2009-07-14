@@ -130,27 +130,25 @@ public class Client implements ILobbyClientListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
-		if (id == EPlayerId.OBSERVER)
-		{
-			mycolor = FigureColor.RED; // set Red as first Player in Observer
-										// mode
-		}
-
 		GameState gameState = (GameState) state;
 		Game game = gameState.getGame();
-		handler.onUpdate(game.getBoard(), game.getTurn());
 
-		if (game.getActivePlayer().getColor() == mycolor)
-		{ // active player is own
-			handler.onUpdate(game.getActivePlayer(), game.getBoard()
-					.getOtherPlayer(game.getActivePlayer()));
-		}
-		else
-		// active player is the enemy
+		if (id != EPlayerId.OBSERVER)
 		{
-			handler.onUpdate(game.getBoard().getOtherPlayer(
-					game.getActivePlayer()), game.getActivePlayer());
+			handler.onUpdate(game.getBoard(), game.getTurn());
 
+			if (game.getActivePlayer().getColor() == mycolor)
+			{ // active player is own
+				handler.onUpdate(game.getActivePlayer(), game.getBoard()
+						.getOtherPlayer(game.getActivePlayer()));
+			}
+			else
+			// active player is the enemy
+			{
+				handler.onUpdate(game.getBoard().getOtherPlayer(
+						game.getActivePlayer()), game.getActivePlayer());
+
+			}
 		}
 
 		if (obs != null)
