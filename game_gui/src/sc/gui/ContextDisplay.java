@@ -16,6 +16,8 @@ public class ContextDisplay extends JPanel {
 	private static final String PATH_ICON_CANCEL = "/sc/resource/cancel.png";
 	private static final String PATH_ICON_START = "/sc/resource/start.png";
 	private static final String PATH_ICON_PAUSE = "/sc/resource/pause.png";
+	private static final String PATH_ICON_BACK = "/sc/resource/back.png";
+	private static final String PATH_ICON_NEXT = "/sc/resource/next.png";
 
 	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class
 			.getResource(PATH_ICON_CANCEL));
@@ -23,6 +25,10 @@ public class ContextDisplay extends JPanel {
 			.getResource(PATH_ICON_START));
 	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class
 			.getResource(PATH_ICON_PAUSE));
+	private static final ImageIcon ICON_BACK = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_BACK));
+	private static final ImageIcon ICON_NEXT = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_NEXT));
 
 	private final PresentationFacade presFac;
 	private final ResourceBundle lang;
@@ -50,13 +56,18 @@ public class ContextDisplay extends JPanel {
 		buttonBar = new JPanel();
 		buttonBar.setBorder(BorderFactory.createEtchedBorder());
 
-		btn_back = new JButton(lang.getString("context_back"));
+		//btn_back = new JButton(lang.getString("context_back"));
 		// btn_cancel = new JButton(lang.getString("context_cancel"));
 		// btn_spGame = new JButton(lang.getString("context_start"));
-		btn_next = new JButton(lang.getString("context_next"));
+		//btn_next = new JButton(lang.getString("context_next"));
 
+		btn_back = new JButton(ICON_BACK);
+		btn_back.setToolTipText(lang.getString("context_back"));
 		btn_cancel = new JButton(ICON_CANCEL);
+		btn_cancel.setToolTipText(lang.getString("context_cancel"));
 		btn_spGame = new JButton(ICON_START);
+		btn_next = new JButton(ICON_NEXT);
+		btn_next.setToolTipText(lang.getString("context_next"));
 
 		// disable by default
 		btn_back.setEnabled(false);

@@ -106,8 +106,6 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		try {
 			out = new ObjectOutputStream(new FileOutputStream(CONFIG_FILENAME));
 			out.writeObject(this);
-			out.flush();
-			out.close();
 			System.out.println("Saved Configuration");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -118,6 +116,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		} finally {
 			if (null != out) {
 				try {
+					out.flush();
 					out.close();
 				} catch (IOException e) {
 					// ignore
