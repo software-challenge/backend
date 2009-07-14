@@ -131,9 +131,6 @@ public class ReplayDialog extends JDialog {
 			return;
 		}
 
-		// start server
-		presFac.getLogicFacade().startServer(REPLAY_PORT, false);
-
 		ContextDisplay contextPanel = ((ContextDisplay) presFac.getContextDisplay());
 
 		// set render context
@@ -146,6 +143,7 @@ public class ReplayDialog extends JDialog {
 			IObservation observation = selPlugin.getPlugin().loadReplay(filename);
 			presFac.getLogicFacade().setObservation(observation);
 			contextPanel.updateButtonBar(false);
+			this.dispose();
 		} catch (IOException e) {
 			// path check is done before, i.e. this exception should not happen
 			e.printStackTrace();
