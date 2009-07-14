@@ -281,6 +281,8 @@ public class CreateGameDialog extends JDialog {
 				}
 			}
 		});
+		
+		observer.addNewTurnListener(contextPanel);
 
 		List<KIInformation> KIs = new ArrayList<KIInformation>();
 

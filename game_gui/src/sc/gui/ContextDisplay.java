@@ -10,8 +10,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import sc.guiplugin.interfaces.IObservation;
+import sc.guiplugin.interfaces.listener.INewTurnListener;
+import sc.protocol.clients.IUpdateListener;
+
 @SuppressWarnings("serial")
-public class ContextDisplay extends JPanel {
+public class ContextDisplay extends JPanel implements INewTurnListener {
 
 	private static final String PATH_ICON_CANCEL = "/sc/resource/cancel.png";
 	private static final String PATH_ICON_START = "/sc/resource/start.png";
@@ -39,7 +43,6 @@ public class ContextDisplay extends JPanel {
 	private JButton btn_next;
 	private JButton btn_cancel;
 	private boolean started;
-	private boolean playing;
 
 	public ContextDisplay() {
 		super();
@@ -93,24 +96,12 @@ public class ContextDisplay extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!started) {
-					presFac.getLogicFacade().getObservation().start();
-					// btn_spGame.setText(lang.getString("context_pause"));
-					btn_spGame.setIcon(ICON_PAUSE);
-					btn_cancel.setEnabled(true);
 					started = true;
-					playing = true;
-				} else if (playing) {
-					presFac.getLogicFacade().getObservation().pause();
-					// btn_spGame.setText(lang.getString("context_unpause"));
-					btn_spGame.setIcon(ICON_START);
-					btn_back.setEnabled(true);
-					playing = false;
-				} else {
+					presFac.getLogicFacade().getObservation().start();
+				} else if (presFac.getLogicFacade().getObservation().isPaused()) {
 					presFac.getLogicFacade().getObservation().unpause();
-					// btn_spGame.setText(lang.getString("context_pause"));
-					btn_spGame.setIcon(ICON_PAUSE);
-					btn_back.setEnabled(false);
-					playing = true;
+				} else {
+					presFac.getLogicFacade().getObservation().pause();
 				}
 			}
 		});
@@ -133,11 +124,8 @@ public class ContextDisplay extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (presFac.getLogicFacade().getObservation().hasNext()) {
+					btn_next.setEnabled(false);
 					presFac.getLogicFacade().getObservation().next();
-					btn_back.setEnabled(true);
-					if (!presFac.getLogicFacade().getObservation().hasNext()) {
-						btn_next.setEnabled(false);
-					}
 				}
 			}
 		});
@@ -178,4 +166,13 @@ public class ContextDisplay extends JPanel {
 		}
 	}
 
+	@Override
+	public void newTurn(int id, String info) {
+		IObservation obs = presFac.getLogicFacade().getObservation();
+		if (obs != null) {
+			btn_back.setEnabled(obs.hasPrevious());
+			btn_next.setEnabled(obs.hasNext());			
+			btn_spGame.setIcon(obs.isPaused() ? ICON_START : ICON_PAUSE);
+		}
+	}
 }

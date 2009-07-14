@@ -22,7 +22,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 			throws IOException
 	{
 		this(new ReplayClient(xStream, inputStream), null);
-		this.isReplay = true;
+		this.replay = true;
 		this.mode = PlayMode.PAUSED;
 		this.poller.start();
 	}
@@ -41,7 +41,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	private static final Logger			logger		= LoggerFactory
 															.getLogger(ObservingClient.class);
 
-	private boolean						isReplay	= false;
+	private boolean						replay		= false;
 
 	private boolean						gameOver	= false;
 
@@ -81,7 +81,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	private boolean isAffected(String roomId)
 	{
-		return this.isReplay || this.roomId.equals(roomId);
+		return this.replay || this.roomId.equals(roomId);
 	}
 
 	protected void notifyOnUpdate()
@@ -108,36 +108,56 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void next()
 	{
-		this.position = Math.min(this.position + 1, this.history.size() - 1);
+		this.changePosition(+1);
 	}
 
 	@Override
 	public void pause()
 	{
 		this.mode = PlayMode.PAUSED;
+		notifyOnUpdate();
 	}
 
 	@Override
 	public void previous()
 	{
-		if (this.mode == PlayMode.PLAYING)
+		if (!isPaused())
 		{
 			pause();
 		}
-		this.setPosition(Math.max(this.position - 1, 0));
+
+		this.changePosition(-1);
+	}
+
+	private void changePosition(int i)
+	{
+		this.setPosition(this.getPosition() + i);
+	}
+
+	private int getPosition()
+	{
+		return this.position;
 	}
 
 	@Override
 	public void unpause()
 	{
 		this.mode = PlayMode.PLAYING;
-		this.setPosition(this.history.size() - 1);
+		if (this.replay)
+		{
+			next();
+			// TODO: start a thread which increments automatically
+		}
+		else
+		{
+			this.setPosition(this.history.size() - 1);
+		}
 	}
 
 	private void setPosition(int i)
 	{
 		logger.debug("Setting Position to {}", i);
-		this.position = i;
+		this.position = Math.max(0, Math.min(this.history.size() - 1, i));
 		notifyOnUpdate();
 	}
 
@@ -153,7 +173,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	public boolean atEnd()
 	{
-		return this.position >= this.history.size() - 1;
+		return this.getPosition() >= this.history.size() - 1;
 	}
 
 	public List<Object> getHistory()
@@ -164,13 +184,13 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public boolean hasNext()
 	{
-		return (this.position + 1) < this.history.size();
+		return (this.getPosition() + 1) < this.history.size();
 	}
 
 	@Override
 	public boolean hasPrevious()
 	{
-		return this.position > 0;
+		return this.getPosition() > 0;
 	}
 
 	@Override

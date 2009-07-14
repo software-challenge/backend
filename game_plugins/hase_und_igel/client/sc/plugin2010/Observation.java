@@ -176,6 +176,11 @@ public class Observation implements IObservation, IUpdateListener
 						game.getActivePlayer()), game.getActivePlayer());
 
 			}
+
+			for (INewTurnListener turnListener : newTurnListeners)
+			{
+				turnListener.newTurn(0, "");
+			}
 		}
 	}
 
@@ -189,5 +194,11 @@ public class Observation implements IObservation, IUpdateListener
 	public boolean hasPrevious()
 	{
 		return conGame.hasPrevious();
+	}
+
+	@Override
+	public boolean isPaused()
+	{
+		return conGame.isPaused();
 	}
 }

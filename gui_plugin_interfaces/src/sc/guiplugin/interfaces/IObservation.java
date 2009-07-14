@@ -62,4 +62,6 @@ public interface IObservation {
 	void addGameEndedListener(IGameEndedListener listener);
 
 	void removeGameEndedListener(IGameEndedListener listener);
+
+	boolean isPaused();
 }

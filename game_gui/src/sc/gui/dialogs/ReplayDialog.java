@@ -141,6 +141,7 @@ public class ReplayDialog extends JDialog {
 		// load replay and set observation
 		try {
 			IObservation observation = selPlugin.getPlugin().loadReplay(filename);
+			observation.addNewTurnListener(contextPanel);
 			presFac.getLogicFacade().setObservation(observation);
 			contextPanel.updateButtonBar(false);
 			this.dispose();
