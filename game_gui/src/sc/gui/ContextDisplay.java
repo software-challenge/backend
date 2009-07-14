@@ -17,12 +17,12 @@ public class ContextDisplay extends JPanel {
 	private static final String PATH_ICON_START = "/sc/resource/start.png";
 	private static final String PATH_ICON_PAUSE = "/sc/resource/pause.png";
 
-	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class.getResource(
-			PATH_ICON_CANCEL));
-	private static final ImageIcon ICON_START = new ImageIcon(ContextDisplay.class.getResource(
-			PATH_ICON_START));
-	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class.getResource(
-			PATH_ICON_PAUSE));
+	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_CANCEL));
+	private static final ImageIcon ICON_START = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_START));
+	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_PAUSE));
 
 	private final PresentationFacade presFac;
 	private final ResourceBundle lang;
@@ -70,6 +70,9 @@ public class ContextDisplay extends JPanel {
 				if (presFac.getLogicFacade().getObservation().hasPrevious()) {
 					presFac.getLogicFacade().getObservation().back();
 					btn_next.setEnabled(true);
+					if (!presFac.getLogicFacade().getObservation().hasPrevious()) {
+						btn_back.setEnabled(false);
+					}
 				}
 			}
 		});
@@ -87,13 +90,13 @@ public class ContextDisplay extends JPanel {
 					playing = true;
 				} else if (playing) {
 					presFac.getLogicFacade().getObservation().pause();
-					//btn_spGame.setText(lang.getString("context_unpause"));
+					// btn_spGame.setText(lang.getString("context_unpause"));
 					btn_spGame.setIcon(ICON_START);
 					btn_back.setEnabled(true);
 					playing = false;
 				} else {
 					presFac.getLogicFacade().getObservation().unpause();
-					//btn_spGame.setText(lang.getString("context_pause"));
+					// btn_spGame.setText(lang.getString("context_pause"));
 					btn_spGame.setIcon(ICON_PAUSE);
 					btn_back.setEnabled(false);
 					playing = true;
@@ -110,7 +113,7 @@ public class ContextDisplay extends JPanel {
 				btn_cancel.setEnabled(false);
 				btn_spGame.setEnabled(false);
 				btn_next.setEnabled(false);
-				//btn_spGame.setText(lang.getString("context_start"));
+				// btn_spGame.setText(lang.getString("context_start"));
 				btn_spGame.setIcon(ICON_START);
 			}
 		});
@@ -121,6 +124,9 @@ public class ContextDisplay extends JPanel {
 				if (presFac.getLogicFacade().getObservation().hasNext()) {
 					presFac.getLogicFacade().getObservation().next();
 					btn_back.setEnabled(true);
+					if (!presFac.getLogicFacade().getObservation().hasNext()) {
+						btn_next.setEnabled(false);
+					}
 				}
 			}
 		});
