@@ -95,13 +95,14 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void removeListener(IUpdateListener u)
 	{
-		this.listeners.add(u);
+		this.listeners.remove(u);
 	}
 
 	@Override
 	public void addListener(IUpdateListener u)
 	{
-		this.listeners.remove(u);
+		this.listeners.add(u);
+		u.onUpdate(this);
 	}
 
 	@Override
