@@ -156,7 +156,8 @@ public class FieldButton extends JButton
 
 	public boolean needRepaint()
 	{
-		return (reachable || occupied);
+		// return (reachable || occupied);
+		return true;
 	}
 
 	class ClickListener extends MouseAdapter

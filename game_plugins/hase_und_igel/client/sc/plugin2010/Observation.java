@@ -109,6 +109,11 @@ public class Observation implements IObservation, IUpdateListener
 	public void start()
 	{
 		conGame.unpause();
+		if (RenderFacade.getInstance().getActivePlayer() != null)
+		{
+			RenderFacade.getInstance().switchToPlayer(
+					RenderFacade.getInstance().getActivePlayer());
+		}
 	}
 
 	@Override

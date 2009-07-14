@@ -28,6 +28,8 @@ public class RenderFacade
 	private IRenderer						player2;
 	private JPanel							panel;
 
+	private EPlayerId						activePlayer;
+
 	private String							connectString			= "connectingPanel";
 	private String							observerString			= "observerPanel";
 	private String							player1String			= "player1Panel";
@@ -73,6 +75,7 @@ public class RenderFacade
 		observer = null;
 		player1 = null;
 		player2 = null;
+		activePlayer = null;
 
 		if (panel != null)
 		{
@@ -279,9 +282,11 @@ public class RenderFacade
 		{
 			case PLAYER_ONE:
 				player1.requestMove();
+				setActivePlayer(id);
 				break;
 			case PLAYER_TWO:
 				player2.requestMove();
+				setActivePlayer(id);
 				break;
 			default:
 				break;
@@ -306,5 +311,15 @@ public class RenderFacade
 		{
 			player2.gameEnded(data);
 		}
+	}
+
+	private void setActivePlayer(EPlayerId activePlayer)
+	{
+		this.activePlayer = activePlayer;
+	}
+
+	public EPlayerId getActivePlayer()
+	{
+		return activePlayer;
 	}
 }
