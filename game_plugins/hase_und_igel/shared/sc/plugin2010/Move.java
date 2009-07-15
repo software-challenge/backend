@@ -7,7 +7,7 @@ import sc.plugin2010.Player.Action;
  * @since Jul 4, 2009
  * 
  */
-public final class Move
+public final class Move implements Cloneable
 {
 	/**
 	 * Die aus Hase- und Igel bekannten Aktionen, sowie die Erweiterungen der
@@ -101,5 +101,11 @@ public final class Move
 	{
 		return "type=" + this.getTyp() + ", card=" + getCard() + ", n="
 				+ getN();
+	}
+
+	@Override
+	protected Move clone() throws CloneNotSupportedException
+	{
+		return (Move) super.clone();
 	}
 }

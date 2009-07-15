@@ -12,6 +12,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
+import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
@@ -291,6 +292,12 @@ public class Game extends RoundBasedGameInstance<Player>
 
 		players.remove(player);
 		notifyOnGameOver(res);
+	}
+	
+	@Override
+	protected ActionTimeout getTimeoutFor(Player player)
+	{
+		return new ActionTimeout(false);
 	}
 
 	@Override	

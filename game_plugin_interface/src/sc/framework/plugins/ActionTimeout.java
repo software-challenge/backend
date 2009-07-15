@@ -101,7 +101,11 @@ public class ActionTimeout
 
 		this.stopTimestamp = System.currentTimeMillis();
 		this.status = Status.STOPPED;
-		this.timeoutThread.interrupt();
+		
+		if(this.timeoutThread != null)
+		{
+			this.timeoutThread.interrupt();			
+		}
 	}
 
 	public synchronized void start(final Runnable onTimeout)

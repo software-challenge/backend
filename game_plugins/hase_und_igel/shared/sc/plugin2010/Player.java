@@ -226,6 +226,10 @@ public class Player extends SimplePlayer implements Cloneable
 		try
 		{
 			ret = (Player) super.clone();
+			ret.history = new LinkedList<Move>();
+			ret.history.addAll(this.getHistory());
+			ret.actions = new LinkedList<Action>();
+			ret.actions.addAll(this.getActions());
 		}
 		catch (CloneNotSupportedException e)
 		{
