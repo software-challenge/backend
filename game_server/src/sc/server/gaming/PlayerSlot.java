@@ -10,6 +10,7 @@ public class PlayerSlot
 	private PlayerRole		role;
 	private final GameRoom	room;
 	private boolean			reserved;
+	private String			displayName;
 
 	public PlayerSlot(GameRoom room)
 	{
@@ -47,7 +48,7 @@ public class PlayerSlot
 		{
 			throw new IllegalStateException("Slot already reserved.");
 		}
-		else if(!isEmpty())
+		else if (!isEmpty())
 		{
 			throw new IllegalStateException("This slot is already occupied.");
 		}
@@ -88,5 +89,20 @@ public class PlayerSlot
 		}
 
 		this.reserved = false;
+	}
+
+	public void setDisplayName(String displayName)
+	{
+		this.displayName = displayName;
+	}
+	
+	public String getDisplayName()
+	{
+		if(this.displayName == null)
+		{
+			return "Unknown";
+		}
+		
+		return this.displayName;
 	}
 }

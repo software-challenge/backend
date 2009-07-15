@@ -62,14 +62,14 @@ public class GUIPluginFacade implements IGuiPlugin
 
 	@Override
 	public IGamePreparation prepareGame(final String ip, final int port,
-			int playerCount, String filename) throws IOException
+			int playerCount, String... displayNames) throws IOException
 	{
 		Client client = new Client(ip, port, EPlayerId.OBSERVER);
 		GUIGameHandler handler = new GUIGameHandler(client);
 		client.setHandler(handler);
 		RenderFacade.getInstance().createPanel(handler, "Spieler 1",
 				"Spieler 2", EPlayerId.OBSERVER);
-		return new GamePreparation(client, playerCount);
+		return new GamePreparation(client, playerCount, displayNames);
 	}
 
 	@Override

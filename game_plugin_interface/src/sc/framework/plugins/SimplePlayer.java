@@ -22,6 +22,8 @@ public abstract class SimplePlayer implements IPlayer
 	@XStreamOmitField
 	private List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 
+	private String	displayName;
+
 	@Override
 	public void addPlayerListener(IPlayerListener listener)
 	{
@@ -55,4 +57,16 @@ public abstract class SimplePlayer implements IPlayer
 	}
 
 	public abstract PlayerScore getScore();
+	
+	@Override
+	public final void setDisplayName(String displayName)
+	{
+		this.displayName = displayName;
+	}
+	
+	@Override
+	public final String getDisplayName()
+	{
+		return this.displayName;
+	}
 }

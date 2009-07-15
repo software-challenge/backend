@@ -24,12 +24,12 @@ public class GamePreparation implements IGamePreparation
 	private List<ISlot>	slots	= new LinkedList<ISlot>();
 	private Observation	obs;
 
-	public GamePreparation(Client client, int playerCount)
+	public GamePreparation(Client client, int playerCount, String... displayNames)
 	{
 		RequestResult<PrepareGameResponse> results = null;
 		try
 		{
-			results = client.prepareGameAndWait(playerCount);
+			results = client.prepareGameAndWait(playerCount, displayNames);
 		}
 		catch (InterruptedException e)
 		{

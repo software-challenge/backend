@@ -226,6 +226,7 @@ public class GameRoom implements IGameListener
 			// should't happen
 			throw new RuntimeException(e);
 		}
+		player.setDisplayName(openSlot.getDisplayName());
 		openSlot.setPlayer(player);
 		client.send(new JoinGameResponse(getId()));
 		startIfReady();
@@ -430,5 +431,13 @@ public class GameRoom implements IGameListener
 	{
 		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(
 				nextPlayer)));
+	}
+
+	public void setDisplayNames(List<String> displayNames)
+	{
+		for(int i=0; i<displayNames.size(); i++)
+		{
+			playerSlots.get(i).setDisplayName(displayNames.get(i));
+		}
 	}
 }

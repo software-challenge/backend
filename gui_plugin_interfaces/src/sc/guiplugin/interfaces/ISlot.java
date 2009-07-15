@@ -7,7 +7,7 @@ public interface ISlot {
 	/**
 	 * Reserves the slot for a human player.
 	 */
-	void asHuman(String[] playerNames) throws IOException;
+	void asHuman() throws IOException;
 
 	/**
 	 * Reserves the slot for a client.

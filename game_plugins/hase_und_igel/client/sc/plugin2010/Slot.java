@@ -34,7 +34,7 @@ public class Slot implements ISlot
 	}
 
 	@Override
-	public void asHuman(String[] playerNames) throws IOException
+	public void asHuman() throws IOException
 	{
 		Client humanClient;
 		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne())
@@ -52,13 +52,13 @@ public class Slot implements ISlot
 		humanClient.setHandler(handler);
 		if (humanClient.getID() == EPlayerId.PLAYER_ONE)
 		{
-			RenderFacade.getInstance().createPanel(handler, playerNames[0],
-					playerNames[1], humanClient.getID());
+			RenderFacade.getInstance().createPanel(handler, "",
+					"", humanClient.getID());
 		}
 		else
 		{
-			RenderFacade.getInstance().createPanel(handler, playerNames[1],
-					playerNames[0], humanClient.getID());
+			RenderFacade.getInstance().createPanel(handler, "",
+					"", humanClient.getID());
 		}
 		humanClient.joinPreparedGame(reservation);
 	}

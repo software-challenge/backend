@@ -231,10 +231,10 @@ public class Client implements ILobbyClientListener
 		// not needed
 	}
 
-	public RequestResult<PrepareGameResponse> prepareGameAndWait(int playerCount)
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(int playerCount, String... displayNames)
 			throws InterruptedException
 	{
-		return client.prepareGameAndWait(gameType, playerCount);
+		return client.prepareGameAndWait(gameType, playerCount, displayNames);
 	}
 
 	public String getHost()

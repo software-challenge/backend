@@ -153,12 +153,13 @@ public class GameRoomManager implements Runnable
 	{
 		return this.pluginApi;
 	}
-
-	public synchronized PrepareGameResponse prepareGame(String gameType, int playerCount)
+	
+	public synchronized PrepareGameResponse prepareGame(String gameType, int playerCount, List<String> displayNames)
 			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
 		room.setSize(playerCount);
+		room.setDisplayNames(displayNames);
 		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 

@@ -41,12 +41,11 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * 
 	 * @param ip
 	 * @param port
-	 * @param replayFilename
 	 * @return
 	 * @throws IOException
 	 */
 	public IGamePreparation prepareGame(final String ip, final int port,
-			int playerCount, String filename) throws IOException;
+			int playerCount, String... displayNames) throws IOException;
 
 	/**
 	 * Loads the replay given by <code>filename</code>.

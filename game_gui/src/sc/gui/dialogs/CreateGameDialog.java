@@ -237,13 +237,10 @@ public class CreateGameDialog extends JDialog {
 
 		int playerCount = model.getRowCount();
 
-		// prepare game
-		String replayFilename = String.valueOf(new Date().getTime())
-				+ ILogicFacade.EXT_REPLAY;
 		IGamePreparation prep;
 		try {
 			prep = selPlugin.getPlugin().prepareGame(ip, port, playerCount,
-					replayFilename);
+					"Spieler 1", "Spieler 2");
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_create_error_network_msg"), lang
@@ -298,9 +295,7 @@ public class CreateGameDialog extends JDialog {
 			switch (index) {
 			case 0:
 				try {
-					String[] players = { "Player 1", "Player 2" };
-					slot.asHuman(players); // TODO ffi: change to
-					// right player name
+					slot.asHuman();
 				} catch (IOException e) {
 					e.printStackTrace();
 					cancelGameCreation(observer);

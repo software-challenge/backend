@@ -7,4 +7,6 @@ public interface IPlayer
 {
 	public void addPlayerListener(IPlayerListener listener);
 	public void removePlayerListener(IPlayerListener listener);
+	public void setDisplayName(String displayName);
+	public String getDisplayName();
 }
