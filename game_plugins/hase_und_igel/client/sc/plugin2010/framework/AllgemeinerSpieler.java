@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.framework;
 
 import java.util.LinkedList;
@@ -45,6 +42,13 @@ public abstract class AllgemeinerSpieler
 		return player.getSaladsToEat();
 	}
 
+	/**
+	 * Hat der Spieler einen Hasenjoker vom Typ <code>joker</code> auf der Hand?
+	 * 
+	 * @param joker
+	 *            Auf welchen Typ von Hasenjoker geprüft werden soll.
+	 * @return true, wenn ja hat er, sonst nein
+	 */
 	public boolean hatHasenjokerTyp(Hasenjoker joker)
 	{
 		Action type;
@@ -88,18 +92,31 @@ public abstract class AllgemeinerSpieler
 	/**
 	 * Holt das aktuelle Feld auf welchem der Spieler steht.
 	 * 
-	 * @return Feldnummer zwischen 0 und 65
+	 * @return Feldnummer zwischen 0 und 64
 	 */
 	public int holeFeldnummer()
 	{
 		return player.getFieldNumber();
 	}
 
+	/**
+	 * Holt den letzten Zug des Spielers. Hier ist Achtung geboten, da ein Zug,
+	 * dass alleinige Spielen eines Hasenjokers umfassen kann. Für die gesamten
+	 * Züge in der Runde müssen die Informationen aus
+	 * <code>holeZugHistorie</code> extrahiert werden.
+	 * 
+	 * @return der letzte Zug des Spielers
+	 */
 	public Zug holeLetztenZug()
 	{
 		return Werkzeuge.convertMove(player.getLastMove());
 	}
 
+	/**
+	 * Holt die Zug Historie des gesamten Spiels des Spielers.
+	 * 
+	 * @return Zug Historie des Spielers
+	 */
 	public List<Zug> holeZugHistorie()
 	{
 		List<Zug> res = new LinkedList<Zug>();
@@ -146,13 +163,21 @@ public abstract class AllgemeinerSpieler
 	}
 
 	/**
-	 * @param pu
+	 * Updated das interne Player Objekt und somit den Spieler
+	 * 
+	 * @param player
+	 *            neue Player instanz
 	 */
 	protected void update(Player player)
 	{
 		this.player = player;
 	}
 
+	/**
+	 * Holt das interne Player Objekt
+	 * 
+	 * @return die aktuelle Playerinstanz
+	 */
 	protected Player getPlayer()
 	{
 		return player;

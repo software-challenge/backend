@@ -76,6 +76,7 @@ public class RenderFacade
 		player1 = null;
 		player2 = null;
 		activePlayer = null;
+		alreadyCreatedPlayerOne = false;
 
 		if (panel != null)
 		{
@@ -133,21 +134,23 @@ public class RenderFacade
 	{
 		if (threeDimensional)
 		{
-			if (target == EPlayerId.OBSERVER)
+			switch (target)
 			{
-				observer = new ThreeDimRenderer(handler, true);
-				panel.add((ThreeDimRenderer) observer, observerString);
-			}
-			else if (target == EPlayerId.PLAYER_ONE)
-			{
-				player1 = new ThreeDimRenderer(handler, false);
-				panel.add((ThreeDimRenderer) player1, player1String);
-				setAlreadyCreatedPlayerOne(true);
-			}
-			else if (target == EPlayerId.PLAYER_TWO)
-			{
-				player2 = new ThreeDimRenderer(handler, false);
-				panel.add((ThreeDimRenderer) player2, player2String);
+				case OBSERVER:
+					observer = new ThreeDimRenderer(handler, true);
+					panel.add((ThreeDimRenderer) observer, observerString);
+					break;
+				case PLAYER_ONE:
+					player1 = new ThreeDimRenderer(handler, false);
+					panel.add((ThreeDimRenderer) player1, player1String);
+					setAlreadyCreatedPlayerOne(true);
+					break;
+				case PLAYER_TWO:
+					player2 = new ThreeDimRenderer(handler, false);
+					panel.add((ThreeDimRenderer) player2, player2String);
+					break;
+				default:
+					break;
 			}
 		}
 		else
@@ -174,17 +177,20 @@ public class RenderFacade
 	public void updatePlayer(final Player myplayer, final Player otherPlayer,
 			final EPlayerId target)
 	{
-		if (target == EPlayerId.OBSERVER)
+
+		switch (target)
 		{
-			observer.updatePlayer(myplayer, otherPlayer);
-		}
-		else if (target == EPlayerId.PLAYER_ONE)
-		{
-			player1.updatePlayer(myplayer, otherPlayer);
-		}
-		else if (target == EPlayerId.PLAYER_TWO)
-		{
-			player2.updatePlayer(myplayer, otherPlayer);
+			case OBSERVER:
+				observer.updatePlayer(myplayer, otherPlayer);
+				break;
+			case PLAYER_ONE:
+				player1.updatePlayer(myplayer, otherPlayer);
+				break;
+			case PLAYER_TWO:
+				player2.updatePlayer(myplayer, otherPlayer);
+				break;
+			default:
+				break;
 		}
 	}
 

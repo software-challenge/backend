@@ -3,11 +3,15 @@ package sc.plugin2010.framework;
 import sc.plugin2010.Board;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
+import sc.plugin2010.Player;
 import sc.plugin2010.Player.Action;
 
 /**
- * Eine Werkzeug Klasse, um nützliche und häufig gebrauchte Funktionen zur
- * Verfügung zu stellen
+ * Eine Werkzeug-Klasse, um nützliche und häufig gebrauchte Funktionen zur
+ * Verfügung zu stellen.
+ * 
+ * @author ffi
+ * 
  */
 public class Werkzeuge
 {
@@ -37,17 +41,46 @@ public class Werkzeuge
 		return GameUtil.calculateMoveableFields(karotten);
 	}
 
+	/**
+	 * Ist es valide, dass der Spieler <code>spieler</code> einen Salat fressen
+	 * darf?
+	 * 
+	 * @param brett
+	 *            aktuelles Spielbrett
+	 * @param spieler
+	 *            zu prüfender Spieler
+	 * @return true, falls er dies darf, sonst false
+	 */
 	public static boolean istValideSalatFressen(Spielbrett brett,
 			Spieler spieler)
 	{
 		return GameUtil.isValidToEat(brett.getBoard(), spieler.getPlayer());
 	}
 
+	/**
+	 * Ist es valide, dass der Spieler <code>spieler</code> aussetzen muss?
+	 * 
+	 * @param brett
+	 *            aktuelles Spielbrett
+	 * @param spieler
+	 *            zu prüfender Spieler
+	 * @return true, falls er dies MUSS, sonst false
+	 */
 	public static boolean istValideAussetzen(Spielbrett brett, Spieler spieler)
 	{
 		return GameUtil.isValidToSkip(brett.getBoard(), spieler.getPlayer());
 	}
 
+	/**
+	 * Ist es valide, dass der Spieler <code>spieler</code> auf den letzten Igel
+	 * zurückfallen darf?
+	 * 
+	 * @param brett
+	 *            aktuelles Spielbrett
+	 * @param spieler
+	 *            zu prüfender Spieler
+	 * @return true, falls er dies darf, sonst false
+	 */
 	public static boolean istValideIgelZurueckfallen(Spielbrett brett,
 			Spieler spieler)
 	{
@@ -55,6 +88,18 @@ public class Werkzeuge
 				.isValidToFallBack(brett.getBoard(), spieler.getPlayer());
 	}
 
+	/**
+	 * Ist es valide, dass der Spieler <code>spieler</code> auf das Feld mit der
+	 * Nummer <code>feldNummer</code> ziehen darf darf?
+	 * 
+	 * @param brett
+	 *            aktuelles Spielbrett
+	 * @param spieler
+	 *            zu prüfender Spieler
+	 * @param feldAnzahl
+	 *            absolute Feldnummer auf welche der Spieler ziehen möchte
+	 * @return true, falls er dies darf, sonst false
+	 */
 	public static boolean istValideFeldZiehen(Spielbrett brett,
 			Spieler spieler, int feldAnzahl)
 	{
@@ -149,6 +194,15 @@ public class Werkzeuge
 				spieler.getPlayer(), type, karottenAnzahl);
 	}
 
+	/**
+	 * Muss der Spieler sich bewegen? Zum Beispiel nach einem Salatfressen.
+	 * 
+	 * @param brett
+	 *            das aktuelle Spielbrett
+	 * @param spieler
+	 *            der zu prüfende Spieler
+	 * @return true, wenn er sich bewegen muss, sonst false
+	 */
 	public static boolean mussSpielerSichBewegen(Spielbrett brett,
 			Spieler spieler)
 	{
@@ -177,15 +231,36 @@ public class Werkzeuge
 				case FRISS_SALAT:
 					result = new Move(Move.MoveTyp.EAT);
 					break;
-				case ZIEHE_VORWAERTS:
+				case SETZE_FIGUR:
 					result = new Move(Move.MoveTyp.MOVE, zug.holeN());
 					break;
 				case NIMM_ODER_GIB_KAROTTEN:
 					result = new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, zug
 							.holeN());
 					break;
-				case SPIELE_HASENJOKER: // TODO
-					result = new Move(Move.MoveTyp.PLAY_CARD, zug.holeN());
+				case SPIELE_HASENJOKER:
+					switch (zug.holeJoker())
+					{
+						case FALLE_ZURUECK:
+							result = new Move(Move.MoveTyp.PLAY_CARD,
+									Player.Action.FALL_BACK);
+							break;
+						case FRISS_SALAT:
+							result = new Move(Move.MoveTyp.PLAY_CARD,
+									Player.Action.EAT_SALAD);
+							break;
+						case NIMM_ODER_GIB_20_KAROTTEN:
+							result = new Move(Move.MoveTyp.PLAY_CARD,
+									Player.Action.TAKE_OR_DROP_CARROTS, zug
+											.holeN());
+							break;
+						case RUECKE_VOR:
+							result = new Move(Move.MoveTyp.PLAY_CARD,
+									Player.Action.HURRY_AHEAD);
+							break;
+						default:
+							break;
+					}
 					break;
 				default:
 					break;
@@ -217,10 +292,27 @@ public class Werkzeuge
 					result = new Zug(Zugtyp.NIMM_ODER_GIB_KAROTTEN);
 					break;
 				case MOVE:
-					result = new Zug(Zugtyp.ZIEHE_VORWAERTS, move.getN());
+					result = new Zug(Zugtyp.SETZE_FIGUR, move.getN());
 					break;
-				case PLAY_CARD: // TODO
-					result = new Zug(Zugtyp.SPIELE_HASENJOKER, move.getN());
+				case PLAY_CARD:
+					switch (move.getCard())
+					{
+						case EAT_SALAD:
+							result = new Zug(Zugtyp.SPIELE_HASENJOKER,
+									Hasenjoker.FRISS_SALAT);
+							break;
+						case FALL_BACK:
+							result = new Zug(Zugtyp.SPIELE_HASENJOKER,
+									Hasenjoker.FALLE_ZURUECK);
+							break;
+						case HURRY_AHEAD:
+							result = new Zug(Zugtyp.SPIELE_HASENJOKER,
+									Hasenjoker.RUECKE_VOR, move.getN());
+							break;
+						default:
+							break;
+					}
+
 					break;
 				default:
 					break;
@@ -230,10 +322,14 @@ public class Werkzeuge
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param typ
+	 * @return
+	 */
 	protected static Board.FieldTyp convertSpielfeldtyp(Spielfeldtyp typ)
 	{
 		switch (typ)
-		// TODO
 		{
 			case SALAT:
 				return Board.FieldTyp.SALAD;
@@ -258,6 +354,11 @@ public class Werkzeuge
 		}
 	}
 
+	/**
+	 * 
+	 * @param typ
+	 * @return
+	 */
 	protected static Spielfeldtyp convertFieldtype(Board.FieldTyp typ)
 	{
 		switch (typ)

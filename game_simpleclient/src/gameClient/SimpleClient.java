@@ -133,9 +133,11 @@ public class SimpleClient extends SpielClient
 
 			int feldNummer = -1;
 
-			// TODO setze ins Ziel
-
-			// TODO vereinfache das suchen nach Typ + setzen + istValide
+			if (Werkzeuge.istValideFeldZiehen(spielbrett, eigenerSpieler, 64))
+			{
+				eigenerSpieler.setzeFigur(64);
+				zugGemacht = true;
+			}
 
 			// Suche nach dem nächsten Salat
 			feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(

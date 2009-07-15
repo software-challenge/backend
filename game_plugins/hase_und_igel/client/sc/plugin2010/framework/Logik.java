@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
@@ -11,6 +8,9 @@ import sc.plugin2010.Player;
 import sc.shared.GameResult;
 
 /**
+ * Die Logik Klasse, welche zum Weiterleiten der von Netzwerk empfangenen
+ * Nachrichten dient.
+ * 
  * @author ffi
  * 
  */

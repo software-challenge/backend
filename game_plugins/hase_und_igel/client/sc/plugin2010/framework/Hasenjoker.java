@@ -1,12 +1,9 @@
-/**
- * 
- */
 package sc.plugin2010.framework;
 
 /**
  * 
  * 
- * die Hasenjoker, welche man am Anfang bekommt
+ * Die Hasenjoker, welche man am Anfang bekommt.
  * 
  * @author ffi
  * 

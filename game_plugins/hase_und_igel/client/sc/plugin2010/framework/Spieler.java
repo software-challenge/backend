@@ -1,12 +1,12 @@
-/**
- * 
- */
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 
 /**
+ * Repräsentiert den Spieler in Hase und Igel. Hier wird nach dem "Kara-Prinzip"
+ * vorgegangen.
+ * 
  * @author ffi
  * 
  */
@@ -19,6 +19,18 @@ public class Spieler extends AllgemeinerSpieler
 
 	}
 
+	/**
+	 * Spielt den Hasenjoker <code>joker</code>. Mit der
+	 * <code>karottenAnzahl</code> wird bei NIMM_ODER_GIB_20_KAROTTEN
+	 * beschreiben, welche Aktion genau gemacht werden soll
+	 * 
+	 * @param joker
+	 *            der zu spielende Hasenjoker
+	 * @param karottenAnzahl
+	 *            Nur bei NIMM_ODER_GIB_20_KAROTTEN entscheidet: Wenn 20 dann
+	 *            nimm 20 Karotten, wenn -20 dann gib 20 Karotten ab und bei 0
+	 *            mache keine Aktion.
+	 */
 	public void spieleHasenjoker(Hasenjoker joker, int karottenAnzahl)
 	{
 		switch (joker)
@@ -44,19 +56,33 @@ public class Spieler extends AllgemeinerSpieler
 		}
 	}
 
+	/**
+	 * Spielt den Hasenjoker <code>joker</code>.
+	 * 
+	 * @param joker
+	 *            der zu spielende Hasenjoker
+	 */
 	public void spieleHasenjoker(Hasenjoker joker)
 	{
 		spieleHasenjoker(joker, 0);
 	}
 
 	/**
-	 * 
+	 * Manchmal ist es nur noch möglich auszusetzen. Dann setze hiermit aus.
+	 * ACHTUNG: Aussetzen ist nur erlaubt, wenn kein anderer Zug mehr möglich
+	 * ist.
 	 */
 	public void setzeAus()
 	{
 		logik.sendAction(new Move(Move.MoveTyp.SKIP));
 	}
 
+	/**
+	 * Setzt den Spieler auf das Feld <code>feldNummer</code>.
+	 * 
+	 * @param feldNummer
+	 *            die absolute Feldnummer des Zielfeldes
+	 */
 	public void setzeFigur(final int feldNummer)
 	{
 		if (feldNummer < 0 && feldNummer > 64)
@@ -68,30 +94,45 @@ public class Spieler extends AllgemeinerSpieler
 				- holeFeldnummer()));
 	}
 
+	/**
+	 * Frisst einen Salat.
+	 */
 	public void frissSalat()
 	{
 		logik.sendAction(new Move(Move.MoveTyp.EAT));
 	}
 
+	/**
+	 * Setzt den Spieler auf den letzten Igel zurück. Dabei kriegt der Spieler
+	 * x*10 Karotten für x Felder zurück.
+	 */
 	public void zurueckAufLetztenIgel()
 	{
 		logik.sendAction(new Move(Move.MoveTyp.FALL_BACK));
 	}
 
+	/**
+	 * Gibt auf einem Karottenfeld 10 Karotten ab.
+	 */
 	public void gibKarottenAb()
 	{
 		logik.sendAction(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, -10));
 	}
 
+	/**
+	 * Nimmt auf einem Karottenfeld 10 Karotten.
+	 */
 	public void nimmKarotten()
 	{
 		logik.sendAction(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, 10));
 	}
 
 	/**
-	 * Die nicht Kara-Variante. Für erfahrenere Schüler.
+	 * Die nicht "Kara"-Variante. Für erfahrenere Schüler. Dies ist eine
+	 * Alternative zu den Methoden "nimmKarotten" etc.
 	 * 
 	 * @param zug
+	 *            der zu machende Zug
 	 */
 	public void sendeZug(Zug zug)
 	{
@@ -104,6 +145,8 @@ public class Spieler extends AllgemeinerSpieler
 	}
 
 	/**
+	 * setzt den Logikhandler
+	 * 
 	 * @param logik
 	 */
 	protected void setLogik(Logik logik)

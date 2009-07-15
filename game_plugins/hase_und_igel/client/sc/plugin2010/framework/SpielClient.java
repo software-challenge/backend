@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2010.framework;
 
 import java.io.IOException;
@@ -12,6 +9,8 @@ import sc.plugin2010.Player;
 import sc.protocol.LobbyClient;
 
 /**
+ * Diese Klasse übernimmt das initalisieren des Spieles und des Netzwerkclients.
+ * 
  * @author ffi
  * 
  */
@@ -19,14 +18,26 @@ public abstract class SpielClient implements IGameUpdateObserver
 {
 	private Spielbrett	spielbrett;
 	private Spieler		spieler;
-	private Spieler		gegner;	// TODO kara wegkapseln?
+	private Spieler		gegner;
 	private Logik		logik;
 
-	public SpielClient(String ip, int port, String spielreservierung)
+	/**
+	 * Startet Netzwerkclient und setzt benötigte Referenzen und Klassen
+	 * 
+	 * @param host
+	 *            der Zielhost auf dem der Server läuft. Typischerweise
+	 *            localhost
+	 * @param port
+	 *            der Zielport auf dem der Server hört.
+	 * @param spielreservierung
+	 *            Falls eine Spielreservierung besteht, dann tritt diesem Spiel
+	 *            bei
+	 */
+	public SpielClient(String host, int port, String spielreservierung)
 	{
-		if (ip == null || ip.isEmpty())
+		if (host == null || host.isEmpty())
 		{
-			ip = LobbyClient.DEFAULT_HOST;
+			host = LobbyClient.DEFAULT_HOST;
 		}
 
 		if (port == 0)
@@ -37,7 +48,7 @@ public abstract class SpielClient implements IGameUpdateObserver
 		try
 		{
 			// verbinde beim starten
-			Client client = new Client(ip, port, EPlayerId.PLAYER_ONE);
+			Client client = new Client(host, port, EPlayerId.PLAYER_ONE);
 			logik = new Logik(this, client);
 			client.setHandler(logik);
 
@@ -70,7 +81,10 @@ public abstract class SpielClient implements IGameUpdateObserver
 	}
 
 	/**
+	 * Setzt die Gegner Referenz für das Spiel
+	 * 
 	 * @param gegner
+	 *            der andere Spieler
 	 */
 	public void setzeGegner(Spieler gegner)
 	{
@@ -78,7 +92,10 @@ public abstract class SpielClient implements IGameUpdateObserver
 	}
 
 	/**
+	 * Setzt die Spieler Referenz für das Spiel
+	 * 
 	 * @param spieler
+	 *            der eigene Spieler
 	 */
 	public void setzeSpieler(Spieler spieler)
 	{
@@ -87,7 +104,10 @@ public abstract class SpielClient implements IGameUpdateObserver
 	}
 
 	/**
+	 * Setzt die Spielbrett Referenz für das Spiel
+	 * 
 	 * @param spielbrett
+	 *            das Spielbrett
 	 */
 	public void setzeSpielbrett(Spielbrett spielbrett)
 	{
