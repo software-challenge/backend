@@ -84,4 +84,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		return this.players.size() == TestPlugin.MAXIMUM_PLAYER_SIZE;
 	}
+
+	@Override
+	protected void onNewTurn()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
