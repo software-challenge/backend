@@ -68,4 +68,11 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	{
 		return this.players.size() == GamePluginImpl.MAXIMUM_PLAYER_SIZE;
 	}
+
+	@Override
+	protected void onNewTurn()
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }
