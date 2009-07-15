@@ -221,18 +221,24 @@ public class Game extends RoundBasedGameInstance<Player>
 				break;
 		}
 		final Player nextPlayer = this.players.get(activePlayerId);
-		if (!nextPlayer.equals(active))
+		next(nextPlayer);
+	}
+
+	@Override
+	protected boolean increaseTurnIfNecessary(Player nextPlayer)
+	{
+		if (!nextPlayer.equals(getActivePlayer()))
 		{
 			playerToggles++;
 			if (playerToggles >= GamePlugin.MAX_PLAYER_COUNT)
 			{
 				playerToggles = 0;
-				turn++;
+				return true;
 			}
 		}
-		next(nextPlayer);
+		return false;
 	}
-
+	
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{

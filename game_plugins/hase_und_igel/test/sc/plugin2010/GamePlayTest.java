@@ -328,19 +328,23 @@ public class GamePlayTest
 	{
 		int hedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0);
 
+		// direkter zug
 		Move m1 = new Move(MoveTyp.MOVE, hedgehog);
 		Assert.assertEquals(false, b.isValid(m1, red));
 
 		blue.setFieldNumber(hedgehog + 1);
-		red.setFieldNumber(hedgehog + 2);
-
-		Move m2 = new Move(MoveTyp.FALL_BACK);
+		int rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, blue.getFieldNumber());
+		red.setFieldNumber(rabbit);
+		
+		// mit fallback
+		Move m2 = new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK);
 		Assert.assertEquals(false, b.isValid(m2, red));
 
 		blue.setFieldNumber(hedgehog - 1);
-		int rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
+		rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
 		red.setFieldNumber(rabbit);
 
+		// mit hurry ahead
 		Move m3 = new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD);
 		Assert.assertEquals(false, b.isValid(m3, red));
 	}
