@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema elementFormDefault="qualified" version="1.0"
+	targetNamespace="http://se.informatik.uni-kiel.de/BASETorrent"
+	xmlns:tns="http://se.informatik.uni-kiel.de/BASETorrent"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<xs:element name="deleteBackup" type="tns:deleteBackupMessage" />
+
+	<xs:element name="find" type="tns:findMessage" />
+
+	<xs:element name="get" type="tns:getMessage" />
+
+	<xs:element name="listBackups" type="tns:listBackupsMessage" />
+
+	<xs:element name="meta" type="tns:metaMessage" />
+
+	<xs:element name="status" type="tns:statusMessage" />
+
+	<xs:element name="store" type="tns:storeMessage" />
+
+	<!-- vllt reicht auch ein Element fuer Beides, so ists uebersichtlicher -->
+	<xs:element name="checkPartsReq" type="tns:checkParts" />
+	<xs:element name="checkPartsResp" type="tns:checkParts" />
+
+	<!-- einziges nicht-Nachricht-Wurzelelement -->
+	<!-- zu verschlüsselnde und in encryptedMeta einzupackende Daten -->
+	<xs:element name="backupMeta" type="tns:backupMeta" />
+
+	<!-- Wrapper für Nachrichten, z.B. falls timestamping/TTL/etc gewünscht -->
+	<xs:complexType name="message" abstract="true">
+		<xs:sequence>
+			<xs:element name="node" type="tns:node" />
+			<xs:element name="reqId" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Alles was mit einem konkreten Part zu tun hat -->
+	<xs:complexType name="partMessage" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="tns:message">
+				<xs:sequence>
+					<xs:element name="partHash" type="xs:base64Binary" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Part runterladen -> ServerSocket an tcpPort offen -->
+	<xs:complexType name="getMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:partMessage">
+				<xs:sequence>
+					<xs:element name="tcpPort" type="tns:portType" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Part hochladen, sowohl Backup als auch Share -->
+	<xs:complexType name="storeMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:partMessage">
+				<xs:sequence>
+					<xs:choice>
+						<xs:element name="encryptedMeta"
+							type="tns:encryptedMeta" />
+						<xs:element name="shareMeta"
+							type="tns:shareMeta" />
+					</xs:choice>
+					<xs:element name="tcpPort" type="tns:portType" />
+					<xs:element name="size" type="xs:unsignedInt" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Löschen eines Backupparts -> Veröffentlichen des Challenge-Secrets  -->
+	<xs:complexType name="deleteBackupMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:partMessage">
+				<xs:sequence>
+					<xs:element name="secret" type="xs:string" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Parts finden per Schlüsselwörter -->
+	<xs:complexType name="findMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:message">
+				<xs:sequence>
+					<xs:element name="keywords" type="tns:keywordsType" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Eigene Backups auflisten -->
+	<xs:complexType name="listBackupsMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:message">
+				<xs:sequence>
+					<xs:element name="author" type="xs:string" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Antwort auf Partinfoanfragen mit Metadaten -->
+	<xs:complexType name="metaMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:partMessage">
+				<xs:sequence>
+					<xs:choice>
+						<xs:element name="encryptedMeta"
+							type="tns:encryptedMeta" />
+						<xs:element name="shareMeta"
+							type="tns:shareMeta" />
+					</xs:choice>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Alle Parts haben Author im Klartext -->
+	<xs:complexType name="metaData" abstract="true">
+		<xs:sequence>
+			<xs:element name="author" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- Alles, was eine Datei beschreibt -->
+	<xs:complexType name="fileMeta">
+		<xs:complexContent>
+			<xs:extension base="tns:metaData">
+				<xs:sequence>
+					<xs:element name="title" type="xs:string" />
+					<xs:element name="partNumber"
+						type="xs:positiveInteger" />
+					<xs:element name="partCount"
+						type="xs:positiveInteger" />
+					<xs:element name="timeStamp" type="xs:dateTime" />
+					<xs:element name="fileHash" type="xs:base64Binary" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Infos über veröffentlichte Parts -->
+	<xs:complexType name="shareMeta">
+		<xs:complexContent>
+			<xs:extension base="tns:fileMeta">
+				<xs:sequence>
+					<xs:element name="keywords" type="tns:keywordsType" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Infos über Backups -->
+	<xs:complexType name="backupMeta">
+		<xs:complexContent>
+			<xs:extension base="tns:fileMeta">
+				<xs:sequence>
+					<xs:element name="secret" type="xs:string" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Alles verschlüsselt -->
+	<xs:complexType name="encryptedMeta">
+		<xs:complexContent>
+			<xs:extension base="tns:metaData">
+				<xs:sequence>
+					<!-- delete-Challenge -->
+					<xs:element name="encAuthor" type="xs:base64Binary" />
+					<!-- eigentliche Metadaten -->
+					<xs:element name="encMeta" type="xs:base64Binary" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="keywordsType">
+		<xs:list itemType="xs:string" />
+	</xs:simpleType>
+
+	<!-- Hello, Listupdate, Ping/Pong -->
+	<xs:complexType name="statusMessage">
+		<xs:complexContent>
+			<xs:extension base="tns:message">
+				<xs:sequence>
+					<xs:element name="nodeList">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="node"
+									type="tns:nodeInfo" minOccurs="0" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Nodeidentifikation -->
+	<xs:complexType name="node">
+		<xs:sequence>
+			<xs:element name="ip" type="xs:string" />
+			<xs:element name="port" type="tns:portType" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- voller Nodedatensatz -->
+	<xs:complexType name="nodeInfo">
+		<xs:complexContent>
+			<xs:extension base="tns:node">
+				<xs:sequence>
+					<xs:element name="freeMb" type="xs:int" />
+					<xs:element name="totalMb" type="xs:int" />
+					<xs:element name="lastActivity" type="xs:int" /> <!-- Sekunden seit letztem Kontakt -->
+					<!-- eher UNIX-TS? sonst müsste ja im Sekundentakt aktualisiert werden... -->
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:simpleType name="portType">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="65535" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Sender polled seine Liste von Parts, Empfaenger antwortet mit Schnittmenge -->
+	<xs:complexType name="checkParts">
+		<xs:complexContent>
+			<xs:extension base="tns:message">
+				<xs:sequence>
+					<xs:element name="partList">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="partHash"
+									type="xs:base64Binary" minOccurs="1" maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+</xs:schema>

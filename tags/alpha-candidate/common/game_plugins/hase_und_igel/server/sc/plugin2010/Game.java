@@ -1,0 +1,326 @@
+package sc.plugin2010;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.api.plugins.IPlayer;
+import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.IGameListener;
+import sc.framework.plugins.ActionTimeout;
+import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin2010.Board.FieldTyp;
+import sc.plugin2010.Move.MoveTyp;
+import sc.plugin2010.Player.Action;
+import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.Player.Position;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
+
+/**
+ * Die Spiellogik von Hase- und Igel.
+ * 
+ * Die Spieler spielen in genau der Reihenfolge in der sie das Spiel betreten
+ * haben.
+ * 
+ * @author rra
+ * @since Jul 4, 2009
+ * 
+ */
+public class Game extends RoundBasedGameInstance<Player>
+{
+	private static Logger		logger			= LoggerFactory
+														.getLogger(Game.class);
+
+	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
+	private Board				board			= Board.create();
+
+	public Board getBoard()
+	{
+		return board;
+	}
+
+	public Player getActivePlayer()
+	{
+		return activePlayer;
+	}
+
+	public Game()
+	{
+		availableColors.addAll(Arrays.asList(FigureColor.values()));
+	}
+
+	@Override
+	protected boolean checkGameOverCondition()
+	{
+		boolean gameOver = getTurn() >= GamePlugin.MAX_TURN_COUNT;
+
+		for (final Player p : players)
+		{
+			gameOver = gameOver || p.inGoal();
+		}
+
+		return gameOver;
+	}
+
+	@Override
+	protected Object getCurrentState()
+	{
+		return new GameState(this);
+	}
+
+	@Override
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+			throws RescueableClientException
+	{
+		final Player author = (Player) fromPlayer;
+		if (data instanceof Move)
+		{
+			final Move move = (Move) data;
+
+			if (board.isValid(move, author))
+			{
+				update(move, author);
+				author.addToHistory(move);
+			}
+			else
+			{
+				logger.warn("Ungültiger Zug {} von Spieler '{}'", move, author
+						.getColor());
+
+				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
+
+				for (final Player p : players)
+				{
+					PlayerScore score = p.getScore();
+					score.setCause(ScoreCause.RULE_VIOLATION);
+					score.set(0, (p == fromPlayer) ? 0 : 1);
+					res.put(p, score);
+				}
+
+				notifyOnGameOver(res);
+			}
+
+			next();
+		}
+		else
+		{
+			logger.warn("Ungültige Aktion {} von Spieler '{}'",
+					data.getClass(), author.getColor());
+		}
+	}
+
+	private void update(Move move, Player player)
+	{
+		switch (move.getTyp())
+		{
+			case TAKE_OR_DROP_CARROTS:
+				player.changeCarrotsAvailableBy(move.getN());
+				break;
+			case EAT:
+				player.eatSalad();
+				if (board.isFirst(player))
+				{
+					player
+							.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_SALAD);
+				}
+				else
+				{
+					player
+							.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_SALAD);
+				}
+				break;
+			case MOVE:
+				player.setFieldNumber(player.getFieldNumber() + move.getN());
+				player.changeCarrotsAvailableBy(-GameUtil.calculateCarrots(move
+						.getN()));
+				break;
+			case FALL_BACK:
+			{
+				int nextField = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
+						player.getFieldNumber());
+				int diff = player.getFieldNumber() - nextField;
+				player.changeCarrotsAvailableBy(diff
+						* GameUtil.HEDGEHOG_CARROT_MULTIPLIER);
+				player.setFieldNumber(nextField);
+				break;
+			}
+			case PLAY_CARD:
+			{
+				final Action action = move.getCard();
+				List<Action> remaining = player.getActions();
+				remaining.remove(action);
+				player.setActions(remaining);
+
+				switch (action)
+				{
+					case EAT_SALAD:
+						player.eatSalad();
+						if (board.isFirst(player))
+						{
+							player
+									.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_SALAD);
+						}
+						else
+						{
+							player
+									.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_SALAD);
+						}
+						break;
+					case FALL_BACK:
+						if (board.isFirst(player))
+						{
+							player.setFieldNumber(board.getOtherPlayer(player)
+									.getFieldNumber() - 1);
+						}
+						break;
+					case HURRY_AHEAD:
+						if (!board.isFirst(player))
+						{
+							player.setFieldNumber(board.getOtherPlayer(player)
+									.getFieldNumber() + 1);
+						}
+						break;
+					case TAKE_OR_DROP_CARROTS:
+						player.changeCarrotsAvailableBy(move.getN());
+						break;
+				}
+			}
+			default:
+				break;
+		}
+	}
+
+	@Override
+	public IPlayer onPlayerJoined() throws TooManyPlayersException
+	{
+		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT)
+		{
+			throw new TooManyPlayersException();
+		}
+
+		final Player player = new Player(availableColors.remove(0));
+		players.add(player);
+		board.addPlayer(player);
+
+		for (final IGameListener listener : listeners)
+		{
+			listener.onPlayerJoined(player);
+		}
+
+		return player;
+	}
+
+	@Override
+	protected void next()
+	{
+		Player nextPlayer = determineNextPlayer();
+		applyTakeoffBonus(nextPlayer);
+		next(nextPlayer);
+	}
+
+	private Player determineNextPlayer()
+	{
+		final Player active = getActivePlayer();
+		final Move last = active.getLastMove();
+		Player nextPlayer = getPlayerAfter(active);
+
+		switch (board.getTypeAt(active.getFieldNumber()))
+		{
+			case RABBIT:
+				if (last != null)
+				{
+					// regular move onto rabbit-field
+					if (last.getTyp() == MoveTyp.MOVE)
+					{
+						nextPlayer = active;
+					}
+					else if (last.getTyp() == MoveTyp.PLAY_CARD)
+					{
+						// warp-move onto rabbit-field
+						if (last.getCard() == Action.FALL_BACK
+								|| last.getCard() == Action.HURRY_AHEAD)
+						{
+							nextPlayer = active;
+						}
+					}
+				}
+				break;
+		}
+
+		return nextPlayer;
+	}
+
+	/**
+	 * Add Carrots on [1] and [2] fields
+	 * 
+	 * @param nextPlayer
+	 */
+	private void applyTakeoffBonus(Player nextPlayer)
+	{
+		final Player active = getActivePlayer();
+
+		if (nextPlayer != active)
+		{
+			FieldTyp typ = board.getTypeAt(nextPlayer.getFieldNumber());
+
+			if (typ == FieldTyp.POSITION_1
+					&& nextPlayer.getPosition(active) == Position.FIRST)
+			{
+				nextPlayer
+						.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_FIELD);
+			}
+			else if (typ == FieldTyp.POSITION_2
+					&& nextPlayer.getPosition(active) == Position.SECOND)
+			{
+				nextPlayer
+						.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_FIELD);
+			}
+		}
+	}
+
+	@Override
+	public void onPlayerLeft(IPlayer player)
+	{
+		HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
+
+		for (final Player p : players)
+		{
+			PlayerScore score = p.getScore();
+			score.setCause(ScoreCause.LEFT);
+			score.set(0, (p == player) ? 0 : 1);
+			res.put(p, score);
+		}
+
+		players.remove(player);
+		notifyOnGameOver(res);
+	}
+
+	@Override
+	protected ActionTimeout getTimeoutFor(Player player)
+	{
+		return new ActionTimeout(true, 10000, 5000);
+	}
+
+	@Override
+	public boolean ready()
+	{
+		return players.size() == GamePlugin.MAX_PLAYER_COUNT;
+	}
+
+	@Override
+	public void start()
+	{
+		for (final Player p : players)
+		{
+			p.notifyListeners(new WelcomeMessage(p.getColor()));
+		}
+
+		super.start();
+	}
+}
