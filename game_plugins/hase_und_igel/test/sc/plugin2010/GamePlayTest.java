@@ -7,6 +7,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor.GetterOnlyReflection;
+
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.plugin2010.Board.FieldTyp;
@@ -89,6 +91,102 @@ public class GamePlayTest
 		int pos2 = b.getNextFieldByTyp(FieldTyp.POSITION_2, 0);
 		red.setFieldNumber(pos2);
 		Assert.assertEquals(false, b.isValid(m, red));
+	}
+	
+	/**
+	 * Überprüft, dass der Rundenzähler korrekt gesetzt wird. 
+	 * @throws RescueableClientException 
+	 */
+	@Test
+	public void turnCounting() throws RescueableClientException
+	{
+		g.start();
+		
+		red.setCarrotsAvailable(100);
+		Assert.assertEquals(0, g.getTurn());
+		
+		int firstCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red.getFieldNumber());
+		Move r1 = new Move(MoveTyp.MOVE, firstCarrot);
+		g.onAction(red, r1);
+		
+		Assert.assertEquals(0, g.getTurn());
+		
+		int nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red.getFieldNumber());
+		Move b1 = new Move(MoveTyp.MOVE, nextCarrot);
+		Assert.assertEquals(blue, g.getActivePlayer());
+		g.onAction(blue, b1);
+		
+		Assert.assertEquals(1, g.getTurn());
+		
+		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, red.getFieldNumber());
+		Move r2 = new Move(MoveTyp.MOVE, rabbitAt-red.getFieldNumber());
+		Assert.assertEquals(red, g.getActivePlayer());
+		g.onAction(red, r2);
+		
+		Move r3 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
+		Assert.assertEquals(red, g.getActivePlayer());
+		g.onAction(red, r3);
+		
+		Assert.assertEquals(1, g.getTurn());
+		
+		nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, blue.getFieldNumber());
+		Move b2 = new Move(MoveTyp.MOVE, nextCarrot);
+		Assert.assertEquals(blue, g.getActivePlayer());
+		g.onAction(blue, b2);
+		
+		Assert.assertEquals(2, g.getTurn());
+	}
+	
+	/**
+	 * Überprüft den Ablauf, das Ziel zu erreichen 
+	 * @throws RescueableClientException 
+	 */
+	@Test
+	public void enterGoalCycle() throws RescueableClientException
+	{
+		g.start();
+		
+		int lastCarrot = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
+		int preLastCarrot = b.getPreviousFieldByTyp(FieldTyp.CARROT, lastCarrot);
+		red.setFieldNumber(lastCarrot);
+		blue.setFieldNumber(preLastCarrot);
+		
+		red.setCarrotsAvailable(GameUtil.calculateCarrots(64-lastCarrot));
+		blue.setCarrotsAvailable(GameUtil.calculateCarrots(64-preLastCarrot)+1);
+		red.setSaladsToEat(0);
+		blue.setSaladsToEat(0);
+		
+		Move r1 = new Move(MoveTyp.MOVE, 64-red.getFieldNumber());
+		Move b1 = new Move(MoveTyp.MOVE, 64-blue.getFieldNumber());
+		
+		g.onAction(red, r1);
+		Assert.assertTrue(red.inGoal());
+		
+		g.onAction(blue, b1);
+		Assert.assertTrue(blue.inGoal());
+		
+		Assert.assertTrue(b.isFirst(red));
+	}
+	
+	/**
+	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
+	 */
+	@Test
+	public void enterGoal()
+	{
+		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
+		red.setFieldNumber(carrotAt);
+		int toGoal = 64 - red.getFieldNumber();
+		Move m = new Move(MoveTyp.MOVE, toGoal);
+		Assert.assertFalse(b.isValid(m, red));
+		
+		red.setCarrotsAvailable(10);
+		Assert.assertFalse(b.isValid(m, red));
+		
+		red.setSaladsToEat(0);
+		Assert.assertTrue(red.getSaladsToEat() == 0);
+		Assert.assertTrue(red.getCarrotsAvailable() <= 10);
+		Assert.assertTrue(b.isValid(m, red));
 	}
 	
 	/**

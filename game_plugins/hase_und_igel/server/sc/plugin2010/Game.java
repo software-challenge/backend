@@ -12,13 +12,10 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2010.Board.FieldTyp;
-import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.Player.Position;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -39,8 +36,10 @@ public class Game extends RoundBasedGameInstance<Player>
 
 	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
 	private Board				board			= Board.create();
+	private boolean				oneLastMove		= false;
+	private int 				playerToggles	= 0;
 
-	public Board getBoard()
+	protected Board getBoard()
 	{
 		return board;
 	}
@@ -58,12 +57,13 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected boolean checkGameOverCondition()
 	{
-		boolean gameOver = getTurn() >= GamePlugin.MAX_TURN_COUNT;
+		boolean gameOver = turn >= GamePlugin.MAX_TURN_COUNT;
 
-		for (final Player p : players)
-		{
-			gameOver = gameOver || p.inGoal();
-		}
+		if (!oneLastMove)
+			for (final Player p : this.players)
+			{
+				gameOver = gameOver || p.inGoal();
+			}
 
 		return gameOver;
 	}
@@ -81,6 +81,8 @@ public class Game extends RoundBasedGameInstance<Player>
 		final Player author = (Player) fromPlayer;
 		if (data instanceof Move)
 		{
+			if (oneLastMove)
+				oneLastMove = false;
 			final Move move = (Move) data;
 
 			if (board.isValid(move, author))
@@ -90,18 +92,9 @@ public class Game extends RoundBasedGameInstance<Player>
 			}
 			else
 			{
-				logger.warn("Ungültiger Zug {} von Spieler '{}'", move, author
-						.getColor());
-
 				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
-
 				for (final Player p : players)
-				{
-					PlayerScore score = p.getScore();
-					score.setCause(ScoreCause.RULE_VIOLATION);
-					score.set(0, (p == fromPlayer) ? 0 : 1);
-					res.put(p, score);
-				}
+					res.put(p, p.getScore());
 
 				notifyOnGameOver(res);
 			}
@@ -110,8 +103,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 		else
 		{
-			logger.warn("Ungültige Aktion {} von Spieler '{}'",
-					data.getClass(), author.getColor());
+			logger.warn("Ungültiger Zug von '{}'", author.getColor());
 		}
 	}
 
@@ -126,27 +118,27 @@ public class Game extends RoundBasedGameInstance<Player>
 				player.eatSalad();
 				if (board.isFirst(player))
 				{
-					player
-							.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_SALAD);
+					player.changeCarrotsAvailableBy(10);
 				}
 				else
 				{
-					player
-							.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_SALAD);
+					player.changeCarrotsAvailableBy(30);
 				}
 				break;
 			case MOVE:
 				player.setFieldNumber(player.getFieldNumber() + move.getN());
 				player.changeCarrotsAvailableBy(-GameUtil.calculateCarrots(move
 						.getN()));
+
+				if (player.inGoal())
+					oneLastMove = true;
 				break;
 			case FALL_BACK:
 			{
 				int nextField = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG,
 						player.getFieldNumber());
 				int diff = player.getFieldNumber() - nextField;
-				player.changeCarrotsAvailableBy(diff
-						* GameUtil.HEDGEHOG_CARROT_MULTIPLIER);
+				player.changeCarrotsAvailableBy(diff * 10);
 				player.setFieldNumber(nextField);
 				break;
 			}
@@ -163,28 +155,22 @@ public class Game extends RoundBasedGameInstance<Player>
 						player.eatSalad();
 						if (board.isFirst(player))
 						{
-							player
-									.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_SALAD);
+							player.changeCarrotsAvailableBy(10);
 						}
 						else
 						{
-							player
-									.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_SALAD);
+							player.changeCarrotsAvailableBy(30);
 						}
 						break;
 					case FALL_BACK:
 						if (board.isFirst(player))
-						{
 							player.setFieldNumber(board.getOtherPlayer(player)
 									.getFieldNumber() - 1);
-						}
 						break;
 					case HURRY_AHEAD:
 						if (!board.isFirst(player))
-						{
 							player.setFieldNumber(board.getOtherPlayer(player)
 									.getFieldNumber() + 1);
-						}
 						break;
 					case TAKE_OR_DROP_CARROTS:
 						player.changeCarrotsAvailableBy(move.getN());
@@ -199,19 +185,15 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException
 	{
-		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT)
-		{
+		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
-		}
 
-		final Player player = new Player(availableColors.remove(0));
-		players.add(player);
-		board.addPlayer(player);
+		final Player player = new Player(this.availableColors.remove(0));
+		this.players.add(player);
+		this.board.addPlayer(player);
 
-		for (final IGameListener listener : listeners)
-		{
+		for (final IGameListener listener : this.listeners)
 			listener.onPlayerJoined(player);
-		}
 
 		return player;
 	}
@@ -219,92 +201,47 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void next()
 	{
-		Player nextPlayer = determineNextPlayer();
-		applyTakeoffBonus(nextPlayer);
-		next(nextPlayer);
-	}
-
-	private Player determineNextPlayer()
-	{
 		final Player active = getActivePlayer();
-		final Move last = active.getLastMove();
-		Player nextPlayer = getPlayerAfter(active);
-
+		Move last = active.getLastMove();
+		int activePlayerId = this.players.indexOf(this.activePlayer);
 		switch (board.getTypeAt(active.getFieldNumber()))
 		{
 			case RABBIT:
-				if (last != null)
-				{
-					// regular move onto rabbit-field
-					if (last.getTyp() == MoveTyp.MOVE)
-					{
-						nextPlayer = active;
-					}
-					else if (last.getTyp() == MoveTyp.PLAY_CARD)
-					{
-						// warp-move onto rabbit-field
-						if (last.getCard() == Action.FALL_BACK
-								|| last.getCard() == Action.HURRY_AHEAD)
-						{
-							nextPlayer = active;
-						}
-					}
+				switch (last.getTyp())
+				{	
+					case MOVE:
+						break;
+					default:
+						activePlayerId = (activePlayerId + 1) % this.players.size();
+						break;
 				}
 				break;
+			default:
+				activePlayerId = (activePlayerId + 1) % this.players.size();
+				break;
 		}
-
-		return nextPlayer;
-	}
-
-	/**
-	 * Add Carrots on [1] and [2] fields
-	 * 
-	 * @param nextPlayer
-	 */
-	private void applyTakeoffBonus(Player nextPlayer)
-	{
-		final Player active = getActivePlayer();
-
-		if (nextPlayer != active)
+		final Player nextPlayer = this.players.get(activePlayerId);
+		if (!nextPlayer.equals(active))
 		{
-			FieldTyp typ = board.getTypeAt(nextPlayer.getFieldNumber());
-
-			if (typ == FieldTyp.POSITION_1
-					&& nextPlayer.getPosition(active) == Position.FIRST)
+			playerToggles++;
+			if (playerToggles >= GamePlugin.MAX_PLAYER_COUNT)
 			{
-				nextPlayer
-						.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_1_FIELD);
-			}
-			else if (typ == FieldTyp.POSITION_2
-					&& nextPlayer.getPosition(active) == Position.SECOND)
-			{
-				nextPlayer
-						.changeCarrotsAvailableBy(GameUtil.CARROT_BONUS_ON_POSITION_2_FIELD);
+				playerToggles = 0;
+				turn++;
 			}
 		}
+		next(nextPlayer);
 	}
 
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
 		HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
-
 		for (final Player p : players)
-		{
-			PlayerScore score = p.getScore();
-			score.setCause(ScoreCause.LEFT);
-			score.set(0, (p == player) ? 0 : 1);
-			res.put(p, score);
-		}
+			res.put(p, p.getScore());
 
 		players.remove(player);
 		notifyOnGameOver(res);
-	}
-
-	@Override
-	protected ActionTimeout getTimeoutFor(Player player)
-	{
-		return new ActionTimeout(true, 10000, 5000);
 	}
 
 	@Override

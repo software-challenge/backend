@@ -242,7 +242,7 @@ public class Player extends SimplePlayer implements Cloneable
 	@Override
 	public PlayerScore getScore()
 	{
-		return new PlayerScore(ScoreCause.REGULAR, this.inGoal() ? 1 : 0,
+		return new PlayerScore(ScoreCause.REGULAR, 0,
 				getFieldNumber());
 	}
 

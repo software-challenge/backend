@@ -1,12 +1,10 @@
 package sc.plugin2010;
 
-import edu.cau.plugins.PluginDescriptor;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
 import sc.shared.ScoreDefinition;
-import sc.shared.ScoreFragment;
-import sc.shared.ScoreFragment.Aggregation;
+import edu.cau.plugins.PluginDescriptor;
 
 /**
  * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge
@@ -32,8 +30,8 @@ public class GamePlugin implements IGamePlugin
 	{
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("winner");
-		SCORE_DEFINITION
-				.add(new ScoreFragment("position", Aggregation.AVERAGE));
+		//SCORE_DEFINITION
+		//		.add(new ScoreFragment("position", Aggregation.AVERAGE));
 	}
 
 	@Override

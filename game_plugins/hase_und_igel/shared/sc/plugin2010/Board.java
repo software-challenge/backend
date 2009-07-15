@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.Player.Position;
 
 /**
  * @author rra
@@ -21,9 +20,10 @@ public class Board
 	public enum FieldTyp
 	{
 		/**
-		 * Zahl- und Flaggenfelder Die veränderten Spielregeln sehen nur noch
-		 * die Felder 1,2 vor. Die Positionsfelder 3 und 4 wurden in
-		 * Möhrenfelder umgewandelt, und (1,5,6) sind jetzt Position-1-Felder.
+		 * Zahl- und Flaggenfelder
+		 * Die veränderten Spielregeln sehen nur noch die Felder 1,2 vor.
+		 * Die Positionsfelder 3 und 4 wurden in Möhrenfelder umgewandelt,
+		 * und (1,5,6) sind jetzt Position-1-Felder.
 		 */
 		POSITION_1, POSITION_2,
 		/**
@@ -81,8 +81,9 @@ public class Board
 	/**
 	 * Erstellt eine zufällige Rennstrecke. Die Positionen der Salat- und
 	 * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
-	 * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
-	 * und Ziel und dem ersten bzw. letzten Igelfeld permutiert.
+	 * werden permutiert.
+	 * Außerdem werden auch die Abschnitte zwischen Start- und Ziel und dem
+	 * ersten bzw. letzten Igelfeld permutiert.
 	 */
 	private final void initialize()
 	{
@@ -190,7 +191,7 @@ public class Board
 	 */
 	public final boolean isOccupied(final int pos)
 	{
-		return red.getFieldNumber() == pos || blue.getFieldNumber() == pos;
+		return (red.getFieldNumber() == pos || blue.getFieldNumber() == pos) && (pos != 64 || pos == 0);
 	}
 
 	public final int nextFreeFieldFor(Player player, int off)
@@ -301,12 +302,9 @@ public class Board
 				valid = GameUtil.isValidToPlayCard(this, player,
 						move.getCard(), move.getN());
 				break;
-			case SKIP:
-				valid = GameUtil.isValidToSkip(this, player);
-				break;
 			default:
-				throw new IllegalArgumentException("Unknown MoveType "
-						+ move.getTyp());
+				valid = false;
+				break;
 		}
 		return valid;
 	}
@@ -349,14 +347,20 @@ public class Board
 	}
 
 	/**
-	 * Überprüft ob der angegebene Spieler an erster Stelle ist
+	 * Überprüft ob der angegebene Spieler an erster Stelle ist. Wenn sich beide
+	 * Spieler im Ziel befinden wird zusätzlich überprüft, ob <code>p</code>
+	 * weniger Karotten besitzt als der Gegenspieler.
 	 * 
 	 * @param player
 	 * @return
 	 */
-	public final boolean isFirst(final Player player)
+	public final boolean isFirst(final Player p)
 	{
-		return player.getPosition(getOtherPlayer(player)) == Position.FIRST;
+		Player o = getOtherPlayer(p);
+		boolean isFirst = o.getFieldNumber() <= p.getFieldNumber();
+		if (p.inGoal() && o.getFieldNumber() == p.getFieldNumber())
+			isFirst = isFirst && p.getCarrotsAvailable() < o.getCarrotsAvailable();
+		return isFirst;
 	}
 
 	public final boolean canEnterGoal(final Player player)
