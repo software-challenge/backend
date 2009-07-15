@@ -4,6 +4,7 @@
 package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -20,14 +21,17 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class QuestionPanel extends JPanel
 {
-	private static final int	DEFAULTHEIGHT	= 100;
-	private FrameRenderer		obs;
-	private String				type;
+	private FrameRenderer	obs;
+	private String			type;
 
 	public QuestionPanel(String question, List<String> answers,
 			FrameRenderer obs, String type)
 	{
 		// setTitle("?");
+
+		Color bg = new Color(255, 255, 255, 120);
+
+		setBackground(bg);
 
 		this.type = type;
 
@@ -37,7 +41,7 @@ public class QuestionPanel extends JPanel
 
 		AnswerListener awListener = new AnswerListener();
 
-		JPanel buttonPanel = new JPanel();
+		JPanel buttonPanel = new TransparentPanel();
 
 		FlowLayout buttonLayout = new FlowLayout();
 

@@ -13,7 +13,6 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Player.Action;
@@ -27,7 +26,7 @@ import sc.plugin2010.renderer.RendererUtil;
  * 
  */
 @SuppressWarnings("serial")
-public class InformationBar extends JPanel
+public class InformationBar extends TransparentPanel
 {
 
 	private final String	CARROTCOUNT		= "Karottenanzahl:";
@@ -49,7 +48,7 @@ public class InformationBar extends JPanel
 	private final JLabel	enemy			= new JLabel(ENEMY);
 	private final JLabel	turnicon		= new JLabel("");
 
-	private final String	FONTTYPE		= "New Courier";
+	private final String	FONTTYPE		= "Arial";
 	private final int		SIZE			= 12;
 
 	private final Image		blue			= RendererUtil
@@ -61,22 +60,25 @@ public class InformationBar extends JPanel
 	{
 		setDoubleBuffered(true);
 
+		setBorder(BorderFactory.createBevelBorder(3));
+
 		setBorder(BorderFactory.createEtchedBorder());
 		setLayout(new GridLayout(1, 1));
 
 		Color light_black = new Color(0, 0, 0, 180);
+		Color bg = new Color(255, 255, 255, 120);
 
-		final JPanel left = new JPanel();
+		final TransparentPanel left = new TransparentPanel();
 		left.setLayout(new BorderLayout());
-		left.setBackground(Color.WHITE);
+		left.setBackground(bg);
 
-		final JPanel center = new JPanel();
+		final TransparentPanel center = new TransparentPanel();
 		center.setLayout(new BorderLayout());
-		center.setBackground(Color.WHITE);
+		center.setBackground(bg);
 
-		final JPanel right = new JPanel();
+		final TransparentPanel right = new TransparentPanel();
 		right.setLayout(new BorderLayout());
-		right.setBackground(Color.WHITE);
+		right.setBackground(bg);
 
 		player.setHorizontalAlignment(JLabel.LEFT);
 		carrots.setHorizontalAlignment(JLabel.LEFT);
@@ -98,6 +100,10 @@ public class InformationBar extends JPanel
 		turn.setForeground(light_black);
 		turn.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
+		left.add(rounds, BorderLayout.NORTH);
+		left.add(turn, BorderLayout.CENTER);
+		left.add(turnicon, BorderLayout.SOUTH);
+
 		center.add(player, BorderLayout.NORTH);
 		center.add(carrots, BorderLayout.CENTER);
 		center.add(hasenjoker, BorderLayout.SOUTH);
@@ -105,10 +111,6 @@ public class InformationBar extends JPanel
 		right.add(enemy, BorderLayout.NORTH);
 		right.add(enemycarrots, BorderLayout.CENTER);
 		right.add(enemyhasenjoker, BorderLayout.SOUTH);
-
-		left.add(rounds, BorderLayout.NORTH);
-		left.add(turn, BorderLayout.CENTER);
-		left.add(turnicon, BorderLayout.SOUTH);
 
 		this.add(left);
 		this.add(center);
@@ -119,13 +121,13 @@ public class InformationBar extends JPanel
 
 	public void setColor(boolean iAmRed)
 	{
-		Color mycolor = new Color(0, 0, 255, 180);
-		Color enemycolor = new Color(255, 0, 0, 180);
+		Color mycolor = new Color(0, 0, 255, 255);
+		Color enemycolor = new Color(255, 0, 0, 255);
 
 		if (iAmRed)
 		{
-			mycolor = new Color(255, 0, 0, 180);
-			enemycolor = new Color(0, 0, 255, 180);
+			mycolor = new Color(255, 0, 0, 255);
+			enemycolor = new Color(0, 0, 255, 255);
 		}
 
 		player.setForeground(mycolor);

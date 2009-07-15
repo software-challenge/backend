@@ -298,8 +298,9 @@ public class CreateGameDialog extends JDialog {
 			switch (index) {
 			case 0:
 				try {
-					slot.asHuman("Player 1", "Player 2"); // TODO ffi: change to
-															// right player name
+					String[] players = { "Player 1", "Player 2" };
+					slot.asHuman(players); // TODO ffi: change to
+					// right player name
 				} catch (IOException e) {
 					e.printStackTrace();
 					cancelGameCreation(observer);

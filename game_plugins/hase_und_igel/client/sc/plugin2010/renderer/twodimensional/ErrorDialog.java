@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -37,9 +38,16 @@ public class ErrorDialog extends JDialog
 
 		JPanel buttonPanel = new JPanel();
 
+		JLabel imageLabel = new JLabel();
+
+		imageLabel.setIcon(new ImageIcon(RendererUtil
+				.getImage("resource/error.png")));
+
 		FlowLayout buttonLayout = new FlowLayout();
 
 		buttonPanel.setLayout(buttonLayout);
+
+		buttonPanel.add(imageLabel);
 
 		// add okay Button
 		JButton jbut = new JButton("OK");

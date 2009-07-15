@@ -36,7 +36,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
 	private final GUIGameHandler	handler;
-	private final JPanel			leftPanel		= new JPanel();
+	private final JPanel			leftPanel		= new BackgoundPane(
+															"resource/background.png");
 	private QuestionPanel			qPanel;
 
 	// local instances of current players and board
@@ -82,7 +83,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	{
 		setDoubleBuffered(true);
 
-		final BackgoundPane bg = new BackgoundPane("resource/background.png");
+		final TransparentPanel bg = new TransparentPanel();
 		int scale = Math.min(bg.getWidth(), bg.getHeight());
 		bg.setPreferredSize(new Dimension(scale, scale));
 
@@ -384,6 +385,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			else if (answer.equals(moveForward))
 			{
 				qPanel.setVisible(false);
+				this.repaint();
 			}
 		}
 		if (type.equals(jokerAnswer))
@@ -515,6 +517,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			{
 				leftPanel.remove(qPanel);
 				questionOpen = false;
+				this.repaint();
 			}
 
 			handler.sendAction(move);
