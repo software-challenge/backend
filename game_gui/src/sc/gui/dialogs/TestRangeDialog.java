@@ -355,7 +355,7 @@ public class TestRangeDialog extends JDialog {
 
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 
-		curTest++;
+		curTest = 0;
 
 		int playerCount = txfclient.length;
 
@@ -499,7 +499,12 @@ public class TestRangeDialog extends JDialog {
 			List<BigDecimal> stats = result.getScores().get(playerId).getValues();
 			for (int j = 0; j < stats.size(); j++) {
 				BigDecimal newStat = stats.get(i);
-				final BigDecimal old = (BigDecimal) model.getValueAt(playerId, j + 2);
+				BigDecimal old = (BigDecimal) model.getValueAt(playerId, j + 2);
+				
+				if(old == null)
+				{
+					old = BigDecimal.ZERO;
+				}
 
 				Aggregation action = result.getDefinition().get(i).getAggregation();
 				switch (action) {
@@ -508,7 +513,7 @@ public class TestRangeDialog extends JDialog {
 					break;
 				case AVERAGE:
 					newStat = newStat.add(old);
-					newStat = newStat.divide(BigDecimal.valueOf(curTest));
+					newStat = newStat.divide(BigDecimal.valueOf(curTest + 1));
 					break;
 				default:
 					throw new RuntimeException("Unknown aggregation type (" + action
