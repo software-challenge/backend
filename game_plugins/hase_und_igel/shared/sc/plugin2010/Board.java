@@ -21,10 +21,9 @@ public class Board
 	public enum FieldTyp
 	{
 		/**
-		 * Zahl- und Flaggenfelder
-		 * Die veränderten Spielregeln sehen nur noch die Felder 1,2 vor.
-		 * Die Positionsfelder 3 und 4 wurden in Möhrenfelder umgewandelt,
-		 * und (1,5,6) sind jetzt Position-1-Felder.
+		 * Zahl- und Flaggenfelder Die veränderten Spielregeln sehen nur noch
+		 * die Felder 1,2 vor. Die Positionsfelder 3 und 4 wurden in
+		 * Möhrenfelder umgewandelt, und (1,5,6) sind jetzt Position-1-Felder.
 		 */
 		POSITION_1, POSITION_2,
 		/**
@@ -82,9 +81,8 @@ public class Board
 	/**
 	 * Erstellt eine zufällige Rennstrecke. Die Positionen der Salat- und
 	 * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
-	 * werden permutiert.
-	 * Außerdem werden auch die Abschnitte zwischen Start- und Ziel und dem
-	 * ersten bzw. letzten Igelfeld permutiert.
+	 * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
+	 * und Ziel und dem ersten bzw. letzten Igelfeld permutiert.
 	 */
 	private final void initialize()
 	{
@@ -202,7 +200,7 @@ public class Board
 			offset++;
 		return offset;
 	}
-	
+
 	public final int nextFreeFieldFor(Player player)
 	{
 		return nextFreeFieldFor(player, 1);
@@ -303,9 +301,12 @@ public class Board
 				valid = GameUtil.isValidToPlayCard(this, player,
 						move.getCard(), move.getN());
 				break;
-			default:
-				valid = false;
+			case SKIP:
+				valid = GameUtil.isValidToSkip(this, player);
 				break;
+			default:
+				throw new IllegalArgumentException("Unknown MoveType "
+						+ move.getTyp());
 		}
 		return valid;
 	}

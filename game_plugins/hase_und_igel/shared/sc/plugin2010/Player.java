@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.framework.plugins.SimplePlayer;
+import sc.plugin2010.Move.MoveTyp;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -267,5 +268,20 @@ public class Player extends SimplePlayer implements Cloneable
 		int fieldDifference = this.getFieldNumber() - other.getFieldNumber();
 
 		return (fieldDifference > 0) ? Position.FIRST : Position.SECOND;
+	}
+
+	public Move getLastNonSkipMove()
+	{
+		for (int i = history.size() - 1; i >= 0; i--)
+		{
+			Move lastMove = history.get(i);
+
+			if (lastMove.getTyp() != MoveTyp.SKIP)
+			{
+				return lastMove;
+			}
+		}
+
+		return null;
 	}
 }

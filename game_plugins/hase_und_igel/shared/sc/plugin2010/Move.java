@@ -35,7 +35,11 @@ public final class Move implements Cloneable
 		/**
 		 * Spielt einen Hasenjoker aus - auf einem Hasenfeld
 		 */
-		PLAY_CARD
+		PLAY_CARD,
+		/**
+		 * Im sehr seltenen Fall, wenn man sich gar nicht bewegen kann.
+		 */
+		SKIP
 	}
 
 	private int		turn;

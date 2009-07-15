@@ -111,6 +111,33 @@ public class GameUtil
 		return valid;
 	}
 
+	public static boolean isValidToSkip(Board b, Player p)
+	{
+		return !canDoAnything(b, p);
+	}
+
+	private static boolean canDoAnything(Board b, Player p)
+	{
+		return canPlayAnyCard(b, p) || isValidToFallBack(b, p)
+				|| isValidToTakeOrDrop10Carrots(b, p, 10)
+				|| isValidToTakeOrDrop10Carrots(b, p, -10)
+				|| isValidToEat(b, p) || canMoveToAnyField(b, p);
+	}
+
+	private static boolean canMoveToAnyField(Board b, Player p)
+	{
+		int fields = calculateMoveableFields(p.getCarrotsAvailable());
+		for (int i = 0; i < fields; i++)
+		{
+			if (isValidToMove(b, p, i))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Überprüft <code>MoveTyp.EAT</code> Züge auf Korrektheit. Um einen Salat
 	 * zu verzehren muss der Spieler sich:
@@ -136,15 +163,16 @@ public class GameUtil
 
 	public static boolean playerMustMove(Board b, Player p)
 	{
-		Move lastMove = p.getLastMove();
-
 		FieldTyp type = b.getTypeAt(p.getFieldNumber());
 
 		if (type == FieldTyp.HEDGEHOG || type == FieldTyp.START)
 		{
 			return true;
 		}
-		else if (lastMove != null)
+
+		Move lastMove = p.getLastNonSkipMove();
+
+		if (lastMove != null)
 		{
 			if (lastMove.getTyp() == MoveTyp.EAT)
 			{
