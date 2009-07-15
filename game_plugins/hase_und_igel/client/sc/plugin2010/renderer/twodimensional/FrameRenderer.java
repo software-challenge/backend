@@ -64,7 +64,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private String					give20carrots	= "Gib 20 Karotten ab";
 	private String					eatsalad		= "Friss sofort einen Salat";
 	private String					hurryahead		= "Rücke eine Position vor";
-	private String					fallback		= "Rücke eine Position vor";
+	private String					fallback		= "Falle eine Position zurück";
 	private String					jokerAnswer		= "joker";
 
 	public FrameRenderer(final GUIGameHandler handler,

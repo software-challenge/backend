@@ -65,18 +65,19 @@ public class GameUtil
 	 */
 	public static boolean isValidToMove(Board b, Player p, int l)
 	{
-		if(l <= 0)
+		if (l <= 0)
 		{
 			return false;
 		}
-		
+
 		boolean valid = true;
 		int requiredCarrots = GameUtil.calculateCarrots(l);
 		valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
 
 		int newPosition = p.getFieldNumber() + l;
 		valid = valid && !b.isOccupied(newPosition);
-		switch (b.getTypeAt(newPosition))
+		FieldTyp type = b.getTypeAt(newPosition);
+		switch (type)
 		{
 			case INVALID:
 				valid = false;
@@ -86,6 +87,7 @@ public class GameUtil
 				break;
 			case RABBIT:
 				Player p2 = p.clone();
+				p2.addToHistory(new Move(MoveTyp.MOVE, l));
 				p2.setFieldNumber(newPosition);
 				p2.changeCarrotsAvailableBy(-requiredCarrots);
 				valid = valid && canPlayAnyCard(b, p2);
@@ -97,6 +99,14 @@ public class GameUtil
 				break;
 			case HEDGEHOG:
 				valid = false;
+				break;
+			case CARROT:
+			case POSITION_1:
+			case POSITION_2:
+				break;
+			default:
+				throw new IllegalStateException("Unknown Type " + type);
+
 		}
 		return valid;
 	}
@@ -219,8 +229,13 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = (Player) p.clone();
 				p2.setFieldNumber(nextPos);
+				p2.addToHistory(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK));
 				p2.setActions(p.getActionsWithout(Action.FALL_BACK));
 				valid = valid && canPlayAnyCard(b, p2);
+				break;
+			case CARROT:
+			case POSITION_1:
+			case POSITION_2:
 				break;
 			default:
 				throw new IllegalStateException("Unknown Type " + type);
@@ -251,11 +266,18 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = p.clone();
 				p2.setFieldNumber(nextPos);
+				p2
+						.addToHistory(new Move(MoveTyp.PLAY_CARD,
+								Action.HURRY_AHEAD));
 				p2.setActions(p.getActionsWithout(Action.HURRY_AHEAD));
 				valid = valid && canPlayAnyCard(b, p2);
 				break;
 			case GOAL:
 				valid = valid && b.canEnterGoal(p);
+				break;
+			case CARROT:
+			case POSITION_1:
+			case POSITION_2:
 				break;
 			default:
 				throw new IllegalStateException("Unknown Type " + type);
