@@ -27,7 +27,7 @@ public class Client implements ILobbyClientListener
 
 	private IGameHandler	handler;
 	private LobbyClient		client;
-	private Observation		obs;
+	private IGUIObservation	obs;
 	private String			gameType;
 
 	// current id to identify the client instance internal
@@ -67,13 +67,13 @@ public class Client implements ILobbyClientListener
 		return handler;
 	}
 
-	public void setObservation(Observation obs)
+	public void setObservation(IGUIObservation obs)
 	{
 		this.obs = obs;
 		// this.client.start();
 	}
 
-	public Observation getObservation()
+	public IGUIObservation getObservation()
 	{
 		return obs;
 	}
@@ -127,6 +127,26 @@ public class Client implements ILobbyClientListener
 		System.err.println(response.getMessage());
 	}
 
+	private void sendLastTurn(Player oldPlayer, int playerid)
+	{
+		Move move = oldPlayer.getHistory().get(
+				oldPlayer.getHistory().size() - 1);
+		if (move.getTyp() == Move.MoveTyp.PLAY_CARD)
+		{
+			Move move2 = oldPlayer.getHistory().get(
+					oldPlayer.getHistory().size() - 2);
+			if (move2.getTyp() == Move.MoveTyp.PLAY_CARD)
+			{
+				Move move3 = oldPlayer.getHistory().get(
+						oldPlayer.getHistory().size() - 3);
+				obs.newTurn(playerid, GameUtil.displayMoveAction(move3));
+			}
+
+			obs.newTurn(playerid, GameUtil.displayMoveAction(move2));
+		}
+		obs.newTurn(playerid, GameUtil.displayMoveAction(move));
+	}
+
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
@@ -167,9 +187,10 @@ public class Client implements ILobbyClientListener
 			Player oldPlayer = game.getBoard().getOtherPlayer(
 					game.getActivePlayer());
 
-			// TODO display 3 actions if last move was a card not only one
-			obs.newTurn(playerid, GameUtil.displayMoveAction(oldPlayer
-					.getLastMove()));
+			if (oldPlayer.getLastMove() != null)
+			{
+				sendLastTurn(oldPlayer, playerid);
+			}
 
 			if (!alreadyReady)
 			{
@@ -231,7 +252,8 @@ public class Client implements ILobbyClientListener
 		// not needed
 	}
 
-	public RequestResult<PrepareGameResponse> prepareGameAndWait(int playerCount, String... displayNames)
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(
+			int playerCount, String... displayNames)
 			throws InterruptedException
 	{
 		return client.prepareGameAndWait(gameType, playerCount, displayNames);

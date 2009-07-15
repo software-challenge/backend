@@ -6,6 +6,7 @@ package sc.plugin2010.renderer.twodimensional;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -24,10 +25,12 @@ public class QuestionPanel extends JPanel
 	private FrameRenderer	obs;
 	private String			type;
 
+	private final String	FONTTYPE	= "New Courier";
+	private final int		SIZE		= 12;
+
 	public QuestionPanel(String question, List<String> answers,
 			FrameRenderer obs, String type)
 	{
-		// setTitle("?");
 
 		Color bg = new Color(255, 255, 255, 120);
 
@@ -36,8 +39,6 @@ public class QuestionPanel extends JPanel
 		this.type = type;
 
 		this.obs = obs;
-
-		// setIconImage(RendererUtil.getImage("resource/hase_und_igel_icon.png"));
 
 		AnswerListener awListener = new AnswerListener();
 
@@ -59,19 +60,18 @@ public class QuestionPanel extends JPanel
 			width += jbut.getPreferredSize().width;
 		}
 
-		// setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-
 		BorderLayout dialogLayout = new BorderLayout();
 		setLayout(dialogLayout);
 
-		this.add(new JLabel(question, JLabel.CENTER), BorderLayout.CENTER);
+		JLabel textLabel = new JLabel(question, JLabel.CENTER);
+
+		textLabel.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
+		this.add(textLabel, BorderLayout.CENTER);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 
 		setSize(width, 200);
 
-		// setLocationRelativeTo(null);
-
-		// setModal(true);
 		setVisible(true);
 	}
 

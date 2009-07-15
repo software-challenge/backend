@@ -173,7 +173,7 @@ public class FieldButton extends JButton
 		{
 			if (occupied)
 			{
-				border = createBorder(Color.ORANGE);
+				border = createBorder(Color.RED);
 			}
 			else if (reachable)
 			{

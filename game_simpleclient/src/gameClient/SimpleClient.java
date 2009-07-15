@@ -63,8 +63,14 @@ public class SimpleClient extends SpielClient
 		// zeigt an, ob eine Standardaktion ausgeführt wurde
 		boolean zugGemacht = false;
 
-		// Wenn auf einem Salatfeld, dann Salat fressen
-		if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler))
+		// Wenn keine Aktion möglich ist, dann muss der Spieler aussetzen
+		if (Werkzeuge.istValideAussetzen(spielbrett, eigenerSpieler))
+		{
+			eigenerSpieler.setzeAus();
+			System.out.println("Spieler muss aussetzen");
+			zugGemacht = true;
+		}
+		else if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler))
 		{
 			eigenerSpieler.frissSalat();
 			System.out.println("Salat gefressen");
@@ -78,7 +84,8 @@ public class SimpleClient extends SpielClient
 		{
 
 			// wenn unter Feldnummer 45, dann nimm 10 Karotten
-			if (eigenerSpieler.holeFeldnummer() < 45)
+			if (eigenerSpieler.holeKarottenAnzahl() < 50
+					&& eigenerSpieler.holeFeldnummer() < 50)
 			{
 				eigenerSpieler.nimmKarotten();
 				bereitsKarottenGenommen = true;
@@ -87,7 +94,9 @@ public class SimpleClient extends SpielClient
 
 			} // sonst gib Karotten ab (wenn möglich)
 			else if (Werkzeuge.istValide10KarrotenAbgeben(spielbrett,
-					eigenerSpieler))
+					eigenerSpieler)
+					&& eigenerSpieler.holeKarottenAnzahl() < 50
+					&& eigenerSpieler.holeFeldnummer() > 50)
 			{
 				eigenerSpieler.gibKarottenAb();
 				bereitsKarottenGenommen = true;
@@ -123,6 +132,10 @@ public class SimpleClient extends SpielClient
 			bereitsKarottenGenommen = false;
 
 			int feldNummer = -1;
+
+			// TODO setze ins Ziel
+
+			// TODO vereinfache das suchen nach Typ + setzen + istValide
 
 			// Suche nach dem nächsten Salat
 			feldNummer = spielbrett.holeNaechstesSpielfeldNachTyp(

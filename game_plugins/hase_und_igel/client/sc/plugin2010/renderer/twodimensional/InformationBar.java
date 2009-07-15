@@ -48,7 +48,7 @@ public class InformationBar extends TransparentPanel
 	private final JLabel	enemy			= new JLabel(ENEMY);
 	private final JLabel	turnicon		= new JLabel("");
 
-	private final String	FONTTYPE		= "Arial";
+	private final String	FONTTYPE		= "New Courier";
 	private final int		SIZE			= 12;
 
 	private final Image		blue			= RendererUtil

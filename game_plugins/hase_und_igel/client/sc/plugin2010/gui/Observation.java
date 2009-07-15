@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010;
+package sc.plugin2010.gui;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -12,6 +12,11 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
+import sc.plugin2010.EPlayerId;
+import sc.plugin2010.Game;
+import sc.plugin2010.GameState;
+import sc.plugin2010.IGUIObservation;
+import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
@@ -22,7 +27,8 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-public class Observation implements IObservation, IUpdateListener
+public class Observation implements IObservation, IUpdateListener,
+		IGUIObservation
 {
 	private IControllableGame			conGame;
 
@@ -120,7 +126,8 @@ public class Observation implements IObservation, IUpdateListener
 	@Override
 	public void unpause()
 	{
-		RenderFacade.getInstance().switchToPlayer(RenderFacade.getInstance().getActivePlayer());
+		RenderFacade.getInstance().switchToPlayer(
+				RenderFacade.getInstance().getActivePlayer());
 		conGame.unpause();
 	}
 
@@ -166,7 +173,7 @@ public class Observation implements IObservation, IUpdateListener
 
 		if (gameState != null)
 		{
-			
+
 			// ready();
 			Game game = gameState.getGame();
 			handler.onUpdate(game.getBoard(), game.getTurn());
@@ -183,13 +190,13 @@ public class Observation implements IObservation, IUpdateListener
 						game.getActivePlayer()), game.getActivePlayer());
 
 			}
-			
-			if(!conGame.atEnd())
+
+			if (!conGame.atEnd())
 			{
 				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 			}
 		}
-		
+
 		for (INewTurnListener turnListener : newTurnListeners)
 		{
 			turnListener.newTurn(0, "");

@@ -1,12 +1,13 @@
 /**
  * 
  */
-package sc.plugin2010;
+package sc.plugin2010.gui;
 
 import java.io.IOException;
 
 import sc.guiplugin.interfaces.ISlot;
-import sc.plugin2010.gui.GUIGameHandler;
+import sc.plugin2010.Client;
+import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
 
 /**
@@ -48,7 +49,7 @@ public class Slot implements ISlot
 					.getPort(), EPlayerId.PLAYER_TWO);
 		}
 
-		GUIGameHandler handler = new GUIGameHandler(humanClient);
+		HumanGameHandler handler = new HumanGameHandler(humanClient);
 		humanClient.setHandler(handler);
 		if (humanClient.getID() == EPlayerId.PLAYER_ONE)
 		{

@@ -6,6 +6,8 @@ package sc.plugin2010.renderer.twodimensional;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -19,7 +21,7 @@ import sc.plugin2010.Move;
 import sc.plugin2010.Player;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.gui.GUIGameHandler;
+import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.IRenderer;
 import sc.shared.GameResult;
 
@@ -35,7 +37,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private ChatBar					chat;
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
-	private final GUIGameHandler	handler;
+	private final HumanGameHandler	handler;
 	private final JPanel			leftPanel		= new BackgoundPane(
 															"resource/background.png");
 	private QuestionPanel			qPanel;
@@ -65,7 +67,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private String					fallback		= "Falle eine Position zurück";
 	private String					jokerAnswer		= "joker";
 
-	public FrameRenderer(final GUIGameHandler handler,
+	public FrameRenderer(final HumanGameHandler handler,
 			final boolean onlyObserving)
 	{
 		this.handler = handler;
@@ -76,6 +78,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private void createInitFrame()
 	{
 		setDoubleBuffered(true);
+
+		addMouseListener(new ClickRefresher());
 
 		final TransparentPanel bg = new TransparentPanel();
 		int scale = Math.min(bg.getWidth(), bg.getHeight());
@@ -168,40 +172,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			i = printHistroyTillNewTurn(redPlayer, i, red);
 			j = printHistroyTillNewTurn(bluePlayer, j, blue);
-		}
-
-		action.addNormal("DEBUG:---");
-		String col = "";
-
-		if (player.getColor() == FigureColor.RED)
-		{
-			col = "Rot";
-		}
-		else
-		{
-			col = "Blau";
-		}
-
-		for (int k = 0; k < player.getHistory().size(); k++)
-		{
-
-			action.addAction(col, player.getDisplayName(), " "
-					+ GameUtil.displayMoveAction(player.getHistory().get(k)));
-		}
-
-		if (enemy.getColor() == FigureColor.RED)
-		{
-			col = "Rot";
-		}
-		else
-		{
-			col = "Blau";
-		}
-
-		for (int k = 0; k < enemy.getHistory().size(); k++)
-		{
-			action.addAction(col, enemy.getDisplayName(), " "
-					+ GameUtil.displayMoveAction(enemy.getHistory().get(k)));
 		}
 	}
 
@@ -328,7 +298,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				break;
 		}
 
-		if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
+		if (GameUtil.isValidToSkip(board, player))
+		{
+			sendMove(new Move(Move.MoveTyp.SKIP));
+		}
+		else if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 		{
 			setReachableFields(player.getFieldNumber());
 
@@ -447,12 +421,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	}
 
 	@Override
-	public void updateAction(final String doneAction)
-	{
-		// actionb.addRow(doneAction);
-	}
-
-	@Override
 	public void updateChat(final String chatMsg)
 	{
 		chat.addOtherMessage(chatMsg);
@@ -504,23 +472,12 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				{
 					sendMove(new Move(Move.MoveTyp.FALL_BACK));
 				}
-				else
-				{
-
-					new ErrorDialog("Dies ist kein valider Zug.");
-					repaint();
-				}
 			}
 			else
 			{
 				if (GameUtil.isValidToMove(board, player, relativeFieldsToMove))
 				{
 					sendMove(new Move(Move.MoveTyp.MOVE, relativeFieldsToMove));
-				}
-				else
-				{
-					new ErrorDialog("Dies ist kein valider Zug.");
-					repaint();
 				}
 			}
 		}
@@ -622,5 +579,14 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld:"
 				+ results[1]);
+	}
+
+	private class ClickRefresher extends MouseAdapter
+	{
+		@Override
+		public void mouseReleased(MouseEvent e)
+		{
+			FrameRenderer.this.repaint();
+		}
 	}
 }

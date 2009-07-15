@@ -14,8 +14,6 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import sc.plugin2010.Player.FigureColor;
-
 /**
  * @author ffi
  * 

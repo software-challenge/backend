@@ -19,8 +19,6 @@ public interface IRenderer
 
 	void updateBoard(Board board, int round);
 
-	void updateAction(String doneAction);
-
 	void updateChat(String chatMsg);
 
 	Image getImage();

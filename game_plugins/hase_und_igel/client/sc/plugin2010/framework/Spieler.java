@@ -49,6 +49,14 @@ public class Spieler extends AllgemeinerSpieler
 		spieleHasenjoker(joker, 0);
 	}
 
+	/**
+	 * 
+	 */
+	public void setzeAus()
+	{
+		logik.sendAction(new Move(Move.MoveTyp.SKIP));
+	}
+
 	public void setzeFigur(final int feldNummer)
 	{
 		if (feldNummer < 0 && feldNummer > 64)

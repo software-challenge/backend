@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2010;
+package sc.plugin2010.gui;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +9,8 @@ import java.util.List;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
-import sc.plugin2010.gui.ObserverGameHandler;
+import sc.plugin2010.Client;
+import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.RequestResult;
@@ -24,7 +25,8 @@ public class GamePreparation implements IGamePreparation
 	private List<ISlot>	slots	= new LinkedList<ISlot>();
 	private Observation	obs;
 
-	public GamePreparation(Client client, int playerCount, String... displayNames)
+	public GamePreparation(Client client, int playerCount,
+			String... displayNames)
 	{
 		RequestResult<PrepareGameResponse> results = null;
 		try

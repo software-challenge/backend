@@ -13,8 +13,6 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.GamePlugin;
-import sc.plugin2010.GamePreparation;
-import sc.plugin2010.Observation;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.Configuration;
@@ -65,7 +63,7 @@ public class GUIPluginFacade implements IGuiPlugin
 			int playerCount, String... displayNames) throws IOException
 	{
 		Client client = new Client(ip, port, EPlayerId.OBSERVER);
-		GUIGameHandler handler = new GUIGameHandler(client);
+		HumanGameHandler handler = new HumanGameHandler(client);
 		client.setHandler(handler);
 		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
 		return new GamePreparation(client, playerCount, displayNames);

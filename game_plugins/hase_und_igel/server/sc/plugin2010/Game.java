@@ -40,7 +40,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
 	private Board				board			= Board.create();
 
-	protected Board getBoard()
+	public Board getBoard()
 	{
 		return board;
 	}
@@ -60,7 +60,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	{
 		boolean gameOver = getTurn() >= GamePlugin.MAX_TURN_COUNT;
 
-		for (final Player p : this.players)
+		for (final Player p : players)
 		{
 			gameOver = gameOver || p.inGoal();
 		}
@@ -174,13 +174,17 @@ public class Game extends RoundBasedGameInstance<Player>
 						break;
 					case FALL_BACK:
 						if (board.isFirst(player))
+						{
 							player.setFieldNumber(board.getOtherPlayer(player)
 									.getFieldNumber() - 1);
+						}
 						break;
 					case HURRY_AHEAD:
 						if (!board.isFirst(player))
+						{
 							player.setFieldNumber(board.getOtherPlayer(player)
 									.getFieldNumber() + 1);
+						}
 						break;
 					case TAKE_OR_DROP_CARROTS:
 						player.changeCarrotsAvailableBy(move.getN());
@@ -195,15 +199,19 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException
 	{
-		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
+		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT)
+		{
 			throw new TooManyPlayersException();
+		}
 
-		final Player player = new Player(this.availableColors.remove(0));
-		this.players.add(player);
-		this.board.addPlayer(player);
+		final Player player = new Player(availableColors.remove(0));
+		players.add(player);
+		board.addPlayer(player);
 
-		for (final IGameListener listener : this.listeners)
+		for (final IGameListener listener : listeners)
+		{
 			listener.onPlayerJoined(player);
+		}
 
 		return player;
 	}
@@ -292,14 +300,14 @@ public class Game extends RoundBasedGameInstance<Player>
 		players.remove(player);
 		notifyOnGameOver(res);
 	}
-	
+
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player)
 	{
 		return new ActionTimeout(false);
 	}
 
-	@Override	
+	@Override
 	public boolean ready()
 	{
 		return players.size() == GamePlugin.MAX_PLAYER_COUNT;

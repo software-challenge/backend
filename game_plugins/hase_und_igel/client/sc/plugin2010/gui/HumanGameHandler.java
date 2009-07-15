@@ -15,12 +15,12 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-public class GUIGameHandler implements IGameHandler
+public class HumanGameHandler implements IGameHandler
 {
 
 	private Client	client;
 
-	public GUIGameHandler(Client client)
+	public HumanGameHandler(Client client)
 	{
 		this.client = client;
 	}

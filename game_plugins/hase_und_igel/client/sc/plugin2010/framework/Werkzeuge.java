@@ -43,6 +43,11 @@ public class Werkzeuge
 		return GameUtil.isValidToEat(brett.getBoard(), spieler.getPlayer());
 	}
 
+	public static boolean istValideAussetzen(Spielbrett brett, Spieler spieler)
+	{
+		return GameUtil.isValidToSkip(brett.getBoard(), spieler.getPlayer());
+	}
+
 	public static boolean istValideIgelZurueckfallen(Spielbrett brett,
 			Spieler spieler)
 	{
@@ -144,7 +149,8 @@ public class Werkzeuge
 				spieler.getPlayer(), type, karottenAnzahl);
 	}
 
-	public static boolean mussSpielerSichBewegen(Spielbrett brett, Spieler spieler)
+	public static boolean mussSpielerSichBewegen(Spielbrett brett,
+			Spieler spieler)
 	{
 		return GameUtil.playerMustMove(brett.getBoard(), spieler.getPlayer());
 	}

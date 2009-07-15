@@ -5,15 +5,15 @@ package sc.plugin2010.renderer;
 
 import java.awt.CardLayout;
 import java.awt.Image;
+import java.awt.Panel;
 
 import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
-import sc.plugin2010.gui.GUIGameHandler;
+import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
-import sc.plugin2010.renderer.twodimensional.DefaultPanel;
 import sc.plugin2010.renderer.twodimensional.FrameRenderer;
 import sc.shared.GameResult;
 
@@ -83,7 +83,7 @@ public class RenderFacade
 
 			panel.setLayout(new CardLayout());
 			// create components
-			DefaultPanel con = new DefaultPanel();
+			Panel con = new Panel();
 			// add components
 			panel.add(con, connectString);
 
@@ -129,7 +129,7 @@ public class RenderFacade
 	 *            if asPlayer1 is true than panel will be created for player 1
 	 *            else it is created for player2
 	 */
-	public void createPanel(GUIGameHandler handler, EPlayerId target)
+	public void createPanel(HumanGameHandler handler, EPlayerId target)
 	{
 		if (threeDimensional)
 		{
@@ -217,22 +217,6 @@ public class RenderFacade
 		else if (target == EPlayerId.PLAYER_TWO)
 		{
 			player2.updateChat(chatMsg);
-		}
-	}
-
-	public void updateAction(final String doneAction, final EPlayerId target)
-	{
-		if (target == EPlayerId.OBSERVER)
-		{
-			observer.updateAction(doneAction);
-		}
-		else if (target == EPlayerId.PLAYER_ONE)
-		{
-			player1.updateAction(doneAction);
-		}
-		else if (target == EPlayerId.PLAYER_TWO)
-		{
-			player2.updateAction(doneAction);
 		}
 	}
 
