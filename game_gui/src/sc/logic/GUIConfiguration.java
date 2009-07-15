@@ -1,5 +1,6 @@
 package sc.logic;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private static final long serialVersionUID = -4635852675167221186L;
 
 	private static final String CONFIG_FILENAME = "game_gui.conf";
+
+	private static final String PATH_STD = ".";
 
 	private static String pluginFolder = null;
 
@@ -42,9 +45,9 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	 */
 	private GUIConfiguration() {
 		this.lang = ELanguage.DE;
-		this.createGameDialogPath = ".";
-		this.testDialogPath = ".";
-		this.loadReplayPath = ".";
+		this.createGameDialogPath = PATH_STD;
+		this.testDialogPath = PATH_STD;
+		this.loadReplayPath = PATH_STD;
 		this.numTest = 100;
 	}
 
@@ -68,16 +71,6 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	public static String getPluginFolder() {
 		return pluginFolder;
-	}
-
-	@Override
-	public void setCreateGameDialogPath(String createGameDialogPath) {
-		this.createGameDialogPath = createGameDialogPath;
-	}
-
-	@Override
-	public String getCreateGameDialogPath() {
-		return createGameDialogPath;
 	}
 
 	private static GUIConfiguration load() {
@@ -151,9 +144,34 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		return numTest;
 	}
 
+	/**
+	 * Checks if the given <code>path</code> (still) exists. If so, it returns
+	 * the path. Otherwise, it returns the execution path.
+	 * 
+	 * @param path
+	 * @return
+	 */
+	private File checkPath(final String path) {
+		File f = new File(path);
+		if (!f.exists()) {
+			return new File(PATH_STD);
+		}
+		return f;
+	}
+
 	@Override
-	public String getTestDialogPath() {
-		return this.testDialogPath;
+	public File getCreateGameDialogPath() {
+		return checkPath(createGameDialogPath);
+	}
+
+	@Override
+	public void setCreateGameDialogPath(String createGameDialogPath) {
+		this.createGameDialogPath = createGameDialogPath;
+	}
+
+	@Override
+	public File getTestDialogPath() {
+		return checkPath(testDialogPath);
 	}
 
 	@Override
@@ -162,8 +180,8 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	}
 
 	@Override
-	public String getLoadReplayPath() {
-		return this.loadReplayPath;
+	public File getLoadReplayPath() {
+		return checkPath(loadReplayPath);
 	}
 
 	@Override

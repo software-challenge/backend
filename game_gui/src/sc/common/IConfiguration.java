@@ -1,5 +1,7 @@
 package sc.common;
 
+import java.io.File;
+
 import sc.logic.ELanguage;
 
 public interface IConfiguration {
@@ -7,15 +9,15 @@ public interface IConfiguration {
 	ELanguage getLanguage();
 	void setLanguage(ELanguage language);
 	
-	void setCreateGameDialogPath(String createGameDialogPath);
-	String getCreateGameDialogPath();
-	
 	void setNumTest(int numTest);
 	int getNumTest();
 	
-	String getTestDialogPath();
+	File getCreateGameDialogPath();
+	void setCreateGameDialogPath(String createGameDialogPath);
+	
+	File getTestDialogPath();
 	void setTestDialogPath(String testDialogPath);
 	
-	String getLoadReplayPath();
+	File getLoadReplayPath();
 	void setLoadReplayPath(String loadReplayPath);
 }

@@ -69,8 +69,8 @@ public class ReplayDialog extends JDialog {
 		btnReplay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				File startDir = new File(GUIConfiguration.instance().getLoadReplayPath());
-				JFileChooser chooser = new JFileChooser(startDir);
+				JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
+						.getLoadReplayPath());
 				chooser.setDialogTitle(lang.getString("dialog_replay_dialog_title"));
 				if (chooser.showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
 					loadReplay(chooser.getSelectedFile());

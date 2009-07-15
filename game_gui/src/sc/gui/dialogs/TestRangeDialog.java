@@ -31,11 +31,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
@@ -44,6 +46,7 @@ import sc.common.UnsupportedFileExtensionException;
 import sc.gui.PresentationFacade;
 import sc.gui.stuff.KIInformation;
 import sc.guiplugin.interfaces.IGamePreparation;
+import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
@@ -75,6 +78,10 @@ public class TestRangeDialog extends JDialog {
 	private JLabel[] lblclient;
 	private JButton[] btnclient;
 	private JPanel[] pnlclient;
+	/**
+	 * -1 indicates "no testing"<br>
+	 * 0..* indicates the completed number of tests so far, i.e. "testing"
+	 */
 	protected int curTest;
 	protected int numTest;
 	private JPanel pnlPref;
@@ -85,11 +92,13 @@ public class TestRangeDialog extends JDialog {
 	private JLabel lblCenter;
 	private IObservation obs;
 	private JScrollPane scrollTextArea;
+	private JProgressBar progressBar;
 
 	public TestRangeDialog(JFrame frame) {
 		super();
 		presFac = PresentationFacade.getInstance();
 		lang = presFac.getLogicFacade().getLanguageData();
+		curTest = -1; // not testing
 		createGUI();
 	}
 
@@ -144,30 +153,31 @@ public class TestRangeDialog extends JDialog {
 
 		// -----------------------------------------------------------
 
-		txtarea = new JTextArea();
-		scrollTextArea = new JScrollPane(txtarea);
-		scrollTextArea.setAutoscrolls(true);
+		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
 
 		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
+
+		txtarea = new JTextArea();
+		scrollTextArea = new JScrollPane(txtarea);
+		scrollTextArea.setAutoscrolls(true);
+
 		// -----------------------------------------------------------
 
 		testStart = new JButton(lang.getString("dialog_test_btn_start"));
 		testStart.addActionListener(new ActionListener() {
-			private boolean testing = false;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (testing) {
+				if (curTest >= 0) { // testing
 					cancelTest();
 					testStart.setText(lang.getString("dialog_test_btn_start"));
 					cmbGameType.setEnabled(true);
 					addLogMessage(lang.getString("dialog_test_msg_cancel"));
 				} else {
 					if (prepareTest()) {
-						testing = true;// FIXME
 						testStart.setText(lang.getString("dialog_test_btn_stop"));
 						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
@@ -193,6 +203,7 @@ public class TestRangeDialog extends JDialog {
 		pnlCenter = new JPanel();
 		pnlCenter.setBorder(BorderFactory.createEtchedBorder());
 		pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.PAGE_AXIS));
+		pnlCenter.add(progressBar);
 		pnlCenter.add(lblCenter);
 		pnlCenter.add(scrollTextArea);
 
@@ -278,8 +289,7 @@ public class TestRangeDialog extends JDialog {
 			pnlclient[i].add(btnclient[i]);
 			// ------------------------------------------------
 			Vector<String> rowData = new Vector<String>(); // default
-			rowData.add(String.valueOf(i));
-			// rowData.add(new File(name).getName() + " " + i);
+			rowData.add(String.valueOf(i)); // set position#
 			model.addRow(rowData);
 		}
 
@@ -304,13 +314,18 @@ public class TestRangeDialog extends JDialog {
 	 */
 	private boolean prepareTest() {
 
+		IGuiPlugin selPlugin = getSelectedPlugin().getPlugin();
+
 		curTest = -1;
 		try {
 			numTest = new Integer(txfNumTest.getText());
-		} finally {
+		} catch (NumberFormatException e) {
 			numTest = GUIConfiguration.instance().getNumTest();
 			txfNumTest.setText(String.valueOf(numTest));
 		}
+
+		progressBar.setMaximum(numTest);
+		progressBar.setValue(0);
 
 		for (JTextField element : txfclient) {
 			File file = new File(element.getText());
@@ -331,17 +346,17 @@ public class TestRangeDialog extends JDialog {
 			// without file ext and with a number
 			name = HelperMethods.getFilenameWithoutFileExt(name) + " " + (i + 1);
 			model.setValueAt(name, i, 1);
+			for (int j = 0; j < selPlugin.getScoreDefinition().size(); j++) {
+				model.setValueAt(new BigDecimal(0), i, 2 + j); // set default 0
+			}
 		}
 		statTable.validate();
 
 		// start server
 		presFac.getLogicFacade().startServer(INTERN_PORT);
 
-		// set fake render context
-		getSelectedPlugin().getPlugin().setRenderContext(null, false);// TODO
-		// new
-		// JPanel
-		// ()
+		// disable rendering
+		selPlugin.setRenderContext(null, false);
 
 		return true;
 	}
@@ -355,7 +370,7 @@ public class TestRangeDialog extends JDialog {
 
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 
-		curTest = 0;
+		curTest++;
 
 		int playerCount = txfclient.length;
 
@@ -411,6 +426,9 @@ public class TestRangeDialog extends JDialog {
 						break;
 					}
 				}
+				// update progress bar
+				progressBar.setValue(progressBar.getValue() + 1);
+
 				// start new test if number of tests is not still reached
 				if (curTest < numTest) {
 					startTest();
@@ -529,7 +547,7 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest() {
-		curTest = numTest;
+		curTest = -1;
 		if (null != obs)
 			obs.cancel();
 		stopServer();
@@ -542,10 +560,9 @@ public class TestRangeDialog extends JDialog {
 	 * @param txf
 	 */
 	private void loadClient(JTextField txf) {
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
+				.getTestDialogPath());
 		chooser.setDialogTitle(lang.getString("dialog_test_dialog_title"));
-		chooser.setCurrentDirectory(new File(GUIConfiguration.instance()
-				.getTestDialogPath()));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File f = chooser.getSelectedFile();
 			txf.setText(f.getAbsolutePath());
@@ -587,9 +604,5 @@ public class TestRangeDialog extends JDialog {
 	private void addLogMessage(final String msg) {
 		txtarea.append(msg + "\n");
 		txtarea.setCaretPosition(txtarea.getText().length());
-		/*
-		 * int max = scrollTextArea.getJScrollBar().getMaximum();
-		 * scrollTextArea.getJScrollBar().setValue(max);
-		 */
 	}
 }
