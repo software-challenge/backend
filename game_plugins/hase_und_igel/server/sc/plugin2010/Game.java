@@ -37,9 +37,8 @@ public class Game extends RoundBasedGameInstance<Player>
 	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
 	private Board				board			= Board.create();
 	private boolean				oneLastMove		= false;
-	private int 				playerToggles	= 0;
 
-	protected Board getBoard()
+	public Board getBoard()
 	{
 		return board;
 	}
@@ -224,21 +223,6 @@ public class Game extends RoundBasedGameInstance<Player>
 		next(nextPlayer);
 	}
 
-	@Override
-	protected boolean increaseTurnIfNecessary(Player nextPlayer)
-	{
-		if (!nextPlayer.equals(getActivePlayer()))
-		{
-			playerToggles++;
-			if (playerToggles >= GamePlugin.MAX_PLAYER_COUNT)
-			{
-				playerToggles = 0;
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{

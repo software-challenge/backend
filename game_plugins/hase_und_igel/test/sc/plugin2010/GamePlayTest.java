@@ -24,7 +24,7 @@ public class GamePlayTest
 	private Player	blue;
 
 	@Before
-	public void beforeTest() throws TooManyPlayersException
+	public void beforeEveryTest() throws TooManyPlayersException
 	{
 		g = new Game();
 		b = g.getBoard();
@@ -113,25 +113,21 @@ public class GamePlayTest
 		
 		int nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red.getFieldNumber());
 		Move b1 = new Move(MoveTyp.MOVE, nextCarrot);
-		Assert.assertEquals(blue, g.getActivePlayer());
 		g.onAction(blue, b1);
 		
 		Assert.assertEquals(1, g.getTurn());
 		
 		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, red.getFieldNumber());
 		Move r2 = new Move(MoveTyp.MOVE, rabbitAt-red.getFieldNumber());
-		Assert.assertEquals(red, g.getActivePlayer());
 		g.onAction(red, r2);
 		
 		Move r3 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
-		Assert.assertEquals(red, g.getActivePlayer());
 		g.onAction(red, r3);
 		
 		Assert.assertEquals(1, g.getTurn());
 		
 		nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, blue.getFieldNumber());
 		Move b2 = new Move(MoveTyp.MOVE, nextCarrot);
-		Assert.assertEquals(blue, g.getActivePlayer());
 		g.onAction(blue, b2);
 		
 		Assert.assertEquals(2, g.getTurn());

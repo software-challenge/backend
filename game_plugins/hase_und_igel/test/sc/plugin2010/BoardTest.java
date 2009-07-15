@@ -32,7 +32,6 @@ public class BoardTest
 		b.addPlayer(p);
 		b.addPlayer(new Player(FigureColor.RED));
 
-		// Der Spieler belegt das angegebene Spielfeld
 		Assert.assertTrue(b.isOccupied(p.getFieldNumber()));
 	}
 
@@ -135,6 +134,14 @@ public class BoardTest
 		p2.setFieldNumber(5);
 		b.addPlayer(p2);
 
+		Assert.assertTrue(b.isFirst(p1));
+		Assert.assertFalse(b.isFirst(p2));
+		
+		p1.setFieldNumber(64);
+		p2.setFieldNumber(64);
+		p1.setCarrotsAvailable(4);
+		p2.setCarrotsAvailable(6);
+		
 		Assert.assertTrue(b.isFirst(p1));
 		Assert.assertFalse(b.isFirst(p2));
 	}
