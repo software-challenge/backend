@@ -77,6 +77,30 @@ public class Player extends SimplePlayer implements Cloneable
 
 	private List<Move>		history;
 
+	private Position		position;
+	
+	private boolean			mustPlayCard;
+	
+	public void setMustPlayCard(boolean mustPlayCard)
+	{
+		this.mustPlayCard = mustPlayCard;
+	}
+	
+	public boolean mustPlayCard()
+	{
+		return mustPlayCard;
+	}
+
+	public Position getPosition()
+	{
+		return position;
+	}
+
+	public void setPosition(Position position)
+	{
+		this.position = position;
+	}
+
 	protected void addToHistory(final Move m)
 	{
 		history.add(m);
@@ -242,31 +266,14 @@ public class Player extends SimplePlayer implements Cloneable
 	@Override
 	public PlayerScore getScore()
 	{
-		return new PlayerScore(ScoreCause.REGULAR, inGoal() ? 1 : 0, getFieldNumber());
+		return new PlayerScore(ScoreCause.REGULAR, getPosition().equals(
+				Position.FIRST) ? 1 : getPosition().equals(Position.SECOND) ? 0
+				: -1, getFieldNumber());
 	}
 
 	public boolean inGoal()
 	{
 		return fieldNumber == 64;
-	}
-
-	/**
-	 * Get's the position (1. or 2.) compared to another player.
-	 * 
-	 * @param other
-	 * @return
-	 */
-	public Position getPosition(Player other)
-	{
-		if (this == other)
-		{
-			throw new IllegalArgumentException(
-					"Can't compare with the same instance.");
-		}
-
-		int fieldDifference = this.getFieldNumber() - other.getFieldNumber();
-
-		return (fieldDifference > 0) ? Position.FIRST : Position.SECOND;
 	}
 
 	public Move getLastNonSkipMove()

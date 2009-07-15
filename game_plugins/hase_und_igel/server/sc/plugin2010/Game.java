@@ -14,10 +14,11 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2010.Board.FieldTyp;
+import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.Player.Position;
 import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
 
 /**
  * Die Spiellogik von Hase- und Igel.
@@ -98,6 +99,12 @@ public class Game extends RoundBasedGameInstance<Player>
 				notifyOnGameOver(res);
 			}
 
+			for (final Player p : players)
+			{
+				p.setPosition(GameUtil
+						.getGameResult(p, board.getOtherPlayer(p)));
+			}
+
 			next();
 		}
 		else
@@ -116,21 +123,14 @@ public class Game extends RoundBasedGameInstance<Player>
 			case EAT:
 				player.eatSalad();
 				if (board.isFirst(player))
-				{
 					player.changeCarrotsAvailableBy(10);
-				}
 				else
-				{
 					player.changeCarrotsAvailableBy(30);
-				}
 				break;
 			case MOVE:
 				player.setFieldNumber(player.getFieldNumber() + move.getN());
 				player.changeCarrotsAvailableBy(-GameUtil.calculateCarrots(move
 						.getN()));
-
-				if (player.inGoal())
-					oneLastMove = true;
 				break;
 			case FALL_BACK:
 			{
@@ -179,6 +179,38 @@ public class Game extends RoundBasedGameInstance<Player>
 			default:
 				break;
 		}
+
+		updatePlayer(move, player);
+
+		if (player.inGoal())
+			oneLastMove = true;
+	}
+
+	private void updatePlayer(Move move, Player p)
+	{
+		p.setMustPlayCard(false);
+		switch (move.getTyp())
+		{
+			case PLAY_CARD:
+			{
+				switch (move.getCard())
+				{
+					case FALL_BACK:
+					case HURRY_AHEAD:
+						if (board.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT))
+							p.setMustPlayCard(true);
+						break;
+				}
+				break;
+			}
+			case MOVE:
+			case FALL_BACK:
+			{
+				if (board.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT))
+					p.setMustPlayCard(true);
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -207,11 +239,12 @@ public class Game extends RoundBasedGameInstance<Player>
 		{
 			case RABBIT:
 				switch (last.getTyp())
-				{	
+				{
 					case MOVE:
 						break;
 					default:
-						activePlayerId = (activePlayerId + 1) % this.players.size();
+						activePlayerId = (activePlayerId + 1)
+								% this.players.size();
 						break;
 				}
 				break;
@@ -246,8 +279,31 @@ public class Game extends RoundBasedGameInstance<Player>
 		for (final Player p : players)
 		{
 			p.notifyListeners(new WelcomeMessage(p.getColor()));
+			p.setPosition(Position.TIE);
 		}
 
 		super.start();
+	}
+
+	@Override
+	protected void onNewTurn()
+	{
+		for (final Player p : players)
+		{
+			switch (board.getTypeAt(p.getFieldNumber()))
+			{
+				case POSITION_1:
+					if (board.isFirst(p))
+						p.changeCarrotsAvailableBy(10);
+					break;
+				case POSITION_2:
+					if (!board.isFirst(p))
+						p.changeCarrotsAvailableBy(20);
+					break;
+				default:
+					break;
+			}
+		}
+
 	}
 }

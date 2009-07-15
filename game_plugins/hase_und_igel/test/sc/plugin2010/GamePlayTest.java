@@ -13,6 +13,7 @@ import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
 import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.Player.Position;
 
 public class GamePlayTest
 {
@@ -31,7 +32,7 @@ public class GamePlayTest
 	}
 
 	/**
-	 * In der ersten Runde stehen beide Spieler am Start, und rot ist an der 
+	 * In der ersten Runde stehen beide Spieler am Start, und rot ist an der
 	 * Reihe
 	 */
 	@Test
@@ -42,9 +43,35 @@ public class GamePlayTest
 
 		Assert.assertEquals(0, red.getFieldNumber());
 		Assert.assertEquals(0, blue.getFieldNumber());
-		
+
 		g.start();
 		Assert.assertEquals(red, g.getActivePlayer());
+	}
+
+	/**
+	 * Überprüft den allgemeinen, abwechselnden Spielablauf
+	 * 
+	 * @throws RescueableClientException
+	 */
+	@Test
+	public void basicGameCycle() throws RescueableClientException
+	{
+		g.start();
+
+		Move r1 = new Move(MoveTyp.MOVE, b
+				.getNextFieldByTyp(FieldTyp.CARROT, 0));
+		g.onAction(red, r1);
+
+		Assert.assertEquals(Position.FIRST, red.getPosition());
+		Assert.assertTrue(b.isFirst(red));
+
+		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
+				red.getFieldNumber()));
+		g.onAction(blue, b1);
+
+		Assert.assertEquals(Position.FIRST, blue.getPosition());
+		Assert.assertEquals(Position.SECOND, red.getPosition());
+		Assert.assertTrue(b.isFirst(blue));
 	}
 
 	/**
@@ -176,6 +203,32 @@ public class GamePlayTest
 	}
 
 	/**
+	 * Wenn ein Spieler ein Hasenfeld neu betritt _MUSS_ eine Hasenkarte
+	 * gespielt werden
+	 * @throws RescueableClientException 
+	 */
+	@Test
+	public void mustPlayCard() throws RescueableClientException
+	{
+		g.start();
+		
+		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.RABBIT, 0));
+		g.onAction(red, r1);
+		
+		Assert.assertTrue(red.mustPlayCard());
+		
+		Move r2 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
+		g.onAction(red, r2);
+		
+		Assert.assertFalse(red.mustPlayCard());
+
+		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
+		g.onAction(blue, b1);
+		
+		Assert.assertFalse(red.mustPlayCard());
+	}
+
+	/**
 	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
 	 */
 	@Test
@@ -250,6 +303,12 @@ public class GamePlayTest
 		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
 		Move r1 = new Move(MoveTyp.MOVE, rabbitAt);
 		g.onAction(red, r1);
+		Assert.assertTrue(red.mustPlayCard());
+
+		Move rFail = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(
+				FieldTyp.CARROT, red.getFieldNumber())
+				- red.getFieldNumber());
+		Assert.assertFalse(b.isValid(rFail, red));
 
 		Assert.assertTrue(red.getActions()
 				.contains(Action.TAKE_OR_DROP_CARROTS));

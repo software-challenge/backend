@@ -337,6 +337,8 @@ public class GameUtil
 		Position ret = null;
 		if (o.getFieldNumber() <= relevant.getFieldNumber())
 			ret = Position.FIRST;
+		else
+			ret = Position.SECOND;
 		if (relevant.inGoal() && o.getFieldNumber() == relevant.getFieldNumber())
 		{
 			if (o.getCarrotsAvailable()>relevant.getCarrotsAvailable())

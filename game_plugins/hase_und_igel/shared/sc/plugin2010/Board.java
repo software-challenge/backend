@@ -287,16 +287,20 @@ public class Board
 		{
 			case MOVE:
 				valid = GameUtil.isValidToMove(this, player, move.getN());
+				valid = valid && !player.mustPlayCard();
 				break;
 			case EAT:
 				valid = GameUtil.isValidToEat(this, player);
+				valid = valid && !player.mustPlayCard();
 				break;
 			case TAKE_OR_DROP_CARROTS:
 				valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player,
 						move.getN());
+				valid = valid && !player.mustPlayCard();
 				break;
 			case FALL_BACK:
 				valid = GameUtil.isValidToFallBack(this, player);
+				valid = valid && !player.mustPlayCard();
 				break;
 			case PLAY_CARD:
 				valid = GameUtil.isValidToPlayCard(this, player,
