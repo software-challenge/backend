@@ -101,7 +101,7 @@ public class RenderFacade
 	 */
 	public void setGUIMode(GUIMode mode)
 	{
-		if (currentMode != mode)
+		if (currentMode != mode && panel != null)
 		{
 			switch (mode)
 			{
@@ -140,44 +140,47 @@ public class RenderFacade
 	 */
 	public void createPanel(HumanGameHandler handler, EPlayerId target)
 	{
-		if (threeDimensional)
+		if (panel != null)
 		{
-			switch (target)
+			if (threeDimensional)
 			{
-				case OBSERVER:
-					observer = new ThreeDimRenderer(handler, true);
-					panel.add((ThreeDimRenderer) observer, observerString);
-					break;
-				case PLAYER_ONE:
-					player1 = new ThreeDimRenderer(handler, false);
-					panel.add((ThreeDimRenderer) player1, player1String);
+				switch (target)
+				{
+					case OBSERVER:
+						observer = new ThreeDimRenderer(handler, true);
+						panel.add((ThreeDimRenderer) observer, observerString);
+						break;
+					case PLAYER_ONE:
+						player1 = new ThreeDimRenderer(handler, false);
+						panel.add((ThreeDimRenderer) player1, player1String);
+						setAlreadyCreatedPlayerOne(true);
+						break;
+					case PLAYER_TWO:
+						player2 = new ThreeDimRenderer(handler, false);
+						panel.add((ThreeDimRenderer) player2, player2String);
+						break;
+					default:
+						break;
+				}
+			}
+			else
+			{
+				if (target == EPlayerId.OBSERVER)
+				{
+					observer = new FrameRenderer(handler, true);
+					panel.add((FrameRenderer) observer, observerString);
+				}
+				else if (target == EPlayerId.PLAYER_ONE)
+				{
+					player1 = new FrameRenderer(handler, false);
+					panel.add((FrameRenderer) player1, player1String);
 					setAlreadyCreatedPlayerOne(true);
-					break;
-				case PLAYER_TWO:
-					player2 = new ThreeDimRenderer(handler, false);
-					panel.add((ThreeDimRenderer) player2, player2String);
-					break;
-				default:
-					break;
-			}
-		}
-		else
-		{
-			if (target == EPlayerId.OBSERVER)
-			{
-				observer = new FrameRenderer(handler, true);
-				panel.add((FrameRenderer) observer, observerString);
-			}
-			else if (target == EPlayerId.PLAYER_ONE)
-			{
-				player1 = new FrameRenderer(handler, false);
-				panel.add((FrameRenderer) player1, player1String);
-				setAlreadyCreatedPlayerOne(true);
-			}
-			else if (target == EPlayerId.PLAYER_TWO)
-			{
-				player2 = new FrameRenderer(handler, false);
-				panel.add((FrameRenderer) player2, player2String);
+				}
+				else if (target == EPlayerId.PLAYER_TWO)
+				{
+					player2 = new FrameRenderer(handler, false);
+					panel.add((FrameRenderer) player2, player2String);
+				}
 			}
 		}
 	}
@@ -185,58 +188,71 @@ public class RenderFacade
 	public void updatePlayer(final Player myplayer, final Player otherPlayer,
 			final EPlayerId target)
 	{
-
-		switch (target)
+		if (panel != null)
 		{
-			case OBSERVER:
-				observer.updatePlayer(myplayer, otherPlayer);
-				break;
-			case PLAYER_ONE:
-				player1.updatePlayer(myplayer, otherPlayer);
-				break;
-			case PLAYER_TWO:
-				player2.updatePlayer(myplayer, otherPlayer);
-				break;
-			default:
-				break;
+			switch (target)
+			{
+				case OBSERVER:
+					observer.updatePlayer(myplayer, otherPlayer);
+					break;
+				case PLAYER_ONE:
+					player1.updatePlayer(myplayer, otherPlayer);
+					break;
+				case PLAYER_TWO:
+					player2.updatePlayer(myplayer, otherPlayer);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
 	public void updateBoard(final Board board, int round, final EPlayerId target)
 	{
-		if (target == EPlayerId.OBSERVER)
+		if (panel != null)
 		{
-			observer.updateBoard(board, round);
-		}
-		else if (target == EPlayerId.PLAYER_ONE)
-		{
-			player1.updateBoard(board, round);
-		}
-		else if (target == EPlayerId.PLAYER_TWO)
-		{
-			player2.updateBoard(board, round);
+			if (target == EPlayerId.OBSERVER)
+			{
+				observer.updateBoard(board, round);
+			}
+			else if (target == EPlayerId.PLAYER_ONE)
+			{
+				player1.updateBoard(board, round);
+			}
+			else if (target == EPlayerId.PLAYER_TWO)
+			{
+				player2.updateBoard(board, round);
+			}
 		}
 	}
 
 	public void updateChat(final String chatMsg, final EPlayerId target)
 	{
-		if (target == EPlayerId.OBSERVER)
+		if (panel != null)
 		{
-			observer.updateChat(chatMsg);
-		}
-		else if (target == EPlayerId.PLAYER_ONE)
-		{
-			player1.updateChat(chatMsg);
-		}
-		else if (target == EPlayerId.PLAYER_TWO)
-		{
-			player2.updateChat(chatMsg);
+			if (target == EPlayerId.OBSERVER)
+			{
+				observer.updateChat(chatMsg);
+			}
+			else if (target == EPlayerId.PLAYER_ONE)
+			{
+				player1.updateChat(chatMsg);
+			}
+			else if (target == EPlayerId.PLAYER_TWO)
+			{
+				player2.updateChat(chatMsg);
+			}
 		}
 	}
 
 	public Image getImage()
 	{
-		return observer.getImage();
+		if (panel != null)
+		{
+			return observer.getImage();
+		}
+
+		return null;
 	}
 
 	/**
@@ -244,26 +260,28 @@ public class RenderFacade
 	 */
 	public void switchToPlayer(EPlayerId playerView)
 	{
-		if (playerView == null)
+		if (panel != null)
 		{
-			playerView = EPlayerId.OBSERVER;
-		}
+			if (playerView == null)
+			{
+				playerView = EPlayerId.OBSERVER;
+			}
 
-		switch (playerView)
-		{
-			case OBSERVER:
-				setGUIMode(GUIMode.OBSERVER);
-				break;
-			case PLAYER_ONE:
-				setGUIMode(GUIMode.PLAYER_ONE);
-				break;
-			case PLAYER_TWO:
-				setGUIMode(GUIMode.PLAYER_TWO);
-				break;
-			default:
-				break;
+			switch (playerView)
+			{
+				case OBSERVER:
+					setGUIMode(GUIMode.OBSERVER);
+					break;
+				case PLAYER_ONE:
+					setGUIMode(GUIMode.PLAYER_ONE);
+					break;
+				case PLAYER_TWO:
+					setGUIMode(GUIMode.PLAYER_TWO);
+					break;
+				default:
+					break;
+			}
 		}
-
 	}
 
 	public void setAlreadyCreatedPlayerOne(boolean alreadyCreatedPlayerOne)
@@ -281,18 +299,21 @@ public class RenderFacade
 	 */
 	public void requestMove(EPlayerId id)
 	{
-		switch (id)
+		if (panel != null)
 		{
-			case PLAYER_ONE:
-				player1.requestMove();
-				setActivePlayer(id);
-				break;
-			case PLAYER_TWO:
-				player2.requestMove();
-				setActivePlayer(id);
-				break;
-			default:
-				break;
+			switch (id)
+			{
+				case PLAYER_ONE:
+					player1.requestMove();
+					setActivePlayer(id);
+					break;
+				case PLAYER_TWO:
+					player2.requestMove();
+					setActivePlayer(id);
+					break;
+				default:
+					break;
+			}
 		}
 	}
 
@@ -302,17 +323,20 @@ public class RenderFacade
 	 */
 	public void gameEnded(GameResult data, EPlayerId target)
 	{
-		if (target == EPlayerId.OBSERVER)
+		if (panel != null)
 		{
-			observer.gameEnded(data);
-		}
-		else if (target == EPlayerId.PLAYER_ONE)
-		{
-			player1.gameEnded(data);
-		}
-		else if (target == EPlayerId.PLAYER_TWO)
-		{
-			player2.gameEnded(data);
+			if (target == EPlayerId.OBSERVER)
+			{
+				observer.gameEnded(data);
+			}
+			else if (target == EPlayerId.PLAYER_ONE)
+			{
+				player1.gameEnded(data);
+			}
+			else if (target == EPlayerId.PLAYER_TWO)
+			{
+				player2.gameEnded(data);
+			}
 		}
 	}
 
