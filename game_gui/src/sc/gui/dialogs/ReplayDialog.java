@@ -31,9 +31,8 @@ import sc.plugin.GUIPluginInstance;
 @SuppressWarnings("serial")
 public class ReplayDialog extends JDialog {
 
-	private static final Integer REPLAY_PORT = 10500;
-	private ResourceBundle lang;
-	private PresentationFacade presFac;
+	private final ResourceBundle lang;
+	private final PresentationFacade presFac;
 	private List<GUIPluginInstance> plugins;
 	private JComboBox cmbGameType;
 	private JTextField txfReplay;
@@ -135,7 +134,7 @@ public class ReplayDialog extends JDialog {
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(contextPanel.getGameField(),
+		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField(),
 				threeDimensional);
 
 		// load replay and set observation

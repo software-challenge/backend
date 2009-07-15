@@ -9,11 +9,9 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
-import sc.protocol.clients.IUpdateListener;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
@@ -24,16 +22,16 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private static final String PATH_ICON_BACK = "/sc/resource/back.png";
 	private static final String PATH_ICON_NEXT = "/sc/resource/next.png";
 
-	private static final ImageIcon ICON_CANCEL = new ImageIcon(
-			ContextDisplay.class.getResource(PATH_ICON_CANCEL));
-	private static final ImageIcon ICON_START = new ImageIcon(
-			ContextDisplay.class.getResource(PATH_ICON_START));
-	private static final ImageIcon ICON_PAUSE = new ImageIcon(
-			ContextDisplay.class.getResource(PATH_ICON_PAUSE));
-	private static final ImageIcon ICON_BACK = new ImageIcon(
-			ContextDisplay.class.getResource(PATH_ICON_BACK));
-	private static final ImageIcon ICON_NEXT = new ImageIcon(
-			ContextDisplay.class.getResource(PATH_ICON_NEXT));
+	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_CANCEL));
+	private static final ImageIcon ICON_START = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_START));
+	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_PAUSE));
+	private static final ImageIcon ICON_BACK = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_BACK));
+	private static final ImageIcon ICON_NEXT = new ImageIcon(ContextDisplay.class
+			.getResource(PATH_ICON_NEXT));
 
 	private final PresentationFacade presFac;
 	private final ResourceBundle lang;
@@ -55,8 +53,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private void createGUI() {
 		this.setLayout(new BorderLayout());
 
-		gameField = new JPanel();
-		gameField.setBorder(BorderFactory.createEtchedBorder());
 		buttonBar = new JPanel();
 		buttonBar.setBorder(BorderFactory.createEtchedBorder());
 
@@ -86,8 +82,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				if (presFac.getLogicFacade().getObservation().hasPrevious()) {
 					presFac.getLogicFacade().getObservation().back();
 					btn_next.setEnabled(true);
-					if (!presFac.getLogicFacade().getObservation()
-							.hasPrevious()) {
+					if (!presFac.getLogicFacade().getObservation().hasPrevious()) {
 						btn_back.setEnabled(false);
 					}
 				}
@@ -120,6 +115,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				btn_next.setEnabled(false);
 				btn_spGame.setToolTipText(lang.getString("context_start"));
 				btn_spGame.setIcon(ICON_START);
+				((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
 			}
 		});
 
@@ -133,30 +129,39 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			}
 		});
 
-		buttonBar.setLayout(new BorderLayout( 30, 30 ));
-		
-		JPanel regularButtonBar = new JPanel();		
+		buttonBar.setLayout(new BorderLayout(30, 30));
+
+		JPanel regularButtonBar = new JPanel();
 		regularButtonBar.add(btn_back);
 		regularButtonBar.add(btn_spGame);
 		regularButtonBar.add(btn_next);
-		//regularButtonBar.add(new JSeparator(JSeparator.VERTICAL));
-		
+		// regularButtonBar.add(new JSeparator(JSeparator.VERTICAL));
+
 		JPanel cancelButtonBar = new JPanel();
 		cancelButtonBar.add(btn_cancel);
-		
+
 		buttonBar.add(regularButtonBar, BorderLayout.CENTER);
 		buttonBar.add(cancelButtonBar, BorderLayout.LINE_END);
 
-		this.add(gameField, BorderLayout.CENTER);
-		this.add(buttonBar, BorderLayout.PAGE_END);
+		recreateGameField();
 	}
 
 	/**
-	 * Returns the panel where the game field is drawn to.
+	 * Recreates an empty game field panel and replaces it with the current game
+	 * field. It also resets all other components on this panel in the old
+	 * order.
 	 * 
-	 * @return
+	 * @return the new game field panel
 	 */
-	public JPanel getGameField() {
+	public JPanel recreateGameField() {
+		gameField = new JPanel();
+		gameField.setBorder(BorderFactory.createEtchedBorder());
+
+		this.removeAll();
+		this.add(gameField, BorderLayout.CENTER);
+		this.add(buttonBar, BorderLayout.PAGE_END);
+		this.validate();
+
 		return gameField;
 	}
 
@@ -185,7 +190,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		if (obs != null) {
 			btn_back.setEnabled(obs.hasPrevious());
 			btn_next.setEnabled(obs.hasNext());
-			btn_spGame.setToolTipText(obs.isPaused() ? lang.getString("context_start") : lang.getString("context_pause"));
+			btn_spGame.setToolTipText(obs.isPaused() ? lang.getString("context_start")
+					: lang.getString("context_pause"));
 			btn_spGame.setIcon(obs.isPaused() ? ICON_START : ICON_PAUSE);
 		}
 	}

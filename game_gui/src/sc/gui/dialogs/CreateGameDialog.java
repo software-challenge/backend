@@ -235,7 +235,7 @@ public class CreateGameDialog extends JDialog {
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(contextPanel.getGameField(),
+		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField(),
 				threeDimensional);
 
 		List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(model
@@ -414,8 +414,9 @@ public class CreateGameDialog extends JDialog {
 		}
 		presFac.getLogicFacade().stopServer();
 		// clear panel
-		((ContextDisplay) presFac.getContextDisplay()).getGameField()
-				.removeAll();
+		/*((ContextDisplay) presFac.getContextDisplay()).getGameField()
+				.removeAll();*/ //TODO does it work?
+		((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {
