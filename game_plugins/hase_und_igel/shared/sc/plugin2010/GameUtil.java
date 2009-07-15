@@ -48,11 +48,6 @@ public class GameUtil
 		return moves - 1;
 	}
 
-	public static boolean isValidToMove(Board b, Player p, int l)
-	{
-		return isValidToMove(b, p, l, true);
-	}
-
 	/**
 	 * Überprüft <code>MoveTyp.MOVE</code> Züge auf ihre Korrektheit. Folgende
 	 * Spielregeln werden beachtet:
@@ -68,16 +63,16 @@ public class GameUtil
 	 * @param p
 	 * @return
 	 */
-	public static boolean isValidToMove(Board b, Player p, int l,
-			boolean checkCarrots)
+	public static boolean isValidToMove(Board b, Player p, int l)
 	{
+		if(l <= 0)
+		{
+			return false;
+		}
+		
 		boolean valid = true;
 		int requiredCarrots = GameUtil.calculateCarrots(l);
-
-		if (checkCarrots)
-		{
-			valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
-		}
+		valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
 
 		int newPosition = p.getFieldNumber() + l;
 		valid = valid && !b.isOccupied(newPosition);
@@ -92,6 +87,7 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = p.clone();
 				p2.setFieldNumber(newPosition);
+				p2.changeCarrotsAvailableBy(-requiredCarrots);
 				valid = valid && canPlayAnyCard(b, p2);
 				break;
 			case GOAL:
@@ -222,6 +218,7 @@ public class GameUtil
 				break;
 			case RABBIT:
 				Player p2 = (Player) p.clone();
+				p2.setFieldNumber(nextPos);
 				p2.setActions(p.getActionsWithout(Action.FALL_BACK));
 				valid = valid && canPlayAnyCard(b, p2);
 				break;
@@ -253,6 +250,7 @@ public class GameUtil
 				break;
 			case RABBIT:
 				Player p2 = p.clone();
+				p2.setFieldNumber(nextPos);
 				p2.setActions(p.getActionsWithout(Action.HURRY_AHEAD));
 				valid = valid && canPlayAnyCard(b, p2);
 				break;
