@@ -1,13 +1,15 @@
 package sc.shared;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import sc.helpers.CollectionHelper;
 import sc.helpers.Function;
 
 public final class PlayerScore {
-	private final BigInteger[] bigIntegers;
+	private final BigDecimal[] parts;
 	private ScoreCause cause;
 
 	public PlayerScore(boolean winner) {
@@ -16,21 +18,21 @@ public final class PlayerScore {
 
 	public PlayerScore(ScoreCause cause, Integer... scores) {
 		this(cause, CollectionHelper.iterableToColleciton(
-				CollectionHelper.intArrayToBigIntArray(scores)).toArray(
-				new BigInteger[scores.length]));
+				CollectionHelper.intArrayToBigDecimalArray(scores)).toArray(
+				new BigDecimal[scores.length]));
 	}
 
-	public PlayerScore(ScoreCause cause, BigInteger... bigIntegers) {
-		if (bigIntegers == null) {
+	public PlayerScore(ScoreCause cause, BigDecimal... parts) {
+		if (parts == null) {
 			throw new IllegalArgumentException("scores must not be null");
 		}
 
-		this.bigIntegers = bigIntegers;
+		this.parts = parts;
 		this.cause = cause;
 	}
 
 	public int size() {
-		return this.bigIntegers.length;
+		return this.parts.length;
 	}
 
 	public ScoreCause getCause() {
@@ -39,13 +41,13 @@ public final class PlayerScore {
 
 	public String[] toStrings() {
 		return CollectionHelper.iterableToColleciton(
-				CollectionHelper.map(Arrays.asList(this.bigIntegers),
-						new Function<BigInteger, String>() {
+				CollectionHelper.map(Arrays.asList(this.parts),
+						new Function<BigDecimal, String>() {
 							@Override
-							public String operate(BigInteger val) {
+							public String operate(BigDecimal val) {
 								return val.toString();
 							}
-						})).toArray(new String[this.bigIntegers.length]);
+						})).toArray(new String[this.parts.length]);
 	}
 
 	public void setCause(ScoreCause cause) {
@@ -53,7 +55,10 @@ public final class PlayerScore {
 	}
 
 	public void set(int pos, int value) {
-		this.bigIntegers[pos] = BigInteger.valueOf(value);
+		this.parts[pos] = BigDecimal.valueOf(value);
 	}
-
+	
+	public List<BigDecimal> getValues() {
+		return Collections.unmodifiableList(Arrays.asList(this.parts));
+	}
 }

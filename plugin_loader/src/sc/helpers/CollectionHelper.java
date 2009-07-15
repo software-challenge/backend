@@ -1,9 +1,8 @@
 package sc.helpers;
 
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -52,14 +51,14 @@ public abstract class CollectionHelper
 		return result;
 	}
 	
-	public static Iterable<BigInteger> intArrayToBigIntArray(Integer[] integers)
+	public static Iterable<BigDecimal> intArrayToBigDecimalArray(Integer[] integers)
 	{
 		return CollectionHelper.map(Arrays.asList(integers),
-				new Function<Integer, BigInteger>() {
+				new Function<Integer, BigDecimal>() {
 					@Override
-					public BigInteger operate(Integer val)
+					public BigDecimal operate(Integer val)
 					{
-						return BigInteger.valueOf(val);
+						return BigDecimal.valueOf(val);
 					}
 				});
 	}
