@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.host.IGameListener;
@@ -18,11 +20,20 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	private static Logger	logger				= LoggerFactory
 														.getLogger(RoundBasedGameInstance.class);
 	protected P				activePlayer		= null;
-	private boolean			paused				= false;
-	private Runnable		afterPauseAction	= null;
-	private Object			afterPauseLock		= new Object();
+
 	private int				turn				= 0;
-	private ActionTimeout	requestTimeout;
+
+	@XStreamOmitField
+	private boolean			paused				= false;
+
+	@XStreamOmitField
+	private Runnable		afterPauseAction	= null;
+
+	@XStreamOmitField
+	private Object			afterPauseLock		= new Object();
+
+	@XStreamOmitField
+	private ActionTimeout	requestTimeout		= null;
 
 	public int getTurn()
 	{

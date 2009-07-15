@@ -293,7 +293,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		notifyOnGameOver(res);
 	}
 
-	@Override
+	@Override	
 	public boolean ready()
 	{
 		return players.size() == GamePlugin.MAX_PLAYER_COUNT;
