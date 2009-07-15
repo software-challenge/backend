@@ -7,8 +7,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.Accessor.GetterOnlyReflection;
-
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.plugin2010.Board.FieldTyp;
@@ -33,7 +31,8 @@ public class GamePlayTest
 	}
 
 	/**
-	 * In der ersten Runde stehen beide Spieler am Start
+	 * In der ersten Runde stehen beide Spieler am Start, und rot ist an der 
+	 * Reihe
 	 */
 	@Test
 	public void firstRound()
@@ -43,6 +42,9 @@ public class GamePlayTest
 
 		Assert.assertEquals(0, red.getFieldNumber());
 		Assert.assertEquals(0, blue.getFieldNumber());
+		
+		g.start();
+		Assert.assertEquals(red, g.getActivePlayer());
 	}
 
 	/**
@@ -106,39 +108,31 @@ public class GamePlayTest
 		red.setCarrotsAvailable(100);
 		blue.setCarrotsAvailable(100);
 		Assert.assertEquals(0, g.getTurn());
-		Assert.assertEquals(red, g.getActivePlayer());
 		int firstCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red
 				.getFieldNumber());
 		Move r1 = new Move(MoveTyp.MOVE, firstCarrot);
-		Assert.assertTrue(b.isValid(r1, red));
 		g.onAction(red, r1);
 
 		Assert.assertEquals(0, g.getTurn());
-		Assert.assertEquals(blue, g.getActivePlayer());
 		int nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red
 				.getFieldNumber());
 		Move b1 = new Move(MoveTyp.MOVE, nextCarrot - blue.getFieldNumber());
-		Assert.assertTrue(b.isValid(b1, blue));
 		g.onAction(blue, b1);
 
 		Assert.assertEquals(1, g.getTurn());
-		Assert.assertEquals(red, g.getActivePlayer());
 		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, red
 				.getFieldNumber());
 		Move r2 = new Move(MoveTyp.MOVE, rabbitAt - red.getFieldNumber());
-		Assert.assertTrue(b.isValid(r2, red));
+
 		g.onAction(red, r2);
-		Assert.assertEquals(red, g.getActivePlayer());
+		Assert.assertEquals(1, g.getTurn());
 		Move r3 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
-		Assert.assertTrue(b.isValid(r3, red));
 		g.onAction(red, r3);
 
 		Assert.assertEquals(1, g.getTurn());
-		Assert.assertEquals(blue, g.getActivePlayer());
 		nextCarrot = b
 				.getNextFieldByTyp(FieldTyp.CARROT, blue.getFieldNumber());
 		Move b2 = new Move(MoveTyp.MOVE, nextCarrot - blue.getFieldNumber());
-		Assert.assertTrue(b.isValid(b2, blue));
 		g.onAction(blue, b2);
 
 		Assert.assertEquals(red, g.getActivePlayer());
