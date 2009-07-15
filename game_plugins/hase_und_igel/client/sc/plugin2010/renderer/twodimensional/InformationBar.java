@@ -30,13 +30,13 @@ import sc.plugin2010.renderer.RendererUtil;
 public class InformationBar extends JPanel
 {
 
-	private final String	CARROTCOUNT		= "Karottenanzahl: ";
-	private final String	ROUNDCOUNT		= "Runde: ";
-	private final String	MOVESCOUNT		= "Zuganzahl möglich: ";
-	private final String	TURNCOUNT		= "An der Reihe: ";
+	private final String	CARROTCOUNT		= "Karottenanzahl:";
+	private final String	ROUNDCOUNT		= "Runde:";
+	private final String	MOVESCOUNT		= "Zuganzahl möglich:";
+	private final String	TURNCOUNT		= "<html><h1> An der Reihe:</h1></html> ";
 	private final String	PLAYER			= "<html><h1>Spieler:</h1></html>";
 	private final String	ENEMY			= "<html><h1>Gegner:</h1></html>";
-	private final String	SALADCOUNT		= "Salatanzahl: ";
+	private final String	SALADCOUNT		= "Salatanzahl:";
 	private final String	HASENJOKER		= "Hasenjoker:";
 
 	private final JLabel	carrots			= new JLabel(CARROTCOUNT);
@@ -159,9 +159,10 @@ public class InformationBar extends JPanel
 
 	private void setMyAttributes(JLabel carrots, final int car, final int sal)
 	{
-		carrots.setText("<html>" + CARROTCOUNT + String.valueOf(car) + "<BR>"
-				+ MOVESCOUNT + GameUtil.calculateMoveableFields(car) + "<BR>"
-				+ SALADCOUNT + String.valueOf(sal) + "</html>");
+		carrots.setText("<html><u>" + CARROTCOUNT + "</u>" + " "
+				+ String.valueOf(car) + "<BR><u>" + MOVESCOUNT + "</u>" + " "
+				+ GameUtil.calculateMoveableFields(car) + "<BR><u>"
+				+ SALADCOUNT + "</u>" + " " + String.valueOf(sal) + "</html>");
 	}
 
 	public void setHasenjoker(final List<Action> joker)
@@ -176,22 +177,23 @@ public class InformationBar extends JPanel
 
 	private void setMyHasenjoker(JLabel label, final List<Action> joker)
 	{
-		String text = "<html>" + HASENJOKER;
+		String text = "<html><u>" + HASENJOKER + "</u>";
+		String indent = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		for (Action jo : joker)
 		{
 			switch (jo)
 			{
 				case TAKE_OR_DROP_CARROTS:
-					text += "<BR>Du kannst 20 Karotten nehmen oder abgeben";
+					text += "<BR>" + indent + "20 Karotten nehmen oder abgeben";
 					break;
 				case EAT_SALAD:
-					text += "<BR>Friss sofort einen Salat";
+					text += "<BR>" + indent + "Friss sofort einen Salat";
 					break;
 				case FALL_BACK:
-					text += "<BR>Gehe eine Position zurück";
+					text += "<BR>" + indent + "Gehe eine Position zurück";
 					break;
 				case HURRY_AHEAD:
-					text += "<BR>Rücke eine Position vor";
+					text += "<BR>" + indent + "Rücke eine Position vor";
 					break;
 				default:
 					break;
@@ -201,15 +203,26 @@ public class InformationBar extends JPanel
 		label.setText(text + "</html>");
 	}
 
+	public void setPlayer(final String playerName)
+	{
+		player.setText("<html><h1>" + playerName + "</h1></html>");
+	}
+
+	public void setOtherPlayer(final String playerName)
+	{
+		enemy.setText("<html><h1>" + playerName + "</h1></html>");
+	}
+
 	public void setRound(final int count)
 	{
-		rounds.setText(ROUNDCOUNT + String.valueOf(count));
+		rounds.setText("<html><h1>" + ROUNDCOUNT + " " + String.valueOf(count)
+				+ "</h1>" + "</html>");
 	}
 
 	public void setTurn(final String color)
 	{
 		ImageIcon icon = new ImageIcon();
-		int scaleValue = 70;
+		int scaleValue = 60;
 		if (color.equals("blue"))
 		{
 			icon.setImage(blue.getScaledInstance(scaleValue, scaleValue,

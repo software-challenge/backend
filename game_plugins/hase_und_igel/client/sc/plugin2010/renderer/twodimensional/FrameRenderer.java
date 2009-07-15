@@ -73,7 +73,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	{
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
-		this.playername = playername; // TODO use playername
+		this.playername = playername;
 		this.otherPlayername = otherPlayername;
 		createInitFrame();
 	}
@@ -114,6 +114,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		this.add(leftPanel, BorderLayout.CENTER);
 		action.setPreferredSize(new Dimension(200, getHeight() - 100));
 		this.add(action, BorderLayout.EAST);
+
+		info.setPlayer(playername);
+		info.setOtherPlayer(otherPlayername);
 
 		// chat.addOtherMessage("Chat: ");
 		// chat.addOwnMessage("Prototyp: 0.1 alpha :)");
@@ -380,7 +383,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			else if (answer.equals(moveForward))
 			{
-				// TODO close dialog
+				qPanel.setVisible(false);
 			}
 		}
 		if (type.equals(jokerAnswer))
