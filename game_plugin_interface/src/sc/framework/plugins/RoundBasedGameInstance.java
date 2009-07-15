@@ -129,6 +129,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		if (increaseTurnIfNecessary(nextPlayer))
 		{
 			this.turn++;
+			onNewTurn();
 		}
 
 		this.activePlayer = nextPlayer;
@@ -157,6 +158,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 				.indexOf(nextPlayer) == 0);
 	}
 
+	protected abstract void onNewTurn();
+	
 	/**
 	 * Gets the current state representation.
 	 * 
