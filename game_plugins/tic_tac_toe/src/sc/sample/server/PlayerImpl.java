@@ -19,7 +19,6 @@ public class PlayerImpl extends SimplePlayer
 		return data;
 	}
 
-	@Override
 	public PlayerScore getScore()
 	{
 		return new PlayerScore(ScoreCause.REGULAR, 1, 0);

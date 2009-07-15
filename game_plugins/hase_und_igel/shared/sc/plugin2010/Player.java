@@ -263,7 +263,6 @@ public class Player extends SimplePlayer implements Cloneable
 		return ret;
 	}
 
-	@Override
 	public PlayerScore getScore()
 	{
 		return new PlayerScore(ScoreCause.REGULAR, getPosition().equals(

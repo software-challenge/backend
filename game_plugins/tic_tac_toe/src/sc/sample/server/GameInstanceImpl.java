@@ -7,6 +7,7 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.sample.shared.GameState;
 import sc.sample.shared.Move;
 import sc.sample.shared.Player;
+import sc.shared.PlayerScore;
 
 public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 {
@@ -74,5 +75,11 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected PlayerScore getScoreFor(PlayerImpl p)
+	{
+		return p.getScore();
 	}
 }

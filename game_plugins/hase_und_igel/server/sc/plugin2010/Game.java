@@ -306,4 +306,10 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 
 	}
+	
+	@Override
+	protected PlayerScore getScoreFor(Player p)
+	{
+		return p.getScore();
+	}
 }

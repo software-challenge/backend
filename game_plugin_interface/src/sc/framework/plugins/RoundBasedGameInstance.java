@@ -141,7 +141,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 			for (final P p : this.players)
 			{
-				map.put(p, p.getScore());
+				map.put(p, getScoreFor(p));
 			}
 
 			notifyOnGameOver(map);
@@ -151,6 +151,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			notifyActivePlayer();
 		}
 	}
+
+	protected abstract PlayerScore getScoreFor(P p);
 
 	protected boolean increaseTurnIfNecessary(P nextPlayer)
 	{

@@ -34,7 +34,6 @@ public class TestPlayer extends SimplePlayer
 		}
 	}
 	
-	@Override
 	public PlayerScore getScore()
 	{
 		return new PlayerScore(true);

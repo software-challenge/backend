@@ -6,6 +6,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.shared.PlayerScore;
 
 public class TestGame extends RoundBasedGameInstance<TestPlayer>
 {
@@ -90,5 +91,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected PlayerScore getScoreFor(TestPlayer p)
+	{
+		return p.getScore();
 	}
 }

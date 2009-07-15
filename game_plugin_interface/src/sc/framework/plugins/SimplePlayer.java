@@ -63,8 +63,6 @@ public abstract class SimplePlayer implements IPlayer
 		logger.debug("Move requested.");
 	}
 
-	public abstract PlayerScore getScore();
-
 	@Override
 	public final void setDisplayName(String displayName)
 	{
