@@ -168,6 +168,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		if (presFac.getLogicFacade().getObservation() != null) {
 			if (ended) {
 				btn_cancel.setEnabled(false);
+				btn_spGame.setEnabled(false);
 			} else {
 				btn_cancel.setEnabled(true);
 				btn_spGame.setEnabled(true);

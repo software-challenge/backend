@@ -1,11 +1,5 @@
 package sc.logic;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -119,7 +113,7 @@ public class LogicFacade implements ILogicFacade {
 	public void setObservation(IObservation observer) {
 		this.observation = observer;
 	}
-
+	
 	@Override
 	public void startServer(Integer port, boolean timeout) {
 		if (null != server) {

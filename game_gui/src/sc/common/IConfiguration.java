@@ -9,4 +9,10 @@ public interface IConfiguration {
 	
 	void setCreateGameDialogPath(String createGameDialogPath);
 	String getCreateGameDialogPath();
+	
+	void setNumTest(int numTest);
+	int getNumTest();
+	
+	String getTestDialogPath();
+	void setTestDialogPath(String testDialogPath);
 }

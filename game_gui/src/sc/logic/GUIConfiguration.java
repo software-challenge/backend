@@ -25,15 +25,24 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	private String createGameDialogPath;
 
+	private int numTest;
+
+	private String testDialogPath;
+
 	private static GUIConfiguration instance;
 
 	static {
 		instance = load();
 	}
 
+	/**
+	 * Constructs a configuration with default values.
+	 */
 	private GUIConfiguration() {
 		this.lang = ELanguage.DE;
 		this.createGameDialogPath = ".";
+		this.numTest = 100;
+		this.testDialogPath = ".";
 	}
 
 	public static GUIConfiguration instance() {
@@ -76,13 +85,10 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 			result = (GUIConfiguration) in.readObject();
 			System.out.println("Loaded GUI Configuration");
 		} catch (FileNotFoundException e) {
-			result = new GUIConfiguration();
 		} catch (IOException e) {
 			e.printStackTrace();
-			result = new GUIConfiguration();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			result = new GUIConfiguration();
 		} finally {
 			if (in != null) {
 				try {
@@ -123,5 +129,29 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 				}
 			}
 		}
+	}
+
+	public void setNumberOfTests(int numTest) {
+		this.setNumTest(numTest);
+	}
+
+	@Override
+	public void setNumTest(int numTest) {
+		this.numTest = numTest;
+	}
+
+	@Override
+	public int getNumTest() {
+		return numTest;
+	}
+
+	@Override
+	public String getTestDialogPath() {
+		return this.testDialogPath;
+	}
+
+	@Override
+	public void setTestDialogPath(String testDialogPath) {
+		this.testDialogPath = testDialogPath;
 	}
 }
