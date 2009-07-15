@@ -1,5 +1,6 @@
 package sc.server;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -61,18 +62,15 @@ public abstract class ServiceManager
 		return createService(name, target, true);
 	}
 
-	protected static Collection<Thread> getServices()
+	protected static synchronized Collection<Thread> getServices()
 	{
-		return Collections.unmodifiableCollection(threads);
+		ArrayList<Thread> result = new ArrayList<Thread>(threads.size());
+		result.addAll(threads);
+		return Collections.unmodifiableCollection(result);
 	}
 
-	protected static Collection<Thread> getServiceNames()
-	{
-		return Collections.unmodifiableCollection(threads);
-	}
-
-	public static Thread createService(String name, Runnable target,
-			boolean daemon)
+	public static synchronized Thread createService(String name,
+			Runnable target, boolean daemon)
 	{
 		logger.debug("Spawning Thread for new service (name={}, daemon={})",
 				name, daemon);
@@ -84,14 +82,14 @@ public abstract class ServiceManager
 		return thread;
 	}
 
-	private static void kill(Thread thread)
+	private synchronized static void kill(Thread thread)
 	{
 		thread.interrupt();
 		threads.remove(thread);
 		killedThreads.add(thread);
 	}
 
-	public static void killAll()
+	public synchronized static void killAll()
 	{
 		logger.info("Shutting down all services...");
 
@@ -101,12 +99,7 @@ public abstract class ServiceManager
 		}
 	}
 
-	public static Collection<Thread> getAll()
-	{
-		return Collections.unmodifiableCollection(threads);
-	}
-
-	public static boolean isEmpty()
+	public synchronized static boolean isEmpty()
 	{
 		return threads.isEmpty();
 	}
