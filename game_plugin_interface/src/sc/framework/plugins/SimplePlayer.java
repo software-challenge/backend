@@ -71,7 +71,6 @@ public abstract class SimplePlayer implements IPlayer
 		this.displayName = displayName;
 	}
 
-	@Override
 	public final String getDisplayName()
 	{
 		return this.displayName;
