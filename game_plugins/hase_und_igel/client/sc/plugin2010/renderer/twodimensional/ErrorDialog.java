@@ -40,14 +40,9 @@ public class ErrorDialog extends JDialog
 
 		JLabel imageLabel = new JLabel();
 
-		imageLabel.setIcon(new ImageIcon(RendererUtil
-				.getImage("resource/error.png")));
-
 		FlowLayout buttonLayout = new FlowLayout();
 
 		buttonPanel.setLayout(buttonLayout);
-
-		buttonPanel.add(imageLabel);
 
 		// add okay Button
 		JButton jbut = new JButton("OK");
@@ -57,7 +52,11 @@ public class ErrorDialog extends JDialog
 		BorderLayout dialogLayout = new BorderLayout();
 		setLayout(dialogLayout);
 
+		imageLabel.setIcon(new ImageIcon(RendererUtil
+				.getImage("resource/error.png")));
+
 		this.add(new JLabel(message, JLabel.CENTER), BorderLayout.CENTER);
+		this.add(imageLabel, BorderLayout.WEST);
 		this.add(buttonPanel, BorderLayout.SOUTH);
 
 		setLocationRelativeTo(null);

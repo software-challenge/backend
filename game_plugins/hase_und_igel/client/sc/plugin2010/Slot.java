@@ -52,13 +52,13 @@ public class Slot implements ISlot
 		humanClient.setHandler(handler);
 		if (humanClient.getID() == EPlayerId.PLAYER_ONE)
 		{
-			RenderFacade.getInstance().createPanel(handler, "",
-					"", humanClient.getID());
+			RenderFacade.getInstance()
+					.createPanel(handler, humanClient.getID());
 		}
 		else
 		{
-			RenderFacade.getInstance().createPanel(handler, "",
-					"", humanClient.getID());
+			RenderFacade.getInstance()
+					.createPanel(handler, humanClient.getID());
 		}
 		humanClient.joinPreparedGame(reservation);
 	}

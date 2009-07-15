@@ -14,6 +14,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
+import sc.plugin2010.Player.FigureColor;
+
 /**
  * @author ffi
  * 
@@ -73,18 +75,18 @@ public class ActionBar extends JPanel
 
 	}
 
-	public void addAction(String color, String action)
+	public void addAction(String color, String playername, String action)
 	{
 		if (color.equals("Rot"))
 		{
 			if (pane.getText().equals(""))
 			{
-				appendText(color, RED);
+				appendText(playername, RED);
 				appendText(action, BLACK);
 			}
 			else
 			{
-				appendText("\n" + color, RED);
+				appendText("\n" + playername, RED);
 				appendText(action, BLACK);
 			}
 		}
@@ -92,12 +94,12 @@ public class ActionBar extends JPanel
 		{
 			if (pane.getText().equals(""))
 			{
-				appendText(color, BLUE);
+				appendText(playername, BLUE);
 				appendText(action, BLACK);
 			}
 			else
 			{
-				appendText("\n" + color, BLUE);
+				appendText("\n" + playername, BLUE);
 				appendText(action, BLACK);
 			}
 		}

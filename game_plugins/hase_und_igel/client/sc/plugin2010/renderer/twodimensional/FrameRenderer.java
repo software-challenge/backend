@@ -51,9 +51,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private boolean					onlyObserving	= false;
 	private boolean					questionOpen	= false;
 
-	private String					playername		= "";
-	private String					otherPlayername	= "";
-
 	// Strings used for asking Questions to the user
 	private String					moveForward		= "Weiter ziehen";
 	private String					takeCarrots		= "10 Karotten nehmen";
@@ -69,13 +66,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private String					jokerAnswer		= "joker";
 
 	public FrameRenderer(final GUIGameHandler handler,
-			final boolean onlyObserving, String playername,
-			String otherPlayername)
+			final boolean onlyObserving)
 	{
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
-		this.playername = playername;
-		this.otherPlayername = otherPlayername;
 		createInitFrame();
 	}
 
@@ -116,35 +110,34 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		action.setPreferredSize(new Dimension(200, getHeight() - 100));
 		this.add(action, BorderLayout.EAST);
 
-		info.setPlayer(playername);
-		info.setOtherPlayer(otherPlayername);
-
 		// chat.addOtherMessage("Chat: ");
 		// chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
 		setVisible(true);
 	}
 
-	private int printHistroyTillNewTurn(final Player player, int i,
+	private int printHistroyTillNewTurn(final Player curPlayer, int i,
 			final String color)
 	{
-		if (i < player.getHistory().size())
+		if (i < curPlayer.getHistory().size())
 		{
-			action.addAction(color, " "
-					+ GameUtil.displayMoveAction(player.getHistory().get(i)));
+			action
+					.addAction(color, curPlayer.getDisplayName(), " "
+							+ GameUtil.displayMoveAction(curPlayer.getHistory()
+									.get(i)));
 			i++;
-			if (i < player.getHistory().size()
-					&& player.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
+			if (i < curPlayer.getHistory().size()
+					&& curPlayer.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
 			{
-				action.addAction(color, " "
-						+ GameUtil
-								.displayMoveAction(player.getHistory().get(i)));
+				action.addAction(color, curPlayer.getDisplayName(), " "
+						+ GameUtil.displayMoveAction(curPlayer.getHistory()
+								.get(i)));
 				i++;
-				if (i < player.getHistory().size()
-						&& player.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
+				if (i < curPlayer.getHistory().size()
+						&& curPlayer.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
 				{
-					action.addAction(color, " "
-							+ GameUtil.displayMoveAction(player.getHistory()
+					action.addAction(color, curPlayer.getDisplayName(), " "
+							+ GameUtil.displayMoveAction(curPlayer.getHistory()
 									.get(i)));
 					i++;
 				}
@@ -176,39 +169,48 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			i = printHistroyTillNewTurn(redPlayer, i, red);
 			j = printHistroyTillNewTurn(bluePlayer, j, blue);
 		}
+
+		action.addNormal("DEBUG:---");
+		String col = "";
+
+		if (player.getColor() == FigureColor.RED)
+		{
+			col = "Rot";
+		}
+		else
+		{
+			col = "Blau";
+		}
+
+		for (int k = 0; k < player.getHistory().size(); k++)
+		{
+
+			action.addAction(col, player.getDisplayName(), " "
+					+ GameUtil.displayMoveAction(player.getHistory().get(k)));
+		}
+
+		if (enemy.getColor() == FigureColor.RED)
+		{
+			col = "Rot";
+		}
+		else
+		{
+			col = "Blau";
+		}
+
+		for (int k = 0; k < enemy.getHistory().size(); k++)
+		{
+			action.addAction(col, enemy.getDisplayName(), " "
+					+ GameUtil.displayMoveAction(enemy.getHistory().get(k)));
+		}
 	}
 
 	@Override
 	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
+
 		this.player = player;
 		enemy = otherPlayer;
-
-		if (player.getColor() == FigureColor.RED)
-		{
-			info.setColor(true);
-		}
-		else
-		{
-			info.setColor(false);
-		}
-
-		String currentColorPath = "";
-		switch (player.getColor())
-		{
-			case BLUE:
-				addHistory(enemy, player);
-				currentColorPath = "blue";
-				break;
-			case RED:
-				addHistory(player, enemy);
-				currentColorPath = "red";
-				break;
-			default:
-				break;
-		}
-
-		info.setTurn(currentColorPath);
 
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
@@ -220,20 +222,39 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 		}
 
-		if (enemy != null)
-		{
-			fbuttons.get(enemy.getFieldNumber()).setOccupied(enemy.getColor());
-		}
-
+		fbuttons.get(enemy.getFieldNumber()).setOccupied(enemy.getColor());
 		fbuttons.get(player.getFieldNumber()).setOccupied(player.getColor());
 
+		String currentColorPath = "";
+		switch (player.getColor())
+		{
+			case RED:
+				addHistory(player, enemy);
+				info.setColor(true);
+				currentColorPath = "red";
+				break;
+			case BLUE:
+				addHistory(enemy, player);
+				info.setColor(false);
+				currentColorPath = "blue";
+				break;
+			default:
+				break;
+		}
+
+		info.setTurn(currentColorPath);
+
+		info.setPlayer(player.getDisplayName());
 		info.setAttributes(player.getCarrotsAvailable(), player
 				.getSaladsToEat());
 		info.setHasenjoker(player.getActions());
 
+		info.setOtherPlayer(enemy.getDisplayName());
 		info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
 				.getSaladsToEat());
 		info.setEnemyHasenjoker(enemy.getActions());
+
+		this.repaint();
 	}
 
 	@Override
@@ -296,10 +317,12 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		switch (player.getColor())
 		{
 			case RED:
-				color = "<font color='#ff0000'>Rot</font>";
+				color = "<font color='#ff0000'>" + player.getDisplayName()
+						+ "</font>";
 				break;
 			case BLUE:
-				color = "<font color='#0000ff'>Blau</font>";
+				color = "<font color='#0000ff'>" + player.getDisplayName()
+						+ "</font>";
 				break;
 			default:
 				break;
@@ -483,7 +506,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				}
 				else
 				{
+
 					new ErrorDialog("Dies ist kein valider Zug.");
+					repaint();
 				}
 			}
 			else
@@ -495,6 +520,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				else
 				{
 					new ErrorDialog("Dies ist kein valider Zug.");
+					repaint();
 				}
 			}
 		}
@@ -538,31 +564,63 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		}
 	}
 
+	public void addGameEndedRightColors(FigureColor col, String text)
+	{
+		String colorStr = "";
+
+		switch (col)
+		{
+			case RED:
+				colorStr = "Rot";
+				break;
+			case BLUE:
+				colorStr = "Blau";
+				break;
+
+			default:
+				break;
+		}
+
+		if (player.getColor() == col)
+		{
+			action.addAction(colorStr, player.getDisplayName(), text);
+		}
+		else
+		{
+			action.addAction(colorStr, enemy.getDisplayName(), text);
+		}
+	}
+
 	@Override
 	public void gameEnded(GameResult data)
 	{
+		action.addNormal("----------------");
+		action.addNormal("Spielresultat:");
+
 		String[] results = data.getScores().get(0).toStrings();
 		if (results[0].equals("1"))
 		{
-			action.addAction("Rot", ": Gewinner");
+			addGameEndedRightColors(FigureColor.RED, ": Gewinner");
 		}
 		else if (results[0].equals("0"))
 		{
-			action.addAction("Rot", ": Verlierer");
+			addGameEndedRightColors(FigureColor.RED, ": Verlierer");
 		}
 
-		action.addAction("Rot", ": erreichtes Feld:" + results[1]);
+		addGameEndedRightColors(FigureColor.RED, ": erreichtes Feld:"
+				+ results[1]);
 
 		results = data.getScores().get(1).toStrings();
 		if (results[0].equals("1"))
 		{
-			action.addAction("Blau", ": Gewinner");
+			addGameEndedRightColors(FigureColor.BLUE, ": Gewinner");
 		}
 		else if (results[0].equals("0"))
 		{
-			action.addAction("Blau", ": Verlierer");
+			addGameEndedRightColors(FigureColor.BLUE, ": Verlierer");
 		}
 
-		action.addAction("Blau", ": erreichtes Feld:" + results[1]);
+		addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld:"
+				+ results[1]);
 	}
 }
