@@ -21,8 +21,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	private boolean			paused				= false;
 	private Runnable		afterPauseAction	= null;
 	private Object			afterPauseLock		= new Object();
-	private boolean			moveRequested		= false;
 	private int				turn				= 0;
+	private ActionTimeout	requestTimeout;
 
 	public int getTurn()
 	{
@@ -35,10 +35,19 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	{
 		if (fromPlayer.equals(this.activePlayer))
 		{
-			if (this.moveRequested)
+			if (wasMoveRequested())
 			{
-				this.moveRequested = false;
-				onRoundBasedAction(fromPlayer, data);
+				this.requestTimeout.stop();
+
+				if (this.requestTimeout.didTimeout())
+				{
+					logger.warn("Client hit soft-timeout.");
+					onPlayerLeft(fromPlayer);
+				}
+				else
+				{
+					onRoundBasedAction(fromPlayer, data);
+				}
 			}
 			else
 			{
@@ -50,6 +59,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		{
 			throw new RescueableClientException("It's not your turn yet.");
 		}
+	}
+
+	private boolean wasMoveRequested()
+	{
+		return this.requestTimeout != null;
 	}
 
 	protected abstract void onRoundBasedAction(IPlayer fromPlayer, Object data)
@@ -179,10 +193,34 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	 * 
 	 * @param player
 	 */
-	protected final void requestMove(P player)
+	protected synchronized final void requestMove(P player)
 	{
-		this.moveRequested = true;
+		final ActionTimeout timeout = getTimeoutFor(player);
+		final Logger logger = RoundBasedGameInstance.logger;
+		final P playerToTimeout = player;
+
+		this.requestTimeout = timeout;
+		timeout.start(new Runnable() {
+			@Override
+			public void run()
+			{
+				logger.warn("Player {} reached the timeout of {}ms",
+						playerToTimeout, timeout.getHardTimeout());
+				onPlayerLeft(playerToTimeout);
+			}
+		});
+
 		player.requestMove();
+	}
+
+	protected ActionTimeout getTimeoutFor(P player)
+	{
+		return new ActionTimeout(true);
+	}
+
+	protected final boolean isPaused()
+	{
+		return this.paused;
 	}
 
 	@Override

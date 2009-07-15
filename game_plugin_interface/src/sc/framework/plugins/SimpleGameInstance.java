@@ -1,16 +1,15 @@
 package sc.framework.plugins;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
+
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		IGameInstance
