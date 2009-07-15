@@ -144,9 +144,9 @@ public class Werkzeuge
 				spieler.getPlayer(), type, karottenAnzahl);
 	}
 
-	public static boolean mussSpielerSichBewegen(Spieler spieler)
+	public static boolean mussSpielerSichBewegen(Spielbrett brett, Spieler spieler)
 	{
-		return GameUtil.playerMustMove(spieler.getPlayer());
+		return GameUtil.playerMustMove(brett.getBoard(), spieler.getPlayer());
 	}
 
 	// /////////////////////////////////////

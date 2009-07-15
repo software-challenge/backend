@@ -73,7 +73,6 @@ public class GameUtil
 	{
 		boolean valid = true;
 		int requiredCarrots = GameUtil.calculateCarrots(l);
-		valid = valid && l > 0;
 
 		if (checkCarrots)
 		{
@@ -93,7 +92,7 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = p.clone();
 				p2.setFieldNumber(newPosition);
-				valid = valid && isValidToPlayCard(b, p2);
+				valid = valid && canPlayAnyCard(b, p2);
 				break;
 			case GOAL:
 				int carrotsLeft = p.getCarrotsAvailable() - requiredCarrots;
@@ -124,16 +123,22 @@ public class GameUtil
 
 		valid = valid && (currentField.equals(FieldTyp.SALAD));
 		valid = valid && (p.getSaladsToEat() > 0);
-		valid = valid && !playerMustMove(p);
+		valid = valid && !playerMustMove(b, p);
 
 		return valid;
 	}
 
-	public static boolean playerMustMove(Player p)
+	public static boolean playerMustMove(Board b, Player p)
 	{
 		Move lastMove = p.getLastMove();
 
-		if (lastMove != null)
+		FieldTyp type = b.getTypeAt(p.getFieldNumber());
+
+		if (type == FieldTyp.HEDGEHOG || type == FieldTyp.START)
+		{
+			return true;
+		}
+		else if (lastMove != null)
 		{
 			if (lastMove.getTyp() == MoveTyp.EAT)
 			{
@@ -142,6 +147,10 @@ public class GameUtil
 			else if (lastMove.getTyp() == MoveTyp.PLAY_CARD)
 			{
 				if (lastMove.getCard() == Player.Action.EAT_SALAD)
+				{
+					return true;
+				}
+				else if (lastMove.getCard() == Player.Action.TAKE_OR_DROP_CARROTS)
 				{
 					return true;
 				}
@@ -189,32 +198,9 @@ public class GameUtil
 		return valid;
 	}
 
-	public static List<Action> validCards(Board b, Player p)
-	{
-		List<Action> ret = new LinkedList<Action>();
-
-		for (final Action a : p.getActions())
-		{
-			switch (a)
-			{
-				case HURRY_AHEAD:
-					break;
-				case TAKE_OR_DROP_CARROTS:
-					break;
-				case EAT_SALAD:
-					break;
-				case FALL_BACK:
-					break;
-			}
-		}
-
-		return ret;
-	}
-
 	public static boolean isValidToPlayFallBack(Board b, Player p)
 	{
-		boolean valid = !playerMustMove(p)
-				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		boolean valid = !playerMustMove(b, p) && isOnRabbitField(b, p)
 				&& b.isFirst(p);
 
 		valid = valid && p.ownsCardOfTyp(Action.FALL_BACK);
@@ -222,7 +208,8 @@ public class GameUtil
 		final Player o = b.getOtherPlayer(p);
 		int nextPos = o.getFieldNumber() - 1;
 
-		switch (b.getTypeAt(nextPos))
+		FieldTyp type = b.getTypeAt(nextPos);
+		switch (type)
 		{
 			case INVALID:
 			case HEDGEHOG:
@@ -236,8 +223,10 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = (Player) p.clone();
 				p2.setActions(p.getActionsWithout(Action.FALL_BACK));
-				valid = valid && isValidToPlayCard(b, p2);
+				valid = valid && canPlayAnyCard(b, p2);
 				break;
+			default:
+				throw new IllegalStateException("Unknown Type " + type);
 		}
 
 		return valid;
@@ -245,15 +234,15 @@ public class GameUtil
 
 	public static boolean isValidToPlayHurryAhead(final Board b, final Player p)
 	{
-		boolean valid = !playerMustMove(p)
-				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		boolean valid = !playerMustMove(b, p) && isOnRabbitField(b, p)
 				&& !b.isFirst(p);
 		valid = valid && p.ownsCardOfTyp(Action.HURRY_AHEAD);
 
 		final Player o = b.getOtherPlayer(p);
 		int nextPos = o.getFieldNumber() + 1;
 
-		switch (b.getTypeAt(nextPos))
+		FieldTyp type = b.getTypeAt(nextPos);
+		switch (type)
 		{
 			case INVALID:
 			case HEDGEHOG:
@@ -265,11 +254,13 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = p.clone();
 				p2.setActions(p.getActionsWithout(Action.HURRY_AHEAD));
-				valid = valid && isValidToPlayCard(b, p2);
+				valid = valid && canPlayAnyCard(b, p2);
 				break;
 			case GOAL:
 				valid = valid && b.canEnterGoal(p);
 				break;
+			default:
+				throw new IllegalStateException("Unknown Type " + type);
 		}
 
 		return valid;
@@ -277,19 +268,22 @@ public class GameUtil
 
 	public static boolean isValidToPlayTakeOrDropCarrots(Board b, Player p)
 	{
-		return !playerMustMove(p)
-				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		return !playerMustMove(b, p) && isOnRabbitField(b, p)
 				&& p.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
 	}
 
 	public static boolean isValidToPlayEatSalad(Board b, Player p)
 	{
-		return !playerMustMove(p)
-				&& b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT)
+		return !playerMustMove(b, p) && isOnRabbitField(b, p)
 				&& p.ownsCardOfTyp(Action.EAT_SALAD) && p.getSaladsToEat() > 0;
 	}
 
-	public static boolean isValidToPlayCard(Board b, Player p)
+	private static boolean isOnRabbitField(Board b, Player p)
+	{
+		return b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT);
+	}
+
+	private static boolean canPlayAnyCard(Board b, Player p)
 	{
 		boolean valid = false;
 
@@ -309,25 +303,12 @@ public class GameUtil
 				case TAKE_OR_DROP_CARROTS:
 					valid = valid || isValidToPlayTakeOrDropCarrots(b, p);
 					break;
+				default:
+					throw new IllegalArgumentException("Unknown CardType " + a);
 			}
 		}
 
 		return valid;
-	}
-
-	public static boolean canMove(Player player, Board board)
-	{
-		boolean canMove = true;
-		if (player.getCarrotsAvailable() == 0)
-		{
-			canMove = player.getActions().size() > 0;
-			// TODO
-		}
-		else
-		{
-			// TODO
-		}
-		return canMove;
 	}
 
 	public static boolean isValidToPlayCard(Board b, Player p, Action c, int n)
@@ -348,6 +329,8 @@ public class GameUtil
 				valid = isValidToPlayTakeOrDropCarrots(b, p)
 						&& (n == 20 || n == -20 || n == 0);
 				break;
+			default:
+				throw new IllegalArgumentException("Unknown CardType " + c);
 		}
 		return valid;
 	}
