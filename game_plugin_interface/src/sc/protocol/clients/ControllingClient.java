@@ -1,27 +1,30 @@
 package sc.protocol.clients;
 
+import sc.api.plugins.IPlayer;
+import sc.protocol.IAdministrativeListener;
 import sc.protocol.LobbyClient;
-import sc.protocol.clients.ObservingClient.PlayMode;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
 
-public class ControllingClient extends ObservingClient
+public class ControllingClient extends ObservingClient implements
+		IAdministrativeListener
 {
 	final LobbyClient	client;
-	private boolean	allowOneStep = false;
+	private boolean		allowOneStep	= false;
 
 	public ControllingClient(LobbyClient client, String roomId)
 	{
 		super(client, roomId);
 		this.client = client;
+		client.addListener((IAdministrativeListener) this);
 	}
-	
+
 	@Override
 	protected void addObservation(Object observation)
 	{
 		super.addObservation(observation);
-		
-		if(this.allowOneStep)
+
+		if (this.allowOneStep)
 		{
 			changePosition(+1);
 			this.allowOneStep = false;
@@ -31,21 +34,27 @@ public class ControllingClient extends ObservingClient
 	@Override
 	public void pause()
 	{
-		this.client.send(new PauseGameRequest(this.roomId, true));
+		if(!this.client.isClosed())
+		{			
+			this.client.send(new PauseGameRequest(this.roomId, true));
+		}
 		super.pause();
 	}
 
 	@Override
 	public void unpause()
 	{
-		this.client.send(new PauseGameRequest(this.roomId, false));
+		if(!this.client.isClosed())
+		{	
+			this.client.send(new PauseGameRequest(this.roomId, false));
+		}
 		super.unpause();
 	}
 
 	@Override
 	public void next()
 	{
-		if (atEnd())
+		if (atEnd() && !this.client.isClosed())
 		{
 			this.client.send(new StepRequest(this.roomId));
 			this.allowOneStep = true;
@@ -64,17 +73,24 @@ public class ControllingClient extends ObservingClient
 
 		return isPaused();
 	}
-	
+
 	@Override
 	public void cancel()
 	{
-		if(!isGameOver()) 
+		if (!isGameOver())
 		{
-			if(!this.client.isClosed()) {
-				this.client.send(new CancelRequest(this.roomId));				
+			if (!this.client.isClosed())
+			{
+				this.client.send(new CancelRequest(this.roomId));
 			}
 		}
-		
+
 		super.cancel();
+	}
+
+	@Override
+	public void onGamePaused(String roomId, IPlayer nextPlayer)
+	{
+		
 	}
 }

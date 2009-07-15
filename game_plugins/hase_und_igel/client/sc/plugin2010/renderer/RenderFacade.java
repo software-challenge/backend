@@ -246,6 +246,11 @@ public class RenderFacade
 	 */
 	public void switchToPlayer(EPlayerId playerView)
 	{
+		if(playerView == null)
+		{
+			playerView = EPlayerId.OBSERVER;
+		}
+		
 		switch (playerView)
 		{
 			case OBSERVER:

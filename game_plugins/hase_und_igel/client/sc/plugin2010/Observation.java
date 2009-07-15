@@ -166,6 +166,7 @@ public class Observation implements IObservation, IUpdateListener
 
 		if (gameState != null)
 		{
+			
 			// ready();
 			Game game = gameState.getGame();
 			handler.onUpdate(game.getBoard(), game.getTurn());
@@ -182,11 +183,16 @@ public class Observation implements IObservation, IUpdateListener
 						game.getActivePlayer()), game.getActivePlayer());
 
 			}
-
-			for (INewTurnListener turnListener : newTurnListeners)
+			
+			if(!conGame.atEnd())
 			{
-				turnListener.newTurn(0, "");
+				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 			}
+		}
+		
+		for (INewTurnListener turnListener : newTurnListeners)
+		{
+			turnListener.newTurn(0, "");
 		}
 	}
 

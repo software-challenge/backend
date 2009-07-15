@@ -40,15 +40,16 @@ import com.thoughtworks.xstream.XStream;
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory
 {
-	private static final Logger					logger				= LoggerFactory
-																			.getLogger(LobbyClient.class);
-	private static final List<String>			rooms				= new LinkedList<String>();
-	private final AsyncResultManager			asyncManager		= new AsyncResultManager();
-	private final List<ILobbyClientListener>	listeners			= new LinkedList<ILobbyClientListener>();
-	private final List<IHistoryListener>		historyListeners	= new LinkedList<IHistoryListener>();
+	private static final Logger					logger					= LoggerFactory
+																				.getLogger(LobbyClient.class);
+	private static final List<String>			rooms					= new LinkedList<String>();
+	private final AsyncResultManager			asyncManager			= new AsyncResultManager();
+	private final List<ILobbyClientListener>	listeners				= new LinkedList<ILobbyClientListener>();
+	private final List<IHistoryListener>		historyListeners		= new LinkedList<IHistoryListener>();
+	private final List<IAdministrativeListener>	administrativeListeners	= new LinkedList<IAdministrativeListener>();
 
-	public static final int						DEFAULT_PORT		= 13050;
-	public static final String					DEFAULT_HOST		= "localhost";
+	public static final int						DEFAULT_PORT			= 13050;
+	public static final String					DEFAULT_HOST			= "localhost";
 
 	public LobbyClient(XStream xStream) throws IOException
 	{
@@ -99,7 +100,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			}
 			else if (packet.getData() instanceof GamePausedEvent)
 			{
-				onGamePaused(roomId, ((GamePausedEvent) packet.getData()).getNextPlayer());
+				onGamePaused(roomId, ((GamePausedEvent) packet.getData())
+						.getNextPlayer());
 			}
 			else
 			{
@@ -147,6 +149,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	private void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
 		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGamePaused(roomId, nextPlayer);
+		}
+
+		for (IAdministrativeListener listener : this.administrativeListeners)
 		{
 			listener.onGamePaused(roomId, nextPlayer);
 		}
@@ -334,7 +341,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public IControllableGame observeAndControl(PrepareGameResponse handle)
 	{
-		IControllableGame result = new ControllingClient(this, handle.getRoomId());
+		IControllableGame result = new ControllingClient(this, handle
+				.getRoomId());
 		this.start();
 		this.send(new ObservationRequest(handle.getRoomId(), ""));
 		result.pause();
@@ -359,6 +367,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public void removeListener(IHistoryListener listener)
 	{
 		this.historyListeners.remove(listener);
+	}
+	
+	public void addListener(IAdministrativeListener listener)
+	{
+		this.administrativeListeners.add(listener);
+	}
+
+	public void removeListener(IAdministrativeListener listener)
+	{
+		this.administrativeListeners.remove(listener);
 	}
 
 	public void freeReservation(String reservation)
