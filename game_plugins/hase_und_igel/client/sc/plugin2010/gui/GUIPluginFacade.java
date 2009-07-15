@@ -67,7 +67,8 @@ public class GUIPluginFacade implements IGuiPlugin
 		Client client = new Client(ip, port, EPlayerId.OBSERVER);
 		GUIGameHandler handler = new GUIGameHandler(client);
 		client.setHandler(handler);
-		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().createPanel(handler, "Zuschauer",
+				"Zuschauer", EPlayerId.OBSERVER);
 		return new GamePreparation(client, playerCount);
 	}
 
@@ -77,7 +78,8 @@ public class GUIPluginFacade implements IGuiPlugin
 		ObservingClient rep = new ObservingClient(Configuration.getXStream(),
 				ReplayBuilder.loadReplay(filename));
 		ObserverGameHandler handler = new ObserverGameHandler();
-		RenderFacade.getInstance().createPanel(null, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().createPanel(null, "Zuschauer", "Zuschauer",
+				EPlayerId.OBSERVER);
 		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		IObservation obs = new Observation(rep, handler);
 		return obs;

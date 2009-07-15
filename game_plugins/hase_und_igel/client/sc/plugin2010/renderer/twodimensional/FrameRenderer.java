@@ -50,6 +50,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private boolean					onlyObserving	= false;
 	private boolean					questionOpen	= false;
 
+	private String					playername		= "";
+	private String					otherPlayername	= "";
+
 	// Strings used for asking Questions to the user
 	private String					moveForward		= "Weiter ziehen";
 	private String					takeCarrots		= "10 Karotten nehmen";
@@ -65,10 +68,13 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private String					jokerAnswer		= "joker";
 
 	public FrameRenderer(final GUIGameHandler handler,
-			final boolean onlyObserving)
+			final boolean onlyObserving, String playername,
+			String otherPlayername)
 	{
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
+		this.playername = playername; // TODO use playername
+		this.otherPlayername = otherPlayername;
 		createInitFrame();
 	}
 
@@ -374,8 +380,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			else if (answer.equals(moveForward))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.EAT_SALAD));
+				// TODO close dialog
 			}
 		}
 		if (type.equals(jokerAnswer))

@@ -129,7 +129,8 @@ public class RenderFacade
 	 *            if asPlayer1 is true than panel will be created for player 1
 	 *            else it is created for player2
 	 */
-	public void createPanel(GUIGameHandler handler, EPlayerId target)
+	public void createPanel(GUIGameHandler handler, String playername,
+			String otherPlayername, EPlayerId target)
 	{
 		if (threeDimensional)
 		{
@@ -154,18 +155,21 @@ public class RenderFacade
 		{
 			if (target == EPlayerId.OBSERVER)
 			{
-				observer = new FrameRenderer(handler, true);
+				observer = new FrameRenderer(handler, true, playername,
+						otherPlayername);
 				panel.add((FrameRenderer) observer, observerString);
 			}
 			else if (target == EPlayerId.PLAYER_ONE)
 			{
-				player1 = new FrameRenderer(handler, false);
+				player1 = new FrameRenderer(handler, false, playername,
+						otherPlayername);
 				panel.add((FrameRenderer) player1, player1String);
 				setAlreadyCreatedPlayerOne(true);
 			}
 			else if (target == EPlayerId.PLAYER_TWO)
 			{
-				player2 = new FrameRenderer(handler, false);
+				player2 = new FrameRenderer(handler, false, playername,
+						otherPlayername);
 				panel.add((FrameRenderer) player2, player2String);
 			}
 		}

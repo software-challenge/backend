@@ -34,8 +34,8 @@ public class InformationBar extends JPanel
 	private final String	ROUNDCOUNT		= "Runde: ";
 	private final String	MOVESCOUNT		= "Zuganzahl möglich: ";
 	private final String	TURNCOUNT		= "An der Reihe: ";
-	private final String	PLAYER			= "<html><u>Spieler:</u></html>";
-	private final String	ENEMY			= "<html><u>Gegner:</u></html>";
+	private final String	PLAYER			= "<html><h1>Spieler:</h1></html>";
+	private final String	ENEMY			= "<html><h1>Gegner:</h1></html>";
 	private final String	SALADCOUNT		= "Salatanzahl: ";
 	private final String	HASENJOKER		= "Hasenjoker:";
 

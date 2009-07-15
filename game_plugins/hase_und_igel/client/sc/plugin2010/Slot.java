@@ -27,14 +27,15 @@ public class Slot implements ISlot
 	@Override
 	public String[] asClient()
 	{
-		String[] res = { "--host", adminclient.getHost(),
-				"--port", String.valueOf(adminclient.getPort()),
-				"--reservation", reservation };
+		String[] res = { "--host", adminclient.getHost(), "--port",
+				String.valueOf(adminclient.getPort()), "--reservation",
+				reservation };
 		return res;
 	}
 
 	@Override
-	public void asHuman() throws IOException
+	public void asHuman(String player_one, String player_two)
+			throws IOException
 	{
 		Client humanClient;
 		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne())
@@ -50,7 +51,16 @@ public class Slot implements ISlot
 
 		GUIGameHandler handler = new GUIGameHandler(humanClient);
 		humanClient.setHandler(handler);
-		RenderFacade.getInstance().createPanel(handler, humanClient.getID());
+		if (humanClient.getID() == EPlayerId.PLAYER_ONE)
+		{
+			RenderFacade.getInstance().createPanel(handler, player_one,
+					player_two, humanClient.getID());
+		}
+		else
+		{
+			RenderFacade.getInstance().createPanel(handler, player_two,
+					player_one, humanClient.getID());
+		}
 		humanClient.joinPreparedGame(reservation);
 	}
 
