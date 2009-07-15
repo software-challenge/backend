@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -25,7 +26,7 @@ import javax.swing.border.BevelBorder;
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.guiplugin.interfaces.IObservation;
-import sc.logic.ILogicFacade;
+import sc.logic.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
 
 @SuppressWarnings("serial")
@@ -68,10 +69,14 @@ public class ReplayDialog extends JDialog {
 		btnReplay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				File startDir = new File(ILogicFacade.APP_DIR);// default
+				File startDir = new File(GUIConfiguration.instance().getLoadReplayPath());
 				JFileChooser chooser = new JFileChooser(startDir);
+				chooser.setDialogTitle(lang.getString("dialog_replay_dialog_title"));
 				if (chooser.showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
 					loadReplay(chooser.getSelectedFile());
+					// save path
+					GUIConfiguration.instance().setLoadReplayPath(
+							chooser.getSelectedFile().getParent());
 				}
 			}
 		});
@@ -105,12 +110,14 @@ public class ReplayDialog extends JDialog {
 		this.add(pnlButtons);
 
 		// set pref
+		setIconImage(new ImageIcon(getClass().getResource(
+				PresentationFacade.getInstance().getClientIcon())).getImage());
 		this.setResizable(false);
 		this.setTitle(lang.getString("dialog_replay_title"));
 		this.setModal(true);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
 	protected void loadReplay(File f) {

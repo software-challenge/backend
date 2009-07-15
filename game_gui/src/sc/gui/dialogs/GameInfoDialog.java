@@ -3,12 +3,15 @@ package sc.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
+
+import sc.gui.PresentationFacade;
 
 @SuppressWarnings("serial")
 public class GameInfoDialog extends JDialog {
@@ -18,6 +21,7 @@ public class GameInfoDialog extends JDialog {
 	private final Image image;
 	private final String infoText;
 	private final String author;
+	private final ResourceBundle lang;
 
 	public GameInfoDialog(String gameTypeName, String version, Image image,
 			String infoText, String author) {
@@ -27,6 +31,7 @@ public class GameInfoDialog extends JDialog {
 		this.image = image;
 		this.infoText = infoText;
 		this.author = author;
+		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
 		createGUI();
 	}
 
@@ -45,11 +50,14 @@ public class GameInfoDialog extends JDialog {
 		JLabel lblImage = new JLabel();
 		pnlImage.add(lblImage);
 
-		JLabel lblText = new JLabel(infoText);
+		JLabel lblText = new JLabel(lang.getString("dialog_gameinfo_description") + "\n"
+				+ infoText);
 		pnlText.add(lblText);
-		JLabel lblVersion = new JLabel(version);
+		JLabel lblVersion = new JLabel(lang.getString("dialog_gameinfo_version") + ": "
+				+ version);
 		pnlText.add(lblVersion);
-		JLabel lblAuthor = new JLabel(author);
+		JLabel lblAuthor = new JLabel(lang.getString("dialog_gameinfo_author") + ": "
+				+ author);
 		pnlText.add(lblAuthor);
 
 		// add components
@@ -59,9 +67,9 @@ public class GameInfoDialog extends JDialog {
 		// set pref
 		this.setTitle(gameTypeName);
 		this.setModal(true);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
 }

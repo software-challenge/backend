@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -49,6 +50,8 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 
 		// ------------------------------------------
 
+		setIconImage(new ImageIcon(getClass().getResource(
+				PresentationFacade.getInstance().getClientIcon())).getImage());
 		this.setResizable(false);
 		this.setModal(true);
 		this.pack();

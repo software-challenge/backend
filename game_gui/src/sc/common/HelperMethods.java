@@ -15,8 +15,7 @@ import sc.helpers.StringHelper;
 
 public class HelperMethods {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(HelperMethods.class);
+	private static final Logger logger = LoggerFactory.getLogger(HelperMethods.class);
 
 	/**
 	 * Executes a file indicated by <code>filename</code> with the given
@@ -55,8 +54,8 @@ public class HelperMethods {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				BufferedReader input = new BufferedReader(
-						new InputStreamReader(proc.getInputStream()));
+				BufferedReader input = new BufferedReader(new InputStreamReader(proc
+						.getInputStream()));
 				String line = "";
 				try {
 					while ((line = input.readLine()) != null) {
@@ -65,17 +64,42 @@ public class HelperMethods {
 				} catch (IOException e) {
 					System.err.println("Failed to redirect STDOUT.");
 				}
-				
+
 				System.out.println("Process exited with ExitCode=" + proc.exitValue());
 			}
 		}).start();
 	}
 
+	/**
+	 * Returns the file extension of the given <code>file</code>. Otherwise, it
+	 * returns the filename of the given <code>file</code>.
+	 * 
+	 * @param file
+	 * @return
+	 */
 	public static String getFileExtension(File file) {
 		String filename = file.getName();
 
-		int index = filename.lastIndexOf(".");
+		int index = filename.lastIndexOf('.');
+		if (-1 != index) {
+			return filename.substring(index);
+		}
 
-		return filename.substring(index);
+		return filename;
+	}
+
+	/**
+	 * Returns the filename without the file extension if present.
+	 * 
+	 * @param filename
+	 * @return
+	 */
+	public static String getFilenameWithoutFileExt(String filename) {
+		int dotindex = filename.lastIndexOf('.');
+		if (dotindex != -1) {
+			return filename.substring(0, dotindex);
+		} else {
+			return filename;
+		}
 	}
 }

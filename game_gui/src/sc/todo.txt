@@ -7,9 +7,10 @@ ok-cancel: disable all buttons
 -statusbar: iwas anzeigen
 -testing=true/false
 -testrange statistics
--speicher/lade dirs: user.dir
+<ok>-speicher/lade dirs: user.dir
 -test range: txtfield num test only numbers
--dialoge title und icon setzen
+<ok>-dialoge title und icon setzen
+-dateiendung bei clients als playername entfernen
 
 FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)

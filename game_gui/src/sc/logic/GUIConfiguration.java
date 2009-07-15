@@ -25,9 +25,11 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	private String createGameDialogPath;
 
-	private int numTest;
-
 	private String testDialogPath;
+
+	private String loadReplayPath;
+
+	private int numTest;
 
 	private static GUIConfiguration instance;
 
@@ -41,8 +43,9 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private GUIConfiguration() {
 		this.lang = ELanguage.DE;
 		this.createGameDialogPath = ".";
-		this.numTest = 100;
 		this.testDialogPath = ".";
+		this.loadReplayPath = ".";
+		this.numTest = 100;
 	}
 
 	public static GUIConfiguration instance() {
@@ -107,6 +110,9 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		return result;
 	}
 
+	/**
+	 * Saves the current configuration
+	 */
 	public void save() {
 		ObjectOutputStream out = null;
 		try {
@@ -153,5 +159,15 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	@Override
 	public void setTestDialogPath(String testDialogPath) {
 		this.testDialogPath = testDialogPath;
+	}
+
+	@Override
+	public String getLoadReplayPath() {
+		return this.loadReplayPath;
+	}
+
+	@Override
+	public void setLoadReplayPath(String loadReplayPath) {
+		this.loadReplayPath = loadReplayPath;
 	}
 }

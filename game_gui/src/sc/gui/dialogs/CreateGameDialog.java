@@ -16,6 +16,7 @@ import java.util.Vector;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -89,8 +90,7 @@ public class CreateGameDialog extends JDialog {
 	private void createGUI() {
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
-		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(
-				plugins);
+		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(plugins);
 
 		// ---------------------------------------------------
 
@@ -112,8 +112,7 @@ public class CreateGameDialog extends JDialog {
 
 		ckbDim = new JCheckBox(lang.getString("dialog_create_pref_dim"));
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug
-				.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
 		txfPort = new JTextField(DEFAULT_PORT);
 		lblPort = new JLabel(lang.getString("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);
@@ -179,8 +178,7 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang
-				.getString("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang.getString("dialog_create_cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -198,7 +196,9 @@ public class CreateGameDialog extends JDialog {
 		this.add(pnlTable, BorderLayout.CENTER);
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 		// set dialog preferences
-		// this.getRootPane().setDefaultButton(okButton);
+		this.setTitle(lang.getString("dialog_create_title"));
+		setIconImage(new ImageIcon(getClass().getResource(
+				PresentationFacade.getInstance().getClientIcon())).getImage());
 		setResizable(false);
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setModal(true);
@@ -227,8 +227,7 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
-		final ContextDisplay contextPanel = (ContextDisplay) presFac
-				.getContextDisplay();
+		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
 
 		// start server
 		presFac.getLogicFacade().startServer(port);
@@ -243,18 +242,14 @@ public class CreateGameDialog extends JDialog {
 		for (int i = 0; i < model.getRowCount(); i++) {
 			String playerName = (String) model.getValueAt(i, 1);
 			int index = extractIndex((String) model.getValueAt(i, 2));
-			descriptors.add(new SlotDescriptor(playerName, index != 0 && !ckbDebug.isSelected(),
-					index != 0));
+			descriptors.add(new SlotDescriptor(playerName, index != 0
+					&& !ckbDebug.isSelected(), index != 0));
 		}
 
 		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin()
-					.prepareGame(
-							ip,
-							port,
-							descriptors.toArray(new SlotDescriptor[descriptors
-									.size()]));
+			prep = selPlugin.getPlugin().prepareGame(ip, port,
+					descriptors.toArray(new SlotDescriptor[descriptors.size()]));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_create_error_network_msg"), lang
@@ -327,20 +322,16 @@ public class CreateGameDialog extends JDialog {
 					cancelGameCreation(observer);
 					return;
 				}
-
+				System.out.println("PATH >>> " + path);
 				KIs.add(new KIInformation(slot.asClient(), path));
 				break;
 			case 2: // KI extern
 				slot.asRemote();
 				break;
-			case 3: // nothing to do
-				break;
-			case 4: // nothing to do
-				break;
 			default:
 				cancelGameCreation(observer);
-				throw new RuntimeException("Selection range out of bounds ("
-						+ index + ")");
+				throw new RuntimeException("Selection range out of bounds (" + index
+						+ ")");
 			}
 		}
 
@@ -376,32 +367,31 @@ public class CreateGameDialog extends JDialog {
 		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getDescription()
-					.version(), null,
-					selPlugin.getPlugin().getPluginInfoText(), selPlugin
-							.getDescription().author());
+					.getDescription().name(), selPlugin.getDescription().version(), null,
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
+							.author());
 			// close dialog
 			dispose();
 		}
 
 	}
 
-	private int extractIndex(String plyType) {
+	/**
+	 * Returns an identifier for the player type: human, internal KI or external
+	 * KI.
+	 * 
+	 * @param plyType
+	 * @return
+	 */
+	private int extractIndex(final String plyType) {
 		if (plyType.equals(lang.getString("dialog_create_plyType_human"))) {
 			return 0;
-		} else if (plyType.equals(lang
-				.getString("dialog_create_plyType_ki_intern"))) {
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_intern"))) {
 			return 1;
-		} else if (plyType.equals(lang
-				.getString("dialog_create_plyType_ki_extern"))) {
+		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_extern"))) {
 			return 2;
-		} else if (plyType.equals(lang
-				.getString("dialog_create_plyType_observer"))) {
-			return 3;
-		} else if (plyType.equals(lang
-				.getString("dialog_create_plyType_closed"))) {
-			return 4;
 		}
+
 		return -1;
 	}
 
@@ -414,8 +404,10 @@ public class CreateGameDialog extends JDialog {
 		}
 		presFac.getLogicFacade().stopServer();
 		// clear panel
-		/*((ContextDisplay) presFac.getContextDisplay()).getGameField()
-				.removeAll();*/ //TODO does it work?
+		/*
+		 * ((ContextDisplay) presFac.getContextDisplay()).getGameField()
+		 * .removeAll();
+		 */// TODO does it work?
 		((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
 	}
 
@@ -423,6 +415,11 @@ public class CreateGameDialog extends JDialog {
 		return plugins.get(combPlugins.getSelectedIndex());
 	}
 
+	/**
+	 * Adds standard rows after selecting a game type.
+	 * 
+	 * @param table
+	 */
 	private void addRows(final JTable table) {
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 		MyTableModel model = (MyTableModel) table.getModel();
@@ -434,58 +431,6 @@ public class CreateGameDialog extends JDialog {
 			rowData.add(lang.getString("dialog_create_plyType_human")); // default
 			rowData.add("-");
 			model.addRow(rowData);
-		}
-	}
-
-	private class MyTableModel extends DefaultTableModel {
-
-		@Override
-		public boolean isCellEditable(int row, int col) {
-			return (col > 0);
-		}
-
-	}
-
-	public class MyComboBoxRenderer extends JComboBox implements
-			TableCellRenderer {
-		public MyComboBoxRenderer(Vector<String> items) {
-			super(items);
-		}
-
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			if (isSelected) {
-				setForeground(table.getSelectionForeground());
-				super.setBackground(table.getSelectionBackground());
-			} else {
-				setForeground(table.getForeground());
-				setBackground(table.getBackground());
-			}
-
-			// Select the current value
-			setSelectedItem(value);
-			return this;
-		}
-	}
-
-	public class MyComboBoxEditor extends DefaultCellEditor implements
-			ItemListener {
-		public MyComboBoxEditor(Vector<String> items) {
-			super(new JComboBox(items));
-
-			JComboBox cbox = (JComboBox) getComponent();
-			cbox.setEditable(false);
-			cbox.addItemListener(this);
-		}
-
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			if (e.getStateChange() == ItemEvent.SELECTED) {
-				JComboBox cbox = (JComboBox) getComponent();
-				int row = tblPlayers.getSelectedRow();
-				updatePlayerTable(cbox, row);
-			}
 		}
 	}
 
@@ -505,18 +450,19 @@ public class CreateGameDialog extends JDialog {
 			playersModel.setValueAt("-", row, 3);
 			break;
 		case 1:// KI intern
-			String currentDirectoryPath = presFac.getLogicFacade()
-					.getConfiguration().getCreateGameDialogPath();
-			JFileChooser chooser = new JFileChooser(currentDirectoryPath);
-			// chooser.setDialogTitle(dialogTitle); TODO
+			JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
+					.getCreateGameDialogPath());
+			chooser.setDialogTitle(lang.getString("dialog_create_dialog_title"));
+
 			switch (chooser.showOpenDialog(frame)) {
 			case JFileChooser.APPROVE_OPTION:
 				// set name
-				playersModel.setValueAt(chooser.getSelectedFile().getName(),
-						row, 1);
+				String clientname = chooser.getSelectedFile().getName();
+				playersModel.setValueAt(HelperMethods
+						.getFilenameWithoutFileExt(clientname), row, 1);
 				// set path
-				playersModel.setValueAt(chooser.getSelectedFile()
-						.getAbsolutePath(), row, 3);
+				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
+						3);
 				// save config
 				GUIConfiguration.instance().setCreateGameDialogPath(
 						chooser.getSelectedFile().getParent());
@@ -529,17 +475,66 @@ public class CreateGameDialog extends JDialog {
 		case 2: // KI extern
 			playersModel.setValueAt("-", row, 3);
 			break;
-		case 3:// observer
-			playersModel.setValueAt("-", row, 3);
-			break;
-		case 4: // closed
-			playersModel.setValueAt("-", row, 1);
-			playersModel.setValueAt("-", row, 3);
-			break;
 		default:
 			// throw new RuntimeException("Selection range out of bounds (" +
 			// index + ")");
 		}
 	}
 
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+	// ------------------------------------------------------------------------
+
+	private class MyTableModel extends DefaultTableModel {
+
+		@Override
+		public boolean isCellEditable(int row, int col) {
+			return (col > 0);
+		}
+
+	}
+
+	public class MyComboBoxRenderer extends JComboBox implements TableCellRenderer {
+		public MyComboBoxRenderer(Vector<String> items) {
+			super(items);
+		}
+
+		public Component getTableCellRendererComponent(JTable table, Object value,
+				boolean isSelected, boolean hasFocus, int row, int column) {
+			if (isSelected) {
+				setForeground(table.getSelectionForeground());
+				super.setBackground(table.getSelectionBackground());
+			} else {
+				setForeground(table.getForeground());
+				setBackground(table.getBackground());
+			}
+
+			// Select the current value
+			setSelectedItem(value);
+			return this;
+		}
+	}
+
+	public class MyComboBoxEditor extends DefaultCellEditor implements ItemListener {
+		public MyComboBoxEditor(Vector<String> items) {
+			super(new JComboBox(items));
+
+			JComboBox cbox = (JComboBox) getComponent();
+			cbox.setEditable(false);
+			cbox.addItemListener(this);
+		}
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			JComboBox cbox = (JComboBox) getComponent();
+			/**
+			 * Only react on opening (i.e. having the focus), not additionally
+			 * on closing the roll menu
+			 */
+			if (e.getStateChange() == ItemEvent.SELECTED && cbox.hasFocus()) {
+				int row = tblPlayers.getSelectedRow();
+				updatePlayerTable(cbox, row);
+			}
+		}
+	}
 }

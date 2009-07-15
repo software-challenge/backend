@@ -60,6 +60,8 @@ public class InfoDialog extends JDialog {
 		devPanel.add(developer);
 
 		// set dialog preferences
+		setIconImage(new ImageIcon(getClass().getResource(
+				PresentationFacade.getInstance().getClientIcon())).getImage());
 		this.setPreferredSize(new Dimension(400,300));
 		this.setResizable(false);
 		this.setModal(true);

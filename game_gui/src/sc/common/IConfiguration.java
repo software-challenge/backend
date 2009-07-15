@@ -15,4 +15,7 @@ public interface IConfiguration {
 	
 	String getTestDialogPath();
 	void setTestDialogPath(String testDialogPath);
+	
+	String getLoadReplayPath();
+	void setLoadReplayPath(String loadReplayPath);
 }
