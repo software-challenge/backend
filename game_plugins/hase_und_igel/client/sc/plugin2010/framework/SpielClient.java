@@ -20,6 +20,8 @@ public abstract class SpielClient implements IGameUpdateObserver
 	private Spieler		spieler;
 	private Spieler		gegner;
 	private Logik		logik;
+	private String		spielreservierung;
+	private Client		client;
 
 	/**
 	 * Startet Netzwerkclient und setzt benötigte Referenzen und Klassen
@@ -48,18 +50,10 @@ public abstract class SpielClient implements IGameUpdateObserver
 		try
 		{
 			// verbinde beim starten
-			Client client = new Client(host, port, EPlayerId.PLAYER_ONE);
+			client = new Client(host, port, EPlayerId.PLAYER_ONE);
 			logik = new Logik(this, client);
 			client.setHandler(logik);
-
-			if (spielreservierung == null || spielreservierung.isEmpty())
-			{
-				client.joinAnyGame();
-			}
-			else
-			{
-				client.joinPreparedGame(spielreservierung);
-			}
+			this.spielreservierung = spielreservierung;
 		}
 		catch (IOException e)
 		{
@@ -70,14 +64,32 @@ public abstract class SpielClient implements IGameUpdateObserver
 	@Override
 	public void spiellbrettAktualisiert(Board board, int round)
 	{
-		spielbrett.update(board, round);
+		if (spielbrett != null)
+		{
+			spielbrett.update(board, round);
+		}
+	}
+
+	public void starteSpiel()
+	{
+		if (spielreservierung == null || spielreservierung.isEmpty())
+		{
+			client.joinAnyGame();
+		}
+		else
+		{
+			client.joinPreparedGame(spielreservierung);
+		}
 	}
 
 	@Override
 	public void spielerAktualisiert(Player player, Player otherPlayer)
 	{
-		spieler.update(player);
-		gegner.update(otherPlayer);
+		if (spieler != null && gegner != null)
+		{
+			spieler.update(player);
+			gegner.update(otherPlayer);
+		}
 	}
 
 	/**

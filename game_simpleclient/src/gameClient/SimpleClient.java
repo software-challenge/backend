@@ -50,6 +50,8 @@ public class SimpleClient extends SpielClient
 		super.setzeSpielbrett(spielbrett);
 		super.setzeSpieler(eigenerSpieler);
 		super.setzeGegner(gegner);
+
+		super.starteSpiel();
 	}
 
 	/**
