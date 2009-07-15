@@ -18,13 +18,13 @@ import javax.swing.JPanel;
  * 
  */
 @SuppressWarnings("serial")
-public class QuestionDialog extends JPanel
+public class QuestionPanel extends JPanel
 {
 	private static final int	DEFAULTHEIGHT	= 100;
 	private FrameRenderer		obs;
 	private String				type;
 
-	public QuestionDialog(String question, List<String> answers,
+	public QuestionPanel(String question, List<String> answers,
 			FrameRenderer obs, String type)
 	{
 		// setTitle("?");

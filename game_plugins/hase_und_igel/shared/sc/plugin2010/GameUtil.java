@@ -361,8 +361,15 @@ public class GameUtil
 				case EAT:
 					return "frisst einen Salat";
 				case MOVE:
-					return "setzt "
-							+ String.valueOf(mov.getN() + " Felder vorwärts");
+					String str = String.valueOf(mov.getN())
+							+ " Felder vorwärts";
+
+					if (mov.getN() == 1)
+					{
+						str = String.valueOf(mov.getN()) + " Feld vorwärts";
+					}
+
+					return "setzt " + str;
 				case TAKE_OR_DROP_CARROTS:
 					String res = "";
 					if (mov.getN() == 10)

@@ -6,7 +6,6 @@ package sc.plugin2010.renderer.twodimensional;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.ScrollPane;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,11 +33,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	// GUI Components
 	private InformationBar			info;
 	private ChatBar					chat;
-	private ScrollPane				action;
-	private ActionBar				actionb;
+	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
 	private final GUIGameHandler	handler;
 	private final JPanel			leftPanel		= new JPanel();
+	private QuestionPanel			qPanel;
 
 	// local instances of current players and board
 	private Player					player;
@@ -49,6 +48,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private boolean					boardWasCreated	= false;
 	private boolean					myturn			= false;
 	private boolean					onlyObserving	= false;
+	private boolean					questionOpen	= false;
 
 	// Strings used for asking Questions to the user
 	private String					moveForward		= "Weiter ziehen";
@@ -93,9 +93,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		info = new InformationBar();
 		// chat = new ChatBar();
-		actionb = new ActionBar();
-		action = new ScrollPane();
-		action.add(actionb);
+		action = new ActionBar();
 
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
@@ -122,22 +120,20 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	{
 		if (i < player.getHistory().size())
 		{
-			actionb.addRow(color + " "
+			action.addAction(color, " "
 					+ GameUtil.displayMoveAction(player.getHistory().get(i)));
 			i++;
 			if (i < player.getHistory().size()
 					&& player.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
 			{
-				actionb.addRow(color
-						+ " "
+				action.addAction(color, " "
 						+ GameUtil
 								.displayMoveAction(player.getHistory().get(i)));
 				i++;
 				if (i < player.getHistory().size()
 						&& player.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
 				{
-					actionb.addRow(color
-							+ " "
+					action.addAction(color, " "
 							+ GameUtil.displayMoveAction(player.getHistory()
 									.get(i)));
 					i++;
@@ -157,21 +153,19 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		String red = "Rot";
 		String blue = "Blau";
 
-		actionb.removeAllRows();
-		actionb.addRow("Aktionen: ");
+		action.removeAllActions();
+		action.addNormal("Aktionen: ");
 
 		int max = Math.max(redPlayer.getHistory().size(), bluePlayer
 				.getHistory().size());
 		int i = 0;
 		int j = 0;
 
-		while (i < max || j < max)
+		while (i <= max || j <= max)
 		{
 			i = printHistroyTillNewTurn(redPlayer, i, red);
 			j = printHistroyTillNewTurn(bluePlayer, j, blue);
 		}
-
-		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 	}
 
 	@Override
@@ -205,8 +199,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		}
 
 		info.setTurn(currentColorPath);
-
-		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
 
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
@@ -283,9 +275,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void askQuestion(final String question, final List<String> answers,
 			String type)
 	{
-		myturn = false;
-		leftPanel.add(new QuestionDialog(question, answers, this, type),
-				BorderLayout.AFTER_LAST_LINE);
+		questionOpen = true;
+		qPanel = new QuestionPanel(question, answers, this, type);
+		leftPanel.add(qPanel, BorderLayout.AFTER_LAST_LINE);
 	}
 
 	private void askForAction(final Player player)
@@ -305,6 +297,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 		{
+			setReachableFields(player.getFieldNumber());
+
 			List<String> answers = new LinkedList<String>();
 			answers.add(takeCarrots);
 			if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, -10))
@@ -323,6 +317,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		else if ((board.getTypeAt(player.getFieldNumber()) == Board.FieldTyp.RABBIT)
 				&& (player.getActions().size() > 0))
 		{
+
 			List<String> answers = new LinkedList<String>();
 			if (GameUtil.isValidToPlayCard(board, player,
 					Player.Action.TAKE_OR_DROP_CARROTS, 20))
@@ -356,15 +351,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			if (answers.size() > 0)
 			{
-				askQuestion("Welchen Hasenjoker möchten Sie spielen, " + color
-						+ " ?", answers, jokerAnswer);
+				myturn = false;
+				askQuestion("<html>Welchen Hasenjoker möchten Sie spielen, "
+						+ color + " ?</html>", answers, jokerAnswer);
 			}
 		}
 	}
 
 	public void answerQuestion(final String answer, String type)
 	{
-		leftPanel.remove(leftPanel.getComponentCount() - 1);
 		myturn = true;
 
 		if (type.equals(carrotAnswer))
@@ -379,7 +374,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			else if (answer.equals(moveForward))
 			{
-				setReachableFields(player.getFieldNumber());
+				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
+						Player.Action.EAT_SALAD));
 			}
 		}
 		if (type.equals(jokerAnswer))
@@ -420,7 +416,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	@Override
 	public void updateAction(final String doneAction)
 	{
-		actionb.addRow(doneAction);
+		// actionb.addRow(doneAction);
 	}
 
 	@Override
@@ -507,6 +503,12 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	{
 		if (myturn)
 		{
+			if (questionOpen)
+			{
+				leftPanel.remove(qPanel);
+				questionOpen = false;
+			}
+
 			handler.sendAction(move);
 			myturn = false;
 		}
@@ -519,7 +521,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		askForAction(player);
 
-		if (myturn)
+		if (!questionOpen)
 		{
 			setReachableFields(player.getFieldNumber());
 		}
@@ -531,27 +533,25 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		String[] results = data.getScores().get(0).toStrings();
 		if (results[0].equals("1"))
 		{
-			actionb.addRow("Gewinner: Rot");
+			action.addAction("Rot", ": Gewinner");
 		}
 		else if (results[0].equals("0"))
 		{
-			actionb.addRow("Verlierer: Rot");
+			action.addAction("Rot", ": Verlierer");
 		}
 
-		actionb.addRow("Erreichtes Feld Rot: " + results[1]);
+		action.addAction("Rot", ": erreichtes Feld:" + results[1]);
 
 		results = data.getScores().get(1).toStrings();
 		if (results[0].equals("1"))
 		{
-			actionb.addRow("Gewinner: Blau");
+			action.addAction("Blau", ": Gewinner");
 		}
 		else if (results[0].equals("0"))
 		{
-			actionb.addRow("Verlierer: Blau");
+			action.addAction("Blau", ": Verlierer");
 		}
 
-		actionb.addRow("Erreichtes Feld Blau: " + results[1]);
-
-		action.getVAdjustable().setValue(action.getVAdjustable().getMaximum());
+		action.addAction("Blau", ": erreichtes Feld:" + results[1]);
 	}
 }
