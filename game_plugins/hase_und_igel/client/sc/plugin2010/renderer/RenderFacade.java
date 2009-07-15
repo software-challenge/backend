@@ -29,6 +29,7 @@ public class RenderFacade
 	private JPanel							panel;
 
 	private EPlayerId						activePlayer;
+	private GUIMode							currentMode;
 
 	private String							connectString			= "connectingPanel";
 	private String							observerString			= "observerPanel";
@@ -76,6 +77,7 @@ public class RenderFacade
 		player1 = null;
 		player2 = null;
 		activePlayer = null;
+		currentMode = null;
 		alreadyCreatedPlayerOne = false;
 
 		if (panel != null)
@@ -99,27 +101,33 @@ public class RenderFacade
 	 */
 	public void setGUIMode(GUIMode mode)
 	{
-
-		switch (mode)
+		if (currentMode != mode)
 		{
-			case CONNECT:
-				CardLayout layout = (CardLayout) panel.getLayout();
-				layout.show(panel, connectString);
-				break;
-			case OBSERVER:
-				CardLayout layout1 = (CardLayout) panel.getLayout();
-				layout1.show(panel, observerString);
-				break;
-			case PLAYER_ONE:
-				CardLayout layout2 = (CardLayout) panel.getLayout();
-				layout2.show(panel, player1String);
-				break;
-			case PLAYER_TWO:
-				CardLayout layout3 = (CardLayout) panel.getLayout();
-				layout3.show(panel, player2String);
-				break;
+			switch (mode)
+			{
+				case CONNECT:
+					CardLayout layout = (CardLayout) panel.getLayout();
+					layout.show(panel, connectString);
+					currentMode = mode;
+					break;
+				case OBSERVER:
+					CardLayout layout1 = (CardLayout) panel.getLayout();
+					layout1.show(panel, observerString);
+					currentMode = mode;
+					break;
+				case PLAYER_ONE:
+					CardLayout layout2 = (CardLayout) panel.getLayout();
+					layout2.show(panel, player1String);
+					currentMode = mode;
+					break;
+				case PLAYER_TWO:
+					CardLayout layout3 = (CardLayout) panel.getLayout();
+					layout3.show(panel, player2String);
+					currentMode = mode;
+					break;
+			}
 		}
-		// redraw
+
 		panel.repaint();
 	}
 

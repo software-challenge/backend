@@ -178,6 +178,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	@Override
 	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
+		this.repaint();
 
 		this.player = player;
 		enemy = otherPlayer;
@@ -500,7 +501,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			{
 				leftPanel.remove(qPanel);
 				questionOpen = false;
-				this.repaint();
+				validate();
 			}
 
 			handler.sendAction(move);
