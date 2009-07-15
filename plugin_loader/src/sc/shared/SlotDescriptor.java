@@ -21,6 +21,10 @@ public class SlotDescriptor {
 		this.shouldBePaused = shouldBePaused;
 	}
 
+	public SlotDescriptor(String displayName, boolean canTimeout) {
+		this(displayName, canTimeout, true);
+	}
+
 	public String getDisplayName() {
 		return this.displayName;
 	}

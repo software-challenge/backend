@@ -334,8 +334,7 @@ public class TestRangeDialog extends JDialog {
 		statTable.validate();
 
 		// start server
-		presFac.getLogicFacade().startServer(INTERN_PORT,
-				!ckbDebug.isSelected());
+		presFac.getLogicFacade().startServer(INTERN_PORT);
 
 		return true;
 	}
@@ -368,7 +367,7 @@ public class TestRangeDialog extends JDialog {
 			String path = txfclient[Math.abs(offset - i)].getText();
 			String clientName = new File(path).getName() + " " + (i + 1);
 			playerNames.add(clientName);
-			descriptors.add(new SlotDescriptor(clientName));
+			descriptors.add(new SlotDescriptor(clientName, !ckbDebug.isSelected()));
 		}
 
 		IGamePreparation prep;

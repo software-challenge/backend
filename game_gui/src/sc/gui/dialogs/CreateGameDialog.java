@@ -231,7 +231,7 @@ public class CreateGameDialog extends JDialog {
 				.getContextDisplay();
 
 		// start server
-		presFac.getLogicFacade().startServer(port, !ckbDebug.isSelected());
+		presFac.getLogicFacade().startServer(port);
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
@@ -243,7 +243,7 @@ public class CreateGameDialog extends JDialog {
 		for (int i = 0; i < model.getRowCount(); i++) {
 			String playerName = (String) model.getValueAt(i, 1);
 			int index = extractIndex((String) model.getValueAt(i, 2));
-			descriptors.add(new SlotDescriptor(playerName, index != 0,
+			descriptors.add(new SlotDescriptor(playerName, index != 0 && !ckbDebug.isSelected(),
 					index != 0));
 		}
 
