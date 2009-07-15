@@ -6,6 +6,7 @@ import java.util.List;
 import sc.plugin2010.Board.FieldTyp;
 import sc.plugin2010.Move.MoveTyp;
 import sc.plugin2010.Player.Action;
+import sc.plugin2010.Player.Position;
 
 public class GameUtil
 {
@@ -331,6 +332,21 @@ public class GameUtil
 		return b.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT);
 	}
 
+	public static Position getGameResult(Player relevant, Player o)
+	{
+		Position ret = null;
+		if (o.getFieldNumber() <= relevant.getFieldNumber())
+			ret = Position.FIRST;
+		if (relevant.inGoal() && o.getFieldNumber() == relevant.getFieldNumber())
+		{
+			if (o.getCarrotsAvailable()>relevant.getCarrotsAvailable())
+				ret = Position.SECOND;
+			else if (o.getCarrotsAvailable() == relevant.getCarrotsAvailable())
+				ret = Position.TIE;
+		}
+		return ret;
+	}
+	
 	private static boolean canPlayAnyCard(Board b, Player p)
 	{
 		boolean valid = false;

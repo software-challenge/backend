@@ -53,7 +53,7 @@ public class Player extends SimplePlayer implements Cloneable
 
 	public enum Position
 	{
-		FIRST, SECOND,
+		SECOND, FIRST,
 		/**
 		 * In the rare case where both players are on the same spot (START).
 		 */
@@ -242,8 +242,7 @@ public class Player extends SimplePlayer implements Cloneable
 	@Override
 	public PlayerScore getScore()
 	{
-		return new PlayerScore(ScoreCause.REGULAR, 0,
-				getFieldNumber());
+		return new PlayerScore(ScoreCause.REGULAR, inGoal() ? 1 : 0, getFieldNumber());
 	}
 
 	public boolean inGoal()
