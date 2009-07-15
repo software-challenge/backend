@@ -84,6 +84,7 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlCenter;
 	private JLabel lblCenter;
 	private IObservation obs;
+	private JScrollPane scrollTextArea;
 
 	public TestRangeDialog(JFrame frame) {
 		super();
@@ -144,6 +145,9 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		txtarea = new JTextArea();
+		scrollTextArea = new JScrollPane(txtarea);
+		scrollTextArea.setAutoscrolls(true);
+
 		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
@@ -167,7 +171,7 @@ public class TestRangeDialog extends JDialog {
 						testStart.setText(lang.getString("dialog_test_btn_stop"));
 						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
-						startTest(true);
+						startTest();
 					}
 				}
 			}
@@ -190,7 +194,7 @@ public class TestRangeDialog extends JDialog {
 		pnlCenter.setBorder(BorderFactory.createEtchedBorder());
 		pnlCenter.setLayout(new BoxLayout(pnlCenter, BoxLayout.PAGE_AXIS));
 		pnlCenter.add(lblCenter);
-		pnlCenter.add(new JScrollPane(txtarea));
+		pnlCenter.add(scrollTextArea);
 
 		// add components
 		this.add(pnlTop, BorderLayout.PAGE_START);
@@ -300,7 +304,7 @@ public class TestRangeDialog extends JDialog {
 	 */
 	private boolean prepareTest() {
 
-		curTest = 0;
+		curTest = -1;
 		try {
 			numTest = new Integer(txfNumTest.getText());
 		} finally {
@@ -323,13 +327,21 @@ public class TestRangeDialog extends JDialog {
 		MyTableModel model = (MyTableModel) statTable.getModel();
 		for (int i = 0; i < txfclient.length; i++) {
 			model.setValueAt(new Integer(i + 1), i, 0);
-			String name = new File(txfclient[i].getText()).getName() + " " + (i + 1);
+			String name = new File(txfclient[i].getText()).getName();
+			// without file ext and with a number
+			name = HelperMethods.getFilenameWithoutFileExt(name) + " " + (i + 1);
 			model.setValueAt(name, i, 1);
 		}
 		statTable.validate();
 
 		// start server
 		presFac.getLogicFacade().startServer(INTERN_PORT);
+
+		// set fake render context
+		getSelectedPlugin().getPlugin().setRenderContext(null, false);// TODO
+		// new
+		// JPanel
+		// ()
 
 		return true;
 	}
@@ -339,7 +351,7 @@ public class TestRangeDialog extends JDialog {
 	 * 
 	 * @param ascending
 	 */
-	protected void startTest(final boolean ascending) {
+	protected void startTest() {
 
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 
@@ -349,7 +361,7 @@ public class TestRangeDialog extends JDialog {
 
 		// switch slot declaration
 		final int offset;
-		if (ascending) {
+		if (curTest % 2 == 0) {
 			offset = 0;
 		} else {
 			offset = playerCount - 1;
@@ -388,7 +400,7 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void gameEnded(GameResult result) {
 				addLogMessage("Game ended");// FIXME remove; only for test
-											// purpose
+				// purpose
 				updateStatistics(offset, result);
 				// add winner log message
 				for (int i = 0; i < result.getScores().size(); i++) {
@@ -401,7 +413,7 @@ public class TestRangeDialog extends JDialog {
 				}
 				// start new test if number of tests is not still reached
 				if (curTest < numTest) {
-					startTest(!ascending);
+					startTest();
 				} else {
 					stopServer();
 					cmbGameType.setEnabled(true);
@@ -413,7 +425,8 @@ public class TestRangeDialog extends JDialog {
 			public void newTurn(int playerid, String info) {
 				String clientName = playerNames.get(Math.abs(offset - playerid));
 				// add log
-				addLogMessage(clientName + ": " + info);
+				if (!info.equals(""))
+					addLogMessage(clientName + ": " + info);
 			}
 		});
 		obs.addReadyListener(new IReadyListener() {
@@ -561,7 +574,17 @@ public class TestRangeDialog extends JDialog {
 
 	}
 
+	/**
+	 * Adds the given <code>msg</code> to the log text area.
+	 * 
+	 * @param msg
+	 */
 	private void addLogMessage(final String msg) {
 		txtarea.append(msg + "\n");
+		txtarea.setCaretPosition(txtarea.getText().length());
+		/*
+		 * int max = scrollTextArea.getJScrollBar().getMaximum();
+		 * scrollTextArea.getJScrollBar().setValue(max);
+		 */
 	}
 }

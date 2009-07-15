@@ -458,8 +458,9 @@ public class CreateGameDialog extends JDialog {
 			case JFileChooser.APPROVE_OPTION:
 				// set name
 				String clientname = chooser.getSelectedFile().getName();
-				playersModel.setValueAt(HelperMethods
-						.getFilenameWithoutFileExt(clientname), row, 1);
+				clientname = HelperMethods.getFilenameWithoutFileExt(clientname) + " "
+						+ (row + 1);
+				playersModel.setValueAt(clientname, row, 1);
 				// set path
 				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
 						3);

@@ -10,7 +10,9 @@ ok-cancel: disable all buttons
 <ok>-speicher/lade dirs: user.dir
 -test range: txtfield num test only numbers
 <ok>-dialoge title und icon setzen
--dateiendung bei clients als playername entfernen
+<ok>-dateiendung bei clients als playername entfernen
+-2 clients, replay, button play/pause falsch
+-test range: txtfield num test always 0
 
 FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)
