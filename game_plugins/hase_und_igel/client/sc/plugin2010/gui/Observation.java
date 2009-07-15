@@ -79,13 +79,21 @@ public class Observation implements IObservation, IUpdateListener,
 	public void next()
 	{
 		conGame.next();
+		if(!conGame.hasNext())
+		{
+			if (RenderFacade.getInstance().getActivePlayer() != null)
+			{
+				RenderFacade.getInstance().switchToPlayer(
+						RenderFacade.getInstance().getActivePlayer());
+			}
+		}
 	}
 
 	@Override
 	public void pause()
 	{
 		conGame.pause();
-		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+		// RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 	}
 
 	@Override
@@ -191,7 +199,7 @@ public class Observation implements IObservation, IUpdateListener,
 
 			}
 
-			if (!conGame.atEnd())
+			if (conGame.hasNext())
 			{
 				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 			}

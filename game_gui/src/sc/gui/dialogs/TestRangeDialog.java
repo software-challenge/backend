@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Vector;
@@ -53,6 +54,7 @@ import sc.plugin.GUIPluginInstance;
 import sc.shared.GameResult;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
+import sc.shared.SlotDescriptor;
 import sc.shared.ScoreFragment.Aggregation;
 
 @SuppressWarnings("serial")
@@ -111,12 +113,15 @@ public class TestRangeDialog extends JDialog {
 		});
 
 		txfNumTest = new JTextField(5);
-		txfNumTest.setText(String.valueOf(GUIConfiguration.instance().getNumTest())); // default
-		JLabel lblNumTest = new JLabel(lang.getString("dialog_test_lbl_numtest"));
+		txfNumTest.setText(String.valueOf(GUIConfiguration.instance()
+				.getNumTest())); // default
+		JLabel lblNumTest = new JLabel(lang
+				.getString("dialog_test_lbl_numtest"));
 		lblNumTest.setLabelFor(lblNumTest);
 
 		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDebug
+				.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
 
 		pnlPref = new JPanel();
 		pnlPref.add(cmbGameType);
@@ -142,7 +147,8 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		txtarea = new JTextArea();
-		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
+		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"),
+				JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
@@ -163,7 +169,8 @@ public class TestRangeDialog extends JDialog {
 				} else {
 					if (prepareTest()) {
 						testing = true;// FIXME
-						testStart.setText(lang.getString("dialog_test_btn_stop"));
+						testStart.setText(lang
+								.getString("dialog_test_btn_stop"));
 						testStart.setEnabled(false);
 						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
@@ -230,7 +237,8 @@ public class TestRangeDialog extends JDialog {
 		statTable.getColumnModel().getColumn(0).setPreferredWidth(15);
 		model.addColumn(lang.getString("dialog_test_stats_name"));
 
-		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
+		ScoreDefinition statColumns = selPlugin.getPlugin()
+				.getScoreDefinition();
 		for (int i = 0; i < statColumns.size(); i++) {
 			ScoreFragment column = statColumns.get(i);
 			model.addColumn(column.getName());
@@ -251,7 +259,8 @@ public class TestRangeDialog extends JDialog {
 			txfclient[i] = new JTextField(20);
 			final JTextField txfClient = txfclient[i];
 
-			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki") + " " + i);
+			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki")
+					+ " " + i);
 			lblclient[i].setLabelFor(txfclient[i]);
 
 			btnclient[i] = new JButton(lang.getString("dialog_test_btn_file"));
@@ -274,7 +283,8 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
+		statTable.setPreferredScrollableViewportSize(statTable
+				.getPreferredSize());
 
 		// display
 		pnlTop.removeAll();
@@ -284,7 +294,7 @@ public class TestRangeDialog extends JDialog {
 		}
 		pnlTop.add(new JScrollPane(statTable));
 		pnlTop.validate();
-		//pnlTop.invalidate();// TODO order?
+		// pnlTop.invalidate();// TODO order?
 
 		System.out.println("UPDATE: test range dialog");
 	}
@@ -317,13 +327,15 @@ public class TestRangeDialog extends JDialog {
 		MyTableModel model = (MyTableModel) statTable.getModel();
 		for (int i = 0; i < txfclient.length; i++) {
 			model.setValueAt(new Integer(i + 1), i, 0);
-			String name = new File(txfclient[i].getText()).getName() + " " + (i + 1);
+			String name = new File(txfclient[i].getText()).getName() + " "
+					+ (i + 1);
 			model.setValueAt(name, i, 1);
 		}
 		statTable.validate();
 
 		// start server
-		presFac.getLogicFacade().startServer(INTERN_PORT, !ckbDebug.isSelected());
+		presFac.getLogicFacade().startServer(INTERN_PORT,
+				!ckbDebug.isSelected());
 
 		return true;
 	}
@@ -350,17 +362,19 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// get player names
-		final List<String> playerNames = new ArrayList<String>();
+		final List<String> playerNames = new LinkedList<String>();
+		List<SlotDescriptor> descriptors = new LinkedList<SlotDescriptor>();
 		for (int i = 0; i < txfclient.length; i++) {
 			String path = txfclient[Math.abs(offset - i)].getText();
 			String clientName = new File(path).getName() + " " + (i + 1);
 			playerNames.add(clientName);
+			descriptors.add(new SlotDescriptor(clientName));
 		}
 
 		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT, playerCount,
-					playerNames.toArray(new String[0]));
+			prep = selPlugin.getPlugin().prepareGame(HOST_IP, INTERN_PORT,
+					descriptors.toArray(new SlotDescriptor[0]));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_test_error_network_msg"), lang
@@ -381,7 +395,8 @@ public class TestRangeDialog extends JDialog {
 				// add winner log message
 				for (int i = 0; i < result.getScores().size(); i++) {
 					if (result.getScores().get(i).equals("1")) {
-						String clientName = playerNames.get(Math.abs(offset - i));
+						String clientName = playerNames.get(Math
+								.abs(offset - i));
 						addLogMessage(clientName + " "
 								+ lang.getString("dialog_test_win"));
 						break;
@@ -400,7 +415,8 @@ public class TestRangeDialog extends JDialog {
 		obs.addNewTurnListener(new INewTurnListener() {
 			@Override
 			public void newTurn(int playerid, String info) {
-				String clientName = playerNames.get(Math.abs(offset - playerid));
+				String clientName = playerNames
+						.get(Math.abs(offset - playerid));
 				// add log
 				addLogMessage(clientName + ": " + info);
 			}
@@ -423,8 +439,8 @@ public class TestRangeDialog extends JDialog {
 			KIs.add(new KIInformation(slot.asClient(), path));
 
 			String clientName = playerNames.get(Math.abs(offset - i));
-			addLogMessage(clientName + " " + lang.getString("dialog_test_switchpos")
-					+ " " + (i + 1));
+			addLogMessage(clientName + " "
+					+ lang.getString("dialog_test_switchpos") + " " + (i + 1));
 		}
 
 		// start KI (intern) clients
@@ -444,11 +460,10 @@ public class TestRangeDialog extends JDialog {
 			} catch (UnsupportedFileExtensionException e) {
 				e.printStackTrace();
 				stopServer();
-				JOptionPane
-						.showMessageDialog(this, lang
-								.getString("dialog_error_fileext_msg"), lang
-								.getString("dialog_error_fileext_msg"),
-								JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, lang
+						.getString("dialog_error_fileext_msg"), lang
+						.getString("dialog_error_fileext_msg"),
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -472,12 +487,15 @@ public class TestRangeDialog extends JDialog {
 		for (int i = 0; i < result.getScores().size(); i++) {
 			int playerId = Math.abs(offset - i);
 
-			List<BigDecimal> stats = result.getScores().get(playerId).getValues();
+			List<BigDecimal> stats = result.getScores().get(playerId)
+					.getValues();
 			for (int j = 0; j < stats.size(); j++) {
 				BigDecimal newStat = stats.get(i);
-				final BigDecimal old = (BigDecimal) model.getValueAt(playerId, j + 2);
+				final BigDecimal old = (BigDecimal) model.getValueAt(playerId,
+						j + 2);
 
-				Aggregation action = result.getDefinition().get(i).getAggregation();
+				Aggregation action = result.getDefinition().get(i)
+						.getAggregation();
 				switch (action) {
 				case SUM:
 					newStat = newStat.add(old);
@@ -487,8 +505,8 @@ public class TestRangeDialog extends JDialog {
 					newStat = newStat.divide(BigDecimal.valueOf(curTest));
 					break;
 				default:
-					throw new RuntimeException("Unknown aggregation type (" + action
-							+ ")");
+					throw new RuntimeException("Unknown aggregation type ("
+							+ action + ")");
 				}
 				// set to model
 				model.setValueAt(newStat, playerId, j + 2);

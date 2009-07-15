@@ -26,6 +26,7 @@ import sc.server.plugins.GamePluginInstance;
 import sc.shared.GameResult;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreDefinition;
+import sc.shared.SlotDescriptor;
 
 /**
  * A wrapper for an actual <code>GameInstance</code>. GameInstances are provided
@@ -226,7 +227,9 @@ public class GameRoom implements IGameListener
 			// should't happen
 			throw new RuntimeException(e);
 		}
-		player.setDisplayName(openSlot.getDisplayName());
+		player.setDisplayName(openSlot.getDescriptor().getDisplayName());
+		player.setShouldBePaused(openSlot.getDescriptor().isShouldBePaused());
+		player.setCanTimeout(openSlot.getDescriptor().isCanTimeout());
 		openSlot.setPlayer(player);
 		client.send(new JoinGameResponse(getId()));
 		startIfReady();
@@ -433,11 +436,14 @@ public class GameRoom implements IGameListener
 				nextPlayer)));
 	}
 
-	public void setDisplayNames(List<String> displayNames)
+	public void openSlots(List<SlotDescriptor> descriptors)
+			throws TooManyPlayersException
 	{
-		for(int i=0; i<displayNames.size(); i++)
+		this.setSize(descriptors.size());
+
+		for (int i = 0; i < descriptors.size(); i++)
 		{
-			playerSlots.get(i).setDisplayName(displayNames.get(i));
+			playerSlots.get(i).setDescriptor(descriptors.get(i));
 		}
 	}
 }

@@ -14,6 +14,7 @@ import sc.protocol.LobbyClient;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.GameResult;
+import sc.shared.SlotDescriptor;
 
 /**
  * Der Client für das Hase- und Igel Plugin.
@@ -253,10 +254,10 @@ public class Client implements ILobbyClientListener
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			int playerCount, String... displayNames)
+			SlotDescriptor... descriptors)
 			throws InterruptedException
 	{
-		return client.prepareGameAndWait(gameType, playerCount, displayNames);
+		return client.prepareGameAndWait(gameType, descriptors);
 	}
 
 	public String getHost()

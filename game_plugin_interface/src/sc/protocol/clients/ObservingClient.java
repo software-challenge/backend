@@ -154,7 +154,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		}
 	}
 
-	private void setPosition(int i)
+	protected void setPosition(int i)
 	{
 		logger.debug("Setting Position to {}", i);
 		this.position = Math.max(0, Math.min(this.history.size() - 1, i));

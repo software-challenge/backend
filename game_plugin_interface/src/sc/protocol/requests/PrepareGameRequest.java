@@ -7,6 +7,7 @@ import java.util.List;
 
 import sc.protocol.IRequest;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.shared.SlotDescriptor;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -17,46 +18,37 @@ public class PrepareGameRequest implements ILobbyRequest,
 		IRequest<PrepareGameResponse>
 {
 	@XStreamAsAttribute
-	private final int			playerCount;
+	private final String				gameType;
 
-	@XStreamAsAttribute
-	private final String		gameType;
-
-	@XStreamImplicit
-	private final List<String>	displayNames	= new LinkedList<String>();
+	@XStreamImplicit(itemFieldName = "slot")
+	private final List<SlotDescriptor>	slotDescriptors;
 
 	public PrepareGameRequest(String gameType, int playerCount)
 	{
-		this(gameType, playerCount, new String[0]);
-	}
 
-	public PrepareGameRequest(String gameType, int playerCount,
-			String... displayNames)
-	{
-		this(gameType, playerCount, displayNames != null ? Arrays
-				.asList(displayNames) : null);
-	}
-
-	public PrepareGameRequest(String gameType, int playerCount,
-			List<String> displayNames)
-	{
-		this.playerCount = playerCount;
 		this.gameType = gameType;
+		this.slotDescriptors = new LinkedList<SlotDescriptor>();
 
-		if (displayNames != null)
+		for (int i = 0; i < playerCount; i++)
 		{
-			this.displayNames.addAll(displayNames);
+			this.slotDescriptors.add(new SlotDescriptor("Player "
+					+ String.valueOf(i + 1)));
 		}
 
-		if (this.displayNames.size() > playerCount)
+		if (getPlayerCount() == 0)
 		{
-			throw new IllegalArgumentException(
-					"The amount of DisplayNames must not be larger than the PlayerCount.");
+			throw new IllegalArgumentException("PlayerCount must be positive");
 		}
+	}
 
-		for (int i = this.displayNames.size(); i < playerCount; i++)
+	public PrepareGameRequest(String gameType, SlotDescriptor... descriptors)
+	{
+		this.gameType = gameType;
+		this.slotDescriptors = Arrays.asList(descriptors);
+
+		if (getPlayerCount() == 0)
 		{
-			this.displayNames.add("Player " + String.valueOf(i + 1));
+			throw new IllegalArgumentException("PlayerCount must be positive");
 		}
 	}
 
@@ -67,11 +59,11 @@ public class PrepareGameRequest implements ILobbyRequest,
 
 	public int getPlayerCount()
 	{
-		return this.playerCount;
+		return this.getSlotDescriptors().size();
 	}
 
-	public List<String> getDisplayNames()
+	public List<SlotDescriptor> getSlotDescriptors()
 	{
-		return this.displayNames;
+		return this.slotDescriptors;
 	}
 }

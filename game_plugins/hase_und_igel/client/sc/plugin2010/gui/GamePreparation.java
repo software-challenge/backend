@@ -15,6 +15,7 @@ import sc.plugin2010.renderer.RenderFacade;
 import sc.protocol.IControllableGame;
 import sc.protocol.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.shared.SlotDescriptor;
 
 /**
  * @author ffi
@@ -25,13 +26,12 @@ public class GamePreparation implements IGamePreparation
 	private List<ISlot>	slots	= new LinkedList<ISlot>();
 	private Observation	obs;
 
-	public GamePreparation(Client client, int playerCount,
-			String... displayNames)
+	public GamePreparation(Client client, SlotDescriptor... descriptors)
 	{
 		RequestResult<PrepareGameResponse> results = null;
 		try
 		{
-			results = client.prepareGameAndWait(playerCount, displayNames);
+			results = client.prepareGameAndWait(descriptors);
 		}
 		catch (InterruptedException e)
 		{

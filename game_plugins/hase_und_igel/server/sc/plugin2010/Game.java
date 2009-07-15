@@ -304,7 +304,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player)
 	{
-		return new ActionTimeout(false);
+		return new ActionTimeout(true, 10000, 5000);
 	}
 
 	@Override

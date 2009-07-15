@@ -18,6 +18,7 @@ import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.Configuration;
 import sc.protocol.clients.ObservingClient;
 import sc.shared.ScoreDefinition;
+import sc.shared.SlotDescriptor;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
@@ -60,13 +61,13 @@ public class GUIPluginFacade implements IGuiPlugin
 
 	@Override
 	public IGamePreparation prepareGame(final String ip, final int port,
-			int playerCount, String... displayNames) throws IOException
+			SlotDescriptor... descriptors) throws IOException
 	{
 		Client client = new Client(ip, port, EPlayerId.OBSERVER);
 		HumanGameHandler handler = new HumanGameHandler(client);
 		client.setHandler(handler);
 		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
-		return new GamePreparation(client, playerCount, displayNames);
+		return new GamePreparation(client, descriptors);
 	}
 
 	@Override

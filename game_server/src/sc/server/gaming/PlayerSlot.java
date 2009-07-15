@@ -4,6 +4,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.protocol.responses.JoinGameResponse;
 import sc.server.network.Client;
+import sc.shared.SlotDescriptor;
 
 public class PlayerSlot
 {
@@ -11,6 +12,7 @@ public class PlayerSlot
 	private final GameRoom	room;
 	private boolean			reserved;
 	private String			displayName;
+	private SlotDescriptor	descriptor;
 
 	public PlayerSlot(GameRoom room)
 	{
@@ -104,5 +106,20 @@ public class PlayerSlot
 		}
 		
 		return this.displayName;
+	}
+
+	public SlotDescriptor getDescriptor()
+	{
+		if(this.descriptor == null)
+		{
+			return SlotDescriptor.DEFAULT_DESCRIPTOR;
+		}
+		
+		return this.descriptor;
+	}
+	
+	public void setDescriptor(SlotDescriptor descriptor)
+	{
+		this.descriptor = descriptor;
 	}
 }

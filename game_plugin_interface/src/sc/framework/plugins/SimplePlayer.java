@@ -6,13 +6,13 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
+
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class SimplePlayer implements IPlayer
 {
@@ -22,7 +22,14 @@ public abstract class SimplePlayer implements IPlayer
 	@XStreamOmitField
 	private List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
 
-	private String	displayName;
+	@XStreamOmitField
+	private boolean					canTimeout;
+
+	@XStreamOmitField
+	private boolean					shouldBePaused;
+
+	@XStreamAsAttribute
+	private String					displayName;
 
 	@Override
 	public void addPlayerListener(IPlayerListener listener)
@@ -57,16 +64,38 @@ public abstract class SimplePlayer implements IPlayer
 	}
 
 	public abstract PlayerScore getScore();
-	
+
 	@Override
 	public final void setDisplayName(String displayName)
 	{
 		this.displayName = displayName;
 	}
-	
+
 	@Override
 	public final String getDisplayName()
 	{
 		return this.displayName;
+	}
+
+	@Override
+	public final void setCanTimeout(boolean canTimeout)
+	{
+		this.canTimeout = canTimeout;
+	}
+
+	@Override
+	public final void setShouldBePaused(boolean shouldBePaused)
+	{
+		this.shouldBePaused = shouldBePaused;
+	}
+
+	public boolean isCanTimeout()
+	{
+		return this.canTimeout;
+	}
+
+	public boolean isShouldBePaused()
+	{
+		return this.shouldBePaused;
 	}
 }

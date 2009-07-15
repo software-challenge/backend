@@ -172,7 +172,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	{
 		final P currentActivePlayer = this.activePlayer;
 
-		if (this.paused)
+		if (this.paused && currentActivePlayer.isShouldBePaused())
 		{
 			synchronized (this.afterPauseLock)
 			{
@@ -206,7 +206,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	 */
 	protected synchronized final void requestMove(P player)
 	{
-		final ActionTimeout timeout = getTimeoutFor(player);
+		final ActionTimeout timeout = player.isCanTimeout() ? getTimeoutFor(player)
+				: new ActionTimeout(false);
+
 		final Logger logger = RoundBasedGameInstance.logger;
 		final P playerToTimeout = player;
 

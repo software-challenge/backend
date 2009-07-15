@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.swing.JPanel;
 
 import sc.shared.ScoreDefinition;
+import sc.shared.SlotDescriptor;
 import edu.cau.plugins.IPlugin;
 
 public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
@@ -45,7 +46,7 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * @throws IOException
 	 */
 	public IGamePreparation prepareGame(final String ip, final int port,
-			int playerCount, String... displayNames) throws IOException;
+			SlotDescriptor... descriptors) throws IOException;
 
 	/**
 	 * Loads the replay given by <code>filename</code>.

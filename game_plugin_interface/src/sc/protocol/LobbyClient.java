@@ -29,6 +29,7 @@ import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.GameResult;
+import sc.shared.SlotDescriptor;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -225,9 +226,17 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			String gameType, int playerCount, String... displayNames) throws InterruptedException
+			String gameType, int playerClount) throws InterruptedException
 	{
-		return blockingRequest(new PrepareGameRequest(gameType, playerCount, displayNames),
+		return blockingRequest(new PrepareGameRequest(gameType, playerClount),
+				PrepareGameResponse.class);
+	}
+
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(
+			String gameType, SlotDescriptor... descriptors)
+			throws InterruptedException
+	{
+		return blockingRequest(new PrepareGameRequest(gameType, descriptors),
 				PrepareGameResponse.class);
 	}
 
@@ -368,7 +377,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	{
 		this.historyListeners.remove(listener);
 	}
-	
+
 	public void addListener(IAdministrativeListener listener)
 	{
 		this.administrativeListeners.add(listener);

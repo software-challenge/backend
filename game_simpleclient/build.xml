@@ -41,7 +41,7 @@
 	</pathconvert>
 
 	<target name="clean">
-		<delete dir="build" />
+		<delete dir="build/bin" />
 	</target>
 
 	<target name="dependencies">
@@ -78,5 +78,5 @@
 
 	<target name="clean-build" depends="clean,build" />
 
-	<target name="main" depends="build" />
+	<target name="main" depends="clean-build" />
 </project>

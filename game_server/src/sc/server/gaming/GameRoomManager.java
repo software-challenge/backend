@@ -18,6 +18,7 @@ import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.GamePluginManager;
 import sc.server.plugins.UnknownGameTypeException;
+import sc.shared.SlotDescriptor;
 
 /**
  * The GameManager is responsible to keep all games alive and kill them once
@@ -154,12 +155,12 @@ public class GameRoomManager implements Runnable
 		return this.pluginApi;
 	}
 	
-	public synchronized PrepareGameResponse prepareGame(String gameType, int playerCount, List<String> displayNames)
+	public synchronized PrepareGameResponse prepareGame(String gameType,
+			int playerCount, List<SlotDescriptor> descriptors)
 			throws RescueableClientException
 	{
 		GameRoom room = createGame(gameType);
-		room.setSize(playerCount);
-		room.setDisplayNames(displayNames);
+		room.openSlots(descriptors);
 		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 
