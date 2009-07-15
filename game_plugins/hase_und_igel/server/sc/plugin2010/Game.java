@@ -82,7 +82,6 @@ public class Game extends RoundBasedGameInstance<Player>
 		if (data instanceof Move)
 		{
 			final Move move = (Move) data;
-			move.setTurn(getTurn());
 
 			if (board.isValid(move, author))
 			{

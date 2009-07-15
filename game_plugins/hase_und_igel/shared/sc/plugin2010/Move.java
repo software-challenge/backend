@@ -42,20 +42,9 @@ public final class Move implements Cloneable
 		SKIP
 	}
 
-	private int		turn;
 	private int		n;
 	private MoveTyp	typ;
 	private Action	card;
-
-	protected void setTurn(int turn)
-	{
-		this.turn = turn;
-	}
-
-	public int getTurn()
-	{
-		return turn;
-	}
 
 	public Move(final MoveTyp t)
 	{
