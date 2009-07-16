@@ -519,4 +519,32 @@ public class GamePlayTest
 		Assert.assertEquals(carrotsBefore + diff * 10, red
 				.getCarrotsAvailable());
 	}
+	
+	/**
+	 * Ein Spieler kann sich zweimal hintereinander zurückfallen lassen
+	 * @throws RescueableClientException 
+	 */
+	@Test
+	public void fallbackTwice() throws RescueableClientException
+	{
+		g.start();
+		
+		int firstHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, red.getFieldNumber());
+		int carrotAt = b.getNextFieldByTyp(FieldTyp.CARROT, firstHedgehog);
+		int secondHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, carrotAt);
+		carrotAt = b.getNextFieldByTyp(FieldTyp.CARROT, secondHedgehog);
+		
+		red.setFieldNumber(carrotAt);
+		Move r1 = new Move(MoveTyp.FALL_BACK);
+		g.onAction(red, r1);
+		Assert.assertEquals(red.getFieldNumber(), secondHedgehog);
+		
+		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.POSITION_2, 0));
+		g.onAction(blue, b1);
+		
+		Move r2 = new Move(MoveTyp.FALL_BACK);
+		Assert.assertTrue(b.isValid(r2, red));
+		g.onAction(red, r2);
+		Assert.assertEquals(red.getFieldNumber(), firstHedgehog);
+	}
 }
