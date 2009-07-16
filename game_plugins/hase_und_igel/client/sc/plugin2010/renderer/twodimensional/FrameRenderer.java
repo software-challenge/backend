@@ -222,13 +222,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		info.setPlayer(player.getDisplayName());
 		info.setAttributes(player.getCarrotsAvailable(), player
-				.getSaladsToEat());
-		info.setHasenjoker(player.getActions());
+				.getSaladsToEat(), player.getActions());
 
 		info.setOtherPlayer(enemy.getDisplayName());
 		info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
-				.getSaladsToEat());
-		info.setEnemyHasenjoker(enemy.getActions());
+				.getSaladsToEat(), enemy.getActions());
 
 		repaint();
 	}

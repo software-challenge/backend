@@ -94,7 +94,7 @@ public class FieldButton extends JButton
 	{
 		if (color != null)
 		{
-			border = createBorder(Color.RED);
+			border = createBorder(Color.ORANGE);
 			final MediaTracker mt = new MediaTracker(this);
 			String colorString = "blue";
 
@@ -173,7 +173,7 @@ public class FieldButton extends JButton
 		{
 			if (occupied)
 			{
-				border = createBorder(Color.RED);
+				border = createBorder(Color.ORANGE);
 			}
 			else if (reachable)
 			{

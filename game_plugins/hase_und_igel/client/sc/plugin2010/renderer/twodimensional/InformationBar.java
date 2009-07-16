@@ -3,7 +3,6 @@
  */
 package sc.plugin2010.renderer.twodimensional;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -11,6 +10,7 @@ import java.awt.Image;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -40,6 +40,10 @@ public class InformationBar extends TransparentPanel
 
 	private final JLabel	carrots			= new JLabel(CARROTCOUNT);
 	private final JLabel	enemycarrots	= new JLabel(CARROTCOUNT);
+	private final JLabel	maxfields		= new JLabel(MOVESCOUNT);
+	private final JLabel	enemymaxfields	= new JLabel(MOVESCOUNT);
+	private final JLabel	salads			= new JLabel(SALADCOUNT);
+	private final JLabel	enemysalads		= new JLabel(SALADCOUNT);
 	private final JLabel	rounds			= new JLabel(ROUNDCOUNT);
 	private final JLabel	hasenjoker		= new JLabel(HASENJOKER);
 	private final JLabel	enemyhasenjoker	= new JLabel(HASENJOKER);
@@ -50,6 +54,7 @@ public class InformationBar extends TransparentPanel
 
 	private final String	FONTTYPE		= "New Courier";
 	private final int		SIZE			= 12;
+	private final int		ICONSIZE		= 24;
 
 	private final Image		blue			= RendererUtil
 													.getImage("resource/blue.png");
@@ -69,28 +74,64 @@ public class InformationBar extends TransparentPanel
 		Color bg = new Color(255, 255, 255, 120);
 
 		final TransparentPanel left = new TransparentPanel();
-		left.setLayout(new BorderLayout());
+		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
 		left.setBackground(bg);
 
 		final TransparentPanel center = new TransparentPanel();
-		center.setLayout(new BorderLayout());
+		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
 		center.setBackground(bg);
 
 		final TransparentPanel right = new TransparentPanel();
-		right.setLayout(new BorderLayout());
+		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 		right.setBackground(bg);
 
 		player.setHorizontalAlignment(JLabel.LEFT);
 		carrots.setHorizontalAlignment(JLabel.LEFT);
+		maxfields.setHorizontalAlignment(JLabel.LEFT);
+		salads.setHorizontalAlignment(JLabel.LEFT);
 		hasenjoker.setHorizontalAlignment(JLabel.LEFT);
 
 		enemy.setHorizontalAlignment(JLabel.LEFT);
 		enemycarrots.setHorizontalAlignment(JLabel.LEFT);
+		enemymaxfields.setHorizontalAlignment(JLabel.LEFT);
+		enemysalads.setHorizontalAlignment(JLabel.LEFT);
 		enemyhasenjoker.setHorizontalAlignment(JLabel.LEFT);
 
 		rounds.setHorizontalAlignment(JLabel.LEFT);
 		turn.setHorizontalAlignment(JLabel.LEFT);
 		turnicon.setHorizontalAlignment(JLabel.LEFT);
+
+		carrots.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/carrots.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				Image.SCALE_SMOOTH)));
+
+		maxfields.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/background.png").getScaledInstance(ICONSIZE,
+				ICONSIZE, Image.SCALE_SMOOTH)));
+
+		salads.setIcon(new ImageIcon(RendererUtil
+				.getImage("resource/salad.png").getScaledInstance(ICONSIZE,
+						ICONSIZE, Image.SCALE_SMOOTH)));
+
+		hasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/rabbit.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				Image.SCALE_SMOOTH)));
+
+		enemycarrots.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/carrots.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				Image.SCALE_SMOOTH)));
+
+		enemymaxfields.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/background.png").getScaledInstance(ICONSIZE,
+				ICONSIZE, Image.SCALE_SMOOTH)));
+
+		enemysalads.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/salad.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				Image.SCALE_SMOOTH)));
+
+		enemyhasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/rabbit.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				Image.SCALE_SMOOTH)));
 
 		setColor(false);
 
@@ -100,17 +141,21 @@ public class InformationBar extends TransparentPanel
 		turn.setForeground(light_black);
 		turn.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
-		left.add(rounds, BorderLayout.NORTH);
-		left.add(turn, BorderLayout.CENTER);
-		left.add(turnicon, BorderLayout.SOUTH);
+		left.add(rounds);
+		left.add(turn);
+		left.add(turnicon);
 
-		center.add(player, BorderLayout.NORTH);
-		center.add(carrots, BorderLayout.CENTER);
-		center.add(hasenjoker, BorderLayout.SOUTH);
+		center.add(player);
+		center.add(carrots);
+		center.add(maxfields);
+		center.add(salads);
+		center.add(hasenjoker);
 
-		right.add(enemy, BorderLayout.NORTH);
-		right.add(enemycarrots, BorderLayout.CENTER);
-		right.add(enemyhasenjoker, BorderLayout.SOUTH);
+		right.add(enemy);
+		right.add(enemycarrots);
+		right.add(enemymaxfields);
+		right.add(enemysalads);
+		right.add(enemyhasenjoker);
 
 		this.add(left);
 		this.add(center);
@@ -136,6 +181,12 @@ public class InformationBar extends TransparentPanel
 		carrots.setForeground(mycolor);
 		carrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
+		maxfields.setForeground(mycolor);
+		maxfields.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
+		salads.setForeground(mycolor);
+		salads.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
 		hasenjoker.setForeground(mycolor);
 		hasenjoker.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
@@ -145,36 +196,40 @@ public class InformationBar extends TransparentPanel
 		enemycarrots.setForeground(enemycolor);
 		enemycarrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
+		enemymaxfields.setForeground(enemycolor);
+		enemymaxfields.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
+		enemysalads.setForeground(enemycolor);
+		enemysalads.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
 		enemyhasenjoker.setForeground(enemycolor);
 		enemyhasenjoker.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 	}
 
-	public void setAttributes(final int car, final int salads)
+	public void setAttributes(final int carrotCount, final int saladsCount,
+			final List<Action> joker)
 	{
-		setMyAttributes(carrots, car, salads);
-	}
-
-	public void setEnemyAttributes(final int car, final int salads)
-	{
-		setMyAttributes(enemycarrots, car, salads);
-	}
-
-	private void setMyAttributes(JLabel carrots, final int car, final int sal)
-	{
-		carrots.setText("<html><u>" + CARROTCOUNT + "</u>" + " "
-				+ String.valueOf(car) + "<BR><u>" + MOVESCOUNT + "</u>" + " "
-				+ GameUtil.calculateMoveableFields(car) + "<BR><u>"
-				+ SALADCOUNT + "</u>" + " " + String.valueOf(sal) + "</html>");
-	}
-
-	public void setHasenjoker(final List<Action> joker)
-	{
+		setMyAttributes(carrots, maxfields, salads, carrotCount, saladsCount);
 		setMyHasenjoker(hasenjoker, joker);
 	}
 
-	public void setEnemyHasenjoker(final List<Action> joker)
+	public void setEnemyAttributes(final int carrotCount,
+			final int saladsCount, final List<Action> joker)
 	{
+		setMyAttributes(enemycarrots, enemymaxfields, enemysalads, carrotCount,
+				saladsCount);
 		setMyHasenjoker(enemyhasenjoker, joker);
+	}
+
+	private void setMyAttributes(JLabel carrots, JLabel maxfields,
+			JLabel salads, final int car, final int sal)
+	{
+		carrots.setText("<html><u>" + CARROTCOUNT + "</u>" + " "
+				+ String.valueOf(car) + "</html>");
+		maxfields.setText("<html><u>" + MOVESCOUNT + "</u>" + " "
+				+ GameUtil.calculateMoveableFields(car) + "</html>");
+		salads.setText("<html><u>" + SALADCOUNT + "</u>" + " "
+				+ String.valueOf(sal) + "</html>");
 	}
 
 	private void setMyHasenjoker(JLabel label, final List<Action> joker)
