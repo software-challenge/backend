@@ -25,6 +25,7 @@ import javax.swing.border.BevelBorder;
 
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
+import sc.gui.SCMenuBar;
 import sc.guiplugin.interfaces.IObservation;
 import sc.logic.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
@@ -156,6 +157,11 @@ public class ReplayDialog extends JDialog {
 			e.printStackTrace();
 			return;
 		}
+
+		// add game specific info item in menu bar
+		((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin.getDescription()
+				.name(), selPlugin.getDescription().version(), null, selPlugin
+				.getPlugin().getPluginInfoText(), selPlugin.getDescription().author());
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {

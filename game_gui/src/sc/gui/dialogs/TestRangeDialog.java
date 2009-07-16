@@ -98,7 +98,7 @@ public class TestRangeDialog extends JDialog {
 		super();
 		presFac = PresentationFacade.getInstance();
 		lang = presFac.getLogicFacade().getLanguageData();
-		curTest = -1; // not testing
+		initCurTest(); // not testing
 		createGUI();
 	}
 
@@ -154,6 +154,7 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
+		progressBar.setStringPainted(true); // draw procent
 
 		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
@@ -171,11 +172,8 @@ public class TestRangeDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (curTest >= 0) { // testing
+				if (curTest > 0) { // testing
 					cancelTest();
-					testStart.setText(lang.getString("dialog_test_btn_start"));
-					cmbGameType.setEnabled(true);
-					addLogMessage(lang.getString("dialog_test_msg_cancel"));
 				} else {
 					if (prepareTest()) {
 						testStart.setText(lang.getString("dialog_test_btn_stop"));
@@ -226,6 +224,7 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				cancelTest();
+				GUIConfiguration.instance().setNumberOfTests(numTest);
 				super.windowClosing(e);
 			}
 		});
@@ -316,7 +315,7 @@ public class TestRangeDialog extends JDialog {
 
 		IGuiPlugin selPlugin = getSelectedPlugin().getPlugin();
 
-		curTest = -1;
+		initCurTest();
 		try {
 			numTest = new Integer(txfNumTest.getText());
 		} catch (NumberFormatException e) {
@@ -347,7 +346,7 @@ public class TestRangeDialog extends JDialog {
 			name = HelperMethods.getFilenameWithoutFileExt(name) + " " + (i + 1);
 			model.setValueAt(name, i, 1);
 			for (int j = 0; j < selPlugin.getScoreDefinition().size(); j++) {
-				model.setValueAt(new BigDecimal(0), i, 2 + j); // set default 0
+				model.setValueAt(BigDecimal.ZERO, i, 2 + j); // set default 0
 			}
 		}
 		statTable.validate();
@@ -376,7 +375,7 @@ public class TestRangeDialog extends JDialog {
 
 		// switch slot declaration
 		final int offset;
-		if (curTest % 2 == 0) {
+		if (curTest % 2 == 1) {
 			offset = 0;
 		} else {
 			offset = playerCount - 1;
@@ -386,10 +385,11 @@ public class TestRangeDialog extends JDialog {
 		final List<String> playerNames = new LinkedList<String>();
 		List<SlotDescriptor> descriptors = new LinkedList<SlotDescriptor>();
 		for (int i = 0; i < txfclient.length; i++) {
-			String path = txfclient[Math.abs(offset - i)].getText();
+			int statPos = Math.abs(offset - i);
+			String path = txfclient[statPos].getText();
 			String clientName = HelperMethods.getFilenameWithoutFileExt(new File(path)
 					.getName())
-					+ " " + (i + 1);
+					+ " " + (statPos + 1);
 			playerNames.add(clientName);
 			descriptors.add(new SlotDescriptor(clientName, !ckbDebug.isSelected()));
 		}
@@ -403,7 +403,7 @@ public class TestRangeDialog extends JDialog {
 					.getString("dialog_test_error_network_msg"), lang
 					.getString("dialog_test_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
-			stopServer();
+			cancelTest();
 			return;
 		}
 
@@ -414,13 +414,20 @@ public class TestRangeDialog extends JDialog {
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded(GameResult result) {
-				addLogMessage("Game ended");// FIXME remove; only for test
+				addLogMessage(lang.getString("dialog_test_end") + " " + curTest + ":"
+						+ numTest);
 				// purpose
 				updateStatistics(offset, result);
 				// add winner log message
 				for (int i = 0; i < result.getScores().size(); i++) {
-					if (result.getScores().get(i).equals("1")) {
-						String clientName = playerNames.get(Math.abs(offset - i));
+					/*
+					 * FIXME hard coded winner -> better: attribute in result
+					 * with winner player index
+					 */
+					boolean winner = result.getScores().get(i).getValues().get(0).equals(
+							BigDecimal.ONE);
+					if (winner) {
+						String clientName = playerNames.get(i);
 						addLogMessage(clientName + " "
 								+ lang.getString("dialog_test_win"));
 						break;
@@ -435,13 +442,15 @@ public class TestRangeDialog extends JDialog {
 				} else {
 					stopServer();
 					cmbGameType.setEnabled(true);
+					testStart.setText(lang.getString("dialog_test_btn_start"));
+					TestRangeDialog.this.repaint();
 				}
 			}
 		});
 		obs.addNewTurnListener(new INewTurnListener() {
 			@Override
 			public void newTurn(int playerid, String info) {
-				String clientName = playerNames.get(Math.abs(offset - playerid));
+				String clientName = playerNames.get(playerid);
 				// add log
 				if (!info.equals(""))
 					addLogMessage(clientName + ": " + info);
@@ -464,20 +473,23 @@ public class TestRangeDialog extends JDialog {
 			String path = txfclient[Math.abs(offset - i)].getText();
 			KIs.add(new KIInformation(slot.asClient(), path));
 
-			String clientName = playerNames.get(Math.abs(offset - i));
+			String clientName = playerNames.get(i);
 			addLogMessage(clientName + " " + lang.getString("dialog_test_switchpos")
 					+ " " + (i + 1));
 		}
 
 		// start KI (intern) clients
-		for (KIInformation kinfo : KIs) {
+		for (int i = 0; i < KIs.size(); i++) {
+			KIInformation kinfo = KIs.get(i);
+			
 			String file = kinfo.getPath();
 			String[] params = kinfo.getParameters();
+			
 			try {
 				HelperMethods.exec(file, params);
 			} catch (IOException e) {
 				e.printStackTrace();
-				stopServer();
+				cancelTest();
 				JOptionPane.showMessageDialog(this, lang
 						.getString("dialog_test_error_client_msg"), lang
 						.getString("dialog_test_error_client_title"),
@@ -485,7 +497,7 @@ public class TestRangeDialog extends JDialog {
 				return;
 			} catch (UnsupportedFileExtensionException e) {
 				e.printStackTrace();
-				stopServer();
+				cancelTest();
 				JOptionPane
 						.showMessageDialog(this, lang
 								.getString("dialog_error_fileext_msg"), lang
@@ -507,38 +519,38 @@ public class TestRangeDialog extends JDialog {
 	 * @param offset
 	 * @param result
 	 */
-	protected void updateStatistics(int offset, GameResult result) {
+	protected void updateStatistics(final int offset, final GameResult result) {
 		MyTableModel model = (MyTableModel) statTable.getModel();
 
 		// display wins/losses etc.
 		for (int i = 0; i < result.getScores().size(); i++) {
-			int playerId = Math.abs(offset - i);
+			int statRow = Math.abs(offset - i);
 
-			List<BigDecimal> stats = result.getScores().get(playerId).getValues();
+			List<BigDecimal> stats = result.getScores().get(i).getValues();
 			for (int j = 0; j < stats.size(); j++) {
-				BigDecimal newStat = stats.get(i);
-				BigDecimal old = (BigDecimal) model.getValueAt(playerId, j + 2);
-				
-				if(old == null)
-				{
-					old = BigDecimal.ZERO;
-				}
+				BigDecimal newStat = stats.get(j);
+				BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
 
-				Aggregation action = result.getDefinition().get(i).getAggregation();
+				Aggregation action = result.getDefinition().get(j).getAggregation();
 				switch (action) {
 				case SUM:
-					newStat = newStat.add(old);
+
+					newStat = old.add(newStat);
 					break;
 				case AVERAGE:
-					newStat = newStat.add(old);
-					newStat = newStat.divide(BigDecimal.valueOf(curTest + 1));
+					// restore old absolute value
+					old = old.multiply(BigDecimal.valueOf(curTest - 1));
+					// add newStat to absolute value
+					newStat = old.add(newStat);
+					// divide with curTest (rounded down)
+					newStat = newStat.divideToIntegralValue(BigDecimal.valueOf(curTest));
 					break;
 				default:
 					throw new RuntimeException("Unknown aggregation type (" + action
 							+ ")");
 				}
 				// set to model
-				model.setValueAt(newStat, playerId, j + 2);
+				model.setValueAt(newStat, statRow, j + 2);
 			}
 		}
 	}
@@ -547,11 +559,20 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest() {
-		curTest = -1;
+		initCurTest();
 		if (null != obs)
 			obs.cancel();
 		stopServer();
-		GUIConfiguration.instance().setNumberOfTests(numTest);
+		testStart.setText(lang.getString("dialog_test_btn_start"));
+		cmbGameType.setEnabled(true);
+		addLogMessage(lang.getString("dialog_test_msg_cancel"));
+	}
+
+	/**
+	 * Initializes curTest to 0.
+	 */
+	private void initCurTest() {
+		curTest = 0;
 	}
 
 	/**

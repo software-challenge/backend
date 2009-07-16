@@ -5,14 +5,16 @@ ok-next: disabled
 -back: set pause to unpause
 ok-cancel: disable all buttons
 -statusbar: iwas anzeigen
-<ok>-testing=true/false
--testrange statistics
-<ok>-speicher/lade dirs: user.dir
+ok-testing=true/false
+ok-testrange statistics
+ok-speicher/lade dirs: user.dir
 -test range: txtfield num test only numbers
-<ok>-dialoge title und icon setzen
-<ok>-dateiendung bei clients als playername entfernen
+ok-dialoge title und icon setzen
+ok-dateiendung bei clients als playername entfernen
 -2 clients, replay, button play/pause falsch
-<ok>-test range: txtfield num test always 0
+ok-test range: txtfield num test always 0
+
+
 
 FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)
