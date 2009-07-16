@@ -38,8 +38,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
 	private final HumanGameHandler	handler;
-	private final JPanel			leftPanel		= new BackgoundPane(
-															"resource/background.png");
 	private QuestionPanel			qPanel;
 
 	// local instances of current players and board
@@ -100,12 +98,17 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		// chat = new ChatBar();
 		action = new ActionBar();
 
+		JPanel leftPanel = new BackgoundPane("resource/background.png");
+
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
 
 		leftPanel.add(info, BorderLayout.NORTH);
 		leftPanel.add(bg, BorderLayout.CENTER);
 		// leftPanel.add(chat, BorderLayout.SOUTH);
+
+		qPanel = new QuestionPanel(this);
+		leftPanel.add(qPanel, BorderLayout.AFTER_LAST_LINE);
 
 		final BorderLayout framelayout = new BorderLayout();
 		setLayout(framelayout);
@@ -227,7 +230,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				.getSaladsToEat());
 		info.setEnemyHasenjoker(enemy.getActions());
 
-		this.repaint();
+		repaint();
 	}
 
 	@Override
@@ -280,8 +283,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			String type)
 	{
 		questionOpen = true;
-		qPanel = new QuestionPanel(question, answers, this, type);
-		leftPanel.add(qPanel, BorderLayout.AFTER_LAST_LINE);
+		qPanel.showQuestion(question, answers, type);
+
+		repaint();
 	}
 
 	private void askForAction(final Player player)
@@ -384,7 +388,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			else if (answer.equals(moveForward))
 			{
-				qPanel.setVisible(false);
+				qPanel.hideComponents();
 				this.repaint();
 			}
 		}
@@ -501,9 +505,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			if (questionOpen)
 			{
-				leftPanel.remove(qPanel);
+				qPanel.hideComponents();
 				questionOpen = false;
-				validate();
+
+				repaint();
 			}
 
 			handler.sendAction(move);
@@ -567,7 +572,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			addGameEndedRightColors(FigureColor.RED, ": Verlierer");
 		}
 
-		addGameEndedRightColors(FigureColor.RED, ": erreichtes Feld:"
+		addGameEndedRightColors(FigureColor.RED, ": erreichtes Feld: "
 				+ results[1]);
 
 		results = data.getScores().get(1).toStrings();
@@ -580,7 +585,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			addGameEndedRightColors(FigureColor.BLUE, ": Verlierer");
 		}
 
-		addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld:"
+		addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld: "
 				+ results[1]);
 
 		action.setScrollBarToEnd();

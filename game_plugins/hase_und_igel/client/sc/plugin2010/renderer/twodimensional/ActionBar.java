@@ -83,8 +83,6 @@ public class ActionBar extends JPanel
 
 	public void setScrollBarToEnd()
 	{
-		scroll.getVerticalScrollBar().setValue(
-				scroll.getVerticalScrollBar().getMaximum());
 		pane.setCaretPosition(pane.getDocument().getLength());
 	}
 

@@ -22,33 +22,53 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class QuestionPanel extends JPanel
 {
-	private FrameRenderer	obs;
-	private String			type;
+	private FrameRenderer		obs;
+	private String				type		= "";
+	private JLabel				textLabel;
+	private TransparentPanel	buttonPanel;
 
-	private final String	FONTTYPE	= "New Courier";
-	private final int		SIZE		= 12;
+	private final String		FONTTYPE	= "New Courier";
+	private final int			SIZE		= 12;
 
-	public QuestionPanel(String question, List<String> answers,
-			FrameRenderer obs, String type)
+	public QuestionPanel(FrameRenderer obs)
 	{
 
 		Color bg = new Color(255, 255, 255, 120);
 
 		setBackground(bg);
 
-		this.type = type;
-
 		this.obs = obs;
 
-		AnswerListener awListener = new AnswerListener();
-
-		JPanel buttonPanel = new TransparentPanel();
+		buttonPanel = new TransparentPanel();
 
 		FlowLayout buttonLayout = new FlowLayout();
 
 		buttonPanel.setLayout(buttonLayout);
 
-		int width = 50;
+		BorderLayout dialogLayout = new BorderLayout();
+		setLayout(dialogLayout);
+
+		textLabel = new JLabel("", JLabel.CENTER);
+
+		textLabel.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+
+		this.add(textLabel, BorderLayout.CENTER);
+		this.add(buttonPanel, BorderLayout.SOUTH);
+
+		// setSize(100, 200);
+
+		// setMinimumSize(new Dimension(100, 50));
+		// setPreferredSize(new Dimension(100, 50));
+
+		setVisible(true);
+	}
+
+	public void showQuestion(String question, List<String> answers, String type)
+	{
+		textLabel.setText(question);
+		textLabel.setVisible(true);
+
+		AnswerListener awListener = new AnswerListener();
 
 		// add Buttons with answers
 		for (int i = 0; i < answers.size(); i++)
@@ -57,22 +77,15 @@ public class QuestionPanel extends JPanel
 			jbut.setName(answers.get(i));
 			jbut.addMouseListener(awListener);
 			buttonPanel.add(jbut);
-			width += jbut.getPreferredSize().width;
 		}
 
-		BorderLayout dialogLayout = new BorderLayout();
-		setLayout(dialogLayout);
+		this.type = type;
+	}
 
-		JLabel textLabel = new JLabel(question, JLabel.CENTER);
-
-		textLabel.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
-
-		this.add(textLabel, BorderLayout.CENTER);
-		this.add(buttonPanel, BorderLayout.SOUTH);
-
-		setSize(width, 200);
-
-		setVisible(true);
+	public void hideComponents()
+	{
+		textLabel.setVisible(false);
+		buttonPanel.removeAll();
 	}
 
 	private class AnswerListener extends MouseAdapter
