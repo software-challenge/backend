@@ -31,9 +31,9 @@ public class GamePlugin implements IGamePlugin
 	static
 	{
 		SCORE_DEFINITION = new ScoreDefinition();
-		SCORE_DEFINITION.add("winner");
-		SCORE_DEFINITION
-				.add(new ScoreFragment("position", Aggregation.AVERAGE));
+		SCORE_DEFINITION.add("Gewinner");
+		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Position",
+				Aggregation.AVERAGE));
 	}
 
 	@Override

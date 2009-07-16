@@ -60,7 +60,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private String					carrotAnswer	= "carrots";
 
 	private String					take20carrots	= "Nimm 20 Karotten";
-	private String					doNothing		= "Nichts";
+	private String					doNothing		= "Keine Karotten abgeben oder nehmen";
 	private String					give20carrots	= "Gib 20 Karotten ab";
 	private String					eatsalad		= "Friss sofort einen Salat";
 	private String					hurryahead		= "Rücke eine Position vor";
@@ -173,6 +173,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			i = printHistroyTillNewTurn(redPlayer, i, red);
 			j = printHistroyTillNewTurn(bluePlayer, j, blue);
 		}
+
+		action.setScrollBarToEnd();
 	}
 
 	@Override
@@ -424,7 +426,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	@Override
 	public void updateChat(final String chatMsg)
 	{
-		chat.addOtherMessage(chatMsg);
+		// chat.addOtherMessage(chatMsg);
 	}
 
 	private void setReachableFields(final int pos)
@@ -580,6 +582,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld:"
 				+ results[1]);
+
+		action.setScrollBarToEnd();
 	}
 
 	private class ClickRefresher extends MouseAdapter
