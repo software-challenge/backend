@@ -1,19 +1,10 @@
-ok-config save/load
-ok-status: selektierte plugin version
-ok-info: plugin version
-ok-next: disabled
 -back: set pause to unpause
-ok-cancel: disable all buttons
 -statusbar: iwas anzeigen
-ok-testing=true/false
-ok-testrange statistics
-ok-speicher/lade dirs: user.dir
 -test range: txtfield num test only numbers
-ok-dialoge title und icon setzen
-ok-dateiendung bei clients als playername entfernen
+-icon für jedes plugin
 -2 clients, replay, button play/pause falsch
-ok-test range: txtfield num test always 0
-
+-beim laden eines ki-programms/replays game type prüfen
+-vertauschung der namen beim test range
 
 
 FUTURE WORK:
