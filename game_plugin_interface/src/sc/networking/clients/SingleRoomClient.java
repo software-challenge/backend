@@ -1,7 +1,5 @@
-package sc.protocol.clients;
+package sc.networking.clients;
 
-import sc.protocol.ILobbyClientListener;
-import sc.protocol.LobbyClient;
 
 public abstract class SingleRoomClient implements ILobbyClientListener
 {

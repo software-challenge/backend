@@ -3,6 +3,7 @@ package sc.plugin2010;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
+import sc.plugin2010.util.Configuration;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.ScoreFragment.Aggregation;
@@ -53,12 +54,7 @@ public class GamePlugin implements IGamePlugin
 	@Override
 	public void initialize(IGamePluginHost host)
 	{
-		host.registerProtocolClass(Player.class);
-		host.registerProtocolClass(Move.class);
-		host.registerProtocolClass(GameState.class);
-		host.registerProtocolClass(Board.class);
-
-		// TODO evtl. fehlende Klassen registrieren
+		host.registerProtocolClasses(Configuration.getClassesToRegister());
 	}
 
 	@Override

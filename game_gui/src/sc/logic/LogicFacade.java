@@ -120,6 +120,7 @@ public class LogicFacade implements ILogicFacade {
 			this.stopServer();
 		}
 		server = Application.startServer(port);
+		System.out.println("Server started on " + port);
 	}
 
 	@Override

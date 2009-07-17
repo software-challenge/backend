@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
-import sc.protocol.ErrorResponse;
-import sc.protocol.RoomPacket;
-import sc.protocol.XStreamClient;
+import sc.networking.clients.XStreamClient;
+import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.RoomPacket;
 import sc.server.Configuration;
 
 import com.thoughtworks.xstream.XStream;

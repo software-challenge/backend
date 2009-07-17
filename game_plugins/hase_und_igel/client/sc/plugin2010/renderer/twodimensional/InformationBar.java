@@ -14,8 +14,8 @@ import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import sc.plugin2010.Action;
 import sc.plugin2010.GameUtil;
-import sc.plugin2010.Player.Action;
 import sc.plugin2010.renderer.RendererUtil;
 
 /**

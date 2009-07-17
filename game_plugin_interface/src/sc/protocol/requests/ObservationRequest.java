@@ -1,10 +1,14 @@
-package sc.protocol;
+package sc.protocol.requests;
 
-import sc.protocol.requests.ILobbyRequest;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 
 public class ObservationRequest implements ILobbyRequest
 {
+	@XStreamAsAttribute
 	private String	gameId;
+	
+	@XStreamAsAttribute
 	private String	passphrase;
 
 	public ObservationRequest(String gameId, String passphrase)

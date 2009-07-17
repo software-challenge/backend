@@ -1,4 +1,4 @@
-package sc.protocol.clients;
+package sc.networking.clients;
 
 public interface IUpdateListener
 {

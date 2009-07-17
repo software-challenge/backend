@@ -1,7 +1,8 @@
 package sc.plugin2010;
 
-import sc.plugin2010.Player.FigureColor;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
+@XStreamAlias(value="hui:welcome")
 public class WelcomeMessage
 {
 	private FigureColor myColor;

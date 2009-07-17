@@ -9,9 +9,9 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import sc.helpers.Generator;
-import sc.protocol.ErrorResponse;
-import sc.protocol.LobbyClient;
-import sc.protocol.RequestResult;
+import sc.networking.clients.LobbyClient;
+import sc.protocol.helpers.RequestResult;
+import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.server.Configuration;
 import sc.server.helpers.TestHelper;

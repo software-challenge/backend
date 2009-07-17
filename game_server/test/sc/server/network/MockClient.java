@@ -7,7 +7,7 @@ import java.util.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.protocol.RoomPacket;
+import sc.protocol.responses.RoomPacket;
 import sc.server.Configuration;
 import sc.server.helpers.StringNetworkInterface;
 

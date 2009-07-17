@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.networking.clients;
 
 import java.io.EOFException;
 import java.io.IOException;

@@ -9,11 +9,6 @@ import org.junit.Test;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
-import sc.plugin2010.Board.FieldTyp;
-import sc.plugin2010.Move.MoveTyp;
-import sc.plugin2010.Player.Action;
-import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.Player.Position;
 
 public class GamePlayTest
 {

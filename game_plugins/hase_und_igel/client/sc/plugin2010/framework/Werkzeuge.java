@@ -1,10 +1,11 @@
 package sc.plugin2010.framework;
 
-import sc.plugin2010.Board;
+import sc.plugin2010.Action;
+import sc.plugin2010.FieldTyp;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
+import sc.plugin2010.MoveTyp;
 import sc.plugin2010.Player;
-import sc.plugin2010.Player.Action;
 
 /**
  * Eine Werkzeug-Klasse, um nützliche und häufig gebrauchte Funktionen zur
@@ -226,37 +227,37 @@ public class Werkzeuge
 			switch (zug.holeZugTyp())
 			{
 				case FALLE_ZURUECK:
-					result = new Move(Move.MoveTyp.FALL_BACK);
+					result = new Move(MoveTyp.FALL_BACK);
 					break;
 				case FRISS_SALAT:
-					result = new Move(Move.MoveTyp.EAT);
+					result = new Move(MoveTyp.EAT);
 					break;
 				case SETZE_FIGUR:
-					result = new Move(Move.MoveTyp.MOVE, zug.holeN());
+					result = new Move(MoveTyp.MOVE, zug.holeN());
 					break;
 				case NIMM_ODER_GIB_KAROTTEN:
-					result = new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, zug
+					result = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, zug
 							.holeN());
 					break;
 				case SPIELE_HASENJOKER:
 					switch (zug.holeJoker())
 					{
 						case FALLE_ZURUECK:
-							result = new Move(Move.MoveTyp.PLAY_CARD,
-									Player.Action.FALL_BACK);
+							result = new Move(MoveTyp.PLAY_CARD,
+									Action.FALL_BACK);
 							break;
 						case FRISS_SALAT:
-							result = new Move(Move.MoveTyp.PLAY_CARD,
-									Player.Action.EAT_SALAD);
+							result = new Move(MoveTyp.PLAY_CARD,
+									Action.EAT_SALAD);
 							break;
 						case NIMM_ODER_GIB_20_KAROTTEN:
-							result = new Move(Move.MoveTyp.PLAY_CARD,
-									Player.Action.TAKE_OR_DROP_CARROTS, zug
+							result = new Move(MoveTyp.PLAY_CARD,
+									Action.TAKE_OR_DROP_CARROTS, zug
 											.holeN());
 							break;
 						case RUECKE_VOR:
-							result = new Move(Move.MoveTyp.PLAY_CARD,
-									Player.Action.HURRY_AHEAD);
+							result = new Move(MoveTyp.PLAY_CARD,
+									Action.HURRY_AHEAD);
 							break;
 						default:
 							break;
@@ -327,30 +328,30 @@ public class Werkzeuge
 	 * @param typ
 	 * @return
 	 */
-	protected static Board.FieldTyp convertSpielfeldtyp(Spielfeldtyp typ)
+	protected static FieldTyp convertSpielfeldtyp(Spielfeldtyp typ)
 	{
 		switch (typ)
 		{
 			case SALAT:
-				return Board.FieldTyp.SALAD;
+				return FieldTyp.SALAD;
 			case KAROTTEN:
-				return Board.FieldTyp.CARROT;
+				return FieldTyp.CARROT;
 			case HASE:
-				return Board.FieldTyp.RABBIT;
+				return FieldTyp.RABBIT;
 			case IGEL:
-				return Board.FieldTyp.HEDGEHOG;
+				return FieldTyp.HEDGEHOG;
 			case POSITION_1:
-				return Board.FieldTyp.POSITION_1;
+				return FieldTyp.POSITION_1;
 			case POSITION_2:
-				return Board.FieldTyp.POSITION_2;
+				return FieldTyp.POSITION_2;
 			case INVALIDE:
-				return Board.FieldTyp.INVALID;
+				return FieldTyp.INVALID;
 			case ZIEL:
-				return Board.FieldTyp.GOAL;
+				return FieldTyp.GOAL;
 			case START:
-				return Board.FieldTyp.START;
+				return FieldTyp.START;
 			default:
-				return Board.FieldTyp.INVALID;
+				return FieldTyp.INVALID;
 		}
 	}
 
@@ -359,7 +360,7 @@ public class Werkzeuge
 	 * @param typ
 	 * @return
 	 */
-	protected static Spielfeldtyp convertFieldtype(Board.FieldTyp typ)
+	protected static Spielfeldtyp convertFieldtype(FieldTyp typ)
 	{
 		switch (typ)
 		{

@@ -1,7 +1,10 @@
 package sc.protocol.requests;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 public class FreeReservationRequest implements ILobbyRequest
 {
+	@XStreamAsAttribute
 	private String	reservation;
 
 	public FreeReservationRequest(String reservation)

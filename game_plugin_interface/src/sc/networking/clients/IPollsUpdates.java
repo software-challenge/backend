@@ -1,6 +1,5 @@
-package sc.protocol;
+package sc.networking.clients;
 
-import sc.protocol.clients.IUpdateListener;
 
 public interface IPollsUpdates
 {

@@ -1,7 +1,7 @@
 package sc.plugin2010.framework;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.FigureColor;
 
 /**
  * Das Spielbrett in einem Hase und Igel Spiel.

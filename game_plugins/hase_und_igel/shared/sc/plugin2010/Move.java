@@ -1,49 +1,23 @@
 package sc.plugin2010;
 
-import sc.plugin2010.Player.Action;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * @author rra
  * @since Jul 4, 2009
  * 
  */
+@XStreamAlias(value = "hui:move")
 public final class Move implements Cloneable
 {
-	/**
-	 * Die aus Hase- und Igel bekannten Aktionen, sowie die Erweiterungen der
-	 * CAU-Kiel
-	 */
-	public enum MoveTyp
-	{
-		/**
-		 * Ziehe <code>n</code> Felder vor
-		 */
-		MOVE,
-		/**
-		 * Iß einen Salat - auf einem Salatfeld
-		 */
-		EAT,
-		/**
-		 * Nehme 10 Karotten auf oder gib 10 Karotten ab - auf einem
-		 * Karottenfeld
-		 */
-		TAKE_OR_DROP_CARROTS,
-		/**
-		 * Falle zum letzten Igelfeld zurück.
-		 */
-		FALL_BACK,
-		/**
-		 * Spielt einen Hasenjoker aus - auf einem Hasenfeld
-		 */
-		PLAY_CARD,
-		/**
-		 * Im sehr seltenen Fall, wenn man sich gar nicht bewegen kann.
-		 */
-		SKIP
-	}
-
+	@XStreamAsAttribute
 	private int		n;
+
+	@XStreamAsAttribute
 	private MoveTyp	typ;
+
+	@XStreamAsAttribute
 	private Action	card;
 
 	public Move(final MoveTyp t)

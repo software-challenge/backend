@@ -2,11 +2,11 @@ package sc.plugin2010.framework;
 
 import java.io.IOException;
 
+import sc.networking.clients.LobbyClient;
 import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
-import sc.protocol.LobbyClient;
 
 /**
  * Diese Klasse übernimmt das initalisieren des Spieles und des Netzwerkclients.

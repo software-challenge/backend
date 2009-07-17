@@ -12,15 +12,16 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
+import sc.networking.clients.IControllableGame;
+import sc.networking.clients.IUpdateListener;
 import sc.plugin2010.EPlayerId;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.Game;
 import sc.plugin2010.GameState;
 import sc.plugin2010.IGUIObservation;
 import sc.plugin2010.IGameHandler;
-import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.renderer.RenderFacade;
-import sc.protocol.IControllableGame;
-import sc.protocol.clients.IUpdateListener;
+import sc.plugin2010.util.Configuration;
 import sc.shared.GameResult;
 
 /**
@@ -79,7 +80,7 @@ public class Observation implements IObservation, IUpdateListener,
 	public void next()
 	{
 		conGame.next();
-		if(!conGame.hasNext())
+		if (!conGame.hasNext())
 		{
 			if (RenderFacade.getInstance().getActivePlayer() != null)
 			{
@@ -117,7 +118,7 @@ public class Observation implements IObservation, IUpdateListener,
 	@Override
 	public void saveReplayToFile(String filename) throws IOException
 	{
-		ReplayBuilder.saveReplay(conGame, filename);
+		ReplayBuilder.saveReplay(Configuration.getXStream(), conGame, filename);
 	}
 
 	@Override

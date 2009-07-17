@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.protocol.IRequest;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.SlotDescriptor;
 

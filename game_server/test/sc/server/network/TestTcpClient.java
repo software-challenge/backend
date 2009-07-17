@@ -6,7 +6,7 @@ import java.net.Socket;
 import org.junit.Assert;
 
 import sc.networking.TcpNetwork;
-import sc.protocol.XStreamClient;
+import sc.networking.clients.XStreamClient;
 import sc.server.Configuration;
 
 import com.thoughtworks.xstream.XStream;

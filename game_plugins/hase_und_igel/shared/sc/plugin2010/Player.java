@@ -5,9 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import sc.framework.plugins.SimplePlayer;
-import sc.plugin2010.Move.MoveTyp;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Ein Spieler aus Hase- und Igel.
@@ -16,50 +19,10 @@ import sc.shared.ScoreCause;
  * @since Jul 4, 2009
  * 
  */
+// FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
+@XStreamAlias(value = "hui:player")
 public class Player extends SimplePlayer implements Cloneable
 {
-	/**
-	 * Mögliche Aktionen, die durch das Ausspielen eines Hasenjokers ausgelöst
-	 * werden können.
-	 */
-	public enum Action
-	{
-		/**
-		 * Nehme Karotten auf, oder leg sie ab
-		 */
-		TAKE_OR_DROP_CARROTS,
-		/**
-		 * Iß sofort einen Salat
-		 */
-		EAT_SALAD,
-		/**
-		 * Falle eine Position zurück
-		 */
-		FALL_BACK,
-		/**
-		 * Rücke eine Position vor
-		 */
-		HURRY_AHEAD
-	}
-
-	/**
-	 * Alle Spielfiguren aus dem Hase und Igel Original Mit Veränderungen der
-	 * CAU
-	 */
-	public enum FigureColor
-	{
-		RED, BLUE
-	}
-
-	public enum Position
-	{
-		SECOND, FIRST,
-		/**
-		 * In the rare case where both players are on the same spot (START).
-		 */
-		TIE
-	}
-
 	// Farbe der Spielfigure
 	private FigureColor		color;
 
@@ -73,19 +36,24 @@ public class Player extends SimplePlayer implements Cloneable
 	private int				saladsToEat;
 
 	// verfügbare Hasenkarten
+	@XStreamImplicit(itemFieldName = "action")
 	private List<Action>	actions;
 
+	@XStreamImplicit(itemFieldName = "move")
 	private List<Move>		history;
 
 	private Position		position;
-	
+
+	@XStreamOmitField
 	private boolean			mustPlayCard;
-	
+
+	// FIXME: shouldn't be a property of a DAO that
+	// is sent over the network/replay
 	public void setMustPlayCard(boolean mustPlayCard)
 	{
 		this.mustPlayCard = mustPlayCard;
 	}
-	
+
 	public boolean mustPlayCard()
 	{
 		return mustPlayCard;

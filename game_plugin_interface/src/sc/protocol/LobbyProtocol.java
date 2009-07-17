@@ -1,14 +1,24 @@
 package sc.protocol;
 
+import java.util.Arrays;
 import java.util.Collection;
 
-import sc.framework.plugins.RoundBasedGameInstance;
-import sc.framework.plugins.SimpleGameInstance;
-import sc.framework.plugins.SimplePlayer;
 import sc.protocol.requests.AuthenticateRequest;
+import sc.protocol.requests.CancelRequest;
+import sc.protocol.requests.FreeReservationRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.ObservationRequest;
+import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.requests.StepRequest;
+import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.GamePausedEvent;
+import sc.protocol.responses.JoinGameResponse;
+import sc.protocol.responses.LeftGameEvent;
+import sc.protocol.responses.MementoPacket;
+import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.RoomPacket;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -16,31 +26,30 @@ public abstract class LobbyProtocol
 {
 	public static XStream registerMessages(XStream xStream)
 	{
-		return registerMessages(xStream, null);
-	}
+		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
+				ErrorResponse.class, GamePausedEvent.class,
+				JoinGameResponse.class, LeftGameEvent.class,
+				MementoPacket.class, PrepareGameResponse.class,
+				RoomPacket.class }));
 
-	public static XStream registerMessages(XStream xStream,
-			Collection<Class<?>> additionClasses)
-	{
-		xStream.processAnnotations(ErrorResponse.class);
-		xStream.processAnnotations(RoomPacket.class);
-		xStream.processAnnotations(AuthenticateRequest.class);
-		xStream.processAnnotations(JoinPreparedRoomRequest.class);
-		xStream.processAnnotations(JoinRoomRequest.class);
-		xStream.processAnnotations(PrepareGameRequest.class);
-		xStream.processAnnotations(MementoPacket.class);
-		xStream.processAnnotations(SimplePlayer.class);
-		xStream.processAnnotations(SimpleGameInstance.class);
-		xStream.processAnnotations(RoundBasedGameInstance.class);
-
-		if (additionClasses != null)
-		{
-			for (Class<?> cls : additionClasses)
-			{
-				xStream.processAnnotations(cls);
-			}
-		}
+		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
+				AuthenticateRequest.class, CancelRequest.class,
+				FreeReservationRequest.class, JoinPreparedRoomRequest.class,
+				JoinRoomRequest.class, ObservationRequest.class,
+				PauseGameRequest.class, PrepareGameRequest.class,
+				StepRequest.class }));
 
 		return xStream;
+	}
+
+	public static XStream registerAdditionalMessages(XStream xstream,
+			Collection<Class<?>> protocolClasses)
+	{
+		for (Class<?> clazz : protocolClasses)
+		{
+			xstream.processAnnotations(clazz);
+		}
+
+		return xstream;
 	}
 }

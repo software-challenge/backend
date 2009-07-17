@@ -1,12 +1,5 @@
 package sc.plugin2010;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import sc.plugin2010.Board.FieldTyp;
-import sc.plugin2010.Move.MoveTyp;
-import sc.plugin2010.Player.Action;
-import sc.plugin2010.Player.Position;
 
 public class GameUtil
 {
@@ -15,6 +8,11 @@ public class GameUtil
 	public static final int	CARROT_BONUS_ON_POSITION_2_FIELD	= 30;
 	public static final int	CARROT_BONUS_ON_POSITION_1_SALAD	= 10;
 	public static final int	CARROT_BONUS_ON_POSITION_2_SALAD	= 30;
+	
+	private GameUtil()
+	{
+		throw new IllegalStateException("Can't be instantiated.");
+	}
 
 	/**
 	 * Berechnet wie viele Karotten für einen Zug der länge
@@ -181,11 +179,11 @@ public class GameUtil
 			}
 			else if (lastMove.getTyp() == MoveTyp.PLAY_CARD)
 			{
-				if (lastMove.getCard() == Player.Action.EAT_SALAD)
+				if (lastMove.getCard() == Action.EAT_SALAD)
 				{
 					return true;
 				}
-				else if (lastMove.getCard() == Player.Action.TAKE_OR_DROP_CARROTS)
+				else if (lastMove.getCard() == Action.TAKE_OR_DROP_CARROTS)
 				{
 					return true;
 				}

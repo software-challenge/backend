@@ -13,12 +13,10 @@ import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin2010.Board.FieldTyp;
-import sc.plugin2010.Move.MoveTyp;
-import sc.plugin2010.Player.Action;
-import sc.plugin2010.Player.FigureColor;
-import sc.plugin2010.Player.Position;
 import sc.shared.PlayerScore;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Die Spiellogik von Hase- und Igel.
@@ -30,14 +28,19 @@ import sc.shared.PlayerScore;
  * @since Jul 4, 2009
  * 
  */
+@XStreamAlias(value="hui:game")
 public class Game extends RoundBasedGameInstance<Player>
 {
 	private static Logger		logger			= LoggerFactory
 														.getLogger(Game.class);
 
+	@XStreamOmitField
 	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
-	private Board				board			= Board.create();
+	
+	@XStreamOmitField
 	private boolean				oneLastMove		= false;
+	
+	private Board				board			= Board.create();
 
 	public Board getBoard()
 	{

@@ -3,9 +3,10 @@ package sc.plugin2010.framework;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.plugin2010.Action;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
-import sc.plugin2010.Player.Action;
 
 /**
  * Diese Klasse repräsentiert einen allgemeinen abstrakten Spieler. Dieser
@@ -79,7 +80,7 @@ public abstract class AllgemeinerSpieler
 	 */
 	public Spielerfarbe holeSpielerfarbe()
 	{
-		if (player.getColor() == Player.FigureColor.BLUE)
+		if (player.getColor() == FigureColor.BLUE)
 		{
 			return Spielerfarbe.BLAU;
 		}

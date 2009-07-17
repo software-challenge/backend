@@ -1,9 +1,11 @@
-package sc.protocol.clients;
+package sc.protocol.requests;
 
-import sc.protocol.requests.ILobbyRequest;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 
 public class CancelRequest implements ILobbyRequest
 {
+	@XStreamAsAttribute
 	public String	roomId;
 
 	public CancelRequest(String roomId)

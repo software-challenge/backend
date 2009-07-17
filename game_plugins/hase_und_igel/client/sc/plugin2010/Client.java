@@ -1,17 +1,15 @@
 package sc.plugin2010;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
-import sc.plugin2010.Player.FigureColor;
+import sc.networking.clients.IControllableGame;
+import sc.networking.clients.ILobbyClientListener;
+import sc.networking.clients.LobbyClient;
 import sc.plugin2010.util.Configuration;
-import sc.protocol.ErrorResponse;
-import sc.protocol.IControllableGame;
-import sc.protocol.ILobbyClientListener;
-import sc.protocol.LobbyClient;
-import sc.protocol.RequestResult;
+import sc.protocol.helpers.RequestResult;
+import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
@@ -44,13 +42,11 @@ public class Client implements ILobbyClientListener
 	// set to true when ready was sent to ReadyListeners
 	private boolean			alreadyReady	= false;
 
-	@SuppressWarnings("unchecked")
 	public Client(String host, int port, EPlayerId id) throws IOException
 	{
 		gameType = GamePlugin.PLUGIN_UUID;
-		client = new LobbyClient(Configuration.getXStream(), Arrays.asList(
-				Player.class, Move.class, Board.class, GameState.class), host,
-				port);
+		client = new LobbyClient(Configuration.getXStream(), Configuration
+				.getClassesToRegister(), host, port);
 		client.addListener(this);
 		client.start();
 		this.id = id;
@@ -132,11 +128,11 @@ public class Client implements ILobbyClientListener
 	{
 		Move move = oldPlayer.getHistory().get(
 				oldPlayer.getHistory().size() - 1);
-		if (move.getTyp() == Move.MoveTyp.PLAY_CARD)
+		if (move.getTyp() == MoveTyp.PLAY_CARD)
 		{
 			Move move2 = oldPlayer.getHistory().get(
 					oldPlayer.getHistory().size() - 2);
-			if (move2.getTyp() == Move.MoveTyp.PLAY_CARD)
+			if (move2.getTyp() == MoveTyp.PLAY_CARD)
 			{
 				Move move3 = oldPlayer.getHistory().get(
 						oldPlayer.getHistory().size() - 3);
@@ -254,8 +250,7 @@ public class Client implements ILobbyClientListener
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			SlotDescriptor... descriptors)
-			throws InterruptedException
+			SlotDescriptor... descriptors) throws InterruptedException
 	{
 		return client.prepareGameAndWait(gameType, descriptors);
 	}

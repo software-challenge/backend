@@ -1,6 +1,7 @@
-package sc.protocol;
+package sc.networking.clients;
 
 import sc.api.plugins.IPlayer;
+import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.GameResult;
 

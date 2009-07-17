@@ -49,8 +49,6 @@ public class ClientManager implements Runnable
 	@Override
 	public void run()
 	{
-		clientListener.start();
-
 		running = true;
 
 		logger.info("ClientManager running.");
@@ -82,6 +80,7 @@ public class ClientManager implements Runnable
 	 */
 	public void start()
 	{
+		clientListener.start();
 		ServiceManager.createService(this.getClass().getSimpleName(), this)
 				.start();
 	}

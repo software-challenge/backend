@@ -1,11 +1,10 @@
-package sc.protocol.clients;
+package sc.networking.clients;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
-import sc.protocol.IAdministrativeListener;
-import sc.protocol.LobbyClient;
+import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
 

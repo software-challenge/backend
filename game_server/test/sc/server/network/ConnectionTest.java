@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sc.helpers.Generator;
-import sc.protocol.XStreamClient.DisconnectCause;
+import sc.networking.clients.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.server.Configuration;
 import sc.server.Lobby;

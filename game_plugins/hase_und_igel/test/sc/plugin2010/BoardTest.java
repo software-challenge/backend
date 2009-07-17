@@ -7,9 +7,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sc.plugin2010.Board.FieldTyp;
-import sc.plugin2010.Player.FigureColor;
-
 /**
  * Überprüft einige Methoden des Spielbretts
  * 

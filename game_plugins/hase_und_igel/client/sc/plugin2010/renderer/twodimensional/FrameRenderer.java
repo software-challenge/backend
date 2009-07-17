@@ -15,12 +15,14 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import sc.plugin2010.Action;
 import sc.plugin2010.Board;
+import sc.plugin2010.FieldTyp;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
+import sc.plugin2010.MoveTyp;
 import sc.plugin2010.Player;
-import sc.plugin2010.Board.FieldTyp;
-import sc.plugin2010.Player.FigureColor;
 import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.IRenderer;
 import sc.shared.GameResult;
@@ -85,7 +87,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		for (int i = 0; i < 65; i++)
 		{
-			fbuttons.add(new FieldButton("", i, Board.FieldTyp.INVALID, this));
+			fbuttons.add(new FieldButton("", i, FieldTyp.INVALID, this));
 			fbuttons.get(i).setPreferredSize(new Dimension(40, 40));
 			bg.add("1", fbuttons.get(i));
 		}
@@ -134,14 +136,14 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 									.get(i)));
 			i++;
 			if (i < curPlayer.getHistory().size()
-					&& curPlayer.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
+					&& curPlayer.getHistory().get(i).getTyp() == MoveTyp.PLAY_CARD)
 			{
 				action.addAction(color, curPlayer.getDisplayName(), " "
 						+ GameUtil.displayMoveAction(curPlayer.getHistory()
 								.get(i)));
 				i++;
 				if (i < curPlayer.getHistory().size()
-						&& curPlayer.getHistory().get(i).getTyp() == Move.MoveTyp.PLAY_CARD)
+						&& curPlayer.getHistory().get(i).getTyp() == MoveTyp.PLAY_CARD)
 				{
 					action.addAction(color, curPlayer.getDisplayName(), " "
 							+ GameUtil.displayMoveAction(curPlayer.getHistory()
@@ -305,7 +307,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		if (GameUtil.isValidToSkip(board, player))
 		{
-			sendMove(new Move(Move.MoveTyp.SKIP));
+			sendMove(new Move(MoveTyp.SKIP));
 		}
 		else if (GameUtil.isValidToTakeOrDrop10Carrots(board, player, 10))
 		{
@@ -324,40 +326,40 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		}
 		else if (GameUtil.isValidToEat(board, player))
 		{
-			sendMove(new Move(Move.MoveTyp.EAT));
+			sendMove(new Move(MoveTyp.EAT));
 		}
-		else if ((board.getTypeAt(player.getFieldNumber()) == Board.FieldTyp.RABBIT)
+		else if ((board.getTypeAt(player.getFieldNumber()) == FieldTyp.RABBIT)
 				&& (player.getActions().size() > 0))
 		{
 
 			List<String> answers = new LinkedList<String>();
 			if (GameUtil.isValidToPlayCard(board, player,
-					Player.Action.TAKE_OR_DROP_CARROTS, 20))
+					Action.TAKE_OR_DROP_CARROTS, 20))
 			{
 				answers.add(take20carrots);
 			}
 			if (GameUtil.isValidToPlayCard(board, player,
-					Player.Action.TAKE_OR_DROP_CARROTS, 0))
+					Action.TAKE_OR_DROP_CARROTS, 0))
 			{
 				answers.add(doNothing);
 			}
 			if (GameUtil.isValidToPlayCard(board, player,
-					Player.Action.TAKE_OR_DROP_CARROTS, -20))
+					Action.TAKE_OR_DROP_CARROTS, -20))
 			{
 				answers.add(give20carrots);
 			}
 			if (GameUtil.isValidToPlayCard(board, player,
-					Player.Action.EAT_SALAD, 0))
+					Action.EAT_SALAD, 0))
 			{
 				answers.add(eatsalad);
 			}
 			if (GameUtil.isValidToPlayCard(board, player,
-					Player.Action.HURRY_AHEAD, 0))
+					Action.HURRY_AHEAD, 0))
 			{
 				answers.add(hurryahead);
 			}
 			if (GameUtil.isValidToPlayCard(board, player,
-					Player.Action.FALL_BACK, 0))
+					Action.FALL_BACK, 0))
 			{
 				answers.add(fallback);
 			}
@@ -378,11 +380,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			if (answer.equals(takeCarrots))
 			{
-				sendMove(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, 10));
+				sendMove(new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10));
 			}
 			else if (answer.equals(dropCarrots))
 			{
-				sendMove(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, -10));
+				sendMove(new Move(MoveTyp.TAKE_OR_DROP_CARROTS, -10));
 			}
 			else if (answer.equals(moveForward))
 			{
@@ -394,33 +396,33 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			if (answer.equals(take20carrots))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.TAKE_OR_DROP_CARROTS, 20));
+				sendMove(new Move(MoveTyp.PLAY_CARD,
+						Action.TAKE_OR_DROP_CARROTS, 20));
 			}
 			else if (answer.equals(doNothing))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.TAKE_OR_DROP_CARROTS, 0));
+				sendMove(new Move(MoveTyp.PLAY_CARD,
+						Action.TAKE_OR_DROP_CARROTS, 0));
 			}
 			else if (answer.equals(give20carrots))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.TAKE_OR_DROP_CARROTS, -20));
+				sendMove(new Move(MoveTyp.PLAY_CARD,
+						Action.TAKE_OR_DROP_CARROTS, -20));
 			}
 			else if (answer.equals(eatsalad))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.EAT_SALAD));
+				sendMove(new Move(MoveTyp.PLAY_CARD,
+						Action.EAT_SALAD));
 			}
 			else if (answer.equals(hurryahead))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.HURRY_AHEAD));
+				sendMove(new Move(MoveTyp.PLAY_CARD,
+						Action.HURRY_AHEAD));
 			}
 			else if (answer.equals(fallback))
 			{
-				sendMove(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.FALL_BACK));
+				sendMove(new Move(MoveTyp.PLAY_CARD,
+						Action.FALL_BACK));
 			}
 		}
 	}
@@ -475,14 +477,14 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				if (GameUtil.isValidToFallBack(board, player)
 						&& board.getTypeAt(fieldNumber) == FieldTyp.HEDGEHOG)
 				{
-					sendMove(new Move(Move.MoveTyp.FALL_BACK));
+					sendMove(new Move(MoveTyp.FALL_BACK));
 				}
 			}
 			else
 			{
 				if (GameUtil.isValidToMove(board, player, relativeFieldsToMove))
 				{
-					sendMove(new Move(Move.MoveTyp.MOVE, relativeFieldsToMove));
+					sendMove(new Move(MoveTyp.MOVE, relativeFieldsToMove));
 				}
 			}
 		}

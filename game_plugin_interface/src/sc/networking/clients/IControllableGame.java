@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.networking.clients;
 
 public interface IControllableGame extends IPollsUpdates
 {

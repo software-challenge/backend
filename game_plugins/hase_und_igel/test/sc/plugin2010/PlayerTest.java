@@ -6,10 +6,6 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import sc.plugin2010.Player;
-import sc.plugin2010.Player.Action;
-import sc.plugin2010.Player.FigureColor;
-
 /**
  * @author rra
  * @since Jul 4, 2009

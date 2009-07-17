@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.protocol.responses;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.protocol.requests.ILobbyRequest;
 
 @XStreamAlias("room")
-public class RoomPacket implements ILobbyRequest
+public final class RoomPacket implements ILobbyRequest
 {
 	@XStreamAsAttribute
 	private String	roomId;

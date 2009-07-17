@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.networking.clients;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.networking.FileSystemInterface;
-import sc.protocol.clients.IUpdateListener;
-import sc.protocol.clients.ObservingClient;
 
 import com.thoughtworks.xstream.XStream;
 

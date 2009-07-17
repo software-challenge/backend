@@ -1,7 +1,8 @@
 package sc.plugin2010.framework;
 
+import sc.plugin2010.Action;
 import sc.plugin2010.Move;
-import sc.plugin2010.Player;
+import sc.plugin2010.MoveTyp;
 
 /**
  * Repräsentiert den Spieler in Hase und Igel. Hier wird nach dem "Kara-Prinzip"
@@ -36,20 +37,20 @@ public class Spieler extends AllgemeinerSpieler
 		switch (joker)
 		{
 			case FALLE_ZURUECK:
-				logik.sendAction(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.FALL_BACK));
+				logik.sendAction(new Move(MoveTyp.PLAY_CARD,
+						Action.FALL_BACK));
 				break;
 			case FRISS_SALAT:
-				logik.sendAction(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.EAT_SALAD));
+				logik.sendAction(new Move(MoveTyp.PLAY_CARD,
+						Action.EAT_SALAD));
 				break;
 			case NIMM_ODER_GIB_20_KAROTTEN:
-				logik.sendAction(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.TAKE_OR_DROP_CARROTS, karottenAnzahl));
+				logik.sendAction(new Move(MoveTyp.PLAY_CARD,
+						Action.TAKE_OR_DROP_CARROTS, karottenAnzahl));
 				break;
 			case RUECKE_VOR:
-				logik.sendAction(new Move(Move.MoveTyp.PLAY_CARD,
-						Player.Action.HURRY_AHEAD));
+				logik.sendAction(new Move(MoveTyp.PLAY_CARD,
+						Action.HURRY_AHEAD));
 				break;
 			default:
 				break;
@@ -74,7 +75,7 @@ public class Spieler extends AllgemeinerSpieler
 	 */
 	public void setzeAus()
 	{
-		logik.sendAction(new Move(Move.MoveTyp.SKIP));
+		logik.sendAction(new Move(MoveTyp.SKIP));
 	}
 
 	/**
@@ -90,7 +91,7 @@ public class Spieler extends AllgemeinerSpieler
 			throw new IllegalArgumentException();
 		}
 
-		logik.sendAction(new Move(Move.MoveTyp.MOVE, feldNummer
+		logik.sendAction(new Move(MoveTyp.MOVE, feldNummer
 				- holeFeldnummer()));
 	}
 
@@ -99,7 +100,7 @@ public class Spieler extends AllgemeinerSpieler
 	 */
 	public void frissSalat()
 	{
-		logik.sendAction(new Move(Move.MoveTyp.EAT));
+		logik.sendAction(new Move(MoveTyp.EAT));
 	}
 
 	/**
@@ -108,7 +109,7 @@ public class Spieler extends AllgemeinerSpieler
 	 */
 	public void zurueckAufLetztenIgel()
 	{
-		logik.sendAction(new Move(Move.MoveTyp.FALL_BACK));
+		logik.sendAction(new Move(MoveTyp.FALL_BACK));
 	}
 
 	/**
@@ -116,7 +117,7 @@ public class Spieler extends AllgemeinerSpieler
 	 */
 	public void gibKarottenAb()
 	{
-		logik.sendAction(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, -10));
+		logik.sendAction(new Move(MoveTyp.TAKE_OR_DROP_CARROTS, -10));
 	}
 
 	/**
@@ -124,7 +125,7 @@ public class Spieler extends AllgemeinerSpieler
 	 */
 	public void nimmKarotten()
 	{
-		logik.sendAction(new Move(Move.MoveTyp.TAKE_OR_DROP_CARROTS, 10));
+		logik.sendAction(new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10));
 	}
 
 	/**

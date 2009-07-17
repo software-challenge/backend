@@ -220,6 +220,7 @@ public class CreateGameDialog extends JDialog {
 		try {
 			port = new Integer(txfPort.getText());
 		} catch (NumberFormatException ex) {
+			ex.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_create_error_port_msg"), lang
 					.getString("dialog_create_error_port_title"),
@@ -251,6 +252,7 @@ public class CreateGameDialog extends JDialog {
 			prep = selPlugin.getPlugin().prepareGame(ip, port,
 					descriptors.toArray(new SlotDescriptor[descriptors.size()]));
 		} catch (IOException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
 					.getString("dialog_create_error_network_msg"), lang
 					.getString("dialog_create_error_network_title"),

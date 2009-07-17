@@ -1,9 +1,10 @@
-package sc.protocol;
+package sc.networking.clients;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,18 +17,25 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IRequestResult;
+import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
-import sc.protocol.clients.ControllingClient;
-import sc.protocol.clients.ObservingClient;
+import sc.protocol.LobbyProtocol;
+import sc.protocol.helpers.AsyncResultManager;
+import sc.protocol.helpers.RequestResult;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.FreeReservationRequest;
+import sc.protocol.requests.IRequest;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.requests.ObservationRequest;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
+import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.RoomPacket;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
@@ -66,8 +74,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses,
 			String host, int port) throws IOException
 	{
-		super(xstream, new TcpNetwork(new Socket(host, port)));
-		LobbyProtocol.registerMessages(xstream, protocolClasses);
+		super(xstream, createTcpNetwork(host, port));
+		LobbyProtocol.registerMessages(xstream);
+		LobbyProtocol.registerAdditionalMessages(xstream, protocolClasses);
+	}
+
+	private static INetworkInterface createTcpNetwork(String host, int port)
+			throws UnknownHostException, IOException
+	{
+		logger.info("Creating TCP Network for {}:{}", host, port);
+		return new TcpNetwork(new Socket(host, port));
 	}
 
 	public List<String> getRooms()

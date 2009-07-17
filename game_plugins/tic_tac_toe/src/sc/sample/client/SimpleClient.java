@@ -6,9 +6,9 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.api.plugins.IPlayer;
 import sc.helpers.StringHelper;
-import sc.protocol.ErrorResponse;
-import sc.protocol.ILobbyClientListener;
-import sc.protocol.LobbyClient;
+import sc.networking.clients.ILobbyClientListener;
+import sc.networking.clients.LobbyClient;
+import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.sample.server.GamePluginImpl;
 import sc.sample.shared.Board;

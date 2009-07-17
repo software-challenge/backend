@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.protocol.responses;
 
 import sc.framework.plugins.IPerspectiveProvider;
 

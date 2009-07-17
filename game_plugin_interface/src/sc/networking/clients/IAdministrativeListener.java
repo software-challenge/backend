@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.networking.clients;
 
 import sc.api.plugins.IPlayer;
 

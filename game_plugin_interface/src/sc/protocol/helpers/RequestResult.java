@@ -1,6 +1,8 @@
-package sc.protocol;
+package sc.protocol.helpers;
 
-public class RequestResult<T>
+import sc.protocol.responses.ErrorResponse;
+
+public final class RequestResult<T>
 {
 	T				result	= null;
 	ErrorResponse	error	= null;

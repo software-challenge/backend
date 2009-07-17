@@ -5,60 +5,22 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin2010.Player.FigureColor;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * @author rra
  * @since Jul 1, 2009
  * 
  */
+@XStreamAlias(value = "hui:board")
 public class Board
 {
-	/**
-	 * Die unterschiedlichen Spielfelder aus dem Hase und Igel Original
-	 */
-	public enum FieldTyp
-	{
-		/**
-		 * Zahl- und Flaggenfelder
-		 * Die veränderten Spielregeln sehen nur noch die Felder 1,2 vor.
-		 * Die Positionsfelder 3 und 4 wurden in Möhrenfelder umgewandelt,
-		 * und (1,5,6) sind jetzt Position-1-Felder.
-		 */
-		POSITION_1, POSITION_2,
-		/**
-		 * Igelfeld
-		 */
-		HEDGEHOG,
-		/**
-		 * Salatfeld
-		 */
-		SALAD,
-		/**
-		 * Karottenfeld
-		 */
-		CARROT,
-		/**
-		 * Hasenfeld
-		 */
-		RABBIT,
-		/**
-		 * Außerhalb des Spielfeldes
-		 */
-		INVALID,
-		/**
-		 * Das Zielfeld
-		 */
-		GOAL,
-		/**
-		 * Das Startfeld
-		 */
-		START,
-	}
-
+	@XStreamImplicit(itemFieldName = "field")
 	private List<FieldTyp>	track;
 
 	protected Player		red;
+	
 	protected Player		blue;
 
 	private Board()
@@ -81,9 +43,8 @@ public class Board
 	/**
 	 * Erstellt eine zufällige Rennstrecke. Die Positionen der Salat- und
 	 * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
-	 * werden permutiert.
-	 * Außerdem werden auch die Abschnitte zwischen Start- und Ziel und dem
-	 * ersten bzw. letzten Igelfeld permutiert.
+	 * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
+	 * und Ziel und dem ersten bzw. letzten Igelfeld permutiert.
 	 */
 	private final void initialize()
 	{
@@ -191,7 +152,8 @@ public class Board
 	 */
 	public final boolean isOccupied(final int pos)
 	{
-		return (red.getFieldNumber() == pos || blue.getFieldNumber() == pos) && (pos != 64 || pos == 0);
+		return (red.getFieldNumber() == pos || blue.getFieldNumber() == pos)
+				&& (pos != 64 || pos == 0);
 	}
 
 	public final int nextFreeFieldFor(Player player, int off)
@@ -363,7 +325,8 @@ public class Board
 		Player o = getOtherPlayer(p);
 		boolean isFirst = o.getFieldNumber() <= p.getFieldNumber();
 		if (p.inGoal() && o.getFieldNumber() == p.getFieldNumber())
-			isFirst = isFirst && p.getCarrotsAvailable() < o.getCarrotsAvailable();
+			isFirst = isFirst
+					&& p.getCarrotsAvailable() < o.getCarrotsAvailable();
 		return isFirst;
 	}
 

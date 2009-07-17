@@ -1,4 +1,4 @@
-package sc.protocol.clients;
+package sc.networking.clients;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,10 +9,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.protocol.IControllableGame;
-import sc.protocol.IHistoryListener;
-import sc.protocol.IPollsHistory;
-import sc.protocol.ReplayClient;
 
 import com.thoughtworks.xstream.XStream;
 

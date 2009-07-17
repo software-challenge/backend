@@ -82,8 +82,6 @@ public class NewClientListener implements Runnable, Closeable
 	@Override
 	public void run()
 	{
-		startSocketListener();
-
 		while (!serverSocket.isClosed() && !Thread.interrupted())
 		{
 			acceptClient();
@@ -93,6 +91,7 @@ public class NewClientListener implements Runnable, Closeable
 
 	public void start()
 	{
+		startSocketListener();
 		ServiceManager.createService(this.getClass().getSimpleName(), this)
 				.start();
 	}

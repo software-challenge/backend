@@ -1,4 +1,4 @@
-package sc.protocol;
+package sc.protocol.helpers;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import sc.api.plugins.host.IRequestResult;
+import sc.protocol.responses.ErrorResponse;
 
 public class AsyncResultManager
 {

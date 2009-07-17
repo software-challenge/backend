@@ -16,7 +16,8 @@ import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.Player.FigureColor;
+import sc.plugin2010.FieldTyp;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.renderer.RendererUtil;
 
 /**
@@ -37,10 +38,10 @@ public class FieldButton extends JButton
 	private int						fieldNumber	= 0;
 	private boolean					reachable	= false;
 	private boolean					occupied	= false;
-	private Board.FieldTyp			type;
+	private FieldTyp				type;
 
 	public FieldButton(final String imagefile, final int fieldNumber,
-			final Board.FieldTyp type, final IClickObserver obs)
+			final FieldTyp type, final IClickObserver obs)
 	{
 		super();
 		setType(type);
@@ -208,12 +209,12 @@ public class FieldButton extends JButton
 		setBorder(border);
 	}
 
-	public void setType(final Board.FieldTyp type)
+	public void setType(final FieldTyp type)
 	{
 		this.type = type;
 	}
 
-	public Board.FieldTyp getType()
+	public FieldTyp getType()
 	{
 		return type;
 	}

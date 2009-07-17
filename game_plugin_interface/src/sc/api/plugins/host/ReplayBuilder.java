@@ -16,22 +16,22 @@ import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.protocol.IControllableGame;
-import sc.protocol.clients.ObservingClient;
+import sc.networking.clients.IControllableGame;
+import sc.networking.clients.ObservingClient;
 
 public class ReplayBuilder
 {
 	private static final Logger	logger	= LoggerFactory
 												.getLogger(ReplayBuilder.class);
 
-	public static void saveReplay(IControllableGame game, String pathname)
-			throws IOException
+	public static void saveReplay(XStream xStream, IControllableGame game,
+			String pathname) throws IOException
 	{
-		saveReplay(game, pathname, true);
+		saveReplay(xStream, game, pathname, true);
 	}
 
-	public static void saveReplay(IControllableGame game, String pathname,
-			boolean useGzip) throws IOException
+	public static void saveReplay(XStream xStream, IControllableGame game,
+			String pathname, boolean useGzip) throws IOException
 	{
 		String finalPathname = pathname;
 
@@ -65,7 +65,7 @@ public class ReplayBuilder
 
 		if (!file.isDirectory())
 		{
-			saveReplay(game, file, true);
+			saveReplay(xStream, game, file, true);
 		}
 		else
 		{
@@ -73,8 +73,8 @@ public class ReplayBuilder
 		}
 	}
 
-	public static void saveReplay(IControllableGame game, File file,
-			boolean useGzip) throws IOException
+	public static void saveReplay(XStream xStream, IControllableGame game,
+			File file, boolean useGzip) throws IOException
 	{
 		OutputStream out = new FileOutputStream(file);
 
@@ -83,16 +83,16 @@ public class ReplayBuilder
 			out = new GZIPOutputStream(out);
 		}
 
-		saveReplay(game, out);
+		saveReplay(xStream, game, out);
 	}
 
-	public static void saveReplay(IControllableGame game, OutputStream out)
-			throws IOException
+	public static void saveReplay(XStream xStream, IControllableGame game,
+			OutputStream out) throws IOException
 	{
 		if (game instanceof ObservingClient)
 		{
 			ObservingClient client = (ObservingClient) game;
-			ObjectOutputStream objectOut = new XStream()
+			ObjectOutputStream objectOut = xStream
 					.createObjectOutputStream(out);
 
 			for (Object state : client.getHistory())

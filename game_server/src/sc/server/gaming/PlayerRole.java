@@ -2,7 +2,7 @@ package sc.server.gaming;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
-import sc.protocol.RoomPacket;
+import sc.protocol.responses.RoomPacket;
 import sc.server.network.Client;
 import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;

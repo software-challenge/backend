@@ -7,11 +7,13 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
+import javax.security.auth.login.Configuration;
+
 import sc.api.plugins.host.ReplayBuilder;
-import sc.protocol.IControllableGame;
-import sc.protocol.LobbyClient;
-import sc.protocol.RequestResult;
-import sc.protocol.clients.ObservingClient;
+import sc.networking.clients.IControllableGame;
+import sc.networking.clients.LobbyClient;
+import sc.networking.clients.ObservingClient;
+import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.sample.protocol.ProtocolDefinition;
 import sc.sample.server.GamePluginImpl;
@@ -35,9 +37,10 @@ public class ClientApp
 			throw new RuntimeException("Couldn't prepare the game.");
 		}
 
-		LobbyClient observerClient = new LobbyClient(xStream, ProtocolDefinition
-				.getProtocolClasses());
-		IControllableGame observer = observerClient.observe(preparation.getResult());
+		LobbyClient observerClient = new LobbyClient(xStream,
+				ProtocolDefinition.getProtocolClasses());
+		IControllableGame observer = observerClient.observe(preparation
+				.getResult());
 		observerClient.start();
 
 		final Semaphore sem = new Semaphore(0);
@@ -86,6 +89,7 @@ public class ClientApp
 		System.out.println("Done.");
 		admin.close();
 		observerClient.close();
-		ReplayBuilder.saveReplay(observer, new FileOutputStream("./replay.xml"));
+		ReplayBuilder.saveReplay(new XStream(), observer, new FileOutputStream(
+				"./replay.xml"));
 	}
 }

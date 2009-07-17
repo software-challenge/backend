@@ -9,11 +9,11 @@ import java.util.List;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
+import sc.networking.clients.IControllableGame;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.renderer.RenderFacade;
-import sc.protocol.IControllableGame;
-import sc.protocol.RequestResult;
+import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.SlotDescriptor;
 
