@@ -100,7 +100,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		// chat = new ChatBar();
 		action = new ActionBar();
 
-		JPanel leftPanel = new BackgoundPane("resource/background.png");
+		JPanel leftPanel = new BackgoundPane("resource/game/background.png");
 
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
@@ -248,28 +248,28 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				switch (board.getTypeAt(i))
 				{
 					case CARROT:
-						back = "resource/carrots.png";
+						back = "resource/game/carrots.png";
 						break;
 					case HEDGEHOG:
-						back = "resource/hedgehog.png";
+						back = "resource/game/hedgehog.png";
 						break;
 					case RABBIT:
-						back = "resource/rabbit.png";
+						back = "resource/game/rabbit.png";
 						break;
 					case SALAD:
-						back = "resource/salad.png";
+						back = "resource/game/salad.png";
 						break;
 					case POSITION_1:
-						back = "resource/position_1.png";
+						back = "resource/game/position_1.png";
 						break;
 					case POSITION_2:
-						back = "resource/position_2.png";
+						back = "resource/game/position_2.png";
 						break;
 					case START:
-						back = "resource/start.png";
+						back = "resource/game/start.png";
 						break;
 					case GOAL:
-						back = "resource/finish.png";
+						back = "resource/game/finish.png";
 						break;
 				}
 				fbuttons.get(i).setBackground(back);

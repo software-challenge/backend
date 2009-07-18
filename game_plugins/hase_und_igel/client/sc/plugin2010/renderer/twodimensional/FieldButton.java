@@ -109,7 +109,7 @@ public class FieldButton extends JButton
 					break;
 			}
 
-			icon = RendererUtil.getImage("resource/" + colorString + ".png");
+			icon = RendererUtil.getImage("resource/game/" + colorString + ".png");
 			mt.addImage(icon, 0);
 			occupied = true;
 			try

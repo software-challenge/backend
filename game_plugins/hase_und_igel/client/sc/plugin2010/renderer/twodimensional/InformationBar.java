@@ -57,9 +57,9 @@ public class InformationBar extends TransparentPanel
 	private final int		ICONSIZE		= 24;
 
 	private final Image		blue			= RendererUtil
-													.getImage("resource/blue.png");
+													.getImage("resource/game/blue.png");
 	private final Image		red				= RendererUtil
-													.getImage("resource/red.png");
+													.getImage("resource/game/red.png");
 
 	public InformationBar()
 	{
@@ -102,35 +102,35 @@ public class InformationBar extends TransparentPanel
 		turnicon.setHorizontalAlignment(JLabel.LEFT);
 
 		carrots.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/carrots.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				"resource/game/carrots.png").getScaledInstance(ICONSIZE, ICONSIZE,
 				Image.SCALE_SMOOTH)));
 
 		maxfields.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/background.png").getScaledInstance(ICONSIZE,
+				"resource/game/background.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
 		salads.setIcon(new ImageIcon(RendererUtil
-				.getImage("resource/salad.png").getScaledInstance(ICONSIZE,
+				.getImage("resource/game/salad.png").getScaledInstance(ICONSIZE,
 						ICONSIZE, Image.SCALE_SMOOTH)));
 
 		hasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/rabbit.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				"resource/game/rabbit.png").getScaledInstance(ICONSIZE, ICONSIZE,
 				Image.SCALE_SMOOTH)));
 
 		enemycarrots.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/carrots.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				"resource/game/carrots.png").getScaledInstance(ICONSIZE, ICONSIZE,
 				Image.SCALE_SMOOTH)));
 
 		enemymaxfields.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/background.png").getScaledInstance(ICONSIZE,
+				"resource/game/background.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
 		enemysalads.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/salad.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				"resource/game/salad.png").getScaledInstance(ICONSIZE, ICONSIZE,
 				Image.SCALE_SMOOTH)));
 
 		enemyhasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/rabbit.png").getScaledInstance(ICONSIZE, ICONSIZE,
+				"resource/game/rabbit.png").getScaledInstance(ICONSIZE, ICONSIZE,
 				Image.SCALE_SMOOTH)));
 
 		setColor(false);

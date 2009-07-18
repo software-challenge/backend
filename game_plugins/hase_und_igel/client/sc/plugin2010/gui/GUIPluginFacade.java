@@ -56,7 +56,7 @@ public class GUIPluginFacade implements IGuiPlugin
 
 	public Image getPluginIcon()
 	{
-		return RendererUtil.getImage("resource/hase_und_igel_icon.png");
+		return RendererUtil.getImage("resource/game/hase_und_igel_icon.png");
 	}
 
 	@Override
