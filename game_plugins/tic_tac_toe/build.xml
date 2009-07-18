@@ -13,7 +13,7 @@
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${gameApi.dir}" includes="**/*.jar" />
 		<fileset dir="${guiApi.dir}" includes="**/*.jar" />
-		<fileset dir="${pluginLiader.dir}/lib" includes="**/*.jar" />
+		<fileset dir="${pluginLoader.dir}/lib" includes="**/*.jar" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${guiApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />
