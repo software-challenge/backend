@@ -97,7 +97,7 @@ public class PresentationFacade implements IPresentationFacade {
 
 	@Override
 	public String getClientIcon() {
-		return "/sc/resource/guilogo.png";
+		return "/resource/guilogo.png";
 	}
 
 	@Override

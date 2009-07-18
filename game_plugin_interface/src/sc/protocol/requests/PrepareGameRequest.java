@@ -24,7 +24,6 @@ public class PrepareGameRequest implements ILobbyRequest,
 
 	public PrepareGameRequest(String gameType, int playerCount)
 	{
-
 		this.gameType = gameType;
 		this.slotDescriptors = new LinkedList<SlotDescriptor>();
 

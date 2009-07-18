@@ -1,25 +1,27 @@
 package sc.shared;
 
-public class ScoreFragment {
-	public enum Aggregation {
-		SUM, AVERAGE
-	}
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+@XStreamAlias(value = "scoreFragment")
+public class ScoreFragment {
+	
+	@XStreamAsAttribute
 	private final String name;
 
-	private final Aggregation aggregation;
+	private final ScoreAggregation aggregation;
 
 	private final boolean relevantForRanking;
 
 	public ScoreFragment(String name) {
-		this(name, Aggregation.SUM);
+		this(name, ScoreAggregation.SUM);
 	}
 
-	public ScoreFragment(String name, Aggregation aggregation) {
+	public ScoreFragment(String name, ScoreAggregation aggregation) {
 		this(name, aggregation, true);
 	}
 
-	public ScoreFragment(String name, Aggregation aggregation,
+	public ScoreFragment(String name, ScoreAggregation aggregation,
 			boolean relevantForRanking) {
 		this.name = name;
 		this.aggregation = aggregation;
@@ -30,7 +32,7 @@ public class ScoreFragment {
 		return this.name;
 	}
 
-	public Aggregation getAggregation() {
+	public ScoreAggregation getAggregation() {
 		return aggregation;
 	}
 

@@ -55,8 +55,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			logicFac.unloadPlugins();
 			System.exit(-1);
 		} catch (CouldNotFindAnyPluginException e) {
-			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getString(
-					"main_error_plugin_msg"), logicFac.getLanguageData().getString(
+			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getProperty(
+					"main_error_plugin_msg"), logicFac.getLanguageData().getProperty(
 					"main_error_plugin_title"), JOptionPane.ERROR_MESSAGE);
 			System.exit(-2);
 		}
@@ -79,7 +79,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		// set window preferences
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 		this.setTitle(presFac.getLogicFacade().getLanguageData()
-				.getString("window_title"));
+				.getProperty("window_title"));
 		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
 				.getImage());
 		this.setPreferredSize(new Dimension(1024, 768));

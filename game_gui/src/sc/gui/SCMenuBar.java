@@ -3,6 +3,7 @@ package sc.gui;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.JMenu;
@@ -36,7 +37,7 @@ public class SCMenuBar extends JMenuBar {
 	 * Specific game info menu item
 	 */
 	private JMenuItem specificInfo;
-	private ResourceBundle lang;
+	private Properties lang;
 
 	/**
 	 * Constructs the SC menu bar.
@@ -54,12 +55,12 @@ public class SCMenuBar extends JMenuBar {
 	private void createMenuBar() {
 
 		// create menus
-		JMenu data = new JMenu(lang.getString("menu_program"));
-		JMenu game = new JMenu(lang.getString("menu_game"));
-		help = new JMenu(lang.getString("menu_help"));
+		JMenu data = new JMenu(lang.getProperty("menu_program"));
+		JMenu game = new JMenu(lang.getProperty("menu_game"));
+		help = new JMenu(lang.getProperty("menu_help"));
 
 		// create menu items
-		JMenuItem close = new JMenuItem(lang.getString("menu_items_close"));
+		JMenuItem close = new JMenuItem(lang.getProperty("menu_items_close"));
 		close.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -67,7 +68,7 @@ public class SCMenuBar extends JMenuBar {
 			}
 		});
 
-		JMenuItem createGame = new JMenuItem(lang.getString("menu_items_create"));
+		JMenuItem createGame = new JMenuItem(lang.getProperty("menu_items_create"));
 		createGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -75,7 +76,7 @@ public class SCMenuBar extends JMenuBar {
 			}
 		});
 
-		JMenuItem loadReplay = new JMenuItem(lang.getString("menu_items_replay"));
+		JMenuItem loadReplay = new JMenuItem(lang.getProperty("menu_items_replay"));
 		loadReplay.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -83,7 +84,7 @@ public class SCMenuBar extends JMenuBar {
 			}
 		});
 
-		JMenuItem testRange = new JMenuItem(lang.getString("menu_items_test"));
+		JMenuItem testRange = new JMenuItem(lang.getProperty("menu_items_test"));
 		testRange.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -91,7 +92,7 @@ public class SCMenuBar extends JMenuBar {
 			}
 		});
 
-		JMenuItem info = new JMenuItem(lang.getString("menu_items_info"));
+		JMenuItem info = new JMenuItem(lang.getProperty("menu_items_info"));
 		info.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {

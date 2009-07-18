@@ -5,11 +5,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 import sc.helpers.CollectionHelper;
 import sc.helpers.Function;
 
+@XStreamAlias(value = "score")
 public final class PlayerScore {
-	private final BigDecimal[] parts;
+	@XStreamImplicit(itemFieldName = "part")
+	private final List<BigDecimal> parts;
+
+	@XStreamAsAttribute
 	private ScoreCause cause;
 
 	public PlayerScore(boolean winner) {
@@ -27,12 +35,12 @@ public final class PlayerScore {
 			throw new IllegalArgumentException("scores must not be null");
 		}
 
-		this.parts = parts;
+		this.parts = Arrays.asList(parts);
 		this.cause = cause;
 	}
 
 	public int size() {
-		return this.parts.length;
+		return this.parts.size();
 	}
 
 	public ScoreCause getCause() {
@@ -41,24 +49,20 @@ public final class PlayerScore {
 
 	public String[] toStrings() {
 		return CollectionHelper.iterableToColleciton(
-				CollectionHelper.map(Arrays.asList(this.parts),
+				CollectionHelper.map(this.parts,
 						new Function<BigDecimal, String>() {
 							@Override
 							public String operate(BigDecimal val) {
 								return val.toString();
 							}
-						})).toArray(new String[this.parts.length]);
+						})).toArray(new String[this.parts.size()]);
 	}
 
 	public void setCause(ScoreCause cause) {
 		this.cause = cause;
 	}
 
-	public void set(int pos, int value) {
-		this.parts[pos] = BigDecimal.valueOf(value);
-	}
-	
 	public List<BigDecimal> getValues() {
-		return Collections.unmodifiableList(Arrays.asList(this.parts));
+		return Collections.unmodifiableList(this.parts);
 	}
 }

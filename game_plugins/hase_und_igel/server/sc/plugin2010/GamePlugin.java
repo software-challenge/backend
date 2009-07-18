@@ -4,9 +4,9 @@ import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
 import sc.plugin2010.util.Configuration;
+import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
-import sc.shared.ScoreFragment.Aggregation;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
@@ -34,7 +34,7 @@ public class GamePlugin implements IGamePlugin
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("Gewinner");
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Position",
-				Aggregation.AVERAGE));
+				ScoreAggregation.AVERAGE));
 	}
 
 	@Override

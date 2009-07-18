@@ -1,6 +1,7 @@
 package sc.logic;
 
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -16,12 +17,11 @@ public interface ILogicFacade {
 	/**
 	 * Replay file extension.
 	 */
-	public static final String EXT_REPLAY = ".rpl";
 	public static final String APP_DIR = System.getProperty("user.dir");
 
 	void loadLanguageData() throws CouldNotFindAnyLanguageFileException;
 
-	ResourceBundle getLanguageData();
+	Properties getLanguageData();
 
 	IConfiguration getConfiguration();
 

@@ -1,6 +1,8 @@
 package sc.shared;
 
-public enum ScoreCause
-{
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias(value = "scoreCause")
+public enum ScoreCause {
 	REGULAR, LEFT, RULE_VIOLATION, UNKNOWN
 }

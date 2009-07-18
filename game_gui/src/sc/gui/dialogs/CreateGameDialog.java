@@ -10,6 +10,7 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -58,7 +59,7 @@ public class CreateGameDialog extends JDialog {
 	private static final String DEFAULT_PORT = "10500";
 
 	private final PresentationFacade presFac;
-	private final ResourceBundle lang;
+	private final Properties lang;
 	private JPanel pnlTable;
 	private JPanel pnlButtons;
 	private JTable tblPlayers;
@@ -110,11 +111,11 @@ public class CreateGameDialog extends JDialog {
 
 		// ---------------------------------------------------
 
-		ckbDim = new JCheckBox(lang.getString("dialog_create_pref_dim"));
-		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDim = new JCheckBox(lang.getProperty("dialog_create_pref_dim"));
+		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
+		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
 		txfPort = new JTextField(DEFAULT_PORT);
-		lblPort = new JLabel(lang.getString("dialog_create_pref_port"));
+		lblPort = new JLabel(lang.getProperty("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);
 		// pnlPref.add(ckbDim); TODO for future
 		pnlPref.add(ckbDebug);
@@ -136,18 +137,18 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		Vector<String> cmbItems = new Vector<String>();
-		cmbItems.add(lang.getString("dialog_create_plyType_human"));
-		cmbItems.add(lang.getString("dialog_create_plyType_ki_intern"));
-		cmbItems.add(lang.getString("dialog_create_plyType_ki_extern"));
-		// cmbItems.add(lang.getString("dialog_create_plyType_observer"));
-		// cmbItems.add(lang.getString("dialog_create_plyType_closed"));
+		cmbItems.add(lang.getProperty("dialog_create_plyType_human"));
+		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_intern"));
+		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_extern"));
+		// cmbItems.add(lang.getProperty("dialog_create_plyType_observer"));
+		// cmbItems.add(lang.getProperty("dialog_create_plyType_closed"));
 
 		// add columns
 		playersModel = new MyTableModel();
-		playersModel.addColumn(lang.getString("dialog_create_tbl_pos"));
-		playersModel.addColumn(lang.getString("dialog_create_tbl_name"));
-		playersModel.addColumn(lang.getString("dialog_create_tbl_plytype"));
-		playersModel.addColumn(lang.getString("dialog_create_tbl_filename"));
+		playersModel.addColumn(lang.getProperty("dialog_create_tbl_pos"));
+		playersModel.addColumn(lang.getProperty("dialog_create_tbl_name"));
+		playersModel.addColumn(lang.getProperty("dialog_create_tbl_plytype"));
+		playersModel.addColumn(lang.getProperty("dialog_create_tbl_filename"));
 
 		tblPlayers = new JTable(playersModel);
 		tblPlayers.setRowHeight(25);
@@ -169,7 +170,7 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		/* okButton */
-		JButton okButton = new JButton(lang.getString("dialog_create_create"));
+		JButton okButton = new JButton(lang.getProperty("dialog_create_create"));
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -178,7 +179,7 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang.getString("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang.getProperty("dialog_create_cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -196,7 +197,7 @@ public class CreateGameDialog extends JDialog {
 		this.add(pnlTable, BorderLayout.CENTER);
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 		// set dialog preferences
-		this.setTitle(lang.getString("dialog_create_title"));
+		this.setTitle(lang.getProperty("dialog_create_title"));
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		setResizable(false);
@@ -222,8 +223,8 @@ public class CreateGameDialog extends JDialog {
 		} catch (NumberFormatException ex) {
 			ex.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
-					.getString("dialog_create_error_port_msg"), lang
-					.getString("dialog_create_error_port_title"),
+					.getProperty("dialog_create_error_port_msg"), lang
+					.getProperty("dialog_create_error_port_title"),
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -254,8 +255,8 @@ public class CreateGameDialog extends JDialog {
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
-					.getString("dialog_create_error_network_msg"), lang
-					.getString("dialog_create_error_network_title"),
+					.getProperty("dialog_create_error_network_msg"), lang
+					.getProperty("dialog_create_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
 			cancelGameCreation(null);
 			return;
@@ -286,8 +287,8 @@ public class CreateGameDialog extends JDialog {
 							+ System.currentTimeMillis() + ".xml");
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(CreateGameDialog.this, lang
-							.getString("dialog_create_error_replay_msg"), lang
-							.getString("dialog_create_error_replay_title"),
+							.getProperty("dialog_create_error_replay_msg"), lang
+							.getProperty("dialog_create_error_replay_title"),
 							JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
@@ -318,8 +319,8 @@ public class CreateGameDialog extends JDialog {
 				// check path
 				if (path == null || path.equals("")) {
 					JOptionPane.showMessageDialog(this, lang
-							.getString("dialog_create_error_path_msg"), lang
-							.getString("dialog_create_error_path_title"),
+							.getProperty("dialog_create_error_path_msg"), lang
+							.getProperty("dialog_create_error_path_title"),
 							JOptionPane.ERROR_MESSAGE);
 					cancelGameCreation(observer);
 					return;
@@ -347,16 +348,16 @@ public class CreateGameDialog extends JDialog {
 				e.printStackTrace();
 				cancelGameCreation(observer);
 				JOptionPane.showMessageDialog(this, lang
-						.getString("dialog_create_error_client_msg"), lang
-						.getString("dialog_create_error_client_title"),
+						.getProperty("dialog_create_error_client_msg"), lang
+						.getProperty("dialog_create_error_client_title"),
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			} catch (UnsupportedFileExtensionException e) {
 				e.printStackTrace();
 				cancelGameCreation(observer);
 				JOptionPane.showMessageDialog(this, lang
-						.getString("dialog_error_fileext_msg"), lang
-						.getString("dialog_error_fileext_title"),
+						.getProperty("dialog_error_fileext_msg"), lang
+						.getProperty("dialog_error_fileext_title"),
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -386,11 +387,11 @@ public class CreateGameDialog extends JDialog {
 	 * @return
 	 */
 	private int extractIndex(final String plyType) {
-		if (plyType.equals(lang.getString("dialog_create_plyType_human"))) {
+		if (plyType.equals(lang.getProperty("dialog_create_plyType_human"))) {
 			return 0;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_intern"))) {
+		} else if (plyType.equals(lang.getProperty("dialog_create_plyType_ki_intern"))) {
 			return 1;
-		} else if (plyType.equals(lang.getString("dialog_create_plyType_ki_extern"))) {
+		} else if (plyType.equals(lang.getProperty("dialog_create_plyType_ki_extern"))) {
 			return 2;
 		}
 
@@ -430,7 +431,7 @@ public class CreateGameDialog extends JDialog {
 			Vector<Object> rowData = new Vector<Object>();
 			rowData.add(new Integer(i + 1));
 			rowData.add("Player " + (i + 1));
-			rowData.add(lang.getString("dialog_create_plyType_human")); // default
+			rowData.add(lang.getProperty("dialog_create_plyType_human")); // default
 			rowData.add("-");
 			model.addRow(rowData);
 		}
@@ -454,7 +455,7 @@ public class CreateGameDialog extends JDialog {
 		case 1:// KI intern
 			JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 					.getCreateGameDialogPath());
-			chooser.setDialogTitle(lang.getString("dialog_create_dialog_title"));
+			chooser.setDialogTitle(lang.getProperty("dialog_create_dialog_title"));
 
 			switch (chooser.showOpenDialog(frame)) {
 			case JFileChooser.APPROVE_OPTION:

@@ -3,15 +3,13 @@
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
-	<property name="lib.dir" value="lib" />
+	<property name="lib.dir" value="../../plugin_loader/lib" />
 	<property name="gameApi.dir" value="./../../game_plugin_interface" />
 	<property name="guiApi.dir" value="./../../gui_plugin_interfaces" />
 	<property name="pluginLoader.dir" value="./../../plugin_loader" />
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<fileset dir="${gameApi.dir}" includes="**/*.jar" />
-		<fileset dir="${guiApi.dir}" includes="**/*.jar" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${guiApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />

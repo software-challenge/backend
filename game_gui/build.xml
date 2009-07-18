@@ -1,21 +1,22 @@
-<project name="HaseUndIgelSC" basedir="." default="main">
+<project name="SoftwareChallenge" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="plugin.dir" value="${build.dir}/jar/plugins" />
 	<property name="lib.dir" value="./../plugin_loader/lib" />
-	<property name="main-class" value="gameClient.Starter" />
+	<property name="main-class" value="sc.SoftwareChallengeGUI" />
 	<property name="gameApi.dir" value="./../game_plugin_interface" />
 	<property name="guiApi.dir" value="./../gui_plugin_interfaces" />
 	<property name="pluginLoader.dir" value="./../plugin_loader" />
-	<property name="game.dir" value="./../game_plugins/hase_und_igel" />
+	<property name="server.dir" value="./../game_server" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<fileset dir="${gameApi.dir}" includes="**/*.jar" />
-		<fileset dir="${guiApi.dir}" includes="**/*.jar" />
-		<fileset dir="${game.dir}" includes="**/*.jar" />
-		<fileset dir="${pluginLoader.dir}" includes="**/*.jar" />
+		<fileset dir="${gameApi.dir}" includes="build/jar/*.jar" />
+		<fileset dir="${guiApi.dir}" includes="build/jar/*.jar" />
+		<fileset dir="${server.dir}" includes="build/jar/*.jar" />
+		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${guiApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />
@@ -49,7 +50,8 @@
 		<ant dir="${pluginLoader.dir}" inheritAll="false" />
 		<ant dir="${gameApi.dir}" inheritAll="false" />
 		<ant dir="${guiApi.dir}" inheritAll="false" />
-		<ant dir="${game.dir}" inheritAll="false" />
+		<ant dir="./../game_plugins/hase_und_igel" inheritAll="false" />
+		<ant dir="${server.dir}" inheritAll="false" />
 	</target>
 
 	<target name="compile" depends="dependencies">
@@ -59,18 +61,28 @@
 
 	<target name="jar" depends="compile">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
 				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
+			<fileset dir="${classes.dir}" />
+			<fileset dir="src">
+				<include name="resource/**/*" />
+			</fileset>
+
 		</jar>
+
+		<delete dir="${plugin.dir}" />
+		<mkdir dir="${plugin.dir}" />
+		<copy todir="${plugin.dir}" flatten="true">
+			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
+		</copy>
 
 		<delete dir="${jar.dir}/lib" />
 		<mkdir dir="${jar.dir}/lib" />
 		<copy todir="${jar.dir}/lib" flatten="true">
 			<path refid="classpath.libs" />
-			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
 		</copy>
 	</target>
 

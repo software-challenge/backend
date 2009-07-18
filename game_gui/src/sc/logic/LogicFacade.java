@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.Properties;
 import java.util.Vector;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
@@ -24,11 +24,11 @@ public class LogicFacade implements ILogicFacade {
 	/**
 	 * Folder of all language files
 	 */
-	private static final String BASENAME = "sc/resource/game_gui";
+	private static final String BASENAME = "/resource/game_gui";
 	/**
 	 * Configuration file name
 	 */
-	
+
 	/**
 	 * Holds all vailable plugins
 	 */
@@ -36,7 +36,7 @@ public class LogicFacade implements ILogicFacade {
 	/**
 	 * For multi-language support
 	 */
-	private ResourceBundle languageData;
+	private Properties languageData;
 	private IObservation observation;
 	private Lobby server;
 
@@ -75,7 +75,17 @@ public class LogicFacade implements ILogicFacade {
 			throw new CouldNotFindAnyLanguageFileException();
 		}
 
-		this.languageData = ResourceBundle.getBundle(BASENAME, locale);
+		this.languageData = new Properties();
+		String fileName = BASENAME + "_" + locale.getLanguage() + "_"
+		+ locale.getCountry() + ".properties";
+		try {
+			this.languageData.load(getClass().getResourceAsStream(
+					fileName));
+		} catch (Exception e) {
+			System.err.println("Failed to read " + fileName);
+			e.printStackTrace();
+			throw new CouldNotFindAnyLanguageFileException();
+		}
 	}
 
 	@Override
@@ -95,7 +105,7 @@ public class LogicFacade implements ILogicFacade {
 	}
 
 	@Override
-	public ResourceBundle getLanguageData() {
+	public Properties getLanguageData() {
 		return languageData;
 	}
 
@@ -113,7 +123,7 @@ public class LogicFacade implements ILogicFacade {
 	public void setObservation(IObservation observer) {
 		this.observation = observer;
 	}
-	
+
 	@Override
 	public void startServer(int port) {
 		if (null != server) {

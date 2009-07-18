@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -54,11 +55,11 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
+import sc.shared.ScoreAggregation;
 import sc.shared.GameResult;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.SlotDescriptor;
-import sc.shared.ScoreFragment.Aggregation;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
@@ -70,7 +71,7 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlBottom;
 	private JButton testStart;
 	private JButton testCancel;
-	private final ResourceBundle lang;
+	private final Properties lang;
 	private final PresentationFacade presFac;
 	private JComboBox cmbGameType;
 	private List<GUIPluginInstance> plugins;
@@ -124,11 +125,11 @@ public class TestRangeDialog extends JDialog {
 
 		txfNumTest = new JTextField(5);
 		txfNumTest.setText(String.valueOf(GUIConfiguration.instance().getNumTest())); // default
-		JLabel lblNumTest = new JLabel(lang.getString("dialog_test_lbl_numtest"));
+		JLabel lblNumTest = new JLabel(lang.getProperty("dialog_test_lbl_numtest"));
 		lblNumTest.setLabelFor(lblNumTest);
 
-		ckbDebug = new JCheckBox(lang.getString("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang.getString("dialog_create_pref_debug_hint"));
+		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
+		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
 
 		pnlPref = new JPanel();
 		pnlPref.add(cmbGameType);
@@ -156,7 +157,7 @@ public class TestRangeDialog extends JDialog {
 		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
 		progressBar.setStringPainted(true); // draw procent
 
-		lblCenter = new JLabel(lang.getString("dialog_test_tbl_log"), JLabel.CENTER);
+		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"), JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
@@ -167,7 +168,7 @@ public class TestRangeDialog extends JDialog {
 
 		// -----------------------------------------------------------
 
-		testStart = new JButton(lang.getString("dialog_test_btn_start"));
+		testStart = new JButton(lang.getProperty("dialog_test_btn_start"));
 		testStart.addActionListener(new ActionListener() {
 
 			@Override
@@ -176,7 +177,7 @@ public class TestRangeDialog extends JDialog {
 					cancelTest();
 				} else {
 					if (prepareTest()) {
-						testStart.setText(lang.getString("dialog_test_btn_stop"));
+						testStart.setText(lang.getProperty("dialog_test_btn_stop"));
 						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
 						startTest();
@@ -185,7 +186,7 @@ public class TestRangeDialog extends JDialog {
 			}
 		});
 
-		testCancel = new JButton(lang.getString("dialog_test_btn_cancel"));
+		testCancel = new JButton(lang.getProperty("dialog_test_btn_cancel"));
 		testCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -211,7 +212,7 @@ public class TestRangeDialog extends JDialog {
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 
 		// set dialog preferences
-		setTitle(lang.getString("dialog_test_title"));
+		setTitle(lang.getProperty("dialog_test_title"));
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		setModal(true);
@@ -246,9 +247,9 @@ public class TestRangeDialog extends JDialog {
 
 		// -------------------------------------------------------------
 
-		model.addColumn(lang.getString("dialog_test_stats_pos"));
+		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
 		statTable.getColumnModel().getColumn(0).setPreferredWidth(15);
-		model.addColumn(lang.getString("dialog_test_stats_name"));
+		model.addColumn(lang.getProperty("dialog_test_stats_name"));
 
 		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
 		for (int i = 0; i < statColumns.size(); i++) {
@@ -271,10 +272,10 @@ public class TestRangeDialog extends JDialog {
 			txfclient[i] = new JTextField(20);
 			final JTextField txfClient = txfclient[i];
 
-			lblclient[i] = new JLabel(lang.getString("dialog_test_lbl_ki") + " " + i);
+			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki") + " " + i);
 			lblclient[i].setLabelFor(txfclient[i]);
 
-			btnclient[i] = new JButton(lang.getString("dialog_test_btn_file"));
+			btnclient[i] = new JButton(lang.getProperty("dialog_test_btn_file"));
 			btnclient[i].addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
@@ -330,8 +331,8 @@ public class TestRangeDialog extends JDialog {
 			File file = new File(element.getText());
 			if (!file.exists()) {
 				JOptionPane.showMessageDialog(this, lang
-						.getString("dialog_test_error_path_msg"), lang
-						.getString("dialog_test_error_path_title"),
+						.getProperty("dialog_test_error_path_msg"), lang
+						.getProperty("dialog_test_error_path_title"),
 						JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
@@ -400,8 +401,8 @@ public class TestRangeDialog extends JDialog {
 					descriptors.toArray(new SlotDescriptor[0]));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
-					.getString("dialog_test_error_network_msg"), lang
-					.getString("dialog_test_error_network_title"),
+					.getProperty("dialog_test_error_network_msg"), lang
+					.getProperty("dialog_test_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
 			cancelTest();
 			return;
@@ -414,7 +415,7 @@ public class TestRangeDialog extends JDialog {
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded(GameResult result) {
-				addLogMessage(lang.getString("dialog_test_end") + " " + curTest + ":"
+				addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + ":"
 						+ numTest);
 				// purpose
 				updateStatistics(offset, result);
@@ -429,7 +430,7 @@ public class TestRangeDialog extends JDialog {
 					if (winner) {
 						String clientName = playerNames.get(i);
 						addLogMessage(clientName + " "
-								+ lang.getString("dialog_test_win"));
+								+ lang.getProperty("dialog_test_win"));
 						break;
 					}
 				}
@@ -442,7 +443,7 @@ public class TestRangeDialog extends JDialog {
 				} else {
 					stopServer();
 					cmbGameType.setEnabled(true);
-					testStart.setText(lang.getString("dialog_test_btn_start"));
+					testStart.setText(lang.getProperty("dialog_test_btn_start"));
 					TestRangeDialog.this.repaint();
 				}
 			}
@@ -466,7 +467,7 @@ public class TestRangeDialog extends JDialog {
 
 		List<KIInformation> KIs = new ArrayList<KIInformation>();
 
-		addLogMessage(">>> " + lang.getString("dialog_test_switch"));
+		addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
 		// add slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
@@ -474,7 +475,7 @@ public class TestRangeDialog extends JDialog {
 			KIs.add(new KIInformation(slot.asClient(), path));
 
 			String clientName = playerNames.get(i);
-			addLogMessage(clientName + " " + lang.getString("dialog_test_switchpos")
+			addLogMessage(clientName + " " + lang.getProperty("dialog_test_switchpos")
 					+ " " + (i + 1));
 		}
 
@@ -491,8 +492,8 @@ public class TestRangeDialog extends JDialog {
 				e.printStackTrace();
 				cancelTest();
 				JOptionPane.showMessageDialog(this, lang
-						.getString("dialog_test_error_client_msg"), lang
-						.getString("dialog_test_error_client_title"),
+						.getProperty("dialog_test_error_client_msg"), lang
+						.getProperty("dialog_test_error_client_title"),
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			} catch (UnsupportedFileExtensionException e) {
@@ -500,8 +501,8 @@ public class TestRangeDialog extends JDialog {
 				cancelTest();
 				JOptionPane
 						.showMessageDialog(this, lang
-								.getString("dialog_error_fileext_msg"), lang
-								.getString("dialog_error_fileext_msg"),
+								.getProperty("dialog_error_fileext_msg"), lang
+								.getProperty("dialog_error_fileext_msg"),
 								JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -531,7 +532,7 @@ public class TestRangeDialog extends JDialog {
 				BigDecimal newStat = stats.get(j);
 				BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
 
-				Aggregation action = result.getDefinition().get(j).getAggregation();
+				ScoreAggregation action = result.getDefinition().get(j).getAggregation();
 				switch (action) {
 				case SUM:
 
@@ -563,9 +564,9 @@ public class TestRangeDialog extends JDialog {
 		if (null != obs)
 			obs.cancel();
 		stopServer();
-		testStart.setText(lang.getString("dialog_test_btn_start"));
+		testStart.setText(lang.getProperty("dialog_test_btn_start"));
 		cmbGameType.setEnabled(true);
-		addLogMessage(lang.getString("dialog_test_msg_cancel"));
+		addLogMessage(lang.getProperty("dialog_test_msg_cancel"));
 	}
 
 	/**
@@ -583,7 +584,7 @@ public class TestRangeDialog extends JDialog {
 	private void loadClient(JTextField txf) {
 		JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 				.getTestDialogPath());
-		chooser.setDialogTitle(lang.getString("dialog_test_dialog_title"));
+		chooser.setDialogTitle(lang.getProperty("dialog_test_dialog_title"));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			File f = chooser.getSelectedFile();
 			txf.setText(f.getAbsolutePath());

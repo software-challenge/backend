@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  */
 // FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
 @XStreamAlias(value = "hui:player")
-public class Player extends SimplePlayer implements Cloneable
+public final class Player extends SimplePlayer implements Cloneable
 {
 	// Farbe der Spielfigure
 	private FigureColor		color;
@@ -71,29 +71,45 @@ public class Player extends SimplePlayer implements Cloneable
 
 	protected void addToHistory(final Move m)
 	{
-		history.add(m);
+		getHistory().add(m);
 	}
 
 	public List<Move> getHistory()
 	{
+		if(this.history == null)
+		{
+			this.history = new LinkedList<Move>();
+		}
+		
 		return history;
 	}
 
 	public Move getLastMove()
 	{
-		Move ret = null;
-		if (history.size() > 0)
-			ret = history.get(history.size() - 1);
-		return ret;
+		if (getHistory() != null && getHistory().size() > 0)
+		{
+			return getHistory().get(getHistory().size() - 1);
+		}
+
+		return null;
+	}
+	
+	protected Player()
+	{
+		actions = new LinkedList<Action>();
+		history = new LinkedList<Move>();
+		// only for XStream
 	}
 
 	protected Player(FigureColor color)
 	{
+		this();
 		initialize(color, 0);
 	}
 
 	protected Player(FigureColor color, int position)
 	{
+		this();
 		initialize(color, position);
 	}
 
@@ -104,8 +120,6 @@ public class Player extends SimplePlayer implements Cloneable
 		carrots = 68;
 		saladsToEat = 5;
 
-		history = new LinkedList<Move>();
-		actions = new ArrayList<Action>(4);
 		actions.add(Action.TAKE_OR_DROP_CARROTS);
 		actions.add(Action.EAT_SALAD);
 		actions.add(Action.HURRY_AHEAD);
@@ -118,7 +132,7 @@ public class Player extends SimplePlayer implements Cloneable
 	 */
 	public boolean ownsCardOfTyp(Action typ)
 	{
-		return actions.contains(typ);
+		return getActions().contains(typ);
 	}
 
 	/**
@@ -168,6 +182,11 @@ public class Player extends SimplePlayer implements Cloneable
 	 */
 	public List<Action> getActions()
 	{
+		if(this.actions == null)
+		{
+			this.actions = new LinkedList<Action>();
+		}
+		
 		return actions;
 	}
 
@@ -245,9 +264,9 @@ public class Player extends SimplePlayer implements Cloneable
 
 	public Move getLastNonSkipMove()
 	{
-		for (int i = history.size() - 1; i >= 0; i--)
+		for (int i = getHistory().size() - 1; i >= 0; i--)
 		{
-			Move lastMove = history.get(i);
+			Move lastMove = getHistory().get(i);
 
 			if (lastMove.getTyp() != MoveTyp.SKIP)
 			{

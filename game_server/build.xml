@@ -17,6 +17,7 @@
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${gameApi.dir}" includes="lib/**/*.jar" />
+		<fileset dir="${pluginLoader.dir}" includes="lib/**/*.jar" />
 		<pathelement location="${api.dir}/bin" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />

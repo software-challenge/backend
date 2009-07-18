@@ -3,6 +3,7 @@ package sc.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
@@ -19,7 +20,7 @@ import sc.gui.PresentationFacade;
 public class ConnectingDialog extends JDialog implements ActionListener {
 
 	private int returnValue = JOptionPane.DEFAULT_OPTION;
-	private ResourceBundle lang;
+	private Properties lang;
 	private boolean closed;
 
 	public ConnectingDialog() {
@@ -41,10 +42,10 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 
 		// ------------------------------------------
 
-		JLabel lblConnecting = new JLabel(lang.getString("dialog_connecting_msg"));
+		JLabel lblConnecting = new JLabel(lang.getProperty("dialog_connecting_msg"));
 		pnlConnecting.add(lblConnecting);
 
-		JButton btnCancel = new JButton(lang.getString("dialog_connecting_cancel"));// TODO
+		JButton btnCancel = new JButton(lang.getProperty("dialog_connecting_cancel"));// TODO
 		btnCancel.addActionListener(this);
 		pnlButtonBar.add(btnCancel);
 

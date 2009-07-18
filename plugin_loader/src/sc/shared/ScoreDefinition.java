@@ -4,32 +4,31 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ScoreDefinition implements Iterable<ScoreFragment>
-{
-	private List<ScoreFragment>	fragments	= new LinkedList<ScoreFragment>();
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-	public void add(String name)
-	{
+@XStreamAlias(value = "scoreDefinition")
+public class ScoreDefinition implements Iterable<ScoreFragment> {
+	@XStreamImplicit(itemFieldName = "fragment")
+	private List<ScoreFragment> fragments = new LinkedList<ScoreFragment>();
+
+	public void add(String name) {
 		this.fragments.add(new ScoreFragment(name));
 	}
-	
-	public void add(ScoreFragment fragment)
-	{
+
+	public void add(ScoreFragment fragment) {
 		this.fragments.add(fragment);
 	}
 
-	public int size()
-	{
+	public int size() {
 		return this.fragments.size();
 	}
 
-	public boolean isValid()
-	{
+	public boolean isValid() {
 		return size() > 0;
 	}
 
-	public ScoreFragment get(int i)
-	{
+	public ScoreFragment get(int i) {
 		return this.fragments.get(i);
 	}
 

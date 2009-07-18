@@ -172,12 +172,6 @@ public class Client extends XStreamClient
 	}
 
 	@Override
-	public String toString()
-	{
-		return String.format("Client(interface=%s)", networkInterface);
-	}
-
-	@Override
 	public void onDisconnect(DisconnectCause cause)
 	{
 		super.onDisconnect(cause);

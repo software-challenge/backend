@@ -18,7 +18,7 @@ public abstract class XStreamClient
 {
 	private static Logger				logger			= LoggerFactory
 																.getLogger(XStreamClient.class);
-	protected final INetworkInterface	networkInterface;
+	private final INetworkInterface		networkInterface;
 	private final ObjectOutputStream	out;
 	ObjectInputStream					in;
 	private final Thread				thread;
@@ -206,8 +206,7 @@ public abstract class XStreamClient
 
 		try
 		{
-			// logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-			// this.xStream.toXML(o, this.networkInterface.getOutputStream());
+			logger.debug("DataDump:\n{}", this.xStream.toXML(o));
 			this.out.writeObject(o);
 			this.out.flush();
 		}
@@ -240,7 +239,6 @@ public abstract class XStreamClient
 				this.readyLock.notifyAll();
 			}
 
-			//
 			if (this.thread != null)
 			{
 				this.thread.interrupt();

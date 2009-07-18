@@ -6,13 +6,12 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
+
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		SimpleGameInstance<P> implements IPauseable

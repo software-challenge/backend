@@ -3,6 +3,7 @@ package sc.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -18,7 +19,7 @@ import sc.gui.PresentationFacade;
 @SuppressWarnings("serial")
 public class InfoDialog extends JDialog {
 
-	private ResourceBundle lang;
+	private Properties lang;
 
 	public InfoDialog(JFrame frame) {
 		super();
@@ -48,7 +49,7 @@ public class InfoDialog extends JDialog {
 		JLabel lblImage = new JLabel(image);
 		scPanel.add(lblImage);
 
-		JLabel developer = new JLabel(lang.getString("dialog_info_developers"), JLabel.CENTER);
+		JLabel developer = new JLabel(lang.getProperty("dialog_info_developers"), JLabel.CENTER);
 		devPanel.add(developer);
 		developer = new JLabel("Christian Wulf", JLabel.CENTER);
 		devPanel.add(developer);

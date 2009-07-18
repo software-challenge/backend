@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
 
@@ -33,7 +34,7 @@ import sc.plugin.GUIPluginInstance;
 @SuppressWarnings("serial")
 public class ReplayDialog extends JDialog {
 
-	private final ResourceBundle lang;
+	private final Properties lang;
 	private final PresentationFacade presFac;
 	private List<GUIPluginInstance> plugins;
 	private JComboBox cmbGameType;
@@ -64,15 +65,15 @@ public class ReplayDialog extends JDialog {
 		pnlGameType.add(cmbGameType);
 
 		txfReplay = new JTextField(20);
-		JLabel lblReplay = new JLabel(lang.getString("dialog_replay_lbl_file"));
+		JLabel lblReplay = new JLabel(lang.getProperty("dialog_replay_lbl_file"));
 		lblReplay.setLabelFor(txfReplay);
-		JButton btnReplay = new JButton(lang.getString("dialog_replay_btn_file"));
+		JButton btnReplay = new JButton(lang.getProperty("dialog_replay_btn_file"));
 		btnReplay.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 						.getLoadReplayPath());
-				chooser.setDialogTitle(lang.getString("dialog_replay_dialog_title"));
+				chooser.setDialogTitle(lang.getProperty("dialog_replay_dialog_title"));
 				if (chooser.showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
 					loadReplay(chooser.getSelectedFile());
 					// save path
@@ -87,7 +88,7 @@ public class ReplayDialog extends JDialog {
 
 		// ---------------------------------------------
 
-		JButton btnStart = new JButton(lang.getString("dialog_replay_btn_start"));
+		JButton btnStart = new JButton(lang.getProperty("dialog_replay_btn_start"));
 		btnStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -95,7 +96,7 @@ public class ReplayDialog extends JDialog {
 			}
 		});
 		pnlButtons.add(btnStart);
-		JButton btnCancel = new JButton(lang.getString("dialog_replay_btn_cancel"));
+		JButton btnCancel = new JButton(lang.getProperty("dialog_replay_btn_cancel"));
 		btnCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -114,7 +115,7 @@ public class ReplayDialog extends JDialog {
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		this.setResizable(false);
-		this.setTitle(lang.getString("dialog_replay_title"));
+		this.setTitle(lang.getProperty("dialog_replay_title"));
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
@@ -132,8 +133,8 @@ public class ReplayDialog extends JDialog {
 		File f = new File(filename);
 		if (!f.exists()) {
 			JOptionPane.showMessageDialog(this,
-					lang.getString("dialog_replay_error_msg"), lang
-							.getString("dialog_replay_error_title"),
+					lang.getProperty("dialog_replay_error_msg"), lang
+							.getProperty("dialog_replay_error_title"),
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}

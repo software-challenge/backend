@@ -15,7 +15,6 @@ import sc.protocol.LobbyProtocol;
 import sc.server.network.PerspectiveAwareConverter;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.core.JVM;
 
 /**
  * Server configuration.

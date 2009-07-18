@@ -1,13 +1,20 @@
 package sc.shared;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+@XStreamAlias(value = "slotDescriptor")
 public class SlotDescriptor {
 	public static final SlotDescriptor DEFAULT_DESCRIPTOR = new SlotDescriptor(
 			"Unknown");
 
+	@XStreamAsAttribute
 	private final String displayName;
 
+	@XStreamAsAttribute
 	private final boolean canTimeout;
 
+	@XStreamAsAttribute
 	private final boolean shouldBePaused;
 
 	public SlotDescriptor(String displayName) {

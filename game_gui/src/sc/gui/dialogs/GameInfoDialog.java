@@ -3,6 +3,7 @@ package sc.gui.dialogs;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -21,7 +22,7 @@ public class GameInfoDialog extends JDialog {
 	private final Image image;
 	private final String infoText;
 	private final String author;
-	private final ResourceBundle lang;
+	private final Properties lang;
 
 	public GameInfoDialog(String gameTypeName, String version, Image image,
 			String infoText, String author) {
@@ -50,13 +51,13 @@ public class GameInfoDialog extends JDialog {
 		JLabel lblImage = new JLabel();
 		pnlImage.add(lblImage);
 
-		JLabel lblText = new JLabel(lang.getString("dialog_gameinfo_description") + "\n"
+		JLabel lblText = new JLabel(lang.getProperty("dialog_gameinfo_description") + "\n"
 				+ infoText);
 		pnlText.add(lblText);
-		JLabel lblVersion = new JLabel(lang.getString("dialog_gameinfo_version") + ": "
+		JLabel lblVersion = new JLabel(lang.getProperty("dialog_gameinfo_version") + ": "
 				+ version);
 		pnlText.add(lblVersion);
-		JLabel lblAuthor = new JLabel(lang.getString("dialog_gameinfo_author") + ": "
+		JLabel lblAuthor = new JLabel(lang.getProperty("dialog_gameinfo_author") + ": "
 				+ author);
 		pnlText.add(lblAuthor);
 
