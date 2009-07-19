@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -93,7 +94,10 @@ public abstract class ServiceManager
 	{
 		logger.info("Shutting down all services...");
 
-		for (Thread thread : threads)
+		List<Thread> clonedList = new ArrayList<Thread>(threads.size());
+		clonedList.addAll(threads);
+
+		for (Thread thread : clonedList)
 		{
 			kill(thread);
 		}

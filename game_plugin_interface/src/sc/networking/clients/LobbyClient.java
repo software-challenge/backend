@@ -36,6 +36,7 @@ import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.protocol.responses.RoomPacket;
+import sc.shared.SharedConfiguration;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
@@ -57,7 +58,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	private final List<IHistoryListener>		historyListeners		= new LinkedList<IHistoryListener>();
 	private final List<IAdministrativeListener>	administrativeListeners	= new LinkedList<IAdministrativeListener>();
 
-	public static final int						DEFAULT_PORT			= 13050;
 	public static final String					DEFAULT_HOST			= "localhost";
 
 	public LobbyClient(XStream xStream) throws IOException
@@ -68,7 +68,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public LobbyClient(XStream xStream, Collection<Class<?>> protocolClasses)
 			throws IOException
 	{
-		this(xStream, protocolClasses, DEFAULT_HOST, DEFAULT_PORT);
+		this(xStream, protocolClasses, DEFAULT_HOST, SharedConfiguration.DEFAULT_PORT);
 	}
 
 	public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses,

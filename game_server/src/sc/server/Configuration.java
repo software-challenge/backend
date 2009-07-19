@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import sc.helpers.RuntimeJarLoader;
 import sc.protocol.LobbyProtocol;
 import sc.server.network.PerspectiveAwareConverter;
+import sc.shared.SharedConfiguration;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -60,7 +61,7 @@ public class Configuration
 
 	public static int getPort()
 	{
-		return get(PORT_KEY, Integer.class, 13050);
+		return get(PORT_KEY, Integer.class, SharedConfiguration.DEFAULT_PORT);
 	}
 
 	public static XStream getXStream()

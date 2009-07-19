@@ -1,5 +1,6 @@
 package gameClient;
 
+import sc.shared.SharedConfiguration;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
@@ -37,8 +38,8 @@ public class Starter
 		}
 
 		// Parameter laden
-		String host = (String) parser.getOptionValue(hostOption, "");
-		int port = (Integer) parser.getOptionValue(portOption, 0);
+		String host = (String) parser.getOptionValue(hostOption, "localhost");
+		int port = (Integer) parser.getOptionValue(portOption, SharedConfiguration.DEFAULT_PORT);
 		String reservierung = (String) parser.getOptionValue(reservationOption,
 				"");
 

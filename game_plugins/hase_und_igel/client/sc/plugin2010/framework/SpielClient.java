@@ -7,6 +7,7 @@ import sc.plugin2010.Board;
 import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.Player;
+import sc.shared.SharedConfiguration;
 
 /**
  * Diese Klasse übernimmt das initalisieren des Spieles und des Netzwerkclients.
@@ -39,12 +40,14 @@ public abstract class SpielClient implements IGameUpdateObserver
 	{
 		if (host == null || host.isEmpty())
 		{
-			host = LobbyClient.DEFAULT_HOST;
+			throw new IllegalArgumentException(
+					"Please provide an IP or a DNS hostname.");
 		}
 
-		if (port == 0)
+		if (port <= 0 || port > 65535)
 		{
-			port = LobbyClient.DEFAULT_PORT;
+			throw new IllegalArgumentException(
+					"Please provide a valid port number.");
 		}
 
 		try
