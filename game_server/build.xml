@@ -9,18 +9,23 @@
 
 	<property name="main-class" value="sc.server.Application" />
 
-	<property name="lib.dir" value="lib" />
+	<property name="lib.dir" value="./../plugin_loader/lib" />
 	<property name="plugin.dir" value="${jar.dir}/plugins" />
 	<property name="gameApi.dir" value="./../game_plugin_interface" />
 	<property name="pluginLoader.dir" value="./../plugin_loader" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<fileset dir="${gameApi.dir}" includes="lib/**/*.jar" />
-		<fileset dir="${pluginLoader.dir}" includes="lib/**/*.jar" />
+		<fileset dir="${gameApi.dir}" includes="build/jar/*.jar" />
+		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
 		<pathelement location="${api.dir}/bin" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />
+	</path>
+
+	<path id="classpath.base">
+		<path refid="classpath.libs" />
+		<pathelement location="${classes.dir}" />
 	</path>
 
 	<pathconvert property="jar.classpath" pathsep="">
@@ -36,11 +41,6 @@
 		<path refid="classpath.libs" />
 	</pathconvert>
 
-	<path id="classpath.base">
-		<path refid="classpath.libs" />
-		<pathelement location="${classes.dir}" />
-	</path>
-
 	<target name="clean">
 		<delete dir="build" />
 	</target>
@@ -52,8 +52,8 @@
 
 	<target name="dependencies">
 		<echo message="Compiling API Libraries..." />
+		<ant dir="./../plugin_loader" inheritAll="false" />
 		<ant dir="./../game_plugin_interface" inheritAll="false" />
-		<ant dir="./../gui_plugin_interfaces" inheritAll="false" />
 		<echo message="Compiling Plugins..." />
 		<ant dir="./../game_plugins/hase_und_igel" inheritAll="false" />
 		<ant dir="./../game_plugins/tic_tac_toe" inheritAll="false" />
@@ -63,7 +63,7 @@
 	<target name="compile" depends="dependencies">
 		<mkdir dir="${classes.dir}" />
 		<antcall target="configure.eclipse" />
-		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath.base" debug="true"  />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath.base" debug="true" />
 	</target>
 
 	<target name="export-plugins">
