@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;

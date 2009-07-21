@@ -1,6 +1,6 @@
 -back: set pause to unpause
 -statusbar: iwas anzeigen
--test range: txtfield num test only numbers
+<ok>-test range: txtfield num test only numbers
 -icon für jedes plugin
 -2 clients, replay, button play/pause falsch
 -beim laden eines ki-programms/replays game type prüfen
@@ -11,6 +11,7 @@
 -fix: winner bei test range entfernen
 -fix: "Warte auf externe.." externe umformulieren
 -fix: Path nach approve sofort in die config schreiben
+-fix: dispose MUST call window listener
 
 FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)

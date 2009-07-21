@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -117,7 +116,9 @@ public class CreateGameDialog extends JDialog {
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
 		ckbDebug.setToolTipText(lang
 				.getProperty("dialog_create_pref_debug_hint"));
-		txfPort = new JTextField(DEFAULT_PORT);
+		txfPort = new JTextField(5);
+		txfPort.setText(""+DEFAULT_PORT);
+		txfPort.setEditable(false);
 		lblPort = new JLabel(lang.getProperty("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);
 		// pnlPref.add(ckbDim); TODO for future
@@ -202,13 +203,13 @@ public class CreateGameDialog extends JDialog {
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 		// set dialog preferences
 		this.setTitle(lang.getProperty("dialog_create_title"));
-		setIconImage(new ImageIcon(getClass().getResource(
+		this.setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
-		setResizable(false);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setModal(true);
-		pack();
-		setLocationRelativeTo(null);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setModal(true);
+		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setResizable(false);
 	}
 
 	/**

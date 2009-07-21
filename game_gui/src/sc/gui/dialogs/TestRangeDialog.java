@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -41,6 +40,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -55,8 +57,8 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
-import sc.shared.ScoreAggregation;
 import sc.shared.GameResult;
+import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.SharedConfiguration;
@@ -108,7 +110,7 @@ public class TestRangeDialog extends JDialog {
 	 */
 	private void createGUI() {
 
-		setLayout(new BorderLayout());
+		this.setLayout(new BorderLayout());
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
 		Vector<String> items = presFac.getLogicFacade().getPluginNames(plugins);
@@ -124,15 +126,35 @@ public class TestRangeDialog extends JDialog {
 		});
 
 		txfNumTest = new JTextField(5);
-		txfNumTest.setText(String.valueOf(GUIConfiguration.instance()
-				.getNumTest())); // default
-		JLabel lblNumTest = new JLabel(lang
-				.getProperty("dialog_test_lbl_numtest"));
+		// only numbers and at least number 0
+		txfNumTest.setDocument(new PlainDocument() {
+			@Override
+			public void insertString(int offs, String str, AttributeSet a)
+					throws BadLocationException {
+
+				String wholeText = getText(0, getLength()) + str;
+
+				try {
+					int value = new Integer(wholeText);
+					if (value < 0) {
+						throw new NumberFormatException();
+					}
+				} catch (NumberFormatException e) {
+					java.awt.Toolkit.getDefaultToolkit().beep();
+					return;
+				}
+
+				super.insertString(offs, str, a);
+			}
+		});
+		// must be set after setDocument()
+		txfNumTest.setText(String.valueOf(GUIConfiguration.instance().getNumTest())); // default
+
+		JLabel lblNumTest = new JLabel(lang.getProperty("dialog_test_lbl_numtest"));
 		lblNumTest.setLabelFor(lblNumTest);
 
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang
-				.getProperty("dialog_create_pref_debug_hint"));
+		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
 
 		pnlPref = new JPanel();
 		pnlPref.add(cmbGameType);
@@ -160,8 +182,7 @@ public class TestRangeDialog extends JDialog {
 		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
 		progressBar.setStringPainted(true); // draw procent
 
-		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"),
-				JLabel.CENTER);
+		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"), JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
@@ -181,8 +202,7 @@ public class TestRangeDialog extends JDialog {
 					cancelTest();
 				} else {
 					if (prepareTest()) {
-						testStart.setText(lang
-								.getProperty("dialog_test_btn_stop"));
+						testStart.setText(lang.getProperty("dialog_test_btn_stop"));
 						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
 						startTest();
@@ -196,6 +216,8 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelTest();
+				TestRangeDialog.this.setVisible(false);// FIXME call window
+														// listener
 				TestRangeDialog.this.dispose();
 			}
 		});
@@ -217,20 +239,26 @@ public class TestRangeDialog extends JDialog {
 		this.add(pnlBottom, BorderLayout.PAGE_END);
 
 		// set dialog preferences
-		setTitle(lang.getProperty("dialog_test_title"));
-		setIconImage(new ImageIcon(getClass().getResource(
+		this.setTitle(lang.getProperty("dialog_test_title"));
+		this.setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
-		setModal(true);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		setPreferredSize(new Dimension(500, 500));
-		setMinimumSize(getPreferredSize());
-		pack();
-		setLocationRelativeTo(null);
+		this.setModal(true);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		this.setPreferredSize(new Dimension(500, 500));
+		this.setMinimumSize(getPreferredSize());
+		this.pack();
+		this.setLocationRelativeTo(null);
+
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				cancelTest();
-				GUIConfiguration.instance().setNumberOfTests(numTest);
+				try {
+					GUIConfiguration.instance().setNumberOfTests(
+							new Integer(txfNumTest.getText()));
+				} catch (NumberFormatException ex) {
+					// just don't save the invalid value
+				}
 				super.windowClosing(e);
 			}
 		});
@@ -256,8 +284,7 @@ public class TestRangeDialog extends JDialog {
 		statTable.getColumnModel().getColumn(0).setPreferredWidth(15);
 		model.addColumn(lang.getProperty("dialog_test_stats_name"));
 
-		ScoreDefinition statColumns = selPlugin.getPlugin()
-				.getScoreDefinition();
+		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
 		for (int i = 0; i < statColumns.size(); i++) {
 			ScoreFragment column = statColumns.get(i);
 			model.addColumn(column.getName());
@@ -278,8 +305,7 @@ public class TestRangeDialog extends JDialog {
 			txfclient[i] = new JTextField(20);
 			final JTextField txfClient = txfclient[i];
 
-			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki")
-					+ " " + i);
+			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki") + " " + i);
 			lblclient[i].setLabelFor(txfclient[i]);
 
 			btnclient[i] = new JButton(lang.getProperty("dialog_test_btn_file"));
@@ -301,8 +327,7 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable
-				.getPreferredSize());
+		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
 
 		// display
 		pnlTop.removeAll();
@@ -325,12 +350,8 @@ public class TestRangeDialog extends JDialog {
 		IGuiPlugin selPlugin = getSelectedPlugin().getPlugin();
 
 		initCurTest();
-		try {
-			numTest = new Integer(txfNumTest.getText());
-		} catch (NumberFormatException e) {
-			numTest = GUIConfiguration.instance().getNumTest();
-			txfNumTest.setText(String.valueOf(numTest));
-		}
+		// on-demand number checking -> here: no checking required
+		numTest = new Integer(txfNumTest.getText());
 
 		progressBar.setMaximum(numTest);
 		progressBar.setValue(0);
@@ -352,8 +373,7 @@ public class TestRangeDialog extends JDialog {
 			model.setValueAt(new Integer(i + 1), i, 0);
 			String name = new File(txfclient[i].getText()).getName();
 			// without file ext and with a number
-			name = HelperMethods.getFilenameWithoutFileExt(name) + " "
-					+ (i + 1);
+			name = HelperMethods.getFilenameWithoutFileExt(name) + " " + (i + 1);
 			model.setValueAt(name, i, 1);
 			for (int j = 0; j < selPlugin.getScoreDefinition().size(); j++) {
 				model.setValueAt(BigDecimal.ZERO, i, 2 + j); // set default 0
@@ -397,12 +417,11 @@ public class TestRangeDialog extends JDialog {
 		for (int i = 0; i < txfclient.length; i++) {
 			int statPos = Math.abs(offset - i);
 			String path = txfclient[statPos].getText();
-			String clientName = HelperMethods
-					.getFilenameWithoutFileExt(new File(path).getName())
+			String clientName = HelperMethods.getFilenameWithoutFileExt(new File(path)
+					.getName())
 					+ " " + (statPos + 1);
 			playerNames.add(clientName);
-			descriptors.add(new SlotDescriptor(clientName, !ckbDebug
-					.isSelected()));
+			descriptors.add(new SlotDescriptor(clientName, !ckbDebug.isSelected()));
 		}
 
 		IGamePreparation prep;
@@ -426,8 +445,8 @@ public class TestRangeDialog extends JDialog {
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded(GameResult result) {
-				addLogMessage(lang.getProperty("dialog_test_end") + " "
-						+ curTest + ":" + numTest);
+				addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + ":"
+						+ numTest);
 				// purpose
 				updateStatistics(offset, result);
 				// add winner log message
@@ -436,8 +455,8 @@ public class TestRangeDialog extends JDialog {
 					 * FIXME hard coded winner -> better: attribute in result
 					 * with winner player index
 					 */
-					boolean winner = result.getScores().get(i).getValues().get(
-							0).equals(BigDecimal.ONE);
+					boolean winner = result.getScores().get(i).getValues().get(0).equals(
+							BigDecimal.ONE);
 					if (winner) {
 						String clientName = playerNames.get(i);
 						addLogMessage(clientName + " "
@@ -454,8 +473,7 @@ public class TestRangeDialog extends JDialog {
 				} else {
 					stopServer();
 					cmbGameType.setEnabled(true);
-					testStart
-							.setText(lang.getProperty("dialog_test_btn_start"));
+					testStart.setText(lang.getProperty("dialog_test_btn_start"));
 					TestRangeDialog.this.repaint();
 				}
 			}
@@ -487,8 +505,8 @@ public class TestRangeDialog extends JDialog {
 			KIs.add(new KIInformation(slot.asClient(), path));
 
 			String clientName = playerNames.get(i);
-			addLogMessage(clientName + " "
-					+ lang.getProperty("dialog_test_switchpos") + " " + (i + 1));
+			addLogMessage(clientName + " " + lang.getProperty("dialog_test_switchpos")
+					+ " " + (i + 1));
 		}
 
 		// start KI (intern) clients
@@ -543,8 +561,7 @@ public class TestRangeDialog extends JDialog {
 				BigDecimal newStat = stats.get(j);
 				BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
 
-				ScoreAggregation action = result.getDefinition().get(j)
-						.getAggregation();
+				ScoreAggregation action = result.getDefinition().get(j).getAggregation();
 				switch (action) {
 				case SUM:
 
@@ -556,12 +573,11 @@ public class TestRangeDialog extends JDialog {
 					// add newStat to absolute value
 					newStat = old.add(newStat);
 					// divide with curTest (rounded down)
-					newStat = newStat.divideToIntegralValue(BigDecimal
-							.valueOf(curTest));
+					newStat = newStat.divideToIntegralValue(BigDecimal.valueOf(curTest));
 					break;
 				default:
-					throw new RuntimeException("Unknown aggregation type ("
-							+ action + ")");
+					throw new RuntimeException("Unknown aggregation type (" + action
+							+ ")");
 				}
 				// set to model
 				model.setValueAt(newStat, statRow, j + 2);
