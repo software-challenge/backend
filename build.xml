@@ -1,0 +1,54 @@
+<project name="Complete" basedir="." default="main">
+
+	<property name="out.dir" value="deploy" />
+
+	<target name="clean">
+		<delete dir="${out.dir}" />
+	</target>
+
+	<target name="dependencies">
+		<echo message="Compiling SC dependencies" />
+		<ant dir="game_gui" inheritAll="false" />
+		<ant dir="game_server" inheritAll="false" />
+		<ant dir="game_simpleclient" inheritAll="false" />
+	</target>
+
+	<target name="build" depends="dependencies">
+		<mkdir dir="${out.dir}" />
+
+		<mkdir dir="${out.dir}/gui" />
+		<copy todir="${out.dir}/gui">
+			<fileset dir="./game_gui/build/jar" />
+		</copy>
+
+		<mkdir dir="${out.dir}/server" />
+		<copy todir="${out.dir}/server">
+			<fileset dir="./game_server/build/jar" />
+		</copy>
+
+		<mkdir dir="${out.dir}/simple_client" />
+		<copy todir="${out.dir}/simple_client">
+			<fileset dir="./game_simpleclient/build/jar" />
+		</copy>
+
+		<mkdir dir="${out.dir}/simple_client/src" />
+		<copy todir="${out.dir}/simple_client/src">
+			<fileset dir="./game_simpleclient">
+				<exclude name="build/**/*" />
+				<exclude name="bin/**/*" />
+				<exclude name=".classpath" />
+			</fileset>
+		</copy>
+
+		<rename dest="${out.dir}/simple_client/src/.classpath" src="${out.dir}/simple_client/src/.deployed_classpath" />
+
+		<mkdir dir="${out.dir}/simple_client/src/lib" />
+		<copy todir="${out.dir}/simple_client/src/lib">
+			<fileset dir="${out.dir}/simple_client/lib" />
+		</copy>
+	</target>
+
+	<target name="clean-build" depends="clean,build" />
+
+	<target name="main" depends="clean-build" />
+</project>
