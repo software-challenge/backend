@@ -4,8 +4,13 @@
 -icon für jedes plugin
 -2 clients, replay, button play/pause falsch
 -beim laden eines ki-programms/replays game type prüfen
--vertauschung der namen beim test range
-
+-fix: vertauschung der namen beim test range
+-fix: game info text html
+-fix: allgem. lang-Texte, d.h. common_timelimit, common_choose_KI anstatt 2x das gleiche
+	(z.B. dialog_test_dialog_title, dialog_create_dialog_title) 
+-fix: winner bei test range entfernen
+-fix: "Warte auf externe.." externe umformulieren
+-fix: Path nach approve sofort in die config schreiben
 
 FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)
