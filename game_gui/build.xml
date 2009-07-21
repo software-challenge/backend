@@ -17,10 +17,6 @@
 		<fileset dir="${guiApi.dir}" includes="build/jar/*.jar" />
 		<fileset dir="${server.dir}" includes="build/jar/*.jar" />
 		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
-		<pathelement location="${gameApi.dir}/bin" />
-		<pathelement location="${guiApi.dir}/bin" />
-		<pathelement location="${pluginLoader.dir}/bin" />
-		<pathelement location="${game.dir}/bin" />
 	</path>
 
 	<path id="classpath.base">
