@@ -217,7 +217,7 @@ public class TestRangeDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				cancelTest();
 				TestRangeDialog.this.setVisible(false);// FIXME call window
-														// listener
+				// listener
 				TestRangeDialog.this.dispose();
 			}
 		});
@@ -449,21 +449,17 @@ public class TestRangeDialog extends JDialog {
 						+ numTest);
 				// purpose
 				updateStatistics(offset, result);
-				// add winner log message
-				for (int i = 0; i < result.getScores().size(); i++) {
-					/*
-					 * FIXME hard coded winner -> better: attribute in result
-					 * with winner player index
-					 */
-					boolean winner = result.getScores().get(i).getValues().get(0).equals(
-							BigDecimal.ONE);
-					if (winner) {
-						String clientName = playerNames.get(i);
-						addLogMessage(clientName + " "
-								+ lang.getProperty("dialog_test_win"));
-						break;
-					}
-				}
+				/*
+				 * add winner log message: NO! so far, there is no special
+				 * attribute indicating the winner, therefore do not display
+				 */
+				/*
+				 * for (int i = 0; i < result.getScores().size(); i++) { boolean
+				 * winner = result.getScores().get(i).getValues().get(0).equals(
+				 * BigDecimal.ONE); if (winner) { String clientName =
+				 * playerNames.get(i); addLogMessage(clientName + " " +
+				 * lang.getProperty("dialog_test_win")); break; } }
+				 */
 				// update progress bar
 				progressBar.setValue(progressBar.getValue() + 1);
 

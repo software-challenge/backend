@@ -35,10 +35,6 @@ public class PresentationFacade implements IPresentationFacade {
 	 */
 	private ILogicFacade logic;
 	/**
-	 * Contains the current configuration data
-	 */
-	private GUIConfiguration config;
-	/**
 	 * The main frame
 	 */
 	private JFrame frame;

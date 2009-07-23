@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -24,6 +23,14 @@ public class GameInfoDialog extends JDialog {
 	private final String author;
 	private final Properties lang;
 
+	/**
+	 * Create <code>GameInfoDialog</code>
+	 * @param gameTypeName
+	 * @param version
+	 * @param image
+	 * @param infoText
+	 * @param author
+	 */
 	public GameInfoDialog(String gameTypeName, String version, Image image,
 			String infoText, String author) {
 		super();
@@ -36,6 +43,9 @@ public class GameInfoDialog extends JDialog {
 		createGUI();
 	}
 
+	/**
+	 * Create GUI
+	 */
 	private void createGUI() {
 
 		this.setLayout(new BorderLayout());
@@ -51,8 +61,10 @@ public class GameInfoDialog extends JDialog {
 		JLabel lblImage = new JLabel();
 		pnlImage.add(lblImage);
 
-		JLabel lblText = new JLabel(lang.getProperty("dialog_gameinfo_description") + "\n"
-				+ infoText);
+		JLabel lblDescriptionText = new JLabel(lang.getProperty("dialog_gameinfo_description"));
+		pnlText.add(lblDescriptionText);
+		// infoText is in html format, so show it in a separate label
+		JLabel lblText = new JLabel(infoText);
 		pnlText.add(lblText);
 		JLabel lblVersion = new JLabel(lang.getProperty("dialog_gameinfo_version") + ": "
 				+ version);

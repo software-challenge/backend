@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
