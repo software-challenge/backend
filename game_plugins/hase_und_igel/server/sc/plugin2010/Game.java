@@ -183,15 +183,7 @@ public class Game extends RoundBasedGameInstance<Player>
 				break;
 		}
 
-		updatePlayer(move, player);
-
-		if (player.inGoal())
-			oneLastMove = true;
-	}
-
-	private void updatePlayer(Move move, Player p)
-	{
-		p.setMustPlayCard(false);
+		player.setMustPlayCard(false);
 		switch (move.getTyp())
 		{
 			case PLAY_CARD:
@@ -200,8 +192,8 @@ public class Game extends RoundBasedGameInstance<Player>
 				{
 					case FALL_BACK:
 					case HURRY_AHEAD:
-						if (board.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT))
-							p.setMustPlayCard(true);
+						if (board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT))
+							player.setMustPlayCard(true);
 						break;
 				}
 				break;
@@ -209,11 +201,14 @@ public class Game extends RoundBasedGameInstance<Player>
 			case MOVE:
 			case FALL_BACK:
 			{
-				if (board.getTypeAt(p.getFieldNumber()).equals(FieldTyp.RABBIT))
-					p.setMustPlayCard(true);
+				if (board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT))
+					player.setMustPlayCard(true);
 				break;
 			}
 		}
+
+		if (player.inGoal())
+			oneLastMove = true;
 	}
 
 	@Override
@@ -291,21 +286,19 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void onNewTurn()
 	{
-		for (final Player p : players)
+		final Player player = getActivePlayer();
+		switch (board.getTypeAt(player.getFieldNumber()))
 		{
-			switch (board.getTypeAt(p.getFieldNumber()))
-			{
-				case POSITION_1:
-					if (board.isFirst(p))
-						p.changeCarrotsAvailableBy(10);
-					break;
-				case POSITION_2:
-					if (!board.isFirst(p))
-						p.changeCarrotsAvailableBy(20);
-					break;
-				default:
-					break;
-			}
+			case POSITION_1:
+				if (board.isFirst(player))
+					player.changeCarrotsAvailableBy(10);
+				break;
+			case POSITION_2:
+				if (!board.isFirst(player))
+					player.changeCarrotsAvailableBy(20);
+				break;
+			default:
+				break;
 		}
 
 	}

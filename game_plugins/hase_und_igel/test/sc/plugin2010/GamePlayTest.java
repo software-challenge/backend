@@ -222,6 +222,30 @@ public class GamePlayTest
 		
 		Assert.assertFalse(red.mustPlayCard());
 	}
+	
+	/**
+	 * Überprüft die Bedingungen, unter denen ein Spieler auf den Positionsfeldern
+	 * Karotten bekommt.
+	 * @throws RescueableClientException
+	 */
+	@Test
+	public void onPositionField() throws RescueableClientException
+	{
+		g.start();
+		
+		int carrotsBefore = red.getCarrotsAvailable();
+		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.POSITION_1, 0));
+		int moveCosts = GameUtil.calculateCarrots(r1.getN());
+		g.onAction(red, r1);
+		
+		Assert.assertEquals(carrotsBefore-moveCosts, red.getCarrotsAvailable());
+		
+		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
+		g.onAction(blue, b1);
+		
+		Assert.assertEquals(g.getActivePlayer(), red);
+		Assert.assertEquals(carrotsBefore-moveCosts+10, red.getCarrotsAvailable());
+	}
 
 	/**
 	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
