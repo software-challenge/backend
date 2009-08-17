@@ -125,14 +125,21 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	protected final void next(P nextPlayer)
 	{
+		boolean newTurn = false;
 		if (increaseTurnIfNecessary(nextPlayer))
 		{
 			this.turn++;
-			onNewTurn();
+			newTurn = true;
+			//onNewTurn();
 		}
 
 		this.activePlayer = nextPlayer;
 		notifyOnNewState(getCurrentState());
+		
+		if (newTurn)
+		{
+			onNewTurn();
+		}
 
 		if (checkGameOverCondition())
 		{
