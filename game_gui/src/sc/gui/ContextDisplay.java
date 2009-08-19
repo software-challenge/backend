@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -108,7 +107,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		btn_cancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				presFac.getLogicFacade().getObservation().cancel();
+				presFac.getLogicFacade().getObservation().cancel();//FIXME MUST call gameEnded
 				started = false;
 				btn_back.setEnabled(false);
 				btn_cancel.setEnabled(false);

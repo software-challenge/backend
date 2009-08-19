@@ -2,7 +2,6 @@ package sc.logic;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
@@ -26,6 +25,7 @@ public interface ILogicFacade {
 	IConfiguration getConfiguration();
 
 	void loadPlugins() throws CouldNotFindAnyPluginException;
+
 	void unloadPlugins();
 
 	GUIPluginManager getPluginManager();
@@ -35,8 +35,18 @@ public interface ILogicFacade {
 	IObservation getObservation();
 
 	void startServer(int port);
+
 	void stopServer();
-	
+
 	List<GUIPluginInstance> getAvailablePluginsSorted();
+
 	Vector<String> getPluginNames(List<GUIPluginInstance> plugins);
+
+	void setGameActive(boolean b);
+	/**
+	 * Returns true if a game is currently being played, false otherwise
+	 * 
+	 * @return
+	 */
+	boolean isGameActive();
 }

@@ -2,6 +2,7 @@ package sc.logic;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -25,10 +26,8 @@ public class LogicFacade implements ILogicFacade {
 	 * Folder of all language files
 	 */
 	private static final String BASENAME = "/resource/game_gui";
-	/**
-	 * Configuration file name
-	 */
-
+	
+	private static final Comparator<? super GUIPluginInstance> yearComparator = new YearComparator();
 	/**
 	 * Holds all vailable plugins
 	 */
@@ -39,6 +38,10 @@ public class LogicFacade implements ILogicFacade {
 	private Properties languageData;
 	private IObservation observation;
 	private Lobby server;
+	/**
+	 * true if a game is currently being played, false otherwise
+	 */
+	private boolean gameActive;
 
 	/**
 	 * Singleton instance
@@ -77,10 +80,9 @@ public class LogicFacade implements ILogicFacade {
 
 		this.languageData = new Properties();
 		String fileName = BASENAME + "_" + locale.getLanguage() + "_"
-		+ locale.getCountry() + ".properties";
+				+ locale.getCountry() + ".properties";
 		try {
-			this.languageData.load(getClass().getResourceAsStream(
-					fileName));
+			this.languageData.load(getClass().getResourceAsStream(fileName));
 		} catch (Exception e) {
 			System.err.println("Failed to read " + fileName);
 			e.printStackTrace();
@@ -140,6 +142,7 @@ public class LogicFacade implements ILogicFacade {
 		}
 		if (server != null)
 			server.close();
+		System.out.println("Server stopped.");
 	}
 
 	@Override
@@ -155,9 +158,8 @@ public class LogicFacade implements ILogicFacade {
 	public List<GUIPluginInstance> getAvailablePluginsSorted() {
 		Collection<GUIPluginInstance> plugins = pluginMan.getAvailablePlugins();
 		// sort by plugin's year
-		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(
-				plugins);
-		Collections.sort(sortedPlugins, new YearComparator());
+		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(plugins);
+		Collections.sort(sortedPlugins, yearComparator);
 		return sortedPlugins;
 	}
 
@@ -178,6 +180,16 @@ public class LogicFacade implements ILogicFacade {
 		}
 
 		return result;
+	}
+
+	@Override
+	public boolean isGameActive() {
+		return gameActive;
+	}
+
+	@Override
+	public void setGameActive(boolean b) {
+		this.gameActive = b;
 	}
 
 }

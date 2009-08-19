@@ -215,9 +215,8 @@ public class TestRangeDialog extends JDialog {
 		testCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cancelTest();
-				TestRangeDialog.this.setVisible(false);// FIXME call window
-				// listener
+				cancelTestAndSave();
+				TestRangeDialog.this.setVisible(false);
 				TestRangeDialog.this.dispose();
 			}
 		});
@@ -252,16 +251,23 @@ public class TestRangeDialog extends JDialog {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				cancelTest();
-				try {
-					GUIConfiguration.instance().setNumberOfTests(
-							new Integer(txfNumTest.getText()));
-				} catch (NumberFormatException ex) {
-					// just don't save the invalid value
-				}
+				cancelTestAndSave();
 				super.windowClosing(e);
 			}
 		});
+	}
+
+	/**
+	 * Cancels the test if active and saves the number of tests
+	 */
+	protected void cancelTestAndSave() {
+		cancelTest();
+		try {
+			GUIConfiguration.instance().setNumberOfTests(
+					new Integer(txfNumTest.getText()));
+		} catch (NumberFormatException ex) {
+			// just don't save the invalid value
+		}
 	}
 
 	/**

@@ -1,6 +1,7 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -177,7 +178,17 @@ public class CreateGameDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				createGame(playersModel);
+				boolean createGame = true;
+				if (presFac.getLogicFacade().isGameActive()) {
+					if (JOptionPane.showConfirmDialog(null, lang
+							.getProperty("dialog_create_gameactive_msg"), lang
+							.getProperty("dialog_create_gameactive_title"),
+							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+						createGame = false;
+					}
+				}
+				if (createGame)
+					createGame(playersModel);
 			}
 		});
 
@@ -274,16 +285,17 @@ public class CreateGameDialog extends JDialog {
 		observer.addReadyListener(new IReadyListener() {
 			@Override
 			public void ready() {
-				System.out.println(">>> ready");
 				connDial.close();
 				contextPanel.updateButtonBar(false);
+				presFac.getLogicFacade().setGameActive(true);
 			}
 		});
 
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded(GameResult result) {
-				// presFac.getLogicFacade().stopServer();//TODO wieder rein?
+				presFac.getLogicFacade().stopServer();
+				presFac.getLogicFacade().setGameActive(false);
 				contextPanel.updateButtonBar(true);
 				try {
 					observer.saveReplayToFile("./replays/replay-"
@@ -513,11 +525,11 @@ public class CreateGameDialog extends JDialog {
 		public Component getTableCellRendererComponent(JTable table, Object value,
 				boolean isSelected, boolean hasFocus, int row, int column) {
 			if (isSelected) {
-				setForeground(table.getSelectionForeground());
+				super.setForeground(Color.BLUE); // visible color
 				super.setBackground(table.getSelectionBackground());
 			} else {
-				setForeground(table.getForeground());
-				setBackground(table.getBackground());
+				super.setForeground(table.getForeground());
+				super.setBackground(table.getBackground());
 			}
 
 			// Select the current value
