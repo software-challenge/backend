@@ -39,6 +39,12 @@ public class BackgoundPane extends JPanel
 	}
 
 	@Override
+	public void update(Graphics g)
+	{
+		paint(g);
+	}
+
+	@Override
 	protected void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);

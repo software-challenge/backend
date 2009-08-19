@@ -15,7 +15,6 @@ import javax.swing.JButton;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 
-import sc.plugin2010.Board;
 import sc.plugin2010.FieldTyp;
 import sc.plugin2010.FigureColor;
 import sc.plugin2010.renderer.RendererUtil;
@@ -33,6 +32,7 @@ public class FieldButton extends JButton
 	private final IClickObserver	obs;
 
 	private Border					border;
+	private Border					oldBorder;
 	private final Border			defaultBorder;
 
 	private int						fieldNumber	= 0;
@@ -95,21 +95,19 @@ public class FieldButton extends JButton
 	{
 		if (color != null)
 		{
-			border = createBorder(Color.ORANGE);
+
 			final MediaTracker mt = new MediaTracker(this);
 			String colorString = "blue";
 
-			switch (color)
+			if (color == FigureColor.RED)
 			{
-				case BLUE:
-					colorString = "blue";
-					break;
-				case RED:
-					colorString = "red";
-					break;
+				colorString = "red";
 			}
 
-			icon = RendererUtil.getImage("resource/game/" + colorString + ".png");
+			border = createBorder(Color.CYAN);
+
+			icon = RendererUtil.getImage("resource/game/" + colorString
+					+ ".png");
 			mt.addImage(icon, 0);
 			occupied = true;
 			try
@@ -135,13 +133,20 @@ public class FieldButton extends JButton
 						.getGreen(), col.getBlue(), 150)));
 	}
 
-	public void setReachable(final boolean reachable)
+	public void setReachable(final boolean reachable, final boolean red)
 	{
 		this.reachable = reachable;
 
 		if (reachable)
 		{
-			border = createBorder(Color.BLUE);
+			if (red)
+			{
+				border = createBorder(Color.BLACK);
+			}
+			else
+			{
+				border = createBorder(Color.BLACK);
+			}
 		}
 		else
 		{
@@ -166,6 +171,7 @@ public class FieldButton extends JButton
 		@Override
 		public void mouseEntered(final MouseEvent e)
 		{
+			oldBorder = border;
 			border = createBorder(Color.RED);
 		}
 
@@ -174,11 +180,11 @@ public class FieldButton extends JButton
 		{
 			if (occupied)
 			{
-				border = createBorder(Color.ORANGE);
+				border = oldBorder;
 			}
 			else if (reachable)
 			{
-				border = createBorder(Color.BLUE);
+				border = oldBorder;
 			}
 			else
 			{

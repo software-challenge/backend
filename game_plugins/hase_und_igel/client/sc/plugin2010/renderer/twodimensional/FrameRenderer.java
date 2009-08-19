@@ -5,6 +5,7 @@ package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -111,6 +112,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		qPanel = new QuestionPanel(this);
 		leftPanel.add(qPanel, BorderLayout.AFTER_LAST_LINE);
+		qPanel.setPreferredSize(new Dimension(Frame.WIDTH, 50));
 
 		final BorderLayout framelayout = new BorderLayout();
 		setLayout(framelayout);
@@ -195,7 +197,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			if (fbuttons.get(i).needRepaint())
 			{
 				fbuttons.get(i).setFree();
-				fbuttons.get(i).setReachable(false);
+				fbuttons.get(i).setReachable(false, false);
 				fbuttons.get(i).repaint();
 			}
 		}
@@ -208,27 +210,31 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			case RED:
 				addHistory(player, enemy);
-				info.setColor(true);
 				currentColorPath = "red";
+				info.setPlayer(player.getDisplayName());
+				info.setAttributes(player.getCarrotsAvailable(), player
+						.getSaladsToEat(), player.getActions());
+
+				info.setOtherPlayer(enemy.getDisplayName());
+				info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
+						.getSaladsToEat(), enemy.getActions());
 				break;
 			case BLUE:
 				addHistory(enemy, player);
-				info.setColor(false);
 				currentColorPath = "blue";
+				info.setPlayer(enemy.getDisplayName());
+				info.setAttributes(enemy.getCarrotsAvailable(), enemy
+						.getSaladsToEat(), enemy.getActions());
+
+				info.setOtherPlayer(player.getDisplayName());
+				info.setEnemyAttributes(player.getCarrotsAvailable(), player
+						.getSaladsToEat(), player.getActions());
 				break;
 			default:
 				break;
 		}
 
 		info.setTurn(currentColorPath);
-
-		info.setPlayer(player.getDisplayName());
-		info.setAttributes(player.getCarrotsAvailable(), player
-				.getSaladsToEat(), player.getActions());
-
-		info.setOtherPlayer(enemy.getDisplayName());
-		info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
-				.getSaladsToEat(), enemy.getActions());
 
 		repaint();
 	}
@@ -348,18 +354,16 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			{
 				answers.add(give20carrots);
 			}
-			if (GameUtil.isValidToPlayCard(board, player,
-					Action.EAT_SALAD, 0))
+			if (GameUtil.isValidToPlayCard(board, player, Action.EAT_SALAD, 0))
 			{
 				answers.add(eatsalad);
 			}
-			if (GameUtil.isValidToPlayCard(board, player,
-					Action.HURRY_AHEAD, 0))
+			if (GameUtil
+					.isValidToPlayCard(board, player, Action.HURRY_AHEAD, 0))
 			{
 				answers.add(hurryahead);
 			}
-			if (GameUtil.isValidToPlayCard(board, player,
-					Action.FALL_BACK, 0))
+			if (GameUtil.isValidToPlayCard(board, player, Action.FALL_BACK, 0))
 			{
 				answers.add(fallback);
 			}
@@ -411,18 +415,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			else if (answer.equals(eatsalad))
 			{
-				sendMove(new Move(MoveTyp.PLAY_CARD,
-						Action.EAT_SALAD));
+				sendMove(new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD));
 			}
 			else if (answer.equals(hurryahead))
 			{
-				sendMove(new Move(MoveTyp.PLAY_CARD,
-						Action.HURRY_AHEAD));
+				sendMove(new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD));
 			}
 			else if (answer.equals(fallback))
 			{
-				sendMove(new Move(MoveTyp.PLAY_CARD,
-						Action.FALL_BACK));
+				sendMove(new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK));
 			}
 		}
 	}
@@ -442,7 +443,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			{
 				if (GameUtil.isValidToMove(board, player, i - pos))
 				{
-					fbuttons.get(i).setReachable(true);
+					if (player.getColor() == FigureColor.RED)
+					{
+						fbuttons.get(i).setReachable(true, true);
+					}
+					else
+					{
+						fbuttons.get(i).setReachable(true, false);
+					}
+
 					fbuttons.get(i).repaint();
 				}
 			}
@@ -454,7 +463,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				int index = board.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, pos);
 				if (index > 0 && index < fbuttons.size())
 				{
-					fbuttons.get(index).setReachable(true);
+					if (player.getColor() == FigureColor.RED)
+					{
+						fbuttons.get(index).setReachable(true, true);
+					}
+					else
+					{
+						fbuttons.get(index).setReachable(true, false);
+					}
+
 					fbuttons.get(index).repaint();
 				}
 			}
