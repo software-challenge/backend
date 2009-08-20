@@ -253,7 +253,7 @@ public class CreateGameDialog extends JDialog {
 		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField(),
 				threeDimensional);
 
-		List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(model
+		final List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(model
 				.getRowCount());
 		for (int i = 0; i < model.getRowCount(); i++) {
 			String playerName = (String) model.getValueAt(i, 1);
@@ -297,11 +297,17 @@ public class CreateGameDialog extends JDialog {
 				presFac.getLogicFacade().stopServer();
 				presFac.getLogicFacade().setGameActive(false);
 				contextPanel.updateButtonBar(true);
+				// generate replay filename
+				StringBuilder replayFilename = new StringBuilder("./replays/replay");
+				for (int i = 0; i < descriptors.size(); i++) {
+					replayFilename.append("_" + descriptors.get(i).getDisplayName());
+				}
+				replayFilename.append(System.currentTimeMillis() + ".xml");
+				// save replay
 				try {
-					observer.saveReplayToFile("./replays/replay-"
-							+ System.currentTimeMillis() + ".xml");
+					observer.saveReplayToFile(replayFilename.toString());
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(CreateGameDialog.this, lang
+					JOptionPane.showMessageDialog(null, lang
 							.getProperty("dialog_create_error_replay_msg"), lang
 							.getProperty("dialog_create_error_replay_title"),
 							JOptionPane.ERROR_MESSAGE);
