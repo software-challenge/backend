@@ -105,49 +105,33 @@ public class InformationBar extends TransparentPanel
 				"resource/game/carrots.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
-		carrots.setToolTipText(CARROTCOUNT);
-
 		maxfields.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/background.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		maxfields.setToolTipText(MOVESCOUNT);
 
 		salads.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/salad.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
-		salads.setToolTipText(SALADCOUNT);
-
 		hasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/rabbit.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		hasenjoker.setToolTipText(HASENJOKER);
 
 		enemycarrots.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/carrots.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
-		enemycarrots.setToolTipText(CARROTCOUNT);
-
 		enemymaxfields.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/background.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		enemymaxfields.setToolTipText(MOVESCOUNT);
 
 		enemysalads.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/salad.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
-		enemysalads.setToolTipText(SALADCOUNT);
-
 		enemyhasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/rabbit.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		enemyhasenjoker.setToolTipText(HASENJOKER);
 
 		setColor();
 
@@ -192,7 +176,7 @@ public class InformationBar extends TransparentPanel
 		player.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		carrots.setForeground(mycolor);
-		carrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE + 4));
+		carrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		maxfields.setForeground(mycolor);
 		maxfields.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
@@ -207,7 +191,7 @@ public class InformationBar extends TransparentPanel
 		enemy.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		enemycarrots.setForeground(enemycolor);
-		enemycarrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE + 4));
+		enemycarrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		enemymaxfields.setForeground(enemycolor);
 		enemymaxfields.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
@@ -237,15 +221,17 @@ public class InformationBar extends TransparentPanel
 	private void setMyAttributes(JLabel carrots, JLabel maxfields,
 			JLabel salads, final int car, final int sal)
 	{
-		carrots.setText("<html>" + String.valueOf(car) + "</html>");
-		maxfields.setText("<html>" + GameUtil.calculateMoveableFields(car)
+		carrots.setText("<html><u>" + CARROTCOUNT + "</u> "
+				+ String.valueOf(car) + "</html>");
+		maxfields.setText("<html><u>" + MOVESCOUNT + "</u> "
+				+ GameUtil.calculateMoveableFields(car) + "</html>");
+		salads.setText("<html><u>" + SALADCOUNT + "</u> " + String.valueOf(sal)
 				+ "</html>");
-		salads.setText("<html>" + String.valueOf(sal) + "</html>");
 	}
 
 	private void setMyHasenjoker(JLabel label, final List<Action> joker)
 	{
-		String text = "<html>";
+		String text = "<html><u>" + HASENJOKER + "</u> ";
 		String indent = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		for (Action jo : joker)
 		{

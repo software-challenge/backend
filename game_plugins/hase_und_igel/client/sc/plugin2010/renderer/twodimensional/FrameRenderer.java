@@ -106,6 +106,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
 
+		info.setPreferredSize(new Dimension(Frame.WIDTH, 220));
+
 		leftPanel.add(info, BorderLayout.NORTH);
 		leftPanel.add(bg, BorderLayout.CENTER);
 		// leftPanel.add(chat, BorderLayout.SOUTH);
@@ -194,6 +196,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		for (int i = 0; i < fbuttons.size(); i++)
 		{
+			if (player.getColor() == FigureColor.RED)
+			{
+				fbuttons.get(i).setTurnRed();
+			}
+			else
+			{
+				fbuttons.get(i).setTurnBlue();
+			}
+
 			if (fbuttons.get(i).needRepaint())
 			{
 				fbuttons.get(i).setFree();
@@ -338,6 +349,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				&& (player.getActions().size() > 0))
 		{
 
+			// TODO if the width of the window isnt enough for the buttons than
+			// only a few buttons are shown
 			List<String> answers = new LinkedList<String>();
 			if (GameUtil.isValidToPlayCard(board, player,
 					Action.TAKE_OR_DROP_CARROTS, 20))

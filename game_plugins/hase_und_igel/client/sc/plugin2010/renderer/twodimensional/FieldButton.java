@@ -40,6 +40,8 @@ public class FieldButton extends JButton
 	private boolean					occupied	= false;
 	private FieldTyp				type;
 
+	private Color					turn;
+
 	public FieldButton(final String imagefile, final int fieldNumber,
 			final FieldTyp type, final IClickObserver obs)
 	{
@@ -172,7 +174,7 @@ public class FieldButton extends JButton
 		public void mouseEntered(final MouseEvent e)
 		{
 			oldBorder = border;
-			border = createBorder(Color.RED);
+			border = createBorder(turn);
 		}
 
 		@Override
@@ -223,5 +225,15 @@ public class FieldButton extends JButton
 	public FieldTyp getType()
 	{
 		return type;
+	}
+
+	public void setTurnRed()
+	{
+		turn = Color.RED;
+	}
+
+	public void setTurnBlue()
+	{
+		turn = Color.BLUE;
 	}
 }
