@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,6 +19,9 @@ import sc.helpers.StringHelper;
 public class HelperMethods {
 
 	private static final Logger logger = LoggerFactory.getLogger(HelperMethods.class);
+
+	private static final DateFormat dateTimeFormat = new SimpleDateFormat(
+			"yyyy.MM.dd HH_mm_ss");
 
 	/**
 	 * Executes a file indicated by <code>filename</code> with the given
@@ -101,5 +107,15 @@ public class HelperMethods {
 		} else {
 			return filename;
 		}
+	}
+
+	/**
+	 * Returns the current date and time as string formatted as yyyy.MM.dd
+	 * HH_mm_ss.
+	 * 
+	 * @return current date and time
+	 */
+	public static String getCurrentDateTime() {
+		return dateTimeFormat.format(new Date());
 	}
 }

@@ -107,7 +107,9 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		btn_cancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				presFac.getLogicFacade().getObservation().cancel();//FIXME MUST call gameEnded
+				presFac.getLogicFacade().getObservation().cancel();// FIXME MUST
+																	// call
+																	// gameEnded
 				started = false;
 				btn_back.setEnabled(false);
 				btn_cancel.setEnabled(false);
@@ -116,6 +118,9 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				btn_spGame.setToolTipText(lang.getProperty("context_start"));
 				btn_spGame.setIcon(ICON_START);
 				((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
+				// update status bar
+				((StatusBar) presFac.getStatusBar()).setStatus(lang
+						.getProperty("statusbar_status_nogame"));
 			}
 		});
 

@@ -1,0 +1,35 @@
+package sc.gui.dialogs.renderer;
+
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+
+public class PositionCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
+
+	private static final Color lightGray = new Color(225, 225, 225);
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7046161718002270036L;
+
+	@Override
+	public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected, boolean hasFocus, int row, int column) {
+		
+		super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+		
+		if (isSelected) {
+			setForeground(Color.BLUE);	// visible color
+		} else {
+			setForeground(table.getForeground());
+		}
+		setBackground(lightGray);
+		
+		return this;
+	}
+
+}

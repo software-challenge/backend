@@ -1,15 +1,16 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -33,7 +34,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -41,6 +41,8 @@ import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
 import sc.gui.StatusBar;
+import sc.gui.dialogs.renderer.MyComboBoxRenderer;
+import sc.gui.dialogs.renderer.PositionCellRenderer;
 import sc.gui.stuff.KIInformation;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
@@ -156,6 +158,11 @@ public class CreateGameDialog extends JDialog {
 
 		tblPlayers = new JTable(playersModel);
 		tblPlayers.setRowHeight(25);
+		
+		// set attributes of each column
+		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(5);
+		tblPlayers.getColumnModel().getColumn(0).setCellRenderer(new PositionCellRenderer());
+		
 		// set single selection on one cell
 		tblPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		// don't let the user change the columns' order or width
@@ -302,7 +309,7 @@ public class CreateGameDialog extends JDialog {
 				for (int i = 0; i < descriptors.size(); i++) {
 					replayFilename.append("_" + descriptors.get(i).getDisplayName());
 				}
-				replayFilename.append(System.currentTimeMillis() + ".xml");
+				replayFilename.append(HelperMethods.getCurrentDateTime() + ".xml");
 				// save replay
 				try {
 					observer.saveReplayToFile(replayFilename.toString());
@@ -518,30 +525,9 @@ public class CreateGameDialog extends JDialog {
 
 		@Override
 		public boolean isCellEditable(int row, int col) {
-			return (col > 0);
+			return (0 != col) && (col != 3);
 		}
 
-	}
-
-	public class MyComboBoxRenderer extends JComboBox implements TableCellRenderer {
-		public MyComboBoxRenderer(Vector<String> items) {
-			super(items);
-		}
-
-		public Component getTableCellRendererComponent(JTable table, Object value,
-				boolean isSelected, boolean hasFocus, int row, int column) {
-			if (isSelected) {
-				super.setForeground(Color.BLUE); // visible color
-				super.setBackground(table.getSelectionBackground());
-			} else {
-				super.setForeground(table.getForeground());
-				super.setBackground(table.getBackground());
-			}
-
-			// Select the current value
-			setSelectedItem(value);
-			return this;
-		}
 	}
 
 	public class MyComboBoxEditor extends DefaultCellEditor implements ItemListener {

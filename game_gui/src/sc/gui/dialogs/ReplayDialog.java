@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
-import java.util.ResourceBundle;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -27,6 +26,7 @@ import javax.swing.border.BevelBorder;
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
+import sc.gui.StatusBar;
 import sc.guiplugin.interfaces.IObservation;
 import sc.logic.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
@@ -126,16 +126,19 @@ public class ReplayDialog extends JDialog {
 		txfReplay.setText(f.getAbsolutePath());
 	}
 
+	/**
+	 * Starts the selected replay file, closes this dialog and displays the
+	 * replay.
+	 */
 	private void startReplay() {
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 
 		String filename = txfReplay.getText();
 		File f = new File(filename);
 		if (!f.exists()) {
-			JOptionPane.showMessageDialog(this,
-					lang.getProperty("dialog_replay_error_msg"), lang
-							.getProperty("dialog_replay_error_title"),
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, lang
+					.getProperty("dialog_replay_error_msg"), lang
+					.getProperty("dialog_replay_error_title"), JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 
@@ -163,6 +166,10 @@ public class ReplayDialog extends JDialog {
 		((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin.getDescription()
 				.name(), selPlugin.getDescription().version(), null, selPlugin
 				.getPlugin().getPluginInfoText(), selPlugin.getDescription().author());
+		// update status bar
+		((StatusBar)presFac.getStatusBar()).setStatus(lang
+				.getProperty("statusbar_status_currentreplay")
+				+ " " + selPlugin.getDescription().name());
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {
