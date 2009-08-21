@@ -314,10 +314,18 @@ public class GameUtil
 		return valid;
 	}
 
-	public static boolean isValidToPlayTakeOrDropCarrots(Board b, Player p)
+	public static boolean isValidToPlayTakeOrDropCarrots(Board b, Player p, int n)
 	{
-		return !playerMustMove(b, p) && isOnRabbitField(b, p)
+		boolean valid = !playerMustMove(b, p) && isOnRabbitField(b, p)
 				&& p.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
+		
+		valid = valid && (n == 20 || n == -20 || n == 0);
+		
+		// Fix #32
+		if (n < 0)
+			valid = valid && ((p.getCarrotsAvailable() - n) >= 0);
+		
+		return valid;
 	}
 
 	public static boolean isValidToPlayEatSalad(Board b, Player p)
@@ -366,7 +374,7 @@ public class GameUtil
 					valid = valid || isValidToPlayHurryAhead(b, p);
 					break;
 				case TAKE_OR_DROP_CARROTS:
-					valid = valid || isValidToPlayTakeOrDropCarrots(b, p);
+					valid = valid || isValidToPlayTakeOrDropCarrots(b, p, 20);
 					break;
 				default:
 					throw new IllegalArgumentException("Unknown CardType " + a);
@@ -391,8 +399,7 @@ public class GameUtil
 				valid = isValidToPlayHurryAhead(b, p);
 				break;
 			case TAKE_OR_DROP_CARROTS:
-				valid = isValidToPlayTakeOrDropCarrots(b, p)
-						&& (n == 20 || n == -20 || n == 0);
+				valid = isValidToPlayTakeOrDropCarrots(b, p, n);
 				break;
 			default:
 				throw new IllegalArgumentException("Unknown CardType " + c);
