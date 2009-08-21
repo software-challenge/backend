@@ -7,7 +7,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-public class PositionCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
+public class GreyBackgroundCellRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
 
 	private static final Color lightGray = new Color(225, 225, 225);
 	

@@ -7,10 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -41,8 +38,8 @@ import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
 import sc.gui.StatusBar;
+import sc.gui.dialogs.renderer.GreyBackgroundCellRenderer;
 import sc.gui.dialogs.renderer.MyComboBoxRenderer;
-import sc.gui.dialogs.renderer.PositionCellRenderer;
 import sc.gui.stuff.KIInformation;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
@@ -116,11 +113,15 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		ckbDim = new JCheckBox(lang.getProperty("dialog_create_pref_dim"));
+		ckbDim.setToolTipText("");
+
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
 		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
+
 		txfPort = new JTextField(5);
 		txfPort.setText("" + DEFAULT_PORT);
 		txfPort.setEditable(false);
+
 		lblPort = new JLabel(lang.getProperty("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);
 		// pnlPref.add(ckbDim); TODO for future
@@ -158,11 +159,7 @@ public class CreateGameDialog extends JDialog {
 
 		tblPlayers = new JTable(playersModel);
 		tblPlayers.setRowHeight(25);
-		
-		// set attributes of each column
-		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(5);
-		tblPlayers.getColumnModel().getColumn(0).setCellRenderer(new PositionCellRenderer());
-		
+
 		// set single selection on one cell
 		tblPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		// don't let the user change the columns' order or width
@@ -171,10 +168,18 @@ public class CreateGameDialog extends JDialog {
 		// add rows (default)
 		addRows(tblPlayers);
 
+		// set attributes of each column
+		tblPlayers.getColumnModel().getColumn(0).setMinWidth(0);
+		tblPlayers.getColumnModel().getColumn(0).setMaxWidth(100);
+		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(50);
+		tblPlayers.getColumnModel().getColumn(0).setCellRenderer(
+				new GreyBackgroundCellRenderer());
 		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
 				new MyComboBoxEditor(cmbItems));
 		tblPlayers.getColumnModel().getColumn(2).setCellRenderer(
 				new MyComboBoxRenderer(cmbItems));
+		tblPlayers.getColumnModel().getColumn(3).setCellRenderer(
+				new GreyBackgroundCellRenderer());
 
 		pnlTable.add(new JScrollPane(tblPlayers));
 

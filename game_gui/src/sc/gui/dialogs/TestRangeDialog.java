@@ -82,8 +82,8 @@ public class TestRangeDialog extends JDialog {
 	private JButton[] btnclient;
 	private JPanel[] pnlclient;
 	/**
-	 * -1 indicates "no testing"<br>
-	 * 0..* indicates the completed number of tests so far, i.e. "testing"
+	 * 0 indicates "no testing"<br>
+	 * 1..* indicates the current running test, i.e. "testing"
 	 */
 	protected int curTest;
 	protected int numTest;
@@ -169,7 +169,9 @@ public class TestRangeDialog extends JDialog {
 		statTable.setCellSelectionEnabled(false);
 		// don't let the user change the columns' order or width
 		statTable.getTableHeader().setReorderingAllowed(false);
-		// statTable.getTableHeader().setResizingAllowed(false);
+		statTable.getTableHeader().setResizingAllowed(false);
+		// Disable auto resizing
+		statTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		// -----------------------------------------------------------
 		pnlTop = new JPanel();
 		pnlTop.setLayout(new BoxLayout(pnlTop, BoxLayout.PAGE_AXIS));
@@ -284,17 +286,31 @@ public class TestRangeDialog extends JDialog {
 			model.removeRow(0);
 		}
 
-		// -------------------------------------------------------------
-
+		// add columns
 		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
-		statTable.getColumnModel().getColumn(0).setPreferredWidth(15);
 		model.addColumn(lang.getProperty("dialog_test_stats_name"));
-
 		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
 		for (int i = 0; i < statColumns.size(); i++) {
 			ScoreFragment column = statColumns.get(i);
 			model.addColumn(column.getName());
-			statTable.getColumnModel().getColumn(i + 2).setPreferredWidth(20);
+		}
+
+		/*
+		 * set minimum and maximum width for each column to enable correct
+		 * resizablity
+		 */
+		statTable.getColumnModel().getColumn(0).setMinWidth(0);
+		statTable.getColumnModel().getColumn(0).setMaxWidth(100);
+		for (int i = 0; i < statColumns.size(); i++) {
+			int index = i + 2;
+			statTable.getColumnModel().getColumn(index).setMinWidth(0);
+			statTable.getColumnModel().getColumn(index).setMaxWidth(100);
+		}
+
+		// set width of columns
+		statTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+		for (int i = 0; i < statColumns.size(); i++) {
+			statTable.getColumnModel().getColumn(i + 2).setPreferredWidth(80);
 		}
 
 		// -------------------------------------------------------------
@@ -311,7 +327,9 @@ public class TestRangeDialog extends JDialog {
 			txfclient[i] = new JTextField(20);
 			final JTextField txfClient = txfclient[i];
 
-			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki") + " " + i);
+			String playerNumber = String.valueOf(i + 1);
+			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki") + " "
+					+ playerNumber);
 			lblclient[i].setLabelFor(txfclient[i]);
 
 			btnclient[i] = new JButton(lang.getProperty("dialog_test_btn_file"));
@@ -328,7 +346,7 @@ public class TestRangeDialog extends JDialog {
 			pnlclient[i].add(btnclient[i]);
 			// ------------------------------------------------
 			Vector<String> rowData = new Vector<String>(); // default
-			rowData.add(String.valueOf(i)); // set position#
+			rowData.add(playerNumber); // set position#
 			model.addRow(rowData);
 		}
 
@@ -499,7 +517,10 @@ public class TestRangeDialog extends JDialog {
 
 		List<KIInformation> KIs = new ArrayList<KIInformation>();
 
-		addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
+		// only display message after the first round
+		if (curTest > 1)
+			addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
+
 		// add slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
