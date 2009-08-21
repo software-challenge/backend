@@ -134,12 +134,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 
 		this.activePlayer = nextPlayer;
-		notifyOnNewState(getCurrentState());
-		
 		if (newTurn)
 		{
 			onNewTurn();
 		}
+		notifyOnNewState(getCurrentState());
 
 		if (checkGameOverCondition())
 		{
