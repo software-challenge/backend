@@ -305,6 +305,7 @@ public class GameUtil
 			case CARROT:
 			case POSITION_1:
 			case POSITION_2:
+			case START:
 				break;
 			default:
 				throw new IllegalStateException("Unknown Type " + type);
@@ -450,5 +451,23 @@ public class GameUtil
 			}
 		}
 		return "";
+	}
+
+	public static boolean canPlayCard(Board board, Player player)
+	{
+		boolean canPlayCard = board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT);
+		for(Action a : player.getActions()) {
+			canPlayCard = canPlayCard || isValidToPlayCard(board, player, a, 0);
+		}
+		return canPlayCard;
+	}
+
+	public static boolean canMove(Board board, Player player)
+	{
+		boolean canMove = false;
+		int maxDistance = GameUtil.calculateMoveableFields(player.getCarrotsAvailable());
+		for(int i = 1; i < maxDistance; i++) 
+			canMove = canMove || isValidToMove(board, player, i);
+		return canMove;
 	}
 }

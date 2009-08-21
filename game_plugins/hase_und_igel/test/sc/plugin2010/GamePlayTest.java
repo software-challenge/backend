@@ -224,6 +224,26 @@ public class GamePlayTest
 	}
 	
 	/**
+	 * Überprüft, ob ein Spieler eine Runde aussetzen kann.
+	 * Getestet wird:
+	 *  - 0 Karotten und das Igelfeld hinter dem Spieler ist belegt
+	 */
+	@Test
+	public void canSkip() {
+		g.start();
+		
+		int redPos = b.getNextFieldByTyp(FieldTyp.POSITION_2, red.getFieldNumber());
+		red.setFieldNumber(redPos);
+		red.setCarrotsAvailable(0);
+		
+		int bluePos = b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, red.getFieldNumber());
+		blue.setFieldNumber(bluePos);
+		
+		Move m = new Move(MoveTyp.SKIP);
+		Assert.assertTrue(b.isValid(m, red));
+	}
+	
+	/**
 	 * Überprüft die Bedingungen, unter denen ein Spieler auf den Positionsfeldern
 	 * Karotten bekommt.
 	 * @throws RescueableClientException
@@ -233,6 +253,8 @@ public class GamePlayTest
 	{
 		g.start();
 		
+		red.setCarrotsAvailable(1000);
+		blue.setCarrotsAvailable(1000);
 		int carrotsBefore = red.getCarrotsAvailable();
 		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.POSITION_1, 0));
 		int moveCosts = GameUtil.calculateCarrots(r1.getN());
@@ -240,7 +262,7 @@ public class GamePlayTest
 		
 		Assert.assertEquals(carrotsBefore-moveCosts, red.getCarrotsAvailable());
 		
-		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
+		Move b1 = new Move(MoveTyp.MOVE, b.getPreviousFieldByTyp(FieldTyp.CARROT, red.getFieldNumber()));
 		g.onAction(blue, b1);
 		
 		Assert.assertEquals(g.getActivePlayer(), red);

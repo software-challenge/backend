@@ -268,6 +268,11 @@ public class Board
 				valid = GameUtil.isValidToPlayCard(this, player,
 						move.getCard(), move.getN());
 				break;
+			case SKIP:
+				valid = !GameUtil.isValidToFallBack(this, player) || 
+					!GameUtil.canPlayCard(this, player) ||
+					 !GameUtil.canMove(this, player);
+				break;
 			default:
 				valid = false;
 				break;
