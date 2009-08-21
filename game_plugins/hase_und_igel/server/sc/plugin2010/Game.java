@@ -295,7 +295,7 @@ public class Game extends RoundBasedGameInstance<Player>
 				break;
 			case POSITION_2:
 				if (!board.isFirst(player))
-					player.changeCarrotsAvailableBy(20);
+					player.changeCarrotsAvailableBy(30);
 				break;
 			default:
 				break;
