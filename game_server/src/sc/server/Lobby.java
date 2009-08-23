@@ -1,5 +1,6 @@
 package sc.server;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,7 +49,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 		clientManager.addListener(this);
 	}
 
-	public void start()
+	public void start() throws IOException
 	{
 		gameManager.start();
 		clientManager.start();

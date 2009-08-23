@@ -89,14 +89,14 @@ public class NewClientListener implements Runnable, Closeable
 		}
 	}
 
-	public void start()
+	public void start() throws IOException
 	{
 		startSocketListener();
 		ServiceManager.createService(this.getClass().getSimpleName(), this)
 				.start();
 	}
 
-	private void startSocketListener()
+	private void startSocketListener() throws IOException
 	{
 		int port = Configuration.getPort();
 
@@ -110,7 +110,7 @@ public class NewClientListener implements Runnable, Closeable
 		}
 		catch (IOException e)
 		{
-			throw new RuntimeException(
+			throw new IOException(
 					"Could not start server on port " + port, e);
 		}
 	}

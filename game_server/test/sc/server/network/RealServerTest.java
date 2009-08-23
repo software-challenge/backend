@@ -26,7 +26,7 @@ public abstract class RealServerTest
 	protected GamePluginManager	pluginMgr;
 
 	@Before
-	public void setup() throws PluginLoaderException
+	public void setup() throws IOException, PluginLoaderException
 	{
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");

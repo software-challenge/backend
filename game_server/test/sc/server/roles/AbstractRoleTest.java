@@ -17,7 +17,7 @@ import sc.server.plugins.TestPlugin;
 public abstract class AbstractRoleTest
 {
 	@Before
-	public void setup() throws PluginLoaderException
+	public void setup() throws IOException, PluginLoaderException
 	{
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");

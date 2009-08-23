@@ -5,6 +5,7 @@ import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +15,9 @@ public final class Application
 	private static final Logger	logger	= LoggerFactory
 												.getLogger(Application.class);
 
-	public static void main(String[] params) throws InterruptedException,
-			IllegalOptionValueException, UnknownOptionException
+	public static void main(String[] params) throws IOException,
+			InterruptedException, IllegalOptionValueException,
+			UnknownOptionException
 	{
 		parseArguments(params);
 
@@ -44,7 +46,7 @@ public final class Application
 	 * @param port
 	 * @return the lobby
 	 */
-	public static Lobby startServer(final Integer port)
+	public static Lobby startServer(final Integer port) throws IOException
 	{
 		logger.info("Starting the Server on port {}", port);
 		Configuration.set(Configuration.PORT_KEY, port.toString());

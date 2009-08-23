@@ -78,7 +78,7 @@ public class ClientManager implements Runnable
 	/**
 	 * Starts the ClientManager in it's own daemon thread.
 	 */
-	public void start()
+	public void start() throws IOException
 	{
 		clientListener.start();
 		ServiceManager.createService(this.getClass().getSimpleName(), this)

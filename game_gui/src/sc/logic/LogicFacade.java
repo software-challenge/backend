@@ -1,5 +1,6 @@
 package sc.logic;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -127,7 +128,7 @@ public class LogicFacade implements ILogicFacade {
 	}
 
 	@Override
-	public void startServer(int port) {
+	public void startServer(int port) throws IOException {
 		if (null != server) {
 			this.stopServer();
 		}

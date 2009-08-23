@@ -1,5 +1,6 @@
 package sc.logic;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -34,7 +35,7 @@ public interface ILogicFacade {
 
 	IObservation getObservation();
 
-	void startServer(int port);
+	void startServer(int port) throws IOException;
 
 	void stopServer();
 
