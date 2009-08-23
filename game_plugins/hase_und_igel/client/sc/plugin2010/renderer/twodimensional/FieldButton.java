@@ -127,12 +127,12 @@ public class FieldButton extends JButton
 	{
 		return BorderFactory.createCompoundBorder(BorderFactory
 				.createEtchedBorder(EtchedBorder.LOWERED, new Color(col
-						.getRed(), col.getGreen(), col.getBlue(), 150),
+						.getRed(), col.getGreen(), col.getBlue(), 160),
 						new Color(col.getRed(), col.getGreen(), col.getBlue(),
-								70)), BorderFactory.createEtchedBorder(
+								80)), BorderFactory.createEtchedBorder(
 				EtchedBorder.LOWERED, new Color(col.getRed(), col.getGreen(),
-						col.getBlue(), 70), new Color(col.getRed(), col
-						.getGreen(), col.getBlue(), 150)));
+						col.getBlue(), 80), new Color(col.getRed(), col
+						.getGreen(), col.getBlue(), 160)));
 	}
 
 	public void setReachable(final boolean reachable, final boolean red)

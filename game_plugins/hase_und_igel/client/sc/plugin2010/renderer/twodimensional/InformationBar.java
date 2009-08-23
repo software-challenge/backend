@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -26,7 +27,7 @@ import sc.plugin2010.renderer.RendererUtil;
  * 
  */
 @SuppressWarnings("serial")
-public class InformationBar extends TransparentPanel
+public class InformationBar extends BackgroundPane
 {
 
 	private final String	CARROTCOUNT		= "Karottenanzahl:";
@@ -61,8 +62,14 @@ public class InformationBar extends TransparentPanel
 	private final Image		red				= RendererUtil
 													.getImage("resource/game/red.png");
 
+	private BackgroundPane	left;
+	private BackgroundPane	center;
+	private BackgroundPane	right;
+
 	public InformationBar()
 	{
+		super();
+
 		setDoubleBuffered(true);
 
 		setBorder(BorderFactory.createBevelBorder(3));
@@ -71,19 +78,15 @@ public class InformationBar extends TransparentPanel
 		setLayout(new GridLayout(1, 1));
 
 		Color light_black = new Color(0, 0, 0, 180);
-		Color bg = new Color(255, 255, 255, 120);
 
-		final TransparentPanel left = new TransparentPanel();
+		left = new BackgroundPane();
 		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-		left.setBackground(bg);
 
-		final TransparentPanel center = new TransparentPanel();
+		center = new BackgroundPane();
 		center.setLayout(new BoxLayout(center, BoxLayout.Y_AXIS));
-		center.setBackground(bg);
 
-		final TransparentPanel right = new TransparentPanel();
+		right = new BackgroundPane();
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
-		right.setBackground(bg);
 
 		player.setHorizontalAlignment(JLabel.LEFT);
 		carrots.setHorizontalAlignment(JLabel.LEFT);
@@ -162,6 +165,37 @@ public class InformationBar extends TransparentPanel
 		this.add(right);
 
 		setVisible(true);
+	}
+
+	@Override
+	public void setBackground(Image img)
+	{
+		int width = img.getWidth(this);
+		int height = img.getHeight(this);
+
+		int partWidth = width / 3;
+
+		Image leftImg = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Image centerImg = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Image rightImg = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+
+		leftImg.getGraphics().drawImage(img, 0, 0, width, height, 0, 0,
+				partWidth, height, this);
+
+		centerImg.getGraphics().drawImage(img, 0, 0, width, height, partWidth,
+				0, partWidth * 2, height, this);
+
+		rightImg.getGraphics().drawImage(img, 0, 0, width, height,
+				partWidth * 2, 0, partWidth * 3, height, this);
+
+		left.setBackground(leftImg);
+		center.setBackground(centerImg);
+		right.setBackground(rightImg);
 	}
 
 	private void setColor()

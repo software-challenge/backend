@@ -4,8 +4,9 @@
 package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,6 +27,7 @@ import sc.plugin2010.MoveTyp;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.IRenderer;
+import sc.plugin2010.renderer.RendererUtil;
 import sc.shared.GameResult;
 
 /**
@@ -38,10 +40,14 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	// GUI Components
 	private InformationBar			info;
 	private ChatBar					chat;
+	private BackgroundPane			bg;
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
 	private final HumanGameHandler	handler;
 	private QuestionPanel			qPanel;
+
+	private final Image				backGroundImage	= RendererUtil
+															.getImage("resource/game/background.png");
 
 	// local instances of current players and board
 	private Player					player;
@@ -82,8 +88,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		addMouseListener(new ClickRefresher());
 
-		final TransparentPanel bg = new TransparentPanel();
-		int scale = Math.min(bg.getWidth(), bg.getHeight());
+		bg = new BackgroundPane();
+		int scale = Math.min(getWidth(), getHeight());
 		bg.setPreferredSize(new Dimension(scale, scale));
 
 		for (int i = 0; i < 65; i++)
@@ -101,12 +107,12 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		// chat = new ChatBar();
 		action = new ActionBar();
 
-		JPanel leftPanel = new BackgoundPane("resource/game/background.png");
+		JPanel leftPanel = new JPanel();
 
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
 
-		info.setPreferredSize(new Dimension(Frame.WIDTH, 220));
+		info.setPreferredSize(new Dimension(getWidth(), 220));
 
 		leftPanel.add(info, BorderLayout.NORTH);
 		leftPanel.add(bg, BorderLayout.CENTER);
@@ -114,19 +120,78 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		qPanel = new QuestionPanel(this);
 		leftPanel.add(qPanel, BorderLayout.AFTER_LAST_LINE);
-		qPanel.setPreferredSize(new Dimension(Frame.WIDTH, 50));
+		qPanel.setPreferredSize(new Dimension(getWidth(), 60));
 
 		final BorderLayout framelayout = new BorderLayout();
 		setLayout(framelayout);
 
 		this.add(leftPanel, BorderLayout.CENTER);
-		action.setPreferredSize(new Dimension(200, getHeight() - 100));
+		action.setPreferredSize(new Dimension(200, getHeight()));
 		this.add(action, BorderLayout.EAST);
 
 		// chat.addOtherMessage("Chat: ");
 		// chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
 		setVisible(true);
+
+		divideBackground(new Dimension(1024, 1024), new Color(255, 255, 255,
+				120));
+	}
+
+	private void divideBackground(Dimension size, Color transparentColor)
+	{
+		final int UPPERHEIGHT = 220;
+		final int LOWERHEIGHT = 60;
+		int CENTERHEIGHT;
+
+		if (size.height - UPPERHEIGHT - LOWERHEIGHT > 0)
+		{
+			CENTERHEIGHT = size.height - UPPERHEIGHT - LOWERHEIGHT;
+		}
+		else
+		{
+			CENTERHEIGHT = 0;
+		}
+
+		setVisible(true);
+		BufferedImage wholeBackground = new BufferedImage(size.width,
+				size.height, BufferedImage.TYPE_INT_ARGB);
+
+		wholeBackground.getGraphics().drawImage(backGroundImage, 0, 0,
+				size.width, size.height, 0, 0, backGroundImage.getWidth(this),
+				backGroundImage.getHeight(this), this);
+
+		Graphics2D g2d = wholeBackground.createGraphics();
+
+		g2d.setColor(transparentColor);
+		g2d.fillRect(0, 0, size.width, UPPERHEIGHT);
+		g2d.fillRect(0, size.height - LOWERHEIGHT, size.width, size.height);
+		// wholeBackground.getGraphics().fillRect(0, size.height - LOWERHEIGHT,
+		// size.width, LOWERHEIGHT);
+
+		Image upper = new BufferedImage(size.width, UPPERHEIGHT,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Image center = new BufferedImage(size.width, CENTERHEIGHT,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Image lower = new BufferedImage(size.width, LOWERHEIGHT,
+				BufferedImage.TYPE_INT_ARGB);
+
+		upper.getGraphics().drawImage(wholeBackground, 0, 0, size.width,
+				UPPERHEIGHT, 0, 0, size.width, UPPERHEIGHT, this);
+
+		center.getGraphics().drawImage(wholeBackground, 0, 0, size.width,
+				CENTERHEIGHT, 0, UPPERHEIGHT, size.width,
+				UPPERHEIGHT + CENTERHEIGHT, this);
+
+		lower.getGraphics().drawImage(wholeBackground, 0, 0, size.width,
+				LOWERHEIGHT, 0, size.height - LOWERHEIGHT, size.width,
+				size.height, this);
+
+		info.setBackground(upper);
+		bg.setBackground(center);
+		qPanel.setBackground(lower);
 	}
 
 	private int printHistroyTillNewTurn(final Player curPlayer, int i,
@@ -348,9 +413,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		else if ((board.getTypeAt(player.getFieldNumber()) == FieldTyp.RABBIT)
 				&& (player.getActions().size() > 0))
 		{
-
-			// TODO if the width of the window isnt enough for the buttons than
-			// only a few buttons are shown
 			List<String> answers = new LinkedList<String>();
 			if (GameUtil.isValidToPlayCard(board, player,
 					Action.TAKE_OR_DROP_CARROTS, 20))

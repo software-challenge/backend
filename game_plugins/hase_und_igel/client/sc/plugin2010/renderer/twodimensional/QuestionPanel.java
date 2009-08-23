@@ -4,45 +4,48 @@
 package sc.plugin2010.renderer.twodimensional;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 /**
  * @author ffi
  * 
  */
 @SuppressWarnings("serial")
-public class QuestionPanel extends JPanel
+public class QuestionPanel extends BackgroundPane
 {
 	private FrameRenderer		obs;
-	private String				type		= "";
+	private String				type				= "";
 	private JLabel				textLabel;
-	private TransparentPanel	buttonPanel;
+	private BackgroundPane		buttonPanel;
+	private BackgroundPane		textPanel;
+	private final List<JButton>	answerButtons		= new ArrayList<JButton>();
+	private Image				totalBackgroundImg;
+	private int					displayedCompCount	= 1;
 
-	private final String		FONTTYPE	= "New Courier";
-	private final int			SIZE		= 12;
+	private final String		FONTTYPE			= "New Courier";
+	private final int			SIZE				= 12;
 
 	public QuestionPanel(FrameRenderer obs)
 	{
-
-		Color bg = new Color(255, 255, 255, 120);
-
-		setBackground(bg);
-
 		this.obs = obs;
 
-		buttonPanel = new TransparentPanel();
+		textPanel = new BackgroundPane();
+		buttonPanel = new BackgroundPane();
 
+		FlowLayout textLayout = new FlowLayout();
 		FlowLayout buttonLayout = new FlowLayout();
 
+		textPanel.setLayout(textLayout);
 		buttonPanel.setLayout(buttonLayout);
 
 		BorderLayout dialogLayout = new BorderLayout();
@@ -52,15 +55,37 @@ public class QuestionPanel extends JPanel
 
 		textLabel.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
-		this.add(textLabel, BorderLayout.CENTER);
-		this.add(buttonPanel, BorderLayout.SOUTH);
-
-		// setSize(100, 200);
-
-		// setMinimumSize(new Dimension(100, 50));
-		// setPreferredSize(new Dimension(100, 50));
+		textPanel.add(textLabel);
 
 		setVisible(true);
+	}
+
+	@Override
+	public void setBackground(Image img)
+	{
+		super.setBackground(img);
+
+		totalBackgroundImg = img;
+
+		int width = img.getWidth(this);
+		int height = img.getHeight(this);
+
+		int partHeight = height / displayedCompCount;
+
+		Image textImg = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Image button1Img = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_ARGB);
+
+		textImg.getGraphics().drawImage(img, 0, 0, width, height, 0, 0, width,
+				partHeight, this);
+
+		button1Img.getGraphics().drawImage(img, 0, 0, width, height, 0,
+				partHeight, width, partHeight * 2, this);
+
+		textPanel.setBackground(textImg);
+		buttonPanel.setBackground(button1Img);
 	}
 
 	public void showQuestion(String question, List<String> answers, String type)
@@ -70,14 +95,26 @@ public class QuestionPanel extends JPanel
 
 		AnswerListener awListener = new AnswerListener();
 
+		answerButtons.clear();
+
 		// add Buttons with answers
 		for (int i = 0; i < answers.size(); i++)
 		{
-			JButton jbut = new JButton(answers.get(i));
-			jbut.setName(answers.get(i));
-			jbut.addMouseListener(awListener);
-			buttonPanel.add(jbut);
+			answerButtons.add(new JButton(answers.get(i)));
+			answerButtons.get(i).setName(answers.get(i));
+			answerButtons.get(i).addMouseListener(awListener);
 		}
+
+		for (int i = 0; i < answerButtons.size(); i++)
+		{
+			buttonPanel.add(answerButtons.get(i));
+		}
+
+		displayedCompCount = 2;
+		this.add(textPanel, BorderLayout.NORTH);
+		this.add(buttonPanel, BorderLayout.CENTER);
+
+		setBackground(totalBackgroundImg);
 
 		this.type = type;
 	}
@@ -86,6 +123,11 @@ public class QuestionPanel extends JPanel
 	{
 		textLabel.setVisible(false);
 		buttonPanel.removeAll();
+
+		removeAll();
+
+		setBackground(totalBackgroundImg);
+		displayedCompCount = 1;
 	}
 
 	private class AnswerListener extends MouseAdapter
@@ -96,7 +138,6 @@ public class QuestionPanel extends JPanel
 			if (e.getButton() == MouseEvent.BUTTON1)
 			{
 				obs.answerQuestion(e.getComponent().getName(), type);
-				// dispose();
 			}
 		}
 	}
