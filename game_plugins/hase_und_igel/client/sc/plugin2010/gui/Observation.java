@@ -80,6 +80,11 @@ public class Observation implements IObservation, IUpdateListener,
 	public void next()
 	{
 		conGame.next();
+		showActivePlayerIfNecessary();
+	}
+
+	private void showActivePlayerIfNecessary()
+	{
 		if (!conGame.hasNext())
 		{
 			if (RenderFacade.getInstance().getActivePlayer() != null)
@@ -94,7 +99,6 @@ public class Observation implements IObservation, IUpdateListener,
 	public void pause()
 	{
 		conGame.pause();
-		// RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 	}
 
 	@Override
@@ -228,5 +232,30 @@ public class Observation implements IObservation, IUpdateListener,
 	public boolean isPaused()
 	{
 		return conGame.isPaused();
+	}
+	
+	@Override
+	public boolean isAtEnd()
+	{
+		return conGame.isAtEnd();
+	}
+	
+	@Override
+	public boolean isAtStart()
+	{
+		return conGame.isAtStart();
+	}
+
+	@Override
+	public void goToFirst()
+	{
+		conGame.goToFirst();
+	}
+
+	@Override
+	public void goToLast()
+	{
+		conGame.goToLast();
+		showActivePlayerIfNecessary();
 	}
 }

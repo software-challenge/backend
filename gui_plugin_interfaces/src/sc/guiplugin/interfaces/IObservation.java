@@ -31,6 +31,10 @@ public interface IObservation {
 	boolean hasNext();
 
 	boolean hasPrevious();
+	
+	boolean isAtEnd();
+	
+	boolean isAtStart();
 
 	/**
 	 * Saves the replay of the last ended game to the given
@@ -64,4 +68,8 @@ public interface IObservation {
 	void removeGameEndedListener(IGameEndedListener listener);
 
 	boolean isPaused();
+
+	void goToFirst();
+
+	void goToLast();
 }

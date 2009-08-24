@@ -20,5 +20,11 @@ public interface IControllableGame extends IPollsUpdates
 
 	public Object getCurrentState();
 
-	public boolean atEnd();
+	public boolean isAtEnd();
+
+	public boolean isAtStart();
+
+	public void goToFirst();
+
+	public void goToLast();
 }

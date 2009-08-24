@@ -68,7 +68,7 @@ public class ControllingClient extends ObservingClient implements
 	@Override
 	public void next()
 	{
-		if (atEnd())
+		if (isAtEnd())
 		{
 			this.pauseHitReceived = false;
 
@@ -90,7 +90,7 @@ public class ControllingClient extends ObservingClient implements
 			return super.hasNext();
 		}
 
-		if (isPaused() && atEnd())
+		if (isPaused() && isAtEnd())
 		{
 			return this.pauseHitReceived;
 		}

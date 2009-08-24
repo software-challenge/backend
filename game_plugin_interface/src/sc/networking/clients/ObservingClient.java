@@ -166,8 +166,15 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 		return this.history.get(this.position);
 	}
+	
+	@Override
+	public boolean isAtStart()
+	{
+		return this.getPosition() == 0;
+	}
 
-	public boolean atEnd()
+	@Override
+	public boolean isAtEnd()
 	{
 		return this.getPosition() >= this.history.size() - 1;
 	}
@@ -215,5 +222,17 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public void cancel()
 	{
 		// TODO:
+	}
+
+	@Override
+	public void goToFirst()
+	{
+		this.setPosition(0);
+	}
+
+	@Override
+	public void goToLast()
+	{
+		this.setPosition(getHistory().size() - 1);	
 	}
 }
