@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.protocol.MoveRequest;
-import sc.shared.PlayerScore;
-
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 

@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescueableClientException;
-import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.server.ServiceManager;
 import sc.server.network.Client;
@@ -39,8 +38,8 @@ public class GameRoomManager implements Runnable
 
 	public GameRoomManager()
 	{
-		gamePluginManager.reload();
-		gamePluginManager.activateAllPlugins(this.pluginApi);
+		this.gamePluginManager.reload();
+		this.gamePluginManager.activateAllPlugins(this.pluginApi);
 	}
 
 	/**
@@ -116,11 +115,11 @@ public class GameRoomManager implements Runnable
 
 	public void start()
 	{
-		if (serviceThread == null)
+		if (this.serviceThread == null)
 		{
-			serviceThread = ServiceManager.createService(this.getClass()
+			this.serviceThread = ServiceManager.createService(this.getClass()
 					.getSimpleName(), this);
-			serviceThread.start();
+			this.serviceThread.start();
 		}
 	}
 
@@ -134,9 +133,9 @@ public class GameRoomManager implements Runnable
 
 	public void close()
 	{
-		if (serviceThread != null)
+		if (this.serviceThread != null)
 		{
-			serviceThread.interrupt();
+			this.serviceThread.interrupt();
 		}
 	}
 

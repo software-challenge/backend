@@ -6,7 +6,6 @@ import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -54,7 +53,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 		}
 
 		logger.info("Plugin-Cache reloaded. {} plugins available.",
-				availablePlugins.size());
+				this.availablePlugins.size());
 	}
 
 	private void unload()

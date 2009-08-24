@@ -1,9 +1,6 @@
 package sc.server.network;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.concurrent.TimeUnit;
-
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -11,13 +8,10 @@ import org.junit.Test;
 import sc.helpers.Generator;
 import sc.networking.clients.LobbyClient;
 import sc.protocol.helpers.RequestResult;
-import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.server.Configuration;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
-
-import com.thoughtworks.xstream.XStream;
 
 public class SampleLibraryTest extends RealServerTest
 {
@@ -28,14 +22,14 @@ public class SampleLibraryTest extends RealServerTest
 		public TestLobbyClient(String gameType, String host, int port)
 				throws IOException
 		{
-			client = new LobbyClient(Configuration.getXStream(), null, host,
+			this.client = new LobbyClient(Configuration.getXStream(), null, host,
 					port);
-			client.start();
+			this.client.start();
 		}
 
 		public LobbyClient getClient()
 		{
-			return client;
+			return this.client;
 		}
 	}
 

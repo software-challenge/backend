@@ -3,20 +3,12 @@ package sc.server.network;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
 import sc.helpers.Generator;
 import sc.networking.clients.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
-import sc.server.Configuration;
-import sc.server.Lobby;
-import sc.server.gaming.GameRoomManager;
 import sc.server.helpers.TestHelper;
-import sc.server.plugins.GamePluginManager;
-import sc.server.plugins.PluginLoaderException;
 import sc.server.plugins.TestPlugin;
 
 public class ConnectionTest extends RealServerTest
@@ -37,7 +29,7 @@ public class ConnectionTest extends RealServerTest
 			@Override
 			public Integer operate()
 			{
-				return lobby.getGameManager().getGames().size();
+				return ConnectionTest.this.lobby.getGameManager().getGames().size();
 			}
 		}, 1, TimeUnit.SECONDS);
 	}
@@ -56,7 +48,7 @@ public class ConnectionTest extends RealServerTest
 					@Override
 					public DisconnectCause operate()
 					{
-						return lobby.getClientManager().clients.iterator()
+						return ConnectionTest.this.lobby.getClientManager().clients.iterator()
 								.next().getDisconnectCause();
 					}
 				}, 1, TimeUnit.SECONDS);
@@ -74,7 +66,7 @@ public class ConnectionTest extends RealServerTest
 			@Override
 			public Integer operate()
 			{
-				return lobby.getClientManager().clients.size();
+				return ConnectionTest.this.lobby.getClientManager().clients.size();
 			}
 		}, 1, TimeUnit.SECONDS);
 
@@ -87,7 +79,7 @@ public class ConnectionTest extends RealServerTest
 					@Override
 					public DisconnectCause operate()
 					{
-						return lobby.getClientManager().clients.iterator()
+						return ConnectionTest.this.lobby.getClientManager().clients.iterator()
 								.next().getDisconnectCause();
 					}
 				}, 1, TimeUnit.SECONDS);

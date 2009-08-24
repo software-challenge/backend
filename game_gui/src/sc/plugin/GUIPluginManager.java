@@ -9,7 +9,6 @@ import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.logic.GUIConfiguration;
 import sc.server.Configuration;
-import sc.server.gaming.GamePluginApi;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.PluginLoaderException;
 import sc.server.plugins.PluginManager;

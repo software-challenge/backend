@@ -5,7 +5,6 @@ import sc.plugin2010.FieldTyp;
 import sc.plugin2010.GameUtil;
 import sc.plugin2010.Move;
 import sc.plugin2010.MoveTyp;
-import sc.plugin2010.Player;
 
 /**
  * Eine Werkzeug-Klasse, um nützliche und häufig gebrauchte Funktionen zur

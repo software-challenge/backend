@@ -1,9 +1,6 @@
 package sc.server.plugins;
 
-import java.util.Collection;
-
 import sc.api.plugins.exceptions.RescueableClientException;
-import sc.helpers.CollectionHelper;
 import sc.helpers.StringHelper;
 
 public class UnknownGameTypeException extends RescueableClientException
@@ -25,7 +22,7 @@ public class UnknownGameTypeException extends RescueableClientException
 	public String getMessage()
 	{
 		return "Unknown GameType UUID: " + super.getMessage() + " (available: "
-				+ StringHelper.join(availableUUIDs, ",") + ")";
+				+ StringHelper.join(this.availableUUIDs, ",") + ")";
 	}
 
 }

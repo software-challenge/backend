@@ -14,7 +14,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 
 	public TestGame()
 	{
-		state.setController(this);
+		this.state.setController(this);
 	}
 
 	@Override
@@ -25,30 +25,30 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		{
 			int newSecret = ((TestMove) data).value;
 
-			if (fromPlayer == players.get(0))
+			if (fromPlayer == this.players.get(0))
 			{
-				state.secret0 = newSecret;
+				this.state.secret0 = newSecret;
 			}
-			else if (fromPlayer == players.get(1))
+			else if (fromPlayer == this.players.get(1))
 			{
-				state.secret1 = newSecret;
+				this.state.secret1 = newSecret;
 			}
 			else
 			{
 				throw new RuntimeException("Unknown Player");
 			}
 		}
-		state.round++;
+		this.state.round++;
 		next();
 	}
 
 	@Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException
 	{
-		if (players.size() < 2)
+		if (this.players.size() < 2)
 		{
 			TestPlayer player = new TestPlayer();
-			players.add(player);
+			this.players.add(player);
 			return player;
 		}
 		else

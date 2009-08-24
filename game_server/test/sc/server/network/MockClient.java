@@ -39,13 +39,13 @@ public class MockClient extends Client
 	{
 		super.send(packet);
 
-		Object parsedPacket = xStream.fromXML(xStream.toXML(packet));
-		outgoingMessages.add(parsedPacket);
+		Object parsedPacket = this.xStream.fromXML(this.xStream.toXML(packet));
+		this.outgoingMessages.add(parsedPacket);
 	}
 
 	public Object popMessage()
 	{
-		return outgoingMessages.poll();
+		return this.outgoingMessages.poll();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -113,11 +113,11 @@ public class MockClient extends Client
 
 	public Object receive() throws InterruptedException
 	{
-		while (object == null)
+		while (this.object == null)
 		{
 			Thread.sleep(10);
 		}
 
-		return object;
+		return this.object;
 	}
 }

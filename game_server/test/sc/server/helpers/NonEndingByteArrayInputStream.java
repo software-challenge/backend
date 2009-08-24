@@ -11,12 +11,12 @@ public class NonEndingByteArrayInputStream extends InputStream
 
 	public NonEndingByteArrayInputStream(byte[] buf)
 	{
-		byteArray = new ByteArrayInputStream(buf);
+		this.byteArray = new ByteArrayInputStream(buf);
 	}
 
 	private void waitForever() throws IOException
 	{
-		synchronized (hold)
+		synchronized (this.hold)
 		{
 			try
 			{
@@ -31,7 +31,7 @@ public class NonEndingByteArrayInputStream extends InputStream
 
 	public synchronized int read(byte b[], int off, int len) throws IOException
 	{
-		int result = byteArray.read(b, off, len);
+		int result = this.byteArray.read(b, off, len);
 		if(result < 0)
 		{
 			waitForever();
@@ -42,31 +42,31 @@ public class NonEndingByteArrayInputStream extends InputStream
 	@Override
 	public synchronized void mark(int readlimit)
 	{
-		byteArray.mark(readlimit);
+		this.byteArray.mark(readlimit);
 	}
 	
 	@Override
 	public void close() throws IOException
 	{
-		byteArray.close();
+		this.byteArray.close();
 	}
 	
 	@Override
 	public long skip(long n) throws IOException
 	{
-		return byteArray.skip(n);
+		return this.byteArray.skip(n);
 	}
 	
 	@Override
 	public boolean markSupported()
 	{
-		return byteArray.markSupported();
+		return this.byteArray.markSupported();
 	}
 	
 	@Override
 	public int read(byte[] b) throws IOException
 	{
-		int result = byteArray.read(b);
+		int result = this.byteArray.read(b);
 		if(result < 0)
 		{
 			waitForever();
@@ -77,20 +77,20 @@ public class NonEndingByteArrayInputStream extends InputStream
 	@Override
 	public synchronized void reset() throws IOException
 	{
-		byteArray.reset();
+		this.byteArray.reset();
 	}
 	
 
 	@Override
 	public int available() throws IOException
 	{
-		return Math.max(0, byteArray.available());
+		return Math.max(0, this.byteArray.available());
 	}
 
 	@Override
 	public int read() throws IOException
 	{
-		int result = byteArray.read();
+		int result = this.byteArray.read();
 		if (result < 0)
 		{
 			waitForever();

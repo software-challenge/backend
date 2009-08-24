@@ -14,7 +14,6 @@ import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.RoomPacket;
 import sc.server.Configuration;
 
 import com.thoughtworks.xstream.XStream;
@@ -57,7 +56,7 @@ public class Client extends XStreamClient
 
 	public boolean isZombie()
 	{
-		return zombie;
+		return this.zombie;
 	}
 
 	@Override
@@ -77,7 +76,7 @@ public class Client extends XStreamClient
 
 		PacketCallback callback = new PacketCallback(packet);
 
-		for (IClientListener listener : clientListeners)
+		for (IClientListener listener : this.clientListeners)
 		{
 			try
 			{
@@ -105,7 +104,7 @@ public class Client extends XStreamClient
 
 	private void notifyOnDisconnect()
 	{
-		for (IClientListener listener : clientListeners)
+		for (IClientListener listener : this.clientListeners)
 		{
 			listener.onClientDisconnected(this);
 		}
@@ -127,7 +126,7 @@ public class Client extends XStreamClient
 	 */
 	public boolean isAdministrator()
 	{
-		for (IClientRole role : roles)
+		for (IClientRole role : this.roles)
 		{
 			if (role instanceof AdministratorRole)
 			{

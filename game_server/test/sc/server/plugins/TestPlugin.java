@@ -1,7 +1,5 @@
 package sc.server.plugins;
 
-import org.slf4j.Logger;
-
 import edu.cau.plugins.PluginDescriptor;
 
 import sc.api.plugins.IGameInstance;

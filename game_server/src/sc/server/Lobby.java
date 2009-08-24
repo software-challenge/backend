@@ -1,13 +1,9 @@
 package sc.server;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.CancelRequest;
@@ -19,11 +15,9 @@ import sc.protocol.requests.ObservationRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.requests.StepRequest;
-import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.RoomPacket;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
-import sc.server.gaming.PlayerSlot;
 import sc.server.gaming.ReservationManager;
 import sc.server.network.Client;
 import sc.server.network.ClientManager;
@@ -46,13 +40,13 @@ public class Lobby implements IClientManagerListener, IClientListener
 
 	public Lobby()
 	{
-		clientManager.addListener(this);
+		this.clientManager.addListener(this);
 	}
 
 	public void start() throws IOException
 	{
-		gameManager.start();
-		clientManager.start();
+		this.gameManager.start();
+		this.clientManager.start();
 	}
 
 	@Override
@@ -65,7 +59,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onClientDisconnected(Client source)
 	{
-		logger.info("{} disconnected.", source);
+		this.logger.info("{} disconnected.", source);
 	}
 
 	@Override
@@ -86,7 +80,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 			}
 			else if (packet instanceof JoinRoomRequest)
 			{
-				gameManager.joinOrCreateGame(source, ((JoinRoomRequest) packet)
+				this.gameManager.joinOrCreateGame(source, ((JoinRoomRequest) packet)
 						.getGameType());
 			}
 			else if (packet instanceof AuthenticateRequest)
@@ -97,7 +91,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 			else if (packet instanceof PrepareGameRequest)
 			{
 				PrepareGameRequest prepared = (PrepareGameRequest) packet;
-				source.send(gameManager.prepareGame(prepared.getGameType(),
+				source.send(this.gameManager.prepareGame(prepared.getGameType(),
 						prepared.getPlayerCount(), prepared.getSlotDescriptors()));
 			}
 			else if (packet instanceof FreeReservationRequest)
@@ -108,7 +102,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 			else if (packet instanceof RoomPacket)
 			{
 				RoomPacket casted = (RoomPacket) packet;
-				GameRoom room = gameManager.findRoom(casted.getRoomId());
+				GameRoom room = this.gameManager.findRoom(casted.getRoomId());
 				room.onEvent(source, casted.getData());
 
 			}
@@ -116,25 +110,25 @@ public class Lobby implements IClientManagerListener, IClientListener
 			{
 				// TODO: check permissions
 				ObservationRequest observe = (ObservationRequest) packet;
-				GameRoom room = gameManager.findRoom(observe.getGameId());
+				GameRoom room = this.gameManager.findRoom(observe.getGameId());
 				room.addObserver(source);
 			}
 			else if (packet instanceof PauseGameRequest)
 			{
 				PauseGameRequest pause = (PauseGameRequest) packet;
-				GameRoom room = gameManager.findRoom(pause.roomId);
+				GameRoom room = this.gameManager.findRoom(pause.roomId);
 				room.pause(pause.pause);
 			}
 			else if (packet instanceof StepRequest)
 			{
 				StepRequest pause = (StepRequest) packet;
-				GameRoom room = gameManager.findRoom(pause.roomId);
+				GameRoom room = this.gameManager.findRoom(pause.roomId);
 				room.step();
 			}
 			else if (packet instanceof CancelRequest)
 			{
 				CancelRequest cancel = (CancelRequest) packet;
-				GameRoom room = gameManager.findRoom(cancel.roomId);
+				GameRoom room = this.gameManager.findRoom(cancel.roomId);
 				room.cancel();
 			}
 			else
@@ -149,8 +143,8 @@ public class Lobby implements IClientManagerListener, IClientListener
 
 	public void close()
 	{
-		clientManager.close();
-		gameManager.close();
+		this.clientManager.close();
+		this.gameManager.close();
 	}
 
 	public GameRoomManager getGameManager()

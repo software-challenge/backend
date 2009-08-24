@@ -24,12 +24,12 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 
 	public PluginType getPlugin()
 	{
-		return instance;
+		return this.instance;
 	}
 
 	public PluginDescriptor getDescription()
 	{
-		return description;
+		return this.description;
 	}
 
 	public void load(HostType host) throws PluginLoaderException
@@ -47,7 +47,7 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 	{
 		try
 		{
-			Class<? extends PluginType> castedDefintion = uncheckedDefinitionCast(definition);
+			Class<? extends PluginType> castedDefintion = uncheckedDefinitionCast(this.definition);
 			this.instance = castedDefintion.newInstance();
 		}
 		catch (IllegalAccessException e)
@@ -58,7 +58,7 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 		{
 			throw new PluginLoaderException(
 					"Could not instanciate the plugin ("
-							+ definition.getCanonicalName()
+							+ this.definition.getCanonicalName()
 							+ "). "
 							+ "Plugin must be a class with a public parameterless constructor and must not be nested.",
 					e);

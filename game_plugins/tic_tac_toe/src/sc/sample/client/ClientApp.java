@@ -1,18 +1,14 @@
 package sc.sample.client;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
-import javax.security.auth.login.Configuration;
-
 import sc.api.plugins.host.ReplayBuilder;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.LobbyClient;
-import sc.networking.clients.ObservingClient;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.sample.protocol.ProtocolDefinition;

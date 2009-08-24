@@ -1,7 +1,5 @@
 package sc.framework.plugins;
 
-import javax.rmi.CORBA.Tie;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

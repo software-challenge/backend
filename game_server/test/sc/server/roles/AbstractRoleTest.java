@@ -22,21 +22,21 @@ public abstract class AbstractRoleTest
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");
 
-		lobby = new Lobby();
-		clientMgr = lobby.getClientManager();
-		gameMgr = lobby.getGameManager();
-		pluginMgr = gameMgr.getPluginManager();
+		this.lobby = new Lobby();
+		this.clientMgr = this.lobby.getClientManager();
+		this.gameMgr = this.lobby.getGameManager();
+		this.pluginMgr = this.gameMgr.getPluginManager();
 
-		pluginMgr.loadPlugin(TestPlugin.class, gameMgr.getPluginApi());
-		Assert.assertTrue(pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
+		this.pluginMgr.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());
+		Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
 
-		lobby.start();
+		this.lobby.start();
 	}
 
 	@After
 	public void tearDown()
 	{
-		lobby.close();
+		this.lobby.close();
 	}
 
 	protected Lobby				lobby;
@@ -50,7 +50,7 @@ public abstract class AbstractRoleTest
 		try
 		{
 			client = new MockClient();
-			clientMgr.add(client);
+			this.clientMgr.add(client);
 			return client;
 		}
 		catch (IOException e)

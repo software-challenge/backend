@@ -112,6 +112,8 @@ import java.util.*;
  * @version May 10 2001
  */
 
+@Deprecated
+@SuppressWarnings("unchecked")
 public class StreamSplitter extends Thread
 {
 	/** Command line handling */

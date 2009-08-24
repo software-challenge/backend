@@ -3,12 +3,8 @@ package sc.server.network;
 import java.io.IOException;
 import java.net.Socket;
 
-import org.junit.Assert;
-
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
-import sc.server.Configuration;
-
 import com.thoughtworks.xstream.XStream;
 
 public class TestTcpClient extends XStreamClient

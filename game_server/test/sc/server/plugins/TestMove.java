@@ -6,6 +6,6 @@ public class TestMove
 	
 	public TestMove(int i)
 	{
-		value = i;
+		this.value = i;
 	}
 }

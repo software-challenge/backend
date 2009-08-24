@@ -1,6 +1,5 @@
 package sc.server.helpers;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +15,7 @@ public class StringNetworkInterface implements INetworkInterface
 		
 	public StringNetworkInterface(String data)
 	{
-		inputStream = new NonEndingByteArrayInputStream(data.getBytes());
+		this.inputStream = new NonEndingByteArrayInputStream(data.getBytes());
 	}
 	
 	@Override
@@ -29,19 +28,19 @@ public class StringNetworkInterface implements INetworkInterface
 	@Override
 	public InputStream getInputStream() throws IOException
 	{
-		return inputStream;
+		return this.inputStream;
 	}
 
 	@Override
 	public OutputStream getOutputStream() throws IOException
 	{
-		return outputStream;
+		return this.outputStream;
 	}
 	
 	public String getData() throws IOException
 	{
-		outputStream.flush();
-		return outputStream.toString();
+		this.outputStream.flush();
+		return this.outputStream.toString();
 	}
 	
 	@Override

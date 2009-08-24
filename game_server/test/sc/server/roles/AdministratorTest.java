@@ -38,7 +38,7 @@ public class AdministratorTest extends AbstractRoleTest
 
 		try
 		{
-			lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
+			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
 					WRONG_PASSWORD)));
 			Assert.fail("No exception was thrown");
 		}
@@ -60,7 +60,7 @@ public class AdministratorTest extends AbstractRoleTest
 
 		try
 		{
-			lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
+			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
 					CORRECT_PASSWORD)));
 		}
 		catch (RescueableClientException e)
@@ -76,9 +76,9 @@ public class AdministratorTest extends AbstractRoleTest
 	{
 		Client client = connectAsAdmin();
 
-		lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
+		this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
 				TestPlugin.TEST_PLUGIN_UUID, 2)));
 
-		Assert.assertEquals(1, gameMgr.getGames().size());
+		Assert.assertEquals(1, this.gameMgr.getGames().size());
 	}
 }

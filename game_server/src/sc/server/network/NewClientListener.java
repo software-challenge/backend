@@ -29,11 +29,11 @@ public class NewClientListener implements Runnable, Closeable
 	{
 		Collection<Client> result = new LinkedList<Client>();
 
-		synchronized (newClientLock)
+		synchronized (this.newClientLock)
 		{
 			for (int i = 0; i < 10; i++)
 			{
-				Client c = newClients.poll();
+				Client c = this.newClients.poll();
 
 				if (c != null)
 				{
@@ -60,9 +60,9 @@ public class NewClientListener implements Runnable, Closeable
 			Client newClient = new Client(new TcpNetwork(clientSocket),
 					Configuration.getXStream());
 
-			synchronized (newClientLock)
+			synchronized (this.newClientLock)
 			{
-				newClients.add(newClient);
+				this.newClients.add(newClient);
 				logger.info("Added Client to ReadyQueue.");
 			}
 		}
@@ -82,7 +82,7 @@ public class NewClientListener implements Runnable, Closeable
 	@Override
 	public void run()
 	{
-		while (!serverSocket.isClosed() && !Thread.interrupted())
+		while (!this.serverSocket.isClosed() && !Thread.interrupted())
 		{
 			acceptClient();
 			Thread.yield();

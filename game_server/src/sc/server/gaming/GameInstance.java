@@ -20,11 +20,17 @@ public class GameInstance
 
 	public GamePluginInstance getProvider()
 	{
-		return provider;
+		return this.provider;
 	}
 
 	public IGameInstance getGame()
 	{
-		return game;
+		return this.game;
+	}
+
+	public boolean isOver()
+	{
+		// TODO implement this
+		return false;
 	}
 }

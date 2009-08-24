@@ -30,9 +30,9 @@ public class ClientManager implements Runnable
 
 	public void add(Client newClient)
 	{
-		clients.add(newClient);
+		this.clients.add(newClient);
 
-		for (IClientManagerListener listener : listeners)
+		for (IClientManagerListener listener : this.listeners)
 		{
 			listener.onClientConnected(newClient);
 		}
@@ -49,11 +49,11 @@ public class ClientManager implements Runnable
 	@Override
 	public void run()
 	{
-		running = true;
+		this.running = true;
 
 		logger.info("ClientManager running.");
 
-		while (running && !Thread.interrupted())
+		while (this.running && !Thread.interrupted())
 		{
 			Collection<Client> clients = this.clientListener.fetchNewClients();
 
@@ -80,7 +80,7 @@ public class ClientManager implements Runnable
 	 */
 	public void start() throws IOException
 	{
-		clientListener.start();
+		this.clientListener.start();
 		ServiceManager.createService(this.getClass().getSimpleName(), this)
 				.start();
 	}
@@ -94,9 +94,9 @@ public class ClientManager implements Runnable
 	{
 		this.running = false;
 
-		clientListener.close();
+		this.clientListener.close();
 
-		for (Client client : clients)
+		for (Client client : this.clients)
 		{
 			try
 			{

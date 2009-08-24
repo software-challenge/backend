@@ -34,10 +34,10 @@ public class ThreeDimRenderer extends JPanel implements IRenderer
 	private boolean					myturn			= false;
 	private boolean					onlyObserving	= false;
 	// Strings used for asking Questions to the user
-	private String					moveForward		= "Weiter ziehen";
-	private String					takeCarrots		= "10 Karotten nehmen";
-	private String					dropCarrots		= "10 Karotten abgeben";
-	private String					carrotAnswer	= "carrots";
+	private static final String					moveForward		= "Weiter ziehen";
+	private static final String					takeCarrots		= "10 Karotten nehmen";
+	private static final String					dropCarrots		= "10 Karotten abgeben";
+	private static final String					carrotAnswer	= "carrots";
 
 	public ThreeDimRenderer(HumanGameHandler handler, boolean onlyObserving)
 	{

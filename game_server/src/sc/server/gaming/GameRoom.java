@@ -60,18 +60,18 @@ public class GameRoom implements IGameListener
 
 	public GamePluginInstance getProvider()
 	{
-		return provider;
+		return this.provider;
 	}
 
 	public IGameInstance getGame()
 	{
-		return game;
+		return this.game;
 	}
 
 	@Override
 	public void onGameOver(Map<IPlayer, PlayerScore> results)
 	{
-		isOver = true;
+		this.isOver = true;
 
 		ScoreDefinition definition = getProvider().getPlugin()
 				.getScoreDefinition();
@@ -125,7 +125,7 @@ public class GameRoom implements IGameListener
 
 	private void observerBroadcast(Object toSend)
 	{
-		for (ObserverRole observer : observers)
+		for (ObserverRole observer : this.observers)
 		{
 			observer.getClient().send(toSend);
 		}
@@ -157,7 +157,7 @@ public class GameRoom implements IGameListener
 	{
 		RoomPacket packet = createRoomPacket(new MementoPacket(data, null));
 
-		for (ObserverRole observer : observers)
+		for (ObserverRole observer : this.observers)
 		{
 			observer.getClient().sendAsynchronous(packet);
 		}
@@ -189,7 +189,7 @@ public class GameRoom implements IGameListener
 	{
 		PlayerSlot openSlot = null;
 
-		for (PlayerSlot slot : playerSlots)
+		for (PlayerSlot slot : this.playerSlots)
 		{
 			if (slot.isEmpty() && !slot.isReserved())
 			{
@@ -198,7 +198,7 @@ public class GameRoom implements IGameListener
 			}
 		}
 
-		if (playerSlots.size() < getMaximumPlayerCount())
+		if (this.playerSlots.size() < getMaximumPlayerCount())
 		{
 			openSlot = new PlayerSlot(this);
 			this.playerSlots.add(openSlot);
@@ -237,9 +237,9 @@ public class GameRoom implements IGameListener
 
 	private void startIfReady()
 	{
-		if (game.ready())
+		if (this.game.ready())
 		{
-			game.start();
+			this.game.start();
 			logger.info("Started the game.");
 		}
 		else
@@ -279,9 +279,9 @@ public class GameRoom implements IGameListener
 
 	public synchronized List<String> reserveAllSlots()
 	{
-		List<String> result = new ArrayList<String>(playerSlots.size());
+		List<String> result = new ArrayList<String>(this.playerSlots.size());
 
-		for (PlayerSlot playerSlot : playerSlots)
+		for (PlayerSlot playerSlot : this.playerSlots)
 		{
 			result.add(playerSlot.reserve());
 		}
@@ -292,7 +292,7 @@ public class GameRoom implements IGameListener
 	public synchronized void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
-		if (isOver)
+		if (this.isOver)
 		{
 			throw new RescueableClientException(
 					"Game is already over, but got data: " + data.getClass());
@@ -323,7 +323,7 @@ public class GameRoom implements IGameListener
 		}
 
 		throw new RescueableClientException("Client is not a member of game "
-				+ id);
+				+ this.id);
 	}
 
 	private Collection<PlayerSlot> getOccupiedPlayerSlots()
@@ -376,17 +376,17 @@ public class GameRoom implements IGameListener
 
 	public synchronized void pause(boolean pause)
 	{
-		if (game instanceof IPauseable)
+		if (this.game instanceof IPauseable)
 		{
-			IPauseable pausableGame = (IPauseable) game;
-			if (pause == paused)
+			IPauseable pausableGame = (IPauseable) this.game;
+			if (pause == this.paused)
 			{
 				logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
-						paused, pause);
+						this.paused, pause);
 			}
 			else
 			{
-				logger.info("Switching PAUSE from {} to {}.", paused, pause);
+				logger.info("Switching PAUSE from {} to {}.", this.paused, pause);
 				this.paused = pause;
 				pausableGame.setPauseMode(pause);
 
@@ -404,12 +404,12 @@ public class GameRoom implements IGameListener
 
 	public synchronized void step()
 	{
-		if (game instanceof IPauseable)
+		if (this.game instanceof IPauseable)
 		{
-			if (paused)
+			if (this.paused)
 			{
 				logger.info("Stepping.");
-				((IPauseable) game).afterPause();
+				((IPauseable) this.game).afterPause();
 			}
 			else
 			{
@@ -443,7 +443,7 @@ public class GameRoom implements IGameListener
 
 		for (int i = 0; i < descriptors.size(); i++)
 		{
-			playerSlots.get(i).setDescriptor(descriptors.get(i));
+			this.playerSlots.get(i).setDescriptor(descriptors.get(i));
 		}
 	}
 }

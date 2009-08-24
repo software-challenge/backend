@@ -12,12 +12,12 @@ public class PacketCallback
 
 	public Object getPacket()
 	{
-		return packet;
+		return this.packet;
 	}
 
 	public boolean isProcessed()
 	{
-		return processed;
+		return this.processed;
 	}
 
 	public void setProcessed()

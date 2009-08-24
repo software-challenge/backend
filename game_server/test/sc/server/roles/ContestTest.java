@@ -24,20 +24,20 @@ public class ContestTest extends AdministratorTest
 		Client player1 = connectClient();
 		Client player2 = connectClient();
 
-		lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
+		this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
 				TestPlugin.TEST_PLUGIN_UUID, 2)));
 
-		Assert.assertEquals(1, gameMgr.getGames().size());
-		GameRoom room = gameMgr.getGames().iterator().next();
+		Assert.assertEquals(1, this.gameMgr.getGames().size());
+		GameRoom room = this.gameMgr.getGames().iterator().next();
 
 		PrepareGameResponse response = admin
 				.seekMessage(PrepareGameResponse.class);
 
 		Assert.assertEquals(2, room.getSlots().size());
 
-		lobby.onRequest(player1, new PacketCallback(new JoinPreparedRoomRequest(response
+		this.lobby.onRequest(player1, new PacketCallback(new JoinPreparedRoomRequest(response
 				.getReservations().get(1))));
-		lobby.onRequest(player2, new PacketCallback(new JoinPreparedRoomRequest(response
+		this.lobby.onRequest(player2, new PacketCallback(new JoinPreparedRoomRequest(response
 				.getReservations().get(0))));
 
 		Assert.assertEquals(2, room.getSlots().size());

@@ -1,8 +1,6 @@
 package sc.server.gaming;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.exceptions.TooManyPlayersException;
-import sc.protocol.responses.JoinGameResponse;
 import sc.server.network.Client;
 import sc.shared.SlotDescriptor;
 
@@ -26,12 +24,12 @@ public class PlayerSlot
 
 	public PlayerRole getRole()
 	{
-		return role;
+		return this.role;
 	}
 
 	public GameRoom getRoom()
 	{
-		return room;
+		return this.room;
 	}
 
 	public boolean isEmpty()

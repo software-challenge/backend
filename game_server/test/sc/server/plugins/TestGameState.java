@@ -23,11 +23,11 @@ public class TestGameState implements IPerspectiveAware
 	{
 		if (field.equals("secret0"))
 		{
-			return viewer == controller.getPlayers().get(0);
+			return viewer == this.controller.getPlayers().get(0);
 		}
 		else if (field.equals("secret1"))
 		{
-			return viewer == controller.getPlayers().get(1);
+			return viewer == this.controller.getPlayers().get(1);
 		}
 
 		return true;

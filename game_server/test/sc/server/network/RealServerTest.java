@@ -31,23 +31,23 @@ public abstract class RealServerTest
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");
 
-		lobby = new Lobby();
-		clientMgr = lobby.getClientManager();
-		gameMgr = lobby.getGameManager();
-		pluginMgr = gameMgr.getPluginManager();
+		this.lobby = new Lobby();
+		this.clientMgr = this.lobby.getClientManager();
+		this.gameMgr = this.lobby.getGameManager();
+		this.pluginMgr = this.gameMgr.getPluginManager();
 
-		pluginMgr.loadPlugin(TestPlugin.class, gameMgr.getPluginApi());
-		Assert.assertTrue(pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
+		this.pluginMgr.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());
+		Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
 
 		NewClientListener.lastUsedPort = 0;
-		lobby.start();
+		this.lobby.start();
 		waitForServer();
 	}
 
 	@After
 	public void tearDown()
 	{
-		lobby.close();
+		this.lobby.close();
 	}
 
 	private void waitForServer()
@@ -64,7 +64,7 @@ public abstract class RealServerTest
 			@Override
 			public Integer operate()
 			{
-				return lobby.getClientManager().clients.size();
+				return RealServerTest.this.lobby.getClientManager().clients.size();
 			}
 		}, 1, TimeUnit.SECONDS);
 	}

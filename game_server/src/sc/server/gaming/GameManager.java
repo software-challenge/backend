@@ -2,6 +2,7 @@ package sc.server.gaming;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import sc.server.ServiceManager;
 import sc.server.plugins.GamePluginManager;
@@ -22,8 +23,8 @@ public class GameManager implements Runnable
 
 	public GameManager()
 	{
-		gamePluginManager.reload();
-		gamePluginManager.activateAllPlugins(this.pluginApi);
+		this.gamePluginManager.reload();
+		this.gamePluginManager.activateAllPlugins(this.pluginApi);
 	}
 
 	/**
@@ -45,12 +46,29 @@ public class GameManager implements Runnable
 	@Override
 	public void run()
 	{
+		List<GameInstance> toRemove = new LinkedList<GameInstance>();
+
 		while (!Thread.interrupted())
 		{
-			for (GameInstance game : games)
+			try
 			{
-				Thread.yield();
+				Thread.sleep(500);
 			}
+			catch (InterruptedException e)
+			{
+				return; // silently return
+			}
+
+			for (GameInstance game : this.games)
+			{
+				if (game.isOver())
+				{
+					toRemove.add(game);
+				}
+			}
+
+			this.games.removeAll(toRemove);
+			toRemove.clear();
 		}
 	}
 }

@@ -69,7 +69,7 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 					public void visit(String fieldName, Class type,
 							Class definedIn, Object value)
 					{
-						if (!mapper.shouldSerializeMember(definedIn, fieldName))
+						if (!PerspectiveAwareConverter.this.mapper.shouldSerializeMember(definedIn, fieldName))
 						{
 							return;
 						}
@@ -87,11 +87,11 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 							// lookupType = definedIn;
 							// }
 							defaultFieldDefinition.put(fieldName,
-									reflectionProvider.getField(lookupType,
+									PerspectiveAwareConverter.this.reflectionProvider.getField(lookupType,
 											fieldName));
 						}
 
-						SingleValueConverter converter = mapper
+						SingleValueConverter converter = PerspectiveAwareConverter.this.mapper
 								.getConverterFromItemType(fieldName, type,
 										definedIn);
 						if (converter != null)
@@ -110,8 +110,8 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 								final String str = converter.toString(value);
 								if (str != null)
 								{
-									writer.addAttribute(mapper
-											.aliasForAttribute(mapper
+									writer.addAttribute(PerspectiveAwareConverter.this.mapper
+											.aliasForAttribute(PerspectiveAwareConverter.this.mapper
 													.serializedMember(
 															definedIn,
 															fieldName)), str);
@@ -124,12 +124,12 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 				});
 
 		// Child elements not covered already processed as attributes ...
-		reflectionProvider.visitSerializableFields(source,
+		this.reflectionProvider.visitSerializableFields(source,
 				new ReflectionProvider.Visitor() {
 					public void visit(String fieldName, Class fieldType,
 							Class definedIn, Object newObj)
 					{
-						if (!mapper.shouldSerializeMember(definedIn, fieldName))
+						if (!PerspectiveAwareConverter.this.mapper.shouldSerializeMember(definedIn, fieldName))
 						{
 							return;
 						}
@@ -139,7 +139,7 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 						}
 						if (!seenFields.contains(fieldName) && newObj != null)
 						{
-							Mapper.ImplicitCollectionMapping mapping = mapper
+							Mapper.ImplicitCollectionMapping mapping = PerspectiveAwareConverter.this.mapper
 									.getImplicitCollectionDefForFieldName(
 											source.getClass(), fieldName);
 							if (mapping != null)
@@ -153,7 +153,7 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 										Object obj = iter.next();
 										writeField(
 												fieldName,
-												obj == null ? mapper
+												obj == null ? PerspectiveAwareConverter.this.mapper
 														.serializedClass(null)
 														: mapping
 																.getItemFieldName(),
@@ -178,23 +178,23 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 							Class fieldType, Class definedIn, Object newObj)
 					{
 						ExtendedHierarchicalStreamWriterHelper.startNode(
-								writer, aliasName != null ? aliasName : mapper
+								writer, aliasName != null ? aliasName : PerspectiveAwareConverter.this.mapper
 										.serializedMember(source.getClass(),
 												fieldName), fieldType);
 
 						if (newObj != null)
 						{
 							Class actualType = newObj.getClass();
-							Class defaultType = mapper
+							Class defaultType = PerspectiveAwareConverter.this.mapper
 									.defaultImplementationOf(fieldType);
 							if (!actualType.equals(defaultType))
 							{
-								String serializedClassName = mapper
+								String serializedClassName = PerspectiveAwareConverter.this.mapper
 										.serializedClass(actualType);
-								if (!serializedClassName.equals(mapper
+								if (!serializedClassName.equals(PerspectiveAwareConverter.this.mapper
 										.serializedClass(defaultType)))
 								{
-									String attributeName = mapper
+									String attributeName = PerspectiveAwareConverter.this.mapper
 											.aliasForSystemAttribute("class");
 									if (attributeName != null)
 									{
@@ -208,16 +208,16 @@ public class PerspectiveAwareConverter extends AbstractReflectionConverter
 									.get(fieldName);
 							if (defaultField.getDeclaringClass() != definedIn)
 							{
-								String attributeName = mapper
+								String attributeName = PerspectiveAwareConverter.this.mapper
 										.aliasForSystemAttribute("defined-in");
 								if (attributeName != null)
 								{
-									writer.addAttribute(attributeName, mapper
+									writer.addAttribute(attributeName, PerspectiveAwareConverter.this.mapper
 											.serializedClass(definedIn));
 								}
 							}
 
-							Field field = reflectionProvider.getField(
+							Field field = PerspectiveAwareConverter.this.reflectionProvider.getField(
 									definedIn, fieldName);
 							marshallField(context, newObj, field);
 						}
