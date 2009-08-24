@@ -269,6 +269,23 @@ public class GamePlayTest
 	}
 
 	/**
+	 * Überprüft, dass Karotten nur abgegeben werden dürfen, wenn man mehr als 20
+	 * Karotten besitzt.
+	 */
+	@Test
+	public void playDropCarrotsCard() {
+		g.start();
+		
+		red.setFieldNumber(b.getNextFieldByTyp(FieldTyp.RABBIT, 0));
+		Move r = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, -20);
+		Assert.assertTrue(red.getCarrotsAvailable() > 20);
+		Assert.assertTrue(b.isValid(r, red));
+		
+		red.setCarrotsAvailable(19);
+		Assert.assertFalse(b.isValid(r, red));
+	}
+	
+	/**
 	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
 	 */
 	@Test

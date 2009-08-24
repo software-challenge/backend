@@ -324,7 +324,7 @@ public class GameUtil
 		// Fix #32
 		if (n < 0)
 		{
-			valid = valid && ((p.getCarrotsAvailable() - n) >= 0);
+			valid = valid && ((p.getCarrotsAvailable() + n) >= 0);
 		}
 
 		return valid;
