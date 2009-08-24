@@ -1,6 +1,5 @@
 package sc.plugin2010;
 
-
 public class GameUtil
 {
 	public static final int	HEDGEHOG_CARROT_MULTIPLIER			= 10;
@@ -8,7 +7,7 @@ public class GameUtil
 	public static final int	CARROT_BONUS_ON_POSITION_2_FIELD	= 30;
 	public static final int	CARROT_BONUS_ON_POSITION_1_SALAD	= 10;
 	public static final int	CARROT_BONUS_ON_POSITION_2_SALAD	= 30;
-	
+
 	private GameUtil()
 	{
 		throw new IllegalStateException("Can't be instantiated.");
@@ -314,17 +313,20 @@ public class GameUtil
 		return valid;
 	}
 
-	public static boolean isValidToPlayTakeOrDropCarrots(Board b, Player p, int n)
+	public static boolean isValidToPlayTakeOrDropCarrots(Board b, Player p,
+			int n)
 	{
 		boolean valid = !playerMustMove(b, p) && isOnRabbitField(b, p)
 				&& p.ownsCardOfTyp(Action.TAKE_OR_DROP_CARROTS);
-		
+
 		valid = valid && (n == 20 || n == -20 || n == 0);
-		
+
 		// Fix #32
 		if (n < 0)
+		{
 			valid = valid && ((p.getCarrotsAvailable() - n) >= 0);
-		
+		}
+
 		return valid;
 	}
 
@@ -343,19 +345,28 @@ public class GameUtil
 	{
 		Position ret = null;
 		if (o.getFieldNumber() <= relevant.getFieldNumber())
-			ret = Position.FIRST;
-		else
-			ret = Position.SECOND;
-		if (relevant.inGoal() && o.getFieldNumber() == relevant.getFieldNumber())
 		{
-			if (o.getCarrotsAvailable()>relevant.getCarrotsAvailable())
+			ret = Position.FIRST;
+		}
+		else
+		{
+			ret = Position.SECOND;
+		}
+		if (relevant.inGoal()
+				&& o.getFieldNumber() == relevant.getFieldNumber())
+		{
+			if (o.getCarrotsAvailable() > relevant.getCarrotsAvailable())
+			{
 				ret = Position.SECOND;
+			}
 			else if (o.getCarrotsAvailable() == relevant.getCarrotsAvailable())
+			{
 				ret = Position.TIE;
+			}
 		}
 		return ret;
 	}
-	
+
 	private static boolean canPlayAnyCard(Board b, Player p)
 	{
 		boolean valid = false;
@@ -438,6 +449,8 @@ public class GameUtil
 					return res;
 				case FALL_BACK:
 					return "lässt sich auf Igel zurückfallen";
+				case SKIP:
+					return "muss aussetzen";
 				case PLAY_CARD:
 					switch (mov.getCard())
 					{
@@ -462,8 +475,10 @@ public class GameUtil
 
 	public static boolean canPlayCard(Board board, Player player)
 	{
-		boolean canPlayCard = board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT);
-		for(Action a : player.getActions()) {
+		boolean canPlayCard = board.getTypeAt(player.getFieldNumber()).equals(
+				FieldTyp.RABBIT);
+		for (Action a : player.getActions())
+		{
 			canPlayCard = canPlayCard || isValidToPlayCard(board, player, a, 0);
 		}
 		return canPlayCard;
@@ -472,9 +487,12 @@ public class GameUtil
 	public static boolean canMove(Board board, Player player)
 	{
 		boolean canMove = false;
-		int maxDistance = GameUtil.calculateMoveableFields(player.getCarrotsAvailable());
-		for(int i = 1; i < maxDistance; i++) 
+		int maxDistance = GameUtil.calculateMoveableFields(player
+				.getCarrotsAvailable());
+		for (int i = 1; i < maxDistance; i++)
+		{
 			canMove = canMove || isValidToMove(board, player, i);
+		}
 		return canMove;
 	}
 }

@@ -30,37 +30,38 @@ import sc.plugin2010.renderer.RendererUtil;
 public class InformationBar extends BackgroundPane
 {
 
-	private final String	CARROTCOUNT		= "Karottenanzahl:";
-	private final String	ROUNDCOUNT		= "Runde:";
-	private final String	MOVESCOUNT		= "Zuganzahl möglich:";
-	private final String	TURNCOUNT		= "<html><h1> An der Reihe:</h1></html> ";
-	private final String	PLAYER			= "<html><h1>Spieler:</h1></html>";
-	private final String	ENEMY			= "<html><h1>Gegner:</h1></html>";
-	private final String	SALADCOUNT		= "Salatanzahl:";
-	private final String	HASENJOKER		= "Hasenjoker:";
+	private final String	CARROTCOUNT			= "Karottenanzahl";
+	private final String	ROUNDCOUNT			= "Runde:";
+	private final String	MOVESCOUNT			= "Maximale Zuganzahl durch Karotten möglich";
+	private final String	TURNCOUNT			= "<html><h1>An der Reihe:</h1></html> ";
+	private final String	PLAYER				= "<html><h1>Spieler:</h1></html>";
+	private final String	ENEMY				= "<html><h1>Gegner:</h1></html>";
+	private final String	SALADCOUNT			= "Salatanzahl";
+	private final String	HASENJOKER			= "Hasenjoker";
 
-	private final JLabel	carrots			= new JLabel(CARROTCOUNT);
-	private final JLabel	enemycarrots	= new JLabel(CARROTCOUNT);
-	private final JLabel	maxfields		= new JLabel(MOVESCOUNT);
-	private final JLabel	enemymaxfields	= new JLabel(MOVESCOUNT);
-	private final JLabel	salads			= new JLabel(SALADCOUNT);
-	private final JLabel	enemysalads		= new JLabel(SALADCOUNT);
-	private final JLabel	rounds			= new JLabel(ROUNDCOUNT);
-	private final JLabel	hasenjoker		= new JLabel(HASENJOKER);
-	private final JLabel	enemyhasenjoker	= new JLabel(HASENJOKER);
-	private final JLabel	turn			= new JLabel(TURNCOUNT);
-	private final JLabel	player			= new JLabel(PLAYER);
-	private final JLabel	enemy			= new JLabel(ENEMY);
-	private final JLabel	turnicon		= new JLabel("");
+	private final JLabel	carrots				= new JLabel(CARROTCOUNT);
+	private final JLabel	enemycarrots		= new JLabel(CARROTCOUNT);
+	private final JLabel	maxfields			= new JLabel(MOVESCOUNT);
+	private final JLabel	enemymaxfields		= new JLabel(MOVESCOUNT);
+	private final JLabel	salads				= new JLabel(SALADCOUNT);
+	private final JLabel	enemysalads			= new JLabel(SALADCOUNT);
+	private final JLabel	rounds				= new JLabel(ROUNDCOUNT);
+	private final JLabel	hasenjoker			= new JLabel(HASENJOKER);
+	private final JLabel	enemyhasenjoker		= new JLabel(HASENJOKER);
+	private final JLabel	turn				= new JLabel(TURNCOUNT);
+	private final JLabel	player				= new JLabel(PLAYER);
+	private final JLabel	enemy				= new JLabel(ENEMY);
+	private final JLabel	turnicon			= new JLabel("");
 
-	private final String	FONTTYPE		= "New Courier";
-	private final int		SIZE			= 12;
-	private final int		ICONSIZE		= 24;
+	private final String	FONTTYPE			= "New Courier";
+	private final int		SIZE				= 12;
+	private final int		ICONSIZE			= 28;
+	private final int		BIGGERCARROTSIZE	= 4;
 
-	private final Image		blue			= RendererUtil
-													.getImage("resource/game/blue.png");
-	private final Image		red				= RendererUtil
-													.getImage("resource/game/red.png");
+	private final Image		blue				= RendererUtil
+														.getImage("resource/game/blue.png");
+	private final Image		red					= RendererUtil
+														.getImage("resource/game/red.png");
 
 	private BackgroundPane	left;
 	private BackgroundPane	center;
@@ -136,6 +137,16 @@ public class InformationBar extends BackgroundPane
 				"resource/game/rabbit.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
+		carrots.setToolTipText(CARROTCOUNT);
+		maxfields.setToolTipText(MOVESCOUNT);
+		salads.setToolTipText(SALADCOUNT);
+		hasenjoker.setToolTipText(HASENJOKER);
+
+		enemycarrots.setToolTipText(CARROTCOUNT);
+		enemymaxfields.setToolTipText(MOVESCOUNT);
+		enemysalads.setToolTipText(SALADCOUNT);
+		enemyhasenjoker.setToolTipText(HASENJOKER);
+
 		setColor();
 
 		rounds.setForeground(light_black);
@@ -210,7 +221,7 @@ public class InformationBar extends BackgroundPane
 		player.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		carrots.setForeground(mycolor);
-		carrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+		carrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE + BIGGERCARROTSIZE));
 
 		maxfields.setForeground(mycolor);
 		maxfields.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
@@ -225,7 +236,8 @@ public class InformationBar extends BackgroundPane
 		enemy.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		enemycarrots.setForeground(enemycolor);
-		enemycarrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
+		enemycarrots.setFont(new Font(FONTTYPE, Font.BOLD, SIZE
+				+ BIGGERCARROTSIZE));
 
 		enemymaxfields.setForeground(enemycolor);
 		enemymaxfields.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
@@ -255,33 +267,60 @@ public class InformationBar extends BackgroundPane
 	private void setMyAttributes(JLabel carrots, JLabel maxfields,
 			JLabel salads, final int car, final int sal)
 	{
-		carrots.setText("<html><u>" + CARROTCOUNT + "</u> "
-				+ String.valueOf(car) + "</html>");
-		maxfields.setText("<html><u>" + MOVESCOUNT + "</u> "
-				+ GameUtil.calculateMoveableFields(car) + "</html>");
-		salads.setText("<html><u>" + SALADCOUNT + "</u> " + String.valueOf(sal)
+		carrots.setText("<html>" + String.valueOf(car) + "</html>");
+		maxfields.setText("<html>" + GameUtil.calculateMoveableFields(car)
 				+ "</html>");
+		salads.setText("<html>" + String.valueOf(sal) + "</html>");
 	}
 
 	private void setMyHasenjoker(JLabel label, final List<Action> joker)
 	{
-		String text = "<html><u>" + HASENJOKER + "</u> ";
-		String indent = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		String text = "<html>";
+		String newline = "<BR>";
+		// String indent = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 		for (Action jo : joker)
 		{
 			switch (jo)
 			{
 				case TAKE_OR_DROP_CARROTS:
-					text += "<BR>" + indent + "20 Karotten nehmen oder abgeben";
+					if (text.length() == 6)
+					{
+						text += "20 Karotten nehmen oder abgeben";
+					}
+					else
+					{
+						text += newline + "20 Karotten nehmen oder abgeben";
+					}
 					break;
 				case EAT_SALAD:
-					text += "<BR>" + indent + "Friss sofort einen Salat";
+					if (text.length() == 6)
+					{
+						text += "Friss sofort einen Salat";
+					}
+					else
+					{
+						text += newline + "Friss sofort einen Salat";
+					}
 					break;
 				case FALL_BACK:
-					text += "<BR>" + indent + "Gehe eine Position zurück";
+					if (text.length() == 6)
+					{
+						text += "Gehe eine Position zurück";
+					}
+					else
+					{
+						text += newline + "Gehe eine Position zurück";
+					}
 					break;
 				case HURRY_AHEAD:
-					text += "<BR>" + indent + "Rücke eine Position vor";
+					if (text.length() == 6)
+					{
+						text += "Rücke eine Position vor";
+					}
+					else
+					{
+						text += newline + "Rücke eine Position vor";
+					}
 					break;
 				default:
 					break;

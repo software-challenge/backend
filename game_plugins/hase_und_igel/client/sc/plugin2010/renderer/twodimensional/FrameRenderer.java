@@ -39,10 +39,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 {
 	// GUI Components
 	private InformationBar			info;
-	
+
 	@SuppressWarnings("unused")
 	private ChatBar					chat;
-	
+
 	private BackgroundPane			bg;
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
@@ -64,18 +64,18 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private boolean					questionOpen	= false;
 
 	// Strings used for asking Questions to the user
-	private String					moveForward		= "Weiter ziehen";
-	private String					takeCarrots		= "10 Karotten nehmen";
-	private String					dropCarrots		= "10 Karotten abgeben";
-	private String					carrotAnswer	= "carrots";
+	private final String			moveForward		= "Weiter ziehen";
+	private final String			takeCarrots		= "10 Karotten nehmen";
+	private final String			dropCarrots		= "10 Karotten abgeben";
+	private final String			carrotAnswer	= "carrots";
 
-	private String					take20carrots	= "Nimm 20 Karotten";
-	private String					doNothing		= "Keine Karotten abgeben oder nehmen";
-	private String					give20carrots	= "Gib 20 Karotten ab";
-	private String					eatsalad		= "Friss sofort einen Salat";
-	private String					hurryahead		= "Rücke eine Position vor";
-	private String					fallback		= "Falle eine Position zurück";
-	private String					jokerAnswer		= "joker";
+	private final String			take20carrots	= "Nimm 20 Karotten";
+	private final String			doNothing		= "Keine Karotten abgeben oder nehmen";
+	private final String			give20carrots	= "Gib 20 Karotten ab";
+	private final String			eatsalad		= "Friss sofort einen Salat";
+	private final String			hurryahead		= "Rücke eine Position vor";
+	private final String			fallback		= "Falle eine Position zurück";
+	private final String			jokerAnswer		= "joker";
 
 	public FrameRenderer(final HumanGameHandler handler,
 			final boolean onlyObserving)
@@ -404,7 +404,18 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			{
 				answers.add(dropCarrots);
 			}
-			answers.add(moveForward);
+			boolean moveable = false;
+			for (int i = 0; i < 65; i++)
+			{
+				if (board.isMoveable(i, player))
+				{
+					moveable = true;
+				}
+			}
+			if (moveable)
+			{
+				answers.add(moveForward);
+			}
 			askQuestion("<html>Was wollen Sie tun, " + color + " ?</html>",
 					answers, carrotAnswer);
 
