@@ -122,7 +122,7 @@ public class CreateGameDialog extends JDialog {
 
 		txfPort = new JTextField(5);
 		txfPort.setText("" + DEFAULT_PORT);
-		txfPort.setEditable(false);
+		// txfPort.setEditable(false);
 
 		lblPort = new JLabel(lang.getProperty("dialog_create_pref_port"));
 		lblPort.setLabelFor(txfPort);

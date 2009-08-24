@@ -57,9 +57,12 @@ public abstract class LobbyProtocol
 	public static XStream registerAdditionalMessages(XStream xstream,
 			Collection<Class<?>> protocolClasses)
 	{
-		for (Class<?> clazz : protocolClasses)
+		if(protocolClasses != null)
 		{
-			xstream.processAnnotations(clazz);
+			for (Class<?> clazz : protocolClasses)
+			{
+				xstream.processAnnotations(clazz);
+			}
 		}
 
 		return xstream;

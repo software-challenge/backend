@@ -8,10 +8,11 @@ public interface IGameInstance
 {
 	/**
 	 * 
+	 * @param position 
 	 * @return
 	 * @throws TooManyPlayersException
 	 */
-	public IPlayer onPlayerJoined() throws TooManyPlayersException;
+	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException;
 
 	public void onPlayerLeft(IPlayer player);
 

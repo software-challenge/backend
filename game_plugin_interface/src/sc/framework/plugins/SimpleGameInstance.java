@@ -1,5 +1,6 @@
 package sc.framework.plugins;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 	protected final List<IGameListener>	listeners	= new LinkedList<IGameListener>();
 
 	@XStreamImplicit(itemFieldName = "player")
-	protected final List<P>				players		= new LinkedList<P>();
+	protected final List<P>				players		= new ArrayList<P>();
 
 	@Override
 	public void addGameListener(IGameListener listener)

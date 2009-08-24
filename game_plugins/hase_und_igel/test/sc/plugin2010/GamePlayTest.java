@@ -22,8 +22,8 @@ public class GamePlayTest
 	{
 		g = new Game();
 		b = g.getBoard();
-		red = (Player) g.onPlayerJoined();
-		blue = (Player) g.onPlayerJoined();
+		red = (Player) g.onPlayerJoined(0);
+		blue = (Player) g.onPlayerJoined(1);
 	}
 
 	/**

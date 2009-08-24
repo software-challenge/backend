@@ -18,7 +18,7 @@ import sc.server.plugins.TestPlugin;
 public class ContestTest extends AdministratorTest
 {
 	@Test
-	public void shouldBeAbleToPrepareGame() throws RescueableClientException
+	public void shouldBeAbleToPrepareAndStartGame() throws RescueableClientException
 	{
 		MockClient admin = connectAsAdmin();
 		Client player1 = connectClient();

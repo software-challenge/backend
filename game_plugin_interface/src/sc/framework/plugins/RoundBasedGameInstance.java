@@ -270,4 +270,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	{
 		this.paused = pause;
 	}
+	
+	protected void setPlayer(int position, P newPlayer)
+	{
+		this.players.set(position, newPlayer);
+	}
 }

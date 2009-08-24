@@ -220,7 +220,8 @@ public class GameRoom implements IGameListener
 		IPlayer player;
 		try
 		{
-			player = getGame().onPlayerJoined();
+			int position = this.playerSlots.indexOf(openSlot);
+			player = getGame().onPlayerJoined(position);
 		}
 		catch (TooManyPlayersException e)
 		{

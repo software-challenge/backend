@@ -22,11 +22,10 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException
+	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException
 	{
-		PlayerImpl newPlayer = new PlayerImpl(this.players.size() == 0 ? "X"
-				: "O");
-		this.players.add(newPlayer);
+		PlayerImpl newPlayer = new PlayerImpl(position == 0 ? "X" : "O");
+		this.setPlayer(position, newPlayer);
 		return newPlayer;
 	}
 
@@ -74,9 +73,9 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	protected void onNewTurn()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	protected PlayerScore getScoreFor(PlayerImpl p)
 	{

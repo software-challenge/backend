@@ -212,7 +212,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException
+	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException
 	{
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();

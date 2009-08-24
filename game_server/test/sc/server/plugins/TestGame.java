@@ -43,7 +43,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException
+	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException
 	{
 		if (this.players.size() < 2)
 		{
