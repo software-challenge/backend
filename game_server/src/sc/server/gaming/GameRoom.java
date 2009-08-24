@@ -42,10 +42,12 @@ public class GameRoom implements IGameListener
 	private List<ObserverRole>			observers	= new LinkedList<ObserverRole>();
 	private List<PlayerSlot>			playerSlots	= new ArrayList<PlayerSlot>(
 															2);
-	private boolean						isOver		= false;
+	private final boolean				prepared;
+	private boolean						over		= false;
 	private boolean						paused		= false;
 
-	public GameRoom(String id, GamePluginInstance provider, IGameInstance game)
+	public GameRoom(String id, GamePluginInstance provider, IGameInstance game,
+			boolean prepared)
 	{
 		if (provider == null)
 		{
@@ -55,6 +57,7 @@ public class GameRoom implements IGameListener
 		this.id = id;
 		this.provider = provider;
 		this.game = game;
+		this.prepared = prepared;
 		game.addGameListener(this);
 	}
 
@@ -71,7 +74,7 @@ public class GameRoom implements IGameListener
 	@Override
 	public void onGameOver(Map<IPlayer, PlayerScore> results)
 	{
-		this.isOver = true;
+		this.over = true;
 
 		ScoreDefinition definition = getProvider().getPlugin()
 				.getScoreDefinition();
@@ -186,6 +189,7 @@ public class GameRoom implements IGameListener
 	}
 
 	public synchronized boolean join(Client client)
+			throws RescueableClientException
 	{
 		PlayerSlot openSlot = null;
 
@@ -215,31 +219,60 @@ public class GameRoom implements IGameListener
 	}
 
 	private synchronized void fillSlot(PlayerSlot openSlot, Client client)
+			throws RescueableClientException
 	{
 		openSlot.setClient(client);
-		IPlayer player;
-		try
+		
+		if(!isPrepared())
 		{
-			int position = this.playerSlots.indexOf(openSlot);
-			player = getGame().onPlayerJoined(position);
+			syncSlot(openSlot);
 		}
-		catch (TooManyPlayersException e)
-		{
-			// should't happen
-			throw new RuntimeException(e);
-		}
-		player.setDisplayName(openSlot.getDescriptor().getDisplayName());
-		player.setShouldBePaused(openSlot.getDescriptor().isShouldBePaused());
-		player.setCanTimeout(openSlot.getDescriptor().isCanTimeout());
-		openSlot.setPlayer(player);
-		client.send(new JoinGameResponse(getId()));
+		
 		startIfReady();
 	}
 
-	private void startIfReady()
+	private void syncSlot(PlayerSlot slot)
+			throws RescueableClientException
 	{
-		if (this.game.ready())
+		IPlayer player = getGame().onPlayerJoined();
+		player.setDisplayName(slot.getDescriptor().getDisplayName());
+		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
+		player.setCanTimeout(slot.getDescriptor().isCanTimeout());
+		slot.setPlayer(player);
+		slot.getClient().send(new JoinGameResponse(getId()));
+	}
+
+	private boolean isReady()
+	{
+		if (isPrepared())
 		{
+			for (PlayerSlot slot : this.playerSlots)
+			{
+				if (slot.isEmpty())
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+		else
+		{
+			return this.game.ready();
+		}
+	}
+
+	private void startIfReady() throws RescueableClientException
+	{
+		if (isReady())
+		{
+			if(isPrepared())
+			{
+				for (PlayerSlot slot : this.playerSlots)
+				{
+					syncSlot(slot);
+				}
+			}
 			this.game.start();
 			logger.info("Started the game.");
 		}
@@ -293,7 +326,7 @@ public class GameRoom implements IGameListener
 	public synchronized void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
-		if (this.isOver)
+		if (this.over)
 		{
 			throw new RescueableClientException(
 					"Game is already over, but got data: " + data.getClass());
@@ -370,7 +403,7 @@ public class GameRoom implements IGameListener
 	}
 
 	public synchronized void onReservationClaimed(Client source,
-			PlayerSlot result)
+			PlayerSlot result) throws RescueableClientException
 	{
 		fillSlot(result, source);
 	}
@@ -387,7 +420,8 @@ public class GameRoom implements IGameListener
 			}
 			else
 			{
-				logger.info("Switching PAUSE from {} to {}.", this.paused, pause);
+				logger.info("Switching PAUSE from {} to {}.", this.paused,
+						pause);
 				this.paused = pause;
 				pausableGame.setPauseMode(pause);
 
@@ -446,5 +480,20 @@ public class GameRoom implements IGameListener
 		{
 			this.playerSlots.get(i).setDescriptor(descriptors.get(i));
 		}
+	}
+
+	public boolean isPrepared()
+	{
+		return this.prepared;
+	}
+
+	public boolean isOver()
+	{
+		return this.over;
+	}
+
+	public boolean isPaused()
+	{
+		return this.paused;
 	}
 }

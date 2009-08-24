@@ -120,4 +120,14 @@ public class PlayerSlot
 	{
 		this.descriptor = descriptor;
 	}
+
+	public Client getClient()
+	{
+		if(this.role == null)
+		{
+			return null;
+		}
+		
+		return this.role.getClient();
+	}
 }

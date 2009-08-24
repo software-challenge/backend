@@ -130,7 +130,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		{
 			this.turn++;
 			newTurn = true;
-			//onNewTurn();
+			// onNewTurn();
 		}
 
 		this.activePlayer = nextPlayer;
@@ -166,7 +166,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	}
 
 	protected abstract void onNewTurn();
-	
+
 	/**
 	 * Gets the current state representation.
 	 * 
@@ -269,10 +269,5 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	public void setPauseMode(boolean pause)
 	{
 		this.paused = pause;
-	}
-	
-	protected void setPlayer(int position, P newPlayer)
-	{
-		this.players.set(position, newPlayer);
 	}
 }

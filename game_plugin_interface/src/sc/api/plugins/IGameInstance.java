@@ -8,11 +8,11 @@ public interface IGameInstance
 {
 	/**
 	 * 
-	 * @param position 
 	 * @return
 	 * @throws TooManyPlayersException
+	 * @throws RescueableClientException 
 	 */
-	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException;
+	public IPlayer onPlayerJoined() throws RescueableClientException;
 
 	public void onPlayerLeft(IPlayer player);
 

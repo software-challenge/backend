@@ -212,14 +212,14 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException
+	public IPlayer onPlayerJoined() throws RescueableClientException
 	{
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
 
 		final Player player = new Player(this.availableColors.remove(0));
-		this.players.add(player);
 		this.board.addPlayer(player);
+		this.players.add(player);
 
 		for (final IGameListener listener : this.listeners)
 			listener.onPlayerJoined(player);
@@ -268,7 +268,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	public boolean ready()
 	{
-		return players.size() == GamePlugin.MAX_PLAYER_COUNT;
+		return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
 	}
 
 	@Override

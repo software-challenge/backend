@@ -2,7 +2,6 @@ package sc.sample.server;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
-import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.sample.shared.GameState;
 import sc.sample.shared.Move;
@@ -22,10 +21,10 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined(int position) throws TooManyPlayersException
+	public IPlayer onPlayerJoined() throws RescueableClientException
 	{
-		PlayerImpl newPlayer = new PlayerImpl(position == 0 ? "X" : "O");
-		this.setPlayer(position, newPlayer);
+		PlayerImpl newPlayer = new PlayerImpl(this.players.size() == 0 ? "X" : "O");
+		this.players.add(newPlayer);
 		return newPlayer;
 	}
 

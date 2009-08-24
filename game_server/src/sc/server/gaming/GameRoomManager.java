@@ -55,6 +55,12 @@ public class GameRoomManager implements Runnable
 	public synchronized GameRoom createGame(String gameType)
 			throws RescueableClientException
 	{
+		return createGame(gameType, false);
+	}
+
+	public synchronized GameRoom createGame(String gameType, boolean prepared)
+			throws RescueableClientException
+	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 
 		if (plugin == null)
@@ -67,7 +73,7 @@ public class GameRoomManager implements Runnable
 		logger.info("Created new game of type " + gameType);
 
 		String roomId = generateRoomId();
-		GameRoom room = new GameRoom(roomId, plugin, plugin.createGame());
+		GameRoom room = new GameRoom(roomId, plugin, plugin.createGame(), prepared);
 
 		this.add(room);
 
@@ -101,6 +107,7 @@ public class GameRoomManager implements Runnable
 	}
 
 	public synchronized boolean joinGame(Client client, String id)
+			throws RescueableClientException
 	{
 		for (GameRoom game : getGames())
 		{
@@ -153,17 +160,18 @@ public class GameRoomManager implements Runnable
 	{
 		return this.pluginApi;
 	}
-	
+
 	public synchronized PrepareGameResponse prepareGame(String gameType,
 			int playerCount, List<SlotDescriptor> descriptors)
 			throws RescueableClientException
 	{
-		GameRoom room = createGame(gameType);
+		GameRoom room = createGame(gameType, true);
 		room.openSlots(descriptors);
 		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 
-	public synchronized GameRoom findRoom(String roomId) throws RescueableClientException
+	public synchronized GameRoom findRoom(String roomId)
+			throws RescueableClientException
 	{
 		GameRoom room = this.rooms.get(roomId);
 

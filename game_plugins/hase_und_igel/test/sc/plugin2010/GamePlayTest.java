@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sc.api.plugins.exceptions.RescueableClientException;
-import sc.api.plugins.exceptions.TooManyPlayersException;
 
 public class GamePlayTest
 {
@@ -18,12 +17,12 @@ public class GamePlayTest
 	private Player	blue;
 
 	@Before
-	public void beforeEveryTest() throws TooManyPlayersException
+	public void beforeEveryTest() throws RescueableClientException
 	{
 		g = new Game();
 		b = g.getBoard();
-		red = (Player) g.onPlayerJoined(0);
-		blue = (Player) g.onPlayerJoined(1);
+		red = (Player) g.onPlayerJoined();
+		blue = (Player) g.onPlayerJoined();
 	}
 
 	/**
