@@ -64,7 +64,14 @@ public final class Application
 				.addStringOption("plugins");
 		parser.parse(params);
 
+		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
+		
+		if(debugMode)
+		{
+			logger.info("Running in DebugMode now.");
+		}		
+		
 		if (path != null)
 		{
 			File f = new File(path);

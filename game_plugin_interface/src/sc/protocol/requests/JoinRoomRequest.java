@@ -31,4 +31,9 @@ public class JoinRoomRequest implements ILobbyRequest
 	{
 		return this.gameType;
 	}
+	
+	public String getRoomId()
+	{
+		return this.roomId;
+	}
 }

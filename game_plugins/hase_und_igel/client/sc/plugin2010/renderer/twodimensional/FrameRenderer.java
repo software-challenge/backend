@@ -39,7 +39,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 {
 	// GUI Components
 	private InformationBar			info;
+	
+	@SuppressWarnings("unused")
 	private ChatBar					chat;
+	
 	private BackgroundPane			bg;
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();

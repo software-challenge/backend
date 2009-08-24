@@ -18,7 +18,7 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "unused"})
 public class ThreeDimRenderer extends JPanel implements IRenderer
 {
 	// GUI Components

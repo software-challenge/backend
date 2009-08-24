@@ -34,5 +34,10 @@ public class ObserverRole implements IClientRole
 	{
 		return this.client;
 	}
+	
+	public GameRoom getGameRoom()
+	{
+		return this.gameRoom;
+	}
 
 }

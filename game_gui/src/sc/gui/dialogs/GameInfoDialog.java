@@ -18,7 +18,10 @@ public class GameInfoDialog extends JDialog {
 
 	private final String gameTypeName;
 	private final String version;
+	
+	@SuppressWarnings("unused")
 	private final Image image;
+	
 	private final String infoText;
 	private final String author;
 	private final Properties lang;
