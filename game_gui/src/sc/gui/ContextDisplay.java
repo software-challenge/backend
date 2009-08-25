@@ -16,9 +16,9 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
 
-	private static final String PATH_ICON_CANCEL = "/resource/process-stop.png";
-	private static final String PATH_ICON_START = "/resource/media-playback-start.png";
-	private static final String PATH_ICON_PAUSE = "/resource/media-playback-pause.png";
+	private static final String PATH_ICON_CANCEL = "/resource/stop.png";
+	private static final String PATH_ICON_START = "/resource/player_play.png";
+	private static final String PATH_ICON_PAUSE = "/resource/player_pause.png";
 	private static final String PATH_ICON_TO_START = "/resource/go-first.png";
 	private static final String PATH_ICON_TO_END = "/resource/go-last.png";
 	private static final String PATH_ICON_BACK = "/resource/go-previous.png";
