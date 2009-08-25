@@ -60,7 +60,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 		this.history.add(observation);
 
-		if (this.mode == PlayMode.PLAYING || firstObservation)
+		if (!this.replay || this.mode == PlayMode.PLAYING || firstObservation)
 		{
 			setPosition(this.history.size() - 1);
 		}
