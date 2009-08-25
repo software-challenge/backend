@@ -25,6 +25,7 @@ public class Configuration
 	static
 	{
 		xStream = new XStream();
+		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
 		LobbyProtocol.registerMessages(xStream);
 		LobbyProtocol.registerAdditionalMessages(xStream,

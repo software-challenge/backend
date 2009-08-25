@@ -40,6 +40,7 @@ public class Configuration
 	static
 	{
 		xStream = new XStream();
+		xStream.setMode(XStream.NO_REFERENCES);
 		xStreamClassLoader = AccessController
 				.doPrivileged(new PrivilegedAction<RuntimeJarLoader>() {
 					@Override

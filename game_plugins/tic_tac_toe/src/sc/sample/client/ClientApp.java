@@ -22,6 +22,7 @@ public class ClientApp
 			InterruptedException
 	{
 		final XStream xStream = new XStream();
+		xStream.setMode(XStream.NO_REFERENCES);
 		LobbyClient admin = new LobbyClient(xStream, ProtocolDefinition
 				.getProtocolClasses());
 		admin.start();

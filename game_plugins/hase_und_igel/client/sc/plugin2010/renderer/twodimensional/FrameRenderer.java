@@ -525,6 +525,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 	private void setReachableFields(final int pos)
 	{
+		if(!myturn)
+		{
+			return;
+		}
+		
 		// if not in finish
 		if (pos != 64)
 		{
