@@ -160,6 +160,7 @@ public class CreateGameDialog extends JDialog {
 		playersModel.addColumn(lang.getProperty("dialog_create_tbl_filename"));
 
 		tblPlayers = new JTable(playersModel);
+		tblPlayers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		tblPlayers.setRowHeight(25);
 
 		// set single selection on one cell
