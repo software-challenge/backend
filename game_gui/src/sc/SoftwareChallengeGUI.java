@@ -78,15 +78,18 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 		// set window preferences
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-		this.setTitle(presFac.getLogicFacade().getLanguageData()
-				.getProperty("window_title"));
+		this.setTitle(presFac.getLogicFacade().getLanguageData().getProperty(
+				"window_title"));
 		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
 				.getImage());
-		this.setPreferredSize(new Dimension(1024, 768));
-		this.pack();
-		this.setMinimumSize(new Dimension(600,480));
+		// set application size to 80 per cent of screen size
+		Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		screen.height = (int) Math.round(0.8 * screen.height);
+		screen.width = (int) Math.round(0.8 * screen.width);
+		this.setSize(screen);
+		// center application
 		this.setLocationRelativeTo(null);
-		
+
 		// before closing this frame
 		this.addWindowListener(new WindowAdapter() {
 			@Override

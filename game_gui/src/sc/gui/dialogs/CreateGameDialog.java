@@ -31,6 +31,9 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
 
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -92,8 +95,7 @@ public class CreateGameDialog extends JDialog {
 	private void createGUI() {
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
-		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(
-				plugins);
+		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(plugins);
 
 		// ---------------------------------------------------
 
@@ -117,8 +119,7 @@ public class CreateGameDialog extends JDialog {
 		ckbDim.setToolTipText("");
 
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang
-				.getProperty("dialog_create_pref_debug_hint"));
+		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
 
 		txfPort = new JTextField(5);
 		txfPort.setText("" + DEFAULT_PORT);
@@ -144,6 +145,21 @@ public class CreateGameDialog extends JDialog {
 		pnlLeft.add(combPlugins);
 
 		// ---------------------------------------------------
+
+		JTextField tfName = new JTextField();
+		// only max 15 characters
+		tfName.setDocument(new PlainDocument() {
+			@Override
+			public void insertString(int offs, String str, AttributeSet a)
+					throws BadLocationException {
+
+				if (str == null || offs + str.length() > 15) {
+					java.awt.Toolkit.getDefaultToolkit().beep();
+					return;
+				}
+				super.insertString(offs, str, a);
+			}
+		});
 
 		Vector<String> cmbItems = new Vector<String>();
 		cmbItems.add(lang.getProperty("dialog_create_plyType_human"));
@@ -177,6 +193,8 @@ public class CreateGameDialog extends JDialog {
 		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(50);
 		tblPlayers.getColumnModel().getColumn(0).setCellRenderer(
 				new GreyBackgroundCellRenderer());
+		tblPlayers.getColumnModel().getColumn(1).setCellEditor(
+				new MyTextFieldNameEditor(tfName));
 		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
 				new MyComboBoxEditor(cmbItems));
 		tblPlayers.getColumnModel().getColumn(2).setCellRenderer(
@@ -189,8 +207,7 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		/* okButton */
-		final JButton okButton = new JButton(lang
-				.getProperty("dialog_create_create"));
+		final JButton okButton = new JButton(lang.getProperty("dialog_create_create"));
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -209,8 +226,7 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang
-				.getProperty("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang.getProperty("dialog_create_cancel"));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -260,8 +276,7 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
-		final ContextDisplay contextPanel = (ContextDisplay) presFac
-				.getContextDisplay();
+		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
 
 		// start server
 		try {
@@ -276,17 +291,16 @@ public class CreateGameDialog extends JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, e.getMessage(), lang
-					.getProperty("dialog_error_title"),
-					JOptionPane.ERROR_MESSAGE);
+					.getProperty("dialog_error_title"), JOptionPane.ERROR_MESSAGE);
 		}
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(
-				contextPanel.recreateGameField(), threeDimensional);
+		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField(),
+				threeDimensional);
 
-		final List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(
-				model.getRowCount());
+		final List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(model
+				.getRowCount());
 		for (int i = 0; i < model.getRowCount(); i++) {
 			String playerName = (String) model.getValueAt(i, 1);
 			int index = extractIndex((String) model.getValueAt(i, 2));
@@ -296,12 +310,8 @@ public class CreateGameDialog extends JDialog {
 
 		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin()
-					.prepareGame(
-							ip,
-							port,
-							descriptors.toArray(new SlotDescriptor[descriptors
-									.size()]));
+			prep = selPlugin.getPlugin().prepareGame(ip, port,
+					descriptors.toArray(new SlotDescriptor[descriptors.size()]));
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
@@ -334,26 +344,19 @@ public class CreateGameDialog extends JDialog {
 				presFac.getLogicFacade().setGameActive(false);
 				contextPanel.updateButtonBar(true);
 				// generate replay filename
-				StringBuilder replayFilename = new StringBuilder(
-						"./replays/replay");
+				StringBuilder replayFilename = new StringBuilder("./replays/replay");
 				for (int i = 0; i < descriptors.size(); i++) {
-					replayFilename.append("_"
-							+ descriptors.get(i).getDisplayName());
+					replayFilename.append("_" + descriptors.get(i).getDisplayName());
 				}
-				replayFilename.append(HelperMethods.getCurrentDateTime()
-						+ ".xml");
+				replayFilename.append(HelperMethods.getCurrentDateTime() + ".xml");
 				// save replay
 				try {
 					observer.saveReplayToFile(replayFilename.toString());
 				} catch (IOException e) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									lang
-											.getProperty("dialog_create_error_replay_msg"),
-									lang
-											.getProperty("dialog_create_error_replay_title"),
-									JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, lang
+							.getProperty("dialog_create_error_replay_msg"), lang
+							.getProperty("dialog_create_error_replay_title"),
+							JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 			}
@@ -397,8 +400,8 @@ public class CreateGameDialog extends JDialog {
 				break;
 			default:
 				cancelGameCreation(observer);
-				throw new RuntimeException("Selection range out of bounds ("
-						+ index + ")");
+				throw new RuntimeException("Selection range out of bounds (" + index
+						+ ")");
 			}
 		}
 
@@ -434,10 +437,9 @@ public class CreateGameDialog extends JDialog {
 		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getDescription()
-					.version(), null,
-					selPlugin.getPlugin().getPluginInfoText(), selPlugin
-							.getDescription().author());
+					.getDescription().name(), selPlugin.getDescription().version(), null,
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
+							.author());
 			// update status bar
 			((StatusBar) presFac.getStatusBar()).setStatus(lang
 					.getProperty("statusbar_status_currentgame")
@@ -458,11 +460,9 @@ public class CreateGameDialog extends JDialog {
 	private int extractIndex(final String plyType) {
 		if (plyType.equals(lang.getProperty("dialog_create_plyType_human"))) {
 			return 0;
-		} else if (plyType.equals(lang
-				.getProperty("dialog_create_plyType_ki_intern"))) {
+		} else if (plyType.equals(lang.getProperty("dialog_create_plyType_ki_intern"))) {
 			return 1;
-		} else if (plyType.equals(lang
-				.getProperty("dialog_create_plyType_ki_extern"))) {
+		} else if (plyType.equals(lang.getProperty("dialog_create_plyType_ki_extern"))) {
 			return 2;
 		}
 
@@ -526,20 +526,18 @@ public class CreateGameDialog extends JDialog {
 		case 1:// KI intern
 			JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 					.getCreateGameDialogPath());
-			chooser.setDialogTitle(lang
-					.getProperty("dialog_create_dialog_title"));
+			chooser.setDialogTitle(lang.getProperty("dialog_create_dialog_title"));
 
 			switch (chooser.showOpenDialog(frame)) {
 			case JFileChooser.APPROVE_OPTION:
 				// set name
 				String clientname = chooser.getSelectedFile().getName();
-				clientname = HelperMethods
-						.getFilenameWithoutFileExt(clientname)
-						+ " " + (row + 1);
+				clientname = HelperMethods.getFilenameWithoutFileExt(clientname) + " "
+						+ (row + 1);
 				playersModel.setValueAt(clientname, row, 1);
 				// set path
-				playersModel.setValueAt(chooser.getSelectedFile()
-						.getAbsolutePath(), row, 3);
+				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
+						3);
 				// save config
 				GUIConfiguration.instance().setCreateGameDialogPath(
 						chooser.getSelectedFile().getParent());
@@ -571,8 +569,16 @@ public class CreateGameDialog extends JDialog {
 
 	}
 
-	public class MyComboBoxEditor extends DefaultCellEditor implements
-			ItemListener {
+	public class MyTextFieldNameEditor extends DefaultCellEditor {
+
+		public MyTextFieldNameEditor(JTextField textField) {
+			super(textField);
+			// TODO Auto-generated constructor stub
+		}
+
+	}
+
+	public class MyComboBoxEditor extends DefaultCellEditor implements ItemListener {
 		public MyComboBoxEditor(Vector<String> items) {
 			super(new JComboBox(items));
 

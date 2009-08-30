@@ -10,6 +10,8 @@
 <ok>-fix: "Warte auf externe.." externe umformulieren
 <ok>-fix: Path nach approve sofort in die config schreiben
 -fix: dispose MUST call window listener
+- Testrange mit externen Clients war mir gar nicht bewusst
+- Testrange mit Spielnamen hatte ich auch nie benutzt
 
 marcel:
 -beim laden eines ki-programms/replays game type prüfen
