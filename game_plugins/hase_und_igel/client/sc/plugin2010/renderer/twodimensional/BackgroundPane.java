@@ -37,7 +37,7 @@ public class BackgroundPane extends JPanel
 	@Override
 	protected void paintComponent(Graphics g)
 	{
-		super.paintComponent(g);
+		// super.paintComponent(g);
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 	}
 }

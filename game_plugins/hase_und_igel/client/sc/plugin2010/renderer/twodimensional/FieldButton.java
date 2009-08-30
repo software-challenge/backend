@@ -210,7 +210,7 @@ public class FieldButton extends JButton
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 		if (icon != null)
 		{
-			g.drawImage(icon, 5, 5, getWidth() - 20, getHeight() - 15, this);
+			g.drawImage(icon, 5, 5, getWidth() - 15, getHeight() - 15, this);
 		}
 		final String text = String.valueOf(fieldNumber);
 		g.drawString(text, getWidth() - 15, getHeight() - 5);

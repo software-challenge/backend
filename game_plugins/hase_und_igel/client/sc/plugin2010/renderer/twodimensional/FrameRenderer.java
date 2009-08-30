@@ -8,6 +8,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -38,19 +41,25 @@ import sc.shared.GameResult;
 public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 {
 	// GUI Components
-	private InformationBar			info;
+	private UpperInformationBar		upperInformationBar;
 
 	@SuppressWarnings("unused")
 	private ChatBar					chat;
 
-	private BackgroundPane			bg;
+	private BackgroundPane			centerBoard;
+	private BorderInformationBar	leftPlayerBar;
+	private BorderInformationBar	rightPlayerBar;
 	private ActionBar				action;
-	private final List<FieldButton>	fbuttons		= new ArrayList<FieldButton>();
+	private final List<FieldButton>	fbuttons			= new ArrayList<FieldButton>();
 	private final HumanGameHandler	handler;
 	private QuestionPanel			qPanel;
 
-	private final Image				backGroundImage	= RendererUtil
-															.getImage("resource/game/background.png");
+	private final int				UPPERHEIGHT			= 130;
+	private final int				LOWERHEIGHT			= 60;
+	private final int				CENTERBORDERWIDTH	= 180;
+
+	private final Image				backGroundImage		= RendererUtil
+																.getImage("resource/game/background.png");
 
 	// local instances of current players and board
 	private Player					player;
@@ -58,24 +67,24 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private Board					board;
 
 	// only draw the board the first time it updates
-	private boolean					boardWasCreated	= false;
-	private boolean					myturn			= false;
-	private boolean					onlyObserving	= false;
-	private boolean					questionOpen	= false;
+	private boolean					boardWasCreated		= false;
+	private boolean					myturn				= false;
+	private boolean					onlyObserving		= false;
+	private boolean					questionOpen		= false;
 
 	// Strings used for asking Questions to the user
-	private final String			moveForward		= "Weiter ziehen";
-	private final String			takeCarrots		= "10 Karotten nehmen";
-	private final String			dropCarrots		= "10 Karotten abgeben";
-	private final String			carrotAnswer	= "carrots";
+	private final String			moveForward			= "Weiter ziehen";
+	private final String			takeCarrots			= "10 Karotten nehmen";
+	private final String			dropCarrots			= "10 Karotten abgeben";
+	private final String			carrotAnswer		= "carrots";
 
-	private final String			take20carrots	= "Nimm 20 Karotten";
-	private final String			doNothing		= "Keine Karotten abgeben oder nehmen";
-	private final String			give20carrots	= "Gib 20 Karotten ab";
-	private final String			eatsalad		= "Friss sofort einen Salat";
-	private final String			hurryahead		= "Rücke eine Position vor";
-	private final String			fallback		= "Falle eine Position zurück";
-	private final String			jokerAnswer		= "joker";
+	private final String			take20carrots		= "Nimm 20 Karotten";
+	private final String			doNothing			= "Keine Karotten abgeben oder nehmen";
+	private final String			give20carrots		= "Gib 20 Karotten ab";
+	private final String			eatsalad			= "Friss sofort einen Salat";
+	private final String			hurryahead			= "Rücke eine Position vor";
+	private final String			fallback			= "Falle eine Position zurück";
+	private final String			jokerAnswer			= "joker";
 
 	public FrameRenderer(final HumanGameHandler handler,
 			final boolean onlyObserving)
@@ -91,22 +100,24 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		addMouseListener(new ClickRefresher());
 
-		bg = new BackgroundPane();
+		centerBoard = new BackgroundPane();
 		int scale = Math.min(getWidth(), getHeight());
-		bg.setPreferredSize(new Dimension(scale, scale));
+		centerBoard.setPreferredSize(new Dimension(scale, scale));
 
 		for (int i = 0; i < 65; i++)
 		{
 			fbuttons.add(new FieldButton("", i, FieldTyp.INVALID, this));
 			fbuttons.get(i).setPreferredSize(new Dimension(40, 40));
-			bg.add("1", fbuttons.get(i));
+			centerBoard.add("1", fbuttons.get(i));
 		}
 
 		final HaseUndIgelLayout paneLayout = new HaseUndIgelLayout();
 
-		bg.setLayout(paneLayout);
+		centerBoard.setLayout(paneLayout);
 
-		info = new InformationBar();
+		upperInformationBar = new UpperInformationBar();
+		leftPlayerBar = new BorderInformationBar(true);
+		rightPlayerBar = new BorderInformationBar(false);
 		// chat = new ChatBar();
 		action = new ActionBar();
 
@@ -115,15 +126,28 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		final BorderLayout layout = new BorderLayout();
 		leftPanel.setLayout(layout);
 
-		info.setPreferredSize(new Dimension(getWidth(), 220));
+		JPanel centerPanel = new JPanel();
 
-		leftPanel.add(info, BorderLayout.NORTH);
-		leftPanel.add(bg, BorderLayout.CENTER);
+		final BorderLayout clayout = new BorderLayout();
+		centerPanel.setLayout(clayout);
+
+		leftPlayerBar.setPreferredSize(new Dimension(CENTERBORDERWIDTH, 100));
+		rightPlayerBar.setPreferredSize(new Dimension(CENTERBORDERWIDTH, 100));
+
+		centerPanel.add(leftPlayerBar, BorderLayout.WEST);
+		centerPanel.add(centerBoard, BorderLayout.CENTER);
+		centerPanel.add(rightPlayerBar, BorderLayout.EAST);
+
+		upperInformationBar.setPreferredSize(new Dimension(getWidth(),
+				UPPERHEIGHT));
+
+		leftPanel.add(upperInformationBar, BorderLayout.NORTH);
+		leftPanel.add(centerPanel, BorderLayout.CENTER);
 		// leftPanel.add(chat, BorderLayout.SOUTH);
 
 		qPanel = new QuestionPanel(this);
 		leftPanel.add(qPanel, BorderLayout.AFTER_LAST_LINE);
-		qPanel.setPreferredSize(new Dimension(getWidth(), 60));
+		qPanel.setPreferredSize(new Dimension(getWidth(), LOWERHEIGHT));
 
 		final BorderLayout framelayout = new BorderLayout();
 		setLayout(framelayout);
@@ -137,14 +161,41 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		setVisible(true);
 
-		divideBackground(new Dimension(1024, 1024), new Color(255, 255, 255,
-				120));
+		addComponentListener(new ComponentListener() {
+			@Override
+			public void componentHidden(ComponentEvent e)
+			{
+
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e)
+			{
+
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e)
+			{
+				// JPanel c = (JPanel) e.getSource();
+
+				// divideBackground(c.getSize(), new Color(255, 255, 255, 120));
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e)
+			{
+
+			}
+		});
+
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		divideBackground(new Dimension(screen.width - 200, screen.height),
+				new Color(255, 255, 255, 120));
 	}
 
 	private void divideBackground(Dimension size, Color transparentColor)
 	{
-		final int UPPERHEIGHT = 220;
-		final int LOWERHEIGHT = 60;
 		int CENTERHEIGHT;
 
 		if (size.height - UPPERHEIGHT - LOWERHEIGHT > 0)
@@ -169,13 +220,20 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		g2d.setColor(transparentColor);
 		g2d.fillRect(0, 0, size.width, UPPERHEIGHT);
 		g2d.fillRect(0, size.height - LOWERHEIGHT, size.width, size.height);
-		// wholeBackground.getGraphics().fillRect(0, size.height - LOWERHEIGHT,
-		// size.width, LOWERHEIGHT);
+		g2d.fillRect(0, UPPERHEIGHT, CENTERBORDERWIDTH, CENTERHEIGHT);
+		g2d.fillRect(size.width - CENTERBORDERWIDTH, UPPERHEIGHT, size.width,
+				CENTERHEIGHT);
 
 		Image upper = new BufferedImage(size.width, UPPERHEIGHT,
 				BufferedImage.TYPE_INT_ARGB);
 
-		Image center = new BufferedImage(size.width, CENTERHEIGHT,
+		Image leftcenter = new BufferedImage(CENTERBORDERWIDTH, CENTERHEIGHT,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Image center = new BufferedImage(size.width - CENTERBORDERWIDTH * 2,
+				CENTERHEIGHT, BufferedImage.TYPE_INT_ARGB);
+
+		Image rightcenter = new BufferedImage(CENTERBORDERWIDTH, CENTERHEIGHT,
 				BufferedImage.TYPE_INT_ARGB);
 
 		Image lower = new BufferedImage(size.width, LOWERHEIGHT,
@@ -184,16 +242,28 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		upper.getGraphics().drawImage(wholeBackground, 0, 0, size.width,
 				UPPERHEIGHT, 0, 0, size.width, UPPERHEIGHT, this);
 
-		center.getGraphics().drawImage(wholeBackground, 0, 0, size.width,
-				CENTERHEIGHT, 0, UPPERHEIGHT, size.width,
+		leftcenter.getGraphics().drawImage(wholeBackground, 0, 0,
+				CENTERBORDERWIDTH, CENTERHEIGHT, 0, UPPERHEIGHT,
+				CENTERBORDERWIDTH, UPPERHEIGHT + CENTERHEIGHT, this);
+
+		center.getGraphics().drawImage(wholeBackground, 0, 0,
+				size.width - CENTERBORDERWIDTH * 2, CENTERHEIGHT,
+				CENTERBORDERWIDTH, UPPERHEIGHT, size.width - CENTERBORDERWIDTH,
+				UPPERHEIGHT + CENTERHEIGHT, this);
+
+		rightcenter.getGraphics().drawImage(wholeBackground, 0, 0,
+				CENTERBORDERWIDTH, CENTERHEIGHT,
+				size.width - CENTERBORDERWIDTH, UPPERHEIGHT, size.width,
 				UPPERHEIGHT + CENTERHEIGHT, this);
 
 		lower.getGraphics().drawImage(wholeBackground, 0, 0, size.width,
 				LOWERHEIGHT, 0, size.height - LOWERHEIGHT, size.width,
 				size.height, this);
 
-		info.setBackground(upper);
-		bg.setBackground(center);
+		upperInformationBar.setBackground(upper);
+		leftPlayerBar.setBackground(leftcenter);
+		centerBoard.setBackground(center);
+		rightPlayerBar.setBackground(rightcenter);
 		qPanel.setBackground(lower);
 	}
 
@@ -290,30 +360,30 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			case RED:
 				addHistory(player, enemy);
 				currentColorPath = "red";
-				info.setPlayer(player.getDisplayName());
-				info.setAttributes(player.getCarrotsAvailable(), player
-						.getSaladsToEat(), player.getActions());
+				upperInformationBar.setPlayer(player.getDisplayName());
+				leftPlayerBar.setAttributes(player.getCarrotsAvailable(),
+						player.getSaladsToEat(), player.getActions());
 
-				info.setOtherPlayer(enemy.getDisplayName());
-				info.setEnemyAttributes(enemy.getCarrotsAvailable(), enemy
+				upperInformationBar.setOtherPlayer(enemy.getDisplayName());
+				rightPlayerBar.setAttributes(enemy.getCarrotsAvailable(), enemy
 						.getSaladsToEat(), enemy.getActions());
 				break;
 			case BLUE:
 				addHistory(enemy, player);
 				currentColorPath = "blue";
-				info.setPlayer(enemy.getDisplayName());
-				info.setAttributes(enemy.getCarrotsAvailable(), enemy
+				upperInformationBar.setPlayer(enemy.getDisplayName());
+				leftPlayerBar.setAttributes(enemy.getCarrotsAvailable(), enemy
 						.getSaladsToEat(), enemy.getActions());
 
-				info.setOtherPlayer(player.getDisplayName());
-				info.setEnemyAttributes(player.getCarrotsAvailable(), player
-						.getSaladsToEat(), player.getActions());
+				upperInformationBar.setOtherPlayer(player.getDisplayName());
+				rightPlayerBar.setAttributes(player.getCarrotsAvailable(),
+						player.getSaladsToEat(), player.getActions());
 				break;
 			default:
 				break;
 		}
 
-		info.setTurn(currentColorPath);
+		upperInformationBar.setTurn(currentColorPath);
 
 		repaint();
 	}
@@ -323,7 +393,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	{
 		this.board = board;
 
-		info.setRound(round + 1);
+		upperInformationBar.setRound(round + 1);
 
 		if (!boardWasCreated)
 		{
@@ -525,11 +595,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 	private void setReachableFields(final int pos)
 	{
-		if(!myturn)
+		if (!myturn)
 		{
 			return;
 		}
-		
+
 		// if not in finish
 		if (pos != 64)
 		{

@@ -18,7 +18,7 @@ public class HaseUndIgelLayout implements LayoutManager
 	private final Vector<Integer>	levels;
 	private final Vector<Component>	comps;
 	private final int				BORDER	= 5;
-	private final int				SIZEX	= 10;
+	private final int				SIZEX	= 11;
 	private final int				SIZEY	= 11;
 
 	public HaseUndIgelLayout()
@@ -104,20 +104,19 @@ public class HaseUndIgelLayout implements LayoutManager
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
 
-			if (between(i, 0, 9) || between(i, 36, 43) || between(i, 58, 61))
+			if (between(i, 0, 10) || between(i, 38, 46) || between(i, 63, 65))
 			{
 				x += c.getPreferredSize().width;
 			}
-			else if (between(i, 9, 19) || between(i, 43, 49)
-					|| between(i, 61, 63))
+			else if (between(i, 10, 20) || between(i, 47, 53))
 			{
 				y -= c.getPreferredSize().height;
 			}
-			if (between(i, 19, 28) || between(i, 49, 54) || between(i, 63, 65))
+			if (between(i, 20, 30) || between(i, 53, 59))
 			{
 				x -= c.getPreferredSize().width;
 			}
-			else if (between(i, 28, 36) || between(i, 54, 58))
+			else if (between(i, 30, 38) || between(i, 59, 63))
 			{
 				y += c.getPreferredSize().height;
 			}
