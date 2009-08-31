@@ -104,19 +104,20 @@ public class HaseUndIgelLayout implements LayoutManager
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
 
-			if (between(i, 0, 10) || between(i, 38, 46) || between(i, 63, 65))
+			if (between(i, 0, 10) || between(i, 38, 46))
 			{
 				x += c.getPreferredSize().width;
 			}
-			else if (between(i, 10, 20) || between(i, 47, 53))
+			else if (between(i, 10, 20) || between(i, 47, 53)
+					|| between(i, 63, 65))
 			{
 				y -= c.getPreferredSize().height;
 			}
-			if (between(i, 20, 30) || between(i, 53, 59))
+			if (between(i, 20, 30) || between(i, 53, 56) || between(i, 60, 63))
 			{
 				x -= c.getPreferredSize().width;
 			}
-			else if (between(i, 30, 38) || between(i, 59, 63))
+			else if (between(i, 30, 38) || between(i, 56, 60))
 			{
 				y += c.getPreferredSize().height;
 			}

@@ -54,7 +54,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private final HumanGameHandler	handler;
 	private QuestionPanel			qPanel;
 
-	private final int				UPPERHEIGHT			= 130;
+	private final int				UPPERHEIGHT			= 80;
 	private final int				LOWERHEIGHT			= 60;
 	private final int				CENTERBORDERWIDTH	= 180;
 
@@ -177,9 +177,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			@Override
 			public void componentResized(ComponentEvent e)
 			{
-				// JPanel c = (JPanel) e.getSource();
+				JPanel c = (JPanel) e.getSource();
 
-				// divideBackground(c.getSize(), new Color(255, 255, 255, 120));
+				divideBackground(new Dimension(c.getSize().width - 200, c
+						.getSize().height), new Color(255, 255, 255, 120));
 			}
 
 			@Override

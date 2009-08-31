@@ -30,38 +30,38 @@ import sc.plugin2010.renderer.RendererUtil;
 public class BorderInformationBar extends BackgroundPane
 {
 
-	private final String		CARROTCOUNT			= "Karottenanzahl";
-	private final String		MOVESCOUNT			= "Maximale Zuganzahl durch Karotten möglich";
-	private final String		SALADCOUNT			= "Salate";
-	private final String		HASENJOKER			= "Hasenjoker";
+	private final String	CARROTCOUNT			= "Karottenanzahl";
+	private final String	MOVESCOUNT			= "Maximale Zuganzahl durch Karotten möglich";
+	private final String	SALADCOUNT			= "Salate";
+	private final String	HASENJOKER			= "Hasenjoker";
 
-	private final JLabel		carrots				= new JLabel(CARROTCOUNT);
-	private final JLabel		maxfields			= new JLabel(MOVESCOUNT);
-	private final SaladPanel	salads				= new SaladPanel();
-	private final JLabel		hasenjoker			= new JLabel(" ");
+	private final JLabel	carrots				= new JLabel(CARROTCOUNT);
+	private final JLabel	maxfields			= new JLabel(MOVESCOUNT);
+	private final JLabel	salads				= new JLabel(SALADCOUNT);
+	private final JLabel	hasenjoker			= new JLabel(" ");
 
-	private final String		FONTTYPE			= "New Courier";
-	private final int			SIZE				= 14;
-	private final int			ICONSIZE			= 30;
-	private final int			BIGGERCARROTSIZE	= 4;
-	private final int			INDENT				= 5;
+	private final String	FONTTYPE			= "New Courier";
+	private final int		SIZE				= 16;
+	private final int		ICONSIZE			= 40;
+	private final int		BIGGERCARROTSIZE	= 2;
+	private final int		INDENT				= 10;
 
-	private final Image			rabbit_carrot		= RendererUtil
-															.getImage("resource/game/hasenjoker_carrots.png");
-	private final Image			rabbit_salad		= RendererUtil
-															.getImage("resource/game/hasenjoker_salad.png");
-	private final Image			rabbit_forward		= RendererUtil
-															.getImage("resource/game/hasenjoker_forward.png");
-	private final Image			rabbit_backward		= RendererUtil
-															.getImage("resource/game/hasenjoker_backward.png");
+	private final Image		rabbit_carrot		= RendererUtil
+														.getImage("resource/game/hasenjoker_carrots.png");
+	private final Image		rabbit_salad		= RendererUtil
+														.getImage("resource/game/hasenjoker_salad.png");
+	private final Image		rabbit_forward		= RendererUtil
+														.getImage("resource/game/hasenjoker_forward.png");
+	private final Image		rabbit_backward		= RendererUtil
+														.getImage("resource/game/hasenjoker_backward.png");
 
-	private final JLabel		rabbit_carrotIcon	= new JLabel();
-	private final JLabel		rabbit_saladIcon	= new JLabel();
-	private final JLabel		rabbit_forwardIcon	= new JLabel();
-	private final JLabel		rabbit_backwardIcon	= new JLabel();
+	private final JLabel	rabbit_carrotIcon	= new JLabel();
+	private final JLabel	rabbit_saladIcon	= new JLabel();
+	private final JLabel	rabbit_forwardIcon	= new JLabel();
+	private final JLabel	rabbit_backwardIcon	= new JLabel();
 
-	private BackgroundPane		rabbitjokerPane		= new BackgroundPane();
-	private BackgroundPane		hasenjokerPanel		= new BackgroundPane();
+	private BackgroundPane	rabbitjokerPane		= new BackgroundPane();
+	private BackgroundPane	hasenjokerPanel		= new BackgroundPane();
 
 	public BorderInformationBar(boolean red)
 	{
@@ -101,7 +101,6 @@ public class BorderInformationBar extends BackgroundPane
 		rabbitjokerPane.setLayout(new BoxLayout(rabbitjokerPane,
 				BoxLayout.Y_AXIS));
 
-		salads.setIconSize(ICONSIZE);
 		salads.setToolTipText(SALADCOUNT);
 
 		carrots.setHorizontalAlignment(JLabel.LEFT);
@@ -114,6 +113,10 @@ public class BorderInformationBar extends BackgroundPane
 
 		maxfields.setIcon(new ImageIcon(RendererUtil.getImage(
 				"resource/game/background.png").getScaledInstance(ICONSIZE,
+				ICONSIZE, Image.SCALE_SMOOTH)));
+
+		salads.setIcon(new ImageIcon(RendererUtil.getImage(
+				"resource/game/salad.png").getScaledInstance(ICONSIZE,
 				ICONSIZE, Image.SCALE_SMOOTH)));
 
 		hasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
@@ -159,22 +162,14 @@ public class BorderInformationBar extends BackgroundPane
 	{
 		int width = img.getWidth(this);
 
-		Image saladBGImg = new BufferedImage(width, ICONSIZE,
-				BufferedImage.TYPE_INT_ARGB);
-
-		saladBGImg.getGraphics().drawImage(img, 0, 0, width, ICONSIZE, INDENT,
-				(ICONSIZE + INDENT) * 2, INDENT + width,
-				(ICONSIZE + INDENT) * 3, this);
-
 		Image hasenjokerBGImg = new BufferedImage(width, ICONSIZE * 4,
 				BufferedImage.TYPE_INT_ARGB);
 
 		hasenjokerBGImg.getGraphics().drawImage(img, 0, 0, width, ICONSIZE * 4,
-				INDENT, (ICONSIZE + INDENT) * 3 + 1, INDENT + width,
-				(ICONSIZE + INDENT) * 3 + 1 + ICONSIZE * 4, this);
+				INDENT, ICONSIZE * 3 + INDENT * 5, INDENT + width,
+				ICONSIZE * 3 + INDENT * 5 + ICONSIZE * 4, this);
 
 		super.setBackground(img);
-		salads.setBackground(saladBGImg);
 		hasenjokerPanel.setBackground(hasenjokerBGImg);
 	}
 
@@ -219,7 +214,7 @@ public class BorderInformationBar extends BackgroundPane
 		carrots.setText("<html><u>" + String.valueOf(car) + "</u></html>");
 		maxfields.setText("<html>" + GameUtil.calculateMoveableFields(car)
 				+ "</html>");
-		salads.setSaladCount(sal);
+		salads.setText("<html>" + String.valueOf(sal) + "</html>");
 	}
 
 	private void setMyHasenjoker(final List<Action> joker)

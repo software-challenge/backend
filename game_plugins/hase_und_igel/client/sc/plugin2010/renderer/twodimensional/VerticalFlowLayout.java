@@ -106,6 +106,11 @@ public class VerticalFlowLayout implements LayoutManager
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
 			y += c.getPreferredSize().height + INDENT;
+			if (i == 2)
+			{
+				y += c.getPreferredSize().height + INDENT;
+			}
 		}
+
 	}
 }

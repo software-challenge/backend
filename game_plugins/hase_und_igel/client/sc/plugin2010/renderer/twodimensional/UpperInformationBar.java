@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import sc.plugin2010.renderer.RendererUtil;
 
@@ -51,7 +52,6 @@ public class UpperInformationBar extends BackgroundPane
 	private final BackgroundPane	left				= new BackgroundPane();
 	private final BackgroundPane	center				= new BackgroundPane();
 	private final BackgroundPane	right				= new BackgroundPane();
-	private final BackgroundPane	turnPanel			= new BackgroundPane();
 
 	public UpperInformationBar()
 	{
@@ -64,7 +64,7 @@ public class UpperInformationBar extends BackgroundPane
 		Color light_black = new Color(0, 0, 0, 180);
 
 		left.setLayout(new BorderLayout());
-		center.setLayout(new BorderLayout());
+		center.setLayout(new FlowLayout());
 		right.setLayout(new BorderLayout());
 
 		player.setHorizontalAlignment(JLabel.CENTER);
@@ -84,14 +84,16 @@ public class UpperInformationBar extends BackgroundPane
 
 		left.add(player, BorderLayout.CENTER);
 
-		center.add(rounds, BorderLayout.NORTH);
+		JPanel centerPanel = new JPanel();
 
-		turnPanel.setLayout(new FlowLayout());
+		centerPanel.setLayout(new BorderLayout());
 
-		turnPanel.add(turn);
-		turnPanel.add(turnicon);
+		center.add(rounds);
+		center.add(new JLabel("                    ")); // dummy
+		center.add(turn);
+		center.add(turnicon);
 
-		center.add(turnPanel, BorderLayout.SOUTH);
+		centerPanel.add(center, BorderLayout.CENTER);
 
 		right.add(enemy, BorderLayout.CENTER);
 
@@ -99,7 +101,7 @@ public class UpperInformationBar extends BackgroundPane
 		right.setPreferredSize(new Dimension(CENTERBORDERWIDTH, 100));
 
 		this.add(left, BorderLayout.WEST);
-		this.add(center, BorderLayout.CENTER);
+		this.add(centerPanel, BorderLayout.CENTER);
 		this.add(right, BorderLayout.EAST);
 
 		setVisible(true);
@@ -117,9 +119,6 @@ public class UpperInformationBar extends BackgroundPane
 		Image centerImg = new BufferedImage(width - CENTERBORDERWIDTH * 2,
 				height, BufferedImage.TYPE_INT_ARGB);
 
-		Image centerTurnImg = new BufferedImage(width - CENTERBORDERWIDTH * 2,
-				height / 2, BufferedImage.TYPE_INT_ARGB);
-
 		Image rightImg = new BufferedImage(CENTERBORDERWIDTH, height,
 				BufferedImage.TYPE_INT_ARGB);
 
@@ -130,16 +129,11 @@ public class UpperInformationBar extends BackgroundPane
 				width - CENTERBORDERWIDTH * 2, height, CENTERBORDERWIDTH, 0,
 				width - CENTERBORDERWIDTH, height, this);
 
-		centerTurnImg.getGraphics().drawImage(img, 0, 0,
-				width - CENTERBORDERWIDTH * 2, height / 2, CENTERBORDERWIDTH,
-				height / 2, width - CENTERBORDERWIDTH, height, this);
-
 		rightImg.getGraphics().drawImage(img, 0, 0, CENTERBORDERWIDTH, height,
 				width - CENTERBORDERWIDTH, 0, width, height, this);
 
 		left.setBackground(leftImg);
 		center.setBackground(centerImg);
-		turnPanel.setBackground(centerTurnImg);
 		right.setBackground(rightImg);
 	}
 
