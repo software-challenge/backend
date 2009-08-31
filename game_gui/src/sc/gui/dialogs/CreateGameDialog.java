@@ -40,9 +40,9 @@ import sc.gui.SCMenuBar;
 import sc.gui.StatusBar;
 import sc.gui.dialogs.renderer.CenteredBlackBackgroundCellRenderer;
 import sc.gui.dialogs.renderer.FilenameBlackBGCellRenderer;
-import sc.gui.dialogs.renderer.MaxCharDocument;
 import sc.gui.dialogs.renderer.MyComboBoxRenderer;
 import sc.gui.stuff.KIInformation;
+import sc.gui.stuff.MaxCharDocument;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
@@ -207,17 +207,7 @@ public class CreateGameDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boolean createGame = true;
-				if (presFac.getLogicFacade().isGameActive()) {
-					if (JOptionPane.showConfirmDialog(null, lang
-							.getProperty("dialog_create_gameactive_msg"), lang
-							.getProperty("dialog_create_gameactive_title"),
-							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-						createGame = false;
-					}
-				}
-				if (createGame)
-					createGame(playersModel);
+				createGame(playersModel);
 			}
 		});
 

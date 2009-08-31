@@ -13,15 +13,10 @@ import sc.common.IConfiguration;
 
 public class GUIConfiguration implements IConfiguration, Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4635852675167221186L;
-
+	
 	private static final String CONFIG_FILENAME = "game_gui.conf";
-
 	private static final String PATH_STD = ".";
-
 	private static String pluginFolder = null;
 
 	private ELanguage lang;

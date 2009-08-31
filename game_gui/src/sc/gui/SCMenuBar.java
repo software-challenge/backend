@@ -8,6 +8,7 @@ import java.util.Properties;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import sc.IGUIApplication;
 import sc.gui.dialogs.CreateGameDialog;
@@ -71,6 +72,15 @@ public class SCMenuBar extends JMenuBar {
 		createGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				if (presFac.getLogicFacade().isGameActive()) {
+					if (JOptionPane.showConfirmDialog(null, lang
+							.getProperty("dialog_create_gameactive_msg"), lang
+							.getProperty("dialog_create_gameactive_title"),
+							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+						return;
+					}
+				}
+				// show create-game dialog
 				new CreateGameDialog(presFac.getFrame()).setVisible(true);
 			}
 		});

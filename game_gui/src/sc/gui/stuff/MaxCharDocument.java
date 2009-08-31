@@ -1,4 +1,4 @@
-package sc.gui.dialogs.renderer;
+package sc.gui.stuff;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
