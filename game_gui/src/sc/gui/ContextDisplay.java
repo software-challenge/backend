@@ -126,8 +126,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().cancel();// FIXME MUST
-				// call
-				// gameEnded
+				// call gameEnded, e.g. for gameActive = false
 				started = false;
 				disableAllButtons();
 

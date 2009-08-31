@@ -27,8 +27,7 @@ public class FilenameBlackBGCellRenderer extends BlackBackgroundCellRenderer {
 		File f = new File((String) value);
 		if (f.exists()) {
 			String clientname = f.getName();
-			clientname = HelperMethods.getFilenameWithoutFileExt(clientname) + " "
-					+ (row + 1);
+			clientname = HelperMethods.getFilenameWithoutFileExt(clientname);
 			// set filename
 			setText(clientname);
 		}
