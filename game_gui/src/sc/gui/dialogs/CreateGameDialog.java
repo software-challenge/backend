@@ -31,9 +31,6 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -41,7 +38,9 @@ import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
 import sc.gui.StatusBar;
-import sc.gui.dialogs.renderer.GreyBackgroundCellRenderer;
+import sc.gui.dialogs.renderer.CenteredBlackBackgroundCellRenderer;
+import sc.gui.dialogs.renderer.FilenameBlackBGCellRenderer;
+import sc.gui.dialogs.renderer.MaxCharDocument;
 import sc.gui.dialogs.renderer.MyComboBoxRenderer;
 import sc.gui.stuff.KIInformation;
 import sc.guiplugin.interfaces.IGamePreparation;
@@ -59,11 +58,12 @@ import sc.shared.SlotDescriptor;
 public class CreateGameDialog extends JDialog {
 
 	private static final String HOST_IP = "localhost";
-
 	private static final int DEFAULT_PORT = SharedConfiguration.DEFAULT_PORT;
+	private static final int MAX_CHARS = 50;
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
+
 	private JPanel pnlTable;
 	private JPanel pnlButtons;
 	private JTable tblPlayers;
@@ -80,11 +80,16 @@ public class CreateGameDialog extends JDialog {
 	private JLabel lblPort;
 	private MyTableModel playersModel;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param frame
+	 */
 	public CreateGameDialog(JFrame frame) {
 		super();
 
-		presFac = PresentationFacade.getInstance();
-		lang = presFac.getLogicFacade().getLanguageData();
+		this.presFac = PresentationFacade.getInstance();
+		this.lang = presFac.getLogicFacade().getLanguageData();
 		this.frame = frame;
 		createGUI();
 	}
@@ -95,7 +100,8 @@ public class CreateGameDialog extends JDialog {
 	private void createGUI() {
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
-		Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(plugins);
+		final Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(
+				plugins);
 
 		// ---------------------------------------------------
 
@@ -148,25 +154,12 @@ public class CreateGameDialog extends JDialog {
 
 		JTextField tfName = new JTextField();
 		// only max 15 characters
-		tfName.setDocument(new PlainDocument() {
-			@Override
-			public void insertString(int offs, String str, AttributeSet a)
-					throws BadLocationException {
+		tfName.setDocument(new MaxCharDocument(MAX_CHARS));
 
-				if (str == null || offs + str.length() > 15) {
-					java.awt.Toolkit.getDefaultToolkit().beep();
-					return;
-				}
-				super.insertString(offs, str, a);
-			}
-		});
-
-		Vector<String> cmbItems = new Vector<String>();
+		final Vector<String> cmbItems = new Vector<String>();
 		cmbItems.add(lang.getProperty("dialog_create_plyType_human"));
 		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_intern"));
 		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_extern"));
-		// cmbItems.add(lang.getProperty("dialog_create_plyType_observer"));
-		// cmbItems.add(lang.getProperty("dialog_create_plyType_closed"));
 
 		// add columns
 		playersModel = new MyTableModel();
@@ -192,15 +185,18 @@ public class CreateGameDialog extends JDialog {
 		tblPlayers.getColumnModel().getColumn(0).setMaxWidth(100);
 		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(50);
 		tblPlayers.getColumnModel().getColumn(0).setCellRenderer(
-				new GreyBackgroundCellRenderer());
+				new CenteredBlackBackgroundCellRenderer());
+
 		tblPlayers.getColumnModel().getColumn(1).setCellEditor(
-				new MyTextFieldNameEditor(tfName));
+				new DefaultCellEditor(tfName));
+
 		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
 				new MyComboBoxEditor(cmbItems));
 		tblPlayers.getColumnModel().getColumn(2).setCellRenderer(
 				new MyComboBoxRenderer(cmbItems));
+
 		tblPlayers.getColumnModel().getColumn(3).setCellRenderer(
-				new GreyBackgroundCellRenderer());
+				new FilenameBlackBGCellRenderer());
 
 		pnlTable.add(new JScrollPane(tblPlayers));
 
@@ -344,14 +340,10 @@ public class CreateGameDialog extends JDialog {
 				presFac.getLogicFacade().setGameActive(false);
 				contextPanel.updateButtonBar(true);
 				// generate replay filename
-				StringBuilder replayFilename = new StringBuilder("./replays/replay");
-				for (int i = 0; i < descriptors.size(); i++) {
-					replayFilename.append("_" + descriptors.get(i).getDisplayName());
-				}
-				replayFilename.append(HelperMethods.getCurrentDateTime() + ".xml");
+				String replayFilename = HelperMethods.generateReplayFilename(descriptors);
 				// save replay
 				try {
-					observer.saveReplayToFile(replayFilename.toString());
+					observer.saveReplayToFile(replayFilename);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, lang
 							.getProperty("dialog_create_error_replay_msg"), lang
@@ -363,8 +355,8 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		observer.addNewTurnListener(contextPanel);
-
-		List<KIInformation> KIs = new ArrayList<KIInformation>();
+		
+		final List<KIInformation> KIs = new ArrayList<KIInformation>();
 
 		// configure slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
@@ -385,7 +377,7 @@ public class CreateGameDialog extends JDialog {
 				String path = (String) model.getValueAt(i, 3);
 				// check path
 				if (path == null || path.equals("")) {
-					JOptionPane.showMessageDialog(this, lang
+					JOptionPane.showMessageDialog(null, lang
 							.getProperty("dialog_create_error_path_msg"), lang
 							.getProperty("dialog_create_error_path_title"),
 							JOptionPane.ERROR_MESSAGE);
@@ -530,14 +522,8 @@ public class CreateGameDialog extends JDialog {
 
 			switch (chooser.showOpenDialog(frame)) {
 			case JFileChooser.APPROVE_OPTION:
-				// set name
-				String clientname = chooser.getSelectedFile().getName();
-				clientname = HelperMethods.getFilenameWithoutFileExt(clientname) + " "
-						+ (row + 1);
-				playersModel.setValueAt(clientname, row, 1);
 				// set path
-				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
-						3);
+				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row, 3);
 				// save config
 				GUIConfiguration.instance().setCreateGameDialogPath(
 						chooser.getSelectedFile().getParent());
@@ -565,15 +551,6 @@ public class CreateGameDialog extends JDialog {
 		@Override
 		public boolean isCellEditable(int row, int col) {
 			return (0 != col) && (col != 3);
-		}
-
-	}
-
-	public class MyTextFieldNameEditor extends DefaultCellEditor {
-
-		public MyTextFieldNameEditor(JTextField textField) {
-			super(textField);
-			// TODO Auto-generated constructor stub
 		}
 
 	}

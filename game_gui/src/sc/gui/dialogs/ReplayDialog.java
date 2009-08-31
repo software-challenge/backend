@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 
+import sc.common.HelperMethods;
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
@@ -75,10 +76,11 @@ public class ReplayDialog extends JDialog {
 						.getLoadReplayPath());
 				chooser.setDialogTitle(lang.getProperty("dialog_replay_dialog_title"));
 				if (chooser.showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
-					loadReplay(chooser.getSelectedFile());
+					File f = chooser.getSelectedFile();
+					// set new path
+					txfReplay.setText(f.getAbsolutePath());
 					// save path
-					GUIConfiguration.instance().setLoadReplayPath(
-							chooser.getSelectedFile().getParent());
+					GUIConfiguration.instance().setLoadReplayPath(f.getParent());
 				}
 			}
 		});
@@ -122,10 +124,6 @@ public class ReplayDialog extends JDialog {
 		this.setLocationRelativeTo(null);
 	}
 
-	protected void loadReplay(File f) {
-		txfReplay.setText(f.getAbsolutePath());
-	}
-
 	/**
 	 * Starts the selected replay file, closes this dialog and displays the
 	 * replay.
@@ -167,9 +165,9 @@ public class ReplayDialog extends JDialog {
 				.name(), selPlugin.getDescription().version(), null, selPlugin
 				.getPlugin().getPluginInfoText(), selPlugin.getDescription().author());
 		// update status bar
-		((StatusBar)presFac.getStatusBar()).setStatus(lang
+		((StatusBar) presFac.getStatusBar()).setStatus(lang
 				.getProperty("statusbar_status_currentreplay")
-				+ " " + selPlugin.getDescription().name());
+				+ " " + HelperMethods.getFilenameWithoutFileExt(f.getName()));
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {

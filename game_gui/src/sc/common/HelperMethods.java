@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.helpers.StringHelper;
+import sc.shared.SlotDescriptor;
 
 public class HelperMethods {
 
@@ -95,7 +96,8 @@ public class HelperMethods {
 	}
 
 	/**
-	 * Returns the filename without the file extension if present.
+	 * Returns the filename without the file extension if present, i.e. it
+	 * simply removes the file extension at the end.
 	 * 
 	 * @param filename
 	 * @return
@@ -117,5 +119,21 @@ public class HelperMethods {
 	 */
 	public static String getCurrentDateTime() {
 		return dateTimeFormat.format(new Date());
+	}
+
+	/**
+	 * Returns a new generated filename for a replay file.
+	 * 
+	 * @param descriptors
+	 * @return
+	 */
+	public static String generateReplayFilename(List<SlotDescriptor> descriptors) {
+		StringBuilder replayFilename = new StringBuilder("./replays/replay");
+		for (int i = 0; i < descriptors.size(); i++) {
+			replayFilename.append("_" + descriptors.get(i).getDisplayName());
+		}
+		replayFilename.append(" " + HelperMethods.getCurrentDateTime() + ".xml");
+
+		return replayFilename.toString();
 	}
 }
