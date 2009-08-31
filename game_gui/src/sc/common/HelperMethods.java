@@ -47,6 +47,8 @@ public class HelperMethods {
 		if (ext.equals(".jar")) {
 			commandFragments.add("java");
 			commandFragments.add("-jar");
+		} else if (ext.equals(".exe")) {
+			// do nothing
 		} else {
 			throw new UnsupportedFileExtensionException();// TODO remove?
 		}
