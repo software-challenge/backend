@@ -9,8 +9,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -161,37 +161,25 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 
 		setVisible(true);
 
-		addComponentListener(new ComponentListener() {
-			@Override
-			public void componentHidden(ComponentEvent e)
-			{
-
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e)
-			{
-
-			}
+		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(ComponentEvent e)
 			{
 				JPanel c = (JPanel) e.getSource();
+				if (c.getSize().width - 200 > 0 && c.getSize().height > 0)
+				{
+					// divideBackground(new Dimension(c.getSize().width - 200, c
+					// .getSize().height), new Color(255, 255, 255, 120));
 
-				divideBackground(new Dimension(c.getSize().width - 200, c
-						.getSize().height), new Color(255, 255, 255, 120));
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e)
-			{
-
+					// repaint();
+				}
 			}
 		});
 
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		divideBackground(new Dimension(screen.width - 200, screen.height),
+		divideBackground(
+				new Dimension(screen.width - 200, screen.height - 142),
 				new Color(255, 255, 255, 120));
 	}
 

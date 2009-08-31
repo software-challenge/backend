@@ -108,7 +108,7 @@ public class VerticalFlowLayout implements LayoutManager
 			y += c.getPreferredSize().height + INDENT;
 			if (i == 2)
 			{
-				y += c.getPreferredSize().height + INDENT;
+				y += INDENT;
 			}
 		}
 
