@@ -50,16 +50,19 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private BorderInformationBar	leftPlayerBar;
 	private BorderInformationBar	rightPlayerBar;
 	private ActionBar				action;
-	private final List<FieldButton>	fbuttons			= new ArrayList<FieldButton>();
+	private final List<FieldButton>	fbuttons				= new ArrayList<FieldButton>();
 	private final HumanGameHandler	handler;
 	private QuestionPanel			qPanel;
 
-	private final int				UPPERHEIGHT			= 80;
-	private final int				LOWERHEIGHT			= 60;
-	private final int				CENTERBORDERWIDTH	= 180;
+	private final int				UPPERHEIGHT				= 80;
+	private final int				LOWERHEIGHT				= 70;
+	private final int				CENTERBORDERWIDTH		= 180;
+	private final Color				borderColor				= new Color(255,
+																	255, 255,
+																	120);
 
-	private final Image				backGroundImage		= RendererUtil
-																.getImage("resource/game/background.png");
+	private final Image				backGroundImage			= RendererUtil
+																	.getImage("resource/game/background.png");
 
 	// local instances of current players and board
 	private Player					player;
@@ -67,24 +70,26 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private Board					board;
 
 	// only draw the board the first time it updates
-	private boolean					boardWasCreated		= false;
-	private boolean					myturn				= false;
-	private boolean					onlyObserving		= false;
-	private boolean					questionOpen		= false;
+	private boolean					boardWasCreated			= false;
+	private boolean					myturn					= false;
+	private boolean					onlyObserving			= false;
+	private boolean					questionOpen			= false;
+	private boolean					showing					= false;
+	private boolean					needBackgroundUpdate	= false;
 
 	// Strings used for asking Questions to the user
-	private final String			moveForward			= "Weiter ziehen";
-	private final String			takeCarrots			= "10 Karotten nehmen";
-	private final String			dropCarrots			= "10 Karotten abgeben";
-	private final String			carrotAnswer		= "carrots";
+	private final String			moveForward				= "Weiter ziehen";
+	private final String			takeCarrots				= "10 Karotten nehmen";
+	private final String			dropCarrots				= "10 Karotten abgeben";
+	private final String			carrotAnswer			= "carrots";
 
-	private final String			take20carrots		= "Nimm 20 Karotten";
-	private final String			doNothing			= "Keine Karotten abgeben oder nehmen";
-	private final String			give20carrots		= "Gib 20 Karotten ab";
-	private final String			eatsalad			= "Friss sofort einen Salat";
-	private final String			hurryahead			= "Rücke eine Position vor";
-	private final String			fallback			= "Falle eine Position zurück";
-	private final String			jokerAnswer			= "joker";
+	private final String			take20carrots			= "Nimm 20 Karotten";
+	private final String			doNothing				= "Keine Karotten abgeben oder nehmen";
+	private final String			give20carrots			= "Gib 20 Karotten ab";
+	private final String			eatsalad				= "Friss sofort einen Salat";
+	private final String			hurryahead				= "Rücke eine Position vor";
+	private final String			fallback				= "Falle eine Position zurück";
+	private final String			jokerAnswer				= "joker";
 
 	public FrameRenderer(final HumanGameHandler handler,
 			final boolean onlyObserving)
@@ -92,6 +97,24 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
 		createInitFrame();
+	}
+
+	public void shown()
+	{
+		showing = true;
+		if (needBackgroundUpdate)
+		{
+			divideBackground(new Dimension(getWidth() - 200, getHeight()),
+					borderColor);
+
+			repaint();
+			needBackgroundUpdate = false;
+		}
+	}
+
+	public void hidden()
+	{
+		showing = false;
 	}
 
 	private void createInitFrame()
@@ -167,12 +190,15 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			public void componentResized(ComponentEvent e)
 			{
 				JPanel c = (JPanel) e.getSource();
-				if (c.getSize().width - 200 > 0 && c.getSize().height > 0)
+				needBackgroundUpdate = true;
+				if (c.getSize().width - 200 > 0 && c.getSize().height > 0
+						&& showing)
 				{
-					// divideBackground(new Dimension(c.getSize().width - 200, c
-					// .getSize().height), new Color(255, 255, 255, 120));
+					divideBackground(new Dimension(c.getSize().width - 200, c
+							.getSize().height), borderColor);
 
-					// repaint();
+					repaint();
+					needBackgroundUpdate = false;
 				}
 			}
 		});
@@ -180,7 +206,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 		divideBackground(
 				new Dimension(screen.width - 200, screen.height - 142),
-				new Color(255, 255, 255, 120));
+				borderColor);
 	}
 
 	private void divideBackground(Dimension size, Color transparentColor)

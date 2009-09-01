@@ -41,10 +41,10 @@ public class BorderInformationBar extends BackgroundPane
 	private final JLabel	hasenjoker			= new JLabel(" ");
 
 	private final String	FONTTYPE			= "New Courier";
-	private final int		SIZE				= 16;
-	private final int		ICONSIZE			= 40;
+	private final int		SIZE				= 20;
+	private final int		ICONSIZE			= 60;
 	private final int		BIGGERCARROTSIZE	= 2;
-	private final int		INDENT				= 10;
+	private final int		INDENT				= 15;
 
 	private final Image		rabbit_carrot		= RendererUtil
 														.getImage("resource/game/hasenjoker_carrots.png");

@@ -26,4 +26,8 @@ public interface IRenderer
 	void requestMove();
 
 	void gameEnded(GameResult data);
+
+	void shown();
+
+	void hidden();
 }

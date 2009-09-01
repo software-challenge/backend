@@ -18,7 +18,7 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-@SuppressWarnings({"serial", "unused"})
+@SuppressWarnings( { "serial", "unused" })
 public class ThreeDimRenderer extends JPanel implements IRenderer
 {
 	// GUI Components
@@ -34,10 +34,10 @@ public class ThreeDimRenderer extends JPanel implements IRenderer
 	private boolean					myturn			= false;
 	private boolean					onlyObserving	= false;
 	// Strings used for asking Questions to the user
-	private static final String					moveForward		= "Weiter ziehen";
-	private static final String					takeCarrots		= "10 Karotten nehmen";
-	private static final String					dropCarrots		= "10 Karotten abgeben";
-	private static final String					carrotAnswer	= "carrots";
+	private static final String		moveForward		= "Weiter ziehen";
+	private static final String		takeCarrots		= "10 Karotten nehmen";
+	private static final String		dropCarrots		= "10 Karotten abgeben";
+	private static final String		carrotAnswer	= "carrots";
 
 	public ThreeDimRenderer(HumanGameHandler handler, boolean onlyObserving)
 	{
@@ -92,4 +92,29 @@ public class ThreeDimRenderer extends JPanel implements IRenderer
 		// TODO Auto-generated method stub
 
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sc.plugin2010.renderer.IRenderer#hidden()
+	 */
+	@Override
+	public void hidden()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see sc.plugin2010.renderer.IRenderer#shown()
+	 */
+	@Override
+	public void shown()
+	{
+		// TODO Auto-generated method stub
+
+	}
+
 }

@@ -33,7 +33,7 @@ public class QuestionPanel extends BackgroundPane
 	private int					displayedCompCount	= 1;
 
 	private final String		FONTTYPE			= "New Courier";
-	private final int			SIZE				= 12;
+	private final int			SIZE				= 16;
 
 	public QuestionPanel(FrameRenderer obs)
 	{
@@ -103,6 +103,8 @@ public class QuestionPanel extends BackgroundPane
 			answerButtons.add(new JButton(answers.get(i)));
 			answerButtons.get(i).setName(answers.get(i));
 			answerButtons.get(i).addMouseListener(awListener);
+			// answerButtons.get(i).setFont(
+			// new Font(FONTTYPE, Font.PLAIN, SIZE - 4));
 		}
 
 		for (int i = 0; i < answerButtons.size(); i++)

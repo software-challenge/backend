@@ -94,6 +94,22 @@ public class RenderFacade
 		}
 	}
 
+	private void hideAll()
+	{
+		if (observer != null)
+		{
+			observer.hidden();
+		}
+		if (player1 != null)
+		{
+			player1.hidden();
+		}
+		if (player2 != null)
+		{
+			player2.hidden();
+		}
+	}
+
 	/**
 	 * Switches to the given GUI <code>mode</code>.
 	 * 
@@ -113,16 +129,22 @@ public class RenderFacade
 				case OBSERVER:
 					CardLayout layout1 = (CardLayout) panel.getLayout();
 					layout1.show(panel, observerString);
+					hideAll();
+					observer.shown();
 					currentMode = mode;
 					break;
 				case PLAYER_ONE:
 					CardLayout layout2 = (CardLayout) panel.getLayout();
 					layout2.show(panel, player1String);
+					hideAll();
+					player1.shown();
 					currentMode = mode;
 					break;
 				case PLAYER_TWO:
 					CardLayout layout3 = (CardLayout) panel.getLayout();
 					layout3.show(panel, player2String);
+					hideAll();
+					player2.shown();
 					currentMode = mode;
 					break;
 			}
