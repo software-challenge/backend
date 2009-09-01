@@ -1,7 +1,9 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -38,6 +40,7 @@ import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
 import sc.gui.StatusBar;
+import sc.gui.dialogs.renderer.BigFontTableCellRenderer;
 import sc.gui.dialogs.renderer.CenteredBlackBackgroundCellRenderer;
 import sc.gui.dialogs.renderer.FilenameBlackBGCellRenderer;
 import sc.gui.dialogs.renderer.MyComboBoxRenderer;
@@ -60,6 +63,7 @@ public class CreateGameDialog extends JDialog {
 	private static final String HOST_IP = "localhost";
 	private static final int DEFAULT_PORT = SharedConfiguration.DEFAULT_PORT;
 	private static final int MAX_CHARS = 50;
+	private static final Font font = new Font("Arial", Font.PLAIN, 16);
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
@@ -152,9 +156,13 @@ public class CreateGameDialog extends JDialog {
 
 		// ---------------------------------------------------
 
+		// only a max. of characters
 		JTextField tfName = new JTextField();
-		// only max 15 characters
 		tfName.setDocument(new MaxCharDocument(MAX_CHARS));
+		tfName.setFont(font);
+
+		JTextField tf_BigSize = new JTextField();
+		tf_BigSize.setFont(font);
 
 		final Vector<String> cmbItems = new Vector<String>();
 		cmbItems.add(lang.getProperty("dialog_create_plyType_human"));
@@ -170,7 +178,13 @@ public class CreateGameDialog extends JDialog {
 
 		tblPlayers = new JTable(playersModel);
 		tblPlayers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-		tblPlayers.setRowHeight(25);
+		tblPlayers.setRowHeight(40);
+
+		// set bigger width of table
+		Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		int newWidth = (int) Math.round(0.7 * screen.width);
+		tblPlayers.setPreferredScrollableViewportSize(new Dimension(newWidth, tblPlayers
+				.getPreferredScrollableViewportSize().height));
 
 		// set single selection on one cell
 		tblPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -179,6 +193,12 @@ public class CreateGameDialog extends JDialog {
 		tblPlayers.getTableHeader().setResizingAllowed(false);
 		// add rows (default)
 		addRows(tblPlayers);
+
+		// set big font
+		for (int i = 0; i < tblPlayers.getColumnCount(); i++) {
+			//tblPlayers.getColumnModel().getColumn(i).setHeaderRenderer(new BigFontTableCellRenderer(font));
+		}
+		tblPlayers.setCellEditor(new DefaultCellEditor(tf_BigSize));
 
 		// set attributes of each column
 		tblPlayers.getColumnModel().getColumn(0).setMinWidth(0);
@@ -189,16 +209,23 @@ public class CreateGameDialog extends JDialog {
 
 		tblPlayers.getColumnModel().getColumn(1).setCellEditor(
 				new DefaultCellEditor(tfName));
+		tblPlayers.getColumnModel().getColumn(1).setCellRenderer(
+				new BigFontTableCellRenderer(font));
 
 		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
 				new MyComboBoxEditor(cmbItems));
 		tblPlayers.getColumnModel().getColumn(2).setCellRenderer(
-				new MyComboBoxRenderer(cmbItems));
+				new MyComboBoxRenderer(cmbItems, font));
 
 		tblPlayers.getColumnModel().getColumn(3).setCellRenderer(
-				new FilenameBlackBGCellRenderer());
+				new FilenameBlackBGCellRenderer(font));
 
-		pnlTable.add(new JScrollPane(tblPlayers));
+		// fit the scroll pane to the size of the table's rows
+		JScrollPane scroll = new JScrollPane(tblPlayers);
+		scroll.setPreferredSize(new Dimension(scroll.getPreferredSize().width,
+				(tblPlayers.getRowCount() + 1) * tblPlayers.getRowHeight() + 2));
+
+		pnlTable.add(scroll);
 
 		// ---------------------------------------------------
 
@@ -345,7 +372,7 @@ public class CreateGameDialog extends JDialog {
 		});
 
 		observer.addNewTurnListener(contextPanel);
-		
+
 		final List<KIInformation> KIs = new ArrayList<KIInformation>();
 
 		// configure slots
@@ -483,7 +510,7 @@ public class CreateGameDialog extends JDialog {
 		for (int i = 0; i < selPlugin.getPlugin().getMinimalPlayerCount(); i++) {
 			Vector<Object> rowData = new Vector<Object>();
 			rowData.add(new Integer(i + 1));
-			rowData.add("Player " + (i + 1));
+			rowData.add(lang.getProperty("dialog_create_player") + " " + (i + 1));
 			rowData.add(lang.getProperty("dialog_create_plyType_human")); // default
 			rowData.add("-");
 			model.addRow(rowData);
@@ -513,7 +540,8 @@ public class CreateGameDialog extends JDialog {
 			switch (chooser.showOpenDialog(frame)) {
 			case JFileChooser.APPROVE_OPTION:
 				// set path
-				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row, 3);
+				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
+						3);
 				// save config
 				GUIConfiguration.instance().setCreateGameDialogPath(
 						chooser.getSelectedFile().getParent());
@@ -552,6 +580,7 @@ public class CreateGameDialog extends JDialog {
 			JComboBox cbox = (JComboBox) getComponent();
 			cbox.setEditable(false);
 			cbox.addItemListener(this);
+			cbox.setFont(font);
 		}
 
 		@Override

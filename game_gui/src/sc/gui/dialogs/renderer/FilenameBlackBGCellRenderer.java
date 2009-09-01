@@ -1,6 +1,7 @@
 package sc.gui.dialogs.renderer;
 
 import java.awt.Component;
+import java.awt.Font;
 import java.io.File;
 
 import javax.swing.JTable;
@@ -16,7 +17,13 @@ import sc.common.HelperMethods;
 public class FilenameBlackBGCellRenderer extends BlackBackgroundCellRenderer {
 
 	private static final long serialVersionUID = 7977514938815958506L;
+	private final Font font;
 
+	public FilenameBlackBGCellRenderer(Font font) {
+		super();
+		this.font = font;
+	}
+	
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
@@ -31,6 +38,8 @@ public class FilenameBlackBGCellRenderer extends BlackBackgroundCellRenderer {
 			// set filename
 			setText(clientname);
 		}
+		
+		setFont(font);
 
 		return c;
 	}
