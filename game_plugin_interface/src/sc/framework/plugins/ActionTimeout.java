@@ -5,63 +5,66 @@ import org.slf4j.LoggerFactory;
 
 public class ActionTimeout
 {
-	static final Logger		logger			= LoggerFactory
-													.getLogger(ActionTimeout.class);
+	static final Logger			logger					= LoggerFactory
+																.getLogger(ActionTimeout.class);
 
-	private final long		softTimeout;
+	private final long			softTimeoutInMilliseconds;
 
-	private final long		hardTimeout;
+	private final long			hardTimeoutInMilliseconds;
 
-	private final boolean	timeout;
+	private final boolean		canTimeout;
 
-	private Thread			timeoutThread;
+	private Thread				timeoutThread;
 
-	private Status			status			= Status.NEW;
+	private Status				status					= Status.NEW;
 
-	private long			startTimestamp	= 0;
-	private long			stopTimestamp	= 0;
+	private long				startTimestamp			= 0;
+	private long				stopTimestamp			= 0;
+
+	private static final long	DEFAULT_HARD_TIMEOUT	= 10000;
+	private static final long	DEFAULT_SOFT_TIMEOUT	= 5000;
 
 	private enum Status
 	{
 		NEW, STARTED, STOPPED
 	}
 
-	public ActionTimeout(boolean timeout)
+	public ActionTimeout(boolean canTimeout)
 	{
-		this(timeout, 10000, 5000);
+		this(canTimeout, DEFAULT_HARD_TIMEOUT, DEFAULT_SOFT_TIMEOUT);
 	}
 
-	public ActionTimeout(boolean timeout, long hardTimeout)
+	public ActionTimeout(boolean canTimeout, long hardTimeoutInMilliseconds)
 	{
-		this(timeout, hardTimeout, hardTimeout);
+		this(canTimeout, hardTimeoutInMilliseconds, hardTimeoutInMilliseconds);
 	}
 
-	public ActionTimeout(boolean timeout, long hardTimeout, long softTimeout)
+	public ActionTimeout(boolean canTimeout, long hardTimeoutInMilliseconds, long softTimeoutInMilliseconds)
 	{
-		if (hardTimeout < softTimeout)
+		if (hardTimeoutInMilliseconds < softTimeoutInMilliseconds)
 		{
 			throw new IllegalArgumentException(
 					"HardTimeout must be greater or equal the SoftTimeout");
 		}
 
-		this.timeout = timeout;
-		this.softTimeout = softTimeout;
-		this.hardTimeout = hardTimeout;
+		this.canTimeout = canTimeout;
+		this.softTimeoutInMilliseconds = softTimeoutInMilliseconds;
+		this.hardTimeoutInMilliseconds = hardTimeoutInMilliseconds;
 	}
 
 	public long getHardTimeout()
 	{
-		return this.hardTimeout;
+		return this.hardTimeoutInMilliseconds;
 	}
 
 	public long getSoftTimeout()
 	{
-		return this.softTimeout;
+		return this.softTimeoutInMilliseconds;
 	}
 
 	public boolean canTimeout()
 	{
-		return this.timeout;
+		return this.canTimeout;
 	}
 
 	public synchronized boolean didTimeout()
@@ -78,7 +81,7 @@ public class ActionTimeout
 
 		if (this.canTimeout())
 		{
-			return (this.stopTimestamp - this.startTimestamp) > this.softTimeout;
+			return (this.stopTimestamp - this.startTimestamp) > this.softTimeoutInMilliseconds;
 		}
 
 		return false;
@@ -99,10 +102,10 @@ public class ActionTimeout
 
 		this.stopTimestamp = System.currentTimeMillis();
 		this.status = Status.STOPPED;
-		
-		if(this.timeoutThread != null)
+
+		if (this.timeoutThread != null)
 		{
-			this.timeoutThread.interrupt();			
+			this.timeoutThread.interrupt();
 		}
 	}
 

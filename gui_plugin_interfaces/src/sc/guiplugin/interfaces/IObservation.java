@@ -72,4 +72,6 @@ public interface IObservation {
 	void goToFirst();
 
 	void goToLast();
+
+	boolean canTogglePause();
 }

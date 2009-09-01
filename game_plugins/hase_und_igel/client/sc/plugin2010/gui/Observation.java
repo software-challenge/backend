@@ -258,4 +258,10 @@ public class Observation implements IObservation, IUpdateListener,
 		conGame.goToLast();
 		showActivePlayerIfNecessary();
 	}
+	
+	@Override
+	public boolean canTogglePause()
+	{
+		return conGame.canTogglePause();
+	}
 }

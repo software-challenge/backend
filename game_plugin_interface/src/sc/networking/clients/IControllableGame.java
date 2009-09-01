@@ -27,4 +27,6 @@ public interface IControllableGame extends IPollsUpdates
 	public void goToFirst();
 
 	public void goToLast();
+
+	public boolean canTogglePause();
 }

@@ -9,7 +9,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import com.thoughtworks.xstream.XStream;
 
 public class ObservingClient implements IControllableGame, IHistoryListener
@@ -166,7 +165,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 		return this.history.get(this.position);
 	}
-	
+
 	@Override
 	public boolean isAtStart()
 	{
@@ -233,6 +232,12 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void goToLast()
 	{
-		this.setPosition(getHistory().size() - 1);	
+		this.setPosition(getHistory().size() - 1);
+	}
+
+	@Override
+	public boolean canTogglePause()
+	{
+		return false;
 	}
 }
