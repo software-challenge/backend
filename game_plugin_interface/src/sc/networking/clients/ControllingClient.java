@@ -118,7 +118,13 @@ public class ControllingClient extends ObservingClient implements
 	public void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
 		logger.info("A PAUSE HIT was detected.");
-		
 		this.pauseHitReceived = true;
+		this.notifyOnUpdate();
+	}
+	
+	@Override
+	public boolean canTogglePause()
+	{
+		return true;
 	}
 }
