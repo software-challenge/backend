@@ -245,11 +245,15 @@ public final class Player extends SimplePlayer implements Cloneable
 		return ret;
 	}
 
-	public PlayerScore getScore()
+	public PlayerScore getScore(int avg_time)
 	{
 		return new PlayerScore(ScoreCause.REGULAR, getPosition().equals(
 				Position.FIRST) ? 1 : getPosition().equals(Position.SECOND) ? 0
-				: -1, getFieldNumber());
+				: -1,  // Spielergebnis (WIN/LOSS/TIE)
+				getFieldNumber(), // Position auf dem Spielfeld
+				getCarrotsAvailable(), // Anzahl verbliebene Karotten
+				getHistory().size(), // Anzahl Züge
+				avg_time); // durchschnittliche Zugzeit in Millisekunden
 	}
 
 	public boolean inGoal()

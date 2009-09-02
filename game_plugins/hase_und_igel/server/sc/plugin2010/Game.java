@@ -41,6 +41,11 @@ public class Game extends RoundBasedGameInstance<Player>
 	private boolean				oneLastMove		= false;
 	
 	private Board				board			= Board.create();
+	
+	// Zugzeit berechnung für Score
+	private transient long		time_start;
+	private transient long 		sum_red;
+	private transient long		sum_blue;
 
 	public Board getBoard()
 	{
@@ -88,6 +93,11 @@ public class Game extends RoundBasedGameInstance<Player>
 				oneLastMove = false;
 			final Move move = (Move) data;
 
+			if (author.getColor().equals(FigureColor.BLUE))
+				sum_blue += System.currentTimeMillis() - time_start;
+			else
+				sum_red += System.currentTimeMillis() - time_start;
+			
 			if (board.isValid(move, author))
 			{
 				update(move, author);
@@ -96,8 +106,8 @@ public class Game extends RoundBasedGameInstance<Player>
 			else
 			{
 				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
-				for (final Player p : players)
-					res.put(p, p.getScore());
+				for (final Player p : players) 
+					res.put(p, getScoreFor(p));
 
 				notifyOnGameOver(res);
 			}
@@ -252,6 +262,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 		final Player nextPlayer = this.players.get(activePlayerId);
 		next(nextPlayer);
+		time_start = System.currentTimeMillis();
 	}
 
 	@Override
@@ -259,7 +270,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	{
 		HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
 		for (final Player p : players)
-			res.put(p, p.getScore());
+			res.put(p, getScoreFor(p));
 
 		players.remove(player);
 		notifyOnGameOver(res);
@@ -306,6 +317,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected PlayerScore getScoreFor(Player p)
 	{
-		return p.getScore();
+		int avg_time = (int) (p.getColor().equals(FigureColor.BLUE) ? sum_blue : sum_red);
+		return p.getScore(avg_time / p.getHistory().size());
 	}
 }

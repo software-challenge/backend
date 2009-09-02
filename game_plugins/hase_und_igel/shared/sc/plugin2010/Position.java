@@ -7,7 +7,7 @@ public enum Position
 {
 	SECOND, FIRST,
 	/**
-	 * In the rare case where both players are on the same spot (START).
+	 * In the rare case where both players are on the same spot (START, GOAL).
 	 */
 	TIE
 }
