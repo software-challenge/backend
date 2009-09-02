@@ -74,6 +74,7 @@ public class CreateGameDialog extends JDialog {
 	private static final int MAX_CHARS = 50;
 	private static final float FONT_SIZE = 16;
 	private static final Font font = new Font("Arial", Font.PLAIN, (int) FONT_SIZE);
+	private static final int MAX_WIDTH = 800;
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
@@ -191,6 +192,8 @@ public class CreateGameDialog extends JDialog {
 		// set bigger width of table
 		Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		int newWidth = (int) Math.round(0.7 * screen.width);
+		if (newWidth > MAX_WIDTH)
+			newWidth = MAX_WIDTH;
 		tblPlayers.setPreferredScrollableViewportSize(new Dimension(newWidth, tblPlayers
 				.getPreferredScrollableViewportSize().height));
 
@@ -229,9 +232,8 @@ public class CreateGameDialog extends JDialog {
 		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
 				new MyComboBoxEditor(cmbItems));
 
-		// fit the scroll pane to the size of the table's rows
+		// fit the height of the scroll pane to the size of the table's rows
 		JScrollPane scroll = new JScrollPane(tblPlayers);
-		scroll.setMaximumSize(new Dimension(400, 600));
 		scroll.setPreferredSize(new Dimension(scroll.getPreferredSize().width,
 				(tblPlayers.getRowCount() + 1) * tblPlayers.getRowHeight() + 2));
 
@@ -434,46 +436,79 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
-		// set observation
-		final IObservation observer = prep.getObserver();
-		presFac.getLogicFacade().setObservation(observer);
-
 		final ConnectingDialog connDial = new ConnectingDialog();
 
-		observer.addReadyListener(new IReadyListener() {
-			@Override
-			public void ready() {
-				connDial.close();
-				contextPanel.updateButtonBar(false);
-				presFac.getLogicFacade().setGameActive(true);
-			}
-		});
-
-		observer.addGameEndedListener(new IGameEndedListener() {
-			@Override
-			public void gameEnded(GameResult result) {
-				presFac.getLogicFacade().stopServer();
-				presFac.getLogicFacade().setGameActive(false);
-				contextPanel.updateButtonBar(true);
-				// generate replay filename
-				String replayFilename = HelperMethods.generateReplayFilename(descriptors);
-				// save replay
-				try {
-					observer.saveReplayToFile(replayFilename);
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, lang
-							.getProperty("dialog_create_error_replay_msg"), lang
-							.getProperty("dialog_create_error_replay_title"),
-							JOptionPane.ERROR_MESSAGE);
-					e.printStackTrace();
-				}
-			}
-		});
-
-		observer.addNewTurnListener(contextPanel);
+		// set observation
+		IObservation observer = prep.getObserver();
+		prepareObserver(observer, contextPanel, connDial, descriptors);
+		presFac.getLogicFacade().setObservation(observer);
 
 		final List<KIInformation> KIs = new ArrayList<KIInformation>();
+		prepareSlots(KIs, prep, model, observer);
+		executeClients(KIs, observer);
 
+		// show connecting dialog
+		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
+			observer.cancel();
+			cancelGameCreation(observer);
+		} else {
+			// add game specific info item in menu bar
+			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
+					.getDescription().name(), selPlugin.getDescription().version(), null,
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
+							.author());
+			// update status bar
+			StatusBar statusBar = ((StatusBar) presFac.getStatusBar());
+			//statusBar.setCopyrightText(selPlugin.getPlugin().getPluginInfoText());
+			statusBar.setStatus(lang
+					.getProperty("statusbar_status_currentgame")
+					+ " " + selPlugin.getDescription().name());
+			// close dialog
+			closeDialog();
+		}
+
+	}
+
+	/**
+	 * Executes the given <code>KIs</code>
+	 * @param is
+	 */
+	private void executeClients(final List<KIInformation> KIs, final IObservation observer) {
+		// start KI (intern) clients
+		for (KIInformation kinfo : KIs) {
+			String filename = kinfo.getPath();
+			String[] params = kinfo.getParameters();
+			try {
+				HelperMethods.exec(filename, params);
+			} catch (IOException e) {
+				e.printStackTrace();
+				cancelGameCreation(observer);
+				JOptionPane.showMessageDialog(this, lang
+						.getProperty("dialog_create_error_client_msg"), lang
+						.getProperty("dialog_create_error_client_title"),
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			} catch (UnsupportedFileExtensionException e) {
+				e.printStackTrace();
+				cancelGameCreation(observer);
+				JOptionPane.showMessageDialog(this, lang
+						.getProperty("dialog_error_fileext_msg"), lang
+						.getProperty("dialog_error_fileext_title"),
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Prepares the slots.
+	 * 
+	 * @param is
+	 * @param prep
+	 * @param model
+	 */
+	private void prepareSlots(final List<KIInformation> KIs, final IGamePreparation prep,
+			final DefaultTableModel model, final IObservation observer) {
 		// configure slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
@@ -512,50 +547,48 @@ public class CreateGameDialog extends JDialog {
 						+ ")");
 			}
 		}
+	}
 
-		// start KI (intern) clients
-		for (KIInformation kinfo : KIs) {
-			String filename = kinfo.getPath();
-			String[] params = kinfo.getParameters();
-			try {
-				HelperMethods.exec(filename, params);
-			} catch (IOException e) {
-				e.printStackTrace();
-				cancelGameCreation(observer);
-				JOptionPane.showMessageDialog(this, lang
-						.getProperty("dialog_create_error_client_msg"), lang
-						.getProperty("dialog_create_error_client_title"),
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			} catch (UnsupportedFileExtensionException e) {
-				e.printStackTrace();
-				cancelGameCreation(observer);
-				JOptionPane.showMessageDialog(this, lang
-						.getProperty("dialog_error_fileext_msg"), lang
-						.getProperty("dialog_error_fileext_title"),
-						JOptionPane.ERROR_MESSAGE);
-				return;
+	/**
+	 * Prepares the given <code>observer</code>.
+	 * 
+	 * @param observer
+	 */
+	private void prepareObserver(final IObservation observer,
+			final ContextDisplay contextPanel, final ConnectingDialog connDial,
+			final List<SlotDescriptor> descriptors) {
+		observer.addReadyListener(new IReadyListener() {
+			@Override
+			public void ready() {
+				connDial.close();
+				contextPanel.updateButtonBar(false);
+				presFac.getLogicFacade().setGameActive(true);
 			}
-		}
+		});
 
-		// show connecting dialog
-		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
-			observer.cancel();
-			cancelGameCreation(observer);
-		} else {
-			// add game specific info item in menu bar
-			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getDescription().version(), null,
-					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
-							.author());
-			// update status bar
-			((StatusBar) presFac.getStatusBar()).setStatus(lang
-					.getProperty("statusbar_status_currentgame")
-					+ " " + selPlugin.getDescription().name());
-			// close dialog
-			closeDialog();
-		}
+		observer.addGameEndedListener(new IGameEndedListener() {
+			@Override
+			public void gameEnded(GameResult result) {
+				System.out.println("Game ended.");
+				presFac.getLogicFacade().stopServer();
+				presFac.getLogicFacade().setGameActive(false);
+				contextPanel.updateButtonBar(true);
+				// generate replay filename
+				String replayFilename = HelperMethods.generateReplayFilename(descriptors);
+				// save replay
+				try {
+					observer.saveReplayToFile(replayFilename);
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, lang
+							.getProperty("dialog_create_error_replay_msg"), lang
+							.getProperty("dialog_create_error_replay_title"),
+							JOptionPane.ERROR_MESSAGE);
+					e.printStackTrace();
+				}
+			}
+		});
 
+		observer.addNewTurnListener(contextPanel);
 	}
 
 	/**
