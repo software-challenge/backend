@@ -204,9 +204,9 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		});
 
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		divideBackground(
-				new Dimension(screen.width - 200, screen.height - 142),
-				borderColor);
+		// divideBackground(
+		// new Dimension(screen.width - 200, screen.height - 142),
+		// borderColor);
 	}
 
 	private void divideBackground(Dimension size, Color transparentColor)
