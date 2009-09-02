@@ -85,21 +85,18 @@ public class HaseUndIgelLayout implements LayoutManager
 		int height = Math.min(parent.getWidth(), parent.getHeight());
 		int width = height;
 
-		int y = BORDER;
-		int compWidth = (int) (Math.round(height - BORDER * 2) / SIZEX);
-		int compHeight = (int) (Math.round(width - BORDER * 2) / SIZEY);
+		int compWidth = (int) (Math.round(width - BORDER * 2) / SIZEX);
+		int compHeight = (int) (Math.round(height - BORDER * 2) / SIZEY);
 
 		int x = (parent.getWidth() - compWidth * SIZEX) / 2;
+		int y = Math.min(parent.getHeight() - BORDER - compHeight, parent
+				.getHeight()
+				- ((parent.getHeight() - compHeight * SIZEY) / 2) - compHeight);
 
 		for (int i = 0; i <= 64; i++)
 		{
 			c = parent.getComponent(i);
 			c.setPreferredSize(new Dimension(compWidth, compHeight));
-
-			if (i == 0)
-			{
-				y = parent.getHeight() - BORDER - c.getPreferredSize().height;
-			}
 
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);

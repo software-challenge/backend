@@ -31,6 +31,7 @@ public class QuestionPanel extends BackgroundPane
 	private final List<JButton>	answerButtons		= new ArrayList<JButton>();
 	private Image				totalBackgroundImg;
 	private int					displayedCompCount	= 1;
+	private String				ravensburger		= "<html>Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) <br> &nbsp;&nbsp;&nbsp;erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.</html>";
 
 	private final String		FONTTYPE			= "New Courier";
 	private final int			SIZE				= 16;
@@ -51,11 +52,13 @@ public class QuestionPanel extends BackgroundPane
 		BorderLayout dialogLayout = new BorderLayout();
 		setLayout(dialogLayout);
 
-		textLabel = new JLabel("", JLabel.CENTER);
+		textLabel = new JLabel(ravensburger, JLabel.CENTER);
 
 		textLabel.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
 		textPanel.add(textLabel);
+
+		this.add(textPanel, BorderLayout.CENTER);
 
 		setVisible(true);
 	}
@@ -123,10 +126,12 @@ public class QuestionPanel extends BackgroundPane
 
 	public void hideComponents()
 	{
-		textLabel.setVisible(false);
+		textLabel.setText(ravensburger);
 		buttonPanel.removeAll();
 
 		removeAll();
+
+		this.add(textPanel, BorderLayout.CENTER);
 
 		setBackground(totalBackgroundImg);
 		displayedCompCount = 1;

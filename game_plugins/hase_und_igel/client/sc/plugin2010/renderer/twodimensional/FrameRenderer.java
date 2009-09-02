@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
@@ -180,7 +179,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		this.add(action, BorderLayout.EAST);
 
 		// chat.addOtherMessage("Chat: ");
-		// chat.addOwnMessage("Prototyp: 0.1 alpha :)");
 
 		setVisible(true);
 
@@ -202,11 +200,6 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				}
 			}
 		});
-
-		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		// divideBackground(
-		// new Dimension(screen.width - 200, screen.height - 142),
-		// borderColor);
 	}
 
 	private void divideBackground(Dimension size, Color transparentColor)
