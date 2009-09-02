@@ -2,7 +2,8 @@ package sc.common;
 
 import java.io.File;
 
-import sc.logic.ELanguage;
+import sc.logic.ConfigCreateGameDialog;
+import sc.logic.GUIConfiguration.ELanguage;
 
 public interface IConfiguration {
 
@@ -20,4 +21,6 @@ public interface IConfiguration {
 	
 	File getLoadReplayPath();
 	void setLoadReplayPath(String loadReplayPath);
+	
+	ConfigCreateGameDialog getConfigCreateGameDialog();
 }

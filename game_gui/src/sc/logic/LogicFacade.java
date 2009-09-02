@@ -16,6 +16,7 @@ import sc.common.IConfiguration;
 import sc.gui.stuff.YearComparator;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
+import sc.logic.GUIConfiguration.ELanguage;
 import sc.plugin.GUIPluginInstance;
 import sc.plugin.GUIPluginManager;
 import sc.server.Application;

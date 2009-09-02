@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,15 +57,12 @@ import sc.guiplugin.interfaces.ISlot;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.GUIConfiguration;
+import sc.logic.Player;
 import sc.plugin.GUIPluginInstance;
 import sc.shared.GameResult;
-import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
 
 /**
- * 
- dialog_create_plugin_name = Plugin dialog_create_add_client = Programm
- * dialog_create_add_human = Mensch
  * 
  * @author chw
  * 
@@ -72,10 +71,9 @@ import sc.shared.SlotDescriptor;
 public class CreateGameDialog extends JDialog {
 
 	private static final String HOST_IP = "localhost";
-	private static final int DEFAULT_PORT = SharedConfiguration.DEFAULT_PORT;
 	private static final int MAX_CHARS = 50;
 	private static final float FONT_SIZE = 16;
-	private static final Font font = new Font("Arial", Font.PLAIN, (int)FONT_SIZE);
+	private static final Font font = new Font("Arial", Font.PLAIN, (int) FONT_SIZE);
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
@@ -137,6 +135,7 @@ public class CreateGameDialog extends JDialog {
 
 		// ---------------------------------------------------
 
+		// TODO for future
 		ckbDim = new JCheckBox(lang.getProperty("dialog_create_pref_dim"));
 		ckbDim.setFont(ckbDim.getFont().deriveFont(FONT_SIZE));
 		ckbDim.setToolTipText("");
@@ -144,15 +143,18 @@ public class CreateGameDialog extends JDialog {
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
 		ckbDebug.setFont(ckbDebug.getFont().deriveFont(FONT_SIZE));
 		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
+		ckbDebug.setSelected(GUIConfiguration.instance().getConfigCreateGameDialog()
+				.isTimeLimit());
 
 		txfPort = new JTextField(5);
 		txfPort.setFont(txfPort.getFont().deriveFont(FONT_SIZE));
-		txfPort.setText("" + DEFAULT_PORT);
-		// txfPort.setEditable(false);
+		txfPort.setText(String.valueOf(GUIConfiguration.instance()
+				.getConfigCreateGameDialog().getPort()));
 
 		lblPort = new JLabel(lang.getProperty("dialog_create_pref_port"));
 		lblPort.setFont(lblPort.getFont().deriveFont(FONT_SIZE));
 		lblPort.setLabelFor(txfPort);
+
 		// pnlPref.add(ckbDim); TODO for future
 		pnlPref.add(ckbDebug);
 		pnlPref.add(lblPort);
@@ -169,6 +171,8 @@ public class CreateGameDialog extends JDialog {
 
 		combPlugins = new JComboBox(pluginNames);
 		combPlugins.setFont(combPlugins.getFont().deriveFont(FONT_SIZE));
+		combPlugins.setSelectedItem(GUIConfiguration.instance()
+				.getConfigCreateGameDialog().getGameType());
 		pnlLeft.add(combPlugins);
 
 		// ---------------------------------------------------
@@ -215,7 +219,7 @@ public class CreateGameDialog extends JDialog {
 		JTextField tfName = new JTextField();
 		tfName.setDocument(new MaxCharDocument(MAX_CHARS));
 		tfName.setFont(font);
-		
+
 		// set attributes of each column
 		tblPlayers.getColumnModel().getColumn(0).setMinWidth(0);
 		tblPlayers.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -251,8 +255,7 @@ public class CreateGameDialog extends JDialog {
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// close dialog
-				CreateGameDialog.this.dispose();
+				closeDialog();
 			}
 		});
 
@@ -273,6 +276,40 @@ public class CreateGameDialog extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				closeDialog();
+				super.windowClosing(e);
+			}
+		});
+	}
+
+	/**
+	 * Saves the dialog settings and disposes itself.
+	 */
+	private void closeDialog() {
+		GUIConfiguration.instance().getConfigCreateGameDialog().setGameType(
+				(String) combPlugins.getSelectedItem());
+		GUIConfiguration.instance().getConfigCreateGameDialog().setPort(
+				Integer.parseInt(txfPort.getText()));
+		GUIConfiguration.instance().getConfigCreateGameDialog().setTimeLimit(
+				ckbDebug.isSelected());
+
+		final List<Player> players = GUIConfiguration.instance()
+				.getConfigCreateGameDialog().getPlayers();
+		players.clear();
+		for (int i = 0; i < playersModel.getRowCount(); i++) {
+			Player player = new Player();
+			player.name = (String) playersModel.getValueAt(i, 1);
+			player.playerType = (String) playersModel.getValueAt(i, 2);
+			player.filename = (String) playersModel.getValueAt(i, 3);
+			players.add(player);
+		}
+
+		System.out.println("Dialog settings saved.");
+		// dispose dialog
+		this.dispose();
 	}
 
 	private void setTableCellEditing(final JTable table) {
@@ -516,7 +553,7 @@ public class CreateGameDialog extends JDialog {
 					.getProperty("statusbar_status_currentgame")
 					+ " " + selPlugin.getDescription().name());
 			// close dialog
-			dispose();
+			closeDialog();
 		}
 
 	}
@@ -569,12 +606,31 @@ public class CreateGameDialog extends JDialog {
 		GUIPluginInstance selPlugin = getSelectedPlugin();
 		MyTableModel model = (MyTableModel) table.getModel();
 
+		List<Player> players = null;
+		final String gameTypeName = GUIConfiguration.instance()
+				.getConfigCreateGameDialog().getGameType();
+		/*
+		 * check if the selected plugin is the one which information are stored
+		 * of.
+		 */
+		if (selPlugin.getDescription().name().equals(gameTypeName)) {
+			players = GUIConfiguration.instance().getConfigCreateGameDialog()
+					.getPlayers();
+		}
+
 		for (int i = 0; i < selPlugin.getPlugin().getMinimalPlayerCount(); i++) {
 			Vector<Object> rowData = new Vector<Object>();
 			rowData.add(new Integer(i + 1));
-			rowData.add(lang.getProperty("dialog_create_player") + " " + (i + 1));
-			rowData.add(lang.getProperty("dialog_create_plyType_human")); // default
-			rowData.add("-");
+			if (players != null) {
+				Player player = players.get(i);
+				rowData.add(player.name);
+				rowData.add(player.playerType);
+				rowData.add(player.filename);
+			} else {
+				rowData.add(lang.getProperty("dialog_create_player") + " " + (i + 1));
+				rowData.add(lang.getProperty("dialog_create_plyType_human")); // default
+				rowData.add("-");
+			}
 			model.addRow(rowData);
 		}
 	}

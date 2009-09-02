@@ -19,6 +19,10 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private static final String PATH_STD = ".";
 	private static String pluginFolder = null;
 
+	public enum ELanguage {
+		DE, EN
+	}
+	
 	private ELanguage lang;
 
 	private String createGameDialogPath;
@@ -28,8 +32,10 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private String loadReplayPath;
 
 	private int numTest;
+	
+	private final ConfigCreateGameDialog configCreateGameDialog = new ConfigCreateGameDialog();
 
-	private static GUIConfiguration instance;
+	private final static GUIConfiguration instance;
 
 	static {
 		instance = load();
@@ -183,4 +189,9 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	public void setLoadReplayPath(String loadReplayPath) {
 		this.loadReplayPath = loadReplayPath;
 	}
+
+	public ConfigCreateGameDialog getConfigCreateGameDialog() {
+		return configCreateGameDialog;
+	}
+
 }
