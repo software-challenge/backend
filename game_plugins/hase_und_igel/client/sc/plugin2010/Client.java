@@ -124,24 +124,22 @@ public class Client implements ILobbyClientListener
 		System.err.println(response.getMessage());
 	}
 
-	private void sendLastTurn(Player oldPlayer, int playerid)
+	private void sendLastTurn(Player oldPlayer, int playerId)
 	{
-		Move move = oldPlayer.getHistory().get(
-				oldPlayer.getHistory().size() - 1);
+		Move move = oldPlayer.getLastMove();
+
 		if (move.getTyp() == MoveTyp.PLAY_CARD)
 		{
-			Move move2 = oldPlayer.getHistory().get(
-					oldPlayer.getHistory().size() - 2);
+			Move move2 = oldPlayer.getLastMove(-2);
 			if (move2.getTyp() == MoveTyp.PLAY_CARD)
 			{
-				Move move3 = oldPlayer.getHistory().get(
-						oldPlayer.getHistory().size() - 3);
-				obs.newTurn(playerid, GameUtil.displayMoveAction(move3));
+				Move move3 = oldPlayer.getLastMove(-3);
+				obs.newTurn(playerId, GameUtil.displayMoveAction(move3));
 			}
 
-			obs.newTurn(playerid, GameUtil.displayMoveAction(move2));
+			obs.newTurn(playerId, GameUtil.displayMoveAction(move2));
 		}
-		obs.newTurn(playerid, GameUtil.displayMoveAction(move));
+		obs.newTurn(playerId, GameUtil.displayMoveAction(move));
 	}
 
 	@Override
@@ -170,8 +168,11 @@ public class Client implements ILobbyClientListener
 
 		if (obs != null)
 		{
+			Player oldPlayer = game.getBoard().getOtherPlayer(
+					game.getActivePlayer());
+			
 			int playerid = 0;
-			if (game.getActivePlayer().getColor() == FigureColor.RED)
+			if (oldPlayer.getColor() == FigureColor.RED)
 			{
 				playerid = 0;
 			}
@@ -181,8 +182,6 @@ public class Client implements ILobbyClientListener
 			}
 			;
 
-			Player oldPlayer = game.getBoard().getOtherPlayer(
-					game.getActivePlayer());
 
 			if (oldPlayer.getLastMove() != null)
 			{

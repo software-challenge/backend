@@ -10,10 +10,10 @@ public interface IGUIObservation
 {
 
 	/**
-	 * @param playerid
-	 * @param displayMoveAction
+	 * @param activePlayerId
+	 * @param actionFromOther
 	 */
-	void newTurn(int playerid, String displayMoveAction);
+	void newTurn(int activePlayerId, String actionFromOther);
 
 	/**
 	 * 

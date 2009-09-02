@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -114,7 +115,8 @@ public class TestRangeDialog extends JDialog {
 		this.setLayout(new BorderLayout());
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
-		final Vector<String> items = presFac.getLogicFacade().getPluginNames(plugins);
+		final Vector<String> items = presFac.getLogicFacade().getPluginNames(
+				plugins);
 		cmbGameType = new JComboBox(items);
 		cmbGameType.addItemListener(new ItemListener() {
 			@Override
@@ -149,13 +151,16 @@ public class TestRangeDialog extends JDialog {
 			}
 		});
 		// must be set after setDocument()
-		txfNumTest.setText(String.valueOf(GUIConfiguration.instance().getNumTest())); // default
+		txfNumTest.setText(String.valueOf(GUIConfiguration.instance()
+				.getNumTest())); // default
 
-		JLabel lblNumTest = new JLabel(lang.getProperty("dialog_test_lbl_numtest"));
+		JLabel lblNumTest = new JLabel(lang
+				.getProperty("dialog_test_lbl_numtest"));
 		lblNumTest.setLabelFor(lblNumTest);
 
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
-		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
+		ckbDebug.setToolTipText(lang
+				.getProperty("dialog_create_pref_debug_hint"));
 
 		pnlPref = new JPanel();
 		pnlPref.add(cmbGameType);
@@ -183,7 +188,8 @@ public class TestRangeDialog extends JDialog {
 		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
 		progressBar.setStringPainted(true); // draw procent
 
-		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"), JLabel.CENTER);
+		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"),
+				JLabel.CENTER);
 		Font font = new Font(lblCenter.getFont().getName(), lblCenter.getFont()
 				.getStyle(), lblCenter.getFont().getSize() + 4);
 		lblCenter.setFont(font);
@@ -203,7 +209,8 @@ public class TestRangeDialog extends JDialog {
 					cancelTest();
 				} else {
 					if (prepareTest()) {
-						testStart.setText(lang.getProperty("dialog_test_btn_stop"));
+						testStart.setText(lang
+								.getProperty("dialog_test_btn_stop"));
 						cmbGameType.setEnabled(false);
 						// first game with first player at the first position
 						startTest();
@@ -288,7 +295,8 @@ public class TestRangeDialog extends JDialog {
 		// add columns
 		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
 		model.addColumn(lang.getProperty("dialog_test_stats_name"));
-		ScoreDefinition statColumns = selPlugin.getPlugin().getScoreDefinition();
+		ScoreDefinition statColumns = selPlugin.getPlugin()
+				.getScoreDefinition();
 		for (int i = 0; i < statColumns.size(); i++) {
 			ScoreFragment column = statColumns.get(i);
 			model.addColumn(column.getName());
@@ -298,7 +306,8 @@ public class TestRangeDialog extends JDialog {
 		 * set minimum and maximum width for each column to enable correct
 		 * resizablity
 		 */
-		statTable.getColumnModel().getColumn(0).setCellRenderer(new CenteredTableCellRenderer());
+		statTable.getColumnModel().getColumn(0).setCellRenderer(
+				new CenteredTableCellRenderer());
 		statTable.getColumnModel().getColumn(0).setMinWidth(0);
 		statTable.getColumnModel().getColumn(0).setMaxWidth(100);
 		for (int i = 0; i < statColumns.size(); i++) {
@@ -328,8 +337,8 @@ public class TestRangeDialog extends JDialog {
 			final JTextField txfClient = txfclient[i];
 
 			String playerNumber = String.valueOf(i + 1);
-			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki") + " "
-					+ playerNumber);
+			lblclient[i] = new JLabel(lang.getProperty("dialog_test_lbl_ki")
+					+ " " + playerNumber);
 			lblclient[i].setLabelFor(txfclient[i]);
 
 			btnclient[i] = new JButton(lang.getProperty("dialog_test_btn_file"));
@@ -351,7 +360,8 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
+		statTable.setPreferredScrollableViewportSize(statTable
+				.getPreferredSize());
 
 		// display
 		pnlTop.removeAll();
@@ -397,7 +407,8 @@ public class TestRangeDialog extends JDialog {
 			model.setValueAt(new Integer(i + 1), i, 0);
 			String name = new File(txfclient[i].getText()).getName();
 			// without file ext and with a number
-			name = HelperMethods.getFilenameWithoutFileExt(name) + " " + (i + 1);
+			name = HelperMethods.getFilenameWithoutFileExt(name) + " "
+					+ (i + 1);
 			model.setValueAt(name, i, 1);
 			for (int j = 0; j < selPlugin.getScoreDefinition().size(); j++) {
 				model.setValueAt(BigDecimal.ZERO, i, 2 + j); // set default 0
@@ -407,7 +418,8 @@ public class TestRangeDialog extends JDialog {
 
 		// start server
 		try {
-			presFac.getLogicFacade().startServer(SharedConfiguration.DEFAULT_PORT);
+			presFac.getLogicFacade().startServer(
+					SharedConfiguration.DEFAULT_PORT);
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
@@ -418,7 +430,8 @@ public class TestRangeDialog extends JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, e.getMessage(), lang
-					.getProperty("dialog_error_title"), JOptionPane.ERROR_MESSAGE);
+					.getProperty("dialog_error_title"),
+					JOptionPane.ERROR_MESSAGE);
 		}
 
 		// disable rendering
@@ -434,117 +447,80 @@ public class TestRangeDialog extends JDialog {
 	 */
 	protected void startTest() {
 
-		GUIPluginInstance selPlugin = getSelectedPlugin();
-
-		curTest++;
-
-		int playerCount = txfclient.length;
-
-		// switch slot declaration
-		final int offset;
-		if (curTest % 2 == 1) {
-			offset = 0;
-		} else {
-			offset = playerCount - 1;
+		final ConnectingDialog connectionDialog = new ConnectingDialog();
+		
+		try
+		{
+			curTest++;
+	
+			final int rotation = getRotation(txfclient.length);
+	
+			final List<SlotDescriptor> slotDescriptors = prepareSlots(
+					preparePlayerNames(), rotation);
+			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
+					slotDescriptors);
+	
+			createObserveration(rotation, slotDescriptors, prep, connectionDialog);
+	
+			// only display message after the first round
+			if (curTest > 1) {
+				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
+			}
+	
+			List<KIInformation> KIs = prepareClientProcesses(slotDescriptors, prep,
+					rotation);
+	
+			runClientProcesses(KIs);
+			
+			// show connecting dialog
+			if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
+				cancelTest();
+			}
 		}
-
-		// get player names
-		final List<String> playerNames = new LinkedList<String>();
-		final List<SlotDescriptor> descriptors = new LinkedList<SlotDescriptor>();
-		for (int i = 0; i < txfclient.length; i++) {
-			int statPos = Math.abs(offset - i);
-			String path = txfclient[statPos].getText();
-			String clientName = HelperMethods.getFilenameWithoutFileExt(new File(path)
-					.getName())
-					+ " " + (statPos + 1);
-			playerNames.add(clientName);
-			descriptors.add(new SlotDescriptor(clientName, !ckbDebug.isSelected()));
-		}
-
-		IGamePreparation prep;
-		try {
-			prep = selPlugin.getPlugin().prepareGame(DEFAULT_HOST,
-					SharedConfiguration.DEFAULT_PORT,
-					descriptors.toArray(new SlotDescriptor[0]));
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, lang
-					.getProperty("dialog_test_error_network_msg"), lang
-					.getProperty("dialog_test_error_network_title"),
-					JOptionPane.ERROR_MESSAGE);
+		catch (IOException e)
+		{
+			e.printStackTrace();
 			cancelTest();
-			return;
 		}
 
-		final ConnectingDialog connDial = new ConnectingDialog();
+	}
 
-		// get observer
-		obs = prep.getObserver();
-		obs.addGameEndedListener(new IGameEndedListener() {
-			@Override
-			public void gameEnded(GameResult result) {
-				addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + ":"
-						+ numTest);
-				// purpose
-				updateStatistics(offset, result);
-				// update progress bar
-				progressBar.setValue(progressBar.getValue() + 1);
-				// create replay file if this game ended with a failure
-				if (!result.isRegular()) {
-					String replayFilename = HelperMethods.generateReplayFilename(descriptors);
-					try {
-						obs.saveReplayToFile(replayFilename);
-						addLogMessage(lang.getProperty("dialog_test_log_replay"));
-					} catch (IOException e) {
-						e.printStackTrace();
-						addLogMessage(lang.getProperty("dialog_test_log_replay_error"));
-					}
-				}
+	private int getRotation(int playerCount) {
+		return (curTest + 1) % playerCount;
+	}
 
-				// start new test if number of tests is not still reached
-				if (curTest < numTest) {
-					startTest();
-				} else {
-					stopServer();
-					cmbGameType.setEnabled(true);
-					testStart.setText(lang.getProperty("dialog_test_btn_start"));
-					TestRangeDialog.this.repaint();
-				}
-			}
-		});
-		obs.addNewTurnListener(new INewTurnListener() {
-			@Override
-			public void newTurn(int playerid, String info) {
-				String clientName = playerNames.get(playerid);
-				// add log
-				if (!info.equals(""))
-					addLogMessage(clientName + ": " + info);
-			}
-		});
-		obs.addReadyListener(new IReadyListener() {
-			@Override
-			public void ready() {
-				connDial.close();
-				obs.start();
-			}
-		});
+	private List<KIInformation> prepareClientProcesses(
+			final List<SlotDescriptor> descriptors,
+			final IGamePreparation prep, final int rotation) {
+		List<ISlot> slots = new LinkedList<ISlot>(prep.getSlots());
+		List<String> paths = prepareProcessPaths(rotation);
 
 		List<KIInformation> KIs = new ArrayList<KIInformation>();
+		for (int i = 0; i < slots.size(); i++) {
+			ISlot slot = slots.get(i);
+			String path = paths.get(i);
 
-		// only display message after the first round
-		if (curTest > 1)
-			addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
-
-		// add slots
-		for (int i = 0; i < prep.getSlots().size(); i++) {
-			ISlot slot = prep.getSlots().get(i);
-			String path = txfclient[Math.abs(offset - i)].getText();
 			KIs.add(new KIInformation(slot.asClient(), path));
 
-			String clientName = playerNames.get(i);
-			addLogMessage(clientName + " " + lang.getProperty("dialog_test_switchpos")
-					+ " " + (i + 1));
+			addLogMessage(descriptors.get(i).getDisplayName() + " "
+					+ lang.getProperty("dialog_test_switchpos") + " " + (i + 1));
+		}
+		return KIs;
+	}
+
+	private List<String> prepareProcessPaths(int rotation) {
+		List<String> paths = new LinkedList<String>();
+
+		for (int i = 0; i < txfclient.length; i++) {
+			paths.add(txfclient[i].getText());
 		}
 
+		Collections.rotate(paths, rotation);
+
+		return paths;
+	}
+
+	private void runClientProcesses(List<KIInformation> KIs) throws IOException {
 		// start KI (intern) clients
 		for (int i = 0; i < KIs.size(); i++) {
 			KIInformation kinfo = KIs.get(i);
@@ -555,49 +531,152 @@ public class TestRangeDialog extends JDialog {
 			try {
 				HelperMethods.exec(file, params);
 			} catch (IOException e) {
-				e.printStackTrace();
-				cancelTest();
 				JOptionPane.showMessageDialog(this, lang
 						.getProperty("dialog_test_error_client_msg"), lang
 						.getProperty("dialog_test_error_client_title"),
 						JOptionPane.ERROR_MESSAGE);
-				return;
+				throw new IOException(e);
 			} catch (UnsupportedFileExtensionException e) {
-				e.printStackTrace();
-				cancelTest();
 				JOptionPane.showMessageDialog(this, lang
 						.getProperty("dialog_error_fileext_msg"), lang
 						.getProperty("dialog_error_fileext_msg"),
 						JOptionPane.ERROR_MESSAGE);
-				return;
+				throw new IOException(e);
 			}
 		}
+	}
 
-		// show connecting dialog
-		if (connDial.showDialog() == JOptionPane.CANCEL_OPTION) {
-			cancelTest();
+	private void createObserveration(final int rotation,
+			final List<SlotDescriptor> slotDescriptors,
+			final IGamePreparation prep, final ConnectingDialog connectionDialog) {
+		// get observer
+		obs = prep.getObserver();
+		obs.addGameEndedListener(new IGameEndedListener() {
+			@Override
+			public void gameEnded(GameResult result) {
+				addLogMessage(lang.getProperty("dialog_test_end") + " "
+						+ curTest + ":" + numTest);
+				// purpose
+				updateStatistics(rotation, result);
+				// update progress bar
+				progressBar.setValue(progressBar.getValue() + 1);
+				// create replay file if this game ended with a failure
+				if (!result.isRegular()) {
+					String replayFilename = HelperMethods
+							.generateReplayFilename(slotDescriptors);
+					try {
+						obs.saveReplayToFile(replayFilename);
+						addLogMessage(lang
+								.getProperty("dialog_test_log_replay"));
+					} catch (IOException e) {
+						e.printStackTrace();
+						addLogMessage(lang
+								.getProperty("dialog_test_log_replay_error"));
+					}
+				}
+
+				// start new test if number of tests is not still reached
+				if (curTest < numTest) {
+					// FIXME: Recursive Execution of Tests might be REALLY bad for big N
+					startTest();
+				} else {
+					stopServer();
+					cmbGameType.setEnabled(true);
+					testStart
+							.setText(lang.getProperty("dialog_test_btn_start"));
+					TestRangeDialog.this.repaint();
+				}
+			}
+		});
+		obs.addNewTurnListener(new INewTurnListener() {
+			@Override
+			public void newTurn(int playerid, String info) {
+				String clientName = slotDescriptors.get(playerid)
+						.getDisplayName();
+				// add log
+				if (!info.equals("")) {
+					addLogMessage(clientName + ": " + info);
+				}
+			}
+		});
+		obs.addReadyListener(new IReadyListener() {
+			@Override
+			public void ready() {
+				connectionDialog.close();
+				obs.start();
+			}
+		});
+	}
+
+	private List<SlotDescriptor> prepareSlots(final List<String> playerNames,
+			int rotation) {
+		final List<SlotDescriptor> descriptors = new LinkedList<SlotDescriptor>();
+
+		for (String playerName : playerNames) {
+			descriptors.add(new SlotDescriptor(playerName, !ckbDebug
+					.isSelected()));
 		}
+
+		Collections.rotate(descriptors, rotation);
+
+		return descriptors;
+	}
+
+	private List<String> preparePlayerNames() {
+		// get player names
+		final List<String> playerNames = new LinkedList<String>();
+
+		for (int i = 0; i < txfclient.length; i++) {
+			String path = txfclient[i].getText();
+			String clientName = HelperMethods
+					.getFilenameWithoutFileExt(new File(path).getName())
+					+ " " + (i + 1);
+			playerNames.add(clientName);
+		}
+
+		return playerNames;
+	}
+
+	private IGamePreparation prepareGame(GUIPluginInstance selPlugin,
+			final List<SlotDescriptor> descriptors) throws IOException {
+		IGamePreparation prep;
+		try {
+			prep = selPlugin.getPlugin()
+					.prepareGame(
+							DEFAULT_HOST,
+							SharedConfiguration.DEFAULT_PORT,
+							descriptors.toArray(new SlotDescriptor[descriptors
+									.size()]));
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, lang
+					.getProperty("dialog_test_error_network_msg"), lang
+					.getProperty("dialog_test_error_network_title"),
+					JOptionPane.ERROR_MESSAGE);
+			throw new IOException(e);
+		}
+		return prep;
 	}
 
 	/**
 	 * Updates the statistics table
 	 * 
-	 * @param offset
+	 * @param rotation
 	 * @param result
 	 */
-	protected void updateStatistics(final int offset, final GameResult result) {
+	protected void updateStatistics(final int rotation, final GameResult result) {
 		MyTableModel model = (MyTableModel) statTable.getModel();
 
 		// display wins/losses etc.
 		for (int i = 0; i < result.getScores().size(); i++) {
-			int statRow = Math.abs(offset - i);
+			int statRow = Math.abs(rotation - i);
 
 			List<BigDecimal> stats = result.getScores().get(i).getValues();
 			for (int j = 0; j < stats.size(); j++) {
 				BigDecimal newStat = stats.get(j);
 				BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
 
-				ScoreAggregation action = result.getDefinition().get(j).getAggregation();
+				ScoreAggregation action = result.getDefinition().get(j)
+						.getAggregation();
 				switch (action) {
 				case SUM:
 
@@ -609,11 +688,12 @@ public class TestRangeDialog extends JDialog {
 					// add newStat to absolute value
 					newStat = old.add(newStat);
 					// divide with curTest (rounded down)
-					newStat = newStat.divideToIntegralValue(BigDecimal.valueOf(curTest));
+					newStat = newStat.divideToIntegralValue(BigDecimal
+							.valueOf(curTest));
 					break;
 				default:
-					throw new RuntimeException("Unknown aggregation type (" + action
-							+ ")");
+					throw new RuntimeException("Unknown aggregation type ("
+							+ action + ")");
 				}
 				// set to model
 				model.setValueAt(newStat, statRow, j + 2);

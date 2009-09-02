@@ -86,12 +86,7 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	public Move getLastMove()
 	{
-		if (getHistory() != null && getHistory().size() > 0)
-		{
-			return getHistory().get(getHistory().size() - 1);
-		}
-
-		return null;
+		return getLastMove(-1);
 	}
 	
 	protected Player()
@@ -272,6 +267,26 @@ public final class Player extends SimplePlayer implements Cloneable
 			{
 				return lastMove;
 			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param i Use -2 to get the move before the last move.
+	 * @return
+	 */
+	public Move getLastMove(int i)
+	{
+		if(i >= 0)
+		{
+			throw new IllegalArgumentException("getLastMove requires i < 0");
+		}
+		
+		if (getHistory() != null && getHistory().size() >= - i)
+		{
+			return getHistory().get(getHistory().size() + i);
 		}
 
 		return null;
