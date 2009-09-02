@@ -23,4 +23,7 @@ public interface IConfiguration {
 	void setLoadReplayPath(String loadReplayPath);
 	
 	ConfigCreateGameDialog getConfigCreateGameDialog();
+	
+	public int getSpeedValue();
+	public void setSpeedValue(int speedValue);
 }

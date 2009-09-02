@@ -463,6 +463,8 @@ public class CreateGameDialog extends JDialog {
 			statusBar.setStatus(lang
 					.getProperty("statusbar_status_currentgame")
 					+ " " + selPlugin.getDescription().name());
+			// enable speed bar
+			//contextPanel.enableSpeedBar(true);	//TODO
 			// close dialog
 			closeDialog();
 		}
@@ -570,9 +572,13 @@ public class CreateGameDialog extends JDialog {
 			@Override
 			public void gameEnded(GameResult result) {
 				System.out.println("Game ended.");
+				
 				presFac.getLogicFacade().stopServer();
 				presFac.getLogicFacade().setGameActive(false);
+				
 				contextPanel.updateButtonBar(true);
+				contextPanel.stopTimer();
+				
 				// generate replay filename
 				String replayFilename = HelperMethods.generateReplayFilename(descriptors);
 				// save replay

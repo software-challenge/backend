@@ -34,6 +34,10 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private int numTest;
 	
 	private final ConfigCreateGameDialog configCreateGameDialog = new ConfigCreateGameDialog();
+	/**
+	 * cursor of the speed bar
+	 */
+	private int speedValue;
 
 	private final static GUIConfiguration instance;
 
@@ -50,6 +54,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		this.testDialogPath = PATH_STD;
 		this.loadReplayPath = PATH_STD;
 		this.numTest = 100;
+		this.speedValue = 100;
 	}
 
 	public static GUIConfiguration instance() {
@@ -192,6 +197,14 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	public ConfigCreateGameDialog getConfigCreateGameDialog() {
 		return configCreateGameDialog;
+	}
+
+	public int getSpeedValue() {
+		return this.speedValue;
+	}
+
+	public void setSpeedValue(int speedValue) {
+		this.speedValue = speedValue;
 	}
 
 }

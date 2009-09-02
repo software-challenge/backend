@@ -1,18 +1,25 @@
 package sc.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
+import sc.logic.GUIConfiguration;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
@@ -42,6 +49,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
+	private final Timer timer;
+	private final TimerTask nextTask;
 
 	private JPanel gameField;
 	private JPanel buttonBar;
@@ -52,6 +61,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private JButton btn_next;
 	private JButton btn_cancel;
 	private boolean started;
+	private JScrollBar speedBar;
 
 	/**
 	 * Constructor
@@ -60,6 +70,13 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		super();
 		this.presFac = PresentationFacade.getInstance();
 		this.lang = presFac.getLogicFacade().getLanguageData();
+		this.timer = new Timer();
+		this.nextTask = new TimerTask() {
+			@Override
+			public void run() {
+				presFac.getLogicFacade().getObservation().next();
+			}
+		};
 		createGUI();
 	}
 
@@ -87,6 +104,29 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 		disableAllButtons(); // by default
 
+		speedBar = new JScrollBar(JScrollBar.HORIZONTAL);
+		speedBar.setPreferredSize(new Dimension(200, 30));
+		speedBar.setValue(GUIConfiguration.instance().getSpeedValue());
+		speedBar.setEnabled(false);
+		speedBar.setMaximum(100+speedBar.getVisibleAmount());
+		speedBar.addAdjustmentListener(new AdjustmentListener() {
+			@Override
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				stopTimer();
+				GUIConfiguration.instance().setSpeedValue(e.getValue());
+				
+				System.out.println("speedbar: "+e.getValue());
+				
+				if (e.getValue() < speedBar.getMaximum()) {
+					// may not start a paused or not created game
+					IObservation obs = presFac.getLogicFacade().getObservation();
+					if (!obs.isPaused()) {
+						startTimer();
+					}
+				}
+			}
+		});
+
 		btn_toBegin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -109,38 +149,24 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		});
 
 		btn_pauseAndPlay.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!started) {
 					started = true;
-					presFac.getLogicFacade().getObservation().start();
+					if (speedBar.getValue() < speedBar.getMaximum()) {
+						startTimer();
+					} else {
+						presFac.getLogicFacade().getObservation().start();
+					}
 				} else if (presFac.getLogicFacade().getObservation().isPaused()) {
-					presFac.getLogicFacade().getObservation().unpause();
+					if (speedBar.getValue() < speedBar.getMaximum()) {
+						startTimer();
+					} else {
+						presFac.getLogicFacade().getObservation().unpause();
+					}
 				} else {
 					presFac.getLogicFacade().getObservation().pause();
-				}
-			}
-		});
-
-		btn_cancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (JOptionPane.showConfirmDialog(null, lang
-						.getProperty("context_dialog_cancel_msg"), lang
-						.getProperty("context_dialog_cancel_title"),
-						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-					presFac.getLogicFacade().getObservation().cancel();
-					// FIXME call gameEnded
-					started = false;
-					disableAllButtons();
-
-					btn_pauseAndPlay.setToolTipText(lang.getProperty("context_start"));
-					btn_pauseAndPlay.setIcon(ICON_START);
-					((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
-					// update status bar
-					((StatusBar) presFac.getStatusBar()).setStatus(lang
-							.getProperty("statusbar_status_nogame"));
+					stopTimer();
 				}
 			}
 		});
@@ -152,7 +178,28 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			}
 		});
 
-		buttonBar.setLayout(new BorderLayout(30, 30));
+		btn_cancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (JOptionPane.showConfirmDialog(null, lang
+						.getProperty("context_dialog_cancel_msg"), lang
+						.getProperty("context_dialog_cancel_title"),
+						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+					presFac.getLogicFacade().getObservation().cancel();
+					// FIXME call gameEnded, stopTimer()
+					started = false;
+					disableAllButtons();
+					enableSpeedBar(false);
+
+					btn_pauseAndPlay.setToolTipText(lang.getProperty("context_start"));
+					btn_pauseAndPlay.setIcon(ICON_START);
+					((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
+					// update status bar
+					((StatusBar) presFac.getStatusBar()).setStatus(lang
+							.getProperty("statusbar_status_nogame"));
+				}
+			}
+		});
 
 		JPanel regularButtonBar = new JPanel();
 		regularButtonBar.add(btn_toBegin);
@@ -160,11 +207,12 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		regularButtonBar.add(btn_pauseAndPlay);
 		regularButtonBar.add(btn_next);
 		regularButtonBar.add(btn_toEnd);
-		// regularButtonBar.add(new JSeparator(JSeparator.VERTICAL));
+		regularButtonBar.add(speedBar);
 
 		JPanel cancelButtonBar = new JPanel();
 		cancelButtonBar.add(btn_cancel);
 
+		buttonBar.setLayout(new BorderLayout(30, 30));
 		buttonBar.add(regularButtonBar, BorderLayout.CENTER);
 		buttonBar.add(cancelButtonBar, BorderLayout.LINE_END);
 
@@ -232,9 +280,35 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		syncPauseAndPlayState(obs.isPaused());
 	}
 
+	/**
+	 * Updates the tool tip and the icon.
+	 * 
+	 * @param paused
+	 */
 	private void syncPauseAndPlayState(boolean paused) {
 		btn_pauseAndPlay.setToolTipText(paused ? lang.getProperty("context_start") : lang
 				.getProperty("context_pause"));
 		btn_pauseAndPlay.setIcon(paused ? ICON_START : ICON_PAUSE);
+	}
+
+	/**
+	 * Enables the speed bar.
+	 * 
+	 * @param value
+	 */
+	public void enableSpeedBar(boolean value) {
+		speedBar.setEnabled(value);
+	}
+
+	public void startTimer() {
+		// change timer interval
+		long period = Math.round(5000 - (float) speedBar.getValue() * 5000
+				/ speedBar.getMaximum());
+		System.out.println("period: "+period);
+		timer.schedule(nextTask, 0, period);
+	}
+
+	public void stopTimer() {
+		timer.cancel();
 	}
 }
