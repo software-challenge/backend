@@ -9,7 +9,12 @@ import javax.swing.JTable;
 public class CenteredBlackBackgroundCellRenderer extends BlackBackgroundCellRenderer {
 
 	private static final long serialVersionUID = 7276570948183124841L;
-	private static final Font font = new Font("Arial", Font.PLAIN, 20);
+	private final Font font;
+	
+	public CenteredBlackBackgroundCellRenderer(Font font) {
+		super();
+		this.font = font;
+	}
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,

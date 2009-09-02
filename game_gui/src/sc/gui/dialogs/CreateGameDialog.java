@@ -1,6 +1,7 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -33,6 +34,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -57,13 +60,22 @@ import sc.shared.GameResult;
 import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
 
+/**
+ * 
+ dialog_create_plugin_name = Plugin dialog_create_add_client = Programm
+ * dialog_create_add_human = Mensch
+ * 
+ * @author chw
+ * 
+ */
 @SuppressWarnings("serial")
 public class CreateGameDialog extends JDialog {
 
 	private static final String HOST_IP = "localhost";
 	private static final int DEFAULT_PORT = SharedConfiguration.DEFAULT_PORT;
 	private static final int MAX_CHARS = 50;
-	private static final Font font = new Font("Arial", Font.PLAIN, 16);
+	private static final float FONT_SIZE = 16;
+	private static final Font font = new Font("Arial", Font.PLAIN, (int)FONT_SIZE);
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
@@ -126,16 +138,20 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		ckbDim = new JCheckBox(lang.getProperty("dialog_create_pref_dim"));
+		ckbDim.setFont(ckbDim.getFont().deriveFont(FONT_SIZE));
 		ckbDim.setToolTipText("");
 
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
+		ckbDebug.setFont(ckbDebug.getFont().deriveFont(FONT_SIZE));
 		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
 
 		txfPort = new JTextField(5);
+		txfPort.setFont(txfPort.getFont().deriveFont(FONT_SIZE));
 		txfPort.setText("" + DEFAULT_PORT);
 		// txfPort.setEditable(false);
 
 		lblPort = new JLabel(lang.getProperty("dialog_create_pref_port"));
+		lblPort.setFont(lblPort.getFont().deriveFont(FONT_SIZE));
 		lblPort.setLabelFor(txfPort);
 		// pnlPref.add(ckbDim); TODO for future
 		pnlPref.add(ckbDebug);
@@ -152,22 +168,10 @@ public class CreateGameDialog extends JDialog {
 		// ---------------------------------------------------
 
 		combPlugins = new JComboBox(pluginNames);
+		combPlugins.setFont(combPlugins.getFont().deriveFont(FONT_SIZE));
 		pnlLeft.add(combPlugins);
 
 		// ---------------------------------------------------
-
-		// only a max. of characters
-		JTextField tfName = new JTextField();
-		tfName.setDocument(new MaxCharDocument(MAX_CHARS));
-		tfName.setFont(font);
-
-		JTextField tf_BigSize = new JTextField();
-		tf_BigSize.setFont(font);
-
-		final Vector<String> cmbItems = new Vector<String>();
-		cmbItems.add(lang.getProperty("dialog_create_plyType_human"));
-		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_intern"));
-		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_extern"));
 
 		// add columns
 		playersModel = new MyTableModel();
@@ -194,34 +198,36 @@ public class CreateGameDialog extends JDialog {
 		// add rows (default)
 		addRows(tblPlayers);
 
-		// set big font
-		for (int i = 0; i < tblPlayers.getColumnCount(); i++) {
-			//tblPlayers.getColumnModel().getColumn(i).setHeaderRenderer(new BigFontTableCellRenderer(font));
-		}
-		tblPlayers.setCellEditor(new DefaultCellEditor(tf_BigSize));
+		// -----------------------------------------------------------
 
+		// combobox content
+		final Vector<String> cmbItems = new Vector<String>();
+		cmbItems.add(lang.getProperty("dialog_create_plyType_human"));
+		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_intern"));
+		cmbItems.add(lang.getProperty("dialog_create_plyType_ki_extern"));
+
+		// especially set big font
+		setTableHeaderFontSize(tblPlayers, font.getSize2D());
+		setTableCellEditing(tblPlayers);
+		setTableColumnRendering(tblPlayers, font, cmbItems);
+
+		// only a max. of characters
+		JTextField tfName = new JTextField();
+		tfName.setDocument(new MaxCharDocument(MAX_CHARS));
+		tfName.setFont(font);
+		
 		// set attributes of each column
 		tblPlayers.getColumnModel().getColumn(0).setMinWidth(0);
 		tblPlayers.getColumnModel().getColumn(0).setMaxWidth(100);
-		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(50);
-		tblPlayers.getColumnModel().getColumn(0).setCellRenderer(
-				new CenteredBlackBackgroundCellRenderer());
-
+		tblPlayers.getColumnModel().getColumn(0).setPreferredWidth(70);
 		tblPlayers.getColumnModel().getColumn(1).setCellEditor(
 				new DefaultCellEditor(tfName));
-		tblPlayers.getColumnModel().getColumn(1).setCellRenderer(
-				new BigFontTableCellRenderer(font));
-
 		tblPlayers.getColumnModel().getColumn(2).setCellEditor(
 				new MyComboBoxEditor(cmbItems));
-		tblPlayers.getColumnModel().getColumn(2).setCellRenderer(
-				new MyComboBoxRenderer(cmbItems, font));
-
-		tblPlayers.getColumnModel().getColumn(3).setCellRenderer(
-				new FilenameBlackBGCellRenderer(font));
 
 		// fit the scroll pane to the size of the table's rows
 		JScrollPane scroll = new JScrollPane(tblPlayers);
+		scroll.setMaximumSize(new Dimension(400, 600));
 		scroll.setPreferredSize(new Dimension(scroll.getPreferredSize().width,
 				(tblPlayers.getRowCount() + 1) * tblPlayers.getRowHeight() + 2));
 
@@ -231,6 +237,7 @@ public class CreateGameDialog extends JDialog {
 
 		/* okButton */
 		final JButton okButton = new JButton(lang.getProperty("dialog_create_create"));
+		okButton.setFont(okButton.getFont().deriveFont(FONT_SIZE));
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -240,6 +247,7 @@ public class CreateGameDialog extends JDialog {
 
 		/* cancelButton */
 		JButton cancelButton = new JButton(lang.getProperty("dialog_create_cancel"));
+		cancelButton.setFont(cancelButton.getFont().deriveFont(FONT_SIZE));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -265,6 +273,60 @@ public class CreateGameDialog extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
+	}
+
+	private void setTableCellEditing(final JTable table) {
+		// big size for editing
+		JTextField tf_BigSize = new JTextField();
+		tf_BigSize.setFont(font);
+
+		table.setCellEditor(new DefaultCellEditor(tf_BigSize));
+	}
+
+	/**
+	 * Sets the cell font size of the given <code>table</code> to
+	 * <code>fontSize</code>.
+	 * 
+	 * @param table
+	 * @param font
+	 * @param items
+	 */
+	private void setTableColumnRendering(final JTable table, final Font font,
+			final Vector<String> items) {
+		table.getColumnModel().getColumn(0).setCellRenderer(
+				new CenteredBlackBackgroundCellRenderer(font));
+		table.getColumnModel().getColumn(1).setCellRenderer(
+				new BigFontTableCellRenderer(font));
+		table.getColumnModel().getColumn(2).setCellRenderer(
+				new MyComboBoxRenderer(items, font));
+		table.getColumnModel().getColumn(3).setCellRenderer(
+				new FilenameBlackBGCellRenderer(font));
+	}
+
+	/**
+	 * Sets the header font size of the given <code>table</code> to
+	 * <code>fontSize</code>.
+	 * 
+	 * @param table
+	 * @param fontSize
+	 */
+	private void setTableHeaderFontSize(final JTable table, final float fontSize) {
+		JTableHeader header = table.getTableHeader();
+
+		final Font newFont = header.getFont().deriveFont(fontSize);
+		final TableCellRenderer headerRenderer = header.getDefaultRenderer();
+
+		header.setDefaultRenderer(new TableCellRenderer() {
+			public Component getTableCellRendererComponent(JTable table, Object value,
+					boolean isSelected, boolean hasFocus, int row, int column) {
+
+				Component comp = headerRenderer.getTableCellRendererComponent(table,
+						value, isSelected, hasFocus, row, column);
+				comp.setFont(newFont); // set size
+				return comp;
+			}
+		});
+
 	}
 
 	/**

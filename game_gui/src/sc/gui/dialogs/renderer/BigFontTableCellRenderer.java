@@ -22,7 +22,7 @@ public class BigFontTableCellRenderer extends DefaultTableCellRenderer {
 
 		Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
 				column);
-		
+
 		setFont(font);
 		
 		return c;
