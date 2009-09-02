@@ -8,5 +8,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias(value="hui:color")
 public enum FigureColor
 {
-	RED, BLUE
+	/**
+	 * Der erste Spieler ist immer rot 
+	 */
+	RED,
+	/**
+	 *  Der zweite Spieler ist immer blau
+	 */
+	BLUE
 }

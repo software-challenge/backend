@@ -62,6 +62,10 @@ public class Game extends RoundBasedGameInstance<Player>
 		availableColors.addAll(Arrays.asList(FigureColor.values()));
 	}
 
+	public boolean hasLastMove() {
+		return oneLastMove;
+	}
+	
 	@Override
 	protected boolean checkGameOverCondition()
 	{
@@ -89,8 +93,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		final Player author = (Player) fromPlayer;
 		if (data instanceof Move)
 		{
-			if (oneLastMove)
-				oneLastMove = false;
+			oneLastMove = false;
 			final Move move = (Move) data;
 
 			if (author.getColor().equals(FigureColor.BLUE))
@@ -217,7 +220,7 @@ public class Game extends RoundBasedGameInstance<Player>
 			}
 		}
 
-		if (player.inGoal())
+		if (player.inGoal() && !player.getColor().equals(FigureColor.BLUE))
 			oneLastMove = true;
 	}
 
@@ -318,6 +321,6 @@ public class Game extends RoundBasedGameInstance<Player>
 	protected PlayerScore getScoreFor(Player p)
 	{
 		int avg_time = (int) (p.getColor().equals(FigureColor.BLUE) ? sum_blue : sum_red);
-		return p.getScore(avg_time / p.getHistory().size());
+		return p.getScore(avg_time / (p.getHistory().size() == 0 ? 1 : p.getHistory().size()));
 	}
 }

@@ -344,25 +344,19 @@ public class GameUtil
 	public static Position getGameResult(Player relevant, Player o)
 	{
 		Position ret = null;
-		if (o.getFieldNumber() <= relevant.getFieldNumber())
-		{
+		if (o.getFieldNumber() < relevant.getFieldNumber())
 			ret = Position.FIRST;
-		}
-		else
-		{
+		else if (o.getFieldNumber() > relevant.getFieldNumber())
 			ret = Position.SECOND;
-		}
-		if (relevant.inGoal()
-				&& o.getFieldNumber() == relevant.getFieldNumber())
+		else // Beide Spieler auf dem gleichen Spielfeld (Ziel) 
 		{
+			// nachrangiges Kriterium: Anzahl der Karotten, je weniger desto besser
 			if (o.getCarrotsAvailable() > relevant.getCarrotsAvailable())
-			{
+				ret = Position.FIRST;
+			else if (o.getCarrotsAvailable() < relevant.getCarrotsAvailable() )
 				ret = Position.SECOND;
-			}
-			else if (o.getCarrotsAvailable() == relevant.getCarrotsAvailable())
-			{
+			else 
 				ret = Position.TIE;
-			}
 		}
 		return ret;
 	}

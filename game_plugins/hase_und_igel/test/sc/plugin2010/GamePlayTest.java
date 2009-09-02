@@ -199,97 +199,113 @@ public class GamePlayTest
 	/**
 	 * Wenn ein Spieler ein Hasenfeld neu betritt _MUSS_ eine Hasenkarte
 	 * gespielt werden
-	 * @throws RescueableClientException 
+	 * 
+	 * @throws RescueableClientException
 	 */
 	@Test
 	public void mustPlayCard() throws RescueableClientException
 	{
 		g.start();
-		
-		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.RABBIT, 0));
+
+		Move r1 = new Move(MoveTyp.MOVE, b
+				.getNextFieldByTyp(FieldTyp.RABBIT, 0));
 		g.onAction(red, r1);
-		
+
 		Assert.assertTrue(red.mustPlayCard());
-		
+
 		Move r2 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
 		g.onAction(red, r2);
-		
+
 		Assert.assertFalse(red.mustPlayCard());
 
-		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
+		Move b1 = new Move(MoveTyp.MOVE, b
+				.getNextFieldByTyp(FieldTyp.CARROT, 0));
 		g.onAction(blue, b1);
-		
+
 		Assert.assertFalse(red.mustPlayCard());
 	}
-	
+
 	/**
 	 * Überprüft, ob ein Spieler eine Runde aussetzen kann.
 	 * Getestet wird:
-	 *  - 0 Karotten und das Igelfeld hinter dem Spieler ist belegt
+	 * - 0 Karotten und das Igelfeld hinter dem Spieler ist belegt
 	 */
 	@Test
-	public void canSkip() {
+	public void canSkip()
+	{
 		g.start();
-		
-		int redPos = b.getNextFieldByTyp(FieldTyp.POSITION_2, red.getFieldNumber());
+
+		int redPos = b.getNextFieldByTyp(FieldTyp.POSITION_2, red
+				.getFieldNumber());
 		red.setFieldNumber(redPos);
 		red.setCarrotsAvailable(0);
-		
-		int bluePos = b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, red.getFieldNumber());
+
+		int bluePos = b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, red
+				.getFieldNumber());
 		blue.setFieldNumber(bluePos);
-		
+
 		Move m = new Move(MoveTyp.SKIP);
 		Assert.assertTrue(b.isValid(m, red));
 	}
-	
+
 	/**
-	 * Überprüft die Bedingungen, unter denen ein Spieler auf den Positionsfeldern
+	 * Überprüft die Bedingungen, unter denen ein Spieler auf den
+	 * Positionsfeldern
 	 * Karotten bekommt.
+	 * 
 	 * @throws RescueableClientException
 	 */
 	@Test
 	public void onPositionField() throws RescueableClientException
 	{
 		g.start();
-		
+
 		red.setCarrotsAvailable(1000);
 		blue.setCarrotsAvailable(1000);
 		int carrotsBefore = red.getCarrotsAvailable();
-		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.POSITION_1, 0));
+		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(
+				FieldTyp.POSITION_1, 0));
 		int moveCosts = GameUtil.calculateCarrots(r1.getN());
 		g.onAction(red, r1);
-		
-		Assert.assertEquals(carrotsBefore-moveCosts, red.getCarrotsAvailable());
-		
-		Move b1 = new Move(MoveTyp.MOVE, b.getPreviousFieldByTyp(FieldTyp.CARROT, red.getFieldNumber()));
+
+		Assert.assertEquals(carrotsBefore - moveCosts, red
+				.getCarrotsAvailable());
+
+		Move b1 = new Move(MoveTyp.MOVE, b.getPreviousFieldByTyp(
+				FieldTyp.CARROT, red.getFieldNumber()));
 		g.onAction(blue, b1);
-		
+
 		Assert.assertEquals(g.getActivePlayer(), red);
-		Assert.assertEquals(carrotsBefore-moveCosts+10, red.getCarrotsAvailable());
+		Assert.assertEquals(carrotsBefore - moveCosts + 10, red
+				.getCarrotsAvailable());
 	}
 
 	/**
-	 * Überprüft, dass Karotten nur abgegeben werden dürfen, wenn man mehr als 20
+	 * Überprüft, dass Karotten nur abgegeben werden dürfen, wenn man mehr als
+	 * 20
 	 * Karotten besitzt.
 	 */
 	@Test
-	public void playDropCarrotsCard() {
+	public void playDropCarrotsCard()
+	{
 		g.start();
-		
+
 		red.setFieldNumber(b.getNextFieldByTyp(FieldTyp.RABBIT, 0));
 		Move r = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, -20);
 		Assert.assertTrue(red.getCarrotsAvailable() > 20);
 		Assert.assertTrue(b.isValid(r, red));
-		
+
 		red.setCarrotsAvailable(19);
 		Assert.assertFalse(b.isValid(r, red));
 	}
-	
+
 	/**
 	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
+	 * 
+	 * @throws RescueableClientException
 	 */
 	@Test
-	public void enterGoal()
+	public void enterGoal() throws RescueableClientException
 	{
 		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
 		red.setFieldNumber(carrotAt);
@@ -304,6 +320,52 @@ public class GamePlayTest
 		Assert.assertTrue(red.getSaladsToEat() == 0);
 		Assert.assertTrue(red.getCarrotsAvailable() <= 10);
 		Assert.assertTrue(b.isValid(m, red));
+	}
+
+	/**
+	 * Überprüft, dass blau einen letzen Zug bekommt, wenn rot vor Ihr das Ziel
+	 * erreicht.
+	 * 
+	 * @throws RescueableClientException
+	 */
+	@Test
+	public void blueHasLastMove() throws RescueableClientException
+	{
+		g.start();
+
+		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
+		red.setFieldNumber(carrotAt);
+		int toGoal = 64 - red.getFieldNumber();
+		Move m = new Move(MoveTyp.MOVE, toGoal);
+		red.setCarrotsAvailable(10);
+		red.setSaladsToEat(0);
+
+		g.onAction(red, m);
+		Assert.assertTrue(g.hasLastMove());
+	}
+
+	/**
+	 * Überprüft, dass rot keinen letzen Zug bekommt, wenn blau vor Ihr das Ziel
+	 * erreicht.
+	 * @throws RescueableClientException 
+	 */
+	@Test
+	public void redHasNoLastMove() throws RescueableClientException
+	{
+		g.start();
+
+		Move r = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
+		g.onAction(red, r);
+		
+		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
+		blue.setFieldNumber(carrotAt);
+		int toGoal = 64 - blue.getFieldNumber();
+		Move b = new Move(MoveTyp.MOVE, toGoal);
+		blue.setCarrotsAvailable(10);
+		blue.setSaladsToEat(0);
+
+		g.onAction(blue, b);
+		Assert.assertFalse(g.hasLastMove());
 	}
 
 	/**
@@ -576,29 +638,32 @@ public class GamePlayTest
 		Assert.assertEquals(carrotsBefore + diff * 10, red
 				.getCarrotsAvailable());
 	}
-	
+
 	/**
 	 * Ein Spieler kann sich zweimal hintereinander zurückfallen lassen
-	 * @throws RescueableClientException 
+	 * 
+	 * @throws RescueableClientException
 	 */
 	@Test
 	public void fallbackTwice() throws RescueableClientException
 	{
 		g.start();
-		
-		int firstHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, red.getFieldNumber());
+
+		int firstHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, red
+				.getFieldNumber());
 		int carrotAt = b.getNextFieldByTyp(FieldTyp.CARROT, firstHedgehog);
 		int secondHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, carrotAt);
 		carrotAt = b.getNextFieldByTyp(FieldTyp.CARROT, secondHedgehog);
-		
+
 		red.setFieldNumber(carrotAt);
 		Move r1 = new Move(MoveTyp.FALL_BACK);
 		g.onAction(red, r1);
 		Assert.assertEquals(red.getFieldNumber(), secondHedgehog);
-		
-		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.POSITION_2, 0));
+
+		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(
+				FieldTyp.POSITION_2, 0));
 		g.onAction(blue, b1);
-		
+
 		Move r2 = new Move(MoveTyp.FALL_BACK);
 		Assert.assertTrue(b.isValid(r2, red));
 		g.onAction(red, r2);
