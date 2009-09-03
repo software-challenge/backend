@@ -112,12 +112,13 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 		disableAllButtons(); // by default
 
-		speedBar = new JScrollBar(JScrollBar.HORIZONTAL);
+		// set scrollbar to maximum by default
+		int knobWidth = 30;
+		speedBar = new JScrollBar(JScrollBar.HORIZONTAL, 100, knobWidth, 0,
+				100 + knobWidth);
 		speedBar.setPreferredSize(new Dimension(200, 30));
 		speedBar.setValue(GUIConfiguration.instance().getSpeedValue());
 		speedBar.setEnabled(false); // false by default
-		speedBar.setVisibleAmount(30);
-		speedBar.setMaximum(100 + speedBar.getVisibleAmount());
 		speedBar.addAdjustmentListener(new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {

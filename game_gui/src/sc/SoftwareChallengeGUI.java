@@ -107,12 +107,14 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		if (logic.isGameActive()) {
 			Properties lang = logic.getLanguageData();
 			if (JOptionPane.showConfirmDialog(null, lang.getProperty("main_close_msg"),
-					lang.getProperty("main_close_title"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-				// quit application
-				presFac.shutdown();
-				System.exit(0);
+					lang.getProperty("main_close_title"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+				// do not quit
+				return;
 			}
 		}
+		// quit application
+		presFac.shutdown();
+		System.exit(0);
 	}
 
 	/**
