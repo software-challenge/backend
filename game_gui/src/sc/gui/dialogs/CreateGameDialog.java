@@ -55,8 +55,8 @@ import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
-import sc.logic.GUIConfiguration;
-import sc.logic.Player;
+import sc.logic.save.GUIConfiguration;
+import sc.logic.save.Player;
 import sc.plugin.GUIPluginInstance;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
@@ -279,7 +279,6 @@ public class CreateGameDialog extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				closeDialog();
-				super.windowClosing(e);
 			}
 		});
 	}
@@ -299,7 +298,7 @@ public class CreateGameDialog extends JDialog {
 				.getConfigCreateGameDialog().getPlayers();
 		players.clear();
 		for (int i = 0; i < playersModel.getRowCount(); i++) {
-			Player player = new Player();
+			final Player player = new Player();
 			player.name = (String) playersModel.getValueAt(i, 1);
 			player.playerType = (String) playersModel.getValueAt(i, 2);
 			player.filename = (String) playersModel.getValueAt(i, 3);
@@ -456,12 +455,10 @@ public class CreateGameDialog extends JDialog {
 							.author());
 			// update status bar
 			StatusBar statusBar = ((StatusBar) presFac.getStatusBar());
-			//statusBar.setCopyrightText(selPlugin.getPlugin().getPluginInfoText());
-			statusBar.setStatus(lang
-					.getProperty("statusbar_status_currentgame")
-					+ " " + selPlugin.getDescription().name());
+			statusBar.setStatus(lang.getProperty("statusbar_status_currentgame") + " "
+					+ selPlugin.getDescription().name());
 			// enable speed bar
-			contextPanel.enableSpeedBar(true);	//TODO
+			// contextPanel.enableSpeedBar(true); //TODO
 			// close dialog
 			closeDialog();
 		}
@@ -470,6 +467,7 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Executes the given <code>KIs</code>
+	 * 
 	 * @param is
 	 */
 	private void executeClients(final List<KIInformation> KIs, final IObservation observer) {
@@ -569,13 +567,13 @@ public class CreateGameDialog extends JDialog {
 			@Override
 			public void gameEnded(GameResult result) {
 				System.out.println("Game ended.");
-				
+
 				presFac.getLogicFacade().stopServer();
 				presFac.getLogicFacade().setGameActive(false);
-				
+
 				contextPanel.updateButtonBar(true);
 				contextPanel.stopTimer();
-				
+
 				// generate replay filename
 				String replayFilename = HelperMethods.generateReplayFilename(descriptors);
 				// save replay

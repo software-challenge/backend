@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
-import sc.logic.GUIConfiguration;
+import sc.logic.save.GUIConfiguration;
 import sc.server.Configuration;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.PluginLoaderException;

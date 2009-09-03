@@ -56,7 +56,7 @@ import sc.guiplugin.interfaces.ISlot;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
-import sc.logic.GUIConfiguration;
+import sc.logic.save.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
 import sc.shared.GameResult;
 import sc.shared.ScoreAggregation;

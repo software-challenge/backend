@@ -29,7 +29,7 @@ import sc.gui.PresentationFacade;
 import sc.gui.SCMenuBar;
 import sc.gui.StatusBar;
 import sc.guiplugin.interfaces.IObservation;
-import sc.logic.GUIConfiguration;
+import sc.logic.save.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
 
 @SuppressWarnings("serial")

@@ -1,21 +1,14 @@
--back: set pause to unpause
-<ok>-statusbar: iwas anzeigen
-<ok>-test range: txtfield num test only numbers
 -icon für jedes plugin
--2 clients, replay, button play/pause falsch
-<ok>-fix: game info text html
 -fix: allgem. lang-Texte, d.h. common_timelimit, common_choose_KI anstatt 2x das gleiche
 	(z.B. dialog_test_dialog_title, dialog_create_dialog_title) 
-<ok>-fix: winner bei test range entfernen
-<ok>-fix: "Warte auf externe.." externe umformulieren
-<ok>-fix: Path nach approve sofort in die config schreiben
 -fix: dispose MUST call window listener
 - Testrange mit externen Clients war mir gar nicht bewusst
 - Testrange mit Spielnamen hatte ich auch nie benutzt
+- testrange: winner in log anzeigen
+- save screen size
 
 marcel:
 -beim laden eines ki-programms/replays game type prüfen
--fix: vertauschung der namen beim test range
 
 FUTURE WORK:
 -TestRange: parallel testing (3-5 games at once -> new code architecture)

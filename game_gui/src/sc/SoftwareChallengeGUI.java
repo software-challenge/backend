@@ -19,9 +19,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.PresentationFacade;
-import sc.logic.GUIConfiguration;
 import sc.logic.ILogicFacade;
 import sc.logic.LogicFacade;
+import sc.logic.save.GUIConfiguration;
 import sc.server.Configuration;
 
 /**

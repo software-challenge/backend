@@ -6,8 +6,8 @@ import javax.swing.JPanel;
 
 import sc.IGUIApplication;
 import sc.IPresentationFacade;
-import sc.logic.GUIConfiguration;
 import sc.logic.ILogicFacade;
+import sc.logic.save.GUIConfiguration;
 
 /**
  * The Software Challenge's implementation of {@link IPresentationFacade}.

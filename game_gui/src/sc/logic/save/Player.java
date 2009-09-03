@@ -1,4 +1,4 @@
-package sc.logic;
+package sc.logic.save;
 
 import java.io.Serializable;
 

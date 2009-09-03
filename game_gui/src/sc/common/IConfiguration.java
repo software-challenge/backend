@@ -2,8 +2,8 @@ package sc.common;
 
 import java.io.File;
 
-import sc.logic.ConfigCreateGameDialog;
-import sc.logic.GUIConfiguration.ELanguage;
+import sc.logic.save.ConfigCreateGameDialog;
+import sc.logic.save.GUIConfiguration.ELanguage;
 
 public interface IConfiguration {
 

@@ -23,7 +23,7 @@ import javax.swing.KeyStroke;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
-import sc.logic.GUIConfiguration;
+import sc.logic.save.GUIConfiguration;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
@@ -53,7 +53,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
-	private final Timer timer;
+	private Timer timer;
 	private final TimerTask nextTask;
 
 	private JPanel gameField;
@@ -78,7 +78,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		this.nextTask = new TimerTask() {
 			@Override
 			public void run() {
-				presFac.getLogicFacade().getObservation().next();
+				// presFac.getLogicFacade().getObservation().next();
+				btn_next.doClick();
 			}
 		};
 		createGUI();
@@ -126,16 +127,21 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				GUIConfiguration.instance().setSpeedValue(e.getValue());
 
 				System.out.println("speedbar: " + e.getValue());
+				System.out.println("getVisibleAmount: " + speedBar.getVisibleAmount());
 
-				if (e.getValue() < speedBar.getMaximum()) {
-					// may not start a paused or not created game
-					IObservation obs = presFac.getLogicFacade().getObservation();
-					if (!obs.isPaused()) {
+				IObservation obs = presFac.getLogicFacade().getObservation();
+				// may not start a paused or not created game
+				if (!obs.isPaused()) {
+					if (e.getValue() < speedBar.getMaximum()
+							+ speedBar.getVisibleAmount()) {
 						startTimer();
+					} else {
+						obs.unpause();
 					}
 				}
 			}
 		});
+		speedBar.setVisible(false);// TODO
 
 		btn_toBegin.addActionListener(new ActionListener() {
 			@Override
@@ -163,17 +169,9 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			public void actionPerformed(ActionEvent e) {
 				if (!started) {
 					started = true;
-					if (speedBar.getValue() < speedBar.getMaximum()) {
-						startTimer();
-					} else {
-						presFac.getLogicFacade().getObservation().start();
-					}
+					presFac.getLogicFacade().getObservation().start();
 				} else if (presFac.getLogicFacade().getObservation().isPaused()) {
-					if (speedBar.getValue() < speedBar.getMaximum()) {
-						startTimer();
-					} else {
-						presFac.getLogicFacade().getObservation().unpause();
-					}
+					presFac.getLogicFacade().getObservation().unpause();
 				} else {
 					presFac.getLogicFacade().getObservation().pause();
 					stopTimer();
@@ -332,15 +330,18 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 	public void startTimer() {
 		if (speedBar.isEnabled()) {
-			// change timer interval
+			// change timer interval/period
 			long period = Math.round(5000 - (float) speedBar.getValue() * 5000
 					/ speedBar.getMaximum());
-			System.out.println("period: " + period);
+
+			timer = new Timer();
 			timer.schedule(nextTask, 0, period);
+			System.out.println("Timer started (" + period + ")");
 		}
 	}
 
 	public void stopTimer() {
 		timer.cancel();
+		System.out.println("timer canceled.");
 	}
 }
