@@ -126,12 +126,10 @@ public class QuestionPanel extends BackgroundPane
 
 	public void hideComponents()
 	{
-		textLabel.setText(ravensburger);
+		textLabel.setVisible(false);
 		buttonPanel.removeAll();
 
 		removeAll();
-
-		this.add(textPanel, BorderLayout.CENTER);
 
 		setBackground(totalBackgroundImg);
 		displayedCompCount = 1;

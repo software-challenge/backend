@@ -402,6 +402,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		this.board = board;
 
 		upperInformationBar.setRound(round + 1);
+		if (round == 1)
+		{
+			qPanel.hideComponents();
+		}
 
 		if (!boardWasCreated)
 		{

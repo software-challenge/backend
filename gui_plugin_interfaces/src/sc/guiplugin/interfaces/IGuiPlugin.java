@@ -84,4 +84,9 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * @return
 	 */
 	int getMaximalPlayerCount();
+
+	/**
+	 * @return an Icon of the game
+	 */
+	Image getPluginIcon();
 }

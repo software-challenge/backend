@@ -54,6 +54,7 @@ public class GUIPluginFacade implements IGuiPlugin
 				+ "<BR> erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.</html>";
 	}
 
+	@Override
 	public Image getPluginIcon()
 	{
 		return RendererUtil.getImage("resource/game/hase_und_igel_icon.png");
