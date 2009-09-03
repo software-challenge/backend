@@ -746,8 +746,10 @@ public class CreateGameDialog extends JDialog {
 			 * Only react on opening (i.e. having the focus), not additionally
 			 * on closing the roll menu
 			 */
+			int row = tblPlayers.rowAtPoint(cbox.getLocation());
 			if (e.getStateChange() == ItemEvent.SELECTED && cbox.hasFocus()) {
-				int row = tblPlayers.convertRowIndexToModel(tblPlayers.getSelectedRow());
+				//int row = tblPlayers.convertRowIndexToModel(tblPlayers.getSelectedRow());
+				System.out.println("row: "+row);
 				updatePlayerTable(cbox, row);
 			}
 		}
