@@ -6,16 +6,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
+import javax.swing.KeyStroke;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
@@ -91,14 +95,18 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 		btn_toBegin = new JButton(ICON_TO_START);
 		btn_toBegin.setToolTipText(lang.getProperty("context_to_begin"));
+		bindShortcut(btn_toBegin, KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK);
 		btn_back = new JButton(ICON_BACK);
 		btn_back.setToolTipText(lang.getProperty("context_back"));
+		bindShortcut(btn_back, KeyEvent.VK_LEFT, 0);
 		btn_pauseAndPlay = new JButton(ICON_START);
 		btn_pauseAndPlay.setToolTipText(lang.getProperty("context_start"));
 		btn_next = new JButton(ICON_NEXT);
 		btn_next.setToolTipText(lang.getProperty("context_next"));
+		bindShortcut(btn_next, KeyEvent.VK_RIGHT, 0);
 		btn_toEnd = new JButton(ICON_TO_END);
 		btn_toEnd.setToolTipText(lang.getProperty("context_to_end"));
+		bindShortcut(btn_toEnd, KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK);
 		btn_cancel = new JButton(ICON_CANCEL);
 		btn_cancel.setToolTipText(lang.getProperty("context_cancel"));
 
@@ -107,16 +115,17 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		speedBar = new JScrollBar(JScrollBar.HORIZONTAL);
 		speedBar.setPreferredSize(new Dimension(200, 30));
 		speedBar.setValue(GUIConfiguration.instance().getSpeedValue());
-		speedBar.setEnabled(false);
-		speedBar.setMaximum(100+speedBar.getVisibleAmount());
+		speedBar.setEnabled(false); // false by default
+		speedBar.setVisibleAmount(30);
+		speedBar.setMaximum(100 + speedBar.getVisibleAmount());
 		speedBar.addAdjustmentListener(new AdjustmentListener() {
 			@Override
 			public void adjustmentValueChanged(AdjustmentEvent e) {
 				stopTimer();
 				GUIConfiguration.instance().setSpeedValue(e.getValue());
-				
-				System.out.println("speedbar: "+e.getValue());
-				
+
+				System.out.println("speedbar: " + e.getValue());
+
 				if (e.getValue() < speedBar.getMaximum()) {
 					// may not start a paused or not created game
 					IObservation obs = presFac.getLogicFacade().getObservation();
@@ -220,6 +229,26 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	}
 
 	/**
+	 * Binds the standard action of the given <code>button</code> to the given
+	 * <code>key</code>.
+	 * 
+	 * @param component
+	 * @param key
+	 * @param modifiers
+	 */
+	private void bindShortcut(final JButton button, int key, int modifiers) {
+		Object actionMapKey = "shortcut1";
+		button.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(key, modifiers), actionMapKey);
+		button.getActionMap().put(actionMapKey, new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				button.doClick();
+			}
+		});
+	}
+
+	/**
 	 * Disables all 6 buttons in the control bar at the bottom.
 	 */
 	private void disableAllButtons() {
@@ -301,11 +330,13 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	}
 
 	public void startTimer() {
-		// change timer interval
-		long period = Math.round(5000 - (float) speedBar.getValue() * 5000
-				/ speedBar.getMaximum());
-		System.out.println("period: "+period);
-		timer.schedule(nextTask, 0, period);
+		if (speedBar.isEnabled()) {
+			// change timer interval
+			long period = Math.round(5000 - (float) speedBar.getValue() * 5000
+					/ speedBar.getMaximum());
+			System.out.println("period: " + period);
+			timer.schedule(nextTask, 0, period);
+		}
 	}
 
 	public void stopTimer() {

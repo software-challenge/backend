@@ -1,7 +1,6 @@
 package sc.gui;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
@@ -35,11 +34,6 @@ public class PresentationFacade implements IPresentationFacade {
 	 */
 	private ILogicFacade logic;
 	/**
-	 * The main frame
-	 */
-	private JFrame frame;
-
-	/**
 	 * Singleton instance
 	 */
 	private static volatile PresentationFacade instance;
@@ -66,13 +60,12 @@ public class PresentationFacade implements IPresentationFacade {
 	 * @param root
 	 * @param logic
 	 */
-	public static PresentationFacade init(final JFrame frame, final IGUIApplication root,
+	public static PresentationFacade init(final IGUIApplication root,
 			final ILogicFacade logic) {
 
 		// create instance
 		getInstance();
-		
-		instance.frame = frame;
+
 		instance.logic = logic;
 		instance.contextDisplay = new ContextDisplay();
 		instance.menuBar = new SCMenuBar(root);
@@ -109,10 +102,6 @@ public class PresentationFacade implements IPresentationFacade {
 
 	public ILogicFacade getLogicFacade() {
 		return logic;
-	}
-
-	public JFrame getFrame() {
-		return frame;
 	}
 
 }

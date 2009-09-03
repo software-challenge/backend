@@ -8,7 +8,6 @@ import java.util.Properties;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -20,13 +19,13 @@ public class InfoDialog extends JDialog {
 
 	private Properties lang;
 
-	public InfoDialog(JFrame frame) {
+	public InfoDialog() {
 		super();
 		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
-		createGUI(frame);
+		createGUI();
 	}
 
-	private void createGUI(JFrame frame) {
+	private void createGUI() {
 
 		this.setLayout(new BorderLayout());
 

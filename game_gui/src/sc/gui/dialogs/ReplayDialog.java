@@ -75,7 +75,7 @@ public class ReplayDialog extends JDialog {
 				JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 						.getLoadReplayPath());
 				chooser.setDialogTitle(lang.getProperty("dialog_replay_dialog_title"));
-				if (chooser.showOpenDialog(presFac.getFrame()) == JFileChooser.APPROVE_OPTION) {
+				if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 					File f = chooser.getSelectedFile();
 					// set new path
 					txfReplay.setText(f.getAbsolutePath());

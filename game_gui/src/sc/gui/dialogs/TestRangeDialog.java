@@ -28,7 +28,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -99,7 +98,7 @@ public class TestRangeDialog extends JDialog {
 	private JScrollPane scrollTextArea;
 	private JProgressBar progressBar;
 
-	public TestRangeDialog(JFrame frame) {
+	public TestRangeDialog() {
 		super();
 		presFac = PresentationFacade.getInstance();
 		lang = presFac.getLogicFacade().getLanguageData();

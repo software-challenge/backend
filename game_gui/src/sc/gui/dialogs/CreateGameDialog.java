@@ -26,7 +26,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -90,7 +89,6 @@ public class CreateGameDialog extends JDialog {
 	private JPanel pnlPref;
 	private JCheckBox ckbDim;
 	private JCheckBox ckbDebug;
-	private JFrame frame;
 	private JTextField txfPort;
 	private JLabel lblPort;
 	private MyTableModel playersModel;
@@ -100,12 +98,11 @@ public class CreateGameDialog extends JDialog {
 	 * 
 	 * @param frame
 	 */
-	public CreateGameDialog(JFrame frame) {
+	public CreateGameDialog() {
 		super();
 
 		this.presFac = PresentationFacade.getInstance();
 		this.lang = presFac.getLogicFacade().getLanguageData();
-		this.frame = frame;
 		createGUI();
 	}
 
@@ -464,7 +461,7 @@ public class CreateGameDialog extends JDialog {
 					.getProperty("statusbar_status_currentgame")
 					+ " " + selPlugin.getDescription().name());
 			// enable speed bar
-			//contextPanel.enableSpeedBar(true);	//TODO
+			contextPanel.enableSpeedBar(true);	//TODO
 			// close dialog
 			closeDialog();
 		}
@@ -694,7 +691,7 @@ public class CreateGameDialog extends JDialog {
 					.getCreateGameDialogPath());
 			chooser.setDialogTitle(lang.getProperty("dialog_create_dialog_title"));
 
-			switch (chooser.showOpenDialog(frame)) {
+			switch (chooser.showOpenDialog(null)) {
 			case JFileChooser.APPROVE_OPTION:
 				// set path
 				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,

@@ -81,7 +81,7 @@ public class SCMenuBar extends JMenuBar {
 					}
 				}
 				// show create-game dialog
-				new CreateGameDialog(presFac.getFrame()).setVisible(true);
+				new CreateGameDialog().setVisible(true);
 			}
 		});
 
@@ -97,7 +97,7 @@ public class SCMenuBar extends JMenuBar {
 		testRange.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new TestRangeDialog(presFac.getFrame()).setVisible(true);
+				new TestRangeDialog().setVisible(true);
 			}
 		});
 
@@ -105,7 +105,7 @@ public class SCMenuBar extends JMenuBar {
 		info.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new InfoDialog(presFac.getFrame()).setVisible(true);
+				new InfoDialog().setVisible(true);
 			}
 		});
 
