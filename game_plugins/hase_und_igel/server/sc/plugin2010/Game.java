@@ -73,9 +73,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
 		if (!oneLastMove)
 			for (final Player p : this.players)
-			{
 				gameOver = gameOver || p.inGoal();
-			}
 
 		return gameOver;
 	}
@@ -116,10 +114,8 @@ public class Game extends RoundBasedGameInstance<Player>
 			}
 
 			for (final Player p : players)
-			{
 				p.setPosition(GameUtil
 						.getGameResult(p, board.getOtherPlayer(p)));
-			}
 
 			next();
 		}
@@ -169,13 +165,9 @@ public class Game extends RoundBasedGameInstance<Player>
 					case EAT_SALAD:
 						player.eatSalad();
 						if (board.isFirst(player))
-						{
 							player.changeCarrotsAvailableBy(10);
-						}
 						else
-						{
 							player.changeCarrotsAvailableBy(30);
-						}
 						break;
 					case FALL_BACK:
 						if (board.isFirst(player))
@@ -264,8 +256,26 @@ public class Game extends RoundBasedGameInstance<Player>
 				break;
 		}
 		final Player nextPlayer = this.players.get(activePlayerId);
+		onPlayerChange(nextPlayer);
 		next(nextPlayer);
 		time_start = System.currentTimeMillis();
+	}
+
+	private void onPlayerChange(Player player)
+	{
+		switch (board.getTypeAt(player.getFieldNumber()))
+		{
+			case POSITION_1:
+				if (board.isFirst(player))
+					player.changeCarrotsAvailableBy(10);
+				break;
+			case POSITION_2:
+				if (!board.isFirst(player))
+					player.changeCarrotsAvailableBy(30);
+				break;
+			default:
+				break;
+		}
 	}
 
 	@Override
@@ -300,21 +310,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void onNewTurn()
 	{
-		final Player player = getActivePlayer();
-		switch (board.getTypeAt(player.getFieldNumber()))
-		{
-			case POSITION_1:
-				if (board.isFirst(player))
-					player.changeCarrotsAvailableBy(10);
-				break;
-			case POSITION_2:
-				if (!board.isFirst(player))
-					player.changeCarrotsAvailableBy(30);
-				break;
-			default:
-				break;
-		}
-
+		
 	}
 	
 	@Override

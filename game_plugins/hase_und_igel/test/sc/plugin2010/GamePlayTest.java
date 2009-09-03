@@ -260,23 +260,35 @@ public class GamePlayTest
 	{
 		g.start();
 
-		red.setCarrotsAvailable(1000);
-		blue.setCarrotsAvailable(1000);
-		int carrotsBefore = red.getCarrotsAvailable();
-		Move r1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(
-				FieldTyp.POSITION_1, 0));
-		int moveCosts = GameUtil.calculateCarrots(r1.getN());
+		red.setCarrotsAvailable(5000);
+		blue.setCarrotsAvailable(5000);
+		int redCarrotsBefore = red.getCarrotsAvailable();
+		int pos1At = b.getPreviousFieldByTyp(FieldTyp.POSITION_1, b.getPreviousFieldByTyp(FieldTyp.POSITION_1, 64));
+		Move r1 = new Move(MoveTyp.MOVE, pos1At);
+		int redMoveCosts = GameUtil.calculateCarrots(r1.getN());
 		g.onAction(red, r1);
 
-		Assert.assertEquals(carrotsBefore - moveCosts, red
+		Assert.assertEquals(redCarrotsBefore - redMoveCosts, red
 				.getCarrotsAvailable());
 
-		Move b1 = new Move(MoveTyp.MOVE, b.getPreviousFieldByTyp(
-				FieldTyp.CARROT, red.getFieldNumber()));
+		int blueCarrotsBefore = blue.getCarrotsAvailable();
+		int pos2At = b.getPreviousFieldByTyp(FieldTyp.POSITION_2, pos1At);
+		Move b1 = new Move(MoveTyp.MOVE, pos2At);
+		int blueMoveCosts = GameUtil.calculateCarrots(b1.getN());
 		g.onAction(blue, b1);
 
+		// Rot hat den Bonus auf Position 1 bekommen
 		Assert.assertEquals(g.getActivePlayer(), red);
-		Assert.assertEquals(carrotsBefore - moveCosts + 10, red
+		Assert.assertEquals(redCarrotsBefore - redMoveCosts + 10, red
+				.getCarrotsAvailable());
+
+		Move r2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
+				red.getFieldNumber())-red.getFieldNumber());
+		g.onAction(red, r2);
+
+		// Blau hat den Bonus auf Position 2 bekommen
+		Assert.assertEquals(g.getActivePlayer(), blue);
+		Assert.assertEquals(blueCarrotsBefore - blueMoveCosts + 30, blue
 				.getCarrotsAvailable());
 	}
 
@@ -347,7 +359,8 @@ public class GamePlayTest
 	/**
 	 * Überprüft, dass rot keinen letzen Zug bekommt, wenn blau vor Ihr das Ziel
 	 * erreicht.
-	 * @throws RescueableClientException 
+	 * 
+	 * @throws RescueableClientException
 	 */
 	@Test
 	public void redHasNoLastMove() throws RescueableClientException
@@ -356,7 +369,7 @@ public class GamePlayTest
 
 		Move r = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
 		g.onAction(red, r);
-		
+
 		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
 		blue.setFieldNumber(carrotAt);
 		int toGoal = 64 - blue.getFieldNumber();
