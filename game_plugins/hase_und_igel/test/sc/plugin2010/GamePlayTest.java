@@ -263,7 +263,8 @@ public class GamePlayTest
 		red.setCarrotsAvailable(5000);
 		blue.setCarrotsAvailable(5000);
 		int redCarrotsBefore = red.getCarrotsAvailable();
-		int pos1At = b.getPreviousFieldByTyp(FieldTyp.POSITION_1, b.getPreviousFieldByTyp(FieldTyp.POSITION_1, 64));
+		int pos1At = b.getPreviousFieldByTyp(FieldTyp.POSITION_1, b
+				.getPreviousFieldByTyp(FieldTyp.POSITION_1, 64));
 		Move r1 = new Move(MoveTyp.MOVE, pos1At);
 		int redMoveCosts = GameUtil.calculateCarrots(r1.getN());
 		g.onAction(red, r1);
@@ -283,7 +284,8 @@ public class GamePlayTest
 				.getCarrotsAvailable());
 
 		Move r2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
-				red.getFieldNumber())-red.getFieldNumber());
+				red.getFieldNumber())
+				- red.getFieldNumber());
 		g.onAction(red, r2);
 
 		// Blau hat den Bonus auf Position 2 bekommen

@@ -235,15 +235,30 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void next()
 	{
-		final Player active = getActivePlayer();
-		Move last = active.getLastMove();
+		final Player activePlayer = getActivePlayer();
+		Move lastMove = activePlayer.getLastMove();
 		int activePlayerId = this.players.indexOf(this.activePlayer);
-		switch (board.getTypeAt(active.getFieldNumber()))
+		switch (board.getTypeAt(activePlayer.getFieldNumber()))
 		{
 			case RABBIT:
-				switch (last.getTyp())
+				switch (lastMove.getTyp())
 				{
 					case MOVE:
+						// Auf ein Hasenfeld gezogen: gleicher Spieler nochmal
+						break;
+					case PLAY_CARD:
+						switch (lastMove.getCard()) {
+							case EAT_SALAD:
+							case TAKE_OR_DROP_CARROTS:
+								activePlayerId = (activePlayerId + 1)
+									% this.players.size();
+								break;
+							case FALL_BACK:
+							case HURRY_AHEAD:
+								// Durch eine Hasenkarte auf ein Hasenfeld gekommen:
+								// gleicher Spieler nochmal
+								break;
+						}
 						break;
 					default:
 						activePlayerId = (activePlayerId + 1)
