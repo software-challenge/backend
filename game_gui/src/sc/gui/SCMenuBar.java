@@ -133,7 +133,8 @@ public class SCMenuBar extends JMenuBar {
 	 * @param author
 	 */
 	public void setGameSpecificInfo(final String gameTypeName, final String version,
-			final Image image, final String infoText, final String author) {
+			final Image image, final String infoText, final String author,
+			final int infoYear) {
 
 		// remove old info item
 		if (null != specificInfo) {
@@ -145,8 +146,8 @@ public class SCMenuBar extends JMenuBar {
 		specificInfo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new GameInfoDialog(gameTypeName, version, image, infoText, author)
-						.setVisible(true);
+				new GameInfoDialog(gameTypeName, version, image, infoText, author,
+						infoYear).setVisible(true);
 			}
 		});
 		help.add(specificInfo);

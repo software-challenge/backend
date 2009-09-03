@@ -23,6 +23,7 @@ public class GameInfoDialog extends JDialog {
 	private final String infoText;
 	private final String author;
 	private final Properties lang;
+	private final int infoYear;
 
 	/**
 	 * Create <code>GameInfoDialog</code>
@@ -32,8 +33,8 @@ public class GameInfoDialog extends JDialog {
 	 * @param infoText
 	 * @param author
 	 */
-	public GameInfoDialog(String gameTypeName, String version, Image image,
-			String infoText, String author) {
+	public GameInfoDialog(String gameTypeName, String version, final Image image,
+			String infoText, String author, int infoYear) {
 		super();
 		this.gameTypeName = gameTypeName;
 		this.version = version;
@@ -41,6 +42,7 @@ public class GameInfoDialog extends JDialog {
 		this.infoText = infoText;
 		this.author = author;
 		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		this.infoYear = infoYear;
 		createGUI();
 	}
 
@@ -66,6 +68,8 @@ public class GameInfoDialog extends JDialog {
 		// infoText is in html format, so show it in a separate label
 		JLabel lblText = new JLabel(infoText);
 		pnlText.add(lblText);
+		JLabel lblYear = new JLabel(lang.getProperty("dialog_gameinfo_year") + ": "+infoYear);
+		pnlText.add(lblYear);
 		JLabel lblVersion = new JLabel(lang.getProperty("dialog_gameinfo_version") + ": "
 				+ version);
 		pnlText.add(lblVersion);
@@ -81,6 +85,7 @@ public class GameInfoDialog extends JDialog {
 		this.setIconImage(image);
 		this.setTitle(gameTypeName);
 		this.setModal(true);
+		this.setResizable(false);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);

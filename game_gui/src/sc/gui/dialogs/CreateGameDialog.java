@@ -452,7 +452,8 @@ public class CreateGameDialog extends JDialog {
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
 					.getDescription().name(), selPlugin.getDescription().version(),
 					selPlugin.getPlugin().getPluginIcon(), selPlugin.getPlugin()
-							.getPluginInfoText(), selPlugin.getDescription().author());
+							.getPluginInfoText(), selPlugin.getDescription().author(),
+					selPlugin.getPlugin().getPluginYear());
 			// update status bar
 			StatusBar statusBar = ((StatusBar) presFac.getStatusBar());
 			statusBar.setStatus(lang.getProperty("statusbar_status_currentgame") + " "
