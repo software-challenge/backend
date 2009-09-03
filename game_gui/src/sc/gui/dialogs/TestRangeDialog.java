@@ -554,7 +554,7 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void gameEnded(GameResult result) {
 				addLogMessage(lang.getProperty("dialog_test_end") + " "
-						+ curTest + ":" + numTest);
+						+ curTest + "/" + numTest);
 				// purpose
 				updateStatistics(rotation, result);
 				// update progress bar
