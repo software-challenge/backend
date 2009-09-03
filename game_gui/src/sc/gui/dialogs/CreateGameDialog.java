@@ -70,7 +70,7 @@ import sc.shared.SlotDescriptor;
 public class CreateGameDialog extends JDialog {
 
 	private static final String HOST_IP = "localhost";
-	private static final int MAX_CHARS = 50;
+	private static final int MAX_CHARS = 20;
 	private static final float FONT_SIZE = 16;
 	private static final Font font = new Font("Arial", Font.PLAIN, (int) FONT_SIZE);
 	private static final int MAX_WIDTH = 800;
@@ -450,9 +450,9 @@ public class CreateGameDialog extends JDialog {
 		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getDescription().version(), null,
-					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
-							.author());
+					.getDescription().name(), selPlugin.getDescription().version(),
+					selPlugin.getPlugin().getPluginIcon(), selPlugin.getPlugin()
+							.getPluginInfoText(), selPlugin.getDescription().author());
 			// update status bar
 			StatusBar statusBar = ((StatusBar) presFac.getStatusBar());
 			statusBar.setStatus(lang.getProperty("statusbar_status_currentgame") + " "
@@ -532,7 +532,6 @@ public class CreateGameDialog extends JDialog {
 					cancelGameCreation(observer);
 					return;
 				}
-				System.out.println("PATH >>> " + path);
 				KIs.add(new KIInformation(slot.asClient(), path));
 				break;
 			case 2: // KI extern

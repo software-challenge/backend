@@ -124,6 +124,14 @@ public class SCMenuBar extends JMenuBar {
 		this.add(help);
 	}
 
+	/**
+	 * 
+	 * @param gameTypeName
+	 * @param version
+	 * @param image
+	 * @param infoText
+	 * @param author
+	 */
 	public void setGameSpecificInfo(final String gameTypeName, final String version,
 			final Image image, final String infoText, final String author) {
 

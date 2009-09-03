@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -18,10 +19,7 @@ public class GameInfoDialog extends JDialog {
 
 	private final String gameTypeName;
 	private final String version;
-	
-	@SuppressWarnings("unused")
 	private final Image image;
-	
 	private final String infoText;
 	private final String author;
 	private final Properties lang;
@@ -60,8 +58,7 @@ public class GameInfoDialog extends JDialog {
 
 		// ------------------------------------------
 
-		// JLabel lblImage = new JLabel(new ImageIcon(image));
-		JLabel lblImage = new JLabel();
+		JLabel lblImage = new JLabel(new ImageIcon(image));
 		pnlImage.add(lblImage);
 
 		JLabel lblDescriptionText = new JLabel(lang.getProperty("dialog_gameinfo_description"));
@@ -81,6 +78,7 @@ public class GameInfoDialog extends JDialog {
 		this.add(pnlText, BorderLayout.PAGE_END);
 
 		// set pref
+		this.setIconImage(image);
 		this.setTitle(gameTypeName);
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

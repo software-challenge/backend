@@ -162,8 +162,9 @@ public class ReplayDialog extends JDialog {
 
 		// add game specific info item in menu bar
 		((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin.getDescription()
-				.name(), selPlugin.getDescription().version(), null, selPlugin
-				.getPlugin().getPluginInfoText(), selPlugin.getDescription().author());
+				.name(), selPlugin.getDescription().version(), selPlugin.getPlugin()
+				.getPluginIcon(), selPlugin.getPlugin().getPluginInfoText(), selPlugin
+				.getDescription().author());
 		// update status bar
 		((StatusBar) presFac.getStatusBar()).setStatus(lang
 				.getProperty("statusbar_status_currentreplay")
