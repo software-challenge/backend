@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import sc.gui.PresentationFacade;
+import sc.server.Configuration;
 
 @SuppressWarnings("serial")
 public class InfoDialog extends JDialog {
@@ -46,6 +47,7 @@ public class InfoDialog extends JDialog {
 		
 		JLabel lblImage = new JLabel(image);
 		scPanel.add(lblImage);
+		scPanel.add(new JLabel("Version: " + Configuration.get("code-version", String.class, "Unbekannt"), JLabel.CENTER));
 
 		JLabel developer = new JLabel(lang.getProperty("dialog_info_developers"), JLabel.CENTER);
 		devPanel.add(developer);

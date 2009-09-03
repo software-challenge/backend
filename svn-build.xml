@@ -1,0 +1,11 @@
+<project name="SvnBuild" basedir=".">
+	<property name="manifest.code.version.key" value="SC-Module-Version" />
+	<target name="svnversion">
+		<exec executable="svnversion2" outputproperty="code.version"
+			failonerror="true" failifexecutionfails="false" resolveexecutable="">
+			<env key="path" value="/usr/bin" />
+			<arg value="--no-newline" />
+		</exec>
+		<echo message="SVN Version is ${code.version}" />
+	</target>
+</project>

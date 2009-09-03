@@ -1,4 +1,6 @@
 <project name="HaseUndIgel" basedir="." default="main">
+	<import file="../../svn-build.xml" />
+
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
@@ -32,9 +34,12 @@
 		</javac>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="jar" depends="svnversion,compile">
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
+			<manifest>
+				<attribute name="${manifest.code.version.key}" value="${code.version}" />
+			</manifest>
 			<fileset dir="${classes.dir}" />
 			<fileset dir=".">
 				<include name="resource/**/*" />

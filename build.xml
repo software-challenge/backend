@@ -1,5 +1,6 @@
 <project name="Complete" basedir="." default="main">
-
+	<import file="svn-build.xml"/>
+	
 	<property name="out.dir" value="deploy" />
 
 	<target name="clean">
@@ -9,11 +10,11 @@
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
 		<ant dir="game_gui" inheritAll="false" />
-		<ant dir="game_server" inheritAll="false" />
+		<ant dir="game_server" inheritAll="false"  />
 		<ant dir="game_simpleclient" inheritAll="false" />
 	</target>
 
-	<target name="build" depends="dependencies">
+	<target name="build" depends="svnversion,dependencies">
 		<mkdir dir="${out.dir}" />
 
 		<mkdir dir="${out.dir}/gui" />

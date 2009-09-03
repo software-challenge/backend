@@ -3,7 +3,11 @@ package sc;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -46,25 +50,69 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 */
 	public SoftwareChallengeGUI() {
 		super();
+		loadCodeVersionFromManifest();
 		// get logic facade
 		LogicFacade logicFac = LogicFacade.getInstance();
 		try {
 			logicFac.loadLanguageData();
 			logicFac.loadPlugins();
 		} catch (CouldNotFindAnyLanguageFileException e) {
-			JOptionPane.showMessageDialog(this, "Could not load any language file.",
+			JOptionPane.showMessageDialog(this,
+					"Could not load any language file.",
 					"Missing any language file.", JOptionPane.ERROR_MESSAGE);
 			logicFac.unloadPlugins();
 			System.exit(-1);
 		} catch (CouldNotFindAnyPluginException e) {
-			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getProperty(
-					"main_error_plugin_msg"), logicFac.getLanguageData().getProperty(
-					"main_error_plugin_title"), JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, logicFac.getLanguageData()
+					.getProperty("main_error_plugin_msg"), logicFac
+					.getLanguageData().getProperty("main_error_plugin_title"),
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(-2);
 		}
 		// get presentation facade
 		this.presFac = PresentationFacade.init(this, logicFac);
 		createGUI();
+	}
+
+	private void loadCodeVersionFromManifest() {
+		Attributes attrs = getAttributes();
+		String version = attrs.getValue("SC-Module-Version");
+
+		if (version != null) {
+			Configuration.set("code-version", version);
+		}
+
+		System.out.println(attrs.size());
+		System.out.println(version);
+	}
+
+	private Attributes getAttributes() {
+		final Class<?> classe = this.getClass();
+		InputStream stream = classe.getClassLoader().getResourceAsStream(
+				"META-INF/MANIFEST.MF");
+		if (stream != null) {
+			try {
+				final Manifest manifest = new Manifest(stream);
+				stream.close();
+				String name = classe.getName().replace('.', '/');
+				int index;
+				while ((index = name.lastIndexOf('/')) >= 0) {
+					final Attributes attributes = manifest.getAttributes(name
+							.substring(0, index + 1));
+					if (attributes != null)
+						return attributes;
+					name = name.substring(0, index);
+				}
+				return manifest.getMainAttributes();
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+		} else {
+			System.out.println("Couldn't load Manifest. Not a JAR?");
+		}
+
+		// Use empty manifest attributes.
+		return new Attributes();
 	}
 
 	/**
@@ -79,11 +127,12 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		this.add(presFac.getStatusBar());
 
 		// set window preferences
-		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		this
+				.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.setTitle(presFac.getLogicFacade().getLanguageData().getProperty(
 				"window_title"));
-		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
-				.getImage());
+		this.setIconImage(new ImageIcon(getClass().getResource(
+				presFac.getClientIcon())).getImage());
 		// set application size to 80 per cent of screen size
 		Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		screen.height = (int) Math.round(0.8 * screen.height);
@@ -106,8 +155,11 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		ILogicFacade logic = presFac.getLogicFacade();
 		if (logic.isGameActive()) {
 			Properties lang = logic.getLanguageData();
-			if (JOptionPane.showConfirmDialog(null, lang.getProperty("main_close_msg"),
-					lang.getProperty("main_close_title"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+			if (JOptionPane
+					.showConfirmDialog(null,
+							lang.getProperty("main_close_msg"), lang
+									.getProperty("main_close_title"),
+							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
 				// do not quit
 				return;
 			}
