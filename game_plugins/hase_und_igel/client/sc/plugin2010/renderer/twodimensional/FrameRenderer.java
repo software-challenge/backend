@@ -764,6 +764,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			addGameEndedRightColors(FigureColor.RED, ": Verlierer");
 		}
+		else
+		{
+			action.addNormal("Unentschieden");
+		}
 
 		addGameEndedRightColors(FigureColor.RED, ": erreichtes Feld: "
 				+ results[1]);
