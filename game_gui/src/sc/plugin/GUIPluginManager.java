@@ -1,5 +1,6 @@
 package sc.plugin;
 
+import java.net.URI;
 import java.net.URL;
 
 import org.slf4j.Logger;
@@ -7,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
+import sc.helpers.ManifestHelper;
 import sc.logic.save.GUIConfiguration;
 import sc.server.Configuration;
 import sc.server.plugins.GamePluginInstance;
@@ -48,8 +50,9 @@ public class GUIPluginManager extends PluginManager<GUIPluginInstance> {
 	}
 
 	@Override
-	protected GUIPluginInstance createPluginInstance(Class<?> definition) {
-		GUIPluginInstance instance = new GUIPluginInstance(definition);
+	protected GUIPluginInstance createPluginInstance(Class<?> definition, URI jarUri) {
+		String version = ManifestHelper.getModuleVersion(jarUri);
+		GUIPluginInstance instance = new GUIPluginInstance(definition, version);
 		logger.info("GUIPluginInstance '{}' {{}} was loaded.", instance
 				.getDescription().name(), instance.getDescription().uuid());
 		return instance;

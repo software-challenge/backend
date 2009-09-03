@@ -450,7 +450,7 @@ public class CreateGameDialog extends JDialog {
 		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getDescription().version(),
+					.getDescription().name(), selPlugin.getVersion(),
 					selPlugin.getPlugin().getPluginIcon(), selPlugin.getPlugin()
 							.getPluginInfoText(), selPlugin.getDescription().author(),
 					selPlugin.getPlugin().getPluginYear());

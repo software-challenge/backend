@@ -3,11 +3,7 @@ package sc;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -19,6 +15,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.PresentationFacade;
+import sc.helpers.ManifestHelper;
 import sc.logic.ILogicFacade;
 import sc.logic.LogicFacade;
 import sc.logic.save.GUIConfiguration;
@@ -75,44 +72,11 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	}
 
 	private void loadCodeVersionFromManifest() {
-		Attributes attrs = getAttributes();
-		String version = attrs.getValue("SC-Module-Version");
+		String version = ManifestHelper.getModuleVersion(this.getClass());
 
 		if (version != null) {
 			Configuration.set("code-version", version);
 		}
-
-		System.out.println(attrs.size());
-		System.out.println(version);
-	}
-
-	private Attributes getAttributes() {
-		final Class<?> classe = this.getClass();
-		InputStream stream = classe.getClassLoader().getResourceAsStream(
-				"META-INF/MANIFEST.MF");
-		if (stream != null) {
-			try {
-				final Manifest manifest = new Manifest(stream);
-				stream.close();
-				String name = classe.getName().replace('.', '/');
-				int index;
-				while ((index = name.lastIndexOf('/')) >= 0) {
-					final Attributes attributes = manifest.getAttributes(name
-							.substring(0, index + 1));
-					if (attributes != null)
-						return attributes;
-					name = name.substring(0, index);
-				}
-				return manifest.getMainAttributes();
-			} catch (IOException exception) {
-				exception.printStackTrace();
-			}
-		} else {
-			System.out.println("Couldn't load Manifest. Not a JAR?");
-		}
-
-		// Use empty manifest attributes.
-		return new Attributes();
 	}
 
 	/**

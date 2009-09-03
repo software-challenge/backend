@@ -1,5 +1,6 @@
 package sc.server.plugins;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,7 +35,7 @@ public class GamePluginManager extends PluginManager<GamePluginInstance>
 	}
 
 	@Override
-	protected GamePluginInstance createPluginInstance(Class<?> definition)
+	protected GamePluginInstance createPluginInstance(Class<?> definition, URI jarUri)
 	{
 		GamePluginInstance instance = new GamePluginInstance(definition);
 		logger.info("GamePlugin '{}' {{}} was loaded.", instance

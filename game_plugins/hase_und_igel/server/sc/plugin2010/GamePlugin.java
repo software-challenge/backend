@@ -16,10 +16,9 @@ import edu.cau.plugins.PluginDescriptor;
  * @author rra
  * @since Jul 4, 2009
  */
-@PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR, version = GamePlugin.PLUGIN_VERSION)
+@PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin
 {
-	public static final String			PLUGIN_VERSION		= "1.0";
 	public static final String			PLUGIN_AUTHOR		= "Raphael Randschau <rra@informatik.uni-kiel.de>";
 	public static final String			PLUGIN_UUID			= "swc_2010_hase_und_igel";
 

@@ -15,9 +15,8 @@ import java.util.jar.JarFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.cau.plugins.PluginDescriptor;
-
 import sc.server.Configuration;
+import edu.cau.plugins.PluginDescriptor;
 
 /**
  * The <code>PluginManager</code> loads all available plugins from the plugin-
@@ -46,9 +45,9 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 		for (URI jarURI : findPluginArchives(this.getPluginFolder()))
 		{
-			for (Class<?> definition : findGameDefinitionsInJar(jarURI))
+			for (Class<?> definition : findEntryPointsInJar(jarURI))
 			{
-				this.availablePlugins.add(createPluginInstance(definition));
+				this.availablePlugins.add(createPluginInstance(definition, jarURI));
 			}
 		}
 
@@ -68,7 +67,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 	}
 
 	protected abstract PluginInstanceType createPluginInstance(
-			Class<?> definition);
+			Class<?> definition, URI jarURI);
 
 	public Collection<PluginInstanceType> getAvailablePlugins()
 	{
@@ -110,13 +109,15 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 				- COMPILED_CLASS_IDENTIFIER.length());
 	}
 
-	private Collection<Class<?>> findGameDefinitionsInJar(URI jarURI)
+	private Collection<Class<?>> findEntryPointsInJar(URI jarURI)
 	{
-		Collection<Class<?>> gameDefinitions = new LinkedList<Class<?>>();
+		Collection<Class<?>> entryPoints = new LinkedList<Class<?>>();
 
 		try
 		{
 			addJarToClassloader(jarURI.toURL());
+			
+			// FIXME: shouldn't have a reference to Configuration
 			ClassLoader loader = Configuration.getXStream().getClassLoader();
 
 			JarFile jarArchive = new JarFile(new File(jarURI));
@@ -135,7 +136,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 						if (isValidPlugin(clazz))
 						{
-							gameDefinitions.add(clazz);
+							entryPoints.add(clazz);
 						}
 					}
 					catch (ClassNotFoundException e)
@@ -164,7 +165,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 			e.printStackTrace();
 		}
 
-		return gameDefinitions;
+		return entryPoints;
 	}
 
 	protected abstract void addJarToClassloader(URL url);
