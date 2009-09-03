@@ -310,6 +310,10 @@ public class CreateGameDialog extends JDialog {
 		this.dispose();
 	}
 
+	/**
+	 * 
+	 * @param table
+	 */
 	private void setTableCellEditing(final JTable table) {
 		// big size for editing
 		JTextField tf_BigSize = new JTextField();
@@ -743,7 +747,7 @@ public class CreateGameDialog extends JDialog {
 			 * on closing the roll menu
 			 */
 			if (e.getStateChange() == ItemEvent.SELECTED && cbox.hasFocus()) {
-				int row = tblPlayers.getSelectedRow();
+				int row = tblPlayers.convertRowIndexToModel(tblPlayers.getSelectedRow());
 				updatePlayerTable(cbox, row);
 			}
 		}
