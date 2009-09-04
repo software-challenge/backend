@@ -1,5 +1,6 @@
 package sc.plugin2010;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import junit.framework.Assert;
@@ -165,9 +166,10 @@ public class GamePlayTest
 	 * Überprüft den Ablauf, das Ziel zu erreichen
 	 * 
 	 * @throws RescueableClientException
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void enterGoalCycle() throws RescueableClientException
+	public void enterGoalCycle() throws RescueableClientException, InterruptedException
 	{
 		g.start();
 
@@ -187,13 +189,21 @@ public class GamePlayTest
 		Move r1 = new Move(MoveTyp.MOVE, 64 - red.getFieldNumber());
 		Move b1 = new Move(MoveTyp.MOVE, 64 - blue.getFieldNumber());
 
+		Thread.sleep(14);
+		
 		g.onAction(red, r1);
 		Assert.assertTrue(red.inGoal());
 
+		Thread.sleep(14);
+		
 		g.onAction(blue, b1);
 		Assert.assertTrue(blue.inGoal());
 
 		Assert.assertTrue(b.isFirst(red));
+		Assert.assertTrue(g.checkGameOverCondition());
+		
+		Assert.assertTrue(g.sum_blue.compareTo(BigInteger.ZERO) == 1);
+		Assert.assertTrue(g.sum_red.compareTo(BigInteger.ZERO) == 1);
 	}
 
 	/**

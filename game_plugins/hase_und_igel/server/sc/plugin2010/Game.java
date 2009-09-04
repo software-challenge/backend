@@ -1,5 +1,6 @@
 package sc.plugin2010;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,9 +44,9 @@ public class Game extends RoundBasedGameInstance<Player>
 	private Board				board			= Board.create();
 	
 	// Zugzeit berechnung für Score
-	private transient long		time_start;
-	private transient long 		sum_red;
-	private transient long		sum_blue;
+	protected transient long		time_start;
+	protected transient BigInteger 	sum_red = BigInteger.ZERO;
+	protected transient BigInteger	sum_blue = BigInteger.ZERO;
 
 	public Board getBoard()
 	{
@@ -95,9 +96,9 @@ public class Game extends RoundBasedGameInstance<Player>
 			final Move move = (Move) data;
 
 			if (author.getColor().equals(FigureColor.BLUE))
-				sum_blue += System.currentTimeMillis() - time_start;
+				sum_blue = sum_blue.add(BigInteger.valueOf(System.currentTimeMillis() - time_start));
 			else
-				sum_red += System.currentTimeMillis() - time_start;
+				sum_red = sum_red.add(BigInteger.valueOf(System.currentTimeMillis() - time_start));
 			
 			if (board.isValid(move, author))
 			{
@@ -246,6 +247,7 @@ public class Game extends RoundBasedGameInstance<Player>
 					case MOVE:
 						// Auf ein Hasenfeld gezogen: gleicher Spieler nochmal
 						break;
+					
 					case PLAY_CARD:
 						switch (lastMove.getCard()) {
 							case EAT_SALAD:
@@ -319,6 +321,7 @@ public class Game extends RoundBasedGameInstance<Player>
 			p.setPosition(Position.TIE);
 		}
 
+		time_start = System.currentTimeMillis();
 		super.start();
 	}
 
@@ -331,7 +334,14 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected PlayerScore getScoreFor(Player p)
 	{
-		int avg_time = (int) (p.getColor().equals(FigureColor.BLUE) ? sum_blue : sum_red);
-		return p.getScore(avg_time / (p.getHistory().size() == 0 ? 1 : p.getHistory().size()));
+		long avg_time = 0;
+		if (p.getColor().equals(FigureColor.BLUE)) {
+			sum_blue  = sum_blue.divide(BigInteger.valueOf(p.getHistory().size() > 0 ? p.getHistory().size() : 1));
+			avg_time = sum_blue.longValue();
+		} else {
+			sum_red = sum_red.divide(BigInteger.valueOf(p.getHistory().size() > 0 ? p.getHistory().size() : 1));
+			avg_time = sum_red.longValue();
+		}
+		return p.getScore((int) avg_time);
 	}
 }
