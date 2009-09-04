@@ -16,7 +16,6 @@ import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.PresentationFacade;
 import sc.helpers.ManifestHelper;
-import sc.logic.ILogicFacade;
 import sc.logic.LogicFacade;
 import sc.logic.save.GUIConfiguration;
 import sc.server.Configuration;
@@ -116,8 +115,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 	@Override
 	public void closeGUI() {
-		ILogicFacade logic = presFac.getLogicFacade();
-		if (logic.isGameActive()) {
+		LogicFacade logic = presFac.getLogicFacade();
+		if (logic.isGameActive() && !logic.getObservation().isFinished()) {
 			Properties lang = logic.getLanguageData();
 			if (JOptionPane
 					.showConfirmDialog(null,

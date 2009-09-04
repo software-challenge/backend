@@ -9,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.shared.GameResult;
+
 import com.thoughtworks.xstream.XStream;
 
 public class ObservingClient implements IControllableGame, IHistoryListener
@@ -16,9 +18,11 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public ObservingClient(XStream xStream, InputStream inputStream)
 			throws IOException
 	{
-		this(new ReplayClient(xStream, inputStream), null);
-		this.replay = true;
+		this.poller = new ReplayClient(xStream, inputStream);
+		this.roomId = null;
+		this.poller.addListener(this);
 		this.mode = PlayMode.PAUSED;
+		this.replay = true;
 		this.poller.start();
 	}
 
@@ -26,7 +30,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	{
 		this.poller = client;
 		this.roomId = roomId;
-		client.addListener(this);
+		this.poller.addListener(this);
+		this.replay = false;
 	}
 
 	protected final IPollsHistory		poller;
@@ -36,7 +41,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	private static final Logger			logger		= LoggerFactory
 															.getLogger(ObservingClient.class);
 
-	private boolean						replay		= false;
+	private final boolean				replay;
 
 	private boolean						gameOver	= false;
 
@@ -47,6 +52,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	protected int						position	= 0;
 
 	protected PlayMode					mode		= PlayMode.PAUSED;
+
+	private GameResult					result		= null;
 
 	enum PlayMode
 	{
@@ -59,10 +66,15 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 		this.history.add(observation);
 
-		if (!this.replay || this.mode == PlayMode.PLAYING || firstObservation)
+		if (canAutoStep() || firstObservation)
 		{
 			setPosition(this.history.size() - 1);
 		}
+	}
+
+	private boolean canAutoStep()
+	{
+		return !this.replay || this.mode == PlayMode.PLAYING;
 	}
 
 	@Override
@@ -138,10 +150,10 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public void unpause()
 	{
 		this.mode = PlayMode.PLAYING;
+
 		if (this.replay)
 		{
 			next();
-			// TODO: start a thread which increments automatically
 		}
 		else
 		{
@@ -203,7 +215,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	public boolean isGameOver()
 	{
-		return this.gameOver;
+		return this.replay || this.gameOver;
 	}
 
 	public void close()
@@ -212,15 +224,23 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	}
 
 	@Override
-	public void onGameOver(String roomId, Object o)
+	public void onGameOver(String roomId, GameResult result)
 	{
-		// TODO:
+		if (this.result != null)
+		{
+			logger.warn("Received two GameResults");
+		}
+
+		this.gameOver = true;
+		this.result = result;
+		
+		notifyOnUpdate();
 	}
 
 	@Override
 	public void cancel()
 	{
-		// TODO:
+		this.mode = PlayMode.PAUSED;
 	}
 
 	@Override
@@ -239,5 +259,16 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public boolean canTogglePause()
 	{
 		return false;
+	}
+
+	public GameResult getResult()
+	{
+		return this.result;
+	}
+
+	@Override
+	public boolean isReplay()
+	{
+		return this.replay;
 	}
 }

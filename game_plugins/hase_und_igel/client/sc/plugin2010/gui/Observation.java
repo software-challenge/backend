@@ -39,6 +39,8 @@ public class Observation implements IObservation, IUpdateListener,
 	private List<INewTurnListener>		newTurnListeners	= new LinkedList<INewTurnListener>();
 	private List<IReadyListener>		readyListeners		= new LinkedList<IReadyListener>();
 
+	private boolean						notifiedAboutEnd;
+
 	public Observation(IControllableGame conGame, IGameHandler handler)
 	{
 		this.conGame = conGame;
@@ -74,6 +76,7 @@ public class Observation implements IObservation, IUpdateListener,
 	public void cancel()
 	{
 		conGame.cancel();
+		onGameEnded(this, conGame.getResult());
 	}
 
 	@Override
@@ -159,11 +162,17 @@ public class Observation implements IObservation, IUpdateListener,
 	 * @param data
 	 * 
 	 */
-	public void gameEnded(GameResult data)
+	@Override
+	public void onGameEnded(Object sender, GameResult data)
 	{
-		for (IGameEndedListener list : gameEndedListeners)
+		if (!notifiedAboutEnd && !conGame.isReplay())
 		{
-			list.gameEnded(data);
+			notifiedAboutEnd = true;
+
+			for (IGameEndedListener list : gameEndedListeners)
+			{
+				list.gameEnded(data);
+			}
 		}
 	}
 
@@ -186,22 +195,27 @@ public class Observation implements IObservation, IUpdateListener,
 
 		if (gameState != null)
 		{
-
 			// ready();
 			Game game = gameState.getGame();
 			handler.onUpdate(game.getBoard(), game.getTurn());
 
 			if (game.getActivePlayer().getColor() == FigureColor.RED)
-			{ // active player is own
+			{
+				// active player is own
 				handler.onUpdate(game.getActivePlayer(), game.getBoard()
 						.getOtherPlayer(game.getActivePlayer()));
 			}
 			else
-			// active player is the enemy
 			{
+				// active player is the enemy
 				handler.onUpdate(game.getBoard().getOtherPlayer(
 						game.getActivePlayer()), game.getActivePlayer());
 
+			}
+
+			if (conGame.isGameOver() && conGame.isAtEnd())
+			{
+				handler.gameEnded(conGame.getResult());
 			}
 
 			if (conGame.hasNext())
@@ -233,13 +247,19 @@ public class Observation implements IObservation, IUpdateListener,
 	{
 		return conGame.isPaused();
 	}
-	
+
+	@Override
+	public boolean isFinished()
+	{
+		return conGame.isGameOver();
+	}
+
 	@Override
 	public boolean isAtEnd()
 	{
 		return conGame.isAtEnd();
 	}
-	
+
 	@Override
 	public boolean isAtStart()
 	{
@@ -258,7 +278,7 @@ public class Observation implements IObservation, IUpdateListener,
 		conGame.goToLast();
 		showActivePlayerIfNecessary();
 	}
-	
+
 	@Override
 	public boolean canTogglePause()
 	{

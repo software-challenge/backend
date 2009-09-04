@@ -54,7 +54,7 @@ public class ActionBar extends JPanel
 		this.add(scroll, BorderLayout.CENTER);
 	}
 
-	public void removeAllActions()
+	public synchronized void removeAllActions()
 	{
 		try
 		{
@@ -66,7 +66,7 @@ public class ActionBar extends JPanel
 		}
 	}
 
-	private void appendText(String text, AttributeSet set)
+	private synchronized void appendText(String text, AttributeSet set)
 	{
 		try
 		{
@@ -81,12 +81,12 @@ public class ActionBar extends JPanel
 
 	}
 
-	public void setScrollBarToEnd()
+	public synchronized void setScrollBarToEnd()
 	{
 		pane.setCaretPosition(pane.getDocument().getLength());
 	}
 
-	public void addAction(String color, String playername, String action)
+	public synchronized void addAction(String color, String playername, String action)
 	{
 		if (color.equals("Rot"))
 		{
@@ -117,7 +117,7 @@ public class ActionBar extends JPanel
 
 	}
 
-	public void addNormal(String action)
+	public synchronized void addNormal(String action)
 	{
 		if (pane.getText().equals(""))
 		{

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.networking.FileSystemInterface;
+import sc.shared.GameResult;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -25,7 +26,8 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 														.getLogger(ReplayClient.class);
 	private List<IHistoryListener>	listeners	= new LinkedList<IHistoryListener>();
 
-	public ReplayClient(XStream xstream, InputStream inputStream) throws IOException
+	public ReplayClient(XStream xstream, InputStream inputStream)
+			throws IOException
 	{
 		super(xstream, new FileSystemInterface(inputStream));
 		logger.info("Loading Replay from {}", inputStream);
@@ -36,7 +38,14 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 	{
 		for (IHistoryListener listener : this.listeners)
 		{
-			listener.onNewState(null, o);
+			if (o instanceof GameResult)
+			{
+				listener.onGameOver(null, (GameResult) o);
+			}
+			else
+			{
+				listener.onNewState(null, o);
+			}
 		}
 	}
 

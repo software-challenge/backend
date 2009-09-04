@@ -5,8 +5,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 
 import sc.IGUIApplication;
-import sc.IPresentationFacade;
-import sc.logic.ILogicFacade;
+import sc.logic.LogicFacade;
 import sc.logic.save.GUIConfiguration;
 
 /**
@@ -15,7 +14,7 @@ import sc.logic.save.GUIConfiguration;
  * @author chw
  * @since SC'09
  */
-public class PresentationFacade implements IPresentationFacade {
+public class PresentationFacade {
 
 	/**
 	 * The menu bar
@@ -32,7 +31,7 @@ public class PresentationFacade implements IPresentationFacade {
 	/**
 	 * The logic facade
 	 */
-	private ILogicFacade logic;
+	private LogicFacade logic;
 	/**
 	 * Singleton instance
 	 */
@@ -61,7 +60,7 @@ public class PresentationFacade implements IPresentationFacade {
 	 * @param logic
 	 */
 	public static PresentationFacade init(final IGUIApplication root,
-			final ILogicFacade logic) {
+			final LogicFacade logic) {
 
 		// create instance
 		getInstance();
@@ -74,33 +73,28 @@ public class PresentationFacade implements IPresentationFacade {
 		return instance;
 	}
 
-	@Override
 	public JPanel getContextDisplay() {
 		return contextDisplay;
 	}
 
-	@Override
 	public JMenuBar getMenuBar() {
 		return menuBar;
 	}
 
-	@Override
 	public String getClientIcon() {
 		return "/resource/guilogo.png";
 	}
 
-	@Override
 	public JComponent getStatusBar() {
 		return statusBar;
 	}
 
-	@Override
 	public void shutdown() {
 		GUIConfiguration.instance().save();
 		logic.stopServer();
 	}
 
-	public ILogicFacade getLogicFacade() {
+	public LogicFacade getLogicFacade() {
 		return logic;
 	}
 

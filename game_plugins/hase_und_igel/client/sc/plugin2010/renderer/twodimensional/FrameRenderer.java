@@ -753,6 +753,14 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void gameEnded(GameResult data)
 	{
 		action.addNormal("----------------");
+		
+		if(data == null)
+		{
+			action.addNormal("Leeres Spielresultat!");
+			action.setScrollBarToEnd();
+			return;
+		}
+		
 		action.addNormal("Spielresultat:");
 
 		String[] results = data.getScores().get(0).toStrings();

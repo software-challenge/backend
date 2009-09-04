@@ -23,7 +23,7 @@ import sc.plugin.GUIPluginManager;
 import sc.server.Application;
 import sc.server.Lobby;
 
-public class LogicFacade implements ILogicFacade {
+public class LogicFacade {
 
 	/**
 	 * Folder of all language files
@@ -66,7 +66,6 @@ public class LogicFacade implements ILogicFacade {
 		return instance;
 	}
 
-	@Override
 	public void loadLanguageData() throws CouldNotFindAnyLanguageFileException {
 		ELanguage language = GUIConfiguration.instance().getLanguage();
 		Locale locale;
@@ -93,12 +92,10 @@ public class LogicFacade implements ILogicFacade {
 		}
 	}
 
-	@Override
 	public GUIPluginManager getPluginManager() {
 		return pluginMan;
 	}
 
-	@Override
 	public void loadPlugins() throws CouldNotFindAnyPluginException {
 		this.pluginMan.reload();
 		if (this.pluginMan.getAvailablePlugins().size() == 0) {
@@ -109,27 +106,22 @@ public class LogicFacade implements ILogicFacade {
 		});
 	}
 
-	@Override
 	public Properties getLanguageData() {
 		return languageData;
 	}
 
-	@Override
 	public IConfiguration getConfiguration() {
 		return GUIConfiguration.instance();
 	}
 
-	@Override
 	public IObservation getObservation() {
 		return observation;
 	}
 
-	@Override
 	public void setObservation(IObservation observer) {
 		this.observation = observer;
 	}
 
-	@Override
 	public void startServer(int port) throws IOException {
 		if (null != server) {
 			this.stopServer();
@@ -138,7 +130,6 @@ public class LogicFacade implements ILogicFacade {
 		System.out.println("Server started on " + port);
 	}
 
-	@Override
 	public void stopServer() {
 		if (null != observation) {
 			observation.cancel();
@@ -148,7 +139,6 @@ public class LogicFacade implements ILogicFacade {
 		System.out.println("Server stopped.");
 	}
 
-	@Override
 	public void unloadPlugins() {
 		pluginMan.reload();
 	}
@@ -185,12 +175,10 @@ public class LogicFacade implements ILogicFacade {
 		return result;
 	}
 
-	@Override
 	public boolean isGameActive() {
 		return gameActive;
 	}
 
-	@Override
 	public void setGameActive(boolean b) {
 		this.gameActive = b;
 	}

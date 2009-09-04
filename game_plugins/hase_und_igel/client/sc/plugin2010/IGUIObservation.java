@@ -23,6 +23,6 @@ public interface IGUIObservation
 	/**
 	 * @param data
 	 */
-	void gameEnded(GameResult data);
+	void onGameEnded(Object sender, GameResult data);
 
 }

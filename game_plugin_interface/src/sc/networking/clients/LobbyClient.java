@@ -160,19 +160,24 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	private void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
-		for (ILobbyClientListener listener : this.listeners)
+		for (IAdministrativeListener listener : this.administrativeListeners)
 		{
 			listener.onGamePaused(roomId, nextPlayer);
 		}
-
-		for (IAdministrativeListener listener : this.administrativeListeners)
+		
+		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onGamePaused(roomId, nextPlayer);
 		}
 	}
 
 	private void onGameOver(String roomId, GameResult data)
-	{
+	{		
+		for (IHistoryListener listener : this.historyListeners)
+		{
+			listener.onGameOver(roomId, data);
+		}
+		
 		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onGameOver(roomId, data);

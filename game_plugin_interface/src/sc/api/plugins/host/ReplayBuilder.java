@@ -18,6 +18,7 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ObservingClient;
+import sc.shared.GameResult;
 
 public class ReplayBuilder
 {
@@ -98,6 +99,13 @@ public class ReplayBuilder
 			for (Object state : client.getHistory())
 			{
 				objectOut.writeObject(state);
+			}
+
+			GameResult result = client.getResult();
+			
+			if (result != null)
+			{
+				objectOut.writeObject(result);
 			}
 
 			objectOut.flush();

@@ -68,11 +68,14 @@ public class SCMenuBar extends JMenuBar {
 			}
 		});
 
-		JMenuItem createGame = new JMenuItem(lang.getProperty("menu_items_create"));
+		JMenuItem createGame = new JMenuItem(lang
+				.getProperty("menu_items_create"));
 		createGame.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (presFac.getLogicFacade().isGameActive()) {
+				if (presFac.getLogicFacade().isGameActive()
+						&& !presFac.getLogicFacade().getObservation()
+								.isFinished()) {
 					if (JOptionPane.showConfirmDialog(null, lang
 							.getProperty("dialog_create_gameactive_msg"), lang
 							.getProperty("dialog_create_gameactive_title"),
@@ -85,7 +88,8 @@ public class SCMenuBar extends JMenuBar {
 			}
 		});
 
-		JMenuItem loadReplay = new JMenuItem(lang.getProperty("menu_items_replay"));
+		JMenuItem loadReplay = new JMenuItem(lang
+				.getProperty("menu_items_replay"));
 		loadReplay.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -132,9 +136,9 @@ public class SCMenuBar extends JMenuBar {
 	 * @param infoText
 	 * @param author
 	 */
-	public void setGameSpecificInfo(final String gameTypeName, final String version,
-			final Image image, final String infoText, final String author,
-			final int infoYear) {
+	public void setGameSpecificInfo(final String gameTypeName,
+			final String version, final Image image, final String infoText,
+			final String author, final int infoYear) {
 
 		// remove old info item
 		if (null != specificInfo) {
@@ -146,8 +150,8 @@ public class SCMenuBar extends JMenuBar {
 		specificInfo.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				new GameInfoDialog(gameTypeName, version, image, infoText, author,
-						infoYear).setVisible(true);
+				new GameInfoDialog(gameTypeName, version, image, infoText,
+						author, infoYear).setVisible(true);
 			}
 		});
 		help.add(specificInfo);

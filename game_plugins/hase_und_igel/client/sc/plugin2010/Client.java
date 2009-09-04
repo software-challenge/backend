@@ -238,7 +238,7 @@ public class Client implements ILobbyClientListener
 	{
 		if (obs != null)
 		{
-			obs.gameEnded(null);
+			obs.onGameEnded(this, null);
 		}
 	}
 
@@ -271,7 +271,7 @@ public class Client implements ILobbyClientListener
 
 		if (obs != null)
 		{
-			obs.gameEnded(data);
+			obs.onGameEnded(this, data);
 		}
 
 		try

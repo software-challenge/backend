@@ -131,7 +131,9 @@ public class QuestionPanel extends BackgroundPane
 
 		removeAll();
 
-		setBackground(totalBackgroundImg);
+		if(totalBackgroundImg != null) {
+			setBackground(totalBackgroundImg);			
+		}
 		displayedCompCount = 1;
 	}
 

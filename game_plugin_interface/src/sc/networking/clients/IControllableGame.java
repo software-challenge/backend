@@ -1,5 +1,7 @@
 package sc.networking.clients;
 
+import sc.shared.GameResult;
+
 public interface IControllableGame extends IPollsUpdates
 {
 	public void next();
@@ -29,4 +31,10 @@ public interface IControllableGame extends IPollsUpdates
 	public void goToLast();
 
 	public boolean canTogglePause();
+	
+	public GameResult getResult();
+
+	public boolean isGameOver();
+
+	public boolean isReplay();
 }

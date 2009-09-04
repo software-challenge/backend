@@ -31,10 +31,12 @@ public interface IObservation {
 	boolean hasNext();
 
 	boolean hasPrevious();
-	
+
 	boolean isAtEnd();
-	
+
 	boolean isAtStart();
+
+	boolean isFinished();
 
 	/**
 	 * Saves the replay of the last ended game to the given
