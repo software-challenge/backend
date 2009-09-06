@@ -256,7 +256,6 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				cancelTestAndSave();
-				super.windowClosing(e);
 			}
 		});
 	}

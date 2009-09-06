@@ -39,6 +39,8 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	 */
 	private int speedValue;
 
+	private boolean showWarnMsg;
+
 	private final static GUIConfiguration instance;
 
 	static {
@@ -205,6 +207,14 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 
 	public void setSpeedValue(int speedValue) {
 		this.speedValue = speedValue;
+	}
+	
+	public boolean showWarnMsg() {
+		return showWarnMsg;
+	}
+
+	public void setShowWarnMsg(boolean selected) {
+		this.showWarnMsg = selected;
 	}
 
 }

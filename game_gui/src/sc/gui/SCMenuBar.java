@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Properties;
 
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -16,6 +17,7 @@ import sc.gui.dialogs.GameInfoDialog;
 import sc.gui.dialogs.InfoDialog;
 import sc.gui.dialogs.ReplayDialog;
 import sc.gui.dialogs.TestRangeDialog;
+import sc.logic.save.GUIConfiguration;
 
 /**
  * The menu bar.
@@ -57,6 +59,7 @@ public class SCMenuBar extends JMenuBar {
 		// create menus
 		JMenu data = new JMenu(lang.getProperty("menu_program"));
 		JMenu game = new JMenu(lang.getProperty("menu_game"));
+		JMenu options = new JMenu(lang.getProperty("menu_options"));
 		help = new JMenu(lang.getProperty("menu_help"));
 
 		// create menu items
@@ -104,6 +107,15 @@ public class SCMenuBar extends JMenuBar {
 				new TestRangeDialog().setVisible(true);
 			}
 		});
+		
+		final JCheckBoxMenuItem noMsg = new JCheckBoxMenuItem(lang.getProperty("menu_items_nomsg"));
+		noMsg.setSelected(GUIConfiguration.instance().showWarnMsg());
+		noMsg.addMouseListener(new MouseAdapter(){
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				GUIConfiguration.instance().setShowWarnMsg(noMsg.isSelected());
+			}
+		});
 
 		JMenuItem info = new JMenuItem(lang.getProperty("menu_items_info"));
 		info.addMouseListener(new MouseAdapter() {
@@ -119,12 +131,15 @@ public class SCMenuBar extends JMenuBar {
 		game.add(createGame);
 		game.add(loadReplay);
 		game.add(testRange);
+		
+		options.add(noMsg);
 
 		help.add(info);
 
 		// add menus
 		this.add(data);
 		this.add(game);
+		this.add(options);
 		this.add(help);
 	}
 

@@ -53,16 +53,14 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			logicFac.loadLanguageData();
 			logicFac.loadPlugins();
 		} catch (CouldNotFindAnyLanguageFileException e) {
-			JOptionPane.showMessageDialog(this,
-					"Could not load any language file.",
+			JOptionPane.showMessageDialog(this, "Could not load any language file.",
 					"Missing any language file.", JOptionPane.ERROR_MESSAGE);
 			logicFac.unloadPlugins();
 			System.exit(-1);
 		} catch (CouldNotFindAnyPluginException e) {
-			JOptionPane.showMessageDialog(this, logicFac.getLanguageData()
-					.getProperty("main_error_plugin_msg"), logicFac
-					.getLanguageData().getProperty("main_error_plugin_title"),
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, logicFac.getLanguageData().getProperty(
+					"main_error_plugin_msg"), logicFac.getLanguageData().getProperty(
+					"main_error_plugin_title"), JOptionPane.ERROR_MESSAGE);
 			System.exit(-2);
 		}
 		// get presentation facade
@@ -90,12 +88,11 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		this.add(presFac.getStatusBar());
 
 		// set window preferences
-		this
-				.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.setTitle(presFac.getLogicFacade().getLanguageData().getProperty(
 				"window_title"));
-		this.setIconImage(new ImageIcon(getClass().getResource(
-				presFac.getClientIcon())).getImage());
+		this.setIconImage(new ImageIcon(getClass().getResource(presFac.getClientIcon()))
+				.getImage());
 		// set application size to 80 per cent of screen size
 		Dimension screen = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
 		screen.height = (int) Math.round(0.8 * screen.height);
@@ -117,14 +114,15 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	public void closeGUI() {
 		LogicFacade logic = presFac.getLogicFacade();
 		if (logic.isGameActive() && !logic.getObservation().isFinished()) {
-			Properties lang = logic.getLanguageData();
-			if (JOptionPane
-					.showConfirmDialog(null,
-							lang.getProperty("main_close_msg"), lang
-									.getProperty("main_close_title"),
-							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-				// do not quit
-				return;
+			// if showing warning message is enabled
+			if (!GUIConfiguration.instance().showWarnMsg()) {
+				Properties lang = logic.getLanguageData();
+				if (JOptionPane.showConfirmDialog(null, lang
+						.getProperty("main_close_msg"), lang
+						.getProperty("main_close_title"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+					// do not quit
+					return;
+				}
 			}
 		}
 		// quit application
