@@ -1,6 +1,7 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -40,6 +41,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -244,7 +247,7 @@ public class TestRangeDialog extends JDialog {
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		this.setPreferredSize(new Dimension(600, 500));
+		this.setPreferredSize(new Dimension(650, 500));
 		this.setMinimumSize(getPreferredSize());
 		this.pack();
 		this.setLocationRelativeTo(null);
@@ -294,25 +297,28 @@ public class TestRangeDialog extends JDialog {
 			model.addColumn(column.getName());
 		}
 
+		setTableHeaderRenderer(statTable);
+
 		/*
 		 * set minimum and maximum width for each column to enable correct
 		 * resizablity
 		 */
 		statTable.getColumnModel().getColumn(0).setCellRenderer(
 				new CenteredTableCellRenderer());
+		statTable.getColumnModel().getColumn(0).setMinWidth(0);
 		statTable.getColumnModel().getColumn(0).setMaxWidth(100);
-		// Column: Name
+
 		statTable.getColumnModel().getColumn(1).setMaxWidth(300);
-		statTable.getColumnModel().getColumn(1).setPreferredWidth(170);
 
 		for (int i = 0; i < statColumns.size(); i++) {
 			int index = i + 2;
-			statTable.getColumnModel().getColumn(index).setMinWidth(0);
+			statTable.getColumnModel().getColumn(index).setMinWidth(10);
 			statTable.getColumnModel().getColumn(index).setMaxWidth(100);
 		}
 
 		// set width of columns
-		statTable.getColumnModel().getColumn(0).setPreferredWidth(50);
+		statTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+		statTable.getColumnModel().getColumn(1).setPreferredWidth(170);
 		for (int i = 0; i < statColumns.size(); i++) {
 			statTable.getColumnModel().getColumn(i + 2).setPreferredWidth(80);
 		}
@@ -368,6 +374,34 @@ public class TestRangeDialog extends JDialog {
 		// pnlTop.invalidate();// TODO order?
 
 		System.out.println("UPDATE: test range dialog");
+	}
+
+	/**
+	 * Sets the specific table header renderer.
+	 * 
+	 * @param table
+	 */
+	private void setTableHeaderRenderer(JTable table) {
+		final JTableHeader header = table.getTableHeader();
+		final TableCellRenderer headerRenderer = header.getDefaultRenderer();
+
+		header.setDefaultRenderer(new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value,
+					boolean isSelected, boolean hasFocus, int row, int column) {
+
+				JLabel c = (JLabel) headerRenderer.getTableCellRendererComponent(table,
+						value, isSelected, hasFocus, row, column);
+
+				if (column == 0) {
+					c.setHorizontalAlignment(SwingConstants.CENTER);
+				} else {
+					c.setHorizontalAlignment(SwingConstants.LEADING);
+				}
+
+				return c;
+			}
+		});
 	}
 
 	/**
