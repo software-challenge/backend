@@ -749,7 +749,6 @@ public class CreateGameDialog extends JDialog {
 			int row = tblPlayers.rowAtPoint(cbox.getLocation());
 			if (e.getStateChange() == ItemEvent.SELECTED && cbox.hasFocus()) {
 				//int row = tblPlayers.convertRowIndexToModel(tblPlayers.getSelectedRow());
-				System.out.println("row: "+row);
 				updatePlayerTable(cbox, row);
 			}
 		}
