@@ -39,7 +39,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	 */
 	private int speedValue;
 
-	private boolean showWarnMsg;
+	private boolean suppressWarnMsg;
 
 	private final static GUIConfiguration instance;
 
@@ -57,6 +57,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		this.loadReplayPath = PATH_STD;
 		this.numTest = 100;
 		this.speedValue = 100;
+		this.suppressWarnMsg = false;
 	}
 
 	public static GUIConfiguration instance() {
@@ -209,12 +210,12 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		this.speedValue = speedValue;
 	}
 	
-	public boolean showWarnMsg() {
-		return showWarnMsg;
+	public boolean suppressWarnMsg() {
+		return suppressWarnMsg;
 	}
 
-	public void setShowWarnMsg(boolean selected) {
-		this.showWarnMsg = selected;
+	public void setSuppressWarnMsg(boolean selected) {
+		this.suppressWarnMsg = selected;
 	}
 
 }

@@ -27,6 +27,6 @@ public interface IConfiguration {
 	public int getSpeedValue();
 	public void setSpeedValue(int speedValue);
 	
-	boolean showWarnMsg();
-	void setShowWarnMsg(boolean selected);
+	boolean suppressWarnMsg();
+	void setSuppressWarnMsg(boolean selected);
 }

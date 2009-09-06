@@ -115,7 +115,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		LogicFacade logic = presFac.getLogicFacade();
 		if (logic.isGameActive() && !logic.getObservation().isFinished()) {
 			// if showing warning message is enabled
-			if (!GUIConfiguration.instance().showWarnMsg()) {
+			if (!GUIConfiguration.instance().suppressWarnMsg()) {
 				Properties lang = logic.getLanguageData();
 				if (JOptionPane.showConfirmDialog(null, lang
 						.getProperty("main_close_msg"), lang

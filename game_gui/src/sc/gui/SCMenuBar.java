@@ -109,11 +109,11 @@ public class SCMenuBar extends JMenuBar {
 		});
 		
 		final JCheckBoxMenuItem noMsg = new JCheckBoxMenuItem(lang.getProperty("menu_items_nomsg"));
-		noMsg.setSelected(GUIConfiguration.instance().showWarnMsg());
+		noMsg.setSelected(GUIConfiguration.instance().suppressWarnMsg());
 		noMsg.addMouseListener(new MouseAdapter(){
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				GUIConfiguration.instance().setShowWarnMsg(noMsg.isSelected());
+				GUIConfiguration.instance().setSuppressWarnMsg(noMsg.isSelected());
 			}
 		});
 
