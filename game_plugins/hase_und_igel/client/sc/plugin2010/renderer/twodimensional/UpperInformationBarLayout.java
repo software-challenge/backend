@@ -93,23 +93,22 @@ public class UpperInformationBarLayout implements LayoutManager
 		int roundStartX = width / 2 - roundWidth / 2;
 		int leftFreeSpace = roundStartX
 				- parent.getComponent(0).getPreferredSize().width - 10;
-		int rightFreeSpace = width - (width / 2 + roundWidth / 2) - 10;
+		int rightFreeSpace = width - (width / 2 + roundWidth / 2)
+				- parent.getComponent(4).getPreferredSize().width - 10;
 
 		for (int i = 0; i < parent.getComponentCount(); i++)
 		{
 
 			c = parent.getComponent(i);
 
-			y = getVerticalMiddle(c, height);
-
 			switch (i)
 			{
 				case 0:
 					if (leftFreeSpace < 30)
 					{
-						c.setPreferredSize(new Dimension(
-								c.getPreferredSize().width / 2, c
-										.getPreferredSize().height * 2));
+						c.setPreferredSize(new Dimension(300, 80)); // TODO set
+						// right
+						// width
 					}
 					break;
 				case 1:
@@ -124,9 +123,9 @@ public class UpperInformationBarLayout implements LayoutManager
 				case 4:
 					if (rightFreeSpace < 30)
 					{
-						c.setPreferredSize(new Dimension(
-								c.getPreferredSize().width / 2, c
-										.getPreferredSize().height * 2));
+						c.setPreferredSize(new Dimension(300, 80)); // TODO set
+						// right
+						// width
 					}
 
 					if (c.getPreferredSize().width < 180 - INDENT)
@@ -141,10 +140,7 @@ public class UpperInformationBarLayout implements LayoutManager
 					break;
 			}
 
-			if (i == 4)
-			{
-
-			}
+			y = getVerticalMiddle(c, height);
 
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
