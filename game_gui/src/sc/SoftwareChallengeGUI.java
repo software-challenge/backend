@@ -98,7 +98,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		screen.height = (int) Math.round(0.8 * screen.height);
 		screen.width = (int) Math.round(0.8 * screen.width);
 		this.setSize(screen);
-		this.setMinimumSize(screen);
+		//this.setMinimumSize(screen);
 		// center application
 		this.setLocationRelativeTo(null);
 
