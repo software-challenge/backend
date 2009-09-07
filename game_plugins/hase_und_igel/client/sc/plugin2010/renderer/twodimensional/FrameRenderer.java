@@ -238,6 +238,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		Image leftcenter = new BufferedImage(CENTERBORDERWIDTH, CENTERHEIGHT,
 				BufferedImage.TYPE_INT_ARGB);
 
+		if (size.width - CENTERBORDERWIDTH * 2 <= 0)
+		{
+			return;
+		}
+
 		Image center = new BufferedImage(size.width - CENTERBORDERWIDTH * 2,
 				CENTERHEIGHT, BufferedImage.TYPE_INT_ARGB);
 
@@ -753,14 +758,14 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void gameEnded(GameResult data)
 	{
 		action.addNormal("----------------");
-		
-		if(data == null)
+
+		if (data == null)
 		{
 			action.addNormal("Leeres Spielresultat!");
 			action.setScrollBarToEnd();
 			return;
 		}
-		
+
 		action.addNormal("Spielresultat:");
 
 		String[] results = data.getScores().get(0).toStrings();

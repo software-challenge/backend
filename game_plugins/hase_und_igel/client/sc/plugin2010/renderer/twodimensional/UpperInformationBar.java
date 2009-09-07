@@ -3,17 +3,12 @@
  */
 package sc.plugin2010.renderer.twodimensional;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
 import sc.plugin2010.renderer.RendererUtil;
 
@@ -28,30 +23,26 @@ import sc.plugin2010.renderer.RendererUtil;
 public class UpperInformationBar extends BackgroundPane
 {
 
-	private final String			ROUNDCOUNT			= "Runde:";
-	private final String			TURNCOUNT			= "<html><h1>An der Reihe: </h1> </html> ";
-	private final String			PLAYER				= "<html><h1>Spieler:</h1></html>";
-	private final String			ENEMY				= "<html><h1>Gegner:</h1></html>";
+	private final String	ROUNDCOUNT			= "Runde:";
+	private final String	TURNCOUNT			= "<html><h1>An der Reihe: </h1> </html> ";
+	private final String	PLAYER				= "<html><h1>Spieler:</h1></html>";
+	private final String	ENEMY				= "<html><h1>Gegner:</h1></html>";
 
-	private final JLabel			rounds				= new JLabel(ROUNDCOUNT);
-	private final JLabel			turn				= new JLabel(TURNCOUNT);
-	private final JLabel			player				= new JLabel(PLAYER);
-	private final JLabel			enemy				= new JLabel(ENEMY);
-	private final JLabel			turnicon			= new JLabel("");
+	private final JLabel	rounds				= new JLabel(ROUNDCOUNT);
+	private final JLabel	turn				= new JLabel(TURNCOUNT);
+	private final JLabel	player				= new JLabel(PLAYER);
+	private final JLabel	enemy				= new JLabel(ENEMY);
+	private final JLabel	turnicon			= new JLabel("");
 
-	private final String			FONTTYPE			= "New Courier";
-	private final int				SIZE				= 12;
+	private final String	FONTTYPE			= "New Courier";
+	private final int		SIZE				= 12;
 
-	private final Image				blue				= RendererUtil
-																.getImage("resource/game/blue.png");
-	private final Image				red					= RendererUtil
-																.getImage("resource/game/red.png");
+	private final Image		blue				= RendererUtil
+														.getImage("resource/game/blue.png");
+	private final Image		red					= RendererUtil
+														.getImage("resource/game/red.png");
 
-	private final int				CENTERBORDERWIDTH	= 180;
-
-	private final BackgroundPane	left				= new BackgroundPane();
-	private final BackgroundPane	center				= new BackgroundPane();
-	private final BackgroundPane	right				= new BackgroundPane();
+	private final int		CENTERBORDERWIDTH	= 180;
 
 	public UpperInformationBar()
 	{
@@ -59,13 +50,9 @@ public class UpperInformationBar extends BackgroundPane
 
 		setDoubleBuffered(true);
 
-		setLayout(new BorderLayout());
+		setLayout(new UpperInformationBarLayout());
 
 		Color light_black = new Color(0, 0, 0, 180);
-
-		left.setLayout(new BorderLayout());
-		center.setLayout(new FlowLayout());
-		right.setLayout(new BorderLayout());
 
 		player.setHorizontalAlignment(JLabel.CENTER);
 
@@ -82,59 +69,15 @@ public class UpperInformationBar extends BackgroundPane
 		turn.setForeground(light_black);
 		turn.setFont(new Font(FONTTYPE, Font.BOLD, SIZE));
 
-		left.add(player, BorderLayout.CENTER);
+		this.add(player);
 
-		JPanel centerPanel = new JPanel();
+		this.add(rounds);
+		this.add(turn);
+		this.add(turnicon);
 
-		centerPanel.setLayout(new BorderLayout());
-
-		center.add(rounds);
-		center.add(new JLabel("                    ")); // dummy
-		center.add(turn);
-		center.add(turnicon);
-
-		centerPanel.add(center, BorderLayout.CENTER);
-
-		right.add(enemy, BorderLayout.CENTER);
-
-		left.setPreferredSize(new Dimension(CENTERBORDERWIDTH, 100));
-		right.setPreferredSize(new Dimension(CENTERBORDERWIDTH, 100));
-
-		this.add(left, BorderLayout.WEST);
-		this.add(centerPanel, BorderLayout.CENTER);
-		this.add(right, BorderLayout.EAST);
+		this.add(enemy);
 
 		setVisible(true);
-	}
-
-	@Override
-	public void setBackground(Image img)
-	{
-		int width = img.getWidth(this);
-		int height = img.getHeight(this);
-
-		Image leftImg = new BufferedImage(CENTERBORDERWIDTH, height,
-				BufferedImage.TYPE_INT_ARGB);
-
-		Image centerImg = new BufferedImage(width - CENTERBORDERWIDTH * 2,
-				height, BufferedImage.TYPE_INT_ARGB);
-
-		Image rightImg = new BufferedImage(CENTERBORDERWIDTH, height,
-				BufferedImage.TYPE_INT_ARGB);
-
-		leftImg.getGraphics().drawImage(img, 0, 0, CENTERBORDERWIDTH, height,
-				0, 0, CENTERBORDERWIDTH, height, this);
-
-		centerImg.getGraphics().drawImage(img, 0, 0,
-				width - CENTERBORDERWIDTH * 2, height, CENTERBORDERWIDTH, 0,
-				width - CENTERBORDERWIDTH, height, this);
-
-		rightImg.getGraphics().drawImage(img, 0, 0, CENTERBORDERWIDTH, height,
-				width - CENTERBORDERWIDTH, 0, width, height, this);
-
-		left.setBackground(leftImg);
-		center.setBackground(centerImg);
-		right.setBackground(rightImg);
 	}
 
 	private void setColor()

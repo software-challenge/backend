@@ -58,8 +58,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public Image getPluginIcon()
 	{
-		return RendererUtil
-				.getImage("resource/game/hase_alternatives_icon.png");
+		return RendererUtil.getImage("resource/game/hase_und_igel_icon.png");
 	}
 
 	@Override
@@ -130,6 +129,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public Image getPluginImage()
 	{
-		return RendererUtil.getImage("resource/game/hase_und_igel_icon.png");
+		return RendererUtil
+				.getImage("resource/game/hase_alternatives_icon.png");
 	}
 }

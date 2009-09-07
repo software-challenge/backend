@@ -18,7 +18,7 @@ public class VerticalFlowLayout implements LayoutManager
 
 	private final Vector<Integer>	levels;
 	private final Vector<Component>	comps;
-	private int						INDENT	= 5;
+	private int						INDENT	= 15;
 
 	public VerticalFlowLayout(int indent)
 	{

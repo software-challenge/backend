@@ -17,6 +17,7 @@ public class UpperInformationBarLayout implements LayoutManager
 {
 	private final Vector<Integer>	levels;
 	private final Vector<Component>	comps;
+	private final int				INDENT	= 15;
 
 	public UpperInformationBarLayout()
 	{
@@ -82,36 +83,71 @@ public class UpperInformationBarLayout implements LayoutManager
 		int height = parent.getHeight();
 		int width = parent.getWidth();
 
-		int x = 5;
+		int x = INDENT;
 		int y;
+
+		int roundWidth = parent.getComponent(1).getPreferredSize().width + 40
+				+ parent.getComponent(2).getPreferredSize().width + 5
+				+ parent.getComponent(3).getPreferredSize().width;
+
+		int roundStartX = width / 2 - roundWidth / 2;
+		int leftFreeSpace = roundStartX
+				- parent.getComponent(0).getPreferredSize().width - 10;
+		int rightFreeSpace = width - (width / 2 + roundWidth / 2) - 10;
 
 		for (int i = 0; i < parent.getComponentCount(); i++)
 		{
+
 			c = parent.getComponent(i);
 
 			y = getVerticalMiddle(c, height);
 
-			c.setBounds(x, y, c.getPreferredSize().width,
-					c.getPreferredSize().height);
-
 			switch (i)
 			{
 				case 0:
-					x += c.getPreferredSize().width + 50;
-					c.setPreferredSize(new Dimension(200, 80));
+					if (leftFreeSpace < 30)
+					{
+						c.setPreferredSize(new Dimension(
+								c.getPreferredSize().width / 2, c
+										.getPreferredSize().height * 2));
+					}
 					break;
 				case 1:
-					x += c.getPreferredSize().width + 40;
+					x = roundStartX;
 					break;
 				case 2:
-					x += c.getPreferredSize().width + 5;
+					x += parent.getComponent(1).getPreferredSize().width + 40;
 					break;
 				case 3:
-					x += c.getPreferredSize().width + 50;
+					x += parent.getComponent(2).getPreferredSize().width + 5;
 					break;
+				case 4:
+					if (rightFreeSpace < 30)
+					{
+						c.setPreferredSize(new Dimension(
+								c.getPreferredSize().width / 2, c
+										.getPreferredSize().height * 2));
+					}
+
+					if (c.getPreferredSize().width < 180 - INDENT)
+					{
+						x = width - 180 + INDENT;
+					}
+					else
+					{
+						x = width - c.getPreferredSize().width - INDENT;
+					}
 				default:
 					break;
 			}
+
+			if (i == 4)
+			{
+
+			}
+
+			c.setBounds(x, y, c.getPreferredSize().width,
+					c.getPreferredSize().height);
 		}
 	}
 }
