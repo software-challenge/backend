@@ -454,10 +454,10 @@ public class CreateGameDialog extends JDialog {
 		} else {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
-					.getDescription().name(), selPlugin.getVersion(),
-					selPlugin.getPlugin().getPluginIcon(), selPlugin.getPlugin()
-							.getPluginInfoText(), selPlugin.getDescription().author(),
-					selPlugin.getPlugin().getPluginYear());
+					.getDescription().name(), selPlugin.getVersion(), selPlugin
+					.getPlugin().getPluginImage(), selPlugin.getPlugin().getPluginIcon(),
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
+							.author(), selPlugin.getPlugin().getPluginYear());
 			// update status bar
 			StatusBar statusBar = ((StatusBar) presFac.getStatusBar());
 			statusBar.setStatus(lang.getProperty("statusbar_status_currentgame") + " "
@@ -748,7 +748,9 @@ public class CreateGameDialog extends JDialog {
 			 */
 			int row = tblPlayers.rowAtPoint(cbox.getLocation());
 			if (e.getStateChange() == ItemEvent.SELECTED && cbox.hasFocus()) {
-				//int row = tblPlayers.convertRowIndexToModel(tblPlayers.getSelectedRow());
+				// int row =
+				// tblPlayers.convertRowIndexToModel(tblPlayers.getSelectedRow
+				// ());
 				updatePlayerTable(cbox, tblPlayers.convertRowIndexToModel(row));
 			}
 		}

@@ -24,9 +24,11 @@ public class GameInfoDialog extends JDialog {
 	private final String author;
 	private final Properties lang;
 	private final int infoYear;
+	private final Image icon;
 
 	/**
 	 * Create <code>GameInfoDialog</code>
+	 * 
 	 * @param gameTypeName
 	 * @param version
 	 * @param image
@@ -34,11 +36,12 @@ public class GameInfoDialog extends JDialog {
 	 * @param author
 	 */
 	public GameInfoDialog(String gameTypeName, String version, final Image image,
-			String infoText, String author, int infoYear) {
+			final Image icon, String infoText, String author, int infoYear) {
 		super();
 		this.gameTypeName = gameTypeName;
 		this.version = version;
 		this.image = image;
+		this.icon = icon;
 		this.infoText = infoText;
 		this.author = author;
 		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
@@ -63,12 +66,14 @@ public class GameInfoDialog extends JDialog {
 		JLabel lblImage = new JLabel(new ImageIcon(image));
 		pnlImage.add(lblImage);
 
-		JLabel lblDescriptionText = new JLabel(lang.getProperty("dialog_gameinfo_description"));
+		JLabel lblDescriptionText = new JLabel(lang
+				.getProperty("dialog_gameinfo_description"));
 		pnlText.add(lblDescriptionText);
 		// infoText is in html format, so show it in a separate label
 		JLabel lblText = new JLabel(infoText);
 		pnlText.add(lblText);
-		JLabel lblYear = new JLabel(lang.getProperty("dialog_gameinfo_year") + ": "+infoYear);
+		JLabel lblYear = new JLabel(lang.getProperty("dialog_gameinfo_year") + ": "
+				+ infoYear);
 		pnlText.add(lblYear);
 		JLabel lblVersion = new JLabel(lang.getProperty("dialog_gameinfo_version") + ": "
 				+ version);
@@ -82,7 +87,7 @@ public class GameInfoDialog extends JDialog {
 		this.add(pnlText, BorderLayout.PAGE_END);
 
 		// set pref
-		this.setIconImage(image);
+		this.setIconImage(icon);
 		this.setTitle(gameTypeName);
 		this.setModal(true);
 		this.setResizable(false);
