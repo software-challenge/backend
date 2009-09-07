@@ -1,5 +1,6 @@
 package sc.guiplugin.interfaces;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.IOException;
 
@@ -89,4 +90,14 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 * @return an Icon of the game
 	 */
 	Image getPluginIcon();
+
+	/**
+	 * @return an Image of the game
+	 */
+	Image getPluginImage();
+
+	/**
+	 * @return the minimum size of the game display
+	 */
+	Dimension getMinimumSize();
 }
