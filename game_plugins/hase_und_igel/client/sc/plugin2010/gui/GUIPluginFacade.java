@@ -1,5 +1,6 @@
 package sc.plugin2010.gui;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.io.IOException;
 
@@ -118,5 +119,17 @@ public class GUIPluginFacade implements IGuiPlugin
 	public ScoreDefinition getScoreDefinition()
 	{
 		return GamePlugin.SCORE_DEFINITION;
+	}
+
+	@Override
+	public Dimension getMinimumSize()
+	{
+		return new Dimension(400, 400); // TODO
+	}
+
+	@Override
+	public Image getPluginImage()
+	{
+		return RendererUtil.getImage("resource/game/hase_und_igel_icon.png");
 	}
 }
