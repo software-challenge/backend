@@ -123,7 +123,10 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public Dimension getMinimumSize()
 	{
-		return new Dimension(400, 400); // TODO
+		Dimension screen = new Dimension(100, 100);
+		screen.height = (int) Math.round(0.8 * screen.height);
+		screen.width = (int) Math.round(0.8 * screen.width);
+		return screen;
 	}
 
 	@Override
