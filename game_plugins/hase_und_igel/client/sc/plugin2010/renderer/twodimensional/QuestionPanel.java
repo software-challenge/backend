@@ -85,7 +85,7 @@ public class QuestionPanel extends BackgroundPane
 				partHeight, this);
 
 		button1Img.getGraphics().drawImage(img, 0, 0, width, height, 0,
-				partHeight, width, partHeight * 2, this);
+				partHeight, width, height, this);
 
 		textPanel.setBackground(textImg);
 		buttonPanel.setBackground(button1Img);
@@ -131,8 +131,9 @@ public class QuestionPanel extends BackgroundPane
 
 		removeAll();
 
-		if(totalBackgroundImg != null) {
-			setBackground(totalBackgroundImg);			
+		if (totalBackgroundImg != null)
+		{
+			setBackground(totalBackgroundImg);
 		}
 		displayedCompCount = 1;
 	}
