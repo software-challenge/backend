@@ -14,6 +14,16 @@ import sc.plugin2010.MoveTyp;
 public class Spieler extends AllgemeinerSpieler
 {
 	private Logik	logik;
+	private Spielbrett spielbrett;
+	private Spieler gegner;
+	
+	public void setzteGegner(Spieler gegner) {
+		this.gegner = gegner;
+	}
+	
+	public void setzteSpielbrett(Spielbrett brett) {
+		this.spielbrett = brett;
+	}
 
 	public Spieler()
 	{
@@ -153,5 +163,64 @@ public class Spieler extends AllgemeinerSpieler
 	protected void setLogik(Logik logik)
 	{
 		this.logik = logik;
+	}
+	
+	/**
+	 * Muss der Spieler einen Zug aussetzen, weil kein anderer Zug möglich ist?
+	 * @return
+	 */
+	public boolean mussAussetzen() {
+		return Werkzeuge.istValideAussetzen(spielbrett, this);
+	}
+	
+	/**
+	 * Kann der Spieler einen Salat fressen?
+	 * @return
+	 */
+	public boolean kannSalatFressen() {
+		return Werkzeuge.istValideSalatFressen(spielbrett, this);
+	}
+	
+	/**
+	 * Kann der Spieler Karotten aufnehmen?
+	 * @return
+	 */
+	public boolean kannKarottenAufnehmen() {
+		return Werkzeuge.istValide10KarrotenNehmen(spielbrett, this);
+	}
+	
+	/**
+	 * Kann der Spieler Karotten abgeben?
+	 * @return
+	 */
+	public boolean kannKarottenAbgeben() {
+		return Werkzeuge.istValide10KarrotenAbgeben(spielbrett, this);
+	}
+	
+	/**
+	 * Kann der Spieler einen Hasenjoker ausspielen?
+	 * @param joker
+	 * @return
+	 */
+	public boolean kannHasenjokerSpielen(Hasenjoker joker) {
+		return Werkzeuge.istValideHasenjokerSpielen(spielbrett,
+				this, joker, 0);
+	}
+	
+	/**
+	 * Kann der Spieler auf ein Feld ziehen?
+	 * @param feldnummer
+	 * @return
+	 */
+	public boolean kannAufFeldZiehen(int feldnummer) {
+		return Werkzeuge.istValideFeldZiehen(spielbrett, this, feldnummer);
+	}
+	
+	/**
+	 * Kann der Spieler auf einen Igel zurueckfallen?
+	 * @return
+	 */
+	public boolean kannZurueckfallen() {
+		return Werkzeuge.istValideIgelZurueckfallen(spielbrett, this);
 	}
 }
