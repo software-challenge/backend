@@ -46,6 +46,9 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	@XStreamOmitField
 	private boolean			mustPlayCard;
+	
+	public static final int		SALADS_TO_EAT		= 5;
+	public static final	int 	INITIAL_CARROTS 	= 68;
 
 	// FIXME: shouldn't be a property of a DAO that
 	// is sent over the network/replay
@@ -112,8 +115,8 @@ public final class Player extends SimplePlayer implements Cloneable
 	{
 		fieldNumber = p;
 		color = c;
-		carrots = 68;
-		saladsToEat = 5;
+		carrots = INITIAL_CARROTS;
+		saladsToEat = SALADS_TO_EAT;
 
 		actions.add(Action.TAKE_OR_DROP_CARROTS);
 		actions.add(Action.EAT_SALAD);
@@ -251,7 +254,7 @@ public final class Player extends SimplePlayer implements Cloneable
 				Position.FIRST) ? 1 : getPosition().equals(Position.SECOND) ? 0
 				: -1,  // Spielergebnis (WIN/LOSS/TIE)
 				getFieldNumber(), // Position auf dem Spielfeld
-				getSaladsToEat(), // Anzahl an Salate übrig
+				(SALADS_TO_EAT - getSaladsToEat()), // Anzahl an Salate gegessen
 				getCarrotsAvailable(), // Anzahl verbliebene Karotten
 				getHistory().size(), // Anzahl Züge
 				avg_time); // durchschnittliche Zugzeit in Millisekunden
