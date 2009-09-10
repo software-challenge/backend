@@ -202,12 +202,11 @@ public class TestRangeDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (curTest > 0) { // testing
+				if (isTesting()) { // testing
 					cancelTest();
 				} else {
 					if (prepareTest()) {
-						testStart.setText(lang.getProperty("dialog_test_btn_stop"));
-						cmbGameType.setEnabled(false);
+						updateGUI(false);
 						// first game with first player at the first position
 						startTest();
 					}
@@ -258,6 +257,36 @@ public class TestRangeDialog extends JDialog {
 				cancelTestAndSave();
 			}
 		});
+	}
+
+	/**
+	 * Returns true if a test is running, otherwise false.
+	 * 
+	 * @return
+	 */
+	private boolean isTesting() {
+		return curTest > 0;
+	}
+
+	/**
+	 * Updates the start/stop button and the text area.
+	 * 
+	 * @param endOfTest
+	 *            true if it should reset the gui, otherwise false.
+	 */
+	protected void updateGUI(boolean endOfTest) {
+		if (endOfTest) {
+			testStart.setText(lang.getProperty("dialog_test_btn_start"));
+			cmbGameType.setEnabled(true);
+			// testStart.repaint();
+			// txtarea.repaint();
+		} else {
+			testStart.setText(lang.getProperty("dialog_test_btn_stop"));
+			cmbGameType.setEnabled(false);
+			txtarea.setText("");
+		}
+		// TestRangeDialog.this.validate();
+		TestRangeDialog.this.repaint();
 	}
 
 	/**
@@ -410,7 +439,6 @@ public class TestRangeDialog extends JDialog {
 
 		IGuiPlugin selPlugin = getSelectedPlugin().getPlugin();
 
-		initCurTest();
 		// on-demand number checking -> here: no checking required
 		numTest = new Integer(txfNumTest.getText());
 
@@ -574,9 +602,10 @@ public class TestRangeDialog extends JDialog {
 		obs = prep.getObserver();
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
-			public void gameEnded(GameResult result) {
+			public void gameEnded(GameResult result, String gameResultString) {
 				addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + "/"
 						+ numTest);
+				addLogMessage(gameResultString); // game over information
 				// purpose
 				updateStatistics(rotation, result);
 				// update progress bar
@@ -600,10 +629,7 @@ public class TestRangeDialog extends JDialog {
 					// for big N
 					startTest();
 				} else {
-					stopServer();
-					cmbGameType.setEnabled(true);
-					testStart.setText(lang.getProperty("dialog_test_btn_start"));
-					TestRangeDialog.this.repaint();
+					finishTest();
 				}
 			}
 		});
@@ -624,6 +650,14 @@ public class TestRangeDialog extends JDialog {
 				obs.start();
 			}
 		});
+	}
+
+	/**
+	 * Stops the server and reset the button's status.
+	 */
+	private void finishTest() {
+		stopServer();
+		updateGUI(true);
 	}
 
 	private List<SlotDescriptor> prepareSlots(final List<String> playerNames, int rotation) {
@@ -716,13 +750,15 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest() {
-		initCurTest();
-		if (null != obs)
+		if (null != obs) {
 			obs.cancel();
+		}
+		System.out.println("canceling...");
 		stopServer();
-		testStart.setText(lang.getProperty("dialog_test_btn_start"));
-		cmbGameType.setEnabled(true);
+		updateGUI(true);
+		initCurTest();
 		addLogMessage(lang.getProperty("dialog_test_msg_cancel"));
+		System.out.println("canceled.");
 	}
 
 	/**
