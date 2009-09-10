@@ -1,6 +1,6 @@
 <project name="Complete" basedir="." default="main">
-	<import file="svn-build.xml"/>
-	
+	<import file="svn-build.xml" />
+
 	<property name="out.dir" value="deploy" />
 
 	<target name="clean">
@@ -10,7 +10,7 @@
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
 		<ant dir="game_gui" inheritAll="false" />
-		<ant dir="game_server" inheritAll="false"  />
+		<ant dir="game_server" inheritAll="false" />
 		<ant dir="game_simpleclient" inheritAll="false" />
 	</target>
 
@@ -45,8 +45,20 @@
 
 		<mkdir dir="${out.dir}/simple_client/src/lib" />
 		<copy todir="${out.dir}/simple_client/src/lib">
-			<fileset dir="${out.dir}/simple_client/lib" />
+			<fileset dir="${out.dir}/simple_client/jar/lib" />
 		</copy>
+		
+		<echo message="Zipping files..." />
+
+		<mkdir dir="${out.dir}/zipped" />
+		
+		<zip destfile="${out.dir}/zipped/gui.zip" basedir="${out.dir}/gui" />
+
+		<zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
+		
+		<zip destfile="${out.dir}/zipped/simpleclient-jar.zip" basedir="${out.dir}/simple_client/jar" />
+		
+		<zip destfile="${out.dir}/zipped/simpleclient-src.zip" basedir="${out.dir}/simple_client/src" />
 	</target>
 
 	<target name="clean-build" depends="clean,build" />
