@@ -158,6 +158,54 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 	}
 
+	private String createGameEndedString(GameResult data)
+	{
+		String result = "";
+		result.concat("----------------\n");
+
+		if (data == null)
+		{
+			result.concat("Leeres Spielresultat!");
+			return result;
+		}
+
+		result.concat("Spielresultat:\n");
+
+		String[] results = data.getScores().get(0).toStrings();
+		if (results[0].equals("1"))
+		{
+			result.concat("Player 1");
+			result.concat(": Gewinner\n");
+		}
+		else if (results[0].equals("0"))
+		{
+			result.concat("Player 1");
+			result.concat(": Verlierer\n");
+		}
+		else
+		{
+			result.concat("Unentschieden\n");
+		}
+
+		result.concat(": erreichtes Feld: " + results[1] + "\n");
+
+		result.concat("Player 2");
+
+		results = data.getScores().get(1).toStrings();
+		if (results[0].equals("1"))
+		{
+			result.concat(": Gewinner\n");
+		}
+		else if (results[0].equals("0"))
+		{
+			result.concat(": Verlierer\n");
+		}
+
+		result.concat(": erreichtes Feld: " + results[1]);
+
+		return result;
+	}
+
 	/**
 	 * @param data
 	 * 
@@ -171,7 +219,7 @@ public class Observation implements IObservation, IUpdateListener,
 
 			for (IGameEndedListener list : gameEndedListeners)
 			{
-				list.gameEnded(data);
+				list.gameEnded(data, createGameEndedString(data));
 			}
 		}
 	}

@@ -9,5 +9,5 @@ public interface IGameEndedListener {
 	 * 
 	 * @param data
 	 */
-	void gameEnded(GameResult data);
+	void gameEnded(GameResult data, String gameResultString);
 }
