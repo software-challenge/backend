@@ -27,8 +27,8 @@
 			<fileset dir="./game_server/build/jar" />
 		</copy>
 
-		<mkdir dir="${out.dir}/simple_client" />
-		<copy todir="${out.dir}/simple_client">
+		<mkdir dir="${out.dir}/simple_client/jar" />
+		<copy todir="${out.dir}/simple_client/jar">
 			<fileset dir="./game_simpleclient/build/jar" />
 		</copy>
 
