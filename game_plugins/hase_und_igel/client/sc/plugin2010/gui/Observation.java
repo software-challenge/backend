@@ -160,48 +160,50 @@ public class Observation implements IObservation, IUpdateListener,
 
 	private String createGameEndedString(GameResult data)
 	{
-		String result = "";
-		result.concat("----------------\n");
+		String result = "----------------\n";
 
 		if (data == null)
 		{
-			result.concat("Leeres Spielresultat!");
+			result += "Leeres Spielresultat!";
 			return result;
 		}
 
-		result.concat("Spielresultat:\n");
+		result += "Spielresultat:\n";
+
+		String name1 = "HaseUndIgelSC 1";
+		String name2 = "HaseUndIgelSC 2";
 
 		String[] results = data.getScores().get(0).toStrings();
 		if (results[0].equals("1"))
 		{
-			result.concat("Player 1");
-			result.concat(": Gewinner\n");
+			result += name1; // TODO
+			result += ": Gewinner\n";
 		}
 		else if (results[0].equals("0"))
 		{
-			result.concat("Player 1");
-			result.concat(": Verlierer\n");
+			result += name1; // TODO
+			result += ": Verlierer\n";
 		}
 		else
 		{
-			result.concat("Unentschieden\n");
+			result += "Unentschieden\n";
 		}
 
-		result.concat(": erreichtes Feld: " + results[1] + "\n");
+		result += name1 + ": erreichtes Feld: " + results[1] + "\n";
 
-		result.concat("Player 2");
+		result += name2; // TODO
 
 		results = data.getScores().get(1).toStrings();
 		if (results[0].equals("1"))
 		{
-			result.concat(": Gewinner\n");
+			result += ": Gewinner\n";
 		}
 		else if (results[0].equals("0"))
 		{
-			result.concat(": Verlierer\n");
+			result += ": Verlierer\n";
 		}
 
-		result.concat(": erreichtes Feld: " + results[1]);
+		result += name2 + ": erreichtes Feld: " + results[1];
 
 		return result;
 	}
