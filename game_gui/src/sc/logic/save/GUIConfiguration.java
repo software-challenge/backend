@@ -9,12 +9,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import sc.common.IConfiguration;
-
-public class GUIConfiguration implements IConfiguration, Serializable {
+public class GUIConfiguration implements Serializable {
 
 	private static final long serialVersionUID = -4635852675167221186L;
-	
+
 	private static final String CONFIG_FILENAME = "game_gui.conf";
 	private static final String PATH_STD = ".";
 	private static String pluginFolder = null;
@@ -22,7 +20,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	public enum ELanguage {
 		DE, EN
 	}
-	
+
 	private ELanguage lang;
 
 	private String createGameDialogPath;
@@ -32,7 +30,7 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private String loadReplayPath;
 
 	private int numTest;
-	
+
 	private final ConfigCreateGameDialog configCreateGameDialog = new ConfigCreateGameDialog();
 	/**
 	 * cursor of the speed bar
@@ -40,6 +38,8 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	private int speedValue;
 
 	private boolean suppressWarnMsg;
+
+	private boolean showLog;
 
 	private final static GUIConfiguration instance;
 
@@ -58,18 +58,17 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		this.numTest = 100;
 		this.speedValue = 100;
 		this.suppressWarnMsg = false;
+		this.showLog = true;
 	}
 
 	public static GUIConfiguration instance() {
 		return instance;
 	}
 
-	@Override
 	public ELanguage getLanguage() {
 		return lang;
 	}
 
-	@Override
 	public void setLanguage(ELanguage language) {
 		this.lang = language;
 	}
@@ -122,11 +121,11 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 			out.writeObject(this);
 			System.out.println("Saved Configuration");
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("Could not save configuration");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.out.println("Could not save configuration");
 		} finally {
 			if (null != out) {
 				try {
@@ -143,12 +142,10 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		this.setNumTest(numTest);
 	}
 
-	@Override
 	public void setNumTest(int numTest) {
 		this.numTest = numTest;
 	}
 
-	@Override
 	public int getNumTest() {
 		return numTest;
 	}
@@ -168,32 +165,26 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 		return f;
 	}
 
-	@Override
 	public File getCreateGameDialogPath() {
 		return checkPath(createGameDialogPath);
 	}
 
-	@Override
 	public void setCreateGameDialogPath(String createGameDialogPath) {
 		this.createGameDialogPath = createGameDialogPath;
 	}
 
-	@Override
 	public File getTestDialogPath() {
 		return checkPath(testDialogPath);
 	}
 
-	@Override
 	public void setTestDialogPath(String testDialogPath) {
 		this.testDialogPath = testDialogPath;
 	}
 
-	@Override
 	public File getLoadReplayPath() {
 		return checkPath(loadReplayPath);
 	}
 
-	@Override
 	public void setLoadReplayPath(String loadReplayPath) {
 		this.loadReplayPath = loadReplayPath;
 	}
@@ -209,13 +200,21 @@ public class GUIConfiguration implements IConfiguration, Serializable {
 	public void setSpeedValue(int speedValue) {
 		this.speedValue = speedValue;
 	}
-	
+
 	public boolean suppressWarnMsg() {
 		return suppressWarnMsg;
 	}
 
 	public void setSuppressWarnMsg(boolean selected) {
 		this.suppressWarnMsg = selected;
+	}
+
+	public void setShowTestLog(boolean showLog) {
+		this.showLog = showLog;
+	}
+
+	public boolean showTestLog() {
+		return showLog;
 	}
 
 }

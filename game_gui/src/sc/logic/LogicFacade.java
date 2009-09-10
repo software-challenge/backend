@@ -12,7 +12,6 @@ import java.util.Vector;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
-import sc.common.IConfiguration;
 import sc.gui.stuff.YearComparator;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
@@ -29,7 +28,7 @@ public class LogicFacade {
 	 * Folder of all language files
 	 */
 	private static final String BASENAME = "/resource/game_gui";
-	
+
 	private static final Comparator<? super GUIPluginInstance> yearComparator = new YearComparator();
 	/**
 	 * Holds all vailable plugins
@@ -110,7 +109,7 @@ public class LogicFacade {
 		return languageData;
 	}
 
-	public IConfiguration getConfiguration() {
+	public GUIConfiguration getConfiguration() {
 		return GUIConfiguration.instance();
 	}
 
@@ -130,12 +129,18 @@ public class LogicFacade {
 		System.out.println("Server started on " + port);
 	}
 
+	/**
+	 * Cancels the observer and closes the server.
+	 */
 	public void stopServer() {
 		if (null != observation) {
 			observation.cancel();
+			observation = null;
 		}
-		if (server != null)
+		if (server != null) {
 			server.close();
+			server = null;
+		}
 		System.out.println("Server stopped.");
 	}
 
