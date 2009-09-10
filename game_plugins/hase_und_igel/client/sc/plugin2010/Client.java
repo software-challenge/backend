@@ -170,7 +170,7 @@ public class Client implements ILobbyClientListener
 		{
 			Player oldPlayer = game.getBoard().getOtherPlayer(
 					game.getActivePlayer());
-			
+
 			int playerid = 0;
 			if (oldPlayer.getColor() == FigureColor.RED)
 			{
@@ -181,7 +181,6 @@ public class Client implements ILobbyClientListener
 				playerid = 1;
 			}
 			;
-
 
 			if (oldPlayer.getLastMove() != null)
 			{

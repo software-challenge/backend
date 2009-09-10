@@ -170,18 +170,34 @@ public class Observation implements IObservation, IUpdateListener,
 
 		result += "Spielresultat:\n";
 
-		String name1 = "HaseUndIgelSC 1";
-		String name2 = "HaseUndIgelSC 2";
+		GameState gameState = (GameState) conGame.getCurrentState();
+		Game game = gameState.getGame();
+
+		String name1 = "Spieler 1";
+		String name2 = "Spieler 2";
+
+		if (game.getActivePlayer().getColor() == FigureColor.RED)
+		{
+			name1 = game.getActivePlayer().getDisplayName();
+			name2 = game.getBoard().getOtherPlayer(game.getActivePlayer())
+					.getDisplayName();
+		}
+		else
+		{
+			name1 = game.getBoard().getOtherPlayer(game.getActivePlayer())
+					.getDisplayName();
+			name2 = game.getActivePlayer().getDisplayName();
+		}
 
 		String[] results = data.getScores().get(0).toStrings();
 		if (results[0].equals("1"))
 		{
-			result += name1; // TODO
+			result += name1;
 			result += ": Gewinner\n";
 		}
 		else if (results[0].equals("0"))
 		{
-			result += name1; // TODO
+			result += name1;
 			result += ": Verlierer\n";
 		}
 		else
@@ -191,7 +207,7 @@ public class Observation implements IObservation, IUpdateListener,
 
 		result += name1 + ": erreichtes Feld: " + results[1] + "\n";
 
-		result += name2; // TODO
+		result += name2;
 
 		results = data.getScores().get(1).toStrings();
 		if (results[0].equals("1"))
