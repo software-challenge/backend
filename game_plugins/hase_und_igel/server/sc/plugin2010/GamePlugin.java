@@ -33,6 +33,7 @@ public class GamePlugin implements IGamePlugin
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("Gewinner");
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Feldnummer", ScoreAggregation.AVERAGE));
+		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Salate", ScoreAggregation.AVERAGE));
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Karotten", ScoreAggregation.AVERAGE));
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Züge", ScoreAggregation.AVERAGE));
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Zeit (ms)", ScoreAggregation.AVERAGE));

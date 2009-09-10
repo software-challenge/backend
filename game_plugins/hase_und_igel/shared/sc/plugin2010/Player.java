@@ -251,6 +251,7 @@ public final class Player extends SimplePlayer implements Cloneable
 				Position.FIRST) ? 1 : getPosition().equals(Position.SECOND) ? 0
 				: -1,  // Spielergebnis (WIN/LOSS/TIE)
 				getFieldNumber(), // Position auf dem Spielfeld
+				getSaladsToEat(), // Anzahl an Salate übrig
 				getCarrotsAvailable(), // Anzahl verbliebene Karotten
 				getHistory().size(), // Anzahl Züge
 				avg_time); // durchschnittliche Zugzeit in Millisekunden
