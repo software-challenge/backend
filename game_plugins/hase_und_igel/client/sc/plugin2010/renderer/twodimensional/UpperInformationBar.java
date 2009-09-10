@@ -42,8 +42,6 @@ public class UpperInformationBar extends BackgroundPane
 	private final Image		red					= RendererUtil
 														.getImage("resource/game/red.png");
 
-	private final int		CENTERBORDERWIDTH	= 180;
-
 	public UpperInformationBar()
 	{
 		super();
