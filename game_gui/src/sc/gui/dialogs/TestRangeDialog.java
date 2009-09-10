@@ -297,15 +297,12 @@ public class TestRangeDialog extends JDialog {
 		if (endOfTest) {
 			testStart.setText(lang.getProperty("dialog_test_btn_restart"));
 			cmbGameType.setEnabled(true);
-			// testStart.repaint();
-			// txtarea.repaint();
 		} else {
 			testStart.setText(lang.getProperty("dialog_test_btn_stop"));
 			cmbGameType.setEnabled(false);
 			txtarea.setText("");
 		}
-		// TestRangeDialog.this.validate();
-		TestRangeDialog.this.repaint();
+		TestRangeDialog.this.validate();
 	}
 
 	/**
@@ -793,7 +790,7 @@ public class TestRangeDialog extends JDialog {
 	 * @param txf
 	 */
 	private void loadClient(JTextField txf) {
-		JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
+		final JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 				.getTestDialogPath());
 		chooser.setDialogTitle(lang.getProperty("dialog_test_dialog_title"));
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
