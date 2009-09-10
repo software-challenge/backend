@@ -45,6 +45,8 @@ public class SimpleClient extends SpielClient
 		eigenerSpieler = new Spieler();
 		gegner = new Spieler();
 		spielbrett = new Spielbrett(eigenerSpieler, gegner);
+		eigenerSpieler.setzteGegner(gegner);
+		eigenerSpieler.setzteSpielbrett(spielbrett);
 
 		// gib interne Referenzen der Logik
 		super.setzeSpielbrett(spielbrett);
@@ -66,13 +68,13 @@ public class SimpleClient extends SpielClient
 		boolean zugGemacht = false;
 
 		// Wenn keine Aktion möglich ist, dann muss der Spieler aussetzen
-		if (Werkzeuge.istValideAussetzen(spielbrett, eigenerSpieler))
+		if (eigenerSpieler.mussAussetzen())
 		{
 			eigenerSpieler.setzeAus();
 			System.out.println("Spieler muss aussetzen");
 			zugGemacht = true;
 		}
-		else if (Werkzeuge.istValideSalatFressen(spielbrett, eigenerSpieler))
+		else if (eigenerSpieler.kannSalatFressen())
 		{
 			eigenerSpieler.frissSalat();
 			System.out.println("Salat gefressen");
@@ -80,8 +82,7 @@ public class SimpleClient extends SpielClient
 		}
 		// Wenn auf einem Karottenfeld, dann nimm Karotten oder gib Karotten
 		// ab
-		else if (Werkzeuge
-				.istValide10KarrotenNehmen(spielbrett, eigenerSpieler)
+		else if (eigenerSpieler.kannKarottenAufnehmen()
 				&& !bereitsKarottenGenommen)
 		{
 
@@ -95,8 +96,7 @@ public class SimpleClient extends SpielClient
 				zugGemacht = true;
 
 			} // sonst gib Karotten ab (wenn möglich)
-			else if (Werkzeuge.istValide10KarrotenAbgeben(spielbrett,
-					eigenerSpieler)
+			else if (eigenerSpieler.kannKarottenAbgeben()
 					&& eigenerSpieler.holeKarottenAnzahl() < 50
 					&& eigenerSpieler.holeFeldnummer() > 50)
 			{
@@ -108,8 +108,8 @@ public class SimpleClient extends SpielClient
 		} // falls wir noch Hasenjoker haben
 		else if (eigenerSpieler.holeHasenjoker().size() > 0)
 		{ // spiele den ersten Hasenjoker auf der Hand
-			if (Werkzeuge.istValideHasenjokerSpielen(spielbrett,
-					eigenerSpieler, eigenerSpieler.holeHasenjoker().get(0), 0))
+			if (eigenerSpieler.kannHasenjokerSpielen(eigenerSpieler
+					.holeHasenjoker().get(0)))
 			{
 				eigenerSpieler.spieleHasenjoker(eigenerSpieler.holeHasenjoker()
 						.get(0));
@@ -135,7 +135,7 @@ public class SimpleClient extends SpielClient
 
 			int feldNummer = -1;
 
-			if (Werkzeuge.istValideFeldZiehen(spielbrett, eigenerSpieler, 64))
+			if (eigenerSpieler.kannAufFeldZiehen(64))
 			{
 				eigenerSpieler.setzeFigur(64);
 				zugGemacht = true;
@@ -148,8 +148,7 @@ public class SimpleClient extends SpielClient
 			// Wenn ein Salat gefunden wurde
 			if (feldNummer > 0)
 			{ // wenn es möglich ist auf den Salat zu ziehen
-				if (Werkzeuge.istValideFeldZiehen(spielbrett, eigenerSpieler,
-						feldNummer))
+				if (eigenerSpieler.kannAufFeldZiehen(feldNummer))
 				{
 					System.out.println("Salatfeld");
 					eigenerSpieler.setzeFigur(feldNummer);
@@ -163,15 +162,13 @@ public class SimpleClient extends SpielClient
 					if (feldNummer > 0)
 					{ // wenn man auf das Karottenfeld ziehen darf, setze dort
 						// hin
-						if (Werkzeuge.istValideFeldZiehen(spielbrett,
-								eigenerSpieler, feldNummer))
+						if (eigenerSpieler.kannAufFeldZiehen(feldNummer))
 						{
 							eigenerSpieler.setzeFigur(feldNummer);
 							System.out.println("Karottenfeld");
 							zugGemacht = true;
 						} // sonst falle auf letzten Igel zurück
-						else if (Werkzeuge.istValideIgelZurueckfallen(
-								spielbrett, eigenerSpieler))
+						else if (eigenerSpieler.kannZurueckfallen())
 						{
 							eigenerSpieler.zurueckAufLetztenIgel();
 							System.out.println("Igelfeld1");
@@ -180,8 +177,7 @@ public class SimpleClient extends SpielClient
 					}
 					else
 					{ // sonst falle auf letzten Igel zurück
-						if (Werkzeuge.istValideIgelZurueckfallen(spielbrett,
-								eigenerSpieler))
+						if (eigenerSpieler.kannZurueckfallen())
 						{
 							eigenerSpieler.zurueckAufLetztenIgel();
 							System.out.println("Igelfeld2");
@@ -192,8 +188,7 @@ public class SimpleClient extends SpielClient
 			}
 			else
 			{// sonst falle auf letzten Igel zurück
-				if (Werkzeuge.istValideIgelZurueckfallen(spielbrett,
-						eigenerSpieler))
+				if (eigenerSpieler.kannZurueckfallen())
 				{
 					eigenerSpieler.zurueckAufLetztenIgel();
 					System.out.println("Igelfeld3");
@@ -206,8 +201,7 @@ public class SimpleClient extends SpielClient
 			{
 				for (int i = eigenerSpieler.holeFeldnummer() + 1; i < 65; i++)
 				{
-					if (Werkzeuge.istValideFeldZiehen(spielbrett,
-							eigenerSpieler, i))
+					if (eigenerSpieler.kannAufFeldZiehen(i))
 					{
 						System.out.println("Zufall");
 						eigenerSpieler.setzeFigur(i);
