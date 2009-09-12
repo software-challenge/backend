@@ -2,6 +2,7 @@ package sc.plugin2010.gui;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -123,9 +124,9 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public Dimension getMinimumSize()
 	{
-		Dimension screen = new Dimension(100, 100);
-		screen.height = (int) Math.round(0.8 * screen.height);
-		screen.width = (int) Math.round(0.8 * screen.width);
+		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+		screen.height = (int) Math.round(0.7 * screen.height);
+		screen.width = (int) Math.round(0.7 * screen.width);
 		return screen;
 	}
 

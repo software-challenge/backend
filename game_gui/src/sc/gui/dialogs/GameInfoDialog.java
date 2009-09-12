@@ -35,8 +35,9 @@ public class GameInfoDialog extends JDialog {
 	 * @param infoText
 	 * @param author
 	 */
-	public GameInfoDialog(String gameTypeName, String version, final Image image,
-			final Image icon, String infoText, String author, int infoYear) {
+	public GameInfoDialog(String gameTypeName, String version,
+			final Image image, final Image icon, String infoText,
+			String author, int infoYear) {
 		super();
 		this.gameTypeName = gameTypeName;
 		this.version = version;
@@ -44,7 +45,8 @@ public class GameInfoDialog extends JDialog {
 		this.icon = icon;
 		this.infoText = infoText;
 		this.author = author;
-		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		lang = PresentationFacade.getInstance().getLogicFacade()
+				.getLanguageData();
 		this.infoYear = infoYear;
 		createGUI();
 	}
@@ -54,7 +56,7 @@ public class GameInfoDialog extends JDialog {
 	 */
 	private void createGUI() {
 
-		this.setLayout(new BorderLayout());
+		setLayout(new BorderLayout());
 
 		JPanel pnlImage = new JPanel();
 		pnlImage.setBorder(BorderFactory.createEtchedBorder());
@@ -67,19 +69,22 @@ public class GameInfoDialog extends JDialog {
 		pnlImage.add(lblImage);
 
 		JLabel lblDescriptionText = new JLabel(lang
-				.getProperty("dialog_gameinfo_description"));
+				.getProperty("dialog_gameinfo_description")
+				+ ": ");
 		pnlText.add(lblDescriptionText);
 		// infoText is in html format, so show it in a separate label
 		JLabel lblText = new JLabel(infoText);
 		pnlText.add(lblText);
-		JLabel lblYear = new JLabel(lang.getProperty("dialog_gameinfo_year") + ": "
-				+ infoYear);
+		JLabel lblYear = new JLabel(lang.getProperty("dialog_gameinfo_year")
+				+ ": " + infoYear);
 		pnlText.add(lblYear);
-		JLabel lblVersion = new JLabel(lang.getProperty("dialog_gameinfo_version") + ": "
-				+ version);
+		JLabel lblVersion = new JLabel(lang
+				.getProperty("dialog_gameinfo_version")
+				+ ": " + version);
 		pnlText.add(lblVersion);
-		JLabel lblAuthor = new JLabel(lang.getProperty("dialog_gameinfo_author") + ": "
-				+ author);
+		JLabel lblAuthor = new JLabel(lang
+				.getProperty("dialog_gameinfo_author")
+				+ ": " + author);
 		pnlText.add(lblAuthor);
 
 		// add components
@@ -87,13 +92,13 @@ public class GameInfoDialog extends JDialog {
 		this.add(pnlText, BorderLayout.PAGE_END);
 
 		// set pref
-		this.setIconImage(icon);
-		this.setTitle(gameTypeName);
-		this.setModal(true);
-		this.setResizable(false);
-		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		this.pack();
-		this.setLocationRelativeTo(null);
+		setIconImage(icon);
+		setTitle(gameTypeName);
+		setModal(true);
+		setResizable(false);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		pack();
+		setLocationRelativeTo(null);
 	}
 
 }

@@ -40,9 +40,18 @@ public class BorderInformationBar extends BackgroundPane
 	private final JLabel	salads				= new JLabel(SALADCOUNT);
 	private final JLabel	hasenjoker			= new JLabel(" ");
 
+	private final Image		carrotsIcon			= RendererUtil
+														.getImage("resource/game/carrots.png");
+	private final Image		maxfieldIcon		= RendererUtil
+														.getImage("resource/game/background.png");
+	private final Image		saladIcon			= RendererUtil
+														.getImage("resource/game/salad.png");
+	private final Image		rabbitIcon			= RendererUtil
+														.getImage("resource/game/rabbit.png");
+
 	private final String	FONTTYPE			= "New Courier";
 	private final int		SIZE				= 20;
-	private final int		ICONSIZE			= 60;
+	private int				iconsize			= 10;
 	private final int		BIGGERCARROTSIZE	= 2;
 	private final int		INDENT				= 15;
 
@@ -67,36 +76,15 @@ public class BorderInformationBar extends BackgroundPane
 	{
 		super();
 
-		int scaleValue = ICONSIZE;
-
-		ImageIcon TempIcon = new ImageIcon();
-		TempIcon.setImage(rabbit_carrot.getScaledInstance(scaleValue,
-				scaleValue, Image.SCALE_SMOOTH));
-		rabbit_carrotIcon.setIcon(TempIcon);
 		rabbit_carrotIcon.setToolTipText("20 Karotten nehmen oder abgeben");
-
-		TempIcon = new ImageIcon();
-		TempIcon.setImage(rabbit_salad.getScaledInstance(scaleValue,
-				scaleValue, Image.SCALE_SMOOTH));
-		rabbit_saladIcon.setIcon(TempIcon);
 		rabbit_saladIcon.setToolTipText("Friss sofort einen Salat");
-
-		TempIcon = new ImageIcon();
-		TempIcon.setImage(rabbit_forward.getScaledInstance(scaleValue,
-				scaleValue, Image.SCALE_SMOOTH));
-		rabbit_forwardIcon.setIcon(TempIcon);
 		rabbit_forwardIcon.setToolTipText("Rücke eine Position vor");
-
-		TempIcon = new ImageIcon();
-		TempIcon.setImage(rabbit_backward.getScaledInstance(scaleValue,
-				scaleValue, Image.SCALE_SMOOTH));
-		rabbit_backwardIcon.setIcon(TempIcon);
 		rabbit_backwardIcon.setToolTipText("Falle eine Position zurück");
 
 		setDoubleBuffered(true);
 		setBorder(BorderFactory.createEmptyBorder());
 
-		setLayout(new VerticalFlowLayout(INDENT));
+		setLayout(new VerticalFlowLayout(INDENT, this));
 
 		rabbitjokerPane.setLayout(new BoxLayout(rabbitjokerPane,
 				BoxLayout.Y_AXIS));
@@ -106,22 +94,6 @@ public class BorderInformationBar extends BackgroundPane
 		carrots.setHorizontalAlignment(JLabel.LEFT);
 		maxfields.setHorizontalAlignment(JLabel.LEFT);
 		hasenjoker.setHorizontalAlignment(JLabel.LEFT);
-
-		carrots.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/game/carrots.png").getScaledInstance(ICONSIZE,
-				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		maxfields.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/game/background.png").getScaledInstance(ICONSIZE,
-				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		salads.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/game/salad.png").getScaledInstance(ICONSIZE,
-				ICONSIZE, Image.SCALE_SMOOTH)));
-
-		hasenjoker.setIcon(new ImageIcon(RendererUtil.getImage(
-				"resource/game/rabbit.png").getScaledInstance(ICONSIZE,
-				ICONSIZE, Image.SCALE_SMOOTH)));
 
 		carrots.setToolTipText(CARROTCOUNT);
 		maxfields.setToolTipText(MOVESCOUNT);
@@ -136,10 +108,6 @@ public class BorderInformationBar extends BackgroundPane
 			setBlueColor();
 		}
 
-		carrots.setPreferredSize(new Dimension(180, ICONSIZE));
-		maxfields.setPreferredSize(new Dimension(180, ICONSIZE));
-		salads.setPreferredSize(new Dimension(180, ICONSIZE));
-
 		this.add(carrots);
 		this.add(maxfields);
 		this.add(salads);
@@ -150,11 +118,55 @@ public class BorderInformationBar extends BackgroundPane
 		hasenjokerPanel.add(hasenjoker);
 		hasenjokerPanel.add(rabbitjokerPane);
 
-		hasenjokerPanel.setPreferredSize(new Dimension(180, ICONSIZE * 4));
-
 		this.add(hasenjokerPanel);
 
 		setVisible(true);
+	}
+
+	public void setIconSize(int size)
+	{
+		if (iconsize != size)
+		{
+			iconsize = size;
+
+			ImageIcon TempIcon = new ImageIcon();
+			TempIcon.setImage(rabbit_carrot.getScaledInstance(size, size,
+					Image.SCALE_SMOOTH));
+			rabbit_carrotIcon.setIcon(TempIcon);
+
+			TempIcon = new ImageIcon();
+			TempIcon.setImage(rabbit_salad.getScaledInstance(size, size,
+					Image.SCALE_SMOOTH));
+			rabbit_saladIcon.setIcon(TempIcon);
+
+			TempIcon = new ImageIcon();
+			TempIcon.setImage(rabbit_forward.getScaledInstance(size, size,
+					Image.SCALE_SMOOTH));
+			rabbit_forwardIcon.setIcon(TempIcon);
+
+			TempIcon = new ImageIcon();
+			TempIcon.setImage(rabbit_backward.getScaledInstance(size, size,
+					Image.SCALE_SMOOTH));
+			rabbit_backwardIcon.setIcon(TempIcon);
+
+			carrots.setIcon(new ImageIcon(carrotsIcon.getScaledInstance(size,
+					size, Image.SCALE_SMOOTH)));
+
+			maxfields.setIcon(new ImageIcon(maxfieldIcon.getScaledInstance(
+					size, size, Image.SCALE_SMOOTH)));
+
+			salads.setIcon(new ImageIcon(saladIcon.getScaledInstance(size,
+					size, Image.SCALE_SMOOTH)));
+
+			hasenjoker.setIcon(new ImageIcon(rabbitIcon.getScaledInstance(size,
+					size, Image.SCALE_SMOOTH)));
+
+			carrots.setPreferredSize(new Dimension(180, size));
+			maxfields.setPreferredSize(new Dimension(180, size));
+			salads.setPreferredSize(new Dimension(180, size));
+
+			hasenjokerPanel.setPreferredSize(new Dimension(180, size * 4));
+		}
 	}
 
 	@Override
@@ -162,12 +174,12 @@ public class BorderInformationBar extends BackgroundPane
 	{
 		int width = img.getWidth(this);
 
-		Image hasenjokerBGImg = new BufferedImage(width, ICONSIZE * 4,
+		Image hasenjokerBGImg = new BufferedImage(width, iconsize * 4,
 				BufferedImage.TYPE_INT_ARGB);
 
-		hasenjokerBGImg.getGraphics().drawImage(img, 0, 0, width, ICONSIZE * 4,
-				INDENT, ICONSIZE * 3 + INDENT * 5, INDENT + width,
-				ICONSIZE * 3 + INDENT * 5 + ICONSIZE * 4, this);
+		hasenjokerBGImg.getGraphics().drawImage(img, 0, 0, width, iconsize * 4,
+				INDENT, iconsize * 3 + INDENT * 5, width,
+				iconsize * 3 + INDENT * 5 + iconsize * 4, this);
 
 		super.setBackground(img);
 		hasenjokerPanel.setBackground(hasenjokerBGImg);

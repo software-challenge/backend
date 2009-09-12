@@ -497,6 +497,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				if (board.isMoveable(i, player))
 				{
 					moveable = true;
+					break;
 				}
 			}
 			if (moveable)

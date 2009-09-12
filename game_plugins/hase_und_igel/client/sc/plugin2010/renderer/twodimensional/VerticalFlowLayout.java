@@ -19,12 +19,14 @@ public class VerticalFlowLayout implements LayoutManager
 	private final Vector<Integer>	levels;
 	private final Vector<Component>	comps;
 	private int						INDENT	= 15;
+	private BorderInformationBar	father;
 
-	public VerticalFlowLayout(int indent)
+	public VerticalFlowLayout(int indent, BorderInformationBar father)
 	{
 		levels = new Vector<Integer>();
 		comps = new Vector<Component>();
 		INDENT = indent;
+		this.father = father;
 	}
 
 	@Override
@@ -87,6 +89,12 @@ public class VerticalFlowLayout implements LayoutManager
 		}
 	}
 
+	private int calculateAllComponentsHeight(int iconsize)
+	{
+		return INDENT + iconsize + INDENT + iconsize + INDENT + iconsize + 2
+				* INDENT + iconsize * 4;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -98,11 +106,26 @@ public class VerticalFlowLayout implements LayoutManager
 		int x = INDENT;
 		int y = INDENT;
 
+		int iconsize = 10;
+
+		int height = parent.getHeight();
+
+		while (calculateAllComponentsHeight(iconsize) < height
+				&& iconsize * 2 <= 180 - 3 * INDENT)
+		{
+			iconsize++;
+		}
+
+		iconsize--;
+
+		father.setIconSize(iconsize);
+
 		Component c;
 
 		for (int i = 0; i < parent.getComponentCount(); i++)
 		{
 			c = parent.getComponent(i);
+			// c.setPreferredSize(new Dimension(compWidth, compHeight));
 			c.setBounds(x, y, c.getPreferredSize().width,
 					c.getPreferredSize().height);
 			y += c.getPreferredSize().height + INDENT;
