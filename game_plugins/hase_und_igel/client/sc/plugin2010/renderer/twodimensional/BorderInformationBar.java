@@ -31,7 +31,7 @@ public class BorderInformationBar extends BackgroundPane
 {
 
 	private final String	CARROTCOUNT			= "Karottenanzahl";
-	private final String	MOVESCOUNT			= "Maximale Zuganzahl durch Karotten möglich";
+	private final String	MOVESCOUNT			= "Maximale Zuganzahl durch Karotten m\u00F6glich";
 	private final String	SALADCOUNT			= "Salate";
 	private final String	HASENJOKER			= "Hasenjoker";
 
@@ -78,8 +78,8 @@ public class BorderInformationBar extends BackgroundPane
 
 		rabbit_carrotIcon.setToolTipText("20 Karotten nehmen oder abgeben");
 		rabbit_saladIcon.setToolTipText("Friss sofort einen Salat");
-		rabbit_forwardIcon.setToolTipText("Rücke eine Position vor");
-		rabbit_backwardIcon.setToolTipText("Falle eine Position zurück");
+		rabbit_forwardIcon.setToolTipText("R\u00FCcke eine Position vor");
+		rabbit_backwardIcon.setToolTipText("Falle eine Position zur\u00FCck");
 
 		setDoubleBuffered(true);
 		setBorder(BorderFactory.createEmptyBorder());

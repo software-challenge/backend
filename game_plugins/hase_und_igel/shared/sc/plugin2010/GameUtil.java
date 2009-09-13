@@ -345,18 +345,30 @@ public class GameUtil
 	{
 		Position ret = null;
 		if (o.getFieldNumber() < relevant.getFieldNumber())
-			ret = Position.FIRST;
-		else if (o.getFieldNumber() > relevant.getFieldNumber())
-			ret = Position.SECOND;
-		else // Beide Spieler auf dem gleichen Spielfeld (Ziel) 
 		{
-			// nachrangiges Kriterium: Anzahl der Karotten, je weniger desto besser
+			ret = Position.FIRST;
+		}
+		else if (o.getFieldNumber() > relevant.getFieldNumber())
+		{
+			ret = Position.SECOND;
+		}
+		else
+		// Beide Spieler auf dem gleichen Spielfeld (Ziel)
+		{
+			// nachrangiges Kriterium: Anzahl der Karotten, je weniger desto
+			// besser
 			if (o.getCarrotsAvailable() > relevant.getCarrotsAvailable())
+			{
 				ret = Position.FIRST;
-			else if (o.getCarrotsAvailable() < relevant.getCarrotsAvailable() )
+			}
+			else if (o.getCarrotsAvailable() < relevant.getCarrotsAvailable())
+			{
 				ret = Position.SECOND;
-			else 
+			}
+			else
+			{
 				ret = Position.TIE;
+			}
 		}
 		return ret;
 	}
@@ -422,11 +434,12 @@ public class GameUtil
 					return "frisst einen Salat";
 				case MOVE:
 					String str = String.valueOf(mov.getN())
-							+ " Felder vorwärts";
+							+ " Felder vorw\u00E4rts";
 
 					if (mov.getN() == 1)
 					{
-						str = String.valueOf(mov.getN()) + " Feld vorwärts";
+						str = String.valueOf(mov.getN())
+								+ " Feld vorw\u00E4rts";
 					}
 
 					return "setzt " + str;
@@ -442,7 +455,7 @@ public class GameUtil
 					}
 					return res;
 				case FALL_BACK:
-					return "lässt sich auf Igel zurückfallen";
+					return "l\u00E4sst sich auf Igel zur\u00FCckfallen";
 				case SKIP:
 					return "muss aussetzen";
 				case PLAY_CARD:
@@ -453,9 +466,9 @@ public class GameUtil
 						case EAT_SALAD:
 							return "spielt 'Friss sofort einen Salat'";
 						case FALL_BACK:
-							return "spielt 'Falle eine Position zurück'";
+							return "spielt 'Falle eine Position zur\u00FCck'";
 						case HURRY_AHEAD:
-							return "spielt 'Rücke eine Position vor'";
+							return "spielt 'R\u00FCcke eine Position vor'";
 						default:
 							break;
 					}
