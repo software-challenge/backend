@@ -122,11 +122,14 @@ public class UpperInformationBar extends BackgroundPane
 	{
 		String res = playerName;
 
-		for (int i = 0; i < playerName.length(); i++)
+		if (playerName.length() > 25)
 		{
-			if (i == playerName.length() / 2)
+			for (int i = 0; i < playerName.length(); i++)
 			{
-				res = insertString(playerName, "<br>", i);
+				if (i == playerName.length() / 2)
+				{
+					res = insertString(playerName, "<br>", i);
+				}
 			}
 		}
 
