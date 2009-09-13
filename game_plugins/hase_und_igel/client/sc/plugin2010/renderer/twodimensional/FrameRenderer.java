@@ -491,19 +491,31 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			{
 				answers.add(dropCarrots);
 			}
+
 			boolean moveable = false;
-			for (int i = 0; i < 65; i++)
+
+			if (GameUtil.isValidToFallBack(board, player))
 			{
-				if (board.isMoveable(i, player))
+				moveable = true;
+			}
+			else
+			{
+				for (int i = 0; i < 65; i++)
 				{
-					moveable = true;
-					break;
+					if (GameUtil.isValidToMove(board, player, i
+							- player.getFieldNumber()))
+					{
+						moveable = true;
+						break;
+					}
 				}
 			}
+
 			if (moveable)
 			{
 				answers.add(moveForward);
 			}
+
 			askQuestion("<html>Was wollen Sie tun, " + color + " ?</html>",
 					answers, carrotAnswer);
 

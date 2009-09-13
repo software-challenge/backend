@@ -23,24 +23,24 @@ import sc.plugin2010.renderer.RendererUtil;
 public class UpperInformationBar extends BackgroundPane
 {
 
-	private final String	ROUNDCOUNT			= "Runde:";
-	private final String	TURNCOUNT			= "<html><h1>An der Reihe: </h1> </html> ";
-	private final String	PLAYER				= "<html><h1>Spieler:</h1></html>";
-	private final String	ENEMY				= "<html><h1>Gegner:</h1></html>";
+	private final String	ROUNDCOUNT	= "Runde:";
+	private final String	TURNCOUNT	= "<html>An der Reihe: </html> ";
+	private final String	PLAYER		= "<html><align='center'>Spieler 1: </align></html>";
+	private final String	ENEMY		= "<html><align='center'>Spieler 2: </align></html>";
 
-	private final JLabel	rounds				= new JLabel(ROUNDCOUNT);
-	private final JLabel	turn				= new JLabel(TURNCOUNT);
-	private final JLabel	player				= new JLabel(PLAYER);
-	private final JLabel	enemy				= new JLabel(ENEMY);
-	private final JLabel	turnicon			= new JLabel("");
+	private final JLabel	rounds		= new JLabel(ROUNDCOUNT);
+	private final JLabel	turn		= new JLabel(TURNCOUNT);
+	private final JLabel	player		= new JLabel(PLAYER);
+	private final JLabel	enemy		= new JLabel(ENEMY);
+	private final JLabel	turnicon	= new JLabel("");
 
-	private final String	FONTTYPE			= "New Courier";
-	private final int		SIZE				= 12;
+	private final String	FONTTYPE	= "New Courier";
+	private final int		SIZE		= 24;
 
-	private final Image		blue				= RendererUtil
-														.getImage("resource/game/blue.png");
-	private final Image		red					= RendererUtil
-														.getImage("resource/game/red.png");
+	private final Image		blue		= RendererUtil
+												.getImage("resource/game/blue.png");
+	private final Image		red			= RendererUtil
+												.getImage("resource/game/red.png");
 
 	public UpperInformationBar()
 	{
@@ -92,18 +92,51 @@ public class UpperInformationBar extends BackgroundPane
 
 	public void setPlayer(final String playerName)
 	{
-		player.setText("<html><h1>" + playerName + "</h1></html>");
+		setCommonPlayer(playerName, player);
 	}
 
 	public void setOtherPlayer(final String playerName)
 	{
-		enemy.setText("<html><h1>" + playerName + "</h1></html>");
+		setCommonPlayer(playerName, enemy);
+	}
+
+	private void setCommonPlayer(final String playerName, JLabel label)
+	{
+		label.setText("<html><align='center'>"
+				+ splitTooLongNames(playerName, 200) + "</align></html>");
+	}
+
+	private String insertString(String startString, String insertString,
+			int offset)
+	{
+		String res = startString;
+
+		String start = res.substring(0, offset);
+
+		String end = res.substring(offset);
+
+		return start + insertString + end;
+	}
+
+	private String splitTooLongNames(final String playerName, int maxWidth)
+	{
+		String res = playerName;
+
+		for (int i = 0; i < playerName.length(); i++)
+		{
+			if (i == playerName.length() / 2)
+			{
+				res = insertString(playerName, "<br>", i);
+			}
+		}
+
+		return res;
 	}
 
 	public void setRound(final int count)
 	{
-		rounds.setText("<html><h1>" + ROUNDCOUNT + " " + String.valueOf(count)
-				+ "</h1>" + "</html>");
+		rounds.setText("<html>" + ROUNDCOUNT + " " + String.valueOf(count)
+				+ "</html>");
 	}
 
 	public void setTurn(final String color)
