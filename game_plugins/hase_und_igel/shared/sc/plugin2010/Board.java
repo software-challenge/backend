@@ -159,8 +159,11 @@ public class Board
 	public final int nextFreeFieldFor(Player player, int off)
 	{
 		int offset = off;
-		while (!isMoveable(player.getFieldNumber() + offset, player))
+		Move m = new Move(MoveTyp.MOVE, player.getFieldNumber() + offset);
+		while(isValid(m, player)) {
 			offset++;
+			m = new Move(MoveTyp.MOVE, player.getFieldNumber() + offset);
+		}
 		return offset;
 	}
 
@@ -171,10 +174,12 @@ public class Board
 
 	/**
 	 * Überprüft ob man auf ein Feld mit <code>MoveTyp.MOVE</code> ziehen darf.
-	 * 
+	 * !!DEPRECATED!!
+	 * use <code>isValid</code> instead
 	 * @param pos
 	 * @return
 	 */
+	@Deprecated
 	public final boolean isMoveable(final int pos, Player p)
 	{
 		boolean moveable = !isOccupied(pos);
