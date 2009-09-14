@@ -140,7 +140,10 @@ public class ReplayDialog extends JDialog {
 			return;
 		}
 
-		ContextDisplay contextPanel = ((ContextDisplay) presFac.getContextDisplay());
+		final ContextDisplay contextPanel = ((ContextDisplay) presFac.getContextDisplay());
+
+		if (presFac.getLogicFacade().isGameActive())
+			contextPanel.cancelCurrentGame();
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
@@ -153,23 +156,24 @@ public class ReplayDialog extends JDialog {
 			observation.addNewTurnListener(contextPanel);
 			presFac.getLogicFacade().setObservation(observation);
 			contextPanel.updateButtonBar(false);
+
+			// add game specific info item in menu bar
+			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
+					.getDescription().name(), selPlugin.getVersion(), selPlugin
+					.getPlugin().getPluginImage(), selPlugin.getPlugin().getPluginIcon(),
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
+							.author(), selPlugin.getPlugin().getPluginYear());
+			// update status bar
+			((StatusBar) presFac.getStatusBar()).setStatus(lang
+					.getProperty("statusbar_status_currentreplay")
+					+ " " + HelperMethods.getFilenameWithoutFileExt(f.getName()));
+
 			this.dispose();
 		} catch (IOException e) {
 			// path check is done before, i.e. this exception should not happen
 			e.printStackTrace();
 			return;
 		}
-
-		// add game specific info item in menu bar
-		((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin.getDescription()
-				.name(), selPlugin.getVersion(), selPlugin.getPlugin().getPluginImage(),
-				selPlugin.getPlugin().getPluginIcon(), selPlugin.getPlugin()
-						.getPluginInfoText(), selPlugin.getDescription().author(),
-				selPlugin.getPlugin().getPluginYear());
-		// update status bar
-		((StatusBar) presFac.getStatusBar()).setStatus(lang
-				.getProperty("statusbar_status_currentreplay")
-				+ " " + HelperMethods.getFilenameWithoutFileExt(f.getName()));
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {

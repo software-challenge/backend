@@ -393,6 +393,9 @@ public class CreateGameDialog extends JDialog {
 
 		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
 
+		if (presFac.getLogicFacade().isGameActive())
+			contextPanel.cancelCurrentGame();
+
 		// start server
 		try {
 			presFac.getLogicFacade().startServer(port);

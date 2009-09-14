@@ -133,10 +133,6 @@ public class LogicFacade {
 	 * Cancels the observer and closes the server.
 	 */
 	public void stopServer() {
-		if (null != observation) {
-			observation.cancel();
-			observation = null;
-		}
 		if (server != null) {
 			server.close();
 			server = null;
