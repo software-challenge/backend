@@ -191,11 +191,13 @@ public class GamePlayTest
 
 		Thread.sleep(14);
 		
+		Assert.assertTrue(b.isValid(r1, red));
 		g.onAction(red, r1);
 		Assert.assertTrue(red.inGoal());
 
 		Thread.sleep(14);
 		
+		Assert.assertTrue(b.isValid(b1, blue));
 		g.onAction(blue, b1);
 		Assert.assertTrue(blue.inGoal());
 

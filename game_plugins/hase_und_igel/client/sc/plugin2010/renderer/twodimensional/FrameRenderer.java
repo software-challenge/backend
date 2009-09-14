@@ -500,7 +500,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 			else
 			{
-				for (int i = 0; i < 65; i++)
+				for (int i = player.getFieldNumber(); i < 65; i++)
 				{
 					if (GameUtil.isValidToMove(board, player, i
 							- player.getFieldNumber()))

@@ -57,8 +57,8 @@ public class GameUtil
 	 * betreten werden, wenn man noch Hasenkarten ausspielen kann
 	 * 
 	 * @param b
-	 * @param l
-	 * @param p
+	 * @param p		
+	 * @param l		relativer Abstand zur aktuellen Position des Spielers
 	 * @return
 	 */
 	public static boolean isValidToMove(Board b, Player p, int l)
