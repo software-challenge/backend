@@ -62,6 +62,7 @@ import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.save.GUIConfiguration;
 import sc.plugin.GUIPluginInstance;
 import sc.shared.GameResult;
+import sc.shared.PlayerScore;
 import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
@@ -220,7 +221,7 @@ public class TestRangeDialog extends JDialog {
 					if (prepareTest()) {
 						updateGUI(false);
 						// first game with first player at the first position
-						startTest();
+						startNewTest();
 					}
 				}
 			}
@@ -340,6 +341,8 @@ public class TestRangeDialog extends JDialog {
 			ScoreFragment column = statColumns.get(i);
 			model.addColumn(column.getName());
 		}
+		model.addColumn(lang.getProperty("dialog_test_stats_invalid"));
+		model.addColumn(lang.getProperty("dialog_test_stats_crashed"));
 
 		setTableHeaderRenderer(statTable);
 
@@ -369,6 +372,30 @@ public class TestRangeDialog extends JDialog {
 
 		// -------------------------------------------------------------
 
+		setPlayerRows(selPlugin);
+
+		// show table without extra space
+		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
+
+		// display
+		pnlTop.removeAll();
+		pnlTop.add(pnlPref);
+		for (int i = 0; i < txfclient.length; i++) {
+			pnlTop.add(pnlclient[i]);
+		}
+		pnlTop.add(new JScrollPane(statTable));
+		pnlTop.validate();
+		// pnlTop.invalidate();// TODO order?
+
+		System.out.println("UPDATE: test range dialog");
+	}
+
+	/**
+	 * Adds the necessary input components for each player.
+	 * 
+	 * @param selPlugin
+	 */
+	private void setPlayerRows(GUIPluginInstance selPlugin) {
 		int ki_count = selPlugin.getPlugin().getMinimalPlayerCount();
 
 		txfclient = new JTextField[ki_count];
@@ -401,23 +428,8 @@ public class TestRangeDialog extends JDialog {
 			// ------------------------------------------------
 			Vector<String> rowData = new Vector<String>(); // default
 			rowData.add(playerNumber); // set position#
-			model.addRow(rowData);
+			((DefaultTableModel) statTable.getModel()).addRow(rowData);
 		}
-
-		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable.getPreferredSize());
-
-		// display
-		pnlTop.removeAll();
-		pnlTop.add(pnlPref);
-		for (int i = 0; i < txfclient.length; i++) {
-			pnlTop.add(pnlclient[i]);
-		}
-		pnlTop.add(new JScrollPane(statTable));
-		pnlTop.validate();
-		// pnlTop.invalidate();// TODO order?
-
-		System.out.println("UPDATE: test range dialog");
 	}
 
 	/**
@@ -480,7 +492,7 @@ public class TestRangeDialog extends JDialog {
 			// without file ext and with a number
 			name = HelperMethods.getFilenameWithoutFileExt(name) + " " + (i + 1);
 			model.setValueAt(name, i, 1);
-			for (int j = 0; j < selPlugin.getScoreDefinition().size(); j++) {
+			for (int j = 0; j < selPlugin.getScoreDefinition().size() + 2; j++) {
 				model.setValueAt(BigDecimal.ZERO, i, 2 + j); // set default 0
 			}
 		}
@@ -513,7 +525,7 @@ public class TestRangeDialog extends JDialog {
 	 * 
 	 * @param ascending
 	 */
-	protected void startTest() {
+	protected void startNewTest() {
 
 		final ConnectingDialog connectionDialog = new ConnectingDialog();
 
@@ -644,9 +656,9 @@ public class TestRangeDialog extends JDialog {
 
 				// start new test if number of tests is not still reached
 				if (curTest < numTest) {
-					// FIXME: Recursive Execution of Tests might be REALLY bad
+					// FIXME: "Recursive" Execution of Tests might be REALLY bad
 					// for big N
-					startTest();
+					startNewTest();
 				} else {
 					finishTest();
 				}
@@ -727,8 +739,9 @@ public class TestRangeDialog extends JDialog {
 		// display wins/losses etc.
 		for (int i = 0; i < result.getScores().size(); i++) {
 			int statRow = Math.abs(rotation - i);
+			PlayerScore curPlayer = result.getScores().get(i);
 
-			List<BigDecimal> stats = result.getScores().get(i).getValues();
+			List<BigDecimal> stats = curPlayer.getValues();
 			for (int j = 0; j < stats.size(); j++) {
 				BigDecimal newStat = stats.get(j);
 				BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
@@ -753,6 +766,28 @@ public class TestRangeDialog extends JDialog {
 				}
 				// set to model
 				model.setValueAt(newStat, statRow, j + 2);
+			}
+
+			// display invalid, crashed
+			switch (curPlayer.getCause()) {
+			case LEFT:
+				break;
+			case REGULAR:
+				break;
+			case RULE_VIOLATION:
+				int invalidCol = model.getRowCount() - 2;
+				int oldValue = Integer.parseInt((String) model.getValueAt(statRow,
+						invalidCol));
+				model.setValueAt(oldValue + 1, statRow, invalidCol);
+				break;
+			case UNKNOWN:
+				int crashedCol = model.getRowCount() - 1;
+				oldValue = Integer.parseInt((String) model
+						.getValueAt(statRow, crashedCol));
+				model.setValueAt(oldValue + 1, statRow, crashedCol);
+				break;
+			default:
+				System.out.println("ERROR: Unknown game cause.");
 			}
 		}
 	}
