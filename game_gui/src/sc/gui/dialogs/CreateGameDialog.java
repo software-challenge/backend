@@ -38,6 +38,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
+import sc.IGUIApplication;
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
 import sc.gui.ContextDisplay;
@@ -77,6 +78,7 @@ public class CreateGameDialog extends JDialog {
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
+	private final IGUIApplication root;
 
 	private JPanel pnlTable;
 	private JPanel pnlButtons;
@@ -96,13 +98,16 @@ public class CreateGameDialog extends JDialog {
 	/**
 	 * Constructor
 	 * 
+	 * @param root
+	 * 
 	 * @param frame
 	 */
-	public CreateGameDialog() {
+	public CreateGameDialog(final IGUIApplication root) {
 		super();
 
 		presFac = PresentationFacade.getInstance();
 		lang = presFac.getLogicFacade().getLanguageData();
+		this.root = root;
 		createGUI();
 	}
 
@@ -469,6 +474,8 @@ public class CreateGameDialog extends JDialog {
 					+ selPlugin.getDescription().name());
 			// enable speed bar
 			// contextPanel.enableSpeedBar(true); //TODO
+			// set minimum size
+			root.setMinimumGameSize(selPlugin.getPlugin().getMinimumSize());
 			// close dialog
 			closeDialog();
 		}

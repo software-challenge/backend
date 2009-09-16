@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 
+import sc.IGUIApplication;
 import sc.common.HelperMethods;
 import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
@@ -37,14 +38,17 @@ public class ReplayDialog extends JDialog {
 
 	private final Properties lang;
 	private final PresentationFacade presFac;
+	private final IGUIApplication root;
+	
 	private List<GUIPluginInstance> plugins;
 	private JComboBox cmbGameType;
 	private JTextField txfReplay;
 
-	public ReplayDialog() {
+	public ReplayDialog(final IGUIApplication root) {
 		super();
 		this.presFac = PresentationFacade.getInstance();
 		this.lang = presFac.getLogicFacade().getLanguageData();
+		this.root = root;
 		createGUI();
 	}
 
@@ -167,6 +171,8 @@ public class ReplayDialog extends JDialog {
 			((StatusBar) presFac.getStatusBar()).setStatus(lang
 					.getProperty("statusbar_status_currentreplay")
 					+ " " + HelperMethods.getFilenameWithoutFileExt(f.getName()));
+			// set minimum size
+			root.setMinimumGameSize(selPlugin.getPlugin().getMinimumSize());
 
 			this.dispose();
 		} catch (IOException e) {

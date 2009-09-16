@@ -167,4 +167,9 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		}
 	}
 
+	@Override
+	public void setMinimumGameSize(Dimension dim) {
+		this.setMinimumSize(dim);
+	}
+
 }

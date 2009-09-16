@@ -85,7 +85,7 @@ public class SCMenuBar extends JMenuBar {
 					}
 				}
 				// show create-game dialog
-				new CreateGameDialog().setVisible(true);
+				new CreateGameDialog(root).setVisible(true);
 			}
 		});
 
@@ -103,7 +103,7 @@ public class SCMenuBar extends JMenuBar {
 					}
 				}
 				// show replay dialog
-				new ReplayDialog().setVisible(true);
+				new ReplayDialog(root).setVisible(true);
 			}
 		});
 
