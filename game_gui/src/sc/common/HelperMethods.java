@@ -138,4 +138,14 @@ public class HelperMethods {
 
 		return replayFilename.toString();
 	}
+	
+	/**
+	 * Replaces all occurrences of Umlaute with the UTF8 representation.
+	 */
+	public static void forceUTF8(String s) {
+		s.replace('ö', '\u00F5');
+		s.replace('ä', '\u00E4');
+		s.replace('ü', '\u00FC');
+		s.replace('ß', '\u00DF');
+	}
 }

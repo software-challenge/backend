@@ -421,6 +421,7 @@ public class CreateGameDialog extends JDialog {
 				.getRowCount());
 		for (int i = 0; i < model.getRowCount(); i++) {
 			String playerName = (String) model.getValueAt(i, 1);
+			HelperMethods.forceUTF8(playerName);
 			int index = extractIndex((String) model.getValueAt(i, 2));
 			descriptors.add(new SlotDescriptor(playerName, index != 0
 					&& !ckbDebug.isSelected(), index != 0));
