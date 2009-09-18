@@ -1,10 +1,13 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -34,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -104,6 +108,8 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlBottomRight;
 	private JPanel pnlBottomLeft;
 	private JCheckBox cb_showLog;
+	private JPanel pnl_saveReplay;
+	private JPanel pnlBottomTop;
 
 	public TestRangeDialog() {
 		super();
@@ -209,44 +215,26 @@ public class TestRangeDialog extends JDialog {
 				GUIConfiguration.instance().setShowTestLog(cb_showLog.isSelected());
 			}
 		});
+		JPanel pnl_showLogLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		pnl_showLogLeft.add(cb_showLog);
 
-		testStart = new JButton(lang.getProperty("dialog_test_btn_start"));
-		testStart.addActionListener(new ActionListener() {
+		createButtonsAtBottom();
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (isTesting()) { // testing
-					cancelTest();
-				} else {
-					if (prepareTest()) {
-						updateGUI(false);
-						// first game with first player at the first position
-						startNewTest();
-					}
-				}
-			}
-		});
-
-		testCancel = new JButton(lang.getProperty("dialog_test_btn_cancel"));
-		testCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelTestAndSave();
-				TestRangeDialog.this.setVisible(false);
-				TestRangeDialog.this.dispose();
-			}
-		});
-
-		pnlBottomLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		pnlBottomLeft.add(cb_showLog);
+		createSaveReplayCheckboxGroup();
+		// -------------------------------------------
+		pnlBottomTop = new JPanel(new GridLayout(0, 2));
+		pnlBottomTop.add(pnl_showLogLeft);
+		//pnlBottomTop.add(pnl_saveReplay);
 
 		pnlBottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pnlBottomRight.add(testStart);
 		pnlBottomRight.add(testCancel);
 
-		pnlBottom = new JPanel(new BorderLayout());
-		pnlBottom.add(pnlBottomLeft, BorderLayout.LINE_START);
-		pnlBottom.add(pnlBottomRight, BorderLayout.LINE_END);
+		pnlBottom = new JPanel();
+		setVerticalFlowLayout(pnlBottom);
+		pnlBottom.add(pnlBottomTop);
+		pnlBottom.add(new JSeparator());
+		pnlBottom.add(pnlBottomRight);
 		// -------------------------------------------
 		pnlCenter = new JPanel();
 		pnlCenter.setBorder(BorderFactory.createEtchedBorder());
@@ -275,6 +263,86 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				cancelTestAndSave();
+			}
+		});
+	}
+
+	private void createSaveReplayCheckboxGroup() {
+		pnl_saveReplay = new JPanel();
+		setVerticalFlowLayout(pnl_saveReplay);
+
+		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JLabel lbl_saveReplay = new JLabel(lang.getProperty("dialog_test_lbl_saveReplay"));
+		pnl_saveReplayLeft.add(lbl_saveReplay);
+
+		JPanel pnl_ckbGroup = new JPanel(new GridLayout(0, 1));
+		pnl_ckbGroup.setBorder(BorderFactory.createLineBorder(Color.black));
+
+		final JCheckBox ckb_errorGames = new JCheckBox(lang
+				.getProperty("dialog_test_ckb_error"));
+		ckb_errorGames.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIConfiguration.instance()
+						.setSaveErrorGames(ckb_errorGames.isSelected());
+			}
+		});
+		final JCheckBox ckb_lostGames = new JCheckBox(lang
+				.getProperty("dialog_test_ckb_lost"));
+		ckb_lostGames.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIConfiguration.instance().setSaveLostGames(ckb_lostGames.isSelected());
+			}
+		});
+		final JCheckBox ckb_wonGames = new JCheckBox(lang
+				.getProperty("dialog_test_ckb_won"));
+		ckb_wonGames.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GUIConfiguration.instance().setSaveWonGames(ckb_wonGames.isSelected());
+			}
+		});
+
+		pnl_ckbGroup.add(ckb_errorGames);
+		pnl_ckbGroup.add(ckb_lostGames);
+		pnl_ckbGroup.add(ckb_wonGames);
+
+		pnl_saveReplay.add(pnl_saveReplayLeft);
+		pnl_saveReplay.add(pnl_ckbGroup);
+	}
+
+	private void setVerticalFlowLayout(Container target) {
+		target.setLayout(new BoxLayout(target, BoxLayout.PAGE_AXIS));
+	}
+
+	/**
+	 * Creates the test and cancel button.
+	 */
+	private void createButtonsAtBottom() {
+		testStart = new JButton(lang.getProperty("dialog_test_btn_start"));
+		testStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (isTesting()) { // testing
+					cancelTest();
+				} else {
+					if (prepareTest()) {
+						updateGUI(false);
+						// first game with first player at the first position
+						startNewTest();
+					}
+				}
+			}
+		});
+
+		testCancel = new JButton(lang.getProperty("dialog_test_btn_cancel"));
+		testCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelTestAndSave();
+				TestRangeDialog.this.setVisible(false);
+				TestRangeDialog.this.dispose();
 			}
 		});
 	}
@@ -631,7 +699,7 @@ public class TestRangeDialog extends JDialog {
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void gameEnded(GameResult result, String gameResultString) {
-				if (null == result) // happens after a cancel
+				if (null == result) // happens after a game has been cancel
 					return;
 
 				addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + "/"
@@ -641,10 +709,24 @@ public class TestRangeDialog extends JDialog {
 				updateStatistics(rotation, result);
 				// update progress bar
 				progressBar.setValue(progressBar.getValue() + 1);
-				// create replay file if this game ended with a failure
-				if (!result.isRegular()) {
-					String replayFilename = HelperMethods
+
+				// create replay file name
+				String replayFilename = null;
+				if (!result.isRegular() && GUIConfiguration.instance().saveErrorGames()) {
+					replayFilename = HelperMethods
 							.generateReplayFilename(slotDescriptors);
+				} else if (result.isRegular()) {
+					/*switch (result.getScores().get(rotation).getCause()) {
+					case WON:
+						break;
+					case LOST:
+						break;
+					default:
+						break;
+					}*/
+				}
+				// save replay if it should be saved
+				if (replayFilename != null) {
 					try {
 						obs.saveReplayToFile(replayFilename);
 						addLogMessage(lang.getProperty("dialog_test_log_replay"));

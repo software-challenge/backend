@@ -41,6 +41,10 @@ public class GUIConfiguration implements Serializable {
 
 	private boolean showLog;
 
+	private boolean saveErrorGames;
+	private boolean saveLostGames;
+	private boolean saveWonGames;
+
 	private final static GUIConfiguration instance;
 
 	static {
@@ -59,6 +63,9 @@ public class GUIConfiguration implements Serializable {
 		this.speedValue = 100;
 		this.suppressWarnMsg = false;
 		this.showLog = true;
+		this.saveErrorGames = true;
+		this.saveLostGames = false;
+		this.saveWonGames = false;
 	}
 
 	public static GUIConfiguration instance() {
@@ -215,6 +222,30 @@ public class GUIConfiguration implements Serializable {
 
 	public boolean showTestLog() {
 		return showLog;
+	}
+
+	public void setSaveErrorGames(boolean selected) {
+		this.saveErrorGames = selected;
+	}
+	
+	public boolean saveErrorGames() {
+		return saveErrorGames;
+	}
+
+	public void setSaveLostGames(boolean selected) {
+		this.saveLostGames = selected;
+	}
+	
+	public boolean saveLostGames() {
+		return saveLostGames;
+	}
+
+	public void setSaveWonGames(boolean selected) {
+		this.saveWonGames = selected;
+	}
+	
+	public boolean saveWonGames() {
+		return saveWonGames;
 	}
 
 }
