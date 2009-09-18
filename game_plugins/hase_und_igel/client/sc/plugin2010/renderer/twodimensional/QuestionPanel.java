@@ -122,6 +122,8 @@ public class QuestionPanel extends BackgroundPane
 		setBackground(totalBackgroundImg);
 
 		this.type = type;
+
+		this.repaint();
 	}
 
 	public void hideComponents()

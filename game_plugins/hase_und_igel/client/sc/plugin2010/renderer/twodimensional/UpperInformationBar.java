@@ -25,8 +25,8 @@ public class UpperInformationBar extends BackgroundPane
 
 	private final String	ROUNDCOUNT	= "Runde:";
 	private final String	TURNCOUNT	= "<html>An der Reihe: </html> ";
-	private final String	PLAYER		= "<html><align='center'>Spieler 1: </align></html>";
-	private final String	ENEMY		= "<html><align='center'>Spieler 2: </align></html>";
+	private final String	PLAYER		= "<html>Spieler 1</html>";
+	private final String	ENEMY		= "<html>Spieler 2</html>";
 
 	private final JLabel	rounds		= new JLabel(ROUNDCOUNT);
 	private final JLabel	turn		= new JLabel(TURNCOUNT);
@@ -35,7 +35,7 @@ public class UpperInformationBar extends BackgroundPane
 	private final JLabel	turnicon	= new JLabel("");
 
 	private final String	FONTTYPE	= "New Courier";
-	private final int		SIZE		= 24;
+	private final int		SIZE		= 22;
 
 	private final Image		blue		= RendererUtil
 												.getImage("resource/game/blue.png");
@@ -102,8 +102,9 @@ public class UpperInformationBar extends BackgroundPane
 
 	private void setCommonPlayer(final String playerName, JLabel label)
 	{
-		label.setText("<html><align='center'>"
-				+ splitTooLongNames(playerName, 200) + "</align></html>");
+		label
+				.setText("<html>" + splitTooLongNames(playerName, 200)
+						+ "</html>");
 	}
 
 	private String insertString(String startString, String insertString,

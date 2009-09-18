@@ -106,7 +106,8 @@ public class UpperInformationBarLayout implements LayoutManager
 				case 0:
 					if (leftFreeSpace < 30)
 					{
-						c.setPreferredSize(new Dimension(300, 80)); // TODO set
+						// c.setPreferredSize(new Dimension(250, 80)); // TODO
+						// set
 						// right
 						// width
 					}
@@ -123,7 +124,8 @@ public class UpperInformationBarLayout implements LayoutManager
 				case 4:
 					if (rightFreeSpace < 30)
 					{
-						c.setPreferredSize(new Dimension(300, 80)); // TODO set
+						// c.setPreferredSize(new Dimension(250, 80)); // TODO
+						// set
 						// right
 						// width
 					}

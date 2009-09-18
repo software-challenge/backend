@@ -125,8 +125,17 @@ public class GUIPluginFacade implements IGuiPlugin
 	public Dimension getMinimumSize()
 	{
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-		screen.height = (int) Math.round(0.7 * screen.height);
-		screen.width = (int) Math.round(0.7 * screen.width);
+
+		if (screen.width > 1024)
+		{
+			screen.width = 1024;
+		}
+
+		if (screen.height > 768)
+		{
+			screen.height = 768;
+		}
+
 		return screen;
 	}
 
