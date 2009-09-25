@@ -26,11 +26,11 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Client extends XStreamClient
 {
-	private boolean					zombie			= false;
-	private Set<IClientListener>	clientListeners	= new HashSet<IClientListener>();
-	private Collection<IClientRole>	roles			= new LinkedList<IClientRole>();
-	private static Logger			logger			= LoggerFactory
-															.getLogger(Client.class);
+	private boolean							zombie			= false;
+	private final Set<IClientListener>		clientListeners	= new HashSet<IClientListener>();
+	private final Collection<IClientRole>	roles			= new LinkedList<IClientRole>();
+	private static final Logger				logger			= LoggerFactory
+																	.getLogger(Client.class);
 
 	public Client(INetworkInterface networkInterface, XStream configuredXStream)
 			throws IOException

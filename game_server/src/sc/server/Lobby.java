@@ -33,10 +33,10 @@ import sc.server.network.PacketCallback;
  */
 public class Lobby implements IClientManagerListener, IClientListener
 {
-	private Logger			logger			= LoggerFactory
-													.getLogger(Lobby.class);
-	private GameRoomManager	gameManager		= new GameRoomManager();
-	private ClientManager	clientManager	= new ClientManager();
+	private final Logger			logger			= LoggerFactory
+															.getLogger(Lobby.class);
+	private final GameRoomManager	gameManager		= new GameRoomManager();
+	private final ClientManager		clientManager	= new ClientManager();
 
 	public Lobby()
 	{
@@ -59,6 +59,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onClientDisconnected(Client source)
 	{
+		source.removeClientListener(this);
 		this.logger.info("{} disconnected.", source);
 	}
 
@@ -80,8 +81,8 @@ public class Lobby implements IClientManagerListener, IClientListener
 			}
 			else if (packet instanceof JoinRoomRequest)
 			{
-				this.gameManager.joinOrCreateGame(source, ((JoinRoomRequest) packet)
-						.getGameType());
+				this.gameManager.joinOrCreateGame(source,
+						((JoinRoomRequest) packet).getGameType());
 			}
 			else if (packet instanceof AuthenticateRequest)
 			{
@@ -91,12 +92,13 @@ public class Lobby implements IClientManagerListener, IClientListener
 			else if (packet instanceof PrepareGameRequest)
 			{
 				PrepareGameRequest prepared = (PrepareGameRequest) packet;
-				source.send(this.gameManager.prepareGame(prepared.getGameType(),
-						prepared.getPlayerCount(), prepared.getSlotDescriptors()));
+				source.send(this.gameManager.prepareGame(
+						prepared.getGameType(), prepared.getPlayerCount(),
+						prepared.getSlotDescriptors()));
 			}
 			else if (packet instanceof FreeReservationRequest)
 			{
-				FreeReservationRequest request = (FreeReservationRequest)packet;
+				FreeReservationRequest request = (FreeReservationRequest) packet;
 				ReservationManager.freeReservation(request.getReservation());
 			}
 			else if (packet instanceof RoomPacket)

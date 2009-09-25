@@ -2,8 +2,8 @@ package sc.server.network;
 
 public class PacketCallback
 {
-	private Object	packet;
-	private boolean	processed	= false;
+	private final Object	packet;
+	private boolean			processed	= false;
 
 	public PacketCallback(Object packet)
 	{
