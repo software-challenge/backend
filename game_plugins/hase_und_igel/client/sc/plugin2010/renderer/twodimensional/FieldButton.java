@@ -40,7 +40,7 @@ public class FieldButton extends JButton
 	private boolean					occupied	= false;
 	private FieldTyp				type;
 
-	private Color					turn;
+	private Color					turn		= Color.RED;
 
 	public FieldButton(final String imagefile, final int fieldNumber,
 			final FieldTyp type, final IClickObserver obs)
