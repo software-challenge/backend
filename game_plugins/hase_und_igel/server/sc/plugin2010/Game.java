@@ -29,24 +29,24 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * @since Jul 4, 2009
  * 
  */
-@XStreamAlias(value="hui:game")
+@XStreamAlias(value = "hui:game")
 public class Game extends RoundBasedGameInstance<Player>
 {
-	private static Logger		logger			= LoggerFactory
-														.getLogger(Game.class);
+	private static Logger			logger			= LoggerFactory
+															.getLogger(Game.class);
 
 	@XStreamOmitField
-	private List<FigureColor>	availableColors	= new LinkedList<FigureColor>();
-	
+	private List<FigureColor>		availableColors	= new LinkedList<FigureColor>();
+
 	@XStreamOmitField
-	private boolean				oneLastMove		= false;
-	
-	private Board				board			= Board.create();
-	
+	private boolean					oneLastMove		= false;
+
+	private Board					board			= Board.create();
+
 	// Zugzeit berechnung für Score
 	protected transient long		time_start;
-	protected transient BigInteger 	sum_red = BigInteger.ZERO;
-	protected transient BigInteger	sum_blue = BigInteger.ZERO;
+	protected transient BigInteger	sum_red			= BigInteger.ZERO;
+	protected transient BigInteger	sum_blue		= BigInteger.ZERO;
 
 	public Board getBoard()
 	{
@@ -63,10 +63,11 @@ public class Game extends RoundBasedGameInstance<Player>
 		availableColors.addAll(Arrays.asList(FigureColor.values()));
 	}
 
-	public boolean hasLastMove() {
+	public boolean hasLastMove()
+	{
 		return oneLastMove;
 	}
-	
+
 	@Override
 	protected boolean checkGameOverCondition()
 	{
@@ -90,16 +91,24 @@ public class Game extends RoundBasedGameInstance<Player>
 			throws RescueableClientException
 	{
 		final Player author = (Player) fromPlayer;
+
+		// FIXME validate with move schema AND throw a specific exception
+		// FIXME validate with game rules AND throw a specific exception
+
 		if (data instanceof Move)
 		{
 			oneLastMove = false;
 			final Move move = (Move) data;
 
 			if (author.getColor().equals(FigureColor.BLUE))
-				sum_blue = sum_blue.add(BigInteger.valueOf(System.currentTimeMillis() - time_start));
+				sum_blue = sum_blue.add(BigInteger.valueOf(System
+						.currentTimeMillis()
+						- time_start));
 			else
-				sum_red = sum_red.add(BigInteger.valueOf(System.currentTimeMillis() - time_start));
-			
+				sum_red = sum_red.add(BigInteger.valueOf(System
+						.currentTimeMillis()
+						- time_start));
+
 			if (board.isValid(move, author))
 			{
 				update(move, author);
@@ -108,7 +117,7 @@ public class Game extends RoundBasedGameInstance<Player>
 			else
 			{
 				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
-				for (final Player p : players) 
+				for (final Player p : players)
 					res.put(p, getScoreFor(p));
 
 				notifyOnGameOver(res);
@@ -198,7 +207,8 @@ public class Game extends RoundBasedGameInstance<Player>
 				{
 					case FALL_BACK:
 					case HURRY_AHEAD:
-						if (board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT))
+						if (board.getTypeAt(player.getFieldNumber()).equals(
+								FieldTyp.RABBIT))
 							player.setMustPlayCard(true);
 						break;
 				}
@@ -207,7 +217,8 @@ public class Game extends RoundBasedGameInstance<Player>
 			case MOVE:
 			case FALL_BACK:
 			{
-				if (board.getTypeAt(player.getFieldNumber()).equals(FieldTyp.RABBIT))
+				if (board.getTypeAt(player.getFieldNumber()).equals(
+						FieldTyp.RABBIT))
 					player.setMustPlayCard(true);
 				break;
 			}
@@ -247,17 +258,19 @@ public class Game extends RoundBasedGameInstance<Player>
 					case MOVE:
 						// Auf ein Hasenfeld gezogen: gleicher Spieler nochmal
 						break;
-					
+
 					case PLAY_CARD:
-						switch (lastMove.getCard()) {
+						switch (lastMove.getCard())
+						{
 							case EAT_SALAD:
 							case TAKE_OR_DROP_CARROTS:
 								activePlayerId = (activePlayerId + 1)
-									% this.players.size();
+										% this.players.size();
 								break;
 							case FALL_BACK:
 							case HURRY_AHEAD:
-								// Durch eine Hasenkarte auf ein Hasenfeld gekommen:
+								// Durch eine Hasenkarte auf ein Hasenfeld
+								// gekommen:
 								// gleicher Spieler nochmal
 								break;
 						}
@@ -328,18 +341,25 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void onNewTurn()
 	{
-		
+
 	}
-	
+
 	@Override
 	protected PlayerScore getScoreFor(Player p)
 	{
 		long avg_time = 0;
-		if (p.getColor().equals(FigureColor.BLUE)) {
-			sum_blue  = sum_blue.divide(BigInteger.valueOf(p.getHistory().size() > 0 ? p.getHistory().size() : 1));
+		if (p.getColor().equals(FigureColor.BLUE))
+		{
+			sum_blue = sum_blue.divide(BigInteger
+					.valueOf(p.getHistory().size() > 0 ? p.getHistory().size()
+							: 1));
 			avg_time = sum_blue.longValue();
-		} else {
-			sum_red = sum_red.divide(BigInteger.valueOf(p.getHistory().size() > 0 ? p.getHistory().size() : 1));
+		}
+		else
+		{
+			sum_red = sum_red.divide(BigInteger
+					.valueOf(p.getHistory().size() > 0 ? p.getHistory().size()
+							: 1));
 			avg_time = sum_red.longValue();
 		}
 		return p.getScore((int) avg_time);
