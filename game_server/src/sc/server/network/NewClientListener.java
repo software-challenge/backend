@@ -4,9 +4,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -21,47 +18,11 @@ public class NewClientListener implements Runnable, Closeable
 {
 	protected static final Logger		logger			= LoggerFactory
 																.getLogger(NewClientListener.class);
-	/**
-	 * @deprecated by chw
-	 */
-	private final Object				newClientLock	= new Object();
-	/**
-	 * @deprecated by chw
-	 */
-	private final Queue<Client>			newClients		= new LinkedList<Client>();
 
 	private final BlockingQueue<Client>	queue			= new LinkedBlockingQueue<Client>();
 	private ServerSocket				serverSocket	= null;
 
 	public static int					lastUsedPort	= 0;
-
-	/**
-	 * @deprecated by chw
-	 * @return
-	 */
-	public Collection<Client> fetchNewClients()
-	{
-		Collection<Client> result = new LinkedList<Client>();
-
-		synchronized (this.newClientLock)
-		{
-			for (int i = 0; i < 10; i++)
-			{
-				Client c = this.newClients.poll();
-
-				if (c != null)
-				{
-					result.add(c);
-				}
-				else
-				{
-					break;
-				}
-			}
-		}
-
-		return result;
-	}
 
 	/**
 	 * Returns a new connected client, if a new one is available. Otherwise this
@@ -86,12 +47,6 @@ public class NewClientListener implements Runnable, Closeable
 
 			Client newClient = new Client(new TcpNetwork(clientSocket),
 					Configuration.getXStream());
-
-			/*
-			 * synchronized (this.newClientLock) {
-			 * this.newClients.add(newClient);
-			 * logger.info("Added Client to ReadyQueue."); }
-			 */
 
 			try
 			{

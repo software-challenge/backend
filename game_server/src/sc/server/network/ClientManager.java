@@ -45,18 +45,6 @@ public class ClientManager implements Runnable
 		}
 	}
 
-	/**
-	 * @deprecated by chw
-	 * @param newClients
-	 */
-	public void addAll(Collection<Client> newClients)
-	{
-		for (Client client : newClients)
-		{
-			this.add(client);
-		}
-	}
-
 	@Override
 	public void run()
 	{
@@ -66,18 +54,6 @@ public class ClientManager implements Runnable
 
 		while (this.running && !Thread.interrupted())
 		{
-			/*
-			 * Collection<Client> clients =
-			 * this.clientListener.fetchNewClients();
-			 * 
-			 * if (!clients.isEmpty()) {
-			 * logger.info("Delegating new clients to ClientManager.");
-			 * this.addAll(clients); }
-			 * 
-			 * try { Thread.sleep(1); } catch (InterruptedException e) { //
-			 * Interrupts are not critical at this point }
-			 */
-
 			try
 			{
 				Client client = this.clientListener.fetchNewSingleClient();
@@ -89,7 +65,7 @@ public class ClientManager implements Runnable
 			catch (InterruptedException e)
 			{
 				logger.error("Interrupted while waiting for a new client.", e);
-				//TODO should it be handled?
+				// TODO should it be handled?
 			}
 
 		}
