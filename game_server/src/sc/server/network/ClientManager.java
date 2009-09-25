@@ -16,18 +16,25 @@ import sc.server.ServiceManager;
  */
 public class ClientManager implements Runnable
 {
-	private static Logger					logger			= LoggerFactory
+	private static final Logger					logger		= LoggerFactory
 																	.getLogger(ClientManager.class);
-	protected Collection<Client>			clients			= new LinkedList<Client>();
-	private NewClientListener				clientListener	= new NewClientListener();
-	private List<IClientManagerListener>	listeners		= new LinkedList<IClientManagerListener>();
-	private boolean							running			= false;
+	protected final Collection<Client>			clients		= new LinkedList<Client>();
+	private final NewClientListener				clientListener;
+	private final List<IClientManagerListener>	listeners	= new LinkedList<IClientManagerListener>();
+	private boolean								running		= false;
 
 	public ClientManager()
 	{
 		this.clientListener = new NewClientListener();
 	}
 
+	/**
+	 * Adds the given <code>newClient</code> and notifies all listeners by
+	 * invoking <code>onClientConnected</code>.<br>
+	 * <i>(only used by tests and addAll())</i>
+	 * 
+	 * @param newClient
+	 */
 	public void add(Client newClient)
 	{
 		this.clients.add(newClient);
@@ -38,6 +45,10 @@ public class ClientManager implements Runnable
 		}
 	}
 
+	/**
+	 * @deprecated by chw
+	 * @param newClients
+	 */
 	public void addAll(Collection<Client> newClients)
 	{
 		for (Client client : newClients)
@@ -55,24 +66,35 @@ public class ClientManager implements Runnable
 
 		while (this.running && !Thread.interrupted())
 		{
-			Collection<Client> clients = this.clientListener.fetchNewClients();
-
-			if (!clients.isEmpty())
-			{
-				logger.info("Delegating new clients to ClientManager.");
-				this.addAll(clients);
-			}
+			/*
+			 * Collection<Client> clients =
+			 * this.clientListener.fetchNewClients();
+			 * 
+			 * if (!clients.isEmpty()) {
+			 * logger.info("Delegating new clients to ClientManager.");
+			 * this.addAll(clients); }
+			 * 
+			 * try { Thread.sleep(1); } catch (InterruptedException e) { //
+			 * Interrupts are not critical at this point }
+			 */
 
 			try
 			{
-				Thread.sleep(1);
+				Client client = this.clientListener.fetchNewSingleClient();
+
+				logger.info("Delegating new client to ClientManager...");
+				this.add(client);
+				logger.info("Delegation done.");
 			}
 			catch (InterruptedException e)
 			{
-				// Interrupts are not critical at this point
+				logger.error("Interrupted while waiting for a new client.", e);
+				//TODO should it be handled?
 			}
+
 		}
 
+		logger.info("ClientManager closed.");
 	}
 
 	/**
