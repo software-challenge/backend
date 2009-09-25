@@ -14,6 +14,7 @@ public final class Application
 {
 	private static final Logger	logger	= LoggerFactory
 												.getLogger(Application.class);
+	private static final Object	waitObj	= new Object();
 
 	public static void main(String[] params) throws IOException,
 			InterruptedException, IllegalOptionValueException,
@@ -32,9 +33,9 @@ public final class Application
 		long end = System.currentTimeMillis();
 		logger.info("Server has been initialized in {} ms.", end - start);
 
-		while (!Thread.interrupted() && !ServiceManager.isEmpty())
+		synchronized (waitObj)
 		{
-			Thread.sleep(50);
+			waitObj.wait();
 		}
 	}
 
@@ -66,12 +67,12 @@ public final class Application
 
 		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
-		
-		if(debugMode)
+
+		if (debugMode)
 		{
 			logger.info("Running in DebugMode now.");
-		}		
-		
+		}
+
 		if (path != null)
 		{
 			File f = new File(path);
@@ -99,9 +100,13 @@ public final class Application
 				@Override
 				public void run()
 				{
-					logger.info("Shutting down...");
 					ServiceManager.killAll();
-					logger.info("Exiting");
+					// continues the main-method of this class
+					synchronized (waitObj)
+					{
+						waitObj.notify();
+						logger.info("Exiting application...");
+					}
 				}
 			});
 
