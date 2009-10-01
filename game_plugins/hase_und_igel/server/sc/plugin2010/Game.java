@@ -1,10 +1,13 @@
 package sc.plugin2010;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +17,7 @@ import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -46,6 +50,10 @@ public class Game extends RoundBasedGameInstance<Player>
 	protected transient long		time_start;
 	protected transient BigInteger	sum_red			= BigInteger.ZERO;
 	protected transient BigInteger	sum_blue		= BigInteger.ZERO;
+	
+	public static final int WIN_SCORE = 1;
+	public static final int LOSE_SCORE = 0;
+	public static final int DRAW_SCORE = 1;
 
 	public Board getBoard()
 	{
@@ -307,11 +315,23 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
-		HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
-		for (final Player p : players)
-			res.put(p, getScoreFor(p));
+		Map<IPlayer, PlayerScore> res = generateScoreMap();
+		
+		for (Entry<IPlayer, PlayerScore> entry : res.entrySet())
+		{
+			PlayerScore score = entry.getValue();
 
-		players.remove(player);
+			if (entry.getKey() == player)
+			{
+				score.setCause(ScoreCause.LEFT);
+				score.setValueAt(0, new BigDecimal(0));
+			}
+			else
+			{
+				score.setValueAt(0, new BigDecimal(+1));
+			}
+		}
+		
 		notifyOnGameOver(res);
 	}
 

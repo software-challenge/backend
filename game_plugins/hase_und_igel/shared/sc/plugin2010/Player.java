@@ -46,9 +46,9 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	@XStreamOmitField
 	private boolean			mustPlayCard;
-	
-	public static final int		SALADS_TO_EAT		= 5;
-	public static final	int 	INITIAL_CARROTS 	= 68;
+
+	public static final int	SALADS_TO_EAT	= 5;
+	public static final int	INITIAL_CARROTS	= 68;
 
 	// FIXME: shouldn't be a property of a DAO that
 	// is sent over the network/replay
@@ -79,11 +79,11 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	public List<Move> getHistory()
 	{
-		if(this.history == null)
+		if (this.history == null)
 		{
 			this.history = new LinkedList<Move>();
 		}
-		
+
 		return history;
 	}
 
@@ -91,7 +91,7 @@ public final class Player extends SimplePlayer implements Cloneable
 	{
 		return getLastMove(-1);
 	}
-	
+
 	protected Player()
 	{
 		actions = new LinkedList<Action>();
@@ -180,11 +180,11 @@ public final class Player extends SimplePlayer implements Cloneable
 	 */
 	public List<Action> getActions()
 	{
-		if(this.actions == null)
+		if (this.actions == null)
 		{
 			this.actions = new LinkedList<Action>();
 		}
-		
+
 		return actions;
 	}
 
@@ -251,8 +251,9 @@ public final class Player extends SimplePlayer implements Cloneable
 	public PlayerScore getScore(int avg_time)
 	{
 		return new PlayerScore(ScoreCause.REGULAR, getPosition().equals(
-				Position.FIRST) ? 1 : getPosition().equals(Position.SECOND) ? 0
-				: -1,  // Spielergebnis (WIN/LOSS/TIE)
+				Position.FIRST) ? Game.WIN_SCORE : getPosition().equals(
+				Position.SECOND) ? Game.LOSE_SCORE : Game.DRAW_SCORE, // Spielergebnis
+																		// (WIN/LOSS/TIE)
 				getFieldNumber(), // Position auf dem Spielfeld
 				(SALADS_TO_EAT - getSaladsToEat()), // Anzahl an Salate gegessen
 				getCarrotsAvailable(), // Anzahl verbliebene Karotten
@@ -282,17 +283,18 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	/**
 	 * 
-	 * @param i Use -2 to get the move before the last move.
+	 * @param i
+	 *            Use -2 to get the move before the last move.
 	 * @return
 	 */
 	public Move getLastMove(int i)
 	{
-		if(i >= 0)
+		if (i >= 0)
 		{
 			throw new IllegalArgumentException("getLastMove requires i < 0");
 		}
-		
-		if (getHistory() != null && getHistory().size() >= - i)
+
+		if (getHistory() != null && getHistory().size() >= -i)
 		{
 			return getHistory().get(getHistory().size() + i);
 		}

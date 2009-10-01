@@ -228,7 +228,7 @@ public abstract class XStreamClient
 		{
 			this.close();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			logger.error("Failed to close.", e);
 		}

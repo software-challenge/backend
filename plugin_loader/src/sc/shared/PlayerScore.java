@@ -65,4 +65,8 @@ public final class PlayerScore {
 	public List<BigDecimal> getValues() {
 		return Collections.unmodifiableList(this.parts);
 	}
+
+	public void setValueAt(int index, BigDecimal v) {
+		this.parts.set(index, v);
+	}
 }

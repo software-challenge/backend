@@ -84,7 +84,12 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	@Override
 	public void destroy()
 	{
-		// in most of the cases theres nothing to do
+		logger.info("Destroying Game");
+		
+		if(this.requestTimeout != null)
+		{
+			this.requestTimeout.stop();
+		}
 	}
 
 	@Override
