@@ -1,7 +1,7 @@
 package sc.api.plugins.exceptions;
 
 
-public class TooManyPlayersException extends RescueableClientException
+public class TooManyPlayersException extends GameRoomException
 {
 
 	public TooManyPlayersException()

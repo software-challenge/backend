@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 
 import sc.helpers.Generator;
+import sc.networking.clients.LobbyClient;
 import sc.server.Configuration;
 import sc.server.Lobby;
 import sc.server.gaming.GameRoomManager;
@@ -19,11 +20,18 @@ import sc.server.plugins.TestPlugin;
 
 public abstract class RealServerTest
 {
-
 	protected Lobby				lobby;
 	protected ClientManager		clientMgr;
 	protected GameRoomManager	gameMgr;
 	protected GamePluginManager	pluginMgr;
+	
+	public LobbyClient connectClient(String host, int port) throws IOException
+	{
+		LobbyClient client = new LobbyClient(Configuration.getXStream(), null,
+				host, port);
+		client.start();
+		return client;
+	}
 
 	@Before
 	public void setup() throws IOException, PluginLoaderException
@@ -36,8 +44,10 @@ public abstract class RealServerTest
 		this.gameMgr = this.lobby.getGameManager();
 		this.pluginMgr = this.gameMgr.getPluginManager();
 
-		this.pluginMgr.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());
-		Assert.assertTrue(this.pluginMgr.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
+		this.pluginMgr
+				.loadPlugin(TestPlugin.class, this.gameMgr.getPluginApi());
+		Assert.assertTrue(this.pluginMgr
+				.supportsGame(TestPlugin.TEST_PLUGIN_UUID));
 
 		NewClientListener.lastUsedPort = 0;
 		this.lobby.start();
@@ -64,7 +74,8 @@ public abstract class RealServerTest
 			@Override
 			public Integer operate()
 			{
-				return RealServerTest.this.lobby.getClientManager().clients.size();
+				return RealServerTest.this.lobby.getClientManager().clients
+						.size();
 			}
 		}, 1, TimeUnit.SECONDS);
 	}
@@ -85,8 +96,8 @@ public abstract class RealServerTest
 			}
 			Socket mySocket = new Socket("localhost",
 					NewClientListener.lastUsedPort);
-			TestTcpClient result = new TestTcpClient(Configuration.getXStream(),
-					mySocket);
+			TestTcpClient result = new TestTcpClient(
+					Configuration.getXStream(), mySocket);
 			result.start();
 			return result;
 		}

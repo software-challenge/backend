@@ -22,7 +22,7 @@ public abstract class XStreamClient
 	private final ObjectOutputStream	out;
 	ObjectInputStream					in;
 	private final Thread				thread;
-	private DisconnectCause				disconnectCause	= null;
+	private DisconnectCause				disconnectCause	= DisconnectCause.NOT_DISCONNECTED;
 	protected final XStream				xStream;
 	private boolean						closed			= false;
 	private boolean						ready			= false;
@@ -32,6 +32,7 @@ public abstract class XStreamClient
 	{
 		REGULAR, PROTOCOL_ERROR, LOST_CONNECTION, TIMEOUT, UNKNOWN,
 
+		NOT_DISCONNECTED,
 		/**
 		 * Connection was closed from this side.
 		 */
@@ -98,26 +99,25 @@ public abstract class XStreamClient
 
 					while (!Thread.interrupted())
 					{
-						onObject(XStreamClient.this.in.readObject());
+						Object o = XStreamClient.this.in.readObject();
+						this.threadLogger.debug("Received {} via {}", o,
+								networkInterface);
+						onObject(o);
 					}
 
-					onDisconnect(DisconnectCause.DISCONNECTED);
+					handleDisconnect(DisconnectCause.DISCONNECTED);
 				}
 				catch (EOFException e)
 				{
-					onDisconnect(DisconnectCause.REGULAR);
+					handleDisconnect(DisconnectCause.REGULAR, e);
 				}
 				catch (IOException e)
 				{
-					onDisconnect(DisconnectCause.LOST_CONNECTION);
+					handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 				}
 				catch (ClassNotFoundException e)
 				{
-					onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-					this.threadLogger
-							.error(
-									"Client violated against the protocol (ClassNotFound).",
-									e);
+					handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
 				}
 				catch (XStreamException e)
 				{
@@ -125,37 +125,30 @@ public abstract class XStreamClient
 					{
 						if (e.getCause() instanceof SocketException)
 						{
-							onDisconnect(DisconnectCause.LOST_CONNECTION);
+							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 						}
 						else if (e.getCause() instanceof EOFException)
 						{
-							onDisconnect(DisconnectCause.LOST_CONNECTION);
+							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 						}
 						else if (e.getCause() instanceof IOException
 								&& e.getCause().getCause() instanceof InterruptedException)
 						{
-							onDisconnect(DisconnectCause.LOST_CONNECTION);
+							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 						}
 						else
 						{
-							onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-							this.threadLogger.error(
-									"Client violated against the protocol.", e);
+							handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
 						}
 					}
 					else
 					{
-						onDisconnect(DisconnectCause.PROTOCOL_ERROR);
-						this.threadLogger.error(
-								"Client violated against the protocol.", e);
+						handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
 					}
 				}
 				catch (Exception e)
 				{
-					this.threadLogger.error(
-							"An error occured while trying to read an object.",
-							e);
-					onDisconnect(DisconnectCause.UNKNOWN);
+					handleDisconnect(DisconnectCause.UNKNOWN, e);
 				}
 
 				return;
@@ -167,24 +160,15 @@ public abstract class XStreamClient
 
 	protected abstract void onObject(Object o);
 
-	public void onDisconnect(DisconnectCause cause)
+	public void sendCustomData(String data) throws IOException
 	{
-		logger.info("Client {} disconnected. Cause: {}", this, cause);
-
-		try
-		{
-			this.close();
-		}
-		catch (IOException e)
-		{
-			logger.error("Failed to close.", e);
-		}
-
-		this.disconnectCause = cause;
+		sendCustomData(data.getBytes("utf-8"));
 	}
 
 	public void sendCustomData(byte[] data) throws IOException
 	{
+		logger.warn("Sending Custom data (size={})", data.length);
+
 		this.networkInterface.getOutputStream().write(data);
 		this.networkInterface.getOutputStream().flush();
 	}
@@ -197,7 +181,7 @@ public abstract class XStreamClient
 					"Please call start() before sending any messages.");
 		}
 
-		if (this.closed)
+		if (isClosed())
 		{
 			throw new IllegalStateException("Writing on a closed xStream.");
 		}
@@ -212,14 +196,49 @@ public abstract class XStreamClient
 		}
 		catch (XStreamException e)
 		{
-			logger.error("Couldn't send message", e);
-			onDisconnect(DisconnectCause.PROTOCOL_ERROR);
+			handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
 		}
 		catch (IOException e)
 		{
-			logger.error("Couldn't send message", e);
-			onDisconnect(DisconnectCause.LOST_CONNECTION);
+			handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 		}
+	}
+
+	protected final void handleDisconnect(DisconnectCause cause)
+	{
+		handleDisconnect(cause, null);
+	}
+
+	protected final void handleDisconnect(DisconnectCause cause,
+			Throwable exception)
+	{
+		if (exception != null)
+		{
+			logger.error("Client disconnected (Cause: " + cause + ")",
+					exception);
+		}
+		else
+		{
+			logger.info("Client disconnected (Cause: {})", cause);
+		}
+
+		this.disconnectCause = cause;
+
+		try
+		{
+			this.close();
+		}
+		catch (IOException e)
+		{
+			logger.error("Failed to close.", e);
+		}
+
+		onDisconnect(cause);
+	}
+
+	protected void onDisconnect(DisconnectCause cause)
+	{
+		// callback
 	}
 
 	public DisconnectCause getDisconnectCause()

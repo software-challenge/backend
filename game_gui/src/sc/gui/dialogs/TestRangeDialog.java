@@ -852,11 +852,9 @@ public class TestRangeDialog extends JDialog {
 
 			// display invalid, crashed
 			switch (curPlayer.getCause()) {
-			case LEFT:
-				break;
 			case REGULAR:
 				break;
-			case RULE_VIOLATION:
+			case LEFT:
 				int invalidCol = model.getRowCount() - 2;
 				int oldValue = Integer.parseInt((String) model.getValueAt(statRow,
 						invalidCol));

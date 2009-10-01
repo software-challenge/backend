@@ -1,5 +1,6 @@
 package sc.api.plugins;
 
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
@@ -10,9 +11,8 @@ public interface IGameInstance
 	 * 
 	 * @return
 	 * @throws TooManyPlayersException
-	 * @throws RescueableClientException 
 	 */
-	public IPlayer onPlayerJoined() throws RescueableClientException;
+	public IPlayer onPlayerJoined() throws TooManyPlayersException;
 
 	public void onPlayerLeft(IPlayer player);
 
@@ -26,7 +26,7 @@ public interface IGameInstance
 	 * @throws RescueableClientException
 	 */
 	public void onAction(IPlayer fromPlayer, Object data)
-			throws RescueableClientException;
+			throws GameLogicException;
 
 	/**
 	 * Extends the set of listeners.

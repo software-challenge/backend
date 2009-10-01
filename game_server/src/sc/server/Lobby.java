@@ -106,7 +106,6 @@ public class Lobby implements IClientManagerListener, IClientListener
 				RoomPacket casted = (RoomPacket) packet;
 				GameRoom room = this.gameManager.findRoom(casted.getRoomId());
 				room.onEvent(source, casted.getData());
-
 			}
 			else if (packet instanceof ObservationRequest)
 			{

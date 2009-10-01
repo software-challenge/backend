@@ -37,17 +37,24 @@ public class GameRoom implements IGameListener
 	private static final Logger			logger		= LoggerFactory
 															.getLogger(GameRoom.class);
 	private final String				id;
+	private final GameRoomManager		gameRoomManager;
 	private final GamePluginInstance	provider;
 	private final IGameInstance			game;
 	private List<ObserverRole>			observers	= new LinkedList<ObserverRole>();
 	private List<PlayerSlot>			playerSlots	= new ArrayList<PlayerSlot>(
 															2);
 	private final boolean				prepared;
-	private boolean						over		= false;
+	private GameStatus					status		= GameStatus.CREATED;
+	private GameResult					result		= null;
 	private boolean						paused		= false;
 
-	public GameRoom(String id, GamePluginInstance provider, IGameInstance game,
-			boolean prepared)
+	public enum GameStatus
+	{
+		CREATED, ACTIVE, OVER
+	}
+
+	public GameRoom(String id, GameRoomManager gameRoomManager,
+			GamePluginInstance provider, IGameInstance game, boolean prepared)
 	{
 		if (provider == null)
 		{
@@ -58,6 +65,7 @@ public class GameRoom implements IGameListener
 		this.provider = provider;
 		this.game = game;
 		this.prepared = prepared;
+		this.gameRoomManager = gameRoomManager;
 		game.addGameListener(this);
 	}
 
@@ -72,10 +80,26 @@ public class GameRoom implements IGameListener
 	}
 
 	@Override
-	public void onGameOver(Map<IPlayer, PlayerScore> results)
+	public synchronized void onGameOver(Map<IPlayer, PlayerScore> results)
 	{
-		this.over = true;
+		if (isOver())
+		{
+			logger
+					.warn("Game was already over but received another GameOver-Event.");
+			return;
+		}
 
+		setStatus(GameStatus.OVER);
+		this.result = generateGameResult(results);
+		logger.info("The game {} is over. (regular={})", getId(), this.result
+				.isRegular());
+		broadcast(this.result);
+		kickAllClients();
+		this.gameRoomManager.remove(this);
+	}
+
+	private GameResult generateGameResult(Map<IPlayer, PlayerScore> results)
+	{
 		ScoreDefinition definition = getProvider().getPlugin()
 				.getScoreDefinition();
 		List<PlayerScore> scores = new LinkedList<PlayerScore>();
@@ -99,10 +123,7 @@ public class GameRoom implements IGameListener
 		}
 
 		GameResult result = new GameResult(definition, scores);
-		logger.info("The game {} is over. (regular={})", getId(), result
-				.isRegular());
-		broadcast(result);
-		kickAllClients();
+		return result;
 	}
 
 	private void broadcast(Object o)
@@ -171,18 +192,6 @@ public class GameRoom implements IGameListener
 		return new RoomPacket(this.getId(), data);
 	}
 
-	@Override
-	public void onPlayerJoined(IPlayer player)
-	{
-		// not interesting
-	}
-
-	@Override
-	public void onPlayerLeft(IPlayer player)
-	{
-		// not interesting
-	}
-
 	public String getId()
 	{
 		return this.id;
@@ -222,17 +231,16 @@ public class GameRoom implements IGameListener
 			throws RescueableClientException
 	{
 		openSlot.setClient(client);
-		
-		if(!isPrepared())
+
+		if (!isPrepared())
 		{
 			syncSlot(openSlot);
 		}
-		
+
 		startIfReady();
 	}
 
-	private void syncSlot(PlayerSlot slot)
-			throws RescueableClientException
+	private void syncSlot(PlayerSlot slot) throws RescueableClientException
 	{
 		IPlayer player = getGame().onPlayerJoined();
 		player.setDisplayName(slot.getDescriptor().getDisplayName());
@@ -264,22 +272,31 @@ public class GameRoom implements IGameListener
 
 	private void startIfReady() throws RescueableClientException
 	{
-		if (isReady())
+		if (isOver())
 		{
-			if(isPrepared())
-			{
-				for (PlayerSlot slot : this.playerSlots)
-				{
-					syncSlot(slot);
-				}
-			}
-			this.game.start();
-			logger.info("Started the game.");
+			logger.warn("Game is already over.");
+			return;
 		}
-		else
+
+		if (!isReady())
 		{
 			logger.info("Game isn't ready yet.");
+			return;
 		}
+
+		if (isPrepared())
+		{
+			for (PlayerSlot slot : this.playerSlots)
+			{
+				syncSlot(slot);
+			}
+		}
+
+		setStatus(GameStatus.ACTIVE);
+
+		this.game.start();
+
+		logger.info("Started the game.");
 	}
 
 	private int getMaximumPlayerCount()
@@ -326,15 +343,13 @@ public class GameRoom implements IGameListener
 	public synchronized void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
-		if (this.over)
+		if (isOver())
 		{
 			throw new RescueableClientException(
 					"Game is already over, but got data: " + data.getClass());
 		}
-		else
-		{
-			this.game.onAction(resolvePlayer(source), data);
-		}
+
+		this.game.onAction(resolvePlayer(source), data);
 	}
 
 	private IPlayer resolvePlayer(Client source)
@@ -410,30 +425,33 @@ public class GameRoom implements IGameListener
 
 	public synchronized void pause(boolean pause)
 	{
-		if (this.game instanceof IPauseable)
+		if (isOver())
 		{
-			IPauseable pausableGame = (IPauseable) this.game;
-			if (pause == this.paused)
-			{
-				logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
-						this.paused, pause);
-			}
-			else
-			{
-				logger.info("Switching PAUSE from {} to {}.", this.paused,
-						pause);
-				this.paused = pause;
-				pausableGame.setPauseMode(pause);
-
-				if (!pause) // continue execution
-				{
-					pausableGame.afterPause();
-				}
-			}
+			logger.warn("Game is already over and can't be paused.");
 		}
-		else
+
+		if (!(this.game instanceof IPauseable))
 		{
 			logger.warn("Game isn't pausable.");
+			return;
+		}
+
+		if (pause == isPaused())
+		{
+			logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
+					isPaused(), pause);
+			return;
+		}
+
+		logger.info("Switching PAUSE from {} to {}.", isPaused(), pause);
+		this.paused = pause;
+		IPauseable pausableGame = (IPauseable) this.game;
+		pausableGame.setPauseMode(isPaused());
+
+		// continue execution
+		if (!isPaused())
+		{
+			pausableGame.afterPause();
 		}
 	}
 
@@ -441,7 +459,7 @@ public class GameRoom implements IGameListener
 	{
 		if (this.game instanceof IPauseable)
 		{
-			if (this.paused)
+			if (isPaused())
 			{
 				logger.info("Stepping.");
 				((IPauseable) this.game).afterPause();
@@ -489,11 +507,42 @@ public class GameRoom implements IGameListener
 
 	public boolean isOver()
 	{
-		return this.over;
+		return getStatus() == GameStatus.OVER;
 	}
 
 	public boolean isPaused()
 	{
 		return this.paused;
+	}
+
+	public GameStatus getStatus()
+	{
+		return this.status;
+	}
+
+	protected void setStatus(GameStatus status)
+	{
+		logger.info("Updating Status to {} (was: {})", status, getStatus());
+		this.status = status;
+	}
+
+	public void removePlayer(IPlayer player)
+	{
+		logger.info("Removing {} from {}", player, this);
+		this.game.onPlayerLeft(player);
+	}
+
+	public GameResult getResult()
+	{
+		return this.result;
+	}
+
+	protected void close()
+	{
+		if (!isOver())
+		{
+			kickAllClients();
+			this.game.destroy();
+		}
 	}
 }

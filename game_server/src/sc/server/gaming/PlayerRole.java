@@ -5,7 +5,6 @@ import sc.api.plugins.host.IPlayerListener;
 import sc.protocol.responses.RoomPacket;
 import sc.server.network.Client;
 import sc.server.network.IClientRole;
-import sc.server.network.PacketCallback;
 
 public class PlayerRole implements IClientRole, IPlayerListener
 {
@@ -19,19 +18,6 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	{
 		this.client = owner;
 		this.playerSlot = slot;
-	}
-
-	@Override
-	public void onClientDisconnected(Client source)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRequest(Client source, PacketCallback callback)
-	{
-		// TODO Auto-generated method stub
 	}
 
 	public Client getClient()
@@ -60,5 +46,11 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	{
 		this.player = player;
 		this.player.addPlayerListener(this);
+	}
+
+	@Override
+	public void close()
+	{
+		this.getPlayerSlot().close();
 	}
 }

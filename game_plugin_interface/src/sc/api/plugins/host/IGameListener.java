@@ -9,10 +9,6 @@ public interface IGameListener
 {
 	public void onGameOver(Map<IPlayer, PlayerScore> results);
 
-	public void onPlayerLeft(IPlayer player);
-
-	public void onPlayerJoined(IPlayer player);
-
 	public void onStateChanged(Object data);
 
 	public void onPaused(IPlayer nextPlayer);

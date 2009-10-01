@@ -5,6 +5,7 @@ import java.net.Socket;
 
 import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
+
 import com.thoughtworks.xstream.XStream;
 
 public class TestTcpClient extends XStreamClient
@@ -17,6 +18,7 @@ public class TestTcpClient extends XStreamClient
 	@Override
 	protected void onObject(Object o)
 	{
-		// ignore
+		// ignore it
+		// LoggerFactory.getLogger(this.getClass()).debug("Received: {}", o);
 	}
 }

@@ -130,4 +130,9 @@ public class PlayerSlot
 		
 		return this.role.getClient();
 	}
+
+	public void close()
+	{
+		this.getRoom().removePlayer(this.getRole().getPlayer());
+	}
 }

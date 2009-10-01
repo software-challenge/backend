@@ -10,22 +10,14 @@ public class AdministratorRole implements IClientRole
 	}
 
 	@Override
-	public void onClientDisconnected(Client source)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void onRequest(Client source, PacketCallback callback)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Client getClient()
 	{
 		return this.client;
+	}
+
+	@Override
+	public void close()
+	{
+		// TODO Auto-generated method stub
 	}
 }

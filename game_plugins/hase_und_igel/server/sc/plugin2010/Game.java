@@ -10,9 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
-import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.shared.PlayerScore;
 
@@ -88,7 +87,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
 	@Override
 	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
-			throws RescueableClientException
+			throws GameLogicException
 	{
 		final Player author = (Player) fromPlayer;
 
@@ -229,7 +228,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws RescueableClientException
+	public IPlayer onPlayerJoined() throws TooManyPlayersException
 	{
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
@@ -237,9 +236,6 @@ public class Game extends RoundBasedGameInstance<Player>
 		final Player player = new Player(this.availableColors.remove(0));
 		this.board.addPlayer(player);
 		this.players.add(player);
-
-		for (final IGameListener listener : this.listeners)
-			listener.onPlayerJoined(player);
 
 		return player;
 	}

@@ -32,9 +32,4 @@ public class TestPlayer extends SimplePlayer
 			listener.onPlayerEvent(request);
 		}
 	}
-	
-	public PlayerScore getScore()
-	{
-		return new PlayerScore(true);
-	}
 }

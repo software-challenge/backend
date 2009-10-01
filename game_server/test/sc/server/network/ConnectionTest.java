@@ -29,7 +29,8 @@ public class ConnectionTest extends RealServerTest
 			@Override
 			public Integer operate()
 			{
-				return ConnectionTest.this.lobby.getGameManager().getGames().size();
+				return ConnectionTest.this.lobby.getGameManager().getGames()
+						.size();
 			}
 		}, 1, TimeUnit.SECONDS);
 	}
@@ -48,13 +49,34 @@ public class ConnectionTest extends RealServerTest
 					@Override
 					public DisconnectCause operate()
 					{
-						return ConnectionTest.this.lobby.getClientManager().clients.iterator()
-								.next().getDisconnectCause();
+						return ConnectionTest.this.lobby.getClientManager().clients
+								.iterator().next().getDisconnectCause();
 					}
 				}, 1, TimeUnit.SECONDS);
-		// Assert.assertEquals(DisconnectCause.PROTOCOL_ERROR, lobby
-		// .getClientManager().clients.iterator().next()
-		// .getDisconnectCause());
+	}
+
+	@Test(timeout = 5000)
+	public void protocolViolationTestWithUnknownClass() throws IOException,
+			InterruptedException
+	{
+		TestTcpClient client = connectClient();
+		waitForConnect(1);
+
+		client.sendCustomData("<object-stream>".getBytes("utf-8"));
+
+		client
+				.sendCustomData("<NoSuchClass foo=\"aaa\"><base val=\"arr\" /></NoSuchClass>"
+						.getBytes("utf-8"));
+
+		TestHelper.assertEqualsWithTimeout(DisconnectCause.PROTOCOL_ERROR,
+				new Generator<DisconnectCause>() {
+					@Override
+					public DisconnectCause operate()
+					{
+						return ConnectionTest.this.lobby.getClientManager().clients
+								.iterator().next().getDisconnectCause();
+					}
+				}, 1, TimeUnit.SECONDS);
 	}
 
 	// @Test
@@ -66,7 +88,8 @@ public class ConnectionTest extends RealServerTest
 			@Override
 			public Integer operate()
 			{
-				return ConnectionTest.this.lobby.getClientManager().clients.size();
+				return ConnectionTest.this.lobby.getClientManager().clients
+						.size();
 			}
 		}, 1, TimeUnit.SECONDS);
 
@@ -80,8 +103,8 @@ public class ConnectionTest extends RealServerTest
 					@Override
 					public DisconnectCause operate()
 					{
-						return ConnectionTest.this.lobby.getClientManager().clients.iterator()
-								.next().getDisconnectCause();
+						return ConnectionTest.this.lobby.getClientManager().clients
+								.iterator().next().getDisconnectCause();
 					}
 				}, 1, TimeUnit.SECONDS);
 	}

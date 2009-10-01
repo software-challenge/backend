@@ -4,7 +4,6 @@ import sc.plugin2010.framework.SpielClient;
 import sc.plugin2010.framework.Spielbrett;
 import sc.plugin2010.framework.Spieler;
 import sc.plugin2010.framework.Spielfeldtyp;
-import sc.plugin2010.framework.Werkzeuge;
 
 /**
  * Ein SimpleClient für das Spiel Hase und Igel. Zu beachten ist, dass sobald

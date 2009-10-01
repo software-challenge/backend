@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 
@@ -41,7 +41,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	@Override
 	public final void onAction(IPlayer fromPlayer, Object data)
-			throws RescueableClientException
+			throws GameLogicException
 	{
 		if (fromPlayer.equals(this.activePlayer))
 		{
@@ -61,13 +61,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			}
 			else
 			{
-				throw new RescueableClientException(
+				throw new GameLogicException(
 						"We didn't request a move from you yet.");
 			}
 		}
 		else
 		{
-			throw new RescueableClientException("It's not your turn yet.");
+			throw new GameLogicException("It's not your turn yet.");
 		}
 	}
 
@@ -77,7 +77,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	}
 
 	protected abstract void onRoundBasedAction(IPlayer fromPlayer, Object data)
-			throws RescueableClientException;
+			throws GameLogicException;
 
 	protected abstract boolean checkGameOverCondition();
 
@@ -142,14 +142,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 		if (checkGameOverCondition())
 		{
-			Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
-
-			for (final P p : this.players)
-			{
-				map.put(p, getScoreFor(p));
-			}
-
-			notifyOnGameOver(map);
+			notifyOnGameOver(generateScoreMap());
 		}
 		else
 		{
@@ -269,5 +262,17 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	public void setPauseMode(boolean pause)
 	{
 		this.paused = pause;
+	}
+
+	protected Map<IPlayer, PlayerScore> generateScoreMap()
+	{
+		Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
+
+		for (final P p : this.players)
+		{
+			map.put(p, getScoreFor(p));
+		}
+
+		return map;
 	}
 }

@@ -3,6 +3,8 @@ package sc.server.network;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,11 +17,11 @@ import com.thoughtworks.xstream.XStream;
 
 public class MockClient extends Client
 {
-	private final static Logger	logger				= LoggerFactory
-															.getLogger(MockClient.class);
-	private final Queue<Object>	outgoingMessages	= new LinkedList<Object>();
-	private Object				object				= null;
-	private final XStream		xStream;
+	private final static Logger		logger				= LoggerFactory
+																.getLogger(MockClient.class);
+	private final Queue<Object>		outgoingMessages	= new LinkedList<Object>();
+	private BlockingQueue<Object>	objects				= new LinkedBlockingQueue<Object>();
+	private final XStream			xStream;
 
 	public MockClient(StringNetworkInterface stringInterface, XStream xStream)
 			throws IOException
@@ -108,16 +110,11 @@ public class MockClient extends Client
 	protected void onObject(Object o)
 	{
 		super.onObject(o);
-		this.object = o;
+		this.objects.add(o);
 	}
 
 	public Object receive() throws InterruptedException
 	{
-		while (this.object == null)
-		{
-			Thread.sleep(10);
-		}
-
-		return this.object;
+		return this.objects.take();
 	}
 }

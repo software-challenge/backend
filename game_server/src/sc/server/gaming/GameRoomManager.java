@@ -73,7 +73,8 @@ public class GameRoomManager implements Runnable
 		logger.info("Created new game of type " + gameType);
 
 		String roomId = generateRoomId();
-		GameRoom room = new GameRoom(roomId, plugin, plugin.createGame(), prepared);
+		GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(),
+				prepared);
 
 		this.add(room);
 
@@ -182,5 +183,10 @@ public class GameRoomManager implements Runnable
 		}
 
 		return room;
+	}
+
+	public void remove(GameRoom gameRoom)
+	{
+		this.rooms.remove(gameRoom.getId());
 	}
 }

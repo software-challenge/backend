@@ -1,12 +1,16 @@
 package sc.server.plugins;
 
 import java.util.List;
+import java.util.Map;
+
+import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 public class TestGame extends RoundBasedGameInstance<TestPlayer>
 {
@@ -19,7 +23,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 
 	@Override
 	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
-			throws RescueableClientException
+			throws GameLogicException
 	{
 		if (data instanceof TestMove)
 		{
@@ -77,7 +81,13 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	@Override
 	public void onPlayerLeft(IPlayer player)
 	{
-		// TODO Auto-generated method stub
+		// this.players.remove(player);
+		LoggerFactory.getLogger(this.getClass())
+				.debug("Player left {}", player);
+		Map<IPlayer, PlayerScore> result = generateScoreMap();
+		result.put(player, new PlayerScore(false));
+		result.get(player).setCause(ScoreCause.LEFT);
+		notifyOnGameOver(result);
 	}
 
 	@Override
@@ -90,12 +100,12 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	protected void onNewTurn()
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	protected PlayerScore getScoreFor(TestPlayer p)
 	{
-		return p.getScore();
+		return new PlayerScore(true);
 	}
 }

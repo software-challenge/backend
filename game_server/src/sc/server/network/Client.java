@@ -26,11 +26,11 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Client extends XStreamClient
 {
-	private boolean							zombie			= false;
-	private final Set<IClientListener>		clientListeners	= new HashSet<IClientListener>();
-	private final Collection<IClientRole>	roles			= new LinkedList<IClientRole>();
-	private static final Logger				logger			= LoggerFactory
-																	.getLogger(Client.class);
+	private final Set<IClientListener>		clientListeners			= new HashSet<IClientListener>();
+	private final Collection<IClientRole>	roles					= new LinkedList<IClientRole>();
+	private boolean							notifiedOnDisconnect	= false;
+	private static final Logger				logger					= LoggerFactory
+																			.getLogger(Client.class);
 
 	public Client(INetworkInterface networkInterface, XStream configuredXStream)
 			throws IOException
@@ -51,22 +51,27 @@ public class Client extends XStreamClient
 	@Override
 	public synchronized void send(Object packet)
 	{
-		super.send(packet);
-	}
-
-	public boolean isZombie()
-	{
-		return this.zombie;
+		if (!isClosed())
+		{
+			super.send(packet);
+		}
+		else
+		{
+			logger.warn("Writing on a closed Stream - dropping...");
+		}
 	}
 
 	@Override
 	public void close() throws IOException
 	{
-		super.close();
-		if (!this.zombie)
+		if (!isClosed())
 		{
-			this.zombie = true;
-			notifyOnDisconnect();
+			super.close();
+			onDisconnect(DisconnectCause.REGULAR);
+		}
+		else
+		{
+			logger.warn("Reclosing an already closed stream");
 		}
 	}
 
@@ -102,11 +107,16 @@ public class Client extends XStreamClient
 		}
 	}
 
-	private void notifyOnDisconnect()
+	private synchronized void notifyOnDisconnect()
 	{
-		for (IClientListener listener : this.clientListeners)
+		if (!this.notifiedOnDisconnect)
 		{
-			listener.onClientDisconnected(this);
+			this.notifiedOnDisconnect = true;
+
+			for (IClientListener listener : this.clientListeners)
+			{
+				listener.onClientDisconnected(this);
+			}
 		}
 	}
 
@@ -171,9 +181,20 @@ public class Client extends XStreamClient
 	}
 
 	@Override
-	public void onDisconnect(DisconnectCause cause)
+	protected void onDisconnect(DisconnectCause cause)
 	{
-		super.onDisconnect(cause);
+		for (IClientRole role : this.roles)
+		{
+			try
+			{
+				role.close();
+			}
+			catch (Exception e)
+			{
+				logger.warn("Couldn't close role.", e);
+			}
+		}
+
 		notifyOnDisconnect();
 	}
 

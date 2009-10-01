@@ -1,7 +1,6 @@
 package sc.server.roles;
 
 import java.io.IOException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -77,8 +76,8 @@ public class PlayerTest extends AbstractRoleTest
 				.seekMessage(PrepareGameResponse.class);
 
 		// PAUSE
-		this.lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(prepared
-				.getRoomId(), true)));
+		this.lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(
+				prepared.getRoomId(), true)));
 
 		this.lobby
 				.onRequest(player1, new PacketCallback(
@@ -105,7 +104,8 @@ public class PlayerTest extends AbstractRoleTest
 		}
 
 		// STEP
-		this.lobby.onRequest(admin, new PacketCallback(new StepRequest(roomId)));
+		this.lobby
+				.onRequest(admin, new PacketCallback(new StepRequest(roomId)));
 		player1.seekRoomMessage(prepared.getRoomId(), TestTurnRequest.class);
 		this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
 				new TestMove(this.mySecret1))));
@@ -121,8 +121,8 @@ public class PlayerTest extends AbstractRoleTest
 		}
 
 		// UNPAUSE
-		this.lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(roomId,
-				false)));
+		this.lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(
+				roomId, false)));
 
 		player2.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
@@ -149,8 +149,8 @@ public class PlayerTest extends AbstractRoleTest
 		PrepareGameResponse prepared = admin
 				.seekMessage(PrepareGameResponse.class);
 
-		this.lobby.onRequest(observer, new PacketCallback(new ObservationRequest(
-				prepared.getRoomId(), "hello")));
+		this.lobby.onRequest(observer, new PacketCallback(
+				new ObservationRequest(prepared.getRoomId(), "hello")));
 		this.lobby
 				.onRequest(player1, new PacketCallback(
 						new JoinPreparedRoomRequest(prepared.getReservations()
@@ -216,14 +216,16 @@ public class PlayerTest extends AbstractRoleTest
 		// Check Player 2
 		MementoPacket memento2 = player2.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertFalse("Secret of other Player was revealed",
-				this.mySecret1 == ((TestGameState) memento2.getState()).secret0);
+		Assert
+				.assertFalse(
+						"Secret of other Player was revealed",
+						this.mySecret1 == ((TestGameState) memento2.getState()).secret0);
 
 		// Check Observer
 		MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret1, (int) ((TestGameState) mementoObserver
-				.getState()).secret0);
+		Assert.assertEquals(this.mySecret1,
+				(int) ((TestGameState) mementoObserver.getState()).secret0);
 	}
 
 	private void makeMoveAfterRequest(String roomId, MockClient player)
@@ -247,9 +249,9 @@ public class PlayerTest extends AbstractRoleTest
 		MementoPacket memento1 = player1.seekRoomMessage(roomId,
 				MementoPacket.class);
 		Assert
-				.assertFalse(
-						"Secret of other Player was revealed",
-						this.mySecret2 == (int) ((TestGameState) memento1.getState()).secret1);
+				.assertFalse("Secret of other Player was revealed",
+						this.mySecret2 == (int) ((TestGameState) memento1
+								.getState()).secret1);
 
 		// Player 2
 		MementoPacket memento2 = player2.seekRoomMessage(roomId,
@@ -260,7 +262,7 @@ public class PlayerTest extends AbstractRoleTest
 		// Observer
 		MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret2, (int) ((TestGameState) mementoObserver
-				.getState()).secret1);
+		Assert.assertEquals(this.mySecret2,
+				(int) ((TestGameState) mementoObserver.getState()).secret1);
 	}
 }

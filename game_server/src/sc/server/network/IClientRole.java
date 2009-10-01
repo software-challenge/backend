@@ -1,6 +1,8 @@
 package sc.server.network;
 
-public interface IClientRole extends IClientListener
+public interface IClientRole
 {
 	public Client getClient();
+
+	public void close();
 }

@@ -47,7 +47,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 {
 	private static final Logger					logger					= LoggerFactory
 																				.getLogger(LobbyClient.class);
-	private static final List<String>			rooms					= new LinkedList<String>();
+	private final List<String>					rooms					= new LinkedList<String>();
 	private final AsyncResultManager			asyncManager			= new AsyncResultManager();
 	private final List<ILobbyClientListener>	listeners				= new LinkedList<ILobbyClientListener>();
 	private final List<IHistoryListener>		historyListeners		= new LinkedList<IHistoryListener>();
@@ -63,7 +63,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public LobbyClient(XStream xStream, Collection<Class<?>> protocolClasses)
 			throws IOException
 	{
-		this(xStream, protocolClasses, DEFAULT_HOST, SharedConfiguration.DEFAULT_PORT);
+		this(xStream, protocolClasses, DEFAULT_HOST,
+				SharedConfiguration.DEFAULT_PORT);
 	}
 
 	public LobbyClient(XStream xstream, Collection<Class<?>> protocolClasses,
@@ -83,7 +84,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public List<String> getRooms()
 	{
-		return Collections.unmodifiableList(rooms);
+		return Collections.unmodifiableList(this.rooms);
 	}
 
 	@Override
@@ -128,13 +129,13 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		else if (o instanceof JoinGameResponse)
 		{
 			String roomId = ((JoinGameResponse) o).getRoomId();
-			rooms.add(roomId);
+			this.rooms.add(roomId);
 			onGameJoined(roomId);
 		}
 		else if (o instanceof LeftGameEvent)
 		{
 			String roomId = ((LeftGameEvent) o).getRoomId();
-			rooms.remove(roomId);
+			this.rooms.remove(roomId);
 			onGameLeft(roomId);
 		}
 		else if (o instanceof ErrorResponse)
@@ -164,7 +165,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		{
 			listener.onGamePaused(roomId, nextPlayer);
 		}
-		
+
 		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onGamePaused(roomId, nextPlayer);
@@ -172,12 +173,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	}
 
 	private void onGameOver(String roomId, GameResult data)
-	{		
+	{
 		for (IHistoryListener listener : this.historyListeners)
 		{
 			listener.onGameOver(roomId, data);
 		}
-		
+
 		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onGameOver(roomId, data);
