@@ -14,7 +14,6 @@ import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,42 +27,13 @@ import sc.logic.save.GUIConfiguration;
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
 
-	private static final String PATH_ICON_CANCEL = "/resource/stop.png";
-	private static final String PATH_ICON_START = "/resource/player_play.png";
-	private static final String PATH_ICON_PAUSE = "/resource/player_pause.png";
-	private static final String PATH_ICON_TO_START = "/resource/go-first.png";
-	private static final String PATH_ICON_TO_END = "/resource/go-last.png";
-	private static final String PATH_ICON_BACK = "/resource/go-previous.png";
-	private static final String PATH_ICON_NEXT = "/resource/go-next.png";
-
-	private static final ImageIcon ICON_TO_START = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_TO_START));
-	private static final ImageIcon ICON_TO_END = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_TO_END));
-	private static final ImageIcon ICON_CANCEL = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_CANCEL));
-	private static final ImageIcon ICON_START = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_START));
-	private static final ImageIcon ICON_PAUSE = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_PAUSE));
-	private static final ImageIcon ICON_BACK = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_BACK));
-	private static final ImageIcon ICON_NEXT = new ImageIcon(ContextDisplay.class
-			.getResource(PATH_ICON_NEXT));
-
 	private final PresentationFacade presFac;
 	private final Properties lang;
 	private Timer timer;
 	private final TimerTask nextTask;
 
 	private JPanel gameField;
-	private JPanel buttonBar;
-	private JButton btn_pauseAndPlay;
-	private JButton btn_toBegin;
-	private JButton btn_toEnd;
-	private JButton btn_back;
-	private JButton btn_next;
-	private JButton btn_cancel;
+	private GameControlBar buttonBar;
 	private boolean started;
 	private JScrollBar speedBar;
 
@@ -79,7 +49,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			@Override
 			public void run() {
 				// presFac.getLogicFacade().getObservation().next();
-				btn_next.doClick();
+				buttonBar.btn_next.doClick();
 			}
 		};
 		createGUI();
@@ -91,26 +61,11 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private void createGUI() {
 		this.setLayout(new BorderLayout());
 
-		buttonBar = new JPanel();
-		buttonBar.setBorder(BorderFactory.createEtchedBorder());
-
-		btn_toBegin = new JButton(ICON_TO_START);
-		btn_toBegin.setToolTipText(lang.getProperty("context_to_begin"));
-		bindShortcut(btn_toBegin, KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK);
-		btn_back = new JButton(ICON_BACK);
-		btn_back.setToolTipText(lang.getProperty("context_back"));
-		bindShortcut(btn_back, KeyEvent.VK_LEFT, 0);
-		btn_pauseAndPlay = new JButton(ICON_START);
-		btn_pauseAndPlay.setToolTipText(lang.getProperty("context_start"));
-		btn_next = new JButton(ICON_NEXT);
-		btn_next.setToolTipText(lang.getProperty("context_next"));
-		bindShortcut(btn_next, KeyEvent.VK_RIGHT, 0);
-		btn_toEnd = new JButton(ICON_TO_END);
-		btn_toEnd.setToolTipText(lang.getProperty("context_to_end"));
-		bindShortcut(btn_toEnd, KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK);
-		btn_cancel = new JButton(ICON_CANCEL);
-		btn_cancel.setToolTipText(lang.getProperty("context_cancel"));
-
+		buttonBar = new GameControlBar();
+		bindShortcut(buttonBar.btn_toBegin, KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK);
+		bindShortcut(buttonBar.btn_back, KeyEvent.VK_LEFT, 0);
+		bindShortcut(buttonBar.btn_next, KeyEvent.VK_RIGHT, 0);
+		bindShortcut(buttonBar.btn_toEnd, KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK);
 		disableAllButtons(); // by default
 
 		// set scrollbar to maximum by default
@@ -143,28 +98,28 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		});
 		speedBar.setVisible(false);// TODO
 
-		btn_toBegin.addActionListener(new ActionListener() {
+		buttonBar.btn_toBegin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().goToFirst();
 			}
 		});
 
-		btn_toEnd.addActionListener(new ActionListener() {
+		buttonBar.btn_toEnd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().goToLast();
 			}
 		});
 
-		btn_back.addActionListener(new ActionListener() {
+		buttonBar.btn_back.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().back();
 			}
 		});
 
-		btn_pauseAndPlay.addActionListener(new ActionListener() {
+		ActionListener playPauseActionListner = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (!started) {
@@ -177,16 +132,19 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 					stopTimer();
 				}
 			}
-		});
+		};
+		
+		buttonBar.btn_pause.addActionListener(playPauseActionListner);
+		buttonBar.btn_play.addActionListener(playPauseActionListner);
 
-		btn_next.addActionListener(new ActionListener() {
+		buttonBar.btn_next.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				presFac.getLogicFacade().getObservation().next();
 			}
 		});
 
-		btn_cancel.addActionListener(new ActionListener() {
+		buttonBar.btn_cancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (presFac.getLogicFacade().getObservation().isFinished()
@@ -198,21 +156,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				}
 			}
 		});
-
-		JPanel regularButtonBar = new JPanel();
-		regularButtonBar.add(btn_toBegin);
-		regularButtonBar.add(btn_back);
-		regularButtonBar.add(btn_pauseAndPlay);
-		regularButtonBar.add(btn_next);
-		regularButtonBar.add(btn_toEnd);
-		regularButtonBar.add(speedBar);
-
-		JPanel cancelButtonBar = new JPanel();
-		cancelButtonBar.add(btn_cancel);
-
-		buttonBar.setLayout(new BorderLayout(30, 30));
-		buttonBar.add(regularButtonBar, BorderLayout.CENTER);
-		buttonBar.add(cancelButtonBar, BorderLayout.LINE_END);
 
 		recreateGameField();
 	}
@@ -228,8 +171,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		enableSpeedBar(false);
 		
 		disableAllButtons();
-		btn_pauseAndPlay.setToolTipText(lang.getProperty("context_start"));
-		btn_pauseAndPlay.setIcon(ICON_START);
+		buttonBar.setPaused(false);
 		
 		((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
 		// update status bar
@@ -261,12 +203,13 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * Disables all 6 buttons in the control bar at the bottom.
 	 */
 	private void disableAllButtons() {
-		btn_toBegin.setEnabled(false);
-		btn_back.setEnabled(false);
-		btn_pauseAndPlay.setEnabled(false);
-		btn_next.setEnabled(false);
-		btn_toEnd.setEnabled(false);
-		btn_cancel.setEnabled(false);
+		buttonBar.btn_toBegin.setEnabled(false);
+		buttonBar.btn_back.setEnabled(false);
+		buttonBar.btn_pause.setEnabled(false);
+		buttonBar.btn_play.setEnabled(false);
+		buttonBar.btn_next.setEnabled(false);
+		buttonBar.btn_toEnd.setEnabled(false);
+		buttonBar.btn_cancel.setEnabled(false);
 	}
 
 	/**
@@ -295,7 +238,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	public void updateButtonBar(boolean ended) {
 		IObservation obs = presFac.getLogicFacade().getObservation();
 		if (obs != null) {
-			btn_cancel.setEnabled(!ended);
+			buttonBar.btn_cancel.setEnabled(!ended);
 			syncButtonStates(obs);
 			buttonBar.setVisible(true);
 		}
@@ -310,11 +253,12 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	}
 
 	private void syncButtonStates(IObservation obs) {
-		btn_toBegin.setEnabled(!obs.isAtStart());
-		btn_toEnd.setEnabled(!obs.isAtEnd());
-		btn_back.setEnabled(obs.hasPrevious());
-		btn_next.setEnabled(obs.hasNext());
-		btn_pauseAndPlay.setEnabled(obs.canTogglePause());
+		buttonBar.btn_toBegin.setEnabled(!obs.isAtStart());
+		buttonBar.btn_toEnd.setEnabled(!obs.isAtEnd());
+		buttonBar.btn_back.setEnabled(obs.hasPrevious());
+		buttonBar.btn_next.setEnabled(obs.hasNext());
+		buttonBar.btn_pause.setEnabled(obs.canTogglePause());
+		buttonBar.btn_play.setEnabled(obs.canTogglePause());
 		syncPauseAndPlayState(obs.isPaused());
 	}
 
@@ -324,9 +268,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * @param paused
 	 */
 	private void syncPauseAndPlayState(boolean paused) {
-		btn_pauseAndPlay.setToolTipText(paused ? lang.getProperty("context_start") : lang
-				.getProperty("context_pause"));
-		btn_pauseAndPlay.setIcon(paused ? ICON_START : ICON_PAUSE);
+		buttonBar.setPaused(paused);
 	}
 
 	/**
