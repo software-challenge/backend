@@ -698,7 +698,7 @@ public class TestRangeDialog extends JDialog {
 		obs = prep.getObserver();
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
-			public void gameEnded(GameResult result, String gameResultString) {
+			public void onGameEnded(GameResult result, String gameResultString) {
 				if (null == result) // happens after a game has been cancel
 					return;
 

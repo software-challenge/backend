@@ -6,8 +6,8 @@ package sc.plugin2010.gui;
 import java.io.IOException;
 
 import sc.guiplugin.interfaces.ISlot;
-import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
+import sc.plugin2010.GuiClient;
 import sc.plugin2010.renderer.RenderFacade;
 
 /**
@@ -16,10 +16,10 @@ import sc.plugin2010.renderer.RenderFacade;
  */
 public class Slot implements ISlot
 {
-	private String	reservation;
-	private Client	adminclient;
+	private String		reservation;
+	private GuiClient	adminclient;
 
-	public Slot(String reservation, Client adminclient)
+	public Slot(String reservation, GuiClient adminclient)
 	{
 		this.reservation = reservation;
 		this.adminclient = adminclient;
@@ -37,15 +37,15 @@ public class Slot implements ISlot
 	@Override
 	public void asHuman() throws IOException
 	{
-		Client humanClient;
+		GuiClient humanClient;
 		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne())
 		{
-			humanClient = new Client(adminclient.getHost(), adminclient
+			humanClient = new GuiClient(adminclient.getHost(), adminclient
 					.getPort(), EPlayerId.PLAYER_ONE);
 		}
 		else
 		{
-			humanClient = new Client(adminclient.getHost(), adminclient
+			humanClient = new GuiClient(adminclient.getHost(), adminclient
 					.getPort(), EPlayerId.PLAYER_TWO);
 		}
 

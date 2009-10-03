@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.IRenderer;
@@ -22,7 +23,7 @@ import sc.shared.GameResult;
 public class ThreeDimRenderer extends JPanel implements IRenderer
 {
 	// GUI Components
-	private final HumanGameHandler	handler;
+	private final IGameHandler	handler;
 
 	// local instances of current players and board
 	private Player					player;
@@ -39,7 +40,7 @@ public class ThreeDimRenderer extends JPanel implements IRenderer
 	private static final String		dropCarrots		= "10 Karotten abgeben";
 	private static final String		carrotAnswer	= "carrots";
 
-	public ThreeDimRenderer(HumanGameHandler handler, boolean onlyObserving)
+	public ThreeDimRenderer(IGameHandler handler, boolean onlyObserving)
 	{
 		super();
 		this.handler = handler;

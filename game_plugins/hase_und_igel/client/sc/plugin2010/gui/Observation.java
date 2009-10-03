@@ -39,7 +39,7 @@ public class Observation implements IObservation, IUpdateListener,
 	private List<INewTurnListener>		newTurnListeners	= new LinkedList<INewTurnListener>();
 	private List<IReadyListener>		readyListeners		= new LinkedList<IReadyListener>();
 
-	private boolean						notifiedAboutEnd;
+	private boolean						notifiedOnGameEnded	= false;
 
 	public Observation(IControllableGame conGame, IGameHandler handler)
 	{
@@ -76,7 +76,7 @@ public class Observation implements IObservation, IUpdateListener,
 	public void cancel()
 	{
 		conGame.cancel();
-		onGameEnded(this, conGame.getResult());
+		notifyOnGameEnded(this, conGame.getResult());
 	}
 
 	@Override
@@ -228,18 +228,19 @@ public class Observation implements IObservation, IUpdateListener,
 	 * @param data
 	 * 
 	 */
-	@Override
-	public void onGameEnded(Object sender, GameResult data)
+	private synchronized void notifyOnGameEnded(Object sender, GameResult data)
 	{
-		if (!notifiedAboutEnd && !conGame.isReplay())
+		if (!notifiedOnGameEnded)
 		{
-			notifiedAboutEnd = true;
+			notifiedOnGameEnded = true;
 
 			for (IGameEndedListener list : gameEndedListeners)
 			{
-				list.gameEnded(data, createGameEndedString(data));
+				list.onGameEnded(data, createGameEndedString(data));
 			}
 		}
+
+		handler.gameEnded(data);
 	}
 
 	/**
@@ -281,7 +282,7 @@ public class Observation implements IObservation, IUpdateListener,
 
 			if (conGame.isGameOver() && conGame.isAtEnd())
 			{
-				handler.gameEnded(conGame.getResult());
+				notifyOnGameEnded(sender, conGame.getResult());
 			}
 
 			if (conGame.hasNext())

@@ -4,7 +4,7 @@
 package sc.plugin2010.gui;
 
 import sc.plugin2010.Board;
-import sc.plugin2010.Client;
+import sc.plugin2010.GuiClient;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
@@ -18,9 +18,9 @@ import sc.shared.GameResult;
 public class HumanGameHandler implements IGameHandler
 {
 
-	private Client	client;
+	private GuiClient	client;
 
-	public HumanGameHandler(Client client)
+	public HumanGameHandler(GuiClient client)
 	{
 		this.client = client;
 	}

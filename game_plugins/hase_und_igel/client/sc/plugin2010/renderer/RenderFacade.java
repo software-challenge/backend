@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.EPlayerId;
+import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
@@ -160,7 +161,7 @@ public class RenderFacade
 	 *            if asPlayer1 is true than panel will be created for player 1
 	 *            else it is created for player2
 	 */
-	public void createPanel(HumanGameHandler handler, EPlayerId target)
+	public void createPanel(IGameHandler handler, EPlayerId target)
 	{
 		if (panel != null)
 		{

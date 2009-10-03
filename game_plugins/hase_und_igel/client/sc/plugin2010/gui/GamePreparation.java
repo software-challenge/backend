@@ -10,9 +10,7 @@ import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
 import sc.networking.clients.IControllableGame;
-import sc.plugin2010.Client;
-import sc.plugin2010.EPlayerId;
-import sc.plugin2010.renderer.RenderFacade;
+import sc.plugin2010.GuiClient;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.SlotDescriptor;
@@ -24,9 +22,9 @@ import sc.shared.SlotDescriptor;
 public class GamePreparation implements IGamePreparation
 {
 	private List<ISlot>	slots	= new LinkedList<ISlot>();
-	private Observation	obs;
+	private Observation	observation;
 
-	public GamePreparation(Client client, SlotDescriptor... descriptors)
+	public GamePreparation(GuiClient client, SlotDescriptor... descriptors)
 	{
 		RequestResult<PrepareGameResponse> results = null;
 		try
@@ -47,9 +45,8 @@ public class GamePreparation implements IGamePreparation
 
 		IControllableGame conGame = client.observeAndControl(response);
 		ObserverGameHandler handler = new ObserverGameHandler();
-		obs = new Observation(conGame, handler);
-		client.setObservation(obs);
-		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+		observation = new Observation(conGame, handler);
+		client.setObservation(observation);
 	}
 
 	@Override
@@ -61,6 +58,6 @@ public class GamePreparation implements IGamePreparation
 	@Override
 	public IObservation getObserver()
 	{
-		return obs;
+		return observation;
 	}
 }

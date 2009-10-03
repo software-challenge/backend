@@ -13,9 +13,9 @@ import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
 import sc.networking.clients.ObservingClient;
-import sc.plugin2010.Client;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.GamePlugin;
+import sc.plugin2010.GuiClient;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.Configuration;
@@ -66,11 +66,13 @@ public class GUIPluginFacade implements IGuiPlugin
 	public IGamePreparation prepareGame(final String ip, final int port,
 			SlotDescriptor... descriptors) throws IOException
 	{
-		Client client = new Client(ip, port, EPlayerId.OBSERVER);
-		HumanGameHandler handler = new HumanGameHandler(client);
+		GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
+		AdministrativeGameHandler handler = new AdministrativeGameHandler();
 		client.setHandler(handler);
 		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
-		return new GamePreparation(client, descriptors);
+		GamePreparation result = new GamePreparation(client, descriptors);
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+		return result;
 	}
 
 	@Override
@@ -80,8 +82,8 @@ public class GUIPluginFacade implements IGuiPlugin
 				ReplayBuilder.loadReplay(filename));
 		ObserverGameHandler handler = new ObserverGameHandler();
 		RenderFacade.getInstance().createPanel(null, EPlayerId.OBSERVER);
-		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		IObservation obs = new Observation(rep, handler);
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		return obs;
 	}
 

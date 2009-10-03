@@ -177,20 +177,11 @@ public class GameControlBar extends JPanel implements ActionListener {
 		add(cancelButtonBar, cc.xy(6, 2, "right, center"));
 	}
 
-	protected void setStepping(boolean active) {
-		if (!active) {
-			stepTimer.stop();
-		} else {
-			stepTimer.start();
-		}
-
-		stepStartButton.setVisible(!active);
-		stepStopButton.setVisible(active);
-	}
-
 	public void setPaused(boolean paused) {
-		this.btn_pause.setVisible(!paused);
-		this.btn_play.setVisible(paused);
+		if (SHOW_SERVER_CONTROL_BUTTONS) {
+			this.btn_pause.setVisible(!paused);
+			this.btn_play.setVisible(paused);
+		}
 	}
 
 	private int getLogarithmicSliderValue() {
@@ -229,10 +220,30 @@ public class GameControlBar extends JPanel implements ActionListener {
 		setStepping(false);
 	}
 
-	public void setActive(boolean b) {
-		btn_cancel.setEnabled(b);
-		stepSpeed.setEnabled(b);
-		stepStartButton.setEnabled(b);
-		stepStopButton.setEnabled(b);
+	/**
+	 * 
+	 * @param active True, if there is a loaded game
+	 */
+	protected void setActive(boolean active) {
+		btn_cancel.setEnabled(active);
+		stepSpeed.setEnabled(active);
+		stepStartButton.setEnabled(active);
+		stepStopButton.setEnabled(active);
+		
+		if(!active)
+		{
+			setStepping(false);
+		}
+	}
+	
+	protected void setStepping(boolean active) {
+		if (!active) {
+			stepTimer.stop();
+		} else {
+			stepTimer.start();
+		}
+
+		stepStartButton.setVisible(!active);
+		stepStopButton.setVisible(active);
 	}
 }

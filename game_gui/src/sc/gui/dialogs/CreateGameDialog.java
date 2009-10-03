@@ -581,7 +581,7 @@ public class CreateGameDialog extends JDialog {
 
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
-			public void gameEnded(GameResult result, String gameResultString) {
+			public void onGameEnded(GameResult result, String gameResultString) {
 				System.out.println("Game ended.");
 
 				presFac.getLogicFacade().stopServer();

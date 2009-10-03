@@ -18,12 +18,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import sc.plugin2010.Action;
 import sc.plugin2010.Board;
 import sc.plugin2010.FieldTyp;
 import sc.plugin2010.FigureColor;
 import sc.plugin2010.GameUtil;
+import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Move;
 import sc.plugin2010.MoveTyp;
 import sc.plugin2010.Player;
@@ -50,7 +52,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private BorderInformationBar	rightPlayerBar;
 	private ActionBar				action;
 	private final List<FieldButton>	fbuttons				= new ArrayList<FieldButton>();
-	private final HumanGameHandler	handler;
+	private final IGameHandler		handler;
 	private QuestionPanel			qPanel;
 
 	private final int				UPPERHEIGHT				= 80;
@@ -90,8 +92,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private final String			fallback				= "Falle eine Position zurück";
 	private final String			jokerAnswer				= "joker";
 
-	public FrameRenderer(final HumanGameHandler handler,
-			final boolean onlyObserving)
+	public FrameRenderer(final IGameHandler handler, final boolean onlyObserving)
 	{
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
@@ -768,50 +769,59 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	}
 
 	@Override
-	public void gameEnded(GameResult data)
+	public void gameEnded(final GameResult data)
 	{
-		action.addNormal("----------------");
+		final Runnable awtAction = new Runnable() {
+			@Override
+			public void run()
+			{
+				action.addNormal("----------------");
 
-		if (data == null)
-		{
-			action.addNormal("Leeres Spielresultat!");
-			action.setScrollBarToEnd();
-			return;
-		}
+				if (data == null)
+				{
+					action.addNormal("Leeres Spielresultat!");
+					action.setScrollBarToEnd();
+					return;
+				}
 
-		action.addNormal("Spielresultat:");
+				action.addNormal("Spielresultat:");
 
-		String[] results = data.getScores().get(0).toStrings();
-		if (results[0].equals("1"))
-		{
-			addGameEndedRightColors(FigureColor.RED, ": Gewinner");
-		}
-		else if (results[0].equals("0"))
-		{
-			addGameEndedRightColors(FigureColor.RED, ": Verlierer");
-		}
-		else
-		{
-			action.addNormal("Unentschieden");
-		}
+				String[] results = data.getScores().get(0).toStrings();
+				if (results[0].equals("1"))
+				{
+					addGameEndedRightColors(FigureColor.RED, ": Gewinner");
+				}
+				else if (results[0].equals("0"))
+				{
+					addGameEndedRightColors(FigureColor.RED, ": Verlierer");
+				}
+				else
+				{
+					action.addNormal("Unentschieden");
+				}
 
-		addGameEndedRightColors(FigureColor.RED, ": erreichtes Feld: "
-				+ results[1]);
+				addGameEndedRightColors(FigureColor.RED, ": erreichtes Feld: "
+						+ results[1]);
 
-		results = data.getScores().get(1).toStrings();
-		if (results[0].equals("1"))
-		{
-			addGameEndedRightColors(FigureColor.BLUE, ": Gewinner");
-		}
-		else if (results[0].equals("0"))
-		{
-			addGameEndedRightColors(FigureColor.BLUE, ": Verlierer");
-		}
+				results = data.getScores().get(1).toStrings();
+				if (results[0].equals("1"))
+				{
+					addGameEndedRightColors(FigureColor.BLUE, ": Gewinner");
+				}
+				else if (results[0].equals("0"))
+				{
+					addGameEndedRightColors(FigureColor.BLUE, ": Verlierer");
+				}
 
-		addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld: "
-				+ results[1]);
+				addGameEndedRightColors(FigureColor.BLUE, ": erreichtes Feld: "
+						+ results[1]);
 
-		action.setScrollBarToEnd();
+				action.setScrollBarToEnd();
+
+			}
+		};
+
+		SwingUtilities.invokeLater(awtAction);
 	}
 
 	private class ClickRefresher extends MouseAdapter

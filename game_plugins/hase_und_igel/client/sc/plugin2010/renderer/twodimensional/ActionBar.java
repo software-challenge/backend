@@ -66,19 +66,19 @@ public class ActionBar extends JPanel
 		}
 	}
 
-	private synchronized void appendText(String text, AttributeSet set)
+	private synchronized void appendText(final String text,
+			final AttributeSet set)
 	{
 		try
 		{
-			pane.getDocument().insertString(pane.getDocument().getLength(),
-					text, set);
+			pane.getDocument().insertString(
+					pane.getDocument().getLength(), text, set);
 
 		}
 		catch (BadLocationException e)
 		{
 			// should not happen
 		}
-
 	}
 
 	public synchronized void setScrollBarToEnd()
@@ -86,7 +86,8 @@ public class ActionBar extends JPanel
 		pane.setCaretPosition(pane.getDocument().getLength());
 	}
 
-	public synchronized void addAction(String color, String playername, String action)
+	public synchronized void addAction(String color, String playername,
+			String action)
 	{
 		if (color.equals("Rot"))
 		{

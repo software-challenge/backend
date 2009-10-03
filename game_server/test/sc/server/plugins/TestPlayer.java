@@ -5,7 +5,6 @@ import java.util.List;
 
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.SimplePlayer;
-import sc.shared.PlayerScore;
 
 public class TestPlayer extends SimplePlayer
 {

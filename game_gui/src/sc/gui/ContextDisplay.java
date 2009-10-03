@@ -53,6 +53,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		buttonBar.btn_toBegin.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				buttonBar.setStepping(false);
 				presFac.getLogicFacade().getObservation().goToFirst();
 			}
 		});
@@ -60,6 +61,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		buttonBar.btn_toEnd.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				buttonBar.setStepping(false);
 				presFac.getLogicFacade().getObservation().goToLast();
 			}
 		});
@@ -67,6 +69,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		buttonBar.btn_back.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				buttonBar.setStepping(false);
 				presFac.getLogicFacade().getObservation().back();
 			}
 		});
