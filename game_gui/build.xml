@@ -19,6 +19,7 @@
 		<fileset dir="${guiApi.dir}" includes="build/jar/*.jar" />
 		<fileset dir="${server.dir}" includes="build/jar/*.jar" />
 		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
+		<fileset dir="." includes="lib/*.jar" />
 	</path>
 
 	<path id="classpath.base">
