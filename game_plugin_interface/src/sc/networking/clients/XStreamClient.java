@@ -121,18 +121,20 @@ public abstract class XStreamClient
 				}
 				catch (XStreamException e)
 				{
-					if (e.getCause() != null)
+					Throwable exceptionCause = e.getCause();
+					if (exceptionCause != null)
 					{
-						if (e.getCause() instanceof SocketException)
+						if (exceptionCause instanceof SocketException)
 						{
 							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 						}
-						else if (e.getCause() instanceof EOFException)
+						else if (exceptionCause instanceof EOFException)
 						{
 							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 						}
-						else if (e.getCause() instanceof IOException
-								&& e.getCause().getCause() instanceof InterruptedException)
+						else if (exceptionCause instanceof IOException
+								&& exceptionCause.getCause() != null
+								&& exceptionCause.getCause() instanceof InterruptedException)
 						{
 							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 						}
@@ -148,6 +150,7 @@ public abstract class XStreamClient
 				}
 				catch (Exception e)
 				{
+					this.threadLogger.error("Unknown Communication Error", e);
 					handleDisconnect(DisconnectCause.UNKNOWN, e);
 				}
 
@@ -214,8 +217,8 @@ public abstract class XStreamClient
 	{
 		if (exception != null)
 		{
-			logger.error("Client disconnected (Cause: " + cause + ")",
-					exception);
+			logger.warn("Client disconnected (Cause: " + cause + ", Exception: "
+					+ exception + ")");
 		}
 		else
 		{

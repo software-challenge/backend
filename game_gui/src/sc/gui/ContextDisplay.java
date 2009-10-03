@@ -1,41 +1,31 @@
 package sc.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.KeyStroke;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
-import sc.logic.save.GUIConfiguration;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
 
 	private final PresentationFacade presFac;
 	private final Properties lang;
-	private Timer timer;
-	private final TimerTask nextTask;
 
 	private JPanel gameField;
 	private GameControlBar buttonBar;
 	private boolean started;
-	private JScrollBar speedBar;
 
 	/**
 	 * Constructor
@@ -44,14 +34,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		super();
 		this.presFac = PresentationFacade.getInstance();
 		this.lang = presFac.getLogicFacade().getLanguageData();
-		this.timer = new Timer();
-		this.nextTask = new TimerTask() {
-			@Override
-			public void run() {
-				// presFac.getLogicFacade().getObservation().next();
-				buttonBar.btn_next.doClick();
-			}
-		};
 		createGUI();
 	}
 
@@ -67,36 +49,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		bindShortcut(buttonBar.btn_next, KeyEvent.VK_RIGHT, 0);
 		bindShortcut(buttonBar.btn_toEnd, KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK);
 		disableAllButtons(); // by default
-
-		// set scrollbar to maximum by default
-		int knobWidth = 30;
-		speedBar = new JScrollBar(JScrollBar.HORIZONTAL, 100, knobWidth, 0,
-				100 + knobWidth);
-		speedBar.setPreferredSize(new Dimension(200, 30));
-		speedBar.setValue(GUIConfiguration.instance().getSpeedValue());
-		speedBar.setEnabled(false); // false by default
-		speedBar.addAdjustmentListener(new AdjustmentListener() {
-			@Override
-			public void adjustmentValueChanged(AdjustmentEvent e) {
-				stopTimer();
-				GUIConfiguration.instance().setSpeedValue(e.getValue());
-
-				System.out.println("speedbar: " + e.getValue());
-				System.out.println("getVisibleAmount: " + speedBar.getVisibleAmount());
-
-				IObservation obs = presFac.getLogicFacade().getObservation();
-				// may not start a paused or not created game
-				if (!obs.isPaused()) {
-					if (e.getValue() < speedBar.getMaximum()
-							+ speedBar.getVisibleAmount()) {
-						startTimer();
-					} else {
-						obs.unpause();
-					}
-				}
-			}
-		});
-		speedBar.setVisible(false);// TODO
 
 		buttonBar.btn_toBegin.addActionListener(new ActionListener() {
 			@Override
@@ -129,7 +81,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 					presFac.getLogicFacade().getObservation().unpause();
 				} else {
 					presFac.getLogicFacade().getObservation().pause();
-					stopTimer();
 				}
 			}
 		};
@@ -168,7 +119,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		presFac.getLogicFacade().getObservation().cancel(); // calls gameEnded
 
 		started = false;
-		enableSpeedBar(false);
 		
 		disableAllButtons();
 		buttonBar.setPaused(false);
@@ -203,13 +153,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * Disables all 6 buttons in the control bar at the bottom.
 	 */
 	private void disableAllButtons() {
-		buttonBar.btn_toBegin.setEnabled(false);
-		buttonBar.btn_back.setEnabled(false);
-		buttonBar.btn_pause.setEnabled(false);
-		buttonBar.btn_play.setEnabled(false);
-		buttonBar.btn_next.setEnabled(false);
-		buttonBar.btn_toEnd.setEnabled(false);
-		buttonBar.btn_cancel.setEnabled(false);
+		buttonBar.disable();
 	}
 
 	/**
@@ -238,7 +182,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	public void updateButtonBar(boolean ended) {
 		IObservation obs = presFac.getLogicFacade().getObservation();
 		if (obs != null) {
-			buttonBar.btn_cancel.setEnabled(!ended);
+			buttonBar.setActive(!ended);
 			syncButtonStates(obs);
 			buttonBar.setVisible(true);
 		}
@@ -269,31 +213,5 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 */
 	private void syncPauseAndPlayState(boolean paused) {
 		buttonBar.setPaused(paused);
-	}
-
-	/**
-	 * Enables the speed bar.
-	 * 
-	 * @param value
-	 */
-	public void enableSpeedBar(boolean value) {
-		speedBar.setEnabled(value);
-	}
-
-	public void startTimer() {
-		if (speedBar.isEnabled()) {
-			// change timer interval/period
-			long period = Math.round(5000 - (float) speedBar.getValue() * 5000
-					/ speedBar.getMaximum());
-
-			timer = new Timer();
-			timer.schedule(nextTask, 0, period);
-			System.out.println("Timer started (" + period + ")");
-		}
-	}
-
-	public void stopTimer() {
-		timer.cancel();
-		System.out.println("timer canceled.");
 	}
 }

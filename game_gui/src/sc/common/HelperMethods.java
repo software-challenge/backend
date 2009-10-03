@@ -19,7 +19,8 @@ import sc.shared.SlotDescriptor;
 
 public class HelperMethods {
 
-	private static final Logger logger = LoggerFactory.getLogger(HelperMethods.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(HelperMethods.class);
 
 	private static final DateFormat dateTimeFormat = new SimpleDateFormat(
 			"yyyy.MM.dd HH_mm_ss");
@@ -63,8 +64,8 @@ public class HelperMethods {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				BufferedReader input = new BufferedReader(new InputStreamReader(proc
-						.getInputStream()));
+				BufferedReader input = new BufferedReader(
+						new InputStreamReader(proc.getInputStream()));
 				String line = "";
 				try {
 					while ((line = input.readLine()) != null) {
@@ -74,7 +75,8 @@ public class HelperMethods {
 					System.err.println("Failed to redirect STDOUT.");
 				}
 
-				System.out.println("Process exited with ExitCode=" + proc.exitValue());
+				System.out.println("Process exited with ExitCode="
+						+ proc.exitValue());
 			}
 		}).start();
 	}
@@ -134,11 +136,12 @@ public class HelperMethods {
 		for (int i = 0; i < descriptors.size(); i++) {
 			replayFilename.append("_" + descriptors.get(i).getDisplayName());
 		}
-		replayFilename.append(" " + HelperMethods.getCurrentDateTime() + ".xml");
+		replayFilename
+				.append(" " + HelperMethods.getCurrentDateTime() + ".xml");
 
 		return replayFilename.toString();
 	}
-	
+
 	/**
 	 * Replaces all occurrences of Umlaute with the UTF8 representation.
 	 */
@@ -147,5 +150,30 @@ public class HelperMethods {
 		s.replace('ä', '\u00E4');
 		s.replace('ü', '\u00FC');
 		s.replace('ß', '\u00DF');
+	}
+
+	public static int roundInteger(int value, int numbers) {
+		double dValue = value;
+
+		for (int i = 0; i < numbers; i++) {
+			dValue = Math.round(dValue * 0.1);
+		}
+
+		long iValue = Math.round(dValue);
+
+		for (int i = 0; i < numbers; i++) {
+			iValue *= 10;
+		}
+
+		// since we got an INT as input this will possibly be an INT again
+		return (int) iValue;
+	}
+
+	public static String millisecondsToString(int value) {
+		if (Math.abs(value) < 1000) {
+			return value + "ms";
+		} else {
+			return (value / 1000) + "s";
+		}
 	}
 }

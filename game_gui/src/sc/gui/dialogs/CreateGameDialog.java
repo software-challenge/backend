@@ -588,7 +588,6 @@ public class CreateGameDialog extends JDialog {
 				presFac.getLogicFacade().setGameActive(false);
 
 				contextPanel.updateButtonBar(true);
-				contextPanel.stopTimer();
 
 				// generate replay filename
 				String replayFilename = HelperMethods.generateReplayFilename(descriptors);

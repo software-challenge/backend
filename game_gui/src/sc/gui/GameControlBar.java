@@ -1,19 +1,39 @@
 package sc.gui;
 
-import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-public class GameControlBar extends JPanel {
+import org.slf4j.LoggerFactory;
+
+import sc.common.HelperMethods;
+
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+public class GameControlBar extends JPanel implements ActionListener {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -411501977458671630L;
+
+	private static final int INITIAL_SPEED = 10;
 
 	private static final String PATH_ICON_CANCEL = "/resource/stop.png";
 	private static final String PATH_ICON_START = "/resource/player_play.png";
@@ -38,6 +58,8 @@ public class GameControlBar extends JPanel {
 	private static final ImageIcon ICON_NEXT = new ImageIcon(
 			ContextDisplay.class.getResource(PATH_ICON_NEXT));
 
+	private static final boolean SHOW_SERVER_CONTROL_BUTTONS = false;
+
 	public final JButton btn_play;
 	public final JButton btn_pause;
 	public final JButton btn_toBegin;
@@ -47,6 +69,14 @@ public class GameControlBar extends JPanel {
 	public final JButton btn_cancel;
 
 	private final Properties lang;
+
+	private final Timer stepTimer;
+
+	private final JSlider stepSpeed;
+
+	private final JButton stepStartButton;
+
+	private final JButton stepStopButton;
 
 	public GameControlBar() {
 		setBorder(BorderFactory.createEtchedBorder());
@@ -67,27 +97,142 @@ public class GameControlBar extends JPanel {
 		btn_cancel.setToolTipText(lang.getProperty("context_cancel"));
 		btn_pause = new JButton(ICON_PAUSE);
 		btn_pause.setToolTipText(lang.getProperty("context_pause"));
-
 		btn_pause.setVisible(false);
+
+		stepTimer = new Timer(1000, this);
+
+		JPanel stepperBar = new JPanel();
+		stepSpeed = new JSlider(0, 100, INITIAL_SPEED);
+		stepSpeed.setMajorTickSpacing(50);
+		stepSpeed.setMinorTickSpacing(25);
+		stepSpeed.setPaintTicks(true);
+
+		Dictionary<Integer, JLabel> sliderLabels = new Hashtable<Integer, JLabel>();
+		sliderLabels.put(0, new JLabel(HelperMethods
+				.millisecondsToString(HelperMethods.roundInteger(
+						getLogarithmicSliderValue(0), 2))));
+		sliderLabels.put(50, new JLabel(HelperMethods
+				.millisecondsToString(HelperMethods.roundInteger(
+						getLogarithmicSliderValue(50), 2))));
+		sliderLabels.put(100, new JLabel(HelperMethods
+				.millisecondsToString(HelperMethods.roundInteger(
+						getLogarithmicSliderValue(100), 2))));
+		stepSpeed.setLabelTable(sliderLabels);
+		stepSpeed.setPaintLabels(true);
+
+		stepStartButton = new JButton(ICON_START);
+		stepStopButton = new JButton(ICON_PAUSE);
+
+		stepperBar.add(stepStartButton);
+		stepperBar.add(stepStopButton);
+		stepperBar.add(stepSpeed);
+
+		stepSpeed.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent evt) {
+				int delay = getLogarithmicSliderValue();
+				LoggerFactory.getLogger(GameControlBar.class).debug(
+						"Setting Speed to {}", delay);
+				stepTimer.setDelay((int) delay);
+				stepTimer.setInitialDelay((int) delay);
+			}
+		});
+
+		stepSpeed.setValue(INITIAL_SPEED);
+
+		MouseListener stepToggler = new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				setStepping(!stepTimer.isRunning());
+			}
+		};
+
+		stepStartButton.addMouseListener(stepToggler);
+		stepStopButton.addMouseListener(stepToggler);
+
+		setStepping(false);
 
 		JPanel regularButtonBar = new JPanel();
 		regularButtonBar.add(btn_toBegin);
 		regularButtonBar.add(btn_back);
-		regularButtonBar.add(btn_pause);
-		regularButtonBar.add(btn_play);
 		regularButtonBar.add(btn_next);
 		regularButtonBar.add(btn_toEnd);
+
+		if (SHOW_SERVER_CONTROL_BUTTONS) {
+			regularButtonBar.add(btn_pause);
+			regularButtonBar.add(btn_play);
+		}
 
 		JPanel cancelButtonBar = new JPanel();
 		cancelButtonBar.add(btn_cancel);
 
-		setLayout(new BorderLayout(30, 30));
-		add(regularButtonBar, BorderLayout.CENTER);
-		add(cancelButtonBar, BorderLayout.LINE_END);
+		FormLayout layout = new FormLayout(
+				"pref, left:100dlu:grow, pref, center:100dlu:grow, pref, right:100dlu:grow, pref",
+				"pref, min, pref");
+		setLayout(layout);
+
+		CellConstraints cc = new CellConstraints();
+		add(stepperBar, cc.xy(2, 2, "left, center"));
+		add(regularButtonBar, cc.xy(4, 2, "center, center"));
+		add(cancelButtonBar, cc.xy(6, 2, "right, center"));
+	}
+
+	protected void setStepping(boolean active) {
+		if (!active) {
+			stepTimer.stop();
+		} else {
+			stepTimer.start();
+		}
+
+		stepStartButton.setVisible(!active);
+		stepStopButton.setVisible(active);
 	}
 
 	public void setPaused(boolean paused) {
 		this.btn_pause.setVisible(!paused);
 		this.btn_play.setVisible(paused);
+	}
+
+	private int getLogarithmicSliderValue() {
+		return getLogarithmicSliderValue(stepSpeed.getValue());
+	}
+
+	private int getLogarithmicSliderValue(long value) {
+		return (int) getLogarithmicSliderValue(value, stepSpeed.getMinimum(),
+				stepSpeed.getMaximum(), 200, 5000);
+	}
+
+	private double getLogarithmicSliderValue(long value, long srcMin,
+			long srcMax, long destMin, long destMax) {
+		double min = Math.log(destMin);
+		double max = Math.log(destMax);
+
+		double scale = (max - min) / (srcMax - srcMin);
+		return Math.exp(min + scale * (value - srcMin));
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		LoggerFactory.getLogger(this.getClass()).debug("Stepping.");
+		btn_next.doClick();
+	}
+
+	public void disable() {
+		btn_toBegin.setEnabled(false);
+		btn_back.setEnabled(false);
+		btn_pause.setEnabled(false);
+		btn_play.setEnabled(false);
+		btn_next.setEnabled(false);
+		btn_toEnd.setEnabled(false);
+
+		setActive(false);
+		setStepping(false);
+	}
+
+	public void setActive(boolean b) {
+		btn_cancel.setEnabled(b);
+		stepSpeed.setEnabled(b);
+		stepStartButton.setEnabled(b);
+		stepStopButton.setEnabled(b);
 	}
 }
