@@ -27,7 +27,7 @@
 
 	<target name="compile" depends="dependencies">
 		<mkdir dir="${classes.dir}" />
-		<javac destdir="${classes.dir}" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
+		<javac destdir="${classes.dir}" encoding="utf8" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
 			<src path="server" />
 			<src path="client" />
 			<src path="shared" />
