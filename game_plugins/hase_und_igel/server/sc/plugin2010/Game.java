@@ -3,7 +3,6 @@ package sc.plugin2010;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +49,10 @@ public class Game extends RoundBasedGameInstance<Player>
 	protected transient long		time_start;
 	protected transient BigInteger	sum_red			= BigInteger.ZERO;
 	protected transient BigInteger	sum_blue		= BigInteger.ZERO;
-	
-	public static final int WIN_SCORE = 1;
-	public static final int LOSE_SCORE = 0;
-	public static final int DRAW_SCORE = 1;
+
+	public static final int			WIN_SCORE		= 1;
+	public static final int			LOSE_SCORE		= 0;
+	public static final int			DRAW_SCORE		= 1;
 
 	public Board getBoard()
 	{
@@ -116,29 +115,27 @@ public class Game extends RoundBasedGameInstance<Player>
 						.currentTimeMillis()
 						- time_start));
 
-			if (board.isValid(move, author))
+			if (!board.isValid(move, author))
 			{
-				update(move, author);
-				author.addToHistory(move);
+				logger.error("Received invalid move {} from {}.", data, author);
+				throw new GameLogicException("Move was invalid");
 			}
-			else
-			{
-				HashMap<IPlayer, PlayerScore> res = new HashMap<IPlayer, PlayerScore>();
-				for (final Player p : players)
-					res.put(p, getScoreFor(p));
 
-				notifyOnGameOver(res);
-			}
+			update(move, author);
+			author.addToHistory(move);
 
 			for (final Player p : players)
+			{
 				p.setPosition(GameUtil
 						.getGameResult(p, board.getOtherPlayer(p)));
+			}
 
 			next();
 		}
 		else
 		{
-			logger.warn("Ungültiger Zug von '{}'", author.getColor());
+			logger.error("Received unexpected {} from {}.", data, author);
+			throw new GameLogicException("Unknown ObjectType received.");
 		}
 	}
 
@@ -316,7 +313,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	public void onPlayerLeft(IPlayer player)
 	{
 		Map<IPlayer, PlayerScore> res = generateScoreMap();
-		
+
 		for (Entry<IPlayer, PlayerScore> entry : res.entrySet())
 		{
 			PlayerScore score = entry.getValue();
@@ -331,7 +328,7 @@ public class Game extends RoundBasedGameInstance<Player>
 				score.setValueAt(0, new BigDecimal(+1));
 			}
 		}
-		
+
 		notifyOnGameOver(res);
 	}
 
