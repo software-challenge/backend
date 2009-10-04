@@ -13,6 +13,13 @@ public class TcpNetwork implements INetworkInterface
 	private static Logger	logger	= LoggerFactory.getLogger(TcpNetwork.class);
 	private Socket			socket;
 
+	/**
+	 * Constructs an implementation of <code>INetworkInterface</code> which
+	 * operates on Java's <code>Socket</code>.
+	 * 
+	 * @param socket
+	 * @throws IOException
+	 */
 	public TcpNetwork(Socket socket) throws IOException
 	{
 		this.socket = socket;

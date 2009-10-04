@@ -1,7 +1,6 @@
 package sc.api.plugins;
 
 import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 
@@ -23,7 +22,7 @@ public interface IGameInstance
 	 *            The player who invoked this action.
 	 * @param data
 	 *            The plugin-secific data.
-	 * @throws RescueableClientException
+	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
 	public void onAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException;

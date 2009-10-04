@@ -98,9 +98,6 @@ public class Game extends RoundBasedGameInstance<Player>
 	{
 		final Player author = (Player) fromPlayer;
 
-		// FIXME validate with move schema AND throw a specific exception
-		// FIXME validate with game rules AND throw a specific exception
-
 		if (data instanceof Move)
 		{
 			oneLastMove = false;
