@@ -255,7 +255,6 @@ public final class Player extends SimplePlayer implements Cloneable
 				Position.SECOND) ? Game.LOSE_SCORE : Game.DRAW_SCORE, // Spielergebnis
 																		// (WIN/LOSS/TIE)
 				getFieldNumber(), // Position auf dem Spielfeld
-				(SALADS_TO_EAT - getSaladsToEat()), // Anzahl an Salate gegessen
 				getCarrotsAvailable(), // Anzahl verbliebene Karotten
 				getHistory().size(), // Anzahl Züge
 				avg_time); // durchschnittliche Zugzeit in Millisekunden

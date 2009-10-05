@@ -29,7 +29,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * 
  * @author rra
  * @since Jul 4, 2009
- * 
  */
 @XStreamAlias(value = "hui:game")
 public class Game extends RoundBasedGameInstance<Player>
@@ -47,6 +46,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
 	// Zugzeit berechnung für Score
 	protected transient long		time_start;
+
 	protected transient BigInteger	sum_red			= BigInteger.ZERO;
 	protected transient BigInteger	sum_blue		= BigInteger.ZERO;
 
