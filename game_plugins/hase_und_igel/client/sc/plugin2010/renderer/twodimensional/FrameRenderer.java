@@ -801,13 +801,13 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				if (data.getScores().get(0).getCause() == ScoreCause.INVALID_MOVE)
 				{
 					addGameEndedRightColors(FigureColor.RED,
-							"hat falschen Zug gesetzt!");
+							"hat einen falschen Zug gesetzt!");
 				}
 
 				if (data.getScores().get(1).getCause() == ScoreCause.INVALID_MOVE)
 				{
 					addGameEndedRightColors(FigureColor.BLUE,
-							"hat falschen Zug gesetzt!");
+							"hat einen falschen Zug gesetzt!");
 				}
 
 				String[] results = data.getScores().get(0).toStrings();
