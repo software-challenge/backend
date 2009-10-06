@@ -127,31 +127,6 @@ public class GameControlBar extends JPanel implements ActionListener {
 		stepperBar.add(stepStopButton);
 		stepperBar.add(stepSpeed);
 
-		stepSpeed.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent evt) {
-				int delay = getLogarithmicSliderValue();
-				LoggerFactory.getLogger(GameControlBar.class).debug(
-						"Setting Speed to {}", delay);
-				stepTimer.setDelay((int) delay);
-				stepTimer.setInitialDelay((int) delay);
-			}
-		});
-
-		stepSpeed.setValue(INITIAL_SPEED);
-
-		MouseListener stepToggler = new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				setStepping(!stepTimer.isRunning());
-			}
-		};
-
-		stepStartButton.addMouseListener(stepToggler);
-		stepStopButton.addMouseListener(stepToggler);
-
-		setStepping(false);
-
 		JPanel regularButtonBar = new JPanel();
 		regularButtonBar.add(btn_toBegin);
 		regularButtonBar.add(btn_back);
@@ -175,6 +150,35 @@ public class GameControlBar extends JPanel implements ActionListener {
 		add(stepperBar, cc.xy(2, 2, "left, center"));
 		add(regularButtonBar, cc.xy(4, 2, "center, center"));
 		add(cancelButtonBar, cc.xy(6, 2, "right, center"));
+
+		bindHandlers();
+	}
+
+	private void bindHandlers() {
+		stepSpeed.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent evt) {
+				int delay = getLogarithmicSliderValue();
+				LoggerFactory.getLogger(GameControlBar.class).debug(
+						"Setting Speed to {}", delay);
+				stepTimer.setDelay((int) delay);
+				stepTimer.setInitialDelay((int) delay);
+			}
+		});
+
+		stepSpeed.setValue(INITIAL_SPEED);
+
+		ActionListener stepToggler = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setStepping(!stepTimer.isRunning());
+			}
+		};
+
+		stepStartButton.addActionListener(stepToggler);
+		stepStopButton.addActionListener(stepToggler);
+
+		setStepping(false);
 	}
 
 	public void setPaused(boolean paused) {
@@ -204,7 +208,6 @@ public class GameControlBar extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		LoggerFactory.getLogger(this.getClass()).debug("Stepping.");
 		btn_next.doClick();
 	}
 
@@ -222,20 +225,20 @@ public class GameControlBar extends JPanel implements ActionListener {
 
 	/**
 	 * 
-	 * @param active True, if there is a loaded game
+	 * @param active
+	 *            True, if there is a loaded game
 	 */
 	protected void setActive(boolean active) {
 		btn_cancel.setEnabled(active);
 		stepSpeed.setEnabled(active);
 		stepStartButton.setEnabled(active);
 		stepStopButton.setEnabled(active);
-		
-		if(!active)
-		{
+
+		if (!active) {
 			setStepping(false);
 		}
 	}
-	
+
 	protected void setStepping(boolean active) {
 		if (!active) {
 			stepTimer.stop();
