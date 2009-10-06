@@ -32,6 +32,7 @@ import sc.plugin2010.Player;
 import sc.plugin2010.renderer.IRenderer;
 import sc.plugin2010.renderer.RendererUtil;
 import sc.shared.GameResult;
+import sc.shared.ScoreCause;
 
 /**
  * @author ffi
@@ -87,8 +88,8 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	private final String			doNothing				= "Keine Karotten abgeben oder nehmen";
 	private final String			give20carrots			= "Gib 20 Karotten ab";
 	private final String			eatsalad				= "Friss sofort einen Salat";
-	private final String			hurryahead				= "Rücke eine Position vor";
-	private final String			fallback				= "Falle eine Position zurück";
+	private final String			hurryahead				= "R\u00FCcke eine Position vor";
+	private final String			fallback				= "Falle eine Position zur\u00FCck";
 	private final String			jokerAnswer				= "joker";
 
 	public FrameRenderer(final IGameHandler handler, final boolean onlyObserving)
@@ -784,6 +785,30 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				}
 
 				action.addNormal("Spielresultat:");
+
+				if (data.getScores().get(0).getCause() == ScoreCause.LEFT)
+				{
+					addGameEndedRightColors(FigureColor.RED,
+							"hat das Spiel verlassen!");
+				}
+
+				if (data.getScores().get(1).getCause() == ScoreCause.LEFT)
+				{
+					addGameEndedRightColors(FigureColor.BLUE,
+							"hat das Spiel verlassen!");
+				}
+
+				if (data.getScores().get(0).getCause() == ScoreCause.INVALID_MOVE)
+				{
+					addGameEndedRightColors(FigureColor.RED,
+							"hat falschen Zug gesetzt!");
+				}
+
+				if (data.getScores().get(1).getCause() == ScoreCause.INVALID_MOVE)
+				{
+					addGameEndedRightColors(FigureColor.BLUE,
+							"hat falschen Zug gesetzt!");
+				}
 
 				String[] results = data.getScores().get(0).toStrings();
 				if (results[0].equals("1"))
