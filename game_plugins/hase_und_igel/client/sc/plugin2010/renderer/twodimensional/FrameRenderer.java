@@ -798,13 +798,13 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 							"hat das Spiel verlassen!");
 				}
 
-				if (data.getScores().get(0).getCause() == ScoreCause.INVALID_MOVE)
+				if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION)
 				{
 					addGameEndedRightColors(FigureColor.RED,
 							"hat einen falschen Zug gesetzt!");
 				}
 
-				if (data.getScores().get(1).getCause() == ScoreCause.INVALID_MOVE)
+				if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION)
 				{
 					addGameEndedRightColors(FigureColor.BLUE,
 							"hat einen falschen Zug gesetzt!");

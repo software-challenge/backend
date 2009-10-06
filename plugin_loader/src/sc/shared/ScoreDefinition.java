@@ -34,6 +34,6 @@ public class ScoreDefinition implements Iterable<ScoreFragment> {
 
 	@Override
 	public Iterator<ScoreFragment> iterator() {
-		return fragments.iterator();
+		return this.fragments.iterator();
 	}
 }
