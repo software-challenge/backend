@@ -29,7 +29,6 @@ import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Move;
 import sc.plugin2010.MoveTyp;
 import sc.plugin2010.Player;
-import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.IRenderer;
 import sc.plugin2010.renderer.RendererUtil;
 import sc.shared.GameResult;

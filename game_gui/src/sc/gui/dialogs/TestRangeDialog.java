@@ -51,6 +51,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import org.slf4j.LoggerFactory;
+
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
 import sc.gui.PresentationFacade;
@@ -106,7 +108,6 @@ public class TestRangeDialog extends JDialog {
 	private JScrollPane scrollTextArea;
 	private JProgressBar progressBar;
 	private JPanel pnlBottomRight;
-	private JPanel pnlBottomLeft;
 	private JCheckBox cb_showLog;
 	private JPanel pnl_saveReplay;
 	private JPanel pnlBottomTop;
@@ -856,8 +857,7 @@ public class TestRangeDialog extends JDialog {
 				break;
 			case LEFT:
 				int invalidCol = model.getRowCount() - 2;
-				int oldValue = Integer.parseInt((String) model.getValueAt(statRow,
-						invalidCol));
+				int oldValue = (Integer) model.getValueAt(statRow, invalidCol);
 				model.setValueAt(oldValue + 1, statRow, invalidCol);
 				break;
 			case UNKNOWN:
@@ -867,7 +867,7 @@ public class TestRangeDialog extends JDialog {
 				model.setValueAt(oldValue + 1, statRow, crashedCol);
 				break;
 			default:
-				System.out.println("ERROR: Unknown game cause.");
+				LoggerFactory.getLogger(this.getClass()).error("Unknown game cause.");
 			}
 		}
 	}

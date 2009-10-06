@@ -434,12 +434,12 @@ public class GameUtil
 					return "frisst einen Salat";
 				case MOVE:
 					String str = String.valueOf(mov.getN())
-							+ " Felder vorw\u00E4rts";
+							+ " Felder vorwärts";
 
 					if (mov.getN() == 1)
 					{
 						str = String.valueOf(mov.getN())
-								+ " Feld vorw\u00E4rts";
+								+ " Feld vorwärts";
 					}
 
 					return "setzt " + str;
@@ -455,7 +455,7 @@ public class GameUtil
 					}
 					return res;
 				case FALL_BACK:
-					return "l\u00E4sst sich auf Igel zur\u00FCckfallen";
+					return "lässt sich auf Igel zurückfallen";
 				case SKIP:
 					return "muss aussetzen";
 				case PLAY_CARD:
@@ -466,9 +466,9 @@ public class GameUtil
 						case EAT_SALAD:
 							return "spielt 'Friss sofort einen Salat'";
 						case FALL_BACK:
-							return "spielt 'Falle eine Position zur\u00FCck'";
+							return "spielt 'Falle eine Position zurück'";
 						case HURRY_AHEAD:
-							return "spielt 'R\u00FCcke eine Position vor'";
+							return "spielt 'Rücke eine Position vor'";
 						default:
 							break;
 					}

@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
@@ -40,6 +43,9 @@ public class Observation implements IObservation, IUpdateListener,
 	private List<IReadyListener>		readyListeners		= new LinkedList<IReadyListener>();
 
 	private boolean						notifiedOnGameEnded	= false;
+
+	private static final Logger			logger				= LoggerFactory
+																	.getLogger(Observation.class);
 
 	public Observation(IControllableGame conGame, IGameHandler handler)
 	{
@@ -234,13 +240,41 @@ public class Observation implements IObservation, IUpdateListener,
 		{
 			notifiedOnGameEnded = true;
 
-			for (IGameEndedListener list : gameEndedListeners)
+			for (IGameEndedListener listener : gameEndedListeners)
 			{
-				list.onGameEnded(data, createGameEndedString(data));
+				try
+				{
+					listener.onGameEnded(data, createGameEndedString(data));
+				}
+				catch (Exception e)
+				{
+					logger.error("GameEnded Notification caused an exception.",
+							e);
+				}
 			}
 		}
 
 		handler.gameEnded(data);
+	}
+
+	private void notifyOnNewTurn()
+	{
+		notifyOnNewTurn(0, "");
+	}
+
+	private void notifyOnNewTurn(int id, String info)
+	{
+		for (INewTurnListener listener : newTurnListeners)
+		{
+			try
+			{
+				listener.newTurn(id, info);
+			}
+			catch (Exception e)
+			{
+				logger.error("NewTurn Notification caused an exception.", e);
+			}
+		}
 	}
 
 	/**
@@ -248,10 +282,7 @@ public class Observation implements IObservation, IUpdateListener,
 	 */
 	public void newTurn(int id, String info)
 	{
-		for (INewTurnListener list : newTurnListeners)
-		{
-			list.newTurn(id, info);
-		}
+		notifyOnNewTurn(id, info);
 	}
 
 	@Override
@@ -291,10 +322,7 @@ public class Observation implements IObservation, IUpdateListener,
 			}
 		}
 
-		for (INewTurnListener turnListener : newTurnListeners)
-		{
-			turnListener.newTurn(0, "");
-		}
+		notifyOnNewTurn();
 	}
 
 	@Override

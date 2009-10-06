@@ -96,14 +96,7 @@ public class ClientManager implements Runnable
 
 		for (Client client : this.clients)
 		{
-			try
-			{
-				client.close();
-			}
-			catch (IOException e)
-			{
-				logger.error("Couldn't close client.", e);
-			}
+			client.close();
 		}
 	}
 }

@@ -70,7 +70,6 @@ public abstract class XStreamClient
 			throw new IllegalArgumentException("xstream must not be null.");
 		}
 
-		final Object theReadyLock = this.readyLock;
 		this.xStream = xstream;
 		this.networkInterface = networkInterface;
 		this.out = xstream.createObjectOutputStream(networkInterface
@@ -82,79 +81,14 @@ public abstract class XStreamClient
 			@Override
 			public void run()
 			{
-
 				try
 				{
-					XStreamClient.this.in = xstream
-							.createObjectInputStream(networkInterface
-									.getInputStream());
-
-					synchronized (theReadyLock)
-					{
-						if (!isReady())
-						{
-							theReadyLock.wait();
-						}
-					}
-
-					while (!Thread.interrupted())
-					{
-						Object o = XStreamClient.this.in.readObject();
-						this.threadLogger.debug("Received {} via {}", o,
-								networkInterface);
-						onObject(o);
-					}
-
-					handleDisconnect(DisconnectCause.DISCONNECTED);
-				}
-				catch (EOFException e)
-				{
-					handleDisconnect(DisconnectCause.REGULAR, e);
-				}
-				catch (IOException e)
-				{
-					handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
-				}
-				catch (ClassNotFoundException e)
-				{
-					handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
-				}
-				catch (XStreamException e)
-				{
-					Throwable exceptionCause = e.getCause();
-					if (exceptionCause != null)
-					{
-						if (exceptionCause instanceof SocketException)
-						{
-							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
-						}
-						else if (exceptionCause instanceof EOFException)
-						{
-							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
-						}
-						else if (exceptionCause instanceof IOException
-								&& exceptionCause.getCause() != null
-								&& exceptionCause.getCause() instanceof InterruptedException)
-						{
-							handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
-						}
-						else
-						{
-							handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
-						}
-					}
-					else
-					{
-						handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
-					}
+					receiveThread();
 				}
 				catch (Exception e)
 				{
-					this.threadLogger.error("Unknown Communication Error", e);
-					handleDisconnect(DisconnectCause.UNKNOWN, e);
+					this.threadLogger.error("ReceiveThread caused an exception.", e);
 				}
-
-				return;
 			}
 		});
 		this.thread.setName("XStreamClient Reader");
@@ -162,6 +96,84 @@ public abstract class XStreamClient
 	}
 
 	protected abstract void onObject(Object o);
+
+	/**
+	 * used internally by a ReceiveThread - all Exceptions should be handled.
+	 */
+	public void receiveThread() throws Exception
+	{
+		try
+		{
+			XStreamClient.this.in = this.xStream
+					.createObjectInputStream(this.networkInterface
+							.getInputStream());
+
+			synchronized (this.readyLock)
+			{
+				if (!isReady())
+				{
+					this.readyLock.wait();
+				}
+			}
+
+			while (!Thread.interrupted())
+			{
+				Object o = XStreamClient.this.in.readObject();
+				logger.debug("Received {} via {}", o, this.networkInterface);
+				onObject(o);
+			}
+
+			handleDisconnect(DisconnectCause.DISCONNECTED);
+		}
+		catch (EOFException e)
+		{
+			handleDisconnect(DisconnectCause.REGULAR, e);
+		}
+		catch (IOException e)
+		{
+			handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
+		}
+		catch (ClassNotFoundException e)
+		{
+			handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
+		}
+		catch (XStreamException e)
+		{
+			Throwable exceptionCause = e.getCause();
+			if (exceptionCause != null)
+			{
+				if (exceptionCause instanceof SocketException)
+				{
+					handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
+				}
+				else if (exceptionCause instanceof EOFException)
+				{
+					handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
+				}
+				else if (exceptionCause instanceof IOException
+						&& exceptionCause.getCause() != null
+						&& exceptionCause.getCause() instanceof InterruptedException)
+				{
+					handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
+				}
+				else
+				{
+					handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
+				}
+			}
+			else
+			{
+				handleDisconnect(DisconnectCause.PROTOCOL_ERROR, e);
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error("Unknown Communication Error", e);
+			handleDisconnect(DisconnectCause.UNKNOWN, e);
+		}
+
+		return;
+	}
 
 	public void sendCustomData(String data) throws IOException
 	{
@@ -217,8 +229,8 @@ public abstract class XStreamClient
 	{
 		if (exception != null)
 		{
-			logger.warn("Client disconnected (Cause: " + cause + ", Exception: "
-					+ exception + ")");
+			logger.warn("Client disconnected (Cause: " + cause
+					+ ", Exception: " + exception + ")");
 		}
 		else
 		{
@@ -249,9 +261,9 @@ public abstract class XStreamClient
 		return this.disconnectCause;
 	}
 
-	public synchronized void close() throws IOException
+	public synchronized void close()
 	{
-		if (!this.closed)
+		if (!isClosed())
 		{
 			this.closed = true;
 
@@ -273,19 +285,30 @@ public abstract class XStreamClient
 					this.out.close();
 				}
 			}
-			finally
+			catch (Exception e)
 			{
-				try
+				logger.error("Failed to close OUT", e);
+			}
+
+			try
+			{
+				if (this.in != null)
 				{
-					if (this.in != null)
-					{
-						this.in.close();
-					}
+					this.in.close();
 				}
-				finally
-				{
-					this.networkInterface.close();
-				}
+			}
+			catch (Exception e)
+			{
+				logger.error("Failed to close IN", e);
+			}
+
+			try
+			{
+				this.networkInterface.close();
+			}
+			catch (Exception e)
+			{
+				logger.warn("Failed to close NetworkInterface", e);
 			}
 		}
 	}

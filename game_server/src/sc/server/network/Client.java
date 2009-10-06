@@ -20,9 +20,6 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * A generic client.
- * 
- * @author mja
- * @author rra
  */
 public class Client extends XStreamClient
 {
@@ -57,15 +54,16 @@ public class Client extends XStreamClient
 		}
 		else
 		{
-			logger.warn("Writing on a closed Stream - dropping...");
+			logger.warn("Writing on a closed Stream -> dropped the packet.");
 		}
 	}
 
 	@Override
-	public void close() throws IOException
+	public void close()
 	{
 		if (!isClosed())
 		{
+			logger.info("Closing Client {}", this);
 			super.close();
 			onDisconnect(DisconnectCause.REGULAR);
 		}
@@ -115,7 +113,17 @@ public class Client extends XStreamClient
 
 			for (IClientListener listener : this.clientListeners)
 			{
-				listener.onClientDisconnected(this);
+				try
+				{
+					listener.onClientDisconnected(this);
+				}
+				catch (Exception e)
+				{
+					logger
+							.error(
+									"OnDisconnect Notification caused an exception.",
+									e);
+				}
 			}
 		}
 	}

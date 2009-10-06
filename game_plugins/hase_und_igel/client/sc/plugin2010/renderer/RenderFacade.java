@@ -13,7 +13,6 @@ import sc.plugin2010.Board;
 import sc.plugin2010.EPlayerId;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Player;
-import sc.plugin2010.gui.HumanGameHandler;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
 import sc.plugin2010.renderer.twodimensional.FrameRenderer;
 import sc.shared.GameResult;

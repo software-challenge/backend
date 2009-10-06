@@ -114,7 +114,7 @@ public class GameRoom implements IGameListener
 				throw new RuntimeException("GameScore was not complete!");
 			}
 
-			if (score.size() != definition.size())
+			if (!score.matches(definition))
 			{
 				throw new RuntimeException("ScoreSize did not match Definition");
 			}

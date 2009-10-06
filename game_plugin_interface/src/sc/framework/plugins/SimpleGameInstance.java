@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IGameListener;
@@ -16,6 +19,9 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		IGameInstance
 {
+	public static final Logger			logger		= LoggerFactory
+															.getLogger(SimpleGameInstance.class);
+
 	@XStreamOmitField
 	protected final List<IGameListener>	listeners	= new LinkedList<IGameListener>();
 
@@ -38,7 +44,14 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 	{
 		for (IGameListener listener : this.listeners)
 		{
-			listener.onGameOver(map);
+			try
+			{
+				listener.onGameOver(map);
+			}
+			catch (Exception e)
+			{
+				logger.error("GameOver Notification caused an exception.", e);
+			}
 		}
 	}
 
@@ -46,7 +59,14 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 	{
 		for (IGameListener listener : this.listeners)
 		{
-			listener.onStateChanged(mementoState);
+			try
+			{
+				listener.onStateChanged(mementoState);
+			}
+			catch (Exception e)
+			{
+				logger.error("NewState Notification caused an exception.", e);
+			}
 		}
 	}
 }

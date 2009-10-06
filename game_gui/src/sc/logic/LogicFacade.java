@@ -134,6 +134,12 @@ public class LogicFacade {
 	 */
 	public void stopServer() {
 		if (server != null) {
+			(new Thread(new Runnable() {
+				@Override
+				public void run() {
+					server.close();
+				}
+			})).start();
 			server.close();
 			server = null;
 		}
@@ -152,7 +158,8 @@ public class LogicFacade {
 	public List<GUIPluginInstance> getAvailablePluginsSorted() {
 		Collection<GUIPluginInstance> plugins = pluginMan.getAvailablePlugins();
 		// sort by plugin's year
-		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(plugins);
+		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(
+				plugins);
 		Collections.sort(sortedPlugins, yearComparator);
 		return sortedPlugins;
 	}

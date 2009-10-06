@@ -69,4 +69,8 @@ public final class PlayerScore {
 	public void setValueAt(int index, BigDecimal v) {
 		this.parts.set(index, v);
 	}
+
+	public boolean matches(ScoreDefinition definition) {
+		return this.size() == definition.size();
+	}
 }

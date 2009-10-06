@@ -183,14 +183,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 	@Override
 	public void onGameOver(String roomId, GameResult data)
 	{
-		try
-		{
-			client.close();
-		}
-		catch (IOException e)
-		{
-			// only disconnect...
-		}
+		client.close();
 
 		if (handler != null)
 		{

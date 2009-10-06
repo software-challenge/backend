@@ -84,15 +84,7 @@ public class SimpleClient implements ILobbyClientListener
 		synchronized (consoleLock)
 		{
 			System.out.println("Game is over. Good night.");
-
-			try
-			{
-				this.client.close();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+			this.client.close();
 		}
 	}
 
@@ -119,6 +111,6 @@ public class SimpleClient implements ILobbyClientListener
 	public void onGamePaused(String roomId, IPlayer nextPlayer)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -21,6 +21,10 @@ public class Spieler extends AllgemeinerSpieler
 		this.gegner = gegner;
 	}
 	
+	public Spieler holeGegner() {
+		return this.gegner;
+	}
+	
 	public void setzteSpielbrett(Spielbrett brett) {
 		this.spielbrett = brett;
 	}
