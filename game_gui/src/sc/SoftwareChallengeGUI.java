@@ -138,6 +138,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 *            nothing expected
 	 */
 	public static void main(String[] args) {
+		System.setProperty("file.encoding", "UTF-8");
 		if (args.length > 0) {
 			String path = args[0];
 			System.out.println("Setting Pluginfolder to " + path);

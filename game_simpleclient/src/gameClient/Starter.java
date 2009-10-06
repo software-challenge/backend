@@ -18,6 +18,8 @@ public class Starter
 	public static void main(String[] args) throws IllegalOptionValueException,
 			UnknownOptionException
 	{
+		System.setProperty( "file.encoding", "UTF-8" );
+		
 		// Parameter definieren
 		CmdLineParser parser = new CmdLineParser();
 		CmdLineParser.Option hostOption = parser.addStringOption('h', "host");

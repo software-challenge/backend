@@ -20,6 +20,8 @@ public final class Application
 			InterruptedException, IllegalOptionValueException,
 			UnknownOptionException
 	{
+		System.setProperty( "file.encoding", "UTF-8" );
+		
 		parseArguments(params);
 
 		logger.info("Server is starting up...");

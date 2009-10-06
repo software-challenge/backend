@@ -21,6 +21,8 @@ public class ClientApp
 	public static void main(String[] args) throws IOException,
 			InterruptedException
 	{
+		System.setProperty( "file.encoding", "UTF-8" );
+		
 		final XStream xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		LobbyClient admin = new LobbyClient(xStream, ProtocolDefinition
