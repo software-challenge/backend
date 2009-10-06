@@ -31,10 +31,11 @@ public class HelperMethods {
 	 * 
 	 * @param filename
 	 * @param parameters
+	 * @return 
 	 * @throws IOException
 	 * @throws UnsupportedFileExtensionException
 	 */
-	public static void exec(final String filename, final String[] parameters)
+	public static Process exec(final String filename, final String[] parameters)
 			throws IOException, UnsupportedFileExtensionException {
 		final File file = new File(filename);
 		final String ext = getFileExtension(file);
@@ -58,6 +59,7 @@ public class HelperMethods {
 
 		logger.debug("Executing {}", StringHelper.join(commandFragments, " "));
 		ProcessBuilder builder = new ProcessBuilder(commandFragments);
+		builder.directory(file.getParentFile());
 		builder.redirectErrorStream();
 		final Process proc = builder.start();
 
@@ -79,6 +81,8 @@ public class HelperMethods {
 						+ proc.exitValue());
 			}
 		}).start();
+		
+		return proc;
 	}
 
 	/**
