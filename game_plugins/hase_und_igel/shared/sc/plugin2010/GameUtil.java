@@ -100,6 +100,7 @@ public class GameUtil
 				break;
 			case CARROT:
 			case POSITION_1:
+			case START:
 			case POSITION_2:
 				break;
 			default:
