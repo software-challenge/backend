@@ -7,6 +7,8 @@ class Person < ActiveRecord::Base
   validates_presence_of :password_salt
   validates_presence_of :password_hash
 
+  validates_uniqueness_of :email
+
   def password_match?(password)
     encrypted = self.class.encrypt_password(password, password_salt)
     encrypted == password_hash
