@@ -12,14 +12,19 @@ class MainController < ApplicationController
 
   # TODO: make this real
   def do_login
-    user_id = params[:user_id]
+    email = params[:user][:email]
+    password = params[:user][:password]
 
     begin
-      @person = Person.find(user_id)
-      session[:user_id] = @person.id
+      person = Person.find_by_email(email)
+      raise ActiveRecord::RecordNotFound unless person
+      raise ActiveRecord::RecordNotFound unless person.password_match?(password)
+      session[:user_id] = person.id
+      redirect_to root_url
     rescue ActiveRecord::RecordNotFound
+      @user = { :email => email, :password => "" }.to_obj
       flash[:notice] = "Der Benutzer konnte nicht gefunden werden!"
-      redirect_to login_url
+      render :action => "login"
     end
   end
 end

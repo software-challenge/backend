@@ -18,34 +18,70 @@
 
       #mainMenu li {
         display: inline;
+        margin: 0 6px;
       }
 
       #mainMenu a {
         font-weight: bold;
-        color: #469;
+        color: #4183C4;
         text-decoration: none;
+      }
+
+      #header {
+        height: 60px;
+        border-bottom: 3px #ddd solid;
+        padding: 10px;
+        background-color: #FCFCFC;
+        margin: 0 -10px;
+        background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
+      }
+
+      #header .logo {
+        font-family: Garamond, serif;
+        font-size: 18px;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        text-align: center;
+        height: 58px;
+        line-height: 60px;
+        width: 150px;
+        display: inline-block;
+        color: #4183C4;
+      }
+
+      #content {
+        padding: 10px 0;
+      }
+
+      label {
+        display: block;
       }
     </style>
   </head>
   <body style="margin: 0; padding: 0;">
 
     <div style="margin: 0 auto; width: 750px;">
-      <div style="height: 60px; border-bottom: 3px #469 solid; padding: 10px 0;">
-        <span style="font-family: Garamond, serif; font-size: 18px; background-color: #eee; text-align: center; height: 60px; line-height: 60px; width: 150px; display: inline-block;">
-          SC Logo
-        </span>
-        <div style="float: right; line-height: 20px; padding-top: 40px;">
+      <div id="header">
+        <% link_to root_url do %>
+          <span class="logo">
+            SC Logo
+          </span>
+        <% end %>
+        <div style="float: right; line-height: 16px; font-size: 11px; padding-top: 44px;">
           <ul id="mainMenu">
-            <li><%= link_to "Benutzer", people_url %></li>
+            <li><%= link_to "Startseite", root_url %></li>
             <li><%= link_to "Wettbewerbe", contests_url %></li>
             <li><%= link_to "Teilnehmer", contestants_url %></li>
+            <li><%= link_to "Benutzer", people_url %></li>
           </ul>
         </div>
       </div>
-      <p style="color: green"><%= flash[:notice] %></p>
-      <p style="color: red"><%= flash[:error] %></p>
+      <div id="content">
+        <p style="color: green"><%= flash[:notice] %></p>
+        <p style="color: red"><%= flash[:error] %></p>
 
-      <%= yield %>
+        <%= yield %>
+      </div>
     </div>
   </body>
 </html>

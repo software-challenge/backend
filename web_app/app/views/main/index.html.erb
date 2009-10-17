@@ -1,1 +1,12 @@
-Hello World
+<% if logged_in? %>
+  <p>
+    Hallo, <%= current_user.name %> (<%= current_user.email %>)!
+  </p>
+  <p>
+    Administrator: <%= current_user.administrator? %>
+  </p>
+<% else %>
+  <p>
+    Hello World
+  </p>
+<% end %>

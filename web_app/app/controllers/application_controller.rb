@@ -1,6 +1,8 @@
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
+require_dependency 'hash_objectify'
+
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
@@ -9,7 +11,7 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password
 
   before_filter :fetch_user
-  # before_filter :require_current_user
+  before_filter :require_current_user
 
   protected
 

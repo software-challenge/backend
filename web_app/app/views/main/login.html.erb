@@ -1,5 +1,13 @@
 <% form_tag login_url do %>
-    <%= label_tag :user_id, "Benutzer ID" %>
-  <%= text_field_tag :user_id, "" %>
+  <% fields_for :user do |f| %>
+    <%= f.label :email, "E-Mail Addresse" %>
+    <%= f.text_field :email %>
+    <%= f.label :password, "Passwort" %>
+    <%= f.password_field :password %>
+  <% end %>
   <%= submit_tag "login" %>
 <% end %>
+
+<p>
+  Führt den Raketask <code>rake db:seed</code> aus, um einen Standard-User in die Datenbank zu laden. Die E-Mail Addresse lautet dann <code>root@example.com</code>, das Passwort ist <code>swordfish</code>.
+</p>
