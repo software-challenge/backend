@@ -1,0 +1,28 @@
+<h1>Editing person</h1>
+
+<% form_for(@person) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :email %><br />
+    <%= f.text_field :email %>
+  </p>
+  <p>
+    <%= f.label :password_hash %><br />
+    <%= f.text_field :password_hash %>
+  </p>
+  <p>
+    <%= f.label :password_salt %><br />
+    <%= f.text_field :password_salt %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @person %> |
+<%= link_to 'Back', people_path %>

@@ -1,0 +1,22 @@
+<h1>Listing contestants</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Contest</th>
+  </tr>
+
+<% @contestants.each do |contestant| %>
+  <tr>
+    <td><%=h contestant.name %></td>
+    <td><%=h contestant.contest_id %></td>
+    <td><%= link_to 'Show', contestant %></td>
+    <td><%= link_to 'Edit', edit_contestant_path(contestant) %></td>
+    <td><%= link_to 'Destroy', contestant, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New contestant', new_contestant_path %>

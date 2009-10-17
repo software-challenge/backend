@@ -1,0 +1,13 @@
+<p>
+  <b>Name:</b>
+  <%=h @contestant.name %>
+</p>
+
+<p>
+  <b>Contest:</b>
+  <%=h @contestant.contest_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_contestant_path(@contestant) %> |
+<%= link_to 'Back', contestants_path %>
