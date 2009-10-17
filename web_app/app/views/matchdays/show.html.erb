@@ -1,0 +1,20 @@
+<h2><%= @matchday.position %>. Spieltag von <%= @matchday.contest.name %> (<%= l(@matchday.when, :format => :long) %>)</h2>
+
+<table>
+  <tr>
+    <th>Spieler 1</th>
+    <th>&nbsp;</th>
+    <th>Spieler 2</th>
+    <th>Ergebnis</th>
+  </tr>
+  <% @matchday.matches.each do |match| %>
+    <tr>
+      <td><%= match.slots[0].name || "Freispiel" %></td>
+      <td style="font-weight: bold;">vs</td>
+      <td><%= match.slots[1].name || "Freispiel" %></td>
+      <td>&nbsp;</td>
+    </tr>
+  <% end %>
+</table>
+
+<%= link_to 'Back', contest_matchdays_url(@matchday.contest) %>

@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  contest_id: 1
+  when: 2009-10-17
+  order: 1
+
+two:
+  contest_id: 1
+  when: 2009-10-17
+  order: 1

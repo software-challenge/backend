@@ -1,0 +1,27 @@
+<div style="float: right;">
+  <%= button_to "Spielplan generieren", refresh_matchdays_contest_url(@contest), :method => "post" %>
+</div>
+
+<% if @matchdays.empty? %>
+  <h1>Spielplan für <%=h @contest.name %></h1>
+  <p>Es liegt noch kein Spielplan vor.</p>
+<% else %>
+  <h1>Alle <%= @matchdays.size %> Spieltage für <%=h @contest.name %></h1>
+
+  <table>
+    <tr>
+      <th>&nbsp;</th>
+      <th>Wann</th>
+      <th>&nbsp;</th>
+    </tr>
+
+    <% @matchdays.each_with_index do |matchday,i| %>
+      <tr>
+        <td><%= i+1 %>. Spieltag am</td>
+        <td><%= l(matchday.when, :format => :long) %></td>
+        <td><%= link_to 'Show', [@contest, matchday] %></td>
+      </tr>
+    <% end %>
+  </table>
+
+<% end %>

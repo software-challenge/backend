@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  contestant_type: MyString
+  contestant_id: 1
+  match_id: 1
+  order: 1
+
+two:
+  contestant_type: MyString
+  contestant_id: 1
+  match_id: 1
+  order: 1

@@ -3,18 +3,20 @@
 <table>
   <tr>
     <th>Name</th>
+    <th>Teilnehmer</th>
     <th>Active</th>
   </tr>
 
-<% @contests.each do |contest| %>
-  <tr>
-    <td><%=h contest.name %></td>
-    <td><%=h contest.active %></td>
-    <td><%= link_to 'Show', contest %></td>
-    <td><%= link_to 'Edit', edit_contest_path(contest) %></td>
-    <td><%= link_to 'Destroy', contest, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+  <% @contests.each do |contest| %>
+    <tr>
+      <td><%=h contest.name %></td>
+      <td><%=h contest.contestants.count %> Teilnehmer</td>
+      <td><%=h(contest.active ? 'ja' : 'nein') %></td>
+      <td><%= link_to 'Show', contest_matchdays_url(contest) %></td>
+      <td><%= link_to 'Edit', edit_contest_path(contest) %></td>
+      <td><%= link_to 'Destroy', contest, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
 </table>
 
 <br />

@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  set_id: 1
+  set_type: MyString
+
+two:
+  set_id: 1
+  set_type: MyString

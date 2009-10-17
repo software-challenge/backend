@@ -82,4 +82,15 @@ class ContestsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def refresh_matchdays
+    @contest = Contest.find(params[:id])
+    @contest.refresh_matchdays!
+
+    if @contest.matchdays.count.zero?
+      flash[:error] = "Es sind nicht genug Teilnehmer vorhanden, um einen Spielplan zu erstellen."
+    end
+
+    redirect_to contest_matchdays_url(@contest)
+  end
 end
