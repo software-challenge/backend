@@ -12,6 +12,7 @@
     <tr>
       <th>&nbsp;</th>
       <th>Wann</th>
+      <th>Gespielt?</th>
       <th>&nbsp;</th>
     </tr>
 
@@ -19,6 +20,7 @@
       <tr>
         <td><%= i+1 %>. Spieltag am</td>
         <td><%= l(matchday.when, :format => :long) %></td>
+        <td><%= (matchday.played ? 'ja' : 'nein') %></td>
         <td><%= link_to 'Show', [@contest, matchday] %></td>
       </tr>
     <% end %>

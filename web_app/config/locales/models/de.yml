@@ -1,0 +1,6 @@
+de:
+    activerecord:
+        models:
+            contest:
+                one: Wettbewerb
+                other: Wettbewerbe
