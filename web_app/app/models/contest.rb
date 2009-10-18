@@ -3,7 +3,7 @@ class Contest < ActiveRecord::Base
   has_many :matchdays
 
   def to_param
-    "#{id}-#{name.dasherize}"
+    "#{id}-#{name.parameterize}"
   end
 
   def refresh_matchdays!
