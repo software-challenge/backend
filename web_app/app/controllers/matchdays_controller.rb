@@ -1,3 +1,5 @@
+require 'sandbox'
+
 class MatchdaysController < ApplicationController
   before_filter :fetch_contest
 
@@ -47,14 +49,33 @@ class MatchdaysController < ApplicationController
   def play
     @matchday = @contest.matchdays.find(params[:id])
 
-    # TODO: start a deferred job
-    @matchday.played = true
-    @matchday.save!
+    Matchday.transaction do
+      # TODO: start a deferred job
+      @matchday.played = true
+      @matchday.save!
+
+      sandbox = Sandbox.new("elements.inject(0) { |sum,x| sum + x }")
+      begin
+        result = sandbox.invoke(:locals => {:elements => [1,2,3,4]})
+        flash[:notice] = result.to_i
+      rescue => e
+        flash[:error] = e.message
+      end
+    end
 
     redirect_to contest_matchday_url(@contest, @matchday)
   end
 
   protected
+
+  def get_file_as_string(filename)
+    data = ''
+    f = File.open(filename, "r")
+    f.each_line do |line|
+      data += line
+    end
+    return data
+  end
 
   def fetch_contest
     @contest = Contest.find(params[:contest_id])

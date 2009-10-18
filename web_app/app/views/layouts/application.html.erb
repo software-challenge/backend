@@ -129,8 +129,8 @@
         </div>
       </div>
       <div id="content">
-        <p style="color: green"><%= flash[:notice] %></p>
-        <p style="color: red"><%= flash[:error] %></p>
+        <p style="color: green"><%=h flash[:notice] %></p>
+        <p style="color: red"><%=h flash[:error] %></p>
 
         <%= yield %>
       </div>
