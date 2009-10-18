@@ -108,9 +108,10 @@
           <div style="line-height: 24px; padding: 8px 0;">
             <% if logged_in? %>
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
-                <span><%= link_to "abmelden", logout_url, :method => :post %></span>
-                <%= image_tag gravatar_url(current_user.email, :size => 24), :style => "vertical-align: top; margin: 0 3px;" %>
+                <span>Du bist angemeldet als</span>
                 <span><%= link_to current_user.name, person_url(current_user) %></span>
+                <%= image_tag gravatar_url(current_user.email, :size => 24), :style => "vertical-align: top; margin: 0 3px;" %>
+                <span><%= link_to "Abmelden", logout_url, :method => :post %></span>
               </span>
             <% else %>
               <span>Hey, wer bist Du denn?</span>
