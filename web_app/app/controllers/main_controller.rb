@@ -27,4 +27,10 @@ class MainController < ApplicationController
       render :action => "login"
     end
   end
+
+  def logout
+    session[:user_id] = nil
+    flash[:notice] = "Du wurdest abgemeldet."
+    redirect_to root_url
+  end
 end

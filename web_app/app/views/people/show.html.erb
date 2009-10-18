@@ -9,15 +9,9 @@
 </p>
 
 <p>
-  <b>Password hash:</b>
-  <%=h @person.password_hash %>
+  <b>Avatar (via <%= link_to "Gravatar", "http://www.gravatar.com" %>)</b><br/>
+  <%= gravatar_for @person, :size => 128 %>
 </p>
-
-<p>
-  <b>Password salt:</b>
-  <%=h @person.password_salt %>
-</p>
-
 
 <%= link_to 'Edit', edit_person_path(@person) %> |
 <%= link_to 'Back', people_path %>

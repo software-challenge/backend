@@ -15,7 +15,7 @@
       p {
         margin: 0.33em 0;
       }
-      
+
       ul, li {
         margin: 0;
         padding: 0;
@@ -40,10 +40,10 @@
 
       #mainMenu li {
         display: inline;
-        margin: 0 6px;
+        margin: 0 0 0 8px;
       }
 
-      #mainMenu a {
+      #header a {
         font-weight: bold;
         color: #4183C4;
         text-decoration: none;
@@ -104,13 +104,27 @@
         <% link_to root_url do %>
           <span class="logo"></span>
         <% end %>
-        <div style="float: right; line-height: 14px; padding: 40px 0 6px;">
-          <ul id="mainMenu">
-            <li><%= link_to "Startseite", root_url %></li>
-            <li><%= link_to "Wettbewerbe", contests_url %></li>
-            <li><%= link_to "Teilnehmer", contestants_url %></li>
-            <li><%= link_to "Benutzer", people_url %></li>
-          </ul>
+        <div style="float: right; text-align: right; ">
+          <div style="line-height: 24px; padding: 8px 0;">
+            <% if logged_in? %>
+              <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
+                <span><%= link_to "abmelden", logout_url, :method => :post %></span>
+                <%= image_tag gravatar_url(current_user.email, :size => 24), :style => "vertical-align: top; margin: 0 3px;" %>
+                <span><%= link_to current_user.name, person_url(current_user) %></span>
+              </span>
+            <% else %>
+              <span>Hey, wer bist Du denn?</span>
+              <span>Jetzt <%= link_to "anmelden!", login_url %></span>
+            <% end %>
+          </div>
+          <div style="line-height: 14px; padding: 0 0 6px 0;">
+            <ul id="mainMenu">
+              <li><%= link_to "Startseite", root_url %></li>
+              <li><%= link_to "Wettbewerbe", contests_url %></li>
+              <li><%= link_to "Teilnehmer", contestants_url %></li>
+              <li><%= link_to "Benutzer", people_url %></li>
+            </ul>
+          </div>
         </div>
       </div>
       <div id="content">
