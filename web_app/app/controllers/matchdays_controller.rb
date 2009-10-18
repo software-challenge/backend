@@ -1,8 +1,6 @@
 class MatchdaysController < ApplicationController
   before_filter :fetch_contest
 
-  # GET /matchdays
-  # GET /matchdays.xml
   def index
     @matchdays = @contest.matchdays
 
@@ -12,8 +10,6 @@ class MatchdaysController < ApplicationController
     end
   end
 
-  # GET /matchdays/1
-  # GET /matchdays/1.xml
   def show
     @matchday = @contest.matchdays.find(params[:id])
 
@@ -23,8 +19,6 @@ class MatchdaysController < ApplicationController
     end
   end
 
-  # PUT /matchdays/1
-  # PUT /matchdays/1.xml
   def update
     @matchday = Matchday.find(params[:id])
 
@@ -40,8 +34,6 @@ class MatchdaysController < ApplicationController
     end
   end
 
-  # DELETE /matchdays/1
-  # DELETE /matchdays/1.xml
   def destroy
     @matchday = @contest.matchdays.find(params[:id])
     @matchday.destroy
@@ -50,6 +42,16 @@ class MatchdaysController < ApplicationController
       format.html { redirect_to(matchdays_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def play
+    @matchday = @contest.matchdays.find(params[:id])
+
+    # TODO: start a deferred job
+    @matchday.played = true
+    @matchday.save!
+
+    redirect_to contest_matchday_url(@contest, @matchday)
   end
 
   protected

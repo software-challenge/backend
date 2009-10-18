@@ -1,3 +1,11 @@
+<div style="float: right;">
+  <% if @matchday.played? %>
+    <%= button_to "Spieltag wiederholen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+  <% else %>
+    <%= button_to "Spieltag spielen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+  <% end %>
+</div>
+
 <h2><%= @matchday.position %>. Spieltag von <%= @matchday.contest.name %> (<%= l(@matchday.when, :format => :long) %>)</h2>
 
 <table>

@@ -52,7 +52,7 @@
       #header {
         height: 60px;
         border-bottom: 3px solid #ddd;
-        padding: 10px;
+        padding: 0 10px;
         background-color: #FCFCFC;
         margin: 0 -10px;
         background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
@@ -68,20 +68,17 @@
       }
 
       #header .logo {
-        font-family: Garamond, serif;
-        font-size: 18px;
-        background-color: #f8f8f8;
-        border: 1px solid #ddd;
         text-align: center;
-        height: 58px;
+        height: 60px;
         line-height: 60px;
         width: 150px;
         display: inline-block;
-        color: #4183C4;
+        background-image: url('/images/logo_small.png');
+        background-repeat: no-repeat;
       }
 
       #content {
-        padding: 10px 0;
+        padding: 16px 0;
       }
 
       label {
@@ -105,11 +102,9 @@
     <div style="margin: 0 auto; width: 750px;">
       <div id="header">
         <% link_to root_url do %>
-          <span class="logo">
-            SC Logo
-          </span>
+          <span class="logo"></span>
         <% end %>
-        <div style="float: right; line-height: 16px; padding-top: 44px;">
+        <div style="float: right; line-height: 14px; padding: 40px 0 6px;">
           <ul id="mainMenu">
             <li><%= link_to "Startseite", root_url %></li>
             <li><%= link_to "Wettbewerbe", contests_url %></li>

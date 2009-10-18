@@ -1,12 +1,12 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :matchdays
-
   map.resources :people
 
   map.resources :contests, :member => {
     :refresh_matchdays => :post
   } do |c|
-    c.resources :matchdays
+    c.resources :matchdays, :member => {
+      :play => :post
+    }
   end
 
   map.resources :contestants do |c|
