@@ -263,6 +263,9 @@ Ein Spielzustand hat die folgende Struktur (die Player/Board Felder wurden hier 
 	        <board>
 	          ...
 	        </board>
+	        <activePlayer class="hui:player" displayName="Max">
+	          ...
+	        </activePlayer>
 	        <turn>0</turn>
 	      </game>
 	    </state>
@@ -271,7 +274,7 @@ Ein Spielzustand hat die folgende Struktur (die Player/Board Felder wurden hier 
 
 <h4>Der Spieler</h4>
 
-Das Element `player` repräsentiert einen Spieler.
+Die Elemente `player` (als auch `activePlayer`) repräsentieren jeweils einen Spieler.
 
 	<player class="hui:player" displayName="Max">
 	  <color>RED</color>
@@ -323,6 +326,13 @@ Das Spielbrett enthält die Feldtypen, in **fester Reihenfolge**.
 	  <field>POSITION_2</field>
 	  <field>RABBIT</field>
 	  ...
+	  <field>GOAL</field>
+	  <red displayName="Max">
+	    ...
+	  </red>
+	  <blue displayName="Moritz">
+	    ...
+	  </red>
 	</board>
 	
 Der Wert von `field` ist entweder
@@ -334,6 +344,9 @@ Der Wert von `field` ist entweder
 * `POSITION_1`
 * `POSITION_2`
 * `GOAL`
+
+Die Elemente `red` und `blue` (eigentlich redundant) sind erneut die
+Spieler (siehe `player`).
 
 <h3>Server: Zuganforderung</h3>
 
