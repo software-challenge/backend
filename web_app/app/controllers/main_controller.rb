@@ -33,4 +33,8 @@ class MainController < ApplicationController
     flash[:notice] = "Du wurdest abgemeldet."
     redirect_to root_url
   end
+
+  def debug
+    @jobs = Delayed::Job.all
+  end
 end

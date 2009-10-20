@@ -1,8 +1,12 @@
 <div style="float: right;">
-  <% if @matchday.played? %>
-    <%= button_to "Spieltag wiederholen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+  <% if @matchday.running? %>
+    Der Spieltag wird momentan durchgeführt!
   <% else %>
-    <%= button_to "Spieltag spielen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+    <% if @matchday.played? %>
+      <%= button_to "Spieltag wiederholen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+    <% else %>
+      <%= button_to "Spieltag spielen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+    <% end %>
   <% end %>
 </div>
 
@@ -25,4 +29,9 @@
   <% end %>
 </table>
 
-<%= link_to 'Back', contest_matchdays_url(@matchday.contest) %>
+<div>
+  <% if @matchday.played? %>
+    Durchgespielt am: <%= l(@matchday.played_at, :format => :long) %><br/>
+  <% end %>
+  Aktualisiert am: <%= l(@matchday.updated_at, :format => :long) %>
+</div>

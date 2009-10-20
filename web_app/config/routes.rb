@@ -6,7 +6,9 @@ ActionController::Routing::Routes.draw do |map|
   } do |c|
     c.resources :matchdays, :member => {
       :play => :post
-    }
+    } do |m|
+      m.resources :matches
+    end
   end
 
   map.resources :contestants do |c|
@@ -14,6 +16,7 @@ ActionController::Routing::Routes.draw do |map|
   end
 
   map.with_options :controller => 'main' do |opt|
+    opt.login '/debug', :action => 'debug'
     opt.login '/login', :action => 'login', :conditions => { :method => :get }
     opt.map '/login', :action => 'do_login', :conditions => { :method => :post }
     opt.logout '/logout', :action => 'logout', :conditions => { :method => :post }

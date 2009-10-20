@@ -1,0 +1,22 @@
+<h2>Es sind <%= @jobs.count %> Aufträge aktiv</h2>
+
+<table>
+  <tr>
+    <th>ID</th>
+    <th>Status</th>
+    <th>Versuche</th>
+    <th>Letzte Aktualisierung</th>
+  </tr>
+  <% @jobs.each do |job| %>
+    <tr>
+      <td><%=h job.id %></td>
+      <td>
+        <code style="font-size: 11px; line-height: 12px; color: #666;">
+  <%=h job.last_error || "OK" %>
+        </code>
+      </td>
+      <td><%=h job.attempts %> / <%= Delayed::Job::MAX_ATTEMPTS %></td>
+      <td><%= l(job.updated_at, :format => :long) %></td>
+    </tr>
+  <% end %>
+</table>
