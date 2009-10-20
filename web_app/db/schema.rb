@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091017202913) do
+ActiveRecord::Schema.define(:version => 20091020143335) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -73,7 +73,11 @@ ActiveRecord::Schema.define(:version => 20091017202913) do
     t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "administrator", :default => false, :null => false
+    t.boolean  "administrator",     :default => false, :null => false
+    t.boolean  "blocked",           :default => false, :null => false
+    t.boolean  "showEmailToOthers", :default => false, :null => false
+    t.string   "firstname",         :default => "",    :null => false
+    t.string   "lastname",          :default => "",    :null => false
   end
 
 end
