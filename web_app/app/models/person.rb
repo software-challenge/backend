@@ -1,6 +1,8 @@
 require 'digest/sha1'
 
 class Person < ActiveRecord::Base
+  RANDOM_HASH_CHARS = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
+  
   has_many :memberships
   has_many :contestants, :through => :memberships
 
@@ -16,5 +18,13 @@ class Person < ActiveRecord::Base
 
   def self.encrypt_password(password, salt)
     Digest::SHA1.hexdigest(password + salt)
+  end
+
+  def self.random_hash(length = 10)
+    newpass = ""
+    length.times do
+      newpass << RANDOM_HASH_CHARS[rand(RANDOM_HASH_CHARS.size-1)]
+    end
+    return newpass
   end
 end

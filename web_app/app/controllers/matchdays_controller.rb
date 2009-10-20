@@ -53,14 +53,7 @@ class MatchdaysController < ApplicationController
       # TODO: start a deferred job
       @matchday.played = true
       @matchday.save!
-
-      sandbox = Sandbox.new("elements.inject(0) { |sum,x| sum + x }")
-      begin
-        result = sandbox.invoke(:locals => {:elements => [1,2,3,4]})
-        flash[:notice] = result.to_i
-      rescue => e
-        flash[:error] = e.message
-      end
+      update_scoretable
     end
 
     redirect_to contest_matchday_url(@contest, @matchday)
@@ -75,6 +68,45 @@ class MatchdaysController < ApplicationController
       data += line
     end
     return data
+  end
+
+  def update_scoretable
+    sandbox = Sandbox.new("sum_all(elements)")
+    mod = Module.new do
+      define_method :assert_size do |rows|
+        if rows.empty?
+          true
+        else
+          default_size = rows.first.size
+          rows.each do |row|
+            raise "row sizes didn't match" unless row.size == default_size
+          end
+        end
+      end
+
+      define_method :sum_all do |rows|
+        if rows.empty?
+          []
+        else
+          assert_size rows
+          width = rows.first.size
+          result = []
+          width.times do |i|
+            result << rows.inject(0) { |sum,x| sum + x[i] }
+          end
+          result
+        end
+      end
+
+    end
+    sandbox.extend mod
+
+    begin
+      result = sandbox.invoke(:locals => {:elements => [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]})
+      flash[:notice] = "Result: #{result.to_sentence}"
+    rescue => e
+      flash[:error] = e.message
+    end
   end
 
   def fetch_contest

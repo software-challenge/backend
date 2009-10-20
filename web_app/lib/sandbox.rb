@@ -14,7 +14,7 @@ class Sandbox
       rescue => e
         error = e
       end
-    end
+    end.join
 
     if error
       raise error
