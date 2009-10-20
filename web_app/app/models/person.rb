@@ -21,10 +21,10 @@ class Person < ActiveRecord::Base
   end
 
   def self.random_hash(length = 10)
-    newpass = ""
+    result = ""
     length.times do
-      newpass << RANDOM_HASH_CHARS[rand(RANDOM_HASH_CHARS.size-1)]
+      result << RANDOM_HASH_CHARS[rand(RANDOM_HASH_CHARS.size-1)]
     end
-    return newpass
+    return result
   end
 end
