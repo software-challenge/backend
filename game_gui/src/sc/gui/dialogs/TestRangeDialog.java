@@ -225,7 +225,7 @@ public class TestRangeDialog extends JDialog {
 		// -------------------------------------------
 		pnlBottomTop = new JPanel(new GridLayout(0, 2));
 		pnlBottomTop.add(pnl_showLogLeft);
-		//pnlBottomTop.add(pnl_saveReplay);
+		//pnlBottomTop.add(pnl_saveReplay);//TODO
 
 		pnlBottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pnlBottomRight.add(testStart);
@@ -608,7 +608,7 @@ public class TestRangeDialog extends JDialog {
 			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
 					slotDescriptors);
 
-			createObserveration(rotation, slotDescriptors, prep, connectionDialog);
+			addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
 
 			// only display message after the first round
 			if (curTest > 1) {
@@ -692,7 +692,7 @@ public class TestRangeDialog extends JDialog {
 		}
 	}
 
-	private void createObserveration(final int rotation,
+	private void addObsListeners(final int rotation,
 			final List<SlotDescriptor> slotDescriptors, final IGamePreparation prep,
 			final ConnectingDialog connectionDialog) {
 		// get observer
@@ -856,12 +856,12 @@ public class TestRangeDialog extends JDialog {
 			case REGULAR:
 				break;
 			case LEFT:
-				int invalidCol = model.getRowCount() - 2;
+				int invalidCol = model.getColumnCount() - 2;
 				int oldValue = (Integer) model.getValueAt(statRow, invalidCol);
 				model.setValueAt(oldValue + 1, statRow, invalidCol);
 				break;
 			case UNKNOWN:
-				int crashedCol = model.getRowCount() - 1;
+				int crashedCol = model.getColumnCount() - 1;
 				oldValue = Integer.parseInt((String) model
 						.getValueAt(statRow, crashedCol));
 				model.setValueAt(oldValue + 1, statRow, crashedCol);
