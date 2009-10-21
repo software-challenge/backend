@@ -1,6 +1,9 @@
 de:
-    activerecord:
-        models:
-            contest:
-                one: Wettbewerb
-                other: Wettbewerbe
+  activerecord:
+    models:
+      contest:
+        one: Wettbewerb
+        other: Wettbewerbe
+      contestant:
+        one: Teilnehmer
+        other: Teilnehmer

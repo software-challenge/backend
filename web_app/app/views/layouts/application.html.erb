@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <title><%= controller.controller_name %>: <%= controller.action_name %></title>
+    <title><%= current_page_title %></title>
     <style type="text/css">
       body {
         font-family: helvetica, arial, freesans, clean, sans-serif;
@@ -114,7 +114,7 @@
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
                 <span>Du bist angemeldet als</span> <% username = current_user.first_name + ' ' + current_user.last_name %>
                 <span><%= link_to username, person_url(current_user) %></span>
-                <%= image_tag gravatar_url(current_user.email, :size => 24), :style => "vertical-align: top; margin: 0 3px;" %>
+                <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
                 <span><%= link_to "Abmelden", logout_url, :method => :post %></span>
               </span>
             <% else %>
