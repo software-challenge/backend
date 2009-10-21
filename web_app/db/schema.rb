@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091020175210) do
+ActiveRecord::Schema.define(:version => 20091021120711) do
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -77,23 +77,24 @@ ActiveRecord::Schema.define(:version => 20091020175210) do
   create_table "memberships", :force => true do |t|
     t.integer  "person_id"
     t.integer  "contestant_id"
-    t.string   "role"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "tutor",         :default => false, :null => false
+    t.boolean  "teacher",       :default => false, :null => false
   end
 
   create_table "people", :force => true do |t|
-    t.string   "name"
     t.string   "email"
     t.string   "password_hash"
     t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "administrator",     :default => false, :null => false
-    t.boolean  "blocked",           :default => false, :null => false
-    t.boolean  "showEmailToOthers", :default => false, :null => false
-    t.string   "firstname",         :default => "",    :null => false
-    t.string   "lastname",          :default => "",    :null => false
+    t.boolean  "administrator",        :default => false, :null => false
+    t.boolean  "blocked",              :default => false, :null => false
+    t.string   "first_name",           :default => "",    :null => false
+    t.string   "last_name",            :default => "",    :null => false
+    t.string   "nick_name",            :default => "",    :null => false
+    t.boolean  "show_email_to_others", :default => false, :null => false
   end
 
 end

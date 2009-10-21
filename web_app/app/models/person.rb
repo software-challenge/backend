@@ -20,11 +20,23 @@ class Person < ActiveRecord::Base
     Digest::SHA1.hexdigest(password + salt)
   end
 
-  def self.random_hash(length = 10)
+  def random_hash(length = 10)
     result = ""
     length.times do
       result << RANDOM_HASH_CHARS[rand(RANDOM_HASH_CHARS.size-1)]
     end
     return result
+  end
+
+  def teacher?
+    Membership.first(:conditions => ["memberships.person_id = ? AND memberships.teacher = ?", self.id, true])
+  end
+
+  def tutor?
+    Membership.first(:conditions => ["memberships.person_id = ? AND memberships.tutor = ?", self.id, true])
+  end
+
+  def pupil?
+    Membership.first(:conditions => ["memberships.person_id = ? AND memberships.tutor = ? AND memberships.teacher = ?", self.id, false, false])
   end
 end

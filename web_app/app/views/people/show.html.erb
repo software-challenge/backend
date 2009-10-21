@@ -1,6 +1,6 @@
 <p>
-  <b>Name:</b>
-  <%=h @person.name %>
+  <b>Nickname:</b>
+  <%=h @person.nick_name %>
 </p>
 
 <p>
@@ -13,5 +13,5 @@
   <%= gravatar_for @person, :size => 128 %>
 </p>
 
-<%= link_to 'Edit', edit_person_path(@person) %> |
-<%= link_to 'Back', people_path %>
+<%= link_to 'Bearbeiten', edit_person_path(@person) %> |
+<%= link_to 'Zurück', people_path %>

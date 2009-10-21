@@ -2,7 +2,13 @@ class PeopleController < ApplicationController
   # GET /people
   # GET /people.xml
   def index
-    @people = Person.all
+    if (current_user.administrator?)
+      @people = Person.all
+    else
+      if (params[:teacher])
+        @people = Person.all :joins => "LEFT JOIN memberships ON memberships.person_id = persons.id", :conditions => ["memberships.teacher = ?", true]
+      end
+    end
 
     respond_to do |format|
       format.html # index.html.erb
@@ -42,9 +48,12 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(params[:person])
 
+    @person.password_salt = @person.random_hash
+    @person.password_hash = @person.random_hash
+
     respond_to do |format|
       if @person.save
-        flash[:notice] = 'Person was successfully created.'
+        flash[:notice] = 'Person wurde erfolgreich angelegt.'
         format.html { redirect_to(@person) }
         format.xml  { render :xml => @person, :status => :created, :location => @person }
       else
@@ -61,7 +70,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if @person.update_attributes(params[:person])
-        flash[:notice] = 'Person was successfully updated.'
+        flash[:notice] = 'Person wurde erfolgreich aktualisiert.'
         format.html { redirect_to(@person) }
         format.xml  { head :ok }
       else

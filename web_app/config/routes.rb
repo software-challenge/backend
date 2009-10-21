@@ -1,6 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :people
 
+  map.administration '/administration', :controller => 'administration', :action => 'index'
+
   map.resources :contests, :member => {
     :refresh_matchdays => :post
   } do |c|

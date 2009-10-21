@@ -1,28 +1,28 @@
-<h1>Editing person</h1>
+<h1>Bearbeite Person</h1>
 
 <% form_for(@person) do |f| %>
   <%= f.error_messages %>
 
   <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <%= f.label :nick_name %>
+    <%= f.text_field :nick_name %>
   </p>
   <p>
-    <%= f.label :email %><br />
+    <%= f.label :email %>
     <%= f.text_field :email %>
   </p>
     <p>
-    <%= f.label :firstname %><br />
-    <%= f.text_field :firstname %>
+    <%= f.label :first_name %>
+    <%= f.text_field :first_name %>
   </p>
     <p>
-    <%= f.label :lastname %><br />
-    <%= f.text_field :lastname %>
+    <%= f.label :last_name %>
+    <%= f.text_field :last_name %>
   </p>
   <p>
-    <%= f.submit 'Update' %>
+    <%= f.submit 'Aktualisieren' %>
   </p>
 <% end %>
 
-<%= link_to 'Show', @person %> |
-<%= link_to 'Back', people_path %>
+<%= link_to 'Zeige', @person %> |
+<%= link_to 'Zurück', people_path %>
