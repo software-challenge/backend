@@ -26,6 +26,7 @@ import sc.plugin2010.IGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.util.Configuration;
 import sc.shared.GameResult;
+import sc.shared.ScoreCause;
 
 /**
  * @author ffi
@@ -193,6 +194,30 @@ public class Observation implements IObservation, IUpdateListener,
 			name1 = game.getBoard().getOtherPlayer(game.getActivePlayer())
 					.getDisplayName();
 			name2 = game.getActivePlayer().getDisplayName();
+		}
+
+		if (data.getScores().get(0).getCause() == ScoreCause.LEFT)
+		{
+			result += name1;
+			result += " hat das Spiel verlassen!\n";
+		}
+
+		if (data.getScores().get(1).getCause() == ScoreCause.LEFT)
+		{
+			result += name2;
+			result += " hat das Spiel verlassen!\n";
+		}
+
+		if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION)
+		{
+			result += name1;
+			result += " hat einen falschen Zug gesetzt!\n";
+		}
+
+		if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION)
+		{
+			result += name2;
+			result += " hat einen falschen Zug gesetzt!\n";
 		}
 
 		String[] results = data.getScores().get(0).toStrings();
