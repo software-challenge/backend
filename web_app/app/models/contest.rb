@@ -59,4 +59,8 @@ class Contest < ActiveRecord::Base
 
     result
   end
+
+  def self.active
+    Contest.first(:order => "active DESC")
+  end
 end

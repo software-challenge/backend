@@ -11,10 +11,9 @@ ActionController::Routing::Routes.draw do |map|
     } do |m|
       m.resources :matches
     end
-  end
-
-  map.resources :contestants do |c|
-    c.resources :clients
+    c.resources :contestants do |contestant|
+      contestant.resources :clients
+    end
   end
 
   map.with_options :controller => 'main' do |opt|

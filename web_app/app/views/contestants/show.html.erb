@@ -5,9 +5,9 @@
 
 <p>
   <b>Contest:</b>
-  <%=h @contestant.contest_id %>
+  <%=h @contestant.contest.name %>
 </p>
 
 
-<%= link_to 'Edit', edit_contestant_path(@contestant) %> |
-<%= link_to 'Back', contestants_path %>
+<%= link_to 'Edit', edit_contest_contestant_path(@contest, @contestant) %> |
+<%= link_to 'Back', contest_contestants_path(@contest) %>

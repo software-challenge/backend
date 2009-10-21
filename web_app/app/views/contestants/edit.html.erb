@@ -1,6 +1,6 @@
 <h1>Editing contestant</h1>
 
-<% form_for(@contestant) do |f| %>
+<% form_for([@contest, @contestant]) do |f| %>
   <%= f.error_messages %>
 
   <p>
@@ -9,12 +9,12 @@
   </p>
   <p>
     <%= f.label :contest_id %><br />
-    <%= f.text_field :contest_id %>
+    <%= @contestant.contest.name %>
   </p>
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
-<%= link_to 'Show', @contestant %> |
-<%= link_to 'Back', contestants_path %>
+<%= link_to 'Show', contest_contestants_url(@contest, @contestant) %> |
+<%= link_to 'Back', contest_contestants_path(@contest) %>

@@ -5,5 +5,8 @@ class Contestant < ActiveRecord::Base
   has_many :clients
   has_many :memberships
   has_many :people, :through => :memberships
+
+  attr_readonly :contest
+  attr_protected :contest
   
 end

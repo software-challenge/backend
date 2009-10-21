@@ -1,8 +1,10 @@
 class ContestantsController < ApplicationController
+  before_filter :fetch_contest
+
   # GET /contestants
   # GET /contestants.xml
   def index
-    @contestants = Contestant.all
+    @contestants = @contest.contestants
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,7 +15,7 @@ class ContestantsController < ApplicationController
   # GET /contestants/1
   # GET /contestants/1.xml
   def show
-    @contestant = Contestant.find(params[:id])
+    @contestant = @contest.contestants.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -25,6 +27,7 @@ class ContestantsController < ApplicationController
   # GET /contestants/new.xml
   def new
     @contestant = Contestant.new
+    @contestant.contest = @contest
 
     respond_to do |format|
       format.html # new.html.erb
@@ -34,18 +37,19 @@ class ContestantsController < ApplicationController
 
   # GET /contestants/1/edit
   def edit
-    @contestant = Contestant.find(params[:id])
+    @contestant = @contest.contestants.find(params[:id])
   end
 
   # POST /contestants
   # POST /contestants.xml
   def create
     @contestant = Contestant.new(params[:contestant])
+    @contestant.contest = @contest
 
     respond_to do |format|
       if @contestant.save
         flash[:notice] = 'Contestant was successfully created.'
-        format.html { redirect_to(@contestant) }
+        format.html { redirect_to(contest_contestant_url(@contest, @contestant)) }
         format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
       else
         format.html { render :action => "new" }
@@ -62,7 +66,7 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.update_attributes(params[:contestant])
         flash[:notice] = 'Contestant was successfully updated.'
-        format.html { redirect_to(@contestant) }
+        format.html { redirect_to(contest_contestant_url(@contest, @contestant)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -74,12 +78,18 @@ class ContestantsController < ApplicationController
   # DELETE /contestants/1
   # DELETE /contestants/1.xml
   def destroy
-    @contestant = Contestant.find(params[:id])
+    @contestant = @contest.contestants.find(params[:id])
     @contestant.destroy
 
     respond_to do |format|
-      format.html { redirect_to(contestants_url) }
+      format.html { redirect_to(contest_contestants_url(@contest)) }
       format.xml  { head :ok }
     end
+  end
+
+  protected
+
+  def fetch_contest
+    @contest = Contest.find(params[:contest_id])
   end
 end

@@ -6,17 +6,17 @@
     <th>in Wettbewerb</th>
   </tr>
 
-<% @contestants.each do |contestant| %>
-  <tr>
-    <td><%=h contestant.name %></td>
-    <td><%=h contestant.contest_id %></td>
-    <td><%= link_to 'Show', contestant %></td>
-    <td><%= link_to 'Edit', edit_contestant_path(contestant) %></td>
-    <td><%= link_to 'Destroy', contestant, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+  <% @contestants.each do |contestant| %>
+    <tr>
+      <td><%=h contestant.name %></td>
+      <td><%=h contestant.contest_id %></td>
+      <td><%= link_to 'Show', [contestant.contest, contestant] %></td>
+      <td><%= link_to 'Edit', edit_contest_contestant_path(contestant.contest, contestant) %></td>
+      <td><%= link_to 'Destroy', [contestant.contest, contestant], :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
 </table>
 
 <br />
 
-<%= link_to 'New contestant', new_contestant_path %>
+<%= link_to 'New contestant', new_contest_contestant_path %>
