@@ -111,6 +111,7 @@ public class TestRangeDialog extends JDialog {
 	private JCheckBox cb_showLog;
 	private JPanel pnl_saveReplay;
 	private JPanel pnlBottomTop;
+	private int freePort;
 
 	public TestRangeDialog() {
 		super();
@@ -570,7 +571,9 @@ public class TestRangeDialog extends JDialog {
 
 		// start server
 		try {
-			presFac.getLogicFacade().startServer(SharedConfiguration.DEFAULT_PORT);
+			freePort = generateFreePort();
+			// TODO handle failure 'no free port available'
+			presFac.getLogicFacade().startServer(freePort);
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
@@ -588,6 +591,15 @@ public class TestRangeDialog extends JDialog {
 		selPlugin.setRenderContext(null, false);
 
 		return true;
+	}
+
+	/**
+	 * Returns a free TCP port.
+	 * 
+	 * @return a free port.
+	 */
+	private int generateFreePort() {
+		return SharedConfiguration.DEFAULT_PORT + 1;
 	}
 
 	/**
@@ -747,7 +759,8 @@ public class TestRangeDialog extends JDialog {
 
 				// start new test if number of tests is not still reached
 				if (curTest < numTest) {
-					// FIXME: "Recursive" Execution of Tests might be REALLY bad
+					// FIXME: Perhaps "Recursive" Execution of Tests might be
+					// REALLY bad
 					// for big N
 					startNewTest();
 				} else {
@@ -801,13 +814,22 @@ public class TestRangeDialog extends JDialog {
 		return playerNames;
 	}
 
+	/**
+	 * Prepares a new game with the given parameters.
+	 * 
+	 * @param selPlugin
+	 * @param descriptors
+	 * @return
+	 * @throws IOException
+	 *             (also displays an error message)
+	 */
 	private IGamePreparation prepareGame(GUIPluginInstance selPlugin,
 			final List<SlotDescriptor> descriptors) throws IOException {
-		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin().prepareGame(DEFAULT_HOST,
-					SharedConfiguration.DEFAULT_PORT,
-					descriptors.toArray(new SlotDescriptor[descriptors.size()]));
+			IGamePreparation prep = selPlugin.getPlugin()
+					.prepareGame(DEFAULT_HOST, freePort,
+							descriptors.toArray(new SlotDescriptor[descriptors.size()]));
+			return prep;
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
 					.getProperty("dialog_test_error_network_msg"), lang
@@ -815,7 +837,6 @@ public class TestRangeDialog extends JDialog {
 					JOptionPane.ERROR_MESSAGE);
 			throw new IOException(e);
 		}
-		return prep;
 	}
 
 	/**
@@ -863,18 +884,23 @@ public class TestRangeDialog extends JDialog {
 			switch (curPlayer.getCause()) {
 			case REGULAR:
 				break;
-			case LEFT:
+			case RULE_VIOLATION:
 				int invalidCol = model.getColumnCount() - 2;
 				BigDecimal oldValue = (BigDecimal) model.getValueAt(statRow, invalidCol);
 				model.setValueAt(oldValue.add(BigDecimal.ONE), statRow, invalidCol);
 				break;
-			case UNKNOWN:
+			case LEFT:
 				int crashedCol = model.getColumnCount() - 1;
 				oldValue = (BigDecimal) model.getValueAt(statRow, crashedCol);
 				model.setValueAt(oldValue.add(BigDecimal.ONE), statRow, crashedCol);
 				break;
+			case UNKNOWN:
+				final String player = (String) model.getValueAt(statRow, 1);
+				addLogMessage(player + " "
+						+ lang.getProperty("dialog_test_gamecause_unknown"));
+				break;
 			default:
-				LoggerFactory.getLogger(this.getClass()).error("Unknown game cause.");
+				throw new RuntimeException("Unknown or unimplemented game cause.");
 			}
 		}
 	}
