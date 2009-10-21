@@ -2,11 +2,10 @@
   <%= button_to "Spielplan generieren", refresh_matchdays_contest_url(@contest), :method => "post" %>
 </div>
 
+<h1><%=h @contest.name %> / Spieltage</h1>
 <% if @matchdays.empty? %>
-  <h1>Spielplan für <%=h @contest.name %></h1>
   <p>Es liegt noch kein Spielplan vor.</p>
 <% else %>
-  <h1>Alle <%= @matchdays.size %> Spieltage für <%=h @contest.name %></h1>
 
   <table>
     <tr>

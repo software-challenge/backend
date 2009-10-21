@@ -1,24 +1,17 @@
+<div style="float: right;">
+  <%= link_to 'Neuer Wettewerb', new_contest_path %>
+</div>
+
 <h1>Alle Wettbewerbe</h1>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Teilnehmer</th>
-    <th>Active</th>
-  </tr>
-
+<div id="contests">
   <% @contests.each do |contest| %>
-    <tr>
-      <td><%=h contest.name %></td>
-      <td><%=h contest.contestants.count %> Teilnehmer</td>
-      <td><%=h(contest.active ? 'ja' : 'nein') %></td>
-      <td><%= link_to 'Show', contest_matchdays_url(contest) %></td>
-      <td><%= link_to 'Edit', edit_contest_path(contest) %></td>
-      <td><%= link_to 'Destroy', contest, :confirm => 'Are you sure?', :method => :delete %></td>
-    </tr>
+    <div class="contest <%= "active" if contest.active? %>">
+      <div style="float: right;">
+        <%= link_to 'Anzeigen', contest_path(contest) %>
+        <%= link_to 'Bearbeiten', edit_contest_path(contest) %>
+      </div>
+      <h2><%=h contest.name %> (<%=h contest.contestants.count %> Teilnehmer)</h2>
+    </div>
   <% end %>
-</table>
-
-<br />
-
-<%= link_to 'New contest', new_contest_path %>
+</div>
