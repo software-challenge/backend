@@ -225,7 +225,7 @@ public class TestRangeDialog extends JDialog {
 		// -------------------------------------------
 		pnlBottomTop = new JPanel(new GridLayout(0, 2));
 		pnlBottomTop.add(pnl_showLogLeft);
-		//pnlBottomTop.add(pnl_saveReplay);//TODO
+		// pnlBottomTop.add(pnl_saveReplay);//TODO
 
 		pnlBottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pnlBottomRight.add(testStart);
@@ -326,7 +326,7 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (isTesting()) { // testing
-					cancelTest();
+					cancelTest(lang.getProperty("dialog_test_msg_cancel"));
 				} else {
 					if (prepareTest()) {
 						updateGUI(false);
@@ -376,15 +376,16 @@ public class TestRangeDialog extends JDialog {
 	}
 
 	/**
-	 * Cancels the test if active and saves the number of tests
+	 * Cancels the test if active and saves the number of tests.<br>
+	 * <i>Invoked before closing the dialog.</i>
 	 */
 	protected void cancelTestAndSave() {
-		cancelTest();
+		cancelTest("");
 		try {
 			GUIConfiguration.instance().setNumberOfTests(
 					new Integer(txfNumTest.getText()));
 		} catch (NumberFormatException ex) {
-			// just don't save the invalid value
+			// don't save the invalid value
 		}
 	}
 
@@ -598,13 +599,15 @@ public class TestRangeDialog extends JDialog {
 
 		final ConnectingDialog connectionDialog = new ConnectingDialog();
 
+		curTest++;
+
+		final int rotation = getRotation(txfclient.length);
+
+		final List<SlotDescriptor> slotDescriptors = prepareSlots(preparePlayerNames(),
+				rotation);
+		List<KIInformation> KIs = null;
+
 		try {
-			curTest++;
-
-			final int rotation = getRotation(txfclient.length);
-
-			final List<SlotDescriptor> slotDescriptors = prepareSlots(
-					preparePlayerNames(), rotation);
 			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
 					slotDescriptors);
 
@@ -615,20 +618,25 @@ public class TestRangeDialog extends JDialog {
 				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
 			}
 
-			List<KIInformation> KIs = prepareClientProcesses(slotDescriptors, prep,
-					rotation);
-
-			runClientProcesses(KIs);
-
-			// show connecting dialog
-			if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
-				cancelTest();
-			}
+			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
 		} catch (IOException e) {
 			e.printStackTrace();
-			cancelTest();
+			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
+			return;
 		}
 
+		try {
+			runClientProcesses(KIs);
+		} catch (IOException e) {
+			e.printStackTrace();
+			cancelTest(lang.getProperty("dialog_test_msg_run"));
+			return;
+		}
+
+		// show connecting dialog
+		if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
+			cancelTest(lang.getProperty("dialog_test_msg_cancel"));
+		}
 	}
 
 	private int getRotation(int playerCount) {
@@ -667,6 +675,10 @@ public class TestRangeDialog extends JDialog {
 	}
 
 	private void runClientProcesses(final List<KIInformation> KIs) throws IOException {
+		if (KIs == null) {
+			throw new IllegalArgumentException("Parameter 'KIs' may not be null");
+		}
+
 		// start KI (intern) clients
 		for (int i = 0; i < KIs.size(); i++) {
 			KIInformation kinfo = KIs.get(i);
@@ -700,7 +712,7 @@ public class TestRangeDialog extends JDialog {
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
-				if (null == result) // happens after a game has been cancel
+				if (null == result) // happens after a game has been canceled
 					return;
 
 				addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + "/"
@@ -717,14 +729,10 @@ public class TestRangeDialog extends JDialog {
 					replayFilename = HelperMethods
 							.generateReplayFilename(slotDescriptors);
 				} else if (result.isRegular()) {
-					/*switch (result.getScores().get(rotation).getCause()) {
-					case WON:
-						break;
-					case LOST:
-						break;
-					default:
-						break;
-					}*/
+					/*
+					 * switch (result.getScores().get(rotation).getCause()) {
+					 * case WON: break; case LOST: break; default: break; }
+					 */
 				}
 				// save replay if it should be saved
 				if (replayFilename != null) {
@@ -857,14 +865,13 @@ public class TestRangeDialog extends JDialog {
 				break;
 			case LEFT:
 				int invalidCol = model.getColumnCount() - 2;
-				int oldValue = (Integer) model.getValueAt(statRow, invalidCol);
-				model.setValueAt(oldValue + 1, statRow, invalidCol);
+				BigDecimal oldValue = (BigDecimal) model.getValueAt(statRow, invalidCol);
+				model.setValueAt(oldValue.add(BigDecimal.ONE), statRow, invalidCol);
 				break;
 			case UNKNOWN:
 				int crashedCol = model.getColumnCount() - 1;
-				oldValue = Integer.parseInt((String) model
-						.getValueAt(statRow, crashedCol));
-				model.setValueAt(oldValue + 1, statRow, crashedCol);
+				oldValue = (BigDecimal) model.getValueAt(statRow, crashedCol);
+				model.setValueAt(oldValue.add(BigDecimal.ONE), statRow, crashedCol);
 				break;
 			default:
 				LoggerFactory.getLogger(this.getClass()).error("Unknown game cause.");
@@ -875,12 +882,12 @@ public class TestRangeDialog extends JDialog {
 	/**
 	 * Cancels the active test range.
 	 */
-	private void cancelTest() {
+	private void cancelTest(final String err_msg) {
 		if (null != obs) {
 			obs.cancel();
 		}
 		finishTest();
-		addLogMessage(lang.getProperty("dialog_test_msg_cancel"));
+		addLogMessage(err_msg);
 	}
 
 	/**
