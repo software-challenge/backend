@@ -1,4 +1,4 @@
-<h1>Alle Teilnehmer</h1>
+<h1><%= @contest.name %> / Teilnehmer</h1>
 
 <table>
   <tr>
@@ -11,8 +11,6 @@
       <td><%=h contestant.name %></td>
       <td><%=h contestant.contest_id %></td>
       <td><%= link_to 'Show', [contestant.contest, contestant] %></td>
-      <td><%= link_to 'Edit', edit_contest_contestant_path(contestant.contest, contestant) %></td>
-      <td><%= link_to 'Destroy', [contestant.contest, contestant], :confirm => 'Are you sure?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>

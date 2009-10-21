@@ -1,7 +1,7 @@
 de:
   titles:
     generic:
-      index: "{{model}} auflisten"
+      index: "Liste der {{model}}"
       edit: "{{model}} bearbeiten"
       show: "{{model}} anzeigen"
       new: "{{model}} erstellen"

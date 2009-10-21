@@ -1,9 +1,27 @@
 de:
   activerecord:
     models:
+      client:
+        one: Client
+        other: Clienten
       contest:
         one: Wettbewerb
         other: Wettbewerbe
       contestant:
         one: Teilnehmer
         other: Teilnehmer
+      match:
+        one: Match
+        other: Matches
+      match_slot:
+        one: Slot
+        other: Slots
+      matchday:
+        one: Spieltag
+        other: Spieltage
+      membership:
+        one: Mitgliedschaft
+        other: Mitgliedschaft
+      person:
+        one: Person
+        other: Personen

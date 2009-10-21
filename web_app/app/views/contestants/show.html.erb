@@ -1,13 +1,48 @@
-<p>
-  <b>Name:</b>
-  <%=h @contestant.name %>
-</p>
+<div style="float: right;">
+  <% if logged_in? and current_user.administrator? %>
+    <%= link_to 'Edit', edit_contest_contestant_path(@contest, @contestant) %> |
+  <% end %>
+  <%= link_to 'Back', contest_contestants_path(@contest) %>
+</div>
 
-<p>
-  <b>Contest:</b>
-  <%=h @contestant.contest.name %>
-</p>
+<h1><%=h @contestant.contest.name %> / Teilnehmer <%=h @contestant.name %></h1>
 
+<h2>Matches</h2>
 
-<%= link_to 'Edit', edit_contest_contestant_path(@contest, @contestant) %> |
-<%= link_to 'Back', contest_contestants_path(@contest) %>
+<table>
+  <tr style="display: none;">
+    <th>Spieler 1</th>
+    <th>&nbsp;</th>
+    <th>Spieler 2</th>
+    <th>Ergebnis</th>
+  </tr>
+  <% @contestant.matches.each do |match| %>
+    <tr>
+      <% match.slots.each_with_index do |slot,i| %>
+        <% unless i.zero? %>
+          <td>vs</td>
+        <% end %>
+        <td><%= slot.name %></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<% if logged_in? and current_user.administrator? %>
+
+  <h2>Benutzer</h2>
+
+  <table>
+    <tr style="display: none;">
+      <th>Name</th>
+      <th>Rolle</th>
+    </tr>
+    <% @contestant.people.each do |person| %>
+      <tr>
+        <td><%=h person.name %></td>
+        <td><%= role_for(person, contestant) %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+

@@ -39,4 +39,8 @@ class Person < ActiveRecord::Base
   def pupil?
     Membership.first(:conditions => ["memberships.person_id = ? AND memberships.tutor = ? AND memberships.teacher = ?", self.id, false, false])
   end
+
+  def membership_for(contestant)
+    memberships.first(:conditions => ["membership.contestant_id = ?", contestant.id])
+  end
 end
