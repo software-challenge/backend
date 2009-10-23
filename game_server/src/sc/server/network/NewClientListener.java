@@ -102,7 +102,9 @@ public class NewClientListener implements Runnable, Closeable
 		}
 		catch (IOException e)
 		{
-			throw new IOException("Could not start server on port " + port, e);
+			logger.error("Could not start server on port " + port, e);
+			throw e;
+			// do not throw a new IOException to preserve the inheritance hierarchy
 		}
 	}
 
