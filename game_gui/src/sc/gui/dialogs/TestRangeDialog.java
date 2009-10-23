@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -50,8 +51,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
-
-import org.slf4j.LoggerFactory;
 
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -570,36 +569,36 @@ public class TestRangeDialog extends JDialog {
 		statTable.validate();
 
 		// start server
-		try {
-			freePort = generateFreePort();
-			// TODO handle failure 'no free port available'
-			presFac.getLogicFacade().startServer(freePort);
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, lang
-					.getProperty("dialog_create_error_port_blocked_msg"), lang
-					.getProperty("dialog_create_error_port_blocked_title"),
-					JOptionPane.ERROR_MESSAGE);
-			return false;
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(this, e.getMessage(), lang
-					.getProperty("dialog_error_title"), JOptionPane.ERROR_MESSAGE);
-		}
+		boolean portInUse;
+		final int START_PORT = SharedConfiguration.DEFAULT_PORT;
+		this.freePort = START_PORT;
+		do {
+			portInUse = false;
+			freePort++;
+			try {
+				presFac.getLogicFacade().startServer(freePort);
+			} catch (BindException e) { // port in use
+				if (freePort > START_PORT + 10) {
+					if (JOptionPane.showConfirmDialog(null, lang
+							.getProperty("dialog_test_error_retryPort_msg"), lang
+							.getProperty("dialog_test_error_retryPort_title"),
+							JOptionPane.YES_NO_OPTION) == JOptionPane.NO_OPTION) {
+						return false;
+					}
+				}
+				portInUse = true;
+			} catch (Exception e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage(), lang
+						.getProperty("dialog_error_title"), JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
+		} while (portInUse);
 
 		// disable rendering
 		selPlugin.setRenderContext(null, false);
 
 		return true;
-	}
-
-	/**
-	 * Returns a free TCP port.
-	 * 
-	 * @return a free port.
-	 */
-	private int generateFreePort() {
-		return SharedConfiguration.DEFAULT_PORT + 1;
 	}
 
 	/**
@@ -835,7 +834,7 @@ public class TestRangeDialog extends JDialog {
 					.getProperty("dialog_test_error_network_msg"), lang
 					.getProperty("dialog_test_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
-			throw new IOException(e);
+			throw e;
 		}
 	}
 

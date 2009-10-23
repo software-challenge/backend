@@ -121,6 +121,12 @@ public class LogicFacade {
 		this.observation = observer;
 	}
 
+	/**
+	 * Stops and starts the server.
+	 * 
+	 * @param port
+	 * @throws IOException
+	 */
 	public void startServer(int port) throws IOException {
 		if (null != server) {
 			this.stopServer();
@@ -158,8 +164,7 @@ public class LogicFacade {
 	public List<GUIPluginInstance> getAvailablePluginsSorted() {
 		Collection<GUIPluginInstance> plugins = pluginMan.getAvailablePlugins();
 		// sort by plugin's year
-		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(
-				plugins);
+		List<GUIPluginInstance> sortedPlugins = new LinkedList<GUIPluginInstance>(plugins);
 		Collections.sort(sortedPlugins, yearComparator);
 		return sortedPlugins;
 	}
