@@ -10,28 +10,31 @@
   <% end %>
 </div>
 
-<h2><%= @matchday.position %>. Spieltag von <%= @matchday.contest.name %> (<%= l(@matchday.when, :format => :long) %>)</h2>
+<h2><%= @matchday.position %>. Spieltag, <%= l(@matchday.when, :format => :long) %></h2>
 
-<table>
-  <tr>
+<table style="width: 100%;">
+  <tr style="display: none;">
     <th>Spieler 1</th>
     <th>&nbsp;</th>
     <th>Spieler 2</th>
+    <th>&nbsp;</th>
     <th>Ergebnis</th>
   </tr>
   <% @matchday.matches.each do |match| %>
     <tr>
-      <td><%= match.slots[0].name || "Freispiel" %></td>
-      <td style="font-weight: bold;">vs</td>
+      <td style="text-align: right;"><%= match.slots[0].name || "Freispiel" %></td>
+      <td style="text-align: center; font-weight: bold;">vs</td>
       <td><%= match.slots[1].name || "Freispiel" %></td>
-      <td>&nbsp;</td>
+      <td><%= match.rounds.count %> Runde(n)</td>
+      <td><%= match.result || "Kein Ergebnis" %></td>
+      <td><%= link_to "Details", contest_matchday_match_url(@contest, @matchday, match) %></td>
     </tr>
   <% end %>
 </table>
 
-<div>
+<p>
   <% if @matchday.played? %>
     Durchgespielt am: <%= l(@matchday.played_at, :format => :long) %><br/>
   <% end %>
   Aktualisiert am: <%= l(@matchday.updated_at, :format => :long) %>
-</div>
+</p>

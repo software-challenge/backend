@@ -1,8 +1,12 @@
 class Contest < ActiveRecord::Base
   validates_presence_of :name
+  validates_associated :match_score_definition
+  validates_numericality_of :rounds_per_match, :greater_than => 0, :less_than => 100
 
-  has_many :contestants
-  has_many :matchdays
+  has_many :contestants, :dependent => :destroy
+  has_many :matchdays, :dependent => :destroy
+
+  belongs_to :match_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
 
   def to_param
     "#{id}-#{name.parameterize}"
@@ -13,14 +17,28 @@ class Contest < ActiveRecord::Base
       matchdays.destroy_all
 
       next_date = Date.today
-      generate_matchdays.each_with_index do |pairs,day|
-        matches = pairs.collect do |contestants|
-          match_slots = contestants.collect do |contestant|
-            MatchSlot.new(:contestant => contestant)
+      generate_matchdays.each_with_index do |pairs, day|
+        matchday = matchdays.create!(:contest => self, :when => next_date)
+        pairs.each do |contestants|
+          match = matchday.matches.create!
+          contestants.each do |contestant|
+            match.slots.create!(:contestant => contestant)
           end
-          Match.new(:slots => match_slots)
+          round_count = 0
+          while round_count < rounds_per_match
+            (0...match.slots.count).to_a.permute do |permutation|
+              round_count = round_count + 1
+              round = match.rounds.create!
+              permutation.each do |slot_index|
+                round.slots.create!(:match_slot => match.slots[slot_index])
+              end
+              break if round_count >= rounds_per_match
+            end
+          end
+          (1..rounds_per_match).each do
+            
+          end
         end
-        Matchday.new(:contest => self, :matches => matches, :order => day, :when => next_date).save!
         next_date += 1
       end
     end

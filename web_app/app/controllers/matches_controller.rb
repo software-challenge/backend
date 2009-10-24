@@ -8,7 +8,7 @@ class MatchesController < ApplicationController
     @matches = Match.all
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { redirect_to contest_matchday_url(@contest, @matchday, :anchor => "results")}
       format.xml  { render :xml => @matches }
     end
   end
@@ -16,7 +16,7 @@ class MatchesController < ApplicationController
   # GET /matches/1
   # GET /matches/1.xml
   def show
-    @match = Match.find(params[:id])
+    @match = @matchday.matches.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
@@ -27,7 +27,7 @@ class MatchesController < ApplicationController
   # GET /matches/new
   # GET /matches/new.xml
   def new
-    @match = Match.new
+    @match = @matchday.matches.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,13 +37,13 @@ class MatchesController < ApplicationController
 
   # GET /matches/1/edit
   def edit
-    @match = Match.find(params[:id])
+    @match = @matchday.matches.find(params[:id])
   end
 
   # POST /matches
   # POST /matches.xml
   def create
-    @match = Match.new(params[:match])
+    @match = @matchday.matches.build(params[:match])
 
     respond_to do |format|
       if @match.save
@@ -60,7 +60,7 @@ class MatchesController < ApplicationController
   # PUT /matches/1
   # PUT /matches/1.xml
   def update
-    @match = Match.find(params[:id])
+    @match = @matchday.find(params[:id])
 
     respond_to do |format|
       if @match.update_attributes(params[:match])
@@ -77,7 +77,7 @@ class MatchesController < ApplicationController
   # DELETE /matches/1
   # DELETE /matches/1.xml
   def destroy
-    @match = Match.find(params[:id])
+    @match = @matchday.find(params[:id])
     @match.destroy
 
     respond_to do |format|

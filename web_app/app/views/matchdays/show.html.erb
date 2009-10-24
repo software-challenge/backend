@@ -1,0 +1,28 @@
+<div style="float: right;">
+  <%= link_to "Übersicht", contest_matchdays_url(@contest) %>
+</div>
+
+<h1><%=h @contest.name %> / <%=h @matchday.position %>. Spieltag</h1>
+
+<div id="tabs" style="margin: 0 -10px;">
+  <ul>
+    <li><a href="#results">Ergebnisse</a></li>
+    <% if @matchday.played? %>
+      <li><a href="#standings">Tabelle</a></li>
+    <% end %>
+  </ul>
+  <div id="results">
+    <%= render :partial => "results" %>
+  </div>
+  <% if @matchday.played? %>
+    <div id="standings">
+      <%= render :partial => "standings" %>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#tabs").tabs();
+  });
+</script>

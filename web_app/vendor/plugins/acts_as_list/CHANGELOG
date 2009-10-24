@@ -1,0 +1,31 @@
+2008-06-30 - Sean Huber (shuber@huberry.com)
+	* Changed add_to_list_bottom, :if => :scope_changed? callback to be compatible with older active_record versions
+
+2008-06-16 - Sean Huber (shuber@huberry.com)
+	* scope_changed? returns false if new_record?
+
+2008-06-16 - Sean Huber (shuber@huberry.com)
+	* When a record's scope changes, a call to add_to_list_bottom is not made until the record is saved
+
+2008-06-15 - Sean Huber (shuber@huberry.com)
+	* Records do not automatically save on scope change
+
+2008-06-15 - Sean Huber (shuber@huberry.com)
+	* Records now switch lists on scope change
+
+2008-06-09 - Sean Huber (shuber@huberry.com)
+	* Updated CHANGELOG emails
+
+2008-06-09 - Sean Huber (shuber@huberry.com)
+	* Scope condition properly quotes foreign key values (e.g "parent_id = '1'")
+	* Removed logic that converts scopes that are belongs_to symbols into foreign keys. This will require you to specifically pass the foreign key as a symbol now (e.g. :parent_id instead of :parent) which allows to scope to fields like :type
+	* Updated documentation
+
+2008-06-09 - Sean Huber (shuber@huberry.com)
+	* Added more tests
+	* Updated documentation
+
+2008-06-09 - Sean Huber (shuber@huberry.com)
+	* Removed TextMate paths from $: for tests to avoid builder conflicts
+	* Silenced output for ActiveRecord schema definitions in tests
+	* Added support for multiple scopes

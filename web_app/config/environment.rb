@@ -41,3 +41,5 @@ Rails::Initializer.run do |config|
   config.i18n.load_path += Dir[Rails.root.join('config', 'locales', 'models', '*.{rb,yml}')]
   config.i18n.default_locale = :de
 end
+
+require 'array_permute'

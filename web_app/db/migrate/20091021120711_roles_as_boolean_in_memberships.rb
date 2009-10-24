@@ -7,8 +7,7 @@ class RolesAsBooleanInMemberships < ActiveRecord::Migration
 
   def self.down
     add_column :memberships, :role, :string, :default => '', :null => false
-
     remove_column :memberships, :tutor
-    remove_column :memberships, :tutor
+    remove_column :memberships, :teacher
   end
 end

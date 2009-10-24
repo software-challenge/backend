@@ -11,6 +11,10 @@ class Person < ActiveRecord::Base
 
   validates_uniqueness_of :email
 
+  def name
+    nick_name || ("#{self.first_name} #{self.last_name}")
+  end
+
   def password_match?(password)
     encrypted = self.class.encrypt_password(password, password_salt)
     encrypted == password_hash

@@ -1,3 +1,12 @@
+<h1>Spiel / <%= @match.slots.collect{ |s| content_tag(:em, s.name) }.join(' gegen ') %></h1>
 
-<%= link_to 'Edit', edit_match_path(@match) %> |
-<%= link_to 'Back', matches_path %>
+<% @match.rounds.each do |round| %>
+  <tr>
+    <% round.slots.each_with_index do |slot,i| %>
+      <% unless i.zero? %>
+        <td>vs</td>
+      <% end %>
+      <td><%= slot.name %></td>
+    <% end %>
+  </tr>
+<% end %>

@@ -1,0 +1,16 @@
+class RoundSlot < ActiveRecord::Base
+  validates_presence_of :round
+  validates_presence_of :match_slot
+
+  belongs_to :round
+  belongs_to :match_slot
+  belongs_to :score, :dependent => :destroy
+
+  acts_as_list :scope => :round_id
+
+  delegate :name, :to => :match_slot
+
+  def reset!
+    score.destroy if score
+  end
+end

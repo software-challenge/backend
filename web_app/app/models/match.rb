@@ -1,32 +1,61 @@
 class Match < ActiveRecord::Base
-  has_many :slots, :dependent => :destroy, :class_name => "MatchSlot"
-  
+  validates_presence_of :set
+
   belongs_to :set, :polymorphic => true
+  has_many :slots, :class_name => "MatchSlot", :dependent => :destroy, :order => "position"
+  has_many :rounds, :dependent => :destroy
+  has_many :scores, :through => :slots
 
   alias :matchday :set
   alias :matchday= :set=
+  def played?; played_at; end
 
-  def played?
-    !played_at.nil?
+  def result
+    result = scores.all
+    return nil if result.empty?
+    result
   end
   
   # Delayed::Job handler
   def perform
     unless played?
       run_match
-      self.played_at = DateTime.now
-      self.save!
+    end
+  end
+
+  def reset!
+    rounds.each do |round|
+      round.reset!
     end
 
-    if set and set.respond_to? :after_match_played
-      set.after_match_played self
+    slots.each do |slot|
+      slot.reset!
+    end
+
+    self.played_at = nil
+    save!
+  end
+
+  def after_round_played(round)
+    if all_rounds_played?
+      self.played_at = DateTime.now
+      self.save!
+      
+      if set and set.respond_to? :after_match_played
+        set.after_match_played self
+      end
     end
   end
 
   protected
 
+  def all_rounds_played?(force_reload = true)
+    self.rounds(force_reload).first(:conditions => { :played_at => nil }).nil?
+  end
+
   def run_match
-    # perform the match
-    sleep 1
+    rounds.each do |round|
+      round.perform
+    end
   end
 end

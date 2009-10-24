@@ -7,6 +7,22 @@ class MatchdaysController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @matchdays }
+      format.json {
+        if params[:calendar]
+          data = @matchdays.collect do |day|
+            {
+              :id => day.id,
+              :title => "#{day.position}. Spieltag",
+              :start => day.when.to_s,
+              :allDay => true,
+              :url => contest_matchday_url(@contest, day)
+            }
+          end
+          render :json => data
+        else
+          render :json => @matchdays
+        end
+      }
     end
   end
 
@@ -14,7 +30,7 @@ class MatchdaysController < ApplicationController
     @matchday = @contest.matchdays.find(params[:id])
 
     respond_to do |format|
-      format.html { redirect_to contest_matchday_matches_url(@contest, @matchday) }
+      format.html # show.html.erb
       format.xml  { render :xml => @matchday }
     end
   end
@@ -51,11 +67,12 @@ class MatchdaysController < ApplicationController
       flash[:error] = "Der Spieltag wird bereits gespielt."
     else
       Matchday.transaction do
+        @matchday.logger.info "start"
         @matchday.reset!
-        job_id = Delayed::Job.enqueue @matchday
-        if job_id
-          @matchday.job = Delayed::Job.find(job_id)
-          @matchday.save!
+        @matchday.reload
+        @matchday.logger.info "end"
+        
+        if @matchday.perform # _delayed!
           flash[:notice] = "Der Auftrag wurde erfolgreich gestartet."
         else
           flash[:error] = "Konnte den Auftrag nicht starten."

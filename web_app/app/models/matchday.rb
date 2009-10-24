@@ -1,18 +1,14 @@
 require 'sandbox'
 
 class Matchday < ActiveRecord::Base
-  validates_presence_of :order
   validates_presence_of :contest
   validates_presence_of :when
-  validates_uniqueness_of :order, :scope => :contest_id
+
+  acts_as_list :scope => :contest_id
 
   has_many :matches, :dependent => :destroy, :as => :set
   belongs_to :contest
-  belongs_to :job, :class_name => "Delayed::Job"
-
-  def position
-    self.contest.matchdays.count(:conditions => ["matchdays.when < ? OR (matchdays.when = ? AND matchdays.order < ?)", self.when, self.when, self.order]) + 1
-  end
+  belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
 
   def played?
     !played_at.nil?
@@ -20,6 +16,12 @@ class Matchday < ActiveRecord::Base
 
   def running?
     !job.nil?
+  end
+
+  def perform_delayed!
+    job_id = Delayed::Job.enqueue self
+    self.job = Delayed::Job.find(job_id)
+    save!
   end
 
   # Delayed::Job handler
@@ -33,9 +35,10 @@ class Matchday < ActiveRecord::Base
     raise "Can't reset while Job is running!" if running?
     
     Matchday.transaction do
-      self.matches.each do |match|
-        match.played_at = nil
-        match.save!
+      matches.each do |match|
+        Match.benchmark("resetting match", Logger::DEBUG, false) do
+          match.reset!
+        end
       end
 
       self.played_at = nil
@@ -44,10 +47,10 @@ class Matchday < ActiveRecord::Base
   end
 
   # Callback (called by Match.perfom)
-  def after_match_played(sender = nil)
-    logger.info "Received after_match_played from #{sender}"
-    if all_matches_played?(true)
-      update_scoretable
+  def after_match_played(match)
+    logger.info "Received after_match_played from #{match}"
+    if all_matches_played?
+      # update_scoretable
       self.played_at = DateTime.now
       self.save!
     end
@@ -55,7 +58,7 @@ class Matchday < ActiveRecord::Base
 
   protected
 
-  def all_matches_played?(force_reload = false)
+  def all_matches_played?(force_reload = true)
     self.matches(force_reload).first(:conditions => { :played_at => nil }).nil?
   end
 

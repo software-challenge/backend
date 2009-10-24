@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  match_slot_id: 1
+  round_id: 1
+  score_id: 1
+
+two:
+  match_slot_id: 1
+  round_id: 1
+  score_id: 1

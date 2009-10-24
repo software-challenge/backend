@@ -1,0 +1,12 @@
+.errorExplanation {
+  border: 2px solid #f88;
+  padding: 10px;
+}
+
+.errorExplanation ul {
+  padding: 0 0 0 25px;
+}
+
+.errorExplanation h2 {
+  margin: 0 0 0.8em 0;
+}

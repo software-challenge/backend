@@ -7,6 +7,24 @@
   <p>Es liegt noch kein Spielplan vor.</p>
 <% else %>
 
+  <div id="calendar"></div>
+
+  <script type='text/javascript'>
+
+    $(document).ready(function() {
+      var locale = $.datepicker.regional['de'];
+      var calSettings = {};
+      $.extend(calSettings, locale, {
+        editable: false
+        ,buttonText: {today: "Heute"}
+        ,events: '<%= contest_matchdays_url(@contest, :format => "json", :calendar => true) %>'
+      });
+      $('#calendar').fullCalendar(calSettings);
+
+    });
+
+  </script>
+
   <table>
     <tr>
       <th>&nbsp;</th>
@@ -19,7 +37,7 @@
       <tr>
         <td><%= i+1 %>. Spieltag am</td>
         <td><%= l(matchday.when, :format => :long) %></td>
-        <td><%= (matchday.played? ? 'ja' : 'nein') %></td>
+        <td><%= matchday_status(matchday) %></td>
         <td><%= link_to 'Show', [@contest, matchday] %></td>
       </tr>
     <% end %>

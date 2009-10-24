@@ -16,7 +16,7 @@ class ContestsController < ApplicationController
     @contest = Contest.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html { redirect_to contest_matchdays_url(@contest) }
       format.xml  { render :xml => @contest }
     end
   end
@@ -58,11 +58,42 @@ class ContestsController < ApplicationController
   # PUT /contests/1.xml
   def update
     @contest = Contest.find(params[:id])
+    @match_score_definition = @contest.match_score_definition || @contest.build_match_score_definition
+
+    success = false
+    begin
+      Contest.transaction do
+        fragments = params[:match_score_definition]
+        if fragments
+          fragments.each_with_index do |fragment_data, i|
+            if fragment_data[:id].blank?
+              unless fragment_data[:name].blank? #skip blank fields
+                @fragment = @match_score_definition.fragments.build(fragment_data)
+                @fragment.position = i
+                @fragment.save!
+              end
+            else
+              id = fragment_data.delete :id
+              @fragment = @match_score_definition.fragments.find(id)
+              @fragment.attributes = fragment_data
+              @fragment.position = i
+              @fragment.save!
+            end
+          end
+        end
+        
+        @match_score_definition.save!
+        @contest.update_attributes!(params[:contest])
+      end
+      success = true
+    rescue ActiveRecord::RecordInvalid
+      success = false
+    end
 
     respond_to do |format|
-      if @contest.update_attributes(params[:contest])
+      if success
         flash[:notice] = 'Contest was successfully updated.'
-        format.html { redirect_to(@contest) }
+        format.html { redirect_to edit_contest_url(@contest) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

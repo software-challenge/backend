@@ -11,8 +11,8 @@ de:
         one: Teilnehmer
         other: Teilnehmer
       match:
-        one: Match
-        other: Matches
+        one: Spiel
+        other: Spiele
       match_slot:
         one: Slot
         other: Slots
@@ -25,3 +25,8 @@ de:
       person:
         one: Person
         other: Personen
+
+    attributes:
+      contest:
+        match_score_definition: Wertung für Match
+        round_score_definition: Wertung für Spielrunde
