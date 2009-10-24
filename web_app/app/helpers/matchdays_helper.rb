@@ -1,11 +1,11 @@
 module MatchdaysHelper
   def matchday_status(matchday)
     if matchday.job
-      'aktiv'
+      'läuft gerade'
     elsif matchday.played?
-      'ja'
+      'gespielt'
     else
-      'nein'
+      'ausstehend'
     end
   end
 end

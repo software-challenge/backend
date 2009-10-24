@@ -13,7 +13,8 @@ class MatchdaysController < ApplicationController
             {
               :id => day.id,
               :title => "#{day.position}. Spieltag",
-              :start => day.when.to_s,
+              :start => day.when.strftime('%Y-%m-%d'),
+              :end => day.when.strftime('%Y-%m-%d'),
               :allDay => true,
               :url => contest_matchday_url(@contest, day)
             }

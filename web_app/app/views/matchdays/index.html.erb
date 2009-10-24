@@ -3,14 +3,27 @@
 </div>
 
 <h1><%=h @contest.name %> / Spieltage</h1>
+
 <% if @matchdays.empty? %>
   <p>Es liegt noch kein Spielplan vor.</p>
 <% else %>
-
-  <div id="calendar"></div>
+  <div id="tabs">
+    <ul>
+      <li><a href="#calendar">Kalender</a></li>
+      <li><a href="#list">Liste</a></li>
+    </ul>
+    <div id="calendar">
+      <%= render :partial => "calendar" %>
+    </div>
+    <div id="list">
+      <%= render :partial => "listing" %>
+    </div>
+  </div>
 
   <script type='text/javascript'>
-
+    $(document).ready(function() {
+      $('#tabs').tabs();
+    });
     $(document).ready(function() {
       var locale = $.datepicker.regional['de'];
       var calSettings = {};
@@ -19,28 +32,7 @@
         ,buttonText: {today: "Heute"}
         ,events: '<%= contest_matchdays_url(@contest, :format => "json", :calendar => true) %>'
       });
-      $('#calendar').fullCalendar(calSettings);
-
+      $('#calendar-widget').fullCalendar(calSettings);
     });
-
   </script>
-
-  <table>
-    <tr>
-      <th>&nbsp;</th>
-      <th>Wann</th>
-      <th>Gespielt?</th>
-      <th>&nbsp;</th>
-    </tr>
-
-    <% @matchdays.each_with_index do |matchday,i| %>
-      <tr>
-        <td><%= i+1 %>. Spieltag am</td>
-        <td><%= l(matchday.when, :format => :long) %></td>
-        <td><%= matchday_status(matchday) %></td>
-        <td><%= link_to 'Show', [@contest, matchday] %></td>
-      </tr>
-    <% end %>
-  </table>
-
 <% end %>

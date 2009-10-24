@@ -8,11 +8,10 @@
     <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" %>
     <%= javascript_include_tag 'edit_area/edit_area_full.js' %>
     <%= javascript_include_tag 'ui.datepicker-de', 'jrails', 'application', 'fullcalendar.min', :cache => true %>
-    <%= stylesheet_link_tag 'application', 'rails', 'contests', 'fullcalendar', :cache => true  %>
+    <%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/flick/jquery-ui.css" %>
+    <%= stylesheet_link_tag 'jquery-ui-fixes', 'application', 'rails', 'contests', 'fullcalendar', :cache => true  %>
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/flick/jquery-ui.css"
-          type="text/css" rel="Stylesheet" />
     <title><%= current_page_title %></title>
     <style type="text/css">
       #mainMenu ul {
@@ -84,6 +83,22 @@
       .frontpagePhotoBg .text {
         height: 250px;
         background: -webkit-gradient(linear, left top, right bottom, from(#f8f8f8), to(#e0e0e0));
+      }
+
+      table#rounds {
+        width: 100%;
+        border-spacing: 0;
+      }
+
+      table#rounds th {
+        text-align: left;
+      }
+      
+      #rounds .round td {
+        border: 1px solid #eee;
+        background-color: #f8f8f8;
+        font-weight: bold;
+        padding: 2px 6px;
       }
     </style>
   </head>

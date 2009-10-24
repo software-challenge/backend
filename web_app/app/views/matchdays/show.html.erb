@@ -2,6 +2,20 @@
   <%= link_to "Übersicht", contest_matchdays_url(@contest) %>
 </div>
 
+<% if current_user.administrator? %>
+  <div style="float: right;">
+    <% if @matchday.running? %>
+      <%= button_to "Spiel wird durchgeführt", "#", :disabled => true %>
+    <% else %>
+      <% if @matchday.played? %>
+        <%= button_to "Spieltag wiederholen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+      <% else %>
+        <%= button_to "Spieltag spielen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
 <h1><%=h @contest.name %> / <%=h @matchday.position %>. Spieltag</h1>
 
 <div id="tabs" style="margin: 0 -10px;">
@@ -20,6 +34,13 @@
     </div>
   <% end %>
 </div>
+
+<p>
+  <% if @matchday.played? %>
+    Durchgespielt am: <%= l(@matchday.played_at, :format => :short) %><br/>
+  <% end %>
+  Aktualisiert am: <%= l(@matchday.updated_at, :format => :short) %>
+</p>
 
 <script type="text/javascript">
   $(document).ready(function() {

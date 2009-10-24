@@ -15,6 +15,10 @@ class Match < ActiveRecord::Base
     return nil if result.empty?
     result
   end
+
+  def score_definition
+    set.match_score_definition
+  end
   
   # Delayed::Job handler
   def perform

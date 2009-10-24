@@ -10,6 +10,8 @@ class Matchday < ActiveRecord::Base
   belongs_to :contest
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
 
+  delegate :match_score_definition, :to => :contest
+
   def played?
     !played_at.nil?
   end

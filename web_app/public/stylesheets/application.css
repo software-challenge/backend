@@ -22,13 +22,9 @@ h1, h2, h3, h4, h5, h6 {
   /* font-family: "Gill Sans", "Gill Sans MT", "Helvetica Neue", "Helvetica", Arial, sans-serif; */
 }
 
-h1 em:before {
-  content: "\203A";
-  color: #bbb;
-  font-size: 0.7em;
-}
-h1 em:after {
-  content: "\2039";
-  font-size: 0.7em;
-  color: #bbb;
+h1 em {
+  font-style: inherit;
+  font-variant: small-caps;
+  /* color: #4183C4; */
+  /* font-family: "Gill Sans", "Gill Sans MT", "Helvetica Neue", "Helvetica", Arial, sans-serif; */
 }

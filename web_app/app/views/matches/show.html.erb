@@ -1,12 +1,29 @@
 <h1>Spiel / <%= @match.slots.collect{ |s| content_tag(:em, s.name) }.join(' gegen ') %></h1>
 
-<% @match.rounds.each do |round| %>
+<table id="rounds">
   <tr>
-    <% round.slots.each_with_index do |slot,i| %>
-      <% unless i.zero? %>
-        <td>vs</td>
-      <% end %>
-      <td><%= slot.name %></td>
+    <th>&nbsp;</th>
+    <% fragment_count = 0 %>
+    <% @match.score_definition.fragments.each do |fragment| %>
+      <th><%=h fragment.name %></th>
+      <% fragment_count += 1 %>
     <% end %>
   </tr>
-<% end %>
+  <% @match.rounds.each_with_index do |round,round_index| %>
+    <tr class="round">
+      <td colspan="<%= fragment_count + 1 %>">
+        Runde <%= round_index.next %>
+      </td>
+    </tr>
+    <% round.slots.each do |slot| %>
+      <tr>
+        <td><%= slot.name %></td>
+        <% if slot.score %>
+          <% slot.score.fragments.each do |fragment| %>
+            <td><%= fragment.value %></td>
+          <% end %>
+        <% end %>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
