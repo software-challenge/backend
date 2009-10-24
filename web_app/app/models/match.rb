@@ -19,6 +19,8 @@ class Match < ActiveRecord::Base
   def score_definition
     set.match_score_definition
   end
+
+  alias :round_score_definition :score_definition
   
   # Delayed::Job handler
   def perform

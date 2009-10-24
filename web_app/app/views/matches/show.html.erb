@@ -1,10 +1,43 @@
-<h1>Spiel / <%= @match.slots.collect{ |s| content_tag(:em, s.name) }.join(' gegen ') %></h1>
+<h1><%=h @contest.name %> / <%= @matchday.position %>. Spieltag / Spiel <%= @match.id %></h1>
+
+<div style="font-size: 22px; font-family: Georgia, serif; text-align: center; margin: 2em 0;">
+  <%= @match.slots.collect{ |s| content_tag(:em, h(s.name)) }.join(' <small style="margin: 0 10px; color: #555;">gegen</small> ') %>
+</div>
+
+<h2>Gesamtergebnis</h2>
 
 <table id="rounds">
   <tr>
     <th>&nbsp;</th>
     <% fragment_count = 0 %>
     <% @match.score_definition.fragments.each do |fragment| %>
+      <th><%=h fragment.name %></th>
+      <% fragment_count += 1 %>
+    <% end %>
+  </tr>
+  <% @match.slots.each do |slot| %>
+    <tr>
+      <td><%= slot.name %></td>
+      <% if slot.score %>
+        <% slot.score.fragments.each do |fragment| %>
+          <td><%= fragment.value %></td>
+        <% end %>
+      <% else %>
+        <td colspan="<%= fragment_count %>">
+          Noch keine Ergebnisse
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<h2>Rundenergebnisse</h2>
+
+<table id="rounds">
+  <tr>
+    <th>&nbsp;</th>
+    <% fragment_count = 0 %>
+    <% @match.round_score_definition.fragments.each do |fragment| %>
       <th><%=h fragment.name %></th>
       <% fragment_count += 1 %>
     <% end %>
@@ -22,6 +55,10 @@
           <% slot.score.fragments.each do |fragment| %>
             <td><%= fragment.value %></td>
           <% end %>
+        <% else %>
+          <td colspan="<%= fragment_count %>">
+            Noch keine Ergebnisse
+          </td>
         <% end %>
       </tr>
     <% end %>
