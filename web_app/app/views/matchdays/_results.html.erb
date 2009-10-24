@@ -3,16 +3,20 @@
     <th>Spieler 1</th>
     <th>&nbsp;</th>
     <th>Spieler 2</th>
-    <th>&nbsp;</th>
     <th>Ergebnis</th>
   </tr>
   <% @matchday.matches.each do |match| %>
     <tr>
-      <td style="text-align: right;"><%= match.slots[0].name || "Freispiel" %></td>
-      <td style="text-align: center; font-weight: bold;">vs</td>
+      <td><%= match.slots[0].name || "Freispiel" %></td>
+      <td style="text-align: center; font-weight: bold;">gegen</td>
       <td><%= match.slots[1].name || "Freispiel" %></td>
-      <td><%= match.rounds.count %> Runde(n)</td>
-      <td><%= match.result || "Kein Ergebnis" %></td>
+      <td>
+        <% if match.result %>
+          <%= match.result.first.join(" : ") %>
+        <% else %>
+          <em>Kein Ergebnis</em>
+        <% end %>
+      </td>
       <td><%= link_to "Details", contest_matchday_match_url(@contest, @matchday, match) %></td>
     </tr>
   <% end %>

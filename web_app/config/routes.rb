@@ -7,7 +7,8 @@ ActionController::Routing::Routes.draw do |map|
     :refresh_matchdays => :post
   } do |c|
     c.resources :matchdays, :member => {
-      :play => :post
+      :play => :post,
+      :reaggregate => :post
     } do |m|
       m.resources :matches
     end

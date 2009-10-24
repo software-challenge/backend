@@ -1,3 +1,5 @@
+require 'sandbox'
+
 class Round < ActiveRecord::Base
   validates_presence_of :match
 
@@ -8,7 +10,18 @@ class Round < ActiveRecord::Base
   def played?; played_at; end
 
   def perform
-    update_scores!([[1,0,0], [-1,0,0]])
+    x, y = rand(10), rand(10)
+    a, b = 0, 0
+
+    if x > y
+      a = 1
+    elsif x < y
+      b = 1
+    end
+
+    t1, t2 = rand(100), rand(100)
+
+    update_scores!([[a,x,t1], [b,y,t2]])
   end
 
   def reset!
@@ -26,15 +39,15 @@ class Round < ActiveRecord::Base
     
     Round.transaction do
       slots.each_with_index do |slot,index|
-        score = slot.score
-        unless score
-          score = slot.build_score(:definition => match.matchday.contest.match_score_definition)
+        unless slot.score
+          slot.score = slot.build_score(:definition => match.matchday.contest.match_score_definition)
         end
         slot.score.set!(new_scores[index])
         slot.save!
       end
       
       self.played_at = DateTime.now
+      save!
     end
     
     self.match.after_round_played(self)

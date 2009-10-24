@@ -1,8 +1,72 @@
-<h1><%=h @contest.name %> / <%= @matchday.position %>. Spieltag / Spiel <%= @match.id %></h1>
+<h1>
+  <%= link_to h(@contest.name), @contest %> /
+  <%= link_to h("#{@matchday.position}. Spieltag"), [@contest, @matchday] %> /
+  Spiel <%= @match.id %>
+</h1>
 
-<div style="font-size: 22px; font-family: Georgia, serif; text-align: center; margin: 2em 0;">
-  <%= @match.slots.collect{ |s| content_tag(:em, h(s.name)) }.join(' <small style="margin: 0 10px; color: #555;">gegen</small> ') %>
-</div>
+<style type="text/css">
+  table#result {
+    margin: 60px 0;
+  }
+
+  table#result td {
+
+  }
+
+  table#result td:first-child {
+    text-align: right;
+    width: 45%;
+  }
+  table#result td:last-child {
+    text-align: left;
+    width: 45%;
+  }
+
+
+  table#result td.center {
+    text-align: center;
+    color: #555;
+    padding: 0 10px;
+    font-size: 0.7em;
+  }
+
+  table#result tr.values {
+    line-height: 45px;
+    font-size: 33px;
+    font-weight: bold;
+  }
+
+  table#result tr.contestants {
+    font-size: 24px;
+    font-family: Georgia, serif;
+    line-height: 40px;
+  }
+</style>
+
+<table id="result" style="width: 100%;">
+  <tr class="contestants">
+    <% @match.slots.each_with_index do |slot,i| %>
+      <% unless i.zero? %>
+        <td class="center">gegen</td>
+      <% end %>
+      <td>
+        <%=h slot.name %>
+      </td>
+    <% end %>
+  </tr>
+  <% if @match.result %>
+    <tr class="values">
+      <% @match.result.first.each_with_index do |value,i| %>
+        <% unless i.zero? %>
+          <td class="center">:</td>
+        <% end %>
+        <td>
+          <%=h value  %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
 
 <h2>Gesamtergebnis</h2>
 

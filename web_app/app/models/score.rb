@@ -22,6 +22,12 @@ class Score < ActiveRecord::Base
     end
   end
 
+  def to_a
+    fragments.collect do |fragment|
+      fragment.value
+    end
+  end
+
   class Fragment < ActiveRecord::Base
     set_table_name "score_fragments"
 

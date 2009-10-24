@@ -16,6 +16,7 @@ class MatchdaysController < ApplicationController
               :start => day.when.strftime('%Y-%m-%d'),
               :end => day.when.strftime('%Y-%m-%d'),
               :allDay => true,
+              :className => (day.played? ? "played" : "incoming"),
               :url => contest_matchday_url(@contest, day)
             }
           end
@@ -61,6 +62,25 @@ class MatchdaysController < ApplicationController
     end
   end
 
+  def reaggregate
+    @matchday = @contest.matchdays.find(params[:id])
+
+    if @matchday.running?
+      flash[:error] = "Der Spieltag wird bereits gespielt."
+    else
+      Matchday.transaction do
+        @matchday.reset!
+        @matchday.reload
+
+        @matchday.matches.each do |match|
+          match.after_round_played(nil)
+        end
+      end
+    end
+
+    redirect_to contest_matchday_url(@contest, @matchday)
+  end
+
   def play
     @matchday = @contest.matchdays.find(params[:id])
 
@@ -68,10 +88,10 @@ class MatchdaysController < ApplicationController
       flash[:error] = "Der Spieltag wird bereits gespielt."
     else
       Matchday.transaction do
-        @matchday.logger.info "start"
-        @matchday.reset!
-        @matchday.reload
-        @matchday.logger.info "end"
+        Match.benchmark("resetting matchday", Logger::DEBUG, false) do
+          @matchday.reset!(true)
+          @matchday.reload
+        end
         
         if @matchday.perform # _delayed!
           flash[:notice] = "Der Auftrag wurde erfolgreich gestartet."
