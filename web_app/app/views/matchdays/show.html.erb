@@ -1,13 +1,19 @@
 <% if current_user.administrator? %>
-  <div style="float: right;">
+  <div id="actions">
     <% if @matchday.running? %>
-      <%= button_to "Spiel wird durchgeführt", "#", :disabled => true %>
+
     <% else %>
-      <%= button_to "Erneut zusammenrechnen", reaggregate_contest_matchday_url(@contest, @matchday), :method => "post" %>
       <% if @matchday.played? %>
-        <%= button_to "Spieltag wiederholen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+        <% link_to reaggregate_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Neu zusammenrechnen" do %>
+          <%= image_tag('actions/refresh.png') %>
+        <% end %>
+        <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Zurücksetzen" do %>
+          <%= image_tag('actions/destroy.png') %>
+        <% end %>
       <% else %>
-        <%= button_to "Spieltag spielen", play_contest_matchday_url(@contest, @matchday), :method => "post" %>
+        <% link_to play_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Spielen" do %>
+          <%= image_tag('actions/play.png') %>
+        <% end %>
       <% end %>
     <% end %>
   </div>
@@ -30,7 +36,7 @@
   </div>
   <% if @matchday.played? %>
     <div id="standings">
-      <%= render :partial => "standings" %>
+      <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
     </div>
   <% end %>
 </div>

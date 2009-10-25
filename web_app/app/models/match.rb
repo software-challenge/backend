@@ -21,11 +21,13 @@ class Match < ActiveRecord::Base
     end.transpose
   end
 
-  def score_definition
-    set.match_score_definition
+  def contest
+    set.contest
   end
 
-  alias :round_score_definition :score_definition
+  def score_definition
+    contest.match_score_definition
+  end
   
   # Delayed::Job handler
   def perform
@@ -71,12 +73,16 @@ class Match < ActiveRecord::Base
 
   def update_scoretable
     slots.each do |slot|
-      sandbox = Sandbox.new(set.contest.script_to_aggregate_rounds) # "sum_all(elements)"
+      sandbox = Sandbox.new(set.contest.script_to_aggregate_rounds)
       sandbox.extend SoftwareChallenge::ScriptHelpers::Aggregate
 
       # elements = [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]
-      elements = slot.round_score_array
-      result = sandbox.invoke(:locals => {:elements => elements})
+      other_slots = slots.reject{|item| item == slot}
+      others = other_slots.collect{|other_slot| other_slot.round_score_array}
+      mine = slot.round_score_array
+      result = sandbox.invoke(:locals => {:mine => mine, :others => others})
+
+      # raise "#{others.join(' ')} / #{mine.join(' ')}"
 
       score = slot.score
       unless score

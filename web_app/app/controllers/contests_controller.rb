@@ -59,30 +59,13 @@ class ContestsController < ApplicationController
   def update
     @contest = Contest.find(params[:id])
     @match_score_definition = @contest.match_score_definition || @contest.build_match_score_definition
+    @round_score_definition = @contest.round_score_definition || @contest.build_round_score_definition
 
     success = false
     begin
       Contest.transaction do
-        fragments = params[:match_score_definition]
-        if fragments
-          fragments.each_with_index do |fragment_data, i|
-            if fragment_data[:id].blank?
-              unless fragment_data[:name].blank? #skip blank fields
-                @fragment = @match_score_definition.fragments.build(fragment_data)
-                @fragment.position = i
-                @fragment.save!
-              end
-            else
-              id = fragment_data.delete :id
-              @fragment = @match_score_definition.fragments.find(id)
-              @fragment.attributes = fragment_data
-              @fragment.position = i
-              @fragment.save!
-            end
-          end
-        end
-        
-        @match_score_definition.save!
+        update_definition(@match_score_definition, params[:match_score_definition])
+        update_definition(@round_score_definition, params[:round_score_definition])
         @contest.update_attributes!(params[:contest])
       end
       success = true
@@ -114,14 +97,51 @@ class ContestsController < ApplicationController
     end
   end
 
+  def reset_matchdays
+    @contest = Contest.find(params[:id])
+    
+    @contest.matchdays.destroy_all
+
+    redirect_to contest_matchdays_url(@contest)
+  end
+
   def refresh_matchdays
     @contest = Contest.find(params[:id])
-    @contest.refresh_matchdays!
 
     if @contest.matchdays.count.zero?
-      flash[:error] = "Es sind nicht genug Teilnehmer vorhanden, um einen Spielplan zu erstellen."
+      @contest.refresh_matchdays!
+
+      if @contest.matchdays.count.zero?
+        flash[:error] = "Es sind nicht genug Teilnehmer vorhanden, um einen Spielplan zu erstellen."
+      end
+    else
+      flash[:error] = "Es liegt bereits ein Spielplan vor."
     end
 
     redirect_to contest_matchdays_url(@contest)
+  end
+
+  protected
+
+  def update_definition(definition, fragments)
+    if fragments
+      fragments.each_with_index do |fragment_data, i|
+        if fragment_data[:id].blank?
+          unless fragment_data[:name].blank? #skip blank fields
+            @fragment = definition.fragments.build(fragment_data)
+            @fragment.position = i
+            @fragment.save!
+          end
+        else
+          id = fragment_data.delete :id
+          @fragment = definition.fragments.find(id)
+          @fragment.attributes = fragment_data
+          @fragment.position = i
+          @fragment.save!
+        end
+      end
+    end
+
+    definition.save!
   end
 end

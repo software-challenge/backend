@@ -93,7 +93,7 @@
       table#rounds th {
         text-align: left;
       }
-      
+
       #rounds .round td {
         border: 1px solid #eee;
         background-color: #f8f8f8;
@@ -141,8 +141,26 @@
         </div>
       </div>
       <div id="content">
-        <p style="color: green"><%=h flash[:notice] %></p>
-        <p style="color: red"><%=h flash[:error] %></p>
+        <% unless flash.empty? %>
+          <div id="flash" style="margin: 0 -10px;">
+            <% if flash[:notice] %>
+              <div class="ui-widget">
+                <div class="ui-state-highlight ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
+                  <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+                  <strong>Hinweis:</strong> <%=h flash[:notice] %></p>
+                </div>
+              </div>
+            <% end %>
+            <% if flash[:error] %>
+              <div class="ui-widget">
+                <div class="ui-state-error ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
+                  <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                  <strong>Fehler:</strong> <%=h flash[:error] %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
 
         <%= yield %>
       </div>

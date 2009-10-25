@@ -33,6 +33,10 @@ class Round < ActiveRecord::Base
     save!
   end
 
+  def score_definition
+    match.matchday.contest.round_score_definition
+  end
+
   def update_scores!(new_scores)
     raise "new_scores must not be nil" unless new_scores
     raise "new_scores (#{new_scores.count}) must have same size as there are slots (#{slots.count})" if new_scores.count != slots.count
@@ -40,7 +44,7 @@ class Round < ActiveRecord::Base
     Round.transaction do
       slots.each_with_index do |slot,index|
         unless slot.score
-          slot.score = slot.build_score(:definition => match.matchday.contest.match_score_definition)
+          slot.score = slot.build_score(:definition => score_definition)
         end
         slot.score.set!(new_scores[index])
         slot.save!

@@ -68,59 +68,61 @@
   <% end %>
 </table>
 
+<% match_score_fragments = @match.score_definition.fragments.count %>
+<% round_score_fragments = @contest.round_score_definition.fragments.count %>
+<% max_fragments = [round_score_fragments, match_score_fragments].max %>
+<% match_colspan = 1 + [0, max_fragments - match_score_fragments].max %>
+<% round_colspan = 1 + [0, max_fragments - round_score_fragments].max %>
+
 <h2>Gesamtergebnis</h2>
 
 <table id="rounds">
   <tr>
-    <th>&nbsp;</th>
-    <% fragment_count = 0 %>
+    <th colspan="<%= match_colspan %>">&nbsp;</th>
     <% @match.score_definition.fragments.each do |fragment| %>
       <th><%=h fragment.name %></th>
-      <% fragment_count += 1 %>
     <% end %>
   </tr>
   <% @match.slots.each do |slot| %>
     <tr>
-      <td><%= slot.name %></td>
+      <td colspan="<%= match_colspan %>"><%= slot.name %></td>
       <% if slot.score %>
         <% slot.score.fragments.each do |fragment| %>
           <td><%= fragment.value %></td>
         <% end %>
       <% else %>
-        <td colspan="<%= fragment_count %>">
+        <td colspan="<%= match_score_fragments %>">
           Noch keine Ergebnisse
         </td>
       <% end %>
     </tr>
   <% end %>
-</table>
-
-<h2>Rundenergebnisse</h2>
-
-<table id="rounds">
   <tr>
-    <th>&nbsp;</th>
-    <% fragment_count = 0 %>
-    <% @match.round_score_definition.fragments.each do |fragment| %>
+    <td colspan="<%= 1 + max_fragments %>">
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <th colspan="<%= round_colspan %>">&nbsp;</th>
+    <% @contest.round_score_definition.fragments.each do |fragment| %>
       <th><%=h fragment.name %></th>
-      <% fragment_count += 1 %>
     <% end %>
   </tr>
   <% @match.rounds.each_with_index do |round,round_index| %>
     <tr class="round">
-      <td colspan="<%= fragment_count + 1 %>">
+      <td colspan="<%= round_colspan + round_score_fragments %>">
         Runde <%= round_index.next %>
       </td>
     </tr>
     <% round.slots.each do |slot| %>
       <tr>
-        <td><%= slot.name %></td>
+        <td colspan="<%= round_colspan %>"><%= slot.name %></td>
         <% if slot.score %>
           <% slot.score.fragments.each do |fragment| %>
             <td><%= fragment.value %></td>
           <% end %>
         <% else %>
-          <td colspan="<%= fragment_count %>">
+          <td colspan="<%= round_score_fragments %>">
             Noch keine Ergebnisse
           </td>
         <% end %>

@@ -15,7 +15,7 @@
 <% form_for(@contest) do |f| %>
   <div style="float: right;">
     <%= f.submit 'Speichern' %> oder
-    <%= link_to 'Zurück', contests_path %>
+    <%= link_to 'Zurück', contest_url(@contest) %>
   </div>
   <h1><%= current_page_title %></h1>
   <%= error_messages_for :fragment, :match_score_definition, :contest, :default => :contest %>
@@ -35,180 +35,19 @@
       <p>
         <%= f.label :rounds_per_match, "Runden pro Match" %>
         <%= f.text_field :rounds_per_match %>
-        <div id="rounds_per_match_slider"></div>
       </p>
       <p>
         <%= f.check_box :active %> <%= f.label :active, "Der Wettbewerb ist aktiv", :class => "inline" %>
       </p>
     </div>
     <div id="tabs-2">
-      <h2>Wertung für eine Spielrunde</h2>
-      <p>
-        Der Aufbau muss identisch zu der <code>ScoreDefinition</code> des Spielplugins (Java) sein.
-      </p>
-
-      <style type="text/css">
-        .sortable {
-          list-style: none;
-        }
-
-        .sortable li {
-          line-height: 24px;
-        }
-        .sortable .handle {
-          display: none;
-          /* position: absolute;
-          margin: 4px 0 4px -16px; */
-          border: 0 none;
-          height: 16px;
-          width: 16px;
-          margin: 4px 0;
-          vertical-align: top;
-        }
-
-        .sortable li.template {
-          display: none;
-        }
-
-        .sortable li.hover .handle {
-          display: inline;
-        }
-      </style>
-
-      <ul id="test-list" class="sortable">
-        <% if @contest.match_score_definition %>
-          <% @contest.match_score_definition.fragments.each_with_index do |fragment, i| %>
-            <li id="listItem_<%= i %>">
-              <%= image_tag 'actions/drag.png', :width => 16, :height => 16, :class => "handle" %>
-              <%= hidden_field_tag "match_score_definition[][id]", fragment.id %>
-              <%= text_field_tag "match_score_definition[][name]", fragment.name %>
-            </li>
-          <% end %>
-        <% end %>
-        <li id="listItemTemplate" class="template">
-          <%= image_tag 'actions/drag.png', :width => 16, :height => 16, :class => "handle" %>
-          <%= text_field_tag "match_score_definition[][name]", "", :id => nil %>
-        </li>
-      </ul>
-
-      <script type="text/javascript">
-        $(document).ready(function() {
-          $("ul.sortable li").hover(function() {
-            $(this).addClass("hover");
-          },
-          function() {
-            $(this).removeClass("hover");
-          });
-          $("ul.sortable").sortable({
-            handle : '.handle',
-            axis: 'y',
-            items: '> *:not(.template)'
-          }).each(function() {
-            var $theSort = $(this);
-            $(this.form).submit(function() {
-              $theSort.sortable('serialize');
-              return true;
-            });
-          });
-        });
-      </script>
-
-      <%= link_to_function "Neues Element hinzufügen", "$('#listItemTemplate').clone(true).attr('id', 'listItem_' + $('#test-list').children().size()).appendTo('#test-list').removeClass('template'); $('#test-list').sortable('refresh');" %>
-
-      <h2>Wertung für ein Match</h2>
-
-      <%= radio_button_tag :match_definition_type, "inherit" %>
-      <%= label_tag :match_definition_type_inherit, "Identisch zu Spielrunde", :class => "inline" %>
-
+      <%= render :partial => 'definitions', :locals => { :f => f } %>
     </div>
     <div id="tabs-3">
-      <h2><%= f.label :script_to_aggregate_rounds, "Script: Zusammenrechnen der Spielrunden" %></h2>
-
-      <p>
-        <%= f.text_area :script_to_aggregate_rounds, :cols => 85, :rows => 10, :id => 'roundCode' %>
-      </p>
-
-      <h2><%= f.label :script_to_aggregate_matches, "Script: Zusammenrechnen der Matches" %></h2>
-
-      <p>
-        <%= f.text_area :script_to_aggregate_matches, :cols => 85, :rows => 10, :id => 'matchCode' %>
-      </p>
+      <%= render :partial => 'scripts', :locals => { :f => f } %>
     </div>
     <div id="tabs-4">
-      <h2>Hilfe</h2>
-
-      <p>
-        Um die Wettkampfregeln frei gestalten zu können, ist es notwendig einige Berechnungen zu entwickeln. Dadurch lassen
-        sich spezielle Wertungen wie <em>1 Punkt bei Unentschieden</em>, <em>3 Punkte bei einem Sieg</em> umsetzen.
-      </p>
-
-      <p>
-        Die Scripte werden in der Programmiersprache <em>Ruby</em> verfasst. Die Eingabevariable lautet
-        <code>elements</code> und ist ein <code>Array</code>, der wiederrum weitere <code>Arrays</code> enthält.
-      </p>
-
-      <h3>Beispiel</h3>
-
-      <p>
-        Die Zusammenrechnung der Runden zum Berechnen der Punktzahl für ein Match. Angenommen, dass
-        5 Spielrunden gespielt werden, und jede Spielrunde ein Spielergebnis mit 3 Elementen vorliegt. Dann enthält <code>elements</code>
-        exakt 5 Elemente (die Spielrunden), die jeweils 3 Elemente (Zahlen) enthalten. Dies könnte wie folgt aussehen.
-      </p>
-
-      <p style="text-align: center;">
-        <code>elements = [[1,0,0], [1,5,0], [-1,3,7], [0,1,1], [0,3,3]]</code>
-      </p>
-
-      <p>
-        Wenn wir nun auf der <em>Wertungen</em>-Seite angegeben haben, dass die Wertung für ein Match,
-        nur noch aus 2 Elementen besteht - dann muss das Ergebnis unserer Berechnung ein <code>Array</code> mit
-        zwei Elementen sein.
-      </p>
-
-      <h4>Eingabe</h4>
-
-      <dl style="border: 1px solid #ddd; padding: 10px;">
-        <dt>Sieger?</dt>
-        <dd>-1 = Niederlage, 0 = Unentschieden, 1 = Sieg</dd>
-        <dt>Eigene Tore</dt>
-        <dt>Gegnerische Tore</dt>
-      </dl>
-
-      <h4>Ausgabe</h4>
-
-      <dl style="border: 1px solid #ddd; padding: 10px;">
-        <dt>Ranglistenpunkte</dt>
-        <dd>0 bei Niederlage, 1 bei Unentschieden, 3 bei Sieg</dd>
-        <dt>Tordifferenz</dt>
-      </dl>
-
-      <code><pre>
-                        # "elements" ist definiert
-
-                        result = [0,0]
-                        sum = 0
-
-                        elements.each do |round|
-                          sum += round[0]
-                          result[1] += (round[1] - round[2])
-                        end
-
-                        if sum > 0
-                          result[0] = 3
-                        elsif sum == 0
-                          result[0] = 1
-                        else
-                          result[0] = 0
-                        end
-
-                        result # Rückgabe
-      </pre></code>
-
-      <h3>Hilfsmethoden</h3>
-
-      <p>
-        Vorerst keine&hellip;
-      </p>
+      <%= render :partial => 'help' %>
     </div>
   </div>
 <% end %>
@@ -216,10 +55,6 @@
 <script type="text/javascript">
   $(document).ready(function() {
     $("#tabs").tabs();
-    //$("#rounds_per_match_slider").slider({min: 1, max: 99});
-    //$("#contest_rounds_per_match").blur(function() {
-    //  $("#rounds_per_match_slider").slider('option', 'value', parseInt($(this).val()));
-    //});
   });
 
   var editorSettings = {

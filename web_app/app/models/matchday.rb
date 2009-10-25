@@ -1,16 +1,26 @@
 require_dependency 'sandbox_helpers'
 
 class Matchday < ActiveRecord::Base
+
+  # named scopes
+  named_scope :played, :conditions => "played_at IS NOT NULL"
+
+  # validations
   validates_presence_of :contest
   validates_presence_of :when
 
-  acts_as_list :scope => :contest_id
-
+  # associations
   has_many :matches, :dependent => :destroy, :as => :set
+  has_many :slots, :class_name => "MatchdaySlot"
   belongs_to :contest
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
 
+  # delegates OR :through associations
+  has_many :match_slots, :through => :slots
   delegate :match_score_definition, :to => :contest
+
+  # acts
+  acts_as_list :scope => :contest_id
 
   def played?
     !played_at.nil?
@@ -65,8 +75,39 @@ class Matchday < ActiveRecord::Base
   end
 
   def update_scoretable
-    sandbox = Sandbox.new(contest.script_to_aggregate_rounds) # "sum_all(elements)"
-    sandbox.extend SoftwareChallenge::ScriptHelpers::Aggregate
-    result = sandbox.invoke(:locals => {:elements => [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]})
+    slots.each do |slot|
+      sandbox = Sandbox.new(contest.script_to_aggregate_matches)
+      sandbox.extend SoftwareChallenge::ScriptHelpers::Aggregate
+
+      # elements = [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]
+      elements = contest.matchdays(:reload).all(:conditions => ["played_at IS NOT NULL AND position < ?", position]).collect do |day|
+        match_slot = day.match_slots(:reload).first(:conditions => ["matchday_slots.contestant_id = ?", slot.contestant.id])
+        
+        if match_slot and match_slot.score
+          match_slot.score.to_a
+        else
+          nil
+        end
+      end
+      
+      elements << slot.match_slot.score.to_a
+
+      nil_count = elements.size - elements.nitems
+      logger.warn "array contained #{nil_count} nil elements" unless nil_count.zero?
+      elements.compact!
+      
+      result = sandbox.invoke(:locals => {:elements => elements})
+
+      if result.count != contest.match_score_definition.count
+        raise "result (#{result.count}) did not match definition (#{contest.match_score_definition.count})"
+      end
+
+      score = slot.score
+      unless score
+        slot.score = slot.build_score(:definition => contest.match_score_definition)
+      end
+      slot.score.set!(result)
+      slot.save!
+    end
   end
 end

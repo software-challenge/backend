@@ -1,0 +1,74 @@
+<h2>Hilfe</h2>
+
+<p>
+  Um die Wettkampfregeln frei gestalten zu können, ist es notwendig einige Berechnungen zu entwickeln. Dadurch lassen
+  sich spezielle Wertungen wie <em>1 Punkt bei Unentschieden</em>, <em>3 Punkte bei einem Sieg</em> umsetzen.
+</p>
+
+<p>
+  Die Scripte werden in der Programmiersprache <em>Ruby</em> verfasst. Die Eingabevariable lautet
+  <code>elements</code> und ist ein <code>Array</code>, der wiederrum weitere <code>Arrays</code> enthält.
+</p>
+
+<h3>Beispiel</h3>
+
+<p>
+  Die Zusammenrechnung der Runden zum Berechnen der Punktzahl für ein Match. Angenommen, dass
+  5 Spielrunden gespielt werden, und jede Spielrunde ein Spielergebnis mit 3 Elementen vorliegt. Dann enthält <code>elements</code>
+  exakt 5 Elemente (die Spielrunden), die jeweils 3 Elemente (Zahlen) enthalten. Dies könnte wie folgt aussehen.
+</p>
+
+<p style="text-align: center;">
+  <code>elements = [[1,0,0], [1,5,0], [-1,3,7], [0,1,1], [0,3,3]]</code>
+</p>
+
+<p>
+  Wenn wir nun auf der <em>Wertungen</em>-Seite angegeben haben, dass die Wertung für ein Match,
+  nur noch aus 2 Elementen besteht - dann muss das Ergebnis unserer Berechnung ein <code>Array</code> mit
+  zwei Elementen sein.
+</p>
+
+<h4>Eingabe</h4>
+
+<dl style="border: 1px solid #ddd; padding: 10px;">
+  <dt>Sieger?</dt>
+  <dd>-1 = Niederlage, 0 = Unentschieden, 1 = Sieg</dd>
+  <dt>Eigene Tore</dt>
+  <dt>Gegnerische Tore</dt>
+</dl>
+
+<h4>Ausgabe</h4>
+
+<dl style="border: 1px solid #ddd; padding: 10px;">
+  <dt>Ranglistenpunkte</dt>
+  <dd>0 bei Niederlage, 1 bei Unentschieden, 3 bei Sieg</dd>
+  <dt>Tordifferenz</dt>
+</dl>
+
+<code><pre>
+    # "elements" ist definiert
+
+    result = [0,0]
+    sum = 0
+
+    elements.each do |round|
+      sum += round[0]
+      result[1] += (round[1] - round[2])
+    end
+
+    if sum > 0
+      result[0] = 3
+    elsif sum == 0
+      result[0] = 1
+    else
+      result[0] = 0
+    end
+
+    result # Rückgabe
+</pre></code>
+
+<h3>Hilfsmethoden</h3>
+
+<p>
+  Vorerst keine&hellip;
+</p>

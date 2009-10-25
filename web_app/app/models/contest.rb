@@ -1,5 +1,6 @@
 class Contest < ActiveRecord::Base
   validates_presence_of :name
+  validates_associated :round_score_definition
   validates_associated :match_score_definition
   validates_numericality_of :rounds_per_match, :greater_than => 0, :less_than => 100
 
@@ -7,22 +8,32 @@ class Contest < ActiveRecord::Base
   has_many :matchdays, :dependent => :destroy
 
   belongs_to :match_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
+  belongs_to :round_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
 
   def to_param
     "#{id}-#{name.parameterize}"
   end
 
-  def refresh_matchdays!
-    Contest.transaction do
-      matchdays.destroy_all
+  def started?
+    Round.first(:joins => "INNER JOIN matches ON matches.id = rounds.match_id " +
+        "INNER JOIN matchdays ON matchdays.id = matches.set_id",
+      :conditions => ["rounds.played_at IS NOT NULL AND matches.set_type = ? AND matchdays.contest_id = ?", "Matchday", id])
+  end
 
+  def refresh_matchdays!
+    raise "matchdays exist already" unless matchdays.empty?
+    
+    Contest.transaction do
       next_date = Date.today
       generate_matchdays.each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
+        contestants.each do |contestant|
+          matchday.slots.create!(:contestant => contestant)
+        end
         pairs.each do |contestants|
           match = matchday.matches.create!
           contestants.each do |contestant|
-            match.slots.create!(:contestant => contestant)
+            match.slots.create!(:matchday_slot => matchday.slots.first(:conditions => { :contestant_id => contestant.id }))
           end
           round_count = 0
           while round_count < rounds_per_match

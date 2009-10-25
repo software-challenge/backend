@@ -4,11 +4,13 @@ ActionController::Routing::Routes.draw do |map|
   map.administration '/administration', :controller => 'administration', :action => 'index'
 
   map.resources :contests, :member => {
-    :refresh_matchdays => :post
+    :refresh_matchdays => :post,
+    :reset_matchdays => :post,
   } do |c|
     c.resources :matchdays, :member => {
       :play => :post,
-      :reaggregate => :post
+      :reaggregate => :post,
+      :reset => :post
     } do |m|
       m.resources :matches
     end

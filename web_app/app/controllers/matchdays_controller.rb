@@ -4,6 +4,10 @@ class MatchdaysController < ApplicationController
   def index
     @matchdays = @contest.matchdays
 
+    if @matchdays.empty?
+      flash.now[:notice] = "Es liegt noch kein Spielplan vor!"
+    end
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @matchdays }
@@ -76,12 +80,14 @@ class MatchdaysController < ApplicationController
           match.after_round_played(nil)
         end
       end
+
+      flash[:notice] = "Der Spieltag wurde neu zusammengerechnet."
     end
 
     redirect_to contest_matchday_url(@contest, @matchday)
   end
 
-  def play
+  def reset
     @matchday = @contest.matchdays.find(params[:id])
 
     if @matchday.running?
@@ -92,7 +98,23 @@ class MatchdaysController < ApplicationController
           @matchday.reset!(true)
           @matchday.reload
         end
-        
+      end
+
+      flash[:notice] = "Der Spieltag wurde zurückgesetzt."
+    end
+
+    redirect_to contest_matchday_url(@contest, @matchday)
+  end
+
+  def play
+    @matchday = @contest.matchdays.find(params[:id])
+
+    if @matchday.running?
+      flash[:error] = "Der Spieltag wird gerade gespielt."
+    elsif @matchday.played?
+      flash[:error] = "Der Spieltag wurde bereits gespielt."
+    else
+      Matchday.transaction do
         if @matchday.perform # _delayed!
           flash[:notice] = "Der Auftrag wurde erfolgreich gestartet."
         else

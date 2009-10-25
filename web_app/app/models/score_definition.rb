@@ -3,7 +3,11 @@ class ScoreDefinition < ActiveRecord::Base
   
   has_many :instances, :class_name => "Score", :foreign_key => "definition", :dependent => :destroy
   has_many :fragments, :class_name => "ScoreDefinition::Fragment", :foreign_key => "definition_id", :dependent => :destroy
-  
+
+  def count
+    fragments.count
+  end
+
   class Fragment < ActiveRecord::Base
     set_table_name "score_definition_fragments"
     default_scope :order => "position ASC"

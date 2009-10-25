@@ -1,0 +1,37 @@
+<% sortable = true if local_assigns[:sortable].nil?  %>
+
+<ul id="<%= "#{name}_list" %>" class="sortable <%= "active" if sortable %>">
+  <% if definition %>
+    <% definition.fragments.each_with_index do |fragment, i| %>
+      <li id="<%= "#{name}_list_item_#{i}" %>">
+        <%= image_tag 'actions/drag.png', :width => 16, :height => 16, :class => "handle" %>
+        <%= hidden_field_tag "#{name}[][id]", fragment.id %>
+        <%= text_field_tag "#{name}[][name]", fragment.name %>
+      </li>
+    <% end %>
+  <% end %>
+  <li class="template">
+    <%= image_tag 'actions/drag.png', :width => 16, :height => 16, :class => "handle" %>
+    <%= text_field_tag "#{name}[][name]", "", :id => nil %>
+  </li>
+</ul>
+
+<% if sortable %>
+  <a id="<%= "#{name}_add_item" %>" href="#">Neues Element hinzufügen</a>
+
+  <script type="text/javascript">
+    $(function() {
+      var $link = $('#<%= "#{name}_add_item" %>');
+
+      $link.click(function() {
+        var listId = '#<%= "#{name}_list" %>';
+        var $list = $(listId);
+        var prefix = '<%= "#{name}_list_item_" %>';
+        var newId = prefix + $list.children('li:not(.template)').size();
+        $list.find('.template').clone(true).attr('id', newId).appendTo(listId).removeClass('template');
+        $list.sortable('refresh');
+        return false;
+      });
+    })
+  </script>
+<% end %>

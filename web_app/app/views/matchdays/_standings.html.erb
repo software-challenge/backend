@@ -6,12 +6,13 @@
       <th><%= f.name %></th>
     <% end %>
   </tr>
-  <% @matchday.matches.each do |match| %>
+  <% matchday.slots.each do |slot| %>
     <tr>
-      <td style="text-align: right;"><%= match.slots[0].name || "Freispiel" %></td>
-      <td style="text-align: center; font-weight: bold;">vs</td>
-      <td><%= match.slots[1].name || "Freispiel" %></td>
-      <td><%= match.result || "Kein Ergebnis" %></td>
+      <td><%= slot.position %>.</td>
+      <td><%= slot.contestant.name %></td>
+      <% slot.score.to_a.each do |value| %>
+        <td><%=h value %></td>
+      <% end %>
     </tr>
   <% end %>
 </table>

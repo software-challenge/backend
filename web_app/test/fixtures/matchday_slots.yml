@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  client_id: 1
+  matchday_id: 1
+  contestant_id: 1
+  score_id: 1
+  position: 1
+
+two:
+  client_id: 1
+  matchday_id: 1
+  contestant_id: 1
+  score_id: 1
+  position: 1
