@@ -76,22 +76,26 @@ class Matchday < ActiveRecord::Base
   end
 
   def order_scoretable
-    definition_fragments = match_score_definition.fragments.all(:order => "position ASC")
+    definition_fragments = match_score_definition.fragments.all
     joins = ["INNER JOIN scores AS order_scores ON order_scores.id = matchday_slots.score_id"]
 
     orders = []
     definition_fragments.each_with_index do |fragment, i|
-      orders << "fragment_#{i}.value DESC"
-      joins << ("INNER JOIN score_fragments AS fragment_#{i} ON (fragment_#{i}.score_id = order_scores.id AND fragment_#{i}.definition_id = #{fragment.id})")
+      if fragment.orders?
+        orders << "fragment_#{i}.value #{fragment.direction.upcase}"
+        joins << ("INNER JOIN score_fragments AS fragment_#{i} ON (fragment_#{i}.score_id = order_scores.id AND fragment_#{i}.definition_id = #{fragment.id})")
+      end
     end
 
-    raise "empty ORDER array" if orders.empty?
-    
-    ranked_slots = slots(:reload).all(:order => orders.join(', '), :joins => joins.join(' '), :group => "matchday_slots.id")
-    ranked_slots.each_with_index do |slot, i|
-      writeable_slot = slots.find(slot.id)
-      writeable_slot.position = i.next
-      writeable_slot.save!
+    unless orders.empty?
+      ranked_slots = slots(:reload).all(:order => orders.join(', '), :joins => joins.join(' '), :group => "matchday_slots.id")
+      ranked_slots.each_with_index do |slot, i|
+        writeable_slot = slots.find(slot.id)
+        writeable_slot.position = i.next
+        writeable_slot.save!
+      end
+    else
+      logger.warn "ORDER was empty - cannot order."
     end
   end
 
