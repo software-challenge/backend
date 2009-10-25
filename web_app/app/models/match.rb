@@ -1,6 +1,12 @@
 require_dependency 'sandbox_helpers'
 
 class Match < ActiveRecord::Base
+  named_scope(:with_contestant, lambda do |contestant|
+      { :joins => "INNER JOIN match_slots ms ON ms.match_id = matches.id " +
+          "INNER JOIN matchday_slots mds ON ms.matchday_slot_id = mds.id" ,
+        :conditions => ["mds.contestant_id = ?", contestant.id]}
+    end)
+
   validates_presence_of :set
 
   belongs_to :set, :polymorphic => true

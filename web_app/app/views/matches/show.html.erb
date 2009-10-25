@@ -6,11 +6,13 @@
 
 <style type="text/css">
   table#result {
-    margin: 60px 0;
+    width: 100%;
+    margin: 30px 0;
+    border-spacing: 0;
   }
 
   table#result td {
-
+    padding: 0;
   }
 
   table#result td:first-child {
@@ -24,26 +26,66 @@
 
 
   table#result td.center {
+    font-family: Georgia, serif;
     text-align: center;
-    color: #555;
+    color: #999;
     padding: 0 10px;
-    font-size: 0.7em;
+    font-size: 16px;
+    font-weight: normal;
   }
 
   table#result tr.values {
-    line-height: 45px;
-    font-size: 33px;
+    line-height: 72px;
+    font-size: 60px;
     font-weight: bold;
   }
 
   table#result tr.contestants {
     font-size: 24px;
+    line-height: 1em;
     font-family: Georgia, serif;
-    line-height: 40px;
+  }
+
+  table#result tr.contestants td {
+    -webkit-box-reflect: below 0px -webkit-gradient(linear,
+    left top,
+    left bottom,
+    from(transparent),
+    color-stop(0.5, transparent),
+    to(rgba(255,255,255,0.2))
+    );
+  }
+
+  table#rounds .separator td
+  {
+    border-top: 3px solid #4183C4;
+  }
+
+  table#rounds .preSeparator td
+  {
+    line-height: 24px;
   }
 </style>
 
-<table id="result" style="width: 100%;">
+<table id="result">
+  <% if @match.result %>
+    <tr class="values">
+      <% @match.main_result.each_with_index do |value,i| %>
+        <% unless i.zero? %>
+          <td class="center">-</td>
+        <% end %>
+        <td>
+          <%=h value  %>
+        </td>
+      <% end %>
+    </tr>
+  <% else %>
+    <tr class="values">
+      <td class="center" colspan="<%= @match.slots.count * 2 - 1 %>">
+        Dieses Spiel findet erst am <%= l(@match.matchday.when, :format => :long) %> statt.
+      </td>
+    </tr>
+  <% end %>
   <tr class="contestants">
     <% @match.slots.each_with_index do |slot,i| %>
       <% unless i.zero? %>
@@ -54,18 +96,6 @@
       </td>
     <% end %>
   </tr>
-  <% if @match.result %>
-    <tr class="values">
-      <% @match.main_result.each_with_index do |value,i| %>
-        <% unless i.zero? %>
-          <td class="center">:</td>
-        <% end %>
-        <td>
-          <%=h value  %>
-        </td>
-      <% end %>
-    </tr>
-  <% end %>
 </table>
 
 <% match_score_fragments = @match.score_definition.fragments.count %>
@@ -74,9 +104,12 @@
 <% match_colspan = 1 + [0, max_fragments - match_score_fragments].max %>
 <% round_colspan = 1 + [0, max_fragments - round_score_fragments].max %>
 
-<h2>Gesamtergebnis</h2>
-
 <table id="rounds">
+  <tr class="separator">
+    <td colspan="<%= 1 + max_fragments %>">
+      <h2>Gesamtergebnis</h2>
+    </td>
+  </tr>
   <tr>
     <th colspan="<%= match_colspan %>">&nbsp;</th>
     <% @match.score_definition.fragments.each do |fragment| %>
@@ -97,9 +130,14 @@
       <% end %>
     </tr>
   <% end %>
-  <tr>
+  <tr class="preSeparator">
     <td colspan="<%= 1 + max_fragments %>">
       &nbsp;
+    </td>
+  </tr>
+  <tr class="separator">
+    <td colspan="<%= 1 + max_fragments %>">
+      <h2>Rundenergebnisse</h2>
     </td>
   </tr>
   <tr>
@@ -111,7 +149,7 @@
   <% @match.rounds.each_with_index do |round,round_index| %>
     <tr class="round">
       <td colspan="<%= round_colspan + round_score_fragments %>">
-        Runde <%= round_index.next %>
+        <div>Runde <%= round_index.next %></div>
       </td>
     </tr>
     <% round.slots.each do |slot| %>

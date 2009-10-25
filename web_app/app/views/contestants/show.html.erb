@@ -1,11 +1,14 @@
-<div style="float: right;">
-  <% if logged_in? and current_user.administrator? %>
-    <%= link_to 'Edit', edit_contest_contestant_path(@contest, @contestant) %> |
-  <% end %>
-  <%= link_to 'Back', contest_contestants_path(@contest) %>
-</div>
+<% if logged_in? and current_user.administrator? %>
+  <div id="actions">
+    <%= link_to image_tag('actions/settings.png'), edit_contest_contestant_path(@contest, @contestant) %>
+  </div>
+<% end %>
 
-<h1><%=h @contestant.contest.name %> / Teilnehmer <%=h @contestant.name %></h1>
+<h1>
+  <%= link_to h(@contest.name), @contest %> /
+  <%= link_to "Teilnehmer", contest_contestants_url(@contest) %> /
+  <%=h @contestant.name %>
+</h1>
 
 <h2>Matches</h2>
 
@@ -16,16 +19,7 @@
     <th>Spieler 2</th>
     <th>Ergebnis</th>
   </tr>
-  <% @contestant.matches.each do |match| %>
-    <tr>
-      <% match.slots.each_with_index do |slot,i| %>
-        <% unless i.zero? %>
-          <td>vs</td>
-        <% end %>
-        <td><%= slot.name %></td>
-      <% end %>
-    </tr>
-  <% end %>
+  <%= render :partial => "matchdays/match", :collection => @contestant.matches %>
 </table>
 
 <% if logged_in? and current_user.administrator? %>

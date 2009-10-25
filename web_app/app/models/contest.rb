@@ -10,6 +10,10 @@ class Contest < ActiveRecord::Base
   belongs_to :match_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
   belongs_to :round_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
 
+  # through associations
+
+  has_many :matches, :through => :matchdays
+
   def to_param
     "#{id}-#{name.parameterize}"
   end

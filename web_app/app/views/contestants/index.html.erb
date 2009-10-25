@@ -1,20 +1,23 @@
-<h1><%= @contest.name %> / Teilnehmer</h1>
+<% if logged_in? and current_user.administrator? %>
+  <div id="actions">
+    <%= link_to image_tag('actions/add.png'), new_contest_contestant_url(@contest, @contestant) %>
+  </div>
+<% end %>
+
+<h1>
+  <%= link_to h(@contest.name), @contest %> /
+  Teilnehmer
+</h1>
 
 <table>
   <tr>
     <th>Teilnehmer</th>
-    <th>in Wettbewerb</th>
   </tr>
 
   <% @contestants.each do |contestant| %>
     <tr>
       <td><%=h contestant.name %></td>
-      <td><%=h contestant.contest_id %></td>
       <td><%= link_to 'Show', [contestant.contest, contestant] %></td>
     </tr>
   <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New contestant', new_contest_contestant_path %>

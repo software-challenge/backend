@@ -10,22 +10,6 @@
     </tr>
   </thead>
   <tbody>
-    <% @matchday.matches.each do |match| %>
-      <tr>
-        <td><%= match.slots[0].name || "Freispiel" %></td>
-        <td style="text-align: center; font-weight: bold;">gegen</td>
-        <td><%= match.slots[1].name || "Freispiel" %></td>
-        <td style="text-align: center;">
-          <% if match.main_result %>
-            <%= match.main_result.join(" : ") %>
-          <% else %>
-            <em>Kein Ergebnis</em>
-          <% end %>
-        </td>
-        <td style="text-align: center;">
-          <%= link_to "Details", contest_matchday_match_url(@contest, @matchday, match) %>
-        </td>
-      </tr>
-    <% end %>
+    <%= render :partial => "match", :collection => @matchday.matches %>
   </tbody>
 </table>

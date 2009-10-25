@@ -23,9 +23,21 @@
         margin: 0 0 0 8px;
       }
 
-      #header a {
+      #header #menu a, h1 a {
         font-weight: bold;
         color: #4183C4;
+        text-decoration: none;
+        padding: 0 0.2em;
+        margin: 0 -0.2em;
+      }
+
+      h1 a {
+        text-decoration: underline;
+      }
+
+      #header #menu a:hover, h1 a:hover {
+        background-color: #222;
+        color: white;
         text-decoration: none;
       }
 
@@ -36,6 +48,11 @@
         background-color: #FCFCFC;
         margin: 0 -10px;
         background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
+      }
+
+      #header #menu {
+        float: right;
+        text-align: right;
       }
 
       #footer {
@@ -95,10 +112,14 @@
       }
 
       #rounds .round td {
+        font-weight: bold;
+      }
+
+      #rounds .round td > * {
         border: 1px solid #eee;
         background-color: #f8f8f8;
-        font-weight: bold;
-        padding: 2px 6px;
+        padding: 0 10px;
+        margin: 4px -10px;
       }
     </style>
   </head>
@@ -109,7 +130,7 @@
         <% link_to root_url do %>
           <span class="logo"></span>
         <% end %>
-        <div style="float: right; text-align: right; ">
+        <div id="menu">
           <div style="line-height: 24px; padding: 8px 0;">
             <% if logged_in? %>
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">

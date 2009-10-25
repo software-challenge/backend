@@ -7,10 +7,13 @@ class Contestant < ActiveRecord::Base
   has_many :memberships
   has_many :people, :through => :memberships
 
-  has_many :slots, :class_name => "MatchSlot"
-  has_many :matches, :through => :slots, :source => :match
+  has_many :slots, :class_name => "MatchdaySlot"
 
   attr_readonly :contest
   attr_protected :contest
-  
+
+  def matches
+    contest.matches.with_contestant(self)
+  end
+
 end
