@@ -28,6 +28,12 @@ class Score < ActiveRecord::Base
     end
   end
 
+  def to_a_with_precision
+    fragments.collect do |fragment|
+      fragment.value_with_precision
+    end
+  end
+
   class Fragment < ActiveRecord::Base
     set_table_name "score_fragments"
 
@@ -37,5 +43,9 @@ class Score < ActiveRecord::Base
 
     belongs_to :score
     belongs_to :definition, :class_name => "ScoreDefinition::Fragment"
+
+    def value_with_precision
+      sprintf("%.#{definition.precision}f", value)
+    end
   end
 end

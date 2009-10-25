@@ -7,12 +7,18 @@
         <%= image_tag 'actions/drag.png', :width => 16, :height => 16, :class => "handle" %>
         <%= hidden_field_tag "#{name}[][id]", fragment.id %>
         <%= text_field_tag "#{name}[][name]", fragment.name %>
+        <%= select_tag "#{name}[][precision]", options_for_select((0..5).to_a, fragment.precision) %>
+        <%= check_box_tag "#{name}[][main]", "1", fragment.main %> Hauptergebnis
+        <%= hidden_field_tag "#{name}[][main]", "0" %>
       </li>
     <% end %>
   <% end %>
   <li class="template">
     <%= image_tag 'actions/drag.png', :width => 16, :height => 16, :class => "handle" %>
     <%= text_field_tag "#{name}[][name]", "", :id => nil %>
+    <%= select_tag "#{name}[][precision]", options_for_select((0..5).to_a) %>
+    <%= check_box_tag "#{name}[][main]", "1", false %> Hauptergebnis
+    <%= hidden_field_tag "#{name}[][main]", "0" %>
   </li>
 </ul>
 

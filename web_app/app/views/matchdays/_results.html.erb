@@ -16,8 +16,8 @@
         <td style="text-align: center; font-weight: bold;">gegen</td>
         <td><%= match.slots[1].name || "Freispiel" %></td>
         <td style="text-align: center;">
-          <% if match.result %>
-            <%= match.result.first.join(" : ") %>
+          <% if match.main_result %>
+            <%= match.main_result.join(" : ") %>
           <% else %>
             <em>Kein Ergebnis</em>
           <% end %>

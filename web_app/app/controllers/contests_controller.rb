@@ -126,16 +126,20 @@ class ContestsController < ApplicationController
   def update_definition(definition, fragments)
     if fragments
       fragments.each_with_index do |fragment_data, i|
+        @fragment = nil
         if fragment_data[:id].blank?
           unless fragment_data[:name].blank? #skip blank fields
-            @fragment = definition.fragments.build(fragment_data)
-            @fragment.position = i
-            @fragment.save!
+            @fragment = definition.fragments.build(fragment_data)            
           end
         else
           id = fragment_data.delete :id
           @fragment = definition.fragments.find(id)
           @fragment.attributes = fragment_data
+        end
+
+        if @fragment
+          @fragment.main = fragment_data[:main] if fragment_data[:main]
+          @fragment.precision = fragment_data[:precision] if fragment_data[:precision]
           @fragment.position = i
           @fragment.save!
         end

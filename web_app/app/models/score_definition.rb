@@ -17,6 +17,7 @@ class ScoreDefinition < ActiveRecord::Base
 
     validates_uniqueness_of :name, :scope => :definition_id
     validates_presence_of :name
+    validates_numericality_of :precision, :greater_than_or_equal_to => 0, :less_than => 10
 
     acts_as_list :scope => :definition_id
   end

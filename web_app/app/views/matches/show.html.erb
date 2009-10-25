@@ -56,7 +56,7 @@
   </tr>
   <% if @match.result %>
     <tr class="values">
-      <% @match.result.first.each_with_index do |value,i| %>
+      <% @match.main_result.each_with_index do |value,i| %>
         <% unless i.zero? %>
           <td class="center">:</td>
         <% end %>
@@ -87,8 +87,8 @@
     <tr>
       <td colspan="<%= match_colspan %>"><%= slot.name %></td>
       <% if slot.score %>
-        <% slot.score.fragments.each do |fragment| %>
-          <td><%= fragment.value %></td>
+        <% slot.score.to_a_with_precision.each do |value| %>
+          <td><%= value %></td>
         <% end %>
       <% else %>
         <td colspan="<%= match_score_fragments %>">
@@ -118,8 +118,8 @@
       <tr>
         <td colspan="<%= round_colspan %>"><%= slot.name %></td>
         <% if slot.score %>
-          <% slot.score.fragments.each do |fragment| %>
-            <td><%= fragment.value %></td>
+          <% slot.score.to_a_with_precision.each do |value| %>
+            <td><%= value %></td>
           <% end %>
         <% else %>
           <td colspan="<%= round_score_fragments %>">

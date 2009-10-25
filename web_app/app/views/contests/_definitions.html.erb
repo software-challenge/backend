@@ -28,10 +28,6 @@
 
 <h2>Wertung für eine Spielrunde</h2>
 
-<p>
-  Der Aufbau muss identisch zu der <code>ScoreDefinition</code> des Spielplugins (Java) sein.
-</p>
-
 <% sortable = !@contest.started? %>
 <% unless sortable %>
   <p>
@@ -39,6 +35,10 @@
     Reihenfolge zu verändern muss der gesamte Wettbewerb zurückgesetzt werden.
   </p>
 <% end %>
+
+<p>
+  Der Aufbau muss identisch zu der <code>ScoreDefinition</code> des Spielplugins (Java) sein.
+</p>
 
 <%= render :partial => 'definition', :locals => { :definition => @contest.round_score_definition, :name => 'round_score_definition', :sortable => sortable } %>
 

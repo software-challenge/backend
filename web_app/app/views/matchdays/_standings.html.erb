@@ -10,7 +10,7 @@
     <tr>
       <td><%= slot.position %>.</td>
       <td><%= slot.contestant.name %></td>
-      <% slot.score.to_a.each do |value| %>
+      <% slot.score.to_a_with_precision.each do |value| %>
         <td><%=h value %></td>
       <% end %>
     </tr>

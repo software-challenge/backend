@@ -17,8 +17,18 @@ class Match < ActiveRecord::Base
     return nil if result.empty?
     
     result.collect do |score|
-      score.to_a
+      score.to_a_with_precision
     end.transpose
+  end
+
+  def main_result
+    result = scores.all
+    return nil if result.empty?
+
+    result.collect do |score|
+      score.fragments.first(:joins => "INNER JOIN score_definition_fragments sdf ON sdf.id = score_fragments.definition_id",
+        :order => "sdf.main DESC, sdf.position ASC").value_with_precision
+    end
   end
 
   def contest
