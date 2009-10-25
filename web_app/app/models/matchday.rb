@@ -11,7 +11,7 @@ class Matchday < ActiveRecord::Base
 
   # associations
   has_many :matches, :dependent => :destroy, :as => :set
-  has_many :slots, :class_name => "MatchdaySlot"
+  has_many :slots, :class_name => "MatchdaySlot", :order => "position ASC"
   belongs_to :contest
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
 
@@ -63,6 +63,7 @@ class Matchday < ActiveRecord::Base
     logger.info "Received after_match_played from #{match}"
     if all_matches_played?
       update_scoretable
+      order_scoretable
       self.played_at = DateTime.now
       self.save!
     end
@@ -72,6 +73,26 @@ class Matchday < ActiveRecord::Base
 
   def all_matches_played?(force_reload = true)
     self.matches(force_reload).first(:conditions => { :played_at => nil }).nil?
+  end
+
+  def order_scoretable
+    definition_fragments = match_score_definition.fragments.all(:order => "position ASC")
+    joins = ["INNER JOIN scores AS order_scores ON order_scores.id = matchday_slots.score_id"]
+
+    orders = []
+    definition_fragments.each_with_index do |fragment, i|
+      orders << "fragment_#{i}.value DESC"
+      joins << ("INNER JOIN score_fragments AS fragment_#{i} ON (fragment_#{i}.score_id = order_scores.id AND fragment_#{i}.definition_id = #{fragment.id})")
+    end
+
+    raise "empty ORDER array" if orders.empty?
+    
+    ranked_slots = slots(:reload).all(:order => orders.join(', '), :joins => joins.join(' '), :group => "matchday_slots.id")
+    ranked_slots.each_with_index do |slot, i|
+      writeable_slot = slots.find(slot.id)
+      writeable_slot.position = i.next
+      writeable_slot.save!
+    end
   end
 
   def update_scoretable
