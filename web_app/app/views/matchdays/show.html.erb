@@ -1,17 +1,17 @@
 <% if current_user.administrator? %>
   <div id="actions">
     <% if @matchday.running? %>
-
+      Aktiv
     <% else %>
       <% if @matchday.played? %>
-        <% link_to reaggregate_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Neu zusammenrechnen" do %>
+        <% link_to reaggregate_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Neu zusammenrechnen", :id => "reaggregateAction" do %>
           <%= image_tag('actions/refresh.png') %>
         <% end %>
-        <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Zurücksetzen" do %>
+        <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Zurücksetzen", :id => "resetAction" do %>
           <%= image_tag('actions/destroy.png') %>
         <% end %>
       <% else %>
-        <% link_to play_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Spielen" do %>
+        <% link_to play_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Spielen", :id => "playAction" do %>
           <%= image_tag('actions/play.png') %>
         <% end %>
       <% end %>

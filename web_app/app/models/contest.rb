@@ -37,7 +37,11 @@ class Contest < ActiveRecord::Base
         pairs.each do |contestants|
           match = matchday.matches.create!
           contestants.each do |contestant|
-            match.slots.create!(:matchday_slot => matchday.slots.first(:conditions => { :contestant_id => contestant.id }))
+            if contestant
+              match.slots.create!(:matchday_slot => matchday.slots.first(:conditions => { :contestant_id => contestant.id }))
+            else
+              match.slots.create!
+            end
           end
           round_count = 0
           while round_count < rounds_per_match

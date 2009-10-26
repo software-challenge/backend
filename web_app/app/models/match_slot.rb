@@ -1,6 +1,8 @@
 class MatchSlot < ActiveRecord::Base
   validates_presence_of :match
-  validates_presence_of :matchday_slot
+
+  # might be nil! (free game)
+  # validates_presence_of :matchday_slot
 
   belongs_to :match
   belongs_to :matchday_slot
@@ -22,8 +24,12 @@ class MatchSlot < ActiveRecord::Base
     score.destroy if score
   end
 
+  def occupied?
+    matchday_slot
+  end
+
   def name
-    if contestant
+    if occupied?
       contestant.name || "Unbenannt"
     else
       nil

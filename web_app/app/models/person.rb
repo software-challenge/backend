@@ -15,6 +15,11 @@ class Person < ActiveRecord::Base
     nick_name || ("#{self.first_name} #{self.last_name}")
   end
 
+  def password=(new_password)
+    self.password_salt = random_hash()
+    self.password_hash = Person.encrypt_password(new_password, self.password_salt)
+  end
+
   def password_match?(password)
     encrypted = self.class.encrypt_password(password, password_salt)
     encrypted == password_hash
