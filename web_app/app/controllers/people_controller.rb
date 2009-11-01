@@ -6,7 +6,7 @@ class PeopleController < ApplicationController
       @people = Person.all
     else
       if (params[:pupil])
-        @people = Person.all :joins => "LEFT JOIN memberships ON memberships.person_id = persons.id", :conditions => ["memberships.teacher = ? AND memberships.tutor = ?", false, false]
+        @people = Person.all :joins => "LEFT JOIN memberships ON memberships.person_id = people.id", :conditions => ["memberships.teacher = ? AND memberships.tutor = ?", false, false]
       end
     end
 
@@ -32,13 +32,28 @@ class PeopleController < ApplicationController
   def new
     @person = Person.new
 
-    @roles = [">Keine", "Lehrer", "Schüler", "Tutor"]
-    contestants = Contestant.all
+    if current_user.administrator?
+      @roles = [">Keine", "Lehrer", "Schüler", "Tutor"]
+    else
+      @roles = ["Schüler"]
+    end
 
-    @teams = [">Kein Team"]
+    if current_user.administrator?
+      contestants = Contestant.all
 
-    contestants.each do |contestant|
-      @teams.push(contestant.name)
+      @teams = [">Kein Team"]
+
+      contestants.each do |contestant|
+        @teams.push(contestant.name)
+      end
+    else
+      contestants = Contestant.all :joins => "LEFT JOIN memberships ON memberships.contestant_id = contestants.id AND LEFT JOIN people ON people.id = memberships.person_id", :conditions => ["memberships.teacher = ? AND persons.email = ?", true, current_user.email]
+
+      @teams = []
+
+      contestants.each do |contestant|
+        @teams.push(contestant.name)
+      end
     end
 
     respond_to do |format|
@@ -50,6 +65,7 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     @person = Person.find(params[:id])
+    @person.password_hash = ""
   end
 
   # POST /people
@@ -66,11 +82,11 @@ class PeopleController < ApplicationController
 
     if (role_name != ">Keine" && !error)
       if (team_name != ">Kein Team")
-        team = Contestant.all :conditions => ["name = ?", team_name]
-        person = Person.all :conditions => ["email = ?", @person.email]
-        @membership = Membership.new();
-        @membership.contestant_id = team.id
-        @membership.person_id = person.id
+        team_obj = Contestant.all :conditions => ["contestants.name = ?", team_name]
+        person_obj = Person.all :conditions => ["people.email = ?", @person.email]
+        @membership = Membership.new()
+        @membership.contestant_id = team_obj
+        @membership.person_id = person_obj
         if (role_name == "Lehrer")
           @membership.teacher = true
         else
@@ -83,12 +99,12 @@ class PeopleController < ApplicationController
 
         if (error)
           flash[:notice] = 'Fehler beim Erstellen von der Membership Beziehung.'
-          @person.delete
+          @person.destroy
           error = true;
         end
       else
         flash[:notice] = 'Team darf für eine Rolle nicht leer sein.'
-        @person.delete
+        @person.destroy
         error = true;
       end
     end
@@ -96,7 +112,7 @@ class PeopleController < ApplicationController
     respond_to do |format|
       if !error
         flash[:notice] = 'Person wurde erfolgreich angelegt.'
-        format.html { redirect_to(@person) }
+        format.html { redirect_to(people_url) }
         format.xml  { render :xml => @person, :status => :created, :location => @person }
       else
         format.html { render :action => "new" }
@@ -109,6 +125,10 @@ class PeopleController < ApplicationController
   # PUT /people/1.xml
   def update
     @person = Person.find(params[:id])
+
+    updated_person = params[:person]
+
+    @person.password=updated_person[:password_hash]
 
     respond_to do |format|
       if @person.update_attributes(params[:person])

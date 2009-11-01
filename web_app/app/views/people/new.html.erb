@@ -26,19 +26,27 @@
     <%= f.label :password %>
     <%= f.text_field :password_hash %>
   </p>
-  <br>
-  <p>
-    <%= f.label :administrator %>
-    <%= f.check_box :administrator %>
-  </p>
+  <% if current_user.administrator? %>
+    <br>
+    <p>
+      <%= f.label :administrator %>
+      <%= f.check_box :administrator %>
+    </p>
+  <%  end %>
   <br>
   <p>
     <%= f.label :rolle %>
+    <% if @roles == nil %>
+      <% @roles = "" %>
+    <%  end %>
     <%= select_tag "role", options_for_select(@roles) %>
   </p>
   <br>
-    <p>
+  <p>
     <%= f.label :team %>
+    <% if @teams == nil %>
+      <% @teams = "" %>
+    <%  end %>
     <%= select_tag "team", options_for_select(@teams) %>
   </p>
   <br>
