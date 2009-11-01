@@ -1,17 +1,56 @@
-<p>
-  <b>Nickname:</b>
-  <%=h @person.nick_name %>
-</p>
+<div align="center">
+  <table>
+    <tr>
+      <td>
+        <p>
+          <b>Name:</b>
+          <%=h @person.first_name + " " + @person.last_name %>
+        </p>
 
-<p>
-  <b>Email:</b>
-  <%=h @person.email %>
-</p>
+        <p>
+          <b>Nickname:</b>
+          <%=h @person.nick_name %>
+        </p>
 
-<p>
-  <b>Avatar (via <%= link_to "Gravatar", "http://www.gravatar.com" %>)</b><br/>
-  <%= gravatar_for @person, :size => 128 %>
-</p>
+        <p>
+          <b>Email Adresse:</b>
+          <%=h @person.email %>
+        </p>
 
-<%= link_to 'Bearbeiten', edit_person_path(@person) %> |
-<%= link_to 'Zurück', people_path %>
+        <br>
+
+        <p>
+          <b>Mitglied seit:</b>
+          <%=h @person.created_at %>
+        </p>
+
+        <p>
+          <b>Letztes Update:</b>
+          <%=h @person.updated_at %>
+        </p>
+      </td>
+
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>&nbsp;</td>
+      <td>
+        <p>
+          <b>Avatar (via <%= link_to "Gravatar", "http://www.gravatar.com" %>)</b><br/>
+          <%= gravatar_for @person, :size => 128 %>
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<% if (current_user.email == @person.email) || (current_user.administrator?) %>
+  <div align="center">
+    <br>
+    <%= link_to 'Bearbeiten', edit_person_path(@person) %>
+  </div>
+<% end %>

@@ -1,7 +1,9 @@
 <h1>Administration</h1>
 
 <% if current_user.administrator? %>
-<p><%= link_to "Lehrerverwaltung", people_url(:teacher => true)  %></p>
+  <p><%= link_to "Benutzerverwaltung", people_url()  %></p>
+<% else %>
+    <% if current_user.teacher? %>
+    <p><%= link_to "Schülerverwaltung", people_url(:pupil => true)  %></p>
+    <% end %>
 <% end %>
-
-<p><%= link_to "Schülerverwaltung", people_url(:pupil => true)  %></p>

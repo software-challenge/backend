@@ -12,7 +12,7 @@ class Person < ActiveRecord::Base
   validates_uniqueness_of :email
 
   def name
-    nick_name || ("#{self.first_name} #{self.last_name}")
+    ("#{self.first_name} #{self.last_name}") || nick_name
   end
 
   def password=(new_password)

@@ -1,24 +1,47 @@
-<h1>Neue Person anlegen</h1>
+<% if !params[:pupil] %>
+  <h1>Neue Person anlegen</h1>
+<% else %>
+  <h1>Neuen Schüler anlegen</h1>
+<% end %>
 
 <% form_for(@person) do |f| %>
   <%= f.error_messages %>
 
   <p>
-    <%= f.label :nick_name %>
-    <%= f.text_field :nick_name %>
+    <%= f.label :vorname %>
+    <%= f.text_field :first_name %>
   </p>
+  <br>
+  <p>
+    <%= f.label :nachname %>
+    <%= f.text_field :last_name %>
+  </p>
+  <br>
   <p>
     <%= f.label :email %>
     <%= f.text_field :email %>
   </p>
+  <br>
   <p>
-    <%= f.label :first_name %>
-    <%= f.text_field :first_name %>
+    <%= f.label :password %>
+    <%= f.text_field :password_hash %>
   </p>
+  <br>
   <p>
-    <%= f.label :last_name %>
-    <%= f.text_field :last_name %>
+    <%= f.label :administrator %>
+    <%= f.check_box :administrator %>
   </p>
+  <br>
+  <p>
+    <%= f.label :rolle %>
+    <%= select_tag "role", options_for_select(@roles) %>
+  </p>
+  <br>
+    <p>
+    <%= f.label :team %>
+    <%= select_tag "team", options_for_select(@teams) %>
+  </p>
+  <br>
   <p>
     <%= f.submit 'Erstellen' %>
   </p>

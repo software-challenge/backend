@@ -1,7 +1,7 @@
-<% if params[:teacher] %>
-  <h1>Lehrerverwaltung</h1>
-<% else %>
+<% if !params[:pupil] %>
   <h1>Benutzerverwaltung</h1>
+<% else %>
+  <h1>Schülerverwaltung</h1>
 <% end %>
 
 <table>
@@ -10,59 +10,65 @@
     <th>Nachname</th>
     <th>E-Mail Addresse</th>
     <th>Gesperrt</th>
-    <th>Lehrer</th>
-    <th>Tutor</th>
-    <th>Administrator</th>
+    <% if !params[:pupil] %>
+      <th>Lehrer</th>
+      <th>Tutor</th>
+      <th>Administrator</th>
+    <% end %>
   </tr>
 
-<% @people.each do |person| %>
-  <tr>
-    <td><%=h person.first_name %></td>
-    <td><%=h person.last_name %></td>
-    <td><%=h person.email %></td>
-    <td>
-      <% if person.blocked? %>
-        <%=  'Ja' %>
-      <%  else %>
-        <%=  'Nein' %>
-      <%  end %>
-    </td>
+  <% @people.each do |person| %>
+    <tr>
+      <td><%=h person.first_name %></td>
+      <td><%=h person.last_name %></td>
+      <td><%=h person.email %></td>
+      <td>
+        <% if person.blocked? %>
+          <%=  'Ja' %>
+        <%  else %>
+          <%=  'Nein' %>
+        <%  end %>
+      </td>
+      <% if !params[:pupil] %>
+        <td>
+          <% if person.teacher? %>
+            <%=  'Ja' %>
+          <%  else %>
+            <%=  'Nein' %>
+          <%  end %>
+        </td>
 
-    <td>
-      <% if person.teacher? %>
-        <%=  'Ja' %>
-      <%  else %>
-        <%=  'Nein' %>
-      <%  end %>
-    </td>
+        <td>
+          <% if person.tutor? %>
+            <%=  'Ja' %>
+          <%  else %>
+            <%=  'Nein' %>
+          <%  end %>
+        </td>
 
-    <td>
-      <% if person.tutor? %>
-        <%=  'Ja' %>
-      <%  else %>
-        <%=  'Nein' %>
-      <%  end %>
-    </td>
-
-    <td>
-      <% if person.administrator? %>
-        <%=  'Ja' %>
-      <%  else %>
-        <%=  'Nein' %>
-      <%  end %>
-    </td>
-
-    <td><%= link_to 'Zeige', person %></td>
-    <td><%= link_to 'Bearbeiten', edit_person_path(person,:teacher => true) %></td>
-    <td><%= link_to 'Löschen', person, :confirm => 'Wirklich?', :method => :delete %></td>
-  </tr>
-<% end %>
+        <td>
+          <% if person.administrator? %>
+            <%=  'Ja' %>
+          <%  else %>
+            <%=  'Nein' %>
+          <%  end %>
+        </td>
+      <% end %>
+      <td><%= link_to 'Zeige', person %></td>
+      <% if !params[:pupil] %>
+        <td><%= link_to 'Bearbeiten', edit_person_path(person) %></td>
+      <% else %>
+        <td><%= link_to 'Bearbeiten', edit_person_path(person,:pupil => true) %></td>
+      <% end %>
+      <td><%= link_to 'Löschen', person, :confirm => 'Wirklich?', :method => :delete %></td>
+    </tr>
+  <% end %>
 </table>
 
 <br />
 
-<% if params[:teacher] %>
-<%= link_to 'Neuen Lehrer anlegen', new_person_path(:teacher => true) %>
+<% if !params[:pupil] %>
+  <%= link_to 'Neue Person anlegen', new_person_path() %>
 <% else %>
-<%= link_to 'Neue Person anlegen', new_person_path %>
+  <%= link_to 'Neuen Schüler anlegen', new_person_path(:pupil => true) %>
 <% end %>

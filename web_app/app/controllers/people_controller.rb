@@ -5,8 +5,8 @@ class PeopleController < ApplicationController
     if (current_user.administrator?)
       @people = Person.all
     else
-      if (params[:teacher])
-        @people = Person.all :joins => "LEFT JOIN memberships ON memberships.person_id = persons.id", :conditions => ["memberships.teacher = ?", true]
+      if (params[:pupil])
+        @people = Person.all :joins => "LEFT JOIN memberships ON memberships.person_id = persons.id", :conditions => ["memberships.teacher = ? AND memberships.tutor = ?", false, false]
       end
     end
 
@@ -32,6 +32,15 @@ class PeopleController < ApplicationController
   def new
     @person = Person.new
 
+    @roles = [">Keine", "Lehrer", "Schüler", "Tutor"]
+    contestants = Contestant.all
+
+    @teams = [">Kein Team"]
+
+    contestants.each do |contestant|
+      @teams.push(contestant.name)
+    end
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @person }
@@ -48,11 +57,44 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(params[:person])
 
-    @person.password_salt = @person.random_hash
-    @person.password_hash = @person.random_hash
+    @person.password=@person.password_hash
+
+    error = !@person.save
+
+    role_name = params[:role]
+    team_name = params[:team]
+
+    if (role_name != ">Keine" && !error)
+      if (team_name != ">Kein Team")
+        team = Contestant.all :conditions => ["name = ?", team_name]
+        person = Person.all :conditions => ["email = ?", @person.email]
+        @membership = Membership.new();
+        @membership.contestant_id = team.id
+        @membership.person_id = person.id
+        if (role_name == "Lehrer")
+          @membership.teacher = true
+        else
+          if (role_name == "Tutor")
+            @membership.tutor = true
+          end
+        end
+
+        error = error || !@membership.save
+
+        if (error)
+          flash[:notice] = 'Fehler beim Erstellen von der Membership Beziehung.'
+          @person.delete
+          error = true;
+        end
+      else
+        flash[:notice] = 'Team darf für eine Rolle nicht leer sein.'
+        @person.delete
+        error = true;
+      end
+    end
 
     respond_to do |format|
-      if @person.save
+      if !error
         flash[:notice] = 'Person wurde erfolgreich angelegt.'
         format.html { redirect_to(@person) }
         format.xml  { render :xml => @person, :status => :created, :location => @person }
