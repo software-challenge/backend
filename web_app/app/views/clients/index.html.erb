@@ -1,24 +1,37 @@
 <h1>Listing clients</h1>
+<h2>Schule: </h2>
 
 <table>
   <tr>
+    <td><%= label_tag :clientupload, 'Pfad zum Computerspieler' %></td>
+    <td><%= text_field_tag :clientupload, 'Hier bitte Pfad eintragen lassen' %></td>
+    <td><%= button_to 'Computerspieler auswählen', new_client_path %></td>
+  </tr>
+</table>
+
+<--
+get school name (s. above)
+buttons instead of links
+edit field in front of upload button
+dialog öffnen -> pfad in edit schreiben
+-->
+
+<table>
+  <tr>
+    <th>hochgeladen am</th>
     <th>Name</th>
     <th>von Teilnehmer</th>
     <th>hochgeladen von</th>
   </tr>
-
-<% @clients.each do |client| %>
-  <tr>
-    <td><%=h client.name %></td>
-    <td><%=h client.contestant_id %></td>
-    <td><%=h client.author_id %></td>
-    <td><%= link_to 'Show', client %></td>
-    <td><%= link_to 'Edit', edit_client_path(client) %></td>
-    <td><%= link_to 'Destroy', client, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+  <% @clients.each do |client| %>
+    <tr>
+      <td><%=h client.uploadedAt %></td>
+      <td><%=h client.name %></td>
+      <td><%=h client.contestant_id %></td>
+      <td><%=h client.author_id %></td>
+      <td><%= link_to 'Show', client %></td>
+      <td><%= link_to 'Edit', edit_client_path(client) %></td>
+      <td><%= link_to 'Destroy', client, :confirm => 'Are you sure?', :method => :delete %></td>
+    </tr>
+  <% end %>
 </table>
-
-<br />
-
-<%= link_to 'New client', new_client_path %>
