@@ -82,11 +82,11 @@ class PeopleController < ApplicationController
 
     if (role_name != ">Keine" && !error)
       if (team_name != ">Kein Team")
-        team_obj = Contestant.all :conditions => ["contestants.name = ?", team_name]
-        person_obj = Person.all :conditions => ["people.email = ?", @person.email]
+        team_obj = Contestant.first :conditions => ["contestants.name = ?", team_name]
+        person_obj = Person.first :conditions => ["people.email = ?", @person.email]
         @membership = Membership.new()
-        @membership.contestant_id = team_obj
-        @membership.person_id = person_obj
+        @membership.contestant = team_obj
+        @membership.person = person_obj
         if (role_name == "Lehrer")
           @membership.teacher = true
         else
@@ -128,7 +128,7 @@ class PeopleController < ApplicationController
 
     updated_person = params[:person]
 
-    @person.password=updated_person[:password_hash]
+    @person.password=updated_person.password_hash
 
     respond_to do |format|
       if @person.update_attributes(params[:person])

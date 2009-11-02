@@ -158,7 +158,7 @@
               <% end %>
               <li><%= link_to "Wettbewerbe", contests_url %></li>
               <% if logged_in? %>
-                <% if current_user.administrator? %>
+                <% if current_user.administrator? || current_user.teacher? %>
                   <li><%= link_to "Administration", administration_url %></li>
                 <% end  %>
               <% end %>
