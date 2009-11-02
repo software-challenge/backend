@@ -18,20 +18,25 @@
 	</path>
 
 	<target name="clean">
-		<delete dir="build" />
+		<delete dir="${build.dir}" />
+		<delete dir="${src.dir}" />
 	</target>
 
 	<target name="dependencies">
 		<ant dir="./../../game_plugin_interface" inheritAll="false" />
 	</target>
 
-	<target name="compile" depends="dependencies">
+	<target name="merge-src">
+		<copy todir="${src.dir}">
+			<fileset dir="server" />
+			<fileset dir="client" />
+			<fileset dir="shared" />
+		</copy>
+	</target>
+
+	<target name="compile" depends="merge-src,dependencies">
 		<mkdir dir="${classes.dir}" />
-		<javac destdir="${classes.dir}" encoding="utf8" classpathref="classpath" debug="true" debuglevel="lines,vars,source">
-			<src path="server" />
-			<src path="client" />
-			<src path="shared" />
-		</javac>
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" encoding="utf8" classpathref="classpath" debug="true" debuglevel="lines,vars,source" />
 	</target>
 
 	<target name="jar" depends="svnversion,compile">
@@ -41,6 +46,7 @@
 				<attribute name="${manifest.code.version.key}" value="${code.version}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
+			<fileset dir="${src.dir}" />
 			<fileset dir=".">
 				<include name="resource/**/*" />
 			</fileset>
