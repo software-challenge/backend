@@ -162,7 +162,7 @@
                   <li><%= link_to "Administration", administration_url %></li>
                 <% end  %>
                  <% if current_user.pupil? || current_user.teacher? %>
-                  <li><%= link_to "Hochladen", clients_url(current_user) %></li>
+                  <li><%= link_to "Clients", clients_url() %></li>
                 <% end  %>
               <% end %>
             </ul>

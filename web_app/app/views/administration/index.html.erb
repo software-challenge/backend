@@ -4,6 +4,6 @@
   <p><%= link_to "Benutzerverwaltung", people_url()  %></p>
 <% else %>
     <% if current_user.teacher? %>
-    <p><%= link_to "Schülerverwaltung", people_url(:pupil => true)  %></p>
+    <p><%= link_to "Schülerverwaltung", people_url()  %></p>
     <% end %>
 <% end %>

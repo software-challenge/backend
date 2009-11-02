@@ -5,7 +5,7 @@ class PeopleController < ApplicationController
     if (current_user.administrator?)
       @people = Person.all
     else
-      if (params[:pupil])
+      if (current_user.teacher?)
         @people = Person.all :joins => "LEFT JOIN memberships ON memberships.person_id = people.id", :conditions => ["memberships.teacher = ? AND memberships.tutor = ?", false, false]
       end
     end
@@ -26,18 +26,16 @@ class PeopleController < ApplicationController
       format.xml  { render :xml => @person }
     end
   end
-
-  # GET /people/new
-  # GET /people/new.xml
-  def new
-    @person = Person.new
-
+  
+  def getRoles
     if current_user.administrator?
       @roles = [">Keine", "Lehrer", "Schüler", "Tutor"]
     else
       @roles = ["Schüler"]
     end
+  end
 
+  def getTeams
     if current_user.administrator?
       contestants = Contestant.all
 
@@ -47,7 +45,7 @@ class PeopleController < ApplicationController
         @teams.push(contestant.name)
       end
     else
-      contestants = Contestant.all :joins => "LEFT JOIN memberships ON memberships.contestant_id = contestants.id AND LEFT JOIN people ON people.id = memberships.person_id", :conditions => ["memberships.teacher = ? AND persons.email = ?", true, current_user.email]
+      contestants = Contestant.all :joins => "INNER JOIN memberships ON memberships.contestant_id = contestants.id INNER JOIN people ON people.id = memberships.person_id", :conditions => ["memberships.teacher = ? AND people.email = ?", true, current_user.email]
 
       @teams = []
 
@@ -55,6 +53,15 @@ class PeopleController < ApplicationController
         @teams.push(contestant.name)
       end
     end
+  end
+
+  # GET /people/new
+  # GET /people/new.xml
+  def new
+    @person = Person.new
+
+    getRoles
+    getTeams
 
     respond_to do |format|
       format.html # new.html.erb
@@ -65,7 +72,9 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     @person = Person.find(params[:id])
-    @person.password_hash = ""
+
+    getRoles
+    getTeams
   end
 
   # POST /people
@@ -73,39 +82,49 @@ class PeopleController < ApplicationController
   def create
     @person = Person.new(params[:person])
 
-    @person.password=@person.password_hash
+    getRoles
+    getTeams
 
-    error = !@person.save
+    if (@person.password_hash != "")
+      @person.password=@person.password_hash
+    else
+      error = true
+      flash[:notice] = 'Passwort darf nicht leer sein.'
+    end
 
-    role_name = params[:role]
-    team_name = params[:team]
+    if !error
+      error = !@person.save
 
-    if (role_name != ">Keine" && !error)
-      if (team_name != ">Kein Team")
-        team_obj = Contestant.first :conditions => ["contestants.name = ?", team_name]
-        person_obj = Person.first :conditions => ["people.email = ?", @person.email]
-        @membership = Membership.new()
-        @membership.contestant = team_obj
-        @membership.person = person_obj
-        if (role_name == "Lehrer")
-          @membership.teacher = true
-        else
-          if (role_name == "Tutor")
-            @membership.tutor = true
+      role_name = params[:role]
+      team_name = params[:team]
+
+      if (role_name != ">Keine" && !error)
+        if (team_name != ">Kein Team")
+          team_obj = Contestant.first :conditions => ["contestants.name = ?", team_name]
+          person_obj = Person.first :conditions => ["people.email = ?", @person.email]
+          @membership = Membership.new()
+          @membership.contestant = team_obj
+          @membership.person = person_obj
+          if (role_name == "Lehrer")
+            @membership.teacher = true
+          else
+            if (role_name == "Tutor")
+              @membership.tutor = true
+            end
           end
-        end
 
-        error = error || !@membership.save
+          error = error || !@membership.save
 
-        if (error)
-          flash[:notice] = 'Fehler beim Erstellen von der Membership Beziehung.'
+          if (error)
+            flash[:notice] = 'Fehler beim Erstellen von der Membership Beziehung.'
+            @person.destroy
+            error = true;
+          end
+        else
+          flash[:notice] = 'Team darf für eine Rolle nicht leer sein.'
           @person.destroy
           error = true;
         end
-      else
-        flash[:notice] = 'Team darf für eine Rolle nicht leer sein.'
-        @person.destroy
-        error = true;
       end
     end
 
@@ -126,9 +145,14 @@ class PeopleController < ApplicationController
   def update
     @person = Person.find(params[:id])
 
-    updated_person = params[:person]
+    pass = params[:password]
 
-    @person.password=updated_person.password_hash
+    getRoles
+    getTeams
+
+    if (pass != "!!!empty")
+      @person.password = pass[:value]
+    end
 
     respond_to do |format|
       if @person.update_attributes(params[:person])

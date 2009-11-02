@@ -1,4 +1,4 @@
-<% if !params[:pupil] %>
+<% if !current_user.teacher? || current_user.administrator? %>
   <h1>Neue Person anlegen</h1>
 <% else %>
   <h1>Neuen Schüler anlegen</h1>
@@ -24,7 +24,7 @@
   <br>
   <p>
     <%= f.label :password %>
-    <%= f.text_field :password_hash %>
+    <%= f.password_field :password_hash %>
   </p>
   <% if current_user.administrator? %>
     <br>

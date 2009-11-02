@@ -1,4 +1,4 @@
-<% if !params[:pupil] %>
+<% if !current_user.teacher? || current_user.administrator? %>
   <h1>Benutzerverwaltung</h1>
 <% else %>
   <h1>Schülerverwaltung</h1>
@@ -10,9 +10,8 @@
     <th>Nachname</th>
     <th>E-Mail Addresse</th>
     <th>Gesperrt</th>
-    <% if !params[:pupil] %>
-      <th>Lehrer</th>
-      <th>Tutor</th>
+    <th>Rolle</th>
+    <% if !current_user.teacher? || current_user.administrator? %>
       <th>Administrator</th>
     <% end %>
   </tr>
@@ -29,21 +28,9 @@
           <%=  'Nein' %>
         <%  end %>
       </td>
-      <% if !params[:pupil] %>
+      <% if !current_user.teacher? || current_user.administrator? %>
         <td>
-          <% if person.teacher? %>
-            <%=  'Ja' %>
-          <%  else %>
-            <%=  'Nein' %>
-          <%  end %>
-        </td>
-
-        <td>
-          <% if person.tutor? %>
-            <%=  'Ja' %>
-          <%  else %>
-            <%=  'Nein' %>
-          <%  end %>
+          <%=  person.getRole %>
         </td>
 
         <td>
@@ -55,11 +42,7 @@
         </td>
       <% end %>
       <td><%= link_to 'Zeige', person %></td>
-      <% if !params[:pupil] %>
-        <td><%= link_to 'Bearbeiten', edit_person_path(person) %></td>
-      <% else %>
-        <td><%= link_to 'Bearbeiten', edit_person_path(person,:pupil => true) %></td>
-      <% end %>
+      <td><%= link_to 'Bearbeiten', edit_person_path(person) %></td>
       <td><%= link_to 'Löschen', person, :confirm => 'Wirklich?', :method => :delete %></td>
     </tr>
   <% end %>
@@ -67,8 +50,8 @@
 
 <br />
 
-<% if !params[:pupil] %>
+<% if !current_user.teacher? || current_user.administrator? %>
   <%= link_to 'Neue Person anlegen', new_person_path() %>
 <% else %>
-  <%= link_to 'Neuen Schüler anlegen', new_person_path(:pupil => true) %>
+  <%= link_to 'Neuen Schüler anlegen', new_person_path() %>
 <% end %>

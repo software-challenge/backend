@@ -10,6 +10,8 @@ class Person < ActiveRecord::Base
   validates_presence_of :password_hash
 
   validates_uniqueness_of :email
+  validates_presence_of :email
+
 
   def name
     ("#{self.first_name} #{self.last_name}") || nick_name
@@ -39,6 +41,18 @@ class Person < ActiveRecord::Base
 
   def teacher?
     Membership.first(:conditions => ["memberships.person_id = ? AND memberships.teacher = ?", self.id, true])
+  end
+
+  def getRole
+    if teacher?
+      return "Lehrer"
+    else
+      if tutor?
+        return "Tutor"
+      end
+    end
+
+    return "Schüler"
   end
 
   def tutor?

@@ -1,6 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :people
 
+  map.resources :clients
+
   map.administration '/administration', :controller => 'administration', :action => 'index'
 
   map.resources :contests, :member => {
