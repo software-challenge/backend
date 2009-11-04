@@ -3,6 +3,7 @@ class ClientsController < ApplicationController
   # GET /clients.xml
   def index
     @clients = Client.all
+    @school = get_school(current_user)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -80,6 +81,19 @@ class ClientsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to(clients_url) }
       format.xml  { head :ok }
+    end
+  end
+
+  def open_dialog
+    
+  end
+  
+  def get_school user
+    mships = Membership.find_all_by_person_id(user.id)
+    if mships.length == 0
+      @school = "n/a"
+    else
+      @school = mships[0].contestant.name
     end
   end
 end

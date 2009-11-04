@@ -1,22 +1,24 @@
-<h1>Listing clients</h1>
-<h2>Schule: </h2>
+<h1>Computerspieler hochladen</h1>
+<h2>Schule: <%= @school %> </h2>
 
 <table>
   <tr>
-    <td><%= label_tag :clientupload, 'Pfad zum Computerspieler' %></td>
-    <td><%= text_field_tag :clientupload, 'Hier bitte Pfad eintragen lassen' %></td>
+    <td><%= label_tag :clientupload, 'Pfad zum Computerspieler:' %></td>
+    <td><%= text_field_tag :clientupload, 'Hier bitte Pfad eintragen lassen', :size => 40 %></td>
     <td><%= button_to 'Computerspieler auswählen', new_client_path %></td>
   </tr>
 </table>
 
 <--
+button: open dialog
 get school name (s. above)
 buttons instead of links
 edit field in front of upload button
 dialog öffnen -> pfad in edit schreiben
+sort history by date
 -->
 
-<table>
+<table border="1">
   <tr>
     <th>hochgeladen am</th>
     <th>Name</th>
