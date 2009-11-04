@@ -256,7 +256,6 @@ public final class Player extends SimplePlayer implements Cloneable
 																		// (WIN/LOSS/TIE)
 				getFieldNumber(), // Position auf dem Spielfeld
 				getCarrotsAvailable(), // Anzahl verbliebene Karotten
-				getHistory().size(), // Anzahl Züge
 				avg_time); // durchschnittliche Zugzeit in Millisekunden
 	}
 

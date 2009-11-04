@@ -351,7 +351,6 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected void onNewTurn()
 	{
-
 	}
 
 	@Override

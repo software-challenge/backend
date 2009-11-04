@@ -8,6 +8,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescueableClientException;
 
 public class GamePlayTest
@@ -241,9 +242,10 @@ public class GamePlayTest
 	 * Überprüft, ob ein Spieler eine Runde aussetzen kann.
 	 * Getestet wird:
 	 * - 0 Karotten und das Igelfeld hinter dem Spieler ist belegt
+	 * @throws GameLogicException 
 	 */
 	@Test
-	public void canSkip()
+	public void canSkip() throws GameLogicException
 	{
 		g.start();
 
@@ -256,8 +258,13 @@ public class GamePlayTest
 				.getFieldNumber());
 		blue.setFieldNumber(bluePos);
 
-		Move m = new Move(MoveTyp.SKIP);
-		Assert.assertTrue(b.isValid(m, red));
+		Move r1 = new Move(MoveTyp.SKIP);
+		Assert.assertTrue(b.isValid(r1, red));
+		
+		g.onAction(red, r1);
+		
+		Move b1 = new Move(MoveTyp.SKIP);
+		Assert.assertFalse(b.isValid(b1, blue));
 	}
 
 	/**

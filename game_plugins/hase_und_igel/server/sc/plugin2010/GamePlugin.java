@@ -36,8 +36,6 @@ public class GamePlugin implements IGamePlugin
 				ScoreAggregation.AVERAGE));
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Karotten",
 				ScoreAggregation.AVERAGE));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Z\u00FCge",
-				ScoreAggregation.AVERAGE));
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Zeit (ms)",
 				ScoreAggregation.AVERAGE));
 	}
