@@ -69,6 +69,8 @@ public class InfoDialog extends JDialog {
 		model.addRow(new String[]{"Florian Fittkau", lang.getProperty("dialog_info_ffi")});
 		model.addRow(new String[]{"Marcel Jackwerth", lang.getProperty("dialog_info_mja")});
 		model.addRow(new String[]{"Raphael Randschau", lang.getProperty("dialog_info_rra")});
+		model.addRow(new String[]{"Manfred Schimmler", lang.getProperty("dialog_info_masch")});
+		model.addRow(new String[]{"Christoph Starke", lang.getProperty("dialog_info_chst")});
 
 		// fit scrollpane's size to the table's size
 		JScrollPane scroll = new JScrollPane(tbl_developers);
@@ -81,7 +83,7 @@ public class InfoDialog extends JDialog {
 		// set dialog preferences
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
-		this.setPreferredSize(new Dimension(600,300));
+		this.setPreferredSize(new Dimension(600,360));
 		this.setResizable(false);
 		this.setModal(true);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
