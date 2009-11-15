@@ -23,7 +23,7 @@
   </p>
   <br>
   <p>
-    <%= f.label :password %>
+    <%= f.label :passwort %>
     <%= f.password_field :password_hash %>
   </p>
   <% if current_user.administrator? %>
@@ -36,18 +36,16 @@
   <br>
   <p>
     <%= f.label :rolle %>
-    <% if @roles == nil %>
-      <% @roles = "" %>
-    <%  end %>
     <%= select_tag "role", options_for_select(@roles) %>
   </p>
   <br>
   <p>
-    <%= f.label :team %>
-    <% if @teams == nil %>
-      <% @teams = "" %>
-    <%  end %>
-    <%= select_tag "team", options_for_select(@teams) %>
+    <%= f.label "Team (mit STRG selektieren)" %>
+    <% if current_user.teacher? %>
+      <%= select_tag "team", options_for_select(@teams,@teams), :multiple => true, :size => 5 %>
+    <% else %>
+      <%= select_tag "team", options_for_select(@teams), :multiple => true, :size => 5 %>
+    <% end %>
   </p>
   <br>
   <p>
@@ -55,4 +53,4 @@
   </p>
 <% end %>
 
-<%= link_to 'Zurück', people_path %>
+<%= link_to_function "Zurück", "history.back()" %>

@@ -15,16 +15,3 @@
     </div>
   </div>
 </div>
-
-<% if logged_in? %>
-  <p>
-    Hallo, <%= current_user.first_name %> <%= current_user.last_name %> (<%= current_user.email %>)!
-  </p>
-  <p>
-    Administrator: <%= current_user.administrator? %>
-  </p>
-<% else %>
-  <p>
-    Hello World
-  </p>
-<% end %>

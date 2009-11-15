@@ -3,7 +3,7 @@ class MainController < ApplicationController
   skip_before_filter :require_current_user
 
   def index
-    
+
   end
 
   def login
@@ -19,6 +19,7 @@ class MainController < ApplicationController
       person = Person.find_by_email(email)
       raise ActiveRecord::RecordNotFound unless person
       raise ActiveRecord::RecordNotFound unless person.password_match?(password)
+      raise ActiveRecord::RecordNotFound unless !person.blocked?
       session[:user_id] = person.id
       redirect_to root_url
     rescue ActiveRecord::RecordNotFound

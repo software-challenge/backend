@@ -9,12 +9,23 @@ class Person < ActiveRecord::Base
   validates_presence_of :password_salt
   validates_presence_of :password_hash
 
+  validates_format_of :first_name, :with => /([A-Za-z\s]+)/i, :message => "darf nur aus Buchstaben bestehen!"
+  validates_format_of :last_name, :with => /([A-Za-z\s]+)/i, :message => "darf nur aus Buchstaben bestehen!"
+
+
   validates_uniqueness_of :email
   validates_presence_of :email
+  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :message => "Adresse ist keine korrekte Adresse!"
+
 
 
   def name
-    ("#{self.first_name} #{self.last_name}") || nick_name
+
+    if (self.first_name != "" && self.last_name != "")
+      ("#{self.first_name} #{self.last_name}")
+    else
+      self.email
+    end
   end
 
   def password=(new_password)
@@ -43,16 +54,37 @@ class Person < ActiveRecord::Base
     Membership.first(:conditions => ["memberships.person_id = ? AND memberships.teacher = ?", self.id, true])
   end
 
-  def getRole
+  def getrole
     if teacher?
       return "Lehrer"
     else
       if tutor?
         return "Tutor"
+      else
+        if pupil?
+          return "Schüler"
+        end
       end
     end
 
-    return "Schüler"
+    return ""
+  end
+
+  def getteams
+    teams = Contestant.all :joins => "INNER JOIN memberships ON memberships.contestant_id = contestants.id", :conditions => ["memberships.person_id = ?", self.id]
+
+    result = []
+
+    teams.each do |team|
+      if (result.length == 0)
+        result.push(team.name)
+      else
+        result.push(team.name)
+      end
+     
+    end
+
+    return result
   end
 
   def tutor?
@@ -64,6 +96,6 @@ class Person < ActiveRecord::Base
   end
 
   def membership_for(contestant)
-    memberships.first(:conditions => ["membership.contestant_id = ?", contestant.id])
+    Membership.first(:conditions => ["membership.contestant_id = ?", contestant.id])
   end
 end

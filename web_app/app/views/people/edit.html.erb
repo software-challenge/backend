@@ -5,12 +5,12 @@
 
   <br>
   <p>
-    <%= f.label :first_name %>
+    <%= f.label :vorname %>
     <%= f.text_field :first_name %>
   </p>
   <br>
   <p>
-    <%= f.label :last_name %>
+    <%= f.label :nachname %>
     <%= f.text_field :last_name %>
   </p>
   <br>
@@ -21,12 +21,12 @@
   <br>
   <p>
     <%= f.label :email %>
-    <%= f.text_field :email %>
+    <%= f.text_field :email%>
   </p>
   <br>
   <p>
-    <%= f.label :password %>
-    <%= password_field(:password, :value, :value => "!!!empty") %>
+    <%= f.label :passwort %>
+    <%= password_field(:password, :value, :value => "") %>
   </p>
   <% if current_user.administrator? %>
     <br>
@@ -35,26 +35,27 @@
       <%= f.check_box :administrator %>
     </p>
   <%  end %>
-  <br>
-  <p>
-    <%= f.label :rolle %>
-    <% if @roles == nil %>
-      <% @roles = "" %>
-    <%  end %>
-    <%= select_tag "role", options_for_select(@roles) %>
-  </p>
-  <br>
-  <p>
-    <%= f.label :team %>
-    <% if @teams == nil %>
-      <% @teams = "" %>
-    <%  end %>
-    <%= select_tag "team", options_for_select(@teams) %>
-  </p>
+  <% if (current_user.teacher? && current_user != @person) || current_user.administrator? %>
+    <br>
+    <p>
+      <%= f.label :gesperrt %>
+      <%= f.check_box :blocked %>
+    </p>
+    <br>
+    <p>
+      <%= f.label :rolle %>
+      <%= select_tag "role", options_for_select(@roles, @roles_selected) %>
+    </p>
+    <br>
+    <p>
+      <%= f.label "Team (mit STRG selektieren)" %>
+      <%= select_tag "team", options_for_select(@teams, @teams_selected), :multiple => true, :size => 5 %>
+    </p>
+  <% end %>
   <br>
   <p>
     <%= f.submit 'Aktualisieren' %>
   </p>
 <% end %>
 
-<%= link_to 'Zurück', people_path %>
+<%= link_to_function "Zurück", "history.back()" %>

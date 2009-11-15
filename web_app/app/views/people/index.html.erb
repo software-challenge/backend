@@ -1,4 +1,4 @@
-<% if !current_user.teacher? || current_user.administrator? %>
+<% if current_user.administrator? %>
   <h1>Benutzerverwaltung</h1>
 <% else %>
   <h1>Schülerverwaltung</h1>
@@ -11,7 +11,8 @@
     <th>E-Mail Addresse</th>
     <th>Gesperrt</th>
     <th>Rolle</th>
-    <% if !current_user.teacher? || current_user.administrator? %>
+    <th>Teams</th>
+    <% if current_user.administrator? %>
       <th>Administrator</th>
     <% end %>
   </tr>
@@ -28,11 +29,17 @@
           <%=  'Nein' %>
         <%  end %>
       </td>
-      <% if !current_user.teacher? || current_user.administrator? %>
-        <td>
-          <%=  person.getRole %>
-        </td>
+      <td>
+        <%=  person.getrole %>
+      </td>
 
+      <td>
+        <%  if (person.getteams.length > 0) %>
+        <%= select_tag "team", options_for_select(person.getteams) %>
+        <% end %>
+      </td>
+
+      <% if current_user.administrator? %>
         <td>
           <% if person.administrator? %>
             <%=  'Ja' %>
@@ -41,9 +48,12 @@
           <%  end %>
         </td>
       <% end %>
-      <td><%= link_to 'Zeige', person %></td>
-      <td><%= link_to 'Bearbeiten', edit_person_path(person) %></td>
-      <td><%= link_to 'Löschen', person, :confirm => 'Wirklich?', :method => :delete %></td>
+      <% show_image = image_tag "actions/show.png", :title => "Zeige" %>
+      <% edit_image = image_tag "actions/edit.png", :title => "Bearbeiten" %>
+      <% delete_image = image_tag "actions/delete.png", :title => "Löschen" %>
+      <td><%= link_to show_image, person %></td>
+      <td><%= link_to edit_image, edit_person_path(person) %></td>
+      <td><%= link_to delete_image, person, :confirm => 'Soll "' + person.name + '" wirklich gelöschen werden?', :method => :delete %></td>
     </tr>
   <% end %>
 </table>
