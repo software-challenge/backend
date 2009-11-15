@@ -9,8 +9,8 @@ class Person < ActiveRecord::Base
   validates_presence_of :password_salt
   validates_presence_of :password_hash
 
-  validates_format_of :first_name, :with => /([A-Za-z\s]+)/i, :message => "darf nur aus Buchstaben bestehen!"
-  validates_format_of :last_name, :with => /([A-Za-z\s]+)/i, :message => "darf nur aus Buchstaben bestehen!"
+  validates_format_of :first_name, :with => /\A([a-z\s]+)\Z/i, :message => "darf nur aus Buchstaben bestehen!"
+  validates_format_of :last_name, :with => /\A([a-z\s]+)\Z/i, :message => "darf nur aus Buchstaben bestehen!"
 
 
   validates_uniqueness_of :email
