@@ -30,3 +30,7 @@ de:
       contest:
         match_score_definition: Wertung für Match
         round_score_definition: Wertung für Spielrunde
+      person:
+        first_name: Vorname
+        last_name: Nachname
+
