@@ -19,7 +19,7 @@ class MainController < ApplicationController
       person = Person.find_by_email(email)
       raise ActiveRecord::RecordNotFound unless person
       raise ActiveRecord::RecordNotFound unless person.password_match?(password)
-      raise ActiveRecord::RecordNotFound unless !person.blocked?
+      raise ActiveRecord::RecordNotFound if person.blocked?
       session[:user_id] = person.id
       redirect_to root_url
     rescue ActiveRecord::RecordNotFound
