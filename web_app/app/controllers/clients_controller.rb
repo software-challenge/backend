@@ -1,8 +1,9 @@
 class ClientsController < ApplicationController
+
   # GET /clients
   # GET /clients.xml
   def index
-    @clients = Client.all
+    @clients = Client.all :order => "created_at DESC"
     @school = get_school(current_user)
 
     respond_to do |format|
@@ -89,11 +90,8 @@ class ClientsController < ApplicationController
   end
   
   def get_school user
-    mships = Membership.find_all_by_person_id(user.id)
-    if mships.length == 0
-      @school = "n/a"
-    else
-      @school = mships[0].contestant.name
-    end
+    mship = Membership.find_by_person_id(user.id)
+    raise ActiveRecord::RecordNotFound unless mship
+    mship.contestant.name
   end
 end

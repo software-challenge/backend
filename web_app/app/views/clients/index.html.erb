@@ -9,6 +9,39 @@
   </tr>
 </table>
 
+<script type="text/javascript" src="http://www.swfupload.org/swfupload.js"></script>
+<script type="text/javascript">
+  // The uploadStart event handler. This function variable is assigned to upload_start_handler in the settings object
+  var myCustomUploadStartEventHandler = function (file) {
+    var continue_with_upload;
+    if (file.name === "the sky is blue") {
+      continue_with_upload = true;
+    } else {
+      continue_with_upload = false;
+    }
+    return continue_with_upload;
+  };
+  
+  // The uploadSuccess event handler. This function variable is assigned to upload_success_handler in the settings object
+  var myCustomUploadSuccessEventHandler = function (file, server_data, receivedResponse) { 
+    alert("The file " + file.name +
+      " has been delivered to the server. The server responded with " +
+      server_data); };
+  
+  // Create the SWFUpload Object
+  var swfu = new SWFUpload({ 
+    upload_url : "http://www.swfupload.org/upload.php",
+    flash_url : "http://www.swfupload.org/swfupload.swf",
+    file_size_limit : "200 MB",
+    button_placeholder_id : "spanSWFUploadButton",
+    
+    upload_start_handler : myCustomUploadStartEventHandler,
+    upload_success_handler : myCustomUploadSuccessEventHandler
+  });
+</script>
+
+<%= button_to_function "Upload", "swfu.selectFile" %>
+
 <--
 button: open dialog
 get school name (s. above)
@@ -27,7 +60,7 @@ sort history by date
   </tr>
   <% @clients.each do |client| %>
     <tr>
-      <td><%=h client.uploadedAt %></td>
+      <td><%=h client.created_at %></td>
       <td><%=h client.name %></td>
       <td><%=h client.contestant_id %></td>
       <td><%=h client.author_id %></td>
