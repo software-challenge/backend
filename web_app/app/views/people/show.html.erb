@@ -7,10 +7,12 @@
           <%=h @person.first_name + " " + @person.last_name %>
         </p>
 
+       <% if (@person.nick_name != "") %>
         <p>
           <b>Nickname:</b>
           <%=h @person.nick_name %>
         </p>
+        <% end %>
 
         <p>
           <b>E-Mail Adresse:</b>
@@ -18,29 +20,38 @@
         </p>
 
         <br>
+        <% if (@person.getrole != "") %>
+          <p>
+            <b>Rolle:</b>
+            <%=h @person.getrole %>
+          </p>
+        <% end %>
 
-        <p>
-          <b>Rolle:</b>
-          <%=h @person.getrole %>
-        </p>
-
-        <p>
-          <b>Teams:</b>
-          <%  if (@person.getteams.length > 0) %>
-            <%= select_tag "team", options_for_select(@person.getteams) %>
-          <% end %>
-        </p>
+        <% if (@person.getteams.length > 0) %>
+          <p>
+            <b>Teams:</b>
+          <table>
+            <% @person.getteams.each do |team| %>
+              <tr>
+                <td>
+                  <%= team %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+          </p>
+        <%  end %>
 
         <br>
 
         <p>
           <b>Mitglied seit:</b>
-          <%= l(@person.created_at, :format => :short) %>
+          <%= l(@person.created_at, :format => :long) %>
         </p>
 
         <p>
           <b>Letztes Update:</b>
-          <%= l(@person.created_at, :format => :short) %>
+          <%= l(@person.created_at, :format => :long) %>
         </p>
       </td>
 
