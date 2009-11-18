@@ -159,10 +159,10 @@
                     <li><%= link_to "Wettbewerbe", contests_url %></li>
                     <% if logged_in? %>
                       <% if current_user.administrator? %>
-                        <%= link_to "Benutzerverwaltung", people_url()  %>
+                        <li><%= link_to "Benutzerverwaltung", people_url()  %></li>
                       <% else %>
                         <% if current_user.teacher? %>
-                          <%= link_to "Schülerverwaltung", people_url()  %>
+                          <li><%= link_to "Schülerverwaltung", people_url()  %></li>
                         <% end %>
                       <% end %>
                       <% if current_user.pupil? || current_user.teacher? %>

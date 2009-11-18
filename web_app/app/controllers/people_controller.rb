@@ -5,7 +5,7 @@ class PeopleController < ApplicationController
     if (current_user.administrator?)
       @people = Person.all :order => "email ASC"
     else
-      if (current_user.teacher?)
+      if (current_user.teacher? || current_user.tutor?)
         @people = select_pupils
       end
     end
@@ -28,7 +28,7 @@ class PeopleController < ApplicationController
   end
 
   def select_pupils
-    Person.all :joins => ["INNER JOIN memberships m1 ON m1.person_id = people.id INNER JOIN memberships m2 ON m2.contestant_id = m1.contestant_id"], :conditions => ["m2.person_id = ? AND m1.teacher = ? AND m1.tutor = ?", current_user.id, false, false], :order => "email ASC"
+    Person.all :joins => ["INNER JOIN memberships m1 ON m1.person_id = people.id INNER JOIN memberships m2 ON m2.contestant_id = m1.contestant_id"], :conditions => ["m2.person_id = ? AND m1.teacher = ? AND m1.tutor = ? AND (m2.teacher = ? OR m2.tutor = ?)", current_user.id, false, false, true, true], :order => "email ASC"
   end
 
   def valid_password(pass)
@@ -90,10 +90,13 @@ class PeopleController < ApplicationController
     @person = Person.find(params[:id])
 
     # Rights
-    if current_user.administrator? || current_user.teacher? || current_user == @person
-      # TODO only his pupils
-      if current_user.teacher?
+    if current_user.administrator? || current_user.teacher? || current_user.tutor? || current_user == @person
 
+      # only his pupil
+      if current_user.teacher? || current_user.tutor?
+        if !select_pupils.include?(@person)
+          error = true
+        end
       end
       # Rights end
       
@@ -119,7 +122,7 @@ class PeopleController < ApplicationController
     @person = Person.new(params[:person])
 
     # Rights
-    if current_user.administrator? || current_user.teacher?
+    if current_user.administrator? || current_user.teacher? || current_user.tutor?
       # Rights end
 
       if (valid_password(@person.password_hash))
@@ -194,9 +197,9 @@ class PeopleController < ApplicationController
     @person = Person.find(params[:id])
 
     # Rights
-    if current_user.administrator? || current_user.teacher? || current_user == @person
+    if current_user.administrator? || current_user.teacher? || current_user.tutor? || current_user == @person
       # only his pupils
-      if current_user.teacher? && current_user != @person
+      if (current_user.teacher? || current_user.tutor?) && current_user != @person
         if !select_pupils.include?(@person)
           error = true
         end
@@ -215,7 +218,7 @@ class PeopleController < ApplicationController
         team_names = params[:team]
 
         if (role_name != ">Keine" && role_name != nil && !error)
-          if (team_names.length > 0)
+          if (team_names != nil && team_names.length > 0)
             Membership.transaction do
               Membership.destroy_all :person_id => params[:id]
          
@@ -291,9 +294,9 @@ class PeopleController < ApplicationController
     @person = Person.find(params[:id])
 
     # Rights
-    if current_user.administrator? || current_user.teacher?
+    if current_user.administrator? || current_user.teacher? || current_user.tutor?
       # only his pupils
-      if current_user.teacher?
+      if current_user.teacher? || current_user.tutor?
         if !select_pupils.include?(@person)
           error = true
         end

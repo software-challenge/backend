@@ -70,6 +70,12 @@ class Person < ActiveRecord::Base
     return ""
   end
 
+  def gettutors(team)
+    contestant = Contestant.first :joins => "INNER JOIN memberships ON memberships.contestant_id = contestants.id", :conditions => ["memberships.person_id = ? AND contestants.name = ?", self.id, team]
+
+    Person.all :joins => "INNER JOIN memberships ON memberships.person_id = people.id INNER JOIN contestants ON contestants.id = memberships.contestant_id", :conditions => ["contestants.id = ? AND memberships.tutor = ?",contestant.id, true], :order => "first_name ASC"
+  end
+
   def getteams
     teams = Contestant.all :joins => "INNER JOIN memberships ON memberships.contestant_id = contestants.id", :conditions => ["memberships.person_id = ?", self.id]
 

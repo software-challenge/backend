@@ -1,4 +1,4 @@
-<% if !current_user.teacher? || current_user.administrator? %>
+<% if !current_user.teacher? || !current_user.tutor? || current_user.administrator? %>
   <h1>Neue Person anlegen</h1>
 <% else %>
   <h1>Neuen Schüler anlegen</h1>
@@ -41,7 +41,7 @@
   <br>
   <p>
     <%= f.label "Team (mit STRG selektieren)" %>
-    <% if current_user.teacher? %>
+    <% if current_user.teacher? || current_user.tutor? %>
       <%= select_tag "team", options_for_select(@teams,@teams), :multiple => true, :size => 5 %>
     <% else %>
       <%= select_tag "team", options_for_select(@teams), :multiple => true, :size => 5 %>

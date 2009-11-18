@@ -7,11 +7,11 @@
           <%=h @person.first_name + " " + @person.last_name %>
         </p>
 
-       <% if (@person.nick_name != "") %>
-        <p>
-          <b>Nickname:</b>
-          <%=h @person.nick_name %>
-        </p>
+        <% if (@person.nick_name != "") %>
+          <p>
+            <b>Nickname:</b>
+            <%=h @person.nick_name %>
+          </p>
         <% end %>
 
         <p>
@@ -35,6 +35,17 @@
               <tr>
                 <td>
                   <%= team %>
+                  <% tutors = @person.gettutors(team) %>
+                  <% if tutors.length > 0 && @person.getrole != "Tutor" %>
+                    <% if tutors.length == 1 %>
+                      ( <b>Tutor:</b>
+                    <% else %>
+                      ( <b>Tutoren:</b>
+                    <% end %>
+                    <% tutors.each do |tutor| %>
+                      <%= link_to tutor.name, person_url(tutor) %>
+                    <% end %>)
+                  <% end %>
                 </td>
               </tr>
             <% end %>

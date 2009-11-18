@@ -60,7 +60,7 @@
 
 <br />
 
-<% if !current_user.teacher? || current_user.administrator? %>
+<% if !current_user.teacher? || !current_user.tutor? || current_user.administrator? %>
   <%= link_to 'Neue Person anlegen', new_person_path() %>
 <% else %>
   <%= link_to 'Neuen Schüler anlegen', new_person_path() %>

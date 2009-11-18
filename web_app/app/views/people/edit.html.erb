@@ -35,7 +35,7 @@
       <%= f.check_box :administrator %>
     </p>
   <%  end %>
-  <% if (current_user.teacher? && current_user != @person) || current_user.administrator? %>
+  <% if ((current_user.teacher? || current_user.tutor?) && current_user != @person) || current_user.administrator? %>
     <br>
     <p>
       <%= f.label :gesperrt %>
