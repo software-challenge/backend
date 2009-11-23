@@ -1,23 +1,16 @@
 <h1>New client</h1>
 
-<% form_for(@client) do |f| %>
+<% form_for([@contestant, @client], :html => { :multipart => true }) do |f| %>
   <%= f.error_messages %>
 
   <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+    <%= f.label :file %><br />
+    <%= f.file_field :file %>
   </p>
-  <p>
-    <%= f.label :contestant_id %><br />
-    <%= f.text_field :contestant_id %>
-  </p>
-  <p>
-    <%= f.label :author_id %><br />
-    <%= f.text_field :author_id %>
-  </p>
+
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
-<%= link_to 'Back', clients_path %>
+<%= link_to 'Back', contestant_clients_url(@contestant) %>

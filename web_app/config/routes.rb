@@ -1,7 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :people
 
-  map.resources :clients
+  map.resources :contestants do |contestant|
+    contestant.resources :clients, :member => {
+      :browse => :post
+    }
+  end
 
   map.administration '/administration', :controller => 'administration', :action => 'index'
 

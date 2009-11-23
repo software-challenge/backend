@@ -1,10 +1,13 @@
+require 'zip/zip'
+
 class ClientsController < ApplicationController
 
   # GET /clients
   # GET /clients.xml
   def index
-    @clients = Client.all :order => "created_at DESC"
-    @school = get_school(current_user)
+    @contestant = Contestant.find(params[:contestant_id])
+    @clients = @contestant.clients.all(:order => "created_at DESC")
+    @school = @contestant
 
     respond_to do |format|
       format.html # index.html.erb
@@ -26,7 +29,8 @@ class ClientsController < ApplicationController
   # GET /clients/new
   # GET /clients/new.xml
   def new
-    @client = Client.new
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,18 +40,30 @@ class ClientsController < ApplicationController
 
   # GET /clients/1/edit
   def edit
-    @client = Client.find(params[:id])
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
   end
 
   # POST /clients
   # POST /clients.xml
   def create
-    @client = Client.new(params[:client])
+    # TODO: http://jimneath.org/2008/05/15/swfupload-paperclip-and-ruby-on-rails/
+
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.build(params[:client])
+    @client.author = current_user
 
     respond_to do |format|
       if @client.save
-        flash[:notice] = 'Client was successfully created.'
-        format.html { redirect_to(@client) }
+        begin
+          @client.build_index!
+          flash[:notice] = 'Client was successfully created.'
+        rescue
+          @client.destroy
+          flash[:notice] = "Couldn't process ZIP file."
+        end
+        
+        format.html { redirect_to contestant_clients_url(@contestant) }
         format.xml  { render :xml => @client, :status => :created, :location => @client }
       else
         format.html { render :action => "new" }
@@ -85,13 +101,23 @@ class ClientsController < ApplicationController
     end
   end
 
-  def open_dialog
-    
-  end
-  
-  def get_school user
-    mship = Membership.find_by_person_id(user.id)
-    raise ActiveRecord::RecordNotFound unless mship
-    mship.contestant.name
+  def browse
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
+
+    if params[:entry_id]
+      @entry = @client.file_entries.find(params[:entry_id])
+      @entries = @entry.children
+    else
+      @entries = @client.file_entries.with_level(0)
+    end
+
+    render :update do |page|
+      # todo empty-check
+      page.replace_html '#fileList',
+        :partial => "file_entry",
+        :collection => @entries,
+        :locals => { :client => @client }
+    end
   end
 end

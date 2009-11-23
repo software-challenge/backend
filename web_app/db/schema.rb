@@ -9,7 +9,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091025213259) do
+ActiveRecord::Schema.define(:version => 20091123164956) do
+
+  create_table "client_file_entries", :force => true do |t|
+    t.integer "client_id"
+    t.string  "file_name"
+    t.string  "file_type"
+    t.integer "file_size"
+    t.integer "level"
+  end
 
   create_table "clients", :force => true do |t|
     t.string   "name"
@@ -17,6 +25,9 @@ ActiveRecord::Schema.define(:version => 20091025213259) do
     t.integer  "author_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "file_file_name"
+    t.string   "file_content_type"
+    t.integer  "file_file_size"
   end
 
   create_table "contestants", :force => true do |t|

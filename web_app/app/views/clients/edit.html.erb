@@ -1,24 +1,21 @@
 <h1>Editing client</h1>
 
-<% form_for(@client) do |f| %>
+<% form_for([@contestant, @client]) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :contestant_id %><br />
-    <%= f.text_field :contestant_id %>
-  </p>
-  <p>
-    <%= f.label :author_id %><br />
-    <%= f.text_field :author_id %>
-  </p>
+  <div style="float: right;">
+    <%= link_to_remote "Zurück", :url => browse_contestant_client_url(@client.contestant, @client) %>
+  </div>
+
+  <h3><%=h @client.file_file_name %></h3>
+
+  <table style="width: 100%;" id="fileList">
+    <%= render :partial => "file_entry", :collection => @client.file_entries.with_level(0), :locals => { :client => @client } %>
+  </table>
+
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
-<%= link_to 'Show', @client %> |
-<%= link_to 'Back', clients_path %>
+<%= link_to 'Back', contestant_clients_path(@contestant) %>
