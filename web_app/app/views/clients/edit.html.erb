@@ -1,4 +1,4 @@
-<h1>Editing client</h1>
+<h1>Verfügbare Computerspieler</h1>
 
 <% form_for([@contestant, @client]) do |f| %>
   <%= f.error_messages %>
@@ -8,6 +8,14 @@
   </div>
 
   <h3><%=h @client.file_file_name %></h3>
+
+  <h4>Ausführungsdatei:
+    <% if @client.main_file_name.empty? %>
+      <%=h 'Es wurde bisher keine Ausführungsdatei ausgewählt.' %>
+    <% else %>
+      <%=h @client.main_file_name %>
+    <%end%>
+  </h4>
 
   <table style="width: 100%;" id="fileList">
     <%= render :partial => "file_entry", :collection => @client.file_entries.with_level(0), :locals => { :client => @client } %>

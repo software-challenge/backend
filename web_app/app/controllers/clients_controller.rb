@@ -7,7 +7,6 @@ class ClientsController < ApplicationController
   def index
     @contestant = Contestant.find(params[:contestant_id])
     @clients = @contestant.clients.all(:order => "created_at DESC")
-    @school = @contestant
 
     respond_to do |format|
       format.html # index.html.erb
@@ -119,5 +118,11 @@ class ClientsController < ApplicationController
         :collection => @entries,
         :locals => { :client => @client }
     end
+  end
+
+  protected
+  
+  def is_current_client(client)
+    client.contestant.current_client_id == client.id
   end
 end

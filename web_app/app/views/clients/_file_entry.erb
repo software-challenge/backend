@@ -1,11 +1,16 @@
 <tr>
   <td><%= image_tag "file_types/#{file_entry.file_type}.png" %></td>
   <td>
-  <% if file_entry.file_type == "directory" %>
-    <%= link_to_remote h(file_entry.file_name), :url => browse_contestant_client_url(client.contestant, client, :entry_id => file_entry.id) %>
-  <% else %>
-  <%=h file_entry.file_name %>
-  <% end %>
+    <% if file_entry.file_type == "directory" %>
+      <%= link_to_remote h(file_entry.file_name), :url => browse_contestant_client_url(client.contestant, client, :entry_id => file_entry.id) %>
+    <% else %>
+      <%=h file_entry.file_name %>
+    <% end %>
   </td>
   <td><%=h number_to_human_size file_entry.file_size %></td>
+  <td>
+    <% if file_entry.file_type != "directory" %>
+      Als Ausführungsdatei auswählen
+    <% end %>
+  </td>
 </tr>

@@ -1,19 +1,16 @@
 <h1>Computerspieler hochladen</h1>
-<h2>Team: <%= @school %> </h2>
+<h2>Team: <%= @contestant.name %> </h2>
 
-<%= link_to "Computerspieler hochladen", new_contestant_client_url(@contestant) %>
+<p> <%= link_to "Computerspieler hochladen", new_contestant_client_url(@contestant) %> </p>
 
-<--
-button: open dialog
-get school name (s. above)
-buttons instead of links
-edit field in front of upload button
-dialog öffnen -> pfad in edit schreiben
-sort history by date
--->
+<p>
+  TODO:
+  button der selektierten client übernimmt (button mit methodenaufruf)
+</p>
 
 <table border="1">
   <tr>
+    <th>Aktiv</th>
     <th>hochgeladen am</th>
     <th>Name</th>
     <th>von Teilnehmer</th>
@@ -21,6 +18,7 @@ sort history by date
   </tr>
   <% @clients.each do |client| %>
     <tr>
+      <td><%=h radio_button_tag 'current', '', is_current_client(client)  %></td>
       <td><%=h client.created_at %></td>
       <td><%=h client.name %></td>
       <td><%=h client.contestant.name %></td>
