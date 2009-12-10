@@ -15,3 +15,8 @@
     </div>
   </div>
 </div>
+
+<% if logged_in? %>
+  <% current_user.teams.each do |team| %>
+  <% end %>
+<% end %>

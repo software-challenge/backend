@@ -4,7 +4,9 @@ class Person < ActiveRecord::Base
   RANDOM_HASH_CHARS = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
   
   has_many :memberships
-  has_many :contestants, :through => :memberships
+  has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
+
+  alias :contestants :teams
 
   validates_presence_of :password_salt
   validates_presence_of :password_hash
