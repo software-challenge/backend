@@ -3,7 +3,9 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :contestants do |contestant|
     contestant.resources :clients, :member => {
-      :browse => :post
+      :browse => :post,
+      :select_main => :post,
+      :select => :post
     }
   end
 

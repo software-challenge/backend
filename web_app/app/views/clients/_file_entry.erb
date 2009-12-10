@@ -9,8 +9,12 @@
   </td>
   <td><%=h number_to_human_size file_entry.file_size %></td>
   <td>
-    <% if file_entry.file_type != "directory" %>
-      Als Ausführungsdatei auswählen
+    <% unless file_entry.directory? %>
+      <% if file_entry.current? %>
+        <b>Aktiv</b>
+      <% else %>
+        <%= link_to "Auswählen", select_main_contestant_client_url(client.contestant, client, :main_id => file_entry.id), :method => :post %>
+      <% end %>
     <% end %>
   </td>
 </tr>

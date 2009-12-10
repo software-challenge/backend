@@ -14,4 +14,12 @@ class ClientFileEntry < ActiveRecord::Base
   def children
     client.file_entries.with_level(level + 1).descendant_of(file_name)
   end
+
+  def directory?
+    file_type == "directory"
+  end
+
+  def current?
+    file_name == client.main_file_name
+  end
 end

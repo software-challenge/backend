@@ -10,6 +10,8 @@ class Contestant < ActiveRecord::Base
 
   has_many :slots, :class_name => "MatchdaySlot"
 
+  belongs_to :current_client, :class_name => "Client"
+
   attr_readonly :contest
   attr_protected :contest
 

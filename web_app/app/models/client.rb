@@ -7,7 +7,7 @@ class Client < ActiveRecord::Base
 
   validates_presence_of :file
   validates_attachment_presence :file
-  validates_attachment_content_type :file, :content_type => 'application/octet-stream'
+  # validates_attachment_content_type :file, :content_type => 'application/octet-stream'
 
   validates_presence_of :author
   validates_presence_of :contestant
@@ -23,6 +23,10 @@ class Client < ActiveRecord::Base
           :level => calculate_level(file_name))
       end
     end
+  end
+
+  def current?
+    contestant.current_client == self
   end
 
   protected

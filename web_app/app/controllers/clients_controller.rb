@@ -120,9 +120,26 @@ class ClientsController < ApplicationController
     end
   end
 
-  protected
-  
-  def is_current_client(client)
-    client.contestant.current_client_id == client.id
+  def select_main
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
+    @main_entry = @client.file_entries.find(params[:main_id])
+
+    @client.main_file_name = @main_entry.file_name
+    @client.save!
+
+    redirect_to contestant_clients_url(@contestant)
   end
+
+  def select
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
+
+    @contestant.current_client = @client
+    @contestant.save!
+
+    redirect_to contestant_clients_url(@contestant)
+  end
+
+  protected
 end

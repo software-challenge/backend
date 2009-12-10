@@ -1,29 +1,21 @@
-<h1>Computerspieler hochladen</h1>
-<h2>Team: <%= @contestant.name %> </h2>
+<div id="actions">
+  <%= link_to image_tag('actions/add.png'), new_contestant_client_url(@contestant) %>
+</div>
 
-<p> <%= link_to "Computerspieler hochladen", new_contestant_client_url(@contestant) %> </p>
 
-<p>
-  TODO:
-  button der selektierten client übernimmt (button mit methodenaufruf)
-</p>
+<h1>
+  <%= link_to h(@contestant.name), @contestant %> /
+  Computerspieler
+</h1>
 
-<table border="1">
-  <tr>
-    <th>Aktiv</th>
-    <th>hochgeladen am</th>
-    <th>Name</th>
-    <th>von Teilnehmer</th>
-    <th>hochgeladen von</th>
+
+<table style="width: 100%;">
+  <tr style="text-align: left;">
+    <th>&nbsp;</th>
+    <th>Dateiname</th>
+    <th>Hauptdatei</th>
+    <th>Von</th>
+    <th>Datum</th>
   </tr>
-  <% @clients.each do |client| %>
-    <tr>
-      <td><%=h radio_button_tag 'current', '', is_current_client(client)  %></td>
-      <td><%=h client.created_at %></td>
-      <td><%=h client.name %></td>
-      <td><%=h client.contestant.name %></td>
-      <td><%=h client.file_file_name %></td>
-      <td><%= link_to 'Edit', edit_contestant_client_url(@contestant, client) %></td>
-    </tr>
-  <% end %>
+  <%= render :partial => "client", :collection => @clients %>
 </table>
