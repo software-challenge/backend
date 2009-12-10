@@ -50,8 +50,11 @@
             background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
           }
 
+          #header #mainLogo {
+            float: left;
+          }
+
           #header #menu {
-            float: right;
             text-align: right;
           }
 
@@ -132,9 +135,11 @@
 
           <div style="margin: 0 auto; width: 750px;">
             <div id="header">
-              <% link_to root_url do %>
-                <span class="logo"></span>
-              <% end %>
+              <div id="mainLogo">
+                <% link_to root_url do %>
+                  <span class="logo"></span>
+                <% end %>
+              </div>
               <div id="menu">
                 <div style="line-height: 24px; padding: 8px 0;">
                   <% if logged_in? %>
