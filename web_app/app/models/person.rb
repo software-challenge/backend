@@ -19,10 +19,9 @@ class Person < ActiveRecord::Base
   validates_presence_of :email
   validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :message => "Adresse ist keine korrekte Adresse!"
 
-
+  validate_on_update :validate_at_least_one_admin
 
   def name
-
     if (self.first_name != "" && self.last_name != "")
       ("#{self.first_name} #{self.last_name}")
     else
@@ -105,5 +104,25 @@ class Person < ActiveRecord::Base
 
   def membership_for(contestant)
     Membership.first(:conditions => ["membership.contestant_id = ?", contestant.id])
+  end
+
+  def last_admin?
+    return false unless administrator?
+    return false if Person.count(:conditions => { :administrator => true }) > 1
+    true
+  end
+
+  protected
+
+  before_destroy :validate_on_destroy
+
+  def validate_at_least_one_admin
+    if administrator_changed? and administrator_was and last_admin?
+      errors.add_to_base "Es muss mindestens ein Administrator verbleiben."
+    end
+  end
+
+  def validate_on_destroy
+    raise "can't delete last admin" if last_admin?
   end
 end

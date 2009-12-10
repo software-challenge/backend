@@ -18,5 +18,10 @@
 
 <% if logged_in? %>
   <% current_user.teams.each do |team| %>
+    <div>
+      <h3>
+        <%=h team.name %>
+      </h3>
+    </div>
   <% end %>
 <% end %>

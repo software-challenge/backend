@@ -34,18 +34,6 @@ class PeopleController < ApplicationController
   def valid_password(pass)
     pass != "" && pass.length > 5
   end
-
-  def only_one_admin?
-    admins = Person.all :conditions => ["administrator = ?", true]
-    admins.length == 1
-  end
-
-  def last_admin(person)
-    if only_one_admin?
-      last = Person.first :conditions => ["administrator = ?", true]
-      last == person
-    end
-  end
   
   def set_roles
     if current_user.administrator?
@@ -93,9 +81,9 @@ class PeopleController < ApplicationController
     if current_user.administrator? || current_user.teacher? || current_user.tutor? || current_user == @person
 
       # only his pupil
-      if current_user.teacher? || current_user.tutor?
+      if !current_user.administrator? and current_user != @person
         if !select_pupils.include?(@person)
-          error = true
+          raise "not allowed"
         end
       end
       # Rights end
@@ -108,11 +96,7 @@ class PeopleController < ApplicationController
 
       @person.password_hash = ""
     else
-      error = true
-    end
-
-    if error
-      redirect_to(current_user)
+      return "not allowed"
     end
   end
 
@@ -206,46 +190,35 @@ class PeopleController < ApplicationController
       end
       # Rights end
 
-      # is this the last admin?
-      if (last_admin(@person) && (!params[:administrator] || params[:blocked]))
-        flash[:error] = "Der letzte Administrator darf seine Rechte nicht verlieren und nicht gesperrt sein!"
-        error = true
-      end
-
       # create membership relations
       if (!error)
         role_name = params[:role]
-        team_names = params[:team]
+        team_names = params[:team] || []
 
-        if (role_name != ">Keine" && role_name != nil && !error)
-          if (team_names != nil && team_names.length > 0)
-            Membership.transaction do
-              Membership.destroy_all :person_id => params[:id]
+        if !error
+          Membership.transaction do
+            Membership.destroy_all :person_id => params[:id]
          
-              team_names.each do |team_name|
-                team_obj = Contestant.first :conditions => ["contestants.name = ?", team_name]
-                person_obj = Person.first :conditions => ["people.email = ?", @person.email]
-                @membership = Membership.new()
-                @membership.contestant = team_obj
-                @membership.person = person_obj
-                if (role_name == "Lehrer")
-                  @membership.teacher = true
-                else
-                  if (role_name == "Tutor")
-                    @membership.tutor = true
-                  end
+            team_names.each do |team_name|
+              team_obj = Contestant.first :conditions => ["contestants.name = ?", team_name]
+              person_obj = Person.first :conditions => ["people.email = ?", @person.email]
+              @membership = Membership.new()
+              @membership.contestant = team_obj
+              @membership.person = person_obj
+              if (role_name == "Lehrer")
+                @membership.teacher = true
+              else
+                if (role_name == "Tutor")
+                  @membership.tutor = true
                 end
-
-                error = error || !@membership.save
               end
-            end
 
-            if (error)
-              flash[:error] = 'Fehler beim Erstellen einer Membership Beziehung.'
-              error = true
+              error = error || !@membership.save
             end
-          else
-            flash[:error] = 'Team darf für eine Rolle nicht leer sein.'
+          end
+
+          if (error)
+            flash[:error] = 'Fehler beim Erstellen einer Membership Beziehung.'
             error = true
           end
         end
@@ -302,13 +275,8 @@ class PeopleController < ApplicationController
         end
       end
       # Rights end
-      
-      if (last_admin(@person))
-        flash[:error] = "Der letzte Administrator darf seine Rechte nicht verlieren!"
-        error = true
-      end
 
-      if (!error)
+      unless error
         Membership.destroy_all :person_id => params[:id]
         @person.destroy
       end
