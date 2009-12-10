@@ -103,7 +103,7 @@ class Person < ActiveRecord::Base
   end
 
   def membership_for(contestant)
-    Membership.first(:conditions => ["membership.contestant_id = ?", contestant.id])
+    Membership.first(:conditions => ["memberships.contestant_id = ?", contestant.id])
   end
 
   def last_admin?

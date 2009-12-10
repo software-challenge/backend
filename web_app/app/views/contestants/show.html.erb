@@ -3,15 +3,14 @@
     <% if current_user.administrator? %>
       <%= link_to image_tag('actions/settings.png'), edit_contest_contestant_path(@contest, @contestant) %>
     <% end %>
-    <% if current_user.contestants.exists?(:id => @contestant.id) %>
-      <%= link_to "Clients", contestant_clients_url(@contestant) %>
+    <% if current_user.administrator? or current_user.contestants.exists?(@contestant) %>
+      <%= link_to "Computerspieler", contestant_clients_url(@contestant) %>
     <% end %>
   <% end %>
 </div>
 
 <h1>
   <%= link_to h(@contest.name), @contest %> /
-  <%= link_to "Teilnehmer", contest_contestants_url(@contest) %> /
   <%=h @contestant.name %>
 </h1>
 
@@ -39,7 +38,7 @@
     <% @contestant.people.each do |person| %>
       <tr>
         <td><%=h person.name %></td>
-        <td><%= role_for(person, contestant) %></td>
+        <td>(<%= role_for(person, @contestant) %>)</td>
       </tr>
     <% end %>
   </table>
