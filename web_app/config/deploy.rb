@@ -4,6 +4,8 @@ set :repository,  "http://samoa.informatik.uni-kiel.de:84/svn/teaching/ss09/swch
 set :scm, :subversion
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 
+set :deploy_to, "/home/scadmin/www/apps/#{application}"
+
 role :web, "134.245.253.5"                          # Your HTTP server, Apache/etc
 role :app, "134.245.253.5"                          # This may be the same as your `Web` server
 role :db,  "134.245.253.5", :primary => true # This is where Rails migrations will run
