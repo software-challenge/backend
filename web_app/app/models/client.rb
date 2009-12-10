@@ -15,6 +15,8 @@ class Client < ActiveRecord::Base
   validates_presence_of :author
   validates_presence_of :contestant
 
+  belongs_to :main_file_entry, :class_name => "ClientFileEntry"
+
   def build_index!
     Client.transaction do
       Zip::ZipFile.foreach(file.path) do |e|
@@ -48,20 +50,20 @@ class Client < ActiveRecord::Base
 
     return if potential_matches.empty?
 
-    result = potential_matches.first.file_name
+    result = potential_matches.first
 
     catch :found do
       potential_matches.each do |match|
         %w{simpleclient client myclient main start run}.each do |name|
           if /\/(#{name})\.[a-zA-Z]+\Z/ =~ match.file_name
-            result = match.file_name
+            result = match
             throw :found
           end
         end
       end
     end
 
-    self.main_file_name = result
+    self.main_file_entry = result
     save!
   end
 

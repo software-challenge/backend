@@ -125,7 +125,7 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.find(params[:id])
     @main_entry = @client.file_entries.find(params[:main_id])
 
-    @client.main_file_name = @main_entry.file_name
+    @client.main_file_entry = @main_entry
     @client.save!
 
     redirect_to contestant_clients_url(@contestant)

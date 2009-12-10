@@ -7,7 +7,7 @@
     <% end %>
   </td>
   <td><%=h client.file_file_name %></td>
-  <td><%=h client.main_file_name %></td>
+  <td><%=h client.main_file_entry.try(:file_name) %></td>
   <td><%=h client.author.name %></td>
   <td><%=h l(client.created_at, :format => :short) %></td>
   <td><%= link_to 'Bearbeiten', edit_contestant_client_url(client.contestant, client) %></td>

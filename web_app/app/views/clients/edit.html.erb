@@ -10,10 +10,10 @@
   <h3><%=h @client.file_file_name %></h3>
 
   <h4>Ausführungsdatei:
-    <% if @client.main_file_name.blank? %>
-      <%=h 'Es wurde bisher keine Ausführungsdatei ausgewählt.' %>
+    <% if @client.main_file_entry %>
+      <%=h @client.main_file_entry.file_name %>
     <% else %>
-      <%=h @client.main_file_name %>
+      <%=h 'Es wurde bisher keine Ausführungsdatei ausgewählt.' %>
     <%end%>
   </h4>
 

@@ -20,6 +20,6 @@ class ClientFileEntry < ActiveRecord::Base
   end
 
   def current?
-    file_name == client.main_file_name
+    client.main_file_entry == self
   end
 end
