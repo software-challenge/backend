@@ -1,4 +1,7 @@
 class Client < ActiveRecord::Base
+
+  POTENTIAL_FILE_EXTENSIONS = %w{.jar .exe .py .rb}
+
   belongs_to :contestant
   belongs_to :author, :class_name => "Person"
   has_many :file_entries, :class_name => "ClientFileEntry"
@@ -23,6 +26,8 @@ class Client < ActiveRecord::Base
           :level => calculate_level(file_name))
       end
     end
+
+    guess_main_file!
   end
 
   def current?
@@ -30,6 +35,35 @@ class Client < ActiveRecord::Base
   end
 
   protected
+
+  def guess_main_file!
+    regex = POTENTIAL_FILE_EXTENSIONS.collect do |ext|
+      Regexp.escape ext
+    end.join("|").gsub("\\", "\\\\\\")
+
+    potential_matches = file_entries.all(
+      :conditions => ["client_file_entries.file_name REGEXP '((#{regex})$)' AND level <= 2"],
+      :order => "level ASC, file_name ASC",
+      :limit => 10)
+
+    return if potential_matches.empty?
+
+    result = potential_matches.first.file_name
+
+    catch :found do
+      potential_matches.each do |match|
+        %w{simpleclient client myclient main start run}.each do |name|
+          if /\/(#{name})\.[a-zA-Z]+\Z/ =~ match.file_name
+            result = match.file_name
+            throw :found
+          end
+        end
+      end
+    end
+
+    self.main_file_name = result
+    save!
+  end
 
   def calculate_level(filename)
     n = 0
