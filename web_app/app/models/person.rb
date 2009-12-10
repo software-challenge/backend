@@ -11,13 +11,12 @@ class Person < ActiveRecord::Base
   validates_presence_of :password_salt
   validates_presence_of :password_hash
 
-  validates_format_of :first_name, :with => /\A([a-z\säöüß]+)\Z/i, :message => "darf nur aus Buchstaben bestehen!"
-  validates_format_of :last_name, :with => /\A([a-z\säöüß]+)\Z/i, :message => "darf nur aus Buchstaben bestehen!"
-
-
   validates_uniqueness_of :email
   validates_presence_of :email
-  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :message => "Adresse ist keine korrekte Adresse!"
+  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :message => "ist keine korrekte Adresse!"
+
+  validates_presence_of :first_name
+  validates_presence_of :last_name
 
   validate_on_update :validate_at_least_one_admin
 
