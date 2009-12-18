@@ -59,7 +59,6 @@ module SoChaManager
         logger.warn "Tried to closed an already closed client."
       else
         self.done = true
-        @parser.finish
         @connection.close
       end
     rescue => e
@@ -80,7 +79,7 @@ module SoChaManager
         handler.call(success, data)
       end
     rescue => e
-      logger.error "Failed to invoke handler '#{handler}': #{e}"
+      logger.error "Failed to invoke handler '#{handler}': #{e.class.name}\n#{e}\n#{e.backtrace.join("\n")}"
     end
     
     def on_event(what, fragment)
@@ -116,6 +115,7 @@ module SoChaManager
           logger.warn "Timeout."
         rescue EOFError
           logger.info "EOF reached."
+          @parser.finish
         rescue => e
           logger.error "Could not read:\n#{e.class.name}: #{e}\n#{e.backtrace.join("\n")}"
         ensure

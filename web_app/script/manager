@@ -12,7 +12,7 @@ Signal.trap "INT" do
 end
 
 manager.connect!
-manager.play [["p1", "mip.zip"], ["p2", "nam.zip"]]
+manager.play [["p1", "./tmp/test/player1.zip", "run.exe"], ["p2", "./tmp/test/player2.zip", "run.exe"]]
 
 while !manager.done?
   sleep 0.1
