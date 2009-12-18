@@ -1,0 +1,21 @@
+$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+require 'so_cha_manager'
+
+puts "Running in stand-alone mode."
+  
+manager = SoChaManager::Manager.new
+
+Signal.trap "INT" do
+  puts "Terminating."
+  manager.close
+  exit
+end
+
+manager.connect!
+manager.play [["p1", "mip.zip"], ["p2", "nam.zip"]]
+
+while !manager.done?
+  sleep 0.1
+end
+
+puts "Done."
