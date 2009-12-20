@@ -19,8 +19,10 @@ ActionController::Routing::Routes.draw do |map|
       :play => :post,
       :reaggregate => :post,
       :reset => :post
-    } do |m|
-      m.resources :matches
+    } do |md|
+      md.resources :matches do |m|
+        m.resources :rounds
+      end
     end
     c.resources :contestants do |contestant|
       contestant.resources :clients
