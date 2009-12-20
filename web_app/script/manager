@@ -1,11 +1,13 @@
 puts "Running SCManager in stand-alone mode, Ctrl+C to quit."
 require File.join(File.dirname(__FILE__), '..', 'config', 'environment')
-  
+
+ActiveRecord::Base.logger = Logger.new(STDOUT)
 manager = SoChaManager::Manager.new
 
 Signal.trap "INT" do
-  puts "Terminating."
+  puts "Terminating..."
   manager.close
+  puts "Manager has been closed"
   exit 1
 end
 

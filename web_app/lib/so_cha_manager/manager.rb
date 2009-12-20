@@ -31,6 +31,12 @@ module SoChaManager
 
             reservations = response.xpath '//reservation'
             codes = reservations.collect(&:content)
+            room_id = response.root.attributes['roomId'].value
+            
+            puts "Observing the game."
+            @client.observe room_id do |success,response|
+              puts "ObservationRequest: #{success}"
+            end
 
             ActiveRecord::Base.benchmark "Preparing the Client VMs" do
               round.slots.each_with_index do |slot, i|
@@ -44,7 +50,7 @@ module SoChaManager
             @client.close
           end
         rescue => e
-          puts "An error occured: #{e}"
+          puts "An error occured:\n#{e}\n#{e.backtrace}"
           raise
         end
       end

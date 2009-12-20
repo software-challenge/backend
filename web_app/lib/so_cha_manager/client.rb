@@ -9,16 +9,19 @@ module SoChaManager
     def done?; @done; end
     def done=(x); @done=x; end
 
-    def self.method_with_callback(method, response, &block)
+    def self.method_with_callback(method, response = nil, options = {}, &block)
       define_method "__real__#{method}" do |*args|
-        self.instance_exec *args, &block
+        self.instance_exec(*args, &block)
       end
-    
+
+      class_name = options.delete(:class_name) || method
+      class_name = class_name.to_sym
+
       module_eval %{
         def #{method}(*args, &block)
           if block_given?
-            @response_handlers[:#{method}] = block
-            @response_handlers[:#{response}] = :#{method}
+            @response_handlers[:'#{class_name}'] = block
+            #{"@response_handlers[:'#{response}'] = :'#{class_name}'" if response}
           end
           self.__real__#{method}(*args)
         end
@@ -49,16 +52,18 @@ module SoChaManager
    
       write %{</prepare>}
     end
-    
-    def finalize
-      write "</object-stream>"
+
+    method_with_callback :observe, :joined, :class_name => :"sc.protocol.requests.ObservationRequest" do |game_id|
+      write %{<sc.protocol.requests.ObservationRequest gameId="#{game_id}" passphrase="swordfish" />}
     end
     
     def close
       if done?
-        logger.warn "Tried to closed an already closed client."
+        logger.warn "Tried to close an already closed connection."
       else
+        logger.info "Closing client."
         self.done = true
+        write "</object-stream>"
         @connection.close
       end
     rescue => e
