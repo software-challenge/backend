@@ -14,6 +14,7 @@ class Matchday < ActiveRecord::Base
   has_many :slots, :class_name => "MatchdaySlot", :order => "position ASC"
   belongs_to :contest
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
+  has_many :mini_jobs, :through => :matches, :source => :job
 
   # delegates OR :through associations
   has_many :match_slots, :through => :slots
@@ -27,7 +28,7 @@ class Matchday < ActiveRecord::Base
   end
 
   def running?
-    !job.nil?
+    !job.nil? || !self.mini_jobs.empty?
   end
 
   def perform_delayed!

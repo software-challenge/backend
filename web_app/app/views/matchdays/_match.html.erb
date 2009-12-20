@@ -4,12 +4,13 @@
   <td><%= match.slots[1].name || "Freispiel" %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
-      <%= match.main_result.join(" : ") %>
+      <% link_to [match.contest, match.matchday, match] do %>
+        <%= match.main_result.join(" : ") %>
+      <% end %>
+    <% elsif match.running? %>
+      <%= image_tag 'ui/spinner.gif' %>
     <% else %>
       <em>Kein Ergebnis</em>
     <% end %>
-  </td>
-  <td style="text-align: center;">
-    <%= link_to "Details", contest_matchday_match_url(match.contest, match.matchday, match) %>
   </td>
 </tr>

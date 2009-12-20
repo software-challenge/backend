@@ -131,6 +131,11 @@ class ContestsController < ApplicationController
           unless fragment_data[:name].blank? #skip blank fields
             @fragment = definition.fragments.build(fragment_data)            
           end
+        elsif fragment_data[:name].blank?
+          id = fragment_data.delete :id
+          @fragment = definition.fragments.find(id)
+          @fragment.destroy
+          @fragment = nil
         else
           id = fragment_data.delete :id
           @fragment = definition.fragments.find(id)

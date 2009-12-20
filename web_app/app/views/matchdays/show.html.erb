@@ -1,7 +1,7 @@
 <% if current_user.administrator? %>
   <div id="actions">
     <% if @matchday.running? %>
-      Aktiv
+      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %>
     <% else %>
       <% if @matchday.played? %>
         <% link_to reaggregate_contest_matchday_url(@contest, @matchday), :method => "post", :title => "Neu zusammenrechnen", :id => "reaggregateAction" do %>
@@ -41,12 +41,13 @@
   <% end %>
 </div>
 
-<p>
+<div style="color: #aaa; font-size: 11px; margin: 1em 0 0 0;">
+  Der Spieltag wurde
   <% if @matchday.played? %>
-    Vor <%= distance_of_time_in_words_to_now(@matchday.played_at) %> durchgespielt<br/>
+    vor <%= distance_of_time_in_words_to_now(@matchday.played_at) %> durchgespielt und
   <% end %>
-  Vor <%= distance_of_time_in_words_to_now(@matchday.updated_at) %> zuletzt aktualisiert
-</p>
+  vor <%= distance_of_time_in_words_to_now(@matchday.updated_at) %> zuletzt aktualisiert.
+</div>
 
 <script type="text/javascript">
   $(document).ready(function() {

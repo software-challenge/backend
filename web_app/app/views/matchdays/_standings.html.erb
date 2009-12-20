@@ -1,17 +1,19 @@
-<table style="width: 100%;">
-  <tr>
-    <th>&nbsp;</th>
-    <th>Spieler</th>
+<table style="width: 100%; border-spacing: 0;">
+  <tr style="font-size: 11px;">
+    <th>Platz</th>
+    <th style="text-align: left;">Spieler</th>
+    <th>Spiele</th>
     <% @contest.match_score_definition.fragments.each do |f| %>
       <th><%= f.name %></th>
     <% end %>
   </tr>
-  <% matchday.slots.each do |slot| %>
-    <tr>
-      <td><%= slot.position %>.</td>
-      <td><%= slot.contestant.name %></td>
+  <% matchday.slots.each_with_index do |slot,i| %>
+    <tr style="background-color: <%= i.odd? ? '#f8f8f8': '#fff' %>; line-height: 2em;">
+      <td style="text-align: center;"><%= slot.position %></td>
+      <td><%= link_to slot.contestant.name, [@contest, slot.contestant] %></td>
+      <td style="text-align: center;"><%= slot.contestant.matchdays.played.count %></td>
       <% slot.score.to_a_with_precision.each do |value| %>
-        <td><%=h value %></td>
+        <td style="text-align: center;"><%=h value %></td>
       <% end %>
     </tr>
   <% end %>

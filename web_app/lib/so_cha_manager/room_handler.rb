@@ -59,8 +59,6 @@ module SoChaManager
     def parse_result(result)
       scores = []
 
-      puts result
-
       result.xpath('./score').each do |score_data|
         score = []
         score_data.xpath('./part').each do |part|

@@ -24,37 +24,46 @@
 
 <div id="tabs" style="margin: 0 -10px;">
   <ul>
-    <li><a href="#calendar">Kalender</a></li>
     <% unless @matchdays.empty? %>
       <li><a href="#list">Liste</a></li>
-      <% if last_played_matchday %>
-        <li><a href="#standings">Rangliste</a></li>
-      <% end %>
+    <% end %>
+
+    <% if false %>
+      <li><a href="#calendar">Kalender</a></li>
+    <% end %>
+
+    <% if last_played_matchday %>
+      <li><a href="#standings">Rangliste</a></li>
     <% end %>
   </ul>
-  <div id="calendar">
-    <%= render :partial => "calendar" %>
-  </div>
+
   <% unless @matchdays.empty? %>
     <div id="list">
       <%= render :partial => "listing" %>
     </div>
-
-    <% if last_played_matchday %>
-      <div id="standings">
-        <%= render :partial => "standings", :locals => { :matchday => last_played_matchday } %>
-        <p style="text-align: right; font-size: 11px; color: #666; margin: 0.5em 0 0 0;">
-          Stand: <%= last_played_matchday.position %>. Spieltag, <%= l(last_played_matchday.when, :format => :long) %>
-        </p>
-      </div>
-    <% end %>
   <% end %>
+
+  <% if false %>
+    <div id="calendar">
+      <%= render :partial => "calendar" %>
+    </div>
+  <% end %>
+
+  <% if last_played_matchday %>
+    <div id="standings">
+      <%= render :partial => "standings", :locals => { :matchday => last_played_matchday } %>
+    </div>
+  <% end %>
+
 </div>
 
+<% if last_played_matchday %>
+  <p style="text-align: right; font-size: 11px; color: #666; margin: 1em 0 0 0;">
+    Stand: <%= last_played_matchday.position %>. Spieltag, <%= l(last_played_matchday.when, :format => :long) %>
+  </p>
+<% end %>
+
 <script type='text/javascript'>
-  $(document).ready(function() {
-    $('#tabs').tabs();
-  });
   $(document).ready(function() {
     var locale = $.datepicker.regional['de'];
     var calSettings = {};
@@ -63,6 +72,7 @@
       ,buttonText: {today: "Heute"}
       ,events: '<%= contest_matchdays_url(@contest, :format => "json", :calendar => true) %>'
     });
-    $('#calendar-widget').fullCalendar(calSettings);
+    //$('#calendar-widget').fullCalendar(calSettings);
+    $('#tabs').tabs();
   });
 </script>

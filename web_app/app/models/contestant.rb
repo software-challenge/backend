@@ -9,6 +9,7 @@ class Contestant < ActiveRecord::Base
   has_many :people, :through => :memberships
 
   has_many :slots, :class_name => "MatchdaySlot"
+  has_many :matchdays, :through => :slots
 
   belongs_to :current_client, :class_name => "Client"
 

@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/1">
+        <file>file:/Z:/Workspace/sc2010/se/web_app/app/models/match.rb</file>
+        <file>file:/Z:/Workspace/sc2010/se/web_app/app/models/matchday.rb</file>
+        <file>file:/Z:/Workspace/sc2010/se/web_app/app/models/round.rb</file>
+        <file>file:/Z:/Workspace/sc2010/se/web_app/lib/so_cha_manager/manager.rb</file>
+        <file>file:/Z:/Workspace/sc2010/se/web_app/lib/so_cha_manager/room_handler.rb</file>
+        <file>file:/Z:/Workspace/sc2010/se/web_app/script/manager</file>
+    </open-files>
 </project-private>

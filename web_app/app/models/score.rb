@@ -9,6 +9,7 @@ class Score < ActiveRecord::Base
 
   def set!(values)
     raise "values must be an Array" unless values.is_a? Array
+    raise "expected values to have #{definition.fragments.count} values, but was #{values.count}" unless definition.fragments.count == values.count
 
     Score.transaction do
       fragments.destroy_all

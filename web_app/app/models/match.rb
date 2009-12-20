@@ -19,6 +19,7 @@ class Match < ActiveRecord::Base
   alias :matchday :set
   alias :matchday= :set=
   def played?; played_at; end
+  def running?; !job.nil?; end
 
   def result
     result = scores.all
