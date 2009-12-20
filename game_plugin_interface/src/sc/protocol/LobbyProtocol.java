@@ -17,6 +17,7 @@ import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.MementoPacket;
+import sc.protocol.responses.ObservationResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.protocol.responses.RoomPacket;
 import sc.shared.GameResult;
@@ -37,7 +38,7 @@ public abstract class LobbyProtocol
 				ErrorResponse.class, GamePausedEvent.class,
 				JoinGameResponse.class, LeftGameEvent.class,
 				MementoPacket.class, PrepareGameResponse.class,
-				RoomPacket.class }));
+				ObservationResponse.class, RoomPacket.class }));
 
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
 				AuthenticateRequest.class, CancelRequest.class,

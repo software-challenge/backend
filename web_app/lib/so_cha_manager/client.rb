@@ -53,8 +53,8 @@ module SoChaManager
       write %{</prepare>}
     end
 
-    method_with_callback :observe, :joined, :class_name => :"sc.protocol.requests.ObservationRequest" do |game_id|
-      write %{<sc.protocol.requests.ObservationRequest gameId="#{game_id}" passphrase="swordfish" />}
+    method_with_callback :observe, :observed do |room_id, passphrase|
+      write %{<observe roomId="#{room_id}" passphrase="#{passphrase}" />}
     end
     
     def close

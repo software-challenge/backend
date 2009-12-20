@@ -34,7 +34,7 @@ module SoChaManager
             room_id = response.root.attributes['roomId'].value
             
             puts "Observing the game."
-            @client.observe room_id do |success,response|
+            @client.observe room_id, "swordfish" do |success,response|
               puts "ObservationRequest: #{success}"
             end
 
