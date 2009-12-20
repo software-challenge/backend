@@ -111,7 +111,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 			{
 				// TODO: check permissions
 				ObservationRequest observe = (ObservationRequest) packet;
-				GameRoom room = this.gameManager.findRoom(observe.getGameId());
+				GameRoom room = this.gameManager.findRoom(observe.getRoomId());
 				room.addObserver(source);
 			}
 			else if (packet instanceof PauseGameRequest)

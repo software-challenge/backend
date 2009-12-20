@@ -20,6 +20,7 @@ import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.MementoPacket;
+import sc.protocol.responses.ObservationResponse;
 import sc.protocol.responses.RoomPacket;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -415,6 +416,7 @@ public class GameRoom implements IGameListener
 		ObserverRole role = new ObserverRole(source, this);
 		source.addRole(role);
 		this.observers.add(role);
+		source.send(new ObservationResponse(getId()));
 	}
 
 	public synchronized void onReservationClaimed(Client source,

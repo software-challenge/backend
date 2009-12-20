@@ -1,7 +1,9 @@
 package sc.protocol.requests;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+@XStreamAlias("freeReservation")
 public class FreeReservationRequest implements ILobbyRequest
 {
 	@XStreamAsAttribute

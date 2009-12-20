@@ -1,25 +1,26 @@
 package sc.protocol.requests;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-
+@XStreamAlias("observe")
 public class ObservationRequest implements ILobbyRequest
 {
 	@XStreamAsAttribute
-	private String	gameId;
+	private String	roomId;
 	
 	@XStreamAsAttribute
 	private String	passphrase;
 
-	public ObservationRequest(String gameId, String passphrase)
+	public ObservationRequest(String roomId, String passphrase)
 	{
-		this.gameId = gameId;
+		this.roomId = roomId;
 		this.passphrase = passphrase;
 	}
 	
-	public String getGameId()
+	public String getRoomId()
 	{
-		return this.gameId;
+		return this.roomId;
 	}
 	
 	public String getPassphrase()

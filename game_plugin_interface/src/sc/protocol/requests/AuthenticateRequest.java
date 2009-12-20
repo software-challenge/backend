@@ -7,15 +7,15 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class AuthenticateRequest implements ILobbyRequest
 {
 	@XStreamAsAttribute
-	private String	password;
+	private String	passphrase;
 
-	public AuthenticateRequest(String password)
+	public AuthenticateRequest(String passphrase)
 	{
-		this.password = password;
+		this.passphrase = passphrase;
 	}
 
 	public String getPassword()
 	{
-		return this.password;
+		return this.passphrase;
 	}
 }
