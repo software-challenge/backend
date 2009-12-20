@@ -36,6 +36,11 @@ class Client < ActiveRecord::Base
     contestant.current_client == self
   end
 
+  def java?
+    # FIXME: implement selection
+    true
+  end
+
   protected
 
   def guess_main_file!

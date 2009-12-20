@@ -7,6 +7,8 @@ class Round < ActiveRecord::Base
   has_many :slots, :class_name => "RoundSlot", :dependent => :destroy, :order => "position"
   has_many :scores, :through => :slots
 
+  has_attached_file :replay
+
   def played?; played_at; end
 
   def perform

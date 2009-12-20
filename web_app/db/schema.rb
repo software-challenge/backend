@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091210113209) do
+ActiveRecord::Schema.define(:version => 20091220174747) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -140,6 +140,9 @@ ActiveRecord::Schema.define(:version => 20091210113209) do
     t.datetime "played_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "replay_file_name"
+    t.string   "replay_content_type"
+    t.integer  "replay_file_size"
   end
 
   create_table "score_definition_fragments", :force => true do |t|

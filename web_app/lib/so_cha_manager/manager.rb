@@ -3,7 +3,9 @@ module SoChaManager
   
   class Manager
     
-    IP = "127.0.0.1"
+    include Loggable
+
+    HOST = "127.0.0.1"
     PORT = 13050
     HUI = 'swc_2010_hase_und_igel'
     VM_WATCH_FOLDER = ENV['VM_WATCH_FOLDER']
@@ -16,8 +18,8 @@ module SoChaManager
       end
     end
     
-    def connect!(ip = IP, port = PORT, game = HUI)
-      @ip, @port, @game = ip, port, game
+    def connect!(ip = HOST, port = PORT, game = HUI)
+      @host, @port, @game = ip, port, game
       @client = Client.new ip, port
     end
 
@@ -31,26 +33,64 @@ module SoChaManager
 
             reservations = response.xpath '//reservation'
             codes = reservations.collect(&:content)
-            room_id = response.root.attributes['roomId'].value
+            room_id = response.attributes['roomId'].value
             
             puts "Observing the game."
-            @client.observe room_id, "swordfish" do |success,response|
-              puts "ObservationRequest: #{success}"
+            logfile = Tempfile.new("#{Time.now.to_i}_log_#{round.id}.xml.gz")
+            gzip_logfile = Zlib::GzipWriter.open(logfile.path)
+
+            room_handler = ObservingRoomHandler.new gzip_logfile do
+              begin
+                puts "Logging done!"
+                gzip_logfile.close
+                logfile.close
+
+                round.replay = logfile.open
+                round.save!
+              ensure
+                logfile.close unless logfile.closed?
+                logfile.unlink
+              end
             end
 
+            @client.observe room_id, "swordfish" do |success,response|
+              puts "ObservationRequest: #{success}"
+              
+              if success
+                @client.register_room_handler room_id, room_handler
+              end
+            end
+
+            # TODO: wait for observation response
+
+            zip_files = []
             ActiveRecord::Base.benchmark "Preparing the Client VMs" do
-              round.slots.each_with_index do |slot, i|
-                start_client(slot, codes[i])
+              zip_files = round.slots.zip(codes).collect do |slot, code|
+                start_client(slot, code)
               end
             end
 
             puts "All clients have been prepared"
+            zip_files.each { |path| puts path }
+
+            unless RAILS_ENV.to_s == "production"
+              puts "Starting clients without VM"
+              zip_files.each do |file|
+                Thread.new do
+                  begin
+                    run_without_vm!(file)
+                  rescue => e
+                    logger.log_formatted_exception e
+                  end
+                end
+              end
+            end
           else
             puts "Couldn't prepare game!"
             @client.close
           end
         rescue => e
-          puts "An error occured:\n#{e}\n#{e.backtrace}"
+          puts "An error occured:\n#{e}\n#{e.backtrace.join("\n")}"
           raise
         end
       end
@@ -66,29 +106,64 @@ module SoChaManager
     
     protected
 
+    def run_without_vm!(path)
+      # make it absolute
+      path = File.expand_path(path)
+
+      # assert that we have the output directory
+      output_directory = File.join(RAILS_ROOT, 'tmp', 'vmwatch_extract')
+      Dir.mkdir output_directory unless File.directory? output_directory
+
+      # create a directory to extrat the zip file
+      directory = File.join(output_directory, File.basename(path))
+      Dir.mkdir directory
+
+      # extract
+      puts "Extracting AI program..."
+      full_output_path = File.expand_path(directory)
+      `unzip #{path} -d #{full_output_path}`
+      raise "failed to unzip" unless $?.exitstatus == 0
+
+      puts "Starting AI program..."
+      `sh -c "cd #{full_output_path}; ./startup.sh"`
+      puts "AI program has been executed and returned (exitcode: #{$?.exitstatus})"
+    end
+
     def start_client(slot, reservation)
       puts "Starting client (id=#{slot.client.id}) for '#{slot.name}'"
 
-      file = slot.client.file.path
-      executable = File.join(".", slot.client.main_file_entry.file_name)
+      ai_program = slot.client
+      file = ai_program.file.path
+
+      # add "./" as a prefix
+      executable = ai_program.main_file_entry.file_name
+
+      if ai_program.java?
+        executable = "java -Dfile.encoding=UTF-8 -jar #{executable}"
+      else
+        executable = File.join(".", executable)
+      end
 
       # clone the zip-file
       zip_file = copy_to_temp_file(file, "executable.zip")
       zip = Zip::ZipFile.open(zip_file.path)
 
       # attach startup.sh
-      startup = attach_startup_sh(zip, "#{executable} --host 192.168.56.2 --port 12345 --reservation #{reservation}")
-      zip.close
+      startup = attach_startup_sh(zip, "#{executable} --host #{@host} --port #{@port} --reservation #{reservation}")
+      zip.close # writes startup into zip-file
       startup.unlink
 
       # move zip file to WATCH folder
-      move_to_watch_folder(zip_file.path, slot.ingame_name)
-      zip_file.unlink
+      returning move_to_watch_folder(zip_file.path, slot.ingame_name) do
+        zip_file.unlink
+      end
     end
     
     def move_to_watch_folder(file_path, key = "undefined")
       file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
-      File.copy(file_path, File.join(VM_WATCH_FOLDER, file_name), true)
+      target = File.expand_path(File.join(VM_WATCH_FOLDER, file_name))
+      File.copy(file_path, target, true)
+      return target
     end
     
     # Attaches the required startup.sh file to the
@@ -136,7 +211,6 @@ module SoChaManager
       raise "FileSize does not match! was: #{dest_size}, expected: #{src_size}" unless dest_size == src_size
       
       return dest
-      
     end
   end
 end

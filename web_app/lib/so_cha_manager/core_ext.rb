@@ -21,3 +21,12 @@ class Object
     ret
   end
 end
+
+class Logger
+  def log_formatted_exception(exception)
+    fatal(
+      "\n\n#{exception.class} (#{exception.message}):\n    " +
+        exception.backtrace.join("\n    ") + "\n\n"
+    )
+  end
+end

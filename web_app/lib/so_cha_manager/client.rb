@@ -33,6 +33,7 @@ module SoChaManager
       @processor = XmlFragmentReader.new { |*args| on_event(*args) }
       @parser = Nokogiri::XML::SAX::PushParser.new(@processor, 'utf-8')
       @response_handlers = {}
+      @room_handlers = {}
       @done = false
       start
     end
@@ -56,7 +57,11 @@ module SoChaManager
     method_with_callback :observe, :observed do |room_id, passphrase|
       write %{<observe roomId="#{room_id}" passphrase="#{passphrase}" />}
     end
-    
+
+    def register_room_handler(room_id, handler)
+      @room_handlers[room_id] = handler
+    end
+
     def close
       if done?
         logger.warn "Tried to close an already closed connection."
@@ -67,7 +72,7 @@ module SoChaManager
         @connection.close
       end
     rescue => e
-      logger.error e
+      logger.log_formatted_exception e
     end
     
     protected
@@ -84,21 +89,37 @@ module SoChaManager
         handler.call(success, data)
       end
     rescue => e
-      logger.error "Failed to invoke handler '#{handler}': #{e.class.name}\n#{e}\n#{e.backtrace.join("\n")}"
+      logger.log_formatted_exception e
+    end
+
+    def invoke_room_handler(room_id, data)
+      handler = @room_handlers[room_id]
+
+      unless handler
+        logger.warn "no room handler registered for #{room_id}"
+        return
+      end
+
+      handler.on_data(data)
+    rescue => e
+      logger.log_formatted_exception e
     end
     
-    def on_event(what, fragment)
-      logger.info "Event '#{what}' received"
+    def on_event(what, document)
+      logger.debug "Event '#{what}' received"
       
       case what
-        when "error"
-          caused_by = fragment.xpath('//originalRequest').first.attributes['class'].value
-          invoke_handler(caused_by, false, fragment)
-        else
-          invoke_handler(what, true, fragment)
+      when "error"
+        caused_by = document.root.xpath('./originalRequest').first.attributes['class'].value
+        invoke_handler(caused_by, false, document.root)
+      when "room"
+        room_id = document.root.attributes['roomId'].value
+        invoke_room_handler(room_id, document.root.xpath('./*').first)
+      else
+        invoke_handler(what, true, document.root)
       end
     rescue => e
-      logger.warn "EventProcessing failed: #{e}, #{e.backtrace.join("\n")}"
+      logger.log_formatted_exception e
     end
     
     def start
