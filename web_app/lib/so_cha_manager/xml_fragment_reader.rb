@@ -62,11 +62,11 @@ module SoChaManager
           end
           
           if procs.count == 0
-            xml.__send__(name, hash)
+            xml.tag!(name, hash)
           elsif procs.count == 1 and procs.first.is_a? String
-            xml.__send__(name, procs.first, hash)
+            xml.tag!(name, procs.first, hash)
           else
-            xml.__send__(name, hash) do |xml|
+            xml.tag!(name, hash) do |xml|
               procs.each do |proc|
                 proc.call xml, []
               end
