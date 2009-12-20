@@ -1,21 +1,24 @@
-$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'so_cha_manager'
-
-puts "Running in stand-alone mode."
+puts "Running SCManager in stand-alone mode, Ctrl+C to quit."
+require File.join(File.dirname(__FILE__), '..', 'config', 'environment')
   
 manager = SoChaManager::Manager.new
 
 Signal.trap "INT" do
   puts "Terminating."
   manager.close
-  exit
+  exit 1
 end
 
-manager.connect!
-manager.play [["p1", "./tmp/test/player1.zip", "run.exe"], ["p2", "./tmp/test/player2.zip", "run.exe"]]
+Client.transaction do
+  manager.connect!
+  manager.play Match.find(142).rounds.first
+end
 
+# we must respond to TRAP/SIGINT for Ctrl+C
+# so we can't just do an io-wait
 while !manager.done?
   sleep 0.1
 end
 
 puts "Done."
+exit 0

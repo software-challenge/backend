@@ -8,9 +8,14 @@ class RoundSlot < ActiveRecord::Base
 
   acts_as_list :scope => :round_id
 
-  delegate :name, :to => :match_slot
+  delegate :name, :matchday_slot, :to => :match_slot
+  delegate :client, :contestant, :to => :matchday_slot
 
   def reset!
     score.destroy if score
+  end
+
+  def ingame_name
+    name.parameterize
   end
 end

@@ -11,4 +11,9 @@ class MatchdaySlot < ActiveRecord::Base
   has_many :matches, :through => :match_slot
 
   acts_as_list :scope => :matchday_id
+
+  # TODO: this is a hack for testing
+  def client
+    Client.find(1)
+  end
 end

@@ -2,6 +2,7 @@
 
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.4' unless defined? RAILS_GEM_VERSION
+ENV['VM_WATCH_FOLDER'] = File.join(File.dirname(__FILE__), '..', 'tmp', 'vmwatch')
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -41,6 +42,10 @@ Rails::Initializer.run do |config|
   config.i18n.load_path += Dir[Rails.root.join('config', 'locales', 'rails', '*.{rb,yml}')]
   config.i18n.load_path += Dir[Rails.root.join('config', 'locales', 'models', '*.{rb,yml}')]
   config.i18n.default_locale = :de
+
+  config.after_initialize do
+    require 'so_cha_manager'
+  end
 end
 
 require 'array_permute'

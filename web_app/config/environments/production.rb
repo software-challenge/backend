@@ -26,3 +26,5 @@ config.action_view.cache_template_loading            = true
 
 # Enable threaded mode
 # config.threadsafe!
+
+ENV['VM_WATCH_FOLDER'] = File.join(File.dirname(__FILE__), '..', 'public', 'system', 'vmwatch')
