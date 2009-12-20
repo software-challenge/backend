@@ -10,6 +10,8 @@ class Match < ActiveRecord::Base
   validates_presence_of :set
 
   belongs_to :set, :polymorphic => true
+  belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
+
   has_many :slots, :class_name => "MatchSlot", :dependent => :destroy, :order => "position"
   has_many :rounds, :dependent => :destroy
   has_many :scores, :through => :slots
@@ -43,6 +45,12 @@ class Match < ActiveRecord::Base
 
   def score_definition
     contest.match_score_definition
+  end
+
+  def perform_delayed!
+    job_id = Delayed::Job.enqueue self
+    self.job = Delayed::Job.find(job_id)
+    save!
   end
   
   # Delayed::Job handler

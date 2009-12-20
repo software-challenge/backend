@@ -16,7 +16,7 @@ module SoChaManager
       when "memento"
         on_state(data.xpath('./*').first)
       when "result"
-        on_result(data.xpath('./*').first)
+        on_result(data)
       else
         puts "unknown event room-event '#{type}'"
       end
@@ -36,7 +36,7 @@ module SoChaManager
       append START_TAG
     end
 
-    attr_reader :data
+    attr_reader :data, :result
     
     def done?; @done; end
 
@@ -45,15 +45,32 @@ module SoChaManager
     end
 
     def on_result(result)
+      parse_result result
       append_normalized result
       append END_TAG
     ensure
       @done = true
       @data.flush
-      @callback.call if @callback
+      @callback.call(self) if @callback
     end
 
     protected
+
+    def parse_result(result)
+      scores = []
+
+      puts result
+
+      result.xpath('./score').each do |score_data|
+        score = []
+        score_data.xpath('./part').each do |part|
+          score << BigDecimal.new(part.content)
+        end
+        scores << score
+      end
+
+      @result = scores
+    end
 
     # use class-attribute as node-name
     # FIXME: removes other potential attributes!

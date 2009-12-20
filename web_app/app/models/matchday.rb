@@ -31,9 +31,9 @@ class Matchday < ActiveRecord::Base
   end
 
   def perform_delayed!
-    job_id = Delayed::Job.enqueue self
-    self.job = Delayed::Job.find(job_id)
-    save!
+    matches.each do |match|
+      match.perform_delayed!
+    end
   end
 
   # Delayed::Job handler

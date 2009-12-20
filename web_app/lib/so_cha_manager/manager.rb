@@ -10,6 +10,8 @@ module SoChaManager
     HUI = 'swc_2010_hase_und_igel'
     VM_WATCH_FOLDER = ENV['VM_WATCH_FOLDER']
 
+    attr_reader :last_result
+
     def initialize
       if !File.exists? VM_WATCH_FOLDER
         Dir.mkdir(VM_WATCH_FOLDER)
@@ -24,6 +26,7 @@ module SoChaManager
     end
 
     def play(round)
+      manager = self
       player_names = round.slots.collect(&:ingame_name)
 
       @client.prepare HUI, player_names do |success,response|
@@ -36,17 +39,29 @@ module SoChaManager
             room_id = response.attributes['roomId'].value
             
             puts "Observing the game."
-            logfile = Tempfile.new("#{Time.now.to_i}_log_#{round.id}.xml.gz")
+
+            logfile_name = "#{Time.now.to_i}_log_#{round.id}.xml.gz"
+            logfile = Tempfile.new(logfile_name)
             gzip_logfile = Zlib::GzipWriter.open(logfile.path)
 
-            room_handler = ObservingRoomHandler.new gzip_logfile do
+            room_handler = ObservingRoomHandler.new gzip_logfile do |observer|
               begin
                 puts "Logging done!"
                 gzip_logfile.close
                 logfile.close
 
-                round.replay = logfile.open
+                # add original_filename attribute for Paperclip
+                logfile_handle = logfile.open
+                def logfile_handle.original_filename=(x); @original_filename = x; end
+                def logfile_handle.original_filename; @original_filename; end
+                logfile_handle.original_filename = logfile_name
+
+                # save replay to database
+                round.replay = logfile_handle
                 round.save!
+
+                @last_result = observer.result
+                manager.close
               ensure
                 logfile.close unless logfile.closed?
                 logfile.unlink

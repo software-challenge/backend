@@ -13,13 +13,22 @@ end
 
 Client.transaction do
   manager.connect!
-  manager.play Match.find(142).rounds.first
+  manager.play Match.first.rounds.first
 end
 
 # we must respond to TRAP/SIGINT for Ctrl+C
 # so we can't just do an io-wait
 while !manager.done?
   sleep 0.1
+end
+
+if manager.last_result
+  puts "Results for a total of #{manager.last_result.count} players:"
+  manager.last_result.each_with_index do |score, i|
+    puts "Player #{i+1}: #{score.join(',')}"
+  end
+else
+  puts "no results"
 end
 
 puts "Done."

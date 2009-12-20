@@ -12,18 +12,18 @@ class Round < ActiveRecord::Base
   def played?; played_at; end
 
   def perform
-    x, y = rand(10), rand(10)
-    a, b = 0, 0
+    manager = SoChaManager::Manager.new
+    manager.connect!
+    manager.play self
 
-    if x > y
-      a = 1
-    elsif x < y
-      b = 1
+    while !manager.done?
+      sleep 0.1
     end
 
-    t1, t2 = rand(100), rand(100)
-
-    update_scores!([[a,x,t1], [b,y,t2]])
+    manager.close
+    
+    raise "no game result" unless manager.last_result
+    update_scores!(manager.last_result)
   end
 
   def reset!
