@@ -52,6 +52,7 @@
 
 		<touch file="${out.dir}/gui/start.bat" />
 		<echo message="java -Dfile.encoding=UTF-8 -jar SoftwareChallenge.jar" file="${out.dir}/gui/start.bat" />
+		<echo message="java -Dfile.encoding=UTF-8 -jar GameServer.jar" file="${out.dir}/server/start.bat" />
 
 		<echo message="Zipping files..." />
 
