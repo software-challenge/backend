@@ -1,8 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :people
+  map.resources :people, :as => "personen"
 
-  map.resources :contestants do |contestant|
-    contestant.resources :clients, :member => {
+  map.resources :contestants, :as => "teilnehmer" do |contestant|
+    contestant.resources :clients, :as => "computerspieler", :member => {
       :browse => :post,
       :select_main => :post,
       :select => :post
@@ -11,21 +11,25 @@ ActionController::Routing::Routes.draw do |map|
 
   map.administration '/administration', :controller => 'administration', :action => 'index'
 
-  map.resources :contests, :member => {
-    :refresh_matchdays => :post,
-    :reset_matchdays => :post,
+  map.resources :contests,
+    :as => "wettbewerbe",
+    :member => {
+      :refresh_matchdays => :post,
+      :reset_matchdays => :post,
   } do |c|
-    c.resources :matchdays, :member => {
-      :play => :post,
-      :reaggregate => :post,
-      :reset => :post
+    c.resources :matchdays, 
+      :as => "spieltage",
+      :member => {
+        :play => :post,
+        :reaggregate => :post,
+        :reset => :post
     } do |md|
       md.resources :matches do |m|
         m.resources :rounds
       end
     end
-    c.resources :contestants do |contestant|
-      contestant.resources :clients
+    c.resources :contestants, :as => "teilnehmer" do |contestant|
+      contestant.resources :clients, :as => "computerspieler"
     end
   end
 
