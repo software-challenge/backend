@@ -18,7 +18,6 @@ class Matchday < ActiveRecord::Base
 
   # delegates OR :through associations
   has_many :match_slots, :through => :slots
-  delegate :match_score_definition, :to => :contest
 
   # acts
   acts_as_list :scope => :contest_id
@@ -77,7 +76,7 @@ class Matchday < ActiveRecord::Base
   end
 
   def order_scoretable
-    definition_fragments = match_score_definition.fragments.all
+    definition_fragments = contest.game_definition.match_score.values
     joins = ["INNER JOIN scores AS order_scores ON order_scores.id = matchday_slots.score_id"]
 
     orders = []
@@ -106,9 +105,6 @@ class Matchday < ActiveRecord::Base
 
   def update_scoretable
     slots.each do |slot|
-      sandbox = Sandbox.new(contest.script_to_aggregate_matches)
-      sandbox.extend SoftwareChallenge::ScriptHelpers::Aggregate
-
       # elements = [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]
       elements = contest.matchdays(:reload).all(:conditions => ["played_at IS NOT NULL AND position < ?", position]).collect do |day|
         match_slot = day.match_slots(:reload).first(:conditions => ["matchday_slots.contestant_id = ?", slot.contestant.id])
@@ -126,16 +122,8 @@ class Matchday < ActiveRecord::Base
       logger.warn "array contained #{nil_count} nil elements" unless nil_count.zero?
       elements.compact!
       
-      result = sandbox.invoke(:locals => {:elements => elements})
-
-      if result.count != contest.match_score_definition.count
-        raise "result (#{result.count}) did not match definition (#{contest.match_score_definition.count})"
-      end
-
-      score = slot.score
-      unless score
-        slot.score = slot.build_score(:definition => contest.match_score_definition)
-      end
+      result = []
+      slot.score ||= slot.build_score
       slot.score.set!(result)
       slot.save!
     end

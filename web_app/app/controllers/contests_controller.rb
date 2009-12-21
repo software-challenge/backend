@@ -58,14 +58,10 @@ class ContestsController < ApplicationController
   # PUT /contests/1.xml
   def update
     @contest = Contest.find(params[:id])
-    @match_score_definition = @contest.match_score_definition || @contest.build_match_score_definition
-    @round_score_definition = @contest.round_score_definition || @contest.build_round_score_definition
 
     success = false
     begin
       Contest.transaction do
-        update_definition(@match_score_definition, params[:match_score_definition])
-        update_definition(@round_score_definition, params[:round_score_definition])
         @contest.update_attributes!(params[:contest])
       end
       success = true

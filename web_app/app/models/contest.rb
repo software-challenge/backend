@@ -7,8 +7,9 @@ class Contest < ActiveRecord::Base
   has_many :contestants, :dependent => :destroy
   has_many :matchdays, :dependent => :destroy
 
-  belongs_to :match_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
-  belongs_to :round_score_definition, :class_name => "ScoreDefinition", :dependent => :destroy
+  def game_definition
+    GameDefinition.all.first
+  end
 
   # through associations
 

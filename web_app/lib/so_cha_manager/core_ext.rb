@@ -71,3 +71,11 @@ def Dir.mktmpdir(prefix_suffix=nil, tmpdir=nil)
     path
   end
 end
+
+# easily create singleton-methods
+class ::Object
+  def define_singleton_method name, &body
+    singleton_class = class << self; self; end
+    singleton_class.send(:define_method, name, &body)
+  end
+end

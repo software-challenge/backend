@@ -98,21 +98,38 @@ class Match < ActiveRecord::Base
 
   def update_scoretable
     slots.each do |slot|
-      sandbox = Sandbox.new(set.contest.script_to_aggregate_rounds)
-      sandbox.extend SoftwareChallenge::ScriptHelpers::Aggregate
-
-      # elements = [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]
+      result = nil
+      me = slot.contestant
+      rounds = slot.rounds.all
+      
       other_slots = slots.reject{|item| item == slot}
       others = other_slots.collect{|other_slot| other_slot.round_score_array}
       mine = slot.round_score_array
-      result = sandbox.invoke(:locals => {:mine => mine, :others => others})
-
-      # raise "#{others.join(' ')} / #{mine.join(' ')}"
-
-      score = slot.score
-      unless score
-        slot.score = slot.build_score(:definition => set.contest.match_score_definition)
+      
+      # add some dynamic methods
+      contest.game_definition.round_score.values.each_with_index do |field, i|
+        others.collect do |other|
+          other.each do |score|
+            score.define_singleton_method field.name do
+              score[i]
+            end
+          end
+        end
+        mine.each do |my|
+          my.define_singleton_method field.name do
+            my[i]
+          end
+        end
       end
+      
+      result = []
+      contest.game_definition.match_score.each do |k,v|
+        if v.callback
+          result << v.callback.call(mine, others)
+        end
+      end
+
+      slot.score ||= slot.build_score
       slot.score.set!(result)
       slot.save!
     end

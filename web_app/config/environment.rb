@@ -14,8 +14,6 @@ Rails::Initializer.run do |config|
 
   # Add additional load paths for your own custom dirs
   # config.load_paths += %W( #{RAILS_ROOT}/extras )
-  GAME_DEFINITIONS = Dir[Rails.root.join('app', 'models', 'game_definitions', '*.rb')]
-  config.load_paths += GAME_DEFINITIONS
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"
@@ -48,10 +46,7 @@ Rails::Initializer.run do |config|
 
   config.after_initialize do
     require 'so_cha_manager'
-    GAME_DEFINITIONS.each do |file|
-      require file
-    end
-    puts "Installed games: " + GameDefinition.all.collect(&:game_identifier).join(', ')
+    require 'game_definition'
   end
 end
 

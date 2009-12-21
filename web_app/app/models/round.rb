@@ -8,22 +8,25 @@ class Round < ActiveRecord::Base
   has_many :scores, :through => :slots
 
   has_attached_file :replay
+  
+  delegate :contest, :to => :match
+  delegate :game_definition, :to => :contest
 
   def played?; played_at; end
 
   def perform
-    manager = SoChaManager::Manager.new
-    manager.connect!
-    manager.play self
+    #manager = SoChaManager::Manager.new
+    #manager.connect!
+    #manager.play self
 
-    while !manager.done?
-      sleep 0.1
-    end
+    #while !manager.done?
+    #  sleep 0.1
+    #end
 
-    manager.close
+    #manager.close
     
-    raise "no game result" unless manager.last_result
-    update_scores!(manager.last_result)
+    #raise "no game result" unless manager.last_result
+    update_scores!([[1,2,3,4], [2,3,4,5]])
   end
 
   def reset!
@@ -36,7 +39,7 @@ class Round < ActiveRecord::Base
   end
 
   def score_definition
-    match.matchday.contest.round_score_definition
+    game_definition.round_score
   end
 
   def update_scores!(new_scores)
@@ -46,7 +49,7 @@ class Round < ActiveRecord::Base
     Round.transaction do
       slots.each_with_index do |slot,index|
         unless slot.score
-          slot.score = slot.build_score(:definition => score_definition)
+          slot.score = slot.build_score
         end
         slot.score.set!(new_scores[index])
         slot.save!
