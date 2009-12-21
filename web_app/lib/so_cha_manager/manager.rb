@@ -133,14 +133,22 @@ module SoChaManager
       directory = File.join(output_directory, File.basename(path))
       Dir.mkdir directory
 
+      validate_zip_file(path)
+
       # extract
       puts "Extracting AI program..."
       full_output_path = File.expand_path(directory)
-      `unzip #{path} -d #{full_output_path}`
+      command = %{unzip -oqq #{path} -d #{full_output_path}}
+      puts command
+      system command
+      
       raise "failed to unzip" unless $?.exitstatus == 0
 
-      puts "Starting AI program..."
-      `sh -c "cd #{full_output_path}; ./startup.sh"`
+      puts "Starting AI program and waiting for termination..."
+      command = %{sh -c "cd #{full_output_path}; ./startup.sh"}
+      puts command
+      system command
+      
       puts "AI program has been executed and returned (exitcode: #{$?.exitstatus})"
     end
 
@@ -159,73 +167,56 @@ module SoChaManager
         executable = File.join(".", executable)
       end
 
-      # clone the zip-file
-      zip_file = copy_to_temp_file(file, "executable.zip")
-      zip = Zip::ZipFile.open(zip_file.path)
-
-      # attach startup.sh
-      startup = attach_startup_sh(zip, "#{executable} --host #{@host} --port #{@port} --reservation #{reservation}")
-      zip.close # writes startup into zip-file
-      startup.unlink
-
-      # move zip file to WATCH folder
-      returning move_to_watch_folder(zip_file.path, slot.ingame_name) do
-        zip_file.unlink
+      target = nil
+      
+      Dir.mktmpdir(File.basename(file)) do |dir|
+        command = %{unzip #{File.expand_path(file)} -d #{dir}}
+        puts command
+        system command
+        
+        startup_file = File.join(dir, 'startup.sh')
+        File.open(startup_file, 'w+') do |file|
+          file.puts("#!/bin/bash")
+          file.puts "#{executable} --host #{@host} --port #{@port} --reservation #{reservation}"
+          file.flush
+        end
+        
+        File.chmod(0766, startup_file)
+        
+        key = slot.ingame_name
+        generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
+        target = File.expand_path(File.join(VM_WATCH_FOLDER, generated_file_name))
+        
+        command = %{sh -c "cd #{dir}; zip -r #{target} ."}
+        puts command
+        system command
       end
+
+      target
     end
     
-    def move_to_watch_folder(file_path, key = "undefined")
-      file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
-      target = File.expand_path(File.join(VM_WATCH_FOLDER, file_name))
-      File.copy(file_path, target, true)
-      return target
-    end
-    
-    # Attaches the required startup.sh file to the
-    # +zip+ file and return the file-handle.
-    def attach_startup_sh(zip, cmd_line)
-      startup = Tempfile.new("startup.sh")
-      startup.puts("#!/bin/bash")
-      startup.puts(cmd_line)
-      startup.flush
-      startup.close
-      zip.add("startup.sh", startup.path)
-      startup
-    end
-    
-    # creates a Tempfile and writes the contents
-    # of the source file to it. Then returns the
-    # created Tempfile
-    def copy_to_temp_file(src_path, temp_id = "tmp")
-      raise "file does not exist" unless File.exist?(src_path)
+    def validate_zip_file(path)
+      # check zip for defects
+      puts "Checking zip-file for defects..."
+      command = %{unzip -t #{path}}
+      puts command
+      system command
       
-      src = File.open(src_path, "rb")
-      src.binmode
-      
-      dest = Tempfile.new(temp_id)
-      dest.binmode
-
-      src_size = File.size(src_path)
-      bytes_read = 0
-      chunk_size = 512.kilobytes
-
-      puts "#{src_path} -> #{dest.path}"
-
-      while bytes_read < src_size
-        buffer = src.sysread(chunk_size)
-        dest.syswrite(buffer)
-        bytes_read += chunk_size
+      # repair if broken
+      unless $?.exitstatus == 0
+        puts "Zip-file is broken. Trying to fix..."
+        
+        fixed_path = "#{path}.fixed"
+        command = %{zip -FF #{path} --out #{fixed_path}}
+        puts command
+        system command
+        
+        raise "Couldn't fix broken zip-file" unless $?.exitstatus == 0
+          
+        puts "Sucessfully fixed zip-file"
+        File.unlink(path)
+        File.move(fixed_path, path)
       end
-      
-      src.close
-      dest.flush
-      dest.close
-      
-      dest_size = File.size(dest.path)
-      
-      raise "FileSize does not match! was: #{dest_size}, expected: #{src_size}" unless dest_size == src_size
-      
-      return dest
     end
   end
 end
