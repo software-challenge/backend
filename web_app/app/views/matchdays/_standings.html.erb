@@ -6,6 +6,7 @@
     <% @contest.match_score_definition.fragments.each do |f| %>
       <th><%= f.name %></th>
     <% end %>
+    <th>&Delta;</th>
   </tr>
   <% matchday.slots.each_with_index do |slot,i| %>
     <tr style="background-color: <%= i.odd? ? '#f8f8f8': '#fff' %>; line-height: 2em;">
@@ -15,6 +16,19 @@
       <% slot.score.to_a_with_precision.each do |value| %>
         <td style="text-align: center;"><%=h value %></td>
       <% end %>
+      <td style="text-align: center;">
+        <% previous_position = slot.previous_position %>
+        <% if previous_position %>
+          <% diff = previous_position - slot.position %>
+          <% if diff > 0 %>
+            <span style="font-size: 10px; color: #090; font-weight: bold;">+<%= diff %></span>
+          <% elsif diff < 0 %>
+            <span style="font-size: 10px; color: #f00; font-weight: bold;"><%= diff %></span>
+          <% else %>
+            <span style="font-size: 10px; color: #999;">&plusmn;0</span>
+          <% end %>
+        <% end %>
+      </td>
     </tr>
   <% end %>
 </table>

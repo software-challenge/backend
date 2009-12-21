@@ -100,6 +100,10 @@ class Matchday < ActiveRecord::Base
     end
   end
 
+  def previous
+    contest.matchdays.first(:conditions => ["position < ?", position], :order => "position DESC")
+  end
+
   def update_scoretable
     slots.each do |slot|
       sandbox = Sandbox.new(contest.script_to_aggregate_matches)

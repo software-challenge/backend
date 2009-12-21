@@ -12,8 +12,13 @@ class MatchdaySlot < ActiveRecord::Base
 
   acts_as_list :scope => :matchday_id
 
-  # TODO: this is a hack for testing
-  def client
-    Client.find(1)
+  def previous_position
+    previous_matchday = matchday.previous
+    return nil unless previous_matchday
+
+    slot = previous_matchday.slots.first(:conditions => { :contestant_id => contestant.id })
+    return nil unless slot
+
+    slot.position
   end
 end
