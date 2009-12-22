@@ -81,9 +81,9 @@ class Matchday < ActiveRecord::Base
 
     orders = []
     definition_fragments.each_with_index do |fragment, i|
-      if fragment.orders?
-        orders << "fragment_#{i}.value #{fragment.direction.upcase}"
-        joins << ("INNER JOIN score_fragments AS fragment_#{i} ON (fragment_#{i}.score_id = order_scores.id AND fragment_#{i}.definition_id = #{fragment.id})")
+      if fragment.ordering
+        orders << "fragment_#{i}.value #{fragment.ordering.upcase}"
+        joins << ("INNER JOIN score_fragments AS fragment_#{i} ON (fragment_#{i}.score_id = order_scores.id AND fragment_#{i}.fragment = '#{fragment.name.to_s}')")
       end
     end
 
@@ -122,8 +122,9 @@ class Matchday < ActiveRecord::Base
       logger.warn "array contained #{nil_count} nil elements" unless nil_count.zero?
       elements.compact!
       
-      result = []
-      slot.score ||= slot.build_score
+      result = contest.game_definition.aggregate_matches(elements)
+
+      slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "match_score")
       slot.score.set!(result)
       slot.save!
     end

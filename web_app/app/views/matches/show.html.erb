@@ -98,8 +98,8 @@
   </tr>
 </table>
 
-<% match_score_fragments = @match.score_definition.fragments.count %>
-<% round_score_fragments = @contest.round_score_definition.fragments.count %>
+<% match_score_fragments = @contest.game_definition.match_score.count %>
+<% round_score_fragments = @contest.game_definition.round_score.count %>
 <% max_fragments = [round_score_fragments, match_score_fragments].max %>
 <% match_colspan = 1 + [0, max_fragments - match_score_fragments].max %>
 <% round_colspan = 1 + [0, max_fragments - round_score_fragments].max %>
@@ -112,7 +112,7 @@
   </tr>
   <tr>
     <th colspan="<%= match_colspan %>">&nbsp;</th>
-    <% @match.score_definition.fragments.each do |fragment| %>
+    <% @contest.game_definition.match_score.each do |k,fragment| %>
       <th><%=h fragment.name %></th>
     <% end %>
   </tr>
@@ -142,7 +142,7 @@
   </tr>
   <tr>
     <th colspan="<%= round_colspan %>">&nbsp;</th>
-    <% @contest.round_score_definition.fragments.each do |fragment| %>
+    <%@contest.game_definition.round_score.each do |k,fragment| %>
       <th><%=h fragment.name %></th>
     <% end %>
   </tr>

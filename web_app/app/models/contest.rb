@@ -2,12 +2,14 @@ class Contest < ActiveRecord::Base
   validates_presence_of :name
   validates_associated :round_score_definition
   validates_associated :match_score_definition
-  validates_numericality_of :rounds_per_match, :greater_than => 0, :less_than => 100
+
+  validates_inclusion_of :game_definition, :in => %w{HaseUndIgel}
 
   has_many :contestants, :dependent => :destroy
   has_many :matchdays, :dependent => :destroy
 
   def game_definition
+    # FIXME: use attribute
     GameDefinition.all.first
   end
 
@@ -45,17 +47,17 @@ class Contest < ActiveRecord::Base
             end
           end
           round_count = 0
-          while round_count < rounds_per_match
+          while round_count < game_definition.league.rounds
             (0...match.slots.count).to_a.permute do |permutation|
               round_count = round_count + 1
               round = match.rounds.create!
               permutation.each do |slot_index|
                 round.slots.create!(:match_slot => match.slots[slot_index])
               end
-              break if round_count >= rounds_per_match
+              break if round_count >= game_definition.league.rounds
             end
           end
-          (1..rounds_per_match).each do
+          (1..game_definition.league.rounds).each do
             
           end
         end

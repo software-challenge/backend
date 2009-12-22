@@ -115,7 +115,7 @@ class MatchdaysController < ApplicationController
       flash[:error] = "Der Spieltag wurde bereits gespielt."
     else
       Matchday.transaction do
-        if @matchday.perform#_delayed!
+        if @matchday.perform_delayed!
           flash[:notice] = "Der Auftrag wurde erfolgreich gestartet."
         else
           flash[:error] = "Konnte den Auftrag nicht starten."

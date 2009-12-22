@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091220174747) do
+ActiveRecord::Schema.define(:version => 20091221222930) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -45,11 +45,7 @@ ActiveRecord::Schema.define(:version => 20091220174747) do
     t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "match_score_definition_id"
-    t.integer  "round_score_definition_id"
-    t.integer  "rounds_per_match",            :default => 1
-    t.text     "script_to_aggregate_rounds"
-    t.text     "script_to_aggregate_matches"
+    t.string   "game_definition"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -145,31 +141,17 @@ ActiveRecord::Schema.define(:version => 20091220174747) do
     t.integer  "replay_file_size"
   end
 
-  create_table "score_definition_fragments", :force => true do |t|
-    t.string  "name"
-    t.integer "definition_id"
-    t.boolean "main",                                          :default => false, :null => false
-    t.integer "position"
-    t.decimal "example_value", :precision => 63, :scale => 10
-    t.integer "precision",                                     :default => 0,     :null => false
-    t.string  "direction"
-  end
-
-  create_table "score_definitions", :force => true do |t|
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "score_fragments", :force => true do |t|
-    t.integer "definition_id"
     t.integer "score_id"
-    t.decimal "value",         :precision => 63, :scale => 10
+    t.decimal "value",    :precision => 63, :scale => 10
+    t.string  "fragment"
   end
 
   create_table "scores", :force => true do |t|
-    t.integer  "definition_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "game_definition"
+    t.string   "score_type"
   end
 
 end

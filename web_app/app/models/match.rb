@@ -34,9 +34,11 @@ class Match < ActiveRecord::Base
     result = scores.all
     return nil if result.empty?
 
+    main_field = contest.game_definition.match_score_main_field
     result.collect do |score|
-      score.fragments.first(:joins => "INNER JOIN score_definition_fragments sdf ON sdf.id = score_fragments.definition_id",
-        :order => "sdf.main DESC, sdf.position ASC").value_with_precision
+      score_fragment = score.fragments.first(:conditions => { :fragment => main_field.to_s })
+      raise "main score_fragment #{main_field} not found" unless score_fragment
+      score_fragment.value_with_precision
     end
   end
 
@@ -98,38 +100,13 @@ class Match < ActiveRecord::Base
 
   def update_scoretable
     slots.each do |slot|
-      result = nil
-      me = slot.contestant
-      rounds = slot.rounds.all
-      
       other_slots = slots.reject{|item| item == slot}
       others = other_slots.collect{|other_slot| other_slot.round_score_array}
       mine = slot.round_score_array
       
-      # add some dynamic methods
-      contest.game_definition.round_score.values.each_with_index do |field, i|
-        others.collect do |other|
-          other.each do |score|
-            score.define_singleton_method field.name do
-              score[i]
-            end
-          end
-        end
-        mine.each do |my|
-          my.define_singleton_method field.name do
-            my[i]
-          end
-        end
-      end
-      
-      result = []
-      contest.game_definition.match_score.each do |k,v|
-        if v.callback
-          result << v.callback.call(mine, others)
-        end
-      end
+      result = contest.game_definition.aggregate_rounds(mine, others)
 
-      slot.score ||= slot.build_score
+      slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "match_score")
       slot.score.set!(result)
       slot.save!
     end

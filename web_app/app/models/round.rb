@@ -15,18 +15,18 @@ class Round < ActiveRecord::Base
   def played?; played_at; end
 
   def perform
-    #manager = SoChaManager::Manager.new
-    #manager.connect!
-    #manager.play self
+    manager = SoChaManager::Manager.new
+    manager.connect!
+    manager.play self
 
-    #while !manager.done?
-    #  sleep 0.1
-    #end
+    while !manager.done?
+      sleep 0.1
+    end
 
-    #manager.close
+    manager.close
     
-    #raise "no game result" unless manager.last_result
-    update_scores!([[1,2,3,4], [2,3,4,5]])
+    raise "no game result" unless manager.last_result
+    update_scores!(manager.last_result)
   end
 
   def reset!
@@ -48,9 +48,7 @@ class Round < ActiveRecord::Base
     
     Round.transaction do
       slots.each_with_index do |slot,index|
-        unless slot.score
-          slot.score = slot.build_score
-        end
+        slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "round_score")
         slot.score.set!(new_scores[index])
         slot.save!
       end
