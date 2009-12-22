@@ -16,8 +16,14 @@ role :db,  "134.245.253.5", :primary => true # This is where Rails migrations wi
 # these http://github.com/rails/irs_process_scripts
 
 namespace :deploy do
-  task :start {}
-  task :stop {}
+  task :start do
+
+  end
+
+  task :stop do
+
+  end
+  
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
   end
