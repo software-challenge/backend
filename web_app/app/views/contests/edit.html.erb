@@ -1,69 +1,8 @@
-<style type="text/css">
-  .CodeMirror-line-numbers {
-    width: 2.2em;
-    color: #999;
-    background-color: #333;
-    text-align: right;
-    padding: .4em;
-    margin: 0;
-    font-size: 12pt;
-    line-height: 1.1em;
-    font-family: consolas, monospace;
-  }
-</style> 
-
 <% form_for(@contest) do |f| %>
   <div style="float: right;">
     <%= f.submit 'Speichern' %> oder
     <%= link_to 'Zurück', contest_url(@contest) %>
   </div>
-  <h1><%= current_page_title %></h1>
-  <%= error_messages_for :fragment, :match_score_definition, :contest, :default => :contest %>
 
-  <div id="tabs" style="margin: 0 -10px;">
-    <ul>
-      <li><a href="#tabs-1">Allgemein</a></li>
-      <li><a href="#tabs-2">Wertungen</a></li>
-      <li><a href="#tabs-3">Berechnung</a></li>
-      <li><a href="#tabs-4">Hilfe</a></li>
-    </ul>
-    <div id="tabs-1">
-      <p>
-        <%= f.label :name %>
-        <%= f.text_field :name %>
-      </p>
-      <p>
-        <%= f.check_box :active %> <%= f.label :active, "Der Wettbewerb ist aktiv", :class => "inline" %>
-      </p>
-    </div>
-    <div id="tabs-2">
-      <%= render :partial => 'definitions', :locals => { :f => f } %>
-    </div>
-    <div id="tabs-3">
-      <%= render :partial => 'scripts', :locals => { :f => f } %>
-    </div>
-    <div id="tabs-4">
-      <%= render :partial => 'help' %>
-    </div>
-  </div>
+  <%= render :partial => "form", :locals => { :f => f } %>
 <% end %>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("#tabs").tabs();
-  });
-
-  var editorSettings = {
-    start_highlight: true	// if start with highlight
-    ,allow_resize: "both"
-    ,allow_toggle: false
-    ,toolbar: "undo, redo, |, highlight, reset_highlight, word_wrap, |, fullscreen, help"
-    ,word_wrap: true
-    ,language: "de"
-    ,syntax: "ruby"
-    ,replace_tab_by_spaces: 2
-  };
-
-  editAreaLoader.init($.extend({id: "roundCode"}, editorSettings));
-  editAreaLoader.init($.extend({id: "matchCode"}, editorSettings));
-</script>

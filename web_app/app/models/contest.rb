@@ -1,9 +1,5 @@
 class Contest < ActiveRecord::Base
   validates_presence_of :name
-  validates_associated :round_score_definition
-  validates_associated :match_score_definition
-
-  validates_inclusion_of :game_definition, :in => %w{HaseUndIgel}
 
   has_many :contestants, :dependent => :destroy
   has_many :matchdays, :dependent => :destroy
@@ -11,6 +7,10 @@ class Contest < ActiveRecord::Base
   def game_definition
     # FIXME: use attribute
     GameDefinition.all.first
+  end
+
+  validates_each :game_definition do |model, attr, value|
+    model.errors.add(attr, 'ist unbekannt') unless value
   end
 
   # through associations

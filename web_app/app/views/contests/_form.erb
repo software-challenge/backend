@@ -1,0 +1,16 @@
+<h1><%= current_page_title %></h1>
+<%= error_messages_for :fragment, :match_score_definition, :contest, :default => :contest %>
+
+<div>
+  <p>
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :game_definition, "Spiel" %>
+    <%= f.select(:game_definition, GameDefinition.all.collect{|gd| [gd.game_identifier, gd.game_identifier] }, :disabled => !@contest.new_record?) %>
+  </p>
+  <p>
+    <%= f.check_box :active %> <%= f.label :active, "Der Wettbewerb ist aktiv", :class => "inline" %>
+  </p>
+</div>

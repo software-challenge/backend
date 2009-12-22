@@ -28,8 +28,7 @@ de:
 
     attributes:
       contest:
-        match_score_definition: Wertung für Match
-        round_score_definition: Wertung für Spielrunde
+        game_definition: Spiel
       person:
         first_name: Vorname
         last_name: Nachname
