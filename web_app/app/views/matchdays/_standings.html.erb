@@ -3,8 +3,8 @@
     <th>Platz</th>
     <th style="text-align: left;">Spieler</th>
     <th>Spiele</th>
-    <% @contest.game_definition.match_score.each do |k,v| %>
-      <th><%= v.name %></th>
+    <% @contest.game_definition.match_score.each do |k,fragment| %>
+      <th><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
     <th>&Delta;</th>
   </tr>
@@ -27,6 +27,8 @@
           <% else %>
             <span style="font-size: 10px; color: #999;">&plusmn;0</span>
           <% end %>
+        <% else %>
+          <span style="font-size: 10px; color: #999;">-</span>
         <% end %>
       </td>
     </tr>

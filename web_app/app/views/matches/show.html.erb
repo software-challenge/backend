@@ -113,7 +113,7 @@
   <tr>
     <th colspan="<%= match_colspan %>">&nbsp;</th>
     <% @contest.game_definition.match_score.each do |k,fragment| %>
-      <th><%=h fragment.name %></th>
+      <th><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
   </tr>
   <% @match.slots.each do |slot| %>
@@ -142,8 +142,8 @@
   </tr>
   <tr>
     <th colspan="<%= round_colspan %>">&nbsp;</th>
-    <%@contest.game_definition.round_score.each do |k,fragment| %>
-      <th><%=h fragment.name %></th>
+    <%@contest.game_definition.round_score.each do |k, fragment| %>
+      <th><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
   </tr>
   <% @match.rounds.each_with_index do |round,round_index| %>

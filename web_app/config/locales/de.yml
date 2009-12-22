@@ -1,4 +1,17 @@
 de:
+  games:
+    hase_und_igel:
+      match_score:
+        points: Punkte
+        victories: Siege
+        average_position: "Ø Position"
+        average_carrots: "Ø Karotten"
+        average_time: "Ø Zeit"
+      round_score:
+        victory: Sieg
+        position: "Position"
+        carrots: "Karotten"
+        average_time: "Ø Zeit"
   titles:
     generic:
       index: "Liste der {{model}}"
