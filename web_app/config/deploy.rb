@@ -1,14 +1,20 @@
 set :application, "swchallenge"
 
+set :user, "scadmin"
 set :runner, "scadmin"
 set :admin_runner, "scadmin"
 
-set :scm_user, Proc.new { Capistrano::CLI.ui.ask "SCM User:" }
-set :scm_password, Proc.new { Capistrano::CLI.password_prompt("Password for #{scm_user}: ") } 
+set(:scm_user) do
+  Capistrano::CLI.ui.ask "SCM User:"
+end
 
-set :repository, Proc.new {
+set(:scm_password) do
+  Capistrano::CLI.password_prompt "SCM Password (#{scm_user}): "
+end
+
+set(:repository) do
 	"--username #{scm_user} --password #{scm_password} --no-auth-cache http://samoa.informatik.uni-kiel.de:84/svn/teaching/ss09/swchal/common/web_app"
-}
+end
 
 set :scm, :subversion
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
