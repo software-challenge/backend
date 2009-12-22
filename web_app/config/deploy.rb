@@ -22,6 +22,10 @@ role :app, "134.245.253.5"                          # This may be the same as yo
 role :db,  "134.245.253.5", :primary => true        # This is where Rails migrations will run
 # role :db,  "your slave db-server here"
 
+require 'cap_recipes/tasks/passenger'
+require 'cap_recipes/tasks/rails'
+require 'cap_recipes/tasks/delayed_job'
+
 namespace :deploy do
   task :start do
 
