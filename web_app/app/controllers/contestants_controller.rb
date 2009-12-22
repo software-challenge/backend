@@ -7,7 +7,7 @@ class ContestantsController < ApplicationController
     @contestants = @contest.contestants
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { redirect_to contest_url(@contest, :anchor => "contestants") }
       format.xml  { render :xml => @contestants }
     end
   end

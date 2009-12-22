@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <th>Teilnehmer</th>
+  </tr>
+
+  <% @contest.contestants.each do |contestant| %>
+    <tr>
+      <td><%=h contestant.name %></td>
+      <td><%= link_to 'Show', [contestant.contest, contestant] %></td>
+    </tr>
+  <% end %>
+</table>

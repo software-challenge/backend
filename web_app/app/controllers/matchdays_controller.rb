@@ -4,12 +4,8 @@ class MatchdaysController < ApplicationController
   def index
     @matchdays = @contest.matchdays
 
-    if @matchdays.empty?
-      flash.now[:notice] = "Es liegt noch kein Spielplan vor!"
-    end
-
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { redirect_to @contest }
       format.xml  { render :xml => @matchdays }
       format.json {
         if params[:calendar]

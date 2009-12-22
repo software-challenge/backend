@@ -158,8 +158,7 @@
                   <ul id="mainMenu">
                     <li><%= link_to "Startseite", root_url %></li>
                     <% if Contest.active %>
-                      <li><%= link_to "Spieltage", contest_matchdays_url(Contest.active) %></li>
-                      <li><%= link_to "Teilnehmer", contest_contestants_url(Contest.active) %></li>
+                      <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
                     <% end %>
                     <li><%= link_to "Wettbewerbe", contests_url %></li>
                     <% if logged_in? %>

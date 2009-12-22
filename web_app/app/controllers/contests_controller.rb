@@ -14,9 +14,10 @@ class ContestsController < ApplicationController
   # GET /contests/1.xml
   def show
     @contest = Contest.find(params[:id])
+    @matchdays = @contest.matchdays
 
     respond_to do |format|
-      format.html { redirect_to contest_matchdays_url(@contest) }
+      format.html
       format.xml  { render :xml => @contest }
     end
   end
