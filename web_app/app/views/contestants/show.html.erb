@@ -1,10 +1,10 @@
 <div id="actions">
   <% if logged_in? %>
-    <% if current_user.administrator? %>
-      <%= link_to image_tag('actions/settings.png'), edit_contest_contestant_path(@contest, @contestant) %>
-    <% end %>
     <% if current_user.administrator? or current_user.contestants.exists?(@contestant) %>
-      <%= link_to image_tag('icons/ai_program.png'), contestant_clients_url(@contestant) %>
+      <%= link_to image_tag('icons/ai_program.png') + "Computerspieler", contestant_clients_url(@contestant) %>
+    <% end %>
+    <% if current_user.administrator? %>
+      <%= link_to image_tag('actions/settings.png') + "Bearbeiten", edit_contest_contestant_url(@contest, @contestant) %>
     <% end %>
   <% end %>
 </div>
@@ -15,33 +15,53 @@
   <%=h @contestant.name %>
 </h1>
 
-<h2>Matches</h2>
-
-<table>
-  <tr style="display: none;">
-    <th>Spieler 1</th>
-    <th>&nbsp;</th>
-    <th>Spieler 2</th>
-    <th>Ergebnis</th>
-  </tr>
-  <%= render :partial => "matchdays/match", :collection => @contestant.matches %>
-</table>
-
-<% if logged_in? and current_user.administrator? %>
-
-  <h2>Benutzer</h2>
-
-  <table>
-    <tr style="display: none;">
-      <th>Name</th>
-      <th>Rolle</th>
-    </tr>
-    <% @contestant.people.each do |person| %>
-      <tr>
-        <td><%=h person.name %></td>
-        <td>(<%= role_for(person, @contestant) %>)</td>
-      </tr>
+<div id="tabs" style="margin: 0 -10px;">
+  <ul>
+    <li><a href="#matches">Matches</a></li>
+    <% if logged_in? and current_user.administrator? %>
+      <li><a href="#people">Benutzer</a></li>
     <% end %>
-  </table>
-<% end %>
+  </ul>
+
+  <div id="matches">
+    <table style="width: 100%;">
+      <colgroup span="3"/>
+      <colgroup span="2" width="15%"/>
+      <thead>
+        <tr style="display: none;">
+          <th>Spieler 1</th>
+          <th>&nbsp;</th>
+          <th>Spieler 2</th>
+          <th>Ergebnis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render :partial => "matchdays/match", :collection => @contestant.matches %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if logged_in? and current_user.administrator? %>
+    <div id="people">
+      <table>
+        <tr style="display: none;">
+          <th>Name</th>
+          <th>Rolle</th>
+        </tr>
+        <% @contestant.people.each do |person| %>
+          <tr>
+            <td><%=h person.name %></td>
+            <td>(<%= role_for(person, @contestant) %>)</td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $("#tabs").tabs();
+  });
+</script>
 

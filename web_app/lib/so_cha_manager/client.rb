@@ -4,7 +4,7 @@ module SoChaManager
     
     include Loggable
     
-    MAX_WAIT = 30
+    MAX_WAIT = 2.minutes
     
     def done?; @done; end
     def done=(x); @done=x; end

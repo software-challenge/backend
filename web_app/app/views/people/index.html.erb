@@ -1,3 +1,15 @@
+<div id="actions">
+  <% if !current_user.teacher? || !current_user.tutor? || current_user.administrator? %>
+    <% link_to new_person_url do %>
+      <%= image_tag('actions/add.png') + "Neue Person" %>
+    <% end %>
+  <% else %>
+    <% link_to new_person_url do %>
+      <%= image_tag('actions/add.png') + "Neue/r Schüler/in" %>
+    <% end %>
+  <% end %>
+</div>
+
 <% if current_user.administrator? %>
   <h1>Benutzerverwaltung</h1>
 <% else %>
@@ -35,7 +47,7 @@
 
       <td>
         <%  if (person.getteams.length > 0) %>
-        <%= select_tag "team", options_for_select(person.getteams) %>
+          <%= select_tag "team", options_for_select(person.getteams) %>
         <% end %>
       </td>
 
@@ -59,9 +71,3 @@
 </table>
 
 <br />
-
-<% if !current_user.teacher? || !current_user.tutor? || current_user.administrator? %>
-  <%= link_to 'Neue Person anlegen', new_person_path() %>
-<% else %>
-  <%= link_to 'Neuen Schüler anlegen', new_person_path() %>
-<% end %>

@@ -56,6 +56,23 @@ img {
   line-height: 32px;
 }
 
+#actions a
+{
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0 0 0 4px;
+  background-color: #f8f8f8;
+  padding: 0 8px;
+  display: inline-block;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#actions a:link, #actions a:visited {
+  color: #247;
+}
+
 #actions img {
-  margin: 0;
+  margin: 0 4px 0 0;
 }
