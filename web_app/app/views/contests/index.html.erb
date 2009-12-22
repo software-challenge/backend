@@ -1,5 +1,7 @@
 <div id="actions">
-  <%= link_to image_tag('actions/add.png'), new_contest_path %>
+  <% link_to new_contest_url do %>
+    <%= image_tag('actions/add.png') + "Neuer Wettbewerb" %>
+  <% end %>
 </div>
 
 <h1>Alle Wettbewerbe</h1>

@@ -7,6 +7,9 @@
       <% link_to refresh_matchdays_contest_url(@contest), :method => "post", :title => "Spielplan erstellen" do %>
         <%= image_tag('actions/schedule.png') + "Spielplan generieren" %>
       <% end %>
+      <% link_to new_contest_contestant_url(@contest) do %>
+        <%= image_tag('actions/add.png') + "Neuer Teilnehmer" %>
+      <% end %>
     <% else %>
       <% link_to reset_matchdays_contest_url(@contest), :method => "post", :title => "Zurücksetzen" do %>
         <%= image_tag('actions/destroy.png') + "Zurücksetzen" %>
