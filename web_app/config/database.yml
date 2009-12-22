@@ -22,7 +22,7 @@ test: &TEST
 # README: Do not store production passwords in SCM!
 production:
   adapter: mysql
-  database: quassum_test
+  database: sc_production
   socket: /var/run/mysqld/mysqld.sock
   username: production_user
   timeout: 5000
