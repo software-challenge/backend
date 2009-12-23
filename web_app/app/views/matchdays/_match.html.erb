@@ -1,6 +1,5 @@
-<tr>
+<tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
   <td><%= match.slots[0].name || "Freispiel" %></td>
-  <td style="text-align: center; font-weight: bold;">gegen</td>
   <td><%= match.slots[1].name || "Freispiel" %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
