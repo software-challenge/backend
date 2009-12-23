@@ -11,6 +11,9 @@ Signal.trap "INT" do
   exit 1
 end
 
+puts "Configuration"
+puts SoChaManager.configuration.inspect
+
 Client.transaction do
   match = LeagueMatch.first
   raise "no LeagueMatch found" unless match

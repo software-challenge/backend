@@ -1,0 +1,12 @@
+## YAML Template.
+
+development:
+  timeout: 30
+  start_game_after: 10
+  emulate_vm: true
+  watch_folder: tmp/vmwatch
+
+production:
+  timeout: 240
+  start_game_after: 120
+  watch_folder: public/system/vmwatch

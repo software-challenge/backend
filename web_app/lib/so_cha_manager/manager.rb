@@ -1,6 +1,15 @@
 module SoChaManager
   require 'tempfile'
-  
+  require 'yaml'
+
+  @@configuration = YAML.load_file(Rails.root.join('config', 'vm_watch.yml'))[Rails.env]
+  @@watch_folder = (File.exapand_path(@@configuration["watch_folder"], Rails.root) rescue Rails.root.join('tmp', 'vmwatch'))
+  @@timeout = (@@configuration["timeout"] rescue 60).to_i
+  @@start_game_after = (@@configuration["start_game_after"] rescue 30).to_i
+  @@emulate_vm = (@@configuration["emulate_vm"] rescue false)
+
+  mattr_reader :configuration, :watch_folder, :timeout, :start_game_after, :emulate_vm
+
   class Manager
     
     include Loggable
@@ -8,16 +17,17 @@ module SoChaManager
     HOST = "127.0.0.1"
     PORT = 13050
     HUI = 'swc_2010_hase_und_igel'
-    VM_WATCH_FOLDER = ENV['VM_WATCH_FOLDER']
+
+    if !File.exists? SoChaManager.watch_folder
+      Dir.mkdir(SoChaManager.watch_folder)
+    elsif !File.directory? SoChaManager.watch_folder
+      raise "watch_folder (#{SoChaManager.watch_folder}) isn't a directory"
+    end
 
     attr_reader :last_result
 
     def initialize
-      if !File.exists? VM_WATCH_FOLDER
-        Dir.mkdir(VM_WATCH_FOLDER)
-      elsif !File.directory? VM_WATCH_FOLDER
-        raise "VM_WATCH_FOLDER (#{VM_WATCH_FOLDER}) isn't a directory"
-      end
+      
     end
     
     def connect!(ip = HOST, port = PORT, game = HUI)
@@ -107,14 +117,26 @@ module SoChaManager
 
               puts "All clients have been prepared"
             
-              emulate_vm_watcher! zip_files unless RAILS_ENV.to_s == "production"
+              emulate_vm_watcher! zip_files if SoChaManager.emulate_vm
 
               # force gamestart
               Thread.new do
-                span, threshold = 2.minutes, 1.minute
-                sleep span.to_i
-                if !room_handler.done? and !room_handler.received_data_after?(threshold.ago)
-                  @client.step(room_id, true)
+                begin
+                  puts "start_game_after #{SoChaManager.start_game_after} seconds"
+                  sleep SoChaManager.start_game_after
+
+                  threshold = [[SoChaManager.start_game_after, 20].min, 0].max
+
+                  if room_handler.done?
+                    puts "Game is already over, start_game_after not necessary."
+                  elsif !room_handler.received_data_after?(threshold.seconds.ago)
+                    puts "Invoking handler for start_game_after."
+                    @client.step(room_id, true)
+                  else
+                    puts "Action detected, start_game_after not necessary."
+                  end
+                rescue => e
+                  logger.log_formatted_exception e
                 end
               end
             else
@@ -125,7 +147,7 @@ module SoChaManager
             @client.close
           end
         rescue => e
-          puts "An error occured:\n#{e}\n#{e.backtrace.join("\n")}"
+          logger.log_formatted_exception e
           raise
         end
       end
@@ -220,7 +242,7 @@ module SoChaManager
         
         key = slot.ingame_name
         generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
-        target = File.expand_path(File.join(VM_WATCH_FOLDER, generated_file_name))
+        target = File.expand_path(File.join(SoChaManager.watch_folder, generated_file_name))
         
         command = %{sh -c "cd #{dir}; zip -qr #{target} ."}
         puts command

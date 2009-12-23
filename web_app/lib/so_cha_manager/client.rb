@@ -4,8 +4,6 @@ module SoChaManager
     
     include Loggable
     
-    MAX_WAIT = 2.minutes
-    
     def done?; @done; end
     def done=(x); @done=x; end
 
@@ -147,13 +145,13 @@ module SoChaManager
         rescue Errno::EAGAIN, Errno::EWOULDBLOCK
           diff = Time.now - @last_data
           sleep 0.01
-          retry if diff <= MAX_WAIT
+          retry if diff <= SoChaManager.timeout
           logger.warn "Timeout."
         rescue EOFError
           logger.info "EOF reached."
           @parser.finish
         rescue => e
-          logger.error "Could not read:\n#{e.class.name}: #{e}\n#{e.backtrace.join("\n")}"
+          logger.log_formatted_exception e
         ensure
           logger.info "Finalizing SoChaClient thread. #{$!}"
           close
