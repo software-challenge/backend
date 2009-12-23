@@ -60,22 +60,13 @@ class ContestsController < ApplicationController
   def update
     @contest = Contest.find(params[:id])
 
-    success = false
-    begin
-      Contest.transaction do
-        @contest.update_attributes!(params[:contest])
-      end
-      success = true
-    rescue ActiveRecord::RecordInvalid
-      success = false
-    end
-
     respond_to do |format|
-      if success
+      if @contest.update_attributes(params[:contest])
         flash[:notice] = 'Contest was successfully updated.'
         format.html { redirect_to edit_contest_url(@contest) }
         format.xml  { head :ok }
       else
+        @test_contestant = @contest.test_contestant
         format.html { render :action => "edit" }
         format.xml  { render :xml => @contest.errors, :status => :unprocessable_entity }
       end

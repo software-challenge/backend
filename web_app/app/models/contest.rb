@@ -1,7 +1,10 @@
 class Contest < ActiveRecord::Base
   validates_presence_of :name
+  validates_presence_of :test_contestant
 
-  has_many :contestants, :dependent => :destroy
+  has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
+  has_many :contestants, :conditions => { :tester => false }
+  has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }
   has_many :matchdays, :dependent => :destroy
 
   def game_definition
@@ -19,6 +22,31 @@ class Contest < ActiveRecord::Base
 
   def to_param
     "#{id}-#{name.parameterize}"
+  end
+
+  def after_save
+    if game_definition_changed?
+      # FIXME: read from game_definition
+      file = Rails.root.join('public', 'clients', 'hase_und_igel.zip')
+
+      client = test_contestant.current_client
+      client ||= test_contestant.build_current_client(:author => current_user, :contestant => test_contestant)
+      client.file = File.open(file)
+      client.save!
+      client.build_index!
+
+      main_file_entry_name = "HaseUndIgelSC.jar"
+      main_file_entry = client.file_entries(:reload).find_by_file_name(main_file_entry_name)
+      raise "main_file_entry #{main_file_entry_name} not found" unless main_file_entry
+      client.main_file_entry = main_file_entry
+      client.save!
+
+      test_contestant.save!
+    end
+  end
+
+  def before_validation
+    build_test_contestant( :name => "Testhase", :tester => true ) unless test_contestant
   end
 
   def started?

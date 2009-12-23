@@ -47,6 +47,7 @@ Rails::Initializer.run do |config|
   config.i18n.default_locale = :de
 
   config.after_initialize do
+    require 'core_ext'
     require 'so_cha_manager'
     require 'game_definition'
   end

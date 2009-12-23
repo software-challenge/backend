@@ -1,19 +1,16 @@
 class MatchSlot < ActiveRecord::Base
   validates_presence_of :match
-
-  # might be nil! (free game)
-  # validates_presence_of :matchday_slot
+  validates_presence_of :contestant
 
   belongs_to :match
-  belongs_to :matchday_slot
   belongs_to :score, :dependent => :destroy
+  belongs_to :contestant
 
   has_many :round_slots, :dependent => :destroy
   has_many :round_scores, :through => :round_slots, :class_name => "Score", :source => :score
   has_many :rounds, :through => :round_slots
 
   acts_as_list :scope => :match_id
-  delegate :contestant, :to => :matchday_slot
 
   def round_score_array
     self.round_scores.collect do |score|
@@ -26,7 +23,7 @@ class MatchSlot < ActiveRecord::Base
   end
 
   def occupied?
-    matchday_slot
+    !!contestant
   end
 
   def name

@@ -152,7 +152,7 @@
         <div>
           <% if round.replay? %>
             <span style="float: right;">
-              <%= link_to "Replay herunterladen", [@match.contest, @match.matchday, @match, round] %>
+              <%= link_to "Replay herunterladen", [@match.contest, @match.matchday, @match.becomes(Match), round] %>
             </span>
           <% end %>
           Runde <%= round_index.next %>

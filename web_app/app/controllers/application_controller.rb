@@ -32,6 +32,7 @@ class ApplicationController < ActionController::Base
   def fetch_user
     if session[:user_id]
       @current_user = Person.find(session[:user_id])
+      ActiveRecord::Base.current_user = @current_user
     end
   rescue ActiveRecord::RecordNotFound
     session[:user_id] = nil

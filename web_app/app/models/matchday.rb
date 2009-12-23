@@ -10,7 +10,7 @@ class Matchday < ActiveRecord::Base
   validates_presence_of :when
 
   # associations
-  has_many :matches, :dependent => :destroy, :as => :set
+  has_many :matches, :class_name => "LeagueMatch", :dependent => :destroy, :as => :set
   has_many :slots, :class_name => "MatchdaySlot", :order => "position ASC"
   belongs_to :contest
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"

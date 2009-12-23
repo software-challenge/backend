@@ -16,8 +16,6 @@ class Match < ActiveRecord::Base
   has_many :rounds, :dependent => :destroy
   has_many :scores, :through => :slots
 
-  alias :matchday :set
-  alias :matchday= :set=
   def played?; played_at; end
   def running?; !job.nil?; end
 

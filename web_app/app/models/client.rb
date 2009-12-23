@@ -17,8 +17,10 @@ class Client < ActiveRecord::Base
 
   belongs_to :main_file_entry, :class_name => "ClientFileEntry"
 
-  def build_index!
+  def build_index!    
     Client.transaction do
+      file_entries.destroy_all
+
       Zip::ZipFile.foreach(file.path) do |e|
         file_name = e.name.to_s
 

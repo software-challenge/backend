@@ -16,7 +16,9 @@ class Contestant < ActiveRecord::Base
   attr_readonly :contest
   attr_protected :contest
 
-  validates_uniqueness_of :name
+  validates_presence_of :name
+  validates_uniqueness_of :name, :scope => :contest_id
+  validates_uniqueness_of :tester, :scope => :contest_id, :if => :tester
 
   def matches
     contest.matches.with_contestant(self)
