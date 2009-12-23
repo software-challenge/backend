@@ -124,7 +124,7 @@ public class Lobby implements IClientManagerListener, IClientListener
 			{
 				StepRequest pause = (StepRequest) packet;
 				GameRoom room = this.gameManager.findRoom(pause.roomId);
-				room.step();
+				room.step(pause.forced);
 			}
 			else if (packet instanceof CancelRequest)
 			{

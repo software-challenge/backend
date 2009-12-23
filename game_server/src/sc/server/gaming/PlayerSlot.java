@@ -1,7 +1,7 @@
 package sc.server.gaming;
 
 import sc.api.plugins.IPlayer;
-import sc.server.network.Client;
+import sc.server.network.IClient;
 import sc.shared.SlotDescriptor;
 
 public class PlayerSlot
@@ -59,7 +59,7 @@ public class PlayerSlot
 		}
 	}
 
-	public void setClient(Client client)
+	public void setClient(IClient client)
 	{
 		if (!isEmpty())
 		{
@@ -121,7 +121,7 @@ public class PlayerSlot
 		this.descriptor = descriptor;
 	}
 
-	public Client getClient()
+	public IClient getClient()
 	{
 		if(this.role == null)
 		{

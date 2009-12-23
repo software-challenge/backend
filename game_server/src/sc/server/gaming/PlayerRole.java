@@ -3,24 +3,24 @@ package sc.server.gaming;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
 import sc.protocol.responses.RoomPacket;
-import sc.server.network.Client;
+import sc.server.network.IClient;
 import sc.server.network.IClientRole;
 
 public class PlayerRole implements IClientRole, IPlayerListener
 {
-	private Client		client;
+	private IClient		client;
 
 	private IPlayer		player;
 
 	private PlayerSlot	playerSlot;
 
-	public PlayerRole(Client owner, PlayerSlot slot)
+	public PlayerRole(IClient owner, PlayerSlot slot)
 	{
 		this.client = owner;
 		this.playerSlot = slot;
 	}
 
-	public Client getClient()
+	public IClient getClient()
 	{
 		return this.client;
 	}

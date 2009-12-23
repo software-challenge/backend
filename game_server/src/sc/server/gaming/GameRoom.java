@@ -23,6 +23,8 @@ import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.ObservationResponse;
 import sc.protocol.responses.RoomPacket;
 import sc.server.network.Client;
+import sc.server.network.DummyClient;
+import sc.server.network.IClient;
 import sc.server.plugins.GamePluginInstance;
 import sc.shared.GameResult;
 import sc.shared.PlayerScore;
@@ -247,6 +249,13 @@ public class GameRoom implements IGameListener
 		player.setDisplayName(slot.getDescriptor().getDisplayName());
 		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
 		player.setCanTimeout(slot.getDescriptor().isCanTimeout());
+
+		if (slot.isEmpty())
+		{
+			logger.warn("PlayerSlot is empty! Was this  Caused by a forced STEP?");
+			slot.setClient(new DummyClient());
+		}
+
 		slot.setPlayer(player);
 		slot.getClient().send(new JoinGameResponse(getId()));
 	}
@@ -285,6 +294,11 @@ public class GameRoom implements IGameListener
 			return;
 		}
 
+		start();
+	}
+
+	private void start() throws RescueableClientException
+	{
 		if (isPrepared())
 		{
 			for (PlayerSlot slot : this.playerSlots)
@@ -401,9 +415,9 @@ public class GameRoom implements IGameListener
 		return clients;
 	}
 
-	public Collection<Client> getClients()
+	public Collection<IClient> getClients()
 	{
-		LinkedList<Client> clients = new LinkedList<Client>();
+		LinkedList<IClient> clients = new LinkedList<IClient>();
 		for (PlayerRole slot : getPlayers())
 		{
 			clients.add(slot.getClient());
@@ -457,8 +471,32 @@ public class GameRoom implements IGameListener
 		}
 	}
 
-	public synchronized void step()
+	/**
+	 * 
+	 * @param forced
+	 *            If true, game will be started even if there are not enoug
+	 *            players to complete the game. This should result in a
+	 *            GameOver.
+	 * @throws RescueableClientException
+	 */
+	public synchronized void step(boolean forced)
+			throws RescueableClientException
 	{
+		if (this.status == GameStatus.CREATED)
+		{
+			if (forced)
+			{
+				logger.warn("Forcing a game to start.");
+				start();
+			}
+			else
+			{
+				logger.warn("Game isn't active yet, step was not forced.");
+			}
+
+			return;
+		}
+
 		if (this.game instanceof IPauseable)
 		{
 			if (isPaused())

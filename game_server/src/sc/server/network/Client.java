@@ -21,7 +21,7 @@ import com.thoughtworks.xstream.XStream;
 /**
  * A generic client.
  */
-public class Client extends XStreamClient
+public class Client extends XStreamClient implements IClient
 {
 	private final Set<IClientListener>		clientListeners			= new HashSet<IClientListener>();
 	private final Collection<IClientRole>	roles					= new LinkedList<IClientRole>();
