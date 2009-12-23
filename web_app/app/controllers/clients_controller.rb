@@ -20,7 +20,7 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id])
 
     respond_to do |format|
-      format.html # show.html.erb
+      format.html { redirect_to contestant_clients_url }
       format.xml  { render :xml => @client }
     end
   end
@@ -52,16 +52,22 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.build(params[:client])
     @client.author = current_user
 
+    success = @client.save
+    if success
+      begin
+        @client.build_index!
+        flash[:notice] = 'Client was successfully created.'
+      rescue => e
+        puts e.backtrace.join "\n"
+        flash.now[:error] = "Couldn't process ZIP file."
+        @client.errors.add_to_base e.message
+        @client.destroy
+        success = false
+      end
+    end
+
     respond_to do |format|
-      if @client.save
-        begin
-          @client.build_index!
-          flash[:notice] = 'Client was successfully created.'
-        rescue
-          @client.destroy
-          flash[:notice] = "Couldn't process ZIP file."
-        end
-        
+      if success
         format.html { redirect_to contestant_clients_url(@contestant) }
         format.xml  { render :xml => @client, :status => :created, :location => @client }
       else
@@ -98,6 +104,19 @@ class ClientsController < ApplicationController
       format.html { redirect_to(clients_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def test
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
+
+    if @client.tested?
+      flash[:notice] = "Client wurde bereits getestet."
+    else
+      @client.test_delayed!
+    end
+
+    redirect_to contestant_clients_url(@contestant)
   end
 
   def browse

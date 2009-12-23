@@ -7,6 +7,7 @@ class Match < ActiveRecord::Base
         :conditions => ["mds.contestant_id = ?", contestant.id]}
     end)
 
+  validates_presence_of :type
   validates_presence_of :set
 
   belongs_to :set, :polymorphic => true
@@ -15,6 +16,8 @@ class Match < ActiveRecord::Base
   has_many :slots, :class_name => "MatchSlot", :dependent => :destroy, :order => "position"
   has_many :rounds, :dependent => :destroy
   has_many :scores, :through => :slots
+
+  delegate :game_definition, :to => :set
 
   def played?; played_at; end
   def running?; !job.nil?; end
@@ -95,6 +98,22 @@ class Match < ActiveRecord::Base
   end
 
   protected
+
+  def create_rounds!
+    raise "has already rounds" unless rounds.empty?
+    
+    round_count = 0
+    while round_count < game_definition.league.rounds
+      (0...slots.count).to_a.permute do |permutation|
+        round_count = round_count + 1
+        round = self.rounds.create!
+        permutation.each do |slot_index|
+          round.slots.create!(:match_slot => slots[slot_index])
+        end
+        break if round_count >= game_definition.league.rounds
+      end
+    end
+  end
 
   def update_scoretable
     slots.each do |slot|

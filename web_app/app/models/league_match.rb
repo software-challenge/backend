@@ -7,4 +7,17 @@ class LeagueMatch < Match
 
   alias :matchday :set
   alias :matchday= :set=
+
+  def contestants=(contestants)
+    Match.transaction do
+      contestants.each do |contestant|
+        if contestant
+          slots.create!(:matchday_slot => matchday.slots.first(:conditions => { :contestant_id => contestant.id }))
+        else
+          slots.create!
+        end
+      end
+      create_rounds!
+    end
+  end
 end

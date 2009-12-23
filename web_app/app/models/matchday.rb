@@ -19,6 +19,8 @@ class Matchday < ActiveRecord::Base
   # delegates OR :through associations
   has_many :match_slots, :through => :slots
 
+  delegate :game_definition, :to => :contest
+
   # acts
   acts_as_list :scope => :contest_id
 

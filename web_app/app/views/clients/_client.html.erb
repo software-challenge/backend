@@ -2,13 +2,32 @@
   <td>
     <% if client.current? %>
       <b>Aktiv</b>
-    <% else %>
+    <% elsif client.functional? %>
       <%= link_to "Auswählen", select_contestant_client_url(client.contestant, client), :method => :post %>
+    <% end %>
+  </td>
+  <td>
+    &nbsp;
+    <% if client.testing? %>
+      <%= image_tag("ui/spinner.gif") %>
+    <% elsif client.tested? %>
+      <%= image_tag("state/#{client.functional? ? "ok" : "warning"}.png") %>
     <% end %>
   </td>
   <td><%=h client.file_file_name %></td>
   <td><%=h client.main_file_entry.try(:file_name) %></td>
   <td><%=h client.author.name %></td>
   <td><%=h l(client.created_at, :format => :short) %></td>
-  <td><%= link_to 'Bearbeiten', edit_contestant_client_url(client.contestant, client) %></td>
+  <td>
+    <% if client.current? %>
+      <span style="color: #999;">Im Einsatz</span>
+    <% elsif client.testing? %>
+      <span style="color: #999;">Wird getestet&hellip;</span>
+    <% else %>
+      <%= link_to 'Bearbeiten', edit_contestant_client_url(client.contestant, client) %>
+      <% if client.testable? %>
+        <%= link_to "Testen", test_contestant_client_url(client.contestant, client), :method => :post %>
+      <% end %>
+    <% end %>
+  </td>
 </tr>

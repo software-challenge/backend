@@ -11,7 +11,7 @@
 
 <table style="width: 100%;">
   <tr style="text-align: left;">
-    <th>&nbsp;</th>
+    <th colspan="2">&nbsp;</th>
     <th>Dateiname</th>
     <th>Hauptdatei</th>
     <th>Von</th>
@@ -19,3 +19,9 @@
   </tr>
   <%= render :partial => "client", :collection => @clients %>
 </table>
+
+<% unless @contestant.current_client %>
+  <p>
+    Es ist noch kein Computerspieler ausgewählt worden.
+  </p>
+<% end %>

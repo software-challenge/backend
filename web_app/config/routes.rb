@@ -6,7 +6,8 @@ ActionController::Routing::Routes.draw do |map|
       contestant.resources :clients, :as => "computerspieler", :member => {
         :browse => :post,
         :select_main => :post,
-        :select => :post
+        :select => :post,
+        :test => :post
       }
     end
 

@@ -67,27 +67,7 @@ class Contest < ActiveRecord::Base
         end
         pairs.each do |contestants|
           match = matchday.matches.create!
-          contestants.each do |contestant|
-            if contestant
-              match.slots.create!(:matchday_slot => matchday.slots.first(:conditions => { :contestant_id => contestant.id }))
-            else
-              match.slots.create!
-            end
-          end
-          round_count = 0
-          while round_count < game_definition.league.rounds
-            (0...match.slots.count).to_a.permute do |permutation|
-              round_count = round_count + 1
-              round = match.rounds.create!
-              permutation.each do |slot_index|
-                round.slots.create!(:match_slot => match.slots[slot_index])
-              end
-              break if round_count >= game_definition.league.rounds
-            end
-          end
-          (1..game_definition.league.rounds).each do
-            
-          end
+          match.contestants = contestants
         end
         next_date += 1
       end

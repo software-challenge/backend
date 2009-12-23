@@ -4,18 +4,22 @@ class Client < ActiveRecord::Base
 
   belongs_to :contestant
   belongs_to :author, :class_name => "Person"
-  has_many :file_entries, :class_name => "ClientFileEntry"
+  
+  has_many :file_entries, :class_name => "ClientFileEntry", :dependent => :destroy
+  has_one :test_match, :class_name => "ClientMatch", :as => :set, :dependent => :destroy
 
   has_attached_file :file
 
   validates_presence_of :file
   validates_attachment_presence :file
-  # validates_attachment_content_type :file, :content_type => 'application/octet-stream'
 
   validates_presence_of :author
   validates_presence_of :contestant
 
   belongs_to :main_file_entry, :class_name => "ClientFileEntry"
+
+  delegate :contest, :to => :contestant
+  delegate :game_definition, :to => :contest
 
   def build_index!    
     Client.transaction do
@@ -41,6 +45,43 @@ class Client < ActiveRecord::Base
   def java?
     # FIXME: implement selection
     true
+  end
+
+  def testable?
+    !!main_file_entry and !tested?
+  end
+
+  def tested?
+    !!test_match and !testing?
+  end
+
+  def functional?
+    tested? and !test_match.scores.empty?
+  end
+
+  def testing?
+    test_match and test_match.running?
+  end
+
+  def already_used?
+    # FIXME: check for running games
+    false
+  end
+
+  def test_delayed!
+    raise "client was already tested" if tested?
+    raise "no test_contestant available" unless contest.test_contestant
+    Match.transaction do
+      match = self.create_test_match
+      match.clients = [self, contest.test_contestant.current_client]
+      match.perform_delayed!
+    end
+  end
+
+  def after_save
+    if main_file_entry_id_changed?
+      test_match.destroy if test_match
+    end
   end
 
   protected

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091222235211) do
+ActiveRecord::Schema.define(:version => 20091223184323) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(:version => 20091222235211) do
     t.integer  "score_id"
     t.integer  "matchday_slot_id"
     t.string   "type"
+    t.integer  "client_id"
   end
 
   create_table "matchday_slots", :force => true do |t|
