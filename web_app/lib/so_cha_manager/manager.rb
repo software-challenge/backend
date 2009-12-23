@@ -68,15 +68,32 @@ module SoChaManager
               end
             end
 
+            mutex = Mutex.new
+            resource1 = ConditionVariable.new
+            resource2 = ConditionVariable.new
+            can_signal = false
+
             @client.observe room_id, "swordfish" do |success,response|
               puts "ObservationRequest: #{success}"
               
               if success
                 @client.register_room_handler room_id, room_handler
+                
+                mutex.synchronize {
+                  resource2.lock(mutex) unless can_signal
+                  resource1.signal
+                }
+              else
+                manager.close
               end
             end
 
-            # TODO: wait for observation response
+            # wait for registration of observation-handler
+            mutex.synchronize {
+              can_signal = true
+              resource2.signal
+              resource1.wait(mutex)
+            }
 
             zip_files = []
             ActiveRecord::Base.benchmark "Preparing the Client VMs" do
