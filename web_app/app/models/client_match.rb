@@ -1,5 +1,9 @@
 class ClientMatch < Match
   validates_uniqueness_of :set_id, :scope => :set_type
+
+  belongs_to :client
+  delegate :contestant, :to => :client
+
   def clients=(clients)
     Match.transaction do
       clients.each do |client|

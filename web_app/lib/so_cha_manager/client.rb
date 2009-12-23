@@ -58,6 +58,10 @@ module SoChaManager
       write %{<observe roomId="#{room_id}" passphrase="#{passphrase}" />}
     end
 
+    def step(room_id, forced = false)
+      write %{<step roomId="#{room_id}" forced="#{(!!forced)}" />}
+    end
+
     def register_room_handler(room_id, handler)
       @room_handlers[room_id] = handler
     end
@@ -86,10 +90,13 @@ module SoChaManager
       if handler.is_a? Symbol
         invoke_handler(handler, success, data)
       elsif handler
-        handler.call(success, data)
+        Thread.new do begin
+            handler.call(success, data)
+          rescue => e
+            logger.log_formatted_exception e
+          end
+        end
       end
-    rescue => e
-      logger.log_formatted_exception e
     end
 
     def invoke_room_handler(room_id, data)
@@ -100,9 +107,12 @@ module SoChaManager
         return
       end
 
-      handler.on_data(data)
-    rescue => e
-      logger.log_formatted_exception e
+      Thread.new do begin
+          handler.on_data(data)
+        rescue => e
+          logger.log_formatted_exception e
+        end
+      end
     end
     
     def on_event(what, document)

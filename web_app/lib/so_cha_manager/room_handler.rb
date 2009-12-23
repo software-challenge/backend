@@ -33,6 +33,7 @@ module SoChaManager
       super()
       @data = io || ""
       @callback = block if block_given?
+      @last_data_timestamp = Time.now
       append START_TAG
     end
 
@@ -42,6 +43,10 @@ module SoChaManager
 
     def on_state(state)
       append_normalized(state)
+    end
+
+    def received_data_after?(time)
+      @last_data_timestamp >= time
     end
 
     def on_result(result)

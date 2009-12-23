@@ -98,7 +98,6 @@ module SoChaManager
             }
 
             if observation_success
-
               zip_files = []
               ActiveRecord::Base.benchmark "Preparing the Client VMs" do
                 zip_files = round.slots.zip(codes).collect do |slot, code|
@@ -107,8 +106,19 @@ module SoChaManager
               end
 
               puts "All clients have been prepared"
-              
+            
               emulate_vm_watcher! zip_files unless RAILS_ENV.to_s == "production"
+
+              # force gamestart
+              Thread.new do
+                span, threshold = 2.minutes, 1.minute
+                sleep span.to_i
+                if !room_handler.done? and !room_handler.received_data_after?(threshold.ago)
+                  @client.step(room_id, true)
+                end
+              end
+            else
+              puts "observation failed"
             end
           else
             puts "Couldn't prepare game!"
@@ -195,7 +205,7 @@ module SoChaManager
       target = nil
       
       Dir.mktmpdir(File.basename(file)) do |dir|
-        command = %{unzip #{File.expand_path(file)} -d #{dir}}
+        command = %{unzip -qq #{File.expand_path(file)} -d #{dir}}
         puts command
         system command
         
@@ -212,7 +222,7 @@ module SoChaManager
         generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
         target = File.expand_path(File.join(VM_WATCH_FOLDER, generated_file_name))
         
-        command = %{sh -c "cd #{dir}; zip -r #{target} ."}
+        command = %{sh -c "cd #{dir}; zip -qr #{target} ."}
         puts command
         system command
       end
@@ -223,7 +233,7 @@ module SoChaManager
     def validate_zip_file(path)
       # check zip for defects
       puts "Checking zip-file for defects..."
-      command = %{unzip -t #{path}}
+      command = %{unzip -qqt #{path}}
       puts command
       system command
       
@@ -232,7 +242,7 @@ module SoChaManager
         puts "Zip-file is broken. Trying to fix..."
         
         fixed_path = "#{path}.fixed"
-        command = %{zip -FF #{path} --out #{fixed_path}}
+        command = %{zip -qFF #{path} --out #{fixed_path}}
         puts command
         system command
         

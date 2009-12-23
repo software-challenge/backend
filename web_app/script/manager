@@ -12,8 +12,14 @@ Signal.trap "INT" do
 end
 
 Client.transaction do
+  match = LeagueMatch.first
+  raise "no LeagueMatch found" unless match
+
+  round = match.rounds.first
+  raise "no Round found for match #{match.id}" unless match
+
   manager.connect!
-  manager.play Match.first.rounds.first
+  manager.play round
 end
 
 # we must respond to TRAP/SIGINT for Ctrl+C

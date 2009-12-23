@@ -4,13 +4,14 @@ class MatchSlot < ActiveRecord::Base
 
   belongs_to :match
   belongs_to :score, :dependent => :destroy
-  belongs_to :client
 
   has_many :round_slots, :dependent => :destroy
   has_many :round_scores, :through => :round_slots, :class_name => "Score", :source => :score
   has_many :rounds, :through => :round_slots
 
   acts_as_list :scope => :match_id
+
+  belongs_to :client
   delegate :contestant, :to => :client
 
   def round_score_array
@@ -24,7 +25,7 @@ class MatchSlot < ActiveRecord::Base
   end
 
   def occupied?
-    !!contestant
+    !!client
   end
 
   def name
