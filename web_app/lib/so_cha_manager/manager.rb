@@ -72,20 +72,22 @@ module SoChaManager
             resource1 = ConditionVariable.new
             resource2 = ConditionVariable.new
             can_signal = false
+            observation_success = false
 
             @client.observe room_id, "swordfish" do |success,response|
               puts "ObservationRequest: #{success}"
               
               if success
                 @client.register_room_handler room_id, room_handler
-                
-                mutex.synchronize {
-                  resource2.lock(mutex) unless can_signal
-                  resource1.signal
-                }
+                observation_success = true
               else
                 manager.close
               end
+
+              mutex.synchronize {
+                resource2.lock(mutex) unless can_signal
+                resource1.signal
+              }
             end
 
             # wait for registration of observation-handler
@@ -95,27 +97,18 @@ module SoChaManager
               resource1.wait(mutex)
             }
 
-            zip_files = []
-            ActiveRecord::Base.benchmark "Preparing the Client VMs" do
-              zip_files = round.slots.zip(codes).collect do |slot, code|
-                start_client(slot, code)
-              end
-            end
+            if observation_success
 
-            puts "All clients have been prepared"
-            zip_files.each { |path| puts path }
-
-            unless RAILS_ENV.to_s == "production"
-              puts "Starting clients without VM"
-              zip_files.each do |file|
-                Thread.new do
-                  begin
-                    run_without_vm!(file)
-                  rescue => e
-                    logger.log_formatted_exception e
-                  end
+              zip_files = []
+              ActiveRecord::Base.benchmark "Preparing the Client VMs" do
+                zip_files = round.slots.zip(codes).collect do |slot, code|
+                  start_client(slot, code)
                 end
               end
+
+              puts "All clients have been prepared"
+              
+              emulate_vm_watcher! zip_files unless RAILS_ENV.to_s == "production"
             end
           else
             puts "Couldn't prepare game!"
@@ -137,6 +130,21 @@ module SoChaManager
     end
     
     protected
+
+    def emulate_vm_watcher!(zip_files)
+      puts "Starting clients without VM"
+      zip_files.each { |path| puts path }
+
+      zip_files.each do |file|
+        Thread.new do
+          begin
+            run_without_vm!(file)
+          rescue => e
+            logger.log_formatted_exception e
+          end
+        end
+      end
+    end
 
     def run_without_vm!(path)
       # make it absolute
