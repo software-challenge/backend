@@ -6,10 +6,13 @@ class ClientMatch < Match
 
   def clients=(clients)
     Match.transaction do
-      clients.each do |client|
-        slots.create!(:client => client)
+      self.save!
+      Match.transaction do
+        clients.each do |client|
+          slots.create!(:client => client)
+        end
+        create_rounds!
       end
-      create_rounds!
     end
   end
 end

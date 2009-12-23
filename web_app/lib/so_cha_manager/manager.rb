@@ -211,6 +211,7 @@ module SoChaManager
 
     def start_client(slot, reservation)
       puts "Starting client (id=#{slot.client.id}) for '#{slot.name}'"
+      silent = true
 
       ai_program = slot.client
       file = ai_program.file.path
@@ -230,12 +231,14 @@ module SoChaManager
         command = %{unzip -qq #{File.expand_path(file)} -d #{dir}}
         puts command
         system command
-        
+
         startup_file = File.join(dir, 'startup.sh')
-        File.open(startup_file, 'w+') do |file|
-          file.puts("#!/bin/bash")
-          file.puts "#{executable} --host #{@host} --port #{@port} --reservation #{reservation}"
-          file.flush
+        File.open(startup_file, 'w+') do |f|
+          f.puts("#!/bin/bash")
+          command = "#{executable} --host #{@host} --port #{@port} --reservation #{reservation}"
+          command << " > /dev/null 2>&1" if silent
+          f.puts command
+          f.flush
         end
         
         File.chmod(0766, startup_file)

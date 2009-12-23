@@ -129,6 +129,10 @@ class Match < ActiveRecord::Base
     end
   end
 
+  def slot_for(client)
+    slots.first( :conditions => { :client_id => client.id } )
+  end
+
   def all_rounds_played?(force_reload = true)
     self.rounds(force_reload).first(:conditions => { :played_at => nil }).nil?
   end

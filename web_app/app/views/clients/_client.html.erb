@@ -4,6 +4,8 @@
       <b>Aktiv</b>
     <% elsif client.functional? %>
       <%= link_to "Auswählen", select_contestant_client_url(client.contestant, client), :method => :post %>
+    <% elsif client.tested? %>
+      <%= client.test_results.join('/') %> bestanden
     <% end %>
   </td>
   <td>
@@ -11,7 +13,11 @@
     <% if client.testing? %>
       <%= image_tag("ui/spinner.gif") %>
     <% elsif client.tested? %>
-      <%= image_tag("state/#{client.functional? ? "ok" : "warning"}.png") %>
+      <% if client.functional? %>
+        <%= image_tag("state/ok.png") %>
+      <% else %>
+        <%= image_tag("state/warning.png") %>
+      <% end %>
     <% end %>
   </td>
   <td><%=h client.file_file_name %></td>

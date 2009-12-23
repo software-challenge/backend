@@ -69,7 +69,8 @@ module SoChaManager
         score_data.xpath('./part').each do |part|
           score << BigDecimal.new(part.content)
         end
-        scores << score
+
+        scores << { :score => score, :cause => score_data.attributes['cause'].value }
       end
 
       @result = scores

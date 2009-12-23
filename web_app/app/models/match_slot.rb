@@ -28,6 +28,14 @@ class MatchSlot < ActiveRecord::Base
     !!client
   end
 
+  def cause_distribution
+    returning Hash.new do |result|
+      round_scores.all( :select => "cause, COUNT(*) AS count", :group => "cause" ).collect do |row|
+        result[row[:cause] || "NIL"] = row[:count]
+      end
+    end
+  end
+
   def name
     if occupied?
       contestant.name || "Unbenannt"

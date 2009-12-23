@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091223184323) do
+ActiveRecord::Schema.define(:version => 20091223230413) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -156,6 +156,7 @@ ActiveRecord::Schema.define(:version => 20091223184323) do
     t.datetime "updated_at"
     t.string   "game_definition"
     t.string   "score_type"
+    t.string   "cause"
   end
 
 end

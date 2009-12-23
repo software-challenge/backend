@@ -21,6 +21,17 @@ class Client < ActiveRecord::Base
   delegate :contest, :to => :contestant
   delegate :game_definition, :to => :contest
 
+  def test_results
+    if tested?
+      result = test_match.slot_for(self).cause_distribution
+      regular_results = result["REGULAR"].to_i
+      all_results = result.inject(0){ |sum,x| sum + x[1].to_i }
+      [regular_results, all_results]
+    else
+      nil
+    end
+  end
+
   def build_index!    
     Client.transaction do
       file_entries.destroy_all
@@ -55,8 +66,13 @@ class Client < ActiveRecord::Base
     !!test_match and !testing?
   end
 
+  def all_tests_passed?
+    raise "not tested yet" unless tested?
+    test_results[0] == test_results[1]
+  end
+
   def functional?
-    tested? and !test_match.scores.empty?
+    tested? and all_tests_passed?
   end
 
   def testing?
@@ -70,6 +86,7 @@ class Client < ActiveRecord::Base
 
   def test_delayed!
     raise "client was already tested" if tested?
+    raise "client is currently tested" if testing?
     raise "no test_contestant available" unless contest.test_contestant
     Match.transaction do
       match = self.create_test_match
