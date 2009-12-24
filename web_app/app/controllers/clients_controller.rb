@@ -58,7 +58,6 @@ class ClientsController < ApplicationController
         @client.build_index!
         flash[:notice] = 'Client was successfully created.'
       rescue => e
-        puts e.backtrace.join "\n"
         flash.now[:error] = "Couldn't process ZIP file."
         @client.errors.add_to_base e.message
         @client.destroy

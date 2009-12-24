@@ -42,13 +42,13 @@ module SoChaManager
       @client.prepare HUI, player_names do |success,response|
         begin
           if success
-            puts "Game has been prepared"
+            logger.info "Game has been prepared"
 
             reservations = response.xpath '//reservation'
             codes = reservations.collect(&:content)
             room_id = response.attributes['roomId'].value
             
-            puts "Observing the game."
+            logger.info "Observing the game."
 
             logfile_name = "#{Time.now.to_i}_log_#{round.id}.xml.gz"
             logfile = Tempfile.new(logfile_name)
@@ -56,7 +56,7 @@ module SoChaManager
 
             room_handler = ObservingRoomHandler.new gzip_logfile do |observer|
               begin
-                puts "Logging done!"
+                logger.info "Logging done!"
                 gzip_logfile.close
                 logfile.close
 
@@ -85,7 +85,7 @@ module SoChaManager
             observation_success = false
 
             @client.observe room_id, "swordfish" do |success,response|
-              puts "ObservationRequest: #{success}"
+              logger.info "ObservationRequest: #{success}"
               
               if success
                 @client.register_room_handler room_id, room_handler
@@ -115,36 +115,37 @@ module SoChaManager
                 end
               end
 
-              puts "All clients have been prepared"
+              logger.info "All clients have been prepared"
             
               emulate_vm_watcher! zip_files if SoChaManager.emulate_vm
 
               # force gamestart
               Thread.new do
                 begin
-                  puts "start_game_after #{SoChaManager.start_game_after} seconds"
+                  logger.info "start_game_after #{SoChaManager.start_game_after} seconds"
                   sleep SoChaManager.start_game_after
 
                   threshold = [[SoChaManager.start_game_after, 20].min, 0].max
 
                   if room_handler.done?
-                    puts "Game is already over, start_game_after not necessary."
+                    logger.info "Game is already over, start_game_after not necessary."
                   elsif !room_handler.received_data_after?(threshold.seconds.ago)
-                    puts "Invoking handler for start_game_after."
+                    logger.info "Invoking handler for start_game_after."
                     @client.step(room_id, true)
                   else
-                    puts "Action detected, start_game_after not necessary."
+                    logger.info "Action detected, start_game_after not necessary."
                   end
                 rescue => e
                   logger.log_formatted_exception e
                 end
               end
             else
-              puts "observation failed"
+              logger.warn "observation failed"
             end
           else
-            puts "Couldn't prepare game!"
+            logger.fatal "Couldn't prepare game!"
             @client.close
+            raise "failed to prepare game"
           end
         rescue => e
           logger.log_formatted_exception e
@@ -164,8 +165,8 @@ module SoChaManager
     protected
 
     def emulate_vm_watcher!(zip_files)
-      puts "Starting clients without VM"
-      zip_files.each { |path| puts path }
+      logger.info "Starting clients without VM"
+      zip_files.each { |path| logger.info path }
 
       zip_files.each do |file|
         Thread.new do
@@ -193,24 +194,24 @@ module SoChaManager
       validate_zip_file(path)
 
       # extract
-      puts "Extracting AI program..."
+      logger.info "Extracting AI program..."
       full_output_path = File.expand_path(directory)
       command = %{unzip -oqq #{path} -d #{full_output_path}}
-      puts command
+      logger.info command
       system command
       
       raise "failed to unzip" unless $?.exitstatus == 0
 
-      puts "Starting AI program and waiting for termination..."
+      logger.info "Starting AI program and waiting for termination..."
       command = %{sh -c "cd #{full_output_path}; ./startup.sh"}
-      puts command
+      logger.info command
       system command
       
-      puts "AI program has been executed and returned (exitcode: #{$?.exitstatus})"
+      logger.info "AI program has been executed and returned (exitcode: #{$?.exitstatus})"
     end
 
     def start_client(slot, reservation)
-      puts "Starting client (id=#{slot.client.id}) for '#{slot.name}'"
+      logger.info "Starting client (id=#{slot.client.id}) for '#{slot.name}'"
       silent = true
 
       ai_program = slot.client
@@ -229,7 +230,7 @@ module SoChaManager
       
       Dir.mktmpdir(File.basename(file)) do |dir|
         command = %{unzip -qq #{File.expand_path(file)} -d #{dir}}
-        puts command
+        logger.info command
         system command
 
         startup_file = File.join(dir, 'startup.sh')
@@ -248,7 +249,7 @@ module SoChaManager
         target = File.expand_path(File.join(SoChaManager.watch_folder, generated_file_name))
         
         command = %{sh -c "cd #{dir}; zip -qr #{target} ."}
-        puts command
+        logger.info command
         system command
       end
 
@@ -257,23 +258,23 @@ module SoChaManager
     
     def validate_zip_file(path)
       # check zip for defects
-      puts "Checking zip-file for defects..."
+      logger.info "Checking zip-file for defects..."
       command = %{unzip -qqt #{path}}
-      puts command
+      logger.info command
       system command
       
       # repair if broken
       unless $?.exitstatus == 0
-        puts "Zip-file is broken. Trying to fix..."
+        logger.info "Zip-file is broken. Trying to fix..."
         
         fixed_path = "#{path}.fixed"
         command = %{zip -qFF #{path} --out #{fixed_path}}
-        puts command
+        logger.info command
         system command
         
         raise "Couldn't fix broken zip-file" unless $?.exitstatus == 0
           
-        puts "Sucessfully fixed zip-file"
+        logger.info "Sucessfully fixed zip-file"
         File.unlink(path)
         File.move(fixed_path, path)
       end
