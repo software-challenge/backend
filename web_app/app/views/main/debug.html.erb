@@ -3,9 +3,9 @@
 <h3>Einstellungen</h3>
 <dl>
   <dt>Maximale Laufzeit</dt>
-  <dd><%= distance_of_time_in_words Delayed::Job::MAX_RUN_TIME %></dd>
+  <dd><%= distance_of_time_in_words Delayed::Worker.max_run_time %></dd>
   <dt>Maximale Versuche</dt>
-  <dd><%= Delayed::Job::MAX_ATTEMPTS %></dd>
+  <dd><%= Delayed::Worker.max_attempts %></dd>
 </dl>
 
 <% unless @jobs.empty? %>
@@ -25,7 +25,7 @@
     <%=h job.last_error || "OK" %>
           </code>
         </td>
-        <td><%=h job.attempts %> / <%= Delayed::Job::MAX_ATTEMPTS %></td>
+        <td><%=h job.attempts %> / <%= Delayed::Worker.max_attempts %></td>
         <td><%= l(job.updated_at, :format => :long) %></td>
       </tr>
     <% end %>

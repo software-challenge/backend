@@ -3,7 +3,7 @@ module SoChaManager
   require 'yaml'
 
   @@configuration = YAML.load_file(Rails.root.join('config', 'vm_watch.yml'))[Rails.env]
-  @@watch_folder = (File.exapand_path(@@configuration["watch_folder"], Rails.root) rescue Rails.root.join('tmp', 'vmwatch'))
+  @@watch_folder = (File.expand_path(@@configuration["watch_folder"], Rails.root) rescue Rails.root.join('tmp', 'vmwatch'))
   @@timeout = (@@configuration["timeout"] rescue 60).to_i
   @@start_game_after = (@@configuration["start_game_after"] rescue 30).to_i
   @@emulate_vm = (@@configuration["emulate_vm"] rescue false)
