@@ -27,7 +27,7 @@ module SoChaManager
     attr_reader :last_result
 
     def initialize
-      
+      logger.info "SoftwareChallenge Manager initialized."
     end
     
     def connect!(ip = HOST, port = PORT, game = HUI)
