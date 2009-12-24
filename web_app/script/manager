@@ -34,7 +34,8 @@ end
 if manager.last_result
   puts "Results for a total of #{manager.last_result.count} players:"
   manager.last_result.each_with_index do |score, i|
-    puts "Player #{i+1}: #{score.join(',')}"
+    puts "Player #{i+1}, #{score[:cause]}"
+    puts "#{score[:score].join(',')}"
   end
 else
   puts "no results"

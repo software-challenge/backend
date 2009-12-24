@@ -32,6 +32,10 @@ class GameDefinitionBuilder
   def players(p)
     d.players = p
   end
+
+  def plugin_guid(guid)
+    d.plugin_guid = guid
+  end
   
   def round_score(&block)
     o = GameDefinitionBuilder.field_collector
@@ -191,7 +195,7 @@ class GameDefinition
     end
   end
   
-  attr_accessor :game_identifier, :league, :players, :round_score, :match_score
+  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid
 end
 
 Dir[Rails.root.join('config', 'games', '*.{rb,yml}')].each do |file|

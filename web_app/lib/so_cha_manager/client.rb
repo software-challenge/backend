@@ -26,8 +26,9 @@ module SoChaManager
       }
     end
 
-    def initialize(ip, port)
-      @connection = TCPSocket.new ip, port
+    def initialize(host, port)
+      logger.info "Connecting to #{host}:#{port}"
+      @connection = TCPSocket.new host, port
       @processor = XmlFragmentReader.new { |*args| on_event(*args) }
       @parser = Nokogiri::XML::SAX::PushParser.new(@processor, 'utf-8')
       @response_handlers = {}

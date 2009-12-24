@@ -1,14 +1,13 @@
 module SoChaManager
-  module Loggable    
-    def self.included(base)
-      base.instance_eval do
-        @@logger = nil
+  module Loggable
+    @@logger = Logger.new(Rails.root.join('log', 'sc_manager.log'))
 
-        define_method :logger do
-          # ActiveRecord::Base.logger
-          @@logger ||= Logger.new(Rails.root.join('log', 'sc_manager.log'))
-        end
-      end
+    def self.included(base)
+      base.extend SoChaManager::Loggable
+    end
+
+    def logger
+      @@logger
     end
   end
 end
