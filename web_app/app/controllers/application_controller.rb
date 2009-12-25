@@ -13,11 +13,13 @@ class ApplicationController < ActionController::Base
   before_filter :fetch_user
   before_filter :require_current_user
   before_filter :generate_page_title
+
   before_filter { |c| Authorization.current_user = c.current_user }
+  attr_accessor :current_user
+  hide_action :current_user
 
   protected
 
-  attr_accessor :current_user
   helper_method :current_user, :logged_in?
 
   attr_accessor :current_page_title

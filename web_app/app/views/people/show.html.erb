@@ -90,7 +90,7 @@
       <td>
         <p>
           <b>Avatar (via <%= link_to "Gravatar", "http://www.gravatar.com" %>)</b><br/>
-          <%= gravatar_for @person, :size => 128 %>
+          <%= raw(gravatar_for @person, :size => 128) %>
         </p>
       </td>
     </tr>

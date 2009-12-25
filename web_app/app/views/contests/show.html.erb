@@ -1,18 +1,18 @@
 <% if current_user.administrator? %>
   <div id="actions">
     <% link_to edit_contest_url(@contest), :title => "Bearbeiten" do %>
-      <%= image_tag('actions/settings.png') + "Bearbeiten" %>
+      <%= image_tag('actions/settings.png') %>Bearbeiten
     <% end %>
     <% if @matchdays.empty? %>
       <% link_to refresh_matchdays_contest_url(@contest), :method => "post", :title => "Spielplan erstellen" do %>
-        <%= image_tag('actions/schedule.png') + "Spielplan generieren" %>
+        <%= image_tag('actions/schedule.png') %>Spielplan generieren
       <% end %>
       <% link_to new_contest_contestant_url(@contest) do %>
-        <%= image_tag('actions/add.png') + "Neuer Teilnehmer" %>
+        <%= image_tag('actions/add.png') %>Neuer Teilnehmer
       <% end %>
     <% else %>
       <% link_to reset_matchdays_contest_url(@contest), :method => "post", :title => "Zurücksetzen" do %>
-        <%= image_tag('actions/destroy.png') + "Zurücksetzen" %>
+        <%= image_tag('actions/destroy.png') %>Zurücksetzen
       <% end %>
     <% end %>
   </div>
