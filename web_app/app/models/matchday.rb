@@ -18,6 +18,9 @@ class Matchday < ActiveRecord::Base
       if record.contest.matchdays.first(:conditions => ["matchdays.position < ? AND matchdays.when > ?", record.position, record.when])
         record.errors.add :when, "must not be before preceding matchdays"
       end
+      unless record.moveable?
+        record.errors.add :when, "can't be changed, since game is playing or was already played."
+      end
     end
   end
 
