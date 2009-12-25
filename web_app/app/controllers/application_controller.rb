@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
   before_filter :fetch_user
   before_filter :require_current_user
   before_filter :generate_page_title
+  before_filter { |c| Authorization.current_user = c.current_user }
 
   protected
 
@@ -21,6 +22,11 @@ class ApplicationController < ActionController::Base
 
   attr_accessor :current_page_title
   helper_method :current_page_title
+
+  def permission_denied
+    flash[:error] = "Zugriff nicht gestattet."
+    redirect_to root_url
+  end
 
   def require_current_user
     unless logged_in?
