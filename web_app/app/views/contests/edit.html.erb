@@ -3,6 +3,9 @@
     <%= f.submit 'Speichern' %> oder
     <%= link_to 'Zurück', contest_url(@contest) %>
   </div>
+  <h1><%= current_page_title %></h1>
 
-  <%= render :partial => "form", :locals => { :f => f } %>
+  <% tabnav :edit_contest do %>
+    <%= render :partial => "form", :locals => { :f => f } %>
+  <% end %>
 <% end %>

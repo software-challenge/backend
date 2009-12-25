@@ -3,6 +3,7 @@
     <%= f.submit 'Erstellen' %> oder
     <%= link_to 'Zurück', contests_url %>
   </div>
-
+  <h1><%= current_page_title %></h1>
+  
   <%= render :partial => "form", :locals => { :f => f } %>
 <% end %>

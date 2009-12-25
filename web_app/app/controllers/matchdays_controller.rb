@@ -2,13 +2,18 @@ class MatchdaysController < ApplicationController
   before_filter :fetch_contest
 
   def index
-    @matchdays = @contest.matchdays
-
     respond_to do |format|
       format.html { redirect_to @contest }
-      format.xml  { render :xml => @matchdays }
+      format.xml  { render :xml => @contest.matchdays }
       format.json {
         if params[:calendar]
+          if params[:start] and params[:end]
+            cal_start = Time.at(params[:start].to_i)
+            cal_end = Time.at(params[:end].to_i)
+            @matchdays = @contest.matchdays.all(:conditions => ["(matchdays.when >= ? AND matchdays.when <= ?)", cal_start, cal_end] )
+          else
+            @matchdays = @contest.matchdays
+          end
           data = @matchdays.collect do |day|
             {
               :id => day.id,
@@ -17,12 +22,13 @@ class MatchdaysController < ApplicationController
               :end => day.when.strftime('%Y-%m-%d'),
               :allDay => true,
               :className => (day.played? ? "played" : "incoming"),
-              :url => contest_matchday_url(@contest, day)
+              # :url => contest_matchday_url(@contest, day),
+              :editable => !day.played?
             }
           end
           render :json => data
         else
-          render :json => @matchdays
+          render :json => @contest.matchdays
         end
       }
     end

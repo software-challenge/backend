@@ -1,0 +1,32 @@
+<style type="text/css">
+  .played,
+  .fc-agenda .played .fc-event-time,
+  .played a {
+    background-color: green; /* background color */
+    border-color: green;     /* border color (often same as background-color) */
+    color: white;           /* text color */
+  }
+</style>
+
+<h1><%= current_page_title %></h1>
+
+<% tabnav :edit_contest do %>
+  <div id="calendar-widget"></div>
+<% end %>
+
+
+<script type='text/javascript'>
+  $(function() {
+    var locale = $.datepicker.regional['de'];
+    var calSettings = {};
+    $.extend(calSettings, locale, {
+      editable: true
+      ,buttonText: {today: "Heute"}
+      ,events: '<%= contest_matchdays_url(@contest, :format => "json", :calendar => true) %>'
+      ,eventDrop: function(calEvent, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
+        $.ajax();
+      }
+    });
+    $('#calendar-widget').fullCalendar(calSettings);
+  });
+</script>

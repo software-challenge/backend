@@ -85,6 +85,10 @@ class ContestsController < ApplicationController
     end
   end
 
+  def edit_schedule
+    @contest = Contest.find(params[:contest_id])
+  end
+
   def reset_matchdays
     @contest = Contest.find(params[:id])
     
