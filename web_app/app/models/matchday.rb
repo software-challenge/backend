@@ -8,6 +8,18 @@ class Matchday < ActiveRecord::Base
   # validations
   validates_presence_of :contest
   validates_presence_of :when
+  validates_uniqueness_of :when, :scope => :contest_id
+
+  validate do |record|
+    if record.when_changed?
+      if record.contest.matchdays.first(:conditions => ["matchdays.position > ? AND matchdays.when < ?", record.position, record.when])
+        record.errors.add :when, "must not be after following matchdays"
+      end
+      if record.contest.matchdays.first(:conditions => ["matchdays.position < ? AND matchdays.when > ?", record.position, record.when])
+        record.errors.add :when, "must not be before preceding matchdays"
+      end
+    end
+  end
 
   # associations
   has_many :matches, :class_name => "LeagueMatch", :dependent => :destroy, :as => :set
@@ -26,6 +38,10 @@ class Matchday < ActiveRecord::Base
 
   def played?
     !played_at.nil?
+  end
+
+  def moveable?
+    !played? and !running?
   end
 
   def running?

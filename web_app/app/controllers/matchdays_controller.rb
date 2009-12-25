@@ -23,7 +23,7 @@ class MatchdaysController < ApplicationController
               :allDay => true,
               :className => (day.played? ? "played" : "incoming"),
               # :url => contest_matchday_url(@contest, day),
-              :editable => !day.played?
+              :editable => day.moveable?
             }
           end
           render :json => data
@@ -126,6 +126,25 @@ class MatchdaysController < ApplicationController
     end
     
     redirect_to contest_matchday_url(@contest, @matchday)
+  end
+
+  # POST /contest/1/matchdays/move
+  def move
+    @matchday = @contest.matchdays.find(params[:id])
+    delta = params[:day_delta].to_i
+
+    unless delta.zero?
+      Matchday.transaction do
+        # necessary to resolve UNIQUENESS constraints
+        direction = (delta > 0) ? "DESC" : "ASC"
+        @contest.matchdays.all(:conditions => ["position >= ?", @matchday.position] , :order => "position #{direction}").each do |md|
+          new_date = md.when.advance(:days => delta)
+          md.update_attributes!(:when => new_date)
+        end
+      end
+    end
+
+    render :nothing => true
   end
 
   protected

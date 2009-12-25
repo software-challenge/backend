@@ -84,23 +84,139 @@ img {
   border-color: #aaf;
   -webkit-box-shadow: 0 0 3px rgba(255,255,80,0.8);
   background-image: -webkit-gradient(linear,
-    center top, center bottom,
-    from(rgba(0,0,255,0)),
-    color-stop(0.4, rgba(0,0,255,0)),
-    color-stop(0.6, rgba(0,0,255,0.06)),
-    to(rgba(0,0,255,0.06)));
+  center top, center bottom,
+  from(rgba(0,0,255,0)),
+  color-stop(0.4, rgba(0,0,255,0)),
+  color-stop(0.6, rgba(0,0,255,0.06)),
+  to(rgba(0,0,255,0.06)));
 }
 
 #actions a:active {
   -webkit-box-shadow: inset 1px 1px 4px rgba(0,0,0,0.2);
   background-image: -webkit-gradient(linear,
-    center top, center bottom,
-    from(rgba(0,0,150,0)),
-    color-stop(0.48, rgba(0,0,150,0)),
-    color-stop(0.52, rgba(0,0,150,0.1)),
-    to(rgba(0,0,150,0.2)));
+  center top, center bottom,
+  from(rgba(0,0,150,0)),
+  color-stop(0.48, rgba(0,0,150,0)),
+  color-stop(0.52, rgba(0,0,150,0.1)),
+  to(rgba(0,0,150,0.2)));
 }
 
 #actions img {
   margin: 0 4px;
+}
+
+#mainMenu ul {
+  list-style: none;
+}
+
+#mainMenu li {
+  display: inline;
+  margin: 0 0 0 8px;
+}
+
+#header #menu a, h1 a {
+  font-weight: bold;
+  color: #4183C4;
+  text-decoration: none;
+  padding: 0 0.2em;
+  margin: 0 -0.2em;
+}
+
+h1 a {
+  text-decoration: underline;
+}
+
+#header #menu a:hover, h1 a:hover {
+  background-color: #222;
+  color: white;
+  text-decoration: none;
+}
+
+#header {
+  height: 60px;
+  border-bottom: 3px solid #ddd;
+  padding: 0 10px;
+  background-color: #FCFCFC;
+  margin: 0 -10px;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
+}
+
+#header #mainLogo {
+  float: left;
+}
+
+#header #menu {
+  text-align: right;
+}
+
+#footer {
+  border-top: 2px solid #ddd;
+  color: #aaa;
+  font-size: 11px;
+  line-height: 26px;
+  text-align: center;
+  margin: 10px -10px 0 -10px;
+}
+
+#header .logo {
+  text-align: center;
+  height: 60px;
+  line-height: 60px;
+  width: 150px;
+  display: inline-block;
+  background-image: url('/images/logo_small.png');
+  background-repeat: no-repeat;
+}
+
+#content {
+  padding: 16px 0;
+}
+
+#content #show_person #avatar {
+  float: right;
+  text-align: right;
+}
+
+label {
+  display: block;
+}
+
+label.inline {
+  display: inline;
+}
+
+form {
+  margin: 0;
+  padding: 0;
+}
+
+.frontpagePhotoBg {
+  height: 250px;
+  background-color: #f0f0f0;
+  margin: 0 -10px 10px -10px;
+}
+
+.frontpagePhotoBg .text {
+  height: 250px;
+  background: -webkit-gradient(linear, left top, right bottom, from(#f8f8f8), to(#e0e0e0));
+}
+
+table#rounds {
+  width: 100%;
+  border-spacing: 0;
+}
+
+table#rounds th {
+  text-align: left;
+}
+
+#rounds .round td {
+  font-weight: bold;
+}
+
+#rounds .round td > * {
+  border: 1px solid #eee;
+  background-color: #f8f8f8;
+  padding: 0 10px;
+  margin: 4px -10px;
 }

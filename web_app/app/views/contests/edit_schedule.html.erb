@@ -19,14 +19,34 @@
   $(function() {
     var locale = $.datepicker.regional['de'];
     var calSettings = {};
+    var $calendar = $('#calendar-widget');
     $.extend(calSettings, locale, {
-      editable: true
+      disableResizing: true
       ,buttonText: {today: "Heute"}
+      ,aspectRatio: 1.618
+      ,defaultView: 'month'
       ,events: '<%= contest_matchdays_url(@contest, :format => "json", :calendar => true) %>'
       ,eventDrop: function(calEvent, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
-        $.ajax();
+        var data = {
+          id: calEvent.id
+          ,day_delta: dayDelta
+          ,authenticity_token: '<%= form_authenticity_token %>'
+        };
+        $.ajaxq("calendarQueue", {
+          data: $.param(data)
+          ,dataType: 'script'
+          ,type: 'post'
+          ,url: '<%= move_contest_matchdays_url(@contest) %>'
+          ,error: function() {
+            alert("" + calEvent.title + " konnte nicht verschoben werden.");
+            revertFunc();
+          }
+          ,success: function() {
+            $calendar.fullCalendar("refetchEvents");
+          }
+        });
       }
     });
-    $('#calendar-widget').fullCalendar(calSettings);
+    $calendar.fullCalendar(calSettings);
   });
 </script>

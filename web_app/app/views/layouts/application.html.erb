@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
@@ -7,200 +7,83 @@
     <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" %>
     <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js" %>
     <%= javascript_include_tag 'edit_area/edit_area_full.js' %>
-    <%= javascript_include_tag 'ui.datepicker-de', 'jrails', 'application', 'fullcalendar.min', :cache => true %>
+    <%= javascript_include_tag 'ui.datepicker-de', 'jrails', 'jquery.ajaxq', 'application', 'fullcalendar.min', :cache => true %>
     <%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/flick/jquery-ui.css" %>
     <%= stylesheet_link_tag 'jquery-ui-fixes', 'application', 'rails', 'contests', 'fullcalendar', 'tabnav', :cache => true  %>
-    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
-      <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-        <title><%= current_page_title %></title>
-        <style type="text/css">
-          #mainMenu ul {
-            list-style: none;
-          }
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
+    <title><%= current_page_title %></title>
+  </head>
+  <body style="margin: 0; padding: 0;">
 
-          #mainMenu li {
-            display: inline;
-            margin: 0 0 0 8px;
-          }
-
-          #header #menu a, h1 a {
-            font-weight: bold;
-            color: #4183C4;
-            text-decoration: none;
-            padding: 0 0.2em;
-            margin: 0 -0.2em;
-          }
-
-          h1 a {
-            text-decoration: underline;
-          }
-
-          #header #menu a:hover, h1 a:hover {
-            background-color: #222;
-            color: white;
-            text-decoration: none;
-          }
-
-          #header {
-            height: 60px;
-            border-bottom: 3px solid #ddd;
-            padding: 0 10px;
-            background-color: #FCFCFC;
-            margin: 0 -10px;
-            background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
-          }
-
-          #header #mainLogo {
-            float: left;
-          }
-
-          #header #menu {
-            text-align: right;
-          }
-
-          #footer {
-            border-top: 2px solid #ddd;
-            color: #aaa;
-            font-size: 11px;
-            line-height: 26px;
-            text-align: center;
-            margin: 10px -10px 0 -10px;
-          }
-
-          #header .logo {
-            text-align: center;
-            height: 60px;
-            line-height: 60px;
-            width: 150px;
-            display: inline-block;
-            background-image: url('/images/logo_small.png');
-            background-repeat: no-repeat;
-          }
-
-          #content {
-            padding: 16px 0;
-          }
-
-          #content #show_person #avatar {
-            float: right;
-            text-align: right;
-          }
-
-          label {
-            display: block;
-          }
-
-          label.inline {
-            display: inline;
-          }
-
-          form {
-            margin: 0;
-            padding: 0;
-          }
-
-          .frontpagePhotoBg {
-            height: 250px;
-            background-color: #f0f0f0;
-            margin: 0 -10px 10px -10px;
-          }
-
-          .frontpagePhotoBg .text {
-            height: 250px;
-            background: -webkit-gradient(linear, left top, right bottom, from(#f8f8f8), to(#e0e0e0));
-          }
-
-          table#rounds {
-            width: 100%;
-            border-spacing: 0;
-          }
-
-          table#rounds th {
-            text-align: left;
-          }
-
-          #rounds .round td {
-            font-weight: bold;
-          }
-
-          #rounds .round td > * {
-            border: 1px solid #eee;
-            background-color: #f8f8f8;
-            padding: 0 10px;
-            margin: 4px -10px;
-          }
-        </style>
-        </head>
-        <body style="margin: 0; padding: 0;">
-
-          <div style="margin: 0 auto; width: 750px;">
-            <div id="header">
-              <div id="mainLogo">
-                <% link_to root_url do %>
-                  <span class="logo"></span>
-                <% end %>
-              </div>
-              <div id="menu">
-                <div style="line-height: 24px; padding: 8px 0;">
-                  <% if logged_in? %>
-                    <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
-                      <span>Du bist angemeldet als</span>
-                      <span><%= link_to current_user.name, person_url(current_user) %></span>
-                      <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
-                      <span><%= link_to "Abmelden", logout_url, :method => :post %></span>
-                    </span>
-                  <% else %>
-                    <span>Hey, wer bist Du denn?</span>
-                    <span>Jetzt <%= link_to "anmelden!", login_url %></span>
-                  <% end %>
-                </div>
-                <div style="line-height: 14px; padding: 0 0 6px 0;">
-                  <ul id="mainMenu">
-                    <li><%= link_to "Startseite", root_url %></li>
-                    <% if Contest.active %>
-                      <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
-                    <% end %>
-                    <li><%= link_to "Wettbewerbe", contests_url %></li>
-                    <% if logged_in? %>
-                      <% if current_user.administrator? %>
-                        <li><%= link_to "Benutzerverwaltung", people_url %></li>
-                      <% else %>
-                        <% if current_user.teacher? %>
-                          <li><%= link_to "Schülerverwaltung", people_url %></li>
-                        <% end %>
-                      <% end %>
-                    <% end %>
-                  </ul>
-                </div>
-              </div>
-            </div>
-            <div id="content">
-              <% unless flash.empty? %>
-                <div id="flash" style="margin: 0 -10px;">
-                  <% if flash[:notice] %>
-                    <div class="ui-widget">
-                      <div class="ui-state-highlight ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
-                        <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-                          <strong>Hinweis:</strong> <%=h flash[:notice] %></p>
-                      </div>
-                    </div>
-                  <% end %>
-                  <% if flash[:error] %>
-                    <div class="ui-widget">
-                      <div class="ui-state-error ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
-                        <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                          <strong>Fehler:</strong> <%=h flash[:error] %></p>
-                      </div>
-                    </div>
-                  <% end %>
-                </div>
-              <% end %>
-
-              <%= yield %>
-            </div>
-            <div id="footer">
-              &copy; 2009 Christian-Albrechts-Universität zu Kiel. Alle Rechte vorbehalten.<br/>
-            </div>
+    <div style="margin: 0 auto; width: 750px;">
+      <div id="header">
+        <div id="mainLogo">
+          <% link_to root_url do %>
+            <span class="logo"></span>
+          <% end %>
+        </div>
+        <div id="menu">
+          <div style="line-height: 24px; padding: 8px 0;">
+            <% if logged_in? %>
+              <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
+                <span>Du bist angemeldet als</span>
+                <span><%= link_to current_user.name, person_url(current_user) %></span>
+                <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
+                <span><%= link_to "Abmelden", logout_url, :method => :post %></span>
+              </span>
+            <% else %>
+              <span>Hey, wer bist Du denn?</span>
+              <span>Jetzt <%= link_to "anmelden!", login_url %></span>
+            <% end %>
           </div>
-        </body>
-        </html>
+          <div style="line-height: 14px; padding: 0 0 6px 0;">
+            <ul id="mainMenu">
+              <li><%= link_to "Startseite", root_url %></li>
+              <% if Contest.active %>
+                <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
+              <% end %>
+              <li><%= link_to "Wettbewerbe", contests_url %></li>
+              <% if logged_in? %>
+                <% if current_user.administrator? %>
+                  <li><%= link_to "Benutzerverwaltung", people_url %></li>
+                <% else %>
+                  <% if current_user.teacher? %>
+                    <li><%= link_to "Schülerverwaltung", people_url %></li>
+                  <% end %>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div id="content">
+        <% unless flash.empty? %>
+          <div id="flash" style="margin: 0 -10px;">
+            <% if flash[:notice] %>
+              <div class="ui-widget">
+                <div class="ui-state-highlight ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
+                  <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+                  <strong>Hinweis:</strong> <%=h flash[:notice] %></p>
+                </div>
+              </div>
+            <% end %>
+            <% if flash[:error] %>
+              <div class="ui-widget">
+                <div class="ui-state-error ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
+                  <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                  <strong>Fehler:</strong> <%=h flash[:error] %></p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= yield %>
+      </div>
+      <div id="footer">
+        &copy; 2009 Christian-Albrechts-Universität zu Kiel. Alle Rechte vorbehalten.<br/>
+      </div>
+    </div>
+  </body>
+</html>
