@@ -2,6 +2,7 @@ require 'digest/sha1'
 
 class Person < ActiveRecord::Base
   RANDOM_HASH_CHARS = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
+  MINIMUM_PASSWORD_LENGTH = 6
   
   has_many :memberships
   has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
@@ -13,11 +14,15 @@ class Person < ActiveRecord::Base
 
   validates_uniqueness_of :email
   validates_presence_of :email
-  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :message => "ist keine korrekte Adresse!"
+  validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i, :message => "ist keine gültige Adresse"
 
   validates_presence_of :first_name
   validates_presence_of :last_name
+  validates_uniqueness_of :nick_name, :allow_blank => true
 
+  validates_presence_of :password, :on => :create
+  validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
+  
   validate_on_update :validate_at_least_one_admin
 
   def name
@@ -28,9 +33,15 @@ class Person < ActiveRecord::Base
     end
   end
 
+  # fake accessor for form-builders
+  attr_reader :password
+
   def password=(new_password)
-    self.password_salt = random_hash()
-    self.password_hash = Person.encrypt_password(new_password, self.password_salt)
+    unless new_password.blank?
+      @password = "*" * new_password.length
+      self.password_salt = random_hash()
+      self.password_hash = Person.encrypt_password(new_password, self.password_salt)
+    end
   end
 
   def password_match?(password)
@@ -50,59 +61,64 @@ class Person < ActiveRecord::Base
     return result
   end
 
-  def teacher?
-    Membership.first(:conditions => ["memberships.person_id = ? AND memberships.teacher = ?", self.id, true])
-  end
-
-  def getrole
-    if teacher?
-      return "Lehrer"
-    else
-      if tutor?
-        return "Tutor"
-      else
-        if pupil?
-          return "Schüler"
+  def teams=(teams)
+    Membership.transaction do
+      memberships.destroy_all
+      unless teams.empty?
+        source = Contestant
+        source = Authorization.current_user.manageable_teams if Authorization.current_user
+        source.find(teams).each do |team|
+          memberships << Membership.new(:contestant => team, :person => self)
         end
       end
     end
-
-    return ""
   end
 
-  def gettutors(team)
-    contestant = Contestant.first :joins => "INNER JOIN memberships ON memberships.contestant_id = contestants.id", :conditions => ["memberships.person_id = ? AND contestants.name = ?", self.id, team]
-
-    Person.all :joins => "INNER JOIN memberships ON memberships.person_id = people.id INNER JOIN contestants ON contestants.id = memberships.contestant_id", :conditions => ["contestants.id = ? AND memberships.tutor = ?",contestant.id, true], :order => "first_name ASC"
-  end
-
-  def getteams
-    teams = Contestant.all :joins => "INNER JOIN memberships ON memberships.contestant_id = contestants.id", :conditions => ["memberships.person_id = ?", self.id]
-
-    result = []
-
-    teams.each do |team|
-      if (result.length == 0)
-        result.push(team.name)
-      else
-        result.push(team.name)
+  def role=(new_role)
+    Membership.transaction do
+      memberships(:reload).each do |membership|
+        membership.update_attributes!(:role => new_role)
       end
-     
     end
-
-    return result
   end
 
+  def manageable_teams
+    if administrator?
+      Contestant.without_testers
+    else
+      teams
+    end
+  end
+
+  def role
+    if teacher?
+      "teacher"
+    elsif tutor?
+      "tutor"
+    elsif pupil?
+      "pupil"
+    else
+      ""
+    end
+  end
+
+  # FIXME: These are serious hacks! Should be removed ASAP!
+  def teacher?
+    memberships.as("teacher").first
+  end
+
+  # FIXME: These are serious hacks! Should be removed ASAP!
   def tutor?
-    Membership.first(:conditions => ["memberships.person_id = ? AND memberships.tutor = ?", self.id, true])
+    memberships.as("tutor").first
   end
 
+  # FIXME: These are serious hacks! Should be removed ASAP!
   def pupil?
-    Membership.first(:conditions => ["memberships.person_id = ? AND memberships.tutor = ? AND memberships.teacher = ?", self.id, false, false])
+    memberships.as("pupil").first
   end
 
   def membership_for(contestant)
-    Membership.first(:conditions => ["memberships.contestant_id = ?", contestant.id])
+    memberships.first :conditions => { :contestant_id => contestant.id }
   end
 
   def last_admin?

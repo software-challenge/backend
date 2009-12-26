@@ -32,4 +32,9 @@ de:
       person:
         first_name: Vorname
         last_name: Nachname
+        nick_name: Nickname
+        email: "E-Mail"
+        password: Passwort
+        role: Rolle
+        blocked: Gesperrt
 

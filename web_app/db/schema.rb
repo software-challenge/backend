@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091223230413) do
+ActiveRecord::Schema.define(:version => 20091226020818) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -108,8 +108,7 @@ ActiveRecord::Schema.define(:version => 20091223230413) do
     t.integer  "contestant_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "tutor",         :default => false, :null => false
-    t.boolean  "teacher",       :default => false, :null => false
+    t.string   "role"
   end
 
   create_table "people", :force => true do |t|

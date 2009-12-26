@@ -29,45 +29,7 @@
     <% end %>
   </tr>
 
-  <% @people.each do |person| %>
-    <tr>
-      <td><%=h person.first_name %></td>
-      <td><%=h person.last_name %></td>
-      <td><%=h person.email %></td>
-      <td>
-        <% if person.blocked? %>
-          <%=  'Ja' %>
-        <%  else %>
-          <%=  'Nein' %>
-        <%  end %>
-      </td>
-      <td>
-        <%=  person.getrole %>
-      </td>
-
-      <td>
-        <%  if (person.getteams.length > 0) %>
-          <%= select_tag "team", options_for_select(person.getteams) %>
-        <% end %>
-      </td>
-
-      <% if current_user.administrator? %>
-        <td>
-          <% if person.administrator? %>
-            <%=  'Ja' %>
-          <%  else %>
-            <%=  'Nein' %>
-          <%  end %>
-        </td>
-      <% end %>
-      <% show_image = image_tag "actions/show.png", :title => "Zeige" %>
-      <% edit_image = image_tag "actions/edit.png", :title => "Bearbeiten" %>
-      <% delete_image = image_tag "actions/delete.png", :title => "Löschen" %>
-      <td><%= link_to show_image, person %></td>
-      <td><%= link_to edit_image, edit_person_path(person) %></td>
-      <td><%= link_to delete_image, person, :confirm => 'Soll "' + person.name + '" wirklich gelöschen werden?', :method => :delete %></td>
-    </tr>
-  <% end %>
+  <%= render :partial => "person", :collection => @people %>
 </table>
 
 <br />

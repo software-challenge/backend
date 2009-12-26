@@ -21,11 +21,6 @@ form.formtastic fieldset ol li p.inline-hints {
   margin-top: 1em;
 }
 
-form.formtastic li fieldset legend.label {
-  float: left;
-  font-weight: bold;
-}
-
 form.formtastic fieldset ol li fieldset legend label {
   width: auto;
 }
@@ -38,4 +33,13 @@ form.formtastic fieldset ol li.check_boxes.horizontal fieldset ol li label {
   display: inline;
   width: auto;
   margin: 0 5px 0 0;
+}
+
+form.formtastic fieldset ol li.string input, form.formtastic fieldset ol li.password input {
+  width: inherit;
+}
+
+form.formtastic fieldset ol li p.inline-errors {
+  display: inline-block;
+  margin: 0;
 }

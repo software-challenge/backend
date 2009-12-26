@@ -4,53 +4,6 @@
   <h1>Neuen Schüler anlegen</h1>
 <% end %>
 
-<% form_for(@person) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :vorname %>
-    <%= f.text_field :first_name %>
-  </p>
-  <br>
-  <p>
-    <%= f.label :nachname %>
-    <%= f.text_field :last_name %>
-  </p>
-  <br>
-  <p>
-    <%= f.label :email %>
-    <%= f.text_field :email %>
-  </p>
-  <br>
-  <p>
-    <%= f.label :passwort %>
-    <%= f.password_field :password_hash %>
-  </p>
-  <% if current_user.administrator? %>
-    <br>
-    <p>
-      <%= f.label :administrator %>
-      <%= f.check_box :administrator %>
-    </p>
-  <%  end %>
-  <br>
-  <p>
-    <%= f.label :rolle %>
-    <%= select_tag "role", options_for_select(@roles) %>
-  </p>
-  <br>
-  <p>
-    <%= f.label "Team (mit STRG selektieren)" %>
-    <% if current_user.teacher? || current_user.tutor? %>
-      <%= select_tag "team", options_for_select(@teams,@teams), :multiple => true, :size => 5 %>
-    <% else %>
-      <%= select_tag "team", options_for_select(@teams), :multiple => true, :size => 5 %>
-    <% end %>
-  </p>
-  <br>
-  <p>
-    <%= f.submit 'Erstellen' %>
-  </p>
-<% end %>
+<%= render :partial => "form" %>
 
 <%= link_to_function "Zurück", "history.back()" %>
