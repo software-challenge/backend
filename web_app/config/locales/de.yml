@@ -12,7 +12,11 @@ de:
         position: "Position"
         carrots: "Karotten"
         average_time: "Ø Zeit"
+  formtastic:
+    submit: "Absenden"
   titles:
+    contests:
+      edit_schedule: Terminplan bearbeiten
     generic:
       index: "Liste der {{model}}"
       edit: "{{model}} bearbeiten"

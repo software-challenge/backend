@@ -94,14 +94,20 @@ class ContestsController < ApplicationController
     
     @contest.matchdays.destroy_all
 
-    redirect_to contest_matchdays_url(@contest)
+    redirect_to contest_edit_schedule_url(@contest)
   end
 
   def refresh_matchdays
     @contest = Contest.find(params[:id])
 
+    start_at_param = read_multipart_param(params[:schedule], :start_at)
+    start_at = Date.new(*start_at_param.collect{ |x| x.to_i })
+    weekdays = params[:schedule][:weekdays].collect { |x| x.blank? ? nil : x.to_i }
+    weekdays.compact!
+    weekdays.uniq!
+
     if @contest.matchdays.count.zero?
-      @contest.refresh_matchdays!
+      @contest.refresh_matchdays!(start_at, weekdays)
 
       if @contest.matchdays.count.zero?
         flash[:error] = "Es sind nicht genug Teilnehmer vorhanden, um einen Spielplan zu erstellen."
@@ -110,6 +116,14 @@ class ContestsController < ApplicationController
       flash[:error] = "Es liegt bereits ein Spielplan vor."
     end
 
-    redirect_to contest_matchdays_url(@contest)
+    redirect_to contest_edit_schedule_url(@contest)
+  end
+
+  protected
+
+  def read_multipart_param(data, key, count = 3)
+    (1..count).collect do |i|
+      data["#{key}(#{i}i)"]
+    end
   end
 end

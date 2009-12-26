@@ -55,21 +55,32 @@ class Contest < ActiveRecord::Base
       :conditions => ["rounds.played_at IS NOT NULL AND matches.set_type = ? AND matchdays.contest_id = ?", "Matchday", id])
   end
 
-  def refresh_matchdays!
+  def refresh_matchdays!(start_at = Date.today, weekdays = 0..6)
+    weekdays = weekdays.to_a
+    range = (0..6)
+
     raise "matchdays exist already" unless matchdays.empty?
-    
+    raise "weekdays must at least contain one element in range #{range}" if (range.to_a & weekdays).empty?
+
+    next_date = start_at
     Contest.transaction do
-      next_date = Date.today
       generate_matchdays.each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
+        
         contestants.each do |contestant|
           matchday.slots.create!(:contestant => contestant)
         end
+
         pairs.each do |contestants|
           match = matchday.matches.create!
           match.contestants = contestants
         end
-        next_date += 1
+
+        puts "wd: #{weekdays}"
+        begin
+          puts next_date.wday
+          next_date = next_date.advance(:days => 1)
+        end until weekdays.include?(next_date.wday)
       end
     end
   end

@@ -12,6 +12,8 @@ class Matchday < ActiveRecord::Base
 
   validate do |record|
     if record.when_changed?
+      # record.errors.add :when, "must be today or in the future" if record.when < Date.today
+      
       if record.contest.matchdays.first(:conditions => ["matchdays.position > ? AND matchdays.when < ?", record.position, record.when])
         record.errors.add :when, "must not be after following matchdays"
       end
@@ -19,7 +21,7 @@ class Matchday < ActiveRecord::Base
         record.errors.add :when, "must not be before preceding matchdays"
       end
       unless record.moveable?
-        record.errors.add :when, "can't be changed, since game is playing or was already played."
+        record.errors.add :when, "can't be changed, since game is playing or was already played"
       end
     end
   end

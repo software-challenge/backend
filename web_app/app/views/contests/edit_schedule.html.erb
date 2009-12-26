@@ -8,45 +8,37 @@
   }
 </style>
 
+<div id="actions">
+  <% if !@contest.matchdays.empty? and @contest.matchdays.played.empty? %>
+    <% link_to reset_matchdays_contest_url(@contest), :method => "post" do %>
+      <%= image_tag('actions/destroy.png') %>Spielplan löschen
+    <% end %>
+  <% end %>
+</div>
+
 <h1><%= current_page_title %></h1>
 
 <% tabnav :edit_contest do %>
-  <div id="calendar-widget"></div>
+  <% if @contest.matchdays.empty? %>
+    <% if @contest.contestants.count <= 1 %>
+      <%= @contest.contestats.count %> Teilnehmer ist nicht genug, um einen Spielplan zu erstellen.
+    <% else %>
+      <% semantic_form_for :schedule, :url => refresh_matchdays_contest_url(@contest), :method => :post do |f| %>
+        <p>
+          Der Wettbewerb hat <b><%= @contest.contestants.count %> Teilnehmer</b>
+          und wird somit <b><%= @contest.contestants.count - 1 %> Spieltage</b> haben.
+        </p>
+        <% f.inputs do %>
+          <%= f.input :start_at, :as => :date, :label => "Erster Spieltag" %>
+          <% days = (0..6).collect { |i| [t("date.abbr_day_names")[i], i] } %>
+          <%= f.input :weekdays, :as => :check_boxes, :collection => days, :selected => [1,4],
+            :hint => "Einzelne Daten können nachträglich verschoben werden.", :label => "Wochentage",
+            :wrapper_html => { :class => "horizontal" } %>
+        <% end %>
+        <%= f.buttons %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <%= render :partial => "calendar" %>
+  <% end %>
 <% end %>
-
-
-<script type='text/javascript'>
-  $(function() {
-    var locale = $.datepicker.regional['de'];
-    var calSettings = {};
-    var $calendar = $('#calendar-widget');
-    $.extend(calSettings, locale, {
-      disableResizing: true
-      ,buttonText: {today: "Heute"}
-      ,aspectRatio: 1.618
-      ,defaultView: 'month'
-      ,events: '<%= contest_matchdays_url(@contest, :format => "json", :calendar => true) %>'
-      ,eventDrop: function(calEvent, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
-        var data = {
-          id: calEvent.id
-          ,day_delta: dayDelta
-          ,authenticity_token: '<%= form_authenticity_token %>'
-        };
-        $.ajaxq("calendarQueue", {
-          data: $.param(data)
-          ,dataType: 'script'
-          ,type: 'post'
-          ,url: '<%= move_contest_matchdays_url(@contest) %>'
-          ,error: function() {
-            alert("" + calEvent.title + " konnte nicht verschoben werden.");
-            revertFunc();
-          }
-          ,success: function() {
-            $calendar.fullCalendar("refetchEvents");
-          }
-        });
-      }
-    });
-    $calendar.fullCalendar(calSettings);
-  });
-</script>
