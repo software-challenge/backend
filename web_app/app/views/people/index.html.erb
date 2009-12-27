@@ -1,35 +1,21 @@
 <div id="actions">
-  <% if !current_user.teacher? || !current_user.tutor? || current_user.administrator? %>
-    <% link_to new_person_url do %>
-      <%= image_tag('actions/add.png') %>Neue Person
-    <% end %>
-  <% else %>
-    <% link_to new_person_url do %>
-      <%= image_tag('actions/add.png') %>Neue(r) SchülerIn
-    <% end %>
+  <% link_to new_person_url do %>
+    <%= image_tag('actions/add.png') %>Neue Person
   <% end %>
 </div>
 
-<% if current_user.administrator? %>
-  <h1>Benutzerverwaltung</h1>
-<% else %>
-  <h1>Schülerverwaltung</h1>
+<h1>Administration</h1>
+
+<% tabnav :administration do %>
+
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="font-size: 11px; text-align: left;">
+      <% %w{first_name last_name email blocked role teams administrator}.each do |attr| %>
+        <th><%= Person.human_attribute_name attr %></th>
+      <% end %>
+    </tr>
+
+    <%= render :partial => "person", :collection => @people %>
+  </table>
+
 <% end %>
-
-<table>
-  <tr>
-    <th>Vorname</th>
-    <th>Nachname</th>
-    <th>E-Mail Addresse</th>
-    <th>Gesperrt</th>
-    <th>Rolle</th>
-    <th>Teams</th>
-    <% if current_user.administrator? %>
-      <th>Administrator</th>
-    <% end %>
-  </tr>
-
-  <%= render :partial => "person", :collection => @people %>
-</table>
-
-<br />

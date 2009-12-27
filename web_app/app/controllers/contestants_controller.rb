@@ -7,7 +7,7 @@ class ContestantsController < ApplicationController
     @contestants = @contest.contestants
 
     respond_to do |format|
-      format.html { redirect_to contest_url(@contest, :anchor => "contestants") }
+      format.html # index.html.erb
       format.xml  { render :xml => @contestants }
     end
   end
@@ -15,7 +15,11 @@ class ContestantsController < ApplicationController
   # GET /contestants/1
   # GET /contestants/1.xml
   def show
-    @contestant = @contest.contestants.find(params[:id])
+    # unify URL
+    unless params[:contest_id]
+      redirect_to contest_contestant_url(@contest, @contestant)
+      return
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -90,6 +94,12 @@ class ContestantsController < ApplicationController
   protected
 
   def fetch_contest
-    @contest = Contest.find(params[:contest_id])
+    if params[:contest_id]
+      @contest = Contest.find(params[:contest_id])
+      @contestant = @contest.contestants.find(params[:id]) if params[:id]
+    elsif params[:id]
+      @contestant = Contestant.find(params[:id])
+      @contest = @contestant.contest
+    end
   end
 end

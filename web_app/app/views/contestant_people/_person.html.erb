@@ -1,0 +1,17 @@
+<tr>
+  <td><%=h person.first_name %></td>
+  <td><%=h person.last_name %></td>
+  <td><%=h person.email %></td>
+  <td>
+    <% if person.blocked? %>
+      <%=  'Ja' %>
+    <%  else %>
+      <%=  'Nein' %>
+    <%  end %>
+  </td>
+
+  <td>
+    <%= link_to image_tag("actions/show.png"), [@contestant, person] %>
+    <%= link_to image_tag("actions/edit.png"), edit_contestant_person_url(@contestant, person) %>
+  </td>
+</tr>

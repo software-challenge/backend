@@ -1,15 +1,13 @@
-<%= error_messages_for :test_contestant, :contest, :default => :contest %>
-
-<div>
-  <p>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :game_definition, "Spiel" %>
-    <%= f.select(:game_definition, GameDefinition.all.collect{|gd| [gd.game_identifier, gd.game_identifier] }, :disabled => !@contest.new_record?) %>
-  </p>
-  <p>
-    <%= f.check_box :active %> <%= f.label :active, "Der Wettbewerb ist aktiv", :class => "inline" %>
-  </p>
-</div>
+<% semantic_form_for @contest do |f| %>
+  <% f.inputs do %>
+    <%= f.input :name, :required => true %>
+    <%= f.input :game_definition,
+      :collection => GameDefinition.all.collect{ |gd| [gd.game_identifier, gd.game_identifier] },
+      :input_html => { :disabled => !@contest.new_record? },
+      :include_blank => false,
+      :required => true
+    %>
+    <%= f.input :active %>
+  <% end %>
+  <%= f.buttons %>
+<% end %>

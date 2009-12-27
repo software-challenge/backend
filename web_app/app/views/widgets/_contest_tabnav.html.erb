@@ -11,20 +11,50 @@
 #   :generate_css => true|false #=> generates a default inline css for the tabnav, defaults to false
 #   :html => aHash #=> sets html options for the tabnav's div (es :html => {:class=> 'myCssClass', :id=>'myCssId'}) 
 #     
-render_tabnav :edit_contest, :html => { :class => "tabs_tabnav" } do
-         
+render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
+
   add_tab do |t|
-    t.named 'Allgemein'
-    t.titled 'Allgemeine Einstellungen'
-    t.links_to :controller => "contests", :action => "edit", :id => @contest.to_param
+    t.named 'Übersicht'
+    t.links_to :controller => "contests", :action => "show", :id => @contest
+  end
+
+  if current_user.administrator?
+    add_tab do |t|
+      t.named 'Bearbeiten'
+      t.links_to :controller => "contests", :action => "edit", :id => @contest.to_param
+    end
+
+    add_tab do |t|
+      t.named "Terminplan"
+      t.links_to hash_for_contest_edit_schedule_url(:contest_id => @contest)
+    end
   end
 
   add_tab do |t|
-    t.named "Terminplan"
-    t.titled "Terminplan bearbeiten"
-    t.links_to :controller => "contests", :action => "edit_schedule", :contest_id => @contest.to_param
+    t.named 'Rangliste'
+    t.links_to hash_for_contest_rankings_url(:contest_id => @contest)
+    t.disable! unless @contest.last_played_matchday
   end
-  #  
+  
+  add_tab do |t|
+    t.named 'Ergebnisse'
+    t.named "#{@contest.last_played_matchday.position}. Spieltag" if @contest.last_played_matchday
+    t.links_to hash_for_contest_results_url(:contest_id => @contest)
+    t.disable! unless @contest.last_played_matchday
+  end
+
+  add_tab do |t|
+    t.named 'Spieltage'
+    t.links_to :controller => "matchdays", :action => "index", :contest_id => @contest
+    t.disable! if @contest.matchdays.empty?
+  end
+
+  add_tab do |t|
+    t.named 'Teilnehmer'
+    t.links_to :controller => "contestants", :action => "index", :contest_id => @contest
+  end
+
+  #
   # you can use restful routes with:
   #
   #add_tab do |t|
@@ -36,20 +66,20 @@ render_tabnav :edit_contest, :html => { :class => "tabs_tabnav" } do
   #  t.named 'Customers'
   #  t.links_to :controller => 'customers'
   #end
-  #  
+  #
   # # A tab can be initialized with a Hash like this:
-  # 
+  #
   # add_tab :name => 'welcome', :link => {:controller=>'welcome'}
   #
-  # # You can have a dynamic name or link 
+  # # You can have a dynamic name or link
   # # (this partial is evaluated in the page context, so it sees every helper or instance variable)
-  #  
+  #
   # add_tab do |t|
   #   t.named "#{current_user} details"
   #   t.links_to :controller => 'users', :action => 'show', :id => current_user.id
   # end
   #
-  # # You can have an image inside 
+  # # You can have an image inside
   #
   # add_tab do |t|
   #   t.named image_tag('test')

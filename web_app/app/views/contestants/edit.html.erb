@@ -1,20 +1,13 @@
-<h1>Editing contestant</h1>
+<h1>
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= @contestant.name %>
+</h1>
 
-<% form_for([@contest, @contestant]) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :contest_id %><br />
-    <%= @contestant.contest.name %>
-  </p>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
+<% tabnav :contestant do %>
+  <% semantic_form_for([@contestant.contest, @contestant]) do |f| %>
+    <% f.inputs do %>
+      <%= f.input :name, :required => true %>
+    <% end %>
+    <%= f.buttons %>
+  <% end %>
 <% end %>
-
-<%= link_to 'Show', contest_contestants_url(@contest, @contestant) %> |
-<%= link_to 'Back', contest_contestants_path(@contest) %>

@@ -1,20 +1,15 @@
-class PeopleController < ApplicationController
+class ContestantPeopleController < ApplicationController
+  before_filter :fetch_contestant, :check_permissions
+
   # GET /people
   # GET /people.xml
   def index
-    raise NotAllowed unless current_user.administrator?
-    
     @people = Person.all :order => "email ASC"
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { render :controller => "people", :action => "index" }
       format.xml  { render :xml => @people }
     end
-  end
-
-  def index_for_contestant
-    @contestant = Contestant.find(params[:contestant_id])
-    raise NotAllowed unless current_user.administrator? or @contestant.people.include?(current_user)
   end
 
   # GET /people/1
@@ -61,9 +56,6 @@ class PeopleController < ApplicationController
   # POST /people
   # POST /people.xml
   def create
-    @person =
-      check_permissions_on(@person)
-
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |x| x.blank? } if person_params[:teams]
@@ -111,13 +103,6 @@ class PeopleController < ApplicationController
     end
   end
 
-  # DELETE /people/1
-  # DELETE /people/1.xml
-  def destroy
-    # We need the models to display client.authors etc, so we can't just "delete" them.
-    raise "Deletion is not supported right now."
-  end
-
   protected
 
   def select_pupils
@@ -126,6 +111,14 @@ class PeopleController < ApplicationController
 
   def valid_password(pass)
     pass != "" && pass.length > 5
+  end
+
+  def fetch_contestant
+    @contestant = Contestant.find(params[:contestant_id])
+  end
+
+  def check_permissions
+    raise NotAllowed unless current_user.administrator? or @contestant.people.include?(current_user)
   end
 
   def check_permissions_on(person)

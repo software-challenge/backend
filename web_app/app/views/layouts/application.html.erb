@@ -15,7 +15,6 @@
     <title><%= current_page_title %></title>
   </head>
   <body style="margin: 0; padding: 0;">
-
     <div style="margin: 0 auto; width: 750px;">
       <div id="header">
         <div id="mainLogo">
@@ -43,15 +42,8 @@
               <% if Contest.active %>
                 <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
               <% end %>
-              <li><%= link_to "Wettbewerbe", contests_url %></li>
-              <% if logged_in? %>
-                <% if current_user.administrator? %>
-                  <li><%= link_to "Benutzerverwaltung", people_url %></li>
-                <% else %>
-                  <% if current_user.teacher? %>
-                    <li><%= link_to "Schülerverwaltung", people_url %></li>
-                  <% end %>
-                <% end %>
+              <% if logged_in? and current_user.administrator? %>
+                <li><%= link_to "Administration", administration_url %></li>
               <% end %>
             </ul>
           </div>

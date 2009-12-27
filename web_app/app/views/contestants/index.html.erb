@@ -1,0 +1,28 @@
+<div id="actions">
+  <% if @contest.contestants.empty? %>
+    <% link_to new_contest_contestant_url(@contest) do %>
+      <%= image_tag('actions/add.png') %>Neuer Teilnehmer
+    <% end %>
+  <% end %>
+</div>
+
+<h1>
+  <%= @contest.name %>
+</h1>
+
+<% tabnav :contest do %>
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="font-size: 11px; text-align: left;">
+      <th>Team</th>
+      <th>Mitglieder</th>
+    </tr>
+
+    <% @contest.contestants.each do |contestant| %>
+      <tr>
+        <td><%= contestant.name %></td>
+        <td><%= contestant.people.count %></td>
+        <td><%= link_to image_tag('actions/show.png'), [contestant.contest, contestant] %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

@@ -1,12 +1,13 @@
 .tabs_tabnav {
-  font-size: 15px;
+  font-size: 13px;
+  line-height: 28px;
   font-weight: bold;
   height: 28px;
-  border-bottom: 1px solid #aaa;
+  border-bottom: 2px solid #ddd;
   margin: 13px -10px 0px -10px;
   padding: 0 10px;
   z-index: 1;
-  }
+}
 
 .tabs_tabnav ul {
   margin: 0px;
@@ -17,46 +18,48 @@
   display: inline;
   overflow: hidden;
   height: 28px;
-  list-style-type: none; }
+  list-style-type: none;
+}
 
 .tabs_tabnav li span.disabled {
-  color: #888888;
-  background: #FAFAFA;
-  border: 1px solid #DDDDDD;
-  border-bottom: none;
+  color: #aaa;
+  background-color: #eee;
+  text-decoration: none;
   padding: 5px 10px;
-  margin: 0;
-  text-decoration: none;}
+  border: 1px solid #e8e8e8;
+  border-bottom-color: white;
+}
 
 .tabs_tabnav a, .tabs_tabnav a:visited, tabs_tabnav a.active {
-  font-size: 0.8em;
-  color: #888;
+  color: #4183C4;
   border: 1px solid transparent;
+  border-bottom: 0 none;
   padding: 2px 10px;
   margin: 0;
-  line-height: 22px;
-  text-decoration: none; }
+  text-decoration: none;
+  background-color: white;
+}
 
 .tabs_tabnav a:hover {
+  color: #000;
   background: #fff;
-  padding: 5px 10px 5px 10px;
-  border: 1px solid #ccc;
-  border-bottom: 3px solid white;
+  padding: 5px 10px 8px 10px;
+  border: 1px solid #ddd;
+  border-bottom: 0 none;
 }
 
 .tabs_tabnav a.active, .tabs_tabnav a.active:hover {
-  font-size: 1em;
   color: #000;
   border-bottom: 0 none;
-  padding: 5px 10px 5px 10px;
-  line-height: 28px;
-  border: 1px solid #aaa;
-  border-bottom: 1px solid white;
+  padding: 5px 10px 8px 10px;
+  border: 1px solid #ddd;
+  border-bottom: 0 none;
 }
 
 .tabs_tabnav a.active:hover {
   background: #FFFFFF;
-  color: #000000; }
+  color: #000000;
+}
 
 .tabs_tabnav_content {
   background: #FFFFFF;

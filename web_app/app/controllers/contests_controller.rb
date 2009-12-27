@@ -22,6 +22,20 @@ class ContestsController < ApplicationController
     end
   end
 
+  def rankings
+    @contest = Contest.find(params[:contest_id])
+    @matchday = @contest.last_played_matchday
+
+    redirect_to @contest unless @matchday
+  end
+
+  def results
+    @contest = Contest.find(params[:contest_id])
+    @matchday = @contest.last_played_matchday
+
+    redirect_to @contest unless @matchday
+  end
+
   # GET /contests/new
   # GET /contests/new.xml
   def new

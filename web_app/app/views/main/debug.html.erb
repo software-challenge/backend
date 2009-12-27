@@ -1,33 +1,38 @@
-<h2>Es sind momentan <%= @jobs.count %> Aufträge aktiv</h2>
+<h1>Administration</h1>
 
-<h3>Einstellungen</h3>
-<dl>
-  <dt>Maximale Laufzeit</dt>
-  <dd><%= distance_of_time_in_words Delayed::Worker.max_run_time %></dd>
-  <dt>Maximale Versuche</dt>
-  <dd><%= Delayed::Worker.max_attempts %></dd>
-</dl>
+<% tabnav :administration do %>
 
-<% unless @jobs.empty? %>
-  <h3>Übersicht</h3>
-  <table>
-    <tr>
-      <th>ID</th>
-      <th>Status</th>
-      <th>Versuche</th>
-      <th>Letzte Aktualisierung</th>
-    </tr>
-    <% @jobs.each do |job| %>
+  <h2>Es sind momentan <%= @jobs.count %> Aufträge aktiv</h2>
+
+  <h3>Einstellungen</h3>
+  <dl>
+    <dt>Maximale Laufzeit</dt>
+    <dd><%= distance_of_time_in_words Delayed::Worker.max_run_time %></dd>
+    <dt>Maximale Versuche</dt>
+    <dd><%= Delayed::Worker.max_attempts %></dd>
+  </dl>
+
+  <% unless @jobs.empty? %>
+    <h3>Übersicht</h3>
+    <table>
       <tr>
-        <td><%=h job.id %></td>
-        <td>
-          <code style="font-size: 11px; line-height: 12px; color: #666;">
-    <%=h job.last_error || "OK" %>
-          </code>
-        </td>
-        <td><%=h job.attempts %> / <%= Delayed::Worker.max_attempts %></td>
-        <td><%= l(job.updated_at, :format => :long) %></td>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Versuche</th>
+        <th>Letzte Aktualisierung</th>
       </tr>
-    <% end %>
-  </table>
+      <% @jobs.each do |job| %>
+        <tr>
+          <td><%=h job.id %></td>
+          <td>
+            <code style="font-size: 11px; line-height: 12px; color: #666;">
+      <%=h job.last_error || "OK" %>
+            </code>
+          </td>
+          <td><%=h job.attempts %> / <%= Delayed::Worker.max_attempts %></td>
+          <td><%= l(job.updated_at, :format => :long) %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
 <% end %>

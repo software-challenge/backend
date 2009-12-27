@@ -1,4 +1,8 @@
+<% date = local_assigns[:date] || false %>
 <tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
+  <% if date %>
+    <td><%= l match.matchday.when %></td>
+  <% end %>
   <td><%= match.slots[0].name || "Freispiel" %></td>
   <td><%= match.slots[1].name || "Freispiel" %></td>
   <td style="text-align: center;">

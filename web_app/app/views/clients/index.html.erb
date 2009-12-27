@@ -1,27 +1,25 @@
 <div id="actions">
-  <%= link_to image_tag('actions/add.png'), new_contestant_client_url(@contestant) %>
+  <% link_to new_contestant_client_url(@contestant) do %>
+    <%= image_tag('actions/add.png') %>Computerspieler hochladen
+  <% end %>
 </div>
 
+<h1><%= link_to @contestant.name, @contestant %> / Computerspieler</h1>
 
-<h1>
-  <%= link_to h(@contestant.name), [@contestant.contest, @contestant] %> /
-  Computerspieler
-</h1>
+<% tabnav :contestant do %>
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="text-align: left; font-size: 11px;">
+      <th colspan="2">&nbsp;</th>
+      <th>Dateiname</th>
+      <th>Hauptdatei</th>
+      <th>Informationen</th>
+    </tr>
+    <%= render :partial => "client", :collection => @contestant.clients %>
+  </table>
 
-
-<table style="width: 100%;">
-  <tr style="text-align: left;">
-    <th colspan="2">&nbsp;</th>
-    <th>Dateiname</th>
-    <th>Hauptdatei</th>
-    <th>Von</th>
-    <th>Datum</th>
-  </tr>
-  <%= render :partial => "client", :collection => @clients %>
-</table>
-
-<% unless @contestant.current_client %>
-  <p>
-    Es ist noch kein Computerspieler ausgewählt worden.
-  </p>
+  <% unless @contestant.current_client %>
+    <p>
+      Es ist noch kein Computerspieler ausgewählt worden.
+    </p>
+  <% end %>
 <% end %>

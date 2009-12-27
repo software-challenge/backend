@@ -1,0 +1,7 @@
+<h1>
+  <%= link_to @contestant.name, @contestant %> /
+  <%= link_to "Personen", contestant_people_url(@contestant) %> /
+  SchülerIn bearbeiten
+</h1>
+
+<%= render :partial => "form" %>

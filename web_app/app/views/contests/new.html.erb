@@ -1,9 +1,3 @@
-<% form_for(@contest) do |f| %>
-  <div style="float: right;">
-    <%= f.submit 'Erstellen' %> oder
-    <%= link_to 'Zurück', contests_url %>
-  </div>
-  <h1><%= current_page_title %></h1>
-  
-  <%= render :partial => "form", :locals => { :f => f } %>
-<% end %>
+<h1><%= current_page_title %></h1>
+
+<%= render :partial => "form" %>

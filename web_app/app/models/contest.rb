@@ -85,6 +85,10 @@ class Contest < ActiveRecord::Base
     end
   end
 
+  def last_played_matchday
+    matchdays.played.first(:order => "position DESC")
+  end
+
   protected
 
   # generates all matchdays (round-robin tournament)

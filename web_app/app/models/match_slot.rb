@@ -1,4 +1,6 @@
 class MatchSlot < ActiveRecord::Base
+  default_scope :order => "position ASC"
+
   validates_presence_of :match
   validates_presence_of :contestant
 

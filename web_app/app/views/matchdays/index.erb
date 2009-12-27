@@ -1,0 +1,31 @@
+<h1>
+  <%= @contest.name %>
+</h1>
+
+<% tabnav :contest do %>
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="font-size: 11px;">
+      <th style="padding-left: 10px;">&nbsp;</th>
+      <th style="text-align: left;">Wann</th>
+      <th style="text-align: left;">Status</th>
+    </tr>
+
+    <% @matchdays.each_with_index do |matchday,i| %>
+      <tr style="background-color: <%= i.odd? ? '#f8f8f8': '#fff' %>; line-height: 2em;">
+        <td style="padding-left: 10px;">
+          <% link_to [@contest, matchday] do %>
+            <%= i+1 %>. Spieltag
+          <% end %>
+        </td>
+        <td><%= l(matchday.when, :format => :long) %></td>
+        <% if matchday.played? %>
+          <td style="color: #090; font-weight: bold;"><%= matchday_status(matchday) %></td>
+        <% elsif matchday.running? %>
+          <td><%= matchday_status(matchday) %></td>
+        <% else %>
+          <td style="color: #aaa;"><%= matchday_status(matchday) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

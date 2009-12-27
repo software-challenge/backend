@@ -1,0 +1,37 @@
+<%  
+# this partial renders a tabnav, you can call it in your views with:
+#   <%= tabnav :edit_contest % > (just the tabnav) 
+# or, if you want a boxed tabnav:
+#   <% tabnav :edit_contest do % >
+#     your html here
+#   <% end % >
+# (remove the space between % and >, we don't want to mess up your brand new tabnav :-))
+#
+# you can pass render_tabnav a few options:
+#   :generate_css => true|false #=> generates a default inline css for the tabnav, defaults to false
+#   :html => aHash #=> sets html options for the tabnav's div (es :html => {:class=> 'myCssClass', :id=>'myCssId'}) 
+#     
+render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
+
+  add_tab do |t|
+    t.named 'Übersicht'
+    t.links_to hash_for_administration_url
+  end
+
+  add_tab do |t|
+    t.named 'Benutzerverwaltung'
+    t.links_to hash_for_people_url
+  end
+
+  add_tab do |t|
+    t.named 'Wettbewerbe'
+    t.links_to hash_for_contests_url
+  end
+
+  add_tab do |t|
+    t.named 'Debugansicht'
+    t.links_to hash_for_debug_url
+  end
+
+end 
+%>

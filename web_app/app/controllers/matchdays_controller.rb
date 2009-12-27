@@ -2,9 +2,11 @@ class MatchdaysController < ApplicationController
   before_filter :fetch_contest
 
   def index
+    @matchdays = @contest.matchdays
+
     respond_to do |format|
-      format.html { redirect_to @contest }
-      format.xml  { render :xml => @contest.matchdays }
+      format.html # index.html.erb
+      format.xml  { render :xml => @matchdays }
       format.json {
         if params[:calendar]
           if params[:start] and params[:end]

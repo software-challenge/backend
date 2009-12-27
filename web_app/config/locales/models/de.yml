@@ -29,6 +29,8 @@ de:
     attributes:
       contest:
         game_definition: Spiel
+        name: Name
+        active: Wettbewerb ist aktiv
       person:
         first_name: Vorname
         last_name: Nachname

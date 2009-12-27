@@ -20,6 +20,13 @@ class Person < ActiveRecord::Base
   validates_presence_of :last_name
   validates_uniqueness_of :nick_name, :allow_blank => true
 
+  with_options :with => /\A[\w]*\Z/, :message => "darf keine Sonderzeichen enthalten" do |alnum|
+    alnum.validates_format_of :first_name
+    alnum.validates_format_of :last_name
+  end
+
+  validates_format_of :nick_name, :with => /\A[[:alnum:] ]*\Z/, :message => "darf nur Buchstaben und/oder Zahlen enthalten"
+
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
   
@@ -31,6 +38,13 @@ class Person < ActiveRecord::Base
     else
       self.email
     end
+  end
+
+  # compress whitespaces
+  def nick_name=(new_nick)
+    new_nick = new_nick.strip
+    new_nick = new_nick.gsub(/\s+/, ' ')
+    self[:nick_name] = new_nick
   end
 
   # fake accessor for form-builders

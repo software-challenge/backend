@@ -1,0 +1,7 @@
+<h1>
+  <%= @contest.name %>
+</h1>
+
+<% tabnav :contest do %>
+  <%= render :partial => "matchdays/standings", :locals => { :matchday => @matchday } %>
+<% end %>

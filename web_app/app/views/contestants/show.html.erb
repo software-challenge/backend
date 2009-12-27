@@ -1,66 +1,14 @@
 <div id="actions">
-  <% if logged_in? %>
-    <% if current_user.administrator? or current_user.contestants.exists?(@contestant) %>
-      <%= link_to image_tag('icons/ai_program.png') + "Computerspieler", contestant_clients_url(@contestant) %>
-    <% end %>
-    <% if current_user.administrator? %>
-      <%= link_to image_tag('actions/settings.png') + "Bearbeiten", edit_contest_contestant_url(@contest, @contestant) %>
-    <% end %>
+  <% if logged_in? and current_user.administrator? %>
+    <%= link_to image_tag('actions/settings.png') + "Bearbeiten", edit_contest_contestant_url(@contest, @contestant) %>
   <% end %>
 </div>
 
 <h1>
-  <%= link_to h(@contest.name), @contest %> /
-  <%= link_to "Teilnehmer", contest_contestants_url(@contest) %> /
-  <%=h @contestant.name %>
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= @contestant.name %>
 </h1>
 
-<div id="tabs" style="margin: 0 -10px;">
-  <ul>
-    <li><a href="#matches">Matches</a></li>
-    <% if logged_in? and current_user.administrator? %>
-      <li><a href="#people">Benutzer</a></li>
-    <% end %>
-  </ul>
+<% tabnav :contestant do %>
 
-  <div id="matches">
-    <table style="width: 100%; border-spacing: 0;">
-      <colgroup span="2"/>
-      <colgroup width="15%"/>
-      <thead>
-        <tr style="font-size: 11px;">
-          <th style="text-align: left;">Spieler 1</th>
-          <th style="text-align: left;">Spieler 2</th>
-          <th>Ergebnis</th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= render :partial => "matchdays/match", :collection => @contestant.matches %>
-      </tbody>
-    </table>
-  </div>
-
-  <% if logged_in? and current_user.administrator? %>
-    <div id="people">
-      <table>
-        <tr style="display: none;">
-          <th>Name</th>
-          <th>Rolle</th>
-        </tr>
-        <% @contestant.people.each do |person| %>
-          <tr>
-            <td><%=h person.name %></td>
-            <td>(<%= role_for(person, @contestant) %>)</td>
-          </tr>
-        <% end %>
-      </table>
-    </div>
-  <% end %>
-</div>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("#tabs").tabs();
-  });
-</script>
-
+<% end %>

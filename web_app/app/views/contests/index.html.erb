@@ -4,16 +4,27 @@
   <% end %>
 </div>
 
-<h1>Alle Wettbewerbe</h1>
+<h1>Administration</h1>
 
-<div id="contests">
-  <% @contests.each do |contest| %>
-    <div class="contest <%= "active" if contest.active? %>">
-      <div style="float: right;">
-        <%= link_to 'Anzeigen', contest_path(contest) %>
-        <%= link_to 'Bearbeiten', edit_contest_path(contest) %>
-      </div>
-      <h2><%=h contest.name %> (<%=h contest.contestants.count %> Teilnehmer)</h2>
-    </div>
-  <% end %>
-</div>
+<% tabnav :administration do %>
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="font-size: 11px; text-align: left;">
+      <th>Name</th>
+      <th>Spiel</th>
+      <th>Teilnehmer</th>
+      <th>Aktiv?</th>
+    </tr>
+    <% @contests.each do |contest| %>
+      <tr>
+        <td><%= contest.name %></td>
+        <td><%= contest.game_definition.game_identifier %></td>
+        <td><%= contest.contestants.count %></td>
+        <td><%= (contest.active? ? "Ja" : "Nein") %></td>
+        <td>
+          <%= link_to 'Anzeigen', contest_path(contest) %>
+          <%= link_to 'Bearbeiten', edit_contest_path(contest) %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

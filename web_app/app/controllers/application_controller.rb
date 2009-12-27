@@ -4,6 +4,8 @@
 require_dependency 'hash_objectify'
 
 class ApplicationController < ActionController::Base
+  class NotAllowed < StandardError; end
+
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -19,6 +21,10 @@ class ApplicationController < ActionController::Base
   hide_action :current_user
 
   protected
+
+  rescue_from NotAllowed do
+    render_optional_error_file 403
+  end
 
   helper_method :current_user, :logged_in?
 

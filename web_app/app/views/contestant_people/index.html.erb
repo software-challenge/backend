@@ -1,0 +1,21 @@
+<div id="actions">
+  <% link_to new_person_url do %>
+    <%= image_tag('actions/add.png') %>SchülerIn hinzufügen
+  <% end %>
+</div>
+
+<h1>
+  <%= link_to @contestant.name, @contestant %> / Personen
+</h1>
+
+<% tabnav :contestant do %>
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="font-size: 11px; text-align: left;">
+      <% %w{first_name last_name email blocked}.each do |attr| %>
+        <th><%= Person.human_attribute_name attr %></th>
+      <% end %>
+    </tr>
+
+    <%= render :partial => "person", :collection => @contestant.people %>
+  </table>
+<% end %>

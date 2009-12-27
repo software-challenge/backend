@@ -59,7 +59,7 @@ class Client < ActiveRecord::Base
   end
 
   def testable?
-    !!main_file_entry and !tested?
+    !!main_file_entry and !tested? and !testing?
   end
 
   def tested?

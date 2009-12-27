@@ -16,12 +16,14 @@
   <% end %>
 </div>
 
-<h1><%= current_page_title %></h1>
+<h1>
+  <%= @contest.name %>
+</h1>
 
-<% tabnav :edit_contest do %>
+<% tabnav :contest do %>
   <% if @contest.matchdays.empty? %>
     <% if @contest.contestants.count <= 1 %>
-      <%= @contest.contestats.count %> Teilnehmer ist nicht genug, um einen Spielplan zu erstellen.
+      <%= @contest.contestants.count %> Teilnehmer sind nicht genug, um einen Wettkampf zu beginnen.
     <% else %>
       <% semantic_form_for :schedule, :url => refresh_matchdays_contest_url(@contest), :method => :post do |f| %>
         <p>

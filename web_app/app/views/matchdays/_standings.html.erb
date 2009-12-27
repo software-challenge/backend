@@ -1,6 +1,6 @@
 <table style="width: 100%; border-spacing: 0;">
   <tr style="font-size: 11px;">
-    <th>Platz</th>
+    <th style="text-align: left;">Platz</th>
     <th style="text-align: left;">Spieler</th>
     <th>Spiele</th>
     <% @contest.game_definition.match_score.each do |k,fragment| %>
@@ -10,11 +10,17 @@
   </tr>
   <% matchday.slots.each_with_index do |slot,i| %>
     <tr style="background-color: <%= i.odd? ? '#f8f8f8': '#fff' %>; line-height: 2em;">
-      <td style="text-align: center;"><%= slot.position %></td>
+      <td style="text-align: left;"><%= slot.position %>.</td>
       <td><%= link_to slot.contestant.name, [@contest, slot.contestant] %></td>
       <td style="text-align: center;"><%= slot.contestant.matchdays.played.count %></td>
-      <% slot.score.to_a_with_precision.each do |value| %>
-        <td style="text-align: center;"><%=h value %></td>
+      <% if slot.score %>
+        <% slot.score.to_a_with_precision.each do |value| %>
+          <td style="text-align: center;"><%=h value %></td>
+        <% end %>
+      <% else %>
+        <td colspan="<%= @contest.game_definition.match_score.size %>">
+          <em>Fehler: Es liegen keine Ergebnisse vor.</em>
+        </td>
       <% end %>
       <td style="text-align: center;">
         <% previous_position = slot.previous_position %>
