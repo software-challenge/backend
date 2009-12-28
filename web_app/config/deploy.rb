@@ -32,6 +32,8 @@ require 'cap_recipes/tasks/passenger'
 require 'cap_recipes/tasks/rails'
 require 'cap_recipes/tasks/delayed_job'
 
+after 'deploy:restart', 'daemons:restart'
+
 namespace :deploy do
   task :start do
 
@@ -43,5 +45,19 @@ namespace :deploy do
   
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
+  end
+end
+
+namespace :daemons do
+  task :start do
+    run "#{try_sudo} ruby #{File.join(current_path,'script','daemons')} start"
+  end
+
+  task :restart do
+    run "#{try_sudo} ruby #{File.join(current_path,'script','daemons')} restart"
+  end
+  
+  task :stop do
+    run "#{try_sudo} ruby #{File.join(current_path,'script','daemons')} stop"
   end
 end
