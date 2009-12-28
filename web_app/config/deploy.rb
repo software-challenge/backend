@@ -50,14 +50,14 @@ end
 
 namespace :daemons do
   task :start do
-    run "#{try_sudo} ruby #{File.join(current_path,'script','daemons')} start"
+    run "#{File.join(current_path,'script','daemons')} start"
   end
 
   task :restart do
-    run "#{try_sudo} ruby #{File.join(current_path,'script','daemons')} restart"
+    run "#{File.join(current_path,'script','daemons')} restart"
   end
   
   task :stop do
-    run "#{try_sudo} ruby #{File.join(current_path,'script','daemons')} stop"
+    run "#{File.join(current_path,'script','daemons')} stop"
   end
 end
