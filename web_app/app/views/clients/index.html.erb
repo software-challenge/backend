@@ -6,7 +6,18 @@
 
 <h1><%= link_to @contestant.name, @contestant %> / Computerspieler</h1>
 
+
 <% tabnav :contestant do %>
+  <% unless @contestant.current_client %>
+    <div style="margin: 0 -10px 2em -10px; padding: 0.8em 10px; border: 1px solid #ddd; background-color: #eee;">
+      <strong>Wichtiger Hinweis:</strong> Es ist noch kein Computerspieler für die
+      Wettkampfteilnahme ausgewählt worden! Sie müssen einen Computerspieler
+      hochladen, testen lassen und dann auswählen. Sollten bis zum Spieltag
+      kein Computerspieler aktiviert werden, wird er beim ersten Zug, den
+      er machen muss, verlieren.
+    </div>
+  <% end %>
+  
   <table style="width: 100%; border-spacing: 0;">
     <tr style="text-align: left; font-size: 11px;">
       <th colspan="2">&nbsp;</th>
@@ -14,12 +25,6 @@
       <th>Hauptdatei</th>
       <th>Informationen</th>
     </tr>
-    <%= render :partial => "client", :collection => @contestant.clients %>
+    <%= render :partial => "client", :collection => @contestant.clients.all(:order => "created_at DESC") %>
   </table>
-
-  <% unless @contestant.current_client %>
-    <p>
-      Es ist noch kein Computerspieler ausgewählt worden.
-    </p>
-  <% end %>
 <% end %>

@@ -2,8 +2,6 @@
 
 <% tabnav :administration do %>
 
-  <h2>Es sind momentan <%= @jobs.count %> Aufträge aktiv</h2>
-
   <h3>Einstellungen</h3>
   <dl>
     <dt>Maximale Laufzeit</dt>
@@ -12,27 +10,45 @@
     <dd><%= Delayed::Worker.max_attempts %></dd>
   </dl>
 
-  <% unless @jobs.empty? %>
-    <h3>Übersicht</h3>
-    <table>
-      <tr>
-        <th>ID</th>
-        <th>Status</th>
-        <th>Versuche</th>
-        <th>Letzte Aktualisierung</th>
-      </tr>
+  <h3>Übersicht</h3>
+  <table style="width: 100%; border-spacing: 0;">
+    <tr style="text-align: left;">
+      <th>ID</th>
+      <th style="width: 40%;">Status</th>
+      <th>Geplant für</th>
+      <th>Begonnen</th>
+      <th style="text-align: center;">Prio</th>
+      <th style="text-align: center;">Versuche</th>
+      <th>Aktualisiert</th>
+    </tr>
+    <% unless @jobs.empty? %>
       <% @jobs.each do |job| %>
         <tr>
-          <td><%=h job.id %></td>
+          <td><%= job.id %></td>
           <td>
             <code style="font-size: 11px; line-height: 12px; color: #666;">
       <%=h job.last_error || "OK" %>
             </code>
           </td>
-          <td><%=h job.attempts %> / <%= Delayed::Worker.max_attempts %></td>
-          <td><%= l(job.updated_at, :format => :long) %></td>
+          <td><%= l(job.run_at, :format => "%d.%m.%y, %H:%M Uhr") %></td>
+          <td>
+            <% if job.locked_at %>
+              <%= l(job.locked_at, :format => "%d.%m.%y, %H:%M Uhr") %>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td style="text-align: center;"><%= job.priority %></td>
+          <td style="text-align: center;"><%= job.attempts %></td>
+          <td>
+            <%= l(job.updated_at, :format => "%d.%m.%y, %H:%M Uhr") %>
+          </td>
         </tr>
       <% end %>
-    </table>
-  <% end %>
+    <% else %>
+      <tr>
+        <td colspan="6">Keine Aufträge vorhanden</td>
+      </tr>
+    <% end %>
+  </table>
 <% end %>

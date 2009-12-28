@@ -29,37 +29,37 @@ de:
     distance_in_words:
       half_a_minute: 'eine halbe Minute'
       less_than_x_seconds:
-        zero: 'weniger als 1 Sekunde'
-        one: 'weniger als 1 Sekunde'
+        zero: 'weniger als einer Sekunde'
+        one: 'weniger als einer Sekunde'
         other: 'weniger als {{count}} Sekunden'
       x_seconds:
-        one: '1 Sekunde'
+        one: 'einer Sekunde'
         other: '{{count}} Sekunden'
       less_than_x_minutes:
         zero: 'weniger als 1 Minute'
         one: 'weniger als eine Minute'
         other: 'weniger als {{count}} Minuten'
       x_minutes:
-        one: '1 Minute'
+        one: 'einem Minute'
         other: '{{count}} Minuten'
       about_x_hours:
-        one: 'etwa 1 Stunde'
+        one: 'etwa einem Stunde'
         other: 'etwa {{count}} Stunden'
       x_days:
-        one: '1 Tag'
-        other: '{{count}} Tage'
+        one: 'einem Tag'
+        other: '{{count}} Tagen'
       about_x_months:
-        one: 'etwa 1 Monat'
-        other: 'etwa {{count}} Monate'
+        one: 'etwa einem Monat'
+        other: 'etwa {{count}} Monaten'
       x_months:
-        one: '1 Monat'
-        other: '{{count}} Monate'
+        one: 'einem Monat'
+        other: '{{count}} Monaten'
       about_x_years:
-        one: 'etwa 1 Jahr'
-        other: 'etwa {{count}} Jahre'
+        one: 'etwa einem Jahr'
+        other: 'etwa {{count}} Jahren'
       over_x_years:
-        one: 'mehr als 1 Jahr'
-        other: 'mehr als {{count}} Jahre'
+        one: 'mehr als einem Jahr'
+        other: 'mehr als {{count}} Jahren'
     prompts:
       second: "Sekunden"
       minute: "Minuten"
