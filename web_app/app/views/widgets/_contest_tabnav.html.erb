@@ -32,7 +32,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named 'Rangliste'
-    t.links_to hash_for_contest_rankings_url(:contest_id => @contest)
+    t.links_to hash_for_contest_standings_url(:contest_id => @contest)
     t.disable! unless @contest.last_played_matchday
   end
   

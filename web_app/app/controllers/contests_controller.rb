@@ -22,7 +22,7 @@ class ContestsController < ApplicationController
     end
   end
 
-  def rankings
+  def standings
     @contest = Contest.find(params[:contest_id])
     @matchday = @contest.last_played_matchday
 

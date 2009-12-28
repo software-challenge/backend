@@ -45,6 +45,14 @@ class MatchdaysController < ApplicationController
     end
   end
 
+  def standings
+    @matchday = @contest.matchdays.find(params[:matchday_id])
+
+    respond_to do |format|
+      format.html # standings.html.erb
+    end
+  end
+
   def update
     @matchday = Matchday.find(params[:id])
 

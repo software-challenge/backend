@@ -20,37 +20,10 @@
 <% end %>
 
 <h1>
-  <%= link_to h(@contest.name), @contest %> /
-  <%=h @matchday.position %>. Spieltag
+  <%= link_to @contest.name, contest_matchdays_url(@contest) %> /
+  <%= @matchday.position %>. Spieltag
 </h1>
 
-<div id="tabs" style="margin: 0 -10px;">
-  <ul>
-    <li><a href="#results">Ergebnisse</a></li>
-    <% if @matchday.played? %>
-      <li><a href="#standings">Tabelle</a></li>
-    <% end %>
-  </ul>
-  <div id="results">
-    <%= render :partial => "results" %>
-  </div>
-  <% if @matchday.played? %>
-    <div id="standings">
-      <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
-    </div>
-  <% end %>
-</div>
-
-<div style="color: #aaa; font-size: 11px; margin: 1em 0 0 0;">
-  Der Spieltag wurde
-  <% if @matchday.played? %>
-    vor <%= distance_of_time_in_words_to_now(@matchday.played_at) %> durchgespielt und
-  <% end %>
-  vor <%= distance_of_time_in_words_to_now(@matchday.updated_at) %> zuletzt aktualisiert.
-</div>
-
-<script type="text/javascript">
-  $(document).ready(function() {
-    $("#tabs").tabs();
-  });
-</script>
+<% tabnav :matchday do %>
+  <%= render :partial => "results" %>
+<% end %>

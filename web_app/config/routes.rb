@@ -33,11 +33,12 @@ ActionController::Routing::Routes.draw do |map|
         md.resources :matches do |m|
           m.resources :rounds
         end
+        md.standings '/rangliste', :controller => 'matchdays', :action => 'standings'
       end
       c.resources :contestants, :as => "teilnehmer" do |contestant|
         contestant.resources :clients, :as => "computerspieler"
       end
-      c.rankings '/rangliste', :controller => 'contests', :action => 'rankings'
+      c.standings '/rangliste', :controller => 'contests', :action => 'standings'
       c.results '/ergebnisse', :controller => 'contests', :action => 'results'
     end
   end
