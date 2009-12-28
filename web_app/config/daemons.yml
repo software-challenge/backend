@@ -1,5 +1,5 @@
 dir_mode: script
-dir: ../../log
+dir: ../../public/system/daemons
 multiple: false
 backtrace: true
 monitor: true
