@@ -1,4 +1,4 @@
-<project name="GameServer" basedir="." default="main">
+<project name="softwarechallenge-server" basedir="." default="main">
 
 	<property name="src.dir" value="src" />
 	<property name="test.dir" value="test" />
@@ -11,12 +11,11 @@
 
 	<property name="lib.dir" value="./../software_challenge_sdk/lib" />
 	<property name="plugin.dir" value="${jar.dir}/plugins" />
-	<property name="pluginLoader.dir" value="./../software_challenge_sdk" />
+	<property name="sdk.dir" value="./../software_challenge_sdk" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
-		<pathelement location="${pluginLoader.dir}/bin" />
+		<fileset dir="${sdk.dir}" includes="build/jar/*.jar" />
 	</path>
 
 	<path id="classpath.base">

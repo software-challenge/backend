@@ -5,14 +5,24 @@
 
 	<target name="clean">
 		<delete dir="${out.dir}" />
+		<delete dir="game_server/build" />
+		<delete dir="game_gui/build" />
+		<delete dir="game_plugins/hase_und_igel/build" />
+		<delete dir="game_plugins/tic_tac_toe/build" />
+		<delete dir="game_players/hase_und_igel/build" />
 	</target>
 
 	<target name="dependencies">
-		<echo message="Compiling SC dependencies" />
+		<echo message="Compiling SDK..." />
 		<ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
-		<ant dir="game_gui" target="clean-build" inheritAll="false" />
-		<ant dir="game_server" target="clean-build" inheritAll="false" />
+		
+		<echo message="Compiling Plugins and Players..." />
+		<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />
+		
+		<echo message="Compiling Server and GUI..." />
+		<ant dir="game_server" target="clean-build" inheritAll="false" />
+		<ant dir="game_gui" target="clean-build" inheritAll="false" />
 	</target>
 
 	<target name="build" depends="svnversion,dependencies">
@@ -41,8 +51,8 @@
 				<exclude name=".classpath" />
 			</fileset>
 		</copy>
-
-		<rename dest="${out.dir}/simple_client/src/.classpath" src="${out.dir}/simple_client/src/.deployed_classpath" />
+		
+		<move tofile="${out.dir}/simple_client/src/.classpath" file="${out.dir}/simple_client/src/.deployed_classpath" />
 
 		<mkdir dir="${out.dir}/simple_client/src/lib" />
 		<copy todir="${out.dir}/simple_client/src/lib">
@@ -52,8 +62,8 @@
 		<echo message="Generating Starter-Batchfiles" />
 
 		<touch file="${out.dir}/gui/start.bat" />
-		<echo message="java -Dfile.encoding=UTF-8 -jar SoftwareChallenge.jar" file="${out.dir}/gui/start.bat" />
-		<echo message="java -Dfile.encoding=UTF-8 -jar GameServer.jar" file="${out.dir}/server/start.bat" />
+		<echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-gui.jar" file="${out.dir}/gui/start.bat" />
+		<echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-server.jar" file="${out.dir}/server/start.bat" />
 
 		<echo message="Zipping files..." />
 

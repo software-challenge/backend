@@ -1,4 +1,4 @@
-<project name="SoftwareChallenge" basedir="." default="main">
+<project name="softwarechallenge-gui" basedir="." default="main">
 	<import file="../svn-build.xml" />
 	
 	<property name="src.dir" value="src" />
@@ -8,13 +8,13 @@
 	<property name="plugin.dir" value="${build.dir}/jar/plugins" />
 	<property name="lib.dir" value="./../software_challenge_sdk/lib" />
 	<property name="main-class" value="sc.SoftwareChallengeGUI" />
-	<property name="pluginLoader.dir" value="./../software_challenge_sdk" />
+	<property name="sdk.dir" value="./../software_challenge_sdk" />
 	<property name="server.dir" value="./../game_server" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${server.dir}" includes="build/jar/*.jar" />
-		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
+		<fileset dir="${sdk.dir}" includes="build/jar/*.jar" />
 		<fileset dir="." includes="lib/*.jar" />
 	</path>
 
@@ -42,7 +42,7 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
-		<ant dir="${pluginLoader.dir}" target="clean-build" inheritAll="false" />
+		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>

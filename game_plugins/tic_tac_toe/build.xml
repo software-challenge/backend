@@ -1,4 +1,4 @@
-<project name="TicTacToe" basedir="." default="main">
+<project name="tictactoe-plugin" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
@@ -7,16 +7,16 @@
 	<property name="main-class" value="sc.sample.client.ClientApp" />
 	<property name="gameApi.dir" value="./../../game_plugin_interface" />
 	<property name="guiApi.dir" value="./../../gui_plugin_interfaces" />
-	<property name="pluginLoader.dir" value="./../../software_challenge_sdk" />
+	<property name="sdk.dir" value="./../../software_challenge_sdk" />
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${gameApi.dir}" includes="**/*.jar" />
 		<fileset dir="${guiApi.dir}" includes="**/*.jar" />
-		<fileset dir="${pluginLoader.dir}/lib" includes="**/*.jar" />
+		<fileset dir="${sdk.dir}/lib" includes="**/*.jar" />
 		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${guiApi.dir}/bin" />
-		<pathelement location="${pluginLoader.dir}/bin" />
+		<pathelement location="${sdk.dir}/bin" />
 	</path>
 
 	<target name="clean">
