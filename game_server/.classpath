@@ -4,7 +4,7 @@
 	<classpathentry kind="src" path="lib"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="src" path="/game_plugin_interface"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/plugin_loader"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

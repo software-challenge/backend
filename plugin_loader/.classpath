@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="lib"/>
+	<classpathentry kind="src" path="src/framework"/>
+	<classpathentry kind="src" path="src/server_api"/>
+	<classpathentry kind="src" path="src/gui_api"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/jargs.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/logback-access-0.9.15.jar"/>

@@ -5,19 +5,13 @@
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="lib.dir" value="./../plugin_loader/lib" />
 	<property name="main-class" value="gameClient.Starter" />
-	<property name="gameApi.dir" value="./../game_plugin_interface" />
-	<property name="guiApi.dir" value="./../gui_plugin_interfaces" />
 	<property name="pluginLoader.dir" value="./../plugin_loader" />
 	<property name="game.dir" value="./../game_plugins/hase_und_igel" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<fileset dir="${gameApi.dir}" includes="**/*.jar" />
-		<fileset dir="${guiApi.dir}" includes="**/*.jar" />
 		<fileset dir="${game.dir}" includes="**/*.jar" />
 		<fileset dir="${pluginLoader.dir}" includes="**/*.jar" />
-		<pathelement location="${gameApi.dir}/bin" />
-		<pathelement location="${guiApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />
 		<pathelement location="${game.dir}/bin" />
 	</path>
@@ -47,12 +41,10 @@
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
 		<ant dir="${pluginLoader.dir}" inheritAll="false" />
-		<ant dir="${gameApi.dir}" inheritAll="false" />
-		<ant dir="${guiApi.dir}" inheritAll="false" />
 		<ant dir="${game.dir}" inheritAll="false" />
 	</target>
 
-	<target name="compile" depends="dependencies">
+	<target name="compile">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
 	</target>
@@ -78,5 +70,5 @@
 
 	<target name="clean-build" depends="clean,build" />
 
-	<target name="main" depends="clean-build" />
+	<target name="main" depends="dependencies,clean-build" />
 </project>

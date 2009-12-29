@@ -9,9 +9,10 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
-		<ant dir="game_gui" inheritAll="false" />
-		<ant dir="game_server" inheritAll="false" />
-		<ant dir="game_simpleclient" inheritAll="false" />
+		<ant dir="plugin_loader" target="clean-build" inheritAll="false" />
+		<ant dir="game_gui" target="clean-build" inheritAll="false" />
+		<ant dir="game_server" target="clean-build" inheritAll="false" />
+		<ant dir="game_simpleclient" target="clean-build" inheritAll="false" />
 	</target>
 
 	<target name="build" depends="svnversion,dependencies">

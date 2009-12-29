@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="lib"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/gui_plugin_interfaces"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/game_server"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/forms-1.2.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/plugin_loader"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

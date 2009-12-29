@@ -11,15 +11,11 @@
 
 	<property name="lib.dir" value="./../plugin_loader/lib" />
 	<property name="plugin.dir" value="${jar.dir}/plugins" />
-	<property name="gameApi.dir" value="./../game_plugin_interface" />
 	<property name="pluginLoader.dir" value="./../plugin_loader" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<fileset dir="${gameApi.dir}" includes="build/jar/*.jar" />
 		<fileset dir="${pluginLoader.dir}" includes="build/jar/*.jar" />
-		<pathelement location="${api.dir}/bin" />
-		<pathelement location="${gameApi.dir}/bin" />
 		<pathelement location="${pluginLoader.dir}/bin" />
 	</path>
 
@@ -50,17 +46,20 @@
 		<echo message="Configuring compiler for Eclipse..." />
 	</target>
 
+	<target name="plugins">
+		<echo message="Compiling Plugins..." />
+		<!-- TODO: compile all plugins automatically -->
+		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/tic_tac_toe" target="clean-build" inheritAll="false" />
+	</target>
+	
 	<target name="dependencies">
 		<echo message="Compiling API Libraries..." />
 		<ant dir="./../plugin_loader" inheritAll="false" />
-		<ant dir="./../game_plugin_interface" inheritAll="false" />
-		<echo message="Compiling Plugins..." />
-		<ant dir="./../game_plugins/hase_und_igel" inheritAll="false" />
-		<ant dir="./../game_plugins/tic_tac_toe" inheritAll="false" />
 		<echo message="Dependencies have been compiled." />
 	</target>
 
-	<target name="compile" depends="dependencies">
+	<target name="compile">
 		<mkdir dir="${classes.dir}" />
 		<antcall target="configure.eclipse" />
 		<javac srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" />
@@ -90,5 +89,5 @@
 
 	<target name="clean-build" depends="clean,jar" />
 
-	<target name="main" depends="jar" />
+	<target name="main" depends="dependencies,clean-build" />
 </project>
