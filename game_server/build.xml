@@ -9,9 +9,9 @@
 
 	<property name="main-class" value="sc.server.Application" />
 
-	<property name="lib.dir" value="./../plugin_loader/lib" />
+	<property name="lib.dir" value="./../software_challenge_sdk/lib" />
 	<property name="plugin.dir" value="${jar.dir}/plugins" />
-	<property name="pluginLoader.dir" value="./../plugin_loader" />
+	<property name="pluginLoader.dir" value="./../software_challenge_sdk" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -55,7 +55,7 @@
 	
 	<target name="dependencies">
 		<echo message="Compiling API Libraries..." />
-		<ant dir="./../plugin_loader" inheritAll="false" />
+		<ant dir="./../software_challenge_sdk" inheritAll="false" />
 		<echo message="Dependencies have been compiled." />
 	</target>
 

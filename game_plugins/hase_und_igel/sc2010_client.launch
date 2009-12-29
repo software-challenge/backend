@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/hase_und_igel/client/sc/plugin2010/ClientApp.java"/>
+<listEntry value="/hase_und_igel_plugin"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
-<listEntry value="1"/>
+<listEntry value="4"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="sc.plugin2010.ClientApp"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="hase_und_igel"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="hase_und_igel_plugin"/>
 </launchConfiguration>

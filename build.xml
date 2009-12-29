@@ -9,10 +9,10 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
-		<ant dir="plugin_loader" target="clean-build" inheritAll="false" />
+		<ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
 		<ant dir="game_gui" target="clean-build" inheritAll="false" />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
-		<ant dir="game_simpleclient" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />
 	</target>
 
 	<target name="build" depends="svnversion,dependencies">
@@ -30,12 +30,12 @@
 
 		<mkdir dir="${out.dir}/simple_client/jar" />
 		<copy todir="${out.dir}/simple_client/jar">
-			<fileset dir="./game_simpleclient/build/jar" />
+			<fileset dir="./game_players/hase_und_igel/build/jar" />
 		</copy>
 
 		<mkdir dir="${out.dir}/simple_client/src" />
 		<copy todir="${out.dir}/simple_client/src">
-			<fileset dir="./game_simpleclient">
+			<fileset dir="./game_players/hase_und_igel">
 				<exclude name="build/**/*" />
 				<exclude name="bin/**/*" />
 				<exclude name=".classpath" />

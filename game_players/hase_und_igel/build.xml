@@ -1,18 +1,20 @@
 <project name="HaseUndIgelSC" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
+	<property name="root.dir" value="./../.." />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
-	<property name="lib.dir" value="./../plugin_loader/lib" />
+	<property name="lib.dir" value="${root.dir}/software_challenge_sdk/lib" />
+	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
+	<property name="plugins.dir" value="${root.dir}/game_plugins" />
+	<property name="game.dir" value="${plugins.dir}/hase_und_igel" />
 	<property name="main-class" value="gameClient.Starter" />
-	<property name="pluginLoader.dir" value="./../plugin_loader" />
-	<property name="game.dir" value="./../game_plugins/hase_und_igel" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${game.dir}" includes="**/*.jar" />
-		<fileset dir="${pluginLoader.dir}" includes="**/*.jar" />
-		<pathelement location="${pluginLoader.dir}/bin" />
+		<fileset dir="${sdk.dir}" includes="**/*.jar" />
+		<pathelement location="${sdk.dir}/bin" />
 		<pathelement location="${game.dir}/bin" />
 	</path>
 
@@ -40,7 +42,7 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
-		<ant dir="${pluginLoader.dir}" inheritAll="false" />
+		<ant dir="${sdk.dir}" inheritAll="false" />
 		<ant dir="${game.dir}" inheritAll="false" />
 	</target>
 
@@ -62,7 +64,7 @@
 		<mkdir dir="${jar.dir}/lib" />
 		<copy todir="${jar.dir}/lib" flatten="true">
 			<path refid="classpath.libs" />
-			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
+			<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />
 		</copy>
 	</target>
 
