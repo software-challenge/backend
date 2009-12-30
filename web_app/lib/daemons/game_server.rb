@@ -27,14 +27,16 @@ while($running) do
   log_directory = File.expand_path(Rails.root.join("log"))
   
   Dir.chdir Rails.root.join("public", "server") do
-
+    args = ['java',
+      '-Dfile.encoding=UTF-8',
+      '-Dlogback.configurationFile=logback-release.xml',
+      "-DLOG_DIRECTORY=\"#{log_directory}\"",
+      '-jar "./softwarechallenge-server.jar"']
+    
+    puts "Starting Server: #{args.join(' ')}"
 
     $game_server_pid = Process.fork do
-      exec('java',
-        '-Dfile.encoding=UTF-8',
-        '-Dlogback.configurationFile=logback-release.xml',
-        "-DLOG_DIRECTORY=\"#{log_directory}\"",
-        '-jar', './GameServer.jar')
+      exec(args)
     end
 
     pid, process_status = Process.wait2($game_server_pid)
