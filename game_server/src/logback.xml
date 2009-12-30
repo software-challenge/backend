@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <layout class="ch.qos.logback.classic.PatternLayout">
-      <Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
-    </layout>
-  </appender>
-  
-  <!-- all loggers in DEBUG for now...  -->
-  <logger name="edu.cau.sc.server" level="DEBUG" />
-  <logger name="edu.cau.sc.server.plugins" level="DEBUG" />
-  <logger name="edu.cau.sc.server.clients" level="DEBUG" />
-  <logger name="edu.cau.sc.server.protocol" level="DEBUG" />
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
+		</layout>
+	</appender>
 
-  <root level="debug">
-    <appender-ref ref="STDOUT" />
-  </root>
+	<!-- all loggers in DEBUG for now...  -->
+	<logger name="edu.cau.sc.server" level="DEBUG" />
+	<logger name="edu.cau.sc.server.plugins" level="DEBUG" />
+	<logger name="edu.cau.sc.server.clients" level="DEBUG" />
+	<logger name="edu.cau.sc.server.protocol" level="DEBUG" />
+
+	<root level="debug">
+		<appender-ref ref="STDOUT" />
+	</root>
+	
 </configuration>
