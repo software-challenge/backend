@@ -51,7 +51,7 @@
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/tic_tac_toe" target="clean-build" inheritAll="false" />
 	</target>
-	
+
 	<target name="dependencies">
 		<echo message="Compiling API Libraries..." />
 		<ant dir="./../software_challenge_sdk" inheritAll="false" />
@@ -78,11 +78,13 @@
 	</target>
 
 	<target name="jar" depends="compile, export-plugins">
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
 				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
+			<fileset dir="${classes.dir}" />
+			<fileset dir="./configuration" />
 		</jar>
 	</target>
 
