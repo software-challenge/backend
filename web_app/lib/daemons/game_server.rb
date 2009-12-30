@@ -20,10 +20,12 @@ Thread.new do
   end
 end
 
+logger = Logger.new(Rails.root.join("log/game_server.log"))
+
 while($running) do
   
   # Replace this with your code
-  ActiveRecord::Base.logger.info "This daemon is still running at #{Time.now}.\n"
+  logger.info "This daemon is still running at #{Time.now}.\n"
   log_directory = File.expand_path(Rails.root.join("log"))
   
   Dir.chdir Rails.root.join("public", "server") do
@@ -33,7 +35,7 @@ while($running) do
       "-DLOG_DIRECTORY=\"#{log_directory}\"",
       '-jar "./softwarechallenge-server.jar"']
     
-    puts "Starting Server: #{args.join(' ')}"
+    logger.info "Starting Server: #{args.join(' ')}"
 
     $game_server_pid = Process.fork do
       exec(args)
@@ -41,7 +43,7 @@ while($running) do
 
     pid, process_status = Process.wait2($game_server_pid)
 
-    ActiveRecord::Base.logger.info "The GameServer exited with exitstatus=#{process_status.exitstatus}.\n"
+    logger.info "The GameServer exited with exitstatus=#{process_status.exitstatus}.\n"
   end
 
   # try restart after 5 seconds
