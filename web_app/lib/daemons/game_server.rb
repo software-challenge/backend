@@ -32,7 +32,7 @@ while($running) do
     args = ['java',
       '-Dfile.encoding=UTF-8',
       '-Dlogback.configurationFile=logback-release.xml',
-      "-DLOG_DIRECTORY=\"#{log_directory}\"",
+      "-DLOG_DIRECTORY=#{log_directory}",
       '-jar', './softwarechallenge-server.jar']
     
     logger.info "Starting Server: #{args.join(' ')}"
