@@ -38,7 +38,7 @@ while($running) do
     logger.info "Starting Server: #{args.join(' ')}"
 
     $game_server_pid = Process.fork do
-      exec(args)
+      exec(*args)
     end
 
     pid, process_status = Process.wait2($game_server_pid)
