@@ -20,7 +20,7 @@ Thread.new do
   end
 end
 
-logger = Logger.new(Rails.root.join("log/game_server.log"))
+logger = Logger.new(Rails.root.join("log/game_server_daemon.log"))
 
 while($running) do
   
