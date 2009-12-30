@@ -33,7 +33,7 @@ while($running) do
       '-Dfile.encoding=UTF-8',
       '-Dlogback.configurationFile=logback-release.xml',
       "-DLOG_DIRECTORY=\"#{log_directory}\"",
-      '-jar "./softwarechallenge-server.jar"']
+      '-jar', './softwarechallenge-server.jar']
     
     logger.info "Starting Server: #{args.join(' ')}"
 
