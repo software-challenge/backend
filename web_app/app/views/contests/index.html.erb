@@ -7,13 +7,15 @@
 <h1>Administration</h1>
 
 <% tabnav :administration do %>
-  <table style="width: 100%; border-spacing: 0;">
-    <tr style="font-size: 11px; text-align: left;">
-      <th>Name</th>
-      <th>Spiel</th>
-      <th>Teilnehmer</th>
-      <th>Aktiv?</th>
-    </tr>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Spiel</th>
+        <th>Teilnehmer</th>
+        <th>Aktiv?</th>
+      </tr>
+    </thead>
     <% @contests.each do |contest| %>
       <tr>
         <td><%= contest.name %></td>

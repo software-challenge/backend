@@ -225,3 +225,13 @@ table#rounds th {
   font-size: inherit;
   font-family: inherit;
 }
+
+table.data-table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+table.data-table thead tr {
+  text-align: left;
+  font-size: 11px;
+}

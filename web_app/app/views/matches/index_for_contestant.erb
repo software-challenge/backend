@@ -1,16 +1,16 @@
 <h1><%= link_to @contestant.name, @contestant %> / Matches</h1>
 
 <% tabnav :contestant do %>
-  <table style="width: 100%; border-spacing: 0;">
+  <table class="data-table">
     <colgroup>
     <colgroup span="2"/>
     <colgroup width="15%"/>
     <thead>
-      <tr style="font-size: 11px;">
-        <th style="text-align: left;">Wann</th>
-        <th style="text-align: left;">Spieler 1</th>
-        <th style="text-align: left;">Spieler 2</th>
-        <th>Ergebnis</th>
+      <tr>
+        <th>Wann</th>
+        <th>Spieler 1</th>
+        <th>Spieler 2</th>
+        <th style="text-align: center;">Ergebnis</th>
       </tr>
     </thead>
     <tbody>

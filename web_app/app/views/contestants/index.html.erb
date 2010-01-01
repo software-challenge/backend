@@ -11,11 +11,13 @@
 </h1>
 
 <% tabnav :contest do %>
-  <table style="width: 100%; border-spacing: 0;">
-    <tr style="font-size: 11px; text-align: left;">
-      <th>Team</th>
-      <th>Mitglieder</th>
-    </tr>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Team</th>
+        <th>Mitglieder</th>
+      </tr>
+    </thead>
 
     <% @contest.contestants.each do |contestant| %>
       <tr>

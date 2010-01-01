@@ -1,13 +1,15 @@
-<table style="width: 100%; border-spacing: 0;">
-  <tr style="font-size: 11px;">
-    <th style="text-align: left;">Platz</th>
-    <th style="text-align: left;">Spieler</th>
-    <th>Spiele</th>
-    <% @contest.game_definition.match_score.each do |k,fragment| %>
-      <th><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
-    <% end %>
-    <th>&Delta;</th>
-  </tr>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Platz</th>
+      <th>Spieler</th>
+      <th style="text-align: center;">Spiele</th>
+      <% @contest.game_definition.match_score.each do |k,fragment| %>
+        <th><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
+      <% end %>
+      <th style="text-align: center;">&Delta;</th>
+    </tr>
+  </thead>
   <% matchday.slots.each_with_index do |slot,i| %>
     <tr style="background-color: <%= i.odd? ? '#f8f8f8': '#fff' %>; line-height: 2em;">
       <td style="text-align: left;"><%= slot.position %>.</td>

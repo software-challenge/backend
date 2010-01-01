@@ -11,16 +11,18 @@
   </dl>
 
   <h3>Übersicht</h3>
-  <table style="width: 100%; border-spacing: 0;">
-    <tr style="text-align: left;">
-      <th>ID</th>
-      <th style="width: 40%;">Status</th>
-      <th>Geplant für</th>
-      <th>Begonnen</th>
-      <th style="text-align: center;">Prio</th>
-      <th style="text-align: center;">Versuche</th>
-      <th>Aktualisiert</th>
-    </tr>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th style="width: 40%;">Status</th>
+        <th>Geplant für</th>
+        <th>Begonnen</th>
+        <th style="text-align: center;">Prio</th>
+        <th style="text-align: center;">Versuche</th>
+        <th>Aktualisiert</th>
+      </tr>
+    </thead>
     <% unless @jobs.empty? %>
       <% @jobs.each do |job| %>
         <tr>

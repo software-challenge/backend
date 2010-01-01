@@ -17,7 +17,7 @@
     <%end%>
   </h4>
 
-  <table style="width: 100%;" id="fileList">
+  <table class="data-table" id="fileList">
     <%= render :partial => "file_entry", :collection => @client.file_entries.with_level(0), :locals => { :client => @client } %>
   </table>
 

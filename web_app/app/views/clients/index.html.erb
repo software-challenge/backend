@@ -17,14 +17,16 @@
       er machen muss, verlieren.
     </div>
   <% end %>
-  
-  <table style="width: 100%; border-spacing: 0;">
-    <tr style="text-align: left; font-size: 11px;">
-      <th colspan="2">&nbsp;</th>
-      <th>Dateiname</th>
-      <th>Hauptdatei</th>
-      <th>Informationen</th>
-    </tr>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th colspan="2">&nbsp;</th>
+        <th>Dateiname</th>
+        <th>Hauptdatei</th>
+        <th>Informationen</th>
+      </tr>
+    </thead>
     <%= render :partial => "client", :collection => @contestant.clients.all(:order => "created_at DESC") %>
   </table>
 <% end %>
