@@ -37,5 +37,7 @@ class MainController < ApplicationController
 
   def debug
     @jobs = Delayed::Job.all
+    @server_log = `tail -n 10 #{Rails.root.join('log', 'game_server.log')}`
+    @manager_log = `tail -n 10 #{Rails.root.join('log', 'sc_manager.log')}`
   end
 end

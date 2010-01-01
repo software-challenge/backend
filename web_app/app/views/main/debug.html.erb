@@ -51,4 +51,16 @@
       </tr>
     <% end %>
   </table>
+
+  <h2>Logdateien</h2>
+
+  <h3>Game Server</h3>
+  <div style="overflow: scroll;">
+    <pre><%=h @server_log %></pre>
+  </div>
+
+  <h3>Game Manager</h3>
+  <div style="overflow: scroll;">
+    <pre><%=h @manager_log %></pre>
+  </div>
 <% end %>
