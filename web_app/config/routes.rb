@@ -8,7 +8,9 @@ ActionController::Routing::Routes.draw do |map|
         :select_main => :post,
         :select => :post,
         :test => :post
-      }
+      } do |client|
+        client.status '/status', :controller => "clients", :action => "status"
+      end
       contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
       contestant.resources :people, :as => "personen", :controller => "contestant_people"
     end
@@ -35,9 +37,13 @@ ActionController::Routing::Routes.draw do |map|
         end
         md.standings '/rangliste', :controller => 'matchdays', :action => 'standings'
       end
+
       c.resources :contestants, :as => "teilnehmer" do |contestant|
-        contestant.resources :clients, :as => "computerspieler"
+        contestant.resources :clients, :as => "computerspieler" do |client|
+          # Use /contestants/1/clients/2 route!
+        end
       end
+
       c.standings '/rangliste', :controller => 'contests', :action => 'standings'
       c.results '/ergebnisse', :controller => 'contests', :action => 'results'
     end

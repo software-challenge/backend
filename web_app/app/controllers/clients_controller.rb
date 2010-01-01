@@ -159,5 +159,15 @@ class ClientsController < ApplicationController
     redirect_to contestant_clients_url(@contestant)
   end
 
+  def status
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:client_id])
+
+    render :update do |page|
+      page.replace "client-#{@client.id}",
+        :partial => "client", :locals => { :client => @client }
+    end
+  end
+
   protected
 end

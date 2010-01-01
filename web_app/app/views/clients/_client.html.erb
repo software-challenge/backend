@@ -1,4 +1,4 @@
-<tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>;">
+<tr id="client-<%= client.id %>" class="<%= cycle('odd', 'even') %>;">
   <td>
     <% if client.current? %>
       <b>Aktiv</b>
@@ -14,6 +14,18 @@
     &nbsp;
     <% if client.testing? %>
       <%= image_tag("ui/spinner.gif") %>
+      <script type="text/javascript">
+        //<![CDATA[
+        setTimeout(function() {
+          jQuery.ajax({
+            data:'authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
+            ,dataType:'script'
+            ,type:'get'
+            ,url:'<%= contestant_client_status_url(client.contestant, client) %>'
+          })
+        }, 3 * 1000)
+        //]]>
+      </script>
     <% elsif client.tested? %>
       <% if client.functional? %>
         <%= image_tag("state/ok.png") %>
@@ -30,7 +42,8 @@
   </td>
   <td>
     <% if client.testing? %>
-      <span style="color: #999;">Wird getestet&hellip;</span>
+      <b style="font-size: 11px;">Seit <%= (Time.now - client.test_match.job.created_at).round %> Sekunden</b><br/>
+      <span>Wird getestet&hellip; (<%= match_progress(client.test_match) %>)</span>
     <% elsif !client.functional? %>
       <%= link_to 'Bearbeiten', edit_contestant_client_url(client.contestant, client) %>
     <% end %>

@@ -1,8 +1,14 @@
 require 'sandbox'
 
 class Round < ActiveRecord::Base
+
+  # named scopes
+  named_scope :played, :conditions => "played_at IS NOT NULL"
+
+  # validations
   validates_presence_of :match
 
+  # associnations
   belongs_to :match
   has_many :slots, :class_name => "RoundSlot", :dependent => :destroy, :order => "position"
   has_many :scores, :through => :slots
@@ -12,7 +18,9 @@ class Round < ActiveRecord::Base
   delegate :contest, :to => :match
   delegate :game_definition, :to => :contest
 
-  def played?; played_at; end
+  def played?
+    played_at
+  end
 
   def perform
     manager = SoChaManager::Manager.new

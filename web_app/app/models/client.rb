@@ -63,7 +63,7 @@ class Client < ActiveRecord::Base
   end
 
   def tested?
-    !!test_match and !testing?
+    !testing? and !!test_match and test_match.played?
   end
 
   def all_tests_passed?
@@ -88,7 +88,10 @@ class Client < ActiveRecord::Base
     raise "client was already tested" if tested?
     raise "client is currently tested" if testing?
     raise "no test_contestant available" unless contest.test_contestant
+    
     Match.transaction do
+      match = test_match
+      match.reset! if match
       match = self.create_test_match
       match.clients = [self, contest.test_contestant.current_client]
       match.perform_delayed!
