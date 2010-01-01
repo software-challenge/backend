@@ -9,7 +9,7 @@
 </style>
 
 <div id="actions">
-  <% if !@contest.matchdays.empty? and @contest.matchdays.played.empty? %>
+  <% if @contest.ready? and !@contest.begun? %>
     <% link_to reset_matchdays_contest_url(@contest), :method => "post" do %>
       <%= image_tag('actions/destroy.png') %>Spielplan löschen
     <% end %>
@@ -21,7 +21,7 @@
 </h1>
 
 <% tabnav :contest do %>
-  <% if @contest.matchdays.empty? %>
+  <% unless @contest.ready? %>
     <% if @contest.contestants.count <= 1 %>
       <%= @contest.contestants.count %> Teilnehmer sind nicht genug, um einen Wettkampf zu beginnen.
     <% else %>

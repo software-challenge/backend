@@ -59,7 +59,7 @@ class Contest < ActiveRecord::Base
     weekdays = weekdays.to_a
     range = (0..6)
 
-    raise "matchdays exist already" unless matchdays.empty?
+    raise "contest already has a schedule" if ready?
     raise "weekdays must at least contain one element in range #{range}" if (range.to_a & weekdays).empty?
 
     next_date = start_at
@@ -87,6 +87,14 @@ class Contest < ActiveRecord::Base
 
   def last_played_matchday
     matchdays.played.first(:order => "position DESC")
+  end
+
+  def ready?
+    !matchdays.empty?
+  end
+
+  def begun?
+    !matchdays.played.empty?
   end
 
   protected

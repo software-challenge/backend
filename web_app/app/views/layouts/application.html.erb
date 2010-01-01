@@ -40,7 +40,11 @@
             <ul id="mainMenu">
               <li><%= link_to "Startseite", root_url %></li>
               <% if Contest.active %>
-                <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
+                <% if Contest.active.ready? %>
+                  <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
+                <% else %>
+                  <li><%= link_to "Teilnehmerliste", contest_contestants_url(Contest.active) %></li>
+                <% end %>
               <% end %>
               <% if logged_in? and current_user.administrator? %>
                 <li><%= link_to "Administration", administration_url %></li>

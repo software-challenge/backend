@@ -46,7 +46,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named 'Spieltage'
     t.links_to :controller => "matchdays", :action => "index", :contest_id => @contest
-    t.disable! if @contest.matchdays.empty?
+    t.disable! unless @contest.ready?
   end
 
   add_tab do |t|
