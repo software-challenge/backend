@@ -235,3 +235,7 @@ table.data-table thead tr {
   text-align: left;
   font-size: 11px;
 }
+
+table.data-table tr.odd {
+  background-color: #f8f8f8;
+}

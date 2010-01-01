@@ -13,7 +13,7 @@
     </thead>
 
     <% @matchdays.each_with_index do |matchday,i| %>
-      <tr style="background-color: <%= i.odd? ? '#f8f8f8': '#fff' %>; line-height: 2em;">
+      <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
         <td style="padding-left: 10px;">
           <% link_to [@contest, matchday] do %>
             <%= i+1 %>. Spieltag
