@@ -24,8 +24,7 @@ module SoChaManager
         mattr_reader :server_host, :server_port
         mattr_reader :silent
 
-        logger.info "Configuration: #{self.configuration.inspect}"
-        raise "watch_folder is blank" if watch_folder.blank?
+        logger.info "Configuration: #{self.configuration.inspect}" if base.respond_to? :logger
       end
     end
   end

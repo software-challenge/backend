@@ -32,16 +32,12 @@ module SoChaManager
       # extract
       logger.info "Extracting AI program..."
       full_output_path = File.expand_path(directory)
-      command = %{unzip -oqq #{path} -d #{full_output_path}}
-      logger.info command
-      system command
+      log_and_run %{unzip -oqq #{path} -d #{full_output_path}}
 
       raise "failed to unzip" unless $?.exitstatus == 0
 
       logger.info "Starting AI program and waiting for termination..."
-      command = %{sh -c "cd #{full_output_path}; ./startup.sh"}
-      logger.info command
-      system command
+      log_and_run %{sh -c "cd #{full_output_path}; ./startup.sh"}
 
       logger.info "AI program has been executed and returned (exitcode: #{$?.exitstatus})"
     end
@@ -49,18 +45,14 @@ module SoChaManager
     def validate_zip_file(path)
       # check zip for defects
       logger.info "Checking zip-file for defects..."
-      command = %{unzip -qqt #{path}}
-      logger.info command
-      system command
+      log_and_run %{unzip -qqt #{path}}
 
       # repair if broken
       unless $?.exitstatus == 0
         logger.info "Zip-file is broken. Trying to fix..."
 
         fixed_path = "#{path}.fixed"
-        command = %{zip -qFF #{path} --out #{fixed_path}}
-        logger.info command
-        system command
+        log_and_run %{zip -qFF #{path} --out #{fixed_path}}
 
         raise "Couldn't fix broken zip-file" unless $?.exitstatus == 0
 

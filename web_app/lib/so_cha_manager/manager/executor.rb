@@ -123,7 +123,7 @@ module SoChaManager
       command = "#{executable} --host #{SoChaManager.server_host} --port #{SoChaManager.server_port} --reservation #{reservation}"
       command << " > /dev/null 2>&1" if silent
 
-      logger.info "startup.sh << #{command}"
+      logger.info "Bash Command: #{command}"
 
       command
     end
@@ -149,9 +149,7 @@ module SoChaManager
       generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
       target = File.expand_path(File.join(SoChaManager.watch_folder, generated_file_name))
 
-      command = %{sh -c "cd #{source_directory}; zip -qr #{target} ."}
-      logger.info command
-      system command
+      log_and_run %{sh -c "cd #{source_directory}; zip -qr #{target} ."}
 
       target
     end
@@ -167,9 +165,7 @@ module SoChaManager
     end
 
     def unzip_to_directory(file, dir)
-      command = %{unzip -qq #{File.expand_path(file)} -d #{File.expand_path(dir)}}
-      logger.info command
-      system command
+      log_and_run %{unzip -qq #{File.expand_path(file)} -d #{File.expand_path(dir)}}
     end
   end
 end

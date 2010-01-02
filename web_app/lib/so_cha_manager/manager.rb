@@ -30,5 +30,11 @@ module SoChaManager
     def connect!
       @client = Client.new SoChaManager.server_host, SoChaManager.server_port
     end
+    
+    def log_and_run(command)
+      logger.debug command
+      system command
+    end
+
   end
 end
