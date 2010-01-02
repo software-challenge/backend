@@ -14,7 +14,7 @@ module SoChaManager
 
       settings = defaults.merge(configuration || {})
       watch_folder = settings.delete :watch_folder
-      settings[:watch_folder] = File.expand_path(watch_folder)
+      settings[:watch_folder] = File.expand_path(watch_folder, Rails.root)
 
       base.instance_eval do
         class_variable_set :@@configuration, configuration
