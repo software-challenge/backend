@@ -22,14 +22,10 @@ class Client < ActiveRecord::Base
   delegate :game_definition, :to => :contest
 
   def test_results
-    if tested?
-      result = test_match.slot_for(self).cause_distribution
-      regular_results = result["REGULAR"].to_i
-      all_results = result.inject(0){ |sum,x| sum + x[1].to_i }
-      [regular_results, all_results]
-    else
-      nil
-    end
+    result = test_match.slot_for(self).cause_distribution
+    regular_results = result["REGULAR"].to_i
+    all_results = result.inject(0){ |sum,x| sum + x[1].to_i }
+    [regular_results, all_results]
   end
 
   def build_index!    
@@ -58,25 +54,32 @@ class Client < ActiveRecord::Base
     true
   end
 
-  def testable?
-    !!main_file_entry and !tested? and !testing?
+  def status
+    if test_match and test_match.played?
+      all_tests_passed? ? "ok" : "broken"
+    elsif test_match and test_match.running?
+      "testing"
+    elsif main_file_entry
+      "testable"
+    else
+      "uploaded"
+    end
+  end
+
+  %w{ok broken testing testable}.each do |k|
+    define_method "#{k}?" do
+      status == k
+    end
   end
 
   def tested?
-    !testing? and !!test_match and test_match.played?
+    ok? or broken?
   end
 
   def all_tests_passed?
-    raise "not tested yet" unless tested?
-    test_results[0] == test_results[1]
-  end
-
-  def functional?
-    tested? and all_tests_passed?
-  end
-
-  def testing?
-    test_match and test_match.running?
+    if test_match and test_match.played?
+      test_results[0] == test_results[1]
+    end
   end
 
   def already_used?
@@ -90,8 +93,8 @@ class Client < ActiveRecord::Base
     raise "no test_contestant available" unless contest.test_contestant
     
     Match.transaction do
-      match = test_match
-      match.reset! if match
+      test_match.destroy if test_match
+      self.test_match = nil
       match = self.create_test_match
       match.clients = [self, contest.test_contestant.current_client]
       match.perform_delayed!

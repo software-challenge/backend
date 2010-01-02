@@ -20,9 +20,6 @@ module SoChaManager
     include SoChaManager::VmEmulator
     include SoChaManager::Executor
 
-    HOST = "127.0.0.1"
-    PORT = 13050
-
     unless File.exists?(SoChaManager.watch_folder) and File.directory?(SoChaManager.watch_folder)
       raise "watch_folder (#{SoChaManager.watch_folder}) isn't a directory or does not exist."
     end

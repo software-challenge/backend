@@ -157,7 +157,7 @@ module SoChaManager
       startup_file = File.join(dir, 'startup.sh')
       File.open(startup_file, 'w+') do |f|
         f.puts "#!/bin/bash"
-        f.puts generate_startup_command(ai_program, reservation)
+        f.puts generate_startup_command(ai_program, reservation, SoChaManager.silent)
         f.flush
       end
       File.chmod(0766, startup_file)

@@ -19,8 +19,13 @@ class Match < ActiveRecord::Base
 
   delegate :game_definition, :to => :set
 
-  def played?; played_at; end
-  def running?; !job.nil?; end
+  def running?
+    !!job
+  end
+
+  def played?
+    played_at
+  end
 
   def result
     result = scores.all
