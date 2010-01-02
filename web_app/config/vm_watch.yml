@@ -10,3 +10,5 @@ production:
   timeout: 240
   start_game_after: 120
   watch_folder: public/system/vmwatch
+  server_host: 192.168.56.2
+  silent: false
