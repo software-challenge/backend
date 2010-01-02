@@ -111,7 +111,7 @@ module SoChaManager
       end
     end
 
-    def generate_startup_command(ai_program, reservation, silent = true)
+    def generate_startup_command(ai_program, reservation, silent)
       executable = ai_program.main_file_entry.file_name
 
       if ai_program.java?
@@ -122,6 +122,9 @@ module SoChaManager
 
       command = "#{executable} --host #{SoChaManager.server_host} --port #{SoChaManager.server_port} --reservation #{reservation}"
       command << " > /dev/null 2>&1" if silent
+
+      logger.info "startup.sh << #{command}"
+
       command
     end
 
