@@ -2,6 +2,7 @@ module SoChaManager
   module Configuration
     def self.extended(base)
       configuration = YAML.load_file(Rails.root.join('config', 'vm_watch.yml'))[Rails.env]
+      configuration = configuration.with_indifferent_access
 
       defaults = { :timeout => 60,
         :start_game_after => 30,
@@ -10,7 +11,7 @@ module SoChaManager
         :server_port => 13050,
         :silent => true,
         :watch_folder => Rails.root.join('tmp', 'vmwatch')
-      }
+      }.with_indifferent_access
 
       settings = defaults.merge(configuration || {})
       watch_folder = settings.delete :watch_folder
