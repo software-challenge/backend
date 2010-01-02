@@ -8,14 +8,16 @@ module SoChaManager
         :emulate_vm => false,
         :server_host => "localhost",
         :server_port => 13050,
-        :silent => true
+        :silent => true,
+        :watch_folder => Rails.root.join('tmp', 'vmwatch')
       }
+
+      settings = defaults.merge(configuration || {})
+      watch_folder = settings.delete :watch_folder
+      settings[:watch_folder] = File.expand_path(watch_folder)
 
       base.instance_eval do
         class_variable_set :@@configuration, configuration
-        class_variable_set :@@watch_folder, (File.expand_path(configuration["watch_folder"], Rails.root) rescue Rails.root.join('tmp', 'vmwatch'))
-
-        settings = defaults.merge(configuration || {})
 
         settings.each do |k,default|
           value = (configuration[k.to_s] || default)
