@@ -13,16 +13,15 @@ module SoChaManager
         :watch_folder => Rails.root.join('tmp', 'vmwatch')
       }.with_indifferent_access
 
-      settings = defaults.merge(configuration || {})
+      settings = defaults.merge(configuration || {}).with_indifferent_access
       watch_folder = settings.delete :watch_folder
       settings[:watch_folder] = File.expand_path(watch_folder, Rails.root)
 
       base.instance_eval do
         class_variable_set :@@configuration, configuration
 
-        settings.each do |k,default|
-          value = (configuration[k.to_s] || default)
-          class_variable_set :"@@#{k}", value
+        settings.each do |k,v|
+          class_variable_set :"@@#{k}", v
         end
 
         mattr_reader :configuration
