@@ -21,7 +21,7 @@ module SoChaManager
     include SoChaManager::Executor
 
     unless File.exists?(SoChaManager.watch_folder) and File.directory?(SoChaManager.watch_folder)
-      raise "watch_folder (#{SoChaManager.watch_folder}) isn't a directory or does not exist."
+      logger.fatal "watch_folder (#{SoChaManager.watch_folder}) isn't a directory or does not exist."
     end
 
     attr_reader :last_result, :client

@@ -123,13 +123,13 @@ module SoChaManager
       command = "#{executable} --host #{SoChaManager.server_host} --port #{SoChaManager.server_port} --reservation #{reservation}"
       command << " > /dev/null 2>&1" if silent
 
-      logger.info "Bash Command: #{command}"
+      logger.info "Startup.sh Command: #{command}"
 
       command
     end
 
     def start_client(slot, reservation)
-      logger.info "Starting client (id=#{slot.client.id}) for '#{slot.name}'"
+      logger.info "Preparing client (id=#{slot.client.id}, contestant='#{slot.name}')..."
 
       ai_program = slot.client
       zipped_ai_program = ai_program.file.path
