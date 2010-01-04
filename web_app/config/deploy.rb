@@ -53,7 +53,7 @@ namespace :daemons do
     run "#{File.join(current_path,'script','daemons')} start"
   end
 
-  task :restart, :depends => [ :stop, :start ] do
+  task :restart => [ :stop, :start ] do
     # nothing here
   end
   

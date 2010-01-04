@@ -84,7 +84,7 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.update_attributes(params[:client])
         flash[:notice] = 'Client was successfully updated.'
-        format.html { redirect_to(@client) }
+        format.html { redirect_to contestant_clients_url(@client) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

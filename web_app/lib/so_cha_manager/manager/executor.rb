@@ -84,12 +84,13 @@ module SoChaManager
           if room_handler.done?
             logger.info "Game is already over, start_game_after not necessary."
           elsif !room_handler.received_data_after?(threshold.seconds.ago)
-            logger.info "Invoking handler for start_game_after."
+            logger.info "#{SoChaManager.start_game_after} seconds passed. Forcing game to start."
             @client.step(room_id, true)
           else
             logger.info "Action detected, start_game_after not necessary."
           end
         rescue => e
+          logger.fatal "Timeout thread crashed!"
           logger.log_formatted_exception e
         end
       end
