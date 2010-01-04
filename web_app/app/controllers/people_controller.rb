@@ -56,9 +56,6 @@ class PeopleController < ApplicationController
   # POST /people
   # POST /people.xml
   def create
-    @person =
-      check_permissions_on(@person)
-
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |x| x.blank? } if person_params[:teams]

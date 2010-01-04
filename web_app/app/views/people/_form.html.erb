@@ -9,7 +9,7 @@
       :input_html => { :value => "", :autocomplete => "off" } %>
 
     <% if current_user.administrator? %>
-      <% f.input :administrator %>
+      <%= f.input :administrator %>
       <%= f.input "role", :as => "select", :collection => manageable_roles, :include_blank => false %>
     <% end %>
 
