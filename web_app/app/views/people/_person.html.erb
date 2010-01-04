@@ -30,8 +30,6 @@
   <% end %>
   <% show_image = image_tag "actions/show.png", :title => "Zeige" %>
   <% edit_image = image_tag "actions/edit.png", :title => "Bearbeiten" %>
-  <% delete_image = image_tag "actions/delete.png", :title => "Löschen" %>
   <td><%= link_to show_image, person %></td>
   <td><%= link_to edit_image, edit_person_path(person) %></td>
-  <td><%= link_to delete_image, person, :confirm => 'Soll "' + person.name + '" wirklich gelöschen werden?', :method => :delete %></td>
 </tr>

@@ -1,5 +1,5 @@
 <div id="actions">
-  <% if @contest.contestants.empty? %>
+  <% unless @contest.ready? %>
     <% link_to new_contest_contestant_url(@contest) do %>
       <%= image_tag('actions/add.png') %>Neuer Teilnehmer
     <% end %>

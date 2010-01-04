@@ -3,7 +3,7 @@
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
     <%= f.input :nick_name %>
-    <%= f.input :email, :required => true, :hint => "Bei der Anmeldung muss diese E-Mail Addresse angegeben werden." %>
+    <%= f.input :email, :required => true, :hint => "Bei der Anmeldung muss diese E-Mail-Adresse angegeben werden." %>
     <%= f.input :password, :required => @person.new_record?,
       :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" + (@person.new_record? ? "" : ", frei lassen um Passwort nicht zu ändern") + "."),
       :input_html => { :value => "", :autocomplete => "off" } %>
@@ -19,7 +19,8 @@
     <% end %>
 
   <% end %>
-  <p>
-    <%= f.buttons %>
-  </p>
+  <% f.buttons do %>
+    <%= f.commit_button %>
+    oder <%= link_to_function "Zurück", "history.back()" %>
+  <% end %>
 <% end %>

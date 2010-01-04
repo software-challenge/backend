@@ -14,6 +14,9 @@ de:
         average_time: "Ø Zeit"
   formtastic:
     submit: "Absenden"
+    actions:
+      create: "{{model}} erstellen"
+      update: "Änderungen speichern"
   titles:
     contests:
       edit_schedule: Terminplan bearbeiten

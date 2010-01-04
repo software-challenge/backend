@@ -1,6 +1,10 @@
-<h1>
-  <%= @contest.name %>
-</h1>
+<div id="actions">
+  <% if @contest.ready? and !@contest.begun? %>
+    <% link_to reset_matchdays_contest_url(@contest), :method => :post do %>
+      <%= image_tag('actions/destroy.png') %>Spielplan löschen
+    <% end %>
+  <% end %>
+</div>
 
 <% tabnav :contest do %>
   <table class="data-table">

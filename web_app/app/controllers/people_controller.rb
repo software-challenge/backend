@@ -12,11 +12,6 @@ class PeopleController < ApplicationController
     end
   end
 
-  def index_for_contestant
-    @contestant = Contestant.find(params[:contestant_id])
-    raise NotAllowed unless current_user.administrator? or @contestant.people.include?(current_user)
-  end
-
   # GET /people/1
   # GET /people/1.xml
   def show
