@@ -33,6 +33,8 @@ require 'cap_recipes/tasks/rails'
 require 'cap_recipes/tasks/delayed_job'
 
 after 'deploy:restart', 'daemons:restart'
+before 'daemons:restart', 'daemons:stop'
+after 'daemons:restart', 'daemons:start'
 
 namespace :deploy do
   task :start do
@@ -53,7 +55,7 @@ namespace :daemons do
     run "#{File.join(current_path,'script','daemons')} start"
   end
 
-  task :restart => [ :stop, :start ] do
+  task :restart do
     # nothing here
   end
   
