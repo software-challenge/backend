@@ -24,7 +24,7 @@ class MainController < ApplicationController
       redirect_to root_url
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
-      flash[:notice] = "Der Benutzer konnte nicht gefunden werden!"
+      flash[:notice] = "Die Zugangsdaten sind nicht gültig."
       render :action => "login"
     end
   end
