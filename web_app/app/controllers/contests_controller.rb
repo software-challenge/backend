@@ -124,7 +124,7 @@ class ContestsController < ApplicationController
       @contest.refresh_matchdays!(start_at, weekdays)
 
       if @contest.matchdays.count.zero?
-        flash[:error] = "Es sind nicht genug Teilnehmer vorhanden, um einen Spielplan zu erstellen."
+        flash[:error] = "Es sind nicht genug #{Contestant.human_name(:count => 2)} vorhanden, um einen Spielplan zu erstellen."
       end
     else
       flash[:error] = "Es liegt bereits ein Spielplan vor."

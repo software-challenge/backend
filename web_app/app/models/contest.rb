@@ -105,6 +105,14 @@ class Contest < ActiveRecord::Base
     !matchdays.played.empty?
   end
 
+  def estimate_matchday_count
+    if contestants.count.odd?
+      contestants.count
+    else
+      contestants.count - 1
+    end
+  end
+
   protected
 
   # generates all matchdays (round-robin tournament)

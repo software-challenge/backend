@@ -47,7 +47,7 @@
                 <% if Contest.active.ready? %>
                   <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
                 <% else %>
-                  <li><%= link_to "Teilnehmerliste", contest_contestants_url(Contest.active) %></li>
+                  <li><%= link_to Contestant.human_name(:count => 2), contest_contestants_url(Contest.active) %></li>
                 <% end %>
               <% end %>
               <% if logged_in? and current_user.administrator? %>

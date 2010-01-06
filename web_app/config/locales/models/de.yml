@@ -8,8 +8,8 @@ de:
         one: Wettbewerb
         other: Wettbewerbe
       contestant:
-        one: Teilnehmer
-        other: Teilnehmer
+        one: Team
+        other: Teams
       match:
         one: Spiel
         other: Spiele
