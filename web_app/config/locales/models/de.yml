@@ -34,9 +34,9 @@ de:
       person:
         first_name: Vorname
         last_name: Nachname
-        nick_name: Nickname
-        email: "E-Mail"
+        nick_name: Spitzname
+        email: "E-Mail-Adresse"
         password: Passwort
-        role: Rolle
+        administrator: "AdministratorIn"
         blocked: Gesperrt
 

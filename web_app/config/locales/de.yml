@@ -12,6 +12,14 @@ de:
         position: "Position"
         carrots: "Karotten"
         average_time: "Ø Zeit"
+  acl9:
+    roles:
+      global:
+        administrator: AdministratorIn
+      contestant:
+        teacher: LehrerIn
+        tutor: TutorIn
+        pupil: SchülerIn
   formtastic:
     submit: "Absenden"
     actions:
