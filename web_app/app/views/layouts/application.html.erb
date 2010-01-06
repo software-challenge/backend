@@ -45,10 +45,18 @@
               <li><%= link_to "Startseite", root_url %></li>
               <% if Contest.active %>
                 <% current_contest = Contest.active %>
+                <% team_count = (logged_in? ? current_user.contestants.for_contest(current_contest).count : 0) %>
+                
                 <li><%= link_to current_contest.game_name, contest_url(current_contest) %></li>
+                <% if team_count > 1 %>
+                  <li><%= link_to "Meine #{Contestant.human_name(:count => 2)}", my_contest_contestants_url(current_contest) %></li>
+                <% elsif team_count == 1 %>
+                  <% contestant = current_user.contestants.for_contest(current_contest).first %>
+                  <li><%= link_to "Mein #{Contestant.human_name(:count => 1)}", contest_contestant_url(contestant.contest, contestant) %></li>
+                <% end %>
                 <% if current_contest.ready? %>
                   <li><%= link_to "Spielplan", contest_matchdays_url(current_contest) %></li>
-                <% else %>
+                <% elsif team_count.zero? %>
                   <li><%= link_to Contestant.human_name(:count => 2), contest_contestants_url(current_contest) %></li>
                 <% end %>
               <% end %>

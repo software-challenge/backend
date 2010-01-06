@@ -54,6 +54,11 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.links_to :controller => "contestants", :action => "index", :contest_id => @contest
   end
 
+  add_tab do |t|
+    t.named "Meine #{Contestant.human_name(:count => 2)}"
+    t.links_to hash_for_my_contest_contestants_url(:contest_id => @contest)
+  end if logged_in? and current_user.contestants.for_contest(@contest).count > 1
+
   #
   # you can use restful routes with:
   #

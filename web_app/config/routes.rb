@@ -2,7 +2,7 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
     tmap.resources :people, :as => "personen"
 
-    tmap.resources :contestants, :as => "teilnehmer" do |contestant|
+    tmap.resources :contestants, :as => "teams" do |contestant|
       contestant.resources :clients, :as => "computerspieler", :member => {
         :browse => :post,
         :select_main => :post,
@@ -38,7 +38,8 @@ ActionController::Routing::Routes.draw do |map|
         md.standings '/rangliste', :controller => 'matchdays', :action => 'standings'
       end
 
-      c.resources :contestants, :as => "teilnehmer" do |contestant|
+      c.contestants '/meine-teams', :controller => 'contestants', :action => 'my', :name_prefix => 'my_contest_'
+      c.resources :contestants, :as => "teams" do |contestant|
         contestant.resources :clients, :as => "computerspieler" do |client|
           # Use /contestants/1/clients/2 route!
         end

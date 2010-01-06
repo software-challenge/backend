@@ -1,9 +1,14 @@
 class ContestantsController < ApplicationController
   before_filter :fetch_contest
 
-  access_control :expect => [:show, :index] do
+  access_control :except => [:show, :index] do
     default :deny
     allow :administrator
+  end
+
+  access_control :only => :my do
+    default :deny
+    allow logged_in
   end
 
   # GET /contestants
@@ -13,6 +18,15 @@ class ContestantsController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
+      format.xml  { render :xml => @contestants }
+    end
+  end
+
+  def my
+    @contestants = current_user.contestants.for_contest(@contest)
+
+    respond_to do |format|
+      format.html { render :action => "index" }
       format.xml  { render :xml => @contestants }
     end
   end
