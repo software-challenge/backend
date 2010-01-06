@@ -23,6 +23,8 @@ class Person < ActiveRecord::Base
   validates_presence_of :last_name
   validates_uniqueness_of :nick_name, :allow_blank => true
 
+  validates_associated :memberships
+
   with_options :with => /\A[\w]*\Z/, :message => "darf keine Sonderzeichen enthalten" do |alnum|
     alnum.validates_format_of :first_name
     alnum.validates_format_of :last_name
@@ -79,25 +81,29 @@ class Person < ActiveRecord::Base
   # expects a hash with :id => { :_delete, :role }
   def teams=(teams)
     raise "hash expected" unless teams.is_a? Hash
+    return if teams.empty?
 
-    Membership.transaction do
-      unless teams.empty?
-        Contestant.find(teams.keys).each do |team|
-          membership_data = teams[team.id.to_s]
-          if self.new_record?
-            memberships << Membership.new(:contestant => team, :person => self)
-          elsif membership_data["_delete"].to_i == 1
-            membership_for(team).destroy if membership_for(team)
-          elsif membership_for(team)
-            membership = membership_for(team)
-            membership.role = membership_data["role"]
-            membership.save!
-          else
-            memberships << Membership.new(:contestant => team, :person => self)
-          end
-        end
+    all = {}.tap do |result|
+      self.memberships.each do |m|
+        result[m.contestant.id] = m
       end
     end
+
+    teams.each do |k,v|
+      contestant_id = k.to_i
+      role = v["role"]
+      delete = v["_delete"].to_i == 1
+
+      if all[contestant_id]
+        all[contestant_id].role_name = role
+      else
+        all[contestant_id] = Membership.new(:contestant => Contestant.find(k), :person => self, :role_name => role)
+      end
+
+      all.delete(contestant_id) if delete
+    end
+
+    self.memberships = all.values
   end
 
   def manageable_teams

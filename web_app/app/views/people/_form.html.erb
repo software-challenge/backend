@@ -13,19 +13,22 @@
     <% end %>
 
     <% if current_user.administrator? %>
+      <%= f.errors_on :memberships %>
       <li>
         <% content_for :teams do %>
-          <% current_user.manageable_teams.each_with_index do |t,i| %>
+          <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build } %>
+          <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
+            <% t = m.contestant %>
             <% checkbox_id = "person_team_#{t.id}"  %>
             <li class="boolean <%= cycle("odd", "even") %>">
               <label for="<%= checkbox_id %>" style="padding-left: 0;">
                 <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
-                <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.member_of?(t), :id => checkbox_id %>
+                <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id %>
                 <%= t.name %>
               </label>
 
               <div style="float: right;">
-                <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, @person.membership_for(t).try(:role)) %>
+                <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
               </div>
             <% end %>
           </li>

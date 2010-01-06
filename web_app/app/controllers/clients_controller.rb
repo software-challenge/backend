@@ -1,5 +1,9 @@
 class ClientsController < ApplicationController
 
+  before_filter do |c|
+    c.instance_variable_set :@contestant, Contestant.find(c.params[:contestant_id])
+  end
+
   access_control do
     default :deny
     allow :administrator
@@ -7,7 +11,6 @@ class ClientsController < ApplicationController
   end
 
   def index
-    @contestant = Contestant.find(params[:contestant_id])
     @clients = @contestant.clients.all(:order => "created_at DESC")
 
     respond_to do |format|
@@ -17,7 +20,6 @@ class ClientsController < ApplicationController
   end
 
   def show
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
@@ -27,7 +29,6 @@ class ClientsController < ApplicationController
   end
 
   def new
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.build
 
     respond_to do |format|
@@ -37,14 +38,11 @@ class ClientsController < ApplicationController
   end
 
   def edit
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
   end
 
   def create
     # TODO: http://jimneath.org/2008/05/15/swfupload-paperclip-and-ruby-on-rails/
-
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.build(params[:client])
     @client.author = current_user
 
@@ -73,7 +71,6 @@ class ClientsController < ApplicationController
   end
 
   def update
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
@@ -91,7 +88,6 @@ class ClientsController < ApplicationController
   def destroy
     raise "not supported"
 
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
     @client.destroy
 
@@ -102,7 +98,6 @@ class ClientsController < ApplicationController
   end
 
   def test
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
 
     if @client.tested?
@@ -115,7 +110,6 @@ class ClientsController < ApplicationController
   end
 
   def browse
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
 
     if params[:entry_id]
@@ -135,7 +129,6 @@ class ClientsController < ApplicationController
   end
 
   def select_main
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
     @main_entry = @client.file_entries.find(params[:main_id])
 
@@ -146,7 +139,6 @@ class ClientsController < ApplicationController
   end
 
   def select
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
 
     @contestant.current_client = @client
@@ -156,7 +148,6 @@ class ClientsController < ApplicationController
   end
 
   def status
-    @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:client_id])
 
     render :update do |page|

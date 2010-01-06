@@ -5,4 +5,18 @@ module ApplicationHelper
       link_to text, "##{key}"
     end
   end
+
+  def associated_with_additional(existing, all, on_attribute = :id)
+    result = ActiveSupport::OrderedHash.new
+
+    all.each do |element|
+      result[element.send(on_attribute)] = element
+    end
+
+    existing.each do |element|
+      result[element.send(on_attribute)] = element
+    end
+
+    result.values
+  end
 end

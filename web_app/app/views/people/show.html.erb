@@ -26,7 +26,7 @@
               <% @person.teams.each do |team| %>
                 <tr>
                   <td>
-                    <%= team.name %> (als <%= translate_role(@person.membership_for(team).role) %>)
+                    <%= team.name %> (als <%= @person.membership_for(team).role %>)
                   </td>
                 </tr>
               <% end %>
