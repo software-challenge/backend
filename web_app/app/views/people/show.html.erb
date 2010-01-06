@@ -19,14 +19,6 @@
           <%=h @person.email %>
         </p>
 
-        <br>
-        <% if @person.role.present? %>
-          <p>
-            <b>Rolle:</b>
-            <%= translate_role(@person.role) %>
-          </p>
-        <% end %>
-
         <% unless @person.teams.empty? %>
           <p>
             <b>Teams:</b>
@@ -34,18 +26,7 @@
               <% @person.teams.each do |team| %>
                 <tr>
                   <td>
-                    <%= team.name %>
-                    <% tutors = team.tutors %>
-                    <% if tutors.length > 0 && !@person.tutor? %>
-                      <% if tutors.length == 1 %>
-                        ( <b>Tutor:</b>
-                      <% else %>
-                        ( <b>Tutoren:</b>
-                      <% end %>
-                      <% tutors.each do |tutor| %>
-                        <%= link_to tutor.name, person_url(tutor) %>
-                      <% end %>)
-                    <% end %>
+                    <%= team.name %> (als <%= translate_role(@person.membership_for(team).role) %>)
                   </td>
                 </tr>
               <% end %>

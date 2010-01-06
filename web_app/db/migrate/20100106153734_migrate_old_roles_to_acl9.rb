@@ -10,6 +10,7 @@ class MigrateOldRolesToAcl9 < ActiveRecord::Migration
     end
 
     remove_column :memberships, :role
+    remove_column :people, :administrator
   end
 
   def self.down

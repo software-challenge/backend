@@ -85,7 +85,7 @@ class PeopleController < ApplicationController
 
     # cleanup params
     person_params = params[:person].clone
-    person_params[:teams].reject! { |x| x.blank? } if person_params[:teams]
+    person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
     role = person_params.delete :role
 
     success = @person.update_attributes(person_params)

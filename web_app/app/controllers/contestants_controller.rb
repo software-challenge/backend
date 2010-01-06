@@ -1,6 +1,11 @@
 class ContestantsController < ApplicationController
   before_filter :fetch_contest
 
+  access_control :expect => [:show, :index] do
+    default :deny
+    allow :administrator
+  end
+
   # GET /contestants
   # GET /contestants.xml
   def index

@@ -236,6 +236,6 @@ table.data-table thead tr {
   font-size: 11px;
 }
 
-table.data-table tr.odd {
+table.data-table tr.odd, li.odd {
   background-color: #f8f8f8;
 }

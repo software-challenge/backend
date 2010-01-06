@@ -33,8 +33,6 @@ class Person < ActiveRecord::Base
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
   
-  validate_on_update :validate_at_least_one_admin
-
   def name
     if (self.first_name != "" && self.last_name != "")
       ("#{self.first_name} #{self.last_name}")
@@ -78,21 +76,26 @@ class Person < ActiveRecord::Base
     return result
   end
 
+  # expects a hash with :id => { :_delete, :role }
   def teams=(teams)
-    Membership.transaction do
-      memberships.destroy_all
-      unless teams.empty?
-        Contestant.find(teams).each do |team|
-          memberships << Membership.new(:contestant => team, :person => self)
-        end
-      end
-    end
-  end
+    raise "hash expected" unless teams.is_a? Hash
 
-  def role=(new_role)
     Membership.transaction do
-      memberships(:reload).each do |membership|
-        membership.update_attributes!(:role => new_role)
+      unless teams.empty?
+        Contestant.find(teams.keys).each do |team|
+          membership_data = teams[team.id.to_s]
+          if self.new_record?
+            memberships << Membership.new(:contestant => team, :person => self)
+          elsif membership_data["_delete"].to_i == 1
+            membership_for(team).destroy if membership_for(team)
+          elsif membership_for(team)
+            membership = membership_for(team)
+            membership.role = membership_data["role"]
+            membership.save!
+          else
+            memberships << Membership.new(:contestant => team, :person => self)
+          end
+        end
       end
     end
   end
@@ -105,54 +108,9 @@ class Person < ActiveRecord::Base
     end
   end
 
-  def role
-    if teacher?
-      "teacher"
-    elsif tutor?
-      "tutor"
-    elsif pupil?
-      "pupil"
-    else
-      ""
-    end
-  end
-
-  # FIXME: These are serious hacks! Should be removed ASAP!
-  def teacher?
-    memberships.as("teacher").first
-  end
-
-  # FIXME: These are serious hacks! Should be removed ASAP!
-  def tutor?
-    memberships.as("tutor").first
-  end
-
-  # FIXME: These are serious hacks! Should be removed ASAP!
-  def pupil?
-    memberships.as("pupil").first
-  end
-
   def membership_for(contestant)
     memberships.first :conditions => { :contestant_id => contestant.id }
   end
 
-  def last_admin?
-    return false unless administrator?
-    return false if Person.count(:conditions => { :administrator => true }) > 1
-    true
-  end
-
-  protected
-
-  before_destroy :validate_on_destroy
-
-  def validate_at_least_one_admin
-    if administrator_changed? and administrator_was and last_admin?
-      errors.add_to_base "Es muss mindestens ein Administrator verbleiben."
-    end
-  end
-
-  def validate_on_destroy
-    raise "can't delete last admin" if last_admin?
-  end
+  alias member_of? membership_for
 end

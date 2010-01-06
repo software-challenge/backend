@@ -11,7 +11,7 @@
   <table class="data-table">
     <thead>
       <tr>
-        <% %w{first_name last_name email blocked role teams administrator}.each do |attr| %>
+        <% %w{first_name last_name email blocked teams administrator}.each do |attr| %>
           <th><%= Person.human_attribute_name attr %></th>
         <% end %>
       </tr>

@@ -18,7 +18,7 @@ module PeopleHelper
 
   def manageable_roles
     if current_user.administrator?
-      [["Schüler", "pupil"], ["Lehrer", "teacher"], ["Tutor", "tutor"]]
+      [["Schüler", "pupil"], ["Tutor", "tutor"], ["Lehrer", "teacher"]]
     else
       [["Schüler", "pupil"]]
     end
