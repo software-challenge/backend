@@ -1,14 +1,22 @@
 class Contest < ActiveRecord::Base
   validates_presence_of :name
   validates_presence_of :test_contestant
+  validates_presence_of :game_definition
 
   has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
   has_many :contestants, :conditions => { :tester => false }
   has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }
   has_many :matchdays, :dependent => :destroy
 
+  def game_definition_identifier
+    if game_definition
+      game_definition.game_identifier
+    else
+      nil
+    end
+  end
+
   def game_definition
-    # FIXME: use attribute
     GameDefinition.all.first
   end
 

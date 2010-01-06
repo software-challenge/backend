@@ -141,6 +141,11 @@ class GameDefinition
     @@definitions << definition
   end
   
+  def ==(other)
+    return false unless other.is_a? GameDefinition
+    self.game_identifier.to_sym == other.game_identifier.to_sym
+  end
+  
   def self.all
     @@definitions
   end
