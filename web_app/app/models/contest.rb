@@ -113,6 +113,10 @@ class Contest < ActiveRecord::Base
     end
   end
 
+  def game_name
+    I18n.t("games.#{game_definition.game_identifier.to_s.underscore}.name")
+  end
+
   protected
 
   # generates all matchdays (round-robin tournament)

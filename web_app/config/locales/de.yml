@@ -1,6 +1,7 @@
 de:
   games:
     hase_und_igel:
+      name: Hase und Igel
       match_score:
         points: Punkte
         victories: Siege

@@ -44,13 +44,15 @@
             <ul id="mainMenu">
               <li><%= link_to "Startseite", root_url %></li>
               <% if Contest.active %>
-                <% if Contest.active.ready? %>
-                  <li><%= link_to "Spielplan", contest_matchdays_url(Contest.active) %></li>
+                <% current_contest = Contest.active %>
+                <li><%= link_to current_contest.game_name, contest_url(current_contest) %></li>
+                <% if current_contest.ready? %>
+                  <li><%= link_to "Spielplan", contest_matchdays_url(current_contest) %></li>
                 <% else %>
-                  <li><%= link_to Contestant.human_name(:count => 2), contest_contestants_url(Contest.active) %></li>
+                  <li><%= link_to Contestant.human_name(:count => 2), contest_contestants_url(current_contest) %></li>
                 <% end %>
               <% end %>
-              <% if logged_in? and current_user.administrator? %>
+              <% show_to :administrator do %>
                 <li><%= link_to "Administration", administration_url %></li>
               <% end %>
             </ul>
