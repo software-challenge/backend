@@ -1,16 +1,20 @@
 class MainController < ApplicationController
 
-  skip_before_filter :require_current_user
+  access_control :only => [:debug, :administration] do
+    allow :administrator
+  end
 
   def index
 
   end
 
   def login
-    
+    if logged_in?
+      flash[:notice] = "Du bist bereits eingeloggt."
+      redirect_to root_url
+    end
   end
 
-  # TODO: make this real
   def do_login
     email = params[:user][:email]
     password = params[:user][:password]

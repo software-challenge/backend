@@ -21,15 +21,6 @@
   list-style-type: none;
 }
 
-.tabs_tabnav li span.disabled {
-  color: #aaa;
-  background-color: #eee;
-  text-decoration: none;
-  padding: 5px 10px;
-  border: 1px solid #e8e8e8;
-  border-bottom-color: white;
-}
-
 .tabs_tabnav a, .tabs_tabnav a:visited, tabs_tabnav a.active {
   color: #4183C4;
   border: 1px solid transparent;
@@ -65,4 +56,13 @@
   background: #FFFFFF;
   z-index: 2;
   padding: 2em 0 0 0;
+}
+
+.tabs_tabnav li span.disabled {
+  color: #aaa;
+  background-color: #eee;
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid #e8e8e8;
+  border-bottom-color: #eee;
 }

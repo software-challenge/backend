@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091226020818) do
+ActiveRecord::Schema.define(:version => 20100106153734) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -108,7 +108,6 @@ ActiveRecord::Schema.define(:version => 20091226020818) do
     t.integer  "contestant_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "role"
   end
 
   create_table "people", :force => true do |t|
@@ -123,6 +122,21 @@ ActiveRecord::Schema.define(:version => 20091226020818) do
     t.string   "last_name",            :default => "",    :null => false
     t.string   "nick_name",            :default => "",    :null => false
     t.boolean  "show_email_to_others", :default => false, :null => false
+  end
+
+  create_table "people_roles", :id => false, :force => true do |t|
+    t.integer  "person_id"
+    t.integer  "role_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "roles", :force => true do |t|
+    t.string   "name",              :limit => 40
+    t.string   "authorizable_type", :limit => 40
+    t.integer  "authorizable_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "round_slots", :force => true do |t|

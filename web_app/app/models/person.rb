@@ -3,7 +3,10 @@ require 'digest/sha1'
 class Person < ActiveRecord::Base
   RANDOM_HASH_CHARS = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
   MINIMUM_PASSWORD_LENGTH = 6
-  
+
+  # acl9
+  acts_as_authorization_subject
+
   has_many :memberships
   has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
 
@@ -79,9 +82,7 @@ class Person < ActiveRecord::Base
     Membership.transaction do
       memberships.destroy_all
       unless teams.empty?
-        source = Contestant
-        source = Authorization.current_user.manageable_teams if Authorization.current_user
-        source.find(teams).each do |team|
+        Contestant.find(teams).each do |team|
           memberships << Membership.new(:contestant => team, :person => self)
         end
       end

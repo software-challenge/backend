@@ -1,9 +1,11 @@
-require 'zip/zip'
-
 class ClientsController < ApplicationController
 
-  # GET /clients
-  # GET /clients.xml
+  access_control do
+    default :deny
+    allow :administrator
+    allow :pupil, :tutor, :teacher, :of => :contestant
+  end
+
   def index
     @contestant = Contestant.find(params[:contestant_id])
     @clients = @contestant.clients.all(:order => "created_at DESC")
@@ -14,10 +16,9 @@ class ClientsController < ApplicationController
     end
   end
 
-  # GET /clients/1
-  # GET /clients/1.xml
   def show
-    @client = Client.find(params[:id])
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
       format.html { redirect_to contestant_clients_url }
@@ -25,8 +26,6 @@ class ClientsController < ApplicationController
     end
   end
 
-  # GET /clients/new
-  # GET /clients/new.xml
   def new
     @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.build
@@ -37,14 +36,11 @@ class ClientsController < ApplicationController
     end
   end
 
-  # GET /clients/1/edit
   def edit
     @contestant = Contestant.find(params[:contestant_id])
     @client = @contestant.clients.find(params[:id])
   end
 
-  # POST /clients
-  # POST /clients.xml
   def create
     # TODO: http://jimneath.org/2008/05/15/swfupload-paperclip-and-ruby-on-rails/
 
@@ -76,10 +72,9 @@ class ClientsController < ApplicationController
     end
   end
 
-  # PUT /clients/1
-  # PUT /clients/1.xml
   def update
-    @client = Client.find(params[:id])
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
       if @client.update_attributes(params[:client])
@@ -93,10 +88,11 @@ class ClientsController < ApplicationController
     end
   end
 
-  # DELETE /clients/1
-  # DELETE /clients/1.xml
   def destroy
-    @client = Client.find(params[:id])
+    raise "not supported"
+
+    @contestant = Contestant.find(params[:contestant_id])
+    @client = @contestant.clients.find(params[:id])
     @client.destroy
 
     respond_to do |format|

@@ -16,13 +16,12 @@ class ApplicationController < ActionController::Base
   before_filter :require_current_user
   before_filter :generate_page_title
 
-  before_filter { |c| Authorization.current_user = c.current_user }
   attr_accessor :current_user
   hide_action :current_user
 
   protected
 
-  rescue_from NotAllowed do
+  rescue_from NotAllowed, Acl9::AccessDenied do
     render_optional_error_file 403
   end
 
