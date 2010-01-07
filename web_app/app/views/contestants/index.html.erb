@@ -1,7 +1,7 @@
 <div id="actions">
   <% unless @contest.ready? %>
     <% link_to new_contest_contestant_url(@contest) do %>
-      <%= image_tag('actions/add.png') %>Neuer <%= Contestant.human_name %>
+      <%= image_tag('actions/add.png') %>Neues <%= Contestant.human_name %>
     <% end %>
   <% end %>
 </div>
