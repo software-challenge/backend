@@ -30,4 +30,4 @@ production:
 cucumber:
   <<: *TEST
 cucumber:
-  <<: *TEST
+  <<: *TEST 
