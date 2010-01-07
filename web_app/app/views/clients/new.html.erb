@@ -1,11 +1,16 @@
-<h1><%= current_page_title %></h1>
+<h1>
+  <%= link_to @contestant.name, contestant_clients_url(@contestant) %> /
+  <%= current_page_title %>
+</h1>
 
-<% semantic_form_for([@contestant, @client], :html => { :multipart => true }) do |f| %>
-  <% f.inputs do %>
-    <%= f.input :file %>
-  <% end %>
+<% tabnav :contestant do %>
+  <% semantic_form_for([@contestant, @client], :html => { :multipart => true }) do |f| %>
+    <% f.inputs do %>
+      <%= f.input :file %>
+    <% end %>
 
-  <% f.buttons do %>
-    <%= f.commit_button %> oder <%= link_to 'Zurück', contestant_clients_url(@contestant) %>
+    <% f.buttons do %>
+      <%= f.commit_button %> oder <%= link_to 'Zurück', contestant_clients_url(@contestant) %>
+    <% end %>
   <% end %>
 <% end %>

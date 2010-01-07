@@ -38,6 +38,8 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named 'Computerspieler'
     t.links_to :controller => "clients", :action => "index", :contestant_id => @contestant
+    t.highlights_on :controller => "clients", :action => "new"
+    t.highlights_on :controller => "clients", :action => "create"
   end
 
   #
