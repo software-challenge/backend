@@ -1,7 +1,7 @@
 class ContestantsController < ApplicationController
   before_filter :fetch_contest
 
-  access_control :except => [:show, :index] do
+  access_control :except => [:show, :index, :my] do
     default :deny
     allow :administrator
   end

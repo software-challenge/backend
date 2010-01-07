@@ -23,19 +23,19 @@
             <li class="boolean <%= cycle("odd", "even") %>">
               <label for="<%= checkbox_id %>" style="padding-left: 0;">
                 <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
-                <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id %>
+                <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam" %>
                 <%= t.name %>
               </label>
 
-              <div style="float: right;">
+              <div style="float: right;" class="role">
                 <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
               </div>
-            <% end %>
-          </li>
+            </li>
+          <% end %>
         <% end %>
         <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
-        <%= f.input "blocked", :required => false %>
       </li>
+      <%= f.input "blocked", :required => false %>
     <% end %>
 
   <% end %>
@@ -44,3 +44,21 @@
     oder <%= link_to "Zurück", people_url %>
   <% end %>
 <% end %>
+
+<script type="text/javascript">
+  $('.inTeam').each(function() {
+    var $this = $(this);
+    var $role = $this.closest('li').find('.role');
+
+    var switcher = function() {
+      if($this.is(':checked')) {
+        $role.show();
+      } else {
+        $role.hide();
+      }
+    };
+
+    $this.click(switcher);
+    switcher();
+  });
+</script>
