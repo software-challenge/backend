@@ -34,7 +34,7 @@ class Person < ActiveRecord::Base
 
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
-  
+
   def name
     if (self.first_name != "" && self.last_name != "")
       ("#{self.first_name} #{self.last_name}")
@@ -120,12 +120,14 @@ class Person < ActiveRecord::Base
 
   alias member_of? membership_for
 
-  def administrator
-    @administrator ||= false
-    return @administrator
+  attr_accessor :administrator
+
+  def before_safe
+    if current_user and current_user.has_role? :administrator
+      if @administrator
+        self.has_role! :administrator
+      end
+    end
   end
 
-  def administrator=(true_or_false)
-    @administrator = true_or_false
-  end
 end

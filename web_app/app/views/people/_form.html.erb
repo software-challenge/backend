@@ -9,7 +9,7 @@
       :input_html => { :value => "", :autocomplete => "off" } %>
 
     <% show_to :administrator do %>
-      <%= f.input :administrator %>
+      <%= f.input :administrator, :as => :boolean %>
     <% end %>
 
     <% show_to :administrator do %>
