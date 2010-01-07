@@ -52,6 +52,8 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named Contestant.human_name(:count => 2)
     t.links_to :controller => "contestants", :action => "index", :contest_id => @contest
+    t.highlights_on :controller => "contestants", :action => "new"
+    t.highlights_on :controller => "contestants", :action => "create"
   end
 
   add_tab do |t|

@@ -4,10 +4,5 @@
 </h1>
 
 <% tabnav :contestant do %>
-  <% semantic_form_for([@contestant.contest, @contestant]) do |f| %>
-    <% f.inputs do %>
-      <%= f.input :name, :required => true %>
-    <% end %>
-    <%= f.buttons %>
-  <% end %>
+  <%= render :partial => "form" %>
 <% end %>
