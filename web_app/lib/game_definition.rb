@@ -20,6 +20,7 @@ class GameDefinitionBuilder
     @definition = GameDefinition.new
     d.league = LeagueConfiguration.new 1
     d.players = 2
+    d.test_rounds = 1
   end
   
   attr_reader :definition
@@ -29,8 +30,12 @@ class GameDefinitionBuilder
     d.league.instance_eval(&block)
   end
   
-  def players(p)
-    d.players = p
+  def players(count)
+    d.players = count
+  end
+
+  def test_rounds(count)
+    d.test_rounds = count
   end
 
   def plugin_guid(guid)
@@ -200,7 +205,7 @@ class GameDefinition
     end
   end
   
-  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid
+  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds
 end
 
 Dir[Rails.root.join('config', 'games', '*.{rb,yml}')].each do |file|

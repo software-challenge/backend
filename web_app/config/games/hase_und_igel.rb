@@ -1,6 +1,7 @@
 GameDefinition.create :"HaseUndIgel" do
   players 2
   plugin_guid "swc_2010_hase_und_igel"
+  test_rounds 2
 
   league do
     rounds 6

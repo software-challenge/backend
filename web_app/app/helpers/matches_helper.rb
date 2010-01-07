@@ -7,6 +7,13 @@ module MatchesHelper
     t("games.#{game.game_identifier.to_s.underscore}.round_score.#{fragment.name}")
   end
 
+  def test_progress(client)
+    match = client.test_match
+    results = client.test_results
+    succeeded, played, total = results[0], results[1], match.rounds.count
+    "#{succeeded} bestanden, #{played} von #{total} gespielt"
+  end
+
   def match_progress(match, separator = '/')
     [match.rounds.played.count, match.rounds.count].join(separator)
   end

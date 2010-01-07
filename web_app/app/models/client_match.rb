@@ -11,7 +11,7 @@ class ClientMatch < Match
         clients.each do |client|
           slots.create!(:client => client)
         end
-        create_rounds!
+        create_rounds!(game_definition.test_rounds)
       end
     end
   end

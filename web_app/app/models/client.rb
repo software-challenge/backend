@@ -23,6 +23,8 @@ class Client < ActiveRecord::Base
   delegate :contest, :to => :contestant
   delegate :game_definition, :to => :contest
 
+  # returns an array with the test results
+  # [rounds_passed, rounds_played]
   def test_results
     result = test_match.slot_for(self).cause_distribution
     regular_results = result["REGULAR"].to_i

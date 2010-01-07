@@ -11,8 +11,9 @@
 
 
 <% tabnav :contestant do %>
+
   <% unless @contestant.current_client %>
-    <div style="margin: 0 -10px 2em -10px; padding: 0.8em 10px; border: 1px solid #ddd; background-color: #eee;">
+    <div style="margin: 0 -10px 1em -10px; padding: 0.8em 10px; border: 1px solid #ddd; background-color: #eee;">
       <strong>Wichtiger Hinweis:</strong> Es ist noch kein Computerspieler für die
       Wettkampfteilnahme ausgewählt worden! Sie müssen einen Computerspieler
       hochladen, testen lassen und dann auswählen. Sollten bis zum Spieltag
@@ -20,11 +21,26 @@
       er machen muss, verlieren.
     </div>
   <% end %>
+  
+  <div style="margin: 0 -10px 1em -10px; padding: 0 10px;">
+    <p>
+      Der Test eines hochgeladenen Computerspielers benötigt ca. 10 Minuten und läuft auf einer
+      virtuellen Maschine im Hintergrund. Beim Test spielt der hochgeladene Computerspieler zweimal
+      gegen den SimpleClient. Da nur eine sehr begrenzte Anzahl virtueller Maschinen zur Verfügung
+      steht, kann es sein, dass der Test Ihres Computerspielers erst später beginnen kann, wenn
+      eine virtuelle Maschine dafür frei ist. Nach dem Testende wird das Testergebnis hier angezeigt.
+    </p>
+    <p>
+      Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
+      rechtzeitig (z.B. am Vortag) hochladen.
+    </p>
+  </div>
 
   <table class="data-table">
     <thead>
       <tr>
-        <th colspan="2">&nbsp;</th>
+        <th>&nbsp;</th>
+        <th colspan="2">Test</th>
         <th>Dateiname</th>
         <th>Hauptdatei</th>
         <th>Informationen</th>

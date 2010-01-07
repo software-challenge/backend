@@ -104,11 +104,12 @@ class Match < ActiveRecord::Base
 
   protected
 
-  def create_rounds!
+  def create_rounds!(total_rounds = nil)
     raise "has already rounds" unless rounds.empty?
+    total_rounds ||= game_definition.league.rounds
     
     round_count = 0
-    while round_count < game_definition.league.rounds
+    while round_count < total_rounds
       (0...slots.count).to_a.permute do |permutation|
         round_count = round_count + 1
         round = self.rounds.create!
