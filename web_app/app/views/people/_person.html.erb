@@ -3,11 +3,7 @@
   <td><%=h person.last_name %></td>
   <td><%=h person.email %></td>
   <td>
-    <% if person.blocked? %>
-      <%=  'Ja' %>
-    <%  else %>
-      <%=  'Nein' %>
-    <%  end %>
+    <%=t person.blocked?.to_s %>
   </td>
 
   <td>
@@ -16,13 +12,9 @@
     <% end %>
   </td>
 
-  <% if current_user.administrator? %>
+  <% show_to :administrator do %>
     <td>
-      <% if person.administrator? %>
-        <%=  'Ja' %>
-      <%  else %>
-        <%=  'Nein' %>
-      <%  end %>
+      <%=t person.has_role?(:administrator).to_s %>
     </td>
   <% end %>
   <% show_image = image_tag "actions/show.png", :title => "Zeige" %>

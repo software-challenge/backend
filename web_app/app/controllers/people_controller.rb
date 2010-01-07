@@ -1,9 +1,27 @@
 class PeopleController < ApplicationController
+
+  access_control do
+    default :deny
+    allow :administrator
+  end
+
+  access_control :only => [:show] do
+    allow logged_in
+  end
+
+  access_control :only => [:new, :create] do
+    allow :administrator, :teacher, :tutor
+  end
+
+  access_control :only => [:edit, :update] do
+    allow :administrator
+    allow :pupil, :of => Person
+    allow :teacher, :tutor, :of => Person
+  end
+
   # GET /people
   # GET /people.xml
   def index
-    raise NotAllowed unless current_user.administrator?
-    
     @people = Person.all :order => "email ASC"
 
     respond_to do |format|
@@ -37,20 +55,6 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     @person = Person.find(params[:id])
-
-    # Rights
-    if current_user.administrator? || current_user.teacher? || current_user.tutor? || current_user == @person
-
-      # only his pupil
-      if !current_user.administrator? and current_user != @person
-        if !select_pupils.include?(@person)
-          raise "not allowed"
-        end
-      end
-      # Rights end
-    else
-      return "not allowed"
-    end
   end
 
   # POST /people
@@ -59,11 +63,9 @@ class PeopleController < ApplicationController
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |x| x.blank? } if person_params[:teams]
-    role = person_params.delete :role
 
     @person = Person.new(person_params)
     success = @person.save
-    @person.role = role if success and role # do it after we created the memberships
 
     respond_to do |format|
       if success
@@ -81,15 +83,12 @@ class PeopleController < ApplicationController
   # PUT /people/1.xml
   def update
     @person = Person.find(params[:id])
-    check_permissions_on(@person)
 
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
-    role = person_params.delete :role
 
     success = @person.update_attributes(person_params)
-    @person.role = role if success and role # do it after we created the memberships
 
     respond_to do |format|
       if success
@@ -110,20 +109,4 @@ class PeopleController < ApplicationController
     raise "Deletion is not supported right now."
   end
 
-  protected
-
-  def select_pupils
-    Person.all :joins => ["INNER JOIN memberships m1 ON m1.person_id = people.id INNER JOIN memberships m2 ON m2.contestant_id = m1.contestant_id"], :conditions => ["m2.person_id = ? AND m1.role = 'pupil' AND m2.role <> 'pupil'", current_user.id], :order => "email ASC"
-  end
-
-  def valid_password(pass)
-    pass != "" && pass.length > 5
-  end
-
-  def check_permissions_on(person)
-    # Rights
-    unless current_user.administrator? || current_user == person
-      raise "not allowed" unless select_pupils.include?(person)
-    end
-  end
 end

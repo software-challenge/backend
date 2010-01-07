@@ -1,5 +1,24 @@
 class ContestantPeopleController < ApplicationController
-  before_filter :fetch_contestant, :check_permissions
+  before_filter :fetch_contestant
+
+  access_control do
+    default :deny
+    allow :administrator
+  end
+
+  access_control :only => [:show] do
+    allow logged_in
+  end
+
+  access_control :only => [:new, :create] do
+    allow :administrator, :teacher, :tutor
+  end
+
+  access_control :only => [:edit, :update] do
+    allow :administrator
+    allow :pupil, :of => Person
+    allow :teacher, :tutor, :of => Person
+  end
 
   # GET /people
   # GET /people.xml
@@ -105,27 +124,9 @@ class ContestantPeopleController < ApplicationController
 
   protected
 
-  def select_pupils
-    Person.all :joins => ["INNER JOIN memberships m1 ON m1.person_id = people.id INNER JOIN memberships m2 ON m2.contestant_id = m1.contestant_id"], :conditions => ["m2.person_id = ? AND m1.role = 'pupil' AND m2.role <> 'pupil'", current_user.id], :order => "email ASC"
-  end
-
-  def valid_password(pass)
-    pass != "" && pass.length > 5
-  end
-
   def fetch_contestant
     @contestant = Contestant.find(params[:contestant_id])
     @contest = @contestant.contest
   end
 
-  def check_permissions
-    raise NotAllowed unless current_user.administrator? or @contestant.people.include?(current_user)
-  end
-
-  def check_permissions_on(person)
-    # Rights
-    unless current_user.administrator? || current_user == person
-      raise "not allowed" unless select_pupils.include?(person)
-    end
-  end
 end

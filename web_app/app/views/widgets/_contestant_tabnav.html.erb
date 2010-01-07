@@ -7,7 +7,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
     t.links_to :controller => "contestants", :action => "show", :id => @contestant, :contest_id => @contestant.contest
   end
 
-  if current_user.administrator?
+  show_to :administrator do
     add_tab do |t|
       t.named 'Erstellen'
       t.links_to hash_for_new_contest_contestant_url(:contest_id => @contest)

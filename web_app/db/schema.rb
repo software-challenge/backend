@@ -116,7 +116,6 @@ ActiveRecord::Schema.define(:version => 20100106153734) do
     t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "administrator",        :default => false, :null => false
     t.boolean  "blocked",              :default => false, :null => false
     t.string   "first_name",           :default => "",    :null => false
     t.string   "last_name",            :default => "",    :null => false

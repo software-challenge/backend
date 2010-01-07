@@ -6,7 +6,7 @@ class Client < ActiveRecord::Base
 
   belongs_to :contestant
   belongs_to :author, :class_name => "Person"
-  
+
   has_many :file_entries, :class_name => "ClientFileEntry", :dependent => :destroy
   has_one :test_match, :class_name => "ClientMatch", :as => :set, :dependent => :destroy
 
@@ -106,7 +106,7 @@ class Client < ActiveRecord::Base
     raise "client was already tested" if tested?
     raise "client is currently tested" if testing?
     raise "no test_contestant available" unless contest.test_contestant
-    
+
     Match.transaction do
       test_match.destroy if test_match
       self.test_match = nil

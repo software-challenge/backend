@@ -74,7 +74,7 @@ class Contest < ActiveRecord::Base
     Contest.transaction do
       generate_matchdays.each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
-        
+
         contestants.each do |contestant|
           matchday.slots.create!(:contestant => contestant)
         end
@@ -136,7 +136,7 @@ class Contest < ActiveRecord::Base
       schedule = []
       first = relist[round % relist.size]
       second = list.first
-      
+
       schedule << [first, second]
 
       (1...half_size).each do |i|

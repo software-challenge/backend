@@ -107,7 +107,7 @@ class Person < ActiveRecord::Base
   end
 
   def manageable_teams
-    if administrator?
+    if self.has_role? :administrator
       Contestant.without_testers
     else
       teams
@@ -119,4 +119,13 @@ class Person < ActiveRecord::Base
   end
 
   alias member_of? membership_for
+
+  def administrator
+    @administrator ||= false
+    return @administrator
+  end
+
+  def administrator=(true_or_false)
+    @administrator = true_or_false
+  end
 end

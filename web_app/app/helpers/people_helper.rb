@@ -1,6 +1,6 @@
 module PeopleHelper
   def manageable_roles
-    if current_user.administrator?
+    if current_user.has_role? :administrator
       %w{pupil tutor teacher}.collect do |role|
         [Role.translate(role, :for => Contestant), role]
       end

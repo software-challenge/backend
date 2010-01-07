@@ -1,4 +1,6 @@
 de:
+  "true": Ja
+  "false": Nein
   games:
     hase_und_igel:
       name: Hase und Igel

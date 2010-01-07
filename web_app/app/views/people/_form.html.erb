@@ -8,11 +8,11 @@
       :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" + (@person.new_record? ? "" : ", frei lassen um Passwort nicht zu ändern") + "."),
       :input_html => { :value => "", :autocomplete => "off" } %>
 
-    <% if current_user.administrator? %>
+    <% show_to :administrator do %>
       <%= f.input :administrator %>
     <% end %>
 
-    <% if current_user.administrator? %>
+    <% show_to :administrator do %>
       <%= f.errors_on :memberships %>
       <li>
         <% content_for :teams do %>

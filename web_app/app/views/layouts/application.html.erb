@@ -46,7 +46,7 @@
               <% if Contest.active %>
                 <% current_contest = Contest.active %>
                 <% team_count = (logged_in? ? current_user.contestants.for_contest(current_contest).count : 0) %>
-                
+
                 <li><%= link_to current_contest.game_name, contest_url(current_contest) %></li>
                 <% if team_count > 1 %>
                   <li><%= link_to "Meine #{Contestant.human_name(:count => 2)}", my_contest_contestants_url(current_contest) %></li>
