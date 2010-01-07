@@ -30,6 +30,17 @@ class PeopleController < ApplicationController
     end
   end
 
+  def people_for_contestant
+    @contestant = Contestant.find(params[:contestant_id])
+    @contest = @contestant.contest
+    @people = @contestant.people.all :order => "email ASC"
+
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @people }
+    end
+  end
+
   # GET /people/1
   # GET /people/1.xml
   def show

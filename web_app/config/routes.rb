@@ -12,7 +12,7 @@ ActionController::Routing::Routes.draw do |map|
         client.status '/status', :controller => "clients", :action => "status"
       end
       contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
-      contestant.resources :people, :as => "personen", :controller => "contestant_people"
+      contestant.resources :people, :as => "personen", :controller => "people", :action => "people_for_contestant"
     end
 
     tmap.resources :contests,

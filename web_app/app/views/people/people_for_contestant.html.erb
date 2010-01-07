@@ -1,0 +1,24 @@
+<div id="actions">
+  <% link_to new_person_url do %>
+    <%= image_tag('actions/add.png') %>SchülerIn hinzufügen
+  <% end %>
+</div>
+
+<h1>
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= @contestant.name %>
+</h1>
+
+<% tabnav :contestant do %>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <% %w{first_name last_name email blocked}.each do |attr| %>
+          <th><%= Person.human_attribute_name attr %></th>
+        <% end %>
+      </tr>
+    </thead>
+
+    <%= render :partial => "person", :collection => @contestant.people %>
+  </table>
+<% end %>

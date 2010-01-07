@@ -30,7 +30,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named 'Personen'
     begin; t.disable!; next; end if @contestant.new_record?
-    t.links_to :controller => "contestant_people", :action => "index", :contestant_id => @contestant
+    t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant
   end
 
   add_tab do |t|
