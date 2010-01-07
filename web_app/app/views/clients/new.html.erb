@@ -1,16 +1,11 @@
-<h1>New client</h1>
+<h1><%= current_page_title %></h1>
 
-<% form_for([@contestant, @client], :html => { :multipart => true }) do |f| %>
-  <%= f.error_messages %>
+<% semantic_form_for([@contestant, @client], :html => { :multipart => true }) do |f| %>
+  <% f.inputs do %>
+    <%= f.input :file %>
+  <% end %>
 
-  <p>
-    <%= f.label :file %><br />
-    <%= f.file_field :file %>
-  </p>
-
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
+  <% f.buttons do %>
+    <%= f.commit_button %> oder <%= link_to 'Zurück', contestant_clients_url(@contestant) %>
+  <% end %>
 <% end %>
-
-<%= link_to 'Back', contestant_clients_url(@contestant) %>

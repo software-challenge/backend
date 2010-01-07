@@ -26,6 +26,9 @@ de:
     actions:
       create: "{{model}} erstellen"
       update: "Änderungen speichern"
+    hints:
+      client:
+        file: Der Computerspieler muss als ZIP-Datei gepackt werden.
   titles:
     contests:
       edit_schedule: Terminplan bearbeiten

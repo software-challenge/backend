@@ -27,6 +27,8 @@ de:
         other: Personen
 
     attributes:
+      client:
+        file: ZIP-Datei
       contest:
         game_definition: Spiel
         name: Name
