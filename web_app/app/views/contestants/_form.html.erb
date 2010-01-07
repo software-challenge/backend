@@ -1,0 +1,11 @@
+<% semantic_form_for([@contestant.contest, @contestant]) do |f| %>
+  <% f.inputs do %>
+    <%= f.input :name, :required => true %>
+  <% end %>
+  <% f.buttons do %>
+    <%= f.commit_button %>
+    <% if @contestant.new_record? %>
+    oder <%= link_to "Zurück", contest_contestants_url(@contestant.contest) %>
+    <% end %>
+  <% end %>
+<% end %>
