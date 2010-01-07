@@ -22,6 +22,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
     add_tab do |t|
       t.named 'Bearbeiten'
       t.links_to hash_for_edit_contest_contestant_url(:contest_id => @contestant.contest, :id => @contestant)
+      t.highlights_on :controller => "contestants", :action => "update"
     end
   end
 

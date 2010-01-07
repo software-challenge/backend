@@ -5,7 +5,8 @@
 </div>
 
 <h1>
-  <%= link_to @contestant.name, @contestant %> / Personen
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= @contestant.name %>
 </h1>
 
 <% tabnav :contestant do %>

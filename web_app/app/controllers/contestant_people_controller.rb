@@ -4,7 +4,7 @@ class ContestantPeopleController < ApplicationController
   # GET /people
   # GET /people.xml
   def index
-    @people = Person.all :order => "email ASC"
+    @people = @contestant.people.all :order => "email ASC"
 
     respond_to do |format|
       format.html { render :controller => "people", :action => "index" }
@@ -115,6 +115,7 @@ class ContestantPeopleController < ApplicationController
 
   def fetch_contestant
     @contestant = Contestant.find(params[:contestant_id])
+    @contest = @contestant.contest
   end
 
   def check_permissions

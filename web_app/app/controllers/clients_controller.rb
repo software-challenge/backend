@@ -1,7 +1,9 @@
 class ClientsController < ApplicationController
 
   before_filter do |c|
-    c.instance_variable_set :@contestant, Contestant.find(c.params[:contestant_id])
+    contestant = Contestant.find(c.params[:contestant_id])
+    c.instance_variable_set :@contestant, contestant
+    c.instance_variable_set :@contest, contestant.contest
   end
 
   access_control do
