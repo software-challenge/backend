@@ -13,7 +13,7 @@
       <% end %>
     <% elsif client.tested? %>
       <%= client.test_results.join('/') %> bestanden
-    <% elsif client.testable? %>
+    <% elsif client.testable? and !client.contestant.has_running_tests? %>
       <%= link_to "Testen", test_contestant_client_url(client.contestant, client), :method => :post %>
     <% end %>
   </td>

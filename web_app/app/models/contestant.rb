@@ -31,4 +31,8 @@ class Contestant < ActiveRecord::Base
     people.all(:conditions => ["memberships.role = ?", "tutor"])
   end
 
+  def has_running_tests?
+    !clients.running.count.zero?
+  end
+
 end

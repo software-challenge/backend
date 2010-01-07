@@ -23,6 +23,17 @@ class Client < ActiveRecord::Base
   delegate :contest, :to => :contestant
   delegate :game_definition, :to => :contest
 
+  named_scope :running,
+    :joins => %{
+      INNER JOIN matches m
+        ON
+          m.set_type = 'Client'
+          AND m.set_id = clients.id
+      INNER JOIN delayed_jobs dj
+        ON
+          dj.id = m.job_id
+  }
+
   # returns an array with the test results
   # [rounds_passed, rounds_played]
   def test_results
