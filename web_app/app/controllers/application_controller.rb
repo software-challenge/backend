@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password
 
   before_filter :fetch_user
-  before_filter :require_current_user
+  before_filter :require_current_user, :except => :login
   before_filter :generate_page_title
 
   attr_accessor :current_user
@@ -36,6 +36,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_current_user
+    return true
     unless logged_in?
       redirect_to login_url
     end
