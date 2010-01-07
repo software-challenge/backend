@@ -1,10 +1,5 @@
 class ClientsController < ApplicationController
-
-  before_filter do |c|
-    contestant = Contestant.find(c.params[:contestant_id])
-    c.instance_variable_set :@contestant, contestant
-    c.instance_variable_set :@contest, contestant.contest
-  end
+  before_filter :set_variables
 
   access_control do
     default :deny
@@ -25,7 +20,7 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
-      format.html { redirect_to contestant_clients_url }
+      format.html { redirect_to contest_contestant_clients_url }
       format.xml  { render :xml => @client }
     end
   end
@@ -62,7 +57,7 @@ class ClientsController < ApplicationController
 
     respond_to do |format|
       if success
-        format.html { redirect_to contestant_clients_url(@contestant) }
+        format.html { redirect_to contest_contestant_clients_url(@contestant) }
         format.xml  { render :xml => @client, :status => :created, :location => @client }
       else
         format.html { render :action => "new" }
@@ -77,7 +72,7 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.update_attributes(params[:client])
         flash[:notice] = 'Client was successfully updated.'
-        format.html { redirect_to contestant_clients_url(@client) }
+        format.html { redirect_to contest_contestant_clients_url(@client.contestant) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -107,7 +102,7 @@ class ClientsController < ApplicationController
       @client.test_delayed!
     end
 
-    redirect_to contestant_clients_url(@contestant)
+    redirect_to contest_contestant_clients_url(@contestant)
   end
 
   def browse
@@ -136,7 +131,7 @@ class ClientsController < ApplicationController
     @client.main_file_entry = @main_entry
     @client.save!
 
-    redirect_to contestant_clients_url(@contestant)
+    redirect_to contest_contestant_clients_url(@contestant)
   end
 
   def select
@@ -145,7 +140,7 @@ class ClientsController < ApplicationController
     @contestant.current_client = @client
     @contestant.save!
 
-    redirect_to contestant_clients_url(@contestant)
+    redirect_to contest_contestant_clients_url(@contestant)
   end
 
   def status
@@ -158,4 +153,8 @@ class ClientsController < ApplicationController
   end
 
   protected
+
+  def set_variables
+    @contestant = current_contest.contestants.find(params[:contestant_id])
+  end
 end

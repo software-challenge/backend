@@ -21,7 +21,7 @@
           data: $.param(data)
           ,dataType: 'script'
           ,type: 'post'
-          ,url: '<%= move_contest_matchdays_url(@contest) %>'
+          ,url: '<%= move_contest_matchdays_url %>'
           ,error: function() {
             alert("" + calEvent.title + " konnte nicht verschoben werden.");
             revertFunc();

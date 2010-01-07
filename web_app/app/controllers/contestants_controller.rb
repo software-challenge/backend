@@ -1,5 +1,5 @@
 class ContestantsController < ApplicationController
-  before_filter :fetch_contest
+  before_filter :fetch_contestant
 
   access_control :except => [:show, :index, :my] do
     default :deny
@@ -34,12 +34,6 @@ class ContestantsController < ApplicationController
   # GET /contestants/1
   # GET /contestants/1.xml
   def show
-    # unify URL
-    unless params[:contest_id]
-      redirect_to contest_contestant_url(@contest, @contestant)
-      return
-    end
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @contestant }
@@ -72,7 +66,7 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.save
         flash[:notice] = 'Contestant was successfully created.'
-        format.html { redirect_to(contest_contestant_url(@contest, @contestant)) }
+        format.html { redirect_to(contest_contestant_url(@contestant)) }
         format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
       else
         format.html { render :action => "new" }
@@ -89,7 +83,7 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.update_attributes(params[:contestant])
         flash[:notice] = 'Contestant was successfully updated.'
-        format.html { redirect_to(contest_contestant_url(@contest, @contestant)) }
+        format.html { redirect_to(contest_contestant_url(@contestant)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -105,20 +99,14 @@ class ContestantsController < ApplicationController
     @contestant.destroy
 
     respond_to do |format|
-      format.html { redirect_to(contest_contestants_url(@contest)) }
+      format.html { redirect_to(contest_contestants_url) }
       format.xml  { head :ok }
     end
   end
 
   protected
 
-  def fetch_contest
-    if params[:contest_id]
-      @contest = Contest.find(params[:contest_id])
-      @contestant = @contest.contestants.find(params[:id]) if params[:id]
-    elsif params[:id]
-      @contestant = Contestant.find(params[:id])
-      @contest = @contestant.contest
-    end
+  def fetch_contestant
+    @contestant = @contest.contestants.find(params[:id]) if params[:id]
   end
 end

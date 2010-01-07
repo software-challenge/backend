@@ -1,6 +1,6 @@
 <div id="actions">
   <% if @contest.ready? and !@contest.begun? %>
-    <% link_to reset_matchdays_contest_url(@contest), :method => :post do %>
+    <% link_to reset_matchdays_contest_url, :method => :post do %>
       <%= image_tag('actions/destroy.png') %>Spielplan löschen
     <% end %>
   <% end %>
@@ -19,7 +19,7 @@
     <% @matchdays.each_with_index do |matchday,i| %>
       <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
         <td style="padding-left: 10px;">
-          <% link_to [@contest, matchday] do %>
+          <% link_to [:contest, matchday] do %>
             <%= i+1 %>. Spieltag
           <% end %>
         </td>

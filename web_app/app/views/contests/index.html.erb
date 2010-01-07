@@ -21,9 +21,8 @@
         <td><%= contest.name %></td>
         <td><%= contest.game_definition.game_identifier %></td>
         <td><%= contest.contestants.count %></td>
-        <td><%= (contest.active? ? "Ja" : "Nein") %></td>
-        <td><%= link_to image_tag("actions/edit.png"), edit_contest_path(contest) %></td>
-        <td><%= link_to 'Zur Übersicht', contest_path(contest) %></td>
+        <td><%= link_to image_tag("actions/edit.png"), edit_contest_url(:host => host_for_contest(contest)) %></td>
+        <td><%= link_to 'Zur Übersicht', url_for_contest(contest) %></td>
       </tr>
     <% end %>
   </table>

@@ -1,5 +1,7 @@
 class MainController < ApplicationController
 
+  skip_before_filter :require_current_user
+
   access_control :only => [:debug, :administration] do
     allow :administrator
   end

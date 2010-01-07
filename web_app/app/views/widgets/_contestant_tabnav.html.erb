@@ -4,19 +4,19 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named 'Übersicht'
     begin; t.disable!; next; end if @contestant.new_record?
-    t.links_to :controller => "contestants", :action => "show", :id => @contestant, :contest_id => @contestant.contest
+    t.links_to hash_for_contest_contestant_url(:id => @contestant)
   end
 
   show_to :administrator do
     add_tab do |t|
       t.named 'Erstellen'
-      t.links_to hash_for_new_contest_contestant_url(:contest_id => @contest)
+      t.links_to hash_for_new_contest_contestant_url
       t.highlights_on :controller => "contestants", :action => "create"
     end if @contestant.new_record?
 
     add_tab do |t|
       t.named 'Bearbeiten'
-      t.links_to hash_for_edit_contest_contestant_url(:contest_id => @contestant.contest, :id => @contestant)
+      t.links_to hash_for_edit_contest_contestant_url(:id => @contestant)
       t.highlights_on :controller => "contestants", :action => "update"
     end unless @contestant.new_record?
   end

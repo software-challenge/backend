@@ -1,6 +1,6 @@
 <div id="actions">
   <% unless @contest.ready? %>
-    <% link_to new_contest_contestant_url(@contest) do %>
+    <% link_to new_contest_contestant_url do %>
       <%= image_tag('actions/add.png') %>Neues <%= Contestant.human_name %>
     <% end %>
   <% end %>
@@ -23,7 +23,7 @@
       <tr>
         <td><%= contestant.name %></td>
         <td><%= contestant.people.count %></td>
-        <td><%= link_to image_tag('actions/show.png'), [contestant.contest, contestant] %></td>
+        <td><%= link_to image_tag('actions/show.png'), [:contest, contestant] %></td>
       </tr>
     <% end %>
   </table>

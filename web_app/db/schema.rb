@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100106153734) do
+ActiveRecord::Schema.define(:version => 20100107150533) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -43,10 +43,10 @@ ActiveRecord::Schema.define(:version => 20100106153734) do
 
   create_table "contests", :force => true do |t|
     t.string   "name"
-    t.boolean  "active"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "game_definition"
+    t.string   "subdomain"
   end
 
   create_table "delayed_jobs", :force => true do |t|

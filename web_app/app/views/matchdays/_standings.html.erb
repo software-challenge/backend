@@ -13,7 +13,7 @@
   <% matchday.slots.each_with_index do |slot,i| %>
     <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
       <td style="text-align: left;"><%= slot.position %>.</td>
-      <td><%= link_to slot.contestant.name, [@contest, slot.contestant] %></td>
+      <td><%= link_to slot.contestant.name, [:contest, slot.contestant] %></td>
       <td style="text-align: center;"><%= slot.contestant.matchdays.played.count %></td>
       <% if slot.score %>
         <% slot.score.to_a_with_precision.each do |value| %>

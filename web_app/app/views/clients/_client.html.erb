@@ -3,18 +3,16 @@
     <% if client.current? %>
       <b>Aktiv</b>
     <% else client.ok? %>
-      <%= link_to "Auswählen", select_contestant_client_url(client.contestant, client), :method => :post %>
+      <%= link_to "Auswählen", select_contest_contestant_client_url(client.contestant, client), :method => :post %>
     <% end %>
   </td>
   <td>
     <% if client.broken? %>
-      <% if current_user.administrator? %>
-        <%#= link_to "Testen", test_contestant_client_url(client.contestant, client), :method => :post %>
-      <% end %>
+
     <% elsif client.tested? %>
       <%= client.test_results.join('/') %> bestanden
     <% elsif client.testable? and !client.contestant.has_running_tests? %>
-      <%= link_to "Testen", test_contestant_client_url(client.contestant, client), :method => :post %>
+      <%= link_to "Testen", test_contest_contestant_client_url(client.contestant, client), :method => :post %>
     <% end %>
   </td>
   <td>
@@ -28,7 +26,7 @@
             data:'authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
             ,dataType:'script'
             ,type:'get'
-            ,url:'<%= contestant_client_status_url(client.contestant, client) %>'
+            ,url:'<%= contest_contestant_client_status_url(client.contestant, client) %>'
           })
         }, 3 * 1000)
         //]]>
@@ -44,7 +42,7 @@
     <% main_file_entry_name = client.main_file_entry.try(:file_name) %>
     <% main_file_entry_name ||= content_tag(:i, "Nicht gesetzt") %>
     <% if !client.testing? and !client.ok? %>
-      <%= link_to main_file_entry_name, edit_contestant_client_url(client.contestant, client) %>
+      <%= link_to main_file_entry_name, edit_contest_contestant_client_url(client.contestant, client) %>
     <% else %>
       <%= main_file_entry_name %>
     <% end %>

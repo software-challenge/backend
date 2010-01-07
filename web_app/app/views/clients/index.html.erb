@@ -1,11 +1,11 @@
 <div id="actions">
-  <% link_to new_contestant_client_url(@contestant) do %>
+  <% link_to new_contest_contestant_client_url(@contestant) do %>
     <%= image_tag('actions/add.png') %>Computerspieler hochladen
   <% end %>
 </div>
 
 <h1>
-  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= link_to @contest.name, contest_contestants_url %> /
   <%= @contestant.name %>
 </h1>
 

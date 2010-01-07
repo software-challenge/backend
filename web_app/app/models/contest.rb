@@ -1,7 +1,11 @@
 class Contest < ActiveRecord::Base
   validates_presence_of :name
+  validates_presence_of :subdomain
   validates_presence_of :test_contestant
   validates_presence_of :game_definition
+
+  validates_format_of :subdomain, :with => /\A[a-z0-9-]*\Z/
+  validates_uniqueness_of :subdomain
 
   has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
   has_many :contestants, :conditions => { :tester => false }
@@ -149,9 +153,5 @@ class Contest < ActiveRecord::Base
     end
 
     result
-  end
-
-  def self.active
-    Contest.first(:order => "active DESC")
   end
 end

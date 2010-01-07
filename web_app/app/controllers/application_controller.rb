@@ -12,12 +12,16 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password
 
-  before_filter :fetch_user
-  before_filter :require_current_user, :except => :login
+  before_filter :fetch_user, :fetch_contest
+  append_before_filter :require_current_user
+
   before_filter :generate_page_title
 
   attr_accessor :current_user
   hide_action :current_user
+
+  attr_accessor :current_contest
+  hide_action :current_contest
 
   protected
 
@@ -26,6 +30,7 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :current_user, :logged_in?
+  helper_method :current_contest
 
   attr_accessor :current_page_title
   helper_method :current_page_title
@@ -52,8 +57,13 @@ class ApplicationController < ActionController::Base
     session[:user_id] = nil
   end
 
+  def fetch_contest
+    @contest = @current_contest = Contest.find_by_subdomain(request.host.split('.').first)
+    raise ActiveRecord::RecordNotFound unless @current_contest
+  end
+
   def logged_in?
-    !current_user.nil?
+    !!current_user
   end
 
   def guess_page_title
@@ -88,5 +98,20 @@ class ApplicationController < ActionController::Base
     default = guess_page_title
     default ||= "#{controller_name} : #{action_name}"
     @current_page_title = I18n.t("titles.#{controller_name}.#{action_name}", :default => default)
+  end
+
+  helper_method :host_for_contest, :url_for_contest
+
+  def host_for_contest(contest)
+    all_parts = request.host.split('.')
+    all_parts.shift
+    all_parts.unshift contest.subdomain
+    port = (request.port || 80).to_i
+    port = (port == 80 ? "" : ":#{port}")
+    "#{all_parts.join('.')}#{port}"
+  end
+
+  def url_for_contest(contest)
+    "http://#{host_for_contest(contest)}/"
   end
 end

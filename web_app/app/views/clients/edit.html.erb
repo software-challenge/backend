@@ -1,7 +1,7 @@
 <h1>Verfügbare Computerspieler</h1>
 
 <div style="float: right;">
-  <%= link_to_remote "Zurück", :url => browse_contestant_client_url(@client.contestant, @client) %>
+  <%= link_to_remote "Zurück", :url => browse_contest_contestant_client_url(@client.contestant, @client) %>
 </div>
 
 <h3><%=h @client.file_file_name %></h3>
@@ -18,4 +18,4 @@
   <%= render :partial => "file_entry", :collection => @client.file_entries.with_level(0), :locals => { :client => @client } %>
 </table>
 
-<%= link_to 'Back', contestant_clients_path(@contestant) %>
+<%= link_to 'Back', contest_contestant_clients_path(@contestant) %>

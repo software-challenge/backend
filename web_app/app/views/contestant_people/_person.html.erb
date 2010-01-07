@@ -11,7 +11,7 @@
   </td>
 
   <td>
-    <%= link_to image_tag("actions/show.png"), [@contestant, person] %>
-    <%= link_to image_tag("actions/edit.png"), edit_contestant_person_url(@contestant, person) %>
+    <%= link_to image_tag("actions/show.png"), [:contest, @contestant, person] %>
+    <%= link_to image_tag("actions/edit.png"), edit_contest_contestant_person_url(@contestant, person) %>
   </td>
 </tr>

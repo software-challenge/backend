@@ -1,6 +1,6 @@
 <h1>
   <%= link_to h(@contest.name), @contest %> /
-  <%= link_to h("#{@matchday.position}. Spieltag"), [@contest, @matchday] %> /
+  <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %> /
   Spiel <%= @match.id %>
 </h1>
 

@@ -125,8 +125,7 @@ class ContestantPeopleController < ApplicationController
   protected
 
   def fetch_contestant
-    @contestant = Contestant.find(params[:contestant_id])
-    @contest = @contestant.contest
+    @contestant = @contest.contestants.find(params[:contestant_id])
   end
 
 end

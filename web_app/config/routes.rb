@@ -2,21 +2,12 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
     tmap.resources :people, :as => "personen"
 
-    tmap.resources :contestants, :as => "teams" do |contestant|
-      contestant.resources :clients, :as => "computerspieler", :member => {
-        :browse => :post,
-        :select_main => :post,
-        :select => :post,
-        :test => :post
-      } do |client|
-        client.status '/status', :controller => "clients", :action => "status"
-      end
-      contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
-      contestant.resources :people, :as => "personen", :controller => "people", :action => "people_for_contestant"
-    end
-
     tmap.resources :contests,
       :as => "wettbewerbe",
+      :path_prefix => '/administration',
+      :name_prefix => 'admin_'
+    tmap.resource :contest,
+      :as => "wettbewerb",
       :member => {
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
@@ -40,9 +31,16 @@ ActionController::Routing::Routes.draw do |map|
 
       c.contestants '/meine-teams', :controller => 'contestants', :action => 'my', :name_prefix => 'my_contest_'
       c.resources :contestants, :as => "teams" do |contestant|
-        contestant.resources :clients, :as => "computerspieler" do |client|
-          # Use /contestants/1/clients/2 route!
+        contestant.resources :clients, :as => "computerspieler", :member => {
+          :browse => :post,
+          :select_main => :post,
+          :select => :post,
+          :test => :post
+        } do |client|
+          client.status '/status', :controller => "clients", :action => "status"
         end
+        contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
+        contestant.resources :people, :as => "personen", :controller => "people", :action => "people_for_contestant"
       end
 
       c.standings '/rangliste', :controller => 'contests', :action => 'standings'
