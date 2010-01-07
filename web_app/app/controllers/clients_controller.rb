@@ -52,11 +52,10 @@ class ClientsController < ApplicationController
     if success
       begin
         @client.build_index!
-        flash[:notice] = 'Client was successfully created.'
       rescue => e
-        flash.now[:error] = "Couldn't process ZIP file."
-        @client.errors.add_to_base e.message
         @client.destroy
+        @client = @contestant.clients.build(params[:client])
+        @client.errors.add :file, :invalid_zip
         success = false
       end
     end

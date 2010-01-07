@@ -1,5 +1,9 @@
 de:
   activerecord:
+    errors:
+      messages:
+        invalid_zip: "Die ZIP-Datei war fehlerhaft oder durch ein Passwort geschützt."
+
     models:
       client:
         one: Client

@@ -13,7 +13,7 @@ class Client < ActiveRecord::Base
   has_attached_file :file
 
   validates_presence_of :file
-  validates_attachment_presence :file
+  validates_attachment_presence :file, :message => :blank
 
   validates_presence_of :author
   validates_presence_of :contestant
