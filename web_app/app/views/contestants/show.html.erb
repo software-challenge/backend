@@ -1,9 +1,3 @@
-<div id="actions">
-  <% if logged_in? and current_user.administrator? %>
-    <%= link_to image_tag('actions/settings.png') + "Bearbeiten", edit_contest_contestant_url(@contest, @contestant) %>
-  <% end %>
-</div>
-
 <h1>
   <%= link_to @contest.name, contest_contestants_url(@contest) %> /
   <%= @contestant.name %>
