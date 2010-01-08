@@ -17,22 +17,22 @@
       <strong>Wichtiger Hinweis:</strong> Bitte laden Sie einen Computerspieler für die Wettkampfteilnahme hoch und aktivieren Sie diesen, indem Sie diesen auswählen. Falls Sie bis zur nächsten Begegnung, an der ihr Team teilnimmt, noch keinen Computerspieler aktiviert haben, wird ihr Team das Spiel verlieren, sobald es am Zug ist.
     </div>
   <% end %>
-  
+
   <div style="margin: 0 -10px 1em -10px; padding: 0 10px;">
     <p>
       Der Test eines hochgeladenen Computerspielers benötigt ca. 10 Minuten und läuft auf einer
       virtuellen Maschine im Hintergrund. Beim Test spielt der hochgeladene Computerspieler zweimal
       gegen den SimpleClient. Da nur eine sehr begrenzte Anzahl virtueller Maschinen zur Verfügung
       steht, kann es sein, dass der Test Ihres Computerspielers erst später beginnen kann, wenn
-      eine virtuelle Maschine dafür frei ist. Nach dem Testende wird das Testergebnis hier angezeigt. 
+      eine virtuelle Maschine dafür frei ist. Nach dem Testende wird das Testergebnis hier angezeigt.
     </p>
     <p>
       Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
       rechtzeitig (z.B. am Vortag) hochladen.
     </p>
     <p>
-     <br>
-     Sie können diese Seite währenddessen ruhig verlassen, der Test wird dadurch nicht beeinflusst.
+      <br>
+      Sie können diese Seite währenddessen ruhig verlassen, der Test wird dadurch nicht beeinflusst.
     </p>
   </div>
 
@@ -43,9 +43,15 @@
         <th colspan="2">Test</th>
         <th>Dateiname</th>
         <th>Hauptdatei</th>
-        <th>Informationen</th>
       </tr>
     </thead>
     <%= render :partial => "client", :collection => @contestant.clients.all(:order => "created_at DESC") %>
   </table>
+<% end %>
+
+<% unless @contestant.has_running_tests? %>
+  <% javascript_tag do %>
+    $('.testActions .enabled').show();
+    $('.testActions .disabled').hide();
+  <% end %>
 <% end %>

@@ -1,0 +1,7 @@
+.testActions .enabled {
+  display: none;
+}
+
+.testActions .disabled {
+  color: #aaa;
+}

@@ -148,6 +148,14 @@ class ClientsController < ApplicationController
     render :update do |page|
       page.replace "client-#{@client.id}",
         :partial => "client", :locals => { :client => @client }
+
+      if @contestant.has_running_tests?
+        page << %{$('.testActions .disabled').show();}
+        page << %{$('.testActions .enabled').hide();}
+      else
+        page << %{$('.testActions .enabled').show();}
+        page << %{$('.testActions .disabled').hide();}
+      end
     end
   end
 

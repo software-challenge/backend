@@ -11,8 +11,13 @@
 
     <% elsif client.tested? %>
       <%= client.test_results.join('/') %> bestanden
-    <% elsif client.testable? and !client.contestant.has_running_tests? %>
-      <%= link_to "Testen", test_contest_contestant_client_url(client.contestant, client), :method => :post %>
+    <% elsif client.testable? %>
+      <span class="testActions">
+        <span class="disabled">Testen</span>
+        <%= link_to "Testen",
+          test_contest_contestant_client_url(client.contestant, client), :method => :post,
+          :class => "enabled" %>
+      </span>
     <% end %>
   </td>
   <td>
@@ -37,7 +42,13 @@
       <%= image_tag("state/warning.png") %>
     <% end %>
   </td>
-  <td><%=h client.file_file_name %></td>
+  <td>
+    <%= client.file_file_name %><br/>
+    <span style="font-size: 11px;">
+      Am <%= l(client.created_at.try(:to_date), :format => :long) %>
+      von <%= client.author.name %>
+    </span>
+  </td>
   <td>
     <% main_file_entry_name = client.main_file_entry.try(:file_name) %>
     <% main_file_entry_name ||= content_tag(:i, "Nicht gesetzt") %>
@@ -48,17 +59,13 @@
     <% end %>
   </td>
   <td>
-    <b style="font-size: 11px;"><%=h l(client.created_at.try(:to_date), :format => :long) %></b><br/>
-    Von <%= client.author.name %>
-  </td>
-  <td>
     <% if client.testing? %>
       <% if client.test_match.job.locked_at %>
-        <b style="font-size: 11px;">Testet seit <%= (Time.now - client.test_match.job.locked_at).round %> Sekunden</b><br/>
-        <span><%= test_progress(client) %></span>
+        <span><%= test_progress(client) %></span><br/>
+        <span style="font-size: 11px;">Testet seit <%= (Time.now - client.test_match.job.locked_at).round %> Sekunden</span>
       <% else %>
-        <b style="font-size: 11px;">Wartet seit <%= (Time.now - client.test_match.job.created_at).round %> Sekunden auf</b><br/>
-        <span>Test über <%= client.test_match.rounds.count %> Runden</span>
+        <span>Test über <%= client.test_match.rounds.count %> Runden</span><br/>
+        <span style="font-size: 11px;">Wartet seit <%= (Time.now - client.test_match.job.created_at).round %> Sekunden</span>
       <% end %>
     <% end %>
   </td>
