@@ -1,4 +1,6 @@
 class ClientsController < ApplicationController
+  # skip_before_filter :verify_authenticity_token
+
   before_filter :load_contestant
   access_control do
     default :deny
@@ -38,7 +40,6 @@ class ClientsController < ApplicationController
   end
 
   def create
-    # TODO: http://jimneath.org/2008/05/15/swfupload-paperclip-and-ruby-on-rails/
     @client = @contestant.clients.build(params[:client])
     @client.author = current_user
 
@@ -54,13 +55,18 @@ class ClientsController < ApplicationController
       end
     end
 
-    respond_to do |format|
-      if success
-        format.html { redirect_to contest_contestant_clients_url(@contestant) }
-        format.xml  { render :xml => @client, :status => :created, :location => @client }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @client.errors, :status => :unprocessable_entity }
+    if requested_by_flash?
+      # flash will only handle 200 as a valid response
+      render :nothing => true, :status => (success ? :ok : :unprocessable_entity )
+    else
+      respond_to do |format|
+        if success
+          format.html { redirect_to contest_contestant_clients_url(@contestant) }
+          format.xml  { render :xml => @client, :status => :created, :location => @client }
+        else
+          format.html { render :action => "new" }
+          format.xml  { render :xml => @client.errors, :status => :unprocessable_entity }
+        end
       end
     end
   end
@@ -163,5 +169,9 @@ class ClientsController < ApplicationController
 
   def load_contestant
     @contestant = current_contest.contestants.find(params[:contestant_id])
+  end
+
+  def requested_by_flash?
+    request.env['HTTP_USER_AGENT'] =~ /^(Adobe|Shockwave) Flash/
   end
 end

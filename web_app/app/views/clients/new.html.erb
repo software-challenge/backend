@@ -15,3 +15,33 @@
     <% end %>
   <% end %>
 <% end %>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    //return;
+    var token = encodeURIComponent(encodeURIComponent($('#new_client [name=authenticity_token]').val()));
+    $('#new_client .buttons').hide();
+    $('#client_file').uploadify({
+      uploader: '/flashs/uploadify.swf',
+      script: '<%= url_for([:contest, @contestant, @client]) %>',
+      fileDataName: 'client[file]',
+      cancelImg: '/images/actions/delete.png',
+      buttonText: 'Datei festlegen',
+      width: '175',
+      fileExt: '*.zip',
+      fileDesc: 'Gepackter Computerspieler (*.zip)',
+      auto: true,
+      multi: false,
+      queueSizeLimit: '1',
+      simUploadLimit: '1',
+      onComplete: function(event, queueId, fileObj, response, data) {
+        window.location.href = '<%= contest_contestant_clients_url(@contestant) %>';
+        return true;
+      },
+      scriptData: {
+        '<%= u get_session_key_name %>': '<%= u cookies[get_session_key_name] %>',
+        'authenticity_token': token
+      }
+    });
+  });
+</script>

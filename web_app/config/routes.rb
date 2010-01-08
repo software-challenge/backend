@@ -31,11 +31,13 @@ ActionController::Routing::Routes.draw do |map|
 
       c.contestants '/meine-teams', :controller => 'contestants', :action => 'my', :name_prefix => 'my_contest_'
       c.resources :contestants, :as => "teams" do |contestant|
-        contestant.resources :clients, :as => "computerspieler", :member => {
+        contestant.resources :clients, :as => "computerspieler", :new => {
+          :uploadify => :post
+        }, :member => {
           :browse => :post,
           :select_main => :post,
           :select => :post,
-          :test => :post
+          :test => :post,
         } do |client|
           client.status '/status', :controller => "clients", :action => "status"
         end
