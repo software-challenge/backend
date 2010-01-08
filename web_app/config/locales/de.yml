@@ -4,6 +4,7 @@ de:
   messages:
     hidden_successfully: "{{name}} wurde erfolgreich geloescht"
     confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen moechten?"
+    confirm_remove_from_contestant: "Sind Sie sicher, dass Sie {{name}} aus dem Team entfernen moechten?"
   actions:
     delete: "Loeschen"
     edit: "Bearbeiten"

@@ -1,7 +1,7 @@
 class PeopleController < ApplicationController
 
-  before_filter :fetch_contestant, :only => :people_for_contestant
-  before_filter :fetch_person, :only => [:edit, :update, :hide]
+  before_filter :fetch_contestant, :only => [:people_for_contestant, :remove_from_contestant]
+  before_filter :fetch_person, :only => [:edit, :update, :hide, :remove_from_contestant]
   access_control do
     allow :administrator
 
@@ -23,11 +23,21 @@ class PeopleController < ApplicationController
       allow logged_in, :if => :same_person
     end
 
+    action :remove_from_contestant do
+      allow :administrator
+      allow :tutor, :teacher, :of => :contestant
+    end
+
   end
 
   access_control :helper => :may_edit_person? do
     allow :administrator
     allow logged_in, :if => :same_person
+  end
+
+  access_control :helper => :may_remove_from_contestant? do
+    allow :administrator
+    allow :tutor, :teacher, :of => :contestant
   end
 
   def same_person(as = nil)
@@ -168,6 +178,11 @@ class PeopleController < ApplicationController
   def destroy
     # We need the models to display client.authors etc, so we can't just "delete" them.
     raise "Deletion is not supported right now."
+  end
+
+  def remove_from_contestant
+    @person.memberships.find_by_contestant_id(@contestant.id).destroy
+    redirect_to :action => :people_for_contestant, :contestant_id => @contestant.to_param
   end
 
 end
