@@ -84,8 +84,11 @@ class Contest < ActiveRecord::Base
         end
 
         pairs.each do |contestants|
-          match = matchday.matches.create!
-          match.contestants = contestants
+          # only if all slots are set
+          if contestants.nitems == contestants.count
+            match = matchday.matches.create!
+            match.contestants = contestants
+          end
         end
 
         puts "wd: #{weekdays}"

@@ -134,7 +134,7 @@ class ContestsController < ApplicationController
       flash[:error] = "Es liegt bereits ein Spielplan vor."
     end
 
-    redirect_to contest_edit_schedule_url(@contest)
+    redirect_to contest_edit_schedule_url
   end
 
   protected

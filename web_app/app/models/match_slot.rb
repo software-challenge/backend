@@ -26,9 +26,6 @@ class MatchSlot < ActiveRecord::Base
     score.destroy if score
   end
 
-  def occupied?
-    !!client
-  end
 
   def cause_distribution
     returning Hash.new do |result|
@@ -39,10 +36,6 @@ class MatchSlot < ActiveRecord::Base
   end
 
   def name
-    if occupied?
-      contestant.name || "Unbenannt"
-    else
-      nil
-    end
+    contestant.name
   end
 end

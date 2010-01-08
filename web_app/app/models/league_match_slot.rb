@@ -7,8 +7,4 @@ class LeagueMatchSlot < MatchSlot
   undef :client
 
   delegate :contestant, :client, :to => :matchday_slot
-
-  def occupied?
-    !!contestant
-  end
 end
