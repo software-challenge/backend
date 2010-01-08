@@ -20,8 +20,8 @@
   <% current_user.teams.each do |team| %>
     <div>
       <div style="float: right;">
-        <%= link_to "Teamseite", contest_contestant_url(team.contest, team) %>
-        <%= link_to "Computerspieler", contest_contestant_clients_url(team) %>
+        <%= link_to "Teamseite", [:contest, team] %>
+        <%= link_to "Computerspieler", :controller => "clients", :action => "index", :contestant_id => team %>
       </div>
       <h3>
         <%=h team.name %>

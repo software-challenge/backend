@@ -120,12 +120,28 @@ class Person < ActiveRecord::Base
 
   alias member_of? membership_for
 
-  attr_accessor :administrator
+  def administrator
+    @administrator or self.has_role? :administrator
+  end
 
-  def before_safe
-    if current_user and current_user.has_role? :administrator
+  def administrator=(is_admin)
+    unless is_admin.kind_of? TrueClass or is_admin.kind_of? FalseClass
+      if is_admin.to_s == "1"
+        is_admin = true
+      else
+        is_admin = false
+      end
+    end
+    @administrator = is_admin
+  end
+
+  def before_save
+    logger.debug "saving with admin = #{@should_be_admin.inspect}"
+    if !@administrator.nil? and current_user and current_user.has_role? :administrator
       if @administrator
         self.has_role! :administrator
+      else
+        self.has_no_role! :administrator
       end
     end
     # hidden people should never be able to login
