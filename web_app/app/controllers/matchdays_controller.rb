@@ -1,5 +1,4 @@
 class MatchdaysController < ApplicationController
-  before_filter :fetch_contest
 
   def index
     @matchdays = @contest.matchdays
@@ -155,11 +154,5 @@ class MatchdaysController < ApplicationController
     end
 
     render :nothing => true
-  end
-
-  protected
-
-  def fetch_contest
-    @contest = Contest.find(params[:contest_id])
   end
 end

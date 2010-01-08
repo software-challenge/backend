@@ -3,12 +3,12 @@
   add_tab do |t|
     t.named 'Begegnungen'
     t.named 'Ergebnisse' if @matchday.played?
-    t.links_to hash_for_contest_matchday_url(:contest_id => @matchday.contest, :id => @matchday)
+    t.links_to hash_for_contest_matchday_url(:id => @matchday)
   end
 
   add_tab do |t|
     t.named 'Tabelle'
-    t.links_to hash_for_contest_matchday_standings_url(:contest_id => @matchday.contest, :matchday_id => @matchday)
+    t.links_to hash_for_contest_matchday_standings_url(:matchday_id => @matchday)
     t.disable! unless @matchday.played?
   end
 
