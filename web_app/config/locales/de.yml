@@ -3,6 +3,7 @@ de:
   "false": Nein
   messages:
     hidden_successfully: "{{name}} wurde erfolgreich geloescht"
+    confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen moechten?"
   actions:
     delete: "Loeschen"
     edit: "Bearbeiten"

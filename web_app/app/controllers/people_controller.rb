@@ -59,7 +59,7 @@ class PeopleController < ApplicationController
   # GET /people
   # GET /people.xml
   def index
-    @people = Person.all :order => "email ASC"
+    @people = Person.all :order => "email ASC", :conditions => {:hidden => false}
 
     respond_to do |format|
       format.html # index.html.erb
@@ -158,8 +158,9 @@ class PeopleController < ApplicationController
   def hide
     @person.hidden = true
     if @person.save
-      flash[:notice] = I18n.t("hidden_successfully", :name => @person.name)
+      flash[:notice] = I18n.t("messages.hidden_successfully", :name => @person.name)
     end
+    redirect_to :back
   end
 
   # DELETE /people/1

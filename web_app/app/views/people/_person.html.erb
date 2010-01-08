@@ -35,7 +35,7 @@
   </td>
   <td>
     <% show_to :administrator do -%>
-      <%= link_to delete_image, url_for(:action => :hide, :id => person.to_param) %>
+      <%= link_to delete_image, url_for(:action => :hide, :id => person.to_param), :confirm => I18n.t("messages.confirm_hiding", :name => person.name) %>
     <% end -%>
   </td>
 </tr>
