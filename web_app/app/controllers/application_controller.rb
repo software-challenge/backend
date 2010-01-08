@@ -59,6 +59,10 @@ class ApplicationController < ActionController::Base
 
   def fetch_contest
     @contest = @current_contest = Contest.find_by_subdomain(request.host.split('.').first)
+    # for testing, use first contest when no contest could be found by subdomain
+    if @current_contest.nil?
+      @contest = @current_contest = Contest.first
+    end
     raise ActiveRecord::RecordNotFound unless @current_contest
   end
 
