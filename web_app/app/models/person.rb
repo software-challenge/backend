@@ -35,6 +35,10 @@ class Person < ActiveRecord::Base
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
 
+  def after_initialize
+    @save_on_update = []
+  end
+
   def name
     if (self.first_name != "" && self.last_name != "")
       ("#{self.first_name} #{self.last_name}")
@@ -95,12 +99,16 @@ class Person < ActiveRecord::Base
       delete = v["_delete"].to_i == 1
 
       if all[contestant_id]
+        @save_on_update << all[contestant_id]
         all[contestant_id].role_name = role
       else
         all[contestant_id] = Membership.new(:contestant => Contestant.find(k), :person => self, :role_name => role)
       end
 
-      all.delete(contestant_id) if delete
+      if delete
+        @save_on_update.delete(all[contestant_id])
+        all.delete(contestant_id)
+      end
     end
 
     self.memberships = all.values
@@ -122,6 +130,12 @@ class Person < ActiveRecord::Base
 
   def administrator
     @administrator or self.has_role? :administrator
+  end
+
+  def before_update
+    @save_on_update.each do |item|
+      item.save!
+    end
   end
 
   def administrator=(is_admin)
