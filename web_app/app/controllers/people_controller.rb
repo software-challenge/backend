@@ -1,22 +1,58 @@
 class PeopleController < ApplicationController
 
+  before_filter :fetch_contestant, :only => :people_for_contestant
+  before_filter :fetch_person, :only => [:edit, :update]
   access_control do
-    default :deny
     allow :administrator
+
+    action :show do
+      allow logged_in
+    end
+
+    actions :new, :create do
+      allow :administrator, :teacher, :tutor
+    end
+
+    action :people_for_contestant do
+      allow :administrator
+      allow :tutor, :teacher, :pupil, :of => :contestant
+    end
+
+    actions :edit, :update do
+      allow :administrator
+      allow logged_in, :if => :same_person
+    end
   end
 
-  access_control :only => [:show] do
-    allow logged_in
-  end
-
-  access_control :only => [:new, :create] do
-    allow :administrator, :teacher, :tutor
-  end
-
-  access_control :only => [:edit, :update] do
+  access_control :helper => :may_edit_person? do
     allow :administrator
-    allow :pupil, :of => Person
-    allow :teacher, :tutor, :of => Person
+    allow logged_in, :if => :same_person
+  end
+
+  def same_person(as = nil)
+    if as.nil?
+      current_user == @person
+    else
+      current_user == as
+    end
+  end
+  helper_method :same_person
+
+  access_control :helper => :may_see_person_details? do
+    allow :administrator
+    allow :pupil, :of => :person
+    allow :teacher, :tutor, :of => :person
+  end
+
+
+  def fetch_contestant
+    # contestant needs to be fetched before authorization control
+    @contestant = Contestant.find(params[:contestant_id])
+  end
+
+  def fetch_person
+    # person needs to be fetched before authorization control
+    @person = Person.find(params[:id])
   end
 
   # GET /people
@@ -31,7 +67,6 @@ class PeopleController < ApplicationController
   end
 
   def people_for_contestant
-    @contestant = Contestant.find(params[:contestant_id])
     @contest = @contestant.contest
     @people = @contestant.people.all :order => "email ASC"
 
@@ -65,7 +100,7 @@ class PeopleController < ApplicationController
 
   # GET /people/1/edit
   def edit
-    @person = Person.find(params[:id])
+    # @person is fetched in before_filter
   end
 
   # POST /people
@@ -81,7 +116,13 @@ class PeopleController < ApplicationController
     respond_to do |format|
       if success
         flash[:notice] = @person.name + ' wurde erfolgreich angelegt.'
-        format.html { redirect_to(people_url) }
+        format.html {
+          if @person.has_role? :pupil
+            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.first.to_param)
+          else
+            redirect_to(people_url)
+          end
+        }
         format.xml  { render :xml => @person, :status => :created, :location => @person }
       else
         format.html { render :action => "new" }
@@ -93,7 +134,7 @@ class PeopleController < ApplicationController
   # PUT /people/1
   # PUT /people/1.xml
   def update
-    @person = Person.find(params[:id])
+    # @person is fetched in before_filter
 
     # cleanup params
     person_params = params[:person].clone

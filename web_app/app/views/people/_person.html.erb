@@ -1,24 +1,35 @@
 <tr>
   <td><%=h person.first_name %></td>
   <td><%=h person.last_name %></td>
+  <% if logged_in? -%>
   <td><%=h person.email %></td>
+  <% end -%>
   <td>
     <%=t person.blocked?.to_s %>
   </td>
 
-  <td>
-    <% unless person.teams.empty? %>
-      <%= select_tag "team", options_for_select(person.teams.collect(&:name)) %>
-    <% end %>
-  </td>
-
-  <% show_to :administrator do %>
+  <% unless @contestant # don't show these infos on contestant page -%>
     <td>
-      <%=t person.has_role?(:administrator).to_s %>
+      <% unless person.teams.empty? %>
+        <%= select_tag "team", options_for_select(person.teams.collect(&:name)) %>
+      <% end %>
     </td>
-  <% end %>
+
+    <% show_to :administrator do %>
+      <td>
+        <%=t person.has_role?(:administrator).to_s %>
+      </td>
+    <% end %>
+  <% end -%>
   <% show_image = image_tag "actions/show.png", :title => "Zeige" %>
   <% edit_image = image_tag "actions/edit.png", :title => "Bearbeiten" %>
-  <td><%= link_to show_image, person %></td>
-  <td><%= link_to edit_image, edit_person_path(person) %></td>
+  <td>
+    <% if may_see_person_details? :person => person -%>
+    <%= link_to show_image, person %></td>
+    <% end -%>
+  <td>
+    <% if current_user.has_role? :administrator or same_person(person) -%>
+    <%= link_to edit_image, edit_person_path(person) %>
+    <% end -%>
+  </td>
 </tr>

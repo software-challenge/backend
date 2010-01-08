@@ -1,14 +1,24 @@
 class ContestantsController < ApplicationController
+
   before_filter :fetch_contestant
 
-  access_control :except => [:show, :index, :my] do
-    default :deny
+  access_control do
+
     allow :administrator
+
+    action :index, :show do
+      allow all
+    end
+
+    action :my do
+      allow :administrator
+      allow :tutor, :teacher, :pupil, :of => :contestant
+    end
+
   end
 
-  access_control :only => :my do
-    default :deny
-    allow logged_in
+  access_control :helper => :may_add_teams? do
+    allow :administrator
   end
 
   # GET /contestants

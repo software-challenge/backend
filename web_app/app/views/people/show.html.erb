@@ -56,7 +56,7 @@
     </tr>
   </table>
 
-  <% if (current_user == @person) || (current_user.has_role? :administrator) %>
+  <% if may_edit_person? -%>
     <br/>
     <%= link_to 'Bearbeiten', edit_person_path(@person) %>
   <% end %>

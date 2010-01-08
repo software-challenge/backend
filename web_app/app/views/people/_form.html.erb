@@ -12,7 +12,7 @@
       <%= f.input :administrator, :as => :boolean %>
     <% end %>
 
-    <% show_to :administrator do %>
+    <% show_to :administrator, :teacher, :tutor do %>
       <%= f.errors_on :memberships %>
       <li>
         <% content_for :teams do %>
@@ -28,7 +28,11 @@
               </label>
 
               <div style="float: right;" class="role">
-                <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
+                <% if manageable_roles.size == 1 -%>
+                  <%= hidden_field_tag "person[teams][#{t.id}][role]", manageable_roles.first[1] %>
+                <% else -%>
+                  <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
+                <% end -%>
               </div>
             </li>
           <% end %>
@@ -41,7 +45,7 @@
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button %>
-    oder <%= link_to "Zurück", people_url %>
+    oder <%= link_to "Zurück", :back %>
   <% end %>
 <% end %>
 

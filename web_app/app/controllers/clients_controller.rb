@@ -1,6 +1,5 @@
 class ClientsController < ApplicationController
-  before_filter :set_variables
-
+  before_filter :load_contestant
   access_control do
     default :deny
     allow :administrator
@@ -154,7 +153,7 @@ class ClientsController < ApplicationController
 
   protected
 
-  def set_variables
+  def load_contestant
     @contestant = current_contest.contestants.find(params[:contestant_id])
   end
 end

@@ -1,4 +1,14 @@
 class ContestsController < ApplicationController
+
+  access_control do
+
+    allow :administrator
+
+    actions :show, :standings, :results do
+      allow all
+    end
+  end
+
   # GET /contests
   # GET /contests.xml
   def index

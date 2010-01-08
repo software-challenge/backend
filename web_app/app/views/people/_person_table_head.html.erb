@@ -1,0 +1,17 @@
+    <thead>
+      <tr>
+        <% if not logged_in? -%>
+          <% attributes = %w{first_name last_name} %>
+        <% else -%>
+        <% if @contestant -%>
+          <% attributes = %w{first_name last_name email blocked} %>
+        <% else -%>
+          <% attributes = %w{first_name last_name email blocked teams adminstrator} %>
+        <% end -%>
+        <% end -%>
+
+        <% attributes.each do |attr| %>
+          <th><%= Person.human_attribute_name attr %></th>
+        <% end %>
+      </tr>
+    </thead>

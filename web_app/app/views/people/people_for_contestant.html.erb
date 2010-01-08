@@ -11,14 +11,7 @@
 
 <% tabnav :contestant do %>
   <table class="data-table">
-    <thead>
-      <tr>
-        <% %w{first_name last_name email blocked}.each do |attr| %>
-          <th><%= Person.human_attribute_name attr %></th>
-        <% end %>
-      </tr>
-    </thead>
-
+    <%= render :partial => "person_table_head" %>
     <%= render :partial => "person", :collection => @contestant.people %>
   </table>
 <% end %>

@@ -27,18 +27,20 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
     t.links_to :controller => "matches", :action => "index_for_contestant", :contestant_id => @contestant
   end
 
-  add_tab do |t|
-    t.named 'Personen'
-    begin; t.disable!; next; end if @contestant.new_record?
-    t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant
-  end
+  if logged_in?
+    add_tab do |t|
+      t.named 'Personen'
+      begin; t.disable!; next; end if @contestant.new_record?
+      t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant
+    end
 
-  add_tab do |t|
-    t.named 'Computerspieler'
-    begin; t.disable!; next; end if @contestant.new_record?
-    t.links_to :controller => "clients", :action => "index", :contestant_id => @contestant
-    t.highlights_on :controller => "clients", :action => "new"
-    t.highlights_on :controller => "clients", :action => "create"
+    add_tab do |t|
+      t.named 'Computerspieler'
+      begin; t.disable!; next; end if @contestant.new_record?
+      t.links_to :controller => "clients", :action => "index", :contestant_id => @contestant
+      t.highlights_on :controller => "clients", :action => "new"
+      t.highlights_on :controller => "clients", :action => "create"
+    end
   end
 end 
 %>

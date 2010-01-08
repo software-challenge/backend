@@ -1,3 +1,4 @@
+# DEPRECATED!! WILL BE DELETED
 class ContestantPeopleController < ApplicationController
   before_filter :fetch_contestant
 
