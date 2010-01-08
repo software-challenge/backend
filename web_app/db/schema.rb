@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100107150533) do
+ActiveRecord::Schema.define(:version => 20100108122647) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -121,6 +121,7 @@ ActiveRecord::Schema.define(:version => 20100107150533) do
     t.string   "last_name",            :default => "",    :null => false
     t.string   "nick_name",            :default => "",    :null => false
     t.boolean  "show_email_to_others", :default => false, :null => false
+    t.boolean  "hidden",               :default => false, :null => false
   end
 
   create_table "people_roles", :id => false, :force => true do |t|

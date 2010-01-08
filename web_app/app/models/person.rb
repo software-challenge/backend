@@ -128,6 +128,10 @@ class Person < ActiveRecord::Base
         self.has_role! :administrator
       end
     end
+    # hidden people should never be able to login
+    if self.hidden
+      self.blocked = true
+    end
   end
 
 end

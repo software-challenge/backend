@@ -1,6 +1,12 @@
 de:
   "true": Ja
   "false": Nein
+  messages:
+    hidden_successfully: "{{name}} wurde erfolgreich geloescht"
+  actions:
+    delete: "Loeschen"
+    edit: "Bearbeiten"
+    show: "Anzeigen"
   games:
     hase_und_igel:
       name: Hase und Igel

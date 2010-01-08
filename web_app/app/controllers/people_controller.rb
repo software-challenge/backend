@@ -1,7 +1,7 @@
 class PeopleController < ApplicationController
 
   before_filter :fetch_contestant, :only => :people_for_contestant
-  before_filter :fetch_person, :only => [:edit, :update]
+  before_filter :fetch_person, :only => [:edit, :update, :hide]
   access_control do
     allow :administrator
 
@@ -22,6 +22,7 @@ class PeopleController < ApplicationController
       allow :administrator
       allow logged_in, :if => :same_person
     end
+
   end
 
   access_control :helper => :may_edit_person? do
@@ -151,6 +152,13 @@ class PeopleController < ApplicationController
         format.html { render :action => "edit" }
         format.xml  { render :xml => @person.errors, :status => :unprocessable_entity }
       end
+    end
+  end
+
+  def hide
+    @person.hidden = true
+    if @person.save
+      flash[:notice] = I18n.t("hidden_successfully", :name => @person.name)
     end
   end
 
