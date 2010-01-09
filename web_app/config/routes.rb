@@ -88,6 +88,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.with_options :controller => 'main' do |opt|
     opt.debug '/debug', :action => 'debug', :conditions => { :method => :get }
+    opt.clear_jobs '/clear_jobs', :action => 'clear_jobs', :conditions => { :method => :post }
     opt.login '/login', :action => 'login', :conditions => { :method => :get }
     opt.map '/login', :action => 'do_login', :conditions => { :method => :post }
     opt.logout '/logout', :action => 'logout', :conditions => { :method => :post }

@@ -2,7 +2,7 @@ class MainController < ApplicationController
 
   skip_before_filter :require_current_user
 
-  access_control :only => [:debug, :administration] do
+  access_control :only => [:debug, :clear_jobs, :administration] do
     allow :administrator
   end
 
@@ -45,5 +45,11 @@ class MainController < ApplicationController
     @jobs = Delayed::Job.all
     @server_log = `tail -n 10 #{Rails.root.join('log', 'game_server.log')}`
     @manager_log = `tail -n 10 #{Rails.root.join('log', 'sc_manager.log')}`
+  end
+
+  def clear_jobs
+    Delayed::Job.destroy_all
+    flash[:notice] = "Alle Aufträge wurden gelöscht."
+    redirect_to debug_url
   end
 end

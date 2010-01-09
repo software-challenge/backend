@@ -1,3 +1,11 @@
+<% if Delayed::Job.exists? %>
+  <div id="actions">
+    <% link_to clear_jobs_url, :method => :post do %>
+      <%= image_tag('actions/destroy.png') %>Alle Aufträge löschen
+    <% end %>
+  </div>
+<% end %>
+
 <h1>Administration</h1>
 
 <% tabnav :administration do %>
