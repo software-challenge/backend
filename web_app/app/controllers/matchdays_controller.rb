@@ -95,7 +95,7 @@ class MatchdaysController < ApplicationController
       flash[:notice] = "Der Spieltag wurde neu zusammengerechnet."
     end
 
-    redirect_to contest_matchday_url(@contest, @matchday)
+    redirect_to contest_matchday_url(@matchday)
   end
 
   def reset
@@ -114,7 +114,7 @@ class MatchdaysController < ApplicationController
       flash[:notice] = "Der Spieltag wurde zurückgesetzt."
     end
 
-    redirect_to contest_matchday_url(@contest, @matchday)
+    redirect_to contest_matchday_url(@matchday)
   end
 
   def play
@@ -134,7 +134,7 @@ class MatchdaysController < ApplicationController
       end
     end
     
-    redirect_to contest_matchday_url(@contest, @matchday)
+    redirect_to contest_matchday_url(@matchday)
   end
 
   # POST /contest/1/matchdays/move
