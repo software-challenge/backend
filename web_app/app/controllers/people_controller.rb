@@ -119,7 +119,6 @@ class PeopleController < ApplicationController
   def create
     # cleanup params
     person_params = params[:person].clone
-    person_params[:teams].reject! { |x| x.blank? } if person_params[:teams]
 
     @person = Person.new(person_params)
     success = @person.save

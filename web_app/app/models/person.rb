@@ -35,8 +35,13 @@ class Person < ActiveRecord::Base
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
 
+  def initialize(*args)
+    @save_on_update ||= []
+    super
+  end
+
   def after_initialize
-    @save_on_update = []
+    @save_on_update ||= []
   end
 
   def name
