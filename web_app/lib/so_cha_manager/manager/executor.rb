@@ -101,7 +101,7 @@ module SoChaManager
       ActiveRecord::Base.benchmark "Preparing the Client VMs" do
         zip_files = round.slots.zip(codes).collect do |slot, code|
           start_client(slot, code)
-        end
+        end.compact
       end
 
       logger.info "All clients have been prepared"
@@ -130,19 +130,24 @@ module SoChaManager
     end
 
     def start_client(slot, reservation)
-      logger.info "Preparing client (id=#{slot.client.id}, contestant='#{slot.name}')..."
+      if slot.client
+        logger.info "Preparing client (id=#{slot.client.id}, contestant='#{slot.name}')..."
 
-      ai_program = slot.client
-      zipped_ai_program = ai_program.file.path
-      target = nil
+        ai_program = slot.client
+        zipped_ai_program = ai_program.file.path
+        target = nil
 
-      Dir.mktmpdir(File.basename(zipped_ai_program)) do |dir|
-        unzip_to_directory(zipped_ai_program, dir)
-        create_startup_script(ai_program, reservation, dir)
-        target = zip_to_watch_folder(dir, slot)
+        Dir.mktmpdir(File.basename(zipped_ai_program)) do |dir|
+          unzip_to_directory(zipped_ai_program, dir)
+          create_startup_script(ai_program, reservation, dir)
+          target = zip_to_watch_folder(dir, slot)
+        end
+
+        target
+      else
+        logger.warn "Client for slot #{slot.id} is not set"
+        nil
       end
-
-      target
     end
 
     def zip_to_watch_folder(source_directory, slot)
