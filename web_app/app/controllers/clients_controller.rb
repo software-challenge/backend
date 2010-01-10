@@ -37,6 +37,7 @@ class ClientsController < ApplicationController
 
   def edit
     @client = @contestant.clients.find(params[:id])
+    @entries = @client.file_entries.with_level(0).file_ordering
   end
 
   def create
@@ -114,17 +115,16 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.find(params[:id])
 
     if params[:entry_id]
-      @entry = @client.file_entries.find(params[:entry_id])
-      @entries = @entry.children
+      @parent = @client.file_entries.find(params[:entry_id])
+      @entries = @parent.children.file_ordering
     else
-      @entries = @client.file_entries.with_level(0)
+      @entries = @client.file_entries.with_level(0).file_ordering
     end
 
     render :update do |page|
-      # todo empty-check
+      # TODO: check if empty
       page.replace_html '#fileList',
-        :partial => "file_entry",
-        :collection => @entries,
+        :partial => "file_entries",
         :locals => { :client => @client }
     end
   end

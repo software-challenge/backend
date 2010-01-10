@@ -48,12 +48,16 @@ class Client < ActiveRecord::Base
       file_entries.destroy_all
 
       Zip::ZipFile.foreach(file.path) do |e|
-        file_name = e.name.to_s
+        file_name, file_type, file_size = e.name.to_s, e.ftype.to_s, e.size
+        file_name.gsub!(/\\/, '/') # some zip-programs use windows-style slashes
 
-        file_entries.create!(:file_type => e.ftype.to_s,
+        # was this already created via mkdirs?
+        next if file_type == "directory" and file_entries(:reload).with_file_name(file_name).exists?
+
+        file_entries.create!(:file_type => file_type,
           :file_name => file_name,
-          :file_size => e.size,
-          :level => calculate_level(file_name))
+          :file_size => file_size,
+          :level => ClientFileEntry.calculate_level(file_name))
       end
     end
 
@@ -151,11 +155,5 @@ class Client < ActiveRecord::Base
 
     self.main_file_entry = result
     save!
-  end
-
-  def calculate_level(filename)
-    n = 0
-    filename.scan(/\/\b/) { n += 1 }
-    n
   end
 end
