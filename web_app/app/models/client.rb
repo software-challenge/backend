@@ -69,8 +69,8 @@ class Client < ActiveRecord::Base
   end
 
   def java?
-    # FIXME: implement selection
-    true
+    return nil unless main_file_entry
+    main_file_entry.file_name.ends_with? ".jar"
   end
 
   def status
