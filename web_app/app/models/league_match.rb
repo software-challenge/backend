@@ -20,4 +20,8 @@ class LeagueMatch < Match
       create_rounds!
     end
   end
+
+  def priority
+    Match::MEDIUM_PRIORITY
+  end
 end

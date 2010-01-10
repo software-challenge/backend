@@ -15,4 +15,8 @@ class ClientMatch < Match
       end
     end
   end
+
+  def priority
+    Match::LOW_PRIORITY
+  end
 end

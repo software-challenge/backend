@@ -1,6 +1,11 @@
 require_dependency 'sandbox_helpers'
 
 class Match < ActiveRecord::Base
+
+  HIGH_PRIORITY = 10 # finals
+  MEDIUM_PRIORITY = 5
+  LOW_PRIORITY = 0 # client-tests
+
   named_scope(:with_contestant, lambda do |contestant|
       { :joins => "INNER JOIN match_slots ms ON ms.match_id = matches.id " +
           "INNER JOIN matchday_slots mds ON ms.matchday_slot_id = mds.id" ,
@@ -57,7 +62,7 @@ class Match < ActiveRecord::Base
   end
 
   def perform_delayed!
-    job_id = Delayed::Job.enqueue self
+    job_id = Delayed::Job.enqueue self, priority
     self.job = Delayed::Job.find(job_id)
     save!
   end
@@ -67,6 +72,10 @@ class Match < ActiveRecord::Base
     unless played?
       run_match
     end
+  end
+
+  def priority
+    MEDIUM_PRIORITY
   end
 
   def reset!(delete_games = false)
