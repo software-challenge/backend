@@ -69,7 +69,7 @@ class PeopleController < ApplicationController
   # GET /people
   # GET /people.xml
   def index
-    @people = Person.all :order => "email ASC", :conditions => {:hidden => false}
+    @people = Person.visible :order => "email ASC"
 
     respond_to do |format|
       format.html # index.html.erb
@@ -79,7 +79,7 @@ class PeopleController < ApplicationController
 
   def people_for_contestant
     @contest = @contestant.contest
-    @people = @contestant.people.all :order => "email ASC"
+    @people = @contestant.people.visible :order => "email ASC"
 
     respond_to do |format|
       format.html
@@ -170,11 +170,7 @@ class PeopleController < ApplicationController
   end
 
   def hide
-    @person.hidden = true
-    if @person.save
-      flash[:notice] = I18n.t("messages.hidden_successfully", :name => @person.name)
-    end
-    redirect_to :back
+    generic_hide(@person)
   end
 
   # DELETE /people/1

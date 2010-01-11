@@ -24,7 +24,7 @@ class ContestantsController < ApplicationController
   # GET /contestants
   # GET /contestants.xml
   def index
-    @contestants = @contest.contestants
+    @contestants = @contest.contestants.visible
 
     respond_to do |format|
       format.html # index.html.erb
@@ -33,7 +33,7 @@ class ContestantsController < ApplicationController
   end
 
   def my
-    @contestants = current_user.contestants.for_contest(@contest)
+    @contestants = current_user.contestants.visible.for_contest(@contest)
 
     respond_to do |format|
       format.html { render :action => "index" }
@@ -131,6 +131,10 @@ class ContestantsController < ApplicationController
       end
       redirect_to :controller => :people, :action => :people_for_contestant, :contestant_id => params[:contestant_id]
     end
+  end
+
+  def hide
+    generic_hide(@contestant)
   end
 
   protected

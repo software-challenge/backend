@@ -22,6 +22,7 @@ class Contestant < ActiveRecord::Base
 
   named_scope :without_testers, :conditions => { :tester => false }
   named_scope :for_contest, lambda { |c| {:conditions => { :contest_id => c.id }} }
+  named_scope :visible, :conditions => { :hidden => false }
 
   def matches
     contest.matches.with_contestant(self)

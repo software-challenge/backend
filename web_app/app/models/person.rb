@@ -35,6 +35,8 @@ class Person < ActiveRecord::Base
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
 
+  named_scope :visible, :conditions => {:hidden => false}
+
   def initialize(*args)
     @save_on_update ||= []
     super
@@ -121,7 +123,7 @@ class Person < ActiveRecord::Base
 
   def manageable_teams
     if self.has_role? :administrator
-      Contestant.without_testers
+      Contestant.visible.without_testers
     else
       teams
     end

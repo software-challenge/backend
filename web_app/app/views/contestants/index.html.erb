@@ -18,15 +18,22 @@
       <tr>
         <th>Team</th>
         <th>Mitglieder</th>
+        <th colspan="2">&nbsp;<!-- options --></th>
       </tr>
     </thead>
 
-    <% @contest.contestants.each do |contestant| %>
+    <% @contestants.each do |contestant| %>
       <tr>
         <td><%= contestant.name %></td>
-        <td><%= contestant.people.count %></td>
+        <td><%= contestant.people.visible.count %></td>
         <td>
           <%= link_to image_tag('actions/show.png'), [:contest, contestant] %>
+        </td>
+        <td>
+          <% show_to :administrator do -%>
+            <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+            <%= link_to delete_image, url_for(:action => :hide, :id => contestant.to_param), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
+          <% end -%>
         </td>
       </tr>
     <% end %>

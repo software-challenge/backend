@@ -118,4 +118,12 @@ class ApplicationController < ActionController::Base
   def url_for_contest(contest)
     "http://#{host_for_contest(contest)}/"
   end
+
+  def generic_hide(model_object)
+    model_object.hidden = true
+    if model_object.save
+      flash[:notice] = I18n.t("messages.hidden_successfully", :name => model_object.name)
+    end
+    redirect_to :back
+  end
 end
