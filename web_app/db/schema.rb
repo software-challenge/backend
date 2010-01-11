@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100111125612) do
+ActiveRecord::Schema.define(:version => 20100108122647) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -39,7 +39,6 @@ ActiveRecord::Schema.define(:version => 20100111125612) do
     t.integer  "score_id"
     t.integer  "current_client_id"
     t.boolean  "tester",            :default => false, :null => false
-    t.boolean  "hidden",            :default => false, :null => false
   end
 
   create_table "contests", :force => true do |t|
