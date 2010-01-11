@@ -35,8 +35,8 @@
   <% if @contestant -%>
   <td>
     <% if may_remove_from_contestant? -%>
-      <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
-      <%= link_to delete_image, url_for(:action => :remove_from_contestant, :id => person.to_param, :contestant_id => @contestant.to_param), :confirm => I18n.t("messages.confirm_remove_from_contestant", :name => person.name) %>
+      <% remove_image = image_tag "actions/remove_small.png", :title => I18n.t("actions.remove_from_contestant") %>
+      <%= link_to remove_image, url_for(:action => :remove_from_contestant, :id => person.to_param, :contestant_id => @contestant.to_param), :confirm => I18n.t("messages.confirm_remove_from_contestant", :name => person.name) %>
     <% end -%>
   </td>
   <% else -%>

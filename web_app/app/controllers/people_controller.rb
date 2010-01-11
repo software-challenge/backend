@@ -103,6 +103,11 @@ class PeopleController < ApplicationController
   def new
     @person = Person.new
 
+    if (params[:contestant_id])
+      @contestant = Contestant.find params[:contestant_id]
+      @person.teams = { params[:contestant_id] => {:_delete => false, :role => :pupil} }
+    end
+
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @person }

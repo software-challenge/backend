@@ -114,6 +114,24 @@ class ContestantsController < ApplicationController
     end
   end
 
+  def add_person
+    @person = Person.find_by_email(params[:email])
+    if @person.nil?
+      flash[:error] = I18n.t("messages.person_not_found_by_email", :email => params[:email])
+      redirect_to :controller => :people, :action => :new, :contestant_id => params[:contestant_id]
+    else
+      @contestant = Contestant.find(params[:contestant_id])
+      if @person.memberships.find_by_contestant_id(@contestant.id)
+        flash[:error] = I18n.t("messages.person_already_belongs_to_contestant")
+      else
+        if @person.memberships.create!(:contestant => @contestant, :role_name => params[:role])
+          flash[:notice] = I18n.t("messages.person_added_to_contestant")
+        end
+      end
+      redirect_to :controller => :people, :action => :people_for_contestant, :contestant_id => params[:contestant_id]
+    end
+  end
+
   protected
 
   def fetch_contestant

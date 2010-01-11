@@ -5,10 +5,14 @@ de:
     hidden_successfully: "{{name}} wurde erfolgreich geloescht"
     confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen moechten?"
     confirm_remove_from_contestant: "Sind Sie sicher, dass Sie {{name}} aus dem Team entfernen moechten?"
+    person_not_found_by_email: "Es konnte keine Person mit der eMail-Adresse '{{email}}' gefunden werden."
+    person_added_to_contestant: "Person wurde ins Team eingeladen."
+    person_already_belongs_to_contestant: "Person gehoert bereits zum Team"
   actions:
     delete: "Loeschen"
     edit: "Bearbeiten"
     show: "Anzeigen"
+    remove_from_contestant: "Aus Team entfernen"
   games:
     hase_und_igel:
       name: Hase und Igel

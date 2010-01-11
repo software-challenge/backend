@@ -1,5 +1,5 @@
 <div id="actions">
-  <% link_to new_person_url do %>
+  <% link_to(new_person_url(:contestant_id => @contestant.to_param)) do %>
     <%= image_tag('actions/add.png') %>SchülerIn hinzufügen
   <% end %>
 </div>
