@@ -1,8 +1,10 @@
 <div id="actions">
+  <% show_to :administrator do -%>
   <% if @contest.ready? and !@contest.begun? %>
     <% link_to reset_matchdays_contest_url, :method => :post do %>
       <%= image_tag('actions/destroy.png') %>Spielplan löschen
     <% end %>
+  <% end %>
   <% end %>
 </div>
 

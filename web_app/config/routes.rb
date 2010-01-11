@@ -13,7 +13,7 @@ ActionController::Routing::Routes.draw do |map|
       :reset_matchdays => :post,
     } do |c|
       c.edit_schedule '/spielplan/bearbeiten', :controller => "contests", :action => "edit_schedule"
-      c.resources :matchdays, 
+      c.resources :matchdays,
         :as => "spieltage",
         :collection => {
         :move => :post
@@ -49,7 +49,7 @@ ActionController::Routing::Routes.draw do |map|
       c.results '/ergebnisse', :controller => 'contests', :action => 'results'
     end
   end
-  
+
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -101,6 +101,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 
-  map.root :controller => 'main', :action => 'index'
-  
+  map.root :controller => 'contests', :action => 'show'
+
 end

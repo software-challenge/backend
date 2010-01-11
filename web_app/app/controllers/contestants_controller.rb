@@ -44,10 +44,7 @@ class ContestantsController < ApplicationController
   # GET /contestants/1
   # GET /contestants/1.xml
   def show
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @contestant }
-    end
+    redirect_to :controller => :people, :action => :people_for_contestant, :contestant_id => params[:id]
   end
 
   # GET /contestants/new

@@ -30,6 +30,25 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
+    t.named Contestant.human_name(:count => 2)
+    begin; t.disable!; next; end if @contest.new_record?
+    t.links_to hash_for_contest_contestants_url
+  end
+
+  add_tab do |t|
+    t.named "Meine #{Contestant.human_name(:count => 2)}"
+    begin; t.disable!; next; end if @contest.new_record?
+    t.links_to hash_for_my_contest_contestants_url
+  end if logged_in? and current_user.contestants.for_contest(@contest).count > 1
+
+  add_tab do |t|
+    t.named 'Spieltage'
+    begin; t.disable!; next; end if @contest.new_record?
+    t.links_to hash_for_contest_matchdays_url
+    t.disable! unless @contest.ready?
+  end
+
+  add_tab do |t|
     t.named 'Rangliste'
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_contest_standings_url
@@ -44,24 +63,5 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.disable! unless @contest.last_played_matchday
   end
 
-  add_tab do |t|
-    t.named 'Spieltage'
-    begin; t.disable!; next; end if @contest.new_record?
-    t.links_to hash_for_contest_matchdays_url
-    t.disable! unless @contest.ready?
-  end
-
-  add_tab do |t|
-    t.named Contestant.human_name(:count => 2)
-    begin; t.disable!; next; end if @contest.new_record?
-    t.links_to hash_for_contest_contestants_url
-  end
-
-  add_tab do |t|
-    t.named "Meine #{Contestant.human_name(:count => 2)}"
-    begin; t.disable!; next; end if @contest.new_record?
-    t.links_to hash_for_my_contest_contestants_url
-  end if logged_in? and current_user.contestants.for_contest(@contest).count > 1
-
-end 
+end
 %>
