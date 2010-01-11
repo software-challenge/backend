@@ -1,6 +1,9 @@
 de:
   "true": Ja
   "false": Nein
+  labels:
+    email_adress: "E-Mail-Adresse"
+    password: "Passwort"
   messages:
     hidden_successfully: "{{name}} wurde erfolgreich geloescht"
     confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen moechten?"
@@ -12,6 +15,7 @@ de:
     delete: "Loeschen"
     edit: "Bearbeiten"
     show: "Anzeigen"
+    login: "Einloggen"
     remove_from_contestant: "Aus Team entfernen"
   games:
     hase_und_igel:
@@ -44,6 +48,7 @@ de:
       client:
         file: Der Computerspieler muss als ZIP-Datei gepackt werden.
   titles:
+    upload_new_client: "Computerspieler hochladen"
     contests:
       edit_schedule: Terminplan bearbeiten
     generic:

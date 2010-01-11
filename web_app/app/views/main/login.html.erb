@@ -1,9 +1,9 @@
 <% form_tag login_url do %>
   <% fields_for :user do |f| %>
-    <%= f.label :email, "E-Mail-Adresse" %>
+    <%= f.label :email, (t "labels.email_adress") %>
     <%= f.text_field :email %>
-    <%= f.label :password, "Passwort" %>
+    <%= f.label :password, (t "labels.password") %>
     <%= f.password_field :password %>
   <% end %>
-  <%= submit_tag "login", :disable_with => "Überprüfen" %>
+  <%= submit_tag (t "actions.login"), :disable_with => "Überprüfen" %>
 <% end %>

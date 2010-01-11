@@ -10,7 +10,6 @@ ActiveRecord::Base.transaction do
 
   contest = Contest.create!(
     :name => "Software-Challenge 2010",
-    :game_definition => "HaseUndIgel",
-    :active => true)
+    :game_definition => "HaseUndIgel", :subdomain => "2010")
 
 end
