@@ -42,7 +42,7 @@ ActionController::Routing::Routes.draw do |map|
           client.status '/status', :controller => "clients", :action => "status"
         end
         contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
-        contestant.resources :people, :as => "personen", :controller => "people", :action => "people_for_contestant"
+        contestant.people '/mitglieder', :controller => "people", :action => "people_for_contestant"
       end
 
       c.standings '/rangliste', :controller => 'contests', :action => 'standings'
@@ -101,6 +101,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 
-  map.root :controller => 'contests', :action => 'show'
+  map.root :controller => 'main'
 
 end

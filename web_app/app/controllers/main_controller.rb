@@ -7,7 +7,7 @@ class MainController < ApplicationController
   end
 
   def index
-
+    redirect_to :controller => :contests, :action => :show
   end
 
   def login

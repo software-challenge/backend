@@ -44,7 +44,11 @@ class ContestantsController < ApplicationController
   # GET /contestants/1
   # GET /contestants/1.xml
   def show
-    redirect_to :controller => :people, :action => :people_for_contestant, :contestant_id => params[:id]
+    if logged_in?
+      redirect_to contest_contestant_people_url(Contestant.find(params[:id]))
+    else
+      redirect_to :controller => :matches, :action => :index_for_contestant, :contestant_id => params[:id]
+    end
   end
 
   # GET /contestants/new

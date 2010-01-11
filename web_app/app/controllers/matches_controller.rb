@@ -2,6 +2,14 @@ class MatchesController < ApplicationController
 
   before_filter :fetch_parents
 
+  access_control do
+    allow :administrator
+
+    action :show, :index_for_contestant do
+      allow all
+    end
+  end
+
   def index
     @parent = Match.all
 
