@@ -1,6 +1,7 @@
 <% semantic_form_for([:contest, @contestant]) do |f| %>
   <% f.inputs do %>
     <%= f.input :name, :required => true %>
+    <%= f.input :location, :required => true %>
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button %>

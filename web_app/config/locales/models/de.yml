@@ -45,4 +45,5 @@ de:
         password: Passwort
         administrator: "AdministratorIn"
         blocked: Gesperrt
-
+      contestant:
+        location: Ort

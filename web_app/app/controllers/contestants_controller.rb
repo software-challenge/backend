@@ -30,7 +30,7 @@ class ContestantsController < ApplicationController
   # GET /contestants
   # GET /contestants.xml
   def index
-    @contestants = @contest.contestants.visible
+    @contestants = @contest.contestants.visible.all :order => "location, name"
 
     respond_to do |format|
       format.html # index.html.erb

@@ -29,6 +29,17 @@ class Person < ActiveRecord::Base
 
   named_scope :visible, :conditions => {:hidden => false}
 
+  # NOTE: you can only get teachers, tutors, pupils of a contestant. Person.teacher won't work
+  named_scope :teachers,
+    :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
+    :conditions => "roles.name = 'teacher' AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
+  named_scope :tutors,
+    :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
+    :conditions => "roles.name = 'tutor' AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
+  named_scope :pupils,
+    :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
+    :conditions => "roles.name = 'pupil' AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
+
   def initialize(*args)
     @save_on_update ||= []
     super

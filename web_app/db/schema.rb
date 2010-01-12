@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100112102134) do
+ActiveRecord::Schema.define(:version => 20100112131243) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -41,6 +41,7 @@ ActiveRecord::Schema.define(:version => 20100112102134) do
     t.integer  "current_client_id"
     t.boolean  "tester",            :default => false, :null => false
     t.boolean  "hidden",            :default => false, :null => false
+    t.string   "location",          :default => "",    :null => false
   end
 
   create_table "contests", :force => true do |t|
@@ -121,7 +122,6 @@ ActiveRecord::Schema.define(:version => 20100112102134) do
     t.boolean  "blocked",              :default => false, :null => false
     t.string   "first_name",           :default => "",    :null => false
     t.string   "last_name",            :default => "",    :null => false
-    t.string   "nick_name",            :default => "",    :null => false
     t.boolean  "show_email_to_others", :default => false, :null => false
     t.boolean  "hidden",               :default => false, :null => false
   end

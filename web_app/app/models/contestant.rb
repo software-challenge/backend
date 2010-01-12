@@ -13,7 +13,7 @@ class Contestant < ActiveRecord::Base
 
   belongs_to :current_client, :class_name => "Client"
 
-  validates_presence_of :name
+  validates_presence_of :name, :location
   validates_uniqueness_of :name, :scope => :contest_id
   validates_uniqueness_of :tester, :scope => :contest_id, :if => :tester
 
@@ -26,10 +26,6 @@ class Contestant < ActiveRecord::Base
 
   def matches
     contest.matches.with_contestant(self)
-  end
-
-  def tutors
-    people.all(:conditions => ["memberships.role = ?", "tutor"])
   end
 
   def has_running_tests?
