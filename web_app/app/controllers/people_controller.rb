@@ -80,7 +80,13 @@ class PeopleController < ApplicationController
 
   def people_for_contestant
     @contest = @contestant.contest
-    @people = @contestant.people.visible :order => "email ASC"
+    @people = @contestant.people.visible.all :order => "last_name ASC"
+    @people_by_role = {:teacher => [], :tutor => [], :pupil => []}
+
+    @people.each do |person|
+      @people_by_role[person.membership_for(@contestant).role_name.to_sym] << person
+    end
+
     @from = "contestant"
 
     respond_to do |format|

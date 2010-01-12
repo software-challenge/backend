@@ -10,8 +10,31 @@
 </h1>
 
 <% tabnav :contestant do %>
+
+  <% unless @people_by_role[:teacher].empty? -%>
+  <h2>LehererInnen</h2>
+
   <table class="data-table">
     <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @people %>
+    <%= render :partial => "person", :collection => @people_by_role[:teacher] %>
   </table>
+  <% end %>
+
+  <% unless @people_by_role[:tutor].empty? -%>
+  <h2>TutorInnen</h2>
+
+  <table class="data-table">
+    <%= render :partial => "person_table_head" %>
+    <%= render :partial => "person", :collection => @people_by_role[:tutor] %>
+  </table>
+  <% end %>
+
+  <% unless @people_by_role[:pupil].empty? -%>
+  <h2>SchülerInnen</h2>
+
+  <table class="data-table">
+    <%= render :partial => "person_table_head" %>
+    <%= render :partial => "person", :collection => @people_by_role[:pupil] %>
+  </table>
+  <% end %>
 <% end %>
