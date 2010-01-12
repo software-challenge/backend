@@ -21,6 +21,12 @@ class ContestantsController < ApplicationController
     allow :administrator
   end
 
+  access_control :helper => :may_see_details? do
+    allow anonymous
+    allow :administrator
+    allow :tutor, :teacher, :pupil, :of => :contestant
+  end
+
   # GET /contestants
   # GET /contestants.xml
   def index

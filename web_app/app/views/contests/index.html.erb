@@ -12,8 +12,8 @@
       <tr>
         <th>Name</th>
         <th>Spiel</th>
-        <th><%= Contestant.human_name %></th>
-        <th>Aktiv?</th>
+        <th><%= Contestant.human_name :count => 2 %></th>
+        <th colspan="2"></th>
       </tr>
     </thead>
     <% @contests.each do |contest| %>
@@ -21,7 +21,9 @@
         <td><%= contest.name %></td>
         <td><%= contest.game_definition.game_identifier %></td>
         <td><%= contest.contestants.count %></td>
-        <td><%= link_to image_tag("actions/edit.png"), edit_contest_url(:host => host_for_contest(contest)) %></td>
+        <td>
+          <%= link_to image_tag("actions/edit.png"), edit_admin_contest_url(:id => @contest.to_param) %>
+        </td>
         <td><%= link_to 'Zur Übersicht', url_for_contest(contest) %></td>
       </tr>
     <% end %>

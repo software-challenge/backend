@@ -67,9 +67,8 @@ class ContestsController < ApplicationController
     respond_to do |format|
       if @contest.save
         flash[:notice] = 'Contest was successfully created.'
-        new_url = root_url(:host => host_for_contest(@contest))
-        format.html { redirect_to new_url }
-        format.xml  { render :xml => @contest, :status => :created, :location => new_url }
+        format.html { redirect_to admin_contests_url }
+        format.xml  { render :xml => @contest, :status => :created, :location => admin_contests_url }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @contest.errors, :status => :unprocessable_entity }
@@ -83,9 +82,8 @@ class ContestsController < ApplicationController
     respond_to do |format|
       if @contest.update_attributes(params[:contest])
         flash[:notice] = 'Contest was successfully updated.'
-        new_url = root_url(:host => host_for_contest(@contest))
-        format.html { redirect_to edit_contest_url(:host => new_url) }
-        format.xml  { head :ok, :location => new_url }
+        format.html { redirect_to admin_contests_url }
+        format.xml  { head :ok, :location => admin_contests_url }
       else
         @test_contestant = @contest.test_contestant
         format.html { render :action => "edit" }

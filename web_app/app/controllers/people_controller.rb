@@ -70,6 +70,7 @@ class PeopleController < ApplicationController
   # GET /people.xml
   def index
     @people = Person.visible :order => "email ASC"
+    @from = "admin"
 
     respond_to do |format|
       format.html # index.html.erb
@@ -80,6 +81,7 @@ class PeopleController < ApplicationController
   def people_for_contestant
     @contest = @contestant.contest
     @people = @contestant.people.visible :order => "email ASC"
+    @from = "contestant"
 
     respond_to do |format|
       format.html
@@ -103,6 +105,8 @@ class PeopleController < ApplicationController
   def new
     @person = Person.new
 
+    @from_admin = params[:from] == "admin"
+
     if (params[:contestant_id])
       @contestant = Contestant.find params[:contestant_id]
       @person.teams = { params[:contestant_id] => {:_delete => false, :role => :pupil} }
@@ -117,11 +121,13 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     # @person is fetched in before_filter
+    @from_admin = params[:from] == "admin"
   end
 
   # POST /people
   # POST /people.xml
   def create
+    @from_admin = params[:from] == "admin"
     # cleanup params
     person_params = params[:person].clone
 
@@ -131,13 +137,13 @@ class PeopleController < ApplicationController
     respond_to do |format|
       if success
         flash[:notice] = @person.name + ' wurde erfolgreich angelegt.'
-        format.html {
-          if @person.has_role? :pupil
-            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.first.to_param)
+        format.html do
+          if @from_admin or @person.teams.empty?
+            redirect_to people_url
           else
-            redirect_to(people_url)
+            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.first.to_param)
           end
-        }
+        end
         format.xml  { render :xml => @person, :status => :created, :location => @person }
       else
         format.html { render :action => "new" }
@@ -151,6 +157,8 @@ class PeopleController < ApplicationController
   def update
     # @person is fetched in before_filter
 
+    @from_admin = params[:from] == "admin"
+
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
@@ -160,7 +168,13 @@ class PeopleController < ApplicationController
     respond_to do |format|
       if success
         flash[:notice] = @person.name + ' wurde erfolgreich aktualisiert.'
-        format.html { redirect_to(@person) }
+        format.html do
+          if @from_admin or @person.teams.empty?
+            redirect_to people_url
+          else
+            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.first.to_param)
+          end
+        end
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

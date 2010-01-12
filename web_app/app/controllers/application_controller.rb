@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
     render_optional_error_file 403
   end
 
-  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in?, :not_logged_in?
   helper_method :current_contest
 
   attr_accessor :current_page_title
@@ -70,6 +70,10 @@ class ApplicationController < ActionController::Base
     !!current_user
   end
 
+  def not_logged_in?
+    !logged_in?
+  end
+
   def guess_page_title
     begin
       clazz = Kernel.const_get controller_name.classify
@@ -108,7 +112,14 @@ class ApplicationController < ActionController::Base
 
   def host_for_contest(contest)
     all_parts = request.host.split('.')
-    all_parts.shift
+
+    # don't remove the first part if there is no subdomain
+    # i.e. localhost or software-challenge.de
+    # note that this is not always valid ( test.co.uk )
+    if (all_parts.size > 1 and all_parts.last == "localhost") or all_parts.size > 2
+      all_parts.shift
+    end
+
     all_parts.unshift contest.subdomain
     port = (request.port || 80).to_i
     port = (port == 80 ? "" : ":#{port}")

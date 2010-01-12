@@ -27,7 +27,9 @@
         <td><%= contestant.name %></td>
         <td><%= contestant.people.visible.count %></td>
         <td>
+          <% if may_see_details? :contestant => contestant -%>
           <%= link_to image_tag('actions/show.png'), [:contest, contestant] %>
+          <% end -%>
         </td>
         <td>
           <% show_to :administrator do -%>
