@@ -73,7 +73,7 @@ class GameDefinitionBuilder
         block = lambda do |my_scores, their_scores|
           parts = my_scores.collect { |score| score.send options[:average] }
           sum = parts.inject(0) { |sum, x| sum + x }
-          sum / parts.count.to_f
+          parts.count.zero? ? 0 : (sum / parts.count.to_f)
         end
       end
       
@@ -95,7 +95,7 @@ class GameDefinitionBuilder
         aggregator = lambda do |elements|
           parts = elements.collect { |score| score.send(name) }
           sum = parts.inject(0) { |sum, x| sum + x }
-          sum / parts.count.to_f
+          parts.count.zero? ? 0 : (sum / parts.count.to_f)
         end
       end
 

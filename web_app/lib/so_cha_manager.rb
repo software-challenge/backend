@@ -2,6 +2,7 @@ require 'rubygems'
 require 'socket'
 require 'builder'
 require 'logger'
+require 'active_support'
 
 gem 'nokogiri'
 gem 'rubyzip'

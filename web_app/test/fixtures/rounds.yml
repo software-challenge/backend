@@ -1,9 +1,0 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-one:
-  match_id: 1
-  played_at: 2009-10-23 18:54:00
-
-two:
-  match_id: 1
-  played_at: 2009-10-23 18:54:00
