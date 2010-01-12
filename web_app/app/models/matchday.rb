@@ -139,7 +139,10 @@ class Matchday < ActiveRecord::Base
         end
       end
       
-      elements << slot.match_slot.score.to_a
+      # if there was a game on that day
+      if slot.match_slot
+        elements << slot.match_slot.score.to_a
+      end
 
       nil_count = elements.size - elements.nitems
       logger.warn "array contained #{nil_count} nil elements" unless nil_count.zero?
