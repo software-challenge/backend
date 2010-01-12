@@ -33,8 +33,10 @@
         </td>
         <td>
           <% show_to :administrator do -%>
-            <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
-            <%= link_to delete_image, url_for(:action => :hide, :id => contestant.to_param), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
+            <% unless @contest.ready? %>
+              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+              <%= link_to delete_image, url_for(:action => :hide, :id => contestant.to_param), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
+            <% end -%>
           <% end -%>
         </td>
       </tr>
