@@ -10,7 +10,7 @@ class ContestantsController < ApplicationController
       allow all
     end
 
-    action :my do
+    action :my, :add_person do
       allow :administrator
       allow :tutor, :teacher, :pupil, :of => :contestant
     end
@@ -122,7 +122,7 @@ class ContestantsController < ApplicationController
   end
 
   def add_person
-    @person = Person.find_by_email(params[:email])
+    @person = Person.visible.find_by_email(params[:email])
     if @person.nil?
       flash[:error] = I18n.t("messages.person_not_found_by_email", :email => params[:email])
       redirect_to :controller => :people, :action => :new, :contestant_id => params[:contestant_id]
