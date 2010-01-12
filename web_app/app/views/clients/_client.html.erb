@@ -68,8 +68,10 @@
         <span style="font-size: 11px;">Wartet seit <%= (Time.now - client.test_match.job.created_at).round %> Sekunden</span>
       <% end %>
     <% else %>
-      <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
-      <%= link_to delete_image, hide_contest_contestant_client_url(client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
+      <% if may_delete_client? and not client.current? %>
+        <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+        <%= link_to delete_image, hide_contest_contestant_client_url(client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
+      <% end -%>
     <% end %>
   </td>
 </tr>

@@ -8,6 +8,11 @@ class ClientsController < ApplicationController
     allow :pupil, :tutor, :teacher, :of => :contestant
   end
 
+  access_control :helper => :may_delete_client? do
+    allow :administrator
+    allow :pupil, :tutor, :teacher, :of => :contestant
+  end
+
   def index
     @clients = @contestant.clients.all(:order => "created_at DESC")
 
