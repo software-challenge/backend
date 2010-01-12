@@ -7,13 +7,6 @@
           <%=h @person.first_name + " " + @person.last_name %>
         </p>
 
-        <% if (@person.nick_name != "") %>
-          <p>
-            <b>Nickname:</b>
-            <%=h @person.nick_name %>
-          </p>
-        <% end %>
-
         <p>
           <b>E-Mail Adresse:</b>
           <%=h @person.email %>

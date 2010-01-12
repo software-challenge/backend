@@ -46,13 +46,6 @@ class Person < ActiveRecord::Base
     end
   end
 
-  # compress whitespaces
-  def nick_name=(new_nick)
-    new_nick = new_nick.strip
-    new_nick = new_nick.gsub(/\s+/, ' ')
-    self[:nick_name] = new_nick
-  end
-
   # fake accessor for form-builders
   attr_reader :password
 
