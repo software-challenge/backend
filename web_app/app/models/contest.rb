@@ -113,10 +113,10 @@ class Contest < ActiveRecord::Base
   end
 
   def estimate_matchday_count
-    if contestants.count.odd?
-      contestants.count
+    if contestants.visible.count.odd?
+      contestants.visible.count
     else
-      contestants.count - 1
+      contestants.visible.count - 1
     end
   end
 
@@ -130,7 +130,7 @@ class Contest < ActiveRecord::Base
   # NOTE: (later) how about swiss-system instead of round-robin
   def generate_matchdays
     result = []
-    list = contestants.all
+    list = contestants.visible.all
     list << nil if list.size.odd?
 
     rounds = list.size - 1

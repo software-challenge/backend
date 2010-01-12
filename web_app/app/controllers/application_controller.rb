@@ -130,10 +130,10 @@ class ApplicationController < ActionController::Base
     "http://#{host_for_contest(contest)}/"
   end
 
-  def generic_hide(model_object)
+  def generic_hide(model_object, name = :name)
     model_object.hidden = true
     if model_object.save
-      flash[:notice] = I18n.t("messages.hidden_successfully", :name => model_object.name)
+      flash[:notice] = I18n.t("messages.hidden_successfully", :name => model_object.send(name.to_s))
     end
     redirect_to :back
   end

@@ -38,6 +38,7 @@ ActionController::Routing::Routes.draw do |map|
           :select_main => :post,
           :select => :post,
           :test => :post,
+          :hide => :post,
         } do |client|
           client.status '/status', :controller => "clients", :action => "status"
         end

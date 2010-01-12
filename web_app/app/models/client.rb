@@ -33,6 +33,7 @@ class Client < ActiveRecord::Base
         ON
           dj.id = m.job_id
   }
+  named_scope :visible, :conditions => { :hidden => false }
 
   # returns an array with the test results
   # [rounds_passed, rounds_played]

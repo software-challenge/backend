@@ -43,7 +43,7 @@
         <th>Hauptdatei</th>
       </tr>
     </thead>
-    <%= render :partial => "client", :collection => @contestant.clients.all(:order => "created_at DESC") %>
+    <%= render :partial => "client", :collection => @contestant.clients.visible.all(:order => "created_at DESC") %>
   </table>
 <% end %>
 

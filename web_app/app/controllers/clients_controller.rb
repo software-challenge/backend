@@ -165,6 +165,11 @@ class ClientsController < ApplicationController
     end
   end
 
+  def hide
+    @client = @contestant.clients.find(params[:id])
+    generic_hide(@client, :file_file_name)
+  end
+
   protected
 
   def load_contestant

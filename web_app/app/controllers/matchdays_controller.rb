@@ -133,7 +133,7 @@ class MatchdaysController < ApplicationController
         end
       end
     end
-    
+
     redirect_to contest_matchday_url(@matchday)
   end
 

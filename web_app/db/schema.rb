@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100111125612) do
+ActiveRecord::Schema.define(:version => 20100112102134) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(:version => 20100111125612) do
     t.string   "file_content_type"
     t.integer  "file_file_size"
     t.integer  "main_file_entry_id"
+    t.boolean  "hidden",             :default => false, :null => false
   end
 
   create_table "contestants", :force => true do |t|

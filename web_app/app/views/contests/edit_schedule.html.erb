@@ -22,13 +22,14 @@
 
 <% tabnav :contest do %>
   <% unless @contest.ready? %>
-    <% if @contest.contestants.count <= 1 %>
-      <%= @contest.contestants.count %> <%= Contestant.human_name(:count => @contest.contestants.count) %> sind nicht genug, um einen Wettkampf zu beginnen.
+    <% contestant_count = @contest.contestants.visible.count %>
+    <% if contestant_count <= 1 %>
+      <%= contestant_count %> <%= Contestant.human_name(:count => contestant_count) %> sind nicht genug, um einen Wettkampf zu beginnen.
     <% else %>
       <% semantic_form_for :schedule, :url => refresh_matchdays_contest_url, :method => :post do |f| %>
         <% matchday_count = @contest.estimate_matchday_count %>
         <p>
-          Der Wettbewerb hat <b><%= @contest.contestants.count %> <%= Contestant.human_name(:count => @contest.contestants.count) %></b>
+          Der Wettbewerb hat <b><%= contestant_count %> <%= Contestant.human_name(:count => contestant_count) %></b>
           und wird somit <b><%= matchday_count %> <%= Matchday.human_name(:count => matchday_count) %></b> haben.
         </p>
         <% f.inputs do %>
