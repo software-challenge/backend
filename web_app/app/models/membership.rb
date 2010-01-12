@@ -13,7 +13,7 @@ class Membership < ActiveRecord::Base
   validates_inclusion_of :role_name, :in => ROLES
 
   # higher level checks
-  validates_uniqueness_of :contestant_id, :scope => [:person_id]
+  validates_uniqueness_of :contestant_id, :scope => :person_id, :unless => :person_new_record?
 
   def roles
     if person
@@ -43,5 +43,11 @@ class Membership < ActiveRecord::Base
 
   before_destroy do |record|
     record.person.has_no_roles_for! record.contestant
+  end
+
+  protected
+
+  def person_new_record?
+    person and person.new_record?
   end
 end

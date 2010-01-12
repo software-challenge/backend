@@ -119,6 +119,12 @@ class Person < ActiveRecord::Base
     end
 
     self.memberships = all.values
+
+    self.memberships.each do |m|
+      unless m.valid?
+        raise m.errors.full_messages.to_s
+      end
+    end
   end
 
   def manageable_teams
