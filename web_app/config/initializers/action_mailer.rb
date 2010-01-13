@@ -3,5 +3,5 @@ ActionMailer::Base.smtp_settings = {
   :port  => 587,
   :user_name  => "software-challenge@gfxpro.eu",
   :password  => "4rtjxw40x",
-  :authentication  => :login
+  :authentication  => :plain
 }

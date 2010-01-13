@@ -13,32 +13,32 @@
 
   <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
   <table class="data-table">
-  <% unless @contestant.people.teachers.empty? -%>
+  <% unless @contestant.people.visible.teachers.empty? -%>
     <thead>
     <tr><td colspan="<%=colspan%>"><h2>LehrerInnen</h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.teachers %>
+    <%= render :partial => "person", :collection => @contestant.people.visible.teachers %>
     </tbody>
   <% end %>
-  <% unless @contestant.people.tutors.empty? -%>
+  <% unless @contestant.people.visible.tutors.empty? -%>
     <thead>
     <tr><td colspan="<%=colspan%>"><h2>TutorInnen</h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.tutors %>
+    <%= render :partial => "person", :collection => @contestant.people.visible.tutors %>
     </tbody>
   <% end %>
 
-  <% unless @contestant.people.pupils.empty? -%>
+  <% unless @contestant.people.visible.pupils.empty? -%>
     <thead>
     <tr><td colspan="<%=colspan%>"><h2>SchülerInnen</h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.pupils %>
+    <%= render :partial => "person", :collection => @contestant.people.visible.pupils %>
     </tbody>
   <% end %>
   </table>
