@@ -5,17 +5,19 @@ de:
     email_adress: "E-Mail-Adresse"
     password: "Passwort"
   messages:
-    hidden_successfully: "{{name}} wurde erfolgreich geloescht"
-    confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen moechten?"
-    confirm_remove_from_contestant: "Sind Sie sicher, dass Sie {{name}} aus dem Team entfernen moechten?"
+    hidden_successfully: "{{name}} wurde erfolgreich gelöscht"
+    confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen möchten?"
+    confirm_remove_from_contestant: "Sind Sie sicher, dass Sie {{name}} aus dem Team entfernen möchten?"
     person_not_found_by_email: "Es konnte keine Person mit der eMail-Adresse '{{email}}' gefunden werden."
     person_added_to_contestant: "Person wurde ins Team eingeladen."
-    person_already_belongs_to_contestant: "Person gehoert bereits zum Team"
+    person_already_belongs_to_contestant: "Person gehört bereits zum Team"
+    other_teammembers_currently_logged_in: "Zur Zeit sind noch andere Personen aus Ihrem Team online."
+    other_administrators_currently_logged_in: "Zur Zeit sind noch andere Administratoren online."
   actions:
-    delete: "Loeschen"
+    delete: "Löschen"
     edit: "Bearbeiten"
     show: "Anzeigen"
-    login: "Einloggen"
+    login: "Anmelden"
     remove_from_contestant: "Aus Team entfernen"
   games:
     hase_und_igel:

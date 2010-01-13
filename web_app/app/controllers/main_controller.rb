@@ -27,6 +27,14 @@ class MainController < ApplicationController
       raise ActiveRecord::RecordNotFound unless person.password_match?(password)
       raise ActiveRecord::RecordNotFound if person.blocked?
       session[:user_id] = person.id
+      person.logged_in = true
+      person.last_seen = Time.now
+      person.save
+      if other_people_in_same_team_logged_in? person
+        flash[:notice] = I18n.t "messages.other_teammembers_currently_logged_in"
+      elsif person.has_role? :administrator and other_administrators_logged_in? person
+        flash[:notice] = I18n.t "messages.other_administrators_currently_logged_in"
+      end
       redirect_to root_url
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
@@ -36,8 +44,14 @@ class MainController < ApplicationController
   end
 
   def logout
-    session[:user_id] = nil
-    flash[:notice] = "Du wurdest abgemeldet."
+    if @current_user
+      @current_user.logged_in = false
+      @current_user.save
+      session[:user_id] = nil
+      flash[:notice] = "Du wurdest abgemeldet."
+    else
+      flash[:error] = "Du bist nicht angemeldet."
+    end
     redirect_to root_url
   end
 
@@ -51,5 +65,13 @@ class MainController < ApplicationController
     Delayed::Job.destroy_all
     flash[:notice] = "Alle Aufträge wurden gelöscht."
     redirect_to debug_url
+  end
+
+  def other_people_in_same_team_logged_in?(current_user)
+    !current_user.teams.collect(&:people).flatten.select{|p| !p.hidden and (p != current_user) and p.currently_logged_in?}.empty?
+  end
+
+  def other_administrators_logged_in?(current_user)
+    !Person.administrators.visible.select{|p| (p != current_user) and p.currently_logged_in?}.empty?
   end
 end

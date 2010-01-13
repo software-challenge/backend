@@ -28,6 +28,9 @@ class Person < ActiveRecord::Base
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
 
   named_scope :visible, :conditions => {:hidden => false}
+  named_scope :administrators,
+    :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
+    :conditions => "roles.name = 'administrator'"
 
   # NOTE: you can only get teachers, tutors, pupils of a contestant. Person.teacher won't work
   named_scope :teachers,
@@ -150,6 +153,10 @@ class Person < ActiveRecord::Base
       end
     end
     @administrator = is_admin
+  end
+
+  def currently_logged_in?
+    self.logged_in and self.last_seen > 15.minutes.ago
   end
 
   def before_save
