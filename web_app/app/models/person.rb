@@ -28,6 +28,7 @@ class Person < ActiveRecord::Base
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
 
   named_scope :visible, :conditions => {:hidden => false}
+  named_scope :hidden, :conditions => {:hidden => true}
   named_scope :administrators,
     :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
     :conditions => "roles.name = 'administrator'"

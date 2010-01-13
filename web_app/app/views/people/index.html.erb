@@ -13,4 +13,11 @@
     <%= render :partial => "person", :collection => @people %>
   </table>
 
+  <h2><%=t "headers.hidden_people" %></h2>
+
+  <table class="data-table">
+    <%= render :partial => "person_table_head" %>
+    <%= render :partial => "person", :collection => @hidden_people %>
+  </table>
+
 <% end %>

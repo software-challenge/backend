@@ -1,7 +1,7 @@
 class PeopleController < ApplicationController
 
   before_filter :fetch_contestant, :only => [:people_for_contestant, :remove_from_contestant]
-  before_filter :fetch_person, :only => [:edit, :update, :hide, :remove_from_contestant]
+  before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove_from_contestant]
   access_control do
     allow :administrator
 
@@ -70,6 +70,7 @@ class PeopleController < ApplicationController
   # GET /people.xml
   def index
     @people = Person.visible :order => "email ASC"
+    @hidden_people = Person.hidden :order => "email ASC"
     @from = "admin"
 
     respond_to do |format|
@@ -191,6 +192,15 @@ class PeopleController < ApplicationController
 
   def hide
     generic_hide(@person)
+  end
+
+  def unhide
+    @person.hidden = false
+    @person.blocked = false
+    if @person.save
+      flash[:notice] = I18n.t "messages.unhidden_successfully", :name => @person.name
+    end
+    redirect_to :back
   end
 
   # DELETE /people/1

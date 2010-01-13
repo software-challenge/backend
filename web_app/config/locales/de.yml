@@ -6,6 +6,7 @@ de:
     password: "Passwort"
   messages:
     hidden_successfully: "{{name}} wurde erfolgreich gelöscht"
+    unhidden_successfully: "{{name}} wurde erfolgreich wiederhergestellt"
     confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen möchten?"
     confirm_remove_from_contestant: "Sind Sie sicher, dass Sie {{name}} aus dem Team entfernen möchten?"
     person_not_found_by_email: "Es konnte keine Person mit der eMail-Adresse '{{email}}' gefunden werden."
@@ -18,7 +19,10 @@ de:
     edit: "Bearbeiten"
     show: "Anzeigen"
     login: "Anmelden"
+    unhide: "Wiederherstellen"
     remove_from_contestant: "Aus Team entfernen"
+  headers:
+    hidden_people: "Gelöschte Personen"
   games:
     hase_und_igel:
       name: Hase und Igel
