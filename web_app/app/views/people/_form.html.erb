@@ -6,6 +6,14 @@
     <%= f.input :password, :required => @person.new_record?,
       :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" + (@person.new_record? ? "" : ", frei lassen um Passwort nicht zu ändern") + "."),
       :input_html => { :value => "", :autocomplete => "off" } %>
+    <% if @person.new_record? -%>
+      <li class="boolean optional">
+        <label for="send_notification">
+          <%= check_box_tag "send_notification" %>
+          <%=t "labels.send_notification" %>
+        </label>
+      </li>
+    <% end %>
 
     <% show_to :administrator do %>
       <%= f.input :administrator, :as => :boolean %>

@@ -4,6 +4,7 @@ de:
   labels:
     email_adress: "E-Mail-Adresse"
     password: "Passwort"
+    send_notification: "eMail mit Zugangsdaten versenden"
   messages:
     hidden_successfully: "{{name}} wurde erfolgreich gelöscht"
     unhidden_successfully: "{{name}} wurde erfolgreich wiederhergestellt"

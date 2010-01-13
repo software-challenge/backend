@@ -143,6 +143,10 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if success
+
+        if params[:send_notification] == "1"
+          PersonMailer.deliver_signup_notification(@person, @current_contest, person_params[:password])
+        end
         flash[:notice] = @person.name + ' wurde erfolgreich angelegt.'
         format.html do
           if @from_admin or @person.teams.empty?
