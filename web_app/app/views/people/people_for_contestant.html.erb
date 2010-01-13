@@ -11,30 +11,35 @@
 
 <% tabnav :contestant do %>
 
-  <% unless @people_by_role[:teacher].empty? -%>
-  <h2>LehererInnen</h2>
-
+  <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
   <table class="data-table">
+  <% unless @contestant.people.teachers.empty? -%>
+    <thead>
+    <tr><td colspan="<%=colspan%>"><h2>LehrerInnen</h2></td></tr>
     <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @people_by_role[:teacher] %>
-  </table>
+    </thead>
+    <tbody>
+    <%= render :partial => "person", :collection => @contestant.people.teachers %>
+    </tbody>
+  <% end %>
+  <% unless @contestant.people.tutors.empty? -%>
+    <thead>
+    <tr><td colspan="<%=colspan%>"><h2>TutorInnen</h2></td></tr>
+    <%= render :partial => "person_table_head" %>
+    </thead>
+    <tbody>
+    <%= render :partial => "person", :collection => @contestant.people.tutors %>
+    </tbody>
   <% end %>
 
-  <% unless @people_by_role[:tutor].empty? -%>
-  <h2>TutorInnen</h2>
-
-  <table class="data-table">
+  <% unless @contestant.people.pupils.empty? -%>
+    <thead>
+    <tr><td colspan="<%=colspan%>"><h2>SchülerInnen</h2></td></tr>
     <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @people_by_role[:tutor] %>
-  </table>
+    </thead>
+    <tbody>
+    <%= render :partial => "person", :collection => @contestant.people.pupils %>
+    </tbody>
   <% end %>
-
-  <% unless @people_by_role[:pupil].empty? -%>
-  <h2>SchülerInnen</h2>
-
-  <table class="data-table">
-    <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @people_by_role[:pupil] %>
   </table>
-  <% end %>
 <% end %>

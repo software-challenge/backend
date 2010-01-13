@@ -24,12 +24,13 @@
   <td>
     <% if may_see_person_details? :person => person -%>
     <% show_image = image_tag "actions/show.png", :title => I18n.t("actions.show") %>
-    <%= link_to show_image, person %></td>
+    <%= link_to show_image, person %>
     <% end -%>
+  </td>
   <td>
     <% if current_user.has_role? :administrator or same_person(person) -%>
     <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit") %>
-    <%= link_to edit_image, edit_person_path(person) %>
+    <%= link_to edit_image, edit_person_path(person, :from => @from) %>
     <% end -%>
   </td>
   <% if @contestant -%>
