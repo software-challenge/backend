@@ -11,6 +11,6 @@ module PeopleHelper
   end
 
   def random_password
-    ActiveSupport::SecureRandom.base64(8)
+    ActiveSupport::SecureRandom.base64(6)
   end
 end
