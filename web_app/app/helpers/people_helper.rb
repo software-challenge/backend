@@ -9,4 +9,8 @@ module PeopleHelper
     end
     roles.collect { |role| [Role.translate(role, :for => Contestant), role] }
   end
+
+  def random_password
+    ActiveSupport::SecureRandom.base64(8)
+  end
 end
