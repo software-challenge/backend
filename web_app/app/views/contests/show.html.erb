@@ -27,8 +27,8 @@
   <% current_user.teams.visible.each do |team| %>
     <div>
       <div style="float: right;">
-        <%= link_to "Teamseite", [:contest, team] %>
-        <%= link_to "Computerspieler", :controller => "clients", :action => "index", :contestant_id => team %>
+        <%= link_to t("views.teamside"), [:contest, team] %>
+        <%= link_to t("views.client"), :controller => "clients", :action => "index", :contestant_id => team %>
       </div>
       <h3>
         <%=h team.name %>

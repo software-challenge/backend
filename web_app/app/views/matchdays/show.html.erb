@@ -4,15 +4,15 @@
       <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %>
     <% else %>
       <% if @matchday.played? %>
-        <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => "Neu zusammenrechnen", :id => "reaggregateAction" do %>
-          <%= image_tag('actions/refresh.png') %>Addieren
+        <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateAction" do %>
+          <%= image_tag('actions/refresh.png') %><%= t ("actions.add") %>
         <% end %>
-        <% link_to reset_contest_matchday_url(@matchday), :method => "post", :title => "Zurücksetzen", :id => "resetAction" do %>
-          <%= image_tag('actions/destroy.png') %>Zurücksetzen
+        <% link_to reset_contest_matchday_url(@matchday), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
+          <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
         <% end %>
       <% else %>
-        <% link_to play_contest_matchday_url(@matchday), :method => "post", :title => "Spielen", :id => "playAction" do %>
-          <%= image_tag('actions/play.png') %>Spielen
+        <% link_to play_contest_matchday_url(@matchday), :method => "post", :title => t("views.play"), :id => "playAction" do %>
+          <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
       <% end %>
     <% end %>
@@ -21,7 +21,7 @@
 
 <h1>
   <%= link_to @contest.name, contest_matchdays_url %> /
-  <%= @matchday.position %>. Spieltag
+  <%= @matchday.position %>. <%= t "views.matchday" %>
 </h1>
 
 <% tabnav :matchday do %>

@@ -29,14 +29,14 @@
       <% semantic_form_for :schedule, :url => refresh_matchdays_contest_url, :method => :post do |f| %>
         <% matchday_count = @contest.estimate_matchday_count %>
         <p>
-          Der Wettbewerb hat <b><%= contestant_count %> <%= Contestant.human_name(:count => contestant_count) %></b>
-          und wird somit <b><%= matchday_count %> <%= Matchday.human_name(:count => matchday_count) %></b> haben.
+          <%= t "views.contest_has" %><b><%= contestant_count %> <%= Contestant.human_name(:count => contestant_count) %></b>
+          <%= t "views.therefore" %> <b><%= matchday_count %> <%= Matchday.human_name(:count => matchday_count) %></b> haben.
         </p>
         <% f.inputs do %>
           <%= f.input :start_at, :as => :date, :label => "Erster Spieltag" %>
           <% days = (0..6).collect { |i| [t("date.abbr_day_names")[i], i] } %>
           <%= f.input :weekdays, :as => :check_boxes, :collection => days, :selected => [1,4],
-            :hint => "Einzelne Daten können nachträglich verschoben werden.", :label => "Wochentage",
+            :hint => I18n.t("views.date_can_be_moved"), :label => I18n.t("views.weekdays"),
             :wrapper_html => { :class => "horizontal" } %>
         <% end %>
         <%= f.buttons %>

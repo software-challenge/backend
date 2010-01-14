@@ -13,7 +13,7 @@
     <% elsif match.running? %>
       <%= image_tag 'ui/spinner.gif' %>
     <% else %>
-      <em>ausstehend</em>
+      <em><%= t "views.outstanding" %></em>
     <% end %>
   </td>
 </tr>

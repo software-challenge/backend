@@ -2,7 +2,7 @@
   <% show_to :administrator do -%>
   <% if @contest.ready? and !@contest.begun? %>
     <% link_to reset_matchdays_contest_url, :method => :post do %>
-      <%= image_tag('actions/destroy.png') %>Spielplan löschen
+      <%= image_tag('actions/destroy.png') %><%= t "views.clear_schedule" %>
     <% end %>
   <% end %>
   <% end %>
@@ -17,8 +17,8 @@
     <thead>
       <tr>
         <th style="padding-left: 10px; text-align: center;">&nbsp;</th>
-        <th>Wann</th>
-        <th>Status</th>
+        <th><%= t "views.when" %></th>
+        <th><%= (t "views.status").capitalize%></th>
       </tr>
     </thead>
 
@@ -26,7 +26,7 @@
       <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
         <td style="padding-left: 10px;">
           <% link_to [:contest, matchday] do %>
-            <%= i+1 %>. Spieltag
+            <%= i+1 %>. <%= t "views.matchday" %>
           <% end %>
         </td>
         <td><%= l(matchday.when, :format => :long) %></td>

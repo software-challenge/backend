@@ -1,34 +1,34 @@
 <% if Delayed::Job.exists? %>
   <div id="actions">
     <% link_to clear_jobs_url, :method => :post do %>
-      <%= image_tag('actions/destroy.png') %>Alle Aufträge löschen
+      <%= image_tag('actions/destroy.png') %><%= t "views.delete_all_jobs" %>
     <% end %>
   </div>
 <% end %>
 
-<h1>Administration</h1>
+<h1><%= t "views.administration" %></h1>
 
 <% tabnav :administration do %>
 
-  <h3>Einstellungen</h3>
+  <h3><%= t "views.settings" %></h3>
   <dl>
-    <dt>Maximale Laufzeit</dt>
+    <dt><%= t "views.max_runtime" %></dt>
     <dd><%= distance_of_time_in_words Delayed::Worker.max_run_time %></dd>
-    <dt>Maximale Versuche</dt>
+    <dt><%= t "views.max_trys" %></dt>
     <dd><%= Delayed::Worker.max_attempts %></dd>
   </dl>
 
-  <h3>Übersicht</h3>
+  <h3><%= t "views.overview" %></h3>
   <table class="data-table">
     <thead>
       <tr>
         <th>ID</th>
-        <th style="width: 40%;">Status</th>
-        <th>Geplant für</th>
-        <th>Begonnen</th>
-        <th style="text-align: center;">Prio</th>
-        <th style="text-align: center;">Versuche</th>
-        <th>Aktualisiert</th>
+        <th style="width: 40%;"><%= t "views.status" %></th>
+        <th><%= t "views.planned_for" %></th>
+        <th><%= t "views.began" %></th>
+        <th style="text-align: center;"><%= t "views.prio" %></th>
+        <th style="text-align: center;"><%= t "views.trys" %></th>
+        <th><%= t "views.refreshed" %></th>
       </tr>
     </thead>
     <% unless @jobs.empty? %>
@@ -57,19 +57,19 @@
       <% end %>
     <% else %>
       <tr>
-        <td colspan="6">Keine Aufträge vorhanden</td>
+        <td colspan="6"><%= t "views.no_jobs" %></td>
       </tr>
     <% end %>
   </table>
 
-  <h2>Logdateien</h2>
+  <h2><%= t "views.logs" %></h2>
 
-  <h3>Game Server</h3>
+  <h3><%= t "views.game_server" %></h3>
   <div style="overflow: scroll;">
     <pre><%=h @server_log %></pre>
   </div>
 
-  <h3>Game Manager</h3>
+  <h3><%= t "views.game_manager" %></h3>
   <div style="overflow: scroll;">
     <pre><%=h @manager_log %></pre>
   </div>

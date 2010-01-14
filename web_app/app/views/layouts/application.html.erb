@@ -31,23 +31,23 @@
           <div style="line-height: 24px; padding: 8px 0;">
             <% if logged_in? %>
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
-                <span>Sie sind angemeldet als</span>
+                <span><%= t "views.logged_in_as" %></span>
                 <span><%= link_to current_user.name, person_url(current_user) %></span>
                 <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
-                <span><%= link_to "Abmelden", logout_url, :method => :post %></span>
+                <span><%= link_to t("actions.logout"), logout_url, :method => :post %></span>
               </span>
             <% else %>
-              <span>Hey, wer sind Sie denn?</span>
-              <span>Jetzt <%= link_to "anmelden!", login_url %></span>
+              <span><%= t("views.hey_who_are_you") %></span>
+              <span> <%= link_to ((I18n.t("actions.login")).downcase)+"!", login_url %></span>
             <% end %>
           </div>
           <div style="line-height: 14px; padding: 0 0 6px 0;">
             <ul id="mainMenu">
-              <li><%= link_to "Startseite", root_url %></li>
+              <li><%= link_to t("views.starting_page"), root_url %></li>
               <% team_count = (logged_in? ? current_user.contestants.for_contest(current_contest).count : 0) %>
 
               <% show_to :administrator do %>
-                <li><%= link_to "Administration", administration_url %></li>
+                <li><%= link_to t("views.mainmenu"), administration_url %></li>
               <% end %>
             </ul>
           </div>
@@ -60,7 +60,7 @@
               <div class="ui-widget">
                 <div class="ui-state-highlight ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
                   <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-                  <strong>Hinweis:</strong> <%=h flash[:notice] %></p>
+                  <strong><%= t "views.clue" %>:</strong> <%=h flash[:notice] %></p>
                 </div>
               </div>
             <% end %>
@@ -68,7 +68,7 @@
               <div class="ui-widget">
                 <div class="ui-state-error ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
                   <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                  <strong>Fehler:</strong> <%=h flash[:error] %></p>
+                  <strong><%= t "views.error" %>:</strong> <%=h flash[:error] %></p>
                 </div>
               </div>
             <% end %>
@@ -78,7 +78,7 @@
         <%= yield %>
       </div>
       <div id="footer">
-        &copy; 2009 Christian-Albrechts-Universität zu Kiel. Alle Rechte vorbehalten.<br/>
+        &copy; <%= t "views.copyright" %><br/>
       </div>
     </div>
   </body>
