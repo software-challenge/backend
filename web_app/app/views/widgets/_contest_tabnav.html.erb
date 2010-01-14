@@ -15,14 +15,6 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
         t.highlights_on :controller => "contests", :action => "create"
     end if @contest.new_record?
 
-=begin
-    add_tab do |t|
-        t.named 'Bearbeiten'
-        t.links_to hash_for_edit_admin_contest_url(:id => @contest.to_param)
-        t.highlights_on :controller => "contests", :action => "update"
-    end unless @contest.new_record?
-=end
-
     add_tab do |t|
       t.named "Terminplan"
       begin; t.disable!; next; end if @contest.new_record?
@@ -41,7 +33,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.named "Meine #{Contestant.human_name(:count => 2)}"
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_my_contest_contestants_url
-  end if logged_in? and current_user.contestants.for_contest(@contest).count > 1
+  end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 1
 
   add_tab do |t|
     t.named 'Spieltage'

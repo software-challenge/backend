@@ -35,6 +35,11 @@ class PeopleController < ApplicationController
     allow logged_in, :if => :same_person
   end
 
+  access_control :helper => :may_add_person? do
+    allow :administrator
+    allow :tutor, :teacher, :of => :contestant
+  end
+
   access_control :helper => :may_remove_from_contestant? do
     allow :administrator
     allow :tutor, :teacher, :of => :contestant
