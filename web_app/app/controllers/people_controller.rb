@@ -40,6 +40,11 @@ class PeopleController < ApplicationController
     allow :tutor, :teacher, :of => :contestant
   end
 
+  access_control :may_access_contestant_people_list?, :filter => false do
+    allow :administrator
+    allow :tutor, :teacher, :of => :contestant
+  end
+
   def same_person(as = nil)
     if as.nil?
       current_user == @person
@@ -219,7 +224,11 @@ class PeopleController < ApplicationController
 
   def remove_from_contestant
     @person.memberships.find_by_contestant_id(@contestant.id).destroy
-    redirect_to :action => :people_for_contestant, :contestant_id => @contestant.to_param
+    if may_access_contestant_people_list? @contestant
+      redirect_to :action => :people_for_contestant, :contestant_id => @contestant.to_param
+    else
+      redirect_to :action => :index, :controller => :contestants
+    end
   end
 
 end

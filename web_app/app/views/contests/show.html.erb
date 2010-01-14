@@ -24,7 +24,7 @@
 </div>
 
 <% if logged_in? %>
-  <% current_user.teams.each do |team| %>
+  <% current_user.teams.visible.each do |team| %>
     <div>
       <div style="float: right;">
         <%= link_to "Teamseite", [:contest, team] %>

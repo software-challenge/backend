@@ -23,33 +23,35 @@
     <% end %>
 
     <% show_to :administrator, :teacher, :tutor do %>
-      <%= f.errors_on :memberships %>
-      <li>
-        <% content_for :teams do %>
-          <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build } %>
-          <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
-            <% t = m.contestant %>
-            <% checkbox_id = "person_team_#{t.id}"  %>
-            <li class="boolean <%= cycle("odd", "even") %>">
-              <label for="<%= checkbox_id %>" style="padding-left: 0;">
-                <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
-                <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam" %>
-                <%= t.name %>
-              </label>
+      <% if current_user != @person or current_user.has_role? :administrator %>
+        <%= f.errors_on :memberships %>
+        <li>
+          <% content_for :teams do %>
+            <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build } %>
+            <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
+              <% t = m.contestant %>
+              <% checkbox_id = "person_team_#{t.id}"  %>
+              <li class="boolean <%= cycle("odd", "even") %>">
+                <label for="<%= checkbox_id %>" style="padding-left: 0;">
+                  <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
+                  <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam" %>
+                  <%= t.name %>
+                </label>
 
-              <div style="float: right;" class="role">
-                <% if manageable_roles.size == 1 -%>
-                  <%= hidden_field_tag "person[teams][#{t.id}][role]", manageable_roles.first[1] %>
-                <% else -%>
-                  <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
-                <% end -%>
-              </div>
-            </li>
+                <div style="float: right;" class="role">
+                  <% if manageable_roles.size == 1 -%>
+                    <%= hidden_field_tag "person[teams][#{t.id}][role]", manageable_roles.first[1] %>
+                  <% else -%>
+                    <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
+                  <% end -%>
+                </div>
+              </li>
+            <% end %>
           <% end %>
-        <% end %>
-        <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
-      </li>
-      <%= f.input "blocked", :required => false %>
+          <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
+        </li>
+        <%= f.input "blocked", :required => false %>
+      <% end %>
       <%= hidden_field_tag "from", (@from_admin ? "admin" : "contestant") %>
     <% end %>
 
