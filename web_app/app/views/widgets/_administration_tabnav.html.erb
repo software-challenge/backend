@@ -14,22 +14,22 @@
 render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
-    t.named 'Übersicht'
+    t.named t("titles.overview")
     t.links_to hash_for_administration_url
   end
 
   add_tab do |t|
-    t.named 'Alle Personen'
+    t.named t("titles.all_people")
     t.links_to hash_for_people_url
   end
 
   add_tab do |t|
-    t.named 'Wettbewerbe'
+    t.named t("titles.contests.show")
     t.links_to hash_for_admin_contests_url
   end
 
   add_tab do |t|
-    t.named 'Debugansicht'
+    t.named t("titles.debug_view")
     t.links_to hash_for_debug_url
   end
 

@@ -2,7 +2,7 @@
 render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
-    t.named 'Übersicht'
+    t.named t("titles.overview")
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_contest_url
   end
@@ -10,13 +10,13 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   show_to :administrator do
 
     add_tab do |t|
-        t.named 'Erstellen'
+        t.named t("actions.create").capitalize
         t.links_to hash_for_new_contest_url
         t.highlights_on :controller => "contests", :action => "create"
     end if @contest.new_record?
 
     add_tab do |t|
-      t.named "Terminplan"
+      t.named t("titles.schedule")
       begin; t.disable!; next; end if @contest.new_record?
       t.links_to hash_for_contest_edit_schedule_url
     end
@@ -30,27 +30,27 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
-    t.named "Meine #{Contestant.human_name(:count => 2)}"
+    t.named t("views.my") + " " + Contestant.human_name(:count => 2)
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_my_contest_contestants_url
   end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 1
 
   add_tab do |t|
-    t.named 'Spieltage'
+    t.named t("titles.matchdays")
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_contest_matchdays_url
     t.disable! unless @contest.ready?
   end
 
   add_tab do |t|
-    t.named 'Rangliste'
+    t.named t("titles.ranking")
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_contest_standings_url
     t.disable! unless @contest.last_played_matchday
   end
 
   add_tab do |t|
-    t.named 'Ergebnisse'
+    t.named t("titles.results")
     begin; t.disable!; next; end if @contest.new_record?
     t.named "#{@contest.last_played_matchday.position}. Spieltag" if @contest.last_played_matchday
     t.links_to hash_for_contest_results_url

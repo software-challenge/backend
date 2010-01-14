@@ -128,8 +128,10 @@ de:
     login: "Anmelden"
     logout: "Abmelden"
     add: "Addieren"
+    my: "Meine"
     reset: "Zurücksetzen"
     play: "Spielen"
+    use: "verwenden"
     check: "Überprüfen"
     invite: "Einladen"
     create: "anlegen"
@@ -180,9 +182,20 @@ de:
       client:
         file: Der Computerspieler muss als ZIP-Datei gepackt werden.
   titles:
+    schedule: "Terminplan"
+    overview: "Übersicht"
+    ranking: "Rangliste"
+    results: "Ergebnisse"
+    people: "Personen"
+    table: "Tabelle"
+    matches: "Begegnungen"
+    matchdays: "Spieltage"
+    all_people: "Alle Personen"
+    debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
     contests:
       edit_schedule: Terminplan bearbeiten
+      show: "Wettkämpfe"
     generic:
       index: "Liste der {{model}}"
       edit: "{{model}} bearbeiten"

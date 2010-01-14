@@ -5,7 +5,7 @@
     <%= f.input :email, :required => true, :hint => t("views.email_required") %>
     <% generated_password = random_password() %>
     <%= f.input :password, :required => @person.new_record?,
-      :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + (@person.new_record? ?  "" : t("views.password_not_change_hint")) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">verwenden</a>."),
+      :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + (@person.new_record? ?  "" : t("views.password_not_change_hint")) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>."),
       :input_html => { :value => "", :autocomplete => "off" } %>
     <li class="boolean optional">
       <label for="send_notification">

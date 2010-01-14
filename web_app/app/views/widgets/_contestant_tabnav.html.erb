@@ -3,13 +3,13 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
 
   show_to :administrator do
     add_tab do |t|
-      t.named 'Erstellen'
+      t.named t("actions.create").capitalize
       t.links_to hash_for_new_contest_contestant_url
       t.highlights_on :controller => "contestants", :action => "create"
     end if @contestant.new_record?
 
     add_tab do |t|
-      t.named 'Bearbeiten'
+      t.named t("actions.edit")
       t.links_to hash_for_edit_contest_contestant_url(:id => @contestant)
       t.highlights_on :controller => "contestants", :action => "update"
     end unless @contestant.new_record?
@@ -17,13 +17,13 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
 
   if logged_in?
     add_tab do |t|
-      t.named 'Personen'
+      t.named t("titles.people")
       begin; t.disable!; next; end if @contestant.new_record?
       t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant
     end
 
     add_tab do |t|
-      t.named 'Computerspieler'
+      t.named Client.human_name(:count => 2)
       begin; t.disable!; next; end if @contestant.new_record?
       t.links_to :controller => "clients", :action => "index", :contestant_id => @contestant
       t.highlights_on :controller => "clients", :action => "new"
@@ -32,7 +32,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
-    t.named 'Matches'
+    t.named t("titles.matches")
     begin; t.disable!; next; end if @contestant.new_record?
     t.links_to :controller => "matches", :action => "index_for_contestant", :contestant_id => @contestant
   end
