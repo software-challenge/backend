@@ -9,7 +9,7 @@ class PeopleController < ApplicationController
       allow logged_in
     end
 
-    actions :new, :create do
+    actions :new, :create, :invite do
       allow :administrator, :teacher, :tutor
     end
 
@@ -133,6 +133,10 @@ class PeopleController < ApplicationController
       format.html # new.html.erb
       format.xml  { render :xml => @person }
     end
+  end
+
+  def invite
+    self.new
   end
 
   # GET /people/1/edit

@@ -135,7 +135,8 @@ class ContestantsController < ApplicationController
           flash[:notice] = I18n.t("messages.person_added_to_contestant")
         end
       end
-      redirect_to :controller => :people, :action => :people_for_contestant, :contestant_id => params[:contestant_id]
+      
+      redirect_to invite_contest_contestant_person_url(:contestant_id => params[:contestant_id])
     end
   end
 

@@ -1,31 +1,15 @@
-<h1><%= t("views.new_person") + " " + t("actions.create") %></h1>
-
-<%= render :partial => "form" %>
-
 <% if @contestant -%>
-<h1><%= t "views.invite_person" %></h1>
+  <h1>
+    <%= link_to @contest.name, contest_contestants_url %> /
+    <%= link_to @contestant.name, contest_contestant_url(@contestant) %> /
+    <%= t("views.new_person") + " " + t("actions.create") %>
+  </h1>
 
-  <% form_tag({:controller => "contestants", :action => "add_person"}, {:class => "formtastic"}) do %>
-    <%= hidden_field_tag :contestant_id, @contestant.to_param %>
-    <% if manageable_roles.size == 1 -%>
-      <%= hidden_field_tag "role", manageable_roles.first[1] %>
-    <% end -%>
-    <fieldset class="inputs">
-      <ol>
-        <li class="string required">
-          <%= label_tag :email %> <%= text_field_tag :email %>
-        </li>
-      <% if manageable_roles.size > 1 -%>
-        <li>
-          <%= label_tag :role, "als" %>
-          <%= select_tag :role, options_for_select(manageable_roles) %>
-        </li>
-      <% end -%>
-      </ol>
-    </fieldset>
-    <fieldset class="buttons">
-      <%= submit_tag t("actions.invite") %>
-    </fieldset>
-  <% end -%>
+  <% tabnav :new_person do %>
+    <%= render :partial => "form" %>
+  <% end %>
+<% else %>
+  <h1><%= t("views.new_person") + " " + t("actions.create") %></h1>
 
-<% end -%>
+  <%= render :partial => "form" %>
+<% end %>

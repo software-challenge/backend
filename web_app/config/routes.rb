@@ -47,6 +47,7 @@ ActionController::Routing::Routes.draw do |map|
         end
         contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
         contestant.people '/mitglieder', :controller => "people", :action => "people_for_contestant"
+        contestant.person '/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_"
       end
 
       c.standings '/rangliste', :controller => 'contests', :action => 'standings'

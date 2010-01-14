@@ -1,0 +1,14 @@
+<%- render_tabnav :matchday, :html => { :class => "tabs_tabnav" } do
+
+  add_tab do |t|
+    t.named t("views.new_person")
+    t.links_to new_person_url(:contestant_id => @contestant.to_param, :from => "contestant")
+    t.highlights_on hash_for_new_person_url
+  end
+
+  add_tab do |t|
+    t.named t("views.invite_person")
+    t.links_to hash_for_invite_contest_contestant_person_url(:contestant_id => @contestant)
+  end
+
+end -%>
