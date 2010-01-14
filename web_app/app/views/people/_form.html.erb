@@ -7,18 +7,16 @@
     <%= f.input :password, :required => @person.new_record?,
       :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" +
                  (@person.new_record? ?
-                  ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">verwenden</a>" :
+                  "" :
                   ", frei lassen um Passwort nicht zu ändern"
-                 ) + "."),
+                 ) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">verwenden</a>."),
       :input_html => { :value => "", :autocomplete => "off" } %>
-    <% if @person.new_record? -%>
-      <li class="boolean optional">
-        <label for="send_notification">
-          <%= check_box_tag "send_notification" %>
-          <%=t "labels.send_notification" %>
-        </label>
-      </li>
-    <% end %>
+    <li class="boolean optional">
+      <label for="send_notification">
+        <%= check_box_tag "send_notification" %>
+        <%=t "labels.send_notification" %>
+      </label>
+    </li>
 
     <% show_to :administrator do %>
       <%= f.input :administrator, :as => :boolean %>
