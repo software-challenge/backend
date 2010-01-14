@@ -6,7 +6,7 @@
   <% f.buttons do %>
     <%= f.commit_button %>
     <% if @contestant.new_record? %>
-    oder <%= link_to "Zurück", contest_contestants_url(@contestant.contest) %>
+    oder <%= link_to t("views.back"), contest_contestants_url(@contestant.contest) %>
     <% end %>
   <% end %>
 <% end %>

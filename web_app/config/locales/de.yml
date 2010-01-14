@@ -2,12 +2,17 @@ de:
   "true": Ja
   "false": Nein
   labels:
-    email_adress: "E-Mail-Adresse"
+    email_adress: "eMail-Adresse"
     password: "Passwort"
     send_notification: "eMail mit Zugangsdaten versenden"
 
   views:
-    aktive: "aktiv"
+    need_more_contestants_for_contest: "{{count}} {{contestant_name}} sind nicht genug, um einen Wettkampf zu beginnen"
+    clear_schedule: "Spielplan löschen"
+    members: "Mitglieder"
+    new: "Neues"
+    back: "Zurück"
+    active: "aktiv"
     filename: "Dateiname"
     size: "Größe"
     mainfile: "Hauptdatei"
@@ -21,6 +26,9 @@ de:
     no_executable_selected: "Es wurde bisher keine Ausführungsdatei ausgewählt."
     upload_client: "Computerspieler hochladen"
     important_clue: "Wichtiger Hinweis"
+    password_length: "Die Mindestlänge ist {{min_length}} Zeichen"
+    password_not_change_hint: ", frei lassen um Passwort nicht zu ändern"
+    email_required: "Bei der Anmeldung muss diese eMail-Adresse angegeben werden."
     client_message_one: "Bitte laden Sie einen Computerspieler für die Wettkampfteilnahme hoch und aktivieren Sie diesen, indem Sie diesen auswählen. Falls Sie bis zur nächsten Begegnung, an der Ihr Team teilnimmt, noch keinen Computerspieler aktiviert haben, wird Ihr Team das Spiel verlieren, sobald es am Zug ist."
     client_message_two: "Der Test eines hochgeladenen Computerspielers benötigt ca. 5 Minuten und läuft auf einer virtuellen Maschine im Hintergrund. Beim Test spielt der hochgeladene Computerspieler zweimal gegen den SimpleClient. Da nur eine sehr begrenzte Anzahl virtueller Maschinen zur Verfügung steht, kann es sein, dass der Test Ihres Computerspielers erst später beginnen kann, wenn eine virtuelle Maschine dafür frei ist. Außerdem kann ein Teammitglied nur dann einen Testauftrag erteilen, wenn zur Zeit kein anderer Computerspieler desselben Teams gestestet wird oder in der Warteschlange steht. Nach dem Testende wird das Testergebnis hier angezeigt."
     you_can_leave_while_testing: "Sie können diese Seite währenddessen ruhig verlassen, der Test wird dadurch nicht beeinflusst."
@@ -36,9 +44,9 @@ de:
     matchday_successfully_updated: "Spieltag wurde erfolgreich aktualisiert."
     job_started_successfully: "Der Auftrag wurde erfolgreich gestartet"
     job_starting_failed: "Konnte den Auftrag nicht starten."
-    already_logged_in: "Sie bist bereits eingeloggt."
-    logout_successful: "Sie wurdest abgemeldet."
-    not_logged_in: "Sie bist nicht angemeldet."
+    already_logged_in: "Sie sind bereits eingeloggt."
+    logout_successful: "Sie wurden abgemeldet."
+    not_logged_in: "Sie sind nicht angemeldet."
     login_invalid: "Die Zugangsdaten sind nicht gültig."
     access_denied: "Zugriff nicht gestattet."
     contest_created_successfully: "Wettbewerb wurde erfolgreich erstellt."

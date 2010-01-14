@@ -11,7 +11,7 @@
 <div id="actions">
   <% if @contest.ready? and !@contest.begun? %>
     <% link_to reset_matchdays_contest_url, :method => "post" do %>
-      <%= image_tag('actions/destroy.png') %>Spielplan löschen
+      <%= image_tag('actions/destroy.png') %> <%= t "views.clear_schedule" %>
     <% end %>
   <% end %>
 </div>
@@ -24,7 +24,7 @@
   <% unless @contest.ready? %>
     <% contestant_count = @contest.contestants.visible.count %>
     <% if contestant_count <= 1 %>
-      <%= contestant_count %> <%= Contestant.human_name(:count => contestant_count) %> sind nicht genug, um einen Wettkampf zu beginnen.
+      <%= t("views.need_more_contestants_for_contest", {:count => contestant_count, :contestant_name => Contestant.human_name(:count => contestant_count)}) %>
     <% else %>
       <% semantic_form_for :schedule, :url => refresh_matchdays_contest_url, :method => :post do |f| %>
         <% matchday_count = @contest.estimate_matchday_count %>

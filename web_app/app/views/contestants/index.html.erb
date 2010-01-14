@@ -2,7 +2,7 @@
   <% if may_add_teams? -%>
     <% unless @contest.ready? %>
       <% link_to new_contest_contestant_url do %>
-        <%= image_tag('actions/add.png') %>Neues <%= Contestant.human_name %>
+        <%= image_tag('actions/add.png') %> <%= I18n.t("views.new") + " " + Contestant.human_name %>
       <% end %>
     <% end %>
   <% end %>
@@ -17,10 +17,10 @@
     <thead>
       <tr>
         <th><%= Contestant.human_attribute_name :location %></th>
-        <th>Team</th>
-        <th>Mitglieder</th>
-        <th>LehrerIn</th>
-        <th>TutorIn</th>
+        <th><%= Contestant.human_name %></th>
+        <th><%= t "views.members" %></th>
+        <th><%= t "acl9.roles.contestant.teacher" %></th>
+        <th><%= t "acl9.roles.contestant.tutor" %></th>
         <th colspan="2">&nbsp;<!-- options --></th>
       </tr>
     </thead>

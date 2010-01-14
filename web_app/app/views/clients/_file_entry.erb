@@ -11,7 +11,7 @@
   <td>
     <% unless file_entry.directory? %>
       <% if file_entry.current? %>
-        <b>Aktiv</b>
+        <b><%= t("views.active").capitalize %></b>
       <% else %>
         <%= link_to t("views.select").capitalize, select_main_contest_contestant_client_url(client.contestant, client, :main_id => file_entry.id), :method => :post %>
       <% end %>
