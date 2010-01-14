@@ -157,7 +157,7 @@ class Person < ActiveRecord::Base
   end
 
   def currently_logged_in?
-    self.logged_in and self.last_seen > 15.minutes.ago
+    self.logged_in and self.last_seen > ActionController::Base.session_options[:expire_after].ago
   end
 
   def before_save

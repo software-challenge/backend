@@ -26,7 +26,15 @@ class ApplicationController < ActionController::Base
   protected
 
   rescue_from NotAllowed, Acl9::AccessDenied do
-    render_optional_error_file 403
+    if logged_in?
+      # user has not enough rights
+      render_optional_error_file 403
+    else
+      # user might be logged out, due to inactivity or trys to access
+      # a restricted area without logging in because of bookmark
+      flash[:error] = I18n.t "messages.login_first"
+      redirect_to login_url
+    end
   end
 
   helper_method :current_user, :logged_in?, :not_logged_in?

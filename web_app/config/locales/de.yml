@@ -15,6 +15,7 @@ de:
     person_already_belongs_to_contestant: "Person gehört bereits zum Team"
     other_teammembers_currently_logged_in: "Zur Zeit sind noch andere Personen aus Ihrem Team online."
     other_administrators_currently_logged_in: "Zur Zeit sind noch andere Administratoren online."
+    login_first: "Bitte melden Sie sich zuerst an (eventuell wurden Sie aufgrund von Inaktivität automatisch abgemeldet)"
   actions:
     delete: "Löschen"
     edit: "Bearbeiten"
@@ -22,6 +23,7 @@ de:
     login: "Anmelden"
     unhide: "Wiederherstellen"
     remove_from_contestant: "Aus Team entfernen"
+    activate_client: "Aktivieren"
   headers:
     hidden_people: "Gelöschte Personen"
   games:
