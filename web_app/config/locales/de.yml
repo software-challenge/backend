@@ -9,6 +9,7 @@ de:
   views:
     add_person: "Person hinzufügen"
     as: "als"
+    results: "Ergebnisse"
     member_since: "Mitglied seit"
     need_more_contestants_for_contest: "{{count}} {{contestant_name}} sind nicht genug, um einen Wettkampf zu beginnen"
     contestant: "Team"
