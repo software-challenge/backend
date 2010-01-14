@@ -2,14 +2,10 @@
   <% f.inputs do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
-    <%= f.input :email, :required => true, :hint => "Bei der Anmeldung muss diese E-Mail-Adresse angegeben werden." %>
+    <%= f.input :email, :required => true, :hint => t("views.email_required") %>
     <% generated_password = random_password() %>
     <%= f.input :password, :required => @person.new_record?,
-      :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" +
-                 (@person.new_record? ?
-                  "" :
-                  ", frei lassen um Passwort nicht zu ändern"
-                 ) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">verwenden</a>."),
+      :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + (@person.new_record? ?  "" : t("views.password_not_change_hint")) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">verwenden</a>."),
       :input_html => { :value => "", :autocomplete => "off" } %>
     <li class="boolean optional">
       <label for="send_notification">
@@ -60,7 +56,7 @@
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button %>
-    oder <%= link_to "Zurück", :back %>
+    <%= t "views.or" %> <%= link_to t("actions.back"), :back %>
   <% end %>
 <% end %>
 
