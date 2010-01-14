@@ -1,9 +1,9 @@
-<h1>Neue Person anlegen</h1>
+<h1><%= t("views.new_person") + " " + t("actions.create") %></h1>
 
 <%= render :partial => "form" %>
 
 <% if @contestant -%>
-<h1>Bestehende Person einladen</h1>
+<h1><%= t "views.invite_person" %></h1>
 
   <% form_tag({:controller => "contestants", :action => "add_person"}, {:class => "formtastic"}) do %>
     <%= hidden_field_tag :contestant_id, @contestant.to_param %>
@@ -24,7 +24,7 @@
       </ol>
     </fieldset>
     <fieldset class="buttons">
-      <%= submit_tag "Einladen" %>
+      <%= submit_tag t("actions.invite") %>
     </fieldset>
   <% end -%>
 

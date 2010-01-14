@@ -6,8 +6,8 @@ de:
 
     models:
       client:
-        one: Client
-        other: Clienten
+        one: Computerspieler
+        other: Computerspieler
       contest:
         one: Wettbewerb
         other: Wettbewerbe
@@ -41,7 +41,7 @@ de:
         first_name: Vorname
         last_name: Nachname
         nick_name: Spitzname
-        email: "E-Mail-Adresse"
+        email: "eMail-Adresse"
         password: Passwort
         administrator: "AdministratorIn"
         blocked: Gesperrt
