@@ -1,6 +1,6 @@
 <div id="actions">
   <% if may_add_person? %>
-    <% link_to(new_person_url(:contestant_id => @contestant.to_param, :from => @from)) do %>
+    <% link_to(new_contest_contestant_person_url(:contestant_id => @contestant.to_param)) do %>
       <%= image_tag('actions/add.png') %> <%= t "views.add_person" %>
     <% end %>
   <% end %>

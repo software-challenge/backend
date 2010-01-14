@@ -1,7 +1,10 @@
 class PeopleController < ApplicationController
 
+  protected
+
   before_filter :fetch_contestant, :only => [:people_for_contestant, :remove_from_contestant]
   before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove_from_contestant]
+
   access_control do
     allow :administrator
 
@@ -65,7 +68,6 @@ class PeopleController < ApplicationController
     allow :teacher, :tutor, :of => :person
   end
 
-
   def fetch_contestant
     # contestant needs to be fetched before authorization control
     @contestant = Contestant.find(params[:contestant_id])
@@ -76,12 +78,13 @@ class PeopleController < ApplicationController
     @person = Person.find(params[:id])
   end
 
+  public
+
   # GET /people
   # GET /people.xml
   def index
     @people = Person.visible :order => "email ASC"
     @hidden_people = Person.hidden :order => "email ASC"
-    @from = "admin"
 
     respond_to do |format|
       format.html # index.html.erb
@@ -97,8 +100,6 @@ class PeopleController < ApplicationController
     @people.each do |person|
       @people_by_role[person.membership_for(@contestant).role_name.to_sym] << person
     end
-
-    @from = "contestant"
 
     respond_to do |format|
       format.html
@@ -122,9 +123,7 @@ class PeopleController < ApplicationController
   def new
     @person = Person.new
 
-    @from_admin = params[:from] == "admin"
-
-    if (params[:contestant_id])
+    if params[:contestant_id]
       @contestant = Contestant.find params[:contestant_id]
       @person.teams = { params[:contestant_id] => {:_delete => false, :role => :pupil} }
     end
@@ -142,13 +141,11 @@ class PeopleController < ApplicationController
   # GET /people/1/edit
   def edit
     # @person is fetched in before_filter
-    @from_admin = params[:from] == "admin"
   end
 
   # POST /people
   # POST /people.xml
   def create
-    @from_admin = params[:from] == "admin"
     # cleanup params
     person_params = params[:person].clone
 
@@ -163,10 +160,10 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.created_successfully")
         format.html do
-          if @from_admin or @person.teams.visible.empty?
-            redirect_to people_url
-          else
+          if params[:contestant_id] and !@person.teams.visible.empty?
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
+          else
+            redirect_to people_url
           end
         end
         format.xml  { render :xml => @person, :status => :created, :location => @person }
@@ -182,8 +179,6 @@ class PeopleController < ApplicationController
   def update
     # @person is fetched in before_filter
 
-    @from_admin = params[:from] == "admin"
-
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
@@ -197,10 +192,10 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.updated_successfully")
         format.html do
-          if @from_admin or @person.teams.visible.empty?
-            redirect_to people_url
-          else
+          if params[:contestant_id] and !@person.teams.visible.empty?
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
+          else
+            redirect_to people_url
           end
         end
         format.xml  { head :ok }

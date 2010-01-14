@@ -30,7 +30,7 @@
   <td>
     <% if current_user.has_role? :administrator or same_person(person) -%>
     <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit") %>
-    <%= link_to edit_image, edit_person_path(person, :from => @from) %>
+    <%= link_to edit_image, edit_person_path(person) %>
     <% end -%>
   </td>
   <% if @contestant -%>

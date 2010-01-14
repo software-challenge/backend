@@ -1,4 +1,4 @@
-<% semantic_form_for(@person) do |f| %>
+<% semantic_form_for(@contestant ? [:contest, @contestant, @person] : @person) do |f| %>
   <% f.inputs do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
@@ -50,7 +50,6 @@
         </li>
         <%= f.input "blocked", :required => false %>
       <% end %>
-      <%= hidden_field_tag "from", (@from_admin ? "admin" : "contestant") %>
     <% end %>
 
   <% end %>
