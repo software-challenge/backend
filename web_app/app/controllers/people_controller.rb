@@ -3,6 +3,7 @@ class PeopleController < ApplicationController
   protected
 
   before_filter :fetch_contestant, :only => [:people_for_contestant, :remove_from_contestant]
+  before_filter :try_fetch_contestant
   before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove_from_contestant]
 
   access_control do
@@ -68,9 +69,17 @@ class PeopleController < ApplicationController
     allow :teacher, :tutor, :of => :person
   end
 
+  # NOTE: requires a contestant to be given
   def fetch_contestant
     # contestant needs to be fetched before authorization control
     @contestant = Contestant.find(params[:contestant_id])
+  end
+
+  # tries to fetch the contestant if available
+  def try_fetch_contestant
+    if params[:contestant_id]
+      @contestant ||= Contestant.find(params[:contestant_id])
+    end
   end
 
   def fetch_person
