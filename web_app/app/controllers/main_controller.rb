@@ -39,7 +39,7 @@ class MainController < ApplicationController
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
       flash[:notice] = I18n.t("messages.login_invalid")
-      render :action => "login"
+      redirect_to :action => "login"
     end
   end
 
