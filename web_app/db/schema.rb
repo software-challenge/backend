@@ -32,6 +32,14 @@ ActiveRecord::Schema.define(:version => 20100113091927) do
     t.boolean  "hidden",             :default => false, :null => false
   end
 
+  create_table "comments", :force => true do |t|
+    t.text     "text"
+    t.integer  "client_id"
+    t.integer  "person_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "contestants", :force => true do |t|
     t.string   "name"
     t.integer  "contest_id"

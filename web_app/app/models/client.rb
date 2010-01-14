@@ -9,6 +9,7 @@ class Client < ActiveRecord::Base
 
   has_many :file_entries, :class_name => "ClientFileEntry", :dependent => :destroy
   has_one :test_match, :class_name => "ClientMatch", :as => :set, :dependent => :destroy
+  has_many :comments, :dependent => :destroy
 
   has_attached_file :file
 
@@ -72,6 +73,10 @@ class Client < ActiveRecord::Base
   def java?
     return nil unless main_file_entry
     main_file_entry.file_name.ends_with? ".jar"
+  end
+
+  def has_comments?
+    return !self.comments.blank?
   end
 
   def status

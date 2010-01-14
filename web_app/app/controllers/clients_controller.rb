@@ -7,7 +7,6 @@ class ClientsController < ApplicationController
     allow :administrator
     allow :pupil, :tutor, :teacher, :of => :contestant
   end
-
   access_control :helper => :may_delete_client? do
     allow :administrator
     allow :pupil, :tutor, :teacher, :of => :contestant
@@ -158,7 +157,7 @@ class ClientsController < ApplicationController
 
     render :update do |page|
       page.replace "client-#{@client.id}",
-        :partial => "client", :locals => { :client => @client }
+        :partial => "client", :locals => { :client => @client, :render_comments => false }
 
       if @contestant.has_running_tests?
         page << %{$('.testActions .disabled').show();}
@@ -167,12 +166,44 @@ class ClientsController < ApplicationController
         page << %{$('.testActions .enabled').show();}
         page << %{$('.testActions .disabled').hide();}
       end
+
+      page << %{update_comment_icon(} + @client.id.to_s + ");"
     end
   end
 
   def hide
     @client = @contestant.clients.find(params[:id])
     generic_hide(@client, :file_file_name)
+  end
+
+  def get_comments
+    @client = Client.find(params[:client_id].to_i)
+    @comments = @client.comments.all(:order => "created_at DESC")
+    render :partial => "client_comment_list"
+  end
+
+  def create_comment
+    comment = Comment.new
+    person = Person.find(params["person_id"].to_i)
+    client = Client.find(params["client_id"].to_i)
+    comment.person = person
+    comment.text = params["text"]
+    client.comments << comment
+    client.save!
+    render :text => ""
+  end
+
+  def delete_comment
+      if current_user.has_role? :administrator
+        comment = Comment.find(params["comment_id"].to_i)
+        if comment.destroy
+          render :text => "true"
+        else
+          render :text => "false"
+        end
+      else
+        render :text => "false"
+      end
   end
 
   protected

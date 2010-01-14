@@ -50,6 +50,10 @@
     </span>
   </td>
   <td>
+    <a id="new_comment_<%= client.id %>" href="#" style="margin-right: 10px"><%= image_tag "actions/add_small.png" %></a>
+    <a id="show_comments_<%= client.id %>" href="#" <%= client.has_comments? ? "" : "style='display: none'" %>><%= image_tag "actions/arrow_down.png", :id => "icon" %></a> 
+  </td>
+  <td>
     <% main_file_entry_name = client.main_file_entry.try(:file_name) %>
     <% main_file_entry_name ||= content_tag(:i, t("views.not_set")) %>
     <% if !client.testing? and !client.ok? %>
@@ -58,7 +62,7 @@
       <%= main_file_entry_name %>
     <% end %>
   </td>
-  <td>
+  <td>  
     <% if client.testing? %>
       <% if client.test_match.job.locked_at %>
         <span><%= test_progress(client) %></span><br/>
@@ -69,9 +73,21 @@
       <% end %>
     <% else %>
       <% if may_delete_client? and not client.current? %>
-        <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
-        <%= link_to delete_image, hide_contest_contestant_client_url(client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
+    	  <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+          <%= link_to delete_image, hide_contest_contestant_client_url(client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
       <% end -%>
     <% end %>
   </td>
 </tr>
+<% if render_comments %>
+  <%= render :partial => "client_create_comment", :locals => {:client => client} %>
+  <tr id="client_<%= client.id %>_comments" style="display: none"></tr>
+
+  <% javascript_tag do %>
+    $(function() {
+      update_comment_icon(<%= client.id %>)   
+
+      client_urls[<%= client.id %>] = "<%= contest_contestant_client_url(client.contestant, client) %>"
+    })
+  <% end %>
+<% end %>
