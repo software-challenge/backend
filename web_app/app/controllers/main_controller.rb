@@ -12,7 +12,7 @@ class MainController < ApplicationController
 
   def login
     if logged_in?
-      flash[:notice] = "Du bist bereits eingeloggt."
+      flash[:notice] = "Sie sind bereits eingeloggt."
       redirect_to root_url
     end
   end
@@ -48,9 +48,9 @@ class MainController < ApplicationController
       @current_user.logged_in = false
       @current_user.save
       session[:user_id] = nil
-      flash[:notice] = "Du wurdest abgemeldet."
+      flash[:notice] = "Sie wurden abgemeldet."
     else
-      flash[:error] = "Du bist nicht angemeldet."
+      flash[:error] = "Sie sind nicht angemeldet."
     end
     redirect_to root_url
   end
