@@ -3,8 +3,13 @@
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
     <%= f.input :email, :required => true, :hint => "Bei der Anmeldung muss diese E-Mail-Adresse angegeben werden." %>
+    <% generated_password = random_password() %>
     <%= f.input :password, :required => @person.new_record?,
-      :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" + (@person.new_record? ? ". Z.B. #{random_password}" : ", frei lassen um Passwort nicht zu ändern") + "."),
+      :hint => ("Die Mindestlänge ist #{Person::MINIMUM_PASSWORD_LENGTH} Zeichen" +
+                 (@person.new_record? ?
+                  ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">verwenden</a>" :
+                  ", frei lassen um Passwort nicht zu ändern"
+                 ) + "."),
       :input_html => { :value => "", :autocomplete => "off" } %>
     <% if @person.new_record? -%>
       <li class="boolean optional">
