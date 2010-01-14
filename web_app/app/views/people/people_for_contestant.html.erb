@@ -1,7 +1,7 @@
 <div id="actions">
   <% if may_add_person? %>
     <% link_to(new_person_url(:contestant_id => @contestant.to_param, :from => @from)) do %>
-      <%= image_tag('actions/add.png') %>Person hinzufügen
+      <%= image_tag('actions/add.png') %> <%= t "views.add_person" %>
     <% end %>
   <% end %>
 </div>
@@ -17,7 +17,7 @@
   <table class="data-table">
   <% unless @contestant.people.visible.teachers.empty? -%>
     <thead>
-    <tr><td colspan="<%=colspan%>"><h2>LehrerInnen</h2></td></tr>
+    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.teachers" %></h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
@@ -26,7 +26,7 @@
   <% end %>
   <% unless @contestant.people.visible.tutors.empty? -%>
     <thead>
-    <tr><td colspan="<%=colspan%>"><h2>TutorInnen</h2></td></tr>
+    <tr><td colspan="<%=colspan%>"><h2><%= "acl9.roles.contestant.tutors" %></h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
@@ -36,7 +36,7 @@
 
   <% unless @contestant.people.visible.pupils.empty? -%>
     <thead>
-    <tr><td colspan="<%=colspan%>"><h2>SchülerInnen</h2></td></tr>
+    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.pupils" %></h2></td></tr
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>

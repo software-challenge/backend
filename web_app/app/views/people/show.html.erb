@@ -3,23 +3,23 @@
     <tr>
       <td>
         <p>
-          <b>Name:</b>
+          <b><%= t "views.name" %>:</b>
           <%=h @person.first_name + " " + @person.last_name %>
         </p>
 
         <p>
-          <b>E-Mail Adresse:</b>
+          <b><%= t "labels.email_adress" %>:</b>
           <%=h @person.email %>
         </p>
 
         <% unless @person.teams.visible.empty? %>
           <p>
-            <b>Teams:</b>
+            <b><%= Contestant.human_name(:count => 2)%>:</b>
             <table>
               <% @person.teams.visible.each do |team| %>
                 <tr>
                   <td>
-                    <%= team.name %> (als <%= @person.membership_for(team).role %>)
+                    <%= team.name %> (<%= t "views.as" %> <%= @person.membership_for(team).role %>)
                   </td>
                 </tr>
               <% end %>
@@ -30,12 +30,12 @@
         <br>
 
         <p>
-          <b>Mitglied seit:</b>
+          <b><%= t "views.member_since" %>:</b>
           <%= l(@person.created_at, :format => :long) %>
         </p>
 
         <p>
-          <b>Letztes Update:</b>
+          <b><%= t "views.last_update" %>:</b>
           <%= l(@person.created_at, :format => :long) %>
         </p>
       </td>
@@ -51,7 +51,7 @@
 
   <% if may_edit_person? -%>
     <br/>
-    <%= link_to 'Bearbeiten', edit_person_path(@person) %>
+    <%= link_to t("actions.edit"), edit_person_path(@person) %>
   <% end %>
 </div>
 

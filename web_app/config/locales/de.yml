@@ -7,8 +7,12 @@ de:
     send_notification: "eMail mit Zugangsdaten versenden"
 
   views:
+    add_person: "Person hinzufügen"
+    as: "als"
+    member_since: "Mitglied seit"
     need_more_contestants_for_contest: "{{count}} {{contestant_name}} sind nicht genug, um einen Wettkampf zu beginnen"
     contestant: "Team"
+    last_update: "Letztes Update"
     no_results_yet: "Noch keine Ergebnisse" 
     clear_schedule: "Spielplan löschen"
     therefore: "und wird somit "
@@ -161,8 +165,11 @@ de:
         administrator: AdministratorIn
       contestant:
         teacher: LehrerIn
+        teachers: "LehrerInnen"
         tutor: TutorIn
+        tutors: "TutorInnen"
         pupil: SchülerIn
+        pupils: "SchülerInnen"
   formtastic:
     submit: "Absenden"
     actions:
