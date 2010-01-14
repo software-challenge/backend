@@ -12,7 +12,7 @@ class MainController < ApplicationController
 
   def login
     if logged_in?
-      flash[:notice] = "Sie sind bereits eingeloggt."
+      flash[:notice] = I18n.t("messages.already_logged_in")
       redirect_to root_url
     end
   end
@@ -38,7 +38,7 @@ class MainController < ApplicationController
       redirect_to root_url
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
-      flash[:notice] = "Die Zugangsdaten sind nicht gültig."
+      flash[:notice] = I18n.t("messages.login_invalid")
       render :action => "login"
     end
   end
@@ -48,9 +48,9 @@ class MainController < ApplicationController
       @current_user.logged_in = false
       @current_user.save
       session[:user_id] = nil
-      flash[:notice] = "Sie wurden abgemeldet."
+      flash[:notice] = I18n.t("messages.logout_successful")
     else
-      flash[:error] = "Sie sind nicht angemeldet."
+      flash[:error] = I18n.t("messages.not_logged_in")
     end
     redirect_to root_url
   end
@@ -63,7 +63,7 @@ class MainController < ApplicationController
 
   def clear_jobs
     Delayed::Job.destroy_all
-    flash[:notice] = "Alle Aufträge wurden gelöscht."
+    flash[:notice] = I18n.t("messages.cleared_all_jobs")
     redirect_to debug_url
   end
 

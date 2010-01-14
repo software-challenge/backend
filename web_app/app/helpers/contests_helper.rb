@@ -2,11 +2,11 @@ module ContestsHelper
   def direction_text(direction)
     case direction
     when "asc"
-      "Weniger ist besser"
+      I18n.t("helpers.less_is_better")
     when "desc"
-      "Mehr ist besser"
+      I18n.t("helpers.more_is_better")
     when "none"
-      "Irrelevant"
+      I18n.t("helpers.irrelevant")
     else
       raise "unknown direction #{direction}"
     end

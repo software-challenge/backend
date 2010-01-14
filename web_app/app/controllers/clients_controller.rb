@@ -108,7 +108,7 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.find(params[:id])
 
     if @client.tested?
-      flash[:notice] = "Client wurde bereits getestet."
+      flash[:notice] = I18n.t("messages.client_has_already_been_tested") 
     else
       @client.test_delayed!
     end

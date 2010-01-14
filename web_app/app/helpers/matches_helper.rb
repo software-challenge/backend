@@ -11,7 +11,7 @@ module MatchesHelper
     match = client.test_match
     results = client.test_results
     succeeded, played, total = results[0], results[1], match.rounds.count
-    "#{succeeded} bestanden, #{played} von #{total} gespielt"
+    I18n.t("helpers.test_progress", {:succeeded => succeeded, :played => played, :total => total})
   end
 
   def match_progress(match, separator = '/')

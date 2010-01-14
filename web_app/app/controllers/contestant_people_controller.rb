@@ -87,7 +87,7 @@ class ContestantPeopleController < ApplicationController
 
     respond_to do |format|
       if success
-        flash[:notice] = @person.name + ' wurde erfolgreich angelegt.'
+        flash[:notice] = @person.name + " "+I18n.t("messages.created_saccessfully")+"."
         format.html { redirect_to(people_url) }
         format.xml  { render :xml => @person, :status => :created, :location => @person }
       else
@@ -113,7 +113,7 @@ class ContestantPeopleController < ApplicationController
 
     respond_to do |format|
       if success
-        flash[:notice] = @person.name + ' wurde erfolgreich aktualisiert.'
+        flash[:notice] = @person.name + " " + I18n.t("messages.updated_successfully")+"."
         format.html { redirect_to(@person) }
         format.xml  { head :ok }
       else

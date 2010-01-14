@@ -1,6 +1,6 @@
 <div id="actions">
   <% link_to new_contest_contestant_client_url(@contestant) do %>
-    <%= image_tag('actions/add.png') %>Computerspieler hochladen
+    <%= image_tag('actions/add.png') %><%= t("views.upload_client") %>
   <% end %>
 </div>
 
@@ -14,22 +14,21 @@
 
   <% unless @contestant.current_client %>
     <div style="margin: 0 -10px 1em -10px; padding: 0.8em 10px; border: 1px solid #ddd; background-color: #eee;">
-      <strong>Wichtiger Hinweis:</strong> Bitte laden Sie einen Computerspieler für die Wettkampfteilnahme hoch und aktivieren Sie diesen, indem Sie diesen auswählen. Falls Sie bis zur nächsten Begegnung, an der Ihr Team teilnimmt, noch keinen Computerspieler aktiviert haben, wird Ihr Team das Spiel verlieren, sobald es am Zug ist.
+      <strong><%= t("views.important_clue")+": " %> </strong> <%= t("views.client_message_one") %>
     </div>
   <% end %>
 
   <div style="margin: 0 -10px 1em -10px; padding: 0 10px;">
     <p>
-    Der Test eines hochgeladenen Computerspielers benötigt ca. 5 Minuten und läuft auf einer virtuellen Maschine im Hintergrund. Beim Test spielt der hochgeladene Computerspieler zweimal gegen den SimpleClient. Da nur eine sehr begrenzte Anzahl virtueller Maschinen zur Verfügung steht, kann es sein, dass der Test Ihres Computerspielers erst später beginnen kann, wenn eine virtuelle Maschine dafür frei ist. Außerdem kann ein Teammitglied nur dann einen Testauftrag erteilen, wenn zur Zeit kein anderer Computerspieler desselben Teams gestestet wird oder in der Warteschlange steht. Nach dem Testende wird das Testergebnis hier angezeigt.
-    </p>
+      <%= t("views.client_message_one") %>
+       </p>
     <p>
       <br>
-      Sie können diese Seite währenddessen ruhig verlassen, der Test wird dadurch nicht beeinflusst.
+      <%= t("views.you_can_leave_while_testing") %>
     </p>
     <p>
       <br><b>
-      Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
-      rechtzeitig (z.B. am Vortag) hochladen.
+     <%= t("views.client_can_be_tested") %> 
       </b>
     </p>
   </div>
@@ -38,9 +37,9 @@
     <thead>
       <tr>
         <th>&nbsp;</th>
-        <th colspan="2">Test</th>
-        <th>Dateiname</th>
-        <th>Hauptdatei</th>
+        <th colspan="2"><%= t("views.test") %></th>
+        <th><%= t("views.filename") %></th>
+        <th><%= t("views.mainfile") %></th>
       </tr>
     </thead>
     <%= render :partial => "client", :collection => @contestant.clients.visible.all(:order => "created_at DESC") %>

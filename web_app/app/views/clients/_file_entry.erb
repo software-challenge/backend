@@ -13,7 +13,7 @@
       <% if file_entry.current? %>
         <b>Aktiv</b>
       <% else %>
-        <%= link_to "Auswählen", select_main_contest_contestant_client_url(client.contestant, client, :main_id => file_entry.id), :method => :post %>
+        <%= link_to t("views.select").capitalize, select_main_contest_contestant_client_url(client.contestant, client, :main_id => file_entry.id), :method => :post %>
       <% end %>
     <% end %>
   </td>

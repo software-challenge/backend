@@ -10,7 +10,7 @@
   <% if @client.main_file_entry %>
     <%=h @client.main_file_entry.file_name %>
   <% else %>
-    <%=h 'Es wurde bisher keine Ausführungsdatei ausgewählt.' %>
+    <%= t("views.no_executable_selected") %>
   <%end%>
 </h4>
 

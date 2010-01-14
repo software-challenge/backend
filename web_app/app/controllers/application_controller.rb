@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_page_title
 
   def permission_denied
-    flash[:error] = "Zugriff nicht gestattet."
+    flash[:error] = I18n.t("messages.access_denied")
     redirect_to root_url
   end
 

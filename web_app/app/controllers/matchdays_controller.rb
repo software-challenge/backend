@@ -57,7 +57,7 @@ class MatchdaysController < ApplicationController
 
     respond_to do |format|
       if @matchday.update_attributes(params[:matchday])
-        flash[:notice] = 'Matchday was successfully updated.'
+        flash[:notice] = I18n.t("messages.matchday_successfully_updated")
         format.html { redirect_to(@matchday) }
         format.xml  { head :ok }
       else
@@ -81,7 +81,7 @@ class MatchdaysController < ApplicationController
     @matchday = @contest.matchdays.find(params[:id])
 
     if @matchday.running?
-      flash[:error] = "Der Spieltag wird bereits gespielt."
+      flash[:error] = I18n.t("messages.matchday_already_played")
     else
       Matchday.transaction do
         @matchday.reset!
@@ -92,7 +92,7 @@ class MatchdaysController < ApplicationController
         end
       end
 
-      flash[:notice] = "Der Spieltag wurde neu zusammengerechnet."
+      flash[:notice] = I18n.t("messages.matchday_recalculated") 
     end
 
     redirect_to contest_matchday_url(@matchday)
@@ -102,7 +102,7 @@ class MatchdaysController < ApplicationController
     @matchday = @contest.matchdays.find(params[:id])
 
     if @matchday.running?
-      flash[:error] = "Der Spieltag wird bereits gespielt."
+      flash[:error] = I18n.t("messages.matchday_playing_in_progress")
     else
       Matchday.transaction do
         Match.benchmark("resetting matchday", Logger::DEBUG, false) do
@@ -111,7 +111,7 @@ class MatchdaysController < ApplicationController
         end
       end
 
-      flash[:notice] = "Der Spieltag wurde zurückgesetzt."
+      flash[:notice] = I18n.t("messages.matchday_resetted")
     end
 
     redirect_to contest_matchday_url(@matchday)
@@ -121,15 +121,15 @@ class MatchdaysController < ApplicationController
     @matchday = @contest.matchdays.find(params[:id])
 
     if @matchday.running?
-      flash[:error] = "Der Spieltag wird gerade gespielt."
+      flash[:error] = I18n.t("messages.matchday_playing_in_progress")
     elsif @matchday.played?
-      flash[:error] = "Der Spieltag wurde bereits gespielt."
+      flash[:error] = I18n.t("messages.matchday_already_played")
     else
       Matchday.transaction do
         if @matchday.perform_delayed!
-          flash[:notice] = "Der Auftrag wurde erfolgreich gestartet."
+          flash[:notice] = I18n.t("messages.job_started_successfully")
         else
-          flash[:error] = "Konnte den Auftrag nicht starten."
+          flash[:error] = I18n.t("messages.job_starting_failed")
         end
       end
     end

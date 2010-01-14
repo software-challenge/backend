@@ -147,7 +147,7 @@ class PeopleController < ApplicationController
         if params[:send_notification] == "1"
           PersonMailer.deliver_signup_notification(@person, @current_contest, person_params[:password])
         end
-        flash[:notice] = @person.name + ' wurde erfolgreich angelegt.'
+        flash[:notice] = @person.name + " " + I18n.t("messages.created_successfully")
         format.html do
           if @from_admin or @person.teams.empty?
             redirect_to people_url
@@ -178,7 +178,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if success
-        flash[:notice] = @person.name + ' wurde erfolgreich aktualisiert.'
+        flash[:notice] = @person.name + " " + I18n.t("messages.updated_successfully")
         format.html do
           if @from_admin or @person.teams.empty?
             redirect_to people_url

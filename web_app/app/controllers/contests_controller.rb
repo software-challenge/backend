@@ -66,7 +66,7 @@ class ContestsController < ApplicationController
 
     respond_to do |format|
       if @contest.save
-        flash[:notice] = 'Contest was successfully created.'
+        flash[:notice] = I18n.t("messages.contest_created_successfully")
         format.html { redirect_to admin_contests_url }
         format.xml  { render :xml => @contest, :status => :created, :location => admin_contests_url }
       else
@@ -81,7 +81,7 @@ class ContestsController < ApplicationController
   def update
     respond_to do |format|
       if @contest.update_attributes(params[:contest])
-        flash[:notice] = 'Contest was successfully updated.'
+        flash[:notice] = I18n.t("messages.contest.updated_successfully")
         format.html { redirect_to admin_contests_url }
         format.xml  { head :ok, :location => admin_contests_url }
       else
@@ -126,10 +126,10 @@ class ContestsController < ApplicationController
       @contest.refresh_matchdays!(start_at, weekdays)
 
       if @contest.matchdays.count.zero?
-        flash[:error] = "Es sind nicht genug #{Contestant.human_name(:count => 2)} vorhanden, um einen Spielplan zu erstellen."
+        flash[:error] = I18n.t("messages.not_enough_contestants_for_creating_contest", :contestant_label => Contestant.human_name(:count => 2))
       end
     else
-      flash[:error] = "Es liegt bereits ein Spielplan vor."
+      flash[:error] = I18n.t("messages.there_is_already_a_schedule")
     end
 
     redirect_to contest_edit_schedule_url

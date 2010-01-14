@@ -82,7 +82,7 @@ class ContestantsController < ApplicationController
 
     respond_to do |format|
       if @contestant.save
-        flash[:notice] = 'Contestant was successfully created.'
+        flash[:notice] = I18n.t("messages.contestant_successfully_created")
         format.html { redirect_to(contest_contestant_url(@contestant)) }
         format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
       else
@@ -99,7 +99,7 @@ class ContestantsController < ApplicationController
 
     respond_to do |format|
       if @contestant.update_attributes(params[:contestant])
-        flash[:notice] = 'Contestant was successfully updated.'
+        flash[:notice] = I18n.t("messages.contestant_successfully_updated") 
         format.html { redirect_to(contest_contestant_url(@contestant)) }
         format.xml  { head :ok }
       else

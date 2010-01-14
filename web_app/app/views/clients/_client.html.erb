@@ -1,7 +1,7 @@
 <tr id="client-<%= client.id %>" class="<%= cycle('odd', 'even') %>;">
   <td>
     <% if client.current? %>
-      <b>Aktiv</b>
+      <b><%= t("views.active").capitalize %></b>
     <% else client.ok? %>
       <%= link_to I18n.t("actions.activate_client"), select_contest_contestant_client_url(client.contestant, client), :method => :post %>
     <% end %>
@@ -13,8 +13,8 @@
       <%= client.test_results.join('/') %> bestanden
     <% elsif client.testable? %>
       <span class="testActions">
-        <span class="disabled">Testen</span>
-        <%= link_to "Testen",
+        <span class="disabled"><%= t("views.testen").capitalize %></span>
+        <%= link_to (t("views.test")).capitalize,
           test_contest_contestant_client_url(client.contestant, client), :method => :post,
           :class => "enabled" %>
       </span>
@@ -51,7 +51,7 @@
   </td>
   <td>
     <% main_file_entry_name = client.main_file_entry.try(:file_name) %>
-    <% main_file_entry_name ||= content_tag(:i, "Nicht gesetzt") %>
+    <% main_file_entry_name ||= content_tag(:i, t("views.not_set")) %>
     <% if !client.testing? and !client.ok? %>
       <%= link_to main_file_entry_name, edit_contest_contestant_client_url(client.contestant, client) %>
     <% else %>
@@ -62,10 +62,10 @@
     <% if client.testing? %>
       <% if client.test_match.job.locked_at %>
         <span><%= test_progress(client) %></span><br/>
-        <span style="font-size: 11px;">Testet seit <%= (Time.now - client.test_match.job.locked_at).round %> Sekunden</span>
+        <span style="font-size: 11px;"><%= t("views.testing_for_seconds", {:time => ((Time.now - client.test_match.job.locked_at).round)}) %> </span>
       <% else %>
-        <span>Test über <%= client.test_match.rounds.count %> Runden</span><br/>
-        <span style="font-size: 11px;">Wartet seit <%= (Time.now - client.test_match.job.created_at).round %> Sekunden</span>
+        <span><%= t("views.testing_x_rounds", {:x => client.test_match.rounds.count}) %></span><br/>
+        <span style="font-size: 11px;"> <%= t("views.waiting_for_seconds", {:x => ((Time.now - client.test_match.job.created_at).round)}) %></span>
       <% end %>
     <% else %>
       <% if may_delete_client? and not client.current? %>
