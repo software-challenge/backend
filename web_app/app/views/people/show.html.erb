@@ -12,11 +12,11 @@
           <%=h @person.email %>
         </p>
 
-        <% unless @person.teams.empty? %>
+        <% unless @person.teams.visible.empty? %>
           <p>
             <b>Teams:</b>
             <table>
-              <% @person.teams.each do |team| %>
+              <% @person.teams.visible.each do |team| %>
                 <tr>
                   <td>
                     <%= team.name %> (als <%= @person.membership_for(team).role %>)

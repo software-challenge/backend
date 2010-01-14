@@ -154,10 +154,10 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.created_successfully")
         format.html do
-          if @from_admin or @person.teams.empty?
+          if @from_admin or @person.teams.visible.empty?
             redirect_to people_url
           else
-            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.first.to_param)
+            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
           end
         end
         format.xml  { render :xml => @person, :status => :created, :location => @person }
@@ -188,10 +188,10 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.updated_successfully")
         format.html do
-          if @from_admin or @person.teams.empty?
+          if @from_admin or @person.teams.visible.empty?
             redirect_to people_url
           else
-            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.first.to_param)
+            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
           end
         end
         format.xml  { head :ok }
