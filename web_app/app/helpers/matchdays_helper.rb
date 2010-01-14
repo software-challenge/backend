@@ -5,7 +5,7 @@ module MatchdaysHelper
     elsif matchday.played?
       I18n.t("helpers.played")
     else
-      I18n.t("not_played_yet")
+      I18n.t("helpers.not_played_yet")
     end
   end
 end
