@@ -203,8 +203,10 @@ class PeopleController < ApplicationController
         format.html do
           if params[:contestant_id] and !@person.teams.visible.empty?
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
-          else
+          elsif current_user.has_role? :administrator
             redirect_to people_url
+          else
+            redirect_to @person
           end
         end
         format.xml  { head :ok }
