@@ -13,7 +13,7 @@
       <%= client.test_results.join('/') %> bestanden
     <% elsif client.testable? %>
       <span class="testActions">
-        <span class="disabled"><%= t("messages.test_running").capitalize %></span>
+        <span class="disabled"><%= t("messages.test_running") %></span>
         <%= link_to (t("actions.test")).capitalize,
           test_contest_contestant_client_url(client.contestant, client), :method => :post,
           :class => "enabled" %>
