@@ -41,6 +41,7 @@ class MatchesController < ApplicationController
       @parent = @contestant
     elsif params[:matchday_id]
       @matchday = current_contest.matchdays.find(params[:matchday_id])
+      @parent = @matchday
     else
       raise ActiveRecord::RecordNotFound
     end
