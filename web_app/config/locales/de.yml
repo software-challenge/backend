@@ -42,7 +42,6 @@ de:
     outstanding: "ausstehend"
     logged_in_as: "Angemeldet als "
     select: "auswählen"
-    test: "testen"
     copyright: "2009 Christian-Albrechts-Universität zu Kiel. Alle Rechte vorbehalten."
     error: "Fehler"
     welcome_to_admin: "Willkommen im Admin-Panel."
@@ -121,6 +120,7 @@ de:
     other_teammembers_currently_logged_in: "Zur Zeit sind noch andere Personen aus Ihrem Team online."
     other_administrators_currently_logged_in: "Zur Zeit sind noch andere Administratoren online."
     login_first: "Bitte melden Sie sich zuerst an (eventuell wurden Sie aufgrund von Inaktivität automatisch abgemeldet)"
+    test_running: "Anderer Test im Gange"
   actions:
     delete: "Löschen"
     back: "Zurück"
@@ -139,6 +139,7 @@ de:
     unhide: "Wiederherstellen"
     remove_from_contestant: "Aus Team entfernen"
     activate_client: "Aktivieren"
+    test: "testen"
   helpers:
     less_is_better: "Weniger ist besser"
     more_is_better: "Mehr ist besser"
