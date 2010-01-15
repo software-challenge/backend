@@ -1,5 +1,5 @@
 ActiveRecord::Base.transaction do
-  admin = Person.create!(:nick_name => "The Company Guy",
+  admin = Person.create!(
     :last_name => "Dude", :first_name => "Der",
     :email => "root@example.com",
     :password => "swordfish")

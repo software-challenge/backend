@@ -9,6 +9,7 @@ de:
   views:
     add_person: "Person hinzufügen"
     as: "als"
+    my: Meine
     results: "Ergebnisse"
     result: "Ergebnis"
     member_since: "Mitglied seit"
@@ -87,7 +88,6 @@ de:
     you_can_leave_while_testing: "Sie können diese Seite währenddessen ruhig verlassen, der Test wird dadurch nicht beeinflusst."
     client_can_be_tested: "Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
       rechtzeitig (z.B. am Vortag) hochladen."
-
   messages:
     cleared_all_jobs: "Alle Aufträge wurden gelöscht."
     matchday_recalculated: "Der Spieltag wurde neu zusammengerechnet."

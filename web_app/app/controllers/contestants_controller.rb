@@ -83,7 +83,7 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.save
         flash[:notice] = I18n.t("messages.contestant_successfully_created")
-        format.html { redirect_to(contest_contestant_url(@contestant)) }
+        format.html { redirect_to(contest_contestants_url) }
         format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
       else
         format.html { render :action => "new" }
