@@ -58,7 +58,7 @@ class Contest < ActiveRecord::Base
   end
 
   def before_validation
-    build_test_contestant( :name => "Testhase", :tester => true ) unless test_contestant
+    build_test_contestant( :name => "Testhase", :tester => true, :location => "Test" ) unless test_contestant
   end
 
   def started?
