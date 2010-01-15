@@ -11,13 +11,13 @@
     <% end %>
 
     <% f.buttons do %>
-      <%= f.commit_button %> oder <%= link_to 'Zurück', contest_contestant_clients_url(@contestant) %>
+      <%= f.commit_button :label => t("actions.upload_client") %> oder <%= link_to t("actions.back"), contest_contestant_clients_url(@contestant) %>
     <% end %>
   <% end %>
 
   <div style="width: 100%; text-align: center">
-    <a href="#" id="no_flash">Upload ohne Flash</a> 
-    <a href="#" id="with_flash" style="display: none">Upload mit Flash</a>
+    <a href="#" id="no_flash"><%= t("actions.upload_without_flash") %></a> 
+    <a href="#" id="with_flash" style="display: none"><%= t("actions.upload_with_flash") %></a>
   </div>
 <% end %>
 
@@ -66,13 +66,12 @@
       fileDataName: 'client[file]',
       cancelImg: '/images/actions/delete.png',
       buttonImg: '/images/actions/upload.png',
-      buttonText: 'Datei festlegen',
       width: '350',
       height: '48',
       rollover: true,
       wmode: 'transparent',
       fileExt: '*.zip',
-      fileDesc: 'Gepackter Computerspieler (*.zip)',
+      fileDesc: '<%= t("labels.zipped_client") %>',
       auto: true,
       multi: false,
       queueSizeLimit: '1',

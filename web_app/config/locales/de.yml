@@ -5,7 +5,7 @@ de:
     email_adress: "eMail-Adresse"
     password: "Passwort"
     send_notification: "eMail mit Zugangsdaten versenden"
-
+    zipped_client: "Gepackter Computerspieler (*.zip)"
   views:
     add_person: "Person hinzufügen"
     as: "als"
@@ -42,7 +42,7 @@ de:
     outstanding: "ausstehend"
     logged_in_as: "Angemeldet als "
     select: "auswählen"
-    copyright: "2009 Christian-Albrechts-Universität zu Kiel. Alle Rechte vorbehalten."
+    copyright: "2009-2010 Christian-Albrechts-Universität zu Kiel. Alle Rechte vorbehalten."
     error: "Fehler"
     welcome_to_admin: "Willkommen im Admin-Panel."
     clue: "Hinweis"
@@ -140,6 +140,9 @@ de:
     remove_from_contestant: "Aus Team entfernen"
     activate_client: "Aktivieren"
     test: "testen"
+    upload_client: "Spieler hochladen"
+    upload_with_flash: "Upload mit Flash"
+    upload_without_flash: "Upload ohne Flash"
   helpers:
     less_is_better: "Weniger ist besser"
     more_is_better: "Mehr ist besser"
