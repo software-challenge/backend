@@ -7,7 +7,7 @@
   <td><%= match.slots[1].name || "Freispiel" %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
-      <% link_to [match.matchday, match.becomes(Match)] do %>
+      <% link_to [:contest, match.matchday, match.becomes(Match)] do %>
         <%= match.main_result.join(" : ") %>
       <% end %>
     <% elsif match.running? %>
