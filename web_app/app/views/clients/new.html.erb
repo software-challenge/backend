@@ -7,36 +7,83 @@
 <% tabnav :contestant do %>
   <% semantic_form_for([:contest, @contestant, @client], :html => { :multipart => true }) do |f| %>
     <% f.inputs do %>
-      <%= f.input :file %>
+      <%= f.input :file, :label => "&nbsp;" %>
     <% end %>
 
     <% f.buttons do %>
       <%= f.commit_button %> oder <%= link_to 'Zurück', contest_contestant_clients_url(@contestant) %>
     <% end %>
   <% end %>
+
+  <div style="width: 100%; text-align: center">
+    <a href="#" id="no_flash">Upload ohne Flash</a> 
+    <a href="#" id="with_flash" style="display: none">Upload mit Flash</a>
+  </div>
 <% end %>
 
+<style type="text/css">
+  object {
+    border: 0px;
+  }
+
+  object:focus {
+    outline: none;
+    cursor: pointer;
+  }
+</style>
+
 <script type="text/javascript">
+  $(function() {
+    $("a#no_flash").bind('click', function() {
+      $("a#no_flash").hide()
+      $("a#with_flash").show()
+      $("div#client_fileUploader").hide()
+      $("div#client_fileQueue").hide()
+      $("object#client_fileUploader").hide()
+      $("#new_client .buttons").fadeIn(500)
+      $("input#client_file").fadeIn(500)
+      return false
+    })
+
+    $("a#with_flash").bind('click', function() { 
+      $("a#with_flash").hide()
+      $("#new_client .buttons").hide()
+      $("input#client_file").hide()
+      $("a#no_flash").fadeIn(500)
+      $("div#client_fileUploader").fadeIn(500)
+      $("div#client_fileQueue").fadeIn(500)
+      $("object#client_fileUploader").fadeIn(500)
+    })
+  })
+
   $(document).ready(function() {
     //return;
     var token = encodeURIComponent(encodeURIComponent($('#new_client [name=authenticity_token]').val()));
-    $('#new_client .buttons').hide();
+    //$('#new_client .buttons').hide();
     $('#client_file').uploadify({
       uploader: '/flashs/uploadify.swf',
       script: '<%= url_for([:contest, @contestant, @client]) %>',
       fileDataName: 'client[file]',
       cancelImg: '/images/actions/delete.png',
+      buttonImg: '/images/actions/upload.png',
       buttonText: 'Datei festlegen',
-      width: '175',
+      width: '350',
+      height: '48',
+      rollover: true,
+      wmode: 'transparent',
       fileExt: '*.zip',
       fileDesc: 'Gepackter Computerspieler (*.zip)',
       auto: true,
       multi: false,
       queueSizeLimit: '1',
       simUploadLimit: '1',
+      debug: true,
       onComplete: function(event, queueId, fileObj, response, data) {
         window.location.href = '<%= contest_contestant_clients_url(@contestant) %>';
         return true;
+      },
+      onInit: function() {
+        $('#new_client .buttons').hide(); 
       },
       scriptData: {
         '<%= u get_session_key_name %>': '<%= u cookies[get_session_key_name] %>',
