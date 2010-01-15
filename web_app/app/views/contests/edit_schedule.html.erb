@@ -36,7 +36,7 @@
           <%= f.input :start_at, :as => :date, :label => "Erster Spieltag" %>
           <% days = (0..6).collect { |i| [t("date.abbr_day_names")[i], i] } %>
           <%= f.input :weekdays, :as => :check_boxes, :collection => days, :selected => [1,4],
-            :hint => I18n.t("views.date_can_be_moved"), :label => I18n.t("views.weekdays"),
+            :hint => I18n.t("views.data_can_be_moved"), :label => I18n.t("views.weekdays"),
             :wrapper_html => { :class => "horizontal" } %>
         <% end %>
         <%= f.buttons %>
