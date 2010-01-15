@@ -1,5 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
+
     tmap.resources :people, :as => "personen"
 
     tmap.resources :contests,
@@ -45,10 +46,10 @@ ActionController::Routing::Routes.draw do |map|
         } do |client|
           client.status '/status', :controller => "clients", :action => "status"
         end
-        contestant.resources :people, :as => "mitglieder", :except => [:index]
         contestant.people '/mitglieder', :controller => "people", :action => "people_for_contestant", :conditions => { :method => :get }
         contestant.person '/mitglieder/einladen', :controller => "people", :action => "invite",
           :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }
+        contestant.resources :people, :as => "mitglieder", :except => [:index]
 
         contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
       end
