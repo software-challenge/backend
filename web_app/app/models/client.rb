@@ -70,11 +70,6 @@ class Client < ActiveRecord::Base
     contestant.current_client == self
   end
 
-  def java?
-    return nil unless main_file_entry
-    main_file_entry.file_name.ends_with? ".jar"
-  end
-
   def has_comments?
     return !self.comments.blank?
   end

@@ -115,8 +115,13 @@ module SoChaManager
     def generate_startup_command(ai_program, reservation, silent)
       executable = ai_program.main_file_entry.file_name
 
-      if ai_program.java?
-        executable = "java -Dfile.encoding=UTF-8 -jar #{executable}"
+      if executable.ends_with? ".jar"
+        encoding = "-Dfile.encoding=UTF-8"
+        memory_limit = "-Xmx1024M"
+        jar = "-jar #{executable}"
+        executable = "java #{encoding} #{memory_limit} #{jar}"
+      elsif executable.ends_with? ".exe"
+        executable = "wine #{executable}"
       else
         executable = File.join(".", executable)
       end
@@ -164,6 +169,7 @@ module SoChaManager
       startup_file = File.join(dir, 'startup.sh')
       File.open(startup_file, 'w+') do |f|
         f.puts "#!/bin/bash"
+        f.puts "chmod +x #{ai_program.main_file_entry.file_name}"
         f.puts generate_startup_command(ai_program, reservation, SoChaManager.silent)
         f.flush
       end
