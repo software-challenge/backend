@@ -9,7 +9,7 @@
         <%= submit_tag 'Hinzufügen', :id => "submit_comment_" + client.id.to_s %>
       </p>
       <%= hidden_field_tag :client_id, client.id.to_s %>
-      <%= hidden_field_tag :person_id, 1 %>
+      <%= hidden_field_tag :person_id, current_user.id %>
     <% end %>
   </td>
 </tr>
