@@ -61,6 +61,7 @@ de:
     upload_steps_select_main_file: "Findet das System nicht automatisch die richtige Hauptdatei, muss diese nach dem Hochladen manuell ausgewählt werden."
     upload_steps_upload: "Die ausführbare Client-Datei sowie alle weiterhin benötigten Dateien (libs etc.) müssen zusammen in ein .zip-Archiv gepackt und hier hochgeladen werden."
     upload_steps_title: "Vorgehen beim Hochladen Ihres Computerspielers:" 
+    all_others: "Alle anderen"
     important_clue: "Wichtiger Hinweis"
     mainmenu: "Hauptmenu"
     administration: "Administration"
