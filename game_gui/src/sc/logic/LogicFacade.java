@@ -140,12 +140,6 @@ public class LogicFacade {
 	 */
 	public void stopServer() {
 		if (server != null) {
-			(new Thread(new Runnable() {
-				@Override
-				public void run() {
-					server.close();
-				}
-			})).start();
 			server.close();
 			server = null;
 		}

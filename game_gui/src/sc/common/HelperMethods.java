@@ -31,11 +31,10 @@ public class HelperMethods {
 	 * 
 	 * @param filename
 	 * @param parameters
-	 * @return 
 	 * @throws IOException
 	 * @throws UnsupportedFileExtensionException
 	 */
-	public static Process exec(final String filename, final String[] parameters)
+	public static void exec(final String filename, final String[] parameters)
 			throws IOException, UnsupportedFileExtensionException {
 		final File file = new File(filename);
 		final String ext = getFileExtension(file);
@@ -77,12 +76,17 @@ public class HelperMethods {
 					System.err.println("Failed to redirect STDOUT.");
 				}
 
-				System.out.println("Process exited with ExitCode="
-						+ proc.exitValue());
+				try {
+					int waitFor = proc.waitFor();
+					System.out.println("Process exited with ExitCode="+waitFor);
+				} catch (InterruptedException e) {
+					System.err.println("Waiting interrupted. No exit code available. Killing process...");
+					proc.destroy();
+					System.out.println("Process killed.");
+					//e.printStackTrace();
+				}
 			}
 		}).start();
-		
-		return proc;
 	}
 
 	/**
