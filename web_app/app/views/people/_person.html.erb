@@ -1,4 +1,4 @@
-<tr>
+<tr class="person">
   <td><%=h person.first_name %></td>
   <td><%=h person.last_name %></td>
   <% if logged_in? -%>
@@ -11,7 +11,26 @@
   <% unless @contestant # don't show these infos on contestant page -%>
     <td>
       <% unless person.teams.empty? %>
-        <%= select_tag "team", options_for_select(person.teams.collect(&:name)) %>
+        <% if person.teams.count > 1 then %>
+          <!--<%= select_tag "team", options_for_select(person.teams.collect(&:name)) %> (<%= person.teams.count %>)!-->
+          <div class="team_tooltip">
+            <abbr class="team_tooltip_title"><%= "In " + person.teams.count.to_s + " Teams" %><abbr>
+          <div class="team_list" style="position: absolute; background-color: #DDDDFF; border: 1px solid; padding: 5px; display: none">
+          <% person.teams.each do |team| %>
+            <ul style="margin-left: 15px">
+              <li class="team_text" style=""><%= team.name %></li>
+            </ul>
+          <% end %>
+          </div>
+          </div>
+        <% else %>
+          <span class="team_text"><%= person.teams.find(0).name %></span>
+        <% end %>
+      <% else %>
+        Kein Team
+      <% end %>
+      <% person.contestants.each do |contestant| %>
+        <span class="person_location" style="display: none"><%= contestant.location %></span>
       <% end %>
     </td>
 

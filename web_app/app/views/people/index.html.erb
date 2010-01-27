@@ -8,6 +8,33 @@
 
 <% tabnav :administration do %>
 
+  <% show_to :administrator do %>
+    <div id="filter" style="vertical-align: middle">
+      <fieldset style="">
+        <legend>Filter auswählen</legend>
+
+        <div id="show_teams" style="float: left">
+          <div style="padding-top: 2px; margin-left: 0px; margin-right: 10px; float: left">Ort: </div>
+          <div id="location_filter_container" style="width: 200px; position: relative; float: left">
+            <%= text_field_tag "location_filter", "", :style => "width: 200px" %><br>
+            <div id="location_select" style="position: absolute; left: 0px; background-color: #fff; border: 1px solid #000; display: none">
+              <div class="combobox_item location">Gymnasium Blahblubb</div>
+              <div class="combobox_item location">Husum</div>
+            </div> 
+          </div>
+          <div style="padding-top: 2px; margin-left: 25px; margin-right: 10px; display: inline; float: left">Team: </div>
+          <!--<%= select_tag "team_filter", options_for_select(["Alle"].concat(Contestant.all.collect(&:name))) %>!-->
+          <select id="team_filter" name="team_filter" style="width: 250px">
+            <option class="all" value="all">Alle</option>
+            <% Contestant.all.each do |team| %>
+              <option value="<%= team.location %>"><%= team.name %></option>
+            <% end %>
+          </select>
+        </div>
+      </fieldset><br>
+    </div>
+  <% end %>
+
   <table class="data-table">
     <%= render :partial => "person_table_head" %>
     <%= render :partial => "person", :collection => @people %>
@@ -20,4 +47,130 @@
     <%= render :partial => "person", :collection => @hidden_people %>
   </table>
 
+  <% show_to :administrator do %>
+    <% javascript_tag do %>
+
+      $(function() {
+        $("div#location_select").width($("#location_filter").width())
+
+        $("#location_filter").blur(function() {
+          if(!$("#location_select").data('isover')) {
+            $("#location_select").hide()
+          }
+        })
+
+        $(".location").hover(function() { $("#location_select").data('isover', 1); }, 
+          function() { $("#location_select").data('isover', 0); }
+        )
+
+        $(".location").bind('click', function() {
+          $("#location_filter").val($(this).html())
+          $("#location_select").hide()
+          update_location_list()
+        })
+
+        $("#location_filter").bind('dblclick', function() {
+          $("#location_select").show()
+        })
+ 
+        $("#location_filter").keyup(function() {
+          var str = $(this).val()
+          $(".location").each(function(index) {
+            if($(this).html().match(new RegExp(str, "i")) != null) {
+              $(this).show()
+            } else {
+              $(this).hide()
+            }
+          })
+          $("#location_select").show()
+          update_location_list()
+        })
+              
+        $("#location_filter").change(function() {
+          update_location_list()
+        })
+      })
+
+      function update_location_list() {
+
+        // Update team select box
+        $("select#team_filter option").each(function(index) {
+          if($(this).is('.all')) {
+            return true;
+          }
+          if($(this).val().match(new RegExp($("#location_filter").val(), "i")) != null) {
+            $(this).show()
+          } else {
+            $(this).hide()
+          }
+        })
+
+        if(!$("select#team_filter :selected").is(':visible')) {
+          $("select#team_filter").val("all").attr("selected", "selected")
+        }
+
+        $(".person").each(function(index) {
+          var foundLocation = false;
+
+          // Check each person against location matching
+          if($("#location_filter").val() != "") {
+            $(".person_location", $(this)).each(function(index2) {
+              if($(this).html().match(new RegExp($("#location_filter").val(), "i")) != null) {   
+                foundLocation = true;
+                return false;
+              }
+            })
+          } else {
+            foundLocation = true;
+          }
+
+          // Check each person against team matching
+          if(!$("div#show_teams select#team_filter :selected").is('.all')) {
+            if(isInTeam($(this), $("div#show_teams select#team_filter :selected").text())) {
+              foundLocation = true;
+            } else {
+              foundLocation = false;
+            }
+          }
+
+          // Show or hide person
+          if(foundLocation) {
+            $(this).show()
+          } else {
+            $(this).hide()
+          }
+        })
+      }
+
+      $(function() {
+        $(".team_tooltip").bind('mouseenter', function() {
+          $(".team_list", this).fadeIn(250)
+        })
+        $(".team_tooltip").bind('mouseleave', function() {
+          $(".team_list", this).fadeOut(250)
+        })
+        $(".team_tooltip .team_list").bind('mouseenter', function() {
+          $(this).fadeOut()
+        })
+
+        $("div#show_teams select#team_filter").bind('click', function() {
+          update_location_list()
+        })
+      })
+
+      function isInTeam(person, option) {
+        var found = false;
+        $(".team_text", person).each( function(index) {
+          if($(this).html() == option) {
+            found = true;
+            return false;
+          }
+        })
+        return found;
+      }
+    <% end %>
+  <% end %>
+
 <% end %>
+
+

@@ -238,3 +238,12 @@ table.data-table thead tr {
 table.data-table tr.odd, li.odd {
   background-color: #f8f8f8;
 }
+
+abbr {
+  border-bottom: 1px dotted;
+  cursor: help;
+}
+
+.combobox_item:hover {
+  background-color: #8DB3FF;
+}
