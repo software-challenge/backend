@@ -54,7 +54,7 @@ de:
     no_executable_selected: "Es wurde bisher keine Ausführungsdatei ausgewählt."
     upload_client: "Computerspieler hochladen"
     run_under_linux: "Direkt unter Linux"
-    vm_system_specifications: "Auf dem Wettkampf- und Testserver ist Ubuntu 64Bit ohne besondere Extras installiert. In Compiler-Sprachen (z.B. C++) geschriebene Computerspieler müssen entsprechend kompiliert werden. Python-Scripte müssen in einer Shell durch direkten Aufruf (z.B.: ./client.py) ausführbar sein."
+    vm_system_specifications: "Auf dem Wettkampf- und Testserver ist Ubuntu 64Bit ohne besondere Extras installiert. In Compiler-Sprachen (z.B. C++) geschriebene Computerspieler müssen entsprechend kompiliert werden. Python-Scripte müssen in einer Shell durch direkten Aufruf (z.B.: ./client.py) ausführbar sein (Shebang '#!/usr/bin/env python' in der ersten Scriptzeile)"
     test_with_time_to_spare: "Bitte testen Sie Ihren Client rechtzeitig auf Lauffähigkeit!" 
     upload_steps_file_extension: "Anhand der Dateiendung erkennt das System automatisch, wie die Hauptdatei ausgeführt werden muss. Die Erstellung eines Start-Scriptes ist nicht nötig."
     upload_steps_handle_main_file: "Die Hauptdateien werden folgendermaßen ausgeführt:"
