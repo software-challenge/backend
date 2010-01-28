@@ -17,7 +17,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
 
   if logged_in?
     add_tab do |t|
-      t.named t("titles.people")
+      t.named t("titles.people.people")
       begin; t.disable!; next; end if @contestant.new_record?
       t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant
     end
@@ -32,7 +32,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
-    t.named t("titles.matches")
+    t.named t("titles.matches.matches")
     begin; t.disable!; next; end if @contestant.new_record?
     t.links_to :controller => "matches", :action => "index_for_contestant", :contestant_id => @contestant
   end

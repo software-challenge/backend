@@ -24,7 +24,7 @@ de:
     weekdays: "Wochentage"
     client_not_handed_in: "Nicht hochgeladen oder nicht aktiviert!"
     client_ok: "Tests erfolgreich bestanden und aktiv."
-    client_failed: "Client aktiv, Tests jedoch fehlgeschlagen!"
+    client_failed: "Client aktiv, jedoch nicht erfolgreich getestet!"
     contest_has: "Der Wettbewerb hat "
     members: "Mitglieder"
     new: "Neues"
@@ -206,14 +206,22 @@ de:
     overview: "Übersicht"
     ranking: "Rangliste"
     results: "Ergebnisse"
-    people: "Personen"
     table: "Tabelle"
-    matches: "Begegnungen"
     matchday: "Spieltag"
     matchdays: "Spieltage"
     all_people: "Alle Personen"
     debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
+    main:
+      administration: "Administration"
+      login: "Anmelden"
+      debug: "Debugansicht"
+    people:
+       people_for_contestant: "Teammitglieder"
+       people: "Personen"
+    matches:
+       index_for_contestant: "Begegnungen: Teamübersicht"
+       matches: "Begegnungen"
     contests:
       edit_schedule: Terminplan bearbeiten
       show: "Wettkämpfe"
