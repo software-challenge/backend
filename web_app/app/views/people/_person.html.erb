@@ -24,7 +24,7 @@
           </div>
           </div>
         <% else %>
-          <span class="team_text"><%= person.teams.find(0).name %></span>
+          <span class="team_text"><%= person.teams.first.name %></span>
         <% end %>
       <% else %>
         Kein Team
