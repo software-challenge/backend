@@ -21,7 +21,11 @@
         <th><%= t "views.members" %></th>
         <th><%= t "acl9.roles.contestant.teacher" %></th>
         <th><%= t "acl9.roles.contestant.tutor" %></th>
+        <% show_to :administrator do %>
+          <th><%= t "views.testing_status" %></th> 
+        <% end %>
         <th colspan="2">&nbsp;<!-- options --></th>
+        
       </tr>
     </thead>
 
@@ -32,6 +36,18 @@
         <td><%= contestant.people.visible.count %></td>
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
+        <td>
+          <% show_to :administrator do -%>
+            <% if contestant.current_client.nil? %>
+            <%= image_tag "state/info.png", :title => I18n.t("views.client_not_handed_in") %>
+            <% elsif contestant.current_client.ok? %>
+            <%= image_tag "state/ok.png", :title => I18n.t("views.client_ok") %>
+            <% else %>
+            <%= image_tag "state/warning.png", :title => I18n.t("views.client_failed") %>
+            <% end %> 
+            
+          <% end -%>
+        </td>
         <td>
           <% if may_see_details? :contestant => contestant -%>
           <%= link_to image_tag('actions/show.png'), [:contest, contestant] %>
