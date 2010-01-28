@@ -1,3 +1,15 @@
+<div class="ui-widget">
+<div id="javascript_warning" class="ui-state-error ui-corner-all">
+  <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+  Um das Wettkampfsystem nutzen zu können, muss in Ihrem Browser Javascript aktiviert sein.
+  </p>
+</div>
+</div>
+<% javascript_tag do %>
+ $('div#javascript_warning').hide()
+<% end %>
+
+</div>
 <% form_tag login_url do %>
   <% fields_for :user do |f| %>
     <%= f.label :email, (t "labels.email_adress") %>
