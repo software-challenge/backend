@@ -14,22 +14,27 @@
         <legend>Filter auswählen</legend>
 
         <div id="show_teams" style="float: left">
-          <div style="padding-top: 2px; margin-left: 0px; margin-right: 10px; float: left">Ort: </div>
+          <div style="padding-top: 2px; margin-left: 0px; margin-right: 10px; float: left">Teamort: </div>
           <div id="location_filter_container" style="width: 200px; position: relative; float: left">
             <%= text_field_tag "location_filter", "", :style => "width: 200px" %><br>
             <div id="location_select" style="position: absolute; left: 0px; background-color: #fff; border: 1px solid #000; display: none">
-              <div class="combobox_item location">Gymnasium Blahblubb</div>
-              <div class="combobox_item location">Husum</div>
+              <% Contestant.visible.collect(&:location).uniq.sort!{ |a,b| a.downcase <=> b.downcase}.each do |contestantlocation| %>
+                <div class="combobox_item location"><%= contestantlocation %></div>
+              <% end %>
             </div> 
           </div>
           <div style="padding-top: 2px; margin-left: 25px; margin-right: 10px; display: inline; float: left">Team: </div>
-          <!--<%= select_tag "team_filter", options_for_select(["Alle"].concat(Contestant.all.collect(&:name))) %>!-->
           <select id="team_filter" name="team_filter" style="width: 250px">
             <option class="all" value="all">Alle</option>
-            <% Contestant.all.each do |team| %>
+            <% Contestant.visible.sort!{ |a,b| a.name.downcase <=> b.name.downcase}.each do |team| %>
               <option value="<%= team.location %>"><%= team.name %></option>
             <% end %>
           </select>
+          <br> 
+          <div style="margin-top: 10px">
+            <span style="margin-right: 23px;">Rolle:</span>
+            <%= select_tag "role_filter", options_for_select(["Alle"].concat(Role.all.collect{|role| role.to_s}.uniq)) %>
+          </div>
         </div>
       </fieldset><br>
     </div>
@@ -37,14 +42,14 @@
 
   <table class="data-table">
     <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @people %>
+    <%= render :partial => "person", :collection => @people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
   </table>
 
   <h2><%=t "headers.hidden_people" %></h2>
 
   <table class="data-table">
     <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @hidden_people %>
+    <%= render :partial => "person", :collection => @hidden_people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
   </table>
 
   <% show_to :administrator do %>
@@ -110,9 +115,10 @@
         }
 
         $(".person").each(function(index) {
-          var foundLocation = false;
+          var showPerson = true;
 
           // Check each person against location matching
+          var foundLocation = false;
           if($("#location_filter").val() != "") {
             $(".person_location", $(this)).each(function(index2) {
               if($(this).html().match(new RegExp($("#location_filter").val(), "i")) != null) {   
@@ -123,18 +129,42 @@
           } else {
             foundLocation = true;
           }
+          if(!foundLocation) {
+            showPerson = false;
+          }
+
 
           // Check each person against team matching
+          var teamMatch = false;
           if(!$("div#show_teams select#team_filter :selected").is('.all')) {
             if(isInTeam($(this), $("div#show_teams select#team_filter :selected").text())) {
-              foundLocation = true;
-            } else {
-              foundLocation = false;
+              teamMatch = true;
             }
+          } else {
+            teamMatch = true;
+          }
+          if(!teamMatch) {
+            showPerson = false;
+          }
+
+          // Check each person against role matching
+          var roleMatch = false;
+          if($("div#show_teams select#role_filter :selected").val() != 'Alle') {
+            $(".role_text", $(this)).each(function(index) {
+              if($(this).text() == $("div#show_teams select#role_filter :selected").val()) {
+                roleMatch = true;
+                return false;
+              }
+            })
+          } else {
+            roleMatch = true;
+          }
+          if(!roleMatch) {
+            showPerson = false;
           }
 
           // Show or hide person
-          if(foundLocation) {
+          if(showPerson) {
             $(this).show()
           } else {
             $(this).hide()
@@ -156,6 +186,10 @@
         $("div#show_teams select#team_filter").bind('click', function() {
           update_location_list()
         })
+
+        $("div#show_teams select#role_filter").bind('click', function() {
+          update_location_list()
+        })
       })
 
       function isInTeam(person, option) {
@@ -168,6 +202,59 @@
         })
         return found;
       }
+
+      // Sort all persons by the given parameteres using insertion sort
+      function sort_persons_by(attrib, asc) {
+        var index = 1;
+        while($("tr#person_"+index).html() != null && index < 5) {
+          var pos = index;
+          while(pos > 0) {
+            var cur = $("tr#person_"+pos)
+            var prev = $("tr#person_"+(pos-1))
+            var cur_val = $("td.p_"+attrib, cur).text()
+            var prev_val = $("td.p_"+attrib, prev).html()
+            pos -= 1;
+            if( (asc && (cur_val < prev_val)) ||
+                ((!asc) && (cur_val > prev_val)) ) {
+              // Swap!
+              var tmp_cur = cur.clone(true);
+              var tmp_prev = prev.clone(true);
+              cur.replaceWith(tmp_prev)
+              prev.replaceWith(tmp_cur)
+              tmp_prev.attr("id", "person_" + (pos + 1))
+              tmp_cur.attr("id", "person_" + pos)
+            } else {
+              // Do not swap, done with this one!
+              break
+            }
+          }
+          index += 1;
+        }
+      }
+
+      $(function() {
+        sort_persons_by("last_name", true)
+        $("a.sort_by#last_name img.sort_arrow_up").show()
+        
+        $("a.sort_by").bind('click', function() { 
+          $("a.sort_by img.sort_arrow_up").hide()
+          $("a.sort_by img.sort_arrow_down").hide()
+
+          if($(this).data('asc')) {
+            sort_persons_by($(this).attr("id"), true)
+            $(".sort_arrow_up", $(this)).show()
+            $("a.sort_by").data('asc', 1)
+            $(this).data('asc', 0)
+          } else {
+            sort_persons_by($(this).attr("id"), false)
+            $(".sort_arrow_down", $(this)).show()
+            $(this).data('asc', 1)
+          }
+          return false;
+        })
+
+        $("a.sort_by").data('asc', 1)
+      })
     <% end %>
   <% end %>
 

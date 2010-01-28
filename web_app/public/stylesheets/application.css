@@ -247,3 +247,8 @@ abbr {
 .combobox_item:hover {
   background-color: #8DB3FF;
 }
+
+a.sort_by {
+  text-decoration: none;
+  color: #000;
+}

@@ -3,14 +3,18 @@
           <% attributes = %w{first_name last_name} %>
         <% else -%>
         <% if @contestant -%>
-          <% attributes = %w{first_name last_name email blocked} %>
+          <% attributes = %w{first_name last_name email} %>
         <% else -%>
-          <% attributes = %w{first_name last_name email blocked teams adminstrator} %>
+          <% attributes = %w{first_name last_name email teams administrator} %>
         <% end -%>
         <% end -%>
 
         <% attributes.each do |attr| %>
-          <th><%= Person.human_attribute_name attr %></th>
+          <th><a href="#" class="sort_by" id="<%= attr %>"><%= Person.human_attribute_name attr %>
+            <%= image_tag "actions/arrow_down.png", :class => "sort_arrow_down", :style => "margin-left: 5px; display: none" %>
+            <%= image_tag "actions/arrow_up.png", :class => "sort_arrow_up", :style => "margin-left: 5px; display: none" %>
+            </a>
+          </th>
         <% end %>
         <!-- options -->
         <th></th>
