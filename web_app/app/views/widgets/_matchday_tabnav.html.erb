@@ -1,7 +1,7 @@
 <%- render_tabnav :new_person, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
-    t.named t("titles.matches")
+    t.named t("titles.matches.matches")
     t.named t("titles.results") if @matchday.played?
     t.links_to hash_for_contest_matchday_url(:id => @matchday)
   end

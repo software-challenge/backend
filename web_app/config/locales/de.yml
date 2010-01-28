@@ -225,6 +225,8 @@ de:
     contests:
       edit_schedule: Terminplan bearbeiten
       show: "Wettkämpfe"
+      results: "Ergebnisse"
+      standings: "Rangliste"
     generic:
       index: "Liste der {{model}}"
       edit: "{{model}} bearbeiten"
