@@ -10,11 +10,7 @@
         <% end -%>
 
         <% attributes.each do |attr| %>
-          <th><a href="#" class="sort_by" id="<%= attr %>"><%= Person.human_attribute_name attr %>
-            <%= image_tag "actions/arrow_down.png", :class => "sort_arrow_down", :style => "margin-left: 5px; display: none" %>
-            <%= image_tag "actions/arrow_up.png", :class => "sort_arrow_up", :style => "margin-left: 5px; display: none" %>
-            </a>
-          </th>
+          <th><%= Person.human_attribute_name attr %></th>
         <% end %>
         <!-- options -->
         <th></th>

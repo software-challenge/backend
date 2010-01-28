@@ -40,16 +40,24 @@
     </div>
   <% end %>
 
-  <table class="data-table">
-    <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+  <table class="data-table tablesorter" id="person_table">
+    <thead>
+      <%= render :partial => "person_table_head" %>
+    </thead>
+    <tbody>
+      <%= render :partial => "person", :collection => @people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+    </tbody>
   </table>
 
   <h2><%=t "headers.hidden_people" %></h2>
 
-  <table class="data-table">
-    <%= render :partial => "person_table_head" %>
-    <%= render :partial => "person", :collection => @hidden_people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+  <table class="data-table tablesorter" id="blocked_person_table">
+    <thead>
+      <%= render :partial => "person_table_head" %> 
+    </thead>
+    <tbody>
+      <%= render :partial => "person", :collection => @hidden_people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+    </tbody>
   </table>
 
   <% show_to :administrator do %>
@@ -183,11 +191,11 @@
           $(this).fadeOut()
         })
 
-        $("div#show_teams select#team_filter").bind('click', function() {
+        $("div#show_teams select#team_filter").bind('change', function() {
           update_location_list()
         })
 
-        $("div#show_teams select#role_filter").bind('click', function() {
+        $("div#show_teams select#role_filter").bind('change', function() {
           update_location_list()
         })
       })
@@ -203,57 +211,9 @@
         return found;
       }
 
-      // Sort all persons by the given parameteres using insertion sort
-      function sort_persons_by(attrib, asc) {
-        var index = 1;
-        while($("tr#person_"+index).html() != null && index < 5) {
-          var pos = index;
-          while(pos > 0) {
-            var cur = $("tr#person_"+pos)
-            var prev = $("tr#person_"+(pos-1))
-            var cur_val = $("td.p_"+attrib, cur).text()
-            var prev_val = $("td.p_"+attrib, prev).html()
-            pos -= 1;
-            if( (asc && (cur_val < prev_val)) ||
-                ((!asc) && (cur_val > prev_val)) ) {
-              // Swap!
-              var tmp_cur = cur.clone(true);
-              var tmp_prev = prev.clone(true);
-              cur.replaceWith(tmp_prev)
-              prev.replaceWith(tmp_cur)
-              tmp_prev.attr("id", "person_" + (pos + 1))
-              tmp_cur.attr("id", "person_" + pos)
-            } else {
-              // Do not swap, done with this one!
-              break
-            }
-          }
-          index += 1;
-        }
-      }
-
       $(function() {
-        sort_persons_by("last_name", true)
-        $("a.sort_by#last_name img.sort_arrow_up").show()
-        
-        $("a.sort_by").bind('click', function() { 
-          $("a.sort_by img.sort_arrow_up").hide()
-          $("a.sort_by img.sort_arrow_down").hide()
-
-          if($(this).data('asc')) {
-            sort_persons_by($(this).attr("id"), true)
-            $(".sort_arrow_up", $(this)).show()
-            $("a.sort_by").data('asc', 1)
-            $(this).data('asc', 0)
-          } else {
-            sort_persons_by($(this).attr("id"), false)
-            $(".sort_arrow_down", $(this)).show()
-            $(this).data('asc', 1)
-          }
-          return false;
-        })
-
-        $("a.sort_by").data('asc', 1)
+        $("#person_table").tablesorter({sortList: [[1,0]]});
+        $("#blocked_person_table").tablesorter({sortList: [[1,0]]});
       })
     <% end %>
   <% end %>
