@@ -121,7 +121,7 @@ module SoChaManager
         jar = "-jar #{executable}"
         executable = "java #{encoding} #{memory_limit} #{jar}"
       elsif executable.ends_with? ".exe"
-        executable = "wine #{executable}"
+        executable = "/usr/bin/wine #{executable}"
       else
         executable = File.join(".", executable)
       end
