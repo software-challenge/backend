@@ -28,10 +28,6 @@ role :app, "134.245.253.5"                          # This may be the same as yo
 role :db,  "134.245.253.5", :primary => true        # This is where Rails migrations will run
 # role :db,  "your slave db-server here"
 
-require 'cap_recipes/tasks/passenger'
-require 'cap_recipes/tasks/rails'
-require 'cap_recipes/tasks/delayed_job'
-
 after 'deploy:restart', 'daemons:restart'
 before 'daemons:restart', 'daemons:stop'
 after 'daemons:restart', 'daemons:start'
@@ -49,6 +45,12 @@ namespace :deploy do
     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
   end
 end
+
+receipes_path = "vendor/plugins/cap-recipes/lib/cap_recipes/tasks"
+require "#{receipes_path}/passenger"
+require "#{receipes_path}/rails"
+require "#{receipes_path}/delayed_job"
+
 
 namespace :daemons do
   task :start do

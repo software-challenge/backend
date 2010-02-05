@@ -25,7 +25,7 @@ Rails::Initializer.run do |config|
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem "rubyzip", :lib => false
   config.gem "nokogiri"
-  config.gem "cap-recipes", :lib => false, :source => "http://gemcutter.org"
+  #config.gem "cap-recipes", :lib => false, :source => "http://gemcutter.org" # installed as plugin
   config.gem "daemons", :lib => false
   config.gem "erubis", :lib => false, :version => ">= 2.6.5"
 
