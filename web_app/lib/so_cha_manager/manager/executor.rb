@@ -157,7 +157,8 @@ module SoChaManager
 
     def zip_to_watch_folder(source_directory, slot)
       key = slot.ingame_name
-      generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
+      #generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
+      generated_file_name = "#{Time.now.to_i}_#{key}_#{slot.client.id}.zip"
       target = File.expand_path(File.join(SoChaManager.watch_folder, generated_file_name))
 
       log_and_run %{sh -c "cd #{source_directory}; zip -qr #{target} ."}
