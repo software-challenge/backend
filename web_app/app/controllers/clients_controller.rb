@@ -205,21 +205,20 @@ class ClientsController < ApplicationController
         render :text => "false"
       end
   end
-
+ 
   def get_logs
-    #path = RAILS_ROOT + "/clientlogs/" + params[:id] + "_"
-    path = "/home/scadmin/clientlogs/" + params[:id] + "_"
+    path = ENV['CLIENT_LOGS_FOLDER'] + params[:id] + "_"
     number = 0
     logfiles = []
     while File.exists?(path + number.to_s + ".log")
-      logfiles << (path + number.to_s + ".log")
+      logfiles << {:file => path + number.to_s + ".log", :id => params[:id], :num => number}
       number += 1
     end
     render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles}
   end
 
   def send_log
-    send_file(params[:file], :type => 'text', :stream => "false", :disposition => "attachment")
+    send_file(ENV['CLIENT_LOGS_FOLDER'] + params[:id].to_i.to_s + "_" + params[:num].to_i.to_s + ".log", :type => 'text', :stream => "false", :disposition => "attachment")
   end
 
   protected
