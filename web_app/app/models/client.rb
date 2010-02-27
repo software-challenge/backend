@@ -74,6 +74,11 @@ class Client < ActiveRecord::Base
     return !self.comments.blank?
   end
 
+  def has_logs?
+    return File.exists?(ENV['CLIENT_LOGS_FOLDER'] + self.id.to_s + "_0.log")
+  end
+
+
   def status
     if test_match and test_match.played?
       all_tests_passed? ? "ok" : "broken"
