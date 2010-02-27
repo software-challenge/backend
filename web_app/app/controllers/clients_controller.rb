@@ -206,6 +206,22 @@ class ClientsController < ApplicationController
       end
   end
 
+  def get_logs
+    #path = RAILS_ROOT + "/clientlogs/" + params[:id] + "_"
+    path = "/home/scadmin/clientlogs/" + params[:id] + "_"
+    number = 0
+    logfiles = []
+    while File.exists?(path + number.to_s + ".log")
+      logfiles << (path + number.to_s + ".log")
+      number += 1
+    end
+    render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles}
+  end
+
+  def send_log
+    send_file(params[:file], :type => 'text', :stream => "false", :disposition => "attachment")
+  end
+
   protected
 
   def load_contestant

@@ -8,7 +8,7 @@
   </td>
   <td>
     <% if client.broken? %>
-
+      
     <% elsif client.tested? %>
       <%= client.test_results.join('/') %> bestanden
     <% elsif client.testable? %>
@@ -18,6 +18,12 @@
           test_contest_contestant_client_url(client.contestant, client), :method => :post,
           :class => "enabled" %>
       </span>
+    <% end %>
+
+    <% if !client.testable? %>
+      <a href="#" id="show_logs_<%= client.id %>"><%= t("labels.log").pluralize %></a>
+      <div id="clientlogs_<%= client.id %>" style="position: absolute; background-color: #DDDDFF; display: none">
+      </div>
     <% end %>
   </td>
   <td>
@@ -89,5 +95,21 @@
 
       client_urls[<%= client.id %>] = "<%= contest_contestant_client_url(client.contestant, client) %>"
     })
+  <% end %>
+  <% if !client.testable? %>
+    <% javascript_tag do %>
+      $(function() {
+        $("a#show_logs_<%= client.id %>").bind('click', function() {
+          $.get(
+            "<%= get_logs_contest_contestant_client_url(client.contestant, client) %>",
+            "id=" + <%= client.id %>,
+            function(returned_data) {
+              $("div#clientlogs_<%= client.id %>").replaceWith(returned_data)
+            }
+          )
+          return false;
+        })
+      })
+    <% end %>
   <% end %>
 <% end %>
