@@ -42,7 +42,9 @@ ActionController::Routing::Routes.draw do |map|
           :hide => :post,
           :get_comments => :get,
           :create_comment => :post,
-          :delete_comment => :get
+          :delete_comment => :get,
+          :get_logs => :get,
+          :send_log => :post
         } do |client|
           client.status '/status', :controller => "clients", :action => "status"
         end

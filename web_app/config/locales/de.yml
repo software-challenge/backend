@@ -6,6 +6,7 @@ de:
     password: "Passwort"
     send_notification: "eMail mit Zugangsdaten versenden"
     zipped_client: "Gepackter Computerspieler (*.zip)"
+    log: "Log"
   views:
     add_person: "Person hinzufügen"
     as: "als"
@@ -103,6 +104,7 @@ de:
     client_can_be_tested: "Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
       rechtzeitig (z.B. am Vortag) hochladen."
   messages:
+    no_log_files_available: "Keine Log-Dateien verfügbar."
     cleared_all_jobs: "Alle Aufträge wurden gelöscht."
     matchday_recalculated: "Der Spieltag wurde neu zusammengerechnet."
     matchday_already_played: "Der Spieltag wurde bereits gespielt."
