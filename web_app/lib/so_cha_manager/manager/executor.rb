@@ -123,7 +123,7 @@ module SoChaManager
       elsif executable.ends_with? ".exe"
         executable = "/usr/bin/wine \"#{executable}\""
       else
-        executable = File.join(".\"", executable, "\"")
+        executable = File.join(".", "\"#{executable}\"")
       end
 
       command = "#{executable} --host #{SoChaManager.server_host} --port #{SoChaManager.server_port} --reservation #{reservation}"
