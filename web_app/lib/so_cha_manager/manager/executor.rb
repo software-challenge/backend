@@ -118,12 +118,12 @@ module SoChaManager
       if executable.ends_with? ".jar"
         encoding = "-Dfile.encoding=UTF-8"
         memory_limit = "-Xmx1024M"
-        jar = "-jar #{executable}"
+        jar = "-jar \"#{executable}\""
         executable = "java #{encoding} #{memory_limit} #{jar}"
       elsif executable.ends_with? ".exe"
-        executable = "/usr/bin/wine #{executable}"
+        executable = "/usr/bin/wine \"#{executable}\""
       else
-        executable = File.join(".", executable)
+        executable = File.join("./\"", executable, "\"")
       end
 
       command = "#{executable} --host #{SoChaManager.server_host} --port #{SoChaManager.server_port} --reservation #{reservation}"
@@ -158,7 +158,8 @@ module SoChaManager
     def zip_to_watch_folder(source_directory, slot)
       key = slot.ingame_name
       #generated_file_name = "#{Time.now.to_i}_#{key}_#{(rand * 1000).ceil}.zip"
-      generated_file_name = "#{Time.now.to_i}_#{key}_#{slot.client.id}.zip"
+      # Be careful when altering this filename as it is used to identify the client id for the logs
+      generated_file_name = "#{Time.now.to_i}_#{(rand * 1000).ceil}_#{key}_#{slot.client.id}.zip"
       target = File.expand_path(File.join(SoChaManager.watch_folder, generated_file_name))
 
       log_and_run %{sh -c "cd #{source_directory}; zip -qr #{target} ."}
