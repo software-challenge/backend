@@ -79,7 +79,7 @@ class Contest < ActiveRecord::Base
       generate_matchdays.each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
 
-        contestants.visible.each do |contestant|
+        contestants.each do |contestant|
           matchday.slots.create!(:contestant => contestant)
         end
 
