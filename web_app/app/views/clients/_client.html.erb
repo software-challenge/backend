@@ -96,7 +96,7 @@
       client_urls[<%= client.id %>] = "<%= contest_contestant_client_url(client.contestant, client) %>"
     })
   <% end %>
-  <% if !client.testable? %>
+  <% if client.has_logs? %>
     <% javascript_tag do %>
       $(function() {
         $("a#show_logs_<%= client.id %>").bind('click', function() {
