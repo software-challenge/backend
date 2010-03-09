@@ -52,6 +52,11 @@ class MatchdaysController < ApplicationController
     end
   end
 
+  def get_progress
+    matchday = Matchday.find(params[:id])
+    render :partial => "matchday_progress", :locals => {:matchday => matchday}
+  end
+
   def update
     @matchday = Matchday.find(params[:id])
 

@@ -21,6 +21,7 @@ ActionController::Routing::Routes.draw do |map|
       },
         :member => {
         :play => :post,
+        :get_progress => :get,
         :reaggregate => :post,
         :reset => :post
       } do |md|

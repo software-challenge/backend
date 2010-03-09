@@ -1,7 +1,22 @@
 <% show_to :administrator do %>
   <div id="actions">
     <% if @matchday.running? %>
-      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> 
+      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br>
+      <div id="matchday_progress">
+        <%= render :partial => "matchday_progress", :locals => {:matchday => @matchday} %>
+      </div> 
+      <% javascript_tag do %>
+        function refresh_matchday_progress() {
+          $.get(
+          "<%= get_progress_matchday_contest_url(@matchday, @matchday.contest) %>",
+          "id=<%= @matchday.id %>",
+          function(returned_data) {
+            $("div#matchday_progress").html(returned_data)
+          })  
+        }
+
+        setInterval(refresh_matchday_progress, 5000);
+      <% end %> 
     <% else %>
       <% if @matchday.played? %>
         <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateAction" do %>
@@ -27,12 +42,5 @@
 <% tabnav :matchday do %>
   <%= render :partial => "results" %>
 <% show_to :administrator do %>
-<br>
-<b>Aktueller Status: </b> <%= matchesDone(@matchday) %> von <%= matchesCount(@matchday)%> gespielt <br>
-<b>Verbleibene Zeit: </b> 
-<%= ((matchesCount(@matchday)-matchesDone(@matchday))/6).ceil*5 %> Minuten
-<br> 
-<b>Zeit für gesamten Spieltag: </b> 
-<%= (matchesCount(@matchday)/6).ceil*5 %> Minuten <br>
 <% end %>
 <% end %>
