@@ -1,7 +1,7 @@
 <% show_to :administrator do %>
   <div id="actions">
     <% if @matchday.running? %>
-      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %>
+      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> 
     <% else %>
       <% if @matchday.played? %>
         <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateAction" do %>
@@ -26,4 +26,13 @@
 
 <% tabnav :matchday do %>
   <%= render :partial => "results" %>
+<% show_to :administrator do %>
+<br>
+<b>Aktueller Status: </b> <%= matchesDone(@matchday) %> von <%= matchesCount(@matchday)%> gespielt <br>
+<b>Verbleibene Zeit: </b> 
+<%= ((matchesCount(@matchday)-matchesDone(@matchday))/6).ceil*5 %> Minuten
+<br> 
+<b>Zeit für gesamten Spieltag: </b> 
+<%= (matchesCount(@matchday)/6).ceil*5 %> Minuten <br>
+<% end %>
 <% end %>
