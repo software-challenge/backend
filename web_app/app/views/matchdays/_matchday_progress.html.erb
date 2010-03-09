@@ -1,0 +1,7 @@
+<b>Aktueller Status: </b> <%= matchesDone(matchday) %> von <%= matchesCount(matchday)%> gespielt <br>
+<b>Verbleibene Zeit: </b>~&nbsp;
+<%= ((matchesCount(matchday)-matchesDone(matchday))/6).ceil*5 %> Minuten
+<br> 
+<b>Zeit für gesamten Spieltag: </b>~&nbsp; 
+<%= (matchesCount(matchday)/6).ceil*5 %> Minuten <br>
+
