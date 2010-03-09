@@ -8,7 +8,7 @@
       <% javascript_tag do %>
         function refresh_matchday_progress() {
           $.get(
-          "<%= get_progress_matchday_contest_url(@matchday, @matchday.contest) %>",
+          "<%= get_progress_matchday_url(@matchday) %>",
           "id=<%= @matchday.id %>",
           function(returned_data) {
             $("div#matchday_progress").html(returned_data)
