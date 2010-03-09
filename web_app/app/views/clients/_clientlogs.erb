@@ -1,5 +1,5 @@
-<div id="clientlogs_<%= id %>">
-  <div style="position: absolute; background-color: #DDDDFF; padding-top: 5px; padding-left: 10px; padding-right: 10px; padding-bottom: 5px; width: 125px; max-height: 200px; overflow: scroll">
+<div id="clientlogs_<%= id %>" style="position: absolute; background-color: #DDDDFF; max-height: 250px">
+  <div style="background-color: #DDDDFF; padding-top: 5px; padding-left: 10px; padding-right: 10px; padding-bottom: 5px; width: 125px; max-height: 200px; overflow: scroll">
   <% if logfiles.blank? then %>
     <%= t("messages.no_log_files_available") %>
   <% else %>
