@@ -50,6 +50,7 @@ module SoChaManager
       ObservingRoomHandler.new gzip_logfile do |observer|
         begin
           logger.info "Logging done!"
+          gzip_logfile.flush
           gzip_logfile.close
           logfile.close
 
@@ -64,6 +65,8 @@ module SoChaManager
           round.save!
 
           @last_result = observer.result
+          logger.info "Logfile: " + logfile_handle.original_filename
+          logger.info ""
         ensure
           self.close
           logfile.close unless logfile.closed?
