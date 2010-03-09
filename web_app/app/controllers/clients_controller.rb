@@ -214,7 +214,7 @@ class ClientsController < ApplicationController
       logfiles << {:file => path + number.to_s + ".log", :id => params[:id], :num => number}
       number += 1
     end
-    render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles}
+    render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles.reverse}
   end
 
   def send_log
