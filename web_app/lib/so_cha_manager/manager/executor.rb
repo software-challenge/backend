@@ -174,6 +174,7 @@ module SoChaManager
         f.puts "#!/bin/bash"
         f.puts "echo \"Starting client\""
         f.puts "chmod +x #{ai_program.main_file_entry.file_name}"
+        f.puts "tr -d [] < #{ai_program.main_file_entry.file_name} > #{ai_program.main_file_entry.file_name}"
         f.puts generate_startup_command(ai_program, reservation, SoChaManager.silent)
         f.puts "echo \"Client terminated\""
         f.flush
