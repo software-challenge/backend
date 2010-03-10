@@ -7,7 +7,7 @@
   end
 
   add_tab do |t|
-    t.named t("titles.table")
+    t.named t("titles.ranking")
     t.links_to hash_for_contest_matchday_standings_url(:matchday_id => @matchday)
     t.disable! unless @matchday.played?
   end
