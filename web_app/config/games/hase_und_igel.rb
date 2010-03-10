@@ -21,7 +21,7 @@ GameDefinition.create :"HaseUndIgel" do
       enemy_victories = enemy_scores.inject(0) { |sum,x| sum + x.victory }
 
       if my_victories > enemy_victories
-        3
+        2
       elsif my_victories == enemy_victories
         1
       else
