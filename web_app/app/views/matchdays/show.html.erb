@@ -1,22 +1,7 @@
 <% show_to :administrator do %>
   <div id="actions">
     <% if @matchday.running? %>
-      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br>
-      <div id="matchday_progress">
-        <%= render :partial => "matchday_progress", :locals => {:matchday => @matchday} %>
-      </div> 
-      <% javascript_tag do %>
-        function refresh_matchday_progress() {
-          $.get(
-          "<%= get_progress_contest_matchday_url(@matchday) %>",
-          "id=<%= @matchday.id %>",
-          function(returned_data) {
-            $("div#matchday_progress").html(returned_data)
-          })  
-        }
-
-        setInterval(refresh_matchday_progress, 5000);
-      <% end %> 
+      <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br> 
     <% else %>
       <% if @matchday.played? %>
         <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateAction" do %>
@@ -38,6 +23,25 @@
   <%= link_to @contest.name, contest_matchdays_url %> /
   <%= @matchday.position %>. <%= t "views.matchday" %>
 </h1>
+
+<% if @matchday.running? %>
+  <div id="matchday_progress">
+    <%= render :partial => "matchday_progress", :locals => {:matchday => @matchday} %>
+  </div> 
+  <% javascript_tag do %>
+    function refresh_matchday_progress() {
+      $.get(
+        "<%= get_progress_contest_matchday_url(@matchday) %>",
+        "id=<%= @matchday.id %>",
+        function(returned_data) {
+          $("div#matchday_progress").html(returned_data)
+        }
+      )  
+    }
+
+    setInterval(refresh_matchday_progress, 5000);
+  <% end %> 
+<% end %>
 
 <% tabnav :matchday do %>
   <%= render :partial => "results" %>
