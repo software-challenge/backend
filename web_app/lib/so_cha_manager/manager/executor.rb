@@ -50,8 +50,6 @@ module SoChaManager
       ObservingRoomHandler.new gzip_logfile do |observer|
         begin
           logger.info "Logging done!"
-          gzip_logfile.flush
-          gzip_logfile.close
           logfile.close
 
           # add original_filename attribute for Paperclip
