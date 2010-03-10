@@ -218,7 +218,12 @@ class PeopleController < ApplicationController
   end
 
   def hide
-    generic_hide(@person)
+    # Don't hide myself
+    if @person != current_user
+      generic_hide(@person)
+    else 
+      flash[:error] = "Ein Benutzer kann sich nicht selbst löschen"
+    end
   end
 
   def unhide

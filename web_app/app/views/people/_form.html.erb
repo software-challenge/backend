@@ -48,7 +48,9 @@
           <% end %>
           <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
         </li>
-        <%= f.input "blocked", :required => false %>
+        <% if @person != current_user %>
+          <%= f.input "blocked", :required => false %>
+        <% end %>
       <% end %>
     <% end %>
 
