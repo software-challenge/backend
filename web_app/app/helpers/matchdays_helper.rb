@@ -29,11 +29,11 @@
 	    return done
 	  end
 	  
-	  def count_matches_played_by_contestant(contestant)
+	  def count_matches_played_by_contestant(contestant, currentMatchday)
 	    all_matches = contestant.matches
             count = 0
             all_matches.each do |match|
-              if not match.played?.nil? 
+              if (match.played? <= currentMatchday.played_at) and (not match.played?.nil?)
                 count+=1 
               end
             end

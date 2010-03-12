@@ -14,7 +14,7 @@
     <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
       <td style="text-align: left;"><%= slot.position %>.</td>
       <td><%= link_to slot.contestant.name, [:contest, slot.contestant] %></td>
-      <td style="text-align: center;"><%= count_matches_played_by_contestant(slot.contestant) %></td>
+      <td style="text-align: center;"><%= count_matches_played_by_contestant(slot.contestant, @matchday) %></td>
       <% if slot.score %>
         <% slot.score.to_a_with_precision.each do |value| %>
           <td style="text-align: center;"><%=h value %></td>
