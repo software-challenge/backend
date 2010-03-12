@@ -213,10 +213,7 @@ de:
     results: "Ergebnisse"
     table: "Tabelle"
     matchday: "Spieltag"
-    matchdays: 
-      standing: "Rangliste"
-      results: "Ergebnisse"
-      result: "Ergebnis"
+    matchdays: "Spieltage"
     all_people: "Alle Personen"
     debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
