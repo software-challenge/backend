@@ -11,6 +11,11 @@
           <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
         <% end %>
       <% else %>
+        <% if  ((not @matchday.played?) and (matchesDone(@matchday) > 0))%>
+          <% link_to reset_contest_matchday_url(@matchday), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
+            <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
+          <% end %>
+        <% end %>
         <% link_to play_contest_matchday_url(@matchday), :method => "post", :title => t("views.play"), :id => "playAction" do %>
           <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
