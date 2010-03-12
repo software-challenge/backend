@@ -16,7 +16,7 @@
             <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
           <% end %>
         <% end %>
-        <% link_to play_contest_matchday_url(@matchday), :method => "post", :title => t("views.play"), :id => "playAction" do %>
+        <% link_to play_contest_matchday_url(@matchday), :method => "post", :title => t("actions.play"), :id => "playAction" do %>
           <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
       <% end %>

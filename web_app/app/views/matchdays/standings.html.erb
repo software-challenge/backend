@@ -4,5 +4,11 @@
 </h1>
 
 <% tabnav :matchday do %>
-  <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
+  <% if @matchday.played? %>
+    <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
+  <% else %>
+   <%= image_tag 'ui/spinner.gif' %> <br>
+   Spieltag läuft gerade, Anzeigen ist aktuell nicht möglich! <br>
+   Bitte versuchen sie es später erneut.
+  <% end %>
 <% end %>
