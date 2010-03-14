@@ -66,7 +66,13 @@ class Contest < ActiveRecord::Base
         "INNER JOIN matchdays ON matchdays.id = matches.set_id",
       :conditions => ["rounds.played_at IS NOT NULL AND matches.set_type = ? AND matchdays.contest_id = ?", "Matchday", id])
   end
-
+  
+  def reaggregate
+    Contest.matchdays.each do |matchday|
+      matchday.reaggregate
+    end
+  end
+  
   def refresh_matchdays!(start_at = Date.today, weekdays = 0..6)
     weekdays = weekdays.to_a
     range = (0..6)
