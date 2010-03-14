@@ -66,11 +66,11 @@ module SoChaManager
           logger.info "Logfile: " + logfile_handle.original_filename
           logger.info ""
         ensure
-          if gzip_logfile.closed?
-            logger.info "WARNING: Cannot flush, GZip logfile already closed"
-          else
+          begin
             gzip_logfile.flush
             gzip_logfile.close
+          rescue
+            logger.warning "GZip writer could not be flushed"
           end
           logfile.close unless logfile.closed?
           logfile.unlink
