@@ -70,7 +70,9 @@ module SoChaManager
             gzip_logfile.flush
             gzip_logfile.close
           rescue
-            logger.warning "GZip writer could not be flushed"
+            logger.warn "GZip writer could not be flushed"
+          ensure
+            logger.info "GZip done"
           end
           logfile.close unless logfile.closed?
           logfile.unlink
