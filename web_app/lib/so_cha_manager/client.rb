@@ -57,6 +57,10 @@ module SoChaManager
       write %{<observe roomId="#{room_id}" passphrase="#{passphrase}" />}
     end
 
+    def reset_timeout
+      @last_data = Time.now
+    end 
+
     def step(room_id, forced = false)
       write %{<step roomId="#{room_id}" forced="#{(!!forced)}" />}
     end
