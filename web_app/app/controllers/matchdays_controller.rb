@@ -103,6 +103,10 @@ class MatchdaysController < ApplicationController
     redirect_to contest_matchday_url(@matchday)
   end
 
+  def reaggregateContest
+    Matchday.contest.reaggregate()
+  end
+
   def reset
     @matchday = @contest.matchdays.find(params[:id])
 

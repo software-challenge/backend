@@ -4,7 +4,7 @@
       <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br> 
     <% else %>
       <% if @matchday.played? %>
-        <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateAction" do %>
+        <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateContestAction" do %>
           <%= image_tag('actions/refresh.png') %><%= t ("actions.add") %>
         <% end %>
         <% link_to reset_contest_matchday_url(@matchday), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
