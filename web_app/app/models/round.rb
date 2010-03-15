@@ -19,7 +19,7 @@ class Round < ActiveRecord::Base
   delegate :game_definition, :to => :contest
 
   def played?
-    played_at
+    !played_at.nil?
   end
 
   def perform
