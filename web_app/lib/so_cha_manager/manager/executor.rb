@@ -46,14 +46,18 @@ module SoChaManager
     def create_room_handler(round)
       logfile_name = "#{Time.now.to_i}_log_#{round.id}.xml.gz"
       logfile = Tempfile.new(logfile_name)
-      gzip_logfile = Zlib::GzipWriter.open(logfile.path)
-      ObservingRoomHandler.new gzip_logfile do |observer|
+      ObservingRoomHandler.new logfile do |observer|
         begin
           logger.info "Logging done!"
-          logfile.close
+          observer.data.open # reopen for reading
+          tmp_zip_file = Tempfile.new(logfile_name)
+          zip_file = Zlib::GzipWriter.new(tmp_zip_file)
+          zip_file.write(observer.data.read)
+          zip_file.close
+          observer.data.close
 
           # add original_filename attribute for Paperclip
-          logfile_handle = logfile.open
+          logfile_handle = tmp_zip_file.open
           def logfile_handle.original_filename=(x); @original_filename = x; end
           def logfile_handle.original_filename; @original_filename; end
           logfile_handle.original_filename = logfile_name
@@ -61,19 +65,14 @@ module SoChaManager
           # save replay to database
           round.replay = logfile_handle
           round.save!
+          # file is closed by paperclip
+          logger.info "Logfile: " + logfile_handle.original_filename
 
           @last_result = observer.result
-          logger.info "Logfile: " + logfile_handle.original_filename
-          logger.info ""
         ensure
-          begin
-            gzip_logfile.flush
-            gzip_logfile.close
-          rescue
-            logger.warn "GZip writer could not be flushed"
-          ensure
-            logger.info "GZip done"
-          end
+          logger.info "Cleaning up"
+          tmp_zip_file.close unless tmp_zip_file.closed?
+          tmp_zip_file.unlink
           logfile.close unless logfile.closed?
           logfile.unlink
           self.close

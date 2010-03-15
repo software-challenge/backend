@@ -21,9 +21,9 @@
 	    done = 0
 	    matchday.matches.each do |match|
 	      match.rounds.each do |round|
-		if not round.played?.nil? 
-		  done += 1 
-		end
+          if round.played?
+            done += 1
+          end
 	      end
 	    end
 	    return done
@@ -38,5 +38,14 @@
         end
       end
 	    return count
+    end
+
+    def not_played_contestant_on(matchday)
+      if matchday.contest.contestants.without_testers.visible.count % 2 != 0
+        played_contestants = matchday.slots.collect{|slot| slot.contestant}
+        return (matchday.contest.contestants.without_testers.visible.all - played_contestants).first
+      else
+        return nil
+      end
     end
 end

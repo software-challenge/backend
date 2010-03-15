@@ -12,3 +12,7 @@
     <%= render :partial => "matchdays/match", :collection => @matchday.matches %>
   </tbody>
 </table>
+
+<% if not_played_contestant_on(@matchday) %>
+<p><%=t "views.not_played" %>: <%= not_played_contestant_on(@matchday).name %></p>
+<% end %>
