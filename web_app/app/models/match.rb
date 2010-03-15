@@ -29,7 +29,7 @@ class Match < ActiveRecord::Base
   end
 
   def played?
-    played_at
+    !played_at.nil?
   end
 
   def result
