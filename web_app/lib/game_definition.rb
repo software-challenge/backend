@@ -1,4 +1,4 @@
-:class LeagueConfiguration < Struct.new(:rounds)
+class LeagueConfiguration < Struct.new(:rounds)
   def rounds(r = nil)
     @rounds = r if r
     @rounds

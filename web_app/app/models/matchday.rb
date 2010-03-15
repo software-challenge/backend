@@ -60,6 +60,12 @@ class Matchday < ActiveRecord::Base
 
   def perform_delayed!
     matches.each do |match|
+      match.slots.each do |slot|
+        if slot.client.nil?
+          slot.client = slot.contestant.current_client
+          slot.save!
+        end
+      end
       match.perform_delayed!
     end
   end

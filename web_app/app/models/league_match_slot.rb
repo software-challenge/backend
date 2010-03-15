@@ -6,5 +6,5 @@ class LeagueMatchSlot < MatchSlot
   undef :client=
   undef :client
 
-  delegate :contestant, :client, :to => :matchday_slot
+  delegate :contestant, :client, :client=, :to => :matchday_slot
 end
