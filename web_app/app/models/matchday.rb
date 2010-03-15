@@ -4,6 +4,7 @@ class Matchday < ActiveRecord::Base
 
   # named scopes
   named_scope :played, :conditions => "played_at IS NOT NULL"
+  named_scope :published, :conditions => {:public => true}
 
   # validations
   validates_presence_of :contest
@@ -51,6 +52,10 @@ class Matchday < ActiveRecord::Base
 
   def running?
     !job.nil? || !self.mini_jobs.empty?
+  end
+
+  def published?
+    self.public
   end
 
   def perform_delayed!

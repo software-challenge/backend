@@ -17,13 +17,14 @@ ActionController::Routing::Routes.draw do |map|
       c.resources :matchdays,
         :as => "spieltage",
         :collection => {
-        :move => :post
+        :move => :post,
       },
         :member => {
         :play => :post,
         :get_progress => :get,
         :reaggregate => :post,
-        :reset => :post
+        :reset => :post,
+        :publish => :post
       } do |md|
         md.resources :matches do |m|
           m.resources :rounds

@@ -69,16 +69,21 @@
 
 <table id="result">
   <% if @match.result %>
-    <tr class="values">
-      <% @match.main_result.each_with_index do |value,i| %>
-        <% unless i.zero? %>
-          <td class="center">-</td>
+    <% if @match.matchday.published? or current_user.try(:administrator) %>
+      <tr class="values">
+        <% @match.main_result.each_with_index do |value,i| %>
+          <% unless i.zero? %>
+            <td class="center">-</td>
+          <% end %>
+          <td>
+            <%=h value  %>
+          </td>
         <% end %>
-        <td>
-          <%=h value  %>
-        </td>
-      <% end %>
-    </tr>
+      </tr>
+    <% end %>
+    <% unless @match.matchday.published? %>
+      <tr><td class="center" colspan="<%= @match.slots.count * 2 - 1 %>"><%=t "views.unpublished" %></td></tr>
+    <% end %>
   <% else %>
     <tr class="values">
       <td class="center" colspan="<%= @match.slots.count * 2 - 1 %>">
@@ -119,7 +124,7 @@
   <% @match.slots.each do |slot| %>
     <tr>
       <td colspan="<%= match_colspan %>"><%= slot.name %></td>
-      <% if slot.score %>
+      <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
         <% slot.score.to_a_with_precision.each do |value| %>
           <td><%= value %></td>
         <% end %>
@@ -150,7 +155,7 @@
     <tr class="round">
       <td colspan="<%= round_colspan + round_score_fragments %>">
         <div>
-          <% if round.replay? %>
+          <% if round.replay? and (@matchday.published? or current_user.try(:administrator)) %>
             <span style="float: right;">
               <%= link_to "Replay herunterladen", [:contest, @match.matchday, @match.becomes(Match), round] %>
             </span>
@@ -162,7 +167,7 @@
     <% round.slots.each do |slot| %>
       <tr>
         <td colspan="<%= round_colspan %>"><%= slot.name %></td>
-        <% if slot.score %>
+        <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
           <% slot.score.to_a_with_precision.each do |value| %>
             <td><%= value %></td>
           <% end %>

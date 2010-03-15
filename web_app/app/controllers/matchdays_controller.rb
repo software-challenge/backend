@@ -164,4 +164,13 @@ class MatchdaysController < ApplicationController
 
     render :nothing => true
   end
+
+  # POST /contest/1/matchdays/publish
+  def publish
+    @matchday = @contest.matchdays.find(params[:id])
+    @matchday.public = true
+    @matchday.save
+    redirect_to contest_matchday_url(@matchday)
+  end
+
 end
