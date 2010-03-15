@@ -17,8 +17,14 @@ class MatchSlot < ActiveRecord::Base
   delegate :contestant, :to => :client
 
   def round_score_array
-    self.round_scores.collect do |score|
+    round_scores.collect do |score|
       score.to_a
+    end
+  end
+
+  def round_score_array_with_causes
+    round_scores.collect do |score|
+      score.to_a + [score.cause]
     end
   end
 

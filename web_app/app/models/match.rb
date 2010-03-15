@@ -132,9 +132,9 @@ class Match < ActiveRecord::Base
 
   def update_scoretable
     slots.each do |slot|
-      other_slots = slots.reject{|item| item == slot}
-      others = other_slots.collect{|other_slot| other_slot.round_score_array}
-      mine = slot.round_score_array
+      other_slots = slots.reject{ |item| item == slot }
+      others = other_slots.collect{ |other_slot| other_slot.round_score_array_with_causes }
+      mine = slot.round_score_array_with_causes
       
       result = contest.game_definition.aggregate_rounds(mine, others)
 
