@@ -144,6 +144,7 @@ class GameDefinition
     definition.game_identifier = identifier
     definition.freeze
     @@definitions << definition
+    definition
   end
   
   def ==(other)
@@ -156,37 +157,16 @@ class GameDefinition
   end
 
   def aggregate_rounds(mine, others)
-    # add some dynamic methods
-    round_score.values.each_with_index do |field, i|
-      others.collect do |other|
-        other.each do |score|
-          score.define_singleton_method field.name do
-            score[i]
-          end
-        end
-      end
-      
-      mine.each do |my|
-        my.define_singleton_method field.name do
-          my[i]
-        end
-      end
-    end
-      
+    extend_by_fields(round_score, mine, *others)
+    extend_by_cause(mine, *others)
+   
     match_score.collect do |k,v|
       v.callback.call(mine, others)
     end
   end
 
   def aggregate_matches(elements)
-    # add some dynamic methods
-    match_score.values.each_with_index do |field, i|
-      elements.each do |my|
-        my.define_singleton_method field.name do
-          my[i]
-        end
-      end
-    end
+    extend_by_fields(match_score, elements)
 
     match_score.collect do |k, v|
       v.aggregator.call(elements)
@@ -206,6 +186,39 @@ class GameDefinition
   end
   
   attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds
+
+  protected
+
+  # a = [0,1,2,"HI"]
+  # extend_by_cause([a])
+  # a        # => [0,1,2]
+  # a.cause  # => "HI"
+  def extend_by_cause(*players)
+    players.each do |player|
+      player.each do |score|
+        cause = score.pop
+        # use the eigenklass / metaclass to add method per object
+        score.define_singleton_method :cause do
+          cause
+        end
+      end
+    end
+  end
+
+  # add simple accessors for the score arrays
+  # players = array of array of array of Integer
+  def extend_by_fields(field_definition, *players)
+    field_definition.values.each_with_index do |field, i|
+      players.each do |scores|
+        scores.each do |score|
+          # use the eigenklass / metaclass to add method per object
+          score.define_singleton_method field.name do
+            score[i]
+          end
+        end
+      end
+    end
+  end
 end
 
 Dir[Rails.root.join('config', 'games', '*.{rb,yml}')].each do |file|
