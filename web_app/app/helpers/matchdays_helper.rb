@@ -41,9 +41,19 @@
     end
 
     def not_played_contestant_on(matchday)
-      if matchday.contest.contestants.without_testers.visible.count % 2 != 0
-        played_contestants = matchday.slots.collect{|slot| slot.contestant}
-        return (matchday.contest.contestants.without_testers.visible.all - played_contestants).first
+      all_contestants = matchday.contest.contestants.without_testers.visible.all
+      played_contestants = returning(Array.new) do |contestants|
+        matchday.matches.each do |match|
+          if match.played?
+            match.slots.each do |slot|
+              contestants << slot.contestant
+            end
+          end
+        end
+      end
+      not_played_contestants = all_contestants - played_contestants
+      unless not_played_contestants.empty?
+        return not_played_contestants.first
       else
         return nil
       end
