@@ -22,7 +22,4 @@ class MatchdaySlot < ActiveRecord::Base
     slot.position
   end
   
-  def client
-    contestant.current_client
-  end
 end
