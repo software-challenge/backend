@@ -1,5 +1,9 @@
 class MatchdaysController < ApplicationController
 
+  access_control :only => [:publish] do
+    allow :administrator
+  end
+
   def index
     @matchdays = @contest.matchdays
 
