@@ -141,7 +141,7 @@ module SoChaManager
 
       if executable.ends_with? ".jar"
         encoding = "-Dfile.encoding=UTF-8"
-        memory_limit = "-Xmx1024M"
+        memory_limit = "-Xmx1250M"
         jar = "-jar \"#{executable}\""
         executable = "java #{encoding} #{memory_limit} #{jar}"
       elsif executable.ends_with? ".exe"
