@@ -107,7 +107,7 @@ class Contest < ActiveRecord::Base
   end
 
   def last_played_matchday
-    matchdays.played.first(:order => "position DESC")
+    matchdays.played.published.first(:order => "position DESC")
   end
 
   def ready?

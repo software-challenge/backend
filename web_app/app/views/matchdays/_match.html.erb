@@ -7,8 +7,13 @@
   <td><%= match.slots[1].name || "Freispiel" %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
-      <% link_to [:contest, match.matchday, match.becomes(Match)] do %>
-        <%= match.main_result.join(" : ") %>
+      <% if match.matchday.published? or current_user.try(:administrator) %>
+        <% link_to [:contest, match.matchday, match.becomes(Match)] do %>
+          <%= match.main_result.join(" : ") %>
+        <% end %>
+      <% end %>
+      <% unless match.matchday.published? %>
+        <em><%=t "views.unpublished" %></em>
       <% end %>
     <% elsif match.running? %>
       <%= image_tag 'ui/spinner.gif' %>

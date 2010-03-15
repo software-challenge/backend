@@ -4,5 +4,10 @@
 </h1>
 
 <% tabnav :matchday do %>
-  <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
+  <% unless @matchday.published? %>
+    <p><%=t "views.unpublished" %></p>
+  <% end %>
+  <% if @matchday.published? or current_user.try(:administrator) %>
+    <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
+  <% end %>
 <% end %>

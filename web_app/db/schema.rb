@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100113091927) do
+ActiveRecord::Schema.define(:version => 20100315091912) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20100113091927) do
     t.datetime "updated_at"
     t.datetime "played_at"
     t.integer  "job_id"
+    t.boolean  "public",     :default => false, :null => false
   end
 
   create_table "matches", :force => true do |t|
