@@ -44,15 +44,14 @@
       all_contestants = matchday.contest.contestants.without_testers.visible.all
       played_contestants = returning(Array.new) do |contestants|
         matchday.matches.each do |match|
-          if match.played?
-            match.slots.each do |slot|
-              contestants << slot.contestant
-            end
+          match.slots.each do |slot|
+            contestants << slot.contestant
           end
         end
       end
       not_played_contestants = all_contestants - played_contestants
-      unless not_played_contestants.empty?
+
+      if not_played_contestants.size == 1
         return not_played_contestants.first
       else
         return nil
