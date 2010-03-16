@@ -166,7 +166,12 @@
     </tr>
     <% round.slots.each do |slot| %>
       <tr>
-        <td colspan="<%= round_colspan %>"><%= slot.name %></td>
+        <td colspan="<%= round_colspan %>">
+          <%= slot.name %>
+          <% if slot.score.cause != "REGULAR" %>
+            <em>(<%=t "views.disqualified" %>)</em>
+          <% end %>
+        </td>
         <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
           <% slot.score.to_a_with_precision.each do |value| %>
             <td><%= value %></td>
