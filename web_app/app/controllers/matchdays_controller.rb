@@ -132,12 +132,13 @@ class MatchdaysController < ApplicationController
 
   def play
     @matchday = @contest.matchdays.find(params[:id])
-
+    
     if @matchday.running?
       flash[:error] = I18n.t("messages.matchday_playing_in_progress")
     elsif @matchday.played?
       flash[:error] = I18n.t("messages.matchday_already_played")
     else
+      @matchday.load_active_clients!
       Matchday.transaction do
         if @matchday.perform_delayed!
           flash[:notice] = I18n.t("messages.job_started_successfully")
