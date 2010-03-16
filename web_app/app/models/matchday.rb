@@ -66,14 +66,13 @@ class Matchday < ActiveRecord::Base
   
   def load_active_clients!(force_reload = false)
     matches.each do |match|
-      match.slots.each do |slot|
+      match.slots.each do |league_slot|
+        slot = league_slot.matchday_slot
         if (slot.client.nil? or force_reload)
           slot.client = slot.contestant.current_client
           slot.save!
-          logger.debug("Loading Client " + slot.contestant.current_client.id.to_s + " into match_slot " + slot.id.to_s + " of matchday")
         end
       end
-      match.save!
     end
   end
 
