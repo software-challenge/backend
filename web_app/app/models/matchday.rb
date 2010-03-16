@@ -60,13 +60,20 @@ class Matchday < ActiveRecord::Base
 
   def perform_delayed!
     matches.each do |match|
+      match.perform_delayed!
+    end
+  end
+  
+  def load_active_clients!(force_reload = false)
+    matches.each do |match|
       match.slots.each do |slot|
-        if slot.client.nil?
+        if (slot.client.nil? or force_reload)
           slot.client = slot.contestant.current_client
           slot.save!
+          logger.debug("Loading Client " + slot.contestant.current_client.id.to_s + " into match_slot " + slot.id.to_s + " of matchday")
         end
       end
-      match.perform_delayed!
+      match.save!
     end
   end
 
