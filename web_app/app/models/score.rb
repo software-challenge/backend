@@ -15,6 +15,14 @@ class Score < ActiveRecord::Base
     score_type.to_s == "round_score"
   end
 
+  def round_slot
+    if round_score?
+      RoundSlot.find(:first, :conditions => {:score_id => self.id})
+    else
+      nil
+    end
+  end
+
   def set!(values, cause = nil)
     raise "values must be an Array" unless values.is_a? Array
     raise "values length was #{values.size}, expected: #{definition.size}" unless values.size == definition.size
