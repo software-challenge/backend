@@ -130,7 +130,7 @@ module SoChaManager
           all_moved = true
           @client.reset_timeout
           zip_files.each do |zipfile|
-            if File.exists? zipfile
+            if File.exists? zipfile or File.exists?(File.join(SoChaManager.client_tmp_folder, File.basename(zipfile)))
               all_moved = false
             end
           end

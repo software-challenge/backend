@@ -10,6 +10,7 @@ production:
   timeout: 3600
   start_game_after: 120
   watch_folder: public/system/vmwatch
+  client_tmp_folder: /home/scadmin/tmp
   server_host: 192.168.56.2
   silent: false
   
