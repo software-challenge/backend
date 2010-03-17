@@ -37,6 +37,7 @@ ActionController::Routing::Routes.draw do |map|
         contestant.resources :clients, :as => "computerspieler", :new => {
           :uploadify => :post
         }, :member => {
+          :client_details => :get,
           :browse => :post,
           :select_main => :post,
           :select => :post,

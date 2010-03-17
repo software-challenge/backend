@@ -221,6 +221,11 @@ class ClientsController < ApplicationController
     send_file(ENV['CLIENT_LOGS_FOLDER'] + params[:id].to_i.to_s + "_" + params[:num].to_i.to_s + ".log", :type => 'text', :stream => "false", :disposition => "attachment")
   end
 
+  def client_details
+    @client = Client.find(params[:id]) 
+  end
+
+
   protected
 
   def load_contestant
@@ -229,5 +234,6 @@ class ClientsController < ApplicationController
 
   def requested_by_flash?
     request.env['HTTP_USER_AGENT'] =~ /^(Adobe|Shockwave) Flash/
-  end
+  end  
+
 end
