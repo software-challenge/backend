@@ -1,24 +1,22 @@
 def calculate_victories(my_scores, their_scores)
   my_victories = 0
   enemy_victories = 0
-  my_scores.each do |score|
-    if score.cause == "REGULAR"
-      my_victories += score.victory
-    else
-      # if i violated the rules AND won, enemy gets my victory
-      enemy_victories += score.victory
-    end
-  end
-  enemy_scores = their_scores.first
-  enemy_scores.each do |score|
-    if score.cause == "REGULAR"
-      enemy_victories + score.victory
-    else
-      # if enemy violated the rules AND won, i get his victory
-      my_victories += score.victory
-    end
-  end
-  return my_victories, enemy_victories
+
+      sum = 0
+      (0..(my_scores.size-1)).each do |i|
+        if my_scores[i].cause == "REGULAR" and their_scores.first[i].cause == "REGULAR"
+          # both played by rules
+          my_victories += my_scores[i].victory
+          enemy_victories += their_scores.first[i].victory
+        elsif my_scores[i].cause != "REGULAR"
+          # i violated
+          enemy_victories += 1
+        else
+          # enemy violated
+          my_victories += 1
+        end
+      end
+  { :mine => my_victories, :theirs => enemy_victories}
 end
 
 GameDefinition.create :"HaseUndIgel" do
@@ -40,11 +38,11 @@ GameDefinition.create :"HaseUndIgel" do
   match_score do
     field :points, :ordering => "DESC", :aggregate => :sum do |my_scores, their_scores|
 
-      my_victories, enemy_victories = calculate_victories(my_scores, their_scores)
+      victories = calculate_victories(my_scores, their_scores)
 
-      if my_victories > enemy_victories
+      if victories[:mine] > victories[:theirs]
         2
-      elsif my_victories == enemy_victories
+      elsif victories[:mine] == victories[:theirs]
         1
       else
         0
@@ -52,8 +50,8 @@ GameDefinition.create :"HaseUndIgel" do
     end
 
     field :victories, :aggregate => :sum do |my_scores, their_scores|
-      my_victories, enemy_victories = calculate_victories(my_scores, their_scores)
-      my_victories
+      victories = calculate_victories(my_scores, their_scores)
+      victories[:mine]
     end
 
     field :average_position, :aggregate => :average do |my_scores, their_scores|
