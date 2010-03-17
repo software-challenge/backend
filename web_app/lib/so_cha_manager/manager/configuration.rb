@@ -10,7 +10,8 @@ module SoChaManager
         :server_host => "localhost",
         :server_port => 13050,
         :silent => true,
-        :watch_folder => Rails.root.join('tmp', 'vmwatch')
+        :watch_folder => Rails.root.join('tmp', 'vmwatch'),
+        :client_tmp_folder => ""
       }.with_indifferent_access
 
       settings = defaults.merge(configuration || {}).with_indifferent_access
@@ -28,6 +29,7 @@ module SoChaManager
         mattr_reader :watch_folder, :emulate_vm
         mattr_reader :timeout, :start_game_after
         mattr_reader :server_host, :server_port
+        mattr_reader :client_tmp_folder
         mattr_reader :silent
 
         logger.info "Configuration: #{self.configuration.inspect}" if base.respond_to? :logger
