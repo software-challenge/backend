@@ -103,9 +103,9 @@ public class Client extends XStreamClient implements IClient
 		{
 			logger.warn("An error occured: ", error);
 			this.send(new ErrorResponse(packet, error.getMessage()));
-			if(error.getClass().equals(GameLogicException.class)){
+			if(error.getClass().equals(GameLogicException.class) && (error.getMessage()=="Move was invalid" || error.getMessage()=="Unknown ObjectType received.")){
 				super.close();
-				logger.warn("Game closed because of GameLogicException!");
+				logger.warn("Game closed because of GameLogicException! The message is: " + error.getMessage());
 			}
 		}
 	}
