@@ -11,6 +11,9 @@ module SoChaManager
 
             reservations = response.xpath '//reservation'
             codes = reservations.collect(&:content)
+            codes.each do |reservation|
+              logger.info "Reservation ID: #{reservation}"
+            end
             room_id = response.attributes['roomId'].value
 
             @client.observe room_id, "swordfish" do |success,response|
@@ -93,8 +96,8 @@ module SoChaManager
             logger.info "Game is already over, start_game_after not necessary."
           elsif !room_handler.received_data_after?(threshold.seconds.ago)
             logger.info "#{SoChaManager.start_game_after} seconds passed. Forcing game to start."
-            @client.step(room_id, true)
-            #logger.info "WARNING!: #{SoChaManager.start_game_after} seconds passed, game should be forces to start but isn't!"
+            #@client.step(room_id, true)
+            logger.info "WARNING!: #{SoChaManager.start_game_after} seconds passed, game should be forces to start but isn't!"
           else
             logger.info "Action detected, start_game_after not necessary."
           end
@@ -192,8 +195,10 @@ module SoChaManager
 
     def create_startup_script(ai_program, reservation, dir)
       startup_file = File.join(dir, 'startup.sh')
+      startup_command = generate_startup_command(ai_program, reservation, SoChaManager.silent)
       File.open(startup_file, 'w+') do |f|
         f.puts "#!/bin/bash"
+        f.puts "echo \"Startup command: #{startup_command}\""
         f.puts "echo \"Starting client\""
         f.puts "if [ `head -c 2 #{ai_program.main_file_entry.file_name}` == '#!' ]"
         f.puts "then"
@@ -202,7 +207,7 @@ module SoChaManager
         f.puts "  mv #{ai_program.main_file_entry.file_name}_tmp #{ai_program.main_file_entry.file_name}"
         f.puts "fi"
         f.puts "chmod +x #{ai_program.main_file_entry.file_name}"
-        f.puts generate_startup_command(ai_program, reservation, SoChaManager.silent)
+        f.puts startup_command
         f.puts "echo \"Client terminated\""
         f.flush
       end
