@@ -28,6 +28,7 @@ import sc.server.network.IClient;
 import sc.server.plugins.GamePluginInstance;
 import sc.shared.GameResult;
 import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;
 
@@ -114,10 +115,15 @@ public class GameRoom implements IGameListener
 
 			if (score == null)
 			{
-				throw new RuntimeException("GameScore was not complete!");
+				//throw new RuntimeException("GameScore was not complete!");
+				
+				// FIXME: hack to avoid server hangups
+				// Gewinner, Feldnummer, Karotten, Zeit (ms)
+				score = new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0);
 			}
 
-			if (!score.matches(definition))
+			// FIXME: remove cause != unknown
+			if (score.getCause() != ScoreCause.UNKNOWN && !score.matches(definition))
 			{
 				throw new RuntimeException("ScoreSize did not match Definition");
 			}
