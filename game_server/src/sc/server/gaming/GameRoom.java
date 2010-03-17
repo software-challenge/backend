@@ -130,6 +130,12 @@ public class GameRoom implements IGameListener
 
 			scores.add(score);
 		}
+		
+		// FIXME: if there where not enough players, add scores
+		while (scores.size() < 2)
+		{
+			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
+		}
 
 		GameResult result = new GameResult(definition, scores);
 		return result;
