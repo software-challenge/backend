@@ -222,6 +222,8 @@ de:
     all_people: "Alle Personen"
     debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
+    clients:
+      details: "Details eines Computerspielers"
     main:
       administration: "Administration"
       login: "Anmelden"
