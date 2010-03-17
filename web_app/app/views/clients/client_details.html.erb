@@ -1,0 +1,36 @@
+<% tabnav :contestant do %> <% end %>
+  <font size = "3"><b>Details des gewählten Computerspielers:</b> <br><br></font>
+  <font size ="2">
+  <% if @client.contestant.hidden %> 
+    Dieses Team ist gelöscht worden! <br>
+  <% end %>
+  <b>Team:</b> <%= @client.contestant.name %> <br>
+  <b>Ort:</b> <%= @client.contestant.location %> <br>
+  <b>Hochgeladen am: </b><%= l(@client.created_at.try(:to_date), :format => :long) %> <br>
+  <b>Ersteller:</b> <%= @client.author.name %>  <br>
+  <% main_file_entry_name = @client.main_file_entry.try(:file_name) %>
+  <% main_file_entry_name ||= content_tag(:i, t("views.not_set")) %>
+  <b>Hauptdatei</b>: <%= main_file_entry_name %> <br>
+  <% if @client.id == @client.contestant.current_client.id %>
+    Dieser Client ist <b> aktuell aktiviert </b>! <br>
+  <% end %>
+  <br>
+   
+  <% played = false %>
+  <% @client.contestant.matchdays.each do |matchday| %>
+    <% matchday.slots.each do |slot| %>
+      <% if (not slot.client.nil?) and (@client.id == slot.client.id) %>
+        <% if played %>
+        ", "
+        <% else %>
+        Dieser Computerspieler wurde an folgenden Spieltagen des Wettkampfes verwendet: 
+       <br> 
+       <% end %>
+       <%= link_to matchday.when.to_s, [:contest, matchday] %>
+
+        <% played = true %>
+      <% end %>
+    <% end %>
+  </font>
+ <%= if not played then "Dieser Client hat noch nicht an Spieltagen des Wettkampfes teilgenommen." end%>
+<% end %>
