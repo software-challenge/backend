@@ -184,12 +184,12 @@ de:
       match_score:
         points: Punkte
         victories: Siege
-        average_position: "Ø Position"
+        average_position: "Ø Feldnummer"
         average_carrots: "Ø Karotten"
         average_time: "Ø Zeit"
       round_score:
         victory: Sieg
-        position: "Position"
+        position: "Feldnummer"
         carrots: "Karotten"
         average_time: "Ø Zeit"
   acl9:
