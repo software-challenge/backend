@@ -223,7 +223,7 @@ de:
     debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
     clients:
-      details: "Details eines Computerspielers"
+      client_details: "Details eines Computerspielers"
     main:
       administration: "Administration"
       login: "Anmelden"
