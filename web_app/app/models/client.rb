@@ -109,11 +109,9 @@ class Client < ActiveRecord::Base
 
   def already_used?
     self.contestant.matchdays.each do |matchday|
-      matchday.matches.each do |match|
-        match.slots.each do |slot|
-          if slot.client.id == self.id and (match.played? or match.running?)
+      matchday.match_slots.each do |slots|
+        if slot.client.id == self.id and (matchday.played? or matchday.running?)
             return true
-          end
         end
       end
     end
