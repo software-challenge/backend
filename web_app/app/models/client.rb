@@ -108,7 +108,15 @@ class Client < ActiveRecord::Base
   end
 
   def already_used?
-    # FIXME: check for running games
+    client.contestant.matchdays.each do |matchday|
+      matchday.matches.each do |match|
+        match.slots.each do |slot|
+          if slot.client.id == self.id and (match.played? or match.running?)
+            return true
+          end
+        end
+      end
+    end
     false
   end
 
