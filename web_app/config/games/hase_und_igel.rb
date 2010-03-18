@@ -49,12 +49,12 @@ GameDefinition.create :"HaseUndIgel" do
       end
     end
 
-    field :victories, :aggregate => :sum do |my_scores, their_scores|
+    field :victories, :ordering => "DESC", :aggregate => :sum do |my_scores, their_scores|
       victories = calculate_victories(my_scores, their_scores)
       victories[:mine]
     end
 
-    field :average_position, :aggregate => :average do |my_scores, their_scores|
+    field :average_position, :ordering => "DESC", :aggregate => :average do |my_scores, their_scores|
       # for non-regular game-ends set position to 0
       # and the position of the enemy to 64
       sum = 0
@@ -72,9 +72,9 @@ GameDefinition.create :"HaseUndIgel" do
 
       sum / my_scores.count
     end
-    field :average_carrots, :average => :carrots, :precision => 2
-    field :average_time, :average => :average_time
+    field :average_carrots, :average => :carrots, :ordering => "ASC", :precision => 2
+    field :average_time, :average => :average_time, :ordering => "ASC"
 
-    main :victories
+    main :points
   end
 end
