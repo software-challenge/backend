@@ -102,9 +102,14 @@ public class UpperInformationBar extends BackgroundPane
 
 	private void setCommonPlayer(final String playerName, JLabel label)
 	{
-		label
-				.setText("<html>" + splitTooLongNames(playerName, 200)
-						+ "</html>");
+		int maxWidth = 17;
+		if (playerName.length() < maxWidth)
+		{
+			maxWidth = playerName.length();
+		}
+
+		label.setText("<html>" + splitTooLongNames(playerName, maxWidth)
+				+ "</html>");
 	}
 
 	private String insertString(String startString, String insertString,
@@ -123,15 +128,31 @@ public class UpperInformationBar extends BackgroundPane
 	{
 		String res = playerName;
 
-		if (playerName.length() > 25)
+		if (playerName.length() >= maxWidth)
 		{
-			for (int i = 0; i < playerName.length(); i++)
+			String beginning = playerName.substring(0, maxWidth - 1);
+			int lastWhiteSpace = beginning.lastIndexOf(" ");
+			int lastMinus = beginning.lastIndexOf("-");
+
+			if (lastWhiteSpace > -1)
 			{
-				if (i == playerName.length() / 2)
+				if (lastMinus > -1)
 				{
-					res = insertString(playerName, "<br>", i);
+					if (lastMinus > lastWhiteSpace)
+					{
+						return insertString(playerName, "<br>", lastMinus + 1);
+					}
+					return insertString(playerName, "<br>", lastWhiteSpace);
 				}
+				return insertString(playerName, "<br>", lastWhiteSpace);
 			}
+
+			if (lastMinus > -1)
+			{
+				return insertString(playerName, "<br>", lastMinus + 1);
+			}
+
+			return insertString(playerName, "<br>", maxWidth);
 		}
 
 		return res;
