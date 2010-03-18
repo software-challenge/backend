@@ -87,7 +87,7 @@ module SoChaManager
       # force gamestart
       Thread.new do
         begin
-          logger.info "start_game_after #{SoChaManager.start_game_after} seconds"
+          logger.info "Game will be forced to start in #{SoChaManager.start_game_after} seconds"
           sleep SoChaManager.start_game_after
 
           threshold = [[SoChaManager.start_game_after, 20].min, 0].max
@@ -96,8 +96,8 @@ module SoChaManager
             logger.info "Game is already over, start_game_after not necessary."
           elsif !room_handler.received_data_after?(threshold.seconds.ago)
             logger.info "#{SoChaManager.start_game_after} seconds passed. Forcing game to start."
-            #@client.step(room_id, true)
-            logger.info "WARNING!: #{SoChaManager.start_game_after} seconds passed, game should be forces to start but isn't!"
+            @client.step(room_id, true)
+            #logger.info "WARNING!: #{SoChaManager.start_game_after} seconds passed, game should be forces to start but isn't!"
           else
             logger.info "Action detected, start_game_after not necessary."
           end
@@ -135,6 +135,7 @@ module SoChaManager
             end
           end
         end
+        logger.info "Room timeout in #{SoChaManager.timeout} seconds"
       end
     end
 
