@@ -75,6 +75,6 @@ GameDefinition.create :"HaseUndIgel" do
     field :average_carrots, :average => :carrots, :ordering => "ASC", :precision => 2
     field :average_time, :average => :average_time, :ordering => "ASC"
 
-    main :points
+    main :victories
   end
 end
