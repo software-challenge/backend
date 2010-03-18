@@ -7,7 +7,7 @@ development: &DEFAULT
   watch_folder: tmp/vmwatch
 
 production:
-  timeout: 3600
+  timeout: 300
   start_game_after: 120
   watch_folder: public/system/vmwatch
   client_tmp_folder: /home/scadmin/tmp

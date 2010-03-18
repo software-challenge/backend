@@ -151,7 +151,7 @@ module SoChaManager
           diff = Time.now - @last_data
           sleep 0.01
           retry if diff <= SoChaManager.timeout
-          logger.warn "Timeout."
+          logger.warn "Room observer timed out"
         rescue EOFError
           logger.info "EOF reached."
           @parser.finish
