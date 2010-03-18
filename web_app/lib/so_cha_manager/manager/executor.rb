@@ -171,7 +171,7 @@ module SoChaManager
 
         Dir.mktmpdir(File.basename(zipped_ai_program)) do |dir|
           unzip_to_directory(zipped_ai_program, dir)
-          create_startup_script(ai_program, reservation, dir)
+          create_startup_script(slot, reservation, dir)
           target = zip_to_watch_folder(dir, slot)
         end
 
@@ -194,11 +194,21 @@ module SoChaManager
       target
     end
 
-    def create_startup_script(ai_program, reservation, dir)
+    def create_startup_script(slot, reservation, dir)
+      ai_program = slot.client
       startup_file = File.join(dir, 'startup.sh')
       startup_command = generate_startup_command(ai_program, reservation, SoChaManager.silent)
+      logfile_dir = case slot.round.match.type.to_s
+                    when "ClientMatch"
+                      "test"
+                    when "LeagueMatch"
+                      File.join("match", slot.round.match.id)
+                    else
+                      "unknown"
+                    end
       File.open(startup_file, 'w+') do |f|
         f.puts "#!/bin/bash"
+        f.puts "echo \"Logfile directory: #{logfile_dir}\""
         f.puts "echo \"Startup command: #{startup_command}\""
         f.puts "echo \"Starting client\""
         f.puts "if [ `head -c 2 #{ai_program.main_file_entry.file_name}` == '#!' ]"
