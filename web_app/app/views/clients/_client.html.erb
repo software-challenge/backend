@@ -18,7 +18,7 @@
     <% end %>
     <%= link_to "Details", client_details_contest_contestant_client_url(client.contestant, client), {:client => client} %>
 
-    <% if !client.testing? and client.has_logs? %>
+    <% if !client.testing? and client.has_test_logs? %>
       <a href="#" id="show_logs_<%= client.id %>"><%= t("labels.log").pluralize %></a>
       <div id="clientlogs_<%= client.id %>" style="position: absolute; background-color: #DDDDFF; display: none">
       </div>
@@ -94,13 +94,13 @@
       client_urls[<%= client.id %>] = "<%= contest_contestant_client_url(client.contestant, client) %>"
     })
   <% end %>
-  <% if client.has_logs? %>
+  <% if client.has_test_logs? %>
     <% javascript_tag do %>
       $(function() {
         $("a#show_logs_<%= client.id %>").bind('click', function() {
           $.get(
             "<%= get_logs_contest_contestant_client_url(client.contestant, client) %>",
-            "id=" + <%= client.id %>,
+            "id=" + <%= client.id %> + "&type=test",
             function(returned_data) {
               $("div#clientlogs_<%= client.id %>").replaceWith(returned_data)
             }
