@@ -9,6 +9,7 @@ import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,8 +27,8 @@ import sc.plugin2010.renderer.RendererUtil;
 @SuppressWarnings("serial")
 public class FieldButton extends JButton
 {
-	private Image					img			= null;
-	private Image					icon		= null;
+	private Image					img				= null;
+	private Image					icon			= null;
 
 	private final IClickObserver	obs;
 
@@ -35,12 +36,13 @@ public class FieldButton extends JButton
 	private Border					oldBorder;
 	private final Border			defaultBorder;
 
-	private int						fieldNumber	= 0;
-	private boolean					reachable	= false;
-	private boolean					occupied	= false;
+	private int						fieldNumber		= 0;
+	private boolean					reachable		= false;
+	private boolean					occupied		= false;
 	private FieldTyp				type;
 
-	private Color					turn		= Color.RED;
+	private Color					turn			= Color.RED;
+	private Color					standingColor	= Color.RED;
 
 	public FieldButton(final String imagefile, final int fieldNumber,
 			final FieldTyp type, final IClickObserver obs)
@@ -100,13 +102,15 @@ public class FieldButton extends JButton
 
 			final MediaTracker mt = new MediaTracker(this);
 			String colorString = "blue";
+			standingColor = Color.BLUE;
 
 			if (color == FigureColor.RED)
 			{
 				colorString = "red";
+				standingColor = Color.RED;
 			}
 
-			border = createBorder(Color.CYAN);
+			border = createBorder(standingColor);
 
 			icon = RendererUtil.getImage("resource/game/" + colorString
 					+ ".png");
@@ -210,6 +214,26 @@ public class FieldButton extends JButton
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
 		if (icon != null)
 		{
+			BufferedImage glass = new BufferedImage(getWidth(), getHeight(),
+					BufferedImage.TYPE_INT_ARGB);
+
+			Graphics painter = glass.getGraphics();
+
+			int alpha = 64;
+
+			if (standingColor.getBlue() > 0)
+			{
+				painter.setColor(new Color(0, 0, 255, alpha));
+			}
+			else
+			{
+				painter.setColor(new Color(255, 0, 0, alpha));
+			}
+
+			painter.fillRect(0, 0, getWidth(), getHeight());
+
+			g.drawImage(glass, 0, 0, getWidth(), getHeight(), this);
+
 			g.drawImage(icon, 5, 5, getWidth() - 15, getHeight() - 15, this);
 		}
 		final String text = String.valueOf(fieldNumber);
