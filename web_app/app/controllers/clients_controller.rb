@@ -207,18 +207,31 @@ class ClientsController < ApplicationController
   end
  
   def get_logs
-    path = ENV['CLIENT_LOGS_FOLDER'] + params[:id] + "_"
+    type = params[:type]
+    match_id = params[:match_id]
+    path = case type
+             when "test" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_s, "test")
+             when "match" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_s, match_id.to_s)
+           end
     number = 0
     logfiles = []
-    while File.exists?(path + number.to_s + ".log")
-      logfiles << {:file => path + number.to_s + ".log", :id => params[:id], :num => number}
+    while File.exists?(File.join(path, number.to_s + ".log"))
+      logfiles << {:file => File.join(path, number.to_s + ".log"), :id => params[:id], :num => number, :type => type, :match_id => match_id}
       number += 1
     end
     render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles.reverse}
   end
 
   def send_log
-    send_file(ENV['CLIENT_LOGS_FOLDER'] + params[:id].to_i.to_s + "_" + params[:num].to_i.to_s + ".log", :type => 'text', :stream => "false", :disposition => "attachment")
+    type = params[:type]
+    match_id = params[:match_id]
+    path = case type
+             when "test" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, "test")
+             when "match" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, match_id.to_s)
+           end
+    file = File.join(path, params[:num].to_i.to_s + ".log")
+    filename = "#{type}_#{params[:id]}__#{File.mtime(file).strftime("%d_%m_%y__%H_%M")}.log"
+    send_file(file, :filename => filename, :type => 'text', :stream => "false", :disposition => "attachment")
   end
 
   def client_details

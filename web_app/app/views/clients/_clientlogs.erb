@@ -5,7 +5,7 @@
   <% else %>
     <% client = Client.find(id) %>
     <% logfiles.each do |logfile| %>
-      <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), send_log_contest_contestant_client_url(client.contestant, client, :id => logfile[:id], :num => logfile[:num]), :method => :post %><br>
+      <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), send_log_contest_contestant_client_url(client.contestant, client, :id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id]), :method => :post %><br>
     <% end %>
   <% end %>
   </div>

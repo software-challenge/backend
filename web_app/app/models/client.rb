@@ -74,8 +74,12 @@ class Client < ActiveRecord::Base
     return !self.comments.blank?
   end
 
-  def has_logs?
-    return File.exists?(ENV['CLIENT_LOGS_FOLDER'] + self.id.to_s + "_0.log")
+  def has_test_logs?
+    return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, "test", "0.log"))
+  end
+
+  def has_logs_for_match?(match_id)
+    return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, match_id.to_s, "0.log"))
   end
 
 
