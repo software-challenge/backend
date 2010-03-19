@@ -202,7 +202,7 @@ module SoChaManager
                     when "ClientMatch"
                       "test"
                     when "LeagueMatch"
-                      File.join("match", slot.round.match.id)
+                      File.join("match", slot.round.match.id.to_s)
                     else
                       "unknown"
                     end
