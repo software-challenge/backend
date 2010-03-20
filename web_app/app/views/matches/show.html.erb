@@ -3,7 +3,10 @@
   <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %> /
   Spiel <%= @match.id %>
 </h1>
-
+      <% link_to reset_contest_matchday_match_url(@match.matchday, @match), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
+          <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
+        <% end %>
+ 
 <style type="text/css">
   table#result {
     width: 100%;

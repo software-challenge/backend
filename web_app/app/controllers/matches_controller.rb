@@ -28,6 +28,20 @@ class MatchesController < ApplicationController
     end
   end
 
+  def reset
+    @match = @coontest.matchdays.matches.find(params[:id])
+    
+    if @match.played?
+      Match.transaction do
+        Match.benchmark("resetting match", Logger::DEBUG, false) do
+          @match.reset!
+          @match.reload
+        end
+      end
+      flash[:notice] = "Spiel wurde zurückgesetzt!"
+    end
+    redirect_to_contest_matchday_match_ur(@match.matchday, @match)
+  end 
   protected
 
   def fetch_parents
