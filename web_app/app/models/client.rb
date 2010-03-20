@@ -1,5 +1,5 @@
 require 'zip/zip'
-
+ 
 class Client < ActiveRecord::Base
 
   POTENTIAL_FILE_EXTENSIONS = %w{.jar .exe .py .rb}

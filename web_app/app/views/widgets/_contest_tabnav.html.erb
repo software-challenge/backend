@@ -1,6 +1,6 @@
 <%
 render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
-
+ 
   add_tab do |t|
     t.named t("titles.overview")
     begin; t.disable!; next; end if @contest.new_record?
@@ -36,7 +36,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 1
 
   add_tab do |t|
-    t.named t("titles.matchdays.list")
+    t.named t("titles.matchday.list")
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to hash_for_contest_matchdays_url
     t.disable! unless @contest.ready?

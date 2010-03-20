@@ -219,8 +219,8 @@ de:
     table: "Tabelle"
     matchday: "Spieltag"
     matchdays: 
-       standings: "Rangliste für Spieltag anzeigen"
-       list: "Spieltage"
+      list: "Spieltage"
+      standings: "Rangliste für Spieltag"
     all_people: "Alle Personen"
     debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
