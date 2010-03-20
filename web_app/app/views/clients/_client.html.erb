@@ -4,7 +4,7 @@
       <b><%= t("views.active").capitalize %></b>
     <% else client.ok? %>
       <%= link_to I18n.t("actions.activate_client"), select_contest_contestant_client_url(client.contestant, client), :method => :post %>
-    <% end %>
+    <% end %> 
   </td>
   <td>
     <% if client.broken? %>

@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'zip/zip'
 require 'zip/zipfilesystem'
-
+ 
 module ClientsHelper
   def get_session_key_name
     ActionController::Base.session_options[:key]
