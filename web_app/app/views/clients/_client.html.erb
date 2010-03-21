@@ -76,10 +76,10 @@
         <span style="font-size: 11px;"> <%= t("views.waiting_for_seconds", {:x => ((Time.now - client.test_match.job.created_at).round)}) %></span>
       <% end %>
     <% else %>
-      <% if may_delete_client? and not client.current? and not client.already_used? and not client.used_on_matchdays?%>
+      <% if may_delete_client? and not client.current? and not client.already_used? %>
     	  <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
           <%= link_to delete_image, hide_contest_contestant_client_url(client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
-      <% end -%>
+      <% end %>
     <% end %>
   </td>
 </tr>
