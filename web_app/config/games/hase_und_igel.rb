@@ -54,7 +54,7 @@ GameDefinition.create :"HaseUndIgel" do
       victories[:mine]
     end
 
-    field :average_position, :ordering => "DESC", :aggregate => :average do |my_scores, their_scores|
+    field :average_position, :ordering => "DESC", :aggregate => :average, :precision => 2 do |my_scores, their_scores|
       # for non-regular game-ends set position to 0
       # and the position of the enemy to 64
       sum = 0
