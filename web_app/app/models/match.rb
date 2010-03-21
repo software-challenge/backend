@@ -90,6 +90,8 @@ class Match < ActiveRecord::Base
     end
 
     self.played_at = nil
+    self.matchday.played_at = nil
+    self.matchday.save!
     save!
   end
 
