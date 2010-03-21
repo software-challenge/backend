@@ -132,10 +132,10 @@
           // Check each person against location matching
           var foundLocation = false;
           if($("#location_filter").val() != "") {
-            var loc_string = $("span.person_location", $(this)).html().trim().split(";")
+            var loc_string = $("td.p_teams span.person_location", $(this)).html().trim().split(";")
             var i;
             var filter = $("#location_filter").val()
-            for (i=0; i<=loc_string.length; i=i+1) {
+            for (i=0; i<loc_string.length; i=i+1) {
               if(loc_string[i].match(new RegExp(filter, "i")) != null) {   
                 foundLocation = true;
                 return false;
