@@ -186,7 +186,7 @@ de:
         victories: Siege
         average_position: "Ø Feldnummer"
         average_carrots: "Ø Karotten"
-        average_time: "Ø Zeit"
+        average_time: "Ø Zeit (ms)"
       round_score:
         victory: Sieg
         position: "Feldnummer"
