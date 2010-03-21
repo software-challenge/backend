@@ -88,7 +88,7 @@
  
         $("#location_filter").keyup(function() {
           var str = $(this).val()
-          $(".location").each(function(index) {
+          $("div.location", $("#location_select")).each(function(index) {
             if($(this).html().match(new RegExp(str, "i")) != null) {
               $(this).show()
             } else {
@@ -122,13 +122,13 @@
           $("select#team_filter").val("all").attr("selected", "selected")
         }
 
-        $(".person").each(function(index) {
+        $("tr.person").each(function(index) {
           var showPerson = true;
 
           // Check each person against location matching
           var foundLocation = false;
           if($("#location_filter").val() != "") {
-            $(".person_location", $(this)).each(function(index2) {
+            $("span.person_location", $(this)).each(function(index2) {
               if($(this).html().match(new RegExp($("#location_filter").val(), "i")) != null) {   
                 foundLocation = true;
                 return false;
@@ -158,7 +158,7 @@
           // Check each person against role matching
           var roleMatch = false;
           if($("div#show_teams select#role_filter :selected").val() != 'Alle') {
-            $(".role_text", $(this)).each(function(index) {
+            $("span.role_text", $(this)).each(function(index) {
               if($(this).text() == $("div#show_teams select#role_filter :selected").val()) {
                 roleMatch = true;
                 return false;
