@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
@@ -372,5 +373,11 @@ public class Game extends RoundBasedGameInstance<Player>
 			avg_time = sum_red.longValue();
 		}
 		return p.getScore((int) avg_time);
+	}
+	
+	@Override
+	protected ActionTimeout getTimeoutFor(Player player)
+	{
+		return new ActionTimeout(true, 10000l, 2100l);
 	}
 }
