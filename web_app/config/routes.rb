@@ -26,9 +26,8 @@ ActionController::Routing::Routes.draw do |map|
         :reset => :post,
         :publish => :post
       } do |md|
-        md.resources :matches,
-          :member => {
-          :reset => :post
+        md.resources :matches, :member => {:reset => :post} do |m|
+          m.resources :rounds
         } do |m|
           m.resources :rounds
         end

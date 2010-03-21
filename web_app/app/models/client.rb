@@ -142,17 +142,6 @@ class Client < ActiveRecord::Base
     end
   end
 
-  def used_on_matchdays?
-    self.contestant.matchdays.each do |matchday|
-      matchday.slots.each do |slot|
-        if (not slot.client.nil?) and (self.id == slot.client.id) 
-          true
-        end
-      end
-    end
-    false
-  end
-
 
   protected
 
