@@ -228,7 +228,7 @@ class ClientsController < ApplicationController
     round_id = params[:round_id]
     path = case type
              when "test" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, "test")
-             when "match" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, match_id.to_s, round_id.to_s)
+             when "match" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, "match", match_id.to_s, round_id.to_s)
            end
 
     num = params[:num].nil? ? nil : params[:num].to_i
@@ -240,8 +240,12 @@ class ClientsController < ApplicationController
     end
 
     file = File.join(path, num.to_s + ".log")
-    filename = "#{type}_#{params[:id]}__#{File.mtime(file).strftime("%d_%m_%y__%H_%M")}.log"
-    send_file(file, :filename => filename, :type => 'text', :stream => "false", :disposition => "attachment")
+    if File.exists? file
+      filename = "#{type}_#{params[:id]}__#{File.mtime(file).strftime("%d_%m_%y__%H_%M")}.log"
+      send_file(file, :filename => filename, :type => 'text', :stream => "false", :disposition => "attachment")
+    else
+      render :text => "File not found"
+    end
   end
 
   def client_details
