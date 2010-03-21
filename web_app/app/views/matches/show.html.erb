@@ -1,7 +1,6 @@
 <h1> 
   <%= link_to h(@contest.name), contest_matchdays_url %> /
-  <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %> /
-  Spiel <%= @match.id %>
+  <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %>
 </h1>
       <% link_to reset_contest_matchday_match_url(@match.matchday, @match), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
           <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
@@ -71,6 +70,16 @@
 </style>
 
 <table id="result">
+  <tr class="contestants">
+    <% @match.slots.each_with_index do |slot,i| %>
+      <% unless i.zero? %>
+        <td class="center">gegen</td>
+      <% end %>
+      <td>
+        <%=h slot.name %>
+      </td>
+    <% end %>
+  </tr>
   <% if @match.result %>
     <% if @match.matchday.published? or current_user.try(:administrator) %>
       <tr class="values">
@@ -94,17 +103,9 @@
       </td>
     </tr>
   <% end %>
-  <tr class="contestants">
-    <% @match.slots.each_with_index do |slot,i| %>
-      <% unless i.zero? %>
-        <td class="center">gegen</td>
-      <% end %>
-      <td>
-        <%=h slot.name %>
-      </td>
-    <% end %>
-  </tr>
 </table>
+
+<% if @match.result %>
 
 <% match_score_fragments = @contest.game_definition.match_score.count %>
 <% round_score_fragments = @contest.game_definition.round_score.count %>
@@ -114,7 +115,7 @@
 
 <table id="rounds">
   <tr class="separator">
-    <td colspan="<%= 1 + max_fragments %>">
+    <td colspan="<%= 2 + max_fragments %>">
       <h2>Gesamtergebnis</h2>
     </td>
   </tr>
@@ -123,6 +124,7 @@
     <% @contest.game_definition.match_score.each do |k,fragment| %>
       <th><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
+    <th>&nbsp;</th>
   </tr>
   <% @match.slots.each do |slot| %>
     <tr>
@@ -136,15 +138,16 @@
           <%= t "views.no_results_yet" %>
         </td>
       <% end %>
+      <td>&nbsp;</td>
     </tr>
   <% end %>
   <tr class="preSeparator">
-    <td colspan="<%= 1 + max_fragments %>">
+    <td colspan="<%= 2 + max_fragments %>">
       &nbsp;
     </td>
   </tr>
   <tr class="separator">
-    <td colspan="<%= 1 + max_fragments %>">
+    <td colspan="<%= 2 + max_fragments %>">
       <h2>Rundenergebnisse</h2>
     </td>
   </tr>
@@ -153,6 +156,7 @@
     <%@contest.game_definition.round_score.each do |k, fragment| %>
       <th><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
+    <th>&nbsp;</th>
   </tr>
   <% @match.rounds.each_with_index do |round,round_index| %>
     <tr class="round">
@@ -184,7 +188,18 @@
             <%= t "views.no_results_yet" %>
           </td>
         <% end %>
+        <% if current_user.has_role? :administrator or !current_user.membership_for(slot.contestant).nil? %>
+          <td>
+            <% if slot.client.has_logs_for? :match => @match, :round => slot.round %>
+              <%= link_to "Log", send_log_contest_contestant_client_url(slot.client.contestant, slot.client, :id => slot.client.id, :type => "match", :match_id => @match.id, :round_id => slot.round.id), :method => :post %><br>
+            <% end %>
+          </td>
+        <% else %>
+          <td>&nbsp;</td>
+        <% end %>
       </tr>
     <% end %>
   <% end %>
 </table>
+
+<% end %>

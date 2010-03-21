@@ -78,8 +78,8 @@ class Client < ActiveRecord::Base
     return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, "test", "0.log"))
   end
 
-  def has_logs_for_match?(match_id)
-    return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, match_id.to_s, "0.log"))
+  def has_logs_for?(params)
+    return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, params[:match].id.to_s, params[:round].id.to_s, "0.log"))
   end
 
 
