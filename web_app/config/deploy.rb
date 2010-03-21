@@ -31,6 +31,8 @@ role :db,  "134.245.253.5", :primary => true        # This is where Rails migrat
 after 'deploy:restart', 'daemons:restart'
 before 'daemons:restart', 'daemons:stop'
 after 'daemons:restart', 'daemons:start'
+before 'deploy:migrations', 'daemons:stop'
+before 'deploy:migrations', 'delayed_job:stop'
 
 namespace :deploy do
   task :start do
