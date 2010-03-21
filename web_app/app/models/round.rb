@@ -53,7 +53,9 @@ class Round < ActiveRecord::Base
   def update_scores!(result)
     raise "result must not be nil" unless result
     raise "result (#{result.count}) must have same size as there are slots (#{slots.count})" if result.count != slots.count
-    
+   
+    logger.info "Round finished: #{round}. Updating scores."
+
     Round.transaction do
       slots.each_with_index do |slot,index|
         slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "round_score")

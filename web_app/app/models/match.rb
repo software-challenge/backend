@@ -94,11 +94,12 @@ class Match < ActiveRecord::Base
   end
 
   def after_round_played(round)
-    logger.info "received after_round_played from #{round}"
+    logger.info "Received after_round_played from #{round}"
 
     if all_rounds_played?
-      logger.info "all rounds finished!"
-      
+      logger.info "All rounds finished for match #{self}!"
+     
+      logger.info "Updating scoretable." 
       update_scoretable
       self.played_at = DateTime.now
       self.save!
@@ -107,14 +108,14 @@ class Match < ActiveRecord::Base
         set.after_match_played self
       end
     else
-      logger.info "not all rounds are finished yet"
+      logger.info "Not all rounds are finished yet."
     end
   end
 
   protected
 
   def create_rounds!(total_rounds = nil)
-    raise "has already rounds" unless rounds.empty?
+    raise "already has rounds" unless rounds.empty?
     total_rounds ||= game_definition.league.rounds
     
     round_count = 0
@@ -143,6 +144,7 @@ class Match < ActiveRecord::Base
       slot.score.set!(result)
       slot.save!
     end
+    logger.info "Scoretable updated for match #{self}"
   end
 
   def slot_for(client)
