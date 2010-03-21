@@ -2,9 +2,13 @@
   <%= link_to h(@contest.name), contest_matchdays_url %> /
   <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %>
 </h1>
-      <!-- <% link_to reset_contest_matchday_match_url(@match.matchday, @match), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
-          <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
-        <% end %>
+<% show_to _administrator %>
+  <% if @match.played? %>
+     <% link_to reset_contest_matchday_match_url(@match.matchday, @match), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
+       <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
+     <% end %>
+  <% end %>
+<% end %>
       !-->
  
 <style type="text/css">

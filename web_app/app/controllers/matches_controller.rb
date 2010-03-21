@@ -42,6 +42,8 @@ class MatchesController < ApplicationController
     end
     redirect_to_contest_matchday_match_ur(@match.matchday, @match)
   end 
+
+
   protected
 
   def fetch_parents
