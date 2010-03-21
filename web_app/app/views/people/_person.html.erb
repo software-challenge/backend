@@ -16,7 +16,7 @@
           <% person.teams.each do |team| %>
             <ul style="margin-left: 15px">
               <li>
-                <span class="team_text"><%= team.name %></span> (<%= t "views.as" %> <span class="role_text"><%= person.membership_for(team).role %></span>)
+                <span class="team_text"><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
               </li>
             </ul>
           <% end %>
@@ -26,9 +26,24 @@
           <span class="team_text"><%= person.teams.first.name %></span> (<%= t "views.as" %> <span class="role_text"><%= person.membership_for(person.teams.first).role %></span>)
         <% end %>
       <% end %>
-      <% person.contestants.each do |contestant| %>
-        <span class="person_location" style="display: none"><%= contestant.location %></span>
-      <% end %>
+      <span class="person_location" style="display: none">
+        <% person.contestants.each_with_index do |contestant, index| %>
+          <%= contestant.location %>
+          <%= index > 0 ? ";" : "" %>
+        <% end %>
+      </span>  
+      <span class="role_text" style="display: none">
+        <% roles = [] %>
+        <% if person.has_role?(:administrator) then roles << "administrator" end %>
+        <% person.teams.each do |team| %>
+          <% person.roles_for(team).each do |role| %>
+            <% roles << role.name %>
+          <% end %>
+        <% end %>
+        <% roles.uniq.each_with_index do |role,index| %>
+          <%= (index > 0 ? ";" : "") + role %>
+        <% end %>
+      </span>
       <% if person.has_role?(:administrator) %>
         <span class="role_text" style="display: none"><%= Role.find(:first, :conditions => {:name => "administrator"}).to_s %></span>
       <% end %>
