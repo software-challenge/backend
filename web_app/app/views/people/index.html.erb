@@ -63,6 +63,10 @@
   <% show_to :administrator do %>
     <% javascript_tag do %>
 
+      String.prototype.trim = function () {
+        return this.replace(/^\s*/, "").replace(/\s*$/, "");
+      }
+
       $(function() {
         $("div#location_select").width($("#location_filter").width())
 
@@ -128,7 +132,7 @@
           // Check each person against location matching
           var foundLocation = false;
           if($("#location_filter").val() != "") {
-            var loc_string = $("span.person_location", $(this)).html().split(";")
+            var loc_string = $("span.person_location", $(this)).html().trim().split(";")
             var i;
             var filter = $("#location_filter").val()
             for (i=0; i<=loc_string.length; i=i+1) {
@@ -164,7 +168,7 @@
           if(showPerson) {
             var roleMatch = false;
             if($("div#show_teams select#role_filter :selected").val() != 'Alle') {
-              var roles = $("span.role_text", $(this)).html().split(";")
+              var roles = $("span.role_text", $(this)).html().trim().split(";")
               var i;
               var role = $("div#show_teams select#role_filter :selected").val()
               for (i=0; i<roles.count; i=i+1) {
