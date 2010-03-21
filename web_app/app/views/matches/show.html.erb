@@ -192,7 +192,7 @@
             <%= t "views.no_results_yet" %>
           </td>
         <% end %>
-        <% if current_user.has_role? :administrator or !current_user.membership_for(slot.contestant).nil? %>
+        <% if not current_user.nil? and (current_user.has_role? :administrator or not current_user.membership_for(slot.contestant).nil?) %>
           <td>
             <% if slot.client.has_logs_for? :match => @match, :round => slot.round %>
               <%= link_to "Log", send_log_contest_contestant_client_url(slot.client.contestant, slot.client, :id => slot.client.id, :type => "match", :match_id => @match.id, :round_id => slot.round.id), :method => :post %><br>
