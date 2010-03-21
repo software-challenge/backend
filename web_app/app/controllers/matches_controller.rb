@@ -40,7 +40,7 @@ class MatchesController < ApplicationController
       end
       flash[:notice] = "Spiel wurde zurückgesetzt!"
     end
-    redirect_to_contest_matchday_match_ur(@match.matchday, @match)
+    redirect_to contest_matchday_match_url(@match.matchday, @match)
   end 
 
 
