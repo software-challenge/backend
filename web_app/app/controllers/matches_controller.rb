@@ -29,12 +29,12 @@ class MatchesController < ApplicationController
   end
 
   def reset
-    @match = @coontest.matchdays.matches.find(params[:id])
+    @match = Match.find(params[:id])
     
     if @match.played?
       Match.transaction do
         Match.benchmark("resetting match", Logger::DEBUG, false) do
-          @match.reset!
+          @match.reset! true
           @match.reload
         end
       end
