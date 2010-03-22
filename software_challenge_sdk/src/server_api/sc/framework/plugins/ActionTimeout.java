@@ -81,7 +81,7 @@ public class ActionTimeout
 
 		if (this.canTimeout())
 		{
-			logger.info "Time needed: " + (this.stopTimestamp - this.startTimestamp);
+			logger.info("Time needed: " + Integer.toString(this.stopTimestamp - this.startTimestamp));
 			return (this.stopTimestamp - this.startTimestamp) > this.softTimeoutInMilliseconds;
 		}
 
