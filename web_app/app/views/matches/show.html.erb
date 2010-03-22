@@ -170,7 +170,7 @@
             <span style="float: right;">
               <% if round.has_server_log? %>
                 <% show_to :administrator do %>
-                  <%= link_to "Serverlog", send_server_log_contest_matchday_match_round_url(round.match.matchday, round.match, round), :round_id => round.id, :method => :post %> 
+                  <%= link_to "Serverlog", send_server_log_contest_matchday_match_round_url(round.match.matchday, round.match, round, :round_id => round.id), :method => :post %> 
                 <% end %>
               <% end %>
               <%= link_to "Replay herunterladen", [:contest, @match.matchday, @match.becomes(Match), round] %>
