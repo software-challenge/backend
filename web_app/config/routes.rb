@@ -27,7 +27,7 @@ ActionController::Routing::Routes.draw do |map|
         :publish => :post
       } do |md|
         md.resources :matches, :member => {:reset => :post} do |m|
-          m.resources :rounds
+          m.resources :rounds, :member => {:send_server_log => :post}
         end
         md.standings '/rangliste', :controller => 'matchdays', :action => 'standings'
       end

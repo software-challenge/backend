@@ -87,7 +87,7 @@ module SoChaManager
     end
 
     def log(round)
-      @serverlog = File.new(File.join("/home/scadmin", "serverlogs", round.id.to_s + ".log"), "w")
+      @serverlog = File.new(File.join(ENV['SERVER_LOGS_FOLDER'], round.id.to_s + ".log"), "w")
     end
     
     protected
