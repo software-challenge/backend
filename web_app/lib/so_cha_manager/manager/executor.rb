@@ -3,7 +3,7 @@ module SoChaManager
     def play(round)
       manager = self
       player_names = round.slots.collect(&:ingame_name)
-      @client.log round
+      @client.log round if round.match.type == "LeagueMatch"
 
       @client.prepare round.game_definition.plugin_guid, player_names do |success,response|
         begin
