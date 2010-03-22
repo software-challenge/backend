@@ -34,6 +34,7 @@ module SoChaManager
       @response_handlers = {}
       @room_handlers = {}
       @done = false
+      @serverlog = nil
       start
     end
     
@@ -81,11 +82,16 @@ module SoChaManager
     rescue => e
       logger.log_formatted_exception e
     end
+
+    def log(round)
+      @serverlog = File.new(File.join("/home/scadmin", "serverlogs", round.id.to_s + ".log"), "w")
+    end
     
     protected
     
     def write(data)
       @connection.write_nonblock(%{#{data}\n})
+      @serverlog << data unless @serverlog.nil?
     end
     
     def invoke_handler(handler, success, data)
@@ -144,7 +150,9 @@ module SoChaManager
         
         begin
           while !done? do
-            @parser << @connection.read_nonblock(1024)
+            data = @connection.read_nonblock(1024)
+            @serverlog << data unless @serverlog.nil?
+            @parser << data
             @last_data = Time.now
           end
         rescue Errno::EAGAIN, Errno::EWOULDBLOCK
