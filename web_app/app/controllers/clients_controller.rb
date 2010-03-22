@@ -245,7 +245,7 @@ class ClientsController < ApplicationController
 
       file = File.join(path, num.to_s + ".log")
       if File.exists? file
-        filename = "#{type}_#{params[:id]}__#{File.mtime(file).strftime("%d_%m_%y__%H_%M")}.log"
+        filename = "#{type}_#{params[:id]}__#{File.mtime(file).strftime("%y_%m_%d__%H_%M")}.log"
         send_file(file, :filename => filename, :type => 'text', :stream => "false", :disposition => "attachment")
       else
         render :text => "File not found"

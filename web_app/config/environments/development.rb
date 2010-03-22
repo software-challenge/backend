@@ -17,3 +17,4 @@ config.action_controller.perform_caching             = false
 config.action_mailer.raise_delivery_errors = false
 
 ENV['CLIENT_LOGS_FOLDER'] = RAILS_ROOT + "/clientlogs/"
+ENV['SERVER_LOGS_FOLDER'] = RAILS_ROOT + "/serverlogs/"

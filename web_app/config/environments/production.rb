@@ -33,3 +33,4 @@ config.action_view.cache_template_loading            = true
 ENV['VM_WATCH_FOLDER'] = File.join(File.dirname(__FILE__), '..', 'public', 'system', 'vmwatch')
 
 ENV['CLIENT_LOGS_FOLDER'] = "/home/scadmin/clientlogs/"
+ENV['SERVER_LOGS_FOLDER'] = "/home/scadmin/serverlogs/"
