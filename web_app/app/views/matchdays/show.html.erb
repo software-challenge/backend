@@ -5,16 +5,16 @@
     <% else %>
       <% if @matchday.played? %>
         <% unless @matchday.published? %>
-          <% link_to publish_contest_matchday_url(@matchday), :method => "post", :title => t("views.publish"), :id => "publishContestAction" do %>
+          <% link_to publish_contest_matchday_url(@matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("views.publish"), :id => "publishContestAction" do %>
             <%= image_tag('actions/publish.gif') %><%= t ("actions.publish") %>
           <% end %>
         <% end %>
-      <% link_to reset_contest_matchday_url(@matchday), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
+        <% link_to reset_contest_matchday_url(@matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
           <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
         <% end %>
       <% else %>
         <% if  ((not @matchday.played?) and (matchesDone(@matchday) > 0))%>
-          <% link_to reset_contest_matchday_url(@matchday), :method => "post", :title => t("actions.reset"), :id => "resetAction" do %>
+          <% link_to reset_contest_matchday_url(@matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
             <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
           <% end %>
         <% end %>

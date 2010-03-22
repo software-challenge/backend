@@ -137,6 +137,7 @@ de:
     unhidden_successfully: "{{name}} wurde erfolgreich wiederhergestellt"
     confirm_hiding: "Sind Sie sicher, dass Sie {{name}} loeschen möchten?"
     confirm_remove_from_contestant: "Sind Sie sicher, dass Sie {{name}} aus dem Team entfernen möchten?"
+    confirm_reset: "Sind Sie sicher, dass sie den {{name}} zurücksetzen möchten?"
     person_not_found_by_email: "Es konnte keine Person mit der eMail-Adresse '{{email}}' gefunden werden."
     person_added_to_contestant: "Person wurde ins Team eingeladen."
     person_already_belongs_to_contestant: "Person gehört bereits zum Team"
