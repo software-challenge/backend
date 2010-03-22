@@ -71,6 +71,9 @@ module SoChaManager
     end
 
     def close
+      if not @serverlog.nil? and not @serverlog.closed?
+        @serverlog.close
+      end
       if done?
         logger.warn "Tried to close an already closed connection."
       else
@@ -91,7 +94,7 @@ module SoChaManager
     
     def write(data)
       @connection.write_nonblock(%{#{data}\n})
-      @serverlog << data unless @serverlog.nil?
+      (@serverlog << data).flush unless @serverlog.nil?
     end
     
     def invoke_handler(handler, success, data)
@@ -151,7 +154,7 @@ module SoChaManager
         begin
           while !done? do
             data = @connection.read_nonblock(1024)
-            @serverlog << data unless @serverlog.nil?
+            (@serverlog << data).flush unless @serverlog.nil?
             @parser << data
             @last_data = Time.now
           end
