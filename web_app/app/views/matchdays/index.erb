@@ -1,7 +1,7 @@
 <div id="actions">
   <% show_to :administrator do -%>
     <% if @contest.ready? and !@contest.begun? %>
-      <% link_to reset_matchdays_contest_url, :method => :post do %>
+      <% link_to reset_matchdays_contest_url, :method => :post, :confirm => t("messages.confirm_reset", :name => Contest.human_name), :id => "2" do %>
         <%= image_tag('actions/destroy.png') %><%= t "views.clear_schedule" %>
       <% end %>
     <% end %>
