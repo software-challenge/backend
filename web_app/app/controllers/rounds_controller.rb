@@ -1,8 +1,11 @@
 class RoundsController < ApplicationController
   access_control do
-    action :send_server_log do
-      allow :administrator
-    end
+    default :allow
+  end
+
+  access_control :only => [:send_server_log] do
+    default :deny
+    allow :administrator
   end
   
   def show
