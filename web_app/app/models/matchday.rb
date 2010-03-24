@@ -128,12 +128,23 @@ class Matchday < ActiveRecord::Base
     end
 
     unless orders.empty?
-      ranked_slots = slots(:reload).all(:order => orders.join(', '), :joins => joins.join(' '), :group => "matchday_slots.id")
+      all_slots = slots(:reload).all(:order => orders.join(', '), :joins => joins.join(' '), :group => "matchday_slots.id")
+      ranked_slots = all_slots.find{|slot| !slot.contestant.hidden?}
+      highest_position = 0
       ranked_slots.each_with_index do |slot, i|
         writeable_slot = slots.find(slot.id)
         writeable_slot.position = i.next
         writeable_slot.save!
+        highest_position = i.next
       end
+
+      hidden_slots = all_slots.find{|slot| slot.contestant.hidden?}
+      hidden_slots.each_with_index do |slot,i|
+        writeable_slot = slots.find(slot.id)
+        writeable_slot.position = highest_position + i.next
+        writeable_slot.save!
+      end
+      
     else
       logger.warn "ORDER was empty - cannot order."
     end
