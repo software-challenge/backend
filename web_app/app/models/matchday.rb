@@ -129,7 +129,7 @@ class Matchday < ActiveRecord::Base
 
     unless orders.empty?
       all_slots = slots(:reload).all(:order => orders.join(', '), :joins => joins.join(' '), :group => "matchday_slots.id")
-      ranked_slots = all_slots.find{|slot| !slot.contestant.hidden?}
+      ranked_slots = all_slots.find_all{|slot| !slot.contestant.hidden?}
       highest_position = 0
       ranked_slots.each_with_index do |slot, i|
         writeable_slot = slots.find(slot.id)
@@ -138,7 +138,7 @@ class Matchday < ActiveRecord::Base
         highest_position = i.next
       end
 
-      hidden_slots = all_slots.find{|slot| slot.contestant.hidden?}
+      hidden_slots = all_slots.find_all{|slot| slot.contestant.hidden?}
       hidden_slots.each_with_index do |slot,i|
         writeable_slot = slots.find(slot.id)
         writeable_slot.position = highest_position + i.next
