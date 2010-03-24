@@ -12,7 +12,7 @@
   </thead>
   <% matchday.slots.find_all{|slot| !slot.contestant.hidden?}.each_with_index do |slot,i| %>
     <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
-      <td style="text-align: left;"><%= i + 1 %>.</td>
+      <td style="text-align: left;"><%= slot.position %>.</td>
       <td><%= link_to slot.contestant.name, contest_contestant_matches_url(slot.contestant) %></td>
       <td style="text-align: center;"><%= count_matches_played_by_contestant(slot.contestant, @matchday) %></td>
       <% if slot.score %>
