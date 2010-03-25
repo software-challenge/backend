@@ -174,7 +174,6 @@
                 <% end %>
               <% end %>
               <%= link_to "Replay herunterladen", [:contest, @match.matchday, @match.becomes(Match), round] %>
-              <% show_to :administrator do %>
                 <a href="#" id="replay_show_round_<%= round.id %>">Replay ansehen</a>
                 <% javascript_tag do %>
                   $(function() {
@@ -184,7 +183,6 @@
                     })
                  })
                 <% end %>
-              <% end %>
             </span>
           <% end %>
           Runde <%= round_index.next %>
@@ -219,7 +217,6 @@
         <% end %>
       </tr>
     <% end %>
-    <% show_to :administrator do %>
       <tr>
         <td colspan="<%= round_colspan + round_score_fragments + 5 %>">
           <div style="background-color: #fff; display: none" id="replay_round_<%= round.id %>">
@@ -238,23 +235,14 @@
           </div>
         </td>
       </tr>
-    <% end %>
   <% end %>
 </table>
 
-<% show_to :administrator do %>
 <% javascript_tag do %>
     function show_replay(round, url) {
-      //$.get("http://schule.reemo.de/pub/swchallenge2010/swcreplay/replay.php",
-      //  "replayURL=" + url,
-      //  function(returned_data) {
-      //    $("#replay_box_" + round).html(returned_data)
-      //  }
-      //)
-      $("#replay_box_" + round).attr({src: "http://schule.reemo.de/pub/swchallenge2010/swcreplay/replay.php?replayURL=" + url})
+      $("#replay_box_" + round).attr({src: "http://m0ppelk0tze.paniccrew.de/socha10/replay.php?replayURL=" + url})
       $("#replay_round_" + round).show(250)
     }
-<% end %>
 <% end %>
 
 <% end %>
