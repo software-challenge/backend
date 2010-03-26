@@ -26,7 +26,7 @@
     <% matchday.slots.each do |slot| %>
       <% if (not slot.client.nil?) and (@client.id == slot.client.id) %>
         <% if played %>
-        <%= ", " %>
+        &nbsp; &nbsp; &nbsp;
         <% else %>
         Dieser Computerspieler wurde an folgenden Spieltagen des Wettkampfes verwendet: 
        <br> 
