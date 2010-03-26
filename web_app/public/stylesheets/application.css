@@ -126,6 +126,11 @@ h1 a {
   text-decoration: underline;
 }
 
+#page-container {
+  width: 750px;
+  margin: 0 auto;
+}
+
 #header #menu a:hover, h1 a:hover {
   background-color: #222;
   color: white;
@@ -137,7 +142,6 @@ h1 a {
   border-bottom: 3px solid #ddd;
   padding: 0 10px;
   background-color: #FCFCFC;
-  margin: 0 -10px;
   background: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#eee));
 }
 
@@ -155,7 +159,7 @@ h1 a {
   font-size: 11px;
   line-height: 26px;
   text-align: center;
-  margin: 10px -10px 0 -10px;
+  margin-top: 10px;
 }
 
 #header .logo {
@@ -263,4 +267,12 @@ abbr {
 a.sort_by {
   text-decoration: none;
   color: #000;
+}
+
+.print .inline {
+  display: none;
+}
+
+.print .block {
+  display: none;
 }
