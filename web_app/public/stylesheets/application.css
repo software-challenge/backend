@@ -239,6 +239,18 @@ table.data-table tr.odd, li.odd {
   background-color: #f8f8f8;
 }
 
+tr.right, td.right, th.right {  
+  text-align: right;
+}
+
+tr.middle, td.middle, th.middle {
+  text-align: middle;
+}
+
+tr.space-left, td.space-left, th.space-left {
+  padding-left: 20px;
+}
+
 abbr {
   border-bottom: 1px dotted;
   cursor: help;
