@@ -39,3 +39,7 @@ h1 a {
 .print .block {
   display: block;
 }
+
+td, th {
+  color: black;
+}
