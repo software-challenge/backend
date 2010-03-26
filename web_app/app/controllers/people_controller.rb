@@ -199,7 +199,7 @@ class PeopleController < ApplicationController
         if params[:send_notification] == "1"
           PersonMailer.deliver_password_reset_notification(@person, @current_contest, person_params[:password])
         end
-        flash[:notice] = @person.name + " " + I18n.t("messages.updated_successfully")
+        flash[:notice] = I18n.t("views.profile_of") + " " +  @person.name + " " + I18n.t("messages.updated_successfully")
         format.html do
           if params[:contestant_id] and !@person.teams.visible.empty?
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
