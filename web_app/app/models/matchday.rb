@@ -58,6 +58,18 @@ class Matchday < ActiveRecord::Base
     self.public
   end
 
+  def reaggregate
+    return false if self.running?
+    Matchday.transaction do
+      self.reset!
+      self.reload
+      self.matches.each do |match|
+        match.after_round_played(nil)
+      end
+    end
+    true
+  end
+
   def perform_delayed!
     matches.each do |match|
       match.perform_delayed!
