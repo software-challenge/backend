@@ -23,6 +23,7 @@ de:
     data_can_be_moved: "Einzelne Daten können nachträglich verschoben werden."
     testing_status: "Abgabestatus"
     weekdays: "Wochentage"
+    profile_of: "Profil von"
     client_not_handed_in: "Nicht hochgeladen oder nicht aktiviert!"
     client_ok: "Tests erfolgreich bestanden und aktiv."
     client_failed: "Client aktiv, jedoch nicht erfolgreich getestet!"
