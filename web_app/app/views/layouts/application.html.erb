@@ -16,13 +16,14 @@
     <%= stylesheet_link_tag 'tablesorter/style.css' %>
     <%= stylesheet_link_tag "http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/flick/jquery-ui.css" %>
     <%= stylesheet_link_tag 'jquery-ui-fixes', 'formtastic', 'formtastic_changes',
-      'application', 'rails', 'contests', 'clients', 'fullcalendar', 'tabnav', :cache => true  %>
+      'application', 'rails', 'contests', 'clients', 'fullcalendar', 'tabnav', :media => "all", :cache => true %>
+    <%= stylesheet_link_tag 'print', :media => "print" %>
     <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
     <link rel="icon" href="/images/favicon.ico" type="image/x-icon" />
     <title><%= current_page_title %></title>
   </head>
   <body style="margin: 0; padding: 0;">
-    <div style="margin: 0 auto; width: 750px;">
+    <div id="page-container">
       <div id="header">
         <div id="mainLogo">
           <% link_to root_url do %>

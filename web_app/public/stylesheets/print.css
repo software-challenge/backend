@@ -1,0 +1,41 @@
+#header {
+  display: none;
+}
+
+table.data-table {
+  border: 2px solid black;
+}
+
+#page-container {
+  width: 100%;  
+}
+
+.tabs_tabnav {
+  display: none;
+}
+
+#actions {
+  display: none;
+}
+
+body {
+  width: 100%;
+}
+
+a {  
+  text-decoration: none;
+  color: #000;
+}
+
+h1 a {
+  text-decoration: none;
+  color: #000;
+}
+
+.print .inline {
+  display: inline;
+}
+
+.print .block {
+  display: block;
+}
