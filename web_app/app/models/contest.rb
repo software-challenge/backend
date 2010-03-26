@@ -68,7 +68,7 @@ class Contest < ActiveRecord::Base
   end
   
   def reaggregate
-    Contest.matchdays.each do |matchday|
+    matchdays.each do |matchday|
       matchday.reaggregate
     end
   end

@@ -135,6 +135,16 @@ class ContestsController < ApplicationController
     redirect_to contest_edit_schedule_url
   end
 
+
+  def reaggregate
+    if not @current_contest.reaggregate
+      flash[:error] = I18n.t("messages.matchday_playing")
+    end
+    
+    redirect_to contest_standings_url()
+  end
+
+
   protected
 
   def read_multipart_param(data, key, count = 3)

@@ -1,10 +1,3 @@
-<% show_to :administrator do %>
-  <div id="actions">
-    <% link_to reaggregate_contest_matchday_url(@matchday), :method => "post", :title => t("views.recalc"), :id => "reaggregateContestAction" do %>
-      <%= image_tag('actions/refresh.png') %><%= t ("actions.add") %>
-    <% end %>
-  </div>
-<% end %>
 <h1>
   <%= link_to @contest.name, contest_matchdays_url %> /
   <%= @matchday.position %>. Spieltag
