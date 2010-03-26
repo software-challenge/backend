@@ -71,6 +71,11 @@
   {
     line-height: 24px;
   }
+
+  table#rounds td.value
+  {
+    text-align: right;
+  }
 </style>
 
 <table id="result">
@@ -126,7 +131,7 @@
   <tr>
     <th colspan="<%= match_colspan %>">&nbsp;</th>
     <% @contest.game_definition.match_score.each do |k,fragment| %>
-      <th><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
+      <th style="text-align: right"><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
     <th>&nbsp;</th>
   </tr>
@@ -135,7 +140,7 @@
       <td colspan="<%= match_colspan %>"><%= slot.name %></td>
       <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
         <% slot.score.to_a_with_precision.each do |value| %>
-          <td><%= value %></td>
+          <td style="text-align: right"><%= value %></td>
         <% end %>
       <% else %>
         <td colspan="<%= match_score_fragments %>">
@@ -158,7 +163,7 @@
   <tr>
     <th colspan="<%= round_colspan %>">&nbsp;</th>
     <%@contest.game_definition.round_score.each do |k, fragment| %>
-      <th><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
+      <th style="text-align: right"><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
     <th>&nbsp;</th>
   </tr>
@@ -199,7 +204,7 @@
         </td>
         <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
           <% slot.score.to_a_with_precision.each do |value| %>
-            <td><%= value %></td>
+            <td style="min-width: 10px; text-align: right"><%= value %></td>
           <% end %>
         <% else %>
           <td colspan="<%= round_score_fragments %>">
