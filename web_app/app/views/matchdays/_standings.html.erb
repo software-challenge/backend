@@ -1,12 +1,13 @@
-<h2 class="print inline">Rangliste<br></h2>
+<h2 class="print-inline">Rangliste der <%= @contest.name %> "<%= @contest.game_name %>"<br><br></h2>
 <table class="data-table">
   <thead>
     <tr>
       <th><%= t "views.position" %></th>
       <th><%= t "views.contestant" %></th>
+      <th class="print-inline">Ort</th>
       <th class="right"><%= t "views.matches" %></th>
       <% @contest.game_definition.match_score.each do |k,fragment| %>
-        <th class="right"><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
+        <th class="right <%= match_score_fragment_name(@contest.game_definition, fragment).include?("Zeit") ? "print-hide" : "" %>"><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
       <% end %>
       <th class="middle space-left">&Delta;</th>
     </tr>
@@ -15,10 +16,11 @@
     <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
       <td style="text-align: left;"><%= slot.position %>.</td>
       <td><%= link_to slot.contestant.name, contest_contestant_matches_url(slot.contestant) %></td>
+      <td class="print-inline"><%= slot.contestant.location %></td>
       <td class="right"><%= count_matches_played_by_contestant(slot.contestant, @matchday) %></td>
       <% if slot.score %>
-        <% slot.score.to_a_with_precision.each do |value| %>
-          <td class="right"><%=h value %></td>
+        <% slot.score.to_a_with_precision.each_with_index do |value,i| %>
+          <td class="right <%= slot.score.fragments[i].fragment.include?("time") ? "print-hide" : "" %>"><%=h value %></td>
         <% end %>
       <% else %>
         <td colspan="<%= @contest.game_definition.match_score.size %>">

@@ -32,12 +32,16 @@ h1 a {
   color: #000;
 }
 
-.print .inline {
+.print-inline {
   display: inline;
 }
 
-.print .block {
+.print-block {
   display: block;
+}
+
+.print-hide {
+  display: none;
 }
 
 td, th {
