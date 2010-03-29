@@ -269,10 +269,10 @@ a.sort_by {
   color: #000;
 }
 
-.print .inline {
+.print-inline {
   display: none;
 }
 
-.print .block {
+.print-block {
   display: none;
 }
