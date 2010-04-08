@@ -3,8 +3,8 @@
   <% if date %>
     <td><%= l match.matchday.when %></td>
   <% end %>
-  <td><%= match.slots[0].name || "Freispiel" %></td>
-  <td><%= match.slots[1].name || "Freispiel" %></td>
+  <td><%= link_to (match.slots[0].name || "Freispiel"), contest_contestant_matches_url(match.slots[0].contestant) %></td>
+  <td><%= link_to (match.slots[1].name || "Freispiel"), contest_contestant_matches_url(match.slots[1].contestant) %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
       <% if match.matchday.published? or current_user.try(:administrator) %>
