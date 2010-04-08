@@ -1,15 +1,17 @@
-<h1> 
-  <%= link_to h(@contest.name), contest_matchdays_url %> /
-  <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %>
-</h1>
 <% show_to :administrator do %>
+  <div id="actions">
   <% if @match.played? %>
     <% link_to reset_contest_matchday_match_url(@match.matchday, @match), :method => "post", :confirm => t("messages.confirm_reset", :name => Match.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
        <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
      <% end %>
   <% end %>
+  </div>
 <% end %>
- 
+<h1> 
+  <%= link_to h(@contest.name), contest_matchdays_url %> /
+  <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %>
+</h1>
+
 <style type="text/css">
   table#result {
     width: 100%;
