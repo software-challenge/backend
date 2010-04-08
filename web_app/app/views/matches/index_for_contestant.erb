@@ -10,6 +10,7 @@
     <colgroup width="15%"/>
     <thead>
       <tr>
+        <th><%= t "views.matchday" %></th>
         <th><%= t "views.when" %></th>
         <th><%= t("views.player", {:number => 1}) %></th>
         <th><%= t("views.player", {:number => 2}) %></th>
@@ -17,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <%= render :partial => "matchdays/match", :collection => @contestant.matches, :locals => { :date => true } %>
+      <%= render :partial => "matchdays/match", :collection => @contestant.matches, :locals => { :date => true, :count => true } %>
     </tbody>
   </table>
 <% end %>

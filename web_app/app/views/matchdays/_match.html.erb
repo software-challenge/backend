@@ -1,5 +1,9 @@
 <% date = local_assigns[:date] || false %>
+<% count = local_assigns[:count] || false %>
 <tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
+  <% if count %>
+    <td> <%= link_to match.matchday.position, contest_matchday_url(match.matchday)%> </td>
+  <% end %>
   <% if date %>
     <td><%= l match.matchday.when %></td>
   <% end %>
