@@ -2,6 +2,7 @@
   <% f.inputs do %>
     <%= f.input :name, :required => true %>
     <%= f.input :location, :required => true %>
+    <%= f.input :full_member_count, :required => false %>
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button %>
