@@ -7,8 +7,8 @@
   <% if date %>
     <td><%= l match.matchday.when %></td>
   <% end %>
-  <td><%= link_to (match.slots[0].name || "Freispiel"), contest_contestant_matches_url(match.slots[0].contestant) %></td>
-  <td><%= link_to (match.slots[1].name || "Freispiel"), contest_contestant_matches_url(match.slots[1].contestant) %></td>
+  <td><%= !match.slots[0].blank? ? (link_to match.slots[0].name, contest_contestant_matches_url(match.slots[0].contestant)) : "-" %></td>
+  <td><%= !match.slots[1].blank? ? (link_to match.slots[1].name, contest_contestant_matches_url(match.slots[1].contestant)) : "-" %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
       <% if match.matchday.published? or current_user.try(:administrator) %>
@@ -22,7 +22,7 @@
     <% elsif match.running? %>
       <%= image_tag 'ui/spinner.gif' %>
     <% else %>
-      <em><%= t "views.outstanding" %></em>
+      <em><%= match.slots.empty? ? "Spielfrei" : (t "views.outstanding") %></em>
     <% end %>
   </td>
 </tr>
