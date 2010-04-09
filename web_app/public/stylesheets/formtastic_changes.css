@@ -35,7 +35,7 @@ form.formtastic fieldset ol li.check_boxes.horizontal fieldset ol li label {
   margin: 0 5px 0 0;
 }
 
-form.formtastic fieldset ol li.string input, form.formtastic fieldset ol li.password input {
+form.formtastic fieldset ol li.string input, form.formtastic fieldset ol li.password input, form.formtastic fieldset ol li.numeric input {
   width: inherit;
 }
 

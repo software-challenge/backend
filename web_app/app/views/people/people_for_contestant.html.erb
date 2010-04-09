@@ -13,6 +13,8 @@
 
 <% tabnav :contestant do %>
 
+  <h2>Gesamtzahl der Mitglieder: <%= @contestant.overall_member_count %></h2>
+
   <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
   <table class="data-table">
   <% unless @contestant.people.visible.teachers.empty? -%>

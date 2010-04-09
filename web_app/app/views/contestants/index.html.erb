@@ -33,7 +33,7 @@
       <tr>
         <td><%= contestant.location %></td>
         <td><%= contestant.name %></td>
-        <td><%= contestant.people.visible.count %></td>
+        <td><%= contestant.overall_member_count %></td>
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
         <td>
