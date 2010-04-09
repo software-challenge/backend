@@ -523,7 +523,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		}
 		else if (GameUtil.isValidToEat(board, player))
 		{
-			sendMove(new Move(MoveTyp.EAT));
+			//sendMove(new Move(MoveTyp.EAT));
+			List<String> answers = new LinkedList<String>();
+			answers.add(eatsalad);
+			answers.add(moveForward);
+			askQuestion("<html>Wollen sie einen Salat fressen, "+color+" ?</html", answers, eatsalad);
 		}
 		else if ((board.getTypeAt(player.getFieldNumber()) == FieldTyp.RABBIT)
 				&& (player.getActions().size() > 0))
@@ -569,8 +573,18 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	public void answerQuestion(final String answer, String type)
 	{
 		myturn = true;
-
-		if (type.equals(carrotAnswer))
+		
+                if (type.equals(eatsalad)){
+		  if (answer.equals(eatsalad)){
+                    sendMove(new Move(MoveTyp.EAT, Action.EAT_SALAD));
+		  }else if(answer.equals(moveForward)){
+		    qPanel.hideComponents();
+                    setReachableFields(player.getFieldNumber());
+		    this.repaint();
+	          }
+	        }
+	
+                if (type.equals(carrotAnswer))
 		{
 			if (answer.equals(takeCarrots))
 			{
