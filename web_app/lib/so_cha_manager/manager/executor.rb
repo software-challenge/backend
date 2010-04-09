@@ -5,7 +5,7 @@ module SoChaManager
       player_names = round.slots.collect(&:ingame_name)
       @client.log round if round.match.type == "LeagueMatch"
 
-      @client.prepare round.game_definition.plugin_guid, player_names do |success,response|
+      @client.prepare round.game_definition.plugin_guid, round.slots.collect(&:name) do |success,response|
         begin
           if success
             logger.info "Game has been prepared"
