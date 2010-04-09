@@ -5,7 +5,7 @@
 
 <% tabnav :contestant do %>
   <table class="data-table">
-    <colgroup>
+    <colgroup span="2"/>
     <colgroup span="2"/>
     <colgroup width="15%"/>
     <thead>
@@ -18,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <%= render :partial => "matchdays/match", :collection => @contestant.matches, :locals => { :date => true, :count => true } %>
+      <%= render :partial => "matchdays/match", :collection => @contestant.matches_including_free_days, :locals => { :date => true, :count => true } %>
     </tbody>
   </table>
 <% end %>
