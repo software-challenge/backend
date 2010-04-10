@@ -18,9 +18,10 @@
       <tr>
         <th><%= Contestant.human_attribute_name :location %></th>
         <th><%= Contestant.human_name %></th>
-        <th><%= t "views.members" %></th>
         <th><%= t "acl9.roles.contestant.teacher" %></th>
         <th><%= t "acl9.roles.contestant.tutor" %></th>
+        <th><%= t "acl9.roles.contestant.pupils" %></th>
+
         <% show_to :administrator do %>
           <th><%= t "views.testing_status" %></th> 
         <% end %>
@@ -32,10 +33,10 @@
     <% @contestants.each do |contestant| %>
       <tr>
         <td><%= contestant.location %></td>
-        <td><%= contestant.name %></td>
-        <td><%= contestant.overall_member_count %></td>
+        <td><%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
+        <td><%= contestant.overall_member_count %></td>
         <td>
           <% show_to :administrator do -%>
             <% if contestant.current_client.nil? %>
