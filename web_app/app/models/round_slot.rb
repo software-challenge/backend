@@ -17,4 +17,18 @@ class RoundSlot < ActiveRecord::Base
   def ingame_name
     name.parameterize
   end
+
+  def disqualify
+    # Make sure that nobody else has already been disqualified in this round
+    round.slots.each do |slot|
+      return if slot.score.cause == "LEFT"
+    end
+    score.cause = "LEFT"
+    score.save
+  end
+
+  def requalify
+    score.cause = "REGULAR"
+    score.save
+  end
 end
