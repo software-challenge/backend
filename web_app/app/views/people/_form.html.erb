@@ -20,9 +20,11 @@
 
     <% show_to :administrator, :teacher, :tutor do %>
       <% if current_user != @person or current_user.has_role? :administrator %>
+        <li>
         <%= f.errors_on :memberships %>
         <li>
           <% content_for :teams do %>
+            <div style="overflow-y: scroll; height: 200px; margin-bottom: 15px;">
             <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build } %>
             <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
               <% unless m.contestant.hidden -%>
@@ -45,9 +47,11 @@
                 </li>
               <% end %>
             <% end %>
+            </div>
           <% end %>
           <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
         </li>
+      </li>
         <% if @person != current_user %>
           <%= f.input "blocked", :required => false %>
         <% end %>
