@@ -202,11 +202,11 @@
           <%= link_to slot.contestant.name, contest_contestant_matches_url(slot.contestant) %>
           <% if slot.score.cause == "REGULAR" %>
             <% show_to :administrator do %>
-              <%= link_to (t "actions.disqualify"), :confirm => t("messages.confirm_disqualify", disqualify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id) %> 
+              <%= link_to (t "actions.disqualify"), :confirm => t("messages.confirm_disqualify"), disqualify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id) %> 
             <% end %>
           <% else %>
               <% if current_user.has_role? == :administrator %>
-                <em>(<%= link_to (t "views.disqualified"), :confirm => t("messages.confirm_requalify", requalify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id) %>)</em>
+                <em>(<%= link_to (t "views.disqualified"), :confirm => t("messages.confirm_requalify"), requalify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id) %>)</em>
               <% else %>
                 <em>(<%= t "views.disqualified" %>)</em>
           <% end %>
