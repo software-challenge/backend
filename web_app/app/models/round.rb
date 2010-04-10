@@ -74,4 +74,11 @@ class Round < ActiveRecord::Base
   def has_server_log?
     File.exists? File.join(ENV['SERVER_LOGS_FOLDER'], self.id.to_s + ".log")
   end
+
+  def has_disqualified_slot?
+    slots.each do |slot|
+      return true if slot.score.cause == "LEFT"
+    end
+    false
+  end
 end

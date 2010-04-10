@@ -111,6 +111,10 @@ de:
     client_can_be_tested: "Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
       rechtzeitig (z.B. am Vortag) hochladen."
   messages:
+    contestant_disqualified: "Team wurde disqualifiziert. Bitte die Resultate neu addieren!"
+    contestant_requalified: "Die Disqualifizierung wurde aufgehoben. Bitte die Resultate neu addieren!"
+    contestant_could_not_be_disqualified: "Das Team konnte nicht disqualifiziert werden!"
+    contestant_could_not_be_requalified: "Die Qualifizierung konnte nicht aufgehoben werden!"
     no_log_files_available: "Keine Log-Dateien verfügbar."
     cleared_all_jobs: "Alle Aufträge wurden gelöscht."
     matchday_recalculated: "Der Spieltag wurde neu zusammengerechnet."
@@ -157,6 +161,7 @@ de:
     logout: "Abmelden"
     add: "Addieren"
     disqualify: "disqualifizieren"
+    requalify: "Qualifizierung aufheben"
     my: "Meine"
     reset: "Zurücksetzen"
     play: "Spielen"
