@@ -25,7 +25,7 @@
         <li>
           <% content_for :teams do %>
             <div style="overflow-y: scroll; height: 200px; margin-bottom: 15px;">
-            <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build } %>
+              <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
             <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
               <% unless m.contestant.hidden -%>
                 <% t = m.contestant %>
