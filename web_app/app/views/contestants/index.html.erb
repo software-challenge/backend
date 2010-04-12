@@ -36,7 +36,7 @@
         <td><%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
-        <td><%= contestant.overall_member_count %></td>
+        <td style="text-align: center"><%= contestant.overall_member_count %></td>
         <td>
           <% show_to :administrator do -%>
             <% if contestant.current_client.nil? %>
