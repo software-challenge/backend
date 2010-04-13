@@ -153,6 +153,8 @@ de:
     login_first: "Bitte melden Sie sich zuerst an (eventuell wurden Sie aufgrund von Inaktivität automatisch abgemeldet)"
     test_running: "Anderer Test im Gange"
   actions:
+    cancel: "Abbrechen"
+    save: "Speichern"
     delete: "Löschen"
     back: "Zurück"
     edit: "Bearbeiten"
