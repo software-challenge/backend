@@ -43,7 +43,6 @@
             <span id="change_ovrl_mem_count_edit_<%= contestant.id %>" style="display: none">
               <%= text_field_tag "mem_count_#{contestant.id}", contestant.overall_member_count, :size => 2 %>
               <a href="#" id="submit_ovrl_mem_count_<%= contestant.id %>"><%= t("actions.save") %></a>
-              <a href="#" id="cancel_ovrl_mem_count_<%= contestant.id %>"><%= t("actions.cancel") %></a>
             </span>
           <% else %>
             <%= contestant.overall_member_count %>
@@ -56,12 +55,6 @@
               $("a#change_ovrl_mem_count_<%= contestant.id %>").bind('click', function() {
                 $("a#change_ovrl_mem_count_<%= contestant.id %>").hide();
                 $("span#change_ovrl_mem_count_edit_<%= contestant.id %>").show(250);
-                return false;
-              })
-  
-              $("a#cancel_ovrl_mem_count_<%= contestant.id %>").bind('click', function() {
-                $("span#change_ovrl_mem_count_edit_<%= contestant.id %>").hide();
-                $("a#change_ovrl_mem_count_<%= contestant.id %>").show(250);
                 return false;
               })
   
