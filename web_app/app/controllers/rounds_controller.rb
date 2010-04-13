@@ -32,6 +32,7 @@ class RoundsController < ApplicationController
     else
       flash[:error] = t "messages.contestant_could_not_be_disqualified"
     end
+    
     redirect_to contest_matchday_match_url(slot.round.match.matchday, slot.round.match) 
   end
 

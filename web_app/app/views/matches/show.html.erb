@@ -145,7 +145,9 @@
       <% end %>
       <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
         <% slot.score.to_a_with_precision.each do |value| %>
-          <td style="text-align: right"><%= value %></td>
+          <td style="text-align: right">  
+            <%= value %>
+          </td>
         <% end %>
       <% else %>
         <td colspan="<%= match_score_fragments %>">
@@ -207,14 +209,21 @@
         <td colspan="<%= round_colspan %>">
           <%= link_to slot.contestant.name, contest_contestant_matches_url(slot.contestant) %>
           <% if slot.score.cause == "LEFT" %>
-            <em>(<%= t "views.disqualified" %>)</em>
+            <em>(
+              <%= slot.qualification_changed ? "nachtrgl." : "" %>
+              <%= t "views.disqualified" %>
+            )</em>
+          <% elsif slot.qualification_changed %>
+            <em>
+              (<%= "nachtrgl. qualifiziert" %>)
+            </em>
           <% end %>
         </td>
         <% show_to :administrator do %>
           <td>
             <% if slot.score.cause == "REGULAR" %>
               <% if not round.has_disqualified_slot? %> 
-                <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify").capitalize %>
+                <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify") %>
               <% end %>
             <% else %>
               <%= link_to (image_tag "actions/requalify.png"), requalify_contest_matchday_match_round_url(@match.matchday, @match, round, :slot => slot.id), :confirm => t("messages.confirm_requalify"), :title => t("actions.requalify") %>
@@ -222,8 +231,14 @@
           </td>
         <% end %>
         <% if slot.score and (@matchday.published? or current_user.try(:administrator)) %>
-          <% slot.score.to_a_with_precision.each do |value| %>
-            <td style="min-width: 10px; text-align: right"><%= value %></td>
+          <% slot.score.to_a_with_precision.each_with_index do |value,i| %>
+            <td style="min-width: 10px; text-align: right">
+              <% if slot.qualification_changed %>
+                [ <%= value %> ]
+              <% else %>
+                <%= value %>
+              <% end %>
+            </td>
           <% end %>
         <% else %>
           <td colspan="<%= round_score_fragments %>">
