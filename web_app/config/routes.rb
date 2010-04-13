@@ -38,7 +38,9 @@ ActionController::Routing::Routes.draw do |map|
       end
 
       c.contestants '/meine-teams', :controller => 'contestants', :action => 'my', :name_prefix => 'my_contest_'
-      c.resources :contestants, :as => "teams" do |contestant|
+      c.resources :contestants, :as => "teams", :member => {
+        :set_and_get_overall_member_count => :get 
+      } do |contestant|
         contestant.resources :clients, :as => "computerspieler", :new => {
           :uploadify => :post
         }, :member => {
@@ -66,6 +68,10 @@ ActionController::Routing::Routes.draw do |map|
 
       c.standings '/rangliste', :controller => 'contests', :action => 'standings'
       c.results '/ergebnisse', :controller => 'contests', :action => 'results'
+      c.finale '/finale', :controller => 'finales', :action => 'index'
+      c.resource :finale, :as => "finale", :member => {
+         :lineup => :get
+      }
     end
   end
 

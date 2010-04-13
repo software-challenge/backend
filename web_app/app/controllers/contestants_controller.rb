@@ -15,6 +15,10 @@ class ContestantsController < ApplicationController
       allow :tutor, :teacher, :pupil, :of => :contestant
     end
 
+    action :set_and_get_overall_member_count do
+      allow :administrator
+      allow :tutor, :teacher, :of => :contestant
+    end
   end
 
   access_control :helper => :may_add_teams? do
@@ -142,6 +146,15 @@ class ContestantsController < ApplicationController
 
   def hide
     generic_hide(@contestant)
+  end
+
+  def set_and_get_overall_member_count
+    count = params[:count].to_i
+    render :text => -1.to_s if count < 0
+    contestant = Contestant.find(params[:id].to_i)
+    contestant.overall_member_count = count
+    render :text => -1.to_s unless contestant.save
+    render :text => count.to_s
   end
 
   protected
