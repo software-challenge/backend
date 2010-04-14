@@ -13,7 +13,40 @@
 
 <% tabnav :contestant do %>
 
-  <h2><%= t ("activerecord.attributes.contestant.overall_member_count") %>: <%= @contestant.overall_member_count %></h2>
+  <h2>
+    <%= t ("activerecord.attributes.contestant.overall_member_count") %>: <span id="overall_member_count"><%= @contestant.overall_member_count %></span> 
+    <% if not current_user.nil? and (current_user.has_role?(:teacher, @contestant) or current_user.has_role?(:tutor, @contestant) or current_user.has_role?(:administrator)) %></h2>
+      <a href="#" id="edit_overall_member_count">Ändern</a></h2>
+      <span id="field_overall_member_count" style="display: none">
+        <%= text_field_tag :member_count, @contestant.overall_member_count, :size => 2 %>
+        <a href="#" id="save_overall_member_count"><%= t("actions.save") %></a>
+      </span>
+      <% javascript_tag do %>
+        $(function() {
+          $("a#edit_overall_member_count").bind('click', function() {
+            $("a#edit_overall_member_count").hide()
+            $("span#field_overall_member_count").show(250)
+            return false
+          })
+
+          $("a#save_overall_member_count").bind('click', function() {
+            $("span#field_overall_member_count").hide()
+            $("a#edit_overall_member_count").show(250)
+            $.get(
+              "<%= set_and_get_overall_member_count_contest_contestant_url(@contestant) %>",
+              "id=<%= @contestant.id %>&count=" + $("input#member_count").val(),
+              function(returned_data) {
+                $("span#overall_member_count").html(returned_data)
+              }
+            )
+            return false
+          })
+        })
+      <% end %>
+    <% else %>
+      <%= @contestant.overall_member_count %>
+    <% end %>
+  </h2>
 
   <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
   <table class="data-table">

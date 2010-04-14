@@ -150,10 +150,16 @@ class ContestantsController < ApplicationController
 
   def set_and_get_overall_member_count
     count = params[:count].to_i
-    render :text => -1.to_s if count < 0
+    if count < 0
+      render :text => t("messages.only_values_above_zero")
+      return
+    end
     contestant = Contestant.find(params[:id].to_i)
     contestant.overall_member_count = count
-    render :text => -1.to_s unless contestant.save
+    unless contestant.save
+      render :text => t("messages.couldnt_save")
+      return
+    end
     render :text => count.to_s
   end
 

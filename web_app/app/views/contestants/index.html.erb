@@ -37,7 +37,7 @@
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
         <td style="text-align: center">
-          <% if not current_user.nil? and (current_user.has_role?(:teacher, contestant) or current_user.has_role?(:tutor, contestant) or  current_user.has_role?(:administrator)) %>
+          <% if not current_user.nil? and current_user.has_role?(:administrator) %>
             <% show_ovrl_member_count_edit = true %>
             <a href="#" id="change_ovrl_mem_count_<%= contestant.id %>"><%= contestant.overall_member_count %></a>
             <span id="change_ovrl_mem_count_edit_<%= contestant.id %>" style="display: none">

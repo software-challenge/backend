@@ -111,6 +111,8 @@ de:
     client_can_be_tested: "Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also
       rechtzeitig (z.B. am Vortag) hochladen."
   messages:
+    only_values_above_zero: "Es sind nur Werte über 0 erlaubt."
+    couldnt_save: "Speichern fehlgeschlagen."
     contestant_disqualified: "Team wurde disqualifiziert. Bitte die Resultate neu addieren!"
     contestant_requalified: "Die Disqualifizierung wurde aufgehoben. Bitte die Resultate neu addieren!"
     contestant_could_not_be_disqualified: "Das Team konnte nicht disqualifiziert werden!"
