@@ -13,6 +13,40 @@
 
 <% tabnav :contestant do %>
 
+
+  <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
+  <table class="data-table">
+  <% unless @contestant.people.visible.teachers.empty? -%>
+    <thead>
+    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.teachers" %></h2></td></tr>
+    <%= render :partial => "person_table_head" %>
+    </thead>
+    <tbody>
+    <%= render :partial => "person", :collection => @contestant.people.visible.teachers %>
+    </tbody>
+  <% end %>
+  <% unless @contestant.people.visible.tutors.empty? -%>
+    <thead>
+    <tr><td colspan="<%=colspan%>"><h2><%=t "acl9.roles.contestant.tutors" %></h2></td></tr>
+    <%= render :partial => "person_table_head" %>
+    </thead>
+    <tbody>
+    <%= render :partial => "person", :collection => @contestant.people.visible.tutors %>
+    </tbody>
+  <% end %>
+
+  <% unless @contestant.people.visible.pupils.empty? -%>
+    <thead>
+    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.pupils_with_account" %></h2></td></tr
+    <%= render :partial => "person_table_head" %>
+    </thead>
+    <tbody>
+    <%= render :partial => "person", :collection => @contestant.people.visible.pupils %>
+    </tbody>
+  <% end %>
+  </table>
+
+  <br>
   <h2>
     <%= t ("activerecord.attributes.contestant.overall_member_count") %>: <span id="overall_member_count"><%= @contestant.overall_member_count %></span> 
     <% if not current_user.nil? and (current_user.has_role?(:teacher, @contestant) or current_user.has_role?(:tutor, @contestant) or current_user.has_role?(:administrator)) %></h2>
@@ -54,36 +88,4 @@
       <%= @contestant.overall_member_count %>
     <% end %>
   </h2>
-
-  <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
-  <table class="data-table">
-  <% unless @contestant.people.visible.teachers.empty? -%>
-    <thead>
-    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.teachers" %></h2></td></tr>
-    <%= render :partial => "person_table_head" %>
-    </thead>
-    <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.visible.teachers %>
-    </tbody>
-  <% end %>
-  <% unless @contestant.people.visible.tutors.empty? -%>
-    <thead>
-    <tr><td colspan="<%=colspan%>"><h2><%=t "acl9.roles.contestant.tutors" %></h2></td></tr>
-    <%= render :partial => "person_table_head" %>
-    </thead>
-    <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.visible.tutors %>
-    </tbody>
-  <% end %>
-
-  <% unless @contestant.people.visible.pupils.empty? -%>
-    <thead>
-    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.pupils" %></h2></td></tr
-    <%= render :partial => "person_table_head" %>
-    </thead>
-    <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.visible.pupils %>
-    </tbody>
-  <% end %>
-  </table>
 <% end %>
