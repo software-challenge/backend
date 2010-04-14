@@ -217,6 +217,7 @@ de:
         tutors: "TutorInnen"
         pupil: SchülerIn
         pupils: "SchülerInnen"
+        pupils_with_account: "SchülerInnen mit Zugangsberechtigung"
   formtastic:
     submit: "Absenden"
     actions:
