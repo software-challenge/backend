@@ -20,6 +20,7 @@
       <span id="field_overall_member_count" style="display: none">
         <%= text_field_tag :member_count, @contestant.overall_member_count, :size => 2 %>
         <a href="#" id="save_overall_member_count"><%= t("actions.save") %></a>
+        <a href="#" id="cancel_overall_member_count"><%= t("actions.cancel") %></a>
       </span>
       <% javascript_tag do %>
         $(function() {
@@ -27,6 +28,12 @@
             $("a#edit_overall_member_count").hide()
             $("span#field_overall_member_count").show(250)
             return false
+          })
+
+          $("a#cancel_overall_member_count").bind('click', function() {
+            $("span#field_overall_member_count").hide()
+            $("input#member_count").val($("span#overall_member_count").html())
+            $("a#edit_overall_member_count").show(250)
           })
 
           $("a#save_overall_member_count").bind('click', function() {
