@@ -46,7 +46,6 @@
   <% end %>
   </table>
 
-  <br>
   <h2>
     <%= t ("activerecord.attributes.contestant.overall_member_count") %>: <span id="overall_member_count"><%= @contestant.overall_member_count %></span> 
     <% if not current_user.nil? and (current_user.has_role?(:teacher, @contestant) or current_user.has_role?(:tutor, @contestant) or current_user.has_role?(:administrator)) %></h2>
