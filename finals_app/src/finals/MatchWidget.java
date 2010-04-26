@@ -128,7 +128,10 @@ public class MatchWidget {
 
 	public void paint() {
 		paintOnGC((Graphics2D) pan.getGraphics());
-		paintOnGC((Graphics2D) contestPan.getGraphics());
+		if(contestPan != null && contestPan.getGraphics() != null){
+			paintOnGC((Graphics2D) contestPan.getGraphics());
+		}
+		
 
 	}
 

@@ -21,7 +21,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 	String name = "";
 
 	public ConfigsFrame(FinalsConfiguration config) {
-		this.setSize(100, 100);
+		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		GridLayout gl = new GridLayout();
 		gl.setColumns(1);
 		gl.setRows(4);

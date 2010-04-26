@@ -13,20 +13,26 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class MainFrame extends JFrame implements ActionListener {
+	private static final long serialVersionUID = 1328120526598916894L;
 	LinkedList<Final_Step> steps = new LinkedList<Final_Step>();
 	int currentStep = 0;
 	Panel pan;
 	Panel contestPanel;
-	JButton next = new JButton();
-	JButton last = new JButton();
-	JButton config = new JButton();
+	JButton nextButton = new JButton();
+	JButton lastButton = new JButton();
+	JCheckBox showPresentation = new JCheckBox();
+	FinalsConfiguration config;
 	GridBagLayout mgr;
 	GridBagConstraints c;
 	JFrame contestFrame;
+	ConfigsFrame configFrame;
 
 	MainFrame() {
 		mgr = new GridBagLayout();
@@ -51,7 +57,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.contestFrame = new PresentationFrame(this);
 		this.contestFrame.setSize(700, 700);
 		this.contestFrame.setTitle("asgard");
-		this.contestFrame.setVisible(true);
+		this.contestFrame.setVisible(false);
 		// Add contestPanel to contest window
 		this.contestPanel = new Panel();
 		contestFrame.add(contestPanel);
@@ -68,12 +74,19 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void createGUI() {
+		// Add dummy config
+		config = new FinalsConfiguration("HUND", "Affe gegen Kanacke!", new Date(), 100);
+		// Config frame
+		configFrame = new ConfigsFrame(config);
+		configFrame.setSize(400,400);
+		configFrame.setVisible(false);
+		
 		// Add dummy shit....should be imported from XML!
 		Contestant one = new Contestant("Test A", "A Stadt");
 		Contestant two = new Contestant("Test B", "B Stadt");
 		Contestant three = new Contestant("Test C", "C Stadt");
 		Contestant four = new Contestant("Test D", "D Stadt");
-		LinkedList contestants = new LinkedList<Contestant>();
+		LinkedList<Contestant> contestants = new LinkedList<Contestant>();
 		contestants.add(one);
 		contestants.add(two);
 		contestants.add(three);
@@ -115,27 +128,32 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		this.steps.add(new Final_Step(pan, contestPanel, matches2,
 				contestants2, new Ranking(contestants2), this.steps, false));
-		next = new JButton();
-		next.setText("Vor");
-		next.addActionListener(this);
-		next.setVisible(true);
-		next.setLocation(400, 400);
-		c.gridx = 0;
+		nextButton = new JButton();
+		nextButton.setText(">");
+		nextButton.addActionListener(this);
+		nextButton.setVisible(true);
+		nextButton.setLocation(400, 400);
+		c.gridx = 1;
 		c.gridy = 1;
 		c.weightx = 0.25;
 		c.weighty = 0.25;
 		c.fill = GridBagConstraints.NONE;
-		this.add(next, c);
+		this.add(nextButton, c);
 
-		last.setText("Zurück");
-		last.addActionListener(this);
-		last.setVisible(true);
-		c.gridx = 1;
-		this.add(last, c);
-		/*
-		 * config.setText("test"); config.addActionListener(this);
-		 * config.setVisible(true); c.gridy=2; this.add(config,c);
-		 */
+		lastButton.setText("<");
+		lastButton.addActionListener(this);
+		lastButton.setVisible(true);
+		c.gridx = 0;
+		this.add(lastButton, c);
+		
+		 
+		 showPresentation.setText("Präsentationsmodus");
+		 showPresentation.setSelected(false);
+		 showPresentation.setVisible(true);
+		 showPresentation.addActionListener(this);
+		 c.gridx=2;
+		 this.add(showPresentation, c);
+		
 
 	}
 
@@ -152,20 +170,18 @@ public class MainFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Final_Step curr = steps.get(currentStep);
-		if (e.getSource() == next) {
+		if (e.getSource() == nextButton) {
 			if (curr.isFinished() && currentStep < steps.size() - 1) {
 				currentStep++;
 			}
 			curr.stepForward();
 			this.repaint();
-		} else if (e.getSource() == config) {
-			ConfigsFrame frame = new ConfigsFrame(new FinalsConfiguration(
-					"HUND", "Affe gegen Kanacke!", new Date(), 100));
-			frame.setSize(100, 100);
-			frame.setVisible(true);
-
-		} else if (e.getSource() == last) {
+		}else if (e.getSource() == lastButton) {
 			curr.stepBackward();
+			this.repaint();
+		}else if (e.getSource() == showPresentation) {
+			contestFrame.setVisible(showPresentation.isSelected());
+			contestFrame.repaint();
 			this.repaint();
 		}
 
