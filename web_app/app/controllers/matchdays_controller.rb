@@ -144,7 +144,11 @@ class MatchdaysController < ApplicationController
       end
     end
 
-    redirect_to contest_matchday_url(@matchday)
+    if @matchday.class == FinaleMatchday
+      redirect_to contest_finale_url
+    else
+      redirect_to contest_matchday_url(@matchday)
+    end
   end
 
   # POST /contest/1/matchdays/move

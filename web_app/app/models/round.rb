@@ -16,7 +16,7 @@ class Round < ActiveRecord::Base
   has_attached_file :replay
   
   delegate :contest, :to => :match
-  delegate :game_definition, :to => :contest
+  delegate :game_definition, :to => :match
 
   def played?
     !played_at.nil?
@@ -80,5 +80,9 @@ class Round < ActiveRecord::Base
       return true if slot.score.cause == "LEFT"
     end
     false
+  end
+
+  def winner
+    return slots.to_ary.find{|s| s.score.fragments.find(:first, :conditions => {:fragment => "victory"}).value == 1}.contestant
   end
 end

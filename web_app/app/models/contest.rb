@@ -10,7 +10,20 @@ class Contest < ActiveRecord::Base
   has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
   has_many :contestants, :conditions => { :tester => false }
   has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }
+  #has_many :matchdays, :conditions => {:type => "Matchday"}, :dependent => :destroy
   has_many :matchdays, :dependent => :destroy
+  has_one :finale
+
+  def prepare_finale
+    Contest.transaction do
+      self.finale = Finale.new
+      save!
+      game_definition.final_days.each do |name,options|
+        finale.days.create!(:finale => finale, :name => name.to_s)
+      end
+      finale.save!
+    end
+  end
 
   def game_definition_identifier
     if game_definition
@@ -18,6 +31,11 @@ class Contest < ActiveRecord::Base
     else
       nil
     end
+  end
+
+  def regular_phase_finished?
+    last_day = last_played_matchday
+    return (matchdays.all.find{|day| day.when > last_day.when}.nil?)
   end
 
   def game_definition

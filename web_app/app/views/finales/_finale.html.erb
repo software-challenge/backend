@@ -1,0 +1,9 @@
+
+  <% @contest.game_definition.final_days.sort_by{|setting| setting[1][:order]}.reverse.each do |row| %>
+    <% key = row[0] %>
+    <% options = row[1] %>
+    <% dayname = key.to_sym %>
+      <div id="day_<%= dayname %>">
+        <%= render :partial => "matchday", :locals => {:dayname => dayname, :options => options} %>
+      </div>
+  <% end %>   
