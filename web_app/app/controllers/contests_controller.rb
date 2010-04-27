@@ -144,7 +144,6 @@ class ContestsController < ApplicationController
     redirect_to contest_standings_url()
   end
 
-
   protected
 
   def read_multipart_param(data, key, count = 3)

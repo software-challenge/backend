@@ -70,7 +70,21 @@ ActionController::Routing::Routes.draw do |map|
       c.results '/ergebnisse', :controller => 'contests', :action => 'results'
       c.finale '/finale', :controller => 'finales', :action => 'index'
       c.resource :finale, :as => "finale", :member => {
-         :lineup => :get
+         :lineup => :get,
+         :ranking => :get,
+         :match_results => :get,
+         :play => :post,
+         :prepare => :post,
+         :prepare_day => :post,
+         :delete_matchday => :post,
+         :get_finale => :get,
+         :get_matchday => :get,
+         :play_all => :post,
+         :switch_contestants => :get,
+         :send_archive => :post,
+         :publish => :post,
+         :hide => :post,
+         :delete => :post
       }
     end
   end

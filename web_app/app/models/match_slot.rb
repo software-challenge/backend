@@ -44,4 +44,5 @@ class MatchSlot < ActiveRecord::Base
   def name
     contestant.name
   end
+
 end

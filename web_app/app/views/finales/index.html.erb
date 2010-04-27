@@ -1,0 +1,72 @@
+<div class="actions">
+  <% show_to :administrator do %>
+    <% if @finale.nil? %>
+      <% link_to prepare_contest_finale_url, :method => :post, :title => "Finale vorbereiten", :id => "prepareFinaleAction" do %>
+        <%= image_tag('actions/refresh.png') %><%= "Finale vorbereiten" %>
+      <% end %>
+    <% else %>
+      <% if not @finale.running? and not @finale.finished? and @finale.runnable? %>
+        <% link_to play_all_contest_finale_url, :method => :post, :title => "Alle spielen", :id => "playAllAction" do %>
+          <%= image_tag('actions/play.png') %><%= "Alle spielen" %>
+        <% end %>
+      <% end %>
+      <% if @finale.finished? %>
+        <% link_to send_archive_contest_finale_url, :method => :post, :title => "Finaldatei herunterladen", :id => "sendFinaleAction" do %>
+          <%= image_tag('actions/download.png') %><%= "Finaldatei herunterladen" %>
+        <% end %>
+      <% end %>
+      <% if @finale.finished? and not @finale.published? %>
+        <% link_to publish_contest_finale_url, :method => :post, :title => "Finale veröffentlichen", :id => "publishFinaleAction" do %>
+          <%= image_tag('actions/publish.gif') %><%= "Veröffentlichen" %>
+        <% end %>
+      <% end %>
+      <% if @finale.published? %>
+        <% link_to hide_contest_finale_url, :method => :post, :title => "Finale verstecken", :id => "hideFinaleAction" do %>
+          <%= image_tag('actions/deny.png') %><%= "Verstecken" %>
+        <% end %>
+      <% end %>
+      <% if not @finale.started? %>
+        <% link_to delete_contest_finale_url, :method => :post, :title => "Finale löschen", :id => "destroyFinaleAction" do %>
+          <%= image_tag('actions/destroy.png') %><%= "Löschen" %>
+        <% end %>
+      <% end %> 
+    <% end %>
+  <% end %>
+</div>
+
+<h1>
+  <%= link_to @contest.name, contest_url %> /
+  Finale
+  <% if not @finale.nil? and @finale.running? %>
+    <%= image_tag ('ui/spinner.gif', :style => "margin-top: 10px") %>
+  <% end %>
+</h1>
+
+<% tabnav :finale do %>
+  <% if not @finale.nil? %>
+    <div id="finale" style="width: 100%; height: 100%">
+      <%= render :partial => "finale" %>
+    </div>
+    <% javascript_tag do %>
+      function reload_matchday(daytype) {
+        $.get("<%= get_matchday_contest_finale_url %>",
+          "daytype=" + daytype,
+          function(returned_data) {
+            $("div#day_" + daytype).html(returned_data)
+          }
+        )
+      }
+
+      function reload_finale() {
+        $.get("<%= get_finale_contest_finale_url %>",
+          "",
+          function(returned_data) {
+            $("div#finale").html(returned_data)
+          }
+        )
+      }
+
+      setInterval(reload_finale, 15000);
+    <% end %>
+  <% end %>
+<% end %>

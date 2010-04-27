@@ -41,6 +41,17 @@ class GameDefinitionBuilder
   def plugin_guid(guid)
     d.plugin_guid = guid
   end
+
+  def finale(&block)
+    o = GameDefinitionBuilder.final_day_collector
+    o.instance_eval(&block)
+    d.final_days = {}
+    o.days.each do |data|
+      name, options = *data
+      options[:name] = name
+      d.final_days[name] = options
+    end
+  end
   
   def round_score(&block)
     o = GameDefinitionBuilder.field_collector
@@ -114,7 +125,20 @@ class GameDefinitionBuilder
   end
   
   protected
-  
+
+  def self.final_day_collector
+    o = Object.new
+
+    def o.days; @days; end
+      
+    def o.day(name, options = {})
+      @days ||= []
+      @days << [name, options]
+    end
+
+    return o 
+  end
+
   def self.field_collector
     o = Object.new
 
@@ -156,6 +180,13 @@ class GameDefinition
     @@definitions
   end
 
+  def day_settings_for(dayname)
+    return {} if dayname == :contest
+    settings = final_days[dayname]
+    raise "No settings for day with name #{dayname}" if settings.nil?
+    return settings
+  end
+
   def aggregate_rounds(mine, others)
     extend_by_fields(round_score, mine, *others)
     extend_by_cause(mine, *others)
@@ -185,7 +216,7 @@ class GameDefinition
     end
   end
   
-  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds
+  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :final_days
 
   protected
 

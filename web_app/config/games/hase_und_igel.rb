@@ -28,6 +28,50 @@ GameDefinition.create :"HaseUndIgel" do
     rounds 6
   end
 
+  finale do
+    day :quarter_final,
+        :human_name => "Viertelfinale",
+        :order => 1, 
+        :use => {:best => 8},
+        :from => :contest,
+        :editable => true,
+        :ranking => {
+          5 => :losers
+        }
+
+    day :half_final,
+        :human_name => "Halbfinale",
+        :order => 2,
+        :depends => [:quarter_final],
+        :use => :winners,
+        :from => :quarter_final
+
+    day :small_final,
+        :human_name => "Kleines Finale",
+        :order => 3,
+        :depends => [:half_final],
+        :use => :losers,
+        :from => :half_final,
+        :ranking => {
+          3 => :winners,
+          4 => :losers
+        }
+
+    day :final,
+        :human_name => "Finale",
+        :order => 4,
+        :depends => [:half_final],
+        :use => :winners,
+        :multipleWinners => :true,
+        :from => :half_final,
+        :ranking => {
+          1 => :winners,
+          2 => :losers
+        }
+            
+
+  end
+
   round_score do
     field :victory, :ordering => "DESC"
     field :position, :ordering => "DESC"

@@ -21,7 +21,7 @@
   list-style-type: none;
 }
 
-.tabs_tabnav a, .tabs_tabnav a:visited, tabs_tabnav a.active {
+.tabs_tabnav a, .tabs_tabnav a:visited, .tabs_tabnav a.active {
   color: #4183C4;
   border: 1px solid transparent;
   border-bottom: 0 none;

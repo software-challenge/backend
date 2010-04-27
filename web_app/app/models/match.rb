@@ -23,6 +23,11 @@ class Match < ActiveRecord::Base
   has_many :scores, :through => :slots
 
   delegate :game_definition, :to => :set
+  delegate :contest, :to => :set
+
+  def contestants
+    slots.collect{|slot| slot.contestant}
+  end
 
   def running?
     !!job

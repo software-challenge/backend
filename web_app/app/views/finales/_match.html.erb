@@ -1,0 +1,15 @@
+<% if match.played? %>
+  <a href="<%= match_results_contest_finale_url(:id => match.id) %>">
+<% end %>
+<div style="border: 1px solid #000; text-align: center">
+  <span style="font-weight: bold" class="<%= 'winner' if match.played? %>">
+    <%= match.slots.first.contestant.name %>
+  </span><br>
+  vs.<br>
+  <span style="font-weight: bold" class="<%= 'loser' if match.played? %>"> 
+    <%= match.slots.second.contestant.name %>
+  </span>
+</div>
+<% if match.played? %>
+  </a>
+<% end %>

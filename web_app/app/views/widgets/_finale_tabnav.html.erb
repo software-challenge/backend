@@ -1,0 +1,24 @@
+<% 
+render_tabnav :finale, :html => { :class => "tabs_tabnav" } do
+
+  add_tab do |t|
+    t.named t("titles.overview")
+    t.links_to hash_for_contest_finale_url
+  end
+
+  show_to :administrator do
+    add_tab do |t|
+      t.named "Aufstellung"
+      begin; t.disable!; next; end if @contest.finale.nil? or not @contest.finale.has_editable_day?
+      t.links_to hash_for_lineup_contest_finale_url
+    end
+  end
+
+  if not @contest.finale.nil? and @contest.finale.finished?
+    add_tab do |t|
+      t.named "Ranking"
+      t.links_to hash_for_ranking_contest_finale_url
+    end
+  end
+end
+%>

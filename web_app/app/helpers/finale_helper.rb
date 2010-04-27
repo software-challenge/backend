@@ -1,0 +1,2 @@
+module FinaleHelper
+end

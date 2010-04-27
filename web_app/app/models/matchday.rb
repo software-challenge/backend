@@ -2,16 +2,26 @@ require_dependency 'sandbox_helpers'
 
 class Matchday < ActiveRecord::Base
 
+  def do_validation?
+    true
+  end
+
   # named scopes
   named_scope :played, :conditions => "played_at IS NOT NULL"
   named_scope :published, :conditions => {:public => true}
 
   # validations
-  validates_presence_of :contest
-  validates_presence_of :when
-  validates_uniqueness_of :when, :scope => :contest_id
+  #validates_presence_of :contest
+  validates_presence_of :when, :if => :do_validation?
+  validates_uniqueness_of :when, :scope => :contest_id, :if => :do_validation?
 
   validate do |record|
+    #if not (record.contest.nil? ^ record.finale.nil?)
+      #record.errors.add :matchday, "one and only one of contest and finale must be filled"
+    #end
+
+    return if (self.class == FinaleMatchday)
+
     if record.when_changed?
       # record.errors.add :when, "must be today or in the future" if record.when < Date.today
       
@@ -31,6 +41,7 @@ class Matchday < ActiveRecord::Base
   has_many :matches, :class_name => "LeagueMatch", :dependent => :destroy, :as => :set
   has_many :slots, :class_name => "MatchdaySlot", :order => "position ASC"
   belongs_to :contest
+  belongs_to :finale
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
   has_many :mini_jobs, :through => :matches, :source => :job
 
@@ -41,6 +52,14 @@ class Matchday < ActiveRecord::Base
 
   # acts
   acts_as_list :scope => :contest_id
+
+  def contestants
+    contestants = []
+    matches.each do |match|
+      contestants.concat(match.contestants)
+    end
+    contestants
+  end
 
   def played?
     !played_at.nil?
@@ -121,6 +140,19 @@ class Matchday < ActiveRecord::Base
     end
   end
 
+  def winners
+    #raise "Matchdays have not all been played yet" unless contest.matchdays.all.find{|day| day.when > self.when}.nil?
+    return slots.find_all{|slot| !slot.contestant.hidden? and slot.position <= 8}
+  end
+
+  def losers
+    raise "Losers not available for #{self}"
+  end
+
+  def finished?
+    contest.regular_phase_finished?
+  end
+
   protected
 
   def all_matches_played?(force_reload = true)
@@ -195,4 +227,5 @@ class Matchday < ActiveRecord::Base
       slot.save!
     end
   end
+
 end
