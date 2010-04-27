@@ -36,7 +36,7 @@ class Contest < ActiveRecord::Base
   def regular_phase_finished?
     last_day = last_played_matchday
     return false if last_day.nil?
-    return (self.name.include?("test") or matchdays.all.find{|day| day.when > last_day.when}.nil?)
+    return (self.name.downcase.include?("test") or matchdays.all.find{|day| day.when > last_day.when}.nil?)
   end
 
   def game_definition
