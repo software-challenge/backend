@@ -6,15 +6,24 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Menu;
+import java.awt.MenuBar;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeListener;
 import java.util.Date;
 import java.util.LinkedList;
 
+import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -27,16 +36,34 @@ public class MainFrame extends JFrame implements ActionListener {
 	Panel contestPanel;
 	JButton nextButton = new JButton();
 	JButton lastButton = new JButton();
-	JCheckBox showPresentation = new JCheckBox();
+	JCheckBoxMenuItem showPresentation;
 	FinalsConfiguration config;
 	GridBagLayout mgr;
 	GridBagConstraints c;
 	JFrame contestFrame;
 	ConfigsFrame configFrame;
+	JMenuBar menuBar;
+	JMenuItem configItem;
 
 	MainFrame() {
 		mgr = new GridBagLayout();
-
+		
+		// Create Menu
+		menuBar = new JMenuBar();
+		configItem = new JMenuItem("Konfiguration");
+		configItem.setVisible(true);
+		configItem.addActionListener(this);
+		JMenu files = new JMenu("Einstellungen", true);
+		files.add(configItem);
+		showPresentation = new JCheckBoxMenuItem("Präsentationsmodus");
+		showPresentation.setVisible(true);
+		showPresentation.addActionListener(this);
+		showPresentation.setSelected(false);
+		files.add(showPresentation);
+		menuBar.add(files);
+		menuBar.setVisible(true);
+		this.setJMenuBar(menuBar);
+		
 		this.setLayout(mgr);
 		this.c = new GridBagConstraints();
 		c.fill = GridBagConstraints.NONE;
@@ -61,7 +88,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		// Add contestPanel to contest window
 		this.contestPanel = new Panel();
 		contestFrame.add(contestPanel);
-
+		
+		
+		
+		
 		createGUI();
 
 	}
@@ -146,15 +176,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		c.gridx = 0;
 		this.add(lastButton, c);
 		
-		 
-		 showPresentation.setText("Präsentationsmodus");
-		 showPresentation.setSelected(false);
-		 showPresentation.setVisible(true);
-		 showPresentation.addActionListener(this);
-		 c.gridx=2;
-		 this.add(showPresentation, c);
-		
-
 	}
 
 	@Override
@@ -180,11 +201,14 @@ public class MainFrame extends JFrame implements ActionListener {
 			curr.stepBackward();
 			this.repaint();
 		}else if (e.getSource() == showPresentation) {
-			contestFrame.setVisible(showPresentation.isSelected());
+			contestFrame.setVisible(!showPresentation.isSelected());
 			contestFrame.repaint();
-			this.repaint();
+		}else if (e.getSource() == configItem) {
+			configFrame.setVisible(true);
+			configFrame.repaint();
 		}
 
 	}
+
 
 }

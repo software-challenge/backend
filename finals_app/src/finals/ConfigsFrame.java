@@ -6,34 +6,60 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class ConfigsFrame extends JFrame implements ActionListener,
 		ChangeListener {
-	JTextArea contestName;
-	JTextArea startCommand;
+	JLabel contestNameLabel;
+	JTextField contestName;
+	JLabel startCommandLabel;
+	JTextField startCommand;
 	FinalsConfiguration config;
 	JButton save;
+	JLabel speedLabel;
 	JSlider speed;
 	String name = "";
 
 	public ConfigsFrame(FinalsConfiguration config) {
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		this.setTitle("Konfiguration: Finale");
 		GridLayout gl = new GridLayout();
 		gl.setColumns(1);
 		gl.setRows(4);
 		this.setLayout(gl);
 
 		this.config = config;
-
-		contestName = new JTextArea(config.getSpielname());
+		
+		contestNameLabel = new JLabel();
+		contestNameLabel.setText("Spielname");
+		contestNameLabel.setVisible(true);
+		this.add(contestNameLabel);
+		
+		contestName = new JTextField(config.getSpielname());
 		this.add(contestName);
+		
+		startCommandLabel = new JLabel();
+		startCommandLabel.setText("Server Startbefehl");
+		startCommandLabel.setVisible(true);
+		this.add(startCommandLabel);
 
+		startCommand = new JTextField(config.getServerStartupCommand());
+		this.add(startCommand);
+		
+		
+		speedLabel = new JLabel();
+		speedLabel.setText("Wiedergabegeschwindigkeit");
+		speedLabel.setVisible(true);
+		this.add(speedLabel);
+		
 		speed = new JSlider();
 		speed.setValue(config.getSpeed());
+		speed.addChangeListener(this);
 		speed.setToolTipText("Wiedergabegeschwindigkeit: " + config.getSpeed()
 				+ "%");
 		this.add(speed);
@@ -41,6 +67,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		save = new JButton("Save Configuration");
 		save.addActionListener(this);
 		this.add(save);
+		
 	}
 
 	@Override
@@ -54,6 +81,9 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 
 	@Override
 	public void stateChanged(ChangeEvent e) {
-
+		if(e.getSource() == speed){
+			speed.setToolTipText("Wiedergabegeschwindigkeit: " + speed.getValue()
+					+ "%");
+		}
 	}
 }
