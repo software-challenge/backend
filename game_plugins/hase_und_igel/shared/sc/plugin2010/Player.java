@@ -46,6 +46,8 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	@XStreamOmitField
 	private boolean			mustPlayCard;
+	
+	private boolean			violated = false;
 
 	public static final int	SALADS_TO_EAT	= 5;
 	public static final int	INITIAL_CARROTS	= 68;
@@ -247,10 +249,18 @@ public final class Player extends SimplePlayer implements Cloneable
 		}
 		return ret;
 	}
+	
+	public void setViolated(boolean violated) {
+		this.violated = violated;
+	}
+	
+	public boolean hasViolated() {
+		return this.violated;
+	}
 
 	public PlayerScore getScore(int avg_time)
 	{
-		return new PlayerScore(ScoreCause.REGULAR, getPosition().equals(
+		return new PlayerScore((violated ? ScoreCause.RULE_VIOLATION : ScoreCause.REGULAR), getPosition().equals(
 				Position.FIRST) ? Game.WIN_SCORE : getPosition().equals(
 				Position.SECOND) ? Game.LOSE_SCORE : Game.DRAW_SCORE, // Spielergebnis
 																		// (WIN/LOSS/TIE)
