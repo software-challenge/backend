@@ -77,17 +77,22 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		return this.state;
 	}
-
+	
 	@Override
-	public void onPlayerLeft(IPlayer player)
-	{
+	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
 		// this.players.remove(player);
 		LoggerFactory.getLogger(this.getClass())
 				.debug("Player left {}", player);
 		Map<IPlayer, PlayerScore> result = generateScoreMap();
 		result.put(player, new PlayerScore(false));
-		result.get(player).setCause(ScoreCause.LEFT);
+		result.get(player).setCause(cause);
 		notifyOnGameOver(result);
+	}
+
+	@Override
+	public void onPlayerLeft(IPlayer player)
+	{
+		onPlayerLeft(player, ScoreCause.LEFT);
 	}
 
 	@Override
