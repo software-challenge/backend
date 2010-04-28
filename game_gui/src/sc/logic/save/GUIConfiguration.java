@@ -16,6 +16,8 @@ public class GUIConfiguration implements Serializable {
 	private static final String CONFIG_FILENAME = "game_gui.conf";
 	private static final String PATH_STD = ".";
 	private static String pluginFolder = null;
+	
+	public static String replayFileToLoad = null;
 
 	public enum ELanguage {
 		DE, EN

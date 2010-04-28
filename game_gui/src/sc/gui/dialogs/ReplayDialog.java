@@ -127,6 +127,11 @@ public class ReplayDialog extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(null);
 	}
+	
+	public void startReplay(String replayFile) {
+		txfReplay.setText(replayFile);
+		startReplay();
+	}
 
 	/**
 	 * Starts the selected replay file, closes this dialog and displays the
