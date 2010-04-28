@@ -1,5 +1,9 @@
 package sc;
 
+import jargs.gnu.CmdLineParser;
+import jargs.gnu.CmdLineParser.IllegalOptionValueException;
+import jargs.gnu.CmdLineParser.UnknownOptionException;
+
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -15,6 +19,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.PresentationFacade;
+import sc.gui.dialogs.ReplayDialog;
 import sc.helpers.ManifestHelper;
 import sc.logic.LogicFacade;
 import sc.logic.save.GUIConfiguration;
@@ -66,6 +71,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		// get presentation facade
 		this.presFac = PresentationFacade.init(this, logicFac);
 		createGUI();
+		if (GUIConfiguration.replayFileToLoad != null) {
+			ReplayDialog replay = new ReplayDialog(this);
+			replay.startReplay(GUIConfiguration.replayFileToLoad);
+		}
 	}
 
 	private void loadCodeVersionFromManifest() {
@@ -137,20 +146,44 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 * @param args
 	 *            nothing expected
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IllegalOptionValueException, UnknownOptionException {
 		System.setProperty("file.encoding", "UTF-8");
+
+		parseArguments(args);
+		/*
 		if (args.length > 0) {
 			String path = args[0];
 			System.out.println("Setting Pluginfolder to " + path);
 			GUIConfiguration.setPluginFolder(path);
 			Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
 		}
+		*/
 		setSystemLookAndFeel();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				new SoftwareChallengeGUI().setVisible(true);
 			}
 		});
+	}
+	
+	private static void parseArguments(String[] params) 
+		throws IllegalOptionValueException, UnknownOptionException {
+		CmdLineParser parser = new CmdLineParser();
+		CmdLineParser.Option plugin = parser.addStringOption('p', "plugin");
+		CmdLineParser.Option replay = parser.addStringOption('r', "replay");
+		parser.parse(params);
+		
+		String pluginPath = (String) parser.getOptionValue(plugin, null);
+		String replayFile = (String) parser.getOptionValue(replay, null);
+		
+		if (plugin != null) {
+			GUIConfiguration.setPluginFolder(pluginPath);
+			Configuration.set(Configuration.PLUGIN_PATH_KEY, pluginPath);
+		}
+		
+		if (replayFile != null) {
+			GUIConfiguration.replayFileToLoad = replayFile;
+		}
 	}
 
 	private static void setSystemLookAndFeel() {
