@@ -115,8 +115,9 @@ public class Game extends RoundBasedGameInstance<Player>
 
 			if (!board.isValid(move, author))
 			{
-				logger.error("Received invalid move {} from {}.", data, author);
-				throw new GameLogicException("Move was invalid");
+				logger.error("Received invalid move {} from {}: " + move.toString(), data, author);
+				author.setViolated(true);
+				throw new GameLogicException("Move was invalid: " + move.toString());
 			}
 
 			update(move, author);
@@ -306,9 +307,14 @@ public class Game extends RoundBasedGameInstance<Player>
 				break;
 		}
 	}
+	
+	@Override
+	public void onPlayerLeft(IPlayer player) {
+		onPlayerLeft(player, ScoreCause.LEFT);
+	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player)
+	public void onPlayerLeft(IPlayer player, ScoreCause cause)
 	{
 		Map<IPlayer, PlayerScore> res = generateScoreMap();
 
@@ -318,7 +324,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
 			if (entry.getKey() == player)
 			{
-				score.setCause(ScoreCause.LEFT);
+				score.setCause(cause);
 				score.setValueAt(0, new BigDecimal(0));
 			}
 			else
