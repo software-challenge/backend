@@ -220,10 +220,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			// handle exception
 		}
 	}
-
 	@Override
 	public void setMinimumGameSize(Dimension dim) {
 		this.setMinimumSize(dim);
 	}
-
 }
