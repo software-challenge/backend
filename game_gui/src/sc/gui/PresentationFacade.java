@@ -73,7 +73,7 @@ public class PresentationFacade {
 		return instance;
 	}
 
-	public JPanel getContextDisplay() {
+	public ContextDisplay getContextDisplay() {
 		return contextDisplay;
 	}
 

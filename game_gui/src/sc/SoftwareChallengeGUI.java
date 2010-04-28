@@ -18,6 +18,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
+import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.dialogs.ReplayDialog;
 import sc.helpers.ManifestHelper;
@@ -74,6 +75,13 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		if (GUIConfiguration.replayFileToLoad != null) {
 			ReplayDialog replay = new ReplayDialog(this);
 			replay.startReplay(GUIConfiguration.replayFileToLoad);
+		}
+		if (GUIConfiguration.stepSpeedToSet > -1) {
+			presFac.getContextDisplay().getGameControlBar().setStepSpeed(GUIConfiguration.stepSpeedToSet);
+		}
+		
+		if (GUIConfiguration.startMaximized) {
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		}
 	}
 
@@ -171,18 +179,30 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		CmdLineParser parser = new CmdLineParser();
 		CmdLineParser.Option plugin = parser.addStringOption('p', "plugin");
 		CmdLineParser.Option replay = parser.addStringOption('r', "replay");
+		CmdLineParser.Option stepSpeedOption = parser.addIntegerOption("stepspeed");
+		CmdLineParser.Option maximizedOption = parser.addBooleanOption('m', "maximized");
 		parser.parse(params);
 		
 		String pluginPath = (String) parser.getOptionValue(plugin, null);
 		String replayFile = (String) parser.getOptionValue(replay, null);
+		int stepSpeed = ((Integer) parser.getOptionValue(stepSpeedOption, -1)).intValue();
+		boolean startMaximized = (Boolean) parser.getOptionValue(maximizedOption, false);
 		
-		if (plugin != null) {
+		if (pluginPath != null) {
 			GUIConfiguration.setPluginFolder(pluginPath);
 			Configuration.set(Configuration.PLUGIN_PATH_KEY, pluginPath);
 		}
 		
 		if (replayFile != null) {
 			GUIConfiguration.replayFileToLoad = replayFile;
+		}
+		
+		if (stepSpeed > -1) {
+			GUIConfiguration.stepSpeedToSet = stepSpeed;
+		}
+		
+		if (startMaximized) {
+			GUIConfiguration.startMaximized = true;
 		}
 	}
 

@@ -18,6 +18,8 @@ public class GUIConfiguration implements Serializable {
 	private static String pluginFolder = null;
 	
 	public static String replayFileToLoad = null;
+	public static int stepSpeedToSet = -1;
+	public static boolean startMaximized = false;
 
 	public enum ELanguage {
 		DE, EN

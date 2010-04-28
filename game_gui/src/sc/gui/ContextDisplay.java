@@ -36,6 +36,10 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		this.lang = presFac.getLogicFacade().getLanguageData();
 		createGUI();
 	}
+	
+	public GameControlBar getGameControlBar() {
+		return buttonBar;
+	}
 
 	/**
 	 * Creates the <code>ContextDisplay</code>.

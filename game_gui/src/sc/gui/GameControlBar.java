@@ -246,4 +246,8 @@ public class GameControlBar extends JPanel implements ActionListener {
 		stepStartButton.setVisible(!active);
 		stepStopButton.setVisible(active);
 	}
+	
+	public void setStepSpeed(int speed) {
+		stepSpeed.setValue(speed);
+	}
 }
