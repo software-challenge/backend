@@ -10,6 +10,7 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
@@ -53,7 +54,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 				if (this.requestTimeout.didTimeout())
 				{
 					logger.warn("Client hit soft-timeout.");
-					onPlayerLeft(fromPlayer);
+					onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
 				}
 				else
 				{
@@ -228,13 +229,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			{
 				logger.warn("Player {} reached the timeout of {}ms",
 						playerToTimeout, timeout.getHardTimeout());
-				onPlayerLeft(playerToTimeout);
+				onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
 			}
 		});
 
 		player.requestMove();
 	}
-
+	
 	protected ActionTimeout getTimeoutFor(P player)
 	{
 		return new ActionTimeout(true);

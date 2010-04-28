@@ -19,6 +19,16 @@ public enum ScoreCause
 	 * The player violated against the games rules
 	 */
 	RULE_VIOLATION,
+	
+	/**
+	 * The player needed to long to move
+	 */
+	SOFT_TIMEOUT,
+	
+	/**
+	 * The player doesn't answer anymore
+	 */
+	HARD_TIMEOUT,
 
 	/**
 	 * An error occured during communication. This could indicate a bug in the
