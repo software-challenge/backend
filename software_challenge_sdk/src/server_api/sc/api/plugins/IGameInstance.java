@@ -3,6 +3,7 @@ package sc.api.plugins;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
+import sc.shared.ScoreCause;
 
 public interface IGameInstance
 {
@@ -14,6 +15,8 @@ public interface IGameInstance
 	public IPlayer onPlayerJoined() throws TooManyPlayersException;
 
 	public void onPlayerLeft(IPlayer player);
+	
+	public void onPlayerLeft(IPlayer player, ScoreCause cause);
 
 	/**
 	 * Called by the Server once an action was received.
