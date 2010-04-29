@@ -5,20 +5,46 @@ import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Final_Step {
+import javax.swing.JPanel;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+public class Final_Step {
+	
 	public Final_Step(Panel pan, Panel contestPanel, List<Match> matches,
-			List<Contestant> contestants, Ranking ranking,
 			List<Final_Step> steps) {
-		this(pan, contestPanel, matches, contestants, ranking, steps, false);
+		this(pan, contestPanel, matches, steps, false, 0);
 	}
 
+	
 	public Final_Step(Panel pan, Panel contestPanel, List<Match> matches,
-			List<Contestant> contestants, Ranking ranking,
-			List<Final_Step> steps, boolean showTeamsFromBeginning) {
-		super();
+			List<Final_Step> steps, boolean showTeamsFromBeginning, int order) {
+		this.smallFinals = (order == 4 ? true : false); 
+		this.order = order;
 		this.steps = steps;
-		this.matches = new LinkedList<MatchWidget>();
+		this.matches = matches;
+		this.matchWidgets = new LinkedList<MatchWidget>();
+		this.pan = pan;
+		this.contestPanel = contestPanel;
+		
+	}
+
+	List<MatchWidget> matchWidgets;
+	List<Match> matches;
+	List<Final_Step> steps;
+	boolean smallFinals = false;
+	int order;
+	Panel pan;
+	Panel contestPanel;
+
+	public void showAllNames(){
+		for (MatchWidget w : this.matchWidgets) {
+			w.setFirstNameVisibe(true);
+			w.setSecondNameVisible(true);
+		}
+	}
+	
+	public void createStepWidgets(){
 		int yPossible = 500 / (matches.size() + 1);
 		int currentY = yPossible;
 		int stepCount = 0;
@@ -29,29 +55,22 @@ public class Final_Step {
 		}
 		for (int i = 0; i < matches.size(); i++) {
 			Match m = matches.get(i);
-			MatchWidget wid = new MatchWidget(pan, contestPanel, 1f, new Point(
-					50 + stepCount * 250, currentY), m);
-			this.matches.add(wid);
+			MatchWidget wid;
+			if(smallFinals){
+			Point bigFinalsPosition = steps.get(steps.size()-2).matchWidgets.get(0).getPosition();
+			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m);
+			}else{
+				wid = new MatchWidget(pan, contestPanel, 1f, new Point(
+						450 + stepCount * 250, currentY), m);
+			}
+				
+			this.matchWidgets.add(wid);
 			currentY += yPossible;
 		}
-		this.contestants = contestants;
-		this.ranking = ranking;
-		if (showTeamsFromBeginning) {
-			for (MatchWidget w : this.matches) {
-				w.setFirstNameVisibe(true);
-				w.setSecondNameVisible(true);
-			}
-		}
 	}
-
-	List<MatchWidget> matches;
-	List<Contestant> contestants;
-	Ranking ranking;
-	List<Final_Step> steps;
-
 	public boolean isFinished() {
 		boolean finished = true;
-		for (MatchWidget m : matches) {
+		for (MatchWidget m : matchWidgets) {
 			if (!m.getMatch().isFinished()) {
 				finished = false;
 				break;
@@ -62,9 +81,17 @@ public class Final_Step {
 	}
 
 	public void stepForward() {
-
-		for (int i = 0; i < matches.size(); i++) {
-			MatchWidget m = matches.get(i);
+		Final_Step smallFinals = steps.get(steps.size()-1);
+		if(isFinals() && !smallFinals.isFinished()){
+			smallFinals.showAllNames();
+			smallFinals.stepForward();
+			return;
+		}else if (isFinals() && smallFinals.isFinished() && smallFinals.matchWidgets.get(0).isSelected()) {
+			smallFinals.matchWidgets.get(0).setSelected(false);
+			smallFinals.matchWidgets.get(0).paint();
+		}
+		for (int i = 0; i < matchWidgets.size(); i++) {
+			MatchWidget m = matchWidgets.get(i);
 			if (!m.getMatch().isFinished()) {
 				System.out.println(m);
 				m.setSelected(true);
@@ -73,11 +100,19 @@ public class Final_Step {
 			} else {
 				m.setSelected(false);
 				if (i % 2 == 0) {
-					getNextStep().matches.get(i / 2).setFirstNameVisibe(true);
-					getNextStep().matches.get(i / 2).paint();
+					if (getNextStep() == steps.get(steps.size()-2)){
+						steps.get(steps.size()-1).matchWidgets.get(0).setSecondNameVisible(true);
+						steps.get(steps.size()-1).matchWidgets.get(0).paint();
+					}
+					getNextStep().matchWidgets.get(i / 2).setFirstNameVisibe(true);
+					getNextStep().matchWidgets.get(i / 2).paint();
 				} else {
-					getNextStep().matches.get(i / 2).setSecondNameVisible(true);
-					getNextStep().matches.get(i / 2).paint();
+					getNextStep().matchWidgets.get(i / 2).setSecondNameVisible(true);
+					if (getNextStep() == steps.get(steps.size()-2)){
+						steps.get(steps.size()-1).matchWidgets.get(0).setFirstNameVisibe(true);
+						steps.get(steps.size()-1).matchWidgets.get(0).paint();
+					}
+					getNextStep().matchWidgets.get(i / 2).paint();
 				}
 
 			}
@@ -85,15 +120,17 @@ public class Final_Step {
 	}
 
 	public void repaint() {
-		for (MatchWidget match : matches) {
+		for (MatchWidget match : matchWidgets) {
 			match.paint();
 		}
 	}
 
 	public void stepBackward() {
-		for (int i = matches.size() - 1; i >= 0; i--) {
-			if (matches.get(i).getMatch().getCurrentStep() > 0) {
-				matches.get(i).getMatch().undoLastStep();
+		for (int i = matchWidgets.size() - 1; i >= 0; i--) {
+			if (matchWidgets.get(i).getMatch().getCurrentStep() > 0) {
+				matchWidgets.get(i).getMatch().undoLastStep();
+				matchWidgets.get(i).setSelected(true);
+				matchWidgets.get(i).paint();
 				return;
 			}
 		}
@@ -101,13 +138,13 @@ public class Final_Step {
 	}
 
 	public void doAllMatches() {
-		for (MatchWidget m : matches) {
+		for (MatchWidget m : matchWidgets) {
 			m.getMatch().doAllSteps();
 		}
 	}
 
 	public void undoAllMatches() {
-		for (MatchWidget m : matches) {
+		for (MatchWidget m : matchWidgets) {
 			m.getMatch().undoAllSteps();
 		}
 	}
@@ -124,16 +161,43 @@ public class Final_Step {
 	}
 
 	public void initConnections() {
+		if(isSmallFinals()) return;
 		Final_Step last = getPervStep();
 		if (last != null) {
-			for (int i = 0; i < matches.size(); i++) {
-				matches.get(i).connectFirstPlayerWith(last.matches.get(i * 2));
-				matches.get(i).connectSecondPlayerWith(
-						last.matches.get(i * 2 + 1));
+			for (int i = 0; i < matchWidgets.size(); i++) {
+				matchWidgets.get(i).connectFirstPlayerWith(last.matchWidgets.get(i * 2));
+				matchWidgets.get(i).connectSecondPlayerWith(
+						last.matchWidgets.get(i * 2 +1 ));
 			}
 		}
 	}
+	
+	public boolean areSmallFinalsPlayed(){
+		return steps.get(steps.size()-1).isFinished();
+	}
+	
+	public boolean isSmallFinals(){
+		return getCount()==(steps.size()-1);
+	}
 
+	public boolean isFinals(){
+		int count = getCount();		
+		if(steps.size()-2 == count){
+			return true;
+		}
+		return false;
+	}
+	
+	public int getCount(){
+		int count = 0;
+		for (int i = 0; i < steps.size(); i++) {
+			if(steps.get(i)==this){
+				count = i;
+			}
+		}
+		return count;
+	}
+	
 	public Final_Step getNextStep() {
 		Final_Step next = this;
 		for (int i = 0; i < steps.size() - 1; i++) {
@@ -143,4 +207,12 @@ public class Final_Step {
 		}
 		return next;
 	}
+	
+
+	public boolean isInit(){
+		boolean isInitial = true;
+		for(MatchWidget wid : matchWidgets) if(wid.getMatch().getCurrentStep()!=0) isInitial = false;
+		return isInitial;
+	}
+	
 }

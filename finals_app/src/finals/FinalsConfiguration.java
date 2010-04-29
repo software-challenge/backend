@@ -2,7 +2,13 @@ package finals;
 
 import java.util.Date;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 public class FinalsConfiguration {
+	public FinalsConfiguration() {
+		super();
+	}
+
 	public FinalsConfiguration(String serverStartupCommand, String spielname,
 			Date date, int speed) {
 		super();

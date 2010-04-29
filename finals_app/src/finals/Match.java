@@ -3,7 +3,14 @@ package finals;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 public class Match {
+	
+	public Match() {
+		
+	}
+	
 	public Match(Contestant first, Contestant second, List<Round> rounds) {
 		super();
 		this.first = first;
@@ -32,7 +39,7 @@ public class Match {
 	public void doNextStep() {
 		if (currentStep < rounds.size()) {
 			Round currentRound = rounds.get(currentStep);
-			if (currentRound.winner.equals(first)) {
+			if (currentRound.winner.name.equals(first.name)) {
 				firstCurrentScore++;
 			} else {
 				secondCurrentScore++;
@@ -43,8 +50,8 @@ public class Match {
 
 	public void undoLastStep() {
 		if (currentStep > 0) {
-			Round currentRound = rounds.get(currentStep);
-			if (currentRound.winner.equals(first)) {
+			Round currentRound = rounds.get(currentStep-1);
+			if (currentRound.winner.name.equals(first.name)) {
 				firstCurrentScore--;
 			} else {
 				secondCurrentScore--;
@@ -91,11 +98,11 @@ public class Match {
 	}
 
 	public boolean isFinished() {
-		System.out.println("Current rounds size: " + rounds.size());
 		return (currentStep == rounds.size() ? true : false);
 	}
 
 	public int getCurrentStep() {
 		return this.currentStep;
 	}
+	
 }

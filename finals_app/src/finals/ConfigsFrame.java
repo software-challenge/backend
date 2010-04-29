@@ -1,6 +1,7 @@
 package finals;
 
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -66,6 +67,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 
 		save = new JButton("Save Configuration");
 		save.addActionListener(this);
+		save.setMargin(new Insets(5,5,5,5));
 		this.add(save);
 		
 	}
