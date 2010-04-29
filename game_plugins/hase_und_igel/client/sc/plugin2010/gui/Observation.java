@@ -331,8 +331,10 @@ public class Observation implements IObservation, IUpdateListener,
 			else
 			{
 				// active player is the enemy
-				handler.onUpdate(game.getBoard().getOtherPlayer(
-						game.getActivePlayer()), game.getActivePlayer());
+				//handler.onUpdate(game.getBoard().getOtherPlayer(
+						//game.getActivePlayer()), game.getActivePlayer());
+				handler.onUpdate(game.getActivePlayer(), game.getBoard()
+						.getOtherPlayer(game.getActivePlayer()));
 
 			}
 
