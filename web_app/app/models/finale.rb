@@ -260,11 +260,15 @@ class Finale < ActiveRecord::Base
     game_definition.final_days.each do |dayname,settings|
       day = find_day(dayname)
       dayXML = {
-        'order' => settings[:order]
+        'order' => settings[:order],
+        'name' => settings[:name].to_s,
+        'use' => settings[:use].to_s,
+        'from' => settings[:from].to_s,
+        'match' => []
       }
       day.matches.each do |match|
-        matchXML = {
-          'match' => {
+        matchXML = 
+          {
             'first' => {
               'contestant' => {
                 'name' => match.contestants.first.name,
@@ -276,17 +280,16 @@ class Finale < ActiveRecord::Base
                 'name' => match.contestants.second.name,
                 'location' => match.contestants.second.location
               }
-            }
-          },
-          'rounds' => {'round' => []}
-        }
+            },
+            'rounds' => {'round' => []}
+          }
         match.rounds.each do |round|
           matchXML['rounds']['round'] << {
             'replay' => [round.replay_file_name],
             'winner' => [round.winner.name] 
           }
         end
-        dayXML.update(matchXML)
+        dayXML['match'] << matchXML
       end
       exp['finalStep'] << dayXML
 

@@ -195,11 +195,15 @@
       <tr>
         <td colspan="<%= round_colspan %>">
           <%= link_to slot.contestant.name, contest_contestant_matches_url(slot.contestant) %>
-          <% if slot.score.cause == "LEFT" %>
-            <em>(
-              <%= slot.qualification_changed ? "nachtrgl." : "" %>
-              <%= t "views.disqualified" %>
-            )</em>
+          <% if slot.score.cause != "REGULAR" %>
+            <span title="<%= t("games.causes.#{slot.score.cause}", :default => slot.score.cause) %>">
+              <em>
+                (
+                <%= slot.qualification_changed ? "nachtrgl." : "" %>
+                <%= t "views.disqualified" %>
+                )
+              </em>
+            </span>
           <% elsif slot.qualification_changed %>
             <em>
               (<%= "nachtrgl. qualifiziert" %>)
