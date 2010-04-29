@@ -9,9 +9,14 @@ import java.awt.Insets;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.Panel;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -27,6 +32,16 @@ import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import com.thoughtworks.xstream.XStream;
 
 public class MainFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1328120526598916894L;
@@ -46,6 +61,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	JMenuItem configItem;
 
 	MainFrame() {
+		
 		mgr = new GridBagLayout();
 		
 		// Create Menu
@@ -90,20 +106,47 @@ public class MainFrame extends JFrame implements ActionListener {
 		contestFrame.add(contestPanel);
 		
 		
+
+		try {
+			parseInput("/home/andre/final.xml");
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		createGUI();
 
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		new MainFrame();
+		
+	     
+	}
+	
+	public void parseInput(String in) throws ParserConfigurationException, SAXException, IOException{
+		 SAXParserFactory factory = SAXParserFactory.newInstance();
+	     SAXParser saxParser = factory.newSAXParser();
+	     ImportHandler handler = new ImportHandler();
+	     handler.main = this;
+	     saxParser.parse(in, handler);
 	}
 
 	private void createGUI() {
+		Object[] stepsA = steps.toArray();
+		
+		for (Final_Step step : steps){
+			step.createStepWidgets();
+		}
+
+		steps.get(0).showAllNames();
 		// Add dummy config
 		config = new FinalsConfiguration("HUND", "Affe gegen Kanacke!", new Date(), 100);
 		// Config frame
@@ -111,53 +154,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		configFrame.setSize(400,400);
 		configFrame.setVisible(false);
 		
-		// Add dummy shit....should be imported from XML!
-		Contestant one = new Contestant("Test A", "A Stadt");
-		Contestant two = new Contestant("Test B", "B Stadt");
-		Contestant three = new Contestant("Test C", "C Stadt");
-		Contestant four = new Contestant("Test D", "D Stadt");
-		LinkedList<Contestant> contestants = new LinkedList<Contestant>();
-		contestants.add(one);
-		contestants.add(two);
-		contestants.add(three);
-		contestants.add(four);
-		LinkedList<Round> rounds1 = new LinkedList<Round>();
-		rounds1.add(new Round("123.zip", one, 123, 321));
-		rounds1.add(new Round("123.zip", one, 123, 321));
-		rounds1.add(new Round("123.zip", one, 123, 321));
-		rounds1.add(new Round("123.zip", two, 123, 321));
-		rounds1.add(new Round("123.zip", two, 123, 321));
-		rounds1.add(new Round("123.zip", two, 123, 321));
-		LinkedList<Round> rounds2 = new LinkedList<Round>();
-		rounds2.add(new Round("567.zip", four, 456, 654));
-		rounds2.add(new Round("567.zip", four, 456, 654));
-		LinkedList<Match> matches = new LinkedList<Match>();
-		matches.add(new Match(one, two, rounds1));
-		matches.add(new Match(three, four, rounds2));
-		this.steps.add(new Final_Step(pan, contestPanel, matches, contestants,
-				new Ranking(contestants), this.steps, true));
-
-		Contestant five = new Contestant("Test A", "A Stadt");
-		Contestant six = new Contestant("Test B", "B Stadt");
-		Contestant seven = new Contestant("Test C", "C Stadt");
-		Contestant eight = new Contestant("Test D", "D Stadt");
-		LinkedList<Contestant> contestants2 = new LinkedList<Contestant>();
-		contestants2.add(one);
-		contestants2.add(two);
-		contestants2.add(three);
-		contestants2.add(four);
-		LinkedList<Round> rounds3 = new LinkedList<Round>();
-		rounds3.add(new Round("123.zip", five, 123, 321));
-		rounds3.add(new Round("123.zip", five, 123, 321));
-		rounds3.add(new Round("123.zip", five, 123, 321));
-		rounds3.add(new Round("123.zip", five, 123, 321));
-		rounds3.add(new Round("123.zip", six, 123, 321));
-		rounds3.add(new Round("123.zip", six, 123, 321));
-		LinkedList<Match> matches2 = new LinkedList<Match>();
-		matches2.add(new Match(five, six, rounds3));
-
-		this.steps.add(new Final_Step(pan, contestPanel, matches2,
-				contestants2, new Ranking(contestants2), this.steps, false));
 		nextButton = new JButton();
 		nextButton.setText(">");
 		nextButton.addActionListener(this);
@@ -198,10 +194,13 @@ public class MainFrame extends JFrame implements ActionListener {
 			curr.stepForward();
 			this.repaint();
 		}else if (e.getSource() == lastButton) {
+			if(curr.isInit() && currentStep > 0){
+				currentStep--;
+			}
 			curr.stepBackward();
 			this.repaint();
 		}else if (e.getSource() == showPresentation) {
-			contestFrame.setVisible(!showPresentation.isSelected());
+			contestFrame.setVisible(showPresentation.isSelected());
 			contestFrame.repaint();
 		}else if (e.getSource() == configItem) {
 			configFrame.setVisible(true);
@@ -209,6 +208,15 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 
 	}
-
+	
+	public void addFinalsStep(Final_Step step, int order){
+		for (int i = 0; i < steps.size(); i++) {
+			if(order < steps.get(i).order){
+				steps.add(i,step);
+				return;
+			}
+		}
+		steps.add(step);
+	}
 
 }

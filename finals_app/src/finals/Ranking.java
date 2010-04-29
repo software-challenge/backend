@@ -3,6 +3,8 @@ package finals;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
 public class Ranking {
 	public Ranking(LinkedList<Contestant> standings) {
 		super();
@@ -36,5 +38,15 @@ public class Ranking {
 
 	public Contestant getWinner() {
 		return getContestrantAtRank(1);
+	}
+	
+	public void add(Contestant c, int i){
+		for (int j = 0; j < standings.size(); j++) {
+			if (c.rank <= standings.get(j).rank) {
+				standings.add(c);
+				return;
+			}
+		}
+		standings.add(c);
 	}
 }

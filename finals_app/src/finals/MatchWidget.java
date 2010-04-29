@@ -117,6 +117,9 @@ public class MatchWidget {
 		gc.drawString((match.getCurrentStep() > 0 ? ""
 				+ match.getSecondCurrentScore() : ""), position.x + scl(111),
 				position.y + scl(62));
+		
+		if (match.getCurrentStep() == 0) selected = false;
+		
 		if (selected) {
 			gc.setStroke((new BasicStroke(scl(5))));
 			gc.setColor(new Color(255, 154, 150, 100));
