@@ -193,6 +193,12 @@ de:
   headers:
     hidden_people: "Gelöschte Personen"
   games:
+    causes:
+      REGULAR: In Ordnung
+      SOFT_TIMEOUT: Soft-Timeout überschritten
+      HARD_TIMEOUT: Hard-Timeout überschritten
+      RULE_VIOLATION: Ungültiger Spielzug
+      LEFT: Hat das Spiel verlassen
     hase_und_igel:
       name: Hase und Igel
       match_score:

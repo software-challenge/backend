@@ -202,7 +202,7 @@ module SoChaManager
       logfile_dir = case slot.round.match.type.to_s
                     when "ClientMatch"
                       "test"
-                    when "LeagueMatch"
+                    when "LeagueMatch", "FinaleMatch"
                       File.join("match", slot.round.match.id.to_s, slot.round.id.to_s)
                     else
                       "unknown"

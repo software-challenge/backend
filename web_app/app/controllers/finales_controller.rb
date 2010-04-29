@@ -34,17 +34,19 @@ def fetch_finale
 end
 
 def index
+  redirect_to contest_url unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
 end
 
 def lineup
 end
 
 def match_results
+  redirect_to contest_url unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
   @match = FinaleMatch.find(params[:id].to_i)
 end
 
 def ranking
-  redirect_to contest_finale_url unless @current_contest.finale.finished?
+  redirect_to contest_url unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
 end
 
 def prepare
