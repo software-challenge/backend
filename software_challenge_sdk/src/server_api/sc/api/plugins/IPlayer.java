@@ -10,4 +10,6 @@ public interface IPlayer
 	public void setDisplayName(String displayName);
 	public void setShouldBePaused(boolean shouldBePaused);
 	public void setCanTimeout(boolean canTimeout);
+	public void setViolated(boolean violated);
+	public boolean hasViolated();
 }
