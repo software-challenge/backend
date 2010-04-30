@@ -310,7 +310,11 @@ public class Game extends RoundBasedGameInstance<Player>
 	
 	@Override
 	public void onPlayerLeft(IPlayer player) {
-		onPlayerLeft(player, ScoreCause.LEFT);
+		if(!player.hasViolated()) {
+			onPlayerLeft(player, ScoreCause.LEFT);
+		} else {
+			onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
+		}
 	}
 
 	@Override

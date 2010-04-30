@@ -46,8 +46,6 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	@XStreamOmitField
 	private boolean			mustPlayCard;
-	
-	private boolean			violated = false;
 
 	public static final int	SALADS_TO_EAT	= 5;
 	public static final int	INITIAL_CARROTS	= 68;
@@ -248,14 +246,6 @@ public final class Player extends SimplePlayer implements Cloneable
 			e.printStackTrace();
 		}
 		return ret;
-	}
-	
-	public void setViolated(boolean violated) {
-		this.violated = violated;
-	}
-	
-	public boolean hasViolated() {
-		return this.violated;
 	}
 
 	public PlayerScore getScore(int avg_time)
