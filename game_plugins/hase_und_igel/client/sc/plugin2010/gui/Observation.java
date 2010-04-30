@@ -219,7 +219,31 @@ public class Observation implements IObservation, IUpdateListener,
 			result += name2;
 			result += " hat einen falschen Zug gesetzt!\n";
 		}
+		
+		if (data.getScores().get(0).getCause() == ScoreCause.HARD_TIMEOUT)
+		{
+			result += name1;
+			result += " hat das HardTimeout überschritten!\n";
+		}
+		
+		if (data.getScores().get(1).getCause() == ScoreCause.HARD_TIMEOUT)
+		{
+			result += name2;
+			result += " hat das HardTimeout überschritten!\n";
+		}
 
+		if (data.getScores().get(0).getCause() == ScoreCause.SOFT_TIMEOUT)
+		{
+			result += name1;
+			result += " hat das SoftTimeout überschritten!\n";
+		}
+		
+		if (data.getScores().get(1).getCause() == ScoreCause.SOFT_TIMEOUT)
+		{
+			result += name2;
+			result += " hat das SoftTimeout überschritten!\n";
+		}
+		
 		String[] results = data.getScores().get(0).toStrings();
 		if (results[0].equals("1"))
 		{
