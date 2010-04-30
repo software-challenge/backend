@@ -269,24 +269,33 @@ class Finale < ActiveRecord::Base
       day.matches.each do |match|
         matchXML = 
           {
-            'first' => {
-              'contestant' => {
-                'name' => match.contestants.first.name,
-                'location' => match.contestants.first.location
-              }
-            },
-            'second' => {
-              'contestant' => {
-                'name' => match.contestants.second.name,
-                'location' => match.contestants.second.location
-              }
-            },
-            'rounds' => {'round' => []}
+            'players' => {'contestant' => []},
+            'rounds' => {'round' => []},
+            'winners' => {'contestant' => []},
+            'losers' => {'contestant' => []}
           }
+        match.contestants.each do |contestant|
+          matchXML['players']['contestant'] << {
+            'name' => contestant.name,
+            'location' => contestant.location
+          }
+        end
         match.rounds.each do |round|
           matchXML['rounds']['round'] << {
             'replay' => [round.replay_file_name],
             'winner' => [round.winner.name] 
+          }
+        end
+        match.winner.each do |slot|
+          matchXML['winners']['contestant'] << {
+            'name' => slot.contestant.name,
+            'location' => slot.contestant.location
+          }
+        end
+        match.loser.each do |slot|
+          matchXML['losers']['contestant'] << {
+            'name' => slot.contestant.name,
+            'location' => slot.contestant.location
           }
         end
         dayXML['match'] << matchXML

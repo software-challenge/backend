@@ -20,7 +20,7 @@ class FinaleMatch < LeagueMatch
     if same_score and multiple
       return []
     else
-      return loser
+      return [loser]
     end
   end
 

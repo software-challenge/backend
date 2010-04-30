@@ -24,4 +24,15 @@ class LeagueMatch < Match
   def priority
     Match::MEDIUM_PRIORITY
   end
+
+
+  def load_active_clients(force_reload = false)
+    slots.each do |league_slot|
+      slot = league_slot.matchday_slot
+      if (slot.client.nil? or force_reload)
+        slot.client = slot.contestant.current_client
+        slot.save!
+      end    
+    end
+  end
 end
