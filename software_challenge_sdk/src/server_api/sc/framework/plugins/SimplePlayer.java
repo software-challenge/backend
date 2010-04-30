@@ -28,6 +28,9 @@ public abstract class SimplePlayer implements IPlayer
 
 	@XStreamAsAttribute
 	private String					displayName;
+	
+	@XStreamOmitField
+	protected boolean					violated = false;
 
 	@Override
 	public void addPlayerListener(IPlayerListener listener)
@@ -92,5 +95,13 @@ public abstract class SimplePlayer implements IPlayer
 	public boolean isShouldBePaused()
 	{
 		return this.shouldBePaused;
+	}
+	
+	public void setViolated(boolean violated) {
+		this.violated = violated;
+	}
+	
+	public boolean hasViolated() {
+		return this.violated;
 	}
 }
