@@ -131,7 +131,22 @@ public class Final_Step {
 				matchWidgets.get(i).getMatch().undoLastStep();
 				matchWidgets.get(i).setSelected(true);
 				matchWidgets.get(i).paint();
-				return;
+				break;
+			}
+		}
+		for (int i = matchWidgets.size()-1; i >= 0; i--) {
+			if(matchWidgets.get(i).getMatch().getCurrentStep() < 6){
+				if(getNextStep() != null && i == 1){
+					System.out.println(i/2);
+					if (i % 2 == 0) {
+						//getNextStep().matchWidgets.get(i/2).setSecondNameVisible(false);
+						getNextStep().matchWidgets.get(i/2).setFirstNameVisibe(false);
+					}else{
+						//getNextStep().matchWidgets.get(i/2).setFirstNameVisibe(false);
+						getNextStep().matchWidgets.get(i/2).setSecondNameVisible(false);
+					}
+					getNextStep().matchWidgets.get(i/2).paint();
+				}
 			}
 		}
 		repaint();

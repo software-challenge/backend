@@ -17,14 +17,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.zip.ZipFile;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -59,9 +62,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	ConfigsFrame configFrame;
 	JMenuBar menuBar;
 	JMenuItem configItem;
+	File finaleArchiv;
+	JFrame fileFrame;
+	JFileChooser fileSelectionFrame;
 
-	MainFrame() {
-		
+	MainFrame(String[] args) {
+		this.setEnabled(false);
 		mgr = new GridBagLayout();
 		
 		// Create Menu
@@ -105,33 +111,29 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.contestPanel = new Panel();
 		contestFrame.add(contestPanel);
 		
-		
-
-		try {
-			parseInput("/home/andre/final.xml");
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	
+		if(args.length > 0){
+			finaleArchiv = new File(args[0]);
+			this.setEnabled(true);
+			createGUI();
+		}else{
+			fileFrame = new JFrame("Bitte Final-Archiv auswählen");
+			fileSelectionFrame = new JFileChooser();
+			fileSelectionFrame.addActionListener(this);
+			fileFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			fileFrame.setSize(500,400);
+			fileFrame.setVisible(true);
+			fileFrame.add(fileSelectionFrame);
+			
 		}
-		
-		
-		createGUI();
 
 	}
 
 	public static void main(String[] args){
-		new MainFrame();
-		
-	     
+		new MainFrame(args);	     
 	}
 	
-	public void parseInput(String in) throws ParserConfigurationException, SAXException, IOException{
+	public void parseInput(InputStream in) throws ParserConfigurationException, SAXException, IOException{
 		 SAXParserFactory factory = SAXParserFactory.newInstance();
 	     SAXParser saxParser = factory.newSAXParser();
 	     ImportHandler handler = new ImportHandler();
@@ -140,6 +142,22 @@ public class MainFrame extends JFrame implements ActionListener {
 	}
 
 	private void createGUI() {
+
+		
+		try {
+			ZipFile zipFile = new ZipFile(finaleArchiv);
+			parseInput(zipFile.getInputStream(zipFile.getEntry("final.xml")));
+			
+		} catch (IOException e) {
+			System.out.println("Could not find file: " + finaleArchiv.getPath());
+			return;
+		} catch (ParserConfigurationException e) {
+			System.out.println("Parser misconfiguration detected");
+		} catch (SAXException e) {
+			System.out.println("XML file is corrupted!");
+		}
+		
+		
 		Object[] stepsA = steps.toArray();
 		
 		for (Final_Step step : steps){
@@ -186,6 +204,18 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource().getClass()==JFileChooser.class) {
+			finaleArchiv = ((JFileChooser)e.getSource()).getSelectedFile();
+			if(finaleArchiv != null){
+				fileFrame.setVisible(false);
+				this.setEnabled(true);
+				createGUI();
+			}else{
+				System.exit(ABORT);
+			}
+			return;
+		}
+		
 		Final_Step curr = steps.get(currentStep);
 		if (e.getSource() == nextButton) {
 			if (curr.isFinished() && currentStep < steps.size() - 1) {
