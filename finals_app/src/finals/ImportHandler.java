@@ -23,6 +23,7 @@ public class ImportHandler extends DefaultHandler{
 	int currentRank;
 	LinkedList<Round> currentRounds;
 	int order;
+	boolean playerOpen = false;
 	
 	
 	 public void startElement(String uri, String localName,
@@ -44,7 +45,11 @@ public class ImportHandler extends DefaultHandler{
 		        	waitingForText = true;
 		        }
 		        
-		        if(qName == "contestant"){
+		        if(qName == "players"){
+		        	playerOpen = true;
+		        }
+		        
+		        if(qName == "contestant" && playerOpen){
 		        	currentContestant = new Contestant();
 		        	currentContestant.rank = currentRank;
 		        	currentContestant.name = attributes.getValue("name");
@@ -105,19 +110,28 @@ public class ImportHandler extends DefaultHandler{
 		    		 currentRanking.add(currentContestant, currentRank);
 		    	 }
 		    	 
-		    	 if(qName == "first"){
-		    		 currentMatch.first = currentContestant;
-		    	 }
-		    	
-		    	 if(qName == "second"){
-		    		 currentMatch.second = currentContestant;
+		    	 if(qName == "contestant" && currentMatch != null && playerOpen){
+		    		 if(currentMatch.first == null){
+		    			 currentMatch.first = currentContestant;
+		    		 }else{
+		    			 currentMatch.second = currentContestant;
+		    		 }
 		    	 }
 		    	 
 		    	 if(qName == "match"){
 		    		 currentStepsMatches.add(currentMatch);
+		    		 currentMatch = null;
 		    		 }
 		    	 
 		    	 if(qName == "finalStep"){
+		    		 if(order == 1){
+		    			 Match temp = currentStepsMatches.get(1);
+			    		 currentStepsMatches.set(1, currentStepsMatches.get(3));
+			    		 currentStepsMatches.set(3, temp); 
+			    		 temp = currentStepsMatches.get(3);
+			    		 currentStepsMatches.set(3, currentStepsMatches.get(2));
+			    		 currentStepsMatches.set(2, temp);
+		    		 }
 		    		 main.addFinalsStep(new Final_Step(main.pan, main.contestPanel, currentStepsMatches,main.steps,false,order), order);
 		    	 }
 		    	 
@@ -127,6 +141,10 @@ public class ImportHandler extends DefaultHandler{
 		    	 
 		    	 if(qName == "gameName"){
 		    		 currentConfig.setSpielname(currentText);
+		    	 }
+		    	 
+		    	 if(qName == "players"){
+		    		 playerOpen = false;
 		    	 }
 		     }
 		     

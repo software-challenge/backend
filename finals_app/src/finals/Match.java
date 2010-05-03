@@ -98,7 +98,7 @@ public class Match {
 	}
 
 	public boolean isFinished() {
-		return (currentStep == rounds.size() ? true : false);
+		return currentStep == rounds.size();
 	}
 
 	public int getCurrentStep() {
