@@ -135,15 +135,37 @@ class Finale < ActiveRecord::Base
 
       slots.each_with_index do |slot,i|
         day.slots.create!(:contestant => slot.contestant)
-      end 
+      end
 
-      (0..((slots.count / 2) - 1)).each do |i|
+      pairs = create_pairs( (0..(slots.count - 1)), (not daysettings[:reorder].nil? and daysettings[:reorder]) )
+      pairs.each do |a,b|
         match = day.matches.create!
-        cons = [slots[i].contestant, slots[slots.count-i-1].contestant]
+        cons = [slots[a].contestant, slots[b].contestant]
         match.contestants = cons
       end
     end
     day
+  end
+
+  def create_pairs(range, reorder = false)
+    pairs = []
+    
+    if reorder
+      range1 = (range.first..((range.count / 2) - 1)).entries
+      range2 = ((range.count / 2)..(range.count - 1)).entries.reverse
+      while not range1.empty?
+        pairs << [range1.first, range2.first]
+        range1.delete_at 0
+        range2.delete_at 0
+        range1.reverse!
+        range2.reverse!
+      end
+    else
+      range.step(2).each do |i|
+        pairs << [i, i+1]
+      end
+    end
+    return pairs
   end
 
   def day_deletable?(dayname)

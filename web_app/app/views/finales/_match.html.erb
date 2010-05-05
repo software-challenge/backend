@@ -5,7 +5,13 @@
   <span style="font-weight: bold" class="<%= 'winner' if match.played? %>">
     <%= match.slots.first.contestant.name %>
   </span><br>
-  vs.<br>
+  <% if match.played? %>
+    <%= match.scores.first.fragments.find(:first, :conditions => {:fragment => "victories"}).value.to_i %>&nbsp;:&nbsp;
+    <%= match.scores.second.fragments.find(:first, :conditions => {:fragment => "victories"}).value.to_i %>
+  <% else %>
+    vs.  
+  <% end %>
+  <br>
   <span style="font-weight: bold" class="<%= 'loser' if match.played? %>"> 
     <%= match.slots.second.contestant.name %>
   </span>
