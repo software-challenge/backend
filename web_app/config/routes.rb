@@ -48,7 +48,7 @@ ActionController::Routing::Routes.draw do |map|
           :browse => :post,
           :select_main => :post,
           :select => :post,
-          :test => :post,
+          :test => :get,
           :hide => :post,
           :get_comments => :get,
           :create_comment => :post,
