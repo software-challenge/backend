@@ -106,7 +106,7 @@ class ClientsController < ApplicationController
   def test
     @client = @contestant.clients.find(params[:id])
 
-    activate = params[:activateClient]
+    activate = params[:activateClient] == "true" ? true : false
 
     if @client.tested?
       flash[:notice] = I18n.t("messages.client_has_already_been_tested") 
