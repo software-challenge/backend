@@ -82,11 +82,10 @@
             <% if contestant.current_client.nil? %>
             <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
             <% elsif contestant.current_client.ok? %>
-            <%= image_tag "state/ok.png", :title => I18n.t("views.client_ok") %>
+              <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
             <% else %>
-            <%= image_tag "state/attention.png", :title => I18n.t("views.client_failed") %>
+            <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
             <% end %> 
-            
           <% end -%>
         </td>
         <td>
