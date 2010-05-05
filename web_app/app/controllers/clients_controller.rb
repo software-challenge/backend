@@ -106,10 +106,12 @@ class ClientsController < ApplicationController
   def test
     @client = @contestant.clients.find(params[:id])
 
+    activate = params[:activateClient]
+
     if @client.tested?
       flash[:notice] = I18n.t("messages.client_has_already_been_tested") 
     else
-      @client.test_delayed!
+      @client.test_delayed! activate
     end
 
     redirect_to contest_contestant_clients_url(@contestant)

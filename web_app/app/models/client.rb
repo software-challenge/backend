@@ -122,7 +122,7 @@ class Client < ActiveRecord::Base
     false
   end
 
-  def test_delayed!
+  def test_delayed!(activateClient = false)
     raise "client was already tested" if tested?
     raise "client is currently tested" if testing?
     raise "no test_contestant available" unless contest.test_contestant
@@ -132,7 +132,7 @@ class Client < ActiveRecord::Base
       self.test_match = nil
       match = self.create_test_match
       match.clients = [self, contest.test_contestant.current_client]
-      match.perform_delayed!
+      match.perform_delayed! activateClient
     end
   end
 
