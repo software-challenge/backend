@@ -20,7 +20,7 @@ class Match < ActiveRecord::Base
 
   has_many :slots, :class_name => "MatchSlot", :dependent => :destroy, :order => "position"
   has_many :rounds, :dependent => :destroy
-  has_many :scores, :through => :slots
+  has_many :scores, :through => :slots, :order => "POSITION ASC"
 
   delegate :game_definition, :to => :set
   delegate :contest, :to => :set
