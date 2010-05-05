@@ -11,10 +11,38 @@
     <% elsif client.testable? %>
       <span class="testActions">
         <span class="disabled"><%= t("messages.test_running") %></span>
-        <%= link_to (t("actions.test")).capitalize,
-          test_contest_contestant_client_url(client.contestant, client), :method => :post,
-          :class => "enabled" %>
+        <a id="test_<%= client.id %>" href="#"><%= t("actions.test").capitalize %></a>
+        <div id="test_box_<%= client.id %>" style="display: none; position: absolute; background-color: #eeeeee; border: 1px solid #000000; padding: 5px">
+          <%= check_box_tag "activate_#{client.id}", :id => "activate_#{client.id}" %> Nach erfolgreichem Test aktivieren<br>
+          <div style="float: right; margin-top: 5px">
+            <a id="do_test_<%= client.id %>" href=""><%= t("actions.test").capitalize %></a>
+            <a id="close_test_box_<%= client.id %>" style="margin-left: 5px" href="#"><%= t("actions.cancel") %></a>
+          </div>
+        </div>
       </span>
+      <% javascript_tag do %>
+        $(function() {
+          $("a#close_test_box_<%= client.id %>").bind('click', function() {
+            $("div#test_box_<%= client.id %>").fadeOut(250)
+            return false;
+          })
+
+          $("a#test_<%= client.id %>").bind('click', function() {
+            $("div#test_box_<%= client.id %>").fadeIn(250)
+            return false;
+          })
+
+          $("a#do_test_<%= client.id %>").bind('click', function() {
+            $("div#test_box_<%= client.id %>").fadeOut(250)
+            $.get(
+              "<%= test_contest_contestant_client_url(client.contestant, client) %>",
+              "activateClient=" + $("input#activate_<%= client.id %>").is(':checked'),
+              function(returned_data) { location.reload(); }
+            )
+            return false;
+          })
+        })
+      <% end %>
     <% end %>
     <%= link_to "Details", client_details_contest_contestant_client_url(client.contestant, client), {:client => client} %>
 
