@@ -15,14 +15,14 @@
           <% person.teams.visible.each do |team| %>
             <ul style="margin-left: 15px">
               <li>
-                <span class="team_text"><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
+                <span><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
               </li>
             </ul>
           <% end %>
           </div>
           </div>
         <% else %>
-          <span class="team_text_<%= person.id %>"><%= person.teams.first.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(person.teams.first).role %></span>)
+          <span><%= person.teams.first.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(person.teams.first).role %></span>)
         <% end %>
       <% end %>
       <% locations = [] %>
@@ -42,10 +42,9 @@
       <% roles.uniq.each_with_index do |role,index| %>
         <% rolestr += (index > 0 ? ";" : "") + role %>
       <% end %>
-      <span class="role_text_<%= person.id %>" style="display: none"><%= rolestr %></span>
-      <% if person.has_role?(:administrator) %>
-        <span class="role_text" style="display: none"><%= Role.find(:first, :conditions => {:name => "administrator"}).to_s %></span>
-      <% end %>
+      <% teamstr = person.teams.collect(&:name).join(";") %>
+      <span id="team_text_<%= person.id %>" style="display: none"><%= teamstr %></span>
+      <span id="role_text_<%= person.id %>" style="display: none"><%= rolestr %></span>
     </td>
 
     <% show_to :administrator do %>
