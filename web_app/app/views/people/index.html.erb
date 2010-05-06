@@ -18,7 +18,7 @@
           <div id="location_filter_container" style="width: 200px; position: relative; float: left">
             <%= text_field_tag "location_filter", "", :style => "width: 200px" %><br>
             <div id="location_select" style="position: absolute; left: 0px; background-color: #fff; border: 1px solid #000; display: none">
-              <% Contestant.visible.collect(&:location).uniq.sort!{ |a,b| a.downcase <=> b.downcase}.each do |contestantlocation| %>
+              <% Contestant.visible.without_testers.collect(&:location).uniq.sort!{ |a,b| a.downcase <=> b.downcase}.each do |contestantlocation| %>
                 <div class="combobox_item location"><%= contestantlocation %></div>
               <% end %>
             </div> 
@@ -26,7 +26,7 @@
           <div style="padding-top: 2px; margin-left: 25px; margin-right: 10px; display: inline; float: left">Team: </div>
           <select id="team_filter" name="team_filter" style="width: 250px">
             <option class="all" value="all">Alle</option>
-            <% Contestant.visible.sort!{ |a,b| a.name.downcase <=> b.name.downcase}.each do |team| %>
+            <% Contestant.visible.without_testers.sort!{ |a,b| a.name.downcase <=> b.name.downcase}.each do |team| %>
               <option value="<%= team.location %>"><%= team.name %></option>
             <% end %>
           </select>
