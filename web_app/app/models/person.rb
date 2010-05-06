@@ -121,6 +121,14 @@ class Person < ActiveRecord::Base
     self.memberships = all.values
   end
 
+  def manageable_teams_for(contest)
+    if self.has_role? :administrator
+      contest.contestants.visible.without_testers
+    else
+      teams
+    end
+  end
+
   def manageable_teams
     if self.has_role? :administrator
       Contestant.visible.without_testers

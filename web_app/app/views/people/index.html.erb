@@ -35,9 +35,11 @@
             <span style="margin-right: 23px;">Rolle:</span>
             <%= select_tag "role_filter", options_for_select(["Alle"].concat(Role.all.collect{|role| [role.to_s, role.name]}.uniq)) %>
 
+            <div style="float: right">
+              <a id="sort_persons" style="margin-right: 10px" href="#">Anwenden</a>
+              (<%= check_box_tag "instant", "", false, :style=> "vertical-align: middle" %> automatisch anwenden)
+            </div>
           </div>
-
-            <div style="float: left; margin-top: 10px"><a id="sort_persons" href="#">Anwenden</a></div>
         </div>
       </fieldset><br>
     </div>
@@ -134,6 +136,10 @@
 
         if(!$("select#team_filter :selected").is(':visible')) {
           $("select#team_filter").val("all").attr("selected", "selected")
+        }
+
+        if($("input#instant").is(':checked')) {
+          sort_list()
         }
       }
 

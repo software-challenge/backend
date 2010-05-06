@@ -7,8 +7,8 @@
 
   <% unless @contestant # don't show these infos on contestant page -%>
     <td id="p_teams_<%= person.id %>">
-      <% unless person.teams.empty? %>
-        <% if person.teams.count > 1 then %>
+      <% unless person.teams.visible.empty? %>
+        <% if person.teams.visible.count > 1 then %>
           <div class="team_tooltip">
             <abbr class="team_tooltip_title"><%= "In " + person.teams.visible.count.to_s + " Teams" %><abbr>
           <div class="team_list" style="position: absolute; background-color: #DDDDFF; border: 1px solid; padding: 5px; display: none">

@@ -25,28 +25,51 @@
         <li>
           <% content_for :teams do %>
             <div style="overflow-y: scroll; height: 200px; margin-bottom: 15px;">
-              <% memberships = current_user.manageable_teams.collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
-            <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
-              <% unless m.contestant.hidden -%>
-                <% t = m.contestant %>
-                <% checkbox_id = "person_team_#{t.id}"  %>
-                <li class="boolean <%= cycle("odd", "even") %>">
-                  <label for="<%= checkbox_id %>" style="padding-left: 0;">
-                    <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
-                    <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam" %>
-                    <%= t.name %>
-                  </label>
+              <% Contest.all.each do |contest| %>
+                <a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
+                <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a><br><br>
+                <% javascript_tag do %>
+                  $(function() {
+                    $("a#contestants_show_<%= contest.id %>").bind('click', function() {
+                      $("a#contestants_show_<%= contest.id %>").hide()
+                      $("a#contestants_hide_<%= contest.id %>").show()
+                      $("div#contestants_<%= contest.id %>").fadeIn(250)
+                      return false; 
+                    })
 
-                  <div style="float: right;" class="role">
-                    <% if manageable_roles.size == 1 -%>
-                      <%= hidden_field_tag "person[teams][#{t.id}][role]", manageable_roles.first[1] %>
-                    <% else -%>
-                      <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
-                    <% end -%>
-                  </div>
-                </li>
+                    $("a#contestants_hide_<%= contest.id %>").bind('click', function() {
+                      $("a#contestants_show_<%= contest.id %>").show()
+                      $("a#contestants_hide_<%= contest.id %>").hide()
+                      $("div#contestants_<%= contest.id %>").fadeOut(250)
+                      return false;
+                    })
+                  })
+                <% end %>
+                <div style="display: none; padding-left: 25px" id="contestants_<%= contest.id %>">
+                <% memberships = current_user.manageable_teams_for(contest).collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
+                <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
+                  <% unless m.contestant.hidden -%>
+                    <% t = m.contestant %>
+                    <% checkbox_id = "person_team_#{t.id}"  %>
+                    <li class="boolean <%= cycle("odd", "even") %>">
+                      <label for="<%= checkbox_id %>" style="padding-left: 0;">
+                        <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
+                        <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam" %>
+                        <%= t.name %>
+                      </label>
+
+                      <div style="float: right;" class="role">
+                        <% if manageable_roles.size == 1 -%>
+                          <%= hidden_field_tag "person[teams][#{t.id}][role]", manageable_roles.first[1] %>
+                        <% else -%>
+                          <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
+                        <% end -%>
+                      </div>
+                    </li>
+                  <% end %>
+                <% end %>
+                </div><br>
               <% end %>
-            <% end %>
             </div>
           <% end %>
           <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
