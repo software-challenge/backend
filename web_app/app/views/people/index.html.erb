@@ -104,12 +104,12 @@
         })
               
         $("#location_filter").change(function() {
-          update_location_list()
+          //alert($(this).val());
+          //update_location_list()
         })
       })
 
       function update_location_list() {
-
         // Update team select box
         $("select#team_filter option").each(function(index) {
           if($(this).is('.all')) {
@@ -126,19 +126,23 @@
           $("select#team_filter").val("all").attr("selected", "selected")
         }
 
+        var filter = $("#location_filter").val()
+        var regexp = new RegExp(filter, "i")
+        var role = $("div#show_teams select#role_filter :selected").val()
+
         $("tr.person").each(function(index) {
           var showPerson = true;
+          var personID = $(this).attr('id')
 
           // Check each person against location matching
           var foundLocation = false;
           if($("#location_filter").val() != "") {
-            var loc_string = $("td.p_teams span.person_location", $(this)).html().trim().split(";")
+            var loc_string = $("td#p_teams_" + personID + " span#person_location_" + personID, $(this)).html().split(";")
             var i;
-            var filter = $("#location_filter").val()
             for (i=0; i<loc_string.length; i=i+1) {
-              if(loc_string[i].match(new RegExp(filter, "i")) != null) {   
+              if(loc_string[i].match(regexp) != null) {   
                 foundLocation = true;
-                return false;
+                //return false;
               }
             }
           } else {
@@ -150,10 +154,10 @@
 
 
           // Check each person against team matching
-          if(showPerson) {
+          if(true && showPerson) {
             var teamMatch = false;
             if(!$("div#show_teams select#team_filter :selected").is('.all')) {
-              if(isInTeam($(this), $("div#show_teams select#team_filter :selected").text())) {
+              if(isInTeam(personID, $("div#show_teams select#team_filter :selected").text())) {
                 teamMatch = true;
               }
             } else {
@@ -165,16 +169,14 @@
           }
 
           // Check each person against role matching
-          if(showPerson) {
+          if(true && showPerson) {
             var roleMatch = false;
             if($("div#show_teams select#role_filter :selected").val() != 'Alle') {
-              var roles = $("span.role_text", $(this)).html().trim().split(";")
+              var roles = $("span#role_text_" + personID, $(this)).html().trim().split(";")
               var i;
-              var role = $("div#show_teams select#role_filter :selected").val()
               for (i=0; i<roles.count; i=i+1) {
                 if(roles[i] == role) {
                   roleMatch = true;
-                  return false;
                 }
               }
             } else {
@@ -214,9 +216,9 @@
         })
       })
 
-      function isInTeam(person, option) {
+      function isInTeam(personID, option) {
         var found = false;
-        $(".team_text", person).each( function(index) {
+        $("span#team_text_" + personID).each( function(index) {
           if($(this).html() == option) {
             found = true;
             return false;

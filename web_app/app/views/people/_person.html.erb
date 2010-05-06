@@ -1,4 +1,4 @@
-<tr class="person" id="person_<%= person_counter %>">
+<tr class="person" id="<%= person.id %>">
   <td class="p_first_name"><%=h person.first_name %></td>
   <td class="p_last_name"><%=h person.last_name %></td>
   <% if logged_in? -%>
@@ -6,14 +6,13 @@
   <% end -%>
 
   <% unless @contestant # don't show these infos on contestant page -%>
-    <td class="p_teams">
+    <td id="p_teams_<%= person.id %>">
       <% unless person.teams.empty? %>
         <% if person.teams.count > 1 then %>
-          <!--<%= select_tag "team", options_for_select(person.teams.collect(&:name)) %> (<%= person.teams.count %>)!-->
           <div class="team_tooltip">
-            <abbr class="team_tooltip_title"><%= "In " + person.teams.count.to_s + " Teams" %><abbr>
+            <abbr class="team_tooltip_title"><%= "In " + person.teams.visible.count.to_s + " Teams" %><abbr>
           <div class="team_list" style="position: absolute; background-color: #DDDDFF; border: 1px solid; padding: 5px; display: none">
-          <% person.teams.each do |team| %>
+          <% person.teams.visible.each do |team| %>
             <ul style="margin-left: 15px">
               <li>
                 <span class="team_text"><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
@@ -23,15 +22,15 @@
           </div>
           </div>
         <% else %>
-          <span class="team_text"><%= person.teams.first.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(person.teams.first).role %></span>)
+          <span class="team_text_<%= person.id %>"><%= person.teams.first.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(person.teams.first).role %></span>)
         <% end %>
       <% end %>
-      <% locations = "" %>
+      <% locations = [] %>
       <% person.contestants.each_with_index do |contestant, index| %>
-        <% locations += contestant.location %>
-        <% locations += index > 0 ? ";" : "" %>
+        <% locations << contestant.location %>
       <% end %>
-      <span class="person_location" style="display: none"><%= locations %></span>  
+      <% locations = locations.join(";") %>
+      <span id="person_location_<%= person.id %>" style="display: none"><%= locations %></span>  
       <% roles = [] %>
       <% if person.has_role?(:administrator) then roles << "administrator" end %>
       <% person.teams.each do |team| %>
@@ -43,7 +42,7 @@
       <% roles.uniq.each_with_index do |role,index| %>
         <% rolestr += (index > 0 ? ";" : "") + role %>
       <% end %>
-      <span class="role_text" style="display: none"><%= rolestr %></span>
+      <span class="role_text_<%= person.id %>" style="display: none"><%= rolestr %></span>
       <% if person.has_role?(:administrator) %>
         <span class="role_text" style="display: none"><%= Role.find(:first, :conditions => {:name => "administrator"}).to_s %></span>
       <% end %>
