@@ -16,12 +16,14 @@ public class FinalsConfiguration {
 		this.spielname = spielname;
 		this.date = date;
 		this.speed = speed;
+		this.openReplay = true;
 	}
 
 	private String serverStartupCommand;
 	private String spielname;
 	private Date date;
 	private int speed;
+	private boolean openReplay;
 
 	public String getServerStartupCommand() {
 		return serverStartupCommand;
@@ -53,5 +55,13 @@ public class FinalsConfiguration {
 
 	public void setSpeed(int speed) {
 		this.speed = speed;
+	}
+
+	public boolean isOpenReplay() {
+		return openReplay;
+	}
+
+	public void setOpenReplay(boolean openReplay) {
+		this.openReplay = openReplay;
 	}
 }

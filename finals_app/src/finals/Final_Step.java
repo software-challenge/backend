@@ -2,6 +2,10 @@ package finals;
 
 import java.awt.Panel;
 import java.awt.Point;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,27 +15,29 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 public class Final_Step {
 	
-	public Final_Step(Panel pan, Panel contestPanel, List<Match> matches,
+	public Final_Step(MainFrame main, List<Match> matches,
 			List<Final_Step> steps) {
-		this(pan, contestPanel, matches, steps, false, 0);
+		this(main, matches, steps, false, 0);
 	}
 
 	
-	public Final_Step(Panel pan, Panel contestPanel, List<Match> matches,
+	public Final_Step(MainFrame main, List<Match> matches,
 			List<Final_Step> steps, boolean showTeamsFromBeginning, int order) {
 		this.smallFinals = (order == 4 ? true : false); 
 		this.order = order;
 		this.steps = steps;
 		this.matches = matches;
 		this.matchWidgets = new LinkedList<MatchWidget>();
-		this.pan = pan;
-		this.contestPanel = contestPanel;
+		this.pan = main.pan;
+		this.contestPanel = main.contestPanel;
+		this.main = main;
 		
 	}
 
 	List<MatchWidget> matchWidgets;
 	List<Match> matches;
 	List<Final_Step> steps;
+	MainFrame main;
 	boolean smallFinals = false;
 	int order;
 	Panel pan;
@@ -61,7 +67,7 @@ public class Final_Step {
 			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m);
 			}else{
 				wid = new MatchWidget(pan, contestPanel, 1f, new Point(
-						450 + stepCount * 250, currentY), m);
+						300 + stepCount * 250, currentY), m);
 			}
 				
 			this.matchWidgets.add(wid);
@@ -95,6 +101,24 @@ public class Final_Step {
 			if (!m.getMatch().isFinished()) {
 				System.out.println(m);
 				m.setSelected(true);
+				if(main.config.isOpenReplay()){
+					try {
+						Process prcs;
+						prcs = Runtime.getRuntime().exec("java -jar server/softwarechallenge-gui.jar --plugin server/plugins/ --stepspeed "+main.config.getSpeed()+" --maximized -r replays/"+m.getMatch().getNextReplayName());
+						InputStream cmd_output = prcs.getInputStream();
+						BufferedReader reader = new BufferedReader(new InputStreamReader(cmd_output));
+						String out = reader.readLine();
+						while(out != null){
+							System.out.println(out);
+							out = reader.readLine();
+						}
+						
+						
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}					
+				}
 				m.getMatch().doNextStep();
 				return;
 			} else {
