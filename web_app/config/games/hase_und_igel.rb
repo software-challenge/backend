@@ -34,8 +34,8 @@ GameDefinition.create :"HaseUndIgel" do
         :order => 1, 
         :use => {:best => 8},
         :from => :contest,
-        :reorder_slots => true,
-        :editable => true,
+        :reorder_slots => true,  # 1st vs 8th, 2nd vs 7th, ...
+        :editable => true,       # admin may change lineup
         :ranking => {
           5 => :losers
         }
