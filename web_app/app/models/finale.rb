@@ -137,7 +137,7 @@ class Finale < ActiveRecord::Base
         day.slots.create!(:contestant => slot.contestant)
       end
 
-      pairs = create_pairs( (0..(slots.count - 1)), (not daysettings[:reorder].nil? and daysettings[:reorder]) )
+      pairs = create_pairs( (0..(slots.count - 1)), (not daysettings[:reorder_slots].nil? and daysettings[:reorder_slots]) )
       pairs.each do |a,b|
         match = day.matches.create!
         cons = [slots[a].contestant, slots[b].contestant]
