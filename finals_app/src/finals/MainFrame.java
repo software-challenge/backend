@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -54,7 +55,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	Panel contestPanel;
 	JButton nextButton = new JButton();
 	JButton lastButton = new JButton();
-	JCheckBoxMenuItem showPresentation;
+	JMenuItem showPresentation;
+	JCheckBox openReplay;
 	FinalsConfiguration config;
 	GridBagLayout mgr;
 	GridBagConstraints c;
@@ -77,11 +79,12 @@ public class MainFrame extends JFrame implements ActionListener {
 		configItem.addActionListener(this);
 		JMenu files = new JMenu("Einstellungen", true);
 		files.add(configItem);
-		showPresentation = new JCheckBoxMenuItem("Präsentationsmodus");
+		showPresentation = new JMenuItem("Präsentationsmodus");
 		showPresentation.setVisible(true);
 		showPresentation.addActionListener(this);
 		showPresentation.setSelected(false);
 		files.add(showPresentation);
+
 		menuBar.add(files);
 		menuBar.setVisible(true);
 		this.setJMenuBar(menuBar);
@@ -156,39 +159,52 @@ public class MainFrame extends JFrame implements ActionListener {
 		} catch (SAXException e) {
 			System.out.println("XML file is corrupted!");
 		}
-		
-		
-		Object[] stepsA = steps.toArray();
+	
 		
 		for (Final_Step step : steps){
 			step.createStepWidgets();
 		}
-
+		
+		
 		steps.get(0).showAllNames();
 		// Add dummy config
-		config = new FinalsConfiguration("HUND", "Affe gegen Kanacke!", new Date(), 100);
+		//config = new FinalsConfiguration("HUND", "Affe gegen Kanacke!", new Date(), 100);
 		// Config frame
+		
 		configFrame = new ConfigsFrame(config);
 		configFrame.setSize(400,400);
 		configFrame.setVisible(false);
+		
+		JPanel grp = new JPanel();
 		
 		nextButton = new JButton();
 		nextButton.setText(">");
 		nextButton.addActionListener(this);
 		nextButton.setVisible(true);
 		nextButton.setLocation(400, 400);
-		c.gridx = 1;
-		c.gridy = 1;
-		c.weightx = 0.25;
-		c.weighty = 0.25;
-		c.fill = GridBagConstraints.NONE;
-		this.add(nextButton, c);
 
+		openReplay = new JCheckBox("Replays ausführen");
+		openReplay.setVisible(true);
+		openReplay.addActionListener(this);
+		openReplay.setSelected((config == null ? true : config.isOpenReplay()));
+
+		
 		lastButton.setText("<");
 		lastButton.addActionListener(this);
 		lastButton.setVisible(true);
+
+		grp.add(lastButton);
+		grp.add(openReplay);
+		grp.add(nextButton);
+		c.weightx = 0.25;
+		c.weighty = 0.25;
+		c.fill = GridBagConstraints.NONE;
+		c.gridy = 1;
 		c.gridx = 0;
-		this.add(lastButton, c);
+		grp.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+		grp.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		grp.setVisible(true);
+		this.add(grp, c);
 		
 	}
 
@@ -216,6 +232,10 @@ public class MainFrame extends JFrame implements ActionListener {
 			return;
 		}
 		
+		if(e.getSource() == openReplay){
+			config.setOpenReplay(openReplay.isSelected());
+		}
+		
 		Final_Step curr = steps.get(currentStep);
 		if (e.getSource() == nextButton) {
 			if (curr.isFinished() && currentStep < steps.size() - 1) {
@@ -230,7 +250,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			curr.stepBackward();
 			this.repaint();
 		}else if (e.getSource() == showPresentation) {
-			contestFrame.setVisible(showPresentation.isSelected());
+			contestFrame.setVisible(true);
 			contestFrame.repaint();
 		}else if (e.getSource() == configItem) {
 			configFrame.setVisible(true);

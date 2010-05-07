@@ -83,6 +83,14 @@ public class ImportHandler extends DefaultHandler{
 		        if(qName == "match"){
 		        	currentMatch = new Match();
 		        }
+		        
+		        if(qName == "gameUID"){
+		        	waitingForText = true;
+		        }
+		        
+		        if(qName == "gameName"){
+		        	waitingForText = true;
+		        }
 		     }
 		 
 		     public void endElement(String uri, String localName,
@@ -132,7 +140,7 @@ public class ImportHandler extends DefaultHandler{
 			    		 currentStepsMatches.set(3, currentStepsMatches.get(2));
 			    		 currentStepsMatches.set(2, temp);
 		    		 }
-		    		 main.addFinalsStep(new Final_Step(main.pan, main.contestPanel, currentStepsMatches,main.steps,false,order), order);
+		    		 main.addFinalsStep(new Final_Step(main,currentStepsMatches,main.steps,false,order), order);
 		    	 }
 		    	 
 		    	 if (qName == "gameUID") {
@@ -146,6 +154,10 @@ public class ImportHandler extends DefaultHandler{
 		    	 if(qName == "players"){
 		    		 playerOpen = false;
 		    	 }
+		    	 
+		    	 if(qName == "settings"){
+		    		 main.config = currentConfig;
+		    	 }
 		     }
 		     
 		     public void characters (char ch[], int start, int length)
@@ -156,5 +168,8 @@ public class ImportHandler extends DefaultHandler{
 		    	}
 		    	 
 		     }
-		 
+		     
+		     public void endDocument() throws SAXException{
+		    	 if(main.config == null || main.steps == null) throw new SAXException("");
+		     }
 		      }

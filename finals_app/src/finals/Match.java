@@ -105,4 +105,8 @@ public class Match {
 		return this.currentStep;
 	}
 	
+	public String getNextReplayName(){
+		return rounds.get(currentStep).filename;
+	}
+	
 }

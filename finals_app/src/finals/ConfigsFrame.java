@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -20,6 +21,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 	JTextField contestName;
 	JLabel startCommandLabel;
 	JTextField startCommand;
+	JCheckBox isServerMaximized;
 	FinalsConfiguration config;
 	JButton save;
 	JLabel speedLabel;
@@ -48,7 +50,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		startCommandLabel.setText("Server Startbefehl");
 		startCommandLabel.setVisible(true);
 		this.add(startCommandLabel);
-
+		
 		startCommand = new JTextField(config.getServerStartupCommand());
 		this.add(startCommand);
 		
