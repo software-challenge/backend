@@ -6,7 +6,7 @@
     <%= match.slots.first.contestant.name %>
   </span><br>
   <% if match.played? %>
-    <%= match.scores.first.fragments.find(:first, :conditions => {:fragment => "victories"}).value.to_i %>&nbsp;:&nbsp;
+    <%= match.scores.first.fragments.find(:first, :conditions => {:fragment => "victories"}).value.to_i %>&nbsp;:
     <%= match.scores.second.fragments.find(:first, :conditions => {:fragment => "victories"}).value.to_i %>
   <% else %>
     vs.  
