@@ -4,6 +4,7 @@
 </h1>
 
 <% tabnav :finale do %>
+  <% if not @contest.finale.nil? and @contest.finale.finished? %>
   <% ranking = @contest.finale.ranking.sort %>
 
   <table class="data-table">
@@ -55,4 +56,5 @@
       </tr>
     <% end %> 
   </table>
+  <% end %>
 <% end %>
