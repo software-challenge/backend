@@ -132,6 +132,7 @@
     </thead>
     <%= render :partial => "client", :collection => @contestant.clients.visible.all(:order => "created_at DESC"), :locals => {:render_comments => true} %>
   </table>
+  <% tooltip_init %>
 <% end %>
 
 <% unless @contestant.has_running_tests? %>

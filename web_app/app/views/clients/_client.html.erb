@@ -53,7 +53,6 @@
     <% end %>
   </td>
   <td>
-    &nbsp;
     <% if client.testing? %>
       <%= image_tag("ui/spinner.gif") %>
       <script type="text/javascript">
@@ -72,10 +71,13 @@
       <%= image_tag("state/ok.png") %>
     <% elsif client.broken? %>
       <% causes = [] %>
-      <% client.test_match.slot_for(client).cause_distribution.each do |key,value| %>
-        <% causes << t("games.causes.#{key}", :default => key) if key != "REGULAR" %>
+      <% client.test_match.slot_for(client).round_scores.each do |score| %>
+        <% causes << t("games.causes.#{score.cause}", :default => score.cause)  if score.cause != "REGULAR" %>
+        <% causes << "(#{score.error_message})" if not score.error_message.empty? %>
       <% end %>
-      <%= image_tag("state/warning.png", :title => causes.join("<br>")) %>
+      <% tooltip image_tag("state/warning.png") do %>
+        <%= causes.join("<br>").html_safe! %>
+      <% end %>
     <% end %>
   </td>
   <td>

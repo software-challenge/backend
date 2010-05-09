@@ -10,6 +10,8 @@ module SoChaManager
 
     def on_result(result); end
 
+    def on_error(error); end
+
     def on_data(data)
       type = data.attributes['class'].value
       case type
@@ -17,6 +19,8 @@ module SoChaManager
         on_state(data.xpath('./*').first)
       when "result"
         on_result(data)
+      when "error"
+        on_error(data)
       else
         puts "unknown event room-event '#{type}'"
       end
@@ -37,9 +41,15 @@ module SoChaManager
       append START_TAG
     end
 
-    attr_reader :data, :result
+    attr_reader :data, :result, :error_message
     
     def done?; @done; end
+
+    def on_error(error)
+      msg = error.attributes['message'].value
+      @error_message = msg
+      append(error)   
+    end
 
     def on_state(state)
       append_normalized(state)
@@ -70,7 +80,13 @@ module SoChaManager
           score << BigDecimal.new(part.content)
         end
 
-        scores << { :score => score, :cause => score_data.attributes['cause'].value }
+        score = { :score => score, :cause => score_data.attributes['cause'].value }
+        if score[:cause] != "REGULAR" and not @error_message.empty?
+          score[:error_message] = @error_message
+        else
+          score[:error_message] = ""
+        end
+        scores << score
       end
 
       @result = scores

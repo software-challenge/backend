@@ -9,18 +9,15 @@
     <td id="p_teams_<%= person.id %>">
       <% unless person.teams.visible.empty? %>
         <% if person.teams.visible.count > 1 then %>
-          <div class="team_tooltip">
-            <abbr class="team_tooltip_title"><%= "In " + person.teams.visible.count.to_s + " Teams" %><abbr>
-          <div class="team_list" style="position: absolute; background-color: #DDDDFF; border: 1px solid; padding: 5px; display: none">
-          <% person.teams.visible.each do |team| %>
-            <ul style="margin-left: 15px">
-              <li>
-                <span><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
-              </li>
-            </ul>
+          <% tooltip ("<abbr>In #{person.teams.visible.count.to_s} Teams</abbr>") do %>
+            <% person.teams.visible.each do |team| %>
+              <ul style="margin-left: 15px">
+                <li>
+                  <span><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
+                </li>
+              </ul>
+            <% end %>
           <% end %>
-          </div>
-          </div>
         <% else %>
           <span><%= person.teams.first.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(person.teams.first).role %></span>)
         <% end %>

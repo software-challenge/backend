@@ -65,6 +65,7 @@
     </tbody>
   </table>
 
+  <% tooltip_init %>
   <% show_to :administrator do %>
     <% javascript_tag do %>
 
@@ -220,16 +221,6 @@
       }
 
       $(function() {
-        $(".team_tooltip").bind('mouseenter', function() {
-          $(".team_list", this).fadeIn(250)
-        })
-        $(".team_tooltip").bind('mouseleave', function() {
-          $(".team_list", this).fadeOut(250)
-        })
-        $(".team_tooltip .team_list").bind('mouseenter', function() {
-          $(this).fadeOut()
-        })
-
         $("div#show_teams select#team_filter").bind('change', function() {
           update_location_list()
         })
@@ -245,7 +236,6 @@
       })
     <% end %>
   <% end %>
-
 <% end %>
 
 

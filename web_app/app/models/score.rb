@@ -9,7 +9,7 @@ class Score < ActiveRecord::Base
 
   def definition
     GameDefinition.all.first.send(score_type)
-  end
+  end 
 
   def round_score?
     score_type.to_s == "round_score"
@@ -23,12 +23,13 @@ class Score < ActiveRecord::Base
     end
   end
 
-  def set!(values, cause = nil)
+  def set!(values, cause = nil, error_msg = "")
     raise "values must be an Array" unless values.is_a? Array
     raise "values length was #{values.size}, expected: #{definition.size}" unless values.size == definition.size
 
     Score.transaction do
       self.cause = cause
+      self.error_message = error_msg
       fragments.destroy_all
       save! if new_record?
 

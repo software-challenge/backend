@@ -24,10 +24,12 @@
         <%= f.errors_on :memberships %>
         <li>
           <% content_for :teams do %>
-            <div style="overflow-y: scroll; height: 200px; margin-bottom: 15px;">
+            <div style="overflow-y: scroll; height: 200px; margin-bottom: 5px;">
               <% Contest.all.each do |contest| %>
                 <a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
-                <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a><br><br>
+                <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a>
+                &nbsp;( <%= @person.memberships.find_all {|m| m.contestant.contest == contest}.count %> )
+                <br><br>
                 <% javascript_tag do %>
                   $(function() {
                     $("a#contestants_show_<%= contest.id %>").bind('click', function() {
