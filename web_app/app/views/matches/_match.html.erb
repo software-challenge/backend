@@ -198,14 +198,18 @@
         <td colspan="<%= round_colspan %>">
           <%= link_to slot.contestant.name, contest_contestant_matches_url(slot.contestant) %>
           <% if slot.score.cause != "REGULAR" %>
-            <span title="<%= t("games.causes.#{slot.score.cause}", :default => slot.score.cause) %>">
-              <em>
+            <% tooltip ("
+              <span>
+                <em>
                 (
-                <%= slot.qualification_changed ? "nachtrgl." : "" %>
-                <%= t "views.disqualified" %>
+                #{slot.qualification_changed ? "nachtrgl." : ""}
+                #{t "views.disqualified"}
                 )
-              </em>
-            </span>
+                </em>
+              </span>"), :inline => true do %> 
+              <%= t("games.causes.#{slot.score.cause}", :default => slot.score.cause) %>
+              <%= (slot.score.error_message.empty? ? "" : "<br>" + slot.score.error_message).html_safe! %>
+            <% end %>
           <% elsif slot.qualification_changed %>
             <em>
               (<%= "nachtrgl. qualifiziert" %>)

@@ -3,7 +3,7 @@ module SoChaManager
     def play(round)
       manager = self
       player_names = round.slots.collect(&:ingame_name)
-      @client.log round if round.match.type == "LeagueMatch"
+      @client.log round if true or round.match.type == "LeagueMatch"
 
       @client.prepare round.game_definition.plugin_guid, round.slots.collect(&:name) do |success,response|
         begin
@@ -73,6 +73,7 @@ module SoChaManager
           logger.info "Logfile: " + logfile_handle.original_filename
 
           @last_result = observer.result
+          
         ensure
           logger.info "Cleaning up"
           tmp_zip_file.close unless tmp_zip_file.closed?

@@ -60,7 +60,7 @@ class Round < ActiveRecord::Base
       slots.each_with_index do |slot,index|
         slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "round_score")
         score = result[index]
-        slot.score.set!(score[:score], score[:cause])
+        slot.score.set!(score[:score], score[:cause], score[:error_message])
         slot.save!
       end
       
