@@ -30,9 +30,9 @@
           <% end %>
         </td>
         <td><%= l(matchday.when, :format => :long) %></td>
-        <% if matchday.played? %>
+        <% if matchday.played? and (current_user.has_role?(:administrator) or matchday.published?) %>
           <td style="color: #090; font-weight: bold;"><%= matchday_status(matchday) %></td>
-        <% elsif matchday.running? %>
+        <% elsif matchday.running? and (current_user.has_role?(:administrator) or matchday.published?) %>
           <td><%= matchday_status(matchday) %></td>
         <% else %>
           <td style="color: #aaa;"><%= matchday_status(matchday) %></td>
