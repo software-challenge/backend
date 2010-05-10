@@ -102,12 +102,32 @@ public class Client extends XStreamClient implements IClient
 		for (RescueableClientException error : errors)
 		{
 			logger.warn("An error occured: ", error);
-			this.send(new ErrorResponse(packet, error.getMessage()));
+			Object resp = new ErrorResponse(packet, error.getMessage());
+			this.send(resp);
+			notifyOnError(resp);
 			
 			//if(error.getClass().equals(GameLogicException.class) && (error.getMessage()=="Move was invalid" || error.getMessage()=="Unknown ObjectType received.")){
 			if(error.getMessage() != "It's not your turn yet.") {
 				super.close();
 				logger.warn("Game closed because of GameLogicException! The message is: " + error.getMessage());
+			}
+		}
+	}
+	
+	private synchronized void notifyOnError(Object packet)
+	{
+		for (IClientListener listener : this.clientListeners)
+		{
+			try
+			{
+				listener.onError(this, packet);
+			}
+			catch (Exception e)
+			{
+				logger
+						.error(
+								"OnError Notification caused an exception.",
+								e);
 			}
 		}
 	}

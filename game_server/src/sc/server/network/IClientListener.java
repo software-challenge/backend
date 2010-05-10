@@ -15,4 +15,6 @@ public interface IClientListener
 	 */
 	void onRequest(Client source, PacketCallback packet)
 			throws RescueableClientException;
+	
+	void onError(Client source, Object packet);
 }
