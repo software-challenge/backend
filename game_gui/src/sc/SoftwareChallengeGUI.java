@@ -16,6 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.slf4j.LoggerFactory;
+
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.ContextDisplay;
@@ -82,6 +84,13 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		
 		if (GUIConfiguration.startMaximized) {
 			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
+		
+		if (GUIConfiguration.finaleMode) {
+			LoggerFactory.getLogger(this.getClass()).info("Starting server in finale mode");
+			presFac.getContextDisplay().getGameControlBar().btn_toBegin.setVisible(false);
+			presFac.getContextDisplay().getGameControlBar().btn_toEnd.setVisible(false);
+			presFac.getContextDisplay().getGameControlBar().stepSpeed.setVisible(false);
 		}
 	}
 
@@ -181,12 +190,14 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		CmdLineParser.Option replay = parser.addStringOption('r', "replay");
 		CmdLineParser.Option stepSpeedOption = parser.addIntegerOption("stepspeed");
 		CmdLineParser.Option maximizedOption = parser.addBooleanOption('m', "maximized");
+		CmdLineParser.Option finaleOption = parser.addBooleanOption('f', "finale");
 		parser.parse(params);
 		
 		String pluginPath = (String) parser.getOptionValue(plugin, null);
 		String replayFile = (String) parser.getOptionValue(replay, null);
 		int stepSpeed = ((Integer) parser.getOptionValue(stepSpeedOption, -1)).intValue();
 		boolean startMaximized = (Boolean) parser.getOptionValue(maximizedOption, false);
+		boolean finaleMode = (Boolean) parser.getOptionValue(finaleOption, false);
 		
 		if (pluginPath != null) {
 			GUIConfiguration.setPluginFolder(pluginPath);
@@ -203,6 +214,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		
 		if (startMaximized) {
 			GUIConfiguration.startMaximized = true;
+		}
+		
+		if (finaleMode) {
+			GUIConfiguration.finaleMode = true;
 		}
 	}
 

@@ -20,6 +20,7 @@ public class GUIConfiguration implements Serializable {
 	public static String replayFileToLoad = null;
 	public static int stepSpeedToSet = -1;
 	public static boolean startMaximized = false;
+	public static boolean finaleMode = false;
 
 	public enum ELanguage {
 		DE, EN

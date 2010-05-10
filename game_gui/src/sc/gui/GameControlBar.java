@@ -69,7 +69,7 @@ public class GameControlBar extends JPanel implements ActionListener {
 
 	private final Timer stepTimer;
 
-	private final JSlider stepSpeed;
+	public final JSlider stepSpeed;
 
 	private final JButton stepStartButton;
 
