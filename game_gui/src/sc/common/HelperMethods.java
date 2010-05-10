@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.helpers.StringHelper;
+import sc.logic.save.GUIConfiguration;
 import sc.shared.SlotDescriptor;
 
 public class HelperMethods {
@@ -48,6 +49,7 @@ public class HelperMethods {
 		if (ext.equals(".jar")) {
 			commandFragments.add("java");
 			commandFragments.add("-jar");
+			commandFragments.add("-Xmx" + GUIConfiguration.maxHeapSize + "m");
 		} else if (ext.equals(".exe")) {
 			// do nothing
 		} else {

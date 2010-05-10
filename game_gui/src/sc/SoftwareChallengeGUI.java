@@ -191,6 +191,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		CmdLineParser.Option stepSpeedOption = parser.addIntegerOption("stepspeed");
 		CmdLineParser.Option maximizedOption = parser.addBooleanOption('m', "maximized");
 		CmdLineParser.Option finaleOption = parser.addBooleanOption('f', "finale");
+		CmdLineParser.Option heapSizeOption = parser.addIntegerOption("max_client_heapsize");
 		parser.parse(params);
 		
 		String pluginPath = (String) parser.getOptionValue(plugin, null);
@@ -198,6 +199,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		int stepSpeed = ((Integer) parser.getOptionValue(stepSpeedOption, -1)).intValue();
 		boolean startMaximized = (Boolean) parser.getOptionValue(maximizedOption, false);
 		boolean finaleMode = (Boolean) parser.getOptionValue(finaleOption, false);
+		int heapSize = ((Integer) parser.getOptionValue(heapSizeOption, 1250)).intValue();
 		
 		if (pluginPath != null) {
 			GUIConfiguration.setPluginFolder(pluginPath);
@@ -219,6 +221,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		if (finaleMode) {
 			GUIConfiguration.finaleMode = true;
 		}
+		
+		GUIConfiguration.maxHeapSize = heapSize;
 	}
 
 	private static void setSystemLookAndFeel() {
