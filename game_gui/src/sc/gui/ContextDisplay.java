@@ -16,6 +16,7 @@ import javax.swing.KeyStroke;
 
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
+import sc.logic.save.GUIConfiguration;
 
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
@@ -204,8 +205,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	}
 
 	private void syncButtonStates(IObservation obs) {
-		buttonBar.btn_toBegin.setEnabled(!obs.isAtStart());
-		buttonBar.btn_toEnd.setEnabled(!obs.isAtEnd());
+		buttonBar.btn_toBegin.setEnabled(!obs.isAtStart() && !GUIConfiguration.finaleMode);
+		buttonBar.btn_toEnd.setEnabled(!obs.isAtEnd() && !GUIConfiguration.finaleMode);
 		buttonBar.btn_back.setEnabled(obs.hasPrevious());
 		buttonBar.btn_next.setEnabled(obs.hasNext());
 		buttonBar.btn_pause.setEnabled(obs.canTogglePause());
