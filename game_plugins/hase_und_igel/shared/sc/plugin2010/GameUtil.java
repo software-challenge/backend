@@ -126,7 +126,7 @@ public class GameUtil
 	private static boolean canMoveToAnyField(Board b, Player p)
 	{
 		int fields = calculateMoveableFields(p.getCarrotsAvailable());
-		for (int i = 0; i < fields; i++)
+		for (int i = 0; i <= fields; i++)
 		{
 			if (isValidToMove(b, p, i))
 			{
@@ -497,7 +497,7 @@ public class GameUtil
 		boolean canMove = false;
 		int maxDistance = GameUtil.calculateMoveableFields(player
 				.getCarrotsAvailable());
-		for (int i = 1; i < maxDistance; i++)
+		for (int i = 1; i <= maxDistance; i++)
 		{
 			canMove = canMove || isValidToMove(board, player, i);
 		}
