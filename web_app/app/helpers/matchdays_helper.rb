@@ -1,8 +1,8 @@
 	module MatchdaysHelper
 	  def matchday_status(matchday)
-	    if matchday.running? and (current_user.has_role?(:administrator) or matchday.published?)
+	    if matchday.running? and ((not current_user.nil? and current_user.has_role?(:administrator)) or matchday.published?)
 	      I18n.t("helpers.playing_in_progress")
-	    elsif matchday.played? and (current_user.has_role?(:administrator) or matchday.published?)
+	    elsif matchday.played? and ((not current_user.nil? and current_user.has_role?(:administrator)) or matchday.published?)
 	      I18n.t("helpers.played")
 	    else
 	      I18n.t("helpers.not_played_yet")
