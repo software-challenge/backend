@@ -26,6 +26,8 @@ public interface IRenderer
 	void requestMove();
 
 	void gameEnded(GameResult data);
+	
+	void gameError(String errorMessage);
 
 	void shown();
 

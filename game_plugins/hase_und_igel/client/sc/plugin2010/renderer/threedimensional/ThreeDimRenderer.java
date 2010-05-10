@@ -118,4 +118,11 @@ public class ThreeDimRenderer extends JPanel implements IRenderer
 
 	}
 
+	@Override
+	public void gameError(String errorMessage)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }
