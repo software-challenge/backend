@@ -16,6 +16,7 @@ import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.IPauseable;
+import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
@@ -180,6 +181,11 @@ public class GameRoom implements IGameListener
 	{
 		sendStateToObservers(data);
 		sendStateToPlayers(data);
+	}
+	
+	public void onClientError(Client source, Object errorPacket) {
+		// packet = createRoomPacket(errorPacket);
+		broadcast(errorPacket, true);
 	}
 
 	private void sendStateToPlayers(Object data)

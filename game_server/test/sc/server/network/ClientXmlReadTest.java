@@ -29,6 +29,13 @@ public class ClientXmlReadTest
 		{
 			// I don't care
 		}
+
+		@Override
+		public void onError(Client source, Object packet)
+		{
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	/**

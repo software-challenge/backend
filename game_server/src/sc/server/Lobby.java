@@ -1,6 +1,8 @@
 package sc.server;
 
 import java.io.IOException;
+import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +20,12 @@ import sc.protocol.requests.StepRequest;
 import sc.protocol.responses.RoomPacket;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
+import sc.server.gaming.PlayerRole;
 import sc.server.gaming.ReservationManager;
 import sc.server.network.Client;
 import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
+import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;
 
 /**
@@ -156,5 +160,15 @@ public class Lobby implements IClientManagerListener, IClientListener
 	public ClientManager getClientManager()
 	{
 		return this.clientManager;
+	}
+
+	@Override
+	public void onError(Client source, Object errorPacket)
+	{
+		for (Iterator<IClientRole> iterator = source.getRoles().iterator(); iterator.hasNext();)
+		{
+			PlayerRole role = (PlayerRole) iterator.next();
+			role.getPlayerSlot().getRoom().onClientError(source, errorPacket);
+		}
 	}
 }
