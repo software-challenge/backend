@@ -175,6 +175,7 @@ public class LogicFacade {
 		for (int i = 0; i < plugins.size(); i++) {
 			GUIPluginInstance pluginInstance = plugins.get(i);
 			if (pluginInstance.getPlugin().getPluginYear() > last) {
+				System.out.println("Show plugin: " + pluginInstance.getDescription().name());
 				result.add(pluginInstance.getDescription().name());
 			}
 		}
