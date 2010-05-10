@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ import sc.plugin2010.IGUIObservation;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.util.Configuration;
+import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
@@ -338,8 +341,20 @@ public class Observation implements IObservation, IUpdateListener,
 	public void onUpdate(Object sender)
 	{
 		assert sender == conGame;
-		GameState gameState = (GameState) conGame.getCurrentState();
-
+		Object stateObject = conGame.getCurrentState();
+		GameState gameState = null;
+		if (stateObject instanceof GameState) {
+			gameState = (GameState) stateObject;
+		} else if (stateObject instanceof ErrorResponse) {
+			//System.out.println("Error Reponse");
+			ErrorResponse error = (ErrorResponse) stateObject;
+			RenderFacade.getInstance().gameError(error.getMessage());
+			/*if (conGame.hasNext()) {
+				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+			}*/
+			notifyOnGameEnded(sender, conGame.getResult());
+		}
+		
 		if (gameState != null)
 		{
 			// ready();
@@ -429,5 +444,11 @@ public class Observation implements IObservation, IUpdateListener,
 	public boolean canTogglePause()
 	{
 		return conGame.canTogglePause();
+	}
+
+	@Override
+	public void onError(String errorMessage)
+	{
+		RenderFacade.getInstance().gameError(errorMessage);
 	}
 }

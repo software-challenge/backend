@@ -24,6 +24,7 @@ import sc.shared.GameResult;
 public class RenderFacade
 {
 	private IRenderer						observer;
+
 	private IRenderer						player1;
 	private IRenderer						player2;
 	private JPanel							panel;
@@ -66,6 +67,11 @@ public class RenderFacade
 	public enum GUIMode
 	{
 		CONNECT, OBSERVER, PLAYER_ONE, PLAYER_TWO;
+	}
+	
+	public IRenderer getObserver()
+	{
+		return observer;
 	}
 
 	public void setRenderContext(final JPanel panel,
@@ -337,6 +343,10 @@ public class RenderFacade
 					break;
 			}
 		}
+	}
+	
+	public void gameError(String errorMessage) {
+		observer.gameError(errorMessage);
 	}
 
 	/**

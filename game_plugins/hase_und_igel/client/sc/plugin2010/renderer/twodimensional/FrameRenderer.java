@@ -631,6 +631,10 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 			}
 		}
 	}
+	
+	public ActionBar getActionBar() {
+		return action;
+	}
 
 	@Override
 	public void updateChat(final String chatMsg)
@@ -869,5 +873,11 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 		{
 			FrameRenderer.this.repaint();
 		}
+	}
+
+	@Override
+	public void gameError(String errorMessage)
+	{
+		action.addNormal("Spieler hat einen Fehler gemacht: \n" + errorMessage);
 	}
 }
