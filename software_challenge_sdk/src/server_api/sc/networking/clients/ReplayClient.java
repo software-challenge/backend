@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.networking.FileSystemInterface;
+import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 
 import com.thoughtworks.xstream.XStream;
@@ -41,6 +42,11 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 			if (o instanceof GameResult)
 			{
 				listener.onGameOver(null, (GameResult) o);
+			}
+			else if (o instanceof ErrorResponse)
+			{
+				//logger.debug("Game Error: " + ((ErrorResponse)o).getMessage());
+				listener.onGameError((ErrorResponse)o);
 			}
 			else
 			{

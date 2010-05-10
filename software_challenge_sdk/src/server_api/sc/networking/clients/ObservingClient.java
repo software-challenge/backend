@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 
 import com.thoughtworks.xstream.XStream;
@@ -96,6 +97,14 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		for (IUpdateListener listener : this.listeners)
 		{
 			listener.onUpdate(this);
+		}
+	}
+	
+	protected void notifyOnError(String errorMessage)
+	{
+		for (IUpdateListener listener : this.listeners)
+		{
+			listener.onError(errorMessage);
 		}
 	}
 
@@ -270,5 +279,14 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public boolean isReplay()
 	{
 		return this.replay;
+	}
+
+	@Override
+	public void onGameError(ErrorResponse error)
+	{
+		if (isAffected(null))
+		{
+			addObservation(error);
+		}
 	}
 }
