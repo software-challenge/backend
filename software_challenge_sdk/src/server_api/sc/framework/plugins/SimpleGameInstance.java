@@ -69,4 +69,6 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 			}
 		}
 	}
+	
+	
 }
