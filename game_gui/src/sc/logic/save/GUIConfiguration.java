@@ -22,6 +22,7 @@ public class GUIConfiguration implements Serializable {
 	public static boolean startMaximized = false;
 	public static boolean finaleMode = false;
 	public static int maxHeapSize = 1250;
+	public static int minStepSpeed = 200;
 
 	public enum ELanguage {
 		DE, EN

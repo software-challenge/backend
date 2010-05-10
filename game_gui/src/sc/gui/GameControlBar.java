@@ -19,6 +19,7 @@ import javax.swing.event.ChangeListener;
 import org.slf4j.LoggerFactory;
 
 import sc.common.HelperMethods;
+import sc.logic.save.GUIConfiguration;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -191,7 +192,7 @@ public class GameControlBar extends JPanel implements ActionListener {
 
 	private int getLogarithmicSliderValue(long value) {
 		return (int) getLogarithmicSliderValue(value, stepSpeed.getMinimum(),
-				stepSpeed.getMaximum(), 200, 5000);
+				stepSpeed.getMaximum(), GUIConfiguration.minStepSpeed, 5000);
 	}
 
 	private double getLogarithmicSliderValue(long value, long srcMin,
