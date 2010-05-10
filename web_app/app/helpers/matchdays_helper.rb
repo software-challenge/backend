@@ -3,7 +3,7 @@
 	    if matchday.running? and ((not current_user.nil? and current_user.has_role?(:administrator)) or matchday.published?)
 	      I18n.t("helpers.playing_in_progress")
 	    elsif matchday.played? and ((not current_user.nil? and current_user.has_role?(:administrator)) or matchday.published?)
-	      I18n.t("helpers.played")
+	      I18n.t("helpers.played") + (matchday.published? ? "" : "but not published")
 	    else
 	      I18n.t("helpers.not_played_yet")
 	    end
