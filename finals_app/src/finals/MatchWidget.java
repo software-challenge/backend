@@ -9,9 +9,11 @@ import java.awt.Point;
 import java.awt.Shape;
 import java.awt.Stroke;
 
+import javax.swing.JPanel;
+
 public class MatchWidget {
 
-	public MatchWidget(Panel pan, Panel cpan, float scale, Point position,
+	public MatchWidget(JPanel pan, JPanel cpan, float scale, Point position,
 			Match match) {
 		this.pan = pan;
 		this.contestPan = cpan;
@@ -23,8 +25,8 @@ public class MatchWidget {
 		this.paint();
 	}
 
-	private Panel pan;
-	private Panel contestPan;
+	private JPanel pan;
+	private JPanel contestPan;
 	private Point position;
 	private Match match;
 	private boolean selected = false;

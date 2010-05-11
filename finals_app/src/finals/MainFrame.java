@@ -1,6 +1,7 @@
 package finals;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,13 +14,20 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.Action;
@@ -27,15 +35,19 @@ import javax.swing.ActionMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.metal.MetalIconFactory.FolderIcon16;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -51,8 +63,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1328120526598916894L;
 	LinkedList<Final_Step> steps = new LinkedList<Final_Step>();
 	int currentStep = 0;
-	Panel pan;
-	Panel contestPanel;
+	JPanel pan;
+	JPanel contestPanel;
 	JButton nextButton = new JButton();
 	JButton lastButton = new JButton();
 	JMenuItem showPresentation;
@@ -64,9 +76,11 @@ public class MainFrame extends JFrame implements ActionListener {
 	ConfigsFrame configFrame;
 	JMenuBar menuBar;
 	JMenuItem configItem;
+	JMenuItem startTestGame;
 	File finaleArchiv;
 	JFrame fileFrame;
 	JFileChooser fileSelectionFrame;
+	String titleText = "Software Challenge Finale: ";
 
 	MainFrame(String[] args) {
 		this.setEnabled(false);
@@ -74,6 +88,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		// Create Menu
 		menuBar = new JMenuBar();
+		
 		configItem = new JMenuItem("Konfiguration");
 		configItem.setVisible(true);
 		configItem.addActionListener(this);
@@ -84,6 +99,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		showPresentation.addActionListener(this);
 		showPresentation.setSelected(false);
 		files.add(showPresentation);
+		startTestGame = new JMenuItem("Einführungsspiel starten");
+		startTestGame.setVisible(true);
+		startTestGame.addActionListener(this);
+		files.add(startTestGame);
 
 		menuBar.add(files);
 		menuBar.setVisible(true);
@@ -93,17 +112,24 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.c = new GridBagConstraints();
 		c.fill = GridBagConstraints.NONE;
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setTitle("Hund");
+		this.setTitle(titleText);
 		this.setSize(1000, 1000);
+		this.setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
 		this.setVisible(true);
-		pan = new Panel();
-		pan.setSize(300, 300);
+		pan = new JPanel();
+		pan.setSize(600,400);
+	
+		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
 		c.gridy = 0;
-		c.weightx = 0.5;
-		c.weighty = 0.5;
-		this.add(pan, c);
+		c.weightx = 0.7;
+		c.weighty = 0.7;
+		c.anchor = GridBagConstraints.CENTER;
+		//pan.setAlignmentX(RIGHT_ALIGNMENT);
+		//pan.setAlignmentY(CENTER_ALIGNMENT);
+		mgr.addLayoutComponent(pan,c);
+		this.add(pan);
 
 		// Config the contest window!
 		this.contestFrame = new PresentationFrame(this);
@@ -111,7 +137,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.contestFrame.setTitle("asgard");
 		this.contestFrame.setVisible(false);
 		// Add contestPanel to contest window
-		this.contestPanel = new Panel();
+		this.contestPanel = new JPanel();
 		contestFrame.add(contestPanel);
 		
 	
@@ -149,17 +175,17 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		try {
 			ZipFile zipFile = new ZipFile(finaleArchiv);
+			unzip(zipFile);
 			parseInput(zipFile.getInputStream(zipFile.getEntry("final.xml")));
-			
-		} catch (IOException e) {
-			System.out.println("Could not find file: " + finaleArchiv.getPath());
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Beim Laden des Archivs trat ein Fehler auf!");
+			fileFrame.setVisible(true);
 			return;
-		} catch (ParserConfigurationException e) {
-			System.out.println("Parser misconfiguration detected");
-		} catch (SAXException e) {
-			System.out.println("XML file is corrupted!");
 		}
-	
+		
+		config.load(this);
+		
+		this.setTitle(titleText + config.getSpielname());
 		
 		for (Final_Step step : steps){
 			step.createStepWidgets();
@@ -167,12 +193,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		
 		steps.get(0).showAllNames();
-		// Add dummy config
-		//config = new FinalsConfiguration("HUND", "Affe gegen Kanacke!", new Date(), 100);
-		// Config frame
-		
+
 		configFrame = new ConfigsFrame(config);
-		configFrame.setSize(400,400);
+		configFrame.main = this;
+		configFrame.setSize(300,200);
 		configFrame.setVisible(false);
 		
 		JPanel grp = new JPanel();
@@ -198,14 +222,38 @@ public class MainFrame extends JFrame implements ActionListener {
 		grp.add(nextButton);
 		c.weightx = 0.25;
 		c.weighty = 0.25;
-		c.fill = GridBagConstraints.NONE;
+		//c.fill = GridBagConstraints.NONE;
 		c.gridy = 1;
-		c.gridx = 0;
-		grp.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-		grp.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		//c.gridx = 0;
+		//grp.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+		//grp.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 		grp.setVisible(true);
-		this.add(grp, c);
+		mgr.addLayoutComponent(grp,c);
+		this.add(grp);
+
 		
+		
+	}
+	
+	private void unzip(ZipFile in) throws IOException{
+	    Enumeration enumeration = in.entries();
+	    while (enumeration.hasMoreElements()) {
+	      ZipEntry zipEntry = (ZipEntry) enumeration.nextElement();
+	      System.out.println("Unzipping: " + zipEntry.getName());
+	      BufferedInputStream bis = new BufferedInputStream(in.getInputStream(zipEntry));
+	      int size;
+	      byte[] buffer = new byte[2048];
+	      BufferedOutputStream bos = new BufferedOutputStream(
+	          new FileOutputStream(zipEntry.getName()), buffer.length);
+	      while ((size = bis.read(buffer, 0, buffer.length)) != -1) {
+	        bos.write(buffer, 0, size);
+	      }
+	      bos.flush();
+	      bos.close();
+	      bis.close();
+	      File n = new File(zipEntry.getName());
+	      n.deleteOnExit();
+	    }
 	}
 
 	@Override
@@ -236,6 +284,18 @@ public class MainFrame extends JFrame implements ActionListener {
 			config.setOpenReplay(openReplay.isSelected());
 		}
 		
+		if(e.getSource() == startTestGame){
+			if(config.introReplayPath == null){
+				JOptionPane.showMessageDialog(this,"Bitte wählen die zuerst im Konfigurationsmenu ein entsprechendes Replay aus");
+			}else{
+				System.out.println("Running intro replay!");
+				boolean t = config.isOpenReplay();
+				config.setOpenReplay(true);
+				runReplay(config.introReplayPath);
+				config.setOpenReplay(t);
+			}
+		}
+		
 		Final_Step curr = steps.get(currentStep);
 		if (e.getSource() == nextButton) {
 			if (curr.isFinished() && currentStep < steps.size() - 1) {
@@ -256,7 +316,6 @@ public class MainFrame extends JFrame implements ActionListener {
 			configFrame.setVisible(true);
 			configFrame.repaint();
 		}
-
 	}
 	
 	public void addFinalsStep(Final_Step step, int order){
@@ -268,5 +327,23 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		steps.add(step);
 	}
-
+	public void runReplay(String path){
+		if(config.isOpenReplay()){
+			try {
+				Process prcs;
+				System.out.println("Executing Server:");
+				prcs = Runtime.getRuntime().exec("java -jar server/softwarechallenge-gui.jar --plugin server/plugins/ --stepspeed "+config.getSpeed()+" --maximized -r "+path);
+				InputStream cmd_output = prcs.getInputStream();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(cmd_output));
+				String out = reader.readLine();
+				while(out != null){
+					System.out.println(out);
+					out = reader.readLine();
+				}		
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}					
+		}
+	}
 }
