@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream.GetField;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -133,6 +134,11 @@ public class Final_Step {
 	}
 
 	public void stepBackward() {
+		if(isSmallFinals() && !getFinals().isInit()){
+			getFinals().stepBackward();
+			return;
+		}
+		
 		for (int i = matchWidgets.size() - 1; i >= 0; i--) {
 			if (matchWidgets.get(i).getMatch().getCurrentStep() > 0) {
 				matchWidgets.get(i).getMatch().undoLastStep();
@@ -142,17 +148,32 @@ public class Final_Step {
 			}
 		}
 		for (int i = matchWidgets.size()-1; i >= 0; i--) {
-			if(matchWidgets.get(i).getMatch().getCurrentStep() < 6){
-				if(getNextStep() != null && i == 1){
-					System.out.println(i/2);
+			if(!matchWidgets.get(i).isFinished()){
+				MatchWidget followingWid;
+				if(order == 1){
+					followingWid = getNextStep().matchWidgets.get(i/2);
 					if (i % 2 == 0) {
-						//getNextStep().matchWidgets.get(i/2).setSecondNameVisible(false);
-						getNextStep().matchWidgets.get(i/2).setFirstNameVisibe(false);
+						followingWid.setFirstNameVisibe(false);
 					}else{
-						//getNextStep().matchWidgets.get(i/2).setFirstNameVisibe(false);
-						getNextStep().matchWidgets.get(i/2).setSecondNameVisible(false);
+						followingWid.setSecondNameVisible(false);
 					}
-					getNextStep().matchWidgets.get(i/2).paint();
+					followingWid.paint();
+				}else if (order == 2) {
+					if (i % 2 == 0) {
+						followingWid = getNextStep().matchWidgets.get(0);
+						followingWid.setFirstNameVisibe(false);
+						followingWid.paint();
+						followingWid = getSmallFinals().matchWidgets.get(0);
+						followingWid.setSecondNameVisible(false);
+						followingWid.paint();
+					}else{
+						followingWid = getNextStep().matchWidgets.get(0);
+						followingWid.setSecondNameVisible(false);
+						followingWid.paint();
+						followingWid = getSmallFinals().matchWidgets.get(0);
+						followingWid.setFirstNameVisibe(false);
+						followingWid.paint();
+					}
 				}
 			}
 		}
@@ -161,13 +182,13 @@ public class Final_Step {
 
 	public void doAllMatches() {
 		for (MatchWidget m : matchWidgets) {
-			m.getMatch().doAllSteps();
+			m.doAll(order == 1);
 		}
 	}
 
 	public void undoAllMatches() {
 		for (MatchWidget m : matchWidgets) {
-			m.getMatch().undoAllSteps();
+			m.undoAll(order == 1);
 		}
 	}
 
@@ -235,6 +256,14 @@ public class Final_Step {
 		boolean isInitial = true;
 		for(MatchWidget wid : matchWidgets) if(wid.getMatch().getCurrentStep()!=0) isInitial = false;
 		return isInitial;
+	}
+	
+	public Final_Step getSmallFinals(){
+		return steps.get(steps.size()-1);
+	}
+	
+	public Final_Step getFinals(){
+		return steps.get(steps.size()-2);
 	}
 	
 }

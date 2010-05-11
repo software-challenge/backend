@@ -67,6 +67,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	JPanel contestPanel;
 	JButton nextButton = new JButton();
 	JButton lastButton = new JButton();
+	JButton undoAll = new JButton();
+	JButton doAll = new JButton();
 	JMenuItem showPresentation;
 	JCheckBox openReplay;
 	FinalsConfiguration config;
@@ -201,6 +203,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		JPanel grp = new JPanel();
 		
+		doAll.setText(">>");
+		doAll.addActionListener(this);
+		doAll.setVisible(true);
+		
 		nextButton = new JButton();
 		nextButton.setText(">");
 		nextButton.addActionListener(this);
@@ -216,10 +222,16 @@ public class MainFrame extends JFrame implements ActionListener {
 		lastButton.setText("<");
 		lastButton.addActionListener(this);
 		lastButton.setVisible(true);
-
+		
+		undoAll.setText("<<");
+		undoAll.addActionListener(this);
+		undoAll.setVisible(true);
+		
+		grp.add(undoAll);
 		grp.add(lastButton);
 		grp.add(openReplay);
 		grp.add(nextButton);
+		grp.add(doAll);
 		c.weightx = 0.25;
 		c.weighty = 0.25;
 		//c.fill = GridBagConstraints.NONE;
@@ -309,6 +321,18 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 			curr.stepBackward();
 			this.repaint();
+		}else if (e.getSource() == doAll) {
+			for (Final_Step step : steps) {
+				step.doAllMatches();
+				step.repaint();
+				currentStep = steps.size()-1;
+			}
+		}else if (e.getSource() == undoAll) {
+			for (Final_Step step : steps) {
+				step.undoAllMatches();
+				step.repaint();
+				currentStep = 0;
+			}
 		}else if (e.getSource() == showPresentation) {
 			contestFrame.setVisible(true);
 			contestFrame.repaint();

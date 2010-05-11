@@ -159,5 +159,28 @@ public class MatchWidget {
 	private int scl(int value) {
 		return (int) (scale * value);
 	}
+	
+	public void undoAll(boolean isFirstStep){
+		match.undoAllSteps();
+		selected = false;
+		if(!isFirstStep){
+			firstNameVisibe = false;
+			secondNameVisible = false;
+		}
+	}
+	
+	public void doAll(boolean isFirstStep){
+		undoAll(isFirstStep);
+		firstNameVisibe = true;
+		secondNameVisible = true;
+		while(!match.isFinished()){
+			match.doNextStep();
+		}
+	}
+	
+	
+	public boolean isFinished(){
+		return match.isFinished();
+	}
 
 }
