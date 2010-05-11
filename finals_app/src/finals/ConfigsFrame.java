@@ -1,5 +1,6 @@
 package finals;
 
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -7,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -27,16 +29,26 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 	JLabel speedLabel;
 	JSlider speed;
 	String name = "";
+	MainFrame main;
+	JLabel introLabel;
+	JButton openIntroSelectionButton;
+	JFileChooser chooser;
 
 	public ConfigsFrame(FinalsConfiguration config) {
+		Insets ins = new Insets(5,5,5,5);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setTitle("Konfiguration: Finale");
 		GridLayout gl = new GridLayout();
 		gl.setColumns(1);
 		gl.setRows(4);
+		gl.setVgap(10);
+		gl.setHgap(10);
 		this.setLayout(gl);
 
 		this.config = config;
+		
+
+		chooser = new JFileChooser();
 		
 		contestNameLabel = new JLabel();
 		contestNameLabel.setText("Spielname");
@@ -48,12 +60,21 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		
 		startCommandLabel = new JLabel();
 		startCommandLabel.setText("Server Startbefehl");
-		startCommandLabel.setVisible(true);
-		this.add(startCommandLabel);
+		startCommandLabel.setVisible(false);
+		//this.add(startCommandLabel);
 		
 		startCommand = new JTextField(config.getServerStartupCommand());
-		this.add(startCommand);
+		startCommand.setVisible(false);
+		//this.add(startCommand);
 		
+		introLabel = new JLabel("Replay des Einführungsspiels:");
+		introLabel.setVisible(true);
+		this.add(introLabel);
+		
+		openIntroSelectionButton = new JButton("Durchsuchen");
+		openIntroSelectionButton.setVisible(true);
+		openIntroSelectionButton.addActionListener(this);
+		this.add(openIntroSelectionButton);
 		
 		speedLabel = new JLabel();
 		speedLabel.setText("Wiedergabegeschwindigkeit");
@@ -69,7 +90,8 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 
 		save = new JButton("Save Configuration");
 		save.addActionListener(this);
-		save.setMargin(new Insets(5,5,5,5));
+		save.setAlignmentX(RIGHT_ALIGNMENT);
+		save.setMargin(ins);
 		this.add(save);
 		
 	}
@@ -80,6 +102,19 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 			config.setSpeed(speed.getValue());
 			config.setSpielname(contestName.getText());
 			config.setServerStartupCommand(startCommand.getText());
+			if(main != null){
+				main.setTitle(main.titleText+config.getSpielname());
+			}
+			if(chooser.getSelectedFile() != null){
+				config.introReplayPath = chooser.getSelectedFile().toString();
+				System.out.println("Intro path: "+config.introReplayPath);
+			}
+			config.save(main);
+			this.setVisible(false);
+		}
+		
+		if (e.getSource() == openIntroSelectionButton) {
+			chooser.showOpenDialog(this);
 		}
 	}
 

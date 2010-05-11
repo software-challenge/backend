@@ -40,8 +40,8 @@ public class Final_Step {
 	MainFrame main;
 	boolean smallFinals = false;
 	int order;
-	Panel pan;
-	Panel contestPanel;
+	JPanel pan;
+	JPanel contestPanel;
 
 	public void showAllNames(){
 		for (MatchWidget w : this.matchWidgets) {
@@ -67,7 +67,7 @@ public class Final_Step {
 			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m);
 			}else{
 				wid = new MatchWidget(pan, contestPanel, 1f, new Point(
-						300 + stepCount * 250, currentY), m);
+						stepCount * 250, currentY), m);
 			}
 				
 			this.matchWidgets.add(wid);
@@ -101,24 +101,7 @@ public class Final_Step {
 			if (!m.getMatch().isFinished()) {
 				System.out.println(m);
 				m.setSelected(true);
-				if(main.config.isOpenReplay()){
-					try {
-						Process prcs;
-						prcs = Runtime.getRuntime().exec("java -jar server/softwarechallenge-gui.jar --plugin server/plugins/ --stepspeed "+main.config.getSpeed()+" --maximized -r replays/"+m.getMatch().getNextReplayName());
-						InputStream cmd_output = prcs.getInputStream();
-						BufferedReader reader = new BufferedReader(new InputStreamReader(cmd_output));
-						String out = reader.readLine();
-						while(out != null){
-							System.out.println(out);
-							out = reader.readLine();
-						}
-						
-						
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}					
-				}
+				main.runReplay("replays/"+m.getMatch().getNextReplayName());
 				m.getMatch().doNextStep();
 				return;
 			} else {
