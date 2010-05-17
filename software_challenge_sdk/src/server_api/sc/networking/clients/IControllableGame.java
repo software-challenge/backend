@@ -21,6 +21,8 @@ public interface IControllableGame extends IPollsUpdates
 	public void cancel();
 
 	public Object getCurrentState();
+	
+	public Object getCurrentError();
 
 	public boolean isAtEnd();
 

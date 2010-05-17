@@ -46,7 +46,7 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 			else if (o instanceof ErrorResponse)
 			{
 				//logger.debug("Game Error: " + ((ErrorResponse)o).getMessage());
-				listener.onGameError((ErrorResponse)o);
+				listener.onGameError(null, (ErrorResponse)o);
 			}
 			else
 			{

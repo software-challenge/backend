@@ -183,8 +183,22 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		{
 			return null;
 		}
-
-		return this.history.get(this.position);
+		
+		int pos = this.position;
+		while (this.history.get(pos) instanceof ErrorResponse) {
+			pos--;
+		}
+		return this.history.get(pos);
+	}
+	
+	public Object getCurrentError() {
+		if (this.history.size() == 0)
+		{
+			return null;
+		}
+		
+		Object state = this.history.get(this.position);
+		return (state instanceof ErrorResponse ? state : null);
 	}
 
 	@Override
@@ -235,11 +249,13 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void onGameOver(String roomId, GameResult result)
 	{
+		logger.info("Saving GameResult");
+		
 		if (this.result != null)
 		{
 			logger.warn("Received two GameResults");
 		}
-
+		
 		this.gameOver = true;
 		this.result = result;
 		
@@ -282,9 +298,10 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	}
 
 	@Override
-	public void onGameError(ErrorResponse error)
+	public void onGameError(String roomId, ErrorResponse error)
 	{
-		if (isAffected(null))
+		LoggerFactory.getLogger(this.getClass()).info("Client error detected");
+		if (isAffected(roomId))
 		{
 			addObservation(error);
 		}

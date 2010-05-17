@@ -109,12 +109,18 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			}
 			else if (packet.getData() instanceof GameResult)
 			{
+				logger.info("Received game result");
 				onGameOver(roomId, (GameResult) packet.getData());
 			}
 			else if (packet.getData() instanceof GamePausedEvent)
 			{
 				onGamePaused(roomId, ((GamePausedEvent) packet.getData())
 						.getNextPlayer());
+			}
+			else if (packet.getData() instanceof ErrorResponse)
+			{
+				logger.debug("Received error packet");
+				onError(roomId, ((ErrorResponse) packet.getData()));
 			}
 			else
 			{
@@ -138,21 +144,12 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			this.rooms.remove(roomId);
 			onGameLeft(roomId);
 		}
-		else if (o instanceof ErrorResponse)
+		/*else if (o instanceof ErrorResponse)
 		{
 			ErrorResponse response = (ErrorResponse) o;
-			if (response.getOriginalRequest() != null)
-			{
-				logger.warn("The request {} caused the following error: {}",
-						response.getOriginalRequest().getClass(), response
-								.getMessage());
-			}
-			else
-			{
-				logger.warn("An error occured: {}", response.getMessage());
-			}
+			
 			onError(response);
-		}
+		}*/
 		else
 		{
 			onCustomObject(o);
@@ -280,11 +277,25 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		}
 	}
 
-	protected void onError(ErrorResponse error)
+	protected void onError(String roomId, ErrorResponse error)
 	{
+		if (error.getOriginalRequest() != null)
+		{
+			logger.warn("The request {} caused the following error: {}",
+					error.getOriginalRequest().getClass(), error
+							.getMessage());
+		}
+		else
+		{
+			logger.warn("An error occured: {}", error.getMessage());
+		}
 		for (ILobbyClientListener listener : this.listeners)
 		{
-			listener.onError(error);
+			listener.onError(roomId, error);
+		}
+		for (IHistoryListener listener : this.historyListeners)
+		{
+			listener.onGameError(roomId, error);
 		}
 	}
 

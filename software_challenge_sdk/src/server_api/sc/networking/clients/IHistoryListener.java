@@ -9,5 +9,5 @@ public interface IHistoryListener
 
 	public void onGameOver(String roomId, GameResult o);
 	
-	public void onGameError(ErrorResponse error);
+	public void onGameError(String roomId, ErrorResponse error);
 }
