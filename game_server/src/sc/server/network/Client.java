@@ -103,7 +103,7 @@ public class Client extends XStreamClient implements IClient
 		{
 			logger.warn("An error occured: ", error);
 			Object resp = new ErrorResponse(packet, error.getMessage());
-			this.send(resp);
+			//this.send(resp);
 			notifyOnError(resp);
 			
 			//if(error.getClass().equals(GameLogicException.class) && (error.getMessage()=="Move was invalid" || error.getMessage()=="Unknown ObjectType received.")){
