@@ -38,6 +38,7 @@ module SoChaManager
       @data = io || ""
       @callback = block if block_given?
       @last_data_timestamp = Time.now
+      @error_message = ""
       append START_TAG
     end
 
