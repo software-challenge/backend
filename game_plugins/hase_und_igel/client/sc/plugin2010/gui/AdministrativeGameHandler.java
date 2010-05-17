@@ -4,6 +4,7 @@
 package sc.plugin2010.gui;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Move;
 import sc.plugin2010.Player;
@@ -44,7 +45,7 @@ public class AdministrativeGameHandler implements IGameHandler
 	}
 
 	@Override
-	public void gameEnded(GameResult data)
+	public void gameEnded(GameResult data, FigureColor color, String errorMessage)
 	{
 	}
 }

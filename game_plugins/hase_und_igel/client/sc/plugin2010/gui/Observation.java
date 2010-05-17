@@ -3,6 +3,7 @@
  */
 package sc.plugin2010.gui;
 
+import java.awt.image.renderable.RenderContext;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import sc.plugin2010.GameState;
 import sc.plugin2010.IGUIObservation;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
+import sc.plugin2010.renderer.twodimensional.FrameRenderer;
 import sc.plugin2010.util.Configuration;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
@@ -177,9 +179,7 @@ public class Observation implements IObservation, IUpdateListener,
 			result += "Leeres Spielresultat!";
 			return result;
 		}
-
-		result += "Spielresultat:\n";
-
+		
 		GameState gameState = (GameState) conGame.getCurrentState();
 		Game game = gameState.getGame();
 
@@ -198,6 +198,14 @@ public class Observation implements IObservation, IUpdateListener,
 					.getDisplayName();
 			name2 = game.getActivePlayer().getDisplayName();
 		}
+		
+		if (conGame.getCurrentError() != null) {
+			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
+			result += (game.getActivePlayer().getColor() == FigureColor.RED ? name1 : name2);
+			result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
+		}
+
+		result += "Spielresultat:\n";
 
 		if (data.getScores().get(0).getCause() == ScoreCause.LEFT)
 		{
@@ -296,7 +304,7 @@ public class Observation implements IObservation, IUpdateListener,
 			{
 				try
 				{
-					listener.onGameEnded(data, createGameEndedString(data));
+					listener.onGameEnded(data, null);
 				}
 				catch (Exception e)
 				{
@@ -306,7 +314,18 @@ public class Observation implements IObservation, IUpdateListener,
 			}
 		}
 
-		handler.gameEnded(data);
+		Object errorObject = conGame.getCurrentError();
+		String errorMessage = null;
+		if (errorObject != null) {
+			errorMessage = ((ErrorResponse) errorObject).getMessage();
+		}
+		Object curStateObject = conGame.getCurrentState();
+		FigureColor color = null;
+		if (curStateObject != null) {
+			GameState gameState = (GameState) curStateObject;
+			color = gameState.getGame().getActivePlayer().getColor();
+		}
+		handler.gameEnded(data, color, errorMessage);
 	}
 
 	private void notifyOnNewTurn()
@@ -341,18 +360,22 @@ public class Observation implements IObservation, IUpdateListener,
 	public void onUpdate(Object sender)
 	{
 		assert sender == conGame;
-		Object stateObject = conGame.getCurrentState();
-		GameState gameState = null;
-		if (stateObject instanceof GameState) {
-			gameState = (GameState) stateObject;
-		} else if (stateObject instanceof ErrorResponse) {
-			//System.out.println("Error Reponse");
-			ErrorResponse error = (ErrorResponse) stateObject;
-			RenderFacade.getInstance().gameError(error.getMessage());
-			/*if (conGame.hasNext()) {
+		GameState gameState = (GameState) conGame.getCurrentState();
+		Object errorObject = conGame.getCurrentError();
+		if (errorObject != null) {
+			ErrorResponse error = (ErrorResponse) errorObject;
+			logger.info("Received error response");
+			//RenderFacade.getInstance().gameError(error.getMessage());
+			//RenderFacade.getInstance().getObserver().
+			//notifyOnGameEnded(sender, conGame.getResult());
+			/*//notifyOnGameEnded(sender, conGame.getResult());
+			if (conGame.hasNext())
+			{
 				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+			} else {
+				logger.debug("Game ended");
+				//notifyOnGameEnded(sender, conGame.getResult());
 			}*/
-			notifyOnGameEnded(sender, conGame.getResult());
 		}
 		
 		if (gameState != null)

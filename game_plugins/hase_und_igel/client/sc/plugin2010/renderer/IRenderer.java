@@ -4,8 +4,10 @@
 package sc.plugin2010.renderer;
 
 import java.awt.Image;
+import java.util.Map;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.Player;
 import sc.shared.GameResult;
 
@@ -25,7 +27,7 @@ public interface IRenderer
 
 	void requestMove();
 
-	void gameEnded(GameResult data);
+	void gameEnded(GameResult data, FigureColor color, String errorMessage);
 	
 	void gameError(String errorMessage);
 

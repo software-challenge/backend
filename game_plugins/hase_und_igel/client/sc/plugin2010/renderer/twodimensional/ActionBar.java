@@ -78,6 +78,7 @@ public class ActionBar extends JPanel
 		catch (BadLocationException e)
 		{
 			// should not happen
+			System.err.println(e.getStackTrace());
 		}
 	}
 
