@@ -106,6 +106,8 @@ public class ReplayBuilder
 			if (result != null)
 			{
 				objectOut.writeObject(result);
+			} else {
+				logger.warn("Result was null while saving replay");
 			}
 
 			objectOut.flush();
