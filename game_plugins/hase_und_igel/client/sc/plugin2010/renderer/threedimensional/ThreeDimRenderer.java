@@ -5,10 +5,12 @@ package sc.plugin2010.renderer.threedimensional;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Player;
 import sc.plugin2010.gui.HumanGameHandler;
@@ -88,7 +90,7 @@ public class ThreeDimRenderer extends JPanel implements IRenderer
 	}
 
 	@Override
-	public void gameEnded(GameResult data)
+	public void gameEnded(GameResult data, FigureColor color, String errorMessage)
 	{
 		// TODO Auto-generated method stub
 

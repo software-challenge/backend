@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.EPlayerId;
+import sc.plugin2010.FigureColor;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.Player;
 import sc.plugin2010.renderer.threedimensional.ThreeDimRenderer;
@@ -353,21 +354,21 @@ public class RenderFacade
 	 * @param data
 	 * @param id
 	 */
-	public void gameEnded(GameResult data, EPlayerId target)
+	public void gameEnded(GameResult data, EPlayerId target, FigureColor color, String errorMessage)
 	{
 		if (panel != null)
 		{
 			if (target == EPlayerId.OBSERVER)
 			{
-				observer.gameEnded(data);
+				observer.gameEnded(data, color, errorMessage);
 			}
 			else if (target == EPlayerId.PLAYER_ONE)
 			{
-				player1.gameEnded(data);
+				player1.gameEnded(data, color, errorMessage);
 			}
 			else if (target == EPlayerId.PLAYER_TWO)
 			{
-				player2.gameEnded(data);
+				player2.gameEnded(data, color, errorMessage);
 			}
 		}
 	}

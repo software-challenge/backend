@@ -1,6 +1,7 @@
 package sc.plugin2010;
 
 import java.io.IOException;
+import java.util.Map;
 
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
@@ -19,6 +20,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 	protected IGameHandler	handler;
 	private LobbyClient		client;
 	private String			gameType;
+	private String			error;
 
 	// current id to identify the client instance internal
 	private EPlayerId		id;
@@ -44,6 +46,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 		this.id = id;
 		this.port = port;
 		this.host = host;
+		error = null;
 	}
 
 	public void setHandler(IGameHandler handler)
@@ -100,9 +103,10 @@ public abstract class AbstractClient implements ILobbyClientListener
 	}
 
 	@Override
-	public void onError(ErrorResponse response)
+	public void onError(String roomId, ErrorResponse response)
 	{
 		System.err.println(response.getMessage());
+		this.error = response.getMessage();
 	}
 
 	@Override
@@ -187,7 +191,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 
 		if (handler != null)
 		{
-			handler.gameEnded(data);
+			handler.gameEnded(data, mycolor, this.error);
 		}
 	}
 
@@ -201,4 +205,9 @@ public abstract class AbstractClient implements ILobbyClientListener
 	{
 		// not needed
 	}
+	
+	public String getError() {
+		return error;
+	}
+	
 }

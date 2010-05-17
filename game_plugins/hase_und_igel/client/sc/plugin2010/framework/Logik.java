@@ -50,7 +50,7 @@ public class Logik implements IGameHandler
 	}
 
 	@Override
-	public void gameEnded(GameResult data)
+	public void gameEnded(GameResult data, sc.plugin2010.FigureColor color, String errorMessage)
 	{
 		String[] redResults = data.getScores().get(0).toStrings();
 		String[] blueResults = data.getScores().get(1).toStrings();
