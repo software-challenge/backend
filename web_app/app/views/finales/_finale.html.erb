@@ -7,3 +7,7 @@
         <%= render :partial => "matchday", :locals => {:dayname => dayname, :options => options} %>
       </div>
   <% end %>   
+
+  <% if not @finale.running? %> 
+    <input type="hidden" id="finale_stopped" value="1">
+  <% end %>

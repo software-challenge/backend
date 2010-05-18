@@ -1,7 +1,16 @@
-<b>Aktueller Status: </b> <%= matchesDone(matchday) %> von <%= matchesCount(matchday)%> gespielt <br>
-<b>Verbleibende Zeit: </b>~&nbsp;
-<%= ((matchesCount(matchday).to_f - matchesDone(matchday).to_f) / 6.0).ceil * 5 %> Minuten
-<br> 
-<b>Zeit für gesamten Spieltag: </b>~&nbsp; 
-<%= (matchesCount(matchday).to_f / 6.0).ceil * 5 %> Minuten <br>
+<% rDone = matchday.rounds_done %>
+<% rCount = matchday.rounds_count %>
 
+<b>Aktueller Status: </b> 
+
+<% if rCount - rDone == 0 %>
+  Fertig
+  <input type="hidden" id="matchday_finished_<%= matchday.id %>" value="1">
+<% else %>
+  <%= rDone %> von <%= rCount %> gespielt <br>
+  <b>Verbleibende Zeit: </b>~&nbsp;
+  <%= ((rCount.to_f - rDone.to_f) / 6.0).ceil * 5 %> Minuten
+  <br> 
+  <b>Zeit für gesamten Spieltag: </b>~&nbsp; 
+  <%= (rCount.to_f / 6.0).ceil * 5 %> Minuten <br>
+<% end %>

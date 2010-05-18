@@ -84,7 +84,9 @@ ActionController::Routing::Routes.draw do |map|
          :send_archive => :post,
          :publish => :post,
          :hide => :post,
-         :delete => :post
+         :delete => :post,
+         :publish_lineup => :post,
+         :hide_lineup => :post
       }
     end
   end
