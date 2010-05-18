@@ -49,7 +49,7 @@ module SoChaManager
     def on_error(error)
       msg = error.attributes['message'].value
       @error_message = msg
-      append(error)   
+      append(error) unless @done
     end
 
     def on_state(state)
