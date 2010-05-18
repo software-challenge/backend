@@ -69,7 +69,7 @@
 
 <table id="result">
   <tr class="contestants">
-    <% match.slots.each_with_index do |slot,i| %>
+    <% match.slots.sort_by(&:position).each_with_index do |slot,i| %>
       <% unless i.zero? %>
         <td class="center">gegen</td>
       <% end %>
