@@ -6,7 +6,7 @@
 
 <% tabnav :finale do %>
 
-  <% if true or current_user.nil? or not current_user.has_role?(:administrator) %>
+  <% if current_user.nil? or not current_user.has_role?(:administrator) %>
   <% @contest.game_definition.final_days.sort_by{|day| day[1][:order]}.each do |name,options| %>
     <% day = @contest.finale.find_day(name) %>
     <% if day.prepared? and options[:lineup_publishable] %>
