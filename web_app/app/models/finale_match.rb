@@ -1,5 +1,12 @@
 class FinaleMatch < LeagueMatch
   
+  undef slots
+  has_many :slots,
+    :class_name => "LeagueMatchSlot",
+    :foreign_key => :match_id,
+    :dependent => :destroy,
+    :order => "id"
+
   def winner(multiple = false)
     winner = slots.find(:first, :conditions => {:position => 1})
     loser = slots.find(:first, :conditions => {:position => 2})

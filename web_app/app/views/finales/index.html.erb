@@ -47,6 +47,7 @@
     <div id="finale" style="width: 100%; height: 100%">
       <%= render :partial => "finale" %>
     </div>
+    <% if @finale.running? %>
     <% javascript_tag do %>
       function reload_matchday(daytype) {
         $.get("<%= get_matchday_contest_finale_url %>",
@@ -62,11 +63,17 @@
           "",
           function(returned_data) {
             $("div#finale").html(returned_data)
+            var stopped = $("div#finale input#finale_stopped").val()
+            if (stopped == 1) {
+              clearInterval(refreshInterval);
+              setTimeout("location.reload()", 15000);
+            }
           }
         )
       }
 
-      setInterval(reload_finale, 15000);
+      var refreshInterval = setInterval(reload_finale, 15000);
+    <% end %>
     <% end %>
   <% end %>
 <% end %>
