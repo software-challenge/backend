@@ -36,6 +36,7 @@ GameDefinition.create :"HaseUndIgel" do
         :from => :contest,
         :reorder_slots => true,  # 1st vs 8th, 2nd vs 7th, ...
         :editable => true,       # admin may change lineup
+        :lineup_publishable => true, # lineup may be made public
         :ranking => {
           5 => :losers
         }

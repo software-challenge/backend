@@ -5,6 +5,18 @@
 </h1>
 
 <% tabnav :finale do %>
+
+  <% if true or current_user.nil? or not current_user.has_role?(:administrator) %>
+  <% @contest.game_definition.final_days.sort_by{|day| day[1][:order]}.each do |name,options| %>
+    <% day = @contest.finale.find_day(name) %>
+    <% if day.prepared? and options[:lineup_publishable] %>
+      <h2><%= options[:human_name] %></h2>
+      <%= render :partial => "matchday", :locals => {:dayname => name, :no_controls => true} %>
+    <% end %>
+  <% end %> 
+  <% end %>
+
+  <% show_to :administrator do %>
   <% javascript_tag do %>
     function switch_and_reload(c1, c2, day) {
       $.get("<%= switch_contestants_contest_finale_url() %>",
@@ -18,9 +30,10 @@
 
   <% @contest.game_definition.final_days.sort_by{|day| day[1][:order]}.each do |name,options| %>
     <% day = @contest.finale.find_day(name) %>
-    <% if options[:editable] and day.prepared? and not day.played? %>
+    <% if options[:editable] and day.prepared? and not day.played? and not day.running? %>
       <h2><%= options[:human_name] %></h2>
       <%= render :partial => "match_lineup", :locals => {:day => day} %>
     <% end %>
+  <% end %>
   <% end %>
 <% end %>

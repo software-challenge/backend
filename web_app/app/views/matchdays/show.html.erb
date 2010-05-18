@@ -13,7 +13,7 @@
           <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
         <% end %>
       <% else %>
-        <% if  ((not @matchday.played?) and (matchesDone(@matchday) > 0))%>
+        <% if  ((not @matchday.played?) and (@matchday.rounds_done > 0))%>
           <% link_to reset_contest_matchday_url(@matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
             <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
           <% end %>
@@ -42,11 +42,16 @@
         "id=<%= @matchday.id %>",
         function(returned_data) {
           $("div#matchday_progress").html(returned_data)
+          var finished = $("div#matchday_progress input#matchday_finished_<%= @matchday.id %>").val();
+          if (finished == 1) {
+            clearInterval(refreshInterval);
+            setTimeout("location.reload()", 15000);
+          }
         }
       )  
     }
 
-    setInterval(refresh_matchday_progress, 15000);
+    var refreshInterval = setInterval(refresh_matchday_progress, 15000);
   <% end %> 
 <% end %>
 
