@@ -125,6 +125,7 @@ class Matchday < ActiveRecord::Base
       end
 
       self.played_at = nil
+      self.public = false
       save!
     end
   end
@@ -151,6 +152,14 @@ class Matchday < ActiveRecord::Base
 
   def finished?
     contest.regular_phase_finished?
+  end
+
+  def rounds_done
+    matches.collect{|match| match.rounds.find_all{|round| round.played?}}.flatten.count
+  end
+
+  def rounds_count
+    matches.collect{|match| match.rounds}.flatten.count
   end
 
   protected

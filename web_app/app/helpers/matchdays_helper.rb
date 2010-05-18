@@ -9,26 +9,6 @@
 	    end
 	  end
 	  
-	  def matchesCount(matchday)
-	     matchcount = 0
-	     matchday.matches.each do |match|
-	       matchcount += match.rounds.count
-	     end
-	     return matchcount
-	  end
-	  
-	  def matchesDone(matchday)
-	    done = 0
-	    matchday.matches.each do |match|
-	      match.rounds.each do |round|
-          if round.played?
-            done += 1
-          end
-	      end
-	    end
-	    return done
-	  end
-	  
 	  def count_matches_played_by_contestant(contestant, currentMatchday)
 	    all_matches = contestant.matches
       count = 0

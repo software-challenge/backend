@@ -8,10 +8,28 @@ access_control do
   action :index, :match_results, :ranking, :get_finale, :get_matchday do
     allow all
   end
+
+  action :lineup do
+    allow all
+  end
 end
  
 def publish
   @finale.publish
+  redirect_to contest_finale_url
+end
+
+def publish_lineup
+  day = FinaleMatchday.find(params[:id])
+  day.public = true
+  day.save!
+  redirect_to contest_finale_url
+end
+
+def hide_lineup
+  day = FinaleMatchday.find(params[:id])
+  day.public = false
+  day.save!
   redirect_to contest_finale_url
 end
 
@@ -34,7 +52,15 @@ def fetch_finale
 end
 
 def index
-  redirect_to contest_url unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
+  if (not (@contest.regular_phase_finished?)) or 
+    @finale.nil? or 
+    (not @finale.has_published_lineup? and (current_user.nil? or not current_user.has_role?(:administrator)))
+    redirect_to contest_url
+  end
+
+  if (not @finale.published?) and (current_user.nil? or not current_user.has_role?(:administrator)) and (@finale.has_published_lineup?)
+    redirect_to lineup_contest_finale_url
+  end
 end
 
 def lineup

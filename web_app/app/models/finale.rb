@@ -221,7 +221,11 @@ class Finale < ActiveRecord::Base
   end
 
   def has_editable_day?
-    return (not days.to_ary.find{|day| day_settings(day.name.to_sym)[:editable] and day.prepared? and not day.played?}.nil?)
+    return (not days.to_ary.find{|day| day_settings(day.name.to_sym)[:editable] and day.prepared? and not day.played? and not day.running?}.nil?)
+  end
+
+  def has_published_lineup?
+    return (not days.to_ary.find{|day| day.prepared? and day.published? and day_settings(day.name.to_sym)[:lineup_publishable]}.nil?)
   end
 
   def ranking
