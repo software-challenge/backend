@@ -21,8 +21,6 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		ChangeListener {
 	JLabel contestNameLabel;
 	JTextField contestName;
-	JLabel startCommandLabel;
-	JTextField startCommand;
 	JCheckBox isServerMaximized;
 	FinalsConfiguration config;
 	JButton save;
@@ -33,6 +31,9 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 	JLabel introLabel;
 	JButton openIntroSelectionButton;
 	JFileChooser chooser;
+	JLabel serverJarPathLabel;
+	JFileChooser serverJarPath;
+	JButton serverJarPathButton;
 
 	public ConfigsFrame(FinalsConfiguration config) {
 		Insets ins = new Insets(5,5,5,5);
@@ -40,7 +41,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		this.setTitle("Konfiguration: Finale");
 		GridLayout gl = new GridLayout();
 		gl.setColumns(1);
-		gl.setRows(4);
+		gl.setRows(8);
 		gl.setVgap(10);
 		gl.setHgap(10);
 		this.setLayout(gl);
@@ -58,15 +59,17 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		contestName = new JTextField(config.getSpielname());
 		this.add(contestName);
 		
-		startCommandLabel = new JLabel();
-		startCommandLabel.setText("Server Startbefehl");
-		startCommandLabel.setVisible(false);
-		//this.add(startCommandLabel);
+		serverJarPathLabel = new JLabel("Serverpfad");
+		serverJarPathLabel.setVisible(true);
+		this.add(serverJarPathLabel);
 		
-		startCommand = new JTextField(config.getServerStartupCommand());
-		startCommand.setVisible(false);
-		//this.add(startCommand);
+		serverJarPathButton = new JButton("Durchsuchen");
+		serverJarPathButton.setVisible(true);
+		serverJarPathButton.addActionListener(this);
+		this.add(serverJarPathButton);
 		
+		serverJarPath = new JFileChooser();
+
 		introLabel = new JLabel("Replay des Einführungsspiels:");
 		introLabel.setVisible(true);
 		this.add(introLabel);
@@ -81,6 +84,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		speedLabel.setVisible(true);
 		this.add(speedLabel);
 		
+		
 		speed = new JSlider();
 		speed.setValue(config.getSpeed());
 		speed.addChangeListener(this);
@@ -88,7 +92,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 				+ "%");
 		this.add(speed);
 
-		save = new JButton("Save Configuration");
+		save = new JButton("Speichern");
 		save.addActionListener(this);
 		save.setAlignmentX(RIGHT_ALIGNMENT);
 		save.setMargin(ins);
@@ -101,7 +105,6 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		if (e.getSource() == save) {
 			config.setSpeed(speed.getValue());
 			config.setSpielname(contestName.getText());
-			config.setServerStartupCommand(startCommand.getText());
 			if(main != null){
 				main.setTitle(main.titleText+config.getSpielname());
 			}
@@ -109,12 +112,23 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 				config.introReplayPath = chooser.getSelectedFile().toString();
 				System.out.println("Intro path: "+config.introReplayPath);
 			}
+			
+			if(serverJarPath.getSelectedFile() != null){
+				config.setServerJarPath(serverJarPath.getSelectedFile().toString());
+				config.setServerPluginPath(serverJarPath.getSelectedFile().getParent()+"/plugins/");
+				System.out.println("Server Plugin-Path: "+serverJarPath.getSelectedFile().getParent()+"/plugins/");
+				System.out.println("Server Jar: "+config.getServerJarPath());
+			}
 			config.save(main);
 			this.setVisible(false);
 		}
 		
 		if (e.getSource() == openIntroSelectionButton) {
 			chooser.showOpenDialog(this);
+		}
+		
+		if (e.getSource() == serverJarPathButton){
+			serverJarPath.showOpenDialog(this);
 		}
 	}
 

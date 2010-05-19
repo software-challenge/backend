@@ -24,6 +24,8 @@ public class ImportHandler extends DefaultHandler{
 	LinkedList<Round> currentRounds;
 	int order;
 	boolean playerOpen = false;
+	boolean winnersOpen = false;
+	boolean losersOpen = false;
 	
 	
 	 public void startElement(String uri, String localName,
@@ -45,6 +47,16 @@ public class ImportHandler extends DefaultHandler{
 		        	waitingForText = true;
 		        }
 		        
+		        if(qName == "winners"){
+		    		 currentMatch.winners = new LinkedList<Contestant>();
+		    		 winnersOpen = true;
+		    	 }
+		        
+		        if(qName == "losers"){
+		        	currentMatch.losers = new LinkedList<Contestant>();
+		        	losersOpen = true;
+		        }
+		        
 		        if(qName == "players"){
 		        	playerOpen = true;
 		        }
@@ -55,6 +67,14 @@ public class ImportHandler extends DefaultHandler{
 		        	currentContestant.name = attributes.getValue("name");
 		        	currentContestant.home = attributes.getValue("location");
 		        	
+		        }
+		        
+		        if(qName == "contestant" && winnersOpen){
+		        	currentMatch.winners.add(new Contestant(attributes.getValue("name"),attributes.getValue("location")));
+		        }
+		        
+		        if(qName == "contestant" && losersOpen){
+		        	currentMatch.losers.add(new Contestant(attributes.getValue("name"),attributes.getValue("location")));
 		        }
 		        
 		        if(qName == "finalStep"){
@@ -98,6 +118,14 @@ public class ImportHandler extends DefaultHandler{
 		          throws SAXException {
 		    	 //System.out.println(qName);
 		    	 
+			    if(qName == "winners"){
+			    	winnersOpen = false;
+			    }
+			        
+			    if(qName == "losers"){
+			       	losersOpen = false;
+			     }
+		    	 
 		    	 if(qName == "replay"){
 		    		 currentRound.filename = currentText;
 		    	 }
@@ -113,6 +141,8 @@ public class ImportHandler extends DefaultHandler{
 		    	 if(qName == "winner"){
 		    		 currentRound.winner = new Contestant(currentText, "");
 		    	 }
+		    	 
+		    	 
 		    	 
 		    	 if(qName == "ranking"){
 		    		 currentRanking.add(currentContestant, currentRank);
@@ -144,7 +174,7 @@ public class ImportHandler extends DefaultHandler{
 		    	 }
 		    	 
 		    	 if (qName == "gameUID") {
-					currentConfig.setServerStartupCommand(currentText);
+					//currentConfig.setServerStartupCommand(currentText);
 				 }
 		    	 
 		    	 if(qName == "gameName"){

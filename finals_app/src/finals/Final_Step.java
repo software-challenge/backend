@@ -44,6 +44,7 @@ public class Final_Step {
 	JPanel pan;
 	JPanel contestPanel;
 
+
 	public void showAllNames(){
 		for (MatchWidget w : this.matchWidgets) {
 			w.setFirstNameVisibe(true);
@@ -65,10 +66,10 @@ public class Final_Step {
 			MatchWidget wid;
 			if(smallFinals){
 			Point bigFinalsPosition = steps.get(steps.size()-2).matchWidgets.get(0).getPosition();
-			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m);
+			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m, this,matchWidgets.size());
 			}else{
 				wid = new MatchWidget(pan, contestPanel, 1f, new Point(
-						stepCount * 250, currentY), m);
+						stepCount * 250, currentY), m, this, matchWidgets.size());
 			}
 				
 			this.matchWidgets.add(wid);
@@ -104,6 +105,7 @@ public class Final_Step {
 				m.setSelected(true);
 				main.runReplay("replays/"+m.getMatch().getNextReplayName());
 				m.getMatch().doNextStep();
+				m.setRepaint(true);
 				return;
 			} else {
 				m.setSelected(false);
@@ -141,9 +143,10 @@ public class Final_Step {
 		
 		for (int i = matchWidgets.size() - 1; i >= 0; i--) {
 			if (matchWidgets.get(i).getMatch().getCurrentStep() > 0) {
+				matchWidgets.get(i).setRepaint(true);
 				matchWidgets.get(i).getMatch().undoLastStep();
 				matchWidgets.get(i).setSelected(true);
-				matchWidgets.get(i).paint();
+				//matchWidgets.get(i).paint();
 				break;
 			}
 		}
@@ -162,22 +165,22 @@ public class Final_Step {
 					if (i % 2 == 0) {
 						followingWid = getNextStep().matchWidgets.get(0);
 						followingWid.setFirstNameVisibe(false);
-						followingWid.paint();
+						//followingWid.paint();
 						followingWid = getSmallFinals().matchWidgets.get(0);
 						followingWid.setSecondNameVisible(false);
-						followingWid.paint();
+						//followingWid.paint();
 					}else{
 						followingWid = getNextStep().matchWidgets.get(0);
 						followingWid.setSecondNameVisible(false);
-						followingWid.paint();
+						//followingWid.paint();
 						followingWid = getSmallFinals().matchWidgets.get(0);
 						followingWid.setFirstNameVisibe(false);
-						followingWid.paint();
+						//followingWid.paint();
 					}
 				}
 			}
 		}
-		repaint();
+		//repaint();
 	}
 
 	public void doAllMatches() {
