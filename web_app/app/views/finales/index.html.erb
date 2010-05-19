@@ -2,7 +2,7 @@
   <% show_to :administrator do %>
     <% if @finale.nil? %>
       <% link_to prepare_contest_finale_url, :method => :post, :title => t("actions.prepare_finale"), :id => "prepareFinaleAction" do %>
-        <%= image_tag('actions/refresh.png') %><%= t("actions.prepare_finale) %>
+        <%= image_tag('actions/refresh.png') %><%= t("actions.prepare_finale") %>
       <% end %>
     <% else %>
       <% if not @finale.running? and not @finale.finished? and @finale.runnable? %>
