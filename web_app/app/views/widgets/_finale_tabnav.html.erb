@@ -1,7 +1,7 @@
 <% 
 render_tabnav :finale, :html => { :class => "tabs_tabnav" } do
 
-  if @contest.finale.published? or (not current_user.nil? and current_user.has_role?(:administrator))
+  if (not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator))
   add_tab do |t|
     t.named t("titles.overview")
     t.links_to hash_for_contest_finale_url
@@ -16,7 +16,7 @@ render_tabnav :finale, :html => { :class => "tabs_tabnav" } do
     end
   #end
 
-  if not @contest.finale.nil? and @contest.finale.finished?
+  if not @contest.finale.nil? and @contest.finale.finished? and @contest.finale.published?
     add_tab do |t|
       t.named "Ranking"
       t.links_to hash_for_ranking_contest_finale_url

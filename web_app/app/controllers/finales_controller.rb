@@ -53,12 +53,11 @@ end
 
 def index
   if (not (@contest.regular_phase_finished?)) or 
-    @finale.nil? or 
-    (not @finale.has_published_lineup? and (current_user.nil? or not current_user.has_role?(:administrator)))
+    (@finale.nil? or not @finale.has_published_lineup? and (current_user.nil? or not current_user.has_role?(:administrator)))
     redirect_to contest_url
   end
 
-  if (not @finale.published?) and (current_user.nil? or not current_user.has_role?(:administrator)) and (@finale.has_published_lineup?)
+  if not @finale.nil? and (@finale.nil? or not @finale.published?) and (current_user.nil? or not current_user.has_role?(:administrator)) and (@finale.has_published_lineup?)
     redirect_to lineup_contest_finale_url
   end
 end
