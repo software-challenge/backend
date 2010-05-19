@@ -17,32 +17,24 @@ public class FinalsConfiguration {
 		super();
 	}
 
-	public FinalsConfiguration(String serverStartupCommand, String spielname,
+	public FinalsConfiguration(String spielname,
 			Date date, int speed) {
 		super();
-		this.serverStartupCommand = serverStartupCommand;
 		this.spielname = spielname;
 		this.date = date;
 		this.speed = speed;
 		this.openReplay = true;
 	}
 
-	private String serverStartupCommand;
 	private String spielname;
 	private Date date;
 	private int speed;
 	private boolean openReplay;
 	private File config = new File("setting.conf");
-	String introReplayPath;
-	
+    String introReplayPath;
+	private String serverJarPath = "server/softwarechallenge-gui.jar";
+	private String serverPluginPath = "server/plugins/";
 
-	public String getServerStartupCommand() {
-		return serverStartupCommand;
-	}
-
-	public void setServerStartupCommand(String serverStartupCommand) {
-		this.serverStartupCommand = serverStartupCommand;
-	}
 
 	public String getSpielname() {
 		return spielname;
@@ -126,5 +118,24 @@ public class FinalsConfiguration {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public void setServerJarPath(String path){
+		File file = new File(path);
+		if(file.exists() && file.canRead()){
+			serverJarPath = path;
+		}
+	}
+	
+	public String getServerJarPath(){
+		return serverJarPath;
+	}
+
+	public String getServerPluginPath() {
+		return serverPluginPath;
+	}
+
+	public void setServerPluginPath(String serverPluginPath) {
+		this.serverPluginPath = serverPluginPath;
 	}
 }

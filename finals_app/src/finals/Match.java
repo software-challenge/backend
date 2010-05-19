@@ -28,6 +28,8 @@ public class Match {
 	Contestant first;
 	Contestant second;
 	List<Round> rounds;
+	List<Contestant> winners;
+	List<Contestant> losers;
 	int firstCurrentScore = 0;
 	int secondCurrentScore = 0;
 	private int currentStep = 0;
@@ -107,6 +109,14 @@ public class Match {
 	
 	public String getNextReplayName(){
 		return rounds.get(currentStep).filename;
+	}
+	
+	public boolean isWinner(Contestant player){
+		boolean isTrue = false;
+		for(Contestant con : winners){
+			isTrue = con.name.equals(player.name);
+		}
+		return isTrue;
 	}
 	
 }

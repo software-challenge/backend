@@ -180,6 +180,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			unzip(zipFile);
 			parseInput(zipFile.getInputStream(zipFile.getEntry("final.xml")));
 		} catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, "Beim Laden des Archivs trat ein Fehler auf!");
 			fileFrame.setVisible(true);
 			return;
@@ -198,7 +199,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 		configFrame = new ConfigsFrame(config);
 		configFrame.main = this;
-		configFrame.setSize(300,200);
+		configFrame.setSize(300,300);
 		configFrame.setVisible(false);
 		
 		JPanel grp = new JPanel();
@@ -270,7 +271,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	@Override
 	public void paint(Graphics e) {
-		e.clearRect(0, 0, this.HEIGHT, this.WIDTH);
+		//e.clearRect(0, 0, this.HEIGHT, this.WIDTH);
 		super.paint(e);
 		for (Final_Step step : steps) {
 			step.repaint();
@@ -314,23 +315,23 @@ public class MainFrame extends JFrame implements ActionListener {
 				currentStep++;
 			}
 			curr.stepForward();
-			this.repaint();
+			//this.repaint();
 		}else if (e.getSource() == lastButton) {
 			if(curr.isInit() && currentStep > 0){
 				currentStep--;
 			}
 			curr.stepBackward();
-			this.repaint();
+			//this.repaint();
 		}else if (e.getSource() == doAll) {
 			for (Final_Step step : steps) {
 				step.doAllMatches();
-				step.repaint();
+				//step.repaint();
 				currentStep = steps.size()-1;
 			}
 		}else if (e.getSource() == undoAll) {
 			for (Final_Step step : steps) {
 				step.undoAllMatches();
-				step.repaint();
+				//step.repaint();
 				currentStep = 0;
 			}
 		}else if (e.getSource() == showPresentation) {
@@ -339,6 +340,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		}else if (e.getSource() == configItem) {
 			configFrame.setVisible(true);
 			configFrame.repaint();
+		}
+		
+		//Graphics g = pan.getGraphics();
+		//g.clearRect(0,0,2000,2000);
+		
+		for (Final_Step step : steps) {
+		  step.repaint();
 		}
 	}
 	
@@ -356,7 +364,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			try {
 				Process prcs;
 				System.out.println("Executing Server:");
-				prcs = Runtime.getRuntime().exec("java -jar server/softwarechallenge-gui.jar --plugin server/plugins/ --stepspeed "+config.getSpeed()+" --maximized -r "+path);
+				prcs = Runtime.getRuntime().exec("java -jar "+config.getServerJarPath() + " --plugin "+config.getServerPluginPath()+ " --stepspeed "+config.getSpeed()+" --maximized -r "+path);
 				InputStream cmd_output = prcs.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(cmd_output));
 				String out = reader.readLine();
