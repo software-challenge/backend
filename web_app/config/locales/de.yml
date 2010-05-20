@@ -158,7 +158,11 @@ de:
     other_administrators_currently_logged_in: "Zur Zeit sind noch andere Administratoren online."
     login_first: "Bitte melden Sie sich zuerst an (eventuell wurden Sie aufgrund von Inaktivität automatisch abgemeldet)"
     test_running: "Anderer Test im Gange"
+    new_password_sent: "Neues Passwort wurde an die Adresse \"{{email}}\" gesendet."
+    no_user_with_adress: "Es existiert kein Benutzer mit dieser E-Mail Adresse"
   actions:
+    send: "Absenden"
+    sending: "Sende..."
     cancel: "Abbrechen"
     save: "Speichern"
     delete: "Löschen"
@@ -197,6 +201,7 @@ de:
     prepare: "Vorbereiten"
     publish_lineup: "Aufstellung veröffentlichen"
     hide_lineup: "Aufstellung verstecken"
+    password_lost_send_new: "Passwort vergessen? Jetzt neues zuschicken lassen"
   helpers:
     less_is_better: "Weniger ist besser"
     more_is_better: "Mehr ist besser"

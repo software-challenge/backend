@@ -18,4 +18,5 @@
     <%= f.password_field :password %>
   <% end %>
   <%= submit_tag (t "actions.login"), :disable_with => t("actions.check") %>
-<% end %>
+<% end %><br>
+<%= link_to t("actions.password_lost_send_new"), new_password_url %> 

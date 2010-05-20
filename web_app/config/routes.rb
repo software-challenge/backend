@@ -132,6 +132,7 @@ ActionController::Routing::Routes.draw do |map|
     opt.clear_jobs '/clear_jobs', :action => 'clear_jobs', :conditions => { :method => :post }
     opt.login '/login', :action => 'login', :conditions => { :method => :get }
     opt.map '/login', :action => 'do_login', :conditions => { :method => :post }
+    opt.new_password '/new_password', :action => 'new_password'
     opt.logout '/logout', :action => 'logout', :conditions => { :method => :post }
     opt.administration '/administration', :action => 'administration'
   end
