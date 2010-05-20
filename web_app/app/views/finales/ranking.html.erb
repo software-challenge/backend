@@ -21,9 +21,9 @@
       <th></th>
       <th><%= t "views.position" %></th>
       <th style="text-align: left"><%= t "views.contestant" %></th>
-      <th style="text-align: left">Ort</th>
-      <th style="text-align: center">Gesamt</th>
-      <th style="text-align: center">Gewonnen</th>
+      <th style="text-align: left"><%= t("views.location") %></th>
+      <th style="text-align: center"><%= t("views.overall").capitalize %></th>
+      <th style="text-align: center"><%= t("views.won").capitalize %></th>
     </tr>
     <% ranking.each do |rank,slots| %>
       <tr class="<%= rank.odd? ? "odd" : "even" %>" style="padding-bottom: 5px">

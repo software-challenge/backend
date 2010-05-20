@@ -109,6 +109,10 @@ de:
     client_message_logs: "Die Log-Dateien sollten nach etwas mehr als 5 Minuten nach Beginn des Tests zur Verfügung stehen."
     you_can_leave_while_testing: "Sie können diese Seite währenddessen ruhig verlassen, der Test wird dadurch nicht beeinflusst."
     client_can_be_tested: "Wenn Sie möchten, dass Ihr Computerspieler vor einer Begegnung getestet wird, sollten Sie ihn also rechtzeitig (z.B. am Vortag) hochladen."
+    versus: "gegen"
+    location: "Ort"
+    overall: "gesamt"
+    won: "gewonnen"
   messages:
     only_values_above_zero: "Es sind nur Werte über 0 erlaubt."
     couldnt_save: "Speichern fehlgeschlagen."
@@ -189,6 +193,10 @@ de:
     publish_finale: "Finale veröffentlichen"
     hide_finale: "Finale verstecken" 
     delete_finale: "Finale löschen"
+    switch_with: "Tauschen mit..."
+    prepare: "Vorbereiten"
+    publish_lineup: "Aufstellung veröffentlichen"
+    hide_lineup: "Aufstellung verstecken"
   helpers:
     less_is_better: "Weniger ist besser"
     more_is_better: "Mehr ist besser"
