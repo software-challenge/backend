@@ -87,12 +87,14 @@ class GameDefinitionBuilder
           parts.count.zero? ? 0 : (sum / parts.count.to_f)
         end
       end
-      
+     
+      # TODO: What does this do? Why merging the options?
       if inherit
         from_field = d.round_score[inherit]
         raise "field #{inherit} does not exist" unless from_field
         options = (from_field.options || {}).merge(options)
       end
+
 
       aggregator = nil
 

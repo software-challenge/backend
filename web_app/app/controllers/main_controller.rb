@@ -17,6 +17,28 @@ class MainController < ApplicationController
     end
   end
 
+  def new_password
+    redirect_to root_url if logged_in?
+    @email = params[:user].nil? ? nil : params[:user][:email]
+    if @email
+      person = Person.find(:first, :conditions => {:email => @email})
+      if not person
+        flash[:error] = t("messages.no_user_with_adress")
+        redirect_to login_url
+      else
+        password = ActiveSupport::SecureRandom.base64(6)
+        person.password = password
+        if person.save
+          PersonMailer.deliver_password_reset_notification(person, @current_contest, password)
+          flash[:notice] = t("messages.new_password_sent", :email => @email)
+        else
+          flash[:error] = "Passwort konnte nicht geändert werden" 
+        end
+        redirect_to login_url
+      end
+    end
+  end
+
   def do_login
     email = params[:user][:email]
     password = params[:user][:password]
