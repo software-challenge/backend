@@ -6,10 +6,10 @@
         <colgroup cols="3">
         <% match.contestants.each_with_index do |contestant,i| %>
           <tr>
-            <td style="width: 20%"><%= (i > 0 ? "gegen:" : "") %>&nbsp;</td>
+            <td style="width: 20%"><%= (i > 0 ? t("views.versus") : "") %>&nbsp;</td>
             <td style="width: 40%"><%= contestant.name %></td>
             <td style="width: 40%">
-              <%= select :switch, contestant.id, day.contestants.reject{|c| c == contestant}.collect{|c| [c.name, c.id]}, {:prompt => 'Tauschen mit...', :index => "switch_#{contestant.id}"}, :style => "width: 250px" %>
+              <%= select :switch, contestant.id, day.contestants.reject{|c| c == contestant}.collect{|c| [c.name, c.id]}, {:prompt => t("actions.switch_with"), :index => "switch_#{contestant.id}"}, :style => "width: 250px" %>
             </td>
           </tr>
           <% javascript_tag do %>
