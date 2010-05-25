@@ -106,7 +106,6 @@ public class Final_Step {
 		for (int i = 0; i < matchWidgets.size(); i++) {
 			MatchWidget m = matchWidgets.get(i);
 			if (!m.getMatch().isFinished()) {
-				System.out.println(m);
 				m.setSelected(true);
 				main.runReplay("replays/"+m.getMatch().getNextReplayName());
 				m.getMatch().doNextStep();

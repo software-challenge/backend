@@ -41,13 +41,7 @@ public void createRanking(List<Contestant> standings){
 }
 
 @Override
-	public void repaint() {
-		System.out.println("Du affe!");
-		super.repaint();		
-	}
-@Override
 	public void paint(Graphics g) {
-		System.out.println("ASGAARD!");
 		super.paint(g);
 		if(currentRanking != null) printTable();
 		
