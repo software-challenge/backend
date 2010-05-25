@@ -2,6 +2,7 @@ package finals;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Panel;
@@ -23,8 +24,8 @@ public class MatchWidget {
 		this.width = scl(150);
 		this.heigth = scl(30);
 		this.step = step;
-		this.paint();
 		this.order = order;
+		this.paint();
 	}
 
 	private JPanel pan;
@@ -101,18 +102,41 @@ public class MatchWidget {
 		this.secondPlayerConnection = w.getResultConnectionPoint();
 	}
 
-	private void paintOnGC(Graphics2D gc) {
+	private String decode(int step, int match){
+		String dec;
+		switch (match) {
+		case 0:
+			dec = "A";
+			break;
+		case 1:
+			dec = "B";
+			break;
+		case 2:
+			dec = "C";
+			break;
+		case 3:
+			dec = "D";
+			break;
+		default:
+			System.out.println("undef: "+match);
+			dec = "E";
+			break;
+		}
+		return dec +=step;
+	}
+	private void paintOnGC(Graphics2D gc, JPanel pan) {
+		Point position = new Point(this.position.x+((pan.getWidth()-750)/2), this.position.y);
 		// Clear widgets area
 		gc.clearRect(position.x - scl(4), position.y, position.x + width,
 			position.y + heigth);
 		
 		// Draw incoming connections
 		if (firstPlayerConnection != null) {
-			drawNiceLine(gc, firstPlayerConnection,
+			drawNiceLine(pan, gc, firstPlayerConnection,
 					getPlayerOneConnectionPoint());
 		}
 		if (secondPlayerConnection != null) {
-			drawNiceLine(gc, secondPlayerConnection,
+			drawNiceLine(pan, gc, secondPlayerConnection,
 					getPlayerTwoConnectionPoint());
 		}
 	
@@ -120,13 +144,14 @@ public class MatchWidget {
 		
 		// Choose the names displayed
 		String firstName, secondName;
+		System.out.println(this.order);
 		if(firstNameVisibe){
 			firstName = match.getFirst().name;
 		}else{
 			if(!step.isSmallFinals()){
-				firstName = "Sieger, Runde "+(step.order-1)+"Begegnung "+(1+order*2);
+				firstName = "Sieger: "+decode(step.order-1, order*2);
 			}else{
-				firstName = "Verlierer, Runde"+ (step.order-1)+"Begegnung "+(1+order*2);
+				firstName = "Verlierer: "+decode(step.order-2, order*2);
 			}
 		}
 		
@@ -134,9 +159,9 @@ public class MatchWidget {
 			secondName = match.getSecond().name;
 		}else{
 			if(!step.isSmallFinals()){
-				secondName = "Sieger, Runde "+(step.order-1)+"Begegnung "+(2+order*2);
+				secondName = "Sieger: "+decode(step.order-1, order*2+1);
 			}else{
-				secondName = "Verlierer, Runde"+ (step.order-1)+"Begegnung "+(2+order*2);
+				secondName = "Verlierer: "+decode(step.order-2, order*2+1);
 			}
 		}
 		
@@ -162,11 +187,23 @@ public class MatchWidget {
 			
 		}
 		gc.setColor(firstColor);
+		Font oldFont = gc.getFont();
+		Font newFont = new Font(oldFont.getName(), Font.BOLD, oldFont.getSize());
+		if(isFirstNameVisibe() && (isSelected() || match.isFinished()) ) gc.setFont(newFont);
 		gc.drawString(firstName, position.x + scl(5), position.y + scl(25));
 		gc.setColor(secondColor);
 		gc.drawString(secondName, position.x + scl(5), position.y+ scl(80));
 		gc.setColor(old);
-
+		gc.setFont(oldFont);
+		if(!step.isFinals() && !step.isSmallFinals()){
+			gc.drawString(decode(step.order, order), position.x + scl(86), position.y+ scl(52));
+		}else if (step.isFinals()) {
+			gc.drawString(decode(step.order, order+1), position.x + scl(86), position.y+ scl(52));
+		}else{
+			gc.drawString(decode(step.order-1, order), position.x + scl(86), position.y+ scl(52));
+		}
+		
+		
 		// Draw current standings
 		gc.setColor(firstColor);
 		gc.drawString((match.getCurrentStep() > 0 ? ""
@@ -201,15 +238,21 @@ public class MatchWidget {
 
 	public void paint() {
 		//if(repaint){
-			paintOnGC((Graphics2D) pan.getGraphics());
-			if(contestPan != null && contestPan.getGraphics() != null){
-				paintOnGC((Graphics2D) contestPan.getGraphics());
-			}
+			paintOnGC((Graphics2D) pan.getGraphics(),pan);
+			//if(contestPan != null && contestPan.getGraphics() != null){
+			//	paintOnGC((Graphics2D) contestPan.getGraphics());
+			//}
 			repaint = false;
 		//}
 		
 		
 
+	}
+	
+	public void publishToContestPanel(){
+		if(contestPan != null && contestPan.getGraphics() != null){
+		  paintOnGC((Graphics2D) contestPan.getGraphics(),contestPan);
+		}
 	}
 	
 	public void setRepaint(boolean b){
@@ -225,12 +268,16 @@ public class MatchWidget {
 		this.position = position;
 	}
 
-	private void drawNiceLine(Graphics2D gc, Point o, Point d) {
+	private void drawNiceLine(JPanel pan, Graphics2D gc, Point o, Point d) {
 		gc.setStroke((new BasicStroke(1f)));
-		int xMid = o.x + ((d.x - o.x) / 2);
-		gc.drawLine(o.x, o.y, xMid, o.y);
-		gc.drawLine(xMid, o.y, xMid, d.y);
-		gc.drawLine(xMid, d.y, d.x, d.y);
+		Point od = (Point) o.clone();
+		Point dd = (Point) d.clone();
+		od.translate(((pan.getWidth()-750)/2),0);
+		dd.translate(((pan.getWidth()-750)/2),0);
+		int xMid = od.x + ((dd.x - od.x) / 2);
+		gc.drawLine(od.x, od.y, xMid, od.y);
+		gc.drawLine(xMid, od.y, xMid, dd.y);
+		gc.drawLine(xMid, dd.y, dd.x, dd.y);
 	}
 
 	private int scl(int value) {
