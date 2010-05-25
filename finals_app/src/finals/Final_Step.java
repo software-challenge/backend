@@ -1,5 +1,7 @@
 package finals;
 
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -11,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.plaf.FontUIResource;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
@@ -59,17 +62,19 @@ public class Final_Step {
 		for (Final_Step finalStep : steps) {
 			if (finalStep.equals(this))
 				break;
-			stepCount++;
+			stepCount++;			
 		}
+		
 		for (int i = 0; i < matches.size(); i++) {
 			Match m = matches.get(i);
 			MatchWidget wid;
+			
 			if(smallFinals){
 			Point bigFinalsPosition = steps.get(steps.size()-2).matchWidgets.get(0).getPosition();
 			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m, this,matchWidgets.size());
 			}else{
 				wid = new MatchWidget(pan, contestPanel, 1f, new Point(
-						stepCount * 250, currentY), m, this, matchWidgets.size());
+						((pan.getWidth()-750)/2) + (stepCount * 250) - 125, currentY), m, this, matchWidgets.size());
 			}
 				
 			this.matchWidgets.add(wid);
@@ -132,6 +137,27 @@ public class Final_Step {
 	public void repaint() {
 		for (MatchWidget match : matchWidgets) {
 			match.paint();
+		}
+		if(!smallFinals){
+			Graphics gc = pan.getGraphics();
+			int stepCount = order-1;
+			Font oldFont = gc.getFont();
+			Font newFont = new Font ("Dialog", Font.BOLD, 14);
+			gc.setFont(newFont);
+			switch (order) {
+			case 1:
+				gc.drawString("Viertelfinale", ((pan.getWidth()-750)/2) + (stepCount * 250)+3, 80);		
+				break;
+			case 2:
+				gc.drawString("Halbfinale", ((pan.getWidth()-750)/2) + (stepCount * 250)+3, 80);
+				break;
+			case 3:
+				gc.drawString("Großes und kleines Finale", ((pan.getWidth()-750)/2) + (stepCount * 250)+3, 80);
+				break;
+			default:
+				//pan.getGraphics().drawString("Kleines Finale", ((pan.getWidth()-750)/2) + ((stepCount-1) * 250)+3, 220);
+			}
+			gc.setFont(oldFont);
 		}
 	}
 
@@ -267,6 +293,34 @@ public class Final_Step {
 	
 	public Final_Step getFinals(){
 		return steps.get(steps.size()-2);
+	}
+	
+	public void publishToContestPanel(){
+		if(contestPanel != null && contestPanel.getGraphics() != null){
+			Graphics gc = contestPanel.getGraphics();
+			int stepCount = order-1;
+			Font oldFont = gc.getFont();
+			Font newFont = new Font ("Dialog", Font.BOLD, 14);
+			gc.setFont(newFont);
+			
+			switch (order) {
+			case 1:
+				gc.drawString("Viertelfinale", ((contestPanel.getWidth()-750)/2) + (stepCount * 250)+3, 80);			
+				break;
+			case 2:
+				gc.drawString("Halbfinale", ((contestPanel.getWidth()-750)/2) + (stepCount * 250)+3, 80);
+				break;
+			case 3:
+				gc.drawString("Großes und kleines Finale", ((contestPanel.getWidth()-750)/2) + (stepCount * 250)+3, 80);
+				break;
+			default:
+			}
+			gc.setFont(oldFont);
+		}
+		for(MatchWidget wid : matchWidgets){
+			wid.publishToContestPanel();
+		}
+		
 	}
 	
 }

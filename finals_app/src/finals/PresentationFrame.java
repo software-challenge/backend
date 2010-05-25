@@ -15,35 +15,36 @@ public class PresentationFrame extends JFrame implements WindowListener {
 		this.addWindowListener(this);
 	}
 
-	MainFrame parent;
+	MainFrame parent;    
 
 	@Override
 	public void paint(Graphics g) {
 		parent.repaint();
+		setTitle(parent.getTitle());
 		super.paint(g);
 	}
 
 	@Override
 	public void windowActivated(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		//parent.publish.setEnabled(true);
 	}
 
 	@Override
 	public void windowClosed(WindowEvent arg0) {
+		parent.publish.setEnabled(false);
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowClosing(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		parent.publish.setEnabled(false);
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent arg0) {
 		parent.showPresentation.setSelected(false);
+		//parent.publish.setEnabled(false);
 		
 	}
 
@@ -61,8 +62,7 @@ public class PresentationFrame extends JFrame implements WindowListener {
 
 	@Override
 	public void windowOpened(WindowEvent arg0) {
-		// TODO Auto-generated method stub
-		
+		parent.publish.setEnabled(true);
 	}
 	
 	

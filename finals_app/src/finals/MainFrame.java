@@ -69,7 +69,9 @@ public class MainFrame extends JFrame implements ActionListener {
 	JButton lastButton = new JButton();
 	JButton undoAll = new JButton();
 	JButton doAll = new JButton();
+	JButton publish = new JButton();
 	JMenuItem showPresentation;
+	JMenuItem showRanking;
 	JCheckBox openReplay;
 	FinalsConfiguration config;
 	GridBagLayout mgr;
@@ -83,6 +85,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	JFrame fileFrame;
 	JFileChooser fileSelectionFrame;
 	String titleText = "Software Challenge Finale: ";
+	ResultsFrame results = new ResultsFrame();
+	Ranking ranking;
 
 	MainFrame(String[] args) {
 		this.setEnabled(false);
@@ -106,13 +110,22 @@ public class MainFrame extends JFrame implements ActionListener {
 		startTestGame.addActionListener(this);
 		files.add(startTestGame);
 
+		showRanking = new JMenuItem("Tabelle anzeigen");
+		showRanking.setVisible(true);
+		showRanking.addActionListener(this);
+		files.add(showRanking);
+		
+		
+	
 		menuBar.add(files);
 		menuBar.setVisible(true);
 		this.setJMenuBar(menuBar);
 		
+		results = new ResultsFrame();
+		//results.setSize(800,800);
+		
 		this.setLayout(mgr);
 		this.c = new GridBagConstraints();
-		c.fill = GridBagConstraints.NONE;
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setTitle(titleText);
 		this.setSize(1000, 1000);
@@ -120,14 +133,13 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 		pan = new JPanel();
 		pan.setSize(600,400);
-	
-		
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
 		c.gridy = 0;
-		c.weightx = 0.7;
-		c.weighty = 0.7;
+		c.weightx = 1.0;
+		c.weighty = 1.0;
 		c.anchor = GridBagConstraints.CENTER;
+		//c.anchor = GridBagConstraints.CENTER;
 		//pan.setAlignmentX(RIGHT_ALIGNMENT);
 		//pan.setAlignmentY(CENTER_ALIGNMENT);
 		mgr.addLayoutComponent(pan,c);
@@ -228,6 +240,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		undoAll.addActionListener(this);
 		undoAll.setVisible(true);
 		
+		
 		grp.add(undoAll);
 		grp.add(lastButton);
 		grp.add(openReplay);
@@ -241,9 +254,23 @@ public class MainFrame extends JFrame implements ActionListener {
 		//grp.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 		//grp.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 		grp.setVisible(true);
+		c.weighty = 0.1;
 		mgr.addLayoutComponent(grp,c);
 		this.add(grp);
+		
 
+		publish.setText("Veröffentlichen");
+		publish.addActionListener(this);
+		publish.setVisible(true);
+		publish.setEnabled(false);
+		c.gridy = 2;
+		c.weighty = 0.1;
+		c.fill = GridBagConstraints.NONE;
+		this.add(publish,c);
+		
+		for (Final_Step step : steps) {
+			step.publishToContestPanel();
+		}
 		
 		
 	}
@@ -281,6 +308,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		
+		
 		if (e.getSource().getClass()==JFileChooser.class) {
 			finaleArchiv = ((JFileChooser)e.getSource()).getSelectedFile();
 			if(finaleArchiv != null){
@@ -293,8 +322,23 @@ public class MainFrame extends JFrame implements ActionListener {
 			return;
 		}
 		
+		if(e.getSource() == showRanking){
+			if(!results.isVisible()){
+				int resp = JOptionPane.showConfirmDialog(this,"Sind Sie sicher, dass Sie die Ergebnisse anzeigen lassen wollen, obwohl noch nicht alle Spiele gespielt wurden?");
+				if(resp != JOptionPane.OK_OPTION){ return; };
+			}
+			results.setVisible(true);
+			results.createRanking(ranking.getRanking());
+			
+		}
 		if(e.getSource() == openReplay){
 			config.setOpenReplay(openReplay.isSelected());
+		}
+		
+		if(e.getSource() == publish){
+			for (Final_Step step : steps) {
+				step.publishToContestPanel();
+			}
 		}
 		
 		if(e.getSource() == startTestGame){
@@ -337,6 +381,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		}else if (e.getSource() == showPresentation) {
 			contestFrame.setVisible(true);
 			contestFrame.repaint();
+			publish.setEnabled(true);
 		}else if (e.getSource() == configItem) {
 			configFrame.setVisible(true);
 			configFrame.repaint();

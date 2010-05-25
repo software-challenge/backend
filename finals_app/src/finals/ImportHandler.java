@@ -26,6 +26,8 @@ public class ImportHandler extends DefaultHandler{
 	boolean playerOpen = false;
 	boolean winnersOpen = false;
 	boolean losersOpen = false;
+	boolean rankOpen = false;
+	boolean rankingOpen = false;
 	
 	
 	 public void startElement(String uri, String localName,
@@ -42,6 +44,7 @@ public class ImportHandler extends DefaultHandler{
 		        
 		        if(qName == "rank"){
 		        	currentRank = Integer.parseInt(attributes.getValue("position"));
+		        	rankOpen = true;
 		        }
 		        if(qName == "winner"){
 		        	waitingForText = true;
@@ -61,7 +64,7 @@ public class ImportHandler extends DefaultHandler{
 		        	playerOpen = true;
 		        }
 		        
-		        if(qName == "contestant" && playerOpen){
+		        if(qName == "contestant" && (playerOpen || rankOpen)){
 		        	currentContestant = new Contestant();
 		        	currentContestant.rank = currentRank;
 		        	currentContestant.name = attributes.getValue("name");
@@ -111,6 +114,10 @@ public class ImportHandler extends DefaultHandler{
 		        if(qName == "gameName"){
 		        	waitingForText = true;
 		        }
+		        
+		        if(qName == "contestant" && rankOpen){
+		        	currentRanking.add(new Contestant(attributes.getValue("name"),attributes.getValue("location")),currentRank);
+		        }
 		     }
 		 
 		     public void endElement(String uri, String localName,
@@ -144,8 +151,13 @@ public class ImportHandler extends DefaultHandler{
 		    	 
 		    	 
 		    	 
+		    	 if(qName == "rank"){
+		    		 //currentRanking.add(currentContestant, currentRank);
+		    		 rankOpen = false;
+		    	 }
+		    	 
 		    	 if(qName == "ranking"){
-		    		 currentRanking.add(currentContestant, currentRank);
+		    		 main.ranking = currentRanking;
 		    	 }
 		    	 
 		    	 if(qName == "contestant" && currentMatch != null && playerOpen){
