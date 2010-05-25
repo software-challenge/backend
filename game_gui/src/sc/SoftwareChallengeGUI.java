@@ -5,6 +5,7 @@ import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Properties;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
-import sc.gui.ContextDisplay;
 import sc.gui.PresentationFacade;
 import sc.gui.dialogs.ReplayDialog;
 import sc.helpers.ManifestHelper;
@@ -80,10 +80,6 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		}
 		if (GUIConfiguration.stepSpeedToSet > -1) {
 			presFac.getContextDisplay().getGameControlBar().setStepSpeed(GUIConfiguration.stepSpeedToSet);
-		}
-		
-		if (GUIConfiguration.startMaximized) {
-			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		}
 		
 		if (GUIConfiguration.finaleMode) {
@@ -167,18 +163,15 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		System.setProperty("file.encoding", "UTF-8");
 
 		parseArguments(args);
-		/*
-		if (args.length > 0) {
-			String path = args[0];
-			System.out.println("Setting Pluginfolder to " + path);
-			GUIConfiguration.setPluginFolder(path);
-			Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
-		}
-		*/
 		setSystemLookAndFeel();
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new SoftwareChallengeGUI().setVisible(true);
+				SoftwareChallengeGUI gui = new SoftwareChallengeGUI();
+				gui.setVisible(true);
+				if (GUIConfiguration.startMaximized) {
+					System.out.println("Start maximized");
+					gui.setExtendedState(Frame.MAXIMIZED_BOTH);
+				}
 			}
 		});
 	}
