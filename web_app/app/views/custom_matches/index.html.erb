@@ -1,0 +1,52 @@
+<h1><%= t "views.administration" %></h1>
+
+<% tabnav :administration do %>
+  <div style="border: 1px #000 solid; width: 100%; text-align: center; padding-bottom: 20px">
+    <h3>Neues Spiel</h3>
+    <% form_for :match, hash_for_create_contest_custom_match_url do |f| %>
+      <table style="width: 100%">
+        <tr>
+          <td>
+            <%= f.label Contestant.human_name + " 1" %>
+            <%= f.collection_select :contestant1, @contest.all_contestants.reject{|c| c.current_client.nil?}, :id, :name %>
+          </td>
+          <td>
+            <%= f.label Contestant.human_name + " 2" %>
+            <%= f.collection_select :contestant2, @contest.all_contestants.reject{|c| c.current_client.nil?}, :id, :name %>
+          </td>
+        </tr>
+      </table>
+      <%= submit_tag t("actions.create").capitalize, :style => "margin-top: 10px" %>
+    <% end %>
+  </div> 
+
+  <h3>Match</h3>
+  <table style="width: 100%">
+    <thead style="text-align: left">
+      <th><%= Contestant.human_name + " 1" %></th>
+      <th><%= Contestant.human_name + " 2" %></th>
+      <th>&nbsp;</th>
+    </thead>
+    <% @contest.custom_matches.each do |mm| %>
+      <tr>
+        <td><%= mm.contestants.first.name %></td>
+        <td><%= mm.contestants.second.name %></td> 
+        <td>
+          <% if not mm.played? and not mm.running? %>
+            <%= link_to t("actions.play"), play_contest_custom_match_url(mm), :method => :post %>
+          <% elsif mm.running? %>
+            <%= t("helpers.playing_in_progress") %>&nbsp;&nbsp;
+            <%= image_tag "ui/spinner.gif", :style => "vertical-align: middle" %>
+          <% elsif mm.played? %>
+            <% res = mm.main_result %>
+            <%= "#{res[0]} : #{res[1]}" %>&nbsp; 
+          <% end %>
+
+          <% unless mm.running? %>
+            <%= link_to t("actions.delete"), contest_custom_match_url(mm), :method => "delete" %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

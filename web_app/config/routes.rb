@@ -12,9 +12,13 @@ ActionController::Routing::Routes.draw do |map|
       :member => {
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
-      :reaggregate => :post
+      :reaggregate => :post,
     } do |c|
       c.edit_schedule '/spielplan/bearbeiten', :controller => "contests", :action => "edit_schedule"
+      c.resources :custom_matches, :as => "custom_matches", :member => {
+       :create => :post,
+       :play => :post
+      }
       c.resources :matchdays,
         :as => "spieltage",
         :collection => {
