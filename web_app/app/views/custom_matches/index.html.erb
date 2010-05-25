@@ -16,6 +16,12 @@
           </td>
         </tr>
       </table>
+
+      <span style="margin-right: 15px">
+        <%= t("views.over") %>
+        <%= f.select :rounds, (2..6).step(2) %>
+        <%= t("activerecord.models.round.other") %>
+      </span>
       <%= submit_tag t("actions.create").capitalize, :style => "margin-top: 10px" %>
     <% end %>
   </div> 
