@@ -36,6 +36,7 @@ de:
     to_overview: "zur Übersicht"
     game: "Spiel"
     games: "Spiele"
+    custom_games: "Manuelle Spiele"
     new_contest: "Neuer Wettbewerb"
     back: "Zurück"
     player: "Spieler {{number}}"

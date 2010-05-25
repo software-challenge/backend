@@ -29,6 +29,11 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
+    t.named t("views.custom_games")
+    t.links_to hash_for_contest_custom_matches_url 
+  end
+
+  add_tab do |t|
     t.named t("titles.debug_view")
     t.links_to hash_for_debug_url
   end

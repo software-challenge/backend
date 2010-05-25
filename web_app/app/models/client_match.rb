@@ -1,5 +1,9 @@
 class ClientMatch < Match
-  validates_uniqueness_of :set_id, :scope => :set_type
+  validates_uniqueness_of :set_id, :scope => :set_type, :if => :validate_uniqueness_of_set_id?
+  def validate_uniqueness_of_set_id?
+    true
+  end
+
 
   #belongs_to :client
   delegate :contestant, :to => :client
@@ -28,7 +32,7 @@ class ClientMatch < Match
 
   def perform(activateClient = false)
     super()
-    logger.debug "TestMatch performed"
+    logger.debug "ClientMatch performed"
     if activateClient and client.ok?
       c = client.contestant
       logger.debug "Activating client: #{client}"

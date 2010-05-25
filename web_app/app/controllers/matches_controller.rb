@@ -20,7 +20,8 @@ class MatchesController < ApplicationController
   end
 
   def show
-    @match = @parent.matches.find(params[:id])
+    #@match = @parent.matches.find(params[:id])
+    @match = Match.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
