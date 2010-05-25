@@ -29,7 +29,9 @@ de:
       person:
         one: Person
         other: Personen
-
+      round:
+        one: Runde
+        other: Runden
     attributes:
       client:
         file: ZIP-Datei

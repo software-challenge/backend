@@ -25,4 +25,16 @@ class CustomMatch < ClientMatch
   def perform
     super()
   end
+
+  def setup_clients(clients, rounds)
+    Match.transaction do
+      self.save!
+      Match.transaction do
+        clients.each do |client|
+          slots.create!(:client => client)
+        end
+        create_rounds!(rounds)
+      end
+    end
+  end
 end
