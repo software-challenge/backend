@@ -123,7 +123,6 @@ public class ImportHandler extends DefaultHandler{
 		     public void endElement(String uri, String localName,
 		          String qName)
 		          throws SAXException {
-		    	 //System.out.println(qName);
 		    	 
 			    if(qName == "winners"){
 			    	winnersOpen = false;

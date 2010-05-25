@@ -118,7 +118,6 @@ public class MatchWidget {
 			dec = "D";
 			break;
 		default:
-			System.out.println("undef: "+match);
 			dec = "E";
 			break;
 		}
@@ -144,7 +143,6 @@ public class MatchWidget {
 		
 		// Choose the names displayed
 		String firstName, secondName;
-		System.out.println(this.order);
 		if(firstNameVisibe){
 			firstName = match.getFirst().name;
 		}else{

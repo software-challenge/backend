@@ -409,7 +409,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			try {
 				Process prcs;
 				System.out.println("Executing Server:");
-				prcs = Runtime.getRuntime().exec("java -jar "+config.getServerJarPath() + " --plugin "+config.getServerPluginPath()+ " --stepspeed "+config.getSpeed()+" --maximized -r "+path);
+				prcs = Runtime.getRuntime().exec("java -jar "+config.getServerJarPath() + " --plugin "+config.getServerPluginPath()+ " --stepspeed "+config.getSpeed()+" -m -f -r "+path);
 				InputStream cmd_output = prcs.getInputStream();
 				BufferedReader reader = new BufferedReader(new InputStreamReader(cmd_output));
 				String out = reader.readLine();
