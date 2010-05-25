@@ -1,5 +1,9 @@
 class CustomMatchesController < ApplicationController
 
+  access_control do
+    allow :administrator
+  end
+
   def create
     con1 = Contestant.find(params[:match][:contestant1])
     con2 = Contestant.find(params[:match][:contestant2])

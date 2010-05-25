@@ -204,9 +204,12 @@ module SoChaManager
                       "test"
                     when "LeagueMatch", "FinaleMatch"
                       File.join("match", slot.round.match.id.to_s, slot.round.id.to_s)
+                    when "CustomMatch"
+                      File.join("custom", slot.round.match.id.to_s, slot.round.id.to_s)
                     else
                       "unknown"
                     end
+      logger.info "Logfile directory: #{logfile_dir}" 
       File.open(startup_file, 'w+') do |f|
         f.puts "#!/bin/bash"
         f.puts "echo \"Logfile directory: #{logfile_dir}\""
