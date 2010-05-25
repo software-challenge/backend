@@ -160,6 +160,7 @@ de:
     test_running: "Anderer Test im Gange"
     new_password_sent: "Neues Passwort wurde an die Adresse \"{{email}}\" gesendet."
     no_user_with_adress: "Es existiert kein Benutzer mit dieser E-Mail Adresse"
+    admin_password_cannot_be_changed: "Passwörter für Administratoren können nicht automatisch geändert werden."
   actions:
     send: "Absenden"
     sending: "Sende..."

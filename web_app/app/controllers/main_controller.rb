@@ -25,6 +25,9 @@ class MainController < ApplicationController
       if not person
         flash[:error] = t("messages.no_user_with_adress")
         redirect_to login_url
+      elsif person.has_role?(:administrator)
+        flash[:error] = t("messages.admin_password_cannot_be_changed")
+        redirect_to login_url
       else
         password = ActiveSupport::SecureRandom.base64(6)
         person.password = password
