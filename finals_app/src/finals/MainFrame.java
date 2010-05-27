@@ -132,7 +132,6 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
 		this.setVisible(true);
 		pan = new JPanel();
-		pan.setSize(600,400);
 		c.fill = GridBagConstraints.BOTH;
 		c.gridx = 0;
 		c.gridy = 0;
