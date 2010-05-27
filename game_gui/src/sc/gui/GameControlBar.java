@@ -251,4 +251,8 @@ public class GameControlBar extends JPanel implements ActionListener {
 	public void setStepSpeed(int speed) {
 		stepSpeed.setValue(speed);
 	}
+	
+	public void startStepping() {
+		setStepping(true);
+	}
 }
