@@ -222,4 +222,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private void syncPauseAndPlayState(boolean paused) {
 		buttonBar.setPaused(paused);
 	}
+	
+	public void startPlaying() {
+		buttonBar.startStepping();
+	}
 }

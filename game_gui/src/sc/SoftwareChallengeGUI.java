@@ -9,6 +9,8 @@ import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -19,14 +21,18 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.slf4j.LoggerFactory;
 
+import sc.api.plugins.exceptions.GameException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
+import sc.gui.GameControlBar;
 import sc.gui.PresentationFacade;
 import sc.gui.dialogs.ReplayDialog;
+import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.helpers.ManifestHelper;
 import sc.logic.LogicFacade;
 import sc.logic.save.GUIConfiguration;
 import sc.server.Configuration;
+import sc.shared.GameResult;
 
 /**
  * TODO
@@ -74,12 +80,11 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		// get presentation facade
 		this.presFac = PresentationFacade.init(this, logicFac);
 		createGUI();
-		if (GUIConfiguration.replayFileToLoad != null) {
-			ReplayDialog replay = new ReplayDialog(this);
-			replay.startReplay(GUIConfiguration.replayFileToLoad);
-		}
 		if (GUIConfiguration.stepSpeedToSet > -1) {
-			presFac.getContextDisplay().getGameControlBar().setStepSpeed(GUIConfiguration.stepSpeedToSet);
+			GameControlBar conBar = presFac.getContextDisplay().getGameControlBar();
+			int stepSpeed = GUIConfiguration.stepSpeedToSet % (conBar.stepSpeed.getMaximum() + 1);
+			stepSpeed = conBar.stepSpeed.getMaximum() - stepSpeed;
+			conBar.setStepSpeed(stepSpeed);
 		}
 		
 		if (GUIConfiguration.finaleMode) {
@@ -87,6 +92,34 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			presFac.getContextDisplay().getGameControlBar().btn_toBegin.setVisible(false);
 			presFac.getContextDisplay().getGameControlBar().btn_toEnd.setVisible(false);
 			presFac.getContextDisplay().getGameControlBar().stepSpeed.setVisible(false);
+			presFac.getStatusBar().setVisible(false);
+		}
+		
+		if (GUIConfiguration.replayFileToLoad != null) {
+			ReplayDialog replay = new ReplayDialog(this);
+			replay.startReplay(GUIConfiguration.replayFileToLoad);
+			if (GUIConfiguration.autoStart) {
+				System.out.println("Start playing now");
+				presFac.getContextDisplay().startPlaying();
+			}
+			if (GUIConfiguration.repeat) {
+				presFac.getLogicFacade().getObservation().addGameEndedListener(new IGameEndedListener() {
+					@Override
+					public void onGameEnded(GameResult data, String gameResultString) {
+						TimerTask task = new TimerTask() {
+							@Override
+							public void run() {
+								LoggerFactory.getLogger(this.getClass()).debug("Repeating now");
+								presFac.getLogicFacade().getObservation().goToFirst();
+								presFac.getContextDisplay().startPlaying();
+							}
+						};
+						Timer t = new Timer();
+						LoggerFactory.getLogger(this.getClass()).info("Repeating in " + GUIConfiguration.repeatDelay + "ms...");
+						t.schedule(task, GUIConfiguration.repeatDelay);
+					}
+				});
+			}
 		}
 	}
 
@@ -186,6 +219,9 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		CmdLineParser.Option finaleOption = parser.addBooleanOption('f', "finale");
 		CmdLineParser.Option heapSizeOption = parser.addIntegerOption("max_client_heapsize");
 		CmdLineParser.Option minStepSpeedOption = parser.addIntegerOption("min_step_speed");
+		CmdLineParser.Option autoPlayOption = parser.addBooleanOption("autoplay");
+		CmdLineParser.Option repeatOption = parser.addBooleanOption("repeat");
+		CmdLineParser.Option repeatDelayOption = parser.addIntegerOption("repeat-delay");
 		parser.parse(params);
 		
 		String pluginPath = (String) parser.getOptionValue(plugin, null);
@@ -195,6 +231,9 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		boolean finaleMode = (Boolean) parser.getOptionValue(finaleOption, false);
 		int heapSize = ((Integer) parser.getOptionValue(heapSizeOption, 1250)).intValue();
 		int minStepSpeed = ((Integer) parser.getOptionValue(minStepSpeedOption, 200)).intValue();
+		GUIConfiguration.autoStart = (Boolean) parser.getOptionValue(autoPlayOption, false);
+		GUIConfiguration.repeat = (Boolean) parser.getOptionValue(repeatOption, false);
+		GUIConfiguration.repeatDelay = ((Integer) parser.getOptionValue(repeatDelayOption, 0)).intValue();
 		
 		if (pluginPath != null) {
 			GUIConfiguration.setPluginFolder(pluginPath);
