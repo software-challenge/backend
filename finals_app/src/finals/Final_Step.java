@@ -45,6 +45,7 @@ public class Final_Step {
 	boolean smallFinals = false;
 	int order;
 	JPanel pan;
+	float scl = 1.0f;
 	JPanel contestPanel;
 
 
@@ -56,29 +57,23 @@ public class Final_Step {
 	}
 	
 	public void createStepWidgets(){
-		int yPossible = 500 / (matches.size() + 1);
-		int currentY = yPossible;
-		int stepCount = 0;
-		for (Final_Step finalStep : steps) {
-			if (finalStep.equals(this))
-				break;
-			stepCount++;			
-		}
-		
+		int header = scl(80);
+		int yStep = (pan.getHeight()-header) / (matches.size() + 2);
+		int currentY = (order == 1 ? header : yStep);	
 		for (int i = 0; i < matches.size(); i++) {
 			Match m = matches.get(i);
 			MatchWidget wid;
 			
 			if(smallFinals){
 			Point bigFinalsPosition = steps.get(steps.size()-2).matchWidgets.get(0).getPosition();
-			wid = new MatchWidget(pan, contestPanel, 1f, new Point(bigFinalsPosition.x,bigFinalsPosition.y+150), m, this,matchWidgets.size());
+			wid = new MatchWidget(pan, contestPanel, scl, new Point(bigFinalsPosition.x,bigFinalsPosition.y+scl(150)), m, this,matchWidgets.size());
 			}else{
-				wid = new MatchWidget(pan, contestPanel, 1f, new Point(
-						((pan.getWidth()-750)/2) + (stepCount * 250) - 125, currentY), m, this, matchWidgets.size());
+				wid = new MatchWidget(pan, contestPanel, scl, new Point(
+						getOffsetForPanel(pan) + ((order-1) * scl(300)), currentY), m, this, matchWidgets.size());
 			}
 				
 			this.matchWidgets.add(wid);
-			currentY += yPossible;
+			currentY += yStep;
 		}
 	}
 	public boolean isFinished() {
@@ -138,25 +133,7 @@ public class Final_Step {
 			match.paint();
 		}
 		if(!smallFinals){
-			Graphics gc = pan.getGraphics();
-			int stepCount = order-1;
-			Font oldFont = gc.getFont();
-			Font newFont = new Font ("Dialog", Font.BOLD, 14);
-			gc.setFont(newFont);
-			switch (order) {
-			case 1:
-				gc.drawString("Viertelfinale", ((pan.getWidth()-750)/2) + (stepCount * 250)+3, 80);		
-				break;
-			case 2:
-				gc.drawString("Halbfinale", ((pan.getWidth()-750)/2) + (stepCount * 250)+3, 80);
-				break;
-			case 3:
-				gc.drawString("Großes und kleines Finale", ((pan.getWidth()-750)/2) + (stepCount * 250)+3, 80);
-				break;
-			default:
-				//pan.getGraphics().drawString("Kleines Finale", ((pan.getWidth()-750)/2) + ((stepCount-1) * 250)+3, 220);
-			}
-			gc.setFont(oldFont);
+			drawHeadlineOnPanel(pan);
 		}
 	}
 
@@ -295,8 +272,28 @@ public class Final_Step {
 	}
 	
 	public void publishToContestPanel(){
-		if(contestPanel != null && contestPanel.getGraphics() != null){
-			Graphics gc = contestPanel.getGraphics();
+		if(!isSmallFinals()){
+			drawHeadlineOnPanel(contestPanel);
+		}
+	
+		for(MatchWidget wid : matchWidgets){
+			wid.publishToContestPanel();
+		}
+		
+	}
+	
+	private int getOffsetForPanel(JPanel p){
+		return ((p.getWidth()-((steps.size()-1)*scl(150)*2))/2);
+	}
+	
+	private int scl(int val){
+		return (int)(val*scl);
+	}
+	
+	private void drawHeadlineOnPanel(JPanel p){
+		if(p != null && p.getGraphics() != null){
+			int offset = getOffsetForPanel(p);
+			Graphics gc = p.getGraphics();
 			int stepCount = order-1;
 			Font oldFont = gc.getFont();
 			Font newFont = new Font ("Dialog", Font.BOLD, 14);
@@ -304,22 +301,17 @@ public class Final_Step {
 			
 			switch (order) {
 			case 1:
-				gc.drawString("Viertelfinale", ((contestPanel.getWidth()-750)/2) + (stepCount * 250)+3, 80);			
+				gc.drawString("Viertelfinale", (scl(53)+offset + (stepCount * scl(300))), 60);
 				break;
 			case 2:
-				gc.drawString("Halbfinale", ((contestPanel.getWidth()-750)/2) + (stepCount * 250)+3, 80);
+				gc.drawString("Halbfinale", (scl(53)+offset + (stepCount * scl(300))), 60);
 				break;
 			case 3:
-				gc.drawString("Großes und kleines Finale", ((contestPanel.getWidth()-750)/2) + (stepCount * 250)+3, 80);
+				gc.drawString("Großes und kleines Finale", (scl(53)+offset + (stepCount * scl(300))), 60);
 				break;
 			default:
 			}
 			gc.setFont(oldFont);
 		}
-		for(MatchWidget wid : matchWidgets){
-			wid.publishToContestPanel();
-		}
-		
 	}
-	
 }

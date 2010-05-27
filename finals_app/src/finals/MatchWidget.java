@@ -37,6 +37,7 @@ public class MatchWidget {
 	private boolean secondNameVisible = false;
 	private Point firstPlayerConnection;
 	private Point secondPlayerConnection;
+	private int indentXOffset;
 	private int width;
 	private int heigth;
 	private float scale;
@@ -124,10 +125,15 @@ public class MatchWidget {
 		return dec +=step;
 	}
 	private void paintOnGC(Graphics2D gc, JPanel pan) {
-		Point position = new Point(this.position.x+((pan.getWidth()-750)/2), this.position.y);
+		indentXOffset = ((pan.getWidth()-((step.steps.size()-1)*width*2))/2);
+		Point position = new Point(this.position.x+indentXOffset, this.position.y);
+		
 		// Clear widgets area
 		gc.clearRect(position.x - scl(4), position.y, position.x + width,
 			position.y + heigth);
+		
+		// Scale Font
+		gc.setFont(new Font(gc.getFont().getName(), gc.getFont().getStyle(),scl(gc.getFont().getSize())));
 		
 		// Draw incoming connections
 		if (firstPlayerConnection != null) {
@@ -163,9 +169,6 @@ public class MatchWidget {
 			}
 		}
 		
-		//String firstName = (firstNameVisibe ? match.first.name : "???");
-		//String secondName = (secondNameVisible ? match.second.name : "???");		
-		
 		// Draw player names
 		Color firstColor = gc.getColor();
 		Color secondColor = gc.getColor();
@@ -184,9 +187,11 @@ public class MatchWidget {
 			}
 			
 		}
+		
 		gc.setColor(firstColor);
 		Font oldFont = gc.getFont();
 		Font newFont = new Font(oldFont.getName(), Font.BOLD, oldFont.getSize());
+		
 		if(isFirstNameVisibe() && (isSelected() || match.isFinished()) ) gc.setFont(newFont);
 		gc.drawString(firstName, position.x + scl(5), position.y + scl(25));
 		gc.setColor(secondColor);
@@ -228,20 +233,15 @@ public class MatchWidget {
 		if (selected) {
 			gc.setStroke((new BasicStroke(scl(5))));
 			gc.setColor(new Color(255, 154, 150, 100));
-			gc.drawRect(position.x, position.y + scl(7), scl(125), scl(80));
+			gc.drawRect(position.x, position.y + scl(7), scl(185), scl(80));
 			gc.setStroke((new BasicStroke(scl(3))));
-			gc.drawRect(position.x, position.y + scl(7), scl(125), scl(80));
+			gc.drawRect(position.x, position.y + scl(7), scl(185), scl(80));
 		}
 	}
 
 	public void paint() {
-		//if(repaint){
 			paintOnGC((Graphics2D) pan.getGraphics(),pan);
-			//if(contestPan != null && contestPan.getGraphics() != null){
-			//	paintOnGC((Graphics2D) contestPan.getGraphics());
-			//}
 			repaint = false;
-		//}
 		
 		
 
@@ -270,8 +270,8 @@ public class MatchWidget {
 		gc.setStroke((new BasicStroke(1f)));
 		Point od = (Point) o.clone();
 		Point dd = (Point) d.clone();
-		od.translate(((pan.getWidth()-750)/2),0);
-		dd.translate(((pan.getWidth()-750)/2),0);
+		od.translate(indentXOffset,0);
+		dd.translate(indentXOffset,0);
 		int xMid = od.x + ((dd.x - od.x) / 2);
 		gc.drawLine(od.x, od.y, xMid, od.y);
 		gc.drawLine(xMid, od.y, xMid, dd.y);
