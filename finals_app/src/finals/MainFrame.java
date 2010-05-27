@@ -253,7 +253,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		//grp.setAlignmentX(JPanel.CENTER_ALIGNMENT);
 		//grp.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 		grp.setVisible(true);
-		c.weighty = 0.1;
+		c.weighty = 0.01;
 		mgr.addLayoutComponent(grp,c);
 		this.add(grp);
 		
@@ -263,7 +263,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		publish.setVisible(true);
 		publish.setEnabled(false);
 		c.gridy = 2;
-		c.weighty = 0.1;
+		//c.weighty = 0.0001;
 		c.fill = GridBagConstraints.NONE;
 		this.add(publish,c);
 		
