@@ -474,4 +474,9 @@ public class Observation implements IObservation, IUpdateListener,
 	{
 		RenderFacade.getInstance().gameError(errorMessage);
 	}
+	
+	public void reset() {
+		goToFirst();
+		notifiedOnGameEnded = false;
+	}
 }
