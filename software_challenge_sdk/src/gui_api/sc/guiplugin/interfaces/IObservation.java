@@ -76,4 +76,7 @@ public interface IObservation {
 	void goToLast();
 
 	boolean canTogglePause();
+	
+	// Go to the beginning of the game so it can be completely repeated
+	void reset();
 }
