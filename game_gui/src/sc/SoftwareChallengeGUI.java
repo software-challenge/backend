@@ -110,8 +110,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 							@Override
 							public void run() {
 								LoggerFactory.getLogger(this.getClass()).debug("Repeating now");
-								presFac.getLogicFacade().getObservation().goToFirst();
-								presFac.getContextDisplay().startPlaying();
+								if (presFac.getLogicFacade().getObservation().isAtEnd()) {
+									presFac.getLogicFacade().getObservation().reset();
+									presFac.getContextDisplay().startPlaying();
+								}
 							}
 						};
 						Timer t = new Timer();
