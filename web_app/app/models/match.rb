@@ -163,9 +163,11 @@ class Match < ActiveRecord::Base
     self.rounds(force_reload).first(:conditions => { :played_at => nil }).nil?
   end
 
-  def run_match
+  def run_match()
     rounds.each do |round|
-      round.perform
+      if not round.played?
+        round.perform
+      end
     end
   end
 end
