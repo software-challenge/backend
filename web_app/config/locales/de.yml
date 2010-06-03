@@ -8,6 +8,9 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    friendly_games_experimental: "Dieses Feature ist noch experimentell. Bitte berichten Sie evtl. Fehler im Forum."
+    friendly_games_description: "Zwei verschiedene Teams können gegeneinander ein Freundschaftsspiel spielen. Dazu erstellt ein Team ein Spiel und fordert damit entweder ein bestimmtes oder ein beliebiges Team heraus. Entsprechend muss die Herausforderung dann von einem anderen Team angenommen werden."
+    friendly_games_per_day: "Pro Tag sind maximal {{number}} Spiele pro Team möglich."
     for_all: "für alle"
     is_challenged_by: "wird herausgefordert von"
     friendly_requests_from_others: "Anfragen zu Freundschaftsspielen"
