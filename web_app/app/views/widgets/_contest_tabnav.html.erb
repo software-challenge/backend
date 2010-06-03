@@ -58,7 +58,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   end
 
 
-  if logged_in? and current_user.is_member_of_a_team?
+  if logged_in? and current_user.is_member_of_a_team?(@contest)
     add_tab do |t|
       t.named FriendlyEncounter.human_name(:count => 2)
       t.links_to hash_for_contest_friendly_encounters_url
