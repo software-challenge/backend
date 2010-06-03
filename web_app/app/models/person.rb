@@ -188,6 +188,6 @@ class Person < ActiveRecord::Base
   end
 
   def is_member_of_a_team?(contest)
-    not teams.visible.without_testers.for_contest(contest).nil?
+    not teams.visible.without_testers.for_contest(contest).empty?
   end
 end
