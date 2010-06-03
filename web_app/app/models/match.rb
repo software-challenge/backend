@@ -4,6 +4,7 @@ class Match < ActiveRecord::Base
 
   HIGH_PRIORITY = 10 # finals
   MEDIUM_PRIORITY = 5
+  FRIENDLY_PRIORITY = 3
   LOW_PRIORITY = 0 # client-tests
 
   named_scope(:with_contestant, lambda do |contestant|
