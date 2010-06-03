@@ -11,7 +11,7 @@ end
 
 def ensure_login
   redirect_to contest_url if not logged_in?
-  redirect_to contest_url if not @contest.name.downcase.include?("test")
+  #redirect_to contest_url if not @contest.name.downcase.include?("test")
 end
 
 def show
