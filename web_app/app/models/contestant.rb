@@ -13,6 +13,10 @@ class Contestant < ActiveRecord::Base
   has_many :friendly_encounter_slots
   has_many :friendly_encounters, :through => :friendly_encounter_slots
 
+  def has_hidden_friendly_encounters?
+    friendly_encounter_slots.inject(false) {|val, x| val or x.hidden?}
+  end
+
   def friendly_matches
     friendly_encounter_slots.collect(&:matches).reject{|m| m.nil? or m.empty?}.flatten
   end
