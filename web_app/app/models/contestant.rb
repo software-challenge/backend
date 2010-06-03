@@ -10,6 +10,20 @@ class Contestant < ActiveRecord::Base
 
   has_many :slots, :class_name => "MatchdaySlot"
   has_many :matchdays, :through => :slots, :conditions => ['type = ?', "Matchday"]
+  has_many :friendly_encounter_slots
+  has_many :friendly_encounters, :through => :friendly_encounter_slots
+
+  def friendly_matches
+    friendly_encounter_slots.collect(&:matches).reject{|m| m.nil? or m.empty?}.flatten
+  end
+
+  def friendly_matches_today
+    friendly_encounters.find_all{|enc| not enc.played_at.nil? and enc.played_at.to_date == Date.today}.count
+  end
+
+  def may_play_another_friendly_match_today?
+    ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'].nil? or self.friendly_matches_today < ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'].to_i
+  end
 
   belongs_to :current_client, :class_name => "Client"
 
@@ -43,6 +57,32 @@ class Contestant < ActiveRecord::Base
 
   def has_running_tests?
     !clients.running.count.zero?
+  end
+
+  def open_friendly_encounter_request(hash = {})
+    raise ":to has to be specified" if not hash[:to]
+    con = (hash[:to] == :all ? nil : hash[:to])
+    encounter = contest.friendly_encounters.create!(:contest => contest)
+    encounter.slots.create(:contestant => self)
+    encounter.open_for = con
+    
+    encounter.save!
+  end
+
+  def find_open_requests
+    contest.friendly_encounters.collect{|enc| enc.open? or enc.ready? and (enc.open_for.nil? or enc.open_for == self)}
+  end
+
+  def has_open_friendly_requests_from_others?
+    friendly_requests_from_others.find{|enc| enc.open? or enc.ready?}
+  end
+
+  def friendly_requests_from_others
+    contest.friendly_encounters.to_ary.find_all{|enc| enc.of_interest_for?(self) and not enc.contestants.first == self}
+  end
+
+  def friendly_requests
+    friendly_encounters.find_all{|enc| enc.contestants.first == self}
   end
 
 end

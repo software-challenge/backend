@@ -79,7 +79,18 @@ class Client < ActiveRecord::Base
   end
 
   def has_logs_for?(params)
-    return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, "match", params[:match].id.to_s, params[:round].id.to_s, "0.log"))
+    match = params[:match]
+    #FIXME: Use helper method
+    foldername = 
+      case match.type.to_s
+      when "LegaueMatch"
+        "match"
+      when "CustomMatch"
+        "custom"
+      when "FriendlyMatch"
+        "friendly"
+      end
+    return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, foldername, params[:match].id.to_s, params[:round].id.to_s, "0.log"))
   end
 
 

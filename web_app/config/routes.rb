@@ -15,6 +15,14 @@ ActionController::Routing::Routes.draw do |map|
       :reaggregate => :post,
     } do |c|
       c.edit_schedule '/spielplan/bearbeiten', :controller => "contests", :action => "edit_schedule"
+      c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
+        :play => :post,
+        :reject => :post,
+        :accept => :post,
+        :status => :get,
+        :hide => :post,
+        :unhide => :post
+      }
       c.resources :custom_matches, :as => "custom_matches", :member => {
        :create => :post,
        :play => :post

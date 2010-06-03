@@ -84,3 +84,10 @@ class ::Object
     singleton_class.send(:define_method, name, &body)
   end
 end
+
+class ::String
+  def capitalize_first
+    self[0] = self.first.upcase
+    self
+  end
+end
