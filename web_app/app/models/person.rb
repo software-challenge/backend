@@ -183,11 +183,11 @@ class Person < ActiveRecord::Base
     end
   end
 
-  def has_hidden_friendly_encounters?
-    teams.inject(false) {|val, x| val or x.has_hidden_friendly_encounters?}
+  def has_hidden_friendly_encounters?(contest)
+    teams.visible.without_testers.for_contest(contest).inject(false) {|val, x| val or x.has_hidden_friendly_encounters?}
   end
 
-  def is_member_of_a_team?
-    not teams.nil?
+  def is_member_of_a_team?(contest)
+    not teams.visible.without_testers.for_contest(contest).nil?
   end
 end
