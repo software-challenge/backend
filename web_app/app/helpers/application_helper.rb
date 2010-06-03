@@ -56,12 +56,14 @@ module ApplicationHelper
 
   def logfile_folder(match)
     case match.type.to_s
-    when "LegaueMatch"
+    when "LegaueMatch", "FinaleMatch"
       "match"
     when "CustomMatch"
       "custom"
     when "FriendlyMatch"
       "friendly"
+    else
+      "unknown"
     end
   end
 end
