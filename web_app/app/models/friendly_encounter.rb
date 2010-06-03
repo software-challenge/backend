@@ -107,7 +107,7 @@ class FriendlyEncounter < ActiveRecord::Base
   end
 
   def acceptable_by?(per)
-    per.has_role_for? open_for
+    open_for.nil? or per.has_role_for? open_for
   end
 
   def startable_by?(per)
