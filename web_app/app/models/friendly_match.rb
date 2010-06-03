@@ -1,6 +1,4 @@
 class FriendlyMatch < Match
-  LOW_PRIORITY = 0
-
   has_many :slots, :class_name => "FriendlyMatchSlot", :dependent => :destroy, :order => "position", :foreign_key => "match_id"
 
   alias :friendly_encounter :set
@@ -55,5 +53,9 @@ class FriendlyMatch < Match
         slot.save!
       end    
     end
+  end
+
+  def priority
+    FRIENDLY_PRIORITY
   end
 end
