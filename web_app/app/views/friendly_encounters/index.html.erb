@@ -4,6 +4,11 @@
 </h1>
 
 <% tabnav :contest do %>
+  <div style="border: 1px solid black; margin-bottom: 20px">
+    <p><%= t("views.friendly_games_description") %> <%= t("views.friendly_games_per_day", :number => ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'].to_i) unless ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'].nil? %></p>
+    <p style="font-weight: bold; margin-top: 15px"><%= t("views.friendly_games_experimental") %></p>
+  </div>
+
   <a id="show_hidden" href=""><%= t("actions.show_hidden") %></a><br>
   <h2><%= t("views.open_friendly_matches") %></h2>
   
