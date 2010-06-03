@@ -12,6 +12,8 @@ class Contest < ActiveRecord::Base
   has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }
   has_many :matchdays, :dependent => :destroy
   has_many :custom_matches, :class_name => "CustomMatch", :as => :set, :dependent => :destroy
+  has_many :friendly_encounters, :dependent => :destroy
+
   has_one :finale
 
   def prepare_finale
@@ -91,7 +93,17 @@ class Contest < ActiveRecord::Base
       matchday.reaggregate
     end
   end
-  
+
+  def create_friendly_encounter(c1, c2)
+    encounter = friendly_encounters.create!(:contest => self)
+    encounter.slots.create!(:contestant => c1)
+    encounter.slots.create!(:contestant => c2)
+
+    encounter.friendly_match = FriendlyMatch.new(:friendly_encounter => encounter)
+    encounter.friendly_match.contestants = [c1, c2]
+    encounter
+  end
+
   def refresh_matchdays!(start_at = Date.today, weekdays = 0..6)
     weekdays = weekdays.to_a
     range = (0..6)

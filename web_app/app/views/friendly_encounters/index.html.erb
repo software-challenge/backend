@@ -1,0 +1,172 @@
+<h1>
+  <%= @contest.name %> /
+  <%= t("activerecord.models.friendly_match.other") %>
+</h1>
+
+<% tabnav :contest do %>
+  <a id="show_hidden" href=""><%= t("actions.show_hidden") %></a><br>
+  <h2><%= t("views.open_friendly_matches") %></h2>
+  
+  <div id="new_friendly_encounter" style="display: none">
+    <% form_for :encounter, :method => :post do |f| %>
+      <fieldset style="text-align: center">
+        <legend><%= t("actions.new_friendly_match") %></legend>
+        <%= f.collection_select :con1, @contestants.visible.without_testers, :id, :name %>
+        fordert heraus:
+        <%= f.collection_select :con2, @contest.contestants.visible.without_testers, :id, :name, :prompt => t("views.anyone_who_wants") %>
+        <br><br>
+        <%= submit_tag t("actions.create") %>
+      </fieldset>
+    <% end %>
+    <br>
+  </div>
+  <div class="actions" style="float: none">
+    <a href="#" id="show_new_encounter"><%= t("actions.new_friendly_match") %></a>
+  </div>
+  <% javascript_tag do %>
+    $(function() {
+      $("a#show_new_encounter").bind('click', function() {
+        $("a#show_new_encounter").hide();
+        $("div#new_friendly_encounter").show(250);
+        return false;
+      })
+    })
+
+    function get_state(id, reverse, interval) {
+      $.get("<%= contest_friendly_encounters_url() %>/" + id + "/status",
+        "with_result=true&reverse=" + reverse + "&spinner=true",
+        function(returned_data) {
+          var rev = (reverse ? "_r" : "")
+          $("td#status_" + id + rev).html(returned_data)
+          if ($("td#status_" + id + rev + " input.state").val() != "running") {
+            clearInterval(interval);
+          }
+        }
+      )
+    } 
+  <% end %>
+
+  <% @contestants.each do |con| %>
+    <% req = con.friendly_requests.sort_by(&:date).reverse %>
+    <% unless req.empty? %>
+      <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
+    <table style="width: 100%">
+      <colgroup style="width: 60%"></colgroup>
+      <colgroup style="width: 15%"></colgroup>
+      <colgroup style="width: 35%"></colgroup>
+      <thead style="text-align: left">
+        <th><%= t("views.challenges").capitalize %></th>
+        <th><%= t("views.status") %></th>
+        <th><%= t("views.actions") %></th>
+      </thead>
+      <% con.friendly_requests.sort_by(&:date).reverse.each do |enc| %>
+        <tr <%= "class=\"hidden\" style=\"display: none\"".html_safe! if enc.hidden_for?(con) %>>
+          <td><%= encounter_open_for_str(enc) %></td>
+          <td id="status_<%= enc.id %>">
+            <%= encounter_status(enc, :spinner => true, :with_result => true) %> 
+            <% if enc.running? %>
+              <% javascript_tag do %>
+                var interval_<%= enc.id %> = setInterval("get_state(<%= enc.id %>, false, interval_<%= enc.id %>)", 5000);
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% if not enc.running? %>
+              <% if enc.ready? %>
+                <% if enc.playable? %>
+                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(enc), :method => :post %>
+                <% else %>
+                  <%= t("messages.friendly_match_not_today") %>
+                <% end %>
+              <% end %>
+              <% if not enc.played? and not enc.ready? %>
+                <%= link_to t("actions.revoke"), contest_friendly_encounter_url(enc), :method => :delete %>
+              <% end %>
+              <% if enc.played? %>
+                <% if not enc.hidden_for?(con) %>
+                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                <% else %>
+                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </td> 
+        </tr>
+      <% end %>
+    </table>
+    <% end %> 
+  <% end %>
+
+  <br>
+  <h2><%= t("views.friendly_requests_from_others") %></h2>  
+  <% @contestants.each do |con| %>
+    <% requests = con.friendly_requests_from_others.sort_by(&:date).reverse %>
+    <% if not requests.empty? %>
+    <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
+    <table style="width: 100%">
+      <colgroup style="width: 60%"></colgroup>
+      <colgroup style="width: 15%"></colgroup>
+      <colgroup style="width: 35%"></colgroup>
+      <thead style="text-align: left">
+        <th><%= t("views.is_challenged_by").capitalize %></th>
+        <th><%= t("views.status") %></th>
+        <th><%= t("views.actions") %></th>
+      </thead>
+      <% requests.each do |enc| %>
+        <tr <%= "class=\"hidden\" style=\"display: none\"".html_safe! if enc.hidden_for?(con) %>>
+          <td>
+            <%= enc.contestants.first.name %>
+            <%= enc.open_for.nil? ? "(#{t("views.for_all").capitalize})" : "" %>
+          </td>
+          <td id="status_<%= enc.id %>_r">
+            <%= encounter_status(enc, :spinner => true, :with_result => true, :reverse => true) %>
+            <% if enc.running? %>
+              <% javascript_tag do %>
+                var interval_<%= enc.id %>_r = setInterval("get_state(<%= enc.id %>, true, interval_<%= enc.id %>_r)", 5000);
+              <% end %>
+            <% end %>
+          </td>
+          <td>
+            <% if not enc.running? %>
+              <% if enc.open? and not enc.contestants.include?(con) %>
+                <% if enc.acceptable_by?(current_user) %> 
+                  <%= link_to t("actions.accept"), accept_contest_friendly_encounter_url(enc, :contestant => con), :method => :post %>  
+                <% end %>
+                <% if enc.rejectable_by?(current_user) %>
+                  <%= link_to t("actions.reject"), reject_contest_friendly_encounter_url(enc), :method => :post %>
+                <% end %> 
+              <% end %>
+              <% if enc.ready? %>
+                <% if enc.playable? %>
+                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(enc), :method => :post %>
+                <% else %>
+                  <%= t("messages.friendly_match_not_today") %>
+                <% end %>
+              <% end %>
+              <% if enc.played? %>
+                <% if not enc.hidden_for?(con) %>
+                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                <% else %>
+                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </td> 
+        </tr>
+      <% end %>
+    </table>
+    <% end %> 
+  <% end %>
+
+  <% javascript_tag do %>
+    $(function() {
+      $("a#show_hidden").bind('click', function() {
+        $(this).hide();
+        $("tr.hidden").each(function(index) {
+          $(this).fadeIn(250);
+        })
+        return false;
+      })    
+    })
+  <% end %>
+<% end %>

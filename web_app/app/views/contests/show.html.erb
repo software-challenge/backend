@@ -4,7 +4,6 @@
 
 <% tabnav :contest do  %>
 
-
 <div class="frontpagePhotoBg">
   <%= image_tag "photos/frontpage.png", :style => "float: left;" %>
   <div class="text" style="margin-left: 450px;">
@@ -34,6 +33,11 @@
         <%=h team.name %>
       </h3>
     </div>
+  <% end %>
+  <% has_requests = current_user.teams.visible.collect(&:has_open_friendly_requests_from_others?).inject(false) {|b, x| b | x} %>
+  <% if has_requests %>
+    <br>
+    <%= link_to t("views.person_has_open_friendly_requests"), contest_friendly_encounters_url, :style => "font-size: 15px" %>
   <% end %>
 <% end %>
 

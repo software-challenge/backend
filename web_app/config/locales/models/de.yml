@@ -23,6 +23,12 @@ de:
       matchday:
         one: Spieltag
         other: Spieltage
+      friendly_match:
+        one: Freundschaftsspiel
+        other: Freundschaftsspiele
+      friendly_encounter:
+        one: Freundschaftsspiel
+        other: Freundschaftsspiele
       membership:
         one: Mitgliedschaft
         other: Mitgliedschaft

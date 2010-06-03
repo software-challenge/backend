@@ -54,4 +54,14 @@ module ApplicationHelper
     end
   end
 
+  def logfile_folder(match)
+    case match.type.to_s
+    when "LegaueMatch"
+      "match"
+    when "CustomMatch"
+      "custom"
+    when "FriendlyMatch"
+      "friendly"
+    end
+  end
 end

@@ -57,6 +57,14 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.disable! unless @contest.last_played_matchday
   end
 
+
+  if logged_in? and @contest.name.downcase.include?("test")
+    add_tab do |t|
+      t.named FriendlyEncounter.human_name(:count => 2)
+      t.links_to hash_for_contest_friendly_encounters_url
+    end
+  end
+
     if (@contest.regular_phase_finished?) and ((not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator)) or (not @contest.finale.nil? and @contest.finale.has_published_lineup?))
       add_tab do |t|
         t.named "Finale"

@@ -234,7 +234,18 @@ class ClientsController < ApplicationController
       round_id = params[:round_id]
       path = case type
                when "test" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, "test")
-               when "match" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, "match", match_id.to_s, round_id.to_s)
+               when "match"
+                 match = Match.find(match_id.to_i)
+                 foldername = 
+                    case match.type.to_s
+                    when "LegaueMatch"
+                      "match"
+                    when "CustomMatch"
+                      "custom"
+                    when "FriendlyMatch"
+                      "friendly"
+                    end
+                File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, foldername, match_id.to_s, round_id.to_s)
              end
   
       num = params[:num].nil? ? nil : params[:num].to_i

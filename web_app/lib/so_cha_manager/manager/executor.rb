@@ -206,6 +206,8 @@ module SoChaManager
                       File.join("match", slot.round.match.id.to_s, slot.round.id.to_s)
                     when "CustomMatch"
                       File.join("custom", slot.round.match.id.to_s, slot.round.id.to_s)
+                    when "FriendlyMatch"
+                      File.join("friendly", slot.round.match.id.to_s, slot.round.id.to_s)
                     else
                       "unknown"
                     end

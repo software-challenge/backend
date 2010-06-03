@@ -18,3 +18,4 @@ config.action_mailer.raise_delivery_errors = false
 
 ENV['CLIENT_LOGS_FOLDER'] = RAILS_ROOT + "/clientlogs/"
 ENV['SERVER_LOGS_FOLDER'] = RAILS_ROOT + "/serverlogs/"
+ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'] = nil
