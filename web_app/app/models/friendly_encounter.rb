@@ -98,7 +98,7 @@ class FriendlyEncounter < ActiveRecord::Base
     friendly_match = FriendlyMatch.new(:friendly_encounter => self)
     friendly_match.save!
     friendly_match.contestants = contestants.to_ary
-    self
+    friendly_match.save!
     self.reload
   end
 
@@ -143,4 +143,7 @@ class FriendlyEncounter < ActiveRecord::Base
     self.save!
   end
 
+  def may_be_seen_by(person)
+    contestants.inject(false) {|val, x| person.has_role_for?(x)}    
+  end
 end

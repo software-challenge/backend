@@ -24,7 +24,7 @@ end
 
 def show
   fe = FriendlyEncounter.find(params[:id])
-  redirect_to contest_friendly_encounters_url if not fe.played?
+  redirect_to contest_friendly_encounters_url if not fe.played? or not fe.may_be_seen_by(current_user)
   @match = fe.friendly_match
 end
 
@@ -38,6 +38,7 @@ end
 
 def hide
   con = Contestant.find(params[:contestant])
+  redirect_to contest_friendly_encounters_url unless current_user.has_role_for?(con)
   enc = FriendlyEncounter.find(params[:id])
   slot = enc.slot_for(con)
   unless slot.nil?
@@ -49,6 +50,7 @@ end
 
 def unhide
   con = Contestant.find(params[:contestant])
+  redirect_to contest_friendly_encounters_url unless current_user.has_role_for?(con)
   enc = FriendlyEncounter.find(params[:id])
   slot = enc.slot_for(con)
   unless slot.nil?
@@ -94,7 +96,7 @@ end
   def destroy
     enc = FriendlyEncounter.find(params[:id])
     con = enc.contestants.first
-    raise t("messages.action_now_allowed") if not current_user.has_role_for? con
+    raise t("messages.action_now_allowed") unless current_user.has_role_for? con
     
     enc.destroy
     redirect_to contest_friendly_encounters_url 
