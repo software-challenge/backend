@@ -23,6 +23,7 @@ ActionController::Routing::Routes.draw do |map|
         :hide => :post,
         :unhide => :post
       }
+      c.all_friendly_encounters '/all_friendly_encounters', :controller => 'friendly_encounters', :action => 'all'
       c.resources :custom_matches, :as => "custom_matches", :member => {
        :create => :post,
        :play => :post
