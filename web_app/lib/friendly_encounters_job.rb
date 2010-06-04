@@ -22,7 +22,7 @@ class FriendlyEncountersJob
   def perform
     FriendlyEncounter.all.each do |enc|
       if enc.ready? and enc.playable?
-        enc.perform_delayed!
+        enc.play!
       end
     end
   end
