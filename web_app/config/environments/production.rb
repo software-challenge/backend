@@ -36,8 +36,3 @@ ENV['CLIENT_LOGS_FOLDER'] = "/home/scadmin/clientlogs/"
 ENV['SERVER_LOGS_FOLDER'] = "/home/scadmin/serverlogs/"
 ENV['FRIENDLY_GAMES_PER_DAY'] = "5"
 
-config.after_initialize do
-  require('lib/friendly_encounters_job.rb')
-  fenc_job = FriendlyEncountersJob.new
-  fenc_job.add_friendly_encounter_check
-end
