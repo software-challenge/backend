@@ -20,7 +20,7 @@ end
 
 def ensure_login
   redirect_to contest_url if not logged_in?
-  redirect_to contest_url if not current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
+  redirect_to contest_url unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
   #redirect_to contest_url if not @contest.name.downcase.include?("test")
 end
 
