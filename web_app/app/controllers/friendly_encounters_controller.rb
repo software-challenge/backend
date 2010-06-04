@@ -24,7 +24,7 @@ end
 
 def show
   fe = FriendlyEncounter.find(params[:id])
-  redirect_to contest_friendly_encounters_url unless fe.played? or fe.may_be_seen_by(current_user) or current_user.has_role?(:administrator)
+  redirect_to contest_friendly_encounters_url unless fe.played? and (fe.may_be_seen_by(current_user) or current_user.has_role?(:administrator))
   @match = fe.friendly_match
 end
 
