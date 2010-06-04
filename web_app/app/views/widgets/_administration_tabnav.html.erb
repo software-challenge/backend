@@ -34,6 +34,11 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
+    t.named FriendlyEncounter.human_name(:count => 2)
+    t.links_to hash_for_contest_all_friendly_encounters_url
+  end
+
+  add_tab do |t|
     t.named t("titles.debug_view")
     t.links_to hash_for_debug_url
   end

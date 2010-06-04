@@ -3,6 +3,14 @@ class FriendlyEncountersController < ApplicationController
 before_filter :fetch_contestants
 before_filter :ensure_login
 
+access_control do
+  allow all
+
+  action :all do
+    allow :administrator
+  end
+end
+
 def fetch_contestants
   if logged_in?
     @contestants = current_user.contestants
@@ -78,6 +86,10 @@ def create
 
   redirect_to contest_friendly_encounters_url 
 end
+
+  def all
+    @encounters = @contest.friendly_encounters
+  end
 
   def destroy
     enc = FriendlyEncounter.find(params[:id])
