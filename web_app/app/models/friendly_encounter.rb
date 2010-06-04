@@ -144,6 +144,6 @@ class FriendlyEncounter < ActiveRecord::Base
   end
 
   def may_be_seen_by(person)
-    contestants.inject(false) {|val, x| person.has_role_for?(x)}    
+    contestants.inject(false) {|val, x| val or person.has_role_for?(x)}    
   end
 end

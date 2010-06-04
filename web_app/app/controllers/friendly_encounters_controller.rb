@@ -12,6 +12,7 @@ access_control do
 end
 
 def fetch_contestants
+  @contestants = []
   if logged_in?
     @contestants = current_user.contestants
   end
