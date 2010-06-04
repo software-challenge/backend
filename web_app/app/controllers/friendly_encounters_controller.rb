@@ -20,6 +20,7 @@ end
 
 def ensure_login
   redirect_to contest_url if not logged_in?
+  redirect_to contest_url if not current_user.is_member_of_a_team?(@contest)
   #redirect_to contest_url if not @contest.name.downcase.include?("test")
 end
 
