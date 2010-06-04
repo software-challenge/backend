@@ -24,7 +24,7 @@ end
 
 def show
   fe = FriendlyEncounter.find(params[:id])
-  redirect_to contest_friendly_encounters if not fe.played?
+  redirect_to contest_friendly_encounters_url if not fe.played?
   @match = fe.friendly_match
 end
 

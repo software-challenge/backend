@@ -34,4 +34,4 @@ ENV['VM_WATCH_FOLDER'] = File.join(File.dirname(__FILE__), '..', 'public', 'syst
 
 ENV['CLIENT_LOGS_FOLDER'] = "/home/scadmin/clientlogs/"
 ENV['SERVER_LOGS_FOLDER'] = "/home/scadmin/serverlogs/"
-ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'] = "5"
+ENV['FRIENDLY_GAMES_PER_DAY'] = "5"

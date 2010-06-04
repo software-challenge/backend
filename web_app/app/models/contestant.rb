@@ -13,6 +13,10 @@ class Contestant < ActiveRecord::Base
   has_many :friendly_encounter_slots
   has_many :friendly_encounters, :through => :friendly_encounter_slots
 
+  def friendly_matches_running
+    friendly_encounters.collect{|enc| enc.mini_jobs}.flatten.reject{|m| m.nil?}.count
+  end
+
   def has_hidden_friendly_encounters?
     friendly_encounter_slots.inject(false) {|val, x| val or x.hidden?}
   end
@@ -26,7 +30,7 @@ class Contestant < ActiveRecord::Base
   end
 
   def may_play_another_friendly_match_today?
-    ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'].nil? or self.friendly_matches_today < ENV['MAX_FRIENDLY_GAMES_PER_DAY_AND_TEAM'].to_i
+    ENV['FRIENDLY_GAMES_PER_DAY'].nil? or (self.friendly_matches_today + friendly_matches_running < ENV['FRIENDLY_GAMES_PER_DAY'].to_i)
   end
 
   belongs_to :current_client, :class_name => "Client"

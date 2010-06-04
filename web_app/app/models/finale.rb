@@ -16,6 +16,10 @@ class Finale < ActiveRecord::Base
   def publish
     if finished?
       self.published = true
+      days.each do |day|
+        day.public = true
+        day.save!
+      end
       self.save!
       self.reload
     end

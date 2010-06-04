@@ -142,4 +142,5 @@ class FriendlyEncounter < ActiveRecord::Base
     self.rejected = true
     self.save!
   end
+
 end
