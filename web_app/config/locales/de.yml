@@ -314,6 +314,8 @@ de:
       show: "Wettkämpfe"
       results: "Ergebnisse"
       standings: "Rangliste"
+    friendly_encounters:
+      all: "Alle Freundschaftsspiele"
     generic:
       index: "Liste der {{model}}"
       edit: "{{model}} bearbeiten"
