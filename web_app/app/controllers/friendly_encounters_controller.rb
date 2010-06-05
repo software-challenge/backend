@@ -1,7 +1,7 @@
 class FriendlyEncountersController < ApplicationController
 
-before_filter :fetch_contestants
 before_filter :ensure_login
+before_filter :fetch_contestants
 
 access_control do
   allow all
@@ -9,19 +9,6 @@ access_control do
   action :all do
     allow :administrator
   end
-end
-
-def fetch_contestants
-  @contestants = []
-  if logged_in?
-    @contestants = current_user.contestants
-  end
-end
-
-def ensure_login
-  redirect_to contest_url if not logged_in?
-  redirect_to contest_url unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
-  #redirect_to contest_url if not @contest.name.downcase.include?("test")
 end
 
 def show
@@ -157,5 +144,19 @@ end
     end
 
     redirect_to contest_friendly_encounters_url
+  end
+
+private
+
+  def fetch_contestants
+    @contestants = []
+    if logged_in?
+      @contestants = current_user.contestants
+    end
+  end
+
+  def ensure_login
+    redirect_to contest_url unless logged_in?
+    redirect_to contest_url unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
   end
 end
