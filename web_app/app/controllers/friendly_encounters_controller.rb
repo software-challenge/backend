@@ -156,7 +156,7 @@ private
   end
 
   def ensure_login
-    redirect_to contest_url unless logged_in?
+    redirect_to contest_url unless logged_in? and not current_user.nil?
     redirect_to contest_url unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
   end
 end
