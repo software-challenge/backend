@@ -76,9 +76,9 @@ class FriendlyEncounter < ActiveRecord::Base
 
   def play!
     if ready? and not running?
-      prepare
-      load_active_clients!
-      perform_delayed!
+      self.prepare
+      self.load_active_clients!
+      self.perform_delayed!
     end
   end
 
