@@ -80,8 +80,7 @@ public class FrameRenderer extends JPanel implements IRenderer
 	private void createInitFrame()
 	{
 		setDoubleBuffered(true);
-		setLayout(new BorderLayout());
-		
+
 		moveButton = new JButton("Mache Zug");
 		moveButton.addActionListener(new ActionListener() {
 			
@@ -90,7 +89,7 @@ public class FrameRenderer extends JPanel implements IRenderer
 				sendMove(new Move());
 			}
 		});
-		add(moveButton, BorderLayout.SOUTH);
+		add(moveButton);
 		
 		actionPane = new JTextPane();
 		actionPane.setText("");
@@ -103,9 +102,9 @@ public class FrameRenderer extends JPanel implements IRenderer
 
 		scrollPane.setDoubleBuffered(true);
 		//scrollPane.setSize(250, 300);
-		//actionPane.setSize(250, 300);
+		actionPane.setSize(250, 300);
 
-		this.add(scrollPane, BorderLayout.CENTER);
+		this.add(scrollPane, BorderLayout.AFTER_LAST_LINE);
 		
 		addMouseListener(new ClickRefresher());
 		addComponentListener(new ComponentAdapter() {
