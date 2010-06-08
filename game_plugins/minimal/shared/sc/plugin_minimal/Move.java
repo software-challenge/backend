@@ -4,11 +4,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * @author rra
- * @since Jul 4, 2009
+ * @author sca
  * 
  */
-@XStreamAlias(value = "hui:move")
+@XStreamAlias(value = "minimal:move")
 public final class Move implements Cloneable
 {
 	@Override

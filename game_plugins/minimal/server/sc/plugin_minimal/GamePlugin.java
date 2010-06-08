@@ -10,17 +10,16 @@ import sc.shared.ScoreFragment;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
- * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge
- * 2010.
+ * Das Minimale Plugin
  * 
- * @author rra
- * @since Jul 4, 2009
+ * @author Sven Casimir
+ * @since Juni, 2010
  */
-@PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+@PluginDescriptor(name = "Minimal", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin
 {
-	public static final String			PLUGIN_AUTHOR		= "Raphael Randschau <rra@informatik.uni-kiel.de>";
-	public static final String			PLUGIN_UUID			= "swc_2010_hase_und_igel";
+	public static final String			PLUGIN_AUTHOR		= "Sven Casimir";
+	public static final String			PLUGIN_UUID			= "minimal_plugin";
 
 	public static final int				MAX_PLAYER_COUNT	= 2;
 

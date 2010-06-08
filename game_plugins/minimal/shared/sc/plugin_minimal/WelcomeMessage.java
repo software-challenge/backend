@@ -2,7 +2,7 @@ package sc.plugin_minimal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-@XStreamAlias(value="hui:welcome")
+@XStreamAlias(value="minimal:welcome")
 public class WelcomeMessage
 {
 	private FigureColor myColor;

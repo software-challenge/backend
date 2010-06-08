@@ -24,10 +24,10 @@ import edu.cau.plugins.PluginDescriptor;
 
 /**
  * 
- * @author ffi
+ * @author sca
  * 
  */
-@PluginDescriptor(author = "Florian Fittkau", uuid = "hui", name = "Hase und Igel")
+@PluginDescriptor(author = "Sven Casimir", uuid = "minimal", name = "Minimal Plugin")
 public class GUIPluginFacade implements IGuiPlugin
 {
 	public GUIPluginFacade()

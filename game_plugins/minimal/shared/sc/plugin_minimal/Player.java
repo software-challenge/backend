@@ -13,14 +13,13 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * Ein Spieler aus Hase- und Igel.
+ * Ein minmaler Spieler
  * 
- * @author rra
- * @since Jul 4, 2009
+ * @author sca
  * 
  */
 // FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
-@XStreamAlias(value = "hui:player")
+@XStreamAlias(value = "minimal:player")
 public final class Player extends SimplePlayer implements Cloneable
 {
 	// Farbe der Spielfigure
