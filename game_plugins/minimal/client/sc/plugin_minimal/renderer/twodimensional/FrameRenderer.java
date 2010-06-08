@@ -76,7 +76,7 @@ public class FrameRenderer extends JPanel implements IRenderer
 	{
 		showing = false;
 	}
-
+	
 	private void createInitFrame()
 	{
 		setDoubleBuffered(true);
