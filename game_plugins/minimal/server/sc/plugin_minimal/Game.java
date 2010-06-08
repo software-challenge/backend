@@ -23,15 +23,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * Die Spiellogik von Hase- und Igel.
+ * Minimales Plugin als Beispiel für neue Plugins
  * 
- * Die Spieler spielen in genau der Reihenfolge in der sie das Spiel betreten
- * haben.
- * 
- * @author rra
- * @since Jul 4, 2009
+ * @author Sven Casimir
+ * @since Juni, 2010
  */
-@XStreamAlias(value = "hui:game")
+@XStreamAlias(value = "minimal:game")
 public class Game extends RoundBasedGameInstance<Player>
 {
 	private static Logger			logger			= LoggerFactory

@@ -1,4 +1,4 @@
-<project name="haseundigel-plugin" basedir="." default="main">
+<project name="minimal-plugin" basedir="." default="main">
 	<import file="../../svn-build.xml" />
 
 	<property name="src.dir" value="src" />

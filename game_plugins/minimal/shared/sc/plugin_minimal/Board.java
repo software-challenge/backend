@@ -12,11 +12,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * @author rra
- * @since Jul 1, 2009
+ * @author sca
  * 
  */
-@XStreamAlias(value = "hui:board")
+@XStreamAlias(value = "minimal:board")
 public class Board
 {
 	protected Player		red;
