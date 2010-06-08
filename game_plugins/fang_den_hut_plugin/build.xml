@@ -25,6 +25,8 @@
 	<target name="merge-src">
 		<copy todir="${src.dir}">
 			<fileset dir="client" />
+			<fileset dir="server" />
+			<fileset dir="shared" />
 		</copy>		
 	</target>
 
