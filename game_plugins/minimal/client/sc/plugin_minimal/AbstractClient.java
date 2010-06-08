@@ -15,6 +15,11 @@ import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
+/**
+ * 
+ * @author sven
+ *
+ */
 public abstract class AbstractClient implements ILobbyClientListener
 {
 	protected IGameHandler	handler;
