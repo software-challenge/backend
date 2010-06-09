@@ -1,9 +1,9 @@
 package sc.plugin_minimal;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
+ * This move does exactly nothing :)
  * @author sca
  * 
  */

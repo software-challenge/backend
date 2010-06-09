@@ -16,15 +16,22 @@ import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
 /**
+ * Abstrakter Client nach Vorschrift des SDKs.
+ * Beinhaltet einen LobbyClient, der den tatsächlichen Client darstellt.
  * 
  * @author sven
- *
  */
 public abstract class AbstractClient implements ILobbyClientListener
 {
+	// The handler reacts to messages from the server received by the lobby client
 	protected IGameHandler	handler;
+	
+	// The lobby client, that connects to the room
 	private LobbyClient		client;
+	
 	private String			gameType;
+	
+	// If the client made an error (rule violation), store reason here
 	private String			error;
 
 	// current id to identify the client instance internal
@@ -64,6 +71,12 @@ public abstract class AbstractClient implements ILobbyClientListener
 		return handler;
 	}
 
+	/**
+	 * Tell this client to observe the game given by the preparation handler
+	 * 
+	 * @param handle
+	 * @return
+	 */
 	public IControllableGame observeGame(PrepareGameResponse handle)
 	{
 		return client.observe(handle);
@@ -81,6 +94,9 @@ public abstract class AbstractClient implements ILobbyClientListener
 		return client.observeAndControl(handle);
 	}
 
+	/**
+	 * Called when a new message is sent to the room, e.g. move requests
+	 */
 	@Override
 	public void onRoomMessage(String roomId, Object data)
 	{
@@ -107,6 +123,9 @@ public abstract class AbstractClient implements ILobbyClientListener
 		client.sendMessageToRoom(roomId, move);
 	}
 
+	/**
+	 * Called, when an error is sent to the room
+	 */
 	@Override
 	public void onError(String roomId, ErrorResponse response)
 	{
@@ -114,6 +133,10 @@ public abstract class AbstractClient implements ILobbyClientListener
 		this.error = response.getMessage();
 	}
 
+	/**
+	 * Called when game state has been received
+	 * Happens, after a client made a move.
+	 */
 	@Override
 	public void onNewState(String roomId, Object state)
 	{

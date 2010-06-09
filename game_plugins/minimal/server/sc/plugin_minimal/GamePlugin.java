@@ -10,7 +10,8 @@ import sc.shared.ScoreFragment;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
- * Das Minimale Plugin
+ * Minimal game plugin.
+ * Basic structure of the game is described here
  * 
  * @author Sven Casimir
  * @since Juni, 2010
@@ -23,7 +24,7 @@ public class GamePlugin implements IGamePlugin
 
 	public static final int				MAX_PLAYER_COUNT	= 2;
 
-	public static final int				MAX_TURN_COUNT		= 30;
+	public static final int				MAX_TURN_COUNT		= 16;
 
 	public static final ScoreDefinition	SCORE_DEFINITION;
 

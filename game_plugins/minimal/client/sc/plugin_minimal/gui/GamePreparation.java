@@ -16,7 +16,10 @@ import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.SlotDescriptor;
 
 /**
- * @author ffi
+ * A game preparation lets the client connect to the server and open a new game.
+ * It then opens slots for actual clients
+ * 
+ * @author sca
  * 
  */
 public class GamePreparation implements IGamePreparation

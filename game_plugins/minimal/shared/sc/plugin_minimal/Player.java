@@ -1,19 +1,15 @@
 package sc.plugin_minimal;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import sc.framework.plugins.SimplePlayer;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * Ein minmaler Spieler
+ * A minimal player, it has a color and a move history, nothing more
  * 
  * @author sca
  * 
@@ -28,11 +24,18 @@ public final class Player extends SimplePlayer implements Cloneable
 	@XStreamImplicit(itemFieldName = "move")
 	private List<Move>		history;
 
+	/**
+	 * Add given move to this player's move history
+	 * @param m
+	 */
 	protected void addToHistory(final Move m)
 	{
 		getHistory().add(m);
 	}
 
+	/**
+	 * @return the player's move history
+	 */
 	public List<Move> getHistory()
 	{
 		if (this.history == null)
@@ -43,6 +46,10 @@ public final class Player extends SimplePlayer implements Cloneable
 		return history;
 	}
 
+	/**
+	 * 
+	 * @return the last move done by this player
+	 */
 	public Move getLastMove()
 	{
 		return getLastMove(-1);
@@ -54,13 +61,14 @@ public final class Player extends SimplePlayer implements Cloneable
 	}
 
 	public Player(FigureColor color) {
+		this();
 		this.color = color;
 	}
 	
 	/**
-	 * Die Farbe dieses Spielers auf dem Spielbrett
 	 * 
-	 * @return
+	 * 
+	 * @return Color of this player
 	 */
 	public final FigureColor getColor()
 	{

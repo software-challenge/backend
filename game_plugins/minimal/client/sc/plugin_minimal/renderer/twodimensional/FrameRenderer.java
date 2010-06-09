@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
 
 import sc.plugin_minimal.Board;
 import sc.plugin_minimal.FigureColor;
@@ -39,7 +41,7 @@ import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
 /**
- * @author ffi
+ * @author ffi, sca
  * 
  */
 @SuppressWarnings("serial")
@@ -51,11 +53,20 @@ public class FrameRenderer extends JPanel implements IRenderer
 	private Player					enemy;
 	private Board					board;
 	
+	// We also have a game handler to know whats going on
 	private IGameHandler			handler;
+	
+	// Am I only observing? Then don't show any controls or such
 	private boolean					onlyObserving;
+	
+	// Am I currently visible?
 	private boolean					showing;
+
 	private boolean					myturn;
 	
+	/*
+	 * Some example gui elements, not nice to create everything directly in here
+	 */
 	private JButton			moveButton;
 	private JTextPane		actionPane;
 	private JScrollPane		scrollPane;
@@ -77,6 +88,10 @@ public class FrameRenderer extends JPanel implements IRenderer
 		showing = false;
 	}
 	
+	/**
+	 * Create the GUI the first time
+	 * Add all GUI elements to the panel here
+	 */
 	private void createInitFrame()
 	{
 		setDoubleBuffered(true);
@@ -118,6 +133,11 @@ public class FrameRenderer extends JPanel implements IRenderer
 		});
 	}
 
+	/**
+	 * Prints out the whole move history of both players to our example text pane
+	 * @param redPlayer
+	 * @param bluePlayer
+	 */
 	public void printHistory(Player redPlayer, Player bluePlayer) {
 		actionPane.setText("");
 		String text = "";
@@ -148,6 +168,9 @@ public class FrameRenderer extends JPanel implements IRenderer
 		actionPane.setCaretPosition(actionPane.getDocument().getLength());
 	}
 	
+	/**
+	 * Player got updated, let the gui react to it
+	 */
 	@Override
 	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
@@ -156,10 +179,14 @@ public class FrameRenderer extends JPanel implements IRenderer
 		this.player = player;
 		enemy = otherPlayer;
 		
+		// Set the color of the move button depending on what color I have
+		// Only needs to be done once because this panel is directly connected to the player
 		moveButton.setForeground(
 				player.getColor() == FigureColor.RED ? Color.RED : Color.BLUE
 			);
 		
+		// Show the new history here
+		// Always the whole history is repainted because we don't receive the move but the whole game state
 		if (player.getColor() == FigureColor.RED) {
 			printHistory(player, enemy);
 		} else {
@@ -169,17 +196,18 @@ public class FrameRenderer extends JPanel implements IRenderer
 		repaint();
 	}
 
+	/**
+	 * Board got updated, update local things
+	 */
 	@Override
 	public void updateBoard(Board board, int round)
 	{
 		this.board = board;
 	}
 
-	private void askForAction(final Player player)
-	{
-		
-	}
-				
+	/**
+	 * Create Image of the current gui view
+	 */
 	@Override
 	public Image getImage()
 	{
@@ -189,6 +217,10 @@ public class FrameRenderer extends JPanel implements IRenderer
 		return img;
 	}
 
+	/**
+	 * Send given move (using the game handler)
+	 * @param move
+	 */
 	private void sendMove(Move move)
 	{
 		if (myturn)
@@ -198,18 +230,44 @@ public class FrameRenderer extends JPanel implements IRenderer
 		}
 	}
 
+	/**
+	 * Move is requested
+	 */
 	@Override
 	public void requestMove()
 	{
+		// For this example, only recognize that it's our turn
+		// We don't need to disable the move button because it will be invisible until next turn anyway
 		myturn = true;
-		
 	}
 
+	/**
+	 * Game is over, print out game result
+	 */
 	@Override
 	public void gameEnded(final GameResult data, FigureColor color, String errorMessage)
 	{		
+		try
+		{
+			actionPane.getDocument().insertString(
+					actionPane.getDocument().getLength(), "\n\nSpiel beendet", new SimpleAttributeSet());
+
+		}
+		catch (BadLocationException e)
+		{
+			// should not happen
+			System.err.println(e.getStackTrace());
+		}
+		
+		moveButton.setEnabled(false);
+		actionPane.setCaretPosition(actionPane.getDocument().getLength());
 	}
 
+	/**
+	 * Repaint when something is clicked... useful if used more often
+	 * @author sven
+	 *
+	 */
 	private class ClickRefresher extends MouseAdapter
 	{
 		@Override
@@ -219,11 +277,18 @@ public class FrameRenderer extends JPanel implements IRenderer
 		}
 	}
 
+	/**
+	 * An error (in most cases client failure) happened
+	 */
 	@Override
 	public void gameError(String errorMessage)
 	{
 	}
 
+	/**
+	 * Obviously it was planned to implement internet games and chat functionality for
+	 * this server. Maybe we will do that later, for now it's unused.
+	 */
 	@Override
 	public void updateChat(String chatMsg) {
 		// TODO Auto-generated method stub

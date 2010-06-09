@@ -3,17 +3,17 @@ package sc.plugin_minimal;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Alle Spielfiguren aus dem Hase und Igel Original Mit Veränderungen der CAU
+ * Define player colors here. Maybe would be nicer to name it PlayerColor not FigureColor
  */
 @XStreamAlias(value="minimal:color")
 public enum FigureColor
 {
 	/**
-	 * Der erste Spieler ist immer rot 
+	 * First player is always red
 	 */
 	RED,
 	/**
-	 *  Der zweite Spieler ist immer blau
+	 *  Second player always blue
 	 */
 	BLUE
 }

@@ -23,6 +23,7 @@ import sc.shared.SlotDescriptor;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
+ * This is the GUIPlugin interface that is loaded by the server when it loads the plugins
  * 
  * @author sca
  * 
@@ -51,8 +52,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	@Override
 	public String getPluginInfoText()
 	{
-		return "<html>Die Nutzung des Spielkonzeptes \"Hase und Igel\" (Name, Spielregeln und Grafik) "
-				+ "<BR> erfolgt mit freundlicher Genehmigung der Ravensburger Spieleverlag GmbH.</html>";
+		return "<html>Dies ist ein minimales Beispielplugin als Vorlage für neue Spielplugins</html>";
 	}
 
 	@Override
@@ -61,6 +61,10 @@ public class GUIPluginFacade implements IGuiPlugin
 		return null;
 	}
 
+	/**
+	 * Server wants us to prepare a game
+	 * Then create a GuiClient that opens a new room and create the GUI
+	 */
 	@Override
 	public IGamePreparation prepareGame(final String ip, final int port,
 			SlotDescriptor... descriptors) throws IOException
@@ -74,6 +78,9 @@ public class GUIPluginFacade implements IGuiPlugin
 		return result;
 	}
 
+	/**
+	 * Server wants us to load a replay.
+	 */
 	@Override
 	public IObservation loadReplay(String filename) throws IOException
 	{

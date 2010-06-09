@@ -12,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * @author sca
+ * @author ffa, sca
  * 
  */
 @XStreamAlias(value = "minimal:board")
@@ -28,7 +28,7 @@ public class Board
 	}
 
 	/**
-	 * Erstellt ein neues Spielfeld
+	 * New empty board
 	 * 
 	 * @return
 	 */
@@ -40,16 +40,17 @@ public class Board
 	}
 
 	/**
-	 * Erstellt eine zufällige Rennstrecke. Die Positionen der Salat- und
-	 * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
-	 * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
-	 * und Ziel und dem ersten bzw. letzten Igelfeld permutiert.
+	 * Create initial board here, i.e. if you need to randomly place things on the board
 	 */
 	private final void initialize()
 	{
 		
 	}
 
+	/**
+	 * Add player to this board. Here only two players are supported.
+	 * @param player
+	 */
 	protected final void addPlayer(final Player player)
 	{
 		if (player.getColor().equals(FigureColor.RED))

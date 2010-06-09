@@ -14,8 +14,17 @@ import sc.protocol.LobbyProtocol;
 
 import com.thoughtworks.xstream.XStream;
 
+/**
+ * Configuration
+ * @author sca
+ *
+ */
 public class Configuration
 {
+	/*
+	 * The XStream which is used to translate Objects to XML and vice versa
+	 */
+	
 	private static XStream	xStream;
 
 	static
