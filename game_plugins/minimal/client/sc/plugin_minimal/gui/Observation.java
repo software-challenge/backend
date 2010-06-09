@@ -3,12 +3,9 @@
  */
 package sc.plugin_minimal.gui;
 
-import java.awt.image.renderable.RenderContext;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +31,9 @@ import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
 /**
+ * The observation watches the game and is informed by the GUI client 
+ * when something happens
+ * 
  * @author ffi
  * 
  */
@@ -365,17 +365,6 @@ public class Observation implements IObservation, IUpdateListener,
 		if (errorObject != null) {
 			ErrorResponse error = (ErrorResponse) errorObject;
 			logger.info("Received error response");
-			//RenderFacade.getInstance().gameError(error.getMessage());
-			//RenderFacade.getInstance().getObserver().
-			//notifyOnGameEnded(sender, conGame.getResult());
-			/*//notifyOnGameEnded(sender, conGame.getResult());
-			if (conGame.hasNext())
-			{
-				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
-			} else {
-				logger.debug("Game ended");
-				//notifyOnGameEnded(sender, conGame.getResult());
-			}*/
 		}
 		
 		if (gameState != null)
@@ -384,21 +373,8 @@ public class Observation implements IObservation, IUpdateListener,
 			Game game = gameState.getGame();
 			handler.onUpdate(game.getBoard(), game.getTurn());
 
-			if (game.getActivePlayer().getColor() == FigureColor.RED)
-			{
-				// active player is own
-				handler.onUpdate(game.getActivePlayer(), game.getBoard()
-						.getOtherPlayer(game.getActivePlayer()));
-			}
-			else
-			{
-				// active player is the enemy
-				//handler.onUpdate(game.getBoard().getOtherPlayer(
-						//game.getActivePlayer()), game.getActivePlayer());
-				handler.onUpdate(game.getActivePlayer(), game.getBoard()
-						.getOtherPlayer(game.getActivePlayer()));
-
-			}
+			handler.onUpdate(game.getActivePlayer(), 
+					game.getBoard().getOtherPlayer(game.getActivePlayer()));
 
 			if (conGame.isGameOver() && conGame.isAtEnd())
 			{

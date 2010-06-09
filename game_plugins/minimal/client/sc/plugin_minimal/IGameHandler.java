@@ -2,6 +2,11 @@ package sc.plugin_minimal;
 
 import sc.shared.GameResult;
 
+/**
+ * The game handler is used to interface the client with the observation
+ * @author sven
+ *
+ */
 public interface IGameHandler
 {
 	/**

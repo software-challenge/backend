@@ -12,6 +12,7 @@ import sc.plugin_minimal.Player;
 import sc.shared.GameResult;
 
 /**
+ * This interface describes what the GUI panel assigned to a player/observer has to implement
  * @author ffi
  * 
  */

@@ -23,7 +23,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * Minimales Plugin als Beispiel für neue Plugins
+ * Minimal game. Basis for new plugins.
+ * This class holds the game logic.
  * 
  * @author Sven Casimir
  * @since Juni, 2010
@@ -60,12 +61,16 @@ public class Game extends RoundBasedGameInstance<Player>
 		return new GameState(this);
 	}
 
+	/**
+	 * Someone did something, check out what it was (move maybe? Then check the move)
+	 */
 	@Override
 	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException
 	{
 		final Player author = (Player) fromPlayer;
 
+		// Player did a move
 		if (data instanceof Move)
 		{
 			final Move move = (Move) data;
@@ -81,6 +86,11 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 	}
 
+	/**
+	 * A move has been made, update local game state
+	 * @param move
+	 * @param player
+	 */
 	private void update(Move move, Player player)
 	{
 	
@@ -183,7 +193,6 @@ public class Game extends RoundBasedGameInstance<Player>
 
 	@Override
 	protected boolean checkGameOverCondition() {
-		// TODO Auto-generated method stub
-		return false;
+		return getTurn() >= GamePlugin.MAX_TURN_COUNT;
 	}
 }

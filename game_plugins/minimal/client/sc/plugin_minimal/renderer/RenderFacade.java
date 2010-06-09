@@ -18,26 +18,41 @@ import sc.plugin_minimal.renderer.twodimensional.FrameRenderer;
 import sc.shared.GameResult;
 
 /**
- * @author ffi
+ * This facade contains the main game panel. It uses a CardLayout to switch between the subpanels for every player.
+ * @author ffi, sca
  * 
  */
 public class RenderFacade
 {
-	private IRenderer						observer;
+	private IRenderer						observer; // The observer gets an extra panel (shown while a AI client acts)
 
-	private IRenderer						player1;
-	private IRenderer						player2;
-	private JPanel							panel;
+	private IRenderer						player1; // One panel for player1 (shown at player one's turn)
+	private IRenderer						player2; // One panel for player2 (shown at player two's turn)
+	
+	private JPanel							panel; // The main panel
 
 	private EPlayerId						activePlayer;
+	
+	/*
+	 * GUI modes are used to determine what the gui is showing at the moment
+	 * Can be connection dialogue, player1, ...
+	 */
 	private GUIMode							currentMode;
-
+	
+	/*
+	 * These strings are used to identify the different panels in the CardLayout
+	 */
 	private String							connectString			= "connectingPanel";
 	private String							observerString			= "observerPanel";
 	private String							player1String			= "player1Panel";
 	private String							player2String			= "player2Panel";
 
 	private boolean							threeDimensional;
+	
+	/*
+	 * Used here to determine what panel (IRenderer) should be used when a new panel is created.
+	 * This solution only works with two players
+	 */
 	private boolean							alreadyCreatedPlayerOne	= false;
 
 	/**

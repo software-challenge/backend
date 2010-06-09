@@ -1,5 +1,10 @@
 package sc.plugin_minimal;
 
+/**
+ * Tools to be used in the server or client plugin
+ * @author sca
+ *
+ */
 public class GameUtil
 {
 	

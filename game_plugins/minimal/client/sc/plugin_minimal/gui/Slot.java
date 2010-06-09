@@ -11,6 +11,7 @@ import sc.plugin_minimal.GuiClient;
 import sc.plugin_minimal.renderer.RenderFacade;
 
 /**
+ * Holds a place for a potential client (that can be a remote client or a human client i.e.)
  * @author ffi
  * 
  */
@@ -25,6 +26,9 @@ public class Slot implements ISlot
 		this.adminclient = adminclient;
 	}
 
+	/**
+	 * Local client, started by server
+	 */
 	@Override
 	public String[] asClient()
 	{
@@ -34,6 +38,9 @@ public class Slot implements ISlot
 		return res;
 	}
 
+	/**
+	 * Create new human client and new Panel on the Facade
+	 */
 	@Override
 	public void asHuman() throws IOException
 	{
@@ -64,6 +71,9 @@ public class Slot implements ISlot
 		humanClient.joinPreparedGame(reservation);
 	}
 
+	/**
+	 * Remote client, has to connect to the server manually
+	 */
 	@Override
 	public void asRemote()
 	{

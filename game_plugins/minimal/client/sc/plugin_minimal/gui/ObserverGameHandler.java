@@ -13,6 +13,7 @@ import sc.plugin_minimal.renderer.RenderFacade;
 import sc.shared.GameResult;
 
 /**
+ * 
  * @author ffi
  * 
  */
