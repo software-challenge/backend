@@ -820,25 +820,49 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 				if (data.getScores().get(0).getCause() == ScoreCause.LEFT)
 				{
 					addGameEndedRightColors(FigureColor.RED,
-							" hat das Spiel verlassen!");
+							" hat das Spiel verlassen!\n");
 				}
 
 				if (data.getScores().get(1).getCause() == ScoreCause.LEFT)
 				{
 					addGameEndedRightColors(FigureColor.BLUE,
-							" hat das Spiel verlassen!");
+							" hat das Spiel verlassen!\n");
 				}
 
 				if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION)
 				{
 					addGameEndedRightColors(FigureColor.RED,
-							" hat einen falschen Zug gesetzt!");
+							" hat einen falschen Zug gesetzt!\n");
 				}
 
 				if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION)
 				{
 					addGameEndedRightColors(FigureColor.BLUE,
-							" hat einen falschen Zug gesetzt!");
+							" hat einen falschen Zug gesetzt!\n");
+				}
+				
+				if (data.getScores().get(0).getCause() == ScoreCause.HARD_TIMEOUT)
+				{
+					addGameEndedRightColors(FigureColor.RED, 
+							" hat das HardTimeout überschritten!\n");
+				}
+				
+				if (data.getScores().get(1).getCause() == ScoreCause.HARD_TIMEOUT)
+				{
+					addGameEndedRightColors(FigureColor.BLUE,
+							" hat das HardTimeout überschritten!\n");
+				}
+
+				if (data.getScores().get(0).getCause() == ScoreCause.SOFT_TIMEOUT)
+				{
+					addGameEndedRightColors(FigureColor.RED,
+							" hat das SoftTimeout überschritten!\n");
+				}
+				
+				if (data.getScores().get(1).getCause() == ScoreCause.SOFT_TIMEOUT)
+				{
+					addGameEndedRightColors(FigureColor.BLUE,
+							" hat das SoftTimeout überschritten!\n");
 				}
 
 				String[] results = data.getScores().get(0).toStrings();

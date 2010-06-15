@@ -1,5 +1,6 @@
 package sc.plugin2010;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -14,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin2010.util.Configuration;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -389,5 +392,16 @@ public class Game extends RoundBasedGameInstance<Player>
 	protected ActionTimeout getTimeoutFor(Player player)
 	{
 		return new ActionTimeout(true, 10000l, 2000l);
+	}
+
+	@Override
+	public void loadFromFile(String file)
+	{
+		logger.info("Loading game from: " + file);
+		GameLoader<GameState> gl = new GameLoader<GameState>(GameState.class);
+		GameState state = gl.loadGame(Configuration.getXStream(), file);
+		if (state != null) {
+			this.board = state.getGame().getBoard();
+		}
 	}
 }

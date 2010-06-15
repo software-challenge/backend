@@ -14,7 +14,6 @@ public class GuiClient extends AbstractClient
 	public void setObservation(IGUIObservation obs)
 	{
 		this.obs = obs;
-		// this.client.start();
 	}
 
 	public IGUIObservation getObservation()
