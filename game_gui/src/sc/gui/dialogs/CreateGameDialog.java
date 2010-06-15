@@ -34,6 +34,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -59,6 +61,7 @@ import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.logic.save.GUIConfiguration;
 import sc.logic.save.Player;
 import sc.plugin.GUIPluginInstance;
+import sc.server.Configuration;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
@@ -94,6 +97,12 @@ public class CreateGameDialog extends JDialog {
 	private JTextField txfPort;
 	private JLabel lblPort;
 	private MyTableModel playersModel;
+	
+	private JPanel pnlLoadGame;
+	private JPanel pnlLoadGameChoose;
+	private JCheckBox chkLoadGame;
+	private JTextField txfLoadGame;
+	private JButton btnLoadGame;
 
 	/**
 	 * Constructor
@@ -133,9 +142,57 @@ public class CreateGameDialog extends JDialog {
 
 		pnlPref = new JPanel();
 		pnlButtons = new JPanel();
+		pnlLoadGame = new JPanel();
 		pnlBottom.add(pnlPref);
+		pnlBottom.add(pnlLoadGame);
 		pnlBottom.add(pnlButtons);
 
+		// ---------------------------------------------------
+		
+		pnlLoadGame.setLayout(new FlowLayout());
+		
+		pnlLoadGameChoose = new JPanel();
+		
+		chkLoadGame = new JCheckBox(lang.getProperty("dialog_create_load_game_check"));
+		chkLoadGame.setFont(chkLoadGame.getFont().deriveFont(FONT_SIZE));
+		chkLoadGame.addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				//pnlLoadGameChoose.setVisible(chkLoadGame.isSelected());
+				boolean en = chkLoadGame.isSelected();
+				btnLoadGame.setEnabled(en);
+				txfLoadGame.setEnabled(en);
+			}
+		});
+		
+		btnLoadGame = new JButton(lang.getProperty("dialog_create_load_game_choose"));
+		btnLoadGame.setEnabled(false);
+		btnLoadGame.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JFileChooser gameFileChooser = new JFileChooser();
+				switch (gameFileChooser.showOpenDialog(null)) {
+				case JFileChooser.APPROVE_OPTION:
+					txfLoadGame.setText(gameFileChooser.getSelectedFile().getAbsolutePath());
+					break;
+				case JFileChooser.CANCEL_OPTION:
+					// Do nothing?
+					break;
+				}
+			}
+		});
+		
+		txfLoadGame = new JTextField();
+		txfLoadGame.setEnabled(false);
+		txfLoadGame.setColumns(MAX_CHARS);
+		
+		pnlLoadGame.add(chkLoadGame);
+		pnlLoadGame.add(pnlLoadGameChoose);
+		pnlLoadGameChoose.add(txfLoadGame);
+		pnlLoadGameChoose.add(btnLoadGame);
+		
+		
 		// ---------------------------------------------------
 
 		// TODO for future
@@ -250,6 +307,12 @@ public class CreateGameDialog extends JDialog {
 		okButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (chkLoadGame.isSelected()) {
+					Configuration.set("loadGameFile", txfLoadGame.getText());
+				} else {
+					Configuration.set("loadGameFile", null);
+				}
+				
 				createGame(playersModel);
 			}
 		});
@@ -444,7 +507,7 @@ public class CreateGameDialog extends JDialog {
 			cancelGameCreation(null);
 			return;
 		}
-
+		
 		final ConnectingDialog connDial = new ConnectingDialog();
 
 		// set observation

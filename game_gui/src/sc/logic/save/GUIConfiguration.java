@@ -26,6 +26,8 @@ public class GUIConfiguration implements Serializable {
 	public static boolean autoStart = false;
 	public static boolean repeat = false;
 	public static int repeatDelay = 0;
+	
+	public static String fileToLoadBoardFrom = null;
 
 	public enum ELanguage {
 		DE, EN
