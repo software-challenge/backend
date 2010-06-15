@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.server.Configuration;
 import sc.server.ServiceManager;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -75,6 +76,12 @@ public class GameRoomManager implements Runnable
 		String roomId = generateRoomId();
 		GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(),
 				prepared);
+		
+		String gameFile = Configuration.get("loadGameFile");
+		if (gameFile != null) {
+			logger.info("Request plugin to load game from file: " + gameFile);
+			room.getGame().loadFromFile(gameFile);
+		}
 
 		this.add(room);
 
