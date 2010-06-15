@@ -1,5 +1,9 @@
 package sc.plugin_minimal;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -7,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +19,10 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin_minimal.util.Configuration;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -194,5 +201,14 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected boolean checkGameOverCondition() {
 		return getTurn() >= GamePlugin.MAX_TURN_COUNT;
+	}
+
+	@Override
+	public void loadFromFile(String file) {
+		GameLoader<GameState> gl = new GameLoader<GameState>(GameState.class);
+		GameState state = gl.loadGame(Configuration.getXStream(), file);
+		if (state != null) {
+			this.board = state.getGame().getBoard();
+		}
 	}
 }
