@@ -49,6 +49,8 @@
 		<echo message="Compiling Plugins..." />
 		<!-- TODO: compile all plugins automatically -->
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/fang_den_hut" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/minimal" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/tic_tac_toe" target="clean-build" inheritAll="false" />
 	</target>
 

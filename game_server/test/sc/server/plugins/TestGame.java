@@ -1,5 +1,6 @@
 package sc.server.plugins;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -112,5 +113,12 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	protected PlayerScore getScoreFor(TestPlayer p)
 	{
 		return new PlayerScore(true);
+	}
+
+	@Override
+	public void loadFromFile(String file)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }
