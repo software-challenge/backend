@@ -96,9 +96,10 @@ public class Lobby implements IClientManagerListener, IClientListener
 			else if (packet instanceof PrepareGameRequest)
 			{
 				PrepareGameRequest prepared = (PrepareGameRequest) packet;
-				source.send(this.gameManager.prepareGame(
+				source.send(this.gameManager.prepareGame(prepared));
+				/*source.send(this.gameManager.prepareGame(
 						prepared.getGameType(), prepared.getPlayerCount(),
-						prepared.getSlotDescriptors()));
+						prepared.getSlotDescriptors()));*/
 			}
 			else if (packet instanceof FreeReservationRequest)
 			{

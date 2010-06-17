@@ -65,10 +65,14 @@ public final class Application
 		CmdLineParser.Option debug = parser.addBooleanOption('d', "debug");
 		CmdLineParser.Option pluginDirectory = parser
 				.addStringOption("plugins");
+		CmdLineParser.Option loadGameFileOption = parser.addStringOption("loadGameFile");
 		parser.parse(params);
 
 		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
+		String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
+		
+		Configuration.set("loadGameFile", loadGameFile);
 
 		if (debugMode)
 		{

@@ -121,4 +121,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void loadGameInfo(Object gameInfo)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

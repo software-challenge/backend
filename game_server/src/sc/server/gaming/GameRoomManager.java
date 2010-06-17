@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescueableClientException;
+import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.server.Configuration;
 import sc.server.ServiceManager;
@@ -78,7 +79,7 @@ public class GameRoomManager implements Runnable
 				prepared);
 		
 		String gameFile = Configuration.get("loadGameFile");
-		if (gameFile != null) {
+		if (gameFile != null && gameFile != "") {
 			logger.info("Request plugin to load game from file: " + gameFile);
 			room.getGame().loadFromFile(gameFile);
 		}
@@ -168,14 +169,31 @@ public class GameRoomManager implements Runnable
 	{
 		return this.pluginApi;
 	}
+	
+	public synchronized PrepareGameResponse prepareGame(String gameType,
+			int playerCount, List<SlotDescriptor> descriptors, Object loadGameInfo)
+			throws RescueableClientException {
+		GameRoom room = createGame(gameType, true);
+		room.openSlots(descriptors);
+		
+		if (loadGameInfo != null) {
+			room.getGame().loadGameInfo(loadGameInfo);
+		}
+		
+		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
+	}
 
 	public synchronized PrepareGameResponse prepareGame(String gameType,
 			int playerCount, List<SlotDescriptor> descriptors)
 			throws RescueableClientException
 	{
-		GameRoom room = createGame(gameType, true);
-		room.openSlots(descriptors);
-		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
+		return prepareGame(gameType, playerCount, descriptors, null);
+	}
+	
+	public synchronized PrepareGameResponse prepareGame(PrepareGameRequest prepared) throws RescueableClientException {
+		return prepareGame(
+				prepared.getGameType(), prepared.getPlayerCount(),
+				prepared.getSlotDescriptors(), prepared.getLoadGameInfo());
 	}
 
 	public synchronized GameRoom findRoom(String roomId)
