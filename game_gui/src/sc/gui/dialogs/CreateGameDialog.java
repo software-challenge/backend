@@ -310,7 +310,7 @@ public class CreateGameDialog extends JDialog {
 				if (chkLoadGame.isSelected()) {
 					Configuration.set("loadGameFile", txfLoadGame.getText());
 				} else {
-					Configuration.set("loadGameFile", null);
+					Configuration.set("loadGameFile", "");
 				}
 				
 				createGame(playersModel);
