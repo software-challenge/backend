@@ -228,7 +228,6 @@ class PeopleController < ApplicationController
 
   def unhide
     @person.hidden = false
-    @person.blocked = false
     if @person.save
       flash[:notice] = I18n.t "messages.unhidden_successfully", :name => @person.name
     end

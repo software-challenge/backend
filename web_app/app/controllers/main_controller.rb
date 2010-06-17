@@ -50,7 +50,7 @@ class MainController < ApplicationController
       person = Person.find_by_email(email)
       raise ActiveRecord::RecordNotFound unless person
       raise ActiveRecord::RecordNotFound unless person.password_match?(password)
-      raise ActiveRecord::RecordNotFound if person.blocked?
+      raise ActiveRecord::RecordNotFound if person.hidden?
       session[:user_id] = person.id
       person.logged_in = true
       person.last_seen = Time.now
