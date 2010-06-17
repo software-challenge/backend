@@ -20,6 +20,8 @@ public class PrepareGameRequest implements ILobbyRequest,
 
 	@XStreamImplicit(itemFieldName = "slot")
 	private final List<SlotDescriptor>	slotDescriptors;
+	
+	private Object loadGameInfo = null;
 
 	public PrepareGameRequest(String gameType, int playerCount)
 	{
@@ -47,6 +49,14 @@ public class PrepareGameRequest implements ILobbyRequest,
 		{
 			throw new IllegalArgumentException("PlayerCount must be positive");
 		}
+	}
+	
+	public void setLoadGameInfo(Object info) {
+		this.loadGameInfo = info;
+	}
+	
+	public Object getLoadGameInfo() {
+		return this.loadGameInfo;
 	}
 
 	public String getGameType()

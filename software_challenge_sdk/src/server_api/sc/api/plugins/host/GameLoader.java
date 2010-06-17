@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
@@ -16,20 +18,32 @@ import sc.networking.clients.IHistoryListener;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 
-public class GameLoader<T> implements IHistoryListener
+public class GameLoader implements IHistoryListener
 {
 	private static final Logger	logger = LoggerFactory.getLogger(GameLoader.class);
 	private volatile boolean finished;
-	private T obj = null;
-	private Class<?> clazz;
+	private Object obj = null;
+	private List<Class<?>> clazzes;
 	private GameLoaderClient client;
 	
-	public GameLoader(Class<?> clazz) {
+	public GameLoader(List<Class<?>> clazzes) {
 		this.finished = false;
-		this.clazz = clazz;
+		this.clazzes = clazzes;
 	}
 	
-	public T loadGame(XStream xstream, String filename) {
+	public GameLoader(Class<?> clazz) {
+		this(new LinkedList<Class<?>>());
+		this.clazzes.add(clazz);
+	}
+	
+	public GameLoader(Class<?>[] clazzes) {
+		this(new LinkedList<Class<?>>());
+		for (Class<?> clazz : clazzes) {
+			this.clazzes.add(clazz);
+		}
+	}
+	
+	public Object loadGame(XStream xstream, String filename) {
 		try {
 			return loadGame(xstream, new File(filename));
 		} catch (IOException e) {
@@ -38,11 +52,11 @@ public class GameLoader<T> implements IHistoryListener
 		}
 	}
 	
-	public T loadGame(XStream xstream, File file) throws IOException {
+	public Object loadGame(XStream xstream, File file) throws IOException {
 		return loadGame(xstream, new FileInputStream(file), file.getName().endsWith(".gz"));
 	}
 	
-	public T loadGame(XStream xstream, FileInputStream stream, boolean gzip) throws IOException {
+	public Object loadGame(XStream xstream, FileInputStream stream, boolean gzip) throws IOException {
 		if (gzip) {
 			return loadGame(xstream, new GZIPInputStream(stream));
 		} else {
@@ -50,12 +64,11 @@ public class GameLoader<T> implements IHistoryListener
 		}
 	}
 	
-	public T loadGame(XStream xstream, InputStream file) throws IOException {
+	public Object loadGame(XStream xstream, InputStream file) throws IOException {
 		this.client = new GameLoaderClient(xstream, file);
 		this.client.addListener(this);
 		this.client.start();
-		while(!this.finished) {};
-		logger.debug("Finished");
+		while(!this.finished && !this.client.isClosed()) {};
 		return this.obj;
 	}
 
@@ -75,11 +88,13 @@ public class GameLoader<T> implements IHistoryListener
 	{
 		logger.debug("Received new state");
 		if (!this.finished) {
-			if (this.clazz.isInstance(o)) {
-				logger.debug("Received game info");
-				this.obj = (T) o;
-				this.finished = true;
-				this.client.close();
+			for (Class<?> clazz : this.clazzes) {
+				if (clazz.isInstance(o)) {
+					logger.debug("Received game info of type {}", clazz.getName());
+					this.obj = clazz.cast(o);
+					this.finished = true;
+					this.client.close();
+				}
 			}
 		}
 	}
