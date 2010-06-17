@@ -67,4 +67,9 @@ public interface IGameInstance
 	 */
 	public void loadFromFile(String file);
 	
+	/**
+	 * The game is requested to load itself from a given game information object (could be a board instance for example)
+	 */
+	public void loadGameInfo(Object gameInfo);
+	
 }
