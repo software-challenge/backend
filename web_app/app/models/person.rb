@@ -61,6 +61,10 @@ class Person < ActiveRecord::Base
     end
   end
 
+  def blocked
+    self.hidden
+  end
+
   # fake accessor for form-builders
   attr_reader :password
 
@@ -176,10 +180,6 @@ class Person < ActiveRecord::Base
       else
         self.has_no_role! :administrator
       end
-    end
-    # hidden people should never be able to login
-    if self.hidden
-      self.blocked = true
     end
   end
 
