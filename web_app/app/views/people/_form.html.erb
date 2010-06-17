@@ -77,9 +77,10 @@
           <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
         </li>
       </li>
-        <% if @person != current_user %>
-          <%= f.input "blocked", :required => false %>
-        <% end %>
+      <li>
+        <label><%= Person.human_attribute_name(:hidden) %></label>
+        <%= t(@person.hidden.to_s) %>
+      </li>
       <% end %>
     <% end %>
 
