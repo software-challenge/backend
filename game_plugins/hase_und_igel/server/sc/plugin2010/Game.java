@@ -398,10 +398,22 @@ public class Game extends RoundBasedGameInstance<Player>
 	public void loadFromFile(String file)
 	{
 		logger.info("Loading game from: " + file);
-		GameLoader<GameState> gl = new GameLoader<GameState>(GameState.class);
-		GameState state = gl.loadGame(Configuration.getXStream(), file);
-		if (state != null) {
-			this.board = state.getGame().getBoard();
+		GameLoader gl = new GameLoader(new Class<?>[] {GameState.class, Board.class});
+		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
+		if (gameInfo != null) {
+			loadGameInfo(gameInfo);
+		}
+	}
+
+	@Override
+	public void loadGameInfo(Object gameInfo)
+	{
+		logger.info("Processing game information");
+		if (gameInfo instanceof GameState) {
+			this.board = ((GameState)gameInfo).getGame().getBoard();
+		}
+		if (gameInfo instanceof Board) {
+			this.board = (Board)gameInfo;
 		}
 	}
 }
