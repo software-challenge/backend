@@ -2,20 +2,10 @@ package finals;
 
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Panel;
-import java.awt.Point;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream.GetField;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.plaf.FontUIResource;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 public class Final_Step {
 	
@@ -45,7 +35,7 @@ public class Final_Step {
 	boolean smallFinals = false;
 	int order;
 	JPanel pan;
-	float scl = 1.0f;
+	float scl = 1.2f;
 	JPanel contestPanel;
 
 
@@ -57,23 +47,12 @@ public class Final_Step {
 	}
 	
 	public void createStepWidgets(){
-		int header = scl(80);
-		int yStep = (pan.getHeight()-header) / (matches.size() + 2);
-		int currentY = (order == 1 ? header : yStep);	
+		//(order == 1 ? header : yStep);	
 		for (int i = 0; i < matches.size(); i++) {
 			Match m = matches.get(i);
 			MatchWidget wid;
-			
-			if(smallFinals){
-			Point bigFinalsPosition = steps.get(steps.size()-2).matchWidgets.get(0).getPosition();
-			wid = new MatchWidget(pan, contestPanel, scl, new Point(bigFinalsPosition.x,bigFinalsPosition.y+scl(150)), m, this,matchWidgets.size());
-			}else{
-				wid = new MatchWidget(pan, contestPanel, scl, new Point(
-						getOffsetForPanel(pan) + ((order-1) * scl(300)), currentY), m, this, matchWidgets.size());
-			}
-				
+			wid = new MatchWidget(pan, contestPanel, scl, m,this,i);
 			this.matchWidgets.add(wid);
-			currentY += yStep;
 		}
 	}
 	public boolean isFinished() {
@@ -85,42 +64,39 @@ public class Final_Step {
 			}
 
 		}
+		System.out.println("Step "+order+" is finished? "+finished);
 		return finished;
 	}
-
-	public void stepForward() {
-		Final_Step smallFinals = steps.get(steps.size()-1);
-		if(isFinals() && !smallFinals.isFinished()){
-			smallFinals.showAllNames();
-			smallFinals.stepForward();
-			return;
-		}else if (isFinals() && smallFinals.isFinished() && smallFinals.matchWidgets.get(0).isSelected()) {
-			smallFinals.matchWidgets.get(0).setSelected(false);
-			smallFinals.matchWidgets.get(0).paint();
+	
+	public void setNamesVisible(boolean b){
+		for(MatchWidget wid : matchWidgets){
+			wid.setFirstNameVisibe(b);
+			wid.setSecondNameVisible(b);
 		}
+	}
+	
+	
+	public void stepForward() {
 		for (int i = 0; i < matchWidgets.size(); i++) {
 			MatchWidget m = matchWidgets.get(i);
 			if (!m.getMatch().isFinished()) {
-				m.setSelected(true);
-				main.runReplay("replays/"+m.getMatch().getNextReplayName());
-				m.getMatch().doNextStep();
-				m.setRepaint(true);
+				main.runReplay("replays/"+m.getMatch().getNextReplayName(), false, m);
 				return;
 			} else {
 				m.setSelected(false);
 				if (i % 2 == 0) {
-					if (getNextStep() == steps.get(steps.size()-2)){
-						steps.get(steps.size()-1).matchWidgets.get(0).setSecondNameVisible(true);
-						steps.get(steps.size()-1).matchWidgets.get(0).paint();
+					if (order == 2){
+						getFinals().matchWidgets.get(0).setSecondNameVisible(true);
+						getFinals().matchWidgets.get(0).paint();
 					}
 					getNextStep().matchWidgets.get(i / 2).setFirstNameVisibe(true);
 					getNextStep().matchWidgets.get(i / 2).paint();
 				} else {
-					getNextStep().matchWidgets.get(i / 2).setSecondNameVisible(true);
-					if (getNextStep() == steps.get(steps.size()-2)){
-						steps.get(steps.size()-1).matchWidgets.get(0).setFirstNameVisibe(true);
-						steps.get(steps.size()-1).matchWidgets.get(0).paint();
+					if (order == 2){
+						getFinals().matchWidgets.get(0).setFirstNameVisibe(true);
+						getFinals().matchWidgets.get(0).paint();
 					}
+					getNextStep().matchWidgets.get(i / 2).setSecondNameVisible(true);
 					getNextStep().matchWidgets.get(i / 2).paint();
 				}
 
@@ -138,20 +114,15 @@ public class Final_Step {
 	}
 
 	public void stepBackward() {
-		if(isSmallFinals() && !getFinals().isInit()){
-			getFinals().stepBackward();
-			return;
-		}
 		
 		for (int i = matchWidgets.size() - 1; i >= 0; i--) {
 			if (matchWidgets.get(i).getMatch().getCurrentStep() > 0) {
-				matchWidgets.get(i).setRepaint(true);
 				matchWidgets.get(i).getMatch().undoLastStep();
 				matchWidgets.get(i).setSelected(true);
-				//matchWidgets.get(i).paint();
 				break;
 			}
 		}
+		
 		for (int i = matchWidgets.size()-1; i >= 0; i--) {
 			if(!matchWidgets.get(i).isFinished()){
 				MatchWidget followingWid;
@@ -167,22 +138,17 @@ public class Final_Step {
 					if (i % 2 == 0) {
 						followingWid = getNextStep().matchWidgets.get(0);
 						followingWid.setFirstNameVisibe(false);
-						//followingWid.paint();
 						followingWid = getSmallFinals().matchWidgets.get(0);
 						followingWid.setSecondNameVisible(false);
-						//followingWid.paint();
 					}else{
 						followingWid = getNextStep().matchWidgets.get(0);
 						followingWid.setSecondNameVisible(false);
-						//followingWid.paint();
 						followingWid = getSmallFinals().matchWidgets.get(0);
 						followingWid.setFirstNameVisibe(false);
-						//followingWid.paint();
 					}
 				}
 			}
 		}
-		//repaint();
 	}
 
 	public void doAllMatches() {
@@ -208,43 +174,37 @@ public class Final_Step {
 		return prev;
 	}
 
+	/**
+	 * Initialize the connections of each match-widget
+	 */
 	public void initConnections() {
 		if(isSmallFinals()) return;
-		Final_Step last = getPervStep();
+		Final_Step last = (isFinals() ? getPervStep().getPervStep() : getPervStep());
 		if (last != null) {
-			for (int i = 0; i < matchWidgets.size(); i++) {
-				matchWidgets.get(i).connectFirstPlayerWith(last.matchWidgets.get(i * 2));
-				matchWidgets.get(i).connectSecondPlayerWith(
-						last.matchWidgets.get(i * 2 +1 ));
+			if(order <= 4 &! this.isSmallFinals()){
+				for (int i = 0; i < matchWidgets.size(); i++) {
+					matchWidgets.get(i).connectFirstPlayerWith(last.matchWidgets.get(i * 2));
+					matchWidgets.get(i).connectSecondPlayerWith(
+							last.matchWidgets.get(i * 2 +1 ));
+				}
 			}
+			
 		}
 	}
 	
 	public boolean areSmallFinalsPlayed(){
-		return steps.get(steps.size()-1).isFinished();
+		return steps.get(steps.size()-2).isFinished();
 	}
 	
 	public boolean isSmallFinals(){
-		return getCount()==(steps.size()-1);
+		//System.out.println("IsSmallFinals?");
+		return (order == 3 ? true : false);
 	}
 
 	public boolean isFinals(){
-		int count = getCount();		
-		if(steps.size()-2 == count){
-			return true;
-		}
-		return false;
+		return (order == 4 ? true : false);
 	}
 	
-	public int getCount(){
-		int count = 0;
-		for (int i = 0; i < steps.size(); i++) {
-			if(steps.get(i)==this){
-				count = i;
-			}
-		}
-		return count;
-	}
 	
 	public Final_Step getNextStep() {
 		Final_Step next = this;
@@ -255,7 +215,6 @@ public class Final_Step {
 		}
 		return next;
 	}
-	
 
 	public boolean isInit(){
 		boolean isInitial = true;
@@ -264,26 +223,22 @@ public class Final_Step {
 	}
 	
 	public Final_Step getSmallFinals(){
-		return steps.get(steps.size()-1);
-	}
-	
-	public Final_Step getFinals(){
 		return steps.get(steps.size()-2);
 	}
 	
-	public void publishToContestPanel(){
-		if(!isSmallFinals()){
-			drawHeadlineOnPanel(contestPanel);
-		}
-	
-		for(MatchWidget wid : matchWidgets){
-			wid.publishToContestPanel();
-		}
-		
+	public Final_Step getFinals(){
+		return steps.get(steps.size()-1);
 	}
 	
-	private int getOffsetForPanel(JPanel p){
-		return ((p.getWidth()-((steps.size()-1)*scl(150)*2))/2);
+	public void publishToContestPanel(){
+		drawHeadlineOnPanel(contestPanel);
+		for(MatchWidget wid : matchWidgets){
+			wid.publishToContestPanel();
+		}	
+	}
+	
+	public int getOffsetForPanel(JPanel p){
+		return ((p.getWidth()-(5*scl(150)))/2);
 	}
 	
 	private int scl(int val){
@@ -296,18 +251,18 @@ public class Final_Step {
 			Graphics gc = p.getGraphics();
 			int stepCount = order-1;
 			Font oldFont = gc.getFont();
-			Font newFont = new Font ("Dialog", Font.BOLD, 14);
+			Font newFont = new Font ("Arial", Font.BOLD, 14);
 			gc.setFont(newFont);
 			
 			switch (order) {
 			case 1:
-				gc.drawString("Viertelfinale", (scl(53)+offset + (stepCount * scl(300))), 60);
+				gc.drawString("Viertelfinale", (offset + (stepCount * scl(300))), 60);
 				break;
 			case 2:
-				gc.drawString("Halbfinale", (scl(53)+offset + (stepCount * scl(300))), 60);
+				gc.drawString("Halbfinale", (offset + (stepCount * scl(300))), 60);
 				break;
 			case 3:
-				gc.drawString("Großes und kleines Finale", (scl(53)+offset + (stepCount * scl(300))), 60);
+				gc.drawString("Großes und kleines Finale", (offset + (stepCount * scl(300))), 60);
 				break;
 			default:
 			}

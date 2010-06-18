@@ -1,5 +1,6 @@
 package finals;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,31 +18,37 @@ public class FinalsConfiguration {
 		super();
 	}
 
-	public FinalsConfiguration(String spielname,
+	public FinalsConfiguration(String gameName,
 			Date date, int speed) {
 		super();
-		this.spielname = spielname;
+		this.gameName = gameName;
 		this.date = date;
 		this.speed = speed;
 		this.openReplay = true;
 	}
 
-	private String spielname;
+	private String gameName;
 	private Date date;
 	private int speed;
+	private String version = "v. 1.0";
 	private boolean openReplay;
 	private File config = new File("setting.conf");
     String introReplayPath;
 	private String serverJarPath = "server/softwarechallenge-gui.jar";
 	private String serverPluginPath = "server/plugins/";
+	private boolean isSkipActive = true;
+	public String[] developers = {"André Domnick"};
+	public String TEXT_STYLE = "Arial";
+	String titleText = "Software Challenge Finale: ";
+	public Color BACKGROUND = new Color(255,255,255);
 
 
-	public String getSpielname() {
-		return spielname;
+	public String getGameName() {
+		return gameName;
 	}
 
-	public void setSpielname(String spielname) {
-		this.spielname = spielname;
+	public void setSpielname(String gameName) {
+		this.gameName = gameName;
 	}
 
 	public Date getDate() {
@@ -75,6 +82,8 @@ public class FinalsConfiguration {
 			writer.write("Finals Tool Configuration File \n");
 			writer.write("speed = "+speed+"\n");
 			writer.write("intro path = "+introReplayPath+"\n");
+			writer.write("skipActive = "+isSkipActive+"\n");
+			writer.write("title text = "+titleText+"\n");
 			writer.close(); 
 			return true;
 		} catch (Exception e) {
@@ -108,6 +117,11 @@ public class FinalsConfiguration {
 						}else{
 							System.out.println("The given path to the intro file is not valid!");
 						}
+					}else if (ln.contains("skipActive")){
+						int res = Integer.parseInt(ln.split("=")[1].trim());
+						if(res == 1) this.isSkipActive = true;
+					}else if (ln.contains("title text")){
+						titleText = ln.split("=")[1].trim();
 					}
 					ln = reader.readLine();
 				}
@@ -137,5 +151,21 @@ public class FinalsConfiguration {
 
 	public void setServerPluginPath(String serverPluginPath) {
 		this.serverPluginPath = serverPluginPath;
+	}
+
+	public boolean isSkipActive() {
+		return isSkipActive;
+	}
+
+	public void setSkipActive(boolean isSkipActive) {
+		this.isSkipActive = isSkipActive;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
 	}
 }

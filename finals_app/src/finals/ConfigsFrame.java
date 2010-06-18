@@ -1,5 +1,6 @@
 package finals;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
 import java.awt.Insets;
@@ -28,6 +29,8 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 	JSlider speed;
 	String name = "";
 	MainFrame main;
+	JCheckBox skipActive;
+	JLabel skipActiveLabel;
 	JLabel introLabel;
 	JButton openIntroSelectionButton;
 	JFileChooser chooser;
@@ -41,13 +44,15 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		this.setTitle("Konfiguration: Finale");
 		GridLayout gl = new GridLayout();
 		gl.setColumns(1);
-		gl.setRows(8);
+		gl.setRows(9);
 		gl.setVgap(10);
 		gl.setHgap(10);
 		this.setLayout(gl);
 
 		this.config = config;
 		
+		Font fnt = new Font("Arial",Font.PLAIN,12);
+		this.setFont(fnt);
 
 		chooser = new JFileChooser();
 		
@@ -56,7 +61,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		contestNameLabel.setVisible(true);
 		this.add(contestNameLabel);
 		
-		contestName = new JTextField(config.getSpielname());
+		contestName = new JTextField(config.getGameName());
 		this.add(contestName);
 		
 		serverJarPathLabel = new JLabel("Serverpfad");
@@ -91,6 +96,15 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 		speed.setToolTipText("Wiedergabegeschwindigkeit: " + config.getSpeed()
 				+ "%");
 		this.add(speed);
+		
+		skipActiveLabel = new JLabel("Überspringen deaktivieren:");
+		skipActiveLabel.setVisible(true);
+		this.add(skipActiveLabel);
+		
+		skipActive = new JCheckBox();
+		skipActive.setVisible(true);
+		skipActive.setSelected(!config.isSkipActive());
+		this.add(skipActive);
 
 		save = new JButton("Speichern");
 		save.addActionListener(this);
@@ -106,7 +120,7 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 			config.setSpeed(speed.getValue());
 			config.setSpielname(contestName.getText());
 			if(main != null){
-				main.setTitle(main.titleText+config.getSpielname());
+				main.setTitle(config.titleText+config.getGameName());
 			}
 			if(chooser.getSelectedFile() != null){
 				config.introReplayPath = chooser.getSelectedFile().toString();
@@ -119,6 +133,12 @@ public class ConfigsFrame extends JFrame implements ActionListener,
 				System.out.println("Server Plugin-Path: "+serverJarPath.getSelectedFile().getParent()+"/plugins/");
 				System.out.println("Server Jar: "+config.getServerJarPath());
 			}
+			
+			main.doAll.setEnabled(!skipActive.isSelected());
+			main.undoAll.setEnabled(!skipActive.isSelected());
+			main.nextButton.setEnabled(!skipActive.isSelected());
+			main.lastButton.setEnabled(!skipActive.isSelected());
+			config.setSkipActive(!skipActive.isSelected());
 			config.save(main);
 			this.setVisible(false);
 		}
