@@ -14,17 +14,18 @@ import javax.swing.JPanel;
 
 public class MatchWidget {
 
-	public MatchWidget(JPanel pan, JPanel cpan, float scale, Point position,
+	public MatchWidget(JPanel pan, JPanel cpan, float scale,
 			Match match, Final_Step step, int order) {
 		this.pan = pan;
 		this.contestPan = cpan;
 		this.scale = scale;
-		this.position = position;
+		//this.position = position;
 		this.match = match;
 		this.width = scl(150);
-		this.heigth = scl(30);
+		this.heigth = scl(85);
 		this.step = step;
 		this.order = order;
+		this.position = getPosition(pan);
 		this.paint();
 	}
 
@@ -35,43 +36,67 @@ public class MatchWidget {
 	private boolean selected = false;
 	private boolean firstNameVisibe = false;
 	private boolean secondNameVisible = false;
-	private Point firstPlayerConnection;
-	private Point secondPlayerConnection;
-	private int indentXOffset;
+	private MatchWidget firstPlayerConnection;
+	private MatchWidget secondPlayerConnection;
 	private int width;
 	private int heigth;
 	private float scale;
-	private boolean repaint = true;
 	private Final_Step step;
 	private int order;
 
-	public Point getPlayerOneConnectionPoint() {
+	/**
+	 * Calculate the position of the widget, according the given panel
+	 */
+	public Point getPosition(JPanel pan){
+		Point position;
+		int header = scl(80);
+		int yStep = (pan.getHeight()-header) / step.matches.size();
+		int y = this.order*yStep+header;
+		int column = step.order;
+		
+		if(step.isFinals()){
+			column = 3;
+		}
+		
+		if(column > 1){
+			Final_Step prev = step.steps.get(column-2);
+			int dist = (prev.matchWidgets.get(1).getPosition(pan).y-(prev.matchWidgets.get(0).getPosition(pan).y+heigth))/2;
+			y += dist;
+			y += heigth/2;
+			y += prev.matchWidgets.get(0).getPosition(pan).y-header;
+		}
+		position = new Point((column-1)*2*this.width, y); 
+		
+		// Indent the widgets x coordinate
+		position.translate(step.getOffsetForPanel(pan),0);
+		
+		// 
+		if(step.isSmallFinals()) position.translate(0,2*heigth);
+		return position;
+	}
+	
+	public Point getPlayerOneConnectionPoint(JPanel pan) {
+		Point position = getPosition(pan);
 		return new Point(position.x + scl(5), position.y + scl(30));
 	}
 
-	public Point getPlayerTwoConnectionPoint() {
+	public Point getPlayerTwoConnectionPoint(JPanel pan) {
+		Point position = getPosition(pan);
 		return new Point(position.x + scl(5), position.y + scl(65));
 	}
 
-	public Point getResultConnectionPoint() {
-		return new Point(position.x + scl(105), position.y + scl(47));
+	public Point getResultConnectionPoint(JPanel pan) {
+		Point position = getPosition(pan);
+		return new Point(position.x + scl(145), position.y + scl(47));
 	}
 
-	public boolean isSelected() {
-		return selected;
-	}
 
-	public void setSelected(boolean selected) {
-		if(selected != this.selected) repaint = true;
-		this.selected = selected;
-	}
 
 	public Match getMatch() {
 		return match;
 	}
 
 	public void setMatch(Match match) {
-		if(match != this.match) repaint = true;
 		this.match = match;
 	}
 
@@ -80,7 +105,6 @@ public class MatchWidget {
 	}
 
 	public void setFirstNameVisibe(boolean firstNameVisibe) {
-		if(firstNameVisibe != this.firstNameVisibe) repaint = true;
 		this.firstNameVisibe = firstNameVisibe;
 	}
 
@@ -89,20 +113,33 @@ public class MatchWidget {
 	}
 
 	public void setSecondNameVisible(boolean secondNameVisible) {
-		if(secondNameVisible != this.secondNameVisible) repaint = true;
 		this.secondNameVisible = secondNameVisible;
 	}
 
 	public void connectFirstPlayerWith(MatchWidget w) {
-		repaint = true;
-		this.firstPlayerConnection = w.getResultConnectionPoint();
+		firstPlayerConnection = w;
 	}
 
 	public void connectSecondPlayerWith(MatchWidget w) {
-		repaint = true;
-		this.secondPlayerConnection = w.getResultConnectionPoint();
+		secondPlayerConnection = w;
+	}
+	
+	public boolean isSelected(){
+		return selected;
 	}
 
+	public void setSelected(boolean b){
+		this.selected = b;
+	}
+	/**
+	 * Decode the name of the Math according 
+	 * @param step
+	 * 			widgets step
+	 * @param match
+	 * 			the order of the match
+	 * @return
+	 * 			widgets name
+	 */
 	private String decode(int step, int match){
 		String dec;
 		switch (match) {
@@ -124,25 +161,29 @@ public class MatchWidget {
 		}
 		return dec +=step;
 	}
+	
+	/**
+	 * Paint the whole contents of the widget to a given Graphics2D object!
+	 * @param gc
+	 * @param pan
+	 */
 	private void paintOnGC(Graphics2D gc, JPanel pan) {
-		indentXOffset = ((pan.getWidth()-((step.steps.size()-1)*width*2))/2);
-		Point position = new Point(this.position.x+indentXOffset, this.position.y);
+		Point position = getPosition(pan);
 		
 		// Clear widgets area
-		gc.clearRect(position.x - scl(4), position.y, position.x + width,
-			position.y + heigth);
+		gc.setBackground(new Color(255,255,255));
 		
 		// Scale Font
-		gc.setFont(new Font(gc.getFont().getName(), gc.getFont().getStyle(),scl(gc.getFont().getSize())));
+		gc.setFont(new Font(step.main.config.TEXT_STYLE, gc.getFont().getStyle(),scl(gc.getFont().getSize())));
 		
 		// Draw incoming connections
 		if (firstPlayerConnection != null) {
-			drawNiceLine(pan, gc, firstPlayerConnection,
-					getPlayerOneConnectionPoint());
+			drawNiceLine(pan, gc, firstPlayerConnection.getResultConnectionPoint(pan),
+					getPlayerOneConnectionPoint(pan));
 		}
 		if (secondPlayerConnection != null) {
-			drawNiceLine(pan, gc, secondPlayerConnection,
-					getPlayerTwoConnectionPoint());
+			drawNiceLine(pan, gc, secondPlayerConnection.getResultConnectionPoint(pan),
+					getPlayerTwoConnectionPoint(pan));
 		}
 	
 		
@@ -186,46 +227,38 @@ public class MatchWidget {
 				secondColor = new Color(255,0,0);
 			}
 			
-		}
-		
+		}		
 		gc.setColor(firstColor);
 		Font oldFont = gc.getFont();
 		Font newFont = new Font(oldFont.getName(), Font.BOLD, oldFont.getSize());
-		
 		if(isFirstNameVisibe() && (isSelected() || match.isFinished()) ) gc.setFont(newFont);
 		gc.drawString(firstName, position.x + scl(5), position.y + scl(25));
 		gc.setColor(secondColor);
 		gc.drawString(secondName, position.x + scl(5), position.y+ scl(80));
 		gc.setColor(old);
 		gc.setFont(oldFont);
-		if(!step.isFinals() && !step.isSmallFinals()){
-			gc.drawString(decode(step.order, order), position.x + scl(86), position.y+ scl(52));
-		}else if (step.isFinals()) {
-			gc.drawString(decode(step.order, order+1), position.x + scl(86), position.y+ scl(52));
-		}else{
-			gc.drawString(decode(step.order-1, order), position.x + scl(86), position.y+ scl(52));
-		}
-		
+		gc.drawString(decode(step.order, order), position.x + scl(126), position.y+ scl(52));
+
 		
 		// Draw current standings
 		gc.setColor(firstColor);
 		gc.drawString((match.getCurrentStep() > 0 ? ""
-				+ match.getFirstCurrentScore() : ""), position.x + scl(111),
+				+ match.getFirstCurrentScore() : ""), position.x + scl(151),
 				position.y + scl(40));
 		gc.setColor(secondColor);
 		gc.drawString((match.getCurrentStep() > 0 ? ""
-				+ match.getSecondCurrentScore() : ""), position.x + scl(111),
+				+ match.getSecondCurrentScore() : ""), position.x + scl(151),
 				position.y + scl(62));
 		gc.setColor(old);
 
 		
 		// Draw widgets lines
 		gc.drawLine(position.x + scl(5), position.y + scl(30), position.x
-				+ scl(105), position.y + scl(30));
+				+ scl(145), position.y + scl(30));
 		gc.drawLine(position.x + scl(5), position.y + scl(65), position.x
-				+ scl(105), position.y + scl(65));
-		gc.drawLine(position.x + scl(105), position.y + scl(30), position.x
-				+ scl(105), position.y + scl(65));
+				+ scl(145), position.y + scl(65));
+		gc.drawLine(position.x + scl(145), position.y + scl(30), position.x
+				+ scl(145), position.y + scl(65));
 
 		if (match.getCurrentStep() == 0) selected = false;
 		
@@ -241,28 +274,19 @@ public class MatchWidget {
 
 	public void paint() {
 			paintOnGC((Graphics2D) pan.getGraphics(),pan);
-			repaint = false;
-		
-		
-
 	}
 	
+	/**
+	 * Paint the widget with the current values to the contest window
+	 */
 	public void publishToContestPanel(){
 		if(contestPan != null && contestPan.getGraphics() != null){
 		  paintOnGC((Graphics2D) contestPan.getGraphics(),contestPan);
 		}
 	}
 	
-	public void setRepaint(boolean b){
-		this.repaint = b;
-	}
-	
-	public Point getPosition() {
-		return position;
-	}
 
 	public void setPosition(Point position) {
-		repaint = true;
 		this.position = position;
 	}
 
@@ -270,8 +294,6 @@ public class MatchWidget {
 		gc.setStroke((new BasicStroke(1f)));
 		Point od = (Point) o.clone();
 		Point dd = (Point) d.clone();
-		od.translate(indentXOffset,0);
-		dd.translate(indentXOffset,0);
 		int xMid = od.x + ((dd.x - od.x) / 2);
 		gc.drawLine(od.x, od.y, xMid, od.y);
 		gc.drawLine(xMid, od.y, xMid, dd.y);
@@ -289,7 +311,6 @@ public class MatchWidget {
 			firstNameVisibe = false;
 			secondNameVisible = false;
 		}
-		repaint = true;
 	}
 	
 	public void doAll(boolean isFirstStep){
@@ -299,7 +320,6 @@ public class MatchWidget {
 		while(!match.isFinished()){
 			match.doNextStep();
 		}
-		repaint = true;
 	}
 	
 	

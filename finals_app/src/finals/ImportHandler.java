@@ -83,11 +83,11 @@ public class ImportHandler extends DefaultHandler{
 		        if(qName == "finalStep"){
 		        	currentStepsMatches = new LinkedList<Match>();
 		        	order = Integer.parseInt(attributes.getValue("order"));
-		        	if (order == 3) {
+		        	/*if (order == 3) {
 						order = 4;
 					}else if (order == 4) {
 						order = 3;
-					}
+					}*/
 		        	
 		        }
 		        
@@ -173,14 +173,14 @@ public class ImportHandler extends DefaultHandler{
 		    		 }
 		    	 
 		    	 if(qName == "finalStep"){
-		    		 if(order == 1){
-		    			 Match temp = currentStepsMatches.get(1);
+		    		 /*if(order == 1){
+		    			 /*Match temp = currentStepsMatches.get(1);
 			    		 currentStepsMatches.set(1, currentStepsMatches.get(3));
 			    		 currentStepsMatches.set(3, temp); 
 			    		 temp = currentStepsMatches.get(3);
 			    		 currentStepsMatches.set(3, currentStepsMatches.get(2));
 			    		 currentStepsMatches.set(2, temp);
-		    		 }
+		    		 }*/
 		    		 main.addFinalsStep(new Final_Step(main,currentStepsMatches,main.steps,false,order), order);
 		    	 }
 		    	 
