@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public final class Player extends SimplePlayer implements Cloneable
 {
 	// Farbe der Spielfigure
-	private FigureColor		color;
+	private PlayerColor		color;
 
 	@XStreamImplicit(itemFieldName = "move")
 	private List<Move>		history;
@@ -60,7 +60,7 @@ public final class Player extends SimplePlayer implements Cloneable
 		history = new LinkedList<Move>();
 	}
 
-	public Player(FigureColor color) {
+	public Player(PlayerColor color) {
 		this();
 		this.color = color;
 	}
@@ -70,7 +70,7 @@ public final class Player extends SimplePlayer implements Cloneable
 	 * 
 	 * @return Color of this player
 	 */
-	public final FigureColor getColor()
+	public final PlayerColor getColor()
 	{
 		return color;
 	}

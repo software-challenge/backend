@@ -5,14 +5,14 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias(value="minimal:welcome")
 public class WelcomeMessage
 {
-	private FigureColor myColor;
+	private PlayerColor myColor;
 	
-	public WelcomeMessage(FigureColor c)
+	public WelcomeMessage(PlayerColor c)
 	{
 		myColor = c;
 	}
 	
-	public FigureColor getYourColor()
+	public PlayerColor getYourColor()
 	{
 		return myColor;
 	}

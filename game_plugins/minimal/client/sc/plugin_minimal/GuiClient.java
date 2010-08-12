@@ -51,7 +51,7 @@ public class GuiClient extends AbstractClient
 					game.getActivePlayer());
 
 			int playerid = 0;
-			if (oldPlayer.getColor() == FigureColor.RED)
+			if (oldPlayer.getColor() == PlayerColor.PLAYER1)
 			{
 				playerid = 0;
 			}

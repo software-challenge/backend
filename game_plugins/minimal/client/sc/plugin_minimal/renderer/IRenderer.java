@@ -7,7 +7,7 @@ import java.awt.Image;
 import java.util.Map;
 
 import sc.plugin_minimal.Board;
-import sc.plugin_minimal.FigureColor;
+import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.Player;
 import sc.shared.GameResult;
 
@@ -28,7 +28,7 @@ public interface IRenderer
 
 	void requestMove();
 
-	void gameEnded(GameResult data, FigureColor color, String errorMessage);
+	void gameEnded(GameResult data, PlayerColor color, String errorMessage);
 	
 	void gameError(String errorMessage);
 
