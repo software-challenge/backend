@@ -31,7 +31,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 
 import sc.plugin_minimal.Board;
-import sc.plugin_minimal.FigureColor;
+import sc.plugin_minimal.Node;
+import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.GameUtil;
 import sc.plugin_minimal.IGameHandler;
 import sc.plugin_minimal.Move;
@@ -138,34 +139,19 @@ public class FrameRenderer extends JPanel implements IRenderer
 	 * @param redPlayer
 	 * @param bluePlayer
 	 */
-	public void printHistory(Player redPlayer, Player bluePlayer) {
-		actionPane.setText("");
-		String text = "";
+	public void test() {
 		
-		String red = "Rot";
-		String blue = "Blau";
 		
-		int max = Math.max(redPlayer.getHistory().size(), bluePlayer
-				.getHistory().size());
-		int i = 0;
-		int j = 0;
-
-		while (i <= max || j <= max)
-		{
-			if (redPlayer.getHistory().size() > i) {
-				text += red + " " + GameUtil.displayMoveAction(redPlayer.getHistory().get(i));
-				text += "\n";
+		actionPane.setText("test");
+		if(board != null){
+			
+			for (Node node: board.getNodes()){
+				actionPane.setText(actionPane.getText() + "\n" + node.index);
 			}
-			if (bluePlayer.getHistory().size() > j) {
-				text += blue + " " + GameUtil.displayMoveAction(bluePlayer.getHistory().get(j));
-				text += "\n";
-			}
-			i++;
-			j++;
+			
+			
 		}
 		
-		actionPane.setText(text);
-		actionPane.setCaretPosition(actionPane.getDocument().getLength());
 	}
 	
 	/**
@@ -174,7 +160,6 @@ public class FrameRenderer extends JPanel implements IRenderer
 	@Override
 	public void updatePlayer(final Player player, final Player otherPlayer)
 	{
-		this.repaint();
 
 		this.player = player;
 		enemy = otherPlayer;
@@ -182,16 +167,10 @@ public class FrameRenderer extends JPanel implements IRenderer
 		// Set the color of the move button depending on what color I have
 		// Only needs to be done once because this panel is directly connected to the player
 		moveButton.setForeground(
-				player.getColor() == FigureColor.RED ? Color.RED : Color.BLUE
+				player.getColor() == PlayerColor.PLAYER1 ? Color.RED : Color.BLUE
 			);
 		
-		// Show the new history here
-		// Always the whole history is repainted because we don't receive the move but the whole game state
-		if (player.getColor() == FigureColor.RED) {
-			printHistory(player, enemy);
-		} else {
-			printHistory(enemy, player);
-		}
+		test();
 		
 		repaint();
 	}
@@ -202,7 +181,10 @@ public class FrameRenderer extends JPanel implements IRenderer
 	@Override
 	public void updateBoard(Board board, int round)
 	{
+		
+		test();
 		this.board = board;
+		
 	}
 
 	/**
@@ -245,7 +227,7 @@ public class FrameRenderer extends JPanel implements IRenderer
 	 * Game is over, print out game result
 	 */
 	@Override
-	public void gameEnded(final GameResult data, FigureColor color, String errorMessage)
+	public void gameEnded(final GameResult data, PlayerColor color, String errorMessage)
 	{		
 		try
 		{

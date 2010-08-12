@@ -19,7 +19,7 @@ import edu.cau.plugins.PluginDescriptor;
 @PluginDescriptor(name = "Minimal", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin
 {
-	public static final String			PLUGIN_AUTHOR		= "Sven Casimir";
+	public static final String			PLUGIN_AUTHOR		= "Sven Casimir, Torsten Krause";
 	public static final String			PLUGIN_UUID			= "minimal_plugin";
 
 	public static final int				MAX_PLAYER_COUNT	= 2;

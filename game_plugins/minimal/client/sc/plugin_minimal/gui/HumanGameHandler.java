@@ -4,7 +4,7 @@
 package sc.plugin_minimal.gui;
 
 import sc.plugin_minimal.Board;
-import sc.plugin_minimal.FigureColor;
+import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.GuiClient;
 import sc.plugin_minimal.IGameHandler;
 import sc.plugin_minimal.Move;
@@ -58,8 +58,8 @@ public class HumanGameHandler implements IGameHandler
 	}
 
 	@Override
-	public void gameEnded(GameResult data, FigureColor color, String errorMessage)
+	public void gameEnded(GameResult data, PlayerColor color, String errorMessage)
 	{
-		RenderFacade.getInstance().gameEnded(data, client.getID(), (color == FigureColor.RED ? FigureColor.BLUE : FigureColor.RED), errorMessage);
+		RenderFacade.getInstance().gameEnded(data, client.getID(), (color == PlayerColor.PLAYER1 ? PlayerColor.PLAYER2 : PlayerColor.PLAYER1), errorMessage);
 	}
 }

@@ -48,5 +48,5 @@ public interface IGameHandler
 	 * @param data
 	 *            game results in getScores()
 	 */
-	void gameEnded(GameResult data, FigureColor color, String errorMessage);
+	void gameEnded(GameResult data, PlayerColor color, String errorMessage);
 }

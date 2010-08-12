@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import sc.plugin_minimal.Board;
 import sc.plugin_minimal.EPlayerId;
-import sc.plugin_minimal.FigureColor;
+import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.IGameHandler;
 import sc.plugin_minimal.Player;
 import sc.plugin_minimal.renderer.twodimensional.FrameRenderer;
@@ -350,7 +350,7 @@ public class RenderFacade
 	 * @param data
 	 * @param id
 	 */
-	public void gameEnded(GameResult data, EPlayerId target, FigureColor color, String errorMessage)
+	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color, String errorMessage)
 	{
 		if (panel != null)
 		{

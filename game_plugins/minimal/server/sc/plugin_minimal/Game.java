@@ -30,64 +30,55 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * Minimal game. Basis for new plugins.
- * This class holds the game logic.
+ * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
  * @author Sven Casimir
  * @since Juni, 2010
  */
 @XStreamAlias(value = "minimal:game")
-public class Game extends RoundBasedGameInstance<Player>
-{
-	private static Logger			logger			= LoggerFactory
-															.getLogger(Game.class);
+public class Game extends RoundBasedGameInstance<Player> {
+	private static Logger logger = LoggerFactory.getLogger(Game.class);
 
 	@XStreamOmitField
-	private List<FigureColor>		availableColors	= new LinkedList<FigureColor>();
+	private List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
-	private Board					board			= Board.create();
+	private Board board = Board.create();
 
-	public Board getBoard()
-	{
+	public Board getBoard() {
 		return board;
 	}
 
-	public Player getActivePlayer()
-	{
+	public Player getActivePlayer() {
 		return activePlayer;
 	}
 
-	public Game()
-	{
-		availableColors.addAll(Arrays.asList(FigureColor.values()));
+	public Game() {
+		availableColors.add(PlayerColor.PLAYER1);
+		availableColors.add(PlayerColor.PLAYER2);
 	}
 
 	@Override
-	protected Object getCurrentState()
-	{
+	protected Object getCurrentState() {
 		return new GameState(this);
 	}
 
 	/**
-	 * Someone did something, check out what it was (move maybe? Then check the move)
+	 * Someone did something, check out what it was (move maybe? Then check the
+	 * move)
 	 */
 	@Override
 	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
-			throws GameLogicException
-	{
+			throws GameLogicException {
 		final Player author = (Player) fromPlayer;
 
 		// Player did a move
-		if (data instanceof Move)
-		{
+		if (data instanceof Move) {
 			final Move move = (Move) data;
 
 			update(move, author);
 			author.addToHistory(move);
 			next();
-		}
-		else
-		{
+		} else {
 			logger.error("Received unexpected {} from {}.", data, author);
 			throw new GameLogicException("Unknown ObjectType received.");
 		}
@@ -95,17 +86,16 @@ public class Game extends RoundBasedGameInstance<Player>
 
 	/**
 	 * A move has been made, update local game state
+	 * 
 	 * @param move
 	 * @param player
 	 */
-	private void update(Move move, Player player)
-	{
-	
+	private void update(Move move, Player player) {
+
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException
-	{
+	public IPlayer onPlayerJoined() throws TooManyPlayersException {
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
 
@@ -117,8 +107,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	protected void next()
-	{
+	protected void next() {
 		final Player activePlayer = getActivePlayer();
 		Move lastMove = activePlayer.getLastMove();
 		int activePlayerId = this.players.indexOf(this.activePlayer);
@@ -128,13 +117,12 @@ public class Game extends RoundBasedGameInstance<Player>
 		next(nextPlayer);
 	}
 
-	private void onPlayerChange(Player player)
-	{
+	private void onPlayerChange(Player player) {
 	}
-	
+
 	@Override
 	public void onPlayerLeft(IPlayer player) {
-		if(!player.hasViolated()) {
+		if (!player.hasViolated()) {
 			onPlayerLeft(player, ScoreCause.LEFT);
 		} else {
 			onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
@@ -142,21 +130,16 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player, ScoreCause cause)
-	{
+	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
 		Map<IPlayer, PlayerScore> res = generateScoreMap();
 
-		for (Entry<IPlayer, PlayerScore> entry : res.entrySet())
-		{
+		for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
 			PlayerScore score = entry.getValue();
 
-			if (entry.getKey() == player)
-			{
+			if (entry.getKey() == player) {
 				score.setCause(cause);
 				score.setValueAt(0, new BigDecimal(0));
-			}
-			else
-			{
+			} else {
 				score.setValueAt(0, new BigDecimal(+1));
 			}
 		}
@@ -165,16 +148,13 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	public boolean ready()
-	{
+	public boolean ready() {
 		return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
 	}
 
 	@Override
-	public void start()
-	{
-		for (final Player p : players)
-		{
+	public void start() {
+		for (final Player p : players) {
 			p.notifyListeners(new WelcomeMessage(p.getColor()));
 		}
 
@@ -182,19 +162,16 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	@Override
-	protected void onNewTurn()
-	{
+	protected void onNewTurn() {
 	}
 
 	@Override
-	protected PlayerScore getScoreFor(Player p)
-	{
+	protected PlayerScore getScoreFor(Player p) {
 		return null;
 	}
-	
+
 	@Override
-	protected ActionTimeout getTimeoutFor(Player player)
-	{
+	protected ActionTimeout getTimeoutFor(Player player) {
 		return new ActionTimeout(true, 10000l, 2000l);
 	}
 
@@ -205,7 +182,8 @@ public class Game extends RoundBasedGameInstance<Player>
 
 	@Override
 	public void loadFromFile(String file) {
-		GameLoader gl = new GameLoader(new Class<?>[] {GameState.class, Board.class});
+		GameLoader gl = new GameLoader(new Class<?>[] { GameState.class,
+				Board.class });
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
@@ -215,10 +193,10 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
-			this.board = ((GameState)gameInfo).getGame().getBoard();
+			this.board = ((GameState) gameInfo).getGame().getBoard();
 		}
 		if (gameInfo instanceof Board) {
-			this.board = (Board)gameInfo;
+			this.board = (Board) gameInfo;
 		}
 	}
 }

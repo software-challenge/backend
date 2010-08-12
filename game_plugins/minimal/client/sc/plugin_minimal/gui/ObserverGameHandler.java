@@ -5,7 +5,7 @@ package sc.plugin_minimal.gui;
 
 import sc.plugin_minimal.Board;
 import sc.plugin_minimal.EPlayerId;
-import sc.plugin_minimal.FigureColor;
+import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.IGameHandler;
 import sc.plugin_minimal.Move;
 import sc.plugin_minimal.Player;
@@ -56,7 +56,7 @@ public class ObserverGameHandler implements IGameHandler
 	}
 
 	@Override
-	public void gameEnded(GameResult data, FigureColor color, String errorMessage)
+	public void gameEnded(GameResult data, PlayerColor color, String errorMessage)
 	{
 		RenderFacade.getInstance().gameEnded(data, EPlayerId.OBSERVER, color, errorMessage);
 	}

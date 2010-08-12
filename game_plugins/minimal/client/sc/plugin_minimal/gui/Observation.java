@@ -18,7 +18,7 @@ import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
 import sc.plugin_minimal.EPlayerId;
-import sc.plugin_minimal.FigureColor;
+import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.Game;
 import sc.plugin_minimal.GameState;
 import sc.plugin_minimal.IGUIObservation;
@@ -186,7 +186,7 @@ public class Observation implements IObservation, IUpdateListener,
 		String name1 = "Spieler 1";
 		String name2 = "Spieler 2";
 
-		if (game.getActivePlayer().getColor() == FigureColor.RED)
+		if (game.getActivePlayer().getColor() == PlayerColor.PLAYER1)
 		{
 			name1 = game.getActivePlayer().getDisplayName();
 			name2 = game.getBoard().getOtherPlayer(game.getActivePlayer())
@@ -201,7 +201,7 @@ public class Observation implements IObservation, IUpdateListener,
 		
 		if (conGame.getCurrentError() != null) {
 			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
-			result += (game.getActivePlayer().getColor() == FigureColor.RED ? name1 : name2);
+			result += (game.getActivePlayer().getColor() == PlayerColor.PLAYER1 ? name1 : name2);
 			result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
 		}
 
@@ -320,7 +320,7 @@ public class Observation implements IObservation, IUpdateListener,
 			errorMessage = ((ErrorResponse) errorObject).getMessage();
 		}
 		Object curStateObject = conGame.getCurrentState();
-		FigureColor color = null;
+		PlayerColor color = null;
 		if (curStateObject != null) {
 			GameState gameState = (GameState) curStateObject;
 			color = gameState.getGame().getActivePlayer().getColor();

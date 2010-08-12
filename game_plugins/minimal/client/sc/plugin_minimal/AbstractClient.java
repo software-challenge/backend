@@ -43,7 +43,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 	// the current port
 	private int				port;
 	// current figurecolor to identify which client belongs to which player
-	private FigureColor		mycolor;
+	private PlayerColor		mycolor;
 	// set to true when ready was sent to ReadyListeners
 	protected boolean		alreadyReady	= false;
 
