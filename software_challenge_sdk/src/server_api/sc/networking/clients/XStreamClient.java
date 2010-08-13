@@ -71,6 +71,7 @@ public abstract class XStreamClient
 		}
 
 		this.xStream = xstream;
+		this.xStream.setMode(XStream.ID_REFERENCES);
 		this.networkInterface = networkInterface;
 		this.out = xstream.createObjectOutputStream(networkInterface
 				.getOutputStream(), "protocol");
