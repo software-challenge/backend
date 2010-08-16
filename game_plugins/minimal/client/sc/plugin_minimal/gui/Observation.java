@@ -31,79 +31,68 @@ import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
 /**
- * The observation watches the game and is informed by the GUI client 
- * when something happens
+ * The observation watches the game and is informed by the GUI client when
+ * something happens
  * 
  * @author ffi
  * 
  */
 public class Observation implements IObservation, IUpdateListener,
-		IGUIObservation
-{
-	private IControllableGame			conGame;
+		IGUIObservation {
+	private IControllableGame conGame;
 
-	private IGameHandler				handler;
+	private IGameHandler handler;
 
-	private List<IGameEndedListener>	gameEndedListeners	= new LinkedList<IGameEndedListener>();
-	private List<INewTurnListener>		newTurnListeners	= new LinkedList<INewTurnListener>();
-	private List<IReadyListener>		readyListeners		= new LinkedList<IReadyListener>();
+	private List<IGameEndedListener> gameEndedListeners = new LinkedList<IGameEndedListener>();
+	private List<INewTurnListener> newTurnListeners = new LinkedList<INewTurnListener>();
+	private List<IReadyListener> readyListeners = new LinkedList<IReadyListener>();
 
-	private boolean						notifiedOnGameEnded	= false;
+	private boolean notifiedOnGameEnded = false;
 
-	private static final Logger			logger				= LoggerFactory
-																	.getLogger(Observation.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(Observation.class);
 
-	public Observation(IControllableGame conGame, IGameHandler handler)
-	{
+	public Observation(IControllableGame conGame, IGameHandler handler) {
 		this.conGame = conGame;
 		this.handler = handler;
 		conGame.addListener(this);
 	}
 
 	@Override
-	public void addGameEndedListener(IGameEndedListener listener)
-	{
+	public void addGameEndedListener(IGameEndedListener listener) {
 		gameEndedListeners.add(listener);
 	}
 
 	@Override
-	public void addNewTurnListener(INewTurnListener listener)
-	{
+	public void addNewTurnListener(INewTurnListener listener) {
 		newTurnListeners.add(listener);
 	}
 
 	@Override
-	public void addReadyListener(IReadyListener listener)
-	{
+	public void addReadyListener(IReadyListener listener) {
 		readyListeners.add(listener);
 	}
 
 	@Override
-	public void back()
-	{
+	public void back() {
 		conGame.previous();
 	}
 
 	@Override
-	public void cancel()
-	{
+	public void cancel() {
 		conGame.cancel();
 		notifyOnGameEnded(this, conGame.getResult());
 	}
 
 	@Override
-	public void next()
-	{
+	public void next() {
 		conGame.next();
 		showActivePlayerIfNecessary();
 	}
 
-	private void showActivePlayerIfNecessary()
-	{
-		if (!conGame.hasNext())
-		{
-			if (RenderFacade.getInstance().getActivePlayer() != null)
-			{
+	private void showActivePlayerIfNecessary() {
+		if (!conGame.hasNext()) {
+			if (RenderFacade.getInstance().getActivePlayer() != null) {
 				RenderFacade.getInstance().switchToPlayer(
 						RenderFacade.getInstance().getActivePlayer());
 			}
@@ -111,49 +100,41 @@ public class Observation implements IObservation, IUpdateListener,
 	}
 
 	@Override
-	public void pause()
-	{
+	public void pause() {
 		conGame.pause();
 	}
 
 	@Override
-	public void removeGameEndedListener(IGameEndedListener listener)
-	{
+	public void removeGameEndedListener(IGameEndedListener listener) {
 		gameEndedListeners.remove(listener);
 	}
 
 	@Override
-	public void removeNewTurnListener(INewTurnListener listener)
-	{
+	public void removeNewTurnListener(INewTurnListener listener) {
 		newTurnListeners.remove(listener);
 	}
 
 	@Override
-	public void removeReadyListener(IReadyListener listener)
-	{
+	public void removeReadyListener(IReadyListener listener) {
 		readyListeners.remove(listener);
 	}
 
 	@Override
-	public void saveReplayToFile(String filename) throws IOException
-	{
+	public void saveReplayToFile(String filename) throws IOException {
 		ReplayBuilder.saveReplay(Configuration.getXStream(), conGame, filename);
 	}
 
 	@Override
-	public void start()
-	{
+	public void start() {
 		conGame.unpause();
-		if (RenderFacade.getInstance().getActivePlayer() != null)
-		{
+		if (RenderFacade.getInstance().getActivePlayer() != null) {
 			RenderFacade.getInstance().switchToPlayer(
 					RenderFacade.getInstance().getActivePlayer());
 		}
 	}
 
 	@Override
-	public void unpause()
-	{
+	public void unpause() {
 		RenderFacade.getInstance().switchToPlayer(
 				RenderFacade.getInstance().getActivePlayer());
 		conGame.unpause();
@@ -162,112 +143,94 @@ public class Observation implements IObservation, IUpdateListener,
 	/**
 	 * 
 	 */
-	public void ready()
-	{
-		for (IReadyListener list : readyListeners)
-		{
+	public void ready() {
+		for (IReadyListener list : readyListeners) {
 			list.ready();
 		}
 	}
 
-	private String createGameEndedString(GameResult data)
-	{
+	private String createGameEndedString(GameResult data) {
 		String result = "----------------\n";
 
-		if (data == null)
-		{
+		if (data == null) {
 			result += "Leeres Spielresultat!";
 			return result;
 		}
-		
+
 		GameState gameState = (GameState) conGame.getCurrentState();
 		Game game = gameState.getGame();
 
 		String name1 = "Spieler 1";
 		String name2 = "Spieler 2";
 
-		if (game.getActivePlayer().getPlayerColor() == PlayerColor.PLAYER1)
-		{
+		if (game.getActivePlayer().getPlayerColor() == PlayerColor.PLAYER1) {
 			name1 = game.getActivePlayer().getDisplayName();
 			name2 = game.getBoard().getOtherPlayer(game.getActivePlayer())
 					.getDisplayName();
-		}
-		else
-		{
+		} else {
 			name1 = game.getBoard().getOtherPlayer(game.getActivePlayer())
 					.getDisplayName();
 			name2 = game.getActivePlayer().getDisplayName();
 		}
-		
+
 		if (conGame.getCurrentError() != null) {
 			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
-			result += (game.getActivePlayer().getPlayerColor() == PlayerColor.PLAYER1 ? name1 : name2);
-			result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
+			result += (game.getActivePlayer().getPlayerColor() == PlayerColor.PLAYER1 ? name1
+					: name2);
+			result += " hat einen Fehler gemacht: \n" + error.getMessage()
+					+ "\n";
 		}
 
 		result += "Spielresultat:\n";
 
-		if (data.getScores().get(0).getCause() == ScoreCause.LEFT)
-		{
+		if (data.getScores().get(0).getCause() == ScoreCause.LEFT) {
 			result += name1;
 			result += " hat das Spiel verlassen!\n";
 		}
 
-		if (data.getScores().get(1).getCause() == ScoreCause.LEFT)
-		{
+		if (data.getScores().get(1).getCause() == ScoreCause.LEFT) {
 			result += name2;
 			result += " hat das Spiel verlassen!\n";
 		}
 
-		if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION)
-		{
+		if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION) {
 			result += name1;
 			result += " hat einen falschen Zug gesetzt!\n";
 		}
 
-		if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION)
-		{
+		if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION) {
 			result += name2;
 			result += " hat einen falschen Zug gesetzt!\n";
 		}
-		
-		if (data.getScores().get(0).getCause() == ScoreCause.HARD_TIMEOUT)
-		{
+
+		if (data.getScores().get(0).getCause() == ScoreCause.HARD_TIMEOUT) {
 			result += name1;
 			result += " hat das HardTimeout überschritten!\n";
 		}
-		
-		if (data.getScores().get(1).getCause() == ScoreCause.HARD_TIMEOUT)
-		{
+
+		if (data.getScores().get(1).getCause() == ScoreCause.HARD_TIMEOUT) {
 			result += name2;
 			result += " hat das HardTimeout überschritten!\n";
 		}
 
-		if (data.getScores().get(0).getCause() == ScoreCause.SOFT_TIMEOUT)
-		{
+		if (data.getScores().get(0).getCause() == ScoreCause.SOFT_TIMEOUT) {
 			result += name1;
 			result += " hat das SoftTimeout überschritten!\n";
 		}
-		
-		if (data.getScores().get(1).getCause() == ScoreCause.SOFT_TIMEOUT)
-		{
+
+		if (data.getScores().get(1).getCause() == ScoreCause.SOFT_TIMEOUT) {
 			result += name2;
 			result += " hat das SoftTimeout überschritten!\n";
 		}
-		
+
 		String[] results = data.getScores().get(0).toStrings();
-		if (results[0].equals("1"))
-		{
+		if (results[0].equals("1")) {
 			result += name1;
 			result += ": Gewinner\n";
-		}
-		else if (results[0].equals("0"))
-		{
+		} else if (results[0].equals("0")) {
 			result += name1;
 			result += ": Verlierer\n";
-		}
-		else
-		{
+		} else {
 			result += "Unentschieden\n";
 		}
 
@@ -276,12 +239,9 @@ public class Observation implements IObservation, IUpdateListener,
 		result += name2;
 
 		results = data.getScores().get(1).toStrings();
-		if (results[0].equals("1"))
-		{
+		if (results[0].equals("1")) {
 			result += ": Gewinner\n";
-		}
-		else if (results[0].equals("0"))
-		{
+		} else if (results[0].equals("0")) {
 			result += ": Verlierer\n";
 		}
 
@@ -294,20 +254,14 @@ public class Observation implements IObservation, IUpdateListener,
 	 * @param data
 	 * 
 	 */
-	private synchronized void notifyOnGameEnded(Object sender, GameResult data)
-	{
-		if (!notifiedOnGameEnded)
-		{
+	private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
+		if (!notifiedOnGameEnded) {
 			notifiedOnGameEnded = true;
 
-			for (IGameEndedListener listener : gameEndedListeners)
-			{
-				try
-				{
+			for (IGameEndedListener listener : gameEndedListeners) {
+				try {
 					listener.onGameEnded(data, null);
-				}
-				catch (Exception e)
-				{
+				} catch (Exception e) {
 					logger.error("GameEnded Notification caused an exception.",
 							e);
 				}
@@ -328,21 +282,15 @@ public class Observation implements IObservation, IUpdateListener,
 		handler.gameEnded(data, color, errorMessage);
 	}
 
-	private void notifyOnNewTurn()
-	{
+	private void notifyOnNewTurn() {
 		notifyOnNewTurn(0, "");
 	}
 
-	private void notifyOnNewTurn(int id, String info)
-	{
-		for (INewTurnListener listener : newTurnListeners)
-		{
-			try
-			{
+	private void notifyOnNewTurn(int id, String info) {
+		for (INewTurnListener listener : newTurnListeners) {
+			try {
 				listener.newTurn(id, info);
-			}
-			catch (Exception e)
-			{
+			} catch (Exception e) {
 				logger.error("NewTurn Notification caused an exception.", e);
 			}
 		}
@@ -351,14 +299,12 @@ public class Observation implements IObservation, IUpdateListener,
 	/**
 	 * 
 	 */
-	public void newTurn(int id, String info)
-	{
+	public void newTurn(int id, String info) {
 		notifyOnNewTurn(id, info);
 	}
 
 	@Override
-	public void onUpdate(Object sender)
-	{
+	public void onUpdate(Object sender) {
 		assert sender == conGame;
 		GameState gameState = (GameState) conGame.getCurrentState();
 		Object errorObject = conGame.getCurrentError();
@@ -366,23 +312,20 @@ public class Observation implements IObservation, IUpdateListener,
 			ErrorResponse error = (ErrorResponse) errorObject;
 			logger.info("Received error response");
 		}
-		
-		if (gameState != null)
-		{
+
+		if (gameState != null) {
 			// ready();
 			Game game = gameState.getGame();
 			handler.onUpdate(game.getBoard(), game.getTurn());
 
-			handler.onUpdate(game.getActivePlayer(), 
-					game.getBoard().getOtherPlayer(game.getActivePlayer()));
+			handler.onUpdate(game.getActivePlayer(), game.getBoard()
+					.getOtherPlayer(game.getActivePlayer()));
 
-			if (conGame.isGameOver() && conGame.isAtEnd())
-			{
+			if (conGame.isGameOver() && conGame.isAtEnd()) {
 				notifyOnGameEnded(sender, conGame.getResult());
 			}
 
-			if (conGame.hasNext())
-			{
+			if (conGame.hasNext()) {
 				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 			}
 		}
@@ -391,66 +334,56 @@ public class Observation implements IObservation, IUpdateListener,
 	}
 
 	@Override
-	public boolean hasNext()
-	{
+	public boolean hasNext() {
 		return conGame.hasNext();
 	}
 
 	@Override
-	public boolean hasPrevious()
-	{
+	public boolean hasPrevious() {
 		return conGame.hasPrevious();
 	}
 
 	@Override
-	public boolean isPaused()
-	{
+	public boolean isPaused() {
 		return conGame.isPaused();
 	}
 
 	@Override
-	public boolean isFinished()
-	{
+	public boolean isFinished() {
 		return conGame.isGameOver();
 	}
 
 	@Override
-	public boolean isAtEnd()
-	{
+	public boolean isAtEnd() {
 		return conGame.isAtEnd();
 	}
 
 	@Override
-	public boolean isAtStart()
-	{
+	public boolean isAtStart() {
 		return conGame.isAtStart();
 	}
 
 	@Override
-	public void goToFirst()
-	{
+	public void goToFirst() {
 		conGame.goToFirst();
 	}
 
 	@Override
-	public void goToLast()
-	{
+	public void goToLast() {
 		conGame.goToLast();
 		showActivePlayerIfNecessary();
 	}
 
 	@Override
-	public boolean canTogglePause()
-	{
+	public boolean canTogglePause() {
 		return conGame.canTogglePause();
 	}
 
 	@Override
-	public void onError(String errorMessage)
-	{
+	public void onError(String errorMessage) {
 		RenderFacade.getInstance().gameError(errorMessage);
 	}
-	
+
 	public void reset() {
 		goToFirst();
 		notifiedOnGameEnded = false;

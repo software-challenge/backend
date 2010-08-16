@@ -108,8 +108,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected void next() {
-		final Player activePlayer = getActivePlayer();
-		Move lastMove = activePlayer.getLastMove();
+		// final Player activePlayer = getActivePlayer();
+		// Move lastMove = activePlayer.getLastMove();
 		int activePlayerId = this.players.indexOf(this.activePlayer);
 		activePlayerId = (activePlayerId + 1) % this.players.size();
 		final Player nextPlayer = this.players.get(activePlayerId);

@@ -9,22 +9,18 @@ import java.io.IOException;
  * @since Jul 5, 2009
  * 
  */
-public class Client extends AbstractClient
-{
-	public Client(String host, int port, EPlayerId id) throws IOException
-	{
+public class Client extends AbstractClient {
+	public Client(String host, int port, EPlayerId id) throws IOException {
 		super(host, port, id);
 	}
 
 	@Override
-	public void onGameJoined(String roomId)
-	{
+	public void onGameJoined(String roomId) {
 		// ignore
 	}
 
 	@Override
-	public void onGameLeft(String roomId)
-	{
+	public void onGameLeft(String roomId) {
 		// ignore
 	}
 }

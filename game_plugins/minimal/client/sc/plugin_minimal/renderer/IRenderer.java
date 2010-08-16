@@ -4,11 +4,10 @@
 package sc.plugin_minimal.renderer;
 
 import java.awt.Image;
-import java.util.Map;
 
 import sc.plugin_minimal.Board;
-import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.Player;
+import sc.plugin_minimal.PlayerColor;
 import sc.shared.GameResult;
 
 /**

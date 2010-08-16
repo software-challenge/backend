@@ -23,52 +23,46 @@ import sc.shared.SlotDescriptor;
 import edu.cau.plugins.PluginDescriptor;
 
 /**
- * This is the GUIPlugin interface that is loaded by the server when it loads the plugins
+ * This is the GUIPlugin interface that is loaded by the server when it loads
+ * the plugins
  * 
  * @author sca
  * 
  */
 @PluginDescriptor(author = "Sven Casimir", uuid = "minimal", name = "Minimal Plugin")
-public class GUIPluginFacade implements IGuiPlugin
-{
-	public GUIPluginFacade()
-	{
+public class GUIPluginFacade implements IGuiPlugin {
+	public GUIPluginFacade() {
 
 	}
 
 	@Override
-	public void setRenderContext(JPanel panel, boolean threeDimensional)
-	{
+	public void setRenderContext(JPanel panel, boolean threeDimensional) {
 		RenderFacade.getInstance().setRenderContext(panel, threeDimensional);
 	}
 
 	@Override
-	public Image getCurrentStateImage()
-	{
+	public Image getCurrentStateImage() {
 		return RenderFacade.getInstance().getImage();
 
 	}
 
 	@Override
-	public String getPluginInfoText()
-	{
+	public String getPluginInfoText() {
 		return "<html>Dies ist ein minimales Beispielplugin als Vorlage für neue Spielplugins</html>";
 	}
 
 	@Override
-	public Image getPluginIcon()
-	{
+	public Image getPluginIcon() {
 		return null;
 	}
 
 	/**
-	 * Server wants us to prepare a game
-	 * Then create a GuiClient that opens a new room and create the GUI
+	 * Server wants us to prepare a game Then create a GuiClient that opens a
+	 * new room and create the GUI
 	 */
 	@Override
 	public IGamePreparation prepareGame(final String ip, final int port,
-			SlotDescriptor... descriptors) throws IOException
-	{
+			SlotDescriptor... descriptors) throws IOException {
 		GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
 		AdministrativeGameHandler handler = new AdministrativeGameHandler();
 		client.setHandler(handler);
@@ -82,8 +76,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	 * Server wants us to load a replay.
 	 */
 	@Override
-	public IObservation loadReplay(String filename) throws IOException
-	{
+	public IObservation loadReplay(String filename) throws IOException {
 		ObservingClient rep = new ObservingClient(Configuration.getXStream(),
 				ReplayBuilder.loadReplay(filename));
 		ObserverGameHandler handler = new ObserverGameHandler();
@@ -94,53 +87,44 @@ public class GUIPluginFacade implements IGuiPlugin
 	}
 
 	@Override
-	public int getMinimalPlayerCount()
-	{
+	public int getMinimalPlayerCount() {
 		return 2;
 	}
 
 	@Override
-	public int getMaximalPlayerCount()
-	{
+	public int getMaximalPlayerCount() {
 		return 2;
 	}
 
 	@Override
-	public int getPluginYear()
-	{
+	public int getPluginYear() {
 		return 2010;
 	}
 
 	@Override
-	public void initialize(IGuiPluginHost host)
-	{
+	public void initialize(IGuiPluginHost host) {
 		// not needed
 	}
 
 	@Override
-	public void unload()
-	{
+	public void unload() {
 		// not needed
 	}
 
 	@Override
-	public ScoreDefinition getScoreDefinition()
-	{
+	public ScoreDefinition getScoreDefinition() {
 		return GamePlugin.SCORE_DEFINITION;
 	}
 
 	@Override
-	public Dimension getMinimumSize()
-	{
+	public Dimension getMinimumSize() {
 		Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
 
-		if (screen.width > 1024)
-		{
+		if (screen.width > 1024) {
 			screen.width = 1024;
 		}
 
-		if (screen.height > 768)
-		{
+		if (screen.height > 768) {
 			screen.height = 768;
 		}
 
@@ -148,8 +132,7 @@ public class GUIPluginFacade implements IGuiPlugin
 	}
 
 	@Override
-	public Image getPluginImage()
-	{
+	public Image getPluginImage() {
 		return null;
 	}
 }

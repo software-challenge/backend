@@ -1,6 +1,5 @@
 package sc.plugin_minimal;
 
-import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

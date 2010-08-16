@@ -1,7 +1,6 @@
 package sc.plugin_minimal;
 
 import java.io.IOException;
-import java.util.Map;
 
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
@@ -16,40 +15,39 @@ import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
 /**
- * Abstrakter Client nach Vorschrift des SDKs.
- * Beinhaltet einen LobbyClient, der den tatsächlichen Client darstellt.
+ * Abstrakter Client nach Vorschrift des SDKs. Beinhaltet einen LobbyClient, der
+ * den tatsächlichen Client darstellt.
  * 
  * @author sven
  */
-public abstract class AbstractClient implements ILobbyClientListener
-{
-	// The handler reacts to messages from the server received by the lobby client
-	protected IGameHandler	handler;
-	
+public abstract class AbstractClient implements ILobbyClientListener {
+	// The handler reacts to messages from the server received by the lobby
+	// client
+	protected IGameHandler handler;
+
 	// The lobby client, that connects to the room
-	private LobbyClient		client;
-	
-	private String			gameType;
-	
+	private LobbyClient client;
+
+	private String gameType;
+
 	// If the client made an error (rule violation), store reason here
-	private String			error;
+	private String error;
 
 	// current id to identify the client instance internal
-	private EPlayerId		id;
+	private EPlayerId id;
 	// the current room in which the player is
-	private String			roomId;
+	private String roomId;
 	// the current host
-	private String			host;
+	private String host;
 	// the current port
-	private int				port;
+	private int port;
 	// current figurecolor to identify which client belongs to which player
-	private PlayerColor		mycolor;
+	private PlayerColor mycolor;
 	// set to true when ready was sent to ReadyListeners
-	protected boolean		alreadyReady	= false;
+	protected boolean alreadyReady = false;
 
 	public AbstractClient(String host, int port, EPlayerId id)
-			throws IOException
-	{
+			throws IOException {
 		gameType = GamePlugin.PLUGIN_UUID;
 		client = new LobbyClient(Configuration.getXStream(), Configuration
 				.getClassesToRegister(), host, port);
@@ -61,13 +59,11 @@ public abstract class AbstractClient implements ILobbyClientListener
 		error = null;
 	}
 
-	public void setHandler(IGameHandler handler)
-	{
+	public void setHandler(IGameHandler handler) {
 		this.handler = handler;
 	}
 
-	public IGameHandler getHandler()
-	{
+	public IGameHandler getHandler() {
 		return handler;
 	}
 
@@ -77,8 +73,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 	 * @param handle
 	 * @return
 	 */
-	public IControllableGame observeGame(PrepareGameResponse handle)
-	{
+	public IControllableGame observeGame(PrepareGameResponse handle) {
 		return client.observe(handle);
 	}
 
@@ -89,8 +84,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 	 *            comes from prepareGame()
 	 * @return controllinstance to do pause, unpause etc
 	 */
-	public IControllableGame observeAndControl(PrepareGameResponse handle)
-	{
+	public IControllableGame observeAndControl(PrepareGameResponse handle) {
 		return client.observeAndControl(handle);
 	}
 
@@ -98,14 +92,10 @@ public abstract class AbstractClient implements ILobbyClientListener
 	 * Called when a new message is sent to the room, e.g. move requests
 	 */
 	@Override
-	public void onRoomMessage(String roomId, Object data)
-	{
-		if (data instanceof MoveRequest)
-		{
+	public void onRoomMessage(String roomId, Object data) {
+		if (data instanceof MoveRequest) {
 			handler.onRequestAction();
-		}
-		else if (data instanceof WelcomeMessage)
-		{
+		} else if (data instanceof WelcomeMessage) {
 			WelcomeMessage welc = (WelcomeMessage) data;
 			mycolor = welc.getYourColor();
 		}
@@ -118,8 +108,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 	 * @param move
 	 *            the move you want to do
 	 */
-	public void sendMove(Move move)
-	{
+	public void sendMove(Move move) {
 		client.sendMessageToRoom(roomId, move);
 	}
 
@@ -127,32 +116,30 @@ public abstract class AbstractClient implements ILobbyClientListener
 	 * Called, when an error is sent to the room
 	 */
 	@Override
-	public void onError(String roomId, ErrorResponse response)
-	{
+	public void onError(String roomId, ErrorResponse response) {
 		System.err.println(response.getMessage());
 		this.error = response.getMessage();
 	}
 
 	/**
-	 * Called when game state has been received
-	 * Happens, after a client made a move.
+	 * Called when game state has been received Happens, after a client made a
+	 * move.
 	 */
 	@Override
-	public void onNewState(String roomId, Object state)
-	{
+	public void onNewState(String roomId, Object state) {
 		GameState gameState = (GameState) state;
 		Game game = gameState.getGame();
 
-		if (id != EPlayerId.OBSERVER)
-		{
+		if (id != EPlayerId.OBSERVER) {
 			handler.onUpdate(game.getBoard(), game.getTurn());
 
-			if (game.getActivePlayer().getPlayerColor() == mycolor)
-			{ // active player is own
+			if (game.getActivePlayer().getPlayerColor() == mycolor) { // active
+																		// player
+																		// is
+																		// own
 				handler.onUpdate(game.getActivePlayer(), game.getBoard()
 						.getOtherPlayer(game.getActivePlayer()));
-			}
-			else
+			} else
 			// active player is the enemy
 			{
 				handler.onUpdate(game.getBoard().getOtherPlayer(
@@ -162,80 +149,67 @@ public abstract class AbstractClient implements ILobbyClientListener
 		}
 	}
 
-	public void joinAnyGame()
-	{
+	public void joinAnyGame() {
 		client.joinAnyGame(gameType);
 	}
 
-	public void joinPreparedGame(String reservation)
-	{
+	public void joinPreparedGame(String reservation) {
 		client.joinPreparedGame(reservation);
 	}
 
 	/**
 	 * @return
 	 */
-	public String getGameType()
-	{
+	public String getGameType() {
 		return gameType;
 	}
 
-	public EPlayerId getID()
-	{
+	public EPlayerId getID() {
 		return id;
 	}
 
-	public void prepareGame(int playerCount)
-	{
+	public void prepareGame(int playerCount) {
 		client.prepareGame(gameType, playerCount);
 	}
 
 	@Override
-	public void onGamePrepared(PrepareGameResponse response)
-	{
+	public void onGamePrepared(PrepareGameResponse response) {
 		// not needed
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			SlotDescriptor... descriptors) throws InterruptedException
-	{
+			SlotDescriptor... descriptors) throws InterruptedException {
 		return client.prepareGameAndWait(gameType, descriptors);
 	}
 
-	public String getHost()
-	{
+	public String getHost() {
 		return host;
 	}
 
-	public int getPort()
-	{
+	public int getPort() {
 		return port;
 	}
 
 	@Override
-	public void onGameOver(String roomId, GameResult data)
-	{
+	public void onGameOver(String roomId, GameResult data) {
 		client.close();
 
-		if (handler != null)
-		{
+		if (handler != null) {
 			handler.gameEnded(data, mycolor, this.error);
 		}
 	}
 
-	public void freeReservation(String reservation)
-	{
+	public void freeReservation(String reservation) {
 		client.freeReservation(reservation);
 	}
 
 	@Override
-	public void onGamePaused(String roomId, IPlayer nextPlayer)
-	{
+	public void onGamePaused(String roomId, IPlayer nextPlayer) {
 		// not needed
 	}
-	
+
 	public String getError() {
 		return error;
 	}
-	
+
 }

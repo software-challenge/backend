@@ -1,12 +1,10 @@
 package sc.plugin_minimal;
 
-
 /**
  * @author ffi
  * 
  */
-public interface IGUIObservation
-{
+public interface IGUIObservation {
 
 	/**
 	 * @param activePlayerId

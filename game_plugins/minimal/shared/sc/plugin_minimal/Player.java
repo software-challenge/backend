@@ -1,15 +1,11 @@
 package sc.plugin_minimal;
 
-import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import sc.framework.plugins.SimplePlayer;
-import sc.plugin_minimal.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * ein spieler

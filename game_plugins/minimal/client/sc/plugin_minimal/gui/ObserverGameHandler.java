@@ -17,47 +17,41 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-public class ObserverGameHandler implements IGameHandler
-{
+public class ObserverGameHandler implements IGameHandler {
 
-	public ObserverGameHandler()
-	{
+	public ObserverGameHandler() {
 	}
 
 	@Override
-	public void onUpdate(Board board, int turn)
-	{
+	public void onUpdate(Board board, int turn) {
 		RenderFacade.getInstance().updateBoard(board, turn, EPlayerId.OBSERVER);
 	}
 
 	@Override
-	public void onUpdate(Player player, Player otherPlayer)
-	{
+	public void onUpdate(Player player, Player otherPlayer) {
 		RenderFacade.getInstance().updatePlayer(player, otherPlayer,
 				EPlayerId.OBSERVER);
 	}
 
-	public void onUpdate(String chat)
-	{
+	public void onUpdate(String chat) {
 		RenderFacade.getInstance().updateChat(chat, EPlayerId.OBSERVER);
 	}
 
 	@Override
-	public void onRequestAction()
-	{
+	public void onRequestAction() {
 		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		RenderFacade.getInstance().requestMove(EPlayerId.OBSERVER);
 	}
 
 	@Override
-	public void sendAction(Move move)
-	{
+	public void sendAction(Move move) {
 		// observer cant send moves
 	}
 
 	@Override
-	public void gameEnded(GameResult data, PlayerColor color, String errorMessage)
-	{
-		RenderFacade.getInstance().gameEnded(data, EPlayerId.OBSERVER, color, errorMessage);
+	public void gameEnded(GameResult data, PlayerColor color,
+			String errorMessage) {
+		RenderFacade.getInstance().gameEnded(data, EPlayerId.OBSERVER, color,
+				errorMessage);
 	}
 }

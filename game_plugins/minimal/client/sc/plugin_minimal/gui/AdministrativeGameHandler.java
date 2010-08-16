@@ -14,38 +14,31 @@ import sc.shared.GameResult;
  * @author ffi
  * 
  */
-public class AdministrativeGameHandler implements IGameHandler
-{
-	public AdministrativeGameHandler()
-	{
+public class AdministrativeGameHandler implements IGameHandler {
+	public AdministrativeGameHandler() {
 	}
 
 	@Override
-	public void onUpdate(Board board, int turn)
-	{
+	public void onUpdate(Board board, int turn) {
 	}
 
 	@Override
-	public void onUpdate(Player player, Player otherPlayer)
-	{
+	public void onUpdate(Player player, Player otherPlayer) {
 	}
 
-	public void onUpdate(String chat)
-	{
-	}
-
-	@Override
-	public void onRequestAction()
-	{
+	public void onUpdate(String chat) {
 	}
 
 	@Override
-	public void sendAction(Move move)
-	{
+	public void onRequestAction() {
 	}
 
 	@Override
-	public void gameEnded(GameResult data, PlayerColor color, String errorMessage)
-	{
+	public void sendAction(Move move) {
+	}
+
+	@Override
+	public void gameEnded(GameResult data, PlayerColor color,
+			String errorMessage) {
 	}
 }

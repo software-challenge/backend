@@ -84,7 +84,7 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		setFocusable(true);
-		//this.nodes = nodes;
+		// this.nodes = nodes;
 		hatMap = new HashMap<Sheep, Point>(7);
 
 		createHatMap();
@@ -105,8 +105,7 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 	 * Player got updated, let the gui react to it
 	 */
 	@Override
-	public void updatePlayer(final Player currentPlayer, final Player nextPlayer)
-{
+	public void updatePlayer(final Player currentPlayer, final Player nextPlayer) {
 		this.currentPlayer = currentPlayer;
 		this.nextPlayer = nextPlayer;
 		repaint();
@@ -117,7 +116,7 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 	 */
 	@Override
 	public void updateBoard(Board board, int round) {
-		if (this.board != board){
+		if (this.board != board) {
 			this.board = board;
 		}
 		this.round = round;
@@ -182,30 +181,12 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 	public void updateChat(String chatMsg) {
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	private Font h1 = new Font(getFont().getName(), Font.BOLD, 25);
-	private Font h2 = new Font(getFont().getName(), Font.BOLD, 20);
-	private Font h3 = new Font(getFont().getName(), Font.BOLD, 14);
-	private Font h4 = new Font(getFont().getName(), Font.PLAIN, 14);
 	private Font hdice = new Font(getFont().getName(), Font.PLAIN, 33);
-	
+
 	private FontMetrics fm = getFontMetrics(getFont());
-	private FontMetrics mfdice = getFontMetrics(hdice);
-	
+
 	private List<Node> nodes = new LinkedList<Node>();
-	
+
 	private Node currentNode;
 	private Dimension dim;
 	private int mousey;
@@ -251,8 +232,8 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 
 	@Override
 	public void paint(Graphics g) {
-		
-		if (board != null){
+
+		if (board != null) {
 			nodes = board.getNodes();
 		}
 
@@ -281,7 +262,7 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 				RenderingHints.VALUE_ANTIALIAS_ON);
 		FontMetrics metrics = getFontMetrics(getFont());
 
-		//g2.drawImage(image, xBorder, yBorder, size, size, this);
+		// g2.drawImage(image, xBorder, yBorder, size, size, this);
 
 		for (Node node : nodes) {
 			switch (node.getNodeType()) {
@@ -366,7 +347,6 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 		drawHat(g2, currentHat);
 
 	}
-
 
 	private void drawHat(Graphics2D g2, Sheep hat) {
 

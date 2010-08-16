@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import sc.plugin_minimal.Board;
-import sc.plugin_minimal.BoardFactory;
 import sc.plugin_minimal.PlayerColor;
 import sc.plugin_minimal.Game;
 import sc.plugin_minimal.GameState;
