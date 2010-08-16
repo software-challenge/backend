@@ -1,4 +1,4 @@
-package sc.plugin_minimal.util;
+package sc.plugin_schaefchen.util;
 
 public class Constants {
 

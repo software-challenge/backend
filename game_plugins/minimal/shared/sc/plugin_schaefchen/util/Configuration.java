@@ -1,17 +1,17 @@
-package sc.plugin_minimal.util;
+package sc.plugin_schaefchen.util;
 
 import java.util.Arrays;
 import java.util.List;
 
-import sc.plugin_minimal.Board;
-import sc.plugin_minimal.PlayerColor;
-import sc.plugin_minimal.Game;
-import sc.plugin_minimal.GameState;
-import sc.plugin_minimal.Move;
-import sc.plugin_minimal.Player;
-import sc.plugin_minimal.Sheep;
-import sc.plugin_minimal.SheepSize;
-import sc.plugin_minimal.WelcomeMessage;
+import sc.plugin_schaefchen.Board;
+import sc.plugin_schaefchen.Game;
+import sc.plugin_schaefchen.GameState;
+import sc.plugin_schaefchen.Move;
+import sc.plugin_schaefchen.Player;
+import sc.plugin_schaefchen.PlayerColor;
+import sc.plugin_schaefchen.Sheep;
+import sc.plugin_schaefchen.SheepSize;
+import sc.plugin_schaefchen.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
 import ch.qos.logback.core.pattern.parser.Node;
