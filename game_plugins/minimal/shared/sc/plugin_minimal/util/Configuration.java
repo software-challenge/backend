@@ -33,7 +33,7 @@ public class Configuration {
 
 	static {
 		xStream = new XStream();
-		xStream.setMode(XStream.XPATH_ABSOLUTE_REFERENCES);
+		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
 		LobbyProtocol.registerMessages(xStream);
 		LobbyProtocol.registerAdditionalMessages(xStream,
