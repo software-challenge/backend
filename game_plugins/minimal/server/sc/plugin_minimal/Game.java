@@ -88,8 +88,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private void update(Move move, Player player) {
 
 		//TODO noch irgendwas zu unerpruefen?
-		if (move.isValide()){
-			move.perform();
+		if (board.isValideMove(move)){
+			board.performMove(move);
 		}
 
 	}

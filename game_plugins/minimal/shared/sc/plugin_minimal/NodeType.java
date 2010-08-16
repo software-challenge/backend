@@ -11,6 +11,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias(value = "minimal:nodetype")
 public enum NodeType {
 
-	HOME1, HOME2, FENCE, GRASS;
+	HOME1, HOME2, FENCE, GRASS, DOGHOUSE;
 
 }
