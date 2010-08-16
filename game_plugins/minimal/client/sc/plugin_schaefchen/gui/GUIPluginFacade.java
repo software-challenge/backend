@@ -29,7 +29,7 @@ import edu.cau.plugins.PluginDescriptor;
  * @author sca
  * 
  */
-@PluginDescriptor(author = "Sven Casimir", uuid = "minimal", name = "Minimal Plugin")
+@PluginDescriptor(author = "Sven Casimir", uuid = "minimal", name = "Schäfchen ins Trockene")
 public class GUIPluginFacade implements IGuiPlugin {
 	public GUIPluginFacade() {
 
