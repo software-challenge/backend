@@ -6,35 +6,27 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
  * abstrakte spielerfarben die echte farben liefern
+ * 
  * @author tkra
- *
+ * 
  */
-@XStreamAlias(value="minimal:color")
-public enum PlayerColor
-{
-	
-	/**
-	 * First player is always red
-	 */
-	PLAYER1(Color.RED),
-	/**
-	 *  Second player always blue
-	 */
-	PLAYER2(Color.BLUE), 
-	/**
-	 * 
-	 */
-	NOPLAYER(Color.YELLOW);
+@XStreamAlias(value = "minimal:color")
+public enum PlayerColor {
 
-	
+	PLAYER1(Color.RED), PLAYER2(Color.BLUE), NOPLAYER(Color.YELLOW.darker());
+
+	// die zugehoerige echte farbe
 	private Color color;
-	
-	private PlayerColor(Color c){
+
+	private PlayerColor(Color c) {
 		this.color = c;
 	}
-	
+
+	/**
+	 * liefert die zugehoerige echte farbe
+	 */
 	public Color getColor() {
 		return color;
 	}
-	
+
 }

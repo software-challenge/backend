@@ -147,7 +147,7 @@ public abstract class AbstractClient implements ILobbyClientListener
 		{
 			handler.onUpdate(game.getBoard(), game.getTurn());
 
-			if (game.getActivePlayer().getColor() == mycolor)
+			if (game.getActivePlayer().getPlayerColor() == mycolor)
 			{ // active player is own
 				handler.onUpdate(game.getActivePlayer(), game.getBoard()
 						.getOtherPlayer(game.getActivePlayer()));

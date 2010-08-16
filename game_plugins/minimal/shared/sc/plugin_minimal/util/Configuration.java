@@ -10,26 +10,29 @@ import sc.plugin_minimal.Game;
 import sc.plugin_minimal.GameState;
 import sc.plugin_minimal.Move;
 import sc.plugin_minimal.Player;
+import sc.plugin_minimal.Sheep;
+import sc.plugin_minimal.SheepSize;
 import sc.plugin_minimal.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
+
+import ch.qos.logback.core.pattern.parser.Node;
 
 import com.thoughtworks.xstream.XStream;
 
 /**
  * Configuration
+ * 
  * @author sca
- *
+ * 
  */
-public class Configuration
-{
+public class Configuration {
 	/*
 	 * The XStream which is used to translate Objects to XML and vice versa
 	 */
-	
-	private static XStream	xStream;
 
-	static
-	{
+	private static XStream xStream;
+
+	static {
 		xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
@@ -38,15 +41,14 @@ public class Configuration
 				getClassesToRegister());
 	}
 
-	public static XStream getXStream()
-	{
+	public static XStream getXStream() {
 		return xStream;
 	}
 
-	public static List<Class<?>> getClassesToRegister()
-	{
+	public static List<Class<?>> getClassesToRegister() {
 		return Arrays.asList(new Class<?>[] { Game.class, Board.class,
-				GameState.class, Move.class, Player.class,
-				WelcomeMessage.class, PlayerColor.class });
+				GameState.class, Move.class, Player.class, Node.class,
+				Sheep.class, SheepSize.class, WelcomeMessage.class,
+				PlayerColor.class });
 	}
 }
