@@ -13,7 +13,7 @@ import edu.cau.plugins.PluginDescriptor;
  * Minimal game plugin.
  * Basic structure of the game is described here
  * 
- * @author Sven Casimir
+ * @author Sven Casimir, Torsten Krause
  * @since Juni, 2010
  */
 @PluginDescriptor(name = "Schäfchen ins Trockene", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
