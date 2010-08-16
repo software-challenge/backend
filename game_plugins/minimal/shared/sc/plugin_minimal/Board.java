@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author ffa, sca, tkra
  * 
  */
-@XStreamAlias(value = "minimal:board")
+@XStreamAlias(value = "sit:board")
 public final class Board {
 
 	// der eigentlicher wurfel
