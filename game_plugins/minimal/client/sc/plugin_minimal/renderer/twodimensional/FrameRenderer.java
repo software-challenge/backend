@@ -217,7 +217,7 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 	private int yBorder;
 	private List<Node> nodes;
 
-	private void createSheepMap() {
+	private synchronized void createSheepMap() {
 
 		sheepMap.clear();
 		Map<Integer,Set<Sheep>> map = new HashMap<Integer, Set<Sheep>>();
@@ -414,7 +414,10 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 
 		if (sheep != null) {
 
-			Point p = sheepMap.get(sheep);			
+			Point p;
+			synchronized (sheepMap) {
+				p = sheepMap.get(sheep);					
+			}
 			if (currentSheep != null && sheep == currentSheep) {
 				p.x = mousex;
 				p.y = mousey;
@@ -485,17 +488,18 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 		int x = e.getX();
 		int y = e.getY();
 
-		for (Sheep hat : sheepMap.keySet()) {
-			Point p = sheepMap.get(hat);
+		synchronized (sheepMap){
+		for (Sheep sheep : sheepMap.keySet()) {
+			Point p = sheepMap.get(sheep);
 			if (Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < 12) {
-				currentSheep = hat;
-				if(!hat.owner.equals(PlayerColor.NOPLAYER)){
-				currentNeighbours = board.getValideMoves(hat).keySet();
+				currentSheep = sheep;
+				if(!sheep.owner.equals(PlayerColor.NOPLAYER)){
+				currentNeighbours = board.getValideMoves(sheep.index).keySet();
 				}
 				repaint();
 				break;
 			}
-
+		}
 		}
 
 	}
@@ -507,7 +511,7 @@ public class FrameRenderer extends JPanel implements IRenderer, MouseListener,
 				if (currentSheep.getPlayerColor() != PlayerColor.NOPLAYER
 						&& currentSheep.owner == currentPlayer.getPlayerColor()
 						&& currentNeighbours.contains(currentNode.index)) {
-					move = new Move(currentSheep, currentNode.index);
+					move = new Move(currentSheep.index, currentNode.index);
 					sendMove(move);
 				}
 			}

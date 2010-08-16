@@ -53,7 +53,7 @@ public final class Board {
 		sheeps = new LinkedList<Sheep>();
 		for (Node node : nodes) {
 			if (node.getNodeType().equals(NodeType.DOGHOUSE)) {
-				Sheep sheep =new Sheep(node.index, node.index,
+				Sheep sheep = new Sheep(node.index, node.index,
 						PlayerColor.NOPLAYER);
 				
 				if (Constants.PRE_GOLDEN_RULE) {
@@ -141,6 +141,19 @@ public final class Board {
 		}
 		return sheeps;
 	}
+	
+	
+	/**
+	 * liefert alle schafe eines spielers
+	 */
+	public Sheep getSheepByID(int id) {
+		for (Sheep sheep : this.sheeps) {
+			if (sheep.index == id) {
+				return sheep;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * liefert alle schafe eines knotens
@@ -226,8 +239,13 @@ public final class Board {
 	 * liefert eine abbildung von den gueltig erreichbaren knoten auf deren
 	 * abstand zu diesem knoten
 	 */
-	public Map<Integer, Integer> getValideMoves(Sheep sheep) {
-
+	public Map<Integer, Integer> getValideMoves(int id) {
+		Sheep sheep = getSheepByID(id);
+		
+		if(sheep == null){
+			return new HashMap<Integer, Integer>();
+		}
+		
 		// alle erreichbaren spielfelder
 		Map<Integer, Integer> reachableNodes = getReachableNodes(sheep
 				.getNode());
@@ -286,17 +304,21 @@ public final class Board {
 	 * fuehrt diesen spielzug aus und liefert ob die aenderung in ordnung war
 	 */
 	public boolean performMove(Move move) {
+//
+//		if (!isValideMove(move)) {
+//			return false;
+//		}
 
-		if (!isValideMove(move)) {
+		// zug auspacken
+		Sheep sheep = getSheepByID(move.sheep);
+		Node target = nodes[move.target];
+		
+		if(sheep == null){
 			return false;
 		}
 
-		// zug auspacken
-		Sheep sheep = move.sheep;
-		Node target = nodes[move.target];
-
 		// den verwendeten wuerfel aud dem vorrat entfernen
-		Map<Integer, Integer> validMoves = getValideMoves(sheep);
+		Map<Integer, Integer> validMoves = getValideMoves(move.sheep);		
 		removeDice(validMoves.get(move.target));
 
 		// jedes schaf das auf dem zielfeld steht und dem gegenspieler gehoet
@@ -313,14 +335,20 @@ public final class Board {
 				if (victim.hasSharpSheepdog()) {
 					sheep.setSharpSheepdog(true);
 				}
+				
+				sheeps.remove(victim);
 
 			}
 
 		}
 
+		System.out.println("gurkenwasser *** " + sheep.getNode());
 		// das schaf wird auf das zielfeld bewegt
 		sheep.setNode(target.index);
+		System.out.println("gurkenwasser *** " +  sheep.getNode());
 
+
+		System.out.println("gurkenwasser2 *** " + sheep.getFlowers());
 		switch (target.getNodeType()) {
 		case GRASS:
 		case FENCE:
@@ -364,6 +392,8 @@ public final class Board {
 			break;
 		}
 
+		System.out.println("gurkenwasser2 *** " + sheep.getFlowers());
+		
 		return true;
 
 	}

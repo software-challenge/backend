@@ -11,12 +11,12 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public final class Move {
 
 	// das betroffene schaf
-	public final Sheep sheep;
+	public final int sheep;
 
 	// das spielfeld auf das das betroffene schaf ziehen soll
 	public final int target;
 
-	public Move(Sheep sheep, int target) {
+	public Move(int sheep, int target) {
 		this.sheep = sheep;
 		this.target = target;
 	}
