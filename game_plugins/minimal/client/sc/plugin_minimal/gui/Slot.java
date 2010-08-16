@@ -11,17 +11,17 @@ import sc.plugin_minimal.GuiClient;
 import sc.plugin_minimal.renderer.RenderFacade;
 
 /**
- * Holds a place for a potential client (that can be a remote client or a human client i.e.)
+ * Holds a place for a potential client (that can be a remote client or a human
+ * client i.e.)
+ * 
  * @author ffi
  * 
  */
-public class Slot implements ISlot
-{
-	private String		reservation;
-	private GuiClient	adminclient;
+public class Slot implements ISlot {
+	private String reservation;
+	private GuiClient adminclient;
 
-	public Slot(String reservation, GuiClient adminclient)
-	{
+	public Slot(String reservation, GuiClient adminclient) {
 		this.reservation = reservation;
 		this.adminclient = adminclient;
 	}
@@ -30,8 +30,7 @@ public class Slot implements ISlot
 	 * Local client, started by server
 	 */
 	@Override
-	public String[] asClient()
-	{
+	public String[] asClient() {
 		String[] res = { "--host", adminclient.getHost(), "--port",
 				String.valueOf(adminclient.getPort()), "--reservation",
 				reservation };
@@ -42,29 +41,22 @@ public class Slot implements ISlot
 	 * Create new human client and new Panel on the Facade
 	 */
 	@Override
-	public void asHuman() throws IOException
-	{
+	public void asHuman() throws IOException {
 		GuiClient humanClient;
-		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne())
-		{
+		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne()) {
 			humanClient = new GuiClient(adminclient.getHost(), adminclient
 					.getPort(), EPlayerId.PLAYER_ONE);
-		}
-		else
-		{
+		} else {
 			humanClient = new GuiClient(adminclient.getHost(), adminclient
 					.getPort(), EPlayerId.PLAYER_TWO);
 		}
 
 		HumanGameHandler handler = new HumanGameHandler(humanClient);
 		humanClient.setHandler(handler);
-		if (humanClient.getID() == EPlayerId.PLAYER_ONE)
-		{
+		if (humanClient.getID() == EPlayerId.PLAYER_ONE) {
 			RenderFacade.getInstance()
 					.createPanel(handler, humanClient.getID());
-		}
-		else
-		{
+		} else {
 			RenderFacade.getInstance()
 					.createPanel(handler, humanClient.getID());
 		}
@@ -75,8 +67,7 @@ public class Slot implements ISlot
 	 * Remote client, has to connect to the server manually
 	 */
 	@Override
-	public void asRemote()
-	{
+	public void asRemote() {
 		adminclient.freeReservation(reservation);
 	}
 }

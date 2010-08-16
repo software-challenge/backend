@@ -6,7 +6,6 @@ package sc.plugin_minimal;
  * @author ffi
  * 
  */
-public enum EPlayerId
-{
+public enum EPlayerId {
 	OBSERVER, PLAYER_ONE, PLAYER_TWO
 }

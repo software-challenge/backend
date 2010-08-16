@@ -22,27 +22,21 @@ import sc.shared.SlotDescriptor;
  * @author sca
  * 
  */
-public class GamePreparation implements IGamePreparation
-{
-	private List<ISlot>	slots	= new LinkedList<ISlot>();
-	private Observation	observation;
+public class GamePreparation implements IGamePreparation {
+	private List<ISlot> slots = new LinkedList<ISlot>();
+	private Observation observation;
 
-	public GamePreparation(GuiClient client, SlotDescriptor... descriptors)
-	{
+	public GamePreparation(GuiClient client, SlotDescriptor... descriptors) {
 		RequestResult<PrepareGameResponse> results = null;
-		try
-		{
+		try {
 			results = client.prepareGameAndWait(descriptors);
-		}
-		catch (InterruptedException e)
-		{
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
 		PrepareGameResponse response = results.getResult();
 
-		for (String singleResp : response.getReservations())
-		{
+		for (String singleResp : response.getReservations()) {
 			slots.add(new Slot(singleResp, client));
 		}
 
@@ -53,14 +47,12 @@ public class GamePreparation implements IGamePreparation
 	}
 
 	@Override
-	public List<ISlot> getSlots()
-	{
+	public List<ISlot> getSlots() {
 		return slots;
 	}
 
 	@Override
-	public IObservation getObserver()
-	{
+	public IObservation getObserver() {
 		return observation;
 	}
 }

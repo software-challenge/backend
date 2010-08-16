@@ -4,11 +4,11 @@ import sc.shared.GameResult;
 
 /**
  * The game handler is used to interface the client with the observation
+ * 
  * @author sven
- *
+ * 
  */
-public interface IGameHandler
-{
+public interface IGameHandler {
 	/**
 	 * called, when player is updated
 	 * 
