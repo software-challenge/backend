@@ -1,49 +1,49 @@
 package sc.plugin_minimal.renderer.positioner;
 
+import sc.plugin_minimal.GUINode;
 import sc.plugin_minimal.Node;
 
-public class ArcPositioner implements Positioner{
-	
+public class ArcPositioner implements Positioner {
+
 	private int x1, x2, y1, y2;
-	private final Node node;
-	
+	private final GUINode node;
+
 	private int[] xs;
 	private int[] ys;
 	private int n = 3;
-	
-	public ArcPositioner(Node node) {
-		this.node=node;		
+
+	public ArcPositioner(GUINode node) {
+		this.node = node;
 		createScaledPositions(n);
 	}
-	
+
 	@Override
 	public void scale(int size) {
 
 		x1 = node.getScaledXs()[1];
 		y1 = node.getScaledYs()[1];
-		
+
 		x2 = node.getScaledXs()[4];
 		y2 = node.getScaledYs()[4];
-		
+
 		createScaledPositions(n);
-		
+
 	}
-		
-	private void createScaledPositions(int n){
+
+	private void createScaledPositions(int n) {
 		this.n = n;
 		xs = new int[n];
 		ys = new int[n];
-		
-		for(int i=0;i<n;i++){
-			xs[i] = x1+(2*i+1)*(x2-x1)/(2*n);
-			ys[i] = y1+(2*i+1)*(y2-y1)/(2*n);
+
+		for (int i = 0; i < n; i++) {
+			xs[i] = x1 + (2 * i + 1) * (x2 - x1) / (2 * n);
+			ys[i] = y1 + (2 * i + 1) * (y2 - y1) / (2 * n);
 		}
 	}
-		
 
 	@Override
-	public int[] scaledXs(int n) {	
-		if(n!=this.n){
+	public int[] scaledXs(int n) {
+		if (n != this.n) {
 			createScaledPositions(n);
 		}
 		return xs.clone();
@@ -51,7 +51,7 @@ public class ArcPositioner implements Positioner{
 
 	@Override
 	public int[] scaledYs(int n) {
-		if(n!=this.n){
+		if (n != this.n) {
 			createScaledPositions(n);
 		}
 		return ys.clone();
