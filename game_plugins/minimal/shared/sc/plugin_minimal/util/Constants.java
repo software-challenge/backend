@@ -22,8 +22,7 @@ public class Constants {
 	public final static boolean GOLD_LIMIT_RULE = false;
 	public final static boolean PRE_GOLDEN_RULE = true;
 	
-	public final static int HATS_IN_BASE_ONE = 3;
-	public final static int HATS_IN_BASE_TWO = 3;
+	public final static int HATS_IN_BASE = 3;
 
 	public final static int	DIE_COUNT = 3;
 	public final static int	DIE_SIZE = 6;

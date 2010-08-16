@@ -1,114 +1,132 @@
 package sc.plugin_minimal;
 
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import sc.framework.plugins.SimplePlayer;
+import sc.plugin_minimal.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * A minimal player, it has a color and a move history, nothing more
+ * ein spieler
  * 
- * @author sca
+ * @author sca, tkra
  * 
  */
 // FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
 @XStreamAlias(value = "minimal:player")
-public final class Player extends SimplePlayer implements Cloneable
-{
-	// Farbe der Spielfigure
-	private PlayerColor		color;
+public final class Player extends SimplePlayer {
 
-	@XStreamImplicit(itemFieldName = "move")
-	private List<Move>		history;
+	// spielerfarbe des spielers
+	private PlayerColor color;
+	
+	// liste der schafe die dieser spieler besitzt
+	private List<Sheep> sheeps;
 
-	/**
-	 * Add given move to this player's move history
-	 * @param m
-	 */
-	protected void addToHistory(final Move m)
-	{
-		getHistory().add(m);
+	// gesamtzahl der von diesem spieler gesicherten blumen
+	private int capturedFlowers;
+	
+	// gesamtzahl der von diesem spieler gesicherten gegnerischen schafe
+	private int capturedSheeps;
+
+	public Player() {
+		capturedFlowers = 0;
+		capturedSheeps = 0;
+		sheeps = new LinkedList<Sheep>();
 	}
 
-	/**
-	 * @return the player's move history
-	 */
-	public List<Move> getHistory()
-	{
-		if (this.history == null)
-		{
-			this.history = new LinkedList<Move>();
-		}
-
-		return history;
-	}
-
-	/**
-	 * 
-	 * @return the last move done by this player
-	 */
-	public Move getLastMove()
-	{
-		return getLastMove(-1);
-	}
-
-	protected Player()
-	{
-		history = new LinkedList<Move>();
-	}
-
-	public Player(PlayerColor color) {
+	public Player(final PlayerColor color) {
 		this();
 		this.color = color;
 	}
-	
+
 	/**
-	 * 
-	 * 
-	 * @return Color of this player
+	 * liefert die spielrfarbe dieses spielers
 	 */
-	public final PlayerColor getColor()
-	{
+	public PlayerColor getPlayerColor() {
 		return color;
 	}
 
-	public Player clone()
-	{
-		Player ret = null;
-		try
-		{
-			ret = (Player) super.clone();
-			ret.history = new LinkedList<Move>();
-			ret.history.addAll(this.getHistory());
+	/**
+	 * liefert die spielerfarbe des gegners dieses spielers
+	 */
+	public PlayerColor getOponentColor() {
+		PlayerColor result = PlayerColor.NOPLAYER;
+		switch (color) {
+		case PLAYER1:
+			result = PlayerColor.PLAYER2;
+			break;
+
+		case PLAYER2:
+			result = PlayerColor.PLAYER1;
+			break;
+
+		case NOPLAYER:
+			result = PlayerColor.NOPLAYER;
+			break;
 		}
-		catch (CloneNotSupportedException e)
-		{
-			e.printStackTrace();
-		}
-		return ret;
+
+		return result;
 	}
 
 	/**
-	 * 
-	 * @param i
-	 *            Use -2 to get the move before the last move.
-	 * @return
+	 * liefert die gesamtzahl der von diesem spieler gesicherten blumen
 	 */
-	public Move getLastMove(int i)
-	{
-		if (i >= 0)
-		{
-			throw new IllegalArgumentException("getLastMove requires i < 0");
-		}
+	public int getCapturedFlowers() {
+		return capturedFlowers;
+	}
 
-		if (getHistory() != null && getHistory().size() >= -i)
-		{
-			return getHistory().get(getHistory().size() + i);
-		}
+	/**
+	 * erhoeht die gesamtzahl der von diesem spielr gesicherten blumen
+	 */
+	public void addCapturedFlowers(int flowers) {
+		this.capturedFlowers += flowers;
+	}
 
+	/**
+	 * liefert die gesamtzahl der von diesem spieler gesicherten  schafe
+	 */
+	public int getCapturedSheeps() {
+		return capturedSheeps;
+	}
+
+	/**
+	 * erhoeht die gesamtzahl der von diesem spieler gesicherten schafe
+	 */
+	public void addCapturedSheeps(int sheeps) {
+		this.capturedSheeps += sheeps;
+	}
+
+	
+	/**
+	 * fuegt dem besitz dieses spielers eine neues schaf hinzu
+	 */
+	public void addSheep(final Sheep sheep) {
+		sheeps.add(sheep);
+	}
+
+	/**
+	 * entfernt ein schaf aus dem besitz dieses spielers
+	 */
+	public void removeSheep(final Sheep sheep) {
+		sheeps.remove(sheep);
+	}
+
+	
+	/**
+	 * liefert die liste der zu diesem spieler gehoerenden schafe
+	 */
+	public List<Sheep> getHats() {
+		return new LinkedList<Sheep>(sheeps);
+	}
+
+	
+	public Move getLastMove() {
+		// TODO wird im client scheinbar gebraucht
 		return null;
 	}
 }

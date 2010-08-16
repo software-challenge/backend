@@ -1,83 +1,105 @@
 package sc.plugin_minimal;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin_minimal.PlayerColor;
-import sc.plugin_minimal.Player;
+import sc.plugin_minimal.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * @author ffa, sca
+ * ein spielbrett beinhaltet die liste der spielfelder und die zur verfuegung
+ * stehenden wurfel und die teilnehmenden spieler
+ * 
+ * @author ffa, sca, tkra
  * 
  */
 @XStreamAlias(value = "minimal:board")
-public class Board {
+public final class Board {
+
+	// der eigentlicher wurfel
+	private static final SecureRandom rand = new SecureRandom();
+
+	// die teilenhmenden spieler
+	private Player player1;
+	private Player player2;
+
+	// liste de spielfelder
+	private final List<Node> nodes;
 	
+	// liste der zur verfuegung stehenden wuerfelergebnisse
+	private final List<Integer> dice;
 
-	// spieler
-	protected Player player1;
-	protected Player player2;
+	public Board() {
+		nodes = BoardFactory.createNodes(this);
+		dice = new LinkedList<Integer>();
 
-	// liste von feldern
-	protected List<Node> nodes;
-
-	private Board() {
-
+		for (int i = dice.size(); i < Constants.DIE_COUNT; i++) {
+			dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+		}
 	}
 
 	/**
-	 * New empty board
-	 * 
-	 * @return
+	 * fuegt dem spiel einen neuen spieler hinzu und erzeugt huete in den
+	 * zugehoerigen basen. es werden nur zwei spieler unterstuetzt
 	 */
-	protected static Board create() {
-		Board b = new Board();
-		b.initialize();
-		return b;
-	}
-
-	/**
-	 * Create initial board here, i.e. if you need to randomly place things on
-	 * the board
-	 */
-	private final void initialize() {
-		//nodes = BoardFactory.createNodes();
-	}
-
-	/**
-	 * Add player to this board. Here only two players are supported.
-	 * 
-	 * @param player
-	 */
-	protected final void addPlayer(final Player player) {
-		if (player.getColor().equals(PlayerColor.PLAYER1))
-			player2 = player;
-		else
+	public final void addPlayer(final Player player) {
+		if (player.getPlayerColor().equals(PlayerColor.PLAYER1)) {
 			player1 = player;
+			for (Node node : nodes) {
+				if (node.getNodeType().equals(NodeType.HOME1)) {
+					for (int i = 0; i < Constants.HATS_IN_BASE; i++) {
+						new Sheep(node, node.getCounterPart(), player1);
+					}
+				}
+			}
+		} else if (player.getPlayerColor().equals(PlayerColor.PLAYER2)) {
+			player2 = player;
+			for (Node node : nodes) {
+				if (node.getNodeType().equals(NodeType.HOME2)) {
+					for (int i = 0; i < Constants.HATS_IN_BASE; i++) {
+						new Sheep(node, node.getCounterPart(), player2);
+					}
+				}
+			}
+		}
 	}
 
-	protected final void setPlayer1(final Player player) {
-		player2 = player;
-	}
-
-	protected final void setPlayer2(final Player player) {
-		player1 = player;
-	}
-
-	public final Player getOtherPlayer(final Player player) {
+	/**
+	 * liefert den gegenspieler zu einem gegebenen spieler
+	 */
+	public Player getOtherPlayer(final Player player) {
 		assert player1 != null;
 		assert player2 != null;
-		return player.getColor().equals(PlayerColor.PLAYER1) ? player1
-				: player2;
+
+		return player.getPlayerColor().equals(PlayerColor.PLAYER1) ? player2
+				: player1;
 	}
 
-	// liefert die liste an knoten die zu diesem board gehoeren
+	/* liefert die liste an knoten die zu diesem board gehoeren */
 	public List<Node> getNodes() {
-		return nodes;
+		return new ArrayList<Node>(nodes);
+	}
+
+	/* liefert eine liste der verfuegbaren wuerfel */
+	public List<Integer> getDice() {
+		return new LinkedList<Integer>(dice);
+	}
+
+	/* entfernt einen wuerfel aus dem vorrat und fuellt den vorrat auf */
+	public void removeDice(Integer die) {
+		dice.remove(die);
+		dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+	}
+
+	/* liefert die anzahl aller noch vorhandenen taler */
+	public int getTotalGold() {
+		int result = 0;
+		for (Node node : nodes) {
+			result += node.getFlowers();
+		}
+		return result;
 	}
 }

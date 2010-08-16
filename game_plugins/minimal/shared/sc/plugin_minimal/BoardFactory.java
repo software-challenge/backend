@@ -4,47 +4,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import sc.plugin_minimal.renderer.positioner.ArcPositioner;
 import sc.plugin_minimal.renderer.positioner.BasePositioner;
 import sc.plugin_minimal.renderer.positioner.RectPositioner;
 import sc.plugin_minimal.renderer.positioner.SquarePositioner;
 import sc.plugin_minimal.util.Constants;
-import sc.plugin_minimal.Node;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * generiert das spielfeld als gerichteten graphen, befuellt felder mit talern und setzt initiale huete
+ * generiert die spielfelder
  * @author tkra
  * */
 @XStreamAlias(value = "minimal:boardfactory")
 public class BoardFactory {
 
-	public static  List<Node> createNodes() {
+	public static final List<Node> createNodes(final Board board) {
 		
 		List<Node> nodes = new ArrayList<Node>(81);
 
 		Node center = new Node(new double[] { -1, 1, 1, -1 }, new double[] {
-				-1, -1, 1, 1 }, 4);
+				-1, -1, 1, 1 }, 4, board);
 		center.setPositioner(new SquarePositioner(center));
 
 		Node top = new Node(new double[] { -1, 1, 1, -1 }, new double[] { -1,
-				-1, 1, 1 }, 4);
+				-1, 1, 1 }, 4, board);
 		top.setPositioner(new SquarePositioner(top));
 		top.translate(0, -7);
 
 		Node bottom = new Node(new double[] { -1, 1, 1, -1 }, new double[] {
-				-1, -1, 1, 1 }, 4);
+				-1, -1, 1, 1 }, 4, board);
 		bottom.setPositioner(new SquarePositioner(bottom));
 		bottom.translate(0, 7);
 
 		Node left = new Node(new double[] { -1, 1, 1, -1 }, new double[] { -1,
-				-1, 1, 1 }, 4);
+				-1, 1, 1 }, 4, board);
 		left.setPositioner(new SquarePositioner(left));
 		left.translate(-7, 0);
 
 		Node right = new Node(new double[] { -1, 1, 1, -1 }, new double[] { -1,
-				-1, 1, 1 }, 4);
+				-1, 1, 1 }, 4, board);
 		right.setPositioner(new SquarePositioner(right));
 		right.translate(7, 0);
 
@@ -63,57 +62,57 @@ public class BoardFactory {
 		boolean arcSave = Constants.USE_ARC_SAVE;
 		boolean straightSave = Constants.USE_STRAIGHT_SAVE;
 
-		List<Node> centerTop = getStraightLink(1, 1, 6, -1, straightLength);
+		List<Node> centerTop = getStraightLink(1, 1, 6, -1, straightLength, board);
 		nodes.addAll(centerTop);
 		if (straightSave)
-			centerTop.get(straightSaveDist).setNodeType(NodeType.SAVE);
+			centerTop.get(straightSaveDist).setNodeType(NodeType.FENCE);
 		Node.couple(center, centerTop.get(0));
 		Node.couple(centerTop.get(straightLength - 1), top);
 		for (Node node : centerTop) {
 			node.rotate(3 * Math.PI / 2);
 		}
 
-		List<Node> centerBottom = getStraightLink(1, 1, 6, -1, straightLength);
+		List<Node> centerBottom = getStraightLink(1, 1, 6, -1, straightLength, board);
 		nodes.addAll(centerBottom);
 		if (straightSave)
-			centerBottom.get(straightSaveDist).setNodeType(NodeType.SAVE);
+			centerBottom.get(straightSaveDist).setNodeType(NodeType.FENCE);
 		Node.couple(center, centerBottom.get(0));
 		Node.couple(centerBottom.get(straightLength - 1), bottom);
 		for (Node node : centerBottom) {
 			node.rotate(Math.PI / 2);
 		}
 
-		List<Node> centerLeft = getStraightLink(1, 1, 6, -1, straightLength);
+		List<Node> centerLeft = getStraightLink(1, 1, 6, -1, straightLength, board);
 		nodes.addAll(centerLeft);
 		if (straightSave)
-			centerLeft.get(straightSaveDist).setNodeType(NodeType.SAVE);
+			centerLeft.get(straightSaveDist).setNodeType(NodeType.FENCE);
 		Node.couple(center, centerLeft.get(0));
 		Node.couple(centerLeft.get(straightLength - 1), left);
 		for (Node node : centerLeft) {
 			node.rotate(Math.PI);
 		}
 
-		List<Node> centerRight = getStraightLink(1, 1, 6, -1, straightLength);
+		List<Node> centerRight = getStraightLink(1, 1, 6, -1, straightLength, board);
 		nodes.addAll(centerRight);
 		Node.couple(center, centerRight.get(0));
 		Node.couple(centerRight.get(straightLength - 1), right);
 		if (straightSave)
-			centerRight.get(straightSaveDist).setNodeType(NodeType.SAVE);
+			centerRight.get(straightSaveDist).setNodeType(NodeType.FENCE);
 
-		List<Node> rightBottom = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize);
+		List<Node> rightBottom = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize, board);
 		nodes.addAll(rightBottom);
 		if (arcSave) {
-			rightBottom.get(arcSaveDist).setNodeType(NodeType.SAVE);
-			rightBottom.get(arcSaveDist2).setNodeType(NodeType.SAVE);
+			rightBottom.get(arcSaveDist).setNodeType(NodeType.FENCE);
+			rightBottom.get(arcSaveDist2).setNodeType(NodeType.FENCE);
 		}
 		Node.couple(right, rightBottom.get(0));
 		Node.couple(rightBottom.get(arcSize - 1), bottom);
 
-		List<Node> bottomLeft = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize);
+		List<Node> bottomLeft = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize, board);
 		nodes.addAll(bottomLeft);
 		if (arcSave) {
-			bottomLeft.get(arcSaveDist).setNodeType(NodeType.SAVE);
-			bottomLeft.get(arcSaveDist2).setNodeType(NodeType.SAVE);
+			bottomLeft.get(arcSaveDist).setNodeType(NodeType.FENCE);
+			bottomLeft.get(arcSaveDist2).setNodeType(NodeType.FENCE);
 		}
 		Node.couple(bottom, bottomLeft.get(0));
 		Node.couple(bottomLeft.get(arcSize - 1), left);
@@ -121,11 +120,11 @@ public class BoardFactory {
 			node.rotate(Math.PI / 2);
 		}
 
-		List<Node> leftTop = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize);
+		List<Node> leftTop = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize, board);
 		nodes.addAll(leftTop);
 		if (arcSave) {
-			leftTop.get(arcSaveDist2).setNodeType(NodeType.SAVE);
-			leftTop.get(arcSaveDist).setNodeType(NodeType.SAVE);
+			leftTop.get(arcSaveDist2).setNodeType(NodeType.FENCE);
+			leftTop.get(arcSaveDist).setNodeType(NodeType.FENCE);
 		}
 		Node.couple(left, leftTop.get(0));
 		Node.couple(leftTop.get(arcSize - 1), top);
@@ -133,11 +132,11 @@ public class BoardFactory {
 			node.rotate(Math.PI);
 		}
 
-		List<Node> topRight = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize);
+		List<Node> topRight = getArcLink(1, 1, 5, 7, 0, Math.PI / 2, arcSize, board);
 		nodes.addAll(topRight);
 		if (arcSave) {
-			topRight.get(arcSaveDist).setNodeType(NodeType.SAVE);
-			topRight.get(arcSaveDist2).setNodeType(NodeType.SAVE);
+			topRight.get(arcSaveDist).setNodeType(NodeType.FENCE);
+			topRight.get(arcSaveDist2).setNodeType(NodeType.FENCE);
 		}
 		Node.couple(top, topRight.get(0));
 		Node.couple(topRight.get(arcSize - 1), right);
@@ -145,33 +144,33 @@ public class BoardFactory {
 			node.rotate(3 * Math.PI / 2);
 		}
 
-		Node rightBase = getBaseNode();
+		Node rightBase = getBaseNode(board);
 		nodes.add(rightBase);
 		rightBase.setPositioner(new BasePositioner(rightBase));
-		rightBase.setNodeType(NodeType.BASE1);
+		rightBase.setNodeType(NodeType.HOME2);
 		Node.couple(right, rightBase);
 		rightBase.translate(8, 0);
 
-		Node bottomBase = getBaseNode();
+		Node bottomBase = getBaseNode(board);
 		nodes.add(bottomBase);
 		bottomBase.setPositioner(new BasePositioner(bottomBase));
-		bottomBase.setNodeType(NodeType.BASE0);
+		bottomBase.setNodeType(NodeType.HOME1);
 		Node.couple(bottom, bottomBase);
 		bottomBase.translate(8, 0);
 		bottomBase.rotate(Math.PI / 2);
 
-		Node leftBase = getBaseNode();
+		Node leftBase = getBaseNode(board);
 		nodes.add(leftBase);
 		leftBase.setPositioner(new BasePositioner(leftBase));
-		leftBase.setNodeType(NodeType.BASE1);
+		leftBase.setNodeType(NodeType.HOME2);
 		Node.couple(left, leftBase);
 		leftBase.translate(8, 0);
 		leftBase.rotate(Math.PI);
 
-		Node topBase = getBaseNode();
+		Node topBase = getBaseNode(board);
 		nodes.add(topBase);
 		topBase.setPositioner(new BasePositioner(topBase));
-		topBase.setNodeType(NodeType.BASE0);
+		topBase.setNodeType(NodeType.HOME1);
 		Node.couple(top, topBase);
 		topBase.translate(8, 0);
 		topBase.rotate(3 * Math.PI / 2);
@@ -210,30 +209,21 @@ public class BoardFactory {
 		bottomBase.setCounterPart(topBase);
 		leftBase.setCounterPart(rightBase);
 		rightBase.setCounterPart(leftBase);
-//		for (int i = 0; i < JConfigPanel.getHatsInBase1(); i++) {
-//			new Hat(leftBase, rightBase, Player.PLAYER1);
-//			new Hat(topBase, bottomBase, Player.PLAYER0);
-//		}
-//
-//		for (int i = 0; i < JConfigPanel.getHatsInBase2(); i++) {
-//			new Hat(rightBase, leftBase, Player.PLAYER1);
-//			new Hat(bottomBase, topBase, Player.PLAYER0);
-//		}
-//
-//		Hat goldenhat = new Hat(center, null, Player.NOPLAYER);
-//		if (JConfigPanel.preGoldenRule()) {
-//			goldenhat.setPreGolden(true);
-//		} else {
-//			goldenhat.setGolden(true);
-//		}
+
+		Sheep goldenhat = new Sheep(center, null, null);
+		if (Constants.PRE_GOLDEN_RULE) {
+			goldenhat.setSheepdog(true);
+		} else {
+			goldenhat.setSharpSheepdog(true);
+		}
 
 		int gold = 0, min = Constants.MIN_GOLD;
 		int max = Constants.MAX_GOLD, total = Constants.TOTAL_GOLD;
 		List<Node> goldenNodes = new ArrayList<Node>(nodes.size());
 		for (Node node : nodes) {
-			if (node.getNodeType() == NodeType.NORM && node != center) {
+			if (node.getNodeType() == NodeType.GRASS && node != center) {
 				goldenNodes.add(node);
-				node.addGold(min);
+				node.addFlowers(min);
 				gold += min;
 			}
 		}
@@ -241,9 +231,9 @@ public class BoardFactory {
 		Random rand = new Random();
 		while (gold < total && goldenNodes.size() > 0) {
 			Node n = goldenNodes.get(rand.nextInt(goldenNodes.size()));
-			n.addGold(1);
+			n.addFlowers(1);
 
-			if (n.getGold() == max) {
+			if (n.getFlowers() == max) {
 				goldenNodes.remove(n);
 			}
 
@@ -254,7 +244,7 @@ public class BoardFactory {
 
 	}
 
-	private static Node getBaseNode() {
+	private static final Node getBaseNode(final Board board) {
 
 		int n = 25;
 		double[] xs = new double[n];
@@ -272,12 +262,12 @@ public class BoardFactory {
 			phi += phi_incr;
 		}
 
-		return new Node(xs, ys, n);
+		return new Node(xs, ys, n, board);
 
 	}
 
-	private static List<Node> getStraightLink(double x1, double y1, double x2,
-			double y2, int n) {
+	private static final List<Node> getStraightLink(double x1, double y1, double x2,
+			double y2, int n, final Board board) {
 
 		double xa, xb;
 		double x_incr = (x2 - x1) / n;
@@ -291,7 +281,7 @@ public class BoardFactory {
 				xb = x2;
 
 			Node node = new Node(new double[] { xa, xb, xb, xa }, new double[] {
-					y1, y1, y2, y2 }, 4);
+					y1, y1, y2, y2 }, 4, board);
 			nodes.add(node);
 			node.setPositioner(new RectPositioner(node));
 
@@ -304,8 +294,8 @@ public class BoardFactory {
 		return nodes;
 	}
 
-	private static List<Node> getArcLink(double center_x, double center_y, double r_i,
-			double r_a, double phi_start, double phi_end, int n) {
+	private static final List<Node> getArcLink(double center_x, double center_y, double r_i,
+			double r_a, double phi_start, double phi_end, int n, final Board board) {
 
 		double phi_incr = Math.abs(phi_start - phi_end) / (2 * n);
 		double phi, phi2, phi3;
@@ -333,7 +323,7 @@ public class BoardFactory {
 					(center_y + r_i * Math.sin(phi3)),
 					(center_y + r_a * Math.sin(phi3)),
 					(center_y + r_a * Math.sin(phi2)),
-					(center_y + r_a * Math.sin(phi)) }, 6);
+					(center_y + r_a * Math.sin(phi)) }, 6, board);
 
 			nodes.add(node);
 			node.setPositioner(new ArcPositioner(node));

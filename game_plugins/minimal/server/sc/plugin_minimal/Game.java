@@ -1,17 +1,10 @@
 package sc.plugin_minimal;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.zip.GZIPInputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +22,7 @@ import sc.shared.ScoreCause;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
@@ -42,7 +36,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@XStreamOmitField
 	private List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
-	private Board board = Board.create();
+	private Board board = new Board();
 
 	public Board getBoard() {
 		return board;
@@ -76,7 +70,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 			final Move move = (Move) data;
 
 			update(move, author);
-			author.addToHistory(move);
+			//TODO: zughistorie muss irgendwo gespeichert werden
+			//author.addToHistory(move);
 			next();
 		} else {
 			logger.error("Received unexpected {} from {}.", data, author);
@@ -91,6 +86,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * @param player
 	 */
 	private void update(Move move, Player player) {
+
+		//TODO noch irgendwas zu unerpruefen?
+		if (move.isValide()){
+			move.perform();
+		}
 
 	}
 
@@ -155,7 +155,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	public void start() {
 		for (final Player p : players) {
-			p.notifyListeners(new WelcomeMessage(p.getColor()));
+			p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
 		}
 
 		super.start();
