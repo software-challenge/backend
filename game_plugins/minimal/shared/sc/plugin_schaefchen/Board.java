@@ -281,7 +281,7 @@ public final class Board {
 	 * betroffene schaf gehoert zur zeit am zug waere
 	 */
 	public boolean isValideMove(Move move) {
-		return getValidReachableNodes(move.sheep).keySet().contains(this);
+		return getValidReachableNodes(move.sheep).keySet().contains(move.target);
 	}
 
 	/**
@@ -395,12 +395,9 @@ public final class Board {
 
 		}
 
-		System.out.println("gurkenwasser *** " + sheep.getNode());
 		// das schaf wird auf das zielfeld bewegt
 		sheep.setNode(target.index);
-		System.out.println("gurkenwasser *** " + sheep.getNode());
 
-		System.out.println("gurkenwasser2 *** " + sheep.getFlowers());
 		switch (target.getNodeType()) {
 		case DOGHOUSE:
 		case GRASS:
@@ -446,7 +443,6 @@ public final class Board {
 			break;
 		}
 
-		System.out.println("gurkenwasser2 *** " + sheep.getFlowers());
 
 		return true;
 

@@ -30,4 +30,9 @@ public final class Move {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "Ziehe mit Schaf " + sheep + " auf Feld " + target;
+	}
+
 }
