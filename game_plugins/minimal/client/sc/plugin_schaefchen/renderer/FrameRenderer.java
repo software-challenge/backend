@@ -61,6 +61,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private final static int BORDER_SIZE = 5;
 	private static final String TITLE = "Schäfchen ins Trockene";
+	private static final int ICON_SIZE = 35;
 	private final int STATS_WIDTH = getFontMetrics(h1).stringWidth(TITLE) + 4
 			* BORDER_SIZE;
 
@@ -79,10 +80,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private boolean myturn;
 	private int round;
 
-	private Font hdice = new Font(getFont().getName(), Font.PLAIN, 33);
-	private FontMetrics mfdice = getFontMetrics(hdice);
-
-	private FontMetrics fm = getFontMetrics(getFont());
+	private final Font hdice = new Font(getFont().getName(), Font.PLAIN, 33);
+	private final FontMetrics mfdice = getFontMetrics(hdice);
 
 	private GUINode[] guiNodes;
 
@@ -93,7 +92,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private Set<Integer> currentNeighbours;
 	private Sheep currentSheep;
 
-	private final Image image;
+	private final Image background;
+
+	private final Image mushroom;
+	private final Image flower1;
+	private final Image flower2;
 
 	private Map<Sheep, Point> sheepMap;
 	private int size;
@@ -218,7 +221,12 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	public FrameRenderer(final IGameHandler handler, final boolean onlyObserving) {
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
-		image = RendererUtil.getImage("resource/game/bg3.jpeg");
+
+		background = RendererUtil.getImage("resource/game/bg.png");
+
+		mushroom = RendererUtil.getImage("resource/game/mushroom.png");
+		flower1 = RendererUtil.getImage("resource/game/flower1.png");
+		flower2 = RendererUtil.getImage("resource/game/flower2.png");
 
 		highliteNode = false;
 		sheepMap = new HashMap<Sheep, Point>(4 * Constants.SHEEPS_AT_HOME + 1);
@@ -375,8 +383,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private void paintStaticComponents(Graphics2D g2) {
 
-		// hintergrundbil zeichnen
-		// g2.drawImage(image, xBorder, yBorder, size, size, this);
+		// hintergrundbild zeichnen
+		//g2.drawImage(background, xBorder, yBorder, size, size, this);
 
 		// flaechig gefuellte spielfelder zeichnen
 		for (GUINode guiNode : guiNodes) {
@@ -420,30 +428,30 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private void paintDynamicComponents(Graphics2D g2) {
 
-		// TODO: icons zeichnen
-		// blumen fuer jeden node zeichnen
-		g2.setFont(h4);
-		FontMetrics metrics = getFontMetrics(getFont());
-		if (board != null) {
-			for (Node node : board.getNodes()) {
-				GUINode guiNode = guiNodes[node.index];
-				if (node.getFlowers() != 0) {
-					int k = 10;
-					String gold = Integer.toString(node.getFlowers());
-					g2.setColor(Color.YELLOW);
-					g2.fillOval(guiNode.getScaledCenterX() - k, guiNode
-							.getScaledCenterY()
-							- k, 2 * k, 2 * k);
-					g2.setColor(Color.YELLOW.darker().darker().darker());
-					g2.drawOval(guiNode.getScaledCenterX() - k, guiNode
-							.getScaledCenterY()
-							- k, 2 * k, 2 * k);
-					g2.drawString(gold, guiNode.getScaledCenterX()
-							- metrics.stringWidth(gold) / 2, guiNode
-							.getScaledCenterY()
-							+ metrics.getHeight() / 2 - 2);
-				}
+		for (Node node : board.getNodes()) {
+			GUINode guiNode = guiNodes[node.index];
 
+			switch (node.getFlowers()) {
+
+			case -1:
+				g2.drawImage(mushroom, guiNode.getScaledCenterX() - ICON_SIZE
+						/ 2, guiNode.getScaledCenterY() - ICON_SIZE / 2,
+						ICON_SIZE, ICON_SIZE, this);
+				break;
+				
+			case 1:
+				g2.drawImage(flower1, guiNode.getScaledCenterX() - ICON_SIZE
+						/ 2, guiNode.getScaledCenterY() - ICON_SIZE / 2,
+						ICON_SIZE, ICON_SIZE, this);
+				break;
+				
+			case 2:
+				g2.drawImage(flower2, guiNode.getScaledCenterX() - ICON_SIZE
+						/ 2, guiNode.getScaledCenterY() - ICON_SIZE / 2,
+						ICON_SIZE, ICON_SIZE, this);
+				break;
+
+			default:
 			}
 		}
 
@@ -665,7 +673,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.fillArc(p.x - 12, p.y - 12, 24, 24, 0, 360);
 
 			g2.setColor(Color.BLACK);
-			
+
 		}
 
 	}
