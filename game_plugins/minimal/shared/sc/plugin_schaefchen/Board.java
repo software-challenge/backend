@@ -3,6 +3,7 @@ package sc.plugin_schaefchen;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public final class Board {
 
 		dice = new LinkedList<Integer>();
 		for (int i = dice.size(); i < Constants.DIE_COUNT; i++) {
-			dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+			addDice();
 		}
 
 		sheeps = new LinkedList<Sheep>();
@@ -55,13 +56,13 @@ public final class Board {
 			if (node.getNodeType().equals(NodeType.DOGHOUSE)) {
 				Sheep sheep = new Sheep(node.index, node.index,
 						PlayerColor.NOPLAYER);
-				
+
 				if (Constants.PRE_GOLDEN_RULE) {
 					sheep.setSheepdog(true);
 				} else {
 					sheep.setSharpSheepdog(true);
 				}
-				
+
 				sheeps.add(sheep);
 
 			}
@@ -77,7 +78,7 @@ public final class Board {
 			player1 = player;
 			for (Node node : nodes) {
 				if (node.getNodeType().equals(NodeType.HOME1)) {
-					for (int i = 0; i < Constants.HATS_IN_BASE; i++) {
+					for (int i = 0; i < Constants.SHEEPS_AT_HOME; i++) {
 						sheeps.add(new Sheep(node.index, node.getCounterPart(),
 								PlayerColor.PLAYER1));
 					}
@@ -87,7 +88,7 @@ public final class Board {
 			player2 = player;
 			for (Node node : nodes) {
 				if (node.getNodeType().equals(NodeType.HOME2)) {
-					for (int i = 0; i < Constants.HATS_IN_BASE; i++) {
+					for (int i = 0; i < Constants.SHEEPS_AT_HOME; i++) {
 						sheeps.add(new Sheep(node.index, node.getCounterPart(),
 								PlayerColor.PLAYER2));
 					}
@@ -125,10 +126,10 @@ public final class Board {
 	/**
 	 * liefert alle schafe
 	 */
-	public List<Sheep> getSheeps() { 
+	public List<Sheep> getSheeps() {
 		return sheeps;
 	}
-	
+
 	/**
 	 * liefert alle schafe eines spielers
 	 */
@@ -141,8 +142,7 @@ public final class Board {
 		}
 		return sheeps;
 	}
-	
-	
+
 	/**
 	 * liefert alle schafe eines spielers
 	 */
@@ -180,16 +180,65 @@ public final class Board {
 	 */
 	public void removeDice(Integer die) {
 		dice.remove(die);
-		dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+		addDice();
+
 	}
 
-	/* liefert die anzahl aller noch vorhandenen taler */
-	public int getTotalGold() {
+	private void addDice() {
+		dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+
+		// sicherstellen, dass wenigstens zwei verschiedene  wuerfel vorhanden sind
+		Integer die = dice.get(0);
+		boolean same = dice.size()>1;
+		while (same) {
+			for (int i = 1; i<dice.size(); i++) {
+				if (!dice.get(i).equals(die)) {
+					same = false;
+					break;
+				}
+			}
+			if (same) {
+				dice.remove(0);
+				dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+			}
+		}
+	}
+
+	/**
+	 * liefert die anzahl aller noch vorhandenen taler
+	 */
+	public int getTotalFlowers() {
 		int result = 0;
 		for (Node node : nodes) {
 			result += node.getFlowers();
 		}
 		return result;
+	}
+
+	public int[] getGameStats(PlayerColor p) {
+
+		int[] stats = new int[6];
+		if (p.equals(PlayerColor.NOPLAYER)) {
+			return stats;
+		}
+
+		Player player = p.equals(PlayerColor.PLAYER1) ? player1 : player2;
+		stats[2] = player.getCapturedSheeps();
+		stats[4] = player.getCapturedFlowers();
+
+		for (Sheep sheep : getSheeps(p)) {
+			stats[0]++;
+			stats[1] += sheep.getSize().getSize(sheep.owner.oponent());
+			stats[3] += sheep.getFlowers();
+		}
+
+		stats[5] = Constants.SCORE_PER_SHEEP * stats[1]
+				+ Constants.SCORE_PER_SAVE_SHEEP * stats[2]
+				+ Constants.SCORE_PER_FLOWER * stats[3]
+				+ Constants.SCORE_PER_SAVE_FLOWER * stats[4];
+
+		return stats;
+
 	}
 
 	/**
@@ -232,41 +281,45 @@ public final class Board {
 	 * betroffene schaf gehoert zur zeit am zug waere
 	 */
 	public boolean isValideMove(Move move) {
-		return getValideMoves(move.sheep).keySet().contains(this);
+		return getValidReachableNodes(move.sheep).keySet().contains(this);
 	}
 
 	/**
 	 * liefert eine abbildung von den gueltig erreichbaren knoten auf deren
 	 * abstand zu diesem knoten
 	 */
-	public Map<Integer, Integer> getValideMoves(int id) {
+	public Map<Integer, Integer> getValidReachableNodes(int id) {
 		Sheep sheep = getSheepByID(id);
-		
-		if(sheep == null){
+
+		if (sheep == null) {
 			return new HashMap<Integer, Integer>();
 		}
-		
+
 		// alle erreichbaren spielfelder
 		Map<Integer, Integer> reachableNodes = getReachableNodes(sheep
 				.getNode());
+		Map<Integer, Integer> validNodes = new HashMap<Integer, Integer>();
 
 		// regelwidrige spielfelder entfernen
-		for (Integer n : reachableNodes.keySet()) {
-			switch (nodes[n].getNodeType()) {
+		for (Integer node : reachableNodes.keySet()) {
+			boolean okay = true;
 
+			switch (nodes[node].getNodeType()) {
 			case FENCE:
 				// es darf kein anderes schaf auf dem spielfeld stehen, es sei
 				// den dieses schaf ist in begleitung eines scharfen
 				// schaeferhundes
-				if (!sheep.hasSharpSheepdog() && getSheeps(n).size() != 0) {
-					reachableNodes.remove(n);
+				if (!sheep.hasSharpSheepdog() && getSheeps(node).size() != 0) {
+					okay = false;
+					break;
 				}
 
+			case DOGHOUSE:
 			case GRASS:
 				// es darf kein eigenes schaf auf dem spielfeld stehen
-				for (Sheep hat : getSheeps(n)) {
-					if (hat.owner == sheep.owner) {
-						reachableNodes.remove(n);
+				for (Sheep s : getSheeps(node)) {
+					if (s.owner == sheep.owner) {
+						okay = false;
 						break;
 					}
 				}
@@ -275,15 +328,19 @@ public final class Board {
 			case HOME1:
 			case HOME2:
 				// es muss das richtiges zielfeld sein
-				if (n != sheep.getTarget()) {
-					reachableNodes.remove(n);
+				if (node != sheep.getTarget()) {
+					okay = false;
 				}
 				break;
 
 			}
+
+			if (okay) {
+				validNodes.put(node, reachableNodes.get(node));
+			}
 		}
 
-		return reachableNodes;
+		return validNodes;
 	}
 
 	/*
@@ -304,21 +361,17 @@ public final class Board {
 	 * fuehrt diesen spielzug aus und liefert ob die aenderung in ordnung war
 	 */
 	public boolean performMove(Move move) {
-//
-//		if (!isValideMove(move)) {
-//			return false;
-//		}
 
 		// zug auspacken
 		Sheep sheep = getSheepByID(move.sheep);
 		Node target = nodes[move.target];
-		
-		if(sheep == null){
+
+		if (sheep == null) {
 			return false;
 		}
 
 		// den verwendeten wuerfel aud dem vorrat entfernen
-		Map<Integer, Integer> validMoves = getValideMoves(move.sheep);		
+		Map<Integer, Integer> validMoves = getValidReachableNodes(move.sheep);
 		removeDice(validMoves.get(move.target));
 
 		// jedes schaf das auf dem zielfeld steht und dem gegenspieler gehoet
@@ -335,7 +388,7 @@ public final class Board {
 				if (victim.hasSharpSheepdog()) {
 					sheep.setSharpSheepdog(true);
 				}
-				
+
 				sheeps.remove(victim);
 
 			}
@@ -345,11 +398,11 @@ public final class Board {
 		System.out.println("gurkenwasser *** " + sheep.getNode());
 		// das schaf wird auf das zielfeld bewegt
 		sheep.setNode(target.index);
-		System.out.println("gurkenwasser *** " +  sheep.getNode());
-
+		System.out.println("gurkenwasser *** " + sheep.getNode());
 
 		System.out.println("gurkenwasser2 *** " + sheep.getFlowers());
 		switch (target.getNodeType()) {
+		case DOGHOUSE:
 		case GRASS:
 		case FENCE:
 			// auf normalen feldern werden die blumen aufgesammelt
@@ -366,12 +419,13 @@ public final class Board {
 
 			owner.addCapturedFlowers(sheep.getFlowers());
 			owner.addCapturedSheeps(sheep.getSize().getSize(
-					owner.getOponentColor()));
+					sheep.owner.oponent()));
 
 			// ... und die eigenen gesammelten schafe freigelassen
 			int n = sheep.getSize().getSize(owner.getPlayerColor()) - 1;
 			for (int i = 0; i < n; i++) {
-				new Sheep(target.index, target.getCounterPart(), sheep.owner);
+				sheeps.add(new Sheep(target.index, target.getCounterPart(),
+						sheep.owner));
 			}
 
 			// wurde der schaeferhund eingesammelt bleibt er bei diesem schaf
@@ -393,7 +447,7 @@ public final class Board {
 		}
 
 		System.out.println("gurkenwasser2 *** " + sheep.getFlowers());
-		
+
 		return true;
 
 	}

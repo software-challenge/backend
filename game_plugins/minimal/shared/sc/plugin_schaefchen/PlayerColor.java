@@ -13,20 +13,28 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias(value = "sit:color")
 public enum PlayerColor {
 
-	PLAYER1(Color.RED), PLAYER2(Color.BLUE), NOPLAYER(Color.YELLOW.darker());
-
-	// die zugehoerige echte farbe
-	private Color color;
-
-	private PlayerColor(Color c) {
-		this.color = c;
-	}
+	PLAYER1, PLAYER2, NOPLAYER;
 
 	/**
-	 * liefert die zugehoerige echte farbe
+	 * liefert die spielerfarbe des gegners dieses spielers
 	 */
-	public Color getColor() {
-		return color;
+	public PlayerColor oponent() {
+		PlayerColor result = PlayerColor.NOPLAYER;
+		switch (this) {
+		case PLAYER1:
+			result = PlayerColor.PLAYER2;
+			break;
+
+		case PLAYER2:
+			result = PlayerColor.PLAYER1;
+			break;
+
+		case NOPLAYER:
+			result = PlayerColor.NOPLAYER;
+			break;
+		}
+
+		return result;
 	}
 
 }
