@@ -23,252 +23,6 @@ import sc.plugin_schaefchen.util.Constants;
  * */
 public class BoardFactory {
 
-	private static class FactoryNode {
-
-		public final int index;
-
-		private int flowers;
-		// anzahl und lage der eckpunkte
-		private final int n;
-		private final double[] xs;
-		private final double[] ys;
-
-		// lage des zentrums
-		private double centerX;
-		private double centerY;
-		Class<? extends Positioner> positioner;
-
-		// menge der benachbarten spielfelder
-		private final Set<Integer> neighbours;
-
-		// typ dieses spielfeldes
-		private NodeType type;
-
-		private int counterPart;
-
-		public FactoryNode(double[] xs, double[] ys, int n, int index) {
-			this.n = n;
-			this.xs = xs;
-			this.ys = ys;
-			this.index = index;
-
-			type = NodeType.GRASS;
-			neighbours = new HashSet<Integer>();
-			
-			//mittelpunkt berechnen
-			double a = 0.0;
-			double cx = 0.0;
-			double cy = 0.0;
-			for (int i = 0; i < n; i++) {
-				int j = (i + 1) % n;
-				a += xs[i] * ys[j] - xs[j] * ys[i];
-				cx += (xs[i] + xs[j]) * (xs[i] * ys[j] - xs[j] * ys[i]);
-				cy += (ys[i] + ys[j]) * (xs[i] * ys[j] - xs[j] * ys[i]);
-			}
-			centerX = cx / (3 * a);
-			centerY = cy / (3 * a);
-		}
-
-		void setPositioner(Class<? extends Positioner> positioner) {
-			this.positioner = positioner;
-		}
-
-		/**
-		 * verschiebung im kontinuierlichen koordinatenbereich
-		 */
-		public void translate(double x, double y) {
-
-			for (int i = 0; i < n; i++) {
-				xs[i] += x;
-				ys[i] += y;
-			}
-			centerX += x;
-			centerY += y;
-
-		}
-
-		/**
-		 * skalierung im kontinuierlichen koordinatenbereich
-		 */
-		public void scale(double f) {
-
-			for (int i = 0; i < n; i++) {
-				xs[i] *= f;
-				ys[i] *= f;
-			}
-
-			centerX *= f;
-			centerY *= f;
-
-		}
-
-		/**
-		 * rotation im kontinuierlichen koordinatenbereich
-		 */
-		public void rotate(double phi) {
-			double cosPhi = Math.cos(phi);
-			double sinPhi = Math.sin(phi);
-			double x, y;
-
-			for (int i = 0; i < n; i++) {
-				x = xs[i] * cosPhi - ys[i] * sinPhi;
-				y = xs[i] * sinPhi + ys[i] * cosPhi;
-				xs[i] = x;
-				ys[i] = y;
-			}
-
-			x = centerX * cosPhi - centerY * sinPhi;
-			y = centerX * sinPhi + centerY * cosPhi;
-			centerX = x;
-			centerY = y;
-
-		}
-
-		/**
-		 * maximaler x-wert im kontinuierlichen koordinatenbereich
-		 */
-		public double maxX() {
-
-			double max = Double.MIN_VALUE;
-			for (int i = 0; i < n; i++) {
-				if (xs[i] > max) {
-					max = xs[i];
-				}
-			}
-			return max;
-		}
-
-		/**
-		 * maximaler y-wert im kontinuierlichen koordinatenbereich
-		 */
-		public double maxY() {
-
-			double max = Double.MIN_VALUE;
-			for (int i = 0; i < n; i++) {
-				if (ys[i] > max) {
-					max = ys[i];
-				}
-			}
-			return max;
-		}
-
-		/**
-		 * minimaler x-wert im kontinuierlichen koordinatenbereich
-		 */
-		public double minX() {
-
-			double min = Double.MAX_VALUE;
-			for (int i = 0; i < n; i++) {
-				if (xs[i] < min) {
-					min = xs[i];
-				}
-			}
-			return min;
-		}
-
-		/**
-		 * minimaler y-wert im kontinuierlichen koordinatenbereich
-		 */
-		public double minY() {
-
-			double min = Double.MAX_VALUE;
-			for (int i = 0; i < n; i++) {
-				if (ys[i] < min) {
-					min = ys[i];
-				}
-			}
-			return min;
-		}
-
-		/**
-		 * prueft ob ein im kontinuierlichen koordinatenbereich gegebener püunkt
-		 * innerhalb dieses spielfeldes ist
-		 */
-		public boolean inner(double x, double y) {
-
-			boolean inner = true;
-
-			for (int i = 0; i < 4; i++) {
-				int j = (i + 1) % 4;
-				inner = inner
-						&& (ys[j] - ys[i]) * (x - xs[i]) + (xs[i] - xs[j])
-								* (y - ys[i]) < 0;
-			}
-
-			return inner;
-
-		}
-
-		/**
-		 * verbindet zwei gegebene spielfelder als nachbarn
-		 * 
-		 * @param node1
-		 * @param node2
-		 */
-		public static void couple(final FactoryNode node1,
-				final FactoryNode node2) {
-			node1.addNeighbour(node2.index);
-			node2.addNeighbour(node1.index);
-		}
-
-		/**
-		 * fuegt diesem spielfeld einen nachbar hinzu
-		 */
-		public void addNeighbour(final int other) {
-			neighbours.add(other);
-		}
-
-		/**
-		 * liefert die menge der nachbarn dieses spielfeldes
-		 */
-		public Set<Integer> getNeighbours() {
-			return neighbours;
-		}
-
-		/**
-		 * setzt den spielfeldzyp fuer dieses spielfeld
-		 */
-		public void setNodeType(final NodeType type) {
-			this.type = type;
-		}
-
-		/**
-		 * liefert den spielfeldtyp dieses spielfeldes
-		 */
-		public NodeType getNodeType() {
-			return type;
-		}
-
-		/**
-		 * fuegt diesem spielfeld blumen hinzu
-		 */
-		public void addFlowers(int flowers) {
-			this.flowers += flowers;
-		}
-
-		/**
-		 * liefert die anzahl der blumen auf diesem spielfeld
-		 */
-		public int getFlowers() {
-			return flowers;
-		}
-
-		/**
-		 * liefert das ggf. vorhandene gegenstueck zu diesem spielfeld
-		 */
-		public int getCounterPart() {
-			return counterPart;
-		}
-
-		/**
-		 * setzt das gegenstueck zu diesem spielfeld
-		 */
-		public void setCounterPart(int counterPart) {
-			this.counterPart = counterPart;
-		}
-
-	}
-
 	private static class Index {
 		private int index = 0;
 
@@ -302,8 +56,8 @@ public class BoardFactory {
 		List<GUINode> nodes = new ArrayList<GUINode>(factoryNodes.size());
 
 		for (FactoryNode factoryNode : factoryNodes) {
-			GUINode guiNode = new GUINode(factoryNode.xs, factoryNode.ys,
-					factoryNode.centerX, factoryNode.centerY, factoryNode.n,
+			GUINode guiNode = new GUINode(factoryNode.getXs(), factoryNode
+					.getYs(), factoryNode.getCenterX(), factoryNode.getCenterY(), factoryNode.getN(),
 					factoryNode.index, factoryNode.getNodeType());
 
 			try {
@@ -533,19 +287,19 @@ public class BoardFactory {
 		leftBase.setCounterPart(rightBase.index);
 		rightBase.setCounterPart(leftBase.index);
 
-		int gold = 0, min = Constants.MIN_GOLD;
-		int max = Constants.MAX_GOLD, total = Constants.TOTAL_GOLD;
+		int flowers = 0, min = Constants.MIN_FLOWERS;
+		int max = Constants.MAX_FLOWERS, total = Constants.TOTAL_FLOWERS;
 		List<FactoryNode> goldenNodes = new ArrayList<FactoryNode>(nodes.size());
 		for (FactoryNode node : nodes) {
 			if (node.getNodeType() == NodeType.GRASS && node != center) {
 				goldenNodes.add(node);
 				node.addFlowers(min);
-				gold += min;
+				flowers += min;
 			}
 		}
 
 		Random rand = new Random();
-		while (gold < total && goldenNodes.size() > 0) {
+		while (flowers < total && goldenNodes.size() > 0) {
 			FactoryNode n = goldenNodes.get(rand.nextInt(goldenNodes.size()));
 			n.addFlowers(1);
 
@@ -553,7 +307,7 @@ public class BoardFactory {
 				goldenNodes.remove(n);
 			}
 
-			gold++;
+			flowers++;
 		}
 
 		return nodes;

@@ -1,7 +1,6 @@
 package sc.plugin_schaefchen;
 
-import java.util.LinkedList;
-import java.util.List;
+
 
 import sc.framework.plugins.SimplePlayer;
 
@@ -13,7 +12,6 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author sca, tkra
  * 
  */
-// FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
 @XStreamAlias(value = "sit:player")
 public final class Player extends SimplePlayer {
 
@@ -41,28 +39,6 @@ public final class Player extends SimplePlayer {
 	 */
 	public PlayerColor getPlayerColor() {
 		return color;
-	}
-
-	/**
-	 * liefert die spielerfarbe des gegners dieses spielers
-	 */
-	public PlayerColor getOponentColor() {
-		PlayerColor result = PlayerColor.NOPLAYER;
-		switch (color) {
-		case PLAYER1:
-			result = PlayerColor.PLAYER2;
-			break;
-
-		case PLAYER2:
-			result = PlayerColor.PLAYER1;
-			break;
-
-		case NOPLAYER:
-			result = PlayerColor.NOPLAYER;
-			break;
-		}
-
-		return result;
 	}
 
 	/**

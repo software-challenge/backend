@@ -14,7 +14,6 @@ import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Player;
 import sc.plugin_schaefchen.PlayerColor;
-import sc.plugin_schaefchen.renderer.twodimensional.FrameRenderer;
 import sc.shared.GameResult;
 
 /**

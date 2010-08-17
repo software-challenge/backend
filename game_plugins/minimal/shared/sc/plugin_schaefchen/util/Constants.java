@@ -1,37 +1,25 @@
 package sc.plugin_schaefchen.util;
 
 public class Constants {
-
 	
-	public final static int INIT_HEIGHT = 700;
-	public final static int INIT_WIDTH = 950;
-	
-	public final static int STATS_WIDTH = 300;
-	public final static int BORDER_SIZE = 5;
-		
-	public final static int SCORE_PER_HAT = 8;
-	public final static int SCORE_PER_SAVE_HAT = 16;
-	public final static int SCORE_PER_GOLDEN_HAT = 0;
-	public final static int SCORE_PER_GOLD = 2;
-	public final static int SCORE_PER_SAVE_GOLD=4;
+	public final static int SCORE_PER_SHEEP = 8;
+	public final static int SCORE_PER_SAVE_SHEEP = 16;
+	public final static int SCORE_PER_FLOWER = 2;
+	public final static int SCORE_PER_SAVE_FLOWER=4;
 	
 	public final static int TURN_LIMIT = 50;
-	public final static int GOLD_LIMIT = 0;
 	
-	public final static boolean TURN_LIMIT_RULE = true;
 	public final static boolean GOLD_LIMIT_RULE = false;
 	public final static boolean PRE_GOLDEN_RULE = true;
 	
-	public final static int HATS_IN_BASE = 3;
+	public final static int SHEEPS_AT_HOME = 3;
 
 	public final static int	DIE_COUNT = 3;
 	public final static int	DIE_SIZE = 6;
 
-	public final static boolean SHARE_DICES = true;
-
-	public final static int TOTAL_GOLD = 48;
-	public final static int MIN_GOLD = -1;
-	public final static int MAX_GOLD = 2;
+	public final static int TOTAL_FLOWERS = 48;
+	public final static int MIN_FLOWERS = -1;
+	public final static int MAX_FLOWERS = 2;
 	
 	public final static int ARC_LENGTH= 9;
 	public final static int ARC_SAVE_DIST = 5;
