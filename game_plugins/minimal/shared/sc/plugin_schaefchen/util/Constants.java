@@ -1,5 +1,7 @@
 package sc.plugin_schaefchen.util;
 
+import sc.plugin_schaefchen.GamePlugin;
+
 public class Constants {
 	
 	public final static int SCORE_PER_SHEEP = 8;
@@ -7,7 +9,7 @@ public class Constants {
 	public final static int SCORE_PER_FLOWER = 2;
 	public final static int SCORE_PER_SAVE_FLOWER=4;
 	
-	public final static int TURN_LIMIT = 50;
+	public final static int TURN_LIMIT = GamePlugin.MAX_TURN_COUNT;
 	
 	public final static boolean GOLD_LIMIT_RULE = false;
 	public final static boolean PRE_GOLDEN_RULE = true;

@@ -5,6 +5,7 @@ package sc.plugin_schaefchen;
 import sc.framework.plugins.SimplePlayer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * ein spieler
@@ -23,6 +24,7 @@ public final class Player extends SimplePlayer {
 	
 	// gesamtzahl der von diesem spieler gesicherten gegnerischen schafe
 	private int capturedSheeps;
+
 
 	public Player() {
 		capturedFlowers = 0;

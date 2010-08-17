@@ -28,7 +28,6 @@ import sc.shared.ScoreCause;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
@@ -75,30 +74,29 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (data instanceof Move) {
 			final Move move = (Move) data;
 
-			update(move, author);
-			//TODO: zughistorie muss irgendwo gespeichert werden
-			//author.addToHistory(move);
+			if (author != getActivePlayer()) {
+				author.setViolated(true);
+				logger.error("Received unexpected move {} from {}: "
+						+ move.toString(), data, author);
+				throw new GameLogicException("Move was unexpected: "
+						+ move.toString());
+			}
+
+			if (!board.isValideMove(move)) {
+				author.setViolated(true);
+				logger.error("Received invalid move {} from {}: "
+						+ move.toString(), data, author);
+				throw new GameLogicException("Move was invalid: "
+						+ move.toString());
+			}
+
+			board.performMove(move);
+			// author.addToHistory(move);
 			next();
 		} else {
 			logger.error("Received unexpected {} from {}.", data, author);
 			throw new GameLogicException("Unknown ObjectType received.");
 		}
-	}
-
-	/**
-	 * A move has been made, update local game state
-	 * 
-	 * @param move
-	 * @param player
-	 */
-	private void update(Move move, Player player) {
-
-		//TODO noch irgendwas zu unerpruefen?
-		//if (board.isValideMove(move)){
-			board.performMove(move);
-			System.out.print("wurstwasser");
-	//	}
-
 	}
 
 	@Override
@@ -120,11 +118,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		int activePlayerId = this.players.indexOf(this.activePlayer);
 		activePlayerId = (activePlayerId + 1) % this.players.size();
 		final Player nextPlayer = this.players.get(activePlayerId);
-		onPlayerChange(nextPlayer);
 		next(nextPlayer);
-	}
-
-	private void onPlayerChange(Player player) {
 	}
 
 	@Override
@@ -174,7 +168,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
-		return null;
+
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0)
+				: new PlayerScore(ScoreCause.REGULAR, board.getGameStats(p
+						.getPlayerColor())[5]);
+
 	}
 
 	@Override
@@ -184,7 +182,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected boolean checkGameOverCondition() {
-		return getTurn() >= GamePlugin.MAX_TURN_COUNT;
+		return getTurn() >= GamePlugin.MAX_TURN_COUNT
+				|| board.getSheeps(PlayerColor.PLAYER1).size() == 0
+				|| board.getSheeps(PlayerColor.PLAYER2).size() == 0;
 	}
 
 	@Override
