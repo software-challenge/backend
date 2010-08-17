@@ -82,12 +82,31 @@ public class Game extends RoundBasedGameInstance<Player> {
 						+ move.toString());
 			}
 
+			if (!board.getSheepByID(move.sheep).owner.equals(getActivePlayer()
+					.getPlayerColor())) {
+				author.setViolated(true);
+				logger.error("Received invalid move {} from {}: "
+						+ move.toString(), data, author);
+				throw new GameLogicException(
+						"Move was invalid: Current player can't move sheep #"
+								+ move.sheep);
+			}
+
+			if (!board.isValidTarget(board.getSheepByID(move.sheep),
+					move.target)) {
+				author.setViolated(true);
+				logger.error("Received invalid move {} from {}: "
+						+ move.toString(), data, author);
+				throw new GameLogicException("Move was invalid: Sheep #"
+						+ move.sheep + " can't enter node #" + move.target);
+			}
+			
 			if (!board.isValideMove(move)) {
 				author.setViolated(true);
 				logger.error("Received invalid move {} from {}: "
 						+ move.toString(), data, author);
-				throw new GameLogicException("Move was invalid: "
-						+ move.toString());
+				throw new GameLogicException("Move was invalid: Sheep #"
+						+ move.sheep + " can't reach node #" + move.target);
 			}
 
 			board.performMove(move);

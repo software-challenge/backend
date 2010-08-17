@@ -187,11 +187,12 @@ public final class Board {
 	private void addDice() {
 		dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
 
-		// sicherstellen, dass wenigstens zwei verschiedene  wuerfel vorhanden sind
+		// sicherstellen, dass wenigstens zwei verschiedene wuerfel vorhanden
+		// sind
 		Integer die = dice.get(0);
-		boolean same = dice.size()>1;
+		boolean same = dice.size() > 1;
 		while (same) {
-			for (int i = 1; i<dice.size(); i++) {
+			for (int i = 1; i < dice.size(); i++) {
 				if (!dice.get(i).equals(die)) {
 					same = false;
 					break;
@@ -277,11 +278,51 @@ public final class Board {
 	}
 
 	/**
+	 * gibt an ob ein schaf ein knoten betreten darf
+	 */
+	public boolean isValidTarget(Sheep sheep, int node) {
+
+		boolean okay = true;
+		switch (nodes[node].getNodeType()) {
+		case FENCE:
+			// es darf kein anderes schaf auf dem spielfeld stehen, es sei
+			// den dieses schaf ist in begleitung eines scharfen
+			// schaeferhundes
+			if (!sheep.hasSharpSheepdog() && getSheeps(node).size() != 0) {
+				okay = false;
+				break;
+			}
+
+		case DOGHOUSE:
+		case GRASS:
+			// es darf kein eigenes schaf auf dem spielfeld stehen
+			for (Sheep s : getSheeps(node)) {
+				if (s.owner == sheep.owner) {
+					okay = false;
+					break;
+				}
+			}
+			break;
+
+		case HOME1:
+		case HOME2:
+			// es muss das richtiges zielfeld sein
+			if (node != sheep.getTarget()) {
+				okay = false;
+			}
+			break;
+
+		}
+		return okay;
+	}
+
+	/**
 	 * gibt an ob dies ein gueltiger spielzug ist, wenn der spieler dem das
 	 * betroffene schaf gehoert zur zeit am zug waere
 	 */
 	public boolean isValideMove(Move move) {
-		return getValidReachableNodes(move.sheep).keySet().contains(move.target);
+		return getValidReachableNodes(move.sheep).keySet()
+				.contains(move.target);
 	}
 
 	/**
@@ -302,40 +343,7 @@ public final class Board {
 
 		// regelwidrige spielfelder entfernen
 		for (Integer node : reachableNodes.keySet()) {
-			boolean okay = true;
-
-			switch (nodes[node].getNodeType()) {
-			case FENCE:
-				// es darf kein anderes schaf auf dem spielfeld stehen, es sei
-				// den dieses schaf ist in begleitung eines scharfen
-				// schaeferhundes
-				if (!sheep.hasSharpSheepdog() && getSheeps(node).size() != 0) {
-					okay = false;
-					break;
-				}
-
-			case DOGHOUSE:
-			case GRASS:
-				// es darf kein eigenes schaf auf dem spielfeld stehen
-				for (Sheep s : getSheeps(node)) {
-					if (s.owner == sheep.owner) {
-						okay = false;
-						break;
-					}
-				}
-				break;
-
-			case HOME1:
-			case HOME2:
-				// es muss das richtiges zielfeld sein
-				if (node != sheep.getTarget()) {
-					okay = false;
-				}
-				break;
-
-			}
-
-			if (okay) {
+				if (isValidTarget(sheep, node)) {
 				validNodes.put(node, reachableNodes.get(node));
 			}
 		}
@@ -442,7 +450,6 @@ public final class Board {
 			sheep.addFlowers(-sheep.getFlowers());
 			break;
 		}
-
 
 		return true;
 
