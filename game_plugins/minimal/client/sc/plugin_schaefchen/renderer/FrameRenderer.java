@@ -140,7 +140,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 				for (Sheep sheep : sheepMap.keySet()) {
 					Point p = sheepMap.get(sheep);
-					if (Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < 12) {
+					if (Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < 20) {
 						currentSheep = sheep;
 						if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
 							currentNeighbours = board.getValidReachableNodes(
@@ -582,11 +582,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			fontY += 25;
 			if (currentSheep.hasSheepdog()) {
 				g2
-						.drawString("In Begleitung eines Schäferhundes", fontX,
+						.drawString("In Begleitung des Schäferhundes", fontX,
 								fontY);
 			} else if (currentSheep.hasSharpSheepdog()) {
 				g2
-						.drawString("In Begleitung eines Schäferhundes", fontX,
+						.drawString("In Begleitung des Schäferhundes", fontX,
 								fontY);
 
 				fontY += 20;

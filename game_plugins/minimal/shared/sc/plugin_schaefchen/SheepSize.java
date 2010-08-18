@@ -12,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 @XStreamAlias(value = "sit:sheepsize")
 public final class SheepSize {
 
-	private int player1, player2, dogs;
+	private int player1, player2;
 
 	/**
 	 * setzt alle groessen zurueck
@@ -20,7 +20,6 @@ public final class SheepSize {
 	public void reset() {
 		player1 = 0;
 		player2 = 0;
-		dogs = 0;
 	}
 
 	/**
@@ -29,8 +28,7 @@ public final class SheepSize {
 	public void add(SheepSize other) {
 		player1 += other.player1;
 		player2 += other.player2;
-		dogs += other.dogs;
-	}
+		}
 
 	/**
 	 * vergroesert diese herde in abhaengigkeit einer spielrfarbe
@@ -45,17 +43,16 @@ public final class SheepSize {
 			player2++;
 			break;
 
-		case NOPLAYER:
-			dogs++;
+		default:
 			break;
 		}
 	}
 
 	/**
-	 * liefer die gesamtzahl der schafe und hunde in dieser herde
+	 * liefer die gesamtzahl der schafe in dieser herde
 	 */
 	public int getSize() {
-		return player1 + player2 + dogs;
+		return player1 + player2;
 	}
 
 	/**
@@ -73,17 +70,11 @@ public final class SheepSize {
 			res = player2;
 			break;
 
-		case NOPLAYER:
-			res = dogs;
+		default:
+			res = 0;
 			break;
 		}
 
 		return res;
 	}
-
-	@Override
-	public String toString() {
-		return player1 + "/" + player2 + (dogs > 0 ? "/" + dogs : "");
-	}
-
 }
