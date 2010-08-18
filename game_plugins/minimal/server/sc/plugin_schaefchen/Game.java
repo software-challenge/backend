@@ -100,7 +100,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: Sheep #"
 						+ move.sheep + " can't enter node #" + move.target);
 			}
-			
+
 			if (!board.isValideMove(move)) {
 				author.setViolated(true);
 				logger.error("Received invalid move {} from {}: "
@@ -188,9 +188,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
 
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0)
-				: new PlayerScore(ScoreCause.REGULAR, board.getGameStats(p
-						.getPlayerColor())[5]);
+		int[] stats = board.getGameStats(p.getPlayerColor());
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
+				0, 0, 0, 0, 0, 0) : new PlayerScore(ScoreCause.REGULAR,
+				stats[0], stats[1], stats[2], stats[3], stats[4], stats[5],
+				stats[6]);
 
 	}
 
@@ -201,7 +203,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected boolean checkGameOverCondition() {
-		return getTurn() >= GamePlugin.MAX_TURN_COUNT-1
+		return getTurn() >= GamePlugin.MAX_TURN_COUNT - 1
 				|| board.getSheeps(PlayerColor.PLAYER1).size() == 0
 				|| board.getSheeps(PlayerColor.PLAYER2).size() == 0;
 	}
