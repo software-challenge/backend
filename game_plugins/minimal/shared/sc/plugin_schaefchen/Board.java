@@ -256,15 +256,15 @@ public final class Board {
 			}
 		}
 
-		stats[0][6] = Constants.SCORE_PER_SHEEP * stats[0][1]
-				+ Constants.SCORE_PER_SAVE_SHEEP * stats[0][2]
-				+ Constants.SCORE_PER_FLOWER * stats[0][3]
-				+ Constants.SCORE_PER_SAVE_FLOWER * stats[0][4];
+		stats[0][6] = Constants.SCORE_PER_SHEEP * stats[0][2]
+				+ Constants.SCORE_PER_SAVE_SHEEP * stats[0][3]
+				+ Constants.SCORE_PER_FLOWER * stats[0][4]
+				+ Constants.SCORE_PER_SAVE_FLOWER * stats[0][5];
 
-		stats[1][6] = Constants.SCORE_PER_SHEEP * stats[1][1]
-				+ Constants.SCORE_PER_SAVE_SHEEP * stats[1][2]
-				+ Constants.SCORE_PER_FLOWER * stats[1][3]
-				+ Constants.SCORE_PER_SAVE_FLOWER * stats[1][4];
+		stats[1][6] = Constants.SCORE_PER_SHEEP * stats[1][2]
+				+ Constants.SCORE_PER_SAVE_SHEEP * stats[1][3]
+				+ Constants.SCORE_PER_FLOWER * stats[1][4]
+				+ Constants.SCORE_PER_SAVE_FLOWER * stats[1][5];
 
 		stats[0][0] = (stats[0][1] > 0 && stats[0][6] > stats[1][6]) ? 1 : 0;
 		stats[1][0] = (stats[1][1] > 0 && stats[1][6] > stats[0][6]) ? 1 : 0;
