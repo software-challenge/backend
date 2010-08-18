@@ -604,23 +604,23 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		fontY += 20;
 		g2.setFont(h4);
-		g2.drawString(stats[0] + " Schafe im Spiel", fontX, fontY);
+		g2.drawString(stats[1] + " Schafe im Spiel", fontX, fontY);
 
 		fontY += 20;
-		g2.drawString(stats[1] + " Schafe gefangen", fontX, fontY);
+		g2.drawString(stats[2] + " Schafe gefangen", fontX, fontY);
 
 		fontY += 20;
-		g2.drawString(stats[2] + " Schafe gesichert", fontX, fontY);
+		g2.drawString(stats[3] + " Schafe gesichert", fontX, fontY);
 
 		fontY += 25;
-		g2.drawString(stats[3] + " Blumen gesammelt", fontX, fontY);
+		g2.drawString(stats[4] + " Blumen gesammelt", fontX, fontY);
 
 		fontY += 20;
-		g2.drawString(stats[4] + " Blumen gesichert", fontX, fontY);
+		g2.drawString(stats[5] + " Blumen gesichert", fontX, fontY);
 
 		fontY += 25;
 		g2.setFont(h3);
-		g2.drawString(stats[5] + " Punkte", fontX, fontY);
+		g2.drawString(stats[6] + " Punkte", fontX, fontY);
 
 		return fontY;
 

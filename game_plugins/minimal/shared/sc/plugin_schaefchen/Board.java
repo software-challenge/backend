@@ -218,26 +218,57 @@ public final class Board {
 
 	public int[] getGameStats(PlayerColor p) {
 
-		int[] stats = new int[6];
-		if (p.equals(PlayerColor.NOPLAYER)) {
-			return stats;
+		int[] stats;
+		switch (p) {
+		case PLAYER1:
+			stats = getGameStats()[0];
+			break;
+
+		case PLAYER2:
+			stats = getGameStats()[1];
+			break;
+
+		default:
+			stats = new int[7];
+		}
+		return stats;
+
+	}
+
+	public int[][] getGameStats() {
+
+		int[][] stats = new int[2][7];
+
+		stats[0][3] = player1.getCapturedSheeps();
+		stats[0][5] = player1.getCapturedFlowers();
+
+		stats[1][3] = player2.getCapturedSheeps();
+		stats[1][5] = player2.getCapturedFlowers();
+
+		int index;
+		for (Sheep sheep : getSheeps()) {
+			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
+				index = sheep.owner.equals(PlayerColor.PLAYER1) ? 0 : 1;
+				stats[index][1]++;
+				stats[index][2] += sheep.getSize().getSize(
+						sheep.owner.oponent());
+				stats[index][4] += sheep.getFlowers();
+			}
 		}
 
-		Player player = p.equals(PlayerColor.PLAYER1) ? player1 : player2;
-		stats[2] = player.getCapturedSheeps();
-		stats[4] = player.getCapturedFlowers();
+		stats[0][6] = Constants.SCORE_PER_SHEEP * stats[0][1]
+				+ Constants.SCORE_PER_SAVE_SHEEP * stats[0][2]
+				+ Constants.SCORE_PER_FLOWER * stats[0][3]
+				+ Constants.SCORE_PER_SAVE_FLOWER * stats[0][4];
 
-		for (Sheep sheep : getSheeps(p)) {
-			stats[0]++;
-			stats[1] += sheep.getSize().getSize(sheep.owner.oponent());
-			stats[3] += sheep.getFlowers();
-		}
+		stats[1][6] = Constants.SCORE_PER_SHEEP * stats[1][1]
+				+ Constants.SCORE_PER_SAVE_SHEEP * stats[1][2]
+				+ Constants.SCORE_PER_FLOWER * stats[1][3]
+				+ Constants.SCORE_PER_SAVE_FLOWER * stats[1][4];
 
-		stats[5] = Constants.SCORE_PER_SHEEP * stats[1]
-				+ Constants.SCORE_PER_SAVE_SHEEP * stats[2]
-				+ Constants.SCORE_PER_FLOWER * stats[3]
-				+ Constants.SCORE_PER_SAVE_FLOWER * stats[4];
-
+		stats[0][0] = (stats[0][1] > 0 && stats[0][6] > stats[1][6]) ? 1 : 0;
+		stats[1][0] = (stats[1][1] > 0 && stats[1][6] > stats[0][6]) ? 1 : 0;
+		
 		return stats;
 
 	}
@@ -343,7 +374,7 @@ public final class Board {
 
 		// regelwidrige spielfelder entfernen
 		for (Integer node : reachableNodes.keySet()) {
-				if (isValidTarget(sheep, node)) {
+			if (isValidTarget(sheep, node)) {
 				validNodes.put(node, reachableNodes.get(node));
 			}
 		}
