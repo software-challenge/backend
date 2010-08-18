@@ -378,7 +378,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.drawImage(bgBoard, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE,
 				getHeight() - 2 * BORDER_SIZE, this);
 
-		g2.setColor(new Color(200,255,200,128));
+		g2.setColor(new Color(200,240,200,160));
 		g2.fillRect(getWidth() - BORDER_SIZE - STATS_WIDTH, BORDER_SIZE,
 				STATS_WIDTH, getHeight() - 2 * BORDER_SIZE);
 
