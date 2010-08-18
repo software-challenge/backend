@@ -32,17 +32,17 @@ public class GamePlugin implements IGamePlugin
 	{
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("Gewinner");
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Schafe im Spiel",
+		SCORE_DEFINITION.add(new ScoreFragment("Schafe im Spiel",
 				ScoreAggregation.AVERAGE, false));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Schafe gefangen",
+		SCORE_DEFINITION.add(new ScoreFragment("Schafe gefangen",
 				ScoreAggregation.AVERAGE, false));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Schafe gesichert",
+		SCORE_DEFINITION.add(new ScoreFragment("Schafe gesichert",
 				ScoreAggregation.AVERAGE, false));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Blumen gesammelt",
+		SCORE_DEFINITION.add(new ScoreFragment("Blumen gesammelt",
 				ScoreAggregation.AVERAGE, false));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Blumen gesichert",
+		SCORE_DEFINITION.add(new ScoreFragment("Blumen gesichert",
 				ScoreAggregation.AVERAGE, false));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Punkte",
+		SCORE_DEFINITION.add(new ScoreFragment("Punkte",
 				ScoreAggregation.AVERAGE));
 		//SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Zeit (ms)",
 		//		ScoreAggregation.AVERAGE));
