@@ -201,7 +201,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected boolean checkGameOverCondition() {
-		return getTurn() >= GamePlugin.MAX_TURN_COUNT
+		return getTurn() >= GamePlugin.MAX_TURN_COUNT-1
 				|| board.getSheeps(PlayerColor.PLAYER1).size() == 0
 				|| board.getSheeps(PlayerColor.PLAYER2).size() == 0;
 	}

@@ -24,7 +24,7 @@ public class GamePlugin implements IGamePlugin
 
 	public static final int				MAX_PLAYER_COUNT	= 2;
 
-	public static final int				MAX_TURN_COUNT		= 100;
+	public static final int				MAX_TURN_COUNT		= 30;
 
 	public static final ScoreDefinition	SCORE_DEFINITION;
 
