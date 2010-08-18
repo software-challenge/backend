@@ -58,10 +58,16 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private static final Font h2 = new Font("Helvetica", Font.BOLD, 20);
 	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
 	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 14);
+	private static final Font hSheep = new Font("Helvetica", Font.PLAIN, 10);
+	private static final Font hDice = new Font("Helvetica", Font.BOLD, 33);
+
+	private final FontMetrics mfSheep = getFontMetrics(hSheep);
+	private final FontMetrics mfDice = getFontMetrics(hDice);
 
 	private final static int BORDER_SIZE = 5;
 	private static final String TITLE = "Schäfchen ins Trockene";
 	private static final int ICON_SIZE = 35;
+	private static final int SHEEP_SIZE = 45;
 	private final int STATS_WIDTH = getFontMetrics(h1).stringWidth(TITLE) + 4
 			* BORDER_SIZE;
 
@@ -80,9 +86,6 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private boolean myturn;
 	private int round;
 
-	private final Font hdice = new Font(getFont().getName(), Font.PLAIN, 33);
-	private final FontMetrics mfdice = getFontMetrics(hdice);
-
 	private GUINode[] guiNodes;
 
 	private boolean highliteNode;
@@ -92,11 +95,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private Set<Integer> currentNeighbours;
 	private Sheep currentSheep;
 
-	private final Image background;
+	private final Image bgBoard;
 
-	private final Image mushroom;
-	private final Image flower1;
-	private final Image flower2;
+	private final Image sheepIcon;
+	private final Image dogIcon;
+	private final Image mushroomIcon;
+	private final Image flower1Icon;
+	private final Image flower2Icon;
 
 	private Map<Sheep, Point> sheepMap;
 	private int size;
@@ -187,6 +192,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (!onlyObserving) {
+
+				highliteNode = false;
 				if (currentSheep != null) {
 
 					if (currentSheep.owner.equals(currentPlayer
@@ -222,11 +229,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
 
-		background = RendererUtil.getImage("resource/game/bg.png");
+		bgBoard = RendererUtil.getImage("resource/game/bg.png");
 
-		mushroom = RendererUtil.getImage("resource/game/mushroom.png");
-		flower1 = RendererUtil.getImage("resource/game/flower1.png");
-		flower2 = RendererUtil.getImage("resource/game/flower2.png");
+		sheepIcon = RendererUtil.getImage("resource/game/sheep.png");
+		dogIcon = RendererUtil.getImage("resource/game/dog.png");
+		mushroomIcon = RendererUtil.getImage("resource/game/mushroom.png");
+		flower1Icon = RendererUtil.getImage("resource/game/flower1.png");
+		flower2Icon = RendererUtil.getImage("resource/game/flower2.png");
 
 		highliteNode = false;
 		sheepMap = new HashMap<Sheep, Point>(4 * Constants.SHEEPS_AT_HOME + 1);
@@ -384,7 +393,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private void paintStaticComponents(Graphics2D g2) {
 
 		// hintergrundbild zeichnen
-		//g2.drawImage(background, xBorder, yBorder, size, size, this);
+		g2.drawImage(bgBoard, xBorder, yBorder, size, size, this);
 
 		// flaechig gefuellte spielfelder zeichnen
 		for (GUINode guiNode : guiNodes) {
@@ -434,21 +443,21 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			switch (node.getFlowers()) {
 
 			case -1:
-				g2.drawImage(mushroom, guiNode.getScaledCenterX() - ICON_SIZE
-						/ 2, guiNode.getScaledCenterY() - ICON_SIZE / 2,
-						ICON_SIZE, ICON_SIZE, this);
+				g2.drawImage(mushroomIcon, guiNode.getScaledCenterX()
+						- ICON_SIZE / 2, guiNode.getScaledCenterY() - ICON_SIZE
+						/ 2, ICON_SIZE, ICON_SIZE, this);
 				break;
-				
+
 			case 1:
-				g2.drawImage(flower1, guiNode.getScaledCenterX() - ICON_SIZE
-						/ 2, guiNode.getScaledCenterY() - ICON_SIZE / 2,
-						ICON_SIZE, ICON_SIZE, this);
+				g2.drawImage(flower1Icon, guiNode.getScaledCenterX()
+						- ICON_SIZE / 2, guiNode.getScaledCenterY() - ICON_SIZE
+						/ 2, ICON_SIZE, ICON_SIZE, this);
 				break;
-				
+
 			case 2:
-				g2.drawImage(flower2, guiNode.getScaledCenterX() - ICON_SIZE
-						/ 2, guiNode.getScaledCenterY() - ICON_SIZE / 2,
-						ICON_SIZE, ICON_SIZE, this);
+				g2.drawImage(flower2Icon, guiNode.getScaledCenterX()
+						- ICON_SIZE / 2, guiNode.getScaledCenterY() - ICON_SIZE
+						/ 2, ICON_SIZE, ICON_SIZE, this);
 				break;
 
 			default:
@@ -536,15 +545,16 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		int i = 0;
 		fontY += 15;
-		g2.setFont(hdice);
+		g2.setFont(hDice);
 		for (Integer dice : board.getDice()) {
 			g2.setColor(Color.LIGHT_GRAY);
 			g2.fillRoundRect(fontX + 60 * i, fontY, 50, 50, 15, 15);
 			g2.setColor(Color.DARK_GRAY);
 			String value = dice.toString();
 			g2.drawString(value, fontX + 20 + 60 * i
-					- mfdice.stringWidth(value) / 2, fontY - 2
-					+ mfdice.getHeight());
+					- mfDice.stringWidth(value) / 2, fontY - 2
+					+ mfDice.getHeight());
+
 			i++;
 		}
 
@@ -580,7 +590,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 								fontY);
 
 				fontY += 20;
-				g2.drawString("Der Schäferhundes ist wachsam", fontX, fontY);
+				g2.drawString("Der Schäferhund ist bereit", fontX, fontY);
 			}
 
 		}
@@ -644,17 +654,20 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		if (sheep != null) {
 
-			Point p;
-
-			p = sheepMap.get(sheep);
-
+			Point p = sheepMap.get(sheep);
 			if (currentSheep != null && sheep == currentSheep) {
 				p = new Point(mousex, mousey);
 			}
 
-			g2.setColor(sheep.hasSharpSheepdog() ? Color.YELLOW.darker()
-					.darker() : Color.BLACK);
-			g2.fillArc(p.x - 15, p.y - 15, 30, 30, 0, 360);
+			int spread = (sheep.hasSharpSheepdog() || sheep.hasSheepdog())
+					&& (sheep.getSize().getSize(PlayerColor.PLAYER1)
+							+ sheep.getSize().getSize(PlayerColor.PLAYER2) > 0) ? 3
+					: 0;
+
+			int n = 4;
+			int s = Math.min(42, size / 26);
+			int[] pointerXs = new int[] { s+10, -(s-10), -(s/2-10), -(s-10) };
+			int[] pointerYs = new int[] { 0, (s-5), 0, -(s-5) };
 
 			GUINode target = guiNodes[sheep.getTarget()];
 			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
@@ -664,18 +677,56 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				phiR += ((p.y >= target.getScaledCenterY()) ? 1 : -1) * Math.PI
 						/ 2;
 
-				double phiD = 2 * Math.PI * 9 * phiR;
-				g2.setStroke(new BasicStroke(5f));
-				g2.fillArc(p.x - 20, p.y - 20, 40, 40, (int) (phiD - 10), 20);
+				int x, y;
+				double cosPhi = Math.cos(-phiR);
+				double sinPhi = Math.sin(-phiR);
+				for (int i = 0; i < n; i++) {
+					x = (int) (pointerXs[i] * cosPhi - pointerYs[i] * sinPhi);
+					y = (int) (pointerXs[i] * sinPhi + pointerYs[i] * cosPhi);
+					pointerXs[i] = x + p.x;
+					pointerYs[i] = y + p.y;
+				}
+
+				g2.setColor(getPlayerColor(sheep.owner));
+				g2.fillPolygon(pointerXs, pointerYs, n);
+				g2.setColor(Color.BLACK);
+				g2.setStroke(new BasicStroke(2f));
+				g2.drawPolygon(pointerXs, pointerYs, n);
+
+			
+			}
+			
+			if (sheep.hasSheepdog()) {
+				g2.drawImage(dogIcon, p.x + spread - SHEEP_SIZE / 2, p.y
+						- SHEEP_SIZE / 2, SHEEP_SIZE, SHEEP_SIZE, this);
+			}
+			
+			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
+			g2.drawImage(sheepIcon, p.x - spread - SHEEP_SIZE / 2, p.y
+					- SHEEP_SIZE / 2, SHEEP_SIZE, SHEEP_SIZE, this);
+			}			
+
+			if (sheep.hasSharpSheepdog()) {
+				g2.drawImage(dogIcon, p.x + spread - SHEEP_SIZE / 2, p.y
+						- SHEEP_SIZE / 2, SHEEP_SIZE, SHEEP_SIZE, this);
 			}
 
-			g2.setColor(getPlayerColor(sheep.owner));
-			g2.fillArc(p.x - 12, p.y - 12, 24, 24, 0, 360);
+			g2.setFont(hSheep);
+			String stat = sheep.getFlowers() + " : "
+					+ sheep.getSize().getSize(PlayerColor.PLAYER1) + " ,"
+					+ sheep.getSize().getSize(PlayerColor.PLAYER2);
+			int statsW = mfSheep.stringWidth(stat);
+			int statsH = mfSheep.getHeight();
 
-			g2.setColor(Color.BLACK);
+			g2.setColor(Color.DARK_GRAY);
+			g2.fillRoundRect(p.x - statsW / 2 - 3, p.y + 10, statsW + 6,
+					statsH, 8, 8);
+			g2.setColor(sheep.hasSharpSheepdog() ? Color.YELLOW : Color.WHITE);
+			g2.drawString(stat, p.x - statsW / 2, p.y + 10 + statsH - 3);
 
 		}
 
+		
 	}
 
 }

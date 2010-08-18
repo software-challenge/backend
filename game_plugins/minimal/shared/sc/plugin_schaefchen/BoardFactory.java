@@ -1,6 +1,7 @@
 package sc.plugin_schaefchen;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -287,24 +288,32 @@ public class BoardFactory {
 		leftBase.setCounterPart(rightBase.index);
 		rightBase.setCounterPart(leftBase.index);
 
-		int flowers = 0, min = Constants.MIN_FLOWERS;
-		int max = Constants.MAX_FLOWERS, total = Constants.TOTAL_FLOWERS;
-		List<FactoryNode> goldenNodes = new ArrayList<FactoryNode>(nodes.size());
+		int max = Constants.MAX_FLOWERS;
+		int total = Constants.TOTAL_FLOWERS;
+		int flowers = -Constants.NODES_WITH_MUSHROOMS;
+		List<FactoryNode> flowerNodes = new ArrayList<FactoryNode>(nodes.size());
 		for (FactoryNode node : nodes) {
 			if (node.getNodeType() == NodeType.GRASS && node != center) {
-				goldenNodes.add(node);
-				node.addFlowers(min);
-				flowers += min;
+				flowerNodes.add(node);
+				node.setFlowers(-1);
 			}
 		}
 
-		Random rand = new Random();
-		while (flowers < total && goldenNodes.size() > 0) {
-			FactoryNode n = goldenNodes.get(rand.nextInt(goldenNodes.size()));
-			n.addFlowers(1);
+		Random rand = new SecureRandom();
+		for(int i=0; i<Constants.NODES_WITH_MUSHROOMS; i++){
+			flowerNodes.remove(rand.nextInt(flowerNodes.size()));
+		}
+		
+		for(FactoryNode node : flowerNodes){
+			node.addFlowers(1);
+		}
+		
+		while (flowers < total && flowerNodes.size() > 0) {
+			FactoryNode node = flowerNodes.get(rand.nextInt(flowerNodes.size()));
+			node.addFlowers(1);
 
-			if (n.getFlowers() == max) {
-				goldenNodes.remove(n);
+			if (node.getFlowers() == max) {
+				flowerNodes.remove(node);
 			}
 
 			flowers++;
