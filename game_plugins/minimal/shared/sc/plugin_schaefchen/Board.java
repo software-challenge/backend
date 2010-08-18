@@ -234,6 +234,11 @@ public final class Board {
 		return stats;
 
 	}
+	
+	public String[] getPlayerNames()  {
+		return new String[]{player1.getDisplayName(), player2.getDisplayName()};
+		
+	}
 
 	public int[][] getGameStats() {
 

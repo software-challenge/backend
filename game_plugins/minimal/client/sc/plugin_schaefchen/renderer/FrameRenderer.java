@@ -20,8 +20,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,6 +103,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private int currentNode;
 	private int mousey;
 	private int mousex;
+	private int dx, dy;
 	private Set<Integer> currentNeighbours;
 	private Sheep currentSheep;
 
@@ -150,6 +154,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						&& Math.sqrt(Math.pow(p.x - x, 2)
 								+ Math.pow(p.y - y, 2)) < 20) {
 					currentSheep = sheep;
+					dx = p.x - x;
+					dy = p.y - y;
 					if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
 						currentNeighbours = board.getValidReachableNodes(
 								sheep.index).keySet();
@@ -164,31 +170,29 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			dx = 0;
+			dy = 0;
+			if (currentSheep != null && highliteNode) {
+				if (currentSheep.getPlayerColor() != PlayerColor.NOPLAYER
+						&& currentSheep.owner == currentPlayer.getPlayerColor()
+						&& currentNeighbours.contains(currentNode)) {
 
-			if (currentSheep != null) {
-				if (currentSheep != null && highliteNode) {
-					if (currentSheep.getPlayerColor() != PlayerColor.NOPLAYER
-							&& currentSheep.owner == currentPlayer
-									.getPlayerColor()
-							&& currentNeighbours.contains(currentNode)) {
+					// wenn zug abgeschickt werden soll aktuelln hut
+					// nicht zurueckfallen lassen
+					Point p = sheepMap.get(currentSheep);
+					p.x = mousex;
+					p.y = mousey;
+					sendMove(new Move(currentSheep.index, currentNode));
 
-						// wenn zug abgeschickt werden soll aktuelln hut
-						// nicht zurueckfallen lassen
-						Point p = sheepMap.get(currentSheep);
-						p.x = mousex;
-						p.y = mousey;
-						sendMove(new Move(currentSheep.index, currentNode));
-
-					}
 				}
-
-				currentSheep = null;
-				highliteNode = false;
-				currentNeighbours = null;
-				repaint();
 			}
 
+			currentSheep = null;
+			highliteNode = false;
+			currentNeighbours = null;
+			repaint();
 		}
+
 	};
 
 	private MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
@@ -396,8 +400,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 		if (ended) {
-			String msg = (endColor.equals(PlayerColor.PLAYER1) ? "Spieler 1"
-					: "Spieler 2")
+			String msg = (endColor.equals(PlayerColor.PLAYER1) ? board
+					.getPlayerNames()[0] : board.getPlayerNames()[1])
 					+ " gewinnt!";
 			String info = endErrorMsg != null ? endErrorMsg
 					: "Herzlichen Glückwunsch!";
@@ -526,17 +530,27 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			}
 		}
 
+		List<Sheep> sortedSheeps = new LinkedList<Sheep>(board.getSheeps());
+		Collections.sort(sortedSheeps, new Comparator<Sheep>() {
+
+			@Override
+			public int compare(Sheep o1, Sheep o2) {
+				return sheepMap.get(o1).y < sheepMap.get(o2).y ? 1 : -1;
+			}
+
+		});
+
 		// huete malen
 		g2.setFont(getFont());
 		if (sheepMap != null) {
-			for (Sheep sheep : board.getSheeps()) {
+			for (Sheep sheep : sortedSheeps) {
 				if (sheep != currentSheep) {
-					drawSheep(g2, sheep);
+					drawSheep(g2, sheep, false);
 				}
 			}
 		}
 
-		drawSheep(g2, currentSheep);
+		drawSheep(g2, currentSheep, true);
 
 	}
 
@@ -560,22 +574,22 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		fontY += 35;
 		g2.setFont(h2);
-		String name = "Spieler 1";
+		String name = board.getPlayerNames()[0];
 		g2.setColor(PLAYER1_COLOR);
-		if (currentPlayer.getPlayerColor() == PlayerColor.PLAYER1) {
-			name += " ist am Zug";
-		}
+		// if (currentPlayer.getPlayerColor() == PlayerColor.PLAYER1) {
+		// name += " ist am Zug";
+		// }
 		g2.drawString(name, fontX, fontY);
 		g2.setColor(Color.BLACK);
 		fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER1);
 
 		fontY += 35;
 		g2.setFont(h2);
-		name = "Spieler 2";
+		name = board.getPlayerNames()[1];
 		g2.setColor(PLAYER2_COLOR);
-		if (currentPlayer.getPlayerColor() == PlayerColor.PLAYER2) {
-			name += " ist am Zug";
-		}
+		// if (currentPlayer.getPlayerColor() == PlayerColor.PLAYER2) {
+		// name += " ist am Zug";
+		// }
 		g2.drawString(name, fontX, fontY);
 		g2.setColor(Color.BLACK);
 		fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER2);
@@ -584,11 +598,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		fontY += 15;
 		g2.setFont(hDice);
 		for (Integer dice : board.getDice()) {
-			g2.setColor(Color.LIGHT_GRAY);
+			g2.setColor(Color.GRAY);
 			g2.fillRoundRect(fontX + 60 * i, fontY, 50, 50, 15, 15);
-			g2.setColor(Color.DARK_GRAY);
+			g2.setColor(getPlayerColor(currentPlayer.getPlayerColor()));
 			String value = dice.toString();
-			g2.drawString(value, fontX + 20 + 60 * i
+			g2.drawString(value, fontX + 23 + 60 * i
 					- mfDice.stringWidth(value) / 2, fontY - 2
 					+ mfDice.getHeight());
 
@@ -683,13 +697,14 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		return color;
 	}
 
-	private void drawSheep(Graphics2D g2, Sheep sheep) {
+	private void drawSheep(Graphics2D g2, Sheep sheep, boolean highlight) {
 
 		if (sheep != null) {
 
 			Point p = sheepMap.get(sheep);
-			if (currentSheep != null && sheep == currentSheep) {
-				p = new Point(mousex, mousey);
+			// FIXME: warum kann p == null auftreten?
+			if ((currentSheep != null && sheep == currentSheep) || p == null) {
+				p = new Point(mousex + dx, mousey + dy);
 			}
 
 			int spread = (sheep.hasSharpSheepdog() || sheep.hasSheepdog())
@@ -699,12 +714,15 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 			int n = 4;
 			int s = Math.min(42, size / 26);
+			if (highlight){
+				s+=10;
+			}
 			int[] pointerXs = new int[] { s + 10, -(s - 10), -(s / 2 - 10),
 					-(s - 10) };
 			int[] pointerYs = new int[] { 0, (s - 5), 0, -(s - 5) };
 
 			GUINode target = guiNodes[sheep.getTarget()];
-			if (target != null && !sheep.owner.equals(PlayerColor.NOPLAYER)) {
+			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
 				double phiR = Math.atan((float) (p.x - target
 						.getScaledCenterX())
 						/ (p.y - target.getScaledCenterY()));
