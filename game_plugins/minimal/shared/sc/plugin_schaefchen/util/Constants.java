@@ -19,7 +19,9 @@ public class Constants {
 	public final static int	DIE_COUNT = 3;
 	public final static int	DIE_SIZE = 6;
 
-	public final static int TOTAL_FLOWERS = 48;
+
+	public static final int NODES_WITH_MUSHROOMS = 8;
+	public final static int TOTAL_FLOWERS = 42;
 	public final static int MIN_FLOWERS = -1;
 	public final static int MAX_FLOWERS = 2;
 	

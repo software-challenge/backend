@@ -248,6 +248,15 @@ public class FactoryNode {
 		this.flowers += flowers;
 	}
 
+	
+	/**
+	 * setzt die anzahl an bluemn
+	 */
+	public void setFlowers(int flowers) {
+		this.flowers = flowers;
+		
+	}
+	
 	/**
 	 * liefert die anzahl der blumen auf diesem spielfeld
 	 */
@@ -272,5 +281,7 @@ public class FactoryNode {
 	public int getN() {
 		return n;
 	}
+
+
 
 }
