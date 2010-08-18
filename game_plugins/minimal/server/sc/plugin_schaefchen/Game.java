@@ -76,37 +76,54 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 			if (author != getActivePlayer()) {
 				author.setViolated(true);
-				logger.error("Received unexpected move {} from {}: "
-						+ move.toString(), data, author);
-				throw new GameLogicException("Move was unexpected: "
-						+ move.toString());
+				String err = "Move was unexpected.";
+				logger.error("Received invalid move {} from {}: "
+						+ move.toString() + ". " + err, data, author);
+				throw new GameLogicException("Move was invalid: " + err);
+			}
+
+			if (move.target < 0 || move.target >= board.getNodes().length) {
+				author.setViolated(true);
+				String err = "There is no Node #" + move.target;
+				logger.error("Received invalid move {} from {}: "
+						+ move.toString() + ". " + err, data, author);
+				throw new GameLogicException("Move was invalid: " + err);
+			}
+
+			if (board.getSheepByID(move.sheep) == null) {
+				author.setViolated(true);
+				String err = "There is no Sheep #" + move.sheep;
+				logger.error("Received invalid move {} from {}: "
+						+ move.toString() + ". " + err, data, author);
+				throw new GameLogicException("Move was invalid: " + err);
 			}
 
 			if (!board.getSheepByID(move.sheep).owner.equals(getActivePlayer()
 					.getPlayerColor())) {
 				author.setViolated(true);
+				String err = "Current player can't move sheep #" + move.sheep;
 				logger.error("Received invalid move {} from {}: "
-						+ move.toString(), data, author);
-				throw new GameLogicException(
-						"Move was invalid: Current player can't move sheep #"
-								+ move.sheep);
+						+ move.toString() + ". " + err, data, author);
+				throw new GameLogicException("Move was invalid: " + err);
 			}
 
 			if (!board.isValidTarget(board.getSheepByID(move.sheep),
 					move.target)) {
 				author.setViolated(true);
+				String err = "Sheep #" + move.sheep + " can't enter node #"
+						+ move.target;
 				logger.error("Received invalid move {} from {}: "
-						+ move.toString(), data, author);
-				throw new GameLogicException("Move was invalid: Sheep #"
-						+ move.sheep + " can't enter node #" + move.target);
+						+ move.toString() + ". " + err, data, author);
+				throw new GameLogicException("Move was invalid: " + err);
 			}
 
 			if (!board.isValideMove(move)) {
 				author.setViolated(true);
+				String err = "Sheep #" + move.sheep + " can't reach node #"
+						+ move.target;
 				logger.error("Received invalid move {} from {}: "
-						+ move.toString(), data, author);
-				throw new GameLogicException("Move was invalid: Sheep #"
-						+ move.sheep + " can't reach node #" + move.target);
+						+ move.toString() + ". " + err, data, author);
+				throw new GameLogicException("Move was invalid: " + err);
 			}
 
 			board.performMove(move);
