@@ -229,7 +229,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		this.handler = handler;
 		this.onlyObserving = onlyObserving;
 
-		bgBoard = RendererUtil.getImage("resource/game/bg.png");
+		bgBoard = RendererUtil.getImage("resource/game/boden_wiese3.png");
 
 		sheepIcon = RendererUtil.getImage("resource/game/sheep.png");
 		dogIcon = RendererUtil.getImage("resource/game/dog.png");
@@ -374,11 +374,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.setColor(currentPlayer == null ? Color.LIGHT_GRAY
 				: getPlayerColor(currentPlayer.getPlayerColor()));
 		g2.fillRect(0, 0, getWidth(), getHeight());
-		g2.setColor(getBackground());
-		g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE,
-				getHeight() - 2 * BORDER_SIZE);
+		
+		g2.drawImage(bgBoard, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE,
+				getHeight() - 2 * BORDER_SIZE, this);
 
-		g2.setColor(getBackground().darker());
+		g2.setColor(new Color(200,255,200,128));
 		g2.fillRect(getWidth() - BORDER_SIZE - STATS_WIDTH, BORDER_SIZE,
 				STATS_WIDTH, getHeight() - 2 * BORDER_SIZE);
 
@@ -393,7 +393,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private void paintStaticComponents(Graphics2D g2) {
 
 		// hintergrundbild zeichnen
-		g2.drawImage(bgBoard, xBorder, yBorder, size, size, this);
+		//g2.drawImage(bgBoard, xBorder, yBorder, size, size, this);
 
 		// flaechig gefuellte spielfelder zeichnen
 		for (GUINode guiNode : guiNodes) {

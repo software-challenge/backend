@@ -43,9 +43,8 @@ public class GamePlugin implements IGamePlugin
 	@Override
 	public IGameInstance createGame()
 	{
-		Game g = new Game();
-		// TODO fehlt evtl. Initialisierung?
-		return g;
+		Game game = new Game();
+		return game;
 	}
 
 	@Override
