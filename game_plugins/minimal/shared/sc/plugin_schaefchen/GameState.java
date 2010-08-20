@@ -293,7 +293,8 @@ public final class GameState {
 			// es darf kein anderes schaf auf dem spielfeld stehen, es sei
 			// den dieses schaf ist in begleitung eines scharfen
 			// schaeferhundes
-			if (!sheep.hasSharpSheepdog() && getSheeps(node).size() != 0) {
+			if (sheep.getDogState() != DogState.ACTIVE
+					&& getSheeps(node).size() > 0) {
 				okay = false;
 				break;
 			}
@@ -393,13 +394,7 @@ public final class GameState {
 			if (victim.owner != sheep.owner) {
 				sheep.addSize(victim);
 				sheep.addFlowers(victim.getFlowers());
-				if (victim.hasSheepdog()) {
-					sheep.setSheepdog(true);
-				}
-
-				if (victim.hasSharpSheepdog()) {
-					sheep.setSharpSheepdog(true);
-				}
+				sheep.setDogState(victim.getDogState());
 
 				sheeps.remove(victim);
 
@@ -445,10 +440,8 @@ public final class GameState {
 			// und wird scharf
 			sheep.resetSize();
 			sheep.increaseSize(owner.getPlayerColor());
-			if (sheep.hasSheepdog()) {
-				sheep.increaseSize(PlayerColor.NOPLAYER);
-				sheep.setSharpSheepdog(true);
-				sheep.setSheepdog(false);
+			if (sheep.getDogState() == DogState.PASSIVE) {
+				sheep.setDogState(DogState.ACTIVE);
 			}
 
 			// das neue ziel ist das gegenueberliegende heimatfeld

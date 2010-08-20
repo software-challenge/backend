@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import sc.plugin_schaefchen.BoardFactory;
+import sc.plugin_schaefchen.DogState;
 import sc.plugin_schaefchen.Flower;
 import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.GUINode;
@@ -104,7 +105,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private int currentNode;
 	private int mousey;
 	private int mousex;
-	private int dx, dy;
+	// private int dx, dy;
 	private Set<Integer> currentNeighbours;
 	private Sheep currentSheep;
 
@@ -146,16 +147,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		@Override
 		public void mousePressed(MouseEvent e) {
 
-			int x = e.getX();
-			int y = e.getY();
-
+			mousex = e.getX();
+			mousey = e.getY();
 			for (Sheep sheep : sheepMap.keySet()) {
 				Point p = sheepMap.get(sheep);
-				if (Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < 20
+				if (Math.sqrt(Math.pow(p.x - mousex, 2) + Math.pow(p.y - mousey, 2)) < 20
 						&& !sheep.owner.equals(PlayerColor.NOPLAYER)) {
 					currentSheep = sheep;
-					dx = p.x - x;
-					dy = p.y - y;
 					if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
 						currentNeighbours = gameState.getValidReachableNodes(
 								sheep.index).keySet();
@@ -170,8 +168,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			dx = 0;
-			dy = 0;
+			
+			mousex = 0;
+			mousey = 0;
 			if (currentSheep != null && highliteNode && !ended) {
 				if (currentSheep.owner != PlayerColor.NOPLAYER
 						&& currentSheep.owner == currentPlayer
@@ -181,8 +180,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 					// nicht zurueckfallen lassen
 					if (!onlyObserving) {
 						Point p = sheepMap.get(currentSheep);
-						p.x = mousex;
-						p.y = mousey;
+						p.x = e.getX();
+						p.y = e.getY();
 						sendMove(new Move(currentSheep.index, currentNode));
 					}
 				}
@@ -201,6 +200,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		@Override
 		public void mouseDragged(MouseEvent e) {
 
+			mousex = e.getX();
+			mousey = e.getY();
 			highliteNode = false;
 			if (currentSheep != null) {
 
@@ -213,22 +214,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						}
 					}
 				}
-
-				mousex = e.getX();
-				mousey = e.getY();
-
 				repaint();
 			}
 
 		}
 
-		@Override
-		public void mouseMoved(MouseEvent e) {
-
-			mousex = e.getX();
-			mousey = e.getY();
-
-		}
 	};
 
 	public FrameRenderer(final IGameHandler handler, final boolean onlyObserving) {
@@ -656,14 +646,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.drawString(flowers + " eingesammelte Blume"
 					+ (Math.abs(flowers) != 1 ? "n" : ""), fontX, fontY);
 
-			fontY += 25;
-			if (currentSheep.hasSheepdog()) {
+			if (currentSheep.getDogState() != DogState.NONE) {
+				fontY += 25;
 				g2.drawString("In Begleitung des Schäferhundes", fontX, fontY);
-			} else if (currentSheep.hasSharpSheepdog()) {
-				g2.drawString("In Begleitung des Schäferhundes", fontX, fontY);
-
+			}
+			if (currentSheep.getDogState() == DogState.ACTIVE) {
 				fontY += 20;
-				g2.drawString("Der Schäferhund ist bereit", fontX, fontY);
+				g2.drawString("Der Schäferhund ist aktiv", fontX, fontY);
 			}
 
 		}
@@ -738,10 +727,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			Point p = sheepMap.get(sheep);
 			// FIXME: warum kann p == null auftreten?
 			if ((currentSheep != null && sheep == currentSheep) || p == null) {
-				p = new Point(mousex + dx, mousey + dy);
+				p = new Point(mousex, mousey);
 			}
 
-			int spread = (sheep.hasSharpSheepdog() || sheep.hasSheepdog())
+			int spread = (sheep.getDogState() != DogState.NONE)
 					&& (sheep.getSize(PlayerColor.PLAYER1)
 							+ sheep.getSize(PlayerColor.PLAYER2) > 0) ? 5 : 0;
 
@@ -782,7 +771,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 			}
 
-			if (sheep.hasSheepdog()) {
+			if (sheep.getDogState() == DogState.PASSIVE) {
 				g2.drawImage(dogIcon, p.x + spread - DOG_SIZE / 2, p.y
 						- DOG_SIZE / 2, DOG_SIZE, DOG_SIZE, this);
 			}
@@ -792,7 +781,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						- SHEEP_SIZE / 2, SHEEP_SIZE, SHEEP_SIZE, this);
 			}
 
-			if (sheep.hasSharpSheepdog()) {
+			if (sheep.getDogState() == DogState.ACTIVE) {
 				g2.drawImage(dogIcon, p.x + spread - DOG_SIZE / 2, p.y
 						- DOG_SIZE / 2, DOG_SIZE, DOG_SIZE, this);
 			}
@@ -819,8 +808,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				g2.drawRoundRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
 						statsH, 8, 8);
 
-				g2.setColor(sheep.hasSharpSheepdog() ? Color.YELLOW
-						: Color.WHITE);
+				g2
+						.setColor(sheep.getDogState() == DogState.ACTIVE ? Color.YELLOW
+								: Color.WHITE);
 				g2.drawString(stat, p.x - statsW / 2, p.y + 10 + statsH - 3);
 			}
 		}

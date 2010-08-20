@@ -155,7 +155,7 @@ public class BoardFactory {
 			for(int i=0; i<node.getSheeps(); i++){
 				Sheep sheep = new Sheep(node.index, node.getCounterPart(), owner);
 				if(node.getNodeType().equals(NodeType.GRASS)){
-					sheep.setSheepdog(true);
+					sheep.setDogState(DogState.PASSIVE);
 				}
 				sheepList.add(sheep);
 			}
