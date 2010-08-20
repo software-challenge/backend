@@ -15,7 +15,6 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin_schaefchen.Board;
 import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.Player;
@@ -41,14 +40,18 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@XStreamOmitField
 	private List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
-	private Board board = new Board();
+	private GameState gameState = new GameState();
 
-	public Board getBoard() {
-		return board;
+	public GameState getGameState() {
+		return gameState;
 	}
 
 	public Player getActivePlayer() {
 		return activePlayer;
+	}
+
+	protected void onActivePlayerChanged(Player player) {
+		gameState.setCurrentPlayer(player.getPlayerColor());
 	}
 
 	public Game() {
@@ -58,7 +61,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected Object getCurrentState() {
-		return new GameState(this);
+		return  gameState;
 	}
 
 	/**
@@ -82,7 +85,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (move.target < 0 || move.target >= board.getNodes().length) {
+			if (move.target < 0 || move.target >= BoardFactory.nodes.size()) {
 				author.setViolated(true);
 				String err = "There is no Node #" + move.target;
 				logger.error("Received invalid move {} from {}: "
@@ -90,7 +93,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (board.getSheepByID(move.sheep) == null) {
+			if (gameState.getSheepByID(move.sheep) == null) {
 				author.setViolated(true);
 				String err = "There is no Sheep #" + move.sheep;
 				logger.error("Received invalid move {} from {}: "
@@ -98,7 +101,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (!board.getSheepByID(move.sheep).owner.equals(getActivePlayer()
+			if (!gameState.getSheepByID(move.sheep).owner.equals(getActivePlayer()
 					.getPlayerColor())) {
 				author.setViolated(true);
 				String err = "Current player can't move sheep #" + move.sheep;
@@ -107,7 +110,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (!board.isValidTarget(board.getSheepByID(move.sheep),
+			if (!gameState.isValidTarget(gameState.getSheepByID(move.sheep),
 					move.target)) {
 				author.setViolated(true);
 				String err = "Sheep #" + move.sheep + " can't enter node #"
@@ -117,7 +120,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (!board.isValideMove(move)) {
+			if (!gameState.isValideMove(move)) {
 				author.setViolated(true);
 				String err = "Sheep #" + move.sheep + " can't reach node #"
 						+ move.target;
@@ -126,7 +129,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			board.performMove(move);
+			gameState.performMove(move);
 			// author.addToHistory(move);
 			next();
 		} else {
@@ -141,7 +144,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			throw new TooManyPlayersException();
 
 		final Player player = new Player(this.availableColors.remove(0));
-		this.board.addPlayer(player);
+		this.gameState.addPlayer(player);
 		this.players.add(player);
 
 		return player;
@@ -155,6 +158,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		activePlayerId = (activePlayerId + 1) % this.players.size();
 		final Player nextPlayer = this.players.get(activePlayerId);
 		next(nextPlayer);
+		gameState.setTurn(getTurn());
 	}
 
 	@Override
@@ -205,7 +209,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
 
-		int[] stats = board.getGameStats(p.getPlayerColor());
+		int[] stats = gameState.getGameStats(p.getPlayerColor());
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
 				0, 0, 0, 0, 0, 0) : new PlayerScore(ScoreCause.REGULAR,
 				stats[0], stats[1], stats[2], stats[3], stats[4], stats[5],
@@ -221,14 +225,14 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected boolean checkGameOverCondition() {
 		return getTurn() >= GamePlugin.MAX_TURN_COUNT - 1
-				|| board.getSheeps(PlayerColor.PLAYER1).size() == 0
-				|| board.getSheeps(PlayerColor.PLAYER2).size() == 0;
+				|| gameState.getSheeps(PlayerColor.PLAYER1).size() == 0
+				|| gameState.getSheeps(PlayerColor.PLAYER2).size() == 0;
 	}
 
 	@Override
 	public void loadFromFile(String file) {
-		GameLoader gl = new GameLoader(new Class<?>[] { GameState.class,
-				Board.class });
+		GameLoader gl = new GameLoader(new Class<?>[] {
+				GameState.class });
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
@@ -238,10 +242,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
-			this.board = ((GameState) gameInfo).getGame().getBoard();
-		}
-		if (gameInfo instanceof Board) {
-			this.board = (Board) gameInfo;
+			this.gameState = (GameState) gameInfo;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package sc.plugin_schaefchen;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * ein schaf, bzw eine spielfigur
@@ -12,51 +13,44 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public final class Sheep {
 
 	private static int nextIndex = 0;
+
+	// fortlaufende nummer dieses schafes
+	@XStreamAsAttribute
 	public final int index;
 
-	// groesse der von diesem schaf gefuehrten herde
-	private SheepSize size;
+	// spieler dem dieses schaf gehoert
+	public final PlayerColor owner;
 
 	// info, ob diese schaf einen (scharfen) schaeferhund dabei hat
 	private boolean hasSheepdog;
 	private boolean hasSharpSheepdog;
 
-	// zielfeld fuer dieses schaf
-	private int target;
-
-	// spieler dem dieses schaf gehoert
-	public final PlayerColor owner;
-
-	// spielfeld auf dem sich dieses schaf befindet
-	private int node;
+	// anzahl der eingesammelten schafe
+	private int sheepsFromPlayer1;
+	private int sheepsFromPlayer2;
 
 	// anzahl der von diesem schaf gesammelten blumen
 	private int flowers;
 
-	// spielerfarbe des spielers dem dieses schaf gehoert
-	private PlayerColor playerColor;
+	// spielfeld auf dem sich dieses schaf befindet
+	private int node;
+
+	// zielfeld fuer dieses schaf
+	private int target;
 
 	public Sheep(int start, int target, PlayerColor owner) {
 		this.target = target;
 		this.owner = owner;
 		this.node = start;
-		size = new SheepSize();
 		index = nextIndex++;
 		hasSharpSheepdog = false;
-		size.add(owner);
-	}
-
-	/**
-	 * liefert die groesse der von diesem schaf gefuerten herde
-	 */
-	public SheepSize getSize() {
-		return size;
+		increaseSize(owner);
 	}
 
 	/**
 	 * setzen, ob dieses schaf von einem schaeferhund begleitet wird
 	 */
-	public void setSheepdog(boolean sheepdog) {
+	protected void setSheepdog(boolean sheepdog) {
 		this.hasSheepdog = sheepdog;
 
 	}
@@ -71,7 +65,7 @@ public final class Sheep {
 	/**
 	 * setzen, ob dieses schaf von einem scharfen schaeferhund begleitet wird
 	 */
-	public void setSharpSheepdog(boolean sharpSheepdog) {
+	protected void setSharpSheepdog(boolean sharpSheepdog) {
 		this.hasSharpSheepdog = sharpSheepdog;
 
 	}
@@ -93,14 +87,14 @@ public final class Sheep {
 	/**
 	 * setzt das spielfeld auf dem sich dieses schaf befindet
 	 */
-	public void setNode(int node) {
+	protected void setNode(int node) {
 		this.node = node;
 	}
 
 	/**
 	 * setzt das zielfeld fuer dieses schaf
 	 */
-	public void setTarget(int target) {
+	protected void setTarget(int target) {
 		this.target = target;
 	}
 
@@ -121,17 +115,48 @@ public final class Sheep {
 	/**
 	 * fuegt diesem schaf blumen hinzu
 	 */
-	public void addFlowers(int flowers) {
+	protected void addFlowers(int flowers) {
 		this.flowers += flowers;
 	}
 
 	/**
-	 * liefert die spielerfarbe des spielers dem dieses schaf gehoert
+	 * addiert eine andere herdengruesse zu dieser
 	 */
-	public PlayerColor getPlayerColor() {
-		return playerColor;
+	public void addSize(Sheep other) {
+		sheepsFromPlayer1 += other.sheepsFromPlayer1;
+		sheepsFromPlayer2 += other.sheepsFromPlayer2;
 	}
 
+	/**
+	 * addiert eine andere herdengruesse zu dieser
+	 */
+	protected void resetSize() {
+		sheepsFromPlayer1 = 0;
+		sheepsFromPlayer2 = 0;
+	}
 
+	/**
+	 * vergroesert diese herde in abhaengigkeit einer spielerfarbe
+	 */
+	protected void increaseSize(PlayerColor c) {
+
+		if (c.equals(PlayerColor.PLAYER1)) {
+			sheepsFromPlayer1++;
+		} else if (c.equals(PlayerColor.PLAYER2)) {
+			sheepsFromPlayer2++;
+		}
+
+	}
+
+	/**
+	 * liefert die anzahl der schafe oder hunde in dieser herde in abhaengigkeit
+	 * einer spielerfarbe
+	 */
+	public int getSize(PlayerColor c) {
+		assert c.equals(PlayerColor.PLAYER1) || c.equals(PlayerColor.PLAYER2);
+
+		return c.equals(PlayerColor.PLAYER1) ? sheepsFromPlayer1
+				: sheepsFromPlayer2;
+	}
 
 }

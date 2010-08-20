@@ -17,13 +17,11 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
-import sc.plugin_schaefchen.EPlayerId;
-import sc.plugin_schaefchen.Game;
 import sc.plugin_schaefchen.GameState;
+import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.IGUIObservation;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.PlayerColor;
-import sc.plugin_schaefchen.renderer.FrameRenderer;
 import sc.plugin_schaefchen.renderer.RenderFacade;
 import sc.plugin_schaefchen.util.Configuration;
 import sc.protocol.responses.ErrorResponse;
@@ -149,6 +147,8 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 	}
 
+	
+	@SuppressWarnings("unused")
 	private String createGameEndedString(GameResult data) {
 		String result = "----------------\n";
 
@@ -158,24 +158,23 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 
 		GameState gameState = (GameState) conGame.getCurrentState();
-		Game game = gameState.getGame();
-
+		
 		String name1 = "Spieler 1";
 		String name2 = "Spieler 2";
 
-		if (game.getActivePlayer().getPlayerColor() == PlayerColor.PLAYER1) {
-			name1 = game.getActivePlayer().getDisplayName();
-			name2 = game.getBoard().getOtherPlayer(game.getActivePlayer())
+		if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.PLAYER1) {
+			name1 = gameState.getCurrentPlayer().getDisplayName();
+			name2 = gameState.getOtherPlayer(gameState.getCurrentPlayer())
 					.getDisplayName();
 		} else {
-			name1 = game.getBoard().getOtherPlayer(game.getActivePlayer())
+			name1 = gameState.getOtherPlayer(gameState.getCurrentPlayer())
 					.getDisplayName();
-			name2 = game.getActivePlayer().getDisplayName();
+			name2 = gameState.getCurrentPlayer().getDisplayName();
 		}
 
 		if (conGame.getCurrentError() != null) {
 			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
-			result += (game.getActivePlayer().getPlayerColor() == PlayerColor.PLAYER1 ? name1
+			result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.PLAYER1 ? name1
 					: name2);
 			result += " hat einen Fehler gemacht: \n" + error.getMessage()
 					+ "\n";
@@ -277,7 +276,7 @@ public class Observation implements IObservation, IUpdateListener,
 		PlayerColor color = null;
 		if (curStateObject != null) {
 			GameState gameState = (GameState) curStateObject;
-			color = gameState.getGame().getActivePlayer().getPlayerColor();
+			color = gameState.getCurrentPlayer().getPlayerColor();
 		}
 		handler.gameEnded(data, color, errorMessage);
 	}
@@ -310,16 +309,15 @@ public class Observation implements IObservation, IUpdateListener,
 		Object errorObject = conGame.getCurrentError();
 		if (errorObject != null) {
 			ErrorResponse error = (ErrorResponse) errorObject;
-			logger.info("Received error response");
+			logger.info("Received error response:" + error);
 		}
 
 		if (gameState != null) {
 			// ready();
-			Game game = gameState.getGame();
-			handler.onUpdate(game.getBoard(), game.getTurn());
+			handler.onUpdate(gameState);
 
-			handler.onUpdate(game.getActivePlayer(), game.getBoard()
-					.getOtherPlayer(game.getActivePlayer()));
+			handler.onUpdate(gameState.getCurrentPlayer(), gameState
+					.getOtherPlayer(gameState.getCurrentPlayer()));
 
 			if (conGame.isGameOver() && conGame.isAtEnd()) {
 				notifyOnGameEnded(sender, conGame.getResult());

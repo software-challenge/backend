@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
@@ -15,24 +17,23 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @XStreamAlias(value = "sit:node")
 public final class Node {
-	
+
+
+	// eikndeutige nummer dieses spielfeldes
+	@XStreamAsAttribute
+	public final int index;
+
+	// typ dieses spielfeldes
+	private NodeType type;
 	
 	// menge der benachbarten spielfelder
+	@XStreamImplicit(itemFieldName="neighbour")
 	private final Set<Integer> neighbours;
 
 	// ggf. vorghandeses gegenstueck zu diesem feld
 	// wird bei den heimatfeldern benoetigt um einem schaf sein ziel mitzuteilen
 	@XStreamOmitField
 	private int counterPart;
-
-	// eikndeutige nummer dieses spielfeldes
-	public final int index;
-
-	// typ dieses spielfeldes
-	private NodeType type;
-
-	// anzahl an blumen die auf diesem spielfeld sind
-	private int flowers;
 
 	public Node(final NodeType type, int counterPart, int index) {
 		this.index = index;
@@ -48,7 +49,7 @@ public final class Node {
 	/**
 	 * fuegt diesem spielfeld einen nachbar hinzu
 	 */
-	public void addNeighbour(final int other) {
+	protected void addNeighbour(final int other) {
 		neighbours.add(other);
 	}
 
@@ -67,26 +68,10 @@ public final class Node {
 		return type;
 	}
 
-	/**
-	 * fuegt diesem spielfeld blumen hinzu
-	 */
-	public void addFlowers(int flowers) {
-		this.flowers += flowers;
-	}
 
-	/**
-	 * liefert die anzahl der blumen auf diesem spielfeld
-	 */
-	public int getFlowers() {
-		return flowers;
-	}
 
-	/**
-	 * liefert das ggf. vorhandene gegenstueck zu diesem spielfeld
-	 */
-	public int getCounterPart() {
+	protected int getCounterPart() {
 		return counterPart;
 	}
-
 
 }

@@ -7,9 +7,7 @@ import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
-import sc.plugin_schaefchen.Game;
 import sc.plugin_schaefchen.GamePlugin;
-import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.PlayerColor;
 import sc.plugin_schaefchen.WelcomeMessage;
@@ -133,23 +131,23 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 */
 	@Override
 	public void onNewState(String roomId, Object state) {
+	
 		GameState gameState = (GameState) state;
-		Game game = gameState.getGame();
 
 		if (id != EPlayerId.OBSERVER) {
-			handler.onUpdate(game.getBoard(), game.getTurn());
+			handler.onUpdate(gameState);
 
-			if (game.getActivePlayer().getPlayerColor() == mycolor) { // active
+			if (gameState.getCurrentPlayer().getPlayerColor() == mycolor) { // active
 																		// player
 																		// is
 																		// own
-				handler.onUpdate(game.getActivePlayer(), game.getBoard()
-						.getOtherPlayer(game.getActivePlayer()));
+				handler.onUpdate(gameState.getCurrentPlayer(), gameState
+						.getOtherPlayer(gameState.getCurrentPlayer()));
 			} else
 			// active player is the enemy
 			{
-				handler.onUpdate(game.getBoard().getOtherPlayer(
-						game.getActivePlayer()), game.getActivePlayer());
+				handler.onUpdate(gameState.getOtherPlayer(
+						gameState.getCurrentPlayer()), gameState.getCurrentPlayer());
 
 			}
 		}

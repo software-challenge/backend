@@ -5,7 +5,7 @@ package sc.plugin_schaefchen.renderer;
 
 import java.awt.Image;
 
-import sc.plugin_schaefchen.Board;
+import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.Player;
 import sc.plugin_schaefchen.PlayerColor;
 import sc.shared.GameResult;
@@ -19,7 +19,7 @@ public interface IRenderer
 {
 	void updatePlayer(Player player, Player otherPlayer);
 
-	void updateBoard(Board board, int round);
+	void updateGameState(GameState gameState);
 
 	void updateChat(String chatMsg);
 

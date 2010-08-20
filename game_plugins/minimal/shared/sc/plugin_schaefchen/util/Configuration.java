@@ -3,14 +3,12 @@ package sc.plugin_schaefchen.util;
 import java.util.Arrays;
 import java.util.List;
 
-import sc.plugin_schaefchen.Board;
-import sc.plugin_schaefchen.Game;
 import sc.plugin_schaefchen.GameState;
+import sc.plugin_schaefchen.Game;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.Player;
 import sc.plugin_schaefchen.PlayerColor;
 import sc.plugin_schaefchen.Sheep;
-import sc.plugin_schaefchen.SheepSize;
 import sc.plugin_schaefchen.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
@@ -33,7 +31,7 @@ public class Configuration {
 
 	static {
 		xStream = new XStream();
-		xStream.setMode(XStream.NO_REFERENCES);
+		xStream.setMode(XStream.ID_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
 		LobbyProtocol.registerMessages(xStream);
 		LobbyProtocol.registerAdditionalMessages(xStream,
@@ -45,9 +43,9 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
-		return Arrays.asList(new Class<?>[] { Game.class, Board.class,
-				GameState.class, Move.class, Player.class, Node.class,
-				Sheep.class, SheepSize.class, WelcomeMessage.class,
+		return Arrays.asList(new Class<?>[] { Game.class, GameState.class,
+				 Move.class, Player.class, Node.class,
+				Sheep.class, WelcomeMessage.class,
 				PlayerColor.class });
 	}
 }

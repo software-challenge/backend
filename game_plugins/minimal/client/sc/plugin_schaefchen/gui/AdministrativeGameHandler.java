@@ -3,7 +3,7 @@
  */
 package sc.plugin_schaefchen.gui;
 
-import sc.plugin_schaefchen.Board;
+import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.Player;
@@ -19,7 +19,7 @@ public class AdministrativeGameHandler implements IGameHandler {
 	}
 
 	@Override
-	public void onUpdate(Board board, int turn) {
+	public void onUpdate(GameState gameState) {
 	}
 
 	@Override

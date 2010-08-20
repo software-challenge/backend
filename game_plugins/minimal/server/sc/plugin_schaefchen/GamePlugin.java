@@ -16,10 +16,10 @@ import edu.cau.plugins.PluginDescriptor;
  * @author Sven Casimir, Torsten Krause
  * @since Juni, 2010
  */
-@PluginDescriptor(name = "Schäfchen ins Trockene", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+@PluginDescriptor(name = "Schäfchen im Trockenen", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin
 {
-	public static final String			PLUGIN_AUTHOR		= "Sven Casimir, Torsten Krause";
+	public static final String			PLUGIN_AUTHOR		= "Torsten Krause, Sven Casimir";
 	public static final String			PLUGIN_UUID			= "minimal_plugin";
 
 	public static final int				MAX_PLAYER_COUNT	= 2;
@@ -51,8 +51,7 @@ public class GamePlugin implements IGamePlugin
 	@Override
 	public IGameInstance createGame()
 	{
-		Game game = new Game();
-		return game;
+		return new Game();
 	}
 
 	@Override

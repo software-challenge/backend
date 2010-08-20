@@ -17,6 +17,7 @@ import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.GamePlugin;
 import sc.plugin_schaefchen.GuiClient;
 import sc.plugin_schaefchen.renderer.RenderFacade;
+import sc.plugin_schaefchen.renderer.RendererUtil;
 import sc.plugin_schaefchen.util.Configuration;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;
@@ -29,10 +30,10 @@ import edu.cau.plugins.PluginDescriptor;
  * @author sca
  * 
  */
-@PluginDescriptor(author = "Sven Casimir", uuid = "minimal", name = "Schäfchen ins Trockene")
+@PluginDescriptor(author = "Torsten Krause, Sven Casimir", uuid = "minimal", name = "Schäfchen im Trockenen")
 public class GUIPluginFacade implements IGuiPlugin {
-	public GUIPluginFacade() {
 
+	public GUIPluginFacade() {
 	}
 
 	@Override
@@ -48,12 +49,12 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public String getPluginInfoText() {
-		return "<html>Dies ist ein minimales Beispielplugin als Vorlage für neue Spielplugins</html>";
+		return "Schäfchen im Trockenen";
 	}
 
 	@Override
 	public Image getPluginIcon() {
-		return null;
+		return RendererUtil.getImage("resource/game/bigsheep.png");
 	}
 
 	/**
@@ -133,6 +134,6 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public Image getPluginImage() {
-		return null;
+		return RendererUtil.getImage("resource/game/bigsheep.png");
 	}
 }
