@@ -1,7 +1,6 @@
 package sc.plugin_schaefchen.renderer.positioner;
 
 import sc.plugin_schaefchen.GUINode;
-import sc.plugin_schaefchen.Node;
 
 public class ArcPositioner implements Positioner {
 

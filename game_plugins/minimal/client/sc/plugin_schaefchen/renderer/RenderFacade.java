@@ -9,7 +9,7 @@ import java.awt.Panel;
 
 import javax.swing.JPanel;
 
-import sc.plugin_schaefchen.Board;
+import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Player;
@@ -231,21 +231,21 @@ public class RenderFacade
 		}
 	}
 
-	public void updateBoard(final Board board, int round, final EPlayerId target)
+	public void updateGameState(final GameState gameState, final EPlayerId target)
 	{
 		if (panel != null)
 		{
 			if (target == EPlayerId.OBSERVER)
 			{
-				observer.updateBoard(board, round);
+				observer.updateGameState(gameState);
 			}
 			else if (target == EPlayerId.PLAYER_ONE)
 			{
-				player1.updateBoard(board, round);
+				player1.updateGameState(gameState);
 			}
 			else if (target == EPlayerId.PLAYER_TWO)
 			{
-				player2.updateBoard(board, round);
+				player2.updateGameState(gameState);
 			}
 		}
 	}
@@ -351,6 +351,8 @@ public class RenderFacade
 	 */
 	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color, String errorMessage)
 	{
+		
+		//FIXME sieger berechnen
 		if (panel != null)
 		{
 			if (target == EPlayerId.OBSERVER)

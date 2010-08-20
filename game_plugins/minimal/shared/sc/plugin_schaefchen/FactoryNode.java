@@ -31,7 +31,9 @@ public class FactoryNode {
 	private int counterPart;
 
 	// anzahl blumen auf diesem spielfeld
-	private int flowers;
+	private boolean flowers;
+
+	private int sheepAmount;
 
 	public FactoryNode(double[] xs, double[] ys, int n, int index) {
 		this.n = n;
@@ -241,26 +243,20 @@ public class FactoryNode {
 		return type;
 	}
 
-	/**
-	 * fuegt diesem spielfeld blumen hinzu
-	 */
-	public void addFlowers(int flowers) {
-		this.flowers += flowers;
-	}
 
 	
 	/**
 	 * setzt die anzahl an bluemn
 	 */
-	public void setFlowers(int flowers) {
-		this.flowers = flowers;
+	public void setFlowers(boolean b) {
+		this.flowers = b;
 		
 	}
 	
 	/**
 	 * liefert die anzahl der blumen auf diesem spielfeld
 	 */
-	public int getFlowers() {
+	public boolean hasFlowers() {
 		return flowers;
 	}
 
@@ -280,6 +276,14 @@ public class FactoryNode {
 
 	public int getN() {
 		return n;
+	}
+
+	public void setSheeps(int amount) {
+		this.sheepAmount = amount;
+	}
+	
+	public int getSheeps(){
+		return sheepAmount;
 	}
 
 

@@ -1,6 +1,7 @@
 package sc.plugin_schaefchen;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * ein spielzug
@@ -11,9 +12,11 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public final class Move {
 
 	// das betroffene schaf
+	@XStreamAsAttribute
 	public final int sheep;
 
 	// das spielfeld auf das das betroffene schaf ziehen soll
+	@XStreamAsAttribute
 	public final int target;
 
 	public Move(int sheep, int target) {

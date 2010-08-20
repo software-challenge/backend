@@ -1,6 +1,6 @@
 package sc.plugin_schaefchen;
 
-import sc.plugin_schaefchen.Board;
+import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.Player;
 import sc.plugin_schaefchen.PlayerColor;
@@ -26,12 +26,12 @@ public interface IGameHandler {
 	/**
 	 * called, when board is updated
 	 * 
-	 * @param board
+	 * @param gameState
 	 *            the board
 	 * @param round
 	 *            the round in which the game is
 	 */
-	void onUpdate(Board board, int round);
+	void onUpdate(GameState gameState);
 
 	/**
 	 * request of a move to the client

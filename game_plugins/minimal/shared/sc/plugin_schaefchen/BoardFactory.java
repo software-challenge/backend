@@ -3,11 +3,11 @@ package sc.plugin_schaefchen;
 import java.lang.reflect.InvocationTargetException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import sc.plugin_schaefchen.renderer.positioner.ArcPositioner;
 import sc.plugin_schaefchen.renderer.positioner.BasePositioner;
@@ -23,7 +23,17 @@ import sc.plugin_schaefchen.util.Constants;
  * @author tkra
  * */
 public class BoardFactory {
+	
+	private static final List<FactoryNode> factoryNodes;
+	public static final List<Node> nodes;	
+	public static final List<GUINode> guiNodes;	
 
+	static{
+		factoryNodes=createFactoryNodes();
+		guiNodes = createGUINodes();
+		nodes = createNodes();
+	}
+	
 	private static class Index {
 		private int index = 0;
 
@@ -32,7 +42,7 @@ public class BoardFactory {
 		}
 	}
 
-	public static List<Node> createNodes() {
+	private static List<Node> createNodes() {
 
 		List<FactoryNode> factoryNodes = createFactoryNodes();
 		List<Node> nodes = new ArrayList<Node>(factoryNodes.size());
@@ -40,7 +50,6 @@ public class BoardFactory {
 		for (FactoryNode factoryNode : factoryNodes) {
 			Node node = new Node(factoryNode.getNodeType(), factoryNode
 					.getCounterPart(), factoryNode.index);
-			node.addFlowers(factoryNode.getFlowers());
 			for (Integer n : factoryNode.getNeighbours()) {
 				node.addNeighbour(n);
 			}
@@ -51,7 +60,7 @@ public class BoardFactory {
 
 	}
 
-	public static List<GUINode> createGUINodes() {
+	private static List<GUINode> createGUINodes() {
 
 		List<FactoryNode> factoryNodes = createFactoryNodes();
 		List<GUINode> nodes = new ArrayList<GUINode>(factoryNodes.size());
@@ -62,7 +71,7 @@ public class BoardFactory {
 					factoryNode.index, factoryNode.getNodeType());
 
 			try {
-				// FIXME: scheint ein wenig umstaendlicher weg zu sein
+				// TODO: scheint ein wenig umstaendlicher weg zu sein
 				Positioner positioner = factoryNode.positioner.getConstructor(
 						GUINode.class).newInstance(guiNode);
 				guiNode.setPositioner(positioner);
@@ -86,6 +95,74 @@ public class BoardFactory {
 		return nodes;
 
 	}
+	
+	protected static List<Flower> createFlowers(){
+				
+		Map<FactoryNode, Integer> nodeMap = new HashMap<FactoryNode, Integer>();
+		List<FactoryNode> nodeList = new LinkedList<FactoryNode>();
+		for (FactoryNode node : factoryNodes) {
+			if(node.hasFlowers()){
+				nodeMap.put(node, 0);
+				nodeList.add(node);
+			}
+		}
+		
+		Random rand = new SecureRandom();
+		for(int i=0; i<Constants.NODES_WITH_MUSHROOMS; i++){
+			int r = rand.nextInt(nodeList.size());
+			FactoryNode node = nodeList.get(r);
+			nodeMap.put(node, -1);
+			nodeList.remove(r);
+		}
+
+
+		int max = Constants.MAX_FLOWERS;
+		int total = Constants.TOTAL_FLOWERS;
+		int flowers = -Constants.NODES_WITH_MUSHROOMS;
+		while (flowers < total && nodeList.size() > 0) {
+			int r = rand.nextInt(nodeList.size());
+			FactoryNode node = nodeList.get(r);
+			
+			int f = nodeMap.get(node)+1;
+			nodeMap.put(node, f);
+			if (f == max) {
+				nodeList.remove(node);
+			}
+
+			flowers++;
+		}
+
+		List<Flower> flowerList = new LinkedList<Flower>();
+		for(FactoryNode node : nodeMap.keySet()){
+			int f = nodeMap.get(node);
+			if(f!=0){
+				flowerList.add(new Flower(node.index, f));
+		}
+		}
+		return flowerList;
+	}
+	
+	protected static List<Sheep> createSheeps(){
+		
+		List<Sheep> sheepList = new LinkedList<Sheep>();
+		for (FactoryNode node : factoryNodes){
+			PlayerColor owner = PlayerColor.NOPLAYER;
+			if(node.getNodeType().equals(NodeType.HOME1)){
+				owner = PlayerColor.PLAYER1;
+			} else if(node.getNodeType().equals(NodeType.HOME2)){
+				owner = PlayerColor.PLAYER2;
+			} 
+			for(int i=0; i<node.getSheeps(); i++){
+				Sheep sheep = new Sheep(node.index, node.getCounterPart(), owner);
+				if(node.getNodeType().equals(NodeType.GRASS)){
+					sheep.setSheepdog(true);
+				}
+				sheepList.add(sheep);
+			}
+		}
+		
+		return sheepList;
+	}
 
 	private static List<FactoryNode> createFactoryNodes() {
 
@@ -95,7 +172,7 @@ public class BoardFactory {
 		FactoryNode center = new FactoryNode(new double[] { -1, 1, 1, -1 },
 				new double[] { -1, -1, 1, 1 }, 4, index.next());
 		center.setPositioner(SquarePositioner.class);
-		center.setNodeType(NodeType.DOGHOUSE);
+		center.setSheeps(1);
 
 		FactoryNode top = new FactoryNode(new double[] { -1, 1, 1, -1 },
 				new double[] { -1, -1, 1, 1 }, 4, index.next());
@@ -136,7 +213,7 @@ public class BoardFactory {
 				straightLength, index);
 		nodes.addAll(centerTop);
 		if (straightSave)
-			centerTop.get(straightSaveDist).setNodeType(NodeType.FENCE);
+			centerTop.get(straightSaveDist).setNodeType(NodeType.SAVE);
 		FactoryNode.couple(center, centerTop.get(0));
 		FactoryNode.couple(centerTop.get(straightLength - 1), top);
 		for (FactoryNode node : centerTop) {
@@ -147,7 +224,7 @@ public class BoardFactory {
 				straightLength, index);
 		nodes.addAll(centerBottom);
 		if (straightSave)
-			centerBottom.get(straightSaveDist).setNodeType(NodeType.FENCE);
+			centerBottom.get(straightSaveDist).setNodeType(NodeType.SAVE);
 		FactoryNode.couple(center, centerBottom.get(0));
 		FactoryNode.couple(centerBottom.get(straightLength - 1), bottom);
 		for (FactoryNode node : centerBottom) {
@@ -158,7 +235,7 @@ public class BoardFactory {
 				straightLength, index);
 		nodes.addAll(centerLeft);
 		if (straightSave)
-			centerLeft.get(straightSaveDist).setNodeType(NodeType.FENCE);
+			centerLeft.get(straightSaveDist).setNodeType(NodeType.SAVE);
 		FactoryNode.couple(center, centerLeft.get(0));
 		FactoryNode.couple(centerLeft.get(straightLength - 1), left);
 		for (FactoryNode node : centerLeft) {
@@ -171,14 +248,14 @@ public class BoardFactory {
 		FactoryNode.couple(center, centerRight.get(0));
 		FactoryNode.couple(centerRight.get(straightLength - 1), right);
 		if (straightSave)
-			centerRight.get(straightSaveDist).setNodeType(NodeType.FENCE);
+			centerRight.get(straightSaveDist).setNodeType(NodeType.SAVE);
 
 		List<FactoryNode> rightBottom = getArcLink(1, 1, 5, 7, 0, Math.PI / 2,
 				arcSize, index);
 		nodes.addAll(rightBottom);
 		if (arcSave) {
-			rightBottom.get(arcSaveDist).setNodeType(NodeType.FENCE);
-			rightBottom.get(arcSaveDist2).setNodeType(NodeType.FENCE);
+			rightBottom.get(arcSaveDist).setNodeType(NodeType.SAVE);
+			rightBottom.get(arcSaveDist2).setNodeType(NodeType.SAVE);
 		}
 		FactoryNode.couple(right, rightBottom.get(0));
 		FactoryNode.couple(rightBottom.get(arcSize - 1), bottom);
@@ -187,8 +264,8 @@ public class BoardFactory {
 				arcSize, index);
 		nodes.addAll(bottomLeft);
 		if (arcSave) {
-			bottomLeft.get(arcSaveDist).setNodeType(NodeType.FENCE);
-			bottomLeft.get(arcSaveDist2).setNodeType(NodeType.FENCE);
+			bottomLeft.get(arcSaveDist).setNodeType(NodeType.SAVE);
+			bottomLeft.get(arcSaveDist2).setNodeType(NodeType.SAVE);
 		}
 		FactoryNode.couple(bottom, bottomLeft.get(0));
 		FactoryNode.couple(bottomLeft.get(arcSize - 1), left);
@@ -200,8 +277,8 @@ public class BoardFactory {
 				arcSize, index);
 		nodes.addAll(leftTop);
 		if (arcSave) {
-			leftTop.get(arcSaveDist2).setNodeType(NodeType.FENCE);
-			leftTop.get(arcSaveDist).setNodeType(NodeType.FENCE);
+			leftTop.get(arcSaveDist2).setNodeType(NodeType.SAVE);
+			leftTop.get(arcSaveDist).setNodeType(NodeType.SAVE);
 		}
 		FactoryNode.couple(left, leftTop.get(0));
 		FactoryNode.couple(leftTop.get(arcSize - 1), top);
@@ -213,8 +290,8 @@ public class BoardFactory {
 				arcSize, index);
 		nodes.addAll(topRight);
 		if (arcSave) {
-			topRight.get(arcSaveDist).setNodeType(NodeType.FENCE);
-			topRight.get(arcSaveDist2).setNodeType(NodeType.FENCE);
+			topRight.get(arcSaveDist).setNodeType(NodeType.SAVE);
+			topRight.get(arcSaveDist2).setNodeType(NodeType.SAVE);
 		}
 		FactoryNode.couple(top, topRight.get(0));
 		FactoryNode.couple(topRight.get(arcSize - 1), right);
@@ -288,37 +365,18 @@ public class BoardFactory {
 		leftBase.setCounterPart(rightBase.index);
 		rightBase.setCounterPart(leftBase.index);
 
-		int max = Constants.MAX_FLOWERS;
-		int total = Constants.TOTAL_FLOWERS;
-		int flowers = -Constants.NODES_WITH_MUSHROOMS;
-		List<FactoryNode> flowerNodes = new ArrayList<FactoryNode>(nodes.size());
+		topBase.setSheeps(Constants.SHEEPS_AT_HOME);
+		bottomBase.setSheeps(Constants.SHEEPS_AT_HOME);
+		leftBase.setSheeps(Constants.SHEEPS_AT_HOME);
+		rightBase.setSheeps(Constants.SHEEPS_AT_HOME);
+
+
 		for (FactoryNode node : nodes) {
 			if (node.getNodeType() == NodeType.GRASS && node != center) {
-				flowerNodes.add(node);
-				node.setFlowers(-1);
+				node.setFlowers(true);
 			}
 		}
-
-		Random rand = new SecureRandom();
-		for(int i=0; i<Constants.NODES_WITH_MUSHROOMS; i++){
-			flowerNodes.remove(rand.nextInt(flowerNodes.size()));
-		}
 		
-		for(FactoryNode node : flowerNodes){
-			node.addFlowers(1);
-		}
-		
-		while (flowers < total && flowerNodes.size() > 0) {
-			FactoryNode node = flowerNodes.get(rand.nextInt(flowerNodes.size()));
-			node.addFlowers(1);
-
-			if (node.getFlowers() == max) {
-				flowerNodes.remove(node);
-			}
-
-			flowers++;
-		}
-
 		return nodes;
 
 	}
@@ -369,7 +427,7 @@ public class BoardFactory {
 		for (int i = 1; i < n; i++) {
 			FactoryNode.couple(nodes.get(i - 1), nodes.get(i));
 		}
-
+		
 		return nodes;
 	}
 

@@ -2,8 +2,6 @@ package sc.plugin_schaefchen;
 
 import java.io.IOException;
 
-import sc.plugin_schaefchen.Game;
-import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.GameUtil;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.Player;
@@ -46,11 +44,10 @@ public class GuiClient extends AbstractClient {
 		super.onNewState(roomId, state);
 
 		GameState gameState = (GameState) state;
-		Game game = gameState.getGame();
 
 		if (obs != null) {
-			Player oldPlayer = game.getBoard().getOtherPlayer(
-					game.getActivePlayer());
+			Player oldPlayer = gameState.getOtherPlayer(
+					gameState.getCurrentPlayer());
 
 			int playerid = 0;
 			if (oldPlayer.getPlayerColor() == PlayerColor.PLAYER1) {

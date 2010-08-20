@@ -3,7 +3,7 @@
  */
 package sc.plugin_schaefchen.gui;
 
-import sc.plugin_schaefchen.Board;
+import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Move;
@@ -23,8 +23,8 @@ public class ObserverGameHandler implements IGameHandler {
 	}
 
 	@Override
-	public void onUpdate(Board board, int turn) {
-		RenderFacade.getInstance().updateBoard(board, turn, EPlayerId.OBSERVER);
+	public void onUpdate(GameState gameState) {
+		RenderFacade.getInstance().updateGameState(gameState, EPlayerId.OBSERVER);
 	}
 
 	@Override
