@@ -1,7 +1,5 @@
 package sc.plugin_schaefchen;
 
-import org.omg.PortableInterceptor.NON_EXISTENT;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -21,22 +19,29 @@ public final class Sheep {
 	public final int index;
 
 	// spieler dem dieses schaf gehoert
+	@XStreamAsAttribute
 	public final PlayerColor owner;
 
 	// info, ob diese schaf einen (scharfen) schaeferhund dabei hat
-	private DogState dogState;
+	@XStreamAsAttribute
+	private DogState dog;
 
 	// anzahl der eingesammelten schafe
-	private int sheepsFromPlayer1;
-	private int sheepsFromPlayer2;
+	@XStreamAsAttribute
+	private int sheeps1;
+	@XStreamAsAttribute
+	private int sheeps2;
 
 	// anzahl der von diesem schaf gesammelten blumen
+	@XStreamAsAttribute
 	private int flowers;
 
 	// spielfeld auf dem sich dieses schaf befindet
+	@XStreamAsAttribute
 	private int node;
 
 	// zielfeld fuer dieses schaf
+	@XStreamAsAttribute
 	private int target;
 
 	public Sheep(int start, int target, PlayerColor owner) {
@@ -44,7 +49,7 @@ public final class Sheep {
 		this.owner = owner;
 		this.node = start;
 		index = nextIndex++;
-		dogState = DogState.NONE;
+		dog = DogState.NONE;
 		increaseSize(owner);
 	}
 
@@ -52,7 +57,7 @@ public final class Sheep {
 	 * setzen, ob dieses schaf von einem schaeferhund begleitet wird
 	 */
 	protected void setDogState(DogState dogState) {
-		this.dogState = dogState;
+		this.dog = dogState;
 
 	}
 
@@ -61,7 +66,7 @@ public final class Sheep {
 	 * gibt an, ob dieses schaf von einem schaeferhund begleitet wird
 	 */
 	public DogState getDogState() {
-		return dogState;
+		return dog;
 	}
 
 	/**
@@ -110,16 +115,16 @@ public final class Sheep {
 	 * addiert eine andere herdengruesse zu dieser
 	 */
 	public void addSize(Sheep other) {
-		sheepsFromPlayer1 += other.sheepsFromPlayer1;
-		sheepsFromPlayer2 += other.sheepsFromPlayer2;
+		sheeps1 += other.sheeps1;
+		sheeps2 += other.sheeps2;
 	}
 
 	/**
 	 * addiert eine andere herdengruesse zu dieser
 	 */
 	protected void resetSize() {
-		sheepsFromPlayer1 = 0;
-		sheepsFromPlayer2 = 0;
+		sheeps1 = 0;
+		sheeps2 = 0;
 	}
 
 	/**
@@ -128,9 +133,9 @@ public final class Sheep {
 	protected void increaseSize(PlayerColor c) {
 
 		if (c.equals(PlayerColor.PLAYER1)) {
-			sheepsFromPlayer1++;
+			sheeps1++;
 		} else if (c.equals(PlayerColor.PLAYER2)) {
-			sheepsFromPlayer2++;
+			sheeps2++;
 		}
 
 	}
@@ -142,8 +147,8 @@ public final class Sheep {
 	public int getSize(PlayerColor c) {
 		assert c.equals(PlayerColor.PLAYER1) || c.equals(PlayerColor.PLAYER2);
 
-		return c.equals(PlayerColor.PLAYER1) ? sheepsFromPlayer1
-				: sheepsFromPlayer2;
+		return c.equals(PlayerColor.PLAYER1) ? sheeps1
+				: sheeps2;
 	}
 
 }

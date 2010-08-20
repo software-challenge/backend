@@ -27,6 +27,10 @@ public final class GameState {
 	// der eigentlicher wurfel
 	private static final SecureRandom rand = new SecureRandom();
 
+	// momentane rundenzahl
+	@XStreamAsAttribute
+	private int turn;
+	
 	// die teilenhmenden spieler
 	private Player player1;
 	private Player player2;
@@ -35,25 +39,21 @@ public final class GameState {
 	@XStreamAsAttribute
 	private PlayerColor currentPlayer;
 
-	// liste der zur verfuegung stehenden wuerfelergebnisse
-	@XStreamImplicit(itemFieldName = "die")
-	private final List<Integer> dice;
+	// liste der vorhandenen schafe
+	@XStreamImplicit(itemFieldName = "sheep")
+	private final List<Sheep> sheeps;
 
 	// liste der blumen
 	@XStreamImplicit(itemFieldName = "flowers")
 	private List<Flower> flowers;
 
-	// liste der vorhandenen schafe
-	@XStreamImplicit(itemFieldName = "sheep")
-	private final List<Sheep> sheeps;
-
-	// momentane rundenzahl
-	@XStreamAsAttribute
-	private int turn;
+	// liste der zur verfuegung stehenden wuerfelergebnisse
+	@XStreamImplicit(itemFieldName = "die")
+	private final List<Die> dice;
 
 	public GameState() {
 
-		dice = new LinkedList<Integer>();
+		dice = new LinkedList<Die>();
 		for (int i = dice.size(); i < Constants.DIE_COUNT; i++) {
 			addDice();
 		}
@@ -133,25 +133,24 @@ public final class GameState {
 	/**
 	 * liefert eine liste der verfuegbaren wuerfel
 	 */
-	public List<Integer> getDice() {
-		return new LinkedList<Integer>(dice);
+	public List<Die> getDice() {
+		return new LinkedList<Die>(dice);
 	}
 
 	/**
 	 * entfernt einen wuerfel aus dem vorrat und fuellt den vorrat auf
 	 */
-	public void removeDice(Integer die) {
+	public void removeDice(Die die) {
 		dice.remove(die);
 		addDice();
-
 	}
 
 	private void addDice() {
-		dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+		dice.add(new Die(rand.nextInt(Constants.DIE_SIZE) + 1));
 
 		// sicherstellen, dass wenigstens zwei verschiedene wuerfel vorhanden
 		// sind
-		Integer die = dice.get(0);
+		Die die = dice.get(0);
 		boolean same = dice.size() > 1;
 		while (same) {
 			for (int i = 1; i < dice.size(); i++) {
@@ -162,7 +161,7 @@ public final class GameState {
 			}
 			if (same) {
 				dice.remove(0);
-				dice.add(rand.nextInt(Constants.DIE_SIZE) + 1);
+				dice.add(new Die(rand.nextInt(Constants.DIE_SIZE) + 1));
 			}
 		}
 	}
@@ -362,9 +361,9 @@ public final class GameState {
 	 */
 	private Map<Integer, Integer> getReachableNodes(int node) {
 		Map<Integer, Integer> reachableNodes = new HashMap<Integer, Integer>();
-		for (Integer distance : dice) {
-			for (Integer n : getNeighbours(node, distance))
-				reachableNodes.put(n, distance);
+		for (Die die : dice) {
+			for (Integer n : getNeighbours(node, die.value))
+				reachableNodes.put(n, die.value);
 		}
 
 		return reachableNodes;
@@ -385,7 +384,7 @@ public final class GameState {
 
 		// den verwendeten wuerfel aud dem vorrat entfernen
 		Map<Integer, Integer> validMoves = getValidReachableNodes(move.sheep);
-		removeDice(validMoves.get(move.target));
+		removeDice(new Die(validMoves.get(move.target)));
 
 		// jedes schaf das auf dem zielfeld steht und dem gegenspieler gehoet
 		// wird einverleibt. die blumen werden uebernommen. der geleitschutz

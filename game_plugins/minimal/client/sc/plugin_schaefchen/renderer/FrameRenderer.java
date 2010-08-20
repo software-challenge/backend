@@ -33,6 +33,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import sc.plugin_schaefchen.BoardFactory;
+import sc.plugin_schaefchen.Die;
 import sc.plugin_schaefchen.DogState;
 import sc.plugin_schaefchen.Flower;
 import sc.plugin_schaefchen.GameState;
@@ -612,11 +613,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		int i = 0;
 		fontY += 15;
 		g2.setFont(hDice);
-		for (Integer dice : gameState.getDice()) {
+		for (Die dice : gameState.getDice()) {
 			g2.setColor(Color.GRAY);
 			g2.fillRoundRect(fontX + 60 * i, fontY, 50, 50, 15, 15);
 			g2.setColor(getPlayerColor(currentPlayer));
-			String value = dice.toString();
+			String value = Integer.toString(dice.value);
 			g2.drawString(value, fontX + 23 + 60 * i
 					- mfDice.stringWidth(value) / 2, fontY - 2
 					+ mfDice.getHeight());

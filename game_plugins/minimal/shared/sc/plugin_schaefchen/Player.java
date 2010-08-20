@@ -5,6 +5,7 @@ package sc.plugin_schaefchen;
 import sc.framework.plugins.SimplePlayer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * ein spieler
@@ -16,12 +17,15 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 public final class Player extends SimplePlayer {
 
 	// spielerfarbe des spielers
-	private PlayerColor color;
+	@XStreamAsAttribute
+	private PlayerColor playerId;
 
 	// gesamtzahl der von diesem spieler gesicherten blumen
+	@XStreamAsAttribute
 	private int munchedFlowers;
 	
 	// gesamtzahl der von diesem spieler gesicherten gegnerischen schafe
+	@XStreamAsAttribute
 	private int capturedSheeps;
 
 
@@ -32,14 +36,14 @@ public final class Player extends SimplePlayer {
 
 	public Player(final PlayerColor color) {
 		this();
-		this.color = color;
+		this.playerId = color;
 	}
 
 	/**
 	 * liefert die spielrfarbe dieses spielers
 	 */
 	public PlayerColor getPlayerColor() {
-		return color;
+		return playerId;
 	}
 
 	/**
