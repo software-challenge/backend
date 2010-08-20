@@ -179,11 +179,12 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 					// wenn zug abgeschickt werden soll aktuelln hut
 					// nicht zurueckfallen lassen
-					Point p = sheepMap.get(currentSheep);
-					p.x = mousex;
-					p.y = mousey;
-					sendMove(new Move(currentSheep.index, currentNode));
-
+					if (!onlyObserving) {
+						Point p = sheepMap.get(currentSheep);
+						p.x = mousex;
+						p.y = mousey;
+						sendMove(new Move(currentSheep.index, currentNode));
+					}
 				}
 			}
 
@@ -279,8 +280,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	@Override
 	public void updateGameState(GameState gameState) {
-			this.gameState = gameState;
-		
+		this.gameState = gameState;
+
 		createSheepMap();
 		this.turn = gameState.getTurn();
 		this.currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
@@ -528,7 +529,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 		// highlights fuer erreichbare knoten zeichnen
-		if (currentSheep != null && myturn) {
+		if (currentSheep != null) {
 			Color c = currentSheep.owner.equals(currentPlayer) ? getPlayerColor(currentSheep.owner)
 					: Color.BLACK;
 
@@ -689,7 +690,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		if (Math.abs(stats[4]) == 1) {
 			type = type.substring(0, type.length() - 1);
 		}
-		g2.drawString(Math.abs(stats[4]) + " " + type + " eingesammelt", fontX,
+		g2.drawString(Math.abs(stats[4]) + " " + type + " gesammelt", fontX,
 				fontY);
 
 		fontY += 20;
@@ -772,9 +773,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				}
 
 				g2
-				.setColor(sheep.owner.equals(currentPlayer
-						) ? getPlayerColor(sheep.owner)
-						: Color.DARK_GRAY);
+						.setColor(sheep.owner.equals(currentPlayer) ? getPlayerColor(sheep.owner)
+								: Color.DARK_GRAY);
 				g2.fillPolygon(pointerXs, pointerYs, n);
 				g2.setColor(Color.BLACK);
 				g2.setStroke(new BasicStroke(2f));
@@ -809,8 +809,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				int statsH = mfSheep.getHeight();
 
 				g2
-						.setColor(sheep.owner.equals(currentPlayer
-								) ? getPlayerColor(sheep.owner)
+						.setColor(sheep.owner.equals(currentPlayer) ? getPlayerColor(sheep.owner)
 								: Color.DARK_GRAY);
 				g2.fillRoundRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
 						statsH, 8, 8);
