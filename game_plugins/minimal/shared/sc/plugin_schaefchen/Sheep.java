@@ -1,5 +1,7 @@
 package sc.plugin_schaefchen;
 
+import org.omg.PortableInterceptor.NON_EXISTENT;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -22,8 +24,7 @@ public final class Sheep {
 	public final PlayerColor owner;
 
 	// info, ob diese schaf einen (scharfen) schaeferhund dabei hat
-	private boolean hasSheepdog;
-	private boolean hasSharpSheepdog;
+	private DogState dogState;
 
 	// anzahl der eingesammelten schafe
 	private int sheepsFromPlayer1;
@@ -43,38 +44,24 @@ public final class Sheep {
 		this.owner = owner;
 		this.node = start;
 		index = nextIndex++;
-		hasSharpSheepdog = false;
+		dogState = DogState.NONE;
 		increaseSize(owner);
 	}
 
 	/**
 	 * setzen, ob dieses schaf von einem schaeferhund begleitet wird
 	 */
-	protected void setSheepdog(boolean sheepdog) {
-		this.hasSheepdog = sheepdog;
+	protected void setDogState(DogState dogState) {
+		this.dogState = dogState;
 
 	}
+
 
 	/**
 	 * gibt an, ob dieses schaf von einem schaeferhund begleitet wird
 	 */
-	public boolean hasSheepdog() {
-		return hasSheepdog;
-	}
-
-	/**
-	 * setzen, ob dieses schaf von einem scharfen schaeferhund begleitet wird
-	 */
-	protected void setSharpSheepdog(boolean sharpSheepdog) {
-		this.hasSharpSheepdog = sharpSheepdog;
-
-	}
-
-	/**
-	 * gibt an, ob dieses schaf von einem scharfen schaeferhund begleitet wird
-	 */
-	public boolean hasSharpSheepdog() {
-		return hasSharpSheepdog;
+	public DogState getDogState() {
+		return dogState;
 	}
 
 	/**
