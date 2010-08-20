@@ -49,7 +49,6 @@ public final class Sheep {
 		this.owner = owner;
 		this.node = start;
 		index = nextIndex++;
-		dog = DogState.NONE;
 		increaseSize(owner);
 	}
 
@@ -60,7 +59,6 @@ public final class Sheep {
 		this.dog = dogState;
 
 	}
-
 
 	/**
 	 * gibt an, ob dieses schaf von einem schaeferhund begleitet wird
@@ -132,12 +130,13 @@ public final class Sheep {
 	 */
 	protected void increaseSize(PlayerColor c) {
 
-		if (c.equals(PlayerColor.PLAYER1)) {
-			sheeps1++;
-		} else if (c.equals(PlayerColor.PLAYER2)) {
-			sheeps2++;
+		if (c != null) {
+			if (c == PlayerColor.PLAYER1) {
+				sheeps1++;
+			} else if (c == PlayerColor.PLAYER2) {
+				sheeps2++;
+			}
 		}
-
 	}
 
 	/**
@@ -145,10 +144,9 @@ public final class Sheep {
 	 * einer spielerfarbe
 	 */
 	public int getSize(PlayerColor c) {
-		assert c.equals(PlayerColor.PLAYER1) || c.equals(PlayerColor.PLAYER2);
+		assert c == PlayerColor.PLAYER1 || c == PlayerColor.PLAYER2;
 
-		return c.equals(PlayerColor.PLAYER1) ? sheeps1
-				: sheeps2;
+		return c == PlayerColor.PLAYER1 ? sheeps1 : sheeps2;
 	}
 
 }

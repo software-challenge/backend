@@ -164,10 +164,10 @@ public class Observation implements IObservation, IUpdateListener,
 
 		if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.PLAYER1) {
 			name1 = gameState.getCurrentPlayer().getDisplayName();
-			name2 = gameState.getOtherPlayer(gameState.getCurrentPlayer())
+			name2 = gameState.getOtherPlayer()
 					.getDisplayName();
 		} else {
-			name1 = gameState.getOtherPlayer(gameState.getCurrentPlayer())
+			name1 = gameState.getOtherPlayer()
 					.getDisplayName();
 			name2 = gameState.getCurrentPlayer().getDisplayName();
 		}
@@ -317,7 +317,7 @@ public class Observation implements IObservation, IUpdateListener,
 			handler.onUpdate(gameState);
 
 			handler.onUpdate(gameState.getCurrentPlayer(), gameState
-					.getOtherPlayer(gameState.getCurrentPlayer()));
+					.getOtherPlayer());
 
 			if (conGame.isGameOver() && conGame.isAtEnd()) {
 				notifyOnGameEnded(sender, conGame.getResult());

@@ -46,8 +46,7 @@ public class GuiClient extends AbstractClient {
 		GameState gameState = (GameState) state;
 
 		if (obs != null) {
-			Player oldPlayer = gameState.getOtherPlayer(
-					gameState.getCurrentPlayer());
+			Player oldPlayer = gameState.getOtherPlayer();
 
 			int playerid = 0;
 			if (oldPlayer.getPlayerColor() == PlayerColor.PLAYER1) {

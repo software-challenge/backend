@@ -1,6 +1,7 @@
 package sc.plugin_schaefchen;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,10 +31,10 @@ public final class GameState {
 	// momentane rundenzahl
 	@XStreamAsAttribute
 	private int turn;
-	
+
 	// die teilenhmenden spieler
-	private Player player1;
-	private Player player2;
+	@XStreamImplicit(itemFieldName = "player")
+	private final List<Player> player;
 
 	// farbe des aktuellen spielers
 	@XStreamAsAttribute
@@ -60,6 +61,7 @@ public final class GameState {
 
 		sheeps = BoardFactory.createSheeps();
 		flowers = BoardFactory.createFlowers();
+		player = new ArrayList<Player>(2);
 	}
 
 	/**
@@ -67,22 +69,29 @@ public final class GameState {
 	 * zugehoerigen basen. es werden nur zwei spieler unterstuetzt
 	 */
 	public final void addPlayer(final Player player) {
-		if (player.getPlayerColor().equals(PlayerColor.PLAYER1)) {
-			player1 = player;
-		} else if (player.getPlayerColor().equals(PlayerColor.PLAYER2)) {
-			player2 = player;
+		if (player.getPlayerColor() == PlayerColor.PLAYER1) {
+			this.player.add(0, player);
+		} else if (player.getPlayerColor() == PlayerColor.PLAYER2) {
+			this.player.add(1, player);
 		}
 	}
+	
+
+	public void setCurrentPlayer(PlayerColor p) {
+		assert p == PlayerColor.PLAYER1 || p == PlayerColor.PLAYER2;
+		this.currentPlayer = p;
+	}
+
+	public Player getCurrentPlayer() {
+		return currentPlayer == PlayerColor.PLAYER1 ? player.get(0) : player.get(1);
+	}
+
 
 	/**
 	 * liefert den gegenspieler zu einem gegebenen spieler
 	 */
-	public Player getOtherPlayer(final Player player) {
-		assert player1 != null;
-		assert player2 != null;
-
-		return player.getPlayerColor().equals(PlayerColor.PLAYER1) ? player2
-				: player1;
+	public Player getOtherPlayer() {
+		return currentPlayer == PlayerColor.PLAYER1 ? player.get(1) : player.get(0);
 	}
 
 	/**
@@ -98,7 +107,7 @@ public final class GameState {
 	public List<Sheep> getSheeps(PlayerColor player) {
 		List<Sheep> sheeps = new LinkedList<Sheep>();
 		for (Sheep sheep : this.sheeps) {
-			if (sheep.owner.equals(player)) {
+			if (sheep.owner == player) {
 				sheeps.add(sheep);
 			}
 		}
@@ -204,8 +213,8 @@ public final class GameState {
 	}
 
 	public String[] getPlayerNames() {
-		return new String[] { player1.getDisplayName(),
-				player2.getDisplayName() };
+		return new String[] { player.get(0).getDisplayName(),
+				player.get(1).getDisplayName() };
 
 	}
 
@@ -213,16 +222,16 @@ public final class GameState {
 
 		int[][] stats = new int[2][7];
 
-		stats[0][3] = player1.getCapturedSheeps();
-		stats[0][5] = player1.getMunchedFlowers();
+		stats[0][3] = player.get(0).getCapturedSheeps();
+		stats[0][5] = player.get(0).getMunchedFlowers();
 
-		stats[1][3] = player2.getCapturedSheeps();
-		stats[1][5] = player2.getMunchedFlowers();
+		stats[1][3] = player.get(1).getCapturedSheeps();
+		stats[1][5] = player.get(1).getMunchedFlowers();
 
 		int index;
 		for (Sheep sheep : getSheeps()) {
-			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
-				index = sheep.owner.equals(PlayerColor.PLAYER1) ? 0 : 1;
+			if (sheep.owner != null) {
+				index = sheep.owner == PlayerColor.PLAYER1 ? 0 : 1;
 				stats[index][1]++;
 				stats[index][2] += sheep.getSize(sheep.owner.oponent());
 				stats[index][4] += sheep.getFlowers();
@@ -393,7 +402,11 @@ public final class GameState {
 			if (victim.owner != sheep.owner) {
 				sheep.addSize(victim);
 				sheep.addFlowers(victim.getFlowers());
-				sheep.setDogState(victim.getDogState());
+
+				// hund, dofern vorhanden, wird uebernommen
+				if (victim.getDogState() != null) {
+					sheep.setDogState(victim.getDogState());
+				}
 
 				sheeps.remove(victim);
 
@@ -405,8 +418,8 @@ public final class GameState {
 		sheep.setNode(target.index);
 
 		switch (target.getNodeType()) {
-		case GRASS:
-		case SAVE:
+		
+		default:
 			// auf normalen feldern werden die blumen aufgesammelt
 			for (Flower flower : flowers) {
 				if (flower.node == target.index) {
@@ -417,13 +430,16 @@ public final class GameState {
 				}
 			}
 			break;
-
+			
+		case SAVE:
+			break;
+			
 		case HOME1:
 		case HOME2:
 			// wenn ein heimatfeld betreten wird werden die gesammelten blumen
 			// und gegnerischen schafe gesichert ...
-			Player owner = sheep.owner == PlayerColor.PLAYER1 ? player1
-					: player2;
+			Player owner = sheep.owner == PlayerColor.PLAYER1 ? player.get(0)
+					: player.get(1);
 
 			owner.munchFlowers(sheep.getFlowers());
 			owner.addCapturedSheeps(sheep.getSize(sheep.owner.oponent()));
@@ -461,15 +477,6 @@ public final class GameState {
 
 	public int getTurn() {
 		return turn;
-	}
-
-	public void setCurrentPlayer(PlayerColor p) {
-		assert p.equals(PlayerColor.PLAYER1) || p.equals(PlayerColor.PLAYER2);
-		this.currentPlayer = p;
-	}
-
-	public Player getCurrentPlayer() {
-		return currentPlayer.equals(PlayerColor.PLAYER1) ? player1 : player2;
 	}
 
 }

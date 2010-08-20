@@ -142,12 +142,11 @@ public abstract class AbstractClient implements ILobbyClientListener {
 																		// is
 																		// own
 				handler.onUpdate(gameState.getCurrentPlayer(), gameState
-						.getOtherPlayer(gameState.getCurrentPlayer()));
+						.getOtherPlayer());
 			} else
 			// active player is the enemy
 			{
-				handler.onUpdate(gameState.getOtherPlayer(
-						gameState.getCurrentPlayer()), gameState.getCurrentPlayer());
+				handler.onUpdate(gameState.getOtherPlayer(), gameState.getCurrentPlayer());
 
 			}
 		}
