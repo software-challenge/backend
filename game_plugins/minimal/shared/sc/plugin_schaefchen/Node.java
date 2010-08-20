@@ -24,6 +24,7 @@ public final class Node {
 	public final int index;
 
 	// typ dieses spielfeldes
+	@XStreamAsAttribute
 	private NodeType type;
 	
 	// menge der benachbarten spielfelder

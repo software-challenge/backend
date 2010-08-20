@@ -146,15 +146,15 @@ public class BoardFactory {
 		
 		List<Sheep> sheepList = new LinkedList<Sheep>();
 		for (FactoryNode node : factoryNodes){
-			PlayerColor owner = PlayerColor.NOPLAYER;
-			if(node.getNodeType().equals(NodeType.HOME1)){
+			PlayerColor owner = null;
+			if(node.getNodeType() == NodeType.HOME1){
 				owner = PlayerColor.PLAYER1;
-			} else if(node.getNodeType().equals(NodeType.HOME2)){
+			} else if(node.getNodeType() == NodeType.HOME2){
 				owner = PlayerColor.PLAYER2;
 			} 
 			for(int i=0; i<node.getSheeps(); i++){
 				Sheep sheep = new Sheep(node.index, node.getCounterPart(), owner);
-				if(node.getNodeType().equals(NodeType.GRASS)){
+				if(node.getNodeType() == NodeType.GRASS ){
 					sheep.setDogState(DogState.PASSIVE);
 				}
 				sheepList.add(sheep);

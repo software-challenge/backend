@@ -40,6 +40,7 @@ import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.GUINode;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Move;
+import sc.plugin_schaefchen.NodeType;
 import sc.plugin_schaefchen.Player;
 import sc.plugin_schaefchen.PlayerColor;
 import sc.plugin_schaefchen.Sheep;
@@ -55,7 +56,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private static final Color HOME1_COLOR = new Color(255, 32, 32, 128);
 	private static final Color HOME2_COLOR = new Color(32, 32, 255, 128);
-	private static final Color FENCE_COLOR = new Color(32, 192, 32, 128);
+	private static final Color SAVE_COLOR = new Color(32, 192, 32, 128);
 
 	private static final Color PLAYER2_COLOR = Color.BLUE;
 	private static final Color PLAYER1_COLOR = Color.RED;
@@ -152,13 +153,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			mousey = e.getY();
 			for (Sheep sheep : sheepMap.keySet()) {
 				Point p = sheepMap.get(sheep);
-				if (Math.sqrt(Math.pow(p.x - mousex, 2) + Math.pow(p.y - mousey, 2)) < 20
-						&& !sheep.owner.equals(PlayerColor.NOPLAYER)) {
+				if (Math.sqrt(Math.pow(p.x - mousex, 2)
+						+ Math.pow(p.y - mousey, 2)) < 20
+						&& sheep.owner != null) {
 					currentSheep = sheep;
-					if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
-						currentNeighbours = gameState.getValidReachableNodes(
-								sheep.index).keySet();
-					}
+					currentNeighbours = gameState.getValidReachableNodes(
+							sheep.index).keySet();
+
 					repaint();
 					break;
 				}
@@ -169,11 +170,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			
+
 			mousex = 0;
 			mousey = 0;
 			if (currentSheep != null && highliteNode && !ended) {
-				if (currentSheep.owner != PlayerColor.NOPLAYER
+				if (currentSheep.owner != null
 						&& currentSheep.owner == currentPlayer
 						&& currentNeighbours.contains(currentNode)) {
 
@@ -206,7 +207,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			highliteNode = false;
 			if (currentSheep != null) {
 
-				if (currentSheep.owner.equals(currentPlayer)) {
+				if (currentSheep.owner == currentPlayer) {
 					for (Integer node : currentNeighbours) {
 						if (guiNodes[node].inner(e.getX(), e.getY())) {
 							currentNode = node;
@@ -298,7 +299,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			String errorMessage) {
 		ended = true;
 		endErrorMsg = errorMessage;
-		endColor = PlayerColor.NOPLAYER;
+		endColor = null;
 		if (data != null) {
 			if (data.getScores().get(0).getValues().get(0).equals(
 					new BigDecimal(1))) {
@@ -316,7 +317,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		ended = true;
 		endErrorMsg = errorMessage == null ? "Es ist ein unbekannter Fehler aufgetreten."
 				: errorMessage;
-		endColor = PlayerColor.NOPLAYER;
+		endColor = null;
 		repaint();
 
 	}
@@ -406,16 +407,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 		if (ended) {
-			String msg;
-			switch (endColor) {
-			case PLAYER1:
+			String msg = "Das Spiel ist zu Ende";
+			if (endColor == PlayerColor.PLAYER1) {
 				msg = gameState.getPlayerNames()[0] + " hat gewonnen!";
-				break;
-			case PLAYER2:
+			} else if (endColor == PlayerColor.PLAYER2) {
 				msg = gameState.getPlayerNames()[1] + " hat gewonnen!";
-				break;
-			default:
-				msg = "Das Spiel ist zu Ende";
 			}
 			String info = endErrorMsg != null ? endErrorMsg
 					: "Herzlichen Glückwunsch!";
@@ -453,30 +449,21 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		// flaechig gefuellte spielfelder zeichnen
 		for (GUINode guiNode : guiNodes) {
-			switch (guiNode.getNodeType()) {
 
-			case GRASS:
-				break;
+			NodeType type = guiNode.getNodeType();
+			if (type != NodeType.GRASS) {
 
-			case HOME1:
-				g2.setColor(HOME1_COLOR);
+				if (type == NodeType.HOME1) {
+					g2.setColor(HOME1_COLOR);
+				} else if (type == NodeType.HOME2) {
+					g2.setColor(HOME2_COLOR);
+				} else {
+					g2.setColor(SAVE_COLOR);
+				}
 				g2.fillPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
 						guiNode.size());
-				break;
 
-			case HOME2:
-				g2.setColor(HOME2_COLOR);
-				g2.fillPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
-						guiNode.size());
-				break;
-
-			case SAVE:
-				g2.setColor(FENCE_COLOR);
-				g2.fillPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
-						guiNode.size());
-				break;
 			}
-
 		}
 
 		// rahmen fuer jedes spielfeld zeichnen
@@ -521,7 +508,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		// highlights fuer erreichbare knoten zeichnen
 		if (currentSheep != null) {
-			Color c = currentSheep.owner.equals(currentPlayer) ? getPlayerColor(currentSheep.owner)
+			Color c = currentSheep.owner == currentPlayer ? getPlayerColor(currentSheep.owner)
 					: Color.BLACK;
 
 			if (highliteNode && myturn && !onlyObserving
@@ -534,8 +521,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			}
 
 			g2.setColor(c);
-			if (currentNeighbours != null
-					&& currentSheep.owner != PlayerColor.NOPLAYER) {
+			if (currentNeighbours != null && currentSheep.owner != null) {
 				for (Integer n : currentNeighbours) {
 					GUINode guiNode = guiNodes[n];
 					g2.setStroke(new BasicStroke(3.5f));
@@ -625,8 +611,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			i++;
 		}
 
-		if (currentSheep != null
-				&& !currentSheep.owner.equals(PlayerColor.NOPLAYER)) {
+		if (currentSheep != null && currentSheep.owner != null) {
 			int ownSheeps = currentSheep.getSize(currentSheep.owner);
 			int opponentSheeps = currentSheep.getSize(currentSheep.owner
 					.oponent());
@@ -647,7 +632,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.drawString(flowers + " eingesammelte Blume"
 					+ (Math.abs(flowers) != 1 ? "n" : ""), fontX, fontY);
 
-			if (currentSheep.getDogState() != DogState.NONE) {
+			if (currentSheep.getDogState() != null) {
 				fontY += 25;
 				g2.drawString("In Begleitung des Schäferhundes", fontX, fontY);
 			}
@@ -731,7 +716,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				p = new Point(mousex, mousey);
 			}
 
-			int spread = (sheep.getDogState() != DogState.NONE)
+			int spread = (sheep.getDogState() != null)
 					&& (sheep.getSize(PlayerColor.PLAYER1)
 							+ sheep.getSize(PlayerColor.PLAYER2) > 0) ? 5 : 0;
 
@@ -745,7 +730,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			int[] pointerYs = new int[] { 0, (s - 5), 0, -(s - 5) };
 
 			GUINode target = guiNodes[sheep.getTarget()];
-			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
+			if (sheep.owner != null) {
 				double phiR = Math.atan((float) (p.x - target
 						.getScaledCenterX())
 						/ (p.y - target.getScaledCenterY()));
@@ -763,7 +748,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				}
 
 				g2
-						.setColor(sheep.owner.equals(currentPlayer) ? getPlayerColor(sheep.owner)
+						.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
 								: Color.DARK_GRAY);
 				g2.fillPolygon(pointerXs, pointerYs, n);
 				g2.setColor(Color.BLACK);
@@ -777,7 +762,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						- DOG_SIZE / 2, DOG_SIZE, DOG_SIZE, this);
 			}
 
-			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
+			if (sheep.owner != null) {
 				g2.drawImage(sheepIcon, p.x - spread - SHEEP_SIZE / 2, p.y
 						- SHEEP_SIZE / 2, SHEEP_SIZE, SHEEP_SIZE, this);
 			}
@@ -787,7 +772,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						- DOG_SIZE / 2, DOG_SIZE, DOG_SIZE, this);
 			}
 
-			if (!sheep.owner.equals(PlayerColor.NOPLAYER)) {
+			if (sheep.owner != null) {
 				int ownSheeps = sheep.getSize(sheep.owner);
 				int opponentSheeps = sheep.getSize(sheep.owner.oponent());
 				int flowers = sheep.getFlowers();
@@ -799,7 +784,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				int statsH = mfSheep.getHeight();
 
 				g2
-						.setColor(sheep.owner.equals(currentPlayer) ? getPlayerColor(sheep.owner)
+						.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
 								: Color.DARK_GRAY);
 				g2.fillRoundRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
 						statsH, 8, 8);
