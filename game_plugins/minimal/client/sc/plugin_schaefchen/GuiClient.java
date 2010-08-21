@@ -30,7 +30,8 @@ public class GuiClient extends AbstractClient {
 	 * @param playerId
 	 */
 	private void sendLastTurn(Player oldPlayer, int playerId) {
-		Move move = oldPlayer.getLastMove();
+		//Move move = oldPlayer.getLastMove();
+		Move move = null;
 		obs.newTurn(playerId, GameUtil.displayMoveAction(move));
 	}
 
@@ -56,9 +57,9 @@ public class GuiClient extends AbstractClient {
 			}
 			;
 
-			if (oldPlayer.getLastMove() != null) {
-				sendLastTurn(oldPlayer, playerid);
-			}
+//			if (oldPlayer.getLastMove() != null) {
+//				sendLastTurn(oldPlayer, playerid);
+//			}
 
 			if (!alreadyReady) {
 				alreadyReady = true;

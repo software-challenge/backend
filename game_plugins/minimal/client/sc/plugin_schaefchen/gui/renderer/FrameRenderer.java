@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin_schaefchen.renderer;
+package sc.plugin_schaefchen.gui.renderer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

@@ -26,12 +26,12 @@ public final class Player extends SimplePlayer {
 	
 	// gesamtzahl der von diesem spieler gesicherten gegnerischen schafe
 	@XStreamAsAttribute
-	private int capturedSheeps;
+	private int stolenSheeps;
 
 
 	public Player() {
 		munchedFlowers = 0;
-		capturedSheeps = 0;
+		stolenSheeps = 0;
 	}
 
 	public Player(final PlayerColor color) {
@@ -63,20 +63,15 @@ public final class Player extends SimplePlayer {
 	/**
 	 * liefert die gesamtzahl der von diesem spieler gesicherten  schafe
 	 */
-	public int getCapturedSheeps() {
-		return capturedSheeps;
+	public int getStolenSheeps() {
+		return stolenSheeps;
 	}
 
 	/**
 	 * erhoeht die gesamtzahl der von diesem spieler gesicherten schafe
 	 */
-	protected void addCapturedSheeps(int sheeps) {
-		this.capturedSheeps += sheeps;
+	protected void stealSheeps(int sheeps) {
+		this.stolenSheeps += sheeps;
 	}
 
-	
-	public Move getLastMove() {
-		// TODO wird im client scheinbar gebraucht
-		return null;
-	}
 }

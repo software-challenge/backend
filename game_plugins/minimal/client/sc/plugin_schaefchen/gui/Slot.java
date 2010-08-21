@@ -8,7 +8,7 @@ import java.io.IOException;
 import sc.guiplugin.interfaces.ISlot;
 import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.GuiClient;
-import sc.plugin_schaefchen.renderer.RenderFacade;
+import sc.plugin_schaefchen.gui.renderer.RenderFacade;
 
 /**
  * Holds a place for a potential client (that can be a remote client or a human

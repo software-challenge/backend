@@ -1,4 +1,4 @@
-package sc.plugin_schaefchen.renderer;
+package sc.plugin_schaefchen.gui.renderer;
 
 import java.awt.Image;
 import java.net.URL;

@@ -3,7 +3,7 @@ package sc.plugin_schaefchen;
 import java.util.HashSet;
 import java.util.Set;
 
-import sc.plugin_schaefchen.renderer.positioner.Positioner;
+import sc.plugin_schaefchen.gui.positioner.Positioner;
 
 public class FactoryNode {
 	// index des spielfeldes

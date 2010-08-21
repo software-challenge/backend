@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import sc.plugin_schaefchen.renderer.positioner.ArcPositioner;
-import sc.plugin_schaefchen.renderer.positioner.BasePositioner;
-import sc.plugin_schaefchen.renderer.positioner.Positioner;
-import sc.plugin_schaefchen.renderer.positioner.RectPositioner;
-import sc.plugin_schaefchen.renderer.positioner.SquarePositioner;
+import sc.plugin_schaefchen.gui.positioner.ArcPositioner;
+import sc.plugin_schaefchen.gui.positioner.BasePositioner;
+import sc.plugin_schaefchen.gui.positioner.Positioner;
+import sc.plugin_schaefchen.gui.positioner.RectPositioner;
+import sc.plugin_schaefchen.gui.positioner.SquarePositioner;
 import sc.plugin_schaefchen.util.Constants;
 
 /**
