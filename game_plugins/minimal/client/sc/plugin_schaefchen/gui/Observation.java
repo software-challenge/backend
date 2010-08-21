@@ -22,7 +22,7 @@ import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.IGUIObservation;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.PlayerColor;
-import sc.plugin_schaefchen.renderer.RenderFacade;
+import sc.plugin_schaefchen.gui.renderer.RenderFacade;
 import sc.plugin_schaefchen.util.Configuration;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;

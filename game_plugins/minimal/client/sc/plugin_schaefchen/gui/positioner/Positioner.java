@@ -1,4 +1,4 @@
-package sc.plugin_schaefchen.renderer.positioner;
+package sc.plugin_schaefchen.gui.positioner;
 
 public interface Positioner {
 	

@@ -4,21 +4,17 @@ import sc.plugin_schaefchen.GamePlugin;
 
 public class Constants {
 	
-	public final static int SCORE_PER_SHEEP = 8;
-	public final static int SCORE_PER_SAVE_SHEEP = 16;
-	public final static int SCORE_PER_FLOWER = 2;
-	public final static int SCORE_PER_SAVE_FLOWER=4;
+	public final static int SCORE_PER_CAPTURED_SHEEP = 8;
+	public final static int SCORE_PER_STOLEN_SHEEP = 16;
+	public final static int SCORE_PER_COLLECTED_FLOWER = 2;
+	public final static int SCORE_PER_MUNCHED_FLOWER=4;
 	
 	public final static int TURN_LIMIT = GamePlugin.MAX_TURN_COUNT;
-	
-	public final static boolean GOLD_LIMIT_RULE = false;
-	public final static boolean PRE_GOLDEN_RULE = true;
 	
 	public final static int SHEEPS_AT_HOME = 3;
 
 	public final static int	DIE_COUNT = 3;
 	public final static int	DIE_SIZE = 6;
-
 
 	public static final int NODES_WITH_MUSHROOMS = 8;
 	public final static int TOTAL_FLOWERS = 42;

@@ -1,6 +1,6 @@
 package sc.plugin_schaefchen;
 
-import sc.plugin_schaefchen.renderer.positioner.Positioner;
+import sc.plugin_schaefchen.gui.positioner.Positioner;
 
 
 /**

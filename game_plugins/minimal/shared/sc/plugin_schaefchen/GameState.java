@@ -222,10 +222,10 @@ public final class GameState {
 
 		int[][] stats = new int[2][7];
 
-		stats[0][3] = player.get(0).getCapturedSheeps();
+		stats[0][3] = player.get(0).getStolenSheeps();
 		stats[0][5] = player.get(0).getMunchedFlowers();
 
-		stats[1][3] = player.get(1).getCapturedSheeps();
+		stats[1][3] = player.get(1).getStolenSheeps();
 		stats[1][5] = player.get(1).getMunchedFlowers();
 
 		int index;
@@ -238,15 +238,15 @@ public final class GameState {
 			}
 		}
 
-		stats[0][6] = Constants.SCORE_PER_SHEEP * stats[0][2]
-				+ Constants.SCORE_PER_SAVE_SHEEP * stats[0][3]
-				+ Constants.SCORE_PER_FLOWER * stats[0][4]
-				+ Constants.SCORE_PER_SAVE_FLOWER * stats[0][5];
+		stats[0][6] = Constants.SCORE_PER_CAPTURED_SHEEP * stats[0][2]
+				+ Constants.SCORE_PER_STOLEN_SHEEP * stats[0][3]
+				+ Constants.SCORE_PER_COLLECTED_FLOWER * stats[0][4]
+				+ Constants.SCORE_PER_MUNCHED_FLOWER * stats[0][5];
 
-		stats[1][6] = Constants.SCORE_PER_SHEEP * stats[1][2]
-				+ Constants.SCORE_PER_SAVE_SHEEP * stats[1][3]
-				+ Constants.SCORE_PER_FLOWER * stats[1][4]
-				+ Constants.SCORE_PER_SAVE_FLOWER * stats[1][5];
+		stats[1][6] = Constants.SCORE_PER_CAPTURED_SHEEP * stats[1][2]
+				+ Constants.SCORE_PER_STOLEN_SHEEP * stats[1][3]
+				+ Constants.SCORE_PER_COLLECTED_FLOWER * stats[1][4]
+				+ Constants.SCORE_PER_MUNCHED_FLOWER * stats[1][5];
 
 		stats[0][0] = (stats[0][1] > 0 && stats[0][6] > stats[1][6]) ? 1 : 0;
 		stats[1][0] = (stats[1][1] > 0 && stats[1][6] > stats[0][6]) ? 1 : 0;
@@ -442,7 +442,7 @@ public final class GameState {
 					: player.get(1);
 
 			owner.munchFlowers(sheep.getFlowers());
-			owner.addCapturedSheeps(sheep.getSize(sheep.owner.oponent()));
+			owner.stealSheeps(sheep.getSize(sheep.owner.oponent()));
 
 			// ... und die eigenen gesammelten schafe freigelassen
 			int n = sheep.getSize(owner.getPlayerColor()) - 1;
