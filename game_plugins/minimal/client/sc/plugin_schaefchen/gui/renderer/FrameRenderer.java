@@ -10,6 +10,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.MediaTracker;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -20,6 +21,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImageObserver;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
 import sc.plugin_schaefchen.BoardFactory;
@@ -222,6 +225,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 	};
+	private Image scaledBgBoard;
+	private boolean waiting;
 
 	public FrameRenderer(final IGameHandler handler, final boolean onlyObserving) {
 		this.handler = handler;
@@ -374,13 +379,22 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			guiNode.scale(size, xBorder, yBorder);
 		}
 
+		MediaTracker tracker = new MediaTracker(this);
+		scaledBgBoard = bgBoard.getScaledInstance(400, -1, Image.SCALE_SMOOTH);
+		tracker.addImage(scaledBgBoard, 0);
+		try {
+			tracker.waitForID(0);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		createSheepMap();
 	}
 
 	@Override
 	public void paint(Graphics g) {
 
-		if (!showing) {
+		if (!showing || waiting) {
 			return;
 		}
 
@@ -393,7 +407,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				: getPlayerColor(currentPlayer));
 		g2.fillRect(0, 0, getWidth(), getHeight());
 
-		g2.drawImage(bgBoard, BORDER_SIZE, BORDER_SIZE, getWidth() - 2
+		g2.drawImage(scaledBgBoard, BORDER_SIZE, BORDER_SIZE, getWidth() - 2
 				* BORDER_SIZE, getHeight() - 2 * BORDER_SIZE, this);
 
 		g2.setColor(new Color(200, 240, 200, 160));
@@ -600,13 +614,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		fontY += 15;
 		g2.setFont(hDice);
 		for (Die dice : gameState.getDice()) {
-			g2.setColor(Color.GRAY);
-			g2.fillRoundRect(fontX + 60 * i, fontY, 50, 50, 15, 15);
-			g2.setColor(getPlayerColor(currentPlayer));
-			String value = Integer.toString(dice.value);
-			g2.drawString(value, fontX + 23 + 60 * i
-					- mfDice.stringWidth(value) / 2, fontY - 2
-					+ mfDice.getHeight());
+			drawDie(g2, fontX + 60 * i, fontY, dice.value);
 
 			i++;
 		}
@@ -641,6 +649,43 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				g2.drawString("Der Schäferhund ist aktiv", fontX, fontY);
 			}
 
+		}
+
+	}
+
+	private void drawDie(Graphics2D g2, int x, int y, int value) {
+		g2.setColor(Color.GRAY);
+		g2.fillRoundRect(x, y, 50, 50, 15, 15);
+
+		g2.setColor(getPlayerColor(currentPlayer));
+		switch (value) {
+		case 5:
+			g2.fillArc(x + 37 - 4, y + 13 - 4, 8, 8, 0, 360);
+			g2.fillArc(x + 13 - 4, y + 37 - 4, 8, 8, 0, 360);
+
+		case 3:
+			g2.fillArc(x + 13 - 4, y + 13 - 4, 8, 8, 0, 360);
+			g2.fillArc(x + 37 - 4, y + 37 - 4, 8, 8, 0, 360);
+
+		case 1:
+			g2.fillArc(x + 25 - 4, y + 25 - 4, 8, 8, 0, 360);
+			break;
+
+		case 6:
+			g2.fillArc(x + 37 - 4, y + 25 - 4, 8, 8, 0, 360);
+			g2.fillArc(x + 13 - 4, y + 25 - 4, 8, 8, 0, 360);
+
+		case 4:
+			g2.fillArc(x + 37 - 4, y + 13 - 4, 8, 8, 0, 360);
+			g2.fillArc(x + 13 - 4, y + 37 - 4, 8, 8, 0, 360);
+
+		case 2:
+			g2.fillArc(x + 13 - 4, y + 13 - 4, 8, 8, 0, 360);
+			g2.fillArc(x + 37 - 4, y + 37 - 4, 8, 8, 0, 360);
+			break;
+
+		default:
+			break;
 		}
 
 	}
