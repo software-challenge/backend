@@ -3,6 +3,8 @@ package sc.plugin_schaefchen;
 import java.lang.reflect.InvocationTargetException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,17 +25,17 @@ import sc.plugin_schaefchen.util.Constants;
  * @author tkra
  * */
 public class BoardFactory {
-	
-	private static final List<FactoryNode> factoryNodes;
-	public static final List<Node> nodes;	
-	public static final List<GUINode> guiNodes;	
 
-	static{
-		factoryNodes=createFactoryNodes();
+	private static final List<FactoryNode> factoryNodes;
+	public static final List<Node> nodes;
+	public static final List<GUINode> guiNodes;
+
+	static {
+		factoryNodes = createFactoryNodes();
 		guiNodes = createGUINodes();
 		nodes = createNodes();
 	}
-	
+
 	private static class Index {
 		private int index = 0;
 
@@ -67,8 +69,9 @@ public class BoardFactory {
 
 		for (FactoryNode factoryNode : factoryNodes) {
 			GUINode guiNode = new GUINode(factoryNode.getXs(), factoryNode
-					.getYs(), factoryNode.getCenterX(), factoryNode.getCenterY(), factoryNode.getN(),
-					factoryNode.index, factoryNode.getNodeType());
+					.getYs(), factoryNode.getCenterX(), factoryNode
+					.getCenterY(), factoryNode.getN(), factoryNode.index,
+					factoryNode.getNodeType());
 
 			try {
 				// TODO: scheint ein wenig umstaendlicher weg zu sein
@@ -88,33 +91,32 @@ public class BoardFactory {
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
-			
+
 			nodes.add(guiNode);
 		}
 
 		return nodes;
 
 	}
-	
-	protected static List<Flower> createFlowers(){
-				
+
+	protected static List<Flower> createFlowers() {
+
 		Map<FactoryNode, Integer> nodeMap = new HashMap<FactoryNode, Integer>();
 		List<FactoryNode> nodeList = new LinkedList<FactoryNode>();
 		for (FactoryNode node : factoryNodes) {
-			if(node.hasFlowers()){
+			if (node.hasFlowers()) {
 				nodeMap.put(node, 0);
 				nodeList.add(node);
 			}
 		}
-		
+
 		Random rand = new SecureRandom();
-		for(int i=0; i<Constants.NODES_WITH_MUSHROOMS; i++){
+		for (int i = 0; i < Constants.NODES_WITH_MUSHROOMS; i++) {
 			int r = rand.nextInt(nodeList.size());
 			FactoryNode node = nodeList.get(r);
 			nodeMap.put(node, -1);
 			nodeList.remove(r);
 		}
-
 
 		int max = Constants.MAX_FLOWERS;
 		int total = Constants.TOTAL_FLOWERS;
@@ -122,8 +124,8 @@ public class BoardFactory {
 		while (flowers < total && nodeList.size() > 0) {
 			int r = rand.nextInt(nodeList.size());
 			FactoryNode node = nodeList.get(r);
-			
-			int f = nodeMap.get(node)+1;
+
+			int f = nodeMap.get(node) + 1;
 			nodeMap.put(node, f);
 			if (f == max) {
 				nodeList.remove(node);
@@ -133,34 +135,43 @@ public class BoardFactory {
 		}
 
 		List<Flower> flowerList = new LinkedList<Flower>();
-		for(FactoryNode node : nodeMap.keySet()){
+		for (FactoryNode node : nodeMap.keySet()) {
 			int f = nodeMap.get(node);
-			if(f!=0){
+			if (f != 0) {
 				flowerList.add(new Flower(node.index, f));
+			}
 		}
-		}
+
+		Collections.sort(flowerList, new Comparator<Flower>() {
+			@Override
+			public int compare(Flower o1, Flower o2) {
+				return o1.node > o2.node ? 1 : -1;
+			}
+		});
+
 		return flowerList;
 	}
-	
-	protected static List<Sheep> createSheeps(){
-		
+
+	protected static List<Sheep> createSheeps() {
+
 		List<Sheep> sheepList = new LinkedList<Sheep>();
-		for (FactoryNode node : factoryNodes){
+		for (FactoryNode node : factoryNodes) {
 			PlayerColor owner = null;
-			if(node.getNodeType() == NodeType.HOME1){
+			if (node.getNodeType() == NodeType.HOME1) {
 				owner = PlayerColor.PLAYER1;
-			} else if(node.getNodeType() == NodeType.HOME2){
+			} else if (node.getNodeType() == NodeType.HOME2) {
 				owner = PlayerColor.PLAYER2;
-			} 
-			for(int i=0; i<node.getSheeps(); i++){
-				Sheep sheep = new Sheep(node.index, node.getCounterPart(), owner);
-				if(node.getNodeType() == NodeType.GRASS ){
+			}
+			for (int i = 0; i < node.getSheeps(); i++) {
+				Sheep sheep = new Sheep(node.index, node.getCounterPart(),
+						owner);
+				if (node.getNodeType() == NodeType.GRASS) {
 					sheep.setDogState(DogState.PASSIVE);
 				}
 				sheepList.add(sheep);
 			}
 		}
-		
+
 		return sheepList;
 	}
 
@@ -370,13 +381,12 @@ public class BoardFactory {
 		leftBase.setSheeps(Constants.SHEEPS_AT_HOME);
 		rightBase.setSheeps(Constants.SHEEPS_AT_HOME);
 
-
 		for (FactoryNode node : nodes) {
 			if (node.getNodeType() == NodeType.GRASS && node != center) {
 				node.setFlowers(true);
 			}
 		}
-		
+
 		return nodes;
 
 	}
@@ -427,7 +437,7 @@ public class BoardFactory {
 		for (int i = 1; i < n; i++) {
 			FactoryNode.couple(nodes.get(i - 1), nodes.get(i));
 		}
-		
+
 		return nodes;
 	}
 
