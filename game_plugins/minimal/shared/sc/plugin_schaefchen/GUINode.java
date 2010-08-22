@@ -1,6 +1,7 @@
 package sc.plugin_schaefchen;
 
 import sc.plugin_schaefchen.gui.positioner.Positioner;
+import sc.plugin_schaefchen.gui.renderer.RenderFacade.GUIMode;
 
 /**
  * ein spielfeld. als geometrische figur und als logisches element
@@ -11,6 +12,8 @@ import sc.plugin_schaefchen.gui.positioner.Positioner;
 
 public final class GUINode {
 
+	static boolean simple = false;
+	
 	// ein zur form passender positionierungsalgorithmus fuer
 	// auf diesem feld liegende objekte
 	private Positioner positioner;
@@ -46,6 +49,10 @@ public final class GUINode {
 	// eikndeutige nummer dieses spielfeldes
 	public final int index;
 
+	public static void setSimple(boolean simple){
+		GUINode.simple = simple;
+	}
+	
 	public GUINode(final double[] xs, final double[] ys, int n, double centerX,
 			double centerY, final double[] simpleXs, final double[] simpleYs,
 			int simpleN, int index, NodeType type) {
@@ -82,7 +89,7 @@ public final class GUINode {
 	/**
 	 * liefert die anzahl der eckpunkte deses spielfeldes
 	 */
-	public int size(boolean simple) {
+	public int size() {
 		return simple ? simpleN : n;
 	}
 
@@ -150,7 +157,7 @@ public final class GUINode {
 	 * liefert die x-werte der lagen der eckpunkte im diskreten
 	 * koordinatenbereich
 	 */
-	public int[] getScaledXs(boolean simple) {
+	public int[] getScaledXs() {
 		return simple ? scaledSimpleXs : scaledXs;
 	}
 
@@ -158,7 +165,7 @@ public final class GUINode {
 	 * liefert die y-werte der lagen der eckpunkte im diskreten
 	 * koordinatenbereich
 	 */
-	public int[] getScaledYs(boolean simple) {
+	public int[] getScaledYs() {
 		return simple ? scaledSimpleYs : scaledYs;
 
 	}
@@ -201,7 +208,7 @@ public final class GUINode {
 	 * prueft ob ein im diskreten koordinatenbereich gegebener püunkt innerhalb
 	 * dieses spielfeldes ist
 	 */
-	public boolean inner(int x, int y, boolean simple) {
+	public boolean inner(int x, int y) {
 
 		boolean inner = true;
 		double scalar;

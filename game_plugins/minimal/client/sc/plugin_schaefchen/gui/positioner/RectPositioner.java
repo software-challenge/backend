@@ -18,11 +18,11 @@ public class RectPositioner implements Positioner {
 
 	public void scale(int size) {
 
-		x1 = (node.getScaledXs(false)[0] + node.getScaledXs(false)[1]) / 2;
-		y1 = (node.getScaledYs(false)[0] + node.getScaledYs(false)[1]) / 2;
+		x1 = (node.getScaledXs()[0] + node.getScaledXs()[1]) / 2;
+		y1 = (node.getScaledYs()[0] + node.getScaledYs()[1]) / 2;
 
-		x2 = (node.getScaledXs(false)[2] + node.getScaledXs(false)[3]) / 2;
-		y2 = (node.getScaledYs(false)[2] + node.getScaledYs(false)[3]) / 2;
+		x2 = (node.getScaledXs()[2] + node.getScaledXs()[3]) / 2;
+		y2 = (node.getScaledYs()[2] + node.getScaledYs()[3]) / 2;
 
 		createScaledPositions(n);
 
