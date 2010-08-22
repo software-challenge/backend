@@ -14,6 +14,10 @@ public class FactoryNode {
 	private final double[] xs;
 	private final double[] ys;
 
+	private final int simpleN;
+	private final double[] simpleXs;
+	private final double[] simpleYs;
+
 	// lage des zentrums
 	private double centerX;
 	private double centerY;
@@ -35,10 +39,19 @@ public class FactoryNode {
 
 	private int sheepAmount;
 
+
 	public FactoryNode(double[] xs, double[] ys, int n, int index) {
+		this(xs, ys, n, xs.clone(), ys.clone(), n, index);
+	}
+	
+	public FactoryNode(double[] xs, double[] ys, int n, double[] simpleXs,
+			double[] simpleYs, int simpleN, int index) {
 		this.n = n;
+		this.simpleN = simpleN;
 		this.xs = xs;
 		this.ys = ys;
+		this.simpleXs = simpleXs;
+		this.simpleYs = simpleYs;
 		this.index = index;
 
 		type = NodeType.GRASS;
@@ -62,26 +75,20 @@ public class FactoryNode {
 		this.positioner = positioner;
 	}
 
-	/**
-	 * verschiebung im kontinuierlichen koordinatenbereich
-	 */
-	public void translate(double x, double y) {
-
-		for (int i = 0; i < getN(); i++) {
-			xs[i] += x;
-			ys[i] += y;
-		}
-		centerX += x;
-		centerY += y;
-
-	}
-
 	public double[] getXs() {
 		return xs;
 	}
 
 	public double[] getYs() {
 		return ys;
+	}
+
+	public double[] getSimpleXs() {
+		return simpleXs;
+	}
+
+	public double[] getSimpleYs() {
+		return simpleYs;
 	}
 
 	public double getCenterX() {
@@ -93,13 +100,38 @@ public class FactoryNode {
 	}
 
 	/**
+	 * verschiebung im kontinuierlichen koordinatenbereich
+	 */
+	public void translate(double x, double y) {
+
+		for (int i = 0; i < n; i++) {
+			xs[i] += x;
+			ys[i] += y;
+		}
+
+		for (int i = 0; i < simpleN; i++) {
+			simpleXs[i] += x;
+			simpleYs[i] += y;
+		}
+
+		centerX += x;
+		centerY += y;
+
+	}
+
+	/**
 	 * skalierung im kontinuierlichen koordinatenbereich
 	 */
 	public void scale(double f) {
 
-		for (int i = 0; i < getN(); i++) {
+		for (int i = 0; i < n; i++) {
 			xs[i] *= f;
 			ys[i] *= f;
+		}
+
+		for (int i = 0; i < simpleN; i++) {
+			simpleXs[i] *= f;
+			simpleYs[i] *= f;
 		}
 
 		centerX *= f;
@@ -115,11 +147,18 @@ public class FactoryNode {
 		double sinPhi = Math.sin(phi);
 		double x, y;
 
-		for (int i = 0; i < getN(); i++) {
+		for (int i = 0; i < n; i++) {
 			x = xs[i] * cosPhi - ys[i] * sinPhi;
 			y = xs[i] * sinPhi + ys[i] * cosPhi;
 			xs[i] = x;
 			ys[i] = y;
+		}
+
+		for (int i = 0; i < simpleN; i++) {
+			x = simpleXs[i] * cosPhi - simpleYs[i] * sinPhi;
+			y = simpleXs[i] * sinPhi + simpleYs[i] * cosPhi;
+			simpleXs[i] = x;
+			simpleYs[i] = y;
 		}
 
 		x = centerX * cosPhi - centerY * sinPhi;
@@ -186,25 +225,6 @@ public class FactoryNode {
 	}
 
 	/**
-	 * prueft ob ein im kontinuierlichen koordinatenbereich gegebener püunkt
-	 * innerhalb dieses spielfeldes ist
-	 */
-	public boolean inner(double x, double y) {
-
-		boolean inner = true;
-
-		for (int i = 0; i < 4; i++) {
-			int j = (i + 1) % 4;
-			inner = inner
-					&& (ys[j] - ys[i]) * (x - xs[i]) + (xs[i] - xs[j])
-							* (y - ys[i]) < 0;
-		}
-
-		return inner;
-
-	}
-
-	/**
 	 * verbindet zwei gegebene spielfelder als nachbarn
 	 * 
 	 * @param node1
@@ -243,16 +263,14 @@ public class FactoryNode {
 		return type;
 	}
 
-
-	
 	/**
 	 * setzt die anzahl an bluemn
 	 */
 	public void setFlowers(boolean b) {
 		this.flowers = b;
-		
+
 	}
-	
+
 	/**
 	 * liefert die anzahl der blumen auf diesem spielfeld
 	 */
@@ -278,14 +296,16 @@ public class FactoryNode {
 		return n;
 	}
 
+	public int getSimpleN() {
+		return simpleN;
+	}
+
 	public void setSheeps(int amount) {
 		this.sheepAmount = amount;
 	}
-	
-	public int getSheeps(){
+
+	public int getSheeps() {
 		return sheepAmount;
 	}
-
-
 
 }

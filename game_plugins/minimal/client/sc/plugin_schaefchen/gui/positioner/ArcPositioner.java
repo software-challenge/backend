@@ -19,11 +19,11 @@ public class ArcPositioner implements Positioner {
 	@Override
 	public void scale(int size) {
 
-		x1 = node.getScaledXs()[1];
-		y1 = node.getScaledYs()[1];
+		x1 = node.getScaledXs(false)[1];
+		y1 = node.getScaledYs(false)[1];
 
-		x2 = node.getScaledXs()[4];
-		y2 = node.getScaledYs()[4];
+		x2 = node.getScaledXs(false)[4];
+		y2 = node.getScaledYs(false)[4];
 
 		createScaledPositions(n);
 

@@ -67,15 +67,15 @@ public class BoardFactory {
 		List<FactoryNode> factoryNodes = createFactoryNodes();
 		List<GUINode> nodes = new ArrayList<GUINode>(factoryNodes.size());
 
-		for (FactoryNode factoryNode : factoryNodes) {
-			GUINode guiNode = new GUINode(factoryNode.getXs(), factoryNode
-					.getYs(), factoryNode.getCenterX(), factoryNode
-					.getCenterY(), factoryNode.getN(), factoryNode.index,
-					factoryNode.getNodeType());
+		for (FactoryNode fNode : factoryNodes) {
+			GUINode guiNode = new GUINode(fNode.getXs(), fNode.getYs(), fNode
+					.getN(), fNode.getCenterX(), fNode.getCenterY(), fNode
+					.getSimpleXs(), fNode.getSimpleYs(), fNode.getSimpleN(),
+					fNode.index, fNode.getNodeType());
 
 			try {
 				// TODO: scheint ein wenig umstaendlicher weg zu sein
-				Positioner positioner = factoryNode.positioner.getConstructor(
+				Positioner positioner = fNode.positioner.getConstructor(
 						GUINode.class).newInstance(guiNode);
 				guiNode.setPositioner(positioner);
 			} catch (SecurityException e) {
@@ -409,7 +409,22 @@ public class BoardFactory {
 			phi += phi_incr;
 		}
 
-		return new FactoryNode(xs, ys, n, index.next());
+		int m = 9;
+		double[] simpleXs = new double[n];
+		double[] simpleYs = new double[n];
+
+		phi = Math.PI / 6;
+		phi_cover = 2 * Math.PI - 2 * phi;
+		phi_incr = phi_cover / (m - 1);
+		dx = 2 * Math.cos(phi);
+
+		for (int i = 0; i < m; i++) {
+			simpleXs[i] = dx - 2 * Math.cos(phi);
+			simpleYs[i] = 2 * Math.sin(phi);
+			phi += phi_incr;
+		}
+
+		return new FactoryNode(xs, ys, n, simpleXs, simpleYs, m, index.next());
 
 	}
 
@@ -471,7 +486,15 @@ public class BoardFactory {
 					(center_y + r_i * Math.sin(phi3)),
 					(center_y + r_a * Math.sin(phi3)),
 					(center_y + r_a * Math.sin(phi2)),
-					(center_y + r_a * Math.sin(phi)) }, 6, index.next());
+					(center_y + r_a * Math.sin(phi)) }, 6, new double[] {
+					(center_x + r_i * Math.cos(phi)),
+					(center_x + r_i * Math.cos(phi3)),
+					(center_x + r_a * Math.cos(phi3)),
+					(center_x + r_a * Math.cos(phi)) }, new double[] {
+					(center_y + r_i * Math.sin(phi)),
+					(center_y + r_i * Math.sin(phi3)),
+					(center_y + r_a * Math.sin(phi3)),
+					(center_y + r_a * Math.sin(phi)) }, 4, index.next());
 
 			nodes.add(node);
 			node.setPositioner(ArcPositioner.class);
