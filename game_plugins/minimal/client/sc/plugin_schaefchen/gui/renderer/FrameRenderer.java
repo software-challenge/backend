@@ -23,7 +23,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.math.BigDecimal;
@@ -36,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import sc.plugin_schaefchen.BoardFactory;
@@ -208,8 +206,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 				if (currentSheep.owner == currentPlayer) {
 					for (Integer node : currentNeighbours) {
-						if (guiNodes[node].inner(e.getX(), e.getY(),
-								OPTIONS[SIMEPLE_SHAPES])) {
+						if (guiNodes[node].inner(e.getX(), e.getY())) {
 							currentNode = node;
 							highliteNode = true;
 							break;
@@ -237,6 +234,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				if (y % 25 <= 20) {
 					int i = y / 25;
 					OPTIONS[i] = !OPTIONS[i];
+					if (i == SIMEPLE_SHAPES) {
+						GUINode.setSimple(OPTIONS[SIMEPLE_SHAPES]);
+					}
+					RenderConfiguration.saveSettings();
 					repaint();
 				}
 			}
@@ -287,6 +288,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		setMouseListeners();
 		setFocusable(true);
 		requestFocusInWindow();
+		
+		RenderConfiguration.loadSettings();
 
 		resizeBoard();
 		repaint();
@@ -350,6 +353,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		createSheepMap();
 		currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
+		config = false;
+		ended = false;
 		valideView();
 	}
 
@@ -617,9 +622,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				}
 
 				g2.setColor(getTransparentColor(c, 192));
-				g2.fillPolygon(guiNode.getScaledXs(OPTIONS[SIMEPLE_SHAPES]),
-						guiNode.getScaledYs(OPTIONS[SIMEPLE_SHAPES]), guiNode
-								.size(OPTIONS[SIMEPLE_SHAPES]));
+				g2.fillPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
+						guiNode.size());
 			}
 		}
 
@@ -627,9 +631,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(2f));
 		for (GUINode guiNode : guiNodes) {
-			g2.drawPolygon(guiNode.getScaledXs(OPTIONS[SIMEPLE_SHAPES]),
-					guiNode.getScaledYs(OPTIONS[SIMEPLE_SHAPES]), guiNode
-							.size(OPTIONS[SIMEPLE_SHAPES]));
+			g2.drawPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
+					guiNode.size());
 
 		}
 
@@ -684,10 +687,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 				g2.setColor(getTransparentColor(c, 128));
 				GUINode currentGUINode = guiNodes[currentNode];
-				g2.fillPolygon(currentGUINode
-						.getScaledXs(OPTIONS[SIMEPLE_SHAPES]), currentGUINode
-						.getScaledYs(OPTIONS[SIMEPLE_SHAPES]), currentGUINode
-						.size(OPTIONS[SIMEPLE_SHAPES]));
+				g2.fillPolygon(currentGUINode.getScaledXs(), currentGUINode
+						.getScaledYs(), currentGUINode.size());
 			}
 
 			g2.setColor(c);
@@ -695,10 +696,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				for (Integer n : currentNeighbours) {
 					GUINode guiNode = guiNodes[n];
 					g2.setStroke(new BasicStroke(3.5f));
-					g2.drawPolygon(
-							guiNode.getScaledXs(OPTIONS[SIMEPLE_SHAPES]),
-							guiNode.getScaledYs(OPTIONS[SIMEPLE_SHAPES]),
-							guiNode.size(OPTIONS[SIMEPLE_SHAPES]));
+					g2.drawPolygon(guiNode.getScaledXs(),
+							guiNode.getScaledYs(), guiNode.size());
 				}
 			}
 		}
@@ -780,10 +779,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			}
 		}
 
-		fontY += 75;
+		fontY += 50;
 		g2.setColor(Color.BLACK);
 		g2.setFont(h4);
-
 		if (currentSheep != null && currentSheep.owner != null) {
 			int ownSheeps = currentSheep.getSize(currentSheep.owner);
 			int opponentSheeps = currentSheep.getSize(currentSheep.owner
@@ -817,7 +815,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			fontY = getHeight() - BORDER_SIZE - 5;
 			g2.setFont(hSheep);
 			g2.setColor(Color.DARK_GRAY);
-			g2.drawString("Leertase für Einstellungen", fontX, fontY);
+			g2.drawString("Leertaste für Einstellungen", fontX, fontY);
 		}
 
 	}
