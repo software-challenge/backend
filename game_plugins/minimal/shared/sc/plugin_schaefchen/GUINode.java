@@ -2,7 +2,6 @@ package sc.plugin_schaefchen;
 
 import sc.plugin_schaefchen.gui.positioner.Positioner;
 
-
 /**
  * ein spielfeld. als geometrische figur und als logisches element
  * 
@@ -21,6 +20,10 @@ public final class GUINode {
 	private final double[] xs;
 	private final double[] ys;
 
+	private final int simpleN;
+	private final double[] simpleXs;
+	private final double[] simpleYs;
+
 	// lage des zentrums
 	private double centerX;
 	private double centerY;
@@ -29,32 +32,39 @@ public final class GUINode {
 	private final int[] scaledXs;
 	private final int[] scaledYs;
 
+	// diskrete lage skalierte eckpunkte
+	private final int[] scaledSimpleXs;
+	private final int[] scaledSimpleYs;
+
 	// diskrete lage des skalierten zentrums
 	private int scaledCenterX;
 	private int scaledCenterY;
-	
+
 	// typ dieses spielfeldes
 	private NodeType type;
 
 	// eikndeutige nummer dieses spielfeldes
 	public final int index;
 
-	public GUINode(final double[] xs, final double[] ys, double centerX,
-			double centerY, int n, int index, NodeType type) {
+	public GUINode(final double[] xs, final double[] ys, int n, double centerX,
+			double centerY, final double[] simpleXs, final double[] simpleYs,
+			int simpleN, int index, NodeType type) {
 
 		this.n = n;
+		this.simpleN = simpleN;
 		this.index = index;
-		this.xs = new double[n];
-		this.ys = new double[n];
+		this.xs = xs.clone();
+		this.ys = ys.clone();
+
+		this.simpleXs = simpleXs.clone();
+		this.simpleYs = simpleYs.clone();
 		this.type = type;
-		
+
 		scaledXs = new int[n];
 		scaledYs = new int[n];
 
-		for (int i = 0; i < n; i++) {
-			this.xs[i] = xs[i];
-			this.ys[i] = ys[i];
-		}
+		scaledSimpleXs = new int[n];
+		scaledSimpleYs = new int[n];
 
 		this.centerX = centerX;
 		this.centerY = centerY;
@@ -72,8 +82,8 @@ public final class GUINode {
 	/**
 	 * liefert die anzahl der eckpunkte deses spielfeldes
 	 */
-	public int size() {
-		return n;
+	public int size(boolean simple) {
+		return simple ? simpleN : n;
 	}
 
 	/**
@@ -81,7 +91,7 @@ public final class GUINode {
 	 * koordinatenbereich
 	 */
 	public double[] getXs() {
-		return xs.clone();
+		return xs;
 	}
 
 	/**
@@ -89,7 +99,7 @@ public final class GUINode {
 	 * koordinatenbereich
 	 */
 	public double[] getYs() {
-		return ys.clone();
+		return ys;
 
 	}
 
@@ -122,7 +132,11 @@ public final class GUINode {
 		for (int i = 0; i < n; i++) {
 			scaledXs[i] = xBorder + (int) (xs[i] * size);
 			scaledYs[i] = yBorder + (int) (ys[i] * size);
+		}
 
+		for (int i = 0; i < simpleN; i++) {
+			scaledSimpleXs[i] = xBorder + (int) (simpleXs[i] * size);
+			scaledSimpleYs[i] = yBorder + (int) (simpleYs[i] * size);
 		}
 
 		scaledCenterX = xBorder + (int) (centerX * size);
@@ -136,16 +150,16 @@ public final class GUINode {
 	 * liefert die x-werte der lagen der eckpunkte im diskreten
 	 * koordinatenbereich
 	 */
-	public int[] getScaledXs() {
-		return scaledXs.clone();
+	public int[] getScaledXs(boolean simple) {
+		return simple ? scaledSimpleXs : scaledXs;
 	}
 
 	/**
 	 * liefert die y-werte der lagen der eckpunkte im diskreten
 	 * koordinatenbereich
 	 */
-	public int[] getScaledYs() {
-		return scaledYs.clone();
+	public int[] getScaledYs(boolean simple) {
+		return simple ? scaledSimpleYs : scaledYs;
 
 	}
 
@@ -187,31 +201,52 @@ public final class GUINode {
 	 * prueft ob ein im diskreten koordinatenbereich gegebener püunkt innerhalb
 	 * dieses spielfeldes ist
 	 */
-	public boolean inner(int x, int y) {
+	public boolean inner(int x, int y, boolean simple) {
 
 		boolean inner = true;
 		double scalar;
 		double ref = 0;
 
-		for (int i = 0; i < n; i++) {
-			int j = (i + 1) % n;
-			scalar = (scaledYs[j] - scaledYs[i]) * (x - scaledXs[i])
-					+ (scaledXs[i] - scaledXs[j]) * (y - scaledYs[i]);
+		if (simple) {
+			for (int i = 0; i < simpleN; i++) {
+				int j = (i + 1) % simpleN;
+				scalar = (scaledSimpleYs[j] - scaledSimpleYs[i])
+						* (x - scaledSimpleXs[i])
+						+ (scaledSimpleXs[i] - scaledSimpleXs[j])
+						* (y - scaledSimpleYs[i]);
 
-			if (i == 0) {
-				ref = Math.signum(scalar);
+				if (i == 0) {
+					ref = Math.signum(scalar);
+				}
+
+				if (Math.signum(scalar) != ref) {
+					inner = false;
+					break;
+				}
 			}
 
-			if (Math.signum(scalar) != ref) {
-				inner = false;
-				break;
+			return inner;
+
+		} else {
+			for (int i = 0; i < n; i++) {
+				int j = (i + 1) % n;
+				scalar = (scaledYs[j] - scaledYs[i]) * (x - scaledXs[i])
+						+ (scaledXs[i] - scaledXs[j]) * (y - scaledYs[i]);
+
+				if (i == 0) {
+					ref = Math.signum(scalar);
+				}
+
+				if (Math.signum(scalar) != ref) {
+					inner = false;
+					break;
+				}
 			}
+
+			return inner;
 		}
-
-		return inner;
-
 	}
-	
+
 	/**
 	 * liefert den spielfeldtyp dieses spielfeldes
 	 */

@@ -4,6 +4,8 @@
 package sc.plugin_schaefchen.gui.renderer;
 
 import java.awt.BasicStroke;
+import static sc.plugin_schaefchen.gui.renderer.RenderConfiguration.*;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -15,13 +17,15 @@ import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,15 +36,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.JLayeredPane;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import sc.plugin_schaefchen.BoardFactory;
 import sc.plugin_schaefchen.Die;
 import sc.plugin_schaefchen.DogState;
 import sc.plugin_schaefchen.Flower;
-import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.GUINode;
+import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Move;
 import sc.plugin_schaefchen.NodeType;
@@ -57,10 +61,6 @@ import sc.shared.GameResult;
 @SuppressWarnings("serial")
 public class FrameRenderer extends JPanel implements IRenderer {
 
-	private static final Color HOME1_COLOR = new Color(255, 32, 32, 128);
-	private static final Color HOME2_COLOR = new Color(32, 32, 255, 128);
-	private static final Color SAVE_COLOR = new Color(32, 192, 32, 128);
-
 	private static final Color PLAYER2_COLOR = Color.BLUE;
 	private static final Color PLAYER1_COLOR = Color.RED;
 
@@ -69,14 +69,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
 	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 14);
 	private static final Font hSheep = new Font("Helvetica", Font.PLAIN, 10);
-	private static final Font hDice = new Font("Helvetica", Font.BOLD, 33);
-
 	private final FontMetrics fmH1 = getFontMetrics(h1);
 	// private final FontMetrics fmH2 = getFontMetrics(h2);
 	private final FontMetrics fmH3 = getFontMetrics(h3);
-	// private final FontMetrics fmH4 = getFontMetrics(h4);
+	private final FontMetrics fmH4 = getFontMetrics(h4);
 	private final FontMetrics mfSheep = getFontMetrics(hSheep);
-	private final FontMetrics mfDice = getFontMetrics(hDice);
 
 	private final static int BORDER_SIZE = 5;
 	private static final String TITLE = "Schäfchen im Trockenen";
@@ -98,7 +95,6 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	// Am I currently visible?
 	private boolean showing;
 	private boolean myturn;
-	private int turn;
 
 	private boolean ended;
 	private String endErrorMsg;
@@ -115,6 +111,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private Sheep currentSheep;
 
 	private final Image bgBoard;
+	private Image scaledBgBoard;
 
 	private final Image sheepIcon;
 	private final Image dogIcon;
@@ -127,6 +124,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private int xBorder;
 	private int yBorder;
+
+	private boolean config;
 
 	private class Point {
 		int x, y;
@@ -147,13 +146,14 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	};
 
-	private MouseListener mouseListener = new MouseAdapter() {
+	private MouseAdapter dragMouseAdapter = new MouseAdapter() {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 
 			mousex = e.getX();
 			mousey = e.getY();
+			requestFocusInWindow();
 			for (Sheep sheep : sheepMap.keySet()) {
 				Point p = sheepMap.get(sheep);
 				if (Math.sqrt(Math.pow(p.x - mousex, 2)
@@ -198,10 +198,6 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			repaint();
 		}
 
-	};
-
-	private MouseMotionListener mouseMotionListener = new MouseMotionAdapter() {
-
 		@Override
 		public void mouseDragged(MouseEvent e) {
 
@@ -212,7 +208,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 				if (currentSheep.owner == currentPlayer) {
 					for (Integer node : currentNeighbours) {
-						if (guiNodes[node].inner(e.getX(), e.getY())) {
+						if (guiNodes[node].inner(e.getX(), e.getY(),
+								OPTIONS[SIMEPLE_SHAPES])) {
 							currentNode = node;
 							highliteNode = true;
 							break;
@@ -225,8 +222,44 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 	};
-	private Image scaledBgBoard;
-	private boolean waiting;
+
+	private MouseAdapter configMouseAdapter = new MouseAdapter() {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+
+			int x = e.getX();
+			int y = e.getY();
+			requestFocusInWindow();
+			if (x >= configX && x <= configX + 20 && y >= configY
+					&& y <= configY + 25 * OPTIONS.length) {
+				y -= configY;
+				if (y % 25 <= 20) {
+					int i = y / 25;
+					OPTIONS[i] = !OPTIONS[i];
+					repaint();
+				}
+			}
+
+		}
+
+	};
+
+	private KeyListener keyListener = new KeyAdapter() {
+
+		@Override
+		public void keyTyped(KeyEvent e) {
+
+			if (e.getKeyChar() == KeyEvent.VK_SPACE) {
+				config = !config;
+				valideView();
+			}
+
+		}
+
+	};
+	private int configY;
+	private int configX;
 
 	public FrameRenderer(final IGameHandler handler, final boolean onlyObserving) {
 		this.handler = handler;
@@ -249,13 +282,49 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 		setDoubleBuffered(true);
-		addMouseListener(mouseListener);
-		addMouseMotionListener(mouseMotionListener);
 		addComponentListener(componentListener);
+		addKeyListener(keyListener);
+		setMouseListeners();
 		setFocusable(true);
+		requestFocusInWindow();
 
 		resizeBoard();
 		repaint();
+
+	}
+
+	private void valideView() {
+
+		currentSheep = null;
+		highliteNode = false;
+		currentNeighbours = null;
+		mousex = 0;
+		mousey = 0;
+		setMouseListeners();
+		repaint();
+
+	}
+
+	private void setMouseListeners() {
+
+		// alte listener entfernen
+		for (MouseListener l : getMouseListeners()) {
+			removeMouseListener(l);
+		}
+		for (MouseMotionListener l : getMouseMotionListeners()) {
+			removeMouseMotionListener(l);
+		}
+
+		if (config) {
+			addMouseListener(configMouseAdapter);
+		} else {
+			/*
+			 * if (OPTIONS[DRAG_N_DROP]) { addMouseListener(dragMouseAdapter);
+			 * addMouseMotionListener(dragMouseAdapter); } else {
+			 */addMouseListener(dragMouseAdapter);
+			addMouseMotionListener(dragMouseAdapter);
+			// }
+		}
 
 	}
 
@@ -280,10 +349,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		this.gameState = gameState;
 
 		createSheepMap();
-		this.turn = gameState.getTurn();
-		this.currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
-		this.ended = false;
-		repaint();
+		currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
+		valideView();
 	}
 
 	@Override
@@ -324,7 +391,6 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				: errorMessage;
 		endColor = null;
 		repaint();
-
 	}
 
 	@Override
@@ -389,30 +455,36 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 		createSheepMap();
+		repaint();
 	}
 
 	@Override
 	public void paint(Graphics g) {
 
-		if (!showing || waiting) {
+		if (!showing) {
 			return;
 		}
 
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
+						: RenderingHints.VALUE_ANTIALIAS_OFF);
 
-		g2.setColor(currentPlayer == null ? Color.LIGHT_GRAY
-				: getPlayerColor(currentPlayer));
-		g2.fillRect(0, 0, getWidth(), getHeight());
+		// hintergrundbild
+		if (OPTIONS[BACKGROUND]) {
+			g2.drawImage(scaledBgBoard, BORDER_SIZE, BORDER_SIZE, getWidth()
+					- 2 * BORDER_SIZE, getHeight() - 2 * BORDER_SIZE, this);
+		} else {
+			g2.setColor(new Color(76, 119, 43));
+			g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE,
+					getHeight() - 2 * BORDER_SIZE);
+		}
 
-		g2.drawImage(scaledBgBoard, BORDER_SIZE, BORDER_SIZE, getWidth() - 2
-				* BORDER_SIZE, getHeight() - 2 * BORDER_SIZE, this);
-
-		g2.setColor(new Color(200, 240, 200, 160));
-		g2.fillRect(getWidth() - BORDER_SIZE - STATS_WIDTH, BORDER_SIZE,
-				STATS_WIDTH, getHeight() - 2 * BORDER_SIZE);
+		// seiitenleiste
+		g2.setColor(getTransparentColor(new Color(200, 240, 200), 160));
+		g2.fillRect(getWidth() - BORDER_SIZE - STATS_WIDTH, 0, STATS_WIDTH
+				+ BORDER_SIZE, getHeight());
 
 		paintStaticComponents(g2);
 		if (gameState != null) {
@@ -420,39 +492,107 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			paintDynamicComponents(g2);
 		}
 
-		if (ended) {
-			String msg = "Das Spiel ist zu Ende";
-			if (endColor == PlayerColor.PLAYER1) {
-				msg = gameState.getPlayerNames()[0] + " hat gewonnen!";
-			} else if (endColor == PlayerColor.PLAYER2) {
-				msg = gameState.getPlayerNames()[1] + " hat gewonnen!";
+		if (config) {
+			drawConfigMessage(g2);
+		} else if (ended) {
+			drawEndMessage(g2);
+		}
+
+	}
+
+	private void drawConfigMessage(Graphics2D g2) {
+
+		String msg = "Einstellungen";
+
+		int msgW = fmH1.stringWidth(msg);
+		int msgH = fmH1.getHeight();
+		int xCenter = xBorder + size / 2;
+
+		int w = msgW;
+		int h = msgH + 10 + 25 * OPTION_NAMES.length;
+		for (int i = 0; i < OPTION_NAMES.length; i++) {
+			w = Math.max(w, fmH4.stringWidth(OPTION_NAMES[i]) + 25);
+		}
+
+		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
+		if (OPTIONS[SIMEPLE_SHAPES]) {
+			g2.fillRect(xCenter - w / 2 - 20, (getHeight() - h) / 2 - 5,
+					w + 40, h + 10);
+		} else {
+			g2.fillRoundRect(xCenter - w / 2 - 20, (getHeight() - h) / 2 - 5,
+					w + 40, h + 10, 20, 20);
+		}
+
+		h = (getHeight() - h) / 2 + fmH1.getHeight() - 3;
+		g2.setFont(h1);
+		g2.setColor(Color.BLACK);
+		g2.drawString(msg, xCenter - msgW / 2, h);
+
+		h += 10;
+		g2.setFont(h4);
+		configX = 5 + xCenter - w / 2;
+		configY = h;
+		for (int i = 0; i < OPTION_NAMES.length; i++) {
+			if (OPTIONS[SIMEPLE_SHAPES]) {
+				if (OPTIONS[i]) {
+					g2.setColor(Color.GRAY);
+					g2.fillRect(configX, h, 20, 20);
+				}
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRect(configX, h, 20, 20);
+			} else {
+				if (OPTIONS[i]) {
+					g2.setColor(Color.GRAY);
+					g2.fillRoundRect(configX, h, 20, 20, 10, 10);
+				}
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRoundRect(configX, h, 20, 20, 10, 10);
+
 			}
-			String info = endErrorMsg != null ? endErrorMsg
-					: "Herzlichen Glückwunsch!";
+			g2.setColor(Color.BLACK);
+			g2.drawString(OPTION_NAMES[i], configX + 25, h + fmH4.getHeight());
+			h += 25;
+		}
 
-			int msgW = fmH1.stringWidth(msg);
-			int msgH = fmH1.getHeight();
-			int infoW = fmH3.stringWidth(info);
-			int infoH = fmH3.getHeight();
-			int w = Math.max(msgW, infoW);
-			int h = msgH + infoH;
-			int xCenter = xBorder + size / 2;
+	}
 
-			g2.setColor(new Color(255, 255, 255, 160));
+	private void drawEndMessage(Graphics2D g2) {
+		String msg = "Das Spiel ist zu Ende";
+		if (endColor == PlayerColor.PLAYER1) {
+			msg = gameState.getPlayerNames()[0] + " hat gewonnen!";
+		} else if (endColor == PlayerColor.PLAYER2) {
+			msg = gameState.getPlayerNames()[1] + " hat gewonnen!";
+		}
+		String info = endErrorMsg != null ? endErrorMsg
+				: "Herzlichen Glückwunsch!";
+
+		int msgW = fmH1.stringWidth(msg);
+		int msgH = fmH1.getHeight();
+		int infoW = fmH3.stringWidth(info);
+		int infoH = fmH3.getHeight();
+		int w = Math.max(msgW, infoW);
+		int h = msgH + infoH;
+		int xCenter = xBorder + size / 2;
+
+		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
+
+		if (OPTIONS[SIMEPLE_SHAPES]) {
+			g2.fillRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5,
+					w + 40, h + 10);
+		} else {
 			g2.fillRoundRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5,
 					w + 40, h + 10, 20, 20);
-
-			h = getHeight() / 2 - 5;
-			g2.setFont(h1);
-			g2.setColor(getPlayerColor(endColor));
-			g2.drawString(msg, xCenter - msgW / 2, h);
-
-			h += msgH - 10;
-			g2.setFont(h3);
-			g2.setColor(Color.BLACK);
-			g2.drawString(info, xCenter - infoW / 2, h);
-
 		}
+
+		h = getHeight() / 2 - 5;
+		g2.setFont(h1);
+		g2.setColor(getPlayerColor(endColor));
+		g2.drawString(msg, xCenter - msgW / 2, h);
+
+		h += msgH - 10;
+		g2.setFont(h3);
+		g2.setColor(Color.BLACK);
+		g2.drawString(info, xCenter - infoW / 2, h);
 
 	}
 
@@ -467,16 +607,19 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			NodeType type = guiNode.getNodeType();
 			if (type != NodeType.GRASS) {
 
+				Color c;
 				if (type == NodeType.HOME1) {
-					g2.setColor(HOME1_COLOR);
+					c = new Color(226, 32, 32);
 				} else if (type == NodeType.HOME2) {
-					g2.setColor(HOME2_COLOR);
+					c = new Color(32, 32, 226);
 				} else {
-					g2.setColor(SAVE_COLOR);
+					c = new Color(32, 192, 32);
 				}
-				g2.fillPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
-						guiNode.size());
 
+				g2.setColor(getTransparentColor(c, 192));
+				g2.fillPolygon(guiNode.getScaledXs(OPTIONS[SIMEPLE_SHAPES]),
+						guiNode.getScaledYs(OPTIONS[SIMEPLE_SHAPES]), guiNode
+								.size(OPTIONS[SIMEPLE_SHAPES]));
 			}
 		}
 
@@ -484,14 +627,24 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(2f));
 		for (GUINode guiNode : guiNodes) {
-			g2.drawPolygon(guiNode.getScaledXs(), guiNode.getScaledYs(),
-					guiNode.size());
+			g2.drawPolygon(guiNode.getScaledXs(OPTIONS[SIMEPLE_SHAPES]),
+					guiNode.getScaledYs(OPTIONS[SIMEPLE_SHAPES]), guiNode
+							.size(OPTIONS[SIMEPLE_SHAPES]));
 
 		}
 
 	}
 
 	private void paintDynamicComponents(Graphics2D g2) {
+
+		// rahmen
+		g2.setColor(currentPlayer == null ? Color.LIGHT_GRAY
+				: getPlayerColor(currentPlayer));
+		g2.fillRect(0, 0, getWidth(), BORDER_SIZE);
+		g2.fillRect(0, getHeight() - BORDER_SIZE, getWidth(), BORDER_SIZE);
+
+		g2.fillRect(0, 0, BORDER_SIZE, getHeight());
+		g2.fillRect(getWidth() - BORDER_SIZE, 0, BORDER_SIZE, getHeight());
 
 		for (Flower flower : gameState.getFlowers()) {
 			GUINode guiNode = guiNodes[flower.node];
@@ -528,10 +681,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			if (highliteNode && myturn && !onlyObserving
 					&& currentSheep.owner == currentPlayer
 					&& currentNeighbours.contains(currentNode)) {
-				g2.setColor(getTransparentColor(c));
+
+				g2.setColor(getTransparentColor(c, 128));
 				GUINode currentGUINode = guiNodes[currentNode];
-				g2.fillPolygon(currentGUINode.getScaledXs(), currentGUINode
-						.getScaledYs(), currentGUINode.size());
+				g2.fillPolygon(currentGUINode
+						.getScaledXs(OPTIONS[SIMEPLE_SHAPES]), currentGUINode
+						.getScaledYs(OPTIONS[SIMEPLE_SHAPES]), currentGUINode
+						.size(OPTIONS[SIMEPLE_SHAPES]));
 			}
 
 			g2.setColor(c);
@@ -539,8 +695,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				for (Integer n : currentNeighbours) {
 					GUINode guiNode = guiNodes[n];
 					g2.setStroke(new BasicStroke(3.5f));
-					g2.drawPolygon(guiNode.getScaledXs(),
-							guiNode.getScaledYs(), guiNode.size());
+					g2.drawPolygon(
+							guiNode.getScaledXs(OPTIONS[SIMEPLE_SHAPES]),
+							guiNode.getScaledYs(OPTIONS[SIMEPLE_SHAPES]),
+							guiNode.size(OPTIONS[SIMEPLE_SHAPES]));
 				}
 			}
 		}
@@ -585,8 +743,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				fontX, fontY);
 
 		fontY += 20;
-		g2.drawString("Runde " + (turn + 1) + " von "
-				+ (Constants.TURN_LIMIT - 1), fontX, fontY);
+		g2.drawString("Runde " + (gameState.getTurn() + 1) + " von "
+				+ Constants.TURN_LIMIT + " Runden", fontX, fontY);
 
 		fontY += 35;
 		g2.setFont(h2);
@@ -612,12 +770,19 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		int i = 0;
 		fontY += 15;
-		g2.setFont(hDice);
-		for (Die dice : gameState.getDice()) {
-			drawDie(g2, fontX + 60 * i, fontY, dice.value);
-
-			i++;
+		if (OPTIONS[SIMEPLE_SHAPES]) {
+			for (Die dice : gameState.getDice()) {
+				drawSimpleDie(g2, fontX + 60 * i++, fontY, dice.value);
+			}
+		} else {
+			for (Die dice : gameState.getDice()) {
+				drawDie(g2, fontX + 60 * i++, fontY, dice.value);
+			}
 		}
+
+		fontY += 75;
+		g2.setColor(Color.BLACK);
+		g2.setFont(h4);
 
 		if (currentSheep != null && currentSheep.owner != null) {
 			int ownSheeps = currentSheep.getSize(currentSheep.owner);
@@ -625,9 +790,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 					.oponent());
 			int flowers = currentSheep.getFlowers();
 
-			fontY += 75;
-			g2.setColor(Color.BLACK);
-			g2.setFont(h4);
+			fontY += 25;
 			g2.drawString(ownSheeps + " eigene" + (ownSheeps == 1 ? "s" : "")
 					+ " Schaf" + (ownSheeps == 1 ? "" : "e"), fontX, fontY);
 
@@ -640,24 +803,34 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.drawString(flowers + " eingesammelte Blume"
 					+ (Math.abs(flowers) != 1 ? "n" : ""), fontX, fontY);
 
-			if (currentSheep.getDogState() != null) {
+			if (currentSheep.getDogState() == DogState.PASSIVE) {
 				fontY += 25;
-				g2.drawString("In Begleitung des Schäferhundes", fontX, fontY);
-			}
-			if (currentSheep.getDogState() == DogState.ACTIVE) {
+				g2.drawString("Der Schäferhund ist passiv", fontX, fontY);
+			} else if (currentSheep.getDogState() == DogState.ACTIVE) {
 				fontY += 20;
 				g2.drawString("Der Schäferhund ist aktiv", fontX, fontY);
 			}
 
 		}
 
+		if (hasFocus()) {
+			fontY = getHeight() - BORDER_SIZE - 5;
+			g2.setFont(hSheep);
+			g2.setColor(Color.DARK_GRAY);
+			g2.drawString("Leertase für Einstellungen", fontX, fontY);
+		}
+
 	}
 
 	private void drawDie(Graphics2D g2, int x, int y, int value) {
+
 		g2.setColor(Color.GRAY);
 		g2.fillRoundRect(x, y, 50, 50, 15, 15);
 
-		g2.setColor(getPlayerColor(currentPlayer));
+		g2.setColor(Color.DARK_GRAY);
+		g2.drawRoundRect(x, y, 50, 50, 15, 15);
+
+		g2.setColor(Color.WHITE);
 		switch (value) {
 		case 5:
 			g2.fillArc(x + 37 - 4, y + 13 - 4, 8, 8, 0, 360);
@@ -682,6 +855,44 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		case 2:
 			g2.fillArc(x + 13 - 4, y + 13 - 4, 8, 8, 0, 360);
 			g2.fillArc(x + 37 - 4, y + 37 - 4, 8, 8, 0, 360);
+			break;
+
+		default:
+			break;
+		}
+
+	}
+
+	private void drawSimpleDie(Graphics2D g2, int x, int y, int value) {
+
+		g2.setColor(Color.GRAY);
+		g2.fillRect(x, y, 50, 50);
+
+		g2.setColor(Color.WHITE);
+		switch (value) {
+		case 5:
+			g2.fillRect(x + 37 - 4, y + 13 - 4, 8, 8);
+			g2.fillRect(x + 13 - 4, y + 37 - 4, 8, 8);
+
+		case 3:
+			g2.fillRect(x + 13 - 4, y + 13 - 4, 8, 8);
+			g2.fillRect(x + 37 - 4, y + 37 - 4, 8, 8);
+
+		case 1:
+			g2.fillRect(x + 25 - 4, y + 25 - 4, 8, 8);
+			break;
+
+		case 6:
+			g2.fillRect(x + 37 - 4, y + 25 - 4, 8, 8);
+			g2.fillRect(x + 13 - 4, y + 25 - 4, 8, 8);
+
+		case 4:
+			g2.fillRect(x + 37 - 4, y + 13 - 4, 8, 8);
+			g2.fillRect(x + 13 - 4, y + 37 - 4, 8, 8);
+
+		case 2:
+			g2.fillRect(x + 13 - 4, y + 13 - 4, 8, 8);
+			g2.fillRect(x + 37 - 4, y + 37 - 4, 8, 8);
 			break;
 
 		default:
@@ -729,8 +940,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	}
 
-	private Color getTransparentColor(Color c) {
-		return new Color(c.getRed(), c.getGreen(), c.getBlue(), 128);
+	private Color getTransparentColor(Color c, int alpha) {
+		return new Color(c.getRed(), c.getGreen(), c.getBlue(),
+				OPTIONS[TRANSPARANCY] ? alpha : 255);
 	}
 
 	private Color getPlayerColor(PlayerColor player) {
@@ -828,16 +1040,24 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				int statsW = mfSheep.stringWidth(stat);
 				int statsH = mfSheep.getHeight();
 
-				g2
-						.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
-								: Color.DARK_GRAY);
-				g2.fillRoundRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
-						statsH, 8, 8);
+				if (OPTIONS[SIMEPLE_SHAPES]) {
+					g2
+							.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
+									: Color.DARK_GRAY);
+					g2.fillRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
+							statsH);
+				} else {
+					g2
+							.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
+									: Color.DARK_GRAY);
+					g2.fillRoundRect(p.x - statsW / 2 - 4, p.y + 10,
+							statsW + 8, statsH, 8, 8);
 
-				g2.setColor(Color.BLACK);
-				g2.setStroke(new BasicStroke(1.5f));
-				g2.drawRoundRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
-						statsH, 8, 8);
+					g2.setColor(Color.BLACK);
+					g2.setStroke(new BasicStroke(1.5f));
+					g2.drawRoundRect(p.x - statsW / 2 - 4, p.y + 10,
+							statsW + 8, statsH, 8, 8);
+				}
 
 				g2
 						.setColor(sheep.getDogState() == DogState.ACTIVE ? Color.YELLOW
