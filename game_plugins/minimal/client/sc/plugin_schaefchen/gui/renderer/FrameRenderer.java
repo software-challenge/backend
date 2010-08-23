@@ -220,6 +220,47 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	};
 
+	// private int fps;
+	// private static final int FPS_RESOLUTION = 4;
+	// private int frameCount;
+	// private List<Integer> frames = new LinkedList<Integer>();
+	// private Runnable fpsTracker = new Runnable() {
+	//
+	// private boolean drawZeroFrames;
+	//
+	// @Override
+	// public void run() {
+	// try {
+	// while (true) {
+	// Thread.sleep(1000 / FPS_RESOLUTION);
+	// frames.remove(0);
+	// frames.add(new Integer(frameCount));
+	// frameCount = 0;
+	//
+	// fps = 0;
+	// for (Integer i : frames) {
+	// fps += i;
+	// }
+	//
+	// if (fps == 0 && drawZeroFrames) {
+	// drawZeroFrames = false;
+	// repaint();
+	// frameCount--;
+	// } else if (fps > 0) {
+	// drawZeroFrames = true;
+	// if (frames.get(FPS_RESOLUTION - 1) == 0) {
+	// repaint();
+	// frameCount--;
+	// }
+	// }
+	//
+	// }
+	// } catch (InterruptedException e) {
+	// }
+	// }
+	//
+	// };
+
 	private MouseAdapter configMouseAdapter = new MouseAdapter() {
 
 		@Override
@@ -288,8 +329,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		setMouseListeners();
 		setFocusable(true);
 		requestFocusInWindow();
-		
+
 		RenderConfiguration.loadSettings();
+		// for (int i = 0; i < FPS_RESOLUTION; i++) {
+		// frames.add(new Integer(0));
+		// }
+		// Thread t = new Thread(fpsTracker);
+		// t.start();
 
 		resizeBoard();
 		repaint();
@@ -450,13 +496,21 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			guiNode.scale(size, xBorder, yBorder);
 		}
 
-		MediaTracker tracker = new MediaTracker(this);
-		scaledBgBoard = bgBoard.getScaledInstance(400, -1, Image.SCALE_SMOOTH);
-		tracker.addImage(scaledBgBoard, 0);
-		try {
-			tracker.waitForID(0);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (width > 0 && heigth > 0) {
+			MediaTracker tracker = new MediaTracker(this);
+			// scaledBgBoard = bgBoard.getScaledInstance(400, -1,
+			// Image.SCALE_AREA_AVERAGING);
+
+			scaledBgBoard = new BufferedImage(width, heigth,
+					BufferedImage.TYPE_3BYTE_BGR);
+			scaledBgBoard.getGraphics().drawImage(bgBoard, 0, 0, width, heigth,
+					this);
+			tracker.addImage(scaledBgBoard, 0);
+			try {
+				tracker.waitForID(0);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		createSheepMap();
@@ -470,6 +524,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			return;
 		}
 
+		// frameCount++;
+
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -477,7 +533,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						: RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		// hintergrundbild
-		if (OPTIONS[BACKGROUND]) {
+		if (OPTIONS[BACKGROUND] && scaledBgBoard != null) {
 			g2.drawImage(scaledBgBoard, BORDER_SIZE, BORDER_SIZE, getWidth()
 					- 2 * BORDER_SIZE, getHeight() - 2 * BORDER_SIZE, this);
 		} else {
@@ -743,7 +799,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		fontY += 20;
 		g2.drawString("Runde " + (gameState.getTurn() + 1) + " von "
-				+ Constants.TURN_LIMIT + " Runden", fontX, fontY);
+				+ Constants.TURN_LIMIT  + " Runden", fontX, fontY);
 
 		fontY += 35;
 		g2.setFont(h2);
@@ -811,12 +867,16 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		}
 
+		fontY = getHeight() - BORDER_SIZE - 5;
+		g2.setFont(hSheep);
+		g2.setColor(Color.DARK_GRAY);
 		if (hasFocus()) {
-			fontY = getHeight() - BORDER_SIZE - 5;
-			g2.setFont(hSheep);
-			g2.setColor(Color.DARK_GRAY);
 			g2.drawString("Leertaste für Einstellungen", fontX, fontY);
 		}
+
+		// String fpsS = fps + " fps";
+		// fontX = getWidth() - BORDER_SIZE - 5 - mfSheep.stringWidth(fpsS);
+		// g2.drawString(fpsS, fontX, fontY);
 
 	}
 

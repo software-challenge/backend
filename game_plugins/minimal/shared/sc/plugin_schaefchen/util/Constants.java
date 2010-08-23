@@ -9,7 +9,7 @@ public class Constants {
 	public final static int SCORE_PER_COLLECTED_FLOWER = 2;
 	public final static int SCORE_PER_MUNCHED_FLOWER=4;
 	
-	public final static int TURN_LIMIT = GamePlugin.MAX_TURN_COUNT;
+	public final static int TURN_LIMIT = GamePlugin.MAX_TURN_COUNT - 1;
 	
 	public final static int SHEEPS_AT_HOME = 3;
 
