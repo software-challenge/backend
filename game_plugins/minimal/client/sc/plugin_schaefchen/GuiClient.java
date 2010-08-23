@@ -2,10 +2,10 @@ package sc.plugin_schaefchen;
 
 import java.io.IOException;
 
-import sc.plugin_schaefchen.GameUtil;
-import sc.plugin_schaefchen.Move;
-import sc.plugin_schaefchen.Player;
-import sc.plugin_schaefchen.PlayerColor;
+//
+//import sc.plugin_schaefchen.Move;
+//import sc.plugin_schaefchen.Player;
+//import sc.plugin_schaefchen.PlayerColor;
 
 public class GuiClient extends AbstractClient {
 	public GuiClient(String host, int port, EPlayerId id) throws IOException {
@@ -22,18 +22,19 @@ public class GuiClient extends AbstractClient {
 		return obs;
 	}
 
-	/**
-	 * Send the last turn made by player oldPlayer to the game observation (not
-	 * the room!)
-	 * 
-	 * @param oldPlayer
-	 * @param playerId
-	 */
-	private void sendLastTurn(Player oldPlayer, int playerId) {
-		//Move move = oldPlayer.getLastMove();
-		Move move = null;
-		obs.newTurn(playerId, GameUtil.displayMoveAction(move));
-	}
+	// /**
+	// * Send the last turn made by player oldPlayer to the game observation
+	// (not
+	// * the room!)
+	// *
+	// * @param oldPlayer
+	// * @param playerId
+	// */
+	// private void sendLastTurn(Player oldPlayer, int playerId) {
+	// //Move move = oldPlayer.getLastMove();
+	// // Move move = null;
+	// // obs.newTurn(playerId, "nothing");
+	// }
 
 	/**
 	 * Called when game state has been received Happens, after a client made a
@@ -44,22 +45,7 @@ public class GuiClient extends AbstractClient {
 	public void onNewState(String roomId, Object state) {
 		super.onNewState(roomId, state);
 
-		GameState gameState = (GameState) state;
-
 		if (obs != null) {
-			Player oldPlayer = gameState.getOtherPlayer();
-
-			int playerid = 0;
-			if (oldPlayer.getPlayerColor() == PlayerColor.PLAYER1) {
-				playerid = 0;
-			} else {
-				playerid = 1;
-			}
-			;
-
-//			if (oldPlayer.getLastMove() != null) {
-//				sendLastTurn(oldPlayer, playerid);
-//			}
 
 			if (!alreadyReady) {
 				alreadyReady = true;
@@ -68,15 +54,4 @@ public class GuiClient extends AbstractClient {
 		}
 	}
 
-	@Override
-	public void onGameJoined(String roomId) {
-		if (obs != null) {
-			obs.ready();
-		}
-	}
-
-	@Override
-	public void onGameLeft(String roomId) {
-		// nothing to do
-	}
 }

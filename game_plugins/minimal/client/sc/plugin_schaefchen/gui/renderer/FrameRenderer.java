@@ -791,15 +791,20 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.setColor(Color.BLACK);
 		g2.drawString(TITLE, fontX, fontY);
 
+		int flowers = gameState.getTotalFlowers();
+		String type = flowers < 0 ? "Fliegenpilze" : "Blumen";
+		if (Math.abs(flowers) == 1) {
+			type = type.substring(0, type.length() - 1);
+		}
+
 		fontY += 20;
 		g2.setFont(h4);
-		g2.drawString(
-				gameState.getTotalFlowers() + " Blumen auf dem Spielfeld",
-				fontX, fontY);
+		g2.drawString(flowers + " " + type + " auf dem Spielfeld", fontX,
+						fontY);
 
 		fontY += 20;
 		g2.drawString("Runde " + (gameState.getTurn() + 1) + " von "
-				+ Constants.TURN_LIMIT  + " Runden", fontX, fontY);
+				+ Constants.TURN_LIMIT + " Runden", fontX, fontY);
 
 		fontY += 35;
 		g2.setFont(h2);
@@ -842,7 +847,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			int ownSheeps = currentSheep.getSize(currentSheep.owner);
 			int opponentSheeps = currentSheep.getSize(currentSheep.owner
 					.oponent());
-			int flowers = currentSheep.getFlowers();
+			flowers = currentSheep.getFlowers();
 
 			fontY += 25;
 			g2.drawString(ownSheeps + " eigene" + (ownSheeps == 1 ? "s" : "")
@@ -969,10 +974,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.drawString(stats[1] + " Schafe im Spiel", fontX, fontY);
 
 		fontY += 20;
-		g2.drawString(stats[2] + " Schafe gestohlen", fontX, fontY);
+		g2.drawString(stats[2] + " Schafe gefangen", fontX, fontY);
 
 		fontY += 20;
-		g2.drawString(stats[3] + " Schafe gefangen", fontX, fontY);
+		g2.drawString(stats[3] + " Schafe gestohlen", fontX, fontY);
 
 		fontY += 25;
 		String type = (stats[4] < 0 ? "Fliegenpilze" : "Blumen");
