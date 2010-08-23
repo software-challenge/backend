@@ -22,7 +22,7 @@ import sc.shared.SlotDescriptor;
  * Abstrakter Client nach Vorschrift des SDKs. Beinhaltet einen LobbyClient, der
  * den tatsächlichen Client darstellt.
  * 
- * @author sven
+ * @author sven, tkra
  */
 public abstract class AbstractClient implements ILobbyClientListener {
 	// The handler reacts to messages from the server received by the lobby
@@ -46,7 +46,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	// the current port
 	private int port;
 	// current figurecolor to identify which client belongs to which player
-	private PlayerColor mycolor;
+	private PlayerColor myColor;
 	// set to true when ready was sent to ReadyListeners
 	protected boolean alreadyReady = false;
 
@@ -61,6 +61,11 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		this.port = port;
 		this.host = host;
 		error = null;
+	}
+
+	// wenn es nur einen client gibt
+	public AbstractClient(String host, int port) throws IOException {
+		this(host, port, EPlayerId.PLAYER_ONE);
 	}
 
 	public void setHandler(IGameHandler handler) {
@@ -101,7 +106,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 			handler.onRequestAction();
 		} else if (data instanceof WelcomeMessage) {
 			WelcomeMessage welc = (WelcomeMessage) data;
-			mycolor = welc.getYourColor();
+			myColor = welc.getYourColor();
 		}
 		this.roomId = roomId;
 	}
@@ -137,7 +142,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		if (id != EPlayerId.OBSERVER) {
 			handler.onUpdate(gameState);
 
-			if (gameState.getCurrentPlayer().getPlayerColor() == mycolor) { // active
+			if (gameState.getCurrentPlayer().getPlayerColor() == myColor) { // active
 																		// player
 																		// is
 																		// own
@@ -154,6 +159,16 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	public void joinAnyGame() {
 		client.joinAnyGame(gameType);
+	}
+
+	@Override
+	public void onGameJoined(String roomId) {
+		
+	}
+
+	@Override
+	public void onGameLeft(String roomId) {
+		
 	}
 
 	public void joinPreparedGame(String reservation) {
@@ -198,7 +213,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		client.close();
 
 		if (handler != null) {
-			handler.gameEnded(data, mycolor, this.error);
+			handler.gameEnded(data, myColor, this.error);
 		}
 	}
 
@@ -213,6 +228,10 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	public String getError() {
 		return error;
+	}
+
+	public PlayerColor getMyColor() {
+		return myColor;
 	}
 
 }
