@@ -25,7 +25,7 @@ public class RenderConfiguration {
 
 	
 	private static final boolean[] DEFAULTS = new boolean[] { true, true,
-			false, true };
+			true, false };
 
 	public static final boolean[] OPTIONS = new boolean[] { true, true, false,
 			true };
