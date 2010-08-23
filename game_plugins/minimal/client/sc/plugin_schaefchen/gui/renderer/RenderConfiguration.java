@@ -20,17 +20,14 @@ public class RenderConfiguration {
 	public static final int INDICES = 5;
 
 	public static final String[] OPTION_NAMES = new String[] {
-		"Kantenglättung", "Transparenz", 
-		"Hintergrundbild", "Einfache Grafik" /* , "Drag'n'Drop", "Indizes zeigen" */};
+			"Kantenglättung", "Transparenz", "Hintergrundbild",
+			"Einfache Grafik" /* , "Drag'n'Drop", "Indizes zeigen" */};
 
-	
-	private static final boolean[] DEFAULTS = new boolean[] { true, true,
-			true, false };
+	private static final boolean[] DEFAULTS = new boolean[] { true, true, true,
+			false };
 
-	public static final boolean[] OPTIONS = new boolean[] { true, true, false,
-			true };
+	public static final boolean[] OPTIONS = DEFAULTS.clone();
 
-	
 	public static void saveSettings() {
 
 		Map<String, Boolean> map = new HashMap<String, Boolean>();
@@ -40,9 +37,10 @@ public class RenderConfiguration {
 
 		OutputStream fileStream = null;
 		try {
-			fileStream = new FileOutputStream("schaefchen_einstellungen");
+			fileStream = new FileOutputStream("schaefchen_gui.conf");
 			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
 			objectStream.writeObject(map);
+			objectStream.flush();
 		} catch (IOException e) {
 		} finally {
 			try {
@@ -60,14 +58,14 @@ public class RenderConfiguration {
 		InputStream fileStream = null;
 
 		try {
-			fileStream = new FileInputStream("schaefchen_einstellungen");
+			fileStream = new FileInputStream("schaefchen_gui.conf");
 			ObjectInputStream objectStream = new ObjectInputStream(fileStream);
 			HashMap<String, Boolean> map = (HashMap<String, Boolean>) objectStream
 					.readObject();
 
 			for (int i = 0; i < OPTIONS.length; i++) {
 				Boolean option = map.get(OPTION_NAMES[i]);
-				OPTIONS[i] = option == null ? DEFAULTS[i] : option; 
+				OPTIONS[i] = option == null ? DEFAULTS[i] : option;
 			}
 
 		} catch (IOException e) {
