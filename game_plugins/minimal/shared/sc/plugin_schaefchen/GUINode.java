@@ -1,7 +1,6 @@
 package sc.plugin_schaefchen;
 
 import sc.plugin_schaefchen.gui.positioner.Positioner;
-import sc.plugin_schaefchen.gui.renderer.RenderFacade.GUIMode;
 
 /**
  * ein spielfeld. als geometrische figur und als logisches element
