@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import sc.plugin_schaefchen.gui.positioner.ArcPositioner;
 import sc.plugin_schaefchen.gui.positioner.BasePositioner;
@@ -28,12 +30,19 @@ public class BoardFactory {
 
 	private static final List<FactoryNode> factoryNodes;
 	public static final List<Node> nodes;
-	public static final List<GUINode> guiNodes;
 
 	static {
 		factoryNodes = createFactoryNodes();
-		guiNodes = createGUINodes();
 		nodes = createNodes();
+
+		for (Node node : nodes) {
+			for (int i = 2; i <= Constants.DIE_SIZE; i++) {
+				for (Integer neighbour : getNeighbours(node, i)) {
+					node.addNeighbour(neighbour, i);
+				}
+			}
+		}
+
 	}
 
 	private static class Index {
@@ -53,7 +62,7 @@ public class BoardFactory {
 			Node node = new Node(factoryNode.getNodeType(), factoryNode
 					.getCounterPart(), factoryNode.index);
 			for (Integer n : factoryNode.getNeighbours()) {
-				node.addNeighbour(n);
+				node.addNeighbour(n, 1);
 			}
 			nodes.add(node);
 		}
@@ -62,7 +71,42 @@ public class BoardFactory {
 
 	}
 
-	private static List<GUINode> createGUINodes() {
+	/*
+	 * liefert die menge der (indirekten) nachbar dieses spielfeldes im abstand
+	 * dist
+	 */
+	private static Set<Integer> getNeighbours(Node node, int dist) {
+		Set<Integer> set = new HashSet<Integer>();
+		if (dist == 0) {
+			set.add(node.index);
+		} else {
+			for (Integer n : node.getNeighbours()) {
+				addNeighbours(nodes.get(n), node, Math.abs(dist) - 1, set);
+			}
+		}
+
+		return set;
+	}
+
+	/*
+	 * fuegt einen menge von spielfeldern ihre (indirekten) nachbarn im abstand
+	 * dist hinzu. ohne den aufrufenden knoten origin
+	 */
+	private static void addNeighbours(Node node, Node origin, int dist,
+			final Set<Integer> set) {
+		if (dist == 0) {
+			set.add(node.index);
+		} else {
+			for (Integer n : node.getNeighbours()) {
+				if (nodes.get(n) != origin) {
+					addNeighbours(nodes.get(n), node, dist - 1, set);
+				}
+			}
+		}
+
+	}
+
+	public static List<GUINode> createGUINodes() {
 
 		List<FactoryNode> factoryNodes = createFactoryNodes();
 		List<GUINode> nodes = new ArrayList<GUINode>(factoryNodes.size());
@@ -386,6 +430,14 @@ public class BoardFactory {
 				node.setFlowers(true);
 			}
 		}
+
+		// nach knotenindex sortieren
+		 Collections.sort(nodes, new Comparator<FactoryNode>() {
+			@Override
+			public int compare(FactoryNode o1, FactoryNode o2) {
+				return o1.index > o2.index ? 1 : -1;
+			}
+		});
 
 		return nodes;
 

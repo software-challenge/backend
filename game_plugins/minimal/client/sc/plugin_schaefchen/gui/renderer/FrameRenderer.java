@@ -158,8 +158,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						+ Math.pow(p.y - mousey, 2)) < 20
 						&& sheep.owner != null) {
 					currentSheep = sheep;
-					currentNeighbours = gameState.getValidReachableNodes(
-							sheep.index).keySet();
+					currentNeighbours = gameState
+							.getValidReacheableNodes(currentSheep);
 
 					repaint();
 					break;
@@ -317,7 +317,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		highliteNode = false;
 		sheepMap = new HashMap<Sheep, Point>(4 * Constants.SHEEPS_AT_HOME + 1);
-		List<GUINode> guiNodeList = BoardFactory.guiNodes;
+		List<GUINode> guiNodeList = BoardFactory.createGUINodes();
 		guiNodes = new GUINode[guiNodeList.size()];
 		for (GUINode node : guiNodeList) {
 			guiNodes[node.index] = node;
@@ -705,7 +705,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.fillRect(0, 0, BORDER_SIZE, getHeight());
 		g2.fillRect(getWidth() - BORDER_SIZE, 0, BORDER_SIZE, getHeight());
 
-		for (Flower flower : gameState.getFlowers()) {
+		for (Flower flower : gameState.getAllFlowers()) {
 			GUINode guiNode = guiNodes[flower.node];
 
 			switch (flower.amount) {
@@ -791,7 +791,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.setColor(Color.BLACK);
 		g2.drawString(TITLE, fontX, fontY);
 
-		int flowers = gameState.getTotalFlowers();
+		int flowers = gameState.getTotalFlowerAmount();
 		String type = flowers < 0 ? "Fliegenpilze" : "Blumen";
 		if (Math.abs(flowers) == 1) {
 			type = type.substring(0, type.length() - 1);
@@ -799,7 +799,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		fontY += 20;
 		g2.setFont(h4);
-		g2.drawString(flowers + " " + type + " auf dem Spielfeld", fontX,
+		g2
+				.drawString(flowers + " " + type + " auf dem Spielfeld", fontX,
 						fontY);
 
 		fontY += 20;
@@ -967,7 +968,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private int drawPlayerInfo(Graphics2D g2, int fontY, int fontX,
 			PlayerColor player) {
 
-		int[] stats = gameState.getGameStats(player);
+		int[] stats = gameState.getPlayerStats(player);
 
 		fontY += 20;
 		g2.setFont(h4);

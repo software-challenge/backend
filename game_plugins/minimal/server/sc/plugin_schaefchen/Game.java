@@ -94,7 +94,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (gameState.getSheepByID(move.sheep) == null) {
+			if (gameState.getSheep(move.sheep) == null) {
 				author.setViolated(true);
 				String err = "There is no Sheep #" + move.sheep;
 				logger.error("Received invalid move {} from {}: "
@@ -102,7 +102,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (!gameState.getSheepByID(move.sheep).owner.equals(getActivePlayer()
+			if (!gameState.getSheep(move.sheep).owner.equals(getActivePlayer()
 					.getPlayerColor())) {
 				author.setViolated(true);
 				String err = "Current player can't move sheep #" + move.sheep;
@@ -111,7 +111,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new GameLogicException("Move was invalid: " + err);
 			}
 
-			if (!gameState.isValidTarget(gameState.getSheepByID(move.sheep),
+			if (!gameState.isValidTarget(gameState.getSheep(move.sheep),
 					move.target)) {
 				author.setViolated(true);
 				String err = "Sheep #" + move.sheep + " can't enter node #"
@@ -210,7 +210,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
 
-		int[] stats = gameState.getGameStats(p.getPlayerColor());
+		int[] stats = gameState.getPlayerStats(p.getPlayerColor());
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
 				0, 0, 0, 0, 0, 0) : new PlayerScore(ScoreCause.REGULAR,
 				stats[0], stats[1], stats[2], stats[3], stats[4], stats[5],
