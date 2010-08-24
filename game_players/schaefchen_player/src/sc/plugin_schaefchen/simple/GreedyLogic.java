@@ -22,7 +22,7 @@ import sc.shared.GameResult;
 public class GreedyLogic implements IGameHandler
 {
 
-	private SimpleClient	client;
+	private Starter	client;
 	private GameState		gameState;
 	private Player			currentPlayer;
 
@@ -97,7 +97,7 @@ public class GreedyLogic implements IGameHandler
 
 	}
 
-	public GreedyLogic(SimpleClient client)
+	public GreedyLogic(Starter client)
 	{
 		this.client = client;
 	}

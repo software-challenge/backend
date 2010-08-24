@@ -9,10 +9,10 @@ import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 
-public class SimpleClient extends AbstractClient
+public class Starter extends AbstractClient
 {
 
-	public SimpleClient(String host, int port, String reservation, String strategy)
+	public Starter(String host, int port, String reservation, String strategy)
 			throws IOException
 	{
 		// client starten
@@ -81,7 +81,7 @@ public class SimpleClient extends AbstractClient
 		String strategy = (String) parser.getOptionValue(strategyOption, "");
 
 		// einen neuen client erzeugen
-		new SimpleClient(host, port, reservation, strategy);
+		new Starter(host, port, reservation, strategy);
 		
 	}
 
