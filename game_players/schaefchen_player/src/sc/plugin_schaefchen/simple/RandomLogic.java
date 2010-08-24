@@ -14,11 +14,11 @@ import sc.shared.GameResult;
 public class RandomLogic implements IGameHandler
 {
 
-	private SimpleClient	client;
+	private Starter	client;
 	private GameState		gameState;
 	private Player			currentPlayer;
 
-	public RandomLogic(SimpleClient client)
+	public RandomLogic(Starter client)
 	{
 		this.client = client;
 	}
