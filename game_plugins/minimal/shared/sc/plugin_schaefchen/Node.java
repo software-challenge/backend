@@ -13,7 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * ein spielfeld. als geometrische figur und als logisches element
+ * ein spielfeld als logisches element
  * 
  * @author tkra
  * 
@@ -33,6 +33,7 @@ public final class Node {
 	// mengen der benachbarten spielfelder
 	@XStreamOmitField
 	private final List<Set<Integer>> neighbours;
+	@SuppressWarnings("unused")
 	@XStreamImplicit(itemFieldName = "neighbour")
 	private final Set<Integer> directNeighbours;
 

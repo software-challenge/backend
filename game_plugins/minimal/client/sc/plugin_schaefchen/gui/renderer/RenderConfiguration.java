@@ -15,16 +15,18 @@ public class RenderConfiguration {
 	public static final int ANTIALIASING = 0;
 	public static final int TRANSPARANCY = 1;
 	public static final int BACKGROUND = 2;
-	public static final int SIMEPLE_SHAPES = 3;
-	public static final int DRAG_N_DROP = 5;
-	public static final int INDICES = 5;
+	public static final int CURVED_SHAPES = 3;
+	public static final int NODE_INDICES = 4;
+	public static final int SHEEP_INDICES = 5;
+	public static final int DEBUG_VIEW = 6;
 
 	public static final String[] OPTION_NAMES = new String[] {
 			"Kantenglättung", "Transparenz", "Hintergrundbild",
-			"Einfache Grafik" /* , "Drag'n'Drop", "Indizes zeigen" */};
+			"Rundungen", "Feldindizes zeigen", "Schafindizes zeigen",
+			"Debugansicht" };
 
 	private static final boolean[] DEFAULTS = new boolean[] { true, true, true,
-			false };
+			true, false, false, false };
 
 	public static final boolean[] OPTIONS = DEFAULTS.clone();
 

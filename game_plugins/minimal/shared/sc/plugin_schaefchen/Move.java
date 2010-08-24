@@ -1,7 +1,11 @@
 package sc.plugin_schaefchen;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * ein spielzug
@@ -19,9 +23,24 @@ public final class Move {
 	@XStreamAsAttribute
 	public final int target;
 
+	@XStreamImplicit(itemFieldName = "hint")
+	private List<DebugHint> hints;
+
 	public Move(int sheep, int target) {
 		this.sheep = sheep;
 		this.target = target;
+	}
+
+	public void addHint(DebugHint hint) {
+		if (hints == null) {
+			hints = new LinkedList<DebugHint>();
+		}
+
+		hints.add(hint);
+	}
+
+	public List<DebugHint> getHints() {
+		return hints == null ? new LinkedList<DebugHint>() : hints;
 	}
 
 	@Override

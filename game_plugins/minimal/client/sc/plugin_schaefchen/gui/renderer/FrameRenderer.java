@@ -38,6 +38,7 @@ import java.util.Set;
 import javax.swing.JPanel;
 
 import sc.plugin_schaefchen.BoardFactory;
+import sc.plugin_schaefchen.DebugHint;
 import sc.plugin_schaefchen.Die;
 import sc.plugin_schaefchen.DogState;
 import sc.plugin_schaefchen.Flower;
@@ -71,7 +72,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	// private final FontMetrics fmH2 = getFontMetrics(h2);
 	private final FontMetrics fmH3 = getFontMetrics(h3);
 	private final FontMetrics fmH4 = getFontMetrics(h4);
-	private final FontMetrics mfSheep = getFontMetrics(hSheep);
+	private final FontMetrics fmSheep = getFontMetrics(hSheep);
 
 	private final static int BORDER_SIZE = 5;
 	private static final String TITLE = "Schäfchen im Trockenen";
@@ -275,8 +276,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				if (y % 25 <= 20) {
 					int i = y / 25;
 					OPTIONS[i] = !OPTIONS[i];
-					if (i == SIMEPLE_SHAPES) {
-						GUINode.setSimple(OPTIONS[SIMEPLE_SHAPES]);
+					if (i == CURVED_SHAPES) {
+						GUINode.setSimple(!OPTIONS[CURVED_SHAPES]);
 					}
 					RenderConfiguration.saveSettings();
 					repaint();
@@ -576,12 +577,12 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
-		if (OPTIONS[SIMEPLE_SHAPES]) {
-			g2.fillRect(xCenter - w / 2 - 20, (getHeight() - h) / 2 - 5,
-					w + 40, h + 10);
-		} else {
+		if (OPTIONS[CURVED_SHAPES]) {
 			g2.fillRoundRect(xCenter - w / 2 - 20, (getHeight() - h) / 2 - 5,
 					w + 40, h + 10, 20, 20);
+		} else {
+			g2.fillRect(xCenter - w / 2 - 20, (getHeight() - h) / 2 - 5,
+					w + 40, h + 10);
 		}
 
 		h = (getHeight() - h) / 2 + fmH1.getHeight() - 3;
@@ -594,14 +595,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		configX = 5 + xCenter - w / 2;
 		configY = h;
 		for (int i = 0; i < OPTION_NAMES.length; i++) {
-			if (OPTIONS[SIMEPLE_SHAPES]) {
-				if (OPTIONS[i]) {
-					g2.setColor(Color.GRAY);
-					g2.fillRect(configX, h, 20, 20);
-				}
-				g2.setColor(Color.DARK_GRAY);
-				g2.drawRect(configX, h, 20, 20);
-			} else {
+			if (OPTIONS[CURVED_SHAPES]) {
 				if (OPTIONS[i]) {
 					g2.setColor(Color.GRAY);
 					g2.fillRoundRect(configX, h, 20, 20, 10, 10);
@@ -609,7 +603,15 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				g2.setColor(Color.DARK_GRAY);
 				g2.drawRoundRect(configX, h, 20, 20, 10, 10);
 
+			} else {
+				if (OPTIONS[i]) {
+					g2.setColor(Color.GRAY);
+					g2.fillRect(configX, h, 20, 20);
+				}
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRect(configX, h, 20, 20);
 			}
+
 			g2.setColor(Color.BLACK);
 			g2.drawString(OPTION_NAMES[i], configX + 25, h + fmH4.getHeight());
 			h += 25;
@@ -637,12 +639,12 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
 
-		if (OPTIONS[SIMEPLE_SHAPES]) {
-			g2.fillRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5,
-					w + 40, h + 10);
-		} else {
+		if (OPTIONS[CURVED_SHAPES]) {
 			g2.fillRoundRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5,
 					w + 40, h + 10, 20, 20);
+		} else {
+			g2.fillRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5,
+					w + 40, h + 10);
 		}
 
 		h = getHeight() / 2 - 5;
@@ -730,6 +732,39 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 			default:
 			}
+
+		}
+
+		for (GUINode guiNode : guiNodes) {
+			if (OPTIONS[NODE_INDICES]) {
+
+				int x = guiNode.getScaledCenterX();
+				int y = guiNode.getScaledCenterY();
+				g2.setFont(hSheep);
+				String index = Integer.toString(guiNode.index);
+				int indexW = fmSheep.stringWidth(index);
+				int indexH = fmSheep.getHeight();
+
+				if (OPTIONS[CURVED_SHAPES]) {
+					g2.setColor(Color.GRAY);
+					g2.fillRoundRect(x - indexW / 2 - 4, y - indexH / 2 - 2,
+							indexW + 8, indexH, 8, 8);
+
+					g2.setColor(Color.DARK_GRAY);
+					g2.setStroke(new BasicStroke(1.5f));
+					g2.drawRoundRect(x - indexW / 2 - 4, y - indexH / 2 - 2,
+							indexW + 8, indexH, 8, 8);
+				} else {
+					g2.setColor(Color.GRAY);
+					g2.fillRect(x - indexW / 2 - 4, y - indexH / 2 - 2,
+							indexW + 8, indexH);
+				}
+
+				g2.setColor(Color.WHITE);
+				g2.drawString(index, x - indexW / 2, y - indexH / 2 - 1
+						+ indexH - 3);
+
+			}
 		}
 
 		// highlights fuer erreichbare knoten zeichnen
@@ -812,39 +847,47 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		String name = gameState.getPlayerNames()[0];
 		g2.setColor(PLAYER1_COLOR);
 		if (currentPlayer == PlayerColor.PLAYER1) {
-			name += " ist am Zug";
+			name += " am Zug";
 		}
 		g2.drawString(name, fontX, fontY);
 		g2.setColor(Color.BLACK);
-		fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER1);
+		if (OPTIONS[DEBUG_VIEW]) {
+			fontY = drawSmallPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER1);
+		} else {
+			fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER1);
+		}
 
 		fontY += 35;
 		g2.setFont(h2);
 		name = gameState.getPlayerNames()[1];
 		g2.setColor(PLAYER2_COLOR);
 		if (currentPlayer == PlayerColor.PLAYER2) {
-			name += " ist am Zug";
+			name += " am Zug";
 		}
 		g2.drawString(name, fontX, fontY);
 		g2.setColor(Color.BLACK);
-		fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER2);
-
+		if (OPTIONS[DEBUG_VIEW]) {
+			fontY = drawSmallPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER2);
+		} else {
+			fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER2);
+		}
 		int i = 0;
 		fontY += 15;
-		if (OPTIONS[SIMEPLE_SHAPES]) {
+		if (OPTIONS[CURVED_SHAPES]) {
 			for (Die dice : gameState.getDice()) {
-				drawSimpleDie(g2, fontX + 60 * i++, fontY, dice.value);
+				drawDie(g2, fontX + 60 * i++, fontY, dice.value);
 			}
 		} else {
 			for (Die dice : gameState.getDice()) {
-				drawDie(g2, fontX + 60 * i++, fontY, dice.value);
+				drawSimpleDie(g2, fontX + 60 * i++, fontY, dice.value);
 			}
 		}
 
 		fontY += 50;
 		g2.setColor(Color.BLACK);
 		g2.setFont(h4);
-		if (currentSheep != null && currentSheep.owner != null) {
+		if (!OPTIONS[DEBUG_VIEW] && currentSheep != null
+				&& currentSheep.owner != null) {
 			int ownSheeps = currentSheep.getSize(currentSheep.owner);
 			int opponentSheeps = currentSheep.getSize(currentSheep.owner
 					.oponent());
@@ -869,6 +912,23 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			} else if (currentSheep.getDogState() == DogState.ACTIVE) {
 				fontY += 20;
 				g2.drawString("Der Schäferhund ist aktiv", fontX, fontY);
+			}
+
+		}
+
+		if (OPTIONS[DEBUG_VIEW]) {
+			Move lastMove = gameState.getLastMove();
+			if (lastMove != null) {
+				fontY += 25;
+				g2.drawString("Letzter Zug: Schaf #" + lastMove.sheep
+						+ " auf Feld#" + lastMove.target, fontX, fontY);
+
+				fontY += 5;
+				for (DebugHint hint : lastMove.getHints()) {
+					fontY += 20;
+					g2.drawString(hint.key + " = " + hint.value, fontX, fontY);
+				}
+
 			}
 
 		}
@@ -1004,6 +1064,36 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	}
 
+	private int drawSmallPlayerInfo(Graphics2D g2, int fontY, int fontX,
+			PlayerColor player) {
+
+		int dFontX = STATS_WIDTH / 8;
+		int[] stats = gameState.getPlayerStats(player);
+
+		fontY += 20;
+		g2.setFont(h4);
+		g2.drawString(Integer.toString(stats[1]), fontX, fontY);
+
+		fontX += dFontX;
+		g2.drawString(Integer.toString(stats[2]), fontX, fontY);
+
+		fontX += dFontX;
+		g2.drawString(Integer.toString(stats[3]), fontX, fontY);
+
+		fontX += dFontX;
+		g2.drawString(Integer.toString(stats[4]), fontX, fontY);
+
+		fontX += dFontX;
+		g2.drawString(Integer.toString(stats[5]), fontX, fontY);
+
+		fontX += dFontX;
+		g2.setFont(h3);
+		g2.drawString(stats[6] + " Punkte", fontX, fontY);
+
+		return fontY;
+
+	}
+
 	private Color getTransparentColor(Color c, int alpha) {
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(),
 				OPTIONS[TRANSPARANCY] ? alpha : 255);
@@ -1093,6 +1183,33 @@ public class FrameRenderer extends JPanel implements IRenderer {
 						- DOG_SIZE / 2, DOG_SIZE, DOG_SIZE, this);
 			}
 
+			if (OPTIONS[SHEEP_INDICES]) {
+
+				g2.setFont(h4);
+				String index = Integer.toString(sheep.index);
+				int indexW = fmH4.stringWidth(index);
+				int indexH = fmH4.getHeight();
+
+				if (OPTIONS[CURVED_SHAPES]) {
+					g2.setColor(Color.GRAY);
+					g2.fillRoundRect(p.x - indexW / 2 - 4, p.y - 10,
+							indexW + 8, indexH, 8, 8);
+
+					g2.setColor(Color.DARK_GRAY);
+					g2.setStroke(new BasicStroke(1.5f));
+					g2.drawRoundRect(p.x - indexW / 2 - 4, p.y - 10,
+							indexW + 8, indexH, 8, 8);
+				} else {
+					g2.setColor(Color.GRAY);
+					g2.fillRect(p.x - indexW / 2 - 4, p.y - 10, indexW + 8,
+							indexH);
+				}
+
+				g2.setColor(Color.WHITE);
+				g2.drawString(index, p.x - indexW / 2, p.y - 10 + indexH - 3);
+
+			}
+
 			if (sheep.owner != null) {
 				int ownSheeps = sheep.getSize(sheep.owner);
 				int opponentSheeps = sheep.getSize(sheep.owner.oponent());
@@ -1101,16 +1218,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				g2.setFont(hSheep);
 				String stat = ownSheeps + ", " + opponentSheeps + ", "
 						+ flowers;
-				int statsW = mfSheep.stringWidth(stat);
-				int statsH = mfSheep.getHeight();
+				int statsW = fmSheep.stringWidth(stat);
+				int statsH = fmSheep.getHeight();
 
-				if (OPTIONS[SIMEPLE_SHAPES]) {
-					g2
-							.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
-									: Color.DARK_GRAY);
-					g2.fillRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
-							statsH);
-				} else {
+				if (OPTIONS[CURVED_SHAPES]) {
 					g2
 							.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
 									: Color.DARK_GRAY);
@@ -1121,6 +1232,12 @@ public class FrameRenderer extends JPanel implements IRenderer {
 					g2.setStroke(new BasicStroke(1.5f));
 					g2.drawRoundRect(p.x - statsW / 2 - 4, p.y + 10,
 							statsW + 8, statsH, 8, 8);
+				} else {
+					g2
+							.setColor(sheep.owner == currentPlayer ? getPlayerColor(sheep.owner)
+									: Color.DARK_GRAY);
+					g2.fillRect(p.x - statsW / 2 - 4, p.y + 10, statsW + 8,
+							statsH);
 				}
 
 				g2

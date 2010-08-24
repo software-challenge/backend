@@ -50,6 +50,9 @@ public final class GameState {
 	@XStreamImplicit(itemFieldName = "die")
 	private final List<Die> dice;
 
+	// letzter performte move
+	private Move lastMove;
+
 	public GameState() {
 
 		dice = new LinkedList<Die>();
@@ -106,17 +109,24 @@ public final class GameState {
 	}
 
 	/**
-	 * liefert den knoten zu einem gegebenen index
-	 */
-	public Node getNode(int nodeIndex) {
-		return BoardFactory.nodes.get(nodeIndex);
-	}
-
-	/**
 	 * liefert die aktuelle rundenzahl
 	 */
 	public int getTurn() {
 		return turn;
+	}
+
+	/**
+	 * liefert den zuletzt ausgefuehrten zug
+	 */
+	public Move getLastMove() {
+		return lastMove;
+	}
+
+	/**
+	 * liefert den knoten zu einem gegebenen index
+	 */
+	public Node getNode(int nodeIndex) {
+		return BoardFactory.nodes.get(nodeIndex);
 	}
 
 	/**
@@ -235,22 +245,31 @@ public final class GameState {
 		addDice();
 	}
 
+	/*
+	 * einen wuerfelwurf machen und den wuerfel dem vorrat hinzufuegen
+	 */
 	private void addDice() {
 		dice.add(new Die(rand.nextInt(Constants.DIE_SIZE) + 1));
 
-		// sicherstellen, dass wenigstens zwei verschiedene wuerfel vorhanden
-		// sind
-		Die die = dice.get(0);
-		boolean same = dice.size() > 1;
-		while (same) {
+		boolean again = dice.size() > 1;
+		while (again) {
+			// neu wuerfeln, wenn alle wuerfel die gleiche augen zahl haben
+			Die die = dice.get(0);
 			for (int i = 1; i < dice.size(); i++) {
 				if (!dice.get(i).equals(die)) {
-					same = false;
+					again = false;
 					break;
 				}
 			}
-			if (same) {
-				dice.remove(0);
+
+			// neu wuerfeln, wenn der kommende spieler nichts machen kann
+			if (!again && currentPlayer != null) {
+				again = getValidMoves(currentPlayer.oponent()).size() == 0;
+			}
+
+			// neu wuerfeln
+			if (again) {
+				dice.remove(dice.size() - 1);
 				dice.add(new Die(rand.nextInt(Constants.DIE_SIZE) + 1));
 			}
 		}
@@ -485,11 +504,19 @@ public final class GameState {
 	}
 
 	/**
-	 * liefert alle momentan gueltigen zuege
+	 * liefert alle momentan gueltigen zuege fuer den aktuellen spieler
 	 */
 	public List<Move> getValidMoves() {
+		return getValidMoves(currentPlayer);
+	}
+
+	/**
+	 * liefert alle momentan gueltigen zuege
+	 */
+	public List<Move> getValidMoves(PlayerColor playerColor) {
+
 		List<Move> validMoves = new LinkedList<Move>();
-		for (Sheep sheep : getSheeps(currentPlayer)) {
+		for (Sheep sheep : getSheeps(playerColor)) {
 			for (Integer target : getValidReacheableNodes(sheep)) {
 				validMoves.add(new Move(sheep.index, target));
 			}
@@ -592,6 +619,7 @@ public final class GameState {
 			break;
 		}
 
+		lastMove = move;
 		return true;
 
 	}
