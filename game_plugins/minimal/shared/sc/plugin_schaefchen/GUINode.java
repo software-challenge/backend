@@ -3,7 +3,7 @@ package sc.plugin_schaefchen;
 import sc.plugin_schaefchen.gui.positioner.Positioner;
 
 /**
- * ein spielfeld. als geometrische figur und als logisches element
+ * ein spielfeld als geometrische figur
  * 
  * @author tkra
  * 
