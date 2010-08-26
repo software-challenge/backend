@@ -221,46 +221,28 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	};
 
-	// private int fps;
-	// private static final int FPS_RESOLUTION = 4;
-	// private int frameCount;
-	// private List<Integer> frames = new LinkedList<Integer>();
-	// private Runnable fpsTracker = new Runnable() {
-	//
-	// private boolean drawZeroFrames;
-	//
-	// @Override
-	// public void run() {
-	// try {
-	// while (true) {
-	// Thread.sleep(1000 / FPS_RESOLUTION);
-	// frames.remove(0);
-	// frames.add(new Integer(frameCount));
-	// frameCount = 0;
-	//
-	// fps = 0;
-	// for (Integer i : frames) {
-	// fps += i;
-	// }
-	//
-	// if (fps == 0 && drawZeroFrames) {
-	// drawZeroFrames = false;
-	// repaint();
-	// frameCount--;
-	// } else if (fps > 0) {
-	// drawZeroFrames = true;
-	// if (frames.get(FPS_RESOLUTION - 1) == 0) {
-	// repaint();
-	// frameCount--;
-	// }
-	// }
-	//
-	// }
-	// } catch (InterruptedException e) {
-	// }
-	// }
-	//
-	// };
+	private double phiBenchmark = 0;
+	private final Object LOCK = new Object();
+	private int frames;
+	private int frameRate;
+	private long lastSecond;
+	private final Runnable fpsThread = new Runnable() {
+
+		@Override
+		public void run() {
+			while (OPTIONS[BENCHMARK]) {
+
+				try {
+					synchronized (LOCK) {
+						LOCK.wait();
+					}
+					FrameRenderer.this.repaint();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
 
 	private MouseAdapter configMouseAdapter = new MouseAdapter() {
 
@@ -279,6 +261,14 @@ public class FrameRenderer extends JPanel implements IRenderer {
 					if (i == CURVED_SHAPES) {
 						GUINode.setSimple(!OPTIONS[CURVED_SHAPES]);
 					}
+					if (i == BENCHMARK) {
+
+						frameRate = 0;
+						phiBenchmark = 0;
+						lastSecond = System.currentTimeMillis();
+						Thread t = new Thread(fpsThread);
+						t.start();
+					}
 					RenderConfiguration.saveSettings();
 					repaint();
 				}
@@ -287,7 +277,6 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		}
 
 	};
-
 	private KeyListener keyListener = new KeyAdapter() {
 
 		@Override
@@ -345,6 +334,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private void valideView() {
 
+		if (!config) {
+			OPTIONS[BENCHMARK] = false;
+		}
 		currentSheep = null;
 		highliteNode = false;
 		currentNeighbours = null;
@@ -560,6 +552,27 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			drawEndMessage(g2);
 		}
 
+		if (OPTIONS[BENCHMARK]) {
+
+			frames++;
+			long now = System.currentTimeMillis();
+			if (now >= lastSecond + 1000) {
+				frameRate = frames;
+				frames = 0;
+				lastSecond = now;
+			}
+
+			phiBenchmark += (2 * Math.PI) / 360;
+			if (phiBenchmark >= 2 * Math.PI) {
+				phiBenchmark = 0;
+			}
+
+			synchronized (LOCK) {
+				LOCK.notifyAll();
+			}
+
+		}
+
 	}
 
 	private void drawConfigMessage(Graphics2D g2) {
@@ -613,8 +626,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			}
 
 			g2.setColor(Color.BLACK);
-			g2.drawString(OPTION_NAMES[i], configX + 25, h + fmH4.getHeight());
+			String option = OPTION_NAMES[i];
+			if (i == BENCHMARK && OPTIONS[BENCHMARK]) {
+				option += " @ " + frameRate + " fps";
+			}
+			g2.drawString(option, configX + 25, h + fmH4.getHeight());
 			h += 25;
+
 		}
 
 	}
@@ -1123,10 +1141,18 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 			Point p = sheepMap.get(sheep);
 			// FIXME: warum kann p == null auftreten?
-			if ((currentSheep != null && sheep == currentSheep) || p == null) {
+			if (OPTIONS[BENCHMARK]) {
+				int dX = guiNodes[0].getScaledCenterX();
+				int dY = guiNodes[0].getScaledCenterY();
+				double cosPhi = Math.cos(-phiBenchmark);
+				double sinPhi = Math.sin(-phiBenchmark);
+				int x = (int) ((p.x - dX) * cosPhi - (p.y - dY) * sinPhi);
+				int y = (int) ((p.x - dX) * sinPhi + (p.y - dY) * cosPhi);
+				p = new Point(dX + x, dY + y);
+			} else if ((currentSheep != null && sheep == currentSheep)
+					|| p == null) {
 				p = new Point(mousex, mousey);
 			}
-
 			int spread = (sheep.getDogState() != null)
 					&& (sheep.getSize(PlayerColor.PLAYER1)
 							+ sheep.getSize(PlayerColor.PLAYER2) > 0) ? 5 : 0;

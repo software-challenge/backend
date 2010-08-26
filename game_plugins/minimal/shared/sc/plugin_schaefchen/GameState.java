@@ -121,6 +121,15 @@ public final class GameState {
 	public Move getLastMove() {
 		return lastMove;
 	}
+	
+
+	/**
+	 * liefert alle knoten
+	 */
+	public List<Node> getNodes() {
+		return BoardFactory.nodes;
+	}
+
 
 	/**
 	 * liefert den knoten zu einem gegebenen index
@@ -623,5 +632,4 @@ public final class GameState {
 		return true;
 
 	}
-
 }

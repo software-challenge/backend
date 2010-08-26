@@ -16,17 +16,18 @@ public class RenderConfiguration {
 	public static final int TRANSPARANCY = 1;
 	public static final int BACKGROUND = 2;
 	public static final int CURVED_SHAPES = 3;
-	public static final int NODE_INDICES = 4;
-	public static final int SHEEP_INDICES = 5;
-	public static final int DEBUG_VIEW = 6;
+	public static final int BENCHMARK = 4;
+	public static final int NODE_INDICES = 5;
+	public static final int SHEEP_INDICES = 6;
+	public static final int DEBUG_VIEW = 7;
 
 	public static final String[] OPTION_NAMES = new String[] {
-			"Kantenglättung", "Transparenz", "Hintergrundbild",
-			"Rundungen", "Feldindizes zeigen", "Schafindizes zeigen",
+			"Kantenglättung", "Transparenz", "Hintergrundbild", "Rundungen",
+			"Benachmark", "Feldindizes zeigen", "Schafindizes zeigen",
 			"Debugansicht" };
 
 	private static final boolean[] DEFAULTS = new boolean[] { true, true, true,
-			true, false, false, false };
+			true, false, false, false, false };
 
 	public static final boolean[] OPTIONS = DEFAULTS.clone();
 
