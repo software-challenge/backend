@@ -21,7 +21,7 @@
 	<target name="dependencies">
 		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
 	</target>
-	
+
 	<target name="merge-src">
 		<copy todir="${src.dir}">
 			<fileset dir="server" />
@@ -49,7 +49,14 @@
 		</jar>
 	</target>
 
-	<target name="clean-build" depends="clean,jar" />
+	<target name="javadoc">
+		<echo message="${classpath}" />
+		<echo message="${toString:classpath}" />
+		<javadoc encoding="UTF-8" charset="UTF-8" access="public" author="true" classpath="${toString:classpath}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
+	</target>
+
+
+	<target name="clean-build" depends="clean,jar,javadoc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>
