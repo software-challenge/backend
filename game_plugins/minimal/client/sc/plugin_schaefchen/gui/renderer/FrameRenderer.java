@@ -562,7 +562,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				lastSecond = now;
 			}
 
-			phiBenchmark += (2 * Math.PI) / 360;
+			phiBenchmark += (2 * Math.PI) / size;
 			if (phiBenchmark >= 2 * Math.PI) {
 				phiBenchmark = 0;
 			}
