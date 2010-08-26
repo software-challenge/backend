@@ -1,10 +1,10 @@
 package sc.server.plugins;
 
-import edu.cau.plugins.PluginDescriptor;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
+import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
 
 @PluginDescriptor(author="Chuck", name="TestPlugin", uuid=TestPlugin.TEST_PLUGIN_UUID)

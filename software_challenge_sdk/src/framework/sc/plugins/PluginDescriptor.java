@@ -1,4 +1,4 @@
-package edu.cau.plugins;
+package sc.plugins;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
