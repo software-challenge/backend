@@ -50,8 +50,6 @@
 	</target>
 
 	<target name="javadoc">
-		<echo message="${classpath}" />
-		<echo message="${toString:classpath}" />
 		<javadoc encoding="UTF-8" charset="UTF-8" access="public" author="true" classpath="${toString:classpath}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
 	</target>
 
