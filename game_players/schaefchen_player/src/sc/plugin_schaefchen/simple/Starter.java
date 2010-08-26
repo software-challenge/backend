@@ -12,27 +12,23 @@ import jargs.gnu.CmdLineParser.UnknownOptionException;
 public class Starter extends AbstractClient
 {
 
-	public Starter(String host, int port, String reservation, String strategy)
-			throws IOException
+	public Starter(String host, int port, String reservation, String strategy) throws Exception
 	{
 		// client starten
 		super(host, port);
 
 		// strategie auswaehlen und zuweisen
 		IGameHandler logic;
-		if (strategy != null && strategy.toUpperCase().equals("GREEDY"))
-		{
-			logic = new GreedyLogic(this);
+		
+		// Versuche für den strategy-Parameter eine passende Logik zu instanzieren,
+		// sonst verwende Standard
+		try {
+			logic = LogicFactory.valueOf(strategy.toUpperCase()).getInstance(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logic = LogicFactory.DEFAULT.getInstance(this);
 		}
-		else if (strategy != null && strategy.toUpperCase().equals("RANDOM"))
-		{
-			logic = new RandomLogic(this);
-		}
-		else
-		{
-			// wenn keine andere strategie angegeben wurde
-			logic = new GreedyLogic(this);
-		}
+		
 		setHandler(logic);
 		
 		// einem spiel beitreten
@@ -81,7 +77,12 @@ public class Starter extends AbstractClient
 		String strategy = (String) parser.getOptionValue(strategyOption, "");
 
 		// einen neuen client erzeugen
-		new Starter(host, port, reservation, strategy);
+		try {
+			new Starter(host, port, reservation, strategy);
+		} catch (Exception e) {
+			System.err.println("Beim Starten den Clients ist ein Fehler aufgetreten:");
+			e.printStackTrace();
+		}
 		
 	}
 
