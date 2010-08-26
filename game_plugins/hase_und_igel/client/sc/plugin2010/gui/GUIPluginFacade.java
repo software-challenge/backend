@@ -19,9 +19,9 @@ import sc.plugin2010.GuiClient;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.renderer.RendererUtil;
 import sc.plugin2010.util.Configuration;
+import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;
-import edu.cau.plugins.PluginDescriptor;
 
 /**
  * 
