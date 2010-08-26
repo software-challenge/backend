@@ -68,7 +68,11 @@
 		</copy>
 	</target>
 
-	<target name="build" depends="jar" />
+	<target name="javadoc">
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="true" classpath="${toString:classpath.base}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
+	</target>
+
+	<target name="build" depends="jar,javadoc" />
 
 	<target name="clean-build" depends="clean,build" />
 
