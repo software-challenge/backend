@@ -1,6 +1,6 @@
 package sc.plugin_schaefchen.kara;
 
-import sc.plugin_schaefchen.HundStatus;
+import sc.plugin_schaefchen.kara.HundStatus ;
 import sc.plugin_schaefchen.PlayerColor;
 import sc.plugin_schaefchen.Sheep;
 
