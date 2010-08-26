@@ -4,10 +4,10 @@ import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
 import sc.plugin_schaefchen.util.Configuration;
+import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
-import edu.cau.plugins.PluginDescriptor;
 
 /**
  * Minimal game plugin.

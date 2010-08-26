@@ -19,9 +19,9 @@ import sc.plugin_schaefchen.GuiClient;
 import sc.plugin_schaefchen.gui.renderer.RenderFacade;
 import sc.plugin_schaefchen.gui.renderer.RendererUtil;
 import sc.plugin_schaefchen.util.Configuration;
+import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;
-import edu.cau.plugins.PluginDescriptor;
 
 /**
  * This is the GUIPlugin interface that is loaded by the server when it loads
