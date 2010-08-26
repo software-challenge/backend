@@ -23,7 +23,7 @@ public class RenderConfiguration {
 
 	public static final String[] OPTION_NAMES = new String[] {
 			"Kantenglättung", "Transparenz", "Hintergrundbild", "Rundungen",
-			"Benachmark", "Feldindizes zeigen", "Schafindizes zeigen",
+			"Benchmark", "Feldindizes zeigen", "Schafindizes zeigen",
 			"Debugansicht" };
 
 	private static final boolean[] DEFAULTS = new boolean[] { true, true, true,
