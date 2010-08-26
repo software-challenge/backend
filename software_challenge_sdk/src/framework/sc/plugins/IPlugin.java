@@ -1,4 +1,4 @@
-package edu.cau.plugins;
+package sc.plugins;
 
 
 public interface IPlugin<HostType>

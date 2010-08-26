@@ -15,8 +15,8 @@ import java.util.jar.JarFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.plugins.PluginDescriptor;
 import sc.server.Configuration;
-import edu.cau.plugins.PluginDescriptor;
 
 /**
  * The <code>PluginManager</code> loads all available plugins from the plugin-

@@ -6,9 +6,9 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import sc.plugins.IPlugin;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;
-import edu.cau.plugins.IPlugin;
 
 public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 
