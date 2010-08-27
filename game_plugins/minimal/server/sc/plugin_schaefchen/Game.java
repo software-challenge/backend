@@ -144,8 +144,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
 
-		final Player player = Player.getPlayer(this.availableColors.remove(0));
+		final Player player = new Player(this.availableColors.remove(0));
 		this.players.add(player);
+		this.gameState.setPlayer(player);
 
 		return player;
 	}

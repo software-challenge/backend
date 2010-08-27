@@ -65,16 +65,31 @@ public final class GameState implements Cloneable {
 			addDice();
 		}
 
+		// liste mit zwei plaetzen initialisieren 
 		player = new ArrayList<Player>(2);
-		player.add(0, Player.getPlayer(PlayerColor.RED));
-		player.add(1, Player.getPlayer(PlayerColor.BLUE));
-
+		player.add(null);
+		player.add(null);
+		
 		sheeps = BoardFactory.createSheeps();
 		flowers = BoardFactory.createFlowers();
 
 		nextSheep = sheeps.size();
 	}
 
+	/**
+	 * setzt einer spieler 
+	 */
+	public void setPlayer(Player player) {
+
+		if(player.getPlayerColor() == PlayerColor.RED){
+			this.player.set(0, player);
+		} else if(player.getPlayerColor() == PlayerColor.BLUE){
+			this.player.set(1, player);
+		}
+		
+		
+	}
+	
 	/**
 	 * setzt den aktuellen spieler
 	 */
