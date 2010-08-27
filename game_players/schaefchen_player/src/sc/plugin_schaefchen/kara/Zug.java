@@ -49,11 +49,10 @@ public class Zug{
 	/**
 	 * Gibt die aktuell gespeicherten Debug Hilfestellungen zurück!
 	 */
-	public String[][] gibtDebugHilfestellungenZurueck(){
-		String[][] debugHints = new String[move.getHints().size()][2];
+	public String[] gibtDebugHilfestellungenZurueck(){
+		String[] debugHints = new String[move.getHints().size()];
 		for (int i = 0; i < debugHints.length; i++) {
-			debugHints[i][0] = move.getHints().get(i).key;
-			debugHints[i][1] = move.getHints().get(i).value;
+			debugHints[i] = move.getHints().get(i).content;
 		}
 		return debugHints;
 	}

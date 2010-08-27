@@ -1,9 +1,5 @@
 package sc.plugin_schaefchen.kara;
 
-import java.util.List;
-import java.util.Random;
-
-import sc.plugin_schaefchen.DebugHint;
 import sc.plugin_schaefchen.GameState;
 import sc.plugin_schaefchen.IGameHandler;
 import sc.plugin_schaefchen.Move;

@@ -62,8 +62,8 @@ public class GreedyLogic implements IGameHandler
 					// punkte fuer gefangene gegnerische und befreite
 					// eigene schafe gleich bewerten
 					value += Constants.SCORE_PER_CAPTURED_SHEEP
-							* (other.getSize(PlayerColor.PLAYER1) + other
-									.getSize(PlayerColor.PLAYER2));
+							* (other.getSize(PlayerColor.RED) + other
+									.getSize(PlayerColor.BLUE));
 				}
 			}
 
