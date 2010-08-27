@@ -1,8 +1,5 @@
 package sc.api.plugins;
 
-import java.io.File;
-import java.io.IOException;
-
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
