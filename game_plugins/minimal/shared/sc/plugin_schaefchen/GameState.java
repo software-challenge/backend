@@ -12,16 +12,17 @@ import sc.plugin_schaefchen.util.Constants;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * ein spielbrett beinhaltet die liste der spielfelder und die zur verfuegung
- * stehenden wurfel und die teilnehmenden spieler
+ * ein spielzustand beinhaltet die liste der spielfelder spielfiguren, die zur
+ * verfuegung stehenden wurfel und die teilnehmenden spieler
  * 
  * @author ffa, sca, tkra
  * 
  */
 @XStreamAlias(value = "sit:state")
-public final class GameState {
+public final class GameState implements Cloneable {
 
 	// der eigentlicher wurfel
 	private static final SecureRandom rand = new SecureRandom();
@@ -42,6 +43,10 @@ public final class GameState {
 	@XStreamImplicit(itemFieldName = "sheep")
 	private final List<Sheep> sheeps;
 
+	// naechste zur vergebender schafindex
+	@XStreamOmitField
+	private int nextSheep;
+
 	// liste der blumen
 	@XStreamImplicit(itemFieldName = "flowers")
 	private List<Flower> flowers;
@@ -60,28 +65,21 @@ public final class GameState {
 			addDice();
 		}
 
+		player = new ArrayList<Player>(2);
+		player.add(0, Player.getPlayer(PlayerColor.RED));
+		player.add(1, Player.getPlayer(PlayerColor.BLUE));
+
 		sheeps = BoardFactory.createSheeps();
 		flowers = BoardFactory.createFlowers();
-		player = new ArrayList<Player>(2);
-	}
 
-	/**
-	 * fuegt dem spiel einen neuen spieler hinzu und erzeugt huete in den
-	 * zugehoerigen basen. es werden nur zwei spieler unterstuetzt
-	 */
-	public final void addPlayer(final Player player) {
-		if (player.getPlayerColor() == PlayerColor.PLAYER1) {
-			this.player.add(0, player);
-		} else if (player.getPlayerColor() == PlayerColor.PLAYER2) {
-			this.player.add(1, player);
-		}
+		nextSheep = sheeps.size();
 	}
 
 	/**
 	 * setzt den aktuellen spieler
 	 */
 	public void setCurrentPlayer(PlayerColor p) {
-		assert p == PlayerColor.PLAYER1 || p == PlayerColor.PLAYER2;
+		assert p == PlayerColor.RED || p == PlayerColor.BLUE;
 		this.currentPlayer = p;
 	}
 
@@ -89,16 +87,14 @@ public final class GameState {
 	 * liefert den spieler der momentan am zug ist
 	 */
 	public Player getCurrentPlayer() {
-		return currentPlayer == PlayerColor.PLAYER1 ? player.get(0) : player
-				.get(1);
+		return currentPlayer == PlayerColor.RED ? player.get(0) : player.get(1);
 	}
 
 	/**
 	 * liefert den gegenspieler des aktiven spielers
 	 */
 	public Player getOtherPlayer() {
-		return currentPlayer == PlayerColor.PLAYER1 ? player.get(1) : player
-				.get(0);
+		return currentPlayer == PlayerColor.RED ? player.get(1) : player.get(0);
 	}
 
 	/**
@@ -121,7 +117,6 @@ public final class GameState {
 	public Move getLastMove() {
 		return lastMove;
 	}
-	
 
 	/**
 	 * liefert alle knoten
@@ -129,7 +124,6 @@ public final class GameState {
 	public List<Node> getNodes() {
 		return BoardFactory.nodes;
 	}
-
 
 	/**
 	 * liefert den knoten zu einem gegebenen index
@@ -298,7 +292,7 @@ public final class GameState {
 	public int[] getPlayerStats(PlayerColor playerColor) {
 		assert playerColor != null;
 
-		if (playerColor == PlayerColor.PLAYER1) {
+		if (playerColor == PlayerColor.RED) {
 			return getGameStats()[0];
 		} else {
 			return getGameStats()[1];
@@ -321,7 +315,7 @@ public final class GameState {
 		int index;
 		for (Sheep sheep : getSheeps()) {
 			if (sheep.owner != null) {
-				index = sheep.owner == PlayerColor.PLAYER1 ? 0 : 1;
+				index = sheep.owner == PlayerColor.RED ? 0 : 1;
 				stats[index][1]++;
 				stats[index][2] += sheep.getSize(sheep.owner.oponent());
 				stats[index][4] += sheep.getFlowers();
@@ -597,7 +591,7 @@ public final class GameState {
 		case HOME2:
 			// wenn ein heimatfeld betreten wird werden die gesammelten blumen
 			// und gegnerischen schafe gesichert ...
-			Player owner = sheep.owner == PlayerColor.PLAYER1 ? player.get(0)
+			Player owner = sheep.owner == PlayerColor.RED ? player.get(0)
 					: player.get(1);
 
 			// die gesammelten blumen werden gefressen
@@ -611,7 +605,7 @@ public final class GameState {
 			int n = sheep.getSize(owner.getPlayerColor()) - 1;
 			for (int i = 0; i < n; i++) {
 				sheeps.add(new Sheep(targetIndex, target.getCounterPart(),
-						sheep.owner));
+						sheep.owner, nextSheep++));
 			}
 
 			// wurde der schaeferhund eingesammelt bleibt er bei diesem schaf
@@ -631,5 +625,25 @@ public final class GameState {
 		lastMove = move;
 		return true;
 
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		GameState clone = new GameState();
+		clone.turn = turn;
+		clone.currentPlayer = currentPlayer;
+		for (Sheep sheep : sheeps) {
+			clone.sheeps.add((Sheep) sheep.clone());
+		}
+		clone.nextSheep = nextSheep;
+		for (Flower flower : flowers) {
+			clone.flowers.add((Flower) flower.clone());
+		}
+		clone.dice.clear();
+		for (Die die : dice) {
+			clone.dice.add((Die) die.clone());
+		}
+		clone.lastMove = lastMove;
+		return clone;
 	}
 }

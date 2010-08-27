@@ -7,22 +7,24 @@ import java.util.Set;
 
 import sc.plugin_schaefchen.util.Constants;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * ein spielfeld als logisches element
+ * ein spielfeld des statischen spielplans. es kennt im wesentlichen seine
+ * direkten und indirekten nachbarn -- sofern diese maximal einen wuerfel
+ * entfernt liegen.
  * 
  * @author tkra
  * 
  */
 
-@XStreamAlias(value = "sit:node")
-public final class Node {
+public final class Node implements Cloneable {
 
-	// eikndeutige nummer dieses spielfeldes
+	/**
+	 * eindeutiger index dieses spielfeldes
+	 */
 	@XStreamAsAttribute
 	public final int index;
 
@@ -42,6 +44,16 @@ public final class Node {
 	@XStreamOmitField
 	private int counterPart;
 
+	/**
+	 * ein neues spielfeld erstellen
+	 * 
+	 * @param type
+	 *            der spielfeldtyp dieses spielfelds
+	 * @param counterPart
+	 *            ggf. index des ihm gegenueberliegenden spielfeldes
+	 * @param index
+	 *            der index, den dieses spielfeld bekommen soll
+	 */
 	public Node(final NodeType type, int counterPart, int index) {
 		this.index = index;
 		this.counterPart = counterPart;
@@ -85,7 +97,10 @@ public final class Node {
 	 * spielfeldes. der abstand muss mit einem wuerfel erreichbar sein
 	 */
 	public Set<Integer> getNeighbours(int dist) {
-		assert dist >= 0 && dist <= Constants.DIE_SIZE;
+		if (dist < 1 || dist > Constants.DIE_SIZE) {
+			throw new IllegalArgumentException("keine gueltige augenzahl: "
+					+ dist);
+		}
 		return neighbours.get(dist);
 	}
 
@@ -96,8 +111,21 @@ public final class Node {
 		return type;
 	}
 
+	/**
+	 * liefert den index des gegenueberliegenden spielfeldes.
+	 */
 	protected int getCounterPart() {
 		return counterPart;
 	}
 
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Node clone = new Node(type, counterPart, index);
+		for (int i = 1; i <= Constants.DIE_SIZE; i++) {
+			for (Integer n : getNeighbours(i)) {
+				clone.addNeighbour(n, i);
+			}
+		}
+		return clone;
+	}
 }

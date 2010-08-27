@@ -3,7 +3,8 @@ package sc.plugin_schaefchen;
 import sc.plugin_schaefchen.gui.positioner.Positioner;
 
 /**
- * ein spielfeld als geometrische figur
+ * 
+ * geometrische informationen ueber ein spielfeld
  * 
  * @author tkra
  * 
@@ -12,7 +13,7 @@ import sc.plugin_schaefchen.gui.positioner.Positioner;
 public final class GUINode {
 
 	static boolean simple = false;
-	
+
 	// ein zur form passender positionierungsalgorithmus fuer
 	// auf diesem feld liegende objekte
 	private Positioner positioner;
@@ -48,10 +49,10 @@ public final class GUINode {
 	// eikndeutige nummer dieses spielfeldes
 	public final int index;
 
-	public static void setSimple(boolean simple){
+	public static void setSimple(boolean simple) {
 		GUINode.simple = simple;
 	}
-	
+
 	public GUINode(final double[] xs, final double[] ys, int n, double centerX,
 			double centerY, final double[] simpleXs, final double[] simpleYs,
 			int simpleN, int index, NodeType type) {
@@ -78,21 +79,21 @@ public final class GUINode {
 		scale(100, 100, 10);
 	}
 
-	/**
+	/*
 	 * setzt den positionierungsalgorithmus
 	 */
 	public void setPositioner(final Positioner positioner) {
 		this.positioner = positioner;
 	}
 
-	/**
+	/*
 	 * liefert die anzahl der eckpunkte deses spielfeldes
 	 */
 	public int size() {
 		return simple ? simpleN : n;
 	}
 
-	/**
+	/*
 	 * liefert die x-werte der lagen der eckpunkte im kontinuierlichen
 	 * koordinatenbereich
 	 */
@@ -100,7 +101,7 @@ public final class GUINode {
 		return xs;
 	}
 
-	/**
+	/*
 	 * liefert die y-werte der lagen der eckpunkte im kontinuierlichen
 	 * koordinatenbereich
 	 */
@@ -109,7 +110,7 @@ public final class GUINode {
 
 	}
 
-	/**
+	/*
 	 * liefert den x-werte der lage des mittelpunktes im kontinuierlichen
 	 * koordinatenbereich
 	 */
@@ -117,7 +118,7 @@ public final class GUINode {
 		return centerX;
 	}
 
-	/**
+	/*
 	 * liefert den y-werte der lage des mittelpunktes im kontinuierlichen
 	 * koordinatenbereich
 	 */
@@ -125,7 +126,7 @@ public final class GUINode {
 		return centerY;
 	}
 
-	/**
+	/*
 	 * skalierung im diskreten koordinatenbereich
 	 */
 	public void scale(int size, int xBorder, int yBorder) {
@@ -152,7 +153,7 @@ public final class GUINode {
 
 	}
 
-	/**
+	/*
 	 * liefert die x-werte der lagen der eckpunkte im diskreten
 	 * koordinatenbereich
 	 */
@@ -160,7 +161,7 @@ public final class GUINode {
 		return simple ? scaledSimpleXs : scaledXs;
 	}
 
-	/**
+	/*
 	 * liefert die y-werte der lagen der eckpunkte im diskreten
 	 * koordinatenbereich
 	 */
@@ -169,7 +170,7 @@ public final class GUINode {
 
 	}
 
-	/**
+	/*
 	 * liefert den x-wert der lagen des mittelpunktes im diskreten
 	 * koordinatenbereich
 	 */
@@ -177,7 +178,7 @@ public final class GUINode {
 		return scaledCenterX;
 	}
 
-	/**
+	/*
 	 * liefert den y-wert der lagen des mittelpunktes im diskreten
 	 * koordinatenbereich
 	 */
@@ -185,7 +186,7 @@ public final class GUINode {
 		return scaledCenterY;
 	}
 
-	/**
+	/*
 	 * liefert die x-wert der lagen der mittelpunkte von n objekten die auf
 	 * diesem spielfeld positioniert werden sollen im diskreten
 	 * koordinatenbereich
@@ -194,7 +195,7 @@ public final class GUINode {
 		return positioner.scaledXs(n);
 	}
 
-	/**
+	/*
 	 * liefert die y-wert der lagen der mittelpunkte von n objekten die auf
 	 * diesem spielfeld positioniert werden sollen im diskreten
 	 * koordinatenbereich
@@ -203,7 +204,7 @@ public final class GUINode {
 		return positioner.scaledYs(n);
 	}
 
-	/**
+	/*
 	 * prueft ob ein im diskreten koordinatenbereich gegebener püunkt innerhalb
 	 * dieses spielfeldes ist
 	 */
@@ -253,7 +254,7 @@ public final class GUINode {
 		}
 	}
 
-	/**
+	/*
 	 * liefert den spielfeldtyp dieses spielfeldes
 	 */
 	public NodeType getNodeType() {

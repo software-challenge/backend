@@ -55,8 +55,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	}
 
 	public Game() {
-		availableColors.add(PlayerColor.PLAYER1);
-		availableColors.add(PlayerColor.PLAYER2);
+		availableColors.add(PlayerColor.RED);
+		availableColors.add(PlayerColor.BLUE);
 	}
 
 	@Override
@@ -144,8 +144,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
 
-		final Player player = new Player(this.availableColors.remove(0));
-		this.gameState.addPlayer(player);
+		final Player player = Player.getPlayer(this.availableColors.remove(0));
 		this.players.add(player);
 
 		return player;
@@ -226,8 +225,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected boolean checkGameOverCondition() {
 		return getTurn() >= GamePlugin.MAX_TURN_COUNT - 1
-				|| gameState.getSheeps(PlayerColor.PLAYER1).size() == 0
-				|| gameState.getSheeps(PlayerColor.PLAYER2).size() == 0;
+				|| gameState.getSheeps(PlayerColor.RED).size() == 0
+				|| gameState.getSheeps(PlayerColor.BLUE).size() == 0;
 	}
 
 	@Override

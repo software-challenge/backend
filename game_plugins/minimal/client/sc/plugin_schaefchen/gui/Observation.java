@@ -162,7 +162,7 @@ public class Observation implements IObservation, IUpdateListener,
 		String name1 = "Spieler 1";
 		String name2 = "Spieler 2";
 
-		if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.PLAYER1) {
+		if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED) {
 			name1 = gameState.getCurrentPlayer().getDisplayName();
 			name2 = gameState.getOtherPlayer()
 					.getDisplayName();
@@ -174,7 +174,7 @@ public class Observation implements IObservation, IUpdateListener,
 
 		if (conGame.getCurrentError() != null) {
 			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
-			result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.PLAYER1 ? name1
+			result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED ? name1
 					: name2);
 			result += " hat einen Fehler gemacht: \n" + error.getMessage()
 					+ "\n";

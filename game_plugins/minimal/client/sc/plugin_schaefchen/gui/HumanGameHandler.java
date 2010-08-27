@@ -56,7 +56,7 @@ public class HumanGameHandler implements IGameHandler {
 		RenderFacade.getInstance().gameEnded(
 				data,
 				client.getID(),
-				(color == PlayerColor.PLAYER1 ? PlayerColor.PLAYER2
-						: PlayerColor.PLAYER1), errorMessage);
+				(color == PlayerColor.RED ? PlayerColor.BLUE
+						: PlayerColor.RED), errorMessage);
 	}
 }

@@ -1,6 +1,11 @@
 package sc.plugin_schaefchen;
 
-public enum DogState {
+/**
+ * enumeration fuer die beiden moeglichen zustaende des schaeferhundes
+ * @author tkra
+ *
+ */
+public enum DogState{
 
 	ACTIVE, PASSIVE
 	

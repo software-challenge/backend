@@ -419,10 +419,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		if (data != null) {
 			if (data.getScores().get(0).getValues().get(0).equals(
 					new BigDecimal(1))) {
-				endColor = PlayerColor.PLAYER1;
+				endColor = PlayerColor.RED;
 			} else if (data.getScores().get(1).getValues().get(0).equals(
 					new BigDecimal(1))) {
-				endColor = PlayerColor.PLAYER2;
+				endColor = PlayerColor.BLUE;
 			}
 		}
 		repaint();
@@ -628,6 +628,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.setColor(Color.BLACK);
 			String option = OPTION_NAMES[i];
 			if (i == BENCHMARK && OPTIONS[BENCHMARK]) {
+				if(frameRate < 30){
+					g2.setColor(Color.RED);
+				}
 				option += " @ " + frameRate + " fps";
 			}
 			g2.drawString(option, configX + 25, h + fmH4.getHeight());
@@ -639,9 +642,9 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	private void drawEndMessage(Graphics2D g2) {
 		String msg = "Das Spiel ist zu Ende";
-		if (endColor == PlayerColor.PLAYER1) {
+		if (endColor == PlayerColor.RED) {
 			msg = gameState.getPlayerNames()[0] + " hat gewonnen!";
-		} else if (endColor == PlayerColor.PLAYER2) {
+		} else if (endColor == PlayerColor.BLUE) {
 			msg = gameState.getPlayerNames()[1] + " hat gewonnen!";
 		}
 		String info = endErrorMsg != null ? endErrorMsg
@@ -864,30 +867,30 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.setFont(h2);
 		String name = gameState.getPlayerNames()[0];
 		g2.setColor(PLAYER1_COLOR);
-		if (currentPlayer == PlayerColor.PLAYER1) {
+		if (currentPlayer == PlayerColor.RED) {
 			name += " am Zug";
 		}
 		g2.drawString(name, fontX, fontY);
 		g2.setColor(Color.BLACK);
 		if (OPTIONS[DEBUG_VIEW]) {
-			fontY = drawSmallPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER1);
+			fontY = drawSmallPlayerInfo(g2, fontY, fontX, PlayerColor.RED);
 		} else {
-			fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER1);
+			fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.RED);
 		}
 
 		fontY += 35;
 		g2.setFont(h2);
 		name = gameState.getPlayerNames()[1];
 		g2.setColor(PLAYER2_COLOR);
-		if (currentPlayer == PlayerColor.PLAYER2) {
+		if (currentPlayer == PlayerColor.BLUE) {
 			name += " am Zug";
 		}
 		g2.drawString(name, fontX, fontY);
 		g2.setColor(Color.BLACK);
 		if (OPTIONS[DEBUG_VIEW]) {
-			fontY = drawSmallPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER2);
+			fontY = drawSmallPlayerInfo(g2, fontY, fontX, PlayerColor.BLUE);
 		} else {
-			fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.PLAYER2);
+			fontY = drawPlayerInfo(g2, fontY, fontX, PlayerColor.BLUE);
 		}
 		int i = 0;
 		fontY += 15;
@@ -944,7 +947,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				fontY += 5;
 				for (DebugHint hint : lastMove.getHints()) {
 					fontY += 20;
-					g2.drawString(hint.key + " = " + hint.value, fontX, fontY);
+					g2.drawString(hint.content, fontX, fontY);
 				}
 
 			}
@@ -957,10 +960,6 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		if (hasFocus()) {
 			g2.drawString("Leertaste für Einstellungen", fontX, fontY);
 		}
-
-		// String fpsS = fps + " fps";
-		// fontX = getWidth() - BORDER_SIZE - 5 - mfSheep.stringWidth(fpsS);
-		// g2.drawString(fpsS, fontX, fontY);
 
 	}
 
@@ -1121,10 +1120,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		Color color;
 
 		switch (player) {
-		case PLAYER1:
+		case RED:
 			color = PLAYER1_COLOR;
 			break;
-		case PLAYER2:
+		case BLUE:
 			color = PLAYER2_COLOR;
 			break;
 
@@ -1154,8 +1153,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 				p = new Point(mousex, mousey);
 			}
 			int spread = (sheep.getDogState() != null)
-					&& (sheep.getSize(PlayerColor.PLAYER1)
-							+ sheep.getSize(PlayerColor.PLAYER2) > 0) ? 5 : 0;
+					&& (sheep.getSize(PlayerColor.RED)
+							+ sheep.getSize(PlayerColor.BLUE) > 0) ? 5 : 0;
 
 			int n = 4;
 			int s = Math.min(42, size / 26);

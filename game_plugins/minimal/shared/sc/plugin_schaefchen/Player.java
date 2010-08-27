@@ -1,49 +1,74 @@
 package sc.plugin_schaefchen;
 
-
-
 import sc.framework.plugins.SimplePlayer;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * ein spieler
+ * ein spieler. er wird durch seine spielerfarbe identifiziert und weiss wie
+ * viele schafe seine schafe gestohlen haben und wie viele blumen seine schafe
+ * gefressen haben.
  * 
  * @author sca, tkra
  * 
  */
-@XStreamAlias(value = "sit:player")
 public final class Player extends SimplePlayer {
+
+	private static Player player1 = new Player(PlayerColor.RED);
+	private static Player player2 = new Player(PlayerColor.BLUE);
 
 	// spielerfarbe des spielers
 	@XStreamAsAttribute
-	private PlayerColor playerId;
+	private PlayerColor color;
 
 	// gesamtzahl der von diesem spieler gesicherten blumen
 	@XStreamAsAttribute
 	private int munchedFlowers;
-	
+
 	// gesamtzahl der von diesem spieler gesicherten gegnerischen schafe
 	@XStreamAsAttribute
 	private int stolenSheeps;
 
-
-	public Player() {
+	/*
+	 * einen neuen spieler erstellen und ihm eine spielerfarbe zuweisen
+	 * 
+	 * @param color seine spielerfarbe
+	 */
+	private Player(final PlayerColor color) {
 		munchedFlowers = 0;
 		stolenSheeps = 0;
-	}
-
-	public Player(final PlayerColor color) {
-		this();
-		this.playerId = color;
+		this.color = color;
 	}
 
 	/**
-	 * liefert die spielrfarbe dieses spielers
+	 * liefert den spieler einer gegebenen spielerfarbe
+	 * 
+	 * @throws NullPointerException
+	 *             wenn keine spielerfarbe angegebenwurde
+	 */
+	public static Player getPlayer(PlayerColor color)
+			throws NullPointerException {
+		if (color == null) {
+			throw new NullPointerException("keine spielerfarbe angegeben");
+		} else if (color == PlayerColor.RED) {
+			return player1;
+
+		} else {
+			return player2;
+		}
+ 
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return (obj instanceof Player) && ((Player) obj).color == this.color;
+	}
+
+	/**
+	 * liefert die spielerfarbe dieses spielers
 	 */
 	public PlayerColor getPlayerColor() {
-		return playerId;
+		return color;
 	}
 
 	/**
@@ -61,7 +86,7 @@ public final class Player extends SimplePlayer {
 	}
 
 	/**
-	 * liefert die gesamtzahl der von diesem spieler gesicherten  schafe
+	 * liefert die gesamtzahl der von diesem spieler gesicherten schafe
 	 */
 	public int getStolenSheeps() {
 		return stolenSheeps;
