@@ -133,10 +133,11 @@ public class GreedyLogic implements IGameHandler
 		Move move = new Move(maximalRatedMove.sheep, maximalRatedMove.target);
 
 
-		move.addHint(new DebugHint("Strategie", "GREEDY"));
+		move.addHint(new DebugHint("Strategie: unschlagar"));
 		move.addHint(new DebugHint("Maximum", Integer.toString(moves.get(moves
 				.size() - 1).value)));
 		move.addHint(new DebugHint("Minimum", Integer.toString(moves.get(0).value)));
+		move.addHint(new DebugHint("barney stinson, awesome!"));
 		
 		sendAction(move);
 
