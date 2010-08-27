@@ -1,6 +1,5 @@
 package sc.plugin_schaefchen;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -9,10 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author tkra
  * 
  */
-@XStreamAlias(value = "sit:sheep")
-public final class Sheep {
-
-	private static int nextIndex = 0;
+public final class Sheep implements Cloneable {
 
 	// fortlaufende nummer dieses schafes
 	@XStreamAsAttribute
@@ -44,11 +40,24 @@ public final class Sheep {
 	@XStreamAsAttribute
 	private int target;
 
-	public Sheep(int start, int target, PlayerColor owner) {
+	/**
+	 * ein neues schaf erzeugen.
+	 * 
+	 * @param start
+	 *            der index des knotens auf dem sich das schaf befinden soll
+	 * @param target
+	 *            der index des einzigen heimatfeldes das dieses schaf betreten
+	 *            darf
+	 * @param owner
+	 *            der spieler der dieses schaf besitzt
+	 * @param index
+	 *            der eindeutige index dieses schafs
+	 */
+	public Sheep(int start, int target, PlayerColor owner, int index) {
 		this.target = target;
 		this.owner = owner;
 		this.node = start;
-		index = nextIndex++;
+		this.index = index;
 		increaseSize(owner);
 	}
 
@@ -110,7 +119,8 @@ public final class Sheep {
 	}
 
 	/**
-	 * addiert eine andere herdengruesse zu dieser
+	 * addiert dei anzahl der gefangenen schafe eines anderen schafes zu seiner
+	 * eienen groesse.
 	 */
 	public void addSize(Sheep other) {
 		sheeps1 += other.sheeps1;
@@ -118,7 +128,7 @@ public final class Sheep {
 	}
 
 	/**
-	 * addiert eine andere herdengruesse zu dieser
+	 * setzt die anzahl der gefangenen schafe auf 0 zurueck
 	 */
 	protected void resetSize() {
 		sheeps1 = 0;
@@ -126,27 +136,38 @@ public final class Sheep {
 	}
 
 	/**
-	 * vergroesert diese herde in abhaengigkeit einer spielerfarbe
+	 * erhoeht die anzahl der gefangenen schafe in abhaengigkeit der
+	 * spielerfarbe
 	 */
 	protected void increaseSize(PlayerColor c) {
 
 		if (c != null) {
-			if (c == PlayerColor.PLAYER1) {
+			if (c == PlayerColor.RED) {
 				sheeps1++;
-			} else if (c == PlayerColor.PLAYER2) {
+			} else if (c == PlayerColor.BLUE) {
 				sheeps2++;
 			}
 		}
 	}
 
 	/**
-	 * liefert die anzahl der schafe oder hunde in dieser herde in abhaengigkeit
-	 * einer spielerfarbe
+	 * liefert die anzahl der gefangenen schafe inklusive sich selbst in
+	 * abhaengigkeit der spielerfarbe
 	 */
 	public int getSize(PlayerColor c) {
-		assert c == PlayerColor.PLAYER1 || c == PlayerColor.PLAYER2;
+		assert c == PlayerColor.RED || c == PlayerColor.BLUE;
 
-		return c == PlayerColor.PLAYER1 ? sheeps1 : sheeps2;
+		return c == PlayerColor.RED ? sheeps1 : sheeps2;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Sheep dolly = new Sheep(node, target, owner, index);
+		dolly.dog = dog;
+		dolly.sheeps1 = sheeps1;
+		dolly.sheeps2 = sheeps2;
+		dolly.flowers = flowers;
+		return dolly;
 	}
 
 }

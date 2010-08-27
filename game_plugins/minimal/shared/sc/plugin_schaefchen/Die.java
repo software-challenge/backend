@@ -1,14 +1,29 @@
 package sc.plugin_schaefchen;
 
+import sc.plugin_schaefchen.util.Constants;
+
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Die{
-	
-	// farbe des aktuellen spielers
+/**
+ * containerklasse fuer einen wuerfel mitr augenzahl zwischen 1 und
+ * Constants.DIE_SIZE
+ * 
+ * @author tkra
+ * 
+ */
+public final class Die implements Cloneable {
+
+	/**
+	 * die von diesem wuerfel repraesentierte augenzahl
+	 */
 	@XStreamAsAttribute
 	public final int value;
-	
-	public Die(int value){
+
+	public Die(final int value) throws IllegalArgumentException {
+		if (value < 1 || value > Constants.DIE_SIZE) {
+			throw new IllegalArgumentException("keine gueltige augenzahl: "
+					+ value);
+		}
 		this.value = value;
 	}
 
@@ -17,5 +32,10 @@ public class Die{
 		assert obj instanceof Die;
 		return this.value == ((Die) obj).value;
 	}
-	
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new Die(value);
+	}
+
 }

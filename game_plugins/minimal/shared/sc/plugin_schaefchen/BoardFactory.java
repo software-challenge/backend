@@ -198,17 +198,18 @@ public class BoardFactory {
 
 	protected static List<Sheep> createSheeps() {
 
+		int nextSheep = 0;
 		List<Sheep> sheepList = new LinkedList<Sheep>();
 		for (FactoryNode node : factoryNodes) {
 			PlayerColor owner = null;
 			if (node.getNodeType() == NodeType.HOME1) {
-				owner = PlayerColor.PLAYER1;
+				owner = PlayerColor.RED;
 			} else if (node.getNodeType() == NodeType.HOME2) {
-				owner = PlayerColor.PLAYER2;
+				owner = PlayerColor.BLUE;
 			}
 			for (int i = 0; i < node.getSheeps(); i++) {
 				Sheep sheep = new Sheep(node.index, node.getCounterPart(),
-						owner);
+						owner, nextSheep++);
 				if (node.getNodeType() == NodeType.GRASS) {
 					sheep.setDogState(DogState.PASSIVE);
 				}

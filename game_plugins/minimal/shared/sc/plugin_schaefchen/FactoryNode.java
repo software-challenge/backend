@@ -5,7 +5,12 @@ import java.util.Set;
 
 import sc.plugin_schaefchen.gui.positioner.Positioner;
 
-public class FactoryNode {
+/*
+ * knoten-hilfsklasse fuer die boardfactory
+ * @author tkra
+ *
+ */
+public final class FactoryNode {
 	// index des spielfeldes
 	public final int index;
 
@@ -99,7 +104,7 @@ public class FactoryNode {
 		return centerY;
 	}
 
-	/**
+	/*
 	 * verschiebung im kontinuierlichen koordinatenbereich
 	 */
 	public void translate(double x, double y) {
@@ -119,7 +124,7 @@ public class FactoryNode {
 
 	}
 
-	/**
+	/*
 	 * skalierung im kontinuierlichen koordinatenbereich
 	 */
 	public void scale(double f) {
@@ -139,7 +144,7 @@ public class FactoryNode {
 
 	}
 
-	/**
+	/*
 	 * rotation im kontinuierlichen koordinatenbereich
 	 */
 	public void rotate(double phi) {
@@ -168,7 +173,7 @@ public class FactoryNode {
 
 	}
 
-	/**
+	/*
 	 * maximaler x-wert im kontinuierlichen koordinatenbereich
 	 */
 	public double maxX() {
@@ -182,7 +187,7 @@ public class FactoryNode {
 		return max;
 	}
 
-	/**
+	/*
 	 * maximaler y-wert im kontinuierlichen koordinatenbereich
 	 */
 	public double maxY() {
@@ -196,7 +201,7 @@ public class FactoryNode {
 		return max;
 	}
 
-	/**
+	/*
 	 * minimaler x-wert im kontinuierlichen koordinatenbereich
 	 */
 	public double minX() {
@@ -210,7 +215,7 @@ public class FactoryNode {
 		return min;
 	}
 
-	/**
+	/*
 	 * minimaler y-wert im kontinuierlichen koordinatenbereich
 	 */
 	public double minY() {
@@ -224,7 +229,7 @@ public class FactoryNode {
 		return min;
 	}
 
-	/**
+	/*
 	 * verbindet zwei gegebene spielfelder als nachbarn
 	 * 
 	 * @param node1
@@ -235,35 +240,35 @@ public class FactoryNode {
 		node2.addNeighbour(node1.index);
 	}
 
-	/**
+	/*
 	 * fuegt diesem spielfeld einen nachbar hinzu
 	 */
 	public void addNeighbour(final int other) {
 		neighbours.add(other);
 	}
 
-	/**
+	/*
 	 * liefert die menge der nachbarn dieses spielfeldes
 	 */
 	public Set<Integer> getNeighbours() {
 		return neighbours;
 	}
 
-	/**
+	/*
 	 * setzt den spielfeldzyp fuer dieses spielfeld
 	 */
 	public void setNodeType(final NodeType type) {
 		this.type = type;
 	}
 
-	/**
+	/*
 	 * liefert den spielfeldtyp dieses spielfeldes
 	 */
 	public NodeType getNodeType() {
 		return type;
 	}
 
-	/**
+	/*
 	 * setzt die anzahl an bluemn
 	 */
 	public void setFlowers(boolean b) {
@@ -271,21 +276,21 @@ public class FactoryNode {
 
 	}
 
-	/**
+	/*
 	 * liefert die anzahl der blumen auf diesem spielfeld
 	 */
 	public boolean hasFlowers() {
 		return flowers;
 	}
 
-	/**
+	/*
 	 * liefert das ggf. vorhandene gegenstueck zu diesem spielfeld
 	 */
 	public int getCounterPart() {
 		return counterPart;
 	}
 
-	/**
+	/*
 	 * setzt das gegenstueck zu diesem spielfeld
 	 */
 	public void setCounterPart(int counterPart) {
