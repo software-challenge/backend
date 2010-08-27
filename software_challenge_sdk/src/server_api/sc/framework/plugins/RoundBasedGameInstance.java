@@ -17,7 +17,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		SimpleGameInstance<P> implements IPauseable
 {
-	@SuppressWarnings("hiding")
 	private static Logger	logger				= LoggerFactory
 														.getLogger(RoundBasedGameInstance.class);
 	protected P				activePlayer		= null;
