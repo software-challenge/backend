@@ -54,8 +54,7 @@ import sc.plugin_schaefchen.util.Constants;
 import sc.shared.GameResult;
 
 /**
- * @author ffi, sca, tkra
- * 
+ * @author tkra, ffi, sca
  */
 @SuppressWarnings("serial")
 public class FrameRenderer extends JPanel implements IRenderer {
@@ -223,12 +222,12 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 	};
 
-	private double phiBenchmark = 0;
 	private final Object LOCK = new Object();
-	private int frames;
-	private int frameRate;
-	private long lastSecond;
-	private final Runnable fpsThread = new Runnable() {
+	private int bmFrames;
+	private int bmFrameRate;
+	private long bmLastSecond;
+	private double bmPhi = 0;
+	private final Runnable bmThread = new Runnable() {
 
 		@Override
 		public void run() {
@@ -265,10 +264,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 					}
 					if (i == BENCHMARK) {
 
-						frameRate = 0;
-						phiBenchmark = 0;
-						lastSecond = System.currentTimeMillis();
-						Thread t = new Thread(fpsThread);
+						bmFrameRate = 0;
+						bmPhi = 0;
+						bmLastSecond = System.currentTimeMillis();
+						Thread t = new Thread(bmThread);
 						t.start();
 					}
 					RenderConfiguration.saveSettings();
@@ -557,17 +556,17 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		if (OPTIONS[BENCHMARK]) {
 
-			frames++;
+			bmFrames++;
 			long now = System.currentTimeMillis();
-			if (now >= lastSecond + 1000) {
-				frameRate = frames;
-				frames = 0;
-				lastSecond = now;
+			if (now >= bmLastSecond + 1000) {
+				bmFrameRate = bmFrames;
+				bmFrames = 0;
+				bmLastSecond = now;
 			}
 
-			phiBenchmark += (2 * Math.PI) / size;
-			if (phiBenchmark >= 2 * Math.PI) {
-				phiBenchmark = 0;
+			bmPhi += (2 * Math.PI) / size;
+			if (bmPhi >= 2 * Math.PI) {
+				bmPhi = 0;
 			}
 
 			synchronized (LOCK) {
@@ -631,10 +630,10 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.setColor(Color.BLACK);
 			String option = OPTION_NAMES[i];
 			if (i == BENCHMARK && OPTIONS[BENCHMARK]) {
-				if (frameRate < 30) {
+				if (bmFrameRate < 30) {
 					g2.setColor(Color.RED);
 				}
-				option += " @ " + frameRate + " fps";
+				option += " @ " + bmFrameRate + " fps";
 			}
 			g2.drawString(option, configX + 25, h + fmH4.getHeight());
 			h += 25;
@@ -1147,8 +1146,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			if (OPTIONS[BENCHMARK]) {
 				int dX = guiNodes[0].getScaledCenterX();
 				int dY = guiNodes[0].getScaledCenterY();
-				double cosPhi = Math.cos(-phiBenchmark);
-				double sinPhi = Math.sin(-phiBenchmark);
+				double cosPhi = Math.cos(-bmPhi);
+				double sinPhi = Math.sin(-bmPhi);
 				int x = (int) ((p.x - dX) * cosPhi - (p.y - dY) * sinPhi);
 				int y = (int) ((p.x - dX) * sinPhi + (p.y - dY) * cosPhi);
 				p = new Point(dX + x, dY + y);
