@@ -42,7 +42,7 @@ public class Schaf {
 	 * zuzuordnen sind)
 	 */
 	public int holeGesamteGroesse(){
-		return sheep.getSize(PlayerColor.PLAYER1)+sheep.getSize(PlayerColor.PLAYER2);
+		return sheep.getSize(PlayerColor.RED)+sheep.getSize(PlayerColor.BLUE);
 	}
 	
 	/**
