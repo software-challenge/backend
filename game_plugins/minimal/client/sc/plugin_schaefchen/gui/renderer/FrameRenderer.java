@@ -63,11 +63,13 @@ public class FrameRenderer extends JPanel implements IRenderer {
 	private static final Color PLAYER2_COLOR = Color.BLUE;
 	private static final Color PLAYER1_COLOR = Color.RED;
 
+	private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
 	private static final Font h1 = new Font("Helvetica", Font.BOLD, 25);
 	private static final Font h2 = new Font("Helvetica", Font.BOLD, 20);
 	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
 	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 14);
 	private static final Font hSheep = new Font("Helvetica", Font.PLAIN, 10);
+	private final FontMetrics fmH0 = getFontMetrics(h0);
 	private final FontMetrics fmH1 = getFontMetrics(h1);
 	// private final FontMetrics fmH2 = getFontMetrics(h2);
 	private final FontMetrics fmH3 = getFontMetrics(h3);
@@ -506,6 +508,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			}
 		}
 
+		System.gc();
 		createSheepMap();
 		repaint();
 	}
@@ -628,7 +631,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			g2.setColor(Color.BLACK);
 			String option = OPTION_NAMES[i];
 			if (i == BENCHMARK && OPTIONS[BENCHMARK]) {
-				if(frameRate < 30){
+				if (frameRate < 30) {
 					g2.setColor(Color.RED);
 				}
 				option += " @ " + frameRate + " fps";
@@ -855,9 +858,8 @@ public class FrameRenderer extends JPanel implements IRenderer {
 
 		fontY += 20;
 		g2.setFont(h4);
-		g2
-				.drawString(flowers + " " + type + " auf dem Spielfeld", fontX,
-						fontY);
+		g2.drawString(Math.abs(flowers) + " " + type + " auf dem Spielfeld",
+				fontX, fontY);
 
 		fontY += 20;
 		g2.drawString("Runde " + (gameState.getTurn() + 1) + " von "
@@ -942,7 +944,7 @@ public class FrameRenderer extends JPanel implements IRenderer {
 			if (lastMove != null) {
 				fontY += 25;
 				g2.drawString("Letzter Zug: Schaf #" + lastMove.sheep
-						+ " auf Feld#" + lastMove.target, fontX, fontY);
+						+ " auf Feld #" + lastMove.target, fontX, fontY);
 
 				fontY += 5;
 				for (DebugHint hint : lastMove.getHints()) {
@@ -1073,9 +1075,11 @@ public class FrameRenderer extends JPanel implements IRenderer {
 		g2.drawString(Math.abs(stats[5]) + " " + type + " gefressen", fontX,
 				fontY);
 
-		fontY += 25;
-		g2.setFont(h3);
-		g2.drawString(stats[6] + " Punkte", fontX, fontY);
+		// fontY += 25;
+		g2.setFont(h0);
+		g2.setColor(getTransparentColor(getPlayerColor(player), 174));
+		g2.drawString(Integer.toString(stats[6]), getWidth() - 2 * BORDER_SIZE
+				- fmH0.stringWidth(Integer.toString(stats[6])), fontY);
 
 		return fontY;
 
