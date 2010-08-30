@@ -173,7 +173,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 */
 	public JPanel recreateGameField() {
 		gameField = new JPanel();
-		gameField.setBorder(BorderFactory.createEtchedBorder());
+		//gameField.setBorder(BorderFactory.createEtchedBorder());
 
 		this.removeAll();
 		this.add(gameField, BorderLayout.CENTER);
