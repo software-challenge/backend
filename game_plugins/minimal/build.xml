@@ -10,7 +10,7 @@
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
-		<pathelement location="${sdk.dir}/bin" />
+		<pathelement location="${sdk.dir}/${build.dir}/bin" />
 	</path>
 
 	<target name="clean">
