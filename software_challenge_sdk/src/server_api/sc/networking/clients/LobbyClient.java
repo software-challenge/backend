@@ -24,12 +24,14 @@ import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.ObservationRequest;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.requests.PrepareOnlineGameRequest;
 import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.PrepareOnlineGameResponse;
 import sc.protocol.responses.RoomPacket;
 import sc.shared.SharedConfiguration;
 import sc.shared.GameResult;
@@ -100,6 +102,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 		if (o instanceof RoomPacket)
 		{
+			System.out.println("Received room packet of class " + ((RoomPacket)o).getData().getClass().getName());
 			RoomPacket packet = (RoomPacket) o;
 			String roomId = packet.getRoomId();
 			if (packet.getData() instanceof MementoPacket)
@@ -254,6 +257,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 				PrepareGameResponse.class);
 	}
 	
+	public RequestResult<PrepareOnlineGameResponse> prepareOnlineGameAndWait(
+			String gameType, SlotDescriptor... descriptors)
+			throws InterruptedException
+	{
+		return blockingRequest(new PrepareOnlineGameRequest(gameType, descriptors), 
+				PrepareOnlineGameResponse.class);
+	}
+	
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(PrepareGameRequest request) throws InterruptedException {
 		return blockingRequest(request, PrepareGameResponse.class);
 	}
@@ -270,6 +281,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	protected void onNewState(String roomId, Object state)
 	{
+		System.out.println("Lobby client received new state");
 		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onNewState(roomId, state);
@@ -324,6 +336,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	public void joinAnyGame(String gameType)
 	{
 		this.send(new JoinRoomRequest(gameType));
+	}
+	
+	public void joinRoom(String gameType, String roomId) {
+		this.send(new JoinRoomRequest(gameType, roomId));
 	}
 
 	protected <T> void request(IRequest<T> request, Class<T> response,
@@ -392,9 +408,13 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public IControllableGame observe(PrepareGameResponse handle)
 	{
-		IControllableGame result = new ObservingClient(this, handle.getRoomId());
+		return observe(handle.getRoomId());
+	}
+	
+	public IControllableGame observe(String roomId) {
+		IControllableGame result = new ObservingClient(this, roomId);
 		this.start();
-		this.send(new ObservationRequest(handle.getRoomId(), ""));
+		this.send(new ObservationRequest(roomId, ""));
 		return result;
 	}
 
