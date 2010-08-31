@@ -335,7 +335,7 @@ negativ
 
 \begin_layout Standard
 \begin_inset Float figure
-placement !h
+placement H
 wide false
 sideways false
 status open
@@ -713,7 +713,7 @@ reference "spielzug"
 
 \begin_layout Standard
 \begin_inset Float figure
-placement !h
+placement H
 wide false
 sideways false
 status open
@@ -912,7 +912,7 @@ onen gezeigt.
 
 \begin_layout Standard
 \begin_inset Float figure
-placement !t
+placement H
 wide false
 sideways false
 status open
@@ -1029,7 +1029,7 @@ reference "einstellungen"
 
 \begin_layout Standard
 \begin_inset Float figure
-placement !t
+placement H
 wide false
 sideways false
 status open
