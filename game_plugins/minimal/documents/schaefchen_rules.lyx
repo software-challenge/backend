@@ -1,0 +1,1125 @@
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass scrreprt
+\begin_preamble
+\input{part/header}% pakete laden, werte einstellen
+\input{part/cmds}% eigene befehle
+\input{part/math}% eigene mathe-befehle
+
+
+\renewcommand{\thesection}{\arabic{section}}\renewcommand{\thefigure}{\arabic{figure}}\newcommand{\token}[1]{\ensuremath{\text{\texttt{\,{#1}\,}}}}
+\end_preamble
+\options pointlessnumbers,DIV10,BCOR10mm,tocleft,utf8
+\use_default_options false
+\language ngerman
+\inputencoding ascii
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize 11
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Chapter*
+Software-Challenge 2011
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace -0.9cm*
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Section*
+Spielanleitung zu 
+\begin_inset Quotes gld
+\end_inset
+
+Schäfchen im Trockenen
+\begin_inset Quotes grd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename ps/server.png
+	lyxscale 30
+	width 75page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace -0.2cm*
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace vfill
+\end_inset
+
+ Stand: 31.08.2010 
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter*
+\begin_inset Quotes gld
+\end_inset
+
+Schäfchen im Trockenen
+\begin_inset Quotes grd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Einführung
+\end_layout
+
+\begin_layout Standard
+Bei 
+\begin_inset Quotes gld
+\end_inset
+
+Schäfchen im Trockenen
+\begin_inset Quotes grd
+\end_inset
+
+ spielen zwei Spieler darum, die größte Schafherde zu bilden und damit die
+ meisten Punkte zu sammeln.
+ Der erste Spieler spielt in 
+\series bold
+rot
+\series default
+, der zweite Spieler in 
+\series bold
+blau
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+Um die Zufriedenheit der Herde zu steigern, können die Schafe auf dem Spielplan
+ leckere Blumen 
+\series bold
+sammeln
+\series default
+.
+ Vor unbekömmlichen Fliegenpilzen sollten sie sich aber fernhalten.
+ Sie können auch Schafe des Gegenspielers 
+\series bold
+fangen
+\series default
+ und dessen Blumen und Fliegenpilze übernehmen.
+ Wenn sie den 
+\series bold
+Schäferhund
+\series default
+ dabei haben, gelingt ihnen dies noch öfter.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Schafe
+\series default
+ bilden durch das Fangen von gegnerischen Schafen 
+\series bold
+Schafherden
+\series default
+.
+ Im Folgenden werden die Begriffe gleichwertig verwendet.
+ Eine Schafherde wird immer durch das eine Schaf identifiziert, das die
+ restliche Herde eingefangen hat.
+ Kommt eine Schafherde nach Hause, werden die gesammelten Blumen 
+\series bold
+gefressen
+\series default
+ und die gefangenen Schafe 
+\series bold
+gestohlen
+\series default
+, das heißt endgültig aus dem Spiel entfernt.
+\end_layout
+
+\begin_layout Standard
+Gespielt wird auf einem Spielplan, der immer gleich aufgebaut ist.
+ Die Positionen der Blumen und Fliegenpilze wechseln jedoch von Spiel zu
+ Spiel.
+ Die Würfel entscheiden, wie weit sich ein Schaf in einem Spielzug bewegen
+ kann.
+\end_layout
+
+\begin_layout Section
+Spielmaterial
+\end_layout
+
+\begin_layout Subsection
+Spielplan
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ps/spielplan.ps
+	lyxscale 10
+	width 50page%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Der Spielplan mit den Indizes der Spielfelder.
+ Markiert sind a) die Heimatfelder des ersten Spielers, b) die Heimatfelder
+ des zweiten Spielers, c) ein Sicherheitsfeld und d) ein normales Feld.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "spielplan"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Der Spielplan besteht aus 65 Spielfeldern und ist immer gleich aufgebaut,
+ s.
+ Abbildung 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "spielplan"
+
+\end_inset
+
+.
+ Jedes Schaf befindet sich immer auf genau einem Spielfeld und im Allgemeinen
+ darf auf jedem Spielfeld immer nur ein Schaf stehen.
+ Jedes Spielfeld hat einen eindeutigen Index.
+\end_layout
+
+\begin_layout Standard
+Es gibt drei verschiedene Sorten von Feldern auf dem Spielplan:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Heimatfelder
+\series default
+: Hier befinden sich die Schafe zu Beginn des Spiels.
+ Die Schafe betreten ihre Heimatfelder gerne, denn nur hier können sie ungestört
+ fressen und gefangene Schafe stehlen.
+ Jeder Spieler besitzt zwei gegenüberliegende Heimatfelder.
+ Dies sind die einzigen Felder, auf denen mehr als ein Schaf gleichzeitig
+ stehen kann.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Sicherheitsfelder
+\series default
+: Auf diesen Feldern ist ein Schaf relativ sicher.
+ Es kann nur dann vom Gegenspieler gefangen werden, wenn sein Schaf den
+ aktiven Schäferhund dabei hat.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+Normale Felder
+\series default
+: Auf diesen Feldern können sich die Blumen und Fliegenpilze befinden.
+ Sie werden von dem ersten Schaf, das ein solches Feld betritt, automatisch
+ eingesammelt und mitgenommen.
+ 
+\end_layout
+
+\begin_layout Standard
+Die Schafe finden die 
+\series bold
+Blumen
+\series default
+ sehr lecker und sollten so viele Blumen wie möglich sammeln und später
+ fressen.
+ Dies macht die Schafe glücklich und bringt dem Spieler Punkte.
+\end_layout
+
+\begin_layout Standard
+Zusätzlich zu den Blumen befinden sich auf dem Spielplan auch 
+\series bold
+Fliegenpilze
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+Auch diese werden gesammelt, wenn ein Schaf ein entsprechendes Feld betritt
+ und später gefressen.
+ Allerdings gilt es, die Fliegenpilze zu vermeiden, denn sie bekommen den
+ Schafen nicht gut und zählen daher 
+\series bold
+negativ
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement !h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ps/blumen.ps
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Symbole für a) eine Blume, b) zwei Blumen und c) ein Fliegenpilz.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "blumen"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Spielfiguren
+\end_layout
+
+\begin_layout Standard
+Jedes 
+\series bold
+Schaf
+\series default
+ ist genau einem der beiden Spieler zugeordnet und hat einen eindeutigen
+ Index.
+ Im Spiel wird jedes Schaf durch eine Spielfigur in der Farbe seines Spielers
+ dargestellt.
+ Die Spielfiguren des Spielers, der nicht am Zug ist, werden grau dargestellt.
+\end_layout
+
+\begin_layout Standard
+Ein Schaf kann im Laufe des Spiels gegnerische Schafe fangen bzw.
+ in seine Herde aufnehmen.
+ Hatte ein gegnerisches Schaf schon Schafe gefangen, können so auch eigene
+ Schafe in die Herde gelangen, sie werden also 
+\series bold
+zurückgefangen
+\series default
+.
+ Wie bereits erwähnt, kann jedes Schaf Blumen oder Fliegenpilze sammeln.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ps/schafe.ps
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Die Spielfiguren für a) den Schäferhund zu Beginn, b) ein Schaf c), ein
+ mit der Maus bewegtes Schaf, d) ein Schaf mit passivem Schäferhund und
+ e) ein Schaf mit aktivem Schäferhund.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "schafe"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Die drei Zahlen nunter den Spielfiguren haben der Reihe nach folgende Bedeutung:
+ 
+\end_layout
+
+\begin_layout Itemize
+Die Anzahl der 
+\series bold
+eigenen Schafe
+\series default
+ inklusive des Schafes, das durch diese Spilfigur symbolisiert wird.
+ Diese Zahl kann daher nie kleiner als 1 sein.
+ 
+\end_layout
+
+\begin_layout Itemize
+Die Anzahl der gefangenen, 
+\series bold
+gegnerischen Schafe
+\series default
+.
+ Diese Zahl kann nie kleiner als 0 sein.
+ 
+\end_layout
+
+\begin_layout Itemize
+Die Anzahl der gesammelten Blumen abzüglich der Anzahl der gesammelten Fliegenpi
+lze.
+ Diese Zahl kann also auch negativ sein.
+ 
+\end_layout
+
+\begin_layout Standard
+Ein Schaf darf nach dem Verlassen eines Heimatfeldes nur das Heimatfeld
+ betreten, das dem 
+\series bold
+von ihm zuletzt verlassenen
+\series default
+ Heimatfeld 
+\series bold
+gegenüberliegt
+\series default
+.
+ Unter der Spielfigur befindet sich ein Pfeil, der immer auf dieses Heimatfeld
+ zeigt.
+ Wird eine Spielfigur mit der Maus bewegt, wird der Pfeil etwas größer.
+\end_layout
+
+\begin_layout Standard
+Zusätzlich zu den Schafen gibt es genau einen 
+\series bold
+Schäferhund
+\series default
+.
+ Ein Schaf, das auf das Feld mit dem Schäferhund zieht, wird fortan von
+ diesem 
+\series bold
+begleitet
+\series default
+.
+ Wird ein von dem Schäferhund begleitetes Schaf von einem anderen Schaf
+ gefangen, so begleitet der Schäferhund ab sofort das neue Schaf.
+ Ist der Schäferhund also einmal mitgenommen worden, begleitet er von da
+ an immer ein Schaf.
+\end_layout
+
+\begin_layout Standard
+Zu Beginn des Spiels ist der Schäferhund 
+\series bold
+passiv
+\series default
+.
+ Er wird 
+\series bold
+aktiv
+\series default
+, wenn er das erste Mal von einem Schaf mit 
+\series bold
+in ein Heimatfeld genommen
+\series default
+ wird.
+ Erst jetzt hat er einen Nutzen, denn er erlaubt es von da an dem von ihm
+ begleiteten Schaf, auch gegnerische Schafe auf 
+\series bold
+Sicherheitsfeldern
+\series default
+ zu fangen.
+ Er beschützt ein Schaf aber 
+\series bold
+nicht
+\series default
+ davor, selbst gefangen zu werden.
+ Ist der Schäferhund einmal aktiv geworden, wird er nie wieder passiv.
+\end_layout
+
+\begin_layout Subsection
+Würfel
+\end_layout
+
+\begin_layout Standard
+Im Spiel gibt es drei Würfel mit Augenzahlen zwischen 1 und 6.
+ Eine Augenzahl gibt an, um wieviele Felder sich ein Schaf in einem Zug
+ bewegen kann.
+ Der Würfelvorrat wird von beiden Spielern gemeinsam benutzt und jedem Schaf
+ steht jeder Würfel zur Verfügung.
+ Der Spieler muss sich aber für ein Schaf und eine der vorhandenen Augenzahlen
+ entscheiden.
+\end_layout
+
+\begin_layout Standard
+Sobald ein Spieler eine Augenzahl genutzt hat, wird ein Würfel mit dieser
+ Augenzahl neu gewürfelt.
+ Der Wurf wird solange wiederholt, bis die folgenden beiden Bedingungen
+ erfüllt sind:
+\end_layout
+
+\begin_layout Itemize
+Dem Spieler müssen zu jedem Zeitpunkt mindestens zwei verschiedene Augenzahlen
+ zur Verfügung stehen.
+ 
+\end_layout
+
+\begin_layout Itemize
+Der Spieler, der als nächstes am Zug ist, muss mindestens einen gültigen
+ Zug machen können.
+ 
+\end_layout
+
+\begin_layout Section
+Spielbeginn
+\end_layout
+
+\begin_layout Standard
+Jeder Spieler beginnt mit 
+\series bold
+sechs
+\series default
+ einzelnen Schafen, je drei in den beiden gegenüberliegenden Heimatfeldern.
+ Der Schäferhund befindet sich zunächst in der Mitte des Spielplans auf
+ dem Feld mit dem Index 0.
+\end_layout
+
+\begin_layout Standard
+Zu Spielbeginn befinden sich je ein Fliegenpilz auf 
+\series bold
+acht
+\series default
+ zufällig gewählten, normalen Feldern und 
+\series bold
+fünfzig
+\series default
+ Blumen auf den übrigen normalen Feldern.
+ Dabei sind jedoch nie mehr als zwei Blumen auf einem Feld.
+ Es kann normale Felder geben, auf denen sich weder Blumen noch Fliegenpilze
+ befinden.
+\end_layout
+
+\begin_layout Standard
+Alle drei Würfel wurden unter Einhaltung der beiden zuvor genannten Bedingungen
+ gewürfelt.
+\end_layout
+
+\begin_layout Section
+Spielablauf
+\end_layout
+
+\begin_layout Standard
+Das Spiel ist rundenbasiert.
+ In jeder Runde bewegt zunächst der erste Spieler eines seiner Schafe auf
+ ein Feld, auf das dieses Schaf ziehen darf.
+ Wie wit ein Schaf ziehen kann, richtet sich generell nach den Augenzahlen
+ der Würfel (stehen z.B.
+ die Augenzahlen 2, 2, 5 zur Verfügung, darf ein Schaf 2 oder 5 Felder weit
+ ziehen).
+\end_layout
+
+\begin_layout Standard
+Dabei ist zu beachten, dass in den folgenden Fällen ein Schaf ein Spielfeld
+ nicht betreten darf:
+\end_layout
+
+\begin_layout Itemize
+Wenn es sich um ein gegnerisches Heimatfeld handelt.
+ 
+\end_layout
+
+\begin_layout Itemize
+Wenn es sich um das eigene Heimatfeld handelt, das von dem Schaf zuletzt
+ verlassen wurde.
+\end_layout
+
+\begin_layout Itemize
+Wenn es sich um ein Sicherheitsfeld handelt, auf dem ein eigenes Schaf steht.
+ 
+\end_layout
+
+\begin_layout Itemize
+Wenn es sich um ein Sicherheitsfeld handelt, auf dem ein gegnerisches Schaf
+ steht und das sich bewegende Schaf nicht in Begleitung des aktiven Schäfer\SpecialChar \-
+hunde
+s ist.
+\end_layout
+
+\begin_layout Itemize
+Wenn es sich um ein normales Feld handelt, auf dem bereits ein eigenes Schaf
+ steht.
+ 
+\end_layout
+
+\begin_layout Standard
+Nachdem der erste Spieler seinen Zug beendet hat, wird ein Würfel mit der
+ verwendeten Augenzahl den Regeln entsprechend neu gewürfelt.
+ Anschließend macht auch der zweite Spieler einen solchen Zug und es wird
+ erneut gewürfelt.
+ Damit ist eine Runde beendet.
+\end_layout
+
+\begin_layout Subsection
+Schafe bewegen
+\end_layout
+
+\begin_layout Standard
+Wird im Spiel eine Spielfigur mit der Maus bewegt, werden alle Felder, auf
+ die das zugehörige Schaf ziehen darf, mit einem Rahmen 
+\series bold
+hervorgehoben
+\series default
+.
+ Die Farbe des Rahmens entspricht der Farbe der Spielfigur.
+ Auch eine Spielfigur des Spielers, der momentan nicht am Zug ist, kann
+ mit der Maus bewegt werden.
+ So kann man sich angucken, welche Felder ein Schaf theoretisch betreten
+ könnte, wenn sein Spieler bereits am Zug wäre.
+\end_layout
+
+\begin_layout Standard
+Zieht man eine Spielfigur des aktuellen Spielers über ein hervorgehobenes
+ Spielfeld, so wird dieses Feld zusätzlich mit der Farbe der Spielfigur
+ 
+\series bold
+hinterlegt
+\series default
+.
+ Lässt man die Spielfigur über einem so hinterlegten Feld los, bewegt sich
+ das Schaf auf dieses Feld.
+\end_layout
+
+\begin_layout Standard
+Abbildung 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "spielzug"
+
+\end_inset
+
+ zeigt, wie ein kompletter Spielzug im Spiel aussieht.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement !h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ps/spielzug.ps
+	scale 40
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Eine Spielfigur auf dem Spielplan a) vor dem Spielzug, b) mit hervorgehobenen
+ Spielfeldern, c) mit hinterlegtem Spielfeld und d) nach dem Spielzug.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "spielzug"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Nach der Bewegung
+\end_layout
+
+\begin_layout Standard
+Bewegt sich ein Schaf auf ein Feld, werden alle dort vorhandenen Blumen
+ und Fliegenpilze eingesammelt.
+\end_layout
+
+\begin_layout Standard
+Befindet sich ein gegnerisches Schaf auf dem Spielfeld, wird dieses Schaf
+ gefangen.
+ Alle von diesem nun gefangenen Schaf bereits gefangenen Schafe und eingesammelt
+en Blumen und Fliegenpilze werden übernommen.
+\end_layout
+
+\begin_layout Standard
+Wird ein Heimatfeld betreten, frisst das heimgekehrte Schaf alle von ihm
+ gesammelten Blumen und Fliegenpilze.
+ Der Spieler erhält für gegnerische Schafe sowie gefressene Blumen und Fliegenpi
+lze Punkte (s.
+ Kapitel 5).
+ Alle nach Hause gebrachten Blumen und Fliegenpilze sowie Schafe werden
+ aus dem Spiel entfernt
+\begin_inset Foot
+status collapsed
+
+\begin_layout Plain Layout
+Die mitgebrachten, eigenen Schafe werden aus Implementierungsgründen nicht
+ befreit.
+ Er werden tatsächlich neue Schafe erstellt.
+ Diese haben auch einen neuen, vorher nicht vergebenen Index.
+\end_layout
+
+\end_inset
+
+.
+ Dabei ist folgendes zu beachten:
+\end_layout
+
+\begin_layout Itemize
+Handelte es sich um ein gegnerisches, also ein 
+\series bold
+gefangenes
+\series default
+ Schaf, ist es endgültig aus dem Spiel raus.
+ Es ist nun 
+\series bold
+gestohlen
+\series default
+.
+ 
+\end_layout
+
+\begin_layout Itemize
+Handelte es sich um ein eigenes, also ein 
+\series bold
+zurückgefangenes
+\series default
+ Schaf, wird in dieses Heimatfeld ein neues, eigenes Schaf gestellt.
+ 
+\end_layout
+
+\begin_layout Standard
+Nach einer Bewegung kann in einem Heimatfeld also niemals ein Schaf stehen,
+ das von weiteren Schafen begleitet wird.
+\end_layout
+
+\begin_layout Section
+Punkte
+\end_layout
+
+\begin_layout Standard
+Spielbegleitend werden Punkte nach den folgenden Regeln verteilt:
+\end_layout
+
+\begin_layout Itemize
+Für jede gesammelte Blume gibt es zwei Punkte.
+ 
+\end_layout
+
+\begin_layout Itemize
+Für jeden gesammelten Fliegenpilz gibt es zwei Minuspunkte.
+ 
+\end_layout
+
+\begin_layout Itemize
+Für jede gefressene Blume gibt es zwei zusätzliche Punkte.
+ 
+\end_layout
+
+\begin_layout Itemize
+Für jeden gefressenen Fliegenpilz gibt es zwei zusätzliche Minuspunkte.
+ 
+\end_layout
+
+\begin_layout Itemize
+Für jedes gefangene, gegnerische Schaf gibt es acht Punkte.
+ 
+\end_layout
+
+\begin_layout Itemize
+Für jedes gestohlene, gegnerische Schaf gibt es acht zusätzliche Punkte.
+ 
+\end_layout
+
+\begin_layout Section
+Spielende
+\end_layout
+
+\begin_layout Standard
+Das Spiel endet, sobald ein Spieler keine Schafe mehr hat; spätestens aber
+ nach 30 Runden.
+\end_layout
+
+\begin_layout Standard
+Ist das Spiel vorzeitig zu Ende, gewinnt der Spieler, der als einziger noch
+ ein Schaf hat.
+ Werden alle 30 Runden gespielt, gewinnt der Spieler mit mehr Punkten.
+ Bei gleichem Punktestand ist das Spiel unentscheiden.
+\end_layout
+
+\begin_layout Section
+Weitere Elemente
+\end_layout
+
+\begin_layout Standard
+Um das Spielfeld herum ist immer ein Rahmen in der Farbe des aktuellen Spielers
+ gezeichnet.
+\end_layout
+
+\begin_layout Standard
+An der rechten Seite befindet sich die in Abbildung 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "seitenleiste"
+
+\end_inset
+
+ gezeigte Seitenleiste mit einigen Spielinformationen.
+ Sie zeigt, wie viele Blumen noch auf dem Spielfeld vorhanden sind.
+ Von diesem Wert ist die Anzahl der noch vorhandenen Fliegenpilze bereits
+ abgezogen, so dass zu Beginn des Spiels hier 42 steht.
+ Darunter wird angezeigt, in der wievielten Runde sich das Spiel befindet.
+\end_layout
+
+\begin_layout Standard
+In der normalen Ansicht werden darunter für beide Spieler einige Statusinformati
+onen gezeigt.
+ In der Debugansicht sind dieselben Informationen in einer kompakten Darstellung
+ zu finden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement !t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ps/seitenleiste.ps
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Die Seitenleiste in 
+\begin_inset Newline newline
+\end_inset
+
+a) normaler Ansicht oder 
+\begin_inset Newline newline
+\end_inset
+
+b) Debugansicht zeigt 
+\begin_inset Newline newline
+\end_inset
+
+c) den aktuellen Spielstand, 
+\begin_inset Newline newline
+\end_inset
+
+d) ausführliche Spielerinformation bzw.
+ 
+\begin_inset Newline newline
+\end_inset
+
+e) kompakte Spielerinformation, 
+\begin_inset Newline newline
+\end_inset
+
+f) die vorhandenen Augenzahlen, 
+\begin_inset Newline newline
+\end_inset
+
+g) Informationen über eine markierte Spielfigur, 
+\begin_inset Newline newline
+\end_inset
+
+h) der letzte Spielzug, 
+\begin_inset Newline newline
+\end_inset
+
+i) Debuginformationen und 
+\begin_inset Newline newline
+\end_inset
+
+j) Hinweis auf das Einstellungsmenü.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "seitenleiste"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Zudem werden die momentan verfügbaren Augenzahlen der drei Würfel angezeigt.
+\end_layout
+
+\begin_layout Standard
+Wird eine Spielfigur mit der Maus bewegt, werden in der normalen Ansicht
+ nochmals die wichtigsten Informationen über diese Spielfigur angezeigt.
+ In der Debugansicht werden die Kenndaten des letzten Zuges eingeblendet.
+ Darunter befinden sich gegebenenfalls von einem Client gesendete Debuginformati
+onen.
+\end_layout
+
+\begin_layout Standard
+Hat das Spielfeld den Tastaturfokus, erscheint unten ein Hinweis auf das
+ Einstellungsmenü.
+ Um dem Spielfeld den Fokus zu geben, muss man ggf.
+ einmal in das Spielfeld klicken.
+ Hat das Spielfeld den Fokus, kann mit der 
+\series bold
+Leertaste
+\series default
+ das in Abbildung 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "einstellungen"
+
+\end_inset
+
+ gezeigte Menü geöffnet und wieder geschlossen werden.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement !t
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename ps/einstellungen.ps
+	scale 75
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Das Einstellungsmenü.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "einstellungen"
+
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Die Optionen 
+\series bold
+Kantenglättung
+\series default
+, 
+\series bold
+Transparenz
+\series default
+, 
+\series bold
+Hintergrundbild
+\series default
+ und 
+\series bold
+Rundungen
+\series default
+ beeinflussen die grafische Darstellung des Spiels.
+ Insbesondere die ersten beiden Optionen sind sehr rechenintensiv und sollten
+ auf schwächeren Rechnern ausgeschaltet werden.
+ Mit der Option 
+\series bold
+Benchmark
+\series default
+ kann überprüft werden, ob die momentanen Einstellungen für den Rechner
+ geeignet sind.
+\end_layout
+
+\begin_layout Standard
+Über die Optionen "
+\series bold
+Feld--
+\series default
+ und 
+\series bold
+Schafindizes zeigen
+\series default
+" kann über jedem Feld bzw.
+ Schaf der zugehörige, eindeutige Index eingeblendet werden.
+\end_layout
+
+\begin_layout Standard
+Die Option 
+\series bold
+Debugansicht
+\series default
+ legt fest, welche Seitenleiste angezeigt werden soll.
+\end_layout
+
+\end_body
+\end_document
