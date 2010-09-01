@@ -21,7 +21,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.GameException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.GameControlBar;

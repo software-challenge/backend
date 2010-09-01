@@ -16,7 +16,6 @@ import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.IPauseable;
-import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
