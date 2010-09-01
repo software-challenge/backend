@@ -24,14 +24,12 @@ import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.ObservationRequest;
 import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.PrepareOnlineGameRequest;
 import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.PrepareGameResponse;
-import sc.protocol.responses.PrepareOnlineGameResponse;
 import sc.protocol.responses.RoomPacket;
 import sc.shared.SharedConfiguration;
 import sc.shared.GameResult;
@@ -256,15 +254,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		return blockingRequest(new PrepareGameRequest(gameType, descriptors),
 				PrepareGameResponse.class);
 	}
-	
-	public RequestResult<PrepareOnlineGameResponse> prepareOnlineGameAndWait(
-			String gameType, SlotDescriptor... descriptors)
-			throws InterruptedException
-	{
-		return blockingRequest(new PrepareOnlineGameRequest(gameType, descriptors), 
-				PrepareOnlineGameResponse.class);
-	}
-	
+
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(PrepareGameRequest request) throws InterruptedException {
 		return blockingRequest(request, PrepareGameResponse.class);
 	}

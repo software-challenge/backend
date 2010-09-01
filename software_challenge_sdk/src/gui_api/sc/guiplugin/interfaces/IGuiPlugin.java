@@ -49,10 +49,6 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	public IGamePreparation prepareGame(final String ip, final int port,
 			SlotDescriptor... descriptors) throws IOException;
 	
-	public IGamePreparation prepareOnlineGame(final String ip, final int port,
-			SlotDescriptor... descriptors) throws IOException;
-	
-	public IObservation joinOnlineGame(final String ip, final int port, String roomId) throws IOException;
 
 	/**
 	 * Loads the replay given by <code>filename</code>.
