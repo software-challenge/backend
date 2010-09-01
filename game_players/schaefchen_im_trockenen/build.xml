@@ -7,7 +7,7 @@
 	<property name="lib.dir" value="${root.dir}/software_challenge_sdk/lib" />
 	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
 	<property name="plugins.dir" value="${root.dir}/game_plugins" />
-	<property name="game.dir" value="${plugins.dir}/schaefchen_plugin" />
+	<property name="game.dir" value="${plugins.dir}/schaefchen_im_trockenen" />
 	<property name="main-class" value="sc.plugin_schaefchen.simple.Starter" />
 
 	<path id="classpath.libs">

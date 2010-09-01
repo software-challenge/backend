@@ -10,8 +10,8 @@
 		<delete dir="game_gui/build" />
 		<delete dir="game_plugins/hase_und_igel/build" />
 		<delete dir="game_plugins/tic_tac_toe/build" />
-		<delete dir="game_plugins/fang_den_hut/build" />
-		<delete dir="game_plugins/minimal/build" />
+		<delete dir="game_plugins/schaefchen_im_trockenen/build" />
+		<delete dir="game_players/schaefchen_im_trockenen/build" />
 		<delete dir="game_players/hase_und_igel/build" />
 	</target>
 
@@ -22,8 +22,8 @@
 		<echo message="Compiling Plugins and Players..." />
 		<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />
-		<ant dir="game_plugins/fang_den_hut" target="clean-build" inheritAll="false" />
-		<ant dir="game_plugins/minimal" target="clean-build" inheritAll="false" />
+		<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -43,25 +43,41 @@
 			<fileset dir="./game_server/build/jar" />
 		</copy>
 
-		<mkdir dir="${out.dir}/simple_client/jar" />
-		<copy todir="${out.dir}/simple_client/jar">
+		<mkdir dir="${out.dir}/simple_client/hase_und_igel/jar" />
+		<copy todir="${out.dir}/simple_client/hase_und_igel/jar">
 			<fileset dir="./game_players/hase_und_igel/build/jar" />
 		</copy>
+		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
+		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/jar">
+			<fileset dir="./game_players/schaefchen_im_trockenen/build/jar" />
+		</copy>
 
-		<mkdir dir="${out.dir}/simple_client/src" />
-		<copy todir="${out.dir}/simple_client/src">
+		<mkdir dir="${out.dir}/simple_client/hase_und_igel/src" />
+		<copy todir="${out.dir}/simple_client/hase_und_igel/src">
 			<fileset dir="./game_players/hase_und_igel">
 				<exclude name="build/**/*" />
 				<exclude name="bin/**/*" />
 				<exclude name=".classpath" />
 			</fileset>
 		</copy>
+		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
+		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/src">
+			<fileset dir="./game_players/schaefchen_im_trockenen">
+				<exclude name="build/**/*" />
+				<exclude name="bin/**/*" />
+				<exclude name=".classpath" />
+			</fileset>
+		</copy>
 		
-		<move tofile="${out.dir}/simple_client/src/.classpath" file="${out.dir}/simple_client/src/.deployed_classpath" />
+		<move tofile="${out.dir}/simple_client/hase_und_igel/src/.classpath" file="${out.dir}/simple_client/hase_und_igel/src/.deployed_classpath" />
 
-		<mkdir dir="${out.dir}/simple_client/src/lib" />
-		<copy todir="${out.dir}/simple_client/src/lib">
-			<fileset dir="${out.dir}/simple_client/jar/lib" />
+		<mkdir dir="${out.dir}/simple_client/hase_und_igel/src/lib" />
+		<copy todir="${out.dir}/simple_client/hase_und_igel/src/lib">
+			<fileset dir="${out.dir}/simple_client/hase_und_igel/jar/lib" />
+		</copy>
+		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib" />
+		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib">
+			<fileset dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar/lib" />
 		</copy>
 
 		<echo message="Generating Starter-Batchfiles" />
@@ -78,9 +94,13 @@
 
 		<zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
-		<zip destfile="${out.dir}/zipped/simpleclient-jar.zip" basedir="${out.dir}/simple_client/jar" />
+		<zip destfile="${out.dir}/zipped/simpleclient-hui-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel/jar" />
 
-		<zip destfile="${out.dir}/zipped/simpleclient-src.zip" basedir="${out.dir}/simple_client/src" />
+		<zip destfile="${out.dir}/zipped/simpleclient-hui-src.zip" basedir="${out.dir}/simple_client/hase_und_igel/src" />
+
+		<zip destfile="${out.dir}/zipped/simpleclient-sit-jar.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
+
+		<zip destfile="${out.dir}/zipped/simpleclient-sit-src.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
 	</target>
 
 	<target name="clean-build" depends="clean,build" />
