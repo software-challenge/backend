@@ -66,8 +66,10 @@
 				<exclude name="build/**/*" />
 				<exclude name="bin/**/*" />
 				<exclude name=".classpath" />
+				<exclude name="build.xml" />
 			</fileset>
 		</copy>
+		<move tofile="${out.dir}/simple_client/schaefchen_im_trockenen/src/build.xml" file="${out.dir}/simple_client/schaefchen_im_trockenen/src/build-deploy.xml" />
 		
 		<move tofile="${out.dir}/simple_client/hase_und_igel/src/.classpath" file="${out.dir}/simple_client/hase_und_igel/src/.deployed_classpath" />
 
@@ -78,6 +80,15 @@
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib" />
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib">
 			<fileset dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar/lib" />
+		</copy>
+
+		<mkdir dir="game_gui/plugins" />
+		<copy todir="game_gui/plugins" flatten="true">
+			<fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
+		</copy>
+		<mkdir dir="game_server/plugins" />
+		<copy todir="game_server/plugins" flatten="true">
+			<fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
 		</copy>
 
 		<echo message="Generating Starter-Batchfiles" />
