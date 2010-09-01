@@ -49,11 +49,11 @@ public class SimpleClient implements ILobbyClientListener
 
 		throw new RuntimeException("Couldn't find a valid move.");
 	}
-
+	
 	@Override
-	public void onError(ErrorResponse response)
+	public void onError(String roomId, ErrorResponse error)
 	{
-		System.err.println(response);
+		System.err.println(error);		
 	}
 
 	@Override
