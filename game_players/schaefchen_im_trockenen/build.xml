@@ -64,7 +64,8 @@
 		<mkdir dir="${jar.dir}/lib" />
 		<copy todir="${jar.dir}/lib" flatten="true">
 			<path refid="classpath.libs" />
-			<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />
+			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
+			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
 		</copy>
 	</target>
 
