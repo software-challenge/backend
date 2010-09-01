@@ -112,6 +112,13 @@
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-jar.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
 
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-src.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
+
+		<echo message="Gathering documentations..." />
+		<mkdir dir="${out.dir}/zipped/doc" />
+		<zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
+		<zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
+		<zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
+
 	</target>
 
 	<target name="clean-build" depends="clean,build" />
