@@ -72,7 +72,9 @@ public final class Application
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
 		String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
 		
-		Configuration.set("loadGameFile", loadGameFile);
+		if (loadGameFile != null) {
+			Configuration.set("loadGameFile", loadGameFile);
+		}
 
 		if (debugMode)
 		{
