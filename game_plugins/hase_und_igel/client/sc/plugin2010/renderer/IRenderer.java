@@ -4,7 +4,6 @@
 package sc.plugin2010.renderer;
 
 import java.awt.Image;
-import java.util.Map;
 
 import sc.plugin2010.Board;
 import sc.plugin2010.FigureColor;

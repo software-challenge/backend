@@ -3,12 +3,9 @@
  */
 package sc.plugin2010.gui;
 
-import java.awt.image.renderable.RenderContext;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JOptionPane;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +24,6 @@ import sc.plugin2010.GameState;
 import sc.plugin2010.IGUIObservation;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
-import sc.plugin2010.renderer.twodimensional.FrameRenderer;
 import sc.plugin2010.util.Configuration;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
@@ -170,6 +166,7 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private String createGameEndedString(GameResult data)
 	{
 		String result = "----------------\n";
@@ -364,7 +361,7 @@ public class Observation implements IObservation, IUpdateListener,
 		Object errorObject = conGame.getCurrentError();
 		if (errorObject != null) {
 			ErrorResponse error = (ErrorResponse) errorObject;
-			logger.info("Received error response");
+			logger.info("Received error response: " + error);
 			//RenderFacade.getInstance().gameError(error.getMessage());
 			//RenderFacade.getInstance().getObserver().
 			//notifyOnGameEnded(sender, conGame.getResult());

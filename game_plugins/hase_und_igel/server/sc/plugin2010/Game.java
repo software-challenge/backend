@@ -1,6 +1,5 @@
 package sc.plugin2010;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
