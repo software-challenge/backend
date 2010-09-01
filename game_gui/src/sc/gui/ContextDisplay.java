@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;

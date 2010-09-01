@@ -10,7 +10,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.clients.XStreamClient;
