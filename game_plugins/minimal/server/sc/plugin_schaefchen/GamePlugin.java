@@ -18,7 +18,7 @@ import sc.shared.ScoreFragment;
 @PluginDescriptor(name = "Schäfchen im Trockenen", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin {
 	public static final String PLUGIN_AUTHOR = "Torsten Krause, Sven Casimir";
-	public static final String PLUGIN_UUID = "minimal_plugin";
+	public static final String PLUGIN_UUID = "swc_2010_schaefchen_im_trockenen";
 
 	public static final int MAX_PLAYER_COUNT = 2;
 
