@@ -8,6 +8,7 @@ import sc.sample.shared.GameState;
 import sc.sample.shared.Move;
 import sc.sample.shared.Player;
 import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 
 public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 {
@@ -81,5 +82,26 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	protected PlayerScore getScoreFor(PlayerImpl p)
 	{
 		return p.getScore();
+	}
+
+	@Override
+	public void loadFromFile(String file)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadGameInfo(Object gameInfo)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayerLeft(IPlayer player, ScoreCause cause)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

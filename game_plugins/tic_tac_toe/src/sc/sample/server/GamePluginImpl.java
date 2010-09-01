@@ -1,9 +1,9 @@
 package sc.sample.server;
 
-import edu.cau.plugins.PluginDescriptor;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
+import sc.plugins.PluginDescriptor;
 import sc.sample.protocol.ProtocolDefinition;
 import sc.shared.ScoreDefinition;
 
