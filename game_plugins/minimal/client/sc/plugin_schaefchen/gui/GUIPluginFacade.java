@@ -30,7 +30,7 @@ import sc.shared.SlotDescriptor;
  * @author sca
  * 
  */
-@PluginDescriptor(author = "Torsten Krause, Sven Casimir", uuid = "minimal", name = "Schäfchen im Trockenen")
+@PluginDescriptor(author = "Torsten Krause, Sven Casimir", uuid = "sit", name = "Schäfchen im Trockenen")
 public class GUIPluginFacade implements IGuiPlugin {
 
 	public GUIPluginFacade() {
