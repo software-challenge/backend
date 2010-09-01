@@ -14,10 +14,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -791,7 +789,7 @@ public class FrameRenderer extends JPanel implements IRenderer, IClickObserver
 	@Override
 	public void gameEnded(final GameResult data, FigureColor color, String errorMessage)
 	{		
-		String colStr = (color == null ? "" : color.toString());
+		//String colStr = (color == null ? "" : color.toString());
 		final FigureColor col = color;
 		final String error = errorMessage;
 		final Runnable awtAction = new Runnable() {

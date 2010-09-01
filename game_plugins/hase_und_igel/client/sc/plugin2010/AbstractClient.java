@@ -1,7 +1,6 @@
 package sc.plugin2010;
 
 import java.io.IOException;
-import java.util.Map;
 
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;

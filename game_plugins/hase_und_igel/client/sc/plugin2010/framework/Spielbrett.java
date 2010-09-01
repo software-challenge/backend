@@ -75,6 +75,7 @@ public class Spielbrett
 	 *            die absolute Feldnummer auf die der Spieler ziehen möchte
 	 * @return true, falls der Spieler dies darf, sonst false
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean darfSpielerAufFeld(Spieler spieler, int feldNummer)
 	{
 		return brett.isMoveable(feldNummer, spieler.getPlayer());
