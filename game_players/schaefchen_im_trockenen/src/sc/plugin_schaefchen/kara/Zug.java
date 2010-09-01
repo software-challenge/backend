@@ -1,7 +1,5 @@
 package sc.plugin_schaefchen.kara;
 
-import java.util.List;
-
 import sc.plugin_schaefchen.DebugHint;
 import sc.plugin_schaefchen.Move;
 
