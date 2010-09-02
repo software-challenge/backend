@@ -1,0 +1,8 @@
+<project name="Complete" basedir="." default="main">
+
+	<target name="upper">
+		<ant dir=".." target="clean-build" inheritAll="false" />
+	</target>
+
+	<target name="main" depends="upper" />
+</project>
