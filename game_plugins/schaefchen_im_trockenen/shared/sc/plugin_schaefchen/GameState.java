@@ -58,6 +58,9 @@ public final class GameState implements Cloneable {
 	// letzter performte move
 	private Move lastMove;
 
+	// spielzustand
+	private Condition condition = new Condition();
+
 	public GameState() {
 
 		dice = new LinkedList<Die>();
@@ -65,11 +68,11 @@ public final class GameState implements Cloneable {
 			addDice();
 		}
 
-		// liste mit zwei plaetzen initialisieren 
+		// liste mit zwei plaetzen initialisieren
 		player = new ArrayList<Player>(2);
 		player.add(null);
 		player.add(null);
-		
+
 		sheeps = BoardFactory.createSheeps();
 		flowers = BoardFactory.createFlowers();
 
@@ -77,19 +80,18 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * setzt einer spieler 
+	 * setzt einer spieler
 	 */
 	public void setPlayer(Player player) {
 
-		if(player.getPlayerColor() == PlayerColor.RED){
+		if (player.getPlayerColor() == PlayerColor.RED) {
 			this.player.set(0, player);
-		} else if(player.getPlayerColor() == PlayerColor.BLUE){
+		} else if (player.getPlayerColor() == PlayerColor.BLUE) {
 			this.player.set(1, player);
 		}
-		
-		
+
 	}
-	
+
 	/**
 	 * setzt den aktuellen spieler
 	 */
@@ -113,19 +115,20 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * veraendert die aktuelle rundanzahl
-	 */
-	public void setTurn(int turn) {
-		this.turn = turn;
-	}
-
-	/**
-	 * liefert die aktuelle rundenzahl
+	 * liefert die aktuelle zugzahl
 	 */
 	public int getTurn() {
 		return turn;
 	}
-
+	
+	/**
+	 * liefert die aktuelle rundenzahl
+	 */
+	public int getRound() {
+		return turn/2;
+	}
+	
+	
 	/**
 	 * liefert den zuletzt ausgefuehrten zug
 	 */
@@ -282,7 +285,7 @@ public final class GameState implements Cloneable {
 
 			// neu wuerfeln, wenn der kommende spieler nichts machen kann
 			if (!again && currentPlayer != null) {
-				again = getValidMoves(currentPlayer.oponent()).size() == 0;
+				again = getValidMoves(currentPlayer.opponent()).size() == 0;
 			}
 
 			// neu wuerfeln
@@ -332,7 +335,7 @@ public final class GameState implements Cloneable {
 			if (sheep.owner != null) {
 				index = sheep.owner == PlayerColor.RED ? 0 : 1;
 				stats[index][1]++;
-				stats[index][2] += sheep.getSize(sheep.owner.oponent());
+				stats[index][2] += sheep.getSize(sheep.owner.opponent());
 				stats[index][4] += sheep.getFlowers();
 			}
 		}
@@ -347,8 +350,8 @@ public final class GameState implements Cloneable {
 				+ Constants.SCORE_PER_COLLECTED_FLOWER * stats[1][4]
 				+ Constants.SCORE_PER_MUNCHED_FLOWER * stats[1][5];
 
-		stats[0][0] = (stats[0][1] > 0 && stats[0][6] > stats[1][6]) ? 1 : 0;
-		stats[1][0] = (stats[1][1] > 0 && stats[1][6] > stats[0][6]) ? 1 : 0;
+		stats[0][0] = gameEnded() && winner() == PlayerColor.RED ? 1 : 0;
+		stats[1][0] = gameEnded() && winner() == PlayerColor.BLUE ? 1 : 0;
 
 		return stats;
 
@@ -419,7 +422,7 @@ public final class GameState implements Cloneable {
 			}
 			break;
 
-		}
+		}		
 		return okay;
 	}
 
@@ -614,7 +617,7 @@ public final class GameState implements Cloneable {
 			sheep.addFlowers(-sheep.getFlowers());
 
 			// die gefangenen schafe werden gestohlen
-			owner.stealSheeps(sheep.getSize(sheep.owner.oponent()));
+			owner.stealSheeps(sheep.getSize(sheep.owner.opponent()));
 
 			// ... und die eigenen gefangenen schafe freigelassen
 			int n = sheep.getSize(owner.getPlayerColor()) - 1;
@@ -637,6 +640,7 @@ public final class GameState implements Cloneable {
 			break;
 		}
 
+		turn++;
 		lastMove = move;
 		return true;
 
@@ -661,4 +665,38 @@ public final class GameState implements Cloneable {
 		clone.lastMove = lastMove;
 		return clone;
 	}
+
+	/**
+	 * das spiel alsbeendet markieren, gewinner und gewinnggrund festlegen.
+	 */
+	public void endGame(PlayerColor winner, String reason) {
+		condition.state = Condition.State.ENDED;
+		condition.winner = winner;
+		condition.reason = reason;
+
+	}
+
+	/**
+	 * gibt an, o das spiel als beendet markeirt wurde.
+	 */
+	public boolean gameEnded() {
+		return condition.state == Condition.State.ENDED;
+	}
+
+	/**
+	 * liefert den gewinner des spiels, falls gameEnded() true liefert. sonst
+	 * undefiniert.
+	 */
+	public PlayerColor winner() {
+		return condition.winner;
+	}
+
+	/**
+	 * liefert den gewinngrund des spiels, falls gameEnded() true liefert. sonst
+	 * undefiniert.
+	 */
+	public String winningReason() {
+		return condition.reason;
+	}
+
 }

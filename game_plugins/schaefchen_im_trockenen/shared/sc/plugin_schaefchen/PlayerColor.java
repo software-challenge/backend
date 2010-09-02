@@ -14,7 +14,7 @@ public enum PlayerColor {
 	/**
 	 * liefert die spielerfarbe des gegners dieses spielers
 	 */
-	public PlayerColor oponent() {
+	public PlayerColor opponent() {
 		PlayerColor result = null;
 		switch (this) {
 		case RED:

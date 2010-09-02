@@ -4,7 +4,9 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import sc.api.plugins.host.ReplayBuilder;
@@ -16,8 +18,8 @@ import sc.networking.clients.ObservingClient;
 import sc.plugin_schaefchen.EPlayerId;
 import sc.plugin_schaefchen.GamePlugin;
 import sc.plugin_schaefchen.GuiClient;
+import sc.plugin_schaefchen.gui.renderer.FrameRenderer;
 import sc.plugin_schaefchen.gui.renderer.RenderFacade;
-import sc.plugin_schaefchen.gui.renderer.RendererUtil;
 import sc.plugin_schaefchen.util.Configuration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
@@ -30,7 +32,7 @@ import sc.shared.SlotDescriptor;
  * @author sca
  * 
  */
-@PluginDescriptor(author = "Torsten Krause, Sven Casimir", uuid = "sit", name = "Schäfchen im Trockenen")
+@PluginDescriptor(author = "Torsten Krause, Sven Casimir", uuid = "minimal", name = "Schäfchen im Trockenen")
 public class GUIPluginFacade implements IGuiPlugin {
 
 	public GUIPluginFacade() {
@@ -54,9 +56,40 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public Image getPluginIcon() {
-		return RendererUtil.getImage("resource/game/bigsheep.png");
+		return loadImage("resource/game/sheep.png");
 	}
 
+	@Override
+	public Image getPluginImage() {
+		return loadImage("resource/game/bigsheep.png");
+	}
+
+	private static Image loadImage(String filename) {
+		URL url = FrameRenderer.class.getClassLoader().getResource(filename);
+
+		if (url == null) {
+			return new ImageIcon().getImage();
+		}
+		return (new ImageIcon(url)).getImage();
+	}
+
+	/**
+	 * Server wants us to prepare a game Then create a GuiClient that opens a
+	 * new room and create the GUI
+	 */
+	@Override
+	public IGamePreparation prepareBackgroundGame(final String ip, final int port,
+			SlotDescriptor... descriptors) throws IOException {
+		GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
+		AdministrativeGameHandler handler = new AdministrativeGameHandler();
+		client.setHandler(handler);
+		//RenderFacade.getInstance().setHandler(handler, EPlayerId.OBSERVER);
+		GamePreparation result = new GamePreparation(client, descriptors);
+		RenderFacade.getInstance().setDisabled(true);
+		return result;
+	}
+	
+	
 	/**
 	 * Server wants us to prepare a game Then create a GuiClient that opens a
 	 * new room and create the GUI
@@ -67,7 +100,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 		GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
 		AdministrativeGameHandler handler = new AdministrativeGameHandler();
 		client.setHandler(handler);
-		RenderFacade.getInstance().createPanel(handler, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().setHandler(handler, EPlayerId.OBSERVER);
 		GamePreparation result = new GamePreparation(client, descriptors);
 		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		return result;
@@ -81,7 +114,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 		ObservingClient rep = new ObservingClient(Configuration.getXStream(),
 				ReplayBuilder.loadReplay(filename));
 		ObserverGameHandler handler = new ObserverGameHandler();
-		RenderFacade.getInstance().createPanel(null, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().setHandler(null, EPlayerId.OBSERVER);
 		IObservation obs = new Observation(rep, handler);
 		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		return obs;
@@ -132,8 +165,4 @@ public class GUIPluginFacade implements IGuiPlugin {
 		return screen;
 	}
 
-	@Override
-	public Image getPluginImage() {
-		return RendererUtil.getImage("resource/game/bigsheep.png");
-	}
 }
