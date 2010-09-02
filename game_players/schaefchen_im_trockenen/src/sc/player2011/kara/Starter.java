@@ -1,9 +1,10 @@
-package sc.plugin_schaefchen.simple;
+package sc.player2011.kara;
 
 import java.io.IOException;
 
-import sc.plugin_schaefchen.AbstractClient;
-import sc.plugin_schaefchen.IGameHandler;
+import sc.player2011.simple.LogicFactory;
+import sc.plugin2011.AbstractClient;
+import sc.plugin2011.IGameHandler;
 import sc.shared.SharedConfiguration;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;

@@ -1,4 +1,4 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
 /**
  * Beschreibt von welchem Typ ein Feld ist

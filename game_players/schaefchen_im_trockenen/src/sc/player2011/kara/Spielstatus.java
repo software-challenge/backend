@@ -1,4 +1,4 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import sc.plugin_schaefchen.Die;
-import sc.plugin_schaefchen.Flower;
-import sc.plugin_schaefchen.GameState;
-import sc.plugin_schaefchen.Move;
-import sc.plugin_schaefchen.Node;
-import sc.plugin_schaefchen.Sheep;
+import sc.plugin2011.Die;
+import sc.plugin2011.Flower;
+import sc.plugin2011.GameState;
+import sc.plugin2011.Move;
+import sc.plugin2011.Node;
+import sc.plugin2011.Sheep;
 
 /**
  * Ein Kara Frontend welche den aktuellen Spielstatus darstellt 

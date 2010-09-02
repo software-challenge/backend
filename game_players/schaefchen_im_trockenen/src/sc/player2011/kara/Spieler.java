@@ -1,6 +1,6 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
-import sc.plugin_schaefchen.Player;
+import sc.plugin2011.Player;
 
 public class Spieler{
 	Player player;

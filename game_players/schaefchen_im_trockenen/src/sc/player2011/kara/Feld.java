@@ -1,9 +1,9 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin_schaefchen.Node;
+import sc.plugin2011.Node;
 
 /**
  * Beschreibt ein Feld des Spiels

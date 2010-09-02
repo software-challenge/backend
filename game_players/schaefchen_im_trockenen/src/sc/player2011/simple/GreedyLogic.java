@@ -1,22 +1,23 @@
-package sc.plugin_schaefchen.simple;
+package sc.player2011.simple;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin_schaefchen.BoardFactory;
-import sc.plugin_schaefchen.DebugHint;
-import sc.plugin_schaefchen.DogState;
-import sc.plugin_schaefchen.Flower;
-import sc.plugin_schaefchen.GameState;
-import sc.plugin_schaefchen.IGameHandler;
-import sc.plugin_schaefchen.Move;
-import sc.plugin_schaefchen.NodeType;
-import sc.plugin_schaefchen.Player;
-import sc.plugin_schaefchen.PlayerColor;
-import sc.plugin_schaefchen.Sheep;
-import sc.plugin_schaefchen.util.Constants;
+import sc.player2011.kara.Starter;
+import sc.plugin2011.BoardFactory;
+import sc.plugin2011.DebugHint;
+import sc.plugin2011.DogState;
+import sc.plugin2011.Flower;
+import sc.plugin2011.GameState;
+import sc.plugin2011.IGameHandler;
+import sc.plugin2011.Move;
+import sc.plugin2011.NodeType;
+import sc.plugin2011.Player;
+import sc.plugin2011.PlayerColor;
+import sc.plugin2011.Sheep;
+import sc.plugin2011.util.Constants;
 import sc.shared.GameResult;
 
 public class GreedyLogic implements IGameHandler

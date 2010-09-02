@@ -1,8 +1,8 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
-import sc.plugin_schaefchen.kara.HundStatus ;
-import sc.plugin_schaefchen.PlayerColor;
-import sc.plugin_schaefchen.Sheep;
+import sc.player2011.kara.HundStatus;
+import sc.plugin2011.PlayerColor;
+import sc.plugin2011.Sheep;
 
 public class Schaf {
 	private Spieler owner;
