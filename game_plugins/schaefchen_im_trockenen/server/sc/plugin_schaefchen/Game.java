@@ -21,6 +21,7 @@ import sc.plugin_schaefchen.Player;
 import sc.plugin_schaefchen.PlayerColor;
 import sc.plugin_schaefchen.WelcomeMessage;
 import sc.plugin_schaefchen.util.Configuration;
+import sc.plugin_schaefchen.util.Constants;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -62,7 +63,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected Object getCurrentState() {
 		gameState.setCurrentPlayer(activePlayer.getPlayerColor());
-		return  gameState;
+		return gameState;
 	}
 
 	/**
@@ -74,65 +75,66 @@ public class Game extends RoundBasedGameInstance<Player> {
 			throws GameLogicException {
 		final Player author = (Player) fromPlayer;
 
-		// Player did a move
 		if (data instanceof Move) {
 			final Move move = (Move) data;
 
-			if (author != getActivePlayer()) {
-				author.setViolated(true);
-				String err = "Move was unexpected.";
-				logger.error("Received invalid move {} from {}: "
-						+ move.toString() + ". " + err, data, author);
-				throw new GameLogicException("Move was invalid: " + err);
-			}
-
+			// auf fehlerhafte zuege ueberpruefen
+			String err = null;
 			if (move.target < 0 || move.target >= BoardFactory.nodes.size()) {
+				err = "Es gibt kein Feld #" + move.target;
+			} else if (gameState.getSheep(move.sheep) == null) {
+				err = "Es gibt kein Schaf #" + move.sheep;
+			} else if (!gameState.getSheep(move.sheep).owner
+					.equals(getActivePlayer().getPlayerColor())) {
+				err = "Der aktuelle Spieler darf schaf #" + move.sheep
+						+ "nicht bewegen";
+			} else if (!gameState.isValidTarget(move.sheep, move.target)) {
+				err = "Schaf #" + move.sheep + " darf das Feld #" + move.target
+						+ " nicht betreten";
+			} else if (!gameState.isValideMove(move)) {
+				err = "Schaf #" + move.sheep + " kann das Feld #" + move.target
+						+ " nicht erreichen";
+			}
+
+			// fehlerhgaften zug melden
+			if (err != null) {
 				author.setViolated(true);
-				String err = "There is no Node #" + move.target;
+				gameState.endGame(author.getPlayerColor().opponent(),
+						"Ungültiger Zug von " + author.getDisplayName()
+								+ ".\\n" + err + ".");
 				logger.error("Received invalid move {} from {}: "
 						+ move.toString() + ". " + err, data, author);
 				throw new GameLogicException("Move was invalid: " + err);
+
 			}
 
-			if (gameState.getSheep(move.sheep) == null) {
-				author.setViolated(true);
-				String err = "There is no Sheep #" + move.sheep;
-				logger.error("Received invalid move {} from {}: "
-						+ move.toString() + ". " + err, data, author);
-				throw new GameLogicException("Move was invalid: " + err);
-			}
-
-			if (!gameState.getSheep(move.sheep).owner.equals(getActivePlayer()
-					.getPlayerColor())) {
-				author.setViolated(true);
-				String err = "Current player can't move sheep #" + move.sheep;
-				logger.error("Received invalid move {} from {}: "
-						+ move.toString() + ". " + err, data, author);
-				throw new GameLogicException("Move was invalid: " + err);
-			}
-
-			if (!gameState.isValidTarget(gameState.getSheep(move.sheep),
-					move.target)) {
-				author.setViolated(true);
-				String err = "Sheep #" + move.sheep + " can't enter node #"
-						+ move.target;
-				logger.error("Received invalid move {} from {}: "
-						+ move.toString() + ". " + err, data, author);
-				throw new GameLogicException("Move was invalid: " + err);
-			}
-
-			if (!gameState.isValideMove(move)) {
-				author.setViolated(true);
-				String err = "Sheep #" + move.sheep + " can't reach node #"
-						+ move.target;
-				logger.error("Received invalid move {} from {}: "
-						+ move.toString() + ". " + err, data, author);
-				throw new GameLogicException("Move was invalid: " + err);
-			}
-
+			// korrekten zug ausfuehren
 			gameState.performMove(move);
-			// author.addToHistory(move);
+
+			// wurde durch diesen zug das spiel gewonnen?
+			if (gameState.getSheeps(author.getPlayerColor().opponent()).size() == 0) {
+				gameState
+						.endGame(
+								author.getPlayerColor(),
+								author.getDisplayName()
+										+ " gewinnt das Spiel vorzeitig.\\nDer Gegner kontrolliert keine Schafe mehr.");
+			} else if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+				int[][] stats = gameState.getGameStats();
+				PlayerColor winner = null;
+				String winnerName = "Gleichstand.";
+				if (stats[0][6] > stats[1][6]) {
+					winner = PlayerColor.RED;
+					winnerName = "Sieg nach Punkten.";
+				} else if (stats[0][6] < stats[1][6]) {
+					winner = PlayerColor.BLUE;
+					winnerName = "Sieg nach Punkten.";
+				}
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
+						+ winnerName);
+			}
+
 			next();
+
 		} else {
 			logger.error("Received unexpected {} from {}.", data, author);
 			throw new GameLogicException("Unknown ObjectType received.");
@@ -153,13 +155,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected void next() {
-		// final Player activePlayer = getActivePlayer();
-		// Move lastMove = activePlayer.getLastMove();
 		int activePlayerId = this.players.indexOf(this.activePlayer);
 		activePlayerId = (activePlayerId + 1) % this.players.size();
 		final Player nextPlayer = this.players.get(activePlayerId);
 		next(nextPlayer);
-		gameState.setTurn(getTurn());
 	}
 
 	@Override
@@ -205,6 +204,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected void onNewTurn() {
+
 	}
 
 	@Override
@@ -225,15 +225,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected boolean checkGameOverCondition() {
-		return getTurn() >= GamePlugin.MAX_TURN_COUNT - 1
-				|| gameState.getSheeps(PlayerColor.RED).size() == 0
-				|| gameState.getSheeps(PlayerColor.BLUE).size() == 0;
+		return gameState.gameEnded();
 	}
 
 	@Override
 	public void loadFromFile(String file) {
-		GameLoader gl = new GameLoader(new Class<?>[] {
-				GameState.class });
+		GameLoader gl = new GameLoader(new Class<?>[] { GameState.class });
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
