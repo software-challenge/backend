@@ -14,8 +14,8 @@
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${game.dir}" includes="**/*.jar" />
 		<fileset dir="${sdk.dir}" includes="**/*.jar" />
-		<pathelement location="${sdk.dir}/build/bin" />
-		<pathelement location="${game.dir}/build/bin" />
+		<pathelement location="${sdk.dir}/${build.dir}/bin" />
+		<pathelement location="${game.dir}/${build.dir}/bin" />
 	</path>
 
 	<path id="classpath.base">
