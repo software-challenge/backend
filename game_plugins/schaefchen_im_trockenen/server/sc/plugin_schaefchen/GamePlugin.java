@@ -40,10 +40,8 @@ public class GamePlugin implements IGamePlugin {
 				ScoreAggregation.AVERAGE, false));
 		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Gefressen Blumen",
 				ScoreAggregation.AVERAGE, false));
-		SCORE_DEFINITION.add(new ScoreFragment("Punkte",
+		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Punkte",
 				ScoreAggregation.AVERAGE));
-		// SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Zeit (ms)",
-		// ScoreAggregation.AVERAGE));
 	}
 
 	@Override

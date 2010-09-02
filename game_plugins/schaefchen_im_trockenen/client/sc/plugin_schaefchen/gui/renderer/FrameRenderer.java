@@ -190,8 +190,7 @@ public class FrameRenderer extends JPanel {
 					}
 				}
 			}
-			
-			
+
 			draggedSheep = false;
 			highliteSheep = false;
 			highliteNode = false;
@@ -453,7 +452,6 @@ public class FrameRenderer extends JPanel {
 			try {
 				Thread.sleep(1000 / 35);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -481,22 +479,12 @@ public class FrameRenderer extends JPanel {
 		return img;
 	}
 
-	public void requestMove(int turn) {
+	public synchronized void requestMove(int turn) {
 		turnToAnswer = turn;
 	}
 
-	// public void gameError(String errorMessage) {
-	// ended = true;
-	// endErrorMsg = errorMessage == null ?
-	// "Es ist ein unbekannter Fehler aufgetreten."
-	// : errorMessage;
-	// endColor = null;
-	// repaint();
-	// }
-
-	private void sendMove(Move move) {
+	private synchronized void sendMove(Move move) {
 		if (myTurn() && !gameEnded) {
-			// handler.sendAction(move);
 			RenderFacade.getInstance().sendMove(move);
 			turnToAnswer = -1;
 		}
@@ -750,18 +738,8 @@ public class FrameRenderer extends JPanel {
 		// highlights fuer erreichbare knoten zeichnen
 		if (highliteSheep) {
 			Sheep sheep = gameState.getSheep(currentSheep);
-			Color c = getPlayerColor(sheep.owner);
-
-			if (highliteNode && myTurn() && sheep.owner == currentPlayer
-					&& currentNeighbours.contains(currentNode)) {
-
-				g2.setColor(getTransparentColor(c, 128));
-				GUINode currentGUINode = guiNodes[currentNode];
-				g2.fillPolygon(currentGUINode.getScaledXs(), currentGUINode
-						.getScaledYs(), currentGUINode.size());
-			}
-
-			g2.setColor(c);
+			g2.setColor(sheep.owner == currentPlayer ? getPlayerColor(
+					sheep.owner, true) : Color.BLACK);
 			if (currentNeighbours != null && sheep.owner != null) {
 				for (Integer n : currentNeighbours) {
 					GUINode guiNode = guiNodes[n];
@@ -805,8 +783,7 @@ public class FrameRenderer extends JPanel {
 		Sheep sheep = gameState.getSheep(currentSheep);
 		if (highliteSheep) {
 			Color c = getPlayerColor(sheep.owner);
-			if (highliteNode && myTurn() && sheep.owner == currentPlayer
-					&& currentNeighbours.contains(currentNode)) {
+			if (highliteNode && myTurn()) {
 
 				g2.setColor(getTransparentColor(c, 128));
 				GUINode currentGUINode = guiNodes[currentNode];
@@ -1043,9 +1020,15 @@ public class FrameRenderer extends JPanel {
 					+ (opponentSheeps == 1 ? "s" : "") + " Schaf"
 					+ (opponentSheeps == 1 ? "" : "e"), fontX, fontY2);
 
+			type = flowers < 0 ? "Fliegenpilze" : "Blumen";
+			if (Math.abs(flowers) == 1) {
+				type = type.substring(0, type.length() - 1);
+			}
+
 			fontY2 += 20;
-			g2.drawString(flowers + " eingesammelte Blume"
-					+ (Math.abs(flowers) != 1 ? "n" : ""), fontX, fontY2);
+			g2.drawString(
+					Math.abs(flowers) + " " + type + " auf dem Spielfeld",
+					fontX, fontY2);
 
 			if (sheep.getDogState() == DogState.PASSIVE) {
 				fontY2 += 25;
@@ -1221,14 +1204,10 @@ public class FrameRenderer extends JPanel {
 				OPTIONS[TRANSPARANCY] ? alpha : 255);
 	}
 
-	
-
-	
 	private Color getPlayerColor(PlayerColor player) {
 		return getPlayerColor(player, false);
 	}
-	
-	
+
 	private Color getPlayerColor(PlayerColor player, boolean forced) {
 		Color color;
 
@@ -1256,7 +1235,7 @@ public class FrameRenderer extends JPanel {
 		if (sheep != null) {
 
 			Point p = sheepMap.get(sheep.index);
-		//	System.out.println(p);
+			// System.out.println(p);
 
 			// FIXME: warum kann p == null auftreten?
 			// if (OPTIONS[BENCHMARK]) {

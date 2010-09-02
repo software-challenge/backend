@@ -69,7 +69,6 @@ public class RenderFacade {
 
 					try {
 						gameStateQueue.wait();
-						// System.out.println(" ***  dequeueing");
 
 					} catch (InterruptedException e) {
 						e.printStackTrace();
@@ -78,14 +77,12 @@ public class RenderFacade {
 				}
 
 				while (gameStateQueue.size() > 0) {
-					
-					try{
-					
-					GameState gameState = gameStateQueue.remove(0);
-					// System.out.println(" ***  dequeue " +
-					// gameState.getTurn());
-					frameRenderer.updateGameState(gameState);
-					} catch (Exception e){
+
+					try {
+
+						GameState gameState = gameStateQueue.remove(0);
+						frameRenderer.updateGameState(gameState);
+					} catch (Exception e) {
 						System.err.println(e.getStackTrace());
 					}
 				}
@@ -206,7 +203,6 @@ public class RenderFacade {
 
 				first = false;
 				maxTurn = Math.max(maxTurn, gameState.getTurn());
-				//System.out.println(" ***  enqueue " + gameState.getTurn());
 				gameStateQueue.add(gameState);
 				lastGameState = gameState;
 				gameStateQueue.notifyAll();
@@ -255,7 +251,7 @@ public class RenderFacade {
 	/**
 	 * @param id
 	 */
-	public void requestMove(EPlayerId id) {
+	public synchronized void requestMove(EPlayerId id) {
 
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			setActivePlayer(id);

@@ -100,8 +100,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 			if (err != null) {
 				author.setViolated(true);
 				gameState.endGame(author.getPlayerColor().opponent(),
-						"Ungültiger Zug von " + author.getDisplayName()
-								+ ".\\n" + err + ".");
+						"Ungültiger Zug von '" + author.getDisplayName()
+								+ "'.\\n" + err + ".");
 				logger.error("Received invalid move {} from {}: "
 						+ move.toString() + ". " + err, data, author);
 				throw new GameLogicException("Move was invalid: " + err);
@@ -116,12 +116,15 @@ public class Game extends RoundBasedGameInstance<Player> {
 				gameState
 						.endGame(
 								author.getPlayerColor(),
-								author.getDisplayName()
-										+ " gewinnt das Spiel vorzeitig.\\nDer Gegner kontrolliert keine Schafe mehr.");
+								"Das Spiel ist vorzeitig zu Ende.\\n'"
+										+ (gameState.getPlayerNames()[author
+												.getPlayerColor() == PlayerColor.RED ? 1
+												: 0])
+										+ "' hat keine Schafe mehr.");
 			} else if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
-				String winnerName = "Gleichstand.";
+				String winnerName = "Das Spiel ist zu Ende.";
 				if (stats[0][6] > stats[1][6]) {
 					winner = PlayerColor.RED;
 					winnerName = "Sieg nach Punkten.";
