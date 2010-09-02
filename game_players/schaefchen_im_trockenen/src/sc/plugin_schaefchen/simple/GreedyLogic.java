@@ -79,11 +79,11 @@ public class GreedyLogic implements IGameHandler
 
 				// gegnerische schafe mit vierfachem wert bewerten
 				value += 4 * Constants.SCORE_PER_STOLEN_SHEEP
-						* thisSheep.getSize(client.getMyColor().oponent());
+						* thisSheep.getSize(client.getMyColor().opponent());
 
 				// eigene schafe mitdoppeltem wert bewerten
 				value += 2 * Constants.SCORE_PER_STOLEN_SHEEP
-						* thisSheep.getSize(client.getMyColor().oponent());
+						* thisSheep.getSize(client.getMyColor().opponent());
 
 				// 15 extrapunkte wwenn man einen passiven hund hat
 				// der durch's nachhausebringen aktiv wird
