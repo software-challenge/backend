@@ -402,6 +402,9 @@ public class TestRangeDialog extends JDialog {
 		while (model.getRowCount() > 0) {
 			model.removeRow(0);
 		}
+		
+		// remove columns
+		model.setColumnCount(0);
 
 		// add columns
 		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
