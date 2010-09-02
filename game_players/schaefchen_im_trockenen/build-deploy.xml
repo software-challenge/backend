@@ -5,7 +5,7 @@
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="zip.dir" value="${build.dir}/zipped" />
-	<property name="main-class" value="sc.plugin_schaefchen.simple.Starter" />
+	<property name="main-class" value="sc.player2011.Starter" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
