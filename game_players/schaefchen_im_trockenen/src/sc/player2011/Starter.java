@@ -2,7 +2,6 @@ package sc.player2011;
 
 import java.io.IOException;
 
-import sc.player2011.simple.LogicFactory;
 import sc.plugin2011.AbstractClient;
 import sc.plugin2011.IGameHandler;
 import sc.shared.SharedConfiguration;

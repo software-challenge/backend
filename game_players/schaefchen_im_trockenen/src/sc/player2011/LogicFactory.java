@@ -1,6 +1,7 @@
-package sc.player2011.simple;
+package sc.player2011;
 
 import sc.player2011.kara.KaraLogic;
+import sc.player2011.simple.RandomLogic;
 import sc.plugin2011.AbstractClient;
 import sc.plugin2011.IGameHandler;
 
