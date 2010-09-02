@@ -1027,7 +1027,7 @@ public class FrameRenderer extends JPanel {
 
 			fontY2 += 20;
 			g2.drawString(
-					Math.abs(flowers) + " " + type + " auf dem Spielfeld",
+					Math.abs(flowers) + " " + type + " eingesammelt",
 					fontX, fontY2);
 
 			if (sheep.getDogState() == DogState.PASSIVE) {
