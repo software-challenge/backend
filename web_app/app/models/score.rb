@@ -1,6 +1,6 @@
 class Score < ActiveRecord::Base
   
-  validates_inclusion_of :game_definition, :in => %w{HaseUndIgel}
+  validates_inclusion_of :game_definition, :in => %w{HaseUndIgel SchaefchenImTrockenen}
   validates_inclusion_of :score_type, :in => %w{round_score match_score}
 
   has_many :fragments, :class_name => "Score::Fragment", :foreign_key => "score_id", :dependent => :destroy
@@ -8,7 +8,7 @@ class Score < ActiveRecord::Base
   validates_presence_of :cause, :if => :round_score?
 
   def definition
-    GameDefinition.all.first.send(score_type)
+    GameDefinition.all.find{|gd| gd.game_identifier == game_definition.to_sym}.send(score_type)
   end 
 
   def round_score?
