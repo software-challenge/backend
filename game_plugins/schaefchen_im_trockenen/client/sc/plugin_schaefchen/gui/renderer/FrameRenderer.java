@@ -316,7 +316,6 @@ public class FrameRenderer extends JPanel {
 	private int configX;
 	private BufferedImage buffer;
 	private boolean updateBuffer;
-	private Image staticImage;
 	private int fontY;
 	private int fontX;
 	private boolean highliteSheep;
