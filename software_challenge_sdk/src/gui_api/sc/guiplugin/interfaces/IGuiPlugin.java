@@ -49,6 +49,18 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	public IGamePreparation prepareGame(final String ip, final int port,
 			SlotDescriptor... descriptors) throws IOException;
 	
+	
+
+	/**
+	 * 
+	 * @param ip
+	 * @param port
+	 * @return
+	 * @throws IOException
+	 */
+	public IGamePreparation prepareBackgroundGame(final String ip, final int port,
+			SlotDescriptor... descriptors) throws IOException;
+	
 
 	/**
 	 * Loads the replay given by <code>filename</code>.
