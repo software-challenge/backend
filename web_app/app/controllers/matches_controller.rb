@@ -48,11 +48,11 @@ class MatchesController < ApplicationController
   protected
 
   def fetch_parents
-    if params[:contest_id]
-      @contest = Contest.find(params[:contest_id])
-      @matchday = @contest.matchdays.find(params[:matchday_id])
-      @parent = @matchday
-    elsif params[:contestant_id]
+   # if params[:contest_id]
+     # @contest = Contest.find(params[:contest_id])
+    #  @matchday = @contest.matchdays.find(params[:matchday_id])
+     # @parent = @matchday
+    if params[:contestant_id]
       @contestant = Contestant.find(params[:contestant_id])
       @contest = @contestant.contest
       @parent = @contestant

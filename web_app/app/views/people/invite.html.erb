@@ -1,6 +1,6 @@
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
-  <%= link_to @contestant.name, contest_contestant_url(@contestant) %> /
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= link_to @contestant.name, contest_contestant_url(@contest, @contestant) %> /
   <%= t "views.invite_person" %>
 </h1>
 

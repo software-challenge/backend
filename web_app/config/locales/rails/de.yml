@@ -139,3 +139,5 @@ de:
         even: "muss gerade sein"
         record_invalid: "Gültigkeitsprüfung ist fehlgeschlagen: {{errors}}"
       models:
+        round:
+          other: "anderer Wert"

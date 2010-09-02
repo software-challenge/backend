@@ -54,7 +54,8 @@ class Contest < ActiveRecord::Base
   has_many :matches, :through => :matchdays
 
   def to_param
-    "#{id}-#{name.parameterize}"
+   #TODO DELETE "#{id}-#{name.parameterize}"
+   "#{id}"
   end
 
   def after_save

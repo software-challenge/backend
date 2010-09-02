@@ -86,6 +86,9 @@ class MainController < ApplicationController
     @manager_log = `tail -n 10 #{Rails.root.join('log', 'sc_manager.log')}`
   end
 
+  def administration
+  end
+
   def clear_jobs
     Delayed::Job.destroy_all
     flash[:notice] = I18n.t("messages.cleared_all_jobs")

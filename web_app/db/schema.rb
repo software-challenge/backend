@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100427120945) do
+ActiveRecord::Schema.define(:version => 20100617134026) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -82,6 +82,27 @@ ActiveRecord::Schema.define(:version => 20100427120945) do
     t.boolean  "published",  :default => false
   end
 
+  create_table "friendly_encounter_slots", :force => true do |t|
+    t.integer  "friendly_encounter_id"
+    t.integer  "client_id"
+    t.integer  "contestant_id"
+    t.integer  "score_id"
+    t.boolean  "hidden"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "friendly_encounters", :force => true do |t|
+    t.integer  "contest_id"
+    t.datetime "played_at"
+    t.integer  "job_id"
+    t.string   "type",        :default => "FriendlyEncounter"
+    t.integer  "open_for_id"
+    t.boolean  "rejected",    :default => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "match_slots", :force => true do |t|
     t.integer  "match_id"
     t.integer  "position"
@@ -140,7 +161,6 @@ ActiveRecord::Schema.define(:version => 20100427120945) do
     t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "blocked",              :default => false, :null => false
     t.string   "first_name",           :default => "",    :null => false
     t.string   "last_name",            :default => "",    :null => false
     t.boolean  "show_email_to_others", :default => false, :null => false
@@ -196,6 +216,7 @@ ActiveRecord::Schema.define(:version => 20100427120945) do
     t.string   "game_definition"
     t.string   "score_type"
     t.string   "cause"
+    t.string   "error_message",   :default => ""
   end
 
 end

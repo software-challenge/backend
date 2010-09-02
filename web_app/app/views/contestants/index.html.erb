@@ -61,7 +61,7 @@
               $("a#submit_ovrl_mem_count_<%= contestant.id %>").bind('click', function() {
                 $("span#change_ovrl_mem_count_edit_<%= contestant.id %>").hide();
                 $("a#change_ovrl_mem_count_<%= contestant.id %>").show(250);
-                $.get("<%= set_and_get_overall_member_count_contest_contestant_url(contestant) %>",
+                $.get("<%= set_and_get_overall_member_count_contest_contestant_url(@contest, contestant) %>",
                   "id=<%= contestant.id %>&count=" + $("input#mem_count_<%= contestant.id %>").val(),
                   function(returned_data) {
                     if (returned_data == "-1") {
@@ -90,7 +90,7 @@
         </td>
         <td>
           <% if may_see_details? :contestant => contestant -%>
-          <%= link_to image_tag('actions/show.png'), [:contest, contestant] %>
+          <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
           <% end -%>
         </td>
         <td>

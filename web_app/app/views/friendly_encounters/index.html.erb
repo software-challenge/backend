@@ -40,7 +40,7 @@
     })
 
     function get_state(id, reverse, interval) {
-      $.get("<%= contest_friendly_encounters_url() %>/" + id + "/status",
+      $.get("<%= contest_friendly_encounters_url(@contest) %>/" + id + "/status",
         "with_result=true&reverse=" + reverse + "&spinner=true",
         function(returned_data) {
           var rev = (reverse ? "_r" : "")
@@ -81,19 +81,19 @@
             <% if not enc.running? %>
               <% if enc.ready? %>
                 <% if enc.playable? %>
-                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(enc), :method => :post %>
+                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(@contst, enc), :method => :post %>
                 <% else %>
                   <%= t("messages.friendly_match_not_today") %>
                 <% end %>
               <% end %>
               <% if not enc.played? and not enc.ready? %>
-                <%= link_to t("actions.revoke"), contest_friendly_encounter_url(enc), :method => :delete %>
+                <%= link_to t("actions.revoke"), contest_friendly_encounter_url(@contest, enc), :method => :delete %>
               <% end %>
               <% if enc.played? %>
                 <% if not enc.hidden_for?(con) %>
-                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
                 <% else %>
-                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
                 <% end %>
               <% end %>
             <% end %>
@@ -137,24 +137,24 @@
             <% if not enc.running? %>
               <% if enc.open? and not enc.contestants.include?(con) %>
                 <% if enc.acceptable_by?(current_user) %> 
-                  <%= link_to t("actions.accept"), accept_contest_friendly_encounter_url(enc, :contestant => con), :method => :post %>  
+                  <%= link_to t("actions.accept"), accept_contest_friendly_encounter_url(@contest, enc, :contestant => con), :method => :post %>  
                 <% end %>
                 <% if enc.rejectable_by?(current_user) %>
-                  <%= link_to t("actions.reject"), reject_contest_friendly_encounter_url(enc), :method => :post %>
+                  <%= link_to t("actions.reject"), reject_contest_friendly_encounter_url(@contest, enc), :method => :post %>
                 <% end %> 
               <% end %>
               <% if enc.ready? %>
                 <% if enc.playable? %>
-                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(enc), :method => :post %>
+                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(@contest, enc), :method => :post %>
                 <% else %>
                   <%= t("messages.friendly_match_not_today") %>
                 <% end %>
               <% end %>
               <% if enc.played? %>
                 <% if not enc.hidden_for?(con) %>
-                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
                 <% else %>
-                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
                 <% end %>
               <% end %>
             <% end %>

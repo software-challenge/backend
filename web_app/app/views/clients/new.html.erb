@@ -1,17 +1,17 @@
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
   <%= @contestant.name %> /
   <%= t "titles.upload_new_client" %>
 </h1>
 
 <% tabnav :contestant do %>
-  <% semantic_form_for([:contest, @contestant, @client], :html => { :multipart => true }) do |f| %>
+  <% semantic_form_for([@contest, @contestant, @client], :html => { :multipart => true }) do |f| %>
     <% f.inputs do %>
       <%= f.input :file, :label => "&nbsp;" %>
     <% end %>
 
     <% f.buttons do %>
-      <%= f.commit_button :label => t("actions.upload_client") %> <%= t("views.or") %> <%= link_to t("actions.back"), contest_contestant_clients_url(@contestant) %>
+      <%= f.commit_button :label => t("actions.upload_client") %> <%= t("views.or") %> <%= link_to t("actions.back"), contest_contestant_clients_url(@contest, @contestant) %>
     <% end %>
   <% end %>
 
@@ -96,7 +96,7 @@
     //$('#new_client .buttons').hide();
     $('#client_file').uploadify({
       uploader: '/flashs/uploadify.swf',
-      script: '<%= url_for([:contest, @contestant, @client]) %>',
+      script: '<%= url_for([@contest, @contestant, @client]) %>',
       fileDataName: 'client[file]',
       cancelImg: '/images/actions/delete.png',
       buttonImg: '/images/actions/upload.png',
@@ -112,7 +112,7 @@
       simUploadLimit: '1',
       debug: true,
       onComplete: function(event, queueId, fileObj, response, data) {
-        window.location.href = '<%= contest_contestant_clients_url(@contestant) %>';
+        window.location.href = '<%= contest_contestant_clients_url(@contest, @contestant) %>';
         return true;
       },
       onInit: function() {

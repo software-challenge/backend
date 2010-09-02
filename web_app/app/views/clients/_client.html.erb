@@ -3,7 +3,7 @@
     <% if client.current? %>
       <b><%= t("views.active").capitalize %></b>
     <% else client.ok? %>
-      <%= link_to I18n.t("actions.activate_client"), select_contest_contestant_client_url(client.contestant, client), :method => :post %>
+      <%= link_to I18n.t("actions.activate_client"), select_contest_contestant_client_url(@contest, client.contestant, client), :method => :post %>
     <% end %> 
   </td>
   <td>
@@ -35,7 +35,7 @@
           $("a#do_test_<%= client.id %>").bind('click', function() {
             $("div#test_box_<%= client.id %>").fadeOut(250)
             $.get(
-              "<%= test_contest_contestant_client_url(client.contestant, client) %>",
+              "<%= test_contest_contestant_client_url(@contest, client.contestant, client) %>",
               "activateClient=" + $("input#activate_<%= client.id %>").is(':checked'),
               function(returned_data) { location.reload(); }
             )
@@ -44,7 +44,7 @@
         })
       <% end %>
     <% end %>
-    <%= link_to "Details", client_details_contest_contestant_client_url(client.contestant, client), {:client => client} %>
+    <%= link_to "Details", client_details_contest_contestant_client_url(@contest, client.contestant, client), {:client => client} %>
 
     <% if !client.testing? and client.has_test_logs? %>
       <a href="#" id="show_logs_<%= client.id %>"><%= t("labels.log").pluralize %></a>
@@ -62,7 +62,7 @@
             data:'authenticity_token=' + encodeURIComponent('<%= form_authenticity_token %>')
             ,dataType:'script'
             ,type:'get'
-            ,url:'<%= contest_contestant_client_status_url(client.contestant, client) %>'
+            ,url:'<%= contest_contestant_client_status_url(@contest, client.contestant, client) %>'
           })
         }, 3 * 1000)
         //]]>
@@ -95,7 +95,7 @@
     <% main_file_entry_name = client.main_file_entry.try(:file_name) %>
     <% main_file_entry_name ||= content_tag(:i, t("views.not_set")) %>
     <% if !client.testing? and !client.ok? %>
-      <%= link_to main_file_entry_name, edit_contest_contestant_client_url(client.contestant, client) %>
+      <%= link_to main_file_entry_name, edit_contest_contestant_client_url(@contest, client.contestant, client) %>
     <% else %>
       <%= main_file_entry_name %>
     <% end %>
@@ -112,7 +112,7 @@
     <% else %>
       <% if may_delete_client? and not client.current? and not client.already_used? %>
     	  <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
-          <%= link_to delete_image, hide_contest_contestant_client_url(client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
+          <%= link_to delete_image, hide_contest_contestant_client_url(@contest, client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
       <% end %>
     <% end %>
   </td>
@@ -125,7 +125,7 @@
     $(function() {
       update_comment_icon(<%= client.id %>)   
 
-      client_urls[<%= client.id %>] = "<%= contest_contestant_client_url(client.contestant, client) %>"
+      client_urls[<%= client.id %>] = "<%= contest_contestant_client_url(@contest, client.contestant, client) %>"
     })
   <% end %>
   <% if client.has_test_logs? %>
@@ -133,7 +133,7 @@
       $(function() {
         $("a#show_logs_<%= client.id %>").bind('click', function() {
           $.get(
-            "<%= get_logs_contest_contestant_client_url(client.contestant, client) %>",
+            "<%= get_logs_contest_contestant_client_url(@contest, client.contestant, client) %>",
             "id=" + <%= client.id %> + "&type=test",
             function(returned_data) {
               $("div#clientlogs_<%= client.id %>").replaceWith(returned_data)

@@ -3,7 +3,7 @@
 <% tabnav :administration do %>
   <div style="border: 1px #000 solid; width: 100%; text-align: center; padding-bottom: 20px">
     <h3>Neues Spiel</h3>
-    <% form_for :match, hash_for_create_contest_custom_match_url do |f| %>
+    <% form_for :match, contest_custom_match_url(@contest,@custom_match) do |f| %>
       <table style="width: 100%">
         <tr>
           <td>

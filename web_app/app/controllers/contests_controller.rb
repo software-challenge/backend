@@ -7,6 +7,7 @@ class ContestsController < ApplicationController
     actions :show, :standings, :results do
       allow all
     end
+
   end
 
   # GET /contests

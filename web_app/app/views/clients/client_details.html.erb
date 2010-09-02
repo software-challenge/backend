@@ -1,5 +1,5 @@
 <h1>
-  <%= link_to @client.contest.name, contest_contestants_url %> /
+  <%= link_to @client.contest.name, contest_contestants_url(@contest) %> /
   <%= @client.contestant.name %>
 </h1>
 
@@ -31,7 +31,7 @@
         Dieser Computerspieler wurde an folgenden Spieltagen des Wettkampfes verwendet: 
        <br> 
        <% end %>
-       <%= link_to matchday.when.to_s, [:contest, matchday] %>
+       <%= link_to matchday.when.to_s, [@contest, matchday] %>
 
         <% played = true %>
       <% end %>

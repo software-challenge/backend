@@ -1,6 +1,6 @@
 <h1>
-  <%= link_to @contest.name, contest_url %> /
-  <%= link_to "Finale", contest_finale_url %> /
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to "Finale", contest_finale_url(@contest)%> /
   Aufstellung
 </h1>
 
@@ -19,7 +19,7 @@
   <% show_to :administrator do %>
   <% javascript_tag do %>
     function switch_and_reload(c1, c2, day) {
-      $.get("<%= switch_contestants_contest_finale_url() %>",
+      $.get("<%= switch_contestants_contest_finale_url(@contest) %>",
         "c1=" + c1 + "&c2=" + c2 + "&day=" + day,
         function(returned_data) {
           $("div#lineup_day_" + day).replaceWith(returned_data) 

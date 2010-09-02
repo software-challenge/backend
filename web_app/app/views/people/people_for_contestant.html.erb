@@ -73,7 +73,7 @@
             $("span#field_overall_member_count").hide()
             $("a#edit_overall_member_count").show(250)
             $.get(
-              "<%= set_and_get_overall_member_count_contest_contestant_url(@contestant) %>",
+              "<%= set_and_get_overall_member_count_contest_contestant_url(@contest, @contestant) %>",
               "id=<%= @contestant.id %>&count=" + $("input#member_count").val(),
               function(returned_data) {
                 $("span#overall_member_count").html(returned_data)
