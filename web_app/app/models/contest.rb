@@ -42,7 +42,7 @@ class Contest < ActiveRecord::Base
   end
 
   def game_definition
-    GameDefinition.all.first
+    GameDefinition.all.find{|gd| gd.game_identifier == attributes["game_definition"].to_sym}
   end
 
   validates_each :game_definition do |model, attr, value|
