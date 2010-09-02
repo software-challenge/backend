@@ -38,8 +38,8 @@ class GameDefinitionBuilder
     d.test_rounds = count
   end
 
-  def test_client(client)
-    d.test_client = client    
+  def tester(client)
+    d.tester = client    
   end 
 
   def plugin_guid(guid)
@@ -222,7 +222,7 @@ class GameDefinition
     end
   end
   
-  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :test_client, :final_days
+  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :tester, :final_days
 
   protected
 
