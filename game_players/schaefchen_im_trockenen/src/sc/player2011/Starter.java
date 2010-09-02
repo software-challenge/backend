@@ -1,4 +1,4 @@
-package sc.player2011.kara;
+package sc.player2011;
 
 import java.io.IOException;
 

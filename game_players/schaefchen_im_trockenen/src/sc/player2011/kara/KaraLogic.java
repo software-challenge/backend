@@ -2,6 +2,8 @@ package sc.player2011.kara;
 
 import java.util.Random;
 
+import sc.player2011.Starter;
+
 
 /**
  * Dies ist eine Logik, die Kara verwendet um eine
