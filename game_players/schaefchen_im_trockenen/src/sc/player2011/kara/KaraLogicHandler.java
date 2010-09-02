@@ -1,5 +1,6 @@
 package sc.player2011.kara;
 
+import sc.player2011.Starter;
 import sc.plugin2011.GameState;
 import sc.plugin2011.IGameHandler;
 import sc.plugin2011.Move;

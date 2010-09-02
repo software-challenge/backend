@@ -3,7 +3,7 @@ package sc.player2011.simple;
 import java.util.List;
 import java.util.Random;
 
-import sc.player2011.kara.Starter;
+import sc.player2011.Starter;
 import sc.plugin2011.DebugHint;
 import sc.plugin2011.GameState;
 import sc.plugin2011.IGameHandler;
