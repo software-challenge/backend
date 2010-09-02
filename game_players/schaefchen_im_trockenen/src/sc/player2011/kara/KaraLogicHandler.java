@@ -1,11 +1,10 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
-import sc.plugin_schaefchen.GameState;
-import sc.plugin_schaefchen.IGameHandler;
-import sc.plugin_schaefchen.Move;
-import sc.plugin_schaefchen.Player;
-import sc.plugin_schaefchen.PlayerColor;
-import sc.plugin_schaefchen.simple.Starter;
+import sc.plugin2011.GameState;
+import sc.plugin2011.IGameHandler;
+import sc.plugin2011.Move;
+import sc.plugin2011.Player;
+import sc.plugin2011.PlayerColor;
 import sc.shared.GameResult;
 
 /**

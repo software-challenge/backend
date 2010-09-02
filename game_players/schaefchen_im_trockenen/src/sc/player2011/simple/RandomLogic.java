@@ -1,14 +1,15 @@
-package sc.plugin_schaefchen.simple;
+package sc.player2011.simple;
 
 import java.util.List;
 import java.util.Random;
 
-import sc.plugin_schaefchen.DebugHint;
-import sc.plugin_schaefchen.GameState;
-import sc.plugin_schaefchen.IGameHandler;
-import sc.plugin_schaefchen.Move;
-import sc.plugin_schaefchen.Player;
-import sc.plugin_schaefchen.PlayerColor;
+import sc.player2011.kara.Starter;
+import sc.plugin2011.DebugHint;
+import sc.plugin2011.GameState;
+import sc.plugin2011.IGameHandler;
+import sc.plugin2011.Move;
+import sc.plugin2011.Player;
+import sc.plugin2011.PlayerColor;
 import sc.shared.GameResult;
 
 public class RandomLogic implements IGameHandler

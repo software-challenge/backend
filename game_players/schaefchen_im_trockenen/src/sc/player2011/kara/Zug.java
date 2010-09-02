@@ -1,7 +1,7 @@
-package sc.plugin_schaefchen.kara;
+package sc.player2011.kara;
 
-import sc.plugin_schaefchen.DebugHint;
-import sc.plugin_schaefchen.Move;
+import sc.plugin2011.DebugHint;
+import sc.plugin2011.Move;
 
 public class Zug{
 	public Zug(Move move, Spielstatus state) {

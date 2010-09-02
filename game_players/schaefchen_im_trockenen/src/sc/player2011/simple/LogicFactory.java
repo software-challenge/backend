@@ -1,7 +1,8 @@
-package sc.plugin_schaefchen.simple;
+package sc.player2011.simple;
 
-import sc.plugin_schaefchen.AbstractClient;
-import sc.plugin_schaefchen.IGameHandler;
+import sc.player2011.kara.KaraLogic;
+import sc.plugin2011.AbstractClient;
+import sc.plugin2011.IGameHandler;
 
 /**
  * Erlaubt es verschiedene Logiken zu verwenden und eine davon auszuwählen und

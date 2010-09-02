@@ -1,9 +1,7 @@
-package sc.plugin_schaefchen.simple;
+package sc.player2011.kara;
 
 import java.util.Random;
 
-import sc.plugin_schaefchen.kara.KaraLogicHandler;
-import sc.plugin_schaefchen.kara.Zug;
 
 /**
  * Dies ist eine Logik, die Kara verwendet um eine
