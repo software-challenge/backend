@@ -92,7 +92,7 @@ class MainController < ApplicationController
   def clear_jobs
     Delayed::Job.destroy_all
     flash[:notice] = I18n.t("messages.cleared_all_jobs")
-    redirect_to debug_url
+    redirect_to contest_debug_url(@contest)
   end
 
   def other_people_in_same_team_logged_in?(current_user)
