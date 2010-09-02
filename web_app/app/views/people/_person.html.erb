@@ -53,7 +53,7 @@
   <td>
     <% if may_see_person_details? :person => person -%>
     <% show_image = image_tag "actions/show.png", :title => I18n.t("actions.show") %>
-    <%= link_to show_image, person %>
+    <%= link_to show_image, [@contest, person] %>
     <% end -%>
   </td>
   <% if @contestant -%>

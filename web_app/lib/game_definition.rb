@@ -29,7 +29,7 @@ class GameDefinitionBuilder
   def league(&block)
     d.league.instance_eval(&block)
   end
-  
+
   def players(count)
     d.players = count
   end
@@ -37,6 +37,10 @@ class GameDefinitionBuilder
   def test_rounds(count)
     d.test_rounds = count
   end
+
+  def test_client(client)
+    d.test_client = client    
+  end 
 
   def plugin_guid(guid)
     d.plugin_guid = guid
@@ -218,7 +222,7 @@ class GameDefinition
     end
   end
   
-  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :final_days
+  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :test_client, :final_days
 
   protected
 

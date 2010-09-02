@@ -17,7 +17,7 @@
       <td style="text-align: left;"><%= slot.position %>.</td>
       <td><%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %></td>
       <td class="print-inline"><%= slot.contestant.location %></td>
-      <td class="right"><%= count_matches_played_by_contestant(@contest, slot.contestant, @matchday) %></td>
+      <td class="right"><%= count_matches_played_by_contestant(slot.contestant, @matchday) %></td>
       <% if slot.score %>
         <% slot.score.to_a_with_precision.each_with_index do |value,i| %>
           <td class="right <%= slot.score.fragments[i].fragment.include?("time") ? "print-hide" : "" %>"><%=h value %></td>

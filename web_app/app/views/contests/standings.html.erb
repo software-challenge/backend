@@ -1,6 +1,6 @@
 <% show_to :administrator do %>
   <div id="actions">
-    <% link_to reaggregate_contest_url(), :method => "post", :title => t("views.recalc"), :id => "reaggregateContestAction" do %>
+    <% link_to reaggregate_contest_url(@contest), :method => "post", :title => t("views.recalc"), :id => "reaggregateContestAction" do %>
       <%= image_tag('actions/refresh.png') %><%= t ("actions.add") %>
     <% end %>
   </div>

@@ -20,12 +20,12 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named t("titles.all_people")
-    t.links_to people_url
+    t.links_to contest_people_url(@contest)
   end
 
   add_tab do |t|
     t.named t("titles.contests.show")
-    t.links_to administration_url
+    t.links_to contest_contests_url(@contest)
   end
 
   add_tab do |t|
@@ -40,7 +40,7 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named t("titles.debug_view")
-    t.links_to debug_url
+    t.links_to contest_debug_url(@contest)
   end
 
 end 

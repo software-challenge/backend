@@ -10,7 +10,7 @@
 <% end %>
 
 </div>
-<% form_tag login_url do %>
+<% form_tag contest_login_url(@contest) do %>
   <% fields_for :user do |f| %>
     <%= f.label :email, (t "labels.email_adress") %>
     <%= f.text_field :email %>
@@ -19,4 +19,4 @@
   <% end %>
   <%= submit_tag (t "actions.login"), :disable_with => t("actions.check") %>
 <% end %><br>
-<%= link_to t("actions.password_lost_send_new"), new_password_url %> 
+<%= link_to t("actions.password_lost_send_new"), contest_new_password_url(@contest) %> 

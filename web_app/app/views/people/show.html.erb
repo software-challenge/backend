@@ -51,7 +51,7 @@
 
   <% if may_edit_person? -%>
     <br/>
-    <%= link_to t("actions.edit"), edit_person_path(@person) %>
+    <%= link_to t("actions.edit"), edit_contest_person_path(@contest, @person) %>
   <% end %>
 </div>
 

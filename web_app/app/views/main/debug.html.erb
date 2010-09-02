@@ -1,6 +1,6 @@
 <% if Delayed::Job.exists? %>
   <div id="actions">
-    <% link_to clear_jobs_url, :method => :post do %>
+    <% link_to contest_clear_jobs_url(@contest), :method => :post do %>
       <%= image_tag('actions/destroy.png') %><%= t "views.delete_all_jobs" %>
     <% end %>
   </div>
