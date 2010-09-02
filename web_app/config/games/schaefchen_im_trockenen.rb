@@ -23,7 +23,8 @@ GameDefinition.create :"SchaefchenImTrockenen" do
   players 2
   plugin_guid "swc_2011_schaefchen_im_trockenen"
   test_rounds 2
-  test_client "schaefchen_im_trockenen.zip"
+  test_client :file => "schaefchen_im_trockenen.zip", 
+    :executable => "schaefchen_player.jar"
 
   league do
     rounds 6

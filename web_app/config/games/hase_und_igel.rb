@@ -23,7 +23,8 @@ GameDefinition.create :"HaseUndIgel" do
   players 2
   plugin_guid "swc_2010_hase_und_igel"
   test_rounds 2
-  test_client "hase_und_igel.zip"
+  test_client :file => "hase_und_igel.zip",
+    :executable => "HaseUndIgelSC.jar"
 
   league do
     rounds 6

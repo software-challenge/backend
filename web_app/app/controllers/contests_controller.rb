@@ -63,7 +63,6 @@ class ContestsController < ApplicationController
   # POST /contests
   # POST /contests.xml
   def create
-    puts params
     @new_contest = Contest.new(params[:new_contest])
 
     respond_to do |format|
