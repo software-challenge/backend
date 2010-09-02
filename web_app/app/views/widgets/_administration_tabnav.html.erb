@@ -20,27 +20,27 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named t("titles.all_people")
-    t.links_to hash_for_people_url
+    t.links_to people_url
   end
 
   add_tab do |t|
     t.named t("titles.contests.show")
-    t.links_to hash_for_admin_contests_url
+    t.links_to administration_url
   end
 
   add_tab do |t|
     t.named t("views.custom_games")
-    t.links_to hash_for_contest_custom_matches_url 
+    t.links_to contest_custom_matches_url(@contest) 
   end
 
   add_tab do |t|
     t.named FriendlyEncounter.human_name(:count => 2)
-    t.links_to hash_for_contest_all_friendly_encounters_url
+    t.links_to contest_all_friendly_encounters_url(@contest)
   end
 
   add_tab do |t|
     t.named t("titles.debug_view")
-    t.links_to hash_for_debug_url
+    t.links_to debug_url
   end
 
 end 

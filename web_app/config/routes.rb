@@ -2,13 +2,15 @@ ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
 
     tmap.resources :people, :as => "personen"
+    
+    #tmap.resources :contests,
+    #  :as => "wettbewerbe",
+    #  :path_prefix => '/administration',
+    #  :name_prefix => 'admin_'
+     
+
 
     tmap.resources :contests,
-      :as => "wettbewerbe",
-      :path_prefix => '/administration',
-      :name_prefix => 'admin_'
-    tmap.resource :contest,
-      :as => "wettbewerb",
       :member => {
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
@@ -25,7 +27,6 @@ ActionController::Routing::Routes.draw do |map|
       }
       c.all_friendly_encounters '/all_friendly_encounters', :controller => 'friendly_encounters', :action => 'all'
       c.resources :custom_matches, :as => "custom_matches", :member => {
-       :create => :post,
        :play => :post
       }
       c.resources :matchdays,

@@ -5,20 +5,20 @@
     <% else %>
       <% if @matchday.played? %>
         <% unless @matchday.published? %>
-          <% link_to publish_contest_matchday_url(@matchday), :method => "post", :title => t("views.publish"), :id => "publishContestAction" do %>
+          <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :id => "publishContestAction" do %>
             <%= image_tag('actions/publish.gif') %><%= t ("actions.publish") %>
           <% end %>
         <% end %>
-        <% link_to reset_contest_matchday_url(@matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
+        <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
           <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
         <% end %>
       <% else %>
         <% if  ((not @matchday.played?) and (@matchday.rounds_done > 0))%>
-          <% link_to reset_contest_matchday_url(@matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
+          <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
             <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
           <% end %>
         <% end %>
-        <% link_to play_contest_matchday_url(@matchday), :method => "post", :title => t("actions.play"), :id => "playAction" do %>
+        <% link_to play_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("actions.play"), :id => "playAction" do %>
           <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
       <% end %>
@@ -27,7 +27,7 @@
 <% end %>
 
 <h1>
-  <%= link_to @contest.name, contest_matchdays_url %> /
+  <%= link_to @contest.name, contest_matchdays_url(@contest) %> /
   <%= @matchday.position %>. <%= t "views.matchday" %>
 </h1>
 
@@ -38,7 +38,7 @@
   <% javascript_tag do %>
     function refresh_matchday_progress() {
       $.get(
-        "<%= get_progress_contest_matchday_url(@matchday) %>",
+        "<%= get_progress_contest_matchday_url(@contest, @matchday) %>",
         "id=<%= @matchday.id %>",
         function(returned_data) {
           $("div#matchday_progress").html(returned_data)

@@ -2,17 +2,17 @@
 <% count = local_assigns[:count] || false %>
 <tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
   <% if count %>
-    <td> <%= link_to match.matchday.position, contest_matchday_url(match.matchday)%> </td>
+    <td> <%= link_to match.matchday.position, contest_matchday_url(@contest, match.matchday)%> </td>
   <% end %>
   <% if date %>
     <td><%= (l match.matchday.when) unless match.matchday.when.nil? %></td>
   <% end %>
-  <td><%= !match.slots[0].blank? ? (link_to match.slots[0].name, contest_contestant_matches_url(match.slots[0].contestant)) : "-" %></td>
-  <td><%= !match.slots[1].blank? ? (link_to match.slots[1].name, contest_contestant_matches_url(match.slots[1].contestant)) : "-" %></td>
+  <td><%= !match.slots[0].blank? ? (link_to match.slots[0].name, contest_contestant_matches_url(@contest, match.slots[0].contestant)) : "-" %></td>
+  <td><%= !match.slots[1].blank? ? (link_to match.slots[1].name, contest_contestant_matches_url(@contest, match.slots[1].contestant)) : "-" %></td>
   <td style="text-align: center;">
     <% if match.main_result %>
       <% if match.matchday.published? or current_user.try(:administrator) %>
-        <% link_to [:contest, match.matchday, match.becomes(Match)] do %>
+        <% link_to [@contest, match.matchday, match.becomes(Match)] do %>
           <%= match.main_result.join(" : ") %>
         <% end %>
       <% end %>

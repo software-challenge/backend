@@ -1,4 +1,4 @@
-<% semantic_form_for([:contest, @contestant]) do |f| %>
+<% semantic_form_for([@contest, @contestant]) do |f| %>
   <% f.inputs do %>
     <%= f.input :name, :required => true %>
     <%= f.input :location, :required => true %>
@@ -6,7 +6,7 @@
   <% f.buttons do %>
     <%= f.commit_button %>
     <% if @contestant.new_record? %>
-    oder <%= link_to t("views.back"), contest_contestants_url %>
+    oder <%= link_to t("views.back"), contest_contestants_url(@contest) %>
     <% end %>
   <% end %>
 <% end %>

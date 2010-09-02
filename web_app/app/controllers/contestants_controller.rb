@@ -55,7 +55,7 @@ class ContestantsController < ApplicationController
   # GET /contestants/1.xml
   def show
     if logged_in?
-      redirect_to contest_contestant_people_url(Contestant.find(params[:id]))
+      redirect_to contest_contestant_people_url(@contest, Contestant.find(params[:id]))
     else
       redirect_to :controller => :matches, :action => :index_for_contestant, :contestant_id => params[:id]
     end
@@ -87,7 +87,7 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.save
         flash[:notice] = I18n.t("messages.contestant_successfully_created")
-        format.html { redirect_to(contest_contestants_url) }
+        format.html { redirect_to(contest_contestants_url(@contest)) }
         format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
       else
         format.html { render :action => "new" }
@@ -104,7 +104,7 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.update_attributes(params[:contestant])
         flash[:notice] = I18n.t("messages.contestant_successfully_updated") 
-        format.html { redirect_to(contest_contestant_url(@contestant)) }
+        format.html { redirect_to(contest_contestant_url(@contest, @contestant)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -120,7 +120,7 @@ class ContestantsController < ApplicationController
     @contestant.destroy
 
     respond_to do |format|
-      format.html { redirect_to(contest_contestants_url) }
+      format.html { redirect_to(contest_contestants_url(@contest)) }
       format.xml  { head :ok }
     end
   end
@@ -140,7 +140,7 @@ class ContestantsController < ApplicationController
         end
       end
 
-      redirect_to contest_contestant_url(@contestant)
+      redirect_to contest_contestant_url(@contest, @contestant)
     end
   end
 

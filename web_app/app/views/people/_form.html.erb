@@ -1,4 +1,4 @@
-<% semantic_form_for(@contestant ? [:contest, @contestant, @person] : @person) do |f| %>
+<% semantic_form_for(@contestant ? [@contest, @contestant, @person] : @person) do |f| %>
   <% f.inputs do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>

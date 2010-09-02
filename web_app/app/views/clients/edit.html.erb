@@ -1,6 +1,6 @@
 <h1>
   <%= link_to @contest.name, contest_contestants_url %> /
-  <%= link_to @contestant.name, contest_contestant_clients_path(@contestant) %> /
+  <%= link_to @contestant.name, contest_contestant_clients_path(@contest, @contestant) %> /
   Hauptdatei wählen
 </h1>
 

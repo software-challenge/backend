@@ -104,7 +104,7 @@ class MatchdaysController < ApplicationController
       flash[:notice] = I18n.t("messages.matchday_recalculated") 
     end
 
-    redirect_to contest_matchday_url(@matchday)
+    redirect_to contest_matchday_url(@contst, @matchday)
   end
 
   def reset
@@ -123,7 +123,7 @@ class MatchdaysController < ApplicationController
       flash[:notice] = I18n.t("messages.matchday_resetted")
     end
 
-    redirect_to contest_matchday_url(@matchday)
+    redirect_to contest_matchday_url(@contest, @matchday)
   end
 
   def play
@@ -145,9 +145,9 @@ class MatchdaysController < ApplicationController
     end
 
     if @matchday.class == FinaleMatchday
-      redirect_to contest_finale_url
+      redirect_to contest_finale_url(@contest)
     else
-      redirect_to contest_matchday_url(@matchday)
+      redirect_to contest_matchday_url(@contest, @matchday)
     end
   end
 
@@ -175,7 +175,7 @@ class MatchdaysController < ApplicationController
     @matchday = @contest.matchdays.find(params[:id])
     @matchday.public = true
     @matchday.save
-    redirect_to contest_matchday_url(@matchday)
+    redirect_to contest_matchday_url(@contest, @matchday)
   end
 
 end

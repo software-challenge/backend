@@ -3,6 +3,10 @@ class CustomMatchesController < ApplicationController
   access_control do
     allow :administrator
   end
+   
+  def index
+    @custom_match = CustomMatch.new
+  end
 
   def create
     con1 = Contestant.find(params[:match][:contestant1])

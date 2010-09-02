@@ -1,7 +1,7 @@
 <% dayname = @contest.finale.day_settings(@match.matchday.name.to_sym)[:human_name] %>
 <h1>
-  <%= link_to @contest.name, contest_url %> /
-  <%= link_to "Finale", contest_finale_url %> /
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to "Finale", contest_finale_url(@contest) %> /
   <%= dayname %> /
   <%= @match.contestants.first.name + " vs " + @match.contestants.second.name %>
 </h1>

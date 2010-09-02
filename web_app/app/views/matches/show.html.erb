@@ -9,7 +9,7 @@
 <% end %>
 <h1> 
   <%= link_to h(@contest.name), contest_matchdays_url %> /
-  <%= link_to h("#{@matchday.position}. Spieltag"), [:contest, @matchday] %>
+  <%= link_to h("#{@matchday.position}. Spieltag"), [@contest, @matchday] %>
 </h1>
 
 <%= render :partial => "match", :locals => {:match => @match} %>

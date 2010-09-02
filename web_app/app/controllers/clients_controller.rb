@@ -25,7 +25,7 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
-      format.html { redirect_to contest_contestant_clients_url }
+      format.html { redirect_to contest_contestant_clients_url(@contest) }
       format.xml  { render :xml => @client }
     end
   end
@@ -66,7 +66,7 @@ class ClientsController < ApplicationController
     else
       respond_to do |format|
         if success
-          format.html { redirect_to contest_contestant_clients_url(@contestant) }
+          format.html { redirect_to contest_contestant_clients_url(@contest,@contestant) }
           format.xml  { render :xml => @client, :status => :created, :location => @client }
         else
           format.html { render :action => "new" }
@@ -82,7 +82,7 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.update_attributes(params[:client])
         flash[:notice] = 'Client was successfully updated.'
-        format.html { redirect_to contest_contestant_clients_url(@client.contestant) }
+        format.html { redirect_to contest_contestant_clients_url(@contest, @client.contestant) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -114,7 +114,7 @@ class ClientsController < ApplicationController
       @client.test_delayed! activate
     end
 
-    redirect_to contest_contestant_clients_url(@contestant)
+    redirect_to contest_contestant_clients_url(@contest, @contestant)
   end
 
   def browse
@@ -142,7 +142,7 @@ class ClientsController < ApplicationController
     @client.main_file_entry = @main_entry
     @client.save!
 
-    redirect_to contest_contestant_clients_url(@contestant)
+    redirect_to contest_contestant_clients_url(@contest, @contestant)
   end
 
   def select
@@ -151,7 +151,7 @@ class ClientsController < ApplicationController
     @contestant.current_client = @client
     @contestant.save!
 
-    redirect_to contest_contestant_clients_url(@contestant)
+    redirect_to contest_contestant_clients_url(@contest, @contestant)
   end
 
   def status

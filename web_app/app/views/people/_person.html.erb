@@ -60,7 +60,7 @@
     <td>
       <% if current_user.has_role? :administrator or same_person(person) -%>
       <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit") %>
-      <%= link_to edit_image, edit_contest_contestant_person_url(@contestant, person) %>
+      <%= link_to edit_image, edit_contest_contestant_person_url(@contest, @contestant, person) %>
       <% end -%>
     </td>
     <td>

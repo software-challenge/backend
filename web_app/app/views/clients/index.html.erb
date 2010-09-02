@@ -1,5 +1,5 @@
 <div id="actions">
-  <% link_to new_contest_contestant_client_url(@contestant) do %>
+  <% link_to new_contest_contestant_client_url(@contest, @contestant) do %>
     <%= image_tag('actions/add.png') %><%= t("views.upload_client") %>
   <% end %>
 </div>
