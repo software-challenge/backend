@@ -111,7 +111,9 @@ ActionController::Routing::Routes.draw do |map|
       c.map '/login', :controller => 'main', :action => 'do_login', :conditions => { :method => :post }
       c.new_password '/new_password', :controller => 'main', :action => 'new_password'
       c.logout '/logout', :controller => 'main', :action => 'logout', :conditions => { :method => :post }
-      c.contests '/contests', :controller => 'contests', :action => 'index'
+      c.contests '/contests', :controller => 'contests', :action => 'index', :conditions => {:method => :get}
+      c.map '/contests', :controller => 'contests', :action => 'create', :conditions => {:method => :post }
+      c.new '/neu', :controller => 'contests', :action => 'new'
     end
   end
 

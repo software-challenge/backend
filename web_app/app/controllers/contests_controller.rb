@@ -47,7 +47,7 @@ class ContestsController < ApplicationController
   # GET /contests/new
   # GET /contests/new.xml
   def new
-    @contest = Contest.new
+    @new_contest = Contest.new
 
     respond_to do |format|
       format.html # new.html.erb
@@ -63,17 +63,17 @@ class ContestsController < ApplicationController
   # POST /contests
   # POST /contests.xml
   def create
-    @contest = Contest.new(params[:contest])
-    puts @contest.attributes["game_definition"]
+    puts params
+    @new_contest = Contest.new(params[:new_contest])
 
     respond_to do |format|
-      if @contest.save
+      if @new_contest.save
         flash[:notice] = I18n.t("messages.contest_created_successfully")
-        format.html { redirect_to contests_url }
-        format.xml  { render :xml => @contest, :status => :created, :location => contests_url }
+        format.html { redirect_to contest_contests_url(@contest) }
+        format.xml  { render :xml => @new_contest, :status => :created, :location => contests_url }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @contest.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @new_contest.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -84,8 +84,8 @@ class ContestsController < ApplicationController
     respond_to do |format|
       if @contest.update_attributes(params[:contest])
         flash[:notice] = I18n.t("messages.contest.updated_successfully")
-        format.html { redirect_to admin_contests_url }
-        format.xml  { head :ok, :location => admin_contests_url }
+        format.html { redirect_to contest_contests_url(@contest) }
+        format.xml  { head :ok, :location => contest_contests_url(@contest) }
       else
         @test_contestant = @contest.test_contestant
         format.html { render :action => "edit" }
@@ -102,7 +102,7 @@ class ContestsController < ApplicationController
     @contest.destroy
 
     respond_to do |format|
-      format.html { redirect_to(contests_url) }
+      format.html { redirect_to(contest_contests_url(@contest)) }
       format.xml  { head :ok }
     end
   end
