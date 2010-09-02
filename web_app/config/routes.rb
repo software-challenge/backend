@@ -1,7 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
 
-    tmap.resources :people, :as => "personen"
+    #tmap.resources :people, :as => "personen"
     
     #tmap.resources :contests,
     #  :as => "wettbewerbe",
@@ -102,6 +102,16 @@ ActionController::Routing::Routes.draw do |map|
          :publish_lineup => :post,
          :hide_lineup => :post
       }
+      c.resources :people, :as => "personen"
+
+      c.administration '/administration', :controller => 'main', :action => 'administration'
+      c.debug '/debug', :controller => 'main', :action => 'debug', :conditions => { :method => :get }
+      c.clear_jobs '/clear_jobs', :controller => 'main', :action => 'clear_jobs', :conditions => { :method => :post }
+      c.login '/login', :controller => 'main', :action => 'login', :conditions => { :method => :get }
+      c.map '/login', :controller => 'main', :action => 'do_login', :conditions => { :method => :post }
+      c.new_password '/new_password', :controller => 'main', :action => 'new_password'
+      c.logout '/logout', :controller => 'main', :action => 'logout', :conditions => { :method => :post }
+      c.contests '/contests', :controller => 'contests', :action => 'index'
     end
   end
 
@@ -141,15 +151,15 @@ ActionController::Routing::Routes.draw do |map|
 
   # See how all your routes lay out with "rake routes"
 
-  map.with_options :controller => 'main' do |opt|
-    opt.debug '/debug', :action => 'debug', :conditions => { :method => :get }
-    opt.clear_jobs '/clear_jobs', :action => 'clear_jobs', :conditions => { :method => :post }
-    opt.login '/login', :action => 'login', :conditions => { :method => :get }
-    opt.map '/login', :action => 'do_login', :conditions => { :method => :post }
-    opt.new_password '/new_password', :action => 'new_password'
-    opt.logout '/logout', :action => 'logout', :conditions => { :method => :post }
-    opt.administration '/administration', :action => 'administration'
-  end
+  #map.with_options :controller => 'main' do |opt|
+    #opt.debug '/debug', :action => 'debug', :conditions => { :method => :get }
+    #opt.clear_jobs '/clear_jobs', :action => 'clear_jobs', :conditions => { :method => :post }
+    #opt.login '/login', :action => 'login', :conditions => { :method => :get }
+    #opt.map '/login', :action => 'do_login', :conditions => { :method => :post }
+    #opt.new_password '/new_password', :action => 'new_password'
+    #opt.logout '/logout', :action => 'logout', :conditions => { :method => :post }
+    #opt.administration '/administration', :action => 'administration'
+  #end
 
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should

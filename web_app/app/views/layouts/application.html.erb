@@ -35,22 +35,22 @@
             <% if logged_in? %>
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
                 <span><%= t "views.logged_in_as" %></span>
-                <span><%= link_to current_user.name, person_url(current_user) %></span>
+                <span><%= link_to current_user.name, contest_person_url(@contest, current_user) %></span>
                 <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
-                <span><%= link_to t("actions.logout"), logout_url, :method => :post %></span>
+                <span><%= link_to t("actions.logout"), contest_logout_url(@contest), :method => :post %></span>
               </span>
             <% else %>
               <span><%= t("views.hey_who_are_you") %></span>
-              <span> <%= link_to ((I18n.t("actions.login")).downcase)+"!", login_url %></span>
+              <span> <%= link_to ((I18n.t("actions.login")).downcase)+"!", contest_login_url(@contest) %></span>
             <% end %>
           </div>
           <div style="line-height: 14px; padding: 0 0 6px 0;">
             <ul id="mainMenu">
-              <li><%= link_to t("views.starting_page"), root_url %></li>
+              <li><%= link_to t("views.starting_page"), (@contest.nil? ? root_url : contest_url(@contest)) %></li>
               <% team_count = (logged_in? ? current_user.contestants.for_contest(current_contest).count : 0) %>
 
               <% show_to :administrator do %>
-                <li><%= link_to t("views.administration"), administration_url %></li>
+                <li><%= link_to t("views.administration"), contest_administration_url(@contest) %></li>
               <% end %>
             </ul>
           </div>

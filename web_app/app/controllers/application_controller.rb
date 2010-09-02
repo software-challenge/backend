@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
       # user might be logged out, due to inactivity or trys to access
       # a restricted area without logging in because of bookmark
       flash[:error] = I18n.t "messages.login_first"
-      redirect_to login_url
+      redirect_to contest_login_url(@contest)
     end
   end
 
@@ -45,13 +45,13 @@ class ApplicationController < ActionController::Base
 
   def permission_denied
     flash[:error] = I18n.t("messages.access_denied")
-    redirect_to root_url
+    redirect_to contest_url(@contest)
   end
 
   def require_current_user
     return true
     unless logged_in?
-      redirect_to login_url
+      redirect_to contest_login_url(@contest)
     end
   end
 
@@ -68,15 +68,22 @@ class ApplicationController < ActionController::Base
   end
 
   def fetch_contest
-    if params[:contest_id]
-      @contest = @current_contest = Contest.find_by_subdomain(params[:contest_id])
-    end
+  #  if params[:contest_id]
+  #    @contest = @current_contest = Contest.find_by_subdomain(params[:contest_id])
+  #  end
 
     # for testing, use first contest when no contest could be found by subdomain
-    if @current_contest.nil?
+  #  if @current_contest.nil?
+  #    @contest = @current_contest = Contest.first
+  #  end
+  #  raise ActiveRecord::RecordNotFound unless @current_contest
+    parts = request.url.split('/')
+    id = parts[4].to_i
+    if parts[3] == "contests" and id > 0
+      @contest = @current_contest = Contest.find(request.url.split('/')[4].to_i)
+    else
       @contest = @current_contest = Contest.first
     end
-    raise ActiveRecord::RecordNotFound unless @current_contest
   end
 
   def logged_in?
@@ -124,23 +131,25 @@ class ApplicationController < ActionController::Base
   helper_method :host_for_contest, :url_for_contest
 
   def host_for_contest(contest)
-    all_parts = request.host.split('.')
+    "#{request.host}:#{request.port}"
+  #  all_parts = request.host.split('.')
 
     # don't remove the first part if there is no subdomain
     # i.e. localhost or software-challenge.de
     # note that this is not always valid ( test.co.uk )
-    if (all_parts.size > 1 and all_parts.last == "localhost") or all_parts.size > 2
-      all_parts.shift
-    end
+  #  if (all_parts.size > 1 and all_parts.last == "localhost") or all_parts.size > 2
+  #    all_parts.shift
+  #  end
 
-    all_parts.unshift contest.subdomain
-    port = (request.port || 80).to_i
-    port = (port == 80 ? "" : ":#{port}")
-    "#{all_parts.join('.')}#{port}"
+  #  all_parts.unshift contest.subdomain
+  #  port = (request.port || 80).to_i
+  #  port = (port == 80 ? "" : ":#{port}")
+  #  "#{all_parts.join('.')}#{port}"
   end
 
   def url_for_contest(contest)
-    "http://#{host_for_contest(contest)}/"
+    #"http://#{host_for_contest(contest)}/"
+    "http://#{host_for_contest(contest)}/contests/#{contest.id}/"
   end
 
   def generic_hide(model_object, name = :name)

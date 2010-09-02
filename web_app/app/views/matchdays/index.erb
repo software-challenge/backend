@@ -25,7 +25,7 @@
     <% @matchdays.each_with_index do |matchday,i| %>
       <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
         <td style="padding-left: 10px;">
-          <% link_to [@contest, matchday] do %>
+          <% link_to contest_matchday_path(@contest, matchday) do %>
             <%= i+1 %>. <%= t "views.matchday" %>
           <% end %>
         </td>

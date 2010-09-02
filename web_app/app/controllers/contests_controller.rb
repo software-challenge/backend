@@ -64,12 +64,13 @@ class ContestsController < ApplicationController
   # POST /contests.xml
   def create
     @contest = Contest.new(params[:contest])
+    puts @contest.attributes["game_definition"]
 
     respond_to do |format|
       if @contest.save
         flash[:notice] = I18n.t("messages.contest_created_successfully")
-        format.html { redirect_to admin_contests_url }
-        format.xml  { render :xml => @contest, :status => :created, :location => admin_contests_url }
+        format.html { redirect_to contests_url }
+        format.xml  { render :xml => @contest, :status => :created, :location => contests_url }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @contest.errors, :status => :unprocessable_entity }

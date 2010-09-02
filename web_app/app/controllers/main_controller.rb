@@ -13,7 +13,7 @@ class MainController < ApplicationController
   def login
     if logged_in?
       flash[:notice] = I18n.t("messages.already_logged_in")
-      redirect_to root_url
+      redirect_to contest_url(@contest)
     end
   end
 
@@ -60,7 +60,7 @@ class MainController < ApplicationController
       elsif person.has_role? :administrator and other_administrators_logged_in? person
         flash[:notice] = I18n.t "messages.other_administrators_currently_logged_in"
       end
-      redirect_to root_url
+      redirect_to contest_url(@contest)
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
       flash[:notice] = I18n.t("messages.login_invalid")

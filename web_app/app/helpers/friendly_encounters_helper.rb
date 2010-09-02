@@ -24,7 +24,7 @@ def encounter_status(enc, options = {})
         if options[:reverse]
           res.reverse!
         end
-        str = link_to "Gespielt (#{res[0]} : #{res[1]})", contest_friendly_encounter_url(enc)
+        str = link_to "Gespielt (#{res[0]} : #{res[1]})", contest_friendly_encounter_url(@contest, enc)
       else
         str = "Gespielt"
       end

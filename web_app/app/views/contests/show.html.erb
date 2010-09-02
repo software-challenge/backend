@@ -23,7 +23,7 @@
 </div>
 
 <% if logged_in? %>
-  <% current_user.teams.visible.each do |team| %>
+  <% current_user.teams.visible.for_contest(@contest).each do |team| %>
     <div>
       <div style="float: right;">
         <%= link_to t("views.teamsite"), [:contest, team] %>

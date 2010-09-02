@@ -10,7 +10,7 @@ class Contest < ActiveRecord::Base
   has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
   has_many :contestants, :conditions => { :tester => false }
   has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }
-  has_many :matchdays, :dependent => :destroy
+  has_many :matchdays, :dependent => :destroy, :conditions => { :type => "Matchday" }
   has_many :custom_matches, :class_name => "CustomMatch", :as => :set, :dependent => :destroy
   has_many :friendly_encounters, :dependent => :destroy
 
@@ -42,7 +42,9 @@ class Contest < ActiveRecord::Base
   end
 
   def game_definition
-    GameDefinition.all.find{|gd| gd.game_identifier == attributes["game_definition"].to_sym}
+    gd = GameDefinition.all.find{|gd| gd.game_identifier == attributes["game_definition"].to_sym} unless attributes["game_definition"].nil?
+    gd = GameDefinition.all.first if gd.nil?
+    gd
   end
 
   validates_each :game_definition do |model, attr, value|
@@ -60,8 +62,7 @@ class Contest < ActiveRecord::Base
 
   def after_save
     if game_definition_changed?
-      # FIXME: read from game_definition
-      file = Rails.root.join('public', 'clients', 'hase_und_igel.zip')
+      file = Rails.root.join('public', 'clients', game_definition.test_client)
 
       client = test_contestant.current_client
       client ||= test_contestant.build_current_client(:author => current_user, :contestant => test_contestant)

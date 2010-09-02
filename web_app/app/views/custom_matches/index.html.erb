@@ -3,23 +3,23 @@
 <% tabnav :administration do %>
   <div style="border: 1px #000 solid; width: 100%; text-align: center; padding-bottom: 20px">
     <h3>Neues Spiel</h3>
-    <% form_for :match, contest_custom_match_url(@contest,@custom_match) do |f| %>
+    <% form_for :match, contest_custom_matches_url(@contest)  do |f| %>
       <table style="width: 100%">
         <tr>
           <td>
             <%= f.label Contestant.human_name + " 1" %>
-            <%= f.collection_select :contestant1, @contest.all_contestants.reject{|c| c.current_client.nil?}, :id, :name %>
+            <%= collection_select :match, :contestant1, @contest.all_contestants.reject{|c| c.current_client.nil?}, :id, :name %>
           </td>
           <td>
             <%= f.label Contestant.human_name + " 2" %>
-            <%= f.collection_select :contestant2, @contest.all_contestants.reject{|c| c.current_client.nil?}, :id, :name %>
+            <%= collection_select :match, :contestant2, @contest.all_contestants.reject{|c| c.current_client.nil?}, :id, :name %>
           </td>
         </tr>
       </table>
 
       <span style="margin-right: 15px">
         <%= t("views.over") %>
-        <%= f.select :rounds, (2..6).step(2) %>
+        <%= select :match, :rounds, (2..6).step(2) %>
         <%= t("activerecord.models.round.other") %>
       </span>
       <%= submit_tag t("actions.create").capitalize, :style => "margin-top: 10px" %>
