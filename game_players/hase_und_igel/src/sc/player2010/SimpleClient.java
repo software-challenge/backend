@@ -1,4 +1,4 @@
-package gameClient;
+package sc.player2010;
 
 import sc.plugin2010.framework.SpielClient;
 import sc.plugin2010.framework.Spielbrett;

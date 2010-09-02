@@ -1,4 +1,4 @@
-package gameClient;
+package sc.player2010;
 
 import sc.shared.SharedConfiguration;
 import jargs.gnu.CmdLineParser;

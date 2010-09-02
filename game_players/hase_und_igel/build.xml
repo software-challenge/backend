@@ -8,7 +8,7 @@
 	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
 	<property name="plugins.dir" value="${root.dir}/game_plugins" />
 	<property name="game.dir" value="${plugins.dir}/hase_und_igel" />
-	<property name="main-class" value="gameClient.Starter" />
+	<property name="main-class" value="sc.player2010.Starter" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
