@@ -826,7 +826,7 @@ public class TestRangeDialog extends JDialog {
 			final List<SlotDescriptor> descriptors) throws IOException {
 		try {
 			IGamePreparation prep = selPlugin.getPlugin()
-					.prepareGame(DEFAULT_HOST, freePort,
+					.prepareBackgroundGame(DEFAULT_HOST, freePort,
 							descriptors.toArray(new SlotDescriptor[descriptors.size()]));
 			return prep;
 		} catch (IOException e) {
