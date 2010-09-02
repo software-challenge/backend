@@ -44,8 +44,7 @@ public class Configuration {
 
 	public static List<Class<?>> getClassesToRegister() {
 		return Arrays.asList(new Class<?>[] { Game.class, GameState.class,
-				 Move.class, Player.class, Node.class,
-				Sheep.class, WelcomeMessage.class,
-				PlayerColor.class });
+				Constants.class, Move.class, Player.class, Node.class,
+				Sheep.class, WelcomeMessage.class, PlayerColor.class });
 	}
 }

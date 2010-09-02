@@ -2,14 +2,7 @@ package sc.plugin_schaefchen;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Condition {
-
-	public enum State {
-		CONTINUING, ENDED;
-	}
-
-	@XStreamAsAttribute
-	public State state = State.CONTINUING;
+class Condition {
 
 	@XStreamAsAttribute
 	public PlayerColor winner = null;

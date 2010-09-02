@@ -59,7 +59,7 @@ public final class GameState implements Cloneable {
 	private Move lastMove;
 
 	// spielzustand
-	private Condition condition = new Condition();
+	private Condition condition = null;
 
 	public GameState() {
 
@@ -670,7 +670,8 @@ public final class GameState implements Cloneable {
 	 * das spiel alsbeendet markieren, gewinner und gewinnggrund festlegen.
 	 */
 	public void endGame(PlayerColor winner, String reason) {
-		condition.state = Condition.State.ENDED;
+
+		condition = new Condition();
 		condition.winner = winner;
 		condition.reason = reason;
 
@@ -680,7 +681,7 @@ public final class GameState implements Cloneable {
 	 * gibt an, o das spiel als beendet markeirt wurde.
 	 */
 	public boolean gameEnded() {
-		return condition.state == Condition.State.ENDED;
+		return condition != null;
 	}
 
 	/**
@@ -688,7 +689,7 @@ public final class GameState implements Cloneable {
 	 * undefiniert.
 	 */
 	public PlayerColor winner() {
-		return condition.winner;
+		return condition == null ? null : condition.winner;
 	}
 
 	/**
@@ -696,7 +697,7 @@ public final class GameState implements Cloneable {
 	 * undefiniert.
 	 */
 	public String winningReason() {
-		return condition.reason;
+		return condition == null ? "" : condition.reason;
 	}
 
 }
