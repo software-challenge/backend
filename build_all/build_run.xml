@@ -2,11 +2,9 @@
 
 	<target name="upper">
 		<ant dir=".." target="clean-build" inheritAll="false" />
-
 		<exec dir="../deploy/gui" executable="java" >
 			<arg line="-jar softwarechallenge-gui.jar" />
 		</exec>
-
 	</target>
 
 	<target name="main" depends="upper" />

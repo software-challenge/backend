@@ -1,0 +1,5 @@
+build_run.xml erstellt das gesamte projekt und startet den gui-server
+kann in eclipse per "run as" -> "ant build" direkt ausgefuehrt werden
+
+im unterverzeichnis toplevel_buildfiles befinden sich kopien der beiden
+xml's die direkt im workspace-verzeichnis liegen muessen 
