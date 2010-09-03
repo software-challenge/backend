@@ -18,7 +18,7 @@
     <% form_for :encounter, :method => :post do |f| %>
       <fieldset style="text-align: center">
         <legend><%= t("actions.new_friendly_match") %></legend>
-        <%= f.collection_select :con1, @contestants.visible.without_testers, :id, :name %>
+        <%= f.collection_select :con1, @contestants.visible.without_testers.for_contest(@contest), :id, :name %>
         fordert heraus:
         <%= f.collection_select :con2, @contest.contestants.visible.without_testers, :id, :name, :prompt => t("views.anyone_who_wants") %>
         <br><br>
