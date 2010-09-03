@@ -78,12 +78,13 @@ GameDefinition.create :"SchaefchenImTrockenen" do
   end
 
   round_score do
+    # NOTE: Only [a-z0-9_], no capitals!
     field :victory, :ordering => "DESC"
-    field :sheepsIngame, :ordering => "DESC"
-    field :sheepsCaptured, :ordering => "DESC"
-    field :sheepsSaved, :ordering => "DESC"
-    field :flowersCollected, :ordering => "DESC"
-    field :flowersSaved, :ordering => "DESC"
+    field :sheeps_ingame, :ordering => "DESC"
+    field :sheeps_captured, :ordering => "DESC"
+    field :sheeps_saved, :ordering => "DESC"
+    field :flowers_collected, :ordering => "DESC"
+    field :flowers_saved, :ordering => "DESC"
     field :points, :ordering => "DESC"
     #field :average_time, :ordering => "ASC", :precision => 2
   end
