@@ -57,7 +57,8 @@ class Contest < ActiveRecord::Base
 
   def to_param
    #TODO DELETE "#{id}-#{name.parameterize}"
-   "#{id}"
+   #"#{id}"
+   "#{subdomain}"
   end
 
   def after_save

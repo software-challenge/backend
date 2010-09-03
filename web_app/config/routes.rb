@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
 
 
     tmap.resources :contests,
+      :as => "wettbewerb",
       :member => {
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
@@ -53,7 +54,9 @@ ActionController::Routing::Routes.draw do |map|
 
       c.contestants '/meine-teams', :controller => 'contestants', :action => 'my', :name_prefix => 'my_contest_'
       c.resources :contestants, :as => "teams", :member => {
-        :set_and_get_overall_member_count => :get 
+        :set_and_get_overall_member_count => :get,
+        :hide => :get,
+        :unhide => :get
       } do |contestant|
         contestant.resources :clients, :as => "computerspieler", :new => {
           :uploadify => :post
@@ -117,9 +120,13 @@ ActionController::Routing::Routes.draw do |map|
       c.contests '/contests', :controller => 'contests', :action => 'index', :conditions => {:method => :get}
       c.map '/contests', :controller => 'contests', :action => 'create', :conditions => {:method => :post }
       c.new '/neu', :controller => 'contests', :action => 'new'
+
+      #map.connect ':controller/:action/:id'
+      #map.connect ':subdomain/:action', :controller => 'contests'
     end
   end
 
+  #map.contest ':id/:action', :controller => 'contests'
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:
@@ -169,6 +176,8 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default routes as the lowest priority.
   # Note: These default routes make all actions in every controller accessible via GET requests. You should
   # consider removing the them or commenting them out if you're using named routes and resources.
+  
+  map.connect 'contests/:subdomain/:action', :controller => 'contests'
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
 

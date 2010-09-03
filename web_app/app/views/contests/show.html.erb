@@ -27,7 +27,7 @@
     <div>
       <div style="float: right;">
         <%= link_to t("views.teamsite"), [:contest, team] %>
-        <%= link_to Client.human_name(:count => 2), :controller => "clients", :action => "index", :contestant_id => team %>
+        <%= link_to Client.human_name(:count => 2), contest_contestant_clients_url(@contest, team) %>
       </div>
       <h3>
         <%=h team.name %>
