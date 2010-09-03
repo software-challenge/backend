@@ -13,6 +13,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
@@ -76,7 +78,8 @@ public class CreateGameDialog extends JDialog {
 	private static final String HOST_IP = "localhost";
 	private static final int MAX_CHARS = 35;
 	private static final float FONT_SIZE = 16;
-	private static final Font font = new Font("Arial", Font.PLAIN, (int) FONT_SIZE);
+	private static final Font font = new Font("Arial", Font.PLAIN,
+			(int) FONT_SIZE);
 	private static final int MAX_WIDTH = 800;
 
 	private final PresentationFacade presFac;
@@ -97,7 +100,7 @@ public class CreateGameDialog extends JDialog {
 	private JTextField txfPort;
 	private JLabel lblPort;
 	private MyTableModel playersModel;
-	
+
 	private JPanel pnlLoadGame;
 	private JPanel pnlLoadGameChoose;
 	private JCheckBox chkLoadGame;
@@ -126,8 +129,8 @@ public class CreateGameDialog extends JDialog {
 	private void createGUI() {
 
 		plugins = presFac.getLogicFacade().getAvailablePluginsSorted();
-		final Vector<String> pluginNames = presFac.getLogicFacade().getPluginNames(
-				plugins);
+		final Vector<String> pluginNames = presFac.getLogicFacade()
+				.getPluginNames(plugins);
 
 		// ---------------------------------------------------
 
@@ -148,25 +151,27 @@ public class CreateGameDialog extends JDialog {
 		pnlBottom.add(pnlButtons);
 
 		// ---------------------------------------------------
-		
+
 		pnlLoadGame.setLayout(new FlowLayout());
-		
+
 		pnlLoadGameChoose = new JPanel();
-		
-		chkLoadGame = new JCheckBox(lang.getProperty("dialog_create_load_game_check"));
+
+		chkLoadGame = new JCheckBox(lang
+				.getProperty("dialog_create_load_game_check"));
 		chkLoadGame.setFont(chkLoadGame.getFont().deriveFont(FONT_SIZE));
 		chkLoadGame.addChangeListener(new ChangeListener() {
-			
+
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
-				//pnlLoadGameChoose.setVisible(chkLoadGame.isSelected());
+				// pnlLoadGameChoose.setVisible(chkLoadGame.isSelected());
 				boolean en = chkLoadGame.isSelected();
 				btnLoadGame.setEnabled(en);
 				txfLoadGame.setEnabled(en);
 			}
 		});
-		
-		btnLoadGame = new JButton(lang.getProperty("dialog_create_load_game_choose"));
+
+		btnLoadGame = new JButton(lang
+				.getProperty("dialog_create_load_game_choose"));
 		btnLoadGame.setEnabled(false);
 		btnLoadGame.addActionListener(new ActionListener() {
 			@Override
@@ -174,7 +179,8 @@ public class CreateGameDialog extends JDialog {
 				JFileChooser gameFileChooser = new JFileChooser();
 				switch (gameFileChooser.showOpenDialog(null)) {
 				case JFileChooser.APPROVE_OPTION:
-					txfLoadGame.setText(gameFileChooser.getSelectedFile().getAbsolutePath());
+					txfLoadGame.setText(gameFileChooser.getSelectedFile()
+							.getAbsolutePath());
 					break;
 				case JFileChooser.CANCEL_OPTION:
 					// Do nothing?
@@ -182,17 +188,16 @@ public class CreateGameDialog extends JDialog {
 				}
 			}
 		});
-		
+
 		txfLoadGame = new JTextField();
 		txfLoadGame.setEnabled(false);
 		txfLoadGame.setColumns(MAX_CHARS);
-		
+
 		pnlLoadGame.add(chkLoadGame);
 		pnlLoadGame.add(pnlLoadGameChoose);
 		pnlLoadGameChoose.add(txfLoadGame);
 		pnlLoadGameChoose.add(btnLoadGame);
-		
-		
+
 		// ---------------------------------------------------
 
 		// TODO for future
@@ -202,9 +207,10 @@ public class CreateGameDialog extends JDialog {
 
 		ckbDebug = new JCheckBox(lang.getProperty("dialog_create_pref_debug"));
 		ckbDebug.setFont(ckbDebug.getFont().deriveFont(FONT_SIZE));
-		ckbDebug.setToolTipText(lang.getProperty("dialog_create_pref_debug_hint"));
-		ckbDebug.setSelected(GUIConfiguration.instance().getConfigCreateGameDialog()
-				.isTimeLimit());
+		ckbDebug.setToolTipText(lang
+				.getProperty("dialog_create_pref_debug_hint"));
+		ckbDebug.setSelected(GUIConfiguration.instance()
+				.getConfigCreateGameDialog().isTimeLimit());
 
 		txfPort = new JTextField(5);
 		txfPort.setFont(txfPort.getFont().deriveFont(FONT_SIZE));
@@ -243,6 +249,7 @@ public class CreateGameDialog extends JDialog {
 		playersModel.addColumn(lang.getProperty("dialog_create_tbl_name"));
 		playersModel.addColumn(lang.getProperty("dialog_create_tbl_plytype"));
 		playersModel.addColumn(lang.getProperty("dialog_create_tbl_filename"));
+		playersModel.addColumn(lang.getProperty("dialog_create_tbl_parameter"));
 
 		tblPlayers = new JTable(playersModel);
 		tblPlayers.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
@@ -254,8 +261,8 @@ public class CreateGameDialog extends JDialog {
 		if (newWidth > MAX_WIDTH) {
 			newWidth = MAX_WIDTH;
 		}
-		tblPlayers.setPreferredScrollableViewportSize(new Dimension(newWidth, tblPlayers
-				.getPreferredScrollableViewportSize().height));
+		tblPlayers.setPreferredScrollableViewportSize(new Dimension(newWidth,
+				tblPlayers.getPreferredScrollableViewportSize().height));
 
 		// set single selection on one cell
 		tblPlayers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -294,15 +301,19 @@ public class CreateGameDialog extends JDialog {
 
 		// fit the height of the scroll pane to the size of the table's rows
 		JScrollPane scroll = new JScrollPane(tblPlayers);
-		scroll.setPreferredSize(new Dimension(scroll.getPreferredSize().width,
-				(tblPlayers.getRowCount() + 1) * tblPlayers.getRowHeight() + 2));
+		scroll
+				.setPreferredSize(new Dimension(
+						scroll.getPreferredSize().width, (tblPlayers
+								.getRowCount() + 1)
+								* tblPlayers.getRowHeight() + 2));
 
 		pnlTable.add(scroll);
 
 		// ---------------------------------------------------
 
 		/* okButton */
-		final JButton okButton = new JButton(lang.getProperty("dialog_create_create"));
+		final JButton okButton = new JButton(lang
+				.getProperty("dialog_create_create"));
 		okButton.setFont(okButton.getFont().deriveFont(FONT_SIZE));
 		okButton.addActionListener(new ActionListener() {
 			@Override
@@ -312,13 +323,14 @@ public class CreateGameDialog extends JDialog {
 				} else {
 					Configuration.set("loadGameFile", "");
 				}
-				
+
 				createGame(playersModel);
 			}
 		});
 
 		/* cancelButton */
-		JButton cancelButton = new JButton(lang.getProperty("dialog_create_cancel"));
+		JButton cancelButton = new JButton(lang
+				.getProperty("dialog_create_cancel"));
 		cancelButton.setFont(cancelButton.getFont().deriveFont(FONT_SIZE));
 		cancelButton.addActionListener(new ActionListener() {
 			@Override
@@ -409,6 +421,8 @@ public class CreateGameDialog extends JDialog {
 				new MyComboBoxRenderer(items, font));
 		table.getColumnModel().getColumn(3).setCellRenderer(
 				new FilenameBlackBGCellRenderer(font));
+		table.getColumnModel().getColumn(4).setCellRenderer(
+				new BigFontTableCellRenderer(font));
 	}
 
 	/**
@@ -425,11 +439,12 @@ public class CreateGameDialog extends JDialog {
 		final TableCellRenderer headerRenderer = header.getDefaultRenderer();
 
 		header.setDefaultRenderer(new TableCellRenderer() {
-			public Component getTableCellRendererComponent(JTable table, Object value,
-					boolean isSelected, boolean hasFocus, int row, int column) {
+			public Component getTableCellRendererComponent(JTable table,
+					Object value, boolean isSelected, boolean hasFocus,
+					int row, int column) {
 
-				Component comp = headerRenderer.getTableCellRendererComponent(table,
-						value, isSelected, hasFocus, row, column);
+				Component comp = headerRenderer.getTableCellRendererComponent(
+						table, value, isSelected, hasFocus, row, column);
 				comp.setFont(newFont); // set size
 				return comp;
 			}
@@ -459,7 +474,8 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
-		final ContextDisplay contextPanel = (ContextDisplay) presFac.getContextDisplay();
+		final ContextDisplay contextPanel = (ContextDisplay) presFac
+				.getContextDisplay();
 
 		if (presFac.getLogicFacade().isGameActive())
 			contextPanel.cancelCurrentGame();
@@ -477,16 +493,17 @@ public class CreateGameDialog extends JDialog {
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, e.getMessage(), lang
-					.getProperty("dialog_error_title"), JOptionPane.ERROR_MESSAGE);
+					.getProperty("dialog_error_title"),
+					JOptionPane.ERROR_MESSAGE);
 		}
 
 		// set render context
 		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField(),
-				threeDimensional);
+		selPlugin.getPlugin().setRenderContext(
+				contextPanel.recreateGameField(), threeDimensional);
 
-		final List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(model
-				.getRowCount());
+		final List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(
+				model.getRowCount());
 		for (int i = 0; i < model.getRowCount(); i++) {
 			String playerName = (String) model.getValueAt(i, 1);
 			int index = extractIndex((String) model.getValueAt(i, 2));
@@ -496,8 +513,12 @@ public class CreateGameDialog extends JDialog {
 
 		IGamePreparation prep;
 		try {
-			prep = selPlugin.getPlugin().prepareGame(ip, port,
-					descriptors.toArray(new SlotDescriptor[descriptors.size()]));
+			prep = selPlugin.getPlugin()
+					.prepareGame(
+							ip,
+							port,
+							descriptors.toArray(new SlotDescriptor[descriptors
+									.size()]));
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this, lang
@@ -507,7 +528,7 @@ public class CreateGameDialog extends JDialog {
 			cancelGameCreation(null);
 			return;
 		}
-		
+
 		final ConnectingDialog connDial = new ConnectingDialog();
 
 		// set observation
@@ -527,13 +548,16 @@ public class CreateGameDialog extends JDialog {
 			// add game specific info item in menu bar
 			((SCMenuBar) presFac.getMenuBar()).setGameSpecificInfo(selPlugin
 					.getDescription().name(), selPlugin.getVersion(), selPlugin
-					.getPlugin().getPluginImage(), selPlugin.getPlugin().getPluginIcon(),
-					selPlugin.getPlugin().getPluginInfoText(), selPlugin.getDescription()
-							.author(), selPlugin.getPlugin().getPluginYear());
+					.getPlugin().getPluginImage(), selPlugin.getPlugin()
+					.getPluginIcon(),
+					selPlugin.getPlugin().getPluginInfoText(), selPlugin
+							.getDescription().author(), selPlugin.getPlugin()
+							.getPluginYear());
 			// update status bar
 			StatusBar statusBar = ((StatusBar) presFac.getStatusBar());
-			statusBar.setStatus(lang.getProperty("statusbar_status_currentgame") + " "
-					+ selPlugin.getDescription().name());
+			statusBar.setStatus(lang
+					.getProperty("statusbar_status_currentgame")
+					+ " " + selPlugin.getDescription().name());
 			// enable speed bar
 			// contextPanel.enableSpeedBar(true); //TODO
 			// set minimum size
@@ -549,7 +573,8 @@ public class CreateGameDialog extends JDialog {
 	 * 
 	 * @param is
 	 */
-	private void executeClients(final List<KIInformation> KIs, final IObservation observer) {
+	private void executeClients(final List<KIInformation> KIs,
+			final IObservation observer) {
 		// start KI (intern) clients
 		for (KIInformation kinfo : KIs) {
 			String filename = kinfo.getPath();
@@ -583,8 +608,9 @@ public class CreateGameDialog extends JDialog {
 	 * @param prep
 	 * @param model
 	 */
-	private void prepareSlots(final List<KIInformation> KIs, final IGamePreparation prep,
-			final DefaultTableModel model, final IObservation observer) {
+	private void prepareSlots(final List<KIInformation> KIs,
+			final IGamePreparation prep, final DefaultTableModel model,
+			final IObservation observer) {
 		// configure slots
 		for (int i = 0; i < prep.getSlots().size(); i++) {
 			ISlot slot = prep.getSlots().get(i);
@@ -611,15 +637,29 @@ public class CreateGameDialog extends JDialog {
 					cancelGameCreation(observer);
 					return;
 				}
-				KIs.add(new KIInformation(slot.asClient(), path));
+
+				String[] slotParams = slot.asClient();
+				String paramLine = (String) model.getValueAt(i, 4);
+				paramLine = paramLine == null ? "" : paramLine;
+				String[] lineParams = paramLine.split(" ");
+				String[] params = new String[slotParams.length
+						+ lineParams.length];
+				for (int j = 0; j < slotParams.length; j++) {
+					params[j] = slotParams[j];
+				}
+				for (int j = 0; j < lineParams.length; j++) {
+					params[j + slotParams.length] = lineParams[j];
+				}
+
+				KIs.add(new KIInformation(params, path));
 				break;
 			case 2: // KI extern
 				slot.asRemote();
 				break;
 			default:
 				cancelGameCreation(observer);
-				throw new RuntimeException("Selection range out of bounds (" + index
-						+ ")");
+				throw new RuntimeException("Selection range out of bounds ("
+						+ index + ")");
 			}
 		}
 	}
@@ -652,15 +692,20 @@ public class CreateGameDialog extends JDialog {
 				contextPanel.updateButtonBar(true);
 
 				// generate replay filename
-				String replayFilename = HelperMethods.generateReplayFilename(descriptors);
+				String replayFilename = HelperMethods
+						.generateReplayFilename(descriptors);
 				// save replay
 				try {
 					observer.saveReplayToFile(replayFilename);
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, lang
-							.getProperty("dialog_create_error_replay_msg"), lang
-							.getProperty("dialog_create_error_replay_title"),
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									null,
+									lang
+											.getProperty("dialog_create_error_replay_msg"),
+									lang
+											.getProperty("dialog_create_error_replay_title"),
+									JOptionPane.ERROR_MESSAGE);
 					e.printStackTrace();
 				}
 			}
@@ -679,9 +724,11 @@ public class CreateGameDialog extends JDialog {
 	private int extractIndex(final String plyType) {
 		if (plyType.equals(lang.getProperty("dialog_create_plyType_human"))) {
 			return 0;
-		} else if (plyType.equals(lang.getProperty("dialog_create_plyType_ki_intern"))) {
+		} else if (plyType.equals(lang
+				.getProperty("dialog_create_plyType_ki_intern"))) {
 			return 1;
-		} else if (plyType.equals(lang.getProperty("dialog_create_plyType_ki_extern"))) {
+		} else if (plyType.equals(lang
+				.getProperty("dialog_create_plyType_ki_extern"))) {
 			return 2;
 		}
 
@@ -738,7 +785,8 @@ public class CreateGameDialog extends JDialog {
 				rowData.add(player.playerType);
 				rowData.add(player.filename);
 			} else {
-				rowData.add(lang.getProperty("dialog_create_player") + " " + (i + 1));
+				rowData.add(lang.getProperty("dialog_create_player") + " "
+						+ (i + 1));
 				rowData.add(lang.getProperty("dialog_create_plyType_human")); // default
 				rowData.add("-");
 			}
@@ -764,13 +812,14 @@ public class CreateGameDialog extends JDialog {
 		case 1:// KI intern
 			JFileChooser chooser = new JFileChooser(GUIConfiguration.instance()
 					.getCreateGameDialogPath());
-			chooser.setDialogTitle(lang.getProperty("dialog_create_dialog_title"));
+			chooser.setDialogTitle(lang
+					.getProperty("dialog_create_dialog_title"));
 
 			switch (chooser.showOpenDialog(null)) {
 			case JFileChooser.APPROVE_OPTION:
 				// set path
-				playersModel.setValueAt(chooser.getSelectedFile().getAbsolutePath(), row,
-						3);
+				playersModel.setValueAt(chooser.getSelectedFile()
+						.getAbsolutePath(), row, 3);
 				// save config
 				GUIConfiguration.instance().setCreateGameDialogPath(
 						chooser.getSelectedFile().getParent());
@@ -802,7 +851,8 @@ public class CreateGameDialog extends JDialog {
 
 	}
 
-	public class MyComboBoxEditor extends DefaultCellEditor implements ItemListener {
+	public class MyComboBoxEditor extends DefaultCellEditor implements
+			ItemListener {
 		public MyComboBoxEditor(Vector<String> items) {
 			super(new JComboBox(items));
 
