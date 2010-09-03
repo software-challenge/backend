@@ -319,6 +319,7 @@ public class FrameRenderer extends JPanel {
 	private int fontX;
 	private boolean highliteSheep;
 	private int turnToAnswer;
+	private boolean repainted;
 
 	public FrameRenderer() {
 		bgBoard = loadImage("resource/game/boden_wiese3.png");
@@ -455,18 +456,21 @@ public class FrameRenderer extends JPanel {
 				e.printStackTrace();
 			}
 
+			repainted = false;
 			getParent().repaint();
+			synchronized (LOCK) {
+				while (!repainted) {
+					getParent().repaint();
 
-			// synchronized (LOCK) {
-			// try {
-			// repainted = false;
-			// repaint();
-			// LOCK.wait();
-			// } catch (InterruptedException e) {
-			// e.printStackTrace();
-			// }
-			//					
-			// }
+					try {
+						LOCK.wait();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				}
+
+			}
 
 		}
 
@@ -582,6 +586,7 @@ public class FrameRenderer extends JPanel {
 		}
 
 		bmFrames++;
+		repainted = true;
 		synchronized (LOCK) {
 			LOCK.notifyAll();
 		}
@@ -1026,8 +1031,7 @@ public class FrameRenderer extends JPanel {
 			}
 
 			fontY2 += 20;
-			g2.drawString(
-					Math.abs(flowers) + " " + type + " eingesammelt",
+			g2.drawString(Math.abs(flowers) + " " + type + " eingesammelt",
 					fontX, fontY2);
 
 			if (sheep.getDogState() == DogState.PASSIVE) {
