@@ -56,7 +56,8 @@ ActionController::Routing::Routes.draw do |map|
       c.resources :contestants, :as => "teams", :member => {
         :set_and_get_overall_member_count => :get,
         :hide => :get,
-        :unhide => :get
+        :unhide => :get,
+        :add_person => :post
       } do |contestant|
         contestant.resources :clients, :as => "computerspieler", :new => {
           :uploadify => :post

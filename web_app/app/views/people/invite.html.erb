@@ -5,8 +5,7 @@
 </h1>
 
 <% tabnav :new_person do %>
-  <% form_tag({:controller => "contestants", :action => "add_person"}, {:class => "formtastic"}) do %>
-    <%= hidden_field_tag :contestant_id, @contestant.to_param %>
+  <% form_tag(add_person_contest_contestant_url(@contest, @contestant), {:class => "formtastic"}) do %>
     <% if manageable_roles.size == 1 -%>
       <%= hidden_field_tag "role", manageable_roles.first[1] %>
     <% end -%>
