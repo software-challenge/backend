@@ -319,7 +319,7 @@ public class FrameRenderer extends JPanel {
 	private int fontX;
 	private boolean highliteSheep;
 	private int turnToAnswer;
-	private boolean repainted;
+	//private boolean repainted;
 
 	public FrameRenderer() {
 		bgBoard = loadImage("resource/game/boden_wiese3.png");
@@ -432,7 +432,7 @@ public class FrameRenderer extends JPanel {
 		Point q = new Point(guiNodes[move.target].getScaledCenterX(),
 				guiNodes[move.target].getScaledCenterY());
 
-		double pixelPerFrame = (0.6 * (double) size) / (1 * 35);
+		double pixelPerFrame = (0.6 * (double) size) / (1 * 30);
 		double dist = Math
 				.sqrt(Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2));
 
@@ -451,26 +451,26 @@ public class FrameRenderer extends JPanel {
 			p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
 
 			try {
-				Thread.sleep(1000 / 35);
+				Thread.sleep(1000 / 30);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
-			repainted = false;
-			getParent().repaint();
-			synchronized (LOCK) {
-				while (!repainted) {
-					getParent().repaint();
-
-					try {
-						LOCK.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
-				}
-
-			}
+//
+//			repainted = false;
+//			getParent().repaint();
+//			synchronized (LOCK) {
+//				while (!repainted) {
+//					getParent().repaint();
+//
+//					try {
+//						LOCK.wait();
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//
+//				}
+//
+//			}
 
 		}
 
@@ -586,7 +586,7 @@ public class FrameRenderer extends JPanel {
 		}
 
 		bmFrames++;
-		repainted = true;
+		//repainted = true;
 		synchronized (LOCK) {
 			LOCK.notifyAll();
 		}
@@ -624,10 +624,6 @@ public class FrameRenderer extends JPanel {
 			printGameStatus(g2);
 			paintSemiStaticComponents(g2);
 		}
-
-		// staticImage =
-		// Toolkit.getDefaultToolkit().createImage(buffer.getSource());
-		//
 
 	}
 
