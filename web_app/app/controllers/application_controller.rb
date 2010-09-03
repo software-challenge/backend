@@ -78,9 +78,9 @@ class ApplicationController < ActionController::Base
   #  end
   #  raise ActiveRecord::RecordNotFound unless @current_contest
     parts = request.url.split('/')
-    id = parts[4].to_i
-    if parts[3] == "contests" and id > 0
-      @contest = @current_contest = Contest.find(request.url.split('/')[4].to_i)
+    id = parts[4]
+    if parts[3] == "wettbewerb" and Contest.all.inject(false) {|i,c| i |= c.subdomain == parts[4]} 
+      @contest = @current_contest = Contest.find_by_subdomain(parts[4])
     else
       @contest = @current_contest = Contest.first
     end

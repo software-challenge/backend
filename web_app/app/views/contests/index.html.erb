@@ -24,7 +24,7 @@
         <td>
           <%= link_to image_tag("actions/edit.png"), edit_contest_url(:id => contest.to_param) %>
         </td>
-        <td><%= link_to t("views.to_overview").capitalize, url_for_contest(contest) %></td>
+        <td><%= link_to t("views.to_overview").capitalize, contest_url(contest) %></td>
       </tr>
     <% end %>
   </table>

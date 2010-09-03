@@ -18,7 +18,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     add_tab do |t|
       t.named t("titles.schedule")
       begin; t.disable!; next; end if @contest.new_record?
-      t.links_to contest_edit_schedule_url(@contest.id)
+      t.links_to contest_edit_schedule_url(@contest)
     end
 
   end
@@ -26,26 +26,26 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named Contestant.human_name(:count => 2)
     begin; t.disable!; next; end if @contest.new_record?
-    t.links_to contest_contestants_url(@contest.id)
+    t.links_to contest_contestants_url(@contest)
   end
 
   add_tab do |t|
     t.named t("views.my") + " " + Contestant.human_name(:count => 2)
     begin; t.disable!; next; end if @contest.new_record?
-    t.links_to my_contest_contestants_url(@contest.id)
+    t.links_to my_contest_contestants_url(@contest)
   end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 1
 
   add_tab do |t|
     t.named t("titles.matchdays.list")
     begin; t.disable!; next; end if @contest.new_record?
-    t.links_to contest_matchdays_url(@contest.id)
+    t.links_to contest_matchdays_url(@contest)
     t.disable! unless @contest.ready?
   end
 
   add_tab do |t|
     t.named t("titles.ranking")
     begin; t.disable!; next; end if @contest.new_record?
-    t.links_to contest_standings_url(@contest.id)
+    t.links_to contest_standings_url(@contest)
     t.disable! unless @contest.last_played_matchday
   end
 
@@ -53,7 +53,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.named t("titles.results")
     begin; t.disable!; next; end if @contest.new_record?
     t.named "#{@contest.last_played_matchday.position}. Spieltag" if @contest.last_played_matchday
-    t.links_to contest_results_url(@contest.id)
+    t.links_to contest_results_url(@contest)
     t.disable! unless @contest.last_played_matchday
   end
 
@@ -61,14 +61,14 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   if logged_in? and current_user.is_member_of_a_team?(@contest)
     add_tab do |t|
       t.named FriendlyEncounter.human_name(:count => 2)
-      t.links_to contest_friendly_encounters_url(@contest.id)
+      t.links_to contest_friendly_encounters_url(@contest)
     end
   end
 
     if (@contest.regular_phase_finished?) and ((not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator)) or (not @contest.finale.nil? and @contest.finale.has_published_lineup?))
       add_tab do |t|
         t.named "Finale"
-        t.links_to contest_finale_url(@contest.id)
+        t.links_to contest_finale_url(@contest)
       end
     end
   
