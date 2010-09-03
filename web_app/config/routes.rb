@@ -102,7 +102,10 @@ ActionController::Routing::Routes.draw do |map|
          :publish_lineup => :post,
          :hide_lineup => :post
       }
-      c.resources :people, :as => "personen"
+      c.resources :people, :as => "personen", :member => {
+        :hide => :get,
+        :unhide => :get
+      }
 
       c.administration '/administration', :controller => 'main', :action => 'administration'
       c.debug '/debug', :controller => 'main', :action => 'debug', :conditions => { :method => :get }

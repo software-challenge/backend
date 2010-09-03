@@ -73,7 +73,7 @@
     <td>
       <% if current_user.has_role? :administrator or same_person(person) -%>
       <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit") %>
-      <%= link_to edit_image, edit_person_url(person) %>
+      <%= link_to edit_image, edit_contest_person_url(@contest, person) %>
       <% end -%>
     </td>
     <td>
@@ -81,11 +81,11 @@
         <% unless person.hidden -%>
           <% if person != current_user %>
             <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
-            <%= link_to delete_image, url_for(:action => :hide, :id => person.to_param), :confirm => I18n.t("messages.confirm_hiding", :name => person.name) %>
+            <%= link_to delete_image, hide_contest_person_url(@contest, person), :confirm => I18n.t("messages.confirm_hiding", :name => person.name) %>
           <% end %>
         <% else %>
         <% undelete_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide") %>
-        <%= link_to undelete_image, url_for(:action => :unhide, :id => person.to_param) %>
+        <%= link_to undelete_image, unhide_contest_person_url(@contest, person) %>
         <% end -%>
       <% end -%>
     </td>
