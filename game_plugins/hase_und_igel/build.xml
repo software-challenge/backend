@@ -42,7 +42,6 @@
 				<attribute name="${manifest.code.version.key}" value="${code.version}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
-			<fileset dir="${src.dir}" />
 			<fileset dir=".">
 				<include name="resource/**/*" />
 			</fileset>
