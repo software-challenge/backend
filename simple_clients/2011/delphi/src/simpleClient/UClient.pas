@@ -46,7 +46,7 @@ uses UNetwork;
       die : Integer;
       sheep : TSheep;
     begin
-      // Die beiden Spieler zur ï¿½bersicht als Ich und Gegner ordnen
+      // Die beiden Spieler zur Übersicht als Ich und Gegner ordnen
       if(FPlayers[0].PlayerID = FMyId) then begin
         Me := FPlayers[0];
         Opponent := FPlayers[1];
@@ -88,7 +88,7 @@ uses UNetwork;
 
       // Einen Debug-Hinweis mit dem Zug ubertragen. Dieser wird dann im Server auf der GUI
       // angezeigt.
-      mov.addHint(TDebugHint.create('Hinweis: Das ist ein zufalliger Zug!'));
+      mov.addHint(TDebugHint.create('Hinweis', 'Das ist ein zufalliger Zug!'));
     end;
 
   procedure TClient.setId(playerId : Integer);

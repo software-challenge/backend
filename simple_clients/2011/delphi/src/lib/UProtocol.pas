@@ -109,11 +109,11 @@ begin
           // Die Welcome-Nachricht enthalt alle Felder und ihre Verbindungen (das Board)
           if(XmlSubNodei.Attributes.GetNamedItem('class').NodeValue = 'sit:welcome') then begin
             // Die Spieler auslesen
-            if(XmlSubNodei.Attributes.GetNamedItem('color').NodeValue = 'PLAYER1') then begin
-              FClient.setId(PLAYER_1);
+            if(XmlSubNodei.Attributes.GetNamedItem('color').NodeValue = 'RED') then begin
+              FClient.setId(PLAYER_RED);
             end
             else begin
-              FClient.setId(PLAYER_2);
+              FClient.setId(PLAYER_BLUE);
             end;
             writeln;
             writeln('My id is: ' + XmlSubNodei.Attributes.getNamedItem('color').NodeValue);
@@ -164,11 +164,11 @@ begin
                 a := 0;
                 // Aktuelle Rundennummer und Spieler auslesen
                 FClient.CurrentTurn := StrToInt(XmlSubNodej.Attributes.getNamedItem('turn').NodeValue);
-                if(XmlSubNodej.Attributes.getNamedItem('currentPlayer').NodeValue = 'PLAYER1') then begin
-                  FBoard.CurrentPlayer := PLAYER_1;
+                if(XmlSubNodej.Attributes.getNamedItem('currentPlayer').NodeValue = 'RED') then begin
+                  FBoard.CurrentPlayer := PLAYER_RED;
                 end
                 else begin
-                  FBoard.CurrentPlayer := PLAYER_2;
+                  FBoard.CurrentPlayer := PLAYER_BLUE;
                 end;
                 for m := 0 to XmlSubNodej.ChildNodes.Length - 1 do begin
                   XmlSubNodel := XmlSubNodej.ChildNodes.Item(m);
@@ -177,11 +177,11 @@ begin
                     // Receive player data
                     player[a] := FClient.getPlayer(a);
                     player[a].DisplayName := XmlSubNodel.Attributes.getNamedItem('displayName').NodeValue;
-                    if(XmlSubNodel.Attributes.GetNamedItem('playerId').NodeValue = 'PLAYER1') then begin
-                      player[a].PlayerID := PLAYER_1;
+                    if(XmlSubNodel.Attributes.GetNamedItem('color').NodeValue = 'RED') then begin
+                      player[a].PlayerID := PLAYER_RED;
                     end;
-                    if (XmlSubNodel.Attributes.GetNamedItem('playerId').NodeValue = 'PLAYER2') then begin
-                      player[a].PlayerID := PLAYER_2;
+                    if (XmlSubNodel.Attributes.GetNamedItem('color').NodeValue = 'BLUE') then begin
+                      player[a].PlayerID := PLAYER_BLUE;
                     end;
                     player[a].MunchedFlowers := StrToInt(XmlSubNodel.Attributes.getNamedItem('munchedFlowers').NodeValue);
                     player[a].StolenSheeps := StrToInt(XmlSubNodel.Attributes.getNamedItem('stolenSheeps').NodeValue);
@@ -212,11 +212,11 @@ begin
                     );
                     // Besitzer auslesen, wenn vorhanden
                     if(XmlSubNodel.Attributes.GetNamedItem('owner') <> nil) then begin
-                      if(XmlSubNodel.Attributes.GetNamedItem('owner').NodeValue = 'PLAYER1') then begin
-                        Sheep.PlayerID := PLAYER_1;
+                      if(XmlSubNodel.Attributes.GetNamedItem('owner').NodeValue = 'RED') then begin
+                        Sheep.PlayerID := PLAYER_RED;
                       end
                       else begin
-                        Sheep.PlayerID := PLAYER_2;
+                        Sheep.PlayerID := PLAYER_BLUE;
                       end;
                     end;
                     // Hundstatus auslesen, wenn vorhanden

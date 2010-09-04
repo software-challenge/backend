@@ -30,8 +30,8 @@ const
   FIELD_GRASS         = 4;
 
   NO_PLAYER           = -1;
-  PLAYER_1            = 0;
-  PLAYER_2            = 1;
+  PLAYER_RED            = 0;
+  PLAYER_BLUE           = 1;
 
   DOG_NONE              = 0;
   DOG_PASSIVE           = 1;

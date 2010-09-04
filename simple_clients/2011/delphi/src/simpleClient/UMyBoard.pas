@@ -69,11 +69,11 @@ implementation
       end;
 
       // Moving to a home field that is not ours is invalid
-      if(getFieldType(Move.Target) = FIELD_HOME1) and (FCurrentPlayer <> PLAYER_1) then begin
+      if(getFieldType(Move.Target) = FIELD_HOME1) and (FCurrentPlayer <> PLAYER_RED) then begin
         Result := false;
       end;
 
-      if(getFieldType(Move.Target) = FIELD_HOME2) and (FCurrentPlayer <> PLAYER_2) then begin
+      if(getFieldType(Move.Target) = FIELD_HOME2) and (FCurrentPlayer <> PLAYER_BLUE) then begin
         Result := false;
       end;
 

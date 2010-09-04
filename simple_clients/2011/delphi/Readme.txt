@@ -1,22 +1,19 @@
-Dies ist der Delphi SimpleClient fur das Spiel "Schafchen im Trockenen" 
-der Software Challenge 2011.
-Der Client ist vom Aufbau her der gleiche wie letztes Jahr.
-Im Ordner "src/lib" befinden sich die Units, die der Umsetzung der XML-Kommunikation
-mit dem Server und der Darstellung des Spielbrettes und der darauf
-befindlichen Objekte (Felder, Schafe, Blumen, ...) dienen.
+Hier eine überarbeitete Version des Delphi Simple Clients.
+Die Kommunikation nutzt nun eine externe XML-Lib (OpenXML)
+um das Protokoll zu übersetzen.
+Die Protokollschicht wurde in die Unit UProtocol ausgelagert.
 
-In der Regel solltet ihr diese Dateien nicht bearbeiten mussen.
-Die Dateien, mit denen ihr arbeiten solltet, liegen im Ordner "src/simpleClient".
-Die Klasse TMyBoard in der Unit UMyBoard ist eine Erweiterung der Board-Klasse
-TBoard (src/lib/UBoard.pas) und enthalt bereits einige Hilfsfunktionen zur
-Arbeit mit dem Spielbrett. Weitere Funktionen konnt ihr hier nach Belieben hinzufugen.
-In der Klasse TClient (src/simpleClient/UClient.pas) wird die KI umgesetzt.
-Jedesmal, wenn euer Client am Zug ist, wird hier die Methode TClient.zugAngefordert
-aufgerufen, die dann einen Zug finden und zuruckgeben muss.
+Die Struktur der KI-Unit (UClient) wurde nicht stark verändert.
+Um die KI-Logik aus dem alten SimpleClient in den neuen zu
+übernehmen muss folgendes getan werden:
 
-Um den Einstieg zu erleichtern, wurde bereits eine rudimentare KI implementiert.
-Diese fuhrt einfach den erstbesten gultigen Zug aus, den sie finden kann. Diese
-"Strategie" solltet ihr naturlich durch eure eigene ersetzen.
+- Alle selbst geschriebenen Methoden aus dem alten in den neuen
+  Client kopieren
+- Den Inhalt der Methode zugAngefordert aus dem alten in den
+  neuen Client kopieren
+- Klassennamen müssen angepasst werden (um der Delphi
+  Namenskonvention zu entsprechen wurden die Klassen Client, Board
+  und MyBoard in TClient, TBoard und TMyBoard umbenannt).
 
 Wenn etwas nicht klappt und ihr nicht weiter wisst, schreibt ins
 Forum oder direkt mir eine E-Mail mit Beschreibung.
