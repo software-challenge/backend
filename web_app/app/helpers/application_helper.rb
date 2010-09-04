@@ -66,4 +66,13 @@ module ApplicationHelper
       "unknown"
     end
   end
+
+  def event_text(event)
+    case event.type
+    when "ClientActivatedEvent"
+      link_to "#{event.contestant.name} #{I18n.t("events.client_activated")}", contest_contestant_clients_url(@contest, event.contestant)
+    when "ClientUploadedEvent"
+      link_to "#{event.contestant.name} #{I18n.t("events.client_uploaded")}", contest_contestant_clients_url(@contest, event.contestant)
+    end
+  end
 end

@@ -159,4 +159,11 @@ class ApplicationController < ActionController::Base
     end
     redirect_to :back
   end
+
+  def add_event(event)
+    @contest.events << event
+    @contest.save!
+    @contest.reload
+  end
+
 end

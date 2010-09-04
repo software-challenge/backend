@@ -13,10 +13,10 @@
 #     
 render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
-  #add_tab do |t|
-  #  t.named t("titles.overview")
-  #  t.links_to hash_for_administration_url
-  #end
+  add_tab do |t|
+    t.named t("titles.events")
+    t.links_to contest_administration_url(@contest)
+  end
 
   add_tab do |t|
     t.named t("titles.all_people")

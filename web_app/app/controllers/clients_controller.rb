@@ -60,6 +60,10 @@ class ClientsController < ApplicationController
       end
     end
 
+    if success
+      add_event ClientUploadedEvent.create(:client => @client)
+    end
+
     if requested_by_flash?
       # flash will only handle 200 as a valid response
       render :nothing => true, :status => (success ? :ok : :unprocessable_entity )
@@ -150,6 +154,8 @@ class ClientsController < ApplicationController
 
     @contestant.current_client = @client
     @contestant.save!
+
+    add_event ClientActivatedEvent.create(:client => @client)
 
     redirect_to contest_contestant_clients_url(@contest, @contestant)
   end
