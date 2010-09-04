@@ -13,6 +13,7 @@ class Contest < ActiveRecord::Base
   has_many :matchdays, :dependent => :destroy, :conditions => { :type => "Matchday" }
   has_many :custom_matches, :class_name => "CustomMatch", :as => :set, :dependent => :destroy
   has_many :friendly_encounters, :dependent => :destroy
+  has_many :events, :dependent => :destroy, :order => "created_at DESC"
 
   has_one :finale
 

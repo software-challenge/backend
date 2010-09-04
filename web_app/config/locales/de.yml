@@ -128,6 +128,9 @@ de:
     overall: "gesamt"
     won: "gewonnen"
     person_has_open_friendly_requests: "Sie werden zu einem Freundschaftsspiel herausgefordert!"
+  events:
+    client_activated: "hat einen neuen Client aktiviert."
+    client_uploaded: "hat einen neuen Client hochgeladen."
   messages:
     no_more_friendly_matches_today: "kann heute keine Freundschaftsspiele mehr spielen"
     friendly_match_not_today: "Dieses Spiel kann heute nicht mehr gespielt werden."
@@ -284,6 +287,7 @@ de:
       client:
         file: Der Computerspieler muss als ZIP-Datei gepackt werden.
   titles:
+    events: "Ereignisse"
     schedule: "Terminplan"
     overview: "Übersicht"
     ranking: "Rangliste"

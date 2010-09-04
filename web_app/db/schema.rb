@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100617134026) do
+ActiveRecord::Schema.define(:version => 20100904145320) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -70,6 +70,21 @@ ActiveRecord::Schema.define(:version => 20100617134026) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "events", :force => true do |t|
+    t.integer  "contest_id"
+    t.integer  "param_int_1"
+    t.integer  "param_int_2"
+    t.integer  "param_int_3"
+    t.string   "param_string_1"
+    t.string   "param_string_2"
+    t.boolean  "param_bool_1"
+    t.boolean  "param_bool_2"
+    t.datetime "param_time_1"
+    t.string   "type",           :default => "Event"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

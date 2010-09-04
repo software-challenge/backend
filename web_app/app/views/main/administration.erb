@@ -4,4 +4,11 @@
   <p>
    <%= t "views.welcome_to_admin" %>
   </p>
+  <p style="margin-top: 15px">
+    <strong style="margin-bottom: 5px">Letzte Ereignisse</strong><br>
+    <% @contest.events.first(15).each do |event| %>
+      <%= event.created_at.to_time.strftime("%d.%m.%y - %H:%M") %> - <%= event_text(event) %><br>
+    <% end %>
+    </strong>
+  </p>
 <% end %>
