@@ -58,6 +58,8 @@ public class GUIConfiguration implements Serializable {
 	private boolean saveWonGames;
 
 	private final static GUIConfiguration instance;
+	
+	private String lastChosenPluginUUID;
 
 	static {
 		instance = load();
