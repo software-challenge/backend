@@ -270,7 +270,7 @@ P angezeigter Name des Spielers
 \end_layout
 
 \begin_layout Description
-PID ID des aktuellen Spielers, entweder RED oder BLUE
+COL Farbe des aktuellen Spielers, entweder RED oder BLUE
 \end_layout
 
 \begin_layout LyX-Code
@@ -282,11 +282,11 @@ P
 \begin_inset Quotes erd
 \end_inset
 
- playerId=
+ color=
 \begin_inset Quotes erd
 \end_inset
 
-PID
+COL
 \begin_inset Quotes erd
 \end_inset
 
@@ -622,11 +622,11 @@ Letzter Zug
 \end_layout
 
 \begin_layout Description
-S ID des zu bewegenen Schafes
+S ID des zu bewegenden Schafes
 \end_layout
 
 \begin_layout Description
-T Feld auf welches das Schaf bewegt werden soll
+T Feld, auf welches das Schaf bewegt werden soll
 \end_layout
 
 \begin_layout LyX-Code
@@ -660,7 +660,7 @@ T
 </lastMove>
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Debug-Hinweis
 \end_layout
 
@@ -688,7 +688,7 @@ C
 />
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Zug-Anforderung
 \end_layout
 
@@ -704,7 +704,7 @@ Zug-Anforderung
 </room> 
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Ein Fehler ist aufgetreten
 \end_layout
 
@@ -712,6 +712,19 @@ Ein Fehler ist aufgetreten
 MSG Fehlermeldung
 \end_layout
 
+\begin_layout LyX-Code
+<room roomId=
+\begin_inset Quotes erd
+\end_inset
+
+RID
+\begin_inset Quotes erd
+\end_inset
+
+>
+\end_layout
+
+\begin_deeper
 \begin_layout LyX-Code
 <error message="MSG"> 
 \end_layout
@@ -724,7 +737,7 @@ MSG Fehlermeldung
 \begin_layout LyX-Code
 
 \emph on
-Request der den Fehler verursacht hat
+Request, der den Fehler verursacht hat
 \end_layout
 
 \begin_layout LyX-Code
@@ -736,8 +749,13 @@ Request der den Fehler verursacht hat
 </error>
 \end_layout
 
-\begin_layout Subsection
-Spiel wurde pausiert
+\end_deeper
+\begin_layout LyX-Code
+</room>
+\end_layout
+
+\begin_layout Section
+Spiel pausiert
 \end_layout
 
 \begin_layout LyX-Code
@@ -760,7 +778,7 @@ Spiel wurde pausiert
 </room>
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Antwort auf Raum betreten
 \end_layout
 
@@ -768,26 +786,15 @@ Antwort auf Raum betreten
 <joined roomId="RID"/>
 \end_layout
 
-\begin_layout Subsection
-Antwort auf Spiel verlassen
+\begin_layout Section
+Spiel verlassen
 \end_layout
 
 \begin_layout LyX-Code
 <left roomId="RID"/>
 \end_layout
 
-\begin_layout LyX-Code
-
-\end_layout
-
-\begin_layout LyX-Code
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
+\begin_layout Section
 Spielergebnis
 \end_layout
 
@@ -795,8 +802,8 @@ Spielergebnis
 Am Ende des Spiels wird das Ergebnis des Spiels gesendet.
  Es ist in verschiedene Fragmente aufgeteilt, welche die jeweiligen Bewertungskr
 iterien darstellen.
- Zuerst werden alle diesen Kriterien definiert, beschrieben und ihre Methode
- der Zusammenrechung festgelegt.
+ Zuerst werden diese Kriterien definiert, beschrieben und ihre Methode der
+ Zusammenrechung festgelegt.
 \begin_inset Newline newline
 \end_inset
 
@@ -808,8 +815,8 @@ Nach der Definition folgt für jeden Spieler die Bewertung in der Reihenfolge
 \end_inset
 
 Besteht kein weiteres Interesse an der Ausgabe bzw.
- Auswertung des Ergebnisses durch den Client, so kann das Ergebnis auch
- einfach ignoriert werden.
+ Auswertung des Ergebnisses durch den Client, so kann das Ergebnis einfach
+ ignoriert werden.
 \end_layout
 
 \begin_layout Description
@@ -929,11 +936,11 @@ Client
 RID ID des Raumes
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Spiel betreten
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Ohne Reservierung
 \end_layout
 
@@ -945,7 +952,7 @@ Betritt ein beliebiges offenes Spiel:
 <join gameType="swc_2011_schaefchen_im_trockenen"/>
 \end_layout
 
-\begin_layout Subsubsection
+\begin_layout Subsection
 Mit Reservierungscode
 \end_layout
 
@@ -962,7 +969,7 @@ RC Reservierungscode, für das zu betretene Spiel
 <joinPrepared reservationCode="RC"/>
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Section
 Zug senden
 \end_layout
 
