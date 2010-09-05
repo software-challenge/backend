@@ -144,7 +144,17 @@ class ContestantsController < ApplicationController
   end
 
   def hide
-    generic_hide(@contestant)
+    if @contest.ready?
+      # Contest already started, instead of hiding, hide the members and replace
+      # client with simple client
+      @contestant.memberships.each do |ms|
+        ms.destroy
+      end  
+      @contestant.disqualify 
+      redirect_to :back
+    else
+      generic_hide(@contestant)
+    end
   end
 
   def set_and_get_overall_member_count

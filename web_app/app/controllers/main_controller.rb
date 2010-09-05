@@ -77,7 +77,7 @@ class MainController < ApplicationController
     else
       flash[:error] = I18n.t("messages.not_logged_in")
     end
-    redirect_to root_url
+    redirect_to contest_url(@contest)
   end
 
   def debug

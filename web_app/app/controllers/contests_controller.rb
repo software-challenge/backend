@@ -4,7 +4,7 @@ class ContestsController < ApplicationController
 
     allow :administrator
 
-    actions :show, :standings, :results do
+    actions :show, :standings, :results, :edit_schedule do
       allow all
     end
 
@@ -107,13 +107,13 @@ class ContestsController < ApplicationController
   end
 
   def edit_schedule
-
+    redirect_to contest_url(@contest) unless @contest.ready? or administrator?
   end
 
   def reset_matchdays
     @contest.matchdays.destroy_all
 
-    redirect_to contest_edit_schedule_url
+    redirect_to contest_edit_schedule_url(@contest)
   end
 
   def refresh_matchdays
@@ -133,7 +133,7 @@ class ContestsController < ApplicationController
       flash[:error] = I18n.t("messages.there_is_already_a_schedule")
     end
 
-    redirect_to contest_edit_schedule_url
+    redirect_to contest_edit_schedule_url(@contest)
   end
 
 
@@ -142,7 +142,7 @@ class ContestsController < ApplicationController
       flash[:error] = I18n.t("messages.matchday_playing")
     end
     
-    redirect_to contest_standings_url()
+    redirect_to contest_standings_url(@contest)
   end
 
   protected

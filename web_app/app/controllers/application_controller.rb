@@ -38,6 +38,7 @@ class ApplicationController < ActionController::Base
   end
 
   helper_method :current_user, :logged_in?, :not_logged_in?
+  helper_method :administrator?
   helper_method :current_contest
 
   attr_accessor :current_page_title
@@ -84,6 +85,10 @@ class ApplicationController < ActionController::Base
     else
       @contest = @current_contest = Contest.first
     end
+  end
+
+  def administrator?
+    logged_in? and current_user.has_role?(:administrator)
   end
 
   def logged_in?

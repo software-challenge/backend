@@ -1,5 +1,6 @@
 <% semantic_form_for(@contestant ? [@contest, @contestant, @person] : [@contest, @person]) do |f| %>
   <% f.inputs do %>
+    <% if administrator? or current_user == @person %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
     <%= f.input :email, :required => true, :hint => t("views.email_required") %>
@@ -13,6 +14,7 @@
         <%=t "labels.send_notification" %>
       </label>
     </li>
+    <% end %>
 
     <% show_to :administrator do %>
       <%= f.input :administrator, :as => :boolean %>
@@ -25,10 +27,10 @@
         <li>
           <% content_for :teams do %>
             <div style="overflow-y: scroll; height: 200px; margin-bottom: 5px;">
-              <% Contest.all.each do |contest| %>
+              <% Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty?}.each do |contest| %>
                 <a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
                 <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a>
-                &nbsp;( <%= @person.memberships.find_all {|m| m.contestant.contest == contest}.count %> )
+                &nbsp;( <%= @person.memberships.find_all {|m| m.contest == contest and not m.contestant.hidden?}.count %> )
                 <br><br>
                 <% javascript_tag do %>
                   $(function() {
@@ -49,7 +51,7 @@
                 <% end %>
                 <div style="display: none; padding-left: 25px" id="contestants_<%= contest.id %>">
                 <% memberships = current_user.manageable_teams_for(contest).collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
-                <% associated_with_additional(@person.memberships, memberships, :contestant_id).each_with_index do |m,i| %>
+                <% associated_with_additional(@person.memberships_for(contest).find_all{|m| current_user.manageable_teams.include?(m.contestant)}, memberships, :contestant_id).each_with_index do |m,i| %>
                   <% unless m.contestant.hidden -%>
                     <% t = m.contestant %>
                     <% checkbox_id = "person_team_#{t.id}"  %>

@@ -48,6 +48,20 @@ class Contestant < ActiveRecord::Base
 
   def matches
     contest.matches.with_contestant(self)
+  end 
+
+  def current_client
+    if disqualified
+      contest.test_contestant.current_client
+    else
+      Client.find(attributes["current_client_id"])
+    end 
+  end
+
+  def disqualify
+    self.disqualified = true 
+    self.overall_member_count = 0
+    self.save! 
   end
 
   def matches_including_free_days

@@ -9,7 +9,7 @@
 </style>
 
 <div id="actions">
-  <% if @contest.ready? and !@contest.begun? %>
+  <% if @contest.ready? and !@contest.begun? and administrator? %>
     <% link_to reset_matchdays_contest_url(@contest), :method => "post" do %>
       <%= image_tag('actions/destroy.png') %> <%= t "views.clear_schedule" %>
     <% end %>
