@@ -12,9 +12,8 @@
 		</layout>
 	</appender>
 
-	<logger name="edu.cau" level="ERROR" />
+	<logger name="sc.player2011" level="DEBUG" />
 	<logger name="sc" level="ERROR" />
-	<logger name="gameClient" level="DEBUG" />
 
 	<root level="debug">
 		<appender-ref ref="STDOUT" />
