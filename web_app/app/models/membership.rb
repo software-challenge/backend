@@ -6,6 +6,8 @@ class Membership < ActiveRecord::Base
   belongs_to :contestant
   belongs_to :person
 
+  has_one :contest, :through => :contestant
+
   # lower level checks
   validates_presence_of :contestant
   validates_presence_of :person

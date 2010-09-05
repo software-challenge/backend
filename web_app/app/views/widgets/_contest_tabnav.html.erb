@@ -14,13 +14,15 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
         t.links_to hash_for_new_contest_url
         t.highlights_on :controller => "contests", :action => "create"
     end if @contest.new_record?
-
+  
+  end
+  
+  if @contest.ready? or administrator?
     add_tab do |t|
       t.named t("titles.schedule")
       begin; t.disable!; next; end if @contest.new_record?
       t.links_to contest_edit_schedule_url(@contest)
     end
-
   end
 
   add_tab do |t|

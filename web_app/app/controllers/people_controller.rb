@@ -25,6 +25,7 @@ class PeopleController < ApplicationController
     actions :edit, :update do
       allow :administrator
       allow logged_in, :if => :same_person
+      allow :tutor, :of => :contestant
     end
 
     action :remove_from_contestant do
@@ -191,6 +192,9 @@ class PeopleController < ApplicationController
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
+    unless administrator? or current_user == @person
+      person_params.reject! {|k,v| k != "teams"}
+    end
 
     success = @person.update_attributes(person_params)
 

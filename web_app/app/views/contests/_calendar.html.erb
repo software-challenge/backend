@@ -7,6 +7,7 @@
     var $calendar = $('#calendar-widget');
     $.extend(calSettings, locale, {
       disableResizing: true
+      ,disableDragging: <%= !administrator? %>
       ,buttonText: {today: "Heute"}
       ,aspectRatio: 1.618
       ,defaultView: 'month'

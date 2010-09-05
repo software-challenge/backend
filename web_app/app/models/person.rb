@@ -129,7 +129,7 @@ class Person < ActiveRecord::Base
     if self.has_role? :administrator
       contest.contestants.visible.without_testers
     else
-      teams
+      teams.reject{|t| t.contest != contest}
     end
   end
 
@@ -143,6 +143,10 @@ class Person < ActiveRecord::Base
 
   def membership_for(contestant)
     memberships.first :conditions => { :contestant_id => contestant.id }
+  end
+
+  def memberships_for(contest)
+    memberships.find_all{|m| m.contest == contest}
   end
 
   alias member_of? membership_for
