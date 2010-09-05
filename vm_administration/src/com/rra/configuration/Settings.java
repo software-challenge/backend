@@ -14,4 +14,9 @@ public class Settings
 	public static final String	COMMAND_OPTION	= "c";
 	public static final String	HOST_OPTION		= "h";
 	public static final String	QUEUE_OPTION	= "q";
+	public static final String	INTERVAL_OPTION = "i";
+	public static final String	MAX_PROC_OPTION = "m";
+	public static final String  DEBUG_OPTION	= "d";
+	
+	public static boolean 		DEBUG_MODE		= false;
 }

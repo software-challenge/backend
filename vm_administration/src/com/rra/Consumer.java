@@ -1,6 +1,8 @@
 package com.rra;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.sound.midi.SysexMessage;
 
@@ -21,10 +23,25 @@ public class Consumer
 	protected String			bash;
 	protected String			command;
 	protected String			queue;
+	protected List<IConsumerListener> listeners = new LinkedList<IConsumerListener>();
 
 	public Consumer(String hostname, int port) throws IOException
 	{
 		this.conn = new ConnectionFactory().newConnection(hostname, port);
+	}
+	
+	public void addConsumerListener(IConsumerListener listener) {
+		listeners.add(listener);
+	}
+	
+	public void removeConsumerListener(IConsumerListener listener) {
+		listeners.remove(listener);
+	}
+	
+	protected void notifyOnStartConsuming() {
+		for (IConsumerListener listener : listeners) {
+			listener.onStartConsuming();
+		}
 	}
 
 	protected void consume(String queue) throws IOException
@@ -36,10 +53,11 @@ public class Consumer
 		GetResponse response = ch.basicGet(queue, noAck);
 		if (response == null)
 		{
-			System.out.println("No Messages in Queue '" + queue + "'");
+			// Do nothing
 		} else
 		{
 			System.out.println("Consuming message...");
+			notifyOnStartConsuming();
 			onConsume(new String(response.getBody()));
 		}
 		ch.close();

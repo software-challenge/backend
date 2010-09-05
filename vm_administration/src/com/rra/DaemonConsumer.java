@@ -11,40 +11,53 @@ import com.rra.configuration.Settings;
 
 public class DaemonConsumer
 	implements
-		Runnable
+		Runnable, IConsumerListener
 {
 
 	public void run()
 	{
 		boolean active = true;
+		System.out.println("Consumer daemon started...");
 		while (active)
 		{
-			System.out.println("Executing consumer...");
 			new Thread(new Runnable()
 			{
 				public void run()
 				{
-					Consumer c;
-					try
-					{
-						c = new Consumer(hostName,
-								Settings.DEFAULT_PORT);
-						c.bash = bashPath;
-						c.command = command;
-						c.consume(queue);
-						c.free();
+					if (Settings.DEBUG_MODE) {
+						System.out.println(DaemonConsumer.this.currentProcs + "/" + DaemonConsumer.this.maxProcs + " running");
 					}
-					catch (IOException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					if (DaemonConsumer.this.currentProcs < DaemonConsumer.this.maxProcs) {
+						if (Settings.DEBUG_MODE) {
+							System.out.println("Checking queue...");
+						}
+						Consumer c;
+						DaemonConsumer.this.currentProcs += 1;
+						try
+						{
+							c = new Consumer(hostName,
+									Settings.DEFAULT_PORT);
+							c.addConsumerListener(DaemonConsumer.this);
+							c.bash = bashPath;
+							c.command = command;
+							c.consume(queue);
+							c.free();
+						}
+						catch (IOException e)
+						{
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						finally {
+							DaemonConsumer.this.currentProcs -= 1;
+						}
 					}
 				}
 
 			}).start();
 			try
 			{
-				Thread.sleep(1000 * 30);
+				Thread.sleep(interval * 1000);
 			}
 			catch (InterruptedException e)
 			{
@@ -57,6 +70,9 @@ public class DaemonConsumer
 	protected String	bashPath;
 	protected String	command;
 	protected String	queue;
+	protected int		interval;
+	protected int		maxProcs;
+	protected int		currentProcs = 0;
 
 	public static void main(String[] args)
 	{
@@ -69,6 +85,9 @@ public class DaemonConsumer
 				"Path to bash (normally /bin/bash)");
 			o.addOption(Settings.COMMAND_OPTION, true, "Command to execute");
 			o.addOption(Settings.QUEUE_OPTION, true, "Queue to consume");
+			o.addOption(Settings.INTERVAL_OPTION, true, "How long to wait before consuming next message");
+			o.addOption(Settings.MAX_PROC_OPTION, true, "How many processes at same time");
+			o.addOption(Settings.DEBUG_OPTION, false, "Enable debug mode");
 
 			CommandLineParser parser = new PosixParser();
 			CommandLine cmd = parser.parse(o, args);
@@ -78,6 +97,10 @@ public class DaemonConsumer
 			dc.bashPath = cmd.getOptionValue(Settings.BASH_OPTION);
 			dc.command = cmd.getOptionValue(Settings.COMMAND_OPTION);
 			dc.queue = cmd.getOptionValue(Settings.QUEUE_OPTION);
+			dc.interval = Integer.valueOf(cmd.getOptionValue(Settings.INTERVAL_OPTION, "5"));
+			dc.maxProcs = Integer.valueOf(cmd.getOptionValue(Settings.MAX_PROC_OPTION, "12"));
+			Settings.DEBUG_MODE = cmd.hasOption(Settings.DEBUG_OPTION);
+			
 			if (dc.hostName == null || dc.bashPath == null
 					|| dc.command == null || dc.queue == null)
 			{
@@ -93,5 +116,9 @@ public class DaemonConsumer
 			ex.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+	public void onStartConsuming() {
+		System.out.println("Starting process " + currentProcs + "/" + maxProcs);
 	}
 }
