@@ -450,11 +450,16 @@ public class FrameRenderer extends JPanel {
 			p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
 			p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
 
+			getParent().repaint();
+			
 			try {
 				Thread.sleep(1000 / 30);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
+			
+			
 //
 //			repainted = false;
 //			getParent().repaint();

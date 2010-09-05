@@ -65,7 +65,7 @@ public final class GameState implements Cloneable {
 
 		dice = new LinkedList<Die>();
 		for (int i = dice.size(); i < Constants.DIE_COUNT; i++) {
-			addDice();
+			rollDice();
 		}
 
 		// liste mit zwei plaetzen initialisieren
@@ -120,15 +120,14 @@ public final class GameState implements Cloneable {
 	public int getTurn() {
 		return turn;
 	}
-	
+
 	/**
 	 * liefert die aktuelle rundenzahl
 	 */
 	public int getRound() {
-		return turn/2;
+		return turn / 2;
 	}
-	
-	
+
 	/**
 	 * liefert den zuletzt ausgefuehrten zug
 	 */
@@ -259,17 +258,26 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * entfernt einen wuerfel aus dem vorrat und fuellt den vorrat auf
+	 * entfernt einen wuerfel aus dem vorrat
 	 */
 	public void removeDice(Die die) {
 		dice.remove(die);
-		addDice();
+
 	}
 
-	/*
-	 * einen wuerfelwurf machen und den wuerfel dem vorrat hinzufuegen
+	/**
+	 * fuegt dem wuerfelvorrat einen neuen wuerfel hinzu
 	 */
-	private void addDice() {
+	public void addDice(Die die) {
+		dice.add(die);
+
+	}
+
+	/**
+	 * einen regelkonformen wuerfelwurf machen und den wuerfel dem vorrat
+	 * hinzufuegen
+	 */
+	public void rollDice() {
 		dice.add(new Die(rand.nextInt(Constants.DIE_SIZE) + 1));
 
 		boolean again = dice.size() > 1;
@@ -422,7 +430,7 @@ public final class GameState implements Cloneable {
 			}
 			break;
 
-		}		
+		}
 		return okay;
 	}
 

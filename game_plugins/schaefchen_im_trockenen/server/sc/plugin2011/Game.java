@@ -87,30 +87,31 @@ public class Game extends RoundBasedGameInstance<Player> {
 				err = "Es gibt kein Schaf #" + move.sheep;
 			} else if (!gameState.getSheep(move.sheep).owner
 					.equals(getActivePlayer().getPlayerColor())) {
-				err = "Der aktuelle Spieler darf schaf #" + move.sheep
+				err = "Der aktuelle Spieler darf Schaf #" + move.sheep
 						+ "nicht bewegen";
+			} else if (!gameState.getReacheableNodes(
+					gameState.getSheep(move.sheep)).contains(move.target)) {
+				err = "Schaf #" + move.sheep + " kann das Feld #" + move.target
+						+ " nicht erreichen";
 			} else if (!gameState.isValidTarget(move.sheep, move.target)) {
 				err = "Schaf #" + move.sheep + " darf das Feld #" + move.target
 						+ " nicht betreten";
-			} else if (!gameState.isValideMove(move)) {
-				err = "Schaf #" + move.sheep + " kann das Feld #" + move.target
-						+ " nicht erreichen";
 			}
 
 			// fehlerhgaften zug melden
 			if (err != null) {
 				author.setViolated(true);
-				gameState.endGame(author.getPlayerColor().opponent(),
-						"Ungültiger Zug von '" + author.getDisplayName()
-								+ "'.\\n" + err + ".");
-				logger.error("Received invalid move {} from {}: "
-						+ move.toString() + ". " + err, data, author);
-				throw new GameLogicException("Move was invalid: " + err);
+				err = "Ungültiger Zug von '" + author.getDisplayName()
+						+ "'.\\n" + err + ".";
+				logger.error(err);
+				gameState.endGame(author.getPlayerColor().opponent(), err);
+				throw new GameLogicException(err);
 
 			}
 
 			// korrekten zug ausfuehren
 			gameState.performMove(move);
+			gameState.rollDice();
 
 			// wurde durch diesen zug das spiel gewonnen?
 			if (gameState.getSheeps(author.getPlayerColor().opponent()).size() == 0) {
