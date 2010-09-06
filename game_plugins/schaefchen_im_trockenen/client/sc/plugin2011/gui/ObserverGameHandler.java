@@ -24,7 +24,7 @@ public class ObserverGameHandler implements IGameHandler {
 
 	@Override
 	public void onUpdate(GameState gameState) {
-		RenderFacade.getInstance().updateGameState(gameState, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().updateGameState(gameState);
 	}
 
 	@Override

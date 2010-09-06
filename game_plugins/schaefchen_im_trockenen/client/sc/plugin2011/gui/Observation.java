@@ -147,8 +147,10 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 	}
 
+	
+	@SuppressWarnings("unused")
 	private String createGameEndedString(GameResult data) {
-		String result = "\n";
+		String result = "----------------\n";
 
 		if (data == null) {
 			result += "Leeres Spielresultat!";
@@ -156,9 +158,19 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 
 		GameState gameState = (GameState) conGame.getCurrentState();
+		
+		String name1 = "Spieler 1";
+		String name2 = "Spieler 2";
 
-		String name1 = gameState.getPlayerNames()[0];
-		String name2 = gameState.getPlayerNames()[1];
+		if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED) {
+			name1 = gameState.getCurrentPlayer().getDisplayName();
+			name2 = gameState.getOtherPlayer()
+					.getDisplayName();
+		} else {
+			name1 = gameState.getOtherPlayer()
+					.getDisplayName();
+			name2 = gameState.getCurrentPlayer().getDisplayName();
+		}
 
 		if (conGame.getCurrentError() != null) {
 			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
@@ -210,23 +222,30 @@ public class Observation implements IObservation, IUpdateListener,
 			result += " hat das SoftTimeout überschritten!\n";
 		}
 
-		String[] results1 = data.getScores().get(0).toStrings();
-		String[] results2 = data.getScores().get(0).toStrings();
-		result += name1 + ": " + results1[6] + " Punkte (" + results1[1] + ", "
-				+ results1[2] + ", " + results1[3] + ", " + results1[4] + ", "
-				+ results1[5] + ")\n";
-		result += name2 + ": " + results2[6] + " Punkte (" + results2[1] + ", "
-				+ results2[2] + ", " + results2[3] + ", " + results2[4] + ", "
-				+ results2[5] + ")\n";
-
-		if (results1[0].equals("1")) {
-			result += "Gewinner: " + name1 + "\n";
-		} else if (results2[0].equals("1")) {
-			result += "Gewinner: " + name2 + "\n";
+		String[] results = data.getScores().get(0).toStrings();
+		if (results[0].equals("1")) {
+			result += name1;
+			result += ": Gewinner\n";
+		} else if (results[0].equals("0")) {
+			result += name1;
+			result += ": Verlierer\n";
 		} else {
 			result += "Unentschieden\n";
 		}
-		
+
+		result += name1 + ": erreichtes Feld: " + results[1] + "\n";
+
+		result += name2;
+
+		results = data.getScores().get(1).toStrings();
+		if (results[0].equals("1")) {
+			result += ": Gewinner\n";
+		} else if (results[0].equals("0")) {
+			result += ": Verlierer\n";
+		}
+
+		result += name2 + ": erreichtes Feld: " + results[1];
+
 		return result;
 	}
 
@@ -240,7 +259,7 @@ public class Observation implements IObservation, IUpdateListener,
 
 			for (IGameEndedListener listener : gameEndedListeners) {
 				try {
-					listener.onGameEnded(data, createGameEndedString(data));
+					listener.onGameEnded(data, null);
 				} catch (Exception e) {
 					logger.error("GameEnded Notification caused an exception.",
 							e);
@@ -360,6 +379,9 @@ public class Observation implements IObservation, IUpdateListener,
 
 	@Override
 	public void onError(String errorMessage) {
+		GameState gameState = (GameState) conGame.getCurrentState();
+		gameState.endGame(PlayerColor.RED, errorMessage);
+		System.out.println(" ***************** ERROR");
 		RenderFacade.getInstance().gameError(errorMessage);
 	}
 

@@ -26,7 +26,7 @@ public class HumanGameHandler implements IGameHandler {
 
 	@Override
 	public void onUpdate(GameState gameState) {
-		RenderFacade.getInstance().updateGameState(gameState, client.getID());
+		RenderFacade.getInstance().updateGameState(gameState);
 	}
 
 	@Override
