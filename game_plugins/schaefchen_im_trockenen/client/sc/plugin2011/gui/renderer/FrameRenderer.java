@@ -1089,11 +1089,12 @@ public class FrameRenderer extends JPanel {
 
 		}
 
-		fontY2 = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - 5;
-		int fontX2 = getWidth() - BORDER_SIZE - 5;
+		fontY2 = getHeight() - BORDER_SIZE - 5;
 		if (OPTIONS[PROGRESS_BAR]) {
-			fontX2 -= fmSheep.stringWidth("Leertaste für Einstellungen");
+			fontY2 -= PROGRESS_BAR_HEIGTH;
 		}
+		int fontX2 = getWidth() - BORDER_SIZE - 5;
+		fontX2 -= fmSheep.stringWidth("Leertaste für Einstellungen");
 		g2.setFont(hSheep);
 		g2.setColor(Color.DARK_GRAY);
 		if (hasFocus()) {
