@@ -14,6 +14,7 @@ import sc.plugin2011.Move;
 import sc.plugin2011.Player;
 import sc.plugin2011.PlayerColor;
 import sc.shared.GameResult;
+import sc.shared.ScoreCause;
 
 /**
  * 
@@ -190,8 +191,11 @@ public class RenderFacade {
 
 	}
 
-	public void updateGameState(final GameState gameState,
-			final EPlayerId target) {
+	public void updateGameState(final GameState gameState) {
+		updateGameState(gameState, false);
+	}
+
+	private void updateGameState(final GameState gameState, boolean force) {
 
 		if (disabled) {
 			return;
@@ -199,7 +203,8 @@ public class RenderFacade {
 
 		synchronized (gameStateQueue) {
 
-			if (first || gameState.getTurn() != lastGameState.getTurn()) {
+			if (first || gameState.getTurn() != lastGameState.getTurn()
+					|| force) {
 
 				first = false;
 				maxTurn = Math.max(maxTurn, gameState.getTurn());
@@ -269,6 +274,41 @@ public class RenderFacade {
 	 */
 	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color,
 			String errorMessage) {
+
+		System.out.println();
+		if (data != null) {
+			ScoreCause cause = data.getScores().get(
+					color == PlayerColor.RED ? 0 : 1).getCause();
+
+			if (errorMessage == null && cause != ScoreCause.REGULAR) {
+
+				String err = "'"
+						+ lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0
+								: 1] + "' hat keinen Zug gesendet.\\n";
+
+				switch (cause) {
+
+				case SOFT_TIMEOUT:
+				case HARD_TIMEOUT:
+					err += "Die maximale Zugzeit von 2 Sekunden wurde überschritten.";
+					break;
+
+				case LEFT:
+					err += "Der Spieler hat das Spiel verlassen.";
+					break;
+
+				case UNKNOWN:
+					err += "Es ist ein unbekannter Fehler aufgetreten.";
+					break;
+				}
+
+				lastGameState.endGame(color.opponent(), err);
+				updateGameState(lastGameState, true);
+			}
+		} else if (errorMessage != null) {
+			lastGameState.endGame(color.opponent(), errorMessage);
+			updateGameState(lastGameState, true);
+		}
 
 	}
 

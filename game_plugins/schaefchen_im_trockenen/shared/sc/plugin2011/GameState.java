@@ -292,7 +292,8 @@ public final class GameState implements Cloneable {
 			}
 
 			// neu wuerfeln, wenn der kommende spieler nichts machen kann
-			if (!again && currentPlayer != null) {
+			if (!again && currentPlayer != null
+					&& !getSheeps(currentPlayer.opponent()).isEmpty()) {
 				again = getValidMoves(currentPlayer.opponent()).size() == 0;
 			}
 

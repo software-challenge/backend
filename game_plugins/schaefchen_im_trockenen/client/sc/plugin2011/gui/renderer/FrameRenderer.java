@@ -77,7 +77,9 @@ public class FrameRenderer extends JPanel {
 	private static final String TITLE = "Schäfchen im Trockenen";
 	private static final int ICON_SIZE = 34;
 	private static final int SHEEP_SIZE = 44;
+	private static final int PROGRESS_SHEEP_SIZE = 60;
 	private static final int DOG_SIZE = 50;
+	private static final int PROGRESS_BAR_HEIGTH = 36;
 	private final int STATS_WIDTH = getFontMetrics(h1).stringWidth(TITLE) + 4
 			* BORDER_SIZE;
 
@@ -105,6 +107,7 @@ public class FrameRenderer extends JPanel {
 	private Image scaledBgBoard;
 
 	private final Image sheepIcon;
+	private final Image progessSheepIcon;
 	private final Image dogIcon;
 	private final Image mushroomIcon;
 	private final Image flower1Icon;
@@ -280,14 +283,15 @@ public class FrameRenderer extends JPanel {
 					OPTIONS[i] = !OPTIONS[i];
 					if (i == CURVED_SHAPES) {
 						GUINode.setSimple(!OPTIONS[CURVED_SHAPES]);
-					}
-					if (i == BENCHMARK) {
+					} else if (i == BENCHMARK) {
 
 						bmFrameRate = 0;
 						bmPhi = 0;
 						bmLastSecond = System.currentTimeMillis();
 						Thread t = new Thread(bmThread);
 						t.start();
+					} else if (i == PROGRESS_BAR) {
+						resizeBoard();
 					}
 					RenderConfiguration.saveSettings();
 					updateBuffer = true;
@@ -319,12 +323,14 @@ public class FrameRenderer extends JPanel {
 	private int fontX;
 	private boolean highliteSheep;
 	private int turnToAnswer;
-	//private boolean repainted;
+
+	// private boolean repainted;
 
 	public FrameRenderer() {
 		bgBoard = loadImage("resource/game/boden_wiese3.png");
 
 		sheepIcon = loadImage("resource/game/sheep.png");
+		progessSheepIcon = loadImage("resource/game/medsheep.png");
 		dogIcon = loadImage("resource/game/dog.png");
 		mushroomIcon = loadImage("resource/game/mushroom.png");
 		flower1Icon = loadImage("resource/game/flower1.png");
@@ -408,6 +414,7 @@ public class FrameRenderer extends JPanel {
 
 		if (gameState.gameEnded()) {
 			gameEnded = true;
+			currentPlayer = gameState.winner();
 		}
 
 		updateBuffer = true;
@@ -442,40 +449,17 @@ public class FrameRenderer extends JPanel {
 
 		for (int frame = 0; frame < frames; frame++) {
 
-			// System.out.println(" *** *** frame " + frame + "/" + frames
-			// + " of " + gameState.getTurn() + " at "
-			// + System.currentTimeMillis() + " / " + this.frames
-			// + " from " + Thread.currentThread().getName());
-
 			p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
 			p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
 
+			invalidate();
 			getParent().repaint();
-			
+
 			try {
 				Thread.sleep(1000 / 30);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
-			
-			
-//
-//			repainted = false;
-//			getParent().repaint();
-//			synchronized (LOCK) {
-//				while (!repainted) {
-//					getParent().repaint();
-//
-//					try {
-//						LOCK.wait();
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-//
-//				}
-//
-//			}
 
 		}
 
@@ -529,7 +513,8 @@ public class FrameRenderer extends JPanel {
 	private void resizeBoard() {
 
 		int width = getWidth() - STATS_WIDTH - 2 * BORDER_SIZE;
-		int heigth = getHeight() - 2 * BORDER_SIZE;
+		int heigth = getHeight() - 2 * BORDER_SIZE
+				- (OPTIONS[PROGRESS_BAR] ? PROGRESS_BAR_HEIGTH : 0);
 
 		size = Math.min(width, heigth);
 		xBorder = (width - size) / 2 + BORDER_SIZE;
@@ -591,7 +576,7 @@ public class FrameRenderer extends JPanel {
 		}
 
 		bmFrames++;
-		//repainted = true;
+		// repainted = true;
 		synchronized (LOCK) {
 			LOCK.notifyAll();
 		}
@@ -621,8 +606,15 @@ public class FrameRenderer extends JPanel {
 
 		// seiitenleiste
 		g2.setColor(getTransparentColor(new Color(200, 240, 200), 160));
-		g2.fillRect(getWidth() - BORDER_SIZE - STATS_WIDTH, 0, STATS_WIDTH
-				+ BORDER_SIZE, getHeight());
+		g2.fillRect(getWidth() - BORDER_SIZE - STATS_WIDTH, BORDER_SIZE,
+				STATS_WIDTH, getHeight() - 2 * BORDER_SIZE);
+
+		// fortschrittsleite
+		if (OPTIONS[PROGRESS_BAR]) {
+			g2.fillRect(BORDER_SIZE, getHeight() - BORDER_SIZE
+					- PROGRESS_BAR_HEIGTH, getWidth() - 2 * BORDER_SIZE
+					- STATS_WIDTH, PROGRESS_BAR_HEIGTH);
+		}
 
 		paintStaticComponents(g2);
 		if (gameState != null) {
@@ -669,6 +661,56 @@ public class FrameRenderer extends JPanel {
 	}
 
 	private void paintSemiStaticComponents(Graphics2D g2) {
+
+		// fortschrittsbalken
+		if (OPTIONS[PROGRESS_BAR]) {
+			g2.setColor(Color.BLACK);
+			g2.setFont(h3);
+			int left = fmH3.stringWidth("Spielfortschritt:") + BORDER_SIZE + 30;
+			int right = getWidth() - left - 30;
+			int fontY = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH / 2
+					+ fmH3.getHeight() / 2 - 4;
+			g2.drawString("Spielfortschritt:", BORDER_SIZE + 10, fontY);
+			g2.drawString("Runde " + gameState.getRound() + " von 30",
+					right + 30, fontY);
+
+			int progress = (gameState.getTurn() * (right - left))
+					/ (2 * Constants.ROUND_LIMIT);
+
+			if (OPTIONS[CURVED_SHAPES]) {
+				g2.setColor(Color.GRAY);
+				g2.fillRoundRect(left, getHeight() - BORDER_SIZE
+						- PROGRESS_BAR_HEIGTH + 8, right - left,
+						PROGRESS_BAR_HEIGTH - 16, 10, 10);
+
+				g2.setColor(Color.GREEN);
+				g2.fillRoundRect(left, getHeight() - BORDER_SIZE
+						- PROGRESS_BAR_HEIGTH + 8, progress,
+						PROGRESS_BAR_HEIGTH - 16, 10, 10);
+
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRoundRect(left, getHeight() - BORDER_SIZE
+						- PROGRESS_BAR_HEIGTH + 8, right - left,
+						PROGRESS_BAR_HEIGTH - 16, 10, 10);
+			} else {
+				g2.setColor(Color.GRAY);
+				g2.fillRect(left, getHeight() - BORDER_SIZE
+						- PROGRESS_BAR_HEIGTH + 8, right - left,
+						PROGRESS_BAR_HEIGTH - 16);
+
+				g2.setColor(Color.GREEN);
+				g2.fillRect(left, getHeight() - BORDER_SIZE
+						- PROGRESS_BAR_HEIGTH + 8, progress,
+						PROGRESS_BAR_HEIGTH - 16);
+
+			}
+
+			g2.drawImage(progessSheepIcon, left + progress
+					- PROGRESS_SHEEP_SIZE / 2, getHeight()
+					- PROGRESS_SHEEP_SIZE, PROGRESS_SHEEP_SIZE,
+					PROGRESS_SHEEP_SIZE, this);
+
+		}
 
 		// rahmen
 		g2.setColor(currentPlayer == null ? Color.LIGHT_GRAY
@@ -942,14 +984,16 @@ public class FrameRenderer extends JPanel {
 		g2.drawString(Math.abs(flowers) + " " + type + " auf dem Spielfeld",
 				fontX, fontY);
 
-		fontY += 20;
-		int round = gameState.getRound() + 1;
-		String roundString = "Das Rundenlimit wurde erreicht.";
-		if (round <= Constants.ROUND_LIMIT) {
-			roundString = "Runde " + (gameState.getRound() + 1) + " von "
-					+ Constants.ROUND_LIMIT + " Runden.";
+		if (!OPTIONS[PROGRESS_BAR]) {
+			fontY += 20;
+			int round = gameState.getRound() + 1;
+			String roundString = "Das Rundenlimit wurde erreicht.";
+			if (round <= Constants.ROUND_LIMIT) {
+				roundString = "Runde " + (gameState.getRound() + 1) + " von "
+						+ Constants.ROUND_LIMIT + " Runden.";
+			}
+			g2.drawString(roundString, fontX, fontY);
 		}
-		g2.drawString(roundString, fontX, fontY);
 
 		fontY += 35;
 		g2.setFont(h2);
@@ -1045,11 +1089,15 @@ public class FrameRenderer extends JPanel {
 
 		}
 
-		fontY2 = getHeight() - BORDER_SIZE - 5;
+		fontY2 = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - 5;
+		int fontX2 = getWidth() - BORDER_SIZE - 5;
+		if (OPTIONS[PROGRESS_BAR]) {
+			fontX2 -= fmSheep.stringWidth("Leertaste für Einstellungen");
+		}
 		g2.setFont(hSheep);
 		g2.setColor(Color.DARK_GRAY);
 		if (hasFocus()) {
-			g2.drawString("Leertaste für Einstellungen", fontX, fontY2);
+			g2.drawString("Leertaste für Einstellungen", fontX2, fontY2);
 		}
 
 	}

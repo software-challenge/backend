@@ -16,19 +16,21 @@ public class RenderConfiguration {
 	public static final int TRANSPARANCY = 1;
 	public static final int BACKGROUND = 2;
 	public static final int CURVED_SHAPES = 3;
-	public static final int SHEEP_MOVEMENT = 4;
-	public static final int BENCHMARK = 5;
-	public static final int NODE_INDICES = 6;
-	public static final int SHEEP_INDICES = 7;
-	public static final int DEBUG_VIEW = 8;
+	public static final int PROGRESS_BAR = 4;
+	public static final int SHEEP_MOVEMENT = 5;
+	public static final int BENCHMARK = 6;
+	public static final int NODE_INDICES = 7;
+	public static final int SHEEP_INDICES = 8;
+	public static final int DEBUG_VIEW = 9;
 
 	public static final String[] OPTION_NAMES = new String[] {
 			"Kantenglättung", "Transparenz", "Hintergrundbild",
-			"Rahmen & Rundungen", "Bewegte Schafe", "Benchmark",
-			"Feldindizes zeigen", "Schafindizes zeigen", "Debugansicht" };
+			"Rahmen & Rundungen", "Fortschrittsanzeige", "Bewegte Schafe",
+			"Benchmark", "Feldindizes zeigen", "Schafindizes zeigen",
+			"Debugansicht" };
 
 	private static final boolean[] DEFAULTS = new boolean[] { true, true, true,
-			true, true, false, false, false, false };
+			true, true, true, false, false, false, false };
 
 	public static final boolean[] OPTIONS = DEFAULTS.clone();
 

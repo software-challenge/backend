@@ -111,7 +111,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 			// korrekten zug ausfuehren
 			gameState.performMove(move);
-			gameState.rollDice();
 
 			// wurde durch diesen zug das spiel gewonnen?
 			if (gameState.getSheeps(author.getPlayerColor().opponent()).size() == 0) {
@@ -123,6 +122,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 												.getPlayerColor() == PlayerColor.RED ? 1
 												: 0])
 										+ "' hat keine Schafe mehr.");
+				System.out.println(" ***** vorzeitig zu ende");
+
 			} else if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
@@ -138,6 +139,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 						+ winnerName);
 			}
 
+			// neuer wuerfel und naechster spieler
+			gameState.rollDice();
 			next();
 
 		} else {
