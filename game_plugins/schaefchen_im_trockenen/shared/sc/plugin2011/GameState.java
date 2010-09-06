@@ -680,10 +680,11 @@ public final class GameState implements Cloneable {
 	 */
 	public void endGame(PlayerColor winner, String reason) {
 
-		condition = new Condition();
-		condition.winner = winner;
-		condition.reason = reason;
-
+		if (!gameEnded()) {
+			condition = new Condition();
+			condition.winner = winner;
+			condition.reason = reason;
+		}
 	}
 
 	/**

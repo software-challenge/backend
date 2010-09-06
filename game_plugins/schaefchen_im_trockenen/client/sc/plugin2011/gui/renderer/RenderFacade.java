@@ -305,7 +305,9 @@ public class RenderFacade {
 				lastGameState.endGame(color.opponent(), err);
 				updateGameState(lastGameState, true);
 			}
-		} else if (errorMessage != null) {
+		}
+
+		if (errorMessage != null) {
 			lastGameState.endGame(color.opponent(), errorMessage);
 			updateGameState(lastGameState, true);
 		}
