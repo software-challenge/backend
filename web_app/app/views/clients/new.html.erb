@@ -8,6 +8,8 @@
   <% semantic_form_for([@contest, @contestant, @client], :html => { :multipart => true }) do |f| %>
     <% f.inputs do %>
       <%= f.input :file, :label => "&nbsp;" %>
+      <%= f.input :name, :label => "Name" %>
+      <%= f.input :parameters, :label => "Parameter" %>
     <% end %>
 
     <% f.buttons do %>
@@ -93,6 +95,7 @@
   $(document).ready(function() {
     //return;
     var token = encodeURIComponent(encodeURIComponent($('#new_client [name=authenticity_token]').val()));
+    var parameter = $("input#parameters").val();
     //$('#new_client .buttons').hide();
     $('#client_file').uploadify({
       uploader: '/flashs/uploadify.swf',
@@ -118,9 +121,16 @@
       onInit: function() {
         $('#new_client .buttons').hide(); 
       },
+      onSelectOnce: function() {
+        var upload = $("#client_file");
+        upload.uploadifySettings('scriptData', {
+            'client[parameters]' : $("input#client_parameters").val(),
+            'client[name]' : $("input#client_name").val(),
+            'authenticity_token' : encodeURIComponent($('#new_client [name=authenticity_token]').val())
+        });
+      },
       scriptData: {
-        '<%= u get_session_key_name %>': '<%= u cookies[get_session_key_name] %>',
-        'authenticity_token': token
+        '<%= u get_session_key_name %>': '<%= u cookies[get_session_key_name] %>'
       }
     });
   });

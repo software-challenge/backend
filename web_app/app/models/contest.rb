@@ -64,7 +64,7 @@ class Contest < ActiveRecord::Base
 
   def after_save
     if game_definition_changed?
-      file = Rails.root.join('public', 'clients', game_definition.test_client[:file])
+      file = Rails.root.join('public', 'clients', game_definition.tester[:file])
 
       client = test_contestant.current_client
       client ||= test_contestant.build_current_client(:author => current_user, :contestant => test_contestant)
@@ -72,7 +72,7 @@ class Contest < ActiveRecord::Base
       client.save!
       client.build_index!
 
-      main_file_entry_name = game_definition.test_client[:executable]
+      main_file_entry_name = game_definition.tester[:executable]
       main_file_entry = client.file_entries(:reload).find_by_file_name(main_file_entry_name)
       raise "main_file_entry #{main_file_entry_name} not found" unless main_file_entry
       client.main_file_entry = main_file_entry
