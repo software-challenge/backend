@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100904185530) do
+ActiveRecord::Schema.define(:version => 20100905184742) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(:version => 20100904185530) do
     t.integer  "file_file_size"
     t.integer  "main_file_entry_id"
     t.boolean  "hidden",             :default => false, :null => false
+    t.string   "parameters"
   end
 
   create_table "comments", :force => true do |t|

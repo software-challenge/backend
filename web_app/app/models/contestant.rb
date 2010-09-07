@@ -54,7 +54,7 @@ class Contestant < ActiveRecord::Base
     if disqualified
       contest.test_contestant.current_client
     else
-      Client.find(attributes["current_client_id"])
+      attributes["current_client_id"].nil? ? nil : Client.find(attributes["current_client_id"])
     end 
   end
 

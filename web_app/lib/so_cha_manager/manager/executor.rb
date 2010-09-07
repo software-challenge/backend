@@ -155,6 +155,9 @@ module SoChaManager
       end
 
       command = "#{executable} --host #{SoChaManager.server_host} --port #{SoChaManager.server_port} --reservation #{reservation}"
+      unless ai_program.parameters.blank?
+        command << " #{ai_program.parameters}"
+      end
       command << " > /dev/null 2>&1" if silent
 
       logger.info "Startup.sh Command: #{command}"

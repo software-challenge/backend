@@ -173,7 +173,7 @@ class PeopleController < ApplicationController
           if params[:contestant_id] and !@person.teams.visible.empty?
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
           else
-            redirect_to people_url
+            redirect_to contest_people_url(@contest)
           end
         end
         format.xml  { render :xml => @person, :status => :created, :location => @person }
@@ -205,10 +205,10 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = I18n.t("views.profile_of") + " " +  @person.name + " " + I18n.t("messages.updated_successfully")
         format.html do
-          if params[:contestant_id] and !@person.teams.visible.empty?
-            redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
+          if params[:contestant_id] and !@person.teams.for_contest(@contest).visible.empty?
+            redirect_to(:action => :people_for_contestant, :contestant_id => @contestant.id)
           elsif current_user.has_role? :administrator
-            redirect_to people_url
+            redirect_to contest_people_url(@contest)
           else
             redirect_to @person
           end
