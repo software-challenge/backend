@@ -162,10 +162,12 @@ class ClientsController < ApplicationController
 
   def status
     @client = @contestant.clients.find(params[:client_id])
+    odd = params[:odd]
+    odd = (odd.nil? or odd == "false") ? false : true
 
     render :update do |page|
       page.replace "client-#{@client.id}",
-        :partial => "client", :locals => { :client => @client, :render_comments => false }
+        :partial => "client", :locals => { :client => @client, :render_comments => false, :odd => odd }
 
       if @contestant.has_running_tests?
         page << %{$('.testActions .disabled').show();}
