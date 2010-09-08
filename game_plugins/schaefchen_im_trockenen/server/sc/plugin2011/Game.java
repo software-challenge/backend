@@ -127,7 +127,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			} else if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
-				String winnerName = "Das Spiel ist zu Ende.";
+				String winnerName = "Gleichstand nach Punkten.";
 				if (stats[0][6] > stats[1][6]) {
 					winner = PlayerColor.RED;
 					winnerName = "Sieg nach Punkten.";
