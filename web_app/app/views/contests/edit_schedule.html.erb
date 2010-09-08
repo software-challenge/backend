@@ -22,7 +22,7 @@
 
 <% tabnav :contest do %>
   <% unless @contest.ready? %>
-    <% contestant_count = @contest.contestants.visible.count %>
+    <% contestant_count = @contest.contestants.ranked.visible.count %>
     <% if contestant_count <= 1 %>
       <%= t("views.need_more_contestants_for_contest", {:count => contestant_count, :contestant_name => Contestant.human_name(:count => contestant_count)}) %>
     <% else %>

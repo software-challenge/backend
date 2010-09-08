@@ -110,7 +110,8 @@ class Finale < ActiveRecord::Base
     fromSettings = day_settings(settings[:from])
     if use.class == Hash
       num = use[:best]
-      return from.slots.find_all{|slot| !slot.contestant.hidden? and slot.position <= num}
+      #return from.slots.find_all{|slot| !slot.contestant.hidden? and slot.position <= num}
+      return from.slots.find_all{|slot| !slot.contestant.hidden? and slot.contestant.ranked?}.sort_by{|slot| slot.position}.first(num)
     else
       if use == :winners 
         return from.winners(:multiple => fromSettings[:multipleWinners]).flatten

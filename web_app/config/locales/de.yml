@@ -8,6 +8,13 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    no_matches_planned: "Es stehen keine Begegnungen an."
+    contestant_ranking: "In welcher Rangliste soll das Team aufgelistet werden?"
+    ranking:
+      all: "Alle"
+      none: "Außer Konkurrenz"
+      beginner: "Einsteiger"
+      advanced: "Fortgeschritten"
     challenger: "Herausforderer"
     challenged_one: "Gegner"
     friendly_games_experimental: "Dieses Feature ist noch experimentell. Bitte berichten Sie evtl. Fehler im Forum."
@@ -174,7 +181,7 @@ de:
     contestant_successfully_created: "Team wurde erfolgreich erstellt." 
     contestant_successfully_updated: "Team wurde erfolgreich aktualisiert."
     updated_successfully: "wurde erfolgreich aktualisiert"
-    confirm_contestant_disqualify: "Der Wettbewerb läuft bereits. Wenn Sie das Team disqualifizieren, werden alle Teammitglieder aus dem Team entfernt und das Team wird an den restlichen Spielen mit dem Testclient weiterspielen.\n\nMöchten Sie wirklich das Team \"{{name}}\" disqualifizieren?"
+    confirm_contestant_disqualify_during_contest: "Der Wettbewerb läuft bereits. Wenn Sie das Team disqualifizieren, werden alle Teammitglieder aus dem Team entfernt und das Team wird aus allen Spieltagen entfernt. Abschließend werden die Ranglisten neu berechnet, was einige Zeit dauern kann.\n\nDiese Änderung ist nicht rückgängig zu machen!\n\nMöchten Sie wirklich das Team \"{{name}}\" disqualifizieren?"
     confirm_disqualify: "Nach der manuellen Disqualifizierung wird das Spiel so gewertet, als wäre der Spieler regulär disqualifiziert worden.\nHiernach sollte die Rangliste neu berechnet werden (Addieren-Button).\n\nMöchten Sie wirklich das Team für diese Runde disqualifiziren? "
     confirm_requalify: "Wird die Disqualifizierung aufgehoben, werden die angezeigten Werte des Spielers in die Gesamtwertung übernommen, auch wenn der Spieler das Ziel nicht erreicht hat. Diese Funktion kann NICHT die Wiederholung eines Spieltages ersetzen!\nHiernach sollte die Rangliste neu berechnet werden (Addieren-Button).\n\nMöchten Sie wirklich die Disqualifikation dieses Teams für diese Runde rückgängig machen?"        
     confirm_publish_finale: "Wollen Sie das Finale wirklich veröffentlichen? Die Finalergebnisse werden dann für jeden sichtbar sein!"
@@ -195,6 +202,7 @@ de:
     no_user_with_adress: "Es existiert kein Benutzer mit dieser E-Mail Adresse"
     admin_password_cannot_be_changed: "Passwörter für Administratoren können nicht automatisch geändert werden."
   actions:
+    refresh: "Aktualisieren"
     reject: "Ablehnen"
     accept: "Annehmen"
     revoke: "Absagen"

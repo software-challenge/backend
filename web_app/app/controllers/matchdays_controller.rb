@@ -56,6 +56,13 @@ class MatchdaysController < ApplicationController
     end
   end
 
+  def get_standings
+    @matchday = @contest.matchdays.find(params[:id])
+    ranking = params[:ranking]
+    ranking ||= "all"
+    render :partial => "matchdays/standings", :locals => {:matchday => @matchday, :ranking => ranking}
+  end
+
   def get_progress
     matchday = Matchday.find(params[:id])
     render :partial => "matchday_progress", :locals => {:matchday => matchday}

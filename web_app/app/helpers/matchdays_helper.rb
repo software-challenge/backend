@@ -31,10 +31,11 @@
       end
       not_played_contestants = all_contestants - played_contestants
 
-      if not_played_contestants.size == 1
-        return not_played_contestants.first
-      else
-        return nil
-      end
+      return not_played_contestants
+      #if not_played_contestants.size == 1
+        #return not_played_contestants.first
+      #else
+        #return nil
+      #end
     end
 end

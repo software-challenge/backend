@@ -145,8 +145,7 @@ class ContestantsController < ApplicationController
 
   def hide
     if @contest.ready?
-      # Contest already started, instead of hiding, hide the members and replace
-      # client with simple client
+      # Contest already started, instead of hiding, hide the members and remove contestant from matchdays
       @contestant.memberships.each do |ms|
         ms.destroy
       end  

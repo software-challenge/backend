@@ -1,6 +1,8 @@
 # represents a school
 class Contestant < ActiveRecord::Base
 
+  RANKINGS = %w{beginner advanced none}
+
   belongs_to :contest
 
   has_many :clients
@@ -46,6 +48,21 @@ class Contestant < ActiveRecord::Base
   named_scope :for_contest, lambda { |c| {:conditions => { :contest_id => c.id }} }
   named_scope :visible, :conditions => { :hidden => false }
 
+  RANKINGS.each do |ranking|
+    named_scope ("ranked_#{ranking}").to_sym, :conditions => {:ranking => ranking} 
+  end
+
+  named_scope :ranked, :conditions => ["ranking != ?", "none"]
+  named_scope :unranked, :conditions => ["ranking == ?", "none"]
+
+  def ranked?
+    ["beginner", "advanced"].include? ranking and not disqualified
+  end
+
+  def worth_editing?
+    not administrator? and ranked?
+  end
+  
   def matches
     contest.matches.with_contestant(self)
   end 
@@ -60,8 +77,27 @@ class Contestant < ActiveRecord::Base
 
   def disqualify
     self.disqualified = true 
+    self.ranking = "none"
     self.overall_member_count = 0
+    remove_from_matchdays if contest.ready?
     self.save! 
+  end
+
+  def remove_from_matchdays
+    Matchday.transaction do
+      contest.matchdays.each do |md|
+        slot = md.slots.all.find{|s| s.contestant == self}
+        if not slot.nil?
+          slot.matches.each do |m|
+            m.contestants.each do |c|
+              c.slots.all.find{|s| s.matchday == md}.destroy
+            end
+            m.destroy
+          end
+        end
+      end
+    end
+    contest.reaggregate
   end
 
   def matches_including_free_days

@@ -1,4 +1,9 @@
+<div id="standings">
+<% ranking = "all" if local_assigns[:ranking].nil? %>
 <h2 class="print-inline">Rangliste der <%= @contest.name %> "<%= @contest.game_name %>"<br><br></h2>
+<% if not ranking == "all" %>
+  <h3 class="print-inline">Wertung: <%= t("views.ranking.#{ranking}") %></h3>
+<% end %>
 <table class="data-table">
   <thead>
     <tr>
@@ -9,12 +14,14 @@
       <% @contest.game_definition.match_score.each do |k,fragment| %>
         <th class="right <%= match_score_fragment_name(@contest.game_definition, fragment).include?("Zeit") ? "print-hide" : "" %>"><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
       <% end %>
-      <th class="middle space-left">&Delta;</th>
+      <% if ranking == "all" %>
+        <th class="middle space-left">&Delta;</th>
+      <% end %>
     </tr>
   </thead>
-  <% matchday.slots.find_all{|slot| !slot.contestant.hidden?}.each_with_index do |slot,i| %>
+  <% matchday.slots.find_all{|slot| !slot.contestant.hidden? and slot.contestant.ranked? and (ranking == "all" ? true : slot.contestant.ranking == ranking)}.each_with_index do |slot,i| %>
     <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
-      <td style="text-align: left;"><%= slot.position %>.</td>
+      <td style="text-align: left;"><%= i + 1 %>.</td>
       <td><%= slot.contestant.disqualified ? "<i>#{t "views.disqualified"}</i>".html_safe! : "" %> <%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %></td>
       <td class="print-inline"><%= slot.contestant.location %></td>
       <td class="right"><%= count_matches_played_by_contestant(slot.contestant, @matchday) %></td>
@@ -27,21 +34,24 @@
           <em><%= t "views.error_no_result" %></em>
         </td>
       <% end %>
-      <td class="middle space-left">
-        <% previous_position = slot.previous_position %>
-        <% if previous_position %>
-          <% diff = previous_position - slot.position %>
-          <% if diff > 0 %>
-            <span style="font-size: 10px; color: #090; font-weight: bold;">+<%= diff %></span>
-          <% elsif diff < 0 %>
-            <span style="font-size: 10px; color: #f00; font-weight: bold;"><%= diff %></span>
+      <% if ranking == "all" %>
+        <td class="middle space-left">
+          <% previous_position = slot.previous_position %>
+          <% if previous_position %>
+            <% diff = previous_position - slot.position %>
+            <% if diff > 0 %>
+              <span style="font-size: 10px; color: #090; font-weight: bold;">+<%= diff %></span>
+            <% elsif diff < 0 %>
+              <span style="font-size: 10px; color: #f00; font-weight: bold;"><%= diff %></span>
+            <% else %>
+              <span style="font-size: 10px; color: #999;">&plusmn;0</span>
+            <% end %>
           <% else %>
-            <span style="font-size: 10px; color: #999;">&plusmn;0</span>
+            <span style="font-size: 10px; color: #999;">-</span>
           <% end %>
-        <% else %>
-          <span style="font-size: 10px; color: #999;">-</span>
-        <% end %>
-      </td>
+        </td>
+      <% end %>
     </tr>
   <% end %>
 </table>
+</div>
