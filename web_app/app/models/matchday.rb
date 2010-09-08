@@ -80,11 +80,14 @@ class Matchday < ActiveRecord::Base
   def reaggregate
     return false if self.running?
     Matchday.transaction do
+      pub = self.public
       self.reset!
       self.reload
       self.matches.each do |match|
         match.after_round_played(nil)
       end
+      self.public = pub
+      save!
     end
     true
   end

@@ -7,8 +7,10 @@
  
 </h1>
 
+<% ranking = @current_user.teams.visible.ranked.for_contest(@contest).count == 1 ? @current_user.teams.for_contest(@contest).first.ranking : nil %>
 <% tabnav :matchday do %>
- <% if @matchday.published? or current_user.try(:administrator) %>
-    <%= render :partial => "standings", :locals => { :matchday => @matchday } %>
+  <% if @matchday.published? or current_user.try(:administrator) %>
+    <%= render :partial => "ranking_selection", :locals => {:ranking => ranking} %>
+    <%= render :partial => "standings", :locals => { :matchday => @matchday, :ranking => ranking } %>
   <% end %>
 <% end %>

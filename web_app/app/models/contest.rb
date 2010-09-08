@@ -120,7 +120,7 @@ class Contest < ActiveRecord::Base
       generate_matchdays.each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
 
-        contestants.visible.each do |contestant|
+        contestants.ranked.visible.each do |contestant|
           matchday.slots.create!(:contestant => contestant)
         end
 
@@ -171,7 +171,7 @@ class Contest < ActiveRecord::Base
   # NOTE: (later) how about swiss-system instead of round-robin
   def generate_matchdays
     result = []
-    list = contestants.visible.all
+    list = contestants.ranked.visible.all
     list << nil if list.size.odd?
 
     rounds = list.size - 1

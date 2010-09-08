@@ -13,6 +13,12 @@
 </h1>
 
 <% tabnav :contest do %>
+  <% rankings = Contestant::RANKINGS %>
+  <% rankings.delete("none") %>
+  <% rankings.each do |ranking| %>
+  <% contestants = @contestants.find_all{|c| c.ranked? and c.ranking == ranking} %>
+  <% if contestants.count > 0 %>
+  <h2><%= t("views.ranking.#{ranking}") %></h2>
   <table class="data-table">
     <thead>
       <tr>
@@ -30,7 +36,7 @@
       </tr>
     </thead>
 
-    <% @contestants.each do |contestant| %>
+    <% contestants.each do |contestant| %>
       <tr>
         <td><%= contestant.location %></td>
         <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
@@ -104,11 +110,58 @@
               <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
             <% elsif not contestant.disqualified %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.disqualify") %>
-              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_disqualify", :name => contestant.name) %>
+              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_disqualify_during_contest", :name => contestant.name) %>
             <% end %>
           <% end %>
         </td>
       </tr>
     <% end %>
   </table>
+  <% end %>
+  <% end %>
+
+  <% unranked = @contestants.find_all{|c| !c.ranked?} %>
+  <% if unranked.count > 0 %>
+  <br>
+  <h2><%= t("views.ranking.none") %></h2>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= Contestant.human_attribute_name :location %></th>
+        <th><%= Contestant.human_name %></th>
+        <th><%= t "acl9.roles.contestant.teacher" %></th>
+        <th><%= t "acl9.roles.contestant.tutor" %></th>
+        <th><%= t "acl9.roles.contestant.pupils" %></th>
+
+        <th colspan="2">&nbsp;<!-- options --></th>
+      </tr>
+    </thead>
+
+    <% unranked.each do |contestant| %>
+      <tr>
+        <td><%= contestant.location %></td>
+        <td><%= contestant.name %></td>
+        <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
+        <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
+        <td><%= contestant.overall_member_count %></td>
+        <td>
+          <% if may_see_details? :contestant => contestant -%>
+          <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
+          <% end -%>
+        </td>
+        <td>
+          <% show_to :administrator do -%>
+            <% if not @contest.ready? %>
+              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
+            <% elsif not contestant.disqualified %>
+              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.disqualify") %>
+              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_disqualify", :name => contestant.name) %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>  
+    <% end %>
+  </table>
+  <% end %>
 <% end %>

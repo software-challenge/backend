@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100905184742) do
+ActiveRecord::Schema.define(:version => 20100907174016) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -48,11 +48,12 @@ ActiveRecord::Schema.define(:version => 20100905184742) do
     t.datetime "updated_at"
     t.integer  "score_id"
     t.integer  "current_client_id"
-    t.boolean  "tester",               :default => false, :null => false
-    t.boolean  "hidden",               :default => false, :null => false
-    t.string   "location",             :default => "",    :null => false
-    t.integer  "overall_member_count", :default => 0,     :null => false
+    t.boolean  "tester",               :default => false,  :null => false
+    t.boolean  "hidden",               :default => false,  :null => false
+    t.string   "location",             :default => "",     :null => false
+    t.integer  "overall_member_count", :default => 0,      :null => false
     t.boolean  "disqualified",         :default => false
+    t.string   "ranking",              :default => "none", :null => false
   end
 
   create_table "contests", :force => true do |t|

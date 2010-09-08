@@ -40,7 +40,8 @@ ActionController::Routing::Routes.draw do |map|
         :get_progress => :get,
         :reaggregate => :post,
         :reset => :post,
-        :publish => :post
+        :publish => :post,
+        :get_standings => :get
       } do |md|
         md.resources :matches, :member => {:reset => :post} do |m|
           m.resources :rounds, :member => {

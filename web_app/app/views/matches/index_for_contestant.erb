@@ -4,6 +4,12 @@
 </h1>
 
 <% tabnav :contestant do %>
+  <p style="font-size: 15px; margin-bottom: 15px">
+    <b><%= Contestant.human_attribute_name(:ranking) %>: </b>&nbsp;
+    <%= t("views.ranking.#{@contestant.ranking}") %>
+  </p>
+
+  <% if @contestant.matches_including_free_days.count > 0 %>
   <table class="data-table">
     <colgroup span="2"/>
     <colgroup span="2"/>
@@ -21,4 +27,9 @@
       <%= render :partial => "matchdays/match", :collection => @contestant.matches_including_free_days, :locals => { :date => true, :count => true } %>
     </tbody>
   </table>
+  <% else %>
+    <p>
+      <%= t("views.no_matches_planned") %>
+    </p>
+  <% end %>
 <% end %>
