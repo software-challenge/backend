@@ -211,7 +211,7 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 
 		String[] results1 = data.getScores().get(0).toStrings();
-		String[] results2 = data.getScores().get(0).toStrings();
+		String[] results2 = data.getScores().get(1).toStrings();
 		result += name1 + ": " + results1[6] + " Punkte (" + results1[1] + ", "
 				+ results1[2] + ", " + results1[3] + ", " + results1[4] + ", "
 				+ results1[5] + ")\n";
