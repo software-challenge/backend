@@ -282,7 +282,7 @@ class ClientsController < ApplicationController
   protected
 
   def load_contestant
-    @contestant = current_contest.contestants.find(params[:contestant_id])
+    @contestant = @contest.contestants.find(params[:contestant_id])
   end
 
   def requested_by_flash?

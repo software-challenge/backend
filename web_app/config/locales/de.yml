@@ -280,6 +280,19 @@ de:
         position: "Feldnummer"
         carrots: "Karotten"
         average_time: "Ø Zeit"
+    schaefchen_im_trockenen:
+      name: Schäfchen im Trockenen
+      match_score:
+        points: Punkte
+        victories: Siege
+      round_score:
+        victory: Sieg
+        sheeps_ingame: Schafe im Spiel
+        sheeps_captured: Schafe gefangen
+        sheeps_saved: Schafe gestohlen
+        flowers_collected: Blumen gesammelt
+        flowers_saved: Blumen gefressen
+        points: Punkte  
   acl9:
     roles:
       global:
