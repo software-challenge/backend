@@ -10,7 +10,7 @@
   <%= @contest.name %>
 </h1>
 
-<% ranking = @current_user.teams.visible.ranked.for_contest(@contest).count == 1 ? @current_user.teams.for_contest(@contest).first.ranking : nil %>
+<% ranking = (logged_in? and @current_user.teams.visible.ranked.for_contest(@contest).count == 1) ? @current_user.teams.for_contest(@contest).first.ranking : nil %>
 <% tabnav :contest do %>
   <%= render :partial => "matchdays/ranking_selection", :locals => {:ranking => ranking} %>
   <%= render :partial => "matchdays/standings", :locals => { :matchday => @matchday, :ranking => ranking } %>

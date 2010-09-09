@@ -266,6 +266,7 @@ de:
       HARD_TIMEOUT: Hard-Timeout überschritten
       RULE_VIOLATION: Ungültiger Spielzug
       LEFT: Hat das Spiel verlassen
+      DISQUALIFIED: Wurde disqualifiziert
     hase_und_igel:
       name: Hase und Igel
       match_score:

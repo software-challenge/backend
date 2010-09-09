@@ -13,6 +13,10 @@ class ScoreDefinitionField < Struct.new(:name, :options, :callback, :aggregator)
   def ordering
     options[:ordering]
   end
+
+  def worst
+    (options[:worst] || 0).to_i
+  end
 end
 
 class GameDefinitionBuilder
@@ -184,6 +188,19 @@ class GameDefinition
   
   def self.all
     @@definitions
+  end
+
+  def generate_worst_result(slots = [])
+    result = []
+    slots = slots.empty? ? (1..players) : slots
+    slots.each do |slot|
+      score = []
+      round_score.values.each do |frag|
+        score << frag.worst
+      end
+      result << score
+    end
+    result
   end
 
   def day_settings_for(dayname)

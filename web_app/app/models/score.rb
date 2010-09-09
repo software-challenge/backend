@@ -11,6 +11,14 @@ class Score < ActiveRecord::Base
     GameDefinition.all.find{|gd| gd.game_identifier == game_definition.to_sym}.send(score_type)
   end 
 
+  def cause
+    if adjusted_cause.nil?
+      attributes["cause"]
+    else
+      adjusted_cause
+    end
+  end
+
   def round_score?
     score_type.to_s == "round_score"
   end
@@ -64,9 +72,24 @@ class Score < ActiveRecord::Base
 
     belongs_to :score
 
+    def value
+      if adjusted_value.nil?
+        attributes["value"]
+      else
+        adjusted_value
+      end
+    end
+
     def value_with_precision
       precision = score.definition[fragment.to_sym].precision
       sprintf("%.#{precision}f", value)
     end
+
+    def adjust_to_worst
+      gd = GameDefinition.all.find{|gd| gd.game_identifier == score.game_definition.to_sym}
+      self.adjusted_value = BigDecimal.new(gd.round_score.values.find{|v| v.name == fragment.to_sym}.worst.to_s)
+      self.save!
+    end
+
   end
 end
