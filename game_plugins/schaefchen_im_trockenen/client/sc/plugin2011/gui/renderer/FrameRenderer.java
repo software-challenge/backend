@@ -713,8 +713,7 @@ public class FrameRenderer extends JPanel {
 		}
 
 		// rahmen
-		g2.setColor(currentPlayer == null ? Color.LIGHT_GRAY
-				: getPlayerColor(currentPlayer));
+		g2.setColor(getPlayerColor(currentPlayer));
 		g2.fillRect(0, 0, getWidth(), BORDER_SIZE);
 		g2.fillRect(0, getHeight() - BORDER_SIZE, getWidth(), BORDER_SIZE);
 
