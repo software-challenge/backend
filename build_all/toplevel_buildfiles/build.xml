@@ -24,6 +24,7 @@
 		<!--<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />!-->
 		<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -52,6 +53,9 @@
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/jar">
 			<fileset dir="./game_players/schaefchen_im_trockenen/build/jar" />
+		</copy>
+		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen2/jar">
+			<fileset dir="./game_players/schaefchen_im_trockenen2/build/jar" />
 		</copy>
 
 		<!--
@@ -117,6 +121,8 @@
 		<zip destfile="${out.dir}/zipped/simpleclient-hui-src.zip" basedir="${out.dir}/simple_client/hase_und_igel/src" />
 		!-->
 
+
+		<zip destfile="${out.dir}/zipped/challenger-sit.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen2/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-jar.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
 
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-src.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
