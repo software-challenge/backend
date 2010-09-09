@@ -1,9 +1,10 @@
-<project name="schaefchen_player" basedir="." default="main">
+<project name="schaefchen_challenger" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="root.dir" value="./../.." />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="zip.dir" value="${build.dir}/zipped" />
 	<property name="lib.dir" value="${root.dir}/software_challenge_sdk/lib" />
 	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
 	<property name="plugins.dir" value="${root.dir}/game_plugins" />
@@ -78,6 +79,11 @@
 			</manifest>
 		</jar>
 	</target>
+	
+	<target name="zip" depends="jar">
+		<mkdir dir="${zip.dir}" />
+		<zip destfile="${zip.dir}/${ant.project.name}.zip" basedir="${jar.dir}" />
+	</target>
 
 	<target name="javadoc">
 		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="true" classpath="${toString:classpath.base}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
@@ -85,7 +91,7 @@
 
 	<target name="build" depends="jar,javadoc" />
 
-	<target name="clean-build" depends="clean,build" />
+	<target name="clean-build" depends="clean,build,zip" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>
