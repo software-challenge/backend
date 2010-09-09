@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100907174016) do
+ActiveRecord::Schema.define(:version => 20100909093819) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -224,8 +224,9 @@ ActiveRecord::Schema.define(:version => 20100907174016) do
 
   create_table "score_fragments", :force => true do |t|
     t.integer "score_id"
-    t.decimal "value",    :precision => 63, :scale => 10
+    t.decimal "value",          :precision => 63, :scale => 10
     t.string  "fragment"
+    t.decimal "adjusted_value", :precision => 63, :scale => 10
   end
 
   create_table "scores", :force => true do |t|
@@ -235,6 +236,7 @@ ActiveRecord::Schema.define(:version => 20100907174016) do
     t.string   "score_type"
     t.string   "cause"
     t.string   "error_message",   :default => ""
+    t.string   "adjusted_cause"
   end
 
 end

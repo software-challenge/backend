@@ -78,10 +78,10 @@ GameDefinition.create :"HaseUndIgel" do
   end
 
   round_score do
-    field :victory, :ordering => "DESC"
-    field :position, :ordering => "DESC"
-    field :carrots, :ordering => "ASC"
-    field :average_time, :ordering => "ASC", :precision => 2
+    field :victory, :ordering => "DESC", :worst => 0
+    field :position, :ordering => "DESC", :worst => 0
+    field :carrots, :ordering => "ASC", :worst => 100
+    field :average_time, :ordering => "ASC", :precision => 2, :worst => 2000
   end
 
   match_score do

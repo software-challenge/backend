@@ -40,6 +40,7 @@ class Contestant < ActiveRecord::Base
   validates_presence_of :name, :location
   validates_uniqueness_of :name, :scope => :contest_id
   validates_uniqueness_of :tester, :scope => :contest_id, :if => :tester
+  validates_inclusion_of :ranking, :in => RANKINGS
 
   attr_readonly :contest
   attr_protected :contest
@@ -67,37 +68,60 @@ class Contestant < ActiveRecord::Base
     contest.matches.with_contestant(self)
   end 
 
-  def current_client
-    if disqualified
-      contest.test_contestant.current_client
-    else
-      attributes["current_client_id"].nil? ? nil : Client.find(attributes["current_client_id"])
-    end 
+  def disqualify_for_match(match)
+    cont_index = match.contestants.index(self)
+    match.rounds.each do |r|
+      r.scores.each do |s|
+        s.fragments.each do |f|
+          f.adjust_to_worst
+        end
+      end
+    end
+    match.permutated_round_slots.each do |slots|
+      slot = slots[cont_index]
+      if slot.round.played?
+        s = slot.score
+        s.adjusted_cause = "DISQUALIFIED"
+        s.save!
+      end
+    end
   end
 
   def disqualify
     self.disqualified = true 
     self.ranking = "none"
-    self.overall_member_count = 0
-    remove_from_matchdays if contest.ready?
-    self.save! 
-  end
-
-  def remove_from_matchdays
+    #self.overall_member_count = 0
+    #remove_from_matchdays if contest.ready?
     Matchday.transaction do
       contest.matchdays.each do |md|
         slot = md.slots.all.find{|s| s.contestant == self}
         if not slot.nil?
           slot.matches.each do |m|
-            m.contestants.each do |c|
-              c.slots.all.find{|s| s.matchday == md}.destroy
-            end
-            m.destroy
+            disqualify_for_match(m)
           end
         end
       end
-    end
-    contest.reaggregate
+    end  
+    contest.reaggregate 
+    self.save! 
+  end
+
+  def remove_from_matchdays
+    # NOTE: Don't use this, as it deletes the matches irreversibly
+    # Matchday.transaction do
+    #  contest.matchdays.each do |md|
+    #    slot = md.slots.all.find{|s| s.contestant == self}
+    #    if not slot.nil?
+    #      slot.matches.each do |m|
+    #        m.contestants.each do |c|
+    #          c.slots.all.find{|s| s.matchday == md}.destroy
+    #        end
+    #        m.destroy
+    #      end
+    #    end
+    #  end
+    # end
+    # contest.reaggregate
   end
 
   def matches_including_free_days

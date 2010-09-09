@@ -43,7 +43,7 @@
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
         <td style="text-align: center">
-          <% if not current_user.nil? and current_user.has_role?(:administrator) and not contestant.disqualified %>
+          <% if not current_user.nil? and current_user.has_role?(:administrator) %>
             <% show_ovrl_member_count_edit = true %>
             <a href="#" id="change_ovrl_mem_count_<%= contestant.id %>"><%= contestant.overall_member_count %></a>
             <span id="change_ovrl_mem_count_edit_<%= contestant.id %>" style="display: none">
@@ -85,9 +85,6 @@
 
         <td>
           <% show_to :administrator do -%>
-            <% if contestant.disqualified %>
-              <%= image_tag "state/ok.png", :title => I18n.t("views.client_uses_tester") %>
-            <% else %>
               <% if contestant.current_client.nil? %>
                 <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
               <% elsif contestant.current_client.ok? %>
@@ -95,7 +92,6 @@
               <% else %>
                 <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
               <% end %> 
-            <% end %>
           <% end %>
         </td>
         <td>
@@ -140,7 +136,7 @@
     <% unranked.each do |contestant| %>
       <tr>
         <td><%= contestant.location %></td>
-        <td><%= contestant.name %></td>
+        <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
         <td><%= contestant.overall_member_count %></td>
@@ -151,13 +147,8 @@
         </td>
         <td>
           <% show_to :administrator do -%>
-            <% if not @contest.ready? %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
               <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
-            <% elsif not contestant.disqualified %>
-              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.disqualify") %>
-              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_disqualify", :name => contestant.name) %>
-            <% end %>
           <% end %>
         </td>
       </tr>  

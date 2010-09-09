@@ -120,6 +120,22 @@ class Match < ActiveRecord::Base
     end
   end
 
+  def permutated_round_slots
+    round_slots = []
+    round_count = 0
+    while round_count < rounds.count
+      (0..slots.count-1).to_a.permute do |permutation|
+        break if round_count >= rounds.count
+        slots = []
+        permutation.each do |n|
+          slots << rounds[round_count].slots[n]
+        end
+        round_count += 1
+        round_slots << slots
+      end
+    end
+    round_slots
+  end
 
   protected
 
@@ -169,6 +185,9 @@ class Match < ActiveRecord::Base
       if not round.played?
         round.perform
       end
+    end
+    contestants.find_all{|c| c.disqualified?}.each do |c|
+      c.disqualify_for_match(self)
     end
   end
 end

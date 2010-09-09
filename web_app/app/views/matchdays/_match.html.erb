@@ -7,8 +7,18 @@
   <% if date %>
     <td><%= (l match.matchday.when) unless match.matchday.when.nil? %></td>
   <% end %>
-  <td><%= !match.slots[0].blank? ? (link_to match.slots[0].name, contest_contestant_matches_url(@contest, match.slots[0].contestant)) : "-" %></td>
-  <td><%= !match.slots[1].blank? ? (link_to match.slots[1].name, contest_contestant_matches_url(@contest, match.slots[1].contestant)) : "-" %></td>
+  <% [match.slots[0], match.slots[1]].each do |slot| %>
+    <% text = "" %>
+    <% if not slot.blank? %>
+      <% if slot.contestant.disqualified? %>
+        <% text << "<i>[#{t "views.disqualified"}]</i>&nbsp;" %>
+      <% end %>
+      <% text << link_to(slot.name, contest_contestant_matches_url(@contest, slot.contestant)) %>
+    <% else %>
+      <% text << "-" %>
+    <% end %>
+    <td><%= text.html_safe! %></td>
+  <% end %>
   <td style="text-align: center;">
     <% if match.main_result %>
       <% if match.matchday.published? or current_user.try(:administrator) %>
