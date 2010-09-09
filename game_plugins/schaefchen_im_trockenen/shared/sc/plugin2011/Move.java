@@ -88,4 +88,8 @@ public final class Move implements Cloneable {
 		return clone;
 	}
 
+	public void addHint(String string) {
+		addHint(new DebugHint(string));
+	}
+
 }
