@@ -1,6 +1,6 @@
 package sc.player2011;
 
-import sc.player2011.kara.KaraLogic;
+import sc.player2011.kara.KaraLogik;
 import sc.player2011.simple.RandomLogic;
 import sc.plugin2011.AbstractClient;
 import sc.plugin2011.IGameHandler;
@@ -15,7 +15,7 @@ public enum LogicFactory {
 	// Verfügbare Taktiken (Implementierungen des IGameHandler) müssen hier
 	// eingetragen wie im Beispiel eingetragen und ihre Klasse angegeben werden
 	RANDOM(RandomLogic.class),
-	KARA(KaraLogic.class),
+	KARA(KaraLogik.class),
 	// Die Logik die gewählt wird, wenn kein passender Eintrag zu der Eingabe
 	// gefunden wurde:
 	DEFAULT(RandomLogic.class);
