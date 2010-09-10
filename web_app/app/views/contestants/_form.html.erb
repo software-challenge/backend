@@ -3,10 +3,6 @@
     <%= f.input :name, :required => true %>
     <%= f.input :location, :required => true %>
     <% rankings = Contestant::RANKINGS.collect{|r| [t("views.ranking.#{r}"), r]} %>
-    <% if administrator? %>
-      <%= Contestant::RANKINGS %><br>
-      <%= rankings %>
-    <% end %>
     <%= f.input :ranking, :collection => rankings, :include_blank => false %>
   <% end %>
   <% f.buttons do %>

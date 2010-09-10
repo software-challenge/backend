@@ -49,9 +49,9 @@ class Contestant < ActiveRecord::Base
   named_scope :for_contest, lambda { |c| {:conditions => { :contest_id => c.id }} }
   named_scope :visible, :conditions => { :hidden => false }
 
-  RANKINGS.each do |ranking|
-    named_scope ("ranked_#{ranking}").to_sym, :conditions => {:ranking => ranking} 
-  end
+  #RANKINGS.each do |ranking|
+  #  named_scope ("ranked_#{ranking}").to_sym, :conditions => {:ranking => ranking} 
+  #end
 
   named_scope :ranked, :conditions => ["ranking != ?", "none"]
   named_scope :unranked, :conditions => ["ranking == ?", "none"]
