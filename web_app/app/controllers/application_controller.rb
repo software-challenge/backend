@@ -89,6 +89,9 @@ class ApplicationController < ActionController::Base
     if not params[:contest_id].nil? 
       c = Contest.all.find{|c| c.subdomain == params[:contest_id]}
       @contest = @current_contest = c unless c.nil?
+    elsif not params[:id].nil?
+      c = Contest.all.find{|c| c.subdomain == params[:id]}
+      @contest = @current_contest = c unless c.nil?
     end
   end
 
