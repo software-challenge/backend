@@ -32,7 +32,7 @@ class Contestant < ActiveRecord::Base
   end
 
   def may_play_another_friendly_match_today?
-    ENV['FRIENDLY_GAMES_PER_DAY'].nil? or (self.friendly_matches_today + friendly_matches_running < ENV['FRIENDLY_GAMES_PER_DAY'].to_i)
+    ENV['FRIENDLY_GAMES_PER_DAY'].nil? or (self.friendly_matches_today + friendly_matches_running < ENV['FRIENDLY_GAMES_PER_DAY'].to_i) or has_smith?
   end
 
   belongs_to :current_client, :class_name => "Client"
@@ -149,6 +149,7 @@ class Contestant < ActiveRecord::Base
     encounter.open_for = con
     
     encounter.save!
+    encounter
   end
 
   def friendly_encounters
@@ -159,20 +160,32 @@ class Contestant < ActiveRecord::Base
     end
   end
 
+  # Find all requests that are open for all or exclusively for me
   def find_open_requests
-    contest.friendly_encounters.collect{|enc| enc.open? or enc.ready? and (enc.open_for.nil? or enc.open_for == self)}
+    contest.friendly_encounters.collect{|enc| (enc.open? or enc.ready?) and (enc.open_for.nil? or enc.open_for == self)}
   end
 
+  # Are there open requests that I can accept or have accepted and not yet played?
   def has_open_friendly_requests_from_others?
     friendly_requests_from_others.find{|enc| enc.open? or enc.ready?}
   end
 
+  # Find requests that I can answer or already have answered 
   def friendly_requests_from_others
     contest.friendly_encounters.to_ary.find_all{|enc| enc.of_interest_for?(self) and not enc.contestants.first == self}
   end
 
+  # Find requests that are opened by me
   def friendly_requests
     friendly_encounters.find_all{|enc| enc.contestants.first == self}
+  end
+
+  def will_accept_friendly_requests?
+    has_smith?
+  end
+
+  def has_smith?
+    !ENV['MR_SMITH'].nil? and !memberships.to_ary.find{|m| m.person.email == ENV['MR_SMITH']}.nil?
   end
 
 end

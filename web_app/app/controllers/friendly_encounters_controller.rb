@@ -52,6 +52,7 @@ end
 def create
   con1 = Contestant.find(params[:encounter][:con1].to_i)
   raise "Diese Aktion ist nicht erlaubt" if not current_user.has_role_for? con1
+  raise "Mr.Smith kann niemanden herausfordern. Er wird nur herausgefordert." if con1.has_smith?
   con2 = params[:encounter][:con2]
   con2 = con2 == "" ? nil : Contestant.find(con2.to_i)
 
@@ -72,10 +73,16 @@ def create
   con2 = :all if con2.nil?
 
   if not flash[:error]
-    con1.open_friendly_encounter_request :to => con2
+    enc = con1.open_friendly_encounter_request :to => con2
   end
 
-  redirect_to contest_friendly_encounters_url(@contest) 
+  if not con2 == :all and con2.will_accept_friendly_requests?
+    params[:contestant] = con2
+    params[:id] = enc.id
+    accept
+  else
+    redirect_to contest_friendly_encounters_url(@contest) 
+  end
 end
 
   def all

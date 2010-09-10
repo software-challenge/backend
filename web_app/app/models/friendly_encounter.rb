@@ -119,6 +119,8 @@ class FriendlyEncounter < ActiveRecord::Base
     return false
   end
 
+  # An encounter is of interest for a contestant if it is either opened to all and not yet accepted
+  # or if the contestant already accepted or played it
   def of_interest_for?(con)
     (open_for.nil? and open?) or open_for == con or contestants.include?(con)
   end
