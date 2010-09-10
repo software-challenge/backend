@@ -13,7 +13,7 @@
   </tbody>
 </table>
 
-<% if not_played_contestant_on(@matchday) %>
+<% unless not_played_contestant_on(@matchday).empty? %>
   <p><%=t "views.not_played" %>:
   <%= not_played_contestant_on(@matchday).collect(&:name).join(", ") %> 
   </p>
