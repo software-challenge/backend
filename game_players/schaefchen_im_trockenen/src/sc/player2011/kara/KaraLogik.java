@@ -9,9 +9,9 @@ import sc.player2011.Starter;
  * Dies ist eine Logik, die Kara verwendet um eine
  * einfache Strategie zu realisieren (Zufall)
  */
-public class KaraLogic extends KaraLogicHandler{
+public class KaraLogik extends KaraLogicHandler{
 	
-	public KaraLogic(Starter client) {
+	public KaraLogik(Starter client) {
 		super(client);
 	}
 
