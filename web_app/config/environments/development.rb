@@ -19,6 +19,7 @@ config.action_mailer.raise_delivery_errors = false
 ENV['CLIENT_LOGS_FOLDER'] = RAILS_ROOT + "/clientlogs/"
 ENV['SERVER_LOGS_FOLDER'] = RAILS_ROOT + "/serverlogs/"
 ENV['FRIENDLY_GAMES_PER_DAY'] = "4"
+ENV['MR_SMITH'] = "mr.smith@sc.de"
 
 config.after_initialize do
   fenc_job = FriendlyEncountersJob.new
