@@ -136,6 +136,9 @@ class ContestantsController < ApplicationController
     if @person.nil?
       flash[:error] = I18n.t("messages.person_not_found_by_email", :email => params[:email])
       redirect_to :controller => :people, :action => :new, :contestant_id => params[:contestant_id]
+    elsif @person.email == ENV['MR_SMITH'] and not administrator?
+      flash[:error] = "Mr. Smith will only follow administrators' invitations"
+      redirect_to :controller => :people, :action => :new, :contestant_id => params[:contestant_id]
     else
       if @person.memberships.find_by_contestant_id(@contestant.id)
         flash[:error] = I18n.t("messages.person_already_belongs_to_contestant")
