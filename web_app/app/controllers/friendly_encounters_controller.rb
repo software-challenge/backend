@@ -52,7 +52,6 @@ end
 def create
   con1 = Contestant.find(params[:encounter][:con1].to_i)
   raise "Diese Aktion ist nicht erlaubt" if not current_user.has_role_for? con1
-  raise "Mr.Smith kann niemanden herausfordern. Er wird nur herausgefordert." if con1.has_smith?
   con2 = params[:encounter][:con2]
   con2 = con2 == "" ? nil : Contestant.find(con2.to_i)
 
