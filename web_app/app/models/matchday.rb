@@ -210,12 +210,16 @@ class Matchday < ActiveRecord::Base
     contest.matchdays.first(:conditions => ["position < ?", position], :order => "position DESC")
   end
 
+  # Aggregates every matchday result for every contestant
   def update_scoretable
     slots.each do |slot|
+      # For each contestant go through all earlier played matchdays
       # elements = [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]
       elements = contest.matchdays(:reload).all(:conditions => ["played_at IS NOT NULL AND position < ?", position]).collect do |day|
+        # If there was a game on that day, match_slot will not be nil
         match_slot = day.match_slots(:reload).first(:conditions => ["matchday_slots.contestant_id = ?", slot.contestant.id])
         
+        # Add result of that day to array
         if match_slot and match_slot.score
           match_slot.score.to_a
         else
@@ -223,15 +227,17 @@ class Matchday < ActiveRecord::Base
         end
       end
       
-      # if there was a game on that day
+      # if there was a game on current day, add this too
       if slot.match_slot
         elements << slot.match_slot.score.to_a
       end
 
+      # Remove nil elements (days that contestant did not play)
       nil_count = elements.size - elements.nitems
       logger.warn "array contained #{nil_count} nil elements" unless nil_count.zero?
       elements.compact!
       
+      # Now aggregate scores
       result = contest.game_definition.aggregate_matches(elements)
 
       slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "match_score")

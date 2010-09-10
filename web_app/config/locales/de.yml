@@ -286,7 +286,7 @@ de:
         points: Punkte
         victories: Siege
       round_score:
-        victory: Sieg
+        victory: Siegpunkte
         sheeps_ingame: Schafe im Spiel
         sheeps_captured: Schafe gefangen
         sheeps_saved: Schafe gestohlen

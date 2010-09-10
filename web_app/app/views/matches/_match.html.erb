@@ -158,11 +158,11 @@
     <th colspan="<%= round_colspan %>">&nbsp;</th>
     <% if allowQualify %>
       <% show_to :administrator do %>
-        <th>Quali</th>
+        <th></th>
       <% end %>
     <% end %>
     <%@contest.game_definition.round_score.each do |k, fragment| %>
-      <th style="text-align: right"><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
+      <th style="text-align: center"><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
     <% end %>
     <th>&nbsp;</th>
   </tr>
@@ -231,7 +231,7 @@
         <% end %>
         <% if slot.score and (match.matchday.published? or current_user.try(:administrator)) %>
           <% slot.score.to_a_with_precision.each_with_index do |value,i| %>
-            <td style="min-width: 10px; text-align: right">
+            <td style="min-width: 10px; text-align: center">
               <% if slot.qualification_changed %>
                 [ <%= value %> ]
               <% else %>

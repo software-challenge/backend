@@ -71,7 +71,13 @@ class GameDefinitionBuilder
       d.round_score[name] = field
     end
   end
-  
+ 
+  # Does two things: 
+  # 1. When called it creates the scores for a match
+  #    If a block is given, it is used to calculate the score field value. If i.e. :sum => :carrots is given, the score field "carrots" is used. 
+  # 2. It also generates an aggregator that is later used to
+  # aggregate multiple match results for the ranking
+  # This aggregator is automatically generated depending on whether :sum oder :average had been used
   def match_score(&block)
     o = GameDefinitionBuilder.field_collector
     o.instance_eval(&block)
@@ -79,14 +85,17 @@ class GameDefinitionBuilder
     o.fields.each do |data|
       name, options, block = *data
       inherit = options[:inherit] || options[:sum] || options[:average]
+      # How should be aggregated?
       aggregate = options[:aggregate] || (options[:sum] ? :sum : (options[:average] ? :average : nil ))
       
+      # Use an existing score field to sum up, no block needed
       if options[:sum]
         raise "can't provide :average/:sum with a block" if block
         block = lambda do |my_scores, their_scores|
           parts = my_scores.collect { |score| score.send options[:sum] }
           parts.inject(0) { |sum, x| sum + x }
         end
+      # Use an existing score field to average, no block needed
       elsif options[:average]
         raise "can't provide :average/:sum with a block" if block
         block = lambda do |my_scores, their_scores|
@@ -96,23 +105,26 @@ class GameDefinitionBuilder
         end
       end
      
-      # TODO: What does this do? Why merging the options?
+      # Use options already defined in the given round_score field. Automatically done when no block is given (the options :sum or :average are used). So when round_score field ordering is ASC, match_score ordering will be ASC too by default.
       if inherit
         from_field = d.round_score[inherit]
         raise "field #{inherit} does not exist" unless from_field
+        # Adds the options from round_score field to these of match_score field. In the case of duplicate entries the match_score field is used.
         options = (from_field.options || {}).merge(options)
       end
 
-
+      # Now create the aggregator
       aggregator = nil
 
       case aggregate
       when :sum
+        # Just sum up all values
         aggregator = lambda do |elements|
           parts = elements.collect { |score| score.send(name) }
           parts.inject(0) { |sum, x| sum + x }
         end
       when :average
+        # Average all scores
         aggregator = lambda do |elements|
           parts = elements.collect { |score| score.send(name) }
           sum = parts.inject(0) { |sum, x| sum + x }
@@ -222,6 +234,8 @@ class GameDefinition
   def aggregate_matches(elements)
     extend_by_fields(match_score, elements)
 
+    # For every fragment, use its aggregator to
+    # aggregate the score elements
     match_score.collect do |k, v|
       v.aggregator.call(elements)
     end
@@ -262,6 +276,7 @@ class GameDefinition
   # add simple accessors for the score arrays
   # players = array of array of array of Integer
   def extend_by_fields(field_definition, *players)
+    # For every score entry, make the fragments accessible by their name
     field_definition.values.each_with_index do |field, i|
       players.each do |scores|
         scores.each do |score|
