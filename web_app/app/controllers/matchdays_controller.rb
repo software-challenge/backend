@@ -88,7 +88,7 @@ class MatchdaysController < ApplicationController
     @matchday.destroy
 
     respond_to do |format|
-      format.html { redirect_to(matchdays_url) }
+      format.html { redirect_to(contest_matchdays_url(@contest)) }
       format.xml  { head :ok }
     end
   end
@@ -111,7 +111,7 @@ class MatchdaysController < ApplicationController
       flash[:notice] = I18n.t("messages.matchday_recalculated") 
     end
 
-    redirect_to contest_matchday_url(@contst, @matchday)
+    redirect_to contest_matchday_url(@contest, @matchday)
   end
 
   def reset

@@ -88,7 +88,7 @@ class ContestantPeopleController < ApplicationController
     respond_to do |format|
       if success
         flash[:notice] = @person.name + " "+I18n.t("messages.created_saccessfully")+"."
-        format.html { redirect_to(people_url) }
+        format.html { redirect_to(contest_people_url(@contest)) }
         format.xml  { render :xml => @person, :status => :created, :location => @person }
       else
         format.html { render :action => "new" }

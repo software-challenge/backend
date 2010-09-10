@@ -24,23 +24,23 @@ class CustomMatchesController < ApplicationController
       flash[:error] = "Spiel mit #{rounds} Runden nicht möglich"
     end
 
-    redirect_to hash_for_contest_custom_matches_url
+    redirect_to contest_custom_matches_url(@contest)
   end
 
   def play
     mm = CustomMatch.find(params[:id])
     mm.perform_delayed!
-    redirect_to hash_for_contest_custom_matches_url
+    redirect_to contest_custom_matches_url(@contest)
   end
 
   def show
     mm = CustomMatch.find(params[:id])
-    redirect_to hash_for_contest_custom_matches_url
+    redirect_to contest_custom_matches_url(@contest)
   end
 
   def destroy
     mm = CustomMatch.find(params[:id])
     mm.destroy
-    redirect_to contest_custom_matches_url
+    redirect_to contest_custom_matches_url(@contest)
   end
 end

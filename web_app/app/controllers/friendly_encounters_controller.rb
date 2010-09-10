@@ -13,7 +13,7 @@ end
 
 def show
   fe = FriendlyEncounter.find(params[:id])
-  redirect_to contest_friendly_encounters_url unless fe.played? and (fe.may_be_seen_by(current_user) or current_user.has_role?(:administrator))
+  redirect_to contest_friendly_encounters_url(@contest) unless fe.played? and (fe.may_be_seen_by(current_user) or current_user.has_role?(:administrator))
   @match = fe.friendly_match
 end
 
@@ -27,26 +27,26 @@ end
 
 def hide
   con = Contestant.find(params[:contestant])
-  redirect_to contest_friendly_encounters_url unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
+  redirect_to contest_friendly_encounters_url(@contest) unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
   enc = FriendlyEncounter.find(params[:id])
   slot = enc.slot_for(con)
   unless slot.nil?
     slot.hidden = true
     slot.save!
   end
-  redirect_to contest_friendly_encounters_url
+  redirect_to contest_friendly_encounters_url(@contest)
 end
 
 def unhide
   con = Contestant.find(params[:contestant])
-  redirect_to contest_friendly_encounters_url unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
+  redirect_to contest_friendly_encounters_url(@contest) unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
   enc = FriendlyEncounter.find(params[:id])
   slot = enc.slot_for(con)
   unless slot.nil?
     slot.hidden = false
     slot.save!
   end
-  redirect_to contest_friendly_encounters_url
+  redirect_to contest_friendly_encounters_url(@contest)
 end
 
 def create
@@ -75,7 +75,7 @@ def create
     con1.open_friendly_encounter_request :to => con2
   end
 
-  redirect_to contest_friendly_encounters_url 
+  redirect_to contest_friendly_encounters_url(@contest) 
 end
 
   def all
@@ -88,7 +88,7 @@ end
     raise t("messages.action_now_allowed") unless current_user.has_role_for? con
     
     enc.destroy
-    redirect_to contest_friendly_encounters_url 
+    redirect_to contest_friendly_encounters_url(@contest)
   end
 
   def reject
@@ -96,7 +96,7 @@ end
     raise t("messages.action_not_allowed") if not enc.rejectable_by?(current_user)
 
     enc.reject
-    redirect_to contest_friendly_encounters_url
+    redirect_to contest_friendly_encounters_url(@contest)
   end
 
   def accept
@@ -116,7 +116,7 @@ end
       enc.add_contestant(con)
     end
 
-    redirect_to contest_friendly_encounters_url
+    redirect_to contest_friendly_encounters_url(@contest)
   end
 
   def play
@@ -143,7 +143,7 @@ end
       enc.play! 
     end
 
-    redirect_to contest_friendly_encounters_url
+    redirect_to contest_friendly_encounters_url(@contest)
   end
 
 private
@@ -156,9 +156,9 @@ private
   end
 
   def ensure_login
-    redirect_to contest_url unless logged_in? and not current_user.nil?
+    redirect_to contest_url(@contest) unless logged_in? and not current_user.nil?
     if logged_in?
-      redirect_to contest_url unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
+      redirect_to contest_url(@contest) unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
     end
   end
 end

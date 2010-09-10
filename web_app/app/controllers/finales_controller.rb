@@ -16,26 +16,26 @@ end
  
 def publish
   @finale.publish
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end
 
 def publish_lineup
   day = FinaleMatchday.find(params[:id])
   day.public = true
   day.save!
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end
 
 def hide_lineup
   day = FinaleMatchday.find(params[:id])
   day.public = false
   day.save!
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end
 
 def hide
   @finale.hide
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end 
 
 def delete
@@ -44,7 +44,7 @@ def delete
   else
     flash[:error] = "Finals have already begun"
   end
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end
 
 def fetch_finale
@@ -54,11 +54,11 @@ end
 def index
   if (not (@contest.regular_phase_finished?)) or 
     (@finale.nil? or not @finale.has_published_lineup? and (current_user.nil? or not current_user.has_role?(:administrator)))
-    redirect_to contest_url
+    redirect_to contest_url(@contest)
   end
 
   if not @finale.nil? and (@finale.nil? or not @finale.published?) and (current_user.nil? or not current_user.has_role?(:administrator)) and (@finale.has_published_lineup?)
-    redirect_to lineup_contest_finale_url
+    redirect_to lineup_contest_finale_url(@contest)
   end
 end
 
@@ -66,23 +66,23 @@ def lineup
 end
 
 def match_results
-  redirect_to contest_url unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
+  redirect_to contest_url(@contest) unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
   @match = FinaleMatch.find(params[:id].to_i)
 end
 
 def ranking
-  redirect_to contest_url unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
+  redirect_to contest_url(@contest) unless ((@contest.regular_phase_finished? and not current_user.nil? and current_user.has_role?(:administrator)) or (not @finale.nil? and @finale.published?))
 end
 
 def prepare
   @contest.prepare_finale
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end
 
 def prepare_day
   day = params[:dayname]
   @contest.finale.prepare_day day.to_sym
-  redirect_to contest_finale_url
+  redirect_to contest_finale_url(@contest)
 end
 
 def delete_matchday
@@ -92,7 +92,7 @@ def delete_matchday
     @matchday.slots.destroy_all
     @matchday.matches.destroy_all
   end
-  redirect_to contest_finale_url  
+  redirect_to contest_finale_url(@contest)  
 end
 
 def play
@@ -113,14 +113,14 @@ def play
     end
   end
 
-  redirect_to contest_finale_url()
+  redirect_to contest_finale_url(@contest)
 end
 
 def play_all
   if not @finale.running?
     @finale.play_all 
   end
-  redirect_to contest_finale_url()
+  redirect_to contest_finale_url(@contest)
 end
 
 def get_finale
@@ -139,7 +139,7 @@ def send_archive
     send_file(file, :filename => File.basename(file), :type => 'application/zip', :stream => "false", :disposition => "attachment")
   else
     flash[:error] = "Finale not finished yet"
-    redirect_to contest_finale_url 
+    redirect_to contest_finale_url(@contest) 
   end
 end
 

@@ -210,7 +210,7 @@ class PeopleController < ApplicationController
           elsif current_user.has_role? :administrator
             redirect_to contest_people_url(@contest)
           else
-            redirect_to @person
+            redirect_to [@contest, @person]
           end
         end
         format.xml  { head :ok }
