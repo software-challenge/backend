@@ -53,7 +53,7 @@
     } 
   <% end %>
 
-  <% @contestants.each do |con| %>
+  <% @contestants.for_contest(@contest).each do |con| %>
     <% req = con.friendly_requests.sort_by(&:date).reverse %>
     <% unless req.empty? %>
       <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
@@ -106,7 +106,7 @@
 
   <br>
   <h2><%= t("views.friendly_requests_from_others") %></h2>  
-  <% @contestants.each do |con| %>
+  <% @contestants.for_contest(@contest).each do |con| %>
     <% requests = con.friendly_requests_from_others.sort_by(&:date).reverse %>
     <% if not requests.empty? %>
     <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>

@@ -10,6 +10,8 @@ class FriendlyEncounter < ActiveRecord::Base
 
   belongs_to :open_for, :class_name => "Contestant"
   has_many :contestants, :through => :slots
+
+  named_scope :for_contest, lambda {|c| {:conditions => {:contest_id => c.id}}}
   
   def date
     self.created_at

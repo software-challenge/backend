@@ -13,7 +13,7 @@ class Contestant < ActiveRecord::Base
   has_many :slots, :class_name => "MatchdaySlot"
   has_many :matchdays, :through => :slots, :conditions => ['type = ?', "Matchday"]
   has_many :friendly_encounter_slots
-  has_many :friendly_encounters, :through => :friendly_encounter_slots
+  has_many :all_friendly_encounters, :through => :friendly_encounter_slots, :source => :friendly_encounter
 
   def friendly_matches_running
     friendly_encounters.collect{|enc| enc.mini_jobs}.flatten.reject{|m| m.nil?}.count
@@ -149,6 +149,14 @@ class Contestant < ActiveRecord::Base
     encounter.open_for = con
     
     encounter.save!
+  end
+
+  def friendly_encounters
+    if @contest.nil?
+      all_friendly_encounters
+    else
+      all_friendly_encounters.for_contest(@contest)
+    end
   end
 
   def find_open_requests
