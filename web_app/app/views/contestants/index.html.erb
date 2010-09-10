@@ -13,7 +13,7 @@
 </h1>
 
 <% tabnav :contest do %>
-  <% rankings = Contestant::RANKINGS %>
+  <% rankings = Contestant::RANKINGS.clone %>
   <% rankings.delete("none") %>
   <% rankings.each do |ranking| %>
   <% contestants = @contestants.find_all{|c| c.ranked? and c.ranking == ranking} %>
