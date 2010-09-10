@@ -5,15 +5,24 @@
 </h1>
 
 <% tabnav :new_person do %>
-  <% form_tag(add_person_contest_contestant_url(@contest, @contestant), {:class => "formtastic"}) do %>
+  <% form_tag(add_person_contest_contestant_url(@contest, @contestant), {:class => "formtastic", :autocomplete => "off"}) do %>
     <% if manageable_roles.size == 1 -%>
       <%= hidden_field_tag "role", manageable_roles.first[1] %>
     <% end -%>
     <fieldset class="inputs">
       <ol>
         <li class="string required">
-          <%= label_tag :email %> <%= text_field_tag :email %>
+        <% if administrator? %>
+          <% combobox(:email, Person.all.collect(&:email), :label => :email) %>
+        <% else %>
+          <%= label_tag :email %> <%= text_field_tag :email %> 
+        <% end %>
         </li>
+        <% if administrator? %>
+          <li>
+          <% combobox(:name, Person.all.collect(&:name), :label => :name) %>
+          </li>
+        <% end %>
         <% if manageable_roles.size > 1 -%>
           <li>
             <%= label_tag :role, "als" %>

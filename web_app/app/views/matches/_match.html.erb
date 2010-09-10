@@ -278,7 +278,7 @@
 
 <% javascript_tag do %>
     function show_replay(round, url) {
-      $("#replay_box_" + round).attr({src: "http://m0ppelk0tze.paniccrew.de/socha10/replay.php?replayURL=" + url})
+      $("#replay_box_" + round).attr({src: "http://www.software-challenge.de/replayviewer/<%= @contest.game_definition.game_identifier.to_s %>/replay.php?replayURL=" + url})
       $("#replay_round_" + round).show(250)
     }
 <% end %>

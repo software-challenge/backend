@@ -126,7 +126,13 @@ class ContestantsController < ApplicationController
   end
 
   def add_person
-    @person = Person.visible.find_by_email(params[:email])
+    email = params[:email]
+    name = params[:name]
+    unless email.blank?
+      @person = Person.visible.find_by_email(email)
+    else
+      @person = Person.visible.to_ary.find{|p| p.name == name}
+    end
     if @person.nil?
       flash[:error] = I18n.t("messages.person_not_found_by_email", :email => params[:email])
       redirect_to :controller => :people, :action => :new, :contestant_id => params[:contestant_id]

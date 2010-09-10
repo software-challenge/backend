@@ -1,13 +1,13 @@
 <div id="actions">
   <% if may_add_person? and not @contestant.disqualified %>
-    <% link_to(new_contest_contestant_person_url(:contestant_id => @contestant.to_param)) do %>
+    <% link_to(new_contest_contestant_person_url(@contest, @contestant)) do %>
       <%= image_tag('actions/add.png') %> <%= t "views.add_person" %>
     <% end %>
   <% end %>
 </div>
 
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
+  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
   <%= @contestant.name %>
 </h1>
 
