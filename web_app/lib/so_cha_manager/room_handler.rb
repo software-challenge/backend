@@ -94,12 +94,18 @@ module SoChaManager
     end
 
     # use class-attribute as node-name
-    # FIXME: removes other potential attributes!
-    #        <foo class="x" bar="z">  #=> <x>
     def append_normalized(data)
       if data.attributes['class'] and data.attributes['class'].value
         normalized_class = data.attributes['class'].value
-        append "<#{normalized_class}>"
+        str = ""
+        str << "<#{normalized_class}"
+        data.attributes.each do |name,attr|
+          unless name == 'class'
+            str << " #{name}=\"#{attr.value}\"" 
+          end
+        end
+        str << ">"
+        append str
         data.xpath('./*').each do |element|
           append element
         end
