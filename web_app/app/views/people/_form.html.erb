@@ -20,6 +20,12 @@
       <%= f.input :administrator, :as => :boolean %>
     <% end %>
 
+    <style type="text/css">
+      span.other {
+        display: none;
+      }
+    </style>
+
     <% show_to :administrator, :teacher, :tutor do %>
       <% if current_user != @person or current_user.has_role? :administrator %>
         <li>
@@ -27,11 +33,15 @@
         <li>
           <% content_for :teams do %>
             <div style="overflow-y: scroll; height: 200px; margin-bottom: 5px;">
-              <% Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty?}.each do |contest| %>
-                <a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
+              <% there_are_hidden = false %>
+              <% contests = [@contest].concat Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty? and c != @contest} %>
+              <% contests.each do |contest| %>
+                <% there_are_hidden = true if contest != @contest %>
+                <span class="<%= contest == @contest ? "current" : "other" %>"><a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
                 <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a>
                 &nbsp;( <%= @person.memberships.find_all {|m| m.contest == contest and not m.contestant.hidden?}.count %> )
                 <br><br>
+              </span>
                 <% javascript_tag do %>
                   $(function() {
                     $("a#contestants_show_<%= contest.id %>").bind('click', function() {
@@ -74,6 +84,21 @@
                 <% end %>
                 </div>
               <% end %>
+
+              <% if there_are_hidden %>
+                <br><a id="show_hidden" href="#"><%= t("actions.show_hidden") %></a>
+                <% javascript_tag do %>
+                  $(function() {
+                    $("a#show_hidden").bind('click', function() {
+                      $("span.other").each(function(index) {
+                        $("a#show_hidden").hide();
+                        $(this).fadeIn(350);
+                      })
+                      return false;
+                    })
+                  })
+                <% end %>
+            <% end %>
             </div>
           <% end %>
           <%= f.send(:field_set_and_list_wrapping_for_method, :teams, {}, @content_for_teams) %>
