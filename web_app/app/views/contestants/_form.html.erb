@@ -4,9 +4,6 @@
     <%= f.input :location, :required => true %>
     <% rankings = Contestant::RANKINGS.collect{|r| [t("views.ranking.#{r}"), r]} %>
     <%= f.input :ranking, :collection => rankings, :include_blank => false %>
-    <li>
-    <%= f.label :ranking %> <%= select_tag "contestant[ranking2]", options_for_select(rankings) %>
-    </li>
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button %>
