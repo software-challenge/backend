@@ -18,16 +18,16 @@ class MainController < ApplicationController
   end
 
   def new_password
-    redirect_to root_url if logged_in?
+    redirect_to contest_url(@contest) if logged_in?
     @email = params[:user].nil? ? nil : params[:user][:email]
     if @email
       person = Person.find(:first, :conditions => {:email => @email})
       if not person
         flash[:error] = t("messages.no_user_with_adress")
-        redirect_to login_url
+        redirect_to contest_login_url(@contest)
       elsif person.has_role?(:administrator)
         flash[:error] = t("messages.admin_password_cannot_be_changed")
-        redirect_to login_url
+        redirect_to contest_login_url(@contest)
       else
         password = ActiveSupport::SecureRandom.base64(6)
         person.password = password
@@ -37,7 +37,7 @@ class MainController < ApplicationController
         else
           flash[:error] = "Passwort konnte nicht geändert werden" 
         end
-        redirect_to login_url
+        redirect_to contest_login_url(@contest)
       end
     end
   end
