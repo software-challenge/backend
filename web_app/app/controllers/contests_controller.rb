@@ -69,7 +69,7 @@ class ContestsController < ApplicationController
       if @new_contest.save
         flash[:notice] = I18n.t("messages.contest_created_successfully")
         format.html { redirect_to contest_contests_url(@contest) }
-        format.xml  { render :xml => @new_contest, :status => :created, :location => contests_url }
+        format.xml  { render :xml => @new_contest, :status => :created, :location => contests_url(@contest) }
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @new_contest.errors, :status => :unprocessable_entity }

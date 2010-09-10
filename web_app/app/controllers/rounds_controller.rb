@@ -33,7 +33,7 @@ class RoundsController < ApplicationController
       flash[:error] = t "messages.contestant_could_not_be_disqualified"
     end
     
-    redirect_to contest_matchday_match_url(slot.round.match.matchday, slot.round.match) 
+    redirect_to contest_matchday_match_url(@contest, slot.round.match.matchday, slot.round.match) 
   end
 
   def requalify
@@ -43,6 +43,6 @@ class RoundsController < ApplicationController
     else
       flash[:error] = t "messages.contestant_could_not_be_requalified"
     end
-    redirect_to contest_matchday_match_url(slot.round.match.matchday, slot.round.match)
+    redirect_to contest_matchday_match_url(@contest, slot.round.match.matchday, slot.round.match)
   end
 end
