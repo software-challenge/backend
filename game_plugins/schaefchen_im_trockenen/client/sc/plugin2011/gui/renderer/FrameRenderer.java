@@ -61,7 +61,7 @@ public class FrameRenderer extends JPanel {
 	private static final Color PLAYER1_COLOR = Color.RED;
 
 	private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
-	private static final Font h1 = new Font("Helvetica", Font.BOLD, 25);
+	private static final Font h1 = new Font("Helvetica", Font.BOLD, 27);
 	private static final Font h2 = new Font("Helvetica", Font.BOLD, 20);
 	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
 	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 14);
