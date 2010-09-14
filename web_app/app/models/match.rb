@@ -111,6 +111,11 @@ class Match < ActiveRecord::Base
       update_scoretable
       self.played_at = DateTime.now
       self.save!
+
+      # Was any of the playing teams disqualified for the contest?
+      contestants.find_all{|c| c.disqualified?}.each do |c|
+        c.change_qualify_for_match m, :disqualify
+      end
       
       if set and set.respond_to? :after_match_played
         set.after_match_played self
@@ -185,9 +190,6 @@ class Match < ActiveRecord::Base
       if not round.played?
         round.perform
       end
-    end
-    contestants.find_all{|c| c.disqualified?}.each do |c|
-      c.disqualify_for_match(self)
     end
   end
 end

@@ -223,7 +223,7 @@
               <% if not round.has_disqualified_slot? %> 
                 <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify") %>
               <% end %>
-            <% else %>
+            <% elsif slot.qualification_changed %>
               <%= link_to (image_tag "actions/requalify.png"), requalify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_requalify"), :title => t("actions.requalify") %>
             <% end %>
           </td>
