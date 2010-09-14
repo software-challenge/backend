@@ -2,9 +2,9 @@ class PeopleController < ApplicationController
 
   protected
 
-  before_filter :fetch_contestant, :only => [:people_for_contestant, :remove_from_contestant]
+  before_filter :fetch_contestant, :only => [:people_for_contestant, :remove]
   before_filter :try_fetch_contestant
-  before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove_from_contestant]
+  before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove]
 
   access_control do
     allow :administrator
@@ -28,7 +28,7 @@ class PeopleController < ApplicationController
       allow :tutor, :of => :contestant
     end
 
-    action :remove_from_contestant do
+    action :remove do
       allow :administrator
       allow :tutor, :teacher, :of => :contestant
     end
@@ -164,6 +164,8 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if success
+        
+        add_event PersonCreatedEvent.create(:person => @person, :creator => @current_user)
 
         if params[:send_notification] == "1"
           PersonMailer.deliver_signup_notification(@person, @current_contest, person_params[:password])
@@ -245,8 +247,9 @@ class PeopleController < ApplicationController
     raise "Deletion is not supported right now."
   end
 
-  def remove_from_contestant
+  def remove
     @person.memberships.find_by_contestant_id(@contestant.id).destroy
+    add_event PersonRemovedFromContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user)
     if may_access_contestant_people_list? @contestant
       redirect_to :action => :people_for_contestant, :contestant_id => @contestant.to_param
     else
