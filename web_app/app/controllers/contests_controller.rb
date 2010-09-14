@@ -122,9 +122,10 @@ class ContestsController < ApplicationController
     weekdays = params[:schedule][:weekdays].collect { |x| x.blank? ? nil : x.to_i }
     weekdays.compact!
     weekdays.uniq!
+    trials = params[:schedule][:trial_days].to_i
 
     if @contest.matchdays.count.zero?
-      @contest.refresh_matchdays!(start_at, weekdays)
+      @contest.refresh_matchdays!(start_at, weekdays, trials)
 
       if @contest.matchdays.count.zero?
         flash[:error] = I18n.t("messages.not_enough_contestants_for_creating_contest", :contestant_label => Contestant.human_name(:count => 2))
