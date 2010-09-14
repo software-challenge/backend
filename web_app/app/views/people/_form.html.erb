@@ -1,6 +1,6 @@
 <% semantic_form_for(@contestant ? [@contest, @contestant, @person] : [@contest, @person]) do |f| %>
   <% f.inputs do %>
-    <% if administrator? or current_user == @person %>
+    <% show_to :administrator, :teacher, :tutor, @person do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
     <%= f.input :email, :required => true, :hint => t("views.email_required") %>

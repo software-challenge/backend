@@ -147,8 +147,13 @@
         </td>
         <td>
           <% show_to :administrator do -%>
+            <% unless contestant.disqualified? %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
               <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
+            <% else %>
+              <% undo_image = image_tag "actions/undo.gif", :title => I18n.t("actions.requalify") %>
+              <%= link_to undo_image, unhide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_requalify_during_contest", :name => contestant.name) %>
+            <% end %>
           <% end %>
         </td>
       </tr>  

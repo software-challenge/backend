@@ -24,7 +24,10 @@ class RoundSlot < ActiveRecord::Base
       round.slots.each do |slot|
         return if slot.score.cause == "LEFT"
       end
-      score.cause = "LEFT"
+      score.adjusted_cause = "LEFT"
+      score.fragments.each do |f|
+        f.adjust_to_worst
+      end
       self.qualification_changed = !self.qualification_changed
       score.save
       self.save!
@@ -34,7 +37,11 @@ class RoundSlot < ActiveRecord::Base
   def requalify
     return if score.cause == "REGULAR"
     RoundSlot.transaction do
-      score.cause = "REGULAR"
+      score.adjusted_cause = nil
+      score.fragments.each do |f|
+        f.adjusted_value = nil
+        f.save!
+      end
       self.qualification_changed = !self.qualification_changed
       score.save
       self.save!

@@ -66,14 +66,20 @@ class Contestant < ActiveRecord::Base
   
   def matches
     contest.matches.with_contestant(self)
-  end 
+  end
 
-  def disqualify_for_match(match)
+  def change_qualify_for_match(match, change)
+    raise "Possible changes are :disqualify and :requalify" unless [:requalify, :disqualify].include?(change)
     cont_index = match.contestants.index(self)
     match.rounds.each do |r|
       r.scores.each do |s|
         s.fragments.each do |f|
-          f.adjust_to_worst
+          if change == :disqualify
+            f.adjust_to_worst
+          elsif change == :requalify
+            f.adjusted_value = nil
+            f.save!
+          end
         end
       end
     end
@@ -81,29 +87,49 @@ class Contestant < ActiveRecord::Base
       slot = slots[cont_index]
       if slot.round.played?
         s = slot.score
-        s.adjusted_cause = "DISQUALIFIED"
+        if change == :disqualify
+          s.adjusted_cause = "DISQUALIFIED"
+        elsif change == :requalify
+          s.adjusted_cause = nil
+        end
         s.save!
       end
     end
   end
 
-  def disqualify
-    self.disqualified = true 
-    self.ranking = "none"
-    #self.overall_member_count = 0
-    #remove_from_matchdays if contest.ready?
-    Matchday.transaction do
+  def requalify
+    raise "Team is not disqualified" unless self.disqualified
+    transaction do
       contest.matchdays.each do |md|
         slot = md.slots.all.find{|s| s.contestant == self}
         if not slot.nil?
           slot.matches.each do |m|
-            disqualify_for_match(m)
+            change_qualify_for_match m, :requalify
           end
         end
       end
+      self.disqualified = false
+      self.save!
+    end
+    contest.reaggregate!
+  end
+
+  def disqualify
+    raise "Team is already disqualified" if self.disqualified
+    transaction do
+      self.disqualified = true 
+      contest.matchdays.each do |md|
+        slot = md.slots.all.find{|s| s.contestant == self}
+        if not slot.nil?
+          slot.matches.each do |m|
+            change_qualify_for_match m, :disqualify
+          end
+        end
+      end
+      self.ranking = "none"
+      self.save! 
     end  
     contest.reaggregate 
-    self.save! 
   end
 
   def remove_from_matchdays

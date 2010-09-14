@@ -152,12 +152,20 @@ class ContestantsController < ApplicationController
     end
   end
 
+  def unhide
+    if @contestant.disqualified?
+      # Requalify
+      @contestant.requalify
+    else
+      @contestant.hidden = false
+      @contestant.save!
+    end
+    redirect_to :back
+  end
+
   def hide
     if @contest.ready?
       # Contest already started, instead of hiding, hide the members and remove contestant from matchdays
-      @contestant.memberships.each do |ms|
-        ms.destroy
-      end  
       @contestant.disqualify 
       redirect_to :back
     else

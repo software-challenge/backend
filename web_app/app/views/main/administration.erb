@@ -6,7 +6,7 @@
   </p>
   <p style="margin-top: 15px">
     <strong style="margin-bottom: 5px">Letzte Ereignisse</strong><br>
-    <% @contest.events.first(15).each do |event| %>
+    <% @contest.events.first(25).each do |event| %>
       <% if event.valid_event? %>
         <%= event.created_at.to_time.strftime("%d.%m.%y - %H:%M") %> - <%= event_text(event) %><br>
       <% end %>
