@@ -35,7 +35,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.named t("views.my") + " " + Contestant.human_name(:count => 2)
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to my_contest_contestants_url(@contest)
-  end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 1
+  end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 0
 
   add_tab do |t|
     t.named t("titles.matchdays.list")
