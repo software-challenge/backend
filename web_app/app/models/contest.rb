@@ -108,7 +108,7 @@ class Contest < ActiveRecord::Base
     encounter
   end
 
-  def refresh_matchdays!(start_at = Date.today, weekdays = 0..6)
+  def refresh_matchdays!(start_at = Date.today, weekdays = 0..6, trials = 0)
     weekdays = weekdays.to_a
     range = (0..6)
 
@@ -117,8 +117,12 @@ class Contest < ActiveRecord::Base
 
     next_date = start_at
     Contest.transaction do
-      generate_matchdays.each_with_index do |pairs, day|
+      generate_matchdays(trials).each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
+        if day < trials
+          matchday.trial = true
+          matchday.save!
+        end
 
         contestants.ranked.visible.each do |contestant|
           matchday.slots.create!(:contestant => contestant)
@@ -142,7 +146,7 @@ class Contest < ActiveRecord::Base
   end
 
   def last_played_matchday
-    matchdays.played.published.first(:order => "position DESC")
+    matchdays.without_trials.played.published.first(:order => "position DESC")
   end
 
   def ready?
@@ -169,11 +173,34 @@ class Contest < ActiveRecord::Base
 
   # generates all matchdays (round-robin tournament)
   # NOTE: (later) how about swiss-system instead of round-robin
-  def generate_matchdays
+  def generate_matchdays(trials = 0)
     result = []
     list = contestants.ranked.visible.all
-    list << nil if list.size.odd?
 
+    lastNils = []
+    trials.times do |trial|
+      # Just in case, shouldnt happen if used properly
+      conts = list.clone
+      schedule = []
+      if lastNils.size == conts.size
+        lastNils = []
+      end
+      cont1 = nil
+      cont2 = nil
+      if list.size.odd?
+        while cont2.nil? or lastNils.include?(cont2)
+          cont2 = conts.reject{|c| lastNils.include?(c)}.rand
+        end
+        schedule << [nil, conts.delete(cont2)]
+        lastNils << cont2
+      end
+      until conts.empty?
+        schedule << [conts.delete(conts.rand), conts.delete(conts.rand)]
+      end
+      result << schedule
+    end
+
+    list << nil if list.size.odd?
     rounds = list.size - 1
     half_size = list.size / 2
 

@@ -120,6 +120,7 @@ de:
     recalc: "Neu zusammenrechnen"
     logs: "Logdateien"
     matchday: "Spieltag"
+    trial_matchday: "Probespieltag"
     invite_person: "Bestehende Person einladen"
     game_server: "Game Server"
     teamsite: "Teamseite"

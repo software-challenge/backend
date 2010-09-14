@@ -9,6 +9,8 @@ class Matchday < ActiveRecord::Base
   # named scopes
   named_scope :played, :conditions => "played_at IS NOT NULL"
   named_scope :published, :conditions => {:public => true}
+  named_scope :trials, :conditions => {:trial => true}
+  named_scope :without_trials, :conditions => {:trial => false}
 
   # validations
   #validates_presence_of :contest
@@ -215,7 +217,7 @@ class Matchday < ActiveRecord::Base
     slots.each do |slot|
       # For each contestant go through all earlier played matchdays
       # elements = [[1,0,0],[2,3,0],[3,0,0],[4,2,0]]
-      elements = contest.matchdays(:reload).all(:conditions => ["played_at IS NOT NULL AND position < ?", position]).collect do |day|
+      elements = contest.matchdays(:reload).all(:conditions => ["played_at IS NOT NULL AND position < ?", position]).without_trials.collect do |day|
         # If there was a game on that day, match_slot will not be nil
         match_slot = day.match_slots(:reload).first(:conditions => ["matchday_slots.contestant_id = ?", slot.contestant.id])
         

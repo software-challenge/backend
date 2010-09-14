@@ -22,11 +22,18 @@
       </tr>
     </thead>
 
+    <% trialcount = 0 %>
     <% @matchdays.each_with_index do |matchday,i| %>
       <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
         <td style="padding-left: 10px;">
           <% link_to contest_matchday_path(@contest, matchday) do %>
-            <%= i+1 %>. <%= t "views.matchday" %>
+            <% if matchday.trial %>
+              <%= trialcount += 1 %>.
+              <%= t "views.trial_matchday" %>
+            <% else %>
+              <%= i+1-trialcount %>. 
+              <%= t "views.matchday" %>
+            <% end %>
           <% end %>
         </td>
         <td><%= l(matchday.when, :format => :long) %></td>

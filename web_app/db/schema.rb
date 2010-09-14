@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100909093819) do
+ActiveRecord::Schema.define(:version => 20100914122949) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -154,6 +154,7 @@ ActiveRecord::Schema.define(:version => 20100909093819) do
     t.string   "type",       :default => "Matchday"
     t.string   "name",       :default => ""
     t.integer  "finale_id"
+    t.boolean  "trial",      :default => false,      :null => false
   end
 
   create_table "matches", :force => true do |t|
