@@ -59,7 +59,7 @@
                     })
                   })
                 <% end %>
-                <div style="display: none; padding-left: 25px" id="contestants_<%= contest.id %>">
+                <div style="<%= (@person.new_record? and contest == @contest) ? "" : "display: none; " %>padding-left: 25px" id="contestants_<%= contest.id %>">
                 <% memberships = current_user.manageable_teams_for(contest).collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
                 <% associated_with_additional(@person.memberships_for(contest).find_all{|m| current_user.manageable_teams.include?(m.contestant)}, memberships, :contestant_id).each_with_index do |m,i| %>
                   <% unless m.contestant.hidden -%>
@@ -68,7 +68,7 @@
                     <li class="boolean <%= cycle("odd", "even") %>">
                       <label for="<%= checkbox_id %>" style="padding-left: 0;">
                         <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
-                        <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam" %>
+                        <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam", :checked => (@person.new_record? and m.contestant == @contestant) %>
                         <%= t.name %>
                       </label>
 
@@ -86,7 +86,7 @@
               <% end %>
 
               <% if there_are_hidden %>
-                <br><a id="show_hidden" href="#"><%= t("actions.show_hidden") %></a>
+                <br><a id="show_hidden" href="#"><%= t("actions.show_all") %></a>
                 <% javascript_tag do %>
                   $(function() {
                     $("a#show_hidden").bind('click', function() {

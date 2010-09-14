@@ -209,6 +209,7 @@ de:
     revoke: "Absagen"
     new_friendly_match: "Neues Freundschaftsspiel"
     show_hidden: "Versteckte anzeigen"
+    show_all: "Alle anzeigen"
     send: "Absenden"
     sending: "Sende..."
     cancel: "Abbrechen"
