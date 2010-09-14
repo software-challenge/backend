@@ -78,9 +78,10 @@ ActionController::Routing::Routes.draw do |map|
           client.status '/status', :controller => "clients", :action => "status"
         end
         contestant.people '/mitglieder', :controller => "people", :action => "people_for_contestant", :conditions => { :method => :get }
-        contestant.person '/mitglieder/einladen', :controller => "people", :action => "invite",
-          :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }
-        contestant.resources :people, :as => "mitglieder", :except => [:index]
+        contestant.person '/mitglieder/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }
+        contestant.resources :people, :as => "mitglieder", :except => [:index], :member => {
+          :remove => :post
+        }
 
         contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
       end

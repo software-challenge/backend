@@ -25,4 +25,13 @@ class ClientActivatedEvent < Event
   def contestant
     client.contestant
   end
+
+  def path
+    [:contest, contestant]
+  end
+
+  def text
+    "#{contestant.name} #{I18n.t("events.client_activated")}"
+  end
+
 end

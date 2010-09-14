@@ -144,6 +144,7 @@ class ContestantsController < ApplicationController
         flash[:error] = I18n.t("messages.person_already_belongs_to_contestant")
       else
         if @person.memberships.create!(:contestant => @contestant, :role_name => params[:role])
+          add_event PersonAddedToContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user)
           flash[:notice] = I18n.t("messages.person_added_to_contestant")
         end
       end

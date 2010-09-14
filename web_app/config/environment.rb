@@ -18,6 +18,8 @@ Rails::Initializer.run do |config|
     config.load_paths << "#{RAILS_ROOT}/app/#{dir}"
   end
 
+  config.load_paths << "#{RAILS_ROOT}/app/models/events"
+
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"

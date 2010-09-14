@@ -66,7 +66,7 @@
     <td>
       <% if may_remove_from_contestant? -%>
         <% remove_image = image_tag "actions/remove_small.png", :title => I18n.t("actions.remove_from_contestant") %>
-        <%= link_to remove_image, url_for(:action => :remove_from_contestant, :id => person.to_param, :contestant_id => @contestant.to_param), :confirm => I18n.t("messages.confirm_remove_from_contestant", :name => person.name) %>
+        <%= link_to remove_image, remove_contest_contestant_person_url(@contest, @contestant, person), :confirm => I18n.t("messages.confirm_remove_from_contestant", :name => person.name), :method => :post %>
       <% end -%>
     </td>
   <% else -%>

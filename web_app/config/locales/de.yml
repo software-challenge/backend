@@ -142,6 +142,9 @@ de:
   events:
     client_activated: "hat einen neuen Client aktiviert."
     client_uploaded: "hat einen neuen Client hochgeladen."
+    person_created: "{{creator}} hat eine neue Person \"{{person}}\" hinzugefügt."
+    person_added_to_contestant: "{{person}} wurde dem Team \"{{contestant}}\" hinzugefügt."
+    person_removed_from_contestant: "{{person}} wurde aus dem Team \"{{contestant}}\" entfernt."
   messages:
     no_more_friendly_matches_today: "kann heute keine Freundschaftsspiele mehr spielen"
     friendly_match_not_today: "Dieses Spiel kann heute nicht mehr gespielt werden."
