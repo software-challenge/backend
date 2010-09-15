@@ -671,7 +671,15 @@ public class FrameRenderer extends JPanel {
 			int fontY = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH / 2
 					+ fmH3.getHeight() / 2 - 4;
 			g2.drawString("Spielfortschritt:", BORDER_SIZE + 10, fontY);
-			g2.drawString("Runde " + gameState.getRound() + " von 30",
+
+			int round = gameState.getRound() + 1;
+			String roundString = Integer.toString(gameState.getRound() + 1);
+			if (round > Constants.ROUND_LIMIT) {
+				roundString = Integer.toString(Constants.ROUND_LIMIT);
+			}
+			g2.drawString(roundString, fontX, fontY);
+
+			g2.drawString("Runde " + roundString + " von 30",
 					right + 30, fontY);
 
 			int progress = (gameState.getTurn() * (right - left))
