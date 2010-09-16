@@ -9,6 +9,7 @@ class Person < ActiveRecord::Base
 
   has_many :memberships
   has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
+  has_one :email_event, :dependent => :destroy
 
   alias :contestants :teams
 

@@ -1,0 +1,15 @@
+Im Wettbewerb
+"<%= @matchday.contest.name %>"
+wurde der <%= @mdstr %> abgeschlossen und kann jetzt veröffentlicht werden.
+
+<% if @disqualis == 0 %>
+Der Spieltag verlief ohne Disqualifikationen.
+<% else %>
+Während des Spieltages kam es zu <%= @disqualis %> Disqualifikationen.
+<% end %>
+
+Die Spieltagergebnisse sind unter <%= @url %> einsehbar.
+
+
+PS: Sie erhalten diese E-Mail, weil sie auf der Wettkampfseite in den Verteiler eingetragen wurden.
+Um diese E-Mail nicht mehr zu erhalten, wenden Sie sich an einen Administrator.

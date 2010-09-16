@@ -8,6 +8,7 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    receive_email_when: "In folgenden Fällen möchte ich per E-Mail benachrichtigt werden:"
     no_matches_planned: "Es stehen keine Begegnungen an."
     contestant_ranking: "In welcher Rangliste soll das Team aufgelistet werden?"
     ranking:
@@ -65,7 +66,7 @@ de:
     filename: "Dateiname"
     email_hint: "Bei der Anmeldung muss diese eMail-Adresse angegeben werden."
     size: "Größe"
-    hey_who_are_you: "Sie sind nicht anmeldet, jetzt" 
+    hey_who_are_you: "Sie sind nicht angemeldet, jetzt" 
     mainfile: "Hauptdatei"
     test: "Test"
     outstanding: "ausstehend"
@@ -320,6 +321,8 @@ de:
       client:
         file: Der Computerspieler muss als ZIP-Datei gepackt werden.
   titles:
+    edit: "Bearbeiten"
+    edit_notif: "Benachrichtigseinstellungen"
     events: "Ereignisse"
     schedule: "Terminplan"
     overview: "Übersicht"

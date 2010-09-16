@@ -15,7 +15,8 @@ class ApplicationController < ActionController::Base
   before_filter :fetch_user, :fetch_contest
   append_before_filter :require_current_user
 
-  before_filter :generate_page_title
+  append_before_filter :generate_page_title
+  append_before_filter :set_mailer_options
 
   attr_accessor :current_user
   hide_action :current_user
@@ -177,6 +178,10 @@ class ApplicationController < ActionController::Base
     @contest.events << event
     @contest.save!
     @contest.reload
+  end
+
+  def set_mailer_options
+    ActionMailer::Base.default_url_options[:host] = request.host_with_port
   end
 
 end

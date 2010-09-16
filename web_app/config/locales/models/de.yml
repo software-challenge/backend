@@ -38,6 +38,9 @@ de:
       round:
         one: Runde
         other: Runden
+      email_event:
+        one: "E-Mail Empfänger"
+        other: "E-Mail Empfänger"
     attributes:
       client:
         file: ZIP-Datei
@@ -45,6 +48,9 @@ de:
         game_definition: Spiel
         name: Name
         active: Wettbewerb ist aktiv
+      email_event:
+        rcv_on_matchday_played: "Ein Spieltag wurde gespielt"
+        rcv_client_matchday_warning: "Einer meiner Computerspieler ist nicht für den kommenden Spieltag bereit"
       person:
         first_name: Vorname
         last_name: Nachname

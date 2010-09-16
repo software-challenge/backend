@@ -16,6 +16,7 @@ ActionController::Routing::Routes.draw do |map|
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
       :reaggregate => :post,
+      :update_schedule => :post
     } do |c|
       c.edit_schedule '/spielplan/bearbeiten', :controller => "contests", :action => "edit_schedule"
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
@@ -81,7 +82,11 @@ ActionController::Routing::Routes.draw do |map|
         contestant.person '/mitglieder/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }
         contestant.resources :people, :as => "mitglieder", :except => [:index], :member => {
           :remove => :post
-        }
+        } do |person|
+          person.resource :email_event, :as => "mailer", :member => {
+            :update => :put
+          }
+        end
 
         contestant.matches '/matches', :controller => "matches", :action => "index_for_contestant"
       end
@@ -111,7 +116,11 @@ ActionController::Routing::Routes.draw do |map|
       c.resources :people, :as => "personen", :member => {
         :hide => :get,
         :unhide => :get
-      }
+      } do |person|
+        person.resource :email_event, :as => "mailer", :member => {
+          :update => :put
+        }
+      end 
 
       c.administration '/administration', :controller => 'main', :action => 'administration'
       c.debug '/debug', :controller => 'main', :action => 'debug', :conditions => { :method => :get }

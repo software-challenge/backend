@@ -1,0 +1,2 @@
+module EmailEventsHelper
+end

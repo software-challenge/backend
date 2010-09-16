@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100914122949) do
+ActiveRecord::Schema.define(:version => 20100915094537) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -62,6 +62,7 @@ ActiveRecord::Schema.define(:version => 20100914122949) do
     t.datetime "updated_at"
     t.string   "game_definition"
     t.string   "subdomain"
+    t.boolean  "play_automatically", :default => false, :null => false
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -73,6 +74,14 @@ ActiveRecord::Schema.define(:version => 20100914122949) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "email_events", :force => true do |t|
+    t.string   "person_id"
+    t.boolean  "rcv_on_matchday_played",      :default => false, :null => false
+    t.boolean  "rcv_client_matchday_warning", :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -110,6 +110,14 @@ class ContestsController < ApplicationController
     redirect_to contest_url(@contest) unless @contest.ready? or administrator?
   end
 
+  def update_schedule
+    success = @contest.update_attributes(params[:contest])
+    if success
+      flash[:notice] = "LOCALIZE Contest updated"
+    end
+    redirect_to contest_edit_schedule_url(@contest)
+  end
+
   def reset_matchdays
     @contest.matchdays.destroy_all
 
@@ -134,6 +142,8 @@ class ContestsController < ApplicationController
       flash[:error] = I18n.t("messages.there_is_already_a_schedule")
     end
 
+    @contest.play_automatically = params[:schedule][:play_automatically]
+    @contest.save!
     redirect_to contest_edit_schedule_url(@contest)
   end
 

@@ -56,6 +56,9 @@ Rails::Initializer.run do |config|
     require 'core_ext'
     require 'so_cha_manager'
     require 'game_definition'
+
+    daily_job = DailyJob.new
+    daily_job.add_daily_job_check
   end
 end
 
