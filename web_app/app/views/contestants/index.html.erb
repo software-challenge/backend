@@ -13,6 +13,7 @@
 </h1>
 
 <% tabnav :contest do %>
+  <h2><%= t("views.contestants_participating") %>: &nbsp;<%= @contest.contestants.visible.without_testers.ranked.count %></h2>
   <% rankings = Contestant::RANKINGS.clone %>
   <% rankings.delete("none") %>
   <% rankings.each do |ranking| %>

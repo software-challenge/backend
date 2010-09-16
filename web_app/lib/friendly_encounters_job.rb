@@ -16,7 +16,7 @@ class FriendlyEncountersJob
   end
 
   def job_already_started?
-    not Delayed::Job.all.find{|job| job.name == self.class.to_s}.nil?
+    not Delayed::Job.all(:reload).find{|job| job.name == self.class.to_s}.nil?
   end
 
   def perform
