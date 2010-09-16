@@ -41,11 +41,23 @@
           <%= f.input :weekdays, :as => :check_boxes, :collection => days, :selected => [1,4],
             :hint => I18n.t("views.data_can_be_moved"), :label => I18n.t("views.weekdays"),
             :wrapper_html => { :class => "horizontal" } %>
+            <%= f.input :play_automatically, :as => :boolean, :checked => false, :label => "Automatisch spielen", :style => "vertical-align: middle" %>
         <% end %>
         <%= f.buttons %>
       <% end %>
     <% end %>
   <% else %>
     <%= render :partial => "calendar" %>
+    <p style="margin-top: 15px">
+    <% semantic_form_for :contest, :url => update_schedule_contest_url(@contest), :method => :post do |f| %>
+      <fieldset>
+        <legend>Einstellungen</legend>
+        <% f.inputs do %>
+          <%= f.input :play_automatically, :as => :boolean, :label => "Automatisch spielen", :style => "vertical-align: middle" %>
+        <% end %>
+        <%= f.buttons %>
+      </fieldset>
+    <% end %>
+    </p>
   <% end %>
 <% end %>

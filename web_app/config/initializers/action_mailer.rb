@@ -7,3 +7,4 @@ ActionMailer::Base.smtp_settings = {
   :password  => "4rtjxw40x",
   :authentication  => :plain
 }
+ActionMailer::Base.default_url_options[:host] = "www.software-challenge.de"

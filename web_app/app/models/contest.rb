@@ -169,6 +169,10 @@ class Contest < ActiveRecord::Base
     I18n.t("games.#{game_definition.game_identifier.to_s.underscore}.name")
   end
 
+  def upcoming_matchday
+    matchdays.not_played.first(:order => "position ASC")
+  end
+
   protected
 
   # generates all matchdays (round-robin tournament)

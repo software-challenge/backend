@@ -7,7 +7,7 @@ class FriendlyEncountersJob
       while(true) do
         # First check if there still is such a job running
         unless job_already_started?
-          Delayed::Job.enqueue self, 3, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(:hour => 0, :minute => 0, :second => 0)
+          Delayed::Job.enqueue self, Match::FRIENDLY_PRIORITY, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(:hour => 0, :minute => 0, :second => 0)
         end
         sleep 15
       end

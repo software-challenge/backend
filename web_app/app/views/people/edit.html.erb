@@ -1,3 +1,6 @@
+
 <h1><%= t("titles.generic.edit", {:model => Person}) %></h1>
 
-<%= render :partial => "form" %>
+<% tabnav :person do %>
+  <%= render :partial => "form" %>
+<% end %>

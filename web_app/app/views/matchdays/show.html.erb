@@ -28,7 +28,11 @@
 
 <h1>
   <%= link_to @contest.name, contest_matchdays_url(@contest) %> /
-  <%= @matchday.position %>. <%= t "views.matchday" %>
+  <% if @matchday.trial %>
+    <%= @matchday.position %>. <%= t "views.trial_matchday" %>
+  <% else %>
+    <%= @matchday.position - @matchday.contest.matchdays.trials.count %>. <%= t "views.matchday" %>
+  <% end %>
 </h1>
 
 <% if @matchday.running? %>
