@@ -8,6 +8,7 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    contestants_participating: "Teilnehmende Teams"
     receive_email_when: "In folgenden Fällen möchte ich per E-Mail benachrichtigt werden:"
     no_matches_planned: "Es stehen keine Begegnungen an."
     contestant_ranking: "In welcher Rangliste soll das Team aufgelistet werden?"

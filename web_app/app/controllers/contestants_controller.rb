@@ -101,6 +101,14 @@ class ContestantsController < ApplicationController
   def update
     @contestant = Contestant.find(params[:id])
 
+    if @contest.ready?
+      if @contestant.ranked? and params[:contestant][:ranking] == "none"
+        params[:contestant].delete(:ranking)
+      elsif not @contestant.ranked?
+        params[:contestant][:ranking] = "none"
+      end
+    end
+
     respond_to do |format|
       if @contestant.update_attributes(params[:contestant])
         flash[:notice] = I18n.t("messages.contestant_successfully_updated") 

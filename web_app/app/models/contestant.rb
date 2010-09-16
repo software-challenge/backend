@@ -53,7 +53,7 @@ class Contestant < ActiveRecord::Base
   #  named_scope ("ranked_#{ranking}").to_sym, :conditions => {:ranking => ranking} 
   #end
 
-  named_scope :ranked, :conditions => ["ranking != ?", "none"]
+  named_scope :ranked, :conditions => ["ranking != ? AND tester = ? AND hidden = ?", "none", "false", "false"]
   named_scope :unranked, :conditions => ["ranking == ?", "none"]
 
   def ranked?

@@ -2,7 +2,16 @@
   <% f.inputs do %>
     <%= f.input :name, :required => true %>
     <%= f.input :location, :required => true %>
-    <% rankings = Contestant::RANKINGS.collect{|r| [t("views.ranking.#{r}"), r]} %>
+    <% rankings = Contestant::RANKINGS.collect{|r| [t("views.ranking.#{r}"), r]}.clone %>
+    <% 
+      if @contest.ready?
+        if @contestant.ranked?
+          rankings.reject!{|t,r| r == "none"}
+        else
+          rankings = ["none"]
+        end
+      end 
+    %>
     <%= f.input :ranking, :collection => rankings, :include_blank => false %>
   <% end %>
   <% f.buttons do %>
