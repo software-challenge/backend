@@ -15,6 +15,7 @@ class MatchdaySlot < ActiveRecord::Base
   def previous_position
     previous_matchday = matchday.previous
     return nil unless previous_matchday
+    return nil if previous_matchday.trial
 
     slot = previous_matchday.slots.first(:conditions => { :contestant_id => contestant.id })
     return nil unless slot

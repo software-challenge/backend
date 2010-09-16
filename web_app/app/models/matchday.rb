@@ -232,7 +232,7 @@ class Matchday < ActiveRecord::Base
       end
       
       # if there was a game on current day, add this too
-      if slot.match_slot
+      if slot.match_slot and not trial
         elements << slot.match_slot.score.to_a
       end
 

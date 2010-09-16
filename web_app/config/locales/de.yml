@@ -148,6 +148,7 @@ de:
     person_added_to_contestant: "{{person}} wurde dem Team \"{{contestant}}\" hinzugefügt."
     person_removed_from_contestant: "{{person}} wurde aus dem Team \"{{contestant}}\" entfernt."
   messages:
+    email_notification_settings_updated: "Benachrichtigungseinstellungen geändert"
     no_more_friendly_matches_today: "kann heute keine Freundschaftsspiele mehr spielen"
     friendly_match_not_today: "Dieses Spiel kann heute nicht mehr gespielt werden."
     game_not_ready_yet: "Das Spiel ist nicht bereit."

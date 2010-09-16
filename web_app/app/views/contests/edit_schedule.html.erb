@@ -2,10 +2,33 @@
   .played,
   .fc-agenda .played .fc-event-time,
   .played a {
-    background-color: green; /* background color */
-    border-color: green;     /* border color (often same as background-color) */
+    background-color: #0a0; /* background color */
+    border-color: #0a0;     /* border color (often same as background-color) */
     color: white;           /* text color */
   }
+  .running,
+  .fc-agenda .running .fc-event-time,
+  .running a {
+    background-color: #aa0;
+    border-color: #aa0;
+    color: white;
+  }
+  .incoming,
+  .fc-agenda .incoming .fc-event-time,
+  .incoming a {
+    background-color: #00a;
+    border-color: #00a;
+    color: white;
+  }
+  <% if administrator? %>
+    .unpublished,
+    .fc-agenda .unpublished .fc-event-time,
+    .unpublished a {
+      background-color: #9c9;
+      border-color: #9c9;
+      color: white;
+    }
+  <% end %>
 </style>
 
 <div id="actions">
@@ -48,16 +71,28 @@
     <% end %>
   <% else %>
     <%= render :partial => "calendar" %>
-    <p style="margin-top: 15px">
-    <% semantic_form_for :contest, :url => update_schedule_contest_url(@contest), :method => :post do |f| %>
-      <fieldset>
-        <legend>Einstellungen</legend>
-        <% f.inputs do %>
-          <%= f.input :play_automatically, :as => :boolean, :label => "Automatisch spielen", :style => "vertical-align: middle" %>
-        <% end %>
-        <%= f.buttons %>
-      </fieldset>
-    <% end %>
+    <p style="margin-top: 10px">
+      <b>Legende:</b>&nbsp;
+      <span style="padding: 0px 5px 0px 5px; margin: 5px" class="played">gespielt</span>
+      <% if administrator? %>
+        <span style="padding: 0px 5px 0px 5px; margin: 5px" class="unpublished">unveröffentlicht</span>
+      <% end %>
+      <span style="padding: 0px 5px 0px 5px; margin: 5px" class="running">läuft gerade</span>
+      <span style="padding: 0px 5px 0px 5px; margin: 5px" class="incoming">ausstehend</span>
     </p>
+    <% show_to :administrator do %>
+      <hr>
+      <p style="margin-top: 15px">
+        <% semantic_form_for :contest, :url => update_schedule_contest_url(@contest), :method => :post do |f| %>
+          <fieldset>
+            <legend><b>Einstellungen</b></legend>
+            <% f.inputs do %>
+              <%= f.input :play_automatically, :as => :boolean, :label => "Automatisch spielen", :style => "vertical-align: middle" %>
+            <% end %>
+            <%= f.buttons %>
+          </fieldset>
+        <% end %>
+      </p>
+    <% end %>
   <% end %>
 <% end %>

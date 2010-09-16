@@ -18,7 +18,7 @@ ActionController::Routing::Routes.draw do |map|
       :reaggregate => :post,
       :update_schedule => :post
     } do |c|
-      c.edit_schedule '/spielplan/bearbeiten', :controller => "contests", :action => "edit_schedule"
+      c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
         :play => :post,
         :reject => :post,

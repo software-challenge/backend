@@ -70,7 +70,7 @@ class EmailEventsController < ApplicationController
     end
     respond_to do |format|
       if success
-        flash[:notice] = "(TODO: Localize) Benachrichtigungseinstellungen geändert"
+        flash[:notice] = t("messages.email_notification_settings_updated")
         format.html do 
           if @contestant.nil?
             redirect_to edit_contest_person_email_event_url(@contest, @person)
@@ -95,7 +95,7 @@ class EmailEventsController < ApplicationController
 
     respond_to do |format|
       if success
-        flash[:notice] = "(TODO: Localize) Benachrichtigungseinstellungen aktualisiert"
+        flash[:notice] = t("messages.email_notification_settings_updated")
         format.html do
           if @contestant.nil?
             redirect_to edit_contest_person_email_event_url(@contest, @person)
