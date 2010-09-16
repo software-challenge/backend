@@ -34,12 +34,16 @@
           <div style="margin-top: 10px">
             <span style="margin-right: 23px;">Rolle:</span>
             <%= select_tag "role_filter", options_for_select(["Alle"].concat(Role.all.collect{|role| [role.to_s, role.name]}.uniq)) %>
-
+            <span style="margin-left: 30px">Zeige Teams für: </span>
+            <% ind = Contest.all.index(@contest) + 1 %>
+            <% contests = [["Alle", "all"]].concat(Contest.all.collect{|c| [c.name, c.subdomain]}) %>
+            <%= select_tag "contest_filter", options_for_select(contests, contests[ind]) %>
+          </div>
+          <br>
             <div style="float: right">
               <a id="sort_persons" style="margin-right: 10px" href="#">Anwenden</a>
               (<%= check_box_tag "instant", "", false, :style=> "vertical-align: middle" %> automatisch anwenden)
             </div>
-          </div>
         </div>
       </fieldset><br>
     </div>
@@ -116,11 +120,38 @@
 
         $("a#sort_persons").bind('click', function() {
           sort_list();
+          update_team_lists()
           return false;
         })
   
         update_location_list()
       })
+
+      function update_team_lists() {
+        var contest = $("select#contest_filter :selected").val()
+        $(".team").each(function(index) {
+          if(contest == "all" || $(this).hasClass(contest)) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        })
+
+        $(".person_teams").each(function(index) {
+          var count = 0;
+          if(contest == "all") {
+            count = $(".team", $(this)).size()
+          } else {
+            count = $("." + contest, $(this)).size()
+          }
+          if(count == 0) {
+            $(".tooltip", $(this)).hide();
+          } else {
+            $(".team_count", $(this)).html(count)
+            $(".tooltip", $(this)).show();
+          }
+        })
+      }
 
       function update_location_list() {
         // Update team select box
@@ -228,6 +259,15 @@
         $("div#show_teams select#role_filter").bind('change', function() {
           update_location_list()
         })
+
+        $("div#show_teams select#contest_filter").bind('change', function() {
+          if($("input#instant").is(':checked')) {
+            update_team_lists()
+          }
+        })
+
+        update_team_lists()
+
       })
 
       $(function() {
