@@ -22,12 +22,12 @@ class MatchdaysController < ApplicationController
           data = @matchdays.collect do |day|
             {
               :id => day.id,
-              :title => "#{day.position}. Spieltag",
+              :title => day.trial? ? "#{day.position}. Probespieltag" : "#{day.position - day.contest.matchdays.trials.count}. Spieltag",
               :start => day.when.strftime('%Y-%m-%d'),
               :end => day.when.strftime('%Y-%m-%d'),
               :allDay => true,
-              :className => (day.played? ? "played" : "incoming"),
-              # :url => contest_matchday_url(@contest, day),
+              :className => ((day.running? and administrator?) ? "running" : (day.played? ? (day.published? ? "played" : (administrator? ? "unpublished" : "incoming")) : "incoming")),
+              :url => contest_matchday_url(@contest, day),
               :editable => day.moveable?
             }
           end

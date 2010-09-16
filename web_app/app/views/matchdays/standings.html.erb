@@ -1,8 +1,10 @@
 <h1 class="print-hide" id="title">
-  <%= link_to @contest.name, contest_matchdays_url %> /
-  <%= @matchday.position %>. Spieltag
-  <% unless @matchday.published? %>
+  <%= link_to @contest.name, contest_edit_schedule_url(@contest) %> /
+  <%= @matchday.trial? ? "#{@matchday.position}. Probespieltag" : "#{@matchday.position - @matchday.contest.matchdays.trials.count}. Spieltag" %>
+  <% if @matchday.played? and not @matchday.published? and administrator? %>
     (<%=t "views.unpublished" %>)
+  <% elsif not @matchday.played? or not @matchday.published? %>
+    (<%= t "views.outstanding" %>)
   <% end %>
  
 </h1>

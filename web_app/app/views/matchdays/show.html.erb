@@ -27,7 +27,7 @@
 <% end %>
 
 <h1>
-  <%= link_to @contest.name, contest_matchdays_url(@contest) %> /
+  <%= link_to @contest.name, contest_edit_schedule_url(@contest) %> /
   <% if @matchday.trial %>
     <%= @matchday.position %>. <%= t "views.trial_matchday" %>
   <% else %>
@@ -35,7 +35,7 @@
   <% end %>
 </h1>
 
-<% if @matchday.running? %>
+<% if @matchday.running? and administrator? %>
   <div id="matchday_progress">
     <%= render :partial => "matchday_progress", :locals => {:matchday => @matchday} %>
   </div> 

@@ -113,7 +113,7 @@ class ContestsController < ApplicationController
   def update_schedule
     success = @contest.update_attributes(params[:contest])
     if success
-      flash[:notice] = "LOCALIZE Contest updated"
+      flash[:notice] = t("messages.contest_updated_successfully")
     end
     redirect_to contest_edit_schedule_url(@contest)
   end
