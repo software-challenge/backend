@@ -6,9 +6,9 @@
 
 <div class="frontpagePhotoBg">
   <% begin %>
-    <%= render :partial => "contests/pages/p_#{@contest.subdomain}" %>
+    <%= render :partial => "/contests/pages/p_#{@contest.subdomain}" %>
   <% rescue %>
-    <%= render :partial => "contests/pages/default" %>
+    <%= render :partial => "/contests/pages/default" %>
   <% end %>
 </div>
 
