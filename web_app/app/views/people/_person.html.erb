@@ -6,21 +6,17 @@
   <% end -%>
 
   <% unless @contestant # don't show these infos on contestant page -%>
-    <td id="p_teams_<%= person.id %>">
+    <td id="p_teams_<%= person.id %>" class="person_teams">
       <% unless person.teams.visible.empty? %>
-        <% if person.teams.visible.count > 1 then %>
-          <% tooltip ("<abbr>In #{person.teams.visible.count.to_s} Teams</abbr>") do %>
+          <% tooltip ("<abbr class=\"tooltip\">In <span class=\"team_count\">#{person.teams.visible.count.to_s}</span> Team(s)</abbr>") do %>
             <% person.teams.visible.each do |team| %>
-              <ul style="margin-left: 15px">
+              <ul class="team <%= team.contest.subdomain %>" style="margin-left: 15px">
                 <li>
                   <span><%= team.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(team).role %></span>)
                 </li>
               </ul>
             <% end %>
           <% end %>
-        <% else %>
-          <span><%= person.teams.first.name %></span> (<%= t "views.as" %> <span><%= person.membership_for(person.teams.first).role %></span>)
-        <% end %>
       <% end %>
       <% locations = [] %>
       <% person.contestants.each_with_index do |contestant, index| %>
