@@ -12,13 +12,13 @@ class ContestantPeopleController < ApplicationController
   end
 
   access_control :only => [:new, :create] do
-    allow :administrator, :teacher, :tutor
+    allow :administrator, :teacher, :tutor, :helper
   end
 
   access_control :only => [:edit, :update] do
     allow :administrator
     allow :pupil, :of => Person
-    allow :teacher, :tutor, :of => Person
+    allow :teacher, :tutor, :helper, :of => Person
   end
 
   # GET /people
@@ -59,7 +59,7 @@ class ContestantPeopleController < ApplicationController
     @person = Person.find(params[:id])
 
     # Rights
-    if current_user.administrator? || current_user.teacher? || current_user.tutor? || current_user == @person
+    if current_user.administrator? || current_user.teacher? || current_user.tutor? || current_user.helper? || current_user == @person
 
       # only his pupil
       if !current_user.administrator? and current_user != @person

@@ -1,6 +1,6 @@
 <% semantic_form_for(@contestant ? [@contest, @contestant, @person] : [@contest, @person]) do |f| %>
   <% f.inputs do %>
-    <% show_to :administrator, :teacher, :tutor, @person do %>
+    <% show_to :administrator, :teacher, :tutor, :helper, @person do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
     <%= f.input :email, :required => true, :hint => t("views.email_required") %>
@@ -26,7 +26,7 @@
       }
     </style>
 
-    <% show_to :administrator, :teacher, :tutor do %>
+    <% show_to :administrator, :teacher, :tutor, :helper do %>
       <% if current_user != @person or current_user.has_role? :administrator %>
         <li>
         <%= f.errors_on :memberships %>

@@ -14,23 +14,23 @@ class PeopleController < ApplicationController
     end
 
     actions :new, :create, :invite do
-      allow :administrator, :teacher, :tutor
+      allow :administrator, :teacher, :tutor, :helper
     end
 
     action :people_for_contestant do
       allow :administrator
-      allow :tutor, :teacher, :pupil, :of => :contestant
+      allow :tutor, :helper, :teacher, :pupil, :of => :contestant
     end
 
     actions :edit, :update do
       allow :administrator
       allow logged_in, :if => :same_person
-      allow :tutor, :of => :contestant
+      allow :tutor, :helper, :of => :contestant
     end
 
     action :remove do
       allow :administrator
-      allow :tutor, :teacher, :of => :contestant
+      allow :tutor, :helper, :teacher, :of => :contestant
     end
 
   end
@@ -42,17 +42,17 @@ class PeopleController < ApplicationController
 
   access_control :helper => :may_add_person? do
     allow :administrator
-    allow :tutor, :teacher, :of => :contestant
+    allow :tutor, :helper, :teacher, :of => :contestant
   end
 
   access_control :helper => :may_remove_from_contestant? do
     allow :administrator
-    allow :tutor, :teacher, :of => :contestant
+    allow :tutor, :helper, :teacher, :of => :contestant
   end
 
   access_control :may_access_contestant_people_list?, :filter => false do
     allow :administrator
-    allow :tutor, :teacher, :of => :contestant
+    allow :tutor, :helper, :teacher, :of => :contestant
   end
 
   def same_person(as = nil)
@@ -67,7 +67,7 @@ class PeopleController < ApplicationController
   access_control :helper => :may_see_person_details? do
     allow :administrator
     allow :pupil, :of => :person
-    allow :teacher, :tutor, :of => :person
+    allow :teacher, :helper, :tutor, :of => :person
   end
 
   # NOTE: requires a contestant to be given
@@ -105,7 +105,7 @@ class PeopleController < ApplicationController
   def people_for_contestant
     @contest = @contestant.contest
     @people = @contestant.people.visible.all :order => "last_name ASC"
-    @people_by_role = {:teacher => [], :tutor => [], :pupil => []}
+    @people_by_role = {:teacher => [], :helper => [], :tutor => [], :pupil => []}
 
     @people.each do |person|
       @people_by_role[person.membership_for(@contestant).role_name.to_sym] << person

@@ -1,5 +1,5 @@
 <tr class="person" id="<%= person.id %>">
-  <td class="p_first_name"><%=h person.first_name %></td>
+  <td class="p_first_name"><%= (@contestant and person.is_helper_for?(@contestant)) ? "* " : "" %><%=h person.first_name %></td>
   <td class="p_last_name"><%=h person.last_name %></td>
   <% if logged_in? -%>
   <td class="p_email"><%=h person.email %></td>
