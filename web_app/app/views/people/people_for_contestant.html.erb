@@ -12,7 +12,9 @@
 </h1>
 
 <% tabnav :contestant do %>
-
+  <% unless @contestant.people.visible.helpers.empty? %>
+    <%= "* #{t ("views.tutors_with_asterisk_note")}" %>
+  <% end %>
   <% if not logged_in? then colspan = 5 elsif @contestant then colspan = 7 else colspan = 9 end %>
   <table class="data-table">
   <% unless @contestant.people.visible.teachers.empty? -%>
@@ -24,13 +26,13 @@
     <%= render :partial => "person", :collection => @contestant.people.visible.teachers %>
     </tbody>
   <% end %>
-  <% unless @contestant.people.visible.tutors.empty? -%>
+  <% unless @contestant.people.visible.tutors_and_helpers.empty? -%>
     <thead>
     <tr><td colspan="<%=colspan%>"><h2><%=t "acl9.roles.contestant.tutors" %></h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
-    <%= render :partial => "person", :collection => @contestant.people.visible.tutors %>
+    <%= render :partial => "person", :collection => @contestant.people.visible.tutors_and_helpers %>
     </tbody>
   <% end %>
 
@@ -47,7 +49,7 @@
 
   <h2>
     <%= t ("activerecord.attributes.contestant.overall_member_count") %>: <span id="overall_member_count"><%= @contestant.overall_member_count %></span> 
-    <% if not current_user.nil? and (current_user.has_role?(:teacher, @contestant) or current_user.has_role?(:tutor, @contestant) or current_user.has_role?(:administrator)) %></h2>
+    <% if not current_user.nil? and (current_user.has_role?(:teacher, @contestant) or current_user.has_role?(:tutor, @contestant) or current_user.has_role?(:helper, @contestant) or current_user.has_role?(:administrator)) %></h2>
       <% unless @contestant.disqualified %>
         <a href="#" id="edit_overall_member_count">Ändern</a></h2>
       <% end %>

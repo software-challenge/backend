@@ -12,12 +12,12 @@ class ContestantsController < ApplicationController
 
     action :my, :add_person do
       allow :administrator
-      allow :tutor, :teacher, :pupil, :of => :contestant
+      allow :tutor, :helper, :teacher, :pupil, :of => :contestant
     end
 
     action :set_and_get_overall_member_count do
       allow :administrator
-      allow :tutor, :teacher, :of => :contestant
+      allow :tutor, :helper, :teacher, :of => :contestant
     end
   end
 
@@ -28,7 +28,7 @@ class ContestantsController < ApplicationController
   access_control :helper => :may_see_details? do
     allow anonymous
     allow :administrator
-    allow :tutor, :teacher, :pupil, :of => :contestant
+    allow :tutor, :helper, :teacher, :pupil, :of => :contestant
   end
 
   # GET /contestants

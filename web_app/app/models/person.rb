@@ -41,9 +41,14 @@ class Person < ActiveRecord::Base
   named_scope :tutors,
     :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
     :conditions => "roles.name = 'tutor' AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
+  named_scope :helpers,
+    :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id", :conditions => "roles.name = 'helper' AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
   named_scope :pupils,
     :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
     :conditions => "roles.name = 'pupil' AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
+  named_scope :tutors_and_helpers,
+    :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
+    :conditions => "(roles.name = 'tutor' OR roles.name = 'helper') AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
 
   def initialize(*args)
     @save_on_update ||= []
@@ -195,4 +200,16 @@ class Person < ActiveRecord::Base
   def is_member_of_a_team?(contest)
     not teams.visible.without_testers.for_contest(contest).empty?
   end
+
+  Membership::ROLES.each do |role|
+    define_method "is_#{role}_for?" do |c|
+      m = membership_for(c)
+      unless m.nil?
+        m.role.name == role
+      else
+        false
+      end
+    end
+  end 
+
 end

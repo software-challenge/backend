@@ -14,6 +14,7 @@
 
 <% tabnav :contest do %>
   <h2><%= t("views.contestants_participating") %>: &nbsp;<%= @contest.contestants.visible.without_testers.ranked.count %></h2>
+  <%= "* #{t ("views.tutors_with_asterisk_note")}" %>
   <% rankings = Contestant::RANKINGS.clone %>
   <% rankings.delete("none") %>
   <% rankings.each do |ranking| %>
@@ -42,7 +43,7 @@
         <td><%= contestant.location %></td>
         <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
-        <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
+        <td><%= contestant.people.visible.tutors_and_helpers.collect{|t| "#{t.name} #{t.is_helper_for?(contestant) ? "*" : ""}"}.to_sentence %></td>
         <td style="text-align: center">
           <% if not current_user.nil? and current_user.has_role?(:administrator) %>
             <% show_ovrl_member_count_edit = true %>
@@ -139,7 +140,7 @@
         <td><%= contestant.location %></td>
         <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
-        <td><%= contestant.people.visible.tutors.collect(&:name).to_sentence %></td>
+        <td><%= contestant.people.visible.tutors_and_helpers.collect{|t| "#{t.name} #{t.is_helper_for?(contestant) ? "*" : ""}"}.to_sentence %></td>
         <td><%= contestant.overall_member_count %></td>
         <td>
           <% if may_see_details? :contestant => contestant -%>

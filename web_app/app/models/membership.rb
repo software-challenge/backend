@@ -1,6 +1,6 @@
 class Membership < ActiveRecord::Base
 
-  ROLES = %w{teacher tutor pupil}
+  ROLES = %w{teacher tutor helper pupil}
 
   # associations
   belongs_to :contestant
