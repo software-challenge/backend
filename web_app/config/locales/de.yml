@@ -9,7 +9,7 @@ de:
     log: "Log"
   views:
     tutors_with_asterisk_note: "Dieser Tutor steht lediglich bei größeren Problemen als Ansprechpartner zur Verfügung."
-    contestants_participating: "Teilnehmende Teams"
+    contestants_participating: "Teilnehmer: {{teams}} Teams mit {{members}} SchülerInnen"
     receive_email_when: "In folgenden Fällen möchte ich per E-Mail benachrichtigt werden:"
     no_matches_planned: "Es stehen keine Begegnungen an."
     contestant_ranking: "In welcher Rangliste soll das Team aufgelistet werden?"

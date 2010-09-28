@@ -1,6 +1,6 @@
 <h1>
   <%= link_to @contest.name, contest_url(@contest) %> /
-  <%= link_to "Finale", contest_finale_url(@contest)%> /
+  <%= link_to Finale.human_name, contest_finale_url(@contest)%> /
   Aufstellung
 </h1>
 

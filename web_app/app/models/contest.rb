@@ -17,6 +17,10 @@ class Contest < ActiveRecord::Base
 
   has_one :finale
 
+  def overall_member_count
+    contestants.visible.without_testers.ranked.all.sum(&:overall_member_count)  
+  end
+
   def prepare_finale
     Contest.transaction do
       self.finale = Finale.new

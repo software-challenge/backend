@@ -13,7 +13,7 @@
 </h1>
 
 <% tabnav :contest do %>
-  <h2><%= t("views.contestants_participating") %>: &nbsp;<%= @contest.contestants.visible.without_testers.ranked.count %></h2>
+  <h2><%= t("views.contestants_participating", :teams => @contest.contestants.visible.without_testers.ranked.count, :members => @contest.overall_member_count) %></h2>
   <%= "* #{t ("views.tutors_with_asterisk_note")}" %>
   <% rankings = Contestant::RANKINGS.clone %>
   <% rankings.delete("none") %>
@@ -76,26 +76,26 @@
                       $("a#change_ovrl_mem_count_<%= contestant.id %>").html("Error");
                     } else {
                       $("a#change_ovrl_mem_count_<%= contestant.id %>").html(returned_data);
-                   } 
-                 } 
-               )
-               return false;
-             })
-           })
-         <% end %>
-       <% end %>
-
-        <td>
-          <% show_to :administrator do -%>
-              <% if contestant.current_client.nil? %>
-                <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
-              <% elsif contestant.current_client.ok? %>
-                <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
-              <% else %>
-                <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
-              <% end %> 
+                    } 
+                  } 
+                )
+                return false;
+              })
+            })
           <% end %>
-        </td>
+        <% end %>
+
+        <% show_to :administrator do -%>
+          <td style="text-align: center">
+            <% if contestant.current_client.nil? %>
+              <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
+            <% elsif contestant.current_client.ok? %>
+              <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
+            <% else %>
+              <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
+            <% end %> 
+          </td>
+        <% end %>
         <td>
           <% if may_see_details? :contestant => contestant -%>
           <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
@@ -130,7 +130,9 @@
         <th><%= t "acl9.roles.contestant.teacher" %></th>
         <th><%= t "acl9.roles.contestant.tutor" %></th>
         <th><%= t "acl9.roles.contestant.pupils" %></th>
-
+        <% show_to :administrator do %>
+          <th><%= t "views.testing_status" %></th> 
+        <% end %>
         <th colspan="2">&nbsp;<!-- options --></th>
       </tr>
     </thead>
@@ -141,7 +143,18 @@
         <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
         <td><%= contestant.people.visible.tutors_and_helpers.collect{|t| "#{t.name} #{t.is_helper_for?(contestant) ? "*" : ""}"}.to_sentence %></td>
-        <td><%= contestant.overall_member_count %></td>
+        <td style="text-align: center"><%= contestant.overall_member_count %></td>
+        <% show_to :administrator do -%>
+          <td style="text-align: center">
+            <% if contestant.current_client.nil? %>
+              <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
+            <% elsif contestant.current_client.ok? %>
+              <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
+            <% else %>
+              <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
+            <% end %> 
+          </td>
+        <% end %>
         <td>
           <% if may_see_details? :contestant => contestant -%>
           <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
