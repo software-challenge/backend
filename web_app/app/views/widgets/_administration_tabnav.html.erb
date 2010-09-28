@@ -16,31 +16,37 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named t("titles.events")
     t.links_to contest_administration_url(@contest)
+    t.highlights_on :controller => "main", :action => "administration"
   end
 
   add_tab do |t|
     t.named t("titles.all_people")
     t.links_to contest_people_url(@contest)
+    t.highlights_on :controller => "people", :action => "index"
   end
 
   add_tab do |t|
     t.named t("titles.contests.show")
     t.links_to contest_contests_url(@contest)
+    t.highlights_on :controller => "contests", :action => "index"
   end
 
   add_tab do |t|
     t.named t("views.custom_games")
-    t.links_to contest_custom_matches_url(@contest) 
+    t.links_to contest_custom_matches_url(@contest)
+    t.highlights_on :controller => "custom_matches", :action => "index" 
   end
 
   add_tab do |t|
     t.named FriendlyEncounter.human_name(:count => 2)
     t.links_to contest_all_friendly_encounters_url(@contest)
+    t.highlights_on :controller => "friendly_encounters", :action => "all"
   end
 
   add_tab do |t|
     t.named t("titles.debug_view")
     t.links_to contest_debug_url(@contest)
+    t.highlights_on :controller => "main", :action => "debug"
   end
 
 end 
