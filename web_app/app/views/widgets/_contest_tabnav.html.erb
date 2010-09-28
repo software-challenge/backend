@@ -5,6 +5,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.named t("titles.overview")
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to contest_url(@contest)
+    t.highlights_on :controller => "contests", :action => "show"
   end
 
   show_to :administrator do
@@ -23,6 +24,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       begin; t.disable!; next; end if @contest.new_record?
       t.links_to contest_edit_schedule_url(@contest)
       t.disable! unless @contest.ready? or administrator?
+      t.highlights_on :controller => "contests", :action => "edit_schedule"
     end
  # end
 
@@ -30,12 +32,14 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.named Contestant.human_name(:count => 2)
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to contest_contestants_url(@contest)
+    t.highlights_on :controller => "contestants", :action => "index"
   end
 
   add_tab do |t|
     t.named t("views.my") + " " + Contestant.human_name(:count => 2)
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to my_contest_contestants_url(@contest)
+    t.highlights_on :controller => "contestants", :action => "my"
   end if logged_in? and current_user.contestants.visible.for_contest(@contest).count > 0
 
   #add_tab do |t|
@@ -50,6 +54,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to contest_standings_url(@contest)
     t.disable! unless @contest.last_played_matchday
+    t.highlights_on :controller => "contests", :action => "standings"
   end
 
   add_tab do |t|
@@ -58,6 +63,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.named "#{@contest.last_played_matchday.position}. Spieltag" if @contest.last_played_matchday
     t.links_to contest_results_url(@contest)
     t.disable! unless @contest.last_played_matchday
+    t.highlights_on :controller => "contests", :action => "results"
   end
 
 
@@ -65,6 +71,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     add_tab do |t|
       t.named FriendlyEncounter.human_name(:count => 2)
       t.links_to contest_friendly_encounters_url(@contest)
+      t.highlights_on :controller => "friendly_encounters", :action => "index"
     end
   end
 

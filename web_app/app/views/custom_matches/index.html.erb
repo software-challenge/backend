@@ -39,7 +39,7 @@
         <td><%= mm.contestants.second.name %></td> 
         <td>
           <% if not mm.played? and not mm.running? %>
-            <%= link_to t("actions.play"), play_contest_custom_match_url(mm), :method => :post %>
+            <%= link_to t("actions.play"), play_contest_custom_match_url(@contest, mm), :method => :post %>
           <% elsif mm.running? %>
             <%= t("helpers.playing_in_progress") %>&nbsp;&nbsp;
             <%= image_tag "ui/spinner.gif", :style => "vertical-align: middle" %>
@@ -49,7 +49,7 @@
           <% end %>
 
           <% unless mm.running? %>
-            <%= link_to t("actions.delete"), contest_custom_match_url(mm), :method => "delete" %>
+            <%= link_to t("actions.delete"), contest_custom_match_url(@contest, mm), :method => "delete" %>
           <% end %>
         </td>
       </tr>
