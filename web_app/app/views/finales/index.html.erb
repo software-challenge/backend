@@ -35,8 +35,8 @@
 </div>
 
 <h1>
-  <%= link_to @contest.name, contest_url %> /
-  Finale
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= Finale.human_name %>
   <% if not @finale.nil? and @finale.running? %>
     <%= image_tag ('ui/spinner.gif', :style => "margin-top: 10px") %>
   <% end %>

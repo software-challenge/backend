@@ -41,6 +41,9 @@ de:
       email_event:
         one: "E-Mail Empfänger"
         other: "E-Mail Empfänger"
+      finale:
+        one: "Final Eight"
+        other: "Finals"
     attributes:
       client:
         file: ZIP-Datei

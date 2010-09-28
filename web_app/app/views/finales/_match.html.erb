@@ -1,7 +1,7 @@
 <% no_results ||= false %>
 
 <% if not no_results and match.played? %>
-  <a href="<%= match_results_contest_finale_url(:id => match.id,@contest) %>">
+  <a href="<%= match_results_contest_finale_url(@contest, :id => match.id) %>">
 <% end %>
 <% if no_results %>
   <% slots = match.slots %>

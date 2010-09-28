@@ -70,7 +70,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
 
     if (@contest.regular_phase_finished?) and ((not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator)) or (not @contest.finale.nil? and @contest.finale.has_published_lineup?))
       add_tab do |t|
-        t.named "Finale"
+        t.named Finale.human_name.gsub(" ", "&nbsp;")
         t.links_to contest_finale_url(@contest)
       end
     end

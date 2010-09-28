@@ -11,30 +11,30 @@
     <% show_to :administrator do %>
     <% if not @finale.running? %>
       <% if @finale.day_playable?(dayname) and not matchday.prepared? %>
-        <% link_to prepare_day_contest_finale_url(:dayname => dayname,@contest), :method => "post", :title => t("actions.prepare"), :id => "prepareAction" do %>
+        <% link_to prepare_day_contest_finale_url(@contest, :dayname => dayname), :method => "post", :title => t("actions.prepare"), :id => "prepareAction" do %>
           <%= image_tag('actions/refresh.png') %><%= t("actions.prepare") %>
         <% end %>
       <% end %>
       <% if matchday.prepared? and not matchday.played? and not matchday.running? %>
-        <% link_to play_contest_finale_url(@contest,:id => matchday.id), :method => "post", :title => t("actions.play"), :id => "playAction" do %> 
+        <% link_to play_contest_finale_url(@contest, :id => matchday.id), :method => "post", :title => t("actions.play"), :id => "playAction" do %> 
           <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
       <% end %>
 
       <% if matchday.prepared? and not matchday.published? and day_settings[:lineup_publishable] %>
-        <% link_to publish_lineup_contest_finale_url(@contest,:id => matchday.id), :method => :post, :title => t("actions.publish_lineup"), :id => "publishLineupAction" do %>
+        <% link_to publish_lineup_contest_finale_url(@contest, :id => matchday.id), :method => :post, :title => t("actions.publish_lineup"), :id => "publishLineupAction" do %>
           <%= image_tag('actions/publish.gif') %><%= t("actions.publish_lineup") %>
         <% end %>
       <% end %>
 
       <% if matchday.prepared? and matchday.published? and day_settings[:lineup_publishable] %>
-        <% link_to hide_lineup_contest_finale_url(@contest,:id => matchday.id), :method => :post, :title => t("actions.hide_lineup"), :id => "hideLineupAction" do %>
+        <% link_to hide_lineup_contest_finale_url(@contest, :id => matchday.id), :method => :post, :title => t("actions.hide_lineup"), :id => "hideLineupAction" do %>
           <%= image_tag('actions/publish.gif') %><%= t("actions.hide_lineup") %>
         <% end %>
       <% end %>
 
       <% if matchday.prepared? and not matchday.running? and @finale.day_deletable? dayname %>
-        <% link_to delete_matchday_contest_finale_url(@contest,:id => matchday.id), :method => "post", :title => t("actions.delete"), :id => "deleteAction" do %>
+        <% link_to delete_matchday_contest_finale_url(@contest, :id => matchday.id), :method => "post", :title => t("actions.delete"), :id => "deleteAction" do %>
           <%= image_tag('actions/destroy.png') %><%= t "actions.delete" %>
         <% end %>
       <% end %>
@@ -50,7 +50,7 @@
     <% javascript_tag do %>
       function refresh_matchday_progress() {
         $.get(
-          "<%= get_progress_contest_matchday_url(@contest,matchday) %>",
+          "<%= get_progress_contest_matchday_url(@contest, matchday) %>",
           "id=<%= matchday.id %>",
           function(returned_data) {
             $("div#matchday_progress_<%= matchday.id %>").html(returned_data)
