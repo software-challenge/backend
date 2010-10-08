@@ -3,7 +3,7 @@ class ScheduledJob < ActiveRecord::Base
   validates_uniqueness_of :name
 
   def check(job)
-    if not running or (last_check + 1).seconds < DateTime.now
+    if not running or (last_check + 1.seconds) < DateTime.now
       thread = Thread.new {
         jentry = ScheduledJob.find_by_name(job.class.to_s)
         begin
