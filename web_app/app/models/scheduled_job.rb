@@ -7,11 +7,17 @@ class ScheduledJob < ActiveRecord::Base
       thread = Thread.new {
         jentry = ScheduledJob.find_by_name(job.class.to_s)
         begin
+          counter = 0
           while(true) do
-            sleep job.check_interval
-            unless job_already_started?(job)
-              Delayed::Job.enqueue job, job.priority, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(job.time)
+            sleep 1
+            counter += 1
+
+            if counter >= job.check_interval
+              unless job_already_started?(job)
+                Delayed::Job.enqueue job, job.priority, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(job.time)
+              end
             end
+
             jentry.last_check = DateTime.now
             jentry.save!
           end
