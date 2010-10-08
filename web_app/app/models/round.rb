@@ -23,15 +23,20 @@ class Round < ActiveRecord::Base
   end
 
   def perform
-    manager = SoChaManager::Manager.new
-    manager.connect!
-    manager.play self
+    begin
+      manager = SoChaManager::Manager.new
+      manager.connect!
+      manager.play self
 
-    while !manager.done?
-      sleep 0.1
+      while !manager.done?
+        sleep 1
+      end
+
+      manager.close
+    rescue => exception
+      manager.close
+      raise exception
     end
-
-    manager.close
     
     raise "no game result" unless manager.last_result
     update_scores!(manager.last_result)

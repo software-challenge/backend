@@ -160,7 +160,7 @@ module SoChaManager
           end
         rescue Errno::EAGAIN, Errno::EWOULDBLOCK
           diff = Time.now - @last_data
-          sleep 0.01
+          sleep 0.1
           retry if diff <= SoChaManager.timeout
           logger.warn "Room observer timed out"
         rescue EOFError

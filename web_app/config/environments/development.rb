@@ -21,7 +21,3 @@ ENV['SERVER_LOGS_FOLDER'] = RAILS_ROOT + "/serverlogs/"
 ENV['FRIENDLY_GAMES_PER_DAY'] = "4"
 ENV['MR_SMITH'] = "mr.smith@sc.de"
 
-config.after_initialize do
-  fenc_job = FriendlyEncountersJob.new
-  fenc_job.add_friendly_encounter_check 
-end
