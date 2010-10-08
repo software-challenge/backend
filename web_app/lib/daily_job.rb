@@ -1,4 +1,12 @@
-class DailyJob
+class DailyJob < ScheduledJobData
+
+  def priority
+    Match::DAILY_PRIORITY
+  end
+
+  def time
+    {:hour => 3, :minute => 0, :second => 0}
+  end
 
   def add_daily_job_check
     thread = Thread.new {
@@ -10,6 +18,7 @@ class DailyJob
       end
     }
     thread.run
+    puts "Daily job check added"
   end
 
   def job_already_started?
@@ -17,11 +26,15 @@ class DailyJob
   end
 
   def perform
+    # Perform actions
+    logger.info "Performing daily actions"     
     autoplay_days
     send_notifications
+    logger.info "Daily action done"
   end
  
   def send_notifications
+    logger.info "Send automatic E-Mail notifications"
     Contest.all.each do |contest|
       md = contest.upcoming_matchday
       unless md.nil?
@@ -38,6 +51,7 @@ class DailyJob
   end
 
   def autoplay_days
+    logger.info "Autoplay matchdays"
     offset = 1
     Contest.all.each do |contest|
       if contest.ready? and contest.play_automatically?

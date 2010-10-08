@@ -56,9 +56,15 @@ Rails::Initializer.run do |config|
     require 'core_ext'
     require 'so_cha_manager'
     require 'game_definition'
+  
+    # Load regular jobs
+    unless $regular_jobs_loaded
 
-    daily_job = DailyJob.new
-    daily_job.add_daily_job_check
+      DailyJob.new.schedule
+      FriendlyEncountersJob.new.schedule
+
+      $regular_jobs_loaded = true
+    end
   end
 end
 

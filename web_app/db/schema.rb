@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100915094537) do
+ActiveRecord::Schema.define(:version => 20101008131129) do
 
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
@@ -230,6 +230,14 @@ ActiveRecord::Schema.define(:version => 20100915094537) do
     t.string   "replay_file_name"
     t.string   "replay_content_type"
     t.integer  "replay_file_size"
+  end
+
+  create_table "scheduled_jobs", :force => true do |t|
+    t.string   "name",                          :null => false
+    t.boolean  "running",    :default => false
+    t.datetime "last_check"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "score_fragments", :force => true do |t|
