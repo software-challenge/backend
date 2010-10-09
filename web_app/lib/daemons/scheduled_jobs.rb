@@ -17,13 +17,18 @@ Thread.new do
 end
 
 logger = Logger.new(Rails.root.join("log/scheduled_jobs_daemon.log"))
+logger.info "Scheduled jobs daemon started at #{Time.now}."
 
+timer = 0
 while($sjobs_running) do
-  logger.info "The scheduled jobs daemon is still running at #{Time.now}.\n"
+  if timer >= 300
+    logger.info "The scheduled jobs daemon is still running at #{Time.now}."
+  end
   log_directory = File.expand_path(Rails.root.join("log"))
 
   DailyJob.new.schedule
   FriendlyEncountersJob.new.schedule  
 
   sleep 15
+  timer += 15
 end 
