@@ -1,4 +1,11 @@
 class ScheduledJobData
+  
+  def logger
+    unless $sjobs_logger
+      $sjobs_logger = Logger.new(Rails.root.join("log/scheduled_jobs_daemon.log"))
+    end
+    $sjobs_logger
+  end
 
   def priority
     0
@@ -13,6 +20,7 @@ class ScheduledJobData
 
   def schedule
     unless job_already_started?
+      logger.info "Scheduling job: #{self.class.to_s}"
       Delayed::Job.enqueue self, priority, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(time)
     end
   end
