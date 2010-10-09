@@ -8,6 +8,7 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    hidden_teams: "Gelöschte Teams"
     tutors_with_asterisk_note: "Dieser Tutor steht lediglich bei größeren Problemen als Ansprechpartner zur Verfügung."
     contestants_participating: "Teilnehmer: {{teams}} Teams mit {{members}} SchülerInnen"
     receive_email_when: "In folgenden Fällen möchte ich per E-Mail benachrichtigt werden:"
@@ -190,7 +191,7 @@ de:
     contestant_successfully_created: "Team wurde erfolgreich erstellt." 
     contestant_successfully_updated: "Team wurde erfolgreich aktualisiert."
     updated_successfully: "wurde erfolgreich aktualisiert"
-    confirm_contestant_requalify_during_contest: "Wenn Sie die Disqualifikation des Teams aufheben, werden alle ursprünglichen Ergebnisse der Spiele dieses Teams wiederhergestellt (einschließlich der Spiele die in der Zeit der Disqualifikation gespielt wurden). Danach werden die Ranglisten neu berechnet, was einige Zeit dauern kann. Sie sollten danach das Team wieder in eine der Ranglisten einsortieren.\n\nWollen Sie die Disqualifikation des Teams \"{{name}}\" aufheben?"
+    confirm_contestant_requalify_during_contest: "Wenn Sie die Disqualifikation des Teams aufheben, werden alle ursprünglichen Ergebnisse der Spiele dieses Teams wiederhergestellt (einschließlich der Spiele die in der Zeit der Disqualifikation gespielt wurden). Danach werden die Ranglisten neu berechnet, was einige Zeit dauern kann. Das Team wird automatisch in die Rangliste \"Einsteiger\" einsortiert.\n\nWollen Sie die Disqualifikation des Teams \"{{name}}\" aufheben?"
     confirm_contestant_disqualify_during_contest: "Der Wettbewerb läuft bereits. Wenn Sie das Team disqualifizieren, werden alle bisherigen und zukünftigen Spielergebnisse dieses Teams auf den schlechtesten Wert gesetzt und das Team in jeder Runde disqualifiziert. Anschließend werden die Ranglisten neu berechnet, was einige Zeit dauern kann.\n\nWollen Sie wirklich das Team \"{{name}}\" disqualifizieren?"
     confirm_disqualify: "Nach der manuellen Disqualifizierung wird das Spiel so gewertet, als wäre der Spieler regulär disqualifiziert worden. Die Ergebnisse für die Runde werden auf die schlechtesten Werte gesetzt.\nHiernach sollte die Rangliste neu berechnet werden (Addieren-Button).\n\nMöchten Sie wirklich das Team für diese Runde disqualifiziren? "
     confirm_requalify: "Wird die Disqualifizierung aufgehoben, werden die ursprünglichen Werte des Spielers wiederhergestellt.\nHiernach sollte die Rangliste neu berechnet werden (Addieren-Button).\n\nMöchten Sie wirklich die Disqualifikation dieses Teams für diese Runde rückgängig machen?"        

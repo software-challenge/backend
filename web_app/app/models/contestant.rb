@@ -48,6 +48,7 @@ class Contestant < ActiveRecord::Base
   named_scope :without_testers, :conditions => { :tester => false }
   named_scope :for_contest, lambda { |c| {:conditions => { :contest_id => c.id }} }
   named_scope :visible, :conditions => { :hidden => false }
+  named_scope :hidden, :conditions => { :hidden => true }
 
   #RANKINGS.each do |ranking|
   #  named_scope ("ranked_#{ranking}").to_sym, :conditions => {:ranking => ranking} 
@@ -109,6 +110,7 @@ class Contestant < ActiveRecord::Base
         end
       end
       self.disqualified = false
+      self.ranking = "beginner"
       self.save!
     end
     contest.reaggregate!

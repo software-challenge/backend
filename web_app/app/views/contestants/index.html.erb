@@ -175,4 +175,55 @@
     <% end %>
   </table>
   <% end %>
+
+  <% hidden_contestants = @contest.contestants.hidden.without_testers %>
+  <% if administrator? and hidden_contestants.count > 0 %>
+    <br>
+    <h2><%= t("views.hidden_teams") %></h2>
+    <a href="#" id="show_hidden_contestants"><%= t "actions.show_hidden" %></a>
+    <% javascript_tag do %>
+      $(function() {
+        $("a#show_hidden_contestants").bind('click', function() {
+          $("a#show_hidden_contestants").hide();
+          $("div#hidden_contestants").fadeIn(250);
+          return false;
+        })
+      })
+    <% end %>
+    <div id="hidden_contestants" style="display: none">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th><%= Contestant.human_attribute_name :location %></th>
+            <th><%= Contestant.human_name %></th>
+            <th><%= t "acl9.roles.contestant.teacher" %></th>
+            <th><%= t "acl9.roles.contestant.tutor" %></th>
+            <th><%= t "acl9.roles.contestant.pupils" %></th>
+            <th colspan="2">&nbsp;<!-- options --></th>
+          </tr>
+        </thead>
+
+        <% hidden_contestants.each do |contestant| %>
+          <tr>
+            <td><%= contestant.location %></td>
+            <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
+            <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
+            <td><%= contestant.people.visible.tutors_and_helpers.collect{|t| "#{t.name} #{t.is_helper_for?(contestant) ? "*" : ""}"}.to_sentence %></td>
+            <td style="text-align: center"><%= contestant.overall_member_count %></td>
+            <td>
+              <% if may_see_details? :contestant => contestant -%>
+                <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
+              <% end -%>
+            </td>
+            <td>
+              <% show_to :administrator do -%>
+                <% undo_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide") %>
+                <%= link_to undo_image, unhide_contest_contestant_url(@contest, contestant), :name => contestant.name %>
+              <% end %>
+            </td>
+          </tr>  
+        <% end %>
+      </table>
+    </div>
+  <% end %>
 <% end %>
