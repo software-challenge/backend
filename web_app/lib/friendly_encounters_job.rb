@@ -11,13 +11,13 @@ class FriendlyEncountersJob < ScheduledJobData
   end
 
   def perform
-    Delayed::Worker.logger.info "Start playing friendly encounters"
+    logger.info "Start playing friendly encounters"
     FriendlyEncounter.all.each do |enc|
       if enc.ready? and enc.playable?
         enc.play!
       end
     end
-    Delayed::Worker.logger.info "All friendly encounters played"
+    logger.info "All friendly encounters played"
   end
 
 end
