@@ -359,8 +359,8 @@ public final class GameState implements Cloneable {
 				+ Constants.SCORE_PER_COLLECTED_FLOWER * stats[1][4]
 				+ Constants.SCORE_PER_MUNCHED_FLOWER * stats[1][5];
 
-		stats[0][0] = gameEnded() && winner() == PlayerColor.RED ? 1 : 0;
-		stats[1][0] = gameEnded() && winner() == PlayerColor.BLUE ? 1 : 0;
+		stats[0][0] = gameEnded() && winner() == PlayerColor.RED ? 2 : (winner() == PlayerColor.BLUE ? 0 : 1);
+		stats[1][0] = gameEnded() && winner() == PlayerColor.BLUE ? 2 : (winner() == PlayerColor.RED ? 0 : 1);
 
 		return stats;
 
