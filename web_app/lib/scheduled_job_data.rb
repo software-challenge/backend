@@ -1,9 +1,5 @@
 class ScheduledJobData
 
-  def check_interval
-    15
-  end
-
   def priority
     0
   end
@@ -16,13 +12,13 @@ class ScheduledJobData
   end
 
   def schedule
-    if ScheduledJob.table_exists?
-      jentry = ScheduledJob.find_by_name(self.class.to_s)
-      if jentry.nil?
-        jentry = ScheduledJob.create :name => self.class.to_s, :running => false
-      end
-      jentry.save!
-      jentry.check(self)
+    unless job_already_started?
+      Delayed::Job.enqueue self, priority, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(time)
     end
   end
+
+  def job_already_started?
+    not Delayed::Job.all(:reload).to_a.find{|job| job.name == self.class.to_s}.nil?
+  end
+
 end

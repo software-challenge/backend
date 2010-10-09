@@ -8,23 +8,6 @@ class DailyJob < ScheduledJobData
     {:hour => 3, :minute => 0, :second => 0}
   end
 
-  def add_daily_job_check
-    thread = Thread.new {
-      while(true) do
-        unless job_already_started?
-          Delayed::Job.enqueue self, Match::DAILY_PRIORITY, DateTime.now.to_time.in_time_zone("UTC").tomorrow.change(:hour => 3, :minute => 0, :second => 0)
-        end
-        sleep 15
-      end
-    }
-    thread.run
-    puts "Daily job check added"
-  end
-
-  def job_already_started?
-    not Delayed::Job.all(:reload).to_a.find{|job| job.name == self.class.to_s}.nil?
-  end
-
   def perform
     # Perform actions
     logger.info "Performing daily actions"     
