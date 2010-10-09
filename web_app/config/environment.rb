@@ -58,13 +58,13 @@ Rails::Initializer.run do |config|
     require 'game_definition'
   
     # Load regular jobs
-    unless $regular_jobs_loaded
+    #unless $regular_jobs_loaded
 
-      DailyJob.new.schedule
-      FriendlyEncountersJob.new.schedule
+      #DailyJob.new.schedule
+      #FriendlyEncountersJob.new.schedule
 
-      $regular_jobs_loaded = true
-    end
+      #$regular_jobs_loaded = true
+    #end
   end
 end
 
