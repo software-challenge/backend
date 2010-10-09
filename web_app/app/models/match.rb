@@ -116,7 +116,7 @@ class Match < ActiveRecord::Base
 
       # Was any of the playing teams disqualified for the contest?
       contestants.find_all{|c| c.disqualified?}.each do |c|
-        c.change_qualify_for_match m, :disqualify
+        c.change_qualify_for_match self, :disqualify
       end
       
       if set and set.respond_to? :after_match_played

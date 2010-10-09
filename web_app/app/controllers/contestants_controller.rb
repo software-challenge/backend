@@ -166,6 +166,9 @@ class ContestantsController < ApplicationController
       # Requalify
       @contestant.requalify
     else
+      if @contest.ready?
+        @contestant.ranking = "none"
+      end
       @contestant.hidden = false
       @contestant.save!
     end
@@ -173,7 +176,7 @@ class ContestantsController < ApplicationController
   end
 
   def hide
-    if @contest.ready?
+    if @contest.ready? and @contestant.ranked?
       # Contest already started, instead of hiding, hide the members and remove contestant from matchdays
       @contestant.disqualify 
       redirect_to :back
