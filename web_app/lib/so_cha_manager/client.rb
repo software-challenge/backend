@@ -102,13 +102,13 @@ module SoChaManager
       if handler.is_a? Symbol
         invoke_handler(handler, success, data)
       elsif handler
-        Thread.new do 
+        #Thread.new do 
           begin
             handler.call(success, data)
           rescue => e
             logger.log_formatted_exception e
           end
-        end
+        #end
       end
     end
 
@@ -120,7 +120,7 @@ module SoChaManager
         return
       end
 
-      Thread.new do
+      #Thread.new do
         logger.info "Start room handler"
         begin
           handler.on_data(data)
@@ -128,7 +128,7 @@ module SoChaManager
           logger.log_formatted_exception e
         end
         logger.info "End room handler"
-      end
+      #end
     end
     
     def on_event(what, document)
