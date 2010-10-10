@@ -102,7 +102,8 @@ module SoChaManager
       if handler.is_a? Symbol
         invoke_handler(handler, success, data)
       elsif handler
-        Thread.new do begin
+        Thread.new do 
+          begin
             handler.call(success, data)
           rescue => e
             logger.log_formatted_exception e
@@ -119,11 +120,14 @@ module SoChaManager
         return
       end
 
-      Thread.new do begin
+      Thread.new do
+        logger.info "Start room handler"
+        begin
           handler.on_data(data)
         rescue => e
           logger.log_formatted_exception e
         end
+        logger.info "End room handler"
       end
     end
     
@@ -172,6 +176,7 @@ module SoChaManager
           logger.info "Finalizing SoChaClient thread. #{$!}"
           close
         end
+        logger.info "SoChaClient thread stopped."
       end
       
       logger.info "Established connection."
