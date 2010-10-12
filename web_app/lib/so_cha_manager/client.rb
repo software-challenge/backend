@@ -121,13 +121,11 @@ module SoChaManager
       end
 
       #Thread.new do
-        logger.info "Start room handler"
         begin
           handler.on_data(data)
         rescue => e
           logger.log_formatted_exception e
         end
-        logger.info "End room handler"
       #end
     end
     

@@ -135,6 +135,7 @@ module SoChaManager
               all_moved = false
             end
           end
+          sleep 1
         end
         logger.info "Room timeout in #{SoChaManager.timeout} seconds"
       end
