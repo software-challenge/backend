@@ -8,6 +8,8 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    played: "Gespielt"
+    created: "Erstellt"
     hidden_teams: "Gelöschte Teams"
     tutors_with_asterisk_note: "Dieser Tutor steht lediglich bei größeren Problemen als Ansprechpartner zur Verfügung."
     contestants_participating: "Teilnehmer: {{teams}} Teams mit {{members}} SchülerInnen"

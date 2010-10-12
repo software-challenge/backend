@@ -5,16 +5,22 @@
 
   
   <table style="width: 100%">
-    <colgroup style="width: 40%"></colgroup>
-    <colgroup style="width: 40%"></colgroup>
-    <colgroup style="width: 20%"></colgroup>
+    <colgroup style="width: 17.5%"></colgroup>
+    <colgroup style="width: 17.5%"></colgroup>
+    <colgroup style="width: 25%"></colgroup>
+    <colgroup style="width: 25%"></colgroup>
+    <colgroup style="width: 15%"></colgroup>
     <thead style="text-align: left">
+      <th><%= t("views.created") %></th>
+      <th><%= t("views.played") %></th>
       <th><%= t("views.challenger") %></th>
       <th><%= t("views.challenged_one") %></th>
       <th><%= t("views.status") %></th>
     </thead>
     <% @encounters.each do |enc| %>
       <tr>
+        <td><%= enc.created_at.strftime("%d.%m.%Y - %H:%M") %></td>
+        <td><%= enc.played? ? enc.played_at.strftime("%d.%m.%Y - %H:%M") : "-" %></td>
         <td><%= enc.slots.first.contestant.name %></td>
         <td>
           <% if enc.played? or enc.ready? %> 
