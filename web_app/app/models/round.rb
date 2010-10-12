@@ -23,7 +23,6 @@ class Round < ActiveRecord::Base
   end
 
   def perform
-    Delayed::Worker.logger.info "Performing round"
     begin
       manager = SoChaManager::Manager.new
       manager.connect!
@@ -42,7 +41,6 @@ class Round < ActiveRecord::Base
     
     raise "no game result" unless manager.last_result
     update_scores!(manager.last_result)
-    Delayed::Worker.logger.info "Finished performing round"
   end
 
   def reset!
