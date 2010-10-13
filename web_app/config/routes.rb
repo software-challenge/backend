@@ -30,7 +30,9 @@ ActionController::Routing::Routes.draw do |map|
       c.all_friendly_encounters '/all_friendly_encounters', :controller => 'friendly_encounters', :action => 'all'
       c.resources :custom_matches, :as => "custom_matches", :member => {
        :play => :post
-      }
+      } do |cm|
+        cm.resources :rounds
+      end
       c.resources :matchdays,
         :as => "spieltage",
         :collection => {

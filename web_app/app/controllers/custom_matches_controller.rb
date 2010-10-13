@@ -34,8 +34,7 @@ class CustomMatchesController < ApplicationController
   end
 
   def show
-    mm = CustomMatch.find(params[:id])
-    redirect_to contest_custom_matches_url(@contest)
+    @match = CustomMatch.find(params[:id])
   end
 
   def destroy
