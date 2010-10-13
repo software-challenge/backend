@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.helpers.StringHelper;
 import sc.logic.save.GUIConfiguration;
+import sc.plugin.GUIPluginInstance;
 import sc.shared.SlotDescriptor;
 
 public class HelperMethods {
@@ -141,13 +142,13 @@ public class HelperMethods {
 	 * @param descriptors
 	 * @return
 	 */
-	public static String generateReplayFilename(List<SlotDescriptor> descriptors) {
+	public static String generateReplayFilename(GUIPluginInstance plugin, List<SlotDescriptor> descriptors) {
 		StringBuilder replayFilename = new StringBuilder("./replays/replay");
+		replayFilename.append("_" + plugin.getDescription().uuid());
 		for (int i = 0; i < descriptors.size(); i++) {
-			replayFilename.append("_" + descriptors.get(i).getDisplayName());
+			replayFilename.append("_" + descriptors.get(i).getDisplayName().replace(' ', '_'));
 		}
-		replayFilename
-				.append(" " + HelperMethods.getCurrentDateTime() + ".xml");
+		replayFilename.append(" " + HelperMethods.getCurrentDateTime() + ".xml");
 
 		return replayFilename.toString();
 	}
