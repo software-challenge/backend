@@ -45,7 +45,7 @@
             <%= image_tag "ui/spinner.gif", :style => "vertical-align: middle" %>
           <% elsif mm.played? %>
             <% res = mm.main_result %>
-            <%= "#{res[0]} : #{res[1]}" %>&nbsp; 
+            <%= link_to "#{res[0]} : #{res[1]}", contest_custom_match_url(@contest, mm) %>&nbsp; 
           <% end %>
 
           <% unless mm.running? %>

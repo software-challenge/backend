@@ -1,4 +1,7 @@
 <% allowQualify = true if local_assigns[:allowQualify].nil? %>
+<% matchday_match = @match.respond_to? :matchday %>
+<% allowQualify &= matchday_match %>
+
 <style type="text/css">
   table#result {
     width: 100%;
@@ -79,7 +82,7 @@
     <% end %>
   </tr>
   <% if match.result %>
-    <% if match.matchday.published? or current_user.try(:administrator) %>
+    <% if not matchday_match or match.matchday.published? or current_user.try(:administrator) %>
       <tr class="values">
         <% match.main_result.each_with_index do |value,i| %>
           <% unless i.zero? %>
@@ -91,7 +94,7 @@
         <% end %>
       </tr>
     <% end %>
-    <% unless match.matchday.published? %>
+    <% unless not matchday_match or match.matchday.published? %>
       <tr><td class="center" colspan="<%= match.slots.count * 2 - 1 %>"><%=t "views.unpublished" %></td></tr>
     <% end %>
   <% else %>
@@ -130,7 +133,7 @@
       <% show_to :administrator do %>
         <td></td> 
       <% end %>
-      <% if slot.score and (match.matchday.published? or current_user.try(:administrator)) %>
+      <% if slot.score and (not matchday_match or match.matchday.published? or current_user.try(:administrator)) %>
         <% slot.score.to_a_with_precision.each do |value| %>
           <td style="text-align: right">  
             <%= value %>
@@ -170,19 +173,27 @@
     <tr class="round">
       <td colspan="<%= round_colspan + round_score_fragments + 2 %>">
         <div id="round_<%= round.id %>">
-          <% if round.replay? and (match.matchday.published? or current_user.try(:administrator)) %>
+          <% if round.replay? and (not matchday_match or match.matchday.published? or current_user.try(:administrator)) %>
             <span style="float: right;">
-              <% if round.has_server_log? %>
+              <% if round.has_server_log? and matchday_match %>
                 <% show_to :administrator do %>
                   <%= link_to "Serverlog", send_server_log_contest_matchday_match_round_url(@contest, round.match.matchday, round.match, round, :round_id => round.id), :method => :post %> 
                 <% end %>
               <% end %>
-              <%= link_to "Replay herunterladen", [@contest, match.matchday.becomes(Matchday), match.becomes(Match), round] %>
+              <% if matchday_match %>
+                <%= link_to "Replay herunterladen", [@contest, match.matchday.becomes(Matchday), match.becomes(Match), round] %>
+              <% elsif @match.is_a? CustomMatch %>
+                <%= link_to "Replay herunterladen", [@contest, @match, round] %>
+              <% end %>
                 <a href="#" id="replay_show_round_<%= round.id %>">Replay ansehen</a>
                 <% javascript_tag do %>
                   $(function() {
                     $("a#replay_show_round_<%= round.id %>").bind('click', function() {
-                      show_replay(<%= round.id %>, "<%= contest_matchday_match_round_url(@contest, match.matchday.id, match.id, round.id) %>")
+                      <% if matchday_match %>
+                        show_replay(<%= round.id %>, "<%= contest_matchday_match_round_url(@contest, match.matchday.id, match.id, round.id) %>")
+                      <% elsif @match.is_a? CustomMatch %>
+                        show_replay(<%= round.id %>, "<%= contest_custom_match_round_url(@contest, @match, round) %>")
+                      <% end %>
                       return false
                     })
                  })
@@ -229,7 +240,7 @@
           </td>
         <% end %>
         <% end %>
-        <% if slot.score and (match.matchday.published? or current_user.try(:administrator)) %>
+        <% if slot.score and (not matchday_match or match.matchday.published? or current_user.try(:administrator)) %>
           <% slot.score.to_a_with_precision.each_with_index do |value,i| %>
             <td style="min-width: 10px; text-align: center">
               <% if slot.qualification_changed %>
