@@ -767,6 +767,8 @@ public class TestRangeDialog extends JDialog {
 			final List<SlotDescriptor> slotDescriptors,
 			final IGamePreparation prep, final ConnectingDialog connectionDialog) {
 		// get observer
+		
+		final GUIPluginInstance plugin = getSelectedPlugin();
 		obs = prep.getObserver();
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
@@ -787,7 +789,7 @@ public class TestRangeDialog extends JDialog {
 				if (!result.isRegular()
 						&& GUIConfiguration.instance().saveErrorGames()) {
 					replayFilename = HelperMethods
-							.generateReplayFilename(slotDescriptors);
+							.generateReplayFilename(plugin, slotDescriptors);
 				} else if (result.isRegular()) {
 					/*
 					 * switch (result.getScores().get(rotation).getCause()) {

@@ -678,7 +678,8 @@ public class CreateGameDialog extends JDialog {
 				presFac.getLogicFacade().setGameActive(true);
 			}
 		});
-
+		
+		final GUIPluginInstance plugin = getSelectedPlugin();
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
@@ -691,7 +692,7 @@ public class CreateGameDialog extends JDialog {
 
 				// generate replay filename
 				String replayFilename = HelperMethods
-						.generateReplayFilename(descriptors);
+						.generateReplayFilename(plugin, descriptors);
 				// save replay
 				try {
 					observer.saveReplayToFile(replayFilename);
