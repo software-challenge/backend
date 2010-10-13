@@ -148,7 +148,7 @@ public class HelperMethods {
 		for (int i = 0; i < descriptors.size(); i++) {
 			replayFilename.append("_" + descriptors.get(i).getDisplayName().replace(' ', '_'));
 		}
-		replayFilename.append(" " + HelperMethods.getCurrentDateTime().replace(' ', '_') + ".xml");
+		replayFilename.append("_" + HelperMethods.getCurrentDateTime().replace(' ', '_') + ".xml");
 
 		return replayFilename.toString();
 	}
