@@ -32,6 +32,17 @@ GameDefinition.create :"SchaefchenImTrockenen" do
   end
 
   finale do
+    winner_certain? do |match|
+      result = match.result :victories
+      if result.nil?
+        false
+      else
+        rounds_to_play = match.rounds.count - match.rounds.played.count
+        diff = (result[0].to_f - result[1].to_f).abs
+        diff > rounds_to_play * 2
+      end
+    end 
+
     day :quarter_final,
         :human_name => "Viertelfinale",
         :order => 1, 

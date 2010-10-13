@@ -1,0 +1,163 @@
+----------------------------------------------------------------------
+Grundsaetzliches:
+
+Rechnername: numerobis:
+Ausstattung:
+
+  2 * 2.27 GHz Quadcore
+  24 GB RAM
+  136 GB Plattenplatz
+
+----------------------------------------------------------------------
+Netzplan:
+
+       Verwaltungsbereich
+        134.245.248.0/25
+       +---------+---------+
+                 |
+                 |               +
+                 |               | Zugang zum Internet
+                 |15             | 134.245.253.0/26
+         1 +-----+-----+ 4       |
+      +----+ hardware  +---------+
+      |    +-----------+         |
+      |                          |
+      |                          |
+      |    +-----------+ 5       |
+      |    |  VM main  +---------+
+      |    +-----+-----+         |
+      |          | 2             |
+      |          |               |
+      |          |               +
+      |          |
+  +---+----------+----+-------+
+   192.168.56.0/24    |
+   Rechnerintern      |
+                      | dhcp
+                +-----+-----+
+                |   VM x    |
+                +-----------+
+
+----------------------------------------------------------------------
+Filesystem:
+
+Alles sollte nur unter dem User 'vbox' ablaufen. VirtualBox legt dann
+seine Daten standardmaessig unter dem Verzeichnis
+
+  /home/vbox/.VirtualBox
+
+ab. Da wir fuer die eigentlichen Diskimages das ZFS Feature des
+Klonens nutzen wollen, muesse diese in einem eigenen Filesystem
+liegen. Dafuer ist bereits
+
+  /home/vbox/harddisks
+
+angelegt worden.
+
+Ab hier muss fuer jedes Diskimage ein eigenes weiteres Filesystem
+angelegt werden. Diese Images sollen NIE direkt benutzt werden. Statt
+dessen sollte immer erst ein Snapshot/Clone angelegt werden. Das hat 
+den Vorteil, dass das Original immer als Fallback zur Verfuegung 
+steht.
+
+----------------------------------------------------------------------
+Hier das ganze mal am Beispiel OpenSolaris demonstriert:
+
+Zuerst muss ein neues Filesystem angelegt werden
+
+% zfs create zpool1/vbox/harddisks/opensolaris
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    23K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+
+Dann erst kann das Image dort abgelegt werden
+
+% cd ~/harddisks/opensolaris
+% cp <irgendwoher>/OpenSolaris.vdi .
+
+ACHTUNG: jedes Image braucht eine eigene UUID
+
+% VBoxManage internalcommands sethduuid OpenSolaris.vdi
+VirtualBox Command Line Management Interface Version 3.0.8
+(C) 2005-2009 Sun Microsystems, Inc.
+All rights reserved.
+
+UUID changed to: cd6f93b1-cefd-405a-88ba-b55661928bc3
+
+Jetzt wird zuerst ein Snapshot des Originals angelegt. Das muss sein,
+da Clone nur von Snapshots erzeugt werden koennen
+
+% zfs snapshot zpool1/vbox/harddisks/opensolaris@kopie
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    23K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+
+und dann den Clone erzeugen
+
+% zfs clone zpool1/vbox/harddisks/opensolaris@kopie zpool1/vbox/harddisks/opensolaris-1
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    23K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+zpool1/vbox/harddisks/opensolaris-1          0   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-1
+
+dieser Clone kann beschrieben werden, und sollte sofort mit einer eigenen
+UUID versorgt werden
+
+%  cd ../*1
+/home/vbox/harddisks/opensolaris-1
+
+% ls -l
+-rw-------   1 vbox     vbox     3845210624 Oct 15 12:42 OpenSolaris.vdi
+
+% VBoxManage internalcommands sethduuid OpenSolaris.vdi
+VirtualBox Command Line Management Interface Version 3.0.8
+(C) 2005-2009 Sun Microsystems, Inc.
+All rights reserved.
+
+UUID changed to: fcafca0b-3e77-4259-a954-01d4ab5e4954
+
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    24K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+zpool1/vbox/harddisks/opensolaris-1      54.5K   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-1
+
+Wie man gut erkennen kann, belegt der Clone statt 2GB nur 55KB und kann 
+trotzdem voellig unabhaengig vom Original genutzt werden.
+
+Bei Bedarf ist schnell eine zweite Kopie erstellt
+
+% zfs clone zpool1/vbox/harddisks/opensolaris@kopie zpool1/vbox/harddisks/opensolaris-2
+% cd ../*2
+% VBoxManage internalcommands sethduuid OpenSolaris.vdi
+VirtualBox Command Line Management Interface Version 3.0.8
+(C) 2005-2009 Sun Microsystems, Inc.
+All rights reserved.
+
+UUID changed to: 55cec833-3685-483b-9a29-e90cf9b33800
+
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    25K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+zpool1/vbox/harddisks/opensolaris-1      54.5K   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-1
+zpool1/vbox/harddisks/opensolaris-2      54.5K   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-2
+
+----------------------------------------------------------------------
