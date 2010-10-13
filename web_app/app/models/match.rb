@@ -40,13 +40,18 @@ class Match < ActiveRecord::Base
     !played_at.nil?
   end
 
-  def result
+  def result(fragment = nil)
     result = scores.all
     return nil if result.empty?
-    
-    result.collect do |score|
-      score.to_a_with_precision
-    end.transpose
+    if fragment.nil?
+      result.collect do |score|
+        score.to_a_with_precision
+      end.transpose
+    else
+      result.collect do |score|
+        [score.fragments.all.find{|f| f.fragment == fragment.to_s}.value_with_precision]
+      end.transpose.flatten
+    end
   end
 
   def main_result
@@ -187,7 +192,7 @@ class Match < ActiveRecord::Base
     self.rounds(force_reload).first(:conditions => { :played_at => nil }).nil?
   end
 
-  def run_match()
+  def run_match
     rounds.each do |round|
       if not round.played?
         round.perform

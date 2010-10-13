@@ -1,0 +1,400 @@
+\documentclass[10pt,german,a4]{article}
+\usepackage[latin9]{inputenc}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\usepackage{extsizes}
+\usepackage{listings}
+\lstloadlanguages{sh}
+\lstset{showstringspaces=false,
+	breaklines = true,
+	frame=single}
+
+\geometry{a4paper,left=20mm,right=15mm,top=3cm,bottom=5cm}
+\begin{document}
+\title{Dokumentation des\\Wettkampfsystems der Software-Challenge}
+\maketitle
+\tableofcontents
+\pagebreak
+
+\section{Numerobis}\label{numerobis}
+Auf Numerobis laufen die virtuellen Maschinen (VMs), auf denen die meisten Anwendungen der Software-Challenge ausgeführt werden. Zusätzlich gibt es einige Programme und Scripte, die helfen, die VMs zu steuern.
+\subsection{Steuern der VMs}\label{vmcontrol} 
+Hier ein paar grundlegende Befehle zur VM-Steuerung. Für alles Weitere sind die Hilfe des Befehls VBoxManage und Dokumentationen zu VirtualBox zu Rate zu ziehen.
+\begin{lstlisting}[language=sh] 
+  ~/kill_vms.sh
+\end{lstlisting}
+Beendet alle laufenden Client VMs und die dazugehörigen Startscripte.
+\begin{lstlisting}[language=sh]
+  VBoxManage list runningvms
+\end{lstlisting}
+Zeigt alle laufenden VMs an.
+\begin{lstlisting}[language=sh]
+  VBoxManage startvm <VM>
+\end{lstlisting}
+Startet die VM mit dem Namen $<$VM$>$
+\begin{lstlisting}[language=sh]
+  VBoxManage controlvm <VM> poweroff
+\end{lstlisting}
+Stoppt die VM mit dem Namen $<$VM$>$
+\subsection{Netzplan}\label{netzplan}
+\begin{figure}[H]
+  \includegraphics[width=0.8\textwidth]{netzplan.eps}
+  \caption{Netzplan von Numerobis}
+  \label{fig:netzplan}
+\end{figure}
+\subsection{Das ZFS Dateisystem}\label{filesystem}
+Zur Verwaltung der Disk-Images für die VMs wird das ZFS Dateisystem und dessen Features zum Klonen genutzt. Das Ausgangsdateisystem für alle Disk-Images ist /home/vbox/harddisks.
+Ab hier muss fuer jedes Diskimage ein eigenes weiteres Filesystem angelegt werden. Diese Images sollen NIE direkt benutzt werden. Statt dessen sollte immer erst ein Snapshot/Clone angelegt werden. Das hat den Vorteil, dass das Original immer als Fallback zur Verfuegung steht.
+\subsubsection{Beispiel für OpenSolaris}
+Zuerst muss ein neues Filesystem angelegt werden.
+\begin{lstlisting}[language=sh]
+% zfs create zpool1/vbox/harddisks/opensolaris
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    23K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+\end{lstlisting}
+Dann erst kann das Image dort abgelegt werden.
+\begin{lstlisting}[language=sh]
+% cd ~/harddisks/opensolaris
+% cp <irgendwoher>/OpenSolaris.vdi .
+\end{lstlisting}
+ACHTUNG: Jedes Image braucht eine eigene UUID!
+\begin{lstlisting}[language=sh]
+% VBoxManage internalcommands sethduuid OpenSolaris.vdi
+VirtualBox Command Line Management Interface Version 3.0.8
+(C) 2005-2009 Sun Microsystems, Inc.
+All rights reserved.
+
+UUID changed to: cd6f93b1-cefd-405a-88ba-b55661928bc3
+\end{lstlisting}
+Jetzt wird zuerst ein Snapshot des Originals angelegt. Das muss sein, da Clone nur von Snapshots erzeugt werden koennen.
+\begin{lstlisting}[language=sh]
+% zfs snapshot zpool1/vbox/harddisks/opensolaris@kopie
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    23K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+\end{lstlisting}
+Und dann den Clone erzeugen:
+\begin{lstlisting}[language=sh]
+% zfs clone zpool1/vbox/harddisks/opensolaris@kopie zpool1/vbox/harddisks/opensolaris-1
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    23K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+zpool1/vbox/harddisks/opensolaris-1          0   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-1
+\end{lstlisting}
+Dieser Clone kann beschrieben werden, und sollte sofort mit einer eigenen UUID versorgt werden.
+\begin{lstlisting}[language=sh]
+%  cd ../*1
+/home/vbox/harddisks/opensolaris-1
+
+% ls -l
+-rw-------   1 vbox     vbox     3845210624 Oct 15 12:42 OpenSolaris.vdi
+
+% VBoxManage internalcommands sethduuid OpenSolaris.vdi
+VirtualBox Command Line Management Interface Version 3.0.8
+(C) 2005-2009 Sun Microsystems, Inc.
+All rights reserved.
+
+UUID changed to: fcafca0b-3e77-4259-a954-01d4ab5e4954
+
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    24K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+zpool1/vbox/harddisks/opensolaris-1      54.5K   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-1
+\end{lstlisting}
+Wie man gut erkennen kann, belegt der Clone statt 2GB nur 55KB und kann trotzdem völlig unabhängig vom Original genutzt werden.
+Bei Bedarf ist schnell eine zweite Kopie erstellt:
+\begin{lstlisting}[language=sh]
+% zfs clone zpool1/vbox/harddisks/opensolaris@kopie zpool1/vbox/harddisks/opensolaris-2
+% cd ../*2
+% VBoxManage internalcommands sethduuid OpenSolaris.vdi
+VirtualBox Command Line Management Interface Version 3.0.8
+(C) 2005-2009 Sun Microsystems, Inc.
+All rights reserved.
+
+UUID changed to: 55cec833-3685-483b-9a29-e90cf9b33800
+
+% zfs list -r zpool1
+NAME                                      USED  AVAIL  REFER  MOUNTPOINT
+zpool1                                   13.2G   121G  6.97G  /zpool1
+zpool1/vbox                              6.24G   121G  4.19G  /zpool1/vbox
+zpool1/vbox/harddisks                    2.05G   121G    25K  /zpool1/vbox/harddisks
+zpool1/vbox/harddisks/opensolaris        2.05G   121G  2.05G  /zpool1/vbox/harddisks/opensolaris
+zpool1/vbox/harddisks/opensolaris@kopie      0      -  2.05G  -
+zpool1/vbox/harddisks/opensolaris-1      54.5K   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-1
+zpool1/vbox/harddisks/opensolaris-2      54.5K   121G  2.05G  /zpool1/vbox/harddisks/opensolaris-2
+\end{lstlisting}
+\subsection{Der Consumer}\label{consumer}
+Der Consumer läuft ständig im Hintergrund. In regelmäßigen Abständen prüft er, ob eine neue Anfrage zum Starten einer Client VM vorliegt. Dazu pollt er eine Queue, die mit ``vm-queue'' bezeichnet ist (mehr zu den Queues bei \ref{queues}). Liegt eine solche Anfrage vor, startet der Consumer einen neuen Klon der Client VM. Dazu benutzt er das Startscript ~/startVM.sh (siehe Anhang \ref{anhang:startVM.sh})
+\subsubsection*{Consumer starten}
+Der Consumer kann über das Script ~/startVMConsumer.sh gestartet werden. Die Startparameter für den Consumer (daemonconsumer.jar) sind:
+\begin{itemize}
+  \item -c: Der Befehl oder das Script der/das ausgeführt werden soll.
+  \item -b: Pfad zur Bash
+  \item -q: Name der Queue, die überprüft werden soll
+  \item -h: Host, auf dem die Queue läuft
+  \item -m: Maximale Anzahl an Aufträgen, die gleichzeitig bearbeitet werden dürfen
+  \item -i: Intervall in Sekunden, in dem die Queue überprüft werden soll
+  \item -d: Debug-Modus, erzeugt erweiterte Ausgaben
+\end{itemize}
+\subsection{Eine geklonte Client-VM starten}
+Da jeder Client auf einer eigenen Version der Client-VM gestartet werden soll, muss für jeden Client zunächst ein Klon der Client-VM erstellt und gestartet werden. Auf Numerobis übernimmt dies das Script /home/vbox/startVM.sh (siehe Anhang \ref{anhang:startVM.sh}), trotzdem sollen hier im Einzelnen die nötigen Befehle erläutert werden.
+Zunächst müssen einige Dinge vorbereitet werden. Dazu gehören ein eindeutiger Name (z.B. der aktuelle Timestamp) des neuen Klons und der (ZFS-)Pfad zum Klon:
+\begin{lstlisting}[language=sh]
+  # Unique number for the VM
+  vmnr=`bin/date +%m%d%H%M%S`
+  # Path for VM harddisk
+  zfspath=``zpool1/vbox/harddisks/vmclient-$vmnr''
+  vmpath=``/home/vbox/harddisks/vmclient-$vmnr''
+\end{lstlisting}
+Nun muss die Image-Vorlage der Client-VM vom Snapshot geklont werden. Dies geschieht folgendermaßen:
+\begin{lstlisting}[language=sh]
+  zfs clone zpool1/vbox/harddisks/vmclient@kopie $zfspath
+\end{lstlisting}
+Die geklonte HDD braucht unbedingt eine eigene UUID, damit VirtualBox alles auseinanderhalten kann:
+\begin{lstlisting}[language=sh]
+  cd $vmpath
+  VBoxManage internalcommands sethduuid vmclient.vdi
+\end{lstlisting}
+Nun kann eine neue VM erstellt werden. Dann muss die Hardware, Netzwerkverbindung und Festplatte hinzugefügt werden:
+\begin{lstlisting}[language=sh]
+  VBoxManage createvm -name $vmname -register --ostype Ubuntu
+  VBoxManage modifyvm $vmname --memory 1536 --cpus 1
+  VBoxManage modifyvm $vmname --nic1 hostonly --nictype1 82540EM --cableconnected1 on --hostonlyadapter1 vboxnet0 --macaddress1 auto
+  VBoxManage modifyvm $vmname --hda ``$vmpath/vmclient.vdi"
+\end{lstlisting}
+Die erstellte VM kann nun gestartet und benutzt werden:
+\begin{lstlisting}[language=sh]
+  VBoxManage startvm $vmname --type headless
+\end{lstlisting}
+\subsubsection{Den Klon wieder vernichten}
+Wird der Klon nicht mehr benötigt, sollte dieser wieder gelöscht werden. Dazu muss man die geklonte Client-VM zunächst wieder beenden. Dann wird die Festplatte entfernt und die Maschine gelöscht. Schließlich muss die HDD noch ausgeworfen werden.
+\begin{lstlisting}[language=sh]
+  VBoxManage controlvm $vmname poweroff
+  VBoxManage modifyvm $vmname --hda none
+  VBoxManage unregistervm $vmname --delete
+  VBoxManage closemedium disk ``$vmpath/vmclient.vdi''
+\end{lstlisting}
+Zuletzt noch das Festplatten-Image aus dem Dateisystem löschen:
+\begin{lstlisting}[language=sh]
+  zfs destroy -f $zfspath
+\end{lstlisting}
+\section{Die Client-VM}
+Die Client-VMs dienen dazu, die Computerspieler in einer isolierten und genau festgelegten Umgebung auszuführen. Für jeden auszuführenden Computerspieler wird ein neuer Klon der Client-VM erstellt und gestartet.
+\subsection*{Überblick}
+Nach dem Boot der Client-VM wird auf ihr automatisch ein weiterer Consumer (/home/scadmin/swcconsumer.jar) gestartet, der einen Eintrag aus der Queue ``swc-job-queue'' aus\-liest (mehr zu den Queues bei \ref{queues}). Dieser Eintrag enthält einen SCP-Befehl, der den vorbereiteten Client von der VMMain auf die Client-VM kopiert. Dort wird der Client entpackt und ausgeführt. 
+\subsection{Der Ablauf im Detail}
+Ein Eintrag in /etc/rc.local startet den Consumer:
+\begin{lstlisting}[language=sh]
+  /usr/bin/java -jar /home/scadmin/swcconsumer.jar 192.168.56.2
+\end{lstlisting}
+Dieser liest aus der ``swc-job-queue'' den nächsten Eintrag (einen SCP-Befehl) aus und übergibt diesen an das Consumer-Script /home/scadmin/consume.sh. Dieses bereitet zunächst den Ordner vor, in dem der Client später ausgeführt werden soll:
+\begin{lstlisting}[language=sh]
+  /bin/mkdir $clientdir
+  /bin/chown clientexec:clientexec $clientdir
+  /bin/chmod 777 $clientdir
+\end{lstlisting}
+Dann führt es den übergebenen SCP-Befehl aus und kopiert damit das Client-Archiv von der VMMain in den richtigen Ordner auf der Client-VM:
+\begin{lstlisting}[language=sh]
+  `$scpcommand $zipfile` >> $log 2>&1
+  Führt zu:
+  /usr/bin/scp -i /home/scadmin/id_rsa scadmin@192.168.56.2:/home/scadmin/tmp/1286904225_400_gymnasium-elmschenhagen_634.zip /home/clientexec/client/client.zip
+\end{lstlisting}
+Danach löscht das Script das Client-Archiv auf der VMMain:
+\begin{lstlisting}[language=sh]
+  sudo -u scadmin ssh -l scadmin 192.168.56.2 rm /home/scadmin/tmp/${file} >> $log 2>&1 --
+\end{lstlisting}
+Jetzt wird das Client-Archiv entpackt und dem Benutzer ``clientexec'' gegeben, unter dem der Client ausgeführt werden soll. Außerdem muss noch das Startscript des Clients (startup.sh) ausführbar gemacht werden:
+\begin{lstlisting}[language=sh]
+  cd $clientdir
+  /usr/bin/unzip $zipfile >> $log 2>&1
+  /bin/chown -R clientexec:clientexec .
+  /bin/chmod +x $startup
+\end{lstlisting}
+Schließlich wird der Client mit dem Benutzer ``clientexec'' ausgeführt. Der Benutzerwechsel stellt sicher, dass der Client keinen Zugang zu sensiblen Daten oder gar SSH-Zugang zur VMMain erhält.
+\begin{lstlisting}[language=sh]
+  sudo -Hu clientexec /bin/bash +x $startup >> $log 2>&1 --
+\end{lstlisting}
+\subsection{Die Client-VM verändern}
+Möchte man die Vorlage der Client-VM verändern, muss man die Client-VM selbst starten (auf Numerobis):
+\begin{lstlisting}[language=sh]
+  VBoxManage startvm vmclient --type headless
+\end{lstlisting}
+Nun braucht die VM einige Zeit zum Hochfahren. Ist die VM hochgefahren, kann man die IP der VM auslesen:
+\begin{lstlisting}[language=sh]
+  VBoxManage guestproperty enumerate vmclient
+\end{lstlisting}
+Entscheidend ist folgende Zeile:
+\begin{lstlisting}[language=sh]
+  Name: /VirtualBox/GuestInfo/Net/0/V4/IP, value: 192.168.56.56, timestamp: 1286982333177594000, flags:
+\end{lstlisting}
+Ist diese Zeile noch nicht in der Ausgabe vorhanden, ist die VM noch nicht vollständig hochgefahren.
+Nun kann man sich (am besten von der VMMain aus) per SSH auf die VMClient verbinden und alle nötigen Änderungen vornehmen.
+Danach sollte man die VMClient wieder herunterfahren. Vorzugsweise nicht einfach abschalten, sondern richtig Herunterfahren:
+\begin{lstlisting}[language=sh]
+  sudo shutdown -P now
+\end{lstlisting}
+Nun muss noch die Klonvorlage im ZFS-Dateisystem aktualisiert werden. Dazu muss zunächst der bereits vorhandene Snapshot gelöscht werden:
+\begin{lstlisting}[language=sh]
+  zfs destroy -R zpool1/vbox/harddisks/vmclient@kopie
+\end{lstlisting}
+Dann wird das HDD-Image der ClientVM in das ZFS-Dateisystem kopiert:
+\begin{lstlisting}[language=sh]
+  cd /home/vbox/harddisks/vmclient
+  cp /home/vbox/harddisks/vm/vmclient.vdi .
+\end{lstlisting}
+Und zuletzt ein neuer Snapshot erstellt:
+\begin{lstlisting}[language=sh]
+  zfs snapshot zpool1/vbox/harddisks/vmclient@kopie
+\end{lstlisting}
+Das Aktualisieren des Snapshots wird komplett auch vom Script ``/home/vbox/updateVMClient.sh'' (siehe Anhang \ref{anhang:updateVMClient.sh}) übernommen.
+\section{Die VMMain}
+Auf der VMMain läuft die Rails-Webanwendung des Wettkampfsystems sowie der Software-Challenge Server, auf dem die Spiele ausgetragen werden.
+\subsection{Die Queues}\label{queues}
+Eine Warteschlange (RabbitMQ) wird genutzt, um Aufträge für zu startende VMs zu verwalten. Auf der VMMain werden Einträge in die Warteschlange eingefügt, die auf Numerobis und den Client-VMs ausgelesen werden. Ein Eintrag in die Warteschlange ``vm-queue'' hat zur Folge, dass eine neue Client-VM auf Numerobis gestartet wird. Der Inhalt des Eintrags ist dabei egal.
+Gleichzeitig sollte in die Warteschlange ``swc-job-queue'' ein Eintrag eingetragen werden, der einen SCP-Befehl zum Kopieren des vorbereiteten Clients auf die Client-VM enthält. Dieser sieht z.B. so aus:
+\begin{lstlisting}[language=sh]
+  /usr/bin/scp -i /home/scadmin/id_rsa scadmin@192.168.56.2:/home/scadmin/tmp/1286904225_400_gymnasium-elmschenhagen_634.zip
+\end{lstlisting}
+Das Eintragen der entsprechenden Elemente in die Queues wird auf der VMMain vom Producer (s. \ref{producer}) übernommen.
+\subsection{Der Producer}\label{producer} 
+Der Producer überwacht ein angegebenes Verzeichnis. Findet er in diesem einen vorbereiteten Client (ZIP-Archiv), verschiebt er diesen in einen spezifizierten Ordner und erstellt jeweils einen Eintrag in die Queues ``vm-queue'' und ``swc-job-queue''. Derzeit ist der überwachte Ordner /home/scadmin/clients/ und der Ordner, in dem die Ordner auf die VM warten ist /home/scadmin/tmp.
+\subsubsection*{Producer starten}  
+Der Producer kann über das Script ~/startProducer.sh gestartet werden. Die Startparameter für den Producer (producer.jar) sind:
+\begin{itemize}
+  \item -w: Verzeichnis, das überwacht werden soll
+  \item -s: Der SCP-Befehl zum Kopieren des Clients auf die Client-VM
+  \item -h: Host auf dem die RabbitMQ läuft
+  \item -t: Das Verzeichnis, in das der behandelte Client verschoben werden soll.
+\end{itemize}
+\section[Nach einem Neustart]{Was muss nach einem Neustart getan werden?}
+\subsection{Numerobis}
+\subsubsection*{Auf Numerobis den Consumer starten}
+Dies geschieht einfach mit
+\begin{verbatim}
+~/startVMConsumer.sh
+\end{verbatim}
+\subsubsection*{Auf Numerobis muss die VMMain gestartet werden}
+\begin{verbatim}
+VBoxManage startvm vmmain --type headless
+\end{verbatim}
+Nach einiger Startzeit sollte die VMMain dann per SSH erreichbar sein. Sollte dies nicht der Fall sein, hängt die VMMain evtl. im Bootmenü. Dann entweder die VMMain nochmal beenden:
+\begin{verbatim}
+VBoxManage controlvm vmmain poweroff
+\end{verbatim}
+und neustarten. Will dies partout nicht helfen, dann die VMMain folgendermaßen starten
+\begin{verbatim}
+VBoxManage startvm vmmain --type vrdp
+\end{verbatim}
+und dann mit rdesktop auf die VMMain gehen und das Bootmenü bestätigen:
+\begin{verbatim}
+rdesktop 134.245.253.4
+\end{verbatim}
+\subsection{VMMain}
+Auf der VMMain sollte nach einem Neustart durch einen Eintrag in /etc/rc.local das Script /home/scadmin/startup.sh ausgeführt werden. Dieses startet den Producer, die DelayedJob Worker und alle nötigen Daemons.
+Die WebApp läuft auf jeden Fall automatisch wieder.
+\subsubsection*{Producer, Job-Worker und Daemons manuell starten}
+Über ``ps -fe'' lässt sich herausfinden, welche Teile des Systems laufen und welche nicht. Bei Bedarf können alle Einzelkomponenten auch manuell gestartet werden.
+Den Producer startet man folgendermaßen:
+\begin{lstlisting}[language=sh]
+  god -c /home/scadmin/monitoring/producer.conf
+\end{lstlisting}
+Der Delayed-Job Worker wird gestartet mit:
+\begin{lstlisting}[language=sh]
+  cd /home/scadmin/rails-workspace
+  cap delayed_job:start
+\end{lstlisting}
+Die Daemons starten geht so:
+\begin{lstlisting}[language=sh]
+  cd /home/scadmin/rails-workspace
+  cap daemons:start
+\end{lstlisting}
+\section{Anhang}
+\subsection{startVM.sh}\label{anhang:startVM.sh}
+\begin{lstlisting}[language=sh]
+#!/bin/bash
+
+message=$1
+log="/home/vbox/logs/script.log"
+/bin/echo "Starting a new VM at \frac{bin/date`" >> $log
+
+# Unique number for the VM
+vmnr=\frac{bin/date +%m%d%H%M%S`
+# Path for VM harddisk
+zfspath="zpool1/vbox/harddisks/vmclient-$vmnr"
+vmpath="/home/vbox/harddisks/vmclient-$vmnr"
+
+# Clone the VM HDD template
+echo "creas sethduuid vmclient.vdi
+cd
+
+# Create and start new VM using the cloned HDD
+/bin/echo "creating vm"
+vmname="vmclient-$vmnr"
+VBoxManage createvm -name $vmname -register --ostype Ubuntu
+VBoxManage modifyvm $vmname --memory 1536 --cpus 1
+VBoxManage modifyvm $vmname --nic1 hostonly --nictype1 82540EM --cableconnected1 on --hostonlyadapter1 vboxnet0 --macaddress1 auto
+VBoxManage modifyvm $vmname --hda "$vmpath/vmclient.vdi"
+
+/bin/echo "starting vm"
+VBoxManage startvm $vmname --type headless
+
+# Give the VM 5 minutes to run before killing it again
+/bin/echo "5"
+sleep 60
+/bin/echo "4"
+sleep 60
+/bin/echo "3"
+sleep 60
+/bin/echo "2"
+sleep 60
+/bin/echo "1"
+sleep 60 
+/bin/echo "0"
+
+# Parse the VM's ip and call the log copy script on VMMain
+echo "saving log file"
+echo \varepsiloncho $vmname`
+echo `VBoxManage guestproperty get $vmname /VirtualBox/GuestInfo/Net/0/V4/IP` 
+vmip=`VBoxManage guestproperty get $vmname /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's poweroff
+VBoxManage modifyvm $vmname --hda none
+VBoxManage unregistervm $vmname --delete
+
+# Destroy the HDD clone
+zfs destroy -f $zfspath
+
+exit 0
+\end{lstlisting}
+\subsection{updateVMClient.sh}\label{anhang:updateVMClient.sh}
+\begin{lstlisting}[language=sh]
+#!/bin/bash
+# Update the hdd clone
+echo ``removing snapshot''
+zfs destroy -R zpool1/vbox/harddisks/vmclient@kopie
+
+echo ``copying new .vdi''
+cd ~/harddisks/vmclient
+cp ~/harddisks/vm/vmclient.vdi .
+
+echo ``creating snapshot''
+zfs snapshot zpool1/vbox/harddisks/vmclient@kopie
+
+exit 0
+\end{lstlisting}
+\end{document}

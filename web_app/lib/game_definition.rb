@@ -50,14 +50,25 @@ class GameDefinitionBuilder
     d.plugin_guid = guid
   end
 
-  def finale(&block)
-    o = GameDefinitionBuilder.final_day_collector
+  def finale(options = {}, &block)
+    # Eval finale days
+    o = GameDefinitionBuilder.finale_collector
     o.instance_eval(&block)
     d.final_days = {}
     o.days.each do |data|
       name, options = *data
       options[:name] = name
       d.final_days[name] = options
+    end
+    if o.winner_certain_condition.nil?
+      def d.finale_winner_certain?(match)
+        false
+      end
+    else
+      d.finale_winner_certain_condition = o.winner_certain_condition
+      def d.finale_winner_certain?(match)
+        self.finale_winner_certain_condition.call(match)
+      end
     end
   end
   
@@ -148,16 +159,22 @@ class GameDefinitionBuilder
   
   protected
 
-  def self.final_day_collector
+  def self.finale_collector
     o = Object.new
 
     def o.days; @days; end
+
+    def o.winner_certain_condition; @winner_certain_condition; end
       
     def o.day(name, options = {})
       @days ||= []
       @days << [name, options]
     end
-
+   
+    def o.winner_certain?(&block)
+      @winner_certain_condition = block
+    end
+    
     return o 
   end
 
@@ -253,7 +270,7 @@ class GameDefinition
     end
   end
   
-  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :tester, :final_days
+  attr_accessor :game_identifier, :league, :players, :round_score, :match_score, :plugin_guid, :test_rounds, :tester, :final_days, :finale_winner_certain_condition
 
   protected
 

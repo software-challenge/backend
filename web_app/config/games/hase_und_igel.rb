@@ -10,10 +10,10 @@ def calculate_victories(my_scores, their_scores)
           enemy_victories += their_scores.first[i].victory
         elsif my_scores[i].cause != "REGULAR"
           # i violated
-          enemy_victories += 1
+          enemy_victories += 2
         else
           # enemy violated
-          my_victories += 1
+          my_victories += 2
         end
       end
   { :mine => my_victories, :theirs => enemy_victories}
@@ -32,6 +32,17 @@ GameDefinition.create :"HaseUndIgel" do
   end
 
   finale do
+    winner_certain? do |match|
+      result = match.result :victories
+      if result.nil?
+        false
+      else
+        rounds_to_play = match.rounds.count - match.rounds.played.count
+        diff = (result[0].to_f - result[1].to_f).abs
+        diff > rounds_to_play
+      end
+    end
+
     day :quarter_final,
         :human_name => "Viertelfinale",
         :order => 1, 
@@ -73,8 +84,6 @@ GameDefinition.create :"HaseUndIgel" do
           1 => :winners,
           2 => :losers
         }
-            
-
   end
 
   round_score do

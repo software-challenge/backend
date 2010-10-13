@@ -1,0 +1,20 @@
+\contentsline {section}{\numberline {1}Numerobis}{2}
+\contentsline {subsection}{\numberline {1.1}Steuern der VMs}{2}
+\contentsline {subsection}{\numberline {1.2}Netzplan}{3}
+\contentsline {subsection}{\numberline {1.3}Das ZFS Dateisystem}{3}
+\contentsline {subsubsection}{\numberline {1.3.1}Beispiel f\"ur OpenSolaris}{3}
+\contentsline {subsection}{\numberline {1.4}Der Consumer}{6}
+\contentsline {subsection}{\numberline {1.5}Eine geklonte Client-VM starten}{6}
+\contentsline {subsubsection}{\numberline {1.5.1}Den Klon wieder vernichten}{7}
+\contentsline {section}{\numberline {2}Die Client-VM}{7}
+\contentsline {subsection}{\numberline {2.1}Der Ablauf im Detail}{7}
+\contentsline {subsection}{\numberline {2.2}Die Client-VM ver\"andern}{8}
+\contentsline {section}{\numberline {3}Die VMMain}{9}
+\contentsline {subsection}{\numberline {3.1}Die Queues}{9}
+\contentsline {subsection}{\numberline {3.2}Der Producer}{9}
+\contentsline {section}{\numberline {4}Nach einem Neustart}{9}
+\contentsline {subsection}{\numberline {4.1}Numerobis}{9}
+\contentsline {subsection}{\numberline {4.2}VMMain}{10}
+\contentsline {section}{\numberline {5}Anhang}{10}
+\contentsline {subsection}{\numberline {5.1}startVM.sh}{10}
+\contentsline {subsection}{\numberline {5.2}updateVMClient.sh}{11}
