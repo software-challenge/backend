@@ -111,6 +111,15 @@ public class SCMenuBar extends JMenuBar {
 		testRange.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				if (presFac.getLogicFacade().isGameActive()
+						&& !presFac.getLogicFacade().getObservation().isFinished()) {
+					if (JOptionPane.showConfirmDialog(null, lang
+							.getProperty("dialog_test_gameactive_msg"), lang
+							.getProperty("dialog_test_gameactive_title"),
+							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+						return;
+					}
+				}
 				new TestRangeDialog().setVisible(true);
 			}
 		});
