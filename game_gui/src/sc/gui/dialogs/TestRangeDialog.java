@@ -112,12 +112,14 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnl_saveReplay;
 	private JPanel pnlBottomTop;
 	private int freePort;
+	private boolean testStarted;
 
 	public TestRangeDialog() {
 		super();
 		presFac = PresentationFacade.getInstance();
 		lang = presFac.getLogicFacade().getLanguageData();
 		initCurTest(); // not testing
+		testStarted = false;
 		createGUI();
 	}
 
@@ -558,6 +560,11 @@ public class TestRangeDialog extends JDialog {
 	 * Prepares the test range.
 	 */
 	private boolean prepareTest() {
+		
+		testStarted = true;
+		if (presFac.getLogicFacade().isGameActive()) {
+			presFac.getContextDisplay().cancelCurrentGame();
+		}
 
 		IGuiPlugin selPlugin = getSelectedPlugin().getPlugin();
 
@@ -637,7 +644,7 @@ public class TestRangeDialog extends JDialog {
 	 * @param ascending
 	 */
 	protected void startNewTest() {
-
+		 
 		final ConnectingDialog connectionDialog = new ConnectingDialog();
 
 		curTest++;
@@ -984,7 +991,9 @@ public class TestRangeDialog extends JDialog {
 	 * Stops the server and reset the button's status.
 	 */
 	private void finishTest() {
-		stopServer();
+		if (testStarted) {
+			stopServer();
+		}
 		updateGUI(true);
 		initCurTest();
 	}
