@@ -415,4 +415,20 @@ public class Game extends RoundBasedGameInstance<Player>
 			this.board = (Board)gameInfo;
 		}
 	}
+
+	@Override
+	public List<IPlayer> getWinners()
+	{
+		if(checkGameOverCondition()) {
+			List<IPlayer> winners = new LinkedList<IPlayer>();
+			for(Player player : players) {
+				if (getScoreFor(player).getValues().get(0).intValue() > 0) {
+					winners.add(player);
+				}
+			}
+			return winners;
+		} else {
+			return null;
+		}
+	}
 }
