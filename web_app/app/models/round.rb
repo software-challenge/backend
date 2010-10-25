@@ -31,9 +31,10 @@ class Round < ActiveRecord::Base
       while !manager.done?
         sleep 1
       end
-       
-
+      
       manager.close
+
+      Delayed::Job.logger.info "Round finished" 
     rescue => exception
       manager.close
       raise exception
@@ -41,6 +42,7 @@ class Round < ActiveRecord::Base
     
     raise "no game result" unless manager.last_result
     update_scores!(manager.last_result)
+    Delayed::Job.logger.info "Job finished"
   end
 
   def reset!
