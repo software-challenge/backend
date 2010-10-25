@@ -73,6 +73,7 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
+import sun.awt.VerticalBagLayout;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
@@ -191,7 +192,7 @@ public class TestRangeDialog extends JDialog {
 		statTable.setCellSelectionEnabled(false);
 		// don't let the user change the columns' order or width
 		statTable.getTableHeader().setReorderingAllowed(false);
-		statTable.getTableHeader().setResizingAllowed(false);
+		statTable.getTableHeader().setResizingAllowed(true);
 		// -----------------------------------------------------------
 		pnlTop = new JPanel();
 		pnlTop.setLayout(new BoxLayout(pnlTop, BoxLayout.PAGE_AXIS));
@@ -225,16 +226,16 @@ public class TestRangeDialog extends JDialog {
 						cb_showLog.isSelected());
 			}
 		});
-		JPanel pnl_showLogLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		JPanel pnl_showLogLeft = new JPanel(new GridLayout(1, 0));
 		pnl_showLogLeft.add(cb_showLog);
 
 		createButtonsAtBottom();
 
 		createSaveReplayCheckboxGroup();
 		// -------------------------------------------
-		pnlBottomTop = new JPanel(new GridLayout(0, 2));
+		pnlBottomTop = new JPanel(new VerticalBagLayout(10));
 		pnlBottomTop.add(pnl_showLogLeft);
-		// pnlBottomTop.add(pnl_saveReplay);//TODO
+		//pnlBottomTop.add(pnl_saveReplay);
 
 		pnlBottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pnlBottomRight.add(testStart);
@@ -278,15 +279,15 @@ public class TestRangeDialog extends JDialog {
 	}
 
 	private void createSaveReplayCheckboxGroup() {
-		pnl_saveReplay = new JPanel();
-		setVerticalFlowLayout(pnl_saveReplay);
-
+		pnl_saveReplay = new JPanel(new VerticalBagLayout());
+		//setVerticalFlowLayout(pnl_saveReplay);
+		
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel lbl_saveReplay = new JLabel(lang
 				.getProperty("dialog_test_lbl_saveReplay"));
 		pnl_saveReplayLeft.add(lbl_saveReplay);
 
-		JPanel pnl_ckbGroup = new JPanel(new GridLayout(0, 1));
+		JPanel pnl_ckbGroup = new JPanel(new GridLayout(3, 0));
 		pnl_ckbGroup.setBorder(BorderFactory.createLineBorder(Color.black));
 
 		final JCheckBox ckb_errorGames = new JCheckBox(lang
@@ -418,6 +419,8 @@ public class TestRangeDialog extends JDialog {
 		// remove columns
 		model.setColumnCount(0);
 
+		int prefSize = 0;
+		
 		// add columns
 		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
 		model.addColumn(lang.getProperty("dialog_test_stats_name"));
@@ -428,7 +431,9 @@ public class TestRangeDialog extends JDialog {
 			model.addColumn(column.getName());
 		}
 		model.addColumn(lang.getProperty("dialog_test_stats_invalid"));
+		statTable.getColumnModel().getColumn(statTable.getColumnCount() - 1).setMaxWidth(150);
 		model.addColumn(lang.getProperty("dialog_test_stats_crashed"));
+		statTable.getColumnModel().getColumn(statTable.getColumnCount() - 1).setMaxWidth(150);
 
 		setTableHeaderRenderer(statTable);
 
@@ -443,26 +448,39 @@ public class TestRangeDialog extends JDialog {
 
 		statTable.getColumnModel().getColumn(1).setMaxWidth(300);
 
-		for (int i = 0; i < statColumns.size(); i++) {
+		for (int i = 0; i < statTable.getColumnCount() - 2; i++) {
 			int index = i + 2;
 			statTable.getColumnModel().getColumn(index).setMinWidth(10);
-			statTable.getColumnModel().getColumn(index).setMaxWidth(100);
+			//statTable.getColumnModel().getColumn(index).setMaxWidth(100);
 		}
 
 		// set width of columns
 		statTable.getColumnModel().getColumn(0).setPreferredWidth(30);
 		statTable.getColumnModel().getColumn(1).setPreferredWidth(170);
-		for (int i = 0; i < statColumns.size(); i++) {
-			statTable.getColumnModel().getColumn(i + 2).setPreferredWidth(80);
+		prefSize += 200;
+		for (int i = 0; i < statTable.getColumnCount() - 2; i++) {
+			if (i < statColumns.size()) {
+				ScoreFragment column = statColumns.get(i);
+				statTable.getColumnModel().getColumn(i + 2).setPreferredWidth(column.getName().length() * 10);
+				prefSize += column.getName().length() * 10;
+			} else {
+				statTable.getColumnModel().getColumn(i + 2).setPreferredWidth(80);
+				prefSize += 80;
+			}
 		}
 
 		// -------------------------------------------------------------
 
 		setPlayerRows(selPlugin);
-
+		
 		// show table without extra space
-		statTable.setPreferredScrollableViewportSize(statTable
-				.getPreferredSize());
+		//statTable.setPreferredScrollableViewportSize(statTable
+		//		.getPreferredSize());
+		Dimension prefDim = statTable.getPreferredSize();
+		prefDim.width = prefSize;
+		statTable.setPreferredSize(prefDim);
+		statTable.setPreferredScrollableViewportSize(prefDim);
+		System.out.println("Preferred: " + prefSize);
 
 		// display
 		pnlTop.removeAll();
@@ -473,7 +491,10 @@ public class TestRangeDialog extends JDialog {
 		for (int i = 0; i < txfparams.length; i++) {
 			pnlTop.add(pnlclient[i]);
 		}
-		pnlTop.add(new JScrollPane(statTable));
+		JScrollPane statScrollPane = new JScrollPane(statTable);
+		statScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		statScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		pnlTop.add(statScrollPane);
 		pnlTop.validate();
 		// pnlTop.invalidate();// TODO order?
 
@@ -793,18 +814,34 @@ public class TestRangeDialog extends JDialog {
 
 				// create replay file name
 				String replayFilename = null;
+				// TODO: Get winner and decide whether to save replay
+				/*
+				List<PlayerScore> scores = result.getScores();
+				Collections.rotate(scores, getRotation(txfclient.length));
+				int winnerFragmentIndex;
+				ScoreDefinition definition = getSelectedPlugin().getPlugin().getScoreDefinition();
+				for (winnerFragmentIndex = 0; winnerFragmentIndex < definition.size(); winnerFragmentIndex++) {
+					if (definition.get(winnerFragmentIndex).getName().equals("winner")) {
+						break;
+					}
+				}
+				boolean winner = scores.get(0).getValues().get(winnerFragmentIndex).intValue() == 1;
+				boolean saveReplay = false;
 				if (!result.isRegular()
 						&& GUIConfiguration.instance().saveErrorGames()) {
-					replayFilename = HelperMethods
-							.generateReplayFilename(plugin, slotDescriptors);
+					saveReplay = true;
 				} else if (result.isRegular()) {
-					/*
-					 * switch (result.getScores().get(rotation).getCause()) {
-					 * case WON: break; case LOST: break; default: break; }
-					 */
+					if (GUIConfiguration.instance().saveWonGames() && winner) {
+						saveReplay = true;
+					}
+					if (GUIConfiguration.instance().saveLostGames() && !winner) {
+						saveReplay = true;
+					}
 				}
-				// save replay if it should be saved
-				if (replayFilename != null) {
+				if (saveReplay) {
+				*/
+				if (false) {
+					replayFilename = HelperMethods.generateReplayFilename(plugin, slotDescriptors);
 					try {
 						obs.saveReplayToFile(replayFilename);
 						addLogMessage(lang
@@ -980,7 +1017,7 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest(final String err_msg) {
-		if (null != obs) {
+		if (null != obs && !obs.isFinished()) {
 			obs.cancel();
 		}
 		finishTest();
