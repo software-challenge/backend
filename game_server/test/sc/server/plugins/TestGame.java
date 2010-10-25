@@ -127,4 +127,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public List<IPlayer> getWinners()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
