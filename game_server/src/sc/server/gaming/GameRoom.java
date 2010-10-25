@@ -115,11 +115,11 @@ public class GameRoom implements IGameListener
 
 			if (score == null)
 			{
-				//throw new RuntimeException("GameScore was not complete!");
+				throw new RuntimeException("GameScore was not complete!");
 				
 				// FIXME: hack to avoid server hangups
 				// Gewinner, Feldnummer, Karotten, Zeit (ms)
-				score = new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0);
+				//score = new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0);
 			}
 
 			// FIXME: remove cause != unknown
@@ -132,10 +132,10 @@ public class GameRoom implements IGameListener
 		}
 		
 		// FIXME: if there where not enough players, add scores
-		while (scores.size() < 2)
+		/*while (scores.size() < 2)
 		{
 			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
-		}
+		}*/
 
 		GameResult result = new GameResult(definition, scores);
 		return result;
