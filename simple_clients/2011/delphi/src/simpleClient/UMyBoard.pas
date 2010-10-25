@@ -52,7 +52,7 @@ implementation
         Result := false;
       end;
       // If the field is occupied with own sheep, move is invalid
-      if(isFieldOccupied(Move.Target)) then begin
+      if(isFieldOccupied(Move.Target) and (not (getFieldType(Move.Target) in [FIELD_HOME1, FIELD_HOME2]))) then begin
         if(getSheepOnField(Move.Target).PlayerID = FCurrentPlayer) then begin
           Result := false;
         end
