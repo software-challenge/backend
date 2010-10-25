@@ -189,7 +189,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 				score.setCause(cause);
 				score.setValueAt(0, new BigDecimal(0));
 			} else {
-				score.setValueAt(0, new BigDecimal(+1));
+				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
 
@@ -251,4 +251,24 @@ public class Game extends RoundBasedGameInstance<Player> {
 			this.gameState = (GameState) gameInfo;
 		}
 	}
+
+	@Override
+	public List<IPlayer> getWinners() {
+		if (gameState.gameEnded()) {
+			List<IPlayer> winners = new LinkedList<IPlayer>();
+			if (gameState.winner() != null) {
+				for(Player player : players) {
+					if (player.getPlayerColor() == gameState.winner()) {
+						winners.add(player);
+						break;
+					}
+				}
+			}
+			return winners;
+		} else {
+			return null;
+		}
+	}
+	
+	
 }
