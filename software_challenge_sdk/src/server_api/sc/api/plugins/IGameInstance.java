@@ -1,5 +1,7 @@
 package sc.api.plugins;
 
+import java.util.List;
+
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
@@ -68,5 +70,12 @@ public interface IGameInstance
 	 * The game is requested to load itself from a given game information object (could be a board instance for example)
 	 */
 	public void loadGameInfo(Object gameInfo);
+	
+	/**
+	 * Returns the players that have won the game, empty if the game has no winners,
+	 * or null if the game has not finished.
+	 * @return
+	 */
+	public List<IPlayer> getWinners();
 	
 }
