@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2010.9.4)  13 OCT 2010 17:48
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2010.9.4)  25 OCT 2010 14:40
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -8,23 +8,42 @@ LaTeX2e <2009/09/24>
 Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
 yphenation, ngerman, german, german-x-2009-06-19, ngerman-x-2009-06-19, loaded.
 
-(/usr/share/texmf-texlive/tex/latex/base/article.cls
-Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/report.cls
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
 (/usr/share/texmf-texlive/tex/latex/base/size10.clo
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
-\c@section=\count80
-\c@subsection=\count81
-\c@subsubsection=\count82
-\c@paragraph=\count83
-\c@subparagraph=\count84
-\c@figure=\count85
-\c@table=\count86
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
 )
+(/usr/share/texmf-texlive/tex/generic/babel/babel.sty
+Package: babel 2008/07/06 v3.8l The Babel package
+
+(/usr/share/texmf-texlive/tex/generic/babel/germanb.ldf
+Language: germanb 2008/06/01 v2.6m German support from the babel system
+
+(/usr/share/texmf-texlive/tex/generic/babel/babel.def
+File: babel.def 2008/07/06 v3.8l Babel common definitions
+\babel@savecnt=\count88
+\U@D=\dimen103
+)
+\l@austrian = a dialect from \language\l@german 
+Package babel Info: Making " an active character on input line 102.
+)
+(/usr/share/texmf-texlive/tex/generic/babel/ngermanb.ldf
+Language: ngermanb 2008/07/06 v2.6n new German support from the babel system
+\l@naustrian = a dialect from \language\l@ngerman 
+))
 (/usr/share/texmf-texlive/tex/latex/base/inputenc.sty
 Package: inputenc 2008/03/30 v1.1d Input encoding file
 \inpenc@prehook=\toks14
@@ -54,12 +73,12 @@ Package graphics Info: Driver file: dvips.def on input line 91.
 (/usr/share/texmf-texlive/tex/latex/graphics/dvips.def
 File: dvips.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
 ))
-\Gin@req@height=\dimen103
-\Gin@req@width=\dimen104
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
 )
 (/usr/share/texmf-texlive/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count87
+\c@float@type=\count89
 \float@exts=\toks17
 \float@box=\box26
 \@float@everytoks=\toks18
@@ -76,13 +95,13 @@ Package ifpdf Info: pdfTeX in pdf mode not detected.
 Package: ifvtex 2008/11/04 v1.4 Switches for detecting VTeX and its modes (HO)
 Package ifvtex Info: VTeX not detected.
 )
-\Gm@cnth=\count88
-\Gm@cntv=\count89
-\c@Gm@tempcnt=\count90
-\Gm@bindingoffset=\dimen105
-\Gm@wd@mp=\dimen106
-\Gm@odd@mp=\dimen107
-\Gm@even@mp=\dimen108
+\Gm@cnth=\count90
+\Gm@cntv=\count91
+\c@Gm@tempcnt=\count92
+\Gm@bindingoffset=\dimen106
+\Gm@wd@mp=\dimen107
+\Gm@odd@mp=\dimen108
+\Gm@even@mp=\dimen109
 \Gm@dimlist=\toks19
 )
 (/usr/share/texmf-texlive/tex/latex/extsizes/extsizes.sty
@@ -96,23 +115,23 @@ Package ExtSizes Warning: It is better to use one of the extsizes classes,
 File: size10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 ))
 (/usr/share/texmf-texlive/tex/latex/listings/listings.sty
-\lst@mode=\count91
+\lst@mode=\count93
 \lst@gtempboxa=\box28
 \lst@token=\toks20
-\lst@length=\count92
-\lst@currlwidth=\dimen109
-\lst@column=\count93
-\lst@pos=\count94
-\lst@lostspace=\dimen110
-\lst@width=\dimen111
-\lst@newlines=\count95
-\lst@lineno=\count96
-\lst@maxwidth=\dimen112
+\lst@length=\count94
+\lst@currlwidth=\dimen110
+\lst@column=\count95
+\lst@pos=\count96
+\lst@lostspace=\dimen111
+\lst@width=\dimen112
+\lst@newlines=\count97
+\lst@lineno=\count98
+\lst@maxwidth=\dimen113
 
 (/usr/share/texmf-texlive/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2007/02/22 1.4 (Carsten Heinz)
-\c@lstnumber=\count97
-\lst@skipnumbers=\count98
+\c@lstnumber=\count99
+\lst@skipnumbers=\count100
 \lst@framebox=\box29
 )
 (/usr/share/texmf-texlive/tex/latex/listings/listings.cfg
@@ -125,23 +144,23 @@ File: lstlang1.sty 2004/09/05 1.3 listings language file
 )
 
 LaTeX Warning: Unused global option(s):
-    [german,a4].
+    [a4].
 
 (./system_documentation.aux)
 \openout1 = `system_documentation.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 14.
-LaTeX Font Info:    ... okay on input line 14.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 20.
+LaTeX Font Info:    ... okay on input line 20.
 
 *geometry auto-detecting driver*
 *geometry detected driver: dvips*
@@ -184,21 +203,23 @@ driver: dvips
 
 (1in=72.27pt, 1cm=28.45pt)
 -----------------------
-\c@lstlisting=\count99
+\c@lstlisting=\count101
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 16.
+(Font)              <12> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 16.
+(Font)              <8> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 16.
+(Font)              <6> on input line 22.
 
 LaTeX Warning: No \author given.
 
-(./system_documentation.toc
+[1
+
+] (./system_documentation.toc
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 2.
+(Font)              <7> on input line 4.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 2.
+(Font)              <5> on input line 4.
 )
 \tf@toc=\write3
 \openout3 = `system_documentation.toc'.
@@ -206,36 +227,63 @@ LaTeX Font Info:    External font `cmex10' loaded for size
  [1
 
 ]
-LaTeX Font Info:    Try loading font information for OML+cmr on input line 33.
+Kapitel I.
+[2
 
+]
+Kapitel II.
+LaTeX Font Info:    Try loading font information for OML+cmr on input line 37.
 (/usr/share/texmf-texlive/tex/latex/base/omlcmr.fd
 File: omlcmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 33.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 37.
 File: netzplan.eps Graphic file (type eps)
- <netzplan.eps> [2] [3]
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 99.
+ <netzplan.eps> [3
+
+] [4]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 59.
 
 (/usr/share/texmf-texlive/tex/latex/base/omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 99.
- [4] [5] [6] [7] [8]
-Overfull \hbox (4.09612pt too wide) in paragraph at lines 275--276
-\OT1/cmr/m/n/10 Das Ein-tra-gen der entsprechen-den El-e-mente in die Queues wi
-rd auf der VM-Main vom Pro-ducer (s. 3.2[]) ^^?ubernommen. 
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 59.
+ [5] [6]
+
+LaTeX Warning: Reference `anhang-startVM.sh' on page 7 undefined on input line 
+169.
+
+[7] [8] [9] [10]
+Kapitel III.
+[11
+
+] [12] [13]
+Kapitel IV.
+[14
+
+]
+Overfull \hbox (2.24425pt too wide) in paragraph at lines 386--387
+\OT1/cmr/m/n/10 Das Ein-tra-gen der ent-spre-chen-den Ele-men-te in die Queu-es
+ wird auf der VM-Main vom Pro-du-cer (s. 3.4[]) []ubernommen. 
  []
 
-[9] [10] [11] [12] (./system_documentation.aux) ) 
-Here is how much of TeX's memory you used:
- 2990 strings out of 495022
- 40642 string characters out of 1181059
- 295264 words of memory out of 3000000
- 6182 multiletter control sequences out of 15000+50000
- 8409 words of font info for 30 fonts, out of 3000000 for 9000
- 28 hyphenation exceptions out of 8191
- 26i,6n,42p,453b,1628s stack positions out of 5000i,500n,10000p,200000b,50000s
+[15]
+Kapitel V.
+[16
 
-Output written on system_documentation.dvi (12 pages, 69420 bytes).
+] [17] (./system_documentation.aux)
+
+LaTeX Warning: There were undefined references.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 3430 strings out of 495022
+ 46104 string characters out of 1181059
+ 309661 words of memory out of 3000000
+ 6608 multiletter control sequences out of 15000+50000
+ 9453 words of font info for 33 fonts, out of 3000000 for 9000
+ 28 hyphenation exceptions out of 8191
+ 26i,6n,42p,1066b,1643s stack positions out of 5000i,500n,10000p,200000b,50000s
+
+Output written on system_documentation.dvi (18 pages, 86916 bytes).
