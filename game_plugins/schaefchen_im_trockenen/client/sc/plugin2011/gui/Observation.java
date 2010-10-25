@@ -18,6 +18,7 @@ import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
 import sc.plugin2011.EPlayerId;
+import sc.plugin2011.GamePlugin;
 import sc.plugin2011.GameState;
 import sc.plugin2011.IGUIObservation;
 import sc.plugin2011.IGameHandler;
@@ -212,16 +213,22 @@ public class Observation implements IObservation, IUpdateListener,
 
 		String[] results1 = data.getScores().get(0).toStrings();
 		String[] results2 = data.getScores().get(1).toStrings();
-		result += name1 + ": " + results1[6] + " Punkte (" + results1[1] + ", "
-				+ results1[2] + ", " + results1[3] + ", " + results1[4] + ", "
-				+ results1[5] + ")\n";
-		result += name2 + ": " + results2[6] + " Punkte (" + results2[1] + ", "
-				+ results2[2] + ", " + results2[3] + ", " + results2[4] + ", "
-				+ results2[5] + ")\n";
-
-		if (results1[0].equals("1")) {
+		
+		String res1 = name1 + ":\n	Punkte: " + results1[6] + "\n";
+		String res2 = name2 + ":\n	Punkte: " + results2[6] + "\n";
+		for(int i = 1; i < 6; i += 1) {
+			System.out.println("i is " + i);
+			res1 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results1[i] + "\n";
+			res2 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results2[i] + "\n";
+		}
+		
+		result += res1 + "\n";
+		result += res2;
+		
+		PlayerColor winner = ((GameState)gameState).winner();
+		if (winner == PlayerColor.RED) {
 			result += "Gewinner: " + name1 + "\n";
-		} else if (results2[0].equals("1")) {
+		} else if (winner == PlayerColor.BLUE) {
 			result += "Gewinner: " + name2 + "\n";
 		} else {
 			result += "Unentschieden\n";
