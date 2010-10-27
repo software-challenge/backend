@@ -22,6 +22,10 @@ class Round < ActiveRecord::Base
     !played_at.nil?
   end
 
+  def job_logger
+    SO_CHA_MANAGER_LOGGER
+  end
+
   def perform
     begin
       manager = SoChaManager::Manager.new
@@ -34,7 +38,7 @@ class Round < ActiveRecord::Base
       
       manager.close
 
-      Delayed::Job.logger.info "Round finished" 
+      job_logger.info "Round finished" 
     rescue => exception
       manager.close
       raise exception
@@ -42,7 +46,7 @@ class Round < ActiveRecord::Base
     
     raise "no game result" unless manager.last_result
     update_scores!(manager.last_result)
-    Delayed::Job.logger.info "Job finished"
+    job_logger.info "Job finished"
   end
 
   def reset!
@@ -62,7 +66,7 @@ class Round < ActiveRecord::Base
     raise "result must not be nil" unless result
     raise "result (#{result.count}) must have same size as there are slots (#{slots.count})" if result.count != slots.count
    
-    logger.info "Round finished: #{self}. Updating scores."
+    job_logger.info "Round finished: #{self}. Updating scores."
 
     Round.transaction do
       slots.each_with_index do |slot,index|

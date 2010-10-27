@@ -81,7 +81,7 @@
             <% if not enc.running? %>
               <% if enc.ready? %>
                 <% if enc.playable? %>
-                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(@contst, enc), :method => :post %>
+                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(@contest, enc), :method => :post %>
                 <% else %>
                   <%= t("messages.friendly_match_not_today") %>
                 <% end %>

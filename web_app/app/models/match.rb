@@ -108,13 +108,17 @@ class Match < ActiveRecord::Base
     save!
   end
 
+  def job_logger
+    SO_CHA_MANAGER_LOGGER
+  end
+
   def after_round_played(round)
-    logger.info "Received after_round_played from #{round}"
+    job_logger.info "Received after_round_played from #{round}"
 
     if all_rounds_played?
-      logger.info "All rounds finished for match #{self}!"
+      job_logger.info "All rounds finished for match #{self}!"
      
-      logger.info "Updating scoretable." 
+      job_logger.info "Updating scoretable." 
       update_scoretable
       self.played_at = DateTime.now
       self.save!
@@ -128,7 +132,7 @@ class Match < ActiveRecord::Base
         set.after_match_played self
       end
     else
-      logger.info "Not all rounds are finished yet."
+      job_logger.info "Not all rounds are finished yet."
     end
   end
 
@@ -181,7 +185,7 @@ class Match < ActiveRecord::Base
       slot.score.set!(result)
       slot.save!
     end
-    logger.info "Scoretable updated for match #{self}"
+    job_logger.info "Scoretable updated for match #{self}"
   end
 
   def slot_for(client)
