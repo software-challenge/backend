@@ -7,7 +7,8 @@ class Person < ActiveRecord::Base
   # acl9
   acts_as_authorization_subject
 
-  has_many :memberships
+  # Memberships are useless if person is deleted
+  has_many :memberships, :dependent => :destroy
   has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
   has_one :email_event, :dependent => :destroy
 

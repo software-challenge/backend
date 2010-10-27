@@ -172,7 +172,7 @@ module SoChaManager
           logger.log_formatted_exception e
         ensure
           logger.info "Finalizing SoChaClient thread. #{$!}"
-          close
+          close unless done?
         end
         logger.info "SoChaClient thread stopped."
       end
