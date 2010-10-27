@@ -135,10 +135,17 @@ class FriendlyEncounter < ActiveRecord::Base
     friendly_match.main_result
   end
 
+  def job_logger
+    SO_CHA_MANAGER_LOGGER
+  end
+
   def after_match_played(match)
     if match == friendly_match
+      job_logger.info "Friendly encounter finished"
       self.played_at = DateTime.now
       self.save!
+    else
+      job_logger.warn "Friendly match finished, but was not mine!"
     end
   end
 
