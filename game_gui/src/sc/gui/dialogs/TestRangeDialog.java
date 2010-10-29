@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +53,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import sc.api.plugins.IPlayer;
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
 import sc.gui.PresentationFacade;
@@ -114,6 +116,8 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlBottomTop;
 	private int freePort;
 	private boolean testStarted;
+	
+	private List<List<BigDecimal>> absoluteValues;
 
 	public TestRangeDialog() {
 		super();
@@ -235,7 +239,7 @@ public class TestRangeDialog extends JDialog {
 		// -------------------------------------------
 		pnlBottomTop = new JPanel(new VerticalBagLayout(10));
 		pnlBottomTop.add(pnl_showLogLeft);
-		//pnlBottomTop.add(pnl_saveReplay);
+		pnlBottomTop.add(pnl_saveReplay);
 
 		pnlBottomRight = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pnlBottomRight.add(testStart);
@@ -292,6 +296,7 @@ public class TestRangeDialog extends JDialog {
 
 		final JCheckBox ckb_errorGames = new JCheckBox(lang
 				.getProperty("dialog_test_ckb_error"));
+		ckb_errorGames.setSelected(GUIConfiguration.instance().saveErrorGames());
 		ckb_errorGames.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -301,6 +306,7 @@ public class TestRangeDialog extends JDialog {
 		});
 		final JCheckBox ckb_lostGames = new JCheckBox(lang
 				.getProperty("dialog_test_ckb_lost"));
+		ckb_lostGames.setSelected(GUIConfiguration.instance().saveLostGames());
 		ckb_lostGames.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -310,6 +316,7 @@ public class TestRangeDialog extends JDialog {
 		});
 		final JCheckBox ckb_wonGames = new JCheckBox(lang
 				.getProperty("dialog_test_ckb_won"));
+		ckb_wonGames.setSelected(GUIConfiguration.instance().saveWonGames());
 		ckb_wonGames.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -480,7 +487,6 @@ public class TestRangeDialog extends JDialog {
 		prefDim.width = prefSize;
 		statTable.setPreferredSize(prefDim);
 		statTable.setPreferredScrollableViewportSize(prefDim);
-		System.out.println("Preferred: " + prefSize);
 
 		// display
 		pnlTop.removeAll();
@@ -594,8 +600,11 @@ public class TestRangeDialog extends JDialog {
 
 		progressBar.setMaximum(numTest);
 		progressBar.setValue(0);
+		
+		absoluteValues = new LinkedList<List<BigDecimal>>();
 
 		for (JTextField element : txfclient) {
+			absoluteValues.add(new LinkedList<BigDecimal>());
 			File file = new File(element.getText());
 			if (!file.exists()) {
 				JOptionPane.showMessageDialog(this, lang
@@ -797,6 +806,7 @@ public class TestRangeDialog extends JDialog {
 		// get observer
 		
 		final GUIPluginInstance plugin = getSelectedPlugin();
+		final List<SlotDescriptor> descriptors = slotDescriptors;
 		obs = prep.getObserver();
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
@@ -814,18 +824,17 @@ public class TestRangeDialog extends JDialog {
 
 				// create replay file name
 				String replayFilename = null;
-				// TODO: Get winner and decide whether to save replay
-				/*
-				List<PlayerScore> scores = result.getScores();
-				Collections.rotate(scores, getRotation(txfclient.length));
-				int winnerFragmentIndex;
-				ScoreDefinition definition = getSelectedPlugin().getPlugin().getScoreDefinition();
-				for (winnerFragmentIndex = 0; winnerFragmentIndex < definition.size(); winnerFragmentIndex++) {
-					if (definition.get(winnerFragmentIndex).getName().equals("winner")) {
-						break;
+				Collections.rotate(descriptors, -rotation); // Undo rotation
+				boolean winner = false;
+				for (IPlayer player : result.getWinners()) {
+					if (player.getDisplayName().equals(descriptors.get(0).getDisplayName())) {
+						winner = true;
 					}
 				}
-				boolean winner = scores.get(0).getValues().get(winnerFragmentIndex).intValue() == 1;
+				// Draw counts as win
+				if (result.getWinners().size() == 0) {
+					winner = true;
+				}
 				boolean saveReplay = false;
 				if (!result.isRegular()
 						&& GUIConfiguration.instance().saveErrorGames()) {
@@ -839,8 +848,6 @@ public class TestRangeDialog extends JDialog {
 					}
 				}
 				if (saveReplay) {
-				*/
-				if (false) {
 					replayFilename = HelperMethods.generateReplayFilename(plugin, slotDescriptors);
 					try {
 						obs.saveReplayToFile(replayFilename);
@@ -957,21 +964,27 @@ public class TestRangeDialog extends JDialog {
 
 			List<BigDecimal> stats = curPlayer.getValues();
 			for (int j = 0; j < stats.size(); j++) {
+				List<BigDecimal> absVals = absoluteValues.get(statRow);
 				BigDecimal newStat = stats.get(j);
-				BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
+				if (absVals.size() <= j) {
+					absVals.add(new BigDecimal(0));
+				}
+				//BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
+				BigDecimal abs = absVals.get(j);
 
 				ScoreAggregation action = result.getDefinition().get(j)
 						.getAggregation();
 				switch (action) {
 				case SUM:
-
-					newStat = old.add(newStat);
+					newStat = abs.add(newStat);
+					absVals.set(j, newStat);
 					break;
 				case AVERAGE:
 					// restore old absolute value
-					old = old.multiply(BigDecimal.valueOf(curTest - 1));
+					//old = old.multiply(BigDecimal.valueOf(curTest - 1));
 					// add newStat to absolute value
-					newStat = old.add(newStat);
+					newStat = abs.add(newStat);
+					absVals.set(j, newStat);
 					// divide with curTest (rounded down)
 					newStat = newStat.divideToIntegralValue(BigDecimal
 							.valueOf(curTest));
@@ -1081,7 +1094,7 @@ public class TestRangeDialog extends JDialog {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
-
+		
 	}
 
 	/**
