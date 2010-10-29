@@ -137,7 +137,7 @@ public class GameRoom implements IGameListener
 			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
 		}*/
 
-		GameResult result = new GameResult(definition, scores);
+		GameResult result = new GameResult(definition, scores, this.game.getWinners());
 		return result;
 	}
 
