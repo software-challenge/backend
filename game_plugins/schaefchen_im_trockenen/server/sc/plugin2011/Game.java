@@ -192,6 +192,15 @@ public class Game extends RoundBasedGameInstance<Player> {
 				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
+		
+		if(!gameState.gameEnded()) {
+			gameState
+			.endGame(
+					((Player)player).getPlayerColor().opponent(),
+					"Der Spieler '"
+							+ player.getDisplayName()
+							+ "' hat das Spiel verlassen.");
+		}
 
 		notifyOnGameOver(res);
 	}
