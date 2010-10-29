@@ -10,6 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
@@ -23,6 +24,7 @@ import sc.plugin2011.GameState;
 import sc.plugin2011.IGUIObservation;
 import sc.plugin2011.IGameHandler;
 import sc.plugin2011.PlayerColor;
+import sc.plugin2011.Player;
 import sc.plugin2011.gui.renderer.RenderFacade;
 import sc.plugin2011.util.Configuration;
 import sc.protocol.responses.ErrorResponse;
@@ -217,7 +219,6 @@ public class Observation implements IObservation, IUpdateListener,
 		String res1 = name1 + ":\n	Punkte: " + results1[6] + "\n";
 		String res2 = name2 + ":\n	Punkte: " + results2[6] + "\n";
 		for(int i = 1; i < 6; i += 1) {
-			System.out.println("i is " + i);
 			res1 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results1[i] + "\n";
 			res2 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results2[i] + "\n";
 		}
@@ -225,11 +226,14 @@ public class Observation implements IObservation, IUpdateListener,
 		result += res1 + "\n";
 		result += res2;
 		
-		PlayerColor winner = ((GameState)gameState).winner();
-		if (winner == PlayerColor.RED) {
-			result += "Gewinner: " + name1 + "\n";
-		} else if (winner == PlayerColor.BLUE) {
-			result += "Gewinner: " + name2 + "\n";
+		List<IPlayer> winners = data.getWinners();
+		if (winners.size() > 0) {
+			PlayerColor winner = ((Player)data.getWinners().get(0)).getPlayerColor();
+			if (winner == PlayerColor.RED) {
+				result += "Gewinner: " + name1 + "\n";
+			} else if (winner == PlayerColor.BLUE) {
+				result += "Gewinner: " + name2 + "\n";
+			}
 		} else {
 			result += "Unentschieden\n";
 		}

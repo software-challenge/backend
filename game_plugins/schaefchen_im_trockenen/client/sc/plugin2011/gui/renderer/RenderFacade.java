@@ -196,7 +196,6 @@ public class RenderFacade {
 	}
 
 	private void updateGameState(final GameState gameState, boolean force) {
-
 		if (disabled) {
 			return;
 		}
@@ -276,6 +275,9 @@ public class RenderFacade {
 			String errorMessage) {
 
 		System.out.println();
+		if (disabled) {
+			return;
+		}
 		if (data != null) {
 			ScoreCause cause = data.getScores().get(
 					color == PlayerColor.RED ? 0 : 1).getCause();

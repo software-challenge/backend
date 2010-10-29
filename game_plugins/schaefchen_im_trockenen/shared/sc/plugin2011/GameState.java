@@ -24,7 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 @XStreamAlias(value = "sit:state")
 public final class GameState implements Cloneable {
 
-	// der eigentlicher wurfel
+	// der eigentliche wurfel
 	private static final SecureRandom rand = new SecureRandom();
 
 	// momentane rundenzahl
@@ -679,7 +679,6 @@ public final class GameState implements Cloneable {
 	 * das spiel alsbeendet markieren, gewinner und gewinnggrund festlegen.
 	 */
 	public void endGame(PlayerColor winner, String reason) {
-
 		if (!gameEnded()) {
 			condition = new Condition();
 			condition.winner = winner;

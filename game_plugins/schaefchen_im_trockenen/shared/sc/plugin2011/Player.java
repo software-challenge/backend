@@ -2,6 +2,7 @@ package sc.plugin2011;
 
 import sc.framework.plugins.SimplePlayer;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -12,6 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author sca, tkra
  * 
  */
+@XStreamAlias(value = "sit:player")
 public final class Player extends SimplePlayer {
 
 	// spielerfarbe des spielers
