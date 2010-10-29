@@ -271,7 +271,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	protected void onNewState(String roomId, Object state)
 	{
-		System.out.println("Lobby client received new state");
 		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onNewState(roomId, state);

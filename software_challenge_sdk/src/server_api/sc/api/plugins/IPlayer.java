@@ -8,6 +8,7 @@ public interface IPlayer
 	public void addPlayerListener(IPlayerListener listener);
 	public void removePlayerListener(IPlayerListener listener);
 	public void setDisplayName(String displayName);
+	public String getDisplayName();
 	public void setShouldBePaused(boolean shouldBePaused);
 	public void setCanTimeout(boolean canTimeout);
 	public void setViolated(boolean violated);
