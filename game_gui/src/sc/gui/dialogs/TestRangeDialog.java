@@ -865,7 +865,12 @@ public class TestRangeDialog extends JDialog {
 					// FIXME: Perhaps "Recursive" Execution of Tests might be
 					// REALLY bad
 					// for big N
-					startNewTest();
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							startNewTest();
+						}
+					}).start();
 				} else {
 					finishTest();
 				}
