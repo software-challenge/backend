@@ -165,7 +165,7 @@ begin
     writeln('Netzwerkfehler. Verbindung beendet');
     self.sendString('</protocol>');
     self.disconnect;
-    result := false;
+    Result := false;
     exit;
   end;
   if(sockMsg <> '') then begin

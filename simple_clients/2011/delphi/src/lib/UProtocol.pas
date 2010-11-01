@@ -200,6 +200,7 @@ begin
                       StrToInt(XmlSubNodel.Attributes.getNamedItem('node').NodeValue),
                       StrToInt(XmlSubNodel.Attributes.getNamedItem('amount').NodeValue)
                     );
+	            Flowers.Add(Flower);
                   end;
 
                   // Ein Schaf wurde empfangen
