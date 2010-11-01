@@ -5,20 +5,17 @@ interface
   type
     TDebugHint = class
       private
-        FKey : String;
-        FValue : String;
+        FContent : String;
       public
-        property Key : String read FKey write FKey;
-        property Value : String read FValue write FValue;
+        property Content : String read FContent write FContent;
 
-        constructor create(Key : String; Value : String);
+        constructor create(Content : String);
   end;
 
   implementation
-    constructor TDebugHint.create(Key : String; Value : String);
+    constructor TDebugHint.create(Content : String);
     begin
-      FKey := Key;
-      FValue := Value;
+      FContent := Content;
     end;
   end.
 

@@ -46,6 +46,7 @@ uses UNetwork;
       die : Integer;
       sheep : TSheep;
     begin
+      Result := nil;
       // Die beiden Spieler zur Übersicht als Ich und Gegner ordnen
       if(FPlayers[0].PlayerID = FMyId) then begin
         Me := FPlayers[0];

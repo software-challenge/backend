@@ -26,7 +26,7 @@ interface
         function getSheep(Index : Integer) : TSheep;
         procedure getSheepsFor(PlayerID : Integer; Sheeps : TList);
         function getSheepOnField(FieldIndex : Integer) : TSheep;
-        function getFlowersOnField(FieldIndex : Integer) : Integer;
+        function getFlowersOnField(FieldIndex : Integer) : TFlower;
         function getDice : TDice;
         function getPlayer(PlayerID : Integer) : TPlayer;
 
@@ -58,17 +58,17 @@ implementation
       Result := nil;
     end;
 
-  function TBoard.getFlowersOnField(FieldIndex : Integer) : Integer;
+  function TBoard.getFlowersOnField(FieldIndex : Integer) : TFlower;
     var
       Flowers : Integer;
       n : Integer;
     begin
+      Result := nil;
       for n := 0 to FFlowers.Count - 1 do begin
         if(TFlower(FFlowers[n]).Node = FieldIndex) then begin
-          Flowers := Flowers + TFlower(FFlowers[n]).Amount;
+          Result := TFlower(FFlowers[n]);
         end;
       end;
-      Result := Flowers;
     end;
 
   function TBoard.getDice : TDice;
@@ -86,6 +86,7 @@ implementation
           exit;
         end;
       end;
+      Result := nil;
     end;
 
   procedure TBoard.getSheepsFor(PlayerID : Integer; Sheeps : TList);

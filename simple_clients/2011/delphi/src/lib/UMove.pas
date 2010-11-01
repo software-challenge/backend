@@ -34,8 +34,7 @@ implementation
       xmlElement.SetAttribute('target', IntToStr(FTarget));
       for n := 0 to FHints.Count - 1 do begin
         xmlHint := TDomElement.Create(parent, 'hint');
-        xmlHint.SetAttribute('key', TDebugHint(FHints[n]).Key);
-        xmlHint.SetAttribute('value', TDebugHint(FHints[n]).Value);
+        xmlHint.SetAttribute('content', TDebugHint(FHints[n]).Content);
         xmlElement.AppendChild(xmlHint);
       end;
       result := xmlElement;
