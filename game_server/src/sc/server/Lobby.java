@@ -63,8 +63,18 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onClientDisconnected(Client source)
 	{
-		source.removeClientListener(this);
+		/*final Client client = source;
+		new Thread(new Runnable() {
+			@Override
+			public void run()
+			{
+				synchronized(client) {
+					client.removeClientListener(Lobby.this);
+				}
+			}
+		}).start();*/
 		this.logger.info("{} disconnected.", source);
+		source.removeClientListener(this);
 	}
 
 	@Override

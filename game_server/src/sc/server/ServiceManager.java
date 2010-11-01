@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -65,6 +66,22 @@ public abstract class ServiceManager
 
 	protected static synchronized Collection<Thread> getServices()
 	{
+		LinkedList<Thread> threadsToKill = new LinkedList<Thread>();
+		for (Thread thread : threads) {
+			try {
+				if(!thread.isAlive()) {
+					threadsToKill.add(thread);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				threadsToKill.add(thread);
+			}
+		}
+		for (Thread thread : threadsToKill) {
+			threads.remove(thread);
+		}
+		threadsToKill.clear();
+		threadsToKill = null;
 		ArrayList<Thread> result = new ArrayList<Thread>(threads.size());
 		result.addAll(threads);
 		return Collections.unmodifiableCollection(result);
@@ -73,7 +90,7 @@ public abstract class ServiceManager
 	public static synchronized Thread createService(String name,
 			Runnable target, boolean daemon)
 	{
-		logger.debug("Spawning Thread for new service (name={}, daemon={})",
+		logger.debug("Spawning thread for new service (name={}, daemon={})",
 				name, daemon);
 
 		Thread thread = new Thread(target);

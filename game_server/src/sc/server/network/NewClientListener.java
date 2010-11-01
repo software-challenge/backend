@@ -23,6 +23,8 @@ public class NewClientListener implements Runnable, Closeable
 	private ServerSocket				serverSocket	= null;
 
 	public static int					lastUsedPort	= 0;
+	
+	private Thread						thread			= null;
 
 	/**
 	 * Returns a new connected client, if a new one is available. Otherwise this
@@ -84,8 +86,10 @@ public class NewClientListener implements Runnable, Closeable
 	public void start() throws IOException
 	{
 		startSocketListener();
-		ServiceManager.createService(this.getClass().getSimpleName(), this)
-				.start();
+		if (this.thread == null) {
+			this.thread = ServiceManager.createService(this.getClass().getSimpleName(), this);
+			this.thread.start();
+		}
 	}
 
 	private void startSocketListener() throws IOException
@@ -122,6 +126,9 @@ public class NewClientListener implements Runnable, Closeable
 		catch (IOException e)
 		{
 			logger.warn("Couldn't close socket.", e);
+			if (this.thread != null) {
+				this.thread.interrupt();
+			}
 		}
 	}
 }

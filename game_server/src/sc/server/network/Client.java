@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -23,10 +24,10 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Client extends XStreamClient implements IClient
 {
-	private final Set<IClientListener>		clientListeners			= new HashSet<IClientListener>();
-	private final Collection<IClientRole>	roles					= new LinkedList<IClientRole>();
-	private boolean							notifiedOnDisconnect	= false;
-	private static final Logger				logger					= LoggerFactory
+	private final LinkedList<IClientListener>		clientListeners			= new LinkedList<IClientListener>();
+	private final Collection<IClientRole>			roles					= new LinkedList<IClientRole>();
+	private boolean									notifiedOnDisconnect	= false;
+	private static final Logger						logger					= LoggerFactory
 																			.getLogger(Client.class);
 
 	public Client(INetworkInterface networkInterface, XStream configuredXStream)
@@ -66,6 +67,7 @@ public class Client extends XStreamClient implements IClient
 			logger.info("Closing Client {}", this);
 			super.close();
 			onDisconnect(DisconnectCause.REGULAR);
+			logger.info("Closing Client {}", this);
 		}
 		else
 		{
@@ -136,9 +138,9 @@ public class Client extends XStreamClient implements IClient
 		if (!this.notifiedOnDisconnect)
 		{
 			this.notifiedOnDisconnect = true;
-
-			for (IClientListener listener : this.clientListeners)
+			for (int i = 0; i < this.clientListeners.size(); i++)
 			{
+				IClientListener listener = this.clientListeners.get(i);
 				try
 				{
 					listener.onClientDisconnected(this);
