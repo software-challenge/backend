@@ -58,38 +58,36 @@ public class RenderFacade {
 	private static volatile RenderFacade instance;
 
 	private Thread thread;
+	private boolean receiverThreadRunning = false;
 	private final List<GameState> gameStateQueue;
 	private final Runnable gameStateReciever = new Runnable() {
 
 		@Override
 		public void run() {
-
-			while (true) {
+			while (receiverThreadRunning && !Thread.interrupted()) {
 
 				synchronized (gameStateQueue) {
-
 					try {
-						gameStateQueue.wait();
-
+						// Make sure we don't end up in a deadlock
+						if (gameStateQueue.size() == 0) {
+							gameStateQueue.wait();
+						}
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
-
 				}
 
-				while (gameStateQueue.size() > 0) {
-
+				while (gameStateQueue.size() > 0 && receiverThreadRunning && !Thread.interrupted()) {
 					try {
-
 						GameState gameState = gameStateQueue.remove(0);
 						frameRenderer.updateGameState(gameState);
+						gameState = null;
 					} catch (Exception e) {
 						System.err.println(e.getStackTrace());
 					}
 				}
 
 			}
-
 		}
 	};
 	private GameState lastGameState;
@@ -104,10 +102,28 @@ public class RenderFacade {
 
 		frameRenderer = new FrameRenderer();
 		gameStateQueue = new LinkedList<GameState>();
-		thread = new Thread(gameStateReciever);
-		thread.setName("GameStateReciever");
-		thread.start();
+		startReceiverThread();
 
+	}
+	
+	public void startReceiverThread() {
+		if (thread != null && !thread.isAlive()) {
+			thread = null;
+		}
+		if (thread == null) {
+			thread = new Thread(gameStateReciever);
+			thread.setName("GameStateReciever");
+			receiverThreadRunning = true;
+			thread.start();
+		}
+	}
+	
+	public void stopReceiverThread() {
+		if (thread != null) {
+			thread.interrupt();
+			receiverThreadRunning = false;
+			thread = null;
+		}
 	}
 
 	public static RenderFacade getInstance() {
@@ -132,11 +148,7 @@ public class RenderFacade {
 			gameStateQueue.clear();
 		}
 
-		if (!thread.isAlive()) {
-			thread = new Thread(gameStateReciever);
-			thread.setName("GameStateReciever");
-			thread.start();
-		}
+		startReceiverThread();
 
 		maxTurn = 0;
 		first = true;
@@ -201,10 +213,9 @@ public class RenderFacade {
 		}
 
 		synchronized (gameStateQueue) {
-
 			if (first || gameState.getTurn() != lastGameState.getTurn()
 					|| force) {
-
+				startReceiverThread();
 				first = false;
 				maxTurn = Math.max(maxTurn, gameState.getTurn());
 				gameStateQueue.add(gameState);
@@ -274,6 +285,8 @@ public class RenderFacade {
 	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color,
 			String errorMessage) {
 
+		stopReceiverThread();
+		
 		System.out.println();
 		if (disabled) {
 			return;
