@@ -90,6 +90,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		if(this.requestTimeout != null)
 		{
 			this.requestTimeout.stop();
+			this.requestTimeout = null;
 		}
 	}
 
