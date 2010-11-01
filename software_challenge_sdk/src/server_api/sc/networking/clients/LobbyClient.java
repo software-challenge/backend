@@ -100,7 +100,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 		if (o instanceof RoomPacket)
 		{
-			System.out.println("Received room packet of class " + ((RoomPacket)o).getData().getClass().getName());
 			RoomPacket packet = (RoomPacket) o;
 			String roomId = packet.getRoomId();
 			if (packet.getData() instanceof MementoPacket)
