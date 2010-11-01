@@ -25,6 +25,9 @@ import sc.protocol.responses.RoomPacket;
 import sc.server.network.Client;
 import sc.server.network.DummyClient;
 import sc.server.network.IClient;
+import sc.server.network.IClientListener;
+import sc.server.network.IClientRole;
+import sc.server.network.PacketCallback;
 import sc.server.plugins.GamePluginInstance;
 import sc.shared.GameResult;
 import sc.shared.PlayerScore;
@@ -99,6 +102,7 @@ public class GameRoom implements IGameListener
 				.isRegular());
 		broadcast(this.result);
 		kickAllClients();
+		this.game.destroy();
 		this.gameRoomManager.remove(this);
 	}
 
@@ -164,7 +168,7 @@ public class GameRoom implements IGameListener
 
 	private void observerBroadcast(Object toSend)
 	{
-		for (ObserverRole observer : this.observers)
+		for (ObserverRole observer : Collections.unmodifiableCollection(this.observers))
 		{
 			observer.getClient().send(toSend);
 		}
@@ -444,6 +448,29 @@ public class GameRoom implements IGameListener
 
 	public void addObserver(Client source)
 	{
+		/*source.addClientListener(new IClientListener() {
+			@Override
+			public void onRequest(Client source, PacketCallback packet)
+					throws RescueableClientException
+			{
+			}
+			
+			@Override
+			public void onError(Client source, Object packet)
+			{
+			}
+			
+			@Override
+			public void onClientDisconnected(Client source)
+			{
+				for (IClientRole role : source.getRoles()) {
+					if (GameRoom.this.observers.contains(role)) {
+						logger.info("Observer {} disconnected from room {}", source, this);
+						GameRoom.this.observers.remove(role);
+					}
+				}
+			}
+		});*/
 		ObserverRole role = new ObserverRole(source, this);
 		source.addRole(role);
 		this.observers.add(role);
