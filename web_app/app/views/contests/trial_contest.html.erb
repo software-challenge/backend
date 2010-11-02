@@ -1,0 +1,24 @@
+<h1>
+  <%= @contest.name %> / <%= Contest.human_attribute_name "trial_contest" %>
+</h1>
+
+<% tabnav :contest do %>
+  <p style="margin-bottom: 10px">
+    <%= t "views.no_trial_contest_yet" %>
+  </p>
+
+  <p style="margin-bottom: 20px">
+    <b><%= t "views.clue" %>:</b> <%= t "views.new_trial_contest" %>
+  </p>
+
+  <fieldset>
+    <legend><%= t "actions.create_trial_contest" %></legend>
+    <% form_for :trial_contest, :url => create_trial_contest_contest_url(@contest) do |f| %>
+      <% @contest.contestants.each do |con| %>
+        <%= check_box_tag "trial_contest[contestants][#{con.id}]", 0, false %> <%= con.name %><br>
+      <% end %>  
+      <br> 
+      <%= submit_tag t("actions.create_trial_contest") %>
+    <% end %> 
+  </fieldset>
+<% end %>
