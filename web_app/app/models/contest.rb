@@ -8,14 +8,15 @@ class Contest < ActiveRecord::Base
   validates_uniqueness_of :subdomain
 
   has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
-  has_many :contestants, :conditions => { :tester => false }
-  has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }
+  has_many :contestants, :conditions => { :tester => false }, :dependent => :destroy
+  has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }, :dependent => :destroy
   has_many :matchdays, :dependent => :destroy, :conditions => { :type => "Matchday" }
   has_many :custom_matches, :class_name => "CustomMatch", :as => :set, :dependent => :destroy
   has_many :friendly_encounters, :dependent => :destroy
   has_many :events, :dependent => :destroy, :order => "created_at DESC"
+  has_one :trial_contest, :class_name => "Contest", :foreign_key => "trial_contest_id", :dependent => :destroy
 
-  has_one :finale
+  has_one :finale, :dependent => :destroy
 
   def overall_member_count
     contestants.visible.without_testers.ranked.all.sum(&:overall_member_count)  
@@ -67,11 +68,16 @@ class Contest < ActiveRecord::Base
   end
 
   def after_save
-    if game_definition_changed?
+    if game_definition_changed? or test_contestant.current_client.nil?
+      puts "Creating test client"
       file = Rails.root.join('public', 'clients', game_definition.tester[:file])
+      puts "Client file: #{file}"
 
+      author = current_user
+      author ||= Person.find(1)
       client = test_contestant.current_client
-      client ||= test_contestant.build_current_client(:author => current_user, :contestant => test_contestant)
+      client ||= test_contestant.build_current_client(:author => author, :contestant => test_contestant)
+      puts "Author: #{author}, Contestant: #{test_contestant}"
       client.file = File.open(file)
       client.save!
       client.build_index!
@@ -120,6 +126,9 @@ class Contest < ActiveRecord::Base
     raise "weekdays must at least contain one element in range #{range}" if (range.to_a & weekdays).empty?
 
     next_date = start_at
+    until weekdays.include?(next_date.wday) do
+      next_date = next_date.advance(:days => 1)
+    end
     Contest.transaction do
       generate_matchdays(trials).each_with_index do |pairs, day|
         matchday = matchdays.create!(:contest => self, :when => next_date)
@@ -140,9 +149,9 @@ class Contest < ActiveRecord::Base
           end
         end
 
-        puts "wd: #{weekdays}"
+        #puts "wd: #{weekdays}"
         begin
-          puts next_date.wday
+          #puts next_date.wday
           next_date = next_date.advance(:days => 1)
         end until weekdays.include?(next_date.wday)
       end
@@ -162,10 +171,10 @@ class Contest < ActiveRecord::Base
   end
 
   def estimate_matchday_count
-    if contestants.visible.count.odd?
-      contestants.visible.count
+    if contestants.visible.ranked.count.odd?
+      contestants.visible.ranked.count
     else
-      contestants.visible.count - 1
+      contestants.visible.ranked.count - 1
     end
   end
 
@@ -177,6 +186,83 @@ class Contest < ActiveRecord::Base
     matchdays.not_played.first(:order => "position ASC")
   end
 
+  def ret_clone
+    self.clone
+  end
+
+  def is_trial_contest?
+    self.subdomain.starts_with?("trial")
+  end
+
+  def main_contest
+    raise "This is no trial contest" unless is_trial_contest?
+    Contest.all.find{|c| c.trial_contest == self}
+  end
+
+  def create_trial_contest(conts)
+    raise "Contest already has a trial contest" unless trial_contest.nil?
+    sd = "trial#{self.subdomain}"
+    raise "Contest with subdomain #{sd} already exists" unless Contest.find_by_subdomain(sd).nil?
+    raise "Contest is a trial contest" if is_trial_contest?
+
+    new_contest = self.clone
+    new_contest.name = "#{Contest.human_attribute_name "trial_contest"} #{self.name}"
+    new_contest.subdomain = "trial#{self.subdomain}"
+    new_contest.transaction do
+      new_contest.save!
+      conts.each do |con|
+        unless self.all_contestants.include?(con)
+          raise "Contestant is not part of the current contest"
+        end
+        puts "Cloning contestant ##{con.id}"
+        conclone = con.clone
+        new_contest.all_contestants << conclone
+        conclone.save!
+        con.clients.each do |cl|
+          puts "Cloning client ##{cl.id}"
+          clclone = cl.clone
+          clclone.author = cl.author
+          clclone.save!
+          FileUtils.mkpath File.dirname(clclone.file.path)
+          FileUtils.copy cl.file.path, clclone.file.path 
+          conclone.clients << clclone
+          if con.current_client == cl
+            conclone.current_client = clclone
+          end
+          cl.file_entries.each do |fe|
+            if clclone.file_entries.all.find{|f| fe.file_name == f.file_name}.nil?
+              feclone = fe.clone
+              clclone.file_entries << feclone
+              feclone.save!
+              if fe == cl.main_file_entry
+                clclone.main_file_entry = feclone
+              end 
+              clclone.save!
+            end
+          end
+          cl.comments.each do |com|
+            comclone = com.clone
+            clclone.comments << comclone 
+            comclone.save!
+          end  
+          clclone.save!
+        end
+        con.memberships.each do |ms|
+          msclone = ms.clone
+          msclone.contestant_id = conclone.id
+          msclone.person_id = ms.person.id
+          msclone.role_name = ms.role.try(:name)
+          msclone.save!
+        end
+        conclone.save!
+        new_contest.save!
+      end
+    end
+    self.trial_contest = new_contest
+    save!
+    new_contest
+  end
+
   protected
 
   # generates all matchdays (round-robin tournament)
@@ -186,8 +272,9 @@ class Contest < ActiveRecord::Base
     list = contestants.ranked.visible.all
 
     lastNils = []
+    # Create trial days with random matchup
+    # Make sure no team misses more than one day
     trials.times do |trial|
-      # Just in case, shouldnt happen if used properly
       conts = list.clone
       schedule = []
       if lastNils.size == conts.size

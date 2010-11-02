@@ -156,6 +156,32 @@ class ContestsController < ApplicationController
     redirect_to contest_standings_url(@contest)
   end
 
+  def create_trial_contest(contestants=nil)
+    if contestants.nil?
+      contestants = []
+      params[:trial_contest][:contestants].keys.each do |c|
+        contestants << Contestant.find(c.to_i)
+      end
+    end
+    @contest.create_trial_contest(contestants) 
+    redirect_to trial_contest_contest_url(@contest)
+  end
+
+  def destroy_trial_contest
+    if @contest.is_trial_contest?
+      main_contest = @contest.main_contest
+      @contest.destroy
+      redirect_to trial_contest_contest_url(main_contest)
+    end
+  end
+
+  def trial_contest
+    if @contest.trial_contest.nil?
+    else
+      redirect_to contest_url(@contest.trial_contest)
+    end
+  end
+
   protected
 
   def read_multipart_param(data, key, count = 3)

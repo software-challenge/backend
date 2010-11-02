@@ -149,6 +149,13 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def after_destroy
+    dir = File.join(RAILS_ROOT, "public", "system", "files", self.id.to_s)
+    if File.exists?(dir)
+      FileUtils.rm_r dir
+    end
+  end
+
   def after_save
     if main_file_entry_id_changed?
       test_match.destroy if test_match

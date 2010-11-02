@@ -5,7 +5,7 @@ class Contestant < ActiveRecord::Base
 
   belongs_to :contest
 
-  has_many :clients
+  has_many :clients, :dependent => :destroy
 
   has_many :memberships
   has_many :people, :through => :memberships

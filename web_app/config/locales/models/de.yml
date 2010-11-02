@@ -48,6 +48,8 @@ de:
       client:
         file: ZIP-Datei
       contest:
+        trial_contest: Probewettkampf
+        main_contest: Hauptwettkampf
         game_definition: Spiel
         name: Name
         active: Wettbewerb ist aktiv
