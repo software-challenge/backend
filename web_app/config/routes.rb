@@ -16,7 +16,10 @@ ActionController::Routing::Routes.draw do |map|
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
       :reaggregate => :post,
-      :update_schedule => :post
+      :update_schedule => :post,
+      :trial_contest => :get,
+      :create_trial_contest => :post,
+      :destroy_trial_contest => :post
     } do |c|
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {

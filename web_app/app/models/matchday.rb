@@ -42,7 +42,7 @@ class Matchday < ActiveRecord::Base
 
   # associations
   has_many :matches, :class_name => "LeagueMatch", :dependent => :destroy, :as => :set
-  has_many :slots, :class_name => "MatchdaySlot", :order => "position ASC"
+  has_many :slots, :class_name => "MatchdaySlot", :order => "position ASC", :dependent => :destroy
   belongs_to :contest
   belongs_to :finale
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"

@@ -16,8 +16,8 @@ class ClientMatch < Match
     Match.transaction do
       self.save!
       Match.transaction do
-        clients.each do |client|
-          slots.create!(:client => client)
+        clients.each do |cl|
+          slots.create!(:client => cl)
         end
         create_rounds!(game_definition.test_rounds)
       end

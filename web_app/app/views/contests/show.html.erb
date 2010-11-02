@@ -1,3 +1,11 @@
+<div id="actions">
+  <% if @contest.is_trial_contest? %>
+    <% link_to destroy_trial_contest_contest_url(@contest), :confirm => I18n.t("messages.destroy_trial_contest"), :method => :post do %>
+      <%= image_tag('actions/destroy.png') %><%= t "actions.destroy_trial_contest" %>
+    <% end %>
+  <% end %>
+</div>
+
 <h1>
   <%= @contest.name %>
 </h1>

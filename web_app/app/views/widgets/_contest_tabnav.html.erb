@@ -66,7 +66,6 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.highlights_on :controller => "contests", :action => "results"
   end
 
-
   if logged_in? and current_user.is_member_of_a_team?(@contest)
     add_tab do |t|
       t.named FriendlyEncounter.human_name(:count => 2)
@@ -81,6 +80,21 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
         t.links_to contest_finale_url(@contest)
       end
     end
+
+  if (administrator? or (logged_in? and current_user.is_member_of_a_team?(@contest) and not @contest.trial_contest.nil?)) and not @contest.is_trial_contest?
+    add_tab do |t|
+      t.named Contest.human_attribute_name("trial_contest")
+      t.links_to trial_contest_contest_url(@contest)
+      t.highlights_on :controller => "contests", :action => "trial_contest"
+    end
+  end
+
+  if @contest.is_trial_contest?
+    add_tab do |t|
+      t.named Contest.human_attribute_name("main_contest")
+      t.links_to contest_url(@contest.main_contest)
+    end
+  end
   
 end
 %>
