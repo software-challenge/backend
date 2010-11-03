@@ -20,4 +20,23 @@
     oder <%= link_to t("views.back"), contest_contestants_url(@contest) %>
     <% end %>
   <% end %>
+  <% javascript_tag do %>
+    $(function() {
+      $("#contestant_name_input").append("<div id='contestant_name_warn' style='margin-left: 20px; margin-top: 5px; display: none'><b><%= t "views.team_name_too_long" %></b></div>")
+
+      $("#contestant_name").keyup(function() {
+        if ($(this).val().length > 24) {
+          $("#contestant_name_input").css("background-color", "#fcc")
+          $("#contestant_name_input").css("border", "2px solid #f00")
+          $("#contestant_name_input").css("border-radius", "50px")
+          $("#contestant_name_input").css("-moz-border-radius", "5px")
+          $("#contestant_name_warn").fadeIn(500);
+        } else {
+          $("#contestant_name_input").css("background-color", "#fff")
+          $("#contestant_name_input").css("border", "none")
+          $("#contestant_name_warn").fadeOut(500);
+        }
+      })
+    })
+  <% end %>
 <% end %>

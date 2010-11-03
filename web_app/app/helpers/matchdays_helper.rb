@@ -22,7 +22,7 @@ module MatchdaysHelper
   end
 
   def not_played_contestant_on(matchday)
-    all_contestants = matchday.contest.contestants.without_testers.visible.all
+    all_contestants = matchday.contest.contestants.without_testers.visible.ranked.all
     played_contestants = returning(Array.new) do |contestants|
       matchday.matches.each do |match|
         match.slots.each do |slot|
