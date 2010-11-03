@@ -7,7 +7,7 @@ class MatchSlot < ActiveRecord::Base
   belongs_to :match
   belongs_to :score, :dependent => :destroy
 
-  has_many :round_slots, :dependent => :destroy
+  has_many :round_slots
   has_many :round_scores, :through => :round_slots, :class_name => "Score", :source => :score
   has_many :rounds, :through => :round_slots
 
