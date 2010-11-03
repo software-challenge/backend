@@ -199,15 +199,11 @@ class Contest < ActiveRecord::Base
     Contest.all.find{|c| c.trial_contest == self}
   end
 
-  def create_trial_contest(conts)
-    raise "Contest already has a trial contest" unless trial_contest.nil?
-    sd = "trial#{self.subdomain}"
-    raise "Contest with subdomain #{sd} already exists" unless Contest.find_by_subdomain(sd).nil?
-    raise "Contest is a trial contest" if is_trial_contest?
-
+  def create_clone(name, subdomain, conts, options = {})
+    raise "Contest with subdomain #{subdomain} already exists" unless Contest.find_by_subdomain(subdomain).nil?
     new_contest = self.clone
-    new_contest.name = "#{Contest.human_attribute_name "trial_contest"} #{self.name}"
-    new_contest.subdomain = "trial#{self.subdomain}"
+    new_contest.name = name
+    new_contest.subdomain = subdomain
     new_contest.transaction do
       new_contest.save!
       conts.each do |con|
@@ -218,46 +214,61 @@ class Contest < ActiveRecord::Base
         conclone = con.clone
         new_contest.all_contestants << conclone
         conclone.save!
-        con.clients.each do |cl|
-          puts "Cloning client ##{cl.id}"
-          clclone = cl.clone
-          clclone.author = cl.author
-          clclone.save!
-          FileUtils.mkpath File.dirname(clclone.file.path)
-          FileUtils.copy cl.file.path, clclone.file.path 
-          conclone.clients << clclone
-          if con.current_client == cl
-            conclone.current_client = clclone
-          end
-          cl.file_entries.each do |fe|
-            if clclone.file_entries.all.find{|f| fe.file_name == f.file_name}.nil?
-              feclone = fe.clone
-              clclone.file_entries << feclone
-              feclone.save!
-              if fe == cl.main_file_entry
-                clclone.main_file_entry = feclone
-              end 
-              clclone.save!
+        if options[:clone_clients].nil? or options[:clone_clients]
+          con.clients.each do |cl|
+            puts "Cloning client ##{cl.id}"
+            clclone = cl.clone
+            clclone.author = cl.author
+            clclone.save!
+            FileUtils.mkpath File.dirname(clclone.file.path)
+            FileUtils.copy cl.file.path, clclone.file.path 
+            conclone.clients << clclone
+            if con.current_client == cl
+              conclone.current_client = clclone
             end
+            cl.file_entries.each do |fe|
+              if clclone.file_entries.all.find{|f| fe.file_name == f.file_name}.nil?
+                feclone = fe.clone
+                clclone.file_entries << feclone
+                feclone.save!
+                if fe == cl.main_file_entry
+                  clclone.main_file_entry = feclone
+                end 
+                clclone.save!
+              end
+            end
+            cl.comments.each do |com|
+              comclone = com.clone
+              clclone.comments << comclone 
+              comclone.save!
+            end  
+            clclone.save!
           end
-          cl.comments.each do |com|
-            comclone = com.clone
-            clclone.comments << comclone 
-            comclone.save!
-          end  
-          clclone.save!
         end
-        con.memberships.each do |ms|
-          msclone = ms.clone
-          msclone.contestant_id = conclone.id
-          msclone.person_id = ms.person.id
-          msclone.role_name = ms.role.try(:name)
-          msclone.save!
+        if options[:clone_memberships].nil? or options[:clone_memberships]
+          con.memberships.each do |ms|
+            msclone = ms.clone
+            msclone.contestant_id = conclone.id
+            msclone.person_id = ms.person.id
+            msclone.role_name = ms.role.try(:name)
+            msclone.save!
+          end 
         end
         conclone.save!
         new_contest.save!
       end
     end
+    new_contest
+  end
+
+  def create_trial_contest(conts)
+    raise "Contest already has a trial contest" unless trial_contest.nil?
+    sd = "trial#{self.subdomain}"
+    raise "Contest is a trial contest" if is_trial_contest?
+    
+    new_name = "#{Contest.human_attribute_name "trial_contest"} #{self.name}"
+    new_subdomain = "trial#{self.subdomain}"
+    new_contest = self.create_clone(new_name, new_subdomain, conts)
     self.trial_contest = new_contest
     save!
     new_contest
