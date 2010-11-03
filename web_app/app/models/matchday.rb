@@ -54,7 +54,8 @@ class Matchday < ActiveRecord::Base
   delegate :game_definition, :to => :contest
 
   # acts
-  acts_as_list :scope => :contest_id
+  #acts_as_list :scope => :contest_id
+  acts_as_list :scope => 'contest_id=#{contest_id} AND type=\'Matchday\''
 
   def contestants
     contestants = []

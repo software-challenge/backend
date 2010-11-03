@@ -27,7 +27,7 @@ class Contest < ActiveRecord::Base
       self.finale = Finale.new
       save!
       game_definition.final_days.each do |name,options|
-        finale.days.create!(:finale => finale, :name => name.to_s)
+        finale.days.create!(:finale => finale, :name => name.to_s, :contest_id => self.id)
       end
       finale.save!
     end
