@@ -435,7 +435,11 @@ public class TestRangeDialog extends JDialog {
 				.getScoreDefinition();
 		for (int i = 0; i < statColumns.size(); i++) {
 			ScoreFragment column = statColumns.get(i);
-			model.addColumn(column.getName());
+			String columnTitle = column.getName();
+			if (column.getAggregation() == ScoreAggregation.AVERAGE) {
+				columnTitle = "\u00D8 " + columnTitle;
+			}
+			model.addColumn(columnTitle);
 		}
 		model.addColumn(lang.getProperty("dialog_test_stats_invalid"));
 		statTable.getColumnModel().getColumn(statTable.getColumnCount() - 1).setMaxWidth(150);
@@ -1006,6 +1010,7 @@ public class TestRangeDialog extends JDialog {
 			switch (curPlayer.getCause()) {
 			case REGULAR:
 				break;
+			case SOFT_TIMEOUT:
 			case RULE_VIOLATION:
 				int invalidCol = model.getColumnCount() - 2;
 				BigDecimal oldValue = (BigDecimal) model.getValueAt(statRow,
@@ -1013,6 +1018,7 @@ public class TestRangeDialog extends JDialog {
 				model.setValueAt(oldValue.add(BigDecimal.ONE), statRow,
 						invalidCol);
 				break;
+			case HARD_TIMEOUT:
 			case LEFT:
 				int crashedCol = model.getColumnCount() - 1;
 				oldValue = (BigDecimal) model.getValueAt(statRow, crashedCol);
