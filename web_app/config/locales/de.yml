@@ -8,7 +8,7 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
-    team_name_too_long: "Der Teamname ist länger als 24 Zeichen. Dies kann zu unschönen Anzeigefehlern führen und sollte daher vermieden werden."
+    team_name_too_long: "Der Teamname ist länger als 24 Zeichen. Dies kann zu unschönen Anzeigefehlern führen und sollte daher unbedingt vermieden werden."
     new_trial_contest: "Das Erstellen eines Probewettkampfes kann, abhängig von der Anzahl der ausgewählten Teilnehmer, sehr lange dauern."
     no_trial_contest_yet: "Es wurde noch kein Probewettbewerb erstellt."
     played: "Gespielt"

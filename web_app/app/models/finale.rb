@@ -5,7 +5,7 @@ class Finale < ActiveRecord::Base
   belongs_to :contest
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
   
-  has_many :days, :class_name => "FinaleMatchday", :dependent => :destroy, :foreign_key => "contest_id"
+  has_many :days, :class_name => "FinaleMatchday", :dependent => :destroy, :foreign_key => "finale_id"
 
   delegate :game_definition, :to => :contest
 

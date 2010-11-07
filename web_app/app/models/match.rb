@@ -168,7 +168,8 @@ class Match < ActiveRecord::Base
         permutation.each do |slot_index|
           round.slots.create!(:match_slot => slots[slot_index])
         end
-        break if round_count >= game_definition.league.rounds
+        #break if round_count >= game_definition.league.rounds
+        break if round_count >= total_rounds
       end
     end
   end

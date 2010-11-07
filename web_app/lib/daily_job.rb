@@ -40,7 +40,10 @@ class DailyJob < ScheduledJobData
       if contest.ready? and contest.play_automatically?
         matchdays = contest.matchdays(:reload).find_all{|md| (md.when.past? or md.when.today?) and not md.played?}.sort_by(&:position)
         matchdays.each do |md|
-          Delayed::Job.enqueue Delayed::PerformableMethod.new(md, :perform_delayed!, []), Match::MATCHDAY_PRIORITY, offset.minutes.from_now
+          Matchday.transaction do
+            md.load_active_clients!
+            Delayed::Job.enqueue Delayed::PerformableMethod.new(md, :perform_delayed!, []), Match::MATCHDAY_PRIORITY, offset.minutes.from_now
+          end
           offset += 1
         end
       end
