@@ -716,8 +716,10 @@ public class TestRangeDialog extends JDialog {
 		}
 
 		// show connecting dialog
-		if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
-			cancelTest(lang.getProperty("dialog_test_msg_cancel"));
+		if (this.isActive()) {
+			if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
+				cancelTest(lang.getProperty("dialog_test_msg_cancel"));
+			}
 		}
 	}
 

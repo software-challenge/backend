@@ -53,9 +53,11 @@ public class HelperMethods {
 			commandFragments.add("-Xmx" + GUIConfiguration.maxHeapSize + "m");
 		} else if (ext.equals(".exe")) {
 			// do nothing
-		} else {
+		} 
+		/*else {
 			throw new UnsupportedFileExtensionException();// TODO remove?
-		}
+		}*/
+		
 		commandFragments.add(filename);
 		commandFragments.addAll(Arrays.asList(parameters));
 
