@@ -679,7 +679,7 @@ public class TestRangeDialog extends JDialog {
 	 */
 	protected void startNewTest() {
 		 
-		final ConnectingDialog connectionDialog = new ConnectingDialog();
+		final ConnectingDialog connectionDialog = new ConnectingDialog(this);
 
 		curTest++;
 

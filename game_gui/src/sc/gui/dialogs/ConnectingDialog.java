@@ -1,6 +1,7 @@
 package sc.gui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Properties;
@@ -8,6 +9,7 @@ import java.util.Properties;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -21,6 +23,24 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 	private int returnValue = JOptionPane.DEFAULT_OPTION;
 	private Properties lang;
 	private boolean closed;
+	
+	private Component parent;
+	
+	public ConnectingDialog(JDialog parent) {
+		super(parent);
+		this.parent = parent;
+		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		this.closed = false;
+		createGUI();
+	}
+	
+	public ConnectingDialog(JFrame parent) {
+		super(parent);
+		this.parent = parent;
+		this.lang = PresentationFacade.getInstance().getLogicFacade().getLanguageData();
+		this.closed = false;
+		createGUI();
+	}
 
 	public ConnectingDialog() {
 		super();
@@ -53,9 +73,11 @@ public class ConnectingDialog extends JDialog implements ActionListener {
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		this.setResizable(false);
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		this.setModal(true);
 		this.pack();
-		this.setLocationRelativeTo(null);
+		this.setLocationRelativeTo(parent);
+		this.setAlwaysOnTop(false);
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 
