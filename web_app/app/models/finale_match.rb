@@ -72,12 +72,12 @@ class FinaleMatch < LeagueMatch
 
   def run_match
     rounds.each do |round|
-      if game_definition.finale_winner_certain?(self)
-        round.destroy
-        next
-      end
       if not round.played?
-        round.perform
+        if game_definition.finale_winner_certain?(self)
+          round.destroy
+        else
+          round.perform
+        end
       end   
     end
     reload
