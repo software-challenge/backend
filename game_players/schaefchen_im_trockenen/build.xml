@@ -23,6 +23,11 @@
 		<pathelement location="${classes.dir}" />
 	</path>
 
+	<path id="javadoc">
+		<pathelement location="src" />
+		<pathelement location="${game.dir}/src" />
+	</path>
+
 	<pathconvert property="jar.classpath" pathsep="">
 		<mapper>
 			<chainedmapper>
@@ -70,7 +75,7 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="true" classpath="${toString:classpath.base}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="true" classpath="${toString:classpath.base}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.player2011.*,sc.plugin2011" source="1.6" sourcepath="${toString:javadoc}" splitindex="true" use="true" version="true" />
 	</target>
 
 	<target name="build" depends="jar,javadoc" />
