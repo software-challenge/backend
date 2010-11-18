@@ -73,12 +73,14 @@ class FinaleMatch < LeagueMatch
   def run_match
     rounds.each do |round|
       if game_definition.finale_winner_certain?(self)
-        break
+        next
       end
       if not round.played?
         round.perform
-      end
+      end   
     end
+    rounds.find_all{|r| not r.played?}.destroy_all
+    self.after_round_played(nil)
   end
 
 end 
