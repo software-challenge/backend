@@ -16,10 +16,7 @@ ActionController::Routing::Routes.draw do |map|
       :refresh_matchdays => :post,
       :reset_matchdays => :post,
       :reaggregate => :post,
-      :update_schedule => :post,
-      :trial_contest => :get,
-      :create_trial_contest => :post,
-      :destroy_trial_contest => :post
+      :update_schedule => :post
     } do |c|
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
@@ -36,6 +33,11 @@ ActionController::Routing::Routes.draw do |map|
       } do |cm|
         cm.resources :rounds
       end
+
+      c.resources :fake_tests, :as =>"plagiat-tests", :member =>{
+        :restart => :post
+      }
+
       c.resources :matchdays,
         :as => "spieltage",
         :collection => {
@@ -47,7 +49,8 @@ ActionController::Routing::Routes.draw do |map|
         :reaggregate => :post,
         :reset => :post,
         :publish => :post,
-        :get_standings => :get
+        :get_standings => :get,
+        :standings => :get
       } do |md|
         md.resources :matches, :member => {:reset => :post} do |m|
           m.resources :rounds, :member => {
@@ -70,8 +73,10 @@ ActionController::Routing::Routes.draw do |map|
           :uploadify => :post
         }, :member => {
           :client_details => :get,
+          :create_test => :post,
           :browse => :post,
           :select_main => :post,
+          :faketest => :post,
           :select => :post,
           :test => :get,
           :hide => :post,

@@ -1,0 +1,75 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <style type="text/css">
+    table.data-table {
+      width: 100%;
+      border-spacing: 0;
+      font-size: 13px;
+      text-align: left;
+    }
+  </style>
+
+
+</head>
+<body>
+  <h1> <%= @contest.name %> / <%= @matchday.position %>.Spieltag vom <%= @matchday.when.strftime("%d.%m.%Y") %> </h1><br>
+  <table class="data-table">
+   <colgroup span="2"/>
+   <colgroup width="15%"/>
+  <thead>
+    <tr>
+      <th style="text-align:left"><%= t ("views.player", {:number => 1}) %></th>
+      <th style="text-align:left"><%= t ("views.player", {:number => 2}) %></th>
+      <th style="text-align: center;"><%= t "views.result" %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @matchday.matches.each do |match| %>
+     <% date = local_assigns[:date] || false %>
+     <% count = local_assigns[:count] || false %>
+     <tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
+      <% if count %>
+       <td> <%= match.matchday.position %> </td>
+      <% end %>
+      <% if date %>
+        <td><%= (l match.matchday.when) unless match.matchday.when.nil? %></td>
+      <% end %>
+      <% [match.slots[0], match.slots[1]].each do |slot| %>
+      <% text = "" %>
+       <% if not slot.blank? %>
+      <% if slot.contestant.disqualified? %>
+        <% text << "<i>[#{t "views.disqualified"}]</i>&nbsp;" %>
+      <% end %>
+      <% text << slot.name %>
+    <% else %>
+      <% text << "-" %>
+    <% end %>
+    <td><%= text.html_safe! %></td>
+  <% end %>
+  <td style="text-align: center;">
+    <% if match.main_result and (match.matchday.published? or administrator?) %>
+      <% if match.matchday.published? or administrator? %>
+         <%= match.main_result.join(" : ") %>
+      <% end %>
+      <% unless match.matchday.published? %>
+        <em><%=t "views.unpublished" %></em>
+      <% end %>
+    <% elsif match.running? and administrator? %>
+      <%= image_tag 'ui/spinner.gif' %>
+    <% else %>
+      <em><%= match.slots.empty? ? "Spielfrei" : (t "views.outstanding") %></em>
+    <% end %>
+  </td>
+</tr>
+<% end %>
+  </tbody>
+</table>
+
+<% unless not_played_contestant_on(@matchday).empty? %>
+  <p><%=t "views.not_played" %>:
+  <%= not_played_contestant_on(@matchday).collect(&:name).join(", ") %> 
+  </p>
+<% end %>
+</body>
+</html>

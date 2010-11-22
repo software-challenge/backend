@@ -7,15 +7,7 @@ module ClientsHelper
     ActionController::Base.session_options[:key]
   end
   
-  def hash_zip
-    file = "/home/andre/julia/jjj.zip"
-    temp_folder = "/home/andre/julia/testing"
-    unzip_file(file, temp_folder)
-    hash_folder(temp_folder)
-    FileUtils.rm_rf(temp_folder)
-  end
-
-  def hash_folder(folder)
+ def hash_folder(folder)
     hashes = Array.new
     Dir.entries(folder).each do |file|
       if(File.directory?(folder+"/"+file)) then
@@ -38,5 +30,11 @@ module ClientsHelper
        zip_file.extract(f, f_path) unless File.exist?(f_path)
       }
     }
+  end
+ 
+  def get_readable_client_name(client)
+    name = "#{client.contestant.name[0..25]}  - #{client.created_at.strftime("%d.%m.%Y")}"
+    name += " - "+client.name[0..15] unless client.name.nil?
+    return name
   end
 end

@@ -46,4 +46,9 @@ h1 a {
 
 td, th {
   color: black;
+  display: table-cell;
+}
+
+thead {
+  display: table-header-group;
 }
