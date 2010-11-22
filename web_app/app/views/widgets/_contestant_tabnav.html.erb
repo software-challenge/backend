@@ -11,7 +11,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
     add_tab do |t|
       t.named t("actions.edit")
       t.links_to edit_contest_contestant_url(@contest, :id => @contestant)
-      t.highlights_on :controller => "contestants", :action => "edit"
+      t.highlights_on :controller => "contestants", :action => "update"
     end unless @contestant.new_record?
   end
 

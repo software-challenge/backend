@@ -121,6 +121,19 @@ class ClientsController < ApplicationController
     redirect_to contest_contestant_clients_url(@contest, @contestant)
   end
 
+  def create_test
+   respond_to do |format|
+     if @fake_test.save
+       flash[:notice] = "Test erfolgreich erstellt!"
+       format.html { redirect_to(contest_contestant_clients_url(@contest, @contestant))}
+       format.xml  { render :xml => @fake_test, :status => :created, :location => @fake_test}
+     else
+       flash[:error] = "Fehler beim Erstellen des Tests!!"
+       format.html { render :action => "new" }
+       format.xml  { render :xml => @fake_test.error, :status => :unprocessable_entity }
+     end
+   end
+  end
   def browse
     @client = @contestant.clients.find(params[:id])
 
@@ -289,7 +302,6 @@ class ClientsController < ApplicationController
     @client = Client.find(params[:id]) 
   end
 
-
   protected
 
   def load_contestant
@@ -299,5 +311,4 @@ class ClientsController < ApplicationController
   def requested_by_flash?
     request.env['HTTP_USER_AGENT'] =~ /^(Adobe|Shockwave) Flash/
   end  
-
 end

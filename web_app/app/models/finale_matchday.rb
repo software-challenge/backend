@@ -8,9 +8,6 @@ class FinaleMatchday < Matchday
   delegate :game_definition, :to => :finale
   delegate :contest, :to => :finale
 
-  def before_save
-    self.contest_id = contest.id 
-  end
 
   def do_validation?
     false

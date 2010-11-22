@@ -45,14 +45,15 @@ class MatchdaysController < ApplicationController
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @matchday }
+      format.pdf  { render :pdf => "Spieltag_"+@matchday.when.strftime("%d_%m_%Y"), :stylesheets => ['jquery-ui-fixes', 'formtastic', 'formtastic_changes', 'application', 'rails', 'contests', 'clients', 'fullcalendar', 'tabnav'] }
     end
   end
 
   def standings
     @matchday = @contest.matchdays.find(params[:matchday_id])
-
     respond_to do |format|
-      format.html # standings.html.erb
+      format.html  # standings.html.erb
+      format.pdf { render :pdf => "Rangliste_"+@matchday.when.strftime("%d_%m_%Y"), :stylesheets => ['jquery-ui-fixes', 'formtastic', 'formtastic_changes', 'application', 'rails', 'contests', 'clients', 'fullcalendar', 'tabnav'] }
     end
   end
 

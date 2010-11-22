@@ -28,7 +28,7 @@ class ContestsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.xml  { render :xml => @contest }
+      format.xml  { render :xml => @contest } 
     end
   end
 
@@ -39,9 +39,11 @@ class ContestsController < ApplicationController
   end
 
   def results
-    @matchday = @contest.last_played_matchday
-
+    @matchday = @contest.last_played_matchday    
     redirect_to @contest unless @matchday
+    respond_to do |format|
+      format.html
+    end
   end
 
   # GET /contests/new
@@ -154,32 +156,6 @@ class ContestsController < ApplicationController
     end
     
     redirect_to contest_standings_url(@contest)
-  end
-
-  def create_trial_contest(contestants=nil)
-    if contestants.nil?
-      contestants = []
-      params[:trial_contest][:contestants].keys.each do |c|
-        contestants << Contestant.find(c.to_i)
-      end
-    end
-    @contest.create_trial_contest(contestants) 
-    redirect_to trial_contest_contest_url(@contest)
-  end
-
-  def destroy_trial_contest
-    if @contest.is_trial_contest?
-      main_contest = @contest.main_contest
-      @contest.destroy
-      redirect_to trial_contest_contest_url(main_contest)
-    end
-  end
-
-  def trial_contest
-    if @contest.trial_contest.nil?
-    else
-      redirect_to contest_url(@contest.trial_contest)
-    end
   end
 
   protected

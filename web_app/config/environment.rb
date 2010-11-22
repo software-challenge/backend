@@ -1,3 +1,5 @@
+#require 'princely'
+
 # Be sure to restart your server when you modify this file
 
 # Specifies gem version of Rails to use when vendor/rails is not present
@@ -19,6 +21,7 @@ Rails::Initializer.run do |config|
   end
 
   config.load_paths << "#{RAILS_ROOT}/app/models/events"
+  config.load_paths << "#{RAILS_ROOT}/app/models/fake_checks"
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"
@@ -30,6 +33,7 @@ Rails::Initializer.run do |config|
   #config.gem "cap-recipes", :lib => false, :source => "http://gemcutter.org" # installed as plugin
   config.gem "daemons", :lib => false
   config.gem "erubis", :lib => false, :version => ">= 2.6.5"
+  config.gem "princely"
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
@@ -56,7 +60,7 @@ Rails::Initializer.run do |config|
     require 'core_ext'
     require 'so_cha_manager'
     require 'game_definition'
-  
+ 
     # Load regular jobs
     #unless $regular_jobs_loaded
 

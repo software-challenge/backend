@@ -1,0 +1,12 @@
+<% tabnav :abministration do %>
+<h1> 
+  <%= link_to @contest.name, contest_url(@contest) %> / 
+  <%= link_to "Plagiat-Tests", contest_fake_tests_url(@contest) %>
+</h1>
+
+<% tabnav :administration do %> 
+  <h2> Neuen Plagiat-Test erstellen </h2>
+  <%= render :partial => 'form', :locals => {:return_to => contest_fake_tests_url(@contest)} %>
+<% end %>
+<% end %>
+

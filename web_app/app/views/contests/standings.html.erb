@@ -1,10 +1,14 @@
-<% show_to :administrator do %>
-  <div id="actions">
+<div id="actions">
+  <% link_to standings_contest_matchday_url(@contest, @matchday, :matchday_id => @matchday.id, :format => :pdf) do %>
+    <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
+  <% end %>
+ 
+  <% show_to :administrator do %> 
     <% link_to reaggregate_contest_url(@contest), :method => "post", :title => t("views.recalc"), :id => "reaggregateContestAction" do %>
       <%= image_tag('actions/refresh.png') %><%= t ("actions.add") %>
     <% end %>
-  </div>
-<% end %>
+  <% end %>
+</div>
 
 <h1 class="print-hide">
   <%= @contest.name %>

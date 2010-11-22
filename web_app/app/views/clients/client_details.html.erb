@@ -16,10 +16,14 @@
   <% main_file_entry_name = @client.main_file_entry.try(:file_name) %>
   <% main_file_entry_name ||= content_tag(:i, t("views.not_set")) %>
   <b>Hauptdatei</b>: <%= main_file_entry_name %> <br>
-  <% if @client.id == @client.contestant.current_client.id %>
-    Dieser Client ist <b> aktuell aktiviert </b>! <br>
+  <% if @contestant.current_client.nil? %>
+    Aktuell ist kein Client aktiviert!
+  <% else %>
+    <% if @client.id == @client.contestant.current_client.id %>
+      Dieser Client ist <b> aktuell aktiviert </b>! 
+    <% end %>
   <% end %>
-  <br>
+  <br><br>
    
   <% played = false %>
   <% @client.contestant.matchdays.each do |matchday| %>
