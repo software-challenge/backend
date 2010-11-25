@@ -8,8 +8,12 @@
   </div>
 <% end %>
 <h1> 
-  <%= link_to h(@contest.name), contest_matchdays_url %> /
-  <%= link_to h("#{@matchday.position}. Spieltag"), [@contest, @matchday] %>
+  <%= link_to h(@contest.name), contest_edit_schedule_url(@contest) %> /
+  <% if @matchday.trial %>
+    <%= link_to h("#{@matchday.position}. #{t "views.trial_matchday"}"), [@contest, @matchday] %>
+  <% else %>
+    <%= link_to h("#{@matchday.position - @matchday.contest.matchdays.trials.count}. #{t "views.matchday"}"), [@contest, @matchday] %>
+  <% end %>
 </h1>
 
 <%= render :partial => "match", :locals => {:match => @match} %>

@@ -110,6 +110,7 @@ class Finale < ActiveRecord::Base
     fromSettings = day_settings(settings[:from])
     if use.class == Hash
       num = use[:best]
+      raise "There are not enough contestants in #{dayname}" if num > from.slots.count
       #return from.slots.find_all{|slot| !slot.contestant.hidden? and slot.position <= num}
       return from.slots.find_all{|slot| !slot.contestant.hidden? and slot.contestant.ranked?}.sort_by{|slot| slot.position}.first(num)
     else
