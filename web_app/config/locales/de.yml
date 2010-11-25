@@ -8,9 +8,12 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    not_enough_contestants_for_finale: "In diesem Wettkampf spielen nicht genug Teilnehmer mit, um ein Finale durchführen zu können!"
+    team_name_too_long: "Der Teamname ist länger als 24 Zeichen. Dies kann zu unschönen Anzeigefehlern führen und sollte daher unbedingt vermieden werden."
+    new_trial_contest: "Das Erstellen eines Probewettkampfes kann, abhängig von der Anzahl der ausgewählten Teilnehmer, sehr lange dauern."
+    no_trial_contest_yet: "Es wurde noch kein Probewettkampf erstellt."
     played: "Gespielt"
     created: "Erstellt"
-    pdf_export: "Druckversion"
     hidden_teams: "Gelöschte Teams"
     tutors_with_asterisk_note: "Dieser Tutor steht lediglich bei größeren Problemen als Ansprechpartner zur Verfügung."
     contestants_participating: "Teilnehmer: {{teams}} Teams mit {{members}} SchülerInnen"
@@ -156,6 +159,7 @@ de:
     person_added_to_contestant: "{{actor}} hat {{person}} dem Team \"{{contestant}}\" hinzugefügt."
     person_removed_from_contestant: "{{actor}} hat {{person}} aus dem Team \"{{contestant}}\" entfernt."
   messages:
+    destroy_trial_contest: "Möchten Sie diesen Probewettkampf wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
     email_notification_settings_updated: "Benachrichtigungseinstellungen geändert"
     no_more_friendly_matches_today: "kann heute keine Freundschaftsspiele mehr spielen"
     friendly_match_not_today: "Dieses Spiel kann heute nicht mehr gespielt werden."
@@ -217,6 +221,8 @@ de:
     no_user_with_adress: "Es existiert kein Benutzer mit dieser E-Mail Adresse"
     admin_password_cannot_be_changed: "Passwörter für Administratoren können nicht automatisch geändert werden."
   actions:
+    destroy_trial_contest: "Probewettkampf löschen"
+    create_trial_contest: "Probewettkampf erstellen"
     refresh: "Aktualisieren"
     reject: "Ablehnen"
     accept: "Annehmen"
@@ -300,7 +306,7 @@ de:
       name: Schäfchen im Trockenen
       match_score:
         points: Punkte
-        victories: Siege
+        victories: Siegpunkte
       round_score:
         victory: Siegpunkte
         sheeps_ingame: Schafe im Spiel
@@ -365,6 +371,7 @@ de:
       show: "Wettkämpfe"
       results: "Ergebnisse"
       standings: "Rangliste"
+      trial_contest: "Probewettkampf"
     friendly_encounters:
       all: "Alle Freundschaftsspiele"
     generic:

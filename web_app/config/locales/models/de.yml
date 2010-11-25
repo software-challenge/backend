@@ -5,18 +5,6 @@ de:
         invalid_zip: "Die ZIP-Datei war fehlerhaft oder durch ein Passwort geschützt."
 
     models:
-      fake_test:
-        one: Plagiat-Test
-        other: Plagiat-Tests
-      checksum_check:
-        one: Checksummen Check
-        other: Checksummen Checks
-      diff_check:
-        one: Differenz Check
-        other: Differenz Checks
-      fake_check: 
-        one: Plagiat Check
-        other: Plagiat Checks
       client:
         one: Computerspieler
         other: Computerspieler
@@ -60,6 +48,8 @@ de:
       client:
         file: ZIP-Datei
       contest:
+        trial_contest: Probewettkampf
+        main_contest: Hauptwettkampf
         game_definition: Spiel
         name: Name
         active: Wettbewerb ist aktiv
