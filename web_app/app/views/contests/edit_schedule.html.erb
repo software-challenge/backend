@@ -49,6 +49,9 @@
     <% if contestant_count <= 1 %>
       <%= t("views.need_more_contestants_for_contest", {:count => contestant_count, :contestant_name => Contestant.human_name(:count => contestant_count)}) %>
     <% else %>
+      <% if contestant_count < contestants_needed_for_finale %>
+        <b><%= t("views.clue") %>:</b> <%= t("views.not_enough_contestants_for_finale") %><br><br>
+      <% end %>
       <% semantic_form_for :schedule, :url => refresh_matchdays_contest_url(@contest), :method => :post do |f| %>
         <% matchday_count = @contest.estimate_matchday_count %>
         <p>

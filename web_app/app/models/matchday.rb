@@ -137,9 +137,13 @@ class Matchday < ActiveRecord::Base
     end
   end
 
+  def job_logger
+    SO_CHA_MANAGER_LOGGER
+  end
+
   # Callback (called by Match.perfom)
   def after_match_played(match)
-    logger.info "Received after_match_played from #{match}"
+    job_logger.info "Received after_match_played from #{match}"
     if all_matches_played?
       update_scoretable
       order_scoretable

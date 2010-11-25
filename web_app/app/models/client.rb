@@ -10,7 +10,6 @@ class Client < ActiveRecord::Base
   has_many :file_entries, :class_name => "ClientFileEntry", :dependent => :destroy
   has_one :test_match, :class_name => "ClientMatch", :as => :set, :dependent => :destroy
   has_many :comments, :dependent => :destroy
-  has_and_belongs_to_many :fake_tests
 
   has_attached_file :file
 
@@ -150,20 +149,20 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def after_destroy
+    dir = File.join(RAILS_ROOT, "public", "system", "files", self.id.to_s)
+    if File.exists?(dir)
+      FileUtils.rm_r dir
+    end
+  end
+
   def after_save
     if main_file_entry_id_changed?
       test_match.destroy if test_match
     end
   end
 
-  def get_hash
-    File.exists?(file.path) ? Digest::SHA2.hexdigest(File.read(file.path)) : 0
-  end
 
-  def has_fake_test_against_client?(client)
-    fake_tests.inject(false){|t,ft| t |= ft.clients.member? Client.all.first}
-  end
-      
   protected
 
   def guess_main_file!
@@ -194,5 +193,4 @@ class Client < ActiveRecord::Base
     self.main_file_entry = result
     save!
   end
-   
 end

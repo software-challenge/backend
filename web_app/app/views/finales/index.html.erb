@@ -1,8 +1,10 @@
 <div class="actions">
   <% show_to :administrator do %>
     <% if @finale.nil? %>
-      <% link_to prepare_contest_finale_url(@contest), :method => :post, :title => t("actions.prepare_finale"), :id => "prepareFinaleAction" do %>
-        <%= image_tag('actions/refresh.png') %><%= t("actions.prepare_finale") %>
+      <% if contestants_needed_for_finale <= @contest.contestants.ranked.visible.count %>
+        <% link_to prepare_contest_finale_url(@contest), :method => :post, :title => t("actions.prepare_finale"), :id => "prepareFinaleAction" do %>
+          <%= image_tag('actions/refresh.png') %><%= t("actions.prepare_finale") %>
+        <% end %>
       <% end %>
     <% else %>
       <% if not @finale.running? and not @finale.finished? and @finale.runnable? %>
@@ -74,6 +76,10 @@
 
       var refreshInterval = setInterval(reload_finale, 15000);
     <% end %>
+    <% end %>
+  <% else %>
+    <% if contestants_needed_for_finale > @contest.contestants.ranked.visible.count %>
+      <b><%= t("views.not_enough_contestants_for_finale") %></b>
     <% end %>
   <% end %>
 <% end %>

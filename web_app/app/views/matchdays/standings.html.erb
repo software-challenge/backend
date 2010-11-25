@@ -1,9 +1,3 @@
-<div id="actions">
-  <% link_to standings_contest_matchday_url(@contest, @matchday, :matchday_id => @matchday.id, :format => :pdf) do %>
-    <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
-  <% end %>
-</div>
- 
 <h1 class="print-hide" id="title">
   <%= link_to @contest.name, contest_edit_schedule_url(@contest) %> /
   <%= @matchday.trial? ? "#{@matchday.position}. Probespieltag" : "#{@matchday.position - @matchday.contest.matchdays.trials.count}. Spieltag" %>
