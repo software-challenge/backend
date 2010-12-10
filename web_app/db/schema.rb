@@ -228,7 +228,6 @@ ActiveRecord::Schema.define(:version => 20101210135124) do
     t.boolean  "hidden",               :default => false, :null => false
     t.datetime "last_seen"
     t.boolean  "logged_in",            :default => false, :null => false
-    t.boolean  "email_validated",      :default => false
     t.integer  "phone_number"
     t.string   "validation_code"
   end
@@ -287,7 +286,7 @@ ActiveRecord::Schema.define(:version => 20101210135124) do
     t.integer  "contest_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "notify_on_next_step",       :default => false
+    t.boolean  "notify_on_next_step",       :default => false, :null => false
     t.string   "contact_function",                             :null => false
   end
 
