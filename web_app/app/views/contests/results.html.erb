@@ -1,3 +1,9 @@
+<div id="actions">
+  <% link_to contest_matchday_url(@contest, @matchday, :format=>:pdf) do %> 
+    <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
+  <% end %>
+</div>
+
 <h1>
   <%= @contest.name %>
 </h1>

@@ -21,6 +21,9 @@ ActionController::Routing::Routes.draw do |map|
       :create_trial_contest => :post,
       :destroy_trial_contest => :post
     } do |c|
+      c.resources :fake_tests, :as =>"plagiat-tests", :member =>{
+        :restart => :post   
+      }
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
         :play => :post,
