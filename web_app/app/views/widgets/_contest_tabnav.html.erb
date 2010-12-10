@@ -12,8 +12,8 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
 
     add_tab do |t|
         t.named t("actions.create").capitalize
-        t.links_to hash_for_new_contest_url
-        t.highlights_on :controller => "contests", :action => "create"
+        t.links_to new_contest_url
+        t.highlights_on :controller => "contests", :action => "new"
     end if @contest.new_record?
   
   end

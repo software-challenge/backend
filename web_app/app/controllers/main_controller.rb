@@ -1,9 +1,33 @@
+class AccountNotValidated < Exception; end
+
 class MainController < ApplicationController
 
   skip_before_filter :require_current_user
 
   access_control :only => [:debug, :clear_jobs, :administration] do
     allow :administrator
+  end
+
+
+  def register
+    @person = Person.new
+  end
+
+  def do_register
+    @person = Person.create(params[:person])
+    @person.validation_code = @person.random_hash(25)
+    success = @person.save
+    # TODO: Generate event
+    respond_to do |format|
+      if success
+        PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], true)
+        format.html
+        format.xml { render :xml => @person }
+      else
+        format.html { render :action => "register" }
+        format.xml { render :xml => @person.errors, :status => :unprocessable_entity }
+      end
+    end
   end
 
   def index
@@ -45,12 +69,12 @@ class MainController < ApplicationController
   def do_login
     email = params[:user][:email]
     password = params[:user][:password]
-
     begin
       person = Person.find_by_email(email)
       raise ActiveRecord::RecordNotFound unless person
       raise ActiveRecord::RecordNotFound unless person.password_match?(password)
       raise ActiveRecord::RecordNotFound if person.hidden?
+      raise AccountNotValidated unless person.validated?
       session[:user_id] = person.id
       person.logged_in = true
       person.last_seen = Time.now
@@ -65,6 +89,10 @@ class MainController < ApplicationController
       @user = { :email => email, :password => "" }.to_obj
       flash[:notice] = I18n.t("messages.login_invalid")
       redirect_to :action => "login"
+    rescue AccountNotValidated
+      @user = { :email => email, :password => "" }.to_obj
+      flash[:error] = "Der Zugang wurde noch nicht aktiviert. Bitte besuchen Sie den Link in der Bestätigungs E-Mail"
+      redirect_to :aciton => "login"
     end
   end
 

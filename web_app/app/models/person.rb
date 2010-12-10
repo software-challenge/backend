@@ -50,6 +50,8 @@ class Person < ActiveRecord::Base
     :joins => "INNER JOIN people_roles ON people.id = people_roles.person_id INNER JOIN roles ON people_roles.role_id = roles.id",
     :conditions => "(roles.name = 'tutor' OR roles.name = 'helper') AND roles.authorizable_id = memberships.contestant_id AND roles.authorizable_type = 'Contestant'"
 
+  validates_uniqueness_of :validation_code, :if => :validation_code
+
   def initialize(*args)
     @save_on_update ||= []
     super
@@ -191,6 +193,21 @@ class Person < ActiveRecord::Base
         self.has_no_role! :administrator
       end
     end
+  end
+
+  def validate_code(code) 
+    if code == self.validation_code 
+      self.validation_code = nil
+      success = self.save
+      self.reload
+      return success
+    else
+      return false
+    end
+  end
+
+  def validated?
+    self.validation_code == nil
   end
 
   def has_hidden_friendly_encounters?(contest)

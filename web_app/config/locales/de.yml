@@ -8,6 +8,8 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    school_reg: "Vorläufige Anmeldung"
+    school_reg_note: "Diese Anmeldung dient nur der vorläufigen Erfassung interessierter Schulen und ist vollkommen unverbindlich."
     not_enough_contestants_for_finale: "In diesem Wettkampf spielen nicht genug Teilnehmer mit, um ein Finale durchführen zu können!"
     team_name_too_long: "Der Teamname ist länger als 24 Zeichen. Dies kann zu unschönen Anzeigefehlern führen und sollte daher unbedingt vermieden werden."
     new_trial_contest: "Das Erstellen eines Probewettkampfes kann, abhängig von der Anzahl der ausgewählten Teilnehmer, sehr lange dauern."
@@ -321,6 +323,8 @@ de:
       global:
         administrator: AdministratorIn
       contestant:
+        head: SchulleiterIn
+        heads: SchulleiterInnen
         teacher: LehrerIn
         teachers: "LehrerInnen"
         tutor: TutorIn
@@ -361,9 +365,12 @@ de:
       administration: "Administration"
       login: "Anmelden"
       debug: "Debugansicht"
+      register: "Registrieren"
+      do_register: "Registrieren"
     people:
        people_for_contestant: "Teammitglieder"
        people: "Personen"
+       validate_code: "Zugang aktivieren"
     matches:
        index_for_contestant: "Begegnungen: Teamübersicht"
        matches: "Begegnungen"

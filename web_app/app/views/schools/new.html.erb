@@ -1,0 +1,8 @@
+<h1>
+  <%= link_to @contest.name, contest_url(@contest) %> / 
+  Neue Schule anmelden
+</h1>
+
+<% tabnav :school do %>
+  <%= render :partial => "form" %>
+<% end %>

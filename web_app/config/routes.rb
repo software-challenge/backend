@@ -25,6 +25,7 @@ ActionController::Routing::Routes.draw do |map|
         :restart => :post   
       }
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
+      c.resources :schools
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
         :play => :post,
         :reject => :post,
@@ -89,7 +90,7 @@ ActionController::Routing::Routes.draw do |map|
         contestant.people '/mitglieder', :controller => "people", :action => "people_for_contestant", :conditions => { :method => :get }
         contestant.person '/mitglieder/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }
         contestant.resources :people, :as => "mitglieder", :except => [:index], :member => {
-          :remove => :post
+          :remove => :post,
         } do |person|
           person.resource :email_event, :as => "mailer", :member => {
             :update => :put
@@ -123,13 +124,16 @@ ActionController::Routing::Routes.draw do |map|
       }
       c.resources :people, :as => "personen", :member => {
         :hide => :get,
-        :unhide => :get
+        :unhide => :get,
+        :validate_code => :get
       } do |person|
         person.resource :email_event, :as => "mailer", :member => {
           :update => :put
         }
       end 
 
+      c.register '/register', :controller => 'main', :action => 'register', :conditions => { :method => :get }
+      c.map '/register', :controller => 'main', :action => 'do_register', :conditions => { :method => :post }
       c.administration '/administration', :controller => 'main', :action => 'administration'
       c.debug '/debug', :controller => 'main', :action => 'debug', :conditions => { :method => :get }
       c.clear_jobs '/clear_jobs', :controller => 'main', :action => 'clear_jobs', :conditions => { :method => :post }

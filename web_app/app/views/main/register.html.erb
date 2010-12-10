@@ -1,0 +1,20 @@
+<h1>
+  Registrieren
+</h1>
+
+<% tabnav :contest do %>
+  <% semantic_form_for [@contest, @person], :url => contest_register_url(@contest) do |f| %>
+    <% f.inputs do %>
+      <%= f.input :first_name, :required => true %>
+      <%= f.input :last_name, :required => true %>
+      <%= f.input :email, :required => true %>
+      <% generated_password = random_password() %>
+      <%= f.input :password, :required => true, :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>"), :input_html => { :value => "", :autocomplete => "off" } %>
+      <%= f.input :phone_number, :required => false %> 
+    <% end %>
+    <% f.buttons do %>
+      <%= f.commit_button %> 
+      oder <%= link_to "Zurück", contest_url(@contest) %>
+    <% end %>
+  <% end %>
+<% end %>
