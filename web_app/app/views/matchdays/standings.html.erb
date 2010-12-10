@@ -1,5 +1,5 @@
 <div id="actions">
-  <% link_to standings_contest_matchday_url(@contest, @matchday, :matchday_id => @matchday.id, :format => :pdf) do %>
+  <% link_to contest_matchday_standings_url(@contest, @matchday, :format => :pdf) do %>
     <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
   <% end %>
 </div>
