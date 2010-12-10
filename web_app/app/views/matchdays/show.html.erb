@@ -1,5 +1,8 @@
 <% show_to :administrator do %>
   <div id="actions">
+    <% link_to contest_matchday_url(@contest, @matchday, :format=>:pdf) do %> 
+      <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
+    <% end %>   
     <% if @matchday.running? %>
       <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br> 
     <% else %>

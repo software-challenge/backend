@@ -1,4 +1,7 @@
 <div id="actions">
+  <% link_to contest_contestants_url(@contest, :format=>:pdf) do %>
+    <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
+  <% end %>
   <% if may_add_teams? -%>
     <% unless @contest.ready? %>
       <% link_to new_contest_contestant_url do %>

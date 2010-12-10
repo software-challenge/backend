@@ -11,6 +11,13 @@
 
 ActiveRecord::Schema.define(:version => 20101102135313) do
 
+  create_table "check_result_fragments", :force => true do |t|
+    t.integer "fake_check_id"
+    t.string  "name"
+    t.string  "value"
+    t.string  "description"
+  end
+
   create_table "client_file_entries", :force => true do |t|
     t.integer "client_id"
     t.string  "file_name"
@@ -31,6 +38,13 @@ ActiveRecord::Schema.define(:version => 20101102135313) do
     t.integer  "main_file_entry_id"
     t.boolean  "hidden",             :default => false, :null => false
     t.string   "parameters"
+  end
+
+  create_table "clients_fake_tests", :id => false, :force => true do |t|
+    t.integer  "fake_test_id"
+    t.integer  "client_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "comments", :force => true do |t|
@@ -98,6 +112,21 @@ ActiveRecord::Schema.define(:version => 20101102135313) do
     t.boolean  "param_bool_2"
     t.datetime "param_time_1"
     t.string   "type",           :default => "Event"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "fake_checks", :force => true do |t|
+    t.integer  "fake_test_id"
+    t.string   "type",         :default => "FakeCheck"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "fake_tests", :force => true do |t|
+    t.integer  "job_id"
+    t.string   "name"
+    t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

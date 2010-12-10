@@ -13,6 +13,7 @@ de:
     new_trial_contest: "Das Erstellen eines Probewettkampfes kann, abhängig von der Anzahl der ausgewählten Teilnehmer, sehr lange dauern."
     no_trial_contest_yet: "Es wurde noch kein Probewettkampf erstellt."
     played: "Gespielt"
+    pdf_export: "Druckversion"
     created: "Erstellt"
     hidden_teams: "Gelöschte Teams"
     tutors_with_asterisk_note: "Dieser Tutor steht lediglich bei größeren Problemen als Ansprechpartner zur Verfügung."

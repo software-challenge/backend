@@ -39,6 +39,8 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @contestants }
+      format.pdf  { render :pdf => 'Teams',
+                           :stylesheets => ['jquery-ui-fixes', 'formtastic', 'formtastic_changes', 'application', 'rails', 'contests', 'clients', 'fullcalendar', 'tabnav']}
     end
   end
 
