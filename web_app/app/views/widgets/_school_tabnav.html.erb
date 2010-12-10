@@ -1,0 +1,17 @@
+<%
+render_tabnav :school, :html => { :class => "tabs_tabnav" } do
+  add_tab do |t|
+    t.named t("titles.overview")
+    begin; t.disable!; next; end if @school.new_record?
+    t.links_to contest_school_url(@contest, @school)
+    t.highlights_on :controller => "schools", :action => "show" 
+  end
+
+  add_tab do |t|
+    t.named t("actions.create").capitalize
+    t.links_to new_contest_school_url(@contest)
+    t.highlights_on :controller => "schools", :action => "new"
+    t.highlights_on :controller => "schools", :action => "create"
+  end if @school.new_record?
+end
+%>

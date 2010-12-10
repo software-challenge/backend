@@ -20,23 +20,48 @@
   <% end %>
 </div>
 
-<% if logged_in? %>
-  <% current_user.teams.visible.for_contest(@contest).each do |team| %>
-    <div>
-      <div style="float: right;">
-        <%= link_to t("views.teamsite"), contest_contestant_url(@contest, team) %>
-        <%= link_to Client.human_name(:count => 2), contest_contestant_clients_url(@contest, team) %>
+  <% if logged_in? %>
+    <% current_user.teams.visible.for_contest(@contest).each do |team| %>
+      <div>
+        <div style="float: right;">
+          <%= link_to t("views.teamsite"), contest_contestant_url(@contest, team) %>
+          <%= link_to Client.human_name(:count => 2), contest_contestant_clients_url(@contest, team) %>
+        </div>
+        <h3>
+          <%=h team.name %>
+        </h3>
       </div>
-      <h3>
-        <%=h team.name %>
-      </h3>
-    </div>
+    <% end %>
+    <% has_requests = current_user.teams.visible.for_contest(@contest).collect(&:has_open_friendly_requests_from_others?).inject(false) {|b, x| b | x} %>
+    <% if has_requests %>
+      <br>
+      <%= link_to t("views.person_has_open_friendly_requests"), contest_friendly_encounters_url(@contest), :style => "font-size: 15px" %>
+    <% end %>
   <% end %>
-  <% has_requests = current_user.teams.visible.for_contest(@contest).collect(&:has_open_friendly_requests_from_others?).inject(false) {|b, x| b | x} %>
-  <% if has_requests %>
-    <br>
-    <%= link_to t("views.person_has_open_friendly_requests"), contest_friendly_encounters_url(@contest), :style => "font-size: 15px" %>
+
+<div style="background-color: #f5f5f5; margin-top: 25px; border: 1px solid #aaa; padding: 10px">
+  <div style="margin-bottom: 10px">
+    <b>Was kann ich tun:</b>
+  </div>
+  <div style="margin-left: 0px; margin-bottom: 10px">
+    <% if not logged_in? %>
+      <% action_button do %>
+        <%= link_to "Neuen Zugang erstellen", contest_register_url(@contest) %>  
+      <% end %>
+    <% end %>
+    <% if (@contest.allow_school_reg and logged_in?) or administrator? %>
+      <% action_button do %>
+        <%= link_to "Neue Schule anmelden", new_contest_school_url(@contest) %> 
+      <% end %>
+    <% end %>
+  </div>
+  <!--
+  <% if (@contest.allow_team_reg and logged_in?) or administrator? %>
+    <% action_button do %>
+      <%= link_to "Neues Team anmelden", new_contest_contestant_url(@contest) %>
+    <% end %>
   <% end %>
-<% end %>
+  !-->
+</div>
 
 <% end %>

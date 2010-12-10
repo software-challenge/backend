@@ -13,7 +13,18 @@ class DailyJob < ScheduledJobData
     logger.info "Performing daily actions"     
     autoplay_days
     send_notifications
+    remove_unvalidated_people
     logger.info "Daily action done"
+  end
+
+  def remove_unvalidated_people
+    Person.all.each do |person|
+      unless person.validated?
+        if person.created_at + 48.hours < DateTime.now      
+          person.destroy
+        end
+      end 
+    end
   end
  
   def send_notifications
@@ -31,6 +42,8 @@ class DailyJob < ScheduledJobData
         end
       end
     end  
+
+    
   end
 
   def autoplay_days

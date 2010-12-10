@@ -1,0 +1,23 @@
+Hallo <%= @school.contact.email %>,
+
+im Wettbewerb "<%= @contest.name %>" wurden die Einstellungen zur Anmeldung von Schulen geändert.
+
+<% @changes.each do |change| %>
+  <% if change == "+schools" %>
+    Es können nun Schulen angemeldet werden.
+  <% end %>
+  <% if change == "-schools" %>
+    Es können nun keine Schulen mehr angemeldet werden.
+  <% end %>
+  <% if change == "+teams" %>
+    Es können nun Teams angemeldet werden.
+  <% end %>
+  <% if change == "-teams" %>
+    Es können nun keine Teams mehr angemeldet werden."
+  <% end %>
+<% end %>
+
+Sie erhalten diese E-Mail, weil Sie die Schule "<%= @school.name %>" für den Wettbewerb angemeldet haben und um eine Benachrichtigung gebeten haben.
+
+Mit freundlichen Grüßen,
+das Software-Challenge Team.

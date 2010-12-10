@@ -5,6 +5,9 @@ de:
         invalid_zip: "Die ZIP-Datei war fehlerhaft oder durch ein Passwort geschützt."
 
     models:
+      school:
+        one: Schule
+        other: Schulen
       client:
         one: Computerspieler
         other: Computerspieler
@@ -45,6 +48,18 @@ de:
         one: "Final Eight"
         other: "Finals"
     attributes:
+      school:
+        name: Name
+        zipcode: PLZ
+        location: Ort
+        state: Bundesland
+        participation_probability: Wahrscheinlichkeit der Teilnahme
+        contact_name: Vorname der Kontaktperson
+        contact_last_name: Nachname der Kontaktperson
+        contact_email: E-Mail Adresse der Kontaktperson
+        contact_function: Funktion der Kontaktperson
+        estimated_team_count: Voraussichtliche Anzahl Teams
+        notify_on_next_step: Eine E-Mail an die Kontaktaddresse schicken, wenn die nächste Phase der Anmeldung beginnt.
       client:
         file: ZIP-Datei
       contest:
@@ -62,6 +77,7 @@ de:
         nick_name: Spitzname
         email: "eMail-Adresse"
         password: Passwort
+        phone_number: Telefonnummer
         administrator: "AdministratorIn"
         blocked: Gesperrt
         hidden: Gelöscht

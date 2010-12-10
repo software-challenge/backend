@@ -8,6 +8,14 @@ class EventMailer < ActionMailer::Base
     RAILS_DEFAULT_LOGGER.info("Not mailing! #{e}")
   end
 
+  def contest_registration_phase_changed_notification(contest, school, changes)
+    recipients school.contact.email
+    from "software-challenge@gfxpro.de"
+    subject "Änderung der Anmeldungsoptionen"
+    sent_on Time.now
+    body({:contest => contest, :school => school, :changes => changes})
+  end
+
   def client_matchday_warning_notification(contestant, matchday)
     recips = ""
     rcv = EmailEvent.rcvs_client_matchday_warning.collect(&:email)

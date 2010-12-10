@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101102135313) do
+ActiveRecord::Schema.define(:version => 20101210135124) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(:version => 20101102135313) do
     t.integer  "overall_member_count", :default => 0,      :null => false
     t.boolean  "disqualified",         :default => false
     t.string   "ranking",              :default => "none", :null => false
+    t.integer  "school_id"
   end
 
   create_table "contests", :force => true do |t|
@@ -78,6 +79,8 @@ ActiveRecord::Schema.define(:version => 20101102135313) do
     t.string   "subdomain"
     t.boolean  "play_automatically", :default => false, :null => false
     t.integer  "trial_contest_id"
+    t.boolean  "allow_team_reg"
+    t.boolean  "allow_school_reg"
   end
 
   create_table "delayed_jobs", :force => true do |t|
@@ -225,6 +228,9 @@ ActiveRecord::Schema.define(:version => 20101102135313) do
     t.boolean  "hidden",               :default => false, :null => false
     t.datetime "last_seen"
     t.boolean  "logged_in",            :default => false, :null => false
+    t.boolean  "email_validated",      :default => false
+    t.integer  "phone_number"
+    t.string   "validation_code"
   end
 
   create_table "people_roles", :id => false, :force => true do |t|
@@ -268,6 +274,21 @@ ActiveRecord::Schema.define(:version => 20101102135313) do
     t.datetime "last_check"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "schools", :force => true do |t|
+    t.string   "name",                                         :null => false
+    t.integer  "zipcode",                                      :null => false
+    t.string   "location",                                     :null => false
+    t.string   "state",                                        :null => false
+    t.integer  "estimated_team_count",                         :null => false
+    t.string   "participation_probability",                    :null => false
+    t.integer  "person_id"
+    t.integer  "contest_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "notify_on_next_step",       :default => false
+    t.string   "contact_function",                             :null => false
   end
 
   create_table "score_fragments", :force => true do |t|

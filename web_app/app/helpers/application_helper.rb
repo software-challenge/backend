@@ -54,6 +54,14 @@ module ApplicationHelper
     end
   end
 
+  def action_button(&block)
+    content = capture(&block)
+    html = "<div class=\"actions\">"
+    html += content
+    html += "</div>"
+    concat html.html_safe!
+  end
+
   def logfile_folder(match)
     case match.type.to_s
     when "LegaueMatch", "FinaleMatch"

@@ -13,6 +13,10 @@ class PeopleController < ApplicationController
       allow logged_in
     end
 
+    action :validate_code do
+      allow all
+    end
+
     actions :new, :create, :invite do
       allow :administrator, :teacher, :tutor, :helper
     end
@@ -89,6 +93,11 @@ class PeopleController < ApplicationController
   end
 
   public
+
+  def validate_code
+    @person = Person.find(params[:id])
+    success = @person.validate_code(params[:code])
+  end
 
   # GET /people
   # GET /people.xml

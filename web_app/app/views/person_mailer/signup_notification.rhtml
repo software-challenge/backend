@@ -1,6 +1,7 @@
 Hallo <%= @person.name %>,
 
-es wurde soeben ein Account fuer Sie erstellt. Sie koennen sich mit Ihrer
+<% unless @self_created %>
+im Wettkampfsystem der Software Challenge wurde soeben ein Account fuer Sie erstellt. Sie koennen sich mit Ihrer
 eMail-Adresse (<%= @person.email %>) und dem Passwort
 
 <%= @plain_password %>
@@ -10,6 +11,13 @@ unter
 <%= @url %>
 
 anmelden.
+<% else %>
+  Sie haben sich im Wettkampfsystem der Software Challenge einen Zugang eingerichtet. Um diesen nutzen zu können, müssen Sie zunächst die Echtheit Ihrer E-Mail Adresse bestätigen, indem sie folgenden Link besuchen:
+
+  <%= validate_code_contest_person_url(@contest, @person, :code => @person.validation_code) %>
+
+Wenn Sie Ihre Anmeldung nicht innerhalb von 48 Stunden bestätigen, werden Ihre Zugangsdaten automatisch wieder gelöscht.
+<% end %>
 
 Mit freundlichen Gruessen
   Ihr Software-Challenge-Team

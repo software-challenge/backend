@@ -107,8 +107,7 @@ img {
 
 .actions {
   margin-right: -10px;
-  float: right;
-  line-height: 32px;
+  line-height: 22px;
 }
 
 .actions a
@@ -116,10 +115,9 @@ img {
   text-decoration: none;
   font-size: 12px;
   font-weight: bold;
-  cursor: default;
   margin: 0 0 0 4px;
   background-color: #f8f8f8;
-  padding: 0 8px 0 0;
+  padding: 0 8px 0 8px;
   display: inline-block;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
