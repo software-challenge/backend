@@ -31,18 +31,42 @@
     <thead style="text-align: left">
       <th><%= Contestant.human_name + " 1" %></th>
       <th><%= Contestant.human_name + " 2" %></th>
+      <th>Rundenzahl</th>
       <th>&nbsp;</th>
     </thead>
     <% @contest.custom_matches.each do |mm| %>
       <tr>
         <td><%= mm.contestants.first.name %></td>
         <td><%= mm.contestants.second.name %></td> 
+        <td><%= mm.rounds.count %></td>
         <td>
           <% if not mm.played? and not mm.running? %>
-            <%= link_to t("actions.play"), play_contest_custom_match_url(@contest, mm), :method => :post %>
+            <a href="#" id="open_box_<%= mm.id %>"><%= t("actions.play") %></a>
+            <div id="prio_box_<%= mm.id %>" style="padding: 10px; position: absolute; background-color: #ddd; border: 1px solid #aaa; display: none">
+              <% form_tag play_contest_custom_match_url(@contest, mm), :method => :post, :id => "form_#{mm.id}" do %>
+                Priorität:
+                <%= text_field_tag :priority, 0, :size => 1 %>
+                &nbsp;&nbsp;<a id="start_<%= mm.id %>" href="#"><%= t("actions.play") %></a>
+                &nbsp;&nbsp;<a id="cancel_<%= mm.id %>" href="#"><%= t("actions.cancel") %></a>
+              <% end %>
+            </div>
+            <% javascript_tag do %>
+              $(function() {
+                $("#start_<%= mm.id %>").bind('click', function() {
+                  $("#form_<%= mm.id %>").submit(); 
+                })
+                $("#open_box_<%= mm.id %>").bind('click', function() {
+                  $("#prio_box_<%= mm.id %>").fadeIn(250);
+                })
+                $("#cancel_<%= mm.id %>").bind('click', function() {
+                  $("#prio_box_<%= mm.id %>").fadeOut(250);
+                })
+              })
+            <% end %>
           <% elsif mm.running? %>
-            <%= t("helpers.playing_in_progress") %>&nbsp;&nbsp;
-            <%= image_tag "ui/spinner.gif", :style => "vertical-align: middle" %>
+            <%= t("helpers.playing_in_progress") %>&nbsp;
+            (<%= mm.rounds.played.count %> / <%= mm.rounds.count %> gespielt) 
+            &nbsp;&nbsp;<%= image_tag "ui/spinner.gif", :style => "vertical-align: middle" %>
           <% elsif mm.played? %>
             <% res = mm.main_result %>
             <%= link_to "#{res[0]} : #{res[1]}", contest_custom_match_url(@contest, mm) %>&nbsp; 

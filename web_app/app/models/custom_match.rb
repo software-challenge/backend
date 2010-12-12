@@ -1,6 +1,4 @@
 class CustomMatch < ClientMatch
-  LOW_PRIORITY = 0
-
   def validate_uniqueness_of_set_id?
     false
   end
@@ -16,8 +14,8 @@ class CustomMatch < ClientMatch
     self.set
   end
 
-  def perform_delayed!
-    job_id = Delayed::Job.enqueue(self, priority)
+  def perform_delayed!(prio)
+    job_id = Delayed::Job.enqueue(self, prio)
     self.job = Delayed::Job.find(job_id)
     save!
   end

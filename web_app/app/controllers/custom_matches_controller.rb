@@ -29,7 +29,8 @@ class CustomMatchesController < ApplicationController
 
   def play
     mm = CustomMatch.find(params[:id])
-    mm.perform_delayed!
+    prio = params[:priority].to_i
+    mm.perform_delayed! prio
     redirect_to contest_custom_matches_url(@contest)
   end
 
