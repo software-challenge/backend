@@ -2,7 +2,13 @@
 <% count = local_assigns[:count] || false %>
 <tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
   <% if count %>
-    <td> <%= link_to match.matchday.position, contest_matchday_url(@contest, match.matchday)%> </td>
+    <td> 
+      <% if match.matchday.trial %>
+        <%= link_to "P#{match.matchday.position}", contest_matchday_url(@contest, match.matchday)%> 
+      <% else %>
+        <%= link_to match.matchday.position - match.contest.matchdays.trials.count, contest_matchday_url(@contest, match.matchday) %>
+      <% end %>
+    </td>
   <% end %>
   <% if date %>
     <td><%= (l match.matchday.when) unless match.matchday.when.nil? %></td>
