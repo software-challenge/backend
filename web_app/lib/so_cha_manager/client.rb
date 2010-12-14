@@ -71,19 +71,22 @@ module SoChaManager
     end
 
     def close
-      if done?
-        logger.warn "Tried to close an already closed connection."
-      else
-        logger.info "Closing client."
-        self.done = true
-        write "</object-stream>"
-        @connection.close
+      begin
+        puts "Closing client"
+        if done?
+          logger.warn "Tried to close an already closed connection."
+        else
+          logger.info "Closing client."
+          self.done = true
+          write "</object-stream>"
+          @connection.close
+        end
+        if not @serverlog.nil? and not @serverlog.closed?
+          @serverlog.close
+        end
+      rescue => e
+        logger.log_formatted_exception e
       end
-      if not @serverlog.nil? and not @serverlog.closed?
-        @serverlog.close
-      end
-    rescue => e
-      logger.log_formatted_exception e
     end
 
     def log(round)

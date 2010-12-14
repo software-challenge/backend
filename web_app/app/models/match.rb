@@ -116,10 +116,12 @@ class Match < ActiveRecord::Base
     job_logger.info "Received after_round_played from #{round}"
 
     if all_rounds_played?
+      puts "All rounds played"
       job_logger.info "All rounds finished for match #{self}!"
      
       job_logger.info "Updating scoretable." 
       update_scoretable
+      puts "Scoretable updated"
       self.played_at = DateTime.now
       self.save!
 
@@ -131,8 +133,10 @@ class Match < ActiveRecord::Base
       if set and set.respond_to? :after_match_played
         set.after_match_played self
       end
+      puts "Match finished"
     else
-      count = rounds.find_all{|r| r.played?}.count
+      #count = rounds.find_all{|r| r.played?}.count
+      count = rounds.played.count
       job_logger.info "#{count}/#{rounds.count} rounds finished for match #{self}."
     end
   end

@@ -143,13 +143,22 @@ class Matchday < ActiveRecord::Base
 
   # Callback (called by Match.perfom)
   def after_match_played(match)
+    puts "Match was played"
     job_logger.info "Received after_match_played from #{match}"
     if all_matches_played?
       update_scoretable
       order_scoretable
       self.played_at = DateTime.now
       self.save!
-      EventMailer.deliver_on_matchday_played_notification(self) 
+      puts "Sending mail"
+      Thread.new do
+        begin
+          EventMailer.deliver_on_matchday_played_notification(self) 
+        ensure
+          puts "Finished mail"
+        end
+      end
+      puts "Matchday finished"
     end
   end
 
