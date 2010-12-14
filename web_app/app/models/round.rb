@@ -28,6 +28,7 @@ class Round < ActiveRecord::Base
 
   def perform
     begin
+      puts "Starting manager"
       manager = SoChaManager::Manager.new
       manager.connect!
       manager.play self
@@ -35,11 +36,13 @@ class Round < ActiveRecord::Base
       while !manager.done?
         sleep 1
       end
-      
-      #manager.close
+      puts "Manager done"      
+      manager.close
 
       job_logger.info "Manager finished for round: #{self}" 
     rescue => exception
+      puts "Manager raised exception: #{exception}"
+      job_logger.info "Manager raised exception: #{exception}"
       manager.close
       raise exception
     end
@@ -66,6 +69,7 @@ class Round < ActiveRecord::Base
     raise "result (#{result.count}) must have same size as there are slots (#{slots.count})" if result.count != slots.count
    
     job_logger.info "Round finished: #{self}. Updating scores."
+    puts "Round finished"
 
     Round.transaction do
       slots.each_with_index do |slot,index|
