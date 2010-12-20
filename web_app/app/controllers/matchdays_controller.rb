@@ -1,6 +1,6 @@
 class MatchdaysController < ApplicationController
 
-  access_control :only => [:publish] do
+  access_control :only => [:publish, :reset] do
     allow :administrator
   end
 

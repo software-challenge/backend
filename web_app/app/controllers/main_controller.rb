@@ -11,17 +11,26 @@ class MainController < ApplicationController
 
   def register
     @person = Person.new
+    @email_event = EmailEvent.new
   end
 
   def do_register
-    @person = Person.create(params[:person])
+    @person = Person.create(params[:person][:person])
+    @email_event = EmailEvent.create(params[:person][:email_event])
     @person.validation_code = @person.random_hash(25)
-    success = @person.save
+    success = false
+    Person.transaction do
+      begin
+        success = @person.save! && @email_event.save!
+      rescue
+        success = false
+      end
+    end
     # TODO: Generate event
     respond_to do |format|
       if success
         PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], true)
-        format.html
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Registrieren", :message => "Ihr Zugang wurde erstellt. An die angebene E-Mail Adresse wurde eine E-Mail mit einem Bestätigungslink gesendet. Um ihren Zugang nutzen zu können, müssen Sie zunächst diese E-Mail abrufen und den Bestätigungslink besuchen.", :links => [["Weiter", contest_url(@contest)]] }}
         format.xml { render :xml => @person }
       else
         format.html { render :action => "register" }

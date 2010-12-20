@@ -8,7 +8,7 @@
       <%= f.input :name, :required => true %>
       <%= f.input :zipcode, :required => true %>
       <%= f.input :location, :required => true %>
-      <%= f.input :state, :required => true, :collection => School::STATES, :prompt => "Bitte wählen..." %>
+      <%= f.input :state, :required => true, :collection => School::STATES.sort, :prompt => "Bitte wählen..." %>
       <%= f.input :participation_probability, :required => true, :collection => School::PROBS, :prompt => "Bitte wählen..." %>
       <%= f.input :estimated_team_count, :required => true %>
     </fieldset>
@@ -45,7 +45,11 @@
         <label for=school_contact_function_other"></label>
         <%= text_field_tag :school_contact_function_other, "", :name => "contact_function_other" %>
       </li>
-      <%= f.input :notify_on_next_step, :style => "vertical-align: middle" %>
+      <li id="notify_on_contest_progress_input" class="boolean optional">
+        <label for="notify_on_contest_progress">
+          <%= check_box_tag :notify_on_contest_progress, 1, true, :style => "vertical-align: middle" %> <%= t "views.notify_contest_progress_info" %> 
+        </label>
+      </li>
     </fieldset>
   <% end %>
   <% f.buttons do %>

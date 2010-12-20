@@ -59,7 +59,6 @@ de:
         contact_email: E-Mail Adresse der Kontaktperson
         contact_function: Funktion der Kontaktperson
         estimated_team_count: Voraussichtliche Anzahl Teams
-        notify_on_next_step: Eine E-Mail an die Kontaktaddresse schicken, wenn die nächste Phase der Anmeldung beginnt.
       client:
         file: ZIP-Datei
       contest:
@@ -69,8 +68,9 @@ de:
         name: Name
         active: Wettbewerb ist aktiv
       email_event:
-        rcv_on_matchday_played: "Ein Spieltag wurde gespielt"
-        rcv_client_matchday_warning: "Einer meiner Computerspieler ist nicht für den kommenden Spieltag bereit"
+        rcv_on_matchday_played: Ein Spieltag wurde gespielt
+        rcv_client_matchday_warning: Einer meiner Computerspieler ist nicht für den kommenden Spieltag bereit
+        rcv_contest_progress_info: Es gibt Neuigkeiten zum Wettbewerb
       person:
         first_name: Vorname
         last_name: Nachname

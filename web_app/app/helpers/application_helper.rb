@@ -54,9 +54,9 @@ module ApplicationHelper
     end
   end
 
-  def action_button(&block)
+  def action_button(options = {}, &block)
     content = capture(&block)
-    html = "<div class=\"actions\">"
+    html = "<div style=\"#{options[:style]}\" class=\"actions\">"
     html += content
     html += "</div>"
     concat html.html_safe!

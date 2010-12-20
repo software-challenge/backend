@@ -44,6 +44,9 @@ class SchoolsController < ApplicationController
     if @school.contact_function == "Andere"
       @school.contact_function = params[:contact_function_other]
     end
+    if params[:notify_on_contest_progress]
+      add_email_event!(@current_user, :rcv_contest_progress_info) 
+    end 
     success = @school.save
     if success
       @current_user.has_role! @school.contact_function, @school
@@ -52,8 +55,7 @@ class SchoolsController < ApplicationController
     end
     respond_to do |format|
       if success
-        flash[:notice] = "Die Schule \"#{@school.name}\" wurde angemeldet."
-        format.html { redirect_to contest_url(@contest) }
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet", :links => [["Weiter", contest_url(@contest)]] } }
         format.xml { render :xml => @school }
       else
         format.html { render :action => "new" }

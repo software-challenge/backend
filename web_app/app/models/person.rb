@@ -1,6 +1,8 @@
 require 'digest/sha1'
 
 class Person < ActiveRecord::Base
+  include ActionView::Helpers::UrlHelper
+  include ActionController::UrlWriter
   RANDOM_HASH_CHARS = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
   MINIMUM_PASSWORD_LENGTH = 6
 
@@ -16,7 +18,7 @@ class Person < ActiveRecord::Base
   validates_presence_of :password_salt
   validates_presence_of :password_hash
 
-  validates_uniqueness_of :email
+  validates_uniqueness_of :email, :message => I18n.t("messages.email_unique")
   validates_presence_of :email
   validates_format_of :email, :with => /^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i, :message => "ist keine gültige Adresse"
 
