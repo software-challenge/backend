@@ -22,16 +22,7 @@ import sc.shared.ScoreCause;
  * 
  */
 public class RenderFacade {
-	private FrameRenderer frameRenderer; // The observer gets an extra panel
-	// (shown while
-	// a AI client acts)
-
-	// private IRenderer player1; // One panel for player1 (shown at player
-	// one's
-	// turn)
-	// private IRenderer player2; // One panel for player2 (shown at player
-	// two's
-	// turn)
+	private FrameRenderer frameRenderer; 
 
 	private EPlayerId activePlayer;
 

@@ -49,7 +49,7 @@ public final class GameState implements Cloneable {
 
 	// liste der blumen
 	@XStreamImplicit(itemFieldName = "flowers")
-	private List<Flower> flowers;
+	private final List<Flower> flowers;
 
 	// liste der zur verfuegung stehenden wuerfelergebnisse
 	@XStreamImplicit(itemFieldName = "die")
@@ -212,14 +212,14 @@ public final class GameState implements Cloneable {
 	 * liefert dsie liste aller blumen
 	 */
 	public List<Flower> getAllFlowers() {
-		return flowers;
+		return flowers != null ? flowers : new LinkedList<Flower>();
 	}
 
 	/**
 	 * liefert die anzahl der blumen einen gegebenen knotens
 	 */
 	public Flower getFlowers(int nodeIndex) {
-		for (Flower flower : flowers) {
+		for (Flower flower : getAllFlowers()) {
 			if (flower.node == nodeIndex) {
 				return flower;
 			}
@@ -231,7 +231,7 @@ public final class GameState implements Cloneable {
 	 * liefert die anzahl der blumen einen gegebenen knotens
 	 */
 	public int getFlowerAmount(int nodeIndex) {
-		for (Flower flower : flowers) {
+		for (Flower flower : getAllFlowers()) {
 			if (flower.node == nodeIndex) {
 				return flower.amount;
 			}
@@ -244,7 +244,7 @@ public final class GameState implements Cloneable {
 	 */
 	public int getTotalFlowerAmount() {
 		int result = 0;
-		for (Flower flower : flowers) {
+		for (Flower flower : getAllFlowers()) {
 			result += flower.amount;
 		}
 		return result;
@@ -606,7 +606,7 @@ public final class GameState implements Cloneable {
 			// auf normalen feldern werden die blumen aufgesammelt
 			Flower flower = getFlowers(targetIndex);
 			if (flower != null) {
-				flowers.remove(flower);
+				getAllFlowers().remove(flower);
 				sheep.addFlowers(flower.amount);
 			}
 			break;
@@ -664,7 +664,7 @@ public final class GameState implements Cloneable {
 			clone.sheeps.add((Sheep) sheep.clone());
 		}
 		clone.nextSheep = nextSheep;
-		for (Flower flower : flowers) {
+		for (Flower flower : new LinkedList<Flower>()) {
 			clone.flowers.add((Flower) flower.clone());
 		}
 		clone.dice.clear();
@@ -687,7 +687,7 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * gibt an, o das spiel als beendet markeirt wurde.
+	 * gibt an, ob das spiel als beendet markeirt wurde.
 	 */
 	public boolean gameEnded() {
 		return condition != null;
