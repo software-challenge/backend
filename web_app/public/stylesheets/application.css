@@ -105,6 +105,15 @@ img {
   margin: 0 4px;
 }
 
+.actionlist li {
+  margin-left: 25px;
+  margin-top: 10px;
+}
+
+.actionlist .actions {
+  margin-top: 5px;
+}
+
 .actions {
   margin-right: -10px;
   line-height: 22px;

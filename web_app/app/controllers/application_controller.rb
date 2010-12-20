@@ -180,6 +180,18 @@ class ApplicationController < ActionController::Base
     @contest.reload
   end
 
+  def add_email_event!(person, event)
+    person.build_email_event if person.email_event.nil?
+    person.email_event.update_attributes! event => true
+    person.reload
+  end
+
+  def remove_email_event!(person, event)
+    person.build_email_event if person.email_event.nil?
+    person.email_event.update_attributes! event => false
+    person.reload
+  end
+
   def set_mailer_options
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
   end

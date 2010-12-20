@@ -2,7 +2,7 @@ class School < ActiveRecord::Base
 
   STATES = %w{Schleswig-Holstein Mecklenburg-Vorpommern Hamburg Bremen Brandenburg  Niedersachsen Berlin Sachsen-Anhalt Nordrhein-Westfalen Sachsen Thüringen Hessen Rheinland-Pfalz Saarland Bayern Baden-Württemberg}
 
-  PROBS = ["Sehr sicher", "Sicher", "Wahrscheinlich", "Vielleicht", "Eher nicht", "Sicher nicht"]
+  PROBS = ["Sicher", "Wahrscheinlich", "Vielleicht", "Eher nicht", "Sicher nicht"]
 
   belongs_to :contest
   has_many :contestants

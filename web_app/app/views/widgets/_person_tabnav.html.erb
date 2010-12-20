@@ -8,7 +8,7 @@ render_tabnav :person, :html => { :class => "tabs_tabnav" } do
     else
       t.links_to edit_contest_contestant_person_url(@contest, @contestant, @person)
     end
-    t.highlights_on :controller => "person", :action => "edit"
+    t.highlights_on :controller => "people", :action => "edit"
   end
 
   add_tab do |t|

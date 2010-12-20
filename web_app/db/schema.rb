@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101210135124) do
+ActiveRecord::Schema.define(:version => 20101220093011) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(:version => 20101210135124) do
     t.boolean  "rcv_client_matchday_warning", :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "rcv_contest_progress_info",   :default => false, :null => false
   end
 
   create_table "events", :force => true do |t|
@@ -228,6 +229,7 @@ ActiveRecord::Schema.define(:version => 20101210135124) do
     t.boolean  "hidden",               :default => false, :null => false
     t.datetime "last_seen"
     t.boolean  "logged_in",            :default => false, :null => false
+    t.boolean  "email_validated",      :default => false
     t.integer  "phone_number"
     t.string   "validation_code"
   end
@@ -286,7 +288,7 @@ ActiveRecord::Schema.define(:version => 20101210135124) do
     t.integer  "contest_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "notify_on_next_step",       :default => false, :null => false
+    t.boolean  "notify_on_next_step",       :default => false
     t.string   "contact_function",                             :null => false
   end
 

@@ -8,6 +8,7 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    notify_contest_progress_info: "Ich möchte eine E-Mail erhalten, wenn es Neuigkeiten zum Wettbewerb gibt."
     school_reg: "Vorläufige Anmeldung"
     school_reg_note: "Diese Anmeldung dient nur der vorläufigen Erfassung interessierter Schulen und ist vollkommen unverbindlich."
     not_enough_contestants_for_finale: "In diesem Wettkampf spielen nicht genug Teilnehmer mit, um ein Finale durchführen zu können!"
@@ -142,6 +143,7 @@ de:
     game_manager: "Game Manager"
     refreshed: "Aktualisiert"
     no_jobs: "Keine Aufträge vorhanden"  
+    password_info: "Bitte geben Sie hier ein von Ihnen gewünschtes Passwort ein."
     password_length: "Die Mindestlänge ist {{min_length}} Zeichen"
     password_not_change_hint: ", frei lassen um Passwort nicht zu ändern"
     email_required: "Bei der Anmeldung muss diese eMail-Adresse angegeben werden."
@@ -162,6 +164,7 @@ de:
     person_added_to_contestant: "{{actor}} hat {{person}} dem Team \"{{contestant}}\" hinzugefügt."
     person_removed_from_contestant: "{{actor}} hat {{person}} aus dem Team \"{{contestant}}\" entfernt."
   messages:
+    email_unique: "Die angegebene E-Mail Adresse ist bereits vergeben. Das bedeutet, dass bereits ein Benutzer mit dieser E-Mail Adresse im Wettkampfsystem registriert ist. Sollten Sie bereits einen Zugang zum System unter dieser E-Mail Adresse besitzen, melden Sie sich bitte an. Sollten Sie ihr Passwort vergessen haben, können Sie dort ein neues anfordern."
     destroy_trial_contest: "Möchten Sie diesen Probewettkampf wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
     email_notification_settings_updated: "Benachrichtigungseinstellungen geändert"
     no_more_friendly_matches_today: "kann heute keine Freundschaftsspiele mehr spielen"

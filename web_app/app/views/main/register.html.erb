@@ -5,15 +5,23 @@
 <% tabnav :contest do %>
   <% semantic_form_for [@contest, @person], :url => contest_register_url(@contest) do |f| %>
     <% f.inputs do %>
-      <%= f.input :first_name, :required => true %>
-      <%= f.input :last_name, :required => true %>
-      <%= f.input :email, :required => true %>
-      <% generated_password = random_password() %>
-      <%= f.input :password, :required => true, :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>"), :input_html => { :value => "", :autocomplete => "off" } %>
-      <%= f.input :phone_number, :required => false %> 
+      <% f.fields_for @person do |p| %>
+        <%= p.input :first_name, :required => true %>
+        <%= p.input :last_name, :required => true %>
+        <%= p.input :email, :required => true %>
+        <% generated_password = random_password() %>
+        <%= p.input :password, :required => true, :hint => (t("views.password_info") + "<br>" + t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>"), :input_html => { :value => "", :autocomplete => "off" } %>
+        <%= p.input :phone_number, :required => false %> 
+      <% end %>
+      <br>
+      <span>In folgenden Fällen möchte ich per E-Mail informiert werden:</span><br><br>
+      <% f.fields_for @email_event do |e| %>
+        <%= e.input :rcv_client_matchday_warning %>
+        <%= e.input :rcv_contest_progress_info %>
+      <% end %> 
     <% end %>
     <% f.buttons do %>
-      <%= f.commit_button %> 
+      <%= f.commit_button t("actions.save") %> 
       oder <%= link_to "Zurück", contest_url(@contest) %>
     <% end %>
   <% end %>
