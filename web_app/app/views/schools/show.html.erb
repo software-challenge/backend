@@ -30,6 +30,7 @@
           <%= list_item(School.human_attribute_name("contact_name"), @school.contact.first_name) %>
           <%= list_item(School.human_attribute_name("contact_last_name"), @school.contact.last_name) %>
           <%= list_item(School.human_attribute_name("contact_email"), @school.contact.email) %>
+          <%= list_item(School.human_attribute_name("contact_function"), t("acl9.roles.contestant.head")) %>
         </ol>
       </div>
     </div>

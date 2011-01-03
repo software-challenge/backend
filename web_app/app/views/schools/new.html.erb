@@ -14,18 +14,15 @@
     <div class="group content actionlist">
       Das Anmeldeverfahren läuft in 3 Schritten ab:
       <li>
-        Zunächst melden Sie Ihre Schule an. Diese Anmeldung ist absolut unverbindlich. Bitte prüfen Sie zunächst über die Suchfunktion (weiter unten), ob Ihre Schule bereits angemeldet wurde. Ist dies der Fall, brauchen Sie zunächst nichts weiter tun, bis der nächste Schritt fällig wird.
+        Zunächst melden Sie Ihre Schule an. Diese Anmeldung ist absolut unverbindlich. Bitte prüfen Sie zunächst über die Suchfunktion (weiter unten), ob Ihre Schule bereits angemeldet wurde. Ist dies der Fall, können Sie direkt mit dem nächsten Schritt weitermachen.
       </li>
       <li>
-        Im nächsten Schritt melden Sie die einzelnen Teams an, die für Ihre Schule antreten sollen. Die Anmeldung für Teams wird erst zu einem späteren Zeitpunkt als die Anmeldung für Schulen freigeschaltet. 
-        <% if @current_user.email_event.rcv_contest_progress_info %>
-          Sie werden davon per E-Mail in Kenntnis gesetzt.
-        <% end %>
+        Wenn Ihre Schule angemeldet ist, können Sie nun sofort die einzelnen Teams anmelden, die für Ihre Schule antreten sollen. Auch diese Angaben sind zunächst noch unverbindlich. Prüfen Sie auch hier bitte, ob das gewünschte Team bereits eingetragen wurde. Haben Sie die gewünschten Teams angemeldet, können Sie diese bis zum Abschluss der Anmeldephase jederzeit über die Teamanmeldung bearbeiten. Bitte aktualisieren Sie auf diesem Wege Ihre Teamdaten, wenn sich etwas ändern sollte.
       </li>
       <li>
-        Haben Sie die gewünschten Teams angemeldet, können Sie bis zu Beginn des Wettkampfes zu jeder Zeit angeben, mit welcher Wahrscheinlichkeit Ihr Team am Wettkampf teilnehmen wird. Bitte treffen Sie diese Angabe immer möglichst genau. Schließlich wird eine entgültige Wahl darüber getroffen, welche Teams tatsächlich am Wettkampf teilnehmen werden. 
+        Nach Abschluss der Anmeldephase wird schließlich eine endgültige und verbindliche Wahl darüber getroffen, welche Teams tatsächlich am Wettkampf teilnehmen werden. 
         <% if @current_user.email_event.rcv_contest_progress_info %>
-          Sie werden über das Ergebnis dieser Wahl per E-Mail informiert.
+          Sie werden über den Verlauf und das Ergebnis dieser Wahl per E-Mail informiert.
         <% end %>
       </li>
     </div>
@@ -61,7 +58,7 @@
         })
       <% end %>
       Gefundene Schulen:
-      <div style="height: 150px; overflow: scroll; overflow-x: hidden">
+      <div style="max-height: 150px; overflow: scroll; overflow-x: hidden">
         <table id="school_list" style="width: 90%">
           <colgroup width="35%" />
           <colgroup width="35%" />

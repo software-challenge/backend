@@ -1,3 +1,5 @@
-<div>
-  Dieses Jahr nehmen <b><%= @contest.contestants.ranked.count %> Teams</b> mit insgesamt <b><%= @contest.overall_member_count %></b> SchülerInnen am Wettkampf teil.
-</div>
+<% if @contest.ready? %>
+  <div>
+    Dieses Jahr nehmen <b><%= @contest.contestants.ranked.count %> Teams</b> mit insgesamt <b><%= @contest.overall_member_count %></b> SchülerInnen am Wettkampf teil.
+  </div>
+<% end %>

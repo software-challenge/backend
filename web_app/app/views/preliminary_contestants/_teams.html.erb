@@ -1,0 +1,6 @@
+<%= render :partial => "preliminary_contestants/teams_header" %> 
+  <% @school.teams.each do |team| %>
+    <%= render :partial => "preliminary_contestants/form", :locals => {:team => team} %>
+  <% end %>
+  </tbody>
+</table> 

@@ -1,0 +1,2 @@
+module PreliminaryContestantsHelper
+end

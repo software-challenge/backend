@@ -2,11 +2,12 @@ class School < ActiveRecord::Base
 
   STATES = %w{Schleswig-Holstein Mecklenburg-Vorpommern Hamburg Bremen Brandenburg  Niedersachsen Berlin Sachsen-Anhalt Nordrhein-Westfalen Sachsen Thüringen Hessen Rheinland-Pfalz Saarland Bayern Baden-Württemberg}
 
-  PROBS = ["Sicher", "Wahrscheinlich", "Vielleicht", "Eher nicht", "Sicher nicht"]
-
   belongs_to :contest
   has_many :contestants
   belongs_to :person
+  has_many :preliminary_contestants
+
+  alias :teams :preliminary_contestants
   
   validates_presence_of :contest
   validates_presence_of :name  

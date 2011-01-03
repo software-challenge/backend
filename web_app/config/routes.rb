@@ -25,7 +25,13 @@ ActionController::Routing::Routes.draw do |map|
         :restart => :post   
       }
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
-      c.resources :schools
+      c.new_team '/schools/new_team', :controller => 'schools', :action => 'new_team'
+      c.resources :schools, :member => {
+        :get_teams => :get
+      } do |school|
+        school.resources :preliminary_contestants, :as => "teams" do |prelim_contestant|
+        end
+      end
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
         :play => :post,
         :reject => :post,
