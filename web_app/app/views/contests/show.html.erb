@@ -44,15 +44,19 @@
     Was ist zu tun:
   </div>
   <div class="group content actionlist">
-    <% if not logged_in? %>
+    <% if not logged_in? and not @contest.allow_school_reg %>
       <li>
-        Bitte registrieren Sie sich hier unverbindlich, um das Wettkampfsystem nutzen zu können, insbesondere wenn Sie Interesse an der bundesweiten Software-Challenge 2012 haben und/oder Sie eine Teilnahme im Schuljahr 2011/12 erwägen.
+        Um das Wettkampfsystem nutzen zu können, müssen Sie sich zunächst anmelden. Sollten Sie bereits Zugangsdaten zu diesem Wettkampfsystem besitzen, melden Sie sich bitte hier an:
+        <% action_button do %>
+          <%= link_to "Anmelden", contest_login_url(@contest) %>
+        <% end %>
+        andernfalls registrieren Sie sich bitte zunächst unverbindlich:
         <% action_button do %>
           <%= link_to "Jetzt registrieren", contest_register_url(@contest) %>  
         <% end %>
       </li>
     <% end %>
-    <% if @contest.allow_school_reg %>
+    <% if @contest.allow_school_reg or administrator? %>
       <li>
       <% if logged_in? or administrator? %>
         Wenn Sie Interesse an der Teilnahme an diesem Wettbewerb haben, können Sie hier eine neue Schule für den Wettbewerb anmelden. Diese Anmeldung ist vollkommen unverbindlich.
@@ -71,11 +75,11 @@
       <% end %>
       </li>
     <% end %>
-    <% if (@contest.allow_team_reg and logged_in?) or administrator? %>
+    <% if (@contest.allow_school_reg and logged_in?) or administrator? %>
       <li>
-        Wenn Ihre Schule bereits angemeldet ist, können Sie für diese jetzt Teams anmelden.
+        Wenn Ihre Schule bereits angemeldet ist, können Sie für diese jetzt Teams anmelden. Auch können Sie hier bereits angemeldete Teams bearbeiten.
         <% action_button do %>
-          <%= link_to "Neues Team anmelden", new_contest_contestant_url(@contest) %>
+          <%= link_to "Teams anmelden", contest_new_team_url(@contest) %>
         <% end %>
       </li>
     <% end %>

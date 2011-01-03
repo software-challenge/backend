@@ -1,0 +1,37 @@
+<h1>
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to @school.name, contest_school_url(@contest, @school) %> /
+  Teams anmelden
+</h1>
+
+<% tabnav :school do %>
+  <div class="group frame">
+    <div class="group title">
+      Angemeldete Teams
+    </div>
+    <div id="teams" class="group content">
+      <%= render :partial => "teams" %> 
+    </div>
+  </div> 
+  <div class="group frame">
+    <div class="group title">
+      Neues Team anmelden
+    </div>
+    <div id="new_team" class="group content">
+      <%= render :partial => "teams_header" %>
+        <%= render :partial => "form", :locals => {:team => @team} %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <% javascript_tag do %>
+    function reload_teams() {
+      $.get('<%= get_teams_contest_school_url(@contest, @school) %>',
+        '',
+        function(data) {
+          $("#teams").html(data)
+        }
+      )
+    }
+  <% end %>  
+<% end %>

@@ -1,11 +1,11 @@
 class SchoolsController < ApplicationController
 
-  before_filter :fetch_school, :only => [:edit, :show, :update]
+  before_filter :fetch_school, :only => [:edit, :show, :update, :get_teams]
 
   access_control do
     default :deny
     allow :administrator
-    action :create, :new do
+    action :create, :new, :new_team, :get_teams do
       allow all
     end
     action :index do
@@ -27,6 +27,10 @@ class SchoolsController < ApplicationController
 
   def fetch_school
     @school = School.find(params[:id])
+  end
+
+  def get_teams
+    render :partial => "preliminary_contestants/teams"
   end
 
   def index

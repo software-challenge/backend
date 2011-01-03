@@ -1,0 +1,33 @@
+  <tr id="entry_<%= team.id %>">
+    <td id="name_<%= team.id %>">
+      <%= text_field_tag "team[name]", team.name %>
+    </td>
+    <td id="partprob_<%= team.id %>">
+      <%= select_tag "team[participation_probability]", options_for_select(PreliminaryContestant::PROBS.collect{|prob| [prob, prob]}, team.participation_probability) %>
+    </td>
+    <td>
+      <% if team.new_record? or @current_user.has_role?(:creator, team) or administrator? %>
+        <a href="" id="save_<%= team.id %>">Speichern</a>
+      <% end %>
+      <%= image_tag('ui/spinner.gif', :id => "spinner_#{team.id}", :style => "display: none") %>
+    </td> 
+  </tr>
+<% javascript_tag do %>
+  $(function() {
+    $("#save_<%= team.id %>").bind('click', function() {
+      $.post('<%= contest_school_preliminary_contestants_url(@contest, @school) %>',
+      '<%= team.new_record? ? "" : "id=#{team.id}" %>&team[name]=' + $("#name_<%= team.id %> input").val() + '&team[participation_probability]='+$("#partprob_<%= team.id %> select").val(),
+        function(data) {
+          reload_teams()
+        }
+      )
+      <% if team.new_record? %>
+        $("#name_<%= team.id %> input").val("")
+      <% else %>
+        $("#save_<%= team.id %>").hide()
+        $("#spinner_<%= team.id %>").show()
+      <% end %>
+      return false;
+    })
+  })
+<% end %>

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110103004257) do
+ActiveRecord::Schema.define(:version => 20110103143043) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -245,6 +245,7 @@ ActiveRecord::Schema.define(:version => 20110103004257) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "participation_probability", :null => false
   end
 
   create_table "roles", :force => true do |t|
