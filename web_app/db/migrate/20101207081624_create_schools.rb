@@ -6,7 +6,6 @@ class CreateSchools < ActiveRecord::Migration
       t.string :location, :null => false
       t.string :state, :null => false
       t.integer :estimated_team_count, :null => false
-      t.string :participation_probability, :null => false
       t.integer :person_id
       t.integer :contest_id
       t.timestamps

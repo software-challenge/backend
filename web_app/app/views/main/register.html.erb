@@ -15,7 +15,7 @@
       <% end %>
       <br>
       <% f.fields_for @email_event do |e| %>
-        <%= e.input :rcv_contest_progress_info, :label => "Ich möchte per E-Mail informiert werden, wenn es Neugikeiten zum Wettbewerb gibt." %>
+        <%= hidden_field_tag "person[email_event][rcv_contest_progress_info]", "1" %>
         <%= hidden_field_tag "person[email_event][rcv_client_matchday_warning]", "1" %>
       <% end %> 
     <% end %>

@@ -141,4 +141,21 @@ module ApplicationHelper
     end
   end
 
+  def list_item_for(object, attrib)
+    list_item object.class.human_attribute_name(attrib.to_s), object.send(attrib)
+  end
+
+  def list_item(title, value)
+    html = ""
+    html << "<li>\n"
+    html << "  <label>\n"
+    html << "    #{title}:\n"
+    html << "  </label>\n"
+    html << "  <span>\n"
+    html << "    #{value}\n"
+    html << "  </span>\n"
+    html << "</li>\n"
+    return html.html_safe!
+  end
+
 end

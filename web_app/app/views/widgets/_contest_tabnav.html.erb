@@ -74,6 +74,14 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     end
   end
 
+  if logged_in? and not current_user.schools.empty?
+    add_tab do |t|
+      t.named "Meine #{School.human_name(:count => 2)}"
+      t.links_to contest_schools_url(@contest)
+      t.highlights_on :controller => "schools", :action => "index"
+    end
+  end
+
     if (@contest.regular_phase_finished?) and ((not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator)) or (not @contest.finale.nil? and @contest.finale.has_published_lineup?))
       add_tab do |t|
         t.named Finale.human_name.gsub(" ", "&nbsp;")

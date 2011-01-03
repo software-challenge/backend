@@ -1,19 +1,43 @@
 class SchoolsController < ApplicationController
 
+  before_filter :fetch_school, :only => [:edit, :show, :update]
+
   access_control do
     default :deny
     allow :administrator
     action :create, :new do
       allow all
     end
+    action :index do
+      allow logged_in
+    end
+    action :show do 
+      allow logged_in, :if => :admin_for_school
+    end
+  end
+
+  def admin_for_school(as = nil)
+    administrator? or if as.nil?
+      current_user.has_role_for? @school
+    else
+      as.has_role_for? @school 
+    end
+  end
+  helper_method :admin_for_school
+
+  def fetch_school
+    @school = School.find(params[:id])
   end
 
   def index
-    @schools = @contest.schools 
+    if administrator?
+      @schools = @contest.schools 
+    else
+      @schools = @current_user.schools
+    end
   end 
 
   def show
-    @school = School.find(params[:id])
     respond_to do |format|
       format.html
       format.xml { render :xml => @school }
@@ -26,6 +50,7 @@ class SchoolsController < ApplicationController
       return
     end
     @school = School.new
+    @school.contact = @current_user
     respond_to do |format|
       format.html
       format.xml { render :xml => @school }
@@ -33,7 +58,6 @@ class SchoolsController < ApplicationController
   end 
 
   def edit
-    @school = School.find(params[:id])
   end
 
   def create
@@ -65,9 +89,10 @@ class SchoolsController < ApplicationController
   end
 
   def update
-    @school = School.find(params[:id])
     respond_to do |format|
-      if @school.update_attributes(params[:school])
+      success = @school.update_attributes(params[:school])
+      
+      if success
         flash[:notice] = "Die Schule \"#{@school.name}\" wurde aktualisiert."
         format.html { redirect_to contest_school_url(@contest, @school) }
         format.xml { head :ok }

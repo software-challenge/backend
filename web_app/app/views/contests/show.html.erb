@@ -69,17 +69,17 @@
             <%= link_to "Jetzt registrieren", contest_register_url(@contest) %>  
           <% end %>
       <% end %>
-
+      </li>
+    <% end %>
+    <% if (@contest.allow_team_reg and logged_in?) or administrator? %>
+      <li>
+        Wenn Ihre Schule bereits angemeldet ist, können Sie für diese jetzt Teams anmelden.
+        <% action_button do %>
+          <%= link_to "Neues Team anmelden", new_contest_contestant_url(@contest) %>
+        <% end %>
       </li>
     <% end %>
   </div>
-  <!--
-  <% if (@contest.allow_team_reg and logged_in?) or administrator? %>
-    <% action_button do %>
-      <%= link_to "Neues Team anmelden", new_contest_contestant_url(@contest) %>
-    <% end %>
-  <% end %>
-  !-->
 </div>
 
 <% end %>

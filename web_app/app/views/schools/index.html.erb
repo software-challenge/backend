@@ -1,0 +1,29 @@
+<h1>
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  Meine <%= School.human_name(:count => 2) %>
+</h1>
+
+<% tabnav :contest do %>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th><%= School.human_attribute_name("name") %></th>
+        <th><%= School.human_attribute_name("location") %></th>
+        <th><%= School.human_attribute_name("state") %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @schools.each do |school| %>
+        <tr>
+          <td><%= school.name %></td>
+          <td><%= school.location %></td>
+          <td><%= school.state %></td>
+          <td>
+            <%= link_to image_tag('actions/show.png'), [@contest, school] %> 
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table> 
+<% end %>
