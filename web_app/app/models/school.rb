@@ -14,12 +14,10 @@ class School < ActiveRecord::Base
   validates_presence_of :zipcode
   validates_presence_of :location
   validates_presence_of :state
-  validates_presence_of :participation_probability
   validates_presence_of :contact_function
   validates_presence_of :person
   validates_uniqueness_of :name, :scope => :contest_id
   validates_inclusion_of :state, :in => STATES
-  validates_inclusion_of :participation_probability, :in => PROBS
 
   def before_destroy
     person.has_no_roles_for! self

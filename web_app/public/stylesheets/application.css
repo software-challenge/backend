@@ -1,3 +1,23 @@
+div.listing ol {
+  list-style: none outside none;
+}
+
+div.listing ol li {
+  display: block;
+  margin-bottom: 1.5em;
+}
+
+div.listing ol li label {
+  display: block;
+  float: left;
+  padding-top: 0.2em;
+  width: 35%;
+}
+
+div.listing.bold ol li label {
+  font-weight: bold;
+}
+
 div.group.frame {
   background-color: #f5f5f5;
   margin-top: 25px;

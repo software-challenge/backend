@@ -4,6 +4,7 @@ class Contestant < ActiveRecord::Base
   RANKINGS = %w{beginner advanced none}
 
   belongs_to :contest
+  belongs_to :school
 
   has_many :clients, :dependent => :destroy
 

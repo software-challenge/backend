@@ -4,5 +4,85 @@
 </h1>
 
 <% tabnav :school do %>
+  <div style="margin-bottom: 15px; border: 2px solid #ccc">
+    <b><%= t("views.clue") %>: </b><%= t("views.school_reg_note") %>
+  </div> 
+  <div class="group frame">
+    <div class="group title">
+      Hinweise zum Anmeldeverfahren
+    </div>
+    <div class="group content actionlist">
+      Das Anmeldeverfahren läuft in 3 Schritten ab:
+      <li>
+        Zunächst melden Sie Ihre Schule an. Diese Anmeldung ist absolut unverbindlich. Bitte prüfen Sie zunächst über die Suchfunktion (weiter unten), ob Ihre Schule bereits angemeldet wurde. Ist dies der Fall, brauchen Sie zunächst nichts weiter tun, bis der nächste Schritt fällig wird.
+      </li>
+      <li>
+        Im nächsten Schritt melden Sie die einzelnen Teams an, die für Ihre Schule antreten sollen. Die Anmeldung für Teams wird erst zu einem späteren Zeitpunkt als die Anmeldung für Schulen freigeschaltet. 
+        <% if @current_user.email_event.rcv_contest_progress_info %>
+          Sie werden davon per E-Mail in Kenntnis gesetzt.
+        <% end %>
+      </li>
+      <li>
+        Haben Sie die gewünschten Teams angemeldet, können Sie bis zu Beginn des Wettkampfes zu jeder Zeit angeben, mit welcher Wahrscheinlichkeit Ihr Team am Wettkampf teilnehmen wird. Bitte treffen Sie diese Angabe immer möglichst genau. Schließlich wird eine entgültige Wahl darüber getroffen, welche Teams tatsächlich am Wettkampf teilnehmen werden. 
+        <% if @current_user.email_event.rcv_contest_progress_info %>
+          Sie werden über das Ergebnis dieser Wahl per E-Mail informiert.
+        <% end %>
+      </li>
+    </div>
+  </div> 
+  <div class="group frame">
+    <div class="group title">
+      Ist meine Schule bereits angemeldet?
+    </div>
+    <div class="group content">
+      Suchen Sie hier nach einer Schule um herauszufinden, ob Ihre Schule bereits für diesen Wettbewerb angemeldet wurde.<br>
+      Suche nach:
+      <input type="text" id="search" style="margin-top: 15px; margin-bottom: 10px"><br>
+      <% javascript_tag do %>
+        $(function() {
+          $("#search").keyup(function() {
+            $("#school_list tr.school").each(function(index) {
+              var str = $("td.keywords", this).html()
+              var keys = $("#search").val().split(" ")
+              var show = true
+              for (i=0; i < keys.length; i=i+1) {
+                var regexp = new RegExp(keys[i], "i")
+                if(str.match(regexp) == null) {
+                  show = false
+                }
+              }
+              if(show) {
+                $(this).show()
+              } else {
+                $(this).hide()
+              }
+            }) 
+          })
+        })
+      <% end %>
+      Gefundene Schulen:
+      <div style="height: 150px; overflow: scroll; overflow-x: hidden">
+        <table id="school_list" style="width: 90%">
+          <colgroup width="35%" />
+          <colgroup width="35%" />
+          <colgroup width="30%" />
+          <tr style="text-align: left">
+            <th><%= School.human_attribute_name("name") %></th>
+            <th><%= School.human_attribute_name("location") %></th>
+            <th><%= School.human_attribute_name("state") %></th>
+          </tr>
+          <% @contest.schools.each do |school| %>
+            <tr class="school">
+              <td class="keywords" style="display: none"><%= "#{school.name} #{school.location} #{school.state}" %></td>
+              <td><%= school.name %></td>
+              <td><%= school.location %></td>
+              <td><%= school.state %></td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <%= render :partial => "form" %>
 <% end %>

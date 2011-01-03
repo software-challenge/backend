@@ -4,6 +4,6 @@ class AddColumnContactFunctionToSchools < ActiveRecord::Migration
   end
 
   def self.down
-    remove_column :schools, :contat_function
+    remove_column :schools, :contact_function
   end
 end

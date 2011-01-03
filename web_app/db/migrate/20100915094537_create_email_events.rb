@@ -3,7 +3,7 @@ class CreateEmailEvents < ActiveRecord::Migration
     create_table :email_events do |t|
       t.string :person_id
       t.boolean :rcv_on_matchday_played, :default => false, :null => false
-      t.boolean :rcv_client_matchday_warning, :default => false, :null => false
+      t.boolean :rcv_client_matchday_warning, :default => true, :null => false
       t.timestamps
     end
   end

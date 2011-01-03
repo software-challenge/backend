@@ -61,6 +61,13 @@ class Person < ActiveRecord::Base
 
   def after_initialize
     @save_on_update ||= []
+    if self.email_event.nil?
+      self.email_event = EmailEvent.new
+    end
+  end
+  
+  def schools
+    self.roles_for(School).collect{|r| School.find(r.authorizable_id)}
   end
 
   def name

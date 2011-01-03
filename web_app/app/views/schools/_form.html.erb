@@ -1,7 +1,4 @@
 <% semantic_form_for [@contest, @school] do |f| %>
-  <div style="margin-bottom: 15px; border: 2px solid #ccc">
-    <b><%= t("views.clue") %>: </b><%= t("views.school_reg_note") %>
-  </div>  
   <% f.inputs do %>
     <div class="group frame">
       <div class="group title">
@@ -12,7 +9,6 @@
         <%= f.input :zipcode, :required => true %>
         <%= f.input :location, :required => true %>
         <%= f.input :state, :required => true, :collection => School::STATES.sort, :prompt => "Bitte wählen..." %>
-        <%= f.input :participation_probability, :required => true, :collection => School::PROBS, :prompt => "Bitte wählen..." %>
         <%= f.input :estimated_team_count, :required => true, :input_html => {:size => 3} %>
       </div>
     </div>
@@ -26,7 +22,7 @@
             <%= School.human_attribute_name :contact_name %>: 
           </label>
           <span style="vertical-align: middle">
-            <%= @current_user.first_name %>
+            <%= @school.contact.first_name %>
           </span>
         </li>
         <li class="string">
@@ -34,7 +30,7 @@
             <%= School.human_attribute_name :contact_last_name %>: 
           </label>
           <span style="vertical-align: middle">
-            <%= @current_user.last_name %>
+            <%= @school.contact.last_name %>
           </span>
         </li>
         <li class="string">
@@ -42,7 +38,7 @@
             <%= School.human_attribute_name :contact_email %>: 
           </label>
           <span style="vertical-align: middle">
-            <%= @current_user.email %>
+            <%= @school.contact.email %>
           </span>
         </li>
         <% functs = ["head", "teacher", "pupil"].collect{|func| [t("acl9.roles.contestant.#{func}"), func]} %>
@@ -51,11 +47,6 @@
         <li id="school_contact_function_other_input" class="string" style="display: none">
           <label for=school_contact_function_other"></label>
           <%= text_field_tag :school_contact_function_other, "", :name => "contact_function_other" %>
-        </li>
-        <li id="notify_on_contest_progress_input" class="boolean optional">
-          <label for="notify_on_contest_progress">
-            <%= check_box_tag :notify_on_contest_progress, 1, true, :style => "vertical-align: middle" %> <%= t "views.notify_contest_progress_info" %> 
-          </label>
         </li>
       </div>
     </div>
