@@ -198,7 +198,7 @@ class Person < ActiveRecord::Base
   end
 
   def validate_code(code) 
-    if code == self.validation_code 
+    if self.validation_code and code == self.validation_code 
       self.validation_code = nil
       success = self.save
       self.reload

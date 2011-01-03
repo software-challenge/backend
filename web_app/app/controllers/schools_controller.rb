@@ -25,7 +25,7 @@ class SchoolsController < ApplicationController
       redirect_to contest_url(@contest)
       return
     end
-    @school = School.create
+    @school = School.new
     respond_to do |format|
       format.html
       format.xml { render :xml => @school }

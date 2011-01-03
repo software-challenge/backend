@@ -33,7 +33,7 @@ module Acl9
         an_obj  = args.pop.values.first
         has_any = args.detect { |role| user.has_role?(role, an_obj) }
       else
-        has_any = args.detect { |role| user.has_role?(role) }
+        has_any = args.detect { |role| user.has_role?(role) || user == role }
       end
 
       has_any ? yield(:block) : ''

@@ -3,9 +3,11 @@
 </h1>
 
 <% tabnav :contest do %>
-  <% if @person.validated? %>
-    Ihr Zugang wurde erfolgreich aktiviert.
-  <% else %>
-    Der Aktivierungscode war ungültig. Ihr Zugang konnte nich aktiviert werden.
-  <% end %>
+  <div class="notification">
+    <% if @person.validated? %>
+      Ihr Zugang wurde erfolgreich aktiviert.
+    <% else %>
+      Der Aktivierungscode war ungültig. Ihr Zugang konnte nich aktiviert werden.
+    <% end %>
+  </div>
 <% end %>

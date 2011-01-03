@@ -1,20 +1,26 @@
 <% semantic_form_for(@contestant ? [@contest, @contestant, @person] : [@contest, @person]) do |f| %>
   <% f.inputs do %>
-    <% show_to :administrator, :teacher, :tutor, :helper, @person do %>
+    <% show_to :administrator, :teacher, :tutor, :helper, @current_user do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
-    <%= f.input :email, :required => true, :hint => t("views.email_required") %>
+    <% if administrator? or @person.new_record? %>
+      <%= f.input :email, :required => true, :hint => t("views.email_required") %>
+    <% end %>
     <%= f.input :phone_number, :required => false %>
-    <% generated_password = random_password() %>
-    <%= f.input :password, :required => @person.new_record?,
-      :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + (@person.new_record? ?  "" : t("views.password_not_change_hint")) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>."),
+    <% if administrator? or @person.new_record? %>
+      <% generated_password = random_password() %>
+      <%= f.input :password, :required => @person.new_record?,
+        :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + (@person.new_record? ?  "" : t("views.password_not_change_hint")) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>."),
       :input_html => { :value => "", :autocomplete => "off" } %>
-    <li class="boolean optional">
-      <label for="send_notification">
-        <%= check_box_tag "send_notification" %>
-        <%=t "labels.send_notification" %>
-      </label>
-    </li>
+    <% end %>
+    <% show_to :administrator do %>
+      <li class="boolean optional">
+        <label for="send_notification">
+          <%= check_box_tag "send_notification" %>
+          <%=t "labels.send_notification" %>
+        </label>
+      </li>
+    <% end %>
     <% end %>
 
     <% show_to :administrator do %>

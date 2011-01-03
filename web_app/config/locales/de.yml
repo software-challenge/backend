@@ -227,6 +227,8 @@ de:
     no_user_with_adress: "Es existiert kein Benutzer mit dieser E-Mail Adresse"
     admin_password_cannot_be_changed: "Passwörter für Administratoren können nicht automatisch geändert werden."
   actions:
+    new_account: "Noch nicht registriert? Jetzt Zugang erstellen."
+    register: "Registrieren"
     destroy_trial_contest: "Probewettkampf löschen"
     create_trial_contest: "Probewettkampf erstellen"
     refresh: "Aktualisieren"

@@ -39,6 +39,10 @@ form.formtastic fieldset ol li.string input, form.formtastic fieldset ol li.pass
   width: inherit;
 }
 
+input[type=checkbox] {
+  vertical-align: middle;
+}
+
 form.formtastic fieldset ol li p.inline-errors {
   display: inline-block;
   margin: 0;

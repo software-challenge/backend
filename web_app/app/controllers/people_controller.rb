@@ -97,6 +97,19 @@ class PeopleController < ApplicationController
   def validate_code
     @person = Person.find(params[:id])
     success = @person.validate_code(params[:code])
+    respond_to do |format|
+      if success
+        @person.logged_in = true
+        @person.last_seen = Time.now
+        session[:user_id] = @person.id
+        @person.save
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Ihr Zugang wurde erfolgreich aktiviert. Sie wurden automatisch eingeloggt und können die Funktionen des Wettkampfsystems nun nutzen.", :links => [["Zur Hauptseite", contest_url(@contest)], ["Jetzt unverbindlich eine Schule anmelden", new_contest_school_url(@contest)]] }}
+        format.xml { render :xml => @person }  
+      else
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Der Zugangscode ist ungültig. Ihr Zugang konnte daher nicht aktiviert werden.", :links => [["Zur Hauptseite", contest_url(@contest)]] }}
+        format.xml { render :xml => @person }
+      end
+    end
   end
 
   # GET /people
@@ -205,6 +218,10 @@ class PeopleController < ApplicationController
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
     unless administrator? or current_user == @person
       person_params.reject! {|k,v| k != "teams"}
+    end
+    unless administrator?
+      person_params[:email] = @person.email
+      person_params[:password] = ""
     end
 
     success = @person.update_attributes(person_params)
