@@ -10,6 +10,8 @@
 <% end %>
 
 </div>
+<h4>Geben Sie hier Ihre Zugangsdaten ein:</h4>
+<br />
 <% form_tag contest_login_url(@contest) do %>
   <% fields_for :user do |f| %>
     <%= f.label :email, (t "labels.email_adress") %>
@@ -19,4 +21,5 @@
   <% end %>
   <%= submit_tag (t "actions.login"), :disable_with => t("actions.check") %>
 <% end %><br>
+<%= link_to t("actions.new_account"), contest_register_url(@contest) %><br>
 <%= link_to t("actions.password_lost_send_new"), contest_new_password_url(@contest) %> 

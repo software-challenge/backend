@@ -58,7 +58,7 @@ de:
         contact_last_name: Nachname der Kontaktperson
         contact_email: E-Mail Adresse der Kontaktperson
         contact_function: Funktion der Kontaktperson
-        estimated_team_count: Voraussichtliche Anzahl Teams
+        estimated_team_count: Voraussichtliche Anzahl der Teams
       client:
         file: ZIP-Datei
       contest:
@@ -69,7 +69,7 @@ de:
         active: Wettbewerb ist aktiv
       email_event:
         rcv_on_matchday_played: Ein Spieltag wurde gespielt
-        rcv_client_matchday_warning: Einer meiner Computerspieler ist nicht für den kommenden Spieltag bereit
+        rcv_client_matchday_warning: In einem Ihrer Teams gibt es noch keinen spielbereiten Computerspieler für den nahenden Spieltag.
         rcv_contest_progress_info: Es gibt Neuigkeiten zum Wettbewerb
       person:
         first_name: Vorname

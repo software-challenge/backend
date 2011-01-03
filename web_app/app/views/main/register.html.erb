@@ -14,10 +14,9 @@
         <%= p.input :phone_number, :required => false %> 
       <% end %>
       <br>
-      <span>In folgenden Fällen möchte ich per E-Mail informiert werden:</span><br><br>
       <% f.fields_for @email_event do |e| %>
-        <%= e.input :rcv_client_matchday_warning %>
-        <%= e.input :rcv_contest_progress_info %>
+        <%= e.input :rcv_contest_progress_info, :label => "Ich möchte per E-Mail informiert werden, wenn es Neugikeiten zum Wettbewerb gibt." %>
+        <%= hidden_field_tag "person[email_event][rcv_client_matchday_warning]", "1" %>
       <% end %> 
     <% end %>
     <% f.buttons do %>
