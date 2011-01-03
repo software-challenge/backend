@@ -3,6 +3,14 @@ class FakeCheck < ActiveRecord::Base
   has_many :fragments, :class_name => "CheckResultFragment"
   has_many :clients, :through => :fake_test
  
+  def compatible_with_game?(game_identifier)
+    defined?(compatible_games).nil? ? true : compatible_games.include?(game_identifier)
+  end
+
+  def compatible_with_contest?(contest)
+    compatible_with_game? contest.game_definition.game_identifier
+  end
+  
   def done?
    fragments.length > 0
   end
