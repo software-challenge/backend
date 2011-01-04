@@ -1,3 +1,6 @@
+<% if local_assigns[:new_record] and new_record %>
+  <%= ((local_assigns[:errors] and errors) ? "false\n" : "true\n") %>
+<% end %>
 <% if team.new_record? or @current_user.has_role?(:creator, team) or administrator? %>
   <tr id="entry_<%= team.id %>">
     <td id="name_<%= team.id %>">
@@ -39,23 +42,31 @@
         '<%= team.new_record? ? "" : "id=#{team.id}" %>&team[name]=' + $("#name_<%= team.id %> input").val() + '&team[participation_probability]='+$("#partprob_<%= team.id %> select").val(),
           function(data) {
             <% if team.new_record? %>
-              $("#insertHere").before(data) 
-            <% else %>
-              $("#entry_<%= team.id %>").replaceWith(data)
-              $("#saved_<%= team.id %>").fadeIn(250)
-              setTimeout(function() {
-                $("#saved_<%= team.id %>").fadeOut(250)
-              }, 1500)
+              var lines = data.split('\n')
+              while(lines[0] == "") {
+                lines.splice(0,1)
+              }
+              var success = lines[0].trim()
+              lines.splice(0,1)
+              data = lines.join('\n')
+              if(success == "true") {
+                $("#insertHere").before(data) 
+                $("#spinner_<%= team.id %>").fadeOut(250)
+              } else {
+            <% end %>
+                $("#entry_<%= team.id %>").replaceWith(data)
+                $("#saved_<%= team.id %>").fadeIn(250)
+                setTimeout(function() {
+                  $("#saved_<%= team.id %>").fadeOut(250)
+                }, 1500)
+            <% if team.new_record? %>
+              }
             <% end %>
             init_<%= team.id %>()
           }
         )
-        <% if team.new_record? %>
-          $("#name_<%= team.id %> input").val("")
-        <% else %>
-          $("#save_<%= team.id %>").hide()
-          $("#spinner_<%= team.id %>").show()
-        <% end %>
+        $("#save_<%= team.id %>").hide()
+        $("#spinner_<%= team.id %>").show()
         return false;
       })
     }
