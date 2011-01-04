@@ -20,8 +20,11 @@ class School < ActiveRecord::Base
   validates_inclusion_of :state, :in => STATES
 
   def before_destroy
-    person.has_no_roles_for! self
-    person.save
+    Role.find(:all, :conditions => {:authorizable_type => "School", :authorizable_id => self.id}).each do |role|
+      role.destroy
+    end
+    #person.has_no_roles_for! self
+    #person.save
   end
 
   def contact=(p)

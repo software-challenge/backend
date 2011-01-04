@@ -9,4 +9,10 @@ class PreliminaryContestant < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :school_id 
   validates_inclusion_of :participation_probability, :in => PROBS
 
+  def before_destroy
+    Role.find(:all, :conditions => {:authorizable_type => "PreliminaryContestant", :authorizable_id => self.id}).each do |role|
+      role.destroy
+    end
+  end
+
 end
