@@ -29,19 +29,23 @@ class PreliminaryContestantsController < ApplicationController
       # Create new
       @team = PreliminaryContestant.create(params[:team])
       @team.school = @school
-      @current_user.has_role!(:creator, @team)
       success = @team.save
+      if success
+        @current_user.has_role!(:creator, @team)
+      end
     end
     unless success
       errors = @team.errors
-      @team.reload
+      if params[:id]
+        @team.reload
+      end
     end
     respond_to do |format|
       format.html {
         redirect_to new_contest_school_preliminary_contestant_url(@contest, @school)
       }
       format.js {
-        render :partial => "form", :locals => {:team => @team, :errors => errors}
+        render :partial => "form", :locals => {:team => @team, :errors => errors, :new_record => !params[:id]}
       }
     end
   end
