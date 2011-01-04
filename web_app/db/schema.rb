@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110103143043) do
+ActiveRecord::Schema.define(:version => 20110103231055) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -285,16 +285,15 @@ ActiveRecord::Schema.define(:version => 20110103143043) do
   end
 
   create_table "schools", :force => true do |t|
-    t.string   "name",                 :null => false
-    t.integer  "zipcode",              :null => false
-    t.string   "location",             :null => false
-    t.string   "state",                :null => false
-    t.integer  "estimated_team_count", :null => false
+    t.string   "name",             :null => false
+    t.integer  "zipcode",          :null => false
+    t.string   "location",         :null => false
+    t.string   "state",            :null => false
     t.integer  "person_id"
     t.integer  "contest_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "contact_function",     :null => false
+    t.string   "contact_function", :null => false
   end
 
   create_table "score_fragments", :force => true do |t|

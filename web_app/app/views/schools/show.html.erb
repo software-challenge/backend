@@ -4,6 +4,7 @@
 </h1>
 
 <% tabnav :school do %>
+  <h2><%= @school.name %></h2>
   <div class="group frame">
     <div class="group title">   
       Schuldaten
@@ -15,11 +16,11 @@
           <%= list_item_for(@school, :zipcode) %> 
           <%= list_item_for(@school, :location) %>
           <%= list_item_for(@school, :state) %>
-          <%= list_item_for(@school, :estimated_team_count) %>
         </ol>     
       </div>
     </div>
   </div>
+  <% if admin_for_school? %>
   <div class="group frame">
     <div class="group title">
       Kontaktdaten
@@ -30,9 +31,10 @@
           <%= list_item(School.human_attribute_name("contact_name"), @school.contact.first_name) %>
           <%= list_item(School.human_attribute_name("contact_last_name"), @school.contact.last_name) %>
           <%= list_item(School.human_attribute_name("contact_email"), @school.contact.email) %>
-          <%= list_item(School.human_attribute_name("contact_function"), t("acl9.roles.contestant.head")) %>
+          <%= list_item(School.human_attribute_name("contact_function"), @school.contact_function) %>
         </ol>
       </div>
     </div>
   </div>
+  <% end %>
 <% end %>

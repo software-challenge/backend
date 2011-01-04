@@ -7,23 +7,26 @@
 <% tabnav :school do %>
   <div class="group frame">
     <div class="group title">
-      Angemeldete Teams
+      Hinweise zur Anmeldung
     </div>
-    <div id="teams" class="group content">
-      <%= render :partial => "teams" %> 
-    </div>
-  </div> 
-  <div class="group frame">
-    <div class="group title">
-      Neues Team anmelden
-    </div>
-    <div id="new_team" class="group content">
-      <%= render :partial => "teams_header" %>
-        <%= render :partial => "form", :locals => {:team => @team} %>
-        </tbody>
-      </table>
+    <div class="group content">
+      <p>
+      Hier können Sie Teams für die ausgewählte Schule anmelden. Bis zum Abschluss der Anmeldungsphase können Sie
+      hier auch jederzeit die Einstellungen der Teams, die Sie bereits angemeldet haben, ändern.
+      Auch Teams, die von anderen Personen für diese Schule angemeldet wurden, können Sie hier sehen (allerdings nicht verändern). Versuchen Sie bitte, die Einstellungen für die angemeldeten Teams immer möglichst aktuell zu halten.
+      </p>
+      <p class="gap">
+      Wenn Sie alle Teams angemeldet haben, können Sie diese Seite wieder verlassen. Die vorläufige Anmeldung ist damit abgeschlossen.
+      </p>
     </div>
   </div>
+  <h2 class="medium-gap">Angemeldete Teams</h2>
+  <%= render :partial => "teams" %> 
+  <h2 class="huge-gap">Neues Team anmelden</h2>
+  <%= render :partial => "teams_header" %>
+    <%= render :partial => "form", :locals => {:team => @team} %>
+    </tbody>
+  </table>
   <% javascript_tag do %>
     function reload_teams() {
       $.get('<%= get_teams_contest_school_url(@contest, @school) %>',

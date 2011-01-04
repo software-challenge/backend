@@ -65,9 +65,17 @@ class Person < ActiveRecord::Base
       self.email_event = EmailEvent.new
     end
   end
-  
-  def schools
-    self.roles_for(School).collect{|r| School.find(r.authorizable_id)}
+
+  def other_schools_for_contest(contest)
+    schools = []
+    contest.schools.collect{|s| s.teams}.flatten.each do |team|
+      schools << team.school if self.has_role?(:creator, team)  and not self.has_role_for?(team.school)
+    end
+    schools.uniq
+  end
+
+  def schools_for_contest(contest)
+    self.roles_for(School).collect{|r| School.find(r.authorizable_id)}.reject{|s| s.contest != contest}
   end
 
   def name

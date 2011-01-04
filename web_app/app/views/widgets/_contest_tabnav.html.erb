@@ -74,7 +74,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     end
   end
 
-  if logged_in? and not current_user.schools.empty?
+  if logged_in? and not current_user.schools_for_contest(@contest).empty?
     add_tab do |t|
       t.named "Meine #{School.human_name(:count => 2)}"
       t.links_to contest_schools_url(@contest)

@@ -33,6 +33,7 @@ class PreliminaryContestantsController < ApplicationController
   end
 
   def new
+    redirect_to contest_url(@contest) unless logged_in?
     @team = PreliminaryContestant.new
   end
 
