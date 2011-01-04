@@ -15,14 +15,20 @@
     </thead>
     <tbody>
       <% @schools.each do |school| %>
+        <%= render :partial => "school", :locals => {:school => school} %>
+      <% end %>
+      <% unless @other_schools.empty? %>
+        <tr class="medium-gap">
+          <td>&nbsp;</td>
+        </tr>
         <tr>
-          <td><%= school.name %></td>
-          <td><%= school.location %></td>
-          <td><%= school.state %></td>
-          <td>
-            <%= link_to image_tag('actions/show.png'), [@contest, school] %> 
+          <td colspan="4">
+            <b>Die folgenden Schulen haben Sie nicht selbst angemeldet, aber ihnen Teams hinzugefügt</b>
           </td>
         </tr>
+        <% @other_schools.each do |school| %>
+          <%= render :partial => "school", :locals => {:school => school} %>
+        <% end %>
       <% end %>
     </tbody>
   </table> 

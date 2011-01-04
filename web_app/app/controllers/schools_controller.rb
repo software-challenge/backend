@@ -12,18 +12,18 @@ class SchoolsController < ApplicationController
       allow logged_in
     end
     action :show do 
-      allow logged_in, :if => :admin_for_school
+      allow logged_in
     end
   end
 
-  def admin_for_school(as = nil)
+  def admin_for_school?(as = nil)
     administrator? or if as.nil?
       current_user.has_role_for? @school
     else
       as.has_role_for? @school 
     end
   end
-  helper_method :admin_for_school
+  helper_method :admin_for_school?
 
   def fetch_school
     @school = School.find(params[:id])
@@ -37,7 +37,8 @@ class SchoolsController < ApplicationController
     if administrator?
       @schools = @contest.schools 
     else
-      @schools = @current_user.schools
+      @schools = @current_user.schools_for_contest(@contest)
+      @other_schools = @current_user.other_schools_for_contest(@contest)
     end
   end 
 
@@ -49,7 +50,7 @@ class SchoolsController < ApplicationController
   end
 
   def new
-    unless @contest.allow_school_reg or administrator?
+    unless (@contest.allow_school_reg or administrator?) and logged_in?
       redirect_to contest_url(@contest)
       return
     end
@@ -83,7 +84,7 @@ class SchoolsController < ApplicationController
     end
     respond_to do |format|
       if success
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet", :links => [["Weiter", contest_url(@contest)]] } }
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet", :links => [["Ich möchte jetzt Teams für diese Schule anmelden", new_contest_school_preliminary_contestant_url(@contest, @school)], ["Ich möchte zurück zur Hauptseite", contest_url(@contest)]] } }
         format.xml { render :xml => @school }
       else
         format.html { render :action => "new" }

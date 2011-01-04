@@ -4,60 +4,54 @@
 </h1>
 
 <% tabnav :contest do %>
-  <div class="group frame">
-    <div class="group title">
-      Schule auswählen
-    </div>
-    <div class="group content">
-      Suchen Sie hier nach der Schule, für die Sie ein Team anmelden möchten.<br>
-      Suche nach:
-      <input type="text" id="search" style="margin-top: 15px; margin-bottom: 10px"><br>
-      <% javascript_tag do %>
-        $(function() {
-          $("#search").keyup(function() {
-            $("#school_list tr.school").each(function(index) {
-              var str = $("td.keywords", this).html()
-              var keys = $("#search").val().split(" ")
-              var show = true
-              for (i=0; i < keys.length; i=i+1) {
-                var regexp = new RegExp(keys[i], "i")
-                if(str.match(regexp) == null) {
-                  show = false
-                }
-              }
-              if(show) {
-                $(this).show()
-              } else {
-                $(this).hide()
-              }
-            }) 
-          })
-        })
+  <h2>Schule auswählen</h2>
+  Suchen Sie hier nach der Schule, für die Sie ein Team anmelden möchten.<br>
+  Suche nach:
+  <input type="text" id="search" style="margin-top: 15px; margin-bottom: 10px"><br>
+  <% javascript_tag do %>
+    $(function() {
+      $("#search").keyup(function() {
+        $("#school_list tr.school").each(function(index) {
+          var str = $("td.keywords", this).html()
+          var keys = $("#search").val().split(" ")
+          var show = true
+          for (i=0; i < keys.length; i=i+1) {
+            var regexp = new RegExp(keys[i], "i")
+            if(str.match(regexp) == null) {
+              show = false
+            }
+          }
+          if(show) {
+            $(this).show()
+          } else {
+            $(this).hide()
+          }
+        }) 
+      })
+    })
+  <% end %>
+  Gefundene Schulen:
+  <div style="max-height: 150px; overflow: scroll; overflow-x: hidden">
+    <table id="school_list" style="width: 90%">
+      <colgroup width="30%" />
+      <colgroup width="25%" />
+      <colgroup width="25%" />
+      <colgroup width="20%" />    
+      <tr style="text-align: left">
+        <th><%= School.human_attribute_name("name") %></th>
+        <th><%= School.human_attribute_name("location") %></th>
+        <th><%= School.human_attribute_name("state") %></th>
+        <th></th>
+      </tr>
+      <% @contest.schools.each do |school| %>
+        <tr class="school">
+          <td class="keywords" style="display: none"><%= "#{school.name} #{school.location} #{school.state}" %></td>
+          <td><%= school.name %></td>
+          <td><%= school.location %></td>
+          <td><%= school.state %></td>
+          <td><%= link_to "Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, school) %></td> 
+        </tr>
       <% end %>
-      Gefundene Schulen:
-      <div style="max-height: 150px; overflow: scroll; overflow-x: hidden">
-        <table id="school_list" style="width: 90%">
-          <colgroup width="30%" />
-          <colgroup width="25%" />
-          <colgroup width="25%" />
-          <colgroup width="20%" />    
-          <tr style="text-align: left">
-            <th><%= School.human_attribute_name("name") %></th>
-            <th><%= School.human_attribute_name("location") %></th>
-            <th><%= School.human_attribute_name("state") %></th>
-            <th></th>
-          </tr>
-          <% @contest.schools.each do |school| %>
-            <tr class="school">
-              <td class="keywords" style="display: none"><%= "#{school.name} #{school.location} #{school.state}" %></td>
-              <td><%= school.name %></td>
-              <td><%= school.location %></td>
-              <td><%= school.state %></td>
-              <td><%= link_to "Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, school) %></td> 
-            </tr>
-          <% end %>
-        </table>
-      </div>
-    </div>
+    </table>
   </div>
 <% end %>

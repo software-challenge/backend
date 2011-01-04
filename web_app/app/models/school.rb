@@ -11,7 +11,6 @@ class School < ActiveRecord::Base
   
   validates_presence_of :contest
   validates_presence_of :name  
-  validates_presence_of :estimated_team_count
   validates_presence_of :zipcode
   validates_presence_of :location
   validates_presence_of :state

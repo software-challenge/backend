@@ -9,7 +9,6 @@
         <%= f.input :zipcode, :required => true %>
         <%= f.input :location, :required => true %>
         <%= f.input :state, :required => true, :collection => School::STATES.sort, :prompt => "Bitte wählen..." %>
-        <%= f.input :estimated_team_count, :required => true, :input_html => {:size => 3} %>
       </div>
     </div>
     <div class="group frame" style="margin-bottom: 10px">
@@ -41,7 +40,7 @@
             <%= @school.contact.email %>
           </span>
         </li>
-        <% functs = ["head", "teacher", "pupil"].collect{|func| [t("acl9.roles.contestant.#{func}"), func]} %>
+        <% functs = ["head", "teacher", "pupil"].collect{|func| t("acl9.roles.contestant.#{func}")} %>
         <% functs << "Andere" %>
         <%= f.input :contact_function, :required => true, :collection => functs, :prompt => "Bitte wählen..." %> 
         <li id="school_contact_function_other_input" class="string" style="display: none">

@@ -39,18 +39,15 @@
     <% end %>
   <% end %>
 
-<div class="group frame">
-  <div class="group title">
-    Was ist zu tun:
-  </div>
-  <div class="group content actionlist">
+  <h2 class="large-gap">Was ist zu tun:</h2>
+  <div class="actionlist">
     <% if not logged_in? and not @contest.allow_school_reg %>
       <li>
         Um das Wettkampfsystem nutzen zu können, müssen Sie sich zunächst anmelden. Sollten Sie bereits Zugangsdaten zu diesem Wettkampfsystem besitzen, melden Sie sich bitte hier an:
         <% action_button do %>
           <%= link_to "Anmelden", contest_login_url(@contest) %>
         <% end %>
-        andernfalls registrieren Sie sich bitte zunächst unverbindlich:
+        <br>andernfalls registrieren Sie sich bitte zunächst unverbindlich:
         <% action_button do %>
           <%= link_to "Jetzt registrieren", contest_register_url(@contest) %>  
         <% end %>
@@ -65,7 +62,7 @@
         <% end %>
       <% else %>
           Um eine Schule für den Wettbewerb anzumelden, müssen Sie sich zunächst selbst im Wettkampfsystem anmelden. Sofern Sie bereits Zugangsdaten zu diesem Wettkampfsystem erhalten haben (z.B. bei einer früheren Registrierung bzw. der Teilnahme an der Software-Challenge 2010 oder später), melden Sie sich bitte zunächst hier an:
-          <% action_button do %>
+          <% action_button :style => "margin-bottom: 10px" do %>
             <%= link_to "Anmelden", contest_login_url(@contest) %> 
           <% end %>
           anderenfalls registrieren Sie sich bitte zunächst unverbindlich:

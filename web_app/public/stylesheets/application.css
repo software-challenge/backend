@@ -1,3 +1,19 @@
+.gap {
+  margin-top: 10px;
+}
+
+.medium-gap {
+  margin-top: 25px;
+}
+
+.large-gap {
+  margin-top: 35px;
+}
+
+.huge-gap {
+  margin-top: 50px;
+}
+
 div.listing ol {
   list-style: none outside none;
 }
