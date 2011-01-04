@@ -7,22 +7,20 @@
 <% tabnav :school do %>
   <div class="group frame">
     <div class="group title">
-      Hinweise zur Anmeldung
+      <%= t("views.new_team_notes") %>
     </div>
     <div class="group content">
       <p>
-      Hier können Sie Teams für die ausgewählte Schule anmelden. Bis zum Abschluss der Anmeldungsphase können Sie
-      hier auch jederzeit die Einstellungen der Teams, die Sie bereits angemeldet haben, ändern.
-      Auch Teams, die von anderen Personen für diese Schule angemeldet wurden, können Sie hier sehen (allerdings nicht verändern). Versuchen Sie bitte, die Einstellungen für die angemeldeten Teams immer möglichst aktuell zu halten.
+        <%= t("views.new_team_note_1") %>
       </p>
       <p class="gap">
-      Wenn Sie alle Teams angemeldet haben, können Sie diese Seite wieder verlassen. Die vorläufige Anmeldung ist damit abgeschlossen.
+        <%= t("views.new_team_note_2") %>
       </p>
     </div>
   </div>
-  <h2 class="medium-gap">Angemeldete Teams</h2>
+  <h2 class="medium-gap"><%= t("views.new_team_registered") %></h2>
   <%= render :partial => "teams" %> 
-  <h2 class="huge-gap">Neues Team anmelden</h2>
+  <h2 class="huge-gap"><%= t("views.new_team") %></h2>
   <%= render :partial => "teams_header" %>
     <%= render :partial => "form", :locals => {:team => @team} %>
     </tbody>
@@ -33,6 +31,15 @@
         '',
         function(data) {
           $("#teams").html(data)
+        }
+      )
+    }
+
+    function reload_team(team_id, team_url) {
+      $.get(team_url,
+        '',
+        function(data) {
+          $("#entry_"+team_id).replaceWith(data)
         }
       )
     }

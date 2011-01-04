@@ -7,17 +7,47 @@
       <%= select_tag "team[participation_probability]", options_for_select(PreliminaryContestant::PROBS.collect{|prob| [prob, prob]}, team.participation_probability) %>
     </td>
     <td>
-      <a href="" id="save_<%= team.id %>">Speichern</a>
+      <a href="" id="save_<%= team.id %>" style="display: none">Speichern</a>
+      <span id="saved_<%= team.id %>" style="display: none">
+        <% if local_assigns[:errors] and errors %>
+          <%= image_tag('state/warning.png', :class => "middle") %>&nbsp;
+          <span style="color: #c00"><%= "#{errors.first[0].humanize} #{errors.first[1]}" %></span>
+        <% else %>
+          <%= image_tag('state/ok.png', :class => "middle") %>&nbsp;
+          Gespeichert
+        <% end %>
+      </span>
       <%= image_tag('ui/spinner.gif', :id => "spinner_#{team.id}", :style => "display: none") %>
     </td> 
   </tr>
   <% javascript_tag do %>
     $(function() {
+      init_<%= team.id %>()
+    })
+
+    function init_<%= team.id %>() {
+      $("#name_<%= team.id %> input").keyup(function() {
+        $("#save_<%= team.id %>").fadeIn(250)
+      })
+
+      $("#partprob_<%= team.id %> select").change(function() {
+        $("#save_<%= team.id %>").fadeIn(250)
+      })
+
       $("#save_<%= team.id %>").bind('click', function() {
         $.post('<%= contest_school_preliminary_contestants_url(@contest, @school) %>',
         '<%= team.new_record? ? "" : "id=#{team.id}" %>&team[name]=' + $("#name_<%= team.id %> input").val() + '&team[participation_probability]='+$("#partprob_<%= team.id %> select").val(),
           function(data) {
-            reload_teams()
+            <% if team.new_record? %>
+              $("#insertHere").before(data) 
+            <% else %>
+              $("#entry_<%= team.id %>").replaceWith(data)
+              $("#saved_<%= team.id %>").fadeIn(250)
+              setTimeout(function() {
+                $("#saved_<%= team.id %>").fadeOut(250)
+              }, 1500)
+            <% end %>
+            init_<%= team.id %>()
           }
         )
         <% if team.new_record? %>
@@ -28,7 +58,7 @@
         <% end %>
         return false;
       })
-    })
+    }
   <% end %>
 <% else %>
   <tr>

@@ -5,7 +5,7 @@ class School < ActiveRecord::Base
   belongs_to :contest
   has_many :contestants
   belongs_to :person
-  has_many :preliminary_contestants
+  has_many :preliminary_contestants, :dependent => :destroy
 
   alias :teams :preliminary_contestants
   

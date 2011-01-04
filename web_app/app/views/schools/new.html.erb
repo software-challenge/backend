@@ -9,31 +9,35 @@
   </div> 
   <div class="group frame">
     <div class="group title">
-      Hinweise zum Anmeldeverfahren
+      <%= t("views.new_school_notes") %>
     </div>
     <div class="group content actionlist">
-      Das Anmeldeverfahren läuft in 3 Schritten ab:
+      <%= t("views.new_school_note_intro") %>
       <li>
-        Zunächst melden Sie Ihre Schule an. Diese Anmeldung ist absolut unverbindlich. Bitte prüfen Sie zunächst über die Suchfunktion (weiter unten), ob Ihre Schule bereits angemeldet wurde. Ist dies der Fall, können Sie direkt mit dem nächsten Schritt weitermachen.
+        <%= t("views.new_school_note_step_1") %>
       </li>
       <li>
-        Wenn Ihre Schule angemeldet ist, können Sie nun sofort die einzelnen Teams anmelden, die für Ihre Schule antreten sollen. Auch diese Angaben sind zunächst noch unverbindlich. Prüfen Sie auch hier bitte, ob das gewünschte Team bereits eingetragen wurde. Haben Sie die gewünschten Teams angemeldet, können Sie diese bis zum Abschluss der Anmeldephase jederzeit über die Teamanmeldung bearbeiten. Bitte aktualisieren Sie auf diesem Wege Ihre Teamdaten, wenn sich etwas ändern sollte.
+        <%= t("views.new_school_note_step_2") %>
       </li>
       <li>
-        Nach Abschluss der Anmeldephase wird schließlich eine endgültige und verbindliche Wahl darüber getroffen, welche Teams tatsächlich am Wettkampf teilnehmen werden. 
+        <%= t("views.new_school_note_step_3") %>
         <% if @current_user.email_event.rcv_contest_progress_info %>
-          Sie werden über den Verlauf und das Ergebnis dieser Wahl per E-Mail informiert.
+          <%= t("views.new_school_note_step_3_email") %>
         <% end %>
       </li>
+      <p class="medium-gap">
+        <%= t("views.new_school_note_last") %>
+      </p>
     </div>
   </div> 
   <div class="group frame">
     <div class="group title">
-      Ist meine Schule bereits angemeldet?
+      <%= t("views.new_school_already_registered") %>
     </div>
     <div class="group content">
-      Suchen Sie hier nach einer Schule um herauszufinden, ob Ihre Schule bereits für diesen Wettbewerb angemeldet wurde.<br>
-      Suche nach:
+      <%= t("views.new_school_search_school") %>
+      <br>
+      <%= t("views.search_for") %>
       <input type="text" id="search" style="margin-top: 15px; margin-bottom: 10px"><br>
       <% javascript_tag do %>
         $(function() {
@@ -57,7 +61,7 @@
           })
         })
       <% end %>
-      Gefundene Schulen:
+      <%= t("views.new_school_search_school_found") %>
       <div style="max-height: 150px; overflow: scroll; overflow-x: hidden">
         <table id="school_list" style="width: 90%">
           <colgroup width="30%" />
@@ -76,7 +80,7 @@
               <td><%= school.name %></td>
               <td><%= school.location %></td>
               <td><%= school.state %></td>
-              <td><%= link_to "Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, school) %></td> 
+              <td><%= link_to t("views.new_teams"), new_contest_school_preliminary_contestant_url(@contest, school) %></td> 
             </tr>
           <% end %>
         </table>

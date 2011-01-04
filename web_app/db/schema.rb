@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110103231055) do
+ActiveRecord::Schema.define(:version => 20110104141038) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(:version => 20110103231055) do
   create_table "email_events", :force => true do |t|
     t.string   "person_id"
     t.boolean  "rcv_on_matchday_played",      :default => false, :null => false
-    t.boolean  "rcv_client_matchday_warning", :default => false, :null => false
+    t.boolean  "rcv_client_matchday_warning", :default => true,  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "rcv_contest_progress_info",   :default => true,  :null => false
