@@ -408,6 +408,7 @@ de:
        index_for_contestant: "Begegnungen: Teamübersicht"
        matches: "Begegnungen"
     contests:
+      phases: "Phasen"
       my_schools: "Meine Schulen"
       edit_schedule: "Terminplan bearbeiten"
       show: "Wettkämpfe"
