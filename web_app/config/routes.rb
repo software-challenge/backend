@@ -7,8 +7,6 @@ ActionController::Routing::Routes.draw do |map|
     #  :as => "wettbewerbe",
     #  :path_prefix => '/administration',
     #  :name_prefix => 'admin_'
-     
-
 
     tmap.resources :contests,
       :as => "wettbewerb",
@@ -19,7 +17,9 @@ ActionController::Routing::Routes.draw do |map|
       :update_schedule => :post,
       :trial_contest => :get,
       :create_trial_contest => :post,
-      :destroy_trial_contest => :post
+      :destroy_trial_contest => :post,
+      :phases => :get,
+      :move_phase => :post
     } do |c|
       c.resources :fake_tests, :as =>"plagiat-tests", :member =>{
         :restart => :post   

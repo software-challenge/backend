@@ -5,7 +5,7 @@
    <%= t "views.welcome_to_admin" %>
   </p>
   <p style="margin-top: 15px">
-    <strong style="margin-bottom: 5px">Letzte Ereignisse</strong><br>
+    <strong style="margin-bottom: 5px">Letzte Ereignisse in diesem Wettkampf</strong><br>
     <% @contest.events.first(25).each do |event| %>
       <% if event.valid_event? %>
         <% if event.path.nil? %>

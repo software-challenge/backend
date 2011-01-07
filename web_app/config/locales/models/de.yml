@@ -5,6 +5,9 @@ de:
         invalid_zip: "Die ZIP-Datei war fehlerhaft oder durch ein Passwort geschützt."
 
     models:
+      preliminary_contestant:
+        one: Team
+        other: Teams
       school:
         one: Schule
         other: Schulen
@@ -65,6 +68,12 @@ de:
         game_definition: Spiel
         name: Name
         active: Wettbewerb ist aktiv
+        phases:
+          initialization: Einrichtung
+          registration: Vorläufige Anmeldung
+          recall: Erinnerung an die Anmeldung
+          validation: Verbindliche Anmeldung
+          contest: Wettkampf
       email_event:
         rcv_on_matchday_played: Ein Spieltag wurde gespielt
         rcv_client_matchday_warning: In einem Ihrer Teams gibt es noch keinen spielbereiten Computerspieler für den nahenden Spieltag.

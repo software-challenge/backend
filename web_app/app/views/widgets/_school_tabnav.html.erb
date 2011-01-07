@@ -19,7 +19,7 @@ render_tabnav :school, :html => { :class => "tabs_tabnav" } do
   end if @school.new_record?
 
   add_tab do |t|
-    t.named "Team hinzufügen"
+    t.named t("views.new_teams")
     t.links_to new_contest_school_preliminary_contestant_url(@contest, @school)
     t.highlights_on :controller => "preliminary_contestants", :action => "new"
     t.highlights_on :controller => "preliminary_contestants", :action => "create"

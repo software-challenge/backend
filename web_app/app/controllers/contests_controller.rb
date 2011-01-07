@@ -182,6 +182,34 @@ class ContestsController < ApplicationController
     end
   end
 
+  def phases
+    
+  end
+
+  def move_phase
+    direction = params[:direction]
+    index = Contest::PHASES.find_index @contest.phase
+    if direction == "forth"
+      if index < Contest::PHASES.count - 1
+        index += 1
+      else
+        flash[:error] = "Keine weitere Phase vorhanden"
+      end
+    else
+      if index > 0
+        index -= 1
+      else
+        flash[:error] = "Bereits in der ersten Phase"
+      end
+    end
+    @contest.phase = Contest::PHASES[index]
+    if @contest.respond_to? "phase_moved_#{direction}_to_#{@contest.phase}"
+      @contest.send "phase_moved_#{direction}_to_#{@contest.phase}"
+    end
+    @contest.save!
+    redirect_to phases_contest_url(@contest) 
+  end
+
   protected
 
   def read_multipart_param(data, key, count = 3)

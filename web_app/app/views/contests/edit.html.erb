@@ -1,7 +1,10 @@
-
-<% tabnav :administration do %>
 <h1>
   <%= @contest.name_was %>
 </h1>
-  <%= render :partial => "form" %>
+
+<% tabnav :administration do %>
+  <h2><%= t("actions.edit") %></h2>
+  <% tabnav :edit_contest do %>
+    <%= render :partial => "form" %>
+  <% end %>
 <% end %>

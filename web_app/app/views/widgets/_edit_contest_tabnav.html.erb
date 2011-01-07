@@ -1,0 +1,17 @@
+<% 
+render_tabnav :edit_contst, :html => {:class => "tabs_tabnav"} do 
+  
+  add_tab do |t|
+    t.named t("views.dates")
+    t.links_to edit_contest_url(@contest)
+    t.highlights_on :controller => "contests", :action => "edit"
+  end
+
+  add_tab do |t|
+    t.named "Phasen"
+    t.links_to phases_contest_url(@contest)
+    t.highlights_on :controller => "contests", :action => "phases"
+  end
+
+end
+%>
