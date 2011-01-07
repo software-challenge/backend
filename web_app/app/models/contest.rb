@@ -1,4 +1,7 @@
 class Contest < ActiveRecord::Base
+  PHASES = ["initialization", "registration", "recall", "validation", "contest"]
+
+  validates_inclusion_of :phase, :in => PHASES
   validates_presence_of :name
   validates_presence_of :subdomain
   validates_presence_of :test_contestant
@@ -22,6 +25,14 @@ class Contest < ActiveRecord::Base
 
   def overall_member_count
     contestants.visible.without_testers.ranked.all.sum(&:overall_member_count)  
+  end
+
+  def allow_school_reg
+    self.phase == "registration" or self.phase == "recall"
+  end
+
+  def is_past_phase?(phase)
+    Contest::PHASES.find_index(phase) <= Contest::PHASES.find_index(self.phase)
   end
 
   def prepare_finale

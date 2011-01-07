@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110104141038) do
+ActiveRecord::Schema.define(:version => 20110107131314) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -77,10 +77,9 @@ ActiveRecord::Schema.define(:version => 20110104141038) do
     t.datetime "updated_at"
     t.string   "game_definition"
     t.string   "subdomain"
-    t.boolean  "play_automatically", :default => false, :null => false
+    t.boolean  "play_automatically", :default => false,            :null => false
     t.integer  "trial_contest_id"
-    t.boolean  "allow_team_reg"
-    t.boolean  "allow_school_reg"
+    t.string   "phase",              :default => "initialization"
   end
 
   create_table "delayed_jobs", :force => true do |t|

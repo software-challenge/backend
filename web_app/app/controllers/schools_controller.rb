@@ -36,6 +36,7 @@ class SchoolsController < ApplicationController
   def index
     if administrator?
       @schools = @contest.schools 
+      @other_schools = []
     else
       @schools = @current_user.schools_for_contest(@contest)
       @other_schools = @current_user.other_schools_for_contest(@contest)

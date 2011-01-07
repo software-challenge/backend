@@ -29,6 +29,8 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
     t.named t("titles.contests.show")
     t.links_to contest_contests_url(@contest)
     t.highlights_on :controller => "contests", :action => "index"
+    t.highlights_on :controller => "contests", :action => "edit"
+    t.highlights_on :controller => "contests", :action => "phases"
   end
 
   add_tab do |t|

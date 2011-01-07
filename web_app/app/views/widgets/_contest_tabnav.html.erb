@@ -25,7 +25,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       t.links_to contest_edit_schedule_url(@contest)
       t.disable! unless @contest.ready? or administrator?
       t.highlights_on :controller => "contests", :action => "edit_schedule"
-    end
+    end if @contest.phase == "contest"
  # end
 
   add_tab do |t|
@@ -33,7 +33,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to contest_contestants_url(@contest)
     t.highlights_on :controller => "contestants", :action => "index"
-  end
+  end if @contest.phase == "contest"
 
   add_tab do |t|
     t.named t("views.my") + " " + Contestant.human_name(:count => 2)
@@ -55,7 +55,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.links_to contest_standings_url(@contest)
     t.disable! unless @contest.last_played_matchday
     t.highlights_on :controller => "contests", :action => "standings"
-  end
+  end if @contest.phase == "contest"
 
   add_tab do |t|
     t.named t("titles.results")
@@ -64,7 +64,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.links_to contest_results_url(@contest)
     t.disable! unless @contest.last_played_matchday
     t.highlights_on :controller => "contests", :action => "results"
-  end
+  end if @contest.phase == "contest"
 
   if logged_in? and current_user.is_member_of_a_team?(@contest)
     add_tab do |t|
@@ -74,9 +74,10 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     end
   end
 
-  if logged_in? and not current_user.schools_for_contest(@contest).empty?
+  if (logged_in? and not (current_user.schools_for_contest(@contest).empty? and current_user.other_schools_for_contest(@contest).empty?)) or administrator?
     add_tab do |t|
-      t.named "Meine #{School.human_name(:count => 2)}"
+      begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if not administrator?
+      begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if administrator?
       t.links_to contest_schools_url(@contest)
       t.highlights_on :controller => "schools", :action => "index"
     end
@@ -94,7 +95,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       t.named Contest.human_attribute_name("trial_contest")
       t.links_to trial_contest_contest_url(@contest)
       t.highlights_on :controller => "contests", :action => "trial_contest"
-    end
+    end if @contest.phase == "contest"
   end
 
   if @contest.is_trial_contest?

@@ -1,0 +1,51 @@
+<h1>
+  <%= @contest.name %>
+</h1>
+
+<% tabnav :administration do %>
+  <h2><%= t("actions.edit") %></h2>
+  <% tabnav :edit_contest do %>
+  <center>
+  <% Contest::PHASES.each_with_index do |phase,index| %>
+    <% if index > 0 %>
+      <% if @contest.phase == phase %>
+        <%= image_tag 'ui/arrow_down.png', :id => "down", :style => "margin: 15px" %>
+        <%= link_to image_tag('actions/destroy.png', :style => "margin: 15px"), move_phase_contest_url(@contest, :direction => "back"), :id => "undo", :title => "Eine Phase zurück", :style => "display: none", :method => :post %>
+        <% javascript_tag do %>
+          $(function() {
+            $("#down").bind('mouseenter', function() {
+              $("#down").hide()
+              $("#undo").fadeIn(150)
+            }) 
+            $("#undo").bind('mouseleave', function() {
+              $("#undo").hide()
+              $("#down").fadeIn(150)
+            })
+          })
+        <% end %>
+      <% elsif Contest::PHASES[Contest::PHASES.find_index(phase) - 1] == @contest.phase %>
+        <%= link_to image_tag('ui/arrow_down.png', :style => "margin: 15px"), move_phase_contest_url(@contest, :direction => "forth"), :title => "Eine Phase vor", :method => :post %>
+      <% else %>
+        <%= image_tag 'ui/arrow_down.png', :style => "margin: 15px; opacity: 0.5; filter:alpha(opacity=50)" %>
+      <% end %>
+    <% end %>
+    <% 
+      if @contest.phase == phase 
+        color = "#0c0"
+      elsif @contest.is_past_phase?(phase)
+        color = "#000"
+      else
+        color = "#777"
+      end
+    %>
+    <div class="group frame" style="width: 50%; color: <%= color %>; border: 1px solid <%= color %>; margin: 0px; padding: 5px">
+      <div class="group content">
+        <h3>
+          <%= t("activerecord.attributes.contest.phases.#{phase}") %>
+        </h3>
+      </div>
+    </div>
+  <% end %>   
+</center>
+<% end %>
+<% end %>

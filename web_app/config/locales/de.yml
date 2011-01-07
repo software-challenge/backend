@@ -8,6 +8,8 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    all: "Alle"
+    dates: "Daten"
     new_school_notes: "Hinweise zum Anmeldeverfahren"
     new_school_note_intro: "Das Anmeldeverfahren läuft in 3 Schritten ab:"
     new_school_note_step_1: "Zunächst melden Sie Ihre Schule an. Diese Anmeldung ist absolut unverbindlich. Bitte prüfen Sie zunächst über die Suchfunktion (weiter unten), ob Ihre Schule bereits angemeldet wurde. Ist dies der Fall, können Sie direkt mit dem nächsten Schritt weitermachen."
