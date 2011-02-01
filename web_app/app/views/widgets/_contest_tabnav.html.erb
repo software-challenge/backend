@@ -74,7 +74,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     end
   end
 
-  if (logged_in? and not (current_user.schools_for_contest(@contest).empty? and current_user.other_schools_for_contest(@contest).empty?)) or administrator?
+  if ((logged_in? and not (current_user.schools_for_contest(@contest).empty? and current_user.other_schools_for_contest(@contest).empty?)) or administrator?) and @contest.phase != "contest"
     add_tab do |t|
       begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if not administrator?
       begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if administrator?
@@ -90,7 +90,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       end
     end
 
-  if (administrator? or (logged_in? and current_user.is_member_of_a_team?(@contest) and not @contest.trial_contest.nil?)) and not @contest.is_trial_contest?
+  if (administrator? or (logged_in? and current_user.is_member_of_a_team?(@contest) and @contest.allow_trial_registration)) and not @contest.is_trial_contest?
     add_tab do |t|
       t.named Contest.human_attribute_name("trial_contest")
       t.links_to trial_contest_contest_url(@contest)

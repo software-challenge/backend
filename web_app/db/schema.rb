@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110107131314) do
+ActiveRecord::Schema.define(:version => 20110201180601) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -62,13 +62,14 @@ ActiveRecord::Schema.define(:version => 20110107131314) do
     t.datetime "updated_at"
     t.integer  "score_id"
     t.integer  "current_client_id"
-    t.boolean  "tester",               :default => false,  :null => false
-    t.boolean  "hidden",               :default => false,  :null => false
-    t.string   "location",             :default => "",     :null => false
-    t.integer  "overall_member_count", :default => 0,      :null => false
-    t.boolean  "disqualified",         :default => false
-    t.string   "ranking",              :default => "none", :null => false
+    t.boolean  "tester",                       :default => false,  :null => false
+    t.boolean  "hidden",                       :default => false,  :null => false
+    t.string   "location",                     :default => "",     :null => false
+    t.integer  "overall_member_count",         :default => 0,      :null => false
+    t.boolean  "disqualified",                 :default => false
+    t.string   "ranking",                      :default => "none", :null => false
     t.integer  "school_id"
+    t.boolean  "participate_at_trial_contest", :default => false,  :null => false
   end
 
   create_table "contests", :force => true do |t|
@@ -77,9 +78,10 @@ ActiveRecord::Schema.define(:version => 20110107131314) do
     t.datetime "updated_at"
     t.string   "game_definition"
     t.string   "subdomain"
-    t.boolean  "play_automatically", :default => false,            :null => false
+    t.boolean  "play_automatically",       :default => false,            :null => false
     t.integer  "trial_contest_id"
-    t.string   "phase",              :default => "initialization"
+    t.string   "phase",                    :default => "initialization"
+    t.boolean  "allow_trial_registration", :default => false,            :null => false
   end
 
   create_table "delayed_jobs", :force => true do |t|

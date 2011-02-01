@@ -18,6 +18,8 @@ ActionController::Routing::Routes.draw do |map|
       :trial_contest => :get,
       :create_trial_contest => :post,
       :destroy_trial_contest => :post,
+      :register_for_trial_contest => :post,
+      :set_allow_trial_registration => :post,
       :phases => :get,
       :move_phase => :post
     } do |c|

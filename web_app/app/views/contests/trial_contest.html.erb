@@ -1,24 +1,70 @@
+<% show_to :administrator do %>
+  <div id="actions">
+  <% link_to set_allow_trial_registration_contest_url(@contest, :allow => !@contest.allow_trial_registration), :method => :post do %>
+    <% if @contest.allow_trial_registration %>
+      <%= image_tag('actions/deny.png') %>
+      Anmeldung blockieren
+    <% else %>
+      <%= image_tag('actions/publish.gif') %>
+      Anmeldung erlauben
+    <% end %>
+  <% end %>
+  </div>
+<% end %>
+
 <h1>
   <%= @contest.name %> / <%= Contest.human_attribute_name "trial_contest" %>
 </h1>
 
 <% tabnav :contest do %>
-  <p style="margin-bottom: 10px">
-    <%= t "views.no_trial_contest_yet" %>
-  </p>
+  <% if @current_user.teams.count > 0 %>
+    <div style="margin-bottom: 45px">
+      <h2>Teams für den Probewettkampf anmelden</h2>
+      <div class="group frame" style="margin-bottom: 20px">
+        <div class="group title"><%= t("views.clue") %></div>
+        <div class="group content">
+          Vor dem eigentlichen Wettkampf gibt es einen kleinen Probewettkampf, der aus 3
+          Spieltagen besteht. Mit diesem Probewettkampf soll allein die grundsätzliche
+          Funktionsfähigkeit des Wettkampfsystems und der beteiligten Computerspieler
+          geprüft werden. Damit diese Prüfung aussagekräftig wird, sollten möglichst
+          viele Teams am Probewettkampf teilnehmen, auch wenn die Teilnahme freiwillig ist
+          und die Ergebnisse beim späteren Wettkampf völlig unberücksichtigt bleiben. 
+        </div>
+      </div>
+      <div style="margin-bottom: 20px">
+        Folgende Teams für die Teilnahme anmelden. Wenn zu Beginn des Probewettkampfes diese Option gewählt
+        und ein Computerspieler aktiviert ist, nimmt dieser am Probewettkampf teil. 
+      </div>
+      <% form_tag register_for_trial_contest_contest_url(@contest), :method => :post do %>      
+        <% @current_user.teams.for_contest(@contest).each do |team| %>
+          <%= hidden_field_tag "contestants[#{team.name}]", 0 %>
+          <%= check_box_tag "contestants[#{team.name}]", 1, team.participate_at_trial_contest %>
+          <%= team.name %><br>
+        <% end %><br>
+        <%= submit_tag "Abschicken" %>
+      <% end %>
+    </div>
+  <% end %>
 
-  <p style="margin-bottom: 20px">
-    <b><%= t "views.clue" %>:</b> <%= t "views.new_trial_contest" %>
-  </p>
+  <% show_to :administrator do %> 
+    <h2>Probewettkampf erstellen</h2>
+    <p style="margin-bottom: 10px">
+      <%= t "views.no_trial_contest_yet" %>
+    </p>
 
-  <fieldset>
-    <legend><%= t "actions.create_trial_contest" %></legend>
-    <% form_for :trial_contest, :url => create_trial_contest_contest_url(@contest) do |f| %>
-      <% @contest.contestants.each do |con| %>
-        <%= check_box_tag "trial_contest[contestants][#{con.id}]", 0, false %> <%= con.name %><br>
-      <% end %>  
-      <br> 
-      <%= submit_tag t("actions.create_trial_contest") %>
-    <% end %> 
-  </fieldset>
+    <p style="margin-bottom: 20px">
+      <b><%= t "views.clue" %>:</b> <%= t "views.new_trial_contest" %>
+    </p>
+
+    <fieldset>
+      <legend><%= t "actions.create_trial_contest" %></legend>
+      <% form_for :trial_contest, :url => create_trial_contest_contest_url(@contest) do |f| %>
+        <% @contest.contestants.each do |con| %>
+          <%= check_box_tag "trial_contest[contestants][#{con.id}]", 0, con.participate_at_trial_contest %> <%= con.name %><br>
+        <% end %>  
+        <br> 
+        <%= submit_tag t("actions.create_trial_contest") %>
+      <% end %> 
+    </fieldset>
+  <% end %>
 <% end %>

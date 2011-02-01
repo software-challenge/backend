@@ -41,6 +41,14 @@
 
   <h2 class="large-gap">Was ist zu tun:</h2>
   <div class="actionlist">
+    <% if logged_in? and @current_user.is_member_of_a_team?(@contest) and @contest.allow_trial_registration %>
+      <li>
+        Sie können Ihr Team jetzt für die Teilnahme an einem Probewettkampf anmelden. Genaueres hier:
+        <% action_button do %>
+          <%= link_to "Probewettkampf", trial_contest_contest_url(@contest) %>
+        <% end %>
+      </li>
+    <% end %>
     <% if not logged_in? and not @contest.allow_school_reg %>
       <li>
         Um das Wettkampfsystem nutzen zu können, müssen Sie sich zunächst anmelden. Sollten Sie bereits Zugangsdaten zu diesem Wettkampfsystem besitzen, melden Sie sich bitte hier an:

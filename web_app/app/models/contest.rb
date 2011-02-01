@@ -10,8 +10,8 @@ class Contest < ActiveRecord::Base
   validates_format_of :subdomain, :with => /\A[a-z0-9-]*\Z/
   validates_uniqueness_of :subdomain
 
-  has_many :schools
-  has_many :preliminary_contestants, :dependent => :destroy
+  has_many :schools, :dependent => :destroy
+  has_many :preliminary_contestants, :through => :schools
   has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
   has_many :contestants, :conditions => { :tester => false }, :dependent => :destroy
   has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }, :dependent => :destroy

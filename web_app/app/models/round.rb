@@ -68,8 +68,7 @@ class Round < ActiveRecord::Base
     raise "result must not be nil" unless result
     raise "result (#{result.count}) must have same size as there are slots (#{slots.count})" if result.count != slots.count
    
-    job_logger.info "Round finished: #{self}. Updating scores."
-    puts "Round finished"
+    job_logger.info "Round finished: ##{self.id}. Updating scores."
 
     Round.transaction do
       slots.each_with_index do |slot,index|

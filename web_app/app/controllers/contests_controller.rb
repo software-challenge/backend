@@ -8,6 +8,10 @@ class ContestsController < ApplicationController
       allow all
     end
 
+    actions :trial_contest, :register_for_trial_contest do
+      allow all
+    end
+
   end
 
   # GET /contests
@@ -176,10 +180,26 @@ class ContestsController < ApplicationController
   end
 
   def trial_contest
-    if @contest.trial_contest.nil?
-    else
+    unless @contest.trial_contest.nil?
       redirect_to contest_url(@contest.trial_contest)
     end
+  end
+
+  def register_for_trial_contest
+    contestants = params[:contestants];
+    contestants.each do |team,i|
+      contestant = Contestant.find_by_name(team)
+      contestant.participate_at_trial_contest = i
+      contestant.save!
+    end
+    redirect_to trial_contest_contest_url(@contest)
+  end
+
+  def set_allow_trial_registration
+    allow = params[:allow]
+    @contest.allow_trial_registration = allow
+    @contest.save!
+    redirect_to trial_contest_contest_url(@contest)
   end
 
   def phases
