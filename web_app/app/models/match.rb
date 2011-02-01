@@ -135,7 +135,6 @@ class Match < ActiveRecord::Base
       end
       puts "Match finished"
     else
-      #count = rounds.find_all{|r| r.played?}.count
       count = rounds.played.count
       job_logger.info "#{count}/#{rounds.count} rounds finished for match #{self}."
     end
