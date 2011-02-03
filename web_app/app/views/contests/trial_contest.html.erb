@@ -32,13 +32,13 @@
         </div>
       </div>
       <div style="margin-bottom: 20px">
-        Folgende Teams für die Teilnahme anmelden. Wenn zu Beginn des Probewettkampfes diese Option gewählt
-        und ein Computerspieler aktiviert ist, nimmt dieser am Probewettkampf teil. 
+        Voraussetzung für die Teilnahme eines Teams am Probewettkampf ist, dass zu Beginn dieses Probewettkampfes das Team hier ausgewählt und ein Computerspieler dieses Teams aktiviert ist.<br><br>
+        Bitte wählen Sie Ihre Teams aus, die am Probewettkampf teilnehmen sollen:
       </div>
       <% form_tag register_for_trial_contest_contest_url(@contest), :method => :post do %>      
         <% @current_user.teams.for_contest(@contest).each do |team| %>
-          <%= hidden_field_tag "contestants[#{team.name}]", 0 %>
-          <%= check_box_tag "contestants[#{team.name}]", 1, team.participate_at_trial_contest %>
+          <%= hidden_field_tag "contestants[#{team.id}]", 0 %>
+          <%= check_box_tag "contestants[#{team.id}]", 1, team.participate_at_trial_contest %>
           <%= team.name %><br>
         <% end %><br>
         <%= submit_tag "Abschicken" %>

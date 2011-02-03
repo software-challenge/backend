@@ -188,7 +188,7 @@ class ContestsController < ApplicationController
   def register_for_trial_contest
     contestants = params[:contestants];
     contestants.each do |team,i|
-      contestant = Contestant.find_by_name(team)
+      contestant = Contestant.find(team)
       contestant.participate_at_trial_contest = i
       contestant.save!
     end
