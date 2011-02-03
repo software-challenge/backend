@@ -203,6 +203,7 @@ class Person < ActiveRecord::Base
 
   def before_save
     logger.debug "saving with admin = #{@should_be_admin.inspect}"
+    self.email = self.email.downcase
     if !@administrator.nil? and current_user and current_user.has_role? :administrator
       if @administrator
         self.has_role! :administrator

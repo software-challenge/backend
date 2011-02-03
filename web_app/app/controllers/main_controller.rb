@@ -76,7 +76,7 @@ class MainController < ApplicationController
   end
 
   def do_login
-    email = params[:user][:email]
+    email = params[:user][:email].downcase
     password = params[:user][:password]
     begin
       person = Person.find_by_email(email)
