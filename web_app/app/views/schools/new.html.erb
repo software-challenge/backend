@@ -74,7 +74,7 @@
             <th><%= School.human_attribute_name("state") %></th>
             <th></th>
           </tr>
-          <% @contest.schools.each do |school| %>
+          <% @contest.schools.sort_by(&:name).each do |school| %>
             <tr class="school">
               <td class="keywords" style="display: none"><%= "#{school.name} #{school.location} #{school.state}" %></td>
               <td><%= school.name %></td>
