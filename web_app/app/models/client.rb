@@ -11,6 +11,7 @@ class Client < ActiveRecord::Base
   has_one :test_match, :class_name => "ClientMatch", :as => :set, :dependent => :destroy
   has_many :comments, :dependent => :destroy
   has_and_belongs_to_many :fake_tests
+  has_many :match_slots
 
   has_attached_file :file
 
@@ -84,7 +85,7 @@ class Client < ActiveRecord::Base
     #FIXME: Use helper method
     foldername = 
       case match.type.to_s
-      when "LegaueMatch", "FinaleMatch"
+      when "LeagueMatch", "FinaleMatch"
         "match"
       when "CustomMatch"
         "custom"
@@ -96,6 +97,7 @@ class Client < ActiveRecord::Base
     return File.exists?(File.join(ENV['CLIENT_LOGS_FOLDER'], self.id.to_s, foldername, params[:match].id.to_s, params[:round].id.to_s, "0.log"))
   end
 
+  
 
   def status
     if test_match and test_match.played?
@@ -163,8 +165,16 @@ class Client < ActiveRecord::Base
   def has_fake_test_against_client?(client)
     fake_tests.inject(false){|t,ft| t |= ft.clients.member? Client.all.first}
   end
-      
-  protected
+  
+  def played_matchdays
+    played_matchdays = Matchday.find(:all, :conditions => ["contest_id = ? AND played_at IS NOT NULL", contest.id])
+    matchdays_played_at = played_matchdays.select do |md|
+       md.client_played?(self)
+    end
+    matchdays_played_at
+  end    
+ 
+ protected
 
   def guess_main_file!
     regex = POTENTIAL_FILE_EXTENSIONS.collect do |ext|
@@ -194,5 +204,5 @@ class Client < ActiveRecord::Base
     self.main_file_entry = result
     save!
   end
-   
+  
 end

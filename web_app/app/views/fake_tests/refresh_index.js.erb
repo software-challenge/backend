@@ -1,0 +1,7 @@
+<% old_states = session[:ft_states] %>
+<% @fake_tests.each_with_index do |ft,i| %>
+  <% if ft.state != old_states[i] %>
+    $("#fake_test_<%= ft.id %>  td.state").replaceWith("<td class='state' title='<%= msg_for_state(ft.state) %>'><%= (image_for_state(ft.state).gsub "\"", "'").html_safe! %></td>")
+  <% end %>
+<% end %>
+<% session[:ft_states] = @fake_tests.collect{|ft| ft.state} %>

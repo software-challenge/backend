@@ -43,6 +43,8 @@ de:
     receive_email_when: "In folgenden Fällen möchte ich per E-Mail benachrichtigt werden:"
     no_matches_planned: "Es stehen keine Begegnungen an."
     contestant_ranking: "In welcher Rangliste soll das Team aufgelistet werden?"
+    date: "Datum"
+    finale: "Finale"
     ranking:
       all: "Alle"
       none: "Außer Konkurrenz"
@@ -183,6 +185,11 @@ de:
     person_added_to_contestant: "{{actor}} hat {{person}} dem Team \"{{contestant}}\" hinzugefügt."
     person_removed_from_contestant: "{{actor}} hat {{person}} aus dem Team \"{{contestant}}\" entfernt."
   messages:
+    states:
+      finished: "Erfolgreich beendet" 
+      idle: "Wird aktuell ausgeführt"
+      error: "Es ist ein Fehler aufgetreten!"
+      ready: "Wurde noch nicht gestartet oder wartet auf Ausführung!"
     email_unique: "Die angegebene E-Mail-Adresse ist bereits vergeben. Das bedeutet, dass bereits ein Benutzer mit dieser E-Mail-Adresse im Wettkampfsystem registriert ist. Sollten Sie bereits einen Zugang zum System unter dieser E-Mail-Adresse besitzen, melden Sie sich bitte an. Sollten Sie Ihr Passwort vergessen haben, können Sie dort ein neues anfordern."
     destroy_trial_contest: "Möchten Sie diesen Probewettkampf wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
     email_notification_settings_updated: "Benachrichtigungseinstellungen geändert"

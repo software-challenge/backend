@@ -1,0 +1,19 @@
+<div id="actions">
+  <% link_to new_contest_fake_test_suite_url(@contest) do %>
+    <%= image_tag('actions/add.png') %> Neue Testaufstellung
+  <% end %>
+  <% link_to contest_whitelist_entries_url(@contest) do %>
+    <%= image_tag('actions/whitelist.png') %> Whitelist
+  <% end %>
+</div>
+
+
+<h1> 
+  <%= link_to @contest.name, contest_url(@contest) %> / 
+  Plagiat-Test-Aufstellungen
+</h1>
+
+<% tabnav :administration do %> 
+  <%= render :partial => 'list', :locals => {:fake_test_suites => @fake_test_suites}%>
+  <%= periodically_call_remote(:frequency => 20, :url => refresh_index_contest_fake_test_suite_url(@contest, :id => 0), :method => :get) %>
+<% end %>

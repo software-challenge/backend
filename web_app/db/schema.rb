@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110201180601) do
+ActiveRecord::Schema.define(:version => 20110206142641) do
 
   create_table "check_result_fragments", :force => true do |t|
     t.integer "fake_check_id"
@@ -126,14 +126,23 @@ ActiveRecord::Schema.define(:version => 20110201180601) do
     t.string   "type",         :default => "FakeCheck"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "finished_at"
+  end
+
+  create_table "fake_test_suites", :force => true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "contest_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "fake_tests", :force => true do |t|
     t.integer  "job_id"
-    t.string   "name"
-    t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "fake_test_suite_id"
+    t.datetime "started_at"
   end
 
   create_table "finales", :force => true do |t|
@@ -312,6 +321,20 @@ ActiveRecord::Schema.define(:version => 20110201180601) do
     t.string   "cause"
     t.string   "error_message",   :default => ""
     t.string   "adjusted_cause"
+  end
+
+  create_table "whitelist_entries", :force => true do |t|
+    t.integer  "whitelist_id"
+    t.string   "filename"
+    t.string   "checksum"
+    t.string   "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "whitelists", :force => true do |t|
+    t.integer "contest_id"
+    t.text    "description"
   end
 
 end

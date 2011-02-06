@@ -1,15 +1,21 @@
-<div id="actions">
-  <% link_to new_contest_fake_test_url(@contest) do %>
-    <%= image_tag('actions/add.png') %> Neuer Plagiat-Test
-  <% end %>
-</div>
-
-
 <h1> 
   <%= link_to @contest.name, contest_url(@contest) %> / 
-  <%= link_to "Plagiat-Tests", contest_fake_tests_url(@contest) %>
+  <%= link_to "Plagiat-Test-Aufstellungen", contest_fake_test_suites_url(@contest) %> / 
+  <%= if @fake_test_suite.name then @fake_test_suite.name else "Aufstellung Nr. #{@fake_test_suite.id}" end %>
 </h1>
-
-<% tabnav :administration do %> 
-  <%= render :partial => 'list', :locals => {:fake_tests => FakeTest.all.select{|ft| ft.clients.first.contest == @contest}}%>
+<% tabnav :administration do %>
+  <% if @fake_test_suite.name or @fake_test_suite.description %>
+    <h2>Infos</h2>
+      <% unless @fake_test_suite.name.nil? %>
+       <h3> Name: </h3>
+       <%= @fake_test_suite.name %>
+      <% end %>
+      <% unless @fake_test_suite.description.nil? or @fake_test_suite.description.length == 0%>
+       <h3> Beschreibung: </h3>
+       <%= @fake_test_suite.description %>
+      <% end %>
+   <% end %>
+  <h2>Aufstellung</h2>
+  <%= render :partial => 'list', :locals => {:fake_tests => @fake_tests}%>
+  <%= periodically_call_remote(:frequency => 20, :url => refresh_index_contest_fake_test_suite_fake_test_url(@contest, @fake_test_suite, :id => 0), :method => :get) %>
 <% end %>

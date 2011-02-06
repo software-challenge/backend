@@ -1,21 +1,32 @@
-<div id="clientlogs_<%= id %>" style="position: absolute; background-color: #DDDDFF; max-height: 250px; padding-top: 5px; padding-left: 10px; padding-right: 10px; padding-bottom: 5px">
-  <div style="background-color: #DDDDFF; width: 125px; max-height: 200px; overflow: scroll">
-  <% if logfiles.blank? then %>
-    <%= t("messages.no_log_files_available") %>
-  <% else %>
-    <% client = Client.find(id) %>
-    <% logfiles.each do |logfile| %>
-      <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), send_log_contest_contestant_client_url(@contest, client.contestant, client, :id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id]), :method => :post %><br>
+<% if defined?(as_box).nil? or as_box or as_box.nil? %>
+  <div id="clientlogs_<%= id %>" style="position: absolute; background-color: #DDDDFF; max-height: 250px; padding-top: 5px; padding-left: 10px; padding-right: 10px; padding-bottom: 5px">
+    <div style="background-color: #DDDDFF; width: 125px; max-height: 200px; overflow: scroll">
+    <% if logfiles.blank? then %>
+      <%= t("messages.no_log_files_available") %>
+    <% else %>
+      <% client = Client.find(id) %>
+      <% logfiles.each do |logfile| %>
+        <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), send_log_contest_contestant_client_url(@contest, client.contestant, client, :id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id]), :method => :post %><br>
+      <% end %>
     <% end %>
-  <% end %>
-  </div>
-  <a href="#" id="close_logs_<%= id %>"><%= t("actions.close") %></a>
-  <% javascript_tag do %>
-    $(function() {
-      $("a#close_logs_<%= id %>").bind('click', function() {
-        $("div#clientlogs_<%= id %>").fadeOut(500)
-        return false;
+    </div>
+    <a href="#" id="close_logs_<%= id %>"><%= t("actions.close") %></a>
+    <% javascript_tag do %>
+      $(function() {
+        $("a#close_logs_<%= id %>").bind('click', function() {
+          $("div#clientlogs_<%= id %>").fadeOut(500)
+          return false;
+        })
       })
-    })
-  <% end %>
-</div>
+    <% end %>
+  </div>
+<% else %>
+    <% if logfiles.blank? then %>
+      <%= t("messages.no_log_files_available") %>
+    <% else %>
+      <% client = Client.find(id) %>
+      <% logfiles.each do |logfile| %>
+        <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), send_log_contest_contestant_client_url(@contest, client.contestant, client, :id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id], :round_id => logfile[:round_id]), :method => :post %><br>
+      <% end %>
+    <% end %>
+<% end %>

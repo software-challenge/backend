@@ -1,0 +1,8 @@
+$("#flash").remove()
+<% if @whitelist_entries.count > 0 %>
+  $("#entry_<%= @entry.id %>").fadeOut('slow').delay(600).remove()
+<% else %>
+  $("#whitelist-entries").fadeOut('slow').delay(600).replaceWith("<%= render(:partial => "list", :locals => {:entries => []}).strip %>")
+<% end %>
+
+

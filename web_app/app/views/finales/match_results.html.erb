@@ -6,6 +6,8 @@
   <%= @match.contestants.first.name + " vs " + @match.contestants.second.name %>
 </h1>
 
-<%= render :partial => "matches/match", :locals => {:match => @match, :allowQualify => false} %>
+<% tabnav :finale do %>
+  <%= render :partial => "matches/match", :locals => {:match => @match, :allowQualify => false} %>
+<% end %>
 
 <% tooltip_init %>

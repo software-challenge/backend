@@ -5,7 +5,9 @@
     <% form_remote_tag :url => create_comment_contest_contestant_client_url(@contest, client.contestant, client), :complete => "show_comments_for("+client.id.to_s+")" do %>
       <%= text_area_tag :text, "", :id => "text", :style => "width: 100%" %><br>
       <p style="text-align: right">
-        <a href="#" id="cancel_comment_<%= client.id %>" style="margin-right: 10px">Abbrechen</a>
+        <% if defined?(no_cancel).nil? or not no_cancel%>
+          <a href="#" id="cancel_comment_<%= client.id %>" style="margin-right: 10px">Abbrechen</a>
+        <% end %> 
         <%= submit_tag 'Hinzufügen', :id => "submit_comment_" + client.id.to_s %>
       </p>
       <%= hidden_field_tag :client_id, client.id.to_s %>
@@ -13,21 +15,23 @@
     <% end %>
   </td>
 </tr>
-<% javascript_tag do %>
-  $(function() {
-    $("input#submit_comment_<%= client.id %>").bind('click', function () {
-      if($("tr#create_comment_<%= client.id %> textarea#text").val() == "") {
-        return false;
-      } else {
-        $("tr#create_comment_<%= client.id %>").fadeOut(500)
-        $("a#show_comments_<%= client.id %>").show() 
-        //show_comments(<%= client.id %>)  
-      }
-    })
+ <% if defined?(not_bind_submit).nil? or not not_bind_submit %>
+  <% javascript_tag do %>
+    $(function() {
+      $("input#submit_comment_<%= client.id %>").bind('click', function () {
+        if($("tr#create_comment_<%= client.id %> textarea#text").val() == "") {
+          return false;
+        } else {
+          $("tr#create_comment_<%= client.id %>").fadeOut(500)
+          $("a#show_comments_<%= client.id %>").show() 
+          //show_comments(<%= client.id %>)  
+        }
+      })
   
-    $("a#cancel_comment_<%= client.id %>").bind('click', function() {
-      $("tr#create_comment_<%= client.id %>").fadeOut(500)
-      return false
+      $("a#cancel_comment_<%= client.id %>").bind('click', function() {
+        $("tr#create_comment_<%= client.id %>").fadeOut(500)
+        return false
+      })
     })
-  })
+  <% end %> 
 <% end %>

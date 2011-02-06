@@ -6,9 +6,11 @@ class MatchdaySlot < ActiveRecord::Base
   belongs_to :contestant
   belongs_to :client
   belongs_to :score, :dependent => :destroy
-
+  
   has_one :match_slot, :class_name => "LeagueMatchSlot", :dependent => :destroy
   has_many :matches, :through => :match_slot
+   
+  delegate :contest, :to => :matchday 
 
   acts_as_list :scope => :matchday_id
 

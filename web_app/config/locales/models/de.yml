@@ -44,6 +44,24 @@ de:
       round:
         one: Runde
         other: Runden
+      fake_test:
+        one: Plagiat-Test
+        other: Plagiat-Tests
+      whitelist:
+        one: Whitelist
+        other: Whitelists
+      whitelist_entry:
+        one: Whitelist-Eintrag
+        other: Whitelist-Einträge
+      diff_check:
+        one: Datei-Diff Check
+        other: Datei-Diff Check
+      checksum_check:
+        one: Checksummen Check
+        other: Checksummen Check
+      fake_check:
+        one: Plagiat Check
+        other: Plagiat Checks
       email_event:
         one: "E-Mail Empfänger"
         other: "E-Mail Empfänger"

@@ -23,9 +23,22 @@ ActionController::Routing::Routes.draw do |map|
       :phases => :get,
       :move_phase => :post
     } do |c|
-      c.resources :fake_tests, :as =>"plagiat-tests", :member =>{
-        :restart => :post   
+      c.resources :whitelist_entries, :as => "whitelist", :member => { 
+        :reset => :delete,
+        :ajax_delete => :post
       }
+      c.resources :fake_test_suites, :as => "plagiat-test-auftrag", :member => {
+        :restart => :post,
+        :reset_results => :post,
+        :refresh_index => :get
+      }do |fts|
+        fts.resources :fake_tests, :as =>"plagiat-tests", :member => {
+          :restart => :post,
+          :reset_results => :post,
+          :refresh_show => :get,
+          :refresh_index => :get
+        }
+     end
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
       c.new_team '/schools/new_team', :controller => 'schools', :action => 'new_team'
       c.resources :schools, :member => {

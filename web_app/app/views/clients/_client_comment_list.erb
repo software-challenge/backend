@@ -1,6 +1,9 @@
-<tr id="client_<%= @client.id %>_comments" style="display: none;">
-  <td colspan="3"></td>
-  <td colspan="3" style="text-align: left;">
+<% use_table = true if defined?(use_table).nil? %>
+<% if use_table %>
+ <tr id="client_<%= @client.id %>_comments" style="display: none;">
+   <td colspan="3"></td>
+   <td colspan="3" style="text-align: left;">
+<% end %>
     <b>Kommentare:</b>
     <% @comments.each do |comment| %>
       <div class="comment" style="background-color: #EEEEEE; margin-top: 5px"> 
@@ -26,5 +29,7 @@
       <% end %>
     <% end %>
     <div height="15px">&nbsp;</div>
+<% if use_table %>
   </td>
 </tr>
+<% end %>

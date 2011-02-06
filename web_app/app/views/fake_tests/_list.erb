@@ -1,39 +1,22 @@
 <table class="data-table">
    <thead>
     <tr>
-      <th> ID </th>
-      <th> A Name </th>
-      <th> Status</th>
-      <th> B Name </th>
-      <th> ID </th>
-      <th> Aktion </th>
+      <th>Primär-Client</th>
+      <th>Gegner</th>
+      <th>Status</th>
+      <th>Aktion</th>
     </tr>
    </thead> 
     <% fake_tests.each do |ft| %>
-      <tr>
-
-      <% if @client.nil? or @client == ft.clients.first %>
-         <% own = ft.clients.first %>
-         <% opponent = ft.clients.second %>
-      <% else %>
-         <% own = ft.clients.second %>
-         <% opponent = ft.clients.first %>
-      <% end %>
-      
-      <td> <%= own.id %> </td>
-      <td> <%= get_readable_client_name(own) %></td>
-      <td> <%= image_for_state(ft.done? ? "true" : "idle") %></td>
-      <td> <%= get_readable_client_name(opponent) %></td>
-      <td> <%= opponent.id %> </td> 
-      <td> <% link_to contest_fake_test_url(@contest, ft) do %>
+      <tr id="fake_test_<%=ft.id%>">
+      <td title="<%= client_tooltip(ft.clients.first) %>"><%= get_readable_client_name(ft.clients.first, false) %></td>
+      <td title="<%= client_tooltip(ft.clients.second) %>"><%= get_readable_client_name(ft.clients.second, false) %></td>
+      <td class="state" title="<%=msg_for_state(ft.state)%>"><%= image_for_state ft.state %></td>
+      <td> <% link_to contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft) do %>
              <%= image_for_action('show') %>
            <% end %>
-           <% link_to restart_contest_fake_test_url(@contest, ft), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" do %>
-             <%= image_for_action('refresh') %>
-           <% end %>
-           <% link_to contest_fake_test_url(@contest, ft), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" do %>
-             <%= image_for_action('delete') %>
-           <% end %>
+           <%= link_to_remote image_for_action('refresh'), :url => restart_contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" if ft.done? %>
+           <%= link_to_remote image_for_action('delete'), :url => contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" %>
       </td>
     </tr>
   <% end %>
