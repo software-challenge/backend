@@ -18,7 +18,7 @@ class FriendlyEncounter < ActiveRecord::Base
   end
 
   def slot_for(con)
-    slots.to_ary.find{|slot| slot.contestant == con}
+    slots.select{|s| s.contestant == con}
   end
   
   def hidden_for?(con)
@@ -46,6 +46,10 @@ class FriendlyEncounter < ActiveRecord::Base
     raise "Friendly encounter not ready yet" if not ready?
     friendly_match.perform_delayed!
   end
+  
+  def client_played?(client)
+    played? and not slots.select{|s| s.client == client}.empty?
+  end 
 
   def load_active_clients!(force_reload = false)
       friendly_match.slots.each do |friendly_match_slot|

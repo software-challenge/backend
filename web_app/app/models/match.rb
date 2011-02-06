@@ -32,6 +32,10 @@ class Match < ActiveRecord::Base
     slots.collect{|slot| slot.contestant}
   end
 
+  def opponent_for(contestant)
+    contestants.find{|c| c != contestant}
+  end
+
   def running?
     !!job
   end

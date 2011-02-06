@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password
 
-  before_filter :fetch_user, :fetch_contest
+  before_filter :fetch_user, :fetch_contest, :fetch_fake_test_suite
   append_before_filter :require_current_user
 
   append_before_filter :generate_page_title
@@ -94,6 +94,10 @@ class ApplicationController < ActionController::Base
       c = Contest.all.find{|c| c.subdomain == params[:id]}
       @contest = @current_contest = c unless c.nil?
     end
+  end
+ 
+  def fetch_fake_test_suite
+    @fake_test_suite = FakeTestSuite.find_by_id(params[:fake_test_suite_id])
   end
 
   def administrator?

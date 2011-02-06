@@ -47,8 +47,8 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named "Plagiat Tests"
-    t.links_to contest_fake_tests_url(@contest)
-    t.highlights_on :controller => "fake_tests", :action => "index"
+    t.links_to contest_fake_test_suites_url(@contest)
+    t.highlights_on :controller => "fake_test_suites", :action => "index"
   end
 
   add_tab do |t|

@@ -141,6 +141,18 @@ class Matchday < ActiveRecord::Base
     SO_CHA_MANAGER_LOGGER
   end
 
+  def client_played?(client)
+    if played?
+      (slots.find_by_client_id(client.id).nil? ? false : true)
+    else
+      false
+    end
+  end
+
+  def match_for_client(client)
+    slots.find_by_client_id(client.id).matches.first
+  end
+
   # Callback (called by Match.perfom)
   def after_match_played(match)
     puts "Match was played"

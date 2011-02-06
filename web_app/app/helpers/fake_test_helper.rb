@@ -18,7 +18,10 @@ module FakeTestHelper
   def states
    {'true' => 'state/ok.png',
     'false' => 'state/warning.png',
+    'finished' => 'state/ok.png',
+    'error' => 'state/attention.png',
     'attention' => 'state/attention.png',
+    'ready' => 'state/info.png',
     'idle' => 'ui/spinner.gif'}
   end
 
@@ -27,6 +30,10 @@ module FakeTestHelper
     'delete' => 'actions/delete.png',
     'edit' => 'actions/edit.png',
     'refresh' => 'actions/undo.gif'}
+  end
+  
+  def msg_for_state(state)
+    I18n.t('messages.states.'+state)
   end
 
  protected

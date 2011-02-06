@@ -69,7 +69,10 @@ class FinaleMatchday < Matchday
   def finished?
     played?
   end
-
+  
+  def human_name
+    game_definition.final_days.find{|p| p[1][:name] == name.to_sym}[1][:human_name]
+  end
   def prepared?
     !matches.empty?
   end

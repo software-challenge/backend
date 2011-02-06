@@ -18,6 +18,7 @@ class ClientsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @clients }
+      format.js { render @contestant.clients.collect{|c| [get_readable_client_name(c),c.id]} }
     end
   end
 
@@ -109,7 +110,7 @@ class ClientsController < ApplicationController
 
   def test
     @client = @contestant.clients.find(params[:id])
-
+  
     activate = params[:activateClient] == "true" ? true : false
 
     if @client.tested?
@@ -117,8 +118,7 @@ class ClientsController < ApplicationController
     else
       @client.test_delayed! activate
     end
-
-    redirect_to contest_contestant_clients_url(@contest, @contestant)
+    redirect_to  params[:from_details] ? client_details_contest_contestant_client_url(@contest,@contestant,@client) : contest_contestant_clients_url(@contest, @contestant)
   end
 
   def browse
@@ -188,8 +188,9 @@ class ClientsController < ApplicationController
 
   def get_comments
     @client = Client.find(params[:client_id].to_i)
+    @use_table = (params[:use_table] == "true" ? true : false)
     @comments = @client.comments.all(:order => "created_at DESC")
-    render :partial => "client_comment_list"
+    render :partial => "client_comment_list", :locals => {:use_table => @use_table}
   end
 
   def create_comment
@@ -219,12 +220,14 @@ class ClientsController < ApplicationController
   def get_logs
     type = params[:type]
     match_id = params[:match_id]
+    round_id = params[:round_id]
+    layout_as_box = !(params[:as_box] == "0")
     path = case type
              when "test" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_s, "test")
              when "match"
-               match = Match.find(match_id.to_i)
+               @match = Match.find(match_id.to_i)
                foldername = 
-                 case match.type.to_s
+                 case @match.type.to_s
                   when "LeagueMatch"
                     "match"
                   when "CustomMatch"
@@ -232,39 +235,63 @@ class ClientsController < ApplicationController
                   when "FriendlyMatch"
                     "friendly"
                   end
-               File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, foldername, match_id.to_s, round_id.to_s)
+
+                  unless @current_user.has_role?(:administrator)
+                     if @match.type == "CustomMatch" or (@match.type == "LeagueMatch" and not @match.matchday.published?)
+                       render :text => "File not found"
+                     end
+                  end
+
+                  File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, foldername, match_id.to_s, round_id.to_s)
            end
     number = 0
     logfiles = []
-    while File.exists?(File.join(path, number.to_s + ".log"))
-      logfiles << {:file => File.join(path, number.to_s + ".log"), :id => params[:id], :num => number, :type => type, :match_id => match_id}
-      number += 1
+     if defined? @match and round_id.nil?
+       @match.rounds.each do |round|
+         round_path = File.join(path, round.id.to_s)
+         while File.exists?(File.join(round_path, number.to_s + ".log"))
+          logfiles << {:file => File.join(round_path, number.to_s + ".log"), :id => params[:id], :num => number, :type => type, :match_id => match_id, :round_id => round.id}
+          number += 1
+         end  
+       end
+    else  
+      while File.exists?(File.join(path, number.to_s + ".log"))
+        logfiles << {:file => File.join(path, number.to_s + ".log"), :id => params[:id], :num => number, :type => type, :match_id => match_id, :round_id => round_id}
+        number += 1
+      end
     end
-    render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles.reverse}
+
+    render :partial => "clientlogs", :locals => {:id => params[:id], :logfiles => logfiles.reverse, :as_box => layout_as_box}
   end
 
   def send_log
     client = Client.find(params[:id].to_i)
+    type = params[:type]
+    match_id = params[:match_id]
+    round_id = params[:round_id]
     unless current_user.has_role? :administrator or !current_user.membership_for(client.contestant).nil?
       render :text => "Action not allowed"
     else
-      type = params[:type]
-      match_id = params[:match_id]
-      round_id = params[:round_id]
       path = case type
                when "test" then File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, "test")
                when "match"
                  match = Match.find(match_id.to_i)
                  foldername = 
                     case match.type.to_s
-                    when "LegaueMatch"
+                    when "LeagueMatch"
                       "match"
                     when "CustomMatch"
                       "custom"
                     when "FriendlyMatch"
                       "friendly"
                     end
-                File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, foldername, match_id.to_s, round_id.to_s)
+
+                  unless @current_user.has_role?(:administrator)
+                     if match.type == "CustomMatch" or (match.type == "LeagueMatch" and not match.matchday.published?)
+                       render :text => "File not found"
+                     end
+                  end
+                  File.join(ENV['CLIENT_LOGS_FOLDER'], params[:id].to_i.to_s, foldername, match_id.to_s, round_id.to_s)
              end
   
       num = params[:num].nil? ? nil : params[:num].to_i
@@ -286,13 +313,17 @@ class ClientsController < ApplicationController
   end
 
   def client_details
-    @client = Client.find(params[:id]) 
+    @client = Client.find_by_id(params[:id]) 
+    if @client.contestant != @contestant
+      redirect_to contest_contestant_clients_url(@contest,@contestant)
+    end
   end
 
 
   protected
 
   def load_contestant
+
     @contestant = @contest.contestants.find(params[:contestant_id])
   end
 

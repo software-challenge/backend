@@ -1,31 +1,23 @@
 <div id="actions">
-  <% link_to contest_fake_test_url(@contest, @fake_test), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" do %>
+  <% link_to contest_fake_test_suite_fake_test_url(@contest, @fake_test_suite, @fake_test), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" do %>
      <%= image_tag 'actions/destroy.png' %> Plagiat-Test löschen
   <% end %>
-  <% link_to restart_contest_fake_test_url(@contest, @fake_test), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" do %>
+  <% link_to restart_contest_fake_test_suite_fake_test_url(@contest, @fake_test_suite, @fake_test), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" do %>
     <%= image_tag 'actions/refresh.png' %> Plagiat-Test wiederholen
   <% end %>
 </div>
 <h1>
   <%= link_to @contest.name, contest_url(@contest) %> / 
-  <%= link_to "Plagiat-Tests", contest_fake_tests_url(@contest) %> /
+  <%= link_to "Plagiat-Test-Aufstellungen", contest_fake_test_suites_url(@contest) %> /
+  <%= link_to (@fake_test_suite.name ? @fake_test_suite.name : "Aufstellung Nr.#{@fake_test_suite.id}"), contest_fake_test_suite_url(@contest, @fake_test_suite) %> /
   Test <%= @fake_test.id %>
 </h1>
 <% tabnav :administration do %>
-  <h2> Infos </h2>
-  <% unless @fake_test.name.nil? %>
-    <h3> Name: </h3>
-    <%= @fake_test.name %>
-  <% end %>
-  <% unless @fake_test.description.nil? %>
-    <h3> Beschreibung: </h3>
-    <%= @fake_test.description %>
-  <% end %>
   <h3> Aufstellung: </h3> 
-  <b><%= get_readable_client_name(@fake_test.clients[0])+@fake_test.clients[0].id.to_s %></b> vs. <b><%= get_readable_client_name(@fake_test.clients[1])+@fake_test.clients[1].id.to_s %></b>
+  <b title="<%= client_tooltip(@fake_test.clients[0]) %>"><%= link_to get_readable_client_name(@fake_test.clients[0], false), client_details_contest_contestant_client_url(@contest, @fake_test.clients[0].contestant,@fake_test.clients[0]) %></b> vs <b title="<%= client_tooltip @fake_test.clients[1] %>"><%= link_to get_readable_client_name(@fake_test.clients[1],false), client_details_contest_contestant_client_url(@contest, @fake_test.clients[1].contestant,@fake_test.clients[1]) %></b> 
   <h3> Erstellt am: </h3> <%= @fake_test.created_at.strftime("%d.%m.%Y, %H:%M")%>
   <h3> Zuletzt modifiziert am: </h3> <%= @fake_test.updated_at.strftime("%d.%m.%Y, %H:%M")%>
-  <h3> Status: </h3> <%= if @fake_test.done? then "durchgeführt" else "ausstehend" end %>
+  <h3> Status:  <span title="<%= msg_for_state @fake_test.state %>"><%= image_for_state @fake_test.state %></span></h3> 
   <% @fake_test.checks.each do |check| %>
      <h2><%= check.class.human_name %>  <%= image_for_state((check.done? ? "true" : "idle")) %></h2>
      <% special_display_file =  File.join(RAILS_ROOT, "app", "views", "fake_tests", "_display_#{check.class.to_s.underscore}.erb") %>
@@ -35,4 +27,6 @@
       <%= render :partial => "display_check.erb", :locals => {:check => check} %>
      <% end %>
   <% end %>
+  <%= periodically_call_remote(:frequency => 20, :url => refresh_show_contest_fake_test_suite_fake_test_url(@contest, @fake_test_suite, @fake_test), :method => :get) %>
+
 <% end %>

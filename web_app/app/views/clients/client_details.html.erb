@@ -1,46 +1,229 @@
 <h1>
   <%= link_to @client.contest.name, contest_contestants_url(@contest) %> /
-  <%= @client.contestant.name %>
+  <%= link_to @client.contestant.name, contest_contestant_url(@contest, @contestant) %> / 
+  <%= link_to Client.human_name(:count => 2), contest_contestant_clients_url(@contest,@contestant) %> / 
+  Client <%= "#{@client.id} #{(@client.name.blank? ? "" : "("+@client.name+")")}" %> 
+  
 </h1>
 
-<% tabnav :contestant do %> <% end %>
-  <font size = "3"><b>Details des gewählten Computerspielers:</b> <br><br></font>
-  <font size ="2">
-  <% if @client.contestant.hidden %> 
-    Dieses Team ist gelöscht worden! <br>
-  <% end %>
-  <b>Team:</b> <%= @client.contestant.name %> <br>
-  <b>Ort:</b> <%= @client.contestant.location %> <br>
-  <b>Hochgeladen am: </b><%= l(@client.created_at.try(:to_date), :format => :long) %> <br>
-  <b>Ersteller:</b> <%= @client.author.name %>  <br>
-  <% main_file_entry_name = @client.main_file_entry.try(:file_name) %>
-  <% main_file_entry_name ||= content_tag(:i, t("views.not_set")) %>
-  <b>Hauptdatei</b>: <%= main_file_entry_name %> <br>
-  <% if @contestant.current_client.nil? %>
-    Aktuell ist kein Client aktiviert!
-  <% else %>
-    <% if @client.id == @client.contestant.current_client.id %>
-      Dieser Client ist <b> aktuell aktiviert </b>! 
-    <% end %>
-  <% end %>
-  <br><br>
-   
-  <% played = false %>
-  <% @client.contestant.matchdays.each do |matchday| %>
-    <% matchday.slots.each do |slot| %>
-      <% if (not slot.client.nil?) and (@client.id == slot.client.id) %>
-        <% if played %>
-        &nbsp; &nbsp;
-        <% else %>
-        Dieser Computerspieler wurde an folgenden Spieltagen des Wettkampfes verwendet: 
-       <br> 
-       <% end %>
-       <%= link_to matchday.when.to_s, [@contest, matchday] %>
+<% tabnav :contestant do %> 
+  <div class="group frame">
+    <div class="group title">
+      Allgemeine Informationen:
+    </div>
+    <div class="group content">
+      <div class="listing bold">
+        <ol> 
+          <%= list_item("Team", link_if_boolean(@contestant, :name, contest_contestant_url(@contest,@contestant))) %>
+          <%= list_item_for(@contestant, :location) %>
+          <%= list_item("Hochgeladen am",  l(@client.created_at, :format => :long)) %>
+          <%= list_item("Ersteller", link_if_boolean(@client.author, :name, contest_person_url(@contest,@client.author)))%>
+          <% stat = @client.status %>
+          <% test_status = case stat
+            when "ok" then image_tag("state/ok.png", {:title => "Test erfolgreich"})
+            when "broken" then image_tag("state/warning.png", {:title => "Test fehlgeschlagen!"})
+            when "testable" then image_tag("state/info.png", {:title => "Hauptdatei definiert, Test noch nicht durchgeführt"}) + " - #{link_to "Jetzt testen", test_contest_contestant_client_url(@contest,@contestant,@client,:from_details => true)}"
+            when "uploaded" then image_tag("state/attention.png", {:title => "Keine Hauptdatei ausgewählt! Kein Test möglich!"})
+            when "testing" then image_tag("ui/spinner.gif", {:title => @client.test_match.job.locked_at ? t("views.testing_for_seconds",{:time => ((Time.now - @client.test_match.job.locked_at).round)}) : t("views.testing_x_rounds", {:x => @client.test_match.rounds.count})})
+          end %>
+          <%= list_item("Test-Status", test_status) %>
+          <% if @client.main_file_entry %>
+            <% main_name =  @client.main_file_entry.file_name %>
+          <% else %>
+            <% main_name = content_tag(:i, t("views.not_set")) + " (#{link_to( t("views.select"),edit_contest_contestant_client_url(@contest,@contestant,@client))})" %>
+          <% end %>
+          <%= list_item("Hauptdatei", main_name) %>
+          <% unless @client.parameters.blank? %>
+            <%= list_item("Parameter", @client.parameters) %>
+          <% end %>
+          <% if @contestant.current_client == @client %>
+            Dieser Client ist <b>aktuell aktiviert</b>!
+          <% elsif @contestant.current_client %>
+            Aktuell ist <%= link_to "dieser", client_details_contest_contestant_client_url(@contest,@contestant,@contestant.current_client) %> Client aktiviert.
+          <% else %>
+            Das Team hat keinen Client aktiviert.
+          <% end %>
+        </ol>
+      </div>
+     </div>
+    </div>
+    
+    <% played_matchdays = @client.played_matchdays %>
+    <% played_matchdays = played_matchdays.select{|md| md.published?} unless @current_user.has_role?(:administrator) %>
+    <div class="group frame">
+     <% unless played_matchdays.empty? %>
+      <div class="group title">
+         Bei folgenden Spieltagen war der Client aktiviert:
+      </div>
+      <div class="group content">
+        <table class="data-table", style="text-align:left">
+          <thead>
+            <th>Bezeichnung</th>
+            <th><%= t "views.date" %></th>
+            <th>Gegner</th>
+            <th>Ergebnis</th>
+            <th>Zusatz-Info</th>
+            <th>Aktionen</th>
+          </thead>
+          <tbody>
+            <% played_matchdays.each_with_index do |matchday,i| %>
+              <% match = (matchday.finale.nil? ? matchday.match_for_client(@client) : matchday.matches.first) %>
+              <tr class="<%= i.odd? ? 'odd' : 'even' %>" style="line-height:2em;">
+                <td>
+                  <% if matchday.finale %>
+                      <%= matchday.human_name %>
+                  <% else %>
+                      Spieltag Nr.<%= matchday.position %>
+                  <% end %>
+                </td>
+                <td><%= l(matchday.played_at.to_date) %></td>
+                <td><% opp = match.opponent_for(@contestant) %><%= "#{opp.name}, #{opp.location}"%></td>
+                <td style="text-align:center">
+                  <% result =  match.main_result %>
+                  <% result = (match.slots.first.contestant == @contestant ? result : result.reverse!) %>  
+                  <span style="color:<%= result[0] >= result[1] ? "green" : "red" %>"> <%= result.join(":") %> </span>
+                </td>
+                <td><% if matchday.trial? %>
+                  <%= image_tag('state/ok.png', :title => "Probespieltag") %> 
+                  <% elsif matchday.finale %>
+                    <%= image_tag('ui/trophy_1.png', :title => "Final-Eight Begegnung") %>
+                  <% end %>
+                </td>
+                <td><%= link_to image_tag('actions/show.png'), (matchday.finale.nil? ? contest_matchday_match_url(@contest,matchday,match) : match_results_contest_finale_url(@contest, :params => {:id => match.id})), {:title => "Begegnung anzeigen"} %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+     <% else %>
+      <div class="group title">
+       Dieser Client hat bisher an keinem Spieltag teilgenommen.
+      </div>
+     <% end %>
+     </div>
+     
+     <div class="group frame">
+       <div class="group title">
+         Logfiles
+       </div>
+       <div class="group content">
+         <% items = [["Bitte auswählen"],["Tests","test 0"]] %>
+         <% l_matches = @contestant.matches.select{|m| m.matchday.client_played?(@client) and m.matchday.published?}.collect{|m| ["Spieltag #{m.matchday.position} vom #{l m.matchday.played_at.to_date}","match #{m.id}"]} %>
+         <% unless l_matches.empty? %>
+           <% items += ["Wettbewerb:"] %>
+           <% items += l_matches %>
+         <% end %>
+         <% f_encounters = @contestant.friendly_encounters.select{|f| f.played? and not f.friendly_match.nil? and f.client_played?(@client)}.collect{|f|  ["...vom #{l f.created_at.to_date} gegen "+f.contestants.select{|c| c != @contestant}.first.name, "match #{f.friendly_match.id}"]} %>
+         <% unless f_encounters.empty? %>
+           <% items += ["Freundschaftsspiel"] %>
+           <% items +=  f_encounters %>
+         <% end %>
+         <% form_for :log do |f| %>
+           <%= select "log", "match", items %> 
+         <% end %>
+         <div id="logs_title">
+           Verfügbare Logs: 
+         </div>
+         <div id="logs">
+           Bitte zuerst eine Begegnung auswählen!
+         </div>
+         <% javascript_tag do %>
+            $("div#logs_title").hide()
+            $("select#log_match").change(function(){
+                $("select#log_match option:selected").each(
+                 function(){
+                   selected = $(this).val()
+                   if(selected != "Bitte auswählen" && selected != "Freundschaftsspiel" && selected != "Wettbewerb:"){
+                     get_logs_for_selection(selected.split(" ")[0], selected.split(" ")[1])
+                     $("div#logs_title").show()
+                   }else{
+                     $("div#logs_title").hide()
+                     $("div#logs").html("")
+                   }
+                 }
+                )
+              })
 
-        <% played = true %>
-      <% end %>
-    <% end %>
-  </font>
+              function get_logs_for_selection(match_type, match_id){
+                $.get("<%= get_logs_contest_contestant_client_url(@contest,@contestant,@client)%>", 
+                  {type: match_type, match_id: match_id, as_box: 0},
+                  function (returned_data) {
+                   $("div#logs").html(returned_data)  
+                  }
+                )
+              }
+         <% end %>
+       </div>
+      </div>
+      
+       <div class="group frame">
+         <div class="group content">
+           <% @comments = @client.comments %>
+           <div id="comments_list">
+             <% unless @comments.empty? %>
+              <%= render :partial => 'client_comment_list' %>
+             <% else %>
+              <b>Kommentare:</b><br>Zur Zeit sind keine Kommentare vorhanden!<br>
+             <% end %>
+            </div>
+           <%= render :partial => 'client_create_comment', :locals => {:client => @client, :no_cancel => true, :not_bind_submit => true} %>
+           <% javascript_tag do %>
+             function show_comments_for(client_id){
+               show_comments(client_id)
+               $("html,body").animate({ scrollTop: $("#comments_list").offset().top}, 500) 
+               $("textarea#text").val("")
+            }
+            
+            function delete_comment(comment_id, client_id) {
+              if(confirm("Wollen Sie den Kommentar wirklich löschen?")) {
+                $.get("<%= delete_comment_contest_contestant_client_url(@contest,@contestant,@client)%>", 
+                  {comment_id: comment_id},
+                  function (returned_data) {
+                   if(returned_data == "false") {
+                       alert("Kommentar konnte nicht gelöscht werden")
+                   }
+             show_comments(client_id) 
+            })}}
+            
+           function show_comments(client_id){
+             $.get("<%= get_comments_contest_contestant_client_url(@contest,@contestant,@client)%>", {client_id: <%= @client.id %>, table: false},function(data){
+               $("#comments_list").html(data)})}
+           <% end %>
+         </div>
+       </div>
+
+       <% show_to :administrator do %>
+         <div class="group frame">
+           <% unless @client.fake_tests.empty? %>
+             <div class="group title">
+               Plagiat Tests mit diesem Computerspieler:
+             </div>
+             <div class="group content">
+               <table class="data-table", style="text-align:left">
+                <thead>
+                  <th>Gegen</th>
+                  <th>Erstellt am</th>
+                  <th>Status</th>
+                  <th>Aktionen</th>
+                </thead>
+                <tbody>
+                 <% @client.fake_tests.each_with_index do |ft,i| %>
+                  <tr class="<%= i.odd? ? 'odd' : 'even' %>" style="line-height:2em;">
+                    <% opp =  ft.clients.select{|c| c != @client}[0] %>
+                    <td title="<%=client_tooltip opp %>"><%= get_readable_client_name opp, false %></td>
+                    <td><%= l ft.created_at.to_date %></td>
+                    <td><%= image_for_state(ft.done? ? "true" : "idle") %></td>
+                    <td><%= link_to image_tag('actions/show.png', :title => "Plagiat-Test anzeigen"), contest_fake_test_suite_fake_test_url(@contest,ft.fake_test_suite,ft) %></td> 
+                  </tr>         
+                 <% end %>
+                 </tbody>
+                 </table>
+            </div>
+            </div>
+         <% else %>  
+           <div class="group title"> Es wurden noch keine Plagiat-Tests mit diesem Client durchgeführt! </div>
+         <% end %>
+       <% end %>
 <% end %>
-<%= if not played then "Dieser Client hat noch nicht an Spieltagen des Wettkampfes teilgenommen." end%>
+
 

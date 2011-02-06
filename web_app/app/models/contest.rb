@@ -20,8 +20,12 @@ class Contest < ActiveRecord::Base
   has_many :friendly_encounters, :dependent => :destroy
   has_many :events, :dependent => :destroy, :order => "created_at DESC"
   has_one :trial_contest, :class_name => "Contest", :foreign_key => "trial_contest_id", :dependent => :destroy
-
+  has_one :whitelist
+  has_many :fake_test_suites
   has_one :finale, :dependent => :destroy
+  has_many :matches, :through => :matchdays
+
+
 
   def overall_member_count
     contestants.visible.without_testers.ranked.all.sum(&:overall_member_count)  
@@ -69,10 +73,6 @@ class Contest < ActiveRecord::Base
   validates_each :game_definition do |model, attr, value|
     model.errors.add(attr, 'ist unbekannt') unless value
   end
-
-  # through associations
-
-  has_many :matches, :through => :matchdays
 
   def to_param
    #TODO DELETE "#{id}-#{name.parameterize}"
