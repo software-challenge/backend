@@ -115,7 +115,7 @@ class DiffCheck < FakeCheck
             ef_path = File.join(destination, i.to_s+"_"+f_name)
             i+=1
           end
-          zip.extract(f,ef_path)
+          zip.extract(f,ef_path.gsub(" ", "_"))
           @extracted_files += 1
         end
       end
