@@ -158,11 +158,15 @@ class Matchday < ActiveRecord::Base
     puts "Match was played"
     job_logger.info "Received after_match_played from #{match}"
     if all_matches_played?
+      job_logger.info "All matches played"
+      job_logger.info "Update scoretable"
       update_scoretable
+      job_logger.info "Order scoretable"
       order_scoretable
+      job_logger.info "Saving matchday"
       self.played_at = DateTime.now
       self.save!
-      puts "Sending mail"
+      job_logger.info "Sending mail"
       Thread.new do
         begin
           EventMailer.deliver_on_matchday_played_notification(self) 
@@ -170,7 +174,7 @@ class Matchday < ActiveRecord::Base
           puts "Finished mail"
         end
       end
-      puts "Matchday finished"
+      job_logger.info "Matchday finished"
     end
   end
 
