@@ -18,7 +18,7 @@ class FriendlyEncounter < ActiveRecord::Base
   end
 
   def slot_for(con)
-    slots.select{|s| s.contestant == con}
+    slot.select{|s| s.contestant == con}.first
   end
   
   def hidden_for?(con)

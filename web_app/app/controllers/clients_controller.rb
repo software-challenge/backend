@@ -5,11 +5,11 @@ class ClientsController < ApplicationController
   access_control do
     default :deny
     allow :administrator
-    allow :pupil, :tutor, :teacher, :of => :contestant
+    allow :pupil, :tutor, :teacher, :helper, :of => :contestant
   end
   access_control :helper => :may_delete_client? do
     allow :administrator
-    allow :pupil, :tutor, :teacher, :of => :contestant
+    allow :pupil, :tutor, :teacher, :helper, :of => :contestant
   end
 
   def index
