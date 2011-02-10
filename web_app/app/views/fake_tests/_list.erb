@@ -15,8 +15,8 @@
       <td> <% link_to contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft) do %>
              <%= image_for_action('show') %>
            <% end %>
-           <%= link_to_remote image_for_action('refresh'), :url => restart_contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" if ft.done? %>
-           <%= link_to_remote image_for_action('delete'), :url => contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" %>
+           <%= link_to_remote image_for_action('refresh'), :url => restart_contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" if not (ft.running? or ft.state == 'ready') %>
+           <%= link_to_remote image_for_action('delete'), :url => contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" if not ft.running? %>
       </td>
     </tr>
   <% end %>

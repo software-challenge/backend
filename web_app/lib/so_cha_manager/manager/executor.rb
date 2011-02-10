@@ -228,6 +228,7 @@ module SoChaManager
         f.puts "  mv \"#{ai_program.main_file_entry.file_name}_tmp\" \"#{ai_program.main_file_entry.file_name}\""
         f.puts "fi"
         f.puts "chmod +x \"#{ai_program.main_file_entry.file_name}\""
+        f.puts "touch $HOME/started"
         f.puts startup_command
         f.puts "echo \"Client terminated\""
         f.flush

@@ -6,8 +6,8 @@ class Whitelist < ActiveRecord::Base
   belongs_to :contest, :dependent => :destroy
   has_many :entries, :class_name => "WhitelistEntry"
 
-  def upload_file(upload, comment = nil)
-    @comment = comment 
+  def upload_file(upload)
+    @comment = upload["comment"]
     dir = File.join(PATH, contest.id.to_s)
     filename = upload["file"].original_filename
     path = File.join(dir,filename)
@@ -105,7 +105,7 @@ protected
             ef_path = File.join(destination, i.to_s+"_"+f_name)
             i+=1
           end
-          zip.extract(f,ef_path)
+          zip.extract(f,ef_path.gsub(" ","_"))
         end
       end
     end
