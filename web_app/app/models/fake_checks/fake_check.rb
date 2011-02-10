@@ -19,7 +19,7 @@ class FakeCheck < ActiveRecord::Base
    fragments.each do |f|
     f.delete
    end
-   finished_at = nil
+   self.finished_at = nil
    self.save!
   end
   

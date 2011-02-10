@@ -9,7 +9,7 @@
 <h1>
   <%= link_to @contest.name, contest_url(@contest) %> / 
   <%= link_to "Plagiat-Test-Aufstellungen", contest_fake_test_suites_url(@contest) %> /
-  <%= link_to (@fake_test_suite.name ? @fake_test_suite.name : "Aufstellung Nr.#{@fake_test_suite.id}"), contest_fake_test_suite_url(@contest, @fake_test_suite) %> /
+  <%= link_to (@fake_test_suite.name.blank? ? "Aufstellung Nr.#{@fake_test_suite.id}": @fake_test_suite.name), contest_fake_test_suite_url(@contest, @fake_test_suite) %> /
   Test <%= @fake_test.id %>
 </h1>
 <% tabnav :administration do %>

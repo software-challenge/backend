@@ -7,7 +7,14 @@ class FakeTestSuite < ActiveRecord::Base
       ft.perform_delayed!
     end
   end
-  
+ 
+  def handle_event!
+    if done?
+      contest.events << FakeTestEvent.create(:fake_test_suite => self, :contest => contest) 
+      contest.save!
+    end
+  end
+
   def started?
     fake_tests.inject(false){|w,ft| w|= ft.started?}
   end

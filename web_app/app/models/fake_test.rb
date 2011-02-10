@@ -40,6 +40,7 @@ def perform
   end
   save!
   puts "FakeTest: #{id} wurde erfolgreich beendet"
+  fake_test_suite.handle_event!
 end
 
 def perform_delayed!
@@ -83,9 +84,10 @@ def self.available_checks_for_contest(contest)
 end
 
 def reset_results!
-  FakeTest.transaction do 
+  FakeTest.transaction do
+    self.started_at = nil
     checks.each{|check| check.reset!}
-    save!
+    self.save!
   end
 end 
 

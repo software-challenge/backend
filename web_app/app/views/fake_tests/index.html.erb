@@ -1,7 +1,7 @@
 <h1> 
   <%= link_to @contest.name, contest_url(@contest) %> / 
   <%= link_to "Plagiat-Test-Aufstellungen", contest_fake_test_suites_url(@contest) %> / 
-  <%= if @fake_test_suite.name then @fake_test_suite.name else "Aufstellung Nr. #{@fake_test_suite.id}" end %>
+  <%= if @fake_test_suite.name.blank? then "Aufstellung Nr. #{@fake_test_suite.id}" else @fake_test_suite.name end %>
 </h1>
 <% tabnav :administration do %>
   <% if @fake_test_suite.name or @fake_test_suite.description %>
