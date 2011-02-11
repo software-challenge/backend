@@ -50,11 +50,39 @@
     
     <% played_matchdays = @client.played_matchdays %>
     <% played_matchdays = played_matchdays.select{|md| md.published?} unless @current_user.has_role?(:administrator) %>
+    <% friendly_encounters = FriendlyEncounter.for_client @client %>
     <div class="group frame">
-     <% unless played_matchdays.empty? %>
+     <% unless played_matchdays.empty? and friendly_encounters.empty?%>
       <div class="group title">
-         Bei folgenden Spieltagen war der Client aktiviert:
+         Dieser Client spiele bei folgenden Begegnungen: 
+         <span style="float:right">
+           <select id="contest_friendly_encounter_select">
+             <option value="all">Alle anzeigen</option>
+             <% unless played_matchdays.empty? %>
+               <option value="contest">Spieltage</option>
+             <% end %>
+             <% unless friendly_encounters.empty? %>
+               <option value="friendly_encounters">Freundschaftsspiele</option>
+             <% end %>
+           </select>
+         </span>
+         <% javascript_tag do %>
+           $("#contest_friendly_encounter_select").change(function(){
+             var val = $("#contest_friendly_encounter_select option:selected").val()
+             if(val == "contest"){
+                $("tr.matchday").show()
+                $("tr.friendly_encounter").hide()
+             }else if(val == "friendly_encounters"){
+               $("tr.matchday").hide()
+               $("tr.friendly_encounter").show()
+             }else{
+               $("tr.matchday").show()
+               $("tr.friendly_encounter").show()
+             }
+           })
+         <% end %>
       </div>
+      <br>
       <div class="group content">
         <table class="data-table", style="text-align:left">
           <thead>
@@ -68,7 +96,7 @@
           <tbody>
             <% played_matchdays.each_with_index do |matchday,i| %>
               <% match = (matchday.finale.nil? ? matchday.match_for_client(@client) : matchday.matches.first) %>
-              <tr class="<%= i.odd? ? 'odd' : 'even' %>" style="line-height:2em;">
+              <tr class="matchday <%= i.odd? ? 'odd' : 'even' %>" style="line-height:2em;">
                 <td>
                   <% if matchday.finale %>
                       <%= matchday.human_name %>
@@ -91,6 +119,20 @@
                 </td>
                 <td><%= link_to image_tag('actions/show.png'), (matchday.finale.nil? ? contest_matchday_match_url(@contest,matchday,match) : match_results_contest_finale_url(@contest, :params => {:id => match.id})), {:title => "Begegnung anzeigen"} %></td>
               </tr>
+            <% end %>
+            <% friendly_encounters.each_with_index do |fe,i| %>
+               <tr class="friendly_encounter <%= (played_matchdays.length+i).odd? ? 'odd' : 'even' %>" style="line-height:2em;">
+                <td>Freundschaftsspiel</td>
+                <td><%= l(fe.played_at.to_date) %></td>
+                <td><% opp = fe.opponent_for(@contestant) %><%= "#{opp.name}, #{opp.location}"%></td>
+                <td style="text-align:center">
+                  <% result =  fe.main_result %>
+                  <% result = (fe.contestants.first == @contestant ? result : result.reverse!) %>  
+                  <span style="color:<%= result[0] >= result[1] ? "green" : "red" %>"> <%= result.join(":") %> </span>
+                </td>
+                <td></td>
+                <td><%= link_to image_tag('actions/show.png'), contest_friendly_encounter_url(@contest, fe), {:title => "Begegnung anzeigen"} %></td>
+              </tr>             
             <% end %>
           </tbody>
         </table>
