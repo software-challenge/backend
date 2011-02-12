@@ -157,7 +157,7 @@ class DiffCheck < FakeCheck
   end
 
   def decompile(destination)
-    decompile_script = File.join(RAILS_ROOT, "public", "decompile_java.sh")
+    decompile_script = File.join(RAILS_ROOT, "lib", "fake_tests", "decompile_java.sh")
     d = Dir.open(destination)
     d.each do |file|
       f_path = File.join(destination, file)
@@ -176,10 +176,9 @@ class DiffCheck < FakeCheck
   end
 
   def test_file(a,b,logfile)
-    d = File.join(RAILS_ROOT,"public")
-    e = File.join(d, "system", "fake_test")
+    e = File.join(RAILS_ROOT, "public" , "system", "fake_test")
     FileUtils.makedirs(e) unless File.directory?(e)
-    script = File.join(d,'fake_test.sh')
+    script = File.join(RAILS_ROOT, "lib", "fake_tests", 'fake_test.sh')
     system "sh #{script} #{a} #{b} >> #{logfile}" if is_comparable?(a) and is_comparable?(b)
   end
 
