@@ -1,0 +1,484 @@
+<!-- imagine some W3C doctype shit right here -->
+
+<script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.1.2/build/yui/yui-min.js"></script>
+<style>
+body {
+	margin: 0;
+	font-weight: bold;
+	color: #fff;
+	font-family: Arial;
+}
+#container {
+	width: 750px;
+	height: 600px;
+	background-image: url(<%=image_path%>/boden_wiese3.png);
+	background-color: #060;
+}
+#bg {
+	position: absolute;
+	left: 5px;
+	top: 5px;
+	background-image: url(<%=image_path%>/bg.png);
+	width: 587px;
+	height: 588px;
+}
+#score {
+	width: 120px;
+	text-align: center;
+	line-height: 30px;
+}
+#score span.player {
+	padding: 2px 5px;
+	border: 1px solid #000;
+	font-size: 150%;
+}
+#playerinfos1 {
+	position: absolute;
+	top: 248px;
+	left: 110px;
+	font-size: 12px;
+}
+#playerinfos2 {
+	position: absolute;
+	top: 248px;
+	left: 412px;
+	font-size: 12px;
+}
+#dice {
+	position: absolute;
+	top: 415px;
+	left: 236px;
+	font-size: 13px;
+	text-align: center;
+	width: 120px;
+	line-height: 20px;
+}
+.die {
+	background-color: #fff;
+	color: #333;
+	padding: 4px 9px;
+	font-size: 14px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	line-height: 34px;
+}
+.sheep, .arrow, .sheepImage, .flower, .dog  {
+	position: absolute;
+}
+.sheep .sheepImage {
+	left: 2px;
+	top: 2px;
+}
+.sheep .attributes {
+	position: absolute;
+	left: 15px;
+	top: 31px;
+	font-size: 11px;
+	font-weight: normal;
+	padding: 0 2px;
+	border: 1px solid #000;
+	z-index: 3;
+}
+.sheep .attributes.red { background-color: #d00; }
+.sheep .attributes.blue { background-color: #00f; }
+.sheep.inBase .arrow, .sheep.inBase .attributes { display: none; }
+#slider-bg {
+    background:url(http://yui.yahooapis.com/2.8.0r4/build/slider/assets/bg-fader.gif) 5px 0 no-repeat; 
+}
+#names {
+	position: absolute;
+	left: 610px;
+	top: 10px;
+	font-size: 13px;
+}
+#names div {
+	margin-top: 5px;
+	padding: 5px;
+	width: 110px;
+	border: 1px solid #000;
+}
+#buttons button {
+	width: 40px;
+	height: 33px;
+	padding-bottom: 2px;
+}
+</style>
+<head>
+	<title>SWChallenge Replay</title>
+</head>
+<body class="yui3-skin-sam">
+	
+	<div id="container"></div>
+	<div id="bg"></div>
+	<div id="flowers"></div>
+	
+	<div id="sheeps">
+           <% (1..12).each do |i| %>
+             <div class="sheep" id="sheep<%=i%>" style="left:271px;top:275px">
+		<img class="arrow" /> 			
+                <img class="sheepImage" src="<%=image_path%>/sheep.png" />
+	        <img class="dog" src="<%=image_path%>/dog.png" style="display: none;" />
+		<div class="attributes <%= (i-1)%6 > 2 ? 'red' : 'blue' %>"></div>
+	     </div>
+           <% end %>
+	</div>
+	
+	<img id="centerDog" src="<%=image_path%>/dog.png" style="position:absolute;left:269px;top:273px;" />
+	
+	<div id="score" style="position:absolute;top:120px;left:240px;">
+		<span id="score1" class="player" style="background-color:#d00;">0</span> : <span id="score2" class="player" style="background-color:#00f;">0</span><br />
+		<span id="round">Runde 0</span>
+	</div>
+	<div id="playerinfos1">
+		<span style="background-color:#d00; padding: 1px 5px;">Rot</span><br />
+		<span id="numSheeps1">0</span> Schafe<br />
+		<span id="sheepsCaptured1">0</span> Schafe gef.<br />
+		<span id="sheepsStolen1">0</span> Schafe gest.<br />
+		<span id="flowersCollected1">0</span> Blumen ges.<br />
+		<span id="flowersMunched1">0</span> Blumen gefr.
+	</div>
+	<div id="playerinfos2">
+		<span style="background-color:#00f; padding: 1px 5px;">Blau</span><br />
+		<span id="numSheeps2">0</span> Schafe<br />
+		<span id="sheepsCaptured2">0</span> Schafe gef.<br />
+		<span id="sheepsStolen2">0</span> Schafe gest.<br />
+		<span id="flowersCollected2">0</span> Blumen ges.<br />
+		<span id="flowersMunched2">0</span> Blumen gefr.
+	</div>
+	</div>
+	<div id="dice">
+		Hund <span id="dogState">passiv</span><br />
+		<span id="flowersLeft">0</span> Blumen übrig<br />
+		<span id="die1" class="die">0</span>
+		<span id="die2" class="die">0</span>
+		<span id="die3" class="die">0</span>
+	</div>
+	<div id="names">
+		<div id="name1" style="background-color: #d00">&nbsp;</div>
+		<div id="name2" style="background-color: #00f">&nbsp;</div>
+	</div>
+	<div style="position:absolute;top:170px;left:660px;" id="slider"></div>
+	<div id="buttons" style="position: absolute; left: 600px; top: 560px; width: 140px; text-align: center;">
+		<button id="prevButton" onclick="prevButtonClick()"><img src="<%=image_path%>/prev.png" /></button>
+		<button id="playButton" onclick="playButtonClick()"><img src="<%=image_path%>/play.png" /></button>
+		<button id="nextButton" onclick="nextButtonClick()"><img src="<%=image_path%>/next.png" /></button>
+	</div>
+</body>
+
+<script language="JavaScript">
+var nodes = [
+	{x:403, y:408},
+	{x:630, y:183},
+	{x:176, y:637},
+	{x:176, y:181},
+	{x:630, y:633},
+	{x:452, y:357},
+	{x:484, y:326},
+	{x:517, y:293},
+	{x:549, y:263},
+	{x:583, y:229},
+	{x:357, y:456},
+	{x:320, y:487},
+	{x:290, y:518},
+	{x:257, y:551},
+	{x:224, y:586},
+	{x:355, y:356},
+	{x:324, y:326},
+	{x:290, y:294},
+	{x:260, y:262},
+	{x:228, y:230},
+	{x:450, y:458},
+	{x:481, y:489},
+	{x:517, y:521},
+	{x:547, y:555},
+	{x:581, y:584},
+	{x:581, y:683},
+	{x:543, y:711},
+	{x:497, y:731},
+	{x:452, y:743},
+	{x:404, y:747},
+	{x:356, y:744},
+	{x:309, y:730},
+	{x:265, y:712},
+	{x:226, y:684},
+	{x:130, y:586},
+	{x:102, y:546},
+	{x:80, y:501},
+	{x:66, y:455},
+	{x:65, y:411},
+	{x:66, y:361},
+	{x:77, y:312},
+	{x:100, y:271},
+	{x:127, y:232},
+	{x:224, y:129},
+	{x:265, y:102},
+	{x:307, y:83},
+	{x:353, y:70},
+	{x:403, y:64},
+	{x:449, y:68},
+	{x:497, y:81},
+	{x:539, y:103},
+	{x:580, y:131},
+	{x:678, y:228},
+	{x:705, y:266},
+	{x:728, y:313},
+	{x:739, y:356},
+	{x:744, y:404},
+	{x:741, y:454},
+	{x:727, y:500},
+	{x:709, y:545},
+	{x:678, y:585},
+	{x:719, y:723},
+	{x:87, y:724},
+	{x:87, y:90},
+	{x:721, y:90}
+];
+
+var replayURL = "<%= replay_url %>";
+var turnXMLs;
+var turn = 0;
+var interval;
+var numTurns;
+var isPlaying = <%= autoplay %>;
+var slider;
+var ignoreChange = false;
+var tweenDict = {};
+
+function x(index, width) {
+	return nodes[index].x * 0.723 + 5 - Math.floor(width / 2);
+}
+function y(index, height) {
+	return nodes[index].y * 0.723 + 5 - Math.floor(height / 2);
+}
+
+function createAjaxRequest() {
+	try { return new XMLHttpRequest(); } catch(e) {}
+	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch(e) {}
+	try { return new ActiveXObject("Microsoft.XMLHTTP"); } catch(e) {}
+	return null;
+}
+
+var req = createAjaxRequest();
+req.open("GET", replayURL, true);
+req.setRequestHeader("Content-Type", "text/xml");
+req.onreadystatechange = function() {
+	if (req.responseXML == null || req.readyState != 4) return;
+	turnXMLs = req.responseXML.getElementsByTagName("state");
+	numTurns = turnXMLs.length;
+	document.getElementById("name1").innerHTML = turnXMLs[0].getElementsByTagName("player")[0].getAttribute("displayName");
+	document.getElementById("name2").innerHTML = turnXMLs[0].getElementsByTagName("player")[1].getAttribute("displayName");
+	
+	// init flowers
+	var output = "";
+	var flowerDatas = turnXMLs[0].getElementsByTagName("flowers");
+	var flowerSizes = {mushroom:{w:40,h:40},flower1:{w:37,h:35},flower2:{w:45,h:45}};
+	for (var i = 0; i < flowerDatas.length; i++) {
+		var node = flowerDatas[i].getAttribute("node");
+		var amount = parseInt(flowerDatas[i].getAttribute("amount"));
+		var image = (amount == -1) ? "mushroom" : "flower" + amount;
+		var fx = x(parseInt(flowerDatas[i].getAttribute("node")), flowerSizes[image].w);
+		var fy = y(parseInt(flowerDatas[i].getAttribute("node")), flowerSizes[image].h);
+		output += '<img id="flower'+node+'" class="flower" src="<%=image_path%>/'+image+'.png" style="left:'+fx+'px;top:'+fy+'px;"></div>';
+	}
+	document.getElementById("flowers").innerHTML = output;
+	
+	renderTurn();
+	
+	YUI().use("slider", function(Y) {
+		slider = new Y.Slider({
+			axis: 'y',
+			min   : 0,
+			max   : numTurns-1,
+			value : 0,
+			length: '380px',
+			
+			after : {
+				valueChange: function(e) {
+					if (ignoreChange) return;
+					if (isPlaying) stop();
+					setTurn(e.newVal);
+				},
+				slideStart: stop
+			}
+		}).render( "#slider" );
+	});
+}
+req.send(null);
+
+function playButtonClick() {
+	if (isPlaying) stop();
+	else {
+		if (turn == numTurns - 1) setTurn(0);
+		else play();
+	}
+}
+function prevButtonClick() {
+	if (isPlaying) stop();
+	setTurn(turn-1);
+}
+function nextButtonClick() {
+	if (isPlaying) stop();
+	setTurn(turn+1);
+}
+function play() {
+	isPlaying = true;
+	document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/pause.png";
+	nextTurn();
+	interval = setInterval(nextTurn, 2500);
+}
+function stop() {
+	clearInterval(interval);
+	isPlaying = false;
+	document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/play.png";
+}
+function nextTurn() {
+	setTurn(turn+1);
+}
+function setTurn(newTurn) {
+	if (newTurn < 0 || newTurn >= numTurns) return;
+	turn = newTurn;
+	if (turn == numTurns - 1) {
+		if (isPlaying) stop();
+		document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/reset.png";
+	} else {
+		if (isPlaying) document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/pause.png";
+		else document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/play.png";
+	}
+	try {
+		ignoreChange = true;
+		slider.setValue(turn);
+		ignoreChange = false;
+	} catch(e) {}
+	renderTurn();
+}
+function renderTurn() {
+	var turnXML = turnXMLs[turn];
+	
+	var flowersLeft = 0;
+	var numSheeps = [0, 0];
+	var sheepsCaptured = [0, 0];
+	var sheepsStolen = [
+		parseInt(turnXML.getElementsByTagName("player")[0].getAttribute("stolenSheeps")),
+		parseInt(turnXML.getElementsByTagName("player")[1].getAttribute("stolenSheeps"))
+	];
+	var flowersCollected = [0, 0];
+	var flowersMunched = [
+		parseInt(turnXML.getElementsByTagName("player")[0].getAttribute("munchedFlowers")), 
+		parseInt(turnXML.getElementsByTagName("player")[1].getAttribute("munchedFlowers"))
+	];
+	
+	// sheeps (i:index of html element, j:index of xml element)
+	var sheepDatas = turnXML.getElementsByTagName("sheep");
+	var arrowNodeToDir = {"61":"BR","62":"BL","63":"TL","64":"TR"};
+	var sheepsAtBase = {61:[],62:[],63:[],64:[]};
+	
+	var j = sheepDatas[0].getAttribute("index") == "0" ? 1 : 0;
+	document.getElementById("centerDog").style.display = j == 1 ? "block" : "none";
+	if (j == 1) document.getElementById("dogState").innerHTML = "passiv";
+	for (var i = 1; i <= 12; i++) {
+		var sheepElem = document.getElementById("sheep"+i);
+		if (j < sheepDatas.length && parseInt(sheepDatas[j].getAttribute("index")) == i) {
+			var sheepData = sheepDatas[j];
+			sheepElem.style.display = "block";
+			var color = sheepData.getAttribute("owner") == "RED" ? "red" : "blue";
+			var sheeps1 = parseInt(color == "red" ? sheepData.getAttribute("sheeps1") : sheepData.getAttribute("sheeps2"));
+			var sheeps2 = parseInt(color == "red" ? sheepData.getAttribute("sheeps2") : sheepData.getAttribute("sheeps1"));
+			var flowers = parseInt(sheepData.getAttribute("flowers"));
+			var node = sheepData.getAttribute("node");
+			if (sheepData.getAttribute("dog") == null) sheepElem.getElementsByTagName("img")[2].style.display = "none";
+			else {
+				sheepElem.getElementsByTagName("img")[2].style.display = "block";
+				document.getElementById("dogState").innerHTML = sheepData.getAttribute("dog") == "PASSIVE" ? "passiv" : "aktiv";
+			}
+			numSheeps[color == "red" ? 0 : 1]++;
+			sheepsCaptured[color == "red" ? 0 : 1] += sheeps2;
+			flowersCollected[color == "red" ? 0 : 1] += flowers;
+			if (node > 60) {
+				sheepsAtBase[node].push(sheepElem);
+				sheepElem.className = "sheep inBase";
+			} else {
+				sheepElem.className = "sheep";
+				sheepElem.getElementsByTagName("div")[0].innerHTML = sheeps1 + "," + sheeps2+ "," + flowers;
+				sheepElem.getElementsByTagName("img")[0].src = "<%=image_path%>/arrow" + arrowNodeToDir[sheepData.getAttribute("target")] + color + ".png";
+				var sx = x(sheepData.getAttribute("node"), 50);
+				var sy = y(sheepData.getAttribute("node"), 50);
+				tweenTo(sheepElem, sx, sy);
+			}
+			j++;
+		}
+		else {
+			sheepElem.style.display = "none";
+		}
+	}
+	// manage how your sheeps are belong to bases
+	for (var node in sheepsAtBase) {
+		var numSheepsAtBase = sheepsAtBase[node].length;
+		if (numSheepsAtBase == 0) continue;
+		var angle = 2*Math.PI / numSheepsAtBase;
+		for (var i = 0; i < numSheepsAtBase; i++) {
+			var sheepElem = sheepsAtBase[node][i];
+			var sx = x(node,0) + 35 * Math.cos(i * angle) - 25;
+			var sy = y(node,0) + 35 * Math.sin(i * angle) - 25;
+			tweenTo(sheepElem, sx, sy);
+		}
+	}
+	
+	// flowers (i:index of html element, j:index of xml element)
+	var j = 0;
+	var iFlowers = document.getElementById("flowers").getElementsByTagName("img");
+	var jFlowers = turnXML.getElementsByTagName("flowers");
+	for (var i = 0; i < iFlowers.length; i++) {
+		if (j < jFlowers.length && parseInt(iFlowers[i].id.slice(6)) == parseInt(jFlowers[j].getAttribute("node")) ) {
+			iFlowers[i].style.display = "block";
+			flowersLeft += parseInt(jFlowers[j].getAttribute("amount"));
+			j++;
+		} else {
+			iFlowers[i].style.display = "none";
+		}
+	}
+	
+	// texts
+	document.getElementById("score1").innerHTML = flowersCollected[0]*2 + flowersMunched[0]*4 + sheepsCaptured[0]*8 + sheepsStolen[0]*16;
+	document.getElementById("score2").innerHTML = flowersCollected[1]*2 + flowersMunched[1]*4 + sheepsCaptured[1]*8 + sheepsStolen[1]*16;
+	document.getElementById("round").innerHTML = "Runde " + (Math.ceil(turn / 2));
+	document.getElementById("flowersLeft").innerHTML = flowersLeft;
+	document.getElementById("die1").innerHTML = turnXML.getElementsByTagName("die")[0].getAttribute("value");
+	document.getElementById("die2").innerHTML = turnXML.getElementsByTagName("die")[1].getAttribute("value");
+	document.getElementById("die3").innerHTML = turnXML.getElementsByTagName("die")[2].getAttribute("value");
+	document.getElementById("numSheeps1").innerHTML = numSheeps[0];
+	document.getElementById("sheepsCaptured1").innerHTML = sheepsCaptured[0];
+	document.getElementById("sheepsStolen1").innerHTML = sheepsStolen[0];
+	document.getElementById("flowersCollected1").innerHTML = flowersCollected[0];
+	document.getElementById("flowersMunched1").innerHTML = flowersMunched[0];
+	document.getElementById("numSheeps2").innerHTML = numSheeps[1];
+	document.getElementById("sheepsCaptured2").innerHTML = sheepsCaptured[1];
+	document.getElementById("sheepsStolen2").innerHTML = sheepsStolen[1];
+	document.getElementById("flowersCollected2").innerHTML = flowersCollected[1];
+	document.getElementById("flowersMunched2").innerHTML = flowersMunched[1];
+}
+
+<% if not params[:notween].nil? %>
+  function tweenTo(elem, endX, endY) {
+	elem.style.left = Math.round(endX) + "px";
+	elem.style.top = Math.round(endY) + "px";
+  }
+<% else %>
+  function tweenTo(elem, endX, endY) {
+	var x = parseInt(elem.style.left);
+	var y = parseInt(elem.style.top);
+	if (tweenDict[elem.id] != null) clearInterval(tweenDict[elem.id]);
+	tweenDict[elem.id] = setInterval(function() {
+		x += (endX - x) / 5;
+		y += (endY - y) / 5;
+		elem.style.left = Math.round(x) + "px";
+		elem.style.top = Math.round(y) + "px";
+		if (Math.abs(x - endX) < 1 && Math.abs(y - endY) < 1) {
+			clearInterval(tweenDict[elem.id]);
+			delete tweenDict[elem.id];
+			//elem.style.left = endX + "px";
+			//elem.style.top = endY + "px";
+		}
+	}, 32);
+}
+<% end %>
+</script>

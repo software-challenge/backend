@@ -190,9 +190,9 @@
                   $(function() {
                     $("a#replay_show_round_<%= round.id %>").bind('click', function() {
                       <% if matchday_match %>
-                        show_replay(<%= round.id %>, "<%= contest_matchday_match_round_url(@contest, match.matchday.id, match.id, round.id) %>")
+                        show_replay(<%= round.id %>, "<%= show_replay_contest_matchday_match_round_url(@contest, match.matchday.id, match.id, round.id) %>")
                       <% elsif @match.is_a? CustomMatch %>
-                        show_replay(<%= round.id %>, "<%= contest_custom_match_round_url(@contest, @match, round) %>")
+                        show_replay(<%= round.id %>, "<%= show_replay_contest_custom_match_round_url(@contest, @match, round) %>")
                       <% end %>
                       return false
                     })
@@ -291,7 +291,7 @@
 
 <% javascript_tag do %>
     function show_replay(round, url) {
-      $("#replay_box_" + round).attr({src: "http://socha.paniccrew.de/replayviewer/<%= @contest.game_definition.game_identifier.to_s %>/replay.php?replayURL=" + url})
+      $("#replay_box_" + round).attr({src: url})
       $("#replay_round_" + round).show(250)
     }
 <% end %>

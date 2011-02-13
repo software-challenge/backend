@@ -77,6 +77,7 @@ ActionController::Routing::Routes.draw do |map|
         md.resources :matches, :member => {:reset => :post} do |m|
           m.resources :rounds, :member => {
             :send_server_log => :post,
+            :show_replay => :get,
             :disqualify => :get,
             :requalify => :get
           }
