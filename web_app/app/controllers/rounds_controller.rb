@@ -15,7 +15,16 @@ class RoundsController < ApplicationController
   
   def show
     @round = Round.find(params[:id])
-    send_file @round.replay.path, :disposition => 'inline'
+    respond_to do |format|
+      format.html { send_file @round.replay.path, :disposition => 'inline' }
+      format.xml   {
+        xml_handler = File.join(RAILS_ROOT, "lib", "replay_viewers", @contest.game_definition.game_identifier.to_s.underscore, "_replay.xml.erb")
+        unless File.exists? xml_handler
+         xml_handler = File.join(RAILS_ROOT,"lib","replay_viewers","_generic_replay.xml.erb")
+        end
+        render :file => xml_handler, :locals => {:replay => @round.replay.path}
+        response.headers["Content-Type"] = "application/xml; charset=utf-8"}
+    end
   end
 
   def send_server_log
@@ -23,6 +32,16 @@ class RoundsController < ApplicationController
       file = File.join(ENV['SERVER_LOGS_FOLDER'], round_id.to_s + ".log")
       dateinfo = File.mtime(file).strftime("%y-%m-%d_%H-%M")
       send_file file, :filename => "svr_#{dateinfo}_" + round_id.to_s + ".log", :type => 'text', :stream => "false", :disposition => "attachment"
+  end
+
+  def show_replay
+    @round = Round.find(params[:id])
+    if @round.match.respond_to?(:matchday) 
+      replay_url = contest_matchday_match_round_url(@contest,@round.match.matchday,@round.match,@round, :xml)
+    elsif @round.match.is_a? CustomMatch 
+      replay_url = contest_custom_match_round_url(@contest,@match,@round, :xml)
+    end
+    render :file => File.join(RAILS_ROOT, "lib", "replay_viewers", @contest.game_definition.game_identifier.to_s.underscore,"_viewer.erb"), :locals => {:replay_url => replay_url, :autoplay => false, :image_path => "/images/games/viewers/#{@contest.game_definition.game_identifier.to_s.underscore}" } 
   end
 
   def disqualify
