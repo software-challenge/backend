@@ -142,6 +142,7 @@ module SoChaManager
     end
 
     def generate_startup_command(ai_program, reservation, silent)
+      return "echo \"ERROR: No main file set!\"" if ai_program.main_file_entry.nil?
       executable = ai_program.main_file_entry.file_name
 
       if executable.ends_with? ".jar"
