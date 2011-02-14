@@ -168,6 +168,11 @@ class ContestsController < ApplicationController
       end
     end
     @contest.create_trial_contest(contestants) 
+    participants = ""
+    contestants.each do |c|
+      participants << c.name + " "
+    end
+    flash[:notice] = "Probewettkampf erstellt. Teilnehmer: " + participants
     redirect_to trial_contest_contest_url(@contest)
   end
 
