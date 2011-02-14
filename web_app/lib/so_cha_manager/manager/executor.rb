@@ -220,15 +220,17 @@ module SoChaManager
       File.open(startup_file, 'w+') do |f|
         f.puts "#!/bin/bash"
         f.puts "echo \"Logfile directory: #{logfile_dir}\""
-        f.puts "echo \"Startup command: #{startup_command}\""
-        f.puts "echo \"Starting client\""
-        f.puts "if [ `head -c 2 \"#{ai_program.main_file_entry.file_name}\"` == '#!' ]"
-        f.puts "then"
-        f.puts "  tr -d  < \"#{ai_program.main_file_entry.file_name}\" > \"#{ai_program.main_file_entry.file_name}_tmp\""
-        f.puts "  rm \"#{ai_program.main_file_entry.file_name}\""
-        f.puts "  mv \"#{ai_program.main_file_entry.file_name}_tmp\" \"#{ai_program.main_file_entry.file_name}\""
-        f.puts "fi"
-        f.puts "chmod +x \"#{ai_program.main_file_entry.file_name}\""
+        unless ai_program.main_file_entry.nil?
+          f.puts "echo \"Startup command: #{startup_command}\""
+          f.puts "echo \"Starting client\""
+          f.puts "if [ `head -c 2 \"#{ai_program.main_file_entry.file_name}\"` == '#!' ]"
+          f.puts "then"
+          f.puts "  tr -d  < \"#{ai_program.main_file_entry.file_name}\" > \"#{ai_program.main_file_entry.file_name}_tmp\""
+          f.puts "  rm \"#{ai_program.main_file_entry.file_name}\""
+          f.puts "  mv \"#{ai_program.main_file_entry.file_name}_tmp\" \"#{ai_program.main_file_entry.file_name}\""
+          f.puts "fi"
+          f.puts "chmod +x \"#{ai_program.main_file_entry.file_name}\""
+        end
         f.puts "touch $HOME/started"
         f.puts startup_command
         f.puts "echo \"Client terminated\""
