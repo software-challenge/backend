@@ -227,7 +227,12 @@ class Contest < ActiveRecord::Base
         new_contest.all_contestants << conclone
         conclone.save!
         if options[:clone_clients].nil? or options[:clone_clients]
-          con.clients.each do |cl|
+          if options[:only_current_clients]
+            clients = [con.current_client]
+          else
+            clients = con.clients
+          end
+          clients.each do |cl|
             puts "Cloning client ##{cl.id}"
             clclone = cl.clone
             clclone.author = cl.author
@@ -280,7 +285,7 @@ class Contest < ActiveRecord::Base
     
     new_name = "#{Contest.human_attribute_name "trial_contest"} #{self.name}"
     new_subdomain = "trial#{self.subdomain}"
-    new_contest = self.create_clone(new_name, new_subdomain, conts)
+    new_contest = self.create_clone(new_name, new_subdomain, conts, :only_current_clients => true)
     self.trial_contest = new_contest
     save!
     new_contest
