@@ -192,7 +192,7 @@ de:
       ready: "Wurde noch nicht gestartet oder wartet auf Ausführung!"
     email_unique: "Die angegebene E-Mail-Adresse ist bereits vergeben. Das bedeutet, dass bereits ein Benutzer mit dieser E-Mail-Adresse im Wettkampfsystem registriert ist. Sollten Sie bereits einen Zugang zum System unter dieser E-Mail-Adresse besitzen, melden Sie sich bitte an. Sollten Sie Ihr Passwort vergessen haben, können Sie dort ein neues anfordern."
     destroy_trial_contest: "Möchten Sie diesen Probewettkampf wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!"
-    email_notification_settings_updated: "Benachrichtigungseinstellungen geändert"
+    email_notification_settings_updated: "Benachrichtigungen geändert"
     no_more_friendly_matches_today: "kann heute keine Freundschaftsspiele mehr spielen"
     friendly_match_not_today: "Dieses Spiel kann heute nicht mehr gespielt werden."
     game_not_ready_yet: "Das Spiel ist nicht bereit."
@@ -376,7 +376,9 @@ de:
   titles:
     details: "Details"
     edit: "Bearbeiten"
-    edit_notif: "Benachrichtigungseinstellungen"
+    edit_notif: "Benachrichtigungen"
+    email_events:
+      edit: "Benachrichtigungen"
     events: "Ereignisse"
     schedule: "Terminplan"
     overview: "Übersicht"

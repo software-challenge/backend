@@ -90,7 +90,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       end
     end
 
-  if (administrator? or (logged_in? and current_user.is_member_of_a_team?(@contest) and @contest.allow_trial_registration)) and not @contest.is_trial_contest?
+  if (administrator? or (logged_in? and current_user.is_member_of_a_team?(@contest) and (@contest.allow_trial_registration or not @contest.trial_contest.nil?))) and not @contest.is_trial_contest?
     add_tab do |t|
       t.named Contest.human_attribute_name("trial_contest")
       t.links_to trial_contest_contest_url(@contest)

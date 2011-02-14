@@ -14,6 +14,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :fetch_user, :fetch_contest, :fetch_fake_test_suite
   append_before_filter :require_current_user
+  append_before_filter :check_contest_access
 
   append_before_filter :generate_page_title
   append_before_filter :set_mailer_options
@@ -48,6 +49,17 @@ class ApplicationController < ActionController::Base
   def permission_denied
     flash[:error] = I18n.t("messages.access_denied")
     redirect_to contest_url(@contest)
+  end
+
+  def check_contest_access
+    if not @contest.nil? and @contest.is_trial_contest?
+      if logged_in?
+        if administrator? or @current_user.is_member_of_a_team?(@contest.main_contest)
+          return true
+        end
+      end
+      redirect_to contest_url(@contest.main_contest)
+    end
   end
 
   def require_current_user
