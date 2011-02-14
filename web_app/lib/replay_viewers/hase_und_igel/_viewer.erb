@@ -90,7 +90,7 @@ req.onreadystatechange = function() {
 	var output = "";
 	for (var i = 0; i < fieldNodes.length; i++) {
 		var fieldType = fieldNodes[i].firstChild.nodeValue.toLowerCase();
-		output += '<img class="field" src="images/'+fieldType+'.png" style="left:'+fieldPositions[i].x+'px; top:'+fieldPositions[i].y+'px;" />';
+		output += '<img class="field" src="<%=image_path%>/'+fieldType+'.png" style="left:'+fieldPositions[i].x+'px; top:'+fieldPositions[i].y+'px;" />';
 		output += '<div class="fieldNumber" style="left:'+(fieldPositions[i].x+27)+'px; top:'+(fieldPositions[i].y+24)+'px;">'+i+'</div>';
 	}
 	document.getElementById("board").innerHTML = output;
