@@ -49,6 +49,9 @@
   <% show_to :administrator do %> 
     <h2>Probewettkampf erstellen</h2>
     <p style="margin-bottom: 10px">
+      <%= @contest.contestants.find_all{|c| c.participate_at_trial_contest}.count %> Teams haben sich bereits für den Probewettkampf angemeldet.
+    </p>
+    <p style="margin-bottom: 10px">
       <%= t "views.no_trial_contest_yet" %>
     </p>
 

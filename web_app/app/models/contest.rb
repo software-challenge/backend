@@ -61,7 +61,7 @@ class Contest < ActiveRecord::Base
   def regular_phase_finished?
     last_day = last_played_matchday
     return false if last_day.nil?
-    return (self.name.downcase.include?("trial") or matchdays.all.find{|day| day.when > last_day.when}.nil?)
+    return matchdays.all.find{|day| day.when > last_day.when}.nil?
   end
 
   def game_definition
@@ -204,11 +204,10 @@ class Contest < ActiveRecord::Base
   end
 
   def is_trial_contest?
-    self.subdomain.starts_with?("trial")
+    not main_contest.nil?
   end
 
   def main_contest
-    raise "This is no trial contest" unless is_trial_contest?
     Contest.all.find{|c| c.trial_contest == self}
   end
 
