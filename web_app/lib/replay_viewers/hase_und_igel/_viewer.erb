@@ -144,6 +144,7 @@ function nextTurn() {
 	if (turn >= numTurns - 1) {
 		stop();
 		turn = numTurns - 1;
+
 	}
 	try {s.setValue(turn); } catch(e) {}
 	renderTurn();

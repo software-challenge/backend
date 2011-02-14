@@ -1,5 +1,5 @@
 <!-- imagine some W3C doctype shit right here -->
-
+<%= javascript_include_tag 'jquery' %>
 <script type="text/javascript" charset="utf-8" src="http://yui.yahooapis.com/3.1.2/build/yui/yui-min.js"></script>
 <style>
 body {
@@ -82,6 +82,21 @@ body {
 .sheep .attributes.red { background-color: #d00; }
 .sheep .attributes.blue { background-color: #00f; }
 .sheep.inBase .arrow, .sheep.inBase .attributes { display: none; }
+
+#result {
+  background-color: gray;
+  opacity: 0.90;
+}
+#results {
+  border: 1px solid black;
+  font-size: 10px;
+}
+#winner {
+  font-size: 16px;
+}
+.relevantForRanking {
+  font-weight: bold;
+}
 #slider-bg {
     background:url(http://yui.yahooapis.com/2.8.0r4/build/slider/assets/bg-fader.gif) 5px 0 no-repeat; 
 }
@@ -163,6 +178,14 @@ body {
 		<button id="playButton" onclick="playButtonClick()"><img src="<%=image_path%>/play.png" /></button>
 		<button id="nextButton" onclick="nextButtonClick()"><img src="<%=image_path%>/next.png" /></button>
 	</div>
+        <div id="result" style="position:absolute;left:20px;top:240px;">
+          <div id="winner"></div>
+          <table id="results" >
+             <tr id="result_names"> </tr>
+             <tr id="results_0" style="background-color: #d00"> </tr>
+             <tr id="results_1" style="background-color: #00f"> </tr>
+          </table>
+        </div>
 </body>
 
 <script language="JavaScript">
@@ -267,7 +290,7 @@ req.onreadystatechange = function() {
 	numTurns = turnXMLs.length;
 	document.getElementById("name1").innerHTML = turnXMLs[0].getElementsByTagName("player")[0].getAttribute("displayName");
 	document.getElementById("name2").innerHTML = turnXMLs[0].getElementsByTagName("player")[1].getAttribute("displayName");
-	
+
 	// init flowers
 	var output = "";
 	var flowerDatas = turnXMLs[0].getElementsByTagName("flowers");
@@ -282,6 +305,9 @@ req.onreadystatechange = function() {
 	}
 	document.getElementById("flowers").innerHTML = output;
 	
+        createResults()
+        hideResults()
+
 	renderTurn();
 	
 	YUI().use("slider", function(Y) {
@@ -304,6 +330,53 @@ req.onreadystatechange = function() {
 	});
 }
 req.send(null);
+
+
+function createResults(){   
+   var scores = req.responseXML.getElementsByTagName("score")
+   for(var player = 0; player < scores.length; player++){
+     var scoreCause = scores[player].getAttribute("cause")
+     if(scoreCause != "REGULAR"){
+       var message = '<div class="disqualification">'
+       message += (req.responseXML.getElementsByTagName('player')[player].getAttribute("displayName"))
+       <% I18n.t("games.causes").each do |k,v| %>
+          if(scoreCause == "<%= k.to_s %>"){
+            message += " wurde disqualifiziert: <%= v %> </div>"
+          }
+       <% end %>
+       $("#result").append(message)
+     }
+     var parts = scores[player].getElementsByTagName("part")
+     for(var i = 0; i < parts.length; i++){
+       document.getElementById("results_"+player).innerHTML += "<td>"+parts[i].textContent+"</td>"
+     }
+   }
+
+   var fragments = req.responseXML.getElementsByTagName("fragment")
+   for(var i = 0; i < fragments.length; i++){
+     document.getElementById("result_names").innerHTML += "<td>"+fragments[i].getAttribute("name")+"</td>"
+     if (fragments[i].getElementsByTagName("relevantForRanking")[0].textContent == "true"){
+       document.getElementById("results_0").children[i].className = "relevantForRanking"
+       document.getElementById("results_1").children[i].className = "relevantForRanking"
+       document.getElementById("result_names").children[i].className = "relevantForRanking"
+     }
+   } 
+
+   var winner = req.responseXML.getElementsByTagName("winner")[0]
+   $("#winner").html("Das Spiel endet, der Gewinner ist: "+winner.getAttribute("displayName"))
+}
+
+function hideResults(){
+  $("#result").hide()
+  $("#playerinfos1").show()
+  $("#playerinfos2").show()
+}
+
+function showResults(){
+  $("#result").show()
+  $("#playerinfos1").hide()
+  $("#playerinfos2").hide()
+}
 
 function playButtonClick() {
 	if (isPlaying) stop();
@@ -339,8 +412,10 @@ function setTurn(newTurn) {
 	turn = newTurn;
 	if (turn == numTurns - 1) {
 		if (isPlaying) stop();
+                showResults()
 		document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/reset.png";
 	} else {
+                hideResults()
 		if (isPlaying) document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/pause.png";
 		else document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/play.png";
 	}
