@@ -228,7 +228,13 @@ class Contest < ActiveRecord::Base
         conclone.save!
         if options[:clone_clients].nil? or options[:clone_clients]
           if options[:only_current_clients]
-            clients = [con.current_client]
+            if not con.current_client.nil?
+              clients = [con.current_client]
+            else if not con.clients.last.nil?
+              clients = [con.clients.last]
+            else
+              clients = []
+            end
           else
             clients = con.clients
           end
