@@ -230,7 +230,7 @@ class Contest < ActiveRecord::Base
           if options[:only_current_clients]
             if not con.current_client.nil?
               clients = [con.current_client]
-            else if not con.clients.last.nil?
+            elsif not con.clients.last.nil?
               clients = [con.clients.last]
             else
               clients = []
