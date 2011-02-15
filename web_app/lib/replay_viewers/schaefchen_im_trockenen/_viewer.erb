@@ -362,8 +362,15 @@ function createResults(){
      }
    } 
 
-   var winner = req.responseXML.getElementsByTagName("winner")[0]
-   $("#winner").html("Das Spiel endet, der Gewinner ist: "+winner.getAttribute("displayName"))
+   var winner = req.responseXML.getElementsByTagName("winner")
+   var winnerName
+   // To fix some xml inconsistance find the user from <condition/> if no <winner/> defined!
+   if(winner.length > 0){
+      winnerName = winner[0].getAttribute("displayName")
+   }else{
+      winnerName = req.responseXML.getElementsByTagName("player")[req.responseXML.getElementsByTagName('condition')[0].getAttribute("winner") == "RED" ? 0 : 1].getAttribute("displayName")
+   }
+   $("#winner").html("Das Spiel endet, der Gewinner ist: "+winnerName)
 }
 
 function hideResults(){
@@ -412,7 +419,6 @@ function setTurn(newTurn) {
 	turn = newTurn;
 	if (turn == numTurns - 1) {
 		if (isPlaying) stop();
-                showResults()
 		document.getElementById("playButton").getElementsByTagName("img")[0].src = "<%=image_path%>/reset.png";
 	} else {
                 hideResults()
@@ -425,6 +431,11 @@ function setTurn(newTurn) {
 		ignoreChange = false;
 	} catch(e) {}
 	renderTurn();
+
+        // Render Results on top if the replay is ended
+        if (turn == numTurns - 1){
+          showResults()
+        }
 }
 function renderTurn() {
 	var turnXML = turnXMLs[turn];
