@@ -15,7 +15,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
     end unless @contestant.new_record?
   end
 
-  if logged_in?
+  if logged_in? and (administrator? or @current_user.member_of?(@contestant))
     add_tab do |t|
       t.named t("titles.people.people")
       begin; t.disable!; next; end if @contestant.new_record?

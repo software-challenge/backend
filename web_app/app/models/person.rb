@@ -174,7 +174,9 @@ class Person < ActiveRecord::Base
     memberships.find_all{|m| m.contest == contest}
   end
 
-  alias member_of? membership_for
+  def member_of?(contestant)
+    not membership_for(contestant).nil?
+  end
 
   def administrator
     @administrator or self.has_role? :administrator
