@@ -297,6 +297,10 @@ class Contest < ActiveRecord::Base
     new_contest
   end
 
+  def has_replay_viewer?
+   !!File.exists?(File.join(RAILS_ROOT,"lib","replay_viewers",game_definition.game_identifier.to_s.underscore,"_viewer.erb"))
+  end
+
   protected
 
   # generates all matchdays (round-robin tournament)

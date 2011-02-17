@@ -41,7 +41,9 @@ class RoundsController < ApplicationController
     elsif @round.match.is_a? CustomMatch 
       replay_url = contest_custom_match_round_url(@contest,@match,@round, :xml)
     end
-    render :file => File.join(RAILS_ROOT, "lib", "replay_viewers", @contest.game_definition.game_identifier.to_s.underscore,"_viewer.erb"), :locals => {:replay_url => replay_url, :autoplay => false, :image_path => "/images/games/viewers/#{@contest.game_definition.game_identifier.to_s.underscore}" } 
+ 
+    game_identifier = @contest.game_definition.game_identifier.to_s.underscore  
+    render :file => File.join(RAILS_ROOT, "lib", "replay_viewers", game_identifier, "_viewer.erb"), :locals => {:replay_url => replay_url, :autoplay => false, :image_path => "/images/games/viewers/#{game_identifier}", :stylesheet_path => "/stylesheets/replay_viewers/#{game_identifier}"}
   end
 
   def disqualify

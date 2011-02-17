@@ -185,7 +185,8 @@
               <% elsif @match.is_a? CustomMatch %>
                 <%= link_to "Replay herunterladen", [@contest, @match, round] %>
               <% end %>
-                <a href="#" id="replay_show_round_<%= round.id %>">Replay ansehen</a>
+              <% if @contest.has_replay_viewer? %> 
+               <a href="#" id="replay_show_round_<%= round.id %>">Replay ansehen</a>
                 <% javascript_tag do %>
                   $(function() {
                     $("a#replay_show_round_<%= round.id %>").bind('click', function() {
@@ -198,6 +199,7 @@
                     })
                  })
                 <% end %>
+              <% end %>
             </span>
           <% end %>
           Runde <%= round_index.next %>
@@ -266,6 +268,7 @@
         <% end %>
       </tr>
     <% end %>
+    <% if @contest.has_replay_viewer? %>
       <tr>
         <td colspan="<%= round_colspan + round_score_fragments + 5 %>">
           <div style="background-color: #fff; display: none" id="replay_round_<%= round.id %>">
@@ -281,19 +284,21 @@
             <% end %>
           </div>
 
-          <!-- <copy>JavaScript von Mathis Lichtenberger</copy> !-->
           <iframe class="replay_frame_<%= @contest.game_definition.game_identifier.to_s.downcase %>" id="replay_box_<%= round.id %>" style="border: none; margin-top: 5px"></iframe>
           </div>
         </td>
       </tr>
+   <% end %>   
   <% end %>
 </table>
 
-<% javascript_tag do %>
+<% if @contest.has_replay_viewer? %>
+  <% javascript_tag do %>
     function show_replay(round, url) {
       $("#replay_box_" + round).attr({src: url})
       $("#replay_round_" + round).show(250)
     }
+  <% end %>
 <% end %>
 
 <% end %>
