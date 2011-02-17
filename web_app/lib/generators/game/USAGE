@@ -1,0 +1,41 @@
+---------------------------------------------------------------------------
+
+This generates the base for a new game in the webapp, 
+it includes a simple game_definition and replay_viewer 
+that can be extended as you like for the game.
+
+Options:
+
+plugin_guid:[GUID] 
+  description: 	The GUID of the GamePlugin that you want to use
+  example: 	plugin_guid:swc_2011_schaefchen_im_trockenen
+
+test_rounds:[count]
+  example: 	test_rounds:2
+
+tester_file:[filename]
+  description: 	The client-archive that is used as a test-
+		reference (should be in RAILS_ROOT/public/clients/)
+  example: 	tester_file:schaefchen_im_trockenen.zip
+
+tester_executable:[filename]
+  description:  The path of the executable file in the tester_file 
+		archive that should be executed while running the client
+  example:	schaefchen_player.jar
+
+tester_contestant_name:[name]
+  description:	The name of the tester-contestant in the webapp
+  example:	TestSchaf
+
+league_rounds:[count]
+  description:	How many rounds should a LeagueMatch have?
+  example:	2
+
+replay_viewer:[true or false]
+  description:	Should the generator generate a basic replay viewer, 
+  		if not defined otherwise, default is used! => true
+  example:	replay_viewer:false
+
+More setting are available after generation in the game-definition in 
+config/games and the viewer files in lib/replay_viewes/[GameName]
+

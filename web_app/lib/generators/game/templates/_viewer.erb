@@ -1,0 +1,256 @@
+<%%= javascript_include_tag 'cdn/jquery.min', 'cdn/jquery-ui.min' %>
+<%%= stylesheet_link_tag "jquery-ui/jquery-ui", stylesheet_path+"/viewer.css" %>
+
+<head><title><%= file_name.camelcase %> Viewer</title></head>
+
+<body>	
+	<div id="container"></div>
+
+	<div id="board"></div>
+	
+        <div id="score">
+		<span id="score1" class="player player1">0</span> : <span id="score2" class="player player2">0</span><br/>
+		<span id="round">Runde 0</span>
+	</div>
+	
+        <div id="playerinfos1">
+		<span class="player1">Rot</span><br/>
+	</div>
+	
+        <div id="playerinfos2">
+		<span class="player2">Blau</span><br/>
+	</div>
+	
+        <div id="names">
+		<div id="name1" class="player1">&nbsp;</div>
+		<div id="name2" class="player2">&nbsp;</div>
+	</div>
+	
+        <div id="slider"></div>
+	
+        <div id="buttons">
+		<button id="prevButton" onclick="prevButtonClick()"><img src="<%%=image_path%>/prev.png" /></button>
+		<button id="playButton" onclick="playButtonClick()"><img src="<%%=image_path%>/play.png" /></button>
+		<button id="nextButton" onclick="nextButtonClick()"><img src="<%%=image_path%>/next.png" /></button>
+	</div>
+        
+        <div id="result">
+          <div id="winner"></div>
+          <table id="results" >
+             <tr id="result_names"> </tr>
+             <tr id="results_0" class="player1"> </tr>
+             <tr id="results_1" class="player2"> </tr>
+          </table>
+        </div>
+</body>
+
+<script language="JavaScript">
+
+var replayURL = "<%%= replay_url %>";
+var turnXMLs; // The turns
+var displayNames; // The names of the players: [player0,player1]
+var xml; // The xml answer
+var currentTurn = 0; // The current loaded turn
+var lastTurn; // The last turn is the game
+var numTurns; // number of turns
+var interval; // interval-timer for play-mode
+var isPlaying = <%%= autoplay %>;
+var ignoreChange = false; 
+var tweenDict = {};
+
+// Translate the board[x,y] to the coords on the board!
+
+  function translate(x,y,width,height){
+   return [x(x,width),y(y,hight)]
+  }
+  function x(index, width) {
+   return index*20 - Math.floor(width / 2);
+  }
+  function y(index, height) {	
+   return index*20 - Math.floor(height / 2);
+  }
+
+
+function createAjaxRequest() {
+	try { return new XMLHttpRequest(); } catch(e) {}
+	try { return new ActiveXObject("Msxml2.XMLHTTP"); } catch(e) {}
+	try { return new ActiveXObject("Microsoft.XMLHTTP"); } catch(e) {}
+	return null;
+}
+
+// Create the request and load informations from xml
+var req = createAjaxRequest();
+req.open("GET", replayURL, true);
+req.setRequestHeader("Content-Type", "text/xml");
+req.onreadystatechange = function() {
+  if (req.responseXML == null || req.readyState != 4) return;
+  xml = req.responseXML
+  turnXMLs = xml.getElementsByTagName("state");
+  numTurns = turnXMLs.length;
+  lastTurn = numTurns-1
+	
+  // create names
+  displayNames = [turnXMLs[0].getElementsByTagName("player")[0].getAttribute("displayName"),
+                turnXMLs[1].getElementsByTagName("player")[0].getAttribute("displayName")] 
+  $("#name1").html(displayNames[0]); 
+  $("#name2").html(displayNames[1]);
+
+  // create Results
+  createResults()
+  hideResults()
+
+  // create the slider
+  $("#slider").slider({
+    min: 0,
+    max: lastTurn,
+    value: 0,
+    slide: function(e,ui){
+      if(ignoreChange) return;
+      if(isPlaying) stop();
+      setTurn(ui.value);
+    }
+  })
+
+  // render the first turn!
+  renderTurn(turnXMLs[0]);
+	
+}
+req.send(null);
+
+
+function createResults(){   
+  var scores = xml.getElementsByTagName("score")
+  for(var player = 0; player < scores.length; player++){
+    
+    // Display the reason and if any player was disqualified
+    var scoreCause = scores[player].getAttribute("cause")
+    if(scoreCause != "REGULAR"){
+      var message = '<div class="disqualification">'
+      message += displayNames[player]
+      <%% I18n.t("games.causes").each do |k,v| %>
+        if(scoreCause == "<%%= k.to_s %>"){
+          message += " wurde disqualifiziert: <%%= v %> </div>"
+        }
+      <%% end %>
+       $("#result").append(message)
+     }
+     
+     // Put score-values into score-table
+     var parts = scores[player].getElementsByTagName("part")
+     for(var i = 0; i < parts.length; i++){
+       $("#results_"+player).append("<td>"+parts[i].textContent+"</td>")
+     }
+  }
+   
+  // Display the names of the fragments and if are relevant
+  var fragments = xml.getElementsByTagName("fragment")
+  for(var i = 0; i < fragments.length; i++){
+    $("#result_names").append("<td>"+fragments[i].getAttribute("name")+"</td>")
+    if (fragments[i].getElementsByTagName("relevantForRanking")[0].textContent == "true"){
+      $("#result_0, #result_1, #result_names").children().eq(i).addClass("relevantForRanking")
+    }
+  } 
+ 
+  var winner = xml.getElementsByTagName("winner")[0].getAttribute("displayName")
+  $("#winner").html("Das Spiel endet, der Gewinner ist: "+winner)
+}
+
+function hideResults(){
+  $("#result").hide()
+  $("#playerinfos1, #playerinfos2").show()
+}
+
+function showResults(){
+  $("#result").show()
+  $("#playerinfos1, #playerinfos2").hide()
+}
+
+function playButtonClick() {	
+  if (isPlaying){
+    stop();	
+  }else{
+    if (currentTurn == lastTurn) setTurn(0);
+    else play();
+  }
+}
+
+function prevButtonClick() {
+  if (isPlaying) stop();
+  setTurn(currentTurn-1);
+}
+function nextButtonClick() {
+  if (isPlaying) stop();
+  setTurn(currentTurn+1);
+}
+
+function play() {
+  isPlaying = true;
+  setPlayButton("pause");
+  nextTurn();
+  interval = setInterval(nextTurn, 2500);
+}
+function stop() {
+  clearInterval(interval);
+  isPlaying = false;
+  setPlayButton("play");
+}
+
+function nextTurn() {
+  setTurn(currentTurn+1);
+}
+
+// Sets the image of the play button to val.png
+function setPlayButton(val) {
+  $("#playButton img").attr("src", "<%%=image_path%>/"+val+".png")
+}
+
+function setTurn(newTurn) {
+  if (newTurn < 0 || newTurn >= numTurns) return;
+  currentTurn = newTurn;
+  if (currentTurn == lastTurn) {
+    if (isPlaying) stop();
+    setPlayButton("reset");
+  }else{
+    hideResults()
+    if (isPlaying){
+      setPlayButton("pause");
+    }else{
+      setPlayButton("play");	
+    }
+  }
+  try {
+    ignoreChange = true;
+    $("#slider").slider("option","value",currentTurn);
+    ignoreChange = false;
+  } catch(e) {}
+  renderTurn(turnXMLs[currentTurn]);
+  $("#round").html("Runde "+currentTurn)
+        
+  // Render Results on top if the replay is ended
+  if (currentTurn == lastTurn){
+    showResults()
+  }
+}
+
+function renderTurn(turnXML) {
+  // Put code to render a turn here!	
+}
+
+// Move the DOM object to endX:endY
+function tweenTo(elem, endX, endY) {
+  var x = parseInt(elem.style.left);
+  var y = parseInt(elem.style.top);
+  if (tweenDict[elem.id] != null) clearInterval(tweenDict[elem.id]);
+  tweenDict[elem.id] = setInterval(function() {
+    x += (endX - x) / 5;
+    y += (endY - y) / 5;
+    elem.style.left = Math.round(x) + "px";
+    elem.style.top = Math.round(y) + "px";
+    if (Math.abs(x - endX) < 1 && Math.abs(y - endY) < 1) {
+      clearInterval(tweenDict[elem.id]);
+      delete tweenDict[elem.id];
+    }
+  }, 32);
+}
+
+</script>
