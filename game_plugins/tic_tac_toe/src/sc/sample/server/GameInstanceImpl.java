@@ -1,5 +1,7 @@
 package sc.sample.server;
 
+import java.util.List;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
@@ -103,5 +105,12 @@ public class GameInstanceImpl extends RoundBasedGameInstance<PlayerImpl>
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public List<IPlayer> getWinners()
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
