@@ -50,6 +50,7 @@
 		<!-- TODO: compile all plugins automatically -->
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/schaefchen_plugin" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/tic_tac_toe" target="clean-build" inheritAll="false" />
 	</target>
 
