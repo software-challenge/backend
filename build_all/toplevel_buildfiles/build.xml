@@ -8,10 +8,11 @@
 		<delete dir="${out.dir}" />
 		<delete dir="game_server/build" />
 		<delete dir="game_gui/build" />
-		<delete dir="game_plugins/hase_und_igel/build" />
 		<delete dir="game_plugins/tic_tac_toe/build" />
 		<delete dir="game_plugins/schaefchen_im_trockenen/build" />
 		<delete dir="game_players/schaefchen_im_trockenen/build" />
+		<delete dir="game_plugins/manhattan/build" />
+		<delete dir="game_players/manhattan/build" />
 		<delete dir="game_players/hase_und_igel/build" />
 	</target>
 
@@ -22,9 +23,11 @@
 		<echo message="Compiling Plugins and Players..." />
 		<!--<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />!-->
 		<!--<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />!-->
-		<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />
+		<!--<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />-->
+		<!--<ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />-->
+		<!--<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />-->
+		<ant dir="game_plugins/manhattan" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/manhattan" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -50,6 +53,8 @@
 			<fileset dir="./game_players/hase_und_igel/build/jar" />
 		</copy>
 		!-->
+
+		<!--
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/jar">
 			<fileset dir="./game_players/schaefchen_im_trockenen/build/jar" />
@@ -57,7 +62,13 @@
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen2/jar">
 			<fileset dir="./game_players/schaefchen_im_trockenen2/build/jar" />
 		</copy>
+		-->
 
+		<mkdir dir="${out.dir}/simple_client/manhattan/jar" />
+		<copy todir="${out.dir}/simple_client/manhattan/jar">
+			<fileset dir="./game_players/manhattan/build/jar" />
+		</copy>
+		
 		<!--
 		<mkdir dir="${out.dir}/simple_client/hase_und_igel/src" />
 		<copy todir="${out.dir}/simple_client/hase_und_igel/src">
@@ -68,6 +79,7 @@
 			</fileset>
 		</copy>
 		!-->
+		<!--
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/src">
 			<fileset dir="./game_players/schaefchen_im_trockenen">
@@ -78,6 +90,19 @@
 			</fileset>
 		</copy>
 		<move tofile="${out.dir}/simple_client/schaefchen_im_trockenen/src/build.xml" file="${out.dir}/simple_client/schaefchen_im_trockenen/src/build-deploy.xml" />
+		-->
+
+		<mkdir dir="${out.dir}/simple_client/manhattan/src" />
+		<copy todir="${out.dir}/simple_client/manhattan/src">
+			<fileset dir="./game_players/manhattan">
+				<exclude name="build/**/*" />
+				<exclude name="bin/**/*" />
+				<exclude name=".classpath" />
+				<exclude name="build.xml" />
+			</fileset>
+		</copy>
+		<move tofile="${out.dir}/simple_client/manhattan/src/build.xml" file="${out.dir}/simple_client/manhattan/src/build-deploy.xml" />
+
 
 		<!--
 		<move tofile="${out.dir}/simple_client/hase_und_igel/src/.classpath" file="${out.dir}/simple_client/hase_und_igel/src/.deployed_classpath" />
@@ -87,10 +112,18 @@
 			<fileset dir="${out.dir}/simple_client/hase_und_igel/jar/lib" />
 		</copy>
 		!-->
+		<!--
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib" />
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib">
 			<fileset dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar/lib" />
 		</copy>
+		-->
+
+		<mkdir dir="${out.dir}/simple_client/manhattan/src/lib" />
+		<copy todir="${out.dir}/simple_client/manhattan/src/lib">
+			<fileset dir="${out.dir}/simple_client/manhattan/jar/lib" />
+		</copy>
+
 
 		<mkdir dir="game_gui/plugins" />
 		<copy todir="game_gui/plugins" flatten="true">
@@ -117,15 +150,18 @@
 
 		<!--
 		<zip destfile="${out.dir}/zipped/simpleclient-hui-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel/jar" />
-
 		<zip destfile="${out.dir}/zipped/simpleclient-hui-src.zip" basedir="${out.dir}/simple_client/hase_und_igel/src" />
 		!-->
 
-
+		<!--
 		<zip destfile="${out.dir}/zipped/challenger-sit.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen2/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-jar.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
-
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-src.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
+		-->
+
+		<zip destfile="${out.dir}/zipped/simpleclient-mh-jar.zip" basedir="${out.dir}/simple_client/manhattan/jar" />
+		<zip destfile="${out.dir}/zipped/simpleclient-mh-src.zip" basedir="${out.dir}/simple_client/manhattan/src" />
+		
 
 		<echo message="Gathering documentations..." />
 		<mkdir dir="${out.dir}/zipped/doc" />
