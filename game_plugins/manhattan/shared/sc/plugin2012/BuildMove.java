@@ -5,11 +5,8 @@ import sc.plugin2012.util.InvalideMoveException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias(value = "mh:build")
+@XStreamAlias(value = "manhattan:build")
 public class BuildMove extends Move {
-
-	@XStreamAsAttribute
-	public final MoveType moveType = MoveType.BUILD;
 
 	@XStreamAsAttribute
 	public final int city;
@@ -31,19 +28,21 @@ public class BuildMove extends Move {
 		Tower tower = state.getTower(city, slot);
 		PlayerColor color = player.getPlayerColor();
 		Segment segment = player.getSegment(size);
-		
-		if(segment == null || segment.getUsable() < 1) {
-			throw new InvalideMoveException(player .getDisplayName() + " hat kein Bauelement der Groesse " + size);
+
+		if (segment == null || segment.getUsable() < 1) {
+			throw new InvalideMoveException(player.getDisplayName() + " hat kein Bauelement der Groesse "
+					+ size);
 		}
-		
+
 		if (!player.hasCard(slot)) {
-			throw new InvalideMoveException(player .getDisplayName() + " hat keine Karte fuer den Bauplatz " + slot);
+			throw new InvalideMoveException(player.getDisplayName() + " hat keine Karte fuer den Bauplatz "
+					+ slot);
 		}
-	
+
 		if (!tower.addPart(color, size)) {
 			throw new InvalideMoveException("Das gewaehltes Element war nciht gross genug");
 		}
-		
+
 		segment.use();
 		player.removeCard(slot);
 		player.addCard(state.drawCard());
@@ -51,8 +50,8 @@ public class BuildMove extends Move {
 	}
 
 	@Override
-	MoveType getMoveType() {
-		return moveType;
+	public MoveType getMoveType() {
+		return MoveType.BUILD;
 	}
 
 }

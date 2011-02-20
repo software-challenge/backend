@@ -51,11 +51,9 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	// set to true when ready was sent to ReadyListeners
 	protected boolean alreadyReady = false;
 
-	public AbstractClient(String host, int port, EPlayerId id)
-			throws IOException {
+	public AbstractClient(String host, int port, EPlayerId id) throws IOException {
 		gameType = GamePlugin.PLUGIN_UUID;
-		client = new LobbyClient(Configuration.getXStream(), Configuration
-				.getClassesToRegister(), host, port);
+		client = new LobbyClient(Configuration.getXStream(), Configuration.getClassesToRegister(), host, port);
 		client.addListener(this);
 		client.start();
 		this.id = id;
@@ -137,23 +135,18 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 */
 	@Override
 	public void onNewState(String roomId, Object state) {
-	
+
 		GameState gameState = (GameState) state;
 
 		if (id != EPlayerId.OBSERVER) {
 			handler.onUpdate(gameState);
 
-			if (gameState.getCurrentPlayer().getPlayerColor() == myColor) { // active
-																		// player
-																		// is
-																		// own
-				handler.onUpdate(gameState.getCurrentPlayer(), gameState
-						.getOtherPlayer());
-			} else
-			// active player is the enemy
-			{
+			if (gameState.getCurrentPlayer().getPlayerColor() == myColor) {
+				// active player is own
+				handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
+			} else {
+				// active player is the enemy
 				handler.onUpdate(gameState.getOtherPlayer(), gameState.getCurrentPlayer());
-
 			}
 		}
 	}
@@ -164,12 +157,12 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	@Override
 	public void onGameJoined(String roomId) {
-		
+
 	}
 
 	@Override
 	public void onGameLeft(String roomId) {
-		
+
 	}
 
 	public void joinPreparedGame(String reservation) {
@@ -196,8 +189,8 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		// not needed
 	}
 
-	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			SlotDescriptor... descriptors) throws InterruptedException {
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(SlotDescriptor... descriptors)
+			throws InterruptedException {
 		return client.prepareGameAndWait(gameType, descriptors);
 	}
 

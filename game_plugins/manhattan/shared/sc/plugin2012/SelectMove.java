@@ -1,38 +1,28 @@
 package sc.plugin2012;
 
-
 import static sc.plugin2012.util.Constants.MAX_SEGMENT_SIZE;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import sc.plugin2012.util.Constants;
+import static sc.plugin2012.util.Constants.SELECTION_SIZE;
 import sc.plugin2012.util.InvalideMoveException;
+import sc.plugin2012.util.SelectMoveConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-@XStreamAlias(value = "mh:select")
+@XStreamAlias(value = "manhattan:select")
+@XStreamConverter(SelectMoveConverter.class)
 public class SelectMove extends Move {
 
-	@XStreamAsAttribute
-	public final MoveType moveType = MoveType.SELECT;
-
-	// gewaehlte segmentgroessen
-	@XStreamImplicit(itemFieldName = "selection")
-	private final Set<Selection> selections;
-
-	public SelectMove(List<Selection> selections) {
-		this.selections = new HashSet<Selection>(selections);
-	}
+	private int[] selections = new int[MAX_SEGMENT_SIZE];
 
 	public SelectMove(int[] selections) {
-		this.selections = new HashSet<Selection>();
+
 		for (int i = 0; i < selections.length; i++) {
-			this.selections.add(new Selection(i + 1, selections[i]));
+			this.selections[i] = selections[i];
 		}
+	}
+
+	public int[] getSelections() {
+		return selections;
 	}
 
 	@Override
@@ -43,29 +33,27 @@ public class SelectMove extends Move {
 			segments[i - 1] = player.getSegment(i);
 		}
 		int selectionSum = 0;
-		for (Selection selection : selections) {
-			selectionSum += selection.amount;
-			if (segments[selection.size - 1].getRetained() < selection.amount) {
+		for (int i = 0; i < MAX_SEGMENT_SIZE; i++) {
+			selectionSum += selections[i];
+			if (segments[i].getRetained() < selections[i]) {
 				throw new InvalideMoveException(player.getDisplayName()
-						+ " hat nicht genug Bauelemente der Groesse "
-						+ selection.size);
+						+ " hat nicht genug Bauelemente der Groesse " + (i + 1));
 			}
 		}
 
-		if (selectionSum != Constants.SELECTION_SIZE) {
-			throw new InvalideMoveException(player.getDisplayName()
-					+ " hat nicht genau " + Constants.SELECTION_SIZE
+		if (selectionSum != SELECTION_SIZE) {
+			throw new InvalideMoveException(player.getDisplayName() + " hat nicht genau " + SELECTION_SIZE
 					+ " Bauelemente gewaehlt");
 		}
 
-		for (Selection selection : selections) {
-			segments[selection.size - 1].select(selection.amount);
+		for (int i = 0; i < MAX_SEGMENT_SIZE; i++) {
+			segments[i].select(selections[i]);
 		}
 
 	}
 
 	@Override
-	MoveType getMoveType() {
-		return moveType;
+	public MoveType getMoveType() {
+		return MoveType.SELECT;
 	}
 }

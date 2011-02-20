@@ -6,7 +6,6 @@ package sc.plugin2012.gui.renderer;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.BACKGROUND;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.ANTIALIASING;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.OPTIONS;
-import static sc.plugin2012.gui.renderer.RenderConfiguration.OPTION_NAMES;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.TRANSPARANCY;
 
 import static sc.plugin2012.util.Constants.*;
@@ -75,21 +74,21 @@ public class FrameRenderer extends JPanel {
 	private static final int CITY_GAP = 42;
 
 	private static final int CARD_DOT = 8;
-	private static final int CARD_WIDTH = 8 + SLOTS_PER_CITY * 6 - 6 + CARD_DOT;
-	private static final int CARD_HEGTH = 8 + SLOTS_PER_CITY * (CARD_DOT + 4) - 4;
+	private static final int CARD_WIDTH = 8 + SLOTS * 6 - 6 + CARD_DOT;
+	private static final int CARD_HEGTH = 8 + SLOTS * (CARD_DOT + 4) - 4;
 
 	private static final int MAX_SEGMENT_HEIGTH = MAX_SEGMENT_SIZE * TOWER_STORIE_HEIGTH + TOWER_RIGHT_HEIGTH
 			+ TOWER_LEFT_HEIGTH;
 
 	// schrift
-	private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
+	//private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
 	private static final Font h1 = new Font("Helvetica", Font.BOLD, 27);
 	private static final Font h2 = new Font("Helvetica", Font.BOLD, 23);
 	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
 	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 10);
 
 	private static final JPanel fmPanel = new JPanel();
-	private static final FontMetrics fmH0 = fmPanel.getFontMetrics(h0);
+	//private static final FontMetrics fmH0 = fmPanel.getFontMetrics(h0);
 	private static final FontMetrics fmH1 = fmPanel.getFontMetrics(h1);
 	private static final FontMetrics fmH2 = fmPanel.getFontMetrics(h2);
 	private static final FontMetrics fmH3 = fmPanel.getFontMetrics(h3);
@@ -276,7 +275,7 @@ public class FrameRenderer extends JPanel {
 			if (selectedSegment != null) {
 				sensetiveTowers.clear();
 				for (int i = 0; i < CITIES; i++) {
-					for (int j = 0; j < SLOTS_PER_CITY; j++) {
+					for (int j = 0; j < SLOTS; j++) {
 						cityTowers[i][j].highlited = false;
 					}
 				}
@@ -391,9 +390,9 @@ public class FrameRenderer extends JPanel {
 		redSegments = new LinkedList<TowerData>();
 		blueSegments = new LinkedList<TowerData>();
 		sensetiveTowers = new LinkedList<TowerData>();
-		cityTowers = new TowerData[CITIES][SLOTS_PER_CITY];
+		cityTowers = new TowerData[CITIES][SLOTS];
 		for (int i = 0; i < CITIES; i++) {
-			for (int j = 0; j < SLOTS_PER_CITY; j++) {
+			for (int j = 0; j < SLOTS; j++) {
 				cityTowers[i][j] = new TowerData(0, i, j);
 			}
 		}
@@ -468,7 +467,6 @@ public class FrameRenderer extends JPanel {
 		BuildMove move = (BuildMove) gameState.getLastMove();
 		TowerData targetTower = cityTowers[move.city][move.slot];
 
-		System.out.println("~~~~~~~~~~~~~~ " + droppedSegment);
 		if (droppedSegment == null) {
 			updateBuffer = true;
 			for (int i = sensetiveSegments.size() - 1; i >= 0; i--) {
@@ -520,13 +518,7 @@ public class FrameRenderer extends JPanel {
 	}
 
 	private synchronized void sendMove(Move move) {
-
-		// TODO
-		System.out.println("~~~~~~~~~~~ " + turnToAnswer + " " + gameState.getTurn());
-
 		if (myTurn() && !gameEnded) {
-
-			System.out.println("~~~~~~~~~~~  SENDE FUR " + gameState.getTurn());
 			RenderFacade.getInstance().sendMove(move);
 			turnToAnswer = -1;
 		}
@@ -546,13 +538,13 @@ public class FrameRenderer extends JPanel {
 	private void recreateCityTowers() {
 
 		int y = getHeight() - BORDER_SIZE - STATUS_HEIGTH - 25;
-		int cityWidth = TOWER_LEFT_WIDTH + SLOTS_PER_CITY * (TOWER_RIGHT_WIDTH + DIAGONAL_GAP) - DIAGONAL_GAP;
+		int cityWidth = TOWER_LEFT_WIDTH + SLOTS * (TOWER_RIGHT_WIDTH + DIAGONAL_GAP) - DIAGONAL_GAP;
 		int citiesWidth = CITIES * (cityWidth + CITY_GAP) - CITY_GAP;
 		int x = (getWidth() - citiesWidth) / 2;
 
 		for (int i = 0; i < CITIES; i++) {
 			int y2 = y;
-			for (int j = 0; j < SLOTS_PER_CITY; j++) {
+			for (int j = 0; j < SLOTS; j++) {
 				cityTowers[i][j].moveTo(x, y2);
 				x += TOWER_RIGHT_WIDTH + DIAGONAL_GAP;
 				y2 -= TOWER_RIGHT_HEIGTH + DIAGONAL_GAP;
@@ -895,7 +887,7 @@ public class FrameRenderer extends JPanel {
 		// staedte
 		g2.setFont(h4);
 		for (int i = CITIES - 1; i >= 0; i--) {
-			for (int j = SLOTS_PER_CITY - 1; j >= 0; j--) {
+			for (int j = SLOTS - 1; j >= 0; j--) {
 				TowerData data = cityTowers[i][j];
 				paintTower(g2, data, true, data == selectedTower);
 
@@ -997,7 +989,7 @@ public class FrameRenderer extends JPanel {
 		g2.drawRoundRect(x, y, CARD_WIDTH, CARD_HEGTH, 10, 10);
 
 		g2.fillRect(x + 4 + slot * 6, y + CARD_HEGTH - 12 - slot * 12, 8, 8);
-		for (int i = 0; i < SLOTS_PER_CITY; i++) {
+		for (int i = 0; i < SLOTS; i++) {
 			g2.drawRect(x + 4 + i * 6, y + CARD_HEGTH - 12 - i * 12, 8, 8);
 		}
 

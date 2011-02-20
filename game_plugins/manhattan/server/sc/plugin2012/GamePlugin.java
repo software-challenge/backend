@@ -20,6 +20,7 @@ public class GamePlugin implements IGamePlugin {
 	public static final String PLUGIN_AUTHOR = "Torsten Krause, Sven Casimir";
 	public static final String PLUGIN_NAME = "Manhattan";
 	public static final String PLUGIN_UUID = "swc_2012_manhattan";
+	public static final int PLUGIN_YEAR = 2012;
 
 	public static final int MAX_PLAYER_COUNT = 2;
 	public static final int MAX_TURN_COUNT = 24 + 4;
@@ -48,7 +49,7 @@ public class GamePlugin implements IGamePlugin {
 
 	@Override
 	public void unload() {
-		// TODO Plugin entladen
+
 	}
 
 	@Override

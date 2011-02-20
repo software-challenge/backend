@@ -1,25 +1,22 @@
 package sc.plugin2012;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.plugin2012.util.SegmentConverter;
 
-@XStreamAlias(value = "mh:segment")
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+
+@XStreamConverter(SegmentConverter.class)
 public class Segment {
 
 	// segmentgroesse
-	@XStreamAsAttribute
 	public final int size;
 
 	// anzahl verwendeter segmente dieser groesse
-	@XStreamAsAttribute
 	private int used;
 
 	// anzahl verfügbarere segmente dieser groesse
-	@XStreamAsAttribute
 	private int usable;
 
 	// anzahl aufbewahrter segmente dieser groesse
-	@XStreamAsAttribute
 	private int retained;
 
 	public Segment(int size, int amount) {

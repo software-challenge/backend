@@ -8,16 +8,17 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * spielrfarbe mitzuteilen.
  * 
  */
-@XStreamAlias(value = "mh:welcome")
+@XStreamAlias(value = "manhattan:welcome")
 public class WelcomeMessage {
+	
 	@XStreamAsAttribute
-	private PlayerColor color;
-
+	private String color;
+	
 	public WelcomeMessage(PlayerColor c) {
-		color = c;
+		color = c.toString().toLowerCase();
 	}
 
 	public PlayerColor getYourColor() {
-		return color;
+		return PlayerColor.valueOf(color.toUpperCase());
 	}
 }

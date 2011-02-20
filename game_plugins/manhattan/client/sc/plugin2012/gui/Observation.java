@@ -18,8 +18,6 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
-import sc.plugin2012.EPlayerId;
-import sc.plugin2012.GamePlugin;
 import sc.plugin2012.GameState;
 import sc.plugin2012.IGUIObservation;
 import sc.plugin2012.IGameHandler;

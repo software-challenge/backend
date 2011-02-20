@@ -8,6 +8,7 @@ import sc.framework.plugins.SimplePlayer;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * ein spieler. er wird durch seine spielerfarbe identifiziert und weiss wie
@@ -17,24 +18,26 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author sca, tkra
  * 
  */
-@XStreamAlias(value = "mh:player")
+@XStreamAlias(value = "manhattan:player")
 public final class Player extends SimplePlayer {
 
 	// spielerfarbe des spielers
-	@XStreamAsAttribute
+	@XStreamOmitField
 	private PlayerColor color;
 
 	// aktuelle punktzahl des spielers
 	@XStreamAsAttribute
 	private int points;
+	
+	// liste der verwendbaren segmente
+	@XStreamImplicit(itemFieldName = "segment")
+	private final List<Segment> segments;
 
 	// liste der karten des spielers
 	@XStreamImplicit(itemFieldName = "card")
 	private final List<Card> cards;
 
-	// liste der verwendbaren segmente
-	@XStreamImplicit(itemFieldName = "segment")
-	private final List<Segment> segments;
+
 
 	/**
 	 * einen neuen spieler erstellen und ihm eine spielerfarbe zuweisen
@@ -114,13 +117,8 @@ public final class Player extends SimplePlayer {
 	 * oder null, falls keine segmentinformationd ieser groesse existiert.
 	 */
 	public Segment getSegment(int size) {
-		for (Segment segment : segments) {
-			if (segment.size == size) {
-				return segment;
-			}
-		}
-		return null;
-	}
+		return segments.get(size - 1);
+	} 
 
 	/**
 	 * fuegt diesem spieler punkte hinzu
