@@ -70,7 +70,7 @@ public class FrameRenderer extends JPanel {
 	private static final int GAP_TOWER_BOTTOM = TOWER_LEFT_HEIGTH;
 	private static final int DIST_TOWER_SELECT = 15;
 
-	private static final int DIAGONAL_GAP = 6;
+	private static final int DIAGONAL_GAP = 10;
 	private static final int CITY_GAP = 42;
 
 	private static final int CARD_DOT = 8;
@@ -81,14 +81,14 @@ public class FrameRenderer extends JPanel {
 			+ TOWER_LEFT_HEIGTH;
 
 	// schrift
-	//private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
+	// private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
 	private static final Font h1 = new Font("Helvetica", Font.BOLD, 27);
 	private static final Font h2 = new Font("Helvetica", Font.BOLD, 23);
 	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
 	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 10);
 
 	private static final JPanel fmPanel = new JPanel();
-	//private static final FontMetrics fmH0 = fmPanel.getFontMetrics(h0);
+	// private static final FontMetrics fmH0 = fmPanel.getFontMetrics(h0);
 	private static final FontMetrics fmH1 = fmPanel.getFontMetrics(h1);
 	private static final FontMetrics fmH2 = fmPanel.getFontMetrics(h2);
 	private static final FontMetrics fmH3 = fmPanel.getFontMetrics(h3);
@@ -255,8 +255,16 @@ public class FrameRenderer extends JPanel {
 				selectedTower = null;
 				for (TowerData tower : sensetiveTowers) {
 					if (inner(selectedSegment.xs[1], selectedSegment.ys[1], tower.xs, tower.ys)) {
-						selectedTower = tower;
-						break;
+						if (tower.slot > 0) {
+							TowerData clipper = cityTowers[tower.city][tower.slot - 1];
+							if (!inner(selectedSegment.xs[1], selectedSegment.ys[1], clipper.xs, clipper.ys)) {
+								selectedTower = tower;
+								break;
+							}
+						} else {
+							selectedTower = tower;
+							break;
+						}
 					}
 				}
 

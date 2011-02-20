@@ -1,5 +1,9 @@
 package sc.plugin2012.util;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import sc.plugin2012.DebugHint;
 import sc.plugin2012.SelectMove;
 
 import com.thoughtworks.xstream.converters.Converter;
@@ -20,11 +24,17 @@ public class SelectMoveConverter implements Converter {
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 		SelectMove move = (SelectMove) value;
 		int[] selections = move.getSelections();
-
+		
 		for (int i = 0; i < Constants.MAX_SEGMENT_SIZE; i++) {
 			writer.startNode("select");
 			writer.addAttribute("size", Integer.toString(i + 1));
 			writer.addAttribute("amount", Integer.toString(selections[i]));
+			writer.endNode();
+		}
+		
+		for(DebugHint hint : move.getHints()){
+			writer.startNode("hint");
+			writer.addAttribute("content", hint.content);
 			writer.endNode();
 		}
 
@@ -34,20 +44,29 @@ public class SelectMoveConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 
 		int[] selections = new int[Constants.MAX_SEGMENT_SIZE];
+		List<String> hints = new LinkedList<String>();
 
 		while (reader.hasMoreChildren()) {
 			reader.moveDown();
-			if (reader.getNodeName().equals("select")) {
+			String nodeName = reader.getNodeName();
+			if (nodeName.equals("select")) {
 				int size = Integer.parseInt(reader.getAttribute("size"));
 				int amount = Integer.parseInt(reader.getAttribute("amount"));
 				if (0 < size && size <= Constants.MAX_SEGMENT_SIZE) {
 					selections[size - 1] = amount;
 				}
+			} else if(nodeName.equals("hint")){
+				hints.add(reader.getAttribute("content"));	
 			}
 			reader.moveUp();
 		}
 
-		return new SelectMove(selections);
+		SelectMove move = new SelectMove(selections);
+		for(String hint : hints) {
+			move.addHint(hint);
+		}
+		
+		return move;
 
 	}
 
