@@ -34,9 +34,7 @@ public class GameStateConverter implements Converter {
 
 		writer.addAttribute("turn", Integer.toString(gameState.getTurn()));
 		writer.addAttribute("start", gameState.getStartPlayer().toString().toLowerCase());
-		writer
-				.addAttribute("current", gameState.getCurrentPlayer().getPlayerColor().toString()
-						.toLowerCase());
+		writer.addAttribute("current", gameState.getCurrentPlayer().getPlayerColor().toString().toLowerCase());
 		writer.addAttribute("type", gameState.getCurrentMoveType().toString().toLowerCase());
 
 		writer.startNode("red");
