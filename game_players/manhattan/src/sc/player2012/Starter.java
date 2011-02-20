@@ -2,7 +2,6 @@ package sc.player2012;
 
 import java.io.IOException;
 
-import sc.player2012.logic.RandomLogic;
 import sc.plugin2012.AbstractClient;
 import sc.plugin2012.IGameHandler;
 import sc.shared.SharedConfiguration;
@@ -20,17 +19,13 @@ public class Starter extends AbstractClient {
 		IGameHandler logic;
 
 		// Versuche für den strategy-Parameter eine passende Logik zu
-		// instanzieren,
-		// sonst verwende Standard
-		// try {
-		// logic =
-		// LogicFactory.valueOf(strategy.toUpperCase()).getInstance(this);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// logic = LogicFactory.DEFAULT.getInstance(this);
-		// }
+		// instanzieren, sonst verwende Standard
+		try {
+			logic = LogicFactory.valueOf(strategy.toUpperCase()).getInstance(this);
+		} catch (IllegalArgumentException e) {
+			logic = LogicFactory.DEFAULT.getInstance(this);
+		}
 		
-		logic = new RandomLogic(this);
 		setHandler(logic);
 
 		// einem spiel beitreten
