@@ -7,7 +7,7 @@ public class Constants {
 	public final static int ROUND_LIMIT = GamePlugin.MAX_TURN_COUNT;
 
 	public static final int CITIES = 5;
-	public static final int SLOTS_PER_CITY = 5;
+	public static final int SLOTS = 5;
 	public static final int CARDS_PER_SLOT = 5;
 	public static final int CARDS_PER_PLAYER = 4;
 

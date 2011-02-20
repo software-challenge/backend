@@ -1,24 +1,24 @@
 package sc.plugin2012;
 
 import static sc.plugin2012.util.Constants.CARDS_PER_PLAYER;
+import static sc.plugin2012.util.Constants.CARDS_PER_SLOT;
 import static sc.plugin2012.util.Constants.MAX_SEGMENT_SIZE;
 import static sc.plugin2012.util.Constants.SEGMENT_AMOUNTS;
-import static sc.plugin2012.util.GameStateHelper.createCardStack;
+import static sc.plugin2012.util.Constants.SLOTS;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import sc.plugin2012.Condition;
-import sc.plugin2012.PlayerColor;
 import sc.plugin2012.util.Constants;
+import sc.plugin2012.util.GameStateConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * ein spielzustand beinhaltet die liste der spielfelder spielfiguren, die zur
@@ -27,35 +27,29 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * @author ffa, sca, tkra
  * 
  */
-@XStreamAlias(value = "mh:state")
+@XStreamAlias(value = "manhattan:state")
+@XStreamConverter(GameStateConverter.class)
 public final class GameState implements Cloneable {
 
 	// momentane rundenzahl
-	@XStreamAsAttribute
 	private int turn;
 
 	// farbe des startspielers
-	@XStreamAsAttribute
 	private PlayerColor startPlayer;
 
 	// farbe des aktuellen spielers
-	@XStreamAsAttribute
 	private PlayerColor currentPlayer;
 
 	// momentan auszufuehrender zug-type
-	@XStreamAsAttribute
 	private MoveType currentMoveType;
 
 	// die teilenhmenden spieler
-	@XStreamImplicit(itemFieldName = "player")
-	private final List<Player> player;
+	private Player red, blue;
 
 	// kartenstapel
-	@XStreamOmitField
 	private final List<Card> cardStack;
 
 	// listre der gebauten tuerem
-	@XStreamImplicit(itemFieldName = "tower")
 	private final List<Tower> towers;
 
 	// letzter performte move
@@ -66,18 +60,13 @@ public final class GameState implements Cloneable {
 
 	public GameState() {
 
-		// liste mit zwei plaetzen initialisieren
-		player = new ArrayList<Player>(2);
-		player.add(null);
-		player.add(null);
-
 		currentPlayer = PlayerColor.RED;
 		startPlayer = PlayerColor.RED;
 		currentMoveType = MoveType.SELECT;
 		cardStack = new LinkedList<Card>();
-		towers = new LinkedList<Tower>();
+		towers = new ArrayList<Tower>(Constants.CITIES * Constants.SLOTS);
 		for (int city = 0; city < Constants.CITIES; city++) {
-			for (int slot = 0; slot < Constants.SLOTS_PER_CITY; slot++) {
+			for (int slot = 0; slot < Constants.SLOTS; slot++) {
 				towers.add(new Tower(city, slot));
 			}
 		}
@@ -90,9 +79,9 @@ public final class GameState implements Cloneable {
 	public void addPlayer(Player player) {
 
 		if (player.getPlayerColor() == PlayerColor.RED) {
-			this.player.set(0, player);
+			red = player;
 		} else if (player.getPlayerColor() == PlayerColor.BLUE) {
-			this.player.set(1, player);
+			blue = player;
 		}
 
 		for (int i = 0; i < CARDS_PER_PLAYER; i++) {
@@ -109,28 +98,35 @@ public final class GameState implements Cloneable {
 	 * liefert den spieler der momentan am zug ist
 	 */
 	public Player getCurrentPlayer() {
-		return currentPlayer == PlayerColor.RED ? player.get(0) : player.get(1);
+		return currentPlayer == PlayerColor.RED ? red : blue;
+	}
+
+	/**
+	 * liefert den spieler der momentan am zug ist
+	 */
+	public PlayerColor getCurrentPlayerColor() {
+		return currentPlayer;
 	}
 
 	/**
 	 * liefert den gegenspieler des aktiven spielers
 	 */
 	public Player getOtherPlayer() {
-		return currentPlayer == PlayerColor.RED ? player.get(1) : player.get(0);
+		return currentPlayer == PlayerColor.RED ? blue : red;
 	}
 
 	/**
 	 * liefert den ersten/roten spieler
 	 */
 	public Player getRedPlayer() {
-		return player.get(0);
+		return red;
 	}
 
 	/**
 	 * liefert den zweiten/blauenm spieler
 	 */
 	public Player getBluePlayer() {
-		return player.get(1);
+		return blue;
 	}
 
 	/**
@@ -278,17 +274,34 @@ public final class GameState implements Cloneable {
 
 	}
 
+	private static List<Card> createCardStack() {
+
+		List<Card> cardStack = new ArrayList<Card>(SLOTS * CARDS_PER_SLOT);
+
+		for (int slot = 0; slot < SLOTS; slot++) {
+			for (int card = 0; card < CARDS_PER_SLOT; card++) {
+				cardStack.add(new Card(slot));
+			}
+		}
+
+		Collections.shuffle(cardStack, new SecureRandom());
+		return cardStack;
+
+	}
+
 	/**
 	 * liefert den turm an einer gegebenen position, falls vorhanden, null
 	 * andernfalls
 	 */
 	public Tower getTower(int city, int slot) {
-		for (Tower tower : towers) {
-			if (tower.city == city && tower.slot == slot) {
-				return tower;
+		if (city < 0 || city >= Constants.CITIES) {
+			if (slot < 0 || slot >= Constants.SLOTS) {
+				throw new IllegalArgumentException("no such tower: city " + city + ", slot " + slot);
 			}
 		}
-		return null;
+
+		return towers.get(city * Constants.SLOTS + slot);
+
 	}
 
 	/**
@@ -450,7 +463,7 @@ public final class GameState implements Cloneable {
 	 * liefert die namen den beiden spieler
 	 */
 	public String[] getPlayerNames() {
-		return new String[] { player.get(0).getDisplayName(), player.get(1).getDisplayName() };
+		return new String[] { red.getDisplayName(), blue.getDisplayName() };
 
 	}
 

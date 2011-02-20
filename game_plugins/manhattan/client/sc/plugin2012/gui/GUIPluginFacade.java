@@ -51,7 +51,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public String getPluginInfoText() {
-		return "Schäfchen im Trockenen";
+		return GamePlugin.PLUGIN_NAME;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public Image getPluginImage() {
-		return loadImage("resource/game/bigsheep.png");
+		return loadImage("resource/game/manhattan.png");
 	}
 
 	private static Image loadImage(String filename) {
@@ -132,7 +132,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public int getPluginYear() {
-		return 2010;
+		return GamePlugin.PLUGIN_YEAR;
 	}
 
 	@Override

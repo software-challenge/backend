@@ -52,6 +52,6 @@ public abstract class Move implements Cloneable {
 	 */
 	abstract void perform(GameState state, Player player) throws InvalideMoveException;
 	
-	abstract MoveType getMoveType();
+	public abstract MoveType getMoveType();
 	
 }
