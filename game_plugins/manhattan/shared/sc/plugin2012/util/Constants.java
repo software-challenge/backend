@@ -14,7 +14,7 @@ public class Constants {
 	public static final int SELECTION_SIZE = 6;
 	public static final int MAX_SEGMENT_SIZE = 4;
 	public static final int[] SEGMENT_AMOUNTS = new int[] { 11, 6, 4, 3 };
-
+  
 	public static final int POINTS_PER_HIGHEST_TOWER = 3;
 	public static final int POINTS_PER_OWEND_CITY = 2;
 	public static final int POINTS_PER_TOWER = 1;
