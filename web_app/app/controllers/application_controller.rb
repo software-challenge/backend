@@ -100,12 +100,27 @@ class ApplicationController < ActionController::Base
   #  end
     @contest = @current_contest = Contest.first
     if not params[:contest_id].nil? 
-      c = Contest.all.find{|c| c.subdomain == params[:contest_id]}
-      @contest = @current_contest = c unless c.nil?
+      subdomain = params[:contest_id]
     elsif not params[:id].nil?
-      c = Contest.all.find{|c| c.subdomain == params[:id]}
-      @contest = @current_contest = c unless c.nil?
+      subdomain = params[:id]
     end
+    begin
+      case subdomain
+      when "aktuell",nil then
+        redirect = true
+        c = Contest.find_by_subdomain DateTime.now.year.to_s
+      when "voranmeldung" then
+        redirect = true
+        c = Contest.find_by_subdomain((DateTime.now.year+1).to_s)
+      else
+        redirect = false
+        c = Contest.find_by_subdomain subdomain
+      end
+    rescue ActiveRecord::RecordNotFound
+      c = Contest.first
+    end
+    @contest = @current_contest = c unless c.nil?
+    redirect_to contest_url(c) if (redirect and not c.nil?)
   end
  
   def fetch_fake_test_suite
