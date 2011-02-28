@@ -28,6 +28,9 @@ class ContestsController < ApplicationController
   # GET /contests/1
   # GET /contests/1.xml
   def show
+    if params[:curtain] == 'true'
+      @curtain = true
+    end
     @matchdays = @contest.matchdays
 
     respond_to do |format|

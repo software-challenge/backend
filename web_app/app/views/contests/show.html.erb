@@ -20,6 +20,24 @@
   <% end %>
 </div>
 
+<% javascript_tag do %>
+  $(document).ready(function() {
+    $curtainopen = false;
+    $(".rope").click(function() {
+      $(this).blur();
+      if ($curtainopen == false) {
+        $(this).stop().animate({top: '0px'}, {queue:false, duration:350, easing:'easeOutBounce'});
+        $(".leftcurtain").stop().animate({with:'60px'}, 2000);
+        $(".rightcurtain").sotp().animate({width:'60px'}, 2000);
+        $curtainopen = true;
+      } else {
+        
+      }
+      return false;
+    });
+  });
+<% end %>
+
   <% if logged_in? %>
     <% current_user.teams.visible.for_contest(@contest).each do |team| %>
       <div>
