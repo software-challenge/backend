@@ -127,16 +127,7 @@ body {
 	<div id="bg"></div>
 	<div id="flowers"></div>
 	
-	<div id="sheeps">
-           <% (1..12).each do |i| %>
-             <div class="sheep" id="sheep<%=i%>" style="left:271px;top:275px">
-		<img class="arrow" /> 			
-                <img class="sheepImage" src="<%=image_path%>/sheep.png" />
-	        <img class="dog" src="<%=image_path%>/dog.png" style="display: none;" />
-		<div class="attributes <%= (i-1)%6 > 2 ? 'red' : 'blue' %>"></div>
-	     </div>
-           <% end %>
-	</div>
+	<div id="sheeps"></div>
 	
 	<img id="centerDog" src="<%=image_path%>/dog.png" style="position:absolute;left:269px;top:273px;" />
 	
@@ -437,6 +428,12 @@ function setTurn(newTurn) {
           showResults()
         }
 }
+
+function createSheep(sheepData, index){
+         var plyr = (sheepData.getAttribute("owner") == "RED" ? "red" : "blue" )
+         $("#sheeps").append("<div class='sheep' id='sheep"+index+"' style='left:271px;top:275px' index='"+index+"'><img class='arrow' /><img class='sheepImage' src='<%=image_path%>/sheep.png' /><img class='dog' src='<%=image_path%>/dog.png' style='display: none;' /><div class='attributes " + plyr  + "'></div></div>") 
+}
+
 function renderTurn() {
 	var turnXML = turnXMLs[turn];
 	
@@ -453,49 +450,64 @@ function renderTurn() {
 		parseInt(turnXML.getElementsByTagName("player")[1].getAttribute("munchedFlowers"))
 	];
 	
-	// sheeps (i:index of html element, j:index of xml element)
 	var sheepDatas = turnXML.getElementsByTagName("sheep");
 	var arrowNodeToDir = {"61":"BR","62":"BL","63":"TL","64":"TR"};
 	var sheepsAtBase = {61:[],62:[],63:[],64:[]};
 	
 	var j = sheepDatas[0].getAttribute("index") == "0" ? 1 : 0;
 	document.getElementById("centerDog").style.display = j == 1 ? "block" : "none";
-	if (j == 1) document.getElementById("dogState").innerHTML = "passiv";
-	for (var i = 1; i <= 12; i++) {
-		var sheepElem = document.getElementById("sheep"+i);
-		if (j < sheepDatas.length && parseInt(sheepDatas[j].getAttribute("index")) == i) {
-			var sheepData = sheepDatas[j];
-			sheepElem.style.display = "block";
-			var color = sheepData.getAttribute("owner") == "RED" ? "red" : "blue";
-			var sheeps1 = parseInt(color == "red" ? sheepData.getAttribute("sheeps1") : sheepData.getAttribute("sheeps2"));
-			var sheeps2 = parseInt(color == "red" ? sheepData.getAttribute("sheeps2") : sheepData.getAttribute("sheeps1"));
-			var flowers = parseInt(sheepData.getAttribute("flowers"));
-			var node = sheepData.getAttribute("node");
-			if (sheepData.getAttribute("dog") == null) sheepElem.getElementsByTagName("img")[2].style.display = "none";
-			else {
-				sheepElem.getElementsByTagName("img")[2].style.display = "block";
-				document.getElementById("dogState").innerHTML = sheepData.getAttribute("dog") == "PASSIVE" ? "passiv" : "aktiv";
-			}
-			numSheeps[color == "red" ? 0 : 1]++;
-			sheepsCaptured[color == "red" ? 0 : 1] += sheeps2;
-			flowersCollected[color == "red" ? 0 : 1] += flowers;
-			if (node > 60) {
-				sheepsAtBase[node].push(sheepElem);
-				sheepElem.className = "sheep inBase";
-			} else {
-				sheepElem.className = "sheep";
-				sheepElem.getElementsByTagName("div")[0].innerHTML = sheeps1 + "," + sheeps2+ "," + flowers;
-				sheepElem.getElementsByTagName("img")[0].src = "<%=image_path%>/arrow" + arrowNodeToDir[sheepData.getAttribute("target")] + color + ".png";
-				var sx = x(sheepData.getAttribute("node"), 50);
-				var sy = y(sheepData.getAttribute("node"), 50);
-				tweenTo(sheepElem, sx, sy);
-			}
-			j++;
-		}
-		else {
-			sheepElem.style.display = "none";
-		}
-	}
+
+        if (j == 1) document.getElementById("dogState").innerHTML = "passiv";
+
+        var usedSheeps = {} // The sheeps that were used in the xml replay
+        
+        // Iterate over xml-sheeps, refresh the data and create if not exists!
+        for(var j = 0; j < sheepDatas.length; j++){
+          var sheepData = sheepDatas[j]
+          var sheepIndex = parseInt(sheepData.getAttribute("index"))
+          usedSheeps[sheepIndex] = true
+          var sheepElem = document.getElementById("sheep"+sheepIndex)  
+          if(sheepElem == null){
+            createSheep(sheepData,sheepIndex)  
+            var sheepElem = document.getElementById("sheep"+sheepIndex)  
+          } 
+          sheepElem.style.display = (sheepData.getAttribute("owner") == null ? "none" : "block");
+          var color = sheepData.getAttribute("owner") == "RED" ? "red" : "blue";
+	  var sheeps1 = parseInt(color == "red" ? sheepData.getAttribute("sheeps1") : sheepData.getAttribute("sheeps2"));
+	  var sheeps2 = parseInt(color == "red" ? sheepData.getAttribute("sheeps2") : sheepData.getAttribute("sheeps1"));
+	  var flowers = parseInt(sheepData.getAttribute("flowers"));
+	  var node = sheepData.getAttribute("node");
+	  if (sheepData.getAttribute("dog") == null) sheepElem.getElementsByTagName("img")[2].style.display = "none";
+	  else {
+	    sheepElem.getElementsByTagName("img")[2].style.display = "block";
+	    document.getElementById("dogState").innerHTML = sheepData.getAttribute("dog") == "PASSIVE" ? "passiv" : "aktiv";
+	  }
+	  numSheeps[color == "red" ? 0 : 1]++;
+	  sheepsCaptured[color == "red" ? 0 : 1] += sheeps2;
+	  flowersCollected[color == "red" ? 0 : 1] += flowers;
+	  if (node > 60) {
+	    sheepsAtBase[node].push(sheepElem);
+	    sheepElem.className = "sheep inBase";
+	  } else {
+	    sheepElem.className = "sheep";
+	    sheepElem.getElementsByTagName("div")[0].innerHTML = sheeps1 + "," + sheeps2+ "," + flowers;
+            if(sheepElem.style.display != "none") {
+	    sheepElem.getElementsByTagName("img")[0].src = "<%=image_path%>/arrow" + arrowNodeToDir[sheepData.getAttribute("target")] + color + ".png";
+            }
+	    var sx = x(sheepData.getAttribute("node"), 50);
+	    var sy = y(sheepData.getAttribute("node"), 50);
+	    tweenTo(sheepElem, sx, sy);
+          }
+        } 
+
+        // Remove unused sheeps
+        $(".sheep").each(function(i){
+          if(usedSheeps[parseInt(this.getAttribute("index"))] != true){
+            $("#sheep"+this.getAttribute("index")).remove()
+          }
+        })
+        
+        
 	// manage how your sheeps are belong to bases
 	for (var node in sheepsAtBase) {
 		var numSheepsAtBase = sheepsAtBase[node].length;
