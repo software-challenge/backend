@@ -15,18 +15,7 @@ public enum PlayerColor {
 	 * liefert die spielerfarbe des gegners dieses spielers
 	 */
 	public PlayerColor opponent() {
-		PlayerColor result = null;
-		switch (this) {
-		case RED:
-			result = PlayerColor.BLUE;
-			break;
-
-		case BLUE:
-			result = PlayerColor.RED;
-			break;
-		}
-
-		return result;
+		return this == RED ? BLUE : RED;
 	}
 
 }

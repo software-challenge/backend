@@ -43,7 +43,7 @@ public class SelectMove extends Move {
 
 		if (selectionSum != SELECTION_SIZE) {
 			throw new InvalideMoveException(player.getDisplayName() + " hat nicht genau " + SELECTION_SIZE
-					+ " Bauelemente gewaehlt");
+					+ " Bauelemente gewählt");
 		}
 
 		for (int i = 0; i < MAX_SEGMENT_SIZE; i++) {
