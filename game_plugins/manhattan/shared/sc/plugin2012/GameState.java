@@ -21,11 +21,37 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
- * ein spielzustand beinhaltet die liste der spielfelder spielfiguren, die zur
- * verfuegung stehenden wurfel und die teilnehmenden spieler
+ * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
+ * einem gegebenen Zeitpunkt, das heisst zwischen zwie Spielzuegen, beschreiben.
+ * Dies umfasst eine fortlaufende Zugnummer ({@link getTurn() getTurn()}) und
+ * was fuer eine Art von Zug ({@link getCurrentMoveType() getCurrentMoveType()})
+ * der Spielserver als Antwort von einem der beiden Spieler ({@link
+ * getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren die
+ * Informationen ueber die beiden Spieler und alle moeglichen Tuerme zum
+ * Zustand. Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf.
+ * ueber das Spielende informiert.<br/>
+ * <br/>
  * 
- * @author ffa, sca, tkra
+ * Der {@code GameState} ist damit das zentrale Objekt ueber das auf alle
+ * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.<br/>
+ * <br/>
  * 
+ * Der Spielserver sendet an beide teilnehmende Spieler nach jedem getaetigten
+ * Zug eine neue Kopie des {@code GameState}, in dem der dann aktuelle Zustand
+ * beschrieben wird. Informationen ueber den Spielverlauf sind nur bedingt ueber
+ * den {@code GameState}erfragbar und muessen von einem Spielclient daher bei
+ * Bedarf selbst mitgeschrieben werden.<br/>
+ * <br/>
+ * 
+ * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
+ * Teilinformationen, zum Beispiele die Liste aller Tuerme eines Spielers,
+ * abgefragt werden. Insbesondere kann mit der Methode {@link getPossibleMoves()
+ * getPossibleMoves()} eine Liste aller fuer den aktuellen Spieler legalen
+ * Bauzuege abgefragt werden. Ist momentan also eine Bauzug zu taetigen, kann
+ * eine Spieleclient diese Liste aus dem {@code GameState} erfragen und muss
+ * dann lediglich einen Zug aus dieser Liste auswaehlen.
+ * 
+ * @author tkra
  */
 @XStreamAlias(value = "manhattan:state")
 @XStreamConverter(GameStateConverter.class)
@@ -58,6 +84,15 @@ public final class GameState implements Cloneable {
 	// endbedingung
 	private Condition condition = null;
 
+	/**
+	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so
+	 * gesetzt sind, wie sie zu Beginn eines Spiels, bevor die Spieler
+	 * beigetreten sind, gueltig sind.<br/>
+	 * <br/>
+	 * 
+	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte
+	 * vom Spielclient i.A. nicht aufgerufen werden!</b>
+	 */
 	public GameState() {
 
 		currentPlayer = PlayerColor.RED;
@@ -74,7 +109,14 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * setzt einen neuen spieler und gibt ihm siene starthand
+	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
+	 * <br/>
+	 * 
+	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * @param player
+	 *            Der hinzuzufuegende Spieler.
 	 */
 	public void addPlayer(Player player) {
 
@@ -95,59 +137,99 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert den spieler der momentan am zug ist
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, der momentan am Zug
+	 * ist.
+	 * 
+	 * @return Der Spieler, der momentan am Zug ist.
 	 */
 	public Player getCurrentPlayer() {
 		return currentPlayer == PlayerColor.RED ? red : blue;
 	}
 
 	/**
-	 * liefert den spieler der momentan am zug ist
+	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
+	 * ist. Dies ist aequivalent zum Aufruf {@code
+	 * getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * 
+	 * @return Die Farbe des Spielers, der momentan am Zug ist.
 	 */
 	public PlayerColor getCurrentPlayerColor() {
 		return currentPlayer;
 	}
 
 	/**
-	 * liefert den gegenspieler des aktiven spielers
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, der momentan nicht
+	 * am Zug ist.
+	 * 
+	 * @return Der Spieler, der momentan nicht am Zug ist.
 	 */
 	public Player getOtherPlayer() {
 		return currentPlayer == PlayerColor.RED ? blue : red;
 	}
 
 	/**
-	 * liefert den ersten/roten spieler
+	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
+	 * Zug ist. Dies ist aequivalent zum Aufruf @{@code
+	 * getCurrentPlayerColor.opponent()} oder {@code
+	 * getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * 
+	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
+	 */
+	public PlayerColor getOtherPlayerColor() {
+		return currentPlayer.opponent();
+	}
+
+	/**
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
+	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe {@code
+	 * PlayerColor.RED} spielt.
+	 * 
+	 * @return Der rote Spieler.
 	 */
 	public Player getRedPlayer() {
 		return red;
 	}
 
 	/**
-	 * liefert den zweiten/blauenm spieler
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
+	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe
+	 * {@code PlayerColor.BLUE} spielt.
+	 * 
+	 * @return Der blaue Spieler.
 	 */
 	public Player getBluePlayer() {
 		return blue;
 	}
 
 	/**
-	 * wechselt den aktuellen startspieler
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, der den aktuellen
+	 * Durchgang begonnen hat. Also den Spieler, der in der letzten Auswahlphase
+	 * zls erster Bauelemente waehlen musste und danach als erster eine Segment
+	 * an einen Turm angebaut hat.
+	 * 
+	 * @return Der Spieler, der momentan Startspieler ist.
 	 */
+	public Player getStartPlayer() {
+		return startPlayer == PlayerColor.RED ? red : blue;
+	}
+
+	/**
+	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
+	 * Durchgang begonnen hat. Dies ist aequivalent zum Aufruf {@code
+	 * getStartPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * 
+	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
+	 */
+	public PlayerColor getStartPlayerColor() {
+		return startPlayer;
+	}
+
 	private void switchCurrentPlayer() {
 		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
 	}
 
-	/**
-	 * wechselt den aktuellen startspieler
-	 */
 	private void switchStartPlayer() {
 		startPlayer = startPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
-	}
-
-	/**
-	 * leifert den aktuellen startspieler
-	 */
-	public PlayerColor getStartPlayer() {
-		return startPlayer;
 	}
 
 	/**

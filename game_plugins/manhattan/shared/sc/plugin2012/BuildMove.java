@@ -30,17 +30,17 @@ public class BuildMove extends Move {
 		Segment segment = player.getSegment(size);
 
 		if (segment == null || segment.getUsable() < 1) {
-			throw new InvalideMoveException(player.getDisplayName() + " hat kein Bauelement der Groesse "
+			throw new InvalideMoveException(player.getDisplayName() + " hat kein Bauelement der Größe "
 					+ size);
 		}
 
 		if (!player.hasCard(slot)) {
-			throw new InvalideMoveException(player.getDisplayName() + " hat keine Karte fuer den Bauplatz "
+			throw new InvalideMoveException(player.getDisplayName() + " hat keine Karte für den Bauplatz "
 					+ slot);
 		}
 
 		if (!tower.addPart(color, size)) {
-			throw new InvalideMoveException("Das gewaehltes Element war nciht gross genug");
+			throw new InvalideMoveException("Das gewähltes Element war nicht groß genug");
 		}
 
 		segment.use();

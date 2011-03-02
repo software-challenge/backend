@@ -20,6 +20,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -31,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import sc.plugin2012.gui.renderer.RenderConfiguration;
@@ -50,7 +52,7 @@ import sc.plugin2012.util.Constants;
  * @author tkra, ffi
  */
 @SuppressWarnings("serial")
-public class FrameRenderer extends JPanel {
+public class FrameRenderer extends JComponent {
 
 	// konstanten
 	private final static int BORDER_SIZE = 6;
@@ -94,10 +96,16 @@ public class FrameRenderer extends JPanel {
 	private static final FontMetrics fmH3 = fmPanel.getFontMetrics(h3);
 	private static final FontMetrics fmH4 = fmPanel.getFontMetrics(h4);
 
-	private static final String SELECT_STRING = "Bauelemente auswaehlen";
+	private static final Stroke stroke10 = new BasicStroke(1f);
+	private static final Stroke stroke15 = new BasicStroke(1.5f);
+	private static final Stroke stroke20 = new BasicStroke(2f);
+
+	private static final String SELECT_STRING = "Bauelemente auswählen";
 	private static final int MIN_DIALOG_SIZE = fmH1.stringWidth(SELECT_STRING) + 2 * GAP_SIZE;
 	private static final int STATUS_HEIGTH = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP
 			+ Math.max(CARD_HEGTH, MAX_SEGMENT_HEIGTH) + fmH2.getHeight();
+
+	private static final Object LOCK = new Object();
 
 	// current (game) state
 	private PlayerColor currentPlayer;
@@ -470,6 +478,8 @@ public class FrameRenderer extends JPanel {
 	}
 
 	private synchronized void moveSegment(final GameState gameState) {
+		
+		int FPS = 30;
 
 		setEnabled(false);
 		BuildMove move = (BuildMove) gameState.getLastMove();
@@ -490,24 +500,37 @@ public class FrameRenderer extends JPanel {
 		Point p = new Point(selectedSegment.x, selectedSegment.y);
 		Point q = new Point(targetTower.innerX - TOWER_LEFT_WIDTH, targetTower.innerY);
 
-		double pixelPerFrame = ((double) getHeight()) / 40;
+		double pixelPerFrame = ((double) getWidth()) / (1.5 * FPS);
 		double dist = Math.sqrt(Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2));
 
 		final int frames = (int) Math.ceil(dist / pixelPerFrame);
 		final Point o = new Point(p.x, p.y);
 		final Point dP = new Point(q.x - p.x, q.y - p.y);
 
+		long start = System.currentTimeMillis();
+		int h = selectedSegment.size * TOWER_STORIE_HEIGTH + TOWER_LEFT_HEIGTH + TOWER_RIGHT_HEIGTH + 10;
 		for (int frame = 0; frame < frames; frame++) {
+
+			int oldx = selectedSegment.xs[0] - 5;
+			int oldy = selectedSegment.ys[4] - 5;
 
 			p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
 			p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
 			selectedSegment.moveTo(p.x, p.y);
 
-			invalidate();
-			getParent().repaint();
+			// invalidate();
+			// getParent().repaint();
 
+			repaint(oldx, oldy, TOWER_TOTAL_WIDTH + 10, h);
+			repaint(selectedSegment.xs[0] - 5, selectedSegment.ys[4] - 5, TOWER_TOTAL_WIDTH + 10, h);
+
+			
+			synchronized (LOCK) {
+				LOCK.notify();
+			}
+			
 			try {
-				Thread.sleep(1000 / 40);
+				Thread.sleep(start + (frame + 1)*(1000/FPS) - System.currentTimeMillis());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -758,9 +781,9 @@ public class FrameRenderer extends JPanel {
 
 		// bmFrames++;
 		// // repainted = true;
-		// synchronized (LOCK) {
-		// LOCK.notifyAll();
-		// }
+		synchronized (LOCK) {
+			LOCK.notify();
+		}
 
 	}
 
@@ -959,7 +982,7 @@ public class FrameRenderer extends JPanel {
 			g2.setColor(Color.DARK_GRAY);
 			g2.drawString(okay, (getWidth() - okayW) / 2, selectY + selectHeight - GAP_SIZE - 10);
 
-			g2.setStroke(new BasicStroke(1f));
+			g2.setStroke(stroke10);
 			g2.setColor(Color.DARK_GRAY);
 			g2.drawRoundRect(selectButton[0], selectButton[1], selectButton[2], selectButton[3], 15, 15);
 
@@ -978,7 +1001,7 @@ public class FrameRenderer extends JPanel {
 		g2.setColor(glow ? getPlayerColor(currentPlayer) : getBrightPlayerColor(tower.owner, forced));
 		g2.fillPolygon(tower.xs, tower.ys, 6);
 
-		g2.setStroke(new BasicStroke(2f));
+		g2.setStroke(stroke20);
 		g2.setColor(tower.highlited ? getPlayerColor(currentPlayer) : Color.DARK_GRAY);
 		g2.drawPolygon(tower.xs, tower.ys, 6);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[1], tower.ys[1]);
@@ -989,7 +1012,7 @@ public class FrameRenderer extends JPanel {
 
 	private void paintCard(Graphics2D g2, int x, int y, int slot) {
 
-		g2.setStroke(new BasicStroke(1.5f));
+		g2.setStroke(stroke15);
 		g2.setColor(Color.WHITE);
 		g2.fillRoundRect(x, y, CARD_WIDTH, CARD_HEGTH, 10, 10);
 
