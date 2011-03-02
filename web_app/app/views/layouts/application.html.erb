@@ -34,19 +34,31 @@
       <a class="rope" href="#"><%= image_tag "curtain/rope.png" %></a>
 
       <% javascript_tag do %>
+        function open() {
+            $(".rope").blur();
+            if ($curtainopen == false) {
+              $(".rope").stop().animate({top: '0px'}, {queue:false, duration:350, easing:'easeOutBounce'});
+              $(".leftcurtain").stop().animate({width:'60px'}, 2000);
+              $(".rightcurtain").stop().animate({width:'60px'}, 2000);
+              $(".rope").stop().animate({top:'-400px'}, 1500);
+              setTimeout(function() {
+                $(".rope").hide(500);
+              }, "500");
+              $curtainopen = true;
+            } 
+        }
+
         $(document).ready(function() {
           $curtainopen = false;
           $(".rope").click(function() {
-            $(this).blur();
-            if ($curtainopen == false) {
-              $(this).stop().animate({top: '0px'}, {queue:false, duration:350, easing:'easeOutBounce'});
-              $(".leftcurtain").stop().animate({width:'60px'}, 2000);
-              $(".rightcurtain").stop().animate({width:'60px'}, 2000);
-              $curtainopen = true;
-            } else {
-        
-            }
+            open();
             return false;
+          });
+          $("*").each(function(i) {
+            $(this).keypress(function(e) {
+              open();
+              return false;
+            });
           });
         });
       <% end %>
