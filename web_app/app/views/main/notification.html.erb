@@ -7,12 +7,12 @@
 <center>
 <div class="notification">
   <div>
-    <%= message %>
+    <%= message.html_safe! %>
   </div>
   <div>
     <% links.each do |link| %>
       <div style="margin-top: 10px">
-        <%= link_to link[0], link[1] %>
+        <%= link_to link[0].html_safe!, link[1].html_safe! %>
       </div>
     <% end %>
   </div>

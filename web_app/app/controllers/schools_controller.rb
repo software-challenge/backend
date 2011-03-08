@@ -85,7 +85,7 @@ class SchoolsController < ApplicationController
     end
     respond_to do |format|
       if success
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet<br><b>Bitte melden Sie nun auch die Teams an, die voraussichtlich teilnehmen werden.</b>", :links => [["Jetzt Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, @school)]] } }
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet.<br><b>Bitte melden Sie nun auch die Teams an, die voraussichtlich teilnehmen werden.</b>", :links => [["Jetzt Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, @school)]] } }
         format.xml { render :xml => @school }
       else
         format.html { render :action => "new" }

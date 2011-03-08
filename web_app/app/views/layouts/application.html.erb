@@ -76,7 +76,9 @@
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
                 <span><%= t "views.logged_in_as" %></span>
                 <span><%= link_to current_user.name, contest_person_url(@contest, current_user) %></span>
-                <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
+                <% if !ENV['EMAIL_VALIDATION'] or ENV['EMAIL_VALIDATION'] == "true" %>
+                  <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
+                <% end %>
                 <span><%= link_to t("actions.logout"), contest_logout_url(@contest), :method => :post %></span>
               </span>
             <% else %>
