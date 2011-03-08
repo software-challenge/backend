@@ -17,7 +17,7 @@ class MainController < ApplicationController
   def do_register
     @person = Person.create(params[:person][:person])
     @email_event = EmailEvent.create(params[:person][:email_event])
-    @person.validation_code = @person.random_hash(25)
+    @person.validation_code = @person.random_hash(25) if ENV['EMAIL_VALIDATION'] == "true"
     success = false
     Person.transaction do
       begin
@@ -29,8 +29,21 @@ class MainController < ApplicationController
     # TODO: Generate event
     respond_to do |format|
       if success
-        PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], true)
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Registrieren", :message => "Ihr Zugang wurde erstellt. An die angebene E-Mail Adresse wurde eine E-Mail mit einem Bestätigungslink gesendet. Um ihren Zugang nutzen zu können, müssen Sie zunächst diese E-Mail abrufen und den Bestätigungslink besuchen.", :links => [["Weiter", contest_url(@contest)]] }}
+        if ENV['EMAIL_VALIDATION'] == "true"
+          PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], true)
+          format.html { render "main/notification", :locals => {:tab => :contest, :title => "Registrieren", :message => "Ihr Zugang wurde erstellt. An die angebene E-Mail Adresse wurde eine E-Mail mit einem Bestätigungslink gesendet. Um ihren Zugang nutzen zu können, müssen Sie zunächst diese E-Mail abrufen und den Bestätigungslink besuchen.", :links => [["Weiter", contest_url(@contest)]] }}
+        else
+          @person.logged_in = true
+          @person.last_seen = Time.now
+          session[:user_id] = @person.id
+          @person.save
+          begin
+            PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], false)
+          rescue 
+            logger.warn "Registration mail could not be send"
+          end
+          format.html { render "main/notification", :locals => {:tab => :contest, :title => "Registrieren", :message => 'Ihr Zugang wurde erstellt.', :links => [["Weiter", contest_url(@contest)]] }}
+        end
         format.xml { render :xml => @person }
       else
         format.html { render :action => "register" }
