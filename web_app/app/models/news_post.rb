@@ -24,7 +24,8 @@ class NewsPost < ActiveRecord::Base
 
   def translate!
     # TODO: implement BBCode or Markdown as input and translate to html!
-    self.html = self.text
+    puts self.text
+    self.html = BlueCloth.new(self.text).to_html
     self.save!
   end
 
