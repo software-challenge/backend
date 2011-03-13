@@ -1,13 +1,19 @@
 class PreliminaryContestantsController < ApplicationController
-
+ 
+  before_filter :fetch_preliminary_contestant
   before_filter :fetch_school
 
+  def fetch_preliminary_contestant
+    @preliminary_contestant = PreliminaryContestant.find_by_id(params[:id])
+  end
+
   def fetch_school
-    @school = School.find(params[:school_id])
+    @school = School.find_by_id(params[:school_id]) 
+    @school = @preliminary_contestant.school if @preliminary_contestant 
   end
 
   def show
-    @team = PreliminaryContestant.find(params[:id])
+    @team = @preliminary_contestant
     respond_to do |format|
       format.html
       format.js {
@@ -19,7 +25,7 @@ class PreliminaryContestantsController < ApplicationController
   def create
     if params[:id]
       # Update
-      @team = PreliminaryContestant.find(params[:id])
+      @team = @preliminary_contestant
       if @current_user.has_role?(:creator, @team) or administrator?
         success = @team.update_attributes(params[:team])
       else 
@@ -29,6 +35,7 @@ class PreliminaryContestantsController < ApplicationController
       # Create new
       @team = PreliminaryContestant.create(params[:team])
       @team.school = @school
+      @team.person = @current_user
       success = @team.save
       if success
         @current_user.has_role!(:creator, @team)
@@ -54,5 +61,8 @@ class PreliminaryContestantsController < ApplicationController
     redirect_to contest_url(@contest) unless logged_in?
     @team = PreliminaryContestant.new
   end
-
+  
+  def index
+    @preliminary_contestants = @contest.preliminary_contestants
+  end
 end

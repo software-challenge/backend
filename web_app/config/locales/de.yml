@@ -387,6 +387,11 @@ de:
     results: "Ergebnisse"
     table: "Tabelle"
     matchday: "Spieltag"
+    surveys: "Umfragen"
+    survey_results: 
+      index: "Verfügbare Umfrageergebnisse"
+      show: "Umfrageerbnisse"
+      show_response: "Umfrageergebnisse: Details"
     matchdays: 
       list: "Spieltage"
       standings: "Rangliste für Spieltag"

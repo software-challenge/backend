@@ -1,0 +1,12 @@
+source 'http://rubygems.org'
+
+gem 'rails', '2.3.7'
+
+gem "surveyor"
+gem "rubyzip"
+gem "nokogiri"
+gem "daemons"
+gem "erubis", ">= 2.6.5"
+gem "ezprint"
+
+

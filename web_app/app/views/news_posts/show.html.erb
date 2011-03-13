@@ -1,0 +1,25 @@
+<div id="actions">
+  <% show_to :administrator do %>
+    <% if @news_post.published? %>
+      <% link_to unpublish_contest_news_post_url(@contest,@news_post), :method => :post do %>
+        <%= image_tag 'actions/deny.png' %> Veröffentlichung rückgängig machen
+      <% end %>
+    <% else %>
+       <% link_to publish_contest_news_post_url(@contest,@news_post), :method => :post do %>
+        <%= image_tag 'actions/publish.gif' %> Veröffentlichen
+      <% end %>
+    <% end %>
+    <% link_to edit_contest_news_post_url(@contest,@news_post) do %>
+        <%= image_tag 'actions/edit_lrg.png' %> Eintrag bearbeiten 
+    <% end %>
+    <% link_to contest_news_post_url(@contest,@news_ost), :method => :delete, :confirm => "Sind Sie sich wirklich sicher, dass Sie diesen Beitrag unwiederbringlich entfernen wollen?"  do %>
+        <%= image_tag 'actions/destroy.png' %> Eintrag löschen
+    <% end %>
+  <% end %>
+</div>
+
+<h1>News-Beitrag anzeigen </h1>
+
+<% tabnav :contest do %>
+  <%= render :partial => 'news_post' %>
+<% end %>

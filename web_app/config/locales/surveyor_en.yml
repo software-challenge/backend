@@ -1,0 +1,17 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+de:
+  surveyor:
+    take_these_surveys: "An dieser Umfrage teilnehmen"
+    take_it: "Teilnehmen"
+    completed_survey: "Umfrage erfolgreich abgeschlossen."
+    unable_to_find_your_responses: "Kann ihre Antworten auf diese Umfrage nicht finden!"
+    unable_to_update_survey: "Änderungen konnten nicht gespeichert werden!"
+    unable_to_find_that_survey: "Umfrage konnte nicht gefunden werden."
+    survey_started_success: "Umfrage erfolgreich gestartet!"
+    click_here_to_finish: "Umfrage abschließen"
+    previous_section: "&laquo; Vorherige Seite"
+    next_section: "Nächste Seite &raquo;"
+    select_one: "Wählen sie eines ..."
+    sections: "Abschnitte"

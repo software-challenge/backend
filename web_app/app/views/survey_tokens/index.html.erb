@@ -1,0 +1,44 @@
+<div id="actions">
+  <% show_to :administrator do %>
+    <% link_to new_contest_survey_token_url(@contest) do %>
+      <%= image_tag("actions/add.png") %> Neue Tokens erstellen
+    <% end %>  
+  <% end %>
+</div>
+ 
+<h1>
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  Verfügbare Umfragen anzeigen
+</h1>
+
+<% tabnav :contest do %>
+
+<table class="data-table">
+  <thead>
+   <tr class="middle">
+    <th>Name</th>
+    <th>Läuft ab</th>
+    <th>Optionen</th>
+   </tr>
+  </thead>
+  <tbody>
+     <% @tokens.each do |t| %>
+       <tr>
+        <td><%= t.survey.title %></td>
+        <td><%= if t.valid_until then "in #{distance_of_time_in_words(Time.now,t.valid_until)}" else "unbeschränkt" end %></td>
+        <td><%= link_to image_tag("actions/vote.png"), new_contest_survey_token_survey_url(@contest,t), :title => "teilnehmen" if t.currently_valid? %><%= link_to image_tag("actions/show.png"), contest_survey_token_url(@contest,t) %><%= link_to image_tag("actions/delete.png"), contest_survey_token_url(@contest,t), :method => :delete, :confirm => "Sind Sie sicher?" %></td>
+       </tr>
+     <% end %>   
+ </tbody>
+</table>
+
+<% consumed_tokens = SurveyToken.for_person(@current_user).select{|s| s.consumed? }%>
+<% unless consumed_tokens.empty? %>
+  <h3>Sie haben schon beantwortet:</h3>
+  <ul>
+    <% consumed_tokens.each do |token| %>
+      <li><%= link_to "#{token.survey.title} für #{token.token_owner.name}", contest_survey_token_url(@contest,token) %></li>
+    <% end %>
+  </ul>
+<% end %>
+<% end %>

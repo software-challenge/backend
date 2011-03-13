@@ -1,0 +1,26 @@
+<h1>
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to @school.name, contest_school_url(@contest,@school) %> /
+  <%= @preliminary_contestant.name %>
+</h1>
+
+<% tabnav :contest do %>
+  <div class="group frame">
+    <div class="group title">
+      Informationen
+    </div>
+    <div class="group content">
+      <div class="listing bold">
+        <ol>
+          <%= list_item_for(@preliminary_contestant, :name) %>
+          <%= list_item("Erstellt von", @preliminary_contestant.person.name) %>
+          <%= list_item("Erstellt am", l(@preliminary_contestant.created_at)) %>
+          <%= list_item("Zugehörige Schule", link_to(@preliminary_contestant.school.name, contest_school_url(@contest,@preliminary_contestant.school))) %>
+          <%= list_item_for(@preliminary_contestant.school, :location)%>
+          <%= list_item_for(@preliminary_contestant.school, :state) %>
+          <%= list_item "Teilnahmewahrscheinlichkeit", @preliminary_contestant.participation_probability %>
+        </ol>
+      </div>
+    </div>
+  </div>
+<% end %>

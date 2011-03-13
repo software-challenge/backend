@@ -1,0 +1,8 @@
+<% news_post = news_post || @news_post %>
+<span style="font-weight: bold; font-size: 14px;"><%= news_post.title %></span><br>
+<i> vom <%= l news_post.created_at.to_date %>, zuletzt bearbeitet <%= l news_post.updated_at.to_date %></i>
+<div style="margin-top: 10px">
+  <%= news_post.html.html_safe %>
+</div>
+
+

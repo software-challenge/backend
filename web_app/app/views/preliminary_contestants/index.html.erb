@@ -1,0 +1,18 @@
+<h1>
+  <%= link_to @contest.name, contest_url(@contest)%> /
+  Voranmeldungen: Teams
+</h1>
+
+<% tabnav :contest do %>
+  <div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @preliminary_contestants.count %> Teams angemeldet.</div>
+  <%= render :partial => "list", :locales => {:preliminary_contestants => @preliminary_contestants}%>
+<% end %>
+
+<% javascript_tag do %>
+ $("#preliminary_contestants").tablesorter({
+    headers: {
+      1: { sorter: true }
+      2: { sorter: true }
+    }
+  })  
+<% end %>

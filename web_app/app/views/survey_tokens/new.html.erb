@@ -1,0 +1,7 @@
+<h1>
+  <%= link_to @contest.name, contest_url(@contest) %> /
+  Neue Tokens erzeugen
+</h1>
+<% tabnav :contest do %>
+ <%= render :partial => 'form' %> 
+<% end %>

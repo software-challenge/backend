@@ -1,0 +1,53 @@
+<%= stylesheet_link_tag 'surveyor/results' %>
+<h1> Umfrageergebnisse für <%= @survey.title %> </h1>
+<% tabnav :administration do %>
+
+<div id="filter"><b>Filter:</b> <select id="select_question">
+  <option value="all">Alle anzeigen</option>
+  <% @questions.each do |question| %>
+   <% unless question.display_type == "label" or question.display_order == 1 %>
+    <option value="<%= question.id %>"><%= question.text %></option>
+   <% end %>
+  <% end %>
+</select>
+</div>
+
+<div id="questions" style="margin-top: 15px;">
+<table class="list_table">
+  <tr>
+    <th>Adressat</th>
+    <th>Beantworter</th>
+	<% @questions.each do |question| %>
+		<% next if question.display_order == 1 or question.display_type == "label" %>
+		<th class="question question<%=question.id%>"><%= question.text  %></th>
+	<% end %>
+    <th>Aktionen</th>
+  </tr>
+
+<% @response_sets.each do |r_set| %>
+  <tr>
+    <td><%= r_set.survey_token.token_owner.name %></td>
+    <td><%= r_set.user.name %></td>
+    <% @questions.each do |question| %>
+      <% next if question.display_order == 1 or question.display_type == "label"%>
+      <td class="question question<%=question.id%>"><%= display_response(r_set,question).html_safe %></td>
+    <% end %>
+    <td><%= link_to image_tag("actions/show.png"), show_response_contest_survey_result_url(@contest,@survey, :survey_token => r_set.survey_token) %></td>
+  </tr>
+<% end %>
+</table>
+</div>
+
+<% end %>
+
+<% javascript_tag do %>
+ $("#select_question").change(function(){
+  var val = $("#select_question option:selected").val()
+  if(val == "all"){
+    $(".question").show()
+  }else{
+    $(".question").hide()
+    $(".question"+val).show()
+  }
+ })
+<% end %>

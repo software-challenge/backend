@@ -74,14 +74,32 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     end
   end
 
+  if logged_in? and administrator?
+   add_tab do |t|
+    t.named t("titles.surveys")
+    t.links_to contest_survey_tokens_url(@contest)
+    t.highlights_on :controller => "survey_tokens"
+   end
+  end
+
   if ((logged_in? and not (current_user.schools_for_contest(@contest).empty? and current_user.other_schools_for_contest(@contest).empty?)) or administrator?) and @contest.phase != "contest"
     add_tab do |t|
       begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if not administrator?
-      begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if administrator?
+      begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}"; end if administrator?
       t.links_to contest_schools_url(@contest)
       t.highlights_on :controller => "schools", :action => "index"
     end
   end
+
+  if administrator? and @contest.phase != "contest"
+    add_tab do |t|
+      t.named "#{t "views.all"} #{PreliminaryContestant.human_name(:count => 2)}"
+      t.links_to contest_preliminary_contestants_url(@contest)
+      t.highlights_on :controller => "preliminary_contestants"
+    end
+  end
+
+
 
     if (@contest.regular_phase_finished?) and ((not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator)) or (not @contest.finale.nil? and @contest.finale.has_published_lineup?))
       add_tab do |t|

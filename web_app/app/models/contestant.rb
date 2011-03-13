@@ -1,5 +1,7 @@
 # represents a school
 class Contestant < ActiveRecord::Base
+  
+  acts_as_authorization_object
 
   RANKINGS = %w{beginner advanced none}
 
@@ -10,6 +12,8 @@ class Contestant < ActiveRecord::Base
 
   has_many :memberships
   has_many :people, :through => :memberships
+
+  has_many :survey_tokens, :as => :token_owner
 
   has_many :slots, :class_name => "MatchdaySlot"
   has_many :matchdays, :through => :slots, :conditions => ['type = ?', "Matchday"]

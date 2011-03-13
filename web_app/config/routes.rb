@@ -8,6 +8,7 @@ ActionController::Routing::Routes.draw do |map|
     #  :path_prefix => '/administration',
     #  :name_prefix => 'admin_'
 
+
     tmap.resources :contests,
       :as => "wettbewerb",
       :member => {
@@ -23,6 +24,18 @@ ActionController::Routing::Routes.draw do |map|
       :phases => :get,
       :move_phase => :post
     } do |c|
+
+      c.resources :news_posts,
+       :member => {
+       :publish => :post,
+       :unpublish => :post
+      }
+
+      c.resources :survey_results, :member => { :show_response => :get } 
+
+      c.resources :survey_tokens do  |st|
+        st.resources :surveys, :controller => "surveyor"
+      end
       c.resources :whitelist_entries, :as => "whitelist", :member => { 
         :reset => :delete,
         :ajax_delete => :post
@@ -46,6 +59,9 @@ ActionController::Routing::Routes.draw do |map|
       } do |school|
         school.resources :preliminary_contestants, :as => "teams" do |prelim_contestant|
         end
+      end
+      c.resources :preliminary_contestants do |prelim_contestants|
+
       end
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
         :play => :post,
@@ -166,6 +182,9 @@ ActionController::Routing::Routes.draw do |map|
       c.contests '/contests', :controller => 'contests', :action => 'index', :conditions => {:method => :get}
       c.map '/contests', :controller => 'contests', :action => 'create', :conditions => {:method => :post }
       c.new '/neu', :controller => 'contests', :action => 'new'
+      
+      # TODO: In rails 3 replaye with math '/forum' => redirect("...")
+      map.connect '/forum', :controller => 'application', :action => 'forum'
 
       #map.connect ':controller/:action/:id'
       #map.connect ':subdomain/:action', :controller => 'contests'

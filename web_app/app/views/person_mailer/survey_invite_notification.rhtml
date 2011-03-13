@@ -1,0 +1,7 @@
+Hallo <%= @person.name %>,
+
+Sie wurden im Wettkampf-System der Software-Challgene dazu eingeladen an einer Umfrage teilzunehmen: <%= @survey.title %> 
+Um teilzunehmen folgen, können sie innerhalb der nächsten 14 Tage diesen Link anklicken: <%= new_contest_survey_token_survey_url(@contest,@survey_token, :login_token => @login_token.code) %>
+Alternativ können sie diese Umfrage im Wettkampfsystem unter "Umfrag
+Mit freundlichen Gruessen 
+  Ihr Software-Challenge-Team
