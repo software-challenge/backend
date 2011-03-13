@@ -8,5 +8,4 @@ gem "nokogiri"
 gem "daemons"
 gem "erubis", ">= 2.6.5"
 gem "ezprint"
-
-
+gem "bluecloth"

@@ -1,12 +1,13 @@
-This needs markdown
+<%= javascript_include_tag 'markdown/jquery.markedit.js', 'markdown/showdown.js' %>
+<%= stylesheet_link_tag 'markdown/jquery.markedit.css', 'news_post_form' %>
 <% semantic_form_for [@contest, @news_post] do |f| %>
   <% f.inputs do %>
-    <%= f.input :title %>
-    <%= f.input :text %>
+    <b>Titel:</b><%= f.input :title, :label => false %>
+    <%= f.input :text, :label => false %>
   <% end %>
   <%= f.buttons %>
 <% end %>
 
 <% javascript_tag do %>
-  dsf
+  $("#news_post_text").markedit({'preview' : 'below'});
 <% end %>

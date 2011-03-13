@@ -35,6 +35,7 @@ Rails::Initializer.run do |config|
   gem "daemons"
   gem "erubis"
   gem "ezprint"
+  gem "bluecloth", ">=2.0.0"
   
   # In later versions of ruby html_safe! for string is not supported...hotfix for thi
   # TODO: Fix this in views when updating to rails 3!
