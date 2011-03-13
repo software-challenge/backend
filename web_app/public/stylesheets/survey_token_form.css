@@ -1,0 +1,14 @@
+.owner_group {
+  margin-top: 10px;
+  width: 500px;
+}
+
+
+#select_contestants_, #select_people_ {
+  width: 600px;
+  height: 400px;
+}
+
+#validity {
+  margin-top: 15px;
+}

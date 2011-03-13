@@ -55,7 +55,7 @@ class MainController < ApplicationController
   def index
     redirect_to :controller => :contests, :action => :show
   end
-
+   
   def login
     if logged_in?
       flash[:notice] = I18n.t("messages.already_logged_in")

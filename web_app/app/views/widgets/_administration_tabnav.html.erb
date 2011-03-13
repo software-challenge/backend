@@ -52,6 +52,12 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
+    t.named "Umfrage-Ergebnisse"
+    t.links_to contest_survey_results_url(@contest)
+    t.highlights_on :controller => "survey_results"
+  end
+
+  add_tab do |t|
     t.named t("titles.debug_view")
     t.links_to contest_debug_url(@contest)
     t.highlights_on :controller => "main", :action => "debug"

@@ -9,9 +9,20 @@ class Person < ActiveRecord::Base
   # acl9
   acts_as_authorization_subject
 
+  # NOTE: use the acl9 methods to find matching roles!
+   has_and_belongs_to_many :roles
+
   has_many :memberships
   has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
   has_one :email_event, :dependent => :destroy
+  
+  has_many :schools
+  has_many :preliminary_contestants
+
+  # The survey tokens, that are assigned to a single user!
+  has_many :survey_tokens
+
+  has_many :login_tokens
 
   alias :contestants :teams
 
@@ -57,6 +68,10 @@ class Person < ActiveRecord::Base
   def initialize(*args)
     @save_on_update ||= []
     super
+  end
+
+  def generate_login_token
+    LoginToken.create(:person => self)
   end
 
   def after_initialize
@@ -226,6 +241,14 @@ class Person < ActiveRecord::Base
     end
   end
 
+  def tokens_for(survey, only_available = false)
+    (only_available ? survey_tokens.available : survey.tokens).select{|t| t.allowed_for?(self)}
+  end
+
+  def available_tokens_for(survey)
+    tokens_for(survey,true)
+  end
+
   def validated?
     self.validation_code == nil
   end
@@ -248,5 +271,5 @@ class Person < ActiveRecord::Base
       end
     end
   end 
-
+  
 end

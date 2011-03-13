@@ -1,0 +1,50 @@
+<%= stylesheet_link_tag "multiselect/ui.multiselect.css", "survey_token_form" %>
+<%= javascript_include_tag "ui.multiselect.js" %>
+<% form_for [@contest,@token] do |f| %>
+  <div id="form_inputs">
+  <p>Umfrage wählen: <%= select_tag 'survey', options_for_select(@surveys.collect{|s| [s.title,s.id]}) %></p>
+  <p style="margin-top:10px;">Zu befragende Benutzergruppe auswählen: <%= select_tag 'token_owner_group', options_for_select([["Benutzer","people"],["Vorangemeldungen","preliminary"], ["Teams","contestants"]]) %></p>
+ 
+ 
+ <div id="schools", class="owner_group", style="display:none">
+    <% schools = @contest.schools.collect{|s| [s.name,s.id]} %>
+    <div id="sel_schools"><%= select_tag "select_schools[]", options_for_select(schools), {:multiple => true} %></div>
+  </div>
+ 
+ <div id="people", class="owner_group">
+    Zu befragene Benutzer auswählen: <div id="sel_people"><%= select_tag "select_people[]", options_for_select(Person.visible.collect{|p| [p.name,p.id]}), {:multiple => :true} %></div>
+  </div>
+ 
+ <div id="contestants", class="owner_group", style="display:none">
+    Zu befragene Teams auswählen: <div id="sel_contestants"><%= select_tag "select_contestants[]", options_for_select(@contest.contestants.without_testers.visible.collect{|c| [c.name,c.id]}), {:multiple => true} %></div>
+    <b>Umfrage für:</b>
+    <p>Lehrer: <%= check_box_tag "allow_teacher", 1,  @token.allow_teacher %></p>
+    <p>Schüler: <%= check_box_tag "allow_pupil", 1,  @token.allow_pupil %></p>
+    <p>Tutoren: <%= check_box_tag "allow_tutor", 1,  @token.allow_tutor %></p>
+    <p>Anzahl der zu erstellenden Tickets: <input id="tokens_per_contestant", name="quantity", min="1", max="30" /></p>
+  </div>
+ 
+ <div id="preliminary", class="owner_group", style="display:none; margin-top: 10px; margin-bottom: 10px;">
+   <b>Beschreibung:</b> Es werden an alle vorangemeldeten Teams Tokens ausgegeben. Sollte ein Schule kein Team angemeldet haben, so wird dem Anmelder der Schule ein Token zugewiesen. Die betreffenden Personen werden per E-Mail über die Umfrage benachrichtigt.
+ </div>
+ 
+  <div id="validity"><b>Gültig ab:</b><%= text_field_tag "valid_from", "ab sofort" %> <b>bis</b> <%= text_field_tag "valid_until", "unbegrenzt" %></div>
+ </div>
+ <div style="margin-top: 15px;" >
+ <input type="submit" value="Tokens erstellen" onclick="if (!confirm('Sind Sie sich sicher?')) return false; return true;" name="commit">
+ </div>
+<% end %>
+
+<% javascript_tag do %>
+
+  $("#valid_from, #valid_until").datepicker()
+
+  $("#token_owner_group").change(function(){
+    var visible = $(this).val()
+    $(".owner_group").hide()
+    $("#"+visible).show()
+  })
+  
+  $("#select_people_, #select_contestants_").multiselect({dividerLocation: 0.5})
+
+<% end %>

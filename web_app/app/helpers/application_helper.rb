@@ -158,4 +158,8 @@ module ApplicationHelper
     return html.html_safe!
   end
 
+  def update_my_survey_path
+   contest_survey_token_survey_url(@contest,@survey_token,:id => 0)
+  end
+
 end

@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password
 
-  before_filter :fetch_user, :fetch_contest, :fetch_fake_test_suite
+  before_filter :forum_redirect, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts 
   append_before_filter :require_current_user
   append_before_filter :check_contest_access
 
@@ -26,6 +26,13 @@ class ApplicationController < ActionController::Base
   hide_action :current_contest
 
   protected
+
+  # TODO: remove with rails 3!
+  def forum_redirect
+    if action_name == "forum"
+      redirect_to "http://134.245.253.5:8080"
+    end
+  end
 
   rescue_from NotAllowed, Acl9::AccessDenied do
     if logged_in?
@@ -59,6 +66,18 @@ class ApplicationController < ActionController::Base
         end
       end
       redirect_to contest_url(@contest.main_contest)
+    end
+  end
+ 
+  def fetch_login_token
+    token = LoginToken.find_by_code(params[:login_token])
+    if token 
+      if token.valid?
+        session[:user_id] = token.person.id
+      else
+        flash[:error] = "Der von Ihnen eingegebene Link ist leider abgelaufen, bitte erneut anmelden!"
+      end
+      token.destroy
     end
   end
 
@@ -98,7 +117,9 @@ class ApplicationController < ActionController::Base
   #  else
   #    @contest = @current_contest = Contest.first
   #  end
+    
     @contest = @current_contest = Contest.first
+
     if not params[:contest_id].nil? 
       subdomain = params[:contest_id]
     elsif not params[:id].nil?
@@ -125,6 +146,10 @@ class ApplicationController < ActionController::Base
  
   def fetch_fake_test_suite
     @fake_test_suite = FakeTestSuite.find_by_id(params[:fake_test_suite_id])
+  end
+
+  def fetch_survey_token
+    @survey_token = SurveyToken.find_by_id(params[:survey_token_id])
   end
 
   def administrator?
@@ -226,5 +251,8 @@ class ApplicationController < ActionController::Base
   def set_mailer_options
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
   end
-
+  
+  def fetch_latest_news_posts 
+    @news_posts = NewsPost.published.sort_by_update.first(3)
+  end
 end

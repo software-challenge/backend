@@ -1,0 +1,80 @@
+#surveyor {
+  font-family: "Century Gothic";
+  width: 100%;
+  margin: 0 auto;
+  text-align: left;
+  font-family: Helvetica;
+  font-size: 100%;
+  background-color: #fffff1;
+  color: #333333; }
+  #surveyor .surveyor_flash {
+    background-color: #fff1a8;
+    margin: 0 auto;
+    padding: 5px;
+    width: 300px;
+    font-weight: bold;
+    text-align: center; 
+    display:none; }
+  #surveyor .survey_title {
+    font-size: 2em;
+    font-weight: bold;
+    padding: 5px 0; }
+  #surveyor .surveyor_menu {
+    float: right; }
+    #surveyor .surveyor_menu ul {
+      background-color: #eeeeee;
+      border: 1px solid #cccccc;
+      border-bottom-width: 0;
+      list-style: none; }
+      #surveyor .surveyor_menu ul li {
+        border: 0 solid #cccccc;
+        border-bottom-width: 1px; }
+      #surveyor .surveyor_menu ul li.active, #surveyor .surveyor_menu ul li.active input[type="submit"] {
+        background-color: #ebebcc; }
+  #surveyor .next_section {
+    float: right; }
+  #surveyor .survey_section span.title {
+    display: block;
+    padding: 5px 0;
+    font-weight: bold;
+    font-size: 1.5em; }
+  #surveyor fieldset.g_inline fieldset {
+    display: inline; }
+  #surveyor fieldset.g_grid li.surveyor_radio label {
+    visibility: hidden; }
+    #surveyor fieldset.g_grid li.surveyor_radio label input {
+      visibility: visible; }
+  #surveyor fieldset.g_repeater ol fieldset {
+    display: inline; }
+  #surveyor fieldset.g_repeater input[type="submit"].add_row {
+    font-size: 0.7em; }
+  #surveyor .survey_section > fieldset > ol {
+    padding-left: 1em; }
+  #surveyor fieldset {
+    padding: 5px 0 10px 0; }
+    #surveyor fieldset ol fieldset {
+      vertical-align: top; }
+    #surveyor fieldset ol li {
+      padding: 1px 0; }
+      #surveyor fieldset ol li label, #surveyor fieldset ol li input {
+        vertical-align: top; }
+      #surveyor fieldset ol li p.inline-hints {
+        margin: 0;
+        padding: 0;
+        display: inline; }
+    #surveyor fieldset ol li.inline {
+      display: inline; }
+    #surveyor fieldset ol li.datetime input, #surveyor fieldset ol li.datetime fieldset, #surveyor fieldset ol li.datetime fieldset ol li, #surveyor fieldset ol li.time input, #surveyor fieldset ol li.time fieldset, #surveyor fieldset ol li.time fieldset ol li {
+      display: inline; }
+    #surveyor fieldset.q_inline ol li {
+      display: inline; }
+    #surveyor fieldset input, #surveyor fieldset textarea, #surveyor fieldset select {
+      margin: 0 3px; }
+    #surveyor fieldset input[type="text"], #surveyor fieldset textarea {
+      font-size: 0.8em; }
+  #surveyor input[type="submit"] {
+    font-size: 1em;
+    border: 0px;
+    padding: 5px;
+    cursor: pointer;
+    background-color: #eeeeee; }
