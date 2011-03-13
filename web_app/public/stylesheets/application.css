@@ -462,3 +462,13 @@ a.sort_by {
   -moz-box-shadow: 0 0 10px #000;
   -webkit-box-shadow: 0 0 10px #000;
 }
+
+.closed {
+ background: url("/images/actions/arrow_open.png") no-repeat;
+ padding-left: 22px;
+}
+
+.open {
+ background: url("/images/actions/arrow_close.png") no-repeat;
+ padding-left: 22px;
+}

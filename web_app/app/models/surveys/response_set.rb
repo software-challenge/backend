@@ -142,7 +142,7 @@ class ResponseSet < ActiveRecord::Base
   validates_presence_of :survey_token 
 
   def complete?
-   completed_at
+   !!completed_at
   end
 end
 
