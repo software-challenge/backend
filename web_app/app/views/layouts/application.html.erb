@@ -73,10 +73,10 @@
           <% end %>
         </div>
         <div id="newsTicker" style="float:left; font-size:14px;">
-          <b>Aktuelles:</b>
+          <% unless @news_posts.empty? %> <b>Aktuelles:</b> <% end %>
           <% show_to :administrator do %>
             <span style="float:right;">
-              <%= link_to image_tag('actions/add_small.png'), new_contest_news_post_url(@contest) %> 
+              <%= link_to image_tag('actions/add_small.png'), new_contest_news_post_url(@contest), :title => "Neuen Eintrag erstellen" %> 
             </span>
           <% end %>
           <div id="news-content">
