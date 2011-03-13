@@ -13,7 +13,7 @@ class NewsPost < ActiveRecord::Base
     super(params)
 
     unless params.empty?
-      unless params[:title] and self.title.empty?
+      if self.title.nil? or self.title.empty?
        self.title = self.text.first(40)
        self.title << "..." if self.text.length > 40
        self.save!
