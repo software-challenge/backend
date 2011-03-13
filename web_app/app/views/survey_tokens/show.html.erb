@@ -24,9 +24,10 @@
 </h1>
 
 <% tabnav :contest do %>
-  <p> <b>Titel:</b> <%= @token.survey.title %> </p>
+  <p> <b>Umfrage:</b> <%= @token.survey.title %> </p>
   <p> <b>Beschreibung:</b> <%= @token.survey.description || "Keine Beschreibung vorhanden" %> </p>
   <p> <b>Zugeordnet an:</b> <%= @token.token_owner.name %><%= ", #{@token.token_owner.school.name}" if @token.token_owner.is_a? PreliminaryContestant %></p>
+  <p> <b>Teilnahme:</b> <%= @token.response_set and @token.response_set.complete? ? "Am #{l @token.response_set.created_at.to_date} durch #{@token.person.name}" : "Bis jetzt noch nicht teilgenommen" %></p>
   <p> <b>Offen für:</b> 
     <% a = [] %>
     <%  a << @token.token_owner.name if @token.token_owner.is_a? Person %>
@@ -35,6 +36,30 @@
     <%  a << "Schüler" if @token.allow_pupil %>
     <%= a.join(", ") %> 
   </p>
-  <br>
   <p> Geöffnet vom <%= l (@token.valid_from || @token.created_at).to_date %> bis <%= if @token.valid_until then l @token.valid_until.to_date else "unbegrenz" end %>. </p>
+  
+  <% if @token.response_set and @token.response_set.complete? %>
+   <div id="results" style="margin-top: 15px">
+    <a id="view_results" class="closed" href="#" style="text-decoration:none; color: #4183C4; font-weight: bold;">Eingaben anzeigen</a>
+    <div id="results_table" style="margin-top:15px; display:none;">
+      <% @questions = @token.survey.sections_with_questions.map(&:questions).flatten %>
+      <% @response_set = @token.response_set %>
+      <%= render :partial => 'survey_results/result' %>
+    </div>
+   </div>
+    <% javascript_tag do %>
+      $("#view_results").toggle(
+        function(){
+         $(this).next().toggle('slow');
+         $(this).removeClass("closed")
+         $(this).addClass("open")
+         return false;
+       },function(){
+         $(this).next().hide('slow');
+         $(this).removeClass("open"); 
+         $(this).addClass("closed") 
+       } 
+      )
+    <% end %>
+  <% end %>
 <% end %>

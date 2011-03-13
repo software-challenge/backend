@@ -18,6 +18,7 @@
    <tr class="middle">
     <th>Name</th>
     <th>Läuft ab</th>
+    <th>Teilgenommen</th>
     <th>Optionen</th>
    </tr>
   </thead>
@@ -26,6 +27,7 @@
        <tr>
         <td><%= t.survey.title %></td>
         <td><%= if t.valid_until then "in #{distance_of_time_in_words(Time.now,t.valid_until)}" else "unbeschränkt" end %></td>
+        <td><%= image_tag("state/ok.png", :title => "Teilgenommen am #{l t.response_set.created_at.to_date}") if t.response_set and t.response_set.complete? %></td>
         <td><%= link_to image_tag("actions/vote.png"), new_contest_survey_token_survey_url(@contest,t), :title => "teilnehmen" if t.currently_valid? %><%= link_to image_tag("actions/show.png"), contest_survey_token_url(@contest,t) %><%= link_to image_tag("actions/delete.png"), contest_survey_token_url(@contest,t), :method => :delete, :confirm => "Sind Sie sicher?" %></td>
        </tr>
      <% end %>   
