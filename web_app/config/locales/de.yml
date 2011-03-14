@@ -401,6 +401,8 @@ de:
     upload_new_client: "Computerspieler hochladen"
     preliminary_contestants:
       new: "Teams anmelden"
+    contestants:
+      my: "Meine Teams"
     schools:
       new: "Schule anmelden"
       create: "Schule anmelden"
