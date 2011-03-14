@@ -303,6 +303,13 @@ class Contest < ActiveRecord::Base
 
   protected
 
+  def matchdays_contain?(result, c1, c2)
+    result.each do |schedule|
+      return true if schedule.include?([c1, c2]) or schedule.include?([c2, c1])
+    end
+    return false
+  end
+
   # generates all matchdays (round-robin tournament)
   # NOTE: (later) how about swiss-system instead of round-robin
   def generate_matchdays(trials = 0)
@@ -328,7 +335,20 @@ class Contest < ActiveRecord::Base
         lastNils << cont2
       end
       until conts.empty?
-        schedule << [conts.delete(conts.rand), conts.delete(conts.rand)]
+        c1 = conts.rand
+        c2 = conts.rand
+        if c1 != c2
+          if not matchdays_contain(result, c1, c2)
+            schedule << [conts.delete(c1), conts.delete(c2)]
+          else
+            if conts.count == 2
+              s = schedule.rand
+              conts << s[0]
+              conts << s[1]
+              schedule.delete(s)
+            end
+          end
+        end
       end
       result << schedule
     end
