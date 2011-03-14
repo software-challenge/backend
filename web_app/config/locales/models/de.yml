@@ -63,11 +63,20 @@ de:
         one: Plagiat Check
         other: Plagiat Checks
       email_event:
-        one: "E-Mail Empfänger"
-        other: "E-Mail Empfänger"
+        one: E-Mail Empfänger
+        other: E-Mail Empfänger
       finale:
-        one: "Final Eight"
-        other: "Finals"
+        one: Final Eight
+        other: Finals
+      survey_token:
+        one: Umfrage-Möglichkeit
+        other: Umfrage-Möglichkeiten
+      survey: 
+        one: Umfrage
+        other: Umfragen
+      news_post:
+        one: News-Beitrag
+        other: News
     attributes:
       school:
         name: Name
