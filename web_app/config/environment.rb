@@ -34,7 +34,7 @@ Rails::Initializer.run do |config|
   #config.gem "cap-recipes", :lib => false, :source => "http://gemcutter.org" # installed as plugin
   gem "daemons"
   gem "erubis"
-  gem "ezprint"
+  config.gem "ezprint"
   gem "bluecloth", ">=2.0.0"
   
   # In later versions of ruby html_safe! for string is not supported...hotfix for thi
