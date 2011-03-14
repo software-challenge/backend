@@ -69,7 +69,7 @@ de:
     results: "Ergebnisse"
     result: "Ergebnis"
     member_since: "Mitglied seit"
-    need_more_contestants_for_contest: "%{count} {{contestant_name}} sind nicht genug, um einen Wettkampf zu beginnen"
+    need_more_contestants_for_contest: "%{count} %{contestant_name} sind nicht genug, um einen Wettkampf zu beginnen"
     contestant: "Team"
     last_update: "Letztes Update"
     no_results_yet: "Noch keine Ergebnisse" 
@@ -182,9 +182,9 @@ de:
   events:
     client_activated: "hat einen neuen Client aktiviert."
     client_uploaded: "hat einen neuen Client hochgeladen."
-    person_created: "%{creator} hat eine neue Person \"{{person}}\" hinzugefügt."
-    person_added_to_contestant: "%{actor} hat {{person}} dem Team \"{{contestant}}\" hinzugefügt."
-    person_removed_from_contestant: "%{actor} hat {{person}} aus dem Team \"{{contestant}}\" entfernt."
+    person_created: "%{creator} hat eine neue Person \"%{person}\" hinzugefügt."
+    person_added_to_contestant: "%{actor} hat %{person} dem Team \"%{contestant}\" hinzugefügt."
+    person_removed_from_contestant: "%{actor} hat %{person} aus dem Team \"%{contestant}\" entfernt."
   messages:
     states:
       finished: "Erfolgreich beendet" 
@@ -313,7 +313,7 @@ de:
     playing_in_progress: "läuft gerade"
     played: "gespielt"
     not_played_yet: "ausstehend"
-    test_progress: "%{succeeded} bestanden, {{played}} von {{total}} gespielt" 
+    test_progress: "%{succeeded} bestanden, %{played} von %{total} gespielt" 
   headers:
     hidden_people: "Gelöschte Personen"
   games:
