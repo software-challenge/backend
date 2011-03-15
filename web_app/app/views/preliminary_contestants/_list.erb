@@ -1,11 +1,12 @@
 <% preliminary_contestants = preliminary_contestants || @preliminary_contestants %>
-<table class="data-table" id="preliminary_contestants">
+<table class="tablesorter data-table" id="preliminary_contestants">
     <thead>
       <tr>
         <th><%= t "views.name" %></th>
         <th><%= School.human_name %></th>
         <th><%= t "views.location" %></th>
-        <th>Teilnahmewahrscheinlichkeit</th>
+        <th><%= School.human_attribute_name :state %></th>
+        <th class="middle">Teilnahmewahrscheinlichkeit</th>
         <% show_to :administrator do %><th>Aktionen</th><% end %>
       </tr>
     </thead>
@@ -15,7 +16,8 @@
         <td><%= prelim.name %></td>
         <td><%= prelim.school.name %></td>
         <td><%= prelim.school.location %></td>
-        <td style="text-align:center"><%= show_probability prelim.participation_probability %></td>
+        <td><%= prelim.school.state %></td>
+        <td class="middle"><%= show_probability prelim.participation_probability %></td>
         <% show_to :administrator do %><td style="text-align:center"><%= link_to image_tag("actions/show.png"), contest_preliminary_contestant_url(@contest,prelim) %></td><% end %>
        </tr>
       <% end %>

@@ -5,13 +5,13 @@
 
 <% tabnav :contest do %>
   <div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @contest.schools.count %> Schulen angemeldet.</div>
-  <table class="data-table">
+  <table class="tablesorter data-table" id="schools">
     <thead>
       <tr>
         <th><%= School.human_attribute_name("name") %></th>
         <th><%= School.human_attribute_name("location") %></th>
         <th><%= School.human_attribute_name("state") %></th>
-        <th></th>
+        <th class="middle">Aktionen</th>
       </tr>
     </thead>
     <tbody>
@@ -33,4 +33,12 @@
       <% end %>
     </tbody>
   </table> 
+<% end %>
+
+<% javascript_tag do %>
+ $("#schools").tablesorter({
+    headers: {
+      3: { sorter: false }
+    }
+  })  
 <% end %>

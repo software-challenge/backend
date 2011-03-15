@@ -10,6 +10,6 @@ module PreliminaryContestantsHelper
         "warning"
     end
 
-    image_tag("state/#{img}.png", :title => prob)
+    image_tag("state/#{img}.png", :title => prob, :class => "tooltipped")
   end
 end
