@@ -7,7 +7,7 @@ module SurveyorHelper
     stylesheet_link_tag 'surveyor/reset', 'surveyor/dateinput', 'surveyor'
   end
   def surveyor_javascripts
-    javascript_include_tag 'surveyor/jquery.surveyor'
+    javascript_include_tag 'surveyor/jquery.surveyor', 'surveyor/jquery.tools.dateinput.min.js'
   end
   # Helper for displaying warning/notice/error flash messages
   def flash_messages(types)
