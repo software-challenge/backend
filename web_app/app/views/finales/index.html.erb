@@ -2,33 +2,33 @@
   <% show_to :administrator do %>
     <% if @finale.nil? %>
       <% if contestants_needed_for_finale <= @contest.contestants.ranked.visible.count %>
-        <% link_to prepare_contest_finale_url(@contest), :method => :post, :title => t("actions.prepare_finale"), :id => "prepareFinaleAction" do %>
+        <% link_to prepare_contest_finale_url(@contest), :method => :post, :title => t("actions.prepare_finale"), :class=> "tooltipped", :id => "prepareFinaleAction" do %>
           <%= image_tag('actions/refresh.png') %><%= t("actions.prepare_finale") %>
         <% end %>
       <% end %>
     <% else %>
       <% if not @finale.running? and not @finale.finished? and @finale.runnable? %>
-        <% link_to play_all_contest_finale_url(@contest), :method => :post, :title => t("actions.play_all"), :id => "playAllAction" do %>
+        <% link_to play_all_contest_finale_url(@contest), :method => :post, :title => t("actions.play_all"), :class=> "tooltipped", :id => "playAllAction" do %>
           <%= image_tag('actions/play.png') %><%= t("actions.play_all") %>
         <% end %>
       <% end %>
       <% if @finale.finished? %>
-        <% link_to send_archive_contest_finale_url(@contest), :method => :post, :title => t("actions.download_finale_archive"), :id => "sendFinaleAction" do %>
+        <% link_to send_archive_contest_finale_url(@contest), :method => :post, :title => t("actions.download_finale_archive"), :class=> "tooltipped", :id => "sendFinaleAction" do %>
           <%= image_tag('actions/download.png') %><%= t("actions.download_finale_archive") %>
         <% end %>
       <% end %>
       <% if @finale.finished? and not @finale.published? %>
-        <% link_to publish_contest_finale_url(@contest), :method => :post, :title => t("actions.publish_finale"), :id => "publishFinaleAction", :confirm => t("messages.confirm_publish_finale") do %>
+        <% link_to publish_contest_finale_url(@contest), :method => :post, :title => t("actions.publish_finale"), :class=> "tooltipped", :id => "publishFinaleAction", :confirm => t("messages.confirm_publish_finale") do %>
           <%= image_tag('actions/publish.gif') %><%= t("actions.publish") %>
         <% end %>
       <% end %>
       <% if @finale.published? %>
-        <% link_to hide_contest_finale_url(@contest), :method => :post, :title => t("actions.hide_finale"), :id => "hideFinaleAction" do %>
+        <% link_to hide_contest_finale_url(@contest), :method => :post, :title => t("actions.hide_finale"), :class=> "tooltipped", :id => "hideFinaleAction" do %>
           <%= image_tag('actions/deny.png') %><%= t("actions.hide") %>
         <% end %>
       <% end %>
       <% if not @finale.started? %>
-        <% link_to delete_contest_finale_url(@contest), :method => :post, :title => t("actions.delete_finale"), :id => "destroyFinaleAction" do %>
+        <% link_to delete_contest_finale_url(@contest), :method => :post, :title => t("actions.delete_finale"), :class=> "tooltipped", :id => "destroyFinaleAction" do %>
           <%= image_tag('actions/destroy.png') %><%= t("actions.delete") %>
         <% end %>
       <% end %> 

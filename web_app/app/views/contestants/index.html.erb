@@ -91,11 +91,11 @@
         <% show_to :administrator do -%>
           <td style="text-align: center">
             <% if contestant.current_client.nil? %>
-              <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
+              <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in"), :class=> "tooltipped" %>
             <% elsif contestant.current_client.ok? %>
-              <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
+              <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok"), :class=> "tooltipped" %>
             <% else %>
-              <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
+              <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed"), :class=> "tooltipped" %>
             <% end %> 
           </td>
         <% end %>
@@ -107,10 +107,10 @@
         <td>
           <% show_to :administrator do -%>
             <% if not @contest.ready? %>
-              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete"), :class=> "tooltipped" %>
               <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
             <% elsif not contestant.disqualified %>
-              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.disqualify") %>
+              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.disqualify"), :class=> "tooltipped" %>
               <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_disqualify_during_contest", :name => contestant.name) %>
             <% end %>
           <% end %>
@@ -150,11 +150,11 @@
         <% show_to :administrator do -%>
           <td style="text-align: center">
             <% if contestant.current_client.nil? %>
-              <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in") %>
+              <%= image_tag "state/warning.png", :title => I18n.t("views.client_not_handed_in", :class=> "tooltipped") %>
             <% elsif contestant.current_client.ok? %>
-              <%= image_tag "state/ok.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
+              <%= image_tag "state/ok.png", :class=> "tooltipped", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_ok") %>
             <% else %>
-              <%= image_tag "state/attention.png", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
+              <%= image_tag "state/attention.png", :class=> "tooltipped", :title => contestant.current_client.created_at.strftime("%d.%m.%Y") + " - " + I18n.t("views.client_failed") %>
             <% end %> 
           </td>
         <% end %>
@@ -166,10 +166,10 @@
         <td>
           <% show_to :administrator do -%>
             <% unless contestant.disqualified? %>
-              <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+              <% delete_image = image_tag "actions/delete.png", :class=> "tooltipped", :title => I18n.t("actions.delete") %>
               <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
             <% else %>
-              <% undo_image = image_tag "actions/undo.gif", :title => I18n.t("actions.requalify") %>
+              <% undo_image = image_tag "actions/undo.gif", :class=> "tooltipped", :title => I18n.t("actions.requalify") %>
               <%= link_to undo_image, unhide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_requalify_during_contest", :name => contestant.name) %>
             <% end %>
           <% end %>
@@ -220,7 +220,7 @@
             </td>
             <td>
               <% show_to :administrator do -%>
-                <% undo_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide") %>
+                <% undo_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide"), :class=> "tooltipped" %>
                 <%= link_to undo_image, unhide_contest_contestant_url(@contest, contestant), :name => contestant.name %>
               <% end %>
             </td>
