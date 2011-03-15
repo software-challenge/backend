@@ -12,15 +12,15 @@
     <% fake_test_suites.each do |ft| %>
       <tr id="fake_test_suite_<%=ft.id%>">
       <td> <% if ft.name %> <%= ft.name %> <% else %> Suite Nr. <%= ft.id %> <% end %></td>     
-      <td title="<%= client_tooltip ft.primary_client %>"> <%= get_readable_client_name(ft.primary_client, false) %></td>
+      <td class="tooltipped" title="<%= client_tooltip_text ft.primary_client %>"> <%= get_readable_client_name(ft.primary_client, false) %></td>
       <td style="text-align:center"> <%= ft.fake_tests.count %></td>
-      <td class="state" title="<%= msg_for_state ft.state %>"> <%= image_for_state(ft.state) %></td>
+      <td class="state tooltipped" title="<%= msg_for_state ft.state %>"> <%= image_for_state(ft.state) %></td>
       <td> <% link_to (ft.fake_tests.count < 2 ? contest_fake_test_suite_fake_test_url(@contest,ft,ft.fake_tests.first) : contest_fake_test_suite_url(@contest, ft)) do %>
-             <span title="<%= t "actions.show" %>"><%= image_for_action('show') %></span>
+             <span class="tooltipped" title="<%= t "actions.show" %>"><%= image_for_action('show') %></span>
            <% end %>
            <% unless ft.running? %>
-             <span id="restart_<%= ft.id %>" title="<%= t("actions.test").capitalize %>"><%= link_to_remote image_for_action('refresh'), :url => restart_contest_fake_test_suite_url(@contest,ft), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" %></span>
-             <span id="delete_<%= ft.id %>" title="<%= t("actions.delete") %>"><%= link_to image_for_action('delete'), contest_fake_test_suite_url(@contest, ft), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" %></span>
+             <span id="restart_<%= ft.id %>" class="tooltipped" title="<%= t("actions.test").capitalize %>"><%= link_to_remote image_for_action('refresh'), :url => restart_contest_fake_test_suite_url(@contest,ft), :method => :post, :confirm => "Wollen Sie diesen Plagiat-Test wirklich erneut durchführen?" %></span>
+             <span id="delete_<%= ft.id %>" class="tooltipped" title="<%= t("actions.delete") %>"><%= link_to image_for_action('delete'), contest_fake_test_suite_url(@contest, ft), :method => :delete, :confirm => "Wollen Sie diesen Plagiat-Test wirklich löschen?" %></span>
            <% end %>
       </td>
     </tr>
