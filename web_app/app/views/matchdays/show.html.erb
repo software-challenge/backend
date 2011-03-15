@@ -11,20 +11,20 @@
           <%= image_tag('state/attention_lrg.png') %><%= t ("views.disqualifications") %>
         <% end %>
         <% unless @matchday.published? %>
-          <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :id => "publishContestAction" do %>
+          <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :class=> "tooltipped", :id => "publishContestAction" do %>
             <%= image_tag('actions/publish.gif') %><%= t ("actions.publish") %>
           <% end %>
         <% end %>
-        <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
+        <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :class=> "tooltipped", :title => t("actions.reset"), :id => "resetAction" do %>
           <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
         <% end %>
       <% else %>
         <% if  ((not @matchday.played?) and (@matchday.rounds_done > 0))%>
-          <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :id => "resetAction" do %>
+          <% link_to reset_contest_matchday_url(@contest, @matchday), :method => "post", :confirm => t("messages.confirm_reset", :name => Matchday.human_name), :title => t("actions.reset"), :class=> "tooltipped", :id => "resetAction" do %>
             <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
           <% end %>
         <% end %>
-        <% link_to play_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("actions.play"), :id => "playAction" do %>
+        <% link_to play_contest_matchday_url(@contest, @matchday), :method => "post", :class=> "tooltipped", :title => t("actions.play"), :id => "playAction" do %>
           <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
       <% end %>
