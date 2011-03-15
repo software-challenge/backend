@@ -51,7 +51,7 @@ module ClientsHelper
     name
   end
 
-  def client_tooltip(client)
+  def client_tooltip_text(client)
      "Hochgeladen am: #{l client.created_at}  von #{client.author.name}"
   end
 end

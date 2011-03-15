@@ -14,7 +14,7 @@
 </h1>
 <% tabnav :administration do %>
   <h3> Aufstellung: </h3> 
-  <b title="<%= client_tooltip(@fake_test.clients[0]) %>"><%= link_to get_readable_client_name(@fake_test.clients[0], false), client_details_contest_contestant_client_url(@contest, @fake_test.clients[0].contestant,@fake_test.clients[0]) %></b> vs <b title="<%= client_tooltip @fake_test.clients[1] %>"><%= link_to get_readable_client_name(@fake_test.clients[1],false), client_details_contest_contestant_client_url(@contest, @fake_test.clients[1].contestant,@fake_test.clients[1]) %></b> 
+  <b title="<%= client_tooltip_text(@fake_test.clients[0]) %>"><%= link_to get_readable_client_name(@fake_test.clients[0], false), client_details_contest_contestant_client_url(@contest, @fake_test.clients[0].contestant,@fake_test.clients[0]) %></b> vs <b title="<%= client_tooltip_text @fake_test.clients[1] %>"><%= link_to get_readable_client_name(@fake_test.clients[1],false), client_details_contest_contestant_client_url(@contest, @fake_test.clients[1].contestant,@fake_test.clients[1]) %></b> 
   <h3> Erstellt am: </h3> <%= @fake_test.created_at.strftime("%d.%m.%Y, %H:%M")%>
   <h3> Zuletzt modifiziert am: </h3> <%= @fake_test.updated_at.strftime("%d.%m.%Y, %H:%M")%>
   <h3> Status:  <span title="<%= msg_for_state @fake_test.state %>"><%= image_for_state @fake_test.state %></span></h3> 

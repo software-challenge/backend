@@ -87,7 +87,7 @@
                <%= post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
               <% end %>
              </span>
-             <div class="tooltip" style="display:none;">
+             <div class="tooltip news_tooltip_padding">
                <%= render :partial => 'news_posts/news_post', :locals => {:news_post => post} %>
              </div>
              <br>
@@ -153,6 +153,11 @@
         <% end %>
 
         <%= yield %>
+
+        <% javascript_tag do %>
+          $(".tooltipped").tooltip({position:'bottom center'})
+        <% end %>
+
       </div>
       <div id="footer">
         &copy; <%= t "views.copyright" %><br/>

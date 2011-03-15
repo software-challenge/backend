@@ -9,8 +9,8 @@
    </thead> 
     <% fake_tests.each do |ft| %>
       <tr id="fake_test_<%=ft.id%>">
-      <td title="<%= client_tooltip(ft.clients.first) %>"><%= get_readable_client_name(ft.clients.first, false) %></td>
-      <td title="<%= client_tooltip(ft.clients.second) %>"><%= get_readable_client_name(ft.clients.second, false) %></td>
+      <td title="<%= client_tooltip_text(ft.clients.first) %>"><%= get_readable_client_name(ft.clients.first, false) %></td>
+      <td title="<%= client_tooltip_text(ft.clients.second) %>"><%= get_readable_client_name(ft.clients.second, false) %></td>
       <td class="state" title="<%=msg_for_state(ft.state)%>"><%= image_for_state ft.state %></td>
       <td> <% link_to contest_fake_test_suite_fake_test_url(@contest,@fake_test_suite,ft) do %>
              <%= image_for_action('show') %>
