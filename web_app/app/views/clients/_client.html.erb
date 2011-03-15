@@ -75,9 +75,7 @@
         <% causes << t("games.causes.#{score.cause}", :default => score.cause)  if score.cause != "REGULAR" %>
         <% causes << "(#{score.error_message})" if not score.error_message.empty? %>
       <% end %>
-      <% tooltip image_tag("state/warning.png") do %>
-        <%= causes.join("<br>").html_safe! %>
-      <% end %>
+      <%= image_tag "state/warning.png", :class => "tooltipped", :title => causes.join("<br>").html_safe %>
     <% end %>
   </td>
   <td>
@@ -129,7 +127,7 @@
       <% end %>
     <% else %>
       <% if may_delete_client? and not client.current? and not client.already_used? %>
-    	  <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+    	  <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete"), :class => "tooltipped" %>
           <%= link_to delete_image, hide_contest_contestant_client_url(@contest, client.contestant, client), :confirm => I18n.t("messages.confirm_hiding", :name => client.file_file_name), :method => :post %>
       <% end %>
     <% end %>

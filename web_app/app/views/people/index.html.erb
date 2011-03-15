@@ -1,5 +1,5 @@
 <div id="actions">
-  <% link_to new_contest_person_url(@contest) do %>
+  <% link_to new_contest_person_url(@contest)  do %>
     <%= image_tag('actions/add.png') %><%= t "views.new_person" %>
   <% end %>
 </div>
@@ -69,7 +69,6 @@
     </tbody>
   </table>
 
-  <% tooltip_init %>
   <% show_to :administrator do %>
     <% javascript_tag do %>
 
@@ -145,10 +144,10 @@
             count = $("." + contest, $(this)).size()
           }
           if(count == 0) {
-            $(".tooltip", $(this)).hide();
+            $(".tooltipped", $(this)).hide();
           } else {
             $(".team_count", $(this)).html(count)
-            $(".tooltip", $(this)).show();
+            $(".tooltipped", $(this)).show();
           }
         })
       }

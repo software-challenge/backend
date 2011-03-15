@@ -211,18 +211,13 @@
         <td colspan="<%= round_colspan %>">
           <%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %>
           <% if slot.score.cause != "REGULAR" %>
-            <% tooltip ("
-              <span>
-                <em>
-                (
-                #{slot.qualification_changed ? "nachtrgl." : ""}
-                #{t "views.disqualified"}
-                )
-                </em>
-              </span>"), :inline => true do %> 
-              <%= t("games.causes.#{slot.score.cause}", :default => slot.score.cause) %>
-              <%= (slot.score.error_message.empty? ? "" : "<br>" + slot.score.error_message).html_safe! %>
-            <% end %>
+              <span class="tooltipped"><em>
+                <%= "( #{slot.qualification_changed ? "nachtrgl." : ""} #{t "views.disqualified"} )" %></em>
+              </span>
+              <div class="tooltip">
+                 <%= t("games.causes.#{slot.score.cause}", :default => slot.score.cause) %>
+                 <%= (slot.score.error_message.empty? ? "" : "<br>" + slot.score.error_message).html_safe! %>
+              </div>
           <% elsif slot.qualification_changed %>
             <em>
               (<%= "nachtrgl. qualifiziert" %>)
@@ -234,10 +229,10 @@
           <td>
             <% if slot.score.cause == "REGULAR" %>
               <% if not round.has_disqualified_slot? %> 
-                <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify") %>
+                <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify"), :class => "tooltipped" %>
               <% end %>
             <% elsif slot.qualification_changed %>
-              <%= link_to (image_tag "actions/requalify.png"), requalify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_requalify"), :title => t("actions.requalify") %>
+              <%= link_to (image_tag "actions/requalify.png"), requalify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_requalify"), :title => t("actions.requalify"), :class => "tooltipped" %>
             <% end %>
           </td>
         <% end %>

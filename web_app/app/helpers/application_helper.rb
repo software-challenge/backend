@@ -23,37 +23,6 @@ module ApplicationHelper
     result.values
   end
 
-  def tooltip_init 
-    concat(
-      javascript_tag do
-      '$(function() {
-        $(".tooltip").each(function() {
-          $(this).bind(\'mouseenter\', function() {
-            $(".tooltip_text", $(this)).fadeIn(250)
-          })
-              
-          $(".tooltip").bind(\'mouseleave\', function() {
-            $(".tooltip_text", $(this)).fadeOut(250)
-          })
-        })
-      })'
-      end
-    )
-  end
-
-  def tooltip(text, options = {}, &block)
-    inline = (not options[:inline].nil? and options[:inline])
-    if block_given?
-      content = capture(&block)
-      html = "<div style=\"#{(inline ? "display: inline" : "")}\" class=\"tooltip\">"
-      html += text
-      html += "<div class=\"tooltip_text\" style=\"position: absolute; background-color: #DDDDFF; border: 1px solid; padding 5px; display: none\">"
-      html += content
-      html += "</div></div>"
-      concat html.html_safe!
-    end
-  end
-
   def action_button(options = {}, &block)
     content = capture(&block)
     html = "<div style=\"#{options[:style]}\" class=\"actions\">"

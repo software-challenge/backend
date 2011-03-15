@@ -20,11 +20,11 @@
           <%= list_item("Ersteller", link_if_boolean(@client.author, :name, contest_person_url(@contest,@client.author)))%>
           <% stat = @client.status %>
           <% test_status = case stat
-            when "ok" then image_tag("state/ok.png", {:title => "Test erfolgreich"})
-            when "broken" then image_tag("state/warning.png", {:title => "Test fehlgeschlagen!"})
-            when "testable" then image_tag("state/info.png", {:title => "Hauptdatei definiert, Test noch nicht durchgeführt"}) + " - #{link_to "Jetzt testen", test_contest_contestant_client_url(@contest,@contestant,@client,:from_details => true)}"
+            when "ok" then image_tag("state/ok.png", {:title => "Test erfolgreich", :class => "tooltipped"})
+            when "broken" then image_tag("state/warning.png", {:title => "Test fehlgeschlagen!", :class => "tooltipped"})
+            when "testable" then image_tag("state/info.png", {:title => "Hauptdatei definiert, Test noch nicht durchgeführt", :class => "tooltipped"}) + " - #{link_to "Jetzt testen", test_contest_contestant_client_url(@contest,@contestant,@client,:from_details => true)}".html_safe
             when "uploaded" then image_tag("state/attention.png", {:title => "Keine Hauptdatei ausgewählt! Kein Test möglich!"})
-            when "testing" then image_tag("ui/spinner.gif", {:title => @client.test_match.job.locked_at ? t("views.testing_for_seconds",{:time => ((Time.now - @client.test_match.job.locked_at).round)}) : t("views.testing_x_rounds", {:x => @client.test_match.rounds.count})})
+            when "testing" then image_tag("ui/spinner.gif", {:title => @client.test_match.job.locked_at ? t("views.testing_for_seconds",{:time => ((Time.now - @client.test_match.job.locked_at).round), :class => "tooltipped"}) : t("views.testing_x_rounds", {:x => @client.test_match.rounds.count})})
           end %>
           <%= list_item("Test-Status", test_status) %>
           <% if @client.main_file_entry %>
@@ -112,12 +112,12 @@
                   <span style="color:<%= result[0] >= result[1] ? "green" : "red" %>"> <%= result.join(":") %> </span>
                 </td>
                 <td><% if matchday.trial? %>
-                  <%= image_tag('state/ok.png', :title => "Probespieltag") %> 
+                  <%= image_tag('state/ok.png', :title => "Probespieltag", :class => "tooltipped") %> 
                   <% elsif matchday.finale %>
-                    <%= image_tag('ui/trophy_1.png', :title => "Final-Eight Begegnung") %>
+                    <%= image_tag('ui/trophy_1.png', :title => "Final-Eight Begegnung", :class => "tooltipped") %>
                   <% end %>
                 </td>
-                <td><%= link_to image_tag('actions/show.png'), (matchday.finale.nil? ? contest_matchday_match_url(@contest,matchday,match) : match_results_contest_finale_url(@contest, :params => {:id => match.id})), {:title => "Begegnung anzeigen"} %></td>
+                <td><%= link_to image_tag('actions/show.png'), (matchday.finale.nil? ? contest_matchday_match_url(@contest,matchday,match) : match_results_contest_finale_url(@contest, :params => {:id => match.id})), {:title => "Begegnung anzeigen", :class => "tooltipped"} %></td>
               </tr>
             <% end %>
             <% friendly_encounters.each_with_index do |fe,i| %>
@@ -252,10 +252,10 @@
                  <% @client.fake_tests.each_with_index do |ft,i| %>
                   <tr class="<%= i.odd? ? 'odd' : 'even' %>" style="line-height:2em;">
                     <% opp =  ft.clients.select{|c| c != @client}[0] %>
-                    <td title="<%=client_tooltip opp %>"><%= get_readable_client_name opp, false %></td>
+                    <td title="<%=client_tooltip_text opp %>" class="tooltipped"><%= get_readable_client_name opp, false %></td>
                     <td><%= l ft.created_at.to_date %></td>
                     <td><%= image_for_state(ft.done? ? "true" : "idle") %></td>
-                    <td><%= link_to image_tag('actions/show.png', :title => "Plagiat-Test anzeigen"), contest_fake_test_suite_fake_test_url(@contest,ft.fake_test_suite,ft) %></td> 
+                    <td><%= link_to image_tag('actions/show.png', :title => "Plagiat-Test anzeigen", :class => "tooltipped"), contest_fake_test_suite_fake_test_url(@contest,ft.fake_test_suite,ft) %></td> 
                   </tr>         
                  <% end %>
                  </tbody>

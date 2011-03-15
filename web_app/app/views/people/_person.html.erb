@@ -8,7 +8,8 @@
   <% unless @contestant # don't show these infos on contestant page -%>
     <td id="p_teams_<%= person.id %>" class="person_teams">
       <% unless person.teams.visible.empty? %>
-          <% tooltip ("<abbr class=\"tooltip\">In <span class=\"team_count\">#{person.teams.visible.count.to_s}</span> Team(s)</abbr>") do %>
+          <abbr class="tooltipped">In <span class="team_count"><%= person.teams.visible.count.to_s %></span> Team(s)</abbr> 
+          <div class="tooltip">
             <% person.teams.visible.each do |team| %>
               <ul class="team <%= team.contest.subdomain %>" style="margin-left: 15px">
                 <li>
@@ -16,7 +17,7 @@
                 </li>
               </ul>
             <% end %>
-          <% end %>
+          </div>
       <% end %>
       <% locations = [] %>
       <% person.contestants.each_with_index do |contestant, index| %>
@@ -48,27 +49,27 @@
   <% end -%>
   <td>
     <% if may_see_person_details? :person => person -%>
-    <% show_image = image_tag "actions/show.png", :title => I18n.t("actions.show") %>
+    <% show_image = image_tag "actions/show.png", :title => I18n.t("actions.show"), :class => "tooltipped" %>
     <%= link_to show_image, [@contest, person] %>
     <% end -%>
   </td>
   <% if @contestant -%>
     <td>
       <% if current_user.has_role? :administrator or same_person(person) or (current_user.manageable_teams.include?(@contestant) and ["pupil", "teacher"].include?(person.membership_for(@contestant).role.name)) -%>
-      <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit") %>
+      <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit"), :class => "tooltipped" %>
       <%= link_to edit_image, edit_contest_contestant_person_url(@contest, @contestant, person) %>
       <% end -%>
     </td>
     <td>
       <% if may_remove_from_contestant? -%>
-        <% remove_image = image_tag "actions/remove_small.png", :title => I18n.t("actions.remove_from_contestant") %>
+        <% remove_image = image_tag "actions/remove_small.png", :title => I18n.t("actions.remove_from_contestant"), :class => "tooltipped" %>
         <%= link_to remove_image, remove_contest_contestant_person_url(@contest, @contestant, person), :confirm => I18n.t("messages.confirm_remove_from_contestant", :name => person.name), :method => :post %>
       <% end -%>
     </td>
   <% else -%>
     <td>
       <% if current_user.has_role? :administrator or same_person(person) -%>
-      <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit") %>
+      <% edit_image = image_tag "actions/edit.png", :title => I18n.t("actions.edit"), :class => "tooltipped" %>
       <%= link_to edit_image, edit_contest_person_url(@contest, person) %>
       <% end -%>
     </td>
@@ -76,11 +77,11 @@
       <% show_to :administrator do -%>
         <% unless person.hidden -%>
           <% if person != current_user %>
-            <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete") %>
+            <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete"), :class => "tooltipped" %>
             <%= link_to delete_image, hide_contest_person_url(@contest, person), :confirm => I18n.t("messages.confirm_hiding", :name => person.name) %>
           <% end %>
         <% else %>
-        <% undelete_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide") %>
+        <% undelete_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide"), :class => "tooltipped" %>
         <%= link_to undelete_image, unhide_contest_person_url(@contest, person) %>
         <% end -%>
       <% end -%>
