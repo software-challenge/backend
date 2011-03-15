@@ -448,7 +448,7 @@ a.sort_by {
   height: 650px;
 }
 
-.news_post_content {
+.tooltip {
   display:none;
   background-color: white;
   border: 1px solid;
@@ -458,7 +458,7 @@ a.sort_by {
   padding-right: 50px;
   padding-top: 20px;
   padding-bottom: 40px;
-
+  z-index: 10;
   -moz-box-shadow: 0 0 10px #000;
   -webkit-box-shadow: 0 0 10px #000;
 }
@@ -472,3 +472,4 @@ a.sort_by {
  background: url("/images/actions/arrow_close.png") no-repeat;
  padding-left: 22px;
 }
+

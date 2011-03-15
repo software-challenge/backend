@@ -87,7 +87,7 @@
                <%= post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
               <% end %>
              </span>
-             <div class="news_post_content" style="display:none;">
+             <div class="tooltip" style="display:none;">
                <%= render :partial => 'news_posts/news_post', :locals => {:news_post => post} %>
              </div>
              <br>
@@ -95,7 +95,7 @@
           </div>
         </div>
         <% javascript_tag do %>
-          $(".news_post").tooltip({ effect: 'slide', position: 'bottom', delay: 100})
+          $(".news_post").tooltip({ effect: 'slide', position: 'bottom', delay: 150, predelay: 250})
         <% end %>
 
         <div id="menu">
