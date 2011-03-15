@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110311174155) do
+ActiveRecord::Schema.define(:version => 20110315121001) do
 
   create_table "answers", :force => true do |t|
     t.integer  "question_id"
@@ -389,6 +389,15 @@ ActiveRecord::Schema.define(:version => 20110311174155) do
   end
 
   add_index "responses", ["survey_section_id"], :name => "index_responses_on_survey_section_id"
+
+  create_table "reviews", :force => true do |t|
+    t.text     "description"
+    t.boolean  "finished",        :default => false
+    t.integer  "reviewable_id"
+    t.string   "reviewable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "roles", :force => true do |t|
     t.string   "name",              :limit => 40

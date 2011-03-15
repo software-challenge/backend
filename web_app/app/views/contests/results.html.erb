@@ -2,6 +2,13 @@
   <% link_to contest_matchday_url(@contest, @matchday, :format=>:pdf) do %> 
     <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
   <% end %>
+  <% show_to :administrator do %>
+    <% if @matchday.played? %>
+        <% link_to disqualifications_contest_matchday_url(@contest,@matchday) do%>
+          <%= image_tag('state/attention_lrg.png') %><%= t ("views.disqualifications") %>
+        <% end %>
+    <% end %>
+  <% end %>
 </div>
 
 <h1>

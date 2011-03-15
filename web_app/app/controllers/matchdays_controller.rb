@@ -1,6 +1,6 @@
 class MatchdaysController < ApplicationController
 
-  access_control :only => [:publish, :reset] do
+  access_control :only => [:publish, :reset, :disqualifications] do
     allow :administrator
   end
 
@@ -47,6 +47,11 @@ class MatchdaysController < ApplicationController
       format.xml  { render :xml => @matchday }
       format.pdf  { render :pdf => "Spieltag_"+@matchday.when.strftime("%d_%m_%Y"), :stylesheets => ['jquery-ui-fixes', 'formtastic', 'formtastic_changes', 'application', 'rails', 'contests', 'clients', 'fullcalendar', 'tabnav'] }
     end
+  end
+
+  def disqualifications
+    @matchday = @contest.matchdays.find(params[:id])
+    @disqualifications = @matchday.disqualifications 
   end
 
   def standings

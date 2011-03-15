@@ -44,6 +44,28 @@ class MatchesController < ApplicationController
     redirect_to contest_matchday_url(@contest, @match.matchday)
   end 
 
+  def set_review
+   @match = Match.find_by_id(params[:id])
+   @description = params[:description] ? params[:description] : nil
+   Review.create(:reviewable => @match) if @match.review.nil?
+   @match.reload
+
+   if params[:description] 
+     @match.review.description = params[:description] 
+     @match.review.save!
+   end
+
+   if params[:verified] == "true" 
+     @match.review.finished!
+    else
+     @match.review.unfinished!
+   end
+
+   respond_to do |format|
+    format.html { redirect_to :action => :show }
+    format.js { render  :text => {:reviewed => @match.reviewed?}.to_json}
+   end
+  end
 
   protected
 
