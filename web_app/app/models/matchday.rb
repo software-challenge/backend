@@ -102,6 +102,30 @@ class Matchday < ActiveRecord::Base
     end
   end
   
+  def disqualifications
+    disqualifications = {}
+    self.matches.each do |match|
+      disqualified_rounds = match.rounds.select{|r| r.has_disqualified_slot?}
+      unless disqualified_rounds.empty? 
+        disqualifications[match] = {:count => 0, :causes => []}
+        disqualified_rounds.each do |disq_round|
+          disqualifications[match][:causes] += disq_round.scores.collect{|score| score.cause}.select{|cause| cause != "REGULAR"}
+          disqualifications[match][:count] += 1
+        end
+      end
+    end
+    return disqualifications
+  end
+
+  def has_disqualifications?
+   self.matches.each do |match|
+     match.rounds.each do |round|
+       return true if round.has_disqualified_slot?
+     end
+   end
+   false
+  end
+
   def load_active_clients!(force_reload = false)
     matches.each do |match|
       match.slots.each do |league_slot|

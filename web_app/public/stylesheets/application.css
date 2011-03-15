@@ -401,7 +401,7 @@ tr.right, td.right, th.right {
 }
 
 tr.middle, td.middle, th.middle {
-  text-align: middle;
+  text-align: center;
 }
 
 tr.space-left, td.space-left, th.space-left {

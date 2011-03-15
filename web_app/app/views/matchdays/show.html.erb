@@ -6,7 +6,10 @@
     <% if @matchday.running? %>
       <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br> 
     <% else %>
-      <% if @matchday.played? %>
+      <% if @matchday.played? %> 
+        <% link_to disqualifications_contest_matchday_url(@contest,@matchday) do%>
+          <%= image_tag('state/attention_lrg.png') %><%= t ("views.disqualifications") %>
+        <% end %>
         <% unless @matchday.published? %>
           <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :id => "publishContestAction" do %>
             <%= image_tag('actions/publish.gif') %><%= t ("actions.publish") %>

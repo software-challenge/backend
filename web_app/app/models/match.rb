@@ -21,6 +21,8 @@ class Match < ActiveRecord::Base
   belongs_to :set, :polymorphic => true
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
 
+  has_one :review, :as => "reviewable"
+
   has_many :slots, :class_name => "MatchSlot", :dependent => :destroy, :order => "position"
   has_many :rounds, :dependent => :destroy
   has_many :scores, :through => :slots, :order => "POSITION ASC"
@@ -38,6 +40,17 @@ class Match < ActiveRecord::Base
 
   def running?
     !!job
+  end
+
+  def has_disqualifications?
+    rounds.each do |round|
+      return true if round.has_disqualified_slot?
+    end
+    return false
+  end
+
+  def reviewed?
+    self.review and self.review.finished?
   end
 
   def played?

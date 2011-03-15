@@ -38,6 +38,7 @@ de:
     pdf_export: "Druckversion"
     created: "Erstellt"
     hidden_teams: "Gelöschte Teams"
+    disqualifications: "Disqualifikationen"
     tutors_with_asterisk_note: "Dieser Tutor steht lediglich bei größeren Problemen als Ansprechpartner zur Verfügung."
     contestants_participating: "Teilnehmer: %{teams} Teams mit %{members} SchülerInnen"
     receive_email_when: "In folgenden Fällen möchte ich per E-Mail benachrichtigt werden:"

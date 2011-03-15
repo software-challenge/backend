@@ -290,7 +290,21 @@
       </tr>
    <% end %>   
   <% end %>
-</table>
+  </table>
+
+<% show_to :administrator do %>
+  <% if @match.has_disqualifications? and @match.respond_to? :matchday %>
+   <div style="margin-top: 20px; border-top: 3px solid #4183C4"><h2>Verifikation der Disqualifikationen</h2></div>
+   <% form_tag set_review_contest_matchday_match_url(@contest,@match.matchday,@match) do |f| %>
+    <% desc = "" %>
+    <% desc = @match.review.description || "" if @match.review %>
+    <p>Beschreibung: <br> <%= text_area_tag 'description', desc, :size => "75x10" %></p>
+    <p>Abgeschlossen: <%= check_box_tag 'verified', "true",  @match.reviewed? %></p>
+    <%= submit_tag "Speichern" %>
+   <% end %>
+  <% end %>
+<% end %>
+
 
 <% if @contest.has_replay_viewer? %>
   <% javascript_tag do %>

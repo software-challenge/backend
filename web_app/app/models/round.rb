@@ -91,7 +91,7 @@ class Round < ActiveRecord::Base
 
   def has_disqualified_slot?
     slots.each do |slot|
-      return true if slot.score.cause == "LEFT"
+      return true if slot.score.cause != "REGULAR"
     end
     false
   end

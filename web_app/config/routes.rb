@@ -88,9 +88,10 @@ ActionController::Routing::Routes.draw do |map|
         :reaggregate => :post,
         :reset => :post,
         :publish => :post,
+        :disqualifications => :get,
         :get_standings => :get
       } do |md|
-        md.resources :matches, :member => {:reset => :post} do |m|
+        md.resources :matches, :member => {:reset => :post, :set_review => :post} do |m|
           m.resources :rounds, :member => {
             :send_server_log => :post,
             :show_replay => :get,
