@@ -186,6 +186,7 @@ ActionController::Routing::Routes.draw do |map|
       
       # TODO: In rails 3 replaye with math '/forum' => redirect("...")
       map.connect '/forum', :controller => 'application', :action => 'forum'
+      map.connect '/faq', :controller => 'application', :action => 'faq'
 
       #map.connect ':controller/:action/:id'
       #map.connect ':subdomain/:action', :controller => 'contests'

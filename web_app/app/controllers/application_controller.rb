@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password
 
-  before_filter :forum_redirect, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts 
+  before_filter :redirect_if_needed, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts 
   append_before_filter :require_current_user
   append_before_filter :check_contest_access
 
@@ -28,9 +28,11 @@ class ApplicationController < ActionController::Base
   protected
 
   # TODO: remove with rails 3!
-  def forum_redirect
+  def redirect_if_needed
     if action_name == "forum"
       redirect_to "http://134.245.253.5:8080"
+    elsif action_name == "faq"
+      redirect_to "http://134.245.253.5:8080/viewforum.php?f=9"
     end
   end
 
