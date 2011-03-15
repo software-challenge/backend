@@ -1,5 +1,8 @@
 ## This file generated from the list of files ignored by SVN! 
 
+# Ignore temporary VIM files
+.*.sw*
+
 # /
 /.metadata
 /game_simpleclient_test
