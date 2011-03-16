@@ -9,8 +9,8 @@
 <% else %>
   <%= rDone %> von <%= rCount %> gespielt <br>
   <b>Verbleibende Zeit: </b>~&nbsp;
-  <%= ((rCount.to_f - rDone.to_f) / 6.0).ceil * 5 %> Minuten
+  <%= ((rCount.to_f - rDone.to_f) / 6.0).ceil * 2 %> Minuten
   <br> 
   <b>Zeit für gesamten Spieltag: </b>~&nbsp; 
-  <%= (rCount.to_f / 6.0).ceil * 5 %> Minuten <br>
+  <%= (rCount.to_f / 6.0).ceil * 2 %> Minuten <br>
 <% end %>
