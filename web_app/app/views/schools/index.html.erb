@@ -4,7 +4,10 @@
 </h1>
 
 <% tabnav :contest do %>
-  <div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @contest.schools.count %> Schulen angemeldet.</div>
+  <% show_to :administrator do %><div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @contest.schools.count %> Schulen angemeldet.</div><% end %>
+  <div id="filter">
+    Anzeige auf Bundesland beschränken: <%= select_tag "select_state",options_for_select(((@schools.collect{|s| s.state} | @other_schools.collect{|s| s.state}).collect{|s| [s, s.downcase]} << ["Alle", "all"]).sort{|a,b| a.first <=> b.first}) %>
+  </div>
   <table class="tablesorter data-table" id="schools">
     <thead>
       <tr>
@@ -40,5 +43,15 @@
     headers: {
       3: { sorter: false }
     }
-  })  
+  }) 
+
+  $("#select_state").change(function(){
+   var new_state = $("#select_state option:selected").val()
+   if(new_state == "all"){
+     $(".school").show()
+   }else{
+     $(".school").hide()
+     $("."+new_state).show()
+   }
+  })
 <% end %>
