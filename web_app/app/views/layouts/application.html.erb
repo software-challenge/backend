@@ -155,7 +155,7 @@
         <%= yield %>
 
         <% javascript_tag do %>
-          $(".tooltipped").tooltip({position:'bottom center'})
+          $(".tooltipped").tooltip({position:'bottom center', offset:[10,10]})
         <% end %>
 
       </div>
