@@ -12,7 +12,7 @@
     </thead>
     <tbody>
       <% preliminary_contestants.each do |prelim| %>
-       <tr>
+       <tr class="preliminary_contestant <%= prelim.school.state.downcase %>">
         <td><%= prelim.name %></td>
         <td><%= prelim.school.name %></td>
         <td><%= prelim.school.location %></td>

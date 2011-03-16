@@ -4,7 +4,17 @@
 </h1>
 
 <% tabnav :contest do %>
-  <div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @preliminary_contestants.count %> Teams angemeldet.</div>
+  <% show_to :administrator do %><div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @preliminary_contestants.count %> Teams angemeldet.</div> <% end %>
+
+  <div id="filter">
+    <% states = [["Alle","all"]] %>
+    <% @preliminary_contestants.each do |p| %>
+       <% states |= [[p.school.state, p.school.state.downcase]] %>
+    <% end %>
+    <% states.sort!{|a,b| a.first <=> b.first } %>
+    Anzeige auf Bundesland beschränken: <%= select_tag "select_state",options_for_select(states) %>
+  </div>
+  
   <%= render :partial => "list", :locales => {:preliminary_contestants => @preliminary_contestants}%>
 <% end %>
 
@@ -14,4 +24,14 @@
       4: { sorter: false }
     }
   })  
+
+  $("#select_state").change(function(){
+   var new_state = $("#select_state option:selected").val()
+   if(new_state == "all"){
+     $(".preliminary_contestant").show()
+   }else{
+     $(".preliminary_contestant").hide()
+     $("."+new_state).show()
+   }
+  })
 <% end %>
