@@ -4,10 +4,12 @@
 </h1>
 
 <% tabnav :contest do %>
-  <% show_to :administrator do %><div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @contest.schools.count %> Schulen angemeldet.</div><% end %>
-  <div id="filter">
-    Anzeige auf Bundesland beschränken: <%= select_tag "select_state",options_for_select(((@schools.collect{|s| s.state} | @other_schools.collect{|s| s.state}).collect{|s| [s, s.downcase]} << ["Alle", "all"]).sort{|a,b| a.first <=> b.first}) %>
-  </div>
+  <% show_to :administrator do %>
+    <div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @contest.schools.count %> Schulen angemeldet.</div>
+    <div id="filter">
+      Anzeige auf Bundesland beschränken: <%= select_tag "select_state",options_for_select(((@schools.collect{|s| s.state} | @other_schools.collect{|s| s.state}).collect{|s| [s, s.downcase]} << ["Alle", "all"]).sort{|a,b| a.first <=> b.first}) %>
+    </div>
+  <% end %>
   <table class="tablesorter data-table" id="schools">
     <thead>
       <tr>
@@ -23,7 +25,7 @@
       <% end %>
       <% unless @other_schools.empty? %>
         <tr class="medium-gap">
-          <td>&nbsp;</td>
+          <td>&nbsp;</td><td></td><td></td><td></td>
         </tr>
         <tr>
           <td colspan="4">
@@ -39,11 +41,12 @@
 <% end %>
 
 <% javascript_tag do %>
- $("#schools").tablesorter({
+ <% show_to :administrator do %> 
+  $("#schools").tablesorter({
     headers: {
       3: { sorter: false }
     }
-  }) 
+  })
 
   $("#select_state").change(function(){
    var new_state = $("#select_state option:selected").val()
@@ -54,4 +57,5 @@
      $("."+new_state).show()
    }
   })
+ <% end %>
 <% end %>

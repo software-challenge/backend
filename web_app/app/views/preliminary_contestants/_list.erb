@@ -7,7 +7,7 @@
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
         <th class="middle">Teilnahmewahrscheinlichkeit</th>
-        <% show_to :administrator do %><th>Aktionen</th><% end %>
+        <th class="middle">Aktionen</th>
       </tr>
     </thead>
     <tbody>
@@ -18,7 +18,7 @@
         <td><%= prelim.school.location %></td>
         <td><%= prelim.school.state %></td>
         <td class="middle"><%= show_probability prelim.participation_probability %></td>
-        <% show_to :administrator do %><td style="text-align:center"><%= link_to image_tag("actions/show.png"), contest_preliminary_contestant_url(@contest,prelim) %></td><% end %>
+        <td style="text-align:center"><%= link_to image_tag("actions/show.png"), contest_preliminary_contestant_url(@contest,prelim) %></td>
        </tr>
       <% end %>
       </tbody>

@@ -84,16 +84,17 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
 
   if ((logged_in? and not (current_user.schools_for_contest(@contest).empty? and current_user.other_schools_for_contest(@contest).empty?)) or administrator?) and @contest.phase != "contest"
     add_tab do |t|
-      begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}/#{PreliminaryContestant.human_name(:count => 2)}"; end if not administrator?
+      begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}"; end if not administrator?
       begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}"; end if administrator?
       t.links_to contest_schools_url(@contest)
       t.highlights_on :controller => "schools", :action => "index"
     end
   end
 
-  if administrator? and @contest.phase != "contest"
+  if logged_in? and @contest.phase != "contest"
     add_tab do |t|
-      t.named "#{t "views.all"} #{PreliminaryContestant.human_name(:count => 2)}"
+      t.named "#{t "views.all"} #{PreliminaryContestant.human_name(:count => 2)}" if administrator?
+      t.named "#{t "views.my" } #{PreliminaryContestant.human_name(:count => 2)}" if not administrator?
       t.links_to contest_preliminary_contestants_url(@contest)
       t.highlights_on :controller => "preliminary_contestants"
     end
