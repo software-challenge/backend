@@ -223,6 +223,11 @@ class Matchday < ActiveRecord::Base
     matches.collect{|match| match.rounds}.flatten.count
   end
 
+  def position_without_trials
+    position - contest.matchdays.trials.count
+  end
+
+
   protected
 
   def all_matches_played?(force_reload = true)

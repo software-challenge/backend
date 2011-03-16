@@ -60,7 +60,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named t("titles.results")
     begin; t.disable!; next; end if @contest.new_record?
-    t.named "#{@contest.last_played_matchday.position}. Spieltag" if @contest.last_played_matchday
+    t.named "#{@contest.last_played_matchday.position_without_trials}. Spieltag" if @contest.last_played_matchday
     t.links_to contest_results_url(@contest)
     t.disable! unless @contest.last_played_matchday
     t.highlights_on :controller => "contests", :action => "results"
