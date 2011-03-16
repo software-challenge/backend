@@ -419,6 +419,7 @@ de:
       debug: "Debugansicht"
       register: "Registrieren"
       do_register: "Registrieren"
+      new_password: "Neues Passwort anfordern"
     people:
        people_for_contestant: "Teammitglieder"
        people: "Personen"
