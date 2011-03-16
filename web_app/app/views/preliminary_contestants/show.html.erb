@@ -1,3 +1,8 @@
+<div id="actions">
+  <% link_to new_contest_school_preliminary_contestant_url(@contest,@school) do %>
+   <%= image_tag "actions/add.png" %> Anmeldungen bearbeiten
+  <% end %>
+</div>
 <h1>
   <%= link_to @contest.name, contest_url(@contest) %> /
   <%= link_to @school.name, contest_school_url(@contest,@school) %> /

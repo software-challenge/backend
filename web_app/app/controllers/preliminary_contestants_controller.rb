@@ -63,6 +63,10 @@ class PreliminaryContestantsController < ApplicationController
   end
   
   def index
-    @preliminary_contestants = @contest.preliminary_contestants
+    if administrator?
+      @preliminary_contestants = @contest.preliminary_contestants
+    else
+      @preliminary_contestants = @contest.preliminary_contestants.select{|p| p.person == @current_user}
+    end
   end
 end
