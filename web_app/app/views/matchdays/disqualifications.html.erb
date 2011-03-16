@@ -30,8 +30,8 @@
         <td><%= match.contestants.first.name %></td>
         <td><%= match.contestants.second.name %></td>
         <td class="middle"><%= match.main_result.join(" : ") %></td>
-        <td class="middle" class="tooltipped" title="<%= disqus[:causes].join(", ") %>"><%= disqus[:count] %></td>
-        <td class="middle"> <%= link_to image_tag("actions/show.png"), contest_matchday_match_url(@contest,@matchday,match), :title => "Spiel anzeigen", :class => "tooltipped" %></td>
+        <td class="tooltipped middle" title="<%= disqus[:causes].join(", ") %>"><%= disqus[:count] %></td>
+        <td class="middle"> <%= link_to image_tag("actions/show.png", :class => "tooltipped", :title => "Spiel anzeigen"), contest_matchday_match_url(@contest,@matchday,match) %></td>
        </tr>
       <% end %>
     </tbody>

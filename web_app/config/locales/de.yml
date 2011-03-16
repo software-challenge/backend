@@ -396,6 +396,7 @@ de:
     matchdays: 
       list: "Spieltage"
       standings: "Rangliste für Spieltag"
+      disqualifications: "Disqualifikationen"
     all_people: "Alle Personen"
     friendly_encounters: "Freundschaftsspiele"
     debug_view: "Debugansicht"    
