@@ -3,11 +3,8 @@
 <tr style="background-color: <%= cycle('#fff', '#f8f8f8') %>; line-height: 2em;">
   <% if count %>
     <td> 
-      <% if match.matchday.trial %>
-        <%= link_to "P#{match.matchday.position}", contest_matchday_url(@contest, match.matchday)%> 
-      <% else %>
-        <%= link_to match.matchday.position - match.contest.matchdays.trials.count, contest_matchday_url(@contest, match.matchday) %>
-      <% end %>
+      <% pos = match.matchday.position_without_trials %>
+      <%= link_to "#{pos < 1 ? "P#{match.matchday.position}" : "#{pos}"}" %>
     </td>
   <% end %>
   <% if date %>
