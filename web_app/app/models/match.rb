@@ -102,6 +102,8 @@ class Match < ActiveRecord::Base
     unless played?
       run_match
     end
+    self.job_id = nil
+    save!
   end
 
   def priority

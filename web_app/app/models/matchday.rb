@@ -143,6 +143,8 @@ class Matchday < ActiveRecord::Base
     matches.each do |match|
       match.perform
     end
+    self.job_id = nil
+    save!
   end
 
   def reset!(delete_games = false)
