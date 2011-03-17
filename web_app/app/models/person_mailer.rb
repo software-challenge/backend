@@ -16,11 +16,11 @@ class PersonMailer < ActionMailer::Base
     body({ :person => person, :url => "http://www.software-challenge.de/wettbewerb/#{contest.subdomain}/", :plain_password => plain_password })
   end
 
-  def survey_invite_notification(person, login_token, survey_token)
+  def survey_invite_notification(person, contest, login_token, survey_token)
     recipients "#{person.name} #<#{person.email}>"
     from       "software-challenge@gfxpro.eu"
     subject    "Die Software-Challenge läd Sie zu einer Umfrage ein."
     sent_on    Time.now
-    body({ :person => person, :survey => survey_token.survey, :survey_token => survey_token, :login_token => login_token })
+    body({:contest => contest, :person => person, :survey => survey_token.survey, :survey_token => survey_token, :login_token => login_token })
   end
 end

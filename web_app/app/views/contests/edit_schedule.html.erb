@@ -59,11 +59,16 @@
           <%= t "views.therefore" %> <b><%= matchday_count %> <%= Matchday.human_name(:count => matchday_count) %></b> haben.
         </p>
         <% f.inputs do %>
-          <%= f.input :start_at, :as => :date, :label => "Erster Spieltag" %>
+          <%= f.input :start_at, :as => :date, :label => "Erster Spieltag", :input_html => {:class => 'pick_date' } %>
+
+          <% javascript_tag do %>
+             $(".pick_date").datepicker()
+          <% end %>
+          
           <% trials = (0..5).to_a %>
           <% trials.delete(1) if contestant_count.odd? %>
           <%= f.input :trial_days, :label => "Probespieltage", :collection => trials, :include_blank => false %>
-          <% days = (0..6).collect { |i| [t("date.abbr_day_names")[i], i] } %>
+          <% days = (0..6).collect { |i| [I18n.t("date.abbr_day_names")[i], i] } %>
           <%= f.input :weekdays, :as => :check_boxes, :collection => days, :selected => [1,4],
             :hint => I18n.t("views.data_can_be_moved"), :label => I18n.t("views.weekdays"),
             :wrapper_html => { :class => "horizontal" } %>

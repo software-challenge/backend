@@ -132,8 +132,7 @@ class ContestsController < ApplicationController
   end
 
   def refresh_matchdays
-    start_at_param = read_multipart_param(params[:schedule], :start_at)
-    start_at = Date.new(*start_at_param.collect{ |x| x.to_i })
+    start_at = params[:schedule][:start_at].to_date
     weekdays = params[:schedule][:weekdays].collect { |x| x.blank? ? nil : x.to_i }
     weekdays.compact!
     weekdays.uniq!
