@@ -67,7 +67,7 @@
           <%= f.input :weekdays, :as => :check_boxes, :collection => days, :selected => [1,4],
             :hint => I18n.t("views.data_can_be_moved"), :label => I18n.t("views.weekdays"),
             :wrapper_html => { :class => "horizontal" } %>
-            <%= f.input :play_automatically, :as => :boolean, :label => "Automatisch spielen", :style => "vertical-align: middle" %>
+            <%= f.input :play_automatically, :as => :boolean, :checked => @contest.play_automatically, :label => "Automatisch spielen", :style => "vertical-align: middle" %>
         <% end %>
         <%= f.buttons %>
       <% end %>
