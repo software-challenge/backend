@@ -75,10 +75,10 @@ class SurveyTokensController < ApplicationController
         people.each_key do |person|
           token = SurveyToken.create(args)
           token.allow_teacher = false
-          token.owner = person
+          token.token_owner = person
           token.save!
           token_count += 1
-          PersonMailer.deliver_survey_invite_notification(person,person.generate_login_token, token) 
+          PersonMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, token) 
         end
       when "contestants"
         (params[:select_contestants] || []).each do |cont_id|
@@ -101,7 +101,7 @@ class SurveyTokensController < ApplicationController
    end
   rescue
     flash[:error] = "Fehler beim Erstellen der Tokens!"
-    render :action => :new
+    redirect_to :action => :new
   end
  end
 end
