@@ -86,7 +86,7 @@ module SoChaManager
 
     def setup_timeout(room_id, room_handler)
       # force gamestart
-      Thread.new do
+      t = Thread.new do
         begin
           logger.info "Game will be forced to start in #{SoChaManager.start_game_after} seconds"
           sleep SoChaManager.start_game_after
@@ -107,6 +107,7 @@ module SoChaManager
           logger.log_formatted_exception e
         end
       end
+      @threads << t
     end
 
     def setup_clients(round, codes)
