@@ -81,7 +81,7 @@
       </td>
     <% end %>
   </tr>
-  <% if match.result %>
+  <% if match.result and match.played? %>
     <% if not matchday_match or match.matchday.published? or current_user.try(:administrator) %>
       <tr class="values">
         <% match.main_result.each_with_index do |value,i| %>

@@ -49,6 +49,7 @@ class Round < ActiveRecord::Base
     
     raise "no game result" unless manager.last_result
     update_scores!(manager.last_result)
+    job_logger.info "Round performed"
   end
 
   def reset!
