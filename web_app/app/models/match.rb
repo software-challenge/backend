@@ -104,6 +104,7 @@ class Match < ActiveRecord::Base
     end
     self.job_id = nil
     save!
+    job_logger.info "Match performed"
   end
 
   def priority

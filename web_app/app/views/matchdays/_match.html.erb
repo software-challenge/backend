@@ -23,7 +23,7 @@
     <td><%= text.html_safe! %></td>
   <% end %>
   <td style="text-align: center;">
-    <% if match.main_result and (match.matchday.published? or administrator?) %>
+    <% if match.main_result and match.played? and (match.matchday.published? or administrator?) %>
       <% if match.matchday.published? or administrator? %>
         <% link_to [@contest, match.matchday, match.becomes(Match)] do %>
           <%= match.main_result.join(" : ") %>
