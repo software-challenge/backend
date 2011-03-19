@@ -58,6 +58,12 @@ class Round < ActiveRecord::Base
     end
 
     self.played_at = nil
+    m = self.match
+    m.played_at = nil
+    m.save!
+    md = self.match.matchday
+    md.played_at = nil
+    md.save!
     save!
   end
 
