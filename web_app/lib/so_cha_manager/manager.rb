@@ -24,10 +24,18 @@ module SoChaManager
       logger.fatal "watch_folder (#{SoChaManager.watch_folder}) isn't a directory or does not exist."
     end
 
-    attr_reader :last_result, :client
-    delegate :done?, :close, :to => :client
+    attr_reader :last_result, :client, :threads
+    delegate :done?, :to => :client
     
+    def close
+      @client.close
+      @threads.each do |t|
+        t.kill
+      end
+    end
+
     def connect!
+      @threads = []
       @client = Client.new SoChaManager.server_host, SoChaManager.server_port
     end
     
