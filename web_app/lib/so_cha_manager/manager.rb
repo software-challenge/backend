@@ -28,9 +28,12 @@ module SoChaManager
     delegate :done?, :to => :client
     
     def close
+      logger.info "Closing client"
       @client.close
+      logger.info "Closing threads"
       @threads.each do |t|
         t.kill
+        logger.info "Thread #{t} closed"
       end
     end
 
