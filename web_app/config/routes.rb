@@ -1,14 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
 
-    #tmap.resources :people, :as => "personen"
-    
-    #tmap.resources :contests,
-    #  :as => "wettbewerbe",
-    #  :path_prefix => '/administration',
-    #  :name_prefix => 'admin_'
-
-
     tmap.resources :contests,
       :as => "wettbewerb",
       :member => {
