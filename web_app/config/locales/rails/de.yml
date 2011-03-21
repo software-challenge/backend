@@ -31,35 +31,35 @@ de:
       less_than_x_seconds:
         zero: 'weniger als einer Sekunde'
         one: 'weniger als einer Sekunde'
-        other: 'weniger als {{count}} Sekunden'
+        other: 'weniger als %{count} Sekunden'
       x_seconds:
         one: 'einer Sekunde'
-        other: '{{count}} Sekunden'
+        other: '%{count} Sekunden'
       less_than_x_minutes:
         zero: 'weniger als 1 Minute'
         one: 'weniger als eine Minute'
         other: 'weniger als {{count}} Minuten'
       x_minutes:
         one: 'einem Minute'
-        other: '{{count}} Minuten'
+        other: '%{count} Minuten'
       about_x_hours:
         one: 'etwa einem Stunde'
-        other: 'etwa {{count}} Stunden'
+        other: 'etwa %{count} Stunden'
       x_days:
         one: 'einem Tag'
-        other: '{{count}} Tagen'
+        other: '%{count} Tagen'
       about_x_months:
         one: 'etwa einem Monat'
-        other: 'etwa {{count}} Monaten'
+        other: 'etwa %{count} Monaten'
       x_months:
         one: 'einem Monat'
-        other: '{{count}} Monaten'
+        other: '%{count} Monaten'
       about_x_years:
         one: 'etwa einem Jahr'
-        other: 'etwa {{count}} Jahren'
+        other: 'etwa %{count} Jahren'
       over_x_years:
         one: 'mehr als einem Jahr'
-        other: 'mehr als {{count}} Jahren'
+        other: 'mehr als %{count} Jahren'
     prompts:
       second: "Sekunden"
       minute: "Minuten"
@@ -113,8 +113,8 @@ de:
     errors:
       template:
         header:
-          one:    "{{model}} konnte wegen einem Fehler nicht gespeichert werden."
-          other:  "{{model}} konnte wegen {{count}} Fehlern nicht gespeichert werden."
+          one:    "%{model} konnte wegen einem Fehler nicht gespeichert werden."
+          other:  "%{model}} konnte wegen %{count} Fehlern nicht gespeichert werden."
         body: "Bitte überprüfen Sie die folgenden Felder:"
 
       messages:
@@ -125,19 +125,19 @@ de:
         accepted: "muss akzeptiert werden"
         empty: "muss ausgefüllt werden"
         blank: "muss ausgefüllt werden"
-        too_long: "ist zu lang (nicht mehr als {{count}} Zeichen)"
-        too_short: "ist zu kurz (nicht weniger als {{count}} Zeichen)"
-        wrong_length: "hat die falsche Länge (muss genau {{count}} Zeichen haben)"
+        too_long: "ist zu lang (nicht mehr als %{count} Zeichen)"
+        too_short: "ist zu kurz (nicht weniger als %{count} Zeichen)"
+        wrong_length: "hat die falsche Länge (muss genau %{count} Zeichen haben)"
         taken: "ist bereits vergeben"
         not_a_number: "ist keine Zahl"
-        greater_than: "muss größer als {{count}} sein"
-        greater_than_or_equal_to: "muss größer oder gleich {{count}} sein"
-        equal_to: "muss genau {{count}} sein"
-        less_than: "muss kleiner als {{count}} sein"
-        less_than_or_equal_to: "muss kleiner oder gleich {{count}} sein"
+        greater_than: "muss größer als %{count} sein"
+        greater_than_or_equal_to: "muss größer oder gleich %{count} sein"
+        equal_to: "muss genau %{count} sein"
+        less_than: "muss kleiner als %{count} sein"
+        less_than_or_equal_to: "muss kleiner oder gleich %{count} sein"
         odd: "muss ungerade sein"
         even: "muss gerade sein"
-        record_invalid: "Gültigkeitsprüfung ist fehlgeschlagen: {{errors}}"
+        record_invalid: "Gültigkeitsprüfung ist fehlgeschlagen: %{errors}"
       models:
         round:
           other: "anderer Wert"
