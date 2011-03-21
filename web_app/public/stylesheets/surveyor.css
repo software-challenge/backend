@@ -78,3 +78,15 @@
     padding: 5px;
     cursor: pointer;
     background-color: #eeeeee; }
+  
+  html[xmlns] form.formtastic fieldset.q_hidden {
+    display: none;
+  }
+
+  form.formtastic fieldset ol li label {
+    width: auto;
+  }
+
+  form.fieldset {
+   width: 90%;
+  } 
