@@ -22,7 +22,7 @@ class Person < ActiveRecord::Base
   # The survey tokens, that are assigned to a single user!
   has_many :survey_tokens
 
-  has_many :login_tokens
+  has_many :login_tokens 
 
   alias :contestants :teams
 
@@ -103,6 +103,10 @@ class Person < ActiveRecord::Base
 
   def blocked
     self.hidden
+  end
+
+  def has_memberships_in?(contest)
+     not memberships.select{|m| m.contestant.contest == contest}.empty?
   end
 
   # fake accessor for form-builders

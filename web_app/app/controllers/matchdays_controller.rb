@@ -186,8 +186,7 @@ class MatchdaysController < ApplicationController
   # POST /contest/1/matchdays/publish
   def publish
     @matchday = @contest.matchdays.find(params[:id])
-    @matchday.public = true
-    @matchday.save
+    @matchday.publish!
     redirect_to contest_matchday_url(@contest, @matchday)
   end
 

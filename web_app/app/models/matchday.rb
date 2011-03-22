@@ -81,6 +81,27 @@ class Matchday < ActiveRecord::Base
     self.public
   end
 
+  def publish!
+    unless self.first_published_at 
+      self.first_published_at = Time.now 
+      puts "Matchday is published for the first time, sending emails-notifications!"
+      Thread.new do
+        begin
+          EventMailer.deliver_on_matchday_published_notification(self) 
+        ensure
+          puts "Finished email-sending"
+        end
+      end      
+    end
+    self.public = true
+    self.save!
+  end
+
+  def unpublish!
+    self.public = false
+    self.save!
+  end
+
   def reaggregate
     return false if self.running?
     Matchday.transaction do
@@ -194,7 +215,7 @@ class Matchday < ActiveRecord::Base
       self.played_at = DateTime.now
       self.save!
       if not played_before
-        job_logger.info "Sending mail"
+        job_logger.info "Sending matchday played notification"
         Thread.new do
           begin
             EventMailer.deliver_on_matchday_played_notification(self) 

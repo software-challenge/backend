@@ -65,4 +65,31 @@ class EventMailer < ActionMailer::Base
     body({ :matchday => matchday, :mdstr => mdstr, :url => contest_matchday_url(matchday.contest, matchday), :disqualis => disqualis })
   end
 
+  def on_matchday_published_notification(matchday)
+    recips = ""
+    EmailEvent.rcvs_on_matchday_published.select{|e| e.person.has_memberships_in?(matchday.contest) or e.person.has_role? :administrator}.collect(&:email).each do |rcp|
+      recips << ", " unless recips.blank?
+      recips << "#{rcp}"
+    end
+    raise NotSendingMail if recips.blank? or not matchday.played?
+    if matchday.trial
+      mdstr = "#{matchday.position}. Probespieltag"
+    else
+      mdstr = "#{matchday.position - matchday.contest.matchdays.trials.count}. Spieltag"
+    end
+    disqualis = 0
+    matchday.matches.each do |match|
+      match.rounds.each do |round|
+        round.scores.each do |score|
+          disqualis += 1 if score.cause != "REGULAR"
+        end
+      end
+    end
+    recipients recips
+    from "software-challenge@gfxpro.de"
+    subject "Ein Spieltag wurde gespielt"
+    sent_on Time.now
+    body({ :matchday => matchday, :mdstr => mdstr, :url => contest_matchday_url(matchday.contest, matchday), :disqualis => disqualis })   
+  end
+
 end
