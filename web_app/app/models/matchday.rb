@@ -190,14 +190,17 @@ class Matchday < ActiveRecord::Base
       job_logger.info "Order scoretable"
       order_scoretable
       job_logger.info "Saving matchday"
+      played_before = !!self.played_at 
       self.played_at = DateTime.now
       self.save!
-      job_logger.info "Sending mail"
-      Thread.new do
-        begin
-          EventMailer.deliver_on_matchday_played_notification(self) 
-        ensure
-          puts "Finished mail"
+      if not played_before
+        job_logger.info "Sending mail"
+        Thread.new do
+          begin
+            EventMailer.deliver_on_matchday_played_notification(self) 
+          ensure
+            puts "Finished mail"
+          end
         end
       end
       job_logger.info "Matchday finished"
