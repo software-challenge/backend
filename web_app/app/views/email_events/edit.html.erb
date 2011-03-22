@@ -11,10 +11,11 @@
   <% semantic_form_for @email_event, :url => (@contestant ? [@contest, @contestant, @person, :email_event] : [@contest, @person, :email_event]) do |f| %>
     <% f.inputs do %>
       <% show_to :administrator do %>
-        <%= f.input :rcv_on_matchday_played %>
+        <%= f.input :rcv_on_matchday_played, :required => false %>
       <% end %>
-      <%= f.input :rcv_client_matchday_warning %> 
-      <%= f.input :rcv_contest_progress_info %>
+      <%= f.input :rcv_on_matchday_published, :label => @current_user.has_role?(:administrator) ? "Ein neuer Spieltag wurde veröffentlich" : "Ein neuer Spieltag wurde gespielt", :required => false %>
+      <%= f.input :rcv_client_matchday_warning, :required => false %> 
+      <%= f.input :rcv_contest_progress_info, :required => false %>
     <% end %>
     <% f.buttons do %>
       <%= f.commit_button %>

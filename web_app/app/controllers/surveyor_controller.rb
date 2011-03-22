@@ -4,7 +4,7 @@ module SurveyorControllerCustomMethods
     # base.send :before_filter, :login_required  # Restful Authentication
      base.send :layout, 'application'
   end
-
+  
   # Actions
    
   def new
@@ -99,6 +99,10 @@ class SurveyorController < ApplicationController
   include Surveyor::SurveyorControllerMethods
   include SurveyorControllerCustomMethods
 
+  # Surveyor uses it's own form builder, so we have to switch to it for building our surveys
+  after_filter :normal_formtastic_builder!
+  before_filter :surveyor_formtastic_builder!
+
   def allowed?
     @survey_token.allowed_for?(@current_user) and @survey_token.currently_valid?
   end
@@ -110,5 +114,15 @@ class SurveyorController < ApplicationController
   def fetch_response_set
     @response_set = @survey_token.response_set
   end
+ 
+  protected 
+    def surveyor_formtastic_builder!
+      @normal_formtastic_helper = Formtastic::SemanticFormHelper.builder
+      Formtastic::SemanticFormHelper.builder = Formtastic::SurveyorBuilder
+    end
+
+    def normal_formtastic_builder!
+      Formtastic::SemanticFormHelper.builder = @normal_formtastic_helper
+    end
 
 end
