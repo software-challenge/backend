@@ -13,7 +13,7 @@
       <% show_to :administrator do %>
         <%= f.input :rcv_on_matchday_played, :required => false %>
       <% end %>
-      <%= f.input :rcv_on_matchday_published, :label => @current_user.has_role?(:administrator) ? "Ein neuer Spieltag wurde veröffentlich" : "Ein neuer Spieltag wurde gespielt", :required => false %>
+      <%= f.input :rcv_on_matchday_published, :label => @current_user.has_role?(:administrator) ? "Ein neuer Spieltag wurde veröffentlicht" : "Ein neuer Spieltag wurde gespielt", :required => false %>
       <%= f.input :rcv_client_matchday_warning, :required => false %> 
       <%= f.input :rcv_contest_progress_info, :required => false %>
     <% end %>
