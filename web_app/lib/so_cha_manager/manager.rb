@@ -29,7 +29,7 @@ module SoChaManager
     
     def close
       logger.info "Closing client"
-      @client.close
+      @client.close if not @client.nil?
       logger.info "Closing threads"
       @threads.each do |t|
         t.kill
