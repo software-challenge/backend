@@ -31,7 +31,8 @@ class EventMailer < ActionMailer::Base
     else
       mdstr = "#{matchday.position - matchday.contest.matchdays.trials.count}. Spieltag"
     end
-    recipients recips
+    bcc recips
+    recipients "software-challenge@gfxpro.de"
     from "software-challenge@gfxpro.de"
     subject "Client für kommenden Spieltag vorbereiten"
     sent_on Time.now
@@ -40,7 +41,7 @@ class EventMailer < ActionMailer::Base
   
   def on_matchday_played_notification(matchday)
     recips = ""
-    EmailEvent.rcvs_on_matchday_played.collect(&:email).each do |rcp|
+    EmailEvent.rcvs_on_matchday_played.select{|e| e.person.has_role? :administrator}.collect(&:email).each do |rcp|
       recips << ", " unless recips.blank?
       recips << "#{rcp}"
     end
@@ -58,7 +59,8 @@ class EventMailer < ActionMailer::Base
         end
       end
     end
-    recipients recips
+    bcc recips
+    recipients "software-challenge@gfxpro.de"
     from "software-challenge@gfxpro.de"
     subject "Ein Spieltag wurde gespielt"
     sent_on Time.now
@@ -71,7 +73,7 @@ class EventMailer < ActionMailer::Base
       recips << ", " unless recips.blank?
       recips << "#{rcp}"
     end
-    raise NotSendingMail if recips.blank? or not matchday.played?
+    raise NotSendingMail if recips.blank? or not matchday.published?
     if matchday.trial
       mdstr = "#{matchday.position}. Probespieltag"
     else
@@ -85,7 +87,8 @@ class EventMailer < ActionMailer::Base
         end
       end
     end
-    recipients recips
+    bcc recips
+    recipients "software-challenge@gfxpro.de"
     from "software-challenge@gfxpro.de"
     subject "Ein Spieltag wurde gespielt"
     sent_on Time.now
