@@ -43,7 +43,6 @@ class Round < ActiveRecord::Base
     rescue => exception
       puts "Manager raised exception: #{exception}"
       job_logger.info "Manager raised exception: #{exception}"
-      manager.close
       raise exception
     end
     
