@@ -39,7 +39,7 @@ class Person < ActiveRecord::Base
   validates_associated :memberships
 
   validates_presence_of :password, :on => :create
-  validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :on => :create
+  validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH
 
   named_scope :visible, :conditions => {:hidden => false}
   named_scope :hidden, :conditions => {:hidden => true}

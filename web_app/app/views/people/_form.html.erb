@@ -12,6 +12,17 @@
       <%= f.input :password, :required => @person.new_record?,
         :hint => (t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + (@person.new_record? ?  "" : t("views.password_not_change_hint")) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_password').val('#{generated_password}');return false;\">".html_safe + t("actions.use") + "</a>.".html_safe),
       :input_html => { :value => "", :autocomplete => "off" } %>
+    <% else %>
+      <li style="margin-bottom:0.2em;"><b>Passwort ändern:</b></li>
+      <li id="person_current_password_input" class="password optional">
+         <label for="current_password">Aktuelles Passwort</label>
+         <%= password_field_tag 'current_password' %>
+      </li>
+      <%= f.input :password, :label => "Neues Passwort", :hint => t("views.password_length",{:min_length => Person::MINIMUM_PASSWORD_LENGTH}) %>
+       <li id="person_new_password_repeat_input" class="password optional">
+         <label for="repeat_new_password">Neues Passwort wiederholen</label>
+         <%= password_field_tag 'new_password_repeat' %>
+      </li>     
     <% end %>
     <% show_to :administrator do %>
       <li class="boolean optional">

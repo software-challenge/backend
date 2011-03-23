@@ -212,7 +212,6 @@ class PeopleController < ApplicationController
   # PUT /people/1.xml
   def update
     # @person is fetched in before_filter
-
     # cleanup params
     person_params = params[:person].clone
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
@@ -221,9 +220,24 @@ class PeopleController < ApplicationController
     end
     unless administrator?
       person_params[:email] = @person.email
-      person_params[:password] = ""
+       
+      # Does the person want to change it's password?
+      unless person_params[:password].empty?
+        if @person.password_match? params[:current_password] 
+          unless person_params[:password] == params[:new_password_repeat] 
+            flash[:error] = "Die beiden Eingaben des neuen Passworts stimmen nicht überein!"
+            render :action => "edit"
+            return
+          end
+        else
+          flash[:error] = "Sie haben ihr aktuelles Passwort falsch eingegeben!"
+          render :action => "edit"
+          return
+        end
+      end
     end
-
+   
+    flash[:error] = nil
     success = @person.update_attributes(person_params)
 
     respond_to do |format|
@@ -243,7 +257,7 @@ class PeopleController < ApplicationController
         end
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
+        format.html { flash[:error] = "Das Speichern der Änderungen schlug fehl!"; render :action => "edit" }
         format.xml  { render :xml => @person.errors, :status => :unprocessable_entity }
       end
     end
