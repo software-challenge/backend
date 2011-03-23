@@ -26,6 +26,7 @@
  
  <div id="preliminary", class="owner_group", style="display:none; margin-top: 10px; margin-bottom: 10px;">
    <b>Beschreibung:</b> Es werden an alle vorangemeldeten Teams Tokens ausgegeben. Sollte ein Schule kein Team angemeldet haben, so wird dem Anmelder der Schule ein Token zugewiesen. Die betreffenden Personen werden per E-Mail über die Umfrage benachrichtigt.
+   <p><%= check_box_tag "send_email_notifications", "1", true %> Email-Benachrichtigungen senden </p>
  </div>
  
   <div id="validity"><b>Gültig ab:</b><%= text_field_tag "valid_from", "ab sofort" %> <b>bis</b> <%= text_field_tag "valid_until", "unbegrenzt" %></div>
