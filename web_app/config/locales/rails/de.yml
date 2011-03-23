@@ -114,7 +114,7 @@ de:
       template:
         header:
           one:    "%{model} konnte wegen einem Fehler nicht gespeichert werden."
-          other:  "%{model}} konnte wegen %{count} Fehlern nicht gespeichert werden."
+          other:  "%{model} konnte wegen %{count} Fehlern nicht gespeichert werden."
         body: "Bitte überprüfen Sie die folgenden Felder:"
 
       messages:
