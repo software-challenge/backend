@@ -210,11 +210,12 @@ class Matchday < ActiveRecord::Base
       update_scoretable
       job_logger.info "Order scoretable"
       order_scoretable
-      job_logger.info "Saving matchday"
-      played_before = !!self.played_at 
+      job_logger.info "Saving matchday" 
       self.played_at = DateTime.now
       self.save!
-      if not played_before
+      if not first_played_at
+        self.first_played_at = DateTime.now
+        self.save!
         job_logger.info "Sending matchday played notification"
         Thread.new do
           begin
