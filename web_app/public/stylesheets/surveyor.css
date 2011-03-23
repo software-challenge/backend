@@ -18,6 +18,7 @@
   #surveyor .survey_title {
     font-size: 2em;
     font-weight: bold;
+    line-height: 1.2em;
     padding: 5px 0; }
   #surveyor .surveyor_menu {
     float: right; }
@@ -35,6 +36,7 @@
     float: right; }
   #surveyor .survey_section span.title {
     display: block;
+    margin-top: 5px;
     padding: 5px 0;
     font-weight: bold;
     font-size: 1.5em; }
@@ -42,6 +44,9 @@
     display: inline; }
   #surveyor fieldset.g_grid li.surveyor_radio label {
     visibility: hidden; }
+   #surveyor fieldset.g_grid li.surveyor_radio input {
+    margin-top:15px;
+   } 
     #surveyor fieldset.g_grid li.surveyor_radio label input {
       visibility: visible; }
   #surveyor fieldset.g_repeater ol fieldset {
@@ -90,3 +95,7 @@
   form.fieldset {
    width: 90%;
   } 
+
+  div#content {
+   background-color: #FFFFF1;
+  }

@@ -393,6 +393,9 @@ de:
       index: "Verfügbare Umfrageergebnisse"
       show: "Umfrageerbnisse"
       show_response: "Umfrageergebnisse: Details"
+    surveyor:
+      new: "An Umfrage teilnehmen"
+      edit: "Antworten einer Umfrage bearbeiten"
     matchdays: 
       list: "Spieltage"
       standings: "Rangliste für Spieltag"

@@ -92,4 +92,12 @@ class EventMailer < ActionMailer::Base
     body({ :matchday => matchday, :mdstr => mdstr, :url => contest_matchday_url(matchday.contest, matchday), :disqualis => disqualis })   
   end
 
+
+  def survey_invite_notification(person, contest, login_token, survey_token)
+    recipients "#{person.name} #<#{person.email}>"
+    from       "software-challenge@gfxpro.eu"
+    subject    "Die Software-Challenge läd Sie zu einer Umfrage ein."
+    sent_on    Time.now
+    body({:contest => contest, :person => person, :survey => survey_token.survey, :survey_token => survey_token, :login_token => login_token })
+  end
 end

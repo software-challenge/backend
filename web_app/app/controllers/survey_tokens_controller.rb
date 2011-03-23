@@ -78,7 +78,7 @@ class SurveyTokensController < ApplicationController
           token.token_owner = person
           token.save!
           token_count += 1
-          PersonMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, token) 
+          EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, token) if params[:send_email_notification] == "1"
         end
       when "contestants"
         (params[:select_contestants] || []).each do |cont_id|
