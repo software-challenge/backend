@@ -91,7 +91,7 @@
     <% show_to :administrator do %>
       <hr>
       <p style="margin-top: 15px">
-        <% semantic_form_for :contest, :url => update_schedule_contest_url(@contest), :method => :post do |f| %>
+        <% semantic_form_for @contest, :url => update_schedule_contest_url(@contest), :method => :post do |f| %>
           <fieldset>
             <legend><b>Einstellungen</b></legend>
             <% f.inputs do %>
