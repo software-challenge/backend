@@ -41,7 +41,7 @@ class EventMailer < ActionMailer::Base
   
   def on_matchday_played_notification(matchday)
     recips = ""
-    EmailEvent.rcvs_on_matchday_played.select{|e| e.person.has_role? :administrator}.collect(&:email).each do |rcp|
+    EmailEvent.rcvs_on_matchday_played.select{|e| e.person and e.person.has_role? :administrator}.collect(&:email).each do |rcp|
       recips << ", " unless recips.blank?
       recips << "#{rcp}"
     end
