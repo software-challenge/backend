@@ -3,7 +3,7 @@
 <% form_for [@contest,@token] do |f| %>
   <div id="form_inputs">
   <p>Umfrage wählen: <%= select_tag 'survey', options_for_select(@surveys.collect{|s| [s.title,s.id]}) %></p>
-  <p style="margin-top:10px;">Zu befragende Benutzergruppe auswählen: <%= select_tag 'token_owner_group', options_for_select([["Benutzer","people"],["Vorangemeldungen","preliminary"], ["Teams","contestants"]]) %></p>
+  <p style="margin-top:10px;">Zu befragende Benutzergruppe auswählen: <%= select_tag 'token_owner_group', options_for_select([["Benutzer","people"],["Voranmeldungen","preliminary"], ["Teams","contestants"]]) %></p>
  
  
  <div id="schools", class="owner_group", style="display:none">

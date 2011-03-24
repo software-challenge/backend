@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '2.3.7'
 
-gem "surveyor"
+gem "surveyor", "0.19.2"
 gem "rubyzip"
 gem "nokogiri"
 gem "daemons"
