@@ -83,12 +83,13 @@ ActionController::Routing::Routes.draw do |map|
         :disqualifications => :get,
         :get_standings => :get
       } do |md|
-        md.resources :matches, :member => {:reset => :post, :set_review => :post} do |m|
+        md.resources :matches, :member => {:reset => :post, :set_review => :post, :play => :post} do |m|
           m.resources :rounds, :member => {
             :send_server_log => :post,
             :show_replay => :get,
             :disqualify => :get,
-            :requalify => :get
+            :requalify => :get,
+            :reset => :post
           }
         end
         md.standings '/rangliste', :controller => 'matchdays', :action => 'standings'

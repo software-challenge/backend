@@ -8,7 +8,7 @@ class RoundsController < ApplicationController
     allow :administrator
   end
 
-  access_control :only => [:disqualify, :requalify] do
+  access_control :only => [:disqualify, :requalify, :reset] do
     default :deny
     allow :administrator
   end
@@ -65,5 +65,11 @@ class RoundsController < ApplicationController
       flash[:error] = t "messages.contestant_could_not_be_requalified"
     end
     redirect_to contest_matchday_match_url(@contest, slot.round.match.matchday, slot.round.match)
+  end
+
+  def reset
+    @round = Round.find_by_id(params[:id])
+    @round.reset!
+    redirect_to contest_matchday_match_url(@contest,@round.match.matchday,@round.match) 
   end
 end

@@ -33,9 +33,21 @@
         <em><%=t "views.unpublished" %></em>
       <% end %>
     <% elsif match.running? and administrator? %>
-      <%= image_tag 'ui/spinner.gif' %>
+      <%= link_to image_tag('ui/spinner.gif'), contest_matchday_match_url(@contest,match.matchday,match) %>
     <% else %>
-      <em><%= match.slots.empty? ? "Spielfrei" : (t "views.outstanding") %></em>
+      <em>
+        <% if  match.slots.empty?  %>
+           "Spielfrei" 
+        <% else %>
+          <% if @current_user and @current_user.has_role? :administrator %>
+            <% link_to contest_matchday_match_url(@contest,match.matchday,match) do %>
+             <%= t "views.outstanding" %>
+            <% end %>
+          <% else%>
+            <%= t "views.outstanding" %>
+          <% end %>
+       <% end %>
+     </em>
     <% end %>
   </td>
 </tr>

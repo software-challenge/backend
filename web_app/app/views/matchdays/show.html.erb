@@ -11,7 +11,7 @@
           <%= image_tag('state/attention_lrg.png') %><%= t ("views.disqualifications") %>
         <% end %>
         <% unless @matchday.published? %>
-          <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :class=> "tooltipped", :id => "publishContestAction" do %>
+          <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :class=> "tooltipped", :id => "publishContestAction", :confirm => "Sind Sie sicher, dass sie den Spieltag veröffentlichen wollen? Einmal veröffentlicht werden unmittelbar Benachrichtigungen über dessen Veröffentlichung versendet!" do %>
             <%= image_tag('actions/publish.gif') %><%= t ("actions.publish") %>
           <% end %>
         <% end %>
