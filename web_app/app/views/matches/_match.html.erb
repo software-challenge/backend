@@ -180,12 +180,12 @@
                   <%= link_to "Serverlog", send_server_log_contest_matchday_match_round_url(@contest, round.match.matchday, round.match, round, :round_id => round.id), :method => :post %> 
                 <% end %>
               <% end %>
-              <% if matchday_match %>
+              <% if matchday_match and round.played? %>
                 <%= link_to "Replay herunterladen", [@contest, match.matchday.becomes(Matchday), match.becomes(Match), round] %>
               <% elsif @match.is_a? CustomMatch %>
                 <%= link_to "Replay herunterladen", [@contest, @match, round] %>
               <% end %>
-              <% if @contest.has_replay_viewer? %> 
+              <% if @contest.has_replay_viewer? and round.played? %> 
                <a href="#" id="replay_show_round_<%= round.id %>">Replay ansehen</a>
                 <% javascript_tag do %>
                   $(function() {
@@ -202,7 +202,10 @@
               <% end %>
             </span>
           <% end %>
-          Runde <%= round_index.next %>
+          Runde <%= round_index.next %> 
+          <% show_to :administrator do %>
+             <%= link_to image_tag("actions/delete.png", :class => "tooltipped", :title => "Runde zurücksetzen"), reset_contest_matchday_match_round_url(@contest,@match.matchday,@match,round), :method => :post, :confirm => t("messages.confirm_round_reset") if round.played?%>
+          <% end %>
         </div>
       </td>
     </tr>
@@ -210,7 +213,7 @@
       <tr>
         <td colspan="<%= round_colspan %>">
           <%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %>
-          <% if slot.score.cause != "REGULAR" %>
+          <% if round.played? and slot.score.cause != "REGULAR" %>
               <span class="tooltipped"><em>
                 <%= "( #{slot.qualification_changed ? "nachtrgl." : ""} #{t "views.disqualified"} )" %></em>
               </span>
@@ -224,7 +227,7 @@
             </em>
           <% end %>
         </td>
-        <% if allowQualify %>
+        <% if round.played? and allowQualify %>
         <% show_to :administrator do %>
           <td>
             <% if slot.score.cause == "REGULAR" %>

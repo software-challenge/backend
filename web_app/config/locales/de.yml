@@ -218,6 +218,8 @@ de:
     matchday_playing_in_progress: "Der Spieltag wird bereits gespielt."
     matchday_resetted: "Der Spieltag wurde zurückgesetzt."
     matchday_successfully_updated: "Spieltag wurde erfolgreich aktualisiert."
+    confirm_match_play: "Sind Sie sicher, dass Sie diese Begegnung starten wollen?"
+    confirm_round_reset: "Sind Sie sicher, dass Sie diese Runde zurücksetzen wollen?"
     job_started_successfully: "Der Auftrag wurde erfolgreich gestartet"
     job_starting_failed: "Konnte den Auftrag nicht starten."
     already_logged_in: "Sie sind bereits eingeloggt."

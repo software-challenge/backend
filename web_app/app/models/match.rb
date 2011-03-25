@@ -44,7 +44,7 @@ class Match < ActiveRecord::Base
 
   def has_disqualifications?
     rounds.each do |round|
-      return true if round.has_disqualified_slot?
+      return true if round.played? and round.has_disqualified_slot?
     end
     return false
   end

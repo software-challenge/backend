@@ -4,6 +4,11 @@
     <% link_to reset_contest_matchday_match_url(@contest, @match.matchday, @match), :method => "post", :confirm => t("messages.confirm_reset", :name => Match.human_name), :title => t("actions.reset"), :class=> "tooltipped", :id => "resetAction" do %>
        <%= image_tag('actions/destroy.png') %><%= t ("actions.reset") %>
      <% end %>
+  <% elsif @match.running? %>
+    <%= image_tag "ui/spinner.gif", :class => "tooltipped", :title => "Begegnung wird gespielt!", :style => "padding: 8px 0pt;"%>
+  <% else%>
+     <% link_to play_contest_matchday_match_url(@contest, @match.matchday, @match), :method => "post", :confirm => t("messages.confirm_match_play") do %><%= image_tag('actions/play.png')%><%= t("actions.play") %>
+     <% end %>
   <% end %>
   </div>
 <% end %>

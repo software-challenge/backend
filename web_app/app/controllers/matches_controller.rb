@@ -67,6 +67,12 @@ class MatchesController < ApplicationController
    end
   end
 
+  def play
+    @match = Match.find_by_id(params[:id])
+    @match.perform_delayed! if !@match.played? and !@match.running?
+    redirect_to :action => :show
+  end
+
   protected
 
   def fetch_parents
