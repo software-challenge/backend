@@ -1,15 +1,15 @@
-<% show_to :administrator do %>
   <div id="actions">
-    <% link_to contest_matchday_url(@contest, @matchday, :format=>:pdf) do %> 
-      <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
-    <% end %>   
+   <% link_to contest_matchday_url(@contest, @matchday, :format=>:pdf) do %> 
+     <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
+   <% end %>  
+   <% show_to :administrator do %>       
+    <% link_to disqualifications_contest_matchday_url(@contest,@matchday) do %>
+      <%= image_tag('state/attention_lrg.png') %><%= t ("views.disqualifications") %>
+    <% end %>
     <% if @matchday.running? %>
       <%= image_tag 'ui/spinner.gif', :style => "padding: 8px 0;" %> <br> 
     <% else %>
-      <% if @matchday.played? %> 
-        <% link_to disqualifications_contest_matchday_url(@contest,@matchday) do%>
-          <%= image_tag('state/attention_lrg.png') %><%= t ("views.disqualifications") %>
-        <% end %>
+     <% if @matchday.played? %> 
         <% unless @matchday.published? %>
           <% link_to publish_contest_matchday_url(@contest, @matchday), :method => "post", :title => t("views.publish"), :class=> "tooltipped", :id => "publishContestAction", :confirm => "Sind Sie sicher, dass sie den Spieltag veröffentlichen wollen? Einmal veröffentlicht werden unmittelbar Benachrichtigungen über dessen Veröffentlichung versendet!" do %>
             <%= image_tag('actions/publish.gif') %><%= t ("actions.publish") %>
@@ -28,9 +28,9 @@
           <%= image_tag('actions/play.png') %><%= t "actions.play" %>
         <% end %>
       <% end %>
+     <% end %>
     <% end %>
   </div>
-<% end %>
 
 <h1>
   <%= link_to @contest.name, contest_edit_schedule_url(@contest) %> /
