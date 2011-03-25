@@ -10,7 +10,7 @@
         <%= p.input :last_name, :required => true %>
         <%= p.input :email, :required => true %>
         <% generated_password = random_password() %>
-        <%= p.input :password, :required => true, :hint => (t("views.password_info") + "<br>" + t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_person_password').val('#{generated_password}');return false;\">" + t("actions.use") + "</a>"), :input_html => { :value => "", :autocomplete => "off" } %>
+        <%= p.input :password, :required => true, :hint => (t("views.password_info") + "<br>" + t("views.password_length", {:min_length => Person::MINIMUM_PASSWORD_LENGTH}) + ". Z.B. #{generated_password} <a href=\"#\" onclick=\"$('input#person_person_password').val('#{generated_password}');return false;\">".html_safe + t("actions.use") + "</a>".html_safe), :input_html => { :value => "", :autocomplete => "off" } %>
         <%= p.input :phone_number, :required => false %> 
       <% end %>
       <br>

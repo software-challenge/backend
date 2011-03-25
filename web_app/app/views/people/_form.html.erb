@@ -18,7 +18,7 @@
          <label for="current_password">Aktuelles Passwort</label>
          <%= password_field_tag 'current_password' %>
       </li>
-      <%= f.input :password, :label => "Neues Passwort", :hint => t("views.password_length",{:min_length => Person::MINIMUM_PASSWORD_LENGTH}) %>
+      <%= f.input :password, :label => "Neues Passwort", :hint => t("views.password_length", :min_length => Person::MINIMUM_PASSWORD_LENGTH).html_safe %>
        <li id="person_new_password_repeat_input" class="password optional">
          <label for="repeat_new_password">Neues Passwort wiederholen</label>
          <%= password_field_tag 'new_password_repeat' %>
