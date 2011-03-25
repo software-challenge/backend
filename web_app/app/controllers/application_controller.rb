@@ -121,8 +121,9 @@ class ApplicationController < ActionController::Base
   #  end
     
     @contest = @current_contest = Contest.first
-
-    if not params[:contest_id].nil? 
+    if not params[:subdomain].nil?
+      subdomain = params[:subdomain]
+    elsif not params[:contest_id].nil? 
       subdomain = params[:contest_id]
     elsif not params[:id].nil?
       subdomain = params[:id]
