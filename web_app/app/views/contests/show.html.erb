@@ -78,18 +78,13 @@
         <% end %>
       </li>
     <% end %>
-    <% if logged_in? and (@contest.phase == "recall" or @contest.phase == "validation") %>
-       <% available_survey_tokens = SurveyToken.available.select{|t| t.currently_valid? and t.allowed_for?(@current_user)} %>
-       <% unless available_survey_tokens.empty? %> 
-        <li>
-          Sie haben <%= available_survey_tokens.count %> Möglichkeiten an Umfragen teilzunehmen: <% action_button do %><%= link_to "Teilnehmen", contest_survey_tokens_url(@contest) %><% end %>
-        </li>
-      <% end %>
-      <% available_survey_tokens = SurveyToken.available.select{|t| t.currently_valid? and t.allowed_for?(@current_user)} %>
-      <% action (logged_in? and @current_user.has_role? :administrator and not available_survey_tokens.empty?) do %>
-        <%= t ("views.todo.surveys", :count => available_survey_tokens.count) %> 
-        <% action_button do %>
-          <%= link_to "Teilnehmen", contest_survey_tokens_url(@contest) %>
+      <% if logged_in? %>
+        <% available_survey_tokens = SurveyToken.available.select{|t| t.currently_valid? and t.allowed_for?(@current_user)} %>
+        <% action ((@contest.phase == "recall" or @contest.phase == "validation") and not available_survey_tokens.empty?) do %>
+          <%= t ("views.todo.surveys", :count => available_survey_tokens.count) %> 
+          <% action_button do %>
+            <%= link_to "Teilnehmen", contest_survey_tokens_url(@contest) %>
+          <% end %>
         <% end %>
       <% end %>
       <% action (@contest.allow_school_reg) do %>

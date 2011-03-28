@@ -2,7 +2,7 @@
   <td><%= school.name %></td>
   <td><%= school.location %></td>
   <td><%= school.state %></td>
-  <td class="middle"><span class="tooltipped"><%= school.preliminary_contestants.count %></span><div class="tooltip"><% unless school.preliminary_contestants.empty? %><ul style="list-style-type:none;"><% school.preliminary_contestants.each do |p| %><li><%= p.name %></li><% end %></ul><% else %>Bis jetzt keine Teams angemeldet!<% end %></div></td>
+  <td class="middle"><span class="tooltipped"><% c = school.preliminary_contestants.count %><%= c == 0 ? "<b>Keine</b>".html_safe : c %></span><div class="tooltip"><% unless school.preliminary_contestants.empty? %><ul style="list-style-type:none;"><% school.preliminary_contestants.each do |p| %><li><%= p.name %></li><% end %></ul><% else %>Bis jetzt keine Teams angemeldet!<% end %></div></td>
   <td class="middle">
     <%= link_to image_tag('actions/show.png'), [@contest, school] %>   </td>
 </tr>
