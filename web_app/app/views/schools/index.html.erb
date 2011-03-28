@@ -5,7 +5,8 @@
 
 <% tabnav :contest do %>
   <% show_to :administrator do %>
-    <div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @contest.schools.count %> Schulen angemeldet.</div>
+    <div style="margin-bottom: 20px; font-weight: bold">
+      <%= t("views.schools_registered", :schools => @contest.schools.count, :without_teams => @contest.schools.without_teams.count, :teams => @contest.schools.collect(&:teams).count) %></div>
     <div id="filter">
       Anzeige auf Bundesland beschränken: <%= select_tag "select_state",options_for_select(((@schools.collect{|s| s.state} | @other_schools.collect{|s| s.state}).collect{|s| [s, s.downcase]} << ["Alle", "all"]).sort{|a,b| a.first <=> b.first}) %>
     </div>
