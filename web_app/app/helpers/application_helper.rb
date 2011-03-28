@@ -28,7 +28,7 @@ module ApplicationHelper
     html = "<div style=\"#{options[:style]}\" class=\"actions\">"
     html += content
     html += "</div>"
-    concat html.html_safe!
+    concat html.html_safe
   end
 
   def logfile_folder(match)
