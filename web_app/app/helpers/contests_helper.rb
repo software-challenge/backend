@@ -11,4 +11,25 @@ module ContestsHelper
       raise "unknown direction #{direction}"
     end
   end
+
+  def action_list(&block)
+    #instance_eval(&block)
+    @has_actions = false
+    content = capture(&block) 
+    puts content
+    if @has_actions
+      concat content.html_safe
+    end
+  end
+
+  def action(cond, &block)
+    if cond
+      @has_actions = true
+      html = "<li>\n"
+      html += capture(&block)
+      html += "</li>\n"
+      concat html.html_safe
+    end
+  end
+
 end

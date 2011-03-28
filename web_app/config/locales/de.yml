@@ -8,6 +8,14 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    todo:
+      trial_contest: "Sie können Ihr Team jetzt für die Teilnahme an einem Probewettkampf anmelden. Genaueres hier:"
+      login: "Um das Wettkampfsystem nutzen zu können, müssen Sie sich zunächst anmelden. Sollten Sie bereits Zugangsdaten zu diesem Wettkampfsystem besitzen, melden Sie sich bitte hier an:"   
+      login_else: "andernfalls registrieren Sie sich bitte zunächst unverbindlich:"
+      surveys: "Sie haben %{count} Möglichkeiten, an Umfragen teilzunehmen:"
+      reg_school: "Wenn Sie Interesse an der Teilnahme an diese Wettbewerb haben, können Sie hier eine neue Schule für den Wettbewerb anmelden. Diese Anmeldung ist vollkommen unverbindlich."
+      login_before_school: "Um eine Schule für den Wettbewerb anzumelden, müssen Sie sich zunächst selbst im Wettkampfsystem anmelden. Sofern Sie bereits Zugangsdaten zu diesem Wettkampfsystem erhalten haben (z.B. bei einer früheren Registrierung bzw. der Teilnahme an der Software Challenge 2010 oder später), melden Sie sich bitte zunächst hier an:"
+      reg_teams: "Wenn Ihre Schule bereits angemeldet ist, können Sie für diese jetzt Teams anmelden. Auch können Sie hier bereits angemeldete Teams bearbeiten."
     all: "Alle"
     dates: "Daten"
     new_school_notes: "Hinweise zum Anmeldeverfahren"
