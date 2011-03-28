@@ -6,6 +6,7 @@ class School < ActiveRecord::Base
   has_many :contestants
   belongs_to :person
   has_many :preliminary_contestants, :dependent => :destroy
+  has_many :survey_tokens, :as => :token_owner, :dependent => :destroy 
 
   alias :teams :preliminary_contestants
   

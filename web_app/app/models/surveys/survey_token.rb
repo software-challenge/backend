@@ -2,7 +2,7 @@ class SurveyToken < ActiveRecord::Base
 
   belongs_to :survey
   belongs_to :token_owner, :polymorphic => true 
-  belongs_to :response_set
+  belongs_to :response_set, :dependent => :destroy
   has_one :person, :through => :response_set, :source => :user
   
   delegate :contest, :to => :token_owner
@@ -58,6 +58,10 @@ class SurveyToken < ActiveRecord::Base
 
   def consumed?
     !!response_set
+  end
+
+  def complete?
+    consumed? and response_set.complete? 
   end
 end
 

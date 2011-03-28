@@ -1,5 +1,7 @@
-survey "Software Challenge 2012 Voranmeldung - Stufe 2" do
+survey "Software Challenge 2012 Voranmeldung - Stufe 2", {:access_code => "2012_recall_1111111", :description => "Eine Umfrage welche sich an die vorangemeldeten Teams der Software-Challenge 2012 wendet. Dabei werden Informationen über den Kurs, Programmiersprachen usw. erhoben."}  do
+
   section "Angaben zum teilnehmenden Kurs" do
+    
     label "Hinweis: Sollten Sie noch keine Teams angemeldet haben, tun Sie die bitte entsprechend ihrer Wünsche"
 
     q_1 "Anzahl der Teilnehmer"
@@ -100,27 +102,39 @@ survey "Software Challenge 2012 Voranmeldung - Stufe 2" do
   section "Software-Challenge" do
     
     q_1 "Wie sind sie auf die Software-Challenge aufmerksam geworden?", :pick => :any
-    a_1 "Bildungsserver (ggfs. welcher)", :string
-    a_2 "Schulverwaltungsblatt(ggfs. welches)", :string
-    a_3 "Zeitung", :string
+    a_1 "Bildungsserver (ggfs. welcher)"
+    a_2 "Schulverwaltungsblatt(ggfs. welches)"
+    a_3 "Zeitung"
     a_4 "Freunde"
     a_5 "E-Mail des Institut für Informatik"
-    a_6 "CEBIT Präsenz"
-    a_7 "Sonstiges", :string
-    
+    a_6 "CEBIT"
+    a_7 "Sonstiges"
+
+    q_1a "Beschreiben Sie genauer woher Sie auf die Software-Challenge aufmerksam geworden sind", :custom_class => "textarea"
+    a :text
+    dependency :rule => "A or B or C or D"
+    condition_A :q_1, "==", :a_7
+    condition_B :q_1, "==", :a_1
+    condition_C :q_1, "==", :a_2
+    condition_D :q_1, "==", :a_3
+
     q_2 "Wir würden uns vom Software-Challenge Team wünschen", :pick => :any
     a_1 "Weitere Funktionen im Wettkampfsystem, z.B. im Bezug auf Freundschaftsspiele"
-    a_2 "Unterstützung weiterer Programmiersprachen, nämlich:", :string
+    a_2 "Unterstützung weiterer Programmiersprachen"
     a_3 "Eine schnellere Antwort auf Fragen"
     a_4 "Die Bereitstellung von eines Versionsverwaltungssystems für die Teams"
     a_5 "Eine bessere Dokumentation"
     a_6 "Weiteres"
 
-    q_2a "Beschreiben sie ihre weiteren Wünsche:"
-    a "Beschreibung", :text
-    dependency :rule => "A"
-    condition_A :q_2, "==", :a_6
+    q_2a "Beschreiben Sie ihre Wünsche im Bezug auf Programmiersprachen", :custom_class => "textarea"
+    dependency :rule => "E"
+    condition_E :q_2, "==", :a_2
 
+    q_2a "Beschreiben Sie ihre weiteren Wünsche", :custom_class => "textarea"
+    a "Beschreibung", :text
+    dependency :rule => "F"
+    condition_F :q_2, "==", :a_6
+    
   end
 
 end

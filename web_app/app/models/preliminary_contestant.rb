@@ -5,9 +5,7 @@ class PreliminaryContestant < ActiveRecord::Base
   has_one :contest, :through => :school
   belongs_to :person
   belongs_to :school
-  
-  delegate :person, :to => :school, :if => :person.nil?
-
+  has_many :survey_tokens, :as => :token_owner, :dependent => :destroy 
   validates_presence_of :school, :name
   validates_uniqueness_of :name, :scope => :school_id 
   validates_inclusion_of :participation_probability, :in => PROBS
@@ -18,4 +16,8 @@ class PreliminaryContestant < ActiveRecord::Base
     end
   end
 
+  def person
+    return Person.find(person_id) if person_id 
+    school.person
+  end
 end

@@ -80,7 +80,7 @@ module SurveyorControllerCustomMethods
     #super # available_surveys_path
   end
   def surveyor_finish
-    contest_survey_token_url(@contest,@survey_token)
+    @survey_token.finished_redirect_url || contest_survey_token_url(@contest,@survey_token)
     # the update action redirects to this method if given params[:finish]
     #super # available_surveys_path
   end

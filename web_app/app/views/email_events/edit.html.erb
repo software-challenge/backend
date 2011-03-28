@@ -1,4 +1,4 @@
-<h1><%= t("titles.edit_notif") %></h1>
+<h1><%= @person.name %> / <%= t("titles.edit_notif") %></h1>
 
 <style type="text/css">
   input {
@@ -7,10 +7,11 @@
 </style>
 
 <% tabnav :person do %>
+  <p><b>Benachrichtigungen werden gesendet an:</b> <%= @person.email %></p><br>
   <p style="font-weight: bold"><%= t("views.receive_email_when") %></p><br>
   <% semantic_form_for @email_event, :url => (@contestant ? [@contest, @contestant, @person, :email_event] : [@contest, @person, :email_event]) do |f| %>
     <% f.inputs do %>
-      <% show_to :administrator do %>
+      <% if @person.has_role? :administrator %>
         <%= f.input :rcv_on_matchday_played, :required => false %>
       <% end %>
       <%= f.input :rcv_on_matchday_published, :label => @current_user.has_role?(:administrator) ? "Ein neuer Spieltag wurde veröffentlicht" : "Ein neuer Spieltag wurde gespielt", :required => false %>

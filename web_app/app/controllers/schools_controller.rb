@@ -1,6 +1,6 @@
 class SchoolsController < ApplicationController
 
-  before_filter :fetch_school, :only => [:edit, :show, :update, :get_teams]
+  before_filter :fetch_school, :only => [:edit, :show, :update, :get_teams, :surveys]
 
   access_control do
     default :deny
@@ -12,6 +12,10 @@ class SchoolsController < ApplicationController
       allow logged_in
     end
     action :show do 
+      allow logged_in
+    end
+
+    action :surveys do
       allow logged_in
     end
   end
@@ -48,6 +52,14 @@ class SchoolsController < ApplicationController
       format.html
       format.xml { render :xml => @school }
     end
+  end
+
+  def surveys
+    @tokens = @school.survey_tokens + @school.preliminary_contestants.collect{|p| p.survey_tokens}
+    @tokens.flatten! 
+    @tokens = @tokens.select{|token| token.currently_valid? and token.allowed_for? @current_user}
+    @tokens.sort!{|a,b| a.complete? ? 1 : -1 }
+    flash[:notice] = "Bitte füllen Sie alle verfügbaren Umfragen möglichst bald aus. So ermöglichen sie uns eine bessere Planung des Wettbewerbs!" unless flash[:notice] or @tokens.all?{|t| t.complete?}
   end
 
   def new
