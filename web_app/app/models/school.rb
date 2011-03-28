@@ -19,6 +19,8 @@ class School < ActiveRecord::Base
   validates_uniqueness_of :name, :scope => :contest_id
   validates_inclusion_of :state, :in => STATES
 
+  named_scope :without_teams, :conditions => "schools.id NOT IN (SELECT school_id FROM preliminary_contestants)"
+
   def before_destroy
     Role.find(:all, :conditions => {:authorizable_type => "School", :authorizable_id => self.id}).each do |role|
       role.destroy

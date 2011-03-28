@@ -8,6 +8,7 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    schools_registered: "Es sind aktuell %{schools} Schulen angemeldet, von denen %{without_teams} noch keine Teams angemeldet haben. Insgesamt wurden %{teams} Teams angemeldet."
     hidden: "Versteckt"
     public: "Öffentlich"
     todo:
