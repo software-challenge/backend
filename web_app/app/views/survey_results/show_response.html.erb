@@ -30,7 +30,7 @@
       Ergebnisse
     </div>
     <div class="group content" style="margin-top: 10px;">
-      <% specific_partial == File.join(RAILS_ROOT, "app", "views", "survey_results", "_#{@survey.access_code.gsub "-", "_"}.erb") %>
+      <% specific_partial = File.join(RAILS_ROOT, "app", "views", "survey_results", "_#{@survey.access_code.gsub "-", "_"}.erb") %>
       <% if File.exists? specific_partial %>
         <%= render :file => specific_partial %>
       <% else %>
