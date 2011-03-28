@@ -101,6 +101,7 @@ de:
           recall: Erinnerung an die Anmeldung
           validation: Verbindliche Anmeldung
           contest: Wettkampf
+        public: Öffentlich
       email_event:
         rcv_on_matchday_played: Ein Spieltag wurde gespielt
         rcv_client_matchday_warning: In einem Ihrer Teams gibt es noch keinen spielbereiten Computerspieler für den nahenden Spieltag.

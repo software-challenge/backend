@@ -17,7 +17,8 @@ class ContestsController < ApplicationController
   # GET /contests
   # GET /contests.xml
   def index
-    @contests = Contest.all
+    @public_contests = Contest.public
+    @hidden_contests = Contest.hidden
 
     respond_to do |format|
       format.html # index.html.erb
