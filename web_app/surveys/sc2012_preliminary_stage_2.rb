@@ -1,4 +1,4 @@
-survey "Software Challenge 2012 Voranmeldung - Stufe 2", {:access_code => "2012_recall_1111111", :description => "Eine Umfrage welche sich an die vorangemeldeten Teams der Software-Challenge 2012 wendet. Dabei werden Informationen über den Kurs, Programmiersprachen usw. erhoben."}  do
+survey "Software Challenge 2012 Voranmeldung - Stufe 2", {:access_code => "2012_recall", :description => "Eine Umfrage welche sich an die vorangemeldeten Teams der Software-Challenge 2012 wendet. Dabei werden Informationen über den Kurs, Programmiersprachen usw. erhoben."}  do
 
   section "Angaben zum teilnehmenden Kurs" do
     
