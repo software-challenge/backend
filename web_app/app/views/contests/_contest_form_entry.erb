@@ -1,0 +1,11 @@
+<tr>
+  <td><%= contest.name %></td>
+  <td><%= contest.game_definition.game_identifier %></td>
+  <td><%= contest.contestants.count %></td>
+  <td>
+    <%= link_to image_tag("actions/edit.png"), edit_contest_url(:id => contest.to_param) %>
+  </td>
+  <td>
+    <%= link_to t("views.to_overview").capitalize, contest_url(contest) %>
+  </td>
+</tr>

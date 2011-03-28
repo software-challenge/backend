@@ -25,7 +25,16 @@ class Contest < ActiveRecord::Base
   has_one :finale, :dependent => :destroy
   has_many :matches, :through => :matchdays
 
+  named_scope :public, :conditions => {:public => true}
+  named_scope :hidden, :conditions => {:public => false}
 
+  def public?
+    !!self.public
+  end
+
+  def hidden?
+    !self.public
+  end
 
   def overall_member_count
     contestants.visible.without_testers.ranked.all.sum(&:overall_member_count)  

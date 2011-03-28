@@ -8,6 +8,8 @@ de:
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
   views:
+    hidden: "Versteckt"
+    public: "Öffentlich"
     todo:
       trial_contest: "Sie können Ihr Team jetzt für die Teilnahme an einem Probewettkampf anmelden. Genaueres hier:"
       login: "Um das Wettkampfsystem nutzen zu können, müssen Sie sich zunächst anmelden. Sollten Sie bereits Zugangsdaten zu diesem Wettkampfsystem besitzen, melden Sie sich bitte hier an:"   

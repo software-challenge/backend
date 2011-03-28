@@ -9,10 +9,11 @@
       :input_html => { :disabled => !@contest.new_record? },
       :include_blank => true,
       :required => true
-  %>
+    %>
     <%= f.input :subdomain,
       :input_html => { :disabled => !@contest.new_record? }
-  %>
+    %>
+    <%= f.input :public %>
   <% end %>
   <%= f.buttons %>
 <% end %>
