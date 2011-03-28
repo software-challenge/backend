@@ -99,3 +99,7 @@
   div#content {
    background-color: #FFFFF1;
   }
+
+  #surveyor .textarea textarea {
+    height: 75px;
+  }

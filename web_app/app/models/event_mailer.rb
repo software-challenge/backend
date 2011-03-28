@@ -96,11 +96,12 @@ class EventMailer < ActionMailer::Base
   end
 
 
-  def survey_invite_notification(person, contest, login_token, survey_token)
+  def survey_invite_notification(person, contest, login_token, survey_tokens)
+    survey_tokens = [survey_tokens] unless survey_tokens.is_a? Array
     recipients "#{person.name} #<#{person.email}>"
     from       "software-challenge@gfxpro.eu"
-    subject    "Die Software-Challenge läd Sie zu einer Umfrage ein."
+    subject    survey_tokens.count == 1 ? "Die Software-Challenge läd Sie zu einer Umfrage ein." : "Die Software-Challenge läd Sie zu #{survey_tokens.count} Umfragen ein."
     sent_on    Time.now
-    body({:contest => contest, :person => person, :survey => survey_token.survey, :survey_token => survey_token, :login_token => login_token })
+    body({:contest => contest, :person => person, :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => login_token })
   end
 end

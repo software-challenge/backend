@@ -63,22 +63,31 @@ class SurveyTokensController < ApplicationController
          token_count += 1
         end
       when "preliminary"
-        people = {} 
-        @contest.preliminary_contestants.each do |prelim|
-          people[prelim.person] = true
-        end
+        people = {}
         @contest.schools.each do |school|
+          redirect_url = surveys_contest_school_url(@contest,school)
           if school.preliminary_contestants.empty?
-            people[school.person] = true
+            token = SurveyToken.create(args)
+            token.token_owner = school
+            token.finished_redirect_url = redirect_url 
+            token.save!
+            token_count += 1
+            people[school.person] = [] if not people[school.person]
+            people[school.person] << token
+          else
+            school.preliminary_contestants.each do |prelim|
+               token = SurveyToken.create(args)
+               token.token_owner = prelim
+               token.finished_redirect_url = redirect_url
+               token.save!
+               token_count += 1
+               people[prelim.person] = [] if not people[prelim.person]
+               people[prelim.person] << token
+            end
           end
         end
-        people.each_key do |person|
-          token = SurveyToken.create(args)
-          token.allow_teacher = false
-          token.token_owner = person
-          token.save!
-          token_count += 1
-          EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, token) if params[:send_email_notification] == "1"
+        people.each do |person,tokens|
+          EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, tokens) if params[:send_email_notification] == "1"
         end
       when "contestants"
         (params[:select_contestants] || []).each do |cont_id|

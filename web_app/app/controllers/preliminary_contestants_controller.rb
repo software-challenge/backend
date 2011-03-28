@@ -15,7 +15,11 @@ class PreliminaryContestantsController < ApplicationController
   def show
     @team = @preliminary_contestant
     respond_to do |format|
-      format.html
+      format.html {
+        unless @team.person == @current_user or @current_user.has_role? :administrator 
+          redirect_to new_contest_school_preliminary_contestant_url(@contest,@school) 
+        end
+      }
       format.js {
         render :partial => "form", :locals => {:team => @team}
       }
@@ -39,6 +43,13 @@ class PreliminaryContestantsController < ApplicationController
       success = @team.save
       if success
         @current_user.has_role!(:creator, @team)
+        if @contest.phase == "recall" and @contest.recall_survey
+          token = SurveyToken.new({:survey => @contest.recall_survey, :token_owner => @team})
+          token.finished_redirect_url = surveys_contest_school_url(@contest,@school)
+          if token.save
+            EventMailer.deliver_survey_invite_notification(@current_user,@contest,@current_user.generate_login_token,[token])
+          end
+        end
       end
     end
     unless success

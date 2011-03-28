@@ -17,6 +17,7 @@
         <th><%= School.human_attribute_name("name") %></th>
         <th><%= School.human_attribute_name("location") %></th>
         <th><%= School.human_attribute_name("state") %></th>
+        <th class="middle"><%= PreliminaryContestant.human_name :count => 2 %></th>
         <th class="middle">Aktionen</th>
       </tr>
     </thead>
@@ -26,10 +27,10 @@
       <% end %>
       <% unless @other_schools.empty? %>
         <tr class="medium-gap">
-          <td>&nbsp;</td><td></td><td></td><td></td>
+          <td>&nbsp;</td><td></td><td></td><td></td><td></td>
         </tr>
         <tr>
-          <td colspan="4">
+          <td colspan="5">
             <b>Die folgenden Schulen haben Sie nicht selbst angemeldet, aber ihnen Teams hinzugefügt</b>
           </td>
         </tr>
@@ -45,7 +46,7 @@
  <% show_to :administrator do %> 
   $("#schools").tablesorter({
     headers: {
-      3: { sorter: false }
+      4: { sorter: false }
     }
   })
 

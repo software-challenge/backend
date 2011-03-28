@@ -106,7 +106,7 @@ class Person < ActiveRecord::Base
   end
 
   def has_memberships_in?(contest)
-     not memberships.select{|m| m.contestant.contest == contest}.empty?
+     not memberships.select{|m| m.contestant and m.person and m.contestant.contest == contest}.empty?
   end
 
   # fake accessor for form-builders

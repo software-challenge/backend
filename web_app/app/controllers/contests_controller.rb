@@ -238,11 +238,12 @@ class ContestsController < ApplicationController
     redirect_to phases_contest_url(@contest) 
   end
 
-  protected
+protected
 
   def read_multipart_param(data, key, count = 3)
     (1..count).collect do |i|
       data["#{key}(#{i}i)"]
     end
   end
+
 end

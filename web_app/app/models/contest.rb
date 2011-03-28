@@ -293,6 +293,10 @@ class Contest < ActiveRecord::Base
     new_contest
   end
 
+  def recall_survey
+    Survey.find_by_access_code subdomain+"_recall"
+  end
+
   def create_trial_contest(conts)
     raise "Contest already has a trial contest" unless trial_contest.nil?
     sd = "trial#{self.subdomain}"
