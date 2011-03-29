@@ -1,12 +1,12 @@
 <h1>
   <%= link_to @contest.name, contest_url(@contest) %> /
-  Meine <%= School.human_name(:count => 2) %>
+  <%= @current_user.has_role?(:administrator) ? "Alle" : "Meine" %> <%= School.human_name(:count => 2) %>
 </h1>
 
 <% tabnav :contest do %>
   <% show_to :administrator do %>
     <div style="margin-bottom: 20px; font-weight: bold">
-      <%= t("views.schools_registered", :schools => @contest.schools.count, :without_teams => @contest.schools.without_teams.count, :teams => @contest.schools.collect(&:teams).count) %></div>
+      <%= t("views.schools_registered", :schools => "<span class='schools_count'>#{@contest.schools.count}</span>") %></div>
     <div id="filter">
       Anzeige auf Bundesland beschränken: <%= select_tag "select_state",options_for_select(((@schools.collect{|s| s.state} | @other_schools.collect{|s| s.state}).collect{|s| [s, s.downcase]} << ["Alle", "all"]).sort{|a,b| a.first <=> b.first}) %>
     </div>
@@ -42,21 +42,25 @@
   </table> 
 <% end %>
 
-<% javascript_tag do %>
- <% show_to :administrator do %> 
+<% show_to :administrator do %> 
+ <% javascript_tag do %>
+  var counts_for_state = <%=@schools_in_states.to_json.html_safe%>
+  var count_all_schools = <%= @schools.count %>
   $("#schools").tablesorter({
     headers: {
       4: { sorter: false }
     }
   })
-
+  
   $("#select_state").change(function(){
    var new_state = $("#select_state option:selected").val()
    if(new_state == "all"){
      $(".school").show()
+     $(".schools_count").html(count_all_schools)
    }else{
      $(".school").hide()
      $("."+new_state).show()
+     $(".schools_count").html(counts_for_state[new_state])
    }
   })
  <% end %>

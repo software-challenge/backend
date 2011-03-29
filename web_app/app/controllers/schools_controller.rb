@@ -41,10 +41,13 @@ class SchoolsController < ApplicationController
     if administrator?
       @schools = @contest.schools 
       @other_schools = []
+      @schools_in_states = {}; 
+      @contest.schools.each{|s| st = s.state.downcase; @schools_in_states[st] = (@schools_in_states[st] || 0) + 1}; 
     else
       @schools = @current_user.schools_for_contest(@contest)
       @other_schools = @current_user.other_schools_for_contest(@contest)
     end
+ 
   end 
 
   def show

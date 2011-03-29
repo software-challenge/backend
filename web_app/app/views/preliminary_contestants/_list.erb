@@ -6,7 +6,7 @@
         <th><%= School.human_name %></th>
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
-        <th class="middle">Umfragen &nbsp </th>
+        <% if @contest.phase == "recall" or @contest.phase == "validation" %><th class="middle">Umfragen &nbsp </th><% end %>
         <th class="middle">Teilnahmewahrscheinlichkeit</th>
         <th class="middle">Aktionen</th>
       </tr>
@@ -18,7 +18,8 @@
         <td><%= prelim.school.name %></td>
         <td><%= prelim.school.location %></td>
         <td><%= prelim.school.state %></td>
-        <td class="middle"><% if prelim.survey_tokens.empty? %>
+        <% if @contest.phase == "recall" or @contest.phase == "validation" %>
+          <td class="middle"><% if prelim.survey_tokens.empty? %>
               <%= image_tag "state/warning.png", :class => 'tooltipped', :title => "Keine Umfragemöglichkeiten!" %>
             <% else %>
               <% if prelim.survey_tokens.all?{|st| st.complete?} %>
@@ -28,7 +29,8 @@
                 <%= image_tag "state/attention.png", :class => "tooltipped", :title => "Es wurden #{f.length} von #{prelim.survey_tokens.count} Umfragen abgeschlossen" %>
               <% end %>
             <% end %>
-        </td>
+          </td>
+        <% end %>
         <td class="middle"><%= show_probability prelim.participation_probability %></td>
         <td style="text-align:center"><%= link_to image_tag("actions/show.png"), contest_preliminary_contestant_url(@contest,prelim) %></td>
        </tr>
