@@ -79,5 +79,11 @@ class PreliminaryContestantsController < ApplicationController
     else
       @preliminary_contestants = @contest.preliminary_contestants.select{|p| p.person == @current_user}
     end
+    @schools_without_teams_in_states = {}; 
+    @preliminary_contestants_in_states = {};
+    @schools_without_teams = @contest.schools.select{|s| s.preliminary_contestants.empty?}
+    @schools_without_teams.each{|s| st = s.state.downcase; @schools_without_teams_in_states[st] = (@schools_without_teams_in_states[st] || 0) + 1}
+    @preliminary_contestants.each{|s| st = s.school.state.downcase; @preliminary_contestants_in_states[st] = (@preliminary_contestants_in_states[st] || 0) + 1};       
+    @total_count = @preliminary_contestants.count + @schools_without_teams.count
   end
 end

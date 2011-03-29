@@ -4,7 +4,7 @@
 </h1>
 
 <% tabnav :contest do %>
- <% show_to :administrator do %><div style="margin-bottom: 20px; font-weight: bold">Es sind aktuell <%= @preliminary_contestants.count %> Teams angemeldet.</div> 
+ <% show_to :administrator do %><div style="margin-bottom: 20px; font-weight: bold"><%= t "views.teams_registered", :teams => "<span id='teams_count'>#{@preliminary_contestants.count}</span>", :schools_without_teams => "<span id='schools_without_teams'>#{@schools_without_teams.count}</span>", :total => "<span id='total'>#{@total_count}</span>" %></div> 
 
   <div id="filter">
     <% states = [["Alle","all"]] %>
@@ -21,6 +21,10 @@
 
 <% javascript_tag do %>
  <% show_to :administrator do %>
+  var total_team_count = <%= @preliminary_contestants.count %>
+  var total_schools_without_teams_count = <%= @schools_without_teams.count %>
+  var schools_without_teams_in_states = <%= @schools_without_teams_in_states.to_json.html_safe %>
+  var teams_in_states = <%= @preliminary_contestants_in_states.to_json.html_safe %>
   $("#preliminary_contestants").tablesorter({
     headers: {
       6: { sorter: false }
@@ -31,9 +35,15 @@
    var new_state = $("#select_state option:selected").val()
    if(new_state == "all"){
      $(".preliminary_contestant").show()
+     $("#teams_count").html(total_team_count)
+     $("#schools_without_teams").html(total_schools_without_teams_count)
+     $("#total").html(total_team_count + total_schools_without_teams_count)
    }else{
      $(".preliminary_contestant").hide()
      $("."+new_state).show()
+     $("#schools_without_teams").html(schools_without_teams_in_states[new_state] || 0)
+     $("#teams_count").html(teams_in_states[new_state])
+     $("#total").html(teams_in_states[new_state] + (schools_without_teams_in_states[new_state]||0) )
    }
   })
  <% end %>

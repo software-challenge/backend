@@ -246,7 +246,7 @@ class Person < ActiveRecord::Base
   end
 
   def tokens_for(survey, only_available = false)
-    (only_available ? survey_tokens.available : survey.tokens).select{|t| t.allowed_for?(self)}
+    (only_available ? survey.tokens.available : survey.tokens).select{|t| t.allowed_for?(self)}
   end
 
   def available_tokens_for(survey)
@@ -255,6 +255,14 @@ class Person < ActiveRecord::Base
 
   def validated?
     self.validation_code == nil
+  end
+
+  def available_survey_tokens
+    SurveyToken.all.select{|s| s.allowed_for? self}
+  end
+
+  def survey_token_available?
+    !available_survey_tokens.empty?
   end
 
   def has_hidden_friendly_encounters?(contest)
