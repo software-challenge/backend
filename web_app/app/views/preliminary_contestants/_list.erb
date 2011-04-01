@@ -1,4 +1,5 @@
 <% preliminary_contestants = preliminary_contestants || @preliminary_contestants %>
+<% show_surveys = @contest.phase == "recall" or @contest.phase =="validation" %>
 <table class="tablesorter data-table" id="preliminary_contestants">
     <thead>
       <tr>
@@ -6,8 +7,8 @@
         <th><%= School.human_name %></th>
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
-        <% if @contest.phase == "recall" or @contest.phase == "validation" %><th class="middle">Umfragen &nbsp </th><% end %>
-        <th class="middle">Umfragen &nbsp </th>
+         
+        <% if show_surveys %><th class="middle">Umfragen &nbsp </th><% end %>
         <th class="middle">Teilnahmewahrscheinlichkeit</th>
         <th class="middle">Aktionen</th>
       </tr>
@@ -19,15 +20,19 @@
         <td><%= prelim.school.name %></td>
         <td><%= prelim.school.location %></td>
         <td><%= prelim.school.state %></td>
-        <% if @contest.phase == "recall" or @contest.phase == "validation" %>
-          <td class="middle"><% if prelim.survey_tokens.empty? %>
+        <% if show_surveys %>
+          <% tokens = prelim.survey_tokens.select{|st| st.allowed_for? @current_user} %>
+          <td class="middle">
+           <% if tokens.empty? %>
+             <% show_to :administrator do %>
               <%= image_tag "state/warning.png", :class => 'tooltipped', :title => "Keine Umfragemöglichkeiten!" %>
-            <% else %>
-              <% if prelim.survey_tokens.all?{|st| st.complete?} %>
-                <%= image_tag "state/ok.png", :class => 'tooltipped', :title => "Alle (#{prelim.survey_tokens.count}) Umfragen beantwortet" %>
+             <% end %>
+           <% else  %>
+              <% if tokens.all?{|st| st.complete?} %>
+                <%= image_tag "state/ok.png", :class => 'tooltipped', :title => "Alle (#{tokens.count}) Umfragen beantwortet" %>
               <% else %>
-                <% f = prelim.survey_tokens.select{|st| st.complete?} %>
-                <%= image_tag "state/attention.png", :class => "tooltipped", :title => "Es wurden #{f.length} von #{prelim.survey_tokens.count} Umfragen abgeschlossen" %>
+                <% f = tokens.select{|st| st.complete?} %>
+                <%= image_tag "state/attention.png", :class => "tooltipped", :title => "Es wurden #{f.length} von #{tokens.count} Umfragen abgeschlossen" %>
               <% end %>
             <% end %>
           </td>
