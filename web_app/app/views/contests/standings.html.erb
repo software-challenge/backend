@@ -1,13 +1,13 @@
-<% show_to :administrator do %>
   <div id="actions">
+   <% show_to :administrator do %>
     <% link_to reaggregate_contest_url(@contest), :method => "post", :title => t("views.recalc"), :class=> "tooltipped", :id => "reaggregateContestAction" do %>
       <%= image_tag('actions/refresh.png') %><%= t ("actions.add") %>
     <% end %>
-    <% link_to contest_matchday_standings_url(@contest,@contest.last_played_matchday, :format => :pdf) do %>
-      <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
-    <% end %>
+   <% end %>
+   <% link_to contest_matchday_standings_url(@contest,@contest.last_played_matchday, :format => :pdf) do %>
+     <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
+   <% end %>
   </div>
-<% end %>
 
 <h1 class="print-hide">
   <%= @contest.name %>

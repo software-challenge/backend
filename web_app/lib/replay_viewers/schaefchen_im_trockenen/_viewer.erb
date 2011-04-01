@@ -69,6 +69,7 @@ body {
 	left: 2px;
 	top: 2px;
 }
+
 .sheep .attributes {
 	position: absolute;
 	left: 15px;
@@ -431,7 +432,7 @@ function setTurn(newTurn) {
 
 function createSheep(sheepData, index){
          var plyr = (sheepData.getAttribute("owner") == "RED" ? "red" : "blue" )
-         $("#sheeps").append("<div class='sheep' id='sheep"+index+"' style='left:271px;top:275px' index='"+index+"'><img class='arrow' /><img class='sheepImage' src='<%=image_path%>/sheep.png' /><img class='dog' src='<%=image_path%>/dog.png' style='display: none;' /><div class='attributes " + plyr  + "'></div></div>") 
+         $("#sheeps").append("<div class='sheep' id='sheep"+index+"' style='left:271px;top:275px' index='"+index+"'><img class='arrow' style='z-index:1;' /><img class='sheepImage' src='<%=image_path%>/sheep.png' style='z-index:1;'/><img class='dog' src='<%=image_path%>/dog.png' style='display: none;' /><div class='attributes " + plyr  + "'></div></div>") 
 }
 
 function renderTurn() {
@@ -480,6 +481,7 @@ function renderTurn() {
 	  if (sheepData.getAttribute("dog") == null) sheepElem.getElementsByTagName("img")[2].style.display = "none";
 	  else {
 	    sheepElem.getElementsByTagName("img")[2].style.display = "block";
+            sheepElem.getElementsByTagName("img")[2].style.zIndex = (sheepData.getAttribute("dog") == "PASSIVE" ? "0" : "2")
 	    document.getElementById("dogState").innerHTML = sheepData.getAttribute("dog") == "PASSIVE" ? "passiv" : "aktiv";
 	  }
 	  numSheeps[color == "red" ? 0 : 1]++;
