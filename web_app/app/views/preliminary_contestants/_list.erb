@@ -7,6 +7,7 @@
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
         <% if @contest.phase == "recall" or @contest.phase == "validation" %><th class="middle">Umfragen &nbsp </th><% end %>
+        <th class="middle">Umfragen &nbsp </th>
         <th class="middle">Teilnahmewahrscheinlichkeit</th>
         <th class="middle">Aktionen</th>
       </tr>
