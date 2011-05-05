@@ -1,5 +1,6 @@
 <h1>
-  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to @contest.name, contest_url(@contest) %> / 
+  <%= link_to Survey.human_name, contest_survey_tokens_url(@contest) %> / 
   Neue Tokens erzeugen
 </h1>
 <% tabnav :contest do %>

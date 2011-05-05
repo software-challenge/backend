@@ -12,7 +12,7 @@
   </div>
  
  <div id="people", class="owner_group">
-    Zu befragene Benutzer auswählen: <div id="sel_people"><%= select_tag "select_people[]", options_for_select(Person.visible.collect{|p| [p.name,p.id]}), {:multiple => :true} %></div>
+    Zu befragene Benutzer auswählen: <div id="sel_people"><%= select_tag "select_people[]", options_for_select(Person.visible.collect{|p| ["#{p.name} - #{p.email}",p.id]}), {:multiple => :true} %></div>
   </div>
  
  <div id="contestants", class="owner_group", style="display:none">
@@ -21,7 +21,7 @@
     <p>Lehrer: <%= check_box_tag "allow_teacher", 1,  @token.allow_teacher %></p>
     <p>Schüler: <%= check_box_tag "allow_pupil", 1,  @token.allow_pupil %></p>
     <p>Tutoren: <%= check_box_tag "allow_tutor", 1,  @token.allow_tutor %></p>
-    <p>Anzahl der zu erstellenden Tickets: <input id="tokens_per_contestant", name="quantity", min="1", max="30" /></p>
+    <p>Anzahl der zu erstellenden Tokens: <input id="tokens_per_contestant", name="quantity", min="1", max="30" /></p>
   </div>
  
  <div id="preliminary", class="owner_group", style="display:none; margin-top: 10px; margin-bottom: 10px;">
