@@ -20,7 +20,7 @@
           <% open_for << @survey_token.token_owner.name if @survey_token.token_owner.is_a? Person %>
           <%= list_item("Offen für", open_for.join(",")) %>
           <%= list_item("Token erstellt am", l(@survey_token.created_at)) %>
-          <%= list_item("Fertiggestellt am", l(@response_set.completed_at))%>
+          <%= list_item("Fertiggestellt am", l(@response_set.completed_at)) if @response_set.completed_at%>
         </ol>
       </div>
     </div>

@@ -3,3 +3,10 @@
 
 en:
   hello: "Hello world"
+
+  activerecord:
+    errors:
+        full_messages:
+            format: "%{attribute} %{message}"
+
+
