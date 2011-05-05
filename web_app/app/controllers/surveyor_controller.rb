@@ -38,7 +38,6 @@ module SurveyorControllerCustomMethods
        else
          @section = @sections.first
        end
-       @sections[@sections.size-1].id 
        @dependents = (@response_set.unanswered_dependencies - @section.questions) || []
     else
        flash[:notice] = t('surveyor.unable_to_find_your_responses')
