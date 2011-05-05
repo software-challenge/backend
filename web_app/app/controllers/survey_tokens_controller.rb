@@ -24,7 +24,7 @@ class SurveyTokensController < ApplicationController
  end
   
  def token_allowed_for_user
-  @token.allowed_for @current_user
+  @token.allowed_for? @current_user
  end
  
  def index
