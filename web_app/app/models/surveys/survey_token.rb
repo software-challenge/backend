@@ -41,7 +41,7 @@ class SurveyToken < ActiveRecord::Base
      if token_owner.is_a? Person
        return true if token_owner == person
      elsif token_owner.respond_to? :person
-       token_owner.person == person
+       return token_owner.person == person
      elsif token_owner.is_a? Contestant
        if allow_teacher 
          return true if person.has_role?("teacher",token_owner)  

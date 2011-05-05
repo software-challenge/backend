@@ -17,6 +17,7 @@
   <tr>
     <th>Adressat</th>
     <th>Beantworter</th>
+    <th>Abgeschlossen?</th>
 	<% @questions.each do |question| %>
 		<% next if question.display_order == 1 or question.display_type == "label" %>
 		<th class="question question<%=question.id%>"><%= question.text  %></th>
@@ -28,6 +29,7 @@
   <tr>
     <td><%= r_set.survey_token.token_owner.name %></td>
     <td><%= r_set.user.name %></td>
+    <td><%= image_tag "state/ok.png" if r_set.complete? %></td>
     <% @questions.each do |question| %>
       <% next if question.display_order == 1 or question.display_type == "label"%>
       <td class="question question<%=question.id%>"><%= display_response(r_set,question).html_safe %></td>

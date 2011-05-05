@@ -4,9 +4,9 @@
 }
 
 
-#select_contestants_, #select_people_ {
-  width: 600px;
-  height: 400px;
+#select_contestants_, #select_people_, #select_preliminaries_ {
+  width: 700px;
+  height: 500px;
 }
 
 #validity {

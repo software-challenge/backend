@@ -2,14 +2,17 @@
 <%= javascript_include_tag "ui.multiselect.js" %>
 <% form_for [@contest,@token] do |f| %>
   <div id="form_inputs">
-  <p>Umfrage wählen: <%= select_tag 'survey', options_for_select(@surveys.collect{|s| [s.title,s.id]}) %></p>
-  <p style="margin-top:10px;">Zu befragende Benutzergruppe auswählen: <%= select_tag 'token_owner_group', options_for_select([["Benutzer","people"],["Voranmeldungen","preliminary"], ["Teams","contestants"]]) %></p>
- 
- 
- <div id="schools", class="owner_group", style="display:none">
-    <% schools = @contest.schools.collect{|s| [s.name,s.id]} %>
-    <div id="sel_schools"><%= select_tag "select_schools[]", options_for_select(schools), {:multiple => true} %></div>
-  </div>
+    <p style="margin-top 10px; margin-bottom: 15px;"><b>Umfrage wählen: </b><%= select_tag 'survey', options_for_select(@surveys.collect{|s| [s.title,s.id]}) %></p>
+    <b>Zu befragene Benutzergruppe: </b>
+    <% ch = [["Benutzer","people"]] %>
+    <% ch << ["Voranmeldungen","preliminary"] unless @prelims.empty? %>
+    <% ch << ["Teams","contestants"] unless @contest.contestants.empty?  %>
+    <%= select_tag 'token_owner_group', options_for_select(ch) %>
+    <p style="margin-left:10px;">
+      <b>Benutzer:</b> aus den registrierten Benutzern auswählen <br>
+      <% unless @prelims.empty? %><b>Voranmeldungen:</b> aus den vorangemeldeten Teams wählen <br><% end %>
+      <% unless @contest.contestants.empty? %><b>Teams:</b> aus den Teams des Wettkampfes wählen <br><% end %>
+    </p> 
  
  <div id="people", class="owner_group">
     Zu befragene Benutzer auswählen: <div id="sel_people"><%= select_tag "select_people[]", options_for_select(Person.visible.collect{|p| ["#{p.name} - #{p.email}",p.id]}), {:multiple => :true} %></div>
@@ -21,31 +24,60 @@
     <p>Lehrer: <%= check_box_tag "allow_teacher", 1,  @token.allow_teacher %></p>
     <p>Schüler: <%= check_box_tag "allow_pupil", 1,  @token.allow_pupil %></p>
     <p>Tutoren: <%= check_box_tag "allow_tutor", 1,  @token.allow_tutor %></p>
-    <p>Anzahl der zu erstellenden Tokens: <input id="tokens_per_contestant", name="quantity", min="1", max="30" /></p>
   </div>
  
  <div id="preliminary", class="owner_group", style="display:none; margin-top: 10px; margin-bottom: 10px;">
-   <b>Beschreibung:</b> Es werden an alle vorangemeldeten Teams Tokens ausgegeben. Sollte ein Schule kein Team angemeldet haben, so wird dem Anmelder der Schule ein Token zugewiesen. Die betreffenden Personen werden per E-Mail über die Umfrage benachrichtigt.
-   <p><%= check_box_tag "send_email_notifications", "1", true %> Email-Benachrichtigungen senden </p>
+  <div id="sel_preliminaries"><%= select_tag "select_preliminaries[]", options_for_select(@prelims), {:multiple => true} %></div>
  </div>
  
-  <div id="validity"><b>Gültig ab:</b><%= text_field_tag "valid_from", "ab sofort" %> <b>bis</b> <%= text_field_tag "valid_until", "unbegrenzt" %></div>
+ <div id="validity">
+   <table>
+     <thead>
+       <th>Gültig ab:</th>
+       <th></th>
+       <th>Gültib bis:<%= check_box_tag "use_valid_until", "1", false %></th>
+     </thead>
+     <tbody>
+       <tr>
+         <td><div id="from"></div></td>
+         <td style="width: 30px;"/>
+         <td><div id="until"></div></td>
+       </tr>
+    </tbody>
+  </table>
+  <%= text_field_tag "valid_from", "", {:style => "display:none;"} %> 
+  <%= text_field_tag "valid_until", "", {:style => "display:none;"} %>
  </div>
+</div>
+<p style="margin-top: 25px; width: 80%;"><b>E-Mail Benachrichtigungen:</b><%= check_box_tag "send_email_notifications", "1", false %> <br>
+  Wenn diese Option ausgewählt ist, werden beim Erstellen der Tokens an die entsprechenden Betroffenen Benachrichtigungen versendet.<br>
+</p>
  <div style="margin-top: 15px;" >
- <input type="submit" value="Tokens erstellen" onclick="if (!confirm('Sind Sie sich sicher?')) return false; return true;" name="commit">
+ <input type="submit" value="Tokens erstellen" onclick="if (!confirm('Sind Sie sich sicher?')) return false; return true;" name="commit" title="Umfrage-Tokens erstellen lassen. Wenn dies ausgewählt wurde, dann werden E-Mail Benachrichtungen an die Betroffenen versendet!">
  </div>
 <% end %>
 
 <% javascript_tag do %>
+  $(function() {
+    $("#from").datepicker({altField: "#valid_from"})
+    $("#until").datepicker({altField: "#valid_until"})
+    $("#until").datepicker("disable")
+    $("#use_valid_until").bind('click',function(){
+        if($(this).attr("checked")){
+          $("#until").datepicker("enable")
+        }else{
+          $("#until").datepicker("disable")
+        }
+      } 
+    )
+    
+    $("#token_owner_group").change(function(){
+      var visible = $(this).val()
+      $(".owner_group").hide()
+      $("#"+visible).show()
+    })
+    
+    $("#select_people_, #select_contestants_, #select_preliminaries_").multiselect({dividerLocation: 0.5})
 
-  $("#valid_from, #valid_until").datepicker()
-
-  $("#token_owner_group").change(function(){
-    var visible = $(this).val()
-    $(".owner_group").hide()
-    $("#"+visible).show()
-  })
-  
-  $("#select_people_, #select_contestants_").multiselect({dividerLocation: 0.5})
-
+  });
 <% end %>

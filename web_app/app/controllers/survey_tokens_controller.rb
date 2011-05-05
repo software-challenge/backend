@@ -38,6 +38,14 @@ class SurveyTokensController < ApplicationController
  def new
    @token = SurveyToken.new
    @surveys = Survey.all
+   @prelims = []
+   @contest.schools.sort_by(&:name).each do |school|
+    unless school.preliminary_contestants.empty?
+      school.preliminary_contestants.each{|p| @prelims << ["#{school.name} - #{p.name}", "preliminary_contestant|#{p.id}"]}
+    else
+      @prelims << ["#{school.name} - Keine Teams!", "school|#{school.id}"]
+    end
+   end
  end
 
  def destroy
@@ -49,9 +57,10 @@ class SurveyTokensController < ApplicationController
   begin
    token_count = 0
    SurveyToken.transaction do
+    people = {}
     args = {:survey => Survey.find_by_id(params[:survey])}
     args[:valid_from] = begin params[:valid_from].to_date rescue Time.now end 
-    args[:valid_until] = begin params[:valid_until].to_date rescue nil end
+    args[:valid_until] = begin params[:use_valid_until] ? params[:valid_until].to_date : nil rescue nil end
     case params[:token_owner_group]
       when "people"
         (params[:select_people] || []).each do |person_id|
@@ -61,49 +70,61 @@ class SurveyTokensController < ApplicationController
          token.allow_teacher = false
          token.save!
          token_count += 1
+         people[person] = [token]
         end
       when "preliminary"
-        people = {}
-        @contest.schools.each do |school|
-          redirect_url = surveys_contest_school_url(@contest,school)
-          if school.preliminary_contestants.empty?
-            token = SurveyToken.create(args)
-            token.token_owner = school
-            token.finished_redirect_url = redirect_url 
-            token.save!
-            token_count += 1
-            people[school.person] = [] if not people[school.person]
-            people[school.person] << token
+        @schools = []
+        @prelims = []
+        params[:select_preliminaries].each do |p|
+          id = p.split("|")[1]
+          if p.include? "school"
+            @schools << School.find_by_id(id)
           else
-            school.preliminary_contestants.each do |prelim|
-               token = SurveyToken.create(args)
-               token.token_owner = prelim
-               token.finished_redirect_url = redirect_url
-               token.save!
-               token_count += 1
-               people[prelim.person] = [] if not people[prelim.person]
-               people[prelim.person] << token
-            end
+            @prelims << PreliminaryContestant.find_by_id(id)
           end
         end
-        people.each do |person,tokens|
-          EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, tokens) if params[:send_email_notification] == "1"
+        @schools.each do |school|
+          redirect_url = surveys_contest_school_url(@contest,school)
+          token = SurveyToken.create(args)
+          token.token_owner = school
+          token.finished_redirect_url = redirect_url 
+          token.save!
+          token_count += 1
+          people[school.person] = [] if not people[school.person]
+          people[school.person] << token
+        end
+        @prelims.each do |prelim|
+           redirect_url = surveys_contest_school_url(@contest,prelim.school)
+           token = SurveyToken.create(args)
+           token.token_owner = prelim
+           token.finished_redirect_url = redirect_url
+           token.save!
+           token_count += 1
+           people[prelim.person] = [] if not people[prelim.person]
+           people[prelim.person] << token
         end
       when "contestants"
         (params[:select_contestants] || []).each do |cont_id|
          contestant = Contestant.find_by_id(cont_id)
-         (params[:quantity].to_i || 1).times do 
-          token = SurveyToken.create(args)
-          token.allow_teacher = params[:allow_teacher] == "1"
-          token.allow_pupil = params[:allow_pupil] == "1"
-          token.allow_tutor = params[:allow_tutor] == "1"
-          token.token_owner = contestant
-          token.save!
-          token_count += 1
-        end
+          contestant.people.uniq.each do |person|
+            if (params[:allow_teacher] and person.has_role? "teacher", contestant) or (params[:allow_pupil] and person.has_role? "pupil", contestant) or (params[:allow_tutor] and person.has_role? "tutor")
+              token = SurveyToken.create(args)
+              token.allow_teacher = params[:allow_teacher] ? true : false
+              token.allow_pupil = true if  params[:allow_pupil]
+              token.allow_tutors = true if params[:allow_tutor]
+              token.token_owner = person
+              token.save!
+              token_count += 1
+              people[person] = [] if not people[person]
+              people[person] << token
+            end
+          end
         end
       else
         raise "Unknown owner group!"
+      end
+      people.each do |person,tokens|
+        EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, tokens) if params[:send_email_notification] == "1"
       end
     flash[:notice] = "Es wurden erfolgreich #{token_count} Tokens erstellt!"
     redirect_to :actions => :index

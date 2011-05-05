@@ -138,6 +138,7 @@ de:
         odd: "muss ungerade sein"
         even: "muss gerade sein"
         record_invalid: "Gültigkeitsprüfung ist fehlgeschlagen: %{errors}"
+
       models:
         round:
           other: "anderer Wert"

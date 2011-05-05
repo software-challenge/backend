@@ -83,7 +83,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     end
   end
 
-  if logged_in? and @current_user.survey_token_available? 
+  if (logged_in? and @current_user.survey_token_available?) or administrator?
    add_tab do |t|
     t.named t("titles.surveys")
     t.links_to contest_survey_tokens_url(@contest)
@@ -91,7 +91,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
    end
   end
 
-  if logged_in? and @contest.phase != "contest"
+  if (logged_in? and @contest.phase != "contest" and not @current_user.preliminary_contestants.empty?) or administrator?
     add_tab do |t|
       t.named "#{t "views.all"} #{PreliminaryContestant.human_name(:count => 2)}" if administrator?
       t.named "#{t "views.my" } #{PreliminaryContestant.human_name(:count => 2)}" if not administrator?
