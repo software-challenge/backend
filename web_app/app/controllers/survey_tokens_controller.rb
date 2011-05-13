@@ -54,7 +54,7 @@ class SurveyTokensController < ApplicationController
  end
 
  def create
-  begin
+#  begin
    token_count = 0
    SurveyToken.transaction do
     people = {}
@@ -129,10 +129,10 @@ class SurveyTokensController < ApplicationController
     flash[:notice] = "Es wurden erfolgreich #{token_count} Tokens erstellt!"
     redirect_to :actions => :index
    end
-  rescue Exception => e
-    logger.warn(e)
+ # rescue Exception => e
+#     logger.warn(e)
     flash[:error] = "Fehler beim Erstellen der Tokens!"
     redirect_to :action => :new
   end
- end
+ #end
 end
