@@ -129,7 +129,8 @@ class SurveyTokensController < ApplicationController
     flash[:notice] = "Es wurden erfolgreich #{token_count} Tokens erstellt!"
     redirect_to :actions => :index
    end
-  rescue
+  rescue Exception => e
+    logger.warn(e)
     flash[:error] = "Fehler beim Erstellen der Tokens!"
     redirect_to :action => :new
   end
