@@ -13,7 +13,7 @@ set(:scm_password) do
 end
 
 set(:repository) do
-	"--username #{scm_user} --password #{scm_password} --no-auth-cache http://samoa.informatik.uni-kiel.de:84/svn/teaching/ss09/swchal/common/web_app"
+	"--username #{scm_user} --password #{scm_password} --no-auth-cache http://samoa.informatik.uni-kiel.de:80/svn/teaching/ss09/swchal/common/web_app"
 end
 
 set :scm, :subversion
