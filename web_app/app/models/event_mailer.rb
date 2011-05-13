@@ -32,7 +32,6 @@ class EventMailer < ActionMailer::Base
       mdstr = "#{matchday.position - matchday.contest.matchdays.trials.count}. Spieltag"
     end
     bcc recips
-    recipients "software-challenge@gfxpro.eu"
     from "software-challenge@gfxpro.eu"
     subject "Client für kommenden Spieltag vorbereiten"
     sent_on Time.now
@@ -60,7 +59,6 @@ class EventMailer < ActionMailer::Base
       end
     end
     bcc recips
-    recipients "software-challenge@gfxpro.eu"
     from "software-challenge@gfxpro.eu"
     subject "Ein Spieltag wurde gespielt"
     sent_on Time.now
@@ -88,7 +86,6 @@ class EventMailer < ActionMailer::Base
       end
     end
     bcc recips
-    recipients "software-challenge@gfxpro.eu"
     from "software-challenge@gfxpro.eu"
     subject "Ein Spieltag wurde gespielt"
     sent_on Time.now
