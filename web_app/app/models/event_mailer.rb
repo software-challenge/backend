@@ -10,7 +10,7 @@ class EventMailer < ActionMailer::Base
 
   def contest_registration_phase_changed_notification(contest, school, changes)
     recipients school.contact.email
-    from "software-challenge@gfxpro.de"
+    from "software-challenge@gfxpro.eu"
     subject "Änderung der Anmeldungsoptionen"
     sent_on Time.now
     body({:contest => contest, :school => school, :changes => changes})
@@ -32,8 +32,8 @@ class EventMailer < ActionMailer::Base
       mdstr = "#{matchday.position - matchday.contest.matchdays.trials.count}. Spieltag"
     end
     bcc recips
-    recipients "software-challenge@gfxpro.de"
-    from "software-challenge@gfxpro.de"
+    recipients "software-challenge@gfxpro.eu"
+    from "software-challenge@gfxpro.eu"
     subject "Client für kommenden Spieltag vorbereiten"
     sent_on Time.now
     body({ :matchday => matchday, :contestant => contestant, :mdstr => mdstr, :url => contest_contestant_clients_url(contestant.contest_id, contestant) })
@@ -60,8 +60,8 @@ class EventMailer < ActionMailer::Base
       end
     end
     bcc recips
-    recipients "software-challenge@gfxpro.de"
-    from "software-challenge@gfxpro.de"
+    recipients "software-challenge@gfxpro.eu"
+    from "software-challenge@gfxpro.eu"
     subject "Ein Spieltag wurde gespielt"
     sent_on Time.now
     body({ :matchday => matchday, :mdstr => mdstr, :url => contest_matchday_url(matchday.contest, matchday), :disqualis => disqualis })
@@ -88,8 +88,8 @@ class EventMailer < ActionMailer::Base
       end
     end
     bcc recips
-    recipients "software-challenge@gfxpro.de"
-    from "software-challenge@gfxpro.de"
+    recipients "software-challenge@gfxpro.eu"
+    from "software-challenge@gfxpro.eu"
     subject "Ein Spieltag wurde gespielt"
     sent_on Time.now
     body({ :matchday => matchday, :mdstr => mdstr, :url => contest_matchday_url(matchday.contest, matchday), :disqualis => disqualis })   
