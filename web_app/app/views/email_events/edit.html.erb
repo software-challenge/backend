@@ -13,6 +13,7 @@
     <% f.inputs do %>
       <% if @person.has_role? :administrator %>
         <%= f.input :rcv_on_matchday_played, :required => false %>
+        <%= f.input :rcv_survey_token_notification, :required => false %>
       <% end %>
       <%= f.input :rcv_on_matchday_published, :label => @current_user.has_role?(:administrator) ? "Ein neuer Spieltag wurde veröffentlicht" : "Ein neuer Spieltag wurde gespielt", :required => false %>
       <%= f.input :rcv_client_matchday_warning, :required => false %> 

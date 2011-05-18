@@ -36,6 +36,16 @@ class FinaleMatchday < Matchday
     end
   end
 
+  # Override
+  def publish!
+    unless self.first_published_at 
+      self.first_published_at = Time.now
+    end
+    self.public = true
+    self.save!
+  end
+
+
   def winners(hash = {})
     winners = matches.collect{|match| match.winner(hash[:multiple])}.flatten
 

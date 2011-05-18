@@ -24,6 +24,7 @@ module Surveyor
         # Class methods
         base.instance_eval do
           def reject_or_destroy_blanks(hash_of_hashes)
+            puts "INC: #{hash_of_hashes.inspect}"
             result = {}
             (hash_of_hashes || {}).each_pair do |k, hash|
               if has_blank_value?(hash)
@@ -57,6 +58,34 @@ module Surveyor
         end
         super
       end
+
+      # Updating the responses without getting duplicates is not quite easy. 
+      # But in all cases tested this should work.
+      def update_responses(hash_of_responses)
+        updates = []
+        new_responses = {}
+        hash_of_responses.each do |k,v|
+          if v['answer_id'].is_a? Array
+            v['answer_id'].delete("")
+            v['answer_id'] = v['answer_id'].first
+          end
+          resp = responses.select{|r| r.question_id.to_s == v['question_id']}
+          resp = resp.select{|r| r.answer_id.to_s == v['answer_id']} if resp.first and resp.first.question.pick != "one"
+          resp = resp.first if resp
+          if resp
+            v['id'] = resp.id 
+            updates << v
+          else
+            if new_responses[v['answer_id']] 
+              new_responses[v['answer_id']].merge! v
+            else 
+              new_responses[v['answer_id']] = v
+            end
+          end
+        end
+        update_attributes :responses_attributes => updates + new_responses.values
+      end
+
 
       def to_csv(access_code = false, print_header = true)
         qcols = Question.content_columns.map(&:name) - %w(created_at updated_at)
