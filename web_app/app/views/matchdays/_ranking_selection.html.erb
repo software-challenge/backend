@@ -17,6 +17,8 @@
       var visible = $(this).attr("value")
       $("tr."+visible).show()
       $("tr."+visible).each(function(i,e){
+        $(e).removeClass("even").removeClass("odd")
+        $(e).addClass(i%2==0 ? "even" : "odd")
         $(e).children().first().text(i+1+".")
       })
     })
