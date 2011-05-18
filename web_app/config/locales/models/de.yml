@@ -106,6 +106,7 @@ de:
         rcv_on_matchday_played: Ein Spieltag wurde gespielt
         rcv_client_matchday_warning: In einem Ihrer Teams gibt es noch keinen spielbereiten Computerspieler für den nahenden Spieltag.
         rcv_contest_progress_info: Es gibt Neuigkeiten zum Wettbewerb
+        rcv_survey_token_notification: Wenn eine neue Umfrage verfügbar ist
       person:
         first_name: Vorname
         last_name: Nachname

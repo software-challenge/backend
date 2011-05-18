@@ -42,6 +42,7 @@ class EmailEventsController < ApplicationController
     cleaned_up = params[:email_event].clone
     unless administrator?
       cleaned_up.delete :rcv_on_matchday_played
+      cleaned_up.delete :rcv_survey_token_notification
     end
     cleaned_up
   end
