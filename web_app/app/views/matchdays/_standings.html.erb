@@ -20,7 +20,7 @@
     </tr>
   </thead>
   <% matchday.slots.find_all{|slot| !slot.contestant.hidden? and slot.contestant.ranked? and (ranking == "all" ? true : slot.contestant.ranking == ranking)}.each_with_index do |slot,i| %>
-    <tr class="<%= i.odd? ? 'odd': 'even' %>" style="line-height: 2em;">
+    <tr class="<%= i.odd? ? 'odd': 'even' %> all <%= slot.contestant.ranking %>" style="line-height: 2em;">
       <td style="text-align: left;"><%= i + 1 %>.</td>
       <td><%= slot.contestant.disqualified ? "<i>#{t "views.disqualified"}</i>".html_safe! : "" %> <%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %></td>
       <td class="print-inline"><%= slot.contestant.location %></td>

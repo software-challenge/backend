@@ -3,29 +3,22 @@
 <% rankings.insert(0, "all") %>
 <% rankings = rankings.collect{|r| [t("views.ranking.#{r}"), r]} %>
 
-<p class="print-hide" style="font-size: 15px; margin-bottom: 15px">
+<p class="print-hide" id="select_ranking" style="font-size: 15px; margin-bottom: 15px; display: none;">
 <b><%= Contestant.human_attribute_name(:ranking) %>: </b>&nbsp;
 <% ranking = "all" if local_assigns[:ranking].nil? %> 
 <%= select_tag :ranking, options_for_select(rankings, ranking) %>
 </p>
 
 <% javascript_tag do %>
-  function refreshStandings() {
-    $.get(
-      "<%= get_standings_contest_matchday_url(@contest, @matchday) %>",
-      "ranking=" + $("select#ranking :selected").val(),
-      function(returnedData) {
-        $("div#standings").replaceWith(returnedData)   
-      }
-    )
-  }
-
-  $(function() {
+  $(function(){
+    $("#select_ranking").show()
     $("select#ranking").change(function() {
-      refreshStandings();    
-      return false;
+      $("tr.all").hide()
+      var visible = $(this).attr("value")
+      $("tr."+visible).show()
+      $("tr."+visible).each(function(i,e){
+        $(e).children().first().text(i+1+".")
+      })
     })
-
-    refreshStandings();
   })
 <% end %>
