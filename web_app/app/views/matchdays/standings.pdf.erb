@@ -23,8 +23,7 @@
   <% end %>
  
 </h1>
-<% ranking = (logged_in? and @current_user.teams.visible.ranked.for_contest(@contest).count == 1) ? @current_user.teams.for_contest(@contest).first.ranking : nil %>
-<% ranking = "all" if local_assigns[:ranking].nil? %>
+<% ranking = "all" %>
 <h2 class="print-inline">Rangliste der <%= @contest.name %> "<%= @contest.game_name %>"<br><br></h2>
 <% if not ranking == "all" %>
   <h3 class="print-inline">Wertung: <%= t("views.ranking.#{ranking}") %></h3>
