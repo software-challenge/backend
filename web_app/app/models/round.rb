@@ -103,6 +103,6 @@ class Round < ActiveRecord::Base
   end
 
   def winner
-    return slots.to_ary.find{|s| s.score.fragments.find(:first, :conditions => {:fragment => "victory"}).value == 1}.contestant
+    return slots.to_ary.find{|s| s.score.fragments.find(:first, :conditions => {:fragment => "victory"}).value >= 1}.contestant
   end
 end
