@@ -28,7 +28,7 @@ public final class Player extends SimplePlayer {
 	// aktuelle punktzahl des spielers
 	@XStreamAsAttribute
 	private int points;
-	
+
 	// liste der verwendbaren segmente
 	@XStreamImplicit(itemFieldName = "segment")
 	private final List<Segment> segments;
@@ -36,8 +36,6 @@ public final class Player extends SimplePlayer {
 	// liste der karten des spielers
 	@XStreamImplicit(itemFieldName = "card")
 	private final List<Card> cards;
-
-
 
 	/**
 	 * einen neuen spieler erstellen und ihm eine spielerfarbe zuweisen
@@ -76,18 +74,18 @@ public final class Player extends SimplePlayer {
 	 */
 	public void removeCard(int slot) {
 		Card cardToRemove = null;
-		for(Card card : cards){
-			if(card.slot == slot){
+		for (Card card : cards) {
+			if (card.slot == slot) {
 				cardToRemove = card;
 				break;
 			}
 		}
 		cards.remove(cardToRemove);
 	}
-	
-	public boolean hasCard(int slot){
-		for(Card card: cards){
-			if(card.slot == slot){
+
+	public boolean hasCard(int slot) {
+		for (Card card : cards) {
+			if (card.slot == slot) {
 				return true;
 			}
 		}
@@ -118,7 +116,7 @@ public final class Player extends SimplePlayer {
 	 */
 	public Segment getSegment(int size) {
 		return segments.get(size - 1);
-	} 
+	}
 
 	/**
 	 * fuegt diesem spieler punkte hinzu
@@ -135,14 +133,47 @@ public final class Player extends SimplePlayer {
 	}
 
 	/**
-	 * liefert die anzahl der von diesem spieler momentan noch buabaren segmente
+	 * liefert die anzahl der von diesem spieler momentan noch benutzbaren
+	 * segmente
 	 */
-	public int getSegmentCount() {
+	public int getUsableSegmentCount() {
 		int segmentCount = 0;
 		for (Segment segment : segments) {
 			segmentCount += segment.getUsable();
 		}
 		return segmentCount;
+	}
+
+	/**
+	 * liefert die anzahl der von diesem spieler momentan noch benutzbaren
+	 * segmente
+	 */
+	public int getRetainedSegmentCount() {
+		int segmentCount = 0;
+		for (Segment segment : segments) {
+			segmentCount += segment.getRetained();
+		}
+		return segmentCount;
+	}
+
+	public int getHighestSegment() {
+		int highestSegment = 0;
+		for (Segment segment : segments) {
+			if (segment.getRetained() + segment.getUsable() > 0 && segment.size > highestSegment) {
+				highestSegment = segment.size;
+			}
+		}
+		return highestSegment;
+	}
+
+	public int getHighestCurrentSegment() {
+		int highestSegment = 0;
+		for (Segment segment : segments) {
+			if (segment.getUsable() > 0 && segment.size > highestSegment) {
+				highestSegment = segment.size;
+			}
+		}
+		return highestSegment;
 	}
 
 }

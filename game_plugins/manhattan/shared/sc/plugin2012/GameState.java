@@ -265,13 +265,27 @@ public final class GameState implements Cloneable {
 			if (currentMoveType == MoveType.SELECT) {
 				setCurrentMoveType(MoveType.BUILD);
 				switchCurrentPlayer();
-			} else if (getCurrentPlayer().getSegmentCount() == 0) {
+			} else if (getCurrentPlayer().getUsableSegmentCount() == 0) {
 				setCurrentMoveType(MoveType.SELECT);
 				switchStartPlayer();
 				currentPlayer = startPlayer;
 				performScoring();
 			} else {
 				switchCurrentPlayer();
+
+				/*
+				 * im letzten durchgang kann es prinzipiell moeglich sein, dass
+				 * kein zug mehr moeglich ist. dann bekommt der aktuelle spieler
+				 * eine ersatzkarte statt seiner zuletzt gezogenen karte
+				 */
+				Player currentPlayer = getCurrentPlayer();
+				if (currentPlayer.getRetainedSegmentCount() == 0) {
+					while (getPossibleMoves().isEmpty()) {
+						currentPlayer.removeCard(0);
+						currentPlayer.addCard(drawCard());
+					}
+				}
+
 			}
 		} else {
 			switchCurrentPlayer();
@@ -349,26 +363,32 @@ public final class GameState implements Cloneable {
 	 */
 	public Card drawCard() {
 		if (cardStack.isEmpty()) {
-			cardStack.addAll(createCardStack());
+			createCardStack();
 		}
-
 		return cardStack.remove(0);
-
 	}
 
-	private static List<Card> createCardStack() {
+	private void createCardStack() {
 
-		List<Card> cardStack = new ArrayList<Card>(SLOTS * CARDS_PER_SLOT);
+		int[] cardsInGame = new int[Constants.SLOTS];
 
-		for (int slot = 0; slot < SLOTS; slot++) {
-			for (int card = 0; card < CARDS_PER_SLOT; card++) {
-				cardStack.add(new Card(slot));
+		if (null != red && null != blue) {
+			for (Card card : red.getCards()) {
+				cardsInGame[card.slot]++;
+			}
+			for (Card card : blue.getCards()) {
+				cardsInGame[card.slot]++;
 			}
 		}
 
+		cardStack.clear();
+		for (int slot = 0; slot < SLOTS; slot++) {
+			int cards = CARDS_PER_SLOT - cardsInGame[slot];
+			for (int card = 0; card < cards; card++) {
+				cardStack.add(new Card(slot));
+			}
+		}
 		Collections.shuffle(cardStack, new SecureRandom());
-		return cardStack;
-
 	}
 
 	/**
@@ -533,9 +553,44 @@ public final class GameState implements Cloneable {
 	 */
 	public int[][] getGameStats() {
 
-		int[][] stats = new int[2][1];
+		int[][] stats = new int[2][4];
 
-		// TODO
+		int highestHeigth = 0;
+		int[] cityTowers = new int[Constants.CITIES];
+
+		int highestTowerPtr = -1;
+		for (Tower tower : getTowers()) {
+
+			if (tower.getHeight() > 0) {
+
+				int ptr = tower.getOwner() == PlayerColor.RED ? 0 : 1;
+				int dir = tower.getOwner() == PlayerColor.RED ? 1 : -1;
+				cityTowers[tower.city] += dir;
+				stats[ptr][0]++;
+
+				if (tower.getHeight() > highestHeigth) {
+					highestHeigth = tower.getHeight();
+					highestTowerPtr = ptr;
+				} else if (tower.getHeight() == highestHeigth) {
+					highestTowerPtr = -1;
+				}
+			}
+		}
+
+		for (int i = 0; i < cityTowers.length; i++) {
+			if (cityTowers[i] > 0) {
+				stats[0][1]++;
+			} else if (cityTowers[i] < 0) {
+				stats[1][1]++;
+			}
+		}
+
+		if (highestTowerPtr > -1) {
+			stats[highestTowerPtr][2] = 1;
+		}
+
+		stats[0][3] = red.getPoints();
+		stats[1][3] = blue.getPoints();
 
 		return stats;
 
