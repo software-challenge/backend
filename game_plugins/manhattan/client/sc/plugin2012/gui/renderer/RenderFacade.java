@@ -22,7 +22,7 @@ import sc.shared.ScoreCause;
  * 
  */
 public class RenderFacade {
-	private FrameRenderer frameRenderer; 
+	private FrameRenderer frameRenderer;
 
 	private EPlayerId activePlayer;
 
@@ -57,27 +57,25 @@ public class RenderFacade {
 		public void run() {
 			while (receiverThreadRunning && !Thread.interrupted()) {
 
-				synchronized (gameStateQueue) {
-					try {
+				try {
+
+					synchronized (gameStateQueue) {
 						// Make sure we don't end up in a deadlock
 						if (gameStateQueue.size() == 0) {
 							gameStateQueue.wait();
 						}
-					} catch (InterruptedException e) {
-						//e.printStackTrace();
-					}
-				}
 
-				while (gameStateQueue.size() > 0 && receiverThreadRunning && !Thread.interrupted()) {
-					try {
-						GameState gameState = gameStateQueue.remove(0);
-						frameRenderer.updateGameState(gameState);
-						gameState = null;
-					} catch (Exception e) {
-						System.err.println(e.getStackTrace());
+						while (gameStateQueue.size() > 0 && receiverThreadRunning && !Thread.interrupted()) {
+							GameState gameState = gameStateQueue.remove(0);
+							frameRenderer.updateGameState(gameState);
+							gameState = null;
+						}
 					}
-				}
+					
+				} catch (Exception e) {
+					System.err.println(e.getStackTrace());
 
+				}
 			}
 		}
 	};
@@ -96,7 +94,7 @@ public class RenderFacade {
 		startReceiverThread();
 
 	}
-	
+
 	public void startReceiverThread() {
 		if (thread != null && !thread.isAlive()) {
 			thread = null;
@@ -108,7 +106,7 @@ public class RenderFacade {
 			thread.start();
 		}
 	}
-	
+
 	public void stopReceiverThread() {
 		if (thread != null) {
 			thread.interrupt();
@@ -132,8 +130,7 @@ public class RenderFacade {
 		CONNECT, OBSERVER, PLAYER_ONE, PLAYER_TWO;
 	}
 
-	public void setRenderContext(final JPanel panel,
-			final boolean threeDimensional) {
+	public void setRenderContext(final JPanel panel, final boolean threeDimensional) {
 
 		synchronized (gameStateQueue) {
 			gameStateQueue.clear();
@@ -189,8 +186,7 @@ public class RenderFacade {
 	}
 
 	// TODO
-	public void updatePlayer(final Player myplayer, final Player otherPlayer,
-			final EPlayerId target) {
+	public void updatePlayer(final Player myplayer, final Player otherPlayer, final EPlayerId target) {
 
 	}
 
@@ -204,8 +200,7 @@ public class RenderFacade {
 		}
 
 		synchronized (gameStateQueue) {
-			if (first || gameState.getTurn() != lastGameState.getTurn()
-					|| force) {
+			if (first || gameState.getTurn() != lastGameState.getTurn() || force) {
 				startReceiverThread();
 				first = false;
 				maxTurn = Math.max(maxTurn, gameState.getTurn());
@@ -242,7 +237,7 @@ public class RenderFacade {
 			currentHandler = handler2;
 			break;
 		}
-		
+
 		activePlayer = id;
 		frameRenderer.repaint();
 
@@ -260,7 +255,7 @@ public class RenderFacade {
 	 * @param id
 	 */
 	public synchronized void requestMove(EPlayerId id) {
-		
+
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
 			frameRenderer.requestMove(maxTurn);
@@ -275,24 +270,21 @@ public class RenderFacade {
 	 * @param data
 	 * @param id
 	 */
-	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color,
-			String errorMessage) {
+	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color, String errorMessage) {
 
 		stopReceiverThread();
-		
+
 		System.out.println();
 		if (disabled) {
 			return;
 		}
 		if (data != null) {
-			ScoreCause cause = data.getScores().get(
-					color == PlayerColor.RED ? 0 : 1).getCause();
+			ScoreCause cause = data.getScores().get(color == PlayerColor.RED ? 0 : 1).getCause();
 
 			if (errorMessage == null && cause != ScoreCause.REGULAR) {
 
-				String err = "'"
-						+ lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0
-								: 1] + "' hat keinen Zug gesendet.\\n";
+				String err = "'" + lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0 : 1]
+						+ "' hat keinen Zug gesendet.\\n";
 
 				switch (cause) {
 
