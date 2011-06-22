@@ -857,7 +857,7 @@ public class FrameRenderer extends JComponent {
 				* BORDER_SIZE - heigth);
 
 		// seitenleiste, info
-		int fontY = 25 + paintPlayerInfo(g2, BORDER_SIZE, PlayerColor.RED);
+		int fontY = 25 + paintPlayerInfo(g2, 2 * BORDER_SIZE, PlayerColor.RED);
 		paintPlayerInfo(g2, fontY, PlayerColor.BLUE);
 
 	}
