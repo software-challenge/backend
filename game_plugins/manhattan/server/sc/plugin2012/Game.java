@@ -15,6 +15,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin2012.util.Constants;
 import sc.plugin2012.GameState;
 import sc.plugin2012.Move;
 import sc.plugin2012.Player;
@@ -66,38 +67,50 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * move)
 	 */
 	@Override
-	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
-			throws GameLogicException {
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data) throws GameLogicException {
 
-		final Player player = (Player) fromPlayer;
+		final Player author = (Player) fromPlayer;
 		final MoveType expectedMoveType = gameState.getCurrentMoveType();
 		final Player expectedPlayer = gameState.getCurrentPlayer();
 
 		try {
-			if (player.getPlayerColor() != expectedPlayer.getPlayerColor()) {
-				throw new InvalideMoveException(player.getDisplayName()
-						+ " war nicht am Zug");
+			if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
+				throw new InvalideMoveException(author.getDisplayName() + " war nicht am Zug");
 			}
 
 			if (!(data instanceof Move)) {
-				throw new InvalideMoveException(player.getDisplayName()
-						+ " hat kein Zug-Objekt gesendet");
+				throw new InvalideMoveException(author.getDisplayName() + " hat kein Zug-Objekt gesendet");
 			}
 
 			final Move move = (Move) data;
 			if (move.getMoveType() != expectedMoveType) {
-				throw new InvalideMoveException(player.getDisplayName()
-						+ " hat falschen Zug-Typ gesendet");
+				throw new InvalideMoveException(author.getDisplayName() + " hat falschen Zug-Typ gesendet");
 			}
 
 			move.perform(gameState, expectedPlayer);
 			gameState.prepareNextTurn(move);
+
+			if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+				int[][] stats = gameState.getGameStats();
+				PlayerColor winner = null;
+				String winnerName = "Gleichstand nach Punkten.";
+				if (stats[0][3] > stats[1][3]) {
+					winner = PlayerColor.RED;
+					winnerName = "Sieg nach Punkten.";
+				} else if (stats[0][3] < stats[1][3]) {
+					winner = PlayerColor.BLUE;
+					winnerName = "Sieg nach Punkten.";
+				}
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
+			}
+
 			next(gameState.getCurrentPlayer());
 
 		} catch (InvalideMoveException e) {
-			gameState.endGame(player.getPlayerColor().opponent(), e.reason);
+			author.setViolated(true);
+			gameState.endGame(author.getPlayerColor().opponent(), e.reason);
 			logger.error("Received invalide move: " + e.reason);
-			throw new GameLogicException("Received invalide move: " + e.reason);
+			throw new GameLogicException("Received invalid move: " + e.reason);
 		}
 	}
 
@@ -138,9 +151,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 		}
 
 		if (!gameState.gameEnded()) {
-			gameState.endGame(((Player) player).getPlayerColor().opponent(),
-					"Der Spieler '" + player.getDisplayName()
-							+ "' hat das Spiel verlassen.");
+			gameState.endGame(((Player) player).getPlayerColor().opponent(), "Der Spieler '"
+					+ player.getDisplayName() + "' hat das Spiel verlassen.");
 		}
 
 		notifyOnGameOver(res);
@@ -169,8 +181,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	protected PlayerScore getScoreFor(Player p) {
 
 		int[] stats = gameState.getPlayerStats(p.getPlayerColor());
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0)
-				: new PlayerScore(ScoreCause.REGULAR, stats[0]);
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0) : new PlayerScore(
+				ScoreCause.REGULAR, stats[0]);
 
 	}
 
