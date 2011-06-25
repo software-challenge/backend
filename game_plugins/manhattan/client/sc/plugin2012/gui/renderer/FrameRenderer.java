@@ -38,6 +38,7 @@ import javax.swing.JPanel;
 import sc.plugin2012.gui.renderer.RenderConfiguration;
 import sc.plugin2012.BuildMove;
 import sc.plugin2012.Card;
+import sc.plugin2012.DebugHint;
 import sc.plugin2012.GameState;
 import sc.plugin2012.Move;
 import sc.plugin2012.MoveType;
@@ -59,7 +60,7 @@ public class FrameRenderer extends JComponent {
 	private static final int PROGRESS_ICON_SIZE = 60;
 	private static final int PROGRESS_BAR_HEIGTH = 36;
 
-	private static final int SIDE_BAR_WIDTH = 200;
+	private static final int SIDE_BAR_WIDTH = 275;
 
 	private static final int TOWER_LEFT_WIDTH = 25;
 	private static final int TOWER_LEFT_HEIGTH = 10;
@@ -101,6 +102,8 @@ public class FrameRenderer extends JComponent {
 	private static final Stroke stroke10 = new BasicStroke(1f);
 	private static final Stroke stroke15 = new BasicStroke(1.5f);
 	private static final Stroke stroke20 = new BasicStroke(2f);
+	private static final Stroke stroke30 = new BasicStroke(3f);
+	private static final Stroke stroke40 = new BasicStroke(4f);
 
 	private static final String SELECT_STRING = "Bauelemente auswählen";
 	private static final int MIN_DIALOG_SIZE = fmH1.stringWidth(SELECT_STRING) + 2 * GAP_SIZE;
@@ -405,7 +408,7 @@ public class FrameRenderer extends JComponent {
 	public FrameRenderer() {
 
 		updateBuffer = true;
-		bgImage = loadImage("resource/game/boden_wiese3.png");
+		bgImage = loadImage("resource/game/manhattanbg.png");
 		progressIcon = loadImage("resource/game/kelle.png");
 		selections = new int[Constants.MAX_SEGMENT_SIZE];
 		selectTowers = new LinkedList<TowerData>();
@@ -565,6 +568,7 @@ public class FrameRenderer extends JComponent {
 	}
 
 	private synchronized void sendMove(final Move move) {
+
 		if (myTurn() && !gameEnded) {
 			RenderFacade.getInstance().sendMove(move);
 			turnToAnswer = -1;
@@ -786,8 +790,7 @@ public class FrameRenderer extends JComponent {
 		Graphics2D g2 = (Graphics2D) g;
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
-						: RenderingHints.VALUE_ANTIALIAS_OFF);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		if (updateBuffer) {
 			fillBuffer();
@@ -825,8 +828,7 @@ public class FrameRenderer extends JComponent {
 		Graphics2D g2 = (Graphics2D) buffer.getGraphics();
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
-						: RenderingHints.VALUE_ANTIALIAS_OFF);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		paintStaticComponents(g2);
 		if (gameState != null) {
@@ -841,17 +843,15 @@ public class FrameRenderer extends JComponent {
 
 		// hintergrundbild oder farbe
 		if (OPTIONS[BACKGROUND] && scaledBgImage != null) {
-			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight()
-					- 2 * BORDER_SIZE, this);
+			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
+					* BORDER_SIZE, this);
 		} else {
 			g2.setColor(new Color(76, 119, 43));
-			g2
-					.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
-							* BORDER_SIZE);
+			g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2 * BORDER_SIZE);
 		}
 
 		// fortschrittsleite, spielerinfo und seitenleiste
-		g2.setColor(getTransparentColor(new Color(200, 200, 220), 160));
+		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
 
 		// fortschrittsleite, spielerinfo hintergrund
 		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + CARD_HEGTH + fmH2.getHeight();
@@ -862,33 +862,61 @@ public class FrameRenderer extends JComponent {
 				* BORDER_SIZE - heigth);
 
 		// seitenleiste, info
-		int fontY = 25 + paintPlayerInfo(g2, 2 * BORDER_SIZE, PlayerColor.RED);
-		paintPlayerInfo(g2, fontY, PlayerColor.BLUE);
+		boolean hints = false;
+		if (gameState.getLastMove() != null) {
+			if (gameState.getLastMove().getHints() != null) {
+				hints = !gameState.getLastMove().getHints().isEmpty();
+			}
+		}
 
+		g2.setFont(h1);
+		g2.setColor(Color.DARK_GRAY);
+		g2.drawString("Manhattan", getWidth() - 2 * BORDER_SIZE - fmH1.stringWidth("Manhattan"),
+				2 * BORDER_SIZE + 30);
+
+		int fontY = paintPlayerInfo(g2, 2 * BORDER_SIZE + 40, PlayerColor.RED, hints);
+		fontY = 25 + paintPlayerInfo(g2, fontY, PlayerColor.BLUE, hints);
+
+		if (hints) {
+			g2.setColor(Color.BLACK);
+			g2.setFont(h4);
+			int fontX = getWidth() - SIDE_BAR_WIDTH;
+
+			for (DebugHint hint : gameState.getLastMove().getHints()) {
+				g2.drawString(hint.content, fontX, fontY);
+				fontY += 20;
+			}
+		}
 	}
 
-	private int paintPlayerInfo(Graphics2D g2, int fontY, PlayerColor player) {
+	private int paintPlayerInfo(Graphics2D g2, int fontY, PlayerColor player, boolean small) {
 
+		fontY += small ? 15 : 25;
 		int[] stats = gameState.getPlayerStats(player);
-
-		fontY += 60;
-		g2.setFont(h0);
 		g2.setColor(getTransparentColor(getPlayerColor(player), 174));
 		String s = Integer.toString(stats[3]);
-		g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH0.stringWidth(s), fontY);
+		if (small) {
+			fontY += 20;
+			g2.setFont(h2);
+			g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH2.stringWidth(s), fontY);
+		} else {
+			fontY += 60;
+			g2.setFont(h0);
+			g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH0.stringWidth(s), fontY);
+		}
 
 		g2.setColor(Color.BLACK);
 		g2.setFont(h4);
 
-		fontY += 23;
+		fontY += 20;
 		s = stats[0] == 1 ? "1 Turm im Spiel" : stats[0] + " Türme im Spiel";
 		g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH4.stringWidth(s), fontY);
 
-		fontY += 23;
+		fontY += 20;
 		s = stats[1] == 1 ? "1 Stadt im Besitz" : stats[1] + " Städte im Besitz";
 		g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH4.stringWidth(s), fontY);
 
-		fontY += 23;
+		fontY += 20;
 		if (stats[2] == 1) {
 			s = "Höchsten Turm im Besitz";
 			g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH4.stringWidth(s), fontY);
@@ -996,8 +1024,7 @@ public class FrameRenderer extends JComponent {
 							.getHeight(), 8, 8);
 					g2.setColor(data.diff > MAX_SEGMENT_SIZE ? Color.YELLOW : Color.WHITE);
 					String s = Integer.toString(data.diff);
-					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH4.stringWidth(s)) / 2,
-							data.ys[1] - 8);
+					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH4.stringWidth(s)) / 2, data.ys[1] - 8);
 				}
 			}
 		}
@@ -1018,7 +1045,7 @@ public class FrameRenderer extends JComponent {
 
 	private void paintSelectDialog(Graphics2D g2) {
 
-		g2.setColor(getTransparentColor(new Color(200, 200, 220), 160));
+		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
 		g2.fillRoundRect(selectX, selectY, selectWidth, selectHeight, 25, 25);
 
 		String msg = SELECT_STRING;
@@ -1083,7 +1110,7 @@ public class FrameRenderer extends JComponent {
 			Color color = getPlayerColor(tower.owner.opponent(), true);
 			boolean canMatchHeigth = tower.diff <= getHighestSegment(tower.owner.opponent(), false);
 			g2.setColor(canMatchHeigth ? color.darker() : grayer(color));
-			g2.setStroke(new BasicStroke(4f));
+			g2.setStroke(stroke40);
 			g2.drawLine(craneJibLeftX, craneJibLeftY, craneJibRightX, craneJibRightY);
 			g2.drawLine(craneX, craneY, craneX, craneY - frameDisplacement - 40);
 
@@ -1106,10 +1133,10 @@ public class FrameRenderer extends JComponent {
 			g2.setColor(new Color(128, 128, 128, 128));
 			g2.fillPolygon(frameXs, frameYs, 4);
 			g2.setColor(Color.YELLOW.darker());
-			g2.setStroke(new BasicStroke(3f));
+			g2.setStroke(stroke30);
 			g2.drawPolygon(frameXs, frameYs, 4);
 			g2.setColor(Color.DARK_GRAY);
-			g2.setStroke(new BasicStroke(1.5f));
+			g2.setStroke(stroke15);
 			for (int i = 0; i < 4; i++) {
 				g2.drawLine((tower.xs[0] + tower.xs[2]) / 2, frameYs[1] - 15, frameXs[i], frameYs[i]);
 

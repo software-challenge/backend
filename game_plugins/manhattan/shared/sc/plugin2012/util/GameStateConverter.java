@@ -140,10 +140,7 @@ public class GameStateConverter implements Converter {
 					if (moveType == MoveType.SELECT) {
 						move = (Move) context.convertAnother(gameState, SelectMove.class);
 					} else {
-						int city = Integer.parseInt(reader.getAttribute("city"));
-						int slot = Integer.parseInt(reader.getAttribute("slot"));
-						int size = Integer.parseInt(reader.getAttribute("size"));
-						move = new BuildMove(city, slot, size);
+						move = (Move) context.convertAnother(gameState, BuildMove.class);
 					}
 
 					Field moveField = GameState.class.getDeclaredField("lastMove");

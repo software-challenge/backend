@@ -1,20 +1,19 @@
 package sc.plugin2012;
 
+import sc.plugin2012.util.BuildMoveConverter;
 import sc.plugin2012.util.InvalideMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias(value = "manhattan:build")
+@XStreamConverter(BuildMoveConverter.class)
 public class BuildMove extends Move {
 
-	@XStreamAsAttribute
 	public final int city;
 
-	@XStreamAsAttribute
 	public final int slot;
 
-	@XStreamAsAttribute
 	public final int size;
 
 	public BuildMove(int city, int slot, int size) {
@@ -30,8 +29,7 @@ public class BuildMove extends Move {
 		Segment segment = player.getSegment(size);
 
 		if (segment == null || segment.getUsable() < 1) {
-			throw new InvalideMoveException(player.getDisplayName() + " hat kein Bauelement der Größe "
-					+ size);
+			throw new InvalideMoveException(player.getDisplayName() + " hat kein Bauelement der Größe " + size);
 		}
 
 		if (!player.hasCard(slot)) {
