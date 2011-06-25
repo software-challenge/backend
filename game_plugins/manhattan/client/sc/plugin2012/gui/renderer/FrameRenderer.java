@@ -305,12 +305,13 @@ public class FrameRenderer extends JComponent {
 					TowerData data = selectedTower;
 					droppedSegment = selectedSegment;
 					selectedTower = null;
-					sendMove(new BuildMove(data.city, data.slot, selectedSegment.size));
+					selectedSegment = null;
+					sendMove(new BuildMove(data.city, data.slot, droppedSegment.size));
 
 				} else {
 					selectedSegment.moveTo(ox, oy);
+					selectedSegment = null;
 				}
-				selectedSegment = null;
 				updateBuffer = true;
 				repaint();
 			}
@@ -497,6 +498,7 @@ public class FrameRenderer extends JComponent {
 		final BuildMove move = (BuildMove) gameState.getLastMove();
 		final TowerData targetTower = cityTowers[move.city][move.slot];
 
+		// TowerData selectedSegment = null;
 		if (droppedSegment == null) {
 			updateBuffer = true;
 			for (int i = sensetiveSegments.size() - 1; i >= 0; i--) {
@@ -547,6 +549,9 @@ public class FrameRenderer extends JComponent {
 			}
 
 		}
+
+		/* zum schluss richtig positionieren */
+		selectedSegment.moveTo(q.x, q.y);
 		setEnabled(true);
 
 	}
@@ -846,7 +851,7 @@ public class FrameRenderer extends JComponent {
 		}
 
 		// fortschrittsleite, spielerinfo und seitenleiste
-		g2.setColor(getTransparentColor(new Color(200, 240, 200), 160));
+		g2.setColor(getTransparentColor(new Color(200, 200, 220), 160));
 
 		// fortschrittsleite, spielerinfo hintergrund
 		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + CARD_HEGTH + fmH2.getHeight();
@@ -1013,7 +1018,7 @@ public class FrameRenderer extends JComponent {
 
 	private void paintSelectDialog(Graphics2D g2) {
 
-		g2.setColor(getTransparentColor(new Color(200, 240, 200), 160));
+		g2.setColor(getTransparentColor(new Color(200, 200, 220), 160));
 		g2.fillRoundRect(selectX, selectY, selectWidth, selectHeight, 25, 25);
 
 		String msg = SELECT_STRING;

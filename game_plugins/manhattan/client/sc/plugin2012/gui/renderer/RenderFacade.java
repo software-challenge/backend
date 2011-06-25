@@ -55,7 +55,7 @@ public class RenderFacade {
 
 		@Override
 		public void run() {
-			while (receiverThreadRunning && !Thread.interrupted()) {
+			while (receiverThreadRunning) {
 
 				try {
 
@@ -65,16 +65,15 @@ public class RenderFacade {
 							gameStateQueue.wait();
 						}
 
-						while (gameStateQueue.size() > 0 && receiverThreadRunning && !Thread.interrupted()) {
+						while (gameStateQueue.size() > 0) {
 							GameState gameState = gameStateQueue.remove(0);
 							frameRenderer.updateGameState(gameState);
 							gameState = null;
 						}
 					}
-					
-				} catch (Exception e) {
-					System.err.println(e.getStackTrace());
 
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
