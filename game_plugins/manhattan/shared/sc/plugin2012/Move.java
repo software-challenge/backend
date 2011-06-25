@@ -35,6 +35,13 @@ public abstract class Move implements Cloneable {
 	/**
 	 * einen debughinweis hinzufuegen
 	 */
+	public void addHint(String key, String value) {
+		addHint(new DebugHint(key, value));
+	}
+
+	/**
+	 * einen debughinweis hinzufuegen
+	 */
 	public void addHint(String string) {
 		addHint(new DebugHint(string));
 	}
@@ -48,10 +55,11 @@ public abstract class Move implements Cloneable {
 
 	/**
 	 * diesen zug ausfuehren
+	 * 
 	 * @return ob der zug gueltig war und ausgefuehrt wurde
 	 */
 	abstract void perform(GameState state, Player player) throws InvalideMoveException;
-	
+
 	public abstract MoveType getMoveType();
-	
+
 }
