@@ -487,6 +487,11 @@ public class FrameRenderer extends JComponent {
 			addMouseMotionListener(buildMouseAdapter);
 		}
 
+		if (gameState.gameEnded()) {
+			gameEnded = true;
+			currentPlayer = gameState.winner();
+		}
+
 		createPlayerSegments();
 		updateCityTowers();
 		repaint();
@@ -806,6 +811,10 @@ public class FrameRenderer extends JComponent {
 			paintSelectDialog(g2);
 		}
 
+		if (gameEnded) {
+			paintEndMessage(g2);
+		}
+
 		// TODO
 		// if (config) {
 		// drawConfigMessage(g2);
@@ -923,6 +932,49 @@ public class FrameRenderer extends JComponent {
 		}
 
 		return fontY;
+	}
+
+	private void paintEndMessage(Graphics2D g2) {
+		String msg = "Das Spiel ist zu Ende!";
+
+		PlayerColor winner = gameState.winner();
+		if (winner == PlayerColor.RED) {
+			msg = gameState.getPlayerNames()[0] + " hat gewonnen!";
+		} else if (winner == PlayerColor.BLUE) {
+			msg = gameState.getPlayerNames()[1] + " hat gewonnen!";
+		}
+
+		String info = gameState.winningReason();
+		int delim = info.indexOf("\\n");
+		String info1 = info.substring(0, delim);
+		String info2 = info.substring(delim + 2);
+
+		int msgW = fmH1.stringWidth(msg);
+		int msgH = fmH1.getHeight();
+		int info1W = fmH3.stringWidth(info1);
+		int info2W = fmH3.stringWidth(info2);
+		int infoW = Math.max(info1W, info2W);
+		int infoH = 2 * fmH3.getHeight() + 3;
+		int w = Math.max(msgW, infoW);
+		int h = msgH + infoH;
+		int xCenter = BORDER_SIZE + (getWidth() - SIDE_BAR_WIDTH) / 2;
+
+		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
+		g2.fillRoundRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5, w + 40, h + 15, 20, 20);
+
+		h = getHeight() / 2 - 5;
+		g2.setFont(h1);
+		g2.setColor(getPlayerColor(winner, true));
+		g2.drawString(msg, xCenter - msgW / 2, h);
+
+		h += msgH - 10;
+		g2.setFont(h3);
+		g2.setColor(Color.BLACK);
+		g2.drawString(info1, xCenter - info1W / 2, h);
+
+		h += 20;
+		g2.drawString(info2, xCenter - info2W / 2, h);
+
 	}
 
 	private void paintSemiStaticComponents(Graphics2D g2) {

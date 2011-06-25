@@ -65,6 +65,13 @@ public class GameStateConverter implements Converter {
 			writer.endNode();
 		}
 
+		if (gameState.gameEnded()) {
+			writer.startNode("condition");
+			writer.addAttribute("winner", gameState.winner().toString());
+			writer.addAttribute("reason", gameState.winningReason());
+			writer.endNode();
+		}
+
 	}
 
 	@Override
@@ -148,6 +155,10 @@ public class GameStateConverter implements Converter {
 					moveField.set(gameState, move);
 					moveField.setAccessible(false);
 
+				} else if (nodeName.equals("condition")) {
+					PlayerColor winner = PlayerColor.valueOf(reader.getAttribute("winner").toUpperCase());
+					String reason = reader.getAttribute("reason");
+					gameState.endGame(winner, reason);
 				}
 
 				reader.moveUp();

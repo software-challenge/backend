@@ -1,6 +1,7 @@
 package sc.plugin2012;
 
 import sc.plugin2012.util.BuildMoveConverter;
+import sc.plugin2012.util.Constants;
 import sc.plugin2012.util.InvalideMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -24,6 +25,19 @@ public class BuildMove extends Move {
 
 	@Override
 	void perform(GameState state, Player player) throws InvalideMoveException {
+
+		if (0 > city || city >= Constants.CITIES) {
+			throw new InvalideMoveException("Es gibt keine Stadt mit Index " + city);
+		}
+
+		if (0 > slot || slot >= Constants.SLOTS) {
+			throw new InvalideMoveException("Es gibt keinen Bauplatz mit Index " + slot);
+		}
+
+		if (0 >= size || size > Constants.MAX_SEGMENT_SIZE) {
+			throw new InvalideMoveException("Es gibt kein Bauelement der Größe " + size);
+		}
+
 		Tower tower = state.getTower(city, slot);
 		PlayerColor color = player.getPlayerColor();
 		Segment segment = player.getSegment(size);
