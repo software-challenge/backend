@@ -124,7 +124,13 @@ class SurveyTokensController < ApplicationController
         raise "Unknown owner group!"
       end
       people.each do |person,tokens|
-        EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, tokens) if params[:send_email_notifications] == "1" and person.email_event.rcv_survey_token_notification
+        if params[:send_email_notifications] == "1" and person.email_event.rcv_survey_token_notification
+          if params[:custom_template] and params[:custom_template].length > 0  
+            EventMailer.send("deliver_custom_survey_invite_notification_#{params[:custom_template]}",person,@contest,person.generate_login_token, tokens, (params[:custom_email_title] and not params[:custom_email_title].empty? ? params[:custom_email_title] : nil))
+          else 
+            EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, tokens) 
+          end
+        end
       end
     flash[:notice] = "Es wurden erfolgreich #{token_count} Tokens erstellt!"
     redirect_to :actions => :index

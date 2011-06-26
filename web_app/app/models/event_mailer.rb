@@ -101,4 +101,28 @@ class EventMailer < ActionMailer::Base
     sent_on    Time.now
     body({:contest => contest, :person => person, :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => login_token })
   end
+
+  private
+    # We want to be able to render custom email templates, call the method: deliver_custom_survey_invite_notification_<template file>(person,contest,login_token, survey_tokens, email_title)
+    def method_missing(method, *args, &block)
+      if method.to_s.start_with? "custom_survey_invite_notification"
+        files = Dir.open(File.join(RAILS_ROOT,"app","views","event_mailer")).entries
+        files.delete(".")
+        files.delete("..")
+        file = nil
+        files.each{|e| file = e if e.split(".").first == method.to_s}
+        if file
+          survey_tokens = (args[3].is_a? Array) ? args[3] : [args[3]] 
+          recipients "#{args[0].name} <#{args[0].email}>"
+          from       "software-challenge@gfxpro.eu"
+          subject    (args[4].nil? ? (args[3].count == 1 ? "Die Software-Challenge läd Sie zu einer Umfrage ein." : "Die Software-Challenge läd Sie zu #{args[3].count} Umfragen ein.") : args[4])
+          sent_on    Time.now
+          body({:contest => args[1], :person => args[0], :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => args[2] })
+        else
+          raise LoadError.new(method.to_s)
+        end
+      else 
+        raise "Method missing #{method}"
+      end
+    end
 end

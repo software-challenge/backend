@@ -49,9 +49,19 @@
   <%= text_field_tag "valid_until", "", {:style => "display:none;"} %>
  </div>
 </div>
+
+<p style="margin-top: 25px; width: 80%;">
+  <% possible_templates = Dir.open(File.join(RAILS_ROOT,"app","views","event_mailer")).entries %>
+  <% possible_templates.delete("."); possible_templates.delete("..") %>
+  <% possible_templates = [""] + possible_templates.select{|t| t.start_with? "custom_survey_invite_notification_"}.map{|e| e.gsub("custom_survey_invite_notification_", "").split(".")[0]} %>
+  <b>Spezielles E-Mail Template: </b><%= select_tag "custom_template", options_for_select(possible_templates), {:prompt => "Datei auswählen"} %></b><br>
+  <b>Spezieller E-Mail Titel: </b><%= text_field_tag "custom_email_title", "" %>
+</p>
+
 <p style="margin-top: 25px; width: 80%;"><b>E-Mail Benachrichtigungen:</b><%= check_box_tag "send_email_notifications", "1", false %> <br>
   Wenn diese Option ausgewählt ist, werden beim Erstellen der Tokens an die entsprechenden Betroffenen Benachrichtigungen versendet.<br>
 </p>
+
  <div style="margin-top: 15px;" >
  <input type="submit" value="Tokens erstellen" onclick="if (!confirm('Sind Sie sich sicher?')) return false; return true;" name="commit" title="Umfrage-Tokens erstellen lassen. Wenn dies ausgewählt wurde, dann werden E-Mail Benachrichtungen an die Betroffenen versendet!">
  </div>
