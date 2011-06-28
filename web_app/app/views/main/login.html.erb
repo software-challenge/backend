@@ -19,6 +19,7 @@
     <%= f.label :password, (t "labels.password") %>
     <%= f.password_field :password %>
   <% end %>
+  <%= hidden_field_tag "redirect_url", params[:redirect_url] if params[:redirect_url] %>
   <%= submit_tag (t "actions.login"), :disable_with => t("actions.check") %>
 <% end %><br>
 <%= link_to t("actions.new_account"), contest_register_url(@contest) %><br>

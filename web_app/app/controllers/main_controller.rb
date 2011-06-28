@@ -106,11 +106,15 @@ class MainController < ApplicationController
       elsif person.has_role? :administrator and other_administrators_logged_in? person
         flash[:notice] = I18n.t "messages.other_administrators_currently_logged_in"
       end
-      redirect_to contest_url(@contest)
+      if params[:redirect_url]
+        redirect_to url_unescape(params[:redirect_url])
+      else
+        redirect_to contest_url(@contest)
+      end
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
       flash[:notice] = I18n.t("messages.login_invalid")
-      redirect_to :action => "login"
+      redirect_to :action => "login", :redirect_url => params[:redirect_url]
     rescue AccountNotValidated
       @user = { :email => email, :password => "" }.to_obj
       flash[:error] = "Der Zugang wurde noch nicht aktiviert. Bitte besuchen Sie den Link in der Bestätigungs E-Mail"

@@ -8,7 +8,7 @@
   <% if @tokens.empty? %>
      <b> Aktuell gibt es für Sie an dieser Schule keine Umfragemöglichkeiten </b>
   <% elsif unfinished_count == 0 %>
-     <h3> Sie haben an allen <%= @token.count %> für Sie verfügbaren Umfragen erfolgreich teilgenommen.</h3>
+     <h3> Sie haben an allen <%= @tokens.count %> für Sie verfügbaren Umfragen erfolgreich teilgenommen.</h3>
   <% else %>
      <h3> Es sind noch <%= unfinished_count %> von <%= @tokens.count %> Umfragen unbeantwortet!</h3>
    <% @tokens.each do |token|%>

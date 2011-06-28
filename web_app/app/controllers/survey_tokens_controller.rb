@@ -13,7 +13,7 @@ class SurveyTokensController < ApplicationController
      allow logged_in, :if => :token_allowed_for_user
    end
 
-   action :new, :create, :update, :destroy do
+   action :new, :create, :update, :destroy, :preview_template do
      allow :administrator
    end
 
@@ -126,7 +126,7 @@ class SurveyTokensController < ApplicationController
       people.each do |person,tokens|
         if params[:send_email_notifications] == "1" and person.email_event.rcv_survey_token_notification
           if params[:custom_template] and params[:custom_template].length > 0  
-            EventMailer.send("deliver_custom_survey_invite_notification_#{params[:custom_template]}",person,@contest,person.generate_login_token, tokens, (params[:custom_email_title] and not params[:custom_email_title].empty? ? params[:custom_email_title] : nil))
+            EventMailer.send("deliver_custom_survey_invite_notification_#{params[:custom_template]}",person,@contest,person.generate_login_token, tokens, ((params[:custom_email_title] and not params[:custom_email_title].empty?) ? params[:custom_email_title] : nil))
           else 
             EventMailer.deliver_survey_invite_notification(person,@contest,person.generate_login_token, tokens) 
           end
@@ -140,5 +140,12 @@ class SurveyTokensController < ApplicationController
     flash[:error] = "Fehler beim Erstellen der Tokens!"
     redirect_to :action => :new
   end
+ end
+
+ def preview_template
+    @survey_tokens = SurveyToken.all 
+    @login_token = LoginToken.new(:person => @current_user)
+    render :inline => "<%= raw BlueCloth.new(render :file => 'event_mailer/custom_survey_invite_notification_#{params[:template]}.rhtml').to_html %>"
+    @login_token.destroy
  end
 end
