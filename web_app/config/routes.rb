@@ -25,7 +25,7 @@ ActionController::Routing::Routes.draw do |map|
 
       c.resources :survey_results, :member => { :show_response => :get } 
 
-      c.resources :survey_tokens do  |st|
+      c.resources :survey_tokens, :collection => {:preview_template => :get} do  |st|
         st.resources :surveys, :controller => "surveyor"
       end
       c.resources :whitelist_entries, :as => "whitelist", :member => { 

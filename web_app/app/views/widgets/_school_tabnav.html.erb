@@ -29,6 +29,6 @@ render_tabnav :school, :html => { :class => "tabs_tabnav" } do
     t.named SurveyToken.human_name(:count => 2)
     t.links_to surveys_contest_school_url(@contest,@school)
     t.highlights_on :controller => "schools", :action => "surveys"
-  end if @contest.phase == "recall" or @contest.phase == "validation" 
+  end if (@contest.phase == "recall" or @contest.phase == "validation") and not @school.new_record?
 end
 %>

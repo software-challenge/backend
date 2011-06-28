@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password
 
-  before_filter :redirect_if_needed, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts 
+  before_filter :redirect_if_needed, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts
   append_before_filter :require_current_user
   append_before_filter :check_contest_access
 
@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
       # user might be logged out, due to inactivity or trys to access
       # a restricted area without logging in because of bookmark
       flash[:error] = I18n.t "messages.login_first"
-      redirect_to contest_login_url(@contest)
+      redirect_to contest_login_url(@contest,:redirect_url => url_escape(request.url))
     end
   end
 
@@ -259,6 +259,18 @@ class ApplicationController < ActionController::Base
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
   end
   
+  def url_escape(string)
+       string.gsub(/([^ a-zA-Z0-9_.-]+)/n) do
+         '%' + $1.unpack('H2' * $1.size).join('%').upcase
+       end.tr(' ', '+')
+  end
+
+  def url_unescape(string)
+   string.tr('+', ' ').gsub(/((?:%[0-9a-fA-F]{2})+)/n) do
+     [$1.delete('%')].pack('H*')
+   end
+  end
+
   def fetch_latest_news_posts 
     @news_posts = NewsPost.published.sort_by_update.first(3)
   end

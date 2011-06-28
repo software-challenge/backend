@@ -56,7 +56,7 @@
   <% possible_templates.delete("."); possible_templates.delete("..") %>
   <% possible_templates = [""] + possible_templates.select{|t| t.start_with? "custom_survey_invite_notification_"}.map{|e| e.gsub("custom_survey_invite_notification_", "").split(".")[0]} %>
   <div id="custom_email_settings">
-    <b>E-Mail Template: </b><%= select_tag "custom_template", options_for_select(possible_templates), {:prompt => "Datei auswählen"} %></b><br>
+    <b>E-Mail Template: </b><%= select_tag "custom_template", options_for_select(possible_templates), {:prompt => "Datei auswählen"} %> <a id="preview_template" href="#">Vorschau</a><br>
     <b>E-Mail Titel: </b><%= text_field_tag "custom_email_title", "" %>
   </div>
 </p>
@@ -100,6 +100,10 @@
       }else{
         $("#custom_email_settings").hide()
       }
+    })
+    
+    $("#preview_template").bind("click", function(){
+    window.open("<%= preview_template_contest_survey_tokens_url(@contest) %>?template="+$("#custom_template option:selected")[0].value)
     })
   });
 <% end %>
