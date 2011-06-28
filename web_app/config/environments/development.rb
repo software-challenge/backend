@@ -14,8 +14,13 @@ config.action_view.debug_rjs                         = true
 config.action_controller.perform_caching             = false
 
 # Don't care if the mailer can't send
-ActionMailer::Base.delivery_method = :test
-ActionMailer::Base.raise_delivery_errors = false
+# ActionMailer::Base.delivery_method = :test
+# ActionMailer::Base.raise_delivery_errors = false
+
+# Use Mailcatcher on localhost:
+config.action_mailer.delivery_method = :smtp
+config.action_mailer.smtp_settings = {:host => "127.0.0.1", :port => 1025}
+ActionMailer::Base.default_url_options[:host] = "127.0.0.1"
 
 ENV['CLIENT_LOGS_FOLDER'] = RAILS_ROOT + "/clientlogs/"
 ENV['SERVER_LOGS_FOLDER'] = RAILS_ROOT + "/serverlogs/"

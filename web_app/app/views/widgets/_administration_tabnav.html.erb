@@ -63,5 +63,11 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
     t.highlights_on :controller => "main", :action => "debug"
   end
 
+  add_tab do |t|
+    t.named "Rundmail"
+    t.links_to contest_write_email_path(@contest)
+    t.highlights_on :controller => "main", :action => "write_email"
+  end
+
 end 
 %>

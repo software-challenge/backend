@@ -4,7 +4,7 @@ class MainController < ApplicationController
 
   skip_before_filter :require_current_user
 
-  access_control :only => [:debug, :clear_jobs, :administration] do
+  access_control :only => [:debug, :clear_jobs, :administration, :write_email, :send_email] do
     allow :administrator
   end
 
@@ -137,6 +137,21 @@ class MainController < ApplicationController
   end
 
   def administration
+  end
+
+  def write_email
+
+  end
+
+  def send_email
+    people = params[:email][:recipients].map{|r| Person.find_by_id(r)}.compact
+    if not (params[:email][:title].blank? or params[:email][:text].blank? or people.empty?) and EventMailer.deliver_custom_email(params[:email][:title], params[:email][:text], people)
+      flash[:notice] = "Es wurden erfolgreich #{people.count} Mails versendet!"
+      redirect_to :action => :administration
+    else
+      flash[:error] = "Beim Versenden der Mails ist ein Fehler aufgetreten!"
+      render :action => :write_email
+    end
   end
 
   def clear_jobs

@@ -102,6 +102,15 @@ class EventMailer < ActionMailer::Base
     body({:contest => contest, :person => person, :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => login_token })
   end
 
+  def custom_email(title,text,people)
+    email_adds = people.map{|p| p.email}.uniq
+    from      "software-challenge@gfxpro.eu"
+    subject   title
+    sent_on   Time.now
+    bcc       email_adds.join(", ")
+    body({:text => text})
+  end
+
   private
     # We want to be able to render custom email templates, call the method: deliver_custom_survey_invite_notification_<template file>(person,contest,login_token, survey_tokens, email_title)
     def method_missing(method, *args, &block)
