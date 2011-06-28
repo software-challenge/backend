@@ -178,6 +178,9 @@ ActionController::Routing::Routes.draw do |map|
       c.map '/contests', :controller => 'contests', :action => 'create', :conditions => {:method => :post }
       c.new '/neu', :controller => 'contests', :action => 'new'
       
+      c.write_email '/mail', :controller => 'main', :action => 'write_email', :conditions => {:method => :get}
+      c.send_email '/send_mail', :controller => 'main', :action => 'send_email', :conditions => {:method => :post}
+
       # TODO: In rails 3 replaye with math '/forum' => redirect("...")
       map.connect '/forum', :controller => 'application', :action => 'forum'
       map.connect '/faq', :controller => 'application', :action => 'faq'

@@ -1,0 +1,25 @@
+<%= stylesheet_link_tag "multiselect/ui.multiselect.css", "email_form" %>
+<%= javascript_include_tag "ui.multiselect.js" %>
+
+<h1>Rundmail senden</h1>
+<% tabnav :administration do %>
+  <% form_tag "send_mail" do %>
+    <p>
+      <b>Empfänger:</b><br>
+      <div id="recipients"><%= select_tag "email[recipients][]", options_for_select(Person.visible.collect{|p| ["#{p.name} - #{p.email}",p.id]}), {:multiple => :true} %></div>
+    </p>
+    <p>
+      <b>Titel: </b><%= text_field_tag 'email[title]', "", :size => 73 %>
+    </p>
+    <p style="margin-bottom: 20px; margin-top: 15px;">
+      <b>Text:</b><br>
+      <%= text_area_tag "email[text]", "", :rows => 20, :cols => 100 %>
+    </p>
+
+    <%= submit_tag "Email versenden", :confirm => "Wollen sie die Mails wirklich versenden?" %>
+   <% end %>
+<% end %>
+
+<% javascript_tag do %>
+  $("#email_recipients_").multiselect({dividerLocation: 0.5}) 
+<% end %>
