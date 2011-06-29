@@ -103,11 +103,11 @@ class EventMailer < ActionMailer::Base
   end
 
   def custom_email(title,text,people)
-    email_adds = people.map{|p| p.email}.uniq
+    email_adds = people.compact.uniq.map{|p| "\"#{p.name.strip}\" <#{p.email.strip}>"}.uniq
     from      "software-challenge@gfxpro.eu"
     subject   title
     sent_on   Time.now
-    bcc       email_adds.join(", ")
+    bcc       email_adds.join(", ").strip
     body({:text => text})
   end
 
