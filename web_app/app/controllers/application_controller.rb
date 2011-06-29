@@ -144,8 +144,9 @@ class ApplicationController < ActionController::Base
       c = Contest.first
     end
     if not c.nil? and c.hidden? and not administrator?
-      redirect = true
-      c = Contest.find_by_subdomain DateTime.now.year.to_s
+      #redirect = true
+      #c = Contest.find_by_subdomain DateTime.now.year.to_s
+      raise NotAllowed
     end
     @contest = @current_contest = c unless c.nil?
     redirect_to contest_url(c) if (redirect and not c.nil?)
