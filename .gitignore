@@ -1,5 +1,8 @@
 ## This file generated from the list of files ignored by SVN! 
 
+# Ignore RVM Project Config
+.rvmrc
+
 # Ignore temporary VIM files
 .*.sw*
 
@@ -102,6 +105,8 @@
 /web_app/serverlogs
 /web_app/clientlogs
 /web_app/database.yml
+/web_app/Gemfile.lock
+/web_app/bin
 
 # /web_app/config/
 /web_app/config/database.yml
