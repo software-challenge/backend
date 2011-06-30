@@ -53,7 +53,7 @@ ActionController::Routing::Routes.draw do |map|
         school.resources :preliminary_contestants, :as => "teams" do |prelim_contestant|
         end
       end
-      c.resources :preliminary_contestants do |prelim_contestants|
+      c.resources :preliminary_contestants, :as => "voranmeldungen" do |prelim_contestants|
 
       end
       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {

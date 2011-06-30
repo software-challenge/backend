@@ -1,6 +1,6 @@
 class SchoolsController < ApplicationController
 
-  before_filter :fetch_school, :only => [:edit, :show, :update, :get_teams, :surveys]
+  before_filter :fetch_school, :only => [:edit, :show, :update, :get_teams, :surveys, :destroy]
 
   access_control do
     default :deny
@@ -63,6 +63,16 @@ class SchoolsController < ApplicationController
     @tokens = @tokens.select{|token| token.currently_valid? and token.allowed_for? @current_user}
     @tokens.sort!{|a,b| a.complete? ? 1 : -1 }
     flash[:notice] = "Bitte füllen Sie alle verfügbaren Umfragen möglichst bald aus. So ermöglichen sie uns eine bessere Planung des Wettbewerbs!" unless flash[:notice] or @tokens.all?{|t| t.complete?}
+  end
+
+  def destroy
+    if @school.destroy
+      flash[:notice] = "Schule wurde erfolgreich entfernt"
+      redirect_to contest_schools_url(@contest)
+    else
+      flash[:error] = "Beim Entfernen der Schule trat ein Fehler auf!"
+      render :action => :show
+    end
   end
 
   def new
