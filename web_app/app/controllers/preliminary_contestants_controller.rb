@@ -1,7 +1,19 @@
-class PreliminaryContestantsController < ApplicationController
- 
+class PreliminaryContestantsController < ApplicationController  
   before_filter :fetch_preliminary_contestant
   before_filter :fetch_school
+
+  access_control do
+    allow :administrator
+
+    action :show, :create do
+      allow logged_in, :if => :own_team?
+    end
+
+    action :new, :index do
+      allow all
+    end
+  end
+
 
   def fetch_preliminary_contestant
     @preliminary_contestant = PreliminaryContestant.find_by_id(params[:id])
@@ -10,6 +22,12 @@ class PreliminaryContestantsController < ApplicationController
   def fetch_school
     @school = School.find_by_id(params[:school_id]) 
     @school = @preliminary_contestant.school if @preliminary_contestant 
+  end
+
+  def own_team?
+    return true if administrator?
+    return false unless @current_user 
+    @preliminary_contestant ? @current_user == @preliminary_contestant.person : action_name == "create"
   end
 
   def show
@@ -23,6 +41,16 @@ class PreliminaryContestantsController < ApplicationController
       format.js {
         render :partial => "form", :locals => {:team => @team}
       }
+    end
+  end
+
+  def destroy
+    if @preliminary_contestant.destroy
+      flash[:notice] = "Voranmeldung wurde erfolgreich entfernt."
+      redirect_to contest_preliminary_contestants_url(@contest)
+    else
+      flash[:error] = "Beim Entfernen der Voranmeldung trat ein Fehler auf"
+      render :action => :show
     end
   end
 

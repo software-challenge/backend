@@ -1,6 +1,7 @@
 class SurveyResultsController < ApplicationController
   
   access_control do 
+   default :deny
    allow :administrator
   end
 

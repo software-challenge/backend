@@ -49,7 +49,7 @@ module SurveyorControllerCustomMethods
     redirect_to contest_survey_tokens_url(@contest) if @response_set.blank?
     saved = false
     ActiveRecord::Base.transaction do 
-     saved = @response_set.update_responses(ResponseSet.reject_or_destroy_blanks(params[:r].clone)) # surveyor defaults do not seem to work, custom solution
+     saved = @response_set.update_responses(ResponseSet.reject_or_destroy_blanks(params[:r].clone)) if params[:r] # surveyor defaults do not seem to work, custom solution
      saved = @response_set.complete! if saved && params[:finish]
      @response_set.save!
     end

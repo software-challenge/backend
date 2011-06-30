@@ -1,6 +1,11 @@
 <div id="actions">
   <% link_to new_contest_school_preliminary_contestant_url(@contest,@school) do %>
-   <%= image_tag "actions/add.png" %> Anmeldungen bearbeiten
+    <%= image_tag "actions/add.png" %> Anmeldungen bearbeiten
+  <% end %>
+  <% show_to :administrator do %>
+    <% link_to contest_school_preliminary_contestant_url(@contest,@school,@preliminary_contestant), :method => :delete, :confirm => "Sind Sie wirklich sicher?" do %>
+      <%= image_tag "actions/destroy.png" %> Anmeldung entfernen 
+    <% end %>
   <% end %>
 </div>
 <h1>
