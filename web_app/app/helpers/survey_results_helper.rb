@@ -4,7 +4,7 @@ module SurveyResultsHelper
 	  	if sets.size == 0
   			return "-"
   		elsif sets.size >= 1
-  			return (sets.first.string_value || sets.first.text_value || show_answer(sets.first))
+  			return sets.map{|s| show_answer(s)}.join(", ")
   		else
   		  txt = ""
         sets.each do |set|
@@ -15,14 +15,19 @@ module SurveyResultsHelper
   end
   
   def show_answer(set)
-    if  set.answer.text == "Datetime"
-      set.datetime_value.strftime("%d.%m.%Y, %H:%M")
-    elsif set.float_value
-      set.float_value.to_s
-    elsif set.integer_value 
-      set.integer_value.to_s
-    else
-      set.answer.text
+    case set.answer.response_class.downcase
+      when "datetime"
+        set.datetime_value.strftime("%d.%m.%Y, %H:%M")
+      when "float"
+        set.float_value.to_s
+      when "integer"
+        set.integer_value.to_s
+      when "string"
+        set.string_value
+      when "answer"
+        set.answer.text
+      else
+        ""
     end
   end
 end
