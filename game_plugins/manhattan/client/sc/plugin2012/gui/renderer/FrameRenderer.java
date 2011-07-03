@@ -948,8 +948,15 @@ public class FrameRenderer extends JComponent {
 
 		String info = gameState.winningReason();
 		int delim = info.indexOf("\\n");
-		String info1 = info.substring(0, delim);
-		String info2 = info.substring(delim + 2);
+
+		System.err.println(info + " " + delim);
+
+		String info1 = info;
+		String info2 = "";
+		if (delim >= 0) {
+			info1 = info.substring(0, delim);
+			info2 = info.substring(delim + 2);
+		}
 
 		int msgW = fmH1.stringWidth(msg);
 		int msgH = fmH1.getHeight();
@@ -1197,7 +1204,7 @@ public class FrameRenderer extends JComponent {
 		}
 
 		g2.setStroke(stroke20);
-		g2.setColor(tower.highlited ? currentPlayerColor: Color.DARK_GRAY);
+		g2.setColor(tower.highlited ? currentPlayerColor : Color.DARK_GRAY);
 		g2.drawPolygon(tower.xs, tower.ys, 6);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[1], tower.ys[1]);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[3], tower.ys[3]);
