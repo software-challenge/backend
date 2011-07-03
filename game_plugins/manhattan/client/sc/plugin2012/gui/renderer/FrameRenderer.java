@@ -105,7 +105,7 @@ public class FrameRenderer extends JComponent {
 	private static final Stroke stroke30 = new BasicStroke(3f);
 	private static final Stroke stroke40 = new BasicStroke(4f);
 
-	private static final String SELECT_STRING = "Bauelemente auswählen";
+	private static final String SELECT_STRING = Constants.SELECTION_SIZE + " Bauelemente auswählen";
 	private static final int MIN_DIALOG_SIZE = fmH1.stringWidth(SELECT_STRING) + 2 * GAP_SIZE;
 	private static final int STATUS_HEIGTH = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP
 			+ Math.max(CARD_HEGTH, MAX_SEGMENT_HEIGTH) + fmH2.getHeight();
@@ -114,6 +114,7 @@ public class FrameRenderer extends JComponent {
 
 	// current (game) state
 	private PlayerColor currentPlayer;
+	private Color currentPlayerColor;
 	private GameState gameState;
 	private MoveType currentMoveType;
 
@@ -157,51 +158,46 @@ public class FrameRenderer extends JComponent {
 	private final TowerData[][] cityTowers;
 	private TowerData selectedTower;
 	private TowerData droppedSegment;
-	private int turnToAnswer;
+	private int turnToAnswer = -1;
 	private boolean gameEnded;
 
 	private final MouseAdapter selectMouseAdapter = new MouseAdapter() {
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
+		public void mousePressed(MouseEvent e) {
+
 			int x = e.getX();
 			int y = e.getY();
 
-			for (TowerData tower : selectTowers) {
-				if (inner(x, y, tower.xs, tower.ys)) {
-					if (tower.owner == null) {
-						tower.owner = currentPlayer;
-						selections[tower.size - 1]++;
-						selectionSize++;
-					} else {
-						tower.owner = null;
-						selections[tower.size - 1]--;
-						selectionSize--;
-					}
-					selectionOkay = selectionSize == Constants.SELECTION_SIZE;
-					repaint();
-					break;
-				}
-			}
-
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-
 			if (selectionOkay) {
-
-				int x = e.getX();
-				int y = e.getY();
 
 				if (x > selectButton[0] && x < selectButton[0] + selectButton[2]) {
 					if (y > selectButton[1] && y < selectButton[1] + selectButton[3]) {
 						selectionPressed = true;
 						repaint();
 					}
-
 				}
 			}
+
+			if (!selectionPressed) {
+				for (TowerData tower : selectTowers) {
+					if (inner(x, y, tower.xs, tower.ys)) {
+						if (tower.owner == null) {
+							tower.owner = currentPlayer;
+							selections[tower.size - 1]++;
+							selectionSize++;
+						} else {
+							tower.owner = null;
+							selections[tower.size - 1]--;
+							selectionSize--;
+						}
+						selectionOkay = selectionSize == Constants.SELECTION_SIZE;
+						repaint();
+						break;
+					}
+				}
+			}
+
 		}
 
 		@Override
@@ -452,6 +448,7 @@ public class FrameRenderer extends JComponent {
 		this.gameState = gameState;
 		this.currentMoveType = gameState.getCurrentMoveType();
 		currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
+		currentPlayerColor = getPlayerColor(currentPlayer);
 		updateBuffer = true;
 
 		selectedSegment = null;
@@ -551,7 +548,8 @@ public class FrameRenderer extends JComponent {
 			}
 
 			try {
-				Thread.sleep(start + (frame + 1) * (1000 / FPS) - System.currentTimeMillis());
+				long duration = start + (frame + 1) * (1000 / FPS) - System.currentTimeMillis();
+				Thread.sleep(duration > 0 ? duration : 0);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -795,7 +793,8 @@ public class FrameRenderer extends JComponent {
 		Graphics2D g2 = (Graphics2D) g;
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
+						: RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		if (updateBuffer) {
 			fillBuffer();
@@ -837,7 +836,8 @@ public class FrameRenderer extends JComponent {
 		Graphics2D g2 = (Graphics2D) buffer.getGraphics();
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
+						: RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		paintStaticComponents(g2);
 		if (gameState != null) {
@@ -852,11 +852,13 @@ public class FrameRenderer extends JComponent {
 
 		// hintergrundbild oder farbe
 		if (OPTIONS[BACKGROUND] && scaledBgImage != null) {
-			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
-					* BORDER_SIZE, this);
+			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight()
+					- 2 * BORDER_SIZE, this);
 		} else {
 			g2.setColor(new Color(76, 119, 43));
-			g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2 * BORDER_SIZE);
+			g2
+					.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
+							* BORDER_SIZE);
 		}
 
 		// fortschrittsleite, spielerinfo und seitenleiste
@@ -1010,7 +1012,7 @@ public class FrameRenderer extends JComponent {
 				PROGRESS_BAR_HEIGTH - 16, 10, 10);
 
 		// rahmen
-		g2.setColor(getPlayerColor(currentPlayer));
+		g2.setColor(currentPlayerColor);
 		g2.fillRect(0, 0, getWidth(), BORDER_SIZE);
 		g2.fillRect(0, getHeight() - BORDER_SIZE, getWidth(), BORDER_SIZE);
 		g2.fillRect(0, 0, BORDER_SIZE, getHeight());
@@ -1076,7 +1078,8 @@ public class FrameRenderer extends JComponent {
 							.getHeight(), 8, 8);
 					g2.setColor(data.diff > MAX_SEGMENT_SIZE ? Color.YELLOW : Color.WHITE);
 					String s = Integer.toString(data.diff);
-					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH4.stringWidth(s)) / 2, data.ys[1] - 8);
+					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH4.stringWidth(s)) / 2,
+							data.ys[1] - 8);
 				}
 			}
 		}
@@ -1106,7 +1109,7 @@ public class FrameRenderer extends JComponent {
 
 		// menueueberschrift
 		g2.setFont(h1);
-		g2.setColor(getPlayerColor(currentPlayer));
+		g2.setColor(currentPlayerColor);
 		g2.drawString(msg, (getWidth() - SIDE_BAR_WIDTH - msgW) / 2, selectY + GAP_SIZE + msgH - 5);
 
 		// tuerme zeichnen
@@ -1116,11 +1119,11 @@ public class FrameRenderer extends JComponent {
 			}
 		}
 
-		// button
-		String okay = "Abschicken";
-		int okayW = fmH3.stringWidth(okay);
-
 		if (selectionOkay) {
+
+			// button
+			String okay = "Abschicken";
+			int okayW = fmH3.stringWidth(okay);
 
 			g2.setColor(selectionPressed ? Color.LIGHT_GRAY : Color.GRAY);
 			g2.fillRoundRect(selectButton[0], selectButton[1], selectButton[2], selectButton[3], 15, 15);
@@ -1134,6 +1137,31 @@ public class FrameRenderer extends JComponent {
 			g2.setColor(Color.DARK_GRAY);
 			g2.drawRoundRect(selectButton[0], selectButton[1], selectButton[2], selectButton[3], 15, 15);
 
+		} else {
+
+			String remark;
+			if (selectionSize > Constants.SELECTION_SIZE) {
+				int dif = selectionSize - Constants.SELECTION_SIZE;
+				if (dif == 1) {
+					remark = "Es muss noch 1 Bauelenemt abgewählt werden.";
+				} else {
+					remark = "Es müssen noch " + dif + " Bauelenemte abgewählt werden.";
+				}
+			} else {
+				int dif = Constants.SELECTION_SIZE - selectionSize;
+				if (dif == 1) {
+					remark = "Es muss noch 1 Bauelenemt ausgewählt werden.";
+				} else {
+					remark = "Es müssen noch " + dif + " Bauelenemte ausgewählt werden.";
+				}
+			}
+
+			g2.setFont(h3);
+			int remarkW = fmH3.stringWidth(remark);
+			g2.setColor(currentPlayerColor);
+			g2.drawString(remark, (getWidth() - SIDE_BAR_WIDTH - remarkW) / 2, selectY + selectHeight
+					- GAP_SIZE - 10);
+
 		}
 
 	}
@@ -1146,7 +1174,7 @@ public class FrameRenderer extends JComponent {
 
 	private void paintTower(Graphics2D g2, TowerData tower, boolean cityTower, boolean glow) {
 
-		g2.setColor(glow ? getPlayerColor(currentPlayer) : getBrightPlayerColor(tower.owner, cityTower));
+		g2.setColor(glow ? currentPlayerColor : getBrightPlayerColor(tower.owner, cityTower));
 		g2.fillPolygon(tower.xs, tower.ys, 6);
 
 		boolean drawCrane = cityTower && tower.size > 0 && !gameEnded;
@@ -1169,7 +1197,7 @@ public class FrameRenderer extends JComponent {
 		}
 
 		g2.setStroke(stroke20);
-		g2.setColor(tower.highlited ? getPlayerColor(currentPlayer) : Color.DARK_GRAY);
+		g2.setColor(tower.highlited ? currentPlayerColor: Color.DARK_GRAY);
 		g2.drawPolygon(tower.xs, tower.ys, 6);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[1], tower.ys[1]);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[3], tower.ys[3]);
