@@ -108,9 +108,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 		} catch (InvalideMoveException e) {
 			author.setViolated(true);
-			gameState.endGame(author.getPlayerColor().opponent(), e.reason);
-			logger.error("Received invalide move: " + e.reason);
-			throw new GameLogicException("Received invalid move: " + e.reason);
+			String err = "Ungültiger Zug von '" + author.getDisplayName() + "'.\\n" + e.getMessage() + ".";
+			gameState.endGame(author.getPlayerColor().opponent(), err);
+			logger.error(err);
+			throw new GameLogicException(err);
 		}
 	}
 
