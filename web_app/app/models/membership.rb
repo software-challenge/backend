@@ -44,7 +44,9 @@ class Membership < ActiveRecord::Base
   end
 
   before_destroy do |record|
-    record.person.has_no_roles_for! record.contestant
+    if record.person
+      record.person.has_no_roles_for! record.contestant
+    end
   end
 
   protected
