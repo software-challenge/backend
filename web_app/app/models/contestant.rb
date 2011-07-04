@@ -10,7 +10,7 @@ class Contestant < ActiveRecord::Base
 
   has_many :clients, :dependent => :destroy
 
-  has_many :memberships
+  has_many :memberships, :dependent => :destroy
   has_many :people, :through => :memberships
 
   has_many :survey_tokens, :as => :token_owner
@@ -219,6 +219,11 @@ class Contestant < ActiveRecord::Base
 
   def has_smith?
     !ENV['MR_SMITH'].nil? and !memberships.to_ary.find{|m| m.person.email == ENV['MR_SMITH']}.nil?
+  end
+
+  protected
+  before_destroy do |record|
+    Role.for_authorizable(record).destroy_all
   end
 
 end

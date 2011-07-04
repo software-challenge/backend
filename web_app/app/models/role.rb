@@ -1,6 +1,8 @@
 class Role < ActiveRecord::Base
   acts_as_authorization_role
 
+  named_scope :for_authorizable, lambda { |c| {:conditions => ["authorizable_type = ? and authorizable_id = ?",c.class.to_s,c.id]}} 
+
   def self.translate(name, options = {})
     category = options[:for]
     category = case category

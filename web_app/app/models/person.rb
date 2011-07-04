@@ -284,4 +284,8 @@ class Person < ActiveRecord::Base
     end
   end 
   
+ protected
+    before_destroy do |record|
+      self.has_no_roles!
+    end
 end
