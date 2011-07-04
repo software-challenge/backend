@@ -1334,28 +1334,28 @@ public class FrameRenderer extends JComponent {
 
 	public Color grayer(Color color) {
 
-		double FACTOR = 0.5;
-		double RFACTOR = 1.0 - FACTOR;
+		double FACTOR = 0.3;
+		double ROTCAF = 1.0 - FACTOR;
 
 		int r = color.getRed();
 		if (r > 128) {
 			r = 128 + (int) ((r - 128) * FACTOR);
 		} else {
-			r = r + (int) ((128 - r) * RFACTOR);
+			r = r + (int) ((128 - r) * ROTCAF);
 		}
 
 		int g = color.getGreen();
 		if (g > 128) {
 			g = 128 + (int) ((g - 128) * FACTOR);
 		} else {
-			g = g + (int) ((128 - g) * RFACTOR);
+			g = g + (int) ((128 - g) * ROTCAF);
 		}
 
 		int b = color.getBlue();
 		if (b > 128) {
 			b = 128 + (int) ((b - 128) * FACTOR);
 		} else {
-			b = b + (int) ((128 - b) * RFACTOR);
+			b = b + (int) ((128 - b) * ROTCAF);
 		}
 
 		return new Color(r, g, b, color.getAlpha());
