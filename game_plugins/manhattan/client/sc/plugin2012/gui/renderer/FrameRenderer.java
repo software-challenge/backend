@@ -28,6 +28,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -347,6 +349,7 @@ public class FrameRenderer extends JComponent {
 		boolean highlited;
 		PlayerColor owner = null;
 		int size;
+		int oppSize;
 		int x, y;
 		int slot;
 		int city;
@@ -461,6 +464,15 @@ public class FrameRenderer extends JComponent {
 		highestSegments[1] = gameState.getRedPlayer().getHighestSegment();
 		highestSegments[2] = gameState.getBluePlayer().getHighestCurrentSegment();
 		highestSegments[3] = gameState.getBluePlayer().getHighestSegment();
+
+		Comparator<Card> cardComp = new Comparator<Card>() {
+			public int compare(Card o1, Card o2) {
+				return o1.slot == o2.slot ? 0 : (o1.slot > o2.slot ? 1 : -1);
+			}
+		};
+
+		Collections.sort(gameState.getRedPlayer().getCards(), cardComp);
+		Collections.sort(gameState.getBluePlayer().getCards(), cardComp);
 
 		gameEnded = gameState.gameEnded();
 
@@ -585,6 +597,7 @@ public class FrameRenderer extends JComponent {
 			data.resize(tower.getHeight());
 			data.owner = tower.getOwner();
 			data.diff = Math.abs(tower.getRedParts() - tower.getBlueParts());
+			data.oppSize = data.owner == PlayerColor.RED ? tower.getBlueParts() : tower.getRedParts();
 		}
 
 	}
@@ -1184,6 +1197,23 @@ public class FrameRenderer extends JComponent {
 		g2.setColor(glow ? currentPlayerColor : getBrightPlayerColor(tower.owner, cityTower));
 		g2.fillPolygon(tower.xs, tower.ys, 6);
 
+		int[] js = new int[] { 0, 0, 0, 2, 1, 0 };
+		if (tower.size > 1 && tower.oppSize > 0 && cityTower) {
+			int[] otherXs = new int[6];
+			int[] otherYs = new int[6];
+			int opponentHeigth = tower.oppSize * TOWER_STORIE_HEIGTH;
+			for (int i = 0; i < 6; i++) {
+				otherXs[i] = tower.xs[i];
+				otherYs[i] = tower.ys[i];
+				if (i > 2) {
+					otherYs[i] = tower.ys[js[i]] - opponentHeigth;
+					otherXs[i] = tower.xs[js[i]];
+				}
+			}
+			g2.setColor(getBrightPlayerColor(tower.owner.opponent(), true));
+			g2.fillPolygon(otherXs, otherYs, 6);
+		}
+
 		boolean drawCrane = cityTower && tower.size > 0 && !gameEnded;
 		drawCrane = drawCrane && tower.diff <= getHighestSegment(tower.owner.opponent(), true);
 		int frameDisplacement = tower.diff * TOWER_STORIE_HEIGTH;
@@ -1206,6 +1236,16 @@ public class FrameRenderer extends JComponent {
 		g2.setStroke(stroke20);
 		g2.setColor(tower.highlited ? currentPlayerColor : Color.DARK_GRAY);
 		g2.drawPolygon(tower.xs, tower.ys, 6);
+
+		g2.setStroke(stroke10);
+		int diff = TOWER_STORIE_HEIGTH;
+		for (int i = 1; i < tower.size; i++) {
+			g2.drawLine(tower.xs[0], tower.ys[0] - diff, tower.xs[1], tower.ys[1] - diff);
+			g2.drawLine(tower.xs[1], tower.ys[1] - diff, tower.xs[2], tower.ys[2] - diff);
+			diff += TOWER_STORIE_HEIGTH;
+		}
+
+		g2.setStroke(stroke20);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[1], tower.ys[1]);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[3], tower.ys[3]);
 		g2.drawLine(tower.innerX, tower.innerY, tower.xs[5], tower.ys[5]);
