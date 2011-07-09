@@ -295,60 +295,15 @@ public final class GameState implements Cloneable {
 
 	private void performScoring() {
 
-		Player red = getRedPlayer();
-		Player blue = getBluePlayer();
-		int[] majorities = new int[Constants.CITIES];
-		Tower highestTower = null;
-		boolean ambiguous = true;
-		int redTowers = 0;
-		int blueTowers = 0;
+		int[][] stats = getGameStats();
 
-		// tuerme durchgehen und bei den zug. staedten ink. fuer rot
-		// und dek. fuer blau. tuerme der beiden spieler zaehlen
-		for (Tower tower : towers) {
-			if (tower.getOwner() == PlayerColor.RED) {
-				majorities[tower.city]++;
-				redTowers++;
-			} else if (tower.getOwner() == PlayerColor.BLUE) {
-				majorities[tower.city]--;
-				blueTowers++;
-			}
+		red.addPoints(Constants.POINTS_PER_TOWER * stats[0][0]);
+		red.addPoints(Constants.POINTS_PER_OWEND_CITY * stats[0][1]);
+		red.addPoints(Constants.POINTS_PER_HIGHEST_TOWER * stats[0][2]);
 
-			// pruefen ob turm groesster turm ist
-			// oder bisherigem groessten turm gleicht
-			if (highestTower == null) {
-				highestTower = tower;
-				ambiguous = false;
-			} else {
-				if (tower.getHeight() == highestTower.getHeight()) {
-					ambiguous = true;
-				} else if (tower.getHeight() > highestTower.getHeight()) {
-					if (tower.getOwner() != highestTower.getOwner()) {
-						highestTower = tower;
-						ambiguous = false;
-					}
-				}
-			}
-		}
-
-		// punkte fuer eindeutigen groessten turm
-		if (!ambiguous) {
-			((highestTower.getOwner() == PlayerColor.RED) ? red : blue)
-					.addPoints(Constants.POINTS_PER_HIGHEST_TOWER);
-		}
-
-		// punkte fuer eindeutig zugewiesenen staedte
-		for (int i = 0; i < Constants.CITIES; i++) {
-			if (majorities[i] > 0) {
-				red.addPoints(Constants.POINTS_PER_OWEND_CITY);
-			} else if (majorities[i] < 0) {
-				blue.addPoints(Constants.POINTS_PER_OWEND_CITY);
-			}
-		}
-
-		// punkte fuer tuerme
-		red.addPoints(redTowers * Constants.POINTS_PER_TOWER);
-		blue.addPoints(blueTowers * Constants.POINTS_PER_TOWER);
+		blue.addPoints(Constants.POINTS_PER_TOWER * stats[1][0]);
+		blue.addPoints(Constants.POINTS_PER_OWEND_CITY * stats[1][1]);
+		blue.addPoints(Constants.POINTS_PER_HIGHEST_TOWER * stats[1][2]);
 
 	}
 
