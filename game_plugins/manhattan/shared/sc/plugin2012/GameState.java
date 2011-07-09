@@ -323,8 +323,10 @@ public final class GameState implements Cloneable {
 				if (tower.getHeight() == highestTower.getHeight()) {
 					ambiguous = true;
 				} else if (tower.getHeight() > highestTower.getHeight()) {
-					highestTower = tower;
-					ambiguous = false;
+					if (tower.getOwner() != highestTower.getOwner()) {
+						highestTower = tower;
+						ambiguous = false;
+					}
 				}
 			}
 		}
@@ -556,6 +558,7 @@ public final class GameState implements Cloneable {
 		int[][] stats = new int[2][4];
 
 		int highestHeigth = 0;
+		PlayerColor highestOwner = null;
 		int[] cityTowers = new int[Constants.CITIES];
 
 		int highestTowerPtr = -1;
@@ -571,8 +574,11 @@ public final class GameState implements Cloneable {
 				if (tower.getHeight() > highestHeigth) {
 					highestHeigth = tower.getHeight();
 					highestTowerPtr = ptr;
+					highestOwner = tower.getOwner();
 				} else if (tower.getHeight() == highestHeigth) {
-					highestTowerPtr = -1;
+					if (tower.getOwner() != highestOwner) {
+						highestTowerPtr = -1;
+					}
 				}
 			}
 		}

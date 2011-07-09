@@ -2,6 +2,10 @@ package sc.plugin2012.gui.renderer;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -73,6 +77,21 @@ public class RenderFacade {
 					}
 
 				} catch (Exception e) {
+
+					try {
+						File file = new File("sync.error");
+						if (!file.exists()) {
+							file.createNewFile();
+						}
+						FileWriter fWriter = new FileWriter(file, true);
+						PrintWriter pWriter = new PrintWriter(fWriter);
+						e.printStackTrace(pWriter);
+						pWriter.flush();
+						pWriter.close();
+
+					} catch (IOException ex) {
+
+					}
 					e.printStackTrace();
 				}
 			}

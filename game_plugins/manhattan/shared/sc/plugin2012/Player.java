@@ -96,7 +96,7 @@ public final class Player extends SimplePlayer {
 	 * liefert eine kopie der liste der karten des spielers
 	 */
 	public List<Card> getCards() {
-		return new LinkedList<Card>(cards);
+		return cards;
 	}
 
 	/**
