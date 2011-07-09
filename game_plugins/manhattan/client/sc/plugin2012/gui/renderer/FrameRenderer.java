@@ -26,6 +26,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.util.Collections;
@@ -89,17 +90,19 @@ public class FrameRenderer extends JComponent {
 
 	// schrift
 	private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
-	private static final Font h1 = new Font("Helvetica", Font.BOLD, 27);
-	private static final Font h2 = new Font("Helvetica", Font.BOLD, 23);
-	private static final Font h3 = new Font("Helvetica", Font.BOLD, 14);
-	private static final Font h4 = new Font("Helvetica", Font.PLAIN, 13);
+	private static final Font h1 = new Font("Helvetica", Font.BOLD, 42);
+	private static final Font h2 = new Font("Helvetica", Font.BOLD, 27);
+	private static final Font h3 = new Font("Helvetica", Font.BOLD, 23);
+	private static final Font h4 = new Font("Helvetica", Font.BOLD, 14);
+	private static final Font h5 = new Font("Helvetica", Font.PLAIN, 13);
 
 	private static final JPanel fmPanel = new JPanel();
 	private static final FontMetrics fmH0 = fmPanel.getFontMetrics(h0);
-	private static final FontMetrics fmH1 = fmPanel.getFontMetrics(h1);
+	// private static final FontMetrics fmH1 = fmPanel.getFontMetrics(h1);
 	private static final FontMetrics fmH2 = fmPanel.getFontMetrics(h2);
 	private static final FontMetrics fmH3 = fmPanel.getFontMetrics(h3);
 	private static final FontMetrics fmH4 = fmPanel.getFontMetrics(h4);
+	private static final FontMetrics fmH5 = fmPanel.getFontMetrics(h5);
 
 	private static final Stroke stroke10 = new BasicStroke(1f);
 	private static final Stroke stroke15 = new BasicStroke(1.5f);
@@ -108,11 +111,14 @@ public class FrameRenderer extends JComponent {
 	private static final Stroke stroke40 = new BasicStroke(4f);
 
 	private static final String SELECT_STRING = Constants.SELECTION_SIZE + " Bauelemente auswählen";
-	private static final int MIN_DIALOG_SIZE = fmH1.stringWidth(SELECT_STRING) + 2 * GAP_SIZE;
+	private static final int MIN_DIALOG_SIZE = fmH2.stringWidth(SELECT_STRING) + 4 * GAP_SIZE;
 	private static final int STATUS_HEIGTH = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP
-			+ Math.max(CARD_HEGTH, MAX_SEGMENT_HEIGTH) + fmH2.getHeight();
+			+ Math.max(CARD_HEGTH, MAX_SEGMENT_HEIGTH) + fmH3.getHeight();
 
 	private static final Object LOCK = new Object();
+
+	private static final int[] js = new int[] { 0, 0, 0, 2, 1, 0 };
+	private static final String[] CITY_NAMES = new String[] { "Manhattan", "Frankfurt", "Hong Kong", "Dubai" };
 
 	// current (game) state
 	private PlayerColor currentPlayer;
@@ -231,32 +237,33 @@ public class FrameRenderer extends JComponent {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			int x = e.getX();
-			int y = e.getY();
 
-			for (TowerData tower : sensetiveSegments) {
-				if (inner(x, y, tower.xs, tower.ys)) {
-					selectedSegment = tower;
-					ox = tower.x;
-					oy = tower.y;
-					dx = x - ox;
-					dy = y - oy;
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				int x = e.getX();
+				int y = e.getY();
 
-					for (BuildMove move : gameState.getPossibleMoves()) {
-						if (move.size == tower.size) {
-							TowerData data = cityTowers[move.city][move.slot];
-							sensetiveTowers.add(data);
-							data.highlited = true;
+				for (TowerData tower : sensetiveSegments) {
+					if (inner(x, y, tower.xs, tower.ys)) {
+						selectedSegment = tower;
+						ox = tower.x;
+						oy = tower.y;
+						dx = x - ox;
+						dy = y - oy;
+
+						for (BuildMove move : gameState.getPossibleMoves()) {
+							if (move.size == tower.size) {
+								TowerData data = cityTowers[move.city][move.slot];
+								sensetiveTowers.add(data);
+								data.highlited = true;
+							}
 						}
+
+						updateBuffer = true;
+						repaint();
+						break;
 					}
-
-					updateBuffer = true;
-					repaint();
-					break;
 				}
-
 			}
-
 		}
 
 		@Override
@@ -285,40 +292,36 @@ public class FrameRenderer extends JComponent {
 				if (selectedTower != oldSelectedTower) {
 					updateBuffer = true;
 				}
-
 				repaint();
 			}
-
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
 
-			if (selectedSegment != null) {
-				sensetiveTowers.clear();
-				for (int i = 0; i < CITIES; i++) {
-					for (int j = 0; j < SLOTS; j++) {
-						cityTowers[i][j].highlited = false;
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				if (selectedSegment != null) {
+					sensetiveTowers.clear();
+					for (int i = 0; i < CITIES; i++) {
+						for (int j = 0; j < SLOTS; j++) {
+							cityTowers[i][j].highlited = false;
+						}
 					}
+					if (selectedTower != null) {
+						TowerData data = selectedTower;
+						droppedSegment = selectedSegment;
+						selectedTower = null;
+						selectedSegment = null;
+						sendMove(new BuildMove(data.city, data.slot, droppedSegment.size));
+					} else {
+						selectedSegment.moveTo(ox, oy);
+						selectedSegment = null;
+					}
+					updateBuffer = true;
+					repaint();
 				}
-				if (selectedTower != null) {
-
-					TowerData data = selectedTower;
-					droppedSegment = selectedSegment;
-					selectedTower = null;
-					selectedSegment = null;
-					sendMove(new BuildMove(data.city, data.slot, droppedSegment.size));
-
-				} else {
-					selectedSegment.moveTo(ox, oy);
-					selectedSegment = null;
-				}
-				updateBuffer = true;
-				repaint();
 			}
-
 		}
-
 	};
 
 	private ComponentListener componentListener = new ComponentAdapter() {
@@ -330,6 +333,7 @@ public class FrameRenderer extends JComponent {
 		}
 
 	};
+	private int fontX;
 
 	private class Point {
 		int x, y;
@@ -349,7 +353,6 @@ public class FrameRenderer extends JComponent {
 		boolean highlited;
 		PlayerColor owner = null;
 		int size;
-		int oppSize;
 		int x, y;
 		int slot;
 		int city;
@@ -597,7 +600,6 @@ public class FrameRenderer extends JComponent {
 			data.resize(tower.getHeight());
 			data.owner = tower.getOwner();
 			data.diff = Math.abs(tower.getRedParts() - tower.getBlueParts());
-			data.oppSize = data.owner == PlayerColor.RED ? tower.getBlueParts() : tower.getRedParts();
 		}
 
 	}
@@ -625,6 +627,8 @@ public class FrameRenderer extends JComponent {
 
 		int width = getWidth() - 2 * BORDER_SIZE;
 		int heigth = getHeight() - 2 * BORDER_SIZE - PROGRESS_BAR_HEIGTH;
+
+		fontX = getWidth() - SIDE_BAR_WIDTH;
 
 		if (width > 0 && heigth > 0) {
 			MediaTracker tracker = new MediaTracker(this);
@@ -695,7 +699,7 @@ public class FrameRenderer extends JComponent {
 		synchronized (selectTowers) {
 
 			// dialoggroesse bestimmen
-			selectHeight = 2 * GAP_SIZE + 2 * fmH1.getHeight();
+			selectHeight = 2 * GAP_SIZE + 2 * fmH2.getHeight();
 			selectHeight += differentSegments * (GAP_TOWER_TOP + GAP_TOWER_BOTTOM + 2 * GAP_SIZE);
 			selectHeight += differentSegmentsAccN * TOWER_STORIE_HEIGTH;
 			selectWidth = Math.max(MIN_DIALOG_SIZE, mostSegments * (DIST_TOWER_SELECT + TOWER_TOTAL_WIDTH));
@@ -705,7 +709,7 @@ public class FrameRenderer extends JComponent {
 
 			// basispunkte bestimmen
 			int x = 0;
-			int y = selectY + fmH1.getHeight();
+			int y = selectY + fmH2.getHeight();
 			List<Segment> segments = gameState.getCurrentPlayer().getSegments();
 			int listOffset = 0;
 			for (Segment segment : segments) {
@@ -722,7 +726,7 @@ public class FrameRenderer extends JComponent {
 			}
 
 			selectButton = new int[] { (getWidth() - SIDE_BAR_WIDTH - 200) / 2,
-					selectY + selectHeight - GAP_SIZE - fmH1.getHeight(), 200, fmH1.getHeight() };
+					selectY + selectHeight - GAP_SIZE - fmH2.getHeight(), 200, fmH2.getHeight() };
 
 		}
 
@@ -878,7 +882,7 @@ public class FrameRenderer extends JComponent {
 		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
 
 		// fortschrittsleite, spielerinfo hintergrund
-		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + CARD_HEGTH + fmH2.getHeight();
+		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + CARD_HEGTH + fmH3.getHeight();
 		g2.fillRect(BORDER_SIZE, getHeight() - BORDER_SIZE - heigth, getWidth() - 2 * BORDER_SIZE, heigth);
 
 		// seitenleiste, hintergrund
@@ -893,17 +897,13 @@ public class FrameRenderer extends JComponent {
 			}
 		}
 
-		g2.setFont(h1);
-		g2.setColor(Color.DARK_GRAY);
-		g2.drawString("Manhattan", getWidth() - 2 * BORDER_SIZE - fmH1.stringWidth("Manhattan"),
-				2 * BORDER_SIZE + 30);
-
-		int fontY = paintPlayerInfo(g2, 2 * BORDER_SIZE + 40, PlayerColor.RED, hints);
+		int fontY = paintPlayerInfo(g2, 2 * BORDER_SIZE + 10, PlayerColor.RED, hints);
+		fontY += hints ? 40 : 50;
 		fontY = 25 + paintPlayerInfo(g2, fontY, PlayerColor.BLUE, hints);
 
 		if (hints) {
 			g2.setColor(Color.BLACK);
-			g2.setFont(h4);
+			g2.setFont(h5);
 			int fontX = getWidth() - SIDE_BAR_WIDTH;
 
 			for (DebugHint hint : gameState.getLastMove().getHints()) {
@@ -915,35 +915,47 @@ public class FrameRenderer extends JComponent {
 
 	private int paintPlayerInfo(Graphics2D g2, int fontY, PlayerColor player, boolean small) {
 
-		fontY += small ? 15 : 25;
 		int[] stats = gameState.getPlayerStats(player);
+		int p = Constants.POINTS_PER_TOWER * stats[0] + Constants.POINTS_PER_OWEND_CITY * stats[1]
+				+ Constants.POINTS_PER_HIGHEST_TOWER * stats[2];
+
 		g2.setColor(getTransparentColor(getPlayerColor(player), 174));
 		String s = Integer.toString(stats[3]);
 		if (small) {
 			fontY += 20;
-			g2.setFont(h2);
-			g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH2.stringWidth(s), fontY);
+			g2.setFont(h3);
+			g2.drawString(s + " + " + p, fontX, fontY);
 		} else {
 			fontY += 60;
 			g2.setFont(h0);
-			g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH0.stringWidth(s), fontY);
+			g2.drawString(s, fontX, fontY);
+			if (!(gameEnded && gameState.getRound() == Constants.ROUND_LIMIT)) {
+				g2.setFont(h1);
+				g2.drawString("+" + p, fontX + fmH0.stringWidth(s), fontY);
+			}
 		}
 
 		g2.setColor(Color.BLACK);
-		g2.setFont(h4);
 
 		fontY += 20;
+		g2.setFont(h5);
+		p = Constants.POINTS_PER_TOWER * stats[0];
 		s = stats[0] == 1 ? "1 Turm im Spiel" : stats[0] + " Türme im Spiel";
-		g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH4.stringWidth(s), fontY);
+		s += " (" + p + " Punkte)";
+		g2.drawString(s, fontX, fontY);
 
 		fontY += 20;
+		p = Constants.POINTS_PER_OWEND_CITY * stats[1];
 		s = stats[1] == 1 ? "1 Stadt im Besitz" : stats[1] + " Städte im Besitz";
-		g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH4.stringWidth(s), fontY);
+		s += " (" + p + " Punkte)";
+		g2.drawString(s, fontX, fontY);
 
 		fontY += 20;
 		if (stats[2] == 1) {
+			p = Constants.POINTS_PER_HIGHEST_TOWER * stats[2];
 			s = "Höchsten Turm im Besitz";
-			g2.drawString(s, getWidth() - 2 * BORDER_SIZE - fmH4.stringWidth(s), fontY);
+			s += " (" + p + " Punkte)";
+			g2.drawString(s, fontX, fontY);
 		}
 
 		return fontY;
@@ -962,8 +974,6 @@ public class FrameRenderer extends JComponent {
 		String info = gameState.winningReason();
 		int delim = info.indexOf("\\n");
 
-		System.err.println(info + " " + delim);
-
 		String info1 = info;
 		String info2 = "";
 		if (delim >= 0) {
@@ -971,26 +981,26 @@ public class FrameRenderer extends JComponent {
 			info2 = info.substring(delim + 2);
 		}
 
-		int msgW = fmH1.stringWidth(msg);
-		int msgH = fmH1.getHeight();
-		int info1W = fmH3.stringWidth(info1);
-		int info2W = fmH3.stringWidth(info2);
+		int msgW = fmH2.stringWidth(msg);
+		int msgH = fmH2.getHeight();
+		int info1W = fmH4.stringWidth(info1);
+		int info2W = fmH4.stringWidth(info2);
 		int infoW = Math.max(info1W, info2W);
-		int infoH = 2 * fmH3.getHeight() + 3;
+		int infoH = 2 * fmH4.getHeight() + 3;
 		int w = Math.max(msgW, infoW);
 		int h = msgH + infoH;
 		int xCenter = BORDER_SIZE + (getWidth() - SIDE_BAR_WIDTH) / 2;
 
 		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
-		g2.fillRoundRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5, w + 40, h + 15, 20, 20);
+		g2.fillRoundRect(xCenter - w / 2 - 20, getHeight() / 2 - msgH - 5 - 100, w + 40, h + 15, 20, 20);
 
-		h = getHeight() / 2 - 5;
-		g2.setFont(h1);
+		h = getHeight() / 2 - 5 - 100;
+		g2.setFont(h2);
 		g2.setColor(getPlayerColor(winner, true));
 		g2.drawString(msg, xCenter - msgW / 2, h);
 
 		h += msgH - 10;
-		g2.setFont(h3);
+		g2.setFont(h4);
 		g2.setColor(Color.BLACK);
 		g2.drawString(info1, xCenter - info1W / 2, h);
 
@@ -1003,10 +1013,10 @@ public class FrameRenderer extends JComponent {
 
 		// fortschrittsbalken
 		g2.setColor(Color.BLACK);
-		g2.setFont(h3);
-		int left = fmH3.stringWidth("Spielfortschritt:") + BORDER_SIZE + 30;
+		g2.setFont(h4);
+		int left = fmH4.stringWidth("Spielfortschritt:") + BORDER_SIZE + 30;
 		int right = getWidth() - left - 30;
-		int fontY = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH / 2 + fmH3.getHeight() / 2 - 4;
+		int fontY = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH / 2 + fmH4.getHeight() / 2 - 4;
 		g2.drawString("Spielfortschritt:", BORDER_SIZE + 10, fontY);
 
 		int round = gameState.getRound() + 1;
@@ -1018,18 +1028,23 @@ public class FrameRenderer extends JComponent {
 		g2.drawString("Runde " + roundString + " von " + Constants.ROUND_LIMIT, right + 30, fontY);
 
 		int progress = (gameState.getTurn() * (right - left)) / (2 * Constants.ROUND_LIMIT);
+		int progressTop = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH + 8;
 
 		g2.setColor(Color.GRAY);
-		g2.fillRoundRect(left, getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH + 8, right - left,
-				PROGRESS_BAR_HEIGTH - 16, 10, 10);
+		g2.fillRoundRect(left, progressTop, right - left, PROGRESS_BAR_HEIGTH - 16, 10, 10);
 
 		g2.setColor(Color.GREEN);
-		g2.fillRoundRect(left, getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH + 8, progress,
-				PROGRESS_BAR_HEIGTH - 16, 10, 10);
+		g2.fillRoundRect(left, progressTop, progress, PROGRESS_BAR_HEIGTH - 16, 10, 10);
 
 		g2.setColor(Color.DARK_GRAY);
-		g2.drawRoundRect(left, getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH + 8, right - left,
-				PROGRESS_BAR_HEIGTH - 16, 10, 10);
+		g2.drawRoundRect(left, progressTop, right - left, PROGRESS_BAR_HEIGTH - 16, 10, 10);
+
+		int sectionWidth = (right - left) / 4;
+		g2.setStroke(stroke15);
+		progressTop += 2;
+		g2.drawLine(left + sectionWidth, progressTop, left + sectionWidth, progressTop + 16);
+		g2.drawLine(left + 2 * sectionWidth, progressTop, left + 2 * sectionWidth, progressTop + 16);
+		g2.drawLine(left + 3 * sectionWidth, progressTop, left + 3 * sectionWidth, progressTop + 16);
 
 		// rahmen
 		g2.setColor(currentPlayerColor);
@@ -1056,7 +1071,7 @@ public class FrameRenderer extends JComponent {
 			}
 		}
 
-		g2.setFont(h2);
+		g2.setFont(h3);
 		y -= (STUFF_GAP + 5);
 		g2.setColor(getPlayerColor(PlayerColor.RED));
 		g2.drawString(player.getDisplayName(), 2 * BORDER_SIZE, y);
@@ -1079,14 +1094,14 @@ public class FrameRenderer extends JComponent {
 			}
 		}
 
-		g2.setFont(h2);
+		g2.setFont(h3);
 		y -= (STUFF_GAP + 5);
 		g2.setColor(getPlayerColor(PlayerColor.BLUE));
-		int nameWidth = fmH2.stringWidth(player.getDisplayName());
+		int nameWidth = fmH3.stringWidth(player.getDisplayName());
 		g2.drawString(player.getDisplayName(), getWidth() - 2 * BORDER_SIZE - nameWidth, y);
 
 		// staedte
-		g2.setFont(h4);
+		g2.setFont(h5);
 		for (int i = CITIES - 1; i >= 0; i--) {
 			for (int j = SLOTS - 1; j >= 0; j--) {
 				TowerData data = cityTowers[i][j];
@@ -1094,14 +1109,39 @@ public class FrameRenderer extends JComponent {
 
 				if (data.size > 0) {
 					g2.setColor(Color.DARK_GRAY.darker());
-					g2.fillRoundRect(data.xs[1], data.ys[1] - fmH4.getHeight() - 6, TOWER_RIGHT_WIDTH, fmH4
+					g2.fillRoundRect(data.xs[1], data.ys[1] - fmH5.getHeight() - 6, TOWER_RIGHT_WIDTH, fmH5
 							.getHeight(), 8, 8);
 					g2.setColor(data.diff > MAX_SEGMENT_SIZE ? Color.YELLOW : Color.WHITE);
 					String s = Integer.toString(data.diff);
-					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH4.stringWidth(s)) / 2,
+					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH5.stringWidth(s)) / 2,
 							data.ys[1] - 8);
 				}
 			}
+		}
+
+		for (int i = 0; i < Constants.CITIES; i++) {
+			// stadtnamen
+			g2.setFont(h2);
+			g2.setColor(Color.GREEN);
+
+			TowerData base = cityTowers[i][0];
+			int ownership = 0;
+			for (int j = 0; j < Constants.SLOTS; j++) {
+				if (cityTowers[i][j].owner == PlayerColor.RED) {
+					ownership++;
+				} else if (cityTowers[i][j].owner == PlayerColor.BLUE) {
+					ownership--;
+				}
+			}
+			PlayerColor owner = ownership > 0 ? PlayerColor.RED : (ownership < 0 ? PlayerColor.BLUE : null);
+			g2.setColor(getPlayerColor(owner, true));
+
+			g2.translate(base.xs[2] + 20, base.ys[1] + 10);
+			g2.rotate(-0.785);
+			g2.shear(0.42, 0);
+
+			g2.drawString(CITY_NAMES[i], 0, 0);
+			g2.setTransform(new AffineTransform());
 		}
 
 		// fortschirttsbalken, icon
@@ -1124,11 +1164,11 @@ public class FrameRenderer extends JComponent {
 		g2.fillRoundRect(selectX, selectY, selectWidth, selectHeight, 25, 25);
 
 		String msg = SELECT_STRING;
-		int msgW = fmH1.stringWidth(msg);
-		int msgH = fmH1.getHeight();
+		int msgW = fmH2.stringWidth(msg);
+		int msgH = fmH2.getHeight();
 
 		// menueueberschrift
-		g2.setFont(h1);
+		g2.setFont(h2);
 		g2.setColor(currentPlayerColor);
 		g2.drawString(msg, (getWidth() - SIDE_BAR_WIDTH - msgW) / 2, selectY + GAP_SIZE + msgH - 5);
 
@@ -1143,17 +1183,17 @@ public class FrameRenderer extends JComponent {
 
 			// button
 			String okay = "Abschicken";
-			int okayW = fmH3.stringWidth(okay);
+			int okayW = fmH4.stringWidth(okay);
 
-			g2.setColor(selectionPressed ? Color.LIGHT_GRAY : Color.GRAY);
+			g2.setColor(selectionPressed ? new Color(50, 130, 50) : new Color(40, 140, 40));
 			g2.fillRoundRect(selectButton[0], selectButton[1], selectButton[2], selectButton[3], 15, 15);
 
-			g2.setFont(h3);
+			g2.setFont(h4);
 			g2.setColor(Color.DARK_GRAY);
 			g2.drawString(okay, (getWidth() - SIDE_BAR_WIDTH - okayW) / 2, selectY + selectHeight - GAP_SIZE
 					- 10);
 
-			g2.setStroke(stroke10);
+			g2.setStroke(stroke15);
 			g2.setColor(Color.DARK_GRAY);
 			g2.drawRoundRect(selectButton[0], selectButton[1], selectButton[2], selectButton[3], 15, 15);
 
@@ -1176,8 +1216,8 @@ public class FrameRenderer extends JComponent {
 				}
 			}
 
-			g2.setFont(h3);
-			int remarkW = fmH3.stringWidth(remark);
+			g2.setFont(h4);
+			int remarkW = fmH4.stringWidth(remark);
 			g2.setColor(currentPlayerColor);
 			g2.drawString(remark, (getWidth() - SIDE_BAR_WIDTH - remarkW) / 2, selectY + selectHeight
 					- GAP_SIZE - 10);
@@ -1193,26 +1233,6 @@ public class FrameRenderer extends JComponent {
 	}
 
 	private void paintTower(Graphics2D g2, TowerData tower, boolean cityTower, boolean glow) {
-
-		g2.setColor(glow ? currentPlayerColor : getBrightPlayerColor(tower.owner, cityTower));
-		g2.fillPolygon(tower.xs, tower.ys, 6);
-
-		int[] js = new int[] { 0, 0, 0, 2, 1, 0 };
-		if (tower.size > 1 && tower.oppSize > 0 && cityTower) {
-			int[] otherXs = new int[6];
-			int[] otherYs = new int[6];
-			int opponentHeigth = tower.oppSize * TOWER_STORIE_HEIGTH;
-			for (int i = 0; i < 6; i++) {
-				otherXs[i] = tower.xs[i];
-				otherYs[i] = tower.ys[i];
-				if (i > 2) {
-					otherYs[i] = tower.ys[js[i]] - opponentHeigth;
-					otherXs[i] = tower.xs[js[i]];
-				}
-			}
-			g2.setColor(getBrightPlayerColor(tower.owner.opponent(), true));
-			g2.fillPolygon(otherXs, otherYs, 6);
-		}
 
 		boolean drawCrane = cityTower && tower.size > 0 && !gameEnded;
 		drawCrane = drawCrane && tower.diff <= getHighestSegment(tower.owner.opponent(), true);
@@ -1231,6 +1251,28 @@ public class FrameRenderer extends JComponent {
 			g2.drawLine(craneJibLeftX, craneJibLeftY, craneJibRightX, craneJibRightY);
 			g2.drawLine(craneX, craneY, craneX, craneY - frameDisplacement - 40);
 
+		}
+
+		g2.setColor(glow ? currentPlayerColor : getBrightPlayerColor(tower.owner, cityTower));
+		g2.fillPolygon(tower.xs, tower.ys, 6);
+
+		if (!glow) {
+			int oppSize = (tower.size - tower.diff) / 2;
+			if (tower.size > 1 && oppSize > 0 && cityTower) {
+				int[] otherXs = new int[6];
+				int[] otherYs = new int[6];
+				int opponentHeigth = oppSize * TOWER_STORIE_HEIGTH;
+				for (int i = 0; i < 6; i++) {
+					otherXs[i] = tower.xs[i];
+					otherYs[i] = tower.ys[i];
+					if (i > 2) {
+						otherYs[i] = tower.ys[js[i]] - opponentHeigth;
+						otherXs[i] = tower.xs[js[i]];
+					}
+				}
+				g2.setColor(getBrightPlayerColor(tower.owner.opponent(), true));
+				g2.fillPolygon(otherXs, otherYs, 6);
+			}
 		}
 
 		g2.setStroke(stroke20);
@@ -1287,11 +1329,11 @@ public class FrameRenderer extends JComponent {
 			g2.drawRect(x + 4 + i * 6, y + CARD_HEGTH - 12 - i * 12, 8, 8);
 		}
 
-		g2.setFont(h3);
+		g2.setFont(h4);
 		String s = Integer.toString(slot + 1);
-		int sW = fmH3.stringWidth(s);
+		int sW = fmH4.stringWidth(s);
 		g2.drawString(s, x + CARD_WIDTH - 4 - sW, y + CARD_HEGTH - 4);
-		g2.drawString(s, x + 4, y + fmH3.getHeight() - 2);
+		g2.drawString(s, x + 4, y + fmH4.getHeight() - 2);
 
 	}
 
