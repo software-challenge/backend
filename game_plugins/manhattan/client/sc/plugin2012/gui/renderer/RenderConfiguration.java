@@ -15,22 +15,14 @@ public class RenderConfiguration {
 	public static final int ANTIALIASING = 0;
 	public static final int TRANSPARANCY = 1;
 	public static final int BACKGROUND = 2;
-	public static final int CURVED_SHAPES = 3;
-	public static final int PROGRESS_BAR = 4;
-	public static final int SHEEP_MOVEMENT = 5;
-	public static final int BENCHMARK = 6;
-	public static final int NODE_INDICES = 7;
-	public static final int SHEEP_INDICES = 8;
-	public static final int DEBUG_VIEW = 9;
+	public static final int MOVEMENT = 3;
+	public static final int CRANES = 4;
+	public static final int DEBUG_VIEW = 5;
 
-	public static final String[] OPTION_NAMES = new String[] {
-			"Kantenglättung", "Transparenz", "Hintergrundbild",
-			"Rahmen & Rundungen", "Fortschrittsanzeige", "Bewegte Schafe",
-			"Benchmark", "Feldindizes zeigen", "Schafindizes zeigen",
-			"Debugansicht" };
+	public static final String[] OPTION_NAMES = new String[] { "Kantenglättung", "Transparenz",
+			"Hintergrundbild", "Animationen", "Baukräne", "Debugansicht" };
 
-	private static final boolean[] DEFAULTS = new boolean[] { true, true, true,
-			true, true, true, false, false, false, false };
+	private static final boolean[] DEFAULTS = new boolean[] { true, true, true, true, false, false };
 
 	public static final boolean[] OPTIONS = DEFAULTS.clone();
 
@@ -66,8 +58,7 @@ public class RenderConfiguration {
 		try {
 			fileStream = new FileInputStream("manhattan_gui.conf");
 			ObjectInputStream objectStream = new ObjectInputStream(fileStream);
-			HashMap<String, Boolean> map = (HashMap<String, Boolean>) objectStream
-					.readObject();
+			HashMap<String, Boolean> map = (HashMap<String, Boolean>) objectStream.readObject();
 
 			for (int i = 0; i < OPTIONS.length; i++) {
 				Boolean option = map.get(OPTION_NAMES[i]);
