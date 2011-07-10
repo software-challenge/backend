@@ -3,12 +3,20 @@
  */
 package sc.plugin2012.gui.renderer;
 
-import static sc.plugin2012.gui.renderer.RenderConfiguration.BACKGROUND;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.ANTIALIASING;
+import static sc.plugin2012.gui.renderer.RenderConfiguration.BACKGROUND;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.OPTIONS;
 import static sc.plugin2012.gui.renderer.RenderConfiguration.TRANSPARANCY;
 
-import static sc.plugin2012.util.Constants.*;
+import static sc.plugin2012.gui.renderer.RenderConfiguration.CRANES;
+import static sc.plugin2012.gui.renderer.RenderConfiguration.MOVEMENT;
+import static sc.plugin2012.gui.renderer.RenderConfiguration.DEBUG_VIEW;
+
+import static sc.plugin2012.util.Constants.CARDS_PER_PLAYER;
+import static sc.plugin2012.util.Constants.CITIES;
+import static sc.plugin2012.util.Constants.MAX_SEGMENT_SIZE;
+import static sc.plugin2012.util.Constants.SELECTION_SIZE;
+import static sc.plugin2012.util.Constants.SLOTS;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -24,6 +32,9 @@ import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -38,7 +49,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import sc.plugin2012.gui.renderer.RenderConfiguration;
 import sc.plugin2012.BuildMove;
 import sc.plugin2012.Card;
 import sc.plugin2012.DebugHint;
@@ -168,6 +178,7 @@ public class FrameRenderer extends JComponent {
 	private TowerData droppedSegment;
 	private int turnToAnswer = -1;
 	private boolean gameEnded;
+	private int fontX;
 
 	private final MouseAdapter selectMouseAdapter = new MouseAdapter() {
 
@@ -176,6 +187,7 @@ public class FrameRenderer extends JComponent {
 
 			int x = e.getX();
 			int y = e.getY();
+			requestFocusInWindow();
 
 			if (selectionOkay) {
 
@@ -238,6 +250,7 @@ public class FrameRenderer extends JComponent {
 		@Override
 		public void mousePressed(MouseEvent e) {
 
+			requestFocusInWindow();
 			if (e.getButton() == MouseEvent.BUTTON1) {
 				int x = e.getX();
 				int y = e.getY();
@@ -333,7 +346,23 @@ public class FrameRenderer extends JComponent {
 		}
 
 	};
-	private int fontX;
+
+	private KeyListener keyListener = new KeyAdapter() {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+
+			System.out.println("--------------1");
+			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+				System.out.println("--------------2");
+
+				new RenderConfigurationDialog(FrameRenderer.this);
+				updateBuffer = true;
+				repaint();
+
+			}
+		}
+	};
 
 	private class Point {
 		int x, y;
@@ -429,6 +458,7 @@ public class FrameRenderer extends JComponent {
 
 		setDoubleBuffered(true);
 		addComponentListener(componentListener);
+		addKeyListener(keyListener);
 		setFocusable(true);
 		requestFocusInWindow();
 
@@ -534,41 +564,44 @@ public class FrameRenderer extends JComponent {
 		final Point p = new Point(selectedSegment.x, selectedSegment.y);
 		final Point q = new Point(targetTower.innerX - TOWER_LEFT_WIDTH, targetTower.innerY);
 
-		double pixelPerFrame = ((double) getWidth()) / (1.5 * FPS);
-		double dist = Math.sqrt(Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2));
+		if (OPTIONS[MOVEMENT]) {
 
-		final int frames = (int) Math.ceil(dist / pixelPerFrame);
-		final Point o = new Point(p.x, p.y);
-		final Point dP = new Point(q.x - p.x, q.y - p.y);
+			double pixelPerFrame = ((double) getWidth()) / (1.5 * FPS);
+			double dist = Math.sqrt(Math.pow(p.x - q.x, 2) + Math.pow(p.y - q.y, 2));
 
-		long start = System.currentTimeMillis();
-		int h = selectedSegment.size * TOWER_STORIE_HEIGTH + TOWER_LEFT_HEIGTH + TOWER_RIGHT_HEIGTH + 10;
-		for (int frame = 0; frame < frames; frame++) {
+			final int frames = (int) Math.ceil(dist / pixelPerFrame);
+			final Point o = new Point(p.x, p.y);
+			final Point dP = new Point(q.x - p.x, q.y - p.y);
 
-			int oldx = selectedSegment.xs[0] - 5;
-			int oldy = selectedSegment.ys[4] - 5;
+			long start = System.currentTimeMillis();
+			int h = selectedSegment.size * TOWER_STORIE_HEIGTH + TOWER_LEFT_HEIGTH + TOWER_RIGHT_HEIGTH + 10;
+			for (int frame = 0; frame < frames; frame++) {
 
-			p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
-			p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
-			selectedSegment.moveTo(p.x, p.y);
+				int oldx = selectedSegment.xs[0] - 5;
+				int oldy = selectedSegment.ys[4] - 5;
 
-			// invalidate();
-			// getParent().repaint();
+				p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
+				p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
+				selectedSegment.moveTo(p.x, p.y);
 
-			repaint(oldx, oldy, TOWER_TOTAL_WIDTH + 10, h);
-			repaint(selectedSegment.xs[0] - 5, selectedSegment.ys[4] - 5, TOWER_TOTAL_WIDTH + 10, h);
+				// invalidate();
+				// getParent().repaint();
 
-			synchronized (LOCK) {
-				LOCK.notify();
+				repaint(oldx, oldy, TOWER_TOTAL_WIDTH + 10, h);
+				repaint(selectedSegment.xs[0] - 5, selectedSegment.ys[4] - 5, TOWER_TOTAL_WIDTH + 10, h);
+
+				synchronized (LOCK) {
+					LOCK.notify();
+				}
+
+				try {
+					long duration = start + (frame + 1) * (1000 / FPS) - System.currentTimeMillis();
+					Thread.sleep(duration > 0 ? duration : 0);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
 			}
-
-			try {
-				long duration = start + (frame + 1) * (1000 / FPS) - System.currentTimeMillis();
-				Thread.sleep(duration > 0 ? duration : 0);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-
 		}
 
 		/* zum schluss richtig positionieren */
@@ -831,13 +864,6 @@ public class FrameRenderer extends JComponent {
 			paintEndMessage(g2);
 		}
 
-		// TODO
-		// if (config) {
-		// drawConfigMessage(g2);
-		// } else if (gameEnded) {
-		// drawEndMessage(g2);
-		// }
-
 		// bmFrames++;
 		// // repainted = true;
 		synchronized (LOCK) {
@@ -872,7 +898,7 @@ public class FrameRenderer extends JComponent {
 			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight()
 					- 2 * BORDER_SIZE, this);
 		} else {
-			g2.setColor(new Color(76, 119, 43));
+			g2.setColor(new Color(186, 217, 246));
 			g2
 					.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
 							* BORDER_SIZE);
@@ -890,18 +916,12 @@ public class FrameRenderer extends JComponent {
 				* BORDER_SIZE - heigth);
 
 		// seitenleiste, info
-		boolean hints = false;
-		if (gameState.getLastMove() != null) {
-			if (gameState.getLastMove().getHints() != null) {
-				hints = !gameState.getLastMove().getHints().isEmpty();
-			}
-		}
-
+		boolean hints = OPTIONS[DEBUG_VIEW];
 		int fontY = paintPlayerInfo(g2, 2 * BORDER_SIZE + 10, PlayerColor.RED, hints);
-		fontY += hints ? 40 : 50;
+		fontY += hints ? 10 : 30;
 		fontY = 25 + paintPlayerInfo(g2, fontY, PlayerColor.BLUE, hints);
 
-		if (hints) {
+		if (hints && gameState.getLastMove() != null) {
 			g2.setColor(Color.BLACK);
 			g2.setFont(h5);
 			int fontX = getWidth() - SIDE_BAR_WIDTH;
@@ -1234,7 +1254,7 @@ public class FrameRenderer extends JComponent {
 
 	private void paintTower(Graphics2D g2, TowerData tower, boolean cityTower, boolean glow) {
 
-		boolean drawCrane = cityTower && tower.size > 0 && !gameEnded;
+		boolean drawCrane = OPTIONS[CRANES] && cityTower && tower.size > 0 && !gameEnded;
 		drawCrane = drawCrane && tower.diff <= getHighestSegment(tower.owner.opponent(), true);
 		int frameDisplacement = tower.diff * TOWER_STORIE_HEIGTH;
 		if (drawCrane) {
@@ -1250,7 +1270,6 @@ public class FrameRenderer extends JComponent {
 			g2.setStroke(stroke40);
 			g2.drawLine(craneJibLeftX, craneJibLeftY, craneJibRightX, craneJibRightY);
 			g2.drawLine(craneX, craneY, craneX, craneY - frameDisplacement - 40);
-
 		}
 
 		g2.setColor(glow ? currentPlayerColor : getBrightPlayerColor(tower.owner, cityTower));
