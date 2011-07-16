@@ -102,6 +102,15 @@ public class Game extends RoundBasedGameInstance<Player> {
 					winnerName = "Sieg nach Punkten.";
 				}
 				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
+			} else {
+				if (gameState.getCurrentMoveType() == MoveType.BUILD
+						&& gameState.getPossibleMoves().size() == 0) {
+					PlayerColor looser = gameState.getCurrentPlayerColor();
+					gameState.endGame(looser.opponent(), "Das Spiel ist vorzeitig zu Ende.\\n"
+							+ (gameState.getPlayerNames()[looser == PlayerColor.RED ? 1 : 0])
+							+ " ist Zugunfähig.");
+
+				}
 			}
 
 			next(gameState.getCurrentPlayer());

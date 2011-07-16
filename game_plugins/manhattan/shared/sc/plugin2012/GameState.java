@@ -261,35 +261,52 @@ public final class GameState implements Cloneable {
 		turn++;
 		this.lastMove = lastMove;
 
-		if (currentPlayer != startPlayer) {
-			if (currentMoveType == MoveType.SELECT) {
-				setCurrentMoveType(MoveType.BUILD);
+		if (currentMoveType == MoveType.SELECT) {
+			if (currentPlayer == startPlayer) {
 				switchCurrentPlayer();
-			} else if (getCurrentPlayer().getUsableSegmentCount() == 0) {
+			} else {
+				setCurrentMoveType(MoveType.BUILD);
+			}
+		} else {
+			if (currentPlayer == startPlayer && getCurrentPlayer().getUsableSegmentCount() == 0) {
 				setCurrentMoveType(MoveType.SELECT);
+				switchCurrentPlayer();
 				switchStartPlayer();
-				currentPlayer = startPlayer;
 				performScoring();
 			} else {
 				switchCurrentPlayer();
-
-				/*
-				 * im letzten durchgang kann es prinzipiell moeglich sein, dass
-				 * kein zug mehr moeglich ist. dann bekommt der aktuelle spieler
-				 * eine ersatzkarte statt seiner zuletzt gezogenen karte
-				 */
-				Player currentPlayer = getCurrentPlayer();
-				if (currentPlayer.getRetainedSegmentCount() == 0) {
-					while (getPossibleMoves().isEmpty()) {
-						currentPlayer.removeCard(0);
-						currentPlayer.addCard(drawCard());
-					}
-				}
-
 			}
-		} else {
-			switchCurrentPlayer();
 		}
+
+		// if (currentPlayer != startPlayer) {
+		// if (currentMoveType == MoveType.SELECT) {
+		// setCurrentMoveType(MoveType.BUILD);
+		// switchCurrentPlayer();
+		// } else if (getCurrentPlayer().getUsableSegmentCount() == 0) {
+		// setCurrentMoveType(MoveType.SELECT);
+		// switchStartPlayer();
+		// currentPlayer = startPlayer;
+		// performScoring();
+		// } else {
+		// switchCurrentPlayer();
+		//
+		// /*
+		// * im letzten durchgang kann es prinzipiell moeglich sein, dass
+		// * kein zug mehr moeglich ist. dann bekommt der aktuelle spieler
+		// * eine ersatzkarte statt seiner zuletzt gezogenen karte
+		// */
+		// Player currentPlayer = getCurrentPlayer();
+		// if (currentPlayer.getRetainedSegmentCount() == 0) {
+		// while (getPossibleMoves().isEmpty()) {
+		// currentPlayer.removeCard(0);
+		// currentPlayer.addCard(drawCard());
+		// }
+		// }
+		//
+		// }
+		// } else {
+		// switchCurrentPlayer();
+		// }
 
 	}
 
