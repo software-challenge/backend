@@ -439,7 +439,7 @@ public class FrameRenderer extends JComponent {
 	public FrameRenderer() {
 
 		updateBuffer = true;
-		bgImage = loadImage("resource/game/manhattanbg.png");
+		bgImage = loadImage("resource/game/manhattanbg.jpeg");
 		progressIcon = loadImage("resource/game/kelle.png");
 		selections = new int[Constants.MAX_SEGMENT_SIZE];
 		selectTowers = new LinkedList<TowerData>();
