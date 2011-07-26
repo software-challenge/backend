@@ -67,7 +67,8 @@ public class GameStateConverter implements Converter {
 
 		if (gameState.gameEnded()) {
 			writer.startNode("condition");
-			writer.addAttribute("winner", gameState.winner().toString());
+			String winner = (gameState.winner() == null)? "none" : gameState.winner()+"";
+			writer.addAttribute("winner", winner);
 			writer.addAttribute("reason", gameState.winningReason());
 			writer.endNode();
 		}
@@ -156,7 +157,12 @@ public class GameStateConverter implements Converter {
 					moveField.setAccessible(false);
 
 				} else if (nodeName.equals("condition")) {
-					PlayerColor winner = PlayerColor.valueOf(reader.getAttribute("winner").toUpperCase());
+					PlayerColor winner;
+					try {
+						winner = PlayerColor.valueOf(reader.getAttribute("winner").toUpperCase());
+					} catch (IllegalArgumentException ex) {
+						winner = null;
+					}
 					String reason = reader.getAttribute("reason");
 					gameState.endGame(winner, reason);
 				}
