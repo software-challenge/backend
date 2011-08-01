@@ -1223,16 +1223,16 @@ public class FrameRenderer extends JComponent {
 			if (selectionSize > Constants.SELECTION_SIZE) {
 				int dif = selectionSize - Constants.SELECTION_SIZE;
 				if (dif == 1) {
-					remark = "Es muss noch 1 Bauelenemt abgewählt werden.";
+					remark = "Es muss noch 1 Bauelement abgewählt werden.";
 				} else {
-					remark = "Es müssen noch " + dif + " Bauelenemte abgewählt werden.";
+					remark = "Es müssen noch " + dif + " Bauelemente abgewählt werden.";
 				}
 			} else {
 				int dif = Constants.SELECTION_SIZE - selectionSize;
 				if (dif == 1) {
-					remark = "Es muss noch 1 Bauelenemt ausgewählt werden.";
+					remark = "Es muss noch 1 Bauelement ausgewählt werden.";
 				} else {
-					remark = "Es müssen noch " + dif + " Bauelenemte ausgewählt werden.";
+					remark = "Es müssen noch " + dif + " Bauelemente ausgewählt werden.";
 				}
 			}
 
