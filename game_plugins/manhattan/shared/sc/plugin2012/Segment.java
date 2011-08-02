@@ -3,7 +3,14 @@ package sc.plugin2012;
 import sc.plugin2012.util.SegmentConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-
+/**
+ * 
+ * Klasse für die Verwaltung einer Bauteilart (Art=Groesse), unabhaengig
+ * vom Spieler. <br/>
+ * Das heisst um eine Spielsituation komplett zu modellieren
+ * benoetigt man pro Spieler/Groesse-Kombination ein Segmentobjekt.
+ *
+ */
 @XStreamConverter(SegmentConverter.class)
 public class Segment {
 
@@ -18,7 +25,11 @@ public class Segment {
 
 	// anzahl aufbewahrter segmente dieser groesse
 	private int retained;
-
+	/**
+	 * Erzeugt einen Bauteilvorrat mit {@code amount} Elementen der Groesse size
+	 * @param size Groesse der Bauteile
+	 * @param amount Anzahl der Bauteile
+	 */
 	public Segment(int size, int amount) {
 		this.size = size;
 		used = 0;
@@ -27,28 +38,31 @@ public class Segment {
 	}
 
 	/**
-	 * liefert die anzahl der bereits verwendeten segmente dieser groesse
+	 * Liefert die Anzahl bereits verwendeter Bauteile dieser Art
+	 * @return Anzahl bereits verwendeter Bauteile
 	 */
 	public int getUsed() {
 		return used;
 	}
 
 	/**
-	 * liefert die anzahl der momentan verwendbaren segmente dieser groesse
+	 * Liefert die Anzahl momentan zur Verfuegung stehender Bauteile dieser Art
+	 * @return Anzahl momentan verfuegbarer Bauteile
 	 */
 	public int getUsable() {
 		return usable;
 	}
 
 	/**
-	 * liefert die anzahl der noch aufbewahrten segmente dieser groesse
+	 * Liefert die Anzahl noch aufbewahrter Bauteile dieser Art
+	 * @return Anzahl noch aufbewahrter Bauteile
 	 */
 	public int getRetained() {
 		return retained;
 	}
 
 	/**
-	 * ein segment dieser groesse benutzen
+	 * Simuliert die Benutzung eines der Bauteile
 	 */
 	public void use() {
 		usable--;
@@ -56,7 +70,8 @@ public class Segment {
 	}
 
 	/**
-	 * segmente dieser groesse auswaehlen
+	 * Simuliert das Auswaehlen von Bauteilen
+	 * @param amount Anzahl ausgewählter Bauteile
 	 */
 	public void select(int amount) {
 		retained -= amount;

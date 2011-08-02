@@ -9,12 +9,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * ein spielzug besteht aus informationen darueber, welches schaf auf welches
- * feld ziehen soll. er kann mit debughinweisen angereichert werden, die auf der
- * grafischen oberflaeche angezeigt werden, wenn der spielzustand nach diesem
- * zug angezeigt wird.
- * 
- * @author sca, tkra
+ * Ein allgemeiner Spielzug. Dies kann ein Bau- oder ein Auswahlzug sein.
+ * @see SelectMove
+ * @see BuildMove
  */
 @XStreamAlias(value = "mh:move")
 public abstract class Move implements Cloneable {
@@ -23,7 +20,10 @@ public abstract class Move implements Cloneable {
 	private List<DebugHint> hints;
 
 	/**
-	 * einen debighinweis hinzufuegen
+	 * Fuegt eine Debug-Hilfestellung hinzu.<br/>
+	 * Diese kann waehrend des Spieles vom Programmierer gelesen werden,
+	 * wenn der Client einen Zug macht.
+	 * @param hint hinzuzufuegende Debug-Hilfestellung
 	 */
 	public void addHint(DebugHint hint) {
 		if (hints == null) {
@@ -33,33 +33,49 @@ public abstract class Move implements Cloneable {
 	}
 
 	/**
-	 * einen debughinweis hinzufuegen
+	 * 
+	 * Fuegt eine Debug-Hilfestellung hinzu.<br/>
+	 * Diese kann waehrend des Spieles vom Programmierer gelesen werden,
+	 * wenn der Client einen Zug macht.
+	 * @param key Schluessel
+	 * @param value zugehöriger Wert
 	 */
 	public void addHint(String key, String value) {
 		addHint(new DebugHint(key, value));
 	}
 
 	/**
-	 * einen debughinweis hinzufuegen
+	 * Fuegt eine Debug-Hilfestellung hinzu.<br/>
+	 * Diese kann waehrend des Spieles vom Programmierer gelesen werden,
+	 * wenn der Client einen Zug macht.
+	 * @param string Debug-Hilfestellung 
 	 */
 	public void addHint(String string) {
 		addHint(new DebugHint(string));
 	}
 
 	/**
-	 * die liste der hinzugefuegten debughinweise
+	 * Gibt die Liste der hinzugefuegten Debug-Hilfestellungen zurueck
+	 * @return Liste der hinzugefuegten Debug-Hilfestellungen
 	 */
 	public List<DebugHint> getHints() {
 		return hints == null ? new LinkedList<DebugHint>() : hints;
 	}
 
 	/**
-	 * diesen zug ausfuehren
-	 * 
-	 * @return ob der zug gueltig war und ausgefuehrt wurde
+	 * Fuehrt diesen Zug auf den uebergebenen Spielstatus aus, mit 
+	 * uebergebenem Spieler.
+	 * @param state Spielstatus
+	 * @param player ausfuehrender Spieler
+	 * @throws InvalideMoveException geworfen, wenn der Zug ungueltig ist,
+	 * also nicht ausfuehrbar
 	 */
 	abstract void perform(GameState state, Player player) throws InvalideMoveException;
 
+	/**
+	 * Gibt die Art des Zuges zurueck
+	 * @return Zugart
+	 */
 	public abstract MoveType getMoveType();
 
 }

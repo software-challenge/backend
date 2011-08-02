@@ -7,24 +7,39 @@ import sc.plugin2012.util.SelectMoveConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-
+/**
+ * 
+ * Ein Auswahlzug zur Wahl der Bauelemente für einen Spielabschnitt.
+ * @see Move
+ *
+ */
 @XStreamAlias(value = "manhattan:select")
 @XStreamConverter(SelectMoveConverter.class)
 public class SelectMove extends Move {
 
 	private int[] selections = new int[MAX_SEGMENT_SIZE];
-
+	/**
+	 * Einen Auswahlzug anhand eines int-Arrays erzeugen,
+	 * bei dem selections[i] die Anzahl Bausteine mit der
+	 * Groesse i+1 angibt.
+	 * @param selections die jeweilige Anzahl Bausteine
+	 * der Groesse i+1
+	 */
 	public SelectMove(int[] selections) {
 
 		for (int i = 0; i < selections.length; i++) {
 			this.selections[i] = selections[i];
 		}
 	}
-
+	/**
+	 * Gibt ein int-Array zurueck, bei dem das i-te Element
+	 * fuer die Anzahl gewaehlter Bausteine der Groesse i+1 steht.
+	 * @return die jeweilige Anzahl Bausteine der Groesse i+1
+	 */
 	public int[] getSelections() {
 		return selections;
 	}
-
+	
 	@Override
 	void perform(GameState state, Player player) throws InvalideMoveException {
 
