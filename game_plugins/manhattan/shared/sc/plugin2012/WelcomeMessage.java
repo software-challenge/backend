@@ -4,8 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * nachricht die zu beginn eines spiels geschickt wird, um dem client seine
- * spielrfarbe mitzuteilen.
+ * Nachricht, die zu Beginn eines Spiels an einen Client geschickt wird,
+ * um ihm seine Spielerfarbe mitzuteilen
  * 
  */
 @XStreamAlias(value = "manhattan:welcome")

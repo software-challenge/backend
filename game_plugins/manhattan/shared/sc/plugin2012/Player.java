@@ -11,11 +11,9 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * ein spieler. er wird durch seine spielerfarbe identifiziert und weiss wie
- * viele schafe seine schafe gestohlen haben und wie viele blumen seine schafe
- * gefressen haben.
- * 
- * @author sca, tkra
+ * Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
+ * Beeinhaltet auch Informationen zum Punktekonto, zu den 
+ * {@link Segment Bausteinen} und zu den {@link Card Spielkarten} des Spielers.
  * 
  */
 @XStreamAlias(value = "manhattan:player")
@@ -38,10 +36,10 @@ public final class Player extends SimplePlayer {
 	private final List<Card> cards;
 
 	/**
-	 * einen neuen spieler erstellen und ihm eine spielerfarbe zuweisen
+	 * einen neuen Spieler erstellen und ihm eine Spielerfarbe zuweisen
 	 * 
 	 * @param color
-	 *            seine spielerfarbe
+	 *            seine Spielerfarbe
 	 */
 	public Player(final PlayerColor color) {
 		cards = new LinkedList<Card>();
@@ -56,21 +54,21 @@ public final class Player extends SimplePlayer {
 	}
 
 	/**
-	 * liefert die spielerfarbe dieses spielers
+	 * liefert die Spielerfarbe dieses Spielers
 	 */
 	public PlayerColor getPlayerColor() {
 		return color;
 	}
 
 	/**
-	 * fuegt diesem spieler eine spielkarte hinzu
+	 * fuegt diesem Spieler eine Spielkarte hinzu
 	 */
 	public void addCard(Card card) {
 		cards.add(card);
 	}
 
 	/**
-	 * entfernt eine karte von diesem spieler
+	 * entfernt eine Kkarte von diesem Spieler
 	 */
 	public void removeCard(int slot) {
 		Card cardToRemove = null;
@@ -82,7 +80,11 @@ public final class Player extends SimplePlayer {
 		}
 		cards.remove(cardToRemove);
 	}
-
+	/**
+	 * Prüft, ob der Spieler eine Karte für eine Position hat
+	 * @param slot fragliche Position
+	 * @return wahr, wenn Karte vorhanden
+	 */
 	public boolean hasCard(int slot) {
 		for (Card card : cards) {
 			if (card.slot == slot) {
@@ -93,48 +95,56 @@ public final class Player extends SimplePlayer {
 	}
 
 	/**
-	 * liefert eine kopie der liste der karten des spielers
+	 * 
+	 * @return eine Liste der Karten des Spielers
 	 */
 	public List<Card> getCards() {
 		return cards;
 	}
 
 	/**
-	 * fuegt neue segmentinformation hinzu
+	 * fuegt eine Bausteininformation hinzu
+	 * @param segment Bausteininformation
 	 */
 	public void addSegmet(Segment segment) {
 		segments.add(segment);
 	}
-
+	/**
+	 * Gibt eine Liste der Bausteininformationen des Spielers
+	 * @return Liste der Bausteininformationen des Spielers
+	 */
 	public List<Segment> getSegments() {
 		return segments;
 	}
 
 	/**
-	 * liefert die segmentinformatieon einer bestimmten groesse deises spielers
-	 * oder null, falls keine segmentinformationd ieser groesse existiert.
+	 * Gibt {@link Segment Bausteininformation} zu Größe size
+	 * @param size Größe des Bausteins
+	 * @return Bausteininformation
 	 */
 	public Segment getSegment(int size) {
 		return segments.get(size - 1);
 	}
 
 	/**
-	 * fuegt diesem spieler punkte hinzu
+	 * Fügt dem Punktekonto des Spielers Punkte hinzu
+	 * @param points Anzahl hinzuzufügender Punkte
 	 */
 	public void addPoints(int points) {
 		this.points += points;
 	}
 
 	/**
-	 * liefert den punktestand dieses spielers
+	 * Liefert den Stand des Punktekontos des Spielers
+	 * @return Punkte des Spielers
 	 */
 	public int getPoints() {
 		return points;
 	}
 
 	/**
-	 * liefert die anzahl der von diesem spieler momentan noch benutzbaren
-	 * segmente
+	 * Liefert die Anzahl in diesem Abschnitt benutzbarer Bauteile
+	 * @return Anzahl in diesem Abschnitt benutzbarer Bauteile
 	 */
 	public int getUsableSegmentCount() {
 		int segmentCount = 0;
@@ -145,8 +155,8 @@ public final class Player extends SimplePlayer {
 	}
 
 	/**
-	 * liefert die anzahl der von diesem spieler momentan noch benutzbaren
-	 * segmente
+	 * Liefert die Anzahl für spaetere Abschnitte zurueckgelegter Bausteine
+	 * @return Anzahl für spaetere Abschnitte zurueckgelegter Bausteine
 	 */
 	public int getRetainedSegmentCount() {
 		int segmentCount = 0;
@@ -156,6 +166,11 @@ public final class Player extends SimplePlayer {
 		return segmentCount;
 	}
 
+	/**
+	 * Gibt die Groesse des groessten jetzt oder in spaeteren Abschnitten
+	 * verfuegbaren Bauteils des Spielers
+	 * @return Groesse des groessten Bauteils
+	 */
 	public int getHighestSegment() {
 		int highestSegment = 0;
 		for (Segment segment : segments) {
@@ -166,6 +181,11 @@ public final class Player extends SimplePlayer {
 		return highestSegment;
 	}
 
+	/**
+	 * Gibt die Groesse des groessten in diesem Abschnitt
+	 * verfuegbaren Bauteils des Spielers
+	 * @return Groesse des groessten aktuellen Bauteils
+	 */
 	public int getHighestCurrentSegment() {
 		int highestSegment = 0;
 		for (Segment segment : segments) {

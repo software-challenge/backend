@@ -22,7 +22,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
- * einem gegebenen Zeitpunkt, das heisst zwischen zwie Spielzuegen, beschreiben.
+ * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
  * Dies umfasst eine fortlaufende Zugnummer ({@link getTurn() getTurn()}) und
  * was fuer eine Art von Zug ({@link getCurrentMoveType() getCurrentMoveType()})
  * der Spielserver als Antwort von einem der beiden Spieler ({@link
@@ -137,7 +137,7 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, der momentan am Zug
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
 	 * ist.
 	 * 
 	 * @return Der Spieler, der momentan am Zug ist.
@@ -158,7 +158,7 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, der momentan nicht
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht
 	 * am Zug ist.
 	 * 
 	 * @return Der Spieler, der momentan nicht am Zug ist.
@@ -203,9 +203,8 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert den Spieler, also eine {@code Player}-Objekt, der den aktuellen
-	 * Durchgang begonnen hat. Also den Spieler, der in der letzten Auswahlphase
-	 * zls erster Bauelemente waehlen musste und danach als erster eine Segment
-	 * an einen Turm angebaut hat.
+	 * Abschnitt begonnen hat. Also den Spieler, der in der letzten Auswahlphase
+	 * als erster Bauelemente waehlen musste und dann als zweiter gebaut hat.
 	 * 
 	 * @return Der Spieler, der momentan Startspieler ist.
 	 */
@@ -215,46 +214,60 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
-	 * Durchgang begonnen hat. Dies ist aequivalent zum Aufruf {@code
+	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf {@code
 	 * getStartPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
-	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
+	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht begonnen hat.
 	 */
 	public PlayerColor getStartPlayerColor() {
 		return startPlayer;
 	}
-
+	/**
+	 * wechselt den Spieler, der aktuell an der Reihe ist.
+	 */
 	private void switchCurrentPlayer() {
 		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
 	}
-
+	/**
+	 * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
+	 */
 	private void switchStartPlayer() {
 		startPlayer = startPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
 	}
 
 	/**
-	 * liefert den momentan auszufuehrenden zugtyp
+	 * liefert den momentan auszufuehrenden Zugtyp
 	 */
 	public MoveType getCurrentMoveType() {
 		return currentMoveType;
 	}
 
 	/**
-	 * liefert den momentan auszufuehrenden zugtyp
+	 * setzt den momentan auszufuehrenden Zugtyp
 	 */
 	public void setCurrentMoveType(MoveType moveType) {
 		currentMoveType = moveType;
 	}
 
 	/**
-	 * liefert die aktuelle zugzahl
+	 * liefert die aktuelle Zugzahl
 	 */
 	public int getTurn() {
 		return turn;
 	}
 
 	/**
-	 * liefert die aktuelle zugzahl
+	 * Simuliert einen uebergebenen Zug.
+	 * Dabei werden folgende Informationen aktualisiert:
+	 * <ul>
+	 * <li> Zugzahl
+	 * <li> Welcher Spieler an der Reihe ist
+	 * <li> Welcher Spieler erster der Spielphase ist
+	 * <li> Was der letzte Zug war
+	 * <li> Was der aktuell erwartete Zug ist
+	 * <li> die Punkte der Spieler
+	 * </ul>
+	 * @param lastMove auszufuehrender Zug
 	 */
 	public void prepareNextTurn(Move lastMove) {
 
@@ -309,7 +322,9 @@ public final class GameState implements Cloneable {
 		// }
 
 	}
-
+	/**
+	 * 
+	 */
 	private void performScoring() {
 
 		int[][] stats = getGameStats();
@@ -325,15 +340,17 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert die aktuelle rundenzahl
+	 * liefert die aktuelle Rundenzahl
+	 * @return aktuelle Rundenzahl
 	 */
 	public int getRound() {
 		return turn / 2;
 	}
 
 	/**
-	 * liefert die oberste karte vom kartenstapel und fuellt den kartenstapel
-	 * falls noetig vorher auf
+	 * liefert die naechste Karte vom Stapel. Dazu wird dieser
+	 * gegebenenfalls neu aufgefuellt durch mischen der verbauchten Karten.
+	 * @return naechste Karte
 	 */
 	public Card drawCard() {
 		if (cardStack.isEmpty()) {
@@ -366,8 +383,10 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert den turm an einer gegebenen position, falls vorhanden, null
-	 * andernfalls
+	 * Liefert den Turm an gegebenem Feld (Stadt, Position)
+	 * @param city Stadt des Spielfeldes
+	 * @param slot Position des Spielfeldes
+	 * @return Turm an gegebenem Feld, kann null sein oder Hoehe 0 haben.
 	 */
 	public Tower getTower(int city, int slot) {
 		if (city < 0 || city >= Constants.CITIES) {
@@ -381,7 +400,8 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert alle
+	 * Liefert eine Liste aller Tuerme
+	 * @return Liste aller Tuerme
 	 */
 	public List<Tower> getTowers() {
 		List<Tower> towersOfAllCities = new LinkedList<Tower>();
@@ -395,7 +415,9 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert alle tuerme einer stadt
+	 * Liefert eine Liste aller Tuerme in einer gegebenen Stadt
+	 * @param city Index der Stadt
+	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOfCity(int city) {
 		List<Tower> towersOfCity = new LinkedList<Tower>();
@@ -411,7 +433,10 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert alle tuerme einer stadt und eines spielers
+	 * Liefert eine Liste der Tuerme eines Spielers in einer Stadt
+	 * @param city Index der Stadt
+	 * @param color Farbe des besitzenden Spielers
+	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOfCity(int city, PlayerColor color) {
 		List<Tower> towersOfCity = new LinkedList<Tower>();
@@ -424,7 +449,9 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert alle tuerme auf gegebenen slot
+	 * Liefert eine Liste der Tuerme an einer Position
+	 * @param slot Index der Position
+	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOnSlot(int slot) {
 		List<Tower> towersOfCity = new LinkedList<Tower>();
@@ -437,7 +464,11 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert alle tuerme auf gegebenen slot und eines spielers
+	 * Liefert eine Liste der Tuerme an einer Position, die einem
+	 * gegebenen Spieler gehoeren
+	 * @param slot Index der Position
+	 * @param color Farbe des besitzenden Spielers
+	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOnSlot(int slot, PlayerColor color) {
 		List<Tower> towersOfCity = new LinkedList<Tower>();
@@ -450,7 +481,9 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert alle tuerme eines spielers
+	 * Liefert eine Liste der Tuerme eines Spielers
+	 * @param color Farbe des Spielers
+	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersWithOwner(PlayerColor color) {
 		List<Tower> towersOfCity = new LinkedList<Tower>();
@@ -461,7 +494,10 @@ public final class GameState implements Cloneable {
 		}
 		return towersOfCity;
 	}
-
+	/**
+	 * Liefert eine Liste aller aktuell erlaubten Zuege.
+	 * @return Liste erlaubter Spielzuege
+	 */
 	public List<BuildMove> getPossibleMoves() {
 		List<BuildMove> moves = new LinkedList<BuildMove>();
 		Player player = getCurrentPlayer();
@@ -495,14 +531,22 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert den zuletzt ausgefuehrten zug
+	 * Liefert den zuletzt ausgefuehrten Zug
+	 * @return letzter Zug
 	 */
 	public Move getLastMove() {
 		return lastMove;
 	}
 
 	/**
-	 * liefert die statusinformationen zu einem gegebenen spieler
+	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden Einträgen
+	 * <ul><li>[0] - Anzahl Tuerme des Spielers
+	 * <li>[1] - Anzahl Staedte des SPielers
+	 * <li>[2] - 1: Spieler hat hoechsten Turm, 0: sonst
+	 * <li>[3] - Punktekonto des Spielers
+	 * </ul>
+	 * @param player Spieler
+	 * @return Array mit Statistiken 
 	 */
 	public int[] getPlayerStats(Player player) {
 		assert player != null;
@@ -510,7 +554,14 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert die statusinformationen zu einem gegebenen spieler
+	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden Einträgen
+	 * <ul><li>[0] - Anzahl Tuerme des Spielers
+	 * <li>[1] - Anzahl Staedte des SPielers
+	 * <li>[2] - 1: Spieler hat hoechsten Turm, 0: sonst
+	 * <li>[3] - Punktekonto des Spielers
+	 * </ul>
+	 * @param playerColor Farbe des Spielers
+	 * @return Array mit Statistiken 
 	 */
 	public int[] getPlayerStats(PlayerColor playerColor) {
 		assert playerColor != null;
@@ -523,7 +574,11 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert die statusinformationen zu beiden spielern
+	 * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
+	 * {@link Spielerstats getPlayerStats()}, wobei getGameStats()[0], einem Aufruf
+	 * von getPlayerStats(PlayerColor.RED) entspricht.
+	 * @see getPlayerStats()
+	 * @return Statusinformationen beider Spieler
 	 */
 	public int[][] getGameStats() {
 
@@ -575,7 +630,7 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert die namen den beiden spieler
+	 * liefert die Namen den beiden Spieler
 	 */
 	public String[] getPlayerNames() {
 		return new String[] { red.getDisplayName(), blue.getDisplayName() };
@@ -583,7 +638,9 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * das spiel alsbeendet markieren, gewinner und gewinnggrund festlegen.
+	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
+	 * @param winner Farbe des Siegers
+	 * @param reason Gewinngrund
 	 */
 	public void endGame(PlayerColor winner, String reason) {
 		if (condition == null) {
@@ -592,23 +649,26 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * gibt an, ob das spiel als beendet markeirt wurde.
+	 * gibt an, ob das Spiel beendet ist
+	 * @return wahr, wenn beendet
 	 */
 	public boolean gameEnded() {
 		return condition != null;
 	}
 
 	/**
-	 * liefert den gewinner des spiels, falls gameEnded() true liefert. sonst
-	 * undefiniert.
+	 * liefert die Farbe des Siegers, falls das Spiel beendet ist.
+	 * @see gameEnded()
+	 * @return Siegerfarbe
 	 */
 	public PlayerColor winner() {
 		return condition == null ? null : condition.winner;
 	}
 
 	/**
-	 * liefert den gewinngrund des spiels, falls gameEnded() true liefert. sonst
-	 * undefiniert.
+	 * liefert den Gewinngrund, falls das Spiel beendet ist.
+	 * @see gameEnded()
+	 * @return Gewinngrund
 	 */
 	public String winningReason() {
 		return condition == null ? "" : condition.reason;

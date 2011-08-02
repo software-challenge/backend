@@ -6,7 +6,11 @@ import sc.plugin2012.util.InvalideMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-
+/**
+ * Ein Bauzug. Dieser beinhaltet Informationen, welcher Baustein
+ * wohin gesetzt wird.
+ *
+ */
 @XStreamAlias(value = "manhattan:build")
 @XStreamConverter(BuildMoveConverter.class)
 public class BuildMove extends Move {
@@ -16,7 +20,12 @@ public class BuildMove extends Move {
 	public final int slot;
 
 	public final int size;
-
+	/**
+	 * Erzeugt einen neuen Bauzug mit Stadt, Position und Bauteilgroesse
+	 * @param city Index der Zielstadt
+	 * @param slot Index der Zielposition
+	 * @param size Groesse des Bausteins
+	 */
 	public BuildMove(int city, int slot, int size) {
 		this.city = city;
 		this.slot = slot;

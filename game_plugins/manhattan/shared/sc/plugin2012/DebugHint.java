@@ -3,14 +3,14 @@ package sc.plugin2012;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * eine debughinweis ist ein container für einen string der einem move
- * beigefuegt werden kann. beigefuegte debughints werden direkt in der
- * grafischen oberflaeche des plugins angezeit, wenn die debugansiche gewaehlt
+ * Ein Debughinweis ist ein Container für einen String der einem Zug
+ * beigefuegt werden kann. Beigefuegte Debughints werden direkt in der
+ * grafischen Oberflaeche des Plugins angezeigt, wenn die Debugansicht gewaehlt
  * wurde.
- * 
- * dies ermoeglich das schnellere debuggen von clients und besseres
- * konfigurieren von strategien, denn es muessen keien konsolenausgaben gesucht
- * werden und die hinweise werden immer zum passenden zug angezeigt.
+ * <br><br>
+ * Dies ermoeglich das schnellere Debuggen von Clients und besseres
+ * Konfigurieren von Strategien, denn es muessen keine Konsolenausgaben gesucht
+ * werden und die Hinweise werden immer zum passenden Zug angezeigt.
  * 
  * @author tkra
  * 
@@ -21,12 +21,12 @@ public final class DebugHint implements Cloneable {
 	public final String content;
 
 	/**
-	 * einen neuen hinweis der form key = valuie erstellen
+	 * einen neuen Hinweis der form key = value erstellen
 	 * 
 	 * @param key
-	 *            string vor dem gleichheitszeichen
+	 *            string vor dem Gleichheitszeichen
 	 * @param value
-	 *            string nach dem gleichheitszeichen
+	 *            string nach dem Gleichheitszeichen
 	 */
 	public DebugHint(String key, String value) {
 
@@ -42,10 +42,10 @@ public final class DebugHint implements Cloneable {
 	}
 
 	/**
-	 * ein neuen hinweis mit beliebeigen inhalt erstellen
+	 * ein neuen Hinweis mit beliebigem Inhalt erstellen
 	 * 
 	 * @param content
-	 *            der inhalt der angezeigt werden soll
+	 *            der Inhalt, der angezeigt werden soll
 	 */
 	public DebugHint(final String content) {
 		this.content = content == null ? "" : content;
