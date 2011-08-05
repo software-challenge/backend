@@ -11,7 +11,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
     t.named "Neuigkeiten"
     t.links_to url_for [@season, :news_posts]
     t.highlights_on :controller => "news_posts"
-  end unless @season.news_posts.empty?
+  end unless @season.news_posts.published.empty?
 
   add_tab do |t| 
     t.named t("titles.surveys")
