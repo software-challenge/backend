@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
       redirect_to "http://134.245.253.5:8080"
     elsif action_name == "faq"
       redirect_to "http://134.245.253.5:8080/viewforum.php?f=9"
-    elsif request.path == "/wettbewerb/2012"
+    elsif request.path.include? "/wettbewerb/2012"
       redirect_to season_url(2012)
     end
   end
