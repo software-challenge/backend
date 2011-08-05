@@ -95,11 +95,11 @@ class Season < ActiveRecord::Base
   
   # Methods that are always accessable
   def school_registration_allowed?
-    registration? or recall?
+    registration? or recall? or validation?
   end
 
   def team_registration_allowed?
-    registration? or recall?
+    registration? or recall? or validation?
   end
 
   def surveys_visible?

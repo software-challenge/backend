@@ -26,7 +26,7 @@ class SurveyResultsController < ApplicationController
 
     unless @response_set and @survey_token
       flash[:notice] = "Eine Teilnahme fand noch nicht statt!"
-      redirect_to contest_survey_tokens_url(@contest)
+      redirect_to contest_survey_tokens_url(@contest||Contest.public.last)
     end
   end
 end

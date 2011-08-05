@@ -1,6 +1,6 @@
 module SurveyorHelper
   def update_my_survey_path
-   contest_survey_token_survey_url(@contest,@survey_token,:id => 0)
+    @context.is_a?(Season) ? season_survey_token_survey_url(@context,@survey_token, :id => 0) : contest_survey_token_survey_url(@context,@survey_token,:id => 0)
   end
 
 end

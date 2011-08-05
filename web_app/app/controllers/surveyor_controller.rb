@@ -11,10 +11,10 @@ module SurveyorControllerCustomMethods
     @survey = @survey_token.survey
     @response_set = @survey_token.response_set ? @survey_token.response_set : ResponseSet.create(:survey => @survey, :user => @current_user, :survey_token => @survey_token) 
     if(@survey && @response_set)
-      redirect_to edit_contest_survey_token_survey_url(@contest,@survey_token,:id => 0)
+      redirect_to (@context.is_a?(Season) ? edit_season_survey_token_survey_url(@context, @survey_token, :id => 0) : edit_contest_survey_token_survey_url(@context,@survey_token,:id => 0))
     else
       flash[:error] = "Fehler bei der Teilnahme an dieser Umfrage"
-      redirect_to contest_survey_tokens_url(@contest)
+      redirect_to [@context, :survey_tokens]
     end
   end
 
@@ -46,7 +46,7 @@ module SurveyorControllerCustomMethods
   end
 
   def update
-    redirect_to contest_survey_tokens_url(@contest) if @response_set.blank?
+    redirect_to [@context, :survey_tokens] if @response_set.blank?
     saved = false
     ActiveRecord::Base.transaction do 
      saved = @response_set.update_responses(ResponseSet.reject_or_destroy_blanks(params[:r].clone)) if params[:r] # surveyor defaults do not seem to work, custom solution
@@ -79,12 +79,12 @@ module SurveyorControllerCustomMethods
   
   # Paths
   def surveyor_index
-    contest_survey_tokens_url(@contest)
+    [:context, :survey_tokens]
     # most of the above actions redirect to this method
     #super # available_surveys_path
   end
   def surveyor_finish
-    @survey_token.finished_redirect_url || contest_survey_token_url(@contest,@survey_token)
+    @survey_token.finished_redirect_url || url_for([@context,@survey_token])
     # the update action redirects to this method if given params[:finish]
     #super # available_surveys_path
   end
@@ -98,7 +98,7 @@ class SurveyorController < ApplicationController
     allow logged_in, :if => :allowed?
   end
   
-  before_filter :fetch_survey, :fetch_response_set, :only => [:edit,:update,:show]
+  before_filter :fetch_context, :fetch_survey, :fetch_response_set, :only => [:edit,:update,:show]
 
   include Surveyor::SurveyorControllerMethods
   include SurveyorControllerCustomMethods
@@ -118,7 +118,11 @@ class SurveyorController < ApplicationController
   def fetch_response_set
     @response_set = @survey_token.response_set
   end
- 
+
+  def fetch_context 
+    @context = @contest ? @contest : @season
+  end
+
   protected 
     def surveyor_formtastic_builder!
       @normal_formtastic_helper = Formtastic::SemanticFormHelper.builder

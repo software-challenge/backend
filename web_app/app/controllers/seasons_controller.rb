@@ -3,7 +3,11 @@ class SeasonsController < ApplicationController
   access_control do
     allow :administrator
 
-    actions :index, :contests, :show do
+    actions :index do
+      allow all
+    end
+
+    actions :contests, :show do
       allow all, :if => :public?
     end
   end

@@ -87,13 +87,8 @@
           <% end %>
         <% end %>
       <% end %>
-        <% action (@season and @season.school_registration_allowed?) do %>
-        <% if logged_in? or administrator? %>
-          <%= t "views.todo.reg_school" %>
-          <% action_button do %>
-            <%= link_to "Neue Schule anmelden", new_season_school_url(@contest) %> 
-          <% end %>
-        <% else %>
+      <% unless logged_in? %>
+        <% action true do %>
           <%= t "views.todo.login_before_school" %>
           <% action_button :style => "margin-bottom: 10px" do %>
             <%= link_to "Anmelden", contest_login_url(@contest) %> 
@@ -102,12 +97,6 @@
           <% action_button do %>
             <%= link_to "Jetzt registrieren", contest_register_url(@contest) %>  
           <% end %>
-        <% end %>
-      <% end %>
-      <% action (@season and @season.team_registration_allowed? and logged_in?) do %>
-        <%= t "views.todo.reg_teams" %>
-        <% action_button do %>
-          <%= link_to "Teams anmelden", contest_new_team_url(@contest) %>
         <% end %>
       <% end %>
     <% end %>

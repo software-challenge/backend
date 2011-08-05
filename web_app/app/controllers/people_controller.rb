@@ -104,10 +104,16 @@ class PeopleController < ApplicationController
         @person.last_seen = Time.now
         session[:user_id] = @person.id
         @person.save
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Ihr Zugang wurde erfolgreich aktiviert. Sie wurden automatisch eingeloggt und können die Funktionen des Wettkampfsystems nun nutzen.", :links => [["Zur Hauptseite", contest_url(@contest)], ["Jetzt unverbindlich eine Schule anmelden", new_contest_school_url(@contest)]] }}
+        format.html do
+          links = []
+          links << ["Zur Hauptseite", url_for(Season.public.last || Contest.public.last)] if Season.public.last or Contest.public.last
+          links << ["Jetzt unverbindlich eine Schule anmelden", new_season_school_url(Season.public.last)] if Season.public.last
+          render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Ihr Zugang wurde erfolgreich aktiviert. Sie wurden automatisch eingeloggt und können die Funktionen des Wettkampfsystems nun nutzen.", :links => links }
+        end
+
         format.xml { render :xml => @person }  
       else
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Der Zugangscode ist ungültig. Ihr Zugang konnte daher nicht aktiviert werden.", :links => [["Zur Hauptseite", contest_url(@contest)]] }}
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Der Zugangscode ist ungültig. Ihr Zugang konnte daher nicht aktiviert werden.", :links => [["Zur Hauptseite", root_url()]] }}
         format.xml { render :xml => @person }
       end
     end
@@ -215,6 +221,7 @@ class PeopleController < ApplicationController
   def update
     # @person is fetched in before_filter
     # cleanup params
+    @contest ||= Contest.public.last
     person_params = params[:person].clone
     person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
     unless administrator? or current_user == @person
@@ -245,6 +252,7 @@ class PeopleController < ApplicationController
     respond_to do |format|
       if success
         if params[:send_notification] == "1"
+          @current_contest ||= @contest
           PersonMailer.deliver_password_reset_notification(@person, @current_contest, person_params[:password])
         end
         flash[:notice] = I18n.t("views.profile_of") + " " +  @person.name + " " + I18n.t("messages.updated_successfully")

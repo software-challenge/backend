@@ -1,16 +1,16 @@
 <div id="actions">
   <% show_to :administrator do %>
-    <% link_to contest_survey_token_url(@contest,@token), :method => :delete, :confirm => "Wollen Sie dieses Token wirklich löschen?" do %>
+    <% link_to [@context,@token], :method => :delete, :confirm => "Wollen Sie dieses Token wirklich löschen?" do %>
       <%= image_tag "actions/destroy.png" %> Token zerstören
     <% end %>
   <% end %>
   <% if @token.allowed_for? @current_user and @token.currently_valid? %>
     <% if not @token.consumed? %>
-      <% link_to new_contest_survey_token_survey_url(@contest,@token) do %>
+      <% link_to [:new,@context,@token] do %>
         <%= image_tag "actions/vote_lrg.png" %> An Umfrage teilnehmen
       <% end %>
     <% else %>
-      <% link_to edit_contest_survey_token_survey_url(@contest,@token,@token.survey) do %>
+      <% link_to [:edit,@context,@token,@token.survey] do %>
         <%= image_tag "actions/vote_lrg.png" %> Umfrage-Eingaben bearbeiten 
       <% end %>
     <% end %>
@@ -18,12 +18,12 @@
 </div>
 
 <h1>
- <%= link_to @contest.name, contest_url(@contest) %> /
- <%= link_to "Umfragen", contest_survey_tokens_url(@contest) %> /
+ <%= link_to @context.name, @context %> /
+ <%= link_to "Umfragen", [@context, :survey_tokens] %> /
  <%= "#{@token.survey.title} (#{@token.id})" %>
 </h1>
 
-<% tabnav :contest do %>
+<% tabnav @context.class.to_s.downcase.to_sym do %>
   <p> <b>Umfrage:</b> <%= @token.survey.title %> </p>
   <p> <b>Beschreibung:</b> <%= @token.survey.description || "Keine Beschreibung vorhanden" %> </p>
   <p> <b>Zugeordnet an:</b> <%= @token.token_owner.name %><%= ", #{@token.token_owner.school.name}" if @token.token_owner.is_a? PreliminaryContestant %></p>

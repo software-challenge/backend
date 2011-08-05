@@ -40,7 +40,7 @@ class DiffCheck < FakeCheck
     init_extraction_status
     FileUtils.remove_dir(destination, true) if File.directory?(destination)
     FileUtils.mkdir_p destination
-    unless whitelist.file_whitelisted?(file)
+    if whitelist.nil? or not whitelist.file_whitelisted?(file)
       FileUtils.cp(file,destination+"/client.zip")
       unzip_folder(destination,destination) 
       delete_not_needed_files(destination) 
@@ -130,7 +130,7 @@ class DiffCheck < FakeCheck
         if not is_comparable?(file) 
           @uncomparable_files += 1
           File.delete(f_path)
-        elsif contest.whitelist.file_whitelisted?(f_path)
+        elsif contest.whitelist and contest.whitelist.file_whitelisted?(f_path)
           @whitelisted_files += 1
           File.delete(f_path)
         end

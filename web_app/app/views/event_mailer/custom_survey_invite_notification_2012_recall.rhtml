@@ -7,11 +7,11 @@ bzw. http://www.informatik.uni-kiel.de/software-challenge/2011/final-eight/ .  �
 Nun wollen wir die bundesweite Software-Challenge 2012 weiter vorbereiten, für die Sie sich registriert haben. 
 Vielen Dank! 
 
-Damit wir besser planen können, bitten wir Sie zunächst, unter http://www.software-challenge.de/wettbewerb/2012 
+Damit wir besser planen können, bitten wir Sie zunächst, unter http://www.software-challenge.de/saison/2012 
 die Daten der von Ihnen bereits angemeldeten Teams zu prüfen und falls erforderlich zu aktualisieren. 
 Sollten Sie bisher nur die Schule und noch kein Team angemeldet haben, bitten wir Sie, mindestens ein Team anzumelden.     
 
-Außerdem bitten wir darum, unter <%= new_contest_survey_token_survey_url(@contest,@survey_tokens.first, :login_token => @login_token.code) %> 
+Außerdem bitten wir darum, unter <%= @context.is_a?(Season) ? new_season_survey_token_survey_url(@context, @survey_tokens.first, :login_token => @login_token.code) : new_contest_survey_token_survey_url(@contest,@survey_tokens.first, :login_token => @login_token.code) %> 
 die Daten für Ihr Team zu konkretisieren. 
 Dies kostet nur ca. eine Minute Ihrer kostbaren Zeit, ist aber für unsere Planung sehr wichtig. 
 Selbstverständlich ist uns bewusst, dass sich Ihre Angaben bis zum Schuljahresbeginn noch ändern können.     

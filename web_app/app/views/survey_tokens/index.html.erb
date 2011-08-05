@@ -1,17 +1,17 @@
 <div id="actions">
   <% show_to :administrator do %>
-    <% link_to new_contest_survey_token_url(@contest) do %>
+    <% link_to [:new, @context, :survey_token] do %>
       <%= image_tag("actions/add.png") %> Neue Tokens erstellen
     <% end %>  
   <% end %>
 </div>
  
 <h1>
-  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to @context.name, @context %> /
   Verfügbare Umfragen anzeigen
 </h1>
 
-<% tabnav :contest do %>
+<% tabnav @context.class.to_s.downcase.to_sym do %>
 
 <table class="tablesorter data-table">
   <thead>
@@ -30,7 +30,7 @@
         <td><span title="<%= token_receiver_tooltip t %>" class="tooltipped"><%= t.token_owner.name if t.token_owner.respond_to? :name %></span></td>
         <td><%= if t.valid_until then "#{t.valid_until < Time.now ? "vor" : "in"} #{distance_of_time_in_words(Time.now,t.valid_until)}" else "unbeschränkt" end %></td>
         <td><%= image_tag("state/ok.png", :title => "Teilgenommen am #{l t.response_set.created_at.to_date}", :class=> "tooltipped") if t.response_set and t.response_set.complete? %></td>
-        <td><%= link_to image_tag("actions/vote.png", :title => (t.complete? ? "Eingaben bearbeiten" : "Jetzt teilnehmen"), :class => "tooltipped"), new_contest_survey_token_survey_url(@contest,t) if t.currently_valid? %><%= link_to image_tag("actions/show.png"), contest_survey_token_url(@contest,t) %><%= link_to image_tag("actions/delete.png"), contest_survey_token_url(@contest,t), :method => :delete, :confirm => "Sind Sie sicher?" %></td>
+        <td><%= link_to image_tag("actions/vote.png", :title => (t.complete? ? "Eingaben bearbeiten" : "Jetzt teilnehmen"), :class => "tooltipped"), url_for([:new, @context, t, :survey]) if t.currently_valid? %><%= link_to image_tag("actions/show.png"), [@context, t] %><%= link_to image_tag("actions/delete.png"), [@context, t], :method => :delete, :confirm => "Sind Sie sicher?" %></td>
        </tr>
      <% end %>   
  </tbody>
@@ -41,7 +41,7 @@
   <h3>Sie haben schon beantwortet:</h3>
   <ul style="margin-left: 30px">
     <% consumed_tokens.each do |token| %>
-      <li><%= link_to "#{token.survey.title} für #{token.token_owner.name}", contest_survey_token_url(@contest,token) %></li>
+      <li><%= link_to "#{token.survey.title} für #{token.token_owner.name}", [@context, token] %></li>
     <% end %>
   </ul>
 <% end %>

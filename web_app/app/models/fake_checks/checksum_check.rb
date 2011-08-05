@@ -8,7 +8,7 @@ class ChecksumCheck < FakeCheck
 
  protected
   def client_whitelisted?(client)
-    contest.whitelist.file_whitelisted?(client.file.path)
+    contest.whitelist and contest.whitelist.file_whitelisted?(client.file.path)
   end
 
 end
