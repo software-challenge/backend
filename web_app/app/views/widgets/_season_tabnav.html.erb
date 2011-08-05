@@ -29,7 +29,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
     end
   end
 
-  if logged_in? and @season and not (@season.contest? or @season.finished?)
+  if logged_in? and (administrator? or not @current_user.preliminary_contestants.empty?) and not (@season.contest? or @season.finished?)
     add_tab do |t|
       t.named "#{t "views.all"} #{PreliminaryContestant.human_name(:count => 2)}" if administrator?
       t.named "#{t "views.my" } #{PreliminaryContestant.human_name(:count => 2)}" if not administrator?
