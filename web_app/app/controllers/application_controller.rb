@@ -32,6 +32,7 @@ class ApplicationController < ActionController::Base
 
   # TODO: remove with rails 3!
   def redirect_if_needed
+    raise "url= #{request.url} path= #{request.path}"
     if action_name == "forum"
       redirect_to "http://134.245.253.5:8080"
     elsif action_name == "faq"
