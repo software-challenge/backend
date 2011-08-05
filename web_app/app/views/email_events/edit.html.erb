@@ -18,6 +18,7 @@
       <%= f.input :rcv_on_matchday_published, :label => @current_user.has_role?(:administrator) ? "Ein neuer Spieltag wurde veröffentlicht" : "Ein neuer Spieltag wurde gespielt", :required => false %>
       <%= f.input :rcv_client_matchday_warning, :required => false %> 
       <%= f.input :rcv_contest_progress_info, :required => false %>
+      <%= f.input :rcv_quassum_notification, :required => false if Quassum::ApiUser.possible_api_user?(@person)%>
     <% end %>
     <% f.buttons do %>
       <%= f.commit_button %>

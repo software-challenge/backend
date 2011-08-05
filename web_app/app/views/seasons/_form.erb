@@ -1,0 +1,12 @@
+<% semantic_form_for @season do |f| %>
+  <% f.inputs do %>
+  <%= f.input :name, :required => true %>
+  <%= f.input :subdomain, :hint => "Darf nicht doppelt vorkommen!", :required => true %>
+  <% if @season.new_record? %>
+    <%= f.input :definition, :collection => SeasonDefinition.all.map(&:identifier), :label => SeasonDefinition.human_name, :required => true %>
+    <%= f.input :game_definition, :collection => GameDefinition.all.map{|d| d.game_identifier}, :label => t("activerecord.models.game_definition.one"), :required => true %>
+  <% end %>
+  <%= f.input :public %>
+  <% end %>
+  <%= f.buttons %>
+<% end %>

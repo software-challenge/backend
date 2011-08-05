@@ -1,32 +1,67 @@
 class Contest < ActiveRecord::Base
-  PHASES = ["initialization", "registration", "recall", "validation", "contest"]
 
-  validates_inclusion_of :phase, :in => PHASES
   validates_presence_of :name
   validates_presence_of :subdomain
-  validates_presence_of :test_contestant
   validates_presence_of :game_definition
 
-  validates_format_of :subdomain, :with => /\A[a-z0-9-]*\Z/
+  validates_format_of :subdomain, :with => /\A[a-z0-9_-]*\Z/
   validates_uniqueness_of :subdomain
 
-  has_many :schools, :dependent => :destroy
-  has_many :preliminary_contestants, :through => :schools
-  has_many :all_contestants, :class_name => "Contestant", :dependent => :destroy
-  has_many :contestants, :conditions => { :tester => false }, :dependent => :destroy
-  has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }, :dependent => :destroy
+  has_and_belongs_to_many :all_contestants, :class_name => "Contestant", :before_add => :is_no_duplicate_name!
+  has_and_belongs_to_many :contestants, :conditions => { :tester => false }, :before_add => :is_no_duplicate_name!
+  has_and_belongs_to_many :test_contestants, :conditions => { :tester => true }, :class_name => "Contestant", :uniq => true
+  #has_one :test_contestant, :class_name => "Contestant", :conditions => { :tester => true }, :dependent => :destroy
   has_many :matchdays, :dependent => :destroy, :conditions => { :type => "Matchday" }
   has_many :custom_matches, :class_name => "CustomMatch", :as => :set, :dependent => :destroy
-  has_many :friendly_encounters, :dependent => :destroy
+  has_many :friendly_encounters, :dependent => :destroy, :as => "context"
   has_many :events, :dependent => :destroy, :order => "created_at DESC"
   has_one :trial_contest, :class_name => "Contest", :foreign_key => "trial_contest_id", :dependent => :destroy
-  has_one :whitelist
-  has_many :fake_test_suites
+  has_one :whitelist, :dependent => :destroy
+  has_many :fake_test_suites, :dependent => :destroy
   has_one :finale, :dependent => :destroy
   has_many :matches, :through => :matchdays
+  has_many :news_posts, :as => :context
+  
+  delegate :schools, :preliminary_contestants, :to => :season
+
+  belongs_to :season_phase
+  has_one :season, :through => :season_phase
 
   named_scope :public, :conditions => {:public => true}
   named_scope :hidden, :conditions => {:public => false}
+
+  validate do |record|
+    if record.contestants.any?{|con| not record.find_contestants_with_same_name(con).empty? }
+      record.errors.add :contests, "may not have two Contestant with the same name"
+    end
+  end
+
+  before_destroy do |record|
+    (record.contestants + record.test_contestants).each do |c|
+      c.destroy if c.contests.size == 1 and c.season.nil?
+    end
+  end
+
+  def find_contestants_with_same_name(con)
+     contestants.select{|c| c.name == con.name and c.id != con.id}
+  end
+
+  def is_no_duplicate_name!(con)
+    raise "Name of Contestant is already in use!" if not find_contestants_with_same_name(con).empty?
+    true
+  end
+
+  def test_contestant
+    test_contestants.first
+  end
+
+  def all_friendly_encounters
+      friendly_encounters
+  end
+
+  def has_season?
+    !!season_phase
+  end
 
   def public?
     !!self.public
@@ -38,14 +73,6 @@ class Contest < ActiveRecord::Base
 
   def overall_member_count
     contestants.visible.without_testers.ranked.all.sum(&:overall_member_count)  
-  end
-
-  def allow_school_reg
-    self.phase == "registration" or self.phase == "recall"
-  end
-
-  def is_past_phase?(phase)
-    Contest::PHASES.find_index(phase) <= Contest::PHASES.find_index(self.phase)
   end
 
   def prepare_finale
@@ -115,7 +142,13 @@ class Contest < ActiveRecord::Base
   end
 
   def before_validation
-    build_test_contestant( :name => game_definition.tester[:contestant_name], :tester => true, :location => "Test" ) unless test_contestant
+    if test_contestants.empty?
+      con = Contestant.create( :name => game_definition.tester[:contestant_name], :tester => true, :location => "Test" ) 
+      con.valid? 
+      puts con.errors.full_messages
+      con.save!
+      test_contestants << con
+    end
   end
 
   def started?
@@ -166,7 +199,7 @@ class Contest < ActiveRecord::Base
         pairs.each do |contestants|
           # only if all slots are set
           if contestants.nitems == contestants.count
-            match = matchday.matches.create!
+            match = matchday.matches.create!(:context => self)
             match.contestants = contestants
           end
         end
@@ -293,10 +326,6 @@ class Contest < ActiveRecord::Base
     new_contest
   end
 
-  def recall_survey
-    Survey.find_by_access_code subdomain+"_recall"
-  end
-
   def create_trial_contest(conts)
     raise "Contest already has a trial contest" unless trial_contest.nil?
     sd = "trial#{self.subdomain}"
@@ -312,6 +341,24 @@ class Contest < ActiveRecord::Base
 
   def has_replay_viewer?
    !!File.exists?(File.join(RAILS_ROOT,"lib","replay_viewers",game_definition.game_identifier.to_s.underscore,"_viewer.erb"))
+  end
+
+  def status
+    if finale and finale.finished?
+      "finale_finished"
+    elsif finale
+      "finale_created"
+    elsif (not matchdays.empty?) and regular_phase_finished?
+      "regular_phase_finished"
+    elsif matchdays.first and matchdays.first.played?
+      "matchdays_played"
+    elsif not matchdays.empty?
+      "created_schedule"
+    elsif not contestants.empty?
+      "assigned_contestants"
+    else
+      "created"
+    end
   end
 
   protected
@@ -351,7 +398,7 @@ class Contest < ActiveRecord::Base
         c1 = conts.rand
         c2 = conts.rand
         if c1 != c2
-          if not matchdays_contain(result, c1, c2)
+          if not matchdays_contain?(result, c1, c2)
             schedule << [conts.delete(c1), conts.delete(c2)]
           else
             if conts.count == 2
@@ -391,4 +438,5 @@ class Contest < ActiveRecord::Base
 
     result
   end
+
 end

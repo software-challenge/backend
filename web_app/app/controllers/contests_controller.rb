@@ -33,7 +33,6 @@ class ContestsController < ApplicationController
       @curtain = true
     end
     @matchdays = @contest.matchdays
-
     respond_to do |format|
       format.html
       format.xml  { render :xml => @contest }
@@ -133,13 +132,22 @@ class ContestsController < ApplicationController
   end
 
   def refresh_matchdays
-    start_at = params[:schedule][:start_at].to_date
+    unless params[:schedule][:start_at].blank?
+      start_at = params[:schedule][:start_at].to_date
+    else
+      start_at = Time.now
+    end
     weekdays = params[:schedule][:weekdays].collect { |x| x.blank? ? nil : x.to_i }
     weekdays.compact!
     weekdays.uniq!
     trials = params[:schedule][:trial_days].to_i
 
     if @contest.matchdays.count.zero?
+      if weekdays.empty? 
+        flash[:error] = I18n.t("messages.not_enough_weekdays_selected")
+        render :action => :edit_schedule
+        return
+      end
       @contest.refresh_matchdays!(start_at, weekdays, trials)
 
       if @contest.matchdays.count.zero?
@@ -166,8 +174,10 @@ class ContestsController < ApplicationController
   def create_trial_contest(contestants=nil)
     if contestants.nil?
       contestants = []
-      params[:trial_contest][:contestants].keys.each do |c|
-        contestants << Contestant.find(c.to_i)
+      if params[:trial_contest] and params[:trial_contest][:contestants]
+        params[:trial_contest][:contestants].keys.each do |c|
+          contestants << Contestant.find(c.to_i)
+        end
       end
     end
     @contest.create_trial_contest(contestants) 
@@ -194,7 +204,7 @@ class ContestsController < ApplicationController
   end
 
   def register_for_trial_contest
-    contestants = params[:contestants];
+    contestants = params[:contestants] || []
     contestants.each do |team,i|
       contestant = Contestant.find(team)
       contestant.participate_at_trial_contest = i
@@ -208,34 +218,6 @@ class ContestsController < ApplicationController
     @contest.allow_trial_registration = allow
     @contest.save!
     redirect_to trial_contest_contest_url(@contest)
-  end
-
-  def phases
-    
-  end
-
-  def move_phase
-    direction = params[:direction]
-    index = Contest::PHASES.find_index @contest.phase
-    if direction == "forth"
-      if index < Contest::PHASES.count - 1
-        index += 1
-      else
-        flash[:error] = "Keine weitere Phase vorhanden"
-      end
-    else
-      if index > 0
-        index -= 1
-      else
-        flash[:error] = "Bereits in der ersten Phase"
-      end
-    end
-    @contest.phase = Contest::PHASES[index]
-    if @contest.respond_to? "phase_moved_#{direction}_to_#{@contest.phase}"
-      @contest.send "phase_moved_#{direction}_to_#{@contest.phase}"
-    end
-    @contest.save!
-    redirect_to phases_contest_url(@contest) 
   end
 
 protected

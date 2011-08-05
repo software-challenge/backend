@@ -1,7 +1,7 @@
 class ClientsController < ApplicationController
   # skip_before_filter :verify_authenticity_token
 
-  before_filter :load_contestant
+  before_filter :fetch_context, :load_contestant
   access_control do
     default :deny
     allow :administrator
@@ -26,7 +26,7 @@ class ClientsController < ApplicationController
     @client = @contestant.clients.find(params[:id])
 
     respond_to do |format|
-      format.html { redirect_to contest_contestant_clients_url(@contest) }
+      format.html { redirect_to [@context, @contestant, :clients] }
       format.xml  { render :xml => @client }
     end
   end
@@ -61,7 +61,7 @@ class ClientsController < ApplicationController
       end
     end
 
-    if success
+    if success and @contest
       add_event ClientUploadedEvent.create(:client => @client)
     end
 
@@ -71,7 +71,7 @@ class ClientsController < ApplicationController
     else
       respond_to do |format|
         if success
-          format.html { redirect_to contest_contestant_clients_url(@contest,@contestant) }
+          format.html { redirect_to [@context, @contestant, :cients] }
           format.xml  { render :xml => @client, :status => :created, :location => @client }
         else
           format.html { render :action => "new" }
@@ -87,7 +87,7 @@ class ClientsController < ApplicationController
     respond_to do |format|
       if @client.update_attributes(params[:client])
         flash[:notice] = 'Client was successfully updated.'
-        format.html { redirect_to contest_contestant_clients_url(@contest, @client.contestant) }
+        format.html { redirect_to [@context, @client.contestant, :clients] }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -98,12 +98,11 @@ class ClientsController < ApplicationController
 
   def destroy
     raise "not supported"
-
     @client = @contestant.clients.find(params[:id])
     @client.destroy
 
     respond_to do |format|
-      format.html { redirect_to(contest_clients_url(@contest)) }
+      format.html { redirect_to [@context, @contestant, :clients] }
       format.xml  { head :ok }
     end
   end
@@ -118,7 +117,7 @@ class ClientsController < ApplicationController
     else
       @client.test_delayed! activate
     end
-    redirect_to  params[:from_details] ? client_details_contest_contestant_client_url(@contest,@contestant,@client) : contest_contestant_clients_url(@contest, @contestant)
+    redirect_to  params[:from_details] ? [:client_details, @context, @contestant, @client] : [@context, @contestant, :clients]
   end
 
   def browse
@@ -146,7 +145,7 @@ class ClientsController < ApplicationController
     @client.main_file_entry = @main_entry
     @client.save!
 
-    redirect_to contest_contestant_clients_url(@contest, @contestant)
+    redirect_to [@context, @contestant, :clients]
   end
 
   def select
@@ -155,9 +154,11 @@ class ClientsController < ApplicationController
     @contestant.current_client = @client
     @contestant.save!
 
-    add_event ClientActivatedEvent.create(:client => @client)
+    if @contest
+      add_event ClientActivatedEvent.create(:client => @client)
+    end
 
-    redirect_to contest_contestant_clients_url(@contest, @contestant)
+    redirect_to [@context, @contestant, :clients]
   end
 
   def status
@@ -315,7 +316,7 @@ class ClientsController < ApplicationController
   def client_details
     @client = Client.find_by_id(params[:id]) 
     if @client.contestant != @contestant
-      redirect_to contest_contestant_clients_url(@contest,@contestant)
+      redirect_to [@context, @contestant, :clients]
     end
   end
 
@@ -323,12 +324,15 @@ class ClientsController < ApplicationController
   protected
 
   def load_contestant
-
-    @contestant = @contest.contestants.find(params[:contestant_id])
+    @contestant = @context.contestants.find(params[:contestant_id])
   end
 
   def requested_by_flash?
     request.env['HTTP_USER_AGENT'] =~ /^(Adobe|Shockwave) Flash/
   end  
+
+  def fetch_context
+    @context = @contest ? @contest : @season
+  end
 
 end

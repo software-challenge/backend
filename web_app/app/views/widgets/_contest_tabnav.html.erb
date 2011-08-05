@@ -25,7 +25,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       t.links_to contest_edit_schedule_url(@contest)
       t.disable! unless @contest.ready? or administrator?
       t.highlights_on :controller => "contests", :action => "edit_schedule"
-    end if @contest.phase == "contest"
+    end 
  # end
 
   add_tab do |t|
@@ -33,7 +33,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     begin; t.disable!; next; end if @contest.new_record?
     t.links_to contest_contestants_url(@contest)
     t.highlights_on :controller => "contestants", :action => "index"
-  end if @contest.phase == "contest"
+  end 
 
   add_tab do |t|
     t.named t("views.my") + " " + Contestant.human_name(:count => 2)
@@ -55,7 +55,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.links_to contest_standings_url(@contest)
     t.disable! unless @contest.last_played_matchday
     t.highlights_on :controller => "contests", :action => "standings"
-  end if @contest.phase == "contest"
+  end 
 
   add_tab do |t|
     t.named t("titles.results")
@@ -64,22 +64,13 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
     t.links_to contest_results_url(@contest)
     t.disable! unless @contest.last_played_matchday
     t.highlights_on :controller => "contests", :action => "results"
-  end if @contest.phase == "contest"
+  end 
 
   if logged_in? and current_user.is_member_of_a_team?(@contest)
     add_tab do |t|
       t.named FriendlyEncounter.human_name(:count => 2)
       t.links_to contest_friendly_encounters_url(@contest)
       t.highlights_on :controller => "friendly_encounters", :action => "index"
-    end
-  end
-
-  if ((logged_in? and not (current_user.schools_for_contest(@contest).empty? and current_user.other_schools_for_contest(@contest).empty?)) or administrator?) and @contest.phase != "contest"
-    add_tab do |t|
-      begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}"; end if not administrator?
-      begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}"; end if administrator?
-      t.links_to contest_schools_url(@contest)
-      t.highlights_on :controller => "schools", :action => "index"
     end
   end
 
@@ -91,14 +82,25 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
    end
   end
 
-  if (logged_in? and @contest.phase != "contest" and not @current_user.preliminary_contestants.empty?) or administrator?
+  if ((logged_in? and not (current_user.schools_for_season(@season).empty? and current_user.other_schools_for_season(@season).empty?)) or administrator?) and @season and not @season.contest?
+    add_tab do |t|
+      begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}"; end if not administrator?
+      begin; t.named "#{t "views.all"} #{School.human_name(:count => 2)}"; end if administrator?
+      t.links_to season_schools_url(@season)
+      t.highlights_on :controller => "schools", :action => "index"
+    end
+  end
+
+  if logged_in? and @season and not @season.contest? 
     add_tab do |t|
       t.named "#{t "views.all"} #{PreliminaryContestant.human_name(:count => 2)}" if administrator?
       t.named "#{t "views.my" } #{PreliminaryContestant.human_name(:count => 2)}" if not administrator?
-      t.links_to contest_preliminary_contestants_url(@contest)
+      t.links_to season_preliminary_contestants_url(@season)
       t.highlights_on :controller => "preliminary_contestants"
     end
   end
+
+
 
     if (@contest.regular_phase_finished?) and ((not @contest.finale.nil? and @contest.finale.published?) or (not current_user.nil? and current_user.has_role?(:administrator)) or (not @contest.finale.nil? and @contest.finale.has_published_lineup?))
       add_tab do |t|
@@ -112,7 +114,7 @@ render_tabnav :contest, :html => { :class => "tabs_tabnav" } do
       t.named Contest.human_attribute_name("trial_contest")
       t.links_to trial_contest_contest_url(@contest)
       t.highlights_on :controller => "contests", :action => "trial_contest"
-    end if @contest.phase == "contest"
+    end
   end
 
   if @contest.is_trial_contest?

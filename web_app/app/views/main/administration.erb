@@ -11,7 +11,7 @@
         <% if event.path.nil? %>
           <% txt = event.text %>
         <% else %>
-          <% txt = link_to event.text, replace_variables(event.path) %>
+           <% txt = link_to event.text, replace_variables(event.path) %>
         <% end %>
         <%= event.created_at.to_time.strftime("%d.%m.%y - %H:%M") %> - <%= txt %><br>
       <% end %>

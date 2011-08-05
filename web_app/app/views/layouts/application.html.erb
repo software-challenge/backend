@@ -68,64 +68,108 @@
     <div id="page-container">
       <div id="header">
         <div id="mainLogo">
-          <% link_to contest_url(@contest) do %>
+          <% link_to @contest || root_url do %>
             <span class="logo"></span>
           <% end %>
         </div>
-        <div id="newsTicker" style="float:left; font-size:14px;">
-          <% unless @news_posts.empty? %> <b>Aktuelles:</b> <% end %>
-          <% show_to :administrator do %>
-            <span style="float:right;">
-              <%= link_to image_tag('actions/add_small.png'), new_contest_news_post_url(@contest), :title => "Neuen Eintrag erstellen" %> 
-            </span>
-          <% end %>
-          <div id="news-content">
-            <% @news_posts.each do |post| %> 
-             <span id="post_<%= post.id %>" class="news_post">
-              <%= l post.created_at.to_date %> - 
-              <% link_to contest_news_post_url(@contest,post) do %>
-               <%= post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
+        <% if @contest or @season %>
+          <div id="newsTicker" style="float:left; font-size:14px;">
+            <% unless @news_posts.empty? %> <b>Aktuelles:</b> <% end %>
+              <span style="float:right;">
+               <%= link_to image_tag("actions/rss.png"), (@contest ? contest_news_path(@contest) : season_news_path(@season)), :title => "RSS Feed abonnieren" unless @news_posts.empty? %>
+               <% show_to :administrator do %><%= link_to image_tag('actions/add_small.png'), (@contest ? [:new, @contest, :news_post] : [:new, @season, :news_post]), :title => "Neuen Eintrag erstellen" %> <% end %>
+              </span>
+            <div id="news-content">
+              <% @news_posts.each do |post| %> 
+               <span id="post_<%= post.id %>" class="news_post">
+                <%= l post.created_at.to_date %> - 
+                <% link_to [post.context, post] do %>
+                 <%= post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
+                <% end %>
+               </span>
+               <div class="tooltip news_tooltip_padding">
+                 <%= render :partial => 'news_posts/news_post', :locals => {:news_post => post} %>
+               </div>
+               <br>
               <% end %>
-             </span>
-             <div class="tooltip news_tooltip_padding">
-               <%= render :partial => 'news_posts/news_post', :locals => {:news_post => post} %>
-             </div>
-             <br>
-            <% end %>
+            </div>
           </div>
-        </div>
-        <% javascript_tag do %>
-          $(".news_post").tooltip({ effect: 'slide', position: 'bottom', delay: 150, predelay: 250})
-        <% end %>
-
+          <% javascript_tag do %>
+            $(".news_post").tooltip({ effect: 'slide', position: 'bottom', delay: 150, predelay: 250})
+          <% end %>
+        <% end %> 
         <div id="menu">
           <div style="line-height: 24px; padding: 8px 0;">
             <% if logged_in? %>
               <span style="border: 1px solid #eee; padding: 5px; margin: -5px; background-color: white;">
                 <span><%= t "views.logged_in_as" %></span>
-                <span><%= link_to current_user.name, contest_person_url(@contest, current_user) %></span>
+                <span><%= link_to current_user.name, person_url(current_user) %></span>
                 <% if !ENV['EMAIL_VALIDATION'] or ENV['EMAIL_VALIDATION'] == "true" %>
                   <%= image_tag gravatar_url(current_user.email, :size => 24), :width => 24, :height => 24, :style => "vertical-align: top; margin: 0 3px;" %>
                 <% end %>
-                <span><%= link_to t("actions.logout"), contest_logout_url(@contest), :method => :post %></span>
+                <span><%= link_to t("actions.logout"), logout_url(:redirect_url => @current_url[:escaped]), :method => :post %></span>
               </span>
             <% else %>
               <span><%= t("views.hey_who_are_you") %></span>
-              <span> <%= link_to ((I18n.t("actions.login")).downcase)+"!", contest_login_url(@contest) %></span>
+              <span> <%= link_to ((I18n.t("actions.login")).downcase)+"!", login_url(:redirect_url => @current_url[:escaped]) %></span>
             <% end %>
           </div>
           <div style="line-height: 14px; padding: 0 0 6px 0;">
             <ul id="mainMenu">
               <li><%= link_to t("views.starting_page"), (@contest.nil? ? root_url : contest_url(@contest)) %></li>
-              <% team_count = (logged_in? ? current_user.contestants.for_contest(current_contest).count : 0) %>
 
               <% show_to :administrator do %>
-                <li><%= link_to t("views.administration"), contest_administration_url(@contest) %></li>
+                <li><%= link_to t("views.administration"), contest_administration_url(@contest||(@season && @season.contests.first)||Contest.last) %></li>
               <% end %>
               <li><%= link_to t("views.main_page"), "http://www.software-challenge.de", :target => "_blank" %></li>
               <li><%= link_to t("views.wiki"), "http://sc-doku.gfxpro.eu/wiki/Hauptseite", :target => "_blank" %></li>
               <li><%= link_to t("views.forum"), "/forum", :target => "_blank" %></li>
               <li><%= link_to t("views.faq"), "/faq", :target => "_blank" %></li>
+              <li><%= link_to Contest.human_name(:count => 2), contests_url(), :id => :select_contest %></li>
+              <% if @current_user and Quassum::ApiUser.possible_api_user?(@current_user) %>
+                <li><%= link_to t("views.tickets"), tickets_path %></li>
+              <% end %>
+              
+              <div id="available_contests">
+                 <ul>
+                   <% if @season %>
+                     <li><b>Saison: <%= @season.name %></b></li>
+                     <% @season.contests.each do |contest| %>
+                       <li>&nbsp<%= link_to contest.name, contest %></li>
+                     <% end %>
+                   <% end %>
+                     <li><b>Aktuellste Wettkämpfe</b></li>
+                     <% (administrator? ? Contest.all : Contest.public).last(5).each do |contest| %>
+                       <li>&nbsp<%= link_to contest.name, contest %></li>
+                     <% end %> 
+                     <% seasons = (administrator? ? Season.all : Season.public).last(3) %>
+                     <% unless seasons.empty? %>
+                       <li><b>Verfügbare Saisons</b> (<i><%= link_to "alle", seasons_path %></i>)</li>
+                       <% seasons.each do |season| %>
+                         <li>&nbsp<%= link_to season.name, season %></li>
+                       <% end %>
+                     <% end %>
+                 </ul>
+              </div>
+              <% javascript_tag do %>
+                 $(function(){
+                  var par = $("#select_contest").parent()
+                  $("#available_contests").css({
+                     'position': 'absolute',
+                     'top'     : par.height()+par.position().top,
+                     'right'    : $(window).width()-(par.position().left+par.width()),
+                     'width'   : '250'
+                  })
+                  $("#select_contest").toggle(
+                    function(){
+                      $("#select_contest").parent().addClass("dialog_open")
+                      $("#available_contests").slideDown('slow')
+                    },function(){
+                      $("#select_contest").parent().removeClass("dialog_open")
+                      $("#available_contests").slideUp('slow')
+                    })
+                 })
+              <% end %>
             </ul>
           </div>
         </div>
@@ -151,7 +195,7 @@
             <% end %>
           </div>
         <% end %>
-
+        
         <%= yield %>
 
         <% javascript_tag do %>

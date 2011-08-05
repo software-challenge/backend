@@ -35,7 +35,7 @@ class EventMailer < ActionMailer::Base
     from "software-challenge@gfxpro.eu"
     subject "Client für kommenden Spieltag vorbereiten"
     sent_on Time.now
-    body({ :matchday => matchday, :contestant => contestant, :mdstr => mdstr, :url => contest_contestant_clients_url(contestant.contest_id, contestant) })
+    body({ :matchday => matchday, :contestant => contestant, :mdstr => mdstr, :url => contest_contestant_clients_url(matchday.contest_id, contestant) })
   end
   
   def on_matchday_played_notification(matchday)
@@ -109,6 +109,18 @@ class EventMailer < ActionMailer::Base
     sent_on   Time.now
     bcc       email_adds.join(", ").strip
     body({:text => text})
+  end
+
+  def ticket_or_comment_changed_notification(ticket)
+    people = ticket.contexts.map{|c| c.context.people.pupils + c.context.people.teachers}.flatten.uniq.select{|p| p.email_event.rcv_quassum_notification}.compact
+    people.delete ActiveRecord::Base.current_user
+
+    email_adds = people.map{|p| "\"#{p.name.strip}\" <#{p.email.strip}>"}.uniq
+    from      "software-challenge@gfxpro.eu"
+    subject   "[Software-Challenge] Ticket bearbeitet: #{ticket.title}"
+    sent_on   Time.now
+    bcc       email_adds.join(", ").strip
+    body({:ticket => ticket})
   end
 
   private

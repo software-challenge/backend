@@ -2,7 +2,7 @@
   <td colspan="3"></td>
   <td colspan="2" style="text-align: left">
     <b>Kommentar erstellen:</b>
-    <% form_remote_tag :url => create_comment_contest_contestant_client_url(@contest, client.contestant, client), :complete => "show_comments_for("+client.id.to_s+")" do %>
+    <% form_remote_tag :url => [:create_comment, @context, client.contestant, client], :complete => "show_comments_for("+client.id.to_s+")" do %>
       <%= text_area_tag :text, "", :id => "text", :style => "width: 100%" %><br>
       <p style="text-align: right">
         <% if defined?(no_cancel).nil? or not no_cancel%>

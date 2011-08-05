@@ -1,9 +1,9 @@
 <h1>
-  <%= link_to @contest.name, contest_url(@contest)%> /
+  <%= link_to @season.name, season_url(@season)%> /
   Voranmeldungen: Teams
 </h1>
 
-<% tabnav :contest do %>
+<% tabnav :season do %>
  <% show_to :administrator do %><div style="margin-bottom: 20px; font-weight: bold"><%= t "views.teams_registered", :teams => "<span id='teams_count'>#{@preliminary_contestants.count}</span>", :schools_without_teams => "<span id='schools_without_teams'>#{@schools_without_teams.count}</span>", :total => "<span id='total'>#{@total_count}</span>" %></div> 
 
   <div id="filter">

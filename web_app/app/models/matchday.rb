@@ -254,6 +254,11 @@ class Matchday < ActiveRecord::Base
     position - contest.matchdays.trials.count
   end
 
+  def rank_for(contestant)
+     slot = slots.to_a.find{|s| s.contestant == contestant}
+     slot ? slot.position : nil
+  end
+
 
   protected
 
@@ -330,7 +335,7 @@ class Matchday < ActiveRecord::Base
       # Now aggregate scores
       result = contest.game_definition.aggregate_matches(elements)
 
-      slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "match_score")
+      slot.score ||= slot.build_score(:game_definition => contest.game_definition.game_identifier.to_s, :score_type => "match_score")
       slot.score.set!(result)
       slot.save!
     end

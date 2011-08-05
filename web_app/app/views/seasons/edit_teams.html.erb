@@ -1,0 +1,39 @@
+<%= stylesheet_link_tag "edit_season_teams" %>
+<h1>
+  Saison: <%= link_to @season.name, @season %> / 
+  Teams verwalten
+</h1>
+
+<% tabnav :season do %>
+  <div id="edit_teams" >
+    <table>
+      <thead>
+        <th>Voranmeldungen</th>
+        <th>Team</th>
+        <th>Teams</th>
+      </thead>
+      <tr>
+        <td>
+          <%= select_tag "preliminary_contestants", options_for_select(@preliminary_contestants.collect{|p| ["#{p.school.name} - #{p.name}",p.id]}), :size => 50, :style => "width: 300px; height: 400px;" %>
+         </td>
+         <td id="team_partial">
+            <%= render :partial => "contestant_form", :locals => {:prelim => PreliminaryContestant.all.first} %>  
+        </td>
+         <td>
+        <%= select_tag "contestants", options_for_select(@contestants.collect{|c| [c.name,c.id]}), :size => 50, :style => "width: 300px; height: 400px;"  %>
+        </td>
+      </tr>
+    </table>  
+  </div>
+<% end %>
+<% javascript_tag do %>
+  $(function() {
+  $("#preliminary_contestants").bind("change", function(){
+    $.getScript("<%= new_team_season_url(@season)%>?preliminary_contestant="+$(this).attr("value"))
+  })
+  $("#contestants").bind("change", function(){
+    $.getScript("<%= edit_team_season_url(@season)%>?contestant="+$(this).attr("value"))
+  })
+  });
+<% end %>
+

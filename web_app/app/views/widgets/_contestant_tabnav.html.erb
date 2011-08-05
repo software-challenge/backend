@@ -1,16 +1,16 @@
 <%  
 render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
-
+  
   show_to :administrator do
     add_tab do |t|
       t.named t("actions.create").capitalize
-      t.links_to new_contest_contestant_url(@contest)
+      t.links_to url_for [:new, @context, :contestant]
       t.highlights_on :controller => "contestants", :action => "create"
     end if @contestant.new_record?
 
     add_tab do |t|
       t.named t("actions.edit")
-      t.links_to edit_contest_contestant_url(@contest, :id => @contestant)
+      t.links_to url_for [:edit, @context, @contestant]
       t.highlights_on :controller => "contestants", :action => "edit"
     end unless @contestant.new_record?
   end
@@ -19,23 +19,28 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
     add_tab do |t|
       t.named t("titles.people.people")
       begin; t.disable!; next; end if @contestant.new_record?
-      t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant
+      t.links_to :controller => "people", :action => "people_for_contestant", :contestant_id => @contestant.id
     end
 
     add_tab do |t|
       t.named Client.human_name(:count => 2)
       begin; t.disable!; next; end if @contestant.new_record?
-      t.links_to :controller => "clients", :action => "index", :contestant_id => @contestant
+      t.links_to url_for [@context, @contestant, :clients]
       t.highlights_on :controller => "clients", :action => "new"
       t.highlights_on :controller => "clients", :action => "create"
     end
   end
-
+  
   add_tab do |t|
     t.named t("titles.matches.matches")
     begin; t.disable!; next; end if @contestant.new_record?
-    t.links_to :controller => "matches", :action => "index_for_contestant", :contestant_id => @contestant
+    t.links_to :controller => "matches", :action => "index_for_contestant", :contestant_id => @contestant, @context.class.to_s.downcase+"_id" => @context.id
   end
 
+  add_tab do |t|
+    t.named t("views.contestant_report")
+    t.links_to url_for [:report, @context, @contestant]
+    t.highlights_on :controller => "contestants", :action => "report"
+  end if (administrator? or (logged_in? and (@current_user.has_role?(:tutor,@contestant) or @current_user.has_role?(:helper,@contestant)))) and not @contestant.new_record?
 end
 %>

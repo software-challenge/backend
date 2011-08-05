@@ -4,21 +4,32 @@ render_tabnav :person, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named t("titles.edit")
     if @contestant.nil?
-      t.links_to edit_contest_person_url(@contest, @person)
+      t.links_to url_for [:edit, @context, @person]
     else
-      t.links_to edit_contest_contestant_person_url(@contest, @contestant, @person)
+      t.links_to url_for [:edit, @context, @contestant, @person]
     end
     t.highlights_on :controller => "people", :action => "edit"
   end
-
   add_tab do |t|
     t.named "Benachrichtigungen"
     if @contestant.nil?
-      t.links_to edit_contest_person_email_event_url(@contest, @person)
+      t.links_to url_for [:edit, @context, @person, :email_event]
     else
-      t.links_to edit_contest_contestant_person_email_event_url(@contest, @contestant, @person)
+      t.links_to url_for [:edit, @context, @contestant, @person, :email_event]
     end
     t.highlights_on :controller => "email_events", :action => "edit" 
+  end
+
+  if administrator?
+    add_tab do |t|
+      t.named "Ticket Einstellungen"
+      if @contestant
+        t.links_to url_for [:ticket_settings, @context, @contestant, @person]
+      else
+        t.links_to url_for [:ticket_settings, @context, @person]
+      end
+      t.highlights_on :controller => "people", :action => "ticket_settings"
+    end
   end
 
 end

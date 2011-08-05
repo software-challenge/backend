@@ -1,5 +1,6 @@
 class FriendlyEncountersController < ApplicationController
 
+before_filter :fetch_context
 before_filter :ensure_login
 before_filter :fetch_contestants
 
@@ -13,7 +14,7 @@ end
 
 def show
   fe = FriendlyEncounter.find(params[:id])
-  redirect_to contest_friendly_encounters_url(@contest) unless fe.played? and (fe.may_be_seen_by(current_user) or current_user.has_role?(:administrator))
+  redirect_to :action => :index unless fe.played? and (fe.may_be_seen_by(current_user) or current_user.has_role?(:administrator))
   @match = fe.friendly_match
 end
 
@@ -26,27 +27,27 @@ def status
 end 
 
 def hide
-  con = Contestant.find(params[:contestant])
-  redirect_to contest_friendly_encounters_url(@contest) unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
+  con = Contestant.find(params[:contestant_id])
+  redirect_to :action => :index unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
   enc = FriendlyEncounter.find(params[:id])
   slot = enc.slot_for(con)
   unless slot.nil?
     slot.hidden = true
     slot.save!
   end
-  redirect_to contest_friendly_encounters_url(@contest)
+  redirect_to :action => :index
 end
 
 def unhide
-  con = Contestant.find(params[:contestant])
-  redirect_to contest_friendly_encounters_url(@contest) unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
+  con = Contestant.find(params[:contestant_id])
+  redirect_to :action => :index unless current_user.has_role_for?(con) or current_user.has_role?(:administrator)
   enc = FriendlyEncounter.find(params[:id])
   slot = enc.slot_for(con)
   unless slot.nil?
     slot.hidden = false
     slot.save!
   end
-  redirect_to contest_friendly_encounters_url(@contest)
+  redirect_to :action => :index
 end
 
 def create
@@ -60,9 +61,9 @@ def create
   end
 
   if con2.nil?
-    enc = @contest.friendly_encounters.to_ary.find{|enc| enc.contestants.include?(con1) and enc.open_for.nil? and enc.open?}
+    enc = @context.friendly_encounters.to_ary.find{|enc| enc.contestants.include?(con1) and enc.open_for.nil? and enc.open?}
   else
-    enc = @contest.friendly_encounters.to_ary.find{|enc| enc.contestants.include?(con1) and enc.open_for == con2 and (enc.open? or enc.rejected? or enc.ready?)}
+    enc = @context.friendly_encounters.to_ary.find{|enc| enc.contestants.include?(con1) and enc.open_for == con2 and (enc.open? or enc.rejected? or enc.ready?)}
   end
 
   if not enc.nil?
@@ -80,12 +81,12 @@ def create
     params[:id] = enc.id
     accept
   else
-    redirect_to contest_friendly_encounters_url(@contest) 
+    redirect_to :action => :index 
   end
 end
 
   def all
-    @encounters = @contest.friendly_encounters
+    @encounters = @context.friendly_encounters
   end
 
   def destroy
@@ -94,7 +95,7 @@ end
     raise t("messages.action_now_allowed") unless current_user.has_role_for? con
     
     enc.destroy
-    redirect_to contest_friendly_encounters_url(@contest)
+    redirect_to :action => :index
   end
 
   def reject
@@ -102,12 +103,12 @@ end
     raise t("messages.action_not_allowed") if not enc.rejectable_by?(current_user)
 
     enc.reject
-    redirect_to contest_friendly_encounters_url(@contest)
+    redirect_to :action => :index
   end
 
   def accept
     enc = FriendlyEncounter.find(params[:id])
-    con = Contestant.find(params[:contestant])
+    con = Contestant.find(params[:contestant_id])
     raise t("messages.action_not_allowed") if not enc.acceptable_by?(current_user)
 
     if not enc.open?
@@ -122,7 +123,7 @@ end
       enc.add_contestant(con)
     end
 
-    redirect_to contest_friendly_encounters_url(@contest)
+    redirect_to :action => :index
   end
 
   def play
@@ -149,7 +150,7 @@ end
       enc.play! 
     end
 
-    redirect_to contest_friendly_encounters_url(@contest)
+    redirect_to :action => :index
   end
 
 private
@@ -161,10 +162,14 @@ private
     end
   end
 
+  def fetch_context
+    @context = (@season ? @season: @contest)
+  end
+
   def ensure_login
-    redirect_to contest_url(@contest) unless logged_in? and not current_user.nil?
+    redirect_to @context unless logged_in? and not current_user.nil?
     if logged_in?
-      redirect_to contest_url(@contest) unless current_user.is_member_of_a_team?(@contest) or current_user.has_role?(:administrator)
+      redirect_to @context unless current_user.is_member_of_a_team?(@context) or current_user.has_role?(:administrator)
     end
   end
 end

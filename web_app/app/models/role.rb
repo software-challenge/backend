@@ -1,4 +1,12 @@
 class Role < ActiveRecord::Base
+  
+  named_scope :helper, :conditions => {:name => "helper"}
+  named_scope :tutor, :conditions => {:name => "tutor"}
+
+  named_scope :for, lambda{|d| {:conditions => {:authorizable_type => d.class.to_s, :authorizable_id => d.id}}}
+
+  named_scope :for_contestants, :conditions => {:authorizable_type => "Contestant"}
+  named_scope :helper_or_tutor, :conditions => ["name = 'helper' OR name = 'tutor'"]
   acts_as_authorization_role
 
   named_scope :for_authorizable, lambda { |c| {:conditions => ["authorizable_type = ? and authorizable_id = ?",c.class.to_s,c.id]}} 

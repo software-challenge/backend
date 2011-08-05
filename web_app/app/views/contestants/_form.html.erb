@@ -1,10 +1,10 @@
-<% semantic_form_for([@contest, @contestant]) do |f| %>
+<% semantic_form_for([@context, @contestant]) do |f| %>
   <% f.inputs do %>
     <%= f.input :name, :required => true %>
     <%= f.input :location, :required => true %>
     <% rankings = Contestant::RANKINGS.collect{|r| [t("views.ranking.#{r}"), r]}.clone %>
     <% 
-      if @contest.ready?
+      if @contestant.contests.any?{|c| c.ready?}
         if @contestant.ranked?
           rankings.reject!{|t,r| r == "none"}
         else
@@ -16,8 +16,8 @@
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button %>
-    <% if @contestant.new_record? %>
-    oder <%= link_to t("views.back"), contest_contestants_url(@contest) %>
+    <% if @contestant.new_record? %>      
+      oder <%= link_to t("views.back"), :action => :index %>
     <% end %>
   <% end %>
   <% javascript_tag do %>

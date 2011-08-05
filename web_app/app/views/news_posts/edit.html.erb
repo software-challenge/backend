@@ -1,4 +1,4 @@
-<h1>News bearbeiten</h1>
-<% tabnav :administration do %>
+<h1>News bearbeiten für: <%= @context.name %></h1>
+<% tabnav @context.class.to_s.downcase.to_sym do %>
   <%= render :partial => 'form' %>
 <% end %>

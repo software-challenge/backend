@@ -2,7 +2,7 @@ class School < ActiveRecord::Base
 
   STATES = %w{Schleswig-Holstein Mecklenburg-Vorpommern Hamburg Bremen Brandenburg  Niedersachsen Berlin Sachsen-Anhalt Nordrhein-Westfalen Sachsen Thüringen Hessen Rheinland-Pfalz Saarland Bayern Baden-Württemberg}
 
-  belongs_to :contest
+  belongs_to :season
   has_many :contestants
   belongs_to :person
   has_many :preliminary_contestants, :dependent => :destroy
@@ -10,15 +10,15 @@ class School < ActiveRecord::Base
 
   alias :teams :preliminary_contestants
   
-  validates_presence_of :contest
   validates_presence_of :name  
   validates_presence_of :zipcode
   validates_presence_of :location
   validates_presence_of :state
   validates_presence_of :contact_function
   validates_presence_of :person
-  validates_uniqueness_of :name, :scope => :contest_id
+  validates_uniqueness_of :name, :scope => :season_id
   validates_inclusion_of :state, :in => STATES
+  validates_presence_of :season
 
   named_scope :without_teams, :conditions => "schools.id NOT IN (SELECT school_id FROM preliminary_contestants)"
 

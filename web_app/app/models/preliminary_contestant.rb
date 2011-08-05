@@ -2,9 +2,10 @@ class PreliminaryContestant < ActiveRecord::Base
 
   PROBS = ["Sicher", "Wahrscheinlich", "Vielleicht", "Eher nicht", "Sicher nicht"]
 
-  has_one :contest, :through => :school
+  has_one :season, :through => :school
   belongs_to :person
   belongs_to :school
+  belongs_to :contestant # the contestant generated from this one!
   has_many :survey_tokens, :as => :token_owner, :dependent => :destroy 
   validates_presence_of :school, :name
   validates_uniqueness_of :name, :scope => :school_id 

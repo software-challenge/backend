@@ -6,6 +6,7 @@ class SurveyToken < ActiveRecord::Base
   has_one :person, :through => :response_set, :source => :user
   
   delegate :contest, :to => :token_owner
+  delegate :season, :to => :token_owner
  
   validates_presence_of :token_owner
   validates_presence_of :survey

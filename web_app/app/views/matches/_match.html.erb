@@ -1,6 +1,9 @@
 <% allowQualify = true if local_assigns[:allowQualify].nil? %>
 <% matchday_match = @match.respond_to? :matchday %>
 <% allowQualify &= matchday_match %>
+<% context = match.context %>
+<% game_definition = match.context.game_definition %>
+<% @contest = Contest.public.first unless @contest %>
 
 <style type="text/css">
   table#result {
@@ -108,8 +111,8 @@
 
 <% if match.result %>
 
-<% match_score_fragments = @contest.game_definition.match_score.count %>
-<% round_score_fragments = @contest.game_definition.round_score.count %>
+<% match_score_fragments = game_definition.match_score.count %>
+<% round_score_fragments = game_definition.round_score.count %>
 <% max_fragments = [round_score_fragments, match_score_fragments].max %>
 <% match_colspan = 1 + [0, max_fragments - match_score_fragments].max %>
 <% round_colspan = 1 + [0, max_fragments - round_score_fragments].max %>
@@ -122,14 +125,14 @@
   </tr>
   <tr>
     <th colspan="<%= match_colspan + ((not current_user.nil? and current_user.has_role?(:administrator)) ? 1 : 0) %>">&nbsp;</th>
-    <% @contest.game_definition.match_score.each do |k,fragment| %>
-      <th style="text-align: right"><%= match_score_fragment_name(@contest.game_definition, fragment) %></th>
+    <% game_definition.match_score.each do |k,fragment| %>
+      <th style="text-align: right"><%= match_score_fragment_name(game_definition, fragment) %></th>
     <% end %>
     <th>&nbsp;</th>
   </tr>
   <% match.slots.each do |slot| %>
     <tr>
-      <td colspan="<%= match_colspan %>"><%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %></td>
+      <td colspan="<%= match_colspan %>"><%= link_to slot.contestant.name, [context, slot.contestant, :matches] %></td>
       <% show_to :administrator do %>
         <td></td> 
       <% end %>
@@ -164,8 +167,8 @@
         <th></th>
       <% end %>
     <% end %>
-    <%@contest.game_definition.round_score.each do |k, fragment| %>
-      <th style="text-align: center"><%= round_score_fragment_name(@contest.game_definition, fragment) %></th>
+    <% game_definition.round_score.each do |k, fragment| %>
+      <th style="text-align: center"><%= round_score_fragment_name(game_definition, fragment) %></th>
     <% end %>
     <th>&nbsp;</th>
   </tr>
@@ -177,7 +180,7 @@
             <span style="float: right;">
               <% if round.has_server_log? and matchday_match %>
                 <% show_to :administrator do %>
-                  <%= link_to "Serverlog", send_server_log_contest_matchday_match_round_url(@contest, round.match.matchday, round.match, round, :round_id => round.id), :method => :post %> 
+                  <%= link_to "Serverlog", send_server_log_contest_matchday_match_round_url(0, round.match.matchday, round.match, round, :round_id => round.id), :method => :post %> 
                 <% end %>
               <% end %>
               <% if matchday_match and round.played? %>
@@ -185,7 +188,7 @@
               <% elsif @match.is_a? CustomMatch %>
                 <%= link_to "Replay herunterladen", [@contest, @match, round] %>
               <% end %>
-              <% if @contest.has_replay_viewer? and round.played? %> 
+              <% if @context.has_replay_viewer? and round.played? %> 
                <a href="#" id="replay_show_round_<%= round.id %>">Replay ansehen</a>
                 <% javascript_tag do %>
                   $(function() {
@@ -193,7 +196,7 @@
                       <% if matchday_match %>
                         show_replay(<%= round.id %>, "<%= show_replay_contest_matchday_match_round_url(@contest, match.matchday.id, match.id, round.id) %>")
                       <% elsif @match.is_a? CustomMatch %>
-                        show_replay(<%= round.id %>, "<%= show_replay_contest_custom_match_round_url(@contest, @match, round) %>")
+                        show_replay(<%= round.id %>, "<%= show_replay_contest_custom_match_round_url(@contest, @match.id, round.id) %>")
                       <% end %>
                       return false
                     })
@@ -204,7 +207,7 @@
           <% end %>
           Runde <%= round_index.next %> 
           <% show_to :administrator do %>
-             <%= link_to image_tag("actions/delete.png", :class => "tooltipped", :title => "Runde zurücksetzen"), reset_contest_matchday_match_round_url(@contest,@match.matchday,@match,round), :method => :post, :confirm => t("messages.confirm_round_reset") if round.played?%>
+             <%= link_to image_tag("actions/delete.png", :class => "tooltipped", :title => "Runde zurücksetzen"), reset_contest_matchday_match_round_url(@contest,@match.matchday,@match,round), :method => :post, :confirm => t("messages.confirm_round_reset") if round.played? and not @match.is_a? CustomMatch %>
           <% end %>
         </div>
       </td>
@@ -212,7 +215,7 @@
     <% round.slots.each do |slot| %>
       <tr>
         <td colspan="<%= round_colspan %>">
-          <%= link_to slot.contestant.name, contest_contestant_matches_url(@contest, slot.contestant) %>
+          <%= link_to slot.contestant.name, [@context, slot.contestant] %>
           <% if round.played? and slot.score.cause != "REGULAR" %>
               <span class="tooltipped"><em>
                 <%= "( #{slot.qualification_changed ? "nachtrgl." : ""} #{t "views.disqualified"} )" %></em>
@@ -266,7 +269,7 @@
         <% end %>
       </tr>
     <% end %>
-    <% if @contest.has_replay_viewer? %>
+    <% if @context.has_replay_viewer? %>
       <tr>
         <td colspan="<%= round_colspan + round_score_fragments + 5 %>">
           <div style="background-color: #fff; display: none" id="replay_round_<%= round.id %>">
@@ -282,7 +285,7 @@
             <% end %>
           </div>
 
-          <iframe class="replay_frame_<%= @contest.game_definition.game_identifier.to_s.downcase %>" id="replay_box_<%= round.id %>" style="border: none; margin-top: 5px"></iframe>
+          <iframe class="replay_frame_<%= @context.game_definition.game_identifier.to_s.downcase %>" id="replay_box_<%= round.id %>" style="border: none; margin-top: 5px"></iframe>
           </div>
         </td>
       </tr>
@@ -304,7 +307,7 @@
 <% end %>
 
 
-<% if @contest.has_replay_viewer? %>
+<% if @context.has_replay_viewer? %>
   <% javascript_tag do %>
     function show_replay(round, url) {
       $("#replay_box_" + round).attr({src: url})

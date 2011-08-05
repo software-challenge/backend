@@ -8,11 +8,12 @@
     </style>
   </head>
   <body>
-<h2> 
- <%= @contest.name %>
+<h2>
+<% if @season and not @context.is_a? Season %><%= link_to @season.name, @season %> / <% end %>
+ <%= @context.name %>
 </h2>
 
-  <h3><%= t("views.contestants_participating", :teams => @contest.contestants.visible.without_testers.ranked.count, :members => @contest.overall_member_count) %></h3>
+  <h3><%= t("views.contestants_participating", :teams => @context.contestants.visible.without_testers.ranked.count, :members => @context.overall_member_count) %></h3>
   <% rankings = Contestant::RANKINGS.clone %>
   <% rankings.delete("none") %>
   <% rankings.each do |ranking| %>

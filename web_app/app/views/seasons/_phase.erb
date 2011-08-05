@@ -1,0 +1,44 @@
+<div class="phase" style="border: 1px solid black; margin-top: 10px; padding: 5px;">
+  <table style="width: 100%;">
+    <td class="name <%= phase.status %>"> 
+      <span class="tooltipped"><%= phase.name %></span><span class="tooltip"><%= t "season_phase.states.#{phase.status}"%></span>
+    </td>
+    <td>
+      <div class="contests">
+        <span style="font-size: 15px; font-weight: bold;">Wettkämpfe</span>
+        <table>
+          <colgroup>
+            <col width="40%">
+            <col width="50%">
+            <col width="10%">
+          </colgroup>
+          <thead>
+           <th>Name</th>
+           <th>Status</th>
+         </thead>
+         <tbody>
+           <% phase.contests.each do |contest| %>
+             <tr>
+               <td>
+                  <b><%= contest.name %></b>
+                </td>
+               <td>
+                 <% if contest.status == "matchdays_played" %>
+                   <%= t "contest_states.matchdays_played", :played => contest.matchdays.played.count, :overall => contest.matchdays.count %> 
+                 <% else %>
+                   <%= t "contest_states."+contest.status %>
+                 <% end %>
+                 </div>
+               </td>
+               <td>
+                 <%= link_to image_tag("actions/show.png"), contest_url(contest) %>
+               </td>
+             </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </td>
+  </table>
+</div>
+    

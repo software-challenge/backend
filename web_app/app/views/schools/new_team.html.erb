@@ -1,9 +1,9 @@
 <h1>
-  <%= link_to @contest.name, contest_url(@contest) %> /
+  <%= link_to @season.name, season_url(@season) %> /
   Teams anmelden  
 </h1>
 
-<% tabnav :contest do %>
+<% tabnav :season do %>
   <h2>Schule auswählen</h2>
   Suchen Sie hier nach der Schule, für die Sie ein Team anmelden möchten.<br>
   Suche nach:
@@ -43,13 +43,13 @@
         <th><%= School.human_attribute_name("state") %></th>
         <th></th>
       </tr>
-      <% @contest.schools.sort_by(&:name).each do |school| %>
+      <% @season.schools.sort_by(&:name).each do |school| %>
         <tr class="school">
           <td class="keywords" style="display: none"><%= "#{school.name} #{school.location} #{school.state}" %></td>
           <td><%= school.name %></td>
           <td><%= school.location %></td>
           <td><%= school.state %></td>
-          <td><%= link_to "Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, school) %></td> 
+          <td><%= link_to "Teams anmelden", new_season_school_preliminary_contestant_url(@season, school) %></td> 
         </tr>
       <% end %>
     </table>

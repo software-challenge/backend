@@ -1,0 +1,15 @@
+<%= stylesheet_link_tag "tickets" %> 
+
+<div id="actions">
+  <% link_to new_ticket_url do %>
+    <%= image_tag "actions/add.png" %> Neues Ticket erstellen
+  <% end %>
+</div>
+
+<h1>
+  Übersicht Ihrer Tickets
+</h1>
+
+<% tabnav :tickets do %>
+  <%= render :partial => 'list', :locals => {:tickets => @tickets} %>
+<% end %>

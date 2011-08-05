@@ -1,6 +1,6 @@
 class ContestantsController < ApplicationController
 
-  before_filter :fetch_contestant
+  before_filter :fetch_context, :fetch_contestant
 
   access_control do
 
@@ -8,6 +8,11 @@ class ContestantsController < ApplicationController
 
     action :index, :show do
       allow all
+    end
+
+    action :report do
+      allow :tutor, :helper, :of => :contestant
+      allow :administrator
     end
 
     action :my, :add_person do
@@ -34,7 +39,7 @@ class ContestantsController < ApplicationController
   # GET /contestants
   # GET /contestants.xml
   def index
-    @contestants = @contest.contestants.visible.all :order => "location, name"
+    @contestants = @context.contestants.visible.all(:order => "location, name") 
 
     respond_to do |format|
       format.html # index.html.erb
@@ -45,11 +50,15 @@ class ContestantsController < ApplicationController
   end
 
   def my
-    @contestants = current_user.contestants.visible.for_contest(@contest)
+    if @contest
+      @contestants = current_user.contestants.visible.for_contest(@contest)
+    else
+      @contestants = current_user.contestants.visible.for_season(@season)
+    end
 
     respond_to do |format|
       format.html { render :action => "index" }
-      format.xml  { render :xml => @contestants }
+      #format.xml  { render :xml => @contestants }
     end
   end
 
@@ -57,7 +66,7 @@ class ContestantsController < ApplicationController
   # GET /contestants/1.xml
   def show
     if logged_in?
-      redirect_to contest_contestant_people_url(@contest, Contestant.find(params[:id]))
+      redirect_to [@context, @contestant, :people]
     else
       redirect_to :controller => :matches, :action => :index_for_contestant, :contestant_id => params[:id]
     end
@@ -67,33 +76,41 @@ class ContestantsController < ApplicationController
   # GET /contestants/new.xml
   def new
     @contestant = Contestant.new
-    @contestant.contest = @contest
+    if @context.is_a? Contest
+      @contestant.contests << @context
+    elsif @contest.is_a? Season
+      @contestant.season = @context
+    end
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @contestant }
+      #format.xml  { render :xml => @contestant }
     end
   end
 
   # GET /contestants/1/edit
   def edit
-    @contestant = @contest.contestants.find(params[:id])
+    @contestant = @context.contestants.find(params[:id])
   end
 
   # POST /contestants
   # POST /contestants.xml
   def create
     @contestant = Contestant.new(params[:contestant])
-    @contestant.contest = @contest
+    if @context.is_a? Contest
+      @contestant.contests << @context
+    elsif @context.is_a? Season
+      @contestant.season = @context
+    end
 
     respond_to do |format|
       if @contestant.save
         flash[:notice] = I18n.t("messages.contestant_successfully_created")
-        format.html { redirect_to(contest_contestants_url(@contest)) }
-        format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
+        format.html { redirect_to [@context, :index] }
+        #format.xml  { render :xml => @contestant, :status => :created, :location => @contestant }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @contestant.errors, :status => :unprocessable_entity }
+        #format.xml  { render :xml => @contestant.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -101,9 +118,7 @@ class ContestantsController < ApplicationController
   # PUT /contestants/1
   # PUT /contestants/1.xml
   def update
-    @contestant = Contestant.find(params[:id])
-
-    if @contest.ready?
+    if @contest and @contest.ready?
       if @contestant.ranked? and params[:contestant][:ranking] == "none"
         params[:contestant].delete(:ranking)
       elsif not @contestant.ranked?
@@ -114,11 +129,11 @@ class ContestantsController < ApplicationController
     respond_to do |format|
       if @contestant.update_attributes(params[:contestant])
         flash[:notice] = I18n.t("messages.contestant_successfully_updated") 
-        format.html { redirect_to(contest_contestant_url(@contest, @contestant)) }
-        format.xml  { head :ok }
+        format.html { redirect_to [@context, @contestant] }
+        #format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @contestant.errors, :status => :unprocessable_entity }
+        #format.xml  { render :xml => @contestant.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -126,12 +141,14 @@ class ContestantsController < ApplicationController
   # DELETE /contestants/1
   # DELETE /contestants/1.xml
   def destroy
-    @contestant = @contest.contestants.find(params[:id])
-    @contestant.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(contest_contestants_url(@contest)) }
-      format.xml  { head :ok }
+    if @contestant.destroy
+      respond_to do |format|
+        format.html { redirect_to(:action => :index) }
+        #format.xml  { head :ok }
+      end
+    else
+      flash[:error] = "Team konnte nicht entfernt werden!"
+      render :action => :edit
     end
   end
 
@@ -154,12 +171,12 @@ class ContestantsController < ApplicationController
         flash[:error] = I18n.t("messages.person_already_belongs_to_contestant")
       else
         if @person.memberships.create!(:contestant => @contestant, :role_name => params[:role])
-          add_event PersonAddedToContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user)
+          add_event PersonAddedToContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user) if @contest
           flash[:notice] = I18n.t("messages.person_added_to_contestant")
         end
       end
 
-      redirect_to contest_contestant_url(@contest, @contestant)
+      redirect_to [@context, @contestant] 
     end
   end
 
@@ -168,7 +185,7 @@ class ContestantsController < ApplicationController
       # Requalify
       @contestant.requalify
     else
-      if @contest.ready?
+      if @contest and @contest.ready?
         @contestant.ranking = "none"
       end
       @contestant.hidden = false
@@ -178,7 +195,7 @@ class ContestantsController < ApplicationController
   end
 
   def hide
-    if @contest.ready? and @contestant.ranked?
+    if @contest and @contest.ready? and @contestant.ranked?
       # Contest already started, instead of hiding, hide the members and remove contestant from matchdays
       @contestant.disqualify 
       redirect_to :back
@@ -202,9 +219,34 @@ class ContestantsController < ApplicationController
     render :text => count.to_s
   end
 
+  def report
+  end
+
+  def update_report
+    @contestant.report = params[:contestant][:report]
+    last_event = @contestant.report_events.last
+    last_still_fresh = last_event and (last_event.person == @current_user) and (last_event.created_at > 6.hours.ago)
+    if last_still_fresh
+      last_event.param_time_1 = Time.now
+    else
+      ev = ContestantReportEvent.new({:contest => (@contest ? @contest : @contestant.contests.last), :contestant => @contestant, :person => @current_user})
+    end
+    if @contestant.save and ((last_still_fresh and last_event.save) or ev.save)
+      flash[:notice] = "Bericht wurde erfolgreich bearbeitet."
+      redirect_to :action => :show
+    else 
+      flash[:error] = "Beim Speichern der Änderungen kam es zu einem Fehler!"
+      render :action => :report
+    end
+  end
+
+  def fetch_context
+    @context = @contest ? @contest : @season
+  end
+
   protected
 
   def fetch_contestant
-    @contestant = @contest.contestants.find(params[:id]) if params[:id]
+    @contestant = @context.contestants.find(params[:id]) if params[:id]
   end
 end

@@ -98,6 +98,9 @@ class MainController < ApplicationController
       raise ActiveRecord::RecordNotFound if person.hidden?
       raise AccountNotValidated unless person.validated?
       session[:user_id] = person.id
+      if params[:remember_me] == "1"
+        cookies.permanent[:auth_token] = person.auth_token!
+      end
       person.logged_in = true
       person.last_seen = Time.now
       person.save
@@ -125,13 +128,19 @@ class MainController < ApplicationController
   def logout
     if @current_user
       @current_user.logged_in = false
+      @current_user.auth_token = nil
       @current_user.save
       session[:user_id] = nil
+      cookies.delete(:auth_token) if cookies[:auth_token]
       flash[:notice] = I18n.t("messages.logout_successful")
     else
       flash[:error] = I18n.t("messages.not_logged_in")
     end
-    redirect_to contest_url(@contest)
+    if params[:redirect_url] 
+      redirect_to url_unescape(params[:redirect_url])
+    else
+      redirect_to contest_url(@contest)
+    end
   end
 
   def debug

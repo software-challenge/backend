@@ -34,7 +34,7 @@
       <% next if question.display_order == 1 or question.display_type == "label"%>
       <td class="question question<%=question.id%>"><%= display_response(r_set,question).html_safe %></td>
     <% end %>
-    <td><%= link_to image_tag("actions/show.png"), show_response_contest_survey_result_url(@contest,@survey, :survey_token => r_set.survey_token) %></td>
+    <td><%= link_to image_tag("actions/show.png"), show_response_survey_result_url(@survey, :survey_token => r_set.survey_token) %></td>
   </tr>
 <% end %>
 </table>

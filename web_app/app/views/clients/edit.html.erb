@@ -1,6 +1,7 @@
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
-  <%= link_to @contestant.name, contest_contestant_clients_path(@contest, @contestant) %> /
+  <% if @season %><%= link_to @season.name, @season %> / <% end %>
+  <% if @context.is_a? Season and @contest %><%= link_to @contest.name, contest_contestants_url %> /<% end %>
+  <%= link_to @contestant.name, [@context, @contestant, :clients] %> /
   Hauptdatei wählen
 </h1>
 

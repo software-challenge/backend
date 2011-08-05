@@ -1,4 +1,4 @@
-<% semantic_form_for [@contest, @school] do |f| %>
+<% semantic_form_for [@season, @school] do |f| %>
   <% f.inputs do %>
     <div class="group frame">
       <div class="group title">
@@ -52,7 +52,7 @@
   <% end %>
   <% f.buttons do %>
     <%= f.commit_button t("actions.save") %> oder
-    <%= link_to t("views.back"), contest_url(@contest) %>
+    <%= link_to t("views.back"), season_url(@season) %>
   <% end %>
 <% end %>
 <% javascript_tag do %>

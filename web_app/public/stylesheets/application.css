@@ -477,3 +477,28 @@ a.sort_by {
  padding-left: 22px;
 }
 
+div#available_contests {
+  display:none; 
+  background-color: white; 
+  opacity: 1; 
+  margin 0; 
+  padding 0;
+  z-index: 10;
+  margin-top: 4px;
+  margin-right: -8px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 3px;
+  -moz-box-shadow: 0 0 10px #000;
+  -webkit-box-shadow: 0 0 10px #000;
+}
+
+div#available_contests ul li {
+ display:block;
+ text-align: left;
+}
+
+div.odd {
+  background-color: #f4f4f4;
+}
+

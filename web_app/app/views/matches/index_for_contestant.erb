@@ -1,5 +1,6 @@
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
+  <% if @season %><%= link_to @season.name, @season %> / <% end %>
+  <% if @context.is_a? Season and @contest %><%= link_to @contest.name, contest_contestants_url %> /<% end %>
   <%= @contestant.name %>
 </h1>
 
@@ -9,7 +10,7 @@
     <%= t("views.ranking.#{@contestant.ranking}") %>
   </p>
 
-  <% if @contestant.matches_including_free_days.count > 0 %>
+  <% if (@contest ? @contestant.matches_including_free_days(@contest) : @contestant.matches).count > 0 %>
   <table class="data-table">
     <colgroup span="2"/>
     <colgroup span="2"/>
@@ -24,7 +25,7 @@
       </tr>
     </thead>
     <tbody>
-      <%= render :partial => "matchdays/match", :collection => @contestant.matches_including_free_days, :locals => { :date => true, :count => true } %>
+      <%= render :partial => "matchdays/match", :collection => (@contest ? @contestant.matches_including_free_days(@contest) : @contestant.matches), :locals => { :date => true, :count => true } %>
     </tbody>
   </table>
   <% else %>

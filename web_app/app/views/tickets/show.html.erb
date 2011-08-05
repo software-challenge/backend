@@ -1,0 +1,27 @@
+<%= javascript_include_tag 'markdown/jquery.markedit.js', 'markdown/showdown.js' %>
+<%= stylesheet_link_tag 'markdown/jquery.markedit.css', 'tickets' %>
+
+<h1>
+  Ticket:
+  <%= @ticket.title %>
+</h1>
+<% tabnav :tickets do %>
+  <%= render :partial => 'form', :locals => {:ticket => @ticket} %>
+  <div id="history">
+    <h2 id="history_title">Verlauf</h2>
+    <%= render :partial => 'comments', :locals => {:comments => @ticket.comments} %>
+    <%= render :partial => "comments_form", :locals => {:ticket => @ticket} %>
+  </div>
+<% end %>
+
+<% scroll_target = case params[:scroll_to] %>
+  <% when "comments" then "#history" %>
+  <% else "#ticket_form" %>
+<% end %>
+
+<% javascript_tag do %>
+  $(function() {
+    $("html,body").animate({ scrollTop: $("<%=scroll_target%>").offset().top}, 1000)   
+  });
+<% end %> 
+

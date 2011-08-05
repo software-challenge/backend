@@ -7,7 +7,7 @@
 </div>
 
 <h1>
-  <%= @contest.name %>
+  <% if @season %><%= link_to @season.name, @season %> / <% end %><%= @contest.name %>
 </h1>
 
 <% tabnav :contest do  %>
@@ -66,7 +66,7 @@
           <%= link_to "Probewettkampf", trial_contest_contest_url(@contest) %>
         <% end %>
       <% end %>
-      <% action (not logged_in? and not @contest.allow_school_reg) do %>
+      <% action (not logged_in? and not (@season and @season.school_registration_allowed?)) do %>
         <%= t "views.todo.login" %>
         <% action_button do %>
           <%= link_to "Anmelden", contest_login_url(@contest) %>
@@ -80,18 +80,18 @@
     <% end %>
       <% if logged_in? %>
         <% available_survey_tokens = SurveyToken.available.select{|t| t.currently_valid? and t.allowed_for?(@current_user)} %>
-        <% action ((@contest.phase == "recall" or @contest.phase == "validation") and not available_survey_tokens.empty?) do %>
-          <%= t ("views.todo.surveys", :count => available_survey_tokens.count) %> 
+        <% action (not available_survey_tokens.empty?) do %>
+          <%= t("views.todo.surveys", :count => available_survey_tokens.count) %> 
           <% action_button do %>
             <%= link_to "Teilnehmen", contest_survey_tokens_url(@contest) %>
           <% end %>
         <% end %>
       <% end %>
-      <% action (@contest.allow_school_reg) do %>
+        <% action (@season and @season.school_registration_allowed?) do %>
         <% if logged_in? or administrator? %>
           <%= t "views.todo.reg_school" %>
           <% action_button do %>
-            <%= link_to "Neue Schule anmelden", new_contest_school_url(@contest) %> 
+            <%= link_to "Neue Schule anmelden", new_season_school_url(@contest) %> 
           <% end %>
         <% else %>
           <%= t "views.todo.login_before_school" %>
@@ -104,7 +104,7 @@
           <% end %>
         <% end %>
       <% end %>
-      <% action (@contest.allow_school_reg and logged_in?) do %>
+      <% action (@season and @season.team_registration_allowed? and logged_in?) do %>
         <%= t "views.todo.reg_teams" %>
         <% action_button do %>
           <%= link_to "Teams anmelden", contest_new_team_url(@contest) %>

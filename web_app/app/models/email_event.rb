@@ -7,6 +7,7 @@ class EmailEvent < ActiveRecord::Base
   named_scope :rcvs_contest_progress_info, :conditions => {:rcv_contest_progress_info => true}
   named_scope :rcvs_on_matchday_published, :conditions => {:rcv_on_matchday_published => true}
   named_scope :rcvs_survey_token_notification, :conditions => {:rcv_survey_token_notification => true}
+  named_scope :rcvs_quassum_notification, :condition => {:rcv_quassum_notification => true}
 
   attr_reader :email
 

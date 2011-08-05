@@ -1,0 +1,4 @@
+<% for comment in comments %>
+  <%= render :partial => "comment", :locals => {:comment => comment, :curr_cycle => cycle("odd","even")} %>
+<% end %>
+

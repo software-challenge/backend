@@ -10,7 +10,7 @@
   </div>
 
 <h1 class="print-hide">
-  <%= @contest.name %>
+  <% if @season %><%= link_to @season.name, @season %> / <% end %><%= @contest.name %>
 </h1>
 
 <% ranking = "all" %>

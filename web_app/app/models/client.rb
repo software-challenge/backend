@@ -167,7 +167,7 @@ class Client < ActiveRecord::Base
   end
   
   def played_matchdays
-    played_matchdays = Matchday.find(:all, :conditions => ["contest_id = ? AND played_at IS NOT NULL", contest.id])
+    played_matchdays = contestant.matchdays.played
     matchdays_played_at = played_matchdays.select do |md|
        md.client_played?(self)
     end

@@ -1,5 +1,6 @@
 class NewsPost < ActiveRecord::Base
   belongs_to :person
+  belongs_to :context, :polymorphic => true
 
   validates_presence_of :person
   validates_presence_of :text
@@ -23,7 +24,6 @@ class NewsPost < ActiveRecord::Base
   end
 
   def translate!
-    # TODO: implement BBCode or Markdown as input and translate to html!
     puts self.text
     self.html = BlueCloth.new(self.text).to_html
     self.save!
