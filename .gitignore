@@ -106,6 +106,7 @@
 /web_app/clientlogs
 /web_app/database.yml
 #/web_app/Gemfile.lock
+/web_app/vendor/cache/*
 /web_app/bin
 
 # /web_app/config/
