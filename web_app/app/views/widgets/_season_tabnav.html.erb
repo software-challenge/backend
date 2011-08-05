@@ -41,7 +41,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
     t.named Contest.human_name(:count => 2)
     t.links_to contests_season_url(@season)
     t.highlights_on :controller => "seasons", :actions => "contests"
-  end
+  end if @season.contest? or @season.finished?
 
   add_tab do |t|
     t.named t("titles.friendly_encounters.index")
