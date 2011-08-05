@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem "capistrano"
 gem 'rails', '2.3.7'
 gem "surveyor", "0.19.2"
 gem "rubyzip"
