@@ -30,7 +30,7 @@ class NewsPostsController < ApplicationController
   end
 
   def index
-    @news_posts = (@current_user.has_role?(:administrator) ? @context.news_posts.sort_by_update : @context.news_posts.published.sort_by_update)
+    @news_posts = (administrator? ? @context.news_posts.sort_by_update : @context.news_posts.published.sort_by_update)
   end
 
   def create
