@@ -13,6 +13,13 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
     t.highlights_on :controller => "news_posts"
   end unless @season.news_posts.empty?
 
+  add_tab do |t| 
+    t.named t("titles.surveys")
+    t.links_to url_for [@season, :survey_tokens]
+    t.highlights_on :controller => "survey_tokens"
+    t.highlights_on :controller => "surveys"
+  end if @current_user and (@current_user.survey_token_available? or administrator?)
+
   if ((logged_in? and not (current_user.schools_for_season(@season).empty? and current_user.other_schools_for_season(@season).empty?)) or administrator?) and not (@season.contest? or @season.finished?)
     add_tab do |t|
       begin; t.named "#{t "views.my"} #{School.human_name(:count => 2)}"; end if not administrator?
@@ -46,7 +53,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
     t.named t("titles.contestants.index")
     t.links_to season_contestants_url(@season)
     t.highlights_on :controller => "contestants"
-  end if logged_in? and (@season.contest? or @season.finished?)
+  end if @season.contest? or @season.finished?
 
  end
 end

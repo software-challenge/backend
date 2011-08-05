@@ -93,13 +93,13 @@ class EventMailer < ActionMailer::Base
   end
 
 
-  def survey_invite_notification(person, contest, login_token, survey_tokens)
+  def survey_invite_notification(person, context, login_token, survey_tokens)
     survey_tokens = [survey_tokens] unless survey_tokens.is_a? Array
     recipients "#{person.name} <#{person.email}>"
     from       "software-challenge@gfxpro.eu"
     subject    survey_tokens.count == 1 ? "Die Software-Challenge läd Sie zu einer Umfrage ein." : "Die Software-Challenge läd Sie zu #{survey_tokens.count} Umfragen ein."
     sent_on    Time.now
-    body({:contest => contest, :person => person, :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => login_token })
+    body({:context => context, :person => person, :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => login_token })
   end
 
   def custom_email(title,text,people)
@@ -138,7 +138,7 @@ class EventMailer < ActionMailer::Base
           from       "software-challenge@gfxpro.eu"
           subject    (args[4].nil? ? (args[3].count == 1 ? "Die Software-Challenge läd Sie zu einer Umfrage ein." : "Die Software-Challenge läd Sie zu #{args[3].count} Umfragen ein.") : args[4])
           sent_on    Time.now
-          body({:contest => args[1], :person => args[0], :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => args[2] })
+          body({:context => args[1], :person => args[0], :survey => survey_tokens.first.survey, :survey_tokens => survey_tokens, :login_token => args[2] })
         else
           raise LoadError.new(method.to_s)
         end

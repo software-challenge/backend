@@ -1,17 +1,17 @@
 <%= stylesheet_link_tag "multiselect/ui.multiselect.css", "survey_token_form" %>
 <%= javascript_include_tag "ui.multiselect.js" %>
-<% form_for [@contest,@token] do |f| %>
+<% form_for [@context,@token] do |f| %>
   <div id="form_inputs">
     <p style="margin-top 10px; margin-bottom: 15px;"><b>Umfrage wählen: </b><%= select_tag 'survey', options_for_select(@surveys.collect{|s| [s.title,s.id]}) %></p>
     <b>Zu befragene Benutzergruppe: </b>
     <% ch = [["Benutzer","people"]] %>
     <% ch << ["Voranmeldungen","preliminary"] unless @prelims.empty? %>
-    <% ch << ["Teams","contestants"] unless @contest.contestants.empty?  %>
+    <% ch << ["Teams","contestants"] unless @context.contestants.empty?  %>
     <%= select_tag 'token_owner_group', options_for_select(ch) %>
     <p style="margin-left:10px;">
       <b>Benutzer:</b> aus den registrierten Benutzern auswählen <br>
       <% unless @prelims.empty? %><b>Voranmeldungen:</b> aus den vorangemeldeten Teams wählen <br><% end %>
-      <% unless @contest.contestants.empty? %><b>Teams:</b> aus den Teams des Wettkampfes wählen <br><% end %>
+      <% unless @context.contestants.empty? %><b>Teams:</b> aus den Teams des Wettkampfes wählen <br><% end %>
     </p> 
  
  <div id="people", class="owner_group">
@@ -19,7 +19,7 @@
   </div>
  
  <div id="contestants", class="owner_group", style="display:none">
-    Zu befragene Teams auswählen: <div id="sel_contestants"><%= select_tag "select_contestants[]", options_for_select(@contest.contestants.without_testers.visible.collect{|c| [c.name,c.id]}), {:multiple => true} %></div>
+    Zu befragene Teams auswählen: <div id="sel_contestants"><%= select_tag "select_contestants[]", options_for_select(@context.contestants.without_testers.visible.collect{|c| [c.name,c.id]}), {:multiple => true} %></div>
     <b>Umfrage für:</b>
     <p>Lehrer: <%= check_box_tag "allow_teacher", 1,  @token.allow_teacher %></p>
     <p>Schüler: <%= check_box_tag "allow_pupil", 1,  @token.allow_pupil %></p>
@@ -103,7 +103,7 @@
     })
     
     $("#preview_template").bind("click", function(){
-    window.open("<%= preview_template_contest_survey_tokens_url(@contest) %>?template="+$("#custom_template option:selected")[0].value)
+    window.open("<%= url_for [:preview_template, @context, :survey_tokens] %>?template="+$("#custom_template option:selected")[0].value)
     })
   });
 <% end %>

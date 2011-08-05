@@ -1,7 +1,7 @@
 <% show_to :administrator do %>
   <% if @school.teams.empty? %>
     <div id="actions">
-      <% link_to contest_school_url(@contest,@school), :method => :delete, :confirm => "Sind Sie wirklich sicher?" do %>
+      <% link_to season_school_url(@season,@school), :method => :delete, :confirm => "Sind Sie wirklich sicher?" do %>
         <%= image_tag "actions/destroy.png" %> Schule entfernen    
       <% end %>
     </div>

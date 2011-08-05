@@ -44,7 +44,7 @@ ActionController::Routing::Routes.draw do |map|
       s.resources :preliminary_contestants do |prelim_contestants|
       end
       
-      s.resources :survey_tokens do  |st|
+      s.resources :survey_tokens, :collection => {:preview_template => :get} do  |st|
         st.resources :surveys, :controller => "surveyor"
       end
 
