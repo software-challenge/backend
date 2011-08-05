@@ -15,7 +15,6 @@ class Round < ActiveRecord::Base
 
   has_attached_file :replay
   
-  delegate :contest, :to => :match
   delegate :game_definition, :to => :match
 
   def played?
@@ -27,28 +26,34 @@ class Round < ActiveRecord::Base
   end
 
   def perform
-    begin
-      puts "Starting manager"
-      manager = SoChaManager::Manager.new
-      manager.connect!
-      manager.play self
+    if ENV['SIMULATE_GAME_RESULTS'] == "true"
+      update_scores! generate_random_result
+      job_logger.info "Round performed (used randomized results)"
+    else 
+      begin
+        puts "Starting manager"
+        manager = SoChaManager::Manager.new
+        manager.connect!
+        manager.play self
 
-      while !manager.done?
-        sleep 1
+        while !manager.done?
+          sleep 1
+        end
+        puts "Manager done"      
+        manager.close
+
+        job_logger.info "Manager finished for round: #{self}" 
+      rescue => exception
+        puts "Manager raised exception: #{exception}"
+        job_logger.info "Manager raised exception: #{exception}"
+        raise exception
       end
-      puts "Manager done"      
-      manager.close
+      
+      raise "no game result" unless manager.last_result
+      update_scores!(manager.last_result)
+      job_logger.info "Round performed"
 
-      job_logger.info "Manager finished for round: #{self}" 
-    rescue => exception
-      puts "Manager raised exception: #{exception}"
-      job_logger.info "Manager raised exception: #{exception}"
-      raise exception
     end
-    
-    raise "no game result" unless manager.last_result
-    update_scores!(manager.last_result)
-    job_logger.info "Round performed"
   end
 
   def reset!
@@ -78,7 +83,7 @@ class Round < ActiveRecord::Base
 
     Round.transaction do
       slots.each_with_index do |slot,index|
-        slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "round_score")
+        slot.score ||= slot.build_score(:game_definition => game_definition.game_identifier.to_s, :score_type => "round_score")
         score = result[index]
         slot.score.set!(score[:score], score[:cause], score[:error_message])
         slot.save!
@@ -105,4 +110,24 @@ class Round < ActiveRecord::Base
   def winner
     return slots.to_ary.find{|s| s.score.fragments.find(:first, :conditions => {:fragment => "victory"}).value >= 1}.contestant
   end
+
+  private 
+  
+  def generate_random_result
+    winner = rand slots.size
+    result = []
+    slots.each_with_index do |slot,index|
+      score = []
+      score_definition.each_with_index do |frag_def, i|
+        if i == 0
+          score << (winner == index ? 1 : 0)
+        else
+          score << (1..150).to_a.rand
+        end
+      end
+      result[index] = {:score => score, :cause => "REGULAR", :error_message => "auto-generated value!" }
+    end
+    result
+  end
+
 end

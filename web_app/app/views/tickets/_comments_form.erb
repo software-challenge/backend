@@ -1,0 +1,59 @@
+<div id="show_form">
+  <div class="show"><%= image_tag "actions/edit.png" %> Kommentar verfassen </div>
+</div>
+<div id="add_comment">
+  <div id="comment_form">
+    <h3>Kommentar verfassen</h3>
+    <% form_tag "/tickets/1/add_comment", :id => "create_comment" do  %>
+      <%= text_area_tag "comment[text]", "", :style => "width: 100%; height: 100px;" %><br>
+      <div id="comment_form_buttons"><%= submit_tag "Speichern", :id => "create" %> <span id="abort_comment">oder <a class="abort" href="#">Abbrechen</a></span></div>
+    <% end %>
+  </div>
+</div>
+
+<% javascript_tag do %>
+  $(function() {
+    $("#show_form").show()
+    $("#abort_comment").show()
+    $("#add_comment").hide()
+    $("#comment_text").attr("value","")
+    $("#create").enable()   
+
+    $("#show_form").bind("click", function(){
+      $("#show_form").hide()
+      $("#add_comment").show()
+      $("#comment_text").attr("value","")
+      $("html,body").animate({ scrollTop: $("#comment_form").offset().top}, 1000) 
+    })
+    $("#comment_form .abort").bind("click", function(e){
+      $("#show_form").show()
+      $("#add_comment").hide()
+      $("#comment_text").attr("value","")
+      $(".comment:last").scrollTop()
+      $("html,body").animate({ scrollTop: $(".comment:last").offset().top}, 1000) 
+      e.preventDefault()
+    })
+
+    $("#create").bind("click",function(e){
+      $(this).disable()
+      $.ajax({
+      url: "<%= add_comment_ticket_url(:id => ticket.id, :format => :js) %>",
+        type: "POST",
+        data: {
+          comment : { text : $("#comment_text").attr("value") },
+          id : <%= ticket.id %>,
+          authenticity_token: '<%= form_authenticity_token %>'
+        },
+        success: function(resp) {
+          if(resp != "error"){ 
+            $("html,body").animate({ scrollTop: $(".comment:last").offset().top}, 1000) 
+            $("#add_comment").hide()
+            $("#show_form").show()
+            $("#create").enable()
+          }
+        }
+        });
+        e.preventDefault()
+      });
+  });
+<% end %>

@@ -12,7 +12,7 @@
 </div>
 
 <h1>
-  <%= @contest.name %>
+ <% if @season %><%= link_to @season.name, @season %> / <% end %> <%= @contest.name %>
 </h1>
 
 <% tabnav :contest do %>

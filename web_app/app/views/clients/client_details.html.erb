@@ -1,7 +1,8 @@
 <h1>
-  <%= link_to @client.contest.name, contest_contestants_url(@contest) %> /
-  <%= link_to @client.contestant.name, contest_contestant_url(@contest, @contestant) %> / 
-  <%= link_to Client.human_name(:count => 2), contest_contestant_clients_url(@contest,@contestant) %> / 
+  <% if @season %><%= link_to @season.name, @season %> / <% end %>
+  <% if @context.is_a? Season and @contest%><%= link_to @contest.name, contest_contestants_url(@contest) %> /<% end %>
+  <%= link_to @client.contestant.name, [@context, @contestant] %> / 
+  <%= link_to Client.human_name(:count => 2), [@context,@contestant, :clients] %> / 
   Client <%= "#{@client.id} #{(@client.name.blank? ? "" : "("+@client.name+")")}" %> 
   
 </h1>
@@ -14,15 +15,15 @@
     <div class="group content">
       <div class="listing bold">
         <ol> 
-          <%= list_item("Team", link_if_boolean(@contestant, :name, contest_contestant_url(@contest,@contestant))) %>
+          <%= list_item("Team", link_if_boolean(@contestant, :name, url_for([@context, @contestant]))) %>
           <%= list_item_for(@contestant, :location) %>
           <%= list_item("Hochgeladen am",  l(@client.created_at, :format => :long)) %>
-          <%= list_item("Ersteller", link_if_boolean(@client.author, :name, contest_person_url(@contest,@client.author)))%>
+          <%= list_item("Ersteller", link_if_boolean(@client.author, :name, person_url(@client.author)))%>
           <% stat = @client.status %>
           <% test_status = case stat
             when "ok" then image_tag("state/ok.png", {:title => "Test erfolgreich", :class => "tooltipped"})
             when "broken" then image_tag("state/warning.png", {:title => "Test fehlgeschlagen!", :class => "tooltipped"})
-            when "testable" then image_tag("state/info.png", {:title => "Hauptdatei definiert, Test noch nicht durchgeführt", :class => "tooltipped"}) + " - #{link_to "Jetzt testen", test_contest_contestant_client_url(@contest,@contestant,@client,:from_details => true)}".html_safe
+            when "testable" then image_tag("state/info.png", {:title => "Hauptdatei definiert, Test noch nicht durchgeführt", :class => "tooltipped"}) + " - #{link_to "Jetzt testen", eurl_for([:test, @context, @contestant,@client],:from_details => true)}".html_safe
             when "uploaded" then image_tag("state/attention.png", {:title => "Keine Hauptdatei ausgewählt! Kein Test möglich!"})
             when "testing" then image_tag("ui/spinner.gif", {:title => @client.test_match.job.locked_at ? t("views.testing_for_seconds",{:time => ((Time.now - @client.test_match.job.locked_at).round), :class => "tooltipped"}) : t("views.testing_x_rounds", {:x => @client.test_match.rounds.count})})
           end %>
@@ -30,7 +31,7 @@
           <% if @client.main_file_entry %>
             <% main_name =  @client.main_file_entry.file_name %>
           <% else %>
-            <% main_name = content_tag(:i, t("views.not_set")) + " (#{link_to( t("views.select"),edit_contest_contestant_client_url(@contest,@contestant,@client))})" %>
+            <% main_name = content_tag(:i, t("views.not_set")) + " (#{link_to t("views.select"),[:edit, @context, @contestant,@client]})" %>
           <% end %>
           <%= list_item("Hauptdatei", main_name) %>
           <% unless @client.parameters.blank? %>
@@ -39,7 +40,7 @@
           <% if @contestant.current_client == @client %>
             Dieser Client ist <b>aktuell aktiviert</b>!
           <% elsif @contestant.current_client %>
-            Aktuell ist <%= link_to "dieser", client_details_contest_contestant_client_url(@contest,@contestant,@contestant.current_client) %> Client aktiviert.
+            Aktuell ist <%= link_to "dieser", [:client_details, @context,@contestant,@contestant.current_client] %> Client aktiviert.
           <% else %>
             Das Team hat keinen Client aktiviert.
           <% end %>
@@ -54,7 +55,7 @@
     <div class="group frame">
      <% unless played_matchdays.empty? and friendly_encounters.empty?%>
       <div class="group title">
-         Dieser Client spiele bei folgenden Begegnungen: 
+         Dieser Client spielte bei folgenden Begegnungen: 
          <span style="float:right">
            <select id="contest_friendly_encounter_select">
              <option value="all">Alle anzeigen</option>
@@ -117,21 +118,23 @@
                     <%= image_tag('ui/trophy_1.png', :title => "Final-Eight Begegnung", :class => "tooltipped") %>
                   <% end %>
                 </td>
-                <td><%= link_to image_tag('actions/show.png'), (matchday.finale.nil? ? contest_matchday_match_url(@contest,matchday,match) : match_results_contest_finale_url(@contest, :params => {:id => match.id})), {:title => "Begegnung anzeigen", :class => "tooltipped"} %></td>
+                <td><%= link_to image_tag('actions/show.png'), (matchday.finale.nil? ? contest_matchday_match_url(matchday.contest,matchday,match) : match_results_contest_finale_url(match.matchday.contest, :params => {:id => match.id})), {:title => "Begegnung anzeigen", :class => "tooltipped"} %></td>
               </tr>
             <% end %>
             <% friendly_encounters.each_with_index do |fe,i| %>
                <tr class="friendly_encounter <%= (played_matchdays.length+i).odd? ? 'odd' : 'even' %>" style="line-height:2em;">
                 <td>Freundschaftsspiel</td>
-                <td><%= l(fe.played_at.to_date) %></td>
-                <td><% opp = fe.opponent_for(@contestant) %><%= "#{opp.name}, #{opp.location}"%></td>
+                <td><%= fe.played? ? l(fe.played_at.to_date) : "ausstehend" %></td>
+                <td><% opp = fe.opponent_for(@contestant) %><%= "#{opp.name}, #{opp.location}" if opp %></td>
                 <td style="text-align:center">
-                  <% result =  fe.main_result %>
-                  <% result = (fe.contestants.first == @contestant ? result : result.reverse!) %>  
-                  <span style="color:<%= result[0] >= result[1] ? "green" : "red" %>"> <%= result.join(":") %> </span>
+                  <% if fe.played? %>
+                    <% result =  fe.main_result %>
+                    <% result = (fe.contestants.first == @contestant ? result : result.reverse!) %>  
+                    <span style="color:<%= result[0] >= result[1] ? "green" : "red" %>"> <%= result.join(":") %> </span>
+                  <% end %>
                 </td>
                 <td></td>
-                <td><%= link_to image_tag('actions/show.png'), contest_friendly_encounter_url(@contest, fe), {:title => "Begegnung anzeigen"} %></td>
+                <td><%= link_to image_tag('actions/show.png'), [@context, fe], {:title => "Begegnung anzeigen"} %></td>
               </tr>             
             <% end %>
           </tbody>
@@ -187,7 +190,7 @@
               })
 
               function get_logs_for_selection(match_type, match_id){
-                $.get("<%= get_logs_contest_contestant_client_url(@contest,@contestant,@client)%>", 
+                $.get("<%= url_for [:get_logs, @context,@contestant,@client]%>", 
                   {type: match_type, match_id: match_id, as_box: 0},
                   function (returned_data) {
                    $("div#logs").html(returned_data)  
@@ -218,7 +221,7 @@
             
             function delete_comment(comment_id, client_id) {
               if(confirm("Wollen Sie den Kommentar wirklich löschen?")) {
-                $.get("<%= delete_comment_contest_contestant_client_url(@contest,@contestant,@client)%>", 
+                $.get("<%= url_for [:delete_comment, @context,@contestant,@client]%>", 
                   {comment_id: comment_id},
                   function (returned_data) {
                    if(returned_data == "false") {
@@ -228,7 +231,7 @@
             })}}
             
            function show_comments(client_id){
-             $.get("<%= get_comments_contest_contestant_client_url(@contest,@contestant,@client)%>", {client_id: <%= @client.id %>, table: false},function(data){
+             $.get("<%= url_for [:get_comments, @context, @contestant, @client] %>", {client_id: <%= @client.id %>, table: false},function(data){
                $("#comments_list").html(data)})}
            <% end %>
          </div>
@@ -255,7 +258,7 @@
                     <td title="<%=client_tooltip_text opp %>" class="tooltipped"><%= get_readable_client_name opp, false %></td>
                     <td><%= l ft.created_at.to_date %></td>
                     <td><%= image_for_state(ft.done? ? "true" : "idle") %></td>
-                    <td><%= link_to image_tag('actions/show.png', :title => "Plagiat-Test anzeigen", :class => "tooltipped"), contest_fake_test_suite_fake_test_url(@contest,ft.fake_test_suite,ft) %></td> 
+                    <td><%= link_to image_tag('actions/show.png', :title => "Plagiat-Test anzeigen", :class => "tooltipped"), contest_fake_test_suite_fake_test_url(ft.contest,ft.fake_test_suite,ft) %></td> 
                   </tr>         
                  <% end %>
                  </tbody>

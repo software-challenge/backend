@@ -1,5 +1,5 @@
 <% preliminary_contestants = preliminary_contestants || @preliminary_contestants %>
-<% show_surveys = @contest.phase == "recall" or @contest.phase =="validation" %>
+<% show_surveys = @season.surveys_visible? %>
 <table class="tablesorter data-table" id="preliminary_contestants">
     <thead>
       <tr>
@@ -7,7 +7,6 @@
         <th><%= School.human_name %></th>
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
-         
         <% if show_surveys %><th class="middle">Umfragen &nbsp </th><% end %>
         <th class="middle">Teilnahmewahrscheinlichkeit</th>
         <th class="middle">Aktionen</th>
@@ -38,7 +37,7 @@
           </td>
         <% end %>
         <td class="middle"><%= show_probability prelim.participation_probability %></td>
-        <td style="text-align:center"><%= link_to image_tag("actions/show.png"), contest_preliminary_contestant_url(@contest,prelim) %></td>
+        <td style="text-align:center"><%= link_to image_tag("actions/show.png"), season_preliminary_contestant_url(@season,prelim) %></td>
        </tr>
       <% end %>
       </tbody>

@@ -40,7 +40,7 @@
 </div>
 
 <h1>
-  <%= @contest.name %>
+ <% if @season %><%= link_to @season.name, @season %> / <% end %> <%= @contest.name %>
 </h1>
 
 <% tabnav :contest do %>
@@ -59,7 +59,7 @@
           <%= t "views.therefore" %> <b><%= matchday_count %> <%= Matchday.human_name(:count => matchday_count) %></b> haben.
         </p>
         <% f.inputs do %>
-          <%= f.input :start_at, :as => :date, :label => "Erster Spieltag", :input_html => {:class => 'pick_date' } %>
+          <%= f.input :start_at, :label => "Erster Spieltag", :input_html => {:class => 'pick_date' } %>
 
           <% javascript_tag do %>
              $(".pick_date").datepicker()

@@ -22,7 +22,9 @@ class Person < ActiveRecord::Base
   # The survey tokens, that are assigned to a single user!
   has_many :survey_tokens
 
-  has_many :login_tokens 
+  has_many :login_tokens
+
+  has_one :api_user, :class_name => "Quassum::ApiUser"
 
   alias :contestants :teams
 
@@ -65,6 +67,9 @@ class Person < ActiveRecord::Base
 
   validates_uniqueness_of :validation_code, :if => :validation_code
 
+  after_save :update_api_user, :if => :api_user
+  before_destroy :suspend_api_user, :id => :api_user
+
   def initialize(*args)
     @save_on_update ||= []
     super
@@ -81,16 +86,48 @@ class Person < ActiveRecord::Base
     end
   end
 
-  def other_schools_for_contest(contest)
+  def update_api_user
+    if changes['first_name'] or changes['last_name'] or changes['email']
+      api_user.update_attributes({}) 
+    end
+  end
+
+  def suspend_api_user
+    api_user.destroy
+  end
+
+  def auth_token!
+    chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
+    max_offset = rand(20)
+    begin
+     code = ""
+     1.upto(30+max_offset) { |i| code << chars[rand(chars.size-1)]}
+     self.auth_token = code
+    end while Person.find_by_auth_token self.auth_token
+    self.save!
+    auth_token
+  end
+
+  def get_or_create_api_user
+    if api_user
+      api_user
+    else
+      ap = Quassum::ApiUser.create(:person => self, :api_username => name)
+      ap
+    end
+  end
+
+  def other_schools_for_season(season)
+    return [] unless season
     schools = []
-    contest.schools.collect{|s| s.teams}.flatten.each do |team|
+    season.schools.collect{|s| s.teams}.flatten.each do |team|
       schools << team.school if self.has_role?(:creator, team)  and not self.has_role_for?(team.school)
     end
     schools.uniq
   end
 
-  def schools_for_contest(contest)
-    self.roles_for(School).collect{|r| School.find(r.authorizable_id)}.reject{|s| s.contest != contest}
+  def schools_for_season(season)
+    self.roles_for(School).collect{|r| School.find(r.authorizable_id)}.reject{|s| s.season != season}
   end
 
   def name
@@ -106,7 +143,7 @@ class Person < ActiveRecord::Base
   end
 
   def has_memberships_in?(contest)
-     not memberships.select{|m| m.contestant and m.person and m.contestant.contest == contest}.empty?
+     not memberships.select{|m| m.contestant and m.person and m.contestant.contests.include? contest}.empty?
   end
 
   # fake accessor for form-builders
@@ -173,7 +210,7 @@ class Person < ActiveRecord::Base
     if self.has_role? :administrator
       contest.contestants.visible.without_testers
     else
-      teams.reject{|t| t.contest != contest}
+      teams.reject{|t| not t.contests.include?(contest)}
     end
   end
 
@@ -190,7 +227,7 @@ class Person < ActiveRecord::Base
   end
 
   def memberships_for(contest)
-    memberships.find_all{|m| m.contest == contest}
+    memberships.find_all{|m| m.contests.include? contest}
   end
 
   def member_of?(contestant)
@@ -265,12 +302,23 @@ class Person < ActiveRecord::Base
     !available_survey_tokens.empty?
   end
 
-  def has_hidden_friendly_encounters?(contest)
-    teams.visible.without_testers.for_contest(contest).inject(false) {|val, x| val or x.has_hidden_friendly_encounters?}
+  def has_hidden_friendly_encounters?(context)
+    fe = teams.visible.without_testers
+    if context.is_a? Contest
+      fe = fe.for_contest(context)
+    elsif context.is_a? Season
+      fe  =fe.for_season(context)
+    end
+    fe.inject(false) {|val, x| val or x.has_hidden_friendly_encounters?}
   end
 
-  def is_member_of_a_team?(contest)
-    not teams.visible.without_testers.for_contest(contest).empty?
+  def is_member_of_a_team?(context)
+    if context.is_a? Contest
+      not teams.visible.without_testers.for_contest(context).empty?
+    elsif context.is_a? Season
+       not teams.visible.without_testers.for_season(context).empty?    else
+       false
+    end
   end
 
   Membership::ROLES.each do |role|

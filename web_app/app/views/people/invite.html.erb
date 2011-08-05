@@ -1,11 +1,12 @@
 <h1>
-  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
-  <%= link_to @contestant.name, contest_contestant_url(@contest, @contestant) %> /
+  <% if @season %><%= link_to @season.name, @season %> / <% end %>
+    <% if @context.is_a? Season and @contest %><%= link_to @contest.name, contest_contestants_url %> /<% end %>
+  <%= link_to @contestant.name, [@context, @contestant] %> /
   <%= t "views.invite_person" %>
 </h1>
 
 <% tabnav :new_person do %>
-  <% form_tag(add_person_contest_contestant_url(@contest, @contestant), {:class => "formtastic", :autocomplete => "off"}) do %>
+  <% form_tag([:add_person, @context, @contestant], {:class => "formtastic", :autocomplete => "off"}) do %>
     <% if manageable_roles.size == 1 -%>
       <%= hidden_field_tag "role", manageable_roles.first[1] %>
     <% end -%>

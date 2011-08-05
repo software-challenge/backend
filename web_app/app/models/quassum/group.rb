@@ -1,0 +1,4 @@
+class Quassum::Group
+
+end
+

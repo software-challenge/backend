@@ -38,9 +38,12 @@
       })
 
       $("#save_<%= team.id %>").bind('click', function() {
-        $.post('<%= contest_school_preliminary_contestants_url(@contest, @school) %>',
-        '<%= team.new_record? ? "" : "id=#{team.id}" %>&team[name]=' + $("#name_<%= team.id %> input").val() + '&team[participation_probability]='+$("#partprob_<%= team.id %> select").val(),
-          function(data) {
+      $.ajax({
+        type: 'POST',
+        url: '<%= season_school_preliminary_contestants_url(@season, @school, :format => :js) %>',
+        data : { <%= "id : #{team.id}, " unless team.new_record? %> team : { name : $("#name_<%= team.id %> input").val(), participation_probability : $("#partprob_<%= team.id %> select").val()}},
+        complete: function(resp,status){
+            var data = resp.responseText
             <% if team.new_record? %>
               var lines = data.split('\n')
               while(lines[0] == "") {
@@ -52,6 +55,7 @@
               if(success == "true") {
                 $("#insertHere").before(data) 
                 $("#spinner_<%= team.id %>").fadeOut(250)
+                $("#entry_ #team_name").attr("value", "")
               } else {
             <% end %>
                 $("#entry_<%= team.id %>").replaceWith(data)
@@ -64,12 +68,12 @@
             <% end %>
             init_<%= team.id %>()
           }
-        )
-        $("#save_<%= team.id %>").hide()
-        $("#spinner_<%= team.id %>").show()
-        return false;
       })
-    }
+      $("#save_<%= team.id %>").hide()
+      $("#spinner_<%= team.id %>").show()
+      return false;
+    })
+  }
   <% end %>
 <% else %>
   <tr>

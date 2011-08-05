@@ -54,7 +54,7 @@
       <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
-      <%= render :partial => "person", :collection => @people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+     <%= render :partial => "person", :collection => @people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
     </tbody>
   </table>
 

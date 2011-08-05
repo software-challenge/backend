@@ -1,18 +1,20 @@
 class FriendlyEncounter < ActiveRecord::Base
   has_one :friendly_match, :class_name => "FriendlyMatch", :dependent => :destroy, :as => :set
   has_many :slots, :class_name => "FriendlyEncounterSlot", :dependent => :destroy
-  belongs_to :contest
+  belongs_to :context, :polymorphic => true
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
   has_many :mini_jobs, :through => :friendly_match, :source => :job
 
   has_many :match_slots, :through => :slots
-  delegate :game_definition, :to => :contest
+  delegate :game_definition, :to => :context
 
   belongs_to :open_for, :class_name => "Contestant"
   has_many :contestants, :through => :slots
   has_many :clients, :through => :slots
 
-  named_scope :for_contest, lambda {|c| {:conditions => {:contest_id => c.id}}}
+  named_scope :for_context, lambda {|c| {:conditions => {:context_id => c.id, :context_type => c.class.to_s}}}
+  named_scope :for_contests, :conditions => {:context_type => "Contest"}
+  named_scope :for_seasons, :conditions => {:context_type => "Season"}
   named_scope :for_client, lambda {|c| {:joins => [:clients], :conditions => {:clients => {:id => c.id}}}}
 
   def date
@@ -107,7 +109,7 @@ class FriendlyEncounter < ActiveRecord::Base
   def prepare
     raise "Friendly encounter not ready yet" if not ready?
     friendly_match.destroy if not friendly_match.nil?
-    friendly_match = FriendlyMatch.new(:friendly_encounter => self)
+    friendly_match = FriendlyMatch.new(:friendly_encounter => self, :context => context)
     friendly_match.save!
     friendly_match.contestants = contestants.to_ary
     friendly_match.save!

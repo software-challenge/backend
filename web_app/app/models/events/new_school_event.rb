@@ -1,5 +1,8 @@
 class NewSchoolEvent < Event
+  has_one :season, :through => :school
+  belongs_to :school, :foreign_key => :param_int_1
   validates_presence_of :param_int_1
+  validates_presence_of :season
 
   def valid_event?
     if school.nil?
@@ -10,20 +13,8 @@ class NewSchoolEvent < Event
     end
   end
 
-  def school=(school)
-    self.param_int_1 = school.id
-  end
-
-  def school
-    begin
-      School.find(param_int_1)
-    rescue
-      nil
-    end 
-  end
-
   def path
-    [:contest, school]
+    [season, school]
   end
 
   def text

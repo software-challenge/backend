@@ -1,10 +1,10 @@
 <div id="actions">
-  <% link_to contest_contestants_url(@contest, :format=>:pdf) do %>
+  <% link_to :action => :index, :format => :pdf do %>
     <%= image_tag('actions/pdf.png') %> <%= t "views.pdf_export" %>
   <% end %>
   <% if may_add_teams? -%>
-    <% unless @contest.ready? %>
-      <% link_to new_contest_contestant_url do %>
+    <% if @context.is_a? Season or not @contest.ready? %>
+      <% link_to :action => :new do %>
         <%= image_tag('actions/add.png') %> <%= I18n.t("views.new") + " " + Contestant.human_name %>
       <% end %>
     <% end %>
@@ -12,11 +12,16 @@
 </div>
 
 <h1>
-  <%= @contest.name %>
+  <% if @context.is_a? Contest %>
+    <% if @season %><%= link_to @season.name, @season %> / <% end %>
+    <%= @context.name %>
+  <% else %>
+    <%= link_to @context.name, @context %>
+  <% end %>
 </h1>
 
-<% tabnav :contest do %>
-  <h2><%= t("views.contestants_participating", :teams => @contest.contestants.visible.without_testers.ranked.count, :members => @contest.overall_member_count) %></h2>
+<% tabnav @context.class.to_s.downcase.to_sym do %>
+  <h2><%= t("views.contestants_participating", :teams => @context.contestants.visible.without_testers.ranked.count, :members => @context.overall_member_count) %></h2>
   <%= "* #{t ("views.tutors_with_asterisk_note")}" %>
   <% rankings = Contestant::RANKINGS.clone %>
   <% rankings.delete("none") %>
@@ -46,7 +51,7 @@
         <td><%= contestant.location %></td>
         <td><%= contestant.disqualified ? "<i>[#{t "views.disqualified"}]</i>".html_safe! : "" %> <%= contestant.name %></td> 
         <td><%= contestant.people.visible.teachers.collect(&:name).to_sentence %></td>
-        <td><%= contestant.people.visible.tutors_and_helpers.collect{|t| "#{t.name} #{t.is_helper_for?(contestant) ? "*" : ""}"}.to_sentence %></td>
+        <td><%= (contestant.people.visible.helpers.map{|p| "#{p.name}*"} + contestant.people.visible.tutors.map{|p| p.name}).to_sentence %></td>
         <td style="text-align: center">
           <% if not current_user.nil? and current_user.has_role?(:administrator) %>
             <% show_ovrl_member_count_edit = true %>
@@ -72,7 +77,7 @@
               $("a#submit_ovrl_mem_count_<%= contestant.id %>").bind('click', function() {
                 $("span#change_ovrl_mem_count_edit_<%= contestant.id %>").hide();
                 $("a#change_ovrl_mem_count_<%= contestant.id %>").show(250);
-                $.get("<%= set_and_get_overall_member_count_contest_contestant_url(@contest, contestant) %>",
+                $.get("<%= if @context.is_a? Contest then set_and_get_overall_member_count_contest_contestant_url(@context, contestant) else set_and_get_overall_member_count_season_contestant_url(@context, contestant) end %>",
                   "id=<%= contestant.id %>&count=" + $("input#mem_count_<%= contestant.id %>").val(),
                   function(returned_data) {
                     if (returned_data == "-1") {
@@ -101,17 +106,17 @@
         <% end %>
         <td>
           <% if may_see_details? :contestant => contestant -%>
-          <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
+          <%= link_to image_tag('actions/show.png'), [@context, contestant] %>
           <% end -%>
         </td>
         <td>
           <% show_to :administrator do -%>
-            <% if not @contest.ready? %>
+            <% if (@context.is_a?(Contest) ? !@context.ready? : @context.contests.any?{|c| c.ready?}) %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete"), :class=> "tooltipped" %>
-              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
+              <%= link_to delete_image, [:hide, @context, contestant], :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
             <% elsif not contestant.disqualified %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.disqualify"), :class=> "tooltipped" %>
-              <%= link_to delete_image, hide_contest_contestant_url(@contest, contestant), :confirm => I18n.t("messages.confirm_contestant_disqualify_during_contest", :name => contestant.name) %>
+              <%= link_to delete_image, [:hide, @context, contestant], :confirm => I18n.t("messages.confirm_contestant_disqualify_during_contest", :name => contestant.name) %>
             <% end %>
           <% end %>
         </td>
@@ -179,7 +184,7 @@
   </table>
   <% end %>
 
-  <% hidden_contestants = @contest.contestants.hidden.without_testers %>
+  <% hidden_contestants = @context.contestants.hidden.without_testers %>
   <% if administrator? and hidden_contestants.count > 0 %>
     <br>
     <h2><%= t("views.hidden_teams") %></h2>
@@ -215,13 +220,13 @@
             <td style="text-align: center"><%= contestant.overall_member_count %></td>
             <td>
               <% if may_see_details? :contestant => contestant -%>
-                <%= link_to image_tag('actions/show.png'), [@contest, contestant] %>
+                <%= link_to image_tag('actions/show.png'), [@context, contestant] %>
               <% end -%>
             </td>
             <td>
               <% show_to :administrator do -%>
                 <% undo_image = image_tag "actions/undo.gif", :title => I18n.t("actions.unhide"), :class=> "tooltipped" %>
-                <%= link_to undo_image, unhide_contest_contestant_url(@contest, contestant), :name => contestant.name %>
+                <%= link_to undo_image, [:unhide, @context, contestant], :name => contestant.name %>
               <% end %>
             </td>
           </tr>  

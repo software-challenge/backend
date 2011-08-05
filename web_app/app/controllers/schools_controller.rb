@@ -21,12 +21,13 @@ class SchoolsController < ApplicationController
   end
 
   def admin_for_school?(as = nil)
-    administrator? or if as.nil?
+    if administrator? or as.nil?
       current_user.has_role_for? @school
     else
       as.has_role_for? @school 
     end
   end
+
   helper_method :admin_for_school?
 
   def fetch_school
@@ -39,13 +40,13 @@ class SchoolsController < ApplicationController
 
   def index
     if administrator?
-      @schools = @contest.schools 
+      @schools = @season.schools 
       @other_schools = []
       @schools_in_states = {}; 
-      @contest.schools.each{|s| st = s.state.downcase; @schools_in_states[st] = (@schools_in_states[st] || 0) + 1}; 
+      @schools.each{|s| st = s.state.downcase; @schools_in_states[st] = (@schools_in_states[st] || 0) + 1}; 
     else
-      @schools = @current_user.schools_for_contest(@contest)
-      @other_schools = @current_user.other_schools_for_contest(@contest)
+      @schools = @current_user.schools_for_season(@season)
+      @other_schools = @current_user.other_schools_for_season(@season)
     end
  
   end 
@@ -76,8 +77,8 @@ class SchoolsController < ApplicationController
   end
 
   def new
-    unless (@contest.allow_school_reg or administrator?) and logged_in?
-      redirect_to contest_url(@contest)
+    unless (@season.school_registration_allowed? or administrator?) and logged_in?
+      redirect_to season_url(@season)
       return
     end
     @school = School.new
@@ -92,9 +93,9 @@ class SchoolsController < ApplicationController
   end
 
   def create
-    redirect_to contest_url(@contest) unless @contest.allow_school_reg or administrator?
+    redirect_to season_url(@season) unless @season.school_registration_allowed? or administrator?
     @school = School.create(params[:school])
-    @school.contest = @contest
+    @school.season = @season
     @school.contact = @current_user
     if @school.contact_function == "Andere"
       @school.contact_function = params[:contact_function_other]
@@ -110,7 +111,7 @@ class SchoolsController < ApplicationController
     end
     respond_to do |format|
       if success
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet.<br><b>Bitte melden Sie nun auch die Teams an, die voraussichtlich teilnehmen werden.</b>", :links => [["Jetzt Teams anmelden", new_contest_school_preliminary_contestant_url(@contest, @school)]] } }
+        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Schule anmelden", :message => "Die Schule \"#{@school.name}\" wurde erfolgreich angemeldet.<br><b>Bitte melden Sie nun auch die Teams an, die voraussichtlich teilnehmen werden.</b>", :links => [["Jetzt Teams anmelden", new_season_school_preliminary_contestant_url(@season, @school)]] } }
         format.xml { render :xml => @school }
       else
         format.html { render :action => "new" }
@@ -125,7 +126,7 @@ class SchoolsController < ApplicationController
       
       if success
         flash[:notice] = "Die Schule \"#{@school.name}\" wurde aktualisiert."
-        format.html { redirect_to contest_school_url(@contest, @school) }
+        format.html { redirect_to season_school_url(@season, @school) }
         format.xml { head :ok }
       else
         format.html { render :action => "edit" }

@@ -13,6 +13,9 @@ config.action_controller.consider_all_requests_local = true
 config.action_view.debug_rjs                         = true
 config.action_controller.perform_caching             = false
 
+#config.middleware.use "Rack::Bug", :secret_key => "WWQFBFhbDYhLOdE]CMRUUPddgLRaHbBUBDNKZRUdcZBYVQHAX"
+
+
 # Don't care if the mailer can't send
 # ActionMailer::Base.delivery_method = :test
 # ActionMailer::Base.raise_delivery_errors = false
@@ -28,5 +31,5 @@ ENV['FRIENDLY_GAMES_PER_DAY'] = "4"
 ENV['MR_SMITH'] = "mr.smith@sc.de"
 ENV['EMAIL_VALIDATION'] = "false"
 ENV['SHOW_GRAVATAR'] = "false"
-
+ENV['SIMULATE_GAME_RESULTS'] = "true"
 

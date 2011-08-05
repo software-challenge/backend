@@ -1,0 +1,56 @@
+<% show_to :administrator do %>
+  <div id="actions">
+    <% link_to edit_season_url(@season) do %>
+      <%= image_tag "actions/edit_lrg.png" %> Saison bearbeiten
+    <% end %>
+    <% link_to status_season_url(@season) do %>
+      <%= image_tag "actions/schedule.png" %> Season-Status 
+    <% end %>
+    <% if @season.validation? %>
+      <% link_to edit_teams_season_url(@season) do %>
+        <%= image_tag "actions/settings.png" %> Teams zuweisen
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<h1>
+  <%= Season.human_name %>: <%= @season.name %>
+</h1>
+
+<% tabnav :season do  %>
+
+<div class="frontpagePhotoBg">
+  <% begin %>
+    <%= render :partial => "/seasons/pages/p_#{@contest.subdomain}" %>
+  <% rescue %>
+    <%= render :partial => "/seasons/pages/default" %>
+  <% end %>
+</div>
+        <% action (@season.school_registration_allowed?) do %>
+        <% if logged_in? or administrator? %>
+          <%= t "views.todo.reg_school" %>
+          <% action_button do %>
+            <%= link_to "Neue Schule anmelden", new_season_school_url(@season) %> 
+          <% end %>
+        <% else %>
+          <%= t "views.todo.login_before_school" %>
+          <% action_button :style => "margin-bottom: 10px" do %>
+            <%= link_to "Anmelden", login_url() %> 
+          <% end %>
+          <%= t "views.todo.login_else" %>
+          <% action_button do %>
+            <%= link_to "Jetzt registrieren", register_url() %>  
+          <% end %>
+        <% end %>
+      <% end %>
+      <% action (@season.team_registration_allowed? and logged_in?) do %>
+        <%= t "views.todo.reg_teams" %>
+        <% action_button do %>
+          <%= link_to "Teams anmelden", season_new_team_url(@season) %>
+        <% end %>
+      <% end %>
+  </div>
+</div>
+
+<% end %>

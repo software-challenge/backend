@@ -1,0 +1,72 @@
+<%= stylesheet_link_tag "season_states" %>
+<h1> Saison: <%= link_to @season.name, @season %> / 
+     Status 
+</h1>
+<% tabnav :administration do %>
+  <% states  = @season.states %>
+  <div class="states">
+  <% states.each_with_index do |state,i| %>
+    <% 
+      if @season.state? state 
+        type = "current" 
+      elsif @season.past_state? state 
+        type = "past"
+      else
+        type = "future"
+      end 
+    %>
+   
+   <div class="controls">
+   <% if type == "current" and @season.can_prev_step? %>
+        <%= image_tag 'ui/arrow_up.png', :id => "down", :style => "margin: 15px" %>
+        <%= link_to image_tag('actions/destroy.png', :style => "margin: 15px"), prev_step_season_url(@season), :id => "undo", :title => "Einen Schritt zurück", :style => "display: none", :method => :post   %>
+        <% javascript_tag do %>
+          $(function() {
+            $("#down").bind('mouseenter', function() {
+              $("#down").hide()
+              $("#undo").fadeIn(150)
+            }) 
+            $("#undo").bind('mouseleave', function() {
+              $("#undo").hide()
+              $("#down").fadeIn(150)
+            })
+          })
+        <% end %>
+     <% elsif type == "current" and state != states.first %>
+         <%= image_tag 'ui/arrow_up.png', :id => "down", :style => "margin: 15px" %>
+     <% end %>
+    </div>
+    <div class="group frame <%=type%> state <%= state.to_s %>">
+      <div class="group content">
+        <h3>
+          <%= t("season.states.#{state.to_s}") %>
+        </h3>
+        <% if state == :contest and type == "current" %>
+          Aktuell in Phase: <%= @season.current_phase.position %> von <%= @season.phases.count %>
+          <br>
+          Phase: <%= @season.current_phase.name %>
+        <% end %>
+      </div>
+    </div>
+    <div class="controls">
+    <% if type == "current" and @season.can_next_step? %>
+       <%= link_to image_tag('ui/arrow_down.png', :style => "margin: 15px;"), next_step_season_url(@season), :title => "Einen Schritt vor", :method => :post %>
+    <% elsif type == "current" and not state == :finished %>
+       <%=  image_tag('ui/arrow_down.png', :style => "margin: 15px; opacity: 0.5;") %>
+    <% end %>
+    </div>
+  <% end %>
+  </div>
+<% end %>
+
+<% javascript_tag do %>
+  $(function() {
+    $("html,body").animate({ scrollTop: $(".current").offset().top - 150}, 0)
+    
+    $(".contest").bind('click', function(){
+      window.location.href = "<%= phases_season_url(@season) %>";
+    })
+
+  });
+    
+<% end %>

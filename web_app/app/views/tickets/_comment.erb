@@ -1,0 +1,11 @@
+<div class="comment <%= curr_cycle if defined? curr_cycle %>">
+  <div class="author">
+    <%= begin comment.author.person.name rescue "System" end %> schrieb: 
+    <span class="created_at">
+      <%= l comment.created_at.to_date %>
+    </span>
+  </div>
+  <div class="text">
+    <%= comment.html_text.html_safe %>
+  </div>
+</div>

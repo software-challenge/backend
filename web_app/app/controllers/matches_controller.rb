@@ -1,6 +1,7 @@
 class MatchesController < ApplicationController
  
   before_filter :fetch_parents
+  before_filter :fetch_context
 
   access_control do
     allow :administrator
@@ -82,13 +83,16 @@ class MatchesController < ApplicationController
      # @parent = @matchday
     if params[:contestant_id]
       @contestant = Contestant.find(params[:contestant_id])
-      @contest = @contestant.contest
       @parent = @contestant
     elsif params[:matchday_id]
-      @matchday = current_contest.matchdays.find(params[:matchday_id])
+      @matchday = Matchday.find(params[:matchday_id])
       @parent = @matchday
     else
       raise ActiveRecord::RecordNotFound
     end
+  end
+
+  def fetch_context
+    @context = @contest ? @contest : @season
   end
 end

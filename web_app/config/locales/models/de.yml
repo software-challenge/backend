@@ -77,7 +77,21 @@ de:
       news_post:
         one: News-Beitrag
         other: News
+      season:
+        one: Saison
+        other: Saisons
+      season_phase:
+        one: Saison-Phase
+        other: Saison-Phasen
+      season_definition:
+        one: Saison-Definition
+        other: Saison-Definitionen
+      game_definition:
+        one: Spiel-Definition
+        other: Spiel-Definitionen
     attributes:
+      season:
+        public: öffentlich
       school:
         name: Name
         zipcode: PLZ
@@ -95,18 +109,13 @@ de:
         game_definition: Spiel
         name: Name
         active: Wettbewerb ist aktiv
-        phases:
-          initialization: Einrichtung
-          registration: Vorläufige Anmeldung
-          recall: Erinnerung an die Anmeldung
-          validation: Verbindliche Anmeldung
-          contest: Wettkampf
         public: Öffentlich
       email_event:
         rcv_on_matchday_played: Ein Spieltag wurde gespielt
         rcv_client_matchday_warning: In einem Ihrer Teams gibt es noch keinen spielbereiten Computerspieler für den nahenden Spieltag.
         rcv_contest_progress_info: Es gibt Neuigkeiten zum Wettbewerb
         rcv_survey_token_notification: Wenn eine neue Umfrage verfügbar ist
+        rcv_quassum_notification: Bei Änderungen eines meiner Tickets 
       person:
         first_name: Vorname
         last_name: Nachname

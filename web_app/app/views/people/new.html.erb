@@ -1,7 +1,7 @@
 <% if @contestant -%>
   <h1>
-    <%= link_to @contest.name, contest_contestants_url(@contest) %> /
-    <%= link_to @contestant.name, contest_contestant_url(@contest, @contestant) %> /
+    <%= link_to @context.name, [@context, :contestants] %> /
+    <%= link_to @contestant.name, [@context, @contestant] %> /
     <%= t("views.new_person") + " " + t("actions.create") %>
   </h1>
 

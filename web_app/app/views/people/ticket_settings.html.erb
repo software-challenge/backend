@@ -1,0 +1,33 @@
+<h1><%= t("titles.generic.edit", {:model => Person}) %> / Ticket-System</h1>
+
+<% tabnav :person do %>
+  <% if @person.api_user %>
+    <% if @person.api_user.api_token %>
+      <b>Dieser Person ist ein <i>API-User</i> zugewiesen:</b> <%= @person.api_user.api_username %>
+      <div style="margin-top: 15px;">
+        <b>Anmerkung:</b>
+        <p>Ein API-User kann nur verwendet werden um über das Wettkampfsystem an Tickets zu arbeiten. Einen solchen Account sollten nur die Schüler und Lehrer erhalten um ihre eigenen Tickets zu verwalten.</p>
+      </div>
+    <% else %>
+      <b>Dieser Person wurde ein <i>User-Account</i> zugewiesen:</b> <%= @person.api_user.api_username %>
+      <div style="margin-top: 15px;">
+        <b>Anmerkung:</b>
+        <p>Ein solcher Account wird den Tutoren, Betreuern und allen Leuten zugewiesen die direkt über Quassum und nicht über das Wettkampfsystem mit Tickets umgehen. Diese Benutzer werden manuell im Quassum registriert und anschließend im Wettkampfsystem den entsprechenden Personen zugewiesen.
+        </p>
+      </div>
+    <% end %>
+  <% else %>
+    <b>Aktuell ist dieser Person noch kein Quassum Account zugewiesen!</b>
+  <% end %>
+  <h2>Der Person einen Quassum Account zuweisen</h2>
+  <% form_tag [:update_ticket_settings, @person], :method => :put do %>
+    Noch nicht zugewiesene Account aus dem Quassum:
+    <%= select_tag "api_user", options_for_select(@available_quassum_accounts) %>
+    <%= submit_tag "Absenden" %>
+  <% end %>
+  <% if @person.api_user and @person.api_user.api_token %>
+    <div style="margin-top 15px; margin-left: 20px; margin-right: 20px;">
+      <b>Anmerkung:</b> Wenn der Person einen Account zuweisen geht der bisher gültige API Account verloren.
+    </div>
+  <% end %>
+<% end %>

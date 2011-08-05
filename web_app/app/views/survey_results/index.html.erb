@@ -16,7 +16,7 @@
     <td><%=h survey.title %></td>
     <td><%= l survey.created_at.to_date %></td>
     <td><%= survey.response_sets.count %></td>
-    <td><%= link_to image_tag("actions/show.png"), contest_survey_result_url(@contest,survey) %></td>
+    <td><%= link_to image_tag("actions/show.png"), survey_result_url(survey) %></td>
   </tr>
 <% end %>
 </table>

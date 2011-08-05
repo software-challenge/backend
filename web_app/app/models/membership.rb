@@ -6,8 +6,6 @@ class Membership < ActiveRecord::Base
   belongs_to :contestant
   belongs_to :person
 
-  has_one :contest, :through => :contestant
-
   # lower level checks
   validates_presence_of :contestant
   validates_presence_of :person
@@ -16,6 +14,8 @@ class Membership < ActiveRecord::Base
 
   # higher level checks
   validates_uniqueness_of :contestant_id, :scope => :person_id, :unless => :person_new_record?
+
+  delegate :contests, :to => :contestant
 
   def roles
     if person

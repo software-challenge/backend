@@ -1,0 +1,11 @@
+<div id="actions">
+  <% link_to season_url(@season), :method => :delete, :confirm => "Sind sie wirklich sicher, ob Sie diesen Wettbewerb endgültig entfernen wollen? Dabei gehen alle davon abhängigen Wettbewerbe usw. verloren!", :method => :delete do %>
+    <%= image_tag "actions/destroy.png" %> Season löschen
+  <% end %>
+</div>
+
+<h1>
+  Saison bearbeiten: <%= @season.name %> 
+</h1>
+
+<%= render :partial => "form" %>

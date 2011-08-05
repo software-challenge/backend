@@ -1,0 +1,18 @@
+div.odd {
+  background-color: #f4f4f4;
+}
+
+div.even {
+  background-color: white;
+}
+
+div.season_phase{
+  padding-top: 1px;
+  padding-left: 5px;
+  padding-bottom: 3px;
+  margin-bottom: 10px;
+}
+
+div.season_phase h2{
+  margin-top: 5px;
+}

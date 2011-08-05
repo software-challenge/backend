@@ -7,11 +7,45 @@ de:
     send_notification: "eMail mit Zugangsdaten versenden"
     zipped_client: "Gepackter Computerspieler (*.zip)"
     log: "Log"
+    remember_me: "Eingeloggt bleiben"
   views:
+    tickets: "Tickets"
+    contestant_report: "Protokoll"
+    no_seasons_available: "Es sind keine Saisons verfügbar."
+    seasons_available: "Es sind %{count} Saisons verfügbar."
     schools_registered: "Es sind aktuell %{schools} Schulen angemeldet."
+    seasons_overview: "Verfügbare Saisons" 
     teams_registered: "Es sind aktuell %{teams} Team angemeldet + %{schools_without_teams} Schulen, die noch kein Team angemeldet haben. Insgesamt: %{total}" 
     hidden: "Versteckt"
     public: "Öffentlich"
+    quassum:
+      ticket:
+        attributes:
+          title: "Titel"
+          description: "Beschreibung"
+          status: "Status"
+          priority: "Priorität"
+          deadline: "Deadline"
+          ticket_type: "Typ"
+          assignee: "Verantwortlicher"
+          done: "erledigt"
+        states: 
+          suggested: "Vorgeschlagen"
+          open: "Offen"
+          done: "Erledigt"
+          rejected: "Abgelehnt"
+        priorities:
+          requirement: "kritisch"
+          very_important: "sehr wichtig"
+          important: "wichtig"
+          average: "normal"
+          less_important: "weniger wichtig"
+          unimportant: "unwichtig"
+        ticket_types:
+          feature: "Wunsch"
+          defect: "Problem"
+          todo: "Aufgabe"
+          improvement: "Änderung"
     todo:
       trial_contest: "Sie können Ihr Team jetzt für die Teilnahme an einem Probewettkampf anmelden. Genaueres hier:"
       login: "Um das Wettkampfsystem nutzen zu können, müssen Sie sich zunächst anmelden. Sollten Sie bereits Zugangsdaten zu diesem Wettkampfsystem besitzen, melden Sie sich bitte hier an:"   
@@ -191,12 +225,18 @@ de:
     overall: "gesamt"
     won: "gewonnen"
     person_has_open_friendly_requests: "Sie werden zu einem Freundschaftsspiel herausgefordert!"
+  contest_states:
+    created: "Wurde erstellt" 
+    assigned_contestants: "Teams wurden zugewiesen"
+    created_schedule: "Terminplan wurde erstellt"
+    matchdays_played: "Es wurden %{played} von %{overall} Spieltagen gespielt"
   events:
     client_activated: "hat einen neuen Client aktiviert."
     client_uploaded: "hat einen neuen Client hochgeladen."
     person_created: "%{creator} hat eine neue Person \"%{person}\" hinzugefügt."
     person_added_to_contestant: "%{actor} hat %{person} dem Team \"%{contestant}\" hinzugefügt."
     person_removed_from_contestant: "%{actor} hat %{person} aus dem Team \"%{contestant}\" entfernt."
+    report_edited: "%{editor} hat das Protokoll des Teams %{contestant} bearbeitet."
   messages:
     states:
       finished: "Erfolgreich beendet" 
@@ -242,6 +282,7 @@ de:
     contest_updated_successfully: "Wettbewertb wurde erfolgreich aktualisiert."
     created_successfully: "wurde erfolgreich angelegt"
     not_enough_contestants_for_creating_contest: "Es sind nicht genug {contstant_label}} vorhanden, um einen Spielplan zu erstellen."
+    not_enough_weekdays_selected: "Es muss mindestens 1 Wochentag ausgewählt werden!"
     there_is_already_a_schedule: "Es liegt bereits ein Spielplan vor."
     contestant_successfully_created: "Team wurde erfolgreich erstellt." 
     contestant_successfully_updated: "Team wurde erfolgreich aktualisiert."
@@ -330,6 +371,19 @@ de:
     test_progress: "%{succeeded} bestanden, %{played} von %{total} gespielt" 
   headers:
     hidden_people: "Gelöschte Personen"
+  season: 
+     states:
+      initialization: Einrichtung
+      registration: Vorläufige Anmeldung
+      recall: Erinnerung an die Anmeldung
+      validation: Verbindliche Anmeldung
+      contest: Wettkampf
+      finished: Abgeschlossen
+  season_phase:
+     states:
+      past: Bereits abgeschlossen
+      current: Aktuelle Phase
+      future: Noch nicht begonnen
   games:
     causes:
       REGULAR: In Ordnung
@@ -368,6 +422,21 @@ de:
     roles:
       global:
         administrator: AdministratorIn
+        teacher: LehrerIn
+      preliminarycontestant:
+        creator: ErstellerIn
+        creators: ErstellerInnen
+        head: SchulleiterIn
+        heads: SchulleiterInnen
+        teacher: LehrerIn
+        teachers: "LehrerInnen"
+        tutor: TutorIn
+        tutors: "TutorInnen"
+        helper: HelferIn
+        helpers: HelferInnen
+        pupil: SchülerIn
+        pupils: "SchülerInnen"
+        pupils_with_account: "SchülerInnen mit Zugangsberechtigung"
       contestant:
         head: SchulleiterIn
         heads: SchulleiterInnen
@@ -392,6 +461,9 @@ de:
     details: "Details"
     edit: "Bearbeiten"
     edit_notif: "Benachrichtigungen"
+    seasons:
+      status: "Saison-Status verwalten"
+      phases: "Saison-Phasen verwalten"
     email_events:
       edit: "Benachrichtigungen"
     events: "Ereignisse"
@@ -414,13 +486,14 @@ de:
       standings: "Rangliste für Spieltag"
       disqualifications: "Disqualifikationen"
     all_people: "Alle Personen"
-    friendly_encounters: "Freundschaftsspiele"
     debug_view: "Debugansicht"    
     upload_new_client: "Computerspieler hochladen"
     preliminary_contestants:
       new: "Teams anmelden"
     contestants:
+      index: "Teams"
       my: "Meine Teams"
+      report: "Team-Protokoll"
     schools:
       new: "Schule anmelden"
       create: "Schule anmelden"
@@ -454,6 +527,7 @@ de:
       trial_contest: "Probewettkampf"
     friendly_encounters:
       all: "Alle Freundschaftsspiele"
+      index: "Freundschaftsspiele"
     generic:
       index: "Liste der %{model}"
       edit: "%{model} bearbeiten"

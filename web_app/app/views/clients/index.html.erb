@@ -1,11 +1,12 @@
 <div id="actions">
-  <% link_to new_contest_contestant_client_url(@contest, @contestant) do %>
+  <% link_to [:new, @context, @contestant, :client] do %>
     <%= image_tag('actions/add.png') %><%= t("views.upload_client") %>
   <% end %>
 </div>
 
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
+  <% if @season %><%= link_to @season.name, @season %> / <% end %>
+  <% if @context.is_a? Season and @contest %><%= link_to @contest.name, contest_contestants_url %> /<% end %>
   <%= @contestant.name %>
 </h1>
 

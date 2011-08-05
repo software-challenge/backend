@@ -131,4 +131,11 @@ module ApplicationHelper
    contest_survey_token_survey_url(@contest,@survey_token,:id => 0)
   end
 
+  def eurl_for(url_arr, args = {})
+    url = url_for(url_arr)
+    url += ".#{args[:format]}" if args[:format]
+    url += "?#{args[:params].to_param}" if args[:params]
+    url
+  end
+
 end

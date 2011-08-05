@@ -1,7 +1,6 @@
 source 'http://rubygems.org'
 
 gem 'rails', '2.3.7'
-gem "mailcatcher", :groups => [:development, :test]
 gem "surveyor", "0.19.2"
 gem "rubyzip"
 gem "nokogiri"
@@ -9,3 +8,13 @@ gem "daemons"
 gem "erubis", ">= 2.6.5"
 gem "ezprint"
 gem "bluecloth"
+gem "state_machine"
+gem "memcache-client"
+gem "wkhtmltopdf-binary"
+gem "eventmachine"
+gem "faye"
+
+group :development do 
+  gem "mailcatcher"
+end
+

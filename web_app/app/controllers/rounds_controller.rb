@@ -18,7 +18,7 @@ class RoundsController < ApplicationController
     respond_to do |format|
       format.html { send_file @round.replay.path, :disposition => 'inline' }
       format.xml   {
-        xml_handler = File.join(RAILS_ROOT, "lib", "replay_viewers", @contest.game_definition.game_identifier.to_s.underscore, "_replay.xml.erb")
+        xml_handler = File.join(RAILS_ROOT, "lib", "replay_viewers", @round.match.context.game_definition.game_identifier.to_s.underscore, "_replay.xml.erb")
         unless File.exists? xml_handler
          xml_handler = File.join(RAILS_ROOT,"lib","replay_viewers","_generic_replay.xml.erb")
         end
@@ -39,10 +39,10 @@ class RoundsController < ApplicationController
     if @round.match.respond_to?(:matchday) 
       replay_url = contest_matchday_match_round_url(@contest,@round.match.matchday,@round.match,@round, :xml)
     elsif @round.match.is_a? CustomMatch 
-      replay_url = contest_custom_match_round_url(@contest,@match,@round, :xml)
+      replay_url = contest_custom_match_round_url(@contest,@round.match,@round, :xml)
     end
  
-    game_identifier = @contest.game_definition.game_identifier.to_s.underscore  
+    game_identifier = @round.match.context.game_definition.game_identifier.to_s.underscore  
     render :file => File.join(RAILS_ROOT, "lib", "replay_viewers", game_identifier, "_viewer.erb"), :locals => {:replay_url => replay_url, :autoplay => false, :image_path => "/images/games/viewers/#{game_identifier}", :stylesheet_path => "/stylesheets/replay_viewers/#{game_identifier}"}
   end
 
@@ -70,6 +70,10 @@ class RoundsController < ApplicationController
   def reset
     @round = Round.find_by_id(params[:id])
     @round.reset!
-    redirect_to contest_matchday_match_url(@contest,@round.match.matchday,@round.match) 
+    if @round.match.is_a? FriendlyMatch
+      redirect_to [@round.match.context, @round.match.set]
+    else
+      redirect_to contest_matchday_match_url(@contest,@round.match.matchday,@round.match) 
+    end
   end
 end

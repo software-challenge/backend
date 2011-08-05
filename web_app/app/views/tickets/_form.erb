@@ -1,0 +1,209 @@
+<% update = !!ticket.id %>
+<% current_context = ticket.contexts.first.context if update%>
+<% possible_contexts = @current_user.contestants.map{|c| ["#{c.season ? "Saison: "+c.season.name : c.contests.first.name} - #{c.name}", "Contestant:#{c.id}"]} %>
+<% if update %>
+  <% possible_assignees = current_context.possible_assignees %>
+<% else %>
+  <% possible_assignees = @current_user.contestants.first.possible_assignees %>
+<% end %>
+<% possible_assignees << [ticket.assignee["name"], "Group:#{ticket.assignee["id"]}"] if ticket.assignee and ticket.assignee["type"] == "Group" %>
+<% current_assignee = nil %>
+<% if ticket.assignee %>
+  <% current_assignee = "User:#{ticket.assignee["id"]}" if ticket.assignee["type"] == "User" %>
+  <% current_assignee = "Group:#{ticket.assignee["id"]}" if ticket.assignee["type"] == "Group" %>
+<% end %>
+
+<% form_tag ticket.id, {:url => (ticket.id ? ticket_path(:id => ticket.id) : tickets_path), :method => (ticket.id ? "put" : "post"), :id => "ticket_form"} do %>
+
+  <div id="ticket_head">
+    <span class="title"><%= ticket.title ? ticket.title : "Ticket verfassen" %></span>
+    <div id="form_actions"style="display:none; float:right">
+      <% if update %>
+        <% link_to "", :class => "update" do %>
+          <%= image_tag("actions/add.png") %> Änderungen speichern
+        <% end %>
+        <span> oder <a class="cancel" href="">abbrechen</a></span>
+      <% else %>
+         <% link_to "", :class => "update" do %>
+          <%= image_tag("actions/add.png") %> Ticket erstellen
+        <% end %>
+        <span> oder <a class="cancel" href="/tickets/">abbrechen</a></span>
+      <% end %>
+    </div>
+  </div>
+
+  <table> 
+    <colgroup>
+      <col width="150">
+      <col>
+      <col width="150">
+      <col>
+    </colgroup>
+    <thead></thead>
+    <tbody>
+      <tr>
+        <td class="form_key">Thema</td>
+        <td class="form_value" colspan="3">
+          <%= text_field_tag "ticket[title]", ticket.title, :style => "width: 50%;" %>
+        </td>
+        <td class="form_show" colspan="3">
+          <%= ticket.title %>
+        </td>
+      </tr>
+        <tr>
+          <td class="form_key tooltipped" title="In diesem Zusammenhang wird das Ticket verarbeitet, z.B. das Team bei welchem das Problem auftrat">Kontext</td>
+          <% if not update %>
+            <td class="form_value" colspan="3">
+              <%= select_tag "context", options_for_select(possible_contexts, :selected => current_context) %>
+            </td>
+          <% else %>
+            <td class="form_value" colspan="3">
+              <%= ("#{current_context.parent ? current_context.parent.name+" / " : ""}" + current_context.name) %>
+            </td>
+          <% end %>
+        </tr>
+      <tr>
+        <td class="form_key tooltipped" title="Die Person welcher die Anfrage zur Bearbeitung zugewiesen wird">Verantwortlicher</td>
+        <td class="form_value">
+          <%= render :partial => 'select_assignee', :locals => {:assignees => possible_assignees, :current_assignee => current_assignee} %>
+        <% if update %>  
+          <td class="form_show">
+            <%= ticket.assignee_name || "Niemand" %>
+          </td>
+        <% end %>
+        </td>
+        <td class="form_key">Priorität</td>
+        <td class="form_value">
+          <%= select_tag "ticket[priority]", options_for_select(ticket.possible_priorities.map{|s| [t("views.quassum.ticket.priorities.#{s}"), s]}.reverse, ticket.priority ? ticket.priority : "average") %>
+        </td>
+        <% if update %>
+          <td class="form_show">
+            <%= ticket.priority ? t("views.quassum.ticket.priorities.#{ticket.priority}") : "Nicht zugewiesen" %>
+          </td>
+        <% end %>
+      </tr>
+      <tr>
+        <td class="form_key">Status</td>
+        <td class="form_value">
+          <% if update %>
+            <%= select_tag "ticket[status]", options_for_select(ticket.possible_states.map{|s| [t("views.quassum.ticket.states.#{s}"), s]}, ticket.status ? ticket.status : "open") %>
+          <% else %>
+            offen
+            <%= hidden_field_tag "ticket[status]", "open" %>
+          <% end %>
+        </td>
+        <% if update %><td class="form_show"><%= t("views.quassum.ticket.states.#{ticket.status}") %></td><% end %>
+        <td class="form_key">Typ</td>
+        <td class="form_value">
+          <%= select_tag "ticket[ticket_type]", options_for_select(ticket.possible_ticket_types.map{|s| [t("views.quassum.ticket.ticket_types.#{s}"), s]}, ticket.ticket_type) %>
+        </td>
+        <% if update%><td class="form_show"><%= t("views.quassum.ticket.ticket_types.#{ticket.ticket_type}") %></td><% end %>
+      </tr>
+      <tr>
+        <td colspan="4">
+          <hr class="separator">
+        </td>
+      </tr>
+      <tr>
+        <td class="form_key">Beschreibung</td>
+        <td class="form_value" colspan="3">
+          <%= text_area_tag "ticket[description]", ticket.plain_description, :style => "width: 100%; height: 100px;" %>
+        </td>
+        <% if update %>
+          <td class="form_show" colspan="3">
+              <%= ticket.html_description.html_safe %>
+          </td>
+        <% end %>  
+      </tr>
+    </tbody>
+  </table>
+<% end %>
+
+
+<% javascript_tag do %>
+    $(function() {  
+      $("#ticket_head .update").bind("click", function(e){
+        $.ajax({
+        url: "<%= ticket.id ? "/tickets/#{ticket.id}" : "/tickets" %>",
+          type: "<%= ticket.id ? "PUT" : "POST" %>",
+          data: {
+            ticket : {
+              title : $("#ticket_title").attr("value"),
+              assignee  : $("#ticket_assignee").attr("value"),
+              priority : $("#ticket_priority").attr("value"),
+              status : $("#ticket_status").attr("value"),
+              ticket_type : $("#ticket_ticket_type").attr("value"),
+              description : $("#ticket_description").attr("value")
+            },
+            context : $("#context").attr("value"),
+            <%= "id : #{ticket.id},"  if ticket.id %>
+            authenticity_token : "<%= form_authenticity_token %>"
+          },
+          dataType: "script", 
+          complete: function(resp) { 
+          },
+        
+          success: function(resp) {
+            <% if update %>
+              eval(resp);
+              clearFlash()
+              addFlash("notice", "Ticket wurde erfolgreich bearbeitet.")
+              $("html,body").animate({ scrollTop: $("#flash").offset().top}, 1000)   
+            <% else %>
+              location.reload()
+            <% end %>
+          },
+        
+          error: function(resp){ 
+            if(resp.responseText == "Ticket created successfully"){
+              window.location = "/tickets"
+            }
+            var a = $.parseJSON(resp.responseText)
+            clearFlash()
+            for(var i = 0; i < a.length; i++){
+              addFlash("error", a[i])
+            }
+            $("html,body").animate({ scrollTop: $("#flash").offset().top}, 1000)   
+          },
+        });
+        e.preventDefault()
+      })
+
+      <% unless update %>
+      $("#context").bind("change", function(){
+        $.ajax({
+          url: "<%= url_for [:possible_assignees, :tickets] %>",
+          type: "GET",
+          dataType: "html",
+          data: {context : $(this).attr("value")},
+          success: function(resp) {
+            $("#ticket_assignee").replaceWith(resp)
+          },
+        });
+      })
+      <% end %>
+
+      $("#ticket_description").parent().show()
+      $("#ticket_description").markedit({'preview' : 'below'});
+      $(".form_value").hide()
+
+      <% if update %>
+        $("#ticket_head .cancel").bind("click", function(e){
+          $(".form_value").hide()
+          $("#form_actions").hide()
+          $(".form_show").show()
+          $("#flash").hide()
+          e.preventDefault()
+        })
+        $("td").bind("click", function(){
+          $(".form_show").hide()
+          $(".form_value").show()
+          $("#form_actions").show()
+        })
+      <% else %>
+        $(".form_value").show()
+        $("#form_actions").show()
+      <% end %>
+
+  });
+<% end %>

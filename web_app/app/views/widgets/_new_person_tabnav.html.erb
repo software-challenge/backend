@@ -2,13 +2,13 @@
 
   add_tab do |t|
     t.named t("views.new_person")
-    t.links_to new_contest_contestant_person_url(:contestant_id => @contestant.to_param, :from => "contestant")
+    t.links_to eurl_for [:new, @context, @contestant, :person], :from => "contestant"
     t.highlights_on :controller => "people", :action => "new"
   end
 
   add_tab do |t|
     t.named t("views.invite_person")
-    t.links_to hash_for_invite_contest_contestant_person_url(:contestant_id => @contestant)
+    t.links_to @context.is_a?(Contest) ? hash_for_invite_contest_contestant_person_url(:contestant_id => @contestant) : invite_season_contestant_person_url(@context, @contestant,0) 
   end
 
 end -%>

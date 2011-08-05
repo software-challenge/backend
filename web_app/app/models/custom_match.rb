@@ -3,8 +3,6 @@ class CustomMatch < ClientMatch
     false
   end
 
-  undef contest
-
   def contest
     self.set
   end

@@ -1,5 +1,5 @@
 <h1>
-  <%= @contest.name_was %>
+ <% if @season %><%= link_to @season.name, @season %> / <% end %> <%= @contest.name_was %>
 </h1>
 
 <% tabnav :administration do %>

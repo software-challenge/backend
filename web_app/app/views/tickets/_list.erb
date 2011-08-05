@@ -1,0 +1,43 @@
+<table class="data-table">
+
+  <colgroup>
+    <col width="50">
+    <col width="50">
+    <col>
+    <col width="200">
+    <col width="150">
+    <col width="100">
+  </colgroup>
+    
+  <thead>
+    <th>Status</th>
+    <th></th>
+    <th>Titel</th>
+    <th>Bezieht sich auf</th>
+    <th>Zuständiger</th>
+    <th></th>
+  </thead>
+  <tbody>
+    <% for ticket in tickets %>
+      <tr class="<%= cycle("odd","even")%>">
+        <td class="middle"><%= status_for_ticket(ticket)%></td>
+        <td class="middle">
+          <%= priority_for_ticket(ticket) %>
+        </td>
+        <td>
+            <%= ticket.title %>
+        </td>
+        <td>
+            <%= ticket.contexts.map{|c| c.context.name}.join(",")%>
+        </td>
+        <td>
+          <%= begin ticket.assigned_person.name rescue "System" end %>
+        </td>
+        <td class="right">
+          <%= link_to("#{ticket.comments.size} #{image_tag("actions/comments.png").html_safe}", ticket_url(:id => ticket.id, :scroll_to => "comments"), :class=> "tooltipped", :title => "#{ticket.comments.size} Kommentare", :style => "margin-right: 10px") unless ticket.comments.empty? %>
+          <%= link_to image_tag("actions/show.png"), ticket_url(:id => ticket.id) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -34,6 +34,12 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   end
 
   add_tab do |t|
+    t.named Season.human_name(:count => 2)
+    t.links_to seasons_url()
+    t.highlights_on :controller => "seasons"
+  end
+
+  add_tab do |t|
     t.named t("views.custom_games")
     t.links_to contest_custom_matches_url(@contest)
     t.highlights_on :controller => "custom_matches", :action => "index" 
@@ -53,7 +59,7 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named "Umfrage-Ergebnisse"
-    t.links_to contest_survey_results_url(@contest)
+    t.links_to survey_results_url
     t.highlights_on :controller => "survey_results"
   end
 

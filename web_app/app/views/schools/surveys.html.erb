@@ -1,5 +1,5 @@
 <h1> 
-  <%= link_to @school.name, contest_school_url(@contest,@school) %> /
+  <%= link_to @school.name, season_school_url(@season,@school) %> /
   Umfragemöglichkeiten
 </h1>
 
@@ -7,21 +7,23 @@
   <% unfinished_count = @tokens.select{|t| not t.complete?}.count %>
   <% if @tokens.empty? %>
      <b> Aktuell gibt es für Sie an dieser Schule keine Umfragemöglichkeiten </b>
-  <% elsif unfinished_count == 0 %>
-     <h3> Sie haben an allen <%= @tokens.count %> für Sie verfügbaren Umfragen erfolgreich teilgenommen.</h3>
   <% else %>
+   <% if unfinished_count == 0 %>
+      <h3> Sie haben an allen <%= @tokens.count > 1 ? @tokens.count.to_s+" " : "" %>für Sie verfügbaren Umfragen erfolgreich teilgenommen.</h3>
+   <% else %>
      <h3> Es sind noch <%= unfinished_count %> von <%= @tokens.count %> Umfragen unbeantwortet!</h3>
+   <% end %>
    <% @tokens.each do |token|%>
     <div class="survey_token group frame" style="padding-top:0px">
      <div class="group content" style="padding-top:0px">
       <div>
       <div class="actions" style="float:right; margin-right: 5px;">
         <% if not token.consumed? %>
-          <% link_to new_contest_survey_token_survey_url(@contest,token) do %>
+          <% link_to new_season_survey_token_survey_url(@season,token) do %>
             <%= image_tag "actions/vote_lrg.png" %> Umfrage beantworten
           <% end %>
         <% else %>
-          <% link_to edit_contest_survey_token_survey_url(@contest,token,token.survey) do %>
+          <% link_to edit_season_survey_token_survey_url(@season,token,token.survey) do %>
           <%= image_tag "actions/edit_lrg.png" %> Eingaben bearbeiten 
         <% end %>
        <% end %>
@@ -31,7 +33,7 @@
       <p><b>Adressat:</b> <%= token.token_owner.name %></p>
       <% if token.survey.description %><p class="description"><b>Beschreibung:</b><div class="description" style="margin 5px; padding:5px; background-color:white"><%= token.survey.description %></div></p><% end %>
       <% if token.valid_until %><p><b>Geöffnet bis:</b> <%= l token.valid_until.to_date %></p><% end %>
-      <% if token.consumed? %><p><b>Ausgefüllt durch:</b> <%= link_to token.person.name, contest_person_url(@contest,token.person) %> </p><% end %>
+      <% if token.consumed? %><p><b>Ausgefüllt durch:</b> <%= link_to token.person.name, person_url(token.person) %> </p><% end %>
       <% if token.complete? %><p><b>Beantwortung erfolgreich abgeschlossen!</b></p><% end %>
      </div>
     </div>

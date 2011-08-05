@@ -13,7 +13,7 @@
 <% end %>
 
 <h1>
-  <%= @contest.name %> / <%= Contest.human_attribute_name "trial_contest" %>
+  <% if @season %><%= link_to @season.name, @season %> / <% end %><%= @contest.name %> / <%= Contest.human_attribute_name "trial_contest" %>
 </h1>
 
 <% tabnav :contest do %>

@@ -1,10 +1,11 @@
 class PeopleController < ApplicationController
 
   protected
-
+  
+  before_filter :fetch_context
   before_filter :fetch_contestant, :only => [:people_for_contestant, :remove]
   before_filter :try_fetch_contestant
-  before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove]
+  before_filter :fetch_person, :only => [:edit, :update, :hide, :unhide, :remove, :ticket_settings, :update_ticket_settings]
 
   access_control do
     allow :administrator
@@ -125,7 +126,6 @@ class PeopleController < ApplicationController
   end
 
   def people_for_contestant
-    @contest = @contestant.contest
     @people = @contestant.people.visible.all :order => "last_name ASC"
     @people_by_role = {:teacher => [], :helper => [], :tutor => [], :pupil => []}
 
@@ -186,18 +186,20 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       if success
-        
-        add_event PersonCreatedEvent.create(:person => @person, :creator => @current_user)
+
+        if @contest 
+          add_event PersonCreatedEvent.create(:person => @person, :creator => @current_user)
+        end
 
         if params[:send_notification] == "1"
-          PersonMailer.deliver_signup_notification(@person, @current_contest, person_params[:password])
+          PersonMailer.deliver_signup_notification(@person, @current_contest, person_params[:password],false,url_for(@context))
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.created_successfully")
         format.html do
           if params[:contestant_id] and !@person.teams.visible.empty?
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
           else
-            redirect_to contest_people_url(@contest)
+            redirect_to [@context, :people]
           end
         end
         format.xml  { render :xml => @person, :status => :created, :location => @person }
@@ -297,4 +299,30 @@ class PeopleController < ApplicationController
     end
   end
 
+  def ticket_settings
+    u = Quassum::ApiUser.all.map{|a| a.api_user_id} 
+    @available_quassum_accounts = Quassum::ApiUser.quassum_users.reject{|a| u.include? a["id"] }.map{|e| [e["name"],e["id"]]}
+  end
+
+  def update_ticket_settings
+    u = Quassum::ApiUser.all.map{|a| a.api_user_id} 
+    @quassum_user = Quassum::ApiUser.quassum_users.reject{|a| u.include? a["id"] }.find{|a| a["id"] == params[:api_user].to_i} 
+    unless @person.api_user and @quassum_user["id"].to_i == @person.api_user.api_user_id
+      @person.api_user.destroy if @person.api_user
+      @api_user = Quassum::ApiUser.create(:person => @person, :api_user_id => @quassum_user["id"], :api_username => @quassum_user["name"])
+    else
+      @api_user = @person.api_user
+    end
+    if @api_user.save 
+        flash[:notice] = I18n.t("views.profile_of") + " " +  @person.name + " " + I18n.t("messages.updated_successfully")
+        redirect_to [:ticket_settings, @context, @person]
+    else
+        flash[:error] = "Das Speichern der Änderungen schlug fehl!"
+        render :action => "ticket_settings"
+    end
+  end
+
+  def fetch_context
+    @context = @contest ? @contest : @season
+  end
 end

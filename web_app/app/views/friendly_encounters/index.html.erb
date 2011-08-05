@@ -1,15 +1,15 @@
 <h1>
-  <%= @contest.name %> /
+  <%= link_to @context.name, @context %> /
   <%= t("activerecord.models.friendly_match.other") %>
 </h1>
 
-<% tabnav :contest do %>
+<% tabnav (@context.is_a?(Season) ? :season : :contest) do %>
   <div style="border: 1px solid black; margin-bottom: 20px">
     <p><%= t("views.friendly_games_description") %> <%= t("views.friendly_games_per_day", :number => ENV['FRIENDLY_GAMES_PER_DAY'].to_i) unless ENV['FRIENDLY_GAMES_PER_DAY'].nil? %></p>
     <p style="font-weight: bold; margin-top: 15px"><%= t("views.friendly_games_experimental") %></p>
   </div>
 
-  <% if current_user.has_hidden_friendly_encounters?(@contest) %>
+  <% if current_user.has_hidden_friendly_encounters?(@context) %>
     <a id="show_hidden" href=""><%= t("actions.show_hidden") %></a><br>
   <% end %>
   <h2><%= t("views.open_friendly_matches") %></h2>
@@ -18,9 +18,9 @@
     <% form_for :encounter, :method => :post do |f| %>
       <fieldset style="text-align: center">
         <legend><%= t("actions.new_friendly_match") %></legend>
-        <%= f.collection_select :con1, @contestants.visible.without_testers.for_contest(@contest), :id, :name %>
+        <%= f.collection_select :con1, @context.is_a?(Season) ? @contestants.visible.without_testers.for_season(@context) : @contestants.visible.without_testers.for_contest(@context), :id, :name %>
         fordert heraus:
-        <%= f.collection_select :con2, @contest.contestants.visible.without_testers, :id, :name, :prompt => t("views.anyone_who_wants") %>
+        <%= f.collection_select :con2, @context.contestants.visible.without_testers, :id, :name, :prompt => t("views.anyone_who_wants") %>
         <br><br>
         <%= submit_tag t("actions.create") %>
       </fieldset>
@@ -40,7 +40,7 @@
     })
 
     function get_state(id, reverse, interval) {
-      $.get("<%= contest_friendly_encounters_url(@contest) %>/" + id + "/status",
+      $.get("<%= url_for [@context , :friendly_encounters] %>/" + id + "/status",
         "with_result=true&reverse=" + reverse + "&spinner=true",
         function(returned_data) {
           var rev = (reverse ? "_r" : "")
@@ -53,7 +53,7 @@
     } 
   <% end %>
 
-  <% @contestants.for_contest(@contest).each do |con| %>
+  <% @context.contestants.each do |con| %>
     <% req = con.friendly_requests.sort_by(&:date).reverse %>
     <% unless req.empty? %>
       <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
@@ -81,19 +81,19 @@
             <% if not enc.running? %>
               <% if enc.ready? %>
                 <% if enc.playable? %>
-                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(@contest, enc), :method => :post %>
+                  <%= link_to t("actions.play"), [:play, @context, enc], :method => :post %>
                 <% else %>
                   <%= t("messages.friendly_match_not_today") %>
                 <% end %>
               <% end %>
               <% if not enc.played? and not enc.ready? %>
-                <%= link_to t("actions.revoke"), contest_friendly_encounter_url(@contest, enc), :method => :delete %>
+                <%= link_to t("actions.revoke"), [@context, enc], :method => :delete %>
               <% end %>
               <% if enc.played? %>
                 <% if not enc.hidden_for?(con) %>
-                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.hide"), eurl_for([:hide, @context, enc], :params => {:contestant_id => con}), :method => :post %>
                 <% else %>
-                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.unhide"), eurl_for([:unhide, @context, enc], :params => {:contestant_id => con}), :method => :post %>
                 <% end %>
               <% end %>
             <% end %>
@@ -106,7 +106,7 @@
 
   <br>
   <h2><%= t("views.friendly_requests_from_others") %></h2>  
-  <% @contestants.for_contest(@contest).each do |con| %>
+  <% @context.contestants.each do |con| %>
     <% requests = con.friendly_requests_from_others.sort_by(&:date).reverse %>
     <% if not requests.empty? %>
     <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
@@ -137,24 +137,24 @@
             <% if not enc.running? %>
               <% if enc.open? and not enc.contestants.include?(con) %>
                 <% if enc.acceptable_by?(current_user) %> 
-                  <%= link_to t("actions.accept"), accept_contest_friendly_encounter_url(@contest, enc, :contestant => con), :method => :post %>  
+                  <%= link_to t("actions.accept"), eurl_for([:accept, @context, enc], :params => {:contestant_id => con}), :method => :post %>  
                 <% end %>
                 <% if enc.rejectable_by?(current_user) %>
-                  <%= link_to t("actions.reject"), reject_contest_friendly_encounter_url(@contest, enc), :method => :post %>
+                    <%= link_to t("actions.reject"), [:reject, @context, enc], :method => :post %>
                 <% end %> 
               <% end %>
               <% if enc.ready? %>
                 <% if enc.playable? %>
-                  <%= link_to t("actions.play"), play_contest_friendly_encounter_url(@contest, enc), :method => :post %>
+                  <%= link_to t("actions.play"), [:play, @context, enc], :method => :post %>
                 <% else %>
                   <%= t("messages.friendly_match_not_today") %>
                 <% end %>
               <% end %>
               <% if enc.played? %>
                 <% if not enc.hidden_for?(con) %>
-                  <%= link_to t("actions.hide"), hide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.hide"), eurl_for([:hide, @context, enc], :params => {:contestant_id => con}), :method => :post %>
                 <% else %>
-                  <%= link_to t("actions.unhide"), unhide_contest_friendly_encounter_url(@contest, enc, :contestant => con.id), :method => :post %>
+                  <%= link_to t("actions.unhide"), eurl_for([:unhide, @context, enc], :params => {:contestant_id => con}), :method => :post %>
                 <% end %>
               <% end %>
             <% end %>

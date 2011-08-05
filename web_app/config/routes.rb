@@ -1,6 +1,121 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
 
+    tmap.resources :tickets, :collection => {
+      :possible_assignees => :get
+    }, :member => {
+      :add_comment => :post,
+      :upload_attachment => :post,
+      :attachments => :get,
+      :attachment => :get
+    }
+
+
+    tmap.resources :seasons, :as => "saison", :member => {
+      :phases => :get, 
+      :next_step => :post, 
+      :prev_step => :post, 
+      :contests => :get, 
+      :status => :get,
+      :edit_teams => :get,
+      :update_team => :post,
+      :new_team => :get,
+      :edit_team => :get
+    } do |s|
+
+      s.resources :news_posts,
+      :member => {
+       :publish => :post,
+       :unpublish => :post,
+       :feed => :get
+      }
+      s.news '/news.rss', :controller => 'news_posts', :action => 'feed', :format => 'rss'
+
+      s.new_team '/schools/new_team', :controller => 'schools', :action => 'new_team'
+      
+      s.resources :schools, :member => {
+        :get_teams => :get,
+        :surveys => :get
+      } do |school|
+        school.resources :preliminary_contestants, :as => "teams" do |prelim_contestant|
+        end
+      end
+      
+      s.resources :preliminary_contestants do |prelim_contestants|
+      end
+      
+      s.resources :survey_tokens do  |st|
+        st.resources :surveys, :controller => "surveyor"
+      end
+
+      s.resources :friendly_encounters, :as => "friendly_encounters", :member => {
+        :play => :post,
+        :reject => :post,
+        :accept => :post,
+        :status => :get,
+        :hide => :post,
+        :unhide => :post
+      }
+      s.all_friendly_encounters '/all_friendly_encounters', :controller => 'friendly_encounters', :action => 'all'
+:w
+
+      s.resources :contestants, :as => "teams", :member => {
+        :set_and_get_overall_member_count => :get,
+        :hide => :get,
+        :unhide => :get,
+        :add_person => :post,
+        :report => :get,
+        :update_report => :put
+      } do |con|
+          con.resources :people, :as => "mitglieder", :except => [:index], :member => {
+          :remove => :post,
+          :invite => :get,
+          :ticket_settings => :get
+          } do |person|
+            person.resource :email_event, :as => "mailer", :member => {
+              :update => :put
+          }
+
+          con.resources :clients, :as => "computerspieler", :new => {
+            :uploadify => :post
+            }, :member => {
+              :client_details => :get,
+              :browse => :post,
+              :select_main => :post,
+              :select => :post,
+              :test => :get,
+              :hide => :post,
+              :get_comments => :get,
+              :create_comment => :post,
+              :delete_comment => :get,
+              :get_logs => :get,
+              :send_log => :post
+            } do |client|
+              client.status '/status', :controller => "clients", :action => "status"
+            end
+        end
+
+        con.matches '/matches', :controller => "matches", :action => "index_for_contestant"
+        con.people '/mitglieder', :controller => "people", :action => "people_for_contestant", :conditions => { :method => :get }
+        con.person '/mitglieder/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }     
+      end
+    
+    end
+
+     tmap.resources :survey_results, :member => { :show_response => :get } 
+
+    tmap.resources :people, :as => "personen", :member => {
+      :hide => :get,
+      :unhide => :get,
+      :validate_code => :get, 
+      :ticket_settings => :get,
+      :update_ticket_settings => :put
+    } do |person|
+      person.resource :email_event, :as => "mailer", :member => {
+       :update => :put
+      }
+    end 
+
     tmap.resources :contests,
       :as => "wettbewerb",
       :member => {
@@ -13,21 +128,20 @@ ActionController::Routing::Routes.draw do |map|
       :destroy_trial_contest => :post,
       :register_for_trial_contest => :post,
       :set_allow_trial_registration => :post,
-      :phases => :get,
-      :move_phase => :post
     } do |c|
 
       c.resources :news_posts,
-       :member => {
-       :publish => :post,
-       :unpublish => :post
-      }
-
-      c.resources :survey_results, :member => { :show_response => :get } 
+        :member => {
+         :publish => :post,
+         :unpublish => :post,
+         :feed => :get
+        }
+      c.news '/news.rss', :controller => 'news_posts', :action => 'feed', :format => 'rss'
 
       c.resources :survey_tokens, :collection => {:preview_template => :get} do  |st|
         st.resources :surveys, :controller => "surveyor"
       end
+
       c.resources :whitelist_entries, :as => "whitelist", :member => { 
         :reset => :delete,
         :ajax_delete => :post
@@ -45,18 +159,7 @@ ActionController::Routing::Routes.draw do |map|
         }
      end
       c.edit_schedule '/spielplan', :controller => "contests", :action => "edit_schedule"
-      c.new_team '/schools/new_team', :controller => 'schools', :action => 'new_team'
-      c.resources :schools, :member => {
-        :get_teams => :get,
-        :surveys => :get
-      } do |school|
-        school.resources :preliminary_contestants, :as => "teams" do |prelim_contestant|
-        end
-      end
-      c.resources :preliminary_contestants, :as => "voranmeldungen" do |prelim_contestants|
-
-      end
-      c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
+       c.resources :friendly_encounters, :as => "friendly_encounters", :member => {
         :play => :post,
         :reject => :post,
         :accept => :post,
@@ -68,7 +171,10 @@ ActionController::Routing::Routes.draw do |map|
       c.resources :custom_matches, :as => "custom_matches", :member => {
        :play => :post
       } do |cm|
-        cm.resources :rounds
+        cm.resources :rounds, :member =>{ 
+          :send_server_log => :post,
+          :show_replay => :get,
+        }
       end
       c.resources :matchdays,
         :as => "spieltage",
@@ -101,7 +207,9 @@ ActionController::Routing::Routes.draw do |map|
         :set_and_get_overall_member_count => :get,
         :hide => :get,
         :unhide => :get,
-        :add_person => :post
+        :add_person => :post,
+        :report => :get,
+        :update_report => :put
       } do |contestant|
         contestant.resources :clients, :as => "computerspieler", :new => {
           :uploadify => :post
@@ -158,7 +266,9 @@ ActionController::Routing::Routes.draw do |map|
       c.resources :people, :as => "personen", :member => {
         :hide => :get,
         :unhide => :get,
-        :validate_code => :get
+        :validate_code => :get,
+        :ticket_settings => :get,
+        :update_ticket_settings => :put
       } do |person|
         person.resource :email_event, :as => "mailer", :member => {
           :update => :put
@@ -187,8 +297,17 @@ ActionController::Routing::Routes.draw do |map|
 
       #map.connect ':controller/:action/:id'
       #map.connect ':subdomain/:action', :controller => 'contests'
+     
+      tmap.register '/register', :controller => 'main', :action => 'register', :conditions => { :method => :get }
+      tmap.map '/register', :controller => 'main', :action => 'do_register', :conditions => { :method => :post }
+      tmap.login '/login', :controller => 'main', :action => 'login', :conditions => { :method => :get }
+      tmap.map '/login', :controller => 'main', :action => 'do_login', :conditions => { :method => :post }
+      tmap.new_password '/new_password', :controller => 'main', :action => 'new_password'
+      tmap.logout '/logout', :controller => 'main', :action => 'logout', :conditions => { :method => :post }
+     
     end
   end
+  
 
   #map.contest ':id/:action', :controller => 'contests'
   # The priority is based upon order of creation: first created -> highest priority.
@@ -246,7 +365,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'wettbewerb/:subdomain/:action', :controller => 'contests'
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
-
   map.root :controller => 'main'
 
 end 

@@ -7,11 +7,6 @@ render_tabnav :edit_contst, :html => {:class => "tabs_tabnav"} do
     t.highlights_on :controller => "contests", :action => "edit"
   end
 
-  add_tab do |t|
-    t.named "Phasen"
-    t.links_to phases_contest_url(@contest)
-    t.highlights_on :controller => "contests", :action => "phases"
-  end
 
 end
 %>

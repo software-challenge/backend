@@ -21,6 +21,8 @@ Rails::Initializer.run do |config|
   config.load_paths << "#{RAILS_ROOT}/app/models/events"
   config.load_paths << "#{RAILS_ROOT}/app/models/fake_checks"
   config.load_paths << "#{RAILS_ROOT}/app/models/surveys"
+  config.load_paths << "#{RAILS_ROOT}/app/models/quassum"
+  config.load_paths << "#{RAILS_ROOT}/app/models/tags"
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"
@@ -33,10 +35,12 @@ Rails::Initializer.run do |config|
   gem "nokogiri"
   #config.gem "cap-recipes", :lib => false, :source => "http://gemcutter.org" # installed as plugin
   gem "daemons"
+  gem "state_machine"
   gem "erubis"
   config.gem "ezprint"
   gem "bluecloth", ">=2.0.0"
-  
+
+
   # In later versions of ruby html_safe! for string is not supported...hotfix for thi
   # TODO: Fix this in views when updating to rails 3!
   unless String.respond_to? :html_safe!
@@ -47,14 +51,22 @@ Rails::Initializer.run do |config|
     end
   end
 
-  #Setup Hirb   
-  begin
+
+  # Setup memcached!
+  config.cache_store = :mem_cache_store 
+
+  # Setup Hirb
+  begin 
     require 'hirb'
-    Hirb.enable
+    Hirb.enable 
   rescue LoadError => e
     puts "No Hirb installed, using default"
   end
-  
+
+  def log_to(stream)
+    ActiveRecord::Base.logger = Logger.new(stream)
+    ActiveRecord::Base.clear_active_connections!
+  end
 
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
@@ -81,7 +93,10 @@ Rails::Initializer.run do |config|
     require 'core_ext'
     require 'so_cha_manager'
     require 'game_definition'
+    require 'season_definitions/season_definition'
     require 'bluecloth'
+    require 'state_machine'
+    require 'ezprint'
 
     # Load regular jobs
     #unless $regular_jobs_loaded

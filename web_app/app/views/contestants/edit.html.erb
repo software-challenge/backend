@@ -1,5 +1,6 @@
 <h1>
-  <%= link_to @contest.name, contest_contestants_url %> /
+  <% if @season %><%= link_to @season.name, @season %> / <% end %>
+  <% if @context.is_a? Season and @contest %><%= link_to @contest.name, contest_contestants_url %> /<% end %>
   <%= @contestant.name_was %>
 </h1>
 

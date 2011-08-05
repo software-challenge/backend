@@ -12,12 +12,15 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   filter_parameter_logging :password
 
-  before_filter :redirect_if_needed, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts
+  before_filter :set_current_url, :redirect_if_needed, :fetch_login_token, :fetch_user, :fetch_contest, :fetch_season, :fetch_fake_test_suite, :fetch_survey_token, :fetch_latest_news_posts 
   append_before_filter :require_current_user
   append_before_filter :check_contest_access
 
   append_before_filter :generate_page_title
   append_before_filter :set_mailer_options
+
+  after_filter :save_last_visited_contest
+
 
   attr_accessor :current_user
   hide_action :current_user
@@ -44,7 +47,7 @@ class ApplicationController < ActionController::Base
       # user might be logged out, due to inactivity or trys to access
       # a restricted area without logging in because of bookmark
       flash[:error] = I18n.t "messages.login_first"
-      redirect_to contest_login_url(@contest,:redirect_url => url_escape(request.url))
+      redirect_to login_url(:redirect_url => url_escape(request.url))
     end
   end
 
@@ -72,14 +75,16 @@ class ApplicationController < ActionController::Base
   end
  
   def fetch_login_token
-    token = LoginToken.find_by_code(params[:login_token])
-    if token 
-      if token.valid?
-        session[:user_id] = token.person.id
-      else
-        flash[:error] = "Der von Ihnen eingegebene Link ist leider abgelaufen, bitte erneut anmelden!"
+    if params[:login_token]
+      token = LoginToken.find_by_code(params[:login_token])
+      if token 
+        if token.valid?
+          session[:user_id] = token.person.id
+        else
+          flash[:error] = "Der von Ihnen eingegebene Link ist leider abgelaufen, bitte erneut anmelden!"
+        end
+        token.destroy
       end
-      token.destroy
     end
   end
 
@@ -94,9 +99,20 @@ class ApplicationController < ActionController::Base
   def fetch_user
     if session[:user_id]
       @current_user = Person.find(session[:user_id])
-      @current_user.last_seen = Time.now
-      @current_user.save
-      ActiveRecord::Base.current_user = @current_user
+    elsif cookies[:auth_token]
+      @current_user = Person.find_by_auth_token(cookies[:auth_token])
+      if @current_user and @current_user.last_seen < 7.days.ago
+        @current_user.auth_token = nil
+        @current_user.save!
+        @current_user = nil
+        cookies.delete(:auth_token)
+      end
+      session[:user_id] = @current_user.id if @current_user
+    end
+    if @current_user
+       @current_user.last_seen = Time.now
+       @current_user.save
+       ActiveRecord::Base.current_user = @current_user
     end
   rescue ActiveRecord::RecordNotFound
     session[:user_id] = nil
@@ -119,37 +135,59 @@ class ApplicationController < ActionController::Base
   #  else
   #    @contest = @current_contest = Contest.first
   #  end
+    if controller_name == "seasons" or controller_name == "tickets" or params[:season_id] 
+      return 
+    end
     
     @contest = @current_contest = Contest.first
     if not params[:subdomain].nil?
       subdomain = params[:subdomain]
-    elsif not params[:contest_id].nil? 
+    elsif params[:contest_id]
       subdomain = params[:contest_id]
-    elsif not params[:id].nil?
+    elsif params[:id] and controller_name == "contests"
       subdomain = params[:id]
+    else
+      subdomain = nil
     end
-    begin
-      case subdomain
-      when "aktuell",nil then
+      
+    case subdomain
+      when "aktuell" then
         redirect = true
-        c = Contest.find_by_subdomain DateTime.now.year.to_s
+        c = Contest.find_by_subdomain DateTime.now.year
       when "voranmeldung" then
         redirect = true
-        c = Contest.find_by_subdomain((DateTime.now.year+1).to_s)
+        c = Contest.find_by_subdomain(1.year.from_now.year)
+      when nil
+        c = Contest.find_by_id(session[:last_visited_contest]) || Contest.find_by_subdomain(Time.now.year)
       else
         redirect = false
         c = Contest.find_by_subdomain subdomain
-      end
-    rescue ActiveRecord::RecordNotFound
-      c = Contest.first
     end
+
     if not c.nil? and c.hidden? and not administrator?
       #redirect = true
       #c = Contest.find_by_subdomain DateTime.now.year.to_s
       raise NotAllowed
     end
+
     @contest = @current_contest = c unless c.nil?
-    redirect_to contest_url(c) if (redirect and not c.nil?)
+    unless %w(login do_login register do_register new_password logout feed).include? action_name 
+      redirect_to contest_url(c) if (redirect and not c.nil?)
+    end
+  end
+
+  def fetch_season
+    if controller_name == "seasons"
+      @season = Season.find_by_subdomain(params[:subdomain]) || Season.find_by_id(params[:id]) || Season.find_by_subdomain(params[:id])
+    elsif params[:season_id]
+      @season = Season.find_by_id(params[:season_id]) || Season.find_by_subdomain(params[:season_id])
+    else
+      @season = @contest.season if @contest and @contest.has_season?
+    end
+  end
+
+  def save_last_visited_contest
+     session[:last_visited_contest] = @contest.id if @contest
   end
  
   def fetch_fake_test_suite
@@ -173,9 +211,13 @@ class ApplicationController < ActionController::Base
   end
 
   def guess_page_title
+   
+    # ignore controllers that do not have a model named like them (for example when namespaces are used!)
+    return nil if ['tickets'].include? controller_name
+
     begin
       clazz = Kernel.const_get controller_name.classify
-    rescue
+    rescue LoadError, Exception => e
       return  nil
     end
     
@@ -273,6 +315,16 @@ class ApplicationController < ActionController::Base
   end
 
   def fetch_latest_news_posts 
-    @news_posts = NewsPost.published.sort_by_update.first(3)
+    if @contest
+      @news_posts = @contest.news_posts.published.sort_by_update.first(3)
+    elsif @season
+      @news_posts = @season.news_posts.published.sort_by_update.first(3)
+    else 
+      @news_posts = []
+    end
+  end
+
+  def set_current_url
+    @current_url = {:unescaped => request.url, :escaped => url_escape(request.url)}
   end
 end

@@ -3,7 +3,7 @@
 <script type='text/javascript'>
   $(function() {
     var locale = $.datepicker.regional['de'];
-    var calSettings = {};
+    var calSettings = {timeFormat : {"" : "h:mm{ - h:mm}"}};
     var $calendar = $('#calendar-widget');
     $.extend(calSettings, locale, {
       disableResizing: true

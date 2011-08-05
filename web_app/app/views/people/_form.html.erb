@@ -1,4 +1,4 @@
-<% semantic_form_for(@contestant ? [@contest, @contestant, @person] : [@contest, @person]) do |f| %>
+<% semantic_form_for(@contestant ? [@context, @contestant, @person] : [@contest, @person]) do |f| %>
   <% f.inputs do %>
     <% show_to :administrator, :teacher, :tutor, :helper, @current_user do %>
     <%= f.input :first_name, :required => true %>
@@ -52,12 +52,12 @@
           <% content_for :teams do %>
             <div style="overflow-y: scroll; height: 200px; margin-bottom: 5px;">
               <% there_are_hidden = false %>
-              <% contests = [@contest].concat Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty? and c != @contest} %>
+              <% contests = [@context].concat Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty? and c != @context} %>
               <% contests.each do |contest| %>
-                <% there_are_hidden = true if contest != @contest %>
-                <span class="<%= contest == @contest ? "current" : "other" %>"><a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
+                <% there_are_hidden = true if contest != @context %>
+                <span class="<%= contest == @context ? "current" : "other" %>"><a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
                 <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a>
-                &nbsp;( <%= @person.memberships.find_all {|m| m.contest == contest and not m.contestant.hidden?}.count %> )
+                &nbsp;( <%= @person.memberships.find_all {|m| m.contests.include?(contest) and not m.contestant.hidden?}.count %> )
                 <br><br>
               </span>
                 <% javascript_tag do %>
@@ -77,7 +77,7 @@
                     })
                   })
                 <% end %>
-                <div style="<%= (@person.new_record? and contest == @contest) ? "" : "display: none; " %>padding-left: 25px" id="contestants_<%= contest.id %>">
+                <div style="<%= (@person.new_record? and contest == @context) ? "" : "display: none; " %>padding-left: 25px" id="contestants_<%= contest.id %>">
                 <% memberships = current_user.manageable_teams_for(contest).collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
                 <% associated_with_additional(@person.memberships_for(contest).find_all{|m| current_user.manageable_teams.include?(m.contestant)}, memberships, :contestant_id).each_with_index do |m,i| %>
                   <% unless m.contestant.hidden -%>

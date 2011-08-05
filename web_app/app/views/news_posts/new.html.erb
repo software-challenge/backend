@@ -1,4 +1,7 @@
-<h1>News erstellen</h1>
-<% tabnav :administration do %>
+<h1>
+  <%= link_to @context.name, @context %> / 
+  News erstellen
+</h1>
+<% tabnav @context.class.to_s.downcase.to_sym do %>
   <%= render :partial => 'form' %>
 <% end %>

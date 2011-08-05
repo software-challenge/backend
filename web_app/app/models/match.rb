@@ -17,18 +17,19 @@ class Match < ActiveRecord::Base
 
   validates_presence_of :type
   validates_presence_of :set
+  validates_presence_of :context 
 
   belongs_to :set, :polymorphic => true
   belongs_to :job, :dependent => :destroy, :class_name => "Delayed::Job"
+  belongs_to :context, :polymorphic => :true # context which game definition is used etc
 
   has_one :review, :as => "reviewable"
-
+ 
   has_many :slots, :class_name => "MatchSlot", :dependent => :destroy, :order => "position"
   has_many :rounds, :dependent => :destroy
   has_many :scores, :through => :slots, :order => "POSITION ASC"
 
-  delegate :game_definition, :to => :set
-  delegate :contest, :to => :set
+  delegate :game_definition, :to => :context
 
   def contestants
     slots.collect{|slot| slot.contestant}
@@ -75,7 +76,7 @@ class Match < ActiveRecord::Base
     result = scores.all
     return nil if result.empty?
 
-    main_field = contest.game_definition.match_score_main_field
+    main_field = context.game_definition.match_score_main_field
     result.collect do |score|
       score_fragment = score.fragments.first(:conditions => { :fragment => main_field.to_s })
       raise "main score_fragment #{main_field} not found" unless score_fragment
@@ -83,12 +84,8 @@ class Match < ActiveRecord::Base
     end
   end
 
-  def contest
-    set.contest
-  end
-
   def score_definition
-    contest.match_score_definition
+    context.match_score_definition
   end
 
   def perform_delayed!
@@ -202,9 +199,9 @@ class Match < ActiveRecord::Base
       others = other_slots.collect{ |other_slot| other_slot.round_score_array_with_causes }
       mine = slot.round_score_array_with_causes
 
-      result = contest.game_definition.aggregate_rounds(mine, others)
+      result = context.game_definition.aggregate_rounds(mine, others)
 
-      slot.score ||= slot.build_score(:game_definition => contest[:game_definition], :score_type => "match_score")
+      slot.score ||= slot.build_score(:game_definition => context.game_definition.game_identifier.to_s, :score_type => "match_score")
       slot.score.set!(result)
       slot.save!
     end

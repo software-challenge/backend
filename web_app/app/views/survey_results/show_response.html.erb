@@ -1,6 +1,5 @@
 <h1>
-  <%= link_to @contest.name, contest_url(@contest) %> /
-  <%= link_to "Auswertung: #{@survey.title}", contest_survey_result_url(@contest,@survey) %> /
+  <%= link_to "Auswertung: #{@survey.title}", survey_result_url(@survey) %> /
   <%= "Details: #{@survey_token.id}" %>
 </h1>
 

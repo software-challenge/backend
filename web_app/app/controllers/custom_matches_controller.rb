@@ -14,7 +14,7 @@ class CustomMatchesController < ApplicationController
     rounds = params[:match][:rounds].to_i
     rounds ||= @contest.game_definition.test_rounds
     if (con1 != con2 and rounds.even? and rounds > 0)
-      mm = @contest.custom_matches.create
+      mm = @contest.custom_matches.create(:context => @contest)
       mm.setup_clients [con1.current_client, con2.current_client], rounds
     elsif con1 == con2 
       flash[:error] = "Eine Schule kann nicht gegen sich selbst antreten"

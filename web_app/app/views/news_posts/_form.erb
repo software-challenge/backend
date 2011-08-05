@@ -1,6 +1,11 @@
 <%= javascript_include_tag 'markdown/jquery.markedit.js', 'markdown/showdown.js' %>
 <%= stylesheet_link_tag 'markdown/jquery.markedit.css', 'news_post_form' %>
-<% semantic_form_for [@contest, @news_post] do |f| %>
+<% semantic_form_for [@context, @news_post] do |f| %>
+  <% if @context.is_a? Contest %>
+    <%= hidden_field_tag :contest_id, @context.id %>
+  <% elsif @context.is_a? Season %>
+    <%= hidden_field_tag :season_id, @context.id %>
+  <% end %>
   <% f.inputs do %>
     <b>Titel:</b><%= f.input :title, :label => false %>
     <%= f.input :text, :label => false %>

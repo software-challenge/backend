@@ -1,0 +1,27 @@
+<table class="data-table" id="seasons">
+    <thead>
+      <tr>
+        <th><%= t "views.name" %></th>
+        <th><%= SeasonPhase.human_name :count => 2 %></th>
+        <th class="middle">Aktionen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% seasons.each do |season| %>
+       <tr class="<%= season.name %>">
+        <td><%= season.name %></td>
+        <td><span <% unless season.phases.empty? %>class="tooltipped"<% end %>><%= season.phases.count %></span><div class="tooltip">
+          <% season.phases.each do |phase| %>
+             <% if phase.current_phase? %>
+                <b><%= phase.name %></b><i><%= t "helpers.playing_ind_progress" %></i>
+             <% else %>
+                <%= phase.name %>
+             <% end %>
+          <% end %>
+        </div>
+</td>
+        <td class="middle"><%= link_to image_tag("actions/show.png"), season %></td>
+        </td>
+     <% end %>
+      </tbody>
+ </table> 

@@ -1,13 +1,13 @@
 <div id="actions">
   <% if may_add_person? and not @contestant.disqualified %>
-    <% link_to(new_contest_contestant_person_url(@contest, @contestant)) do %>
+    <% link_to [:new, @context, @contestant, :person] do %>
       <%= image_tag('actions/add.png') %> <%= t "views.add_person" %>
     <% end %>
   <% end %>
 </div>
 
 <h1>
-  <%= link_to @contest.name, contest_contestants_url(@contest) %> /
+  <%= link_to @context.name, [@context, :contestants] %> /
   <%= @contestant.name %>
 </h1>
 
@@ -38,7 +38,7 @@
 
   <% unless @contestant.people.visible.pupils.empty? -%>
     <thead>
-    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.pupils_with_account" %></h2></td></tr
+    <tr><td colspan="<%=colspan%>"><h2><%= t "acl9.roles.contestant.pupils_with_account" %></h2></td></tr>
     <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
@@ -76,7 +76,7 @@
             $("span#field_overall_member_count").hide()
             $("a#edit_overall_member_count").show(250)
             $.get(
-              "<%= set_and_get_overall_member_count_contest_contestant_url(@contest, @contestant) %>",
+              "<%= url_for [:set_and_get_overall_member_count, @context, @contestant] %>",
               "id=<%= @contestant.id %>&count=" + $("input#member_count").val(),
               function(returned_data) {
                 $("span#overall_member_count").html(returned_data)

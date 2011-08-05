@@ -1,0 +1,102 @@
+<div class="contestant">
+  <div class="errors"></div>
+  <% form_tag "contestant", :id => "contestant_form" do%>
+    <p>
+      <b>Ersteller:</b> <span class="creator"><%= prelim.person.name %></span>
+    </p>
+    <p>
+      <% role = prelim.person == prelim.school.person ? prelim.school.contact_function : "AnmelderIn" %>
+      <b>Angegebene Rolle:</b> <span class="contact_function"><%= role %></span><br>
+    </p>
+    <% unless prelim.contestant %>
+      <p>
+        <b>Rolle für Team:</b><%= select_tag "creator_role", options_for_select([["LehrerIn","teacher"], ["SchülerIn", "pupil"]]) %>
+      </p>
+    <% end %>
+    <p style="margin-top: 15px;">
+      <b>Voranm. Team:</b><span class="preliminary_name"><%= prelim.name %></span>
+    </p>
+    <p>
+      <b>Schule:</b><span class="school"><%= prelim.school.name %></span>
+    </p>
+    <p>
+      <b>Ort:</b><span class="location"><%= prelim.school.location %> / <%= prelim.school.state %></span>
+    </p>
+    <p>
+      <% suggested_name = "#{prelim.school.name} - #{prelim.name}" %>
+      <% suggested_name = prelim.contestant.name if prelim.contestant %>
+    </p>
+    <p>
+      <b>Name:</b> <%= text_field_tag "team_name", suggested_name %> 
+    <span style="font-style: italic; float: right;">( <span id="current_chars" style="font-weight: bold;"><%= suggested_name.length %></span> von max 25 Zeichen)</span>
+    <br><br>
+    </p>
+    <p>
+      <b>Einstufung:</b> <%= select_tag "ranking", options_for_select([["Einsteiger", "beginner"],["Fortgeschritten","advanced"],["Außer Konkurrenz","none"]]) %>
+    </p>
+    <% if prelim.contestant %>
+      <b>Team entfernen</b> <%= check_box_tag "delete", "1", false %>
+    <% end %>
+    <p style="margin-top: 25px;">
+    <% if prelim.contestant %>
+        <%= submit_tag "Änderungen speichern", :id => "edit" %>
+      <% else %>
+        <%= submit_tag "Team erstellen", :id => "add" %>
+      <% end %>
+    </p>
+  <% end %>
+  <% javascript_tag do %>
+    $(function() {
+      $("#team_name").bind("keypress",function(){
+        $("#current_chars").html($(this).attr("value").length)
+      });
+
+      <% if prelim.contestant %>
+        $("#ranking option[value='<%=prelim.contestant.ranking%>']").attr("selected",true)
+      <% end %>
+
+      $("#contestant_form").bind("submit", function(){
+          $(".errors").html("")
+          var do_delete = $("#delete").attr("checked")
+          $.ajax({
+          url: "<%= update_team_season_path(@season) %>",
+            type: "POST",
+            dataType: "json",
+            data: {preliminary_contestant : <%= prelim.id %>, contestant : {name : $("#team_name").attr("value"), ranking : $("#ranking").attr("value"), creator_role : $("#creator_role").attr("value"), delete : do_delete}},
+          
+            complete: function() {
+              //called when complete
+            },
+          
+            success: function(resp) {
+            if(resp[0] == "ok"){
+              <% unless prelim.contestant %>
+                $("#preliminary_contestants option[value='<%=prelim.id%>']").remove()
+                $("#contestants").append("<option value='"+resp[1]+"'>"+$("#team_name").attr('value')+"</option>")
+              <% end %>
+              if(do_delete){
+                $("#contestants option[value='"+resp[1]+"']").remove()
+                $("#preliminary_contestants").append("<option value='<%= prelim.id %>'><%= "#{prelim.school.name} - #{prelim.name}" %></option>")
+                $.getScript('<%= new_team_season_url(@season, :preliminary_contestant => prelim) %>')
+              }else{
+                $("#contestants option[value='"+resp[1]+"']").text($("#team_name").attr('value'))
+                }
+
+              <% unless prelim.contestant %>$.getScript('<%= edit_team_season_url(@season) %>?contestant='+resp[1])<% end %>
+            }else{
+              var errors = resp[1]["errors"]
+              for(var i in errors){
+                $(".errors").append("<p class='error'>"+errors[i]+"</p>")
+              }
+            }
+            },
+          
+            error: function() {
+              //called when there is an error
+            },
+          });
+          return false;
+      });
+    });
+  <% end %>
+</div>

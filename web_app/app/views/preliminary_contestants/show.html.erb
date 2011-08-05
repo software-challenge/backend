@@ -1,16 +1,16 @@
 <div id="actions">
-  <% link_to new_contest_school_preliminary_contestant_url(@contest,@school) do %>
+  <% link_to new_season_school_preliminary_contestant_url(@season,@school) do %>
     <%= image_tag "actions/add.png" %> Anmeldungen bearbeiten
   <% end %>
   <% show_to :administrator do %>
-    <% link_to contest_school_preliminary_contestant_url(@contest,@school,@preliminary_contestant), :method => :delete, :confirm => "Sind Sie wirklich sicher?" do %>
+    <% link_to season_school_preliminary_contestant_url(@season,@school,@preliminary_contestant), :method => :delete, :confirm => "Sind Sie wirklich sicher?" do %>
       <%= image_tag "actions/destroy.png" %> Anmeldung entfernen 
     <% end %>
   <% end %>
 </div>
 <h1>
-  <%= link_to @contest.name, contest_url(@contest) %> /
-  <%= link_to @school.name, contest_school_url(@contest,@school) %> /
+  <%= link_to @season.name, @season %> /
+  <%= link_to @school.name, [@season, @school] %> /
   <%= @preliminary_contestant.name %>
 </h1>
 
@@ -25,7 +25,7 @@
           <%= list_item_for(@preliminary_contestant, :name) %>
           <%= list_item("Erstellt von", @preliminary_contestant.person.name) %>
           <%= list_item("Erstellt am", l(@preliminary_contestant.created_at)) %>
-          <%= list_item("Zugehörige Schule", link_to(@preliminary_contestant.school.name, contest_school_url(@contest,@preliminary_contestant.school))) %>
+          <%= list_item("Zugehörige Schule", link_to(@preliminary_contestant.school.name, [@season,@preliminary_contestant.school])) %>
           <%= list_item_for(@preliminary_contestant.school, :location)%>
           <%= list_item_for(@preliminary_contestant.school, :state) %>
           <%= list_item "Teilnahmewahrscheinlichkeit", @preliminary_contestant.participation_probability %>
