@@ -15,7 +15,11 @@ import sc.plugin2012.PlayerColor;
 import sc.plugin2012.SelectMove;
 import sc.plugin2012.util.Constants;
 import sc.shared.GameResult;
-
+/**
+ * Das Herz des Simpleclients: Eine sehr simple Logik,
+ * die ihre Zuege zufaellig waehlt, aber gueltige Zuege macht.
+ * Ausserdem werden zum Spielverlauf Konsolenausgaben gemacht.
+ */
 public class RandomLogic implements IGameHandler {
 
 	private Starter client;
@@ -29,7 +33,7 @@ public class RandomLogic implements IGameHandler {
 	private static final Random rand = new SecureRandom();
 
 	/**
-	 * Erzeugt ein neues Stratefieobjekt, dass zufaellige Zuege taetigt.
+	 * Erzeugt ein neues Strategieobjekt, das zufaellige Zuege taetigt.
 	 * 
 	 * @param client
 	 *            Der Zugrundeliegende Client der mit dem Spielserver
@@ -60,15 +64,15 @@ public class RandomLogic implements IGameHandler {
 			/*
 			 * Ein Integer-Array vorbereiten in dem an der i-ten Position
 			 * gespeichert wird, wie viele Segmente der Groesse (i+1) in diesem
-			 * SelectMove angefordert werden sollen. Im Integer Size wird lokal
-			 * gespeischet wie viele Segmente insgesammt angefordert werden.
+			 * SelectMove angefordert werden sollen. Im Integer size wird lokal
+			 * gespeichert, wie viele Segmente insgesammt angefordert werden.
 			 */
 			int[] selections = new int[Constants.MAX_SEGMENT_SIZE];
 			int size = 0;
 
 			/*
-			 * Einen zufaelligen Wert s aus dem Bereich 0, ..., MAX_SEGMENT_SIZE
-			 * - 1 erzeugen und Pruefen ob noch ein weiteres Segment dieser
+			 * Einen zufaelligen Wert s aus dem Bereich [0,MAX_SEGMENT_SIZE-1]
+                         * erzeugen und pruefen, ob noch ein weiteres Segment dieser
 			 * Groesse zur Verfuegung steht. Falls ja, wird das Array selections
 			 * an der Stelle s und der Wert size jeweils um 1 erhoeht. Dies wird
 			 * so oft wiederholt, bis insgesamt SELECTION_SIZE Segmente gewaehlt
@@ -98,10 +102,10 @@ public class RandomLogic implements IGameHandler {
 
 		} else {
 			/*
-			 * Hole Liste aller moeglichen BuildMove's und waehle einen
-			 * zufaelliugen Zug aus dieser Liste, gibt die Informationen zu
-			 * diesem Zug auf der Konsole aus und sende den Zug an den
-			 * Spielserver
+			 * Hole Liste aller moeglichen BuildMoves und waehle einen
+			 * zufaelligen Zug aus dieser Liste.
+                         * gibt die Informationen zu diesem Zug auf der Konsole aus
+                         * und sendet den Zug an den Spielserver
 			 */
 			List<BuildMove> moves = gameState.getPossibleMoves();
 			BuildMove move = moves.get(rand.nextInt(moves.size()));

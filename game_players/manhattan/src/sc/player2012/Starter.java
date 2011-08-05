@@ -8,7 +8,11 @@ import sc.shared.SharedConfiguration;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
-
+/**
+ * Hauptklasse des Clients, die ueber Konsolenargumente gesteuert werden kann.
+ * Sie veranlasst eine Verbindung zum Spielserver und waehlt eine Strategie.
+ * 
+ */
 public class Starter extends AbstractClient {
 
 	public Starter(String host, int port, String reservation, String strategy) throws Exception {
