@@ -1,7 +1,7 @@
 <data>
 <% Zlib::GzipReader.open(replay) do |gz| %>
   <% n = Nokogiri::XML(gz.read.gsub('hui:', '')) %>
-  <%= n.xpath('/object-stream/gameState').first.xpath('./game/board').to_xml.html_safe! %>
+  <%= n.xpath('/object-stream/gameState[1]/game/board').to_xml.html_safe! %>
   <% if n %>
     <% n.xpath('/object-stream/gameState').each do |gameState| %>
       <% gameState.xpath('./game/player').first.name = "red" %>
