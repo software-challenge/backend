@@ -72,8 +72,11 @@
 		<delete dir="${plugin.dir}" />
 		<mkdir dir="${plugin.dir}" />
 		<copy todir="${plugin.dir}" flatten="true">
-			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
+			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" excludes="hase_und_igel/**" /> <!-- ohne hui wegen lizenz !-->
 		</copy>
+
+<!-- have newest plugin as standard entry !-->
+		<copy tofile="${jar.dir}/game_gui.conf" file="game_gui.conf.newest_plugin_chosen"/> 
 
 		<delete dir="${jar.dir}/lib" />
 		<mkdir dir="${jar.dir}/lib" />
