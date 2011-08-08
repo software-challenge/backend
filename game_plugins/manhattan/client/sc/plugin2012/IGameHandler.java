@@ -7,50 +7,49 @@ import sc.plugin2012.PlayerColor;
 import sc.shared.GameResult;
 
 /**
- * The game handler is used to interface the client with the observation
- * 
+ * Ein allgemeines Interface fuer spielfaehige Klassen. <br/>
+ * Eine Spielstrategie / Logik muss dieses Interface implementieren,
+ * damit sie in der LogicFactory verwaltet werden kann.
  * @author sven
  * 
  */
 public interface IGameHandler {
 	/**
-	 * called, when player is updated
+	 * wird aufgerufen, wenn Spieler aktualisiert werden
 	 * 
 	 * @param player
-	 *            own player
+	 *            eigener Spieler
 	 * @param otherPlayer
-	 *            the player object of the other player
+	 *            anderer Spieler
 	 */
 	void onUpdate(Player player, Player otherPlayer);
 
 	/**
-	 * called, when board is updated
+	 * wird aufgerufen, wenn sich das Spielbrett aendert.
 	 * 
 	 * @param gameState
-	 *            the board
-	 * @param round
-	 *            the round in which the game is
+	 *            der Spielstatus
 	 */
 	void onUpdate(GameState gameState);
 
 	/**
-	 * request of a move to the client
+	 * wird aufgreufen, wenn der Spieler zum Zug aufgefordert wurde.
 	 */
 	void onRequestAction();
 
 	/**
-	 * sends the move to the server
+	 * sendet dem Spielserver den uebergebenen Zug
 	 * 
 	 * @param move
-	 *            move to do
+	 *            zu taetigender Zug
 	 */
 	void sendAction(Move move);
 
 	/**
-	 * called, when the game has ended
+	 * aufgerufen, wenn das Spiel beendet ist.
 	 * 
 	 * @param data
-	 *            game results in getScores()
+	 *            mit getScores() kann man die Punkte erfragen
 	 */
 	void gameEnded(GameResult data, PlayerColor color, String errorMessage);
 }

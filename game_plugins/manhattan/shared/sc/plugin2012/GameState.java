@@ -23,10 +23,10 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
- * Dies umfasst eine fortlaufende Zugnummer ({@link getTurn() getTurn()}) und
- * was fuer eine Art von Zug ({@link getCurrentMoveType() getCurrentMoveType()})
+ * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}) und
+ * was fuer eine Art von Zug ({@link #getCurrentMoveType() getCurrentMoveType()})
  * der Spielserver als Antwort von einem der beiden Spieler ({@link
- * getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren die
+ * #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren die
  * Informationen ueber die beiden Spieler und alle moeglichen Tuerme zum
  * Zustand. Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf.
  * ueber das Spielende informiert.<br/>
@@ -45,7 +45,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen, zum Beispiele die Liste aller Tuerme eines Spielers,
- * abgefragt werden. Insbesondere kann mit der Methode {@link getPossibleMoves()
+ * abgefragt werden. Insbesondere kann mit der Methode {@link #getPossibleMoves()
  * getPossibleMoves()} eine Liste aller fuer den aktuellen Spieler legalen
  * Bauzuege abgefragt werden. Ist momentan also eine Bauzug zu taetigen, kann
  * eine Spieleclient diese Liste aus dem {@code GameState} erfragen und muss
@@ -575,9 +575,9 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
-	 * {@link Spielerstats getPlayerStats()}, wobei getGameStats()[0], einem Aufruf
+	 * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei getGameStats()[0], einem Aufruf
 	 * von getPlayerStats(PlayerColor.RED) entspricht.
-	 * @see getPlayerStats()
+	 * @see #getPlayerStats(PlayerColor)
 	 * @return Statusinformationen beider Spieler
 	 */
 	public int[][] getGameStats() {
@@ -658,7 +658,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * liefert die Farbe des Siegers, falls das Spiel beendet ist.
-	 * @see gameEnded()
+	 * @see #gameEnded()
 	 * @return Siegerfarbe
 	 */
 	public PlayerColor winner() {
@@ -667,7 +667,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * liefert den Gewinngrund, falls das Spiel beendet ist.
-	 * @see gameEnded()
+	 * @see #gameEnded()
 	 * @return Gewinngrund
 	 */
 	public String winningReason() {

@@ -75,7 +75,21 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="true" classpath="${toString:classpath.base}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.player2012.*,sc.plugin2012" source="1.6" sourcepath="${toString:javadoc}" splitindex="true" use="true" version="true" />
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.6"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2012 Simpleclient" windowtitle="Javadoc zum Simpleclient '12" packagenames="sc.player2012.*,sc.plugin2012" overview="overview.html" classpath="${toString:classpath.base}">
+		<fileset dir="src" defaultexcludes="yes">
+				<exclude name="logback.xml"/>
+			</fileset> 
+		<fileset dir="../../game_plugins/manhattan/src/sc/plugin2012" defaultexcludes="yes">
+			<include name="*"/>
+			<exclude name="Game.java"/>
+			<exclude name="AbstractClient.java"/>
+			<exclude name="EPlayerId.java"/>
+			<exclude name="GamePlugin.java"/>
+			<exclude name="GuiClient.java"/>
+			<exclude name="IGUIObservation.java"/>
+			<exclude name="WelcomeMessage.java"/>
+		</fileset>
+			</javadoc>
 	</target>
 
 	<target name="build" depends="jar,javadoc" />
