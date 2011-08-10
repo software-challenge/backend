@@ -29,7 +29,11 @@ public class GamePlugin implements IGamePlugin {
 
 	static {
 		SCORE_DEFINITION = new ScoreDefinition();
+		SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte", ScoreAggregation.SUM, false));				
 		SCORE_DEFINITION.add(new ScoreFragment("Punkte", ScoreAggregation.AVERAGE));
+		SCORE_DEFINITION.add(new ScoreFragment("# Gebäude", ScoreAggregation.SUM, false));
+		SCORE_DEFINITION.add(new ScoreFragment("# Städte", ScoreAggregation.SUM, false));
+		SCORE_DEFINITION.add(new ScoreFragment("# höchste Türme", ScoreAggregation.SUM, false));
 	}
 
 	@Override
