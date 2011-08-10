@@ -190,9 +190,16 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
 
-		int[] stats = gameState.getPlayerStats(p.getPlayerColor());
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0) : new PlayerScore(
-				ScoreCause.REGULAR, stats[0]);
+		int[] stats = gameState.getPlayerStats(p);
+		int matchPoints = 1;
+		int oppPoints = gameState.getPlayerStats(p.getPlayerColor().opponent())[3];
+		if (stats[3] > oppPoints) 
+			matchPoints = 2;
+		else if (stats[3] < oppPoints)
+			matchPoints = 0;
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, -2, 0, stats[0], stats[1], stats[2]) : 
+			new PlayerScore(ScoreCause.REGULAR, matchPoints, stats[3], stats[0], stats[1], stats[2]);
+
 
 	}
 
