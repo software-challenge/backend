@@ -1,0 +1,166 @@
+body {
+	margin: 0;
+	font-weight: bold;
+	color: #fff;
+	font-family: Arial;
+}
+
+#container {
+	width: 750px;
+	height: 600px;
+      	background-color: #060;
+        background-image: url(/images/games/viewers/manhattan/manhattanbg.jpeg);
+}
+
+
+#board {
+	position: absolute;
+	left: 5px;
+	top: 5px;	
+	width: 587px;
+	height: 588px;
+}
+
+#board .tower .element {
+        position: absolute;
+        width: 43px;
+        height: 43px;
+}
+
+#board .city {
+        position: absolute;
+        width: 100px;
+        z-index: 1;
+}
+
+#city_0 {
+        bottom: 100px;
+        left: 50px;
+}
+
+#city_1 {
+        bottom: 100px;
+        left: 200px;
+}
+
+#city_2 {
+        bottom: 100px;
+        left: 350px;
+}
+
+#city_3 {
+        bottom: 100px;
+        left: 500px;
+}
+
+#board .city .tower {
+        position: absolute
+}
+
+#score {
+	width: 120px;
+	text-align: center;
+	line-height: 30px;
+        position: absolute;
+        top: 120px;
+        left: 240px;
+}
+
+.player1{
+        background-color: #d00;
+}
+
+.player2{
+       background-color: #00f;
+}
+
+#score span.player {
+	padding: 2px 5px;
+	border: 1px solid #000;
+	font-size: 150%;
+}
+
+#playerinfos1 {
+	position: absolute;
+	top: 248px;
+	left: 110px;
+	font-size: 12px;
+}
+
+#playerinfos1 span {
+        padding: 1px 5px;
+}
+
+#playerinfos2 {
+	position: absolute;
+	top: 248px;
+	left: 412px;
+	font-size: 12px;
+}
+
+#playerinfos2 span {
+        padding: 1px 5px;
+}
+
+#result {
+  background-color: gray;
+  opacity: 0.90;
+  position: absolute;
+  left: 65px;
+  top: 230px;
+}
+
+#results {
+  border: 1px solid black;
+  font-size: 10px;
+}
+
+#winner {
+  font-size: 16px;
+}
+
+.relevantForRanking {
+  font-weight: bold;
+}
+
+#names {
+	position: absolute;
+	left: 610px;
+	top: 10px;
+	font-size: 13px;
+}
+
+#names div {
+	margin-top: 5px;
+	padding: 5px;
+	width: 110px;
+	border: 1px solid #000;
+}
+
+#buttons {
+        position: absolute; 
+        left: 600px; 
+        top: 560px; 
+        width: 140px; 
+        text-align: center;
+}
+
+#buttons button {
+	width: 40px;
+	height: 33px;
+	padding-bottom: 2px;
+}
+
+#slider {
+        position: absolute; 
+        top: 570px; 
+        left: 50px; 
+        width: 500px;
+        height: 6px;
+}
+
+#slider a{
+        margin-left: -0.4em;
+        top: -0.5em;
+        width: 10px;
+}
