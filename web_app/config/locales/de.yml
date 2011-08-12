@@ -54,6 +54,7 @@ de:
       reg_school: "Wenn Sie Interesse an der Teilnahme an diese Wettbewerb haben, können Sie hier eine neue Schule für den Wettbewerb anmelden. Diese Anmeldung ist vollkommen unverbindlich."
       login_before_school: "Um eine Schule für den Wettbewerb anzumelden, müssen Sie sich zunächst selbst im Wettkampfsystem anmelden. Sofern Sie bereits Zugangsdaten zu diesem Wettkampfsystem erhalten haben (z.B. bei einer früheren Registrierung bzw. der Teilnahme an der Software Challenge 2010 oder später), melden Sie sich bitte zunächst hier an:"
       reg_teams: "Wenn Ihre Schule bereits angemeldet ist, können Sie für diese jetzt Teams anmelden. Auch können Sie hier bereits angemeldete Teams bearbeiten."
+      confirm_teams: "Wenn Sie sich sicher sind, welche der vorangemeldeten Teams wirklich an der Saison teilnehmen werden, so können Sie diese verbindlich anmelden."
     all: "Alle"
     dates: "Daten"
     new_school_notes: "Hinweise zum Anmeldeverfahren"

@@ -22,7 +22,7 @@
 
 <div class="frontpagePhotoBg">
   <% begin %>
-    <%= render :partial => "/seasons/pages/p_#{@contest.subdomain}" %>
+    <%= render :partial => "/seasons/pages/p_#{@season.subdomain}" %>
   <% rescue %>
     <%= render :partial => "/seasons/pages/default" %>
   <% end %>
@@ -48,6 +48,12 @@
         <%= t "views.todo.reg_teams" %>
         <% action_button do %>
           <%= link_to "Teams anmelden", season_new_team_url(@season) %>
+        <% end %>
+      <% end %>
+      <% action (@current_user and not @season.preliminary_contestants.select{|p| p.person == @current_user and not p.participation_confirmed}.empty?) do %>
+        <%= t "views.todo.confirm_teams" %>
+        <% action_button do %>
+          <%= link_to "Teams verbindlich anmelden", [@season, :preliminary_contestants] %>
         <% end %>
       <% end %>
   </div>
