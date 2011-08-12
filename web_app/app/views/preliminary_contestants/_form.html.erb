@@ -15,7 +15,7 @@
           <% if team.participation_confirmed %>
             <%= image_tag("state/ok.png") %>
           <% else %>
-            <%= image_tag("state/warning.png")%> <%= link_to "(jetzt verbindlich anmelden)", [:confirm_participation, @season, team], :method => :post, :confirm => "Wollen Sie das Team #{team.name} der Schule #{team.school.name} wirklich verbindlich anmelden?" %>
+            <%= image_tag("state/warning.png")%> <%= link_to "(jetzt verbindlich anmelden)", [:confirm_participation, @season, team], :method => :post, :confirm => "Wollen Sie das Team #{team.name} der Schule #{team.school.name} wirklich verbindlich anmelden?" if @current_user.has_role?(:creator, team)%>
           <% end %>
         </td>
     <% end %>
