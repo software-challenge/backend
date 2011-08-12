@@ -36,7 +36,7 @@
     <%  a << "Schüler" if @token.allow_pupil %>
     <%= a.join(", ") %> 
   </p>
-  <p> Geöffnet vom <%= l (@token.valid_from || @token.created_at).to_date %> bis <%= if @token.valid_until then l @token.valid_until.to_date else "unbegrenz" end %>. </p>
+  <p> Geöffnet vom <%= l (@token.valid_from || @token.created_at).to_date %> bis <%= if @token.valid_until then l @token.valid_until.to_date else "unbegrenzt" end %>. </p>
   
   <% if @token.response_set and @token.response_set.complete? %>
    <div id="results" style="margin-top: 15px">
