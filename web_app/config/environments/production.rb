@@ -11,15 +11,15 @@ config.action_view.cache_template_loading            = true
 
 
 # Setup ActionMailer
-ActionMailer::Base.delivery_method = :test
+ActionMailer::Base.delivery_method = :smtp
 ActionMailer::Base.raise_delivery_errors = true
-#ActionMailer::Base.smtp_settings = {
-#  :address  => "smtp.gfxpro.eu",
-#  :port  => 587,
-#  :user_name  => "software-challenge@gfxpro.eu",
-#  :password  => "4rtjxw40x",
-#  :authentication  => :plain
-#}
+ActionMailer::Base.smtp_settings = {
+  :address  => "smtp.gfxpro.eu",
+  :port  => 587,
+  :user_name  => "software-challenge@gfxpro.eu",
+  :password  => "4rtjxw40x",
+  :authentication  => :plain
+}
 
 # Note: Should we want cross-subdomain cookies, we need this:
 # config.action_controller.session[:domain] = '.YOURDOMAIN.COM'
