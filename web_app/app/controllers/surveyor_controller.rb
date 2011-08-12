@@ -98,7 +98,7 @@ class SurveyorController < ApplicationController
     allow logged_in, :if => :allowed?
   end
   
-  before_filter :fetch_context, :fetch_survey, :fetch_response_set, :only => [:edit,:update,:show]
+  before_filter :fetch_context, :fetch_survey, :fetch_response_set, :only => [:edit,:update,:show,:new]
 
   include Surveyor::SurveyorControllerMethods
   include SurveyorControllerCustomMethods

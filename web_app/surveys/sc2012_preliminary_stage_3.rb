@@ -2,7 +2,7 @@ survey "Software Challenge 2012 Voranmeldung - Stufe 3", {:access_code => "2012_
 
   section "Angaben zum teilnehmenden Team" do
 
-    q_1 "Als was wird Informatik unterrichtet?"
+    q_1 "Als was wird Informatik unterrichtet?", :pick => :one
     a_1 "Profilgebendes Fach"
     a_2 "Profilergänzendes Fach"
     a_3 "Freizeitprojekt oder AG"
@@ -47,9 +47,7 @@ survey "Software Challenge 2012 Voranmeldung - Stufe 3", {:access_code => "2012_
     q_2 "Programmiersprachen", :pick => :any
     a_1 "Java, Version", :string
     a_2 "Delphi, Version", :string
-    a_3 :string
-    a_4 :string
-    a_5 :string
+    a_3 "Eine andere:",:string
 
     q_3 "Entwicklungsumgebung", :pick => :any
     a_1 "Eclipse, Version", :string
@@ -59,7 +57,9 @@ survey "Software Challenge 2012 Voranmeldung - Stufe 3", {:access_code => "2012_
     a_4 "Eine andere:", :string
   end
 
-  section "Bisheriger Unterricht (bitte berücksichtigen Sie auch Inhalte, welche Schüler in vergangenen Jahrgangsstufen im Unterricht behandelt haben)" do
+  section "Bisheriger Unterricht" do
+
+    label "Bitte berücksichtigen Sie auch Inhalte, welche Schüler in vergangenen Jahrgangsstufen im Unterricht behandelt haben"
 
     q_1 "Bisher wurden folgende, grundlegende Aspekte der Programmierung behandelt", :pick => :any
     a_1 "arithmetische und Vergleichsoperatoren (+, -, div, <, <=, ...)"
