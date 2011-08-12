@@ -68,7 +68,7 @@
     <div id="page-container">
       <div id="header">
         <div id="mainLogo">
-          <% link_to @contest || root_url do %>
+          <% link_to @contest || @season || root_url do %>
             <span class="logo"></span>
           <% end %>
         </div>

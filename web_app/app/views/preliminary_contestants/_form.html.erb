@@ -6,9 +6,19 @@
     <td id="name_<%= team.id %>">
       <%= text_field_tag "team[name]", team.name %>
     </td>
-    <td id="partprob_<%= team.id %>">
-      <%= select_tag "team[participation_probability]", options_for_select(PreliminaryContestant::PROBS.collect{|prob| [prob, prob]}, team.participation_probability) %>
-    </td>
+    <% if team.new_record? or not @season.validation? %>
+      <td id="partprob_<%= team.id %>">
+        <%= select_tag "team[participation_probability]", options_for_select(PreliminaryContestant::PROBS.collect{|prob| [prob, prob]}, team.participation_probability) %>
+      </td>
+    <% else %>
+        <td>
+          <% if team.participation_confirmed %>
+            <%= image_tag("state/ok.png") %>
+          <% else %>
+            <%= image_tag("state/warning.png")%> <%= link_to "(jetzt verbindlich anmelden)", [:confirm_participation, @season, team], :method => :post, :confirm => "Wollen Sie das Team #{team.name} der Schule #{team.school.name} wirklich verbindlich anmelden?" %>
+          <% end %>
+        </td>
+    <% end %>
     <td>
       <a href="" id="save_<%= team.id %>" style="display: none">Speichern</a>
       <span id="saved_<%= team.id %>" style="display: none">

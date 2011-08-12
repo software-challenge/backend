@@ -12,6 +12,10 @@ class PreliminaryContestantsController < ApplicationController
     action :new, :index do
       allow all
     end
+
+    action :confirm_participation do
+      allow logged_in, :if => :own_team?
+    end
   end
 
 
@@ -47,7 +51,7 @@ class PreliminaryContestantsController < ApplicationController
   def destroy
     if @preliminary_contestant.destroy
       flash[:notice] = "Voranmeldung wurde erfolgreich entfernt."
-      redirect_to contest_preliminary_contestants_url(@contest)
+      redirect_to [@season, :preliminary_contestants]
     else
       flash[:error] = "Beim Entfernen der Voranmeldung trat ein Fehler auf"
       render :action => :show
@@ -100,7 +104,17 @@ class PreliminaryContestantsController < ApplicationController
     redirect_to season_url(@season) unless logged_in?
     @team = PreliminaryContestant.new
   end
-  
+
+  def confirm_participation
+    @preliminary_contestant.participation_confirmed = true
+    if @preliminary_contestant.save
+      flash[:notice] = "Das Team #{@preliminary_contestant.name} wurde erfolgreich verbindlich angemeldet."
+      redirect_to :back
+    else
+      flash[:error] = "Das Team #{@preliminary_contestant.name} konnte nicht verbindlich angemeldet werden."
+    end
+  end
+
   def index
     if administrator?
       @preliminary_contestants = @season.preliminary_contestants

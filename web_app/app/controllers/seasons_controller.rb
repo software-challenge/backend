@@ -79,7 +79,8 @@ class SeasonsController < ApplicationController
   end
 
   def edit_teams
-    @preliminary_contestants = @season.preliminary_contestants.select{|p| p.contestant.nil?}
+    @preliminary_contestants = @season.preliminary_contestants.participation_confirmed.select{|p| p.contestant.nil?}
+    flash[:notice] = "In der Spalte der Voranmeldungen werden aktuell nur die verbindlichen Voranmeldungen betrachtet! Kann aber geändert werden."
     @contestants = @season.contestants
   end
 

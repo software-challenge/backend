@@ -5,7 +5,11 @@
   <thead>
     <tr>
       <th>Name (Klasse, Kurs, AG)</th>
-      <th>Wahrscheinlichkeit der Teilnahme</th>
+      <% if @season.validation? %>
+        <th>Verbindliche Teilnahme</th>
+      <% else %>
+        <th>Wahrscheinlichkeit der Teilnahme</th>
+      <% end %>
       <th></th>
     </tr>
   </thead>

@@ -8,7 +8,11 @@
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
         <% if show_surveys %><th class="middle">Umfragen &nbsp </th><% end %>
-        <th class="middle">Teilnahmewahrscheinlichkeit</th>
+        <% if @season.validation? %>
+          <th class="middle">Verbindliche Anmeldung</th>
+        <% else %>
+          <th class="middle">Teilnahmewahrscheinlichkeit</th>
+        <% end %>
         <th class="middle">Aktionen</th>
       </tr>
     </thead>
@@ -36,7 +40,23 @@
             <% end %>
           </td>
         <% end %>
-        <td class="middle"><%= show_probability prelim.participation_probability %></td>
+        <% if @season.validation? %>
+          <td class="middle">
+            <% if prelim.participation_confirmed %>
+              <%= image_tag "state/ok.png" %>
+            <% else %>
+              <% if @current_user and @current_user.has_role?(:creator, prelim) %>
+                <span title="Jetzt verbindlich anmelden">
+                  <%= link_to image_tag("actions/unchecked.png"), [:confirm_participation, @season, prelim], :method => :post, :confirm => "Wollen Sie das Team #{prelim.name} der #{prelim.school.name} wirklich verbindlich anmelden?" %>
+                </span>
+              <% else %>
+                <%= image_tag "state/warning.png" %>
+              <% end %>
+            <% end %>
+          </td>
+        <% else %>
+          <td class="middle"><%= show_probability prelim.participation_probability %></td>
+        <% end %>
         <td style="text-align:center"><%= link_to image_tag("actions/show.png"), season_preliminary_contestant_url(@season,prelim) %></td>
        </tr>
       <% end %>
