@@ -3,9 +3,8 @@ survey "Software Challenge 2012 Voranmeldung - Stufe 3", {:access_code => "2012_
   section "Angaben zum teilnehmenden Team" do
 
     q_1 "Als was wird Informatik unterrichtet?", :pick => :one
-    a_1 "Profilgebendes Fach"
-    a_2 "Profilergänzendes Fach"
-    a_3 "Freizeitprojekt oder AG"
+    a_1 "Reguläres Fach"
+    a_2 "Freizeitprojekt oder AG"
 
     q_2 "Wann findet der Unterricht statt? (z.B. Mittwoch von 13:30 bis 14:30 Uhr)"
     a_1 :string
@@ -28,7 +27,7 @@ survey "Software Challenge 2012 Voranmeldung - Stufe 3", {:access_code => "2012_
     a_1 :integer
 
     q_3 "Es handelt sich um", :pick => :one
-    a_1 "eigentständige Computer"
+    a_1 "eigenständige Computer"
     a_2 "einen zentralen Server mit Arbeitsplätzen"
 
     q_4 "Jeder Schüler hat", :pick => :any
