@@ -460,12 +460,16 @@ de:
       client:
         file: Der Computerspieler muss als ZIP-Datei gepackt werden.
   titles:
+    finales:
+      match_results: "Final Eight: Begegnung betrachten"
+      lineup: "Final Eight: Aufstellung"
+      ranking: "Final Eight: Ergebnisse"
     details: "Details"
     edit: "Bearbeiten"
     edit_notif: "Benachrichtigungen"
     seasons:
-      status: "Saison-Status verwalten"
-      phases: "Saison-Phasen verwalten"
+      status: "Saison-Phasen verwalten"
+      contests: "Ligen anzeigen"
     email_events:
       edit: "Benachrichtigungen"
     events: "Ereignisse"
