@@ -8,7 +8,7 @@
         <th><%= t "views.location" %></th>
         <th><%= School.human_attribute_name :state %></th>
         <% if show_surveys %><th class="middle">Umfragen &nbsp </th><% end %>
-        <% if @season.validation? %>
+        <% if @season.participation_confirmation_allowed? %>
           <th class="middle">Verbindliche Anmeldung</th>
         <% else %>
           <th class="middle">Teilnahmewahrscheinlichkeit</th>
