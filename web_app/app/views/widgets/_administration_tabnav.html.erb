@@ -36,8 +36,14 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   add_tab do |t|
     t.named Season.human_name(:count => 2)
     t.links_to seasons_url()
-    t.highlights_on :controller => "seasons"
-  end
+    t.highlights_on :controller => "seasons", :action => :index
+  end 
+
+  add_tab do |t|
+    t.named "Saison Phasen verwalten"
+    t.links_to url_for [:status, @season]
+    t.highlights_on :controller => "seasons", :action => :status
+  end if @season
 
   add_tab do |t|
     t.named t("views.custom_games")

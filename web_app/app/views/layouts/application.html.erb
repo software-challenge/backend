@@ -68,7 +68,7 @@
     <div id="page-container">
       <div id="header">
         <div id="mainLogo">
-          <% link_to @contest || @season || root_url do %>
+          <% link_to @contest || @season || Season.public.last || root_url do %>
             <span class="logo"></span>
           <% end %>
         </div>
@@ -116,7 +116,7 @@
           </div>
           <div style="line-height: 14px; padding: 0 0 6px 0;">
             <ul id="mainMenu">
-              <li><%= link_to t("views.starting_page"), (@contest.nil? ? (@season ? @season : root_url) : contest_url(@contest)) %></li>
+              <li><%= link_to t("views.starting_page"), (@season || @cotnest || root_url) %></li>
 
               <% show_to :administrator do %>
                 <li><%= link_to t("views.administration"), contest_administration_url(@contest||(@season && @season.contests.first)||Contest.last) %></li>

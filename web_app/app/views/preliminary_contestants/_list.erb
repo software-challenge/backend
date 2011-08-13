@@ -40,12 +40,12 @@
             <% end %>
           </td>
         <% end %>
-        <% if @season.validation? %>
+        <% if @season.participation_confirmation_allowed? %>
           <td class="middle">
             <% if prelim.participation_confirmed %>
               <%= image_tag "state/ok.png" %>
             <% else %>
-              <% if @current_user and @current_user.has_role?(:creator, prelim) %>
+              <% if @current_user and @current_user.has_role?(:creator, prelim) or administrator? %>
                 <span title="Jetzt verbindlich anmelden">
                   <%= link_to image_tag("actions/unchecked.png"), [:confirm_participation, @season, prelim], :method => :post, :confirm => "Wollen Sie das Team #{prelim.name} der #{prelim.school.name} wirklich verbindlich anmelden?" %>
                 </span>

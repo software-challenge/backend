@@ -9,10 +9,11 @@
 <h1>
  <%= t "views.seasons_overview" %>
 </h1>
-
-<% unless @seasons.empty? %>
-  <%= t "views.seasons_available", :count => @seasons.count %>
-  <%= render :partial => "list", :locals => {:seasons => @seasons} %> 
-<% else %>
-  <b><%= t "views.no_seasons_available" %></b>
+<% tabnav :season do %>
+  <% unless @seasons.empty? %>
+    <%= t "views.seasons_available", :count => @seasons.count %>
+    <%= render :partial => "list", :locals => {:seasons => @seasons} %> 
+  <% else %>
+    <b><%= t "views.no_seasons_available" %></b>
+  <% end %>
 <% end %>

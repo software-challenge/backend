@@ -6,7 +6,7 @@
     <td id="name_<%= team.id %>">
       <%= text_field_tag "team[name]", team.name %>
     </td>
-    <% if team.new_record? or not @season.validation? %>
+    <% if team.new_record? or not @season.participation_confirmation_allowed? %>
       <td id="partprob_<%= team.id %>">
         <%= select_tag "team[participation_probability]", options_for_select(PreliminaryContestant::PROBS.collect{|prob| [prob, prob]}, team.participation_probability) %>
       </td>
@@ -15,7 +15,7 @@
           <% if team.participation_confirmed %>
             <%= image_tag("state/ok.png") %>
           <% else %>
-            <%= image_tag("state/warning.png")%> <%= link_to "(jetzt verbindlich anmelden)", [:confirm_participation, @season, team], :method => :post, :confirm => "Wollen Sie das Team #{team.name} der Schule #{team.school.name} wirklich verbindlich anmelden?" if @current_user.has_role?(:creator, team)%>
+            <%= image_tag("state/warning.png")%> <%= link_to "(jetzt verbindlich anmelden)", [:confirm_participation, @season, team], :method => :post, :confirm => "Wollen Sie das Team #{team.name} der Schule #{team.school.name} wirklich verbindlich anmelden?" if @current_user.has_role?(:creator, team) or administrator?%>
           <% end %>
         </td>
     <% end %>

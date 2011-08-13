@@ -32,7 +32,7 @@ class Season < ActiveRecord::Base
      season.save!
    end
 
-   after_transition :validation => :contest do |season|
+   after_transition :preparation => :contest do |season|
      season.current_phase = season.phases.first
      season.save! if season.current_phase
      season.current_phase.load_contestants
@@ -72,6 +72,10 @@ class Season < ActiveRecord::Base
     # Validate the registered teams for the contests and create them as contestants
    end
 
+   state :preparation do
+    # The first teams are created and begin to develop their clients, registering new teams is still possible
+   end
+
    state :contest do
     # Contest, where all the phases are played!
    end
@@ -81,29 +85,45 @@ class Season < ActiveRecord::Base
    end
 
    event :next_step do
-    transition :initialization => :registration, :registration => :recall, :recall => :validation, :validation => :contest
+    transition :initialization => :registration, :registration => :recall, :recall => :validation, :validation => :preparation, :preparation => :contest
     transition :contest => :finished, :if => :last_phase?
     transition :contest => :contest 
    end
 
    event :prev_step do
      transition :contest => :contest, :unless => :first_phase?
-     transition :contest => :validation, :validation => :recall, :recall => :registration, :registration => :initialization, :finished => :contest
+     transition :contest => :preparation, :preparation => :validation, :validation => :recall, :recall => :registration, :registration => :initialization, :finished => :contest
    end
 
   end
   
   # Methods that are always accessable
   def school_registration_allowed?
-    registration? or recall? or validation?
+    registration? or recall? or validation? or preparation?
   end
 
   def team_registration_allowed?
-    registration? or recall? or validation?
+    registration? or recall? or validation? or preparation?
   end
 
+  def participation_confirmation_allowed?
+    validation? or preparation?
+  end
+  
   def surveys_visible?
-    recall? or validation? or contest? or finished?
+    recall? or validation? or preparation? or contest? or finished? 
+  end
+
+  def schools_visible?
+    registration? or recall? or validation? or preparation?
+  end
+
+  def preliminary_contestants_visible?
+    registration? or recall? or validation? or preparation?
+  end
+
+  def contests_visible?
+    contest? or finished?
   end
 
   def published? 
@@ -177,7 +197,7 @@ class Season < ActiveRecord::Base
   end
 
   def states
-    [:initialization, :registration, :recall, :validation, :contest, :finished]
+    [:initialization, :registration, :recall, :validation, :preparation, :contest, :finished]
   end
 
   def past_state?(state)

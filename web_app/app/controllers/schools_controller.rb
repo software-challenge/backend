@@ -1,6 +1,7 @@
 class SchoolsController < ApplicationController
 
   before_filter :fetch_school, :only => [:edit, :show, :update, :get_teams, :surveys, :destroy]
+  before_filter :handle_registration_over
 
   access_control do
     default :deny
@@ -133,6 +134,12 @@ class SchoolsController < ApplicationController
         format.xml { render :xml => @school.errors, :status => :unprocessable_entity }
       end
     end 
+  end
+
+  protected
+
+  def handle_registration_over
+    redirect_to @season unless @season.school_registration_allowed?
   end
 
 end

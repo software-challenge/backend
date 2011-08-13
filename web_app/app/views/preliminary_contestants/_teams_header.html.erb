@@ -5,7 +5,7 @@
   <thead>
     <tr>
       <th>Name (Klasse, Kurs, AG)</th>
-      <% if @season.validation? %>
+      <% if @season.participation_confirmation_allowed? %>
         <th>Verbindliche Teilnahme</th>
       <% else %>
         <th>Wahrscheinlichkeit der Teilnahme</th>

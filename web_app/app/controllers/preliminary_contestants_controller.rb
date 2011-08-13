@@ -1,6 +1,7 @@
 class PreliminaryContestantsController < ApplicationController  
   before_filter :fetch_preliminary_contestant
   before_filter :fetch_school
+  before_filter :handle_registration_over
 
   access_control do
     allow :administrator
@@ -128,4 +129,11 @@ class PreliminaryContestantsController < ApplicationController
     @preliminary_contestants.each{|s| st = s.school.state.downcase; @preliminary_contestants_in_states[st] = (@preliminary_contestants_in_states[st] || 0) + 1};       
     @total_count = @preliminary_contestants.count + @schools_without_teams.count
   end
+
+  protected
+
+  def handle_registration_over
+    redirect_to @season unless @season.team_registration_allowed?
+  end
+
 end
