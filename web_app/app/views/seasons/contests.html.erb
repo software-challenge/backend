@@ -1,14 +1,14 @@
 <%= stylesheet_link_tag "season_contests" %>
 
 <h1>
-  <%= Season.human_name %>: <%= @season.name %> /
+  <%= Season.human_name %>: <%= link_to @season.name, @season %> /
   <%= Contest.human_name :count => 2 %>
 </h1>
 
 <% tabnav :season do %>
   <% @season.phases.each do |p| %>
-    <div class="season_phase <%= cycle "even", "odd" %>">
-      <h2>Phase: <%= p.name %></h2>
+    <div class="season_phase <%= cycle "odd", "even" %>">
+      <h2>Liga: <%= p.name %></h2>
       <table class="data-table">
         <colgroup>
           <col width="90%">
@@ -16,13 +16,13 @@
         </colgroup>
         <thead>
           <th>Name</th>
-          <th>Aktionen</th>
+          <th class="middle">Aktionen</th>
         </thead>
         <tbody>
           <% for contest in p.contests %>
            <tr>
              <td><%= contest.name %></td>
-             <td><%= link_to image_tag("actions/show.png"), contest %></td>
+             <td class="middle"><%= link_to image_tag("actions/show.png"), contest %></td>
            </tr>
           <% end %>
         </tbody>

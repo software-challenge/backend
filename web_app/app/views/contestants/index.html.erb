@@ -17,7 +17,8 @@
     <%= @context.name %>
   <% else %>
     <%= link_to @context.name, @context %>
-  <% end %>
+  <% end %> /
+  <%= Contestant.human_name :count => 2 %>
 </h1>
 
 <% tabnav @context.class.to_s.downcase.to_sym do %>

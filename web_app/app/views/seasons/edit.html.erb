@@ -8,4 +8,6 @@
   Saison bearbeiten: <%= @season.name %> 
 </h1>
 
-<%= render :partial => "form" %>
+<% tabnav :season do %>
+  <%= render :partial => "form" %>
+<% end %>

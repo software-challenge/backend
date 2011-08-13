@@ -59,6 +59,8 @@ ActionController::Routing::Routes.draw do |map|
       s.all_friendly_encounters '/all_friendly_encounters', :controller => 'friendly_encounters', :action => 'all'
 :w
 
+      s.contestants '/meine-teams', :controller => 'contestants', :action => 'my', :name_prefix => 'my_season_'
+
       s.resources :contestants, :as => "teams", :member => {
         :set_and_get_overall_member_count => :get,
         :hide => :get,
@@ -97,8 +99,9 @@ ActionController::Routing::Routes.draw do |map|
 
         con.matches '/matches', :controller => "matches", :action => "index_for_contestant"
         con.people '/mitglieder', :controller => "people", :action => "people_for_contestant", :conditions => { :method => :get }
-        con.person '/mitglieder/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }     
+        con.person '/mitglieder/einladen', :controller => "people", :action => "invite", :name_prefix => "invite_contest_contestant_", :conditions => { :method => :get }    
       end
+
     
     end
 

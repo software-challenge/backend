@@ -6,8 +6,8 @@ de:
 
     models:
       preliminary_contestant:
-        one: Team
-        other: Teams
+        one: Voranmeldung
+        other: Voranmeldungen
       school:
         one: Schule
         other: Schulen

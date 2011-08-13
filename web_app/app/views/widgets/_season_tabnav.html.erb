@@ -27,7 +27,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
       t.links_to season_schools_url(@season)
       t.highlights_on :controller => "schools", :action => "index"
     end
-  end
+  end if @season.schools_visible?
 
   if logged_in? and (administrator? or not @current_user.preliminary_contestants.empty?) and not (@season.contest? or @season.finished?)
     add_tab do |t|
@@ -35,7 +35,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
       t.named "#{t "views.my" } #{PreliminaryContestant.human_name(:count => 2)}" if not administrator?
       t.links_to season_preliminary_contestants_url(@season)
       t.highlights_on :controller => "preliminary_contestants"
-    end
+    end if @season.preliminary_contestants_visible?
   end
   add_tab do |t|
     t.named Contest.human_name(:count => 2)
@@ -43,18 +43,29 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
     t.highlights_on :controller => "seasons", :actions => "contests"
   end if @season.contest? or @season.finished?
 
-  add_tab do |t|
-    t.named t("titles.friendly_encounters.index")
-    t.links_to season_friendly_encounters_url(@season)
-    t.highlights_on :controller => "friendly_encounters"
-  end if logged_in? and (@season.contest? or @season.finished?)
+  if @season.preparation? or @season.contest? or @season.finished?
 
-  add_tab do |t|
-    t.named t("titles.contestants.index")
-    t.links_to season_contestants_url(@season)
-    t.highlights_on :controller => "contestants"
-  end if @season.contest? or @season.finished?
+    add_tab do |t|
+      t.named t("views.my") + " " + Contestant.human_name(:count => 2)
+      begin; t.disable!; next; end if @season.new_record?
+      t.links_to url_for [:my, @season, :contestants]
+      t.highlights_on :controller => "contestants", :action => "my"
+    end if logged_in? and current_user.contestants.visible.for_season(@season).count > 0
 
+    add_tab do |t|
+      t.named t("titles.contestants.index")
+      t.links_to season_contestants_url(@season)
+      t.highlights_on :controller => "contestants", :action => :index
+    end 
+
+    if logged_in? and current_user.contestants.visible.for_season(@season).count > 0
+      add_tab do |t|
+        t.named t("titles.friendly_encounters.index")
+        t.links_to season_friendly_encounters_url(@season)
+        t.highlights_on :controller => "friendly_encounters"
+      end
+    end
+  end
  end
 end
 %>

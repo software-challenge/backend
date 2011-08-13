@@ -31,6 +31,7 @@ class SeasonsController < ApplicationController
   end
 
   def contests
+    redirect_to @season unless @season.contests_visible?
     @contests = administrator? ? @season.contests : @season.contests.public
   end
 
