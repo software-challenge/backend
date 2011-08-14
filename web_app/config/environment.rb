@@ -23,6 +23,7 @@ Rails::Initializer.run do |config|
   config.load_paths << "#{RAILS_ROOT}/app/models/surveys"
   config.load_paths << "#{RAILS_ROOT}/app/models/quassum"
   config.load_paths << "#{RAILS_ROOT}/app/models/tags"
+  config.load_paths << "#{RAILS_ROOT}/app/sweepers"
 
   # Specify gems that this application depends on and have them installed with rake gems:install
   # config.gem "bj"

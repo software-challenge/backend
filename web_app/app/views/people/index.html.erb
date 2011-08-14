@@ -54,7 +54,12 @@
       <%= render :partial => "person_table_head" %>
     </thead>
     <tbody>
-     <%= render :partial => "person", :collection => @people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+      <% day = Time.now.strftime("%d") %>
+      <% for person in @people %> 
+        <% cache "_person_#{person.id}_#{day}" do %>
+          <%= render :partial => "person", :locals => {:person => person} %>
+        <% end %>
+      <% end %>
     </tbody>
   </table>
 
@@ -65,7 +70,11 @@
       <%= render :partial => "person_table_head" %> 
     </thead>
     <tbody>
-      <%= render :partial => "person", :collection => @hidden_people.sort!{|a,b| a.last_name.downcase <=> b.last_name.downcase} %>
+      <% for person in @hidden_people %>
+        <% cache "_person_#{person.id}_#{day}" do %>
+          <%= render :partial => "person", :locals => {:person => person} %> 
+        <% end %>
+      <% end %>
     </tbody>
   </table>
 
@@ -265,13 +274,13 @@
           }
         })
 
-        update_team_lists()
+        //update_team_lists()
 
       })
 
       $(function() {
-        $("#person_table").tablesorter({sortList: [[1,0]]});
-        $("#blocked_person_table").tablesorter({sortList: [[1,0]]});
+        $("#person_table").tablesorter();
+        $("#blocked_person_table").tablesorter();
       })
     <% end %>
   <% end %>

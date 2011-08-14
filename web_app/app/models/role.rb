@@ -11,6 +11,8 @@ class Role < ActiveRecord::Base
 
   named_scope :for_authorizable, lambda { |c| {:conditions => ["authorizable_type = ? and authorizable_id = ?",c.class.to_s,c.id]}} 
 
+  after_save :sweep
+
   def self.translate(name, options = {})
     category = options[:for]
     category = case category
@@ -31,5 +33,9 @@ class Role < ActiveRecord::Base
 
   def to_s
     Role.translate(name, :for => authorizable)
+  end
+
+  def sweep
+    people.each{|p| p.sweep}
   end
 end
