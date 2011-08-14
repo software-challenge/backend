@@ -69,6 +69,7 @@ class Person < ActiveRecord::Base
 
   after_save :update_api_user, :if => :api_user
   before_destroy :suspend_api_user, :id => :api_user
+  after_save :sweep
 
   def initialize(*args)
     @save_on_update ||= []
@@ -319,6 +320,10 @@ class Person < ActiveRecord::Base
        not teams.visible.without_testers.for_season(context).empty?    else
        false
     end
+  end
+
+  def sweep
+    PersonSweeper.instance.expire_cache(self)
   end
 
   Membership::ROLES.each do |role|

@@ -17,6 +17,8 @@ class Membership < ActiveRecord::Base
 
   delegate :contests, :to => :contestant
 
+  after_save :sweep
+
   def roles
     if person
       person.roles_for(contestant)
@@ -32,6 +34,10 @@ class Membership < ActiveRecord::Base
 
   def role_name
     @role_name || role.try(:name)
+  end
+
+  def sweep
+    person.sweep
   end
 
   attr_writer :role_name

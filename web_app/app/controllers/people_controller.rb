@@ -1,5 +1,7 @@
 class PeopleController < ApplicationController
 
+  cache_sweeper :person_sweeper, :only => [:update, :create, :remove, :hide, :unhide]
+
   protected
   
   before_filter :fetch_context
@@ -122,8 +124,8 @@ class PeopleController < ApplicationController
   # GET /people
   # GET /people.xml
   def index
-    @people = Person.visible :order => "email ASC"
-    @hidden_people = Person.hidden :order => "email ASC"
+    @people = Person.visible :order => ["email ASC","lower(last_name) ASC"]
+    @hidden_people = Person.hidden :order => ["email ASC","lower(last_name) ASC"]
 
     respond_to do |format|
       format.html # index.html.erb
