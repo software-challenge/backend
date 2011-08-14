@@ -98,7 +98,6 @@ Rails::Initializer.run do |config|
     require 'bluecloth'
     require 'state_machine'
     require 'ezprint'
-    require 'to_xls'
 
     # Load regular jobs
     #unless $regular_jobs_loaded
