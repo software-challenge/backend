@@ -1,5 +1,5 @@
 module SurveyResultsHelper
-  def display_response(r_set,question)
+  def display_response(r_set,question, args = {})
     sets = r_set.responses.select{|r| r.question == question}
 	  	if sets.size == 0
   			return "-"
@@ -8,7 +8,7 @@ module SurveyResultsHelper
   		else
   		  txt = ""
         sets.each do |set|
-          txt << show_answer(set) + "<br/>"
+          txt << show_answer(set) + (args[:separator] || "<br/>")
         end
         return txt
 		  end

@@ -16,6 +16,10 @@ class SurveyResultsController < ApplicationController
     @survey = Survey.find_by_id(params[:id])
     @response_sets = @survey.response_sets
     @questions = @survey.sections_with_questions.map(&:questions).flatten
+    respond_to do |format|
+      format.html
+      format.csv 
+    end
   end
   
   def show_response

@@ -1,4 +1,11 @@
 <%= stylesheet_link_tag 'surveyor/results' %>
+
+<div id="actions">
+  <% link_to survey_result_url(@survey, :format => :csv) do %>
+    <%= image_tag "actions/csv.png" %> CSV-Export
+  <% end %>
+</div>
+
 <h1> Umfrageergebnisse für <%= @survey.title %> </h1>
 <% tabnav :administration do %>
 
@@ -13,8 +20,8 @@
 </div>
 
 <div id="questions" style="margin-top: 15px;">
-<table class="list_table">
-  <tr>
+<table class="list_table" id="results">
+  <thead>
     <th>Adressat</th>
     <th>Beantworter</th>
     <th>Abgeschlossen?</th>
@@ -23,20 +30,21 @@
 		<th class="question question<%=question.id%>"><%= question.text  %></th>
 	<% end %>
     <th>Aktionen</th>
-  </tr>
-
-<% @response_sets.each do |r_set| %>
-  <tr>
-    <td><%= r_set.survey_token.token_owner.name %></td>
-    <td><%= r_set.user.name %></td>
-    <td><%= image_tag "state/ok.png" if r_set.complete? %></td>
-    <% @questions.each do |question| %>
-      <% next if question.display_order == 1 or question.display_type == "label"%>
-      <td class="question question<%=question.id%>"><%= display_response(r_set,question).html_safe %></td>
+  </thead>
+  <tbody>
+    <% @response_sets.each do |r_set| %>
+      <tr>
+        <td><%= r_set.survey_token.token_owner.name %></td>
+        <td><%= r_set.user.name %></td>
+        <td><%= image_tag "state/ok.png" if r_set.complete? %></td>
+        <% @questions.each do |question| %>
+          <% next if question.display_order == 1 or question.display_type == "label"%>
+          <td class="question question<%=question.id%>"><%= display_response(r_set,question).html_safe %></td>
+        <% end %>
+        <td><%= link_to image_tag("actions/show.png"), show_response_survey_result_url(@survey, :survey_token => r_set.survey_token) %></td>
+      </tr>
     <% end %>
-    <td><%= link_to image_tag("actions/show.png"), show_response_survey_result_url(@survey, :survey_token => r_set.survey_token) %></td>
-  </tr>
-<% end %>
+  </tbody>
 </table>
 </div>
 
@@ -51,5 +59,9 @@
     $(".question").hide()
     $(".question"+val).show()
   }
- })
+  })
+
+  $(function() {
+  $("#results").tablesorter({});
+  });
 <% end %>
