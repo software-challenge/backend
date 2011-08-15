@@ -6,8 +6,8 @@ body {
 }
 
 #container {
-	width: 750px;
-	height: 600px;
+	width: 800px;
+	height: 700px;
       	background-color: #060;
         background-image: url(/images/games/viewers/manhattan/manhattanbg.jpeg);
 }
@@ -19,6 +19,44 @@ body {
 	top: 5px;	
 	width: 587px;
 	height: 588px;
+}
+
+.segment .element {
+        position: absolute;
+        width: 43px;
+        height: 43px;
+}
+
+.segment {
+        height: 120px;
+        z-index: 1000;
+}
+
+.segments {
+        position: absolute;
+        height: 120px;
+}
+
+#blue_cards {
+        position: absolute;
+        left: 620px;
+        top: 623px;
+}
+
+#red_cards {
+        position: absolute;
+        left: 10px;
+        top: 623px;
+}
+
+#blue_segments{
+        left: 0px;
+        top: 0px;
+}
+
+#red_segments{
+        left: 0px;
+        top: 0px;
 }
 
 #board .tower .element {
@@ -34,27 +72,52 @@ body {
 }
 
 #city_0 {
-        bottom: 100px;
-        left: 50px;
+        bottom: 110px;
+        left: 40px;
 }
 
 #city_1 {
-        bottom: 100px;
-        left: 200px;
+        bottom: 110px;
+        left: 210px;
 }
 
 #city_2 {
-        bottom: 100px;
-        left: 350px;
+        bottom: 110px;
+        left: 380px;
 }
 
 #city_3 {
-        bottom: 100px;
-        left: 500px;
+        bottom: 110px;
+        left: 550px;
 }
 
 #board .city .tower {
-        position: absolute
+        position: absolute;
+}
+
+#board .city_name {
+        position: absolute;
+        bottom: 40px;
+        left: 30px;
+        width: 170px;
+        font-size: 30px;
+        color: #808080;
+        font-weight: bold;
+        text-align: center;
+        -webkit-transform: rotate(-50deg); 
+        -moz-transform: rotate(-50deg); 
+}
+
+.segment_counter {
+        position: absolute;
+        background-color: black;
+        color: white;
+        bottom: 14px;
+        left: 30px;
+        z-index: 6000;
+        width: 11px;
+        text-align: center;
+        font-size: 10;
 }
 
 #score {
@@ -62,16 +125,21 @@ body {
 	text-align: center;
 	line-height: 30px;
         position: absolute;
-        top: 120px;
-        left: 240px;
+        top: 15px;
+        left: 340px;
+}
+
+#round {
+        color: white;
+        font-size: 20px;
 }
 
 .player1{
-        background-color: #d00;
+        background-color: #ff3c3c;
 }
 
 .player2{
-       background-color: #00f;
+       background-color: #5050ff;
 }
 
 #score span.player {
@@ -81,38 +149,65 @@ body {
 }
 
 #playerinfos1 {
-	position: absolute;
-	top: 248px;
-	left: 110px;
-	font-size: 12px;
+      position: absolute;
+      top: 10px;
+      left: 15px;
+      font-size: 13px;
+      color:white;
 }
 
-#playerinfos1 span {
-        padding: 1px 5px;
+#playerinfos1 div {
+        margin-top: 5px;
+}
+
+#name1 {
+        font-size: 20px;
+        color: #ff3c3c;  
+}
+
+#current_red_points{
+        font-size: 20px;
+}
+
+#current_blue_points{
+        font-size: 20px;
 }
 
 #playerinfos2 {
-	position: absolute;
-	top: 248px;
-	left: 412px;
-	font-size: 12px;
+	position: relative;
+	top: 10px;
+	right: 10px;
+	font-size: 13px;
+        color:white;
 }
 
-#playerinfos2 span {
-        padding: 1px 5px;
+#name2 {
+        font-size: 20px;
+        color: #5050ff;
+        text-align: right;
+}
+
+#playerinfos2 div {
+        margin-top: 8px;
+        text-align:right;
 }
 
 #result {
   background-color: gray;
   opacity: 0.90;
   position: absolute;
-  left: 65px;
-  top: 230px;
+  left: 250px;
+  top: 250px;
+  z-index: 100000;
+  padding: 5px;
 }
 
 #results {
   border: 1px solid black;
   font-size: 10px;
+  margin: auto;
+  margin-top: 15px;
+  margin-bottom: 20px;
 }
 
 #winner {
@@ -123,25 +218,11 @@ body {
   font-weight: bold;
 }
 
-#names {
-	position: absolute;
-	left: 610px;
-	top: 10px;
-	font-size: 13px;
-}
-
-#names div {
-	margin-top: 5px;
-	padding: 5px;
-	width: 110px;
-	border: 1px solid #000;
-}
-
 #buttons {
         position: absolute; 
-        left: 600px; 
-        top: 560px; 
-        width: 140px; 
+        left: 292px; 
+        top: 617px; 
+        width: 216px; 
         text-align: center;
 }
 
@@ -153,9 +234,9 @@ body {
 
 #slider {
         position: absolute; 
-        top: 570px; 
-        left: 50px; 
-        width: 500px;
+        top: 675px; 
+        left: 200px; 
+        width: 400px;
         height: 6px;
 }
 
