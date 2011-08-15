@@ -228,10 +228,12 @@ class ContestantsController < ApplicationController
     last_still_fresh = last_event and (last_event.person == @current_user) and (last_event.created_at > 6.hours.ago)
     if last_still_fresh
       last_event.param_time_1 = Time.now
+      last_event.save
     else
       ev = ContestantReportEvent.new({:contest => (@contest ? @contest : @contestant.contests.last), :contestant => @contestant, :person => @current_user})
+      ev.save 
     end
-    if @contestant.save and ((last_still_fresh and last_event.save) or ev.save)
+    if @contestant.save #and ((last_still_fresh and last_event.save) or ev.save) TODO: fix events
       flash[:notice] = "Bericht wurde erfolgreich bearbeitet."
       redirect_to :action => :show
     else 

@@ -48,16 +48,16 @@ class ApplicationController < ActionController::Base
       flash[:error] = I18n.t "messages.access_denied" 
       if @season and @season.public
         redirect_to @season
-      elsif @contest and @contest.public
-        redirect_to @contest
-      elsif Season.public.last
+     elsif Season.public.last
         redirect_to Season.public.last
-      elsif Contest.public.last
+     elsif @contest and @contest.public
+        redirect_to @contest
+     elsif Contest.public.last
         redirect_to Contest.public.last
-      else
+     else
         redirect_to root_url
-      end
-    else
+     end
+   else
       # user might be logged out, due to inactivity or trys to access
       # a restricted area without logging in because of bookmark
       flash[:error] = I18n.t "messages.login_first"
