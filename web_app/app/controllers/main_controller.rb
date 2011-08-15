@@ -110,7 +110,9 @@ class MainController < ApplicationController
         flash[:notice] = I18n.t "messages.other_administrators_currently_logged_in"
       end
       if params[:redirect_url]
-        redirect_to url_unescape(params[:redirect_url])
+          redirect_to url_unescape(params[:redirect_url])
+      elsif Season.public.last
+          redirect_to Season.public.last
       else
         redirect_to contest_url(@contest)
       end
