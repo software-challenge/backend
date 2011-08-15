@@ -426,7 +426,15 @@ de:
         sheeps_saved: Schafe gestohlen
         flowers_collected: Blumen gesammelt
         flowers_saved: Blumen gefressen
-        points: Punkte  
+        points: Punkte 
+    manhattan:
+      name: Manhattan
+      match_score:
+        points: Punkte
+        victories: Siegpunkte
+      round_score:
+        victory: Siegpunkte
+        points: Punkte
   acl9:
     roles:
       global:

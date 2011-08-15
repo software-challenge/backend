@@ -448,6 +448,11 @@ a.sort_by {
   height: 650px;
 }
 
+.replay_frame_manhattan {
+  width: 815px;
+  height: 710px;
+}
+
 .tooltip {
   display:none;
   background-color: white;
