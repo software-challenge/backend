@@ -16,7 +16,9 @@
   <div id="report_show">
     <% unless @contestant.report.nil? or @contestant.report.empty? %>
       <% last_event = @contestant.report_events.last %>
-      <div style="font-style: italic; margin-bottom: 5px;">zuletzt bearbeitet am <%= l last_event.updated_at.to_date %> durch <%= link_to last_event.person.name, last_event.person %></div>
+      <% if last_event %>
+        <div style="font-style: italic; margin-bottom: 5px;">zuletzt bearbeitet am <%= l last_event.updated_at.to_date %> durch <%= link_to last_event.person.name, last_event.person %></div>
+      <% end %>
       <div style="margin-left: 15px;"><%= BlueCloth.new(@contestant.report).to_html.html_safe %></div>
     <% else %>
       Bisher wurde noch kein Bericht erstellt.
