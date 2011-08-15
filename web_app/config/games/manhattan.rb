@@ -91,6 +91,7 @@ GameDefinition.create :"Manhattan" do
   round_score do
     # NOTE: Only [a-z0-9_], no capitals!
     field :victory, :ordering => "DESC"
+    field :points, :ordering => "DESC"
     #field :average_time, :ordering => "ASC", :precision => 2
   end
 
