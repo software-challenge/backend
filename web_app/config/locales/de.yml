@@ -74,6 +74,13 @@ de:
     new_team_note_2: "Wenn Sie alle Teams angemeldet bzw. aktualisiert haben, können Sie diese Seite wieder verlassen."
     new_team_registered: "Angemeldete Teams"
     new_team: "Neues Team anmelden"
+    new_team_name:
+      title: Wahl des Teamnamens
+      description:
+        title: Der Teamname sollte folgendem Schema entsprechen
+        schema: Schulname - Jahrgang/AG-Bezeichnung - Nummer
+        length: Insgesamt sollte der Teamname höchstens <b> %{length} Zeichen lang</b> sein.
+        shorten: Bitte kürzen Sie erforderlichenfalls Schulnamen und/oder Jahrgang/AG-Bezeichnung sinnvoll
     notify_contest_progress_info: "Ich möchte eine E-Mail erhalten, wenn es Neuigkeiten zum Wettbewerb gibt."
     school_reg: "Vorläufige Anmeldung"
     school_reg_note: "Diese Anmeldung dient nur der vorläufigen Erfassung interessierter Schulen und ist vollkommen unverbindlich."
@@ -470,6 +477,7 @@ de:
     seasons:
       status: "Saison-Phasen verwalten"
       contests: "Ligen anzeigen"
+      edit_teams: "Voranmeldungen übernehmen"
     email_events:
       edit: "Benachrichtigungen"
     events: "Ereignisse"

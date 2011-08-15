@@ -4,6 +4,11 @@
       <%= image_tag("actions/add.png") %> Neue Tokens erstellen
     <% end %>  
   <% end %>
+  <% if logged_in? and (@current_user.has_role?(:tutor) or @current_user.has_role?(:helper) or @current_user.has_role?(:administrator)) %>
+      <% link_to survey_results_path do %>
+        <%= image_tag("actions/show_lrg.png") %> Ergebnisse ansehen
+      <% end %>
+  <% end %>
 </div>
  
 <h1>

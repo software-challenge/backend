@@ -11,6 +11,8 @@ class Season < ActiveRecord::Base
   validates_inclusion_of :game_identifier, :in => GameDefinition.all.map{|d| d.game_identifier.to_s}
   validates_inclusion_of :season_definition, :in => SeasonDefinition.all.map{|d| d.identifier}
   validates_uniqueness_of :subdomain
+  validates_inclusion_of :recall_survey_code, :in => Survey.all.map{|s| s.access_code}
+  validates_inclusion_of :validation_survey_code, :in => Survey.all.map{|s| s.access_code}
 
   named_scope :public, :conditions => {:public => true}
 
@@ -63,9 +65,6 @@ class Season < ActiveRecord::Base
   
    state :recall do
     # Recall the teams with the initial survey
-    def recall_survey
-      Survey.find_by_access_code subdomain+"_recall"
-    end
    end
 
    state :validation do
@@ -147,10 +146,17 @@ class Season < ActiveRecord::Base
     false
   end
 
-
   def unpublish!
     self.public = false
     self.save!
+  end
+
+  def recall_survey
+    Survey.find_by_access_code(recall_survey_code)
+  end
+
+  def validation_survey
+    Survey.find_by_access_code(validation_survey_code)
   end
 
   # Contest methods

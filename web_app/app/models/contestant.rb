@@ -52,6 +52,7 @@ class Contestant < ActiveRecord::Base
 
   validates_presence_of :name, :location
   validates_inclusion_of :ranking, :in => RANKINGS
+  validates_uniqueness_of :name, :scope => :season_id, :if => :season
 
   validate do |record|
     if Contestant.all.find{|c| c.name == record.name and c.id != record.id and not (c.contests & record.contests).empty?}

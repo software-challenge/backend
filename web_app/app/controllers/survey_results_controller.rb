@@ -3,6 +3,7 @@ class SurveyResultsController < ApplicationController
   access_control do 
    default :deny
    allow :administrator
+   allow :tutor, :helper
   end
 
   unloadable

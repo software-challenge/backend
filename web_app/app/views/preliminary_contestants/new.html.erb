@@ -17,6 +17,15 @@
         <%= t("views.new_team_note_2") %>
       </p>
     </div>
+    <div class="group title">
+      <p><%= t "views.new_team_name.title" %></p>
+    </div>
+    <div class="group content">
+      <p><%= t "views.new_team_name.description.title" %>:</p>
+      <div style="font-style: italic; margin: 5px;"><%= t "views.new_team_name.description.schema" %></div>
+      <p><%= t "views.new_team_name.description.length", :length => 24 %></p>
+      <p><%= t "views.new_team_name.description.shorten" %></p>
+    </div>
   </div>
   <h2 class="medium-gap"><%= t("views.new_team_registered") %></h2>
   <%= render :partial => "teams" %> 
