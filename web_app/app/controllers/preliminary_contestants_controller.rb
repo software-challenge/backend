@@ -76,13 +76,25 @@ class PreliminaryContestantsController < ApplicationController
       success = @team.save
       if success
         @current_user.has_role!(:creator, @team)
-        if @season.recall? and @season.recall_survey
+        tokens = []
+        if (@season.recall? or @season.validation? or @season.preparation?) and @season.recall_survey
           token = SurveyToken.new({:survey => @season.recall_survey, :token_owner => @team})
           token.finished_redirect_url = surveys_season_school_url(@season,@school)
-          if token.save
-            EventMailer.deliver_survey_invite_notification(@current_user,@season,@current_user.generate_login_token,[token])
-          end
+          token.save!
+          tokens << token
         end
+
+        if (@season.validation? or @season.preparation?) and @season.validation_survey 
+          token = SurveyToken.new({:survey => @season.validation_survey, :token_owner => @team})
+          token.finished_redirect_url = surveys_season_school_url(@season,@school)
+          token.save!
+          tokens << token
+        end
+
+        unless tokens.empty?
+          EventMailer.deliver_survey_invite_notification(@current_user,@season,@current_user.generate_login_token,tokens)
+        end
+
       end
     end
     unless success

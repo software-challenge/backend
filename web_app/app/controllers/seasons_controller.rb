@@ -97,6 +97,7 @@ class SeasonsController < ApplicationController
     contestant.save
     unless @prelim.contestant 
       @prelim.person.has_role!(params[:contestant][:creator_role], contestant)
+      Membership.create(:person => @prelim.person, :contestant => contestant)
       @prelim.contestant = contestant
       @prelim.save!
     end

@@ -44,7 +44,19 @@ class ApplicationController < ActionController::Base
   rescue_from NotAllowed, Acl9::AccessDenied do
     if logged_in?
       # user has not enough rights
-      render_optional_error_file 403
+      # render_optional_error_file 403
+      flash[:error] = I18n.t "messages.access_denied" 
+      if @season and @season.public
+        redirect_to @season
+      elsif @contest and @contest.public
+        redirect_to @contest
+      elsif Season.public.last
+        redirect_to Season.public.last
+      elsif Contest.public.last
+        redirect_to Contest.public.last
+      else
+        redirect_to root_url
+      end
     else
       # user might be logged out, due to inactivity or trys to access
       # a restricted area without logging in because of bookmark
@@ -283,9 +295,11 @@ class ApplicationController < ActionController::Base
   end
 
   def add_event(event)
-    @contest.events << event
-    @contest.save!
-    @contest.reload
+    if @contest # quick fix => TODO: events should also be generated for season
+      @contest.events << event
+      @contest.save!
+      @contest.reload
+    end
   end
 
   def add_email_event!(person, event)

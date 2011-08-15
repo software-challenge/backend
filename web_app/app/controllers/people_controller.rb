@@ -300,13 +300,17 @@ class PeopleController < ApplicationController
   end
 
   def remove
-    @person.memberships.find_by_contestant_id(@contestant.id).destroy
-    add_event PersonRemovedFromContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user)
-    if may_access_contestant_people_list? @contestant
-      redirect_to :action => :people_for_contestant, :contestant_id => @contestant.to_param
+    membership = @person.memberships.find_by_contestant_id(@contestant.id)
+    if membership and membership.destroy
+      add_event PersonRemovedFromContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user)
+      if may_access_contestant_people_list? @contestant
+        redirect_to :action => :people_for_contestant, :contestant_id => @contestant.to_param
+      else
+        redirect_to :action => :index, :controller => :contestants
+      end
     else
       redirect_to :action => :index, :controller => :contestants
-    end
+    end 
   end
 
   def ticket_settings

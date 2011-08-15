@@ -6,6 +6,8 @@
     <%= f.input :definition, :collection => SeasonDefinition.all.map(&:identifier), :label => SeasonDefinition.human_name, :required => true %>
     <%= f.input :game_definition, :collection => GameDefinition.all.map{|d| d.game_identifier}, :label => t("activerecord.models.game_definition.one"), :required => true %>
   <% end %>
+  <%= f.input :recall_survey_code, :collection => Survey.all.map{|s| s.access_code}, :label => "Recall Umfrage", :required => false %>
+  <%= f.input :validation_survey_code, :collection => Survey.all.map{|s| s.access_code}, :label => "Validation Umfrage", :required => false %>
   <%= f.input :public %>
   <% end %>
   <%= f.buttons %>

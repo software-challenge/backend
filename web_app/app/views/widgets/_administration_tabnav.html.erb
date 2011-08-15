@@ -13,73 +13,76 @@
 #     
 render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
 
-  add_tab do |t|
-    t.named t("titles.events")
-    t.links_to contest_administration_url(@contest)
-    t.highlights_on :controller => "main", :action => "administration"
+  if administrator? 
+    add_tab do |t|
+      t.named t("titles.events")
+      t.links_to contest_administration_url(@contest)
+      t.highlights_on :controller => "main", :action => "administration"
+    end
+
+    add_tab do |t|
+      t.named t("titles.all_people")
+      t.links_to contest_people_url(@contest)
+      t.highlights_on :controller => "people", :action => "index"
+    end
+
+    add_tab do |t|
+      t.named t("titles.contests.show")
+      t.links_to contest_contests_url(@contest)
+      t.highlights_on :controller => "contests", :action => "index"
+      t.highlights_on :controller => "contests", :action => "edit"
+      t.highlights_on :controller => "contests", :action => "phases"
+    end
+
+    add_tab do |t|
+      t.named Season.human_name(:count => 2)
+      t.links_to seasons_url()
+      t.highlights_on :controller => "seasons", :action => :index
+    end 
+
+    add_tab do |t|
+      t.named "Saison Phasen verwalten"
+      t.links_to url_for [:status, @season]
+      t.highlights_on :controller => "seasons", :action => :status
+    end if @season
+
+    add_tab do |t|
+      t.named t("views.custom_games")
+      t.links_to contest_custom_matches_url(@contest)
+      t.highlights_on :controller => "custom_matches", :action => "index" 
+    end
+
+    add_tab do |t|
+      t.named FriendlyEncounter.human_name(:count => 2)
+      t.links_to contest_all_friendly_encounters_url(@contest)
+      t.highlights_on :controller => "friendly_encounters", :action => "all"
+    end
+
+    add_tab do |t|
+      t.named "Plagiat Tests"
+      t.links_to contest_fake_test_suites_url(@contest)
+      t.highlights_on :controller => "fake_test_suites", :action => "index"
+    end
+
+    add_tab do |t|
+      t.named t("titles.debug_view")
+      t.links_to contest_debug_url(@contest)
+      t.highlights_on :controller => "main", :action => "debug"
+    end
+
+    add_tab do |t|
+      t.named "Rundmail"
+      t.links_to contest_write_email_path(@contest)
+      t.highlights_on :controller => "main", :action => "write_email"
+    end
   end
 
-  add_tab do |t|
-    t.named t("titles.all_people")
-    t.links_to contest_people_url(@contest)
-    t.highlights_on :controller => "people", :action => "index"
-  end
+    add_tab do |t|
+      t.named "Umfrage-Ergebnisse"
+      t.links_to survey_results_url
+      t.highlights_on :controller => "survey_results"
+    end
 
-  add_tab do |t|
-    t.named t("titles.contests.show")
-    t.links_to contest_contests_url(@contest)
-    t.highlights_on :controller => "contests", :action => "index"
-    t.highlights_on :controller => "contests", :action => "edit"
-    t.highlights_on :controller => "contests", :action => "phases"
-  end
-
-  add_tab do |t|
-    t.named Season.human_name(:count => 2)
-    t.links_to seasons_url()
-    t.highlights_on :controller => "seasons", :action => :index
-  end 
-
-  add_tab do |t|
-    t.named "Saison Phasen verwalten"
-    t.links_to url_for [:status, @season]
-    t.highlights_on :controller => "seasons", :action => :status
-  end if @season
-
-  add_tab do |t|
-    t.named t("views.custom_games")
-    t.links_to contest_custom_matches_url(@contest)
-    t.highlights_on :controller => "custom_matches", :action => "index" 
-  end
-
-  add_tab do |t|
-    t.named FriendlyEncounter.human_name(:count => 2)
-    t.links_to contest_all_friendly_encounters_url(@contest)
-    t.highlights_on :controller => "friendly_encounters", :action => "all"
-  end
-
-  add_tab do |t|
-    t.named "Plagiat Tests"
-    t.links_to contest_fake_test_suites_url(@contest)
-    t.highlights_on :controller => "fake_test_suites", :action => "index"
-  end
-
-  add_tab do |t|
-    t.named "Umfrage-Ergebnisse"
-    t.links_to survey_results_url
-    t.highlights_on :controller => "survey_results"
-  end
-
-  add_tab do |t|
-    t.named t("titles.debug_view")
-    t.links_to contest_debug_url(@contest)
-    t.highlights_on :controller => "main", :action => "debug"
-  end
-
-  add_tab do |t|
-    t.named "Rundmail"
-    t.links_to contest_write_email_path(@contest)
-    t.highlights_on :controller => "main", :action => "write_email"
-  end
 
 end 
 %>

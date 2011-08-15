@@ -10,7 +10,7 @@ class ContestantsController < ApplicationController
       allow all
     end
 
-    action :report do
+    actions :report, :update_report do
       allow :tutor, :helper, :of => :contestant
       allow :administrator
     end
