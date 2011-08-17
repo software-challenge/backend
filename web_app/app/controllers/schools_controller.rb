@@ -70,7 +70,7 @@ class SchoolsController < ApplicationController
   def destroy
     if @school.destroy
       flash[:notice] = "Schule wurde erfolgreich entfernt"
-      redirect_to contest_schools_url(@contest)
+      redirect_to [@season, :schools]
     else
       flash[:error] = "Beim Entfernen der Schule trat ein Fehler auf!"
       render :action => :show
