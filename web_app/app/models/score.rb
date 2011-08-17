@@ -1,6 +1,6 @@
 class Score < ActiveRecord::Base
   
-  validates_inclusion_of :game_definition, :in => %w{HaseUndIgel SchaefchenImTrockenen}
+  validates_inclusion_of :game_definition, :in => %w{HaseUndIgel SchaefchenImTrockenen Manhattan}
   validates_inclusion_of :score_type, :in => %w{round_score match_score}
 
   has_many :fragments, :class_name => "Score::Fragment", :foreign_key => "score_id", :dependent => :destroy

@@ -111,7 +111,7 @@ class Round < ActiveRecord::Base
     return slots.to_ary.find{|s| s.score.fragments.find(:first, :conditions => {:fragment => "victory"}).value >= 1}.contestant
   end
 
-  private 
+#  private 
   
   def generate_random_result
     winner = rand slots.size
