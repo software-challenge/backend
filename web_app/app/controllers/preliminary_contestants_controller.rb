@@ -81,14 +81,22 @@ class PreliminaryContestantsController < ApplicationController
           token = SurveyToken.new({:survey => @season.recall_survey, :token_owner => @team})
           token.finished_redirect_url = surveys_season_school_url(@season,@school)
           token.save!
-          tokens << token
+          if @season.use_custom_recall_settings 
+            EventMailer.send("deliver_custom_survey_invite_notification_#{@season.recall_survey_template}", @current_user, @season, @current_user.generate_login_token, [token], (@season.recall_survey_title.empty? ? nil : @season.recall_survey_title))
+          else
+            tokens << token
+          end
         end
 
         if (@season.validation? or @season.preparation?) and @season.validation_survey 
           token = SurveyToken.new({:survey => @season.validation_survey, :token_owner => @team})
           token.finished_redirect_url = surveys_season_school_url(@season,@school)
           token.save!
-          tokens << token
+          if @season.use_custom_recall_settings 
+            EventMailer.send("deliver_custom_survey_invite_notification_#{@season.validation_survey_template}", @current_user, @season, @current_user.generate_login_token, [token], (@season.validation_survey_title.empty? ? nil : @season.validation_survey_title))
+          else
+            tokens << token
+          end
         end
 
         unless tokens.empty?

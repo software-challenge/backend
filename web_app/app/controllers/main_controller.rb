@@ -59,7 +59,7 @@ class MainController < ApplicationController
   def login
     if logged_in?
       flash[:notice] = I18n.t("messages.already_logged_in")
-      redirect_to contest_url(@contest)
+      redirect_to @season || Season.public.last || contest_url(@contest)
     end
   end
 
@@ -70,10 +70,10 @@ class MainController < ApplicationController
       person = Person.find(:first, :conditions => {:email => @email})
       if not person
         flash[:error] = t("messages.no_user_with_adress")
-        redirect_to contest_login_url(@contest)
+        redirect_to @season || Season.public.last || contest_login_url(@contest)
       elsif person.has_role?(:administrator)
         flash[:error] = t("messages.admin_password_cannot_be_changed")
-        redirect_to contest_login_url(@contest)
+        redirect_to @season || Season.public.last || contest_login_url(@contest)
       else
         password = ActiveSupport::SecureRandom.base64(6)
         person.password = password
@@ -83,7 +83,7 @@ class MainController < ApplicationController
         else
           flash[:error] = "Passwort konnte nicht geändert werden" 
         end
-        redirect_to contest_login_url(@contest)
+        redirect_to @season || Season.public.last || contest_login_url(@contest)
       end
     end
   end
@@ -140,6 +140,8 @@ class MainController < ApplicationController
     end
     if params[:redirect_url] 
       redirect_to url_unescape(params[:redirect_url])
+    elsif Season.public.last
+      redirect_to Season.public.last
     else
       redirect_to contest_url(@contest)
     end

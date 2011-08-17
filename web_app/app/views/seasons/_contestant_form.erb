@@ -75,9 +75,25 @@
                 $("#contestants").append("<option value='"+resp[1]+"'>"+$("#team_name").attr('value')+"</option>")
               <% end %>
               if(do_delete){
-                $("#contestants option[value='"+resp[1]+"']").remove()
-                $("#preliminary_contestants").append("<option value='<%= prelim.id %>'><%= "#{prelim.school.name} - #{prelim.name}" %></option>")
-                $.getScript('<%= new_team_season_url(@season, :preliminary_contestant => prelim) %>')
+              $("#contestants option[value='"+resp[1]+"']").remove()
+              var last_lower;
+              $("#preliminary_contestants option").each(function(){
+                  if($(this).text < "<%= "#{prelim.school.name} - #{prelim.name}" %>"){
+                    last_lower = $(this);
+                  }
+              })  
+              
+              var prelim =  "<option value='<%= prelim.id %>'><%= "#{prelim.school.name} - #{prelim.name}" %></option>";
+
+              if(last_lower){
+                last_lower.append(prelim)
+                alert("lower")
+              }else{
+                alert("no lower")
+                $("#preliminary_contestants option:first").before(prelim)
+              }
+ 
+               $.getScript('<%= new_team_season_url(@season, :preliminary_contestant => prelim) %>')
               }else{
                 $("#contestants option[value='"+resp[1]+"']").text($("#team_name").attr('value'))
                 }
