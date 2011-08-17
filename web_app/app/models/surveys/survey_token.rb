@@ -64,5 +64,11 @@ class SurveyToken < ActiveRecord::Base
   def complete?
     consumed? and response_set.complete? 
   end
+
+  def self.available_custom_templates
+    possible_templates = Dir.open(File.join(RAILS_ROOT,"app","views","event_mailer")).entries 
+    possible_templates.delete("."); possible_templates.delete("..") 
+    possible_templates.select{|t| t.start_with? "custom_survey_invite_notification_"}.map{|e| e.gsub("custom_survey_invite_notification_", "").split(".")[0]}
+  end
 end
 

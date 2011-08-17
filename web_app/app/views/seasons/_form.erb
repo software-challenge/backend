@@ -1,14 +1,77 @@
+<%= stylesheet_link_tag "season_settings" %>
 <% semantic_form_for @season do |f| %>
-  <% f.inputs do %>
-  <%= f.input :name, :required => true %>
-  <%= f.input :subdomain, :hint => "Darf nicht doppelt vorkommen!", :required => true %>
-  <% if @season.new_record? %>
-    <%= f.input :definition, :collection => SeasonDefinition.all.map(&:identifier), :label => SeasonDefinition.human_name, :required => true %>
-    <%= f.input :game_definition, :collection => GameDefinition.all.map{|d| d.game_identifier}, :label => t("activerecord.models.game_definition.one"), :required => true %>
+  <% f.inputs :name => "Grundeinstellungen" do %>
+    <%= f.input :name, :required => true %>
+    <%= f.input :subdomain, :hint => "Darf nicht doppelt vorkommen!", :required => true %>
+    <% if @season.new_record? %>
+      <%= f.input :definition, :collection => SeasonDefinition.all.map(&:identifier), :label => SeasonDefinition.human_name, :required => true %>
+      <%= f.input :game_definition, :collection => GameDefinition.all.map{|d| d.game_identifier}, :label => t("activerecord.models.game_definition.one"), :required => true %>
+    <% end %>
+    <%= f.input :public %>
   <% end %>
-  <%= f.input :recall_survey_code, :collection => Survey.all.map{|s| s.access_code}, :label => "Recall Umfrage", :required => false %>
-  <%= f.input :validation_survey_code, :collection => Survey.all.map{|s| s.access_code}, :label => "Validation Umfrage", :required => false %>
-  <%= f.input :public %>
+  <% f.inputs :name => "Erinnerung an die Anmeldung (Phase 2)" do %>
+    <%= f.input :recall_survey_code, :collection => Survey.all.map{|s| s.access_code}, :label => "Umfrage", :required => false %>
+    <li id="season_use_custom_recall_settings_input" class="string optional">
+      <input type="hidden" value="0" name="season[use_custom_recall_settings]">
+      <label for="season_use_custom_recall_settings"> 
+        Benutzerdefinierte E-Mails
+      </label>
+      <input id="season_use_custom_recall_settings" type="checkbox" value="1" name="season[use_custom_recall_settings]" <%= "checked='yes'" if @season.use_custom_recall_settings? %>>
+    </li>
+    <%= f.input :recall_survey_template, :collection => SurveyToken.available_custom_templates, :label => "E-Mail Template" %>
+    <%= f.input :recall_survey_title, :label => "E-Mail Titel" %>
+  <% end %>
+
+  <% f.inputs :name => "Verbindliche Anmeldung (Phase 3)" do %>
+    <%= f.input :validation_survey_code, :collection => Survey.all.map{|s| s.access_code}, :label => "Umfrage", :required => false %>
+    <li id="season_use_custom_validation_settings_input" class="string optional">
+      <input type="hidden" value="0" name="season[use_custom_validation_settings]">
+      <label for="season_use_custom_validation_settings"> 
+        Benutzerdefinierte E-Mails
+      </label>
+        <input id="season_use_custom_validation_settings" type="checkbox" value="1" name="season[use_custom_validation_settings]" <%= "checked='yes'" if @season.use_custom_recall_settings? %>>
+    </li>
+    <%= f.input :validation_survey_template, :collection => SurveyToken.available_custom_templates, :label => "E-Mail Template" %>
+    <%= f.input :validation_survey_title, :label => "E-Mail Titel" %>
   <% end %>
   <%= f.buttons %>
+<% end %>
+
+<% javascript_tag do %>
+  $(function() {
+    var validation_custom_fields = $("#season_validation_survey_template_input, #season_validation_survey_title_input");
+    
+    $("#season_use_custom_validation_settings").change(function(){
+    if(this.checked){
+      validation_custom_fields.show();
+    }else{
+      validation_custom_fields.hide();
+    }
+    })
+    
+    if($("#season_use_custom_validation_settings").checked){
+      validation_custom_fields.show();
+    }else{
+      validation_custom_fields.hide();
+    }
+
+    var recall_custom_fields = $("#season_recall_survey_template_input, #season_recall_survey_title_input");
+    
+    $("#season_use_custom_recall_settings").change(function(){
+    if(this.checked){
+      recall_custom_fields.show();
+    }else{
+      recall_custom_fields.hide();
+    }
+    })
+    
+    if($("#season_use_custom_recall_settings").checked){
+      recall_custom_fields.show();
+    }else{
+      recall_custom_fields.hide();
+    }
+
+
+
+  });
 <% end %>
