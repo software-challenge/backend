@@ -101,7 +101,7 @@ class SeasonsController < ApplicationController
       @prelim.contestant = contestant
       @prelim.save!
     end
-    contestant.destroy if params[:contestant][:delete] == "true" 
+    contestant.destroy if params[:contestant][:delete] 
     render :json => (contestant.valid? ? ["ok",contestant.id].to_json : ["error",{:errors => contestant.errors.full_messages}].to_json)
     
   end

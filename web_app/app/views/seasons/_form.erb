@@ -29,7 +29,7 @@
       <label for="season_use_custom_validation_settings"> 
         Benutzerdefinierte E-Mails
       </label>
-        <input id="season_use_custom_validation_settings" type="checkbox" value="1" name="season[use_custom_validation_settings]" <%= "checked='yes'" if @season.use_custom_recall_settings? %>>
+        <input id="season_use_custom_validation_settings" type="checkbox" value="1" name="season[use_custom_validation_settings]" <%= "checked='yes'" if @season.use_custom_validation_settings? %>>
     </li>
     <%= f.input :validation_survey_template, :collection => SurveyToken.available_custom_templates, :label => "E-Mail Template" %>
     <%= f.input :validation_survey_title, :label => "E-Mail Titel" %>
@@ -49,7 +49,7 @@
     }
     })
     
-    if($("#season_use_custom_validation_settings").checked){
+    if($("#season_use_custom_validation_settings").attr("checked")){
       validation_custom_fields.show();
     }else{
       validation_custom_fields.hide();
@@ -65,7 +65,7 @@
     }
     })
     
-    if($("#season_use_custom_recall_settings").checked){
+    if($("#season_use_custom_recall_settings").attr("checked")){
       recall_custom_fields.show();
     }else{
       recall_custom_fields.hide();
