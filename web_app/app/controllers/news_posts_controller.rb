@@ -49,7 +49,7 @@ class NewsPostsController < ApplicationController
     if @news_post.save
       @news_post.translate!
       flash[:notice] = "News wurden erfolgreich bearbeitet."
-      redirect_to [@contest, @news_post]
+      redirect_to [@context, @news_post]
     else
       flash[:error] = "Beim Bearbeiten trat ein Fehler auf!"
       render :action => 'edit'

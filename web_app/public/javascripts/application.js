@@ -14,5 +14,15 @@
       }
     }
 
+    function refresh_counter(input,counter){
+      var length = input.attr("value").length;
+      var color = "green";
+      counter.html(length);
+      if(length > 25){       
+        color = "red";
+      }
+      counter.css("color",color);
+    }
+
 
 

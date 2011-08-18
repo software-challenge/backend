@@ -2,7 +2,7 @@ class EmailEventsController < ApplicationController
 
   protected
 
-  before_filter :fetch_person, :fetch_contestant
+  before_filter :fetch_person, :fetch_contestant, :fetch_context
 
   access_control do
     allow :administrator
@@ -110,5 +110,9 @@ class EmailEventsController < ApplicationController
         format.xml { render :xml => @email_event.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  def fetch_context
+    @context = @contest ? @contest : @season
   end
 end

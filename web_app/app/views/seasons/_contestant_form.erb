@@ -34,6 +34,13 @@
     <p>
       <b>Einstufung:</b> <%= select_tag "ranking", options_for_select([["Einsteiger", "beginner"],["Fortgeschritten","advanced"],["Außer Konkurrenz","none"]]) %>
     </p>
+    <p>
+      <% tutor = (prelim.contestant ? prelim.contestant.people.select{|p| p.has_role?("tutor", prelim.contestant)}.first : nil) %>
+      <b>Betreuer:</b> <a id="reset_tutor", href="#" style="<%= "display:none;" unless tutor %>">(zurücksetzen)</a>
+    </p>
+    <p>
+    <%= text_field_tag "tutor", (tutor ? "#{tutor.name} - #{tutor.email}" : ""), :style => "width: 100%; margin-bottom:15px;", :disabled => !!tutor %>  
+    </p>
     <% if prelim.contestant %>
       <b>Team entfernen</b> <%= check_box_tag "delete", "1", false %>
     <% end %>
@@ -47,9 +54,12 @@
   <% end %>
   <% javascript_tag do %>
     $(function() {
-      $("#team_name").bind("keypress",function(){
-        $("#current_chars").html($(this).attr("value").length)
+      $("#team_name").bind("keyup",function(){
+        refresh_counter($(this),$("#current_chars"));
       });
+      
+      // Initalize counter
+      refresh_counter($("#team_name"),$("#current_chars"));
 
       <% if prelim.contestant %>
         $("#ranking option[value='<%=prelim.contestant.ranking%>']").attr("selected",true)
@@ -62,7 +72,7 @@
           url: "<%= update_team_season_path(@season) %>",
             type: "POST",
             dataType: "json",
-            data: {preliminary_contestant : <%= prelim.id %>, contestant : {name : $("#team_name").attr("value"), ranking : $("#ranking").attr("value"), creator_role : $("#creator_role").attr("value"), delete : do_delete}},
+            data: {preliminary_contestant : <%= prelim.id %>, contestant : {name : $("#team_name").attr("value"), ranking : $("#ranking").attr("value"), creator_role : $("#creator_role").attr("value"), delete : do_delete, tutor : $("#tutor").attr("value")}},
           
             complete: function() {
               //called when complete
@@ -72,23 +82,37 @@
             if(resp[0] == "ok"){
               <% unless prelim.contestant %>
                 $("#preliminary_contestants option[value='<%=prelim.id%>']").remove()
-                $("#contestants").append("<option value='"+resp[1]+"'>"+$("#team_name").attr('value')+"</option>")
+
+                // Insert the new contestant in alphabetical order
+                var last_lower;
+                $("#contestants option").each(function(){
+                    if($(this).text() < $("#team_name").attr("value")){
+                      last_lower = $(this);
+                    }
+                })   
+                var con = "<option value='"+resp[1]+"'>"+$("#team_name").attr('value')+"</option>";
+                if(last_lower){
+                  last_lower.after(con);
+                }else{
+                  $("#contestants option:first").before(con);
+                }
+   
               <% end %>
               if(do_delete){
               $("#contestants option[value='"+resp[1]+"']").remove()
+
+              // Insert the preliminary contestant in alphabetical order
               var last_lower;
               $("#preliminary_contestants option").each(function(){
-                  if($(this).text < "<%= "#{prelim.school.name} - #{prelim.name}" %>"){
+                  if($(this).text() < "<%= "#{prelim.school.name} - #{prelim.name}" %>"){
                     last_lower = $(this);
                   }
-              })  
-              
+              })   
               var prelim =  "<option value='<%= prelim.id %>'><%= "#{prelim.school.name} - #{prelim.name}" %></option>";
-
               if(last_lower){
-                last_lower.append(prelim)
+                last_lower.after(prelim);
               }else{
-                $("#preliminary_contestants option:first").before(prelim)
+                $("#preliminary_contestants option:first").before(prelim);
               }
  
                $.getScript('<%= new_team_season_url(@season, :preliminary_contestant => prelim) %>')
@@ -110,7 +134,41 @@
             },
           });
           return false;
-      });
+        });
+
+        $("#reset_tutor").bind("click", function(e){
+          $("#tutor").attr("value","")
+          $("#tutor").enable()
+          $(this).hide()
+          e.preventDefault();
+        })
+
+        $("#tutor").bind( "keydown", function( event ) {
+         if ( event.keyCode === $.ui.keyCode.TAB && $( this ).data( "autocomplete" ).menu.active ) {
+          event.preventDefault();
+         }
+       }).autocomplete({
+         minLength: 3,
+         source: function( request, add ) {
+           $.getJSON("<%= url_for [:possible_tutors, @season] %>?search="+$("#tutor").attr("value"), function(data){
+            var suggestions = [];
+            $.each(data,function(i,val){
+              suggestions.push(val[0]);
+            })
+            add(suggestions);
+          })
+         },
+         focus: function() {
+          // prevent value inserted on focus
+         return false;
+         },
+         select: function( event, ui ) {
+           $("#tutor").attr("value", ui.item.value)
+           $("#tutor").disable();
+           $("#reset_tutor").show();
+           return false;
+         }
+       });
     });
   <% end %>
 </div>

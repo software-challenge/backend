@@ -84,7 +84,7 @@
                <span id="post_<%= post.id %>" class="news_post">
                 <%= l post.created_at.to_date %> - 
                 <% link_to [post.context, post] do %>
-                 <%= post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
+                  <%= post.title.length > 42 ? "#{post.title[0..40].strip}..." : post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
                 <% end %>
                </span>
                <div class="tooltip news_tooltip_padding">
@@ -126,8 +126,10 @@
               <li><%= link_to t("views.forum"), "/forum", :target => "_blank" %></li>
               <li><%= link_to t("views.faq"), "/faq", :target => "_blank" %></li>
               <li><%= link_to Contest.human_name(:count => 2), contests_url(), :id => :select_contest %></li>
-              <% if @current_user and Quassum::ApiUser.possible_api_user?(@current_user) %>
-                <li><%= link_to t("views.tickets"), tickets_path %></li>
+              <% if false %>
+                <% if @current_user and Quassum::ApiUser.possible_api_user?(@current_user) %>
+                  <li><%= link_to t("views.tickets"), tickets_path %></li>
+                <% end %>
               <% end %>
               
               <div id="available_contests">
