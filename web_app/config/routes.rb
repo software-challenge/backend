@@ -20,7 +20,8 @@ ActionController::Routing::Routes.draw do |map|
       :edit_teams => :get,
       :update_team => :post,
       :new_team => :get,
-      :edit_team => :get
+      :edit_team => :get,
+      :possible_tutors => :get
     } do |s|
 
       s.resources :news_posts,

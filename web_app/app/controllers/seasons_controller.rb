@@ -81,7 +81,6 @@ class SeasonsController < ApplicationController
 
   def edit_teams
     @preliminary_contestants = @season.preliminary_contestants.participation_confirmed.select{|p| p.contestant.nil?}
-    flash[:notice] = "In der Spalte der Voranmeldungen werden aktuell nur die verbindlichen Voranmeldungen betrachtet! Kann aber geändert werden."
     @contestants = @season.contestants
   end
 
@@ -94,12 +93,27 @@ class SeasonsController < ApplicationController
     end
     contestant.name = params[:contestant][:name]
     contestant.ranking = params[:contestant][:ranking]
-    contestant.save
+    contestant.save unless params[:contestant][:delete]
     unless @prelim.contestant 
       @prelim.person.has_role!(params[:contestant][:creator_role], contestant)
       Membership.create(:person => @prelim.person, :contestant => contestant)
       @prelim.contestant = contestant
       @prelim.save!
+    end
+    if params[:contestant][:tutor].present?
+      tutor_email = params[:contestant][:tutor].split("-")[1].strip
+      tutor = Person.find_by_email(tutor_email)
+      if tutor 
+        if contestant.people.tutors.count > 0
+          contestant.people.tutors.each do |t|
+            t.memberships.select do |m|
+              m.destroy if m.contestant_id == contestant.id
+            end
+          end
+        end
+        tutor.has_role! :tutor, contestant
+        Membership.create(:contestant => contestant, :person => tutor)
+      end
     end
     contestant.destroy if params[:contestant][:delete] 
     render :json => (contestant.valid? ? ["ok",contestant.id].to_json : ["error",{:errors => contestant.errors.full_messages}].to_json)
@@ -118,6 +132,16 @@ class SeasonsController < ApplicationController
     respond_to do |format|
       format.js
     end 
+  end
+
+  def possible_tutors
+    if params[:search].present? and params[:search].length >= 3 
+      search = "%#{params[:search].downcase}%"
+      @possible_tutors = Person.find(:all, :conditions => ["lower(last_name) like ? or lower(first_name) like ? or lower(email) like ?", search, search, search], :order => "last_name ASC, first_name ASC, email ASC", :limit => 15)
+    else
+      @possible_tutors = []
+    end
+    render :json => @possible_tutors.map{|t| ["#{t.name} - #{t.email}", t.id]}
   end
 
   private

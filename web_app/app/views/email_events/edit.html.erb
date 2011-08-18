@@ -9,7 +9,7 @@
 <% tabnav :person do %>
   <p><b>Benachrichtigungen werden gesendet an:</b> <%= @person.email %></p><br>
   <p style="font-weight: bold"><%= t("views.receive_email_when") %></p><br>
-  <% semantic_form_for @email_event, :url => (@contestant ? [@contest, @contestant, @person, :email_event] : [@contest, @person, :email_event]) do |f| %>
+  <% semantic_form_for @email_event, :url => (@contestant ? [@context, @contestant, @person, :email_event] : [@context, @person, :email_event]) do |f| %>
     <% f.inputs do %>
       <% if @person.has_role? :administrator %>
         <%= f.input :rcv_on_matchday_played, :required => false %>

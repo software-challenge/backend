@@ -4,7 +4,9 @@
 <% if team.new_record? or @current_user.has_role?(:creator, team) or administrator? %>
   <tr id="entry_<%= team.id %>">
     <td id="name_<%= team.id %>">
-      <%= text_field_tag "team[name]", team.name %>
+      <%= text_field_tag "team[name]", team.name, :class => "team_name_#{team.id}" %>
+      <span style="font-style: italic; padding-left: 5px; padding-right: 5px; display:none;"><span id="current_chars_<%= team.id %>" style="font-weight: bold;"></span> Zeichen</span>
+
     </td>
     <% if team.new_record? or not @season.participation_confirmation_allowed? %>
       <td id="partprob_<%= team.id %>">
@@ -45,6 +47,24 @@
 
       $("#partprob_<%= team.id %> select").change(function() {
         $("#save_<%= team.id %>").fadeIn(250)
+      })
+  
+      // Char counter
+        $(".team_name_<%= team.id %>").bind("keyup",function(){
+          refresh_counter($(this),$("#current_chars_<%=team.id%>"))
+        });
+      
+      // Initalize counter
+        refresh_counter($(".team_name_<%=team.id%>"),$("#current_chars_<%= team.id %>"));
+
+      // Only show when focussed
+        $(".team_name_<%= team.id %>").bind("focusin", function(){
+          $("#current_chars_<%=team.id%>").parent().fadeIn(250)
+        })
+        
+     // Hide if not focussed
+     $(".team_name_<%= team.id %>").bind("focusout", function(){
+        $("#current_chars_<%=team.id%>").parent().fadeOut(100)
       })
 
       $("#save_<%= team.id %>").bind('click', function() {
