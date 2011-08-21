@@ -1,6 +1,6 @@
 <% semantic_form_for(@contestant ? [@context, @contestant, @person] : [@contest, @person]) do |f| %>
   <% f.inputs do %>
-    <% show_to :administrator, :teacher, :tutor, :helper, @current_user do %>
+   <% show_to :administrator, :teacher, :tutor, :helper, @current_user do %>
     <%= f.input :first_name, :required => true %>
     <%= f.input :last_name, :required => true %>
     <% if administrator? or @person.new_record? %>
@@ -52,55 +52,61 @@
           <% content_for :teams do %>
             <div style="overflow-y: scroll; height: 200px; margin-bottom: 5px;">
               <% there_are_hidden = false %>
-              <% contests = [@context].concat Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty? and c != @context} %>
-              <% contests.each do |contest| %>
-                <% there_are_hidden = true if contest != @context %>
-                <span class="<%= contest == @context ? "current" : "other" %>"><a href="#" id="contestants_show_<%= contest.id %>"><%= contest.name %></a>
-                <a href="#" id="contestants_hide_<%= contest.id %>" style="display: none"><%= contest.name %></a>
-                &nbsp;( <%= @person.memberships.find_all {|m| m.contests.include?(contest) and not m.contestant.hidden?}.count %> )
-                <br><br>
-              </span>
-                <% javascript_tag do %>
-                  $(function() {
-                    $("a#contestants_show_<%= contest.id %>").bind('click', function() {
-                      $("a#contestants_show_<%= contest.id %>").hide()
-                      $("a#contestants_hide_<%= contest.id %>").show()
-                      $("div#contestants_<%= contest.id %>").fadeIn(250)
-                      return false; 
-                    })
 
-                    $("a#contestants_hide_<%= contest.id %>").bind('click', function() {
-                      $("a#contestants_show_<%= contest.id %>").show()
-                      $("a#contestants_hide_<%= contest.id %>").hide()
-                      $("div#contestants_<%= contest.id %>").fadeOut(250)
-                      return false;
-                    })
-                  })
-                <% end %>
-                <div style="<%= (@person.new_record? and contest == @context) ? "" : "display: none; " %>padding-left: 25px" id="contestants_<%= contest.id %>">
-                <% memberships = current_user.manageable_teams_for(contest).collect{ |t| t.memberships.build }.sort_by {|m| m.contestant.name} %>
-                <% associated_with_additional(@person.memberships_for(contest).find_all{|m| current_user.manageable_teams.include?(m.contestant)}, memberships, :contestant_id).each_with_index do |m,i| %>
-                  <% unless m.contestant.hidden -%>
-                    <% t = m.contestant %>
-                    <% checkbox_id = "person_team_#{t.id}"  %>
-                    <li class="boolean <%= cycle("odd", "even") %>">
-                      <label for="<%= checkbox_id %>" style="padding-left: 0;">
-                        <%= hidden_field_tag "person[teams][#{t.id}][_delete]", 1 %>
-                        <%= check_box_tag "person[teams][#{t.id}][_delete]", 0, @person.memberships.include?(m), :id => checkbox_id, :class => "inTeam", :checked => (@person.new_record? and m.contestant == @contestant) %>
-                        <%= t.name %>
+              <% contexts = current_user.manageable_teams.group_by{|t| t.parent}.reject{|k,v| k.nil? or not k.public} %>
+
+              <% contests = [@context].concat Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty? and c != @context} %>
+
+              <% contexts.each do |context,teams| %>
+                  <% there_are_hidden = true if context != @context %>
+                  <% context_identifier = "#{context.class.to_s.underscore}_#{context.id}" %>
+                  <span class="<%= context == @context ? "current" : "other" %> contestants_show">
+                    <a href="#" class="contestants_show" id="contestants_show_<%= context_identifier %>" data-context="<%= context_identifier%>"><%= context.name %></a>
+                    <a href="#" class="contestants_hide" id="contestants_hide_<%= context_identifier %>" data-context="<%= context_identifier%>" style="display:none"><%= context.name %></a>
+                    &nbsp;( <%= teams.count %>)      
+                    <br><br>
+                  </span>
+                  <div style="<%= (@person.new_record? and context == @context) ? "" : "display: none; " %>padding-left: 25px" id="contestants_<%= context_identifier %>">
+                    <% teams.reject{|v| v.hidden?}.each do |team| %>
+                      <% roles = @person.roles.find(:all, :conditions => {:authorizable_type => "Contestant", :authorizable_id => team.id}) %>
+                      <li class="boolean <%= cycle("odd", "even") %>">
+                        <% checkbox_id = "person_team_#{team.id}" %>
+                        <label for="<%= checkbox_id %>" style="padding-left: 0;">
+                        <%= hidden_field_tag "person[teams][#{team.id}][_delete]", 1 %>
+                        <%= check_box_tag "person[teams][#{team.id}][_delete]", 0, !roles.empty?, :id => checkbox_id, :class => "inTeam", :checked => (@person.new_record? and team == @contestant) %>
+                        <%= team.name %>
                       </label>
 
                       <div style="float: right;" class="role">
                         <% if manageable_roles.size == 1 -%>
-                          <%= hidden_field_tag "person[teams][#{t.id}][role]", manageable_roles.first[1] %>
+                          <%= hidden_field_tag "person[teams][#{team.id}][role]", manageable_roles.first[1] %>
                         <% else -%>
-                          <%= select_tag "person[teams][#{t.id}][role]", options_for_select(manageable_roles, m.role_name) %>
+                          <%= select_tag "person[teams][#{team.id}][role]", options_for_select(manageable_roles, roles.first ? roles.first.name : manageable_roles[0]) %>
                         <% end -%>
                       </div>
                     </li>
-                  <% end %>
+                    <% end %>
+                  </div>
                 <% end %>
-                </div>
+
+              <% javascript_tag do %>
+                $(function() {
+                  $(".contestants_show").bind("click", function(e){
+                    var context = $(this).data("context");
+                    $("#contestants_hide_"+context).show();
+                    $("#contestants_show_"+context).hide();
+                    $("#contestants_"+context).show();
+                    e.preventDefault();
+                  })
+
+                  $(".contestants_hide").bind("click", function(e){
+                    var context = $(this).data("context");
+                    $("#contestants_hide_"+context).hide();
+                    $("#contestants_show_"+context).show();
+                    $("#contestants_"+context).hide();
+                    e.preventDefault();
+                  })
+                });
               <% end %>
 
               <% if there_are_hidden %>

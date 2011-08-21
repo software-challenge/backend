@@ -3,8 +3,9 @@
 </h1>
 
 <% tabnav :contest do %>
-  <% semantic_form_for [@contest, @person], :url => contest_register_url(@contest) do |f| %>
+  <% semantic_form_for @person, :url => (params[:contest_id] ? contest_register_url(@contest) : register_url()) do |f| %>
     <% f.inputs do %>
+      <%= hidden_field_tag(:context, params[:context]) if params[:context].present? %>
       <% f.fields_for @person do |p| %>
         <%= p.input :first_name, :required => true %>
         <%= p.input :last_name, :required => true %>

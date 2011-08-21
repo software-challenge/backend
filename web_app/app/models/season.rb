@@ -1,7 +1,8 @@
 class Season < ActiveRecord::Base
   has_many :phases, :class_name => "SeasonPhase", :order => :position, :dependent => :destroy
   has_many :contests, :through => :phases
-  has_many :contestants, :dependent => :destroy # All contestants that are validated
+  has_many :contestants, :dependent => :destroy, :conditions => {:tester => false} # All contestants that are validated
+  has_many :test_contestants, :dependent => :destroy, :conditions => {:tester => true}, :class_name => "Contestant"
   has_many :preliminary_contestants, :through => :schools
   has_many :schools, :dependent => :destroy
   has_many :friendly_encounters, :as => :context
@@ -199,7 +200,39 @@ class Season < ActiveRecord::Base
   end
 
   def test_contestant
-    season_definition.test_contestant
+    test_contestants.first
+  end
+
+  def after_save
+    if test_contestants.empty?
+      con = Contestant.create( :name => game_definition.tester[:contestant_name], :tester => true, :location => "Test" ) 
+      con.valid? 
+      puts con.errors.full_messages
+      con.save!
+      test_contestants << con
+    end
+    if game_identifier_changed? or test_contestant.current_client.nil?
+      puts "Creating test client"
+      file = Rails.root.join('public', 'clients', game_definition.tester[:file])
+      puts "Client file: #{file}"
+
+      author = current_user
+      author ||= Person.find(1)
+      client = test_contestant.current_client
+      client ||= test_contestant.build_current_client(:author => author, :contestant => test_contestant)
+      puts "Author: #{author}, Contestant: #{test_contestant}"
+      client.file = File.open(file)
+      client.save!
+      client.build_index!
+
+      main_file_entry_name = game_definition.tester[:executable]
+      main_file_entry = client.file_entries(:reload).find_by_file_name(main_file_entry_name)
+      raise "main_file_entry #{main_file_entry_name} not found" unless main_file_entry
+      client.main_file_entry = main_file_entry
+      client.save!
+
+      test_contestant.save!
+    end
   end
 
   def states

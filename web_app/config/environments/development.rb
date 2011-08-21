@@ -29,7 +29,7 @@ ENV['CLIENT_LOGS_FOLDER'] = RAILS_ROOT + "/clientlogs/"
 ENV['SERVER_LOGS_FOLDER'] = RAILS_ROOT + "/serverlogs/"
 ENV['FRIENDLY_GAMES_PER_DAY'] = "4"
 ENV['MR_SMITH'] = "mr.smith@sc.de"
-ENV['EMAIL_VALIDATION'] = "false"
+ENV['EMAIL_VALIDATION'] = "true"
 ENV['SHOW_GRAVATAR'] = "false"
 ENV['SIMULATE_GAME_RESULTS'] = "true"
 

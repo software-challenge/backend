@@ -108,14 +108,14 @@ class PeopleController < ApplicationController
         @person.save
         format.html do
           links = []
-          links << ["Zur Hauptseite", url_for(Season.public.last || Contest.public.last)] if Season.public.last or Contest.public.last
-          links << ["Jetzt unverbindlich eine Schule anmelden", new_season_school_url(Season.public.last)] if Season.public.last
-          render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Ihr Zugang wurde erfolgreich aktiviert. Sie wurden automatisch eingeloggt und können die Funktionen des Wettkampfsystems nun nutzen.", :links => links }
+          links << ["Zur Hauptseite", @context ? url_for(@context) : root_url] 
+          links << ["Jetzt unverbindlich eine Schule anmelden", new_season_school_url(@season||current_season)] unless Season.public.empty?
+          render "main/notification", :locals => {:tab => @context.class.to_s.underscore, :title => "Zugang aktivieren", :message => "Ihr Zugang wurde erfolgreich aktiviert. Sie wurden automatisch eingeloggt und können die Funktionen des Wettkampfsystems nun nutzen.", :links => links }
         end
 
         format.xml { render :xml => @person }  
       else
-        format.html { render "main/notification", :locals => {:tab => :contest, :title => "Zugang aktivieren", :message => "Der Zugangscode ist ungültig. Ihr Zugang konnte daher nicht aktiviert werden.", :links => [["Zur Hauptseite", root_url()]] }}
+        format.html { render "main/notification", :locals => {:tab => @context.class.to_s.underscore, :title => "Zugang aktivieren", :message => "Der Zugangscode ist ungültig. Ihr Zugang konnte daher nicht aktiviert werden.", :links => [["Zur Hauptseite", @context ? url_for(@context) : root_url()]] }}
         format.xml { render :xml => @person }
       end
     end
@@ -138,7 +138,7 @@ class PeopleController < ApplicationController
     @people_by_role = {:teacher => [], :helper => [], :tutor => [], :pupil => []}
 
     @people.each do |person|
-      @people_by_role[person.membership_for(@contestant).role_name.to_sym] << person
+      @people_by_role[(person.membership_for(@contestant).role_name || "pupil").to_sym] << person
     end
 
     respond_to do |format|
@@ -233,7 +233,7 @@ class PeopleController < ApplicationController
       person_params[:email] = @person.email
        
       # Does the person want to change it's password?
-      unless person_params[:password].empty?
+      if person_params[:password].present? and person_params[:password].empty?
         if @person.password_match? params[:current_password] 
           unless person_params[:password] == params[:new_password_repeat] 
             flash[:error] = "Die beiden Eingaben des neuen Passworts stimmen nicht überein!"
@@ -259,8 +259,8 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = I18n.t("views.profile_of") + " " +  @person.name + " " + I18n.t("messages.updated_successfully")
         format.html do
-          if params[:contestant_id] and !@person.teams.for_contest(@contest).visible.empty?
-            redirect_to(:action => :people_for_contestant, :contestant_id => @contestant.id)
+          if params[:contestant_id] and not (@context.is_a?(Season) ? @person.teams.for_season(@context).visible.empty? : @person.teams.for_contest(@contest).visible.empty?)
+            redirect_to [@context, @contestant,:people]
           elsif current_user.has_role? :administrator
             redirect_to contest_people_url(@contest)
           else

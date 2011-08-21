@@ -23,8 +23,8 @@ class Client < ActiveRecord::Base
 
   belongs_to :main_file_entry, :class_name => "ClientFileEntry"
 
-  delegate :contest, :to => :contestant
-  delegate :game_definition, :to => :contest
+  delegate :parent, :to => :contestant
+  delegate :game_definition, :to => :parent
 
   named_scope :running,
     :joins => %{
@@ -141,13 +141,13 @@ class Client < ActiveRecord::Base
   def test_delayed!(activateClient = false)
     raise "client was already tested" if tested?
     raise "client is currently tested" if testing?
-    raise "no test_contestant available" unless contest.test_contestant
+    raise "no test_contestant available" unless parent.test_contestant
 
     Match.transaction do
       test_match.destroy if test_match
       self.test_match = nil
-      match = self.create_test_match
-      match.clients = [self, contest.test_contestant.current_client]
+      match = self.create_test_match(:context_type => parent.class.to_s, :context_id => parent.id) 
+      match.clients = [self, parent.test_contestant.current_client]
       match.perform_delayed! activateClient
     end
   end

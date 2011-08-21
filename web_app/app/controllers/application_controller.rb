@@ -48,15 +48,11 @@ class ApplicationController < ActionController::Base
       flash[:error] = I18n.t "messages.access_denied" 
       if @season and @season.public
         redirect_to @season
-     elsif Season.public.last
-        redirect_to Season.public.last
-     elsif @contest and @contest.public
+      elsif params[:contest_id] and @contest.public
         redirect_to @contest
-     elsif Contest.public.last
-        redirect_to Contest.public.last
-     else
+      else
         redirect_to root_url
-     end
+      end
    else
       # user might be logged out, due to inactivity or trys to access
       # a restricted area without logging in because of bookmark
@@ -68,13 +64,14 @@ class ApplicationController < ActionController::Base
   helper_method :current_user, :logged_in?, :not_logged_in?
   helper_method :administrator?
   helper_method :current_contest
+  helper_method :current_season
 
   attr_accessor :current_page_title
   helper_method :current_page_title
 
   def permission_denied
     flash[:error] = I18n.t("messages.access_denied")
-    redirect_to contest_url(@contest)
+    redirect_to root_url
   end
 
   def check_contest_access
@@ -342,5 +339,12 @@ class ApplicationController < ActionController::Base
 
   def set_current_url
     @current_url = {:unescaped => request.url, :escaped => url_escape(request.url)}
+  end
+
+  def current_season
+    unless @current_season
+      @current_season = Season.find_by_subdomain(SEASON[:current_subdomain]) 
+    end
+    @current_season
   end
 end

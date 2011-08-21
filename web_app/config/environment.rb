@@ -39,6 +39,7 @@ Rails::Initializer.run do |config|
   gem "state_machine"
   gem "erubis"
   config.gem "ezprint"
+  gem "liquid"
   gem "bluecloth", ">=2.0.0"
 
 
@@ -98,6 +99,7 @@ Rails::Initializer.run do |config|
     require 'bluecloth'
     require 'state_machine'
     require 'ezprint'
+    require 'liquid'
 
     # Load regular jobs
     #unless $regular_jobs_loaded

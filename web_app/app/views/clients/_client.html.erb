@@ -43,7 +43,7 @@
           $("a#do_test_<%= client.id %>").bind('click', function() {
             $("div#test_box_<%= client.id %>").fadeOut(250)
             $.get(
-              "<%= [:test, @context, client.contestant, client] %>",
+              "<%= url_for [:test, @context, client.contestant, client] %>",
               "activateClient=" + $("input#activate_<%= client.id %>").is(':checked'),
               function(returned_data) { location.reload(); }
             )

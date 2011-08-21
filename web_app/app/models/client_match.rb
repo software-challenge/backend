@@ -4,7 +4,6 @@ class ClientMatch < Match
     true
   end
 
-
   #belongs_to :client
   delegate :contestant, :to => :client
 
