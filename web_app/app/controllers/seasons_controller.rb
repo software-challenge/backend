@@ -100,19 +100,20 @@ class SeasonsController < ApplicationController
       @prelim.contestant = contestant
       @prelim.save!
     end
-    if params[:contestant][:tutor].present?
-      tutor_email = params[:contestant][:tutor].split("-")[1].strip
-      tutor = Person.find_by_email(tutor_email)
-      if tutor 
-        if contestant.people.tutors.count > 0
-          contestant.people.tutors.each do |t|
-            t.memberships.select do |m|
-              m.destroy if m.contestant_id == contestant.id
-            end
-          end
+    
+    if contestant.people.tutors.count > 0
+      contestant.people.tutors.each do |t|
+        t.memberships.select do |m|
+          m.destroy if m.contestant_id == contestant.id
         end
-        tutor.has_role! :tutor, contestant
-        Membership.create(:contestant => contestant, :person => tutor)
+      end
+    end
+    
+    if params[:contestant][:tutor].present?
+      tutor_email = (params[:contestant][:tutor].split(" - ")[1] || "").strip
+      tutor = Person.find_by_email(tutor_email)
+      if tutor
+        Membership.create(:contestant => contestant, :person => tutor, :role_name => 'tutor')
       end
     end
     contestant.destroy if params[:contestant][:delete] 
