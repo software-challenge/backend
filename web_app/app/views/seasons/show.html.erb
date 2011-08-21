@@ -40,7 +40,7 @@
           <% end %>
           <%= t "views.todo.login_else" %>
           <% action_button do %>
-            <%= link_to "Jetzt registrieren", register_url() %>  
+            <%= link_to "Jetzt registrieren", register_url(:context => "Season:#{@season.id}") %>  
           <% end %>
         <% end %>
       <% end %>

@@ -4,8 +4,22 @@ class MainController < ApplicationController
 
   skip_before_filter :require_current_user
 
-  access_control :only => [:debug, :clear_jobs, :administration, :write_email, :send_email] do
-    allow :administrator
+  access_control do
+    actions :debug, :clear_jobs, :administration, :write_email, :send_email do
+      allow :administrator
+    end
+
+    actions :do_register, :register, :login, :do_login, :new_password do
+      allow all, :if => :not_logged_in?
+    end
+
+    action :logout do
+      allow logged_in
+    end
+
+    action :index do
+      allow all
+    end
   end
 
 
@@ -15,7 +29,22 @@ class MainController < ApplicationController
   end
 
   def do_register
-    @person = Person.create(params[:person][:person])
+    if params[:context].present?
+      context_type, context_id = params[:context].split(":")
+      @context = ("Season" ? Season : Contest).find_by_id(context_id)
+      if @context.is_a? Season
+        @season = @context
+      elsif @context.is_a? Contest
+        @contest = @context
+      end
+    elsif params[:contest_id]
+      @context = @contest
+    else 
+      @context = current_season
+      @season = @context
+    end
+
+   @person = Person.create(params[:person][:person])
     @email_event = EmailEvent.create(params[:person][:email_event])
     @person.validation_code = @person.random_hash(25) if ENV['EMAIL_VALIDATION'] == "true"
     success = false
@@ -30,19 +59,19 @@ class MainController < ApplicationController
     respond_to do |format|
       if success
         if ENV['EMAIL_VALIDATION'] == "true"
-          PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], true)
-          format.html { render "main/notification", :locals => {:tab => :contest, :title => "Registrieren", :message => "Ihr Zugang wurde erstellt. An die angebene E-Mail Adresse wurde eine E-Mail mit einem Bestätigungslink gesendet. Um ihren Zugang nutzen zu können, müssen Sie zunächst diese E-Mail abrufen und den Bestätigungslink besuchen.", :links => [["Weiter", contest_url(@contest)]] }}
+          PersonMailer.deliver_signup_notification(@person, @context, params[:person][:person][:password], true)
+          format.html { render "main/notification", :locals => {:tab => @context.class.to_s.underscore, :title => "Registrieren", :message => "Ihr Zugang wurde erstellt. An die angebene E-Mail Adresse wurde eine E-Mail mit einem Bestätigungslink gesendet. Um ihren Zugang nutzen zu können, müssen Sie zunächst diese E-Mail abrufen und den Bestätigungslink besuchen.", :links => [["Weiter", url_for(@context)]] }}
         else
           @person.logged_in = true
           @person.last_seen = Time.now
           session[:user_id] = @person.id
           @person.save
           begin
-            PersonMailer.deliver_signup_notification(@person, @contest, params[:person][:password], false)
+            PersonMailer.deliver_signup_notification(@person, @context, params[:person][:person][:password], false)
           rescue 
             logger.warn "Registration mail could not be send"
           end
-          format.html { render "main/notification", :locals => {:tab => :contest, :title => "Registrieren", :message => 'Ihr Zugang wurde erstellt.', :links => [["Weiter", contest_url(@contest)]] }}
+          format.html { render "main/notification", :locals => {:tab => @context.class.to_s.underscore, :title => "Registrieren", :message => 'Ihr Zugang wurde erstellt.', :links => [["Weiter", url_for(@context)]] }}
         end
         format.xml { render :xml => @person }
       else
@@ -52,38 +81,39 @@ class MainController < ApplicationController
     end
   end
 
+  # root_url
   def index
-    redirect_to :controller => :contests, :action => :show
+    redirect_to current_season || seasons_url
   end
    
   def login
     if logged_in?
       flash[:notice] = I18n.t("messages.already_logged_in")
-      redirect_to @season || Season.public.last || contest_url(@contest)
+      redirect_to root_url 
     end
   end
 
   def new_password
-    redirect_to contest_url(@contest) if logged_in?
+    redirect_to @context || root_url if logged_in?
     @email = params[:user].nil? ? nil : params[:user][:email]
     if @email
       person = Person.find(:first, :conditions => {:email => @email})
       if not person
         flash[:error] = t("messages.no_user_with_adress")
-        redirect_to @season || Season.public.last || contest_login_url(@contest)
+        redirect_to login_url
       elsif person.has_role?(:administrator)
         flash[:error] = t("messages.admin_password_cannot_be_changed")
-        redirect_to @season || Season.public.last || contest_login_url(@contest)
+        redirect_to login_url
       else
         password = ActiveSupport::SecureRandom.base64(6)
         person.password = password
         if person.save
-          PersonMailer.deliver_password_reset_notification(person, @current_contest, password)
+          PersonMailer.deliver_password_reset_notification(person, current_season||@current_contest, password)
           flash[:notice] = t("messages.new_password_sent", :email => @email)
         else
           flash[:error] = "Passwort konnte nicht geändert werden" 
-        end
-        redirect_to @season || Season.public.last || contest_login_url(@contest)
+        end  
+        redirect_to login_url
       end
     end
   end
@@ -111,10 +141,10 @@ class MainController < ApplicationController
       end
       if params[:redirect_url]
           redirect_to url_unescape(params[:redirect_url])
-      elsif Season.public.last
-          redirect_to Season.public.last
+      elsif current_season
+          redirect_to current_season
       else
-        redirect_to contest_url(@contest)
+        redirect_to seasons_url
       end
     rescue ActiveRecord::RecordNotFound
       @user = { :email => email, :password => "" }.to_obj
@@ -123,7 +153,7 @@ class MainController < ApplicationController
     rescue AccountNotValidated
       @user = { :email => email, :password => "" }.to_obj
       flash[:error] = "Der Zugang wurde noch nicht aktiviert. Bitte besuchen Sie den Link in der Bestätigungs E-Mail"
-      redirect_to :aciton => "login"
+      redirect_to :action => "login"
     end
   end
 
@@ -140,10 +170,8 @@ class MainController < ApplicationController
     end
     if params[:redirect_url] 
       redirect_to url_unescape(params[:redirect_url])
-    elsif Season.public.last
-      redirect_to Season.public.last
     else
-      redirect_to contest_url(@contest)
+      redirect_to root_url
     end
   end
 

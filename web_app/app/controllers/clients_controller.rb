@@ -71,7 +71,7 @@ class ClientsController < ApplicationController
     else
       respond_to do |format|
         if success
-          format.html { redirect_to [@context, @contestant, :cients] }
+          format.html { redirect_to [@context, @contestant, :clients] }
           format.xml  { render :xml => @client, :status => :created, :location => @client }
         else
           format.html { render :action => "new" }
