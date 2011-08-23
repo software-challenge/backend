@@ -1,0 +1,6 @@
+$("#events").append("<%= escape_javascript( render :partial => "event", :collection => @events) %>");
+offset += <%= @events.length %>;
+
+<% if @events.length < @page_size %>
+  finished = true;
+<% end %>

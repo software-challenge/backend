@@ -1,6 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
   map.with_options :path_names => { :new => "neu", :edit => "bearbeiten" } do |tmap|
 
+    tmap.events "events", :controller => "main", :action => "events"
+
     tmap.resources :tickets, :collection => {
       :possible_assignees => :get
     }, :member => {

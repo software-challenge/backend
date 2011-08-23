@@ -171,7 +171,7 @@ class ContestantsController < ApplicationController
         flash[:error] = I18n.t("messages.person_already_belongs_to_contestant")
       else
         if @person.memberships.create!(:contestant => @contestant, :role_name => params[:role])
-          add_event PersonAddedToContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user) if @contest
+          add_event PersonAddedToContestantEvent.create(:person => @person, :contestant => @contestant, :actor => @current_user) 
           flash[:notice] = I18n.t("messages.person_added_to_contestant")
         end
       end
@@ -228,12 +228,10 @@ class ContestantsController < ApplicationController
     last_still_fresh = last_event and (last_event.person == @current_user) and (last_event.created_at > 6.hours.ago)
     if last_still_fresh
       last_event.param_time_1 = Time.now
-      last_event.save
     else
-      ev = ContestantReportEvent.new({:contest => (@contest ? @contest : @contestant.contests.last), :contestant => @contestant, :person => @current_user})
-      ev.save 
+      ev = ContestantReportEvent.new({:context => @contestant.season || @contestant.contests.last, :contestant => @contestant, :person => @current_user})
     end
-    if @contestant.save #and ((last_still_fresh and last_event.save) or ev.save) TODO: fix events
+    if @contestant.save and ((last_still_fresh and last_event.save) or ev.save)
       flash[:notice] = "Bericht wurde erfolgreich bearbeitet."
       redirect_to :action => :show
     else 

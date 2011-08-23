@@ -5,7 +5,7 @@ class MainController < ApplicationController
   skip_before_filter :require_current_user
 
   access_control do
-    actions :debug, :clear_jobs, :administration, :write_email, :send_email do
+    actions :debug, :clear_jobs, :administration, :write_email, :send_email, :events do
       allow :administrator
     end
 
@@ -182,10 +182,36 @@ class MainController < ApplicationController
   end
 
   def administration
+    @page_size = 80
+    @events = Event.scoped :limit => @page_size, :order => "created_at DESC"
   end
 
   def write_email
 
+  end
+
+  def events
+    @offset = (params[:offset] || 0).to_i
+    @page_size = 40;
+
+    if params[:filter]
+      f_type, f_id = params[:filter].split(":")
+      if ["Contest","Season"].include? f_type
+        type = eval(f_type)
+      else
+        type = nil
+      end
+
+      if type 
+        @events = type.find(f_id).events.scoped(:limit => @page_size, :order => "created_at DESC", :offset => @offset)
+      end
+    else
+      @events = Event.scoped :offset => @offset, :limit => @page_size, :order => "created_at DESC" 
+    end
+    respond_to do |format|
+      format.html { render :action => :administration }
+      format.js
+    end
   end
 
   def send_email
