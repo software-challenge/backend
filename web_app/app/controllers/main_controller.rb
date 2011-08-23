@@ -31,7 +31,7 @@ class MainController < ApplicationController
   def do_register
     if params[:context].present?
       context_type, context_id = params[:context].split(":")
-      @context = ("Season" ? Season : Contest).find_by_id(context_id)
+      @context = (context_type == "Season" ? Season : Contest).find_by_id(context_id)
       if @context.is_a? Season
         @season = @context
       elsif @context.is_a? Contest
