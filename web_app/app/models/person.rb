@@ -70,7 +70,7 @@ class Person < ActiveRecord::Base
   validates_uniqueness_of :validation_code, :if => :validation_code
 
   after_save :update_api_user, :if => :api_user
-  before_destroy :suspend_api_user, :id => :api_user
+  before_destroy :suspend_api_user, :if => :api_user
   after_save :sweep
 
   def initialize(*args)
