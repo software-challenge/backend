@@ -10,7 +10,7 @@ class FakeTestSuite < ActiveRecord::Base
  
   def handle_event!
     if done?
-      contest.events << FakeTestEvent.create(:fake_test_suite => self, :contest => contest) 
+      contest.events << FakeTestEvent.create(:fake_test_suite => self, :context => contest) 
       contest.save!
     end
   end

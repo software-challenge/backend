@@ -527,6 +527,7 @@ de:
       client_details: "Details eines Computerspielers"
     main:
       administration: "Administration"
+      events: "Aktuelle Ergeignisse"
       login: "Anmelden"
       debug: "Debugansicht"
       register: "Registrieren"

@@ -292,10 +292,11 @@ class ApplicationController < ActionController::Base
   end
 
   def add_event(event)
-    if @contest # quick fix => TODO: events should also be generated for season
-      @contest.events << event
-      @contest.save!
-      @contest.reload
+    if @contest or @season
+      event.context = @contest||@season
+      event.save
+    else
+      false
     end
   end
 

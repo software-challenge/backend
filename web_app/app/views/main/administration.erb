@@ -3,19 +3,75 @@
 <% tabnav :administration do %>
   <p>
    <%= t "views.welcome_to_admin" %>
-  </p>
+ </p>
+
   <p style="margin-top: 15px">
-    <strong style="margin-bottom: 5px">Letzte Ereignisse in diesem Wettkampf</strong><br>
-    <% @contest.events.first(25).each do |event| %>
-      <% if event.valid_event? %>
-        <% if event.path.nil? %>
-          <% txt = event.text %>
-        <% else %>
-           <% txt = link_to event.text, replace_variables(event.path) %>
+  <strong style="margin-bottom: 5px">Letzte Ereignisse</strong>
+  
+  <% all_contexts = Event.all.map{|e| e.context}.uniq.compact.group_by{|e| e.class.to_s} %>
+  <span style="float:right; margin-right: 8%;">Filter: <select id="select_event_types">
+    <option style="font-style: italic; font-weight:bold;" value="all">Alle anzeigen</option>
+    <% if all_contexts["Season"] %>
+      <optgroup label="Saisons" class="Season">
+        <% for context in all_contexts["Season"] %>
+          <option value="<%= "#{context.class.to_s}:#{context.id}" %>">
+            <%= context.name %>
+          </option>
         <% end %>
-        <%= event.created_at.to_time.strftime("%d.%m.%y - %H:%M") %> - <%= txt %><br>
-      <% end %>
+      </optgroup>
+    <% end %> 
+    <% if all_contexts["Contest"] %>
+      <optgroup label="Wettbewerbe" class="Contest">
+        <% for context in all_contexts["Contest"] %>
+          <option value="<%= "#{context.class.to_s}:#{context.id}" %>">
+            <%= context.name %>
+          </option>
+        <% end %>
+      </optgroup>
     <% end %>
-    </strong>
+  </select></span>
+  <p id="events" style="margin-top: 15px">
+    <%= render :partial => "event", :collection => @events %>
   </p>
+</p>
+<% end %>
+
+
+<% javascript_tag do %>
+  var offset = <%= @events.length %>;
+  var finished = <%= @events.length < @page_size ? "true" : "false" %>;
+
+  $(function() {
+    $(window).scroll(function(e){
+      endlessScroll();
+    })
+
+    <% if params[:filter].present? %>
+    var a = $("option[value='<%= params[:filter]%>']");
+    a.attr("selected",true);
+    <% end %>
+
+    $("#select_event_types").bind("change", function(){
+      filter();
+    })
+
+    endlessScroll();
+  });
+  
+  function endlessScroll(){
+    if($(window).scrollTop() >= ($(document).height() - $(window).height()) && !finished){
+    $.getScript("<%= params[:filter].present? ? events_path(:filter => params[:filter])+"&" : events_path()+"?" %>offset="+offset);
+    }
+  }
+
+  function filter(){
+    var value = $("#select_event_types").attr("value");
+    var loc = "<%= events_path %>";
+
+    if(value == "all"){
+      window.location = loc
+    }else{
+      window.location = loc + "?filter="+value
+    }
+  }
 <% end %>

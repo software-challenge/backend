@@ -1,4 +1,5 @@
 class PeopleController < ApplicationController
+  include PeopleHelper
 
   cache_sweeper :person_sweeper, :only => [:update, :create, :remove, :hide, :unhide]
 
@@ -165,7 +166,7 @@ class PeopleController < ApplicationController
 
     if params[:contestant_id]
       @contestant = Contestant.find params[:contestant_id]
-      @person.teams = { params[:contestant_id] => {:_delete => false, :role => :pupil} }
+      @person.teams = { params[:contestant_id] => {:_destroy => false, :role => :pupil} }
     end
 
     respond_to do |format|
@@ -191,6 +192,7 @@ class PeopleController < ApplicationController
 
     @person = Person.new(person_params)
     success = @person.save
+    success &= begin @person.update_memberships(params[:memberships]) rescue false end 
 
     respond_to do |format|
       if success
@@ -204,10 +206,12 @@ class PeopleController < ApplicationController
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.created_successfully")
         format.html do
-          if params[:contestant_id] and !@person.teams.visible.empty?
+          if params[:contestant_id] and !@person.teams.visible.empty? 
             redirect_to(:action => :people_for_contestant, :contestant_id => @person.teams.visible.first.to_param)
+          elsif params[:contestant_id]
+            redirect_to(:action => :people_for_contestant, :contestant_id => params[:contestant_id])
           else
-            redirect_to [@context, :people]
+            redirect_to [Contest.pubic.last, :people]
           end
         end
         format.xml  { render :xml => @person, :status => :created, :location => @person }
@@ -225,10 +229,10 @@ class PeopleController < ApplicationController
     # cleanup params
     @contest ||= Contest.public.last
     person_params = params[:person].clone
-    person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
-    unless administrator? or current_user == @person
-      person_params.reject! {|k,v| k != "teams"}
-    end
+    #person_params[:teams].reject! { |k,v| !current_user.manageable_teams.find(k) } if person_params[:teams]
+    #unless administrator? or current_user == @person
+    #  person_params.reject! {|k,v| k != "teams"}
+    #end
     unless administrator?
       person_params[:email] = @person.email
        
@@ -249,7 +253,9 @@ class PeopleController < ApplicationController
     end
    
     flash[:error] = nil
+    
     success = @person.update_attributes(person_params)
+    success &= begin @person.update_memberships!(params[:memberships], manageable_roles.map{|r| r.second}) rescue false end
 
     respond_to do |format|
       if success

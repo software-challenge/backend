@@ -33,3 +33,4 @@ ENV['EMAIL_VALIDATION'] = "true"
 ENV['SHOW_GRAVATAR'] = "false"
 ENV['SIMULATE_GAME_RESULTS'] = "true"
 
+require 'pry'

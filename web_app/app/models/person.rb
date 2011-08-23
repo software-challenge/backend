@@ -14,6 +14,7 @@ class Person < ActiveRecord::Base
 
   has_many :memberships
   has_many :teams, :through => :memberships, :class_name => "Contestant", :source => :contestant
+
   has_one :email_event, :dependent => :destroy
   
   has_many :schools
@@ -38,7 +39,8 @@ class Person < ActiveRecord::Base
   validates_presence_of :first_name
   validates_presence_of :last_name
 
-  validates_associated :memberships
+# FIXME THIS IS REAAALY SLOW! 
+#  validates_associated :memberships
 
   validates_presence_of :password, :on => :create
   validates_length_of :password, :minimum => MINIMUM_PASSWORD_LENGTH, :if => :password
@@ -324,6 +326,27 @@ class Person < ActiveRecord::Base
 
   def sweep
     PersonSweeper.instance.expire_cache(self)
+  end
+
+  def update_memberships!(input,allowed_roles)
+      mems = memberships.all.group_by{|m| m.contestant_id}
+      input.each do |con_id,data|
+        mem = (mems[con_id.to_i] || []).first
+        input_role = data["role"]
+        if data["_destroy"] == "1" 
+          mem.destroy if mem
+        elsif mem 
+          if mem.role_name != input_role
+            raise "Role not allowed!" unless allowed_roles.include? input_role
+            mem.role_name = input_role 
+            mem.save! 
+          end
+        else
+          raise "Role not allowed!" unless allowed_roles.include? input_role
+          Membership.create!(:person_id => self.id, :contestant_id => con_id.to_i, :role_name => input_role)
+        end
+      end
+      true
   end
 
   Membership::ROLES.each do |role|

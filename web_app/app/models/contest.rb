@@ -14,7 +14,7 @@ class Contest < ActiveRecord::Base
   has_many :matchdays, :dependent => :destroy, :conditions => { :type => "Matchday" }
   has_many :custom_matches, :class_name => "CustomMatch", :as => :set, :dependent => :destroy
   has_many :friendly_encounters, :dependent => :destroy, :as => "context"
-  has_many :events, :dependent => :destroy, :order => "created_at DESC"
+  has_many :events, :dependent => :destroy, :order => "created_at DESC", :as => "context"
   has_one :trial_contest, :class_name => "Contest", :foreign_key => "trial_contest_id", :dependent => :destroy
   has_one :whitelist, :dependent => :destroy
   has_many :fake_test_suites, :dependent => :destroy

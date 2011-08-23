@@ -1,6 +1,6 @@
 class Event < ActiveRecord::Base
   
-  belongs_to :contest, :polymorphic => true
+  belongs_to :context, :polymorphic => true
 
   def valid_event?
     false

@@ -7,6 +7,7 @@ class Season < ActiveRecord::Base
   has_many :schools, :dependent => :destroy
   has_many :friendly_encounters, :as => :context
   has_many :news_posts, :as => :context
+  has_many :events, :as => :context
   belongs_to :current_phase, :class_name => "SeasonPhase"
 
   validates_inclusion_of :game_identifier, :in => GameDefinition.all.map{|d| d.game_identifier.to_s}

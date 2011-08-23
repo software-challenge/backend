@@ -55,12 +55,10 @@
 
               <% contexts = current_user.manageable_teams.group_by{|t| t.parent}.reject{|k,v| k.nil? or not k.public} %>
 
-              <% contests = [@context].concat Contest.all.find_all{|c| !current_user.manageable_teams_for(c).reject{|t| t.hidden?}.empty? and c != @context} %>
-
               <% contexts.each do |context,teams| %>
-                  <% there_are_hidden = true if context != @context %>
+                  <% there_are_hidden = true if context != @context and not (@context.respond_to?(:season) and @context.season == context) %>
                   <% context_identifier = "#{context.class.to_s.underscore}_#{context.id}" %>
-                  <span class="<%= context == @context ? "current" : "other" %> contestants_show">
+                  <span class="<%= (context == @context or (@context.respond_to?(:season) and @context.season == context))? "current" : "other" %> contestants_show">
                     <a href="#" class="contestants_show" id="contestants_show_<%= context_identifier %>" data-context="<%= context_identifier%>"><%= context.name %></a>
                     <a href="#" class="contestants_hide" id="contestants_hide_<%= context_identifier %>" data-context="<%= context_identifier%>" style="display:none"><%= context.name %></a>
                     &nbsp;( <%= teams.count %>)      
@@ -72,16 +70,16 @@
                       <li class="boolean <%= cycle("odd", "even") %>">
                         <% checkbox_id = "person_team_#{team.id}" %>
                         <label for="<%= checkbox_id %>" style="padding-left: 0;">
-                        <%= hidden_field_tag "person[teams][#{team.id}][_delete]", 1 %>
-                        <%= check_box_tag "person[teams][#{team.id}][_delete]", 0, !roles.empty?, :id => checkbox_id, :class => "inTeam", :checked => (@person.new_record? and team == @contestant) %>
+                        <%= hidden_field_tag "memberships[#{team.id}][_destroy]", 1 %>
+                        <%= check_box_tag "memberships[#{team.id}][_destroy]", 0, (!roles.empty? or (@person.new_record? and team == @contestant)), :id => checkbox_id, :class => "inTeam" %>
                         <%= team.name %>
                       </label>
 
                       <div style="float: right;" class="role">
                         <% if manageable_roles.size == 1 -%>
-                          <%= hidden_field_tag "person[teams][#{team.id}][role]", manageable_roles.first[1] %>
+                          <%= hidden_field_tag "memberships[#{team.id}][role]", manageable_roles.first[1] %>
                         <% else -%>
-                          <%= select_tag "person[teams][#{team.id}][role]", options_for_select(manageable_roles, roles.first ? roles.first.name : manageable_roles[0]) %>
+                          <%= select_tag "memberships[#{team.id}][role]", options_for_select(manageable_roles, roles.first ? roles.first.name : manageable_roles[0]) %>
                         <% end -%>
                       </div>
                     </li>
@@ -91,6 +89,10 @@
 
               <% javascript_tag do %>
                 $(function() {
+                  $(".current .contestants_show").hide();
+                  $(".current .contestants_hide").show();
+                  $(".current").next().show();
+
                   $(".contestants_show").bind("click", function(e){
                     var context = $(this).data("context");
                     $("#contestants_hide_"+context).show();
