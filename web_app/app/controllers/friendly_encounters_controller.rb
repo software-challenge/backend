@@ -86,7 +86,7 @@ def create
 end
 
   def all
-    @encounters = @context.friendly_encounters
+    @encounters = @context.friendly_encounters.scoped(:order => "created_at DESC")
   end
 
   def destroy

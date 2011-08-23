@@ -84,7 +84,8 @@
                <span id="post_<%= post.id %>" class="news_post">
                 <%= l post.created_at.to_date %> - 
                 <% link_to [post.context, post] do %>
-                  <%= post.title.length > 42 ? "#{post.title[0..40].strip}..." : post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
+                  <% max_len = post.was_updated? ? 25 : 40 %>
+                  <%= post.title.length > max_len ? "#{post.title[0..(max_len-3)].strip}..." : post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
                 <% end %>
                </span>
                <div class="tooltip news_tooltip_padding">

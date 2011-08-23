@@ -64,7 +64,7 @@ class SchoolsController < ApplicationController
     @tokens.flatten! 
     @tokens = @tokens.select{|token| token.currently_valid? and token.allowed_for? @current_user}
     @tokens.sort!{|a,b| a.complete? ? 1 : -1 }
-    flash[:notice] = "Bitte füllen Sie alle verfügbaren Umfragen möglichst bald aus. So ermöglichen sie uns eine bessere Planung des Wettbewerbs!" unless flash[:notice] or @tokens.all?{|t| t.complete?}
+    flash[:notice] = "Bitte füllen Sie alle verfügbaren Umfragen möglichst bald aus. So ermöglichen Sie uns eine bessere Planung des Wettbewerbs!" unless flash[:notice] or @tokens.all?{|t| t.complete?}
   end
 
   def destroy

@@ -22,6 +22,9 @@
         </td>
     <% end %>
     <td>
+      <% unless team.new_record? %>
+        <%= link_to image_tag("actions/show.png"), [@season,@school,team], :id => "details_#{team.id}" %>
+      <% end %>
       <a href="" id="save_<%= team.id %>" style="display: none">Speichern</a>
       <span id="saved_<%= team.id %>" style="display: none">
         <% if local_assigns[:errors] and errors %>
@@ -33,7 +36,7 @@
         <% end %>
       </span>
       <%= image_tag('ui/spinner.gif', :id => "spinner_#{team.id}", :style => "display: none") %>
-    </td> 
+    </td>
   </tr>
   <% javascript_tag do %>
     $(function() {
@@ -42,11 +45,13 @@
 
     function init_<%= team.id %>() {
       $("#name_<%= team.id %> input").keyup(function() {
-        $("#save_<%= team.id %>").fadeIn(250)
+        $("#save_<%= team.id %>").fadeIn(250);
+        $("#details_<%= team.id %>").fadeOut(250);
       })
 
       $("#partprob_<%= team.id %> select").change(function() {
-        $("#save_<%= team.id %>").fadeIn(250)
+        $("#save_<%= team.id %>").fadeIn(250);
+        $("#details_<%= team.id %>").fadeOut(250);
       })
   
       // Char counter
@@ -92,6 +97,7 @@
                 $("#saved_<%= team.id %>").fadeIn(250)
                 setTimeout(function() {
                   $("#saved_<%= team.id %>").fadeOut(250)
+                  $("#details_<%= team.id %>").fadeIn(500);
                 }, 1500)
             <% if team.new_record? %>
               }

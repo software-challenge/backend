@@ -31,7 +31,6 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
       t.links_to contest_contests_url(@contest)
       t.highlights_on :controller => "contests", :action => "index"
       t.highlights_on :controller => "contests", :action => "edit"
-      t.highlights_on :controller => "contests", :action => "phases"
     end
 
     add_tab do |t|
@@ -41,7 +40,7 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
     end 
 
     add_tab do |t|
-      t.named "Saison Phasen verwalten"
+      t.named "Saison-Phasen verwalten"
       t.links_to url_for [:status, @season]
       t.highlights_on :controller => "seasons", :action => :status
     end if @season
@@ -59,7 +58,7 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
     end
 
     add_tab do |t|
-      t.named "Plagiat Tests"
+      t.named "Plagiat-Tests"
       t.links_to contest_fake_test_suites_url(@contest)
       t.highlights_on :controller => "fake_test_suites", :action => "index"
     end
