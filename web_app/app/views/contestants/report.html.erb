@@ -12,7 +12,7 @@
   <%= t("views.contestant_report") %>
 </h1>
 <% tabnav :contestant do %>
-  <h2>Bericht für: <%= @contestant.name %></h2>
+  <h2>Protokoll für: <%= @contestant.name %></h2>
   <div id="report_show">
     <% unless @contestant.report.nil? or @contestant.report.empty? %>
       <% last_event = @contestant.report_events.last %>
@@ -21,7 +21,7 @@
       <% end %>
       <div style="margin-left: 15px;"><%= BlueCloth.new(@contestant.report).to_html.html_safe %></div>
     <% else %>
-      Bisher wurde noch kein Bericht erstellt.
+      Bisher wurde noch kein Protokoll erstellt.
     <% end %>
   </div>
   <% form_for [:update_report, @context, @contestant] do |f| %>
@@ -29,7 +29,7 @@
       <%= f.text_area :report %>
     </div>
     <div style="margin-top: 15px">
-      <%= f.submit "Report speichern"%>
+      <%= f.submit "Protokoll speichern"%>
     </div>
   <% end %>
 
