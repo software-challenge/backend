@@ -1,3 +1,4 @@
+    raise @context.inspect
 class ContestantsController < ApplicationController
 
   before_filter :fetch_context, :fetch_contestant
@@ -232,7 +233,7 @@ class ContestantsController < ApplicationController
       ev = ContestantReportEvent.new({:context => @contestant.season || @contestant.contests.last, :contestant => @contestant, :person => @current_user})
     end
     if @contestant.save and ((last_still_fresh and last_event.save) or ev.save)
-      flash[:notice] = "Bericht wurde erfolgreich bearbeitet."
+      flash[:notice] = "Protokoll wurde erfolgreich bearbeitet."
       redirect_to :action => :show
     else 
       flash[:error] = "Beim Speichern der Änderungen kam es zu einem Fehler!"

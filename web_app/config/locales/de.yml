@@ -489,6 +489,8 @@ de:
     email_events:
       edit: "Benachrichtigungen"
     events: "Ereignisse"
+    tickets: 
+      attachments: "Anhänge" 
     schedule: "Terminplan"
     overview: "Übersicht"
     ranking: "Rangliste"

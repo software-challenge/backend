@@ -140,7 +140,7 @@
                        <li>&nbsp<%= link_to contest.name, contest %></li>
                      <% end %>
                    <% end %>
-                     <li><b>Aktuellste Wettkämpfe</b></li>
+                     <li><b>Aktuelle Wettkämpfe</b></li>
                      <% (administrator? ? Contest.all : Contest.public).last(5).each do |contest| %>
                        <li>&nbsp<%= link_to contest.name, contest %></li>
                      <% end %> 
