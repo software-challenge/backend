@@ -1,4 +1,3 @@
-    raise @context.inspect
 class ContestantsController < ApplicationController
 
   before_filter :fetch_context, :fetch_contestant
