@@ -362,6 +362,6 @@ class Person < ActiveRecord::Base
   
  protected
     before_destroy do |record|
-      self.has_no_roles!
+      record.has_no_roles!
     end
 end
