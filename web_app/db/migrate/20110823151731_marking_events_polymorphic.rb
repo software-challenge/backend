@@ -3,9 +3,9 @@ class MarkingEventsPolymorphic < ActiveRecord::Migration
     rename_column :events, :contest_id, :context_id
     add_column :events, :context_type, :string
 
-    Event.all.each do |e|
-      e.context_type = "Contest"
-      e.save!
+    Event.all.each do |e| 
+	e.context_type = "Contest"
+	e.save!
     end
   end
 
