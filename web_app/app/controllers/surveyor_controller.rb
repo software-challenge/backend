@@ -5,7 +5,6 @@ module SurveyorControllerCustomMethods
      base.send :layout, 'application'
   end
   
-  # Actions
    
   def new
     @survey = @survey_token.survey
