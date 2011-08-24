@@ -3,7 +3,7 @@
       <tr>
         <th><%= t "views.name" %></th>
         <th><%= SeasonPhase.human_name :count => 2 %></th>
-        <th class="middle">Aktionen</th>
+        <th class="middle" colspan="2">Aktionen</th>
       </tr>
     </thead>
     <tbody>
@@ -21,6 +21,7 @@
         </div>
 </td>
         <td class="middle"><%= link_to image_tag("actions/show.png"), season %></td>
+	<td class="middle"><%= link_to image_tag("actions/edit.png"), [:edit, season] %></td>
         </td>
      <% end %>
       </tbody>
