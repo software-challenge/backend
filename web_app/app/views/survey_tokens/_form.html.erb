@@ -3,6 +3,9 @@
 <% form_for [@context,@token] do |f| %>
   <div id="form_inputs">
     <p style="margin-top 10px; margin-bottom: 15px;"><b>Umfrage wählen: </b><%= select_tag 'survey', options_for_select(@surveys.collect{|s| [s.title,s.id]}) %></p>
+    <% @surveys.each do |survey| %>
+	    <p class="survey_description" id="survey_description_<%= survey.id %>" style="display: none; margin-bottom: 15px;"><b>Umfragebeschreibung: </b><%= survey.description %></p>
+    <% end %>
     <b>Zu befragene Benutzergruppe: </b>
     <% ch = [["Benutzer","people"]] %>
     <% ch << ["Voranmeldungen","preliminary"] unless @prelims.empty? %>
@@ -101,9 +104,19 @@
         $("#custom_email_settings").hide()
       }
     })
+
+    $("select#survey").change(function(){
+      loadDescription($(this).val());
+    })
+    loadDescription($("select#survey").val());
     
     $("#preview_template").bind("click", function(){
     window.open("<%= url_for [:preview_template, @context, :survey_tokens] %>?template="+$("#custom_template option:selected")[0].value)
     })
   });
+
+  function loadDescription(id) {
+    $(".survey_description").hide();
+    $("#survey_description_"+id).show();
+  }
 <% end %>
