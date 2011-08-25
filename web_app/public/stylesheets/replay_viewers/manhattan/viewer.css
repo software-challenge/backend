@@ -21,6 +21,17 @@ body {
 	height: 588px;
 }
 
+#head_background {
+        position: absolute;
+        left: 0px;
+        top: 3px;
+        width: 800px;
+        height: 96px;
+        background-color: black;
+        z-index: 1;
+        opacity: 0.12;
+}
+
 .segment .element {
         position: absolute;
         width: 43px;
@@ -127,11 +138,15 @@ body {
         position: absolute;
         top: 15px;
         left: 340px;
+        z-index: 10;
 }
 
 #round {
         color: white;
         font-size: 20px;
+        z-index: 10;
+        text-shadow: 0 0 1px black;
+
 }
 
 .player1{
@@ -150,19 +165,22 @@ body {
 
 #playerinfos1 {
       position: absolute;
-      top: 10px;
+      top: 7px;
       left: 15px;
       font-size: 13px;
       color:white;
+      z-index: 10;
+      text-shadow: 0 0 1px black;
 }
 
 #playerinfos1 div {
-        margin-top: 5px;
+        margin-top: 3px;
 }
 
 #name1 {
-        font-size: 20px;
-        color: #ff3c3c;  
+        font-size: 22px;
+        color: #ff3c3c; 
+        text-shadow: 0 0 2px #FFF;
 }
 
 #current_red_points{
@@ -175,20 +193,23 @@ body {
 
 #playerinfos2 {
 	position: relative;
-	top: 10px;
+	top: 7px;
 	right: 10px;
 	font-size: 13px;
         color:white;
+        z-index: 10;
+        text-shadow: 0 0 1px black;
 }
 
 #name2 {
-        font-size: 20px;
+        font-size: 22px;
         color: #5050ff;
+        text-shadow: 0 0 2px #FFF;
         text-align: right;
 }
 
 #playerinfos2 div {
-        margin-top: 8px;
+        margin-top: 3px;
         text-align:right;
 }
 
@@ -200,6 +221,7 @@ body {
   top: 250px;
   z-index: 100000;
   padding: 5px;
+  text-shadow: 0 0 1px black;
 }
 
 #results {
