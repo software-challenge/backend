@@ -58,7 +58,7 @@ render_tabnav :season, :html => { :class => "tabs_tabnav" } do
       t.highlights_on :controller => "contestants", :action => :index
     end 
 
-    if logged_in? and current_user.contestants.visible.for_season(@season).count > 0
+    if administrator? or (logged_in? and current_user.contestants.visible.for_season(@season).count > 0)
       add_tab do |t|
         t.named t("titles.friendly_encounters.index")
         t.links_to season_friendly_encounters_url(@season)
