@@ -435,6 +435,9 @@ de:
       round_score:
         victory: Siegpunkte
         points: Punkte
+        buildings: Türme
+        cities: Städte
+        highest_tower: Höchster Turm
   acl9:
     roles:
       global:
