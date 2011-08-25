@@ -6,7 +6,7 @@
     <% else %>
       <% client = Client.find(id) %>
       <% logfiles.each do |logfile| %>
-        <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), eurl_for([:send_log, @context, client.contestant, client], :id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id]), :method => :post %><br>
+        <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), eurl_for([:send_log, @context, client.contestant, client], :params => {:id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id]}), :method => :post %><br>
       <% end %>
     <% end %>
     </div>
@@ -26,7 +26,7 @@
     <% else %>
       <% client = Client.find(id) %>
       <% logfiles.each do |logfile| %>
-        <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), eurl_for([:send_log, @context, client.contestant, client], :id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id], :round_id => logfile[:round_id]), :method => :post %><br>
+        <%= link_to File.mtime(logfile[:file]).strftime("%d.%m.%y, %H:%M"), eurl_for([:send_log, @context, client.contestant, client], :params => {:id => logfile[:id], :num => logfile[:num], :type => logfile[:type], :match_id => logfile[:match_id], :round_id => logfile[:round_id]}), :method => :post %><br>
       <% end %>
     <% end %>
 <% end %>
