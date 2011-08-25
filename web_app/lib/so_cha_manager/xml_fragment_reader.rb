@@ -65,16 +65,19 @@ module SoChaManager
           
           if procs.count == 0
             xml.tag!(name, hash)
+	    logger.info "Procs count 0, hash: #{hash.to_s}"
           elsif procs.count == 1 and procs.first.is_a? String
             xml.tag!(name, procs.first, hash)
+	    logger.info "Procs count 1, procs.first: #{procs.first.to_s}, hash: #{hash.to_s}"
           else
             xml.tag!(name, hash) do |xml|
               procs.each do |proc|
                 proc.call xml, []
               end
             end
+	    logger.info "None of that, hash: #{hash}"
           end
-	  logger.info "Xml: #{xml.to_s}"
+	  logger.info "Xml: #{xml}"
         end
         
         @procs.push @calls
