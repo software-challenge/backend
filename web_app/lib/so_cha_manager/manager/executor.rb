@@ -15,6 +15,8 @@ module SoChaManager
             codes.each do |reservation|
               logger.info "Reservation ID: #{reservation}"
             end
+	    logger.info response.to_s
+            logger.info response['roomId']
             room_id = response.attributes['roomId'].value
 
             @client.observe room_id, "swordfish" do |success,response|
