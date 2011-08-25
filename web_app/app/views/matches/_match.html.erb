@@ -235,10 +235,10 @@
           <td>
             <% if slot.score.cause == "REGULAR" %>
               <% if not round.has_disqualified_slot? %> 
-                <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify"), :class => "tooltipped" %>
+                <%= link_to (image_tag "actions/disqualify.png"), disqualify_contest_matchday_match_round_url(match.matchday.contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_disqualify"), :title => t("actions.disqualify"), :class => "tooltipped" %>
               <% end %>
             <% elsif slot.qualification_changed %>
-              <%= link_to (image_tag "actions/requalify.png"), requalify_contest_matchday_match_round_url(@contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_requalify"), :title => t("actions.requalify"), :class => "tooltipped" %>
+              <%= link_to (image_tag "actions/requalify.png"), requalify_contest_matchday_match_round_url(match.matchday.contest, match.matchday, match, round, :slot => slot.id), :confirm => t("messages.confirm_requalify"), :title => t("actions.requalify"), :class => "tooltipped" %>
             <% end %>
           </td>
         <% end %>
@@ -261,7 +261,7 @@
         <% if not current_user.nil? and (current_user.has_role? :administrator or not current_user.membership_for(slot.contestant).nil?) %>
           <td>
             <% if not slot.client.nil? and slot.client.has_logs_for? :match => match, :round => slot.round %>
-              <%= link_to "Log", send_log_contest_contestant_client_url(@contest, slot.client.contestant, slot.client, :id => slot.client.id, :type => "match", :match_id => match.id, :round_id => slot.round.id), :method => :post %><br>
+              <%= link_to "Log", eurl_for([:send_log, @context, slot.cient.contestant, slot.client], :params => {:id => slot.client.id, :type => "match", :match_id => match.id, :round_id => slot.round.id}), :method => :post %><br>
             <% end %>
           </td>
         <% else %>
