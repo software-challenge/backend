@@ -117,8 +117,6 @@ GameDefinition.create :"Manhattan" do
       victories[:mine]
     end
 
-    field :scores, :sum => :points, :ordering => "DESC"
-
     #field :average_time, :average => :average_time, :ordering => "ASC"
 
     main :victories
