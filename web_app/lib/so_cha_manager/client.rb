@@ -133,7 +133,8 @@ module SoChaManager
     end
     
     def on_event(what, document)
-      logger.debug "Event '#{what}' received"
+      logger.info "Event '#{what}' received"
+      logger.info "Content: #{document.to_s}"
       
       case what
       when "error"
