@@ -133,8 +133,6 @@ module SoChaManager
     end
     
     def on_event(what, document)
-      logger.info "Event '#{what}' received"
-      
       case what
       when "error"
         caused_by = document.root.xpath('./originalRequest').first.attributes['class'].value
