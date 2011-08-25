@@ -41,6 +41,7 @@ module SoChaManager
         builder = Builder::XmlMarkup.new(:target => output, :indent => 2)
         @calls.first.call(builder, [])
         @calls = []
+	logger.info "Output: #{output}"
         
         if @processor
           dom = Nokogiri::XML(output)
@@ -73,6 +74,7 @@ module SoChaManager
               end
             end
           end
+	  logger.info "Xml: #{xml.to_s}"
         end
         
         @procs.push @calls
