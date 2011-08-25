@@ -94,7 +94,7 @@ GameDefinition.create :"Manhattan" do
     field :points, :ordering => "DESC"
     field :buildings, :ordering => "DESC"
     field :cities, :ordering => "DESC"
-    field :highest_tower, => "DESC"
+    field :highest_tower, :ordering => "DESC"
     #field :average_time, :ordering => "ASC", :precision => 2
   end
 
