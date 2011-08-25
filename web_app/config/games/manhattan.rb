@@ -92,6 +92,9 @@ GameDefinition.create :"Manhattan" do
     # NOTE: Only [a-z0-9_], no capitals!
     field :victory, :ordering => "DESC"
     field :points, :ordering => "DESC"
+    field :buildings, :ordering => "DESC"
+    field :cities, :ordering => "DESC"
+    field :highest_tower, => "DESC"
     #field :average_time, :ordering => "ASC", :precision => 2
   end
 
@@ -113,6 +116,8 @@ GameDefinition.create :"Manhattan" do
       victories = calculate_victories(my_scores, their_scores)
       victories[:mine]
     end
+
+    field :scores, :sum => :points, :ordering => "DESC"
 
     #field :average_time, :average => :average_time, :ordering => "ASC"
 
