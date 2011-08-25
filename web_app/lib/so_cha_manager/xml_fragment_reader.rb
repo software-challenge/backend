@@ -41,7 +41,6 @@ module SoChaManager
         builder = Builder::XmlMarkup.new(:target => output, :indent => 2)
         @calls.first.call(builder, [])
         @calls = []
-	logger.info "Output: #{output}"
         
         if @processor
           dom = Nokogiri::XML(output)
@@ -54,30 +53,26 @@ module SoChaManager
 
     def start_element name, attributes = []
       if @level >= EVENT_LEVEL
-      	logger.info "Start tag: #{name} with #{attributes.to_s}"
         @calls << Proc.new do |*args|
           xml, procs = *args
           hash = {}
-          0.upto(attributes.count/2 - 1) do |i|
-            k,v = *attributes.values_at(i*2, i*2+1)
+          0.upto(attributes.count - 1) do |i|
+            #k,v = *attributes.values_at(i*2, i*2+1)
+	    k,v = attributes[i]
             hash[k] = v
           end
           
           if procs.count == 0
             xml.tag!(name, hash)
-	    logger.info "Procs count 0, hash: #{hash.to_s}"
           elsif procs.count == 1 and procs.first.is_a? String
             xml.tag!(name, procs.first, hash)
-	    logger.info "Procs count 1, procs.first: #{procs.first.to_s}, hash: #{hash.to_s}"
           else
             xml.tag!(name, hash) do |xml|
               procs.each do |proc|
                 proc.call xml, []
               end
             end
-	    logger.info "None of that, hash: #{hash}"
           end
-	  logger.info "Xml: #{xml}"
         end
         
         @procs.push @calls

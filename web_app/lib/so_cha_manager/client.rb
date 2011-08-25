@@ -134,7 +134,6 @@ module SoChaManager
     
     def on_event(what, document)
       logger.info "Event '#{what}' received"
-      logger.info "Content: #{document.to_s}"
       
       case what
       when "error"
