@@ -53,8 +53,8 @@ module SoChaManager
     end
 
     def start_element name, attributes = []
-      logger.info "Start tag: #{name} with #{attributes.to_s}"
       if @level >= EVENT_LEVEL
+      	logger.info "Start tag: #{name} with #{attributes.to_s}"
         @calls << Proc.new do |*args|
           xml, procs = *args
           hash = {}
