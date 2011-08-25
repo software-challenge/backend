@@ -265,7 +265,7 @@
         <% if not current_user.nil? and (current_user.has_role? :administrator or not current_user.membership_for(slot.contestant).nil?) %>
           <td class="client_log">
             <% if not slot.client.nil? and slot.client.has_logs_for? :match => match, :round => slot.round %>
-              <%= link_to "Log", eurl_for([:send_log, @context, slot.cient.contestant, slot.client], :params => {:id => slot.client.id, :type => "match", :match_id => match.id, :round_id => slot.round.id}), :method => :post %><br>
+              <%= link_to "Log", eurl_for([:send_log, @context, slot.client.contestant, slot.client], :params => {:id => slot.client.id, :type => "match", :match_id => match.id, :round_id => slot.round.id}), :method => :post %><br>
             <% end %>
           </td>
         <% else %>
