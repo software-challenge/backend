@@ -494,6 +494,9 @@ de:
     events: "Ereignisse"
     tickets: 
       attachments: "Anhänge" 
+      new: "Neues Ticket erstellen"
+      index: "Ticket-Übersicht"
+      show: "Ticket anzeigen"
     schedule: "Terminplan"
     overview: "Übersicht"
     ranking: "Rangliste"
@@ -542,6 +545,7 @@ de:
        people_for_contestant: "Teammitglieder"
        people: "Personen"
        validate_code: "Zugang aktivieren"
+       ticket_settings: "Quassum Einstellungen"
     matches:
        index_for_contestant: "Begegnungen: Teamübersicht"
        matches: "Begegnungen"
