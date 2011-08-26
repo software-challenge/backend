@@ -12,7 +12,7 @@ if RAILS_ENV == "development"
 elsif RAILS_ENV == "production"
   QUASSUM[:domain] = "cau.quassum.com"
   QUASSUM[:project_slug] = "Software Challenge"
-  QUASSUM[:user] = {:username => "software-challenge@gfxpro.eu", :token => "MISSING", :password => "MISSING" }
+  QUASSUM[:user] = {:username => "software-challenge@gfxpro.eu", :token => "2589082f287306bfed43e0f047", :password => "246df7f9a" }
 end
 
 # setup settings for faye server

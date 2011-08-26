@@ -127,12 +127,10 @@
               <li><%= link_to t("views.forum"), "/forum", :target => "_blank" %></li>
               <li><%= link_to t("views.faq"), "/faq", :target => "_blank" %></li>
               <li><%= link_to Contest.human_name(:count => 2), contests_url(), :id => :select_contest %></li>
-              <% if false %>
-                <% if @current_user and Quassum::ApiUser.possible_api_user?(@current_user) %>
-                  <li><%= link_to t("views.tickets"), tickets_path %></li>
-                <% end %>
+              <% if @current_user and Quassum::ApiUser.possible_api_user?(@current_user) %>
+                <li><%= link_to t("views.tickets"), tickets_path %></li>
               <% end %>
-              
+            
               <div id="available_contests">
                  <ul>
                    <% if @season %>
