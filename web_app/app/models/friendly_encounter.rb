@@ -16,6 +16,8 @@ class FriendlyEncounter < ActiveRecord::Base
   named_scope :for_contests, :conditions => {:context_type => "Contest"}
   named_scope :for_seasons, :conditions => {:context_type => "Season"}
   named_scope :for_client, lambda {|c| {:joins => [:clients], :conditions => {:clients => {:id => c.id}}}}
+  named_scope :finished, :conditions => "played_at IS NOT NULL"
+  named_scope :unfinished, :conditions => "played_at is NULL"
 
   def date
     self.created_at
