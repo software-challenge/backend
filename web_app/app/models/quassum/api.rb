@@ -8,7 +8,7 @@ class Quassum::Api
       'authentication_token' => atts[:authentication_token],
       'language' => atts[:language] || nil,
       'time_zone' => atts[:time_zone] || nil,
-      'skip_welcome' => atts[:skip_welcome] || false,
+      'skip_welcome' => atts[:skip_welcome] || true,
       'suspended' => atts[:suspended] || false,
       'administrator' => atts[:administrator] || false,
       'wants_daily_briefing' => atts[:wants_daily_briefing] || false,

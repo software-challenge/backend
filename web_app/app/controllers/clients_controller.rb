@@ -1,4 +1,5 @@
 class ClientsController < ApplicationController
+  include ClientsHelper 
   # skip_before_filter :verify_authenticity_token
 
   before_filter :fetch_context, :load_contestant
