@@ -118,7 +118,7 @@ class Quassum::Api
   # --------- generic helpers ----------------------------------
   def self.generic_get(url)
     puts "requesting #{url}..."
-    http = Net::HTTP.new(QUASSUM[:domain], 3000)
+    http = Net::HTTP.new(QUASSUM[:domain], QUASSUM[:port])
     #http.set_debug_output $stderr
 
     resp = data = nil
@@ -131,7 +131,6 @@ class Quassum::Api
     http.start do |http|
        req = Net::HTTP::Get.new(url, headers)
        req.basic_auth QUASSUM[:user][:token], QUASSUM[:user][:password]
-
        resp, data = http.request(req)
     end
 
@@ -145,7 +144,7 @@ class Quassum::Api
   def self.generic_post(url, post_data_hash, api_user_token, api_user_password)
     puts post_data_hash.inspect
     puts "requesting #{url}..."
-    http = Net::HTTP.new(QUASSUM[:domain], 3000)
+    http = Net::HTTP.new(QUASSUM[:domain], QUASSUM[:port])
     #http.set_debug_output $stderr
 
     resp = data = nil
@@ -174,7 +173,7 @@ class Quassum::Api
 
   def self.generic_put(url, put_data_hash, api_user_token, api_user_password)
     puts "requesting #{url}..."
-    http = Net::HTTP.new(QUASSUM[:domain], 3000)
+    http = Net::HTTP.new(QUASSUM[:domain], QUASSUM[:port])
     #http.set_debug_output $stderr
 
     resp = data = nil
