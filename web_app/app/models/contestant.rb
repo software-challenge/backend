@@ -221,7 +221,7 @@ class Contestant < ActiveRecord::Base
   end
 
   # Find all requests that are open for all or exclusively for me
-  def find_open_requests(contest)
+  def find_open_requests(contest = nil)
     if contest
       contest.friendly_encounters.collect{|enc| (enc.open? or enc.ready?) and (enc.open_for.nil? or enc.open_for == self)}
     else
