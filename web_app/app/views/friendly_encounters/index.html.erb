@@ -55,7 +55,7 @@
 
   <% @context.contestants.each do |con| %>
     <% req = con.friendly_requests.sort_by(&:date).reverse %>
-    <% unless req.empty? %>
+    <% unless req.empty? or not @current_user.member_of?(con) %>
       <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
     <table style="width: 100%">
       <colgroup style="width: 60%"></colgroup>
@@ -66,7 +66,7 @@
         <th><%= t("views.status") %></th>
         <th><%= t("views.actions") %></th>
       </thead>
-      <% con.friendly_requests.sort_by(&:date).reverse.each do |enc| %>
+      <% req.each do |enc| %>
         <tr <%= "class=\"hidden\" style=\"display: none\"".html_safe! if enc.hidden_for?(con) %>>
           <td><%= encounter_open_for_str(enc) %></td>
           <td id="status_<%= enc.id %>">
@@ -108,7 +108,7 @@
   <h2><%= t("views.friendly_requests_from_others") %></h2>  
   <% @context.contestants.each do |con| %>
     <% requests = con.friendly_requests_from_others.sort_by(&:date).reverse %>
-    <% if not requests.empty? %>
+    <% unless requests.empty? or not @current_user.member_of?(con) %>
     <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
     <table style="width: 100%">
       <colgroup style="width: 60%"></colgroup>
