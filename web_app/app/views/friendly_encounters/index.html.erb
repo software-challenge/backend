@@ -54,7 +54,7 @@
   <% end %>
 
   <% @context.contestants.each do |con| %>
-    <% req = con.find_open_requests.sort_by(&:date).reverse %>
+    <% req = con.friendly_requests.sort_by(&:date).reverse %>
     <% unless req.empty? %>
       <h3><%= con.name %> <%= "(" + t("messages.no_more_friendly_matches_today").capitalize_first + ")" unless con.may_play_another_friendly_match_today? %></h3>
     <table style="width: 100%">
