@@ -18,7 +18,15 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 public class SelectMove extends Move {
 
 	private int[] selections = new int[MAX_SEGMENT_SIZE];
-	/**
+
+         /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor 
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+        public SelectMove() {
+        }
+
+        /**
 	 * Einen Auswahlzug anhand eines int-Arrays erzeugen,
 	 * bei dem selections[i] die Anzahl Bausteine mit der
 	 * Groesse i+1 angibt.
@@ -66,6 +74,7 @@ public class SelectMove extends Move {
 		}
 
 	}
+
 
 	@Override
 	public MoveType getMoveType() {

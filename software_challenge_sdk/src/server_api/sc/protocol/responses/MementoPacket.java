@@ -19,6 +19,9 @@ public final class MementoPacket implements IPerspectiveProvider
 		this.perspective = perspective;
 	}
 
+        /**
+         * might be needed by XStream
+         */
 	public MementoPacket()
 	{
 		// TODO Auto-generated constructor stub

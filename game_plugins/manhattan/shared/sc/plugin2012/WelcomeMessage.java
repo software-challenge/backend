@@ -13,6 +13,12 @@ public class WelcomeMessage {
 	
 	@XStreamAsAttribute
 	private String color;
+
+        /**
+         * might be needed by XStream
+         */
+        public WelcomeMessage() {
+        }
 	
 	public WelcomeMessage(PlayerColor c) {
 		color = c.toString().toLowerCase();

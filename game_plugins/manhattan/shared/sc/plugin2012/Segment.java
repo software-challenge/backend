@@ -25,7 +25,16 @@ public class Segment {
 
 	// anzahl aufbewahrter segmente dieser groesse
 	private int retained;
-	/**
+
+         /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor 
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+        public Segment() {
+            size = -1; // ob das funktioniert?
+            
+        }
+        /**
 	 * Erzeugt einen Bauteilvorrat mit {@code amount} Elementen der Groesse size
 	 * @param size Groesse der Bauteile
 	 * @param amount Anzahl der Bauteile

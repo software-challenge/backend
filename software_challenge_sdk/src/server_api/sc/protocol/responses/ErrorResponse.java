@@ -10,6 +10,12 @@ public class ErrorResponse
 
 	@XStreamAsAttribute
 	private String	message;
+        
+        /**
+         * might be needed by XStream
+         */
+        public ErrorResponse() {
+        }
 
 	public ErrorResponse(Object request, String message)
 	{

@@ -11,6 +11,13 @@ public class ObservationRequest implements ILobbyRequest
 	
 	@XStreamAsAttribute
 	private String	passphrase;
+        /**
+         * might be needed by XStream
+         */
+        public ObservationRequest() {
+        }
+
+
 
 	public ObservationRequest(String roomId, String passphrase)
 	{

@@ -20,6 +20,13 @@ public final class PlayerScore {
 	@XStreamAsAttribute
 	private ScoreCause cause;
 
+        /**
+         * might be needed by XStream
+         */
+        public PlayerScore() {
+              parts = null;
+        }
+
 	public PlayerScore(boolean winner) {
 		this(ScoreCause.REGULAR, 1);
 	}

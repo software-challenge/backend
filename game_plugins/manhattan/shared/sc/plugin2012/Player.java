@@ -35,7 +35,15 @@ public final class Player extends SimplePlayer {
 	@XStreamImplicit(itemFieldName = "card")
 	private final List<Card> cards;
 
-	/**
+         /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+        public Player() {
+            segments = null;
+            cards = null;
+        }
+        /**
 	 * einen neuen Spieler erstellen und ihm eine Spielerfarbe zuweisen
 	 * 
 	 * @param color

@@ -19,6 +19,15 @@ public class GameResult {
 	@XStreamImplicit(itemFieldName = "winner")
 	private List<IPlayer> winners;
 
+        /**
+         * might be needed by XStream
+         */
+        public GameResult() {
+            definition = null;
+            scores = null;
+            winners = null;
+        }
+
 	public GameResult(ScoreDefinition definition, List<PlayerScore> scores, List<IPlayer> winners) {
 		this.definition = definition;
 		this.scores = scores;

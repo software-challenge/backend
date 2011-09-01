@@ -20,6 +20,15 @@ public final class DebugHint implements Cloneable {
 	@XStreamAsAttribute
 	public final String content;
 
+
+         /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+        public DebugHint() {
+            content = null;
+        }
+
 	/**
 	 * einen neuen Hinweis der form key = value erstellen
 	 * 

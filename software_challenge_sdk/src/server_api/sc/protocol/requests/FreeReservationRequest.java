@@ -9,6 +9,12 @@ public class FreeReservationRequest implements ILobbyRequest
 	@XStreamAsAttribute
 	private String	reservation;
 
+        /**
+         * might be needed by XStream
+         */
+        public FreeReservationRequest() {
+        }
+
 	public FreeReservationRequest(String reservation)
 	{
 		this.reservation = reservation;
