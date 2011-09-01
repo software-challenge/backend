@@ -12,6 +12,12 @@ public class PauseGameRequest implements ILobbyRequest
 	@XStreamAsAttribute
 	public boolean	pause;
 
+        /**
+         * might be needed by XStream
+         */
+        public PauseGameRequest() {
+        }
+
 	public PauseGameRequest(String roomId, boolean pause)
 	{
 		this.roomId = roomId;

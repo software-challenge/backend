@@ -15,6 +15,12 @@ public class PrepareGameResponse
 	@XStreamAsAttribute
 	private String			roomId;
 
+        /**
+         * might be needed by XStream
+         */
+        public PrepareGameResponse() {
+        }
+
 	public PrepareGameResponse(String roomId, List<String> reservations)
 	{
 		this.roomId = roomId;

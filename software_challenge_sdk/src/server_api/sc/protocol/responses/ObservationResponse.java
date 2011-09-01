@@ -8,7 +8,14 @@ public class ObservationResponse
 {
 	@XStreamAsAttribute
 	private String	roomId;
-	
+
+        /**
+         * might be needed by XStream
+         */
+        public ObservationResponse() {
+        }
+
+
 	public ObservationResponse(String roomId)
 	{
 		this.roomId = roomId;

@@ -13,7 +13,15 @@ public class Card {
 
 	@XStreamAsAttribute
     public final int slot;
-    /**
+
+      /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+        public Card() {
+            this.slot = -1; // könnte Probleme geben
+        }
+     /**
      * Erzeugt eine Karte fuer eine Position
      * @param slot Index der Position
      */

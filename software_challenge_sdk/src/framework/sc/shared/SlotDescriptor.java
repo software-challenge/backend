@@ -17,6 +17,15 @@ public class SlotDescriptor {
 	@XStreamAsAttribute
 	private final boolean shouldBePaused;
 
+        /**
+         * might be needed by XStream
+         */
+        public SlotDescriptor() {
+            this.displayName = null;
+            this.canTimeout = false;
+            this.shouldBePaused = false;
+        }
+
 	public SlotDescriptor(String displayName) {
 		this(displayName, true, true);
 	}

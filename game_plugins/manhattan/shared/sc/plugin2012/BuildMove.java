@@ -20,7 +20,19 @@ public class BuildMove extends Move {
 	public final int slot;
 
 	public final int size;
-	/**
+
+
+         /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor 
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+         public BuildMove() {
+            this.city = -1;
+            this.slot = -1;
+            this.size = -1;
+         }
+
+        /**
 	 * Erzeugt einen neuen Bauzug mit Stadt, Position und Bauteilgroesse
 	 * @param city Index der Zielstadt
 	 * @param slot Index der Zielposition

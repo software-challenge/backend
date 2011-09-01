@@ -9,6 +9,12 @@ public class LeftGameEvent
 	@XStreamAsAttribute
 	private String	roomId;
 
+        /**
+         * might be needed by XStream
+         */
+        public LeftGameEvent() {
+        }
+
 	public LeftGameEvent(String id)
 	{
 		this.roomId = id;

@@ -9,6 +9,13 @@ public class GamePausedEvent
 {
 	private final IPlayer	nextPlayer;
 
+        /**
+         * might be needed by XStream
+         */
+        public GamePausedEvent() {
+            nextPlayer = null;
+        }
+
 	public GamePausedEvent(IPlayer nextPlayer)
 	{
 		this.nextPlayer = nextPlayer;

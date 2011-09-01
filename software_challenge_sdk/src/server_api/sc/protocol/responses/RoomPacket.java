@@ -13,6 +13,12 @@ public final class RoomPacket implements ILobbyRequest
 	
 	private Object	data;
 
+        /**
+         * might be needed by XStream
+         */
+        public RoomPacket() {
+        }
+
 	public RoomPacket(String roomId, Object o)
 	{
 		this.roomId = roomId;

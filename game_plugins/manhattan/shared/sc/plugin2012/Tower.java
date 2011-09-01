@@ -29,7 +29,16 @@ public class Tower {
 	// farbe des besitzers dieses turms
 	@XStreamAsAttribute
 	private PlayerColor owner = null;
-/**
+
+        /**
+         * XStream benötigt eventuell einen parameterlosen Konstruktor
+         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
+         */
+        public Tower() {
+            city = -1;
+            slot = -1;
+        }
+        /**
  * Ein neuer Turm an gegebener Position mit Hoehe 0
  * @param city Stadt des Turms
  * @param slot Position des Turms

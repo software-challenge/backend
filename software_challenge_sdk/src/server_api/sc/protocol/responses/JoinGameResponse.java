@@ -8,7 +8,13 @@ public class JoinGameResponse
 {
 	@XStreamAsAttribute
 	private String	roomId;
-	
+
+        /**
+         * might be needed by XStream
+         */
+        public JoinGameResponse() {
+        }
+
 	public JoinGameResponse(String id)
 	{
 		this.roomId = id;

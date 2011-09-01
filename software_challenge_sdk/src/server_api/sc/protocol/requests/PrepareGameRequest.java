@@ -23,6 +23,12 @@ public class PrepareGameRequest implements ILobbyRequest,
 	
 	private Object loadGameInfo = null;
 
+	/* trying to fix "no-args constructor" problem of XStream */	
+	public PrepareGameRequest(){
+		this.gameType = null;
+		this.slotDescriptors = null;
+	}
+
 	public PrepareGameRequest(String gameType, int playerCount)
 	{
 		this.gameType = gameType;
