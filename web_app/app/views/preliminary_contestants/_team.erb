@@ -1,0 +1,31 @@
+  <div class="group title">
+    Informationen
+  </div>
+  <div class="group content">
+    <div class="listing bold">
+      <ol>
+        <%= list_item_for(preliminary_contestant, :name) %>
+        <% show_to :administrator do %>
+          <%= list_item_for(preliminary_contestant.person, :email) %>
+          <%= list_item_for(preliminary_contestant.person, :phone_number) if preliminary_contestant.person.phone_number.present? %>
+        <% end %>
+        <%= list_item("Erstellt von", preliminary_contestant.person.name) %>
+        <%= list_item("Erstellt am", l(preliminary_contestant.created_at)) %>
+        <%= list_item("Zugehörige Schule", link_to(preliminary_contestant.school.name, [preliminary_contestant.season,preliminary_contestant.school])) %>
+        <%= list_item_for(preliminary_contestant.school, :location)%>
+        <%= list_item_for(preliminary_contestant.school, :state) %>
+        <%= list_item "Teilnahmewahrscheinlichkeit", preliminary_contestant.participation_probability %>
+        <% if preliminary_contestant.season.participation_confirmation_allowed? %>
+          <% if preliminary_contestant.participation_confirmed %>
+            <%= list_item "Verbindliche Teilnahme", image_tag("state/ok.png") %>
+          <% else %>
+            <% if @current_user and @current_user.has_role?(:creator, preliminary_contestant) or administrator? %>
+              <%= list_item "Verbindliche Teilnahme", image_tag("state/warning.png")+link_to("(jetzt verbindlich anmelden)", [:confirm_participation, preliminary_contestant.season, preliminary_contestant], :method => :post, :confirm => "Wollen Sie das Team #{preliminary_contestant.name} der Schule #{preliminary_contestant.school.name} wirklich verbindlich anmelden?") %>
+            <% else %>
+              <%= list_item "Verbindliche Teilnahme", image_tag("state/warning.png") %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </ol>
+    </div>
+  </div>
