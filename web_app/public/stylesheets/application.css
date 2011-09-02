@@ -249,29 +249,26 @@ img {
 }
 
 #newsTicker {
-  width: 40%;
+  width: 50%;
   height: 100%;
   margin-top: 5px;
   margin-bottom: 5px;
 }
 
-#newsTicker div span {
-  line-height: 15px;
+#newsTicker div div {
   font-size: 12px;
 }
 
-#newsTicker div span a {
+#newsTicker div div a {
   text-decoration: none;
   color: #4183C4;
-
 }
 
-
-#newsTicker div span a:hover {
+#newsTicker div div a:hover {
  font-weight: bold;
 }
 
-#newsTicker div span a:visited {
+#newsTicker div div a:visited {
  color: #4183C4;
 }
 
@@ -319,7 +316,7 @@ h1 a {
   text-align: center;
   height: 75px;
   line-height: 75px;
-  width: 150px;
+  width: 115px;
   display: inline-block;
   background-image: url('/images/logo_small.png');
   background-repeat: no-repeat;

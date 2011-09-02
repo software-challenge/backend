@@ -18,11 +18,11 @@
     </p> 
  
  <div id="people", class="owner_group">
-    Zu befragene Benutzer auswählen: <div id="sel_people"><%= select_tag "select_people[]", options_for_select(Person.visible.collect{|p| ["#{p.name} - #{p.email}",p.id]}), {:multiple => :true} %></div>
+     Zu befragene Benutzer auswählen: <div id="sel_people"><%= select_tag "select_people[]", options_for_select(Person.visible.collect{|p| ["#{p.name} - #{p.email}",p.id]}.sort{|a,b| a[0] <=> b[0]}), {:multiple => :true} %></div>
   </div>
  
  <div id="contestants", class="owner_group", style="display:none">
-    Zu befragene Teams auswählen: <div id="sel_contestants"><%= select_tag "select_contestants[]", options_for_select(@context.contestants.without_testers.visible.collect{|c| [c.name,c.id]}), {:multiple => true} %></div>
+    Zu befragene Teams auswählen: <div id="sel_contestants"><%= select_tag "select_contestants[]", options_for_select(@context.contestants.without_testers.visible.collect{|c| [c.name,c.id]}.sort{|a,b| a[0] <=> b[0]}), {:multiple => true} %></div>
     <b>Umfrage für:</b>
     <p>Lehrer: <%= check_box_tag "allow_teacher", 1,  @token.allow_teacher %></p>
     <p>Schüler: <%= check_box_tag "allow_pupil", 1,  @token.allow_pupil %></p>
@@ -54,17 +54,17 @@
 </div>
 
 <p style="margin-top: 25px; width: 80%;">
- <b>Manuelle E-Mail Einstellungen:</b> <%= check_box_tag "use_custom_email_settings" %></b>
+ <b>Manuelle E-Mail-Einstellungen:</b> <%= check_box_tag "use_custom_email_settings" %></b>
   <% possible_templates = Dir.open(File.join(RAILS_ROOT,"app","views","event_mailer")).entries %>
   <% possible_templates.delete("."); possible_templates.delete("..") %>
   <% possible_templates = [""] + possible_templates.select{|t| t.start_with? "custom_survey_invite_notification_"}.map{|e| e.gsub("custom_survey_invite_notification_", "").split(".")[0]} %>
   <div id="custom_email_settings">
-    <b>E-Mail Template: </b><%= select_tag "custom_template", options_for_select(possible_templates), {:prompt => "Datei auswählen"} %> <a id="preview_template" href="#">Vorschau</a><br>
-    <b>E-Mail Titel: </b><%= text_field_tag "custom_email_title", "" %>
+    <b>E-Mail-Template: </b><%= select_tag "custom_template", options_for_select(possible_templates), {:prompt => "Datei auswählen"} %> <a id="preview_template" href="#">Vorschau</a><br>
+    <b>E-Mail-Titel: </b><%= text_field_tag "custom_email_title", "" %>
   </div>
 </p>
 
-<p style="margin-top: 25px; width: 80%;"><b>E-Mail Benachrichtigungen:</b><%= check_box_tag "send_email_notifications", "1", false %> <br>
+<p style="margin-top: 25px; width: 80%;"><b>E-Mail-Benachrichtigungen:</b><%= check_box_tag "send_email_notifications", "1", false %> <br>
   Wenn diese Option ausgewählt ist, werden beim Erstellen der Tokens an die entsprechenden Betroffenen Benachrichtigungen versendet.<br>
 </p>
 

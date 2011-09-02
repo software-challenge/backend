@@ -19,7 +19,7 @@
     <tbody>
       <% preliminary_contestants.each do |prelim| %>
        <tr class="preliminary_contestant <%= prelim.school.state.downcase %>">
-        <td><%= prelim.name %></td>
+         <td><span class="tooltipped"><%= prelim.name %></span><% show_to :administrator do %><div class="tooltip" style="margin-top:-10px; margin-left: 200px; width: 600px"><%= render :partial => 'team', :locals => {:preliminary_contestant => prelim} %></div><% end %></td>
         <td><%= prelim.school.name %></td>
         <td><%= prelim.school.location %></td>
         <td><%= prelim.school.state %></td>
@@ -58,7 +58,10 @@
           <td class="middle"><%= show_probability prelim.participation_probability %></td>
         <% end %>
         <td style="text-align:center"><%= link_to image_tag("actions/show.png"), season_preliminary_contestant_url(@season,prelim) %></td>
-       </tr>
+      </tr>
       <% end %>
       </tbody>
- </table> 
+  </table>
+  <% show_to :administrator do %>  
+    <div style="height: 400px;"></div>
+  <% end %>

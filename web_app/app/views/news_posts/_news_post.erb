@@ -1,7 +1,8 @@
 <% news_post = news_post || @news_post %>
+<% tooltip ||= false %>
 <span style="font-weight: bold; font-size: 14px;"><%= (action_name != "show") ? link_to(news_post.title, [news_post.context, news_post]) : news_post.title %></span>
 <% show_to :administrator do%>
-  <% unless news_post.published? %><span style="float:right; font-weight: bold;"> unveröffentlicht </span><% end %>
+  <% unless news_post.published? or tooltip%><span style="float:right; font-weight: bold;"> unveröffentlicht </span><% end %>
 <% end %>
 <br>
 <i> vom <%= l news_post.created_at.to_date %>, zuletzt bearbeitet <%= l news_post.updated_at.to_date %></i>

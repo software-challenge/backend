@@ -105,12 +105,13 @@
             <% end %> 
           </td>
         <% end %>
-        <td>
+        <td class="middle">
           <% if may_see_details? :contestant => contestant -%>
-          <%= link_to image_tag('actions/show.png'), [@context, contestant] %>
+            <%= link_to image_tag('actions/show.png'), [@context, contestant] %>
           <% end -%>
-        </td>
-        <td>
+          <% if administrator? or @current_user.has_role?(:tutor, contestant) or  @current_user.has_role?(:helper, contestant) %>
+            <%= link_to image_tag("actions/protocol.png", :title => "Protokoll ansehen" ), [:report, @context, contestant]%>
+          <% end %>
           <% show_to :administrator do -%>
             <% if (@context.is_a?(Contest) ? !@context.ready? : @context.contests.any?{|c| c.ready?}) %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete"), :class=> "tooltipped" %>

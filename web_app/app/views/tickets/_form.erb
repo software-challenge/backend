@@ -1,7 +1,7 @@
 <% update = !!ticket.id %>
-<% current_context = ticket.contexts.first.context if update%>
-<% possible_contexts = @current_user.contestants.map{|c| ["#{c.season ? "Saison: "+c.season.name : c.contests.first.name} - #{c.name}", "Contestant:#{c.id}"]} %>
+<% possible_contexts = @current_user.contestants.visible.scoped(:order => "created_at DESC").map{|c| ["#{c.season ? "Saison: "+c.season.name : c.contests.first.name} - #{c.name}", "Contestant:#{c.id}"]} %>
 <% if update %>
+  <% current_context = ticket.contexts.first.context %>
   <% possible_assignees = current_context.possible_assignees %>
 <% else %>
   <% possible_assignees = @current_user.contestants.first.possible_assignees %>
@@ -17,17 +17,23 @@
 
   <div id="ticket_head">
     <span class="title"><%= ticket.title ? ticket.title : "Ticket verfassen" %></span>
-    <div id="form_actions"style="display:none; float:right">
+    <div id="spinner">
+      <%= image_tag "ui/spinner.gif" %>
+    </div>
+    <div id="form_actions">
       <% if update %>
-        <% link_to "", :class => "update" do %>
+        <% link_to "", :id => "ticket_update", :class => "update" do %>
           <%= image_tag("actions/add.png") %> Änderungen speichern
         <% end %>
-        <span> oder <a class="cancel" href="">abbrechen</a></span>
+        <span id="ticket_cancel_edit"> oder <a class="cancel" href="">abbrechen</a></span>
+        <% link_to "", :id => "ticket_edit", :class => "edit"  do %>
+          <%= image_tag("actions/edit_lrg.png") %> Ticket bearbeiten
+        <% end %>
       <% else %>
-         <% link_to "", :class => "update" do %>
+        <% link_to "", :id => "ticket_update", :class => "update" do %>
           <%= image_tag("actions/add.png") %> Ticket erstellen
         <% end %>
-        <span> oder <a class="cancel" href="/tickets/">abbrechen</a></span>
+        <span id="ticket_cancel_edit"> oder <a class="cancel" href="/tickets/">abbrechen</a></span>
       <% end %>
     </div>
   </div>
@@ -51,13 +57,21 @@
         </td>
       </tr>
         <tr>
-          <td class="form_key tooltipped" title="In diesem Zusammenhang wird das Ticket verarbeitet, z.B. das Team bei welchem das Problem auftrat">Kontext</td>
+          <td class="form_key">Betroffenes Team</td>
           <% if not update %>
             <td class="form_value" colspan="3">
-              <%= select_tag "context", options_for_select(possible_contexts, :selected => current_context) %>
+              <% if possible_contexts.length > 1 %> 
+                <%= select_tag "context", options_for_select(possible_contexts, :selected => guess_context(possible_contexts)) %>
+              <% elsif possible_contexts.length == 1 %>
+                <% hidden_field_tag "context", possible_contexts.first.second %>
+                <%= possible_contexts.first.first %>
+              <% end %>
             </td>
           <% else %>
             <td class="form_value" colspan="3">
+              <%= ("#{current_context.parent ? current_context.parent.name+" / " : ""}" + current_context.name) %>
+            </td>
+            <td class="form_show" colspan="3">
               <%= ("#{current_context.parent ? current_context.parent.name+" / " : ""}" + current_context.name) %>
             </td>
           <% end %>
@@ -65,7 +79,13 @@
       <tr>
         <td class="form_key tooltipped" title="Die Person welcher die Anfrage zur Bearbeitung zugewiesen wird">Verantwortlicher</td>
         <td class="form_value">
-          <%= render :partial => 'select_assignee', :locals => {:assignees => possible_assignees, :current_assignee => current_assignee} %>
+          <% if false # disabled %>
+            <%= render :partial => 'select_assignee', :locals => {:assignees => possible_assignees, :current_assignee => current_assignee} %>
+          <% elsif update %>
+            <%= ticket.assignee_name || "Niemand" %>
+          <% else %>
+            Mein Betreuer
+          <% end %>
         <% if update %>  
           <td class="form_show">
             <%= ticket.assignee_name || "Niemand" %>
@@ -123,6 +143,8 @@
 <% javascript_tag do %>
     $(function() {  
       $("#ticket_head .update").bind("click", function(e){
+        $("#form_actions").hide();
+        $("#spinner").show();
         $.ajax({
         url: "<%= ticket.id ? "/tickets/#{ticket.id}" : "/tickets" %>",
           type: "<%= ticket.id ? "PUT" : "POST" %>",
@@ -148,7 +170,9 @@
               eval(resp);
               clearFlash()
               addFlash("notice", "Ticket wurde erfolgreich bearbeitet.")
-              $("html,body").animate({ scrollTop: $("#flash").offset().top}, 1000)   
+              $("html,body").animate({ scrollTop: $("#flash").offset().top}, 1000)  
+              $("#spinner").hide()
+              $("#form_actions").show()
             <% else %>
               location.reload()
             <% end %>
@@ -164,12 +188,14 @@
               addFlash("error", a[i])
             }
             $("html,body").animate({ scrollTop: $("#flash").offset().top}, 1000)   
+            $("#spinner").hide()
+            $("#form_actions").show()
           },
         });
         e.preventDefault()
       })
 
-      <% unless update %>
+      <% unless true or update %>
       $("#context").bind("change", function(){
         $.ajax({
           url: "<%= url_for [:possible_assignees, :tickets] %>",
@@ -188,17 +214,21 @@
       $(".form_value").hide()
 
       <% if update %>
+        $("#ticket_update").hide();
         $("#ticket_head .cancel").bind("click", function(e){
           $(".form_value").hide()
-          $("#form_actions").hide()
+          $("#ticket_update, #ticket_cancel_edit").hide()
           $(".form_show").show()
+          $("#ticket_edit").show()
           $("#flash").hide()
-          e.preventDefault()
+          e.preventDefault();
         })
-        $("td").bind("click", function(){
+        $("td, #ticket_edit").bind("click", function(e){
           $(".form_show").hide()
           $(".form_value").show()
-          $("#form_actions").show()
+          $("#ticket_update, #ticket_cancel_edit").show()
+          $("#ticket_edit").hide()
+          e.preventDefault();
         })
       <% else %>
         $(".form_value").show()
