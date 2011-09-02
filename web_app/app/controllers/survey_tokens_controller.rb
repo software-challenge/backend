@@ -48,6 +48,7 @@ class SurveyTokensController < ApplicationController
         @prelims << ["#{school.name} - Keine Teams!", "school|#{school.id}"]
       end
      end
+     @prelims.sort!{|a,b| a[0] <=> b[0]} unless @prelims.empty?
    elsif @context.is_a? Contest
      @prelims = []
    end

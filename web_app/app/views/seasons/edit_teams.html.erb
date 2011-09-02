@@ -1,7 +1,7 @@
 <%= stylesheet_link_tag "edit_season_teams" %>
 <h1>
   <%= link_to @season.name, @season %> / 
-  Teams verwalten
+  Teams übernehmen
 </h1>
 
 <% tabnav :season do %>
@@ -17,7 +17,7 @@
           <%= select_tag "preliminary_contestants", options_for_select(@preliminary_contestants.collect{|p| ["#{p.school.name} - #{p.name}",p.id]}.sort{|a,b| a[0] <=> b[0]}), :size => 50, :style => "width: 300px; height: 400px;" %>
          </td>
          <td id="team_partial">
-            <%= render :partial => "contestant_form", :locals => {:prelim => PreliminaryContestant.all.first} %>  
+           <div style="width: 300px; text-align: center; font-size: 20px;"><b>Bitte ein Team auswählen!</b></div> 
         </td>
          <td>
          <%= select_tag "contestants", options_for_select(@contestants.collect{|c| [c.name,c.id]}.sort{|a,b| a[0] <=> b[0]}), :size => 50, :style => "width: 300px; height: 400px;"  %>

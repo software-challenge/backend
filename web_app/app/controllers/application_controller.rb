@@ -19,8 +19,7 @@ class ApplicationController < ActionController::Base
   append_before_filter :generate_page_title
   append_before_filter :set_mailer_options
 
-  after_filter :save_last_visited_contest
-
+  after_filter :save_last_visited
 
   attr_accessor :current_user
   hide_action :current_user
@@ -197,8 +196,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def save_last_visited_contest
+  def save_last_visited
      session[:last_visited_contest] = @contest.id if @contest
+     if @current_user
+       session[:last_visited_contestant_with_role] = @contestant.id if @contestant and @current_user.has_role_for? @contestant
+     end
   end
  
   def fetch_fake_test_suite

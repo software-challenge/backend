@@ -7,10 +7,10 @@ Sie haben noch keinen Computerspieler aktiviert, der an diesem Spieltag teilnehm
 <%= @url %> ,
 laden Sie dort einen Computerspieler hoch, testen und aktivieren Sie ihn.
 
-Wenn Sie zu Beginn des Spieltages noch keinen Computerspieler aktiviert haben, wird ihr Team das Spiel an diesem Spieltag verlieren.
+Wenn Sie zu Beginn des Spieltages noch keinen Computerspieler aktiviert haben, wird Ihr Team das Spiel an diesem Spieltag verlieren.
 <% elsif not @contestant.current_client.tested? %>
 Der Computerspieler, den Sie zur Zeit aktiviert haben, wurde noch nicht getestet.
-Sie können so zwar am Spieltag teilnehmen, um möglichst sicherzugehen, dass ihr Computerspieler auch spielfähig ist, sollten Sie diesen jedoch testen. Begeben Sie sich dazu in die Computerspieler-Übersicht ihres Teams auf
+Sie können so zwar am Spieltag teilnehmen, um möglichst sicherzugehen, dass ihr Computerspieler auch spielfähig ist, sollten Sie diesen jedoch testen. Begeben Sie sich dazu in die Computerspieler-Übersicht Ihres Teams auf
 <%= @url %>
 und testen Sie den aktiven Computerspieler. Sollte der Test fehlschlagen, sollten Sie versuchen, den Fehler zu beheben und bis zum Beginn des Spieltages einen neuen Computerspieler hochzuladen, zu testen und zu aktivieren.
 <% else %>

@@ -81,15 +81,15 @@
               </span>
             <div id="news-content">
               <% @news_posts.each do |post| %> 
-               <span id="post_<%= post.id %>" class="news_post">
+               <div style="display:inline-block;" id="post_<%= post.id %>" class="news_post">
                 <%= l post.created_at.to_date %> - 
                 <% link_to [post.context, post] do %>
-                  <% max_len = post.was_updated? ? 25 : 40 %>
+                  <% max_len = post.was_updated? ? 45 : 60 %>
                   <%= post.title.length > max_len ? "#{post.title[0..(max_len-3)].strip}..." : post.title %> <% if post.was_updated? %> <b>Update</b> <% end %>
                 <% end %>
-               </span>
+               </div>
                <div class="tooltip news_tooltip_padding">
-                 <%= render :partial => 'news_posts/news_post', :locals => {:news_post => post} %>
+                 <%= render :partial => 'news_posts/news_post', :locals => {:news_post => post, :tooltip => true} %>
                </div>
                <br>
               <% end %>
@@ -176,8 +176,18 @@
         </div>
       </div>
       <div id="content">
-        <% unless flash.empty? %>
-          <div id="flash" style="margin: 0 -10px;">
+          <div id="flash" style="margin: 0 -10px;"> 
+            <div class="ui-widget" id="js_required_msg">
+              <div class="ui-state-highlight ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
+                <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+                <strong><%= t "views.clue" %>:</strong> <%= t "messages.js_required" %></p>
+              </div>
+              <% javascript_tag do %>
+                $("#js_required_msg").remove()
+              <% end %>
+            </div>
+          
+          <% unless flash.empty? %>
             <% if flash[:notice] %>
               <div class="ui-widget">
                 <div class="ui-state-highlight ui-corner-all" style="margin: 0.6em 0; padding: 0 .7em;">
@@ -194,9 +204,8 @@
                 </div>
               </div>
             <% end %>
-          </div>
-        <% end %>
-        
+          <% end %>
+        </div>
         <%= yield %>
 
         <% javascript_tag do %>

@@ -25,6 +25,8 @@ class TicketsController < ApplicationController
   # if the current_user has no api user, create one!
   before_filter :create_api_user, :except => [:possible_assignees]
 
+  helper_method :guess_context
+
   def index
     @tickets = Quassum::Ticket.all_for_person(@current_user).sort{|a,b| a.priority <=> b.priority}
   end
@@ -64,8 +66,12 @@ class TicketsController < ApplicationController
   end
 
   def create
-    @ticket = Quassum::Ticket.create(params[:ticket])
     context_type, context_id = params[:context].split(":")
+    if @possible_contexts[context_type] and @possible_contexts[context_type].include?(context_id.to_i)
+      assignee = Contestant.find_by_id(context_id).people.tutors_and_helpers.first
+      assignee = nil if assignee.nil? or assignee.api_user.nil? # check if the tutor or helper has an api user
+    end
+    @ticket = Quassum::Ticket.create(params[:ticket].merge({:assignee => "Person:#{(assignee||@current_user).id}"}))
     if @possible_contexts[context_type] and @possible_contexts[context_type].include?(context_id.to_i)
       @context = Quassum::TicketContext.create(:context_id => context_id, :context_type => context_type, :ticket_id => @ticket.id) 
     else
@@ -144,10 +150,10 @@ class TicketsController < ApplicationController
     context_type, context_id = params[:context].split(":")
     allowed_types = ["Contestant"]
     if allowed_types.include?(context_type)
-      context = eval(context_type).find_by_id(context_id)
+      @context = eval(context_type).find_by_id(context_id)
     end
-    if context and not @current_user.roles.for(context).empty?
-      render :partial => "select_assignee", :locals => {:assignees => possible_assignees_for(context)}
+    if @context and not @current_user.roles.for(context).empty?
+      render :partial => "select_assignee", :locals => {:assignees => possible_assignees_for(@context)}
     else
       render :text => "Could not find Context", :code => 500
     end
@@ -164,7 +170,7 @@ protected
   end
   def fetch_possible_contexts
     @possible_contexts = {}
-    @possible_contexts['Contestant'] = @current_user.contestants.visible.select{|c| @current_user.has_role?("pupil",c) or @current_user.has_role?("teacher",c)}.map{|c| c.id}
+    @possible_contexts['Contestant'] = @current_user.contestants.visible.scoped(:order => "created_at DESC").map{|c| c.id}
   end
 
   def allowed_for_ticket?
@@ -194,5 +200,14 @@ protected
 
   def set_host_url
     QUASSUM[:webapp] = request.host_with_port
+  end
+
+  def guess_context(possible_contexts)
+    last_contestant = session[:last_visited_contestant_with_role]
+    guess = possible_contexts.first
+    if last_contestant 
+      guess = possible_contexts.find{|c| c[1] == "Contestant:#{last_contestant}"}
+    end
+    guess.second
   end
 end

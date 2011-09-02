@@ -11,7 +11,7 @@ render_tabnav :person, :html => { :class => "tabs_tabnav" } do
     t.highlights_on :controller => "people", :action => "edit"
   end
   add_tab do |t|
-    t.named "E-Mail Benachrichtigungen"
+    t.named "E-Mail-Benachrichtigungen"
     if @contestant.nil?
       t.links_to url_for [:edit, @context, @person, :email_event]
     else

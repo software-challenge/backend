@@ -36,6 +36,7 @@
 
     $("#create").bind("click",function(e){
       $(this).disable()
+      $("#abort_comment").hide()
       $.ajax({
       url: "<%= add_comment_ticket_url(:id => ticket.id, :format => :js) %>",
         type: "POST",
@@ -50,6 +51,7 @@
             $("#add_comment").hide()
             $("#show_form").show()
             $("#create").enable()
+            $("#abort_comment").show()
           }
         }
         });

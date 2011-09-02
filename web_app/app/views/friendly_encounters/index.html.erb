@@ -13,46 +13,46 @@
     <a id="show_hidden" href=""><%= t("actions.show_hidden") %></a><br>
   <% end %>
   <h2><%= t("views.open_friendly_matches") %></h2>
-  
-  <div id="new_friendly_encounter" style="display: none">
-    <% form_for :encounter, :method => :post do |f| %>
-      <fieldset style="text-align: center">
-        <legend><%= t("actions.new_friendly_match") %></legend>
-        <%= f.collection_select :con1, @context.is_a?(Season) ? @contestants.visible.without_testers.for_season(@context) : @contestants.visible.without_testers.for_contest(@context), :id, :name %>
-        fordert heraus:
-        <%= f.collection_select :con2, @context.contestants.visible.without_testers, :id, :name, :prompt => t("views.anyone_who_wants") %>
-        <br><br>
-        <%= submit_tag t("actions.create") %>
-      </fieldset>
-    <% end %>
-    <br>
-  </div>
-  <div class="actions" style="float: none">
-    <a href="#" id="show_new_encounter"><%= t("actions.new_friendly_match") %></a>
-  </div>
-  <% javascript_tag do %>
-    $(function() {
-      $("a#show_new_encounter").bind('click', function() {
-        $("a#show_new_encounter").hide();
-        $("div#new_friendly_encounter").show(250);
-        return false;
+  <% unless (@context.is_a?(Season) ? @contestants.visible.without_testers.for_season(@context) : @contestants.visible.without_testers.for_contest(@context)).empty? %>
+    <div id="new_friendly_encounter" style="display: none">
+      <% form_for :encounter, :method => :post do |f| %>
+        <fieldset style="text-align: center">
+          <legend><%= t("actions.new_friendly_match") %></legend>
+          <%= f.collection_select :con1, @context.is_a?(Season) ? @contestants.visible.without_testers.for_season(@context) : @contestants.visible.without_testers.for_contest(@context), :id, :name %>
+          fordert heraus:
+          <%= f.collection_select :con2, @context.contestants.visible.without_testers, :id, :name, :prompt => t("views.anyone_who_wants") %>
+          <br><br>
+          <%= submit_tag t("actions.create") %>
+        </fieldset>
+      <% end %>
+      <br>
+    </div>
+    <div class="actions" style="float: none">
+      <a href="#" id="show_new_encounter"><%= t("actions.new_friendly_match") %></a>
+    </div>
+    <% javascript_tag do %>
+      $(function() {
+        $("a#show_new_encounter").bind('click', function() {
+          $("a#show_new_encounter").hide();
+          $("div#new_friendly_encounter").show(250);
+          return false;
+        })
       })
-    })
 
-    function get_state(id, reverse, interval) {
-      $.get("<%= url_for [@context , :friendly_encounters] %>/" + id + "/status",
-        "with_result=true&reverse=" + reverse + "&spinner=true",
-        function(returned_data) {
-          var rev = (reverse ? "_r" : "")
-          $("td#status_" + id + rev).html(returned_data)
-          if ($("td#status_" + id + rev + " input.state").val() != "running") {
-            clearInterval(interval);
+      function get_state(id, reverse, interval) {
+        $.get("<%= url_for [@context , :friendly_encounters] %>/" + id + "/status",
+          "with_result=true&reverse=" + reverse + "&spinner=true",
+          function(returned_data) {
+            var rev = (reverse ? "_r" : "")
+            $("td#status_" + id + rev).html(returned_data)
+            if ($("td#status_" + id + rev + " input.state").val() != "running") {
+              clearInterval(interval);
+            }
           }
-        }
-      )
-    } 
+        )
+      } 
+    <% end %>
   <% end %>
-
   <% @context.contestants.each do |con| %>
     <% req = con.friendly_requests.sort_by(&:date).reverse %>
     <% unless req.empty? or not @current_user.member_of?(con) %>

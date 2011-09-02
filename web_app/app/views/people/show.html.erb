@@ -13,22 +13,28 @@
         </p>
 
         <% unless @person.teams.visible.empty? %>
-          <p>
-            <b><%= Contestant.human_name(:count => 2)%>:</b>
-            <table>
-              <% @person.teams.visible.each do |team| %>
-                <tr>
-                  <td>
-                    <%= team.name %> (<%= t "views.as" %> <%= @person.membership_for(team).role %>)
-                  </td>
-                </tr>
+        <p>
+          <b><%= Contestant.human_name(:count => 2)%>:</b><br>
+              <div id="teams" style="margin-left:5px;">
+                <% @person.teams.visible.group_by{|c| c.parent}.each do |parent,teams| %>
+                  <div class="group" style="margin-top:3px">
+                    <b><%= parent.name %></b>
+                    <table>
+                      <% for team in teams %>
+                        <tr style="line-height: 1.2em;">
+                          <td>
+                            <%= team.name %> (<%= t "views.as" %> <%= @person.membership_for(team).role %>)
+                          </td>
+                        </tr>
+                      <% end %>
+                    </table>
+                  </div>
               <% end %>
-            </table>
+            </div>
           </p>
         <%  end %>
 
         <br>
-
         <p>
           <b><%= t "views.member_since" %>:</b>
           <%= l(@person.created_at, :format => :long) %>
