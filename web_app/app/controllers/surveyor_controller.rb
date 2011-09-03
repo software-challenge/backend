@@ -111,6 +111,7 @@ class SurveyorController < ApplicationController
   end
 
   def fetch_survey
+    redirect_to root_url unless @survey_token
     @survey = @survey_token.survey
   end
 
