@@ -92,13 +92,14 @@ end
 class SurveyorController < ApplicationController
   helper 'surveyor' 
   I18n.locale = 'de'  
+  
+  before_filter :fetch_context, :fetch_survey, :fetch_response_set, :only => [:edit,:update,:show,:new]
+  
   access_control do 
     allow :administrator
     allow logged_in, :if => :allowed?
   end
   
-  before_filter :fetch_context, :fetch_survey, :fetch_response_set, :only => [:edit,:update,:show,:new]
-
   include Surveyor::SurveyorControllerMethods
   include SurveyorControllerCustomMethods
 
