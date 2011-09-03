@@ -93,7 +93,7 @@ class PreliminaryContestantsController < ApplicationController
           token.finished_redirect_url = surveys_season_school_url(@season,@school)
           token.save!
           if @season.use_custom_recall_settings and @season.validation_survey_template
-            EventMailer.deliver_custom_survey_invite_notification(@current_user, @season, @current_user.generate_login_token, [token], @season.validation_survey_template)
+            EventMailer.deliver_survey_invite_notification(@current_user, @season, @current_user.generate_login_token, [token], @season.validation_survey_template)
           else
             tokens << token
           end

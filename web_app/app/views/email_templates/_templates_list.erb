@@ -19,7 +19,7 @@
         </td>
         <td>
           <% if t.description and t.description.length > 40 %>
-            <span class="tooltipped"><%= t.description[0..37]%>..</span><div class="tooltip"><%= t.description %></div>
+            <span class="tooltipped"><%= t.description[0..37]%>..</span><div class="tooltip" style="width: 30%;"><%= t.description %></div>
           <% else %>
             <%= t.description %>
           <% end %>
