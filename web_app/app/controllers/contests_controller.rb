@@ -9,7 +9,7 @@ class ContestsController < ApplicationController
     end
 
     actions :trial_contest, :register_for_trial_contest do
-      allow all
+      allow logged_in
     end
 
   end

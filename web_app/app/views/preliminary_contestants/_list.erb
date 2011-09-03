@@ -9,7 +9,7 @@
         <th><%= School.human_attribute_name :state %></th>
         <% if show_surveys %><th class="middle">Umfragen &nbsp </th><% end %>
         <% if @season.participation_confirmation_allowed? %>
-          <th class="middle">Verbindliche Anmeldung</th>
+          <th class="middle">Teilnahme</th>
         <% else %>
           <th class="middle">Teilnahmewahrscheinlichkeit</th>
         <% end %>
@@ -43,7 +43,11 @@
         <% if @season.participation_confirmation_allowed? %>
           <td class="middle">
             <% if prelim.participation_confirmed %>
-              <%= image_tag "state/ok.png" %>
+              <% if prelim.contestant %>
+                <%= image_tag "state/ok.png", :title => "Verbindlich angemeldet und erfolgreich übernommen." %>
+              <% else %>
+                <%= image_tag "state/attention.png", :title => "Verbindlich angemeldet, wartet auf Bearbeitung durch einen Administrator." %>
+              <% end %>
             <% else %>
               <% if @current_user and @current_user.has_role?(:creator, prelim) or administrator? %>
                 <span title="Jetzt verbindlich anmelden">
