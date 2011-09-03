@@ -77,6 +77,12 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
   end
 
     add_tab do |t|
+      t.named "E-Mail-Templates"
+      t.links_to email_templates_path
+      t.highlights_on :controller => "email_templates"
+    end
+
+    add_tab do |t|
       t.named "Umfrage-Ergebnisse"
       t.links_to survey_results_url
       t.highlights_on :controller => "survey_results"

@@ -1,0 +1,26 @@
+<% semantic_form_for template.becomes(EmailTemplate) do |f| %>
+  <% f.inputs do %>
+    <%= f.input :title, :hint => t("views.email_template.title_hint"), :input_html => {:size => 50} %>
+    <li class="string">
+      <label for="email_template_type"> 
+        Template-Typ
+      </label>
+      <%= select_tag "email_template[type]", options_for_select(EmailTemplate.allowed_types.map{|e| [e.human_name,e.to_s]},template.class.to_s) %>
+      <p class="inline-hints"><%= t("views.email_template.type_hint") %></p>
+    </li>
+    <%= f.input :description, :input_html => {:rows => 10, :style => "width:60%;"} %>
+    <%= f.input :email_title, :input_html => {:size => 50} %>
+    <%= f.input :template, :input_html => {:rows => 15, :style => "width:60%;"} %>
+  <% end %>
+  <%= f.buttons %>
+<% end %>
+<% unless template.errors.full_messages.empty? %>
+ <% javascript_tag do %>
+   $(function() {
+     <% template.errors.full_messages.each do |m| %>
+      addFlash("error", "<%= m %>")
+     <% end %>
+   });
+ <% end %>
+<% end %>
+

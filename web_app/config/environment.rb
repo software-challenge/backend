@@ -19,6 +19,7 @@ Rails::Initializer.run do |config|
   end
 
   config.load_paths << "#{RAILS_ROOT}/app/models/events"
+  config.load_paths << "#{RAILS_ROOT}/app/models/email_templates"
   config.load_paths << "#{RAILS_ROOT}/app/models/fake_checks"
   config.load_paths << "#{RAILS_ROOT}/app/models/surveys"
   config.load_paths << "#{RAILS_ROOT}/app/models/quassum"

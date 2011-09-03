@@ -9,6 +9,9 @@ de:
     log: "Log"
     remember_me: "Eingeloggt bleiben"
   views:
+    email_template: 
+      title_hint: "Der Titel sollte das Template eindeutig identifizieren. z.B. \"Software Challenge 2012: Erinnerung an die Anmeldung\""
+      type_hint: "Abhängig vom Typ sind verschiedene Variablen innerhalb der Templates benutzwar (siehe Wiki)"
     tickets: "Tickets"
     contestant_report: "Protokoll"
     no_seasons_available: "Es sind keine Saisons verfügbar."

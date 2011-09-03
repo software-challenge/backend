@@ -10,6 +10,9 @@ class Season < ActiveRecord::Base
   has_many :events, :as => :context
   belongs_to :current_phase, :class_name => "SeasonPhase"
 
+  belongs_to :recall_survey_template, :class_name => "SurveyNotificationTemplate"
+  belongs_to :validation_survey_template, :class_name => "SurveyNotificationTemplate"
+
   validates_inclusion_of :game_identifier, :in => GameDefinition.all.map{|d| d.game_identifier.to_s}
   validates_inclusion_of :season_definition, :in => SeasonDefinition.all.map{|d| d.identifier}
   validates_uniqueness_of :subdomain
@@ -18,6 +21,8 @@ class Season < ActiveRecord::Base
 
   named_scope :public, :conditions => {:public => true}
 
+  liquid_methods :name, :subdomain, :public
+  
   def initialize_definition
     self.name = definition.identifier
     self.subdomain = definition.subdomain

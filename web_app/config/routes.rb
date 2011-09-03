@@ -12,6 +12,7 @@ ActionController::Routing::Routes.draw do |map|
       :attachment => :get
     }
 
+    tmap.resources :email_templates
 
     tmap.resources :seasons, :as => "saison", :member => {
       :phases => :get, 

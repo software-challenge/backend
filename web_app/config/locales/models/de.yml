@@ -5,6 +5,12 @@ de:
         invalid_zip: "Die ZIP-Datei war fehlerhaft oder durch ein Passwort geschützt."
 
     models:
+      email_template:
+        one: E-Mail-Template
+        other: E-Mail-Templates
+      survey_notification_template:
+        one: Umfrage-Benachrichtigungs-Template
+        other: Umfrage-Benachrichtigungs-Templates
       preliminary_contestant:
         one: Voranmeldung
         other: Voranmeldungen
@@ -90,6 +96,11 @@ de:
         one: Spiel-Definition
         other: Spiel-Definitionen
     attributes:
+      email_template:
+        title: Titel
+        template: E-Mail-Template
+        description: Beschreibung
+        email_title: E-Mail-Titel
       season:
         public: öffentlich
       school:

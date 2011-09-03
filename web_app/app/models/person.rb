@@ -6,6 +6,8 @@ class Person < ActiveRecord::Base
   RANDOM_HASH_CHARS = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
   MINIMUM_PASSWORD_LENGTH = 6
 
+  liquid_methods :name, :email, :first_name, :last_name, :hidden, :last_seen, :phone_number
+
   # acl9
   acts_as_authorization_subject
 
