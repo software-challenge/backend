@@ -27,6 +27,8 @@ class Contest < ActiveRecord::Base
   belongs_to :season_phase
   has_one :season, :through => :season_phase
 
+  liquid_methods :name, :subdomain, :public
+
   named_scope :public, :conditions => {:public => true}
   named_scope :hidden, :conditions => {:public => false}
 

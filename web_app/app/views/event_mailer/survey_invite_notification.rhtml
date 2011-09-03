@@ -1,9 +1,11 @@
-Hallo <%= @person.name %>,
+<% survey_url = @context.is_a?(Season) ? new_season_survey_token_survey_url(@context, @survey_tokens.first, :login_token => @login_token.code) : new_contest_survey_token_survey_url(@context,@survey_tokens.first, :login_token => @login_token.code) %><% if @email_template %><%= @email_template.render('context' => @context, 'person' => @person, 'survey' => @survey, 'survey_tokens' => @survey_tokens, 'login_token' => @login_token, 'survey_url' => survey_url) %><% else %>Hallo <%= @person.name %>,
 
 Sie wurden im Wettkampf-System der Software-Challgene dazu eingeladen an <%= @survey_tokens.count == 1 ? "einer Umfrage" : "#{@survey_tokens.count} Umfragen" %> teilzunehmen: <%= @survey.title %> 
 
-Um teilzunehmen, können Sie innerhalb der nächsten 14 Tage diesem Link folgen: <%= @context.is_a?(Season) ? new_season_survey_token_survey_url(@context, @survey_tokens.first, :login_token => @login_token.code) : new_contest_survey_token_survey_url(@context,@survey_tokens.first, :login_token => @login_token.code) %>
+Um teilzunehmen, können Sie innerhalb der nächsten 14 Tage diesem Link folgen: <%= survey_url %>
 Alternativ können Sie diese Umfrage im Wettkampfsystem unter "Umfragen" finden.
 
 Mit freundlichen Gruessen 
   Ihr Software-Challenge-Team
+<% end %>
+

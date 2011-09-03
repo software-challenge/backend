@@ -1,0 +1,2 @@
+class SurveyNotificationTemplate < EmailTemplate
+end

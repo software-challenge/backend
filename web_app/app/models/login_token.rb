@@ -1,6 +1,8 @@
 class LoginToken < ActiveRecord::Base
   belongs_to :person
    
+  liquid_methods :person, :code
+  
   validates_presence_of :person
 
   def initialize(params)

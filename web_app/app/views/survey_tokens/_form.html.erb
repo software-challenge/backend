@@ -55,12 +55,8 @@
 
 <p style="margin-top: 25px; width: 80%;">
  <b>Manuelle E-Mail-Einstellungen:</b> <%= check_box_tag "use_custom_email_settings" %></b>
-  <% possible_templates = Dir.open(File.join(RAILS_ROOT,"app","views","event_mailer")).entries %>
-  <% possible_templates.delete("."); possible_templates.delete("..") %>
-  <% possible_templates = [""] + possible_templates.select{|t| t.start_with? "custom_survey_invite_notification_"}.map{|e| e.gsub("custom_survey_invite_notification_", "").split(".")[0]} %>
   <div id="custom_email_settings">
-    <b>E-Mail-Template: </b><%= select_tag "custom_template", options_for_select(possible_templates), {:prompt => "Datei auswählen"} %> <a id="preview_template" href="#">Vorschau</a><br>
-    <b>E-Mail-Titel: </b><%= text_field_tag "custom_email_title", "" %>
+    <b>E-Mail-Template: </b><%= select_tag "custom_template", options_for_select(SurveyNotificationTemplate.all.map{|t| [t.title,t.id]}), {:prompt => "Datei auswählen"} %> <a id="preview_template" href="#">Vorschau</a><br>
   </div>
 </p>
 

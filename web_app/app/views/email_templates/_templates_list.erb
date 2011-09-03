@@ -1,0 +1,33 @@
+<table class="data-table">
+  
+  <colgroup>
+    <col width="25%">
+    <col>
+    <col width="10%">
+  </colgroup>
+
+  <thead>
+    <th><%= EmailTemplate.human_attribute_name :title %></th>
+    <th><%= EmailTemplate.human_attribute_name :description %></th>
+    <th class="middle">Aktionen</th>
+  </thead>
+  <tbody>
+    <% templates.each do |t| %>
+      <tr>
+        <td>
+          <span class="tooltipped"><%= t.title %></span><div class="tooltip"><%= render :partial => "template", :locals => {:template => t} %></div>
+        </td>
+        <td>
+          <% if t.description and t.description.length > 40 %>
+            <span class="tooltipped"><%= t.description[0..37]%>..</span><div class="tooltip"><%= t.description %></div>
+          <% else %>
+            <%= t.description %>
+          <% end %>
+        </td>
+        <td class="middle">
+          <%= link_to image_tag("actions/edit.png"), [:edit, t.becomes(EmailTemplate)]%>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

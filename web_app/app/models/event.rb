@@ -1,5 +1,4 @@
 class Event < ActiveRecord::Base
-  
   belongs_to :context, :polymorphic => true
 
   def valid_event?
@@ -13,5 +12,5 @@ class Event < ActiveRecord::Base
   def text
     "Nothing"
   end
-
+  
 end

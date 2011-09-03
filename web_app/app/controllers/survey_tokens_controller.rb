@@ -60,9 +60,9 @@ class SurveyTokensController < ApplicationController
  end
 
  def create
-  #begin
+  begin
    token_count = 0
-   #SurveyToken.transaction do
+   SurveyToken.transaction do
     people = {}
     args = {:survey => Survey.find_by_id(params[:survey])}
     args[:valid_from] = begin params[:valid_from].to_date rescue Time.now end 
@@ -131,8 +131,9 @@ class SurveyTokensController < ApplicationController
       end
       people.each do |person,tokens|
         if params[:send_email_notifications] == "1" and person.email_event.rcv_survey_token_notification
-          if params[:custom_template] and params[:custom_template].length > 0  
-            EventMailer.send("deliver_custom_survey_invite_notification_#{params[:custom_template]}",person,@context,person.generate_login_token, tokens, ((params[:custom_email_title] and not params[:custom_email_title].empty?) ? params[:custom_email_title] : nil))
+          if params[:use_custom_email_setting] == "1" and params[:custom_template] and params[:custom_template].length > 0 
+            template = SurveyNotificationTemplate.find_by_id(params[:custom_template])
+            EventMailer.deliver_survey_invite_notification(person,@context,person.generate_login_token, tokens, template)
           else 
             EventMailer.deliver_survey_invite_notification(person,@context,person.generate_login_token, tokens) 
           end
@@ -140,18 +141,18 @@ class SurveyTokensController < ApplicationController
       end
     flash[:notice] = "Es wurden erfolgreich #{token_count} Tokens erstellt!"
     redirect_to :actions => :index
-   #end
-  #rescue Exception => e
-  #  logger.warn("ERROR while creating SurveyTokens: #{e}")
-  #  flash[:error] = "Fehler beim Erstellen der Tokens!"
-  #  redirect_to :action => :new
-  #end
+   end
+  rescue Exception => e
+    logger.warn("ERROR while creating SurveyTokens: #{e}")
+    flash[:error] = "Fehler beim Erstellen der Tokens!"
+    redirect_to :action => :new
+  end
  end
 
  def preview_template
     @survey_tokens = SurveyToken.all 
     @login_token = LoginToken.new(:person => @current_user)
-    render :inline => "<%= raw BlueCloth.new(render :file => 'event_mailer/custom_survey_invite_notification_#{params[:template]}.rhtml').to_html %>"
+    render :inline => "<%= raw BlueCloth.new(SurveyNotificationTemplate.find_by_id(params[:template]).render(:show_dummy => true)).to_html %>"
     @login_token.destroy
  end
 

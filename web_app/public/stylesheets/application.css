@@ -316,6 +316,7 @@ h1 a {
   text-align: center;
   height: 75px;
   line-height: 75px;
+  margin-top: 7px;
   width: 115px;
   display: inline-block;
   background-image: url('/images/logo_small.png');

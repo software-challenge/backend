@@ -18,8 +18,7 @@
       </label>
       <input id="season_use_custom_recall_settings" type="checkbox" value="1" name="season[use_custom_recall_settings]" <%= "checked='yes'" if @season.use_custom_recall_settings? %>>
     </li>
-    <%= f.input :recall_survey_template, :collection => SurveyToken.available_custom_templates, :label => "E-Mail-Template" %>
-    <%= f.input :recall_survey_title, :label => "E-Mail-Titel" %>
+    <%= f.input :recall_survey_template, :label => "E-Mail-Template", :hint => "<a href='' data-select='season_recall_survey_template_id' class='recall_template_preview'>Vorschau ansehen</a>".html_safe, :include_blank => false %>
   <% end %>
 
   <% f.inputs :name => "Verbindliche Anmeldung (Phase 3)" do %>
@@ -31,15 +30,14 @@
       </label>
         <input id="season_use_custom_validation_settings" type="checkbox" value="1" name="season[use_custom_validation_settings]" <%= "checked='yes'" if @season.use_custom_validation_settings? %>>
     </li>
-    <%= f.input :validation_survey_template, :collection => SurveyToken.available_custom_templates, :label => "E-Mail-Template" %>
-    <%= f.input :validation_survey_title, :label => "E-Mail-Titel" %>
+    <%= f.input :validation_survey_template, :label => "E-Mail-Template", :hint => "<a href='' data-select='season_validation_survey_template_id' class='validation_template_preview'>Vorschau ansehen</a>".html_safe, :include_blank => false %>
   <% end %>
   <%= f.buttons %>
 <% end %>
 
 <% javascript_tag do %>
   $(function() {
-    var validation_custom_fields = $("#season_validation_survey_template_input, #season_validation_survey_title_input");
+    var validation_custom_fields = $("#season_validation_survey_template_input");
     
     $("#season_use_custom_validation_settings").change(function(){
     if(this.checked){
@@ -55,7 +53,7 @@
       validation_custom_fields.hide();
     }
 
-    var recall_custom_fields = $("#season_recall_survey_template_input, #season_recall_survey_title_input");
+    var recall_custom_fields = $("#season_recall_survey_template_input");
     
     $("#season_use_custom_recall_settings").change(function(){
     if(this.checked){
@@ -64,7 +62,28 @@
       recall_custom_fields.hide();
     }
     })
-    
+
+    $(".recall_template_preview, .validation_template_preview").bind("click",function(e){
+      window.open("/email_templates/"+$("#"+$(this).data("select")).attr("value")+"?preview=true", "Vorschau: E-Mail-Template", "width=600,height=500");
+      return false;
+    })
+
+    $("#season_recall_survey_template_id").change(function(){
+      show_preview($(".recall_template_preview"), $(this).attr("value") != "")
+    })
+
+    $("#season_validation_survey_template_id").change(function(){
+      show_preview($(".validation_template_preview"), $(this).attr("value") != "");
+    })
+
+    function show_preview(preview,bool){
+      if(bool){
+        preview.show()
+      }else{
+        preview.hide()
+      }
+    }
+
     if($("#season_use_custom_recall_settings").attr("checked")){
       recall_custom_fields.show();
     }else{
