@@ -67,7 +67,7 @@ public class GameStateConverter implements Converter {
 
 		if (gameState.gameEnded()) {
 			writer.startNode("condition");
-			String winner = (gameState.winner() == null)? "none" : gameState.winner()+"";
+			String winner = (gameState.winner() == null) ? "none" : gameState.winner() + "";
 			writer.addAttribute("winner", winner);
 			writer.addAttribute("reason", gameState.winningReason());
 			writer.endNode();
@@ -79,7 +79,7 @@ public class GameStateConverter implements Converter {
 	@SuppressWarnings("unchecked")
 	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 
-		GameState gameState = new GameState();
+		GameState gameState = new GameState(true);
 
 		try {
 
