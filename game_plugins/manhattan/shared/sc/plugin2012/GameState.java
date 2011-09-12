@@ -93,6 +93,25 @@ public final class GameState implements Cloneable {
 	 * 
 	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
 	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * Der Kartenstapel wird nur initialisiert und nicht mit Karten befuellt.
+	 */
+	public GameState() {
+		this(true);
+	}
+
+	/**
+	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
+	 * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
+	 * gueltig sind.<br/>
+	 * <br/>
+	 * 
+	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * @param suppressStack
+	 *           Gibt an ob der Kartenstapel nur initialisiert oder auch mit
+	 *           Karten gefuellt werden soll.
 	 */
 	public GameState(boolean suppressStack) {
 
