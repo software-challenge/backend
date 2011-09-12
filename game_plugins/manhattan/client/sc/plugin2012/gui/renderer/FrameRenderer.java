@@ -489,9 +489,9 @@ public class FrameRenderer extends JComponent {
 
 		selectedSegment = null;
 		droppedSegment = null;
-		removeMouseListener(buildMouseAdapter);
-		removeMouseListener(selectMouseAdapter);
-		removeMouseMotionListener(buildMouseAdapter);
+		// removeMouseListener(buildMouseAdapter);
+		// removeMouseListener(selectMouseAdapter);
+		// removeMouseMotionListener(buildMouseAdapter);
 
 		highestSegments[0] = gameState.getRedPlayer().getHighestCurrentSegment();
 		highestSegments[1] = gameState.getRedPlayer().getHighestSegment();
@@ -518,15 +518,15 @@ public class FrameRenderer extends JComponent {
 				selections[i] = 0;
 			}
 			createSelectDialog();
-			addMouseListener(selectMouseAdapter);
+			// addMouseListener(selectMouseAdapter);
 		} else {
 			if (currentPlayer == PlayerColor.RED) {
 				sensetiveSegments = redSegments;
 			} else {
 				sensetiveSegments = blueSegments;
 			}
-			addMouseListener(buildMouseAdapter);
-			addMouseMotionListener(buildMouseAdapter);
+			// addMouseListener(buildMouseAdapter);
+			// addMouseMotionListener(buildMouseAdapter);
 		}
 
 		if (gameState.gameEnded()) {
@@ -612,6 +612,13 @@ public class FrameRenderer extends JComponent {
 
 	public synchronized void requestMove(final int turn) {
 		turnToAnswer = turn;
+
+		if (currentMoveType == MoveType.SELECT) {
+			addMouseListener(selectMouseAdapter);
+		} else {
+			addMouseListener(buildMouseAdapter);
+			addMouseMotionListener(buildMouseAdapter);
+		}
 	}
 
 	private boolean myTurn() {
@@ -619,6 +626,10 @@ public class FrameRenderer extends JComponent {
 	}
 
 	private synchronized void sendMove(final Move move) {
+
+		removeMouseListener(buildMouseAdapter);
+		removeMouseListener(selectMouseAdapter);
+		removeMouseMotionListener(buildMouseAdapter);
 
 		if (myTurn() && !gameEnded) {
 			RenderFacade.getInstance().sendMove(move);
@@ -843,8 +854,7 @@ public class FrameRenderer extends JComponent {
 		Graphics2D g2 = (Graphics2D) g;
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
-						: RenderingHints.VALUE_ANTIALIAS_OFF);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		if (updateBuffer) {
 			fillBuffer();
@@ -879,8 +889,7 @@ public class FrameRenderer extends JComponent {
 		Graphics2D g2 = (Graphics2D) buffer.getGraphics();
 
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
-						: RenderingHints.VALUE_ANTIALIAS_OFF);
+				OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
 		paintStaticComponents(g2);
 		if (gameState != null) {
@@ -895,13 +904,11 @@ public class FrameRenderer extends JComponent {
 
 		// hintergrundbild oder farbe
 		if (OPTIONS[BACKGROUND] && scaledBgImage != null) {
-			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight()
-					- 2 * BORDER_SIZE, this);
+			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
+					* BORDER_SIZE, this);
 		} else {
 			g2.setColor(new Color(186, 217, 246));
-			g2
-					.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2
-							* BORDER_SIZE);
+			g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE, getHeight() - 2 * BORDER_SIZE);
 		}
 
 		// fortschrittsleite, spielerinfo und seitenleiste
@@ -1133,8 +1140,7 @@ public class FrameRenderer extends JComponent {
 							.getHeight(), 8, 8);
 					g2.setColor(data.diff > MAX_SEGMENT_SIZE ? Color.YELLOW : Color.WHITE);
 					String s = Integer.toString(data.diff);
-					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH5.stringWidth(s)) / 2,
-							data.ys[1] - 8);
+					g2.drawString(s, data.xs[1] + (TOWER_RIGHT_WIDTH - fmH5.stringWidth(s)) / 2, data.ys[1] - 8);
 				}
 			}
 		}
@@ -1239,8 +1245,8 @@ public class FrameRenderer extends JComponent {
 			g2.setFont(h4);
 			int remarkW = fmH4.stringWidth(remark);
 			g2.setColor(currentPlayerColor);
-			g2.drawString(remark, (getWidth() - SIDE_BAR_WIDTH - remarkW) / 2, selectY + selectHeight
-					- GAP_SIZE - 10);
+			g2.drawString(remark, (getWidth() - SIDE_BAR_WIDTH - remarkW) / 2, selectY + selectHeight - GAP_SIZE
+					- 10);
 
 		}
 
