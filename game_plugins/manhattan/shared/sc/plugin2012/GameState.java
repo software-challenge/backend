@@ -24,10 +24,10 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
  * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}) und
- * was fuer eine Art von Zug ({@link #getCurrentMoveType() getCurrentMoveType()})
- * der Spielserver als Antwort von einem der beiden Spieler ({@link
- * #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren die
- * Informationen ueber die beiden Spieler und alle moeglichen Tuerme zum
+ * was fuer eine Art von Zug ({@link #getCurrentMoveType() getCurrentMoveType()}
+ * ) der Spielserver als Antwort von einem der beiden Spieler (
+ * {@link #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren
+ * die Informationen ueber die beiden Spieler und alle moeglichen Tuerme zum
  * Zustand. Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf.
  * ueber das Spielende informiert.<br/>
  * <br/>
@@ -45,11 +45,12 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen, zum Beispiele die Liste aller Tuerme eines Spielers,
- * abgefragt werden. Insbesondere kann mit der Methode {@link #getPossibleMoves()
- * getPossibleMoves()} eine Liste aller fuer den aktuellen Spieler legalen
- * Bauzuege abgefragt werden. Ist momentan also eine Bauzug zu taetigen, kann
- * eine Spieleclient diese Liste aus dem {@code GameState} erfragen und muss
- * dann lediglich einen Zug aus dieser Liste auswaehlen.
+ * abgefragt werden. Insbesondere kann mit der Methode
+ * {@link #getPossibleMoves() getPossibleMoves()} eine Liste aller fuer den
+ * aktuellen Spieler legalen Bauzuege abgefragt werden. Ist momentan also eine
+ * Bauzug zu taetigen, kann eine Spieleclient diese Liste aus dem {@code
+ * GameState} erfragen und muss dann lediglich einen Zug aus dieser Liste
+ * auswaehlen.
  * 
  * @author tkra
  */
@@ -85,20 +86,24 @@ public final class GameState implements Cloneable {
 	private Condition condition = null;
 
 	/**
-	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so
-	 * gesetzt sind, wie sie zu Beginn eines Spiels, bevor die Spieler
-	 * beigetreten sind, gueltig sind.<br/>
+	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
+	 * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
+	 * gueltig sind.<br/>
 	 * <br/>
 	 * 
-	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte
-	 * vom Spielclient i.A. nicht aufgerufen werden!</b>
+	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
 	 */
-	public GameState() {
+	public GameState(boolean suppressStack) {
 
 		currentPlayer = PlayerColor.RED;
 		startPlayer = PlayerColor.RED;
 		currentMoveType = MoveType.SELECT;
 		cardStack = new LinkedList<Card>();
+
+		if (!suppressStack) {
+			createCardStack();
+		}
 		towers = new ArrayList<Tower>(Constants.CITIES * Constants.SLOTS);
 		for (int city = 0; city < Constants.CITIES; city++) {
 			for (int slot = 0; slot < Constants.SLOTS; slot++) {
@@ -116,7 +121,7 @@ public final class GameState implements Cloneable {
 	 * Spielclient i.A. nicht aufgerufen werden!</b>
 	 * 
 	 * @param player
-	 *            Der hinzuzufuegende Spieler.
+	 *           Der hinzuzufuegende Spieler.
 	 */
 	public void addPlayer(Player player) {
 
@@ -158,8 +163,8 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht
-	 * am Zug ist.
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
+	 * Zug ist.
 	 * 
 	 * @return Der Spieler, der momentan nicht am Zug ist.
 	 */
@@ -192,8 +197,8 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe
-	 * {@code PlayerColor.BLUE} spielt.
+	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe {@code
+	 * PlayerColor.BLUE} spielt.
 	 * 
 	 * @return Der blaue Spieler.
 	 */
@@ -217,17 +222,20 @@ public final class GameState implements Cloneable {
 	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf {@code
 	 * getStartPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
-	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht begonnen hat.
+	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht begonnen
+	 *         hat.
 	 */
 	public PlayerColor getStartPlayerColor() {
 		return startPlayer;
 	}
+
 	/**
 	 * wechselt den Spieler, der aktuell an der Reihe ist.
 	 */
 	private void switchCurrentPlayer() {
 		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
 	}
+
 	/**
 	 * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
 	 */
@@ -257,17 +265,19 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Simuliert einen uebergebenen Zug.
-	 * Dabei werden folgende Informationen aktualisiert:
+	 * Simuliert einen uebergebenen Zug. Dabei werden folgende Informationen
+	 * aktualisiert:
 	 * <ul>
-	 * <li> Zugzahl
-	 * <li> Welcher Spieler an der Reihe ist
-	 * <li> Welcher Spieler erster der Spielphase ist
-	 * <li> Was der letzte Zug war
-	 * <li> Was der aktuell erwartete Zug ist
-	 * <li> die Punkte der Spieler
+	 * <li>Zugzahl
+	 * <li>Welcher Spieler an der Reihe ist
+	 * <li>Welcher Spieler erster der Spielphase ist
+	 * <li>Was der letzte Zug war
+	 * <li>Was der aktuell erwartete Zug ist
+	 * <li>die Punkte der Spieler
 	 * </ul>
-	 * @param lastMove auszufuehrender Zug
+	 * 
+	 * @param lastMove
+	 *           auszufuehrender Zug
 	 */
 	public void prepareNextTurn(Move lastMove) {
 
@@ -322,6 +332,7 @@ public final class GameState implements Cloneable {
 		// }
 
 	}
+
 	/**
 	 * 
 	 */
@@ -341,6 +352,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * liefert die aktuelle Rundenzahl
+	 * 
 	 * @return aktuelle Rundenzahl
 	 */
 	public int getRound() {
@@ -348,15 +360,21 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert die naechste Karte vom Stapel. Dazu wird dieser
-	 * gegebenenfalls neu aufgefuellt durch mischen der verbauchten Karten.
+	 * liefert die naechste Karte vom Stapel. Dazu wird dieser gegebenenfalls neu
+	 * aufgefuellt durch mischen der verbauchten Karten.
+	 * 
 	 * @return naechste Karte
 	 */
 	public Card drawCard() {
+
+		Card card = cardStack.remove(0);
+		System.err.println("--------------- POP @ " + turn);
+
 		if (cardStack.isEmpty()) {
 			createCardStack();
 		}
-		return cardStack.remove(0);
+		return card;
+
 	}
 
 	private void createCardStack() {
@@ -379,13 +397,17 @@ public final class GameState implements Cloneable {
 				cardStack.add(new Card(slot));
 			}
 		}
+		System.err.println("--------------- SHUFFLE @ " + turn + " (" + cardStack.size() + " CARDS)");
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
 
 	/**
 	 * Liefert den Turm an gegebenem Feld (Stadt, Position)
-	 * @param city Stadt des Spielfeldes
-	 * @param slot Position des Spielfeldes
+	 * 
+	 * @param city
+	 *           Stadt des Spielfeldes
+	 * @param slot
+	 *           Position des Spielfeldes
 	 * @return Turm an gegebenem Feld, kann null sein oder Hoehe 0 haben.
 	 */
 	public Tower getTower(int city, int slot) {
@@ -401,6 +423,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert eine Liste aller Tuerme
+	 * 
 	 * @return Liste aller Tuerme
 	 */
 	public List<Tower> getTowers() {
@@ -416,7 +439,9 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert eine Liste aller Tuerme in einer gegebenen Stadt
-	 * @param city Index der Stadt
+	 * 
+	 * @param city
+	 *           Index der Stadt
 	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOfCity(int city) {
@@ -434,8 +459,11 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert eine Liste der Tuerme eines Spielers in einer Stadt
-	 * @param city Index der Stadt
-	 * @param color Farbe des besitzenden Spielers
+	 * 
+	 * @param city
+	 *           Index der Stadt
+	 * @param color
+	 *           Farbe des besitzenden Spielers
 	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOfCity(int city, PlayerColor color) {
@@ -450,7 +478,9 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert eine Liste der Tuerme an einer Position
-	 * @param slot Index der Position
+	 * 
+	 * @param slot
+	 *           Index der Position
 	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOnSlot(int slot) {
@@ -464,10 +494,13 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert eine Liste der Tuerme an einer Position, die einem
-	 * gegebenen Spieler gehoeren
-	 * @param slot Index der Position
-	 * @param color Farbe des besitzenden Spielers
+	 * Liefert eine Liste der Tuerme an einer Position, die einem gegebenen
+	 * Spieler gehoeren
+	 * 
+	 * @param slot
+	 *           Index der Position
+	 * @param color
+	 *           Farbe des besitzenden Spielers
 	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersOnSlot(int slot, PlayerColor color) {
@@ -482,7 +515,9 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert eine Liste der Tuerme eines Spielers
-	 * @param color Farbe des Spielers
+	 * 
+	 * @param color
+	 *           Farbe des Spielers
 	 * @return Liste der Tuerme
 	 */
 	public List<Tower> getTowersWithOwner(PlayerColor color) {
@@ -494,8 +529,10 @@ public final class GameState implements Cloneable {
 		}
 		return towersOfCity;
 	}
+
 	/**
 	 * Liefert eine Liste aller aktuell erlaubten Zuege.
+	 * 
 	 * @return Liste erlaubter Spielzuege
 	 */
 	public List<BuildMove> getPossibleMoves() {
@@ -532,6 +569,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert den zuletzt ausgefuehrten Zug
+	 * 
 	 * @return letzter Zug
 	 */
 	public Move getLastMove() {
@@ -539,14 +577,18 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden Einträgen
-	 * <ul><li>[0] - Anzahl Tuerme des Spielers
+	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
+	 * Einträgen
+	 * <ul>
+	 * <li>[0] - Anzahl Tuerme des Spielers
 	 * <li>[1] - Anzahl Staedte des SPielers
 	 * <li>[2] - 1: Spieler hat hoechsten Turm, 0: sonst
 	 * <li>[3] - Punktekonto des Spielers
 	 * </ul>
-	 * @param player Spieler
-	 * @return Array mit Statistiken 
+	 * 
+	 * @param player
+	 *           Spieler
+	 * @return Array mit Statistiken
 	 */
 	public int[] getPlayerStats(Player player) {
 		assert player != null;
@@ -554,14 +596,18 @@ public final class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden Einträgen
-	 * <ul><li>[0] - Anzahl Tuerme des Spielers
+	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
+	 * Einträgen
+	 * <ul>
+	 * <li>[0] - Anzahl Tuerme des Spielers
 	 * <li>[1] - Anzahl Staedte des SPielers
 	 * <li>[2] - 1: Spieler hat hoechsten Turm, 0: sonst
 	 * <li>[3] - Punktekonto des Spielers
 	 * </ul>
-	 * @param playerColor Farbe des Spielers
-	 * @return Array mit Statistiken 
+	 * 
+	 * @param playerColor
+	 *           Farbe des Spielers
+	 * @return Array mit Statistiken
 	 */
 	public int[] getPlayerStats(PlayerColor playerColor) {
 		assert playerColor != null;
@@ -575,8 +621,10 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
-	 * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei getGameStats()[0], einem Aufruf
-	 * von getPlayerStats(PlayerColor.RED) entspricht.
+	 * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei
+	 * getGameStats()[0], einem Aufruf von getPlayerStats(PlayerColor.RED)
+	 * entspricht.
+	 * 
 	 * @see #getPlayerStats(PlayerColor)
 	 * @return Statusinformationen beider Spieler
 	 */
@@ -639,8 +687,11 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
-	 * @param winner Farbe des Siegers
-	 * @param reason Gewinngrund
+	 * 
+	 * @param winner
+	 *           Farbe des Siegers
+	 * @param reason
+	 *           Gewinngrund
 	 */
 	public void endGame(PlayerColor winner, String reason) {
 		if (condition == null) {
@@ -650,6 +701,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * gibt an, ob das Spiel beendet ist
+	 * 
 	 * @return wahr, wenn beendet
 	 */
 	public boolean gameEnded() {
@@ -658,6 +710,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * liefert die Farbe des Siegers, falls das Spiel beendet ist.
+	 * 
 	 * @see #gameEnded()
 	 * @return Siegerfarbe
 	 */
@@ -667,6 +720,7 @@ public final class GameState implements Cloneable {
 
 	/**
 	 * liefert den Gewinngrund, falls das Spiel beendet ist.
+	 * 
 	 * @see #gameEnded()
 	 * @return Gewinngrund
 	 */
