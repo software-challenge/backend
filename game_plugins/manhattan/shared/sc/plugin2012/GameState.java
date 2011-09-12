@@ -320,36 +320,6 @@ public final class GameState implements Cloneable {
 			}
 		}
 
-		// if (currentPlayer != startPlayer) {
-		// if (currentMoveType == MoveType.SELECT) {
-		// setCurrentMoveType(MoveType.BUILD);
-		// switchCurrentPlayer();
-		// } else if (getCurrentPlayer().getUsableSegmentCount() == 0) {
-		// setCurrentMoveType(MoveType.SELECT);
-		// switchStartPlayer();
-		// currentPlayer = startPlayer;
-		// performScoring();
-		// } else {
-		// switchCurrentPlayer();
-		//
-		// /*
-		// * im letzten durchgang kann es prinzipiell moeglich sein, dass
-		// * kein zug mehr moeglich ist. dann bekommt der aktuelle spieler
-		// * eine ersatzkarte statt seiner zuletzt gezogenen karte
-		// */
-		// Player currentPlayer = getCurrentPlayer();
-		// if (currentPlayer.getRetainedSegmentCount() == 0) {
-		// while (getPossibleMoves().isEmpty()) {
-		// currentPlayer.removeCard(0);
-		// currentPlayer.addCard(drawCard());
-		// }
-		// }
-		//
-		// }
-		// } else {
-		// switchCurrentPlayer();
-		// }
-
 	}
 
 	/**
@@ -387,8 +357,6 @@ public final class GameState implements Cloneable {
 	public Card drawCard() {
 
 		Card card = cardStack.remove(0);
-		System.err.println("--------------- POP @ " + turn);
-
 		if (cardStack.isEmpty()) {
 			createCardStack();
 		}
@@ -416,7 +384,6 @@ public final class GameState implements Cloneable {
 				cardStack.add(new Card(slot));
 			}
 		}
-		System.err.println("--------------- SHUFFLE @ " + turn + " (" + cardStack.size() + " CARDS)");
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
 
