@@ -1,0 +1,8 @@
+<h1>
+  <%= link_to @person.name, [@context, @person] %> /
+  <%= Contract.human_name %> bearbeiten
+</h1>
+
+<% tabnav :person do %>
+  <%= render :partial => 'form' %>
+<% end %>

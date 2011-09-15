@@ -35,6 +35,7 @@
     })
 
     $("#create").bind("click",function(e){
+      $("#comment_error").remove();
       $(this).disable()
       $("#abort_comment").hide()
       $.ajax({
@@ -46,13 +47,17 @@
           authenticity_token: '<%= form_authenticity_token %>'
         },
         success: function(resp) {
-          if(resp != "error"){ 
             $("html,body").animate({ scrollTop: $(".comment:last").offset().top}, 1000) 
             $("#add_comment").hide()
             $("#show_form").show()
             $("#create").enable()
             $("#abort_comment").show()
-          }
+        },
+        error: function(resp){
+        $("#comment_text").before('<div id="comment_error" class="ui-state-error ui-corner-all"->Kommentar konnte nicht erstellt werden, es trat ein Fehler auf!</div>');
+        $("#comment_error").delay(3000).fadeOut()
+          $("#create").enable();
+          $("#abort_comment").show();
         }
         });
         e.preventDefault()

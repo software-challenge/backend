@@ -1,0 +1,14 @@
+<div id="actions">
+  <% link_to [:new, @context, @person, :contract] do %>
+    <%= image_tag "actions/add.png" %> Arbeitsvertrag hinzufügen
+  <% end %>
+</div>
+
+<h1>
+  <%= link_to @person.name, [@context, @person] %> /
+  <%= Contract.human_name :count => 2 %>
+</h1>
+
+<% tabnav :person do %>
+  <%= render :partial => "list", :locals => {:contracts => @contracts, :hours_used => (@person.time_entries.length > 0 ? @person.time_entries.sum(:minutes)/60 : 0)} %>
+<% end %>

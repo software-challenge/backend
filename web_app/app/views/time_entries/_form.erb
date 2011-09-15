@@ -1,0 +1,68 @@
+<% row_id = "time_entry_form_row_#{time_entry.new_record? ? "new" : time_entry.id}" %>
+  <tr id="<%= row_id %>" class="time_entry_form_row">
+  <%= stylesheet_link_tag "time_entry" %>
+  <td colspan="6" style="padding: 10px; background-color: #f4f4f4;">
+    <div class="time_entry_form">
+      <h2 style="margin:0.3em 0 0.5em;"><%= TimeEntry.human_name :count => 1 %> <%= time_entry.new_record? ? "erstellen" : "bearbeiten" %></h2>
+      <div class="flash_messages"/>
+      <% form_for [@context, @person, time_entry] do %>  
+        <span style="float:right; margin-right: 10px;"><%= TimeEntry.human_attribute_name :minutes %>: </span>
+        <% if time_entry.new_record? and params[:contestant_id].present? %>
+          <%= hidden_field_tag "time_entry[context]", "Contestant:#{params[:contestant_id]}" %>
+        <% elsif params[:contestant_id].present? %>
+          <%= hidden_field_tag "time_entry[context]", "Contestant:#{params[:contestant_id]}" %>
+        <% else %>
+          <span><%= TimeEntry.human_attribute_name :context %>: </span>
+          <br>
+          <span><%= select_tag "time_entry[context]", options_for_select((time_entry.person||@current_user).memberships.map{|c| ["#{c.contestant.parent.name} - #{c.contestant.name}", "Contestant:#{c.contestant.id}"]},"Contestant:#{time_entry.context || @contestant}") %></span>
+        <% end %>
+        <span style="float:right;"><%= text_field_tag "time_entry[time]", time_entry.minutes_for_input, :style => "width:40px; margin-right: 30px;" %></span>
+        <br>
+        <label for="time_entry[title]"><%= TimeEntry.human_attribute_name :title %>: </label><%= text_field_tag "time_entry[title]", time_entry.title, :style => "width: 600px;" %>
+        <br>
+        <label for="time_entry[description]"><%= TimeEntry.human_attribute_name :description %>: </label>
+        <%= text_area_tag "time_entry[description]", time_entry.description, :style => "width: 500px; height: 100px;" %>
+        <br>
+        <span style="float:right;"><%= submit_tag "Zeit-Eintrag speichern" %> oder <a href="#" class="cancel">abbrechen</a> </span>       
+        <br><br>
+      <% end %>
+    </div>
+    <% javascript_tag do %>
+      $(function() {
+        $("#<%= row_id %> .cancel").bind("click", function(e){
+          $("#<%= row_id %>").remove();
+          $(".add_entry").show()
+          <% unless time_entry.new_record? %>
+            $("#entry_<%= time_entry.id %>").show()
+          <% end %>
+          e.preventDefault();
+        })
+
+        $("#<%=row_id%> input[type='submit']").bind("click", function(e){
+          e.preventDefault()
+          var form = $(this).parents("form")
+          $.ajax({
+            url: form.attr("action"),
+            type: form.attr("method"),
+            dataType: "script",
+            data: {
+              authenticity_token : "<%= form_authenticity_token %>",
+              _method : "<%= time_entry.new_record? ? "post" : "put" %>",
+              time_entry : {
+                context : form.find("#time_entry_context").attr("value"),
+                title   : form.find("#time_entry_title").attr("value"),
+                time    : form.find("#time_entry_time").attr("value"),
+                description : form.find("#time_entry_description").attr("value")
+              }
+            },
+          
+            success: function(resp) {
+              eval(resp)
+            },
+          
+          });
+        })
+      });
+    <% end %>
+  </td>
+</tr>

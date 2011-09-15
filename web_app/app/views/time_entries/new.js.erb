@@ -1,0 +1,2 @@
+$(".data-table tr:last").after("<%= escape_javascript( render :partial => "form", :locals => {:time_entry => @time_entry} ) %>")
+$(".add_entry").hide()

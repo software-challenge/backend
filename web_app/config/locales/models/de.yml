@@ -5,6 +5,12 @@ de:
         invalid_zip: "Die ZIP-Datei war fehlerhaft oder durch ein Passwort geschützt."
 
     models:
+      contract:
+        one: Arbeitsvertrag
+        other: Arbeitsverträge
+      time_entry:
+        one: Zeit-Eintrag
+        other: Zeit-Einträge
       email_template:
         one: E-Mail-Template
         other: E-Mail-Templates
@@ -96,6 +102,16 @@ de:
         one: Spiel-Definition
         other: Spiel-Definitionen
     attributes:
+      contract:
+        hours: Arbeitsstunden
+        description: Beschreibung
+      time_entry:
+        context: Team
+        title: Betreff
+        description: Beschreibung
+        person: Person
+        minutes: Zeitaufwand
+        created_at: Datum
       email_template:
         title: Titel
         template: E-Mail-Template

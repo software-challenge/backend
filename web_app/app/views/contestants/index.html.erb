@@ -110,7 +110,7 @@
             <%= link_to image_tag('actions/show.png'), [@context, contestant] %>
           <% end -%>
           <% if @current_user and (administrator? or @current_user.has_role?(:tutor, contestant) or  @current_user.has_role?(:helper, contestant)) %>
-            <%= link_to image_tag("actions/protocol.png", :title => "Protokoll ansehen" ), [:report, @context, contestant]%>
+            <%= link_to image_tag("actions/protocol.png", :title => "Protokoll ansehen" ), time_entries_url(:filter => {:contestant_id => contestant.id}, :hide_filters => true)%>
           <% end %>
           <% show_to :administrator do -%>
             <% if (@context.is_a?(Contest) ? !@context.ready? : @context.contests.any?{|c| c.ready?}) %>

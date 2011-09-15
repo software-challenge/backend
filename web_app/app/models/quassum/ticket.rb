@@ -43,7 +43,8 @@ class Quassum::Ticket < Quassum::RemoteModel
   def assignee_name
     return nil unless assignee
     if assignee['type'] == "User"
-      assigned_person.name
+      ap = assigned_person
+      ap ? ap.name : assignee['name']
     else
       assignee['name']
     end
@@ -99,7 +100,7 @@ class Quassum::Ticket < Quassum::RemoteModel
   end
 
   def fetch_comments
-    comments = (JSON.parse(Quassum::Api.get_comments(QUASSUM[:project_slug], id))).map do |c|
+    comments = (JSON.parse(Quassum::Api.get_comments(QUASSUM[:project_slug], id)))["comments"].map do |c|
       Quassum::Comment.build(c)
     end
     QUASSUM[:cache].write("#{self.class_name}_#{id}_comments", comments)
@@ -116,10 +117,13 @@ class Quassum::Ticket < Quassum::RemoteModel
 
   def create_comment(text,api_user)
     begin
-      Quassum::Api.create_comment(QUASSUM[:project_slug], id, text, api_user.api_token, api_user.api_password)
-      # TODO: fix when content is returned right!
-      fetch_comments
-      true
+      json_response = Quassum::Api.create_comment(QUASSUM[:project_slug], id, text, api_user.api_token, api_user.api_password)
+      cached_comments = QUASSUM[:cache].read("#{self.class_name}_#{id}_comments")
+      if cached_comments
+        QUASSUM[:cache].write("#{self.class_name}_#{id}_comments", (cached_comments << Quassum::Comment.build(JSON.parse(json_response))))
+      else
+        fetch_comments
+      end
     rescue Exception => e
       puts e.message
       puts e.backtrace

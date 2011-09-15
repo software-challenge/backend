@@ -2,9 +2,9 @@ class Quassum::Comment
   attr_accessor :updated_at, :created_at, :editable_until, :editable, :author_id, :id, :text, :_meta, :ticket_id
 
   def self.build(args)
-    ticket = self.new
-    ticket.apply_attributes(args)
-    ticket
+    comment = self.new
+    comment.apply_attributes(args)
+    comment
   end
 
   def author

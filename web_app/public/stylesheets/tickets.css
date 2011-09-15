@@ -191,3 +191,9 @@ table {
 #content img{
   max-width: 70%;
 }
+
+#comment_error {
+  padding: 5px;
+  margin: 10px;
+  text-align: center;
+}
