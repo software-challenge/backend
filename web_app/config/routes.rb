@@ -14,6 +14,8 @@ ActionController::Routing::Routes.draw do |map|
 
     tmap.resources :email_templates
 
+    tmap.resources :time_entries
+
     tmap.resources :seasons, :as => "saison", :member => {
       :phases => :get, 
       :next_step => :post, 
@@ -33,7 +35,10 @@ ActionController::Routing::Routes.draw do |map|
         :validate_code => :get, 
         :ticket_settings => :get,
         :update_ticket_settings => :put
-      }
+      } do |p|
+        p.resources :contracts
+        p.resources :time_entries
+      end
 
       s.resources :news_posts,
       :member => {
@@ -129,6 +134,8 @@ ActionController::Routing::Routes.draw do |map|
       person.resource :email_event, :as => "mailer", :member => {
        :update => :put
       }
+      person.resources :contracts
+      person.resources :time_entries
     end 
 
     tmap.resources :contests,
@@ -290,6 +297,8 @@ ActionController::Routing::Routes.draw do |map|
         person.resource :email_event, :as => "mailer", :member => {
           :update => :put
         }
+        person.resources :contracts
+        person.resources :time_entries
       end 
 
       c.register '/register', :controller => 'main', :action => 'register', :conditions => { :method => :get }

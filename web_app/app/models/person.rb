@@ -21,11 +21,13 @@ class Person < ActiveRecord::Base
   
   has_many :schools
   has_many :preliminary_contestants
+  has_many :login_tokens
+  has_many :time_entries, :dependent => :destroy
+  has_many :contracts, :dependent => :destroy
 
   # The survey tokens, that are assigned to a single user!
   has_many :survey_tokens
 
-  has_many :login_tokens
 
   has_one :api_user, :class_name => "Quassum::ApiUser"
 
@@ -285,6 +287,18 @@ class Person < ActiveRecord::Base
     else
       return false
     end
+  end
+
+  def available_working_time
+   contracts.sum(0){|c| c.hours}*60 - time_entries.sum(0){|c| c.minutes}
+  end
+
+  def used_working_time
+    time_entriew.sum(0){|c| c.minutes}
+  end
+
+  def assigned_working_time
+    contracts(0).sum{|c| c.minutes} * 60
   end
 
   def tokens_for(survey, only_available = false)

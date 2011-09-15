@@ -1,6 +1,7 @@
 class ContestantReportEvent < Event
   belongs_to :contestant, :foreign_key => "param_int_1"
   belongs_to :person, :foreign_key => "param_int_2"
+  belongs_to :time_entry, :foreign_key => "param_int_2"
   validates_presence_of :contestant
   validates_presence_of :person
   validates_presence_of :context

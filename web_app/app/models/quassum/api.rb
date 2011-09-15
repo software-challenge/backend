@@ -57,7 +57,6 @@ class Quassum::Api
 
   def self.create_comment(project_slug, ticket_id, comment_text, api_user_token, api_user_password)
     generic_post("/projects/#{project_slug}/tickets/#{ticket_id}/comments.json", {'comment' => {'ticket_id' => ticket_id, 'text' => comment_text}}, api_user_token, api_user_password)
-    # FIXME: no data is returned on success
   end
 
   def self.get_projects
@@ -165,7 +164,7 @@ class Quassum::Api
 
     puts data
     puts resp
-
+    
     raise "Quassum-API: Request failed on #{url}: #{resp.message}" unless resp.is_a? Net::HTTPSuccess or resp.is_a? Net::HTTPNotAcceptable or resp.is_a? Net::HTTPRedirection 
     
     return data

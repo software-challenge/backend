@@ -23,7 +23,7 @@
     <div id="form_actions">
       <% if update %>
         <% link_to "", :id => "ticket_update", :class => "update" do %>
-          <%= image_tag("actions/add.png") %> Änderungen speichern
+          <%= image_tag("actions/save.png") %> Änderungen speichern
         <% end %>
         <span id="ticket_cancel_edit"> oder <a class="cancel" href="">abbrechen</a></span>
         <% link_to "", :id => "ticket_edit", :class => "edit"  do %>
@@ -31,7 +31,7 @@
         <% end %>
       <% else %>
         <% link_to "", :id => "ticket_update", :class => "update" do %>
-          <%= image_tag("actions/add.png") %> Ticket erstellen
+          <%= image_tag("actions/save.png") %> Ticket speichern
         <% end %>
         <span id="ticket_cancel_edit"> oder <a class="cancel" href="/tickets/">abbrechen</a></span>
       <% end %>

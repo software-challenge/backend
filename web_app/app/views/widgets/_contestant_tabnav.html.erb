@@ -39,7 +39,7 @@ render_tabnav :contestant, :html => { :class => "tabs_tabnav" } do
 
   add_tab do |t|
     t.named t("views.contestant_report")
-    t.links_to url_for [:report, @context, @contestant]
+    t.links_to time_entries_url(:filter => {:contestant_id => @contestant.id}, :hide_filters => true)
     t.highlights_on :controller => "contestants", :action => "report"
   end if (administrator? or (logged_in? and (@current_user.has_role?(:tutor,@contestant) or @current_user.has_role?(:helper,@contestant)))) and not @contestant.new_record?
 end

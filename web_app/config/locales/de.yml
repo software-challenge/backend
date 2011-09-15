@@ -550,6 +550,7 @@ de:
        people: "Personen"
        validate_code: "Zugang aktivieren"
        ticket_settings: "Quassum Einstellungen"
+       invite: "Personen einladen"
     matches:
        index_for_contestant: "Begegnungen: Teamübersicht"
        matches: "Begegnungen"

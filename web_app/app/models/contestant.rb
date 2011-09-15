@@ -20,7 +20,8 @@ class Contestant < ActiveRecord::Base
   has_many :matchdays, :through => :slots, :conditions => ['type = ?', "Matchday"]
   has_many :friendly_encounter_slots
   has_many :all_friendly_encounters, :through => :friendly_encounter_slots, :source => :friendly_encounter
-  has_many :report_events, :class_name => "ContestantReportEvent", :dependent => :destroy, :order => "created_at DESC", :foreign_key => "param_int_1" 
+  has_many :report_events, :class_name => "ContestantReportEvent", :dependent => :destroy, :order => "created_at DESC", :foreign_key => "param_int_1"
+  has_many :time_entries, :as => :context
 
   def friendly_matches_running
     friendly_encounters.collect{|enc| enc.mini_jobs}.flatten.reject{|m| m.nil?}.count
