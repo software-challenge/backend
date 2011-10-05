@@ -33,9 +33,11 @@ public class SelectMove extends Move {
 	 * @param selections die jeweilige Anzahl Bausteine
 	 * der Groesse i+1
 	 */
-	public SelectMove(int[] selections) {
-
+	public SelectMove(int[] selections) /*throws IllegalArgumentException*/ {
 		for (int i = 0; i < selections.length; i++) {
+			if (selections[i] < 0) {
+				throw new IllegalArgumentException("Auswahlzug konnte nicht konstruiert werden: Negative Anzahl eines Bauelementes gewählt!");
+			}
 			this.selections[i] = selections[i];
 		}
 	}
@@ -57,6 +59,9 @@ public class SelectMove extends Move {
 		}
 		int selectionSum = 0;
 		for (int i = 0; i < MAX_SEGMENT_SIZE; i++) {
+			if (selections[i] < 0) {
+				throw new InvalideMoveException("Illegale Auswahl: Negative Anzahl eines Bauelementes gewählt");
+			}
 			selectionSum += selections[i];
 			if (segments[i].getRetained() < selections[i]) {
 				throw new InvalideMoveException(player.getDisplayName()
