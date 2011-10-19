@@ -20,7 +20,7 @@ class DailyJob < ScheduledJobData
   def remove_unvalidated_people
     Person.all.each do |person|
       unless person.validated?
-        if person.created_at + 48.hours < DateTime.now      
+        if person.created_at + person.validation_time.hours < DateTime.now      
           person.destroy
         end
       end 
