@@ -56,10 +56,14 @@
     $(function() {
       $("#team_name").bind("keyup",function(){
         refresh_counter($(this),$("#current_chars"));
+	refresh_counter_confirm($(this),$("#current_chars"),$("#edit"),"Testmsg");
+	refresh_counter_confirm($(this),$("#current_chars"),$("#add"),"Testmsg");
       });
       
       // Initalize counter
       refresh_counter($("#team_name"),$("#current_chars"));
+      refresh_counter_confirm($(this),$("#current_chars"),$("#edit"),"Testmsg");
+      refresh_counter_confirm($(this),$("#current_chars"),$("#add"),"Testmsg");
 
       <% if prelim.contestant %>
         $("#ranking option[value='<%=prelim.contestant.ranking%>']").attr("selected",true)

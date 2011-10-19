@@ -113,7 +113,7 @@
             <%= link_to image_tag("actions/protocol.png", :title => "Protokoll ansehen" ), time_entries_url(:filter => {:contestant_id => contestant.id}, :hide_filters => true)%>
           <% end %>
           <% show_to :administrator do -%>
-            <% if (@context.is_a?(Contest) ? !@context.ready? : @context.contests.any?{|c| c.ready?}) %>
+            <% if (@context.is_a?(Contest) ? !@context.ready? : !@context.contests.any?{|c| c.ready?}) %>
               <% delete_image = image_tag "actions/delete.png", :title => I18n.t("actions.delete"), :class=> "tooltipped" %>
               <%= link_to delete_image, [:hide, @context, contestant], :confirm => I18n.t("messages.confirm_hiding", :name => contestant.name) %>
             <% elsif not contestant.disqualified %>

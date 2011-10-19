@@ -31,6 +31,8 @@ class Person < ActiveRecord::Base
 
   has_one :api_user, :class_name => "Quassum::ApiUser"
 
+  has_many :protocols
+
   alias :contestants :teams
 
   validates_presence_of :password_salt

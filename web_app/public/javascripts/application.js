@@ -24,5 +24,19 @@ function refresh_counter(input,counter){
   counter.css("color",color);
 }
 
+function refresh_counter_confirm(input,counter,confirmobj,confirmmsg){
+  var length = input.attr("value").length;
+  if(length > 25){
+    confirmobj.unbind("click");
+    confirmobj.bind("click", function() {
+      if (!confirm(confirmmsg)) return false; return true;
+    });
+  } else {
+    confirmobj.unbind("click");
+    confirmobj.bind("click", function() {
+      return true;
+    });
+  }
+}
 
 

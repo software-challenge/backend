@@ -191,6 +191,10 @@ class PeopleController < ApplicationController
     person_params = params[:person].clone
 
     @person = Person.new(person_params)
+    if ENV['EMAIL_VALIDATION']
+      @person.validation_code = @person.random_hash(25)
+      @person.validation_time = 336
+    end
     success = @person.save
     success &= begin @person.update_memberships(params[:memberships]) rescue false end 
 
@@ -201,8 +205,12 @@ class PeopleController < ApplicationController
           add_event PersonCreatedEvent.create(:person => @person, :creator => @current_user)
         end
 
-        if params[:send_notification] == "1"
-          PersonMailer.deliver_signup_notification(@person, @current_contest, person_params[:password],false,url_for(@context))
+	if ENV['EMAIL_VALIDATION'] == "true"
+	  PersonMailer.deliver_signup_notification(@person, @context, params[:person][:person][:password], true)
+        else
+          if params[:send_notification] == "1"
+            PersonMailer.deliver_signup_notification(@person, @context, person_params[:password],false,url_for(@context))
+          end
         end
         flash[:notice] = @person.name + " " + I18n.t("messages.created_successfully")
         format.html do
