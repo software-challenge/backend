@@ -82,9 +82,10 @@ public class BuildMove extends Move {
 		}
 
 		segment.use();
-		player.addCard(state.drawCard());
+	/* first remove card, then add new, because if stack is mixed, the just used card
+		needs to be mixed too */
 		player.removeCard(slot);
-
+		player.addCard(state.drawCard());
 	}
 
 	@Override
