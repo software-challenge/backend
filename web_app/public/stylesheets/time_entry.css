@@ -5,3 +5,7 @@ td.negative {
 td.positive {
   color: green;
 }
+
+#filters {
+  line-height: 2.25em;  
+}

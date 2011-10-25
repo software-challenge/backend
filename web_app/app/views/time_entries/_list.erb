@@ -1,6 +1,7 @@
 <% hide_cols ||= {} %>
+<% group_key ||= nil %>
 
-<table class="data-table time_entries">
+<table class="data-table time_entries <%= (group_key.is_a?(Person) ? "Person" : "Context")+"_#{group_key.id}" if group_key %>">
   <colgroup>
     <col width="15%">
     <col width="25%">
