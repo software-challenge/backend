@@ -4,8 +4,10 @@
 <% if params[:group_by].present? and available_groupings.include? params[:group_by] %>
   <% grouped = time_entries.group_by{|t| t.try(params[:group_by])} %>
   <% grouped.each do |k,list| %>
-    <h3><%= k.name %></h3>
-    <%= render :partial => "list", :locals => {:time_entries => list.sort{|a,b| a.created_at <=> b.created_at} , :hide_cols => hide_cols} %>
+    <div class="time_entry_list">
+      <h3><%= k.name %></h3>
+      <%= render :partial => "list", :locals => {:time_entries => list.sort{|a,b| a.created_at <=> b.created_at} , :hide_cols => hide_cols, :group_key => k} %>
+    </div>
   <% end %>
 <% else %>
   <%= render :partial => "list", :locals => {:time_entries => time_entries.sort{|a,b| a.created_at <=> b.created_at}, :hide_cols => hide_cols} %>

@@ -2,7 +2,7 @@
 <% e = time_entry %>
 <tr id="entry_<%=e.id%>" class="time_entry person_<%=e.person.id%> season_<%=e.context.parent.id%> contestant_<%=e.context.id%>">
   <% unless hide_cols[:person] %>
-    <td><%= link_to e.person.name, time_entries_url(:filter => {:person_id => e.person.id}) %></td>
+    <td><%= link_to e.person.name, time_entries_url(:filter => {:person_id => e.person.id}, :group_by => "person") %></td>
   <% end %>
   <% unless hide_cols[:context] %>
     <td class="middle"><%= e.context.name %></td>
