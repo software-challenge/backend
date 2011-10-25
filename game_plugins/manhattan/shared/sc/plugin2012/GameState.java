@@ -358,13 +358,15 @@ public final class GameState implements Cloneable {
 
 		Card card = cardStack.remove(0);
 		if (cardStack.isEmpty()) {
-			createCardStack();
+			createCardStack(card);
 		}
 		return card;
 
 	}
-
-	private void createCardStack() {
+    /**
+     * card is the last drawed card, which has not reached the palyers hand yet
+     */
+	private void createCardStack(Card card) {
 
 		int[] cardsInGame = new int[Constants.SLOTS];
 
@@ -376,6 +378,7 @@ public final class GameState implements Cloneable {
 				cardsInGame[card.slot]++;
 			}
 		}
+        cardsInGame[card.slot]++;
 
 		cardStack.clear();
 		for (int slot = 0; slot < SLOTS; slot++) {
