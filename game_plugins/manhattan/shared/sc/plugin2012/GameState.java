@@ -385,10 +385,6 @@ public final class GameState implements Cloneable {
 		}
         if (pickedCard != null)
             cardsInGame[pickedCard.slot]++;
-        int a=0;
-        for (int i=0;i<SLOTS;i++) a+= cardsInGame[i];
-        assert a==8;
-        
 
 		cardStack.clear();
 		for (int slot = 0; slot < SLOTS; slot++) {
