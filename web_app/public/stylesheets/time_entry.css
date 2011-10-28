@@ -9,3 +9,9 @@ td.positive {
 #filters {
   line-height: 2.25em;  
 }
+
+table tr select {
+  width: 80%;
+}
+
+table{margin-left: 10px;}

@@ -1,7 +1,20 @@
 class TimeEntriesController < ApplicationController
   
   before_filter :fetch_person
-  before_filter :fetch_time_entry, :except => [:new, :index]
+  before_filter :fetch_time_entry, :except => [:new, :index, :create]
+
+  access_control do
+
+    action :index, :new do
+      allow :tutor
+      allow :administrator
+    end
+
+    action :edit, :create, :update, :show do
+      allow :administrator
+      allow :tutor, :if => :own_entry?
+    end
+  end
 
   def index
     fetch_filters
@@ -21,6 +34,8 @@ class TimeEntriesController < ApplicationController
 
     if @filter[:person] 
       @time_entries = @filter[:person].time_entries
+    elsif not @current_user.has_role? :administrator
+      @time_entries = @current_user.time_entries
     else
       @time_entries = TimeEntry.all
     end
@@ -30,7 +45,7 @@ class TimeEntriesController < ApplicationController
     end
 
     if @filter[:season]
-      @time_entries = @time_entries.select{|t| t.context.season == @filter[:season]}
+      @time_entries = @time_entries.select{|t| (t.context.respond_to?(:season) ? t.context.season : t.context) == @filter[:season] }
     end
   end
 
@@ -53,7 +68,7 @@ class TimeEntriesController < ApplicationController
     con = params[:time_entry][:context]
     if con 
       con_type, con_id = con.split(":")
-      allowed_contexts = ["Contestant"] 
+      allowed_contexts = ["Contestant","Season","Contest"] 
       if allowed_contexts.include? con_type
         params[:time_entry][:context] = eval(con_type).find_by_id(con_id)
       else
@@ -82,7 +97,7 @@ class TimeEntriesController < ApplicationController
     con = params[:time_entry][:context]
     if con 
       con_type, con_id = con.split(":")
-      allowed_contexts = ["Contestant"] 
+      allowed_contexts = ["Contestant","Season","Contest"] 
       if allowed_contexts.include? con_type
         params[:time_entry][:context] = eval(con_type).find_by_id(con_id)
       else
@@ -92,6 +107,14 @@ class TimeEntriesController < ApplicationController
     params[:time_entry][:person_id] = @current_user.id
     @time_entry = TimeEntry.create(params[:time_entry])
     if @time_entry.save
+      if @time_entry.context.is_a? Season
+        contx = @time_entry.context
+      elsif @time_entry.context.respond_to? :season
+        contx = @time_entry.context.season
+      elsif @time_entry.context.resond_to? :parent
+        contx = @time_entry.context.parent
+      end
+      TimeEntryAddedEvent.create(:time_entry => @time_entry, :context => contx, :person => @current_user) 
       respond_to do |format|
         format.html do
           flash[:notice] = "#{TimeEntry.human_name} wurde erfolgreich erstellt."
@@ -109,12 +132,16 @@ class TimeEntriesController < ApplicationController
     end
   end
 
+  def show
+
+  end
+
   def fetch_person
     @person = Person.find_by_id(params[:person_id])
   end
 
   def fetch_time_entry
-    @time_entry = TimeEntry.find_by_id(params[:id])
+    @time_entry = TimeEntry.find(params[:id])
   end
 
   def fetch_filters
@@ -123,5 +150,9 @@ class TimeEntriesController < ApplicationController
     @filter[:season] = Season.find_by_id(params[:filter][:season_id])
     @filter[:person] = Person.find_by_id(params[:filter][:person_id])
     @filter[:contestant] = Contestant.find_by_id(params[:filter][:contestant_id])
+  end
+
+  def own_entry?
+    @time_entry.person == @current_user
   end
 end

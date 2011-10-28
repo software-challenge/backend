@@ -247,7 +247,7 @@ de:
     person_created: "%{creator} hat eine neue Person \"%{person}\" hinzugefügt."
     person_added_to_contestant: "%{actor} hat %{person} dem Team \"%{contestant}\" hinzugefügt."
     person_removed_from_contestant: "%{actor} hat %{person} aus dem Team \"%{contestant}\" entfernt."
-    report_edited: "%{editor} hat das Protokoll des Teams %{contestant} bearbeitet."
+    report_edited: "%{editor} hat einen neuen Zeit-Eintrag für %{contestant} hinzugefügt."
   messages:
     js_required: "Bitte installieren oder aktivieren Sie Javascript in Ihrem Browser. Ansonsten ist nicht der volle Umfang des Wettkampfsystems nutzbar."
     states:

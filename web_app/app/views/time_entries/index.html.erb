@@ -2,7 +2,17 @@
 <%= javascript_include_tag 'markdown/jquery.markedit.js', 'markdown/showdown.js' %>
 
 <div id="actions">
-  <a href="#" class="add_entry"><%= image_tag "actions/add.png" %> Eintrag hinzufügen</a>
+  <% if @filter[:contestant].nil? or @current_user.has_role?(:tutor, @filter[:contestant]) %>
+    <a href="#" class="add_entry"><%= image_tag "actions/add.png" %> Eintrag hinzufügen</a>
+    <% javascript_tag do %>
+      $(function() {
+        $(".add_entry").bind("click", function(e){
+          $.getScript("<%= url_for([:new, @context, @person, :time_entry]) %>.js<%= "?contestant_id=#{@filter[:contestant].id}" if @filter[:contestant] %>")
+          e.preventDefault();    
+        })
+      });
+    <% end %>
+  <% end %>
 </div>
 
 <% @person = @filter[:person] if @filter[:person] %>
@@ -17,65 +27,10 @@
 <% tabnav (@contestant ? :contestant : (@person ? :person : :administration)) do %>
   <% unless params[:hide_filters] %>
     <div id="filters">
-      <% form_tag time_entries_url, :method => :get do %>
-        <% if params[:group_by] %>
-          <%= hidden_field_tag "group_by", params[:group_by] %>
-        <% end %>
-        <div id="filter_person">
-          Person: <%= select_tag "filter[person_id]", options_for_select([["Alle",0]] + @tutors_and_helpers.map{|p| ["#{p.name} - #{p.email}", p.id]}.sort{|a,b| a[0] <=> b[0]}, (@filter[:person] ? @filter[:person].id : nil)) %>
-          <%= link_to("zurücksetzen", "", 'data-select' => "filter_person_id", :class => "reset_filter") %>
-        </div>
-        <div id="filter_season">
-          Saison: <%= select_tag "filter[season_id]", options_for_select([["Alle",0]] + Season.public.map{|s| [s.name, s.id]}, @filter[:season] ? @filter[:season].id : nil) %> 
-          <%= link_to("zurücksetzen", "", 'data-select' => "filter_season_id", :class => "reset_filter") %> </div>
-        <div id="filter_contestant">
-          Team: <%= select_tag "filter[contestant_id]", options_for_select([["Alle",0]] + @contestants.map{|c| [(@filter[:season] ? c.name : "#{c.parent.subdomain} - #{c.name}"), c.id]}, @filter[:contestant] ? @filter[:contestant].id : nil) %>
-          <%= link_to("zurücksetzen", "", 'data-select' => "filter_contestant_id", :class => "reset_filter") %>
-        </div>
-        <%= submit_tag "Filter anwenden", :id => "submit_filter" %>
-      <% end %>
+      <%= render :partial => "filters" %>
     </div>
   <% end %>
   <% hide_cols = {} %>
   <% hide_cols[:person] = true if @person and params[:hide_person]%>
   <%= render :partial => "grouped_list", :locals => {:time_entries => @time_entries, :hide_cols => hide_cols} %>
-
-<% end %>
-
-<% javascript_tag do %>
-  $(function() {
-    $(".add_entry").bind("click", function(e){
-    $.getScript("<%= url_for([:new, @context, @person, :time_entry]) %>.js<%= "?contestant_id=#{params[:contestant_id]}" if params[:contestant_id].present? %>")
-      e.preventDefault();    
-    })
-
-    $("#submit_filter").bind("blick", function(){
-      $("#filters select").enable()
-    })
-    
-    $("#filters select").each(function(i,e){
-      if($(e).attr("value") == "0"){$(e).enable()}
-    })
-
-    $(".reset_filter").each(function(i,e){
-      if($("#"+$(e).data("select")).attr("value") == "0"){
-        $(e).hide()
-      }
-    })
-
-    $("#filters select").change(function(){
-      if($(this).attr("value") == 0){
-        $(this).parent().find(".reset_filter").hide()
-      }else{
-        $(this).parent().find(".reset_filter").show()
-      }
-    })
-
-    $(".reset_filter").bind("click",function(e){
-      $("#"+$(this).data("select")).attr("value","0").enable()
-      $(this).hide()
-      e.preventDefault();
-      })
-
-  });
 <% end %>
