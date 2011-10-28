@@ -1,6 +1,6 @@
 <% hide_cols ||= {} %>
 <% e = time_entry %>
-<tr id="entry_<%=e.id%>" class="time_entry person_<%=e.person.id%> season_<%=e.context.parent.id%> contestant_<%=e.context.id%>">
+<tr id="entry_<%=e.id%>" class="time_entry person_<%=e.person.id%> <% if e.context.is_a?(Contestant) then "contestant_#{e.context.id} season_#{e.context.parent.id}" elsif e.context.is_a?(Contest) then "contest_#{e.context.id} season_#{e.context.season ? e.context.season.id : ""}" elsif e.context.is_a?(Season) then "season_#{e.context.id}" end %>">
   <% unless hide_cols[:person] %>
     <td><%= link_to e.person.name, time_entries_url(:filter => {:person_id => e.person.id}, :group_by => "person") %></td>
   <% end %>
@@ -10,12 +10,12 @@
   <td class="middle"><%= l e.created_at.to_date %></td>
   <td class="middle"><span class="tooltipped"><%= e.title %></span><div class="tooltip"><h2><%= e.title %></h2><%= raw BlueCloth.new(e.description).to_html %></div></td>
   <td class="middle"><%= e.minutes_for_input %></td>
-  <td class="middle"><%= link_to image_tag("actions/edit.png"), "#", :class => 'edit_entry', :id => "edit_#{e.id}", "data-id" => e.id %>
+  <td class="middle"><%= link_to image_tag("actions/show.png"), e %> <%= link_to image_tag("actions/edit.png"), "#", :class => 'edit_entry', :id => "edit_#{e.id}", "data-id" => e.id %>
 </tr>
 <% javascript_tag do %>
   $(function() {
     $("#edit_<%=e.id%>").bind("click", function(e){
-    $.getScript("<%= url_for([:new, @context, @person, :time_entry]) %>".replace("new","").replace("neu","")+$(this).data("id")+"/bearbeiten.js<%="?contestant_id=#{e.context.id}" if e.context.is_a?(Contestant)%>")
+    $.getScript("<%= url_for([:new, @context, @person, :time_entry]) %>".replace("new","").replace("neu","")+$(this).data("id")+"/<%= @person ? "edit.js" : "bearbeiten.js"%><%="?contestant_id=#{e.context.id}" if e.context.is_a?(Contestant) and @filter and @filter[:contestant]%>")
       e.preventDefault();
     })
   });

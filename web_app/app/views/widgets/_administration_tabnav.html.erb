@@ -88,6 +88,10 @@ render_tabnav :administration, :html => { :class => "tabs_tabnav" } do
       t.highlights_on :controller => "survey_results"
     end
 
-
+    add_tab do |t|
+      t.named "Zeit-Einträge"
+      t.links_to time_entries_url
+      t.highlights_on :controller => "time_entries"
+    end
 end 
 %>

@@ -10,5 +10,5 @@
     </div>
   <% end %>
 <% else %>
-  <%= render :partial => "list", :locals => {:time_entries => time_entries.sort{|a,b| a.created_at <=> b.created_at}, :hide_cols => hide_cols} %>
+  <div class="time_entry_list"><%= render :partial => "list", :locals => {:time_entries => time_entries.sort{|a,b| a.created_at <=> b.created_at}, :hide_cols => hide_cols} %></div>
 <% end %>

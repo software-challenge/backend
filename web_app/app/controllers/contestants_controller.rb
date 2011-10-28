@@ -10,11 +10,6 @@ class ContestantsController < ApplicationController
       allow all
     end
 
-    actions :report, :update_report do
-      allow :tutor, :helper, :of => :contestant
-      allow :administrator
-    end
-
     action :my, :add_person do
       allow :administrator
       allow :tutor, :helper, :teacher, :pupil, :of => :contestant
@@ -217,27 +212,6 @@ class ContestantsController < ApplicationController
       return
     end
     render :text => count.to_s
-  end
-
-  def report
-  end
-
-  def update_report
-    @contestant.report = params[:contestant][:report]
-    last_event = @contestant.report_events.last
-    last_still_fresh = last_event and (last_event.person == @current_user) and (last_event.created_at > 6.hours.ago)
-    if last_still_fresh
-      last_event.param_time_1 = Time.now
-    else
-      ev = ContestantReportEvent.new({:context => @contestant.season || @contestant.contests.last, :contestant => @contestant, :person => @current_user})
-    end
-    if @contestant.save and ((last_still_fresh and last_event.save) or ev.save)
-      flash[:notice] = "Protokoll wurde erfolgreich bearbeitet."
-      redirect_to :action => :show
-    else 
-      flash[:error] = "Beim Speichern der Änderungen kam es zu einem Fehler!"
-      render :action => :report
-    end
   end
 
   def fetch_context

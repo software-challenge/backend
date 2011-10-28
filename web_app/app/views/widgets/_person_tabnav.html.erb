@@ -41,7 +41,7 @@ render_tabnav :person, :html => { :class => "tabs_tabnav" } do
 
     add_tab do |t|
       t.named TimeEntry.human_name(:count => 2)
-      t.links_to url_for time_entries_url(:filter => {:person_id => @person.id})
+      t.links_to url_for time_entries_url(:filter => {:person_id => @person.id}, :group_by => "person")
       t.highlights_on :controller => "time_entries"
     end if administrator? or @person == @current_user
   end

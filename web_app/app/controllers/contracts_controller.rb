@@ -1,10 +1,18 @@
 class ContractsController < ApplicationController
 
-  access_control do 
-    allow :administrator
+  before_filter :fetch_person, :fetch_contract
+
+  access_control do
+    action :new, :create, :update do 
+      allow :administrator
+    end
+
+    action :index do
+      allow :administrator
+      allow :tutor, :if => :own?
+    end
   end
 
-  before_filter :fetch_person, :fetch_contract
 
   def index
     @contracts = @person.contracts 
@@ -45,4 +53,9 @@ class ContractsController < ApplicationController
   def fetch_contract
     @contract = Contract.find_by_id(params[:id])
   end
+
+  def own?
+    @person == @current_user
+  end
+
 end

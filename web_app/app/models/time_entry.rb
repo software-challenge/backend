@@ -8,12 +8,12 @@ class TimeEntry < ActiveRecord::Base
 
   def time=(input)
     if input.is_a? Integer
-      self.minutes = input
+      self.minutes = input.abs
     elsif input.is_a?(String) and input.include?(":")
       s = input.split(":")
-      self.minutes = begin (s[0].to_i * 60)+s[1].to_i rescue 0 end
+      self.minutes = begin (s[0].to_i.abs * 60)+s[1].to_i.abs rescue 0 end
     elsif input.is_a?(String)
-      self.minutes = begin input.to_i rescue 0 end
+      self.minutes = begin input.to_i.abs rescue 0 end
     end
   end
 
