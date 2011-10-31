@@ -2,7 +2,7 @@
   <td><%= image_tag "file_types/#{file_entry.file_type}.png" %></td>
   <td>
     <% if file_entry.file_type == "directory" %>
-      <%= link_to_remote file_entry.clean_file_name, :url => eurl_for([:browse, @context, client.contestant, client], :entry_id => file_entry.id) %>
+      <%= link_to_remote file_entry.clean_file_name, :url => eurl_for([:browse, @context, client.contestant, client], :params => {:entry_id => file_entry.id}) %>
     <% else %>
       <%=h file_entry.clean_file_name %>
     <% end %>
@@ -13,7 +13,7 @@
       <% if file_entry.current? %>
         <b><%= t("views.active").capitalize %></b>
       <% else %>
-        <%= link_to t("views.select").capitalize, eurl_for([:select_main, @context, client.contestant, client], :main_id => file_entry.id), :method => :post %>
+        <%= link_to t("views.select").capitalize, eurl_for([:select_main, @context, client.contestant, client], :params => {:main_id => file_entry.id}), :method => :post %>
       <% end %>
     <% end %>
   </td>
