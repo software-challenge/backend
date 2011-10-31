@@ -2,7 +2,7 @@
   <td><%= image_tag "file_types/#{file_entry.file_type}.png" %></td>
   <td>
     <% if file_entry.file_type == "directory" %>
-      <%= link_to_remote file_entry.clean_file_name, :url => eurl_for([:browse, @context, client.contestant, client], :params => {:entry_id => file_entry.id}) %>
+      <%= link_to_remote file_entry.clean_file_name, :url => eurl_for([:browse, @context, client.contestant, client], :params => ({:entry_id => file_entry.id} unless file_entry.id.nil?)) %>
     <% else %>
       <%=h file_entry.clean_file_name %>
     <% end %>
