@@ -6,7 +6,7 @@
   </tr>
 </thead>
 <% if @parent %>
-  <%  parent = @parent.clone; parent.file_name = '..'; parent.readonly! %>
+  <%  parent = @parent.clone; parent.file_name = '..'; parent.id = @parent.parent.try(:id); parent.readonly! %>
   <%= render :partial => "file_entry", :locals => { :file_entry => parent, :client => @client } %>
 <% end %>
 <%= render :partial => "file_entry", :collection => @entries, :locals => { :client => @client } %>
