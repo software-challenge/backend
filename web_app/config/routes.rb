@@ -58,7 +58,7 @@ ActionController::Routing::Routes.draw do |map|
         end
       end
       
-      s.resources :preliminary_contestants, :member => {:confirm_participation => :post} do |prelim_contestants|
+      s.resources :preliminary_contestants, :member => {:confirm_participation => :post, :force_participation => :post} do |prelim_contestants|
       end
       
       s.resources :survey_tokens, :collection => {:preview_template => :get} do  |st|

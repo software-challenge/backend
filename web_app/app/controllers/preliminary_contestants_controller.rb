@@ -130,10 +130,15 @@ class PreliminaryContestantsController < ApplicationController
     @preliminary_contestant.participation_confirmed = true
     if @preliminary_contestant.save
       flash[:notice] = "Das Team #{@preliminary_contestant.name} wurde erfolgreich verbindlich angemeldet."
-      redirect_to :back
     else
       flash[:error] = "Das Team #{@preliminary_contestant.name} konnte nicht verbindlich angemeldet werden."
     end
+    redirect_to :back
+  end
+
+  def force_participation
+    @preliminary_contestant.forced_confirmation = true
+    confirm_participation
   end
 
   def index

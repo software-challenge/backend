@@ -56,6 +56,11 @@
               <% else %>
                 <%= image_tag "state/warning.png" %>
               <% end %>
+              <% if administrator? %>
+                <span title="Jetzt zwangsanmelden">
+                  <%= link_to image_tag("actions/unchecked-force.png"), [:force_participation, @season, prelim], :method => :post, :confirm => "Wollen Sie das Team #{prelim.name} der #{prelim.school.name} wirklich verbindlich anmelden?" %>
+                </span>
+              <% end %>
             <% end %>
           </td>
         <% else %>

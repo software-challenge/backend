@@ -24,6 +24,9 @@
             <% else %>
               <%= list_item "Verbindliche Teilnahme", image_tag("state/warning.png") %>
             <% end %>
+            <% if administrator? %>
+              <%= list_item "Zwangsanmeldung", image_tag("state/warning.png")+link_to("(jetzt zwangsanmelden)", [:force_participation, preliminary_contestant.season, preliminary_contestant], :method => :post, :confirm => "Wollen Sie das Team #{preliminary_contestant.name} der Schule #{preliminary_contestant.school.name} wirklich verbindlich anmelden?") %>
+            <% end %>
           <% end %>
         <% end %>
       </ol>
