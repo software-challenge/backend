@@ -177,7 +177,7 @@ class ApplicationController < ActionController::Base
     if not c.nil? and c.hidden? and not administrator?
       #redirect = true
       #c = Contest.find_by_subdomain DateTime.now.year.to_s
-      raise NotAllowed
+      #raise NotAllowed
     end
 
     @contest = @current_contest = c unless c.nil?
