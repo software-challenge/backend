@@ -341,7 +341,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_current_url
-    @current_url = {:unescaped => request.url, :escaped => url_escape(request.url)}
+    url = url_for :only_path => false, :params => request.GET.except(:redirect_url)
+    @current_url = {:unescaped => url, :escaped => url_escape(url)}
   end
 
   def current_season
