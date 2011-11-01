@@ -1,7 +1,0 @@
-<data>
-<% Zlib::GzipReader.open(replay) do |gz| %>
-  <% gz.each_line do |l| %>
-   <%= (l.gsub "#{@contest.game_definition.game_identifier.to_s.scan(/[A-Z]/).join.downcase}:", "").html_safe! %>
-  <% end %>
-<% end %>
-</data>

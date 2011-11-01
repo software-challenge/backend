@@ -1,5 +1,0 @@
-dir_mode: script
-dir: ../../public/system/daemons
-multiple: false
-backtrace: true
-monitor: true

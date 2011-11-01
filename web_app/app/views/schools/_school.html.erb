@@ -1,8 +1,0 @@
-<tr class="school <%= school.state.downcase %>">
-  <td><%= school.name %></td>
-  <td><%= school.location %></td>
-  <td><%= school.state %></td>
-  <td class="middle"><span class="tooltipped"><%= school.preliminary_contestants.count %></span><div class="tooltip"><% unless school.preliminary_contestants.empty? %><ul style="list-style-type:none;"><% school.preliminary_contestants.each do |p| %><li><%= p.name %></li><% end %></ul><% else %>Bis jetzt keine Teams angemeldet!<% end %></div></td>
-  <td class="middle">
-    <%= link_to image_tag('actions/show.png'), [@season, school] %>   </td>
-</tr>

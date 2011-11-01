@@ -1,2 +1,0 @@
-$("#show_form").before('<%= escape_javascript(render(:partial => "comment", :locals => {:comment => @ticket.comments.last, :curr_cycle => @ticket.comments.length % 2 == 1 ? "odd" : "even"})) %>') 
-

@@ -1,6 +1,0 @@
-<tr id="entry_<%=entry.id%>">
-  <td title="Checksum: <%=entry.checksum%>"><%= entry.filename[0..35] %></td>
-  <td><%= entry.comment %></td>
-  <td><%= l  entry.created_at.to_date %></td>
-  <td><span title="Eintrag entfernen" class="tooltipped"><%= link_to_remote image_tag("actions/delete.png"),:url => ajax_delete_contest_whitelist_entry_url(@contest,entry) %></span></td> 
-</tr>
