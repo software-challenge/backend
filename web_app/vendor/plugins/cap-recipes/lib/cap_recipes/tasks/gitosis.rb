@@ -1,1 +1,0 @@
-Dir[File.join(File.dirname(__FILE__), 'gitosis/*.rb')].sort.each { |lib| require lib }

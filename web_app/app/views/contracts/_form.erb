@@ -1,7 +1,0 @@
-<% semantic_form_for [@context, @person, @contract] do |f| %>
-  <% f.inputs do %> 
-    <%= f.input :hours %>
-    <%= f.input :description, :as => :string, :input_html => {:size => 50} %>
-  <% end %>
-  <%= f.buttons %>
-<% end %>

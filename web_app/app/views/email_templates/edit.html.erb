@@ -1,7 +1,0 @@
-<h1>
-  <%= @email_template.class.human_name %> bearbeiten
-</h1>
-
-<% tabnav :administration do %>
-  <%= render :partial => 'form', :locals => {:template => @email_template} %>
-<% end %>

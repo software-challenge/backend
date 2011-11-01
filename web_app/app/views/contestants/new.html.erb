@@ -1,9 +1,0 @@
-<h1>
-  <% if @season and not @context.is_a? Season %><%= link_to @season.name, @season %> / <% end %>
-  <%= link_to @context.name, [@context, :contestants] %> / 
-  <%= current_page_title %>
-</h1>
-
-<% tabnav :contestant do %>
-  <%= render :partial => "form" %>
-<% end %>

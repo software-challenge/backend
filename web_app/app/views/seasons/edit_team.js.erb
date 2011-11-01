@@ -1,6 +1,0 @@
-<% if @preliminary_contestant %>
-  $("#team_partial").html("<%= escape_javascript(render :partial => "contestant_form", :locals => {:prelim => @preliminary_contestant}) %>")
-<% else %>
-  $("#team_partial").html("<b>Wurde nicht auf Basis einer Voranmeldung erstellt</b>")
-<% end %>
-$("#preliminary_contestants option").attr("selected", false)

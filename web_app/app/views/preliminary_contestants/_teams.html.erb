@@ -1,7 +1,0 @@
-<%= render :partial => "preliminary_contestants/teams_header", :locals => {:show_actions => true} %> 
-  <% @school.teams.each do |team| %>
-    <%= render :partial => "preliminary_contestants/form", :locals => {:team => team} %>
-  <% end %>
-  <tr id="insertHere"></tr>
-  </tbody>
-</table> 

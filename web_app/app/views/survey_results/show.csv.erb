@@ -1,7 +1,0 @@
-Adressat,Beantworter,Schulname,Abgeschlossen?,<%= @questions.reject{|q|q.display_order == 1 or q.display_type == "label"}.map{|q| "\"#{q.text}\""}.join(",").html_safe %>
-    
-<% for set in @response_sets %>
-"<%= set.survey_token.token_owner.name.html_safe %>","<%=set.user.name.html_safe%>","<%=(set.survey_token.token_owner.respond_to?(:school) and set.survey_token.token_owner.school) ? set.survey_token.token_owner.school.name : "Nicht verfügbar" %>",<%= raw (set.complete? ? "Ja" : "Nein") %>,<%= @questions.reject{|q| q.display_order == 1 or q.display_type == "label"}.map{|q| "\"#{display_response(set,q,:separator => "|")}\""}.join(",").html_safe %>
-<% end %>
-
-    

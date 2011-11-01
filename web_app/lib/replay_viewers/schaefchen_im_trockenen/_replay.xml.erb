@@ -1,7 +1,0 @@
-<data>
-<% Zlib::GzipReader.open(replay) do |gz| %>
-  <% gz.each_line do |l| %>
-   <%= l.gsub("sit:", "").html_safe! %>
-  <% end %>
-<% end %>
-</data>
