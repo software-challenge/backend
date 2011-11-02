@@ -26,7 +26,7 @@ public class SelectMoveConverter implements Converter {
 
 	@Override
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
-		if (!value.getClass().equals(BuildMove.class)){
+		if (!value.getClass().equals(SelectMove.class)){
 			/* adding standard xml-tag for derived moves */
 			Configuration.getXStream().alias("manhattan:select", value.getClass());
 		}	
