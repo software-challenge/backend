@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * 
  */
 @XStreamAlias(value = "manhattan:player")
-public final class Player extends SimplePlayer {
+public class Player extends SimplePlayer {
 
 	// spielerfarbe des spielers
 	@XStreamOmitField
