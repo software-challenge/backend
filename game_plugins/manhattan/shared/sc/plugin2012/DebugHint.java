@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author tkra
  * 
  */
-public final class DebugHint implements Cloneable {
+public class DebugHint implements Cloneable {
 
 	@XStreamAsAttribute
 	public final String content;

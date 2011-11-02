@@ -56,7 +56,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  */
 @XStreamAlias(value = "manhattan:state")
 @XStreamConverter(GameStateConverter.class)
-public final class GameState implements Cloneable {
+public class GameState implements Cloneable {
 
 	// momentane rundenzahl
 	private int turn;
