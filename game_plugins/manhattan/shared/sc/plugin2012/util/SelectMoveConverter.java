@@ -18,7 +18,7 @@ public class SelectMoveConverter implements Converter {
 	@Override
 	public boolean canConvert(Class clazz) {
 		try {
-			return BuildMove.class.isAssignableFrom(clazz);
+			return SelectMove.class.isAssignableFrom(clazz);
 		} catch (Exception e) {
 			return false;
 		}
@@ -28,7 +28,7 @@ public class SelectMoveConverter implements Converter {
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 		if (!value.getClass().equals(BuildMove.class)){
 			/* adding standard xml-tag for derived moves */
-			Configuration.getXStream().alias("manhattan:build", value.getClass());
+			Configuration.getXStream().alias("manhattan:select", value.getClass());
 		}	
 		SelectMove move = (SelectMove) value;
 		int[] selections = move.getSelections();
