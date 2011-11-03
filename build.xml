@@ -1,5 +1,5 @@
 <project name="Complete" basedir="." default="main">
-	<import file="svn-build.xml" />
+	<import file="git-build.xml" />
 
 	<property name="out.dir" value="deploy" />
 
@@ -33,7 +33,7 @@
 		<ant dir="game_gui" target="clean-build" inheritAll="false" />
 	</target>
 
-	<target name="build" depends="svnversion,dependencies">
+	<target name="build" depends="scmversion,dependencies">
 		<mkdir dir="${out.dir}" />
 
 		<mkdir dir="${out.dir}/gui" />
