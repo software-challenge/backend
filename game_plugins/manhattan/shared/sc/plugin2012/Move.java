@@ -19,6 +19,18 @@ public abstract class Move implements Cloneable {
 	@XStreamImplicit(itemFieldName = "hint")
 	private List<DebugHint> hints;
 
+         /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            Move clone = (Move) super.clone();
+            if (this.hints != null)
+                clone.hints = new LinkedList<DebugHint>(this.hints); 
+            return clone;
+        }
 	/**
 	 * Fuegt eine Debug-Hilfestellung hinzu.<br/>
 	 * Diese kann waehrend des Spieles vom Programmierer gelesen werden,

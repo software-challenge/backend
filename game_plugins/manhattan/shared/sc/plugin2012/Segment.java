@@ -12,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  *
  */
 @XStreamConverter(SegmentConverter.class)
-public class Segment {
+public class Segment implements Cloneable {
 
 	// segmentgroesse
 	public final int size;
@@ -45,6 +45,16 @@ public class Segment {
 		usable = 0;
 		retained = amount;
 	}
+        
+        /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
 
 	/**
 	 * Liefert die Anzahl bereits verwendeter Bauteile dieser Art

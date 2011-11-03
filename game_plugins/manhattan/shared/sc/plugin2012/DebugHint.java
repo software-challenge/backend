@@ -59,7 +59,11 @@ public class DebugHint implements Cloneable {
 	public DebugHint(final String content) {
 		this.content = content == null ? "" : content;
 	}
-
+        /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		return new DebugHint(content);

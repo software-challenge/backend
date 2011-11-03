@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  */
 @XStreamAlias(value = "mh:tower")
-public class Tower {
+public class Tower implements Cloneable{
 
 	// index des stadt in der dieser turm steht
 	@XStreamAsAttribute
@@ -47,6 +47,15 @@ public class Tower {
 		this.city = city;
 		this.slot = slot;
 	}
+        /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
 
 	/**
 	 * Fuegt dem Turm ein Bauteil hinzu, wenn dies ein erlaubter Zug ist
