@@ -1,5 +1,5 @@
 <project name="haseundigel-plugin" basedir="." default="main">
-	<import file="../../svn-build.xml" />
+	<import file="../../git-build.xml" />
 
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
@@ -35,7 +35,7 @@
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" encoding="utf8" classpathref="classpath" debug="true" debuglevel="lines,vars,source" />
 	</target>
 
-	<target name="jar" depends="svnversion,compile">
+	<target name="jar" depends="scmversion,compile">
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>

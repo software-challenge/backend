@@ -1,5 +1,5 @@
 <project name="softwarechallenge-gui" basedir="." default="main">
-	<import file="../svn-build.xml" />
+	<import file="../git-build.xml" />
 	
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
@@ -49,7 +49,7 @@
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>
 
-	<target name="compile" depends="svnversion">
+	<target name="compile" depends="scmversion">
 		<mkdir dir="${classes.dir}" />
 		<javac srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
 	</target>
