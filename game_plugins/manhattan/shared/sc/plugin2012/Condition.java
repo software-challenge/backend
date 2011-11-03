@@ -4,7 +4,7 @@ package sc.plugin2012;
  * Farbe des Gewinners und Gewinngrund.
  *
  */
-class Condition {
+class Condition implements Cloneable {
 
 	public final PlayerColor winner;
 
@@ -28,5 +28,14 @@ class Condition {
 		this.winner = winner;
 		this.reason = reason;
 	}
+        /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return new Condition(winner, reason);
+        }
 
 }

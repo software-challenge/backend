@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  */
 @XStreamAlias(value = "manhattan:select")
 @XStreamConverter(SelectMoveConverter.class)
-public class SelectMove extends Move {
+public class SelectMove extends Move implements Cloneable{
 
 	private int[] selections = new int[MAX_SEGMENT_SIZE];
 
@@ -41,6 +41,17 @@ public class SelectMove extends Move {
 			this.selections[i] = selections[i];
 		}
 	}
+        /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            SelectMove clone = (SelectMove) super.clone();
+            clone.selections = selections.clone();
+            return clone;
+        }
 	/**
 	 * Gibt ein int-Array zurueck, bei dem das i-te Element
 	 * fuer die Anzahl gewaehlter Bausteine der Groesse i+1 steht.
