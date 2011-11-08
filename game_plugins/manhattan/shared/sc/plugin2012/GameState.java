@@ -56,7 +56,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  */
 @XStreamAlias(value = "manhattan:state")
 @XStreamConverter(GameStateConverter.class)
-public final class GameState implements Cloneable {
+public class GameState implements Cloneable {
 
 	// momentane rundenzahl
 	private int turn;
@@ -74,10 +74,10 @@ public final class GameState implements Cloneable {
 	private Player red, blue;
 
 	// kartenstapel
-	private final List<Card> cardStack;
+	private List<Card> cardStack;
 
-	// listre der gebauten tuerem
-	private final List<Tower> towers;
+	// liste der gebauten tuerem
+	private List<Tower> towers;
 
 	// letzter performte move
 	private Move lastMove;
@@ -131,7 +131,29 @@ public final class GameState implements Cloneable {
 		}
 
 	}
-
+         /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+	@Override
+	public Object clone() throws CloneNotSupportedException{
+		GameState clone = (GameState) super.clone();
+                if (red != null)
+                    clone.red = (Player) red.clone();
+                if (blue != null)
+                    clone.blue = (Player) blue.clone();
+                if (lastMove != null)
+                    clone.lastMove = (Move) lastMove.clone();
+                if (condition != null)
+                    clone.condition = (Condition) condition.clone();
+                if (this.cardStack != null)
+                    clone.cardStack = new LinkedList<Card>(this.cardStack);
+                if (this.towers != null)
+                    clone.towers = new LinkedList<Tower>(this.towers);
+		return clone;
+        }
+        
 	/**
 	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
 	 * <br/>
