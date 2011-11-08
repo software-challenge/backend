@@ -14,13 +14,21 @@ public class BuildMoveConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class clazz) {
-		return clazz.equals(BuildMove.class);
+		try {
+			return BuildMove.class.isAssignableFrom(clazz);
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	@Override
 	public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 		BuildMove move = (BuildMove) value;
-
+		if (!value.getClass().equals(BuildMove.class)){
+			/* adding standard xml-tag for derived moves */
+			Configuration.getXStream().alias("manhattan:build", value.getClass());
+		}	
+        
 		writer.addAttribute("city", Integer.toString(move.city));
 		writer.addAttribute("slot", Integer.toString(move.slot));
 		writer.addAttribute("size", Integer.toString(move.size));
