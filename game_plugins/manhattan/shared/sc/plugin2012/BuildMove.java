@@ -14,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  */
 @XStreamAlias(value = "manhattan:build")
 @XStreamConverter(BuildMoveConverter.class)
-public class BuildMove extends Move {
+public class BuildMove extends Move implements Cloneable {
 
 	public final int city;
 
@@ -48,6 +48,15 @@ public class BuildMove extends Move {
 		this.slot = slot;
 		this.size = size;
 	}
+         /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
 
 	@Override
 	void perform(GameState state, Player player) throws InvalideMoveException {

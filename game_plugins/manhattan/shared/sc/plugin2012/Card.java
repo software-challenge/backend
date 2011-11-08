@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  *
  */
 
-public class Card {
+public class Card implements Cloneable {
 
 	@XStreamAsAttribute
     public final int slot;
@@ -28,6 +28,15 @@ public class Card {
 	public Card(int slot){
 		this.slot = slot;
 	}
+         /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            return super.clone();
+        }
 	/**
 	 * Prueft, ob die Karte mit der uebergebenen an der Position uebereinstimmt
 	 */

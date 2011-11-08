@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * 
  */
 @XStreamAlias(value = "manhattan:player")
-public final class Player extends SimplePlayer {
+public class Player extends SimplePlayer implements Cloneable {
 
 	// spielerfarbe des spielers
 	@XStreamOmitField
@@ -55,6 +55,24 @@ public final class Player extends SimplePlayer {
 		this.color = color;
 		points = 0;
 	}
+
+	 /**
+         * klont dieses Objekt
+         * @return ein neues Objekt mit gleichen Eigenschaften
+         * @throws CloneNotSupportedException 
+         */
+        @Override
+        public Object clone() throws CloneNotSupportedException {
+            Player clone = new Player(this.color);
+            clone.points = this.points;
+            if (segments != null)
+                for (Segment s : this.segments)
+                    clone.addSegmet((Segment)s.clone());
+            if (cards != null)
+                for (Card c : this.cards)
+                    clone.addCard((Card)c.clone());
+            return clone;
+        }
 
 	@Override
 	public boolean equals(Object obj) {
