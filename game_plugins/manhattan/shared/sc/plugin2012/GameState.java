@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+
 import sc.plugin2012.util.Constants;
 import sc.plugin2012.util.GameStateConverter;
 
@@ -75,6 +76,9 @@ public class GameState implements Cloneable {
 
 	// kartenstapel
 	private List<Card> cardStack;
+	
+	// verbrauchte Karten
+	private List<Card> usedStack;
 
 	// liste der gebauten tuerem
 	private List<Tower> towers;
@@ -119,7 +123,7 @@ public class GameState implements Cloneable {
 		startPlayer = PlayerColor.RED;
 		currentMoveType = MoveType.SELECT;
 		cardStack = new LinkedList<Card>();
-
+		usedStack = new LinkedList<Card>();
 		if (!suppressStack) {
 			createCardStack();
 		}
@@ -131,6 +135,7 @@ public class GameState implements Cloneable {
 		}
 
 	}
+	
          /**
          * klont dieses Objekt
          * @return ein neues Objekt mit gleichen Eigenschaften
@@ -149,6 +154,8 @@ public class GameState implements Cloneable {
                     clone.condition = (Condition) condition.clone();
                 if (this.cardStack != null)
                     clone.cardStack = new LinkedList<Card>(this.cardStack);
+                if (this.usedStack != null)
+                    clone.usedStack = new LinkedList<Card>(this.usedStack);
                 if (this.towers != null)
                     clone.towers = new LinkedList<Tower>(this.towers);
 		return clone;
@@ -175,6 +182,7 @@ public class GameState implements Cloneable {
 		for (int i = 0; i < CARDS_PER_PLAYER; i++) {
 			player.addCard(drawCard());
 		}
+		usedStack.clear();
 
 		for (int i = 1; i <= MAX_SEGMENT_SIZE; i++) {
 			player.addSegmet(new Segment(i, SEGMENT_AMOUNTS[i - 1]));
@@ -324,7 +332,6 @@ public class GameState implements Cloneable {
 
 		turn++;
 		this.lastMove = lastMove;
-
 		if (currentMoveType == MoveType.SELECT) {
 			if (currentPlayer == startPlayer) {
 				switchCurrentPlayer();
@@ -332,6 +339,7 @@ public class GameState implements Cloneable {
 				setCurrentMoveType(MoveType.BUILD);
 			}
 		} else {
+			usedStack.add(new Card(((BuildMove)lastMove).slot));
 			if (currentPlayer == startPlayer && getCurrentPlayer().getUsableSegmentCount() == 0) {
 				setCurrentMoveType(MoveType.SELECT);
 				switchCurrentPlayer();
@@ -376,48 +384,34 @@ public class GameState implements Cloneable {
 	 * 
 	 * @return naechste Karte
 	 */
-	public Card drawCard() {
-
-		Card card = cardStack.remove(0);
+	public synchronized Card drawCard() {
 		if (cardStack.isEmpty()) {
-			createCardStack(card);
+			mixCardStack();
 		}
-		return card;
-
+		return 	cardStack.remove(0);
 	}
-    
-    private void createCardStack(){
-        createCardStack(null);
-    }
-    
     /**
-     * card is the last drawed card, which has not reached the palyers hand yet
-     */
-	private void createCardStack(Card pickedCard) {
-
-		int[] cardsInGame = new int[Constants.SLOTS];
-
-		if (null != red && null != blue) {
-			for (Card card : red.getCards()) {
-				cardsInGame[card.slot]++;
-			}
-			for (Card card : blue.getCards()) {
-				cardsInGame[card.slot]++;
-			}
-		}
-        if (pickedCard != null)
-            cardsInGame[pickedCard.slot]++;
-
-		cardStack.clear();
-		for (int slot = 0; slot < SLOTS; slot++) {
-			int cards = CARDS_PER_SLOT - cardsInGame[slot];
-			for (int card = 0; card < cards; card++) {
-				cardStack.add(new Card(slot));
-			}
+	 * erstellt einen stapel mit ALLEN karten.
+	 */
+    private synchronized void createCardStack() {
+		for (int slot = 0; slot < Constants.SLOTS*Constants.CARDS_PER_SLOT; slot++) {
+			cardStack.add(new Card(slot % Constants.SLOTS));
 		}
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
+	/**
+	 * Mischt neuen Stapel aus verbrauchten Karten
+	 */ 
+	private synchronized void mixCardStack() {
+		cardStack.clear();
+		for (Card c : usedStack) {
+			cardStack.add(c);
+		}
+		usedStack.clear();
+		Collections.shuffle(cardStack, new SecureRandom());
+	}
 
+    
 	/**
 	 * Liefert den Turm an gegebenem Feld (Stadt, Position)
 	 * 
