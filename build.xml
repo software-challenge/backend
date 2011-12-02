@@ -13,6 +13,7 @@
 		<delete dir="game_players/schaefchen_im_trockenen/build" />!-->
 		<delete dir="game_plugins/manhattan/build" />
 		<delete dir="game_players/manhattan/build" />
+		<delete dir="game_players/manhattan_player2/build" />
 	</target>
 
 	<target name="dependencies">
@@ -27,6 +28,7 @@
 		<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />!-->
 		<ant dir="game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/manhattan" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -67,6 +69,11 @@
 		<mkdir dir="${out.dir}/simple_client/manhattan/jar" />
 		<copy todir="${out.dir}/simple_client/manhattan/jar">
 			<fileset dir="./game_players/manhattan/build/jar" />
+		</copy>
+
+		<mkdir dir="${out.dir}/not_so_simple_client/manhattan/jar" />
+		<copy todir="${out.dir}/not_so_simple_client/manhattan/jar">
+			<fileset dir="./game_players/manhattan_player2/build/jar" />
 		</copy>
 		
 		<!--

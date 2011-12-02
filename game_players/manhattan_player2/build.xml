@@ -1,14 +1,22 @@
 <project name="manhattan_player2" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
-	<property name="lib.dir" value="lib" />
+	<property name="root.dir" value="./../.." />
+	<property name="lib.dir" value="${root.dir}/software_challenge_sdk/lib" />
+	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="zip.dir" value="${build.dir}/zipped" />
+	<property name="plugins.dir" value="${root.dir}/game_plugins" />
+	<property name="game.dir" value="${plugins.dir}/manhattan" />
 	<property name="main-class" value="sc.player2012.Starter" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<fileset dir="${sdk.dir}" includes="**/*.jar" />
+		<fileset dir="${game.dir}" includes="**/*.jar" />
+		<pathelement location="${sdk.dir}/${build.dir}/bin" />
+		<pathelement location="${game.dir}/${build.dir}/bin" />
 	</path>
 
 	<path id="classpath.base">
@@ -31,6 +39,12 @@
 
 	<target name="clean">
 		<delete dir="build" />
+	</target>
+
+	<target name="dependencies">
+		<echo message="Compiling SC dependencies" />
+		<ant dir="${sdk.dir}" inheritAll="false" />
+		<ant dir="${game.dir}" inheritAll="false" />
 	</target>
 
 	<target name="compile">
@@ -68,5 +82,5 @@
 
 	<target name="clean-build" depends="clean,build" />
 
-	<target name="main" depends="clean-build" />
+	<target name="main" depends="dependencies,clean-build" />
 </project>
