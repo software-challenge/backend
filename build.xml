@@ -167,6 +167,7 @@
 		!-->
 		<zip destfile="${out.dir}/zipped/simpleclient-mh-jar.zip" basedir="${out.dir}/simple_client/manhattan/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-mh-src.zip" basedir="${out.dir}/simple_client/manhattan/src" />
+		<zip destfile="${out.dir}/zipped/not-so-simpleclient-mh-jar.zip" basedir="${out.dir}/not_so_simple_client/manhattan/jar" />
 		
 
 		<echo message="Gathering documentations..." />
