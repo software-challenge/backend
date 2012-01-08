@@ -83,7 +83,7 @@ public class BuildMove extends Move implements Cloneable {
 
 		if (!player.hasCard(slot)) {
 			throw new InvalideMoveException(player.getDisplayName() + " hat keine Karte für den Bauplatz "
-					+ slot);
+					+ slot + 1); //Bugfix #689
 		}
 
 		if (!tower.addPart(color, size)) {
