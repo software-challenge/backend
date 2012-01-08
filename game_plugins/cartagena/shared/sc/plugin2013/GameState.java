@@ -61,7 +61,7 @@ public class GameState implements Cloneable {
 	private List<Card> usedStack;
 	
 	//letzter Performter move
-	//private Move lastMove;
+	private Move lastMove;
 	
 	// endbedingung
 	private Condition condition = null;
@@ -93,14 +93,14 @@ public class GameState implements Cloneable {
 	}
 	
 	/**
-	 * Zieht 12 Karten vom Stapel und legt diese offen hin
+	 * Zieht bis zu 12 Karten vom Stapel und legt diese offen hin
 	 */
 	private synchronized void showCards(){
 		//draw as many cards from Stack to fill out 12
-		if(cardStack.isEmpty()){
-			mixCardStack();
-		}
 		for(int i = openCards.size(); i < Constants.NUM_OPEN_CARDS; i++){
+			if(cardStack.isEmpty()){
+				mixCardStack();
+			}
 			openCards.add(cardStack.remove(0));
 		}
 	}
@@ -127,8 +127,9 @@ public class GameState implements Cloneable {
 			this.blue = player;
 		}
 		
+		//Draw initial Cards for Player
 		for(int i =0; i< Constants.INIT_CARDS_PER_PLAYER; i++){
-			//TODO draw a card for Player
+			player.addCard(cardStack.remove(0));
 		}
 		
 	}

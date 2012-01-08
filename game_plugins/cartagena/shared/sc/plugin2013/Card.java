@@ -11,7 +11,7 @@ public class Card implements Cloneable {
 	 * Deserialisierung von Objekten aus XML-Nachrichten.
 	 */
 	public Card() {
-		this.symbol = null; // könnte Probleme geben
+		this.symbol = null;
 	}
 
 	/**
