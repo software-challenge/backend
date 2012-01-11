@@ -63,6 +63,9 @@ public class GameState implements Cloneable {
 	//letzter Performter move
 	private Move lastMove;
 	
+	//das Spielbrett
+	private List<Field> board;
+	
 	// endbedingung
 	private Condition condition = null;
 	
