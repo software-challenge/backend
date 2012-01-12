@@ -71,7 +71,7 @@ public class GameState implements Cloneable {
 	private Move lastMove;
 
 	// das Spielbrett
-	private List<Field> board;
+	private Board board;
 
 	// endbedingung
 	private Condition condition = null;
@@ -82,7 +82,7 @@ public class GameState implements Cloneable {
 		openCards = new ArrayList<Card>(Constants.NUM_OPEN_CARDS);
 		usedStack = new LinkedList<Card>();
 		initCardStack();
-
+		board = new Board();
 		// TODO implementieren
 	}
 
@@ -125,27 +125,6 @@ public class GameState implements Cloneable {
 		}
 		usedStack.clear();
 		Collections.shuffle(cardStack, new SecureRandom());
-	}
-
-	/** Initialisiert das Spielbrett
-	 * 
-	 */
-	private void initBoard() {
-		// Größe Festgelegt durch Startfeld, Zielfeld und Segmente * Symbole
-		board = new ArrayList<Field>(Constants.SEGMENTS * 6 + 2);
-		board.add(new Field(FieldType.START));
-		for (int i = 0; i < Constants.SEGMENTS; i++) {
-			LinkedList<Field> segment = new LinkedList<Field>();
-			for (SymbolType s : SymbolType.values()) {
-				segment.add(new Field(s));
-			}
-			Collections.shuffle(segment, new SecureRandom());
-
-			for (int j = 0; j < 6; j++) {
-				board.add(segment.get(j));
-			}
-		}
-		board.add(new Field(FieldType.FINISH));
 	}
 
 	/**
