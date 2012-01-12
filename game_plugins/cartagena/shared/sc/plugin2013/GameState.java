@@ -13,9 +13,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
- * Dies umfasst neben einer fortlaufenden Zugnumer ({@link #getTurn() getTurn()}), 
- * Informationen über die Position
- * der Spielfiguren auf dem Spielbrett, sowie Informationen über die Spieler.
+ * Dies umfasst neben einer fortlaufenden Zugnumer ({@link #getTurn() getTurn()}
+ * ), Informationen über die Position der Spielfiguren auf dem Spielbrett, sowie
+ * Informationen über die Spieler.
  * 
  * Der {@code GameState} ist damit das zentrale Objekt ueber das auf alle
  * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.<br/>
@@ -31,11 +31,18 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
  * {@link #getPossibleMoves() getPossibleMoves()} eine Liste aller fuer den
- * aktuellen Spieler legalen Zuege abgefragt werden. Ist momentan also eine
- * Zug zu taetigen, kann eine Spieleclient diese Liste aus dem {@code
- * GameState} erfragen und muss dann lediglich einen Zug aus dieser Liste
- * auswaehlen.
+ * aktuellen Spieler legalen Zuege abgefragt werden. Ist momentan also eine Zug
+ * zu taetigen, kann eine Spieleclient diese Liste aus dem {@code GameState}
+ * erfragen und muss dann lediglich einen Zug aus dieser Liste auswaehlen.
  * 
+ * @author felix
+ * 
+ */
+/**
+ * @author felix
+ *
+ */
+/**
  * @author felix
  *
  */
@@ -50,25 +57,24 @@ public class GameState implements Cloneable {
 
 	// Farbe des aktiven Spielers
 	private PlayerColor currentPlayer;
-	
+
 	// Kartenstapel
 	private List<Card> cardStack;
-	
-	//offen liegende Karten
+
+	// offen liegende Karten
 	private List<Card> openCards;
-	
+
 	// verbrauchte Karten
 	private List<Card> usedStack;
-	
-	//letzter Performter move
+
+	// letzter Performter move
 	private Move lastMove;
-	
-	//das Spielbrett
+
+	// das Spielbrett
 	private List<Field> board;
-	
+
 	// endbedingung
 	private Condition condition = null;
-	
 
 	public GameState() {
 		currentPlayer = PlayerColor.RED;
@@ -76,48 +82,70 @@ public class GameState implements Cloneable {
 		openCards = new ArrayList<Card>(Constants.NUM_OPEN_CARDS);
 		usedStack = new LinkedList<Card>();
 		initCardStack();
-		
-		//TODO implementieren
+
+		// TODO implementieren
 	}
 
 	/**
 	 * Initialisiert den KartenStapel
 	 */
-	private synchronized void initCardStack(){
-		//For each symbol
-		for(SymbolType symbol: SymbolType.values()){
-			for(int i = 0; i < Constants.CARDS_PER_SYMBOL; i++){
-				//add CARDS_PER_SYMBOL Cards to stack
+	private synchronized void initCardStack() {
+		// For each symbol
+		for (SymbolType symbol : SymbolType.values()) {
+			for (int i = 0; i < Constants.CARDS_PER_SYMBOL; i++) {
+				// add CARDS_PER_SYMBOL Cards to stack
 				cardStack.add(new Card(symbol));
 			}
 		}
-		//shuffle Stack
+		// shuffle Stack
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
-	
+
 	/**
 	 * Zieht bis zu 12 Karten vom Stapel und legt diese offen hin
 	 */
-	private synchronized void showCards(){
-		//draw as many cards from Stack to fill out 12
-		for(int i = openCards.size(); i < Constants.NUM_OPEN_CARDS; i++){
-			if(cardStack.isEmpty()){
+	private synchronized void showCards() {
+		// draw as many cards from Stack to fill out 12
+		for (int i = openCards.size(); i < Constants.NUM_OPEN_CARDS; i++) {
+			if (cardStack.isEmpty()) {
 				mixCardStack();
 			}
 			openCards.add(cardStack.remove(0));
 		}
 	}
-	
+
 	/**
-	 * Mischt die verbrauchten Karten und legt diese auf den unverbrauchten Stapel
+	 * Mischt die verbrauchten Karten und legt diese auf den unverbrauchten
+	 * Stapel
 	 */
 	private synchronized void mixCardStack() {
 		cardStack.clear();
-		for(Card c: usedStack){
+		for (Card c : usedStack) {
 			cardStack.add(c);
 		}
 		usedStack.clear();
-		Collections.shuffle(cardStack, new SecureRandom());		
+		Collections.shuffle(cardStack, new SecureRandom());
+	}
+
+	/** Initialisiert das Spielbrett
+	 * 
+	 */
+	private void initBoard() {
+		// Größe Festgelegt durch Startfeld, Zielfeld und Segmente * Symbole
+		board = new ArrayList<Field>(Constants.SEGMENTS * 6 + 2);
+		board.add(new Field(FieldType.START));
+		for (int i = 0; i < Constants.SEGMENTS; i++) {
+			LinkedList<Field> segment = new LinkedList<Field>();
+			for (SymbolType s : SymbolType.values()) {
+				segment.add(new Field(s));
+			}
+			Collections.shuffle(segment, new SecureRandom());
+
+			for (int j = 0; j < 6; j++) {
+				board.add(segment.get(j));
+			}
+		}
+		board.add(new Field(FieldType.FINISH));
 	}
 
 	/**
@@ -129,12 +157,12 @@ public class GameState implements Cloneable {
 		} else if (player.getPlayerColor() == PlayerColor.BLUE) {
 			this.blue = player;
 		}
-		
-		//Draw initial Cards for Player
-		for(int i =0; i< Constants.INIT_CARDS_PER_PLAYER; i++){
+
+		// Draw initial Cards for Player
+		for (int i = 0; i < Constants.INIT_CARDS_PER_PLAYER; i++) {
 			player.addCard(cardStack.remove(0));
 		}
-		
+
 	}
 
 	public Player getCurrentPlayer() {
@@ -185,7 +213,7 @@ public class GameState implements Cloneable {
 
 	public void endGame(PlayerColor opponent, String err) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	// TODO implement GameState

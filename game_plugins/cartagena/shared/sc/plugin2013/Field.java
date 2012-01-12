@@ -1,6 +1,7 @@
 package sc.plugin2013;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,6 +26,14 @@ public class Field implements Cloneable {
 		this.symbol = null;
 		this.pirates = null;
 	}
+	
+	
+	public Field(SymbolType s) {
+		this.type = FieldType.SYMBOL;
+		this.symbol = s;
+		this.pirates = new ArrayList<Pirate>(3);
+	}
+
 
 	/**
 	 * Erzeugt ein neues Spielfeld
@@ -40,6 +49,17 @@ public class Field implements Cloneable {
 		this.pirates = new ArrayList<Pirate>(3);
 	}
 	
+	public Field(FieldType type){
+		assert type == FieldType.FINISH || type == FieldType.START;
+		this.type = type;
+		this.symbol = null;
+		this.pirates = new LinkedList<Pirate>();
+		
+	}
+	
+	
+
+
 	/**
 	 * Setzt einen Piraten auf dieses Spielfeld
 	 * @param pirate
