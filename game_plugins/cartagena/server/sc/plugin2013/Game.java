@@ -54,7 +54,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected Object getCurrentState() {
-		gameState.setCurrentPlayer(activePlayer.getPlayerColor());
 		return gameState;
 	}
 

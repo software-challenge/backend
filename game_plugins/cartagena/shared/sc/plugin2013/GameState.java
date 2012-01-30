@@ -126,9 +126,16 @@ public class GameState implements Cloneable {
 		usedStack.clear();
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
-
+	
 	/**
-	 * Fügt einen Spieler hinzu
+	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
+	 * <br/>
+	 * 
+	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * @param player
+	 *           Der hinzuzufuegende Spieler.
 	 */
 	public void addPlayer(Player player) {
 		if (player.getPlayerColor() == PlayerColor.RED) {
@@ -143,24 +150,78 @@ public class GameState implements Cloneable {
 		}
 
 	}
-
+	
+	/**
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
+	 * ist.
+	 * 
+	 * @return Der Spieler, der momentan am Zug ist.
+	 */
 	public Player getCurrentPlayer() {
 		return currentPlayer == PlayerColor.RED ? this.red : this.blue;
 	}
-
 	/**
-	 * setzt den aktuellen spieler
+	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
+	 * ist. Dies ist aequivalent zum Aufruf {@code
+	 * getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * 
+	 * @return Die Farbe des Spielers, der momentan am Zug ist.
 	 */
-	public void setCurrentPlayer(PlayerColor p) {
-		assert p == PlayerColor.RED || p == PlayerColor.BLUE;
-		this.currentPlayer = p;
+	public PlayerColor getCurrentPlayerColor() {
+		return currentPlayer;
 	}
 
 	/**
-	 * liefert den gegenspieler des aktiven spielers
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
+	 * Zug ist.
+	 * 
+	 * @return Der Spieler, der momentan nicht am Zug ist.
 	 */
 	public Player getOtherPlayer() {
-		return currentPlayer == PlayerColor.RED ? this.blue : this.blue;
+		return currentPlayer == PlayerColor.RED ? blue : red;
+	}
+
+	/**
+	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
+	 * Zug ist. Dies ist aequivalent zum Aufruf @{@code
+	 * getCurrentPlayerColor.opponent()} oder {@code
+	 * getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * 
+	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
+	 */
+	public PlayerColor getOtherPlayerColor() {
+		return currentPlayer.opponent();
+	}
+
+	/**
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
+	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe {@code
+	 * PlayerColor.RED} spielt.
+	 * 
+	 * @return Der rote Spieler.
+	 */
+	public Player getRedPlayer() {
+		return red;
+	}
+
+	/**
+	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
+	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe {@code
+	 * PlayerColor.BLUE} spielt.
+	 * 
+	 * @return Der blaue Spieler.
+	 */
+	public Player getBluePlayer() {
+		return blue;
+	}
+	
+	/**
+	 * wechselt den Spieler, der aktuell an der Reihe ist.
+	 *<b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 */
+	private void switchCurrentPlayer() {
+		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
 	}
 
 	/**
