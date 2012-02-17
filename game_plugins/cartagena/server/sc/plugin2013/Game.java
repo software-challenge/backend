@@ -17,6 +17,8 @@ import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.util.Configuration;
+import sc.plugin2013.util.Constants;
+import sc.plugin2013.util.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -62,10 +64,53 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * move)
 	 */
 	@Override
-	protected void onRoundBasedAction (IPlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException {
-		// TODO GameLogic implementieren
 
+		final Player author = (Player) fromPlayer;
+		final Player expectedPlayer = gameState.getCurrentPlayer();
+
+		try {
+			if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " war nicht am Zug");
+			}
+
+			if (!(data instanceof MoveContainer)) {
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " hat kein Zug-Objekt gesendet");
+			}
+
+			final MoveContainer move = (MoveContainer) data;
+			move.perform(gameState, expectedPlayer);
+			gameState.prepareNextTurn(move);
+			
+			if(gameState.getTurn() == Constants.ROUND_LIMIT *2){
+				PlayerColor winner = null;
+				String winnerName = "Gleichstand nach Punkten.";
+				if (gameState.getRedPlayer().getPoints() > gameState.getBluePlayer().getPoints()) {
+					winner = PlayerColor.RED;
+					winnerName = "Sieg nach Punkten.";
+				} else if (gameState.getRedPlayer().getPoints() < gameState.getBluePlayer().getPoints()) {
+					winner = PlayerColor.BLUE;
+					winnerName = "Sieg nach Punkten.";
+				}
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
+			} else if(gameState.playerFinished()){
+				//TODO ein Spieler hat alle Piraten im Zielfeld
+			}
+			
+			next(gameState.getCurrentPlayer());
+			
+		} catch (InvalidMoveException e) {
+			author.setViolated(true);
+			String err = "Ungültiger Zug von '" + author.getDisplayName()
+					+ "'.\\n" + e.getMessage() + ".";
+			gameState.endGame(author.getPlayerColor().opponent(), err);
+			logger.error(err);
+			throw new GameLogicException(err);
+		}
+		
 	}
 
 	@Override
