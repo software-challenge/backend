@@ -95,7 +95,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * Enfernt eine Karte mit übergebenem Symbol vom Spielerstapel
 	 * @param symbol
 	 */
-	public void removeCard(SymbolType symbol){
+	public Card removeCard(SymbolType symbol){
 		Card cardToRemove = null;
 		for (Card card : cards) {
 			if (card.symbol == symbol) {
@@ -104,6 +104,7 @@ public class Player extends SimplePlayer implements Cloneable {
 			}
 		}
 		cards.remove(cardToRemove);
+		return cardToRemove;
 	}
 	
 	/** Prüft ob ein Spieler eine Karte mit gegebenem Symbol besitzt
@@ -131,7 +132,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * Fügt dem Punktekonto des Spieler Punkte hinzu
 	 * @param points
 	 */
-	public void addPoints(int points){
+	public void setPoints(int points){
 		this.points += points;
 	}
 	

@@ -3,6 +3,7 @@ package sc.plugin2013;
 import java.util.LinkedList;
 import java.util.List;
 
+
 import sc.plugin2013.DebugHint;
 import sc.plugin2013.Move;
 import sc.plugin2013.util.InvalidMoveException;
@@ -10,8 +11,12 @@ import sc.plugin2013.util.InvalidMoveException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
+/** Ein Allgemeiner Zug, kann ein Vorwärts- oder Rückwärtszug sein.
+ * @author fdu
+ *
+ */
 @XStreamAlias(value = "cartagena:move")
-public class Move {
+public abstract class Move {
 	@XStreamImplicit(itemFieldName = "hint")
 	private List<DebugHint> hints;
 
@@ -80,8 +85,5 @@ public class Move {
 		return hints == null ? new LinkedList<DebugHint>() : hints;
 	}
 
-	public void perform(GameState state, Player player)
-			throws InvalidMoveException {
-		// TODO implement perform
-	}
+	abstract void perform(GameState state, Player player) throws InvalidMoveException;
 }

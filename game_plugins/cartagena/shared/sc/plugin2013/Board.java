@@ -83,5 +83,25 @@ public class Board implements Cloneable{
 		}
 		return 0; // Nichts gefunden, gib StartFeld zurück;
 	}
+	
+	/** Gibt zurück ob ein Spieler an einer Position einen Piraten hat.
+	 * @param index Die Spielbrettposition
+	 * @param color Die Spielerfarbe
+	 * @return true wenn sich ein Pirat des Spielers an der Position befindet
+	 */
+	public boolean hasPirates(int index, PlayerColor color){
+		List<Pirate> list = getPirates(index);
+		for(Pirate p: list){
+			if(p.getOwner() == color){
+				return true;
+			}			
+		}
+		return false;
+	}
+	
+	public void movePirate(int field, int nextField, PlayerColor color){
+		Pirate pirate = fields.get(field).removePirate(color);
+		fields.get(nextField).putPirate(pirate);
+	}
 
 }

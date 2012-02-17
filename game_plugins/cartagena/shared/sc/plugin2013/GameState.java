@@ -68,10 +68,10 @@ public class GameState implements Cloneable {
 	private List<Card> usedStack;
 
 	// letzter Performter move
-	private Move lastMove;
+	private MoveContainer lastMove;
 
 	// das Spielbrett
-	private Board board;
+	private final Board board;
 
 	// endbedingung
 	private Condition condition = null;
@@ -83,7 +83,6 @@ public class GameState implements Cloneable {
 		usedStack = new LinkedList<Card>();
 		initCardStack();
 		board = new Board();
-		// TODO implementieren
 	}
 
 	/**
@@ -125,6 +124,20 @@ public class GameState implements Cloneable {
 		}
 		usedStack.clear();
 		Collections.shuffle(cardStack, new SecureRandom());
+	}
+	
+	/** Zieht eine Karte vom offenen Stapel
+	 * @return die erste Karte des offen Stapels
+	 */
+	public synchronized Card drawCard(){
+		return this.openCards.remove(0);
+	}
+	
+	/** Legt eine Karte auf dem benutzten Kartenstapel ab
+	 * @param c die benutzte Karte
+	 */
+	public synchronized void addUsedCard(Card c){
+		this.usedStack.add(c);
 	}
 	
 	/**
@@ -251,10 +264,48 @@ public class GameState implements Cloneable {
 		return this.turn;
 	}
 
-	public void endGame(PlayerColor opponent, String err) {
-		// TODO Auto-generated method stub
+	public void endGame(PlayerColor winner, String reason) {
+		if (condition == null) {
+			condition = new Condition(winner, reason);
+		}
 
 	}
+	
+	/**
+	 * @return Das Spielbrett
+	 */
+	public Board getBoard() {
+		return board;
+	}
+	
+	public void prepareNextTurn(MoveContainer lastMove) {
+		this.lastMove = lastMove;
+		turn++;
+		switchCurrentPlayer();
+		performScoring();
+	}
 
-	// TODO implement GameState
+	private void performScoring() {
+		//TODO Scoring abwandeln??
+		int scoreRed 	= 0;
+		int scoreBlue 	= 0;
+		for(int i = 0; i < Constants.SEGMENTS * 6 + 2; i++){
+			Field field = this.board.getField(i);
+			List<Pirate> pirates = field.getPirates();
+			for(Pirate p: pirates){
+				if(p.getOwner() == PlayerColor.RED){
+					scoreRed += i;
+				}else{
+					scoreBlue += i;
+				}
+			}
+		}
+		getBluePlayer().setPoints(scoreBlue);
+		getRedPlayer().setPoints(scoreRed);		
+	}
+
+	public boolean playerFinished() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

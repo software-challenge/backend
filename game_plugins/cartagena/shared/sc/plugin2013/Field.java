@@ -74,4 +74,14 @@ public class Field implements Cloneable {
 	public List<Pirate> getPirates(){
 		return this.pirates;
 	}
+	
+	public Pirate removePirate(PlayerColor color){
+		for(Pirate p: pirates){
+			if( p.getOwner() == color){
+				pirates.remove(p);
+				return p;
+			}
+		}
+		return null;
+	}
 }
