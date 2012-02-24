@@ -104,4 +104,8 @@ public class Board implements Cloneable{
 		fields.get(nextField).putPirate(pirate);
 	}
 
+	public int size() {
+		return fields.size();
+	}
+
 }

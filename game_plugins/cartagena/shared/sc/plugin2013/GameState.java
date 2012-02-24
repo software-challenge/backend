@@ -82,6 +82,7 @@ public class GameState implements Cloneable {
 		openCards = new ArrayList<Card>(Constants.NUM_OPEN_CARDS);
 		usedStack = new LinkedList<Card>();
 		initCardStack();
+		showCards();
 		board = new Board();
 	}
 
@@ -307,5 +308,9 @@ public class GameState implements Cloneable {
 	public boolean playerFinished() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	public List<Card> getOpenCards() {
+		return openCards;
 	}
 }
