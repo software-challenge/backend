@@ -4,6 +4,7 @@ import static sc.plugin2013.gui.renderer.RenderConfiguration.*;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -25,10 +26,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+
 import sc.plugin2013.util.Constants;
+import sc.plugin2013.Board;
+import sc.plugin2013.Card;
+import sc.plugin2013.Field;
+import sc.plugin2013.FieldType;
 import sc.plugin2013.MoveType;
+import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.GameState;
+import sc.plugin2013.SymbolType;
 
 @SuppressWarnings("serial")
 public class FrameRenderer extends JComponent {
@@ -43,12 +51,25 @@ public class FrameRenderer extends JComponent {
 	private static final int STUFF_GAP = 8;
 	private static final int GAP_SIZE = 10;
 
+	private static final int CARD_WIDTH = 48;
+	private static final int CARD_HEIGTH = 48 + 16;
+	
+	private static final int FIELD_WIDTH = 64;
+	private static final int FIELD_HEIGHT = FIELD_WIDTH;
+	
+
 	// image components
 	private BufferedImage buffer;
 	private boolean updateBuffer;
 	private final Image bgImage;
 	private Image scaledBgImage;
 	private final Image progressIcon;
+	private final Image skullImage;
+	private final Image hatImage;
+	private final Image daggerImage;
+	private final Image bottleImage;
+	private final Image keyImage;
+	private final Image pistolImage;
 
 	// schrift
 	private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
@@ -87,6 +108,17 @@ public class FrameRenderer extends JComponent {
 		this.progressIcon = loadImage("resource/game/kelle.png");
 		this.bgImage = loadImage("resource/game/cartagenabg.jpg");
 
+		this.skullImage = loadImage("resource/game/skull.png");
+		this.hatImage = loadImage("resource/game/hat.png");
+		this.daggerImage = loadImage("resource/game/dagger.png");
+		this.bottleImage = loadImage("resource/game/bottle.png");
+		this.keyImage = loadImage("resource/game/key.png");
+		this.pistolImage = loadImage("resource/game/pistol.png");
+
+		setMinimumSize(new Dimension(2 * Constants.MAX_CARDS_PER_PLAYER
+				* (CARD_WIDTH + STUFF_GAP), 600));
+		// TODO Dimension richtig
+
 		setDoubleBuffered(true);
 		setFocusable(true);
 		requestFocusInWindow();
@@ -105,6 +137,8 @@ public class FrameRenderer extends JComponent {
 		currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
 		currentPlayerColor = getPlayerColor(currentPlayer);
 		updateBuffer = true;
+
+		repaint();
 	}
 
 	public void requestMove(int maxTurn) {
@@ -266,6 +300,12 @@ public class FrameRenderer extends JComponent {
 		g2.drawLine(left + 3 * sectionWidth, progressTop, left + 3
 				* sectionWidth, progressTop + 16);
 
+		// fortschrittsbalken, icon
+		g2.drawImage(progressIcon,
+				left + progress - PROGRESS_ICON_SIZE / 2 + 3, getHeight()
+						- PROGRESS_ICON_SIZE - 3, PROGRESS_ICON_SIZE,
+				PROGRESS_ICON_SIZE, this);
+
 		// rahmen
 		g2.setColor(currentPlayerColor);
 		g2.fillRect(0, 0, getWidth(), BORDER_SIZE);
@@ -273,9 +313,202 @@ public class FrameRenderer extends JComponent {
 		g2.fillRect(0, 0, BORDER_SIZE, getHeight());
 		g2.fillRect(getWidth() - BORDER_SIZE, 0, BORDER_SIZE, getHeight());
 
+		// Offener Kartenstapel		
+		int x = BORDER_SIZE + STUFF_GAP;
+		int y = BORDER_SIZE + STUFF_GAP;
+		
+		for(Card c: gameState.getOpenCards()){
+			paintCard(g2, x, y, c.symbol);
+			x += CARD_WIDTH + STUFF_GAP;
+		}
+		
+		//Spielerinfo Rot
+		Player player = gameState.getRedPlayer();
+		x = BORDER_SIZE + STUFF_GAP;
+		y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - STUFF_GAP - CARD_HEIGTH;
+
+		for (Card card : player.getCards()) {
+			paintCard(g2, x, y, card.symbol);
+			x += CARD_WIDTH + STUFF_GAP;
+		}
+		
+		g2.setFont(h3);
+		y -= (STUFF_GAP + 5);
+		g2.setColor(getPlayerColor(PlayerColor.RED));
+		g2.drawString(player.getDisplayName(), 2 * BORDER_SIZE, y);
+		
+		//Spielerinfo Blau
+		player = gameState.getBluePlayer();
+		x = getWidth() - BORDER_SIZE - STUFF_GAP - CARD_WIDTH;
+		y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - STUFF_GAP - CARD_HEIGTH;
+
+		for (Card card : player.getCards()) {
+			paintCard(g2, x, y, card.symbol);
+			x -= CARD_WIDTH + STUFF_GAP;
+		}
+		
+		g2.setFont(h3);
+		y -= (STUFF_GAP + 5);
+		g2.setColor(getPlayerColor(PlayerColor.BLUE));
+		int nameWidth = fmH3.stringWidth(player.getDisplayName());
+		g2.drawString(player.getDisplayName(), getWidth() - 2 * BORDER_SIZE - nameWidth, y);
+		
+		//Spielbrett
+		
+		x = BORDER_SIZE + STUFF_GAP;
+		y = BORDER_SIZE + 3* STUFF_GAP + CARD_HEIGTH;
+		Board board = gameState.getBoard();
+		
+		g2.setStroke(stroke20);
+		g2.setColor(Color.WHITE);
+		
+		boolean direction = true; //true = right
+		
+		for(int i = 0; i< board.size(); i++){
+			Field field = board.getField(i);
+			switch(field.type){
+			case START:
+				//DRAW START FIELD
+				g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+				g2.setFont(h4);				
+				String s = "Start";
+				int sW = fmH4.stringWidth(s);
+				g2.drawString(s, x + 4 , y + FIELD_HEIGHT / 2);
+				g2.setColor(Color.WHITE);
+				
+				y += FIELD_HEIGHT;
+				break;
+			case FINISH:
+				//DRAW FINISH FIELD
+				//y += FIELD_HEIGHT;
+				g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+				g2.setFont(h4);
+				s = "Ziel";
+				sW = fmH4.stringWidth(s);
+				g2.drawString(s, x + 4 , y + FIELD_HEIGHT / 2);
+				g2.setColor(Color.WHITE);
+				break;
+			case SYMBOL:
+				// SELECT IMAGE
+				Image img;
+				switch(field.symbol){
+				case SKULL:
+					img = skullImage;
+					break;
+				case HAT:
+					img = hatImage;
+					break;
+				case DAGGER:
+					img = daggerImage;
+					break;
+				case BOTTLE:
+					img = bottleImage;
+					break;
+				case KEY:
+					img = keyImage;
+					break;
+				case PISTOL:
+					img = pistolImage;
+					break;
+				default:
+					img = skullImage;
+				}
+				// would the current field be out of right side?
+				if(x + FIELD_WIDTH >= getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH - STUFF_GAP && direction == true){					
+					direction = false;
+					
+					y += FIELD_HEIGHT;
+					x -= FIELD_WIDTH;
+					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.setColor(Color.DARK_GRAY);
+					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
+					y+= FIELD_HEIGHT;
+				}else
+				//would the next field be out of left border?
+				if(x < BORDER_SIZE + STUFF_GAP && direction == false){
+					direction = true;
+					
+					y += FIELD_HEIGHT;
+					x += FIELD_WIDTH;
+					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.setColor(Color.DARK_GRAY);
+					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
+					y+= FIELD_HEIGHT;
+				}else if(direction == true){
+					// go to the right
+					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.setColor(Color.DARK_GRAY);
+					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
+					x += FIELD_WIDTH;
+				}else{
+					// got to the left
+					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.setColor(Color.DARK_GRAY);
+					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
+					x -= FIELD_WIDTH;
+				}
+				
+				
+				
+				break;
+			}
+		}
+		
+
+	}
+
+	private void paintCard(Graphics2D g2, int x, int y, SymbolType type) {
+
+		g2.setStroke(stroke15);
+		g2.setColor(Color.WHITE);
+		g2.fillRoundRect(x, y, CARD_WIDTH, CARD_HEIGTH, 10, 10);
+
+		g2.setColor(Color.DARK_GRAY);
+		g2.drawRoundRect(x, y, CARD_WIDTH, CARD_HEIGTH, 10, 10);
+
+		Image img;
+		switch (type) {
+		case SKULL:
+			img = skullImage;
+			break;
+		case HAT:
+			img = hatImage;
+			break;
+		case DAGGER:
+			img = daggerImage;
+			break;
+		case BOTTLE:
+			img = bottleImage;
+			break;
+		case KEY:
+			img = keyImage;
+			break;
+		case PISTOL:
+			img = pistolImage;
+			break;
+		default:
+			img = skullImage;
+		}
+		
+		int imgY = y + 16;
+		int imgHeight = 32;
+
+		g2.drawImage(img, x + 2 , imgY, CARD_WIDTH-4, imgHeight, this);
 	}
 
 	private void paintStaticComponents(Graphics2D g2) {
+		/*
+		 * Komponenten die nur bei Resize aktualisiert werden
+		 */
+
 		// hintergrundbild oder farbe
 		if (OPTIONS[BACKGROUND] && scaledBgImage != null) {
 			g2.drawImage(scaledBgImage, BORDER_SIZE, BORDER_SIZE, getWidth()
@@ -286,17 +519,21 @@ public class FrameRenderer extends JComponent {
 					getHeight() - 2 * BORDER_SIZE);
 		}
 
-		// fortschrittsleite, spielerinfo und seitenleiste
+		// fortschrittsleiste, spielerinfo und seitenleiste
 		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
 
 		// fortschrittsleite, spielerinfo hintergrund
-		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + fmH3.getHeight();
+		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + fmH3.getHeight() + CARD_HEIGTH;
 		g2.fillRect(BORDER_SIZE, getHeight() - BORDER_SIZE - heigth, getWidth()
 				- 2 * BORDER_SIZE, heigth);
 
 		// seitenleiste, hintergrund
 		g2.fillRect(getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH, BORDER_SIZE,
 				SIDE_BAR_WIDTH, getHeight() - 2 * BORDER_SIZE - heigth);
+
+		// obere Leiste Kartenstapel
+		g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE
+				- SIDE_BAR_WIDTH, BORDER_SIZE + CARD_HEIGTH + 2 * STUFF_GAP);
 
 	}
 
