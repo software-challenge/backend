@@ -24,7 +24,6 @@ public class BackwardMove extends Move{
 		int nextField = board.getPreviousField(fieldIndex);
 		int numPirates = board.getPirates(nextField).size();
 		board.movePirate(fieldIndex, nextField, player.getPlayerColor());
-		//TODO Karten nachziehen
 		if(numPirates == 1){
 			//nur eine Karte nachziehen
 			player.addCard(state.drawCard());

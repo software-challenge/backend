@@ -35,6 +35,12 @@ public class Board implements Cloneable{
 			}
 		}
 		fields.add(new Field(FieldType.FINISH));
+		//Fülle das Startfeld mit Piraten
+		Field start = fields.get(0);
+		for(int i= 0; i< Constants.PIRATES; i++){
+			start.putPirate(new Pirate(PlayerColor.RED));
+			start.putPirate(new Pirate(PlayerColor.BLUE));
+		}
 	}
 
 	public Field getField(int index) {
@@ -77,7 +83,7 @@ public class Board implements Cloneable{
 	 */
 	public int getPreviousField(int start) {
 		for (int i = start - 1; i >= 0; i--) {
-			if (!fields.get(i).getPirates().isEmpty()) {
+			if (!fields.get(i).getPirates().isEmpty() && fields.get(i).getPirates().size() < 3) {
 				return i;
 			}
 		}
@@ -91,12 +97,13 @@ public class Board implements Cloneable{
 	 */
 	public boolean hasPirates(int index, PlayerColor color){
 		List<Pirate> list = getPirates(index);
+		boolean ret = false;
 		for(Pirate p: list){
 			if(p.getOwner() == color){
-				return true;
+				ret = true;
 			}			
 		}
-		return false;
+		return ret;
 	}
 	
 	public void movePirate(int field, int nextField, PlayerColor color){

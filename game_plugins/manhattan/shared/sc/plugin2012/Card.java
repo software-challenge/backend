@@ -1,5 +1,6 @@
 package sc.plugin2012;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
@@ -9,6 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  *
  */
 
+@XStreamAlias(value="cartagena:card")
 public class Card implements Cloneable {
 
 	@XStreamAsAttribute

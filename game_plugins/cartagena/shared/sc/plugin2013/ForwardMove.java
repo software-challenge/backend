@@ -17,7 +17,7 @@ public class ForwardMove extends Move {
 	}
 
 	@Override
-	void perform(GameState state, Player player) throws InvalidMoveException {
+	public void perform(GameState state, Player player) throws InvalidMoveException {
 		//Invalider Move, wenn: 
 			//keine Piraten des Spielers an Position index
 			//Spieler keine Karte des Typs Symbol hat.
@@ -25,8 +25,8 @@ public class ForwardMove extends Move {
 		if(!player.hasCard(symbol)){
 			throw new InvalidMoveException("Spieler hat keine Karte mit Symbol" + symbol);
 		}
-		if(!board.hasPirates(this.fieldIndex, player.getPlayerColor())){
-			throw new InvalidMoveException("Spieler hat keinen Piraten auf Feld" + fieldIndex);
+		if(board.hasPirates(this.fieldIndex, player.getPlayerColor()) == false){
+			throw new InvalidMoveException("Spieler " + player.getPlayerColor() +" hat keinen Piraten auf Feld " + fieldIndex);
 		}
 		//sonst nächstes freies Feld suchen und Piraten vorwärts bewegen
 		int nextField = board.getNextField(fieldIndex, symbol);

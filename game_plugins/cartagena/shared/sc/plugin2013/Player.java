@@ -22,7 +22,7 @@ import sc.plugin2013.PlayerColor;
 public class Player extends SimplePlayer implements Cloneable {
 
 	// Farbe des Spieler
-	@XStreamOmitField
+	@XStreamAsAttribute
 	private PlayerColor color;
 
 	// Punkte des Spieler
@@ -30,7 +30,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	private int points;
 
 	// Liste der Karten, die sich auf der Hand befinden
-	@XStreamImplicit(itemFieldName = "card")
+	//@XStreamImplicit(itemFieldName = "card")
 	private final List<Card> cards;
 
 	/**

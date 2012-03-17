@@ -7,6 +7,7 @@ import sc.plugin2013.GameState;
 import sc.plugin2013.GuiClient;
 import sc.plugin2013.IGameHandler;
 import sc.plugin2013.Move;
+import sc.plugin2013.MoveContainer;
 import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.gui.renderer.RenderFacade;
@@ -45,7 +46,7 @@ public class HumanGameHandler implements IGameHandler {
 	}
 
 	@Override
-	public void sendAction(Move move) {
+	public void sendAction(MoveContainer move) {
 		client.sendMove(move);
 	}
 
