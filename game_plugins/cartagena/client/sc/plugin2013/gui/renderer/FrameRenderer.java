@@ -19,20 +19,32 @@ import java.awt.event.ComponentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-
+import sc.plugin2013.Move;
+import sc.plugin2013.gui.renderer.RenderFacade;
 import sc.plugin2013.util.Constants;
+import sc.plugin2013.util.InvalidMoveException;
+import sc.plugin2013.BackwardMove;
 import sc.plugin2013.Board;
 import sc.plugin2013.Card;
 import sc.plugin2013.Field;
 import sc.plugin2013.FieldType;
+import sc.plugin2013.ForwardMove;
+import sc.plugin2013.MoveContainer;
 import sc.plugin2013.MoveType;
+import sc.plugin2013.Pirate;
 import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.GameState;
@@ -53,10 +65,9 @@ public class FrameRenderer extends JComponent {
 
 	private static final int CARD_WIDTH = 48;
 	private static final int CARD_HEIGTH = 48 + 16;
-	
+
 	private static final int FIELD_WIDTH = 64;
 	private static final int FIELD_HEIGHT = FIELD_WIDTH;
-	
 
 	// image components
 	private BufferedImage buffer;
@@ -97,10 +108,17 @@ public class FrameRenderer extends JComponent {
 	private PlayerColor currentPlayer;
 	private Color currentPlayerColor;
 	private GameState gameState;
-	private MoveType currentMoveType;
 
 	// sonstiges
 	private boolean gameEnded;
+	private int turnToAnswer;
+	private LinkedList<Point> BoardMap;
+	private int movesMade = 0;
+	private Move firstMove;
+	private Move secondMove;
+	private Move thirdMove;
+	private int selectedField = -1;
+	private LinkedList<Integer> possibleFields = new LinkedList<Integer>();
 
 	public FrameRenderer() {
 
@@ -115,8 +133,10 @@ public class FrameRenderer extends JComponent {
 		this.keyImage = loadImage("resource/game/key.png");
 		this.pistolImage = loadImage("resource/game/pistol.png");
 
+		this.BoardMap = new LinkedList<Point>();
+
 		setMinimumSize(new Dimension(2 * Constants.MAX_CARDS_PER_PLAYER
-				* (CARD_WIDTH + STUFF_GAP), 600));
+				* (CARD_WIDTH + STUFF_GAP), 720));
 		// TODO Dimension richtig
 
 		setDoubleBuffered(true);
@@ -134,21 +154,40 @@ public class FrameRenderer extends JComponent {
 	public void updateGameState(GameState gameState) {
 		// aktuellen spielstand sichern
 		this.gameState = gameState;
-		currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
+		currentPlayer = gameState.getCurrentPlayerColor();
 		currentPlayerColor = getPlayerColor(currentPlayer);
 		updateBuffer = true;
 
 		repaint();
+
+		gameEnded = gameState.gameEnded();
 	}
 
-	public void requestMove(int maxTurn) {
-		// TODO Auto-generated method stub
+	public synchronized void requestMove(final int turn) {
+		turnToAnswer = turn;
+		// Set MouseListener
+		addMouseListener(mouseAdapter);
+		addMouseMotionListener(mouseAdapter);
+	}
 
+	private synchronized void sendMove(final MoveContainer move) {
+
+		removeMouseListener(mouseAdapter);
+		removeMouseMotionListener(mouseAdapter);
+
+		if ((turnToAnswer == gameState.getTurn()) && !gameEnded) {
+			RenderFacade.getInstance().sendMove(move);
+			turnToAnswer = -1;
+		}
 	}
 
 	public Image getImage() {
-		// TODO Auto-generated method stub
-		return null;
+		// copied from 2011
+		BufferedImage img;
+		img = new BufferedImage(getWidth(), getHeight(),
+				BufferedImage.TYPE_INT_RGB);
+		paint(img.getGraphics());
+		return img;
 	}
 
 	private KeyListener keyListener = new KeyAdapter() {
@@ -313,89 +352,114 @@ public class FrameRenderer extends JComponent {
 		g2.fillRect(0, 0, BORDER_SIZE, getHeight());
 		g2.fillRect(getWidth() - BORDER_SIZE, 0, BORDER_SIZE, getHeight());
 
-		// Offener Kartenstapel		
+		// Offener Kartenstapel
 		int x = BORDER_SIZE + STUFF_GAP;
 		int y = BORDER_SIZE + STUFF_GAP;
-		
-		for(Card c: gameState.getOpenCards()){
+
+		for (Card c : gameState.getOpenCards()) {
 			paintCard(g2, x, y, c.symbol);
 			x += CARD_WIDTH + STUFF_GAP;
 		}
-		
-		//Spielerinfo Rot
+
+		// Spielerinfo Rot
 		Player player = gameState.getRedPlayer();
 		x = BORDER_SIZE + STUFF_GAP;
-		y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - STUFF_GAP - CARD_HEIGTH;
+		y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - STUFF_GAP
+				- CARD_HEIGTH;
 
 		for (Card card : player.getCards()) {
 			paintCard(g2, x, y, card.symbol);
 			x += CARD_WIDTH + STUFF_GAP;
 		}
-		
+
 		g2.setFont(h3);
 		y -= (STUFF_GAP + 5);
 		g2.setColor(getPlayerColor(PlayerColor.RED));
 		g2.drawString(player.getDisplayName(), 2 * BORDER_SIZE, y);
-		
-		//Spielerinfo Blau
+
+		// Spielerinfo Blau
 		player = gameState.getBluePlayer();
 		x = getWidth() - BORDER_SIZE - STUFF_GAP - CARD_WIDTH;
-		y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - STUFF_GAP - CARD_HEIGTH;
+		y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH - STUFF_GAP
+				- CARD_HEIGTH;
 
 		for (Card card : player.getCards()) {
 			paintCard(g2, x, y, card.symbol);
 			x -= CARD_WIDTH + STUFF_GAP;
 		}
-		
+
 		g2.setFont(h3);
 		y -= (STUFF_GAP + 5);
 		g2.setColor(getPlayerColor(PlayerColor.BLUE));
 		int nameWidth = fmH3.stringWidth(player.getDisplayName());
-		g2.drawString(player.getDisplayName(), getWidth() - 2 * BORDER_SIZE - nameWidth, y);
-		
-		//Spielbrett
-		
+		g2.drawString(player.getDisplayName(), getWidth() - 2 * BORDER_SIZE
+				- nameWidth, y);
+
+		// Spielbrett
+
+		LinkedList<Point> boardMap = new LinkedList<Point>();
 		x = BORDER_SIZE + STUFF_GAP;
-		y = BORDER_SIZE + 3* STUFF_GAP + CARD_HEIGTH;
+		y = BORDER_SIZE + 3 * STUFF_GAP + CARD_HEIGTH;
 		Board board = gameState.getBoard();
-		
+
 		g2.setStroke(stroke20);
 		g2.setColor(Color.WHITE);
-		
-		boolean direction = true; //true = right
-		
-		for(int i = 0; i< board.size(); i++){
+
+		boolean direction = true; // true = right
+
+		for (int i = 0; i < board.size(); i++) {
 			Field field = board.getField(i);
-			switch(field.type){
+			List<Pirate> pirates = field.getPirates();
+			switch (field.type) {
 			case START:
-				//DRAW START FIELD
+				// DRAW START FIELD
 				g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 				g2.setColor(Color.DARK_GRAY);
 				g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
-				g2.setFont(h4);				
+				g2.setFont(h4);
 				String s = "Start";
 				int sW = fmH4.stringWidth(s);
-				g2.drawString(s, x + 4 , y + FIELD_HEIGHT / 2);
+				g2.drawString(s, x + 4, y + FIELD_HEIGHT / 2);
 				g2.setColor(Color.WHITE);
-				
+				// Spielfiguren
+				if (field.numPirates(PlayerColor.RED) > 0) {
+					paintToken(g2, x, y, field.numPirates(PlayerColor.RED),
+							PlayerColor.RED);
+				}
+				if (field.numPirates(PlayerColor.BLUE) > 0) {
+					paintToken(g2, x, y, field.numPirates(PlayerColor.BLUE),
+							PlayerColor.BLUE);
+				}
+				boardMap.add(new Point(x, y));
 				y += FIELD_HEIGHT;
 				break;
 			case FINISH:
-				//DRAW FINISH FIELD
-				//y += FIELD_HEIGHT;
+				// DRAW FINISH FIELD
+				// y += FIELD_HEIGHT;
+				g2.setColor(Color.WHITE);
 				g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 				g2.setColor(Color.DARK_GRAY);
 				g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 				g2.setFont(h4);
 				s = "Ziel";
 				sW = fmH4.stringWidth(s);
-				g2.drawString(s, x + 4 , y + FIELD_HEIGHT / 2);
+				g2.drawString(s, x + 4, y + FIELD_HEIGHT / 2);
 				g2.setColor(Color.WHITE);
+				// Spielfiguren
+				if (field.numPirates(PlayerColor.RED) > 0) {
+					paintToken(g2, x, y, field.numPirates(PlayerColor.RED),
+							PlayerColor.RED);
+				}
+				if (field.numPirates(PlayerColor.BLUE) > 0) {
+					paintToken(g2, x, y, field.numPirates(PlayerColor.BLUE),
+							PlayerColor.BLUE);
+				}
+				boardMap.add(new Point(x, y));
 				break;
 			case SYMBOL:
 				// SELECT IMAGE
 				Image img;
-				switch(field.symbol){
+				switch (field.symbol) {
 				case SKULL:
 					img = skullImage;
 					break;
@@ -418,50 +482,114 @@ public class FrameRenderer extends JComponent {
 					img = skullImage;
 				}
 				// would the current field be out of right side?
-				if(x + FIELD_WIDTH >= getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH - STUFF_GAP && direction == true){					
+				if (x + FIELD_WIDTH >= getBoardRightX() - STUFF_GAP
+						&& direction == true) {
 					direction = false;
-					
+
 					y += FIELD_HEIGHT;
 					x -= FIELD_WIDTH;
-					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 					g2.setColor(Color.DARK_GRAY);
 					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
-					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
-					y+= FIELD_HEIGHT;
-				}else
-				//would the next field be out of left border?
-				if(x < BORDER_SIZE + STUFF_GAP && direction == false){
+					g2.drawImage(img, x + 2, y + 2, FIELD_WIDTH - 2,
+							FIELD_HEIGHT - 2, this);
+					// Spielfiguren
+					if (field.numPirates(PlayerColor.RED) > 0) {
+						paintToken(g2, x, y, field.numPirates(PlayerColor.RED),
+								PlayerColor.RED);
+					}
+					if (field.numPirates(PlayerColor.BLUE) > 0) {
+						paintToken(g2, x, y,
+								field.numPirates(PlayerColor.BLUE),
+								PlayerColor.BLUE);
+					}
+					boardMap.add(new Point(x, y));
+					y += FIELD_HEIGHT;
+				} else
+				// would the next field be out of left border?
+				if (x < BORDER_SIZE + STUFF_GAP && direction == false) {
 					direction = true;
-					
+
 					y += FIELD_HEIGHT;
 					x += FIELD_WIDTH;
-					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					// g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 					g2.setColor(Color.DARK_GRAY);
 					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
-					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
-					y+= FIELD_HEIGHT;
-				}else if(direction == true){
-					// go to the right
-					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					g2.drawImage(img, x + 2, y + 2, FIELD_WIDTH - 2,
+							FIELD_HEIGHT - 2, this);
+					// Spielfiguren
+					if (field.numPirates(PlayerColor.RED) > 0) {
+						paintToken(g2, x, y, field.numPirates(PlayerColor.RED),
+								PlayerColor.RED);
+					}
+					if (field.numPirates(PlayerColor.BLUE) > 0) {
+						paintToken(g2, x, y,
+								field.numPirates(PlayerColor.BLUE),
+								PlayerColor.BLUE);
+					}
+					boardMap.add(new Point(x, y));
+					y += FIELD_HEIGHT;
+				} else if (direction == true) {
+					// draw and go to the right
+					// g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 					g2.setColor(Color.DARK_GRAY);
 					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
-					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
+					g2.drawImage(img, x + 2, y + 2, FIELD_WIDTH - 2,
+							FIELD_HEIGHT - 2, this);
+					// Spielfiguren
+					if (field.numPirates(PlayerColor.RED) > 0) {
+						paintToken(g2, x, y, field.numPirates(PlayerColor.RED),
+								PlayerColor.RED);
+					}
+					if (field.numPirates(PlayerColor.BLUE) > 0) {
+						paintToken(g2, x, y,
+								field.numPirates(PlayerColor.BLUE),
+								PlayerColor.BLUE);
+					}
+					boardMap.add(new Point(x, y));
 					x += FIELD_WIDTH;
-				}else{
+				} else {
 					// got to the left
-					g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
+					// g2.fillRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
 					g2.setColor(Color.DARK_GRAY);
 					g2.drawRect(x, y, FIELD_WIDTH, FIELD_HEIGHT);
-					g2.drawImage(img, x+2, y+2, FIELD_WIDTH-4, FIELD_HEIGHT-1, this);
+					g2.drawImage(img, x + 2, y + 2, FIELD_WIDTH - 2,
+							FIELD_HEIGHT - 2, this);
+					// Spielfiguren
+					if (field.numPirates(PlayerColor.RED) > 0) {
+						paintToken(g2, x, y, field.numPirates(PlayerColor.RED),
+								PlayerColor.RED);
+					}
+					if (field.numPirates(PlayerColor.BLUE) > 0) {
+						paintToken(g2, x, y,
+								field.numPirates(PlayerColor.BLUE),
+								PlayerColor.BLUE);
+					}
+					boardMap.add(new Point(x, y));
 					x -= FIELD_WIDTH;
 				}
-				
-				
-				
 				break;
 			}
 		}
-		
+		// possible fields
+		if (!possibleFields.isEmpty()) {
+			g2.setColor(Color.GREEN);
+			for (int index = 0; index < possibleFields.size(); index++) {
+				Point p = boardMap.get(possibleFields.get(index));
+				g2.drawRect(p.x, p.y, FIELD_WIDTH, FIELD_HEIGHT);
+				System.out.println("Cartagena DEBUG- : possibleFIeld: "
+						+ possibleFields.get(index));
+			}
+		}
+
+		// Selected field
+		if (selectedField != -1) {
+			Point p = boardMap.get(selectedField);
+			g2.setColor(getPlayerColor(currentPlayer));
+			g2.drawRect(p.x, p.y, FIELD_WIDTH, FIELD_HEIGHT);
+		}
+		System.out
+				.println("Cartagena DEBUG- : selectedFIeld: " + selectedField);
+		this.BoardMap = boardMap;
 
 	}
 
@@ -497,11 +625,26 @@ public class FrameRenderer extends JComponent {
 		default:
 			img = skullImage;
 		}
-		
+
 		int imgY = y + 16;
 		int imgHeight = 32;
 
-		g2.drawImage(img, x + 2 , imgY, CARD_WIDTH-4, imgHeight, this);
+		g2.drawImage(img, x + 2, imgY, CARD_WIDTH - 4, imgHeight, this);
+	}
+
+	private void paintToken(Graphics2D g2, int x, int y, int num,
+			PlayerColor color) {
+		// Spielfiguren
+		g2.setFont(h5);
+		if (color == PlayerColor.RED) {
+			g2.setColor(Color.RED);
+			g2.drawString(Integer.toString(num), x + 2, y + fmH5.getHeight());
+		} else {
+			g2.setColor(Color.BLUE);
+			g2.drawString(Integer.toString(num), (x + FIELD_WIDTH) - 10, y
+					+ fmH5.getHeight());
+		}
+
 	}
 
 	private void paintStaticComponents(Graphics2D g2) {
@@ -523,7 +666,8 @@ public class FrameRenderer extends JComponent {
 		g2.setColor(getTransparentColor(new Color(255, 255, 255), 192));
 
 		// fortschrittsleite, spielerinfo hintergrund
-		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + fmH3.getHeight() + CARD_HEIGTH;
+		int heigth = PROGRESS_BAR_HEIGTH + 2 * STUFF_GAP + fmH3.getHeight()
+				+ CARD_HEIGTH;
 		g2.fillRect(BORDER_SIZE, getHeight() - BORDER_SIZE - heigth, getWidth()
 				- 2 * BORDER_SIZE, heigth);
 
@@ -533,7 +677,7 @@ public class FrameRenderer extends JComponent {
 
 		// obere Leiste Kartenstapel
 		g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE
-				- SIDE_BAR_WIDTH, BORDER_SIZE + CARD_HEIGTH + 2 * STUFF_GAP);
+				- SIDE_BAR_WIDTH, CARD_HEIGTH + 2 * STUFF_GAP);
 
 	}
 
@@ -577,4 +721,166 @@ public class FrameRenderer extends JComponent {
 		return color;
 	}
 
+	private final MouseAdapter mouseAdapter = new MouseAdapter() {
+		@Override
+		public void mousePressed(MouseEvent e) {
+			requestFocusInWindow();
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				int x = e.getX();
+				int y = e.getY();
+				// System.out.println("CARTAGENA - DEBUG: x: " + x + " - y: " +
+				// y);
+
+				for (int i = 0; i < BoardMap.size(); i++) {
+					Point p = BoardMap.get(i);
+					if (x > p.x && x < p.x + FIELD_WIDTH && y > p.y
+							&& y < p.y + FIELD_HEIGHT) {
+						System.out
+								.println("CARTAGENA - DEBUG: Klick auf Feld mit Index "
+										+ i);
+						if (gameState.getBoard().hasPirates(i,
+								gameState.getCurrentPlayerColor())
+								&& selectedField == -1) {
+							selectedField = i;
+							System.out
+									.println("CARTAGENA - DEBUG: Feld mit Piraten geklickt "
+											+ selectedField);
+							// fill the possible Field list
+							possibleFields = new LinkedList<Integer>();
+
+							// LinkedList<Card> cards = (LinkedList<Card>)
+							// gameState
+							// .getCurrentPlayer().getCards();
+							for (SymbolType symbol : SymbolType.values()) {
+								if (gameState.getCurrentPlayer()
+										.hasCard(symbol)) {
+									possibleFields
+											.add(gameState.getBoard()
+													.getNextField(
+															selectedField,
+															symbol));
+									System.out
+											.println("CARTAGENA DEBUG - Adding possible Field: "
+													+ gameState
+															.getBoard()
+															.getNextField(
+																	selectedField,
+																	symbol));
+								}
+							}
+							possibleFields.add(gameState.getBoard()
+									.getPreviousField(selectedField));
+						} else if (selectedField != -1) {
+							// Überprüfe ob geklicktes Feld wählbar ist und
+							// führe move aus
+							Move move = null;
+							for (int pF : possibleFields) {
+								if (i == pF) {
+									if (i < selectedField) {
+										// backward Move
+										move = new BackwardMove(selectedField);
+									} else if (i > selectedField) {
+										// Forward Move
+										move = new ForwardMove(selectedField,
+												gameState.getBoard()
+														.getField(i).symbol);
+										// Spezialfall Zielfeld
+										// TODO Spieler fragen welche Karte
+										// abgelegt werden soll.
+										if (i == gameState.getBoard().size() - 1) {
+											move = new ForwardMove(
+													selectedField,
+													gameState
+															.getCurrentPlayer()
+															.getCards().get(0).symbol);
+										}
+									}
+								}
+							}
+							if (move != null) {
+								try {
+									System.out.println("board.haspirates: "
+											+ gameState.getBoard().hasPirates(
+													selectedField,
+													gameState
+															.getCurrentPlayer()
+															.getPlayerColor()));
+									move.perform(gameState,
+											gameState.getCurrentPlayer());
+									selectedField = -1;
+									possibleFields = new LinkedList<Integer>();
+								} catch (InvalidMoveException exception) {
+									System.out.println("CARTAGENA GUI "
+											+ exception.getMessage());
+								}
+								switch (movesMade) {
+								case 0:
+									firstMove = move;
+									movesMade += 1;
+									break;
+								case 1:
+									secondMove = move;
+									movesMade += 1;
+									break;
+								case 2:
+									thirdMove = move;
+								default:
+									MoveContainer moveC = new MoveContainer(
+											firstMove, secondMove, thirdMove);
+									movesMade = 0;
+									sendMove(moveC);
+								}
+
+							} else {
+								selectedField = -1;
+								possibleFields = new LinkedList<Integer>();
+							}
+
+						} else {
+							selectedField = -1;
+							possibleFields = new LinkedList<Integer>();
+							// System.out
+							// .println("CARTAGENA - DEBUG: Else fall:" +
+							// selectedField);
+						}
+					}
+				}
+				// nach jedem Klick wird neu gezeichnet
+				updateBuffer = true;
+				repaint();
+			}
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+
+		}
+	};
+
+	private int getBoardTopY() {
+		return BORDER_SIZE + CARD_HEIGTH + 2 * STUFF_GAP;
+	}
+
+	private int getBoardBottomY() {
+		return this.getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
+				- CARD_HEIGTH - fmH3.getHeight() - 2 * STUFF_GAP;
+	}
+
+	private int getBoardRightX() {
+		return this.getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH;
+	}
+
+	private class Point {
+		int x, y;
+
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+	}
 }

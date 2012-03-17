@@ -6,9 +6,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import sc.plugin2013.util.GameStateConverter;
 import sc.plugin2013.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
@@ -38,15 +41,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author felix
  * 
  */
-/**
- * @author felix
- *
- */
-/**
- * @author felix
- *
- */
 @XStreamAlias(value = "cartagena:state")
+//@XStreamConverter(GameStateConverter.class)
 public class GameState implements Cloneable {
 
 	// momentane rundenzahl
@@ -59,12 +55,14 @@ public class GameState implements Cloneable {
 	private PlayerColor currentPlayer;
 
 	// Kartenstapel
+	@XStreamOmitField
 	private List<Card> cardStack;
 
 	// offen liegende Karten
 	private List<Card> openCards;
 
 	// verbrauchte Karten
+	@XStreamOmitField
 	private List<Card> usedStack;
 
 	// letzter Performter move
@@ -76,6 +74,7 @@ public class GameState implements Cloneable {
 	// endbedingung
 	private Condition condition = null;
 
+	//TODO suppresStack Konstruktor einführen
 	public GameState() {
 		currentPlayer = PlayerColor.RED;
 		cardStack = new LinkedList<Card>();
@@ -283,11 +282,20 @@ public class GameState implements Cloneable {
 		this.lastMove = lastMove;
 		turn++;
 		switchCurrentPlayer();
+		showCards();
+		performScoring();
+	}
+	
+	/** Wird von der Gui benutz um einen Teilzug durchzuführen.
+	 *  Hierbei wird die Punktzahl aktualisiert. Der Momentane Spieler bleibt gleich, die Zugzahl wird nicht erhöht.
+	 * @param move
+	 */
+	public void prepareNextTurn(Move move){
 		performScoring();
 	}
 
 	private void performScoring() {
-		//TODO Scoring abwandeln??
+		//TODO Scoring abwandeln?? Pirat in Segment 1 : 1 Punkt 2: 2 Punkte usw.
 		int scoreRed 	= 0;
 		int scoreBlue 	= 0;
 		for(int i = 0; i < Constants.SEGMENTS * 6 + 2; i++){
@@ -312,5 +320,13 @@ public class GameState implements Cloneable {
 	
 	public List<Card> getOpenCards() {
 		return openCards;
+	}
+	
+	public MoveContainer getLastMove() {
+		return lastMove;
+	}
+
+	public String winningReason() {
+		return condition == null ? "" : condition.reason;
 	}
 }

@@ -85,5 +85,5 @@ public abstract class Move {
 		return hints == null ? new LinkedList<DebugHint>() : hints;
 	}
 
-	abstract void perform(GameState state, Player player) throws InvalidMoveException;
+	public abstract void perform(GameState state, Player player) throws InvalidMoveException;
 }

@@ -111,7 +111,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 * @param move
 	 *            the move you want to do
 	 */
-	public void sendMove(Move move) {
+	public void sendMove(MoveContainer move) {
 		client.sendMessageToRoom(roomId, move);
 	}
 

@@ -43,7 +43,7 @@ public interface IGameHandler {
 	 * @param move
 	 *            zu taetigender Zug
 	 */
-	void sendAction(Move move);
+	void sendAction(MoveContainer move);
 
 	/**
 	 * aufgerufen, wenn das Spiel beendet ist.
