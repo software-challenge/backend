@@ -51,6 +51,12 @@
 /game_plugins/manhattan/doc
 /game_plugins/manhattan/src
 
+# /game_plugins/qwirkle/
+/game_plugins/qwirkle/bin
+/game_plugins/qwirkle/build
+/game_plugins/qwirkle/doc
+/game_plugins/qwirkle/src
+
 # /game_plugins/schaefchen_im_trockenen/
 /game_plugins/schaefchen_im_trockenen/build
 /game_plugins/schaefchen_im_trockenen/src
