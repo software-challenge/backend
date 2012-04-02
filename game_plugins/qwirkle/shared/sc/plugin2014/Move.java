@@ -12,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @see SelectMove
  * @see LayMove
  */
-@XStreamAlias(value = "mh:move")
+@XStreamAlias(value = "qw:move")
 public abstract class Move implements Cloneable {
 
     @XStreamImplicit(itemFieldName = "hint")

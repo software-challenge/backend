@@ -3,41 +3,23 @@ package sc.plugin2014;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-/**
- * Ein Turm an einer Position in einer Stadt.<br/>
- * <br/>
- * Auch für leere Felder nutzbar, dann hat der Turm die Hoehe 0.
- * 
- */
 @XStreamAlias(value = "qw:stone")
 public class Stone implements Cloneable {
 
     // index des stadt in der dieser turm steht
     @XStreamAsAttribute
-    public final int color;
+    private final StoneColor color;
 
     // index des slots auf dem dieser turm steht
     @XStreamAsAttribute
-    public final int shape;
+    private final StoneShape shape;
 
-    /**
-     * XStream benötigt eventuell einen parameterlosen Konstruktor
-     * bei der Deserialisierung von Objekten aus XML-Nachrichten.
-     */
     public Stone() {
-        color = -1;
-        shape = -1;
+        color = StoneColor.BLUE;
+        shape = StoneShape.CIRCLE;
     }
 
-    /**
-     * Ein neuer Turm an gegebener Position mit Hoehe 0
-     * 
-     * @param city
-     *            Stadt des Turms
-     * @param slot
-     *            Position des Turms
-     */
-    public Stone(int color, int shape) {
+    public Stone(StoneColor color, StoneShape shape) {
         this.color = color;
         this.shape = shape;
     }
@@ -54,20 +36,20 @@ public class Stone implements Cloneable {
     }
 
     /**
-     * Gibt die Anzahl roter Segmente im Turm
+     * Holt die Farbe des Steines
      * 
-     * @return Anzahl roter Segmente
+     * @return Steinfarbe
      */
-    public int getColor() {
+    public StoneColor getColor() {
         return color;
     }
 
     /**
-     * Gibt die Anzahl roter Segmente im Turm
+     * Holt die Form des Steines
      * 
-     * @return Anzahl roter Segmente
+     * @return Steinform
      */
-    public int getShape() {
+    public StoneShape getShape() {
         return shape;
     }
 }
