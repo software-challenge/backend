@@ -44,8 +44,9 @@
 		<echo message="Compiling SC dependencies" />
 		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
-		<ant dir="./../game_plugins/schaefchen_plugin" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/qwirkle" target="clean-build" inheritAll="false" />
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>
 
