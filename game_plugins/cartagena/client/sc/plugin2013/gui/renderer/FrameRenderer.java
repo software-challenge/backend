@@ -39,6 +39,7 @@ import sc.plugin2013.util.InvalidMoveException;
 import sc.plugin2013.BackwardMove;
 import sc.plugin2013.Board;
 import sc.plugin2013.Card;
+import sc.plugin2013.DebugHint;
 import sc.plugin2013.Field;
 import sc.plugin2013.FieldType;
 import sc.plugin2013.ForwardMove;
@@ -114,6 +115,7 @@ public class FrameRenderer extends JComponent {
 	private int turnToAnswer;
 	private LinkedList<Point> BoardMap;
 	private int movesMade = 0;
+	private final int movesToMake = 3;
 	private Move firstMove;
 	private Move secondMove;
 	private Move thirdMove;
@@ -679,6 +681,57 @@ public class FrameRenderer extends JComponent {
 		g2.fillRect(BORDER_SIZE, BORDER_SIZE, getWidth() - 2 * BORDER_SIZE
 				- SIDE_BAR_WIDTH, CARD_HEIGTH + 2 * STUFF_GAP);
 
+		// seitenleiste info
+
+		Player player = gameState.getRedPlayer();
+		int x = getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH;
+		int y = BORDER_SIZE + STUFF_GAP + fmH0.getHeight();
+
+		// red player
+		g2.setFont(h0);
+		g2.setColor(getPlayerColor(player.getPlayerColor()));
+		g2.drawString(String.valueOf(player.getPoints()), x, y);
+
+		y += fmH3.getHeight();
+		if (currentPlayer == PlayerColor.RED) {
+			g2.setColor(Color.black);
+			g2.setFont(h3);
+			if (movesToMake - movesMade > 1) {
+				g2.drawString(movesToMake - movesMade + " Züge übrig.", x, y);
+			} else {
+				g2.drawString(movesToMake - movesMade + " Zug übrig.", x, y);
+			}
+
+			String endTurn = "Zug Beenden";
+			g2.setStroke(stroke15);
+			g2.setColor(Color.WHITE);
+			g2.fillRoundRect(x, y, fmH3.stringWidth(endTurn), fmH3.getHeight(),
+					10, 10);
+			g2.setColor(Color.DARK_GRAY);
+			g2.drawRoundRect(x, y, fmH3.stringWidth(endTurn), fmH3.getHeight(),
+					10, 10);
+			y += fmH3.getHeight();
+			g2.setColor(Color.black);
+			g2.drawString(endTurn, x, y);
+		}
+		// blue player
+		g2.setFont(h0);
+		y += fmH0.getHeight();
+		player = gameState.getBluePlayer();
+		g2.setColor(getPlayerColor(player.getPlayerColor()));
+		g2.drawString(String.valueOf(player.getPoints()), x, y);
+
+		y += fmH3.getHeight();
+		if (currentPlayer == PlayerColor.BLUE) {
+			g2.setColor(Color.black);
+			g2.setFont(h3);
+			if (movesToMake - movesMade > 1) {
+				g2.drawString(movesToMake - movesMade + " Züge übrig.", x, y);
+			} else {
+				g2.drawString(movesToMake - movesMade + " Zug übrig.", x, y);
+			}
+		}
+
 	}
 
 	private static Image loadImage(String filename) {
@@ -768,8 +821,11 @@ public class FrameRenderer extends JComponent {
 																	symbol));
 								}
 							}
-							possibleFields.add(gameState.getBoard()
-									.getPreviousField(selectedField));
+							if (gameState.getBoard().getPreviousField(
+									selectedField) != -1) {
+								possibleFields.add(gameState.getBoard()
+										.getPreviousField(selectedField));
+							}
 						} else if (selectedField != -1) {
 							// Überprüfe ob geklicktes Feld wählbar ist und
 							// führe move aus

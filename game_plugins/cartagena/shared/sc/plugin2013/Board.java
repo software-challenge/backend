@@ -82,12 +82,17 @@ public class Board implements Cloneable{
 	 * @return index des Feldes
 	 */
 	public int getPreviousField(int start) {
-		for (int i = start - 1; i >= 0; i--) {
+		//Suche zurückliegendes Feld auf dem, weniger als 3 Piraten stehen
+		for (int i = start - 1; i > 0; i--) {
 			if (!fields.get(i).getPirates().isEmpty() && fields.get(i).getPirates().size() < 3) {
 				return i;
 			}
 		}
-		return 0; // Nichts gefunden, gib StartFeld zurück;
+		//Prüfe ob auf dem Startfeld noch Piraten stehen
+		if(!fields.get(0).getPirates().isEmpty()){
+			return 0;
+		}
+		return -1; // Nichts gefunden, gib -1 zurück;
 	}
 	
 	/** Gibt zurück ob ein Spieler an einer Position einen Piraten hat.
