@@ -133,7 +133,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * @param points
 	 */
 	public void setPoints(int points){
-		this.points += points;
+		this.points = points;
 	}
 	
 	/** 

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin2013.util.GameStateConverter;
+//import sc.plugin2013.util.GameStateConverter;
 import sc.plugin2013.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -298,14 +298,14 @@ public class GameState implements Cloneable {
 		//TODO Scoring abwandeln?? Pirat in Segment 1 : 1 Punkt 2: 2 Punkte usw.
 		int scoreRed 	= 0;
 		int scoreBlue 	= 0;
-		for(int i = 0; i < Constants.SEGMENTS * 6 + 2; i++){
+		for(int i = 1; i < Constants.SEGMENTS * 6 + 1; i++){
 			Field field = this.board.getField(i);
 			List<Pirate> pirates = field.getPirates();
 			for(Pirate p: pirates){
 				if(p.getOwner() == PlayerColor.RED){
-					scoreRed += i;
+					scoreRed += (((i -1) / Constants.SEGMENTS) +1);
 				}else{
-					scoreBlue += i;
+					scoreBlue += (((i -1) / Constants.SEGMENTS) +1);
 				}
 			}
 		}
