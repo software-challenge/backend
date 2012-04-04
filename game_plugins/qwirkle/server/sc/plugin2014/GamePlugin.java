@@ -3,7 +3,7 @@ package sc.plugin2014;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
-import sc.plugin2014.util.Configuration;
+import sc.plugin2014.util.XStreamConfiguration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.*;
 
@@ -45,7 +45,7 @@ public class GamePlugin implements IGamePlugin {
 
     @Override
     public void initialize(IGamePluginHost host) {
-        host.registerProtocolClasses(Configuration.getClassesToRegister());
+        host.registerProtocolClasses(XStreamConfiguration.getClassesToRegister());
     }
 
     @Override

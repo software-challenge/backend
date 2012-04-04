@@ -1,11 +1,13 @@
 package sc.plugin2014;
 
+import sc.plugin2014.entities.PlayerColor;
+
 /**
  * Beinhaltet Informationen zum Spielende:
  * Farbe des Gewinners und Gewinngrund.
  * 
  */
-class Condition implements Cloneable {
+class WinnerAndReason implements Cloneable {
 
     public final PlayerColor winner;
 
@@ -15,7 +17,7 @@ class Condition implements Cloneable {
      * XStream benötigt eventuell einen parameterlosen Konstruktor
      * bei der Deserialisierung von Objekten aus XML-Nachrichten.
      */
-    public Condition() {
+    public WinnerAndReason() {
         winner = null;
         reason = null;
     }
@@ -28,7 +30,7 @@ class Condition implements Cloneable {
      * @param reason
      *            TExt, der Sieg beschreibt
      */
-    public Condition(PlayerColor winner, String reason) {
+    public WinnerAndReason(PlayerColor winner, String reason) {
         this.winner = winner;
         this.reason = reason;
     }
@@ -41,7 +43,7 @@ class Condition implements Cloneable {
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return new Condition(winner, reason);
+        return new WinnerAndReason(winner, reason);
     }
 
 }

@@ -1,4 +1,4 @@
-package sc.plugin2014;
+package sc.plugin2014.entities;
 
 /**
  * Ein Spieler spielt entweder in rot (als erster Spieler) oder blau (zweiter

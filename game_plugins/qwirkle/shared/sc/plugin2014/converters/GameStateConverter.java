@@ -1,9 +1,12 @@
-package sc.plugin2014.util;
+package sc.plugin2014.converters;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import sc.plugin2014.*;
+import sc.plugin2014.entities.*;
+import sc.plugin2014.moves.*;
+import sc.plugin2014.util.Constants;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;

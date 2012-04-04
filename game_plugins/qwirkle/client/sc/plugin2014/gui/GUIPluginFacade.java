@@ -11,7 +11,7 @@ import sc.networking.clients.ObservingClient;
 import sc.plugin2014.*;
 import sc.plugin2014.gui.renderer.FrameRenderer;
 import sc.plugin2014.gui.renderer.RenderFacade;
-import sc.plugin2014.util.Configuration;
+import sc.plugin2014.util.XStreamConfiguration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;
@@ -100,7 +100,7 @@ public class GUIPluginFacade implements IGuiPlugin {
      */
     @Override
     public IObservation loadReplay(String filename) throws IOException {
-        ObservingClient rep = new ObservingClient(Configuration.getXStream(),
+        ObservingClient rep = new ObservingClient(XStreamConfiguration.getXStream(),
                 ReplayBuilder.loadReplay(filename));
         ObserverGameHandler handler = new ObserverGameHandler();
         RenderFacade.getInstance().setHandler(null, EPlayerId.OBSERVER);

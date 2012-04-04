@@ -4,7 +4,9 @@ import java.io.IOException;
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.*;
-import sc.plugin2014.util.Configuration;
+import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.moves.Move;
+import sc.plugin2014.util.XStreamConfiguration;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
@@ -46,8 +48,8 @@ public abstract class AbstractClient implements ILobbyClientListener {
     public AbstractClient(String host, int port, EPlayerId id)
             throws IOException {
         gameType = GamePlugin.PLUGIN_UUID;
-        client = new LobbyClient(Configuration.getXStream(),
-                Configuration.getClassesToRegister(), host, port);
+        client = new LobbyClient(XStreamConfiguration.getXStream(),
+                XStreamConfiguration.getClassesToRegister(), host, port);
         client.addListener(this);
         client.start();
         this.id = id;
