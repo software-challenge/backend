@@ -103,7 +103,7 @@ public class Game extends RoundBasedGameInstance<Player> {
             author.setViolated(true);
             String err = "Ungültiger Zug von '" + author.getDisplayName()
                     + "'.\\n" + e.getMessage() + ".";
-            gameState.endGame(author.getPlayerColor().opponent(), err);
+            gameState.endGame(author.getPlayerColor().getOpponent(), err);
             logger.error(err);
             throw new GameLogicException(err);
         }
@@ -149,7 +149,7 @@ public class Game extends RoundBasedGameInstance<Player> {
         }
 
         if (!gameState.gameEnded()) {
-            gameState.endGame(((Player) player).getPlayerColor().opponent(),
+            gameState.endGame(((Player) player).getPlayerColor().getOpponent(),
                     "Der Spieler '" + player.getDisplayName()
                             + "' hat das Spiel verlassen.");
         }
@@ -181,7 +181,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
         int[] stats = gameState.getPlayerStats(p);
         int matchPoints = 1;
-        int oppPoints = gameState.getPlayerStats(p.getPlayerColor().opponent())[3];
+        int oppPoints = gameState.getPlayerStats(p.getPlayerColor().getOpponent())[3];
         if (stats[3] > oppPoints) {
             matchPoints = 2;
         }

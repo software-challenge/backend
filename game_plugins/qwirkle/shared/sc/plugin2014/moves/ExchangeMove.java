@@ -2,7 +2,7 @@ package sc.plugin2014.moves;
 
 import java.util.List;
 import sc.plugin2014.GameState;
-import sc.plugin2014.converters.LayMoveConverter;
+import sc.plugin2014.converters.ExchangeMoveConverter;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.exceptions.InvalidMoveException;
@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  */
 @XStreamAlias(value = "qw:exchangemove")
-@XStreamConverter(LayMoveConverter.class)
+@XStreamConverter(ExchangeMoveConverter.class)
 public class ExchangeMove extends Move implements Cloneable {
 
     public List<Stone> stones;

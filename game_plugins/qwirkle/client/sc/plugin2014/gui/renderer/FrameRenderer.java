@@ -13,7 +13,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import sc.plugin2014.*;
+import javax.swing.text.Segment;
+import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.moves.*;
@@ -1369,7 +1370,7 @@ public class FrameRenderer extends JComponent {
         boolean drawCrane = OPTIONS[CRANES] && cityTower && (tower.size > 0)
                 && !gameEnded;
         drawCrane = drawCrane
-                && (tower.diff <= getHighestSegment(tower.owner.opponent(),
+                && (tower.diff <= getHighestSegment(tower.owner.getOpponent(),
                         true));
         int frameDisplacement = tower.diff * TOWER_STORIE_HEIGTH;
         if (drawCrane) {
@@ -1380,9 +1381,9 @@ public class FrameRenderer extends JComponent {
             int craneJibRightX = ((tower.xs[3] + tower.innerX) / 2) + 10;
             int craneJibRightY = (((tower.ys[3] + tower.innerY) / 2) + 4)
                     - frameDisplacement - 30;
-            Color color = getPlayerColor(tower.owner.opponent(), true);
+            Color color = getPlayerColor(tower.owner.getOpponent(), true);
             boolean canMatchHeigth = tower.diff <= getHighestSegment(
-                    tower.owner.opponent(), false);
+                    tower.owner.getOpponent(), false);
             g2.setColor(canMatchHeigth ? color.darker() : grayer(color));
             g2.setStroke(stroke40);
             g2.drawLine(craneJibLeftX, craneJibLeftY, craneJibRightX,
@@ -1408,7 +1409,8 @@ public class FrameRenderer extends JComponent {
                         otherXs[i] = tower.xs[js[i]];
                     }
                 }
-                g2.setColor(getBrightPlayerColor(tower.owner.opponent(), true));
+                g2.setColor(getBrightPlayerColor(tower.owner.getOpponent(),
+                        true));
                 g2.fillPolygon(otherXs, otherYs, 6);
             }
         }

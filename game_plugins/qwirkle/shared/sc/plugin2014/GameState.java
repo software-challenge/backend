@@ -66,10 +66,9 @@ public class GameState implements Cloneable {
     private Move              lastMove;
 
     // endbedingung
-    private WinnerAndReason         condition = null;
+    private WinnerAndReason   condition = null;
 
     public GameState() {
-
         currentPlayer = PlayerColor.RED;
         startPlayer = PlayerColor.RED;
         stoneBag = new StoneBag();
@@ -172,7 +171,7 @@ public class GameState implements Cloneable {
      * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
      */
     public PlayerColor getOtherPlayerColor() {
-        return currentPlayer.opponent();
+        return currentPlayer.getOpponent();
     }
 
     /**

@@ -1,7 +1,7 @@
 package sc.plugin2014.exceptions;
 
-@SuppressWarnings("serial")
 public class InvalidMoveException extends Exception {
+    private static final long serialVersionUID = -1095512793431638458L;
 
     public InvalidMoveException(String reason) {
         super(reason);

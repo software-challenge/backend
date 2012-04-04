@@ -12,7 +12,7 @@ public enum PlayerColor {
     /**
      * liefert die Spielerfarbe des Gegners dieses Spielers
      */
-    public PlayerColor opponent() {
+    public PlayerColor getOpponent() {
         return this == RED ? BLUE : RED;
     }
 

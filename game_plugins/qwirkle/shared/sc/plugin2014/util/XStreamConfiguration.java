@@ -28,8 +28,8 @@ public class XStreamConfiguration {
 
     public static List<Class<?>> getClassesToRegister() {
         return Arrays.asList(new Class<?>[] { LayMove.class, Game.class,
-                GameState.class, Constants.class, Move.class,
-                ExchangeMove.class, Player.class, WelcomeMessage.class,
-                PlayerColor.class }); // TODO add other classes
+                GameState.class, Move.class, ExchangeMove.class, Player.class,
+                WelcomeMessage.class, PlayerColor.class }); // TODO add other
+                                                            // classes
     }
 }
