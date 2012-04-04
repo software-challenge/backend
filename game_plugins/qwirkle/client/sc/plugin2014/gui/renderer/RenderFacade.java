@@ -341,13 +341,13 @@ public class RenderFacade {
                         break;
                 }
 
-                lastGameState.endGame(color.opponent(), err);
+                lastGameState.endGame(color.getOpponent(), err);
                 updateGameState(lastGameState, true);
             }
         }
 
         if (errorMessage != null) {
-            lastGameState.endGame(color.opponent(), errorMessage);
+            lastGameState.endGame(color.getOpponent(), errorMessage);
             updateGameState(lastGameState, true);
         }
 
