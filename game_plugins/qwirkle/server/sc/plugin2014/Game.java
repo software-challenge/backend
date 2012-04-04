@@ -11,6 +11,10 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.moves.Move;
 import sc.plugin2014.util.*;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
@@ -29,7 +33,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     @XStreamOmitField
     private final List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
-    private GameState               gameState       = new GameState(false);
+    private GameState               gameState       = new GameState();
 
     public GameState getGameState() {
         return gameState;
@@ -58,25 +62,20 @@ public class Game extends RoundBasedGameInstance<Player> {
             throws GameLogicException {
 
         final Player author = (Player) fromPlayer;
-        final MoveType expectedMoveType = gameState.getCurrentMoveType();
         final Player expectedPlayer = gameState.getCurrentPlayer();
 
         try {
             if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
-                throw new InvalideMoveException(author.getDisplayName()
+                throw new InvalidMoveException(author.getDisplayName()
                         + " war nicht am Zug");
             }
 
             if (!(data instanceof Move)) {
-                throw new InvalideMoveException(author.getDisplayName()
+                throw new InvalidMoveException(author.getDisplayName()
                         + " hat kein Zug-Objekt gesendet");
             }
 
             final Move move = (Move) data;
-            if (move.getMoveType() != expectedMoveType) {
-                throw new InvalideMoveException(author.getDisplayName()
-                        + " hat falschen Zug-Typ gesendet");
-            }
 
             move.perform(gameState, expectedPlayer);
             gameState.prepareNextTurn(move);
@@ -96,25 +95,11 @@ public class Game extends RoundBasedGameInstance<Player> {
                 gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
                         + winnerName);
             }
-            else {
-                if ((gameState.getCurrentMoveType() == MoveType.BUILD)
-                        && (gameState.getPossibleMoves().size() == 0)) {
-                    PlayerColor looser = gameState.getCurrentPlayerColor();
-                    gameState
-                            .endGame(
-                                    looser.opponent(),
-                                    "Das Spiel ist vorzeitig zu Ende.\\n"
-                                            + (gameState.getPlayerNames()[looser == PlayerColor.RED ? 1
-                                                    : 0])
-                                            + " ist nicht mehr fähig zu ziehen.");
-
-                }
-            }
 
             next(gameState.getCurrentPlayer());
 
         }
-        catch (InvalideMoveException e) {
+        catch (InvalidMoveException e) {
             author.setViolated(true);
             String err = "Ungültiger Zug von '" + author.getDisplayName()
                     + "'.\\n" + e.getMessage() + ".";
@@ -223,7 +208,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     @Override
     public void loadFromFile(String file) {
         GameLoader gl = new GameLoader(new Class<?>[] { GameState.class });
-        Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
+        Object gameInfo = gl.loadGame(XStreamConfiguration.getXStream(), file);
         if (gameInfo != null) {
             loadGameInfo(gameInfo);
         }

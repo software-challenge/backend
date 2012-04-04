@@ -1,10 +1,9 @@
 package sc.plugin2014;
 
 import static sc.plugin2014.util.Constants.*;
-import java.security.SecureRandom;
-import java.util.*;
-import sc.plugin2014.util.Constants;
-import sc.plugin2014.util.GameStateConverter;
+import sc.plugin2014.converters.GameStateConverter;
+import sc.plugin2014.entities.*;
+import sc.plugin2014.moves.Move;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -42,85 +41,39 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  * @author tkra
  */
-@XStreamAlias(value = "manhattan:state")
+@XStreamAlias(value = "qw:state")
 @XStreamConverter(GameStateConverter.class)
 public class GameState implements Cloneable {
 
     // momentane rundenzahl
-    private int         turn;
+    private int               turn;
 
     // farbe des startspielers
-    private PlayerColor startPlayer;
+    private final PlayerColor startPlayer;
 
     // farbe des aktuellen spielers
-    private PlayerColor currentPlayer;
+    private final PlayerColor currentPlayer;
 
-    // momentan auszufuehrender zug-type
-    private MoveType    currentMoveType;
+    private Board             board;
 
     // die teilenhmenden spieler
-    private Player      red, blue;
+    private Player            red, blue;
 
     // kartenstapel
-    private List<Stone> stoneStack;
-
-    // liste der gebauten tuerem
-    private List<Stone> towers;
+    private StoneBag          stoneBag;
 
     // letzter performte move
-    private Move        lastMove;
+    private Move              lastMove;
 
     // endbedingung
-    private Condition   condition = null;
+    private WinnerAndReason         condition = null;
 
-    /**
-     * Erzeugt einen neuen {@code GameState} in dem alle Informationen so
-     * gesetzt
-     * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
-     * gueltig sind.<br/>
-     * <br/>
-     * 
-     * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte
-     * vom
-     * Spielclient i.A. nicht aufgerufen werden!</b>
-     * 
-     * Der Kartenstapel wird nur initialisiert und nicht mit Karten befuellt.
-     */
     public GameState() {
-        this(true);
-    }
-
-    /**
-     * Erzeugt einen neuen {@code GameState} in dem alle Informationen so
-     * gesetzt
-     * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
-     * gueltig sind.<br/>
-     * <br/>
-     * 
-     * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte
-     * vom
-     * Spielclient i.A. nicht aufgerufen werden!</b>
-     * 
-     * @param suppressStack
-     *            Gibt an ob der Kartenstapel nur initialisiert oder auch mit
-     *            Karten gefuellt werden soll.
-     */
-    public GameState(boolean suppressStack) {
 
         currentPlayer = PlayerColor.RED;
         startPlayer = PlayerColor.RED;
-        currentMoveType = MoveType.SELECT;
-        stoneStack = new LinkedList<Stone>();
-        if (!suppressStack) {
-            createCardStack();
-        }
-        towers = new ArrayList<Stone>(Constants.CITIES * Constants.SLOTS);
-        for (int city = 0; city < Constants.CITIES; city++) {
-            for (int slot = 0; slot < Constants.SLOTS; slot++) {
-                towers.add(new Stone(city, slot));
-            }
-        }
-
+        stoneBag = new StoneBag();
+        board = new Board();
     }
 
     /**
@@ -142,13 +95,13 @@ public class GameState implements Cloneable {
             clone.lastMove = (Move) lastMove.clone();
         }
         if (condition != null) {
-            clone.condition = (Condition) condition.clone();
+            clone.condition = (WinnerAndReason) condition.clone();
         }
-        if (stoneStack != null) {
-            clone.stoneStack = new LinkedList<Stone>(stoneStack);
+        if (stoneBag != null) {
+            clone.stoneBag = (StoneBag) stoneBag.clone();
         }
-        if (towers != null) {
-            clone.towers = new LinkedList<Stone>(towers);
+        if (board != null) {
+            clone.board = (Board) board.clone();
         }
         return clone;
     }
@@ -173,12 +126,7 @@ public class GameState implements Cloneable {
         }
 
         for (int i = 0; i < STONES_PER_PLAYER; i++) {
-            player.addCard(drawCard());
-        }
-        usedStack.clear();
-
-        for (int i = 1; i <= MAX_SEGMENT_SIZE; i++) {
-            player.addSegmet(new Segment(i, SEGMENT_AMOUNTS[i - 1]));
+            player.addStone(stoneBag.drawStone());
         }
 
     }
@@ -274,100 +222,10 @@ public class GameState implements Cloneable {
     }
 
     /**
-     * wechselt den Spieler, der aktuell an der Reihe ist.
-     */
-    private void switchCurrentPlayer() {
-        currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
-                : PlayerColor.RED;
-    }
-
-    /**
-     * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
-     */
-    private void switchStartPlayer() {
-        startPlayer = startPlayer == PlayerColor.RED ? PlayerColor.BLUE
-                : PlayerColor.RED;
-    }
-
-    /**
-     * liefert den momentan auszufuehrenden Zugtyp
-     */
-    public MoveType getCurrentMoveType() {
-        return currentMoveType;
-    }
-
-    /**
-     * setzt den momentan auszufuehrenden Zugtyp
-     */
-    public void setCurrentMoveType(MoveType moveType) {
-        currentMoveType = moveType;
-    }
-
-    /**
      * liefert die aktuelle Zugzahl
      */
     public int getTurn() {
         return turn;
-    }
-
-    /**
-     * Simuliert einen uebergebenen Zug. Dabei werden folgende Informationen
-     * aktualisiert:
-     * <ul>
-     * <li>Zugzahl
-     * <li>Welcher Spieler an der Reihe ist
-     * <li>Welcher Spieler erster der Spielphase ist
-     * <li>Was der letzte Zug war
-     * <li>Was der aktuell erwartete Zug ist
-     * <li>die Punkte der Spieler
-     * </ul>
-     * 
-     * @param lastMove
-     *            auszufuehrender Zug
-     */
-    public void prepareNextTurn(Move lastMove) {
-
-        turn++;
-        this.lastMove = lastMove;
-        if (currentMoveType == MoveType.SELECT) {
-            if (currentPlayer == startPlayer) {
-                switchCurrentPlayer();
-            }
-            else {
-                setCurrentMoveType(MoveType.BUILD);
-            }
-        }
-        else {
-            usedStack.add(new Card(((LayMove) lastMove).slot));
-            if ((currentPlayer == startPlayer)
-                    && (getCurrentPlayer().getUsableSegmentCount() == 0)) {
-                setCurrentMoveType(MoveType.SELECT);
-                switchCurrentPlayer();
-                switchStartPlayer();
-                performScoring();
-            }
-            else {
-                switchCurrentPlayer();
-            }
-        }
-
-    }
-
-    /**
-	 * 
-	 */
-    private void performScoring() {
-
-        int[][] stats = getGameStats();
-
-        red.addPoints(Constants.POINTS_PER_TOWER * stats[0][0]);
-        red.addPoints(Constants.POINTS_PER_OWEND_CITY * stats[0][1]);
-        red.addPoints(Constants.POINTS_PER_HIGHEST_TOWER * stats[0][2]);
-
-        blue.addPoints(Constants.POINTS_PER_TOWER * stats[1][0]);
-        blue.addPoints(Constants.POINTS_PER_OWEND_CITY * stats[1][1]);
-        blue.addPoints(Constants.POINTS_PER_HIGHEST_TOWER * stats[1][2]);
-
     }
 
     /**
@@ -377,89 +235,6 @@ public class GameState implements Cloneable {
      */
     public int getRound() {
         return turn / 2;
-    }
-
-    /**
-     * liefert die naechste Karte vom Stapel. Dazu wird dieser gegebenenfalls
-     * neu
-     * aufgefuellt durch mischen der verbauchten Karten.
-     * 
-     * @return naechste Karte
-     */
-    public synchronized Card drawCard() {
-        if (cardStack.isEmpty()) {
-            mixCardStack();
-        }
-        return cardStack.remove(0);
-    }
-
-    /**
-     * erstellt einen stapel mit ALLEN karten.
-     */
-    private synchronized void createCardStack() {
-        for (int slot = 0; slot < (Constants.SLOTS * Constants.CARDS_PER_SLOT); slot++) {
-            cardStack.add(new Card(slot % Constants.SLOTS));
-        }
-        Collections.shuffle(cardStack, new SecureRandom());
-    }
-
-    /**
-     * Mischt neuen Stapel aus verbrauchten Karten
-     */
-    private synchronized void mixCardStack() {
-        cardStack.clear();
-        for (Card c : usedStack) {
-            cardStack.add(c);
-        }
-        usedStack.clear();
-        Collections.shuffle(cardStack, new SecureRandom());
-    }
-
-    /**
-     * Liefert den Turm an gegebenem Feld (Stadt, Position)
-     * 
-     * @param city
-     *            Stadt des Spielfeldes
-     * @param slot
-     *            Position des Spielfeldes
-     * @return Turm an gegebenem Feld, kann null sein oder Hoehe 0 haben.
-     */
-    public Stone getTower(int city, int slot) {
-        if ((city < 0) || (city >= Constants.CITIES)) {
-            if ((slot < 0) || (slot >= Constants.SLOTS)) {
-                throw new IllegalArgumentException("no such tower: city "
-                        + city + ", slot " + slot);
-            }
-        }
-
-        return towers.get((city * Constants.SLOTS) + slot);
-
-    }
-
-    /**
-     * Liefert eine Liste aller Tuerme
-     * 
-     * @return Liste aller Tuerme
-     */
-    public List<Stone> getTowers() {
-        List<Stone> towersOfAllCities = new LinkedList<Stone>();
-
-        if (towers != null) {
-            for (Stone tower : towers) {
-                towersOfAllCities.add(tower);
-            }
-        }
-        return towersOfAllCities;
-    }
-
-    /**
-     * Liefert eine Liste aller aktuell erlaubten Zuege.
-     * 
-     * @return Liste erlaubter Spielzuege
-     */
-    public List<LayMove> getPossibleMoves() {
-
-        return null; // TODO
     }
 
     /**
@@ -526,10 +301,10 @@ public class GameState implements Cloneable {
      */
     public int[][] getGameStats() {
 
-        int[][] stats = new int[2][4]; // TODO
+        int[][] stats = new int[2][1];
 
-        stats[0][3] = red.getPoints();
-        stats[1][3] = blue.getPoints();
+        stats[0][0] = red.getPoints();
+        stats[1][0] = blue.getPoints();
 
         return stats;
 
@@ -553,7 +328,7 @@ public class GameState implements Cloneable {
      */
     public void endGame(PlayerColor winner, String reason) {
         if (condition == null) {
-            condition = new Condition(winner, reason);
+            condition = new WinnerAndReason(winner, reason);
         }
     }
 
@@ -586,4 +361,12 @@ public class GameState implements Cloneable {
         return condition == null ? "" : condition.reason;
     }
 
+    public Stone drawStone() {
+        return stoneBag.drawStone();
+    }
+
+    public void prepareNextTurn(Move move) {
+        // TODO Auto-generated method stub
+
+    }
 }

@@ -1,4 +1,4 @@
-package sc.plugin2014;
+package sc.plugin2014.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +85,7 @@ public class Player extends SimplePlayer implements Cloneable {
     }
 
     /**
-     * entfernt eine Kkarte von diesem Spieler
+     * entfernt einen Stein von diesem Spieler
      */
     public void removeStone(Stone stone) {
         stones.remove(stone);

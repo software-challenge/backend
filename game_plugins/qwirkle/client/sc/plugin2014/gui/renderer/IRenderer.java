@@ -5,6 +5,8 @@ package sc.plugin2014.gui.renderer;
 
 import java.awt.Image;
 import sc.plugin2014.*;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
 import sc.shared.GameResult;
 
 /**

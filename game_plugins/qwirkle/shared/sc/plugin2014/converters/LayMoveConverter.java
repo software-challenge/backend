@@ -1,13 +1,14 @@
-package sc.plugin2014.util;
+package sc.plugin2014.converters;
 
-import sc.plugin2014.LayMove;
-import sc.plugin2014.DebugHint;
+import sc.plugin2014.moves.DebugHint;
+import sc.plugin2014.moves.LayMove;
+import sc.plugin2014.util.XStreamConfiguration;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 @SuppressWarnings("unchecked")
-public class BuildMoveConverter implements Converter {
+public class LayMoveConverter implements Converter {
 
     @Override
     public boolean canConvert(Class clazz) {
@@ -25,8 +26,7 @@ public class BuildMoveConverter implements Converter {
         LayMove move = (LayMove) value;
         if (!value.getClass().equals(LayMove.class)) {
             /* adding standard xml-tag for derived moves */
-            Configuration.getXStream().alias("manhattan:build",
-                    value.getClass());
+            XStreamConfiguration.getXStream().alias("qw:laymove", value.getClass());
         }
 
         writer.addAttribute("city", Integer.toString(move.city));

@@ -14,6 +14,9 @@ import java.util.*;
 import java.util.List;
 import javax.swing.*;
 import sc.plugin2014.*;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.moves.*;
 import sc.plugin2014.util.Constants;
 
 /**

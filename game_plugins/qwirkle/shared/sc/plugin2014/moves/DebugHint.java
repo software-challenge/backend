@@ -1,4 +1,4 @@
-package sc.plugin2014;
+package sc.plugin2014.moves;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

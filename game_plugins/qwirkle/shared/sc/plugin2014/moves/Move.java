@@ -1,8 +1,10 @@
-package sc.plugin2014;
+package sc.plugin2014.moves;
 
 import java.util.LinkedList;
 import java.util.List;
-import sc.plugin2014.util.InvalideMoveException;
+import sc.plugin2014.GameState;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.exceptions.InvalidMoveException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -92,18 +94,11 @@ public abstract class Move implements Cloneable {
      *            Spielstatus
      * @param player
      *            ausfuehrender Spieler
-     * @throws InvalideMoveException
+     * @throws InvalidMoveException
      *             geworfen, wenn der Zug ungueltig ist,
      *             also nicht ausfuehrbar
      */
-    abstract void perform(GameState state, Player player)
-            throws InvalideMoveException;
-
-    /**
-     * Gibt die Art des Zuges zurueck
-     * 
-     * @return Zugart
-     */
-    public abstract MoveType getMoveType();
+    public abstract void perform(GameState state, Player player)
+            throws InvalidMoveException;
 
 }

@@ -1,5 +1,6 @@
 package sc.plugin2014;
 
+import sc.plugin2014.entities.PlayerColor;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

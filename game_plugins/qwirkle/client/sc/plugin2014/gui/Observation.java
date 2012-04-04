@@ -15,8 +15,10 @@ import sc.guiplugin.interfaces.listener.*;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
 import sc.plugin2014.*;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.gui.renderer.RenderFacade;
-import sc.plugin2014.util.Configuration;
+import sc.plugin2014.util.XStreamConfiguration;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
@@ -112,7 +114,7 @@ public class Observation implements IObservation, IUpdateListener,
 
     @Override
     public void saveReplayToFile(String filename) throws IOException {
-        ReplayBuilder.saveReplay(Configuration.getXStream(), conGame, filename);
+        ReplayBuilder.saveReplay(XStreamConfiguration.getXStream(), conGame, filename);
     }
 
     @Override

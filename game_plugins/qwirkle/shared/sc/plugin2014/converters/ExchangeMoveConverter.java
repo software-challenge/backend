@@ -1,20 +1,22 @@
-package sc.plugin2014.util;
+package sc.plugin2014.converters;
 
 import java.util.LinkedList;
 import java.util.List;
-import sc.plugin2014.DebugHint;
-import sc.plugin2014.SelectMove;
+import sc.plugin2014.moves.DebugHint;
+import sc.plugin2014.moves.ExchangeMove;
+import sc.plugin2014.util.XStreamConfiguration;
+import sc.plugin2014.util.Constants;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 @SuppressWarnings("unchecked")
-public class SelectMoveConverter implements Converter {
+public class ExchangeMoveConverter implements Converter {
 
     @Override
     public boolean canConvert(Class clazz) {
         try {
-            return SelectMove.class.isAssignableFrom(clazz);
+            return ExchangeMove.class.isAssignableFrom(clazz);
         }
         catch (Exception e) {
             return false;
@@ -24,12 +26,12 @@ public class SelectMoveConverter implements Converter {
     @Override
     public void marshal(Object value, HierarchicalStreamWriter writer,
             MarshallingContext context) {
-        if (!value.getClass().equals(SelectMove.class)) {
+        if (!value.getClass().equals(ExchangeMove.class)) {
             /* adding standard xml-tag for derived moves */
-            Configuration.getXStream().alias("manhattan:select",
+            XStreamConfiguration.getXStream().alias("qw:exchangemove",
                     value.getClass());
         }
-        SelectMove move = (SelectMove) value;
+        ExchangeMove move = (ExchangeMove) value;
         int[] selections = move.getSelections();
 
         for (int i = 0; i < Constants.MAX_SEGMENT_SIZE; i++) {

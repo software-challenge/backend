@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
 import sc.plugin2014.*;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.moves.Move;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 

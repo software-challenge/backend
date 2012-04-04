@@ -4,6 +4,9 @@
 package sc.plugin2014.gui;
 
 import sc.plugin2014.*;
+import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.moves.Move;
 import sc.shared.GameResult;
 
 /**
