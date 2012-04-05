@@ -2,8 +2,6 @@ package sc.plugin2014.entities;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import sc.plugin2014.*;
-import sc.plugin2014.entities.Stone;
 
 public class StoneTest {
 

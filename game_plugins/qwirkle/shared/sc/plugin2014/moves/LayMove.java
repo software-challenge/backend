@@ -9,33 +9,27 @@ import sc.plugin2014.util.GameUtil;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-/**
- * Ein Bauzug. Dieser beinhaltet Informationen, welcher Baustein wohin gesetzt
- * wird.
- * 
- */
 @XStreamAlias(value = "qw:laymove")
 @XStreamConverter(LayMoveConverter.class)
 public class LayMove extends Move implements Cloneable {
 
-    public final Map<Stone, Field> stoneToFieldMapping;
+    private final Map<Stone, Field> stoneToFieldMapping;
 
-    /**
-     * 
-     * Erzeugt einen neuen Bauzug mit Stadt, Position und Bauteilgroesse
-     * 
-     * @param city
-     *            Index der Zielstadt
-     * @param slot
-     *            Index der Zielposition
-     * @param size
-     *            Groesse des Bausteins
-     */
     public LayMove() {
         stoneToFieldMapping = new HashMap<Stone, Field>();
     }
 
+    public Map<Stone, Field> getStoneToFieldMapping() {
+        return stoneToFieldMapping;
+    }
+
     public void layStoneOntoField(Stone stone, Field field) {
+        checkFieldAndStoneNotNull(stone, field);
+
+        getStoneToFieldMapping().put(stone, field);
+    }
+
+    private void checkFieldAndStoneNotNull(Stone stone, Field field) {
         if (stone == null) {
             throw new IllegalArgumentException("Stein darf nicht null sein");
         }
@@ -43,39 +37,59 @@ public class LayMove extends Move implements Cloneable {
         if (field == null) {
             throw new IllegalArgumentException("Feld darf nicht null sein");
         }
-
-        stoneToFieldMapping.put(stone, field);
     }
 
     public void clearStoneToFieldMapping() {
-        stoneToFieldMapping.clear();
-    }
-
-    /**
-     * klont dieses Objekt
-     * 
-     * @return ein neues Objekt mit gleichen Eigenschaften
-     * @throws CloneNotSupportedException
-     */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        // TODO
-        return super.clone();
+        getStoneToFieldMapping().clear();
     }
 
     @Override
     public void perform(GameState state, Player player)
             throws InvalidMoveException {
+        super.perform(state, player);
 
-        boolean allStonesBelongToPlayer = GameUtil.compareStoneList(
-                new LinkedList<Stone>(stoneToFieldMapping.keySet()),
-                player.getStones());
+        checkAtLeastOneStone();
 
-        if (!allStonesBelongToPlayer) {
-            throw new InvalidMoveException(
-                    "Ein übergebener Stein gehört nicht dem Spieler");
+        checkIfStonesAreFromPlayerHand(getStonesToLay(), player);
+
+        GameUtil.checkIfLayMoveIsValid(getStoneToFieldMapping(),
+                state.getBoard(), false); // TODO check first lay
+
+        List<Integer> freePositions = new ArrayList<Integer>();
+
+        int stonesToLaySize = getStonesToLay().size();
+
+        for (int i = 0; i < stonesToLaySize; i++) {
+            Stone stoneToLay = getStonesToLay().get(i);
+
+            freePositions.add(player.getStonePosition(stoneToLay));
+            player.removeStone(stoneToLay);
+
+            Field field = getStoneToFieldMapping().get(stoneToLay);
+            state.layStone(stoneToLay, field.getPosX(), field.getPosY());
         }
 
+        for (int i = 0; i < stonesToLaySize; i++) {
+            player.addStone(state.drawStone(), freePositions.get(i));
+            // TODO check if stonebag is empty
+        }
+    }
+
+    private List<Stone> getStonesToLay() {
+        return new LinkedList<Stone>(getStoneToFieldMapping().keySet());
+    }
+
+    private void checkAtLeastOneStone() throws InvalidMoveException {
+        if (getStoneToFieldMapping().keySet().isEmpty()) {
+            throw new InvalidMoveException(
+                    "Es muss mindestens 1 Stein gesetzt werden");
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        // TODO
+        return super.clone();
     }
 
 }

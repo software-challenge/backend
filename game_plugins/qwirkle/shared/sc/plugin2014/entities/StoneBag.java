@@ -27,7 +27,6 @@ public class StoneBag {
     private void randomizeStones() {
         SecureRandom sr = null;
         try {
-            // Create a secure random number generator
             sr = SecureRandom.getInstance("SHA1PRNG");
 
             byte[] bytes = new byte[1024 / 8];
@@ -39,13 +38,23 @@ public class StoneBag {
             sr = SecureRandom.getInstance("SHA1PRNG");
             sr.setSeed(seed);
         }
-        catch (NoSuchAlgorithmException e) {}
+        catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
 
         Collections.shuffle(stones, sr);
     }
 
+    public int getStoneCountInBag() {
+        return stones.size();
+    }
+
     public Stone drawStone() {
-        return stones.remove(0);
+        if (stones.size() > 0) {
+            return stones.remove(0);
+        }
+
+        throw new IllegalAccessError("Der Beutel ist leer");
     }
 
     public void putBackStone(Stone stone) {

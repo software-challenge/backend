@@ -364,8 +364,24 @@ public class GameState implements Cloneable {
         return stoneBag.drawStone();
     }
 
+    public void putBackStone(Stone stone) {
+        stoneBag.putBackStone(stone);
+    }
+
+    public int getStoneCountInBag() {
+        return stoneBag.getStoneCountInBag();
+    }
+
     public void prepareNextTurn(Move move) {
         // TODO Auto-generated method stub
 
+    }
+
+    public void layStone(Stone stoneToLay, int posX, int posY) {
+        board.layStone(stoneToLay, posX, posY);
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }

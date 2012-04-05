@@ -4,30 +4,16 @@ import java.util.LinkedList;
 import java.util.List;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.Stone;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-/**
- * Ein allgemeiner Spielzug. Dies kann ein Bau- oder ein Auswahlzug sein.
- * 
- * @see SelectMove
- * @see LayMove
- */
 @XStreamAlias(value = "qw:move")
 public abstract class Move implements Cloneable {
 
     @XStreamImplicit(itemFieldName = "hint")
     private List<DebugHint> hints;
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Move clone = (Move) super.clone();
-        if (hints != null) {
-            clone.hints = new LinkedList<DebugHint>(hints);
-        }
-        return clone;
-    }
 
     /**
      * Fuegt eine Debug-Hilfestellung hinzu.<br/>
@@ -67,8 +53,8 @@ public abstract class Move implements Cloneable {
      * @param string
      *            Debug-Hilfestellung
      */
-    public void addHint(String string) {
-        addHint(new DebugHint(string));
+    public void addHint(String content) {
+        addHint(new DebugHint(content));
     }
 
     /**
@@ -80,19 +66,44 @@ public abstract class Move implements Cloneable {
         return hints == null ? new LinkedList<DebugHint>() : hints;
     }
 
-    /**
-     * Fuehrt diesen Zug auf den uebergebenen Spielstatus aus, mit
-     * uebergebenem Spieler.
-     * 
-     * @param state
-     *            Spielstatus
-     * @param player
-     *            ausfuehrender Spieler
-     * @throws InvalidMoveException
-     *             geworfen, wenn der Zug ungueltig ist,
-     *             also nicht ausfuehrbar
-     */
-    public abstract void perform(GameState state, Player player)
-            throws InvalidMoveException;
+    public void perform(GameState state, Player player)
+            throws InvalidMoveException {
+        checkGameStateAndPlayerNotNull(state, player);
+    }
 
+    private void checkGameStateAndPlayerNotNull(GameState state, Player player) {
+        if (state == null) {
+            throw new IllegalArgumentException("GameState darf nicht null sein");
+        }
+
+        if (player == null) {
+            throw new IllegalArgumentException("Spieler darf nicht null sein");
+        }
+    }
+
+    protected void checkIfStonesAreFromPlayerHand(List<Stone> stoneList,
+            Player player) throws InvalidMoveException {
+        for (Stone stone : stoneList) {
+            boolean notFound = true;
+            for (Stone stoneOnHand : player.getStones()) {
+                if (stone == stoneOnHand) {
+                    notFound = false;
+                }
+            }
+
+            if (notFound) {
+                throw new InvalidMoveException(
+                        "Die Steine müssen von der Hand sein");
+            }
+        }
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Move clone = (Move) super.clone();
+        if (hints != null) {
+            clone.hints = new LinkedList<DebugHint>(hints);
+        }
+        return clone;
+    }
 }
