@@ -18,24 +18,12 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class DebugHint implements Cloneable {
 
     @XStreamAsAttribute
-    public final String content;
+    private final String content;
 
-    /**
-     * XStream benötigt eventuell einen parameterlosen Konstruktor
-     * bei der Deserialisierung von Objekten aus XML-Nachrichten.
-     */
     public DebugHint() {
-        content = null;
+        content = "";
     }
 
-    /**
-     * einen neuen Hinweis der form key = value erstellen
-     * 
-     * @param key
-     *            string vor dem Gleichheitszeichen
-     * @param value
-     *            string nach dem Gleichheitszeichen
-     */
     public DebugHint(String key, String value) {
 
         key = key == null ? "" : key;
@@ -50,25 +38,17 @@ public class DebugHint implements Cloneable {
 
     }
 
-    /**
-     * ein neuen Hinweis mit beliebigem Inhalt erstellen
-     * 
-     * @param content
-     *            der Inhalt, der angezeigt werden soll
-     */
     public DebugHint(final String content) {
         this.content = content == null ? "" : content;
     }
 
-    /**
-     * klont dieses Objekt
-     * 
-     * @return ein neues Objekt mit gleichen Eigenschaften
-     * @throws CloneNotSupportedException
-     */
+    public String getContent() {
+        return content;
+    }
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
-        return new DebugHint(content);
+        return new DebugHint(getContent());
     }
 
 }

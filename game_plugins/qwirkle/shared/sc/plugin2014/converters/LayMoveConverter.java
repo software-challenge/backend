@@ -35,7 +35,7 @@ public class LayMoveConverter implements Converter {
 
         for (DebugHint hint : move.getHints()) {
             writer.startNode("hint");
-            writer.addAttribute("content", hint.content);
+            writer.addAttribute("content", hint.getContent());
             writer.endNode();
         }
 

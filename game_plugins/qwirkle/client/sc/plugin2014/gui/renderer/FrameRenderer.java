@@ -1003,7 +1003,7 @@ public class FrameRenderer extends JComponent {
             int fontX = getWidth() - SIDE_BAR_WIDTH;
 
             for (DebugHint hint : gameState.getLastMove().getHints()) {
-                g2.drawString(hint.content, fontX, fontY);
+                g2.drawString(hint.getContent(), fontX, fontY);
                 fontY += 20;
             }
         }

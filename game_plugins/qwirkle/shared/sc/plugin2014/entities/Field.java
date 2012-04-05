@@ -1,10 +1,18 @@
 package sc.plugin2014.entities;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-public class Field {
+@XStreamAlias(value = "qw:field")
+public class Field implements Cloneable {
 
+    @XStreamAsAttribute
     private final int posX;
+
+    @XStreamAsAttribute
     private final int posY;
+
+    @XStreamAsAttribute
     private Stone     stone;
 
     public Field(int posX, int posY) {
@@ -28,4 +36,7 @@ public class Field {
         this.stone = stone;
     }
 
+    public boolean isFree() {
+        return getStone() == null;
+    }
 }
