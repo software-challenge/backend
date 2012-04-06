@@ -1,5 +1,6 @@
 package sc.plugin2014.entities;
 
+import java.awt.Point;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -26,6 +27,10 @@ public class Field implements Cloneable {
 
     public int getPosY() {
         return posY;
+    }
+
+    public Point getPosAsPoint() {
+        return new Point(posX, posY);
     }
 
     public Stone getStone() {
