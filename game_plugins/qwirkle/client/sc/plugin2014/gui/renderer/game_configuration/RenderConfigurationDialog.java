@@ -1,4 +1,4 @@
-package sc.plugin2014.gui.renderer;
+package sc.plugin2014.gui.renderer.game_configuration;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

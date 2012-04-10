@@ -47,6 +47,7 @@
 /game_plugins/hase_und_igel/lib/GamePluginInterface.jar
 
 # /game_plugins/manhattan/
+/game_plugins/manhattan/bin
 /game_plugins/manhattan/build
 /game_plugins/manhattan/doc
 /game_plugins/manhattan/src
