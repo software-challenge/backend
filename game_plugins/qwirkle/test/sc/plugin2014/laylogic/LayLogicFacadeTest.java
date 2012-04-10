@@ -1,12 +1,13 @@
-package sc.plugin2014.util;
+package sc.plugin2014.laylogic;
 
 import static org.junit.Assert.*;
 import java.util.HashMap;
 import org.junit.Test;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.laylogic.LayLogicFacade;
 
-public class GameUtilTest {
+public class LayLogicFacadeTest {
 
     @Test
     public void testCheckIfLayMoveIsValid() {
@@ -23,7 +24,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone2, field01);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not");
@@ -47,7 +48,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone, field00);
         stoneToFieldMap.put(stone2, field01);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
     }
 
     @Test(expected = InvalidMoveException.class)
@@ -65,7 +66,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone, field00);
         stoneToFieldMap.put(stone2, field01);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
     }
 
     @Test(expected = InvalidMoveException.class)
@@ -83,7 +84,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone, field00);
         stoneToFieldMap.put(stone2, field01);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
     }
 
     @Test(expected = InvalidMoveException.class)
@@ -98,7 +99,7 @@ public class GameUtilTest {
 
         stoneToFieldMap.put(stone, field00);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
     }
 
     @Test
@@ -120,7 +121,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone3, field02);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());
@@ -146,7 +147,7 @@ public class GameUtilTest {
 
         stoneToFieldMap.put(stone3, field03);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test(expected = InvalidMoveException.class)
@@ -168,7 +169,7 @@ public class GameUtilTest {
 
         stoneToFieldMap.put(stone3, field20);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test
@@ -190,7 +191,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone3, field10);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());
@@ -216,7 +217,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone3, field01);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());
@@ -250,7 +251,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone6, field12);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());
@@ -284,7 +285,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone5, field11);
         stoneToFieldMap.put(stone6, field12);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test
@@ -311,7 +312,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone5, field04);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());
@@ -342,7 +343,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone4, field00);
         stoneToFieldMap.put(stone5, field04);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test
@@ -370,7 +371,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone6, field22);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());
@@ -402,7 +403,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone5, field12);
         stoneToFieldMap.put(stone6, field22);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test(expected = InvalidMoveException.class)
@@ -425,7 +426,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone2, field01);
         stoneToFieldMap.put(stone3, field10);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test(expected = InvalidMoveException.class)
@@ -450,7 +451,7 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone3, field01);
         stoneToFieldMap.put(stone4, field04);
 
-        GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test
@@ -475,7 +476,39 @@ public class GameUtilTest {
         stoneToFieldMap.put(stone4, field03);
 
         try {
-            GameUtil.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+        }
+        catch (InvalidMoveException e) {
+            fail("Failed when it should not: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testCheckIfLayMoveIsValidLayRowWithoutGapButRowHasMore() {
+        Board board = new Board();
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stoneOutside = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+
+        board.layStone(stone, 0, 0);
+        board.layStone(stone2, 0, 2);
+
+        board.layStone(stoneOutside, 0, 5);
+
+        Field field01 = board.getField(0, 1);
+        Field field03 = board.getField(0, 3);
+
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone3, field01);
+        stoneToFieldMap.put(stone4, field03);
+
+        try {
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
         }
         catch (InvalidMoveException e) {
             fail("Failed when it should not: " + e.getMessage());

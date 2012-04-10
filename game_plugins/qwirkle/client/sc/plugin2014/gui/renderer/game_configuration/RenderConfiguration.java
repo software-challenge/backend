@@ -1,4 +1,4 @@
-package sc.plugin2014.gui.renderer;
+package sc.plugin2014.gui.renderer.game_configuration;
 
 import java.io.*;
 import java.util.HashMap;
@@ -10,12 +10,11 @@ public class RenderConfiguration {
     public static final int        TRANSPARANCY = 1;
     public static final int        BACKGROUND   = 2;
     public static final int        MOVEMENT     = 3;
-    public static final int        CRANES       = 4;
-    public static final int        DEBUG_VIEW   = 5;
+    public static final int        DEBUG_VIEW   = 4;
 
     public static final String[]   OPTION_NAMES = new String[] {
             "Kantenglättung", "Transparenz", "Hintergrundbild", "Animationen",
-            "Baukräne", "Debugansicht"         };
+            "Debugansicht"                     };
 
     private static final boolean[] DEFAULTS     = new boolean[] { true, true,
             true, true, false, false           };
@@ -31,7 +30,7 @@ public class RenderConfiguration {
 
         OutputStream fileStream = null;
         try {
-            fileStream = new FileOutputStream("manhattan_gui.conf");
+            fileStream = new FileOutputStream("qwirkle_gui.conf");
             ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
             objectStream.writeObject(map);
             objectStream.flush();
@@ -53,7 +52,7 @@ public class RenderConfiguration {
         InputStream fileStream = null;
 
         try {
-            fileStream = new FileInputStream("manhattan_gui.conf");
+            fileStream = new FileInputStream("qwirkle_gui.conf");
             ObjectInputStream objectStream = new ObjectInputStream(fileStream);
             HashMap<String, Boolean> map = (HashMap<String, Boolean>) objectStream
                     .readObject();

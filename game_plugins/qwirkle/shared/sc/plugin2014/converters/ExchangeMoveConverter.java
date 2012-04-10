@@ -2,10 +2,11 @@ package sc.plugin2014.converters;
 
 import java.util.LinkedList;
 import java.util.List;
+import sc.plugin2014.entities.Stone;
 import sc.plugin2014.moves.DebugHint;
 import sc.plugin2014.moves.ExchangeMove;
-import sc.plugin2014.util.XStreamConfiguration;
 import sc.plugin2014.util.Constants;
+import sc.plugin2014.util.XStreamConfiguration;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -32,7 +33,7 @@ public class ExchangeMoveConverter implements Converter {
                     value.getClass());
         }
         ExchangeMove move = (ExchangeMove) value;
-        int[] selections = move.getSelections();
+        List<Stone> selections = move.getStonesToExchange();
 
         for (int i = 0; i < Constants.MAX_SEGMENT_SIZE; i++) {
             writer.startNode("select");

@@ -5,7 +5,7 @@ import sc.plugin2014.GameState;
 import sc.plugin2014.converters.LayMoveConverter;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
-import sc.plugin2014.util.GameUtil;
+import sc.plugin2014.laylogic.LayLogicFacade;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -52,7 +52,7 @@ public class LayMove extends Move implements Cloneable {
 
         checkIfStonesAreFromPlayerHand(getStonesToLay(), player);
 
-        GameUtil.checkIfLayMoveIsValid(getStoneToFieldMapping(),
+        LayLogicFacade.checkIfLayMoveIsValid(getStoneToFieldMapping(),
                 state.getBoard(), false); // TODO check first lay
 
         List<Integer> freePositions = new ArrayList<Integer>();
