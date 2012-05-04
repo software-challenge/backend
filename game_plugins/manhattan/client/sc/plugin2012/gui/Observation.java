@@ -250,6 +250,7 @@ public class Observation implements IObservation, IUpdateListener,
 			for (IGameEndedListener listener : gameEndedListeners) {
 				try {
 					listener.onGameEnded(data, createGameEndedString(data));
+					logger.info("Create Game Ended String");
 				} catch (Exception e) {
 					logger.error("GameEnded Notification caused an exception.",
 							e);

@@ -41,6 +41,9 @@ public class Board implements Cloneable{
 			start.putPirate(new Pirate(PlayerColor.RED));
 			start.putPirate(new Pirate(PlayerColor.BLUE));
 		}
+		//FIXME: test für den letzten zug. Piraten im letzten Segment
+		fields.get(fields.size()-4).putPirate(new Pirate(PlayerColor.RED));
+		fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
 	}
 
 	public Field getField(int index) {

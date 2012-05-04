@@ -10,6 +10,7 @@ import java.util.List;
 import sc.plugin2013.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
@@ -38,14 +39,15 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * zu taetigen, kann eine Spieleclient diese Liste aus dem {@code GameState}
  * erfragen und muss dann lediglich einen Zug aus dieser Liste auswaehlen.
  * 
- * @author felix
+ * @author fdu
  * 
  */
 @XStreamAlias(value = "cartagena:state")
-//@XStreamConverter(GameStateConverter.class)
+// @XStreamConverter(GameStateConverter.class)
 public class GameState implements Cloneable {
 
 	// momentane rundenzahl
+	@XStreamAsAttribute
 	private int turn;
 
 	// die teilenhmenden spieler
@@ -56,14 +58,14 @@ public class GameState implements Cloneable {
 
 	// Kartenstapel
 	@XStreamOmitField
-	private List<Card> cardStack;
+	private transient List<Card> cardStack;
 
 	// offen liegende Karten
 	private List<Card> openCards;
 
 	// verbrauchte Karten
 	@XStreamOmitField
-	private List<Card> usedStack;
+	private transient List<Card> usedStack;
 
 	// letzter Performter move
 	private MoveContainer lastMove;
@@ -74,14 +76,21 @@ public class GameState implements Cloneable {
 	// endbedingung
 	private Condition condition = null;
 
-	//TODO suppresStack Konstruktor einführen
+	// TODO suppresStack Konstruktor einführen
+
 	public GameState() {
+		this(true);
+	}
+
+	public GameState(boolean suppressStack) {
 		currentPlayer = PlayerColor.RED;
 		cardStack = new LinkedList<Card>();
 		openCards = new ArrayList<Card>(Constants.NUM_OPEN_CARDS);
 		usedStack = new LinkedList<Card>();
-		initCardStack();
-		showCards();
+		if (!suppressStack) {
+			initCardStack();
+			showCards();
+		}
 		board = new Board();
 	}
 
@@ -98,6 +107,15 @@ public class GameState implements Cloneable {
 		}
 		// shuffle Stack
 		Collections.shuffle(cardStack, new SecureRandom());
+	}
+
+	/** Used to initialize OmittedFields cardStack and used Stack
+	 * @return
+	 */
+	private Object readResolve() {
+		cardStack = new LinkedList<Card>();
+		usedStack = new LinkedList<Card>();
+		return this;
 	}
 
 	/**
@@ -125,21 +143,26 @@ public class GameState implements Cloneable {
 		usedStack.clear();
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
-	
-	/** Zieht eine Karte vom offenen Stapel
+
+	/**
+	 * Zieht eine Karte vom offenen Stapel
+	 * 
 	 * @return die erste Karte des offen Stapels
 	 */
-	public synchronized Card drawCard(){
+	public synchronized Card drawCard() {
 		return this.openCards.remove(0);
 	}
-	
-	/** Legt eine Karte auf dem benutzten Kartenstapel ab
-	 * @param c die benutzte Karte
+
+	/**
+	 * Legt eine Karte auf dem benutzten Kartenstapel ab
+	 * 
+	 * @param c
+	 *            die benutzte Karte
 	 */
-	public synchronized void addUsedCard(Card c){
+	public synchronized void addUsedCard(Card c) {
 		this.usedStack.add(c);
 	}
-	
+
 	/**
 	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
 	 * <br/>
@@ -148,7 +171,7 @@ public class GameState implements Cloneable {
 	 * Spielclient i.A. nicht aufgerufen werden!</b>
 	 * 
 	 * @param player
-	 *           Der hinzuzufuegende Spieler.
+	 *            Der hinzuzufuegende Spieler.
 	 */
 	public void addPlayer(Player player) {
 		if (player.getPlayerColor() == PlayerColor.RED) {
@@ -163,7 +186,7 @@ public class GameState implements Cloneable {
 		}
 
 	}
-	
+
 	/**
 	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
 	 * ist.
@@ -173,10 +196,11 @@ public class GameState implements Cloneable {
 	public Player getCurrentPlayer() {
 		return currentPlayer == PlayerColor.RED ? this.red : this.blue;
 	}
+
 	/**
 	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
-	 * ist. Dies ist aequivalent zum Aufruf {@code
-	 * getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * ist. Dies ist aequivalent zum Aufruf
+	 * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der momentan am Zug ist.
 	 */
@@ -185,8 +209,8 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
-	 * Zug ist.
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht
+	 * am Zug ist.
 	 * 
 	 * @return Der Spieler, der momentan nicht am Zug ist.
 	 */
@@ -196,9 +220,9 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
-	 * Zug ist. Dies ist aequivalent zum Aufruf @{@code
-	 * getCurrentPlayerColor.opponent()} oder {@code
-	 * getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * Zug ist. Dies ist aequivalent zum Aufruf @
+	 * {@code getCurrentPlayerColor.opponent()} oder
+	 * {@code getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
 	 */
@@ -208,8 +232,8 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe {@code
-	 * PlayerColor.RED} spielt.
+	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe
+	 * {@code PlayerColor.RED} spielt.
 	 * 
 	 * @return Der rote Spieler.
 	 */
@@ -219,22 +243,23 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe {@code
-	 * PlayerColor.BLUE} spielt.
+	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe
+	 * {@code PlayerColor.BLUE} spielt.
 	 * 
 	 * @return Der blaue Spieler.
 	 */
 	public Player getBluePlayer() {
 		return blue;
 	}
-	
+
 	/**
-	 * wechselt den Spieler, der aktuell an der Reihe ist.
-	 *<b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * wechselt den Spieler, der aktuell an der Reihe ist. <b>Diese Methode ist
+	 * nur fuer den Spielserver relevant und sollte vom Spielclient i.A. nicht
+	 * aufgerufen werden!</b>
 	 */
 	private void switchCurrentPlayer() {
-		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
+		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
+				: PlayerColor.RED;
 	}
 
 	/**
@@ -264,20 +289,24 @@ public class GameState implements Cloneable {
 		return this.turn;
 	}
 
+	public int getRound() {
+		return turn / 2;
+	}
+
 	public void endGame(PlayerColor winner, String reason) {
 		if (condition == null) {
 			condition = new Condition(winner, reason);
 		}
 
 	}
-	
+
 	/**
 	 * @return Das Spielbrett
 	 */
 	public Board getBoard() {
 		return board;
 	}
-	
+
 	public void prepareNextTurn(MoveContainer lastMove) {
 		this.lastMove = lastMove;
 		turn++;
@@ -285,43 +314,47 @@ public class GameState implements Cloneable {
 		showCards();
 		performScoring();
 	}
-	
-	/** Wird von der Gui benutz um einen Teilzug durchzuführen.
-	 *  Hierbei wird die Punktzahl aktualisiert. Der Momentane Spieler bleibt gleich, die Zugzahl wird nicht erhöht.
+
+	/**
+	 * Wird von der Gui benutz um einen Teilzug durchzuführen. Hierbei wird die
+	 * Punktzahl aktualisiert. Der Momentane Spieler bleibt gleich, die Zugzahl
+	 * wird nicht erhöht.
+	 * 
 	 * @param move
 	 */
-	public void prepareNextTurn(Move move){
+	public void prepareNextTurn(Move move) {
 		performScoring();
 	}
 
 	private void performScoring() {
-		//TODO Scoring abwandeln?? Pirat in Segment 1 : 1 Punkt 2: 2 Punkte usw.
-		int scoreRed 	= 0;
-		int scoreBlue 	= 0;
-		for(int i = 1; i < Constants.SEGMENTS * 6 + 1; i++){
+		// TODO Scoring abwandeln?? Pirat in Segment 1 : 1 Punkt 2: 2 Punkte
+		// usw.
+		int scoreRed = 0;
+		int scoreBlue = 0;
+		for (int i = 1; i <= Constants.SEGMENTS * 6 + 1; i++) {
 			Field field = this.board.getField(i);
 			List<Pirate> pirates = field.getPirates();
-			for(Pirate p: pirates){
-				if(p.getOwner() == PlayerColor.RED){
-					scoreRed += (((i -1) / Constants.SEGMENTS) +1);
-				}else{
-					scoreBlue += (((i -1) / Constants.SEGMENTS) +1);
+			for (Pirate p : pirates) {
+				if (p.getOwner() == PlayerColor.RED) {
+					scoreRed += (((i - 1) / Constants.SEGMENTS) + 1);
+				} else {
+					scoreBlue += (((i - 1) / Constants.SEGMENTS) + 1);
 				}
 			}
 		}
 		getBluePlayer().setPoints(scoreBlue);
-		getRedPlayer().setPoints(scoreRed);		
+		getRedPlayer().setPoints(scoreRed);
 	}
 
 	public boolean playerFinished() {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	public List<Card> getOpenCards() {
 		return openCards;
 	}
-	
+
 	public MoveContainer getLastMove() {
 		return lastMove;
 	}

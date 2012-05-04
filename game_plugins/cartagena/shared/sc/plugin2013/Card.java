@@ -1,7 +1,9 @@
 package sc.plugin2013;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+@XStreamAlias(value="cartagena:card")
 public class Card implements Cloneable {
 	@XStreamAsAttribute
 	public final SymbolType symbol;

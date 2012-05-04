@@ -4,7 +4,7 @@ import sc.plugin2013.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-/** Container Klasse welche insgesamt 3 Züge beherbergt
+/** Container Klasse welche bis zu 3 Züge beherbergt
  * @author fdu
  *
  */
@@ -13,6 +13,12 @@ public class MoveContainer {
 	final public Move	firstMove;
 	final public Move 	secondMove;
 	final public Move 	thirdMove;
+	
+	public MoveContainer(){
+		this.firstMove = null;
+		this.secondMove = null;
+		this.thirdMove = null;
+	}
 	
 	public MoveContainer(Move first){
 		this.firstMove 	= first;
