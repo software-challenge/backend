@@ -3,9 +3,11 @@ package sc.plugin2013;
 import sc.plugin2013.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias(value = "cartagena:backwardMove")
 public class BackwardMove extends Move{
+	@XStreamAsAttribute
 	public final int fieldIndex;
 	
 	public BackwardMove(int index){

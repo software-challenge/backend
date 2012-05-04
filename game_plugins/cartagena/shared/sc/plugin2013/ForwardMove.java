@@ -5,10 +5,13 @@ import java.util.LinkedList;
 import sc.plugin2013.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias(value = "cartagena:forwardMove")
 public class ForwardMove extends Move {
+	@XStreamAsAttribute
 	public final int fieldIndex;
+	@XStreamAsAttribute
 	public final SymbolType symbol;
 	
 	public ForwardMove(int index, SymbolType sym){

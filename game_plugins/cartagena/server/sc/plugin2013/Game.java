@@ -35,7 +35,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@XStreamOmitField
 	private List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
-	private GameState gameState = new GameState();
+	private GameState gameState = new GameState(false);
 
 	public GameState getGameState() {
 		return gameState;

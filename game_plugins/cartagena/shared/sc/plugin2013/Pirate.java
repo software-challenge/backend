@@ -1,6 +1,7 @@
 package sc.plugin2013;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
@@ -11,7 +12,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 @XStreamAlias(value = "cartagena:pirate")
 public class Pirate implements Cloneable {
 	//Der Besitzer der Spielfigur
-	@XStreamOmitField
+	@XStreamAsAttribute
 	private final PlayerColor owner;
 	
 	public Pirate(){
