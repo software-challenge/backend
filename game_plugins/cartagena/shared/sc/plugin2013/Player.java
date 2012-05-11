@@ -15,7 +15,7 @@ import sc.plugin2013.PlayerColor;
  * Beeinhaltet auch Informationen zum Punktekonto und zu den {@link Card Karten).
  *
  * 
- * @author felix
+ * @author fdu
  *
  */
 @XStreamAlias(value = "cartagena:player")
