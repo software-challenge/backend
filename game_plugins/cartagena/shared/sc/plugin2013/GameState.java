@@ -289,10 +289,17 @@ public class GameState implements Cloneable {
 		return this.turn;
 	}
 
+	/** Liefert die aktuelle Runde zurück.
+	 * @return die aktuelle Runde
+	 */
 	public int getRound() {
 		return turn / 2;
 	}
 
+	/** Beendet das aktuelle Spiel
+	 * @param winner Der Gewinner
+	 * @param reason Der Siegesgrund
+	 */
 	public void endGame(PlayerColor winner, String reason) {
 		if (condition == null) {
 			condition = new Condition(winner, reason);
@@ -300,13 +307,16 @@ public class GameState implements Cloneable {
 
 	}
 
-	/**
+	/** Gibt das Spielbrett zurück
 	 * @return Das Spielbrett
 	 */
 	public Board getBoard() {
 		return board;
 	}
 
+	/** Aktualisiert den Spielzustand welcher durch einen Zug verändert wird
+	 * @param lastMove
+	 */
 	public void prepareNextTurn(MoveContainer lastMove) {
 		this.lastMove = lastMove;
 		turn++;
@@ -327,8 +337,8 @@ public class GameState implements Cloneable {
 	}
 
 	private void performScoring() {
-		// TODO Scoring abwandeln?? Pirat in Segment 1 : 1 Punkt 2: 2 Punkte
-		// usw.
+		// Scoring wird je Segment vergeben
+		// Pirat in Segment 1 = 1 Punkt ...
 		int scoreRed = 0;
 		int scoreBlue = 0;
 		for (int i = 1; i <= Constants.SEGMENTS * 6 + 1; i++) {
@@ -346,19 +356,30 @@ public class GameState implements Cloneable {
 		getRedPlayer().setPoints(scoreRed);
 	}
 
-	public boolean playerFinished() {
-		// TODO Auto-generated method stub
+	public boolean playerFinished(PlayerColor color) {
+		if(this.board.numPiratesOf(Constants.SEGMENTS * Constants.SYMBOLS-1, color) == Constants.PIRATES){
+			return true;
+		}
 		return false;
 	}
 
+	/** Gibt die Liste der offen liegenden Karten zurück
+	 * @return
+	 */
 	public List<Card> getOpenCards() {
 		return openCards;
 	}
 
+	/** Gibt den zuletzt ausgeführten Zug zurück
+	 * @return
+	 */
 	public MoveContainer getLastMove() {
 		return lastMove;
 	}
 
+	/** Gibt den Gewinngrund zurück
+	 * @return
+	 */
 	public String winningReason() {
 		return condition == null ? "" : condition.reason;
 	}
