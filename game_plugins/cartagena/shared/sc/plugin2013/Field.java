@@ -8,7 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * @author felix
+ * @author fdu
  * 
  */
 @XStreamAlias(value = "cartagena:field")

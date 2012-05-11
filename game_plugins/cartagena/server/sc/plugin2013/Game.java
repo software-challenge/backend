@@ -96,8 +96,16 @@ public class Game extends RoundBasedGameInstance<Player> {
 					winnerName = "Sieg nach Punkten.";
 				}
 				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
-			} else if(gameState.playerFinished()){
-				//TODO ein Spieler hat alle Piraten im Zielfeld
+			} else if(gameState.playerFinished(PlayerColor.RED)){
+				//Rot hat alle Piraten im Zielfeld
+				PlayerColor winner = PlayerColor.RED;
+				String winningString = "Rot hat alle Piraten im Ziel";
+				gameState.endGame(winner, winningString);
+			} else if(gameState.playerFinished(PlayerColor.BLUE)){
+				//Blau hat alle Piraten im Zielfeld
+				PlayerColor winner = PlayerColor.BLUE;
+				String winningString = "Blau hat alle Piraten im Ziel";
+				gameState.endGame(winner, winningString);
 			}
 			
 			next(gameState.getCurrentPlayer());

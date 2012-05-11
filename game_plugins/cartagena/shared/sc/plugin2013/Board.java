@@ -3,6 +3,7 @@ package sc.plugin2013;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class Board implements Cloneable{
 
 	private void init() {
 		// Größe Festgelegt durch Startfeld, Zielfeld und Segmente * Symbole
-		fields = new ArrayList<Field>(Constants.SEGMENTS * 6 + 2);
+		fields = new ArrayList<Field>(Constants.SEGMENTS * Constants.SYMBOLS + 2);
 		fields.add(new Field(FieldType.START));
 		for (int i = 0; i < Constants.SEGMENTS; i++) {
 			LinkedList<Field> segment = new LinkedList<Field>();
@@ -76,6 +77,22 @@ public class Board implements Cloneable{
 	public List<Pirate> getPirates(int index) {
 		return fields.get(index).getPirates();
 	}
+	
+	/** Gibt die Anzahl der Piraten eines Spielers auf einem bestimmten Feld zurück
+	 * @param index
+	 * @param color
+	 * @return Die Anzahl der Piraten von Spieler color auf dem Feld index
+	 */
+	public int numPiratesOf(int index, PlayerColor color){
+		int num = 0;
+		Iterator<Pirate> pirateIterator = this.getPirates(index).iterator();
+		while(pirateIterator.hasNext()){
+			if(pirateIterator.next().getOwner().equals(color)){
+				num++;
+			}
+		}
+		return num;
+	}
 
 	/**
 	 * Gibt das nächste zurückliegende Feld zurück, auf welchem sich Piraten
@@ -93,7 +110,7 @@ public class Board implements Cloneable{
 		}
 		//Prüfe ob auf dem Startfeld noch Piraten stehen
 		if(!fields.get(0).getPirates().isEmpty()){
-			return 0;
+			return 0; //Gib Startfeld zurück
 		}
 		return -1; // Nichts gefunden, gib -1 zurück;
 	}
