@@ -1,12 +1,9 @@
 package sc.plugin2014.converters;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import sc.plugin2014.*;
+import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.moves.*;
-import sc.plugin2014.util.Constants;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -14,8 +11,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 public class GameStateConverter implements Converter {
 
     @Override
-    @SuppressWarnings("unchecked")
-    public boolean canConvert(Class clazz) {
+    public boolean canConvert(@SuppressWarnings("rawtypes") Class clazz) {
         return clazz.equals(GameState.class);
     }
 
@@ -30,8 +26,6 @@ public class GameStateConverter implements Converter {
                 .toLowerCase());
         writer.addAttribute("current", gameState.getCurrentPlayerColor()
                 .toString().toLowerCase());
-        writer.addAttribute("type", gameState.getCurrentMoveType().toString()
-                .toLowerCase());
 
         writer.startNode("red");
         context.convertAnother(gameState.getRedPlayer());
@@ -40,27 +34,16 @@ public class GameStateConverter implements Converter {
         context.convertAnother(gameState.getBluePlayer());
         writer.endNode();
 
-        List<Stone> towers = gameState.getTowers();
-        for (Stone tower : towers) {
-            if (tower.getHeight() > 0) {
-                writer.startNode("tower");
-                writer.addAttribute("city", Integer.toString(tower.city));
-                writer.addAttribute("slot", Integer.toString(tower.slot));
-                writer.addAttribute("red",
-                        Integer.toString(tower.getRedParts()));
-                writer.addAttribute("blue",
-                        Integer.toString(tower.getBlueParts()));
-                writer.addAttribute("owner", tower.getOwner().toString()
-                        .toLowerCase());
-                writer.endNode();
-            }
+        Board board = gameState.getBoard();
+        if (board != null) {
+            writer.startNode("board");
+            context.convertAnother(board);
+            writer.endNode();
         }
 
         Move move = gameState.getLastMove();
         if (move != null) {
             writer.startNode("move");
-            writer.addAttribute("type",
-                    move.getMoveType() == MoveType.BUILD ? "build" : "select");
             context.convertAnother(move);
             writer.endNode();
         }
@@ -77,11 +60,10 @@ public class GameStateConverter implements Converter {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
 
-        GameState gameState = new GameState(true);
+        GameState gameState = new GameState();
 
         try {
 
@@ -101,17 +83,6 @@ public class GameStateConverter implements Converter {
             field.set(gameState, PlayerColor.valueOf(reader.getAttribute(
                     "current").toUpperCase()));
             field.setAccessible(false);
-
-            field = GameState.class.getDeclaredField("currentMoveType");
-            field.setAccessible(true);
-            field.set(gameState,
-                    MoveType.valueOf(reader.getAttribute("type").toUpperCase()));
-            field.setAccessible(false);
-
-            Field towerField = GameState.class.getDeclaredField("towers");
-            towerField.setAccessible(true);
-            List<Stone> towers = (ArrayList<Stone>) towerField.get(gameState);
-            towerField.setAccessible(false);
 
             while (reader.hasMoreChildren()) {
 
@@ -135,32 +106,23 @@ public class GameStateConverter implements Converter {
                     colorField.set(player, playerColor);
                     colorField.setAccessible(false);
                 }
-                else if (nodeName.equals("tower")) {
-                    int city = Integer.parseInt(reader.getAttribute("city"));
-                    int slot = Integer.parseInt(reader.getAttribute("slot"));
-                    int red = Integer.parseInt(reader.getAttribute("red"));
-                    int blue = Integer.parseInt(reader.getAttribute("blue"));
-                    PlayerColor owner = PlayerColor.valueOf(reader
-                            .getAttribute("owner").toUpperCase());
-
-                    Stone tower = towers.get((city * Constants.SLOTS) + slot);
-                    if (owner == PlayerColor.RED) {
-                        tower.addPart(PlayerColor.BLUE, blue);
-                        tower.addPart(PlayerColor.RED, red);
-                    }
-                    else {
-                        tower.addPart(PlayerColor.RED, red);
-                        tower.addPart(PlayerColor.BLUE, blue);
-                    }
+                else if (nodeName.equals("board")) {
+                    Board board = (Board) context.convertAnother(gameState,
+                            Board.class);
+                    Field boardField = GameState.class
+                            .getDeclaredField("board");
+                    boardField.setAccessible(true);
+                    boardField.set(gameState, board);
+                    boardField.setAccessible(false);
                 }
                 else if (nodeName.equals("move")) {
                     MoveType moveType = MoveType.valueOf(reader.getAttribute(
                             "type").toUpperCase());
                     Move move;
 
-                    if (moveType == MoveType.SELECT) {
+                    if (moveType == MoveType.Exchange) {
                         move = (Move) context.convertAnother(gameState,
-                                SelectMove.class);
+                                ExchangeMove.class);
                     }
                     else {
                         move = (Move) context.convertAnother(gameState,

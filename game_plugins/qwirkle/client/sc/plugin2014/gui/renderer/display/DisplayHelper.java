@@ -45,7 +45,7 @@ public class DisplayHelper {
             PlayerColor currentPlayer) {
         Color color;
 
-        if ((player == null) || ((player != currentPlayer) && !forced)) {
+        if ((player == null) || ((player == currentPlayer) || forced)) {
             return Color.DARK_GRAY;
         }
 

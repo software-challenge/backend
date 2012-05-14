@@ -46,12 +46,12 @@ public class GUIPluginFacade implements IGuiPlugin {
 
     @Override
     public Image getPluginIcon() {
-        return loadImage("resource/game/sheep.png");
+        return loadImage("resource/game/qwirkle_icon.png");
     }
 
     @Override
     public Image getPluginImage() {
-        return loadImage("resource/game/manhattan.png");
+        return loadImage("resource/game/qwirkle.png");
     }
 
     private static Image loadImage(String filename) {
@@ -100,7 +100,8 @@ public class GUIPluginFacade implements IGuiPlugin {
      */
     @Override
     public IObservation loadReplay(String filename) throws IOException {
-        ObservingClient rep = new ObservingClient(XStreamConfiguration.getXStream(),
+        ObservingClient rep = new ObservingClient(
+                XStreamConfiguration.getXStream(),
                 ReplayBuilder.loadReplay(filename));
         ObserverGameHandler handler = new ObserverGameHandler();
         RenderFacade.getInstance().setHandler(null, EPlayerId.OBSERVER);

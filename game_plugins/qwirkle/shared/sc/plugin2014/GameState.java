@@ -54,19 +54,16 @@ public class GameState implements Cloneable {
     // farbe des aktuellen spielers
     private final PlayerColor currentPlayer;
 
-    private Board             board;
-
     // die teilenhmenden spieler
     private Player            red, blue;
 
-    // kartenstapel
+    private Board             board;
+
     private StoneBag          stoneBag;
 
-    // letzter performte move
     private Move              lastMove;
 
-    // endbedingung
-    private WinnerAndReason   condition = null;
+    private WinnerAndReason   endCondition = null;
 
     public GameState() {
         currentPlayer = PlayerColor.RED;
@@ -93,8 +90,8 @@ public class GameState implements Cloneable {
         if (lastMove != null) {
             clone.lastMove = (Move) lastMove.clone();
         }
-        if (condition != null) {
-            clone.condition = (WinnerAndReason) condition.clone();
+        if (endCondition != null) {
+            clone.endCondition = (WinnerAndReason) endCondition.clone();
         }
         if (stoneBag != null) {
             clone.stoneBag = (StoneBag) stoneBag.clone();
@@ -326,8 +323,8 @@ public class GameState implements Cloneable {
      *            Gewinngrund
      */
     public void endGame(PlayerColor winner, String reason) {
-        if (condition == null) {
-            condition = new WinnerAndReason(winner, reason);
+        if (endCondition == null) {
+            endCondition = new WinnerAndReason(winner, reason);
         }
     }
 
@@ -337,7 +334,7 @@ public class GameState implements Cloneable {
      * @return wahr, wenn beendet
      */
     public boolean gameEnded() {
-        return condition != null;
+        return endCondition != null;
     }
 
     /**
@@ -347,7 +344,7 @@ public class GameState implements Cloneable {
      * @return Siegerfarbe
      */
     public PlayerColor winner() {
-        return condition == null ? null : condition.winner;
+        return endCondition == null ? null : endCondition.winner;
     }
 
     /**
@@ -357,7 +354,7 @@ public class GameState implements Cloneable {
      * @return Gewinngrund
      */
     public String winningReason() {
-        return condition == null ? "" : condition.reason;
+        return endCondition == null ? "" : endCondition.reason;
     }
 
     public Stone drawStone() {
