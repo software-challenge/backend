@@ -32,7 +32,6 @@ public class FrameRenderer extends JComponent {
 
     // current (game) state
     private PlayerColor             currentPlayer;
-    private Color                   currentPlayerColor;
     private GameState               gameState;
 
     // image components
@@ -53,9 +52,8 @@ public class FrameRenderer extends JComponent {
     // sonstiges
     private int                     turnToAnswer      = -1;
     private boolean                 gameEnded;
-    private int                     fontX;
 
-    private final MouseAdapter      layMouseAdapter   = new LayMoveAdapter();
+    private final MouseAdapter      layMouseAdapter   = new LayMoveAdapter(this);
 
     private final ComponentListener componentListener = new ComponentAdapter() {
 
@@ -68,24 +66,22 @@ public class FrameRenderer extends JComponent {
 
                                                       };
 
-    private final KeyListener       keyListener       = new GameKeyAdapter();
-
     public FrameRenderer() {
         updateBuffer = true;
-        bgImage = RendererUtil.getImage("resource/game/manhattanbg.jpeg");
-        progressIcon = RendererUtil.getImage("resource/game/kelle.png");
+        bgImage = RendererUtil.getImage("resource/game/bg.png");
+        progressIcon = RendererUtil.getImage("resource/game/progress.png");
         redStones = new LinkedList<Stone>();
         blueStones = new LinkedList<Stone>();
         sensetiveStones = new LinkedList<Stone>();
 
         setMinimumSize(new Dimension(
-                (2 * STONES_PER_PLAYER * (GUIConstants.CARD_WIDTH + GUIConstants.STUFF_GAP))
+                (2 * STONES_PER_PLAYER * (GUIConstants.STONES_ON_HAND_WIDTH + GUIConstants.STUFF_GAP))
                         + (2 * 1 * (GUIConstants.TOWER_TOTAL_WIDTH + GUIConstants.STUFF_GAP)),
                 600));
 
         setDoubleBuffered(true);
         addComponentListener(componentListener);
-        addKeyListener(keyListener);
+        addKeyListener(new GameKeyAdapter(this));
         setFocusable(true);
         requestFocusInWindow();
 
@@ -110,8 +106,6 @@ public class FrameRenderer extends JComponent {
         // aktuellen spielstand sichern
         this.gameState = gameState;
         currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
-        currentPlayerColor = DisplayHelper.getPlayerColor(currentPlayer,
-                currentPlayer);
         updateBuffer = true;
 
         selectedStone = null;
@@ -141,73 +135,66 @@ public class FrameRenderer extends JComponent {
         setEnabled(false);
         final LayMove move = (LayMove) gameState.getLastMove();
 
-        // TowerData selectedSegment = null;
-        if (droppedSegment == null) {
-            updateBuffer = true;
-            for (int i = sensetiveStones.size() - 1; i >= 0; i--) {
-                if (sensetiveStones.get(i).size == move.size) {
-                    selectedStone = sensetiveStones.get(i);
-                    break;
-                }
-            }
-        }
-        else {
-            selectedStone = droppedSegment;
-        }
-
-        final Point p = new Point(selectedStone.x, selectedStone.y);
-        final Point q = new Point(targetTower.innerX - TOWER_LEFT_WIDTH,
-                targetTower.innerY);
-
-        if (OPTIONS[MOVEMENT]) {
-
-            double pixelPerFrame = getWidth() / (1.5 * FPS);
-            double dist = Math.sqrt(Math.pow(p.x - q.x, 2)
-                    + Math.pow(p.y - q.y, 2));
-
-            final int frames = (int) Math.ceil(dist / pixelPerFrame);
-            final Point o = new Point(p.x, p.y);
-            final Point dP = new Point(q.x - p.x, q.y - p.y);
-
-            long start = System.currentTimeMillis();
-            int h = (selectedStone.size * TOWER_STORIE_HEIGTH)
-                    + TOWER_LEFT_HEIGTH + TOWER_RIGHT_HEIGTH + 10;
-            for (int frame = 0; frame < frames; frame++) {
-
-                int oldx = selectedStone.xs[0] - 5;
-                int oldy = selectedStone.ys[4] - 5;
-
-                p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
-                p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
-                selectedStone.moveTo(p.x, p.y);
-
-                // invalidate();
-                // getParent().repaint();
-
-                repaint(oldx, oldy, TOWER_TOTAL_WIDTH + 10, h);
-                repaint(selectedStone.xs[0] - 5, selectedStone.ys[4] - 5,
-                        TOWER_TOTAL_WIDTH + 10, h);
-
-                synchronized (LOCK) {
-                    LOCK.notify();
-                }
-
-                try {
-                    long duration = (start + ((frame + 1) * (1000 / FPS)))
-                            - System.currentTimeMillis();
-                    Thread.sleep(duration > 0 ? duration : 0);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }
-
-        /* zum schluss richtig positionieren */
-        selectedStone.moveTo(q.x, q.y);
+        /*
+         * final Point p = new Point(selectedStone.x, selectedStone.y);
+         * final Point q = new Point(targetTower.innerX - TOWER_LEFT_WIDTH,
+         * targetTower.innerY);
+         * 
+         * if (OPTIONS[MOVEMENT]) {
+         * 
+         * double pixelPerFrame = getWidth() / (1.5 * FPS);
+         * double dist = Math.sqrt(Math.pow(p.x - q.x, 2)
+         * + Math.pow(p.y - q.y, 2));
+         * 
+         * final int frames = (int) Math.ceil(dist / pixelPerFrame);
+         * final Point o = new Point(p.x, p.y);
+         * final Point dP = new Point(q.x - p.x, q.y - p.y);
+         * 
+         * long start = System.currentTimeMillis();
+         * int h = (selectedStone.size * TOWER_STORIE_HEIGTH)
+         * + TOWER_LEFT_HEIGTH + TOWER_RIGHT_HEIGTH + 10;
+         * for (int frame = 0; frame < frames; frame++) {
+         * 
+         * int oldx = selectedStone.xs[0] - 5;
+         * int oldy = selectedStone.ys[4] - 5;
+         * 
+         * p.x = o.x + (int) ((double) (frame * dP.x) / (double) frames);
+         * p.y = o.y + (int) ((double) (frame * dP.y) / (double) frames);
+         * selectedStone.moveTo(p.x, p.y);
+         * 
+         * // invalidate();
+         * // getParent().repaint();
+         * 
+         * repaint(oldx, oldy, TOWER_TOTAL_WIDTH + 10, h);
+         * repaint(selectedStone.xs[0] - 5, selectedStone.ys[4] - 5,
+         * TOWER_TOTAL_WIDTH + 10, h);
+         * 
+         * synchronized (LOCK) {
+         * LOCK.notify();
+         * }
+         * 
+         * try {
+         * long duration = (start + ((frame + 1) * (1000 / FPS)))
+         * - System.currentTimeMillis();
+         * Thread.sleep(duration > 0 ? duration : 0);
+         * }
+         * catch (InterruptedException e) {
+         * e.printStackTrace();
+         * }
+         * 
+         * }
+         * }
+         * 
+         * zum schluss richtig positionieren
+         * selectedStone.moveTo(q.x, q.y);
+         */
         setEnabled(true);
 
+    }
+
+    public synchronized void updateView() {
+        updateBuffer = true;
+        repaint();
     }
 
     public synchronized void requestMove(final int turn) {
@@ -238,8 +225,6 @@ public class FrameRenderer extends JComponent {
         int heigth = getHeight() - (2 * GUIConstants.BORDER_SIZE)
                 - GUIConstants.PROGRESS_BAR_HEIGTH;
 
-        fontX = getWidth() - GUIConstants.SIDE_BAR_WIDTH;
-
         if ((width > 0) && (heigth > 0)) {
             MediaTracker tracker = new MediaTracker(this);
 
@@ -256,7 +241,8 @@ public class FrameRenderer extends JComponent {
             }
         }
 
-        recreatePlayerSegments();
+        DrawAdditional.recreatePlayerSegments(getWidth(), getHeight(),
+                redStones, blueStones);
 
         System.gc();
         updateBuffer = true;
@@ -284,7 +270,7 @@ public class FrameRenderer extends JComponent {
         }
 
         if (gameEnded) {
-            Painter.paintEndMessage(g2);
+            Painter.paintEndMessage(g2, gameState, getWidth(), getHeight());
         }
 
         // bmFrames++;
@@ -306,10 +292,12 @@ public class FrameRenderer extends JComponent {
                 OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
                         : RenderingHints.VALUE_ANTIALIAS_OFF);
 
-        Painter.paintStaticComponents(g2);
+        Painter.paintStaticComponents(g2, getWidth(), getHeight(), this,
+                scaledBgImage, gameState);
         if (gameState != null) {
             // printGameStatus(g2);
-            Painter.paintSemiStaticComponents(g2);
+            Painter.paintSemiStaticComponents(g2, getWidth(), getHeight(),
+                    gameState, progressIcon, this);
         }
 
         updateBuffer = false;

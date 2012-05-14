@@ -114,7 +114,7 @@ public class LayLogicFacadeTest {
 
         Field field02 = board.getField(0, 2);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -141,7 +141,7 @@ public class LayLogicFacadeTest {
 
         Field field03 = board.getField(0, 3);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -163,7 +163,7 @@ public class LayLogicFacadeTest {
 
         Field field20 = board.getField(2, 0);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -184,7 +184,7 @@ public class LayLogicFacadeTest {
 
         Field field10 = board.getField(1, 0);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -210,7 +210,7 @@ public class LayLogicFacadeTest {
 
         Field field01 = board.getField(0, 1);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -230,7 +230,7 @@ public class LayLogicFacadeTest {
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
@@ -242,7 +242,7 @@ public class LayLogicFacadeTest {
 
         Stone stone4 = new Stone(StoneColor.RED, StoneShape.CIRCLE);
         Stone stone5 = new Stone(StoneColor.RED, StoneShape.FLOWER);
-        Stone stone6 = new Stone(StoneColor.RED, StoneShape.FOUR_SPIKE);
+        Stone stone6 = new Stone(StoneColor.RED, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -265,7 +265,7 @@ public class LayLogicFacadeTest {
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
@@ -277,7 +277,7 @@ public class LayLogicFacadeTest {
 
         Stone stone4 = new Stone(StoneColor.RED, StoneShape.CIRCLE);
         Stone stone5 = new Stone(StoneColor.RED, StoneShape.RHOMBUS);
-        Stone stone6 = new Stone(StoneColor.RED, StoneShape.FOUR_SPIKE);
+        Stone stone6 = new Stone(StoneColor.RED, StoneShape.FOURSPIKES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -294,7 +294,7 @@ public class LayLogicFacadeTest {
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 1);
         board.layStone(stone2, 0, 2);
@@ -326,7 +326,7 @@ public class LayLogicFacadeTest {
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 1);
         board.layStone(stone2, 0, 2);
@@ -435,7 +435,7 @@ public class LayLogicFacadeTest {
         Board board = new Board();
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 3);
@@ -459,7 +459,7 @@ public class LayLogicFacadeTest {
         Board board = new Board();
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 2);
@@ -488,8 +488,8 @@ public class LayLogicFacadeTest {
         Board board = new Board();
 
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
-        Stone stoneOutside = new Stone(StoneColor.BLUE, StoneShape.FOUR_SPIKE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stoneOutside = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 2);

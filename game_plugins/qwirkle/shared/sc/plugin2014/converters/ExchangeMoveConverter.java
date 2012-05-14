@@ -1,21 +1,18 @@
 package sc.plugin2014.converters;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.moves.DebugHint;
 import sc.plugin2014.moves.ExchangeMove;
-import sc.plugin2014.util.Constants;
 import sc.plugin2014.util.XStreamConfiguration;
 import com.thoughtworks.xstream.converters.*;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-@SuppressWarnings("unchecked")
 public class ExchangeMoveConverter implements Converter {
 
     @Override
-    public boolean canConvert(Class clazz) {
+    public boolean canConvert(@SuppressWarnings("rawtypes") Class clazz) {
         try {
             return ExchangeMove.class.isAssignableFrom(clazz);
         }
@@ -35,10 +32,9 @@ public class ExchangeMoveConverter implements Converter {
         ExchangeMove move = (ExchangeMove) value;
         List<Stone> selections = move.getStonesToExchange();
 
-        for (int i = 0; i < Constants.MAX_SEGMENT_SIZE; i++) {
+        for (int i = 0; i < selections.size(); i++) {
             writer.startNode("select");
-            writer.addAttribute("size", Integer.toString(i + 1));
-            writer.addAttribute("amount", Integer.toString(selections[i]));
+            context.convertAnother(selections.get(i));
             writer.endNode();
         }
 
@@ -54,18 +50,15 @@ public class ExchangeMoveConverter implements Converter {
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
 
-        int[] selections = new int[Constants.MAX_SEGMENT_SIZE];
+        List<Stone> selections = new ArrayList<Stone>();
         List<String> hints = new LinkedList<String>();
 
         while (reader.hasMoreChildren()) {
             reader.moveDown();
             String nodeName = reader.getNodeName();
             if (nodeName.equals("select")) {
-                int size = Integer.parseInt(reader.getAttribute("size"));
-                int amount = Integer.parseInt(reader.getAttribute("amount"));
-                if ((0 < size) && (size <= Constants.MAX_SEGMENT_SIZE)) {
-                    selections[size - 1] = amount;
-                }
+                selections.add((Stone) context.convertAnother(selections,
+                        Stone.class));
             }
             else if (nodeName.equals("hint")) {
                 hints.add(reader.getAttribute("content"));
@@ -73,7 +66,7 @@ public class ExchangeMoveConverter implements Converter {
             reader.moveUp();
         }
 
-        SelectMove move = new SelectMove(selections);
+        ExchangeMove move = new ExchangeMove(selections);
         for (String hint : hints) {
             move.addHint(hint);
         }
@@ -81,5 +74,4 @@ public class ExchangeMoveConverter implements Converter {
         return move;
 
     }
-
 }

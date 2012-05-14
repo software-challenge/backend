@@ -3,8 +3,7 @@ package sc.plugin2014.util;
 import java.util.Arrays;
 import java.util.List;
 import sc.plugin2014.*;
-import sc.plugin2014.entities.Player;
-import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.entities.*;
 import sc.plugin2014.moves.*;
 import sc.protocol.LobbyProtocol;
 import com.thoughtworks.xstream.XStream;
@@ -29,7 +28,7 @@ public class XStreamConfiguration {
     public static List<Class<?>> getClassesToRegister() {
         return Arrays.asList(new Class<?>[] { LayMove.class, Game.class,
                 GameState.class, Move.class, ExchangeMove.class, Player.class,
-                WelcomeMessage.class, PlayerColor.class }); // TODO add other
-                                                            // classes
+                WelcomeMessage.class, PlayerColor.class, Board.class,
+                Field.class, Stone.class, StoneColor.class, StoneShape.class });
     }
 }
