@@ -2,15 +2,13 @@ package sc.plugin2014.moves;
 
 import java.util.*;
 import sc.plugin2014.GameState;
-import sc.plugin2014.converters.LayMoveConverter;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import sc.plugin2014.laylogic.LayLogicFacade;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias(value = "qw:laymove")
-@XStreamConverter(LayMoveConverter.class)
+// @XStreamConverter(LayMoveConverter.class)
 public class LayMove extends Move implements Cloneable {
 
     private final Map<Stone, Field> stoneToFieldMapping;
@@ -53,7 +51,7 @@ public class LayMove extends Move implements Cloneable {
         checkIfStonesAreFromPlayerHand(getStonesToLay(), player);
 
         LayLogicFacade.checkIfLayMoveIsValid(getStoneToFieldMapping(),
-                state.getBoard(), false); // TODO check first lay
+                state.getBoard(), !state.getBoard().hasStones());
 
         List<Integer> freePositions = new ArrayList<Integer>();
 
@@ -70,8 +68,13 @@ public class LayMove extends Move implements Cloneable {
         }
 
         for (int i = 0; i < stonesToLaySize; i++) {
-            player.addStone(state.drawStone(), freePositions.get(i));
-            // TODO check if stonebag is empty
+            Stone drawStone = state.drawStone();
+            if (drawStone != null) {
+                player.addStone(drawStone, freePositions.get(i));
+            }
+            else {
+                // TODO stonebag is empty
+            }
         }
     }
 

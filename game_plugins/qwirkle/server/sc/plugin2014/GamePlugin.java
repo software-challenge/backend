@@ -29,8 +29,6 @@ public class GamePlugin implements IGamePlugin {
                 ScoreAggregation.SUM, false));
         SCORE_DEFINITION.add(new ScoreFragment("Punkte",
                 ScoreAggregation.AVERAGE));
-        SCORE_DEFINITION.add(new ScoreFragment("# Steine",
-                ScoreAggregation.SUM, false));
     }
 
     @Override
@@ -45,7 +43,8 @@ public class GamePlugin implements IGamePlugin {
 
     @Override
     public void initialize(IGamePluginHost host) {
-        host.registerProtocolClasses(XStreamConfiguration.getClassesToRegister());
+        host.registerProtocolClasses(XStreamConfiguration
+                .getClassesToRegister());
     }
 
     @Override

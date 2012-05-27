@@ -1,44 +1,46 @@
 package sc.shared;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import java.util.*;
 
 import sc.helpers.CollectionHelper;
 import sc.helpers.Function;
 
+import com.thoughtworks.xstream.annotations.*;
+
 @XStreamAlias(value = "score")
-public final class PlayerScore {
+public final class PlayerScore
+{
 	@XStreamImplicit(itemFieldName = "part")
-	private final List<BigDecimal> parts;
+	private final List<BigDecimal>	parts;
 
 	@XStreamAsAttribute
-	private ScoreCause cause;
+	private ScoreCause				cause;
 
-        /**
-         * might be needed by XStream
-         */
-        public PlayerScore() {
-              parts = null;
-        }
+	/**
+	 * might be needed by XStream
+	 */
+	public PlayerScore()
+	{
+		parts = null;
+	}
 
-	public PlayerScore(boolean winner) {
+	public PlayerScore(boolean winner)
+	{
 		this(ScoreCause.REGULAR, 1);
 	}
 
-	public PlayerScore(ScoreCause cause, Integer... scores) {
+	public PlayerScore(ScoreCause cause, Integer... scores)
+	{
 		this(cause, CollectionHelper.iterableToColleciton(
 				CollectionHelper.intArrayToBigDecimalArray(scores)).toArray(
 				new BigDecimal[scores.length]));
 	}
 
-	public PlayerScore(ScoreCause cause, BigDecimal... parts) {
-		if (parts == null) {
+	public PlayerScore(ScoreCause cause, BigDecimal... parts)
+	{
+		if (parts == null)
+		{
 			throw new IllegalArgumentException("scores must not be null");
 		}
 
@@ -46,38 +48,45 @@ public final class PlayerScore {
 		this.cause = cause;
 	}
 
-	public int size() {
-		return this.parts.size();
+	public int size()
+	{
+		return parts.size();
 	}
 
-	public ScoreCause getCause() {
-		return this.cause;
+	public ScoreCause getCause()
+	{
+		return cause;
 	}
 
-	public String[] toStrings() {
+	public String[] toStrings()
+	{
 		return CollectionHelper.iterableToColleciton(
-				CollectionHelper.map(this.parts,
-						new Function<BigDecimal, String>() {
-							@Override
-							public String operate(BigDecimal val) {
-								return val.toString();
-							}
-						})).toArray(new String[this.parts.size()]);
+				CollectionHelper.map(parts, new Function<BigDecimal, String>() {
+					@Override
+					public String operate(BigDecimal val)
+					{
+						return val.toString();
+					}
+				})).toArray(new String[parts.size()]);
 	}
 
-	public void setCause(ScoreCause cause) {
+	public void setCause(ScoreCause cause)
+	{
 		this.cause = cause;
 	}
 
-	public List<BigDecimal> getValues() {
-		return Collections.unmodifiableList(this.parts);
+	public List<BigDecimal> getValues()
+	{
+		return Collections.unmodifiableList(parts);
 	}
 
-	public void setValueAt(int index, BigDecimal v) {
-		this.parts.set(index, v);
+	public void setValueAt(int index, BigDecimal v)
+	{
+		parts.set(index, v);
 	}
 
-	public boolean matches(ScoreDefinition definition) {
-		return this.size() == definition.size();
+	public boolean matches(ScoreDefinition definition)
+	{
+		return size() == definition.size();
 	}
 }

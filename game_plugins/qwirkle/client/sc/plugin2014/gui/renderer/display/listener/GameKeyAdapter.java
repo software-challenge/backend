@@ -21,7 +21,7 @@ public class GameKeyAdapter extends KeyAdapter {
     @Override
     public void keyPressed(KeyEvent e) {
 
-        logger.debug("--------------1");
+        logger.info("--------------1");
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             logger.debug("--------------2");
 

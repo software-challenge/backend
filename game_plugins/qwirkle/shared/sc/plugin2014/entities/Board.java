@@ -51,4 +51,13 @@ public class Board implements Cloneable {
         // TODO
         return null;
     }
+
+    public boolean hasStones() {
+        for (Field field : fields) {
+            if (!field.isFree()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

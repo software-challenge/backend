@@ -31,7 +31,7 @@ public class LayLogicFacade {
     private static void checkIfFieldsAreFree(Collection<Field> passedFields,
             List<Field> boardFields) throws InvalidMoveException {
         for (Field passedField : passedFields) {
-            if (boardFields.contains(passedField)) {
+            if (hasField(boardFields, passedField)) {
                 if (passedField.isFree()) {
                     continue;
                 }
@@ -44,6 +44,16 @@ public class LayLogicFacade {
                         "Feld ist nicht im Spielbrett vorhanden");
             }
         }
+    }
+
+    private static boolean hasField(List<Field> boardFields, Field passedField) {
+        for (Field field : boardFields) {
+            if ((field.getPosX() == passedField.getPosX())
+                    && (field.getPosY() == passedField.getPosY())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void checkIfValidRow(Map<Stone, Field> stoneToFieldMapping)

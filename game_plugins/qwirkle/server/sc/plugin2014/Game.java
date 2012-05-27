@@ -15,7 +15,8 @@ import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import sc.plugin2014.moves.Move;
-import sc.plugin2014.util.*;
+import sc.plugin2014.util.Constants;
+import sc.plugin2014.util.XStreamConfiguration;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -84,11 +85,11 @@ public class Game extends RoundBasedGameInstance<Player> {
                 int[][] stats = gameState.getGameStats();
                 PlayerColor winner = null;
                 String winnerName = "Gleichstand nach Punkten.";
-                if (stats[0][3] > stats[1][3]) {
+                if (stats[0][0] > stats[1][0]) {
                     winner = PlayerColor.RED;
                     winnerName = "Sieg nach Punkten.";
                 }
-                else if (stats[0][3] < stats[1][3]) {
+                else if (stats[0][0] < stats[1][0]) {
                     winner = PlayerColor.BLUE;
                     winnerName = "Sieg nach Punkten.";
                 }
@@ -181,23 +182,23 @@ public class Game extends RoundBasedGameInstance<Player> {
 
         int[] stats = gameState.getPlayerStats(p);
         int matchPoints = 1;
-        int oppPoints = gameState.getPlayerStats(p.getPlayerColor().getOpponent())[3];
-        if (stats[3] > oppPoints) {
+        int oppPoints = gameState.getPlayerStats(p.getPlayerColor()
+                .getOpponent())[0];
+        if (stats[0] > oppPoints) {
             matchPoints = 2;
         }
-        else if (stats[3] < oppPoints) {
+        else if (stats[0] < oppPoints) {
             matchPoints = 0;
         }
         return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, -2,
-                0, stats[0], stats[1], stats[2]) : new PlayerScore(
-                ScoreCause.REGULAR, matchPoints, stats[3], stats[0], stats[1],
-                stats[2]);
+                stats[0]) : new PlayerScore(ScoreCause.REGULAR, matchPoints,
+                stats[0]);
 
     }
 
     @Override
     protected ActionTimeout getTimeoutFor(Player player) {
-        return new ActionTimeout(true, 10000l, 2000l);
+        return new ActionTimeout(true, 1000000l, 200000l); // TODO ...
     }
 
     @Override
