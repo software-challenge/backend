@@ -10,8 +10,8 @@ public class Constants {
 
     public static final int POINTS_AT_END          = 6;
 
-    public static final int FIELDS_IN_X_DIM        = 32;
-    public static final int FIELDS_IN_Y_DIM        = 32;
+    public static final int FIELDS_IN_X_DIM        = 16;
+    public static final int FIELDS_IN_Y_DIM        = 16;
 
     public static final int STONES_COLOR_COUNT     = 6;
     public static final int STONES_SHAPE_COUNT     = 6;

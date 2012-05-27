@@ -12,12 +12,17 @@ public class Stone implements Cloneable {
     @XStreamAsAttribute
     private final StoneShape shape;
 
+    @XStreamAsAttribute
+    private final int        identifier;
+
     public Stone() {
+        identifier = 0;
         color = StoneColor.BLUE;
         shape = StoneShape.CIRCLE;
     }
 
     public Stone(StoneColor color, StoneShape shape) {
+        identifier = 0; // TODO gen id
         this.color = color;
         this.shape = shape;
     }
@@ -28,6 +33,14 @@ public class Stone implements Cloneable {
 
     public StoneShape getShape() {
         return shape;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Stone)
+                && (((Stone) obj).identifier == identifier)
+                && (((Stone) obj).color == color)
+                && (((Stone) obj).shape == shape);
     }
 
     @Override

@@ -9,8 +9,8 @@ public class StoneShapeTest {
         assertEquals(StoneShape.CIRCLE, StoneShape.getShapeFromIndex(0));
         assertEquals(StoneShape.FLOWER, StoneShape.getShapeFromIndex(1));
         assertEquals(StoneShape.FOURSPIKES, StoneShape.getShapeFromIndex(2));
-        assertEquals(StoneShape.RHOMBUS, StoneShape.getShapeFromIndex(3));
-        assertEquals(StoneShape.RECTANGLE, StoneShape.getShapeFromIndex(4));
+        assertEquals(StoneShape.RECTANGLE, StoneShape.getShapeFromIndex(3));
+        assertEquals(StoneShape.RHOMBUS, StoneShape.getShapeFromIndex(4));
         assertEquals(StoneShape.STAR, StoneShape.getShapeFromIndex(5));
     }
 }

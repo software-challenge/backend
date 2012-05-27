@@ -52,9 +52,8 @@ public class GameState implements Cloneable {
     private final PlayerColor startPlayer;
 
     // farbe des aktuellen spielers
-    private final PlayerColor currentPlayer;
+    private PlayerColor       currentPlayer;
 
-    // die teilenhmenden spieler
     private Player            red, blue;
 
     private Board             board;
@@ -370,8 +369,17 @@ public class GameState implements Cloneable {
     }
 
     public void prepareNextTurn(Move move) {
-        // TODO Auto-generated method stub
+        turn++;
+        // lastMove = move; TODO
+        switchCurrentPlayer();
+    }
 
+    /**
+     * wechselt den Spieler, der aktuell an der Reihe ist.
+     */
+    private void switchCurrentPlayer() {
+        currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
+                : PlayerColor.RED;
     }
 
     public void layStone(Stone stoneToLay, int posX, int posY) {

@@ -86,7 +86,7 @@ public abstract class Move implements Cloneable {
         for (Stone stone : stoneList) {
             boolean notFound = true;
             for (Stone stoneOnHand : player.getStones()) {
-                if (stone == stoneOnHand) {
+                if (stone.equals(stoneOnHand)) {
                     notFound = false;
                 }
             }

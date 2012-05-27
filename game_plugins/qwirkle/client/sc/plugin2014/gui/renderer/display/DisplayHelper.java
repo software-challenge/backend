@@ -5,32 +5,6 @@ import java.awt.Color;
 import sc.plugin2014.entities.PlayerColor;
 
 public class DisplayHelper {
-    public static boolean inner(int x, int y, int[] xs, int[] ys) {
-
-        boolean inner = true;
-        double scalar;
-        double ref = 0;
-        int n = xs.length;
-
-        for (int i = 0; i < n; i++) {
-            int j = (i + 1) % n;
-            scalar = ((ys[j] - ys[i]) * (x - xs[i]))
-                    + ((xs[i] - xs[j]) * (y - ys[i]));
-
-            if (i == 0) {
-                ref = Math.signum(scalar);
-            }
-
-            if (Math.signum(scalar) != ref) {
-                inner = false;
-                break;
-            }
-        }
-
-        return inner;
-
-    }
-
     public static Color getTransparentColor(Color c, int alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(),
                 OPTIONS[TRANSPARANCY] ? alpha : 255);

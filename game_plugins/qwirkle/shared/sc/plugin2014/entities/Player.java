@@ -54,7 +54,7 @@ public class Player extends SimplePlayer implements Cloneable {
     public int getStonePosition(Stone stone) {
         for (int i = 0; i < stones.size(); i++) {
             Stone s = stones.get(i);
-            if (s == stone) {
+            if (s.equals(stone)) {
                 return i;
             }
         }
@@ -63,7 +63,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
     public boolean hasStone(Stone stone) {
         for (Stone s : stones) {
-            if (s == stone) {
+            if (s.equals(stone)) {
                 return true;
             }
         }

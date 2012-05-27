@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ LayLogicFacade.class })
+@SuiteClasses({ LayLogicFacadeTest.class })
 public class AllTests {
 
 }

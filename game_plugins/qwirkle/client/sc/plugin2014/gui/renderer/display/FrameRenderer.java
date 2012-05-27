@@ -4,16 +4,15 @@
 package sc.plugin2014.gui.renderer.display;
 
 import static sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration.*;
-import static sc.plugin2014.util.Constants.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import sc.plugin2014.GameState;
-import sc.plugin2014.entities.PlayerColor;
-import sc.plugin2014.entities.Stone;
+import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.RenderFacade;
 import sc.plugin2014.gui.renderer.RendererUtil;
 import sc.plugin2014.gui.renderer.display.listener.GameKeyAdapter;
@@ -28,28 +27,22 @@ import sc.plugin2014.moves.Move;
 public class FrameRenderer extends JComponent {
     private static final long       serialVersionUID  = -7852533731353419771L;
 
-    public static final Object      LOCK              = new Object();
-
-    // current (game) state
     private PlayerColor             currentPlayer;
     private GameState               gameState;
 
-    // image components
     private BufferedImage           buffer;
     private boolean                 updateBuffer;
     private final Image             bgImage;
     private Image                   scaledBgImage;
     private final Image             progressIcon;
 
-    // steine
-    private final List<Stone>       redStones;
-    private final List<Stone>       blueStones;
-    private List<Stone>             sensetiveStones;
-    private Stone                   selectedStone;
-    private int                     dx, dy;
-    private int                     ox, oy;
+    private final List<GUIStone>    redStones;
+    private final List<GUIStone>    blueStones;
+    public List<GUIStone>           sensetiveStones;
+    public GUIStone                 selectedStone;
+    public int                      dx, dy;
+    public int                      ox, oy;
 
-    // sonstiges
     private int                     turnToAnswer      = -1;
     private boolean                 gameEnded;
 
@@ -66,18 +59,19 @@ public class FrameRenderer extends JComponent {
 
                                                       };
 
+    public List<GUIStone>           toLayStones       = new ArrayList<GUIStone>();
+
+    private final JButton           actionButton;
+
     public FrameRenderer() {
         updateBuffer = true;
         bgImage = RendererUtil.getImage("resource/game/bg.png");
         progressIcon = RendererUtil.getImage("resource/game/progress.png");
-        redStones = new LinkedList<Stone>();
-        blueStones = new LinkedList<Stone>();
-        sensetiveStones = new LinkedList<Stone>();
+        redStones = new LinkedList<GUIStone>();
+        blueStones = new LinkedList<GUIStone>();
+        sensetiveStones = new LinkedList<GUIStone>();
 
-        setMinimumSize(new Dimension(
-                (2 * STONES_PER_PLAYER * (GUIConstants.STONES_ON_HAND_WIDTH + GUIConstants.STUFF_GAP))
-                        + (2 * 1 * (GUIConstants.TOWER_TOTAL_WIDTH + GUIConstants.STUFF_GAP)),
-                600));
+        setMinimumSize(new Dimension(1024, 768));
 
         setDoubleBuffered(true);
         addComponentListener(componentListener);
@@ -86,6 +80,20 @@ public class FrameRenderer extends JComponent {
         requestFocusInWindow();
 
         RenderConfiguration.loadSettings();
+
+        setLayout(null);
+        actionButton = new JButton("Legen");
+        this.add(actionButton);
+
+        actionButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    sendMove();
+                }
+            }
+        });
 
         resizeBoard();
         repaint();
@@ -103,16 +111,25 @@ public class FrameRenderer extends JComponent {
             }
         }
 
-        // aktuellen spielstand sichern
         this.gameState = gameState;
         currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
         updateBuffer = true;
 
         selectedStone = null;
 
+        redStones.clear();
+        for (Stone redStone : gameState.getRedPlayer().getStones()) {
+            redStones.add(new GUIStone(redStone));
+        }
+
+        blueStones.clear();
+        for (Stone blueStone : gameState.getBluePlayer().getStones()) {
+            blueStones.add(new GUIStone(blueStone));
+        }
+
         gameEnded = gameState.gameEnded();
 
-        if (currentPlayer == PlayerColor.RED) {
+        if (currentPlayer == PlayerColor.RED) { // TODO and not computer
             sensetiveStones = redStones;
         }
         else {
@@ -208,15 +225,22 @@ public class FrameRenderer extends JComponent {
         return turnToAnswer == gameState.getTurn();
     }
 
-    private synchronized void sendMove(final Move move) {
+    private synchronized void sendMove() {
 
         removeMouseListener(layMouseAdapter);
         removeMouseMotionListener(layMouseAdapter);
 
+        LayMove layMove = new LayMove();
+        for (GUIStone guistone : toLayStones) {
+            layMove.layStoneOntoField(guistone.getStone(), guistone.getField());
+        }
+
         if (myTurn() && !gameEnded) {
-            RenderFacade.getInstance().sendMove(move);
+            RenderFacade.getInstance().sendMove(layMove);
             turnToAnswer = -1;
         }
+
+        toLayStones.clear();
     }
 
     private void resizeBoard() {
@@ -237,12 +261,9 @@ public class FrameRenderer extends JComponent {
                 tracker.waitForID(0);
             }
             catch (InterruptedException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
-
-        DrawAdditional.recreatePlayerSegments(getWidth(), getHeight(),
-                redStones, blueStones);
 
         System.gc();
         updateBuffer = true;
@@ -266,19 +287,17 @@ public class FrameRenderer extends JComponent {
         g2.drawImage(buffer, 0, 0, getWidth(), getHeight(), this);
 
         if (gameState != null) {
-            Painter.paintDynamicComponents(g2);
+            Painter.paintDynamicComponents(g2, selectedStone, getWidth(),
+                    getHeight(), gameState, redStones, blueStones);
         }
 
         if (gameEnded) {
             Painter.paintEndMessage(g2, gameState, getWidth(), getHeight());
         }
 
-        // bmFrames++;
-        // // repainted = true;
-        synchronized (LOCK) {
-            LOCK.notify();
-        }
-
+        actionButton
+                .setBounds((getWidth() / 2) - 50, getHeight() - 80, 100, 30);
+        actionButton.repaint();
     }
 
     private void fillBuffer() {
@@ -293,13 +312,12 @@ public class FrameRenderer extends JComponent {
                         : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         Painter.paintStaticComponents(g2, getWidth(), getHeight(), this,
-                scaledBgImage, gameState);
+                scaledBgImage, gameState, toLayStones);
         if (gameState != null) {
             // printGameStatus(g2);
             Painter.paintSemiStaticComponents(g2, getWidth(), getHeight(),
                     gameState, progressIcon, this);
         }
-
         updateBuffer = false;
     }
 
@@ -309,5 +327,39 @@ public class FrameRenderer extends JComponent {
                 BufferedImage.TYPE_INT_RGB);
         paint(img.getGraphics());
         return img;
+    }
+
+    public void layStone(GUIStone stone) {
+        if (stone != null) {
+            Field belongingField = GUIBoard.getBelongingField(
+                    gameState.getBoard(), GUIConstants.BORDER_SIZE,
+                    GUIConstants.BORDER_SIZE, stone);
+            if ((belongingField != null) && belongingField.isFree()) {
+                stone.setField(belongingField);
+                removeStone(stone);
+                toLayStones.add(stone);
+            }
+            else {
+                addStone(stone);
+            }
+        }
+    }
+
+    public void removeStone(GUIStone stone) {
+        if (currentPlayer == PlayerColor.RED) {
+            redStones.remove(stone);
+        }
+        else {
+            blueStones.remove(stone);
+        }
+    }
+
+    public void addStone(GUIStone stone) {
+        if (currentPlayer == PlayerColor.RED) {
+            redStones.add(stone);
+        }
+        else {
+            blueStones.add(stone);
+        }
     }
 }

@@ -37,7 +37,7 @@ public class Field implements Cloneable {
         return stone;
     }
 
-    protected void setStone(Stone stone) {
+    public void setStone(Stone stone) {
         this.stone = stone;
     }
 
