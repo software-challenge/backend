@@ -44,4 +44,19 @@ public class Field implements Cloneable {
     public boolean isFree() {
         return getStone() == null;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Field) {
+            Field otherField = (Field) o;
+            return (otherField.getPosX() == getPosX())
+                    && (otherField.getPosY() == getPosY());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Field: (" + getPosX() + ", " + getPosY() + ")";
+    }
 }

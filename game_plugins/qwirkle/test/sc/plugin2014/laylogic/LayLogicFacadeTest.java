@@ -5,7 +5,6 @@ import java.util.HashMap;
 import org.junit.Test;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
-import sc.plugin2014.laylogic.LayLogicFacade;
 
 public class LayLogicFacadeTest {
 
