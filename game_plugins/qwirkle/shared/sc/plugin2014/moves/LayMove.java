@@ -5,6 +5,7 @@ import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import sc.plugin2014.laylogic.LayLogicFacade;
+import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias(value = "qw:laymove")
@@ -52,6 +53,11 @@ public class LayMove extends Move implements Cloneable {
 
         LayLogicFacade.checkIfLayMoveIsValid(getStoneToFieldMapping(),
                 state.getBoard(), !state.getBoard().hasStones());
+
+        int points = PointsCalculator.getPointsForMove(stoneToFieldMapping,
+                state.getBoard());
+
+        player.addPoints(points);
 
         List<Integer> freePositions = new ArrayList<Integer>();
 

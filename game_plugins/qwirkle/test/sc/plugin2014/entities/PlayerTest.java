@@ -67,7 +67,7 @@ public class PlayerTest {
     public void testHasStone() {
         Player redPlayer = new Player(PlayerColor.RED);
         Stone stone = new Stone();
-        Stone stone2 = new Stone();
+        Stone stone2 = new Stone(StoneColor.ORANGE, StoneShape.FLOWER);
 
         assertFalse(redPlayer.hasStone(stone));
         assertFalse(redPlayer.hasStone(stone2));

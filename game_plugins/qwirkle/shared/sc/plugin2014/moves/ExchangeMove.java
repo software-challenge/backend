@@ -35,6 +35,8 @@ public class ExchangeMove extends Move implements Cloneable {
 
         checkIfStonesAreFromPlayerHand(getStonesToExchange(), player);
 
+        checkIfPlayerHasStoneAmountToExchange(player);
+
         List<Integer> freePositions = new ArrayList<Integer>();
         ArrayList<Stone> putAsideStones = new ArrayList<Stone>();
 
@@ -57,6 +59,16 @@ public class ExchangeMove extends Move implements Cloneable {
         }
     }
 
+    private void checkIfPlayerHasStoneAmountToExchange(Player player)
+            throws InvalidMoveException {
+        if (getStonesToExchange().size() > player.getStones().size()) {
+            throw new InvalidMoveException(
+                    "Nicht ausreichend Steine auf der Hand um "
+                            + getStonesToExchange().size()
+                            + " Steine zu tauschen");
+        }
+    }
+
     private void checkAtLeastOneStone() throws InvalidMoveException {
         if (getStonesToExchange().isEmpty()) {
             throw new InvalidMoveException(
@@ -66,7 +78,6 @@ public class ExchangeMove extends Move implements Cloneable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-
         // TODO
         return super.clone();
     }
