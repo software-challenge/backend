@@ -15,6 +15,7 @@
 		<delete dir="game_players/manhattan/build" />
 		<delete dir="game_players/manhattan_player2/build" />
 		<delete dir="game_plugins/cartagena/build" />
+		<delete dir="game_players/cartagena_player/build" />
 	</target>
 
 	<target name="dependencies">
@@ -30,8 +31,8 @@
 		<ant dir="game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />
-
 		<ant dir="game_plugins/cartagena" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/cartagena_player/" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -79,6 +80,11 @@
 			<fileset dir="./game_players/manhattan_player2/build/jar" />
 		</copy>
 		
+		<mkdir dir="${out.dir}/simple_client/cartagena/jar" />
+		<copy todir="${out.dir}/simple_client/cartagena/jar">
+			<fileset dir="./game_players/cartagena_player/build/jar" />
+		</copy>
+		
 		<!--
 		<mkdir dir="${out.dir}/simple_client/hase_und_igel/src" />
 		<copy todir="${out.dir}/simple_client/hase_und_igel/src">
@@ -113,6 +119,17 @@
 			</fileset>
 		</copy>
 		<move tofile="${out.dir}/simple_client/manhattan/src/build.xml" file="${out.dir}/simple_client/manhattan/src/build-deploy.xml" />
+		
+		<mkdir dir="${out.dir}/simple_client/cartagena/src" />
+		<copy todir="${out.dir}/simple_client/cartagena/src">
+			<fileset dir="./game_players/cartagena_player">
+				<exclude name="build/**/*" />
+				<exclude name="bin/**/*" />
+				<exclude name=".classpath" />
+				<exclude name="build.xml" />
+			</fileset>
+		</copy>
+		<move tofile="${out.dir}/simple_client/cartagena/src/build.xml" file="${out.dir}/simple_client/cartagena/src/build-deploy.xml" />
 
 
 		<!--
@@ -133,6 +150,11 @@
 		<mkdir dir="${out.dir}/simple_client/manhattan/src/lib" />
 		<copy todir="${out.dir}/simple_client/manhattan/src/lib">
 			<fileset dir="${out.dir}/simple_client/manhattan/jar/lib" />
+		</copy>
+		
+		<mkdir dir="${out.dir}/simple_client/cartagena/src/lib" />
+		<copy todir="${out.dir}/simple_client/cartagena/src/lib">
+			<fileset dir="${out.dir}/simple_client/cartagena/jar/lib" />
 		</copy>
 
 
@@ -171,6 +193,9 @@
 		<zip destfile="${out.dir}/zipped/simpleclient-mh-jar.zip" basedir="${out.dir}/simple_client/manhattan/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-mh-src.zip" basedir="${out.dir}/simple_client/manhattan/src" />
 		<zip destfile="${out.dir}/zipped/not-so-simpleclient-mh-jar.zip" basedir="${out.dir}/not_so_simple_client/manhattan/jar" />
+		
+		<zip destfile="${out.dir}/zipped/simpleclient-ca-jar.zip" basedir="${out.dir}/simple_client/cartagena/jar" />
+		<zip destfile="${out.dir}/zipped/simpleclient-ca-src.zip" basedir="${out.dir}/simple_client/cartagena/src" />
 		
 
 		<echo message="Gathering documentations..." />

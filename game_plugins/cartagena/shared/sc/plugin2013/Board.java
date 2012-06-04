@@ -108,8 +108,8 @@ public class Board implements Cloneable{
 				return i;
 			}
 		}
-		//Prüfe ob auf dem Startfeld noch Piraten stehen
-		if(!fields.get(0).getPirates().isEmpty()){
+		//Prüfe ob auf dem Startfeld noch Piraten stehen und der start nicht auf dem Startindex liegt
+		if(!fields.get(0).getPirates().isEmpty() && start != 0){
 			return 0; //Gib Startfeld zurück
 		}
 		return -1; // Nichts gefunden, gib -1 zurück;

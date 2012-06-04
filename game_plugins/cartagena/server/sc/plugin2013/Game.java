@@ -84,32 +84,35 @@ public class Game extends RoundBasedGameInstance<Player> {
 			final MoveContainer move = (MoveContainer) data;
 			move.perform(gameState, expectedPlayer);
 			gameState.prepareNextTurn(move);
-			
-			if(gameState.getTurn() == Constants.ROUND_LIMIT *2){
+
+			if (gameState.getTurn() == Constants.ROUND_LIMIT * 2) {
 				PlayerColor winner = null;
 				String winnerName = "Gleichstand nach Punkten.";
-				if (gameState.getRedPlayer().getPoints() > gameState.getBluePlayer().getPoints()) {
+				if (gameState.getRedPlayer().getPoints() > gameState
+						.getBluePlayer().getPoints()) {
 					winner = PlayerColor.RED;
 					winnerName = "Sieg nach Punkten.";
-				} else if (gameState.getRedPlayer().getPoints() < gameState.getBluePlayer().getPoints()) {
+				} else if (gameState.getRedPlayer().getPoints() < gameState
+						.getBluePlayer().getPoints()) {
 					winner = PlayerColor.BLUE;
 					winnerName = "Sieg nach Punkten.";
 				}
-				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
-			} else if(gameState.playerFinished(PlayerColor.RED)){
-				//Rot hat alle Piraten im Zielfeld
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
+						+ winnerName);
+			} else if (gameState.playerFinished(PlayerColor.RED)) {
+				// Rot hat alle Piraten im Zielfeld
 				PlayerColor winner = PlayerColor.RED;
 				String winningString = "Rot hat alle Piraten im Ziel";
 				gameState.endGame(winner, winningString);
-			} else if(gameState.playerFinished(PlayerColor.BLUE)){
-				//Blau hat alle Piraten im Zielfeld
+			} else if (gameState.playerFinished(PlayerColor.BLUE)) {
+				// Blau hat alle Piraten im Zielfeld
 				PlayerColor winner = PlayerColor.BLUE;
 				String winningString = "Blau hat alle Piraten im Ziel";
 				gameState.endGame(winner, winningString);
 			}
-			
+
 			next(gameState.getCurrentPlayer());
-			
+
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);
 			String err = "Ungültiger Zug von '" + author.getDisplayName()
@@ -118,7 +121,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			logger.error(err);
 			throw new GameLogicException(err);
 		}
-		
+
 	}
 
 	@Override
@@ -170,8 +173,20 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
-		// TODO Auto-generated method stub
-		return null;
+		int matchPoints = 1;
+		Player player = (p.getPlayerColor() == PlayerColor.RED) ? gameState
+				.getRedPlayer() : gameState.getBluePlayer();
+		Player opponent = (p.getPlayerColor() == PlayerColor.RED) ? gameState
+				.getBluePlayer() : gameState.getRedPlayer();
+		if (player.getPoints() > opponent.getPoints()) {
+			matchPoints = 3;
+		} else if (player.getPoints() < opponent.getPoints()) {
+			matchPoints = 0;
+		}
+
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
+				player.getPoints()) : new PlayerScore(ScoreCause.REGULAR,
+				matchPoints, player.getPoints());
 	}
 
 	@Override

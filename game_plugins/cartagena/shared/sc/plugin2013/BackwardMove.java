@@ -18,7 +18,7 @@ public class BackwardMove extends Move{
 	public void perform(GameState state, Player player) throws InvalidMoveException {
 		Board board = state.getBoard();
 		if(!board.hasPirates(this.fieldIndex, player.getPlayerColor())){
-			throw new InvalidMoveException("Spieler hat keinen Piraten auf Feld" + fieldIndex);
+			throw new InvalidMoveException("Spieler hat keinen Piraten auf Feld " + fieldIndex);
 		}
 		if(fieldIndex == 0){
 			throw new InvalidMoveException("Es ist nicht möglich einen Piraten vom Startfeld zurückzubewegen");
