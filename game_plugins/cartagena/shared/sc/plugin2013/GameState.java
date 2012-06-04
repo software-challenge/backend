@@ -3,8 +3,10 @@ package sc.plugin2013;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 //import sc.plugin2013.util.GameStateConverter;
 import sc.plugin2013.util.Constants;
@@ -382,5 +384,30 @@ public class GameState implements Cloneable {
 	 */
 	public String winningReason() {
 		return condition == null ? "" : condition.reason;
+	}
+	
+	/** Gibt eine Liste aller Züge zurück, welche der Spieler, welcher momentan am Zug ist durchführen kann
+	 * 	diese können sowohl Vorwärts-, als auch Rückwärtszüge sein.
+	 * @return LinkedList der durchführbaren Züge.
+	 */
+	public List<Move> getPossibleMoves(){
+		List<Move> possibleMoves = new LinkedList<Move>();
+		Player player = getCurrentPlayer();
+		
+		Set<Card> cards = new HashSet<Card>(player.getCards());
+		
+		for(int i = 0; i< board.size(); i++){
+			if(board.hasPirates(i, player.getPlayerColor())){
+				if(board.getPreviousField(i) > -1){
+					possibleMoves.add(new BackwardMove(board.getPreviousField(i)));
+				}
+				for(Card c: cards){
+					possibleMoves.add(new ForwardMove(i, c.symbol));
+				}
+				
+			}
+		}
+		
+		return possibleMoves;
 	}
 }
