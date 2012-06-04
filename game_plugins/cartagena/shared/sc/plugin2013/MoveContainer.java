@@ -10,9 +10,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  */
 @XStreamAlias(value = "cartagena:move")
 public class MoveContainer {
-	final public Move	firstMove;
-	final public Move 	secondMove;
-	final public Move 	thirdMove;
+	public Move	firstMove;
+	public Move secondMove;
+	public Move thirdMove;
 	
 	public MoveContainer(){
 		this.firstMove = null;
@@ -51,6 +51,26 @@ public class MoveContainer {
 			thirdMove.perform(gameState,expectedPlayer);
 		}
 		
+	}
+	
+	/** Fügt einen Zug zum Container hinzu. Gibt die verbleibenden Slots zurück. Sollte der Container voll sein,
+	 * 	so wird nichts geändert.
+	 * @param move
+	 * @return
+	 */
+	public int addMove(Move move){
+		if(firstMove == null){
+			firstMove = move;
+			return 2;
+		} else if (secondMove == null){
+			secondMove = move;
+			return 1;
+		} else if (thirdMove == null){
+			thirdMove = move;
+			return 0;
+		} else {
+			return 0;
+		}
 	}
 
 }

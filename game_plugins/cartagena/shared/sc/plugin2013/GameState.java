@@ -396,10 +396,10 @@ public class GameState implements Cloneable {
 		
 		Set<Card> cards = new HashSet<Card>(player.getCards());
 		
-		for(int i = 0; i< board.size(); i++){
+		for(int i = 0; i < board.size(); i++){
 			if(board.hasPirates(i, player.getPlayerColor())){
-				if(board.getPreviousField(i) > -1){
-					possibleMoves.add(new BackwardMove(board.getPreviousField(i)));
+				if(board.getPreviousField(i) != -1){
+					possibleMoves.add(new BackwardMove(i));
 				}
 				for(Card c: cards){
 					possibleMoves.add(new ForwardMove(i, c.symbol));
