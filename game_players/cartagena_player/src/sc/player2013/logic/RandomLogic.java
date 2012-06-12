@@ -62,7 +62,7 @@ public class RandomLogic implements IGameHandler {
 		int numMoves = rand.nextInt(4);
 		System.out.println("*** Anzahl der diesmal ausgewählten Züge: " + numMoves);
 		MoveContainer moveC = new MoveContainer();
-		for(int i = 0 ; i < numMoves ; i++){
+		for(int i = 0 ; i < 3 ; i++){
 			// Liste der verfügbaren Züge
 			LinkedList<Move> possibleMoves = (LinkedList<Move>) gameState.getPossibleMoves();
 			System.out.println("*** Anzahl der möglichen Züge:"  + possibleMoves.size());

@@ -1,7 +1,10 @@
 package sc.plugin2013;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.util.Configuration;
 import sc.plugin2013.util.Constants;
@@ -25,7 +29,7 @@ import sc.shared.ScoreCause;
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
- * @author Felix Dubrownik
+ * @author fdu
  * 
  */
 @XStreamAlias(value = "cartagena:game")
@@ -147,7 +151,26 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-		// TODO Auto-generated method stub
+		Map<IPlayer, PlayerScore> res = generateScoreMap();
+
+		for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
+			PlayerScore score = entry.getValue();
+
+			if (entry.getKey() == player) {
+				score.setCause(cause);
+				score.setValueAt(1, new BigDecimal(0));
+			} else {
+				score.setValueAt(1, new BigDecimal(2));
+			}
+		}
+
+		if (!gameState.gameEnded()) {
+			gameState.endGame(((Player) player).getPlayerColor().opponent(),
+					"Der Spieler '" + player.getDisplayName()
+							+ "' hat das Spiel verlassen.");
+		}
+
+		notifyOnGameOver(res);
 
 	}
 
@@ -167,7 +190,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected void onNewTurn() {
-		// TODO not implemented in last 2 years
+		// never implemented in last plugins
 
 	}
 
@@ -179,7 +202,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		Player opponent = (p.getPlayerColor() == PlayerColor.RED) ? gameState
 				.getBluePlayer() : gameState.getRedPlayer();
 		if (player.getPoints() > opponent.getPoints()) {
-			matchPoints = 3;
+			matchPoints = 2;
 		} else if (player.getPoints() < opponent.getPoints()) {
 			matchPoints = 0;
 		}

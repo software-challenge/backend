@@ -128,6 +128,13 @@ public class Player extends SimplePlayer implements Cloneable {
 		return this.cards;
 	}
 	
+	/** Liefert die Anzahl der Karten zurück, die der Spieler auf der Hand hat.
+	 * @return die Anzahl der Karten
+	 */
+	public int getNumCards(){
+		return this.cards.size();
+	}
+	
 	/** 
 	 * Fügt dem Punktekonto des Spieler Punkte hinzu
 	 * @param points
