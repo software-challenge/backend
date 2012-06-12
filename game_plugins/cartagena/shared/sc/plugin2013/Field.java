@@ -36,7 +36,7 @@ public class Field implements Cloneable {
 	public Field(SymbolType s) {
 		this.type = FieldType.SYMBOL;
 		this.symbol = s;
-		this.pirates = new ArrayList<Pirate>(3);
+		this.pirates = new LinkedList<Pirate>();
 	}
 
 
@@ -51,15 +51,14 @@ public class Field implements Cloneable {
 	public Field(FieldType type, SymbolType symbol) {
 		this.type = type;
 		this.symbol = symbol;
-		this.pirates = new ArrayList<Pirate>(3);
+		this.pirates = new LinkedList<Pirate>();
 	}
 	
 	public Field(FieldType type){
 		assert type == FieldType.FINISH || type == FieldType.START;
 		this.type = type;
 		this.symbol = null;
-		this.pirates = new LinkedList<Pirate>();
-		
+		this.pirates = new LinkedList<Pirate>();		
 	}
 	
 	
@@ -94,7 +93,7 @@ public class Field implements Cloneable {
 		return null;
 	}
 	
-	/** Gibt die Anzahl der Piraten Piraten auf diesem Feld zurück
+	/** Gibt die Anzahl der Piraten auf diesem Feld zurück
 	 * @param color Die Farbe des Spielers
 	 * @return
 	 */

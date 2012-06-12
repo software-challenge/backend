@@ -50,7 +50,7 @@ public class GameState implements Cloneable {
 
 	// momentane rundenzahl
 	@XStreamAsAttribute
-	private int turn;
+	private int turn = 0;
 
 	// die teilenhmenden spieler
 	private Player red, blue;
@@ -359,7 +359,7 @@ public class GameState implements Cloneable {
 	}
 
 	public boolean playerFinished(PlayerColor color) {
-		if(this.board.numPiratesOf(Constants.SEGMENTS * Constants.SYMBOLS-1, color) == Constants.PIRATES){
+		if(this.board.numPiratesOf(Constants.SEGMENTS * Constants.SYMBOLS + 1, color) == Constants.PIRATES){
 			return true;
 		}
 		return false;

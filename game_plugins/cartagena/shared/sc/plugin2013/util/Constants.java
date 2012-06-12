@@ -8,7 +8,7 @@ public class Constants {
 	
 	public final static int PIRATES = 6;
 	
-	public final static int SEGMENTS = 6;
+	public final static int SEGMENTS = 5;
 		
 	public final static int SYMBOLS = 6;
 	public final static int CARDS_PER_SYMBOL = 17;
