@@ -333,7 +333,10 @@ public class FrameRenderer extends JComponent {
         if (stone != null) {
             Field belongingField = GUIBoard.getBelongingField(
                     gameState.getBoard(), GUIConstants.BORDER_SIZE,
-                    GUIConstants.BORDER_SIZE, stone);
+                    GUIConstants.BORDER_SIZE, getWidth()
+                            - GUIConstants.BORDER_SIZE
+                            - GUIConstants.SIDE_BAR_WIDTH, getHeight()
+                            - GUIConstants.STATUS_HEIGTH, stone);
             if ((belongingField != null) && belongingField.isFree()) {
                 stone.setField(belongingField);
                 removeStone(stone);
@@ -352,6 +355,8 @@ public class FrameRenderer extends JComponent {
         else {
             blueStones.remove(stone);
         }
+
+        toLayStones.remove(stone);
     }
 
     public void addStone(GUIStone stone) {

@@ -28,17 +28,25 @@ public class LayMoveAdapter extends MouseAdapter {
             int y = e.getY();
 
             for (GUIStone stone : parent.sensetiveStones) {
-                if (stone.inner(x, y)) {
-                    parent.selectedStone = stone;
-                    parent.removeStone(stone);
-                    parent.ox = stone.getX();
-                    parent.oy = stone.getY();
-                    parent.dx = x - parent.ox;
-                    parent.dy = y - parent.oy;
-
-                    parent.updateView();
-                }
+                checkIfInner(x, y, stone);
             }
+
+            for (GUIStone stone : parent.toLayStones) {
+                checkIfInner(x, y, stone);
+            }
+        }
+    }
+
+    private void checkIfInner(int x, int y, GUIStone stone) {
+        if (stone.inner(x, y)) {
+            parent.selectedStone = stone;
+            parent.removeStone(stone);
+            parent.ox = stone.getX();
+            parent.oy = stone.getY();
+            parent.dx = x - parent.ox;
+            parent.dy = y - parent.oy;
+
+            parent.updateView();
         }
     }
 

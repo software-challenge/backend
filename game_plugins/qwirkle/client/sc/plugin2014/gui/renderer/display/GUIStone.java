@@ -13,6 +13,7 @@ public class GUIStone {
     private int           x, y;
     private final Stone   stone;
     private Field         field;
+    private Image         image;
 
     public GUIStone(Stone stone) {
         this.stone = stone;
@@ -62,9 +63,11 @@ public class GUIStone {
     }
 
     public void draw(Graphics2D g2) {
-        Image image = RendererUtil.getImage("resource/stones/"
-                + stone.getShape().toString().toLowerCase() + "_"
-                + stone.getColor().toString().toLowerCase() + ".png");
+        if (image == null) {
+            image = RendererUtil.getImage("resource/stones/"
+                    + stone.getShape().toString().toLowerCase() + "_"
+                    + stone.getColor().toString().toLowerCase() + ".png");
+        }
         if (highlighted) {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,
                     GUIConstants.STONE_HEIGHT, fmPanel); // TODO make

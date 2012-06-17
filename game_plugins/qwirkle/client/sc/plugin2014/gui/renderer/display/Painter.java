@@ -27,7 +27,7 @@ public class Painter {
                     height - (2 * BORDER_SIZE));
         }
 
-        paintBoard(g2, gameState, toLayStones);
+        paintBoard(g2, width, height, gameState, toLayStones);
 
         g2.setColor(DisplayHelper.getTransparentColor(Color.WHITE, 180));
 
@@ -66,10 +66,11 @@ public class Painter {
         }
     }
 
-    private static void paintBoard(Graphics2D g2, GameState gameState,
-            List<GUIStone> toLayStones) {
+    private static void paintBoard(Graphics2D g2, int width, int height,
+            GameState gameState, List<GUIStone> toLayStones) {
         GUIBoard.draw(g2, GUIConstants.BORDER_SIZE, GUIConstants.BORDER_SIZE,
-                toLayStones, gameState.getBoard());
+                width - GUIConstants.BORDER_SIZE - GUIConstants.SIDE_BAR_WIDTH,
+                height - STATUS_HEIGTH, toLayStones, gameState.getBoard());
     }
 
     public static int paintPlayerInfo(Graphics2D g2, int fontX, int fontY,
@@ -265,8 +266,8 @@ public class Painter {
             List<GUIStone> redStones, List<GUIStone> blueStones) {
 
         if (selectedStone != null) {
-            GUIBoard.drawGrid(g2, GUIConstants.BORDER_SIZE,
-                    GUIConstants.BORDER_SIZE, 480, 480);
+            GUIBoard.drawGrid(g2, BORDER_SIZE, BORDER_SIZE, width - BORDER_SIZE
+                    - SIDE_BAR_WIDTH, height - STATUS_HEIGTH);
 
             selectedStone.draw(g2);
         }
