@@ -67,6 +67,10 @@ public class Board implements Cloneable{
 	 *         trägt. Gesucht wird ab StartIndex
 	 */
 	public int getNextField(int start, SymbolType symbol) {
+		if(start == this.size()-1){
+			//startFeld ist Zielfeld. Zug dorthin nicht möglich.
+			return -1;
+		}
 		for (int i = start + 1; i < fields.size(); i++) {
 			if (fields.get(i).symbol == symbol
 					&& fields.get(i).getPirates().isEmpty()) {
@@ -115,9 +119,9 @@ public class Board implements Cloneable{
 			}
 		}
 		//Prüfe ob auf dem Startfeld noch Piraten stehen und der start nicht auf dem Startindex liegt
-		if(!fields.get(0).getPirates().isEmpty() && start != 0){
-			return 0; //Gib Startfeld zurück
-		}
+//		if(!fields.get(0).getPirates().isEmpty() && start != 0){
+//			return 0; //Gib Startfeld zurück
+//		}
 		return -1; // Nichts gefunden, gib -1 zurück;
 	}
 	

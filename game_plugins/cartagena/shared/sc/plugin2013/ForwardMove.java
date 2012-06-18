@@ -23,11 +23,18 @@ public class ForwardMove extends Move {
 	public void perform(GameState state, Player player)
 			throws InvalidMoveException {
 		// Invalider Move, wenn:
+		// falscher Feldindex
 		// keine Piraten des Spielers an Position index
 		// Spieler keine Karte des Typs Symbol hat.
 		Board board = state.getBoard();
+		if(this.fieldIndex < 0 || this.fieldIndex > board.size()-1){
+			throw new InvalidMoveException("Ungültigen Feldindex Angegeben");
+		}
+		if(this.fieldIndex == board.size()-1){
+			throw new InvalidMoveException("Vorwärtszug vom Zielfeld nicht möglich");
+		}
 		if (!player.hasCard(symbol)) {
-			throw new InvalidMoveException("Spieler hat keine Karte mit Symbol"
+			throw new InvalidMoveException("Spieler hat keine Karte mit Symbol "
 					+ symbol);
 		}
 		if (board.hasPirates(this.fieldIndex, player.getPlayerColor()) == false) {

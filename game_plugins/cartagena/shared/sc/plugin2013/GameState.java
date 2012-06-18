@@ -56,6 +56,7 @@ public class GameState implements Cloneable {
 	private Player red, blue;
 
 	// Farbe des aktiven Spielers
+	@XStreamAsAttribute
 	private PlayerColor currentPlayer;
 
 	// Kartenstapel
@@ -401,10 +402,11 @@ public class GameState implements Cloneable {
 				if(board.getPreviousField(i) != -1){
 					possibleMoves.add(new BackwardMove(i));
 				}
-				for(Card c: cards){
-					possibleMoves.add(new ForwardMove(i, c.symbol));
-				}
-				
+				if(i != board.size()-1){
+					for(Card c: cards){
+						possibleMoves.add(new ForwardMove(i, c.symbol));
+					}
+				}				
 			}
 		}
 		
