@@ -48,6 +48,6 @@ public class Configuration {
 	public static List<Class<?>> getClassesToRegister() {
 		return Arrays.asList(new Class<?>[] { Player.class, Move.class,
 				ForwardMove.class, BackwardMove.class, Field.class,
-				Pirate.class, Board.class });
+				Pirate.class, Board.class, MoveContainer.class, GameState.class });
 	}
 }

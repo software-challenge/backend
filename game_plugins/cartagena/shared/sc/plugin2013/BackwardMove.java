@@ -19,6 +19,9 @@ public class BackwardMove extends Move {
 	public void perform(GameState state, Player player)
 			throws InvalidMoveException {
 		Board board = state.getBoard();
+		if(this.fieldIndex < 0 || this.fieldIndex > board.size()-1){
+			throw new InvalidMoveException("Ungültigen Feldindex Angegeben");
+		}		
 		if (!board.hasPirates(this.fieldIndex, player.getPlayerColor())) {
 			throw new InvalidMoveException(
 					"Spieler hat keinen Piraten auf Feld " + fieldIndex);

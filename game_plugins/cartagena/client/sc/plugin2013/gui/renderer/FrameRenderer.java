@@ -11,7 +11,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MediaTracker;
-import java.awt.Polygon;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
@@ -22,10 +21,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,16 +41,14 @@ import sc.plugin2013.Board;
 import sc.plugin2013.Card;
 import sc.plugin2013.DebugHint;
 import sc.plugin2013.Field;
-import sc.plugin2013.FieldType;
 import sc.plugin2013.ForwardMove;
 import sc.plugin2013.MoveContainer;
-import sc.plugin2013.MoveType;
+//import sc.plugin2013.MoveType;
 import sc.plugin2013.Pirate;
 import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.GameState;
 import sc.plugin2013.SymbolType;
-import sun.security.jgss.TokenTracker;
 
 @SuppressWarnings("serial")
 public class FrameRenderer extends JComponent {
@@ -67,6 +62,7 @@ public class FrameRenderer extends JComponent {
 	private static final int SIDE_BAR_WIDTH = 275;
 
 	private static final int STUFF_GAP = 8;
+	private static final int SEGMENT_GAP = 6;
 	private static final int GAP_SIZE = 10;
 
 	private static final int CARD_WIDTH = 48;
@@ -89,11 +85,6 @@ public class FrameRenderer extends JComponent {
 	private final Image bottleImage;
 	private final Image keyImage;
 	private final Image pistolImage;
-
-	private final Image blueTokenImage;
-	private final Image redTokenImage;
-
-	private static final Object LOCK = new Object();
 
 	// schrift
 	private static final Font h0 = new Font("Helvetica", Font.BOLD, 73);
@@ -123,7 +114,7 @@ public class FrameRenderer extends JComponent {
 	private GameState gameState;
 
 	// sonstiges
-	private boolean gameEnded;
+	private boolean gameEnded = false;
 	private int turnToAnswer;
 	// liste der oberen, linken eckpunkte der spielfelder
 	private LinkedList<Point> BoardMap;
@@ -135,12 +126,13 @@ public class FrameRenderer extends JComponent {
 	private LinkedList<Token> tokenList;
 	// Position des Zug Beenden Buttons
 	private Point cancelMoveButtonPos;
+	private boolean humanMove = false;
 	private int movesMade = 0;
 	private final int movesToMake = 3;
 	private Move firstMove;
 	private Move secondMove;
 	private Move thirdMove;
-	private MoveContainer lastMoveSend;
+	// private MoveContainer lastMoveSend;
 	private int selectedField = -1;
 	private HashSet<Integer> possibleFields = new HashSet<Integer>();
 	// Variablen für den spezialfall "Aufs Zielfeld ziehen"
@@ -164,10 +156,9 @@ public class FrameRenderer extends JComponent {
 		this.bottleImage = loadImage("resource/game/bottle.png");
 		this.keyImage = loadImage("resource/game/key.png");
 		this.pistolImage = loadImage("resource/game/pistol.png");
-		this.blueTokenImage = loadImage("resource/game/Spielfigur-blau.png");
-		this.redTokenImage = loadImage("resource/game/Spielfigur-rot.png");
 
 		this.BoardMap = new LinkedList<Point>();
+		this.tokenList = new LinkedList<Token>();
 
 		setMinimumSize(new Dimension(2 * Constants.MAX_CARDS_PER_PLAYER
 				* (CARD_WIDTH + STUFF_GAP), 720));
@@ -180,72 +171,82 @@ public class FrameRenderer extends JComponent {
 		addComponentListener(componentListener);
 		RenderConfiguration.loadSettings();
 
-		// resizeBoard();
-		// repaint();
+		resizeBoard();
+		repaint();
 	}
 
 	public void updateGameState(GameState gameState) {
+
 		if (this.gameState != null) {
 			int turnDiff = gameState.getTurn() - this.gameState.getTurn();
+			// int turnDiff = gameState.getTurn() - turnToAnswer;
 			MoveContainer mC = gameState.getLastMove();
 			System.out.println("********************************turnDiff: "
 					+ turnDiff);
 			// if move Container != null and move Conatiner ist not the last
 			// Send move
-			if (mC != null && turnDiff == 1) {
-				if (lastMoveSend != null && !mC.equals(lastMoveSend)) {
-					System.out
-							.println("*****************************Checking Animation");
-					if (mC.firstMove != null) {
-						animateTokenMovement(mC.firstMove);
-						try {
-							mC.firstMove.perform(this.gameState,
-									this.gameState.getCurrentPlayer());
-							this.gameState.prepareNextTurn(mC.firstMove);
-						} catch (InvalidMoveException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						generateBoardMap();
-						generateTokenMap();
-						repaint();
+			// if (mC != null && turnDiff == 1) {
+			// if (lastMoveSend != null && !mC.equals(lastMoveSend)) {
+			if (!humanMove && turnDiff == 1) {
+				if (mC.firstMove != null) {
+					animateTokenMovement(mC.firstMove);
+					try {
+						mC.firstMove.perform(this.gameState,
+								this.gameState.getCurrentPlayer());
+						this.gameState.prepareNextTurn(mC.firstMove);
+					} catch (InvalidMoveException e) {
+						e.printStackTrace();
 					}
-					if (mC.secondMove != null) {
-						animateTokenMovement(mC.secondMove);
-						try {
-							mC.secondMove.perform(this.gameState,
-									this.gameState.getCurrentPlayer());
-							this.gameState.prepareNextTurn(mC.secondMove);
-						} catch (InvalidMoveException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						generateBoardMap();
-						generateTokenMap();
-						repaint();
-					}
-					if (mC.thirdMove != null) {
-						animateTokenMovement(mC.thirdMove);
-						try {
-							mC.thirdMove.perform(this.gameState,
-									this.gameState.getCurrentPlayer());
-							this.gameState.prepareNextTurn(mC.thirdMove);
-						} catch (InvalidMoveException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						generateBoardMap();
-						generateTokenMap();
-						repaint();
-					}
+					generateBoardMap();
+					generateTokenMap();
+					repaint();
 				}
+				if (mC.secondMove != null) {
+					animateTokenMovement(mC.secondMove);
+					try {
+						mC.secondMove.perform(this.gameState,
+								this.gameState.getCurrentPlayer());
+						this.gameState.prepareNextTurn(mC.secondMove);
+					} catch (InvalidMoveException e) {
+						e.printStackTrace();
+					}
+					generateBoardMap();
+					generateTokenMap();
+					repaint();
+				}
+				if (mC.thirdMove != null) {
+					animateTokenMovement(mC.thirdMove);
+					try {
+						mC.thirdMove.perform(this.gameState,
+								this.gameState.getCurrentPlayer());
+						this.gameState.prepareNextTurn(mC.thirdMove);
+					} catch (InvalidMoveException e) {
+						e.printStackTrace();
+					}
+					generateBoardMap();
+					generateTokenMap();
+					repaint();
+				}
+				// }
 			}
 		}
+		humanMove = false;
 
 		// aktuellen spielstand sichern
 		this.gameState = gameState;
 		currentPlayer = gameState.getCurrentPlayerColor();
 		currentPlayerColor = getPlayerColor(currentPlayer);
+
+		// gui Controll Variablen setzen.
+		if (gameState.getTurn() == 0) {
+			// neues Spiel alles auf Anfang
+			movesMade = 0;
+			selectedField = -1;
+			throwAwayCard = false;
+			removeMouseListener(mouseAdapter);
+			possibleFields = new HashSet<Integer>();
+			possibleCards = new HashSet<SymbolType>();
+		}
 
 		updateBuffer = true;
 		generateBoardMap();
@@ -271,6 +272,20 @@ public class FrameRenderer extends JComponent {
 				x += FIELD_WIDTH;
 				break;
 			case FINISH:
+				if (x + FIELD_WIDTH >= getBoardRightX() - STUFF_GAP
+						&& direction == true) {
+					// out of right border
+					y += FIELD_HEIGHT + SEGMENT_GAP + (FIELD_HEIGHT /2);
+					x -= FIELD_WIDTH;
+				} else if (x < BORDER_SIZE + STUFF_GAP && direction == false) {
+					// out of left border
+					y += FIELD_HEIGHT + SEGMENT_GAP + (FIELD_HEIGHT /2);
+					x += FIELD_WIDTH;
+				} else if (direction == true) {
+					x += SEGMENT_GAP;
+				} else {
+					x -= SEGMENT_GAP;
+				}
 				boardMap.add(new Point(x, y));
 				break;
 			case SYMBOL:
@@ -278,24 +293,42 @@ public class FrameRenderer extends JComponent {
 				if (x + FIELD_WIDTH >= getBoardRightX() - STUFF_GAP
 						&& direction == true) {
 					direction = false;
+					if (i % 6 == 1) {
+						y += SEGMENT_GAP;
+					}
 
 					y += FIELD_HEIGHT;
 					x -= FIELD_WIDTH;
 					boardMap.add(new Point(x, y));
+					// if (i % 6 == 0) {
+					// y += SEGMENT_GAP;
+					// }
 					y += FIELD_HEIGHT;
 				} else
 				// would the next field be out of left border?
 				if (x < BORDER_SIZE + STUFF_GAP && direction == false) {
 					direction = true;
 
+					if (i % 6 == 1) {
+						y += SEGMENT_GAP;
+					}
 					y += FIELD_HEIGHT;
 					x += FIELD_WIDTH;
 					boardMap.add(new Point(x, y));
+
 					y += FIELD_HEIGHT;
 				} else if (direction == true) {
+
+					if (i % 6 == 1) {
+						x += SEGMENT_GAP;
+					}
 					boardMap.add(new Point(x, y));
 					x += FIELD_WIDTH;
 				} else {
+
+					if (i % 6 == 1) {
+						x -= SEGMENT_GAP;
+					}
 					boardMap.add(new Point(x, y));
 					x -= FIELD_WIDTH;
 				}
@@ -364,7 +397,7 @@ public class FrameRenderer extends JComponent {
 		}
 		Point startPoint = BoardMap.get(startField);
 		Point targetPoint = BoardMap.get(targetField);
-		Point renderPoint = new Point(startPoint.x,startPoint.y);
+		Point renderPoint = new Point(startPoint.x, startPoint.y);
 		if (OPTIONS[MOVEMENT]) {
 			System.out.println("Animation takes place");
 			double pixelPerFrame = ((double) getWidth()) / (1.5 * FPS);
@@ -372,8 +405,8 @@ public class FrameRenderer extends JComponent {
 					2) + Math.pow(startPoint.y - targetPoint.y, 2));
 			final int frames = (int) Math.ceil(distance / pixelPerFrame);
 			long startTime = System.currentTimeMillis();
-			
-			final Point o = new Point(startPoint.x,startPoint.y);
+
+			final Point o = new Point(startPoint.x, startPoint.y);
 			final Point dP = new Point(targetPoint.x - startPoint.x,
 					targetPoint.y - startPoint.y);
 			for (int frame = 0; frame < frames; frame++) {
@@ -387,31 +420,33 @@ public class FrameRenderer extends JComponent {
 				repaint();
 
 				try {
-					long duration = startTime + (frame + 1) * (1000 / FPS)
+					long duration = startTime + (frame + 1) * (1500 / FPS)
 							- System.currentTimeMillis();
 					Thread.sleep(duration > 0 ? duration : 0);
 				} catch (InterruptedException e) {
-					System.out.println("Animation Sleep was interrupted");
 					e.printStackTrace();
 				}
 			}
 		}
 		tokenToMove.moveToken(targetPoint.x, targetPoint.y);
 		setEnabled(true);
-
 	}
 
 	public synchronized void requestMove(final int turn) {
 		turnToAnswer = turn;
-		// Set MouseListener
 		addMouseListener(mouseAdapter);
-		addMouseMotionListener(mouseAdapter);
+		// addMouseMotionListener(mouseAdapter);
+		humanMove = true;
+		updateBuffer = true;
+		repaint();
+		// Set MouseListener
+
 	}
 
 	private synchronized void sendMove(final MoveContainer move) {
 
 		removeMouseListener(mouseAdapter);
-		removeMouseMotionListener(mouseAdapter);
+		// removeMouseMotionListener(mouseAdapter);
 
 		if ((turnToAnswer == gameState.getTurn()) && !gameEnded) {
 			RenderFacade.getInstance().sendMove(move);
@@ -466,9 +501,9 @@ public class FrameRenderer extends JComponent {
 
 		g2.drawImage(buffer, 0, 0, getWidth(), getHeight(), this);
 
-		 if (gameState != null) {
-			 paintDynamicComponents(g2);
-		 }
+		if (gameState != null) {
+			paintDynamicComponents(g2);
+		}
 
 		if (gameEnded) {
 			paintEndMessage(g2);
@@ -553,8 +588,10 @@ public class FrameRenderer extends JComponent {
 
 		System.gc();
 		updateBuffer = true;
-		generateBoardMap();
-		generateTokenMap();
+		if (this.gameState != null) {
+			generateBoardMap();
+			generateTokenMap();
+		}
 		repaint();
 
 	}
@@ -573,7 +610,6 @@ public class FrameRenderer extends JComponent {
 		paintStaticComponents(g2);
 
 		if (gameState != null) {
-			// printGameStatus(g2);g2
 			paintSemiStaticComponents(g2);
 		}
 
@@ -740,60 +776,6 @@ public class FrameRenderer extends JComponent {
 
 	}
 
-	private void paintToken(Graphics2D g2, int x, int y, int num,
-			PlayerColor color) {
-		// Spielfiguren
-		int fieldSizeDiv12 = FIELD_HEIGHT / 12;
-
-		g2.setFont(h5);
-		if (color == PlayerColor.RED) {
-			g2.setColor(Color.RED);
-			// Image scaledToken =
-			// redTokenImage.getScaledInstance(2*fieldSizeDiv6, 4*fieldSizeDiv6,
-			// Image.SCALE_SMOOTH);
-			// g2.drawImage(redTokenImage, x, y + fieldSizeDiv6,
-			// 2* fieldSizeDiv6, 4 * fieldSizeDiv6, this);
-			// g2.drawImage(scaledToken, x, y + fieldSizeDiv6, this);
-			g2.fillOval(x + fieldSizeDiv12, y + fieldSizeDiv12,
-					4 * fieldSizeDiv12, 4 * fieldSizeDiv12);
-			int[] xVals = new int[3];
-			int[] yVals = new int[3];
-			xVals[0] = x + 3 * fieldSizeDiv12;
-			xVals[1] = x + fieldSizeDiv12;
-			xVals[2] = x + 5 * fieldSizeDiv12;
-			yVals[0] = y + fieldSizeDiv12;
-			yVals[1] = y + 11 * fieldSizeDiv12;
-			yVals[2] = y + 11 * fieldSizeDiv12;
-			g2.fillPolygon(xVals, yVals, 3);
-			g2.setColor(Color.BLACK);
-			g2.drawString(Integer.toString(num), x + 3 * fieldSizeDiv12, y
-					+ fieldSizeDiv12 + fmH5.getHeight());
-
-		} else {
-			g2.setColor(Color.BLUE);
-			// Image scaledToken =
-			// blueTokenImage.getScaledInstance(2*fieldSizeDiv6,
-			// 4*fieldSizeDiv6, Image.SCALE_SMOOTH);
-			// g2.drawImage(blueTokenImage, x + 4 * fieldSizeDiv6, y
-			// + fieldSizeDiv6, 2 * fieldSizeDiv6, 4 * fieldSizeDiv6, this);
-			g2.fillOval(x + 7 * fieldSizeDiv12, y + fieldSizeDiv12,
-					4 * fieldSizeDiv12, 4 * fieldSizeDiv12);
-			int[] xVals = new int[3];
-			int[] yVals = new int[3];
-			xVals[0] = x + 9 * fieldSizeDiv12;
-			xVals[1] = x + 7 * fieldSizeDiv12;
-			xVals[2] = x + 11 * fieldSizeDiv12;
-			yVals[0] = y + fieldSizeDiv12;
-			yVals[1] = y + 11 * fieldSizeDiv12;
-			yVals[2] = y + 11 * fieldSizeDiv12;
-			g2.fillPolygon(xVals, yVals, 3);
-			g2.setColor(Color.BLACK);
-			g2.drawString(Integer.toString(num), x + 9 * fieldSizeDiv12, y
-					+ fieldSizeDiv12 + fmH5.getHeight());
-		}
-
-	}
-
 	private void paintStaticComponents(Graphics2D g2) {
 		/*
 		 * Komponenten die nur bei Resize aktualisiert werden
@@ -829,13 +811,10 @@ public class FrameRenderer extends JComponent {
 
 	private void paintBoard(Graphics2D g2) {
 		Board board = gameState.getBoard();
-
-		g2.setStroke(stroke20);
-		g2.setColor(Color.WHITE);
-
 		int x = 0;
 		int y = 0;
-
+		// Spielfelder einzeln
+		g2.setStroke(stroke20);
 		for (int i = 0; i < board.size(); i++) {
 			Field field = board.getField(i);
 			switch (field.type) {
@@ -916,7 +895,7 @@ public class FrameRenderer extends JComponent {
 					g2.drawRect(p.x, p.y, FIELD_WIDTH, FIELD_HEIGHT);
 				}
 			}
-		}	
+		}
 
 		// Selected field
 		if (selectedField != -1) {
@@ -930,7 +909,7 @@ public class FrameRenderer extends JComponent {
 		// seitenleiste info
 
 		Player player = gameState.getRedPlayer();
-		int x = getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH;
+		int x = getWidth() - BORDER_SIZE - SIDE_BAR_WIDTH + 2 * STUFF_GAP;
 		int y = BORDER_SIZE + STUFF_GAP + fmH0.getHeight();
 
 		// red player
@@ -940,7 +919,7 @@ public class FrameRenderer extends JComponent {
 
 		y += fmH3.getHeight();
 
-		if (currentPlayer == PlayerColor.RED) {
+		if (currentPlayer == PlayerColor.RED && !gameEnded) {
 			g2.setColor(Color.black);
 			g2.setFont(h3);
 			if (movesToMake - movesMade > 1) {
@@ -948,18 +927,20 @@ public class FrameRenderer extends JComponent {
 			} else {
 				g2.drawString(movesToMake - movesMade + " Zug übrig.", x, y);
 			}
-
-			g2.setStroke(stroke15);
-			g2.setColor(Color.WHITE);
-			g2.fillRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
-					fmH3.getHeight() + 6, 10, 10);
-			g2.setColor(Color.DARK_GRAY);
-			g2.drawRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
-					fmH3.getHeight() + 6, 10, 10);
-			this.cancelMoveButtonPos = new Point(x, y);
-			y += fmH3.getHeight() + 3;
-			g2.setColor(Color.black);
-			g2.drawString(endTurn, x + 2, y);
+			if (humanMove) {
+				y += STUFF_GAP;
+				g2.setStroke(stroke15);
+				g2.setColor(Color.WHITE);
+				g2.fillRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
+						fmH3.getHeight() + 6, 10, 10);
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
+						fmH3.getHeight() + 6, 10, 10);
+				this.cancelMoveButtonPos = new Point(x, y);
+				y += fmH3.getHeight();
+				g2.setColor(Color.black);
+				g2.drawString(endTurn, x + 2, y);
+			}
 		}
 		// blue player
 		g2.setFont(h0);
@@ -969,7 +950,7 @@ public class FrameRenderer extends JComponent {
 		g2.drawString(String.valueOf(player.getPoints()), x, y);
 
 		y += fmH3.getHeight();
-		if (currentPlayer == PlayerColor.BLUE) {
+		if (currentPlayer == PlayerColor.BLUE && !gameEnded) {
 			g2.setColor(Color.black);
 			g2.setFont(h3);
 			if (movesToMake - movesMade > 1) {
@@ -977,19 +958,62 @@ public class FrameRenderer extends JComponent {
 			} else {
 				g2.drawString(movesToMake - movesMade + " Zug übrig.", x, y);
 			}
+			if (humanMove) {
+				y += STUFF_GAP;
+				g2.setStroke(stroke15);
+				g2.setColor(Color.WHITE);
+				g2.fillRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
+						fmH3.getHeight() + 6, 10, 10);
+				g2.setColor(Color.DARK_GRAY);
+				g2.drawRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
+						fmH3.getHeight() + 6, 10, 10);
+				this.cancelMoveButtonPos = new Point(x, y);
 
-			g2.setStroke(stroke15);
-			g2.setColor(Color.WHITE);
-			g2.fillRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
-					fmH3.getHeight() + 6, 10, 10);
-			g2.setColor(Color.DARK_GRAY);
-			g2.drawRoundRect(x, y, fmH3.stringWidth(endTurn) + 5,
-					fmH3.getHeight() + 6, 10, 10);
-			this.cancelMoveButtonPos = new Point(x, y);
+				y += fmH3.getHeight();
+				g2.setColor(Color.black);
+				g2.drawString(endTurn, x + 2, y);
+			}
+		}
 
-			y += fmH3.getHeight() + 3;
-			g2.setColor(Color.black);
-			g2.drawString(endTurn, x + 2, y);
+		boolean hints = OPTIONS[DEBUG_VIEW];
+		// Move Hints
+		if (hints && this.gameState.getLastMove() != null) {
+			y += fmH4.getHeight() + STUFF_GAP;
+			g2.setFont(h4);
+			g2.drawString("Letzter Zug : ", x, y);
+			if (gameState.getLastMove().firstMove != null) {
+				y += fmH4.getHeight() + STUFF_GAP;
+				g2.drawString("1: ", x, y);
+				g2.setFont(h5);
+				List<DebugHint> hintList = gameState.getLastMove().firstMove
+						.getHints();
+				for (DebugHint hint : hintList) {
+					y += fmH5.getHeight() + STUFF_GAP;
+					g2.drawString(hint.content, x, y);
+				}
+			}
+			if (gameState.getLastMove().secondMove != null) {
+				y += fmH4.getHeight() + STUFF_GAP;
+				g2.drawString("2: ", x, y);
+				g2.setFont(h5);
+				List<DebugHint> hintList = gameState.getLastMove().secondMove
+						.getHints();
+				for (DebugHint hint : hintList) {
+					y += fmH5.getHeight() + STUFF_GAP;
+					g2.drawString(hint.content, x, y);
+				}
+			}
+			if (gameState.getLastMove().thirdMove != null) {
+				y += fmH4.getHeight() + STUFF_GAP;
+				g2.drawString("3: ", x, y);
+				g2.setFont(h5);
+				List<DebugHint> hintList = gameState.getLastMove().thirdMove
+						.getHints();
+				for (DebugHint hint : hintList) {
+					y += fmH5.getHeight() + STUFF_GAP;
+					g2.drawString(hint.content, x, y);
+				}
+			}
 		}
 	}
 
@@ -1041,6 +1065,7 @@ public class FrameRenderer extends JComponent {
 				int x = e.getX();
 				int y = e.getY();
 				// überprüfe ob der cancelButton geklickt wurde
+
 				if (x > cancelMoveButtonPos.x
 						&& x < cancelMoveButtonPos.x
 								+ fmH3.stringWidth(endTurn) + 5
@@ -1061,7 +1086,6 @@ public class FrameRenderer extends JComponent {
 					movesMade = 0;
 					sendMove(moveC);
 				}
-
 				// wenn eine Karte weggeschmissen werden soll überprüfe ob eine
 				// Karte geklickt wurde
 				if (throwAwayCard) {
@@ -1095,16 +1119,39 @@ public class FrameRenderer extends JComponent {
 					}
 
 					if (move != null) {
+						// boolean finished = false;
 						try {
 							move.perform(gameState,
 									gameState.getCurrentPlayer());
 							gameState.prepareNextTurn(move);
+							// wenn durch einen move alle Piraten des Spielers
+							// im Zielfeld sind: abschicken
+							// if (gameState.playerFinished(currentPlayer)) {
+							// MoveContainer moveC;
+							// switch (movesMade) {
+							// case 0:
+							// moveC = new MoveContainer(move);
+							// case 1:
+							// moveC = new MoveContainer(firstMove, move);
+							// break;
+							// case 2: // do
+							// moveC = new MoveContainer(firstMove,
+							// secondMove, move);
+							// break;
+							// default:
+							// moveC = new MoveContainer();
+							// }
+							// finished = true;
+							// movesMade = 0;
+							// sendMove(moveC);
+							// }
 							selectedField = -1;
 							possibleFields = new HashSet<Integer>();
 						} catch (InvalidMoveException exception) {
 							System.out.println("CARTAGENA GUI "
 									+ exception.getMessage());
 						}
+						// if (!finished) {
 						switch (movesMade) {
 						case 0:
 							firstMove = move;
@@ -1122,6 +1169,8 @@ public class FrameRenderer extends JComponent {
 							movesMade = 0;
 							sendMove(moveC);
 						}
+						// }
+
 					}
 
 					if (!pressedCard) {
@@ -1136,9 +1185,6 @@ public class FrameRenderer extends JComponent {
 						Point p = BoardMap.get(i);
 						if (x > p.x && x < p.x + FIELD_WIDTH && y > p.y
 								&& y < p.y + FIELD_HEIGHT) {
-							// System.out
-							// .println("CARTAGENA - DEBUG: Klick auf Feld mit Index "
-							// + i);
 							if (gameState.getBoard().hasPirates(i,
 									gameState.getCurrentPlayerColor())
 									&& selectedField == -1) {
@@ -1147,25 +1193,29 @@ public class FrameRenderer extends JComponent {
 								// gelickten Feld sind Piraten des Spieler
 								// vorhanden
 								selectedField = i;
-								// System.out
-								// .println("CARTAGENA - DEBUG: Feld mit Piraten geklickt "
-								// + selectedField);
+								System.out
+										.println("CARTAGENA - DEBUG: Feld mit Piraten geklickt "
+												+ selectedField);
 								// fill the possible Field list
 								possibleFields = new HashSet<Integer>();
 
 								for (SymbolType symbol : SymbolType.values()) {
 									if (gameState.getCurrentPlayer().hasCard(
 											symbol)) {
-										possibleFields.add(gameState.getBoard()
-												.getNextField(selectedField,
-														symbol));
-										// System.out
-										// .println("CARTAGENA DEBUG - Adding possible Field: "
-										// + gameState
-										// .getBoard()
-										// .getNextField(
-										// selectedField,
-										// symbol));
+										if (gameState.getBoard().getNextField(
+												selectedField, symbol) != -1) {
+											possibleFields.add(gameState
+													.getBoard().getNextField(
+															selectedField,
+															symbol));
+											System.out
+													.println("CARTAGENA DEBUG - Adding possible Field: "
+															+ gameState
+																	.getBoard()
+																	.getNextField(
+																			selectedField,
+																			symbol));
+										}
 									}
 								}
 								if (gameState.getBoard().getPreviousField(
@@ -1273,7 +1323,7 @@ public class FrameRenderer extends JComponent {
 												firstMove, secondMove,
 												thirdMove);
 										movesMade = 0;
-										lastMoveSend = moveC;
+										// lastMoveSend = moveC;
 										sendMove(moveC);
 									}
 
@@ -1320,8 +1370,8 @@ public class FrameRenderer extends JComponent {
 		int boardHeight = getBoardBottomY() - getBoardTopY();
 
 		int numFields = Constants.SEGMENTS * Constants.SYMBOLS;
-		int width = (boardWidth - 3 * STUFF_GAP) / (numFields / 3);
-		int height = (boardHeight - 2 * STUFF_GAP) / 5;
+		int width = ((boardWidth - 3 * STUFF_GAP) / (numFields / 3));
+		int height = (int) ((boardHeight - 2 * STUFF_GAP) / 5.5);
 		int size = Math.min(width, height);
 		this.FIELD_WIDTH = size;
 		this.FIELD_HEIGHT = size;
@@ -1383,7 +1433,7 @@ public class FrameRenderer extends JComponent {
 				xVals[0] = x + 3 * fieldSizeDiv12;
 				xVals[1] = x + fieldSizeDiv12;
 				xVals[2] = x + 5 * fieldSizeDiv12;
-				yVals[0] = y + 2* fieldSizeDiv12;
+				yVals[0] = y + 2 * fieldSizeDiv12;
 				yVals[1] = y + 11 * fieldSizeDiv12;
 				yVals[2] = y + 11 * fieldSizeDiv12;
 				g2.fillPolygon(xVals, yVals, 3);
@@ -1395,7 +1445,8 @@ public class FrameRenderer extends JComponent {
 				g2.setColor(Color.BLACK);
 				g2.drawOval(x + fieldSizeDiv12, y + fieldSizeDiv12,
 						4 * fieldSizeDiv12, 4 * fieldSizeDiv12);
-				g2.drawString(Integer.toString(number), x + 3 * fieldSizeDiv12,
+				g2.setColor(Color.WHITE);
+				g2.drawString(Integer.toString(number), x + 2 * fieldSizeDiv12,
 						y + fieldSizeDiv12 + fmH5.getHeight());
 
 			} else {
@@ -1405,7 +1456,7 @@ public class FrameRenderer extends JComponent {
 				xVals[0] = x + 9 * fieldSizeDiv12;
 				xVals[1] = x + 7 * fieldSizeDiv12;
 				xVals[2] = x + 11 * fieldSizeDiv12;
-				yVals[0] = y + 2* fieldSizeDiv12;
+				yVals[0] = y + 2 * fieldSizeDiv12;
 				yVals[1] = y + 11 * fieldSizeDiv12;
 				yVals[2] = y + 11 * fieldSizeDiv12;
 				g2.fillPolygon(xVals, yVals, 3);
@@ -1417,7 +1468,8 @@ public class FrameRenderer extends JComponent {
 				g2.setColor(Color.BLACK);
 				g2.drawOval(x + 7 * fieldSizeDiv12, y + fieldSizeDiv12,
 						4 * fieldSizeDiv12, 4 * fieldSizeDiv12);
-				g2.drawString(Integer.toString(number), x + 9 * fieldSizeDiv12,
+				g2.setColor(Color.WHITE);
+				g2.drawString(Integer.toString(number), x + 8 * fieldSizeDiv12,
 						y + fieldSizeDiv12 + fmH5.getHeight());
 			}
 		}

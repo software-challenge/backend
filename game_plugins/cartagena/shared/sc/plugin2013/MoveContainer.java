@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:move")
+@XStreamAlias(value = "cartagena:moveContainer")
 public class MoveContainer {
 	public Move firstMove;
 	public Move secondMove;

@@ -71,9 +71,12 @@ public class RandomLogic implements IGameHandler {
 			if(move.getClass().equals(BackwardMove.class)){
 				BackwardMove bMove = (BackwardMove) move;
 				System.out.println("*** Führe Rückwärtstzug aus - Feld mit Index: "  + bMove.fieldIndex);
+				bMove.addHint("Random Move Backward");
+				bMove.addHint("Noch ein Hint");
 			} else if(move.getClass().equals(ForwardMove.class)){
 				ForwardMove fMove = (ForwardMove) move;
 				System.out.println("*** Führe Vorwärtszug aus - Feld mit Index: "  + fMove.fieldIndex + " - Symbol : " + fMove.symbol);
+				fMove.addHint("Random Move Forward");
 			}
 			// Hinzufügen des Zuges zum Container
 			moveC.addMove(move);
@@ -86,6 +89,7 @@ public class RandomLogic implements IGameHandler {
 				e.printStackTrace();
 			}			
 		}
+		
 		// Sende den Container mit allen durchgeführten Zügen.
 		sendAction(moveC);
 	}
