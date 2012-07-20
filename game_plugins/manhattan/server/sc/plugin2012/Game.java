@@ -153,18 +153,19 @@ public class Game extends RoundBasedGameInstance<Player> {
 			PlayerScore score = entry.getValue();
 
 			if (entry.getKey() == player) {
+				logger.debug("setting 0 score");
 				score.setCause(cause);
-				score.setValueAt(1, new BigDecimal(0));
+				score.setValueAt(0, new BigDecimal(0));
 			} else {
-				score.setValueAt(1, new BigDecimal(2));
+				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
+		
 
 		if (!gameState.gameEnded()) {
 			gameState.endGame(((Player) player).getPlayerColor().opponent(), "Der Spieler '"
 					+ player.getDisplayName() + "' hat das Spiel verlassen.");
 		}
-
 		notifyOnGameOver(res);
 	}
 
@@ -197,7 +198,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			matchPoints = 2;
 		else if (stats[3] < oppPoints)
 			matchPoints = 0;
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, -2, 0, stats[0], stats[1], stats[2]) : 
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0, 0, stats[0], stats[1], stats[2]) : 
 			new PlayerScore(ScoreCause.REGULAR, matchPoints, stats[3], stats[0], stats[1], stats[2]);
 
 
