@@ -1,0 +1,12 @@
+\select@language {ngerman}
+\contentsline {section}{\numberline {1}Einf\IeC {\"u}hrung}{4}{section.1}
+\contentsline {section}{\numberline {2}Spielmaterial}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}Das Spielfeld}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Die Spielsteine}{4}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Die Spielkarten}{5}{subsection.2.3}
+\contentsline {section}{\numberline {3}Spielablauf}{5}{section.3}
+\contentsline {subsection}{\numberline {3.1}Vorw\IeC {\"a}rtsz\IeC {\"u}ge}{6}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}R\IeC {\"u}ckw\IeC {\"a}rtsz\IeC {\"u}ge}{6}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Punkteverteilung}{6}{subsection.3.3}
+\contentsline {section}{\numberline {4}Ende des Spiels}{7}{section.4}
+\contentsline {section}{\numberline {5}Die graphische Benutzeroberfl\IeC {\"a}che}{7}{section.5}
