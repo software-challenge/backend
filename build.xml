@@ -24,7 +24,7 @@
 		
 		<echo message="Compiling Plugins and Players..." />
 		<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
-		<!--<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />!-->
+		<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />
 		<!--<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />!-->
@@ -52,12 +52,12 @@
 			<fileset dir="./game_server/build/jar" />
 		</copy>
 
-		<!--
+		
 		<mkdir dir="${out.dir}/simple_client/hase_und_igel/jar" />
 		<copy todir="${out.dir}/simple_client/hase_und_igel/jar">
 			<fileset dir="./game_players/hase_und_igel/build/jar" />
 		</copy>
-		!-->
+	
 		
 		<!--
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />

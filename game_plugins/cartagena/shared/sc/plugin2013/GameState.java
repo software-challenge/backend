@@ -50,7 +50,7 @@ public class GameState implements Cloneable {
 
 	// momentane rundenzahl
 	@XStreamAsAttribute
-	private int turn = 0;
+	private int turn;
 
 	// die teilenhmenden spieler
 	private Player red, blue;
@@ -321,8 +321,8 @@ public class GameState implements Cloneable {
 	 * @param lastMove
 	 */
 	public void prepareNextTurn(MoveContainer lastMove) {
-		this.lastMove = lastMove;
 		turn++;
+		this.lastMove = lastMove;		
 		switchCurrentPlayer();
 		showCards();
 		performScoring();

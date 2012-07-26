@@ -19,17 +19,8 @@ public class Starter extends AbstractClient {
 		// client starten
 		super(host, port);
 
-		// strategie auswaehlen und zuweisen
-		IGameHandler logic;
-
-		// Versuche für den strategy-Parameter eine passende Logik zu
-		// instanzieren, sonst verwende Standard
-		try {
-			logic = LogicFactory.valueOf(strategy.toUpperCase()).getInstance(this);
-		} catch (IllegalArgumentException e) {
-			logic = LogicFactory.DEFAULT.getInstance(this);
-		}
-		
+		/** Hier wird die zu verwendende Strategie eingetragen.*/
+		IGameHandler logic = new RandomLogic(this);		
 		setHandler(logic);
 
 		// einem spiel beitreten
