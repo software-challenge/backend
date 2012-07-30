@@ -79,7 +79,6 @@ public class Observation implements IObservation, IUpdateListener,
 
 	@Override
 	public void cancel() {
-		System.out.println("###########Cancel Observation.cancel()");
 		conGame.cancel();
 		notifyOnGameEnded(this, conGame.getResult());
 	}
@@ -148,7 +147,8 @@ public class Observation implements IObservation, IUpdateListener,
 			list.ready();
 		}
 	}
-
+	
+	@SuppressWarnings("unused")
 	private String createGameEndedString(GameResult data) {
 		String result = "\n";
 
@@ -245,15 +245,13 @@ public class Observation implements IObservation, IUpdateListener,
 	 * 
 	 */
 	private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
-		System.out.println("###################Observation.notifyOnGameEnded()");
 		if (!notifiedOnGameEnded) {
 			notifiedOnGameEnded = true;
 
 			for (IGameEndedListener listener : gameEndedListeners) {
 				try {
-					System.out.println("###Observation.notifyOnGameEnded -> crateGameEndedString" + createGameEndedString(data));
-					listener.onGameEnded(data, createGameEndedString(data));
-					//listener.onGameEnded(data, null);
+					//listener.onGameEnded(data, createGameEndedString(data));
+					listener.onGameEnded(data, null);
 				} catch (Exception e) {
 					logger.error("GameEnded Notification caused an exception.",
 							e);
@@ -313,7 +311,7 @@ public class Observation implements IObservation, IUpdateListener,
 			handler.onUpdate(gameState.getCurrentPlayer(), gameState
 					.getOtherPlayer());
 
-			if (conGame.isGameOver() && conGame.isAtEnd()) {
+			if (conGame.isGameOver() && conGame.isAtEnd()) {				
 				notifyOnGameEnded(sender, conGame.getResult());
 			}
 

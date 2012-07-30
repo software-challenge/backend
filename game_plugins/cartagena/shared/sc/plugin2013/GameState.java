@@ -13,7 +13,6 @@ import sc.plugin2013.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
@@ -74,12 +73,10 @@ public class GameState implements Cloneable {
 	private MoveContainer lastMove;
 
 	// das Spielbrett
-	private final Board board;
+	private Board board;
 
 	// endbedingung
 	private Condition condition = null;
-
-	// TODO suppresStack Konstruktor einführen
 
 	public GameState() {
 		this(true);
@@ -97,6 +94,42 @@ public class GameState implements Cloneable {
 		board = new Board();
 	}
 
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		GameState clone = (GameState) super.clone();
+		if (red != null)
+			clone.red = (Player) red.clone();
+		if (blue != null)
+			clone.blue = (Player) blue.clone();
+		if (lastMove != null)
+			clone.lastMove = (MoveContainer) lastMove.clone();
+		if (cardStack != null) {
+			clone.cardStack = new LinkedList<Card>();
+			for(Card c:cardStack){
+				clone.cardStack.add((Card) c.clone());
+			}
+		}
+		if (usedStack != null){
+			clone.usedStack = new LinkedList<Card>();
+			for(Card c:usedStack){
+				clone.usedStack.add((Card) c.clone());
+			}
+		}
+		if (openCards != null){
+			clone.openCards = new LinkedList<Card>();
+			for(Card c:openCards){
+				clone.openCards.add((Card) c.clone());
+			}
+		}
+		if (condition != null)
+			clone.condition = (Condition) this.condition.clone();
+		if (board != null)
+			clone.board = (Board) this.board.clone();
+		if(currentPlayer != null)
+			clone.currentPlayer = currentPlayer;
+		return clone;
+	}
+
 	/**
 	 * Initialisiert den KartenStapel
 	 */
@@ -112,7 +145,9 @@ public class GameState implements Cloneable {
 		Collections.shuffle(cardStack, new SecureRandom());
 	}
 
-	/** Used to initialize OmittedFields cardStack and used Stack
+	/**
+	 * Used to initialize OmittedFields cardStack and used Stack
+	 * 
 	 * @return
 	 */
 	private Object readResolve() {
@@ -292,16 +327,22 @@ public class GameState implements Cloneable {
 		return this.turn;
 	}
 
-	/** Liefert die aktuelle Runde zurück.
+	/**
+	 * Liefert die aktuelle Runde zurück.
+	 * 
 	 * @return die aktuelle Runde
 	 */
 	public int getRound() {
 		return turn / 2;
 	}
 
-	/** Beendet das aktuelle Spiel
-	 * @param winner Der Gewinner
-	 * @param reason Der Siegesgrund
+	/**
+	 * Beendet das aktuelle Spiel
+	 * 
+	 * @param winner
+	 *            Der Gewinner
+	 * @param reason
+	 *            Der Siegesgrund
 	 */
 	public void endGame(PlayerColor winner, String reason) {
 		if (condition == null) {
@@ -310,19 +351,23 @@ public class GameState implements Cloneable {
 
 	}
 
-	/** Gibt das Spielbrett zurück
+	/**
+	 * Gibt das Spielbrett zurück
+	 * 
 	 * @return Das Spielbrett
 	 */
 	public Board getBoard() {
 		return board;
 	}
 
-	/** Aktualisiert den Spielzustand welcher durch einen Zug verändert wird
+	/**
+	 * Aktualisiert den Spielzustand welcher durch einen Zug verändert wird
+	 * 
 	 * @param lastMove
 	 */
 	public void prepareNextTurn(MoveContainer lastMove) {
 		turn++;
-		this.lastMove = lastMove;		
+		this.lastMove = lastMove;
 		switchCurrentPlayer();
 		showCards();
 		performScoring();
@@ -360,56 +405,66 @@ public class GameState implements Cloneable {
 	}
 
 	public boolean playerFinished(PlayerColor color) {
-		if(this.board.numPiratesOf(Constants.SEGMENTS * Constants.SYMBOLS + 1, color) == Constants.PIRATES){
+		if (this.board.numPiratesOf(Constants.SEGMENTS * Constants.SYMBOLS + 1,
+				color) == Constants.PIRATES) {
 			return true;
 		}
 		return false;
 	}
 
-	/** Gibt die Liste der offen liegenden Karten zurück
+	/**
+	 * Gibt die Liste der offen liegenden Karten zurück
+	 * 
 	 * @return
 	 */
 	public List<Card> getOpenCards() {
 		return openCards;
 	}
 
-	/** Gibt den zuletzt ausgeführten Zug zurück
+	/**
+	 * Gibt den zuletzt ausgeführten Zug zurück
+	 * 
 	 * @return
 	 */
 	public MoveContainer getLastMove() {
 		return lastMove;
 	}
 
-	/** Gibt den Gewinngrund zurück
+	/**
+	 * Gibt den Gewinngrund zurück
+	 * 
 	 * @return
 	 */
 	public String winningReason() {
 		return condition == null ? "" : condition.reason;
 	}
-	
-	/** Gibt eine Liste aller Züge zurück, welche der Spieler, welcher momentan am Zug ist durchführen kann
-	 * 	diese können sowohl Vorwärts-, als auch Rückwärtszüge sein.
+
+	/**
+	 * Gibt eine Liste aller Züge zurück, welche der Spieler, welcher momentan
+	 * am Zug ist durchführen kann diese können sowohl Vorwärts-, als auch
+	 * Rückwärtszüge sein.
+	 * 
 	 * @return LinkedList der durchführbaren Züge.
 	 */
-	public List<Move> getPossibleMoves(){
+	public List<Move> getPossibleMoves() {
 		List<Move> possibleMoves = new LinkedList<Move>();
 		Player player = getCurrentPlayer();
-		
+
 		Set<Card> cards = new HashSet<Card>(player.getCards());
-		
-		for(int i = 0; i < board.size(); i++){
-			if(board.hasPirates(i, player.getPlayerColor())){
-				if(board.getPreviousField(i) != -1){
+
+		for (int i = 0; i < board.size(); i++) {
+			if (board.hasPirates(i, player.getPlayerColor())) {
+				if (board.getPreviousField(i) != -1) {
 					possibleMoves.add(new BackwardMove(i));
 				}
-				if(i != board.size()-1){
-					for(Card c: cards){
+				if (i != board.size() - 1) {
+					for (Card c : cards) {
 						possibleMoves.add(new ForwardMove(i, c.symbol));
 					}
-				}				
+				}
 			}
 		}
-		
+
 		return possibleMoves;
 	}
 }

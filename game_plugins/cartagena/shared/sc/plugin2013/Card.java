@@ -35,7 +35,8 @@ public class Card implements Cloneable {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+		Card clone = new Card(this.symbol);
+		return clone;
 	}
 
 	/**

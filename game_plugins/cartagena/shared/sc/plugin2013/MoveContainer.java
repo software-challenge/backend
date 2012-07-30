@@ -11,7 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * 
  */
 @XStreamAlias(value = "cartagena:moveContainer")
-public class MoveContainer {
+public class MoveContainer implements Cloneable{
 	public Move firstMove;
 	public Move secondMove;
 	public Move thirdMove;
@@ -21,6 +21,8 @@ public class MoveContainer {
 		this.secondMove = null;
 		this.thirdMove = null;
 	}
+
+	
 
 	public MoveContainer(Move first) {
 		this.firstMove = first;
@@ -76,6 +78,19 @@ public class MoveContainer {
 		} else {
 			return 0;
 		}
+	}
+	
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		MoveContainer clone = (MoveContainer) super.clone();
+		if(firstMove != null)
+			clone.firstMove = (Move) firstMove.clone();
+		if(secondMove != null)
+			clone.secondMove = (Move) secondMove.clone();
+		if(thirdMove != null)
+			clone.thirdMove = (Move) thirdMove.clone();
+		return clone;
 	}
 
 	public boolean equals(Object obj) {

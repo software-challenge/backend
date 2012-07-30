@@ -106,4 +106,16 @@ public class Field implements Cloneable {
 		}
 		return num;
 	}
+
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Field clone = new Field(this.type, this.symbol);
+		if(pirates != null){
+			for(Pirate p:pirates){
+				clone.pirates.add((Pirate) p.clone());
+			}
+		}
+		return clone;
+	}
 }

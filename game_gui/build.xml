@@ -44,8 +44,8 @@
 		<echo message="Compiling SC dependencies" />
 		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
-		<ant dir="./../game_plugins/schaefchen_plugin" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/cartagena" target="clean-build" inheritAll="false" />
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>
 
@@ -73,6 +73,12 @@
 		<mkdir dir="${plugin.dir}" />
 		<copy todir="${plugin.dir}" flatten="true">
 			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" excludes="hase_und_igel/**" /> <!-- ohne hui wegen lizenz !-->
+		</copy>
+	<!-- plugins zum debuggen in plugin ordner kopieren-->
+		<delete dir ="./plugins" />
+		<mkdir dir = ".plugins" />
+		<copy todir="./plugins" flatten="true">
+					<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
 		</copy>
 
 <!-- have newest plugin as standard entry !-->
