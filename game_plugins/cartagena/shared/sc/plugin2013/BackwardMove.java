@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias(value = "cartagena:backwardMove")
 public class BackwardMove extends Move {
 	@XStreamAsAttribute
-	public final int fieldIndex;
+	public int fieldIndex;
 
 	public BackwardMove(int index) {
 		this.fieldIndex = index;
@@ -31,6 +31,9 @@ public class BackwardMove extends Move {
 					"Es ist nicht möglich einen Piraten vom Startfeld zurückzubewegen");
 		}
 		int nextField = board.getPreviousField(fieldIndex);
+		if(nextField == -1){
+			throw new InvalidMoveException("Es gibt kein zurückliegendes Feld");
+		}
 		int numPirates = board.getPirates(nextField).size();
 		board.movePirate(fieldIndex, nextField, player.getPlayerColor());
 		if (numPirates == 1) {
@@ -59,5 +62,12 @@ public class BackwardMove extends Move {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		BackwardMove clone =  (BackwardMove) super.clone();
+		clone.fieldIndex = this.fieldIndex;
+		return clone;
 	}
 }

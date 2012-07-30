@@ -30,8 +30,8 @@ public class Player extends SimplePlayer implements Cloneable {
 	private int points;
 
 	// Liste der Karten, die sich auf der Hand befinden
-	//@XStreamImplicit(itemFieldName = "card")
-	private final List<Card> cards;
+	// @XStreamImplicit(itemFieldName = "card")
+	private List<Card> cards;
 
 	/**
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
@@ -53,22 +53,26 @@ public class Player extends SimplePlayer implements Cloneable {
 		this.cards = new LinkedList<Card>();
 		this.points = 0;
 	}
-	
-	 /**
-     * klont dieses Objekt
-     * @return ein neues Objekt mit gleichen Eigenschaften
-     * @throws CloneNotSupportedException 
-     */
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        Player clone = new Player(this.color);
-        clone.points = this.points;
-        if (cards != null)
-            for (Card c : this.cards)
-                clone.addCard((Card)c.clone());
-        return clone;
-    }
-	
+
+	/**
+	 * klont dieses Objekt
+	 * 
+	 * @return ein neues Objekt mit gleichen Eigenschaften
+	 * @throws CloneNotSupportedException
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Player clone = (Player) super.clone();
+		clone.color = this.color;
+		if (cards != null) {
+			clone.cards = new LinkedList<Card>();
+			for (Card c : this.cards) {
+				clone.addCard((Card) c.clone());
+			}
+		}
+		return clone;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return (obj instanceof Player) && ((Player) obj).color == this.color;
@@ -82,20 +86,22 @@ public class Player extends SimplePlayer implements Cloneable {
 	public PlayerColor getPlayerColor() {
 		return this.color;
 	}
-	
-	/** 
+
+	/**
 	 * Fügt dem Spieler eine Karte hinzu
+	 * 
 	 * @param card
 	 */
-	public void addCard(Card card){
+	public void addCard(Card card) {
 		this.cards.add(card);
 	}
-	
-	/** 
+
+	/**
 	 * Enfernt eine Karte mit übergebenem Symbol vom Spielerstapel
+	 * 
 	 * @param symbol
 	 */
-	public Card removeCard(SymbolType symbol){
+	public Card removeCard(SymbolType symbol) {
 		Card cardToRemove = null;
 		for (Card card : cards) {
 			if (card.symbol == symbol) {
@@ -106,48 +112,55 @@ public class Player extends SimplePlayer implements Cloneable {
 		cards.remove(cardToRemove);
 		return cardToRemove;
 	}
-	
-	/** Prüft ob ein Spieler eine Karte mit gegebenem Symbol besitzt
+
+	/**
+	 * Prüft ob ein Spieler eine Karte mit gegebenem Symbol besitzt
+	 * 
 	 * @param symbol
 	 * @return true wenn er eine Karte mit übergebenem Symbol besitzt
 	 */
-	public boolean hasCard(SymbolType symbol){
-		for(Card card: cards){
-			if(card.symbol == symbol){
+	public boolean hasCard(SymbolType symbol) {
+		for (Card card : cards) {
+			if (card.symbol == symbol) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
-	/** 
+
+	/**
 	 * Liefert eine Liste, der Karten des Spielers
+	 * 
 	 * @return
 	 */
-	public List<Card> getCards(){
+	public List<Card> getCards() {
 		return this.cards;
 	}
-	
-	/** Liefert die Anzahl der Karten zurück, die der Spieler auf der Hand hat.
+
+	/**
+	 * Liefert die Anzahl der Karten zurück, die der Spieler auf der Hand hat.
+	 * 
 	 * @return die Anzahl der Karten
 	 */
-	public int getNumCards(){
+	public int getNumCards() {
 		return this.cards.size();
 	}
-	
-	/** 
+
+	/**
 	 * Fügt dem Punktekonto des Spieler Punkte hinzu
+	 * 
 	 * @param points
 	 */
-	public void setPoints(int points){
+	public void setPoints(int points) {
 		this.points = points;
 	}
-	
-	/** 
+
+	/**
 	 * Liefert die Punkte des Spielers
+	 * 
 	 * @return
 	 */
-	public int getPoints(){
+	public int getPoints() {
 		return this.points;
 	}
 

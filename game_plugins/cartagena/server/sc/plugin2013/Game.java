@@ -116,6 +116,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			}
 
 			next(gameState.getCurrentPlayer());
+			//next();
 
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);

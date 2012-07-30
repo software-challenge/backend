@@ -26,6 +26,12 @@ public class Pirate implements Cloneable {
 	public PlayerColor getOwner(){
 		return this.owner;
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Pirate clone = new Pirate(this.owner);
+		return clone;
+	}
 	
 
 }

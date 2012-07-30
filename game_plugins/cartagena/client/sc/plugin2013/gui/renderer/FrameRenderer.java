@@ -147,6 +147,7 @@ public class FrameRenderer extends JComponent {
 
 	// Strings
 	private String endTurn = "Zug Beenden";
+	private Object LOCK = new Object();
 
 	public FrameRenderer() {
 
@@ -247,17 +248,19 @@ public class FrameRenderer extends JComponent {
 					try {
 						Thread.sleep(waitTime);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
-				// }
 			}
 		}
 		humanMove = false;
 
 		// aktuellen spielstand sichern
-		this.gameState = gameState;
+		try {
+			this.gameState = (GameState) gameState.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
 		currentPlayer = gameState.getCurrentPlayerColor();
 		currentPlayerColor = getPlayerColor(currentPlayer);
 
@@ -442,6 +445,10 @@ public class FrameRenderer extends JComponent {
 
 				updateBuffer = true;
 				repaint();
+				
+				synchronized (LOCK) {
+					LOCK.notify();
+				}
 
 				try {
 					long duration = startTime + (frame + 1) * (1500 / FPS)

@@ -1,7 +1,5 @@
 package sc.plugin2013;
 
-import java.util.LinkedList;
-
 import sc.plugin2013.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -10,9 +8,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias(value = "cartagena:forwardMove")
 public class ForwardMove extends Move {
 	@XStreamAsAttribute
-	public final int fieldIndex;
+	public int fieldIndex;
 	@XStreamAsAttribute
-	public final SymbolType symbol;
+	public SymbolType symbol;
 
 	public ForwardMove(int index, SymbolType sym) {
 		this.fieldIndex = index;
@@ -27,15 +25,16 @@ public class ForwardMove extends Move {
 		// keine Piraten des Spielers an Position index
 		// Spieler keine Karte des Typs Symbol hat.
 		Board board = state.getBoard();
-		if(this.fieldIndex < 0 || this.fieldIndex > board.size()-1){
+		if (this.fieldIndex < 0 || this.fieldIndex > board.size() - 1) {
 			throw new InvalidMoveException("Ungültigen Feldindex Angegeben");
 		}
-		if(this.fieldIndex == board.size()-1){
-			throw new InvalidMoveException("Vorwärtszug vom Zielfeld nicht möglich");
+		if (this.fieldIndex == board.size() - 1) {
+			throw new InvalidMoveException(
+					"Vorwärtszug vom Zielfeld nicht möglich");
 		}
 		if (!player.hasCard(symbol)) {
-			throw new InvalidMoveException("Spieler hat keine Karte mit Symbol "
-					+ symbol);
+			throw new InvalidMoveException(
+					"Spieler hat keine Karte mit Symbol " + symbol);
 		}
 		if (board.hasPirates(this.fieldIndex, player.getPlayerColor()) == false) {
 			throw new InvalidMoveException("Spieler " + player.getPlayerColor()
@@ -57,6 +56,14 @@ public class ForwardMove extends Move {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		ForwardMove clone = (ForwardMove) super.clone();
+		clone.fieldIndex = this.fieldIndex;
+		clone.symbol = this.symbol;
+		return clone;
 	}
 
 }

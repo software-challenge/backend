@@ -43,9 +43,9 @@ public class Board implements Cloneable{
 			start.putPirate(new Pirate(PlayerColor.BLUE));
 		}
 		//FIXME: test für den letzten zug. Piraten im letzten Segment
-		fields.get(fields.size()-4).putPirate(new Pirate(PlayerColor.RED));
-		fields.get(fields.size()-5).putPirate(new Pirate(PlayerColor.RED));
-		fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
+//		fields.get(fields.size()-4).putPirate(new Pirate(PlayerColor.RED));
+//		fields.get(fields.size()-5).putPirate(new Pirate(PlayerColor.RED));
+//		fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
 //		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
 //		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
 //		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
@@ -148,6 +148,18 @@ public class Board implements Cloneable{
 
 	public int size() {
 		return fields.size();
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Board clone = (Board) super.clone();
+		if(fields != null){
+			clone.fields = new LinkedList<Field>();
+			for(Field f: this.fields){
+				clone.fields.add((Field) f.clone()); 
+			}
+		}
+		return clone;
 	}
 
 }
