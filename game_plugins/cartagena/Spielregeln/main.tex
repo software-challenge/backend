@@ -10,6 +10,7 @@
 \usepackage{amsfonts}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{paralist}
 
 
 \hypersetup{
@@ -49,16 +50,16 @@ erfolgt mit freundlicher Genehmigung der Winning Moves Deutschland GmbH."
 \EmptyPlainPage
 
 \section{Einführung}
-Das Spiel der Softwarechallenge 2012 ist eine abgewandelte Version von Cartagena
-des \emph{Winning Moves} Verlages. Hierbei werden Piraten abwechselnd, mithilfe
-von Zugkarten über das Spielfeld bewegt.\\
-
+In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Cartagena}
+der Softwarechallenge 2013 erläutert.\\
+In dem Spiel versuchen zwei Spieler,
+abwechselnd ihre Spielsteine, die Piraten, durch einen Tunnel zu bewegen.
 Ziel des Spiels ist es alle Piraten auf die Schaluppe zu bringen. Wer dies als
-Erstes schafft, gewinnt das Spiel.
-\begin{itemize}
-  \item Cartagena in abgewandelter Tortuga Version
-  \item Ziel : Alle Piraten auf die Schaluppe
-\end{itemize}
+Erstes schafft, gewinnt das Spiel.\\
+In der implementierten Version sind jedem Spieler die nächsten 12 ziehbaren
+Karten, sowie die Karten, welche der Gegner auf der Hand hält bekannt. Die
+in einer Spieltaktik zu beachtenden Parameter werden dadurch um ein Vielfaches
+erhöht.
 
 \section{Spielmaterial}
 	\subsection{Das Spielfeld}
@@ -98,7 +99,8 @@ Erstes schafft, gewinnt das Spiel.
 \section{Spielablauf}
 	Es beginnt der Rote Spieler. Jeder Spieler darf innerhalb einer Runde 3 Züge
 	machen. Diese dürfen aus einer beliebigen Kombination von Vorwärts- und
-	Rückwärtzügen bestehen.\\
+	Rückwärtzügen bestehen. Ein Spieler muss jedoch nicht alle 3 Züge nutzen,
+	kann also auch zwei, einen oder gar keinen Zug tätigen.\\
 	Bei einem Vorwärtszug muss eine Karte von der Spielerhand abgelegt werden, bei
 	Rückwärtzügen können neue Karten vom Stapel gezogen werden.
 	
@@ -136,13 +138,58 @@ Erstes schafft, gewinnt das Spiel.
 	\subsection{Punkteverteilung}
 	Die Punkte ergeben sich aus der Anzahl der Piraten, welche sich im jeweiligen
 	Segment befinden. Hat ein Spieler beispielsweise zwei Piraten in Segment 1 und
-	einen Piraten in Segment 3, so ergibt sich eine Gesamtpunktzahl von 4.\\
+	einen Piraten in Segment 3, so ergibt sich eine Gesamtpunktzahl von 5.\\
 	Spielsteine auf dem Startfeld bringen keine Punkte und ein Pirate im Zielfeld
 	bringt 6 Punkte.
 \section{Ende des Spiels}
 	Hat ein Spieler alle seine Piraten im Zielfeld, so gewinnt dieser. Schafft dies
-	keiner der beiden Spieler alle Piraten innerhalb der \RundenAnzahl\ Runden, so
+	keiner der beiden Spieler innerhalb der \RundenAnzahl\ Runden, so
 	gewinnt der Spieler mit den meisten Punkten.
 \section{Die graphische Benutzeroberfläche}
+\subsection{Übersicht der graphischen Benutzeroberfläche}
+	In Abbildung \ref{fig:GUI} ist ein Überblick der graphischen Benutzeroberfläche
+	zu sehen. Die markanten Spielelemente sind mit \emph{a-e} gekenzeichnet.
+	 \begin{figure}[h]
+		\centering
+		\label{fig:GUI}
+		\includegraphics[width=\linewidth]{bilder/gui}
+		\caption{Überblick der GUI}
+	\end{figure}
+	
+	\begin{compactenum}[a)]
+		\item Die nächsten ziehbaren Karten. Die erste befindet sich links.
+		\item Das Spielbrett
+		\item Punkteanzeige, Anzeige der verbleibenden Züge und Button um einen Zug
+		vorzeitig zu Beenden.
+		\item Die Karten, welche Spieler 1 auf der Hand hält
+		\item Spielfortschrittsanzeige
+	\end{compactenum}
+	
+\subsection{Das Einstellungsmenü}
+	 \begin{figure}[h]
+		\centering
+		\label{fig:Configuration}
+		\includegraphics[scale=0.5]{bilder/configuration}
+		\caption{Das Einstellungsmenü}
+	\end{figure}
+	
+	Ein Einstellungsmenü mit Darstellungsoptionen lässt
+sich uber die Leertaste anzeigen. Dazu muss das
+Spielfeld den Tastaturfokus haben (erforderlichenfalls
+vorher Mausklick auf das Spielfeld). Es stehen dort
+folgende Einstellungen zur Verfügung:
+
+\textbf{Kantenglättung} und \textbf{Transparenz} verbessern die
+Optik des Spiels, sind aber rechenintensiv. Auf sehr
+langsamen Rechnern sollten sie daher deaktiviert
+werden. \textbf{Hintergrundbild} ist zwar weniger rechenintensiv, kann
+aber auch aus Gründen der Übersichtlichkeit deaktiviert
+werden.\\
+\textbf{Animationen} legt fest, ob die Bewegungen der Spielsteine in Wiederholungen und bei Computerspielern
+animiert werden sollen.\\
+Die \textbf{Debugansicht} verkleinert die Punkteanzeige in
+der Seitenleiste etwas und zeigt unterhalb Debug-
+Hilfestellungen zu einzelnen Zügen an. Diese Hilfestellungen sind Texte, die ein Spielclient einem Zug
+beifügen kann, den er an den Spielserver sendet.
 	
 \end{document}

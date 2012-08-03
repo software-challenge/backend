@@ -1,16 +1,22 @@
 package sc.plugin2013;
 
+
+import sc.plugin2013.util.ForwardMoveConverter;
 import sc.plugin2013.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias(value = "cartagena:forwardMove")
+@XStreamConverter(ForwardMoveConverter.class)
 public class ForwardMove extends Move {
 	@XStreamAsAttribute
 	public int fieldIndex;
 	@XStreamAsAttribute
 	public SymbolType symbol;
+	
+	private volatile boolean wrongSymbolString = false;
 
 	public ForwardMove(int index, SymbolType sym) {
 		this.fieldIndex = index;
@@ -39,6 +45,9 @@ public class ForwardMove extends Move {
 		if (board.hasPirates(this.fieldIndex, player.getPlayerColor()) == false) {
 			throw new InvalidMoveException("Spieler " + player.getPlayerColor()
 					+ " hat keinen Piraten auf Feld " + fieldIndex);
+		}
+		if(this.wrongSymbolString){
+			throw new InvalidMoveException("Gesendetes Symbol existiert nicht");
 		}
 		// sonst nächstes freies Feld suchen und Piraten vorwärts bewegen
 		int nextField = board.getNextField(fieldIndex, symbol);
