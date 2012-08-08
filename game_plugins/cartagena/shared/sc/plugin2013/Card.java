@@ -3,12 +3,19 @@ package sc.plugin2013;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias(value="cartagena:card")
+/**
+ * Klasse, welche eine Karte darstellt. Hat ein Attribut {@code symbol} vom Typ
+ * {@link SymbolType}.
+ * 
+ * @author fdu
+ * 
+ */
+@XStreamAlias(value = "cartagena:card")
 public class Card implements Cloneable {
 	@XStreamAsAttribute
 	public final SymbolType symbol;
 
-	/**
+	/*
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
 	 * Deserialisierung von Objekten aus XML-Nachrichten.
 	 */

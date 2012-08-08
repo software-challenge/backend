@@ -3,11 +3,10 @@ package sc.plugin2013;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Ein Debughinweis ist ein Container für einen String der einem Zug
- * beigefuegt werden kann. Beigefuegte Debughints werden direkt in der
- * grafischen Oberflaeche des Plugins angezeigt, wenn die Debugansicht gewaehlt
- * wurde.
- * <br><br>
+ * Ein Debughinweis ist ein Container für einen String der einem Zug beigefuegt
+ * werden kann. Beigefuegte Debughints werden direkt in der grafischen
+ * Oberflaeche des Plugins angezeigt, wenn die Debugansicht gewaehlt wurde. <br>
+ * <br>
  * Dies ermoeglich das schnellere Debuggen von Clients und besseres
  * Konfigurieren von Strategien, denn es muessen keine Konsolenausgaben gesucht
  * werden und die Hinweise werden immer zum passenden Zug angezeigt.
@@ -20,14 +19,13 @@ public class DebugHint implements Cloneable {
 	@XStreamAsAttribute
 	public final String content;
 
-
-         /**
-         * XStream benötigt eventuell einen parameterlosen Konstruktor
-         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
-         */
-        public DebugHint() {
-            content = null;
-        }
+	/**
+	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
+	 * Deserialisierung von Objekten aus XML-Nachrichten.
+	 */
+	public DebugHint() {
+		content = null;
+	}
 
 	/**
 	 * einen neuen Hinweis der form key = value erstellen
@@ -59,11 +57,13 @@ public class DebugHint implements Cloneable {
 	public DebugHint(final String content) {
 		this.content = content == null ? "" : content;
 	}
-        /**
-         * klont dieses Objekt
-         * @return ein neues Objekt mit gleichen Eigenschaften
-         * @throws CloneNotSupportedException 
-         */
+
+	/**
+	 * klont dieses Objekt
+	 * 
+	 * @return ein neues Objekt mit gleichen Eigenschaften
+	 * @throws CloneNotSupportedException
+	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		return new DebugHint(content);

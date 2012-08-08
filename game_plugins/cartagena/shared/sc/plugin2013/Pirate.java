@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Repräsentiert eine Spielfigur, besitzt Information darüber, welchem Spieler sie gehört
- * @author felix
+ * @author fdu
  *
  */
 @XStreamAlias(value = "cartagena:pirate")
@@ -23,6 +23,9 @@ public class Pirate implements Cloneable {
 		this.owner = color;
 	}
 	
+	/** Gibt die Farbe des zugehörigen Spielers zurück
+	 * @return
+	 */
 	public PlayerColor getOwner(){
 		return this.owner;
 	}

@@ -3,7 +3,6 @@ package sc.plugin2013;
 import java.util.LinkedList;
 import java.util.List;
 
-
 import sc.plugin2013.DebugHint;
 import sc.plugin2013.Move;
 import sc.plugin2013.util.InvalidMoveException;
@@ -11,12 +10,16 @@ import sc.plugin2013.util.InvalidMoveException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-/** Ein Allgemeiner Zug, kann ein Vorwärts- oder Rückwärtszug sein.
+/**
+ * Abstrakte Zugklasse. {@link ForwardMove} und {@link BackwardMove} erben von
+ * dieser Klasse. Beiden Zugarten gemeinsam ist die Liste mit {@link DebugHint}
+ * -Objekten.
+ * 
  * @author fdu
- *
+ * 
  */
 @XStreamAlias(value = "cartagena:move")
-public abstract class Move implements Cloneable{
+public abstract class Move implements Cloneable {
 	@XStreamImplicit(itemFieldName = "hint")
 	private List<DebugHint> hints;
 
@@ -85,5 +88,15 @@ public abstract class Move implements Cloneable{
 		return hints == null ? new LinkedList<DebugHint>() : hints;
 	}
 
-	public abstract void perform(GameState state, Player player) throws InvalidMoveException;
+	/**
+	 * Abstrakte Methode, welche von ForwardMove und BackwardMove implementiert
+	 * wird. Hierbei wird überprüft ob der Zug gültig ist. Die Spielkarten der
+	 * Spieler werden aktualisiert.
+	 * 
+	 * @param state
+	 * @param player
+	 * @throws InvalidMoveException
+	 */
+	public abstract void perform(GameState state, Player player)
+			throws InvalidMoveException;
 }

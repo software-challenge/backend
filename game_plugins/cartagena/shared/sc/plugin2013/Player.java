@@ -12,7 +12,7 @@ import sc.framework.plugins.SimplePlayer;
 import sc.plugin2013.PlayerColor;
 
 /**Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
- * Beeinhaltet auch Informationen zum Punktekonto und zu den {@link Card Karten).
+ * Beeinhaltet auch Informationen zum Punktekonto und zu den Karten ({@link Card) des Spielers.
  *
  * 
  * @author fdu
@@ -21,16 +21,24 @@ import sc.plugin2013.PlayerColor;
 @XStreamAlias(value = "cartagena:player")
 public class Player extends SimplePlayer implements Cloneable {
 
-	// Farbe des Spieler
+	
+	/**
+	 * Die Farbe des Spielers
+	 */
 	@XStreamAsAttribute
 	private PlayerColor color;
 
-	// Punkte des Spieler
+	
+	/**
+	 * Die Punkte des Spielers
+	 */
 	@XStreamAsAttribute
 	private int points;
 
-	// Liste der Karten, die sich auf der Hand befinden
-	// @XStreamImplicit(itemFieldName = "card")
+
+	/**
+	 * Die Liste der Karten des Spielers
+	 */
 	private List<Card> cards;
 
 	/**
@@ -39,6 +47,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 */
 	public Player() {
 		cards = null;
+		points = -1;
 	}
 
 	/**
@@ -97,7 +106,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * Enfernt eine Karte mit übergebenem Symbol vom Spielerstapel
+	 * Enfernt eine Karte mit übergebenem Symbol vom Spieler
 	 * 
 	 * @param symbol
 	 */
@@ -147,7 +156,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * Fügt dem Punktekonto des Spieler Punkte hinzu
+	 * Setzt die Punkte des Spielers
 	 * 
 	 * @param points
 	 */

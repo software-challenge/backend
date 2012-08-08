@@ -1,14 +1,14 @@
 \select@language {ngerman}
-\contentsline {section}{\numberline {1}Einf\IeC {\"u}hrung}{4}{section.1}
-\contentsline {section}{\numberline {2}Spielmaterial}{4}{section.2}
-\contentsline {subsection}{\numberline {2.1}Das Spielfeld}{4}{subsection.2.1}
-\contentsline {subsection}{\numberline {2.2}Die Spielsteine}{4}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}Die Spielkarten}{5}{subsection.2.3}
-\contentsline {section}{\numberline {3}Spielablauf}{5}{section.3}
-\contentsline {subsection}{\numberline {3.1}Vorw\IeC {\"a}rtsz\IeC {\"u}ge}{6}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}R\IeC {\"u}ckw\IeC {\"a}rtsz\IeC {\"u}ge}{6}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}Punkteverteilung}{6}{subsection.3.3}
-\contentsline {section}{\numberline {4}Ende des Spiels}{7}{section.4}
-\contentsline {section}{\numberline {5}Die graphische Benutzeroberfl\IeC {\"a}che}{7}{section.5}
-\contentsline {subsection}{\numberline {5.1}\IeC {\"U}bersicht der graphischen Benutzeroberfl\IeC {\"a}che}{7}{subsection.5.1}
-\contentsline {subsection}{\numberline {5.2}Das Einstellungsmen\IeC {\"u}}{7}{subsection.5.2}
+\contentsline {section}{\numberline {1}Einf\IeC {\"u}hrung}{3}{section.1}
+\contentsline {section}{\numberline {2}Spielmaterial}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Das Spielbrett}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Die Spielsteine}{3}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Die Spielkarten}{4}{subsection.2.3}
+\contentsline {section}{\numberline {3}Spielablauf}{4}{section.3}
+\contentsline {subsection}{\numberline {3.1}Vorw\IeC {\"a}rtsz\IeC {\"u}ge}{5}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}R\IeC {\"u}ckw\IeC {\"a}rtsz\IeC {\"u}ge}{5}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Punkteverteilung}{5}{subsection.3.3}
+\contentsline {section}{\numberline {4}Ende des Spiels}{6}{section.4}
+\contentsline {section}{\numberline {5}Die graphische Benutzeroberfl\IeC {\"a}che}{6}{section.5}
+\contentsline {subsection}{\numberline {5.1}\IeC {\"U}bersicht der graphischen Benutzeroberfl\IeC {\"a}che}{6}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}Das Einstellungsmen\IeC {\"u}}{6}{subsection.5.2}
