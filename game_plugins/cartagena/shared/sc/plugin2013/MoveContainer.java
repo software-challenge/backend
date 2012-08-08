@@ -5,7 +5,7 @@ import sc.plugin2013.util.InvalidMoveException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Container Klasse welche bis zu 3 Züge beherbergt
+ * Container Klasse welche bis zu 3 Teilzüge beherbergt
  * 
  * @author fdu
  * 
@@ -16,6 +16,9 @@ public class MoveContainer implements Cloneable{
 	public Move secondMove;
 	public Move thirdMove;
 
+	/** XStream benötigt eventuell einen Parameterlosen Konstruktor.
+	 * 
+	 */
 	public MoveContainer() {
 		this.firstMove = null;
 		this.secondMove = null;
@@ -24,24 +27,41 @@ public class MoveContainer implements Cloneable{
 
 	
 
+	/** Erstellt einen MoveContainer mit einem Teilzug.
+	 * @param first
+	 */
 	public MoveContainer(Move first) {
 		this.firstMove = first;
 		this.secondMove = null;
 		this.thirdMove = null;
 	}
 
+	/** Erstellt einen MoveContainer mit zwei Teilzügen.
+	 * @param first
+	 * @param second
+	 */
 	public MoveContainer(Move first, Move second) {
 		this.firstMove = first;
 		this.secondMove = second;
 		this.thirdMove = null;
 	}
 
+	/** Erstellt einen MoveContainer mit drei Teilzügen.
+	 * @param first
+	 * @param second
+	 * @param third
+	 */
 	public MoveContainer(Move first, Move second, Move third) {
 		this.firstMove = first;
 		this.secondMove = second;
 		this.thirdMove = third;
 	}
 
+	/** Führt die Teilzüge durch
+	 * @param gameState
+	 * @param expectedPlayer
+	 * @throws InvalidMoveException
+	 */
 	public void perform(GameState gameState, Player expectedPlayer)
 			throws InvalidMoveException {
 		if (firstMove != null) {
@@ -81,6 +101,9 @@ public class MoveContainer implements Cloneable{
 	}
 	
 	
+	/** Erstellt eine deep copy dieses Objektes. Jeder Teilzug wird auch kopiert.
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		MoveContainer clone = (MoveContainer) super.clone();

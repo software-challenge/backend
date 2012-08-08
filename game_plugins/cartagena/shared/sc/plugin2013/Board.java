@@ -11,8 +11,15 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import sc.plugin2013.util.Constants;
 
+/**
+ * Klasse welche eine Spielbrett darstellt. Beherbergt eine Liste von Feldern (
+ * {@link Field}).
+ * 
+ * @author fdu
+ * 
+ */
 @XStreamAlias(value = "cartagena:board")
-public class Board implements Cloneable{
+public class Board implements Cloneable {
 
 	private List<Field> fields;
 
@@ -22,7 +29,8 @@ public class Board implements Cloneable{
 
 	private void init() {
 		// Größe Festgelegt durch Startfeld, Zielfeld und Segmente * Symbole
-		fields = new ArrayList<Field>(Constants.SEGMENTS * Constants.SYMBOLS + 2);
+		fields = new ArrayList<Field>(Constants.SEGMENTS * Constants.SYMBOLS
+				+ 2);
 		fields.add(new Field(FieldType.START));
 		for (int i = 0; i < Constants.SEGMENTS; i++) {
 			LinkedList<Field> segment = new LinkedList<Field>();
@@ -36,23 +44,29 @@ public class Board implements Cloneable{
 			}
 		}
 		fields.add(new Field(FieldType.FINISH));
-		//Fülle das Startfeld mit Piraten
+		// Fülle das Startfeld mit Piraten
 		Field start = fields.get(0);
-		for(int i= 0; i< Constants.PIRATES; i++){
+		for (int i = 0; i < Constants.PIRATES; i++) {
 			start.putPirate(new Pirate(PlayerColor.RED));
 			start.putPirate(new Pirate(PlayerColor.BLUE));
 		}
-		//FIXME: test für den letzten zug. Piraten im letzten Segment
-//		fields.get(fields.size()-4).putPirate(new Pirate(PlayerColor.RED));
-//		fields.get(fields.size()-5).putPirate(new Pirate(PlayerColor.RED));
-//		fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
-//		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-//		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-//		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-//		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-//		fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+		// FIXME: test für den letzten zug. Piraten im letzten Segment
+		// fields.get(fields.size()-4).putPirate(new Pirate(PlayerColor.RED));
+		// fields.get(fields.size()-5).putPirate(new Pirate(PlayerColor.RED));
+		// fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
+		// fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+		// fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+		// fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+		// fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+		// fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
 	}
 
+	/**
+	 * Gibt das Feld am übergebenen Index zurück
+	 * 
+	 * @param index
+	 * @return das Feld am index
+	 */
 	public Field getField(int index) {
 		return fields.get(index);
 	}
@@ -67,8 +81,8 @@ public class Board implements Cloneable{
 	 *         trägt. Gesucht wird ab StartIndex
 	 */
 	public int getNextField(int start, SymbolType symbol) {
-		if(start == this.size()-1){
-			//startFeld ist Zielfeld. Zug dorthin nicht möglich.
+		if (start == this.size() - 1) {
+			// startFeld ist Zielfeld. Zug dorthin nicht möglich.
 			return -1;
 		}
 		for (int i = start + 1; i < fields.size(); i++) {
@@ -87,17 +101,20 @@ public class Board implements Cloneable{
 	public List<Pirate> getPirates(int index) {
 		return fields.get(index).getPirates();
 	}
-	
-	/** Gibt die Anzahl der Piraten eines Spielers auf einem bestimmten Feld zurück
+
+	/**
+	 * Gibt die Anzahl der Piraten eines Spielers auf einem bestimmten Feld
+	 * zurück
+	 * 
 	 * @param index
 	 * @param color
 	 * @return Die Anzahl der Piraten von Spieler color auf dem Feld index
 	 */
-	public int numPiratesOf(int index, PlayerColor color){
+	public int numPiratesOf(int index, PlayerColor color) {
 		int num = 0;
 		Iterator<Pirate> pirateIterator = this.getPirates(index).iterator();
-		while(pirateIterator.hasNext()){
-			if(pirateIterator.next().getOwner().equals(color)){
+		while (pirateIterator.hasNext()) {
+			if (pirateIterator.next().getOwner().equals(color)) {
 				num++;
 			}
 		}
@@ -112,51 +129,75 @@ public class Board implements Cloneable{
 	 * @return index des Feldes
 	 */
 	public int getPreviousField(int start) {
-		//Suche zurückliegendes Feld auf dem, weniger als 3 Piraten stehen
+		// Suche zurückliegendes Feld auf dem, weniger als 3 Piraten stehen
 		for (int i = start - 1; i > 0; i--) {
-			if (!fields.get(i).getPirates().isEmpty() && fields.get(i).getPirates().size() < 3) {
+			if (!fields.get(i).getPirates().isEmpty()
+					&& fields.get(i).getPirates().size() < 3) {
 				return i;
 			}
 		}
-		//Prüfe ob auf dem Startfeld noch Piraten stehen und der start nicht auf dem Startindex liegt
-//		if(!fields.get(0).getPirates().isEmpty() && start != 0){
-//			return 0; //Gib Startfeld zurück
-//		}
 		return -1; // Nichts gefunden, gib -1 zurück;
 	}
-	
-	/** Gibt zurück ob ein Spieler an einer Position einen Piraten hat.
-	 * @param index Die Spielbrettposition
-	 * @param color Die Spielerfarbe
+
+	/**
+	 * Gibt zurück ob ein Spieler an einer Position einen Piraten hat.
+	 * 
+	 * @param index
+	 *            Die Spielbrettposition
+	 * @param color
+	 *            Die Spielerfarbe
 	 * @return true wenn sich ein Pirat des Spielers an der Position befindet
 	 */
-	public boolean hasPirates(int index, PlayerColor color){
+	public boolean hasPirates(int index, PlayerColor color) {
 		List<Pirate> list = getPirates(index);
 		boolean ret = false;
-		for(Pirate p: list){
-			if(p.getOwner() == color){
+		for (Pirate p : list) {
+			if (p.getOwner() == color) {
 				ret = true;
-			}			
+			}
 		}
 		return ret;
 	}
-	
-	public void movePirate(int field, int nextField, PlayerColor color){
+
+	/**
+	 * Bewegt einen Piraten von einem Startfeld auf ein Zielfeld. Diese Methode
+	 * ist nur für den Server relevant.
+	 * 
+	 * @param field
+	 *            das Startfeld auf dem sich der Pirat befindet
+	 * @param nextField
+	 *            das Zielfeld auf das der Pirat bewegt werden soll
+	 * @param color
+	 *            die Farbe des Besitzers
+	 */
+	public void movePirate(int field, int nextField, PlayerColor color) {
 		Pirate pirate = fields.get(field).removePirate(color);
 		fields.get(nextField).putPirate(pirate);
 	}
 
+	/**
+	 * Gibt die Größe des Spielbrettes zurück. Also die Anzahl der Spielfelder
+	 * inklusive Start und Zielfeld.
+	 * 
+	 * @return
+	 */
 	public int size() {
 		return fields.size();
 	}
 
+	/**
+	 * Gibt eine deep copy des Objektes zurück. Von allen Objekten, welche diese
+	 * Klasse beherbergt werden auch Kopien erstellt.
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		Board clone = (Board) super.clone();
-		if(fields != null){
+		if (fields != null) {
 			clone.fields = new LinkedList<Field>();
-			for(Field f: this.fields){
-				clone.fields.add((Field) f.clone()); 
+			for (Field f : this.fields) {
+				clone.fields.add((Field) f.clone());
 			}
 		}
 		return clone;

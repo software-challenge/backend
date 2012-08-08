@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.21)  3 AUG 2012 12:20
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.21)  8 AUG 2012 10:30
 entering extended mode
  Source specials enabled.
  %&-line parsing enabled.
@@ -58,6 +58,12 @@ Package typearea, 2009/07/24 v3.04a KOMA-Script package (type area)
 
 \ta@bcor=\skip41
 \ta@div=\count79
+Package typearea Info: You've used standard option `a4paper'.
+(typearea)             This is correct!
+(typearea)             Internaly I'm using `paper=a4'.
+(typearea)             If you'd like to set the option with \KOMAoptions,
+(typearea)             you'd have to use `paper=a4' there
+(typearea)             instead of `a4paper', too.
 \ta@hblk=\skip42
 \ta@vblk=\skip43
 \ta@temp=\skip44
@@ -712,53 +718,48 @@ Class scrartcl Info: You've told me to use the font selection of the element
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
- [2] [3]
-<bilder/Spielfeld.png, id=86, 756.8275pt x 361.35pt>
+ [2]
+<bilder/Spielfeld.png, id=82, 756.8275pt x 361.35pt>
 File: bilder/Spielfeld.png Graphic file (type png)
 
-<use bilder/Spielfeld.png> <bilder/Karten.png, id=88, 340.27126pt x 74.2775pt>
+<use bilder/Spielfeld.png> <bilder/Karten.png, id=84, 340.27126pt x 74.2775pt>
 File: bilder/Karten.png Graphic file (type png)
 
-<use bilder/Karten.png>
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[4 <./bilder/Spielfeld.png>]
-<bilder/Moves.png, id=96, 751.80875pt x 359.3425pt>
+<use bilder/Karten.png> [3 <./bilder/Spielfeld.png>]
+<bilder/Moves.png, id=92, 751.80875pt x 359.3425pt>
 File: bilder/Moves.png Graphic file (type png)
  <use bilder/Moves.png>
-[5 <./bilder/Karten.png> <./bilder/Moves.png>]
-<bilder/zielfeld.png, id=105, 751.80875pt x 232.87pt>
+<bilder/zielfeld.png, id=93, 751.80875pt x 232.87pt>
 File: bilder/zielfeld.png Graphic file (type png)
-
-<use bilder/zielfeld.png> [6 <./bilder/zielfeld.png>]
-<bilder/gui.png, id=113, 1007.765pt x 582.175pt>
+ <use bilder/zielfeld.png>
+[4 <./bilder/Karten.png> <./bilder/Moves.png>] [5 <./bilder/zielfeld.png>]
+<bilder/gui.png, id=109, 1007.765pt x 582.175pt>
 File: bilder/gui.png Graphic file (type png)
  <use bilder/gui.png>
-<bilder/configuration.png, id=114, 243.91125pt x 282.05376pt>
+<bilder/configuration.png, id=110, 243.91125pt x 282.05376pt>
 File: bilder/configuration.png Graphic file (type png)
 
 <use bilder/configuration.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[7 <./bilder/gui.png>] [8 <./bilder/configuration.png>] (./main.aux) ) 
+[6 <./bilder/gui.png>] [7 <./bilder/configuration.png>] (./main.aux) ) 
 Here is how much of TeX's memory you used:
- 6972 strings out of 495021
- 99790 string characters out of 1181035
- 185303 words of memory out of 3000000
- 9972 multiletter control sequences out of 15000+50000
+ 6974 strings out of 495021
+ 99837 string characters out of 1181035
+ 185357 words of memory out of 3000000
+ 9975 multiletter control sequences out of 15000+50000
  56103 words of font info for 56 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 43i,8n,36p,270b,320s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 43i,8n,43p,273b,345s stack positions out of 5000i,500n,10000p,200000b,50000s
 {/usr/sha
 re/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/public/lm/l
 mbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/f
 onts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.p
 fb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on main.pdf (8 pages, 3590919 bytes).
+Output written on main.pdf (7 pages, 3586105 bytes).
 PDF statistics:
- 161 PDF objects out of 1000 (max. 8388607)
- 34 named destinations out of 1000 (max. 500000)
+ 157 PDF objects out of 1000 (max. 8388607)
+ 33 named destinations out of 1000 (max. 500000)
  140 words of extra memory for PDF output out of 10000 (max. 10000000)
 

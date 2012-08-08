@@ -1,7 +1,7 @@
 package sc.plugin2013;
 
 /**
- * kopiert von 2012 Beinhaltet Informationen zum Spielende: Farbe des Gewinners
+ * Beinhaltet Informationen zum Spielende: Farbe des Gewinners
  * und Gewinngrund.
  * 
  */
@@ -11,7 +11,7 @@ class Condition implements Cloneable {
 
 	public final String reason;
 
-	/**
+	/*
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
 	 * Deserialisierung von Objekten aus XML-Nachrichten.
 	 */
@@ -21,7 +21,7 @@ class Condition implements Cloneable {
 	}
 
 	/**
-	 * erzeugt eine neue Condition mit Sieger und Geiwnngrund
+	 * erzeugt eine neue Condition mit Sieger und Gewinngrund
 	 * 
 	 * @param winner
 	 *            Farbe des Siegers

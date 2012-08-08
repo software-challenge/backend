@@ -1,6 +1,5 @@
 package sc.plugin2013;
 
-
 import sc.plugin2013.util.ForwardMoveConverter;
 import sc.plugin2013.util.InvalidMoveException;
 
@@ -8,6 +7,13 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+/**
+ * Stellt einen Vorwärtszug dar. Hat Informationen über das Startfeld, sowie das
+ * Symbol auf das gezogen werden soll.
+ * 
+ * @author fdu
+ * 
+ */
 @XStreamAlias(value = "cartagena:forwardMove")
 @XStreamConverter(ForwardMoveConverter.class)
 public class ForwardMove extends Move {
@@ -15,14 +21,31 @@ public class ForwardMove extends Move {
 	public int fieldIndex;
 	@XStreamAsAttribute
 	public SymbolType symbol;
-	
+
+	/**
+	 * Wird gesetzt, falls ein falscher String als symbolTyp gesendet wurde. Nur
+	 * für den Server relevant.
+	 * 
+	 */
 	private volatile boolean wrongSymbolString = false;
 
+	// might be needed by XSTream
+	public ForwardMove() {
+		fieldIndex = -1;
+	}
+
+	/** Erstellt einen neuen Vorwärtszug
+	 * @param index
+	 * @param sym
+	 */
 	public ForwardMove(int index, SymbolType sym) {
 		this.fieldIndex = index;
 		this.symbol = sym;
 	}
 
+	/* (non-Javadoc)
+	 * @see sc.plugin2013.Move#perform(sc.plugin2013.GameState, sc.plugin2013.Player)
+	 */
 	@Override
 	public void perform(GameState state, Player player)
 			throws InvalidMoveException {
@@ -46,7 +69,7 @@ public class ForwardMove extends Move {
 			throw new InvalidMoveException("Spieler " + player.getPlayerColor()
 					+ " hat keinen Piraten auf Feld " + fieldIndex);
 		}
-		if(this.wrongSymbolString){
+		if (this.wrongSymbolString) {
 			throw new InvalidMoveException("Gesendetes Symbol existiert nicht");
 		}
 		// sonst nächstes freies Feld suchen und Piraten vorwärts bewegen
@@ -56,6 +79,9 @@ public class ForwardMove extends Move {
 		state.addUsedCard(usedCard);
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object obj) {
 		if (obj.getClass().equals(ForwardMove.class)) {
 			ForwardMove fW = (ForwardMove) obj;
@@ -67,6 +93,9 @@ public class ForwardMove extends Move {
 		return false;
 	}
 
+	/** Gibt eine Kopie dieses Objektes zurück.
+	 * 
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		ForwardMove clone = (ForwardMove) super.clone();

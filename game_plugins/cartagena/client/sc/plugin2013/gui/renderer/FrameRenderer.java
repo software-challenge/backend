@@ -146,7 +146,7 @@ public class FrameRenderer extends JComponent {
 	private Token movingToken;
 
 	// Strings
-	private String endTurn = "Zug Beenden";
+	private String endTurn = "Zug beenden";
 	private Object LOCK = new Object();
 
 	public FrameRenderer() {
@@ -253,7 +253,17 @@ public class FrameRenderer extends JComponent {
 				}
 			}
 		}
+		// Spieler geht einen Zug zurück
 		humanMove = false;
+		removeMouseListener(mouseAdapter);
+		removeMouseListener(mouseAdapter);
+		if (gameState.getTurn() == turnToAnswer) {
+			// Spieler ist zurück und wieder nach vorn gegangen und ist nun beim
+			// noch nicht beantworteten Zug
+			humanMove = true;
+			addMouseListener(mouseAdapter);
+			addMouseMotionListener(mouseAdapter);
+		}
 
 		// aktuellen spielstand sichern
 		try {
@@ -264,16 +274,7 @@ public class FrameRenderer extends JComponent {
 		currentPlayer = gameState.getCurrentPlayerColor();
 		currentPlayerColor = getPlayerColor(currentPlayer);
 
-		// gui Controll Variablen setzen.
-		if (gameState.getTurn() == 0) {
-			// neues Spiel alles auf Anfang
-			movesMade = 0;
-			selectedField = -1;
-			throwAwayCard = false;
-			removeMouseListener(mouseAdapter);
-			possibleFields = new HashSet<Integer>();
-			possibleCards = new HashSet<SymbolType>();
-		}
+		movesMade = 0;
 
 		updateBuffer = true;
 		generateBoardMap();
@@ -445,7 +446,7 @@ public class FrameRenderer extends JComponent {
 
 				updateBuffer = true;
 				repaint();
-				
+
 				synchronized (LOCK) {
 					LOCK.notify();
 				}
@@ -465,6 +466,8 @@ public class FrameRenderer extends JComponent {
 
 	public synchronized void requestMove(final int turn) {
 		turnToAnswer = turn;
+		removeMouseListener(mouseAdapter);
+		removeMouseMotionListener(mouseAdapter);
 		addMouseListener(mouseAdapter);
 		addMouseMotionListener(mouseAdapter);
 		humanMove = true;
@@ -476,8 +479,7 @@ public class FrameRenderer extends JComponent {
 	private synchronized void sendMove(final MoveContainer move) {
 
 		removeMouseListener(mouseAdapter);
-		// removeMouseMotionListener(mouseAdapter);
-
+		removeMouseMotionListener(mouseAdapter);
 		if ((turnToAnswer == gameState.getTurn()) && !gameEnded) {
 			RenderFacade.getInstance().sendMove(move);
 			turnToAnswer = -1;
@@ -963,9 +965,10 @@ public class FrameRenderer extends JComponent {
 			g2.setColor(Color.black);
 			g2.setFont(h3);
 			if (movesToMake - movesMade > 1) {
-				g2.drawString(movesToMake - movesMade + " Züge übrig.", x, y);
+				g2.drawString(movesToMake - movesMade + " Teilzüge übrig.", x,
+						y);
 			} else {
-				g2.drawString(movesToMake - movesMade + " Zug übrig.", x, y);
+				g2.drawString(movesToMake - movesMade + " Teilzug übrig.", x, y);
 			}
 			if (humanMove) {
 				y += STUFF_GAP;
@@ -994,9 +997,10 @@ public class FrameRenderer extends JComponent {
 			g2.setColor(Color.black);
 			g2.setFont(h3);
 			if (movesToMake - movesMade > 1) {
-				g2.drawString(movesToMake - movesMade + " Züge übrig.", x, y);
+				g2.drawString(movesToMake - movesMade + " Teilzüge übrig.", x,
+						y);
 			} else {
-				g2.drawString(movesToMake - movesMade + " Zug übrig.", x, y);
+				g2.drawString(movesToMake - movesMade + " Teilzug übrig.", x, y);
 			}
 			if (humanMove) {
 				y += STUFF_GAP;
@@ -1520,8 +1524,10 @@ public class FrameRenderer extends JComponent {
 
 		public void paintToken(Graphics2D g2) {
 			int fieldSizeDiv12 = FIELD_HEIGHT / 12;
-
-			g2.setFont(h5);
+			//Setting up the Fontsize
+			Font myFont = new Font("Helvetica", Font.BOLD,  3*fieldSizeDiv12);
+			FontMetrics myFM  = fmPanel.getFontMetrics(myFont);
+			g2.setFont(myFont);
 			if (!dragable) {
 				if (this.owner == PlayerColor.RED) {
 					g2.setColor(Color.RED);
@@ -1544,9 +1550,10 @@ public class FrameRenderer extends JComponent {
 							4 * fieldSizeDiv12, 4 * fieldSizeDiv12);
 					g2.setColor(Color.WHITE);
 					if (number > 1) {
+						
 						g2.drawString(Integer.toString(number), x + 2
 								* fieldSizeDiv12,
-								y + fieldSizeDiv12 + fmH5.getHeight());
+								y + fieldSizeDiv12 + myFM.getHeight());
 					}
 
 				} else {
@@ -1572,7 +1579,7 @@ public class FrameRenderer extends JComponent {
 					if (number > 1) {
 						g2.drawString(Integer.toString(number), x + 8
 								* fieldSizeDiv12,
-								y + fieldSizeDiv12 + fmH5.getHeight());
+								y + fieldSizeDiv12 + myFM.getHeight());
 					}
 				}
 			} else {
