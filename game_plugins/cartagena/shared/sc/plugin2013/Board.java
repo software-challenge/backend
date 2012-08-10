@@ -51,14 +51,14 @@ public class Board implements Cloneable {
 			start.putPirate(new Pirate(PlayerColor.BLUE));
 		}
 		// FIXME: test für den letzten zug. Piraten im letzten Segment
-		 fields.get(fields.size()-8).putPirate(new Pirate(PlayerColor.RED));
-		 fields.get(fields.size()-7).putPirate(new Pirate(PlayerColor.RED));
-		 fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
-		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
-		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+//		 fields.get(fields.size()-8).putPirate(new Pirate(PlayerColor.RED));
+//		 fields.get(fields.size()-7).putPirate(new Pirate(PlayerColor.RED));
+//		 fields.get(fields.size()-2).putPirate(new Pirate(PlayerColor.BLUE));
+//		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+//		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+//		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+//		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
+//		 fields.get(fields.size()-1).putPirate(new Pirate(PlayerColor.BLUE));
 	}
 
 	/**

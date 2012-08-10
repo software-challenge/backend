@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.21)  8 AUG 2012 10:30
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.3.21)  10 AUG 2012 16:51
 entering extended mode
  Source specials enabled.
  %&-line parsing enabled.
@@ -578,25 +578,30 @@ Package: paralist 2002/03/18 v2.3b Extended list environments (BS)
 \plparsep=\skip53
 \pl@lab=\toks23
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 24.
+(/usr/share/texmf-texlive/tex/latex/hyphenat/hyphenat.sty
+Package: hyphenat 2009/09/02 v2.3c hyphenation utilities
+\langwohyphens=\language8
+LaTeX Info: Redefining \_ on input line 43.
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 27.
  (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 38.
-LaTeX Font Info:    ... okay on input line 38.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 38.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 41.
 
 (/usr/share/texmf/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -609,7 +614,7 @@ File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 130.
 )
-Package hyperref Info: Link coloring ON on input line 38.
+Package hyperref Info: Link coloring ON on input line 41.
 
 (/usr/share/texmf-texlive/tex/latex/hyperref/nameref.sty
 Package: nameref 2007/05/29 v2.31 Cross-referencing by name of section
@@ -619,8 +624,8 @@ Package: refcount 2008/08/11 v3.1 Data extraction from references (HO)
 )
 \c@section@level=\count109
 )
-LaTeX Info: Redefining \ref on input line 38.
-LaTeX Info: Redefining \pageref on input line 38.
+LaTeX Info: Redefining \ref on input line 41.
+LaTeX Info: Redefining \pageref on input line 41.
  (./main.out)
 (./main.out)
 \@outlinefile=\write3
@@ -640,44 +645,44 @@ LaTeX Info: Redefining \pageref on input line 38.
 \MPnumerator=\count114
 \everyMPtoPDFconversion=\toks25
 )
-LaTeX Font Info:    Try loading font information for T1+lmss on input line 40.
+LaTeX Font Info:    Try loading font information for T1+lmss on input line 43.
  (/usr/share/texmf/tex/latex/lm/t1lmss.fd
 File: t1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 40.
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 43.
 
 (/usr/share/texmf/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 40.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 43.
 
 (/usr/share/texmf/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 40.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 43.
 
 
 (/usr/share/texmf/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 40.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 43.
 
 
 (/usr/share/texmf/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 40.
+(Font)              <14.4> on input line 43.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 40.
+(Font)              <10> on input line 43.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 40.
-LaTeX Font Info:    Try loading font information for U+msa on input line 40.
+(Font)              <7> on input line 43.
+LaTeX Font Info:    Try loading font information for U+msa on input line 43.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 40.
+LaTeX Font Info:    Try loading font information for U+msb on input line 43.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
@@ -685,7 +690,7 @@ File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 
 LaTeX Warning: No \author given.
 
-<bilder/Uebersicht.png, id=55, 1046.91125pt x 746.79pt>
+<bilder/Uebersicht.png, id=59, 1027.84pt x 770.88pt>
 File: bilder/Uebersicht.png Graphic file (type png)
 
 <use bilder/Uebersicht.png> [1
@@ -713,53 +718,58 @@ Class scrartcl Info: You've told me to use the font selection of the element
 (scrartcl)            on input line 11.
 Class scrartcl Info: You've told me to use the font selection of the element
 (scrartcl)           `sectioning' that is an alias of element `disposition'
-(scrartcl)            on input line 12.
+(scrartcl)            on input line 13.
 )
 \tf@toc=\write4
 \openout4 = `main.toc'.
 
  [2]
-<bilder/Spielfeld.png, id=82, 756.8275pt x 361.35pt>
+<bilder/Spielfeld.png, id=88, 756.8275pt x 361.35pt>
 File: bilder/Spielfeld.png Graphic file (type png)
 
-<use bilder/Spielfeld.png> <bilder/Karten.png, id=84, 340.27126pt x 74.2775pt>
+<use bilder/Spielfeld.png> <bilder/Karten.png, id=90, 340.27126pt x 74.2775pt>
 File: bilder/Karten.png Graphic file (type png)
 
 <use bilder/Karten.png> [3 <./bilder/Spielfeld.png>]
-<bilder/Moves.png, id=92, 751.80875pt x 359.3425pt>
+<bilder/Moves.png, id=98, 1025.8325pt x 601.24625pt>
 File: bilder/Moves.png Graphic file (type png)
  <use bilder/Moves.png>
-<bilder/zielfeld.png, id=93, 751.80875pt x 232.87pt>
+[4 <./bilder/Karten.png> <./bilder/Moves.png (PNG copy)>]
+<bilder/zielfeld.png, id=106, 1025.8325pt x 601.24625pt>
 File: bilder/zielfeld.png Graphic file (type png)
- <use bilder/zielfeld.png>
-[4 <./bilder/Karten.png> <./bilder/Moves.png>] [5 <./bilder/zielfeld.png>]
-<bilder/gui.png, id=109, 1007.765pt x 582.175pt>
+
+<use bilder/zielfeld.png> [5 <./bilder/zielfeld.png (PNG copy)>]
+<bilder/zugunfaehig.png, id=113, 1008.76875pt x 620.3175pt>
+File: bilder/zugunfaehig.png Graphic file (type png)
+
+<use bilder/zugunfaehig.png> <bilder/gui.png, id=115, 1027.84pt x 772.8875pt>
 File: bilder/gui.png Graphic file (type png)
- <use bilder/gui.png>
-<bilder/configuration.png, id=110, 243.91125pt x 282.05376pt>
+
+<use bilder/gui.png> [6 <./bilder/zugunfaehig.png>]
+<bilder/configuration.png, id=122, 213.79875pt x 228.855pt>
 File: bilder/configuration.png Graphic file (type png)
 
 <use bilder/configuration.png>
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[6 <./bilder/gui.png>] [7 <./bilder/configuration.png>] (./main.aux) ) 
+[7 <./bilder/gui.png>] [8 <./bilder/configuration.png (PNG copy)>] (./main.aux)
+ ) 
 Here is how much of TeX's memory you used:
- 6974 strings out of 495021
- 99837 string characters out of 1181035
- 185357 words of memory out of 3000000
- 9975 multiletter control sequences out of 15000+50000
+ 7023 strings out of 495021
+ 100597 string characters out of 1181035
+ 186349 words of memory out of 3000000
+ 10016 multiletter control sequences out of 15000+50000
  56103 words of font info for 56 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 43i,8n,43p,273b,345s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/sha
-re/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/public/lm/l
-mbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/f
-onts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmri10.p
-fb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb>
-Output written on main.pdf (7 pages, 3586105 bytes).
+ 43i,8n,43p,270b,339s stack positions out of 5000i,500n,10000p,200000b,50000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/fonts/type1/
+public/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/sh
+are/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/
+lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb>
+Output written on main.pdf (8 pages, 5247317 bytes).
 PDF statistics:
- 157 PDF objects out of 1000 (max. 8388607)
- 33 named destinations out of 1000 (max. 500000)
- 140 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 168 PDF objects out of 1000 (max. 8388607)
+ 36 named destinations out of 1000 (max. 500000)
+ 153 words of extra memory for PDF output out of 10000 (max. 10000000)
 
