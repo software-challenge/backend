@@ -46,6 +46,7 @@ public class Configuration {
 				Game.class, Constants.class, Move.class, ForwardMove.class,
 				BackwardMove.class, Field.class, Pirate.class, Board.class,
 				MoveContainer.class, GameState.class, WelcomeMessage.class,
-				Card.class, Condition.class, DebugHint.class, MoveContainer.class });
+				Card.class, Condition.class, DebugHint.class,
+				MoveContainer.class });
 	}
 }

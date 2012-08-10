@@ -1101,6 +1101,56 @@ public class FrameRenderer extends JComponent {
 		return color;
 	}
 
+	private void constructMoves(Move move) {
+		try {
+			// wenn ein move konstruiert wurde
+			move.perform(gameState, gameState.getCurrentPlayer());
+			gameState.prepareNextTurn(move);
+			selectedField = -1;
+			hoveredField = -1;
+			possibleFields = new HashSet<Integer>();
+		} catch (InvalidMoveException exception) {
+			System.out.println("CARTAGENA GUI " + exception.getMessage());
+		}
+		if (gameState.playerFinished(currentPlayer)) {
+			MoveContainer moveC = new MoveContainer();
+			switch (movesMade) {
+			case 0:
+				moveC.addMove(move);
+				break;
+			case 1:
+				moveC.addMove(firstMove);
+				moveC.addMove(move);
+				break;
+			case 2:
+				moveC.addMove(firstMove);
+				moveC.addMove(secondMove);
+				moveC.addMove(move);
+				break;
+			}
+			sendMove(moveC);
+			movesMade = 0;
+		} else {
+			switch (movesMade) {
+			case 0:
+				firstMove = move;
+				movesMade += 1;
+				break;
+			case 1:
+				secondMove = move;
+				movesMade += 1;
+				break;
+			case 2:
+				thirdMove = move;
+			default:
+				MoveContainer moveC = new MoveContainer(firstMove, secondMove,
+						thirdMove);
+				movesMade = 0;
+				sendMove(moveC);
+			}
+		}
+	}
+
 	private final MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public synchronized void mousePressed(MouseEvent e) {
@@ -1167,35 +1217,7 @@ public class FrameRenderer extends JComponent {
 					}
 
 					if (move != null) {
-						// Karte wird weggeschmisen.
-						try {
-							move.perform(gameState,
-									gameState.getCurrentPlayer());
-							gameState.prepareNextTurn(move);
-							selectedField = -1;
-							hoveredField = -1;
-							possibleFields = new HashSet<Integer>();
-						} catch (InvalidMoveException exception) {
-							System.out.println("CARTAGENA GUI "
-									+ exception.getMessage());
-						}
-						switch (movesMade) {
-						case 0:
-							firstMove = move;
-							movesMade += 1;
-							break;
-						case 1:
-							secondMove = move;
-							movesMade += 1;
-							break;
-						case 2:
-							thirdMove = move;
-						default:
-							MoveContainer moveC = new MoveContainer(firstMove,
-									secondMove, thirdMove);
-							movesMade = 0;
-							sendMove(moveC);
-						}
+						constructMoves(move);
 						selectedField = -1;
 						possibleFields = new HashSet<Integer>();
 						generateBoardMap();
@@ -1384,8 +1406,14 @@ public class FrameRenderer extends JComponent {
 															.getField(j).symbol);
 										}
 									}
-
-									move = null;
+									if (possibleCards.size() == 1) {
+										move = new ForwardMove(selectedField,
+												(SymbolType) possibleCards
+														.toArray()[0]);
+										throwAwayCard = false;
+									} else {
+										move = null;
+									}
 									// letztes Feld ist das einzige
 									possibleFields = new HashSet<Integer>();
 									possibleFields.add(gameState.getBoard()
@@ -1404,37 +1432,7 @@ public class FrameRenderer extends JComponent {
 						}
 					}
 					if (move != null) {
-						try {
-							// wenn ein move konstruiert wurde
-							move.perform(gameState,
-									gameState.getCurrentPlayer());
-							gameState.prepareNextTurn(move);
-							selectedField = -1;
-							hoveredField = -1;
-							possibleFields = new HashSet<Integer>();
-						} catch (InvalidMoveException exception) {
-							System.out.println("CARTAGENA GUI "
-									+ exception.getMessage());
-						}
-						switch (movesMade) {
-						case 0:
-							firstMove = move;
-							movesMade += 1;
-							break;
-						case 1:
-							secondMove = move;
-							movesMade += 1;
-							break;
-						case 2:
-							thirdMove = move;
-						default:
-							MoveContainer moveC = new MoveContainer(firstMove,
-									secondMove, thirdMove);
-							movesMade = 0;
-							// lastMoveSend = moveC;
-							sendMove(moveC);
-						}
-
+						constructMoves(move);
 					} else if (!throwAwayCard) {
 						// kein move konstruiert
 						selectedField = -1;
@@ -1524,9 +1522,9 @@ public class FrameRenderer extends JComponent {
 
 		public void paintToken(Graphics2D g2) {
 			int fieldSizeDiv12 = FIELD_HEIGHT / 12;
-			//Setting up the Fontsize
-			Font myFont = new Font("Helvetica", Font.BOLD,  3*fieldSizeDiv12);
-			FontMetrics myFM  = fmPanel.getFontMetrics(myFont);
+			// Setting up the Fontsize
+			Font myFont = new Font("Helvetica", Font.BOLD, 3 * fieldSizeDiv12);
+			FontMetrics myFM = fmPanel.getFontMetrics(myFont);
 			g2.setFont(myFont);
 			if (!dragable) {
 				if (this.owner == PlayerColor.RED) {
@@ -1550,7 +1548,7 @@ public class FrameRenderer extends JComponent {
 							4 * fieldSizeDiv12, 4 * fieldSizeDiv12);
 					g2.setColor(Color.WHITE);
 					if (number > 1) {
-						
+
 						g2.drawString(Integer.toString(number), x + 2
 								* fieldSizeDiv12,
 								y + fieldSizeDiv12 + myFM.getHeight());
