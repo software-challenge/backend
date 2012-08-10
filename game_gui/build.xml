@@ -10,6 +10,7 @@
 	<property name="main-class" value="sc.SoftwareChallengeGUI" />
 	<property name="sdk.dir" value="./../software_challenge_sdk" />
 	<property name="server.dir" value="./../game_server" />
+	<property name="version.num" value="1.0" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -60,7 +61,7 @@
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
 				<attribute name="Class-Path" value="${jar.classpath}" />
-				<attribute name="${manifest.code.version.key}" value="${code.version}" />
+				<attribute name="${manifest.code.version.key}" value="${version.num}-build${build.number}-${TODAY}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
 			<fileset dir="src">

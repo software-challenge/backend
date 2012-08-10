@@ -1391,8 +1391,6 @@ public class FrameRenderer extends JComponent {
 									possibleCards.add(SymbolType.KEY);
 									possibleCards.add(SymbolType.PISTOL);
 									possibleCards.add(SymbolType.SKULL);
-									System.out
-											.println("possibleCards generiert");
 									for (int j = selectedField + 1; j < gameState
 											.getBoard().size() - 1; j++) {
 										// remove all fields between
@@ -1406,6 +1404,18 @@ public class FrameRenderer extends JComponent {
 															.getField(j).symbol);
 										}
 									}
+									System.out
+									.println("possibleCards generiert" + possibleCards.size());
+									
+									//remove all Cards, that the active Player doesnt have on hand
+									for(SymbolType s:SymbolType.values()){
+										if(!gameState.getCurrentPlayer().getCards().contains(new Card(s))){
+											possibleCards.remove(s);
+										}
+									}
+									
+									System.out
+									.println("possibleCards generiert" + possibleCards.size());
 									if (possibleCards.size() == 1) {
 										move = new ForwardMove(selectedField,
 												(SymbolType) possibleCards

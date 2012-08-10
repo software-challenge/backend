@@ -44,7 +44,7 @@
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
-				<attribute name="${manifest.code.version.key}" value="${version.num}-b${build.number}-${TODAY}" />
+				<attribute name="${manifest.code.version.key}" value="${version.num}-build${build.number}-${TODAY}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
 			<fileset dir=".">
