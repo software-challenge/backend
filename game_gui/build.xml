@@ -11,6 +11,10 @@
 	<property name="sdk.dir" value="./../software_challenge_sdk" />
 	<property name="server.dir" value="./../game_server" />
 	<property name="version.num" value="1.0" />
+	<buildnumber file="build.num"/>
+	<tstamp>
+	     <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />

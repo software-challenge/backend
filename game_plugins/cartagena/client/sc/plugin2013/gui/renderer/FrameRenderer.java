@@ -144,6 +144,8 @@ public class FrameRenderer extends JComponent {
 	private HashSet<SymbolType> possibleCards;
 	// Spielfigur die beim ziehen bewegt wird
 	private Token movingToken;
+	// Anzahl von Karten die nach einem Rückwärtszug hervorgehoben werden
+//	private int numCardsHighlight = 0;
 
 	// Strings
 	private String endTurn = "Zug beenden";
@@ -187,8 +189,6 @@ public class FrameRenderer extends JComponent {
 		if (this.gameState != null) {
 			int turnDiff = gameState.getTurn() - this.gameState.getTurn();
 			MoveContainer mC = gameState.getLastMove();
-			System.out.println("********************************turnDiff: "
-					+ turnDiff);
 			// if move Container != null and move Conatiner ist not the last
 			// Send move
 			// if (mC != null && turnDiff == 1) {
@@ -254,6 +254,7 @@ public class FrameRenderer extends JComponent {
 			}
 		}
 		// Spieler geht einen Zug zurück
+//		numCardsHighlight = 0;
 		humanMove = false;
 		removeMouseListener(mouseAdapter);
 		removeMouseListener(mouseAdapter);
@@ -765,6 +766,21 @@ public class FrameRenderer extends JComponent {
 		g2.drawString(player.getDisplayName(), getWidth() - 2 * BORDER_SIZE
 				- nameWidth, y);
 
+		// Cards Highlighting
+//		if (numCardsHighlight > 0) {
+//			LinkedList<Point> cardMap;
+//			if (gameState.getCurrentPlayerColor() == PlayerColor.RED) {
+//				cardMap = redCardMap;
+//				
+//			} else {
+//				cardMap = blueCardMap;
+//			}
+//			g2.setColor(getPlayerColor(currentPlayer));
+//			
+//			for(int i= cardMap.size()-numCardsHighlight; i < cardMap.size(); i++){
+//				g2.drawRoundRect(cardMap.get(i).x, cardMap.get(i).y, CARD_WIDTH, CARD_HEIGTH, 10, 10);
+//			}
+//		}
 		paintBoard(g2); // Spielbrett zeichnen
 		paintPlayerPoints(g2); // Seitenleiste info zeichnen
 
@@ -1104,6 +1120,20 @@ public class FrameRenderer extends JComponent {
 	private void constructMoves(Move move) {
 		try {
 			// wenn ein move konstruiert wurde
+//			int numCards = gameState.getCurrentPlayer().getNumCards();
+//			if (move.getClass().equals(BackwardMove.class) && numCards < 8) {
+//				BackwardMove bM = (BackwardMove) move;
+//				int numPirates = gameState
+//						.getBoard()
+//						.getPirates(
+//								gameState.getBoard().getPreviousField(
+//										bM.fieldIndex)).size();
+//				if (numCards == 7) {
+//					numCardsHighlight = 1;
+//				} else {
+//					numCardsHighlight = numPirates;
+//				}
+//			}
 			move.perform(gameState, gameState.getCurrentPlayer());
 			gameState.prepareNextTurn(move);
 			selectedField = -1;
@@ -1165,7 +1195,6 @@ public class FrameRenderer extends JComponent {
 								+ fmH3.stringWidth(endTurn) + 5
 						&& y > cancelMoveButtonPos.y
 						&& y < cancelMoveButtonPos.y + fmH3.getHeight() + 6) {
-					System.out.println("Cancel Button gedrückt");
 					MoveContainer moveC;
 					switch (movesMade) {
 					case 1:
@@ -1196,17 +1225,12 @@ public class FrameRenderer extends JComponent {
 								cardMap.get(i).y);
 						if (x > point.x && x < point.x + CARD_WIDTH
 								&& y > point.y && y < point.y + CARD_HEIGTH) {
-							System.out.println("Karte mit Index " + i
-									+ " gedrückt");
 							pressedCard = true;
 							if (possibleCards
 									.contains(gameState.getCurrentPlayer()
 											.getCards().get(i).symbol)) {
 								// eine wegwerfbare Karte wurde geklickt,
 								// konstruiere einen move
-								System.out
-										.println("Wegwerfbare Karte mit Index "
-												+ i + " gedrückt");
 								move = new ForwardMove(selectedField,
 										gameState.getCurrentPlayer().getCards()
 												.get(i).symbol);
@@ -1404,18 +1428,17 @@ public class FrameRenderer extends JComponent {
 															.getField(j).symbol);
 										}
 									}
-									System.out
-									.println("possibleCards generiert" + possibleCards.size());
-									
-									//remove all Cards, that the active Player doesnt have on hand
-									for(SymbolType s:SymbolType.values()){
-										if(!gameState.getCurrentPlayer().getCards().contains(new Card(s))){
+
+									// remove all Cards, that the active Player
+									// doesnt have on hand
+									for (SymbolType s : SymbolType.values()) {
+										if (!gameState.getCurrentPlayer()
+												.getCards()
+												.contains(new Card(s))) {
 											possibleCards.remove(s);
 										}
 									}
-									
-									System.out
-									.println("possibleCards generiert" + possibleCards.size());
+
 									if (possibleCards.size() == 1) {
 										move = new ForwardMove(selectedField,
 												(SymbolType) possibleCards

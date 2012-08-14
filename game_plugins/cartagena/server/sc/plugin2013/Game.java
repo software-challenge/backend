@@ -1,6 +1,9 @@
 package sc.plugin2013;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -186,7 +189,21 @@ public class Game extends RoundBasedGameInstance<Player> {
 			p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
 		}
 
-		super.start();
+		//super.start();
+		if (this.listeners.size() == 0)
+		{
+			logger.warn("Couldn't find any listeners. Is this intended?");
+		}
+		
+		if(this.gameState.getCurrentPlayerColor() != PlayerColor.RED){
+			this.activePlayer = this.players.get(1);
+		}else{
+			this.activePlayer = this.players.get(0);
+		}
+		
+		onActivePlayerChanged(this.activePlayer);
+		notifyOnNewState(getCurrentState());
+		notifyActivePlayer();
 	}
 
 	@Override
@@ -225,7 +242,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void loadFromFile(String file) {
-		GameLoader gl = new GameLoader(new Class<?>[] { GameState.class });
+		GameLoader gl = new GameLoader(Configuration.getClassesToRegister());
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
@@ -236,6 +253,22 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
 			this.gameState = (GameState) gameInfo;
+			//Initialisiere den Kartenstapel
+			this.gameState.initCardStack();
+			//Entferne die offen liegenden Karten und die Karten der Spieler
+			for(Card c:this.gameState.getOpenCards()){
+				this.gameState.getCardStack().remove(c);
+			}
+			for(Card c:this.gameState.getRedPlayer().getCards()){
+				this.gameState.getCardStack().remove(c);
+			}
+			for(Card c:this.gameState.getBluePlayer().getCards()){
+				this.gameState.getCardStack().remove(c);
+			}
+			//Zum Schluss noch einmal mischen:
+			Collections.shuffle(this.gameState.getCardStack(), new SecureRandom());
+			//turn richtig setzen:
+			//this.turn = this.gameState.getTurn();
 		}
 	}
 

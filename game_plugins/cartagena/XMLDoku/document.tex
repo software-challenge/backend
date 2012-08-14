@@ -1,0 +1,435 @@
+\documentclass[12pt,a4paper, german, oneside]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{lmodern}
+\usepackage{ucs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage[linkcolor=black]{hyperref}
+\usepackage{listings} \lstset{numbers=left, numberstyle=\tiny, numbersep=5pt} \lstset{language=Java}
+%% Grafiken
+\usepackage[pdftex]{graphicx}
+\usepackage{epsfig} 
+\hypersetup{% 
+  colorlinks=true, 
+}
+\sloppy
+\hyphenpenalty=100000
+
+\date{Software-Challenge Germany 2013\\Stand \today}
+
+
+%\author{Niklas Paulsen, npau@informatik.uni-kiel.de }
+\title{Client-Server Kommunikation Cartagena}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\setcounter{page}{1}
+\section{Einleitung}
+\subsection*{Zum Inhalt}
+Wie in den letzten Jahren wird zur Client-Server Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch: \htmladdnormallink{SC Wiki: Die Schnittstelle zum Server}{http://sc-doku.gfxpro.eu/wiki/Die_Schnittstelle_zum_Server}}. In diesem Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett eigener Client geschrieben werden kann. Es wird hier nicht die vollständige Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client umgehen können muss, um spielfähig zu sein.
+\subsection*{An wen richtet sich dieses Dokument?}
+Die Kommunikation mit dem Spielserver ist für diejenigen, die aufbauend auf dem Simpleclient programmieren, unwichtig. Dort steht bereits ein funktionierender Client bereit und es muss nur die Spiellogik entworfen werden. \\
+Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die Programmiersprache frei wählen zu können, benötigt die Definitionen.
+
+\subsection*{Hinweise} 
+Falls Sie beabsichtigen sollten, diese Kommunikationsschnittstelle zu realisieren, sei darauf hingewiesen, dass es im Verlauf des Wettbewerbes möglich ist, dass weitere, hier noch nicht aufgeführte Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei solchen Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu verwerfen, die hier nicht weiter definiert sind. \bigskip \\
+Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt. Dabei werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können vernachlässigt werden.
+
+\subsection*{Wie das Dokument zu lesen ist}
+Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die über dem Code kurz erläutert werden.\\
+Eingebettete XML-Elemente werden hier allgemein als \begin{verbatim}
+{TAGNAME}
+\end{verbatim} geschrieben, wenn an der Stelle eine beliebige Anzahl von \textit{TAGNAME}-Tags eingebettet sein \textit{kann} und als \begin{verbatim}
+[TAGNAME]
+\end{verbatim}, wenn an der Stelle ein \textit{TAGNAME}-Tag optional stehen kann. \\
+
+\subsection{Beispiel-Definition}
+Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags zu:
+\begin{verbatim}
+- <a name="Sinnvoll">
+  <\a>
+- <a name="Sinnvoll">
+      <b anzahl="2"/>
+  <\a>
+- <a name="Hans">
+      <b anzahl="2"/>
+      <b anzahl="2"/>
+      <b anzahl="2"/>
+  </a>
+\end{verbatim}
+\subsubsection*{Definition 'b'}
+\begin{verbatim}
+<b anzahl="2">
+\end{verbatim}
+\subsubsection*{Definition 'a'}
+\begin{description}
+\item[N] Ein beliebiger Name
+\item[b] ein b-Tag wie in obiger Definition
+\end{description}
+\begin{verbatim}
+<a name="N" >
+	{b}
+<\a>
+\end{verbatim}
+
+\newpage
+\part[1]{Client $\rightarrow$ Server}
+\section{Spiel betreten}
+\subsection{Ohne Reservierung}
+Betritt ein beliebiges offenes Spiel:
+\begin{verbatim}
+<join gameType="swc_2013_cartagena"/>
+\end{verbatim}
+\subsection{Mit Reservierungscode}
+Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Platz betreten.
+\begin{description}
+\item[RC] Reservierungscode
+\end{description}
+\begin{verbatim}
+<joinPrepared reservationCode="RC"/>
+\end{verbatim}
+
+\section{Züge senden}
+\begin{description}
+\item[RID] ID des Raumes
+\item[select] wie in \ref{select} definiert
+\end{description}
+\subsection{Auswahlzug}
+
+\begin{verbatim}
+<room roomId="RID">
+  <data class="manhattan:select">
+    {select}
+  </data>
+</room>
+
+\end{verbatim}
+\subsubsection{\label{select}Auswahl}
+\begin{description}
+\item[S] Größe des Bausteins (1-4)
+\item[N] Anzahl gewählter Blöcke
+\end{description}
+\begin{verbatim}
+<select size="S" amount="N"/>
+\end{verbatim}
+
+
+\subsection{Bauzug}
+\begin{description}
+\item[C] Index der Zielstadt
+\item[P] Zielposition
+\item[S] Größe des zu setzenden Bauelementes
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+  <data class="manhattan:build" city="C" slot="P" size="S"/>
+</room>
+\end{verbatim}
+
+\subsection{Debughints}
+Zügen können Debug-Informationen beigefügt werden:
+\begin{description}
+\item[S] Informationen zum Zug als String
+\end{description}
+\begin{verbatim}
+ <hint content="S"/>
+\end{verbatim}
+Damit sieht beispielsweise ein Bauzug so aus:
+\begin{verbatim}
+<room roomId="RID">
+  <data class="manhattan:build" city="C" slot="P" size="S">
+  	<hint content="höchstes Gebäude sichern"/>
+  	<hint content="..."/>
+  </data>
+</room>
+\end{verbatim}
+
+
+
+\newpage
+\part{Server $\rightarrow$ Client}
+\begin{description}
+\item[RID] ID des Raumes, in dem das Spiel stattfindet
+\end{description}
+
+\section{Raum beigetreten}
+ \begin{verbatim}
+ <joined roomId="RID"/>
+ \end{verbatim}
+
+\section{Willkommensnachricht}
+Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
+\begin{description}
+\item[C] Spielerfarbe (red/blue)
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+  <data class="manhattan:welcome" color="C"/>
+</room>
+\end{verbatim}
+
+\section{Spielstatus}
+Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die Clients gesendet wird. Das Spielstatus-Tag ist dabei noch in einem \textit{data}-Tag der Klasse \textit{memento} gewrappt:
+\subsection{memento}
+\begin{description}
+\item[status] wie in \ref{state} definiert
+\end{description}
+\begin{verbatim}
+<room roomId="RID"> 
+  <data class="memento"> 
+  	status
+  </data> 
+</room>
+\end{verbatim}
+
+\subsection{\label{state}Status}
+\begin{description}
+\item[Z] aktuelle Zugzahl
+\item[S] Spieler, der ersten Zug hatte (red/blue)
+\item[C] Spieler, der an der Reihe ist (red/blue)
+\item[T] Zugtyp (select/build)
+\item[red, blue] wie in \ref{player} definiert
+\item[tower] wie in \ref{tower} definiert
+\item[move] Letzter getätigter Zug (nicht in der ersten Runde), wie in \ref{lastmove} definiert
+\item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
+\end{description}
+\begin{verbatim}
+<state class="manhattan:state" turn="Z" start="S" current="C" type="T">
+      red
+      blue
+      {tower}
+      [move]
+      [condition]
+</state>
+
+\end{verbatim}
+
+\subsection{\label{player}Spieler}
+\begin{description}
+\item[C] Farbe (red/blue)
+\item[N] Anzeigename
+\item[P] Punktekonto
+\item[segment] Baustein-Information, wie in \ref{segment} definiert
+\item[card] Spielkarte, wie in \ref{card} definiert
+\end{description}
+\begin{verbatim}
+<C displayName="N" points="P">
+    {segment}
+    {card}
+</C>
+\end{verbatim}
+
+\subsection{\label{segment}Segment}
+Die Angaben beziehen sich jeweils auf einen Spieler. Die Modellierung der Spielsteine als \textit{Segmente} findet sich auch beim Simpleclient, siehe \htmladdnormallink{Javadoc}{http://sc-doku.gfxpro.eu/javadoc/sc/plugin2012/Segment.html}.
+\begin{description}
+\item[S] Segmentgröße (1/2/3/4)
+\item[U] vorhandene Segmente diesen Typs im Abschnittsvorrat
+\item[R] aufbewahrte Segmente diesen Typs (ohne Abschnittsvorrat)
+\end{description}
+\begin{verbatim}<segment size="S" usable="U" retained="R"/>
+\end{verbatim}
+
+
+\subsection{\label{card}Karte}
+\begin{description}
+\item[P] Index der Position (0-4)
+\end{description}
+\begin{verbatim} <card slot="P"/>
+\end{verbatim}
+
+
+\subsection{\label{tower}Turm}
+\begin{description}
+\item[C] Index der Stadt des Turms (0-3)
+\item[P] Index der Position des Turms (0-4)
+\item[R] Anzahl Etagen von Rot
+\item[B] Anzahl Etagen von Blau
+\item[O] Besitzender Spieler (red/blue)
+
+\end{description}
+\begin{verbatim}<tower city="C" slot="P" red="R" blue="B" owner="O"/>
+\end{verbatim}
+
+
+\subsection{\label{lastmove}Letzter Zug}
+ Das letzte-Zug-Element im Spielstatus gibt den letzten getätigten Zug vor dem aktuellen Spielstatus an. Es ist unterschiedlich aufgebaut, je nachdem, ob es sich um einen Auswahl- oder Bauzug handelt:
+\subsubsection{Bauzug}
+\begin{description}
+\item[C] Index der Stadt (0-3)
+\item[P] Index der Position (0-4)
+\item[S] Größe des Bausteins (1-4)
+\end{description}
+\begin{verbatim}
+<move type="build" city="C" slot="P" size="S"/>
+\end{verbatim}
+
+\subsubsection{Auswahlzug}
+\begin{description}
+\item[select] Auswahl einzelner Größen, wie in \ref{select} definiert
+\end{description}
+\begin{verbatim}
+<move type="select">
+  {select}
+</move>
+\end{verbatim}
+
+\section{\label{moverequest}Zug-Anforderung}
+Eine simple Nachricht fordert zum Zug auf:
+\begin{verbatim}
+<room roomId="RID">
+  <data class="sc.framework.plugins.protocol.MoveRequest"/>
+</room>
+\end{verbatim}
+
+\section{Fehler}
+Ein \glqq spielfähiger\grqq Client muss nicht mit Fehlern umgehen können. Fehlerhafte Züge beispielsweise resultieren in einem vorzeitigen Ende des Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend})
+\begin{description}
+\item[MSG] Fehlermeldung
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+	<error message="MSG">
+		<originalRequest>
+		Request, der den Fehler verursacht hat
+		</originalRequest>
+	</error>
+</room>
+\end{verbatim}
+
+\section{Spiel pausiert}
+Ein \glqq spielfähiger\grqq Client muss Pausierungsnachrichten nicht beachten, da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Servers handelt.
+\begin{description}
+\item[N] Spielername
+\item[P] Punktekonto
+\item[segment] wie in \ref{segment} definiert
+\item[card] wie in \ref{card} definiert
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+	<data class="paused">
+		<nextPlayer class="manhattan:player" displayName="N" points="P">
+			{segment}
+			{card}
+		</nextPlayer>
+	</data>
+</room>
+\end{verbatim}
+
+\section{Spiel verlassen}
+\begin{verbatim}
+<left roomId="RID"/>
+\end{verbatim}
+
+
+\section{\label{gameend}Spielergebnis}
+Zum Spielende enthält der Spielstatus eine \textit{Condition}, der das Spielergebnis entnommen werden kann:
+\begin{description}
+\item[W] Gewinner (RED/BLUE/none), none bei unentschieden
+\item[R] Text, der Grund für Spielende erklärt
+\end{description}
+\begin{verbatim}
+<condition winner="W" reason="R"/>
+\end{verbatim}
+
+\newpage
+\part{Überblick}
+Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikation ablaufen kann.\bigskip\\
+
+\begin{enumerate}
+\item Ein Spielserver startet ein Spiel und wartet auf den Client (die Clients).
+\item Der Client stellt eine TCP Verbindung zum Spielserver her (er kennt dessen IP-Adresse und Port)
+\item Die Verbindung ist aufgebaut und der Client sendet \begin{verbatim}
+<protocol>
+    <join gameType="swc_2012_manhattan"/>
+\end{verbatim}
+\item Der Server sendet \begin{verbatim}
+<protocol>
+    <joined roomId="59c8f457-dba3-4cd2-91d4-595b1e62605d"/>
+\end{verbatim}
+\item der Client merkt sich die roomId.
+\item der Server startet das Spiel und sendet \begin{verbatim}
+<room roomId="59c8f457-dba3-4cd2-91d4-595b1e62605d">
+    <data class="manhattan:welcome" color="blue"/>
+</room>
+\end{verbatim}
+\item der Client merkt sich seine Spielerfarbe.
+\item der Server sendet das Ausgangsspielfeld: \begin{verbatim}
+<room roomId="59c8f457-dba3-4cd2-91d4-595b1e62605d">
+    <data class="memento">
+      <state class="manhattan:state" turn="0" start="red" current="red"
+       type="select">
+        <red displayName="Spieler 1" points="0">
+          <segment size="1" usable="0" retained="11"/>
+          <segment size="2" usable="0" retained="6"/>
+          <segment size="3" usable="0" retained="4"/>
+          <segment size="4" usable="0" retained="3"/>
+          <card slot="1"/>
+          <card slot="0"/>
+          <card slot="4"/>
+          <card slot="0"/>
+        </red>
+        <blue displayName="Spieler 2" points="0">
+          <segment size="1" usable="0" retained="11"/>
+          <segment size="2" usable="0" retained="6"/>
+          <segment size="3" usable="0" retained="4"/>
+          <segment size="4" usable="0" retained="3"/>
+          <card slot="1"/>
+          <card slot="4"/>
+          <card slot="1"/>
+          <card slot="2"/>
+        </blue>
+      </state>
+    </data>
+</room>
+
+\end{verbatim}
+\item da der andere Spieler anfängt folgt noch eine \textit{memento}-Nachricht vom Server, die den Spielstatus nach dem ersten Zug von Spieler 1 beinhaltet.
+\item es folgt die erste Zug-Aufforderung vom Server: \begin{verbatim}
+<room roomId="59c8f457-dba3-4cd2-91d4-595b1e62605d">
+    <data class="sc.framework.plugins.protocol.MoveRequest"/>
+</room>
+\end{verbatim}
+\item Der Client antwortet mit einem Auswahlzug: \begin{verbatim}
+<room roomId="59c8f457-dba3-4cd2-91d4-595b1e62605d">
+    <data class="manhattan:select">
+        <select size="1" amount="1"/>
+        <select size="2" amount="2"/>
+        <select size="3" amount="0"/>
+        <select size="4" amount="3"/>
+    </data>
+</room>
+\end{verbatim}
+\item so geht es weiter...
+\item die letzte Nachricht enthält ein \begin{verbatim}
+</protocol>
+\end{verbatim}
+Daraufhin wird die Verbindung geschlossen
+\end{enumerate}
+
+\end{document}
+
+
+<room roomId="RID">
+  <data class="result">
+    <definition>
+      <fragment name="Punkte">
+        <aggregation>AVERAGE</aggregation>
+        <relevantForRanking>true</relevantForRanking>
+      </fragment>
+    </definition>
+    <score cause="REGULAR">
+      <part>12</part>
+    </score>
+    <score cause="REGULAR">
+      <part>8</part>
+    </score>
+  </data>
+</room>

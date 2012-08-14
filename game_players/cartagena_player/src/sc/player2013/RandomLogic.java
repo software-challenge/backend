@@ -14,10 +14,11 @@ import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.util.InvalidMoveException;
 import sc.shared.GameResult;
+
 /**
- * Das Herz des Simpleclients: Eine sehr simple Logik,
- * die ihre Zuege zufaellig waehlt, aber gueltige Zuege macht.
- * Ausserdem werden zum Spielverlauf Konsolenausgaben gemacht.
+ * Das Herz des Simpleclients: Eine sehr simple Logik, die ihre Zuege zufaellig
+ * waehlt, aber gueltige Zuege macht. Ausserdem werden zum Spielverlauf
+ * Konsolenausgaben gemacht.
  */
 public class RandomLogic implements IGameHandler {
 
@@ -46,7 +47,8 @@ public class RandomLogic implements IGameHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void gameEnded(GameResult data, PlayerColor color, String errorMessage) {
+	public void gameEnded(GameResult data, PlayerColor color,
+			String errorMessage) {
 
 		System.out.println("*** Das Spiel ist beendet");
 	}
@@ -57,38 +59,51 @@ public class RandomLogic implements IGameHandler {
 	@Override
 	public void onRequestAction() {
 		System.out.println("*** Es wurde ein Zug angefordert");
-		// wähle eine zufällige Anzahl von Zügen zwischen 0 und 3
-		int numMoves = rand.nextInt(4);
-		System.out.println("*** Anzahl der diesmal ausgewählten Züge: " + numMoves);
+		// wähle eine zufällige Anzahl von Zügen zwischen 0 und 3;
 		MoveContainer moveC = new MoveContainer();
-		for(int i = 0 ; i < 3 ; i++){
+		for (int i = 0; i < 3; i++) {
 			// Liste der verfügbaren Züge
-			LinkedList<Move> possibleMoves = (LinkedList<Move>) gameState.getPossibleMoves();
-			System.out.println("*** Anzahl der möglichen Züge:"  + possibleMoves.size());
+			LinkedList<Move> possibleMoves = (LinkedList<Move>) gameState
+					.getPossibleMoves();
+			System.out.println("*** Anzahl der möglichen Züge:"
+					+ possibleMoves.size());
 			// Zufällige Auswahl eines Zuges
-			Move move = possibleMoves.get(rand.nextInt(possibleMoves.size()));
-			if(move.getClass().equals(BackwardMove.class)){
-				BackwardMove bMove = (BackwardMove) move;
-				System.out.println("*** Führe Rückwärtstzug aus - Feld mit Index: "  + bMove.fieldIndex);
-				bMove.addHint("Random Move Backward");
-				bMove.addHint("Noch ein Hint");
-			} else if(move.getClass().equals(ForwardMove.class)){
-				ForwardMove fMove = (ForwardMove) move;
-				System.out.println("*** Führe Vorwärtszug aus - Feld mit Index: "  + fMove.fieldIndex + " - Symbol : " + fMove.symbol);
-				fMove.addHint("Random Move Forward");
+			Move move;
+			if (possibleMoves.size() > 0) {
+				move = possibleMoves.get(rand.nextInt(possibleMoves.size()));
+				if (move.getClass().equals(BackwardMove.class)) {
+					BackwardMove bMove = (BackwardMove) move;
+					System.out
+							.println("*** Führe Rückwärtstzug aus - Feld mit Index: "
+									+ bMove.fieldIndex);
+					bMove.addHint("Random Move Backward");
+					bMove.addHint("Noch ein Hint");
+				} else if (move.getClass().equals(ForwardMove.class)) {
+					ForwardMove fMove = (ForwardMove) move;
+					System.out
+							.println("*** Führe Vorwärtszug aus - Feld mit Index: "
+									+ fMove.fieldIndex
+									+ " - Symbol : "
+									+ fMove.symbol);
+					fMove.addHint("Random Move Forward");
+				}
+			} else {
+				move = null;
 			}
 			// Hinzufügen des Zuges zum Container
 			moveC.addMove(move);
 			// Lokalen GameState auf den Move aktualisieren.
-			try {
-				move.perform(gameState, gameState.getCurrentPlayer());
-				gameState.prepareNextTurn(move);
-			} catch (InvalidMoveException e) {
-				System.out.println("*** Ungültiger Zug ausgeführt");
-				e.printStackTrace();
-			}			
+			if (move != null) {
+				try {
+					move.perform(gameState, gameState.getCurrentPlayer());
+					gameState.prepareNextTurn(move);
+				} catch (InvalidMoveException e) {
+					System.out.println("*** Ungültiger Zug ausgeführt");
+					e.printStackTrace();
+				}
+			}
 		}
-		
+
 		// Sende den Container mit allen durchgeführten Zügen.
 		sendAction(moveC);
 	}
@@ -112,7 +127,8 @@ public class RandomLogic implements IGameHandler {
 		this.gameState = gameState;
 		currentPlayer = gameState.getCurrentPlayer();
 
-		System.out.print("*** Das Spiel geht vorran: Zug = " + gameState.getTurn());
+		System.out.print("*** Das Spiel geht vorran: Zug = "
+				+ gameState.getTurn());
 		System.out.println(", Spieler = " + currentPlayer.getPlayerColor());
 	}
 

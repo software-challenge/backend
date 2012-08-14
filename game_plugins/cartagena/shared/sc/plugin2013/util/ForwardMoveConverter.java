@@ -41,7 +41,7 @@ public class ForwardMoveConverter implements Converter {
 
 			field = ForwardMove.class.getDeclaredField("symbol");
 			String symbol = reader.getAttribute("symbol").toString();
-			System.out.println(symbol);
+//			System.out.println(symbol);
 
 			if (symbol.equals("BOTTLE")) {
 				field.setAccessible(true);
