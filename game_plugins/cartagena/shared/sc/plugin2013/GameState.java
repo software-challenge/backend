@@ -184,7 +184,7 @@ public class GameState implements Cloneable {
 	/**
 	 * Initialisiert den KartenStapel
 	 */
-	private synchronized void initCardStack() {
+	protected synchronized void initCardStack() {
 		// For each symbol
 		for (SymbolType symbol : SymbolType.values()) {
 			for (int i = 0; i < Constants.CARDS_PER_SYMBOL; i++) {
@@ -273,16 +273,37 @@ public class GameState implements Cloneable {
 	 */
 	public void addPlayer(Player player) {
 		if (player.getPlayerColor() == PlayerColor.RED) {
-			this.red = player;
+			if (this.red == null) {
+				this.red = player;
+				// Draw initial Cards for Player
+				for (int i = 0; i < Constants.INIT_CARDS_PER_PLAYER; i++) {
+					player.addCard(cardStack.remove(0));
+				}
+			} else{
+				//Karten auffüllen
+				for(Card c:red.getCards()){
+					player.addCard(c);
+				}
+				//Punktestand sezten
+				player.setPoints(red.getPoints());
+				this.red = player;				
+			}
 		} else if (player.getPlayerColor() == PlayerColor.BLUE) {
-			this.blue = player;
+			if (this.blue == null) {
+				this.blue = player;
+				for (int i = 0; i < Constants.INIT_CARDS_PER_PLAYER; i++) {
+					player.addCard(cardStack.remove(0));
+				}
+			} else {
+				//Karten auffüllen
+				for(Card c:blue.getCards()){
+					player.addCard(c);
+				}
+				//Punktestand sezten
+				player.setPoints(red.getPoints());
+				this.blue = player;
+			}
 		}
-
-		// Draw initial Cards for Player
-		for (int i = 0; i < Constants.INIT_CARDS_PER_PLAYER; i++) {
-			player.addCard(cardStack.remove(0));
-		}
-
 	}
 
 	/**
@@ -407,16 +428,18 @@ public class GameState implements Cloneable {
 		return turn / 2;
 	}
 
-	/** Gibt den Kartenstapel zurück
-	 * 	Nur für den Server relevant
+	/**
+	 * Gibt den Kartenstapel zurück Nur für den Server relevant
+	 * 
 	 * @return
 	 */
 	public List<Card> getCardStack() {
 		return cardStack;
 	}
 
-	/** Gibt den Stapel der benutzten Karten zurück
-	 *  Nur für den Server relevant
+	/**
+	 * Gibt den Stapel der benutzten Karten zurück Nur für den Server relevant
+	 * 
 	 * @return
 	 */
 	public List<Card> getUsedStack() {
@@ -500,8 +523,11 @@ public class GameState implements Cloneable {
 		getRedPlayer().setPoints(scoreRed);
 	}
 
-	/** Überprüft ob ein Spieler alle Piraten im Zielfeld hat.
-	 * @param color die Farbe des Spielers
+	/**
+	 * Überprüft ob ein Spieler alle Piraten im Zielfeld hat.
+	 * 
+	 * @param color
+	 *            die Farbe des Spielers
 	 * @return true wenn der Spieler alle Piraten im Zilfeld hat
 	 */
 	public boolean playerFinished(PlayerColor color) {
