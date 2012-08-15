@@ -1,7 +1,6 @@
 package sc.plugin2013;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -17,6 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  */
 @XStreamAlias(value = "cartagena:field")
+//@XStreamConverter(FieldConverter.class)
 public class Field implements Cloneable {
 
 	@XStreamAsAttribute
@@ -24,7 +24,7 @@ public class Field implements Cloneable {
 	@XStreamAsAttribute
 	public final SymbolType symbol;
 
-	private List<Pirate> pirates;
+	private LinkedList<Pirate> pirates;
 
 	/**
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
@@ -86,7 +86,7 @@ public class Field implements Cloneable {
 	 * @return Liefert die Liste der Piraten, welche sich auf diesem Feld
 	 *         befinden.
 	 */
-	public List<Pirate> getPirates() {
+	public LinkedList<Pirate> getPirates() {
 		return this.pirates;
 	}
 

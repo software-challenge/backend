@@ -1,14 +1,20 @@
 package sc.plugin2013;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 /**
  * Beinhaltet Informationen zum Spielende: Farbe des Gewinners
  * und Gewinngrund.
  * 
  */
+@XStreamAlias(value = "condition")
 class Condition implements Cloneable {
-
+	
+	@XStreamAsAttribute
 	public final PlayerColor winner;
-
+	
+	@XStreamAsAttribute
 	public final String reason;
 
 	/*
