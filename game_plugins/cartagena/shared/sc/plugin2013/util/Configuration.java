@@ -1,6 +1,7 @@
 package sc.plugin2013.util;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
@@ -17,8 +18,7 @@ import sc.plugin2013.Pirate;
 import sc.plugin2013.Player;
 import sc.plugin2013.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
-
-import com.sun.org.apache.bcel.internal.classfile.Field;
+import sc.plugin2013.Field;
 import com.thoughtworks.xstream.XStream;
 
 public class Configuration {
@@ -32,6 +32,7 @@ public class Configuration {
 		xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
+		//xStream.alias("pirates", List.class, LinkedList.class);
 		LobbyProtocol.registerMessages(xStream);
 		LobbyProtocol.registerAdditionalMessages(xStream,
 				getClassesToRegister());

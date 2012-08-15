@@ -21,7 +21,7 @@ public class WelcomeMessage {
 	}
 
 	public WelcomeMessage(PlayerColor c) {
-		color = c.toString().toLowerCase();
+		color = c.toString();
 	}
 
 	/** Gibt die Farbe des Spielers zurück

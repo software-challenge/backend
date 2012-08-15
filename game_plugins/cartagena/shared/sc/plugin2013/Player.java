@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.framework.plugins.SimplePlayer;
 import sc.plugin2013.PlayerColor;
+import sc.plugin2013.util.PlayerConverter;
 
 /**Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
  * Beeinhaltet auch Informationen zum Punktekonto und zu den Karten ({@link Card) des Spielers.
@@ -19,6 +21,7 @@ import sc.plugin2013.PlayerColor;
  *
  */
 @XStreamAlias(value = "cartagena:player")
+//@XStreamConverter(PlayerConverter.class)
 public class Player extends SimplePlayer implements Cloneable {
 
 	
@@ -39,7 +42,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	/**
 	 * Die Liste der Karten des Spielers
 	 */
-	private List<Card> cards;
+	private LinkedList<Card> cards;
 
 	/**
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
