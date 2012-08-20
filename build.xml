@@ -13,6 +13,7 @@
 		<delete dir="game_players/schaefchen_im_trockenen/build" />!-->
 		<delete dir="game_plugins/manhattan/build" />
 		<delete dir="game_players/manhattan/build" />
+		<delete dir="game_plugins/qwirkle/build"  />
 		<delete dir="game_players/manhattan_player2/build" />
 		<delete dir="game_plugins/cartagena/build" />
 		<delete dir="game_players/cartagena_player/build" />
@@ -23,14 +24,14 @@
 		<ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Plugins and Players..." />
-		<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
+		<!--<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />
-		<!--<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
+		<ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />!-->
+		<ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />
 		<ant dir="game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/manhattan" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />!-->
 		<ant dir="game_plugins/cartagena" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/cartagena_player/" target="clean-build" inheritAll="false" />
 		
@@ -52,14 +53,14 @@
 			<fileset dir="./game_server/build/jar" />
 		</copy>
 
-		
+		<!--
 		<mkdir dir="${out.dir}/simple_client/hase_und_igel/jar" />
 		<copy todir="${out.dir}/simple_client/hase_und_igel/jar">
 			<fileset dir="./game_players/hase_und_igel/build/jar" />
 		</copy>
 	
 		
-		<!--
+		
 		<mkdir dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/jar">
 			<fileset dir="./game_players/schaefchen_im_trockenen/build/jar" />
@@ -68,7 +69,7 @@
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen2/jar">
 			<fileset dir="./game_players/schaefchen_im_trockenen2/build/jar" />
 		</copy>
-		!-->
+		
 		
 		<mkdir dir="${out.dir}/simple_client/manhattan/jar" />
 		<copy todir="${out.dir}/simple_client/manhattan/jar">
@@ -78,7 +79,7 @@
 		<mkdir dir="${out.dir}/not_so_simple_client/manhattan/jar" />
 		<copy todir="${out.dir}/not_so_simple_client/manhattan/jar">
 			<fileset dir="./game_players/manhattan_player2/build/jar" />
-		</copy>
+		</copy>!-->
 		
 		<mkdir dir="${out.dir}/simple_client/cartagena/jar" />
 		<copy todir="${out.dir}/simple_client/cartagena/jar">
@@ -107,7 +108,7 @@
 			</fileset>
 		</copy>
 		<move tofile="${out.dir}/simple_client/schaefchen_im_trockenen/src/build.xml" file="${out.dir}/simple_client/schaefchen_im_trockenen/src/build-deploy.xml" />
-		!-->
+		
 
 		<mkdir dir="${out.dir}/simple_client/manhattan/src" />
 		<copy todir="${out.dir}/simple_client/manhattan/src">
@@ -118,7 +119,7 @@
 				<exclude name="build.xml" />
 			</fileset>
 		</copy>
-		<move tofile="${out.dir}/simple_client/manhattan/src/build.xml" file="${out.dir}/simple_client/manhattan/src/build-deploy.xml" />
+		<move tofile="${out.dir}/simple_client/manhattan/src/build.xml" file="${out.dir}/simple_client/manhattan/src/build-deploy.xml" />!-->
 		
 		<mkdir dir="${out.dir}/simple_client/cartagena/src" />
 		<copy todir="${out.dir}/simple_client/cartagena/src">
@@ -145,12 +146,12 @@
 		<copy todir="${out.dir}/simple_client/schaefchen_im_trockenen/src/lib">
 			<fileset dir="${out.dir}/simple_client/schaefchen_im_trockenen/jar/lib" />
 		</copy>
-		!-->
+		
 
 		<mkdir dir="${out.dir}/simple_client/manhattan/src/lib" />
 		<copy todir="${out.dir}/simple_client/manhattan/src/lib">
 			<fileset dir="${out.dir}/simple_client/manhattan/jar/lib" />
-		</copy>
+		</copy>!-->
 		
 		<mkdir dir="${out.dir}/simple_client/cartagena/src/lib" />
 		<copy todir="${out.dir}/simple_client/cartagena/src/lib">
@@ -189,10 +190,10 @@
 		<zip destfile="${out.dir}/zipped/challenger-sit.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen2/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-jar.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-sit-src.zip" basedir="${out.dir}/simple_client/schaefchen_im_trockenen/src" />
-		!-->
+		
 		<zip destfile="${out.dir}/zipped/simpleclient-mh-jar.zip" basedir="${out.dir}/simple_client/manhattan/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-mh-src.zip" basedir="${out.dir}/simple_client/manhattan/src" />
-		<zip destfile="${out.dir}/zipped/not-so-simpleclient-mh-jar.zip" basedir="${out.dir}/not_so_simple_client/manhattan/jar" />
+		<zip destfile="${out.dir}/zipped/not-so-simpleclient-mh-jar.zip" basedir="${out.dir}/not_so_simple_client/manhattan/jar" />!-->
 		
 		<zip destfile="${out.dir}/zipped/simpleclient-ca-jar.zip" basedir="${out.dir}/simple_client/cartagena/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-ca-src.zip" basedir="${out.dir}/simple_client/cartagena/src" />
