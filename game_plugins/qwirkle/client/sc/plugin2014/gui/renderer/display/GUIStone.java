@@ -1,23 +1,22 @@
 package sc.plugin2014.gui.renderer.display;
 
 import static sc.plugin2014.gui.renderer.display.GUIConstants.*;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import sc.plugin2014.entities.Field;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.gui.renderer.RendererUtil;
 
 public class GUIStone {
 
-    private final boolean highlighted;
-    private int           x, y;
-    private final Stone   stone;
-    private Field         field;
-    private Image         image;
+    private boolean     highlighted;
+    private int         x, y;
+    private final Stone stone;
+    private Field       field;
+    private Image       image;
 
     public GUIStone(Stone stone) {
         this.stone = stone;
-        highlighted = false;
+        setHighlighted(false);
     }
 
     public void moveTo(int x, int y) {
@@ -68,10 +67,14 @@ public class GUIStone {
                     + stone.getShape().toString().toLowerCase() + "_"
                     + stone.getColor().toString().toLowerCase() + ".png");
         }
-        if (highlighted) {
+        if (isHighlighted()) {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,
-                    GUIConstants.STONE_HEIGHT, fmPanel); // TODO make
-                                                         // highlighted
+                    GUIConstants.STONE_HEIGHT, fmPanel);
+            g2.setColor(ColorHelper.getTransparentColor(Color.WHITE, 160));
+            g2.drawRect(getX(), getY(), GUIConstants.STONE_WIDTH,
+                    GUIConstants.STONE_HEIGHT);
+            g2.drawRect(getX() + 1, getY() + 1, GUIConstants.STONE_WIDTH - 2,
+                    GUIConstants.STONE_HEIGHT - 2);
         }
         else {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,
@@ -85,5 +88,13 @@ public class GUIStone {
 
     public void setField(Field belongingField) {
         field = belongingField;
+    }
+
+    public boolean isHighlighted() {
+        return highlighted;
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        this.highlighted = highlighted;
     }
 }

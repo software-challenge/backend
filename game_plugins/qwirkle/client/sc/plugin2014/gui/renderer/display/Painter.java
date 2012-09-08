@@ -8,13 +8,16 @@ import java.util.List;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.laylogic.PointsCalculator;
 import sc.plugin2014.moves.DebugHint;
+import sc.plugin2014.moves.LayMove;
 import sc.plugin2014.util.Constants;
 
 public class Painter {
     public static void paintStaticComponents(Graphics2D g2, int width,
             int height, ImageObserver imgObs, Image scaledBgImage,
-            GameState gameState, List<GUIStone> toLayStones) {
+            GameState gameState, List<GUIStone> toLayStones,
+            Component component, boolean dragging) {
 
         // hintergrundbild oder farbe
         if (OPTIONS[BACKGROUND] && (scaledBgImage != null)) {
@@ -27,7 +30,8 @@ public class Painter {
                     height - (2 * BORDER_SIZE));
         }
 
-        paintBoard(g2, width, height, gameState, toLayStones);
+        paintBoard(g2, width, height, gameState, toLayStones, component,
+                dragging);
 
         g2.setColor(ColorHelper.getTransparentColor(Color.WHITE, 180));
 
@@ -37,22 +41,22 @@ public class Painter {
         g2.fillRect(BORDER_SIZE, height - BORDER_SIZE - heightBar, width
                 - (2 * BORDER_SIZE), heightBar);
 
-        drawSideBar(g2, width, height, gameState, heightBar);
+        drawSideBar(g2, width, height, gameState, heightBar, toLayStones);
     }
 
     private static void drawSideBar(Graphics2D g2, int width, int height,
-            GameState gameState, int heightBar) {
+            GameState gameState, int heightBar, List<GUIStone> toLayStones) {
         g2.fillRect(width - BORDER_SIZE - SIDE_BAR_WIDTH, BORDER_SIZE,
                 SIDE_BAR_WIDTH, height - (2 * BORDER_SIZE) - heightBar);
 
         boolean hints = OPTIONS[DEBUG_VIEW];
         int fontY = paintPlayerInfo(g2, (width - BORDER_SIZE - SIDE_BAR_WIDTH)
                 + STUFF_GAP, (2 * BORDER_SIZE) + 10, PlayerColor.RED, hints,
-                gameState, gameState.gameEnded());
+                gameState, gameState.gameEnded(), toLayStones);
         fontY += hints ? 10 : 30;
         fontY = 25 + paintPlayerInfo(g2, (width - BORDER_SIZE - SIDE_BAR_WIDTH)
                 + STUFF_GAP, fontY, PlayerColor.BLUE, hints, gameState,
-                gameState.gameEnded());
+                gameState.gameEnded(), toLayStones);
 
         if (hints && (gameState.getLastMove() != null)) {
             g2.setColor(Color.BLACK);
@@ -67,15 +71,17 @@ public class Painter {
     }
 
     private static void paintBoard(Graphics2D g2, int width, int height,
-            GameState gameState, List<GUIStone> toLayStones) {
+            GameState gameState, List<GUIStone> toLayStones,
+            Component component, boolean dragging) {
         GUIBoard.draw(g2, GUIConstants.BORDER_SIZE, GUIConstants.BORDER_SIZE,
                 width - GUIConstants.BORDER_SIZE - GUIConstants.SIDE_BAR_WIDTH,
-                height - STATUS_HEIGTH, toLayStones, gameState.getBoard());
+                height - STATUS_HEIGTH, toLayStones, gameState.getBoard(),
+                component, dragging);
     }
 
     public static int paintPlayerInfo(Graphics2D g2, int fontX, int fontY,
             PlayerColor player, boolean small, GameState gameState,
-            boolean gameEnded) {
+            boolean gameEnded, List<GUIStone> toLayStones) {
 
         int[] stats = gameState.getPlayerStats(player);
 
@@ -83,22 +89,38 @@ public class Painter {
                 ColorHelper.getPlayerColor(player,
                         gameState.getCurrentPlayerColor()), 174));
         String points = Integer.toString(stats[0]);
+
+        LayMove layMove = new LayMove();
+        for (GUIStone guistone : toLayStones) {
+            layMove.layStoneOntoField(guistone.getStone(), guistone.getField());
+        }
+
+        String pointsThisRound = "0";
+
+        if (gameState.getCurrentPlayerColor().equals(player)) {
+            pointsThisRound = Integer.toString(PointsCalculator
+                    .getPointsForMove(layMove.getStoneToFieldMapping(),
+                            gameState.getBoard()));
+        }
+
         if (small) {
             fontY += 20;
             g2.setFont(h3);
             g2.drawString(points + " Punkte", fontX, fontY);
+            fontY += 20;
+            g2.setFont(h4);
+            g2.drawString("+ " + pointsThisRound + " Punkte", fontX, fontY);
         }
         else {
             fontY += 60;
             g2.setFont(h2);
             g2.drawString(points + " Punkte", fontX, fontY);
+            fontY += 60;
+            g2.setFont(h3);
+            g2.drawString("+ " + pointsThisRound + " Punkte", fontX, fontY);
         }
 
         g2.setColor(Color.BLACK);
-
-        // fontY += 20;
-        // g2.setFont(h5);
-        // g2.drawString(s, fontX, fontY);
 
         return fontY;
     }
@@ -263,12 +285,13 @@ public class Painter {
 
     public static void paintDynamicComponents(Graphics2D g2,
             GUIStone selectedStone, int width, int height, GameState gameState,
-            List<GUIStone> redStones, List<GUIStone> blueStones) {
+            List<GUIStone> redStones, List<GUIStone> blueStones,
+            Component component) {
 
         if (selectedStone != null) {
             GUIBoard.drawGrid(g2, BORDER_SIZE, BORDER_SIZE, width - BORDER_SIZE
                     - SIDE_BAR_WIDTH, height - STATUS_HEIGTH,
-                    gameState.getBoard());
+                    gameState.getBoard(), component);
 
             selectedStone.draw(g2);
         }

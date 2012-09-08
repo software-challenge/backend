@@ -8,7 +8,8 @@ import sc.plugin2014.util.Constants;
 
 public class GUIBoard {
     public static void draw(Graphics2D g2, int xStart, int yStart, int width,
-            int height, List<GUIStone> toLayStones, Board board) {
+            int height, List<GUIStone> toLayStones, Board board,
+            Component component, boolean dragging) {
         int offsetX = calculateOffsetX(xStart, width);
         int offsetY = calculateOffsetY(yStart, height);
 
@@ -33,6 +34,22 @@ public class GUIBoard {
                 toLayStone.draw(g2);
             }
         }
+
+        if (dragging) {
+            Field fieldFromXY = getFieldUnderMouse(component, offsetX, offsetY,
+                    board, xStart, yStart, width, height);
+
+            if (fieldFromXY != null) {
+                int fieldToHighlightX = (fieldFromXY.getPosX() * GUIConstants.STONE_WIDTH)
+                        + offsetX;
+                int fieldToHighlightY = (fieldFromXY.getPosY() * GUIConstants.STONE_HEIGHT)
+                        + offsetY;
+
+                g2.setColor(Color.GREEN);
+                g2.fillRect(fieldToHighlightX, fieldToHighlightY,
+                        GUIConstants.STONE_WIDTH, GUIConstants.STONE_HEIGHT);
+            }
+        }
     }
 
     private static int calculateOffsetX(int xStart, int width) {
@@ -51,7 +68,7 @@ public class GUIBoard {
     }
 
     public static void drawGrid(Graphics2D g2, int xStart, int yStart,
-            int width, int height, Board board) {
+            int width, int height, Board board, Component component) {
         int offsetX = calculateOffsetX(xStart, width);
         int offsetY = calculateOffsetY(yStart, height);
 
@@ -72,23 +89,35 @@ public class GUIBoard {
                     + (Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH), y);
         }
 
-        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+        Field fieldFromXY = getFieldUnderMouse(component, offsetX, offsetY,
+                board, xStart, yStart, width, height);
 
-        if ((mouseLocation.x >= offsetX)
+        if (fieldFromXY != null) {
+            g2.drawString(
+                    "Legen auf: (" + fieldFromXY.getPosX() + ", "
+                            + fieldFromXY.getPosY() + ")",
+                    offsetX
+                            + (Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH)
+                            + 30,
+                    (offsetY + (Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT)) - 5);
+        }
+    }
+
+    private static Field getFieldUnderMouse(Component component, int offsetX,
+            int offsetY, Board board, int xStart, int yStart, int width,
+            int height) {
+        Point mouseLocation = component.getMousePosition();
+
+        if ((mouseLocation != null)
+                && (mouseLocation.x >= offsetX)
                 && (mouseLocation.x <= ((Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH) + offsetX))) {
             if ((mouseLocation.y >= offsetY)
-                    && (mouseLocation.y <= (Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT) + offsetY)) {
-                Field fieldFromXY = getBelongingFieldFromXY(board, xStart,
-                        yStart, width, height, mouseLocation.x, mouseLocation.y);
-                g2.drawString(
-                        "Legen auf: " + fieldFromXY.getPosX() + " "
-                                + fieldFromXY.getPosY(),
-                        offsetX
-                                + (Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH)
-                                + 30,
-                        (offsetY + (Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT)) - 5);
+                    && (mouseLocation.y <= ((Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT) + offsetY))) {
+                return getBelongingFieldFromXY(board, xStart, yStart, width,
+                        height, mouseLocation.x, mouseLocation.y);
             }
         }
+        return null;
     }
 
     public static Field getBelongingField(Board board, int xStart, int yStart,
