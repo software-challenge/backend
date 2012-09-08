@@ -1,6 +1,3 @@
-/**
- * 
- */
 package sc.plugin2014.gui.renderer.display;
 
 import static sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration.*;
@@ -9,21 +6,18 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.RenderFacade;
 import sc.plugin2014.gui.renderer.RendererUtil;
+import sc.plugin2014.gui.renderer.display.components.Button;
 import sc.plugin2014.gui.renderer.display.listener.GameKeyAdapter;
 import sc.plugin2014.gui.renderer.display.listener.LayMoveAdapter;
 import sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration;
 import sc.plugin2014.moves.LayMove;
 import sc.plugin2014.moves.Move;
 
-/**
- * @author tkra, ffi
- */
 public class FrameRenderer extends JComponent {
     private static final long       serialVersionUID  = -7852533731353419771L;
 
@@ -61,7 +55,7 @@ public class FrameRenderer extends JComponent {
 
     public List<GUIStone>           toLayStones       = new ArrayList<GUIStone>();
 
-    private final JButton           actionButton;
+    private final Button            actionButton;
 
     public FrameRenderer() {
         updateBuffer = true;
@@ -71,18 +65,17 @@ public class FrameRenderer extends JComponent {
         blueStones = new LinkedList<GUIStone>();
         sensetiveStones = new LinkedList<GUIStone>();
 
-        setMinimumSize(new Dimension(1024, 768));
-
         setDoubleBuffered(true);
         addComponentListener(componentListener);
-        addKeyListener(new GameKeyAdapter(this));
+        GameKeyAdapter gameKeyAdapter = new GameKeyAdapter(this);
+        addKeyListener(gameKeyAdapter);
         setFocusable(true);
         requestFocusInWindow();
 
         RenderConfiguration.loadSettings();
 
         setLayout(null);
-        actionButton = new JButton("Legen");
+        actionButton = new Button("Zug abschließen");
         this.add(actionButton);
 
         actionButton.addMouseListener(new MouseAdapter() {
@@ -90,10 +83,14 @@ public class FrameRenderer extends JComponent {
             public void mouseReleased(MouseEvent e) {
 
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    sendMove();
+                    if (actionButton.isEnabled()) {
+                        sendMove();
+                    }
                 }
             }
         });
+
+        actionButton.addKeyListener(gameKeyAdapter);
 
         resizeBoard();
         repaint();
@@ -110,6 +107,8 @@ public class FrameRenderer extends JComponent {
                 moveSegment(gameState);
             }
         }
+
+        actionButton.setEnabled(false);
 
         this.gameState = gameState;
         currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
@@ -147,10 +146,10 @@ public class FrameRenderer extends JComponent {
 
     private synchronized void moveSegment(final GameState gameState) {
 
-        final int FPS = 30;
+        // final int FPS = 30;
 
-        setEnabled(false);
-        final LayMove move = (LayMove) gameState.getLastMove();
+        // setEnabled(false);
+        // final LayMove move = (LayMove) gameState.getLastMove();
 
         /*
          * final Point p = new Point(selectedStone.x, selectedStone.y);
@@ -296,8 +295,8 @@ public class FrameRenderer extends JComponent {
         }
 
         actionButton
-                .setBounds((getWidth() / 2) - 50, getHeight() - 80, 100, 30);
-        actionButton.repaint();
+                .setBounds((getWidth() / 2) - 80, getHeight() - 80, 160, 30);
+        actionButton.paint(g);
     }
 
     private void fillBuffer() {
@@ -341,9 +340,13 @@ public class FrameRenderer extends JComponent {
                 stone.setField(belongingField);
                 removeStone(stone);
                 toLayStones.add(stone);
+                actionButton.setEnabled(true);
             }
             else {
                 addStone(stone);
+                if (toLayStones.size() == 0) {
+                    actionButton.setEnabled(false);
+                }
             }
         }
     }

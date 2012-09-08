@@ -17,7 +17,7 @@ public class RenderConfiguration {
             "Debugansicht"                     };
 
     private static final boolean[] DEFAULTS     = new boolean[] { true, true,
-            true, true, false, false           };
+            true, true, false                  };
 
     public static final boolean[]  OPTIONS      = DEFAULTS.clone();
 
@@ -29,15 +29,19 @@ public class RenderConfiguration {
         }
 
         OutputStream fileStream = null;
+        ObjectOutputStream objectStream = null;
         try {
             fileStream = new FileOutputStream("qwirkle_gui.conf");
-            ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
+            objectStream = new ObjectOutputStream(fileStream);
             objectStream.writeObject(map);
             objectStream.flush();
         }
         catch (IOException e) {}
         finally {
             try {
+                if (objectStream != null) {
+                    objectStream.close();
+                }
                 if (fileStream != null) {
                     fileStream.close();
                 }
@@ -50,10 +54,11 @@ public class RenderConfiguration {
     public static void loadSettings() {
 
         InputStream fileStream = null;
+        ObjectInputStream objectStream = null;
 
         try {
             fileStream = new FileInputStream("qwirkle_gui.conf");
-            ObjectInputStream objectStream = new ObjectInputStream(fileStream);
+            objectStream = new ObjectInputStream(fileStream);
             HashMap<String, Boolean> map = (HashMap<String, Boolean>) objectStream
                     .readObject();
 
@@ -67,6 +72,9 @@ public class RenderConfiguration {
         catch (ClassNotFoundException e) {}
         finally {
             try {
+                if (objectStream != null) {
+                    objectStream.close();
+                }
                 if (fileStream != null) {
                     fileStream.close();
                 }

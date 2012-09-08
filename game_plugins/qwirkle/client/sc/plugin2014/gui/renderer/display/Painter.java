@@ -29,7 +29,7 @@ public class Painter {
 
         paintBoard(g2, width, height, gameState, toLayStones);
 
-        g2.setColor(DisplayHelper.getTransparentColor(Color.WHITE, 180));
+        g2.setColor(ColorHelper.getTransparentColor(Color.WHITE, 180));
 
         // fortschrittsleite, spielerinfo hintergrund
         int heightBar = PROGRESS_BAR_HEIGTH + (2 * STUFF_GAP) + STONE_HEIGHT
@@ -79,8 +79,8 @@ public class Painter {
 
         int[] stats = gameState.getPlayerStats(player);
 
-        g2.setColor(DisplayHelper.getTransparentColor(
-                DisplayHelper.getPlayerColor(player,
+        g2.setColor(ColorHelper.getTransparentColor(
+                ColorHelper.getPlayerColor(player,
                         gameState.getCurrentPlayerColor()), 174));
         String points = Integer.toString(stats[0]);
         if (small) {
@@ -135,14 +135,14 @@ public class Painter {
         int h = msgH + infoH;
         int xCenter = BORDER_SIZE + ((width - SIDE_BAR_WIDTH) / 2);
 
-        g2.setColor(DisplayHelper.getTransparentColor(new Color(255, 255, 255),
+        g2.setColor(ColorHelper.getTransparentColor(new Color(255, 255, 255),
                 192));
         g2.fillRoundRect(xCenter - (w / 2) - 20, (height / 2) - msgH - 5 - 100,
                 w + 40, h + 15, 20, 20);
 
         h = (height / 2) - 5 - 100;
         g2.setFont(h2);
-        g2.setColor(DisplayHelper.getPlayerColor(winner, true,
+        g2.setColor(ColorHelper.getPlayerColor(winner, true,
                 gameState.getCurrentPlayerColor()));
         g2.drawString(msg, xCenter - (msgW / 2), h);
 
@@ -201,14 +201,14 @@ public class Painter {
 
         g2.drawImage(progressIcon,
                 ((left + progress) - (PROGRESS_ICON_SIZE / 2)) + 3, height
-                        - PROGRESS_ICON_SIZE - 3, PROGRESS_ICON_SIZE,
+                        - PROGRESS_ICON_SIZE - 10, PROGRESS_ICON_SIZE,
                 PROGRESS_ICON_SIZE, imgObs);
     }
 
     private static void drawCanvas(Graphics2D g2, int width, int height,
             GameState gameState) {
         g2.setStroke(stroke15);
-        g2.setColor(DisplayHelper.getPlayerColor(
+        g2.setColor(ColorHelper.getPlayerColor(
                 gameState.getCurrentPlayerColor(),
                 gameState.getCurrentPlayerColor()));
         g2.fillRect(0, 0, width, BORDER_SIZE);
@@ -233,7 +233,7 @@ public class Painter {
 
         g2.setFont(h3);
         y -= (STUFF_GAP + 5);
-        g2.setColor(DisplayHelper.getPlayerColor(PlayerColor.RED,
+        g2.setColor(ColorHelper.getPlayerColor(PlayerColor.RED,
                 gameState.getCurrentPlayerColor()));
         g2.drawString(player.getDisplayName(), 2 * BORDER_SIZE, y);
     }
@@ -254,7 +254,7 @@ public class Painter {
 
         g2.setFont(h3);
         y -= (STUFF_GAP + 5);
-        g2.setColor(DisplayHelper.getPlayerColor(PlayerColor.BLUE,
+        g2.setColor(ColorHelper.getPlayerColor(PlayerColor.BLUE,
                 gameState.getCurrentPlayerColor()));
         int nameWidth = fmH3.stringWidth(player.getDisplayName());
         g2.drawString(player.getDisplayName(), width - (2 * BORDER_SIZE)
@@ -267,7 +267,8 @@ public class Painter {
 
         if (selectedStone != null) {
             GUIBoard.drawGrid(g2, BORDER_SIZE, BORDER_SIZE, width - BORDER_SIZE
-                    - SIDE_BAR_WIDTH, height - STATUS_HEIGTH);
+                    - SIDE_BAR_WIDTH, height - STATUS_HEIGTH,
+                    gameState.getBoard());
 
             selectedStone.draw(g2);
         }

@@ -5,6 +5,7 @@
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="devplugin.dir" value="../../game_gui/plugins" />
 	<property name="lib.dir" value="../../software_challenge_sdk/lib" />
 	<property name="sdk.dir" value="./../../software_challenge_sdk" />
 
@@ -47,13 +48,26 @@
 			</fileset>
 		</jar>
 	</target>
+	
+	   <target name="developement_jar" depends="scmversion,compile">
+	        <mkdir dir="${devplugin.dir}" />
+	        <jar destfile="${devplugin.dir}/${ant.project.name}.jar">
+	            <manifest>
+	                <attribute name="${manifest.code.version.key}" value="${code.version}" />
+	            </manifest>
+	            <fileset dir="${classes.dir}" />
+	            <fileset dir=".">
+	                <include name="resource/**/*" />
+	            </fileset>
+	        </jar>
+	    </target>
 
 	<target name="javadoc">
 		<javadoc encoding="UTF-8" charset="UTF-8" access="public" author="true" classpath="${toString:classpath}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
 	</target>
 
 
-	<target name="clean-build" depends="clean,jar,javadoc" />
+	<target name="clean-build" depends="clean,developement_jar,javadoc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>

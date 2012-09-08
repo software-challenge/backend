@@ -1,13 +1,14 @@
 /**
  * 
  */
-package sc.plugin2014.gui;
+package sc.plugin2014.gui.interface_implementation;
 
 import java.util.LinkedList;
 import java.util.List;
 import sc.guiplugin.interfaces.*;
 import sc.networking.clients.IControllableGame;
 import sc.plugin2014.GuiClient;
+import sc.plugin2014.gui.*;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.SlotDescriptor;

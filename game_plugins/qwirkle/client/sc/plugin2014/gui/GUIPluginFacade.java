@@ -9,6 +9,7 @@ import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.*;
 import sc.networking.clients.ObservingClient;
 import sc.plugin2014.*;
+import sc.plugin2014.gui.interface_implementation.*;
 import sc.plugin2014.gui.renderer.RenderFacade;
 import sc.plugin2014.gui.renderer.display.FrameRenderer;
 import sc.plugin2014.util.XStreamConfiguration;

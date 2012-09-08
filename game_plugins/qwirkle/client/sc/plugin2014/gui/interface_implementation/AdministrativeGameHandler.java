@@ -1,11 +1,12 @@
 /**
  * 
  */
-package sc.plugin2014.gui;
+package sc.plugin2014.gui.interface_implementation;
 
 import sc.plugin2014.*;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.interfaces.IGameHandler;
 import sc.plugin2014.moves.Move;
 import sc.shared.GameResult;
 

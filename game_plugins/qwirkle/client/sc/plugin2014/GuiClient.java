@@ -1,6 +1,7 @@
 package sc.plugin2014;
 
 import java.io.IOException;
+import sc.plugin2014.interfaces.IGUIObservation;
 
 public class GuiClient extends AbstractClient {
     public GuiClient(String host, int port, EPlayerId id) throws IOException {

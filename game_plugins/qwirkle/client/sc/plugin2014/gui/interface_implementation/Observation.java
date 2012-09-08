@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2014.gui;
+package sc.plugin2014.gui.interface_implementation;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -18,6 +18,8 @@ import sc.plugin2014.*;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.gui.renderer.RenderFacade;
+import sc.plugin2014.interfaces.IGUIObservation;
+import sc.plugin2014.interfaces.IGameHandler;
 import sc.plugin2014.util.XStreamConfiguration;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
