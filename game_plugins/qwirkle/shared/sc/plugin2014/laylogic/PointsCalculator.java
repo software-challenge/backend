@@ -3,11 +3,18 @@ package sc.plugin2014.laylogic;
 import java.util.List;
 import java.util.Map;
 import sc.plugin2014.entities.*;
+import sc.plugin2014.exceptions.InvalidMoveException;
 
 public class PointsCalculator {
     public static int getPointsForMove(Map<Stone, Field> stoneToFieldMapping,
             Board board) {
-        // TODO check if lay move is valid at first
+        try {
+            LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMapping, board,
+                    !board.hasStones());
+        }
+        catch (InvalidMoveException ex) {
+            return 0;
+        }
 
         int result = 0;
 

@@ -68,8 +68,7 @@ public class LayMoveAdapter extends MouseAdapter {
 
         if (e.getButton() == MouseEvent.BUTTON1) {
             if (parent.selectedStone != null) {
-                parent.selectedStone.moveTo(e.getX() - parent.dx, e.getY()
-                        - parent.dy);
+                parent.selectedStone.moveTo(e.getX(), e.getY());
 
                 parent.layStone(parent.selectedStone);
 

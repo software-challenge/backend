@@ -56,6 +56,7 @@ public class FrameRenderer extends JComponent {
     public List<GUIStone>           toLayStones       = new ArrayList<GUIStone>();
 
     private final Button            actionButton;
+    private final Button            takeBackButton;
 
     public FrameRenderer() {
         updateBuffer = true;
@@ -75,6 +76,7 @@ public class FrameRenderer extends JComponent {
         RenderConfiguration.loadSettings();
 
         setLayout(null);
+
         actionButton = new Button("Zug abschließen");
         this.add(actionButton);
 
@@ -91,6 +93,23 @@ public class FrameRenderer extends JComponent {
         });
 
         actionButton.addKeyListener(gameKeyAdapter);
+
+        takeBackButton = new Button("Steine zurücknehmen");
+        this.add(takeBackButton);
+
+        takeBackButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if (takeBackButton.isEnabled()) {
+                        // TODO
+                    }
+                }
+            }
+        });
+
+        takeBackButton.addKeyListener(gameKeyAdapter);
 
         resizeBoard();
         repaint();
@@ -109,6 +128,7 @@ public class FrameRenderer extends JComponent {
         }
 
         actionButton.setEnabled(false);
+        takeBackButton.setEnabled(false);
 
         this.gameState = gameState;
         currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
@@ -271,7 +291,6 @@ public class FrameRenderer extends JComponent {
 
     @Override
     public void paint(Graphics g) {
-
         super.paint(g);
         Graphics2D g2 = (Graphics2D) g;
 
@@ -287,16 +306,21 @@ public class FrameRenderer extends JComponent {
 
         if (gameState != null) {
             Painter.paintDynamicComponents(g2, selectedStone, getWidth(),
-                    getHeight(), gameState, redStones, blueStones);
+                    getHeight(), gameState, redStones, blueStones, this);
         }
 
         if (gameEnded) {
             Painter.paintEndMessage(g2, gameState, getWidth(), getHeight());
         }
 
-        actionButton
-                .setBounds((getWidth() / 2) - 80, getHeight() - 80, 160, 30);
+        actionButton.setBounds((getWidth() / 2) - 85, getHeight() - 110, 170,
+                30);
+
         actionButton.paint(g);
+
+        takeBackButton.setBounds((getWidth() / 2) - 85, getHeight() - 70, 170,
+                30);
+        takeBackButton.paint(g);
     }
 
     private void fillBuffer() {
@@ -310,8 +334,10 @@ public class FrameRenderer extends JComponent {
                 OPTIONS[ANTIALIASING] ? RenderingHints.VALUE_ANTIALIAS_ON
                         : RenderingHints.VALUE_ANTIALIAS_OFF);
 
+        boolean dragging = selectedStone != null;
+
         Painter.paintStaticComponents(g2, getWidth(), getHeight(), this,
-                scaledBgImage, gameState, toLayStones);
+                scaledBgImage, gameState, toLayStones, this, dragging);
         if (gameState != null) {
             // printGameStatus(g2);
             Painter.paintSemiStaticComponents(g2, getWidth(), getHeight(),
@@ -339,10 +365,12 @@ public class FrameRenderer extends JComponent {
             if ((belongingField != null) && belongingField.isFree()) {
                 stone.setField(belongingField);
                 removeStone(stone);
+                stone.setHighlighted(true);
                 toLayStones.add(stone);
                 actionButton.setEnabled(true);
             }
             else {
+                stone.setHighlighted(false);
                 addStone(stone);
                 if (toLayStones.size() == 0) {
                     actionButton.setEnabled(false);
