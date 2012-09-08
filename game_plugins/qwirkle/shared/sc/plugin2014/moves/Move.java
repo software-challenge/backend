@@ -50,7 +50,7 @@ public abstract class Move implements Cloneable {
      * Diese kann waehrend des Spieles vom Programmierer gelesen werden,
      * wenn der Client einen Zug macht.
      * 
-     * @param string
+     * @param content
      *            Debug-Hilfestellung
      */
     public void addHint(String content) {

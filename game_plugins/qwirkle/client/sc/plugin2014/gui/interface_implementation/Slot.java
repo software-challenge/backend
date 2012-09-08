@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2014.gui;
+package sc.plugin2014.gui.interface_implementation;
 
 import java.io.IOException;
 import sc.guiplugin.interfaces.ISlot;

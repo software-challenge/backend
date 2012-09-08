@@ -4,7 +4,7 @@ import static sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration.
 import java.awt.Color;
 import sc.plugin2014.entities.PlayerColor;
 
-public class DisplayHelper {
+public class ColorHelper {
     public static Color getTransparentColor(Color c, int alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(),
                 OPTIONS[TRANSPARANCY] ? alpha : 255);

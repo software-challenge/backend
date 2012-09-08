@@ -5,7 +5,7 @@ import javax.swing.JPanel;
 
 public class GUIConstants {
     public final static int         BORDER_SIZE         = 6;
-    public static final int         PROGRESS_ICON_SIZE  = 60;
+    public static final int         PROGRESS_ICON_SIZE  = 32;
     public static final int         PROGRESS_BAR_HEIGTH = 36;
 
     public static final int         SIDE_BAR_WIDTH      = 200;
@@ -13,11 +13,8 @@ public class GUIConstants {
     public static final int         STUFF_GAP           = 8;
     public static final int         GAP_SIZE            = 10;
 
-    public static final int         DIAGONAL_GAP        = 10;
-    public static final int         CITY_GAP            = 42;
-
-    public static final int         STONE_WIDTH         = 30;
-    public static final int         STONE_HEIGHT        = 30;
+    public static final int         STONE_WIDTH         = 28;
+    public static final int         STONE_HEIGHT        = 28;
 
     // schrift
     public static final Font        h0                  = new Font("Helvetica",

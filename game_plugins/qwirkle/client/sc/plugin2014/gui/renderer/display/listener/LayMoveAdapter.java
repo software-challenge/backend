@@ -2,15 +2,10 @@ package sc.plugin2014.gui.renderer.display.listener;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import sc.plugin2014.gui.renderer.display.FrameRenderer;
 import sc.plugin2014.gui.renderer.display.GUIStone;
 
 public class LayMoveAdapter extends MouseAdapter {
-
-    private static final Logger logger = LoggerFactory
-                                               .getLogger(LayMoveAdapter.class);
 
     private final FrameRenderer parent;
 
@@ -28,26 +23,34 @@ public class LayMoveAdapter extends MouseAdapter {
             int y = e.getY();
 
             for (GUIStone stone : parent.sensetiveStones) {
-                checkIfInner(x, y, stone);
+                if (checkIfInner(x, y, stone)) {
+                    parent.removeStone(stone);
+                    parent.updateView();
+                    break;
+                }
             }
 
             for (GUIStone stone : parent.toLayStones) {
-                checkIfInner(x, y, stone);
+                if (checkIfInner(x, y, stone)) {
+                    parent.removeStone(stone);
+                    parent.updateView();
+                    break;
+                }
             }
         }
     }
 
-    private void checkIfInner(int x, int y, GUIStone stone) {
+    private boolean checkIfInner(int x, int y, GUIStone stone) {
         if (stone.inner(x, y)) {
             parent.selectedStone = stone;
-            parent.removeStone(stone);
             parent.ox = stone.getX();
             parent.oy = stone.getY();
             parent.dx = x - parent.ox;
             parent.dy = y - parent.oy;
 
-            parent.updateView();
+            return true;
         }
+        return false;
     }
 
     @Override

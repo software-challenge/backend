@@ -1,7 +1,6 @@
 package sc.plugin2014.gui.renderer.display;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.util.List;
 import sc.plugin2014.entities.Board;
 import sc.plugin2014.entities.Field;
@@ -52,34 +51,62 @@ public class GUIBoard {
     }
 
     public static void drawGrid(Graphics2D g2, int xStart, int yStart,
-            int width, int height) {
+            int width, int height, Board board) {
         int offsetX = calculateOffsetX(xStart, width);
         int offsetY = calculateOffsetY(yStart, height);
 
-        g2.setColor(DisplayHelper.getTransparentColor(Color.WHITE, 174));
-        for (int i = 1; i < Constants.FIELDS_IN_X_DIM; i++) {
+        g2.setColor(ColorHelper.getTransparentColor(Color.WHITE, 174));
+        int maxInXDim = Constants.FIELDS_IN_X_DIM + 1;
+
+        for (int i = 0; i < maxInXDim; i++) {
             int x = offsetX + (i * GUIConstants.STONE_WIDTH);
             g2.drawLine(x, offsetY, x, offsetY
                     + (Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT));
         }
 
-        for (int i = 1; i < Constants.FIELDS_IN_Y_DIM; i++) {
+        int maxInYDim = Constants.FIELDS_IN_Y_DIM + 1;
+
+        for (int i = 0; i < maxInYDim; i++) {
             int y = offsetY + (i * GUIConstants.STONE_HEIGHT);
             g2.drawLine(offsetX, y, offsetX
                     + (Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH), y);
+        }
+
+        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+
+        if ((mouseLocation.x >= offsetX)
+                && (mouseLocation.x <= ((Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH) + offsetX))) {
+            if ((mouseLocation.y >= offsetY)
+                    && (mouseLocation.y <= (Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT) + offsetY)) {
+                Field fieldFromXY = getBelongingFieldFromXY(board, xStart,
+                        yStart, width, height, mouseLocation.x, mouseLocation.y);
+                g2.drawString(
+                        "Legen auf: " + fieldFromXY.getPosX() + " "
+                                + fieldFromXY.getPosY(),
+                        offsetX
+                                + (Constants.FIELDS_IN_X_DIM * GUIConstants.STONE_WIDTH)
+                                + 30,
+                        (offsetY + (Constants.FIELDS_IN_Y_DIM * GUIConstants.STONE_HEIGHT)) - 5);
+            }
         }
     }
 
     public static Field getBelongingField(Board board, int xStart, int yStart,
             int width, int height, GUIStone stone) {
+        return getBelongingFieldFromXY(board, xStart, yStart, width, height,
+                stone.getX(), stone.getY());
+    }
+
+    private static Field getBelongingFieldFromXY(Board board, int xStart,
+            int yStart, int width, int height, int x, int y) {
         int offsetX = calculateOffsetX(xStart, width);
         int offsetY = calculateOffsetY(yStart, height);
 
-        int x = (stone.getX() - offsetX) / GUIConstants.STONE_WIDTH;
-        int y = (stone.getY() - offsetY) / GUIConstants.STONE_HEIGHT;
+        int xCalculated = (x - offsetX) / GUIConstants.STONE_WIDTH;
+        int yCalculated = (y - offsetY) / GUIConstants.STONE_HEIGHT;
 
         try {
-            return board.getField(x, y);
+            return board.getField(xCalculated, yCalculated);
         }
         catch (IllegalArgumentException e) {
             return null;

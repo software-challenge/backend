@@ -44,7 +44,12 @@ public class Player extends SimplePlayer implements Cloneable {
     }
 
     public void addStone(Stone stone, int position) {
-        stones.add(position, stone);
+        if (position > stones.size()) {
+            stones.add(stone);
+        }
+        else {
+            stones.add(position, stone);
+        }
     }
 
     public void removeStone(Stone stone) {

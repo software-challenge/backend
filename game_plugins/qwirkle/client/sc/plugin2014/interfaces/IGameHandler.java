@@ -1,5 +1,6 @@
-package sc.plugin2014;
+package sc.plugin2014.interfaces;
 
+import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.moves.Move;

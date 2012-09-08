@@ -6,10 +6,12 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JPanel;
-import sc.plugin2014.*;
+import sc.plugin2014.EPlayerId;
+import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.gui.renderer.display.FrameRenderer;
+import sc.plugin2014.interfaces.IGameHandler;
 import sc.plugin2014.moves.Move;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
@@ -98,7 +100,7 @@ public class RenderFacade {
                                                                                              true);
                                                                                      PrintWriter pWriter = new PrintWriter(
                                                                                              fWriter);
-                                                                                     e.printStackTrace(pWriter);
+                                                                                     // e.printStackTrace(pWriter);
                                                                                      pWriter.flush();
                                                                                      pWriter.close();
 
@@ -248,7 +250,6 @@ public class RenderFacade {
         }
     }
 
-    // TODO
     public void updateChat(final String chatMsg, final EPlayerId target) {
 
     }
@@ -339,6 +340,14 @@ public class RenderFacade {
 
                     case UNKNOWN:
                         err += "Es ist ein unbekannter Fehler aufgetreten.";
+                        break;
+                    case REGULAR:
+                        err += "Das Spiel ist regulär zu Ende.";
+                        break;
+                    case RULE_VIOLATION:
+                        err += "Der Spieler hat eien Regelverletzung begangen.";
+                        break;
+                    default:
                         break;
                 }
 

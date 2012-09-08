@@ -8,13 +8,15 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class Field implements Cloneable {
 
     @XStreamAsAttribute
-    private final int posX;
+    private int   posX;
 
     @XStreamAsAttribute
-    private final int posY;
+    private int   posY;
 
     @XStreamAsAttribute
-    private Stone     stone;
+    private Stone stone;
+
+    public Field() {}
 
     public Field(int posX, int posY) {
         this.posX = posX;
