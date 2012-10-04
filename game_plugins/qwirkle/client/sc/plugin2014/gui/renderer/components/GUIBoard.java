@@ -1,9 +1,11 @@
-package sc.plugin2014.gui.renderer.display;
+package sc.plugin2014.gui.renderer.components;
 
 import java.awt.*;
 import java.util.List;
 import sc.plugin2014.entities.Board;
 import sc.plugin2014.entities.Field;
+import sc.plugin2014.gui.renderer.configuration.GUIConstants;
+import sc.plugin2014.gui.renderer.util.ColorHelper;
 import sc.plugin2014.util.Constants;
 
 public class GUIBoard {

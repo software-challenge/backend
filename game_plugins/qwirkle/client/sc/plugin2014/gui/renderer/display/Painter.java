@@ -1,13 +1,17 @@
 package sc.plugin2014.gui.renderer.display;
 
-import static sc.plugin2014.gui.renderer.display.GUIConstants.*;
-import static sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration.*;
+import static sc.plugin2014.gui.renderer.configuration.GUIConstants.*;
+import static sc.plugin2014.gui.renderer.configuration.RenderConfiguration.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.util.List;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.gui.renderer.components.GUIBoard;
+import sc.plugin2014.gui.renderer.components.GUIStone;
+import sc.plugin2014.gui.renderer.configuration.GUIConstants;
+import sc.plugin2014.gui.renderer.util.ColorHelper;
 import sc.plugin2014.laylogic.PointsCalculator;
 import sc.plugin2014.moves.DebugHint;
 import sc.plugin2014.moves.LayMove;

@@ -1,4 +1,4 @@
-package sc.plugin2014.gui.renderer.game_configuration;
+package sc.plugin2014.gui.renderer.configuration;
 
 import java.io.*;
 import java.util.HashMap;

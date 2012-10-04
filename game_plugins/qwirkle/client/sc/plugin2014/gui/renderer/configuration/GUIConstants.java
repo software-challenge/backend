@@ -1,4 +1,4 @@
-package sc.plugin2014.gui.renderer.display;
+package sc.plugin2014.gui.renderer.configuration;
 
 import java.awt.*;
 import javax.swing.JPanel;

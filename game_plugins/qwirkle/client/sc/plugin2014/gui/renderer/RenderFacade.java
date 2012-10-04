@@ -10,8 +10,8 @@ import sc.plugin2014.EPlayerId;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
-import sc.plugin2014.gui.renderer.display.FrameRenderer;
-import sc.plugin2014.interfaces.IGameHandler;
+import sc.plugin2014.gui.abstractgame.IGameHandler;
+import sc.plugin2014.gui.renderer.display.GameRenderer;
 import sc.plugin2014.moves.Move;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
@@ -22,9 +22,9 @@ import sc.shared.ScoreCause;
  * 
  */
 public class RenderFacade {
-    private final FrameRenderer          frameRenderer;
+    private final GameRenderer           frameRenderer;
 
-    private EPlayerId                    activePlayer;
+    private sc.plugin2014.EPlayerId      activePlayer;
 
     /*
      * GUI modes are used to determine what the gui is showing at the moment Can
@@ -123,7 +123,7 @@ public class RenderFacade {
 
     private RenderFacade() {
 
-        frameRenderer = new FrameRenderer();
+        frameRenderer = new GameRenderer();
         gameStateQueue = new LinkedList<GameState>();
         startReceiverThread();
 
