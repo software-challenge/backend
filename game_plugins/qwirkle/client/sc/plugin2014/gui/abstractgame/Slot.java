@@ -1,7 +1,7 @@
 /**
  * 
  */
-package sc.plugin2014.gui.interface_implementation;
+package sc.plugin2014.gui.abstractgame;
 
 import java.io.IOException;
 import sc.guiplugin.interfaces.ISlot;

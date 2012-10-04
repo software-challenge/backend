@@ -1,10 +1,12 @@
-package sc.plugin2014.gui.renderer.display;
+package sc.plugin2014.gui.renderer.components;
 
-import static sc.plugin2014.gui.renderer.display.GUIConstants.*;
+import static sc.plugin2014.gui.renderer.configuration.GUIConstants.*;
 import java.awt.*;
 import sc.plugin2014.entities.Field;
 import sc.plugin2014.entities.Stone;
-import sc.plugin2014.gui.renderer.RendererUtil;
+import sc.plugin2014.gui.renderer.configuration.GUIConstants;
+import sc.plugin2014.gui.renderer.util.ColorHelper;
+import sc.plugin2014.gui.renderer.util.RendererUtil;
 
 public class GUIStone {
 

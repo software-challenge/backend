@@ -1,6 +1,6 @@
-package sc.plugin2014.gui.renderer.display;
+package sc.plugin2014.gui.renderer.util;
 
-import static sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration.*;
+import static sc.plugin2014.gui.renderer.configuration.RenderConfiguration.*;
 import java.awt.Color;
 import sc.plugin2014.entities.PlayerColor;
 

@@ -1,9 +1,10 @@
-package sc.plugin2014.gui.renderer.game_configuration;
+package sc.plugin2014.gui.renderer.components;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
+import sc.plugin2014.gui.renderer.configuration.RenderConfiguration;
 
 @SuppressWarnings("serial")
 public class RenderConfigurationDialog extends JDialog {

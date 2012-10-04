@@ -5,7 +5,7 @@ import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.*;
 import sc.plugin2014.entities.PlayerColor;
-import sc.plugin2014.interfaces.IGameHandler;
+import sc.plugin2014.gui.abstractgame.IGameHandler;
 import sc.plugin2014.moves.Move;
 import sc.plugin2014.util.XStreamConfiguration;
 import sc.protocol.helpers.RequestResult;

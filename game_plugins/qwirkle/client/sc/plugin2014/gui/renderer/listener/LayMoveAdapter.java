@@ -1,15 +1,15 @@
-package sc.plugin2014.gui.renderer.display.listener;
+package sc.plugin2014.gui.renderer.listener;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import sc.plugin2014.gui.renderer.display.FrameRenderer;
-import sc.plugin2014.gui.renderer.display.GUIStone;
+import sc.plugin2014.gui.renderer.components.GUIStone;
+import sc.plugin2014.gui.renderer.display.GameRenderer;
 
 public class LayMoveAdapter extends MouseAdapter {
 
-    private final FrameRenderer parent;
+    private final GameRenderer parent;
 
-    public LayMoveAdapter(FrameRenderer parent) {
+    public LayMoveAdapter(GameRenderer parent) {
         this.parent = parent;
 
     }

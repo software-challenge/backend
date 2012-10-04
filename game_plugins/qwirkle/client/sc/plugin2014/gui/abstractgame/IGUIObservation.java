@@ -1,4 +1,4 @@
-package sc.plugin2014.interfaces;
+package sc.plugin2014.gui.abstractgame;
 
 /**
  * @author ffi

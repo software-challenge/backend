@@ -1,15 +1,15 @@
-package sc.plugin2014.gui.renderer.display.listener;
+package sc.plugin2014.gui.renderer.listener;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import sc.plugin2014.gui.renderer.display.FrameRenderer;
-import sc.plugin2014.gui.renderer.game_configuration.RenderConfigurationDialog;
+import sc.plugin2014.gui.renderer.components.RenderConfigurationDialog;
+import sc.plugin2014.gui.renderer.display.GameRenderer;
 
 public class GameKeyAdapter extends KeyAdapter {
 
-    private final FrameRenderer parent;
+    private final GameRenderer parent;
 
-    public GameKeyAdapter(FrameRenderer parent) {
+    public GameKeyAdapter(GameRenderer parent) {
         this.parent = parent;
     }
 

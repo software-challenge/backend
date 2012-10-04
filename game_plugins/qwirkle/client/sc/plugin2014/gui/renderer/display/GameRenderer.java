@@ -1,6 +1,6 @@
 package sc.plugin2014.gui.renderer.display;
 
-import static sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration.*;
+import static sc.plugin2014.gui.renderer.configuration.RenderConfiguration.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -10,15 +10,17 @@ import javax.swing.JComponent;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.RenderFacade;
-import sc.plugin2014.gui.renderer.RendererUtil;
-import sc.plugin2014.gui.renderer.display.components.Button;
-import sc.plugin2014.gui.renderer.display.listener.GameKeyAdapter;
-import sc.plugin2014.gui.renderer.display.listener.LayMoveAdapter;
-import sc.plugin2014.gui.renderer.game_configuration.RenderConfiguration;
+import sc.plugin2014.gui.renderer.components.*;
+import sc.plugin2014.gui.renderer.components.Button;
+import sc.plugin2014.gui.renderer.configuration.GUIConstants;
+import sc.plugin2014.gui.renderer.configuration.RenderConfiguration;
+import sc.plugin2014.gui.renderer.listener.GameKeyAdapter;
+import sc.plugin2014.gui.renderer.listener.LayMoveAdapter;
+import sc.plugin2014.gui.renderer.util.RendererUtil;
 import sc.plugin2014.moves.LayMove;
 import sc.plugin2014.moves.Move;
 
-public class FrameRenderer extends JComponent {
+public class GameRenderer extends JComponent {
     private static final long       serialVersionUID  = -7852533731353419771L;
 
     private PlayerColor             currentPlayer;
@@ -58,7 +60,7 @@ public class FrameRenderer extends JComponent {
     private final Button            actionButton;
     private final Button            takeBackButton;
 
-    public FrameRenderer() {
+    public GameRenderer() {
         updateBuffer = true;
         bgImage = RendererUtil.getImage("resource/game/bg.png");
         progressIcon = RendererUtil.getImage("resource/game/progress.png");
@@ -103,7 +105,18 @@ public class FrameRenderer extends JComponent {
 
                 if (e.getButton() == MouseEvent.BUTTON1) {
                     if (takeBackButton.isEnabled()) {
-                        // TODO
+                        for (GUIStone stone : toLayStones) {
+                            stone.setHighlighted(false);
+                            addStone(stone);
+                        }
+
+                        selectedStone = null;
+
+                        toLayStones.clear();
+                        actionButton.setEnabled(false);
+                        takeBackButton.setEnabled(false);
+
+                        updateView();
                     }
                 }
             }
@@ -148,7 +161,7 @@ public class FrameRenderer extends JComponent {
 
         gameEnded = gameState.gameEnded();
 
-        if (currentPlayer == PlayerColor.RED) { // TODO and not computer
+        if (currentPlayer == PlayerColor.RED) {
             sensetiveStones = redStones;
         }
         else {
@@ -313,12 +326,12 @@ public class FrameRenderer extends JComponent {
             Painter.paintEndMessage(g2, gameState, getWidth(), getHeight());
         }
 
-        actionButton.setBounds((getWidth() / 2) - 85, getHeight() - 110, 170,
+        actionButton.setBounds((getWidth() / 2) - 100, getHeight() - 110, 200,
                 30);
 
         actionButton.paint(g);
 
-        takeBackButton.setBounds((getWidth() / 2) - 85, getHeight() - 70, 170,
+        takeBackButton.setBounds((getWidth() / 2) - 100, getHeight() - 70, 200,
                 30);
         takeBackButton.paint(g);
     }
@@ -368,12 +381,14 @@ public class FrameRenderer extends JComponent {
                 stone.setHighlighted(true);
                 toLayStones.add(stone);
                 actionButton.setEnabled(true);
+                takeBackButton.setEnabled(true);
             }
             else {
                 stone.setHighlighted(false);
                 addStone(stone);
                 if (toLayStones.size() == 0) {
                     actionButton.setEnabled(false);
+                    takeBackButton.setEnabled(false);
                 }
             }
         }

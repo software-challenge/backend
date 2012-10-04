@@ -9,9 +9,9 @@ import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.*;
 import sc.networking.clients.ObservingClient;
 import sc.plugin2014.*;
-import sc.plugin2014.gui.interface_implementation.*;
+import sc.plugin2014.gui.abstractgame.*;
 import sc.plugin2014.gui.renderer.RenderFacade;
-import sc.plugin2014.gui.renderer.display.FrameRenderer;
+import sc.plugin2014.gui.renderer.display.GameRenderer;
 import sc.plugin2014.util.XStreamConfiguration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
@@ -56,7 +56,7 @@ public class GUIPluginFacade implements IGuiPlugin {
     }
 
     private static Image loadImage(String filename) {
-        URL url = FrameRenderer.class.getClassLoader().getResource(filename);
+        URL url = GameRenderer.class.getClassLoader().getResource(filename);
 
         if (url == null) {
             return new ImageIcon().getImage();

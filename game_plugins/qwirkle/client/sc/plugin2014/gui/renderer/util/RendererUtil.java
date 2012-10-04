@@ -1,4 +1,4 @@
-package sc.plugin2014.gui.renderer;
+package sc.plugin2014.gui.renderer.util;
 
 import java.awt.Image;
 import java.net.URL;
