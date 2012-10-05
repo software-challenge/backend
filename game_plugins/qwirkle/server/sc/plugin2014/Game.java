@@ -82,19 +82,11 @@ public class Game extends RoundBasedGameInstance<Player> {
             gameState.prepareNextTurn(move);
 
             if (gameState.getTurn() >= (2 * Constants.ROUND_LIMIT)) {
-                int[][] stats = gameState.getGameStats();
-                PlayerColor winner = null;
-                String winnerName = "Gleichstand nach Punkten.";
-                if (stats[0][0] > stats[1][0]) {
-                    winner = PlayerColor.RED;
-                    winnerName = "Sieg nach Punkten.";
-                }
-                else if (stats[0][0] < stats[1][0]) {
-                    winner = PlayerColor.BLUE;
-                    winnerName = "Sieg nach Punkten.";
-                }
-                gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
-                        + winnerName);
+                endGameRegularly("Das Rundenlimit wurde erreicht.");
+            }
+
+            if (expectedPlayer.getStones().isEmpty()) {
+                endGameRegularly("Ein Spieler hat keine Steine mehr.");
             }
 
             next(gameState.getCurrentPlayer());
@@ -108,6 +100,21 @@ public class Game extends RoundBasedGameInstance<Player> {
             logger.error(err);
             throw new GameLogicException(err);
         }
+    }
+
+    private void endGameRegularly(String message) {
+        int[][] stats = gameState.getGameStats();
+        PlayerColor winner = null;
+        String winnerName = "Gleichstand nach Punkten.";
+        if (stats[0][0] > stats[1][0]) {
+            winner = PlayerColor.RED;
+            winnerName = "Sieg nach Punkten.";
+        }
+        else if (stats[0][0] < stats[1][0]) {
+            winner = PlayerColor.BLUE;
+            winnerName = "Sieg nach Punkten.";
+        }
+        gameState.endGame(winner, message + "\\n" + winnerName);
     }
 
     @Override

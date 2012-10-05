@@ -22,6 +22,8 @@ public class GameStateConverter implements Converter {
         GameState gameState = (GameState) value;
 
         writer.addAttribute("turn", Integer.toString(gameState.getTurn()));
+        writer.addAttribute("stonesInBag",
+                Integer.toString(gameState.getStoneCountInBag()));
         writer.addAttribute("start", gameState.getStartPlayerColor().toString()
                 .toLowerCase());
         writer.addAttribute("current", gameState.getCurrentPlayerColor()
@@ -44,6 +46,12 @@ public class GameStateConverter implements Converter {
         Move move = gameState.getLastMove();
         if (move != null) {
             writer.startNode("move");
+            if (move instanceof LayMove) {
+                writer.addAttribute("type", MoveType.LAY.toString());
+            }
+            else {
+                writer.addAttribute("type", MoveType.EXCHANGE.toString());
+            }
             context.convertAnother(move);
             writer.endNode();
         }
@@ -70,6 +78,12 @@ public class GameStateConverter implements Converter {
             Field field = GameState.class.getDeclaredField("turn");
             field.setAccessible(true);
             field.set(gameState, Integer.parseInt(reader.getAttribute("turn")));
+            field.setAccessible(false);
+
+            field = GameState.class.getDeclaredField("stonesInBag");
+            field.setAccessible(true);
+            field.set(gameState,
+                    Integer.parseInt(reader.getAttribute("stonesInBag")));
             field.setAccessible(false);
 
             field = GameState.class.getDeclaredField("startPlayer");
@@ -120,7 +134,7 @@ public class GameStateConverter implements Converter {
                             "type").toUpperCase());
                     Move move;
 
-                    if (moveType == MoveType.Exchange) {
+                    if (moveType == MoveType.EXCHANGE) {
                         move = (Move) context.convertAnother(gameState,
                                 ExchangeMove.class);
                     }

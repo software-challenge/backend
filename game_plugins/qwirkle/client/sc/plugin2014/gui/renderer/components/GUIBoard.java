@@ -2,6 +2,7 @@ package sc.plugin2014.gui.renderer.components;
 
 import java.awt.*;
 import java.util.List;
+import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Board;
 import sc.plugin2014.entities.Field;
 import sc.plugin2014.gui.renderer.configuration.GUIConstants;
@@ -10,14 +11,14 @@ import sc.plugin2014.util.Constants;
 
 public class GUIBoard {
     public static void draw(Graphics2D g2, int xStart, int yStart, int width,
-            int height, List<GUIStone> toLayStones, Board board,
+            int height, List<GUIStone> toLayStones, GameState gameState,
             Component component, boolean dragging) {
         int offsetX = calculateOffsetX(xStart, width);
         int offsetY = calculateOffsetY(yStart, height);
 
-        for (Field field : board.getFields()) {
+        for (Field field : gameState.getBoard().getFields()) {
             if (!field.isFree()) {
-                GUIStone stone = new GUIStone(field.getStone());
+                GUIStone stone = new GUIStone(field.getStone(), -1);
                 stone.setX((field.getPosX() * GUIConstants.STONE_WIDTH)
                         + offsetX);
                 stone.setY((field.getPosY() * GUIConstants.STONE_HEIGHT)
@@ -37,9 +38,12 @@ public class GUIBoard {
             }
         }
 
+        g2.drawString("Steine im Beutel: " + gameState.getStoneCountInBag(),
+                20, 40);
+
         if (dragging) {
             Field fieldFromXY = getFieldUnderMouse(component, offsetX, offsetY,
-                    board, xStart, yStart, width, height);
+                    gameState.getBoard(), xStart, yStart, width, height);
 
             if (fieldFromXY != null) {
                 int fieldToHighlightX = (fieldFromXY.getPosX() * GUIConstants.STONE_WIDTH)
@@ -54,7 +58,7 @@ public class GUIBoard {
         }
     }
 
-    private static int calculateOffsetX(int xStart, int width) {
+    public static int calculateOffsetX(int xStart, int width) {
         int boardWidth = GUIConstants.STONE_WIDTH * Constants.FIELDS_IN_X_DIM;
         int deltaWidth = width - boardWidth;
         int gapWidth = deltaWidth / 2;
@@ -62,7 +66,7 @@ public class GUIBoard {
         return xStart + gapWidth;
     }
 
-    private static int calculateOffsetY(int yStart, int height) {
+    public static int calculateOffsetY(int yStart, int height) {
         int boardHeight = GUIConstants.STONE_HEIGHT * Constants.FIELDS_IN_Y_DIM;
         int deltaHeight = height - boardHeight;
         int gapHeight = deltaHeight / 2;

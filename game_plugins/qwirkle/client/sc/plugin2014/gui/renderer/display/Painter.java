@@ -79,8 +79,8 @@ public class Painter {
             Component component, boolean dragging) {
         GUIBoard.draw(g2, GUIConstants.BORDER_SIZE, GUIConstants.BORDER_SIZE,
                 width - GUIConstants.BORDER_SIZE - GUIConstants.SIDE_BAR_WIDTH,
-                height - STATUS_HEIGTH, toLayStones, gameState.getBoard(),
-                component, dragging);
+                height - STATUS_HEIGTH, toLayStones, gameState, component,
+                dragging);
     }
 
     public static int paintPlayerInfo(Graphics2D g2, int fontX, int fontY,
@@ -290,9 +290,9 @@ public class Painter {
     public static void paintDynamicComponents(Graphics2D g2,
             GUIStone selectedStone, int width, int height, GameState gameState,
             List<GUIStone> redStones, List<GUIStone> blueStones,
-            Component component) {
+            Component component, boolean dragging) {
 
-        if (selectedStone != null) {
+        if (dragging) {
             GUIBoard.drawGrid(g2, BORDER_SIZE, BORDER_SIZE, width - BORDER_SIZE
                     - SIDE_BAR_WIDTH, height - STATUS_HEIGTH,
                     gameState.getBoard(), component);

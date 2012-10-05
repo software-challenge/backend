@@ -60,6 +60,8 @@ public class GameState implements Cloneable {
 
     private StoneBag          stoneBag;
 
+    private int               stonesInBag;
+
     private Move              lastMove;
 
     private WinnerAndReason   endCondition = null;
@@ -124,6 +126,7 @@ public class GameState implements Cloneable {
             player.addStone(stoneBag.drawStone());
         }
 
+        updateStonesInBag();
     }
 
     /**
@@ -365,12 +368,12 @@ public class GameState implements Cloneable {
     }
 
     public int getStoneCountInBag() {
-        return stoneBag.getStoneCountInBag();
+        return stonesInBag;
     }
 
     public void prepareNextTurn(Move move) {
         turn++;
-        // lastMove = move; TODO
+        lastMove = move;
         switchCurrentPlayer();
     }
 
@@ -388,5 +391,9 @@ public class GameState implements Cloneable {
 
     public Board getBoard() {
         return board;
+    }
+
+    public void updateStonesInBag() {
+        stonesInBag = stoneBag.getStoneCountInBag();
     }
 }

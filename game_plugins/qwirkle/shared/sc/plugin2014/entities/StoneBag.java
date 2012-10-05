@@ -53,8 +53,9 @@ public class StoneBag {
         if (stones.size() > 0) {
             return stones.remove(0);
         }
-
-        throw new IllegalAccessError("Der Beutel ist leer");
+        else {
+            return null;
+        }
     }
 
     public void putBackStone(Stone stone) {

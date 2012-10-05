@@ -67,7 +67,7 @@
 	</target>
 
 
-	<target name="clean-build" depends="clean,developement_jar,javadoc" />
+	<target name="clean-build" depends="clean,jar,javadoc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>

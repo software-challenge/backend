@@ -2,14 +2,16 @@ package sc.plugin2014.moves;
 
 import java.util.*;
 import sc.plugin2014.GameState;
+import sc.plugin2014.converters.LayMoveConverter;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import sc.plugin2014.laylogic.LayLogicFacade;
 import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 @XStreamAlias(value = "qw:laymove")
-// @XStreamConverter(LayMoveConverter.class)
+@XStreamConverter(LayMoveConverter.class)
 public class LayMove extends Move implements Cloneable {
 
     private final Map<Stone, Field> stoneToFieldMapping;
@@ -79,9 +81,11 @@ public class LayMove extends Move implements Cloneable {
                 player.addStone(drawStone, freePositions.get(i));
             }
             else {
-                // TODO stonebag is empty
+                // stonebag is empty
             }
         }
+
+        state.updateStonesInBag();
     }
 
     private List<Stone> getStonesToLay() {
