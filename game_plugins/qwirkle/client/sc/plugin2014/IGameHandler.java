@@ -1,4 +1,4 @@
-package sc.plugin2014.gui.abstractgame;
+package sc.plugin2014;
 
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;

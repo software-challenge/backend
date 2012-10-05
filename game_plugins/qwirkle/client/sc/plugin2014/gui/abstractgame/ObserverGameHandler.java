@@ -3,8 +3,7 @@
  */
 package sc.plugin2014.gui.abstractgame;
 
-import sc.plugin2014.EPlayerId;
-import sc.plugin2014.GameState;
+import sc.plugin2014.*;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.gui.renderer.RenderFacade;

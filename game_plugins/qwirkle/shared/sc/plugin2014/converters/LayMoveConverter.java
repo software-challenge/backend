@@ -37,8 +37,12 @@ public class LayMoveConverter implements Converter {
 
         for (Entry<Stone, Field> mapping : stoneToFieldMapping.entrySet()) {
             writer.startNode("stoneToField");
+            writer.startNode("stone");
             context.convertAnother(mapping.getKey());
+            writer.endNode();
+            writer.startNode("field");
             context.convertAnother(mapping.getValue());
+            writer.endNode();
             writer.endNode();
         }
 
@@ -60,8 +64,12 @@ public class LayMoveConverter implements Converter {
             reader.moveDown();
             String nodeName = reader.getNodeName();
             if (nodeName.equals("stoneToField")) {
+                reader.moveDown();
                 Stone stone = (Stone) context.convertAnother(move, Stone.class);
+                reader.moveUp();
+                reader.moveDown();
                 Field field = (Field) context.convertAnother(move, Field.class);
+                reader.moveUp();
                 move.getStoneToFieldMapping().put(stone, field);
             }
             else if (nodeName.equals("hint")) {

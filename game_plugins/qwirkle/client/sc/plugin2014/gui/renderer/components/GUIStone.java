@@ -15,9 +15,11 @@ public class GUIStone {
     private final Stone stone;
     private Field       field;
     private Image       image;
+    private final int   originalPositionOnHand;
 
-    public GUIStone(Stone stone) {
+    public GUIStone(Stone stone, int originalPositionOnHand) {
         this.stone = stone;
+        this.originalPositionOnHand = originalPositionOnHand;
         setHighlighted(false);
     }
 
@@ -98,5 +100,9 @@ public class GUIStone {
 
     public void setHighlighted(boolean highlighted) {
         this.highlighted = highlighted;
+    }
+
+    public int getOriginalPositionOnHand() {
+        return originalPositionOnHand;
     }
 }
