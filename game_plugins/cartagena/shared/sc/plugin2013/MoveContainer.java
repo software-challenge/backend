@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:moveContainer")
+@XStreamAlias(value = "moveContainer")
 public class MoveContainer implements Cloneable{
 	public Move firstMove;
 	public Move secondMove;

@@ -18,7 +18,7 @@ import sc.plugin2013.util.Constants;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:board")
+@XStreamAlias(value = "board")
 public class Board implements Cloneable {
 
 	private List<Field> fields;

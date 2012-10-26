@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * @author fdu
  *
  */
-@XStreamAlias(value = "cartagena:pirate")
+@XStreamAlias(value = "pirate")
 public class Pirate implements Cloneable {
 	//Der Besitzer der Spielfigur
 	@XStreamAsAttribute

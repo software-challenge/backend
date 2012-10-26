@@ -31,10 +31,6 @@ public class Configuration {
 	private static XStream xStream;
 
 	static {
-//		QNameMap qmap = new QNameMap();
-//		qmap.setDefaultNamespace("urn:cg:cartagena");
-////		qmap.setDefaultPrefix("cartagena");
-//		StaxDriver staxDriver = new StaxDriver(qmap);
 		xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());

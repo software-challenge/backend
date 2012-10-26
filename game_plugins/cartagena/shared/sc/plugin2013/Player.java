@@ -20,7 +20,7 @@ import sc.plugin2013.util.PlayerConverter;
  * @author fdu
  *
  */
-@XStreamAlias(value = "cartagena:player")
+@XStreamAlias(value = "player")
 //@XStreamConverter(PlayerConverter.class)
 public class Player extends SimplePlayer implements Cloneable {
 
