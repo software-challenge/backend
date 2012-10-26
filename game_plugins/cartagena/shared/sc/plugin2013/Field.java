@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:field")
+@XStreamAlias(value = "field")
 //@XStreamConverter(FieldConverter.class)
 public class Field implements Cloneable {
 

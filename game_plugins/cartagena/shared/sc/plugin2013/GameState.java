@@ -43,7 +43,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:state")
+@XStreamAlias(value = "state")
 // @XStreamConverter(GameStateConverter.class)
 public class GameState implements Cloneable {
 

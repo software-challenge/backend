@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:move")
+@XStreamAlias(value = "move")
 public abstract class Move implements Cloneable {
 	@XStreamImplicit(itemFieldName = "hint")
 	private List<DebugHint> hints;

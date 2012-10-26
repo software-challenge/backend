@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * @author fdu
  * 
  */
-@XStreamAlias(value = "cartagena:card")
+@XStreamAlias(value = "card")
 public class Card implements Cloneable {
 	@XStreamAsAttribute
 	public final SymbolType symbol;

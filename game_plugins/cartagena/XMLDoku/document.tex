@@ -34,15 +34,34 @@
 \newpage
 \setcounter{page}{1}
 \section{Einleitung}
-\subsection*{Zum Inhalt}
-Wie in den letzten Jahren wird zur Client-Server Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch: \htmladdnormallink{SC Wiki: Die Schnittstelle zum Server}{http://sc-doku.gfxpro.eu/wiki/Die_Schnittstelle_zum_Server}}. In diesem Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett eigener Client geschrieben werden kann. Es wird hier nicht die vollständige Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client umgehen können muss, um spielfähig zu sein.
-\subsection*{An wen richtet sich dieses Dokument?}
-Die Kommunikation mit dem Spielserver ist für diejenigen, die aufbauend auf dem Simpleclient programmieren, unwichtig. Dort steht bereits ein funktionierender Client bereit und es muss nur die Spiellogik entworfen werden. \\
-Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die Programmiersprache frei wählen zu können, benötigt die Definitionen.
+\subsection*{Zum Inhalt} Wie in den letzten Jahren wird zur Client-Server
+Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch:
+\htmladdnormallink{SC Wiki: Die Schnittstelle zum
+Server}{http://sc-doku.gfxpro.eu/wiki/Die_Schnittstelle_zum_Server}}. In diesem
+Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett
+eigener Client geschrieben werden kann. Es wird hier nicht die vollständige
+Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client
+umgehen können muss, um spielfähig zu sein.
+\subsection*{An wen richtet sich dieses Dokument?} Die Kommunikation mit dem
+Spielserver ist für diejenigen, die aufbauend auf dem Simpleclient
+programmieren, unwichtig. Dort steht bereits ein funktionierender Client bereit
+und es muss nur die Spiellogik entworfen werden. \\
+Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die
+Programmiersprache frei wählen zu können, benötigt die Definitionen.
 
-\subsection*{Hinweise} 
-Falls Sie beabsichtigen sollten, diese Kommunikationsschnittstelle zu realisieren, sei darauf hingewiesen, dass es im Verlauf des Wettbewerbes möglich ist, dass weitere, hier noch nicht aufgeführte Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei solchen Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu verwerfen, die hier nicht weiter definiert sind. \bigskip \\
-Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt. Dabei werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können vernachlässigt werden.
+\subsection*{Hinweise} Falls Sie beabsichtigen sollten, diese
+Kommunikationsschnittstelle zu realisieren, sei darauf hingewiesen, dass es im
+Verlauf des Wettbewerbes möglich ist, dass weitere, hier noch nicht aufgeführte
+Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei solchen
+Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server
+kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu
+verwerfen, die hier nicht weiter definiert sind. \bigskip \\
+Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine
+Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt. 
+Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
+%Dabei
+%werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können
+%vernachlässigt werden.
 
 \subsection*{Wie das Dokument zu lesen ist}
 Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die über dem Code kurz erläutert werden.\\
@@ -111,7 +130,7 @@ Abschnitt~\ref{forwardMove} und ~\ref{backwardMove} )
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-  <data class="cartagena:moveContainer">
+  <data class="moveContainer">
     <firstMove ZUG/>
     <secondMove ZUG/>
     <thirdMove ZUG/>
@@ -128,7 +147,7 @@ Abschnitt~\ref{forwardMove} und ~\ref{backwardMove} )
 Abschnitt \ref{symbols})
 \end{description}
 \begin{verbatim}
-	<ZUGNUMMER class="cartagena:forwardMove" fieldIndex="FID" symbol="SYMBOL"/>
+	<ZUGNUMMER class="forwardMove" fieldIndex="FID" symbol="SYMBOL"/>
 \end{verbatim}
 
 \subsection{Rückwärtszug}
@@ -138,7 +157,7 @@ Abschnitt \ref{symbols})
 \item[FID] der Index des Startfeldes
 \end{description}
 \begin{verbatim}
-	<ZUGNUMMER class="cartagena:backwardMove" fieldIndex="FID"/>
+	<ZUGNUMMER class="backwardMove" fieldIndex="FID"/>
 \end{verbatim}
 
 
@@ -174,12 +193,12 @@ Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
 % \end{verbatim}
 \begin{verbatim}
 <room roomId="RID">
-  <data class="cartagena:moveContainer">
-    <firstMove class="cartagena:backwardMove" fieldIndex="FID">
+  <data class="moveContainer">
+    <firstMove class="backwardMove" fieldIndex="FID">
      	<hint content="2 Karten ziehen...."/>
      	<hint content="Noch ein Hint"/>
     </firstMove>
-    <secondMove class="cartagena:forwardMove" fieldIndex="FID" symbol="SYMBOL">
+    <secondMove class="forwardMove" fieldIndex="FID" symbol="SYMBOL">
     	<hint content="Piraten ins Zielfeld bewegen..."/>
     </secondMove>
   </data>
@@ -202,11 +221,11 @@ Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
 \section{Willkommensnachricht}
 Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
 \begin{description}
-\item[C] Spielerfarbe (red/blue)
+\item[C] Spielerfarbe (RED/BLUE)
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-  <data class="cartagena:welcome" color="C"/>
+  <data class="welcome" color="C"/>
 </room>
 \end{verbatim}
 
@@ -237,7 +256,7 @@ werden kann, kommt zuerst.
 \item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
 \end{description}
 \begin{verbatim}
-<state class="cartagena:state" turn="Z" currentPlayer="C">
+<state class="state" turn="Z" currentPlayer="C">
   red
   blue
   <openCards>
@@ -271,7 +290,7 @@ werden kann, kommt zuerst.
 \begin{description}
 \item[S] Symbol der Karte wie in \ref{symbols} definiert.
 \end{description}
-\begin{verbatim} <cartagena:card symbol="S"/>
+\begin{verbatim} <card symbol="S"/>
 \end{verbatim}
 
 \subsection{\label{board}Spielbrett}
@@ -293,11 +312,11 @@ werden kann, kommt zuerst.
 \item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
 \end{description}
 \begin{verbatim}
-<cartagena:field type="T">
+<field type="T">
   <pirates>
   	{PIRATE}
   </pirates>
-</cartagena:field>
+</field>
 \end{verbatim}
 
 \subsubsection{\label{sec:symbolField} Symbolfeld}
@@ -306,11 +325,11 @@ werden kann, kommt zuerst.
 \item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
 \end{description}
 \begin{verbatim}
-<cartagena:field type="SYMBOL" symbol="S">
+<field type="SYMBOL" symbol="S">
   <pirates>
   	{PIRATE}
   </pirates>
-</cartagena:field>
+</field>
 \end{verbatim}
 
 \subsection{\label{sec:pirate}Pirat}
@@ -318,7 +337,7 @@ werden kann, kommt zuerst.
 \item[O] Besitzer RED/BLUE
 \end{description}
 \begin{verbatim}
-<cartagena:pirate owner="O"/>
+<pirate owner="O"/>
 \end{verbatim}
 
 
@@ -373,7 +392,7 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \begin{verbatim}
 <room roomId="RID">
 	<data class="paused">
-		<nextPlayer class="cartagena:player" displayName="N" color="C" points="P">
+		<nextPlayer class="player" displayName="N" color="C" points="P">
 			<cards>
 			  {card}
 			</cards>
@@ -416,7 +435,7 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \item der Client merkt sich die roomId.
 \item der Server startet das Spiel und sendet \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
-    <data class="cartagena:welcome" color="BLUE"/>
+    <data class="welcome" color="BLUE"/>
 </room>
 \end{verbatim}
 \item der Client merkt sich seine Spielerfarbe.
@@ -424,152 +443,152 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
   <data class="memento">
-    <state class="cartagena:state" turn="0" currentPlayer="RED">
+    <state class="state" turn="0" currentPlayer="RED">
       <red displayName="Spieler 1" color="RED" points="0">
         <cards>
-          <cartagena:card symbol="BOTTLE"/>
-          <cartagena:card symbol="DAGGER"/>
-          <cartagena:card symbol="DAGGER"/>
-          <cartagena:card symbol="HAT"/>
-          <cartagena:card symbol="KEY"/>
-          <cartagena:card symbol="PISTOL"/>
+          <card symbol="BOTTLE"/>
+          <card symbol="DAGGER"/>
+          <card symbol="DAGGER"/>
+          <card symbol="HAT"/>
+          <card symbol="KEY"/>
+          <card symbol="PISTOL"/>
         </cards>
       </red>
       <blue displayName="Spieler 2" color="BLUE" points="0">
         <cards>
-          <cartagena:card symbol="PISTOL"/>
-          <cartagena:card symbol="SKULL"/>
-          <cartagena:card symbol="KEY"/>
-          <cartagena:card symbol="KEY"/>
-          <cartagena:card symbol="KEY"/>
-          <cartagena:card symbol="DAGGER"/>
+          <card symbol="PISTOL"/>
+          <card symbol="SKULL"/>
+          <card symbol="KEY"/>
+          <card symbol="KEY"/>
+          <card symbol="KEY"/>
+          <card symbol="DAGGER"/>
         </cards>
       </blue>
       <openCards>
-        <cartagena:card symbol="BOTTLE"/>
-        <cartagena:card symbol="BOTTLE"/>
-        <cartagena:card symbol="HAT"/>
-        <cartagena:card symbol="KEY"/>
-        <cartagena:card symbol="PISTOL"/>
-        <cartagena:card symbol="PISTOL"/>
-        <cartagena:card symbol="PISTOL"/>
-        <cartagena:card symbol="HAT"/>
-        <cartagena:card symbol="PISTOL"/>
-        <cartagena:card symbol="BOTTLE"/>
-        <cartagena:card symbol="KEY"/>
-        <cartagena:card symbol="BOTTLE"/>
+        <card symbol="BOTTLE"/>
+        <card symbol="BOTTLE"/>
+        <card symbol="HAT"/>
+        <card symbol="KEY"/>
+        <card symbol="PISTOL"/>
+        <card symbol="PISTOL"/>
+        <card symbol="PISTOL"/>
+        <card symbol="HAT"/>
+        <card symbol="PISTOL"/>
+        <card symbol="BOTTLE"/>
+        <card symbol="KEY"/>
+        <card symbol="BOTTLE"/>
       </openCards>
       <board>
         <fields>
-          <cartagena:field type="START">
+          <field type="START">
             <pirates>
-              <cartagena:pirate owner="RED"/>
-              <cartagena:pirate owner="BLUE"/>
-              <cartagena:pirate owner="RED"/>
-              <cartagena:pirate owner="BLUE"/>
-              <cartagena:pirate owner="RED"/>
-              <cartagena:pirate owner="BLUE"/>
-              <cartagena:pirate owner="RED"/>
-              <cartagena:pirate owner="BLUE"/>
-              <cartagena:pirate owner="RED"/>
-              <cartagena:pirate owner="BLUE"/>
-              <cartagena:pirate owner="RED"/>
-              <cartagena:pirate owner="BLUE"/>
+              <pirate owner="RED"/>
+              <pirate owner="BLUE"/>
+              <pirate owner="RED"/>
+              <pirate owner="BLUE"/>
+              <pirate owner="RED"/>
+              <pirate owner="BLUE"/>
+              <pirate owner="RED"/>
+              <pirate owner="BLUE"/>
+              <pirate owner="RED"/>
+              <pirate owner="BLUE"/>
+              <pirate owner="RED"/>
+              <pirate owner="BLUE"/>
             </pirates>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="SKULL">
+          </field>
+          <field type="SYMBOL" symbol="SKULL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="DAGGER">
+          </field>
+          <field type="SYMBOL" symbol="DAGGER">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="KEY">
+          </field>
+          <field type="SYMBOL" symbol="KEY">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="HAT">
+          </field>
+          <field type="SYMBOL" symbol="HAT">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="BOTTLE">
+          </field>
+          <field type="SYMBOL" symbol="BOTTLE">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="PISTOL">
+          </field>
+          <field type="SYMBOL" symbol="PISTOL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="HAT">
+          </field>
+          <field type="SYMBOL" symbol="HAT">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="BOTTLE">
+          </field>
+          <field type="SYMBOL" symbol="BOTTLE">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="DAGGER">
+          </field>
+          <field type="SYMBOL" symbol="DAGGER">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="SKULL">
+          </field>
+          <field type="SYMBOL" symbol="SKULL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="PISTOL">
+          </field>
+          <field type="SYMBOL" symbol="PISTOL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="KEY">
+          </field>
+          <field type="SYMBOL" symbol="KEY">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="KEY">
+          </field>
+          <field type="SYMBOL" symbol="KEY">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="HAT">
+          </field>
+          <field type="SYMBOL" symbol="HAT">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="PISTOL">
+          </field>
+          <field type="SYMBOL" symbol="PISTOL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="DAGGER">
+          </field>
+          <field type="SYMBOL" symbol="DAGGER">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="BOTTLE">
+          </field>
+          <field type="SYMBOL" symbol="BOTTLE">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="SKULL">
+          </field>
+          <field type="SYMBOL" symbol="SKULL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="SKULL">
+          </field>
+          <field type="SYMBOL" symbol="SKULL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="HAT">
+          </field>
+          <field type="SYMBOL" symbol="HAT">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="KEY">
+          </field>
+          <field type="SYMBOL" symbol="KEY">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="DAGGER">
+          </field>
+          <field type="SYMBOL" symbol="DAGGER">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="BOTTLE">
+          </field>
+          <field type="SYMBOL" symbol="BOTTLE">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="PISTOL">
+          </field>
+          <field type="SYMBOL" symbol="PISTOL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="BOTTLE">
+          </field>
+          <field type="SYMBOL" symbol="BOTTLE">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="HAT">
+          </field>
+          <field type="SYMBOL" symbol="HAT">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="PISTOL">
+          </field>
+          <field type="SYMBOL" symbol="PISTOL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="SKULL">
+          </field>
+          <field type="SYMBOL" symbol="SKULL">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="DAGGER">
+          </field>
+          <field type="SYMBOL" symbol="DAGGER">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="SYMBOL" symbol="KEY">
+          </field>
+          <field type="SYMBOL" symbol="KEY">
             <pirates/>
-          </cartagena:field>
-          <cartagena:field type="FINISH">
+          </field>
+          <field type="FINISH">
             <pirates/>
-          </cartagena:field>
+          </field>
         </fields>
       </board>
     </state>
@@ -584,10 +603,10 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \end{verbatim}
 \item Der Client antwortet mit einem Zug: \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
-    <data class="cartagena:moveContainer">
-      <firstMove class="cartagena:forwardMove" fieldIndex="0" symbol="DAGGER"/>
-      <secondMove class="cartagena:forwardMove" fieldIndex="2" symbol="KEY"/>
-      <thirdMove class="cartagena:forwardMove" fieldIndex="0" symbol="HAT"/>
+    <data class="moveContainer">
+      <firstMove class="forwardMove" fieldIndex="0" symbol="DAGGER"/>
+      <secondMove class="forwardMove" fieldIndex="2" symbol="KEY"/>
+      <thirdMove class="forwardMove" fieldIndex="0" symbol="HAT"/>
   </data>
 </room>
 \end{verbatim}
