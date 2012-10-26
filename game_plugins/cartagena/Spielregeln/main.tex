@@ -16,6 +16,7 @@
 \sloppy
 
 
+
 \hypersetup{
 pdfborder = {0 0 0},
 urlbordercolor = {0 0 0},
@@ -39,6 +40,7 @@ urlcolor  = black
 \newcommand{\RundenAnzahl}{\emph{15}}
 
 \begin{document}
+\parindent0px
 \maketitle
 
 \begin{figure}[h]
@@ -80,8 +82,6 @@ Abbildung~\ref{fig:Spielfeld} zu sehen.
 Jeder Spieler startet mit \PiratenAnzahl\ Piraten im Startfeld, welche alle ins
 Ziel gebracht werden müssen. Steht auf einem Spielfeld mehr als ein Pirat eines
 Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
-
-
 \begin{figure}[h] \centering \includegraphics[scale = 0.5]{bilder/Spielfeld}
 	\caption{Ein mögliches Spielbrett.}
 	\label{fig:Spielfeld}
@@ -95,8 +95,8 @@ Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
 		\caption{Die Spielkarten mit Symbolen}
 		\label{fig:spielkarten}
 	\end{figure}
-	Zum Ziehen der Piraten werden die Spielkarten benötigt. Die Karten tragen
-	analog zu den Spielfeldern wieder die Symbole \emph{Säbel},  \emph{Hut},
+	Zum Ziehen der Piraten werden die Spielkarten benötigt. Die Karten
+	tragen analog zu den Spielfeldern wieder die Symbole \emph{Säbel},  \emph{Hut},
 	\emph{Flasche}, \emph{Flagge}, \emph{Pistole} und
 	\emph{Schlüssel}.\\
 	Insgesamt gibt es 102 Karten, also 17 von jedem Symbol. Jeder Spieler startet
@@ -105,16 +105,14 @@ Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
 	nächstes gezogen werden können. Die Reihenfolge geht von links nach rechts.\\
 	Sind alle Karten verbraucht, so werden die Karten vom (unsichtbaren)
 	Ablagestapel gemischt und neu bereitgelegt.
-\section{Spielablauf}
-	
+\section{Spielablauf}	
 	\begin{figure}[h]
 		\centering
 		\includegraphics[scale=0.3]{bilder/Moves}
 		\caption{Eine Spielsituation, in der sowohl Vorwärts- als auch Rückwärtszüge
 		möglich sind.}
 		\label{fig:PossibleMoves}
-	\end{figure}
-	
+	\end{figure}	
 	Es beginnt der rote Spieler. Jeder Spieler darf innerhalb einer Runde 3
 	Teilzüge machen. Die Menge der Teilzüge darf aus einer beliebigen Kombination
 	von Vorwärts- und Rückwärtszügen bestehen. Ein Spieler muss jedoch nicht alle 3
@@ -198,7 +196,7 @@ Kartenanzeige, die des blauen Spielers ganz links.
 \section{Die graphische Benutzeroberfläche}
 \subsection{Übersicht der graphischen Benutzeroberfläche}
 	In Abbildung~\ref{fig:GUI} ist ein Überblick der graphischen Benutzeroberfläche
-	zu sehen. Die markanten Spielelemente sind mit \emph{a-e} gekenzeichnet.
+	zu sehen. Die markanten Spielelemente sind mit \emph{a-e} gekennzeichnet.
 	
 	 \begin{figure}[h!]
 		\centering		
@@ -207,11 +205,11 @@ Kartenanzeige, die des blauen Spielers ganz links.
 		\label{fig:GUI}
 	\end{figure}
 	
-\begin{compactenum}[a)] \item Die nächsten ziehbaren Karten. Die erste befindet
+\begin{compactenum}[a)] \item Die nächsten ziehbaren Karten. Die Erste befindet
 sich links.
 \item Das Spielbrett \item Punkteanzeige, Anzeige der verbleibenden Züge und
 Button, um einen Zug vorzeitig zu beenden. Die Punkte des roten Spielers sind
-oben, die des blauen Spielers unten. Die Punkte des inaktiven Spieler sind
+oben, die des blauen Spielers unten. Die Punkte des inaktiven Spielers sind
 jeweils immer grau.
 \item Die Karten von Spieler 1. Neu dazugekommene Karten werden immer Richtung
 Bildmitte positioniert.

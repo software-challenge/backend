@@ -20,6 +20,8 @@ import sc.plugin2013.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 import sc.plugin2013.Field;
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.QNameMap;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 public class Configuration {
 	/*
@@ -29,6 +31,10 @@ public class Configuration {
 	private static XStream xStream;
 
 	static {
+//		QNameMap qmap = new QNameMap();
+//		qmap.setDefaultNamespace("urn:cg:cartagena");
+////		qmap.setDefaultPrefix("cartagena");
+//		StaxDriver staxDriver = new StaxDriver(qmap);
 		xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());

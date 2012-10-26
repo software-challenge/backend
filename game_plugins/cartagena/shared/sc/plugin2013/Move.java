@@ -8,6 +8,7 @@ import sc.plugin2013.Move;
 import sc.plugin2013.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
@@ -22,6 +23,9 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public abstract class Move implements Cloneable {
 	@XStreamImplicit(itemFieldName = "hint")
 	private List<DebugHint> hints;
+	
+	@XStreamAsAttribute
+	public int fieldIndex;
 
 	/**
 	 * klont dieses Objekt

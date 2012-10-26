@@ -15,8 +15,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 @XStreamAlias(value = "cartagena:backwardMove")
 public class BackwardMove extends Move {
-	@XStreamAsAttribute
-	public int fieldIndex;
+//	@XStreamAsAttribute
+//	public int fieldIndex;
 	
 	/**
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der

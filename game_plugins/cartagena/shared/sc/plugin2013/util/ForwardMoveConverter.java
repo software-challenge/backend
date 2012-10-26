@@ -1,6 +1,7 @@
 package sc.plugin2013.util;
 
 import sc.plugin2013.ForwardMove;
+import sc.plugin2013.Move;
 import sc.plugin2013.SymbolType;
 
 import java.lang.reflect.Field;
@@ -34,7 +35,7 @@ public class ForwardMoveConverter implements Converter {
 		// TODO Auto-generated method stub
 		ForwardMove fw = new ForwardMove(0, SymbolType.BOTTLE);
 		try {
-			Field field = ForwardMove.class.getDeclaredField("fieldIndex");
+			Field field = Move.class.getDeclaredField("fieldIndex");
 			field.setAccessible(true);
 			field.set(fw, Integer.parseInt(reader.getAttribute("fieldIndex")));
 			field.setAccessible(false);
