@@ -82,7 +82,7 @@ Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags zu
 \end{verbatim}
 
 \newpage
-\part[1]{Client $\rightarrow$ Server}
+\part{Client $\rightarrow$ Server}
 \section{Spiel betreten}
 \subsection{Ohne Reservierung}
 Betritt ein beliebiges offenes Spiel:
@@ -163,7 +163,7 @@ Zügen können Debug-Informationen beigefügt werden:
 \begin{verbatim}
  <hint content="S"/>
 \end{verbatim}
-Damit sieht beispielsweise ein Move Container mit zwei Teilzügen so aus:
+Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
 % \begin{verbatim}
 % <room roomId="RID">
 %   <data class="manhattan:build" city="C" slot="P" size="S">
@@ -229,7 +229,8 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[Z] aktuelle Zugzahl
 \item[C] Spieler, der an der Reihe ist (RED/BLUE)
 \item[red, blue] wie in \ref{player} definiert
-\item[card] wie in \ref{card} definiert
+\item[card] wie in \ref{card} definiert. Die Karte, welche als Nächste gezogen
+werden kann, kommt zuerst.
 \item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
 \ref{lastmove} definiert
 \item[board] Das Spielbrett, wie in \ref{board} definiert
@@ -301,8 +302,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 
 \subsubsection{\label{sec:symbolField} Symbolfeld}
 \begin{description}
-\item[T] Typ des Feldes START/FINISH
-\item[S] Symbol, welches das Feld trägt. siehe \ref{symbols}
+\item[S] Symbol, welches das Feld trägt, siehe \ref{symbols}
 \item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
 \end{description}
 \begin{verbatim}
@@ -324,7 +324,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 
 
 \subsection{\label{lastmove}Letzter Zug}
-Der letzte Zug ist ein Move Container (sieh hierzu \ref{moveContainer}).
+Der letzte Zug ist ein MoveContainer (siehe hierzu \ref{moveContainer}).
 \begin{description}
 \item[ZUG] Informationen über den Zug. (siehe \ref{forwardMove} und
 \ref{backwardMove})
@@ -346,7 +346,9 @@ Eine simple Nachricht fordert zum Zug auf:
 \end{verbatim}
 
 \section{Fehler}
-Ein \glqq spielfähiger\grqq Client muss nicht mit Fehlern umgehen können. Fehlerhafte Züge beispielsweise resultieren in einem vorzeitigen Ende des Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend})
+Ein \glqq spielfähiger\grqq\ Client muss nicht mit Fehlern umgehen können.
+Fehlerhafte Züge beispielsweise resultieren in einem vorzeitigen Ende des
+Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend}).
 \begin{description}
 \item[MSG] Fehlermeldung
 \end{description}
@@ -361,7 +363,8 @@ Ein \glqq spielfähiger\grqq Client muss nicht mit Fehlern umgehen können. Fehl
 \end{verbatim}
 
 \section{Spiel pausiert}
-Ein \glqq spielfähiger\grqq Client muss Pausierungsnachrichten nicht beachten, da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Servers handelt.
+Ein \glqq spielfähiger\grqq\ Client muss Pausierungsnachrichten nicht beachten,
+da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Servers handelt.
 \begin{description}
 \item[N] Spielername
 \item[P] Punktekonto
@@ -389,7 +392,7 @@ Ein \glqq spielfähiger\grqq Client muss Pausierungsnachrichten nicht beachten, 
 Zum Spielende enthält der Spielstatus eine \textit{Condition}, der das Spielergebnis entnommen werden kann:
 \begin{description}
 \item[W] Gewinner (RED/BLUE), bei Unentschieden wird kein winner mitgeschickt.
-\item[R] Text, der Grund für Spielende erklärt
+\item[R] Text, der den Grund für das Spielende erklärt
 \end{description}
 \begin{verbatim}
 <condition winner="W" reason="R"/>

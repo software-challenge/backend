@@ -58,21 +58,29 @@ public class RandomLogic implements IGameHandler {
 	 */
 	@Override
 	public void onRequestAction() {
+		long currentTime = System.currentTimeMillis();
 		System.out.println("*** Es wurde ein Zug angefordert");
-		// wähle eine zufällige Anzahl von Zügen zwischen 0 und 3;
+		// Erstelle einen neuen MoveContainer, welcher unsere 3 Teilzüge
+		// beherbergt
 		MoveContainer moveC = new MoveContainer();
+		// Schleife die 3 mal durchlaufen wird. i wird jedes mal erhöht
 		for (int i = 0; i < 3; i++) {
 			// Liste der verfügbaren Züge
 			LinkedList<Move> possibleMoves = (LinkedList<Move>) gameState
 					.getPossibleMoves();
 			System.out.println("*** Anzahl der möglichen Züge:"
 					+ possibleMoves.size());
-			// Zufällige Auswahl eines Zuges
 			Move move;
+			// Wenn es mögliche Züge gibt:
 			if (possibleMoves.size() > 0) {
+				// Wähle einen davon zufällig aus.
 				move = possibleMoves.get(rand.nextInt(possibleMoves.size()));
+
+				// Je nachdem welcher Zugtyp vorliegt, werden unterschiedliche
+				// DebugHints hinzugefügt
 				if (move.getClass().equals(BackwardMove.class)) {
 					BackwardMove bMove = (BackwardMove) move;
+					// Konsolenausgabe
 					System.out
 							.println("*** Führe Rückwärtstzug aus - Feld mit Index: "
 									+ bMove.fieldIndex);
@@ -80,6 +88,7 @@ public class RandomLogic implements IGameHandler {
 					bMove.addHint("Noch ein Hint");
 				} else if (move.getClass().equals(ForwardMove.class)) {
 					ForwardMove fMove = (ForwardMove) move;
+					// Konsolenausgabe
 					System.out
 							.println("*** Führe Vorwärtszug aus - Feld mit Index: "
 									+ fMove.fieldIndex
@@ -95,7 +104,10 @@ public class RandomLogic implements IGameHandler {
 			// Lokalen GameState auf den Move aktualisieren.
 			if (move != null) {
 				try {
+					// Führt den Teilzug aus, hier wird überprüft ob der Zug
+					// gültig ist.
 					move.perform(gameState, gameState.getCurrentPlayer());
+					// Aktualisiert die Punktzahl
 					gameState.prepareNextTurn(move);
 				} catch (InvalidMoveException e) {
 					System.out.println("*** Ungültiger Zug ausgeführt");
@@ -106,6 +118,7 @@ public class RandomLogic implements IGameHandler {
 
 		// Sende den Container mit allen durchgeführten Zügen.
 		sendAction(moveC);
+		System.out.println("Zugzeit:" + (System.currentTimeMillis() - currentTime));
 	}
 
 	/**

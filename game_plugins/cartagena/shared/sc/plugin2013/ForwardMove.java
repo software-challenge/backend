@@ -17,8 +17,8 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 @XStreamAlias(value = "cartagena:forwardMove")
 @XStreamConverter(ForwardMoveConverter.class)
 public class ForwardMove extends Move {
-	@XStreamAsAttribute
-	public int fieldIndex;
+//	@XStreamAsAttribute
+//	public int fieldIndex;
 	@XStreamAsAttribute
 	public SymbolType symbol;
 
