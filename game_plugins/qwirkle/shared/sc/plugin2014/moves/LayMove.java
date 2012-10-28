@@ -24,6 +24,12 @@ public class LayMove extends Move implements Cloneable {
         return stoneToFieldMapping;
     }
 
+    /**
+     * Legt einen übergebenen Stein auf das übergebene Feld
+     * 
+     * @param stone
+     * @param field
+     */
     public void layStoneOntoField(Stone stone, Field field) {
         checkFieldAndStoneNotNull(stone, field);
 

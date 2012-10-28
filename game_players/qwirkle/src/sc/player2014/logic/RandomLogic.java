@@ -1,7 +1,6 @@
 package sc.player2014.logic;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.List;
 import sc.player2014.Starter;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
@@ -32,41 +31,49 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void gameEnded(GameResult data, PlayerColor color,
-            String errorMessage) {
-
-        System.out.println("*** Das Spiel ist beendet");
-    }
-
-    /**
-     * {@inheritDoc}
+     * Wenn ein Zug von uns angefordert wurde, dann prüfen wir erst, ob es der
+     * aller erste Zug ist. Wenn dies nicht der Fall ist, wird ein zufälliger
+     * Legezug gemacht. Wenn keine regelkonformen Züge gefunden wurden, dann
+     * werden alle Steine von der Hand ausgetauscht.
      */
     @Override
     public void onRequestAction() {
         System.out.println("*** Es wurde ein Zug angefordert");
 
-        if (isStartLayMove()) {
+        if (isOurStartLayMove()) {
             if (tryToDoStartLayMove() == false) {
-                exchangeAllStones();
+                exchangeStones(currentPlayer.getStones());
             }
         }
         else {
             if (tryToDoValidLayMove() == false) {
-                exchangeAllStones();
+                exchangeStones(currentPlayer.getStones());
             }
         }
     }
 
-    private boolean isStartLayMove() {
+    /**
+     * Gibt zurück, ob wir den aller ersten Zug machen müssen
+     * 
+     * @return <code>true</code>: Wir müssen den ersten Zug machen <br>
+     *         <code>false</code>: Wir müssen nicht den ersten Zug machen
+     */
+    private boolean isOurStartLayMove() {
         return (!gameState.getBoard().hasStones())
                 && (gameState.getStartPlayer() == currentPlayer);
     }
 
+    /**
+     * Versucht einen Startzug zu finden, indem die meiste Farbe der Steine auf
+     * der Hand ausgewählt wird und dann versucht wird, ob das legen dieser
+     * Reihe möglich ist.
+     * 
+     * @return <code>true</code>: Wir müssen den ersten Zug machen <br>
+     *         <code>false</code>: Wir müssen nicht den ersten Zug machen
+     */
     private boolean tryToDoStartLayMove() {
-        StoneColor bestStoneColor = getBestStoneColor();
+        StoneColor bestStoneColor = GameUtil.getBestStoneColor(currentPlayer
+                .getStones());
 
         if (bestStoneColor != null) {
             LayMove layMove = new LayMove();
@@ -90,36 +97,21 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
         return false;
     }
 
-    private StoneColor getBestStoneColor() {
-        HashMap<StoneColor, Integer> seenColors = new HashMap<StoneColor, Integer>();
-        for (Stone stone : currentPlayer.getStones()) {
-            if (seenColors.containsKey(stone.getColor())) {
-                int colorCount = seenColors.get(stone.getColor()) + 1;
-                seenColors.put(stone.getColor(), colorCount);
-            }
-            else {
-                seenColors.put(stone.getColor(), 1);
-            }
-        }
-
-        StoneColor bestStoneColor = null;
-        int bestStoneColorCount = 1; // lay at least 2 stones
-
-        for (Entry<StoneColor, Integer> seenColor : seenColors.entrySet()) {
-            if (bestStoneColorCount < seenColor.getValue()) {
-                bestStoneColor = seenColor.getKey();
-                bestStoneColorCount = seenColor.getValue();
-            }
-        }
-        return bestStoneColor;
-    }
-
+    /**
+     * Versucht einen Zug zu finden, indem für alle Steine auf der Hand alle
+     * freien Felder des Spielbrettes durchgegangen werden und dann versucht
+     * wird, ob das legen des Steines auf das freie Feld möglich ist.
+     * 
+     * @return <code>true</code>: Wir müssen den ersten Zug machen <br>
+     *         <code>false</code>: Wir müssen nicht den ersten Zug machen
+     */
     private boolean tryToDoValidLayMove() {
         for (Stone stone : currentPlayer.getStones()) {
             for (Field field : gameState.getBoard().getFields()) {
                 if (field.isFree()) {
                     LayMove layMove = new LayMove();
                     layMove.layStoneOntoField(stone, field);
+
                     if (GameUtil.checkIfLayMoveIsValid(layMove,
                             gameState.getBoard())) {
                         sendAction(layMove);
@@ -132,8 +124,11 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
         return false;
     }
 
-    private void exchangeAllStones() {
-        ExchangeMove exchangeMove = new ExchangeMove(currentPlayer.getStones());
+    /**
+     * Wechselt die übergebenen Steine aus und beendet damit die Runde.
+     */
+    private void exchangeStones(List<Stone> stones) {
+        ExchangeMove exchangeMove = new ExchangeMove(stones);
         sendAction(exchangeMove);
     }
 
@@ -169,4 +164,13 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
         client.sendMove(move);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void gameEnded(GameResult data, PlayerColor color,
+            String errorMessage) {
+
+        System.out.println("*** Das Spiel ist beendet");
+    }
 }
