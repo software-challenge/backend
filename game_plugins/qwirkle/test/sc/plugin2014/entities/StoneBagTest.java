@@ -23,7 +23,6 @@ public class StoneBagTest {
         assertEquals(sizeBefore - 1, stoneBag.getStoneCountInBag());
     }
 
-    @Test(expected = IllegalAccessError.class)
     public void testDrawStoneOverEnd() {
         StoneBag stoneBag = new StoneBag();
         assertNotNull(stoneBag.drawStone());
@@ -34,7 +33,7 @@ public class StoneBagTest {
             assertNotNull(stoneBag.drawStone());
         }
 
-        stoneBag.drawStone();
+        assertNull(stoneBag.drawStone());
     }
 
     @Test

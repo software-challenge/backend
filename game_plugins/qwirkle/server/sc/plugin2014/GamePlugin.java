@@ -19,7 +19,7 @@ public class GamePlugin implements IGamePlugin {
     public static final int             PLUGIN_YEAR      = 2014;
 
     public static final int             MAX_PLAYER_COUNT = 2;
-    public static final int             MAX_TURN_COUNT   = 30;
+    public static final int             MAX_TURN_COUNT   = 25;
 
     public static final ScoreDefinition SCORE_DEFINITION;
 

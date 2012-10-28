@@ -31,8 +31,6 @@ public class ExchangeMoveTest {
 
         GameState gameState = new GameState();
 
-        int stoneCountInBagBefore = gameState.getStoneCountInBag();
-
         ExchangeMove exchangeMove = new ExchangeMove(stones);
         assertEquals(1, exchangeMove.getStonesToExchange().size());
 
@@ -46,7 +44,7 @@ public class ExchangeMoveTest {
         assertEquals(1, player.getStones().size());
         assertNotSame(stone, player.getStones().get(0));
 
-        assertEquals(stoneCountInBagBefore, gameState.getStoneCountInBag());
+        assertEquals(107, gameState.getStoneCountInBag());
     }
 
     @Test
@@ -62,8 +60,6 @@ public class ExchangeMoveTest {
         player.addStone(stone2);
 
         GameState gameState = new GameState();
-
-        int stoneCountInBagBefore = gameState.getStoneCountInBag();
 
         ExchangeMove exchangeMove = new ExchangeMove(stones);
         assertEquals(2, exchangeMove.getStonesToExchange().size());
@@ -81,7 +77,7 @@ public class ExchangeMoveTest {
         assertNotSame(stone2, player.getStones().get(0));
         assertNotSame(stone2, player.getStones().get(1));
 
-        assertEquals(stoneCountInBagBefore, gameState.getStoneCountInBag());
+        assertEquals(106, gameState.getStoneCountInBag());
     }
 
     @Test
@@ -96,8 +92,6 @@ public class ExchangeMoveTest {
         player.addStone(stone2);
 
         GameState gameState = new GameState();
-
-        int stoneCountInBagBefore = gameState.getStoneCountInBag();
 
         ExchangeMove exchangeMove = new ExchangeMove(stones);
         assertEquals(1, exchangeMove.getStonesToExchange().size());
@@ -114,7 +108,7 @@ public class ExchangeMoveTest {
         assertNotSame(stone, player.getStones().get(1));
         assertSame(stone2, player.getStones().get(1));
 
-        assertEquals(stoneCountInBagBefore, gameState.getStoneCountInBag());
+        assertEquals(107, gameState.getStoneCountInBag());
     }
 
     @Test(expected = InvalidMoveException.class)
