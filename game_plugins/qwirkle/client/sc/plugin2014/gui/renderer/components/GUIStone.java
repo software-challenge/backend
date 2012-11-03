@@ -2,8 +2,7 @@ package sc.plugin2014.gui.renderer.components;
 
 import static sc.plugin2014.gui.renderer.configuration.GUIConstants.*;
 import java.awt.*;
-import sc.plugin2014.entities.Field;
-import sc.plugin2014.entities.Stone;
+import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.configuration.GUIConstants;
 import sc.plugin2014.gui.renderer.util.ColorHelper;
 import sc.plugin2014.gui.renderer.util.RendererUtil;
@@ -65,7 +64,7 @@ public class GUIStone {
         this.y = y;
     }
 
-    public void draw(Graphics2D g2) {
+    public void draw(Graphics2D g2, PlayerColor currentPlayerColor) {
         if (image == null) {
             image = RendererUtil.getImage("resource/stones/"
                     + stone.getShape().toString().toLowerCase() + "_"
@@ -74,11 +73,13 @@ public class GUIStone {
         if (isHighlighted()) {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,
                     GUIConstants.STONE_HEIGHT, fmPanel);
-            g2.setColor(ColorHelper.getTransparentColor(Color.WHITE, 160));
+            g2.setColor(ColorHelper.getPlayerColor(currentPlayerColor,
+                    currentPlayerColor));
             g2.drawRect(getX(), getY(), GUIConstants.STONE_WIDTH,
                     GUIConstants.STONE_HEIGHT);
             g2.drawRect(getX() + 1, getY() + 1, GUIConstants.STONE_WIDTH - 2,
                     GUIConstants.STONE_HEIGHT - 2);
+            g2.setColor(Color.WHITE);
         }
         else {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,

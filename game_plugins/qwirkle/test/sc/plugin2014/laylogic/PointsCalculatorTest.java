@@ -185,4 +185,211 @@ public class PointsCalculatorTest {
                 board);
         assertEquals(9, pointsForMove);
     }
+
+    @Test
+    public void testGetPointsForMoveSimple2Vertical() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone, field00);
+        stoneToFieldMap.put(stone2, field01);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(2, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimple3Vertical() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone, field00);
+        stoneToFieldMap.put(stone2, field01);
+        stoneToFieldMap.put(stone3, field02);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(3, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimple4Vertical() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+        Field field03 = board.getField(3, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RECTANGLE);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone, field00);
+        stoneToFieldMap.put(stone2, field01);
+        stoneToFieldMap.put(stone3, field02);
+        stoneToFieldMap.put(stone4, field03);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(4, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimple5Vertical() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+        Field field03 = board.getField(3, 0);
+        Field field04 = board.getField(4, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RECTANGLE);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone, field00);
+        stoneToFieldMap.put(stone2, field01);
+        stoneToFieldMap.put(stone3, field02);
+        stoneToFieldMap.put(stone4, field03);
+        stoneToFieldMap.put(stone5, field04);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(5, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimpleQwirkleVertical() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+        Field field03 = board.getField(3, 0);
+        Field field04 = board.getField(4, 0);
+        Field field05 = board.getField(5, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RECTANGLE);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
+        Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.STAR);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone, field00);
+        stoneToFieldMap.put(stone2, field01);
+        stoneToFieldMap.put(stone3, field02);
+        stoneToFieldMap.put(stone4, field03);
+        stoneToFieldMap.put(stone5, field04);
+        stoneToFieldMap.put(stone6, field05);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(12, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimpleQwirkleVerticalIn2Steps()
+            throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+        Field field03 = board.getField(3, 0);
+        Field field04 = board.getField(4, 0);
+        Field field05 = board.getField(5, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RECTANGLE);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
+        Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.STAR);
+
+        field00.setStone(stone);
+        field01.setStone(stone2);
+        field02.setStone(stone3);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone4, field03);
+        stoneToFieldMap.put(stone5, field04);
+        stoneToFieldMap.put(stone6, field05);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(12, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimple3VerticalIn2Steps() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+
+        field00.setStone(stone);
+        field01.setStone(stone2);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone3, field02);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(3, pointsForMove);
+    }
+
+    @Test
+    public void testGetPointsForMoveSimple4VerticalIn2Steps() throws Exception {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field01 = board.getField(1, 0);
+        Field field02 = board.getField(2, 0);
+        Field field03 = board.getField(3, 0);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RECTANGLE);
+
+        field00.setStone(stone);
+        field01.setStone(stone2);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone3, field02);
+        stoneToFieldMap.put(stone4, field03);
+
+        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
+                board);
+        assertEquals(4, pointsForMove);
+    }
 }

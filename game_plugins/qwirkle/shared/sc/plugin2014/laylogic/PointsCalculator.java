@@ -21,7 +21,10 @@ public class PointsCalculator {
         List<Field> describedRow = GetDescribedRow.getDescribedRow(
                 stoneToFieldMapping.values(), board);
 
-        result += getPointsToAdd(describedRow.size());
+        if (describedRow.size() != 1) { // if 1 stone no real direction and only
+                                        // adding through neighbours
+            result += getPointsToAdd(describedRow.size());
+        }
 
         for (Field field : stoneToFieldMapping.values()) {
             List<Field> neighbors = GetNeighbours.getOccupiedNeighbors(field,

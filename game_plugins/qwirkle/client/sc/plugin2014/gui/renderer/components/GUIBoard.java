@@ -3,16 +3,17 @@ package sc.plugin2014.gui.renderer.components;
 import java.awt.*;
 import java.util.List;
 import sc.plugin2014.GameState;
-import sc.plugin2014.entities.Board;
-import sc.plugin2014.entities.Field;
+import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.configuration.GUIConstants;
 import sc.plugin2014.gui.renderer.util.ColorHelper;
+import sc.plugin2014.moves.LayMove;
 import sc.plugin2014.util.Constants;
+import sc.plugin2014.util.GameUtil;
 
 public class GUIBoard {
     public static void draw(Graphics2D g2, int xStart, int yStart, int width,
             int height, List<GUIStone> toLayStones, GameState gameState,
-            Component component, boolean dragging) {
+            Component component, boolean dragging, GUIStone selectedStone) {
         int offsetX = calculateOffsetX(xStart, width);
         int offsetY = calculateOffsetY(yStart, height);
 
@@ -23,7 +24,7 @@ public class GUIBoard {
                         + offsetX);
                 stone.setY((field.getPosY() * GUIConstants.STONE_HEIGHT)
                         + offsetY);
-                stone.draw(g2);
+                stone.draw(g2, gameState.getCurrentPlayerColor());
             }
         }
 
@@ -34,7 +35,7 @@ public class GUIBoard {
                         + offsetX);
                 toLayStone.setY((field.getPosY() * GUIConstants.STONE_HEIGHT)
                         + offsetY);
-                toLayStone.draw(g2);
+                toLayStone.draw(g2, gameState.getCurrentPlayerColor());
             }
         }
 
@@ -51,11 +52,37 @@ public class GUIBoard {
                 int fieldToHighlightY = (fieldFromXY.getPosY() * GUIConstants.STONE_HEIGHT)
                         + offsetY;
 
-                g2.setColor(Color.GREEN);
+                if (isLayMovePossible(fieldFromXY, selectedStone.getStone(),
+                        gameState, toLayStones)) {
+                    g2.setColor(Color.GREEN);
+                }
+                else {
+                    g2.setColor(Color.RED);
+                }
                 g2.fillRect(fieldToHighlightX, fieldToHighlightY,
                         GUIConstants.STONE_WIDTH, GUIConstants.STONE_HEIGHT);
             }
         }
+    }
+
+    private static boolean isLayMovePossible(Field belongingField, Stone stone,
+            GameState gameState, List<GUIStone> toLayStones) {
+        if ((belongingField == null) || !belongingField.isFree()) {
+            return false;
+        }
+
+        if (!gameState.getBoard().hasStones() && (toLayStones.isEmpty())) {
+            return true;
+        }
+
+        LayMove layMove = new LayMove();
+
+        for (GUIStone guistone : toLayStones) {
+            layMove.layStoneOntoField(guistone.getStone(), guistone.getField());
+        }
+        layMove.layStoneOntoField(stone, belongingField);
+
+        return GameUtil.checkIfLayMoveIsValid(layMove, gameState.getBoard());
     }
 
     public static int calculateOffsetX(int xStart, int width) {
