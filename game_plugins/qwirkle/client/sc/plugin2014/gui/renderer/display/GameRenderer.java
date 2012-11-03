@@ -20,9 +20,10 @@ import sc.plugin2014.gui.renderer.listener.GameKeyAdapter;
 import sc.plugin2014.gui.renderer.listener.LayMoveAdapter;
 import sc.plugin2014.gui.renderer.util.RendererUtil;
 import sc.plugin2014.moves.*;
+import sc.plugin2014.util.GameUtil;
 
 public class GameRenderer extends JComponent {
-    private static final long       serialVersionUID  = -7852533731353419771L;
+    private static final long       serialVersionUID     = -7852533731353419771L;
 
     private PlayerColor             currentPlayer;
     private GameState               gameState;
@@ -33,9 +34,13 @@ public class GameRenderer extends JComponent {
     private Image                   scaledBgImage;
     private final Image             progressIcon;
 
-    private static final Object     LOCK              = new Object();
+    private static final Object     LOCK                 = new Object();
 
-    public EMoveMode                moveMode          = EMoveMode.NONE;
+    public static final String      LAY_STONE_LABEL      = "Steine legen";
+
+    public static final String      EXCHANGE_STONE_LABEL = "Steine tauschen";
+
+    public EMoveMode                moveMode             = EMoveMode.NONE;
 
     private final List<GUIStone>    redStones;
     private final List<GUIStone>    blueStones;
@@ -44,32 +49,34 @@ public class GameRenderer extends JComponent {
     public int                      dx, dy;
     public int                      ox, oy;
 
-    private int                     turnToAnswer      = -1;
+    private int                     turnToAnswer         = -1;
     private boolean                 gameEnded;
 
-    private final MouseAdapter      layMouseAdapter   = new LayMoveAdapter(this);
+    private final MouseAdapter      layMouseAdapter      = new LayMoveAdapter(
+                                                                 this);
 
-    private final ComponentListener componentListener = new ComponentAdapter() {
+    private final ComponentListener componentListener    = new ComponentAdapter() {
 
-                                                          @Override
-                                                          public void componentResized(
-                                                                  ComponentEvent e) {
-                                                              resizeBoard();
-                                                              repaint();
-                                                          }
+                                                             @Override
+                                                             public void componentResized(
+                                                                     ComponentEvent e) {
+                                                                 resizeBoard();
+                                                                 repaint();
+                                                             }
 
-                                                      };
+                                                         };
 
-    public List<GUIStone>           toLayStones       = new ArrayList<GUIStone>();
+    public List<GUIStone>           toLayStones;
 
-    private final Button            actionButton;
+    public final Button             actionButton;
     private final Button            takeBackButton;
 
-    private final List<GUIStone>    animatedStones    = new ArrayList<GUIStone>();
+    private final List<GUIStone>    animatedStones       = new ArrayList<GUIStone>();
 
     public GameRenderer() {
         updateBuffer = true;
         bgImage = RendererUtil.getImage("resource/game/bg.png");
+        toLayStones = new ArrayList<GUIStone>();
         progressIcon = RendererUtil.getImage("resource/game/progress.png");
         redStones = new LinkedList<GUIStone>();
         blueStones = new LinkedList<GUIStone>();
@@ -86,7 +93,7 @@ public class GameRenderer extends JComponent {
 
         setLayout(null);
 
-        actionButton = new Button("Zug abschließen");
+        actionButton = new Button(LAY_STONE_LABEL);
         this.add(actionButton);
 
         actionButton.addMouseListener(new MouseAdapter() {
@@ -167,6 +174,7 @@ public class GameRenderer extends JComponent {
         currentPlayer = gameState.getCurrentPlayer().getPlayerColor();
         updateBuffer = true;
 
+        toLayStones.clear();
         selectedStone = null;
 
         redStones.clear();
@@ -390,7 +398,7 @@ public class GameRenderer extends JComponent {
                     dragging);
 
             for (GUIStone animatedStone : animatedStones) {
-                animatedStone.draw(g2);
+                animatedStone.draw(g2, currentPlayer);
             }
         }
 
@@ -423,7 +431,8 @@ public class GameRenderer extends JComponent {
                 && (moveMode != EMoveMode.EXCHANGE);
 
         Painter.paintStaticComponents(g2, getWidth(), getHeight(), this,
-                scaledBgImage, gameState, toLayStones, this, dragging);
+                scaledBgImage, gameState, toLayStones, this, dragging,
+                selectedStone);
         if (gameState != null) {
             // printGameStatus(g2);
             Painter.paintSemiStaticComponents(g2, getWidth(), getHeight(),
@@ -448,9 +457,10 @@ public class GameRenderer extends JComponent {
                             - GUIConstants.BORDER_SIZE
                             - GUIConstants.SIDE_BAR_WIDTH, getHeight()
                             - GUIConstants.STATUS_HEIGTH, stone);
-            if ((belongingField != null) && belongingField.isFree()) {
+            if (isLayMovePossible(belongingField, stone.getStone())) {
                 stone.setField(belongingField);
                 removeStone(stone);
+                actionButton.setLabel(LAY_STONE_LABEL);
                 moveMode = EMoveMode.LAY;
                 stone.setHighlighted(true);
                 toLayStones.add(stone);
@@ -466,26 +476,28 @@ public class GameRenderer extends JComponent {
                     takeBackButton.setEnabled(false);
                 }
             }
+            updateBuffer = true;
+            repaint();
         }
     }
 
-    public void exchangeStone(GUIStone stone) {
-        if (stone != null) {
-            if (stone.isHighlighted()) {
-                moveMode = EMoveMode.EXCHANGE;
-                stone.setHighlighted(true);
-                actionButton.setEnabled(true);
-                takeBackButton.setEnabled(true);
-            }
-            else {
-                stone.setHighlighted(false);
-                if (toLayStones.size() == 0) {
-                    moveMode = EMoveMode.NONE;
-                    actionButton.setEnabled(false);
-                    takeBackButton.setEnabled(false);
-                }
-            }
+    private boolean isLayMovePossible(Field belongingField, Stone stone) {
+        if ((belongingField == null) || !belongingField.isFree()) {
+            return false;
         }
+
+        if (!gameState.getBoard().hasStones() && (toLayStones.isEmpty())) {
+            return true;
+        }
+
+        LayMove layMove = new LayMove();
+
+        for (GUIStone guistone : toLayStones) {
+            layMove.layStoneOntoField(guistone.getStone(), guistone.getField());
+        }
+        layMove.layStoneOntoField(stone, belongingField);
+
+        return GameUtil.checkIfLayMoveIsValid(layMove, gameState.getBoard());
     }
 
     public void removeStone(GUIStone stone) {

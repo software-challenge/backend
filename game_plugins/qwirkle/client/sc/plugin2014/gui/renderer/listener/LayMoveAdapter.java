@@ -80,10 +80,14 @@ public class LayMoveAdapter extends MouseAdapter {
                     if ((Math.abs(e.getX() - parent.ox) < 30)
                             && (Math.abs(e.getY() - parent.oy) < 30)) {
                         parent.moveMode = EMoveMode.EXCHANGE;
+                        parent.actionButton
+                                .setLabel(GameRenderer.EXCHANGE_STONE_LABEL);
                         parent.addStone(parent.selectedStone);
                     }
                     else {
                         parent.moveMode = EMoveMode.LAY;
+                        parent.actionButton
+                                .setLabel(GameRenderer.LAY_STONE_LABEL);
                     }
                 }
 

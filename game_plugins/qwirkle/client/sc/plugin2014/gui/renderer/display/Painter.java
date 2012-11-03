@@ -21,7 +21,7 @@ public class Painter {
     public static void paintStaticComponents(Graphics2D g2, int width,
             int height, ImageObserver imgObs, Image scaledBgImage,
             GameState gameState, List<GUIStone> toLayStones,
-            Component component, boolean dragging) {
+            Component component, boolean dragging, GUIStone selectedStone) {
 
         // hintergrundbild oder farbe
         if (OPTIONS[BACKGROUND] && (scaledBgImage != null)) {
@@ -35,7 +35,7 @@ public class Painter {
         }
 
         paintBoard(g2, width, height, gameState, toLayStones, component,
-                dragging);
+                dragging, selectedStone);
 
         g2.setColor(ColorHelper.getTransparentColor(Color.WHITE, 180));
 
@@ -76,11 +76,11 @@ public class Painter {
 
     private static void paintBoard(Graphics2D g2, int width, int height,
             GameState gameState, List<GUIStone> toLayStones,
-            Component component, boolean dragging) {
+            Component component, boolean dragging, GUIStone selectedStone) {
         GUIBoard.draw(g2, GUIConstants.BORDER_SIZE, GUIConstants.BORDER_SIZE,
                 width - GUIConstants.BORDER_SIZE - GUIConstants.SIDE_BAR_WIDTH,
                 height - STATUS_HEIGTH, toLayStones, gameState, component,
-                dragging);
+                dragging, selectedStone);
     }
 
     public static int paintPlayerInfo(Graphics2D g2, int fontX, int fontY,
@@ -253,7 +253,7 @@ public class Painter {
         for (GUIStone stone : redStones) {
             stone.setX(x);
             stone.setY(y);
-            stone.draw(g2);
+            stone.draw(g2, PlayerColor.RED);
             x += STONE_WIDTH + STUFF_GAP;
         }
 
@@ -274,7 +274,7 @@ public class Painter {
         for (GUIStone stone : blueStones) {
             stone.setX(x);
             stone.setY(y);
-            stone.draw(g2);
+            stone.draw(g2, PlayerColor.BLUE);
             x -= STONE_WIDTH + STUFF_GAP;
         }
 
@@ -297,7 +297,7 @@ public class Painter {
                     - SIDE_BAR_WIDTH, height - STATUS_HEIGTH,
                     gameState.getBoard(), component);
 
-            selectedStone.draw(g2);
+            selectedStone.draw(g2, gameState.getCurrentPlayerColor());
         }
 
         drawRedPlayer(g2, height, gameState, redStones);
