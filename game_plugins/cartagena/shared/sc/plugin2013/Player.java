@@ -5,13 +5,9 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.framework.plugins.SimplePlayer;
 import sc.plugin2013.PlayerColor;
-import sc.plugin2013.util.PlayerConverter;
 
 /**Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
  * Beeinhaltet auch Informationen zum Punktekonto und zu den Karten ({@link Card) des Spielers.
