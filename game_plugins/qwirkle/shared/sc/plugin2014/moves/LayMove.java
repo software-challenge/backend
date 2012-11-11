@@ -59,30 +59,14 @@ public class LayMove extends Move implements Cloneable {
 
         checkIfStonesAreFromPlayerHand(getStonesToLay(), player);
 
-        InvalidMoveException invalidmove = null;
+        LayLogicFacade.checkIfLayMoveIsValid(getStoneToFieldMapping(),
+                state.getBoard(), !state.getBoard().hasStones());
 
-        try {
-            LayLogicFacade.checkIfLayMoveIsValid(getStoneToFieldMapping(),
-                    state.getBoard(), !state.getBoard().hasStones());
-        }
-        catch (InvalidMoveException e) {
-            invalidmove = e;
-        }
+        int points = PointsCalculator.getPointsForMove(stoneToFieldMapping,
+                state.getBoard());
 
-        updateGamestate(state, player);
+        player.addPoints(points);
 
-        if (invalidmove == null) {
-            int points = PointsCalculator.getPointsForMove(stoneToFieldMapping,
-                    state.getBoard());
-
-            player.addPoints(points);
-        }
-        else {
-            throw invalidmove;
-        }
-    }
-
-    private void updateGamestate(GameState state, Player player) {
         List<Integer> freePositions = new ArrayList<Integer>();
 
         int stonesToLaySize = getStonesToLay().size();

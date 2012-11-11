@@ -71,7 +71,16 @@ public class LayLogicFacade {
 
     private static boolean checkVerticalRow(Collection<Field> fields) {
         List<Integer> numbers = new ArrayList<Integer>();
+        int xDim = -1;
         for (Field field : fields) {
+            if (xDim == -1) {
+                xDim = field.getPosX();
+            }
+
+            if (xDim != field.getPosX()) {
+                return false;
+            }
+
             numbers.add(field.getPosY());
         }
 
@@ -100,7 +109,15 @@ public class LayLogicFacade {
 
     private static boolean checkHorizontalRow(Collection<Field> fields) {
         List<Integer> numbers = new ArrayList<Integer>();
+        int yDim = -1;
         for (Field field : fields) {
+            if (yDim == -1) {
+                yDim = field.getPosY();
+            }
+
+            if (yDim != field.getPosY()) {
+                return false;
+            }
             numbers.add(field.getPosX());
         }
 

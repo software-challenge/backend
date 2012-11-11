@@ -8,6 +8,23 @@ import sc.plugin2014.exceptions.InvalidMoveException;
 
 public class LayLogicFacadeTest {
 
+    @Test(expected = InvalidMoveException.class)
+    public void testCheckIfFirstLayMoveIsInvalid() throws InvalidMoveException {
+        Board board = new Board();
+        Field field00 = board.getField(0, 0);
+        Field field11 = board.getField(1, 1);
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+
+        HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        stoneToFieldMap.put(stone, field00);
+        stoneToFieldMap.put(stone2, field11);
+
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+    }
+
     @Test
     public void testCheckIfLayMoveIsValid() {
         Board board = new Board();

@@ -40,7 +40,7 @@ public class ExchangeMove extends Move implements Cloneable {
         checkIfPlayerHasStoneAmountToExchange(player);
 
         List<Integer> freePositions = new ArrayList<Integer>();
-        ArrayList<Stone> putAsideStones = new ArrayList<Stone>();
+        List<Stone> putAsideStones = new ArrayList<Stone>();
 
         int stonesToExchangeSize = getStonesToExchange().size();
 
@@ -55,7 +55,7 @@ public class ExchangeMove extends Move implements Cloneable {
         for (int i = 0; i < stonesToExchangeSize; i++) {
             Stone stone = state.drawStone();
             if (stone != null) {
-                player.addStone(state.drawStone(), freePositions.get(i));
+                player.addStone(stone, freePositions.get(i));
             }
             else {
                 throw new InvalidMoveException(
