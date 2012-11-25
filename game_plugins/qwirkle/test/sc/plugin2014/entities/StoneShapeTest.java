@@ -6,11 +6,11 @@ import org.junit.Test;
 public class StoneShapeTest {
     @Test
     public void testGetShapeFromIndex() {
-        assertEquals(StoneShape.CIRCLE, StoneShape.getShapeFromIndex(0));
-        assertEquals(StoneShape.FLOWER, StoneShape.getShapeFromIndex(1));
-        assertEquals(StoneShape.FOURSPIKES, StoneShape.getShapeFromIndex(2));
-        assertEquals(StoneShape.RECTANGLE, StoneShape.getShapeFromIndex(3));
-        assertEquals(StoneShape.RHOMBUS, StoneShape.getShapeFromIndex(4));
-        assertEquals(StoneShape.STAR, StoneShape.getShapeFromIndex(5));
+        assertEquals(StoneShape.ACORN, StoneShape.getShapeFromIndex(0));
+        assertEquals(StoneShape.BELL, StoneShape.getShapeFromIndex(1));
+        assertEquals(StoneShape.CLUBS, StoneShape.getShapeFromIndex(2));
+        assertEquals(StoneShape.DIAMONT, StoneShape.getShapeFromIndex(3));
+        assertEquals(StoneShape.HEART, StoneShape.getShapeFromIndex(4));
+        assertEquals(StoneShape.SPADES, StoneShape.getShapeFromIndex(5));
     }
 }

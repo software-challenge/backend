@@ -29,8 +29,28 @@ public class PointsCalculator {
         for (Field field : stoneToFieldMapping.values()) {
             List<Field> neighbors = GetNeighbours.getOccupiedNeighbors(field,
                     board);
+            boolean verticalDirectionDone = false;
+            boolean horizonzalDirectionDone = false;
             if (!neighbors.isEmpty()) {
                 for (Field neighbor : neighbors) {
+                    if (neighbor.getPosX() == field.getPosX()) {
+                        if (!verticalDirectionDone) {
+                            verticalDirectionDone = true;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+
+                    if (neighbor.getPosY() == field.getPosY()) {
+                        if (!horizonzalDirectionDone) {
+                            horizonzalDirectionDone = true;
+                        }
+                        else {
+                            continue;
+                        }
+                    }
+
                     List<Field> neighborRow = GetRowFromNeighbourFields
                             .getRowFromField(field, neighbor, board);
                     if (notPartOfDescribedRow(describedRow, neighborRow)) {
