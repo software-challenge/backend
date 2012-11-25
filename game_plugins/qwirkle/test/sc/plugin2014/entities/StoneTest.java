@@ -9,11 +9,11 @@ public class StoneTest {
     public void testStone() {
         Stone stone = new Stone();
         assertEquals(StoneColor.BLUE, stone.getColor());
-        assertEquals(StoneShape.CIRCLE, stone.getShape());
+        assertEquals(StoneShape.ACORN, stone.getShape());
 
-        Stone stoneGreenFlower = new Stone(StoneColor.GREEN, StoneShape.FLOWER);
+        Stone stoneGreenFlower = new Stone(StoneColor.GREEN, StoneShape.BELL);
         assertEquals(StoneColor.GREEN, stoneGreenFlower.getColor());
-        assertEquals(StoneShape.FLOWER, stoneGreenFlower.getShape());
+        assertEquals(StoneShape.BELL, stoneGreenFlower.getShape());
     }
 
 }

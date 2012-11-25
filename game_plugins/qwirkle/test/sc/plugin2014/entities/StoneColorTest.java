@@ -9,9 +9,9 @@ public class StoneColorTest {
     public void testGetColorFromIndex() {
         assertEquals(StoneColor.BLUE, StoneColor.getColorFromIndex(0));
         assertEquals(StoneColor.GREEN, StoneColor.getColorFromIndex(1));
-        assertEquals(StoneColor.ORANGE, StoneColor.getColorFromIndex(2));
-        assertEquals(StoneColor.PURPLE, StoneColor.getColorFromIndex(3));
-        assertEquals(StoneColor.RED, StoneColor.getColorFromIndex(4));
+        assertEquals(StoneColor.MAGENTA, StoneColor.getColorFromIndex(2));
+        assertEquals(StoneColor.ORANGE, StoneColor.getColorFromIndex(3));
+        assertEquals(StoneColor.VIOLET, StoneColor.getColorFromIndex(4));
         assertEquals(StoneColor.YELLOW, StoneColor.getColorFromIndex(5));
     }
 

@@ -18,7 +18,7 @@ public class Stone implements Cloneable {
     public Stone() {
         identifier = 0;
         color = StoneColor.BLUE;
-        shape = StoneShape.CIRCLE;
+        shape = StoneShape.ACORN;
     }
 
     public Stone(StoneColor color, StoneShape shape) {

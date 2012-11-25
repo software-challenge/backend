@@ -14,8 +14,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field11 = board.getField(1, 1);
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -31,8 +31,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field01 = board.getField(0, 1);
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -54,8 +54,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field01 = board.getField(0, 1);
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone2, 0, 0);
 
@@ -74,8 +74,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field01 = board.getField(0, 1);
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.GREEN, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.GREEN, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -92,8 +92,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field01 = board.getField(0, 1);
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.ACORN);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -109,7 +109,7 @@ public class LayLogicFacadeTest {
         Board board = new Board();
         Field field00 = board.getField(0, 0);
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -122,15 +122,15 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidAdjoinedOneStone() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
 
         Field field02 = board.getField(0, 2);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -149,15 +149,15 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
 
         Field field03 = board.getField(0, 3);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -171,15 +171,15 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
 
         Field field20 = board.getField(2, 0);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -192,15 +192,15 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidAdjoinedOneStoneToRight() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
 
         Field field10 = board.getField(1, 0);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -218,15 +218,15 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidAdjoinedOneStoneInMiddle() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 2);
 
         Field field01 = board.getField(0, 1);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -244,9 +244,9 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidRowOverRow() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
@@ -256,9 +256,9 @@ public class LayLogicFacadeTest {
         Field field11 = board.getField(1, 1);
         Field field12 = board.getField(1, 2);
 
-        Stone stone4 = new Stone(StoneColor.RED, StoneShape.CIRCLE);
-        Stone stone5 = new Stone(StoneColor.RED, StoneShape.FLOWER);
-        Stone stone6 = new Stone(StoneColor.RED, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.VIOLET, StoneShape.ACORN);
+        Stone stone5 = new Stone(StoneColor.VIOLET, StoneShape.BELL);
+        Stone stone6 = new Stone(StoneColor.VIOLET, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -279,9 +279,9 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
@@ -291,9 +291,9 @@ public class LayLogicFacadeTest {
         Field field11 = board.getField(1, 1);
         Field field12 = board.getField(1, 2);
 
-        Stone stone4 = new Stone(StoneColor.RED, StoneShape.CIRCLE);
-        Stone stone5 = new Stone(StoneColor.RED, StoneShape.RHOMBUS);
-        Stone stone6 = new Stone(StoneColor.RED, StoneShape.FOURSPIKES);
+        Stone stone4 = new Stone(StoneColor.VIOLET, StoneShape.ACORN);
+        Stone stone5 = new Stone(StoneColor.VIOLET, StoneShape.HEART);
+        Stone stone6 = new Stone(StoneColor.VIOLET, StoneShape.CLUBS);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -308,9 +308,9 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidLayOnOutside() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 1);
         board.layStone(stone2, 0, 2);
@@ -319,8 +319,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field04 = board.getField(0, 4);
 
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.STAR);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -340,9 +340,9 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 1);
         board.layStone(stone2, 0, 2);
@@ -351,8 +351,8 @@ public class LayLogicFacadeTest {
         Field field00 = board.getField(0, 0);
         Field field04 = board.getField(0, 4);
 
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -366,8 +366,8 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidLayARow() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
@@ -376,9 +376,9 @@ public class LayLogicFacadeTest {
         Field field12 = board.getField(1, 2);
         Field field22 = board.getField(2, 2);
 
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.STAR);
-        Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
+        Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.ACORN);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -399,8 +399,8 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 1);
@@ -409,9 +409,9 @@ public class LayLogicFacadeTest {
         Field field12 = board.getField(1, 2);
         Field field22 = board.getField(2, 2);
 
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.STAR);
-        Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.STAR);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
+        Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -427,15 +427,15 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
 
         board.layStone(stone, 0, 0);
 
         Field field01 = board.getField(0, 1);
         Field field10 = board.getField(1, 0);
 
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.HEART);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -450,8 +450,8 @@ public class LayLogicFacadeTest {
             throws InvalidMoveException {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 3);
@@ -459,8 +459,8 @@ public class LayLogicFacadeTest {
         Field field01 = board.getField(0, 1);
         Field field04 = board.getField(0, 4);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -474,8 +474,8 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidLayRowWithoutGap() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 2);
@@ -483,8 +483,8 @@ public class LayLogicFacadeTest {
         Field field01 = board.getField(0, 1);
         Field field03 = board.getField(0, 3);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -503,9 +503,9 @@ public class LayLogicFacadeTest {
     public void testCheckIfLayMoveIsValidLayRowWithoutGapButRowHasMore() {
         Board board = new Board();
 
-        Stone stone = new Stone(StoneColor.BLUE, StoneShape.CIRCLE);
-        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
-        Stone stoneOutside = new Stone(StoneColor.BLUE, StoneShape.FOURSPIKES);
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
+        Stone stoneOutside = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
 
         board.layStone(stone, 0, 0);
         board.layStone(stone2, 0, 2);
@@ -515,8 +515,8 @@ public class LayLogicFacadeTest {
         Field field01 = board.getField(0, 1);
         Field field03 = board.getField(0, 3);
 
-        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.RHOMBUS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.FLOWER);
+        Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.HEART);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.BELL);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
