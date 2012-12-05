@@ -1,0 +1,15 @@
+sc.plugin2014
+sc.plugin2014.converters
+sc.plugin2014.entities
+sc.plugin2014.exceptions
+sc.plugin2014.gui
+sc.plugin2014.gui.abstractgame
+sc.plugin2014.gui.renderer
+sc.plugin2014.gui.renderer.components
+sc.plugin2014.gui.renderer.configuration
+sc.plugin2014.gui.renderer.display
+sc.plugin2014.gui.renderer.listener
+sc.plugin2014.gui.renderer.util
+sc.plugin2014.laylogic
+sc.plugin2014.moves
+sc.plugin2014.util

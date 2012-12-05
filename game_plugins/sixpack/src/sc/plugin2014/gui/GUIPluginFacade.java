@@ -1,0 +1,159 @@
+package sc.plugin2014.gui;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URL;
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+import sc.api.plugins.host.ReplayBuilder;
+import sc.guiplugin.interfaces.*;
+import sc.networking.clients.ObservingClient;
+import sc.plugin2014.*;
+import sc.plugin2014.gui.abstractgame.*;
+import sc.plugin2014.gui.renderer.RenderFacade;
+import sc.plugin2014.gui.renderer.display.GameRenderer;
+import sc.plugin2014.util.XStreamConfiguration;
+import sc.plugins.PluginDescriptor;
+import sc.shared.ScoreDefinition;
+import sc.shared.SlotDescriptor;
+
+/**
+ * This is the GUIPlugin interface that is loaded by the server when it loads
+ * the plugins
+ * 
+ * @author sca
+ * 
+ */
+@PluginDescriptor(name = GamePlugin.PLUGIN_NAME, uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
+public class GUIPluginFacade implements IGuiPlugin {
+
+    public GUIPluginFacade() {}
+
+    @Override
+    public void setRenderContext(JPanel panel, boolean threeDimensional) {
+        RenderFacade.getInstance().setRenderContext(panel, threeDimensional);
+    }
+
+    @Override
+    public Image getCurrentStateImage() {
+        return RenderFacade.getInstance().getImage();
+
+    }
+
+    @Override
+    public String getPluginInfoText() {
+        return GamePlugin.PLUGIN_NAME;
+    }
+
+    @Override
+    public Image getPluginIcon() {
+        return loadImage("resource/game/qwirkle_icon.png");
+    }
+
+    @Override
+    public Image getPluginImage() {
+        return loadImage("resource/game/qwirkle.png");
+    }
+
+    private static Image loadImage(String filename) {
+        URL url = GameRenderer.class.getClassLoader().getResource(filename);
+
+        if (url == null) {
+            return new ImageIcon().getImage();
+        }
+        return (new ImageIcon(url)).getImage();
+    }
+
+    /**
+     * Server wants us to prepare a game Then create a GuiClient that opens a
+     * new room and create the GUI
+     */
+    @Override
+    public IGamePreparation prepareBackgroundGame(final String ip,
+            final int port, SlotDescriptor... descriptors) throws IOException {
+        GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
+        AdministrativeGameHandler handler = new AdministrativeGameHandler();
+        client.setHandler(handler);
+        // RenderFacade.getInstance().setHandler(handler, EPlayerId.OBSERVER);
+        GamePreparation result = new GamePreparation(client, descriptors);
+        RenderFacade.getInstance().setDisabled(true);
+        return result;
+    }
+
+    /**
+     * Server wants us to prepare a game Then create a GuiClient that opens a
+     * new room and create the GUI
+     */
+    @Override
+    public IGamePreparation prepareGame(final String ip, final int port,
+            SlotDescriptor... descriptors) throws IOException {
+        GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
+        AdministrativeGameHandler handler = new AdministrativeGameHandler();
+        client.setHandler(handler);
+        RenderFacade.getInstance().setHandler(handler, EPlayerId.OBSERVER);
+        GamePreparation result = new GamePreparation(client, descriptors);
+        RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+        return result;
+    }
+
+    /**
+     * Server wants us to load a replay.
+     */
+    @Override
+    public IObservation loadReplay(String filename) throws IOException {
+        ObservingClient rep = new ObservingClient(
+                XStreamConfiguration.getXStream(),
+                ReplayBuilder.loadReplay(filename));
+        ObserverGameHandler handler = new ObserverGameHandler();
+        RenderFacade.getInstance().setHandler(null, EPlayerId.OBSERVER);
+        IObservation obs = new Observation(rep, handler);
+        // RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+        return obs;
+    }
+
+    @Override
+    public int getMinimalPlayerCount() {
+        return 2;
+    }
+
+    @Override
+    public int getMaximalPlayerCount() {
+        return 2;
+    }
+
+    @Override
+    public int getPluginYear() {
+        return GamePlugin.PLUGIN_YEAR;
+    }
+
+    @Override
+    public void initialize(IGuiPluginHost host) {
+        // not needed
+    }
+
+    @Override
+    public void unload() {
+        // not needed
+    }
+
+    @Override
+    public ScoreDefinition getScoreDefinition() {
+        return GamePlugin.SCORE_DEFINITION;
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        if (screen.width > 1024) {
+            screen.width = 1024;
+        }
+
+        if (screen.height > 768) {
+            screen.height = 768;
+        }
+
+        return screen;
+    }
+
+}
