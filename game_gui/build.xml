@@ -10,6 +10,11 @@
 	<property name="main-class" value="sc.SoftwareChallengeGUI" />
 	<property name="sdk.dir" value="./../software_challenge_sdk" />
 	<property name="server.dir" value="./../game_server" />
+	<property name="version.num" value="1.0" />
+	<buildnumber file="build.num"/>
+	<tstamp>
+	     <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -47,6 +52,8 @@
 		<ant dir="./../game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/sixpack" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/cartagena" target="clean-build" inheritAll="false" />
+
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>
 
@@ -61,7 +68,7 @@
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
 				<attribute name="Class-Path" value="${jar.classpath}" />
-				<attribute name="${manifest.code.version.key}" value="${code.version}" />
+				<attribute name="${manifest.code.version.key}" value="${version.num}-build${build.number}-${TODAY}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
 			<fileset dir="src">
@@ -74,6 +81,12 @@
 		<mkdir dir="${plugin.dir}" />
 		<copy todir="${plugin.dir}" flatten="true">
 			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" excludes="hase_und_igel/**" /> <!-- ohne hui wegen lizenz !-->
+		</copy>
+	<!-- plugins zum debuggen in plugin ordner kopieren-->
+		<delete dir ="./plugins" />
+		<mkdir dir = ".plugins" />
+		<copy todir="./plugins" flatten="true">
+					<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
 		</copy>
 
 <!-- have newest plugin as standard entry !-->

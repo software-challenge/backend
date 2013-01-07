@@ -84,6 +84,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		if (isAffected(roomId))
 		{
 			addObservation(state);
+			notifyOnUpdate();
 		}
 	}
 
