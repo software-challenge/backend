@@ -1,6 +1,5 @@
 package kiModell;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import sc.plugin2013.util.InvalidMoveException;
 public class MoveRater {
 	private GameState startGameState;
 	private List<Node> possibleMoveNodes;
-	private int maxDepth = 3;
 	private int MAXTIME = 3200;
 	private double time;
 

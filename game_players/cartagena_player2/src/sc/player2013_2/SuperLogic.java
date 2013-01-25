@@ -69,27 +69,10 @@ public class SuperLogic implements IGameHandler {
 		MoveContainer moveC = new MoveContainer();
 		
 		moveC = moveRater.getBestNextMove(gameState);
-		
-		cloneGameStateSevenTimes();
-		
-		System.out.println("MoveContainer firstMove Index: " + moveC.firstMove.fieldIndex);
 
 		// Sende den Container mit allen durchgeführten Zügen.
 		sendAction(moveC);
 		System.out.println("Zugzeit:" + (System.currentTimeMillis() - currentTime));
-	}
-
-	private void cloneGameStateSevenTimes() {
-		for(int i = 0; i < 8; i++){
-			try {
-				GameState gs = (GameState) gameState.clone();
-				gs.gameEnded();
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
 	}
 
 	/**
