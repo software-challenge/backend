@@ -22,7 +22,7 @@ public class Stone implements Cloneable {
     }
 
     public Stone(StoneColor color, StoneShape shape) {
-        identifier = 0; // TODO gen id
+        identifier = StoneIdentifierGenerator.getNextId();
         this.color = color;
         this.shape = shape;
     }

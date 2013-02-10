@@ -9,9 +9,8 @@ public class StoneBagTest {
     @Test
     public void testStoneBag() {
         StoneBag stoneBag = new StoneBag();
-        assertEquals(Constants.STONES_COLOR_COUNT
-                * Constants.STONES_SHAPE_COUNT
-                * Constants.STONES_SAME_KIND_COUNT,
+        assertEquals(
+                (Constants.STONES_COLOR_COUNT * Constants.STONES_SHAPE_COUNT * Constants.STONES_SAME_KIND_COUNT),
                 stoneBag.getStoneCountInBag());
     }
 
