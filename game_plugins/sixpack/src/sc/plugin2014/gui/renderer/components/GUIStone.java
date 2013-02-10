@@ -73,8 +73,7 @@ public class GUIStone {
         if (isHighlighted()) {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,
                     GUIConstants.STONE_HEIGHT, fmPanel);
-            g2.setColor(ColorHelper.getPlayerColor(currentPlayerColor,
-                    currentPlayerColor));
+            g2.setColor(ColorHelper.getActiveColor());
             g2.drawRect(getX(), getY(), GUIConstants.STONE_WIDTH,
                     GUIConstants.STONE_HEIGHT);
             g2.drawRect(getX() + 1, getY() + 1, GUIConstants.STONE_WIDTH - 2,

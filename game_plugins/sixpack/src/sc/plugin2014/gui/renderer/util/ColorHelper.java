@@ -5,6 +5,8 @@ import java.awt.Color;
 import sc.plugin2014.entities.PlayerColor;
 
 public class ColorHelper {
+    private static final Color activeColor = new Color(0, 250, 0);
+
     public static Color getTransparentColor(Color c, int alpha) {
         return new Color(c.getRed(), c.getGreen(), c.getBlue(),
                 OPTIONS[TRANSPARANCY] ? alpha : 255);
@@ -13,6 +15,10 @@ public class ColorHelper {
     public static Color getPlayerColor(PlayerColor player,
             PlayerColor currentPlayer) {
         return getPlayerColor(player, false, currentPlayer);
+    }
+
+    public static Color getActiveColor() {
+        return activeColor;
     }
 
     public static Color getPlayerColor(PlayerColor player, boolean forced,
