@@ -15,70 +15,90 @@ import sc.plugin2013.util.InvalidMoveException;
 public class MoveRater {
 	private GameState startGameState;
 	private List<Node> possibleMoveNodes;
-	private int MAXTIME = 3200;
+	private int MAXTIME = 2000;
 	private double time;
 
-	public MoveRater(){
+	public MoveRater() {
 		possibleMoveNodes = new LinkedList<Node>();
 	}
 
 	public MoveContainer getBestNextMove(GameState gs) {
+		System.gc();
+		this.time = System.currentTimeMillis();
 		try {
 			this.startGameState = (GameState) gs.clone();
 			this.possibleMoveNodes = new LinkedList<Node>();
 		} catch (CloneNotSupportedException e1) {
 			e1.printStackTrace();
 		}
-		this.time = System.currentTimeMillis();
-		for (MoveContainer mc : getPossibleMoveContainers()) {
-			try {
-				Node node = new Node((GameState) this.startGameState.clone(),
-						mc);
-				possibleMoveNodes.add(node);
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
+		getPossibleMoveContainers();
+
+		System.out.println("NodeBuilding took "
+				+ (System.currentTimeMillis() - this.time) + " ms to finish");
 		System.out.println("Number of Nodes: " + possibleMoveNodes.size());
 		int bestRating = -Rating.WIN;
 		Node bestNode = null;
 		for (Node n : possibleMoveNodes) {
-			int rating = n.rateMove();
-			if(rating > bestRating){
-				bestRating = rating;
-				bestNode = n;
+			int rating;
+			try {
+				rating = n.rateMove((GameState) this.startGameState.clone());
+				if (rating > bestRating) {
+					bestRating = rating;
+					bestNode = n;
+				}
+				if (System.currentTimeMillis() - time > this.MAXTIME) {
+					break;
+				}
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
 			}
-			if(System.currentTimeMillis() - time > this.MAXTIME){
-				break;
-			}
+
 		}
-		if(bestNode == null){
-			bestNode = new Node(startGameState, new MoveContainer());
+
+		if (bestNode == null) {
+			bestNode = new Node(new MoveContainer());
 		}
-		System.out.println("It took me " + (System.currentTimeMillis() -this.time) + " ms to finish");
+		System.out.println("It took me "
+				+ (System.currentTimeMillis() - this.time) + " ms to finish");
 		System.out.println("Number of Nodes: " + possibleMoveNodes.size());
 		return bestNode.getMoveToPerform();
 	}
 
-	public List<MoveContainer> getPossibleMoveContainers() {
+	public void getPossibleMoveContainers() {
 		List<Move> list = this.startGameState.getPossibleMoves();
 		LinkedList<MoveContainer> stageOneList = new LinkedList<MoveContainer>();
 		LinkedList<MoveContainer> stageTwoList = new LinkedList<MoveContainer>();
-		LinkedList<MoveContainer> stageThreeList = new LinkedList<MoveContainer>();
+		// LinkedList<MoveContainer> stageThreeList = new
+		// LinkedList<MoveContainer>();
 		// Move Container mit nur einem Move
 		for (Move m : list) {
-			stageOneList.add(new MoveContainer(m));
+			if (System.currentTimeMillis() - time > this.MAXTIME) {
+				return;
+			}
+			MoveContainer mc = new MoveContainer(m);
+			stageOneList.add(mc);
+
+			Node node = new Node(mc);
+			possibleMoveNodes.add(node);
 		}
 		// Liste mit 2 Teilzügen erstellen
 		for (MoveContainer mc : stageOneList) {
 			try {
+				if (System.currentTimeMillis() - time > this.MAXTIME) {
+					return;
+				}
 				MoveContainer mcCopy = cloneMoveContainer(mc);
 				GameState gs = (GameState) this.startGameState.clone();
 				mcCopy.firstMove.perform(gs, gs.getCurrentPlayer());
 				for (Move m : gs.getPossibleMoves()) {
+					if (System.currentTimeMillis() - time > this.MAXTIME) {
+						return;
+					}
 					MoveContainer container = cloneMoveContainer(mcCopy);
 					container.addMove(m);
 					stageTwoList.add(container);
+					Node node = new Node(container);
+					possibleMoveNodes.add(node);
 				}
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
@@ -88,17 +108,27 @@ public class MoveRater {
 				e.printStackTrace();
 			}
 		}
+		stageOneList = null;
+		System.gc();
 		// Liste mit 3 Teilzügen erstellen
 		for (MoveContainer mc : stageTwoList) {
 			try {
+				if (System.currentTimeMillis() - time > this.MAXTIME) {
+					return;
+				}
 				MoveContainer mcCopy = cloneMoveContainer(mc);
 				GameState gs = (GameState) this.startGameState.clone();
 				mcCopy.firstMove.perform(gs, gs.getCurrentPlayer());
 				mcCopy.secondMove.perform(gs, gs.getCurrentPlayer());
 				for (Move m : gs.getPossibleMoves()) {
+					if (System.currentTimeMillis() - time > this.MAXTIME) {
+						return;
+					}
 					MoveContainer container = cloneMoveContainer(mcCopy);
 					container.addMove(m);
-					stageThreeList.add(container);
+					// stageThreeList.add(container);
+					Node node = new Node(container);
+					possibleMoveNodes.add(node);
 				}
 			} catch (CloneNotSupportedException e) {
 				e.printStackTrace();
@@ -108,10 +138,12 @@ public class MoveRater {
 				e.printStackTrace();
 			}
 		}
-		stageOneList.addAll(stageTwoList);
-		stageOneList.addAll(stageThreeList);
-		return stageOneList;
-
+		stageTwoList = null;
+		System.gc();
+		// stageOneList.addAll(stageTwoList);
+		// stageOneList.addAll(stageThreeList);
+		// return stageOneList;
+		return;
 	}
 
 	private MoveContainer cloneMoveContainer(MoveContainer mc) {
