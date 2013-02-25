@@ -67,12 +67,13 @@ public class SuperLogic implements IGameHandler {
 		// Erstelle einen neuen MoveContainer, welcher unsere 3 Teilzüge
 		// beherbergt
 		MoveContainer moveC = new MoveContainer();
-		
-		moveC = moveRater.getBestNextMove(gameState);
 
+		moveC = moveRater.getBestNextMove(gameState);
+		
 		// Sende den Container mit allen durchgeführten Zügen.
 		sendAction(moveC);
-		System.out.println("Zugzeit:" + (System.currentTimeMillis() - currentTime));
+		System.out.println("Zugzeit:"
+				+ (System.currentTimeMillis() - currentTime));
 	}
 
 	/**
