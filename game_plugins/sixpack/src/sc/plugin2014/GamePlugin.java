@@ -14,8 +14,8 @@ import sc.shared.*;
 @PluginDescriptor(name = GamePlugin.PLUGIN_NAME, uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin {
     public static final String          PLUGIN_AUTHOR    = "Florian Fittkau";
-    public static final String          PLUGIN_NAME      = "Qwirkle";
-    public static final String          PLUGIN_UUID      = "swc_2014_qwirkle";
+    public static final String          PLUGIN_NAME      = "Sixpack";
+    public static final String          PLUGIN_UUID      = "swc_2014_sixpack";
     public static final int             PLUGIN_YEAR      = 2014;
 
     public static final int             MAX_PLAYER_COUNT = 2;

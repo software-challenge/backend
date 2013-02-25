@@ -1,6 +1,7 @@
 package sc.plugin2014;
 
 import static sc.plugin2014.util.Constants.*;
+import java.util.List;
 import sc.plugin2014.converters.GameStateConverter;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.moves.Move;
@@ -62,6 +63,8 @@ public class GameState implements Cloneable {
 
     private int               stonesInBag;
 
+    private List<Stone>       nextStones;
+
     private Move              lastMove;
 
     private WinnerAndReason   endCondition = null;
@@ -71,6 +74,7 @@ public class GameState implements Cloneable {
         startPlayer = PlayerColor.RED;
         stoneBag = new StoneBag();
         board = new Board();
+        StoneIdentifierGenerator.reset();
     }
 
     /**
@@ -371,6 +375,10 @@ public class GameState implements Cloneable {
         return stonesInBag;
     }
 
+    public List<Stone> getNextStonesInBag() {
+        return nextStones;
+    }
+
     public void prepareNextTurn(Move move) {
         turn++;
         lastMove = move;
@@ -394,6 +402,7 @@ public class GameState implements Cloneable {
     }
 
     public void updateStonesInBag() {
+        nextStones = stoneBag.getNextStonesInBag();
         stonesInBag = stoneBag.getStoneCountInBag();
     }
 }
