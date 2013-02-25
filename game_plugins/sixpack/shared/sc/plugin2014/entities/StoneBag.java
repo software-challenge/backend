@@ -5,14 +5,17 @@ import java.security.SecureRandom;
 import java.util.*;
 import sc.plugin2014.util.Constants;
 
-public class StoneBag {
+public class StoneBag implements Cloneable {
 
     private final List<Stone> stones;
+    private final List<Stone> nextStones;
 
     public StoneBag() {
         stones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
                 * Constants.STONES_SHAPE_COUNT
                 * Constants.STONES_SAME_KIND_COUNT);
+        nextStones = new ArrayList<Stone>(12);
+
         for (int i = 0; i < Constants.STONES_COLOR_COUNT; i++) {
             for (int j = 0; j < Constants.STONES_SHAPE_COUNT; j++) {
                 for (int k = 0; k < Constants.STONES_SAME_KIND_COUNT; k++) {
@@ -22,6 +25,19 @@ public class StoneBag {
             }
         }
         randomizeStones();
+
+        refreshNextStones();
+    }
+
+    private void refreshNextStones() {
+        if (nextStones.size() == Constants.STONES_OPEN_FROM_BAG_COUNT) {
+            return;
+        }
+
+        while (!stones.isEmpty()
+                && (nextStones.size() < Constants.STONES_OPEN_FROM_BAG_COUNT)) {
+            nextStones.add(stones.remove(0));
+        }
     }
 
     private void randomizeStones() {
@@ -46,12 +62,16 @@ public class StoneBag {
     }
 
     public int getStoneCountInBag() {
-        return stones.size();
+        return stones.size() + nextStones.size();
     }
 
     public Stone drawStone() {
-        if (stones.size() > 0) {
-            return stones.remove(0);
+        if (nextStones.size() > 0) {
+            Stone result = nextStones.remove(0);
+
+            refreshNextStones();
+
+            return result;
         }
         else {
             return null;
@@ -61,10 +81,15 @@ public class StoneBag {
     public void putBackStone(Stone stone) {
         stones.add(stone);
         randomizeStones();
+        refreshNextStones();
     }
 
     @Override
     public Object clone() {
         return null; // TODO
+    }
+
+    public List<Stone> getNextStonesInBag() {
+        return nextStones;
     }
 }

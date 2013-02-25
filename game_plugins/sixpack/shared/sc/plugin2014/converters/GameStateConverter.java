@@ -1,6 +1,8 @@
 package sc.plugin2014.converters;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.moves.*;
@@ -28,6 +30,10 @@ public class GameStateConverter implements Converter {
                 .toLowerCase());
         writer.addAttribute("current", gameState.getCurrentPlayerColor()
                 .toString().toLowerCase());
+
+        writer.startNode("nextStones");
+        context.convertAnother(gameState.getNextStonesInBag());
+        writer.endNode();
 
         writer.startNode("red");
         context.convertAnother(gameState.getRedPlayer());
@@ -128,6 +134,15 @@ public class GameStateConverter implements Converter {
                     boardField.setAccessible(true);
                     boardField.set(gameState, board);
                     boardField.setAccessible(false);
+                }
+                else if (nodeName.equals("nextStones")) {
+                    List<Stone> nextStones = (List<Stone>) context
+                            .convertAnother(gameState, ArrayList.class);
+                    Field nextStonesField = GameState.class
+                            .getDeclaredField("nextStones");
+                    nextStonesField.setAccessible(true);
+                    nextStonesField.set(gameState, nextStones);
+                    nextStonesField.setAccessible(false);
                 }
                 else if (nodeName.equals("move")) {
                     MoveType moveType = MoveType.valueOf(reader.getAttribute(
