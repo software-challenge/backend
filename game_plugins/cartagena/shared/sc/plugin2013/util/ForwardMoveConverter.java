@@ -1,5 +1,6 @@
 package sc.plugin2013.util;
 
+import sc.plugin2013.DebugHint;
 import sc.plugin2013.ForwardMove;
 import sc.plugin2013.Move;
 import sc.plugin2013.SymbolType;
@@ -26,6 +27,12 @@ public class ForwardMoveConverter implements Converter {
 		ForwardMove fW = (ForwardMove) forwardMove;
 		writer.addAttribute("fieldIndex", String.valueOf(fW.fieldIndex));
 		writer.addAttribute("symbol", fW.symbol.toString());
+		
+		for(DebugHint hint:fW.getHints()){
+			writer.startNode("hint");
+			writer.addAttribute("content", hint.content);
+			writer.endNode();
+		}
 
 	}
 
@@ -84,6 +91,14 @@ public class ForwardMoveConverter implements Converter {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
+		}
+		while (reader.hasMoreChildren()) {
+			reader.moveDown();
+			String nodeName = reader.getNodeName();
+			if (nodeName.equals("hint")) {
+				fw.addHint(reader.getAttribute("content"));
+			}
+			reader.moveUp();
 		}
 		return fw;
 	}
