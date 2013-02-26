@@ -162,9 +162,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 			if (entry.getKey() == player) {
 				score.setCause(cause);
-				score.setValueAt(1, new BigDecimal(0));
+				score.setValueAt(0, new BigDecimal(0));
 			} else {
-				score.setValueAt(1, new BigDecimal(2));
+				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
 
