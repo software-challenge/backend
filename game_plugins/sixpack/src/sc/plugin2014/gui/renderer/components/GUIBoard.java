@@ -42,6 +42,17 @@ public class GUIBoard {
         g2.drawString("Steine im Beutel: " + gameState.getStoneCountInBag(),
                 20, 40);
 
+        g2.drawString("Nächsten Steine im Beutel:", 20, 60);
+
+        int i = 0;
+        for (Stone nextStone : gameState.getNextStonesInBag()) {
+            GUIStone nextGuiStone = new GUIStone(nextStone, -1);
+            nextGuiStone.setX(20);
+            nextGuiStone.setY((i * (GUIConstants.STONE_HEIGHT + 2)) + 75);
+            nextGuiStone.draw(g2, gameState.getCurrentPlayerColor());
+            i++;
+        }
+
         if (dragging) {
             Field fieldFromXY = getFieldUnderMouse(component, offsetX, offsetY,
                     gameState.getBoard(), xStart, yStart, width, height);

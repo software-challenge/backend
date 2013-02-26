@@ -251,10 +251,10 @@ public class Painter {
                 - STONE_HEIGHT;
 
         for (GUIStone stone : redStones) {
-            stone.setX(x);
+            stone.setX((stone.getOriginalPositionOnHand() * (STONE_WIDTH + STUFF_GAP))
+                    + x);
             stone.setY(y);
             stone.draw(g2, PlayerColor.RED);
-            x += STONE_WIDTH + STUFF_GAP;
         }
 
         g2.setFont(h3);
@@ -272,10 +272,10 @@ public class Painter {
                 - STONE_HEIGHT;
 
         for (GUIStone stone : blueStones) {
-            stone.setX(x);
+            stone.setX((-1 * stone.getOriginalPositionOnHand() * (STONE_WIDTH + STUFF_GAP))
+                    + x);
             stone.setY(y);
             stone.draw(g2, PlayerColor.BLUE);
-            x -= STONE_WIDTH + STUFF_GAP;
         }
 
         g2.setFont(h3);
