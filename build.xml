@@ -17,6 +17,7 @@
 		<delete dir="game_players/manhattan_player2/build" />
 		<delete dir="game_plugins/cartagena/build" />
 		<delete dir="game_players/cartagena_player/build" />
+		<delete dir="game_players/cartagena_player2/build" />
 	</target>
 
 	<target name="dependencies">
@@ -34,6 +35,7 @@
 		<ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />!-->
 		<ant dir="game_plugins/cartagena" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/cartagena_player/" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/cartagena_player2/" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -84,6 +86,11 @@
 		<mkdir dir="${out.dir}/simple_client/cartagena/jar" />
 		<copy todir="${out.dir}/simple_client/cartagena/jar">
 			<fileset dir="./game_players/cartagena_player/build/jar" />
+		</copy>
+		
+		<mkdir dir="${out.dir}/not_so_simple_client/cartagena/jar" />
+		<copy todir="${out.dir}/not_so_simple_client/cartagena/jar">
+			<fileset dir="./game_players/cartagena_player2/build/jar" />
 		</copy>
 		
 		<!--
@@ -197,6 +204,7 @@
 		
 		<zip destfile="${out.dir}/zipped/simpleclient-ca-jar.zip" basedir="${out.dir}/simple_client/cartagena/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-ca-src.zip" basedir="${out.dir}/simple_client/cartagena/src" />
+		<zip destfile="${out.dir}/zipped/not-so-simpleclient-ca-jar.zip" basedir="${out.dir}/not_so_simple_client/cartagena/jar" />
 		
 
 		<echo message="Gathering documentations..." />
