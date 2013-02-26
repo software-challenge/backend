@@ -73,6 +73,8 @@ public class GameRenderer extends JComponent {
 
     private final List<GUIStone>    animatedStones       = new ArrayList<GUIStone>();
 
+    private final int               FPS                  = 60;
+
     public GameRenderer() {
         updateBuffer = true;
         bgImage = RendererUtil.getImage("resource/game/bg.png");
@@ -159,10 +161,15 @@ public class GameRenderer extends JComponent {
 
             Move move = gameState.getLastMove();
             if (!myTurn()) {
-                if ((move != null) && (turnDiff == 1)
-                        && (move instanceof LayMove)) {
-                    moveStonesToBoard((LayMove) move,
-                            gameState.getOtherPlayerColor());
+                if ((move != null) && (turnDiff == 1)) {
+                    if (move instanceof LayMove) {
+                        moveStonesToBoard((LayMove) move,
+                                gameState.getOtherPlayerColor());
+                    }
+                    else if (move instanceof ExchangeMove) {
+                        moveStonesToBag((ExchangeMove) move,
+                                gameState.getOtherPlayerColor());
+                    }
                 }
             }
         }
@@ -178,15 +185,15 @@ public class GameRenderer extends JComponent {
         selectedStone = null;
 
         redStones.clear();
-        for (Stone redStone : gameState.getRedPlayer().getStones()) {
-            redStones.add(new GUIStone(redStone, gameState.getRedPlayer()
-                    .getStones().indexOf(redStone)));
+        for (int i = 0; i < gameState.getRedPlayer().getStones().size(); i++) {
+            redStones.add(new GUIStone(gameState.getRedPlayer().getStones()
+                    .get(i), i));
         }
 
         blueStones.clear();
-        for (Stone blueStone : gameState.getBluePlayer().getStones()) {
-            blueStones.add(new GUIStone(blueStone, gameState.getBluePlayer()
-                    .getStones().indexOf(blueStone)));
+        for (int i = 0; i < gameState.getBluePlayer().getStones().size(); i++) {
+            blueStones.add(new GUIStone(gameState.getBluePlayer().getStones()
+                    .get(i), i));
         }
 
         gameEnded = gameState.gameEnded();
@@ -207,12 +214,45 @@ public class GameRenderer extends JComponent {
 
     }
 
+    private synchronized void moveStonesToBag(final ExchangeMove move,
+            final PlayerColor playerColor) {
+        setEnabled(false);
+
+        for (Stone stoneToMove : move.getStonesToExchange()) {
+            GUIStone animatedStone = new GUIStone(stoneToMove, -1);
+
+            if (playerColor == PlayerColor.RED) {
+                int x = BORDER_SIZE + STUFF_GAP;
+                int y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
+                        - STUFF_GAP - STONE_HEIGHT - 30;
+                animatedStone.setX(x);
+                animatedStone.setY(y);
+            }
+            else {
+                int x = getWidth() - BORDER_SIZE - STUFF_GAP - STONE_WIDTH;
+                int y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
+                        - STUFF_GAP - STONE_HEIGHT - 30;
+                animatedStone.setX(x);
+                animatedStone.setY(y);
+            }
+
+            final Point start = new Point(animatedStone.getX(),
+                    animatedStone.getY());
+
+            final Point target = new Point(20, 40);
+
+            doMovement(animatedStone, start, target);
+
+            animatedStones.add(animatedStone);
+        }
+
+        animatedStones.clear();
+
+        setEnabled(true);
+    }
+
     private synchronized void moveStonesToBoard(final LayMove move,
             final PlayerColor playerColor) {
-
-        System.out.println("moving stones");
-
-        final int FPS = 60;
 
         setEnabled(false);
 
@@ -239,7 +279,7 @@ public class GameRenderer extends JComponent {
                 animatedStone.setY(y);
             }
 
-            final Point p = new Point(animatedStone.getX(),
+            final Point start = new Point(animatedStone.getX(),
                     animatedStone.getY());
 
             int boardOffsetX = GUIBoard.calculateOffsetX(
@@ -250,50 +290,53 @@ public class GameRenderer extends JComponent {
             int boardOffsetY = GUIBoard.calculateOffsetY(
                     GUIConstants.BORDER_SIZE, getHeight() - STATUS_HEIGTH);
 
-            final Point q = new Point(boardOffsetX
+            final Point target = new Point(boardOffsetX
                     + (targetField.getPosX() * STONE_WIDTH), boardOffsetY
                     + (targetField.getPosY() * STONE_HEIGHT));
 
-            if (OPTIONS[MOVEMENT]) {
-
-                double pixelPerFrame = getWidth() / (1.5 * FPS);
-                double dist = Math.sqrt(Math.pow(p.x - q.x, 2)
-                        + Math.pow(p.y - q.y, 2));
-
-                final int frames = (int) Math.ceil(dist / pixelPerFrame);
-                final Point o = new Point(p.x, p.y);
-                final Point dP = new Point(q.x - p.x, q.y - p.y);
-
-                long start = System.currentTimeMillis();
-                for (int frame = 0; frame < frames; frame++) {
-
-                    p.x = o.x + (int) ((double) (frame * dP.x) / frames);
-                    p.y = o.y + (int) ((double) (frame * dP.y) / frames);
-                    animatedStone.moveTo(p.x, p.y);
-
-                    updateView();
-
-                    synchronized (LOCK) {
-                        LOCK.notify();
-                    }
-
-                    try {
-                        long duration = (start + ((frame + 1) * (1000 / FPS)))
-                                - System.currentTimeMillis();
-                        Thread.sleep(duration > 0 ? duration : 0);
-                    }
-                    catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                animatedStone.setHighlighted(true);
-            }
+            doMovement(animatedStone, start, target);
         }
-
         animatedStones.clear();
 
         setEnabled(true);
+    }
+
+    private void doMovement(GUIStone animatedStone, final Point p, final Point q) {
+        if (OPTIONS[MOVEMENT]) {
+
+            double pixelPerFrame = getWidth() / (1.5 * FPS);
+            double dist = Math.sqrt(Math.pow(p.x - q.x, 2)
+                    + Math.pow(p.y - q.y, 2));
+
+            final int frames = (int) Math.ceil(dist / pixelPerFrame);
+            final Point o = new Point(p.x, p.y);
+            final Point dP = new Point(q.x - p.x, q.y - p.y);
+
+            long start = System.currentTimeMillis();
+            for (int frame = 0; frame < frames; frame++) {
+
+                p.x = o.x + (int) ((double) (frame * dP.x) / frames);
+                p.y = o.y + (int) ((double) (frame * dP.y) / frames);
+                animatedStone.moveTo(p.x, p.y);
+
+                updateView();
+
+                synchronized (LOCK) {
+                    LOCK.notify();
+                }
+
+                try {
+                    long duration = (start + ((frame + 1) * (1000 / FPS)))
+                            - System.currentTimeMillis();
+                    Thread.sleep(duration > 0 ? duration : 0);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            animatedStone.setHighlighted(true);
+        }
     }
 
     public synchronized void updateView() {
