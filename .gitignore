@@ -38,6 +38,11 @@
 /game_players/schaefchen_im_trockenen2/build
 /game_players/schaefchen_im_trockenen2/doc
 
+# /game_players/sixpack/
+/game_players/sixpack/bin
+/game_players/sixpack/build
+/game_players/sixpack/doc
+
 # /game_plugins/hase_und_igel/
 /game_plugins/hase_und_igel/bin
 /game_plugins/hase_und_igel/build
