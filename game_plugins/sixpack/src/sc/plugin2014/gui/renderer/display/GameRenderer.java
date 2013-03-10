@@ -221,19 +221,47 @@ public class GameRenderer extends JComponent {
         for (Stone stoneToMove : move.getStonesToExchange()) {
             GUIStone animatedStone = new GUIStone(stoneToMove, -1);
 
+            animatedStones.add(animatedStone);
+
             if (playerColor == PlayerColor.RED) {
                 int x = BORDER_SIZE + STUFF_GAP;
                 int y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
-                        - STUFF_GAP - STONE_HEIGHT - 30;
-                animatedStone.setX(x);
+                        - STUFF_GAP - STONE_HEIGHT;
+
+                GUIStone stoneOnHand = null;
+                for (int i = 0; i < redStones.size(); i++) {
+                    GUIStone stone = redStones.get(i);
+                    if ((stone != null) && stoneToMove.equals(stone.getStone())) {
+                        stoneOnHand = stone;
+                    }
+                }
+
+                animatedStone
+                        .setX((stoneOnHand.getOriginalPositionOnHand() * (STONE_WIDTH + STUFF_GAP))
+                                + x);
                 animatedStone.setY(y);
+
+                removeRedStoneFromHand(stoneToMove);
             }
             else {
                 int x = getWidth() - BORDER_SIZE - STUFF_GAP - STONE_WIDTH;
                 int y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
-                        - STUFF_GAP - STONE_HEIGHT - 30;
-                animatedStone.setX(x);
+                        - STUFF_GAP - STONE_HEIGHT;
+
+                GUIStone stoneOnHand = null;
+                for (int i = 0; i < blueStones.size(); i++) {
+                    GUIStone stone = blueStones.get(i);
+                    if ((stone != null) && stoneToMove.equals(stone.getStone())) {
+                        stoneOnHand = stone;
+                    }
+                }
+
+                animatedStone
+                        .setX((-1 * stoneOnHand.getOriginalPositionOnHand() * (STONE_WIDTH + STUFF_GAP))
+                                + x);
                 animatedStone.setY(y);
+
+                removeBlueStoneFromHand(stoneToMove);
             }
 
             final Point start = new Point(animatedStone.getX(),
@@ -243,7 +271,7 @@ public class GameRenderer extends JComponent {
 
             doMovement(animatedStone, start, target);
 
-            animatedStones.add(animatedStone);
+            animatedStones.remove(animatedStone);
         }
 
         animatedStones.clear();
@@ -259,6 +287,7 @@ public class GameRenderer extends JComponent {
         for (Entry<Stone, Field> stoneToField : move.getStoneToFieldMapping()
                 .entrySet()) {
 
+            Stone originalStone = stoneToField.getKey();
             Field targetField = stoneToField.getValue();
             GUIStone animatedStone = new GUIStone(stoneToField.getKey(), -1);
 
@@ -267,16 +296,44 @@ public class GameRenderer extends JComponent {
             if (playerColor == PlayerColor.RED) {
                 int x = BORDER_SIZE + STUFF_GAP;
                 int y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
-                        - STUFF_GAP - STONE_HEIGHT - 30;
-                animatedStone.setX(x);
+                        - STUFF_GAP - STONE_HEIGHT;
+
+                GUIStone stoneOnHand = null;
+                for (int i = 0; i < redStones.size(); i++) {
+                    GUIStone stone = redStones.get(i);
+                    if ((stone != null)
+                            && originalStone.equals(stone.getStone())) {
+                        stoneOnHand = stone;
+                    }
+                }
+
+                animatedStone
+                        .setX((stoneOnHand.getOriginalPositionOnHand() * (STONE_WIDTH + STUFF_GAP))
+                                + x);
                 animatedStone.setY(y);
+
+                removeRedStoneFromHand(originalStone);
             }
             else {
                 int x = getWidth() - BORDER_SIZE - STUFF_GAP - STONE_WIDTH;
                 int y = getHeight() - BORDER_SIZE - PROGRESS_BAR_HEIGTH
-                        - STUFF_GAP - STONE_HEIGHT - 30;
-                animatedStone.setX(x);
+                        - STUFF_GAP - STONE_HEIGHT;
+
+                GUIStone stoneOnHand = null;
+                for (int i = 0; i < blueStones.size(); i++) {
+                    GUIStone stone = blueStones.get(i);
+                    if ((stone != null)
+                            && originalStone.equals(stone.getStone())) {
+                        stoneOnHand = stone;
+                    }
+                }
+
+                animatedStone
+                        .setX((-1 * stoneOnHand.getOriginalPositionOnHand() * (STONE_WIDTH + STUFF_GAP))
+                                + x);
                 animatedStone.setY(y);
+
+                removeBlueStoneFromHand(originalStone);
             }
 
             final Point start = new Point(animatedStone.getX(),
@@ -301,6 +358,28 @@ public class GameRenderer extends JComponent {
         setEnabled(true);
     }
 
+    private void removeRedStoneFromHand(Stone originalStone) {
+        GUIStone toRemove = null;
+        for (int i = 0; i < redStones.size(); i++) {
+            GUIStone stone = redStones.get(i);
+            if ((stone != null) && originalStone.equals(stone.getStone())) {
+                toRemove = stone;
+            }
+        }
+        redStones.remove(toRemove);
+    }
+
+    private void removeBlueStoneFromHand(Stone originalStone) {
+        GUIStone toRemove = null;
+        for (int i = 0; i < blueStones.size(); i++) {
+            GUIStone stone = blueStones.get(i);
+            if ((stone != null) && originalStone.equals(stone.getStone())) {
+                toRemove = stone;
+            }
+        }
+        blueStones.remove(toRemove);
+    }
+
     private void doMovement(GUIStone animatedStone, final Point p, final Point q) {
         if (OPTIONS[MOVEMENT]) {
 
@@ -308,15 +387,19 @@ public class GameRenderer extends JComponent {
             double dist = Math.sqrt(Math.pow(p.x - q.x, 2)
                     + Math.pow(p.y - q.y, 2));
 
-            final int frames = (int) Math.ceil(dist / pixelPerFrame);
+            final int frames = (int) Math.floor(dist / pixelPerFrame);
             final Point o = new Point(p.x, p.y);
             final Point dP = new Point(q.x - p.x, q.y - p.y);
 
             long start = System.currentTimeMillis();
             for (int frame = 0; frame < frames; frame++) {
-
                 p.x = o.x + (int) ((double) (frame * dP.x) / frames);
                 p.y = o.y + (int) ((double) (frame * dP.y) / frames);
+
+                if ((frame + 1) == frames) {
+                    p.x = q.x;
+                    p.y = q.y;
+                }
                 animatedStone.moveTo(p.x, p.y);
 
                 updateView();
@@ -326,8 +409,8 @@ public class GameRenderer extends JComponent {
                 }
 
                 try {
-                    long duration = (start + ((frame + 1) * (1000 / FPS)))
-                            - System.currentTimeMillis();
+                    long duration = (long) ((start + ((frame + 1) * (1000.0 / FPS))) - System
+                            .currentTimeMillis());
                     Thread.sleep(duration > 0 ? duration : 0);
                 }
                 catch (InterruptedException e) {
@@ -475,7 +558,7 @@ public class GameRenderer extends JComponent {
 
         Painter.paintStaticComponents(g2, getWidth(), getHeight(), this,
                 scaledBgImage, gameState, toLayStones, this, dragging,
-                selectedStone);
+                selectedStone, sensetiveStones);
         if (gameState != null) {
             // printGameStatus(g2);
             Painter.paintSemiStaticComponents(g2, getWidth(), getHeight(),

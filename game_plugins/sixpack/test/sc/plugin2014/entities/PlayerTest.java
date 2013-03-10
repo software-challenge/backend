@@ -38,9 +38,8 @@ public class PlayerTest {
         assertEquals(stone, redPlayer.getStones().get(0));
 
         redPlayer.addStone(stone2, 0);
-        assertEquals(2, redPlayer.getStones().size());
+        assertEquals(1, redPlayer.getStones().size());
         assertEquals(stone2, redPlayer.getStones().get(0));
-        assertEquals(stone, redPlayer.getStones().get(1));
     }
 
     @Test
@@ -56,11 +55,13 @@ public class PlayerTest {
         assertEquals(stone2, redPlayer.getStones().get(1));
 
         redPlayer.removeStone(stone);
-        assertEquals(1, redPlayer.getStones().size());
-        assertEquals(stone2, redPlayer.getStones().get(0));
+        assertEquals(2, redPlayer.getStones().size());
+        assertNull(redPlayer.getStones().get(0));
+        assertEquals(stone2, redPlayer.getStones().get(1));
 
         redPlayer.removeStone(stone2);
-        assertEquals(0, redPlayer.getStones().size());
+        assertNull(redPlayer.getStones().get(0));
+        assertNull(redPlayer.getStones().get(1));
     }
 
     @Test

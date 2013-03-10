@@ -4,10 +4,10 @@ import static sc.plugin2014.gui.renderer.configuration.GUIConstants.*;
 import static sc.plugin2014.gui.renderer.configuration.RenderConfiguration.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
+import java.util.ArrayList;
 import java.util.List;
 import sc.plugin2014.GameState;
-import sc.plugin2014.entities.Player;
-import sc.plugin2014.entities.PlayerColor;
+import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.components.GUIBoard;
 import sc.plugin2014.gui.renderer.components.GUIStone;
 import sc.plugin2014.gui.renderer.configuration.GUIConstants;
@@ -21,7 +21,8 @@ public class Painter {
     public static void paintStaticComponents(Graphics2D g2, int width,
             int height, ImageObserver imgObs, Image scaledBgImage,
             GameState gameState, List<GUIStone> toLayStones,
-            Component component, boolean dragging, GUIStone selectedStone) {
+            Component component, boolean dragging, GUIStone selectedStone,
+            List<GUIStone> sensitiveStones) {
 
         // hintergrundbild oder farbe
         if (OPTIONS[BACKGROUND] && (scaledBgImage != null)) {
@@ -45,22 +46,24 @@ public class Painter {
         g2.fillRect(BORDER_SIZE, height - BORDER_SIZE - heightBar, width
                 - (2 * BORDER_SIZE), heightBar);
 
-        drawSideBar(g2, width, height, gameState, heightBar, toLayStones);
+        drawSideBar(g2, width, height, gameState, heightBar, toLayStones,
+                sensitiveStones);
     }
 
     private static void drawSideBar(Graphics2D g2, int width, int height,
-            GameState gameState, int heightBar, List<GUIStone> toLayStones) {
+            GameState gameState, int heightBar, List<GUIStone> toLayStones,
+            List<GUIStone> sensitiveStones) {
         g2.fillRect(width - BORDER_SIZE - SIDE_BAR_WIDTH, BORDER_SIZE,
                 SIDE_BAR_WIDTH, height - (2 * BORDER_SIZE) - heightBar);
 
         boolean hints = OPTIONS[DEBUG_VIEW];
         int fontY = paintPlayerInfo(g2, (width - BORDER_SIZE - SIDE_BAR_WIDTH)
                 + STUFF_GAP, (2 * BORDER_SIZE) + 10, PlayerColor.RED, hints,
-                gameState, gameState.gameEnded(), toLayStones);
+                gameState, gameState.gameEnded(), toLayStones, sensitiveStones);
         fontY += hints ? 10 : 30;
         fontY = 25 + paintPlayerInfo(g2, (width - BORDER_SIZE - SIDE_BAR_WIDTH)
                 + STUFF_GAP, fontY, PlayerColor.BLUE, hints, gameState,
-                gameState.gameEnded(), toLayStones);
+                gameState.gameEnded(), toLayStones, sensitiveStones);
 
         if (hints && (gameState.getLastMove() != null)) {
             g2.setColor(Color.BLACK);
@@ -85,7 +88,8 @@ public class Painter {
 
     public static int paintPlayerInfo(Graphics2D g2, int fontX, int fontY,
             PlayerColor player, boolean small, GameState gameState,
-            boolean gameEnded, List<GUIStone> toLayStones) {
+            boolean gameEnded, List<GUIStone> toLayStones,
+            List<GUIStone> sensitiveStones) {
 
         int[] stats = gameState.getPlayerStats(player);
 
@@ -94,17 +98,33 @@ public class Painter {
                         gameState.getCurrentPlayerColor()), 174));
         String points = Integer.toString(stats[0]);
 
-        LayMove layMove = new LayMove();
-        for (GUIStone guistone : toLayStones) {
-            layMove.layStoneOntoField(guistone.getStone(), guistone.getField());
-        }
-
         String pointsThisRound = "0";
 
         if (gameState.getCurrentPlayerColor().equals(player)) {
-            pointsThisRound = Integer.toString(PointsCalculator
-                    .getPointsForMove(layMove.getStoneToFieldMapping(),
-                            gameState.getBoard()));
+            if (toLayStones.size() > 0) {
+                LayMove layMove = new LayMove();
+                for (GUIStone guistone : toLayStones) {
+                    layMove.layStoneOntoField(guistone.getStone(),
+                            guistone.getField());
+                }
+
+                pointsThisRound = Integer.toString(PointsCalculator
+                        .getPointsForLayMove(layMove.getStoneToFieldMapping(),
+                                gameState.getBoard()));
+            }
+            else {
+                List<Stone> stonesToExchange = new ArrayList<Stone>();
+                for (GUIStone guiStone : sensitiveStones) {
+                    if (guiStone.isHighlighted()) {
+                        stonesToExchange.add(guiStone.getStone());
+                    }
+                }
+                if (stonesToExchange.size() > 0) {
+                    pointsThisRound = Integer.toString(PointsCalculator
+                            .getPointsForExchangeMove(stonesToExchange,
+                                    gameState.getBoard()));
+                }
+            }
         }
 
         if (small) {

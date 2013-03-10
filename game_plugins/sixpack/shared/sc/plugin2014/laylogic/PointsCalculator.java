@@ -6,8 +6,16 @@ import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
 
 public class PointsCalculator {
-    public static int getPointsForMove(Map<Stone, Field> stoneToFieldMapping,
-            Board board) {
+    public static int getPointsForExchangeMove(List<Stone> stones, Board board) {
+        if (stones.size() > 0) {
+            return 2;
+        }
+
+        return 0;
+    }
+
+    public static int getPointsForLayMove(
+            Map<Stone, Field> stoneToFieldMapping, Board board) {
         try {
             LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMapping, board,
                     !board.hasStones());

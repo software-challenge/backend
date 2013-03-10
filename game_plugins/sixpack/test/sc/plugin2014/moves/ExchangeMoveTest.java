@@ -6,6 +6,7 @@ import org.junit.Test;
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.exceptions.StoneBagIsEmptyException;
 
 public class ExchangeMoveTest {
 
@@ -40,6 +41,9 @@ public class ExchangeMoveTest {
         catch (InvalidMoveException e) {
             fail("Invalid move when it should not");
         }
+        catch (StoneBagIsEmptyException e) {
+            fail("Invalid move when it should not");
+        }
 
         assertEquals(1, player.getStones().size());
         assertNotSame(stone, player.getStones().get(0));
@@ -68,6 +72,9 @@ public class ExchangeMoveTest {
             exchangeMove.perform(gameState, player);
         }
         catch (InvalidMoveException e) {
+            fail("Invalid move when it should not");
+        }
+        catch (StoneBagIsEmptyException e) {
             fail("Invalid move when it should not");
         }
 
@@ -102,6 +109,9 @@ public class ExchangeMoveTest {
         catch (InvalidMoveException e) {
             fail("Invalid move when it should not");
         }
+        catch (StoneBagIsEmptyException e) {
+            fail("Invalid move when it should not");
+        }
 
         assertEquals(2, player.getStones().size());
         assertNotSame(stone, player.getStones().get(0));
@@ -112,7 +122,8 @@ public class ExchangeMoveTest {
     }
 
     @Test(expected = InvalidMoveException.class)
-    public void testPerformNoStone() throws InvalidMoveException {
+    public void testPerformNoStone() throws InvalidMoveException,
+            StoneBagIsEmptyException {
         ArrayList<Stone> stones = new ArrayList<Stone>();
         Player player = new Player(PlayerColor.RED);
         GameState gameState = new GameState();
@@ -124,7 +135,8 @@ public class ExchangeMoveTest {
     }
 
     @Test(expected = InvalidMoveException.class)
-    public void testPerformNotOwnStone() throws InvalidMoveException {
+    public void testPerformNotOwnStone() throws InvalidMoveException,
+            StoneBagIsEmptyException {
         ArrayList<Stone> stones = new ArrayList<Stone>();
         Stone stone = new Stone();
         stones.add(stone);
@@ -140,7 +152,8 @@ public class ExchangeMoveTest {
     }
 
     @Test(expected = InvalidMoveException.class)
-    public void testPerformNotOwnStone2() throws InvalidMoveException {
+    public void testPerformNotOwnStone2() throws InvalidMoveException,
+            StoneBagIsEmptyException {
         ArrayList<Stone> stones = new ArrayList<Stone>();
         Stone stone = new Stone();
         Stone stone2 = new Stone();

@@ -14,6 +14,7 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.exceptions.StoneBagIsEmptyException;
 import sc.plugin2014.moves.Move;
 import sc.plugin2014.util.Constants;
 import sc.plugin2014.util.XStreamConfiguration;
@@ -100,6 +101,11 @@ public class Game extends RoundBasedGameInstance<Player> {
             logger.error(err);
             throw new GameLogicException(err);
         }
+        catch (StoneBagIsEmptyException e) {
+            gameState.prepareNextTurn((Move) data);
+            endGameRegularly("Der Beutel ist leer.");
+            next(gameState.getCurrentPlayer());
+        }
     }
 
     private void endGameRegularly(String message) {
@@ -149,10 +155,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 
             if (entry.getKey() == player) {
                 score.setCause(cause);
-                score.setValueAt(1, new BigDecimal(0));
+                score.setValueAt(0, new BigDecimal(0));
             }
             else {
-                score.setValueAt(1, new BigDecimal(2));
+                score.setValueAt(0, new BigDecimal(2));
             }
         }
 

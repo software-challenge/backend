@@ -7,6 +7,8 @@ import sc.plugin2014.converters.ExchangeMoveConverter;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.exceptions.StoneBagIsEmptyException;
+import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -30,7 +32,7 @@ public class ExchangeMove extends Move implements Cloneable {
 
     @Override
     public void perform(GameState state, Player player)
-            throws InvalidMoveException {
+            throws InvalidMoveException, StoneBagIsEmptyException {
         super.perform(state, player);
 
         checkAtLeastOneStone();
@@ -38,6 +40,11 @@ public class ExchangeMove extends Move implements Cloneable {
         checkIfStonesAreFromPlayerHand(getStonesToExchange(), player);
 
         checkIfPlayerHasStoneAmountToExchange(player);
+
+        int points = PointsCalculator.getPointsForExchangeMove(
+                getStonesToExchange(), state.getBoard());
+
+        player.addPoints(points);
 
         List<Integer> freePositions = new ArrayList<Integer>();
         List<Stone> putAsideStones = new ArrayList<Stone>();
@@ -58,8 +65,8 @@ public class ExchangeMove extends Move implements Cloneable {
                 player.addStone(stone, freePositions.get(i));
             }
             else {
-                throw new InvalidMoveException(
-                        "Der Beutel ist leer - Tauschen nicht möglich");
+                state.updateStonesInBag();
+                throw new StoneBagIsEmptyException("Der Beutel ist leer.");
             }
         }
 
