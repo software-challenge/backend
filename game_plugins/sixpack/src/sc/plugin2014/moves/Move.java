@@ -6,6 +6,7 @@ import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.exceptions.StoneBagIsEmptyException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -67,7 +68,7 @@ public abstract class Move implements Cloneable {
     }
 
     public void perform(GameState state, Player player)
-            throws InvalidMoveException {
+            throws InvalidMoveException, StoneBagIsEmptyException {
         checkGameStateAndPlayerNotNull(state, player);
     }
 

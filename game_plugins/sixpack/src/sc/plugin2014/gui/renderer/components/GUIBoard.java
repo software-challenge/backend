@@ -6,6 +6,7 @@ import sc.plugin2014.GameState;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.gui.renderer.configuration.GUIConstants;
 import sc.plugin2014.gui.renderer.util.ColorHelper;
+import sc.plugin2014.gui.renderer.util.RendererUtil;
 import sc.plugin2014.moves.LayMove;
 import sc.plugin2014.util.Constants;
 import sc.plugin2014.util.GameUtil;
@@ -39,18 +40,24 @@ public class GUIBoard {
             }
         }
 
-        g2.drawString("Steine im Beutel: " + gameState.getStoneCountInBag(),
-                20, 40);
+        g2.drawImage(RendererUtil.getImage("resource/game/beutel.png"), 10, 10,
+                50, 55, null);
 
-        g2.drawString("Nächsten Steine im Beutel:", 20, 60);
+        g2.setColor(Color.BLACK);
+        g2.setFont(new Font("Sans", Font.BOLD, 14));
+        g2.drawString(String.valueOf(gameState.getStoneCountInBag()), 28, 45);
 
-        int i = 0;
-        for (Stone nextStone : gameState.getNextStonesInBag()) {
+        // g2.drawString("Nächsten Steine im Beutel:", 20, 60);
+
+        int positionIndex = 0;
+        for (int i = gameState.getNextStonesInBag().size() - 1; i >= 0; i--) {
+            Stone nextStone = gameState.getNextStonesInBag().get(i);
             GUIStone nextGuiStone = new GUIStone(nextStone, -1);
             nextGuiStone.setX(20);
-            nextGuiStone.setY((i * (GUIConstants.STONE_HEIGHT + 2)) + 75);
+            nextGuiStone
+                    .setY((positionIndex * (GUIConstants.STONE_HEIGHT + 2)) + 75);
             nextGuiStone.draw(g2, gameState.getCurrentPlayerColor());
-            i++;
+            positionIndex++;
         }
 
         if (dragging) {

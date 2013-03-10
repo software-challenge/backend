@@ -1,11 +1,24 @@
 package sc.plugin2014.laylogic;
 
 import static org.junit.Assert.*;
-import java.util.HashMap;
+import java.util.*;
 import org.junit.Test;
 import sc.plugin2014.entities.*;
 
 public class PointsCalculatorTest {
+
+    @Test
+    public void testGetPointsForExchange() throws Exception {
+        Board board = new Board();
+        List<Stone> stones = new ArrayList<Stone>();
+
+        Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
+        stones.add(stone);
+
+        int pointsForMove = PointsCalculator.getPointsForExchangeMove(stones,
+                board);
+        assertEquals(2, pointsForMove);
+    }
 
     @Test
     public void testGetPointsForMoveSimple2() throws Exception {
@@ -21,8 +34,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone, field00);
         stoneToFieldMap.put(stone2, field01);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(2, pointsForMove);
     }
 
@@ -43,8 +56,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone2, field01);
         stoneToFieldMap.put(stone3, field02);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(3, pointsForMove);
     }
 
@@ -68,8 +81,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone3, field02);
         stoneToFieldMap.put(stone4, field03);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(4, pointsForMove);
     }
 
@@ -96,8 +109,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone4, field03);
         stoneToFieldMap.put(stone5, field04);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(5, pointsForMove);
     }
 
@@ -127,8 +140,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone5, field04);
         stoneToFieldMap.put(stone6, field05);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(12, pointsForMove);
     }
 
@@ -150,8 +163,8 @@ public class PointsCalculatorTest {
 
         stoneToFieldMap.put(stone3, field01);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(3, pointsForMove);
     }
 
@@ -181,8 +194,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone5, field11);
         stoneToFieldMap.put(stone6, field12);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(9, pointsForMove);
     }
 
@@ -200,8 +213,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone, field00);
         stoneToFieldMap.put(stone2, field01);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(2, pointsForMove);
     }
 
@@ -222,8 +235,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone2, field01);
         stoneToFieldMap.put(stone3, field02);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(3, pointsForMove);
     }
 
@@ -247,8 +260,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone3, field02);
         stoneToFieldMap.put(stone4, field03);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(4, pointsForMove);
     }
 
@@ -275,8 +288,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone4, field03);
         stoneToFieldMap.put(stone5, field04);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(5, pointsForMove);
     }
 
@@ -306,8 +319,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone5, field04);
         stoneToFieldMap.put(stone6, field05);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(12, pointsForMove);
     }
 
@@ -339,8 +352,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone5, field04);
         stoneToFieldMap.put(stone6, field05);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(12, pointsForMove);
     }
 
@@ -362,8 +375,8 @@ public class PointsCalculatorTest {
 
         stoneToFieldMap.put(stone3, field02);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(3, pointsForMove);
     }
 
@@ -388,8 +401,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone3, field02);
         stoneToFieldMap.put(stone4, field03);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(4, pointsForMove);
     }
 
@@ -420,8 +433,8 @@ public class PointsCalculatorTest {
 
         stoneToFieldMap.put(stone5, field31);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(12, pointsForMove);
     }
 
@@ -470,8 +483,8 @@ public class PointsCalculatorTest {
 
         stoneToFieldMap.put(stone5, field31);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(24, pointsForMove);
     }
 
@@ -517,8 +530,8 @@ public class PointsCalculatorTest {
 
         stoneToFieldMap.put(stone5, field31);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(17, pointsForMove);
     }
 
@@ -555,8 +568,8 @@ public class PointsCalculatorTest {
 
         stoneToFieldMap.put(stone5, field31);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(14, pointsForMove);
     }
 
@@ -605,8 +618,8 @@ public class PointsCalculatorTest {
         stoneToFieldMap.put(stone5, field31);
         stoneToFieldMap.put(stone8, field32);
 
-        int pointsForMove = PointsCalculator.getPointsForMove(stoneToFieldMap,
-                board);
+        int pointsForMove = PointsCalculator.getPointsForLayMove(
+                stoneToFieldMap, board);
         assertEquals(24, pointsForMove);
     }
 }

@@ -5,6 +5,7 @@ import sc.plugin2014.GameState;
 import sc.plugin2014.converters.LayMoveConverter;
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.exceptions.StoneBagIsEmptyException;
 import sc.plugin2014.laylogic.LayLogicFacade;
 import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -52,7 +53,7 @@ public class LayMove extends Move implements Cloneable {
 
     @Override
     public void perform(GameState state, Player player)
-            throws InvalidMoveException {
+            throws InvalidMoveException, StoneBagIsEmptyException {
         super.perform(state, player);
 
         checkAtLeastOneStone();
@@ -62,7 +63,7 @@ public class LayMove extends Move implements Cloneable {
         LayLogicFacade.checkIfLayMoveIsValid(getStoneToFieldMapping(),
                 state.getBoard(), !state.getBoard().hasStones());
 
-        int points = PointsCalculator.getPointsForMove(stoneToFieldMapping,
+        int points = PointsCalculator.getPointsForLayMove(stoneToFieldMapping,
                 state.getBoard());
 
         player.addPoints(points);
@@ -87,7 +88,8 @@ public class LayMove extends Move implements Cloneable {
                 player.addStone(drawStone, freePositions.get(i));
             }
             else {
-                // stonebag is empty
+                state.updateStonesInBag();
+                throw new StoneBagIsEmptyException("Der Beutel ist leer.");
             }
         }
 
