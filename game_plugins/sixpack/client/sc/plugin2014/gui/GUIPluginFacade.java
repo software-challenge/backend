@@ -47,12 +47,12 @@ public class GUIPluginFacade implements IGuiPlugin {
 
     @Override
     public Image getPluginIcon() {
-        return loadImage("resource/game/qwirkle_icon.png");
+        return loadImage("resource/game/sixpack_icon.png");
     }
 
     @Override
     public Image getPluginImage() {
-        return loadImage("resource/game/qwirkle.png");
+        return loadImage("resource/game/sixpack.png");
     }
 
     private static Image loadImage(String filename) {

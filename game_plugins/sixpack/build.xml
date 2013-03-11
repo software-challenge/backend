@@ -9,6 +9,11 @@
 	<property name="devplugin.dir" value="../../game_gui/plugins" />
 	<property name="lib.dir" value="../../software_challenge_sdk/lib" />
 	<property name="sdk.dir" value="./../../software_challenge_sdk" />
+	<property name="version.num" value="0.9" />
+	<buildnumber file="build.num"/>
+	<tstamp>
+     <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+   	</tstamp>
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -41,7 +46,7 @@
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
-				<attribute name="${manifest.code.version.key}" value="${code.version}" />
+				<attribute name="${manifest.code.version.key}" value="${version.num}-build${build.number}-${TODAY}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
 			<fileset dir=".">
