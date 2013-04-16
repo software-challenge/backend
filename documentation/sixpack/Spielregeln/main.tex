@@ -46,7 +46,7 @@ urlcolor  = black
 
 \begin{figure}[h]
 	\centering
-	%\includegraphics[width=\linewidth]{bilder/Uebersicht.png}
+	\includegraphics[scale = 1.0]{images/sixpack}
 \end{figure}
 \vspace*{\fill}
 
@@ -70,7 +70,7 @@ Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfeldern, welche in 
 \end{figure}
 
 \subsection{Die Spielsteine}
-Ein Spielstein besitzt eine von sechs möglichen Farben und eine von sechs möglichen Formen. Es existieren demnach 36 verschiedene Farb/Form Kombinationen (siehe siehe Abbildung ~\ref{fig:Spielsteine}).\\
+Ein Spielstein besitzt eine von sechs möglichen Farben und eine von sechs möglichen Formen. Die sechs Farben sind \emph{Blau},\emph{Grün},\emph{Magenta}, \emph{Orange}, \emph{Violett} und \emph{Gelb}. An Formen gibt es \emph{Eichel}, \emph{Schellen}, \emph{Kreuz}, \emph{Karo}, \emph{Herz} und \emph{Pik}.  Es existieren demnach 36 verschiedene Farb/Form Kombinationen (siehe Abbildung ~\ref{fig:Spielsteine}).\\
 
 \begin{figure}[h] \centering 
 	\includegraphics[scale = 0.8]{images/Spielsteine}
@@ -85,24 +85,30 @@ Von jeder Kombination gibt es genau drei Steine im Spiel, also insgesamt 108 Spi
 	\caption{Der Vorratsbeutel}
 	\label{fig:Vorratsbeutel}
 \end{figure}
-Jeder Spieler besitzt zu Beginn und am Ende seines Zuges immer genau 6 Steine in seinem Vorrat, wobei auch der Vorrat des gegnerischen Spieler eingesehen werden kann.\\
+Jeder Spieler besitzt zu Beginn und am Ende eines jeden Zuges immer genau 6 Steine in seinem Vorrat, wobei auch der Vorrat des gegnerischen Spieler eingesehen werden kann.\\
 
-
-
-
-	
 
 \section{Spielablauf}		
 	Es beginnt der rote Spieler. Jeder Spieler hat in seinem Zug zwei verschiedene Möglichkeiten. Entweder er legt einen oder mehrere Spielsteine auf dem Spielbrett aus, oder er tauscht 1-6 seiner Spielsteine gegen neue ein.	
 	
 \subsection{Spielsteine auslegen}
+Beim Anlegen gelten folgende Regeln:
+\begin{itemize}
+\item Zwei oder mehr Steine nebeneinander bilden eine Reihe.
+\item Eine Reihe besteht entweder aus Spielsteinen welche die gleich Farbe oder die gleiche Form besitzen.
+\item In einer Reihe von gleichen Formen darf jede Farbe nur genau einmal vorkommen.
+\item In einer Reihe von gleichen Farben darf jede Form nur genau einmal vorkommen.
+\item Eine Reihe besteht somit aus maximal 6 Spielsteinen.
+\item Ein Spielstein der ausgelegt werden soll muss immer an schon vorhandene Spielsteine angelegt werden. Ausnahme ist hier der als erstes ausgelegt Spielstein einer Partie. Dieser darf beliebig auf dem Spielbrett platziert werden.
+\item Wenn ein Spielstein an eine bereits existierende Reihe angelegt wird, so muss dieser zu den jeweiligen Eigenschaften dieser Reihe passen.
+\item In jedem Zug dürfen Spielsteine an genau einer Reihe angelegt werden. Die Reihe darf in jede der beiden Richtungen erweitert werden.
+\end{itemize}
 
+Nach dem Anlegen der Spielsteine wird der Vorrat des Spielers wieder auf 6 Steine aus dem Beutel aufgefüllt. Die Steine die dieser erhält, können in der Reihe unterhalb des Beutels eingesehen werden. Der Spielstein, welcher sich ganz unten befindet ist der erste, der gezogen wird.
 	 
 \subsection{Spielsteine tauschen}
-
-
-
-
+Kann ein Spieler keine Spielsteine anlegen oder ist mit seinem Vorrat unzufrieden, so besteht die Möglichkeit 1-6 Spielsteine gegen Neue aus dem Beutel zu tauschen. Er erhält dann die von ihm gewählte Anzahl von Spielsteinen aus den offen liegenden Spielsteinen. Seine abgegebenen Steine werden zurück in den Beutel getan, welcher danach gemischt wird.\\
+Nach dem Tausch ist der Zug des Spielers beendet.
 \subsection{Spezialfall: Keine Züge möglich}
 
 	
@@ -110,9 +116,6 @@ Jeder Spieler besitzt zu Beginn und am Ende seines Zuges immer genau 6 Steine in
 	
 \section{Ende des Spiels}
 
-	Hat ein Spieler alle seine Piraten im Zielfeld, so gewinnt dieser. Schafft dies
-	keiner der beiden Spieler innerhalb der \RundenAnzahl\ Runden, so
-	gewinnt der Spieler mit den meisten Punkten.
 	
 \section{Die graphische Benutzeroberfläche}
 \subsection{Übersicht der graphischen Benutzeroberfläche}
