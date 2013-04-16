@@ -12,6 +12,7 @@
 \usepackage{graphicx}
 \usepackage{paralist}
 \usepackage[none]{hyphenat}
+\usepackage{wrapfig}
 
 \sloppy
 
@@ -60,7 +61,7 @@ In dem Spiel versuchen zwei Spieler durch geschicktes Anlegen von Spielsteinen a
 
 \section{Spielmaterial}
 	\subsection{Das Spielbrett}
-Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfeldern, welche in einer 16x16 Matrix angeordnet sind, gebildet. Die Nummerierung der Spielfelder beginnt dabei, wie in der Informatik üblich, bei 0. Das Spielfeld ganz links oben besitzt also den Index (0,0).\\
+Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfeldern, welche in einer 16x16 Matrix angeordnet sind, gebildet. Die Nummerierung der Spielfelder beginnt dabei, wie in der Informatik üblich, bei 0. Jedes Spielfeld besitzt einen eindeutigen Index der sich aus x und y Komponente zusammensetzt, nach dem Schema (x,y). Das Spielfeld ganz links oben besitzt demnach den Index (0,0) (siehe Abbildung ~\ref{fig:Spielfeld}).\\
 
 \begin{figure}[h] \centering 
 	\includegraphics[scale = 0.3]{images/Spielbrett}
@@ -69,93 +70,43 @@ Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfeldern, welche in 
 \end{figure}
 
 \subsection{Die Spielsteine}
-Jeder Spieler startet mit \PiratenAnzahl\ Piraten im Startfeld, welche alle ins
-Ziel gebracht werden müssen. Steht auf einem Spielfeld mehr als ein Pirat eines
-Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
+Ein Spielstein besitzt eine von sechs möglichen Farben und eine von sechs möglichen Formen. Es existieren demnach 36 verschiedene Farb/Form Kombinationen (siehe siehe Abbildung ~\ref{fig:Spielsteine}).\\
+
+\begin{figure}[h] \centering 
+	\includegraphics[scale = 0.8]{images/Spielsteine}
+	\caption{Alle möglichen Farbe/Form Kombinationen der Spielsteine}
+	\label{fig:Spielsteine}
+\end{figure}
+
+Von jeder Kombination gibt es genau drei Steine im Spiel, also insgesamt 108 Spielsteine. Alle Spielsteine werden zu Beginn des Spiels gemischt und im Spielsteinbeutel abgelegt. Die nächsten 12 Spielsteine, welche aus dem Beutel gezogen werden können, werden unterhalb des Beutels angezeigt. Die Nummer auf dem Beutel gibt die Anzahl der sich noch im Beutel befindenden Spielsteine an. Hierbei ist zu beachten, dass damit die Gesamtanzahl der Spielstein im Vorrat gemeint ist. Sowohl die nicht einsehbaren, als auch die schon sichtbaren Spielsteine unterhalb des Beutels.\\
+
+\begin{figure}[h] \centering 
+	\includegraphics[scale = 0.7]{images/Vorratsbeutel}
+	\caption{Der Vorratsbeutel}
+	\label{fig:Vorratsbeutel}
+\end{figure}
+Jeder Spieler besitzt zu Beginn und am Ende seines Zuges immer genau 6 Steine in seinem Vorrat, wobei auch der Vorrat des gegnerischen Spieler eingesehen werden kann.\\
+
+
+
 
 	
 
-\section{Spielablauf}	
-	\begin{figure}[h]
-		\centering
-		%\includegraphics[scale=0.3]{bilder/Moves}
-		\caption{Eine Spielsituation, in der sowohl Vorwärts- als auch Rückwärtszüge
-		möglich sind.}
-		\label{fig:PossibleMoves}
-	\end{figure}	
-	Es beginnt der rote Spieler. Jeder Spieler darf innerhalb einer Runde 3
-	Teilzüge machen. Die Menge der Teilzüge darf aus einer beliebigen Kombination
-	von Vorwärts- und Rückwärtszügen bestehen. Ein Spieler muss jedoch nicht alle 3
-	Teilzüge nutzen, kann also auch zwei, einen oder gar keinen Teilzug tätigen.\\
-	Bei einem Vorwärtszug muss der Spieler eine Karte  abgelegen, bei
-	Rückwärtszügen können neue Karten vom Stapel gezogen werden.\\
-	Sobald ein Spieler eine Figur ausgewählt hat, werden sämtliche Felder, auf
-	welche die Figur ziehen kann, grün markiert.
+\section{Spielablauf}		
+	Es beginnt der rote Spieler. Jeder Spieler hat in seinem Zug zwei verschiedene Möglichkeiten. Entweder er legt einen oder mehrere Spielsteine auf dem Spielbrett aus, oder er tauscht 1-6 seiner Spielsteine gegen neue ein.	
 	
-	
-	
-	\subsection{Vorwärtszüge}
-	Bei einem Vorwärtszug wählt ein Spieler eine seiner
-	Spiel\-figuren. Zum Vorwärtsziehen muss eine Karte
-	abgelegt werden und die Spielfigur zieht auf das nächste unbesetzte Feld,
-	welches das gleiche Symbol wie die Karte zeigt. Alle übrigen Felder sowie
-	einfach oder mehrfach besetzte Felder werden hierbei übersprungen.\\
-	Gibt es zwischen einem Piraten und der Schaluppe kein Feld mehr mit dem auf
-	einer Karte abgebildeten Symbol oder sind alle Felder mit diesem Symbol
-	belegt, so kann durch Ablegen dieser Karte direkt auf das Zielfeld gezogen
-	werden. In der Implementierung geschieht dies durch Ziehen einer Spielfigur auf
-	das Zielfeld. Gibt es mehrere Kartensymbole, welche abgelegt werden können, so
-	werden die betreffenden Karten grün markiert. Durch Anklicken einer Karte wird
-	diese dann genutzt, um auf das Zielfeld zu ziehen.
-	
-	\begin{figure}[h]
-		\centering
-		%\includegraphics[scale = 0.3]{bilder/zielfeld}
-		\caption{Durch Ablegen einer Pistole oder des Schlüssels kann der blaue
-		Spieler den ausgewählten Piraten (blau umrandet) ins Zielfeld bewegen.}
-		\label{fig:Zielfeld}
-	\end{figure}
+\subsection{Spielsteine auslegen}
+
 	 
-\subsection{Rückwärtszüge}
-Durch Rückwärtszüge können neue Karten aus dem offen liegenden Kartenvorrat
-gezogen werden.
-Hierbei wählt ein Spieler eine Spielfigur aus und zieht sie auf das nächste
-zurückliegende Feld, auf dem bereits mindestens eine und höchstens zwei
-Spielfiguren stehen. Das Startfeld ist hierbei ausgeschlossen und es ist egal,
-welche Farbe die Spielsteine auf dem zurückliegenden Feld haben. Auch wenn eine
-Spielfigur schon auf dem Zielfeld steht, kann diese wieder zurück bewegt
-werden.\\
-Stehen auf dem zurückliegenden Feld 2 Piraten, so zieht der Spieler 2 neue
-Karten, sonst darf er nur eine Karte ziehen. Die Karten werden dabei jeweils von
-links gezogen. Hat ein Spieler schon 8 Karten, so werden keine neuen Karten
-gezogen.\\
-Stehen auf dem nächsten zurückliegenden Feld bereits 3 Spielsteine, darf auf
-dieses Feld nicht gezogen werden. Beim Zurückziehen muss dieses Feld dann
-übersprungen werden.\\
-Neu dazugekommene Karten werden immer
-Richtung Bildmitte positioniert. Die neuen Karten des roten Spielers befinden sich also ganz rechts in seiner
-Kartenanzeige, die des blauen Spielers ganz links.
+\subsection{Spielsteine tauschen}
+
 
 
 
 \subsection{Spezialfall: Keine Züge möglich}
+
 	
-	Sollte der Fall eintreten, dass ein Spieler keine Karten besitzt und keine
-	Rückwärtszüge möglich sind, so muss dieser Spieler aussetzen bzw. einen leeren
-	Zug senden (siehe Abbildung ~\ref{fig:zugunfaehig}).
-	\begin{figure}[h]
-	 \centering
-	 %\includegraphics[scale = 0.3]{bilder/zugunfaehig}
-	 \caption{Der blaue Spieler ist zugunfähig. Er muss eine Runde aussetzen.}
-	 \label{fig:zugunfaehig}
-	\end{figure}
-	
-	\subsection{Punkteverteilung}
-	Die Punkte ergeben sich aus der Anzahl der Piraten, welche sich im jeweiligen
-	Segment befinden. Hat ein Spieler beispielsweise zwei Piraten in Segment 1 und
-	einen Piraten in Segment 3, so ergibt sich eine Gesamtpunktzahl von 5.\\
-	Spielsteine auf dem Startfeld bringen keine Punkte und ein Pirat im Zielfeld
-	bringt 6 Punkte.
+\subsection{Punkteverteilung}
 	
 \section{Ende des Spiels}
 
