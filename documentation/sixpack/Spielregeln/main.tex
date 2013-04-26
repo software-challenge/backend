@@ -13,6 +13,8 @@
 \usepackage{paralist}
 \usepackage[none]{hyphenat}
 \usepackage{wrapfig}
+\usepackage{subfig}
+\usepackage{subfloat}
 
 \def\sectionautorefname{Abschnitt}
 \def\figureautorefname{Abbildung}
@@ -64,43 +66,63 @@ In dem Spiel versuchen zwei Spieler durch geschicktes Anlegen von Spielsteinen a
 
 \section{Spielmaterial}
 \subsection{Das Spielbrett}
-Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfeldern gebildet, welche in einer 16x16 Matrix angeordnet sind. Die Nummerierung der Spielfelder beginnt bei 0, wie in der Informatik üblich. Jedes Spielfeld besitzt einen eindeutigen Index, der sich  nach dem Schema (x,y) aus x und y Koordinate zusammensetzt. Das Spielfeld ganz links oben besitzt demnach den Index (0,0) (siehe Abbildung ~\ref{fig:Spielfeld}).\\
 
 \begin{figure}[h] \centering 
-	\includegraphics[scale = 0.3]{images/Spielbrett}
+	\includegraphics[scale = 0.25]{images/Spielbrett}
 	\caption{Das Spielbrett.}
 	\label{fig:Spielfeld}
 \end{figure}
+Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfelder gebildet, welche in einer 16x16 Matrix angeordnet sind. Die Nummerierung der Spielfelder beginnt bei 0, wie in der Informatik üblich. Jedes Spielfeld besitzt einen eindeutigen Index, der sich  nach dem Schema (x,y) aus x und y Koordinate zusammensetzt. Das Spielfeld ganz links oben besitzt demnach den Index (0,0) (siehe \autoref{fig:Spielfeld}).\\
 
 \subsection{Die Spielsteine}
-\begin{figure}[!h] \centering 
-	\includegraphics[scale = 0.8]{images/Spielsteine}
-	\caption{Die 36 möglichen Farbe-/Form-Kombinationen der Spielsteine}
-	\label{fig:Spielsteine}
-\end{figure}
-Ein Spielstein besitzt eine von sechs möglichen Farben und eine von sechs möglichen Formen. Die sechs Farben sind \emph{Blau},  \emph{Grün}, \emph{Magenta}, \emph{Orange}, \emph{Violett} und \emph{Gelb}. An Formen gibt es \emph{Eichel}, \emph{Schelle}, \emph{Kreuz}, \emph{Karo}, \emph{Herz} und \emph{Pik}.  Es existieren demnach 36 verschiedene Farb-/Form-Kombinationen (siehe Abbildung ~\ref{fig:Spielsteine}).\\
 
+\begin{wrapfigure}[7]{r}{0.3\textwidth}
+	\centering
+	\includegraphics[scale = 0.45]{images/Spielsteine}
+	%\caption{Die 36 möglichen Farbe-/Form-Kombinationen der Spielsteine}
+	\caption{}
+	\label{fig:Spielsteine}
+\end{wrapfigure}
+Ein Spielstein besitzt eine von sechs möglichen Farben und eine von sechs möglichen Formen. Die sechs Farben sind \emph{Blau},  \emph{Grün}, \emph{Magenta}, \emph{Orange}, \emph{Violett} und \emph{Gelb}. An Formen gibt es \emph{Eichel}, \emph{Schelle}, \emph{Kreuz}, \emph{Karo}, \emph{Herz} und \emph{Pik}.  Es existieren demnach 36 verschiedene Farb-/Form-Kombinationen (siehe \autoref{fig:Spielsteine}).\\
 Von jeder Kombination gibt es genau drei Steine im Spiel, also insgesamt 108 Spielsteine.
+\newpage
+
 \subsection{Der Vorrat}
-\begin{wrapfigure}{}{0.1\textwidth}
-	\includegraphics[scale = 0.7]{images/Vorratsbeutel}
+\begin{wrapfigure}[20]{r}{0.5 \textwidth}
+	\centering
+	\includegraphics[scale = 0.5]{images/Vorratsbeutel}
 	\caption{Der Vorrat}
 	\label{fig:Vorrat}
 \end{wrapfigure}
  Alle Spielsteine werden zu Beginn des Spiels gemischt und im Vorrat abgelegt. Dieser Besteht aus Steinen im Beutel und bereits aufgedeckten Steinen (siehe \autoref{fig:Vorrat}). Die Zahl auf dem Beutel gibt die Anzahl, der sich noch im Vorrat befindenden Spielsteine an. Hierbei ist zu beachten, dass damit die Gesamtanzahl der Spielstein im Vorrat gemeint ist. Sowohl die nicht einsehbaren, als auch die schon sichtbaren Spielsteine unterhalb des Beutels.\\
-
-\begin{figure}[h] \centering 
-	\includegraphics[scale = 0.7]{images/Vorratsbeutel}
-	\caption{Der Vorrat}
-	\label{fig:Vorrat2}
-\end{figure}
 Jeder Spieler besitzt zu Beginn und am Ende eines jeden Zuges immer genau 6 Steine, wobei auch die Steine des gegnerischen Spieler eingesehen werden können. Dies ist nur dann nicht der Fall, wenn nicht mehr ausreichend Steine im Vorrat sind. Das Spiel wird in diesem Fall beendet (siehe \autoref{sec:gameOver})\\
-
+\newpage
+%\begin{figure}[h] \centering 
+%	\includegraphics[scale = 0.7]{images/Vorratsbeutel}
+%	\caption{Der Vorrat}
+%	\label{fig:Vorrat2}
+%\end{figure}
 
 \section{Spielablauf}		
 	Es beginnt der rote Spieler. Jeder Spieler hat in seinem Zug zwei verschiedene Möglichkeiten. Entweder er legt einen oder mehrere Spielsteine auf dem Spielbrett aus, oder er tauscht zwischen 1 und 6 seiner Spielsteine gegen neue ein.	
 	
 \subsection{Spielsteine auslegen}
+\begin{wrapfigure}[28]{R}{0.4\textwidth}
+	\centering
+	\begin{subfigures}
+		\includegraphics[scale = 0.7]{images/anlegen01}
+		\caption{Zwei Reihen}
+		\label{fig:Anlegen01}
+		
+		\includegraphics[scale = 0.7]{images/anlegen04}
+		\caption{Anlegen von 2 Spielsteinen}
+		\label{fig:Anlegen02}
+		
+		\includegraphics[scale = 0.7]{images/anlegen02}
+		\caption{Ungültige Position. Die Reihe hat schon ein Pik der selben Farbe.}
+		\label{fig:Anlegen03}
+	\end{subfigures}	
+\end{wrapfigure}
 Beim Anlegen gelten folgende Regeln:
 \begin{itemize}
 \item Zwei oder mehr Steine, die horizontal oder vertikal nebeneinander liegen bilden eine Reihe.
@@ -122,10 +144,22 @@ Nach dem Tausch ist der Zug des Spielers beendet.\\
 Zum Tauschen klickt man die gewünschte Anzahl von Steinen an. Diese werden dann durch einen grünen Rahmen umrandet. Um den Tausch zu vollziehen, klickt man auf den Button \emph{Steine tauschen}. Um die Auswahl aufzuheben, kann man jeden Stein einzeln anklicken oder auf den Button \emph{Steine zurücknehmen} klicken. Sind Spielsteine zum Tausch ausgewählt, ist es nicht möglich, einen Stein auf dem Spielbrett auszulegen.
 	
 \subsection{Punkteverteilung}
+
+\begin{wrapfigure}[12]{R}{0.4\textwidth}
+	\centering	
+		\includegraphics[scale = 0.7]{images/anlegen04}
+		\caption{Für das Anlegen erhält der Spieler 5 Punkte.}
+		\label{fig:Punkte1}	
+\end{wrapfigure}
 Das Tauschen von Spielsteinen bringt 2 Punkte, unabhängig davon, wie viele Steine getauscht werden.\\
 Beim Anlegen von Spielsteinen erhält man für jeden Stein, der sich in einer erweiterten Reihe befindet einen Punkt. Ein Stein wird doppelt gezählt, wenn er Teil von zwei Reihen ist.\\
 Wenn man es schafft eine Reihe von 6 Steinen zu vervollständigen bildet man ein \textbf{Sixpack}. Für diesen Stein erhält man 6 Punkte (einen für jeden Stein der Reihe) und außerdem einen Bonus von 6 Punkten, also insgesamt 12 Punkte.
-TODO: Beispielbilder zur Wertung.
+\begin{figure}[h]
+\centering
+	\includegraphics[scale = 0.7]{images/sixpack_legen}
+		\caption{Das Anlegen des grün umrandeten Steines ergibt ein \emph{Sixpack}. (12 Punkte)}
+		\label{fig:PunkteSixpack}	
+\end{figure}
 	
 \section{Ende des Spiels}
 \label{sec:gameOver}
@@ -133,21 +167,35 @@ Das Ende des Spiels tritt in zwei Fällen auf. Im ersten Fall endet es nach 25 R
 Der Spieler mit den meisten Punkten gewinnt. Haben beide Spieler die gleiche Anzahl an Punkten, so gibt es ein Unentschieden.
 
 \subsection{Spezialfall: Keine Züge mehr möglich}
-Sollte der Fall eintreten, dass keine Spielsteine mehr angelegt werden können, so müssen die Spieler Steine tauschen, bis die maximale Rundenanzahl erreicht ist. Dieser Fall kann auftreten wenn ein 6 mal 6 Quadrat gelegt wurde (siehe Abbildung  ~\ref{fig:Spielsteine}). Dieser Fall wird in der Praxis sehr selten vorkommen.
+Sollte der Fall eintreten, dass keine Spielsteine mehr angelegt werden können, so müssen die Spieler Steine tauschen, bis die maximale Rundenanzahl erreicht ist. Dieser Fall kann auftreten wenn ein 6 mal 6 Quadrat gelegt wurde (siehe \autoref{fig:Spielsteine}). Dieser Fall wird in der Praxis sehr selten vorkommen.
+\newpage
 	
 \section{Die graphische Benutzeroberfläche}
 \subsection{Übersicht der graphischen Benutzeroberfläche}
-TODO
+\begin{figure}[h]
+	\centering
+	\includegraphics[width = \textwidth]{images/GUI}
+	\caption{Die graphische Benutzeroberfläche}
+\end{figure}
+\begin{compactenum}[a)]
+	\item Der Vorrat
+	\item Das Spielbrett
+	\item Punkteanzeige. Die Punkte des roten Spielers sind
+	oben, die des blauen Spielers unten. Die Punkte des inaktiven Spielers sind
+	jeweils immer grau.
+	\item Positionsanzeige
+	\item Die Spielsteine von Spieler 1
+	\item Spielfortschrittsanzeige
+\end{compactenum}
 	
 \subsection{Das Einstellungsmenü}
 	 \begin{figure}[h]
 		\centering
-		%\includegraphics[scale=0.5]{bilder/configuration}
+		\includegraphics[scale=0.5]{images/configuration}
 		\caption{Das Einstellungsmenü}
 		\label{fig:Configuration}
-	\end{figure}
-	
-	Ein Einstellungsmenü mit Darstellungsoptionen lässt
+	\end{figure}	
+Ein Einstellungsmenü mit Darstellungsoptionen lässt
 sich über die Leertaste anzeigen. Dazu muss das
 Spielfeld den Tastaturfokus haben (erforderlichenfalls
 vorher Mausklick auf das Spielfeld). Es stehen dort
