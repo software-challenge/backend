@@ -117,7 +117,7 @@ public class FrameRenderer extends JComponent {
 
 	// sonstiges
 	private boolean gameEnded = false;
-	private int turnToAnswer;
+	private int turnToAnswer = -1;
 	// liste der oberen, linken eckpunkte der spielfelder
 	private LinkedList<Point> BoardMap;
 	// Feldnummer über der eine Spielfigur abgelegt werden kann
@@ -145,7 +145,7 @@ public class FrameRenderer extends JComponent {
 	// Spielfigur die beim ziehen bewegt wird
 	private Token movingToken;
 	// Anzahl von Karten die nach einem Rückwärtszug hervorgehoben werden
-//	private int numCardsHighlight = 0;
+	// private int numCardsHighlight = 0;
 
 	// Strings
 	private String endTurn = "Zug beenden";
@@ -165,6 +165,7 @@ public class FrameRenderer extends JComponent {
 		this.bottleImage = loadImage("resource/game/bottle.png");
 		this.keyImage = loadImage("resource/game/key.png");
 		this.pistolImage = loadImage("resource/game/pistol.png");
+		this.humanMove = false;
 
 		this.BoardMap = new LinkedList<Point>();
 		this.tokenList = new LinkedList<Token>();
@@ -189,10 +190,10 @@ public class FrameRenderer extends JComponent {
 		if (this.gameState != null) {
 			int turnDiff = gameState.getTurn() - this.gameState.getTurn();
 			MoveContainer mC = gameState.getLastMove();
-			// if move Container != null and move Conatiner ist not the last
-			// Send move
-			// if (mC != null && turnDiff == 1) {
-			// if (lastMoveSend != null && !mC.equals(lastMoveSend)) {
+			if (turnDiff < 0 || gameState.getTurn() == 0) {
+				this.turnToAnswer = -1;
+			}
+
 			if (!humanMove && turnDiff == 1 && mC != null) {
 				if (mC.firstMove != null) {
 					animateTokenMovement(mC.firstMove);
@@ -254,7 +255,7 @@ public class FrameRenderer extends JComponent {
 			}
 		}
 		// Spieler geht einen Zug zurück
-//		numCardsHighlight = 0;
+		// numCardsHighlight = 0;
 		humanMove = false;
 		removeMouseListener(mouseAdapter);
 		removeMouseListener(mouseAdapter);
@@ -474,7 +475,6 @@ public class FrameRenderer extends JComponent {
 		humanMove = true;
 		updateBuffer = true;
 		repaint();
-
 	}
 
 	private synchronized void sendMove(final MoveContainer move) {
@@ -767,20 +767,22 @@ public class FrameRenderer extends JComponent {
 				- nameWidth, y);
 
 		// Cards Highlighting
-//		if (numCardsHighlight > 0) {
-//			LinkedList<Point> cardMap;
-//			if (gameState.getCurrentPlayerColor() == PlayerColor.RED) {
-//				cardMap = redCardMap;
-//				
-//			} else {
-//				cardMap = blueCardMap;
-//			}
-//			g2.setColor(getPlayerColor(currentPlayer));
-//			
-//			for(int i= cardMap.size()-numCardsHighlight; i < cardMap.size(); i++){
-//				g2.drawRoundRect(cardMap.get(i).x, cardMap.get(i).y, CARD_WIDTH, CARD_HEIGTH, 10, 10);
-//			}
-//		}
+		// if (numCardsHighlight > 0) {
+		// LinkedList<Point> cardMap;
+		// if (gameState.getCurrentPlayerColor() == PlayerColor.RED) {
+		// cardMap = redCardMap;
+		//
+		// } else {
+		// cardMap = blueCardMap;
+		// }
+		// g2.setColor(getPlayerColor(currentPlayer));
+		//
+		// for(int i= cardMap.size()-numCardsHighlight; i < cardMap.size();
+		// i++){
+		// g2.drawRoundRect(cardMap.get(i).x, cardMap.get(i).y, CARD_WIDTH,
+		// CARD_HEIGTH, 10, 10);
+		// }
+		// }
 		paintBoard(g2); // Spielbrett zeichnen
 		paintPlayerPoints(g2); // Seitenleiste info zeichnen
 
@@ -1120,20 +1122,20 @@ public class FrameRenderer extends JComponent {
 	private void constructMoves(Move move) {
 		try {
 			// wenn ein move konstruiert wurde
-//			int numCards = gameState.getCurrentPlayer().getNumCards();
-//			if (move.getClass().equals(BackwardMove.class) && numCards < 8) {
-//				BackwardMove bM = (BackwardMove) move;
-//				int numPirates = gameState
-//						.getBoard()
-//						.getPirates(
-//								gameState.getBoard().getPreviousField(
-//										bM.fieldIndex)).size();
-//				if (numCards == 7) {
-//					numCardsHighlight = 1;
-//				} else {
-//					numCardsHighlight = numPirates;
-//				}
-//			}
+			// int numCards = gameState.getCurrentPlayer().getNumCards();
+			// if (move.getClass().equals(BackwardMove.class) && numCards < 8) {
+			// BackwardMove bM = (BackwardMove) move;
+			// int numPirates = gameState
+			// .getBoard()
+			// .getPirates(
+			// gameState.getBoard().getPreviousField(
+			// bM.fieldIndex)).size();
+			// if (numCards == 7) {
+			// numCardsHighlight = 1;
+			// } else {
+			// numCardsHighlight = numPirates;
+			// }
+			// }
 			move.perform(gameState, gameState.getCurrentPlayer());
 			gameState.prepareNextTurn(move);
 			selectedField = -1;
