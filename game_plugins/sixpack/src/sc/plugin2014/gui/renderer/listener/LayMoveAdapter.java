@@ -18,7 +18,7 @@ public class LayMoveAdapter extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
 
-        // requestFocusInWindow();
+        parent.requestFocusInWindow();
         if (e.getButton() == MouseEvent.BUTTON1) {
             int x = e.getX();
             int y = e.getY();
