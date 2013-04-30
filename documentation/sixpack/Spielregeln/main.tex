@@ -49,9 +49,10 @@ urlcolor  = black
 \parindent0px
 \maketitle
 
+\vspace{0.15\textheight}
 \begin{figure}[h]
 	\centering
-	\includegraphics[scale = 1.0]{images/sixpack_logo.pdf}
+	\includegraphics[scale = 0.5]{images/sixpack_logo.pdf}
 \end{figure}
 \vspace*{\fill}
 
@@ -62,7 +63,7 @@ urlcolor  = black
 \section{Einführung}
 In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Sixpack}
 der Software-Challenge 2014 erläutert.\\
-In dem Spiel versuchen zwei Spieler durch geschicktes Anlegen von Spielsteinen auf einem Spielbrett möglichst viele Punkte zu erlangen.
+Ziel der beiden Spieler ist, durch geschicktes Anlegen von Spielsteinen auf einem Spielbrett möglichst viele Punkte zu erlangen.
 
 \section{Spielmaterial}
 \subsection{Das Spielbrett}
@@ -72,7 +73,7 @@ In dem Spiel versuchen zwei Spieler durch geschicktes Anlegen von Spielsteinen a
 	\caption{Das Spielbrett.}
 	\label{fig:Spielfeld}
 \end{figure}
-Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfelder gebildet, welche in einer 16x16 Matrix angeordnet sind. Die Nummerierung der Spielfelder beginnt bei 0, wie in der Informatik üblich. Jedes Spielfeld besitzt einen eindeutigen Index, der sich  nach dem Schema (x,y) aus x und y Koordinate zusammensetzt. Das Spielfeld ganz links oben besitzt demnach den Index (0,0) (siehe \autoref{fig:Spielfeld}).\\
+Das Spielbrett wird durch insgesamt \SpielFelderAnzahl\ Spielfelder gebildet, welche in einer 16x16 Matrix angeordnet sind. Die Nummerierung der Spielfelder beginnt bei 0, wie in der Informatik üblich. Jedes Spielfeld besitzt eine eindeutige (x,y)-Koordinate. (0,0) identifiziert demnach das Spielfeld ganz  oben links (siehe \autoref{fig:Spielfeld}).\\
 
 \subsection{Die Spielsteine}
 
@@ -88,26 +89,27 @@ Von jeder Kombination gibt es genau drei Steine im Spiel, also insgesamt 108 Spi
 \newpage
 
 \subsection{Der Vorrat}
-\begin{wrapfigure}[20]{r}{0.5 \textwidth}
+\begin{wrapfigure}[16]{r}{0.6 \textwidth}
 	\centering
 	\includegraphics[scale = 0.5]{images/Vorratsbeutel}
 	\caption{Der Vorrat}
 	\label{fig:Vorrat}
 \end{wrapfigure}
- Alle Spielsteine werden zu Beginn des Spiels gemischt und im Vorrat abgelegt. Dieser Besteht aus Steinen im Beutel und bereits aufgedeckten Steinen (siehe \autoref{fig:Vorrat}). Die Zahl auf dem Beutel gibt die Anzahl, der sich noch im Vorrat befindenden Spielsteine an. Hierbei ist zu beachten, dass damit die Gesamtanzahl der Spielstein im Vorrat gemeint ist. Sowohl die nicht einsehbaren, als auch die schon sichtbaren Spielsteine unterhalb des Beutels.\\
-Jeder Spieler besitzt zu Beginn und am Ende eines jeden Zuges immer genau 6 Steine, wobei auch die Steine des gegnerischen Spieler eingesehen werden können. Dies ist nur dann nicht der Fall, wenn nicht mehr ausreichend Steine im Vorrat sind. Das Spiel wird in diesem Fall beendet (siehe \autoref{sec:gameOver})\\
-\newpage
+ Alle Spielsteine werden zu Beginn des Spiels gemischt und im Vorrat abgelegt. Dieser besteht aus Steinen im Beutel und bereits aufgedeckten Steinen (siehe \autoref{fig:Vorrat}). Die Zahl auf dem Beutel gibt die Anzahl, der sich noch im Vorrat befindenden Spielsteine an. Hierbei ist zu beachten, dass damit die Gesamtanzahl der Spielsteine im Vorrat gemeint ist, also sowohl die im Beutel, als auch die schon sichtbaren Spielsteine unterhalb des Beutels.\\
+%\newpage
 %\begin{figure}[h] \centering 
 %	\includegraphics[scale = 0.7]{images/Vorratsbeutel}
 %	\caption{Der Vorrat}
 %	\label{fig:Vorrat2}
 %\end{figure}
 
-\section{Spielablauf}		
-	Es beginnt der rote Spieler. Jeder Spieler hat in seinem Zug zwei verschiedene Möglichkeiten. Entweder er legt einen oder mehrere Spielsteine auf dem Spielbrett aus, oder er tauscht zwischen 1 und 6 seiner Spielsteine gegen neue ein.	
+\section{Spielablauf}
+	Zu Spielbeginn erhält jeder Spieler 6 Steine, die unterhalb des Spielbretts offen liegen, so dass der Gegner diese sehen kann. Im Vorrat befinden sich 96 Steine, von denen 12 aufgedeckt sind. Der rote Spieler beginnt.\\
+ Jeder Spieler hat in seinem Zug zwei verschiedene Möglichkeiten. Entweder er legt einen oder mehrere Spielsteine auf dem Spielbrett aus, oder er tauscht zwischen 1 und 6 seiner Spielsteine gegen neue ein. Im ersten Zug müssen mindestens 2 Spielsteine ausgelegt werden. Ist dies nicht möglich, so muss der Spieler Steine tauschen.
+ \newpage
 	
 \subsection{Spielsteine auslegen}
-\begin{wrapfigure}[28]{R}{0.4\textwidth}
+\begin{wrapfigure}[27]{r}{0.4\textwidth}
 	\centering
 	\begin{subfigures}
 		\includegraphics[scale = 0.7]{images/anlegen01}
@@ -125,49 +127,49 @@ Jeder Spieler besitzt zu Beginn und am Ende eines jeden Zuges immer genau 6 Stei
 \end{wrapfigure}
 Beim Anlegen gelten folgende Regeln:
 \begin{itemize}
-\item Zwei oder mehr Steine, die horizontal oder vertikal nebeneinander liegen bilden eine Reihe.
+\item Zwei oder mehr Steine, die horizontal oder vertikal unmittelbar nebeneinander liegen, bilden eine Reihe.
 \item Eine Reihe besteht entweder aus Spielsteinen, welche die gleiche Farbe oder die gleiche Form besitzen.
 \item In einer Reihe von gleichen Formen darf jede Farbe höchstens einmal vorkommen.
-\item In einer Reihe von gleichen Farben darf jede Form nur höchstens vorkommen.
+\item In einer Reihe von gleichen Farben darf jede Form höchstens einmal vorkommen.
 \item Eine Reihe besteht somit aus maximal 6 Spielsteinen.
-\item Ein Spielstein der ausgelegt werden soll, muss immer an schon vorhandene Spielsteine angelegt werden. Ausnahme ist hier der als erstes ausgelegte Spielstein einer Partie. Dieser darf beliebig auf dem Spielbrett platziert werden.
-\item Wenn ein Spielstein an eine bereits existierende Reihe angelegt wird, so muss dieser zu den jeweiligen Eigenschaften dieser Reihe passen.
-\item In jedem Zug dürfen Spielsteine an genau einer Reihe angelegt werden. Die Reihe darf in jede der beiden Richtungen erweitert werden.
+\item Ein Spielstein, der ausgelegt werden soll, muss immer an schon vorhandene Spielsteine angelegt werden. Ausnahme ist hier der als erstes ausgelegte Spielstein einer Partie. Dieser darf beliebig auf dem Spielbrett platziert werden.
+\item Werden mehrere Steine in einem Zug ausgelegt, müssen diese sich in derselben Reihe befinden. Am Ende eines Zuges muss für alle auf dem Spielbrett unmittelbar horizontal oder vertikal nebeneinander liegenden Steine gelten, dass diese ausschließlich die zuvor beschriebenen Reihen bilden.
 \end{itemize}
 
-Nach dem Anlegen der Spielsteine werden die Steine des Spielers wieder auf 6 aufgefüllt. Die Steine die dieser erhält, können in der Reihe unterhalb des Beutels eingesehen werden. Der Spielstein, welcher sich ganz unten befindet ist der erste, den der Spieler erhält.\\
-Um einen Stein anzulegen, klickt man auf diesen und zieht ihn auf das Spielbrett. Wenn eine mögliche Position angewählt wurde, wird das Spielfeld grün unterlegt. Ansonsten wird das Spielfeld rot unterlegt. Um alle bisher gelegten Steine zurück zu holen klickt man auf den Button \emph{Steine zurücknehmen}. Um seinen Zug zu beenden und die momentan auf dem Spielbrett liegenden Steine fest anzulegen, klickt man auf den Button \emph{Steine legen}.
+Nach dem Anlegen der Spielsteine werden die Steine des Spielers wieder auf 6 aufgefüllt. Die Steine die dieser erhält, können in der Reihe unterhalb des Beutels eingesehen werden. Der Spielstein, welcher sich ganz unten befindet, ist der erste, den der Spieler erhält.\\
+Um einen Stein anzulegen, klickt man auf diesen und zieht ihn auf das Spielbrett. Wenn eine mögliche Position angewählt wurde, wird das Spielfeld grün unterlegt. Ansonsten wird das Spielfeld rot unterlegt. Um alle bisher gelegten Steine zurückzuholen, klickt man auf den Button \emph{Steine zurücknehmen}. Um seinen Zug zu beenden und die momentan auf dem Spielbrett liegenden Steine fest anzulegen, klickt man auf den Button \emph{Steine legen}.
 	 
 \subsection{Spielsteine tauschen}
-Kann ein Spieler keine Spielsteine anlegen oder ist er mit seinen Steinen unzufrieden, so besteht die Möglichkeit, zwischen 1 und 6 Spielsteine gegen neue aus dem Vorrat zu tauschen. Er erhält dann die von ihm gewählte Anzahl von Spielsteinen aus den offen liegenden Spielsteinen. Seine abgegebenen Steine werden zurück in den Beutel getan, welcher danach gemischt wird.\\
-Nach dem Tausch ist der Zug des Spielers beendet.\\
-Zum Tauschen klickt man die gewünschte Anzahl von Steinen an. Diese werden dann durch einen grünen Rahmen umrandet. Um den Tausch zu vollziehen, klickt man auf den Button \emph{Steine tauschen}. Um die Auswahl aufzuheben, kann man jeden Stein einzeln anklicken oder auf den Button \emph{Steine zurücknehmen} klicken. Sind Spielsteine zum Tausch ausgewählt, ist es nicht möglich, einen Stein auf dem Spielbrett auszulegen.
+Ist ein Spieler mit seinen Steinen unzufrieden, kann er zwischen 1 und 6 Spielsteine gegen neue aus dem Vorrat tauschen. Kann ein Spieler keine Spielsteine anlegen, dann muss er Spielsteine tauschen.\\
+Zum Tauschen klickt man die zu tauschenden Steine an. Diese werden dann durch einen grünen Rahmen umrandet. Um die Auswahl aufzuheben, kann man jeden Stein einzeln anklicken oder auf den Button \emph{Steine zurücknehmen} klicken. Sind Spielsteine zum Tausch ausgewählt, ist es nicht möglich, einen Stein auf dem Spielbrett auszulegen. Um den Tausch zu vollziehen, klickt man auf den Button \emph{Steine tauschen}.
+ Er erhält dann die von ihm gewählte Anzahl von Spielsteinen aus den offen liegenden Spielsteinen und zwar von unten beginnend. Seine abgegebenen Steine werden zurück in den Beutel getan, welcher danach gemischt wird.
+ Nach dem Tausch ist der Zug des Spielers beendet.
 	
 \subsection{Punkteverteilung}
-
-\begin{wrapfigure}[12]{R}{0.4\textwidth}
+\begin{figure}[h]
+\centering
+	\includegraphics[scale = 0.6]{images/sixpack_legen}
+		\caption{Das Anlegen des grün umrandeten Steines ergibt ein \emph{Sixpack}. (12 Punkte)}
+		\label{fig:PunkteSixpack}	
+\end{figure}
+\begin{wrapfigure}[10]{R}{0.4\textwidth}
 	\centering	
 		\includegraphics[scale = 0.7]{images/anlegen04}
 		\caption{Für das Anlegen erhält der Spieler 5 Punkte.}
 		\label{fig:Punkte1}	
 \end{wrapfigure}
 Das Tauschen von Spielsteinen bringt 2 Punkte, unabhängig davon, wie viele Steine getauscht werden.\\
-Beim Anlegen von Spielsteinen erhält man für jeden Stein, der sich in einer erweiterten Reihe befindet einen Punkt. Ein Stein wird doppelt gezählt, wenn er Teil von zwei Reihen ist.\\
-Wenn man es schafft eine Reihe von 6 Steinen zu vervollständigen bildet man ein \textbf{Sixpack}. Für diesen Stein erhält man 6 Punkte (einen für jeden Stein der Reihe) und außerdem einen Bonus von 6 Punkten, also insgesamt 12 Punkte.
-\begin{figure}[h]
-\centering
-	\includegraphics[scale = 0.7]{images/sixpack_legen}
-		\caption{Das Anlegen des grün umrandeten Steines ergibt ein \emph{Sixpack}. (12 Punkte)}
-		\label{fig:PunkteSixpack}	
-\end{figure}
+Beim Anlegen von Spielsteinen erhält man einen Punkt für jeden Stein, der sich in einer erweiterten Reihe befindet . Ein Stein wird doppelt gezählt, wenn er Teil von zwei Reihen ist.\\
+Wenn man es schafft, eine Reihe von 6 Steinen zu erzeugen, bildet man ein \textbf{Sixpack}, für den es einen Bonus von 6 Punkten gibt.
+\newpage
 	
 \section{Ende des Spiels}
 \label{sec:gameOver}
-Das Ende des Spiels tritt in zwei Fällen auf. Im ersten Fall endet es nach 25 Runden. Der zweite Fall tritt auf, sobald ein Spieler in einem Zug mehr Steine legt, als sich noch im Vorrat befinden. Dieser Spieler erhält noch seine Punkte aus diesem Zug. Unmittelbar anschließend ist das Spiel beendet. Legt ein Spieler beispielsweise 4 Steine an, während sich nur noch 3 Steine im Vorrat befinden, so ist das Spiel nach diesem Zug vorbei.\\
+Das Ende des Spiels tritt in zwei Fällen auf. Im ersten Fall endet es nach 25 Runden. Der zweite Fall tritt auf, sobald ein Spieler in einem Zug mehr Steine legt oder tauschen will, als sich noch im Vorrat befinden. Dieser Spieler erhält noch seine Punkte aus diesem Zug. Unmittelbar anschließend ist das Spiel beendet. Legt ein Spieler beispielsweise 4 Steine an, während sich nur noch 3 Steine im Vorrat befinden, so ist das Spiel nach diesem Zug vorbei.\\
 Der Spieler mit den meisten Punkten gewinnt. Haben beide Spieler die gleiche Anzahl an Punkten, so gibt es ein Unentschieden.
 
 \subsection{Spezialfall: Keine Züge mehr möglich}
-Sollte der Fall eintreten, dass keine Spielsteine mehr angelegt werden können, so müssen die Spieler Steine tauschen, bis die maximale Rundenanzahl erreicht ist. Dieser Fall kann auftreten wenn ein 6 mal 6 Quadrat gelegt wurde (siehe \autoref{fig:Spielsteine}). Dieser Fall wird in der Praxis sehr selten vorkommen.
+Sollte der Fall eintreten, dass keine Spielsteine mehr angelegt werden können, so müssen die Spieler Steine tauschen, bis die maximale Rundenanzahl erreicht ist. Dieser Fall wird in der Praxis sehr selten vorkommen, kann aber beispielsweise auftreten wenn ein 6x6-Quadrat gelegt wurde (siehe \autoref{fig:Spielsteine}).
 \newpage
 	
 \section{Die graphische Benutzeroberfläche}
@@ -181,8 +183,7 @@ Sollte der Fall eintreten, dass keine Spielsteine mehr angelegt werden können, 
 	\item Der Vorrat
 	\item Das Spielbrett
 	\item Punkteanzeige. Die Punkte des roten Spielers sind
-	oben, die des blauen Spielers unten. Die Punkte des inaktiven Spielers sind
-	jeweils immer grau.
+	oben, die des blauen Spielers unten. Die Punkte des inaktiven Spielers werden immer grau angezeigt.
 	\item Positionsanzeige
 	\item Die Spielsteine von Spieler 1
 	\item Spielfortschrittsanzeige
@@ -209,7 +210,7 @@ kann aber auch aus Gründen der Übersichtlichkeit deaktiviert werden.\\
 Wiederholungen und bei Computerspielern animiert werden sollen.\\
 Die \textbf{Debugansicht} verkleinert die Punkteanzeige in der Seitenleiste
 etwas und zeigt unterhalb Debug-Hilfestellungen zu einzelnen Zügen an. Diese
-Hilfestellungen sind Texte, die ein Spielclient einem Zug beifügen kann, den er
+Hilfestellungen sind Texte, die ein Computerspieler einem Zug beifügen kann, den er
 an den Spielserver sendet.
 	
 \end{document}
