@@ -144,7 +144,7 @@ Abschnitt~\ref{forwardMove} und ~\ref{backwardMove} )
 \item[ZUGNUMMER] firstMove, secondMove oder thirdMove
 \item[FID] der Index des Startfeldes
 \item[SYMBOL] das Symbol der Karte, welche abgelegt werden soll.(siehe
-Abschnitt \ref{symbols})
+Abschnitt \ref{stoneSymbols})
 \end{description}
 \begin{verbatim}
 	<ZUGNUMMER class="forwardMove" fieldIndex="FID" symbol="SYMBOL"/>
@@ -161,7 +161,7 @@ Abschnitt \ref{symbols})
 \end{verbatim}
 
 
-\subsection{\label{symbols}Symbole}
+\subsection{\label{stoneSymbols}Symbole}
 
 Die Strings der Symbolnamen sind:
 \begin{compactenum}
@@ -221,7 +221,7 @@ Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
 \section{Willkommensnachricht}
 Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
 \begin{description}
-\item[C] Spielerfarbe (RED/BLUE)
+\item[C] Spielerfarbe (red/blue)
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
@@ -246,22 +246,23 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \subsection{\label{state}Status}
 \begin{description}
 \item[Z] aktuelle Zugzahl
-\item[C] Spieler, der an der Reihe ist (RED/BLUE)
+\item[numStones] Anzahl der Spielstein, welche sich im Vorrat befinden.
+\item[sC] Spieler, welcher den ersten Zug ausführen darf ("red"/"blue").
+\item[C] Spieler, der an der Reihe ist ("red"/"blue")
+\item[stone] Wie in \ref{stone} definiert. Der Stein, welcher als nächstes gezogen werden kann, kommt zuerst.
 \item[red, blue] wie in \ref{player} definiert
-\item[card] wie in \ref{card} definiert. Die Karte, welche als Nächste gezogen
-werden kann, kommt zuerst.
 \item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
 \ref{lastmove} definiert
 \item[board] Das Spielbrett, wie in \ref{board} definiert
 \item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
 \end{description}
 \begin{verbatim}
-<state class="state" turn="Z" currentPlayer="C">
+<state class="state" turn="Z" stonesInBag="numStones" start="sC" currentPlayer="C">
+  <nextStones>
+    {stone}
+  </nextStones>
   red
   blue
-  <openCards>
-    {card}
-  </openCards>
   [lastMove]
   [board]
   [condition]
@@ -273,24 +274,25 @@ werden kann, kommt zuerst.
 \begin{description}
 \item[C] Farbe (red/blue)
 \item[N] Anzeigename
-\item[COL] Farbe ``RED''/''BLUE''
+\item[COL] Farbe "red"/"blue"
 \item[P] Punktekonto
-\item[card] Spielkarte, wie in \ref{card} definiert
+\item[card] Spielstein, wie in \ref{stone} definiert
 \end{description}
 \begin{verbatim}
 <C displayName="N" color="COL" points="P">
-  <cards>
-    {card}
-  </cards>
+  {stone}
 </C>
 \end{verbatim}
 
 
-\subsection{\label{card}Karte}
+\subsection{\label{stone}Spielstein}
 \begin{description}
-\item[S] Symbol der Karte wie in \ref{symbols} definiert.
+\item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
+\item[S] Symbol der Karte wie in \ref{stoneSymbols} definiert.
+\item[I] Identifikator. \TODO
 \end{description}
-\begin{verbatim} <card symbol="S"/>
+\begin{verbatim} 
+<card color="C" shape="S" identifier="I"/>
 \end{verbatim}
 
 \subsection{\label{board}Spielbrett}

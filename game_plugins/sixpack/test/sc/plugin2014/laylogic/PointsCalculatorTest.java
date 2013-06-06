@@ -72,7 +72,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -98,7 +98,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
@@ -127,7 +127,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
@@ -251,7 +251,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
 
@@ -277,7 +277,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
 
         HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
@@ -306,7 +306,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
@@ -338,7 +338,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
@@ -391,7 +391,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
 
         field00.setStone(stone);
         field01.setStone(stone2);
@@ -419,7 +419,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
@@ -457,14 +457,14 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         Stone stone7 = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone8 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone9 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone10 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone10 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone11 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         field01.setStone(stone);
@@ -506,13 +506,13 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         Stone stone8 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone9 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone10 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone10 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone11 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         field01.setStone(stone);
@@ -550,7 +550,7 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
@@ -592,14 +592,14 @@ public class PointsCalculatorTest {
         Stone stone = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone2 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone3 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone4 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone5 = new Stone(StoneColor.BLUE, StoneShape.HEART);
         Stone stone6 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         Stone stone7 = new Stone(StoneColor.BLUE, StoneShape.ACORN);
         Stone stone8 = new Stone(StoneColor.BLUE, StoneShape.BELL);
         Stone stone9 = new Stone(StoneColor.BLUE, StoneShape.CLUBS);
-        Stone stone10 = new Stone(StoneColor.BLUE, StoneShape.DIAMONT);
+        Stone stone10 = new Stone(StoneColor.BLUE, StoneShape.DIAMOND);
         Stone stone11 = new Stone(StoneColor.BLUE, StoneShape.SPADES);
 
         field01.setStone(stone);
