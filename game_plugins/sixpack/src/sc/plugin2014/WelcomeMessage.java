@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * um ihm seine Spielerfarbe mitzuteilen
  * 
  */
-@XStreamAlias(value = "qw:welcome")
+@XStreamAlias(value = "welcome")
 public class WelcomeMessage {
 
     @XStreamAsAttribute

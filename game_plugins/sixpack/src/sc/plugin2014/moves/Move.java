@@ -10,7 +10,7 @@ import sc.plugin2014.exceptions.StoneBagIsEmptyException;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-@XStreamAlias(value = "qw:move")
+@XStreamAlias(value = "move")
 public abstract class Move implements Cloneable {
 
     @XStreamImplicit(itemFieldName = "hint")

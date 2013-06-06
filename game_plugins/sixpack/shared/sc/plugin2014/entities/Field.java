@@ -4,7 +4,7 @@ import java.awt.Point;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias(value = "qw:field")
+@XStreamAlias(value = "field")
 public class Field implements Cloneable {
 
     @XStreamAsAttribute

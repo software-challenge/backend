@@ -12,7 +12,7 @@ import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-@XStreamAlias(value = "qw:exchangemove")
+@XStreamAlias(value = "exchangemove")
 @XStreamConverter(ExchangeMoveConverter.class)
 public class ExchangeMove extends Move implements Cloneable {
 
