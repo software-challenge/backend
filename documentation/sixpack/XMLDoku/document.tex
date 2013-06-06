@@ -118,62 +118,89 @@ Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Plat
 \end{verbatim}
 
 \section{Züge senden}
-
-\subsection{\label{moveContainer}Der MoveContainer}
-Der MoveContainer kann bis zu 3 Teilzüge beherbergen. Sollen weniger als 3
-Teilzüge mitgeschickt werden, können third-, second- oder auch firstMove
-weggelassen werden.
+Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zuges muss dieser, jeweils von einem "room" Objekt umschlossen werden.
 \begin{description}
 \item[RID] ID des Raumes
-\item[ZUG] je nach Art des Zuges Informationen über diesen. (siehe
-Abschnitt~\ref{forwardMove} und ~\ref{backwardMove} )
+\item[move] Anlege- oder Tauschzug. Wie in \ref{layMove} und \ref{changeMove} definiert.
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-  <data class="moveContainer">
-    <firstMove ZUG/>
-    <secondMove ZUG/>
-    <thirdMove ZUG/>
-  </data>
+  move
 </room>
-
 \end{verbatim}
-\subsection{Vorwärtszug}
-\label{forwardMove}
+\subsection{Anlegezug}
+\label{layMove}
 \begin{description}
-\item[ZUGNUMMER] firstMove, secondMove oder thirdMove
-\item[FID] der Index des Startfeldes
-\item[SYMBOL] das Symbol der Karte, welche abgelegt werden soll.(siehe
-Abschnitt \ref{stoneSymbols})
+\item[selection] Eins bis sechs Steinlegungen. Wie in \ref{stoneToField} definiert.
 \end{description}
 \begin{verbatim}
-	<ZUGNUMMER class="forwardMove" fieldIndex="FID" symbol="SYMBOL"/>
+<data class="laymove">
+  {stoneToField}
+</data>
 \end{verbatim}
 
-\subsection{Rückwärtszug}
-\label{backwardMove}
+\subsection{Steinlegung}
+\label{stoneToField}
 \begin{description}
-\item[ZUGNUMMER] firstMove, secondMove oder thirdMove
-\item[FID] der Index des Startfeldes
+\item[stone] Spielstein, welcher gelegt werden soll. Wie in \ref{stone} definiert.
+\item[field] Spielfeld, auf das der Stein gelegt werden soll. Wie in TODO definiert.
 \end{description}
 \begin{verbatim}
-	<ZUGNUMMER class="backwardMove" fieldIndex="FID"/>
+<stoneToField>
+  stone
+  field
+</stoneToField>
+\end{verbatim}
+
+\subsection{Tauschzug}
+\label{changeMove}
+\begin{description}
+\item[selection] Eins bis sechs Steinselektionen. Wie in \ref{sec:stoneSelection} definiert.
+\end{description}
+\begin{verbatim}
+<data class="exchangemove">
+  {selection}
+</data>
+\end{verbatim}
+
+\subsection{Steinselektion}
+\label{sec:stoneSelection}
+\begin{description}
+\item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
+\item[S] Symbol des Steins. Wie in \ref{stoneSymbols} definiert.
+\item[I] Identifikator. TODO
+\end{description}
+\begin{verbatim}
+<select color="C" shape="S" identifier="I">
 \end{verbatim}
 
 
-\subsection{\label{stoneSymbols}Symbole}
+\subsection{\label{stoneSymbols}Steinsymbole}
 
 Die Strings der Symbolnamen sind:
 \begin{compactenum}
-\item SKULL
-\item HAT
-\item DAGGER
-\item BOTTLE
-\item KEY
-\item PISTOL
+\item ACORN
+\item BELL
+\item CLUBS
+\item DIAMOND
+\item HEART
+\item SPADES
 \end{compactenum}
 Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
 sein.
+\subsection{\label{stoneColors}Steinfarben}
+Die Strings der Farblnamen sind:
+\begin{compactenum}
+\item BLUE
+\item GREEN
+\item MAGENTA
+\item ORANGE
+\item VIOLET
+\item YELLOW
+\end{compactenum}
+Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
+sein.
+
 \subsection{Debughints}
 Zügen können Debug-Informationen beigefügt werden:
 \begin{description}
@@ -249,7 +276,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[numStones] Anzahl der Spielstein, welche sich im Vorrat befinden.
 \item[sC] Spieler, welcher den ersten Zug ausführen darf ("red"/"blue").
 \item[C] Spieler, der an der Reihe ist ("red"/"blue")
-\item[stone] Wie in \ref{stone} definiert. Der Stein, welcher als nächstes gezogen werden kann, kommt zuerst.
+\item[STONE] Wie in \ref{stone} definiert. Der Stein, welcher als nächstes gezogen werden kann, kommt zuerst.
 \item[red, blue] wie in \ref{player} definiert
 \item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
 \ref{lastmove} definiert
@@ -259,12 +286,12 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \begin{verbatim}
 <state class="state" turn="Z" stonesInBag="numStones" start="sC" currentPlayer="C">
   <nextStones>
-    {stone}
+    {STONE}
   </nextStones>
   red
   blue
-  [lastMove]
-  [board]
+  board
+  [lastMove]  
   [condition]
 </state>
 
@@ -276,11 +303,11 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[N] Anzeigename
 \item[COL] Farbe "red"/"blue"
 \item[P] Punktekonto
-\item[card] Spielstein, wie in \ref{stone} definiert
+\item[STONE] Spielstein, wie in \ref{stone} definiert
 \end{description}
 \begin{verbatim}
 <C displayName="N" color="COL" points="P">
-  {stone}
+  {STONE}
 </C>
 \end{verbatim}
 
@@ -288,11 +315,11 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \subsection{\label{stone}Spielstein}
 \begin{description}
 \item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
-\item[S] Symbol der Karte wie in \ref{stoneSymbols} definiert.
-\item[I] Identifikator. \TODO
+\item[S] Symbol der Steins. Wie in \ref{stoneSymbols} definiert.
+\item[I] Identifikator. TODO
 \end{description}
 \begin{verbatim} 
-<card color="C" shape="S" identifier="I"/>
+<stone color="C" shape="S" identifier="I"/>
 \end{verbatim}
 
 \subsection{\label{board}Spielbrett}
@@ -301,51 +328,23 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \end{description}
 \begin{verbatim}
 <board>
- <fields>
- 	{FIELD}
- </fields>
+  {FIELD}
 </board>
 \end{verbatim}
 
 \subsection{\label{sec:field}Spielfeld}
-\subsubsection{\label{sec:startEndField} Start- und Zielfeld}
 \begin{description}
-\item[T] Typ des Feldes START/FINISH
-\item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
+\item[X] X-Koordinate
+\item[Y] Y-Kooridnate
+\item[STONE] Spielstein, falls einer auf dem Spielfeld liegt. Wie in \ref{stone} beschrieben.
 \end{description}
 \begin{verbatim}
-<field type="T">
-  <pirates>
-  	{PIRATE}
-  </pirates>
+<field posX="X" posY="Y">
+  [STONE]
 </field>
 \end{verbatim}
-
-\subsubsection{\label{sec:symbolField} Symbolfeld}
-\begin{description}
-\item[S] Symbol, welches das Feld trägt, siehe \ref{symbols}
-\item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
-\end{description}
-\begin{verbatim}
-<field type="SYMBOL" symbol="S">
-  <pirates>
-  	{PIRATE}
-  </pirates>
-</field>
-\end{verbatim}
-
-\subsection{\label{sec:pirate}Pirat}
-\begin{description}
-\item[O] Besitzer RED/BLUE
-\end{description}
-\begin{verbatim}
-<pirate owner="O"/>
-\end{verbatim}
-
-
 
 \subsection{\label{lastmove}Letzter Zug}
-Der letzte Zug ist ein MoveContainer (siehe hierzu \ref{moveContainer}).
 \begin{description}
 \item[ZUG] Informationen über den Zug. (siehe \ref{forwardMove} und
 \ref{backwardMove})
