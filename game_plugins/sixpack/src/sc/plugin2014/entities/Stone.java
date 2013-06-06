@@ -3,7 +3,7 @@ package sc.plugin2014.entities;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
-@XStreamAlias(value = "qw:stone")
+@XStreamAlias(value = "stone")
 public class Stone implements Cloneable {
 
     @XStreamAsAttribute

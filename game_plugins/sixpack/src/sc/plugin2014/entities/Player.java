@@ -5,7 +5,7 @@ import java.util.List;
 import sc.framework.plugins.SimplePlayer;
 import com.thoughtworks.xstream.annotations.*;
 
-@XStreamAlias(value = "qw:player")
+@XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
     @XStreamOmitField

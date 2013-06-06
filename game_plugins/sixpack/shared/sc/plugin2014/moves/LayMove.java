@@ -11,7 +11,7 @@ import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-@XStreamAlias(value = "qw:laymove")
+@XStreamAlias(value = "laymove")
 @XStreamConverter(LayMoveConverter.class)
 public class LayMove extends Move implements Cloneable {
 

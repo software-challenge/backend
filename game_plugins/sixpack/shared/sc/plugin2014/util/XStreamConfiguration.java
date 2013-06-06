@@ -14,7 +14,7 @@ public class XStreamConfiguration {
 
     static {
         xStream = new XStream();
-        xStream.setMode(XStream.ID_REFERENCES);
+        xStream.setMode(XStream.NO_REFERENCES);
         xStream.setClassLoader(XStreamConfiguration.class.getClassLoader());
         LobbyProtocol.registerMessages(xStream);
         LobbyProtocol.registerAdditionalMessages(xStream,
