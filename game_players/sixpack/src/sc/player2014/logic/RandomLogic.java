@@ -89,6 +89,7 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
             }
 
             if (GameUtil.checkIfLayMoveIsValid(layMove, gameState.getBoard())) {
+            	layMove.addHint("Sending Start LayMove");
                 sendAction(layMove);
                 return true;
             }
@@ -114,6 +115,7 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
 
                     if (GameUtil.checkIfLayMoveIsValid(layMove,
                             gameState.getBoard())) {
+                    	layMove.addHint("Sending LayMove");
                         sendAction(layMove);
                         return true;
                     }
@@ -129,6 +131,7 @@ public class RandomLogic implements sc.plugin2014.IGameHandler {
      */
     private void exchangeStones(List<Stone> stones) {
         ExchangeMove exchangeMove = new ExchangeMove(stones);
+        exchangeMove.addHint("Sending Exchange Move");
         sendAction(exchangeMove);
     }
 
