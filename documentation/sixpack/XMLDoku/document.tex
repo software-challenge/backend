@@ -57,7 +57,7 @@ Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei solche
 kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu
 verwerfen, die hier nicht weiter definiert sind. \bigskip \\
 Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine
-Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt. 
+Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt \footnote{siehe: \htmladdnormallink{XStream}{http://xstream.codehaus.org/}}. 
 Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
 %Dabei
 %werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können
@@ -118,7 +118,7 @@ Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Plat
 \end{verbatim}
 
 \section{Züge senden}
-Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zuges muss dieser, jeweils von einem "room" Objekt umschlossen werden.
+Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zuges muss dieser, jeweils von einem ''room'' Objekt umschlossen werden.
 \begin{description}
 \item[RID] ID des Raumes
 \item[move] Anlege- oder Tauschzug. Wie in \ref{layMove} und \ref{changeMove} definiert.
@@ -139,7 +139,7 @@ Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zu
 </data>
 \end{verbatim}
 
-\subsection{Steinlegung}
+\subsubsection{Steine legen}
 \label{stoneToField}
 \begin{description}
 \item[stone] Spielstein, welcher gelegt werden soll. Wie in \ref{stone} definiert.
@@ -163,7 +163,7 @@ Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zu
 </data>
 \end{verbatim}
 
-\subsection{Steinselektion}
+\subsubsection{Steinselektion}
 \label{sec:stoneSelection}
 \begin{description}
 \item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
@@ -239,6 +239,7 @@ Damit sieht beispielsweise ein Anlegezug, bei dem zwei Spielsteine auf das Spiel
 \section{Willkommensnachricht}
 Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
 \begin{description}
+\item[RID] ID des Raumes, in dem das Spiel stattfindet
 \item[C] Spielerfarbe (red/blue)
 \end{description}
 \begin{verbatim}
@@ -251,6 +252,7 @@ Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farb
 Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die Clients gesendet wird. Das Spielstatus-Tag ist dabei noch in einem \textit{data}-Tag der Klasse \textit{memento} gewrappt:
 \subsection{memento}
 \begin{description}
+\item[RID] ID des Raumes, in dem das Spiel stattfindet
 \item[status] wie in \ref{state} definiert
 \end{description}
 \begin{verbatim}
@@ -265,17 +267,17 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \begin{description}
 \item[Z] aktuelle Zugzahl
 \item[numStones] Anzahl der Spielstein, welche sich im Vorrat befinden.
-\item[sC] Spieler, welcher den ersten Zug ausführen darf ("red"/"blue").
+\item[SC] Spieler, welcher den ersten Zug ausführen darf ("red"/"blue").
 \item[C] Spieler, der an der Reihe ist ("red"/"blue")
 \item[STONE] Wie in \ref{stone} definiert. Der Stein, welcher als nächstes gezogen werden kann, kommt zuerst.
 \item[red, blue] wie in \ref{player} definiert
+\item[board] Das Spielbrett, wie in \ref{board} definiert
 \item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
 \ref{lastmove} definiert
-\item[board] Das Spielbrett, wie in \ref{board} definiert
 \item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
 \end{description}
 \begin{verbatim}
-<state class="state" turn="Z" stonesInBag="numStones" start="sC" currentPlayer="C">
+<state class="state" turn="Z" stonesInBag="numStones" start="SC" currentPlayer="C">
   <nextStones>
     {STONE}
   </nextStones>
@@ -286,6 +288,16 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
   [condition]
 </state>
 
+\end{verbatim}
+
+\subsection{\label{stone}Spielstein}
+\begin{description}
+\item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
+\item[S] Symbol der Steins. Wie in \ref{stoneSymbols} definiert.
+\item[I] Eindeutiger Identifikator des Spielsteins. Ganzzahlig.
+\end{description}
+\begin{verbatim} 
+<stone color="C" shape="S" identifier="I"/>
 \end{verbatim}
 
 \subsection{\label{player}Spieler}
@@ -300,17 +312,6 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 <C displayName="N" color="COL" points="P">
   {STONE}
 </C>
-\end{verbatim}
-
-
-\subsection{\label{stone}Spielstein}
-\begin{description}
-\item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
-\item[S] Symbol der Steins. Wie in \ref{stoneSymbols} definiert.
-\item[I] Eindeutiger Identifikator des Spielsteins. Ganzzahlig.
-\end{description}
-\begin{verbatim} 
-<stone color="C" shape="S" identifier="I"/>
 \end{verbatim}
 
 \subsection{\label{board}Spielbrett}
@@ -338,7 +339,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \subsection{\label{lastmove}Letzter Zug}
 \begin{description}
 \item[T] Typ des Zugs. Entweder ''EXCHANGE'' oder "LAY".
-\item[moves] Eins bis sechs Steinlegungen oder Steinselektionen (siehe \ref{stoneToField} und \ref{sec:stoneSelection})
+\item[moves] Eins bis sechs Legezüge oder Steinselektionen (siehe \ref{stoneToField} und \ref{sec:stoneSelection})
 \end{description}
 \begin{verbatim}
 <move type="T">
@@ -363,11 +364,11 @@ Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{g
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-	<error message="MSG">
-		<originalRequest>
-		Request, der den Fehler verursacht hat
-		</originalRequest>
-	</error>
+  <error message="MSG">
+    <originalRequest>
+      Request, der den Fehler verursacht hat
+    </originalRequest>
+  </error>
 </room>
 \end{verbatim}
 
@@ -377,17 +378,15 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \begin{description}
 \item[N] Spielername
 \item[P] Punktekonto
-\item[card] wie in \ref{card} definiert
+\item[stones] wie in \ref{stone} definiert
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-	<data class="paused">
-		<nextPlayer class="player" displayName="N" color="C" points="P">
-			<cards>
-			  {card}
-			</cards>
-		</nextPlayer>
-	</data>
+  <data class="paused">
+    <nextPlayer class="player" displayName="N" color="C" points="P">
+      {stones}
+    </nextPlayer>
+  </data>
 </room>
 \end{verbatim}
 
@@ -400,7 +399,7 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \section{\label{gameend}Spielergebnis}
 Zum Spielende enthält der Spielstatus eine \textit{Condition}, der das Spielergebnis entnommen werden kann:
 \begin{description}
-\item[W] Gewinner (RED/BLUE), bei Unentschieden wird kein winner mitgeschickt.
+\item[W] Gewinner (red/blue/none)
 \item[R] Text, der den Grund für das Spielende erklärt
 \end{description}
 \begin{verbatim}
@@ -416,170 +415,311 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \item Der Client stellt eine TCP Verbindung zum Spielserver her (er kennt dessen IP-Adresse und Port)
 \item Die Verbindung ist aufgebaut und der Client sendet \begin{verbatim}
 <protocol>
-    <join gameType="swc_2013_cartagena"/>
+    <join gameType="swc_2014_sixpack"/>
 \end{verbatim}
 \item Der Server sendet \begin{verbatim}
 <protocol>
-    <joined roomId="65d3d704-87d9-42eb-8995-51c3e6324513"/>
+    <joined roomId="14138d11-6528-4a05-8c07-bd53610517cf"/>
 \end{verbatim}
 \item der Client merkt sich die roomId.
 \item der Server startet das Spiel und sendet \begin{verbatim}
-<room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
     <data class="welcome" color="BLUE"/>
 </room>
 \end{verbatim}
 \item der Client merkt sich seine Spielerfarbe.
 \item der Server sendet das Ausgangsspielfeld: 
 \begin{verbatim}
-<room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
   <data class="memento">
-    <state class="state" turn="0" currentPlayer="RED">
-      <red displayName="Spieler 1" color="RED" points="0">
-        <cards>
-          <card symbol="BOTTLE"/>
-          <card symbol="DAGGER"/>
-          <card symbol="DAGGER"/>
-          <card symbol="HAT"/>
-          <card symbol="KEY"/>
-          <card symbol="PISTOL"/>
-        </cards>
+    <state class="state" turn="0" stonesInBag="96" start="red" current="red">
+      <nextStones>
+        <stone color="BLUE" shape="DIAMOND" identifier="12"/>
+        <stone color="MAGENTA" shape="CLUBS" identifier="43"/>
+        <stone color="ORANGE" shape="ACORN" identifier="57"/>
+        <stone color="MAGENTA" shape="CLUBS" identifier="44"/>
+        <stone color="VIOLET" shape="DIAMOND" identifier="82"/>
+        <stone color="GREEN" shape="DIAMOND" identifier="29"/>
+        <stone color="GREEN" shape="SPADES" identifier="34"/>
+        <stone color="YELLOW" shape="ACORN" identifier="92"/>
+        <stone color="VIOLET" shape="DIAMOND" identifier="84"/>
+        <stone color="MAGENTA" shape="DIAMOND" identifier="46"/>
+        <stone color="YELLOW" shape="SPADES" identifier="106"/>
+        <stone color="YELLOW" shape="SPADES" identifier="107"/>
+      </nextStones>
+      <red displayName="Spieler 1" points="0">
+        <stone color="GREEN" shape="HEART" identifier="33"/>
+        <stone color="GREEN" shape="ACORN" identifier="19"/>
+        <stone color="VIOLET" shape="CLUBS" identifier="79"/>
+        <stone color="MAGENTA" shape="ACORN" identifier="37"/>
+        <stone color="VIOLET" shape="HEART" identifier="86"/>
+        <stone color="BLUE" shape="CLUBS" identifier="8"/>
       </red>
-      <blue displayName="Spieler 2" color="BLUE" points="0">
-        <cards>
-          <card symbol="PISTOL"/>
-          <card symbol="SKULL"/>
-          <card symbol="KEY"/>
-          <card symbol="KEY"/>
-          <card symbol="KEY"/>
-          <card symbol="DAGGER"/>
-        </cards>
+      <blue displayName="Spieler 2" points="0">
+        <stone color="MAGENTA" shape="ACORN" identifier="39"/>
+        <stone color="MAGENTA" shape="HEART" identifier="51"/>
+        <stone color="BLUE" shape="BELL" identifier="5"/>
+        <stone color="VIOLET" shape="ACORN" identifier="73"/>
+        <stone color="YELLOW" shape="CLUBS" identifier="99"/>
+        <stone color="MAGENTA" shape="SPADES" identifier="53"/>
       </blue>
-      <openCards>
-        <card symbol="BOTTLE"/>
-        <card symbol="BOTTLE"/>
-        <card symbol="HAT"/>
-        <card symbol="KEY"/>
-        <card symbol="PISTOL"/>
-        <card symbol="PISTOL"/>
-        <card symbol="PISTOL"/>
-        <card symbol="HAT"/>
-        <card symbol="PISTOL"/>
-        <card symbol="BOTTLE"/>
-        <card symbol="KEY"/>
-        <card symbol="BOTTLE"/>
-      </openCards>
       <board>
-        <fields>
-          <field type="START">
-            <pirates>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-            </pirates>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="FINISH">
-            <pirates/>
-          </field>
-        </fields>
+        <field posX="0" posY="0"/>
+        <field posX="0" posY="1"/>
+        <field posX="0" posY="2"/>
+        <field posX="0" posY="3"/>
+        <field posX="0" posY="4"/>
+        <field posX="0" posY="5"/>
+        <field posX="0" posY="6"/>
+        <field posX="0" posY="7"/>
+        <field posX="0" posY="8"/>
+        <field posX="0" posY="9"/>
+        <field posX="0" posY="10"/>
+        <field posX="0" posY="11"/>
+        <field posX="0" posY="12"/>
+        <field posX="0" posY="13"/>
+        <field posX="0" posY="14"/>
+        <field posX="0" posY="15"/>
+        <field posX="1" posY="0"/>
+        <field posX="1" posY="1"/>
+        <field posX="1" posY="2"/>
+        <field posX="1" posY="3"/>
+        <field posX="1" posY="4"/>
+        <field posX="1" posY="5"/>
+        <field posX="1" posY="6"/>
+        <field posX="1" posY="7"/>
+        <field posX="1" posY="8"/>
+        <field posX="1" posY="9"/>
+        <field posX="1" posY="10"/>
+        <field posX="1" posY="11"/>
+        <field posX="1" posY="12"/>
+        <field posX="1" posY="13"/>
+        <field posX="1" posY="14"/>
+        <field posX="1" posY="15"/>
+        <field posX="2" posY="0"/>
+        <field posX="2" posY="1"/>
+        <field posX="2" posY="2"/>
+        <field posX="2" posY="3"/>
+        <field posX="2" posY="4"/>
+        <field posX="2" posY="5"/>
+        <field posX="2" posY="6"/>
+        <field posX="2" posY="7"/>
+        <field posX="2" posY="8"/>
+        <field posX="2" posY="9"/>
+        <field posX="2" posY="10"/>
+        <field posX="2" posY="11"/>
+        <field posX="2" posY="12"/>
+        <field posX="2" posY="13"/>
+        <field posX="2" posY="14"/>
+        <field posX="2" posY="15"/>
+        <field posX="3" posY="0"/>
+        <field posX="3" posY="1"/>
+        <field posX="3" posY="2"/>
+        <field posX="3" posY="3"/>
+        <field posX="3" posY="4"/>
+        <field posX="3" posY="5"/>
+        <field posX="3" posY="6"/>
+        <field posX="3" posY="7"/>
+        <field posX="3" posY="8"/>
+        <field posX="3" posY="9"/>
+        <field posX="3" posY="10"/>
+        <field posX="3" posY="11"/>
+        <field posX="3" posY="12"/>
+        <field posX="3" posY="13"/>
+        <field posX="3" posY="14"/>
+        <field posX="3" posY="15"/>
+        <field posX="4" posY="0"/>
+        <field posX="4" posY="1"/>
+        <field posX="4" posY="2"/>
+        <field posX="4" posY="3"/>
+        <field posX="4" posY="4"/>
+        <field posX="4" posY="5"/>
+        <field posX="4" posY="6"/>
+        <field posX="4" posY="7"/>
+        <field posX="4" posY="8"/>
+        <field posX="4" posY="9"/>
+        <field posX="4" posY="10"/>
+        <field posX="4" posY="11"/>
+        <field posX="4" posY="12"/>
+        <field posX="4" posY="13"/>
+        <field posX="4" posY="14"/>
+        <field posX="4" posY="15"/>
+        <field posX="5" posY="0"/>
+        <field posX="5" posY="1"/>
+        <field posX="5" posY="2"/>
+        <field posX="5" posY="3"/>
+        <field posX="5" posY="4"/>
+        <field posX="5" posY="5"/>
+        <field posX="5" posY="6"/>
+        <field posX="5" posY="7"/>
+        <field posX="5" posY="8"/>
+        <field posX="5" posY="9"/>
+        <field posX="5" posY="10"/>
+        <field posX="5" posY="11"/>
+        <field posX="5" posY="12"/>
+        <field posX="5" posY="13"/>
+        <field posX="5" posY="14"/>
+        <field posX="5" posY="15"/>
+        <field posX="6" posY="0"/>
+        <field posX="6" posY="1"/>
+        <field posX="6" posY="2"/>
+        <field posX="6" posY="3"/>
+        <field posX="6" posY="4"/>
+        <field posX="6" posY="5"/>
+        <field posX="6" posY="6"/>
+        <field posX="6" posY="7"/>
+        <field posX="6" posY="8"/>
+        <field posX="6" posY="9"/>
+        <field posX="6" posY="10"/>
+        <field posX="6" posY="11"/>
+        <field posX="6" posY="12"/>
+        <field posX="6" posY="13"/>
+        <field posX="6" posY="14"/>
+        <field posX="6" posY="15"/>
+        <field posX="7" posY="0"/>
+        <field posX="7" posY="1"/>
+        <field posX="7" posY="2"/>
+        <field posX="7" posY="3"/>
+        <field posX="7" posY="4"/>
+        <field posX="7" posY="5"/>
+        <field posX="7" posY="6"/>
+        <field posX="7" posY="7"/>
+        <field posX="7" posY="8"/>
+        <field posX="7" posY="9"/>
+        <field posX="7" posY="10"/>
+        <field posX="7" posY="11"/>
+        <field posX="7" posY="12"/>
+        <field posX="7" posY="13"/>
+        <field posX="7" posY="14"/>
+        <field posX="7" posY="15"/>
+        <field posX="8" posY="0"/>
+        <field posX="8" posY="1"/>
+        <field posX="8" posY="2"/>
+        <field posX="8" posY="3"/>
+        <field posX="8" posY="4"/>
+        <field posX="8" posY="5"/>
+        <field posX="8" posY="6"/>
+        <field posX="8" posY="7"/>
+        <field posX="8" posY="8"/>
+        <field posX="8" posY="9"/>
+        <field posX="8" posY="10"/>
+        <field posX="8" posY="11"/>
+        <field posX="8" posY="12"/>
+        <field posX="8" posY="13"/>
+        <field posX="8" posY="14"/>
+        <field posX="8" posY="15"/>
+        <field posX="9" posY="0"/>
+        <field posX="9" posY="1"/>
+        <field posX="9" posY="2"/>
+        <field posX="9" posY="3"/>
+        <field posX="9" posY="4"/>
+        <field posX="9" posY="5"/>
+        <field posX="9" posY="6"/>
+        <field posX="9" posY="7"/>
+        <field posX="9" posY="8"/>
+        <field posX="9" posY="9"/>
+        <field posX="9" posY="10"/>
+        <field posX="9" posY="11"/>
+        <field posX="9" posY="12"/>
+        <field posX="9" posY="13"/>
+        <field posX="9" posY="14"/>
+        <field posX="9" posY="15"/>
+        <field posX="10" posY="0"/>
+        <field posX="10" posY="1"/>
+        <field posX="10" posY="2"/>
+        <field posX="10" posY="3"/>
+        <field posX="10" posY="4"/>
+        <field posX="10" posY="5"/>
+        <field posX="10" posY="6"/>
+        <field posX="10" posY="7"/>
+        <field posX="10" posY="8"/>
+        <field posX="10" posY="9"/>
+        <field posX="10" posY="10"/>
+        <field posX="10" posY="11"/>
+        <field posX="10" posY="12"/>
+        <field posX="10" posY="13"/>
+        <field posX="10" posY="14"/>
+        <field posX="10" posY="15"/>
+        <field posX="11" posY="0"/>
+        <field posX="11" posY="1"/>
+        <field posX="11" posY="2"/>
+        <field posX="11" posY="3"/>
+        <field posX="11" posY="4"/>
+        <field posX="11" posY="5"/>
+        <field posX="11" posY="6"/>
+        <field posX="11" posY="7"/>
+        <field posX="11" posY="8"/>
+        <field posX="11" posY="9"/>
+        <field posX="11" posY="10"/>
+        <field posX="11" posY="11"/>
+        <field posX="11" posY="12"/>
+        <field posX="11" posY="13"/>
+        <field posX="11" posY="14"/>
+        <field posX="11" posY="15"/>
+        <field posX="12" posY="0"/>
+        <field posX="12" posY="1"/>
+        <field posX="12" posY="2"/>
+        <field posX="12" posY="3"/>
+        <field posX="12" posY="4"/>
+        <field posX="12" posY="5"/>
+        <field posX="12" posY="6"/>
+        <field posX="12" posY="7"/>
+        <field posX="12" posY="8"/>
+        <field posX="12" posY="9"/>
+        <field posX="12" posY="10"/>
+        <field posX="12" posY="11"/>
+        <field posX="12" posY="12"/>
+        <field posX="12" posY="13"/>
+        <field posX="12" posY="14"/>
+        <field posX="12" posY="15"/>
+        <field posX="13" posY="0"/>
+        <field posX="13" posY="1"/>
+        <field posX="13" posY="2"/>
+        <field posX="13" posY="3"/>
+        <field posX="13" posY="4"/>
+        <field posX="13" posY="5"/>
+        <field posX="13" posY="6"/>
+        <field posX="13" posY="7"/>
+        <field posX="13" posY="8"/>
+        <field posX="13" posY="9"/>
+        <field posX="13" posY="10"/>
+        <field posX="13" posY="11"/>
+        <field posX="13" posY="12"/>
+        <field posX="13" posY="13"/>
+        <field posX="13" posY="14"/>
+        <field posX="13" posY="15"/>
+        <field posX="14" posY="0"/>
+        <field posX="14" posY="1"/>
+        <field posX="14" posY="2"/>
+        <field posX="14" posY="3"/>
+        <field posX="14" posY="4"/>
+        <field posX="14" posY="5"/>
+        <field posX="14" posY="6"/>
+        <field posX="14" posY="7"/>
+        <field posX="14" posY="8"/>
+        <field posX="14" posY="9"/>
+        <field posX="14" posY="10"/>
+        <field posX="14" posY="11"/>
+        <field posX="14" posY="12"/>
+        <field posX="14" posY="13"/>
+        <field posX="14" posY="14"/>
+        <field posX="14" posY="15"/>
+        <field posX="15" posY="0"/>
+        <field posX="15" posY="1"/>
+        <field posX="15" posY="2"/>
+        <field posX="15" posY="3"/>
+        <field posX="15" posY="4"/>
+        <field posX="15" posY="5"/>
+        <field posX="15" posY="6"/>
+        <field posX="15" posY="7"/>
+        <field posX="15" posY="8"/>
+        <field posX="15" posY="9"/>
+        <field posX="15" posY="10"/>
+        <field posX="15" posY="11"/>
+        <field posX="15" posY="12"/>
+        <field posX="15" posY="13"/>
+        <field posX="15" posY="14"/>
+        <field posX="15" posY="15"/>
       </board>
     </state>
   </data>
@@ -587,16 +727,18 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \end{verbatim}
 \item da der andere Spieler anfängt folgt noch eine \textit{memento}-Nachricht vom Server, die den Spielstatus nach dem ersten Zug von Spieler 1 beinhaltet.
 \item es folgt die erste Zug-Aufforderung vom Server: \begin{verbatim}
-<room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
     <data class="sc.framework.plugins.protocol.MoveRequest"/>
 </room>
 \end{verbatim}
 \item Der Client antwortet mit einem Zug: \begin{verbatim}
-<room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
-    <data class="moveContainer">
-      <firstMove class="forwardMove" fieldIndex="0" symbol="DAGGER"/>
-      <secondMove class="forwardMove" fieldIndex="2" symbol="KEY"/>
-      <thirdMove class="forwardMove" fieldIndex="0" symbol="HAT"/>
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
+  <data class="laymove">
+    <stoneToField>
+      <stone color="MAGENTA" shape="HEART" identifier="51"/>
+      <field posX="7" posY="5"/>
+    </stoneToField>
+    <hint content="Sending LayMove"/>
   </data>
 </room>
 \end{verbatim}
@@ -608,21 +750,3 @@ Daraufhin wird die Verbindung geschlossen
 \end{enumerate}
 
 \end{document}
-
-
-<room roomId="RID">
-  <data class="result">
-    <definition>
-      <fragment name="Punkte">
-        <aggregation>AVERAGE</aggregation>
-        <relevantForRanking>true</relevantForRanking>
-      </fragment>
-    </definition>
-    <score cause="REGULAR">
-      <part>12</part>
-    </score>
-    <score cause="REGULAR">
-      <part>8</part>
-    </score>
-  </data>
-</room>
