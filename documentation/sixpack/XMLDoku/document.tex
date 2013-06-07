@@ -208,27 +208,19 @@ Zügen können Debug-Informationen beigefügt werden:
 \begin{verbatim}
  <hint content="S"/>
 \end{verbatim}
-Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
-% \begin{verbatim}
-% <room roomId="RID">
-%   <data class="manhattan:build" city="C" slot="P" size="S">
-%   	<hint content="höchstes Gebäude sichern"/>
-%   	<hint content="..."/>
-%   </data>
-% </room>
-% \end{verbatim}
+Damit sieht beispielsweise ein Anlegezug, bei dem zwei Spielsteine auf das Spielbrett gelegt werden, so aus:
 \begin{verbatim}
-<room roomId="RID">
-  <data class="moveContainer">
-    <firstMove class="backwardMove" fieldIndex="FID">
-     	<hint content="2 Karten ziehen...."/>
-     	<hint content="Noch ein Hint"/>
-    </firstMove>
-    <secondMove class="forwardMove" fieldIndex="FID" symbol="SYMBOL">
-    	<hint content="Piraten ins Zielfeld bewegen..."/>
-    </secondMove>
-  </data>
-</room>
+<move type="LAY">
+<stoneToField>
+  <stone color="BLUE" shape="DIAMOND" identifier="12"/>
+  <field posX="7" posY="7"/>
+</stoneToField>
+<stoneToField>
+  <stone color="BLUE" shape="SPADES" identifier="18"/>
+  <field posX="6" posY="7"/>
+</stoneToField>
+<hint content="Sending Start LayMove"/>
+</move>
 \end{verbatim}
 
 
