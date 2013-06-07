@@ -143,7 +143,7 @@ Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zu
 \label{stoneToField}
 \begin{description}
 \item[stone] Spielstein, welcher gelegt werden soll. Wie in \ref{stone} definiert.
-\item[field] Spielfeld, auf das der Stein gelegt werden soll. Wie in TODO definiert.
+\item[field] Spielfeld, auf das der Stein gelegt werden soll. Wie in \ref{sec:field} definiert.
 \end{description}
 \begin{verbatim}
 <stoneToField>
@@ -168,15 +168,26 @@ Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zu
 \begin{description}
 \item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
 \item[S] Symbol des Steins. Wie in \ref{stoneSymbols} definiert.
-\item[I] Identifikator. TODO
+\item[I] Eindeutiger Identifikator des Spielsteins. Ganzzahlig.
 \end{description}
 \begin{verbatim}
 <select color="C" shape="S" identifier="I">
 \end{verbatim}
 
+\subsection{\label{stoneColors}Steinfarben}
+Die Strings der Farbnamen sind:
+\begin{compactenum}
+\item BLUE
+\item GREEN
+\item MAGENTA
+\item ORANGE
+\item VIOLET
+\item YELLOW
+\end{compactenum}
+Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
+sein.
 
 \subsection{\label{stoneSymbols}Steinsymbole}
-
 Die Strings der Symbolnamen sind:
 \begin{compactenum}
 \item ACORN
@@ -185,18 +196,6 @@ Die Strings der Symbolnamen sind:
 \item DIAMOND
 \item HEART
 \item SPADES
-\end{compactenum}
-Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
-sein.
-\subsection{\label{stoneColors}Steinfarben}
-Die Strings der Farblnamen sind:
-\begin{compactenum}
-\item BLUE
-\item GREEN
-\item MAGENTA
-\item ORANGE
-\item VIOLET
-\item YELLOW
 \end{compactenum}
 Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
 sein.
@@ -316,7 +315,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \begin{description}
 \item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
 \item[S] Symbol der Steins. Wie in \ref{stoneSymbols} definiert.
-\item[I] Identifikator. TODO
+\item[I] Eindeutiger Identifikator des Spielsteins. Ganzzahlig.
 \end{description}
 \begin{verbatim} 
 <stone color="C" shape="S" identifier="I"/>
@@ -346,15 +345,13 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 
 \subsection{\label{lastmove}Letzter Zug}
 \begin{description}
-\item[ZUG] Informationen über den Zug. (siehe \ref{forwardMove} und
-\ref{backwardMove})
+\item[T] Typ des Zugs. Entweder ''EXCHANGE'' oder "LAY".
+\item[moves] Eins bis sechs Steinlegungen oder Steinselektionen (siehe \ref{stoneToField} und \ref{sec:stoneSelection})
 \end{description}
 \begin{verbatim}
-<lastMove>
-  <firstMove ZUG>
-  <secondMove ZUG>
-  <thirdMove ZUG>
-</lastMove>
+<move type="T">
+  {moves}
+</move>
 \end{verbatim}
 
 \section{\label{moverequest}Zug-Anforderung}
