@@ -43,8 +43,8 @@ eigener Client geschrieben werden kann. Es wird hier nicht die vollständige
 Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client
 umgehen können muss, um spielfähig zu sein.
 \subsection*{An wen richtet sich dieses Dokument?} Die Kommunikation mit dem
-Spielserver ist für diejenigen, die aufbauend auf dem Simpleclient
-programmieren, unwichtig. Dort steht bereits ein funktionierender Client bereit
+Spielserver ist für diejenigen unwichtig, die aufbauend auf dem Simpleclient
+programmieren. Dort steht bereits ein funktionierender Client bereit
 und es muss nur die Spiellogik entworfen werden. \\
 Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die
 Programmiersprache frei wählen zu können, benötigt die Definitionen.
@@ -67,7 +67,7 @@ Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
 Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die über dem Code kurz erläutert werden.\\
 Eingebettete XML-Elemente werden hier allgemein als \begin{verbatim}
 {TAGNAME}
-\end{verbatim} geschrieben, wenn an der Stelle eine beliebige Anzahl von \textit{TAGNAME}-Tags eingebettet sein \textit{kann} und als \begin{verbatim}
+\end{verbatim} geschrieben, wenn an der Stelle eine beliebige Anzahl ($\geq 0$) von \textit{TAGNAME}-Tags eingebettet sein \textit{kann} und als \begin{verbatim}
 [TAGNAME]
 \end{verbatim}, wenn an der Stelle ein \textit{TAGNAME}-Tag optional stehen kann. \\
 
@@ -104,7 +104,7 @@ Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags zu
 \part{Client $\rightarrow$ Server}
 \section{Spiel betreten}
 \subsection{Ohne Reservierung}
-Betritt ein beliebiges offenes Spiel:
+Betritt ein beliebiges, offenes Spiel:
 \begin{verbatim}
 <join gameType="swc_2014_sixpack"/>
 \end{verbatim}
@@ -118,7 +118,7 @@ Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Plat
 \end{verbatim}
 
 \section{Züge senden}
-Es gibt zwei Arten von Zügen. Anlegezüge und Tauschzüge. Beim Senden eines Zuges muss dieser, jeweils von einem ''room'' Objekt umschlossen werden.
+Es gibt zwei Arten von Zügen: Anlegezüge und Tauschzüge. Beim Senden eines Zuges muss dieser, jeweils von einem ''room'' Objekt umschlossen werden.
 \begin{description}
 \item[RID] ID des Raumes
 \item[move] Anlege- oder Tauschzug. Wie in \ref{layMove} und \ref{changeMove} definiert.
@@ -266,7 +266,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \subsection{\label{state}Status}
 \begin{description}
 \item[Z] aktuelle Zugzahl
-\item[numStones] Anzahl der Spielstein, welche sich im Vorrat befinden.
+\item[numStones] Anzahl der Spielsteine, welche sich im Vorrat befinden.
 \item[SC] Spieler, welcher den ersten Zug ausführen darf ("red"/"blue").
 \item[C] Spieler, der an der Reihe ist ("red"/"blue")
 \item[STONE] Wie in \ref{stone} definiert. Der Stein, welcher als nächstes gezogen werden kann, kommt zuerst.
@@ -357,7 +357,7 @@ Eine simple Nachricht fordert zum Zug auf:
 
 \section{Fehler}
 Ein \glqq spielfähiger\grqq\ Client muss nicht mit Fehlern umgehen können.
-Fehlerhafte Züge beispielsweise resultieren in einem vorzeitigen Ende des
+Fehlerhafte Züge resultieren in einem vorzeitigen Ende des
 Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend}).
 \begin{description}
 \item[MSG] Fehlermeldung
@@ -496,198 +496,9 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
         <field posX="1" posY="13"/>
         <field posX="1" posY="14"/>
         <field posX="1" posY="15"/>
-        <field posX="2" posY="0"/>
-        <field posX="2" posY="1"/>
-        <field posX="2" posY="2"/>
-        <field posX="2" posY="3"/>
-        <field posX="2" posY="4"/>
-        <field posX="2" posY="5"/>
-        <field posX="2" posY="6"/>
-        <field posX="2" posY="7"/>
-        <field posX="2" posY="8"/>
-        <field posX="2" posY="9"/>
-        <field posX="2" posY="10"/>
-        <field posX="2" posY="11"/>
-        <field posX="2" posY="12"/>
-        <field posX="2" posY="13"/>
-        <field posX="2" posY="14"/>
-        <field posX="2" posY="15"/>
-        <field posX="3" posY="0"/>
-        <field posX="3" posY="1"/>
-        <field posX="3" posY="2"/>
-        <field posX="3" posY="3"/>
-        <field posX="3" posY="4"/>
-        <field posX="3" posY="5"/>
-        <field posX="3" posY="6"/>
-        <field posX="3" posY="7"/>
-        <field posX="3" posY="8"/>
-        <field posX="3" posY="9"/>
-        <field posX="3" posY="10"/>
-        <field posX="3" posY="11"/>
-        <field posX="3" posY="12"/>
-        <field posX="3" posY="13"/>
-        <field posX="3" posY="14"/>
-        <field posX="3" posY="15"/>
-        <field posX="4" posY="0"/>
-        <field posX="4" posY="1"/>
-        <field posX="4" posY="2"/>
-        <field posX="4" posY="3"/>
-        <field posX="4" posY="4"/>
-        <field posX="4" posY="5"/>
-        <field posX="4" posY="6"/>
-        <field posX="4" posY="7"/>
-        <field posX="4" posY="8"/>
-        <field posX="4" posY="9"/>
-        <field posX="4" posY="10"/>
-        <field posX="4" posY="11"/>
-        <field posX="4" posY="12"/>
-        <field posX="4" posY="13"/>
-        <field posX="4" posY="14"/>
-        <field posX="4" posY="15"/>
-        <field posX="5" posY="0"/>
-        <field posX="5" posY="1"/>
-        <field posX="5" posY="2"/>
-        <field posX="5" posY="3"/>
-        <field posX="5" posY="4"/>
-        <field posX="5" posY="5"/>
-        <field posX="5" posY="6"/>
-        <field posX="5" posY="7"/>
-        <field posX="5" posY="8"/>
-        <field posX="5" posY="9"/>
-        <field posX="5" posY="10"/>
-        <field posX="5" posY="11"/>
-        <field posX="5" posY="12"/>
-        <field posX="5" posY="13"/>
-        <field posX="5" posY="14"/>
-        <field posX="5" posY="15"/>
-        <field posX="6" posY="0"/>
-        <field posX="6" posY="1"/>
-        <field posX="6" posY="2"/>
-        <field posX="6" posY="3"/>
-        <field posX="6" posY="4"/>
-        <field posX="6" posY="5"/>
-        <field posX="6" posY="6"/>
-        <field posX="6" posY="7"/>
-        <field posX="6" posY="8"/>
-        <field posX="6" posY="9"/>
-        <field posX="6" posY="10"/>
-        <field posX="6" posY="11"/>
-        <field posX="6" posY="12"/>
-        <field posX="6" posY="13"/>
-        <field posX="6" posY="14"/>
-        <field posX="6" posY="15"/>
-        <field posX="7" posY="0"/>
-        <field posX="7" posY="1"/>
-        <field posX="7" posY="2"/>
-        <field posX="7" posY="3"/>
-        <field posX="7" posY="4"/>
-        <field posX="7" posY="5"/>
-        <field posX="7" posY="6"/>
-        <field posX="7" posY="7"/>
-        <field posX="7" posY="8"/>
-        <field posX="7" posY="9"/>
-        <field posX="7" posY="10"/>
-        <field posX="7" posY="11"/>
-        <field posX="7" posY="12"/>
-        <field posX="7" posY="13"/>
-        <field posX="7" posY="14"/>
-        <field posX="7" posY="15"/>
-        <field posX="8" posY="0"/>
-        <field posX="8" posY="1"/>
-        <field posX="8" posY="2"/>
-        <field posX="8" posY="3"/>
-        <field posX="8" posY="4"/>
-        <field posX="8" posY="5"/>
-        <field posX="8" posY="6"/>
-        <field posX="8" posY="7"/>
-        <field posX="8" posY="8"/>
-        <field posX="8" posY="9"/>
-        <field posX="8" posY="10"/>
-        <field posX="8" posY="11"/>
-        <field posX="8" posY="12"/>
-        <field posX="8" posY="13"/>
-        <field posX="8" posY="14"/>
-        <field posX="8" posY="15"/>
-        <field posX="9" posY="0"/>
-        <field posX="9" posY="1"/>
-        <field posX="9" posY="2"/>
-        <field posX="9" posY="3"/>
-        <field posX="9" posY="4"/>
-        <field posX="9" posY="5"/>
-        <field posX="9" posY="6"/>
-        <field posX="9" posY="7"/>
-        <field posX="9" posY="8"/>
-        <field posX="9" posY="9"/>
-        <field posX="9" posY="10"/>
-        <field posX="9" posY="11"/>
-        <field posX="9" posY="12"/>
-        <field posX="9" posY="13"/>
-        <field posX="9" posY="14"/>
-        <field posX="9" posY="15"/>
-        <field posX="10" posY="0"/>
-        <field posX="10" posY="1"/>
-        <field posX="10" posY="2"/>
-        <field posX="10" posY="3"/>
-        <field posX="10" posY="4"/>
-        <field posX="10" posY="5"/>
-        <field posX="10" posY="6"/>
-        <field posX="10" posY="7"/>
-        <field posX="10" posY="8"/>
-        <field posX="10" posY="9"/>
-        <field posX="10" posY="10"/>
-        <field posX="10" posY="11"/>
-        <field posX="10" posY="12"/>
-        <field posX="10" posY="13"/>
-        <field posX="10" posY="14"/>
-        <field posX="10" posY="15"/>
-        <field posX="11" posY="0"/>
-        <field posX="11" posY="1"/>
-        <field posX="11" posY="2"/>
-        <field posX="11" posY="3"/>
-        <field posX="11" posY="4"/>
-        <field posX="11" posY="5"/>
-        <field posX="11" posY="6"/>
-        <field posX="11" posY="7"/>
-        <field posX="11" posY="8"/>
-        <field posX="11" posY="9"/>
-        <field posX="11" posY="10"/>
-        <field posX="11" posY="11"/>
-        <field posX="11" posY="12"/>
-        <field posX="11" posY="13"/>
-        <field posX="11" posY="14"/>
-        <field posX="11" posY="15"/>
-        <field posX="12" posY="0"/>
-        <field posX="12" posY="1"/>
-        <field posX="12" posY="2"/>
-        <field posX="12" posY="3"/>
-        <field posX="12" posY="4"/>
-        <field posX="12" posY="5"/>
-        <field posX="12" posY="6"/>
-        <field posX="12" posY="7"/>
-        <field posX="12" posY="8"/>
-        <field posX="12" posY="9"/>
-        <field posX="12" posY="10"/>
-        <field posX="12" posY="11"/>
-        <field posX="12" posY="12"/>
-        <field posX="12" posY="13"/>
-        <field posX="12" posY="14"/>
-        <field posX="12" posY="15"/>
-        <field posX="13" posY="0"/>
-        <field posX="13" posY="1"/>
-        <field posX="13" posY="2"/>
-        <field posX="13" posY="3"/>
-        <field posX="13" posY="4"/>
-        <field posX="13" posY="5"/>
-        <field posX="13" posY="6"/>
-        <field posX="13" posY="7"/>
-        <field posX="13" posY="8"/>
-        <field posX="13" posY="9"/>
-        <field posX="13" posY="10"/>
-        <field posX="13" posY="11"/>
-        <field posX="13" posY="12"/>
-        <field posX="13" posY="13"/>
-        <field posX="13" posY="14"/>
-        <field posX="13" posY="15"/>
+        \end{verbatim}
+        \hspace{130px}$\vdots$
+        \begin{verbatim}
         <field posX="14" posY="0"/>
         <field posX="14" posY="1"/>
         <field posX="14" posY="2"/>
