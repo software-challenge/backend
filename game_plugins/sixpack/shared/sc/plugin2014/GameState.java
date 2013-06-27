@@ -42,7 +42,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  * @author tkra
  */
-@XStreamAlias(value = "qw:state")
+@XStreamAlias(value = "state")
 @XStreamConverter(GameStateConverter.class)
 public class GameState implements Cloneable {
 
