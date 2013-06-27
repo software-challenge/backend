@@ -6,7 +6,7 @@ import sc.plugin2014.util.Constants;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-@XStreamAlias(value = "qw:board")
+@XStreamAlias(value = "board")
 public class Board implements Cloneable {
 
     @XStreamImplicit(itemFieldName = "field")

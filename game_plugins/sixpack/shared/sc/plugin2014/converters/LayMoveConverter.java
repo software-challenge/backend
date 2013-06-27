@@ -29,7 +29,7 @@ public class LayMoveConverter implements Converter {
         LayMove move = (LayMove) value;
         if (!value.getClass().equals(LayMove.class)) {
             /* adding standard xml-tag for derived moves */
-            XStreamConfiguration.getXStream().alias("qw:laymove",
+            XStreamConfiguration.getXStream().alias("laymove",
                     value.getClass());
         }
 

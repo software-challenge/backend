@@ -26,7 +26,7 @@ public class ExchangeMoveConverter implements Converter {
             MarshallingContext context) {
         if (!value.getClass().equals(ExchangeMove.class)) {
             /* adding standard xml-tag for derived moves */
-            XStreamConfiguration.getXStream().alias("qw:exchangemove",
+            XStreamConfiguration.getXStream().alias("exchangemove",
                     value.getClass());
         }
         ExchangeMove move = (ExchangeMove) value;

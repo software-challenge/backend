@@ -9,7 +9,7 @@ public class StoneShapeTest {
         assertEquals(StoneShape.ACORN, StoneShape.getShapeFromIndex(0));
         assertEquals(StoneShape.BELL, StoneShape.getShapeFromIndex(1));
         assertEquals(StoneShape.CLUBS, StoneShape.getShapeFromIndex(2));
-        assertEquals(StoneShape.DIAMONT, StoneShape.getShapeFromIndex(3));
+        assertEquals(StoneShape.DIAMOND, StoneShape.getShapeFromIndex(3));
         assertEquals(StoneShape.HEART, StoneShape.getShapeFromIndex(4));
         assertEquals(StoneShape.SPADES, StoneShape.getShapeFromIndex(5));
     }
