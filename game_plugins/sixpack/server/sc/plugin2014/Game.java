@@ -205,7 +205,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player) {
-		return new ActionTimeout(true, 1000000l, 200000l); // TODO ...
+		return new ActionTimeout(true, 10000l, 2000l);
 	}
 
 	@Override
@@ -224,6 +224,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void loadGameInfo(Object gameInfo) {
+		//TODO Player Points and Turn and CurrentPlayer
 		if (gameInfo instanceof GameState) {
 			GameState temp = (GameState) gameInfo;
 			gameState.loadFromFile(temp);
