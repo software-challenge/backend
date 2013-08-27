@@ -404,5 +404,21 @@ public class GameState implements Cloneable {
 
 	public void loadFromFile(GameState gs) {
 		stoneBag.loadFromFile(gs); //filters out the stone Bag
+		//Sets the Board
+		if(gs.getBoard().hasStones()){
+			for(Field field: gs.getBoard().getFields()){
+				if(!field.isFree()){
+					layStone(field.getStone(), field.getPosX(), field.getPosY());
+				}
+			}
+		}
+		//Set Player Points Doesn't work. No Player Object instantiated yet
+		/*this.blue.addPoints(gs.blue.getPoints());
+		this.red.addPoints(gs.getRedPlayer().getPoints());*/
+		
+		//Set turn
+		//this.turn = gs.getTurn();
+		//Set activePlayer
+		//this.currentPlayer = gs.getCurrentPlayerColor();
 	}
 }
