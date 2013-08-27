@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
  */
-@XStreamAlias(value = "qw:game")
+@XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
 	private static Logger logger = LoggerFactory.getLogger(Game.class);
 
@@ -226,10 +226,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
 			GameState temp = (GameState) gameInfo;
-			for (Stone s : temp.getBluePlayer().getStones()) {
-				logger.debug("Stone Color:" + s.getColor() + ", Shape: "+ s.getShape());
-			}
-			logger.debug("Stones in Bag temp:" + String.valueOf(temp.getStoneCountInBag()));
 			gameState.loadFromFile(temp);
 		}
 	}
