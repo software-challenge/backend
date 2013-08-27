@@ -3,6 +3,8 @@ package sc.plugin2014.entities;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.*;
+
+import sc.plugin2014.GameState;
 import sc.plugin2014.util.Constants;
 
 public class StoneBag implements Cloneable {
@@ -92,4 +94,44 @@ public class StoneBag implements Cloneable {
     public List<Stone> getNextStonesInBag() {
         return nextStones;
     }
+
+	public void loadFromFile(GameState gs) {
+		List<Stone> blueStones = gs.getBluePlayer().getStones();
+		List<Stone> redStones = gs.getRedPlayer().getStones();
+		List<Stone> openStones = gs.getNextStonesInBag();
+		
+		ArrayList<Stone> tempStones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
+                * Constants.STONES_SHAPE_COUNT
+                * Constants.STONES_SAME_KIND_COUNT);
+		
+		for(Stone stone: redStones){
+			tempStones.add(stone);
+		}
+		for(Stone stone: blueStones){
+			tempStones.add(stone);
+		}
+		for(Stone stone: openStones){
+			tempStones.add(stone);
+		}
+		
+		for(Stone stone: nextStones){
+			stones.add(stone);
+		}
+		
+		//filter out stones
+		for(Stone bagStone: stones){
+			if(!tempStones.contains(bagStone)){
+				tempStones.add(bagStone);
+			}
+		}
+		
+		stones.clear();
+		nextStones.clear();
+		
+		for(Stone stone:tempStones){
+			stones.add(stone);
+		}
+		
+		refreshNextStones();		
+	}
 }
