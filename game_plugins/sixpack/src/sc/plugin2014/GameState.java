@@ -417,8 +417,8 @@ public class GameState implements Cloneable {
 		this.red.addPoints(gs.getRedPlayer().getPoints());*/
 		
 		//Set turn
-		//this.turn = gs.getTurn();
+		this.turn = gs.getTurn();
 		//Set activePlayer
-		//this.currentPlayer = gs.getCurrentPlayerColor();
+		this.currentPlayer = gs.getCurrentPlayerColor();
 	}
 }

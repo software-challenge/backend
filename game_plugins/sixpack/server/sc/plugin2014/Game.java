@@ -36,10 +36,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private final List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
 	private GameState gameState = new GameState();
-	
-	//start Points for loadFromFile
+
+	// start Points for loadFromFile
 	private int redStartPoints = 0;
 	private int blueStartPoints = 0;
+	private PlayerColor loadPlayerColor = PlayerColor.RED;
 
 	public GameState getGameState() {
 		return gameState;
@@ -133,10 +134,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 		final Player player = new Player(color);
 		players.add(player);
 		gameState.addPlayer(player);
-		
-		if(color == PlayerColor.RED){
+
+		if (color == PlayerColor.RED) {
 			player.addPoints(redStartPoints);
-		}else {
+		} else {
 			player.addPoints(blueStartPoints);
 		}
 
@@ -187,7 +188,18 @@ public class Game extends RoundBasedGameInstance<Player> {
 			p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
 		}
 
-		super.start();
+		// super.start();
+		if (this.listeners.size() == 0) {
+			logger.warn("Couldn't find any listeners. Is this intended?");
+		}
+		if (loadPlayerColor == PlayerColor.RED) {
+			this.activePlayer = this.players.get(0);
+		} else {
+			this.activePlayer = this.players.get(1);
+		}
+		onActivePlayerChanged(this.activePlayer);
+		notifyOnNewState(getCurrentState());
+		notifyActivePlayer();
 	}
 
 	@Override
@@ -234,12 +246,15 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void loadGameInfo(Object gameInfo) {
-		//TODO Player Points and Turn and CurrentPlayer
+		// TODO Turn and CurrentPlayer
 		if (gameInfo instanceof GameState) {
 			GameState temp = (GameState) gameInfo;
 			gameState.loadFromFile(temp);
 			redStartPoints = temp.getRedPlayer().getPoints();
 			blueStartPoints = temp.getBluePlayer().getPoints();
+			if (temp.getCurrentPlayerColor() == PlayerColor.BLUE) {
+				loadPlayerColor = PlayerColor.BLUE;
+			}
 		}
 	}
 
