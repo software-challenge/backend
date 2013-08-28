@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
  */
-@XStreamAlias(value = "qw:game")
+@XStreamAlias(value = "game")
 public class Game extends RoundBasedGameInstance<Player> {
 	private static Logger logger = LoggerFactory.getLogger(Game.class);
 
@@ -36,6 +36,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private final List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
 	private GameState gameState = new GameState();
+	
+	//start Points for loadFromFile
+	private int redStartPoints = 0;
+	private int blueStartPoints = 0;
 
 	public GameState getGameState() {
 		return gameState;
@@ -125,10 +129,16 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT) {
 			throw new TooManyPlayersException();
 		}
-
-		final Player player = new Player(availableColors.remove(0));
+		PlayerColor color = availableColors.remove(0);
+		final Player player = new Player(color);
 		players.add(player);
 		gameState.addPlayer(player);
+		
+		if(color == PlayerColor.RED){
+			player.addPoints(redStartPoints);
+		}else {
+			player.addPoints(blueStartPoints);
+		}
 
 		return player;
 	}
@@ -205,7 +215,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player) {
-		return new ActionTimeout(true, 1000000l, 200000l); // TODO ...
+		return new ActionTimeout(true, 10000l, 2000l);
 	}
 
 	@Override
@@ -224,13 +234,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void loadGameInfo(Object gameInfo) {
+		//TODO Player Points and Turn and CurrentPlayer
 		if (gameInfo instanceof GameState) {
 			GameState temp = (GameState) gameInfo;
-			for (Stone s : temp.getBluePlayer().getStones()) {
-				logger.debug("Stone Color:" + s.getColor() + ", Shape: "+ s.getShape());
-			}
-			logger.debug("Stones in Bag temp:" + String.valueOf(temp.getStoneCountInBag()));
 			gameState.loadFromFile(temp);
+			redStartPoints = temp.getRedPlayer().getPoints();
+			blueStartPoints = temp.getBluePlayer().getPoints();
 		}
 	}
 

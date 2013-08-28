@@ -36,6 +36,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private final List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
 	private GameState gameState = new GameState();
+	
+	//start Points for loadFromFile
+	private int redStartPoints = 0;
+	private int blueStartPoints = 0;
 
 	public GameState getGameState() {
 		return gameState;
@@ -125,10 +129,16 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (players.size() >= GamePlugin.MAX_PLAYER_COUNT) {
 			throw new TooManyPlayersException();
 		}
-
-		final Player player = new Player(availableColors.remove(0));
+		PlayerColor color = availableColors.remove(0);
+		final Player player = new Player(color);
 		players.add(player);
 		gameState.addPlayer(player);
+		
+		if(color == PlayerColor.RED){
+			player.addPoints(redStartPoints);
+		}else {
+			player.addPoints(blueStartPoints);
+		}
 
 		return player;
 	}
@@ -228,6 +238,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (gameInfo instanceof GameState) {
 			GameState temp = (GameState) gameInfo;
 			gameState.loadFromFile(temp);
+			redStartPoints = temp.getRedPlayer().getPoints();
+			blueStartPoints = temp.getBluePlayer().getPoints();
 		}
 	}
 
