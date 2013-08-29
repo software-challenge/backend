@@ -85,8 +85,37 @@ public class StoneBag implements Cloneable {
 	}
 
 	@Override
-	public Object clone() {
-		return null; // TODO
+	public Object clone() throws CloneNotSupportedException {
+		StoneBag clone = new StoneBag();
+		clone.stones.clear();
+		clone.nextStones.clear();
+		for (Stone s : stones) {
+			clone.stones.add((Stone) s.clone());
+		}
+		for (Stone s : nextStones) {
+			clone.nextStones.add((Stone) s.clone());
+		}
+		return clone;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof StoneBag) {
+			StoneBag bag = (StoneBag) obj;
+			for (Stone stone : stones) {
+				if (!bag.stones.contains(stone)) {
+					return false;
+				}
+			}
+			for (Stone stone : nextStones) {
+				if (!bag.nextStones.contains(stone)) {
+					return false;
+				}
+			}
+		} else {
+			return false;
+		}
+		return true;
 	}
 
 	public List<Stone> getNextStonesInBag() {
@@ -122,8 +151,8 @@ public class StoneBag implements Cloneable {
 				tempStones.add(bagStone);
 			}
 		}
-		
-		//filter out the stones already laid
+
+		// filter out the stones already laid
 		if (gs.getBoard().hasStones()) {
 			for (Field field : gs.getBoard().getFields()) {
 				if (!field.isFree()) {

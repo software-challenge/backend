@@ -21,7 +21,8 @@ public class StoneBagTest {
         assertNotNull(stoneBag.drawStone());
         assertEquals(sizeBefore - 1, stoneBag.getStoneCountInBag());
     }
-
+    
+    @Test
     public void testDrawStoneOverEnd() {
         StoneBag stoneBag = new StoneBag();
         assertNotNull(stoneBag.drawStone());
@@ -50,7 +51,13 @@ public class StoneBagTest {
 
     @Test
     public void testClone() {
-        // TODO
+    	StoneBag stoneBag = new StoneBag();
+    	try {
+			StoneBag clone =(StoneBag) stoneBag.clone();
+			assertTrue(stoneBag.equals(clone));
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
     }
 
 }

@@ -37,7 +37,16 @@ public class BoardTest {
 
     @Test
     public void testClone() {
-        // TODO
+    	Board board = new Board();
+    	Stone stone = new Stone();
+    	board.layStone(stone, 0, 0);
+    	Board clone;
+		try {
+			clone = (Board) board.clone();
+			assertTrue(board.equals(clone));
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}    	
     }
 
 }

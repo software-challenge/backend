@@ -173,7 +173,19 @@ public class ExchangeMoveTest {
 
     @Test
     public void testClone() {
-        // TODO
+    	ArrayList<Stone> stones = new ArrayList<Stone>();
+        Stone stone = new Stone();
+        Stone stone2 = new Stone();
+        stones.add(stone);
+        stones.add(stone2);
+        
+        ExchangeMove exchangeMove = new ExchangeMove(stones);
+        try {
+			ExchangeMove clone = (ExchangeMove) exchangeMove.clone();
+			assertTrue(exchangeMove.equals(clone));
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
     }
 
 }
