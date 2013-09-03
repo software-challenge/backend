@@ -11,6 +11,12 @@ import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+/**
+ * Repräsentiert einen Legezug.
+ * 
+ * @author ffi
+ * 
+ */
 @XStreamAlias(value = "laymove")
 @XStreamConverter(LayMoveConverter.class)
 public class LayMove extends Move implements Cloneable {
@@ -21,6 +27,12 @@ public class LayMove extends Move implements Cloneable {
 		stoneToFieldMapping = new HashMap<Stone, Field>();
 	}
 
+	/**
+	 * Liefert eine Map mit Steinen, welche auf die dazugehörigen Felder gelegt
+	 * werden sollen.
+	 * 
+	 * @return
+	 */
 	public Map<Stone, Field> getStoneToFieldMapping() {
 		return stoneToFieldMapping;
 	}
@@ -47,6 +59,9 @@ public class LayMove extends Move implements Cloneable {
 		}
 	}
 
+	/**
+	 * Löscht die Map mit Zügen.
+	 */
 	public void clearStoneToFieldMapping() {
 		getStoneToFieldMapping().clear();
 	}
@@ -95,6 +110,10 @@ public class LayMove extends Move implements Cloneable {
 		state.updateStonesInBag();
 	}
 
+	/**
+	 * Liefert eine liste mit Steinen, welche gelegt werden sollen.
+	 * @return Die Liste mit Steinen.
+	 */
 	private List<Stone> getStonesToLay() {
 		return new LinkedList<Stone>(getStoneToFieldMapping().keySet());
 	}
@@ -122,19 +141,21 @@ public class LayMove extends Move implements Cloneable {
 	public boolean equals(Object obj) {
 		if (obj instanceof LayMove) {
 			LayMove lm = (LayMove) obj;
-			LinkedList<Stone> keys = new LinkedList<Stone>(stoneToFieldMapping.keySet());
-			LinkedList<Stone> keysCp = new LinkedList<Stone>(lm.stoneToFieldMapping.keySet());
+			LinkedList<Stone> keys = new LinkedList<Stone>(
+					stoneToFieldMapping.keySet());
+			LinkedList<Stone> keysCp = new LinkedList<Stone>(
+					lm.stoneToFieldMapping.keySet());
 			for (Stone stone : keys) {
 				if (!(keysCp.contains(stone))) {
 					return false;
-				} 
+				}
 				Stone equi = new Stone();
-				for(Stone s: keysCp){
-					if(s.equals(stone)){
+				for (Stone s : keysCp) {
+					if (s.equals(stone)) {
 						equi = s;
 					}
 				}
-				if(!stoneToFieldMapping.get(stone).equals(
+				if (!stoneToFieldMapping.get(stone).equals(
 						lm.stoneToFieldMapping.get(equi))) {
 					return false;
 				}
