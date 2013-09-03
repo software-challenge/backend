@@ -47,4 +47,8 @@ public class Stone implements Cloneable {
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
+    
+    public String toString(){
+    	return "Stone - Color: " + color + " - Shape: " + shape + " - Identifier: " + identifier;  
+    }
 }
