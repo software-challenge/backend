@@ -79,7 +79,7 @@
 		<fileset dir="src" defaultexcludes="yes">
 				<exclude name="logback.xml"/>
 			</fileset> 
-		<fileset dir="../../game_plugins/sixpack/src/sc/plugin2014" defaultexcludes="yes">
+            <fileset dir="${plugins.dir}/sixpack/src/sc/plugin2014" defaultexcludes="yes">
 			<include name="*"/>
 			<exclude name="Game.java"/>
 			<exclude name="AbstractClient.java"/>
@@ -87,10 +87,23 @@
 			<exclude name="GamePlugin.java"/>
 			<exclude name="GuiClient.java"/>
 			<exclude name="IGUIObservation.java"/>
-            <exclude name="WelcomeMessage.java"/>
-            <exclude name="XStreamConfiguration.java"/>
-		</fileset>
-			</javadoc>
+         		<exclude name="WelcomeMessage.java"/>
+         		
+        </fileset>
+        <fileset dir="${plugins.dir}/sixpack/src/sc/plugin2014/entities" defaultexcludes="yes">
+            <include name="*"/>
+        </fileset>
+        <fileset dir="${plugins.dir}/sixpack/src/sc/plugin2014/moves" defaultexcludes="yes">
+            <include name="*"/>
+        </fileset>
+	<fileset dir="${plugins.dir}/sixpack/src/sc/plugin2014/exceptions" defaultexcludes="yes">
+            <include name="*"/>
+        </fileset>
+	<fileset dir="${plugins.dir}/sixpack/src/sc/plugin2014/util" defaultexcludes="yes">
+        	<include name="*"/>
+		<exclude name="XStreamConfiguration.java"/>
+        </fileset>
+	</javadoc>
 	</target>
 
 	<target name="build" depends="jar,javadoc" />
