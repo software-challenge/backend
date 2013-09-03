@@ -75,7 +75,7 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.6"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2014 Simpleclient" windowtitle="Javadoc zum Simpleclient '14" packagenames="sc.player2014.*,sc.plugin2014" overview="overview.html" classpath="${toString:classpath.base}">
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.6"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2014 Simpleclient" windowtitle="Javadoc zum Simpleclient '14" packagenames="sc.player2014.*,sc.plugin2014,sc.plugin2014.entities,sc.plugin2014.exceptions,sc.plugin2014.moves,sc.plugin2014.util" overview="overview.html" classpath="${toString:classpath.base}">
 		<fileset dir="src" defaultexcludes="yes">
 				<exclude name="logback.xml"/>
 			</fileset> 
@@ -87,7 +87,8 @@
 			<exclude name="GamePlugin.java"/>
 			<exclude name="GuiClient.java"/>
 			<exclude name="IGUIObservation.java"/>
-			<exclude name="WelcomeMessage.java"/>
+            <exclude name="WelcomeMessage.java"/>
+            <exclude name="XStreamConfiguration.java"/>
 		</fileset>
 			</javadoc>
 	</target>
