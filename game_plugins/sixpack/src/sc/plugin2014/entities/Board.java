@@ -6,6 +6,14 @@ import sc.plugin2014.util.Constants;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
+/**
+ * Das Board repräsentiert das Spielbrett auf dem Spielsteine ausgelegt werden
+ * können. Beherbergt eine Menge von {@link Field Feldern} welche entweder leer
+ * sind, oder auf denen ein {@link Stone Stein} liegt.
+ * 
+ * @author ffi
+ * 
+ */
 @XStreamAlias(value = "board")
 public class Board implements Cloneable {
 
@@ -22,10 +30,18 @@ public class Board implements Cloneable {
 		}
 	}
 
+	/** Liefert eine Liste mit allen Feldern zurück
+	 * @return Liste mit Feldern
+	 */
 	public List<Field> getFields() {
 		return fields;
 	}
 
+	/** Legt einen Spielstein auf das Feld an Position (x,y)
+	 * @param stone
+	 * @param posX
+	 * @param posY
+	 */
 	public void layStone(Stone stone, int posX, int posY) {
 		if (stone == null) {
 			throw new IllegalArgumentException("Stein darf nicht leer sein");
@@ -35,6 +51,11 @@ public class Board implements Cloneable {
 		field.setStone(stone);
 	}
 
+	/** Liefert das Feld an Position (posX,posY) zurück.
+	 * @param posX
+	 * @param posY
+	 * @return
+	 */
 	public Field getField(int posX, int posY) {
 		for (Field field : fields) {
 			if ((field.getPosX() == posX) && (field.getPosY() == posY)) {
@@ -46,6 +67,9 @@ public class Board implements Cloneable {
 				"Feldpositionen außerhalb des Bereiches");
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Board clone = new Board();
@@ -58,6 +82,9 @@ public class Board implements Cloneable {
 		return clone;
 	}
 
+	/** Überprüft ob irgendein Feld mit einem Stein belegt ist.
+	 * @return true wenn irgendein Feld mit einem Spielstein belegt ist
+	 */
 	public boolean hasStones() {
 		for (Field field : fields) {
 			if (!field.isFree()) {
@@ -70,13 +97,16 @@ public class Board implements Cloneable {
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof Board) {
-			for(Field field: fields){
-				if(field.isFree()){
-					if(!((Board) obj).getField(field.getPosX(), field.getPosY()).isFree()){
+			for (Field field : fields) {
+				if (field.isFree()) {
+					if (!((Board) obj).getField(field.getPosX(),
+							field.getPosY()).isFree()) {
 						return false;
 					}
-				}else {
-					if(!field.getStone().equals(((Board) obj).getField(field.getPosX(), field.getPosY()).getStone())){
+				} else {
+					if (!field.getStone().equals(
+							((Board) obj).getField(field.getPosX(),
+									field.getPosY()).getStone())) {
 						return false;
 					}
 				}

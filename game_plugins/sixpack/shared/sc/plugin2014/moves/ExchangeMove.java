@@ -13,6 +13,11 @@ import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+/**
+ * Repräsentiert einen Tauschzug.
+ * @author ffi
+ *
+ */
 @XStreamAlias(value = "exchangemove")
 @XStreamConverter(ExchangeMoveConverter.class)
 public class ExchangeMove extends Move implements Cloneable {
@@ -27,6 +32,10 @@ public class ExchangeMove extends Move implements Cloneable {
 		this.stones = stones;
 	}
 
+	/**
+	 * Liefert die Liste mit Steinen, welche ausgetauscht werden sollen.
+	 * @return
+	 */
 	public List<Stone> getStonesToExchange() {
 		return stones;
 	}
