@@ -6,7 +6,6 @@ import sc.plugin2014.moves.Move;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.converters.javabean.JavaBeanConverter;
 
 /**
  * Stellt ein Spieldfeld dar. Besitzt eine x- und y-Position, sowie eventuell
@@ -27,9 +26,18 @@ public class Field implements Cloneable {
 	@XStreamAsAttribute
 	private Stone stone;
 
+	/**
+	 * Erzeugt ein neues Feld.
+	 */
 	public Field() {
 	}
 
+	/**
+	 * Erzeugt ein neues Feld mit übergebener x-,y-Position
+	 * 
+	 * @param posX
+	 * @param posY
+	 */
 	public Field(int posX, int posY) {
 		this.posX = posX;
 		this.posY = posY;
@@ -56,7 +64,7 @@ public class Field implements Cloneable {
 	/**
 	 * Liefert die Position als {@link Point} zurück
 	 * 
-	 * @return
+	 * @return Position als Point
 	 */
 	public Point getPosAsPoint() {
 		return new Point(posX, posY);
@@ -82,7 +90,9 @@ public class Field implements Cloneable {
 		this.stone = stone;
 	}
 
-	/** Überprüft ob das Spielfeld frei ist
+	/**
+	 * Überprüft ob das Spielfeld frei ist
+	 * 
 	 * @return true, wenn kein Spielstein auf diesem Feld liegt.
 	 */
 	public boolean isFree() {
@@ -104,6 +114,9 @@ public class Field implements Cloneable {
 		return "Field: (" + getPosX() + ", " + getPosY() + ")";
 	}
 
+	/** Klont dieses Objekt. (deep-copy)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Field clone = new Field(this.posX, this.posY);

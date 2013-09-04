@@ -9,7 +9,7 @@ import sc.plugin2014.moves.Move;
 import com.thoughtworks.xstream.annotations.*;
 
 /**
- * Stellt ein Spieler dar.
+ * Stellt einen Spieler dar.
  * 
  * @author ffi
  * 
@@ -26,10 +26,19 @@ public class Player extends SimplePlayer implements Cloneable {
 	@XStreamImplicit(itemFieldName = "stone")
 	private final List<Stone> stones;
 
+	/**
+	 * Erzeugt ein neues Spielerobjekt. stones wird auf null gesetzt.
+	 */
 	public Player() {
 		stones = null;
 	}
 
+	/**
+	 * Erzeugt ein neues Spielerobjekt mit übergebener Farbe.
+	 * 
+	 * @param color
+	 *            Die Farbe, welche das Spielerobjekt erhalten soll.
+	 */
 	public Player(final PlayerColor color) {
 		stones = new ArrayList<Stone>();
 		this.color = color;
@@ -39,7 +48,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	/**
 	 * Liefert die Farbe dieses Spielers zurück
 	 * 
-	 * @return
+	 * @return Spielerfarbe
 	 */
 	public PlayerColor getPlayerColor() {
 		return color;
@@ -90,10 +99,11 @@ public class Player extends SimplePlayer implements Cloneable {
 		}
 	}
 
-	/** Entfernt einen Spielstein aus dem Vorrat des Spielers.
-     * <b> Achtung! Keine Überprüfung auf
-	 * korrektheit des Zuges. Dafür siehe
+	/**
+	 * Entfernt einen Spielstein aus dem Vorrat des Spielers. <b> Achtung! Keine
+	 * Überprüfung auf korrektheit des Zuges. Dafür siehe
 	 * {@link Move#perform(sc.plugin2014.GameState, Player)}.</b>
+	 * 
 	 * @param stone
 	 */
 	public void removeStone(Stone stone) {
@@ -101,8 +111,10 @@ public class Player extends SimplePlayer implements Cloneable {
 		stones.set(position, null);
 	}
 
-	/** Liefert die Position eines Spielsteines in der Liste des Spielers.
-	 * @param stone 
+	/**
+	 * Liefert die Position eines Spielsteines in der Liste des Spielers.
+	 * 
+	 * @param stone
 	 * @return -1 wenn Spieler Stein nicht besitz, sonst Position
 	 */
 	public int getStonePosition(Stone stone) {
@@ -117,6 +129,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * Überprüft ob ein Spielstein im Vorrat des Spielers vorhanden ist
+	 * 
 	 * @param stone
 	 * @return true, wenn der Spielstein sich im Vorrat des Spielers befindet.
 	 */
@@ -129,8 +142,10 @@ public class Player extends SimplePlayer implements Cloneable {
 		return false;
 	}
 
-	/** Fügt Punkte zum Konto des Spielers hinzu
-	 * @param points
+	/**
+	 * Fügt Punkte zum Konto des Spielers hinzu
+	 * 
+	 * @param points Punkte, welche hinzuaddiert werden sollen.
 	 */
 	public void addPoints(int points) {
 		this.points += points;
@@ -141,6 +156,9 @@ public class Player extends SimplePlayer implements Cloneable {
 		return (obj instanceof Player) && (((Player) obj).color == color);
 	}
 
+	/** Klont dieses Objekt. (deep-copy)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Player clone = new Player(color);
