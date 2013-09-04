@@ -74,7 +74,13 @@ public abstract class Move implements Cloneable {
 	}
 
 	/**
-	 * Führt diesen Zug aus.
+	 * Führt diesen Zug aus. Modifiziert wird dabei das übergebene
+	 * Spielerobjekt, nicht das korrespondierende Spielerobjekt aus dem
+	 * GameState. Bei einem Aufruf sollte also immer
+	 * {@code move.perform(gameState,
+	 * gameState.getCurrentPlayer())} aufgerufen werden. </br> Bei einem
+	 * {@link LayMove} wird der Vorrat, des übergebenen Spielerobjektes wieder
+	 * mit Steinen aus dem Beutel aufgefüllt.
 	 * 
 	 * @param state
 	 *            Der Spielzustand, auf welchen diese Zug angewandt werden soll.
@@ -91,6 +97,12 @@ public abstract class Move implements Cloneable {
 		checkGameStateAndPlayerNotNull(state, player);
 	}
 
+	/**
+	 * Überprüft ob einer der übergebenen Parameter null ist.
+	 * 
+	 * @param state
+	 * @param player
+	 */
 	private void checkGameStateAndPlayerNotNull(GameState state, Player player) {
 		if (state == null) {
 			throw new IllegalArgumentException("GameState darf nicht null sein");
@@ -102,10 +114,12 @@ public abstract class Move implements Cloneable {
 	}
 
 	/**
-	 * Überprüft ob, der Spieler die übergeben Steine auf der Hand hat.
+	 * Überprüft ob der Spieler die übergeben Steine auf der Hand hat.
 	 * 
-	 * @param stoneList Die Liste von Steinen.
-	 * @param player Der Spieler.
+	 * @param stoneList
+	 *            Die Liste von Steinen.
+	 * @param player
+	 *            Der Spieler.
 	 * @throws InvalidMoveException
 	 */
 	protected void checkIfStonesAreFromPlayerHand(List<Stone> stoneList,

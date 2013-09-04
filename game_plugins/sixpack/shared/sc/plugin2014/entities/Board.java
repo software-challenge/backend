@@ -20,6 +20,10 @@ public class Board implements Cloneable {
 	@XStreamImplicit(itemFieldName = "field")
 	private final List<Field> fields;
 
+	/**
+	 * Erzeugt ein neues Board. Dabei werden die {@link Field Spielfelder}
+	 * generiert.
+	 */
 	public Board() {
 		fields = new ArrayList<Field>();
 
@@ -30,14 +34,18 @@ public class Board implements Cloneable {
 		}
 	}
 
-	/** Liefert eine Liste mit allen Feldern zurück
+	/**
+	 * Liefert eine Liste mit allen Feldern zurück
+	 * 
 	 * @return Liste mit Feldern
 	 */
 	public List<Field> getFields() {
 		return fields;
 	}
 
-	/** Legt einen Spielstein auf das Feld an Position (x,y)
+	/**
+	 * Legt einen Spielstein auf das Feld an Position (x,y)
+	 * 
 	 * @param stone
 	 * @param posX
 	 * @param posY
@@ -51,7 +59,9 @@ public class Board implements Cloneable {
 		field.setStone(stone);
 	}
 
-	/** Liefert das Feld an Position (posX,posY) zurück.
+	/**
+	 * Liefert das Feld an Position (posX,posY) zurück.
+	 * 
 	 * @param posX
 	 * @param posY
 	 * @return
@@ -67,8 +77,8 @@ public class Board implements Cloneable {
 				"Feldpositionen außerhalb des Bereiches");
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
+	/**
+	 * Klont dieses Objekt. (deep-copy)
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
@@ -82,8 +92,10 @@ public class Board implements Cloneable {
 		return clone;
 	}
 
-	/** Überprüft ob irgendein Feld mit einem Stein belegt ist.
-	 * @return true wenn irgendein Feld mit einem Spielstein belegt ist
+	/**
+	 * Überprüft ob irgendein Feld mit einem Stein belegt ist.
+	 * 
+	 * @return true, wenn irgendein Feld mit einem Spielstein belegt ist
 	 */
 	public boolean hasStones() {
 		for (Field field : fields) {

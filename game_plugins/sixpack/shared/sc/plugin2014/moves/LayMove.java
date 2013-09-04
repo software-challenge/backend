@@ -23,6 +23,10 @@ public class LayMove extends Move implements Cloneable {
 
 	private final Map<Stone, Field> stoneToFieldMapping;
 
+	/**
+	 * Erzeugt ein neues LayMove Objekt. {@link #stoneToFieldMapping} wird dabei
+	 * als {@link HashMap} initialisiert.
+	 */
 	public LayMove() {
 		stoneToFieldMapping = new HashMap<Stone, Field>();
 	}
@@ -49,6 +53,12 @@ public class LayMove extends Move implements Cloneable {
 		getStoneToFieldMapping().put(stone, field);
 	}
 
+	/**
+	 * Überprüft ob einer der übergebenen Parameter null ist.
+	 * 
+	 * @param stone
+	 * @param field
+	 */
 	private void checkFieldAndStoneNotNull(Stone stone, Field field) {
 		if (stone == null) {
 			throw new IllegalArgumentException("Stein darf nicht null sein");
@@ -111,13 +121,19 @@ public class LayMove extends Move implements Cloneable {
 	}
 
 	/**
-	 * Liefert eine liste mit Steinen, welche gelegt werden sollen.
+	 * Liefert eine Liste mit Steinen, welche gelegt werden sollen.
+	 * 
 	 * @return Die Liste mit Steinen.
 	 */
 	private List<Stone> getStonesToLay() {
 		return new LinkedList<Stone>(getStoneToFieldMapping().keySet());
 	}
 
+	/**
+	 * Überprüft ob mindestens ein Eintrag in der Map vorhanden ist.
+	 * 
+	 * @throws InvalidMoveException
+	 */
 	private void checkAtLeastOneStone() throws InvalidMoveException {
 		if (getStoneToFieldMapping().keySet().isEmpty()) {
 			throw new InvalidMoveException(
@@ -125,6 +141,9 @@ public class LayMove extends Move implements Cloneable {
 		}
 	}
 
+	/** Klont dieses Objekt. (deep-copy)
+	 * @see sc.plugin2014.moves.Move#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		LayMove clone = new LayMove();
