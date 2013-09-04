@@ -1,7 +1,7 @@
 package sc.plugin2014.entities;
 
 /**
- * Repräsentiert dei Steinform
+ * Enum der Steinformen.
  * @author ffi
  *
  */

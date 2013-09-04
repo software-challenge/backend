@@ -1,7 +1,7 @@
 package sc.plugin2014.entities;
 
 /**
- * Repräsentiert die Steinfarbe.
+ * Enum der Steinfarben.
  * @author ffi
  *
  */
