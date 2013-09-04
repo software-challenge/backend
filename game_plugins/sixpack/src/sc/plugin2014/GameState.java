@@ -36,9 +36,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen, zum Beispiele die Liste aller Spielsteine eines Spielers,
- * abgefragt werden. Insbesondere kann mit der Methode
- * {@link #getPossibleMoves()} eine Liste aller fuer den aktuellen Spieler
- * legalen Zuege abgefragt werden.
+ * abgefragt werden.
  * 
  * @author ffi
  */
@@ -171,7 +169,7 @@ public class GameState implements Cloneable {
 	/**
 	 * Liefert die {@link PlayerColor}-Farbe des Spielers, der momentan nicht am
 	 * Zug ist. Dies ist aequivalent zum Aufruf
-	 * {@link #getCurrentPlayerColor.opponent()} oder {@link #getOtherPlayer()
+	 * {@code #getCurrentPlayerColor.opponent()} oder {@code #getOtherPlayer()
 	 * .getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
@@ -215,7 +213,7 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert die {@link PlayerColor}-Farbe des Spielers, der den aktuellen
-	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf {@link
+	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf {@code
 	 * getStartPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht
