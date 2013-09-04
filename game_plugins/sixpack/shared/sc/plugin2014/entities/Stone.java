@@ -31,6 +31,14 @@ public class Stone implements Cloneable {
 		shape = StoneShape.ACORN;
 	}
 
+	/**
+	 * Erzeugt einen Spielstein mit übergebener Farbe und Form. Der
+	 * {@link Stone#identifier} wird automatisch vom
+	 * {@link StoneIdentifierGenerator} generiert.
+	 * 
+	 * @param color die Farbe des Steins
+	 * @param shape die Form des Steins
+	 */
 	public Stone(StoneColor color, StoneShape shape) {
 		identifier = StoneIdentifierGenerator.getNextId();
 		this.color = color;
@@ -39,6 +47,7 @@ public class Stone implements Cloneable {
 
 	/**
 	 * Liefert die Farbe des Spielsteines
+	 * 
 	 * @return Spielsteinfarbe
 	 */
 	public StoneColor getColor() {
@@ -47,6 +56,7 @@ public class Stone implements Cloneable {
 
 	/**
 	 * Liefert die Form des Spielsteines
+	 * 
 	 * @return Spielsteinform
 	 */
 	public StoneShape getShape() {
@@ -61,6 +71,9 @@ public class Stone implements Cloneable {
 				&& (((Stone) obj).shape == shape);
 	}
 
+	/** Klont dieses Objekt. (deep-copy)
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();

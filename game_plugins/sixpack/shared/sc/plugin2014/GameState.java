@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * <br/>
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
- * Teilinformationen, zum Beispiele die Liste aller Tuerme eines Spielers,
+ * Teilinformationen, zum Beispiele die Liste aller Spielsteine eines Spielers,
  * abgefragt werden. Insbesondere kann mit der Methode
  * {@link #getPossibleMoves()} eine Liste aller fuer den aktuellen Spieler
  * legalen Zuege abgefragt werden.
@@ -69,6 +69,11 @@ public class GameState implements Cloneable {
 
 	private WinnerAndReason endCondition = null;
 
+	/**
+	 * Erzeugt einen neuen GameState. Dabei wird eine neues {@link Board
+	 * Spielbrett}, sowie ein {@link StoneBag Spielsteinbeutel} generiert.
+	 * 
+	 */
 	public GameState() {
 		currentPlayer = PlayerColor.RED;
 		startPlayer = PlayerColor.RED;
@@ -78,7 +83,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Klont dieses Objekt
+	 * Klont dieses Objekt. (deep copy)
 	 * 
 	 * @return ein neues Objekt mit gleichen Eigenschaften
 	 * @throws CloneNotSupportedException
@@ -108,7 +113,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
+	 * Fügt einem Spiel einen weiteren Spieler hinzu.<br/>
 	 * <br/>
 	 * 
 	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
@@ -133,7 +138,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
+	 * Liefert den Spieler, also ein {@link Player}-Objekt, der momentan am Zug
 	 * ist.
 	 * 
 	 * @return Der Spieler, der momentan am Zug ist.
@@ -143,7 +148,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
+	 * Liefert die {@link PlayerColor}-Farbe des Spielers, der momentan am Zug
 	 * ist. Dies ist aequivalent zum Aufruf
 	 * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
@@ -154,7 +159,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht
+	 * Liefert den Spieler, also ein {@link Player}-Objekt, der momentan nicht
 	 * am Zug ist.
 	 * 
 	 * @return Der Spieler, der momentan nicht am Zug ist.
@@ -164,10 +169,10 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
-	 * Zug ist. Dies ist aequivalent zum Aufruf @
-	 * {@code getCurrentPlayerColor.opponent()} oder
-	 * {@code getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * Liefert die {@link PlayerColor}-Farbe des Spielers, der momentan nicht am
+	 * Zug ist. Dies ist aequivalent zum Aufruf
+	 * {@link #getCurrentPlayerColor.opponent()} oder {@link #getOtherPlayer()
+	 * .getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
 	 */
@@ -176,7 +181,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
+	 * Liefert den Spieler, also eine {@link Player}-Objekt, des Spielers, der
 	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe
 	 * {@code PlayerColor.RED} spielt.
 	 * 
@@ -187,7 +192,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
+	 * Liefert den Spieler, also eine {@link Player}-Objekt, des Spielers, der
 	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe
 	 * {@code PlayerColor.BLUE} spielt.
 	 * 
@@ -198,7 +203,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, der den aktuellen
+	 * Liefert den Spieler, also eine {@link Player}-Objekt, der den aktuellen
 	 * Abschnitt begonnen hat. Also den Spieler, der in der letzten Auswahlphase
 	 * als erster Bauelemente waehlen musste und dann als zweiter gebaut hat.
 	 * 
@@ -209,9 +214,9 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
-	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
-	 * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * Liefert die {@link PlayerColor}-Farbe des Spielers, der den aktuellen
+	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf {@link
+	 * getStartPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht
 	 *         begonnen hat.
@@ -221,14 +226,16 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert die aktuelle Zugzahl
+	 * Liefert die aktuelle Zugzahl.
+	 * 
+	 * @return Die aktuelle Zugzahl
 	 */
 	public int getTurn() {
 		return turn;
 	}
 
 	/**
-	 * liefert die aktuelle Rundenzahl
+	 * Liefert die aktuelle Rundenzahl. (Hälfte der Zugzahl)
 	 * 
 	 * @return aktuelle Rundenzahl
 	 */
@@ -237,7 +244,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den zuletzt ausgefuehrten Zug
+	 * Liefert den zuletzt ausgeführten Zug.
 	 * 
 	 * @return letzter Zug
 	 */
@@ -305,7 +312,7 @@ public class GameState implements Cloneable {
 	/**
 	 * Liefert die Namen den beiden Spieler.
 	 * 
-	 * @return Ein Array mit den namen. Position 0: roter Spieler, Position 1:
+	 * @return Ein Array mit den Namen. Position 0: roter Spieler, Position 1:
 	 *         blauer Spieler
 	 */
 	public String[] getPlayerNames() {
@@ -314,7 +321,8 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
+	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und
+	 * Gewinngrund.
 	 * 
 	 * @param winner
 	 *            Farbe des Siegers
@@ -347,10 +355,10 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * liefert den Gewinngrund, falls das Spiel beendet ist.
+	 * Liefert den Gewinngrund, falls das Spiel beendet ist.
 	 * 
 	 * @see #gameEnded()
-	 * @return Gewinngrund
+	 * @return Gewinngrund, leerer String, wenn das Spiel nicht beendet ist.
 	 */
 	public String winningReason() {
 		return endCondition == null ? "" : endCondition.reason;
@@ -415,7 +423,9 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Wechselt den Spieler, der aktuell an der Reihe ist.
+	 * Wechselt den Spieler, der aktuell an der Reihe ist.</br> <b>Diese Methode
+	 * ist nur fuer den Spielserver relevant und sollte vom Spielclient i.A.
+	 * nicht aufgerufen werden!</b>
 	 */
 	private void switchCurrentPlayer() {
 		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
@@ -423,8 +433,9 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * Legt einen Spielstein auf eine Boardposition. </br> <b>Diese Methode ist
+	 * nur fuer den Spielserver relevant und sollte vom Spielclient i.A. nicht
+	 * aufgerufen werden!</b>
 	 * 
 	 * @param stoneToLay
 	 * @param posX
@@ -437,15 +448,16 @@ public class GameState implements Cloneable {
 	/**
 	 * Liefert das aktuelle Spielbrett zurück {@link Board}
 	 * 
-	 * @return
+	 * @return das aktuelle Spielbrett
 	 */
 	public Board getBoard() {
 		return board;
 	}
 
 	/**
-	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * Aktualisiert die Steine im Beutel </br> <b>Diese Methode ist nur fuer den
+	 * Spielserver relevant und sollte vom Spielclient i.A. nicht aufgerufen
+	 * werden!</b>
 	 */
 	public void updateStonesInBag() {
 		nextStones = stoneBag.getNextStonesInBag();
@@ -453,9 +465,12 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
-	 * @param gs GameState der geladen werden soll
+	 * Lädt eine Spielsituation aus einem Gamestate. </br> <b>Diese Methode ist
+	 * nur fuer den Spielserver relevant und sollte vom Spielclient i.A. nicht
+	 * aufgerufen werden!</b>
+	 * 
+	 * @param gs
+	 *            GameState der geladen werden soll
 	 */
 	public void loadFromFile(GameState gs) {
 		stoneBag.loadFromFile(gs); // filters out the stone Bag

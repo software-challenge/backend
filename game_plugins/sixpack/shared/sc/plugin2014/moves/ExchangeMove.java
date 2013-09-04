@@ -15,8 +15,9 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Repräsentiert einen Tauschzug.
+ * 
  * @author ffi
- *
+ * 
  */
 @XStreamAlias(value = "exchangemove")
 @XStreamConverter(ExchangeMoveConverter.class)
@@ -24,16 +25,28 @@ public class ExchangeMove extends Move implements Cloneable {
 
 	private final List<Stone> stones;
 
+	/**
+	 * Erzeugt ein neues ExchangeMove Objekt. Initialisiert die Liste der
+	 * Steine.
+	 */
 	public ExchangeMove() {
 		stones = new ArrayList<Stone>();
 	}
 
+	/**
+	 * Erzeugt ein neues ExchangeMove Objekt mit übergebener Liste von
+	 * Spielsteinen.
+	 * 
+	 * @param stones
+	 *            Liste mit Spielsteinen, welche getauscht werden sollen.
+	 */
 	public ExchangeMove(List<Stone> stones) {
 		this.stones = stones;
 	}
 
 	/**
-	 * Liefert die Liste mit Steinen, welche ausgetauscht werden sollen.
+	 * Liefert die Liste mit Steinen, welche getauscht werden sollen.
+	 * 
 	 * @return
 	 */
 	public List<Stone> getStonesToExchange() {
@@ -86,6 +99,13 @@ public class ExchangeMove extends Move implements Cloneable {
 		state.updateStonesInBag();
 	}
 
+	/**
+	 * Überprüft ob ein übergebener Spieler genug Spielsteine auf der Hand hat
+	 * um diese zu tauschen.
+	 * 
+	 * @param player
+	 * @throws InvalidMoveException
+	 */
 	private void checkIfPlayerHasStoneAmountToExchange(Player player)
 			throws InvalidMoveException {
 		if (getStonesToExchange().size() > player.getStones().size()) {
@@ -96,6 +116,12 @@ public class ExchangeMove extends Move implements Cloneable {
 		}
 	}
 
+	/**
+	 * Überprüft ob dieser Tauschzug mindestens einen Spielstein in seiner Liste
+	 * hat.
+	 * 
+	 * @throws InvalidMoveException
+	 */
 	private void checkAtLeastOneStone() throws InvalidMoveException {
 		if (getStonesToExchange().isEmpty()) {
 			throw new InvalidMoveException(
@@ -103,6 +129,9 @@ public class ExchangeMove extends Move implements Cloneable {
 		}
 	}
 
+	/** Klont dieses Objekt. (deep-copy)
+	 * @see sc.plugin2014.moves.Move#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		ExchangeMove clone = new ExchangeMove();
