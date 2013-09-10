@@ -3,13 +3,16 @@ package sc.plugin2014.moves;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import sc.plugin2014.GameState;
 import sc.plugin2014.converters.ExchangeMoveConverter;
 import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import sc.plugin2014.exceptions.StoneBagIsEmptyException;
 import sc.plugin2014.laylogic.PointsCalculator;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
@@ -97,6 +100,24 @@ public class ExchangeMove extends Move implements Cloneable {
 		}
 
 		state.updateStonesInBag();
+	}
+	
+	public void perform(GameState state, PlayerColor color)
+			throws InvalidMoveException, StoneBagIsEmptyException {
+		super.perform(state, color);
+		Player player;
+		if (color == PlayerColor.BLUE) {
+			player = state.getBluePlayer();
+		} else {
+			player = state.getRedPlayer();
+		}
+		this.perform(state, player);
+	}
+	
+	public void perform(GameState state) throws InvalidMoveException,
+	StoneBagIsEmptyException {
+		super.perform(state);
+		this.perform(state, state.getCurrentPlayer());
 	}
 
 	/**
