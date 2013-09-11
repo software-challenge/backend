@@ -120,6 +120,24 @@ public class LayMove extends Move implements Cloneable {
 		state.updateStonesInBag();
 	}
 
+	public void perform(GameState state, PlayerColor color)
+			throws InvalidMoveException, StoneBagIsEmptyException {
+		super.perform(state, color);
+		Player player;
+		if (color == PlayerColor.BLUE) {
+			player = state.getBluePlayer();
+		} else {
+			player = state.getRedPlayer();
+		}
+		this.perform(state, player);
+	}
+	
+	public void perform(GameState state) throws InvalidMoveException,
+	StoneBagIsEmptyException {
+		super.perform(state);
+		this.perform(state, state.getCurrentPlayer());
+	}
+
 	/**
 	 * Liefert eine Liste mit Steinen, welche gelegt werden sollen.
 	 * 
@@ -141,7 +159,9 @@ public class LayMove extends Move implements Cloneable {
 		}
 	}
 
-	/** Klont dieses Objekt. (deep-copy)
+	/**
+	 * Klont dieses Objekt. (deep-copy)
+	 * 
 	 * @see sc.plugin2014.moves.Move#clone()
 	 */
 	@Override
