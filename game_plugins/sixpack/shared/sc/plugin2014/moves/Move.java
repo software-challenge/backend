@@ -2,11 +2,14 @@ package sc.plugin2014.moves;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import sc.plugin2014.GameState;
 import sc.plugin2014.entities.Player;
+import sc.plugin2014.entities.PlayerColor;
 import sc.plugin2014.entities.Stone;
 import sc.plugin2014.exceptions.InvalidMoveException;
 import sc.plugin2014.exceptions.StoneBagIsEmptyException;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
@@ -95,6 +98,42 @@ public abstract class Move implements Cloneable {
 	public void perform(GameState state, Player player)
 			throws InvalidMoveException, StoneBagIsEmptyException {
 		checkGameStateAndPlayerNotNull(state, player);
+	}
+
+	/**
+	 * Diese Methode funktioniert analog zu {@link #perform(GameState, Player)}.
+	 * Modifiziert wird in dieser Methode jedoch das Player-Objekt im GameState,
+	 * welche die gleiche Farbe besitzt wie die übergebene.
+	 * 
+	 * @param state
+	 * @param color
+	 */
+	public void perform(GameState state, PlayerColor color)
+			throws InvalidMoveException, StoneBagIsEmptyException {
+		if (state == null) {
+			throw new IllegalArgumentException("GameState darf nicht null sein");
+		}
+
+		if (color == null) {
+			throw new IllegalArgumentException(
+					"Spielerfarbe darf nicht null sein");
+		}
+	}
+
+	/**
+	 * Diese Methode funktioniert analog zu {@link #perform(GameState, Player)}.
+	 * Modifiziert wird in dieser Methode der Player, welcher gerade am Zug ist,
+	 * also durch {@link GameState#getCurrentPlayer()} zurückgeliefert wird.
+	 * 
+	 * @param state
+	 * @throws InvalidMoveException
+	 * @throws StoneBagIsEmptyException
+	 */
+	public void perform(GameState state) throws InvalidMoveException,
+			StoneBagIsEmptyException {
+		if (state == null) {
+			throw new IllegalArgumentException("GameState darf nicht null sein");
+		}
 	}
 
 	/**
