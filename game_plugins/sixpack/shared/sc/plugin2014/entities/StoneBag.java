@@ -23,11 +23,13 @@ public class StoneBag implements Cloneable {
 	 * Die offen liegenden Spielsteine
 	 */
 	private final List<Stone> nextStones;
+	
+	private SecureRandom sr;
 
 	/**
 	 * Erzeugt einen neuen Spielsteinvorrat.
-	 */
-	public StoneBag() {
+	 */	
+	public StoneBag()  {
 		stones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
 				* Constants.STONES_SHAPE_COUNT
 				* Constants.STONES_SAME_KIND_COUNT);
@@ -41,6 +43,13 @@ public class StoneBag implements Cloneable {
 				}
 			}
 		}
+		try {
+			sr = SecureRandom.getInstance("SHA1PRNG");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			sr = new SecureRandom();
+		}
+		sr.nextBytes(new byte[1]);
 		randomizeStones();
 
 		refreshNextStones();
@@ -68,22 +77,6 @@ public class StoneBag implements Cloneable {
 	 * werden!</b>
 	 */
 	private void randomizeStones() {
-		SecureRandom sr = null;
-		try {
-			sr = SecureRandom.getInstance("SHA1PRNG");
-
-			byte[] bytes = new byte[1024 / 8];
-			sr.nextBytes(bytes);
-
-			int seedByteCount = 10;
-			byte[] seed = sr.generateSeed(seedByteCount);
-
-			sr = SecureRandom.getInstance("SHA1PRNG");
-			sr.setSeed(seed);
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
 		Collections.shuffle(stones, sr);
 	}
 
