@@ -7,13 +7,28 @@ import java.util.*;
 import sc.plugin2014.GameState;
 import sc.plugin2014.util.Constants;
 
+/**
+ * Repräsentiert den Spielsteinvorrat
+ * 
+ * @author ffi
+ * 
+ */
 public class StoneBag implements Cloneable {
 
+	/**
+	 * Die Spielsteine im Beutel (nicht einsehbar)
+	 */
 	private final List<Stone> stones;
+	/**
+	 * Die offen liegenden Spielsteine
+	 */
 	private final List<Stone> nextStones;
 	
 	private SecureRandom sr;
-	
+
+	/**
+	 * Erzeugt einen neuen Spielsteinvorrat.
+	 */	
 	public StoneBag()  {
 		stones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
 				* Constants.STONES_SHAPE_COUNT
@@ -40,6 +55,11 @@ public class StoneBag implements Cloneable {
 		refreshNextStones();
 	}
 
+	/**
+	 * Aktualisiert die nächsten einsehbaren Spielstein. </br> <b>Diese Methode
+	 * ist nur fuer den Spielserver relevant und sollte vom Spielclient i.A.
+	 * nicht aufgerufen werden!</b>
+	 */
 	private void refreshNextStones() {
 		if (nextStones.size() == Constants.STONES_OPEN_FROM_BAG_COUNT) {
 			return;
@@ -51,14 +71,35 @@ public class StoneBag implements Cloneable {
 		}
 	}
 
+	/**
+	 * Mischt die nicht einsehbaren Steine. </br> <b>Diese Methode ist nur fuer
+	 * den Spielserver relevant und sollte vom Spielclient i.A. nicht aufgerufen
+	 * werden!</b>
+	 */
 	private void randomizeStones() {
 		Collections.shuffle(stones, sr);
 	}
 
+	/**
+	 * Liefert die Anzahl Spielsteine, welche sich noch im Beutel befinden. Dies
+	 * umfasst sowohl, die einsehbaren als auch die nicht einsehbaren
+	 * Spielsteine.
+	 * 
+	 * @return Anzahl der Spielsteine
+	 */
 	public int getStoneCountInBag() {
 		return stones.size() + nextStones.size();
 	}
 
+	/**
+	 * Gibt den nächsten Spielstein im Vorrat zurück und entfernt diesen aus dem
+	 * Beutel.</br>
+	 * 
+	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * @return Der nächste offen liegende Spielstein.
+	 */
 	public Stone drawStone() {
 		if (nextStones.size() > 0) {
 			Stone result = nextStones.remove(0);
@@ -71,12 +112,24 @@ public class StoneBag implements Cloneable {
 		}
 	}
 
+	/**
+	 * Packt einen Spielstein zurück in den Beutel und mischt diesen. </br>
+	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * @param stone
+	 */
 	public void putBackStone(Stone stone) {
 		stones.add(stone);
 		randomizeStones();
 		refreshNextStones();
 	}
 
+	/**
+	 * Klont dieses Objekt. (deep-copy)
+	 * 
+	 * @see java.lang.Object#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		StoneBag clone = new StoneBag();
@@ -111,10 +164,22 @@ public class StoneBag implements Cloneable {
 		return true;
 	}
 
+	/**
+	 * Liefert die Liste der einsehbaren Spielsteine.
+	 * 
+	 * @return Liste, der einsehbaren Spielsteine.
+	 */
 	public List<Stone> getNextStonesInBag() {
 		return nextStones;
 	}
 
+	/**
+	 * Methode um einen StoneBag aus einem übergebenen GameState zu generieren.
+	 * </br> <b>Diese Methode ist nur fuer den Spielserver relevant und sollte
+	 * vom Spielclient i.A. nicht aufgerufen werden!</b>
+	 * 
+	 * @param gs der GameState
+	 */
 	public void loadFromFile(GameState gs) {
 		List<Stone> blueStones = gs.getBluePlayer().getStones();
 		List<Stone> redStones = gs.getRedPlayer().getStones();
