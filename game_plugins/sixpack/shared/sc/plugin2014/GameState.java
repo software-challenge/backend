@@ -66,6 +66,16 @@ public class GameState implements Cloneable {
 	private Move lastMove;
 
 	private WinnerAndReason endCondition = null;
+	
+	public GameState(boolean bare) {
+		startPlayer = PlayerColor.RED;
+		if (!bare) {
+			currentPlayer = PlayerColor.RED;
+			stoneBag = new StoneBag();
+			board = new Board();
+			StoneIdentifierGenerator.reset();
+		}
+	}
 
 	/**
 	 * Erzeugt einen neuen GameState. Dabei wird eine neues {@link Board
@@ -73,11 +83,7 @@ public class GameState implements Cloneable {
 	 * 
 	 */
 	public GameState() {
-		currentPlayer = PlayerColor.RED;
-		startPlayer = PlayerColor.RED;
-		stoneBag = new StoneBag();
-		board = new Board();
-		StoneIdentifierGenerator.reset();
+		this(false);
 	}
 
 	/**
