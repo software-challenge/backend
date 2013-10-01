@@ -1,7 +1,13 @@
 package sc.plugin2013;
 
+import java.math.BigDecimal;
+import java.security.SecureRandom;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,15 +21,18 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.plugin2013.util.Configuration;
+import sc.plugin2013.util.Constants;
+import sc.plugin2013.util.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
  * 
- * @author Felix Dubrownik
+ * @author fdu
  * 
  */
 @XStreamAlias(value = "cartagena:game")
@@ -33,7 +42,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@XStreamOmitField
 	private List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
 
-	private GameState gameState = new GameState();
+	private GameState gameState = new GameState(false);
 
 	public GameState getGameState() {
 		return gameState;
@@ -54,7 +63,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected Object getCurrentState() {
-		gameState.setCurrentPlayer(activePlayer.getPlayerColor());
 		return gameState;
 	}
 
@@ -63,9 +71,64 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * move)
 	 */
 	@Override
-	protected void onRoundBasedAction (IPlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException {
-		// TODO GameLogic implementieren
+
+		final Player author = (Player) fromPlayer;
+		final Player expectedPlayer = gameState.getCurrentPlayer();
+
+		try {
+			if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " war nicht am Zug");
+			}
+
+			if (!(data instanceof MoveContainer)) {
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " hat kein Zug-Objekt gesendet");
+			}
+
+			final MoveContainer move = (MoveContainer) data;
+			move.perform(gameState, expectedPlayer);
+			gameState.prepareNextTurn(move);
+
+			if (gameState.getTurn() == Constants.ROUND_LIMIT * 2) {
+				PlayerColor winner = null;
+				String winnerName = "Gleichstand nach Punkten.";
+				if (gameState.getRedPlayer().getPoints() > gameState
+						.getBluePlayer().getPoints()) {
+					winner = PlayerColor.RED;
+					winnerName = "Sieg nach Punkten.";
+				} else if (gameState.getRedPlayer().getPoints() < gameState
+						.getBluePlayer().getPoints()) {
+					winner = PlayerColor.BLUE;
+					winnerName = "Sieg nach Punkten.";
+				}
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
+						+ winnerName);
+			} else if (gameState.playerFinished(PlayerColor.RED)) {
+				// Rot hat alle Piraten im Zielfeld
+				PlayerColor winner = PlayerColor.RED;
+				String winningString = "Rot hat alle Piraten im Ziel";
+				gameState.endGame(winner, winningString);
+			} else if (gameState.playerFinished(PlayerColor.BLUE)) {
+				// Blau hat alle Piraten im Zielfeld
+				PlayerColor winner = PlayerColor.BLUE;
+				String winningString = "Blau hat alle Piraten im Ziel";
+				gameState.endGame(winner, winningString);
+			}
+
+			next(gameState.getCurrentPlayer());
+			//next();
+
+		} catch (InvalidMoveException e) {
+			author.setViolated(true);
+			String err = "Ungültiger Zug von '" + author.getDisplayName()
+					+ "'.\\n" + e.getMessage() + ".";
+			gameState.endGame(author.getPlayerColor().opponent(), err);
+			logger.error(err);
+			throw new GameLogicException(err);
+		}
 
 	}
 
@@ -92,7 +155,26 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-		// TODO Auto-generated method stub
+		Map<IPlayer, PlayerScore> res = generateScoreMap();
+
+		for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
+			PlayerScore score = entry.getValue();
+
+			if (entry.getKey() == player) {
+				score.setCause(cause);
+				score.setValueAt(0, new BigDecimal(0));
+			} else {
+				score.setValueAt(0, new BigDecimal(2));
+			}
+		}
+
+		if (!gameState.gameEnded()) {
+			gameState.endGame(((Player) player).getPlayerColor().opponent(),
+					"Der Spieler '" + player.getDisplayName()
+							+ "' hat das Spiel verlassen.");
+		}
+
+		notifyOnGameOver(res);
 
 	}
 
@@ -107,24 +189,50 @@ public class Game extends RoundBasedGameInstance<Player> {
 			p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
 		}
 
-		super.start();
+		//super.start();
+		if (this.listeners.size() == 0)
+		{
+			logger.warn("Couldn't find any listeners. Is this intended?");
+		}
+		
+		if(this.gameState.getCurrentPlayerColor() != PlayerColor.RED){
+			this.activePlayer = this.players.get(1);
+		}else{
+			this.activePlayer = this.players.get(0);
+		}
+		
+		onActivePlayerChanged(this.activePlayer);
+		notifyOnNewState(getCurrentState());
+		notifyActivePlayer();
 	}
 
 	@Override
 	protected void onNewTurn() {
-		// TODO not implemented in last 2 years
+		// never implemented in last plugins
 
 	}
 
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
-		// TODO Auto-generated method stub
-		return null;
+		int matchPoints = 1;
+		Player player = (p.getPlayerColor() == PlayerColor.RED) ? gameState
+				.getRedPlayer() : gameState.getBluePlayer();
+		Player opponent = (p.getPlayerColor() == PlayerColor.RED) ? gameState
+				.getBluePlayer() : gameState.getRedPlayer();
+		if (player.getPoints() > opponent.getPoints()) {
+			matchPoints = 2;
+		} else if (player.getPoints() < opponent.getPoints()) {
+			matchPoints = 0;
+		}
+
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
+				player.getPoints()) : new PlayerScore(ScoreCause.REGULAR,
+				matchPoints, player.getPoints());
 	}
 
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player) {
-		return new ActionTimeout(true, 10000l, 2000l);
+		return new ActionTimeout(true, 10000l, 4000l);
 	}
 
 	@Override
@@ -134,7 +242,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void loadFromFile(String file) {
-		GameLoader gl = new GameLoader(new Class<?>[] { GameState.class });
+		GameLoader gl = new GameLoader(Configuration.getClassesToRegister());
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
@@ -145,6 +253,22 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
 			this.gameState = (GameState) gameInfo;
+			//Initialisiere den Kartenstapel
+			this.gameState.initCardStack();
+			//Entferne die offen liegenden Karten und die Karten der Spieler
+			for(Card c:this.gameState.getOpenCards()){
+				this.gameState.getCardStack().remove(c);
+			}
+			for(Card c:this.gameState.getRedPlayer().getCards()){
+				this.gameState.getCardStack().remove(c);
+			}
+			for(Card c:this.gameState.getBluePlayer().getCards()){
+				this.gameState.getCardStack().remove(c);
+			}
+			//Zum Schluss noch einmal mischen:
+			Collections.shuffle(this.gameState.getCardStack(), new SecureRandom());
+			//turn richtig setzen:
+			//this.turn = this.gameState.getTurn();
 		}
 	}
 

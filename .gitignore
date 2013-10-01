@@ -38,6 +38,11 @@
 /game_players/schaefchen_im_trockenen2/build
 /game_players/schaefchen_im_trockenen2/doc
 
+# /game_players/sixpack/
+/game_players/sixpack/bin
+/game_players/sixpack/build
+/game_players/sixpack/doc
+
 # /game_plugins/hase_und_igel/
 /game_plugins/hase_und_igel/bin
 /game_plugins/hase_und_igel/build
@@ -47,9 +52,15 @@
 /game_plugins/hase_und_igel/lib/GamePluginInterface.jar
 
 # /game_plugins/manhattan/
+/game_plugins/manhattan/bin
 /game_plugins/manhattan/build
 /game_plugins/manhattan/doc
 /game_plugins/manhattan/src
+
+# /game_plugins/sixpack/
+/game_plugins/sixpack/bin
+/game_plugins/sixpack/build
+/game_plugins/sixpack/doc
 
 # /game_plugins/schaefchen_im_trockenen/
 /game_plugins/schaefchen_im_trockenen/build
