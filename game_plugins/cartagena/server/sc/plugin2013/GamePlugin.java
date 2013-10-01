@@ -5,7 +5,9 @@ import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
 import sc.plugin2013.util.Configuration;
 import sc.plugins.PluginDescriptor;
+import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;
+import sc.shared.ScoreFragment;
 
 /**
  * Minimal game plugin. Basic structure of the game is described here
@@ -21,13 +23,14 @@ public class GamePlugin implements IGamePlugin {
 	public static final int PLUGIN_YEAR = 2013;
 
 	public static final int MAX_PLAYER_COUNT = 2;
-	public static final int MAX_TURN_COUNT = 20; //TODO sinvollen Wert finden
+	public static final int MAX_TURN_COUNT = 15;
 	
 	public static final ScoreDefinition SCORE_DEFINITION;
 	
 	static{
 		SCORE_DEFINITION = new ScoreDefinition();
-		//TODO Fragmente festlegen
+		SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte", ScoreAggregation.SUM, false));				
+		SCORE_DEFINITION.add(new ScoreFragment("Punkte", ScoreAggregation.AVERAGE));
 	}
 
 

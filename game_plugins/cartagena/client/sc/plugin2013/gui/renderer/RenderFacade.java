@@ -15,6 +15,7 @@ import sc.plugin2013.EPlayerId;
 import sc.plugin2013.GameState;
 import sc.plugin2013.IGameHandler;
 import sc.plugin2013.Move;
+import sc.plugin2013.MoveContainer;
 import sc.plugin2013.Player;
 import sc.plugin2013.PlayerColor;
 import sc.shared.GameResult;
@@ -174,7 +175,7 @@ public class RenderFacade {
 		this.disabled = disabled;
 	}
 
-	public void sendMove(Move move) {
+	public void sendMove(MoveContainer move) {
 		if (currentHandler != null) {
 			currentHandler.sendAction(move);
 		}

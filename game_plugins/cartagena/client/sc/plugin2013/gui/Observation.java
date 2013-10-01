@@ -147,7 +147,8 @@ public class Observation implements IObservation, IUpdateListener,
 			list.ready();
 		}
 	}
-
+	
+	@SuppressWarnings("unused")
 	private String createGameEndedString(GameResult data) {
 		String result = "\n";
 
@@ -249,7 +250,8 @@ public class Observation implements IObservation, IUpdateListener,
 
 			for (IGameEndedListener listener : gameEndedListeners) {
 				try {
-					listener.onGameEnded(data, createGameEndedString(data));
+					//listener.onGameEnded(data, createGameEndedString(data));
+					listener.onGameEnded(data, null);
 				} catch (Exception e) {
 					logger.error("GameEnded Notification caused an exception.",
 							e);
@@ -309,7 +311,7 @@ public class Observation implements IObservation, IUpdateListener,
 			handler.onUpdate(gameState.getCurrentPlayer(), gameState
 					.getOtherPlayer());
 
-			if (conGame.isGameOver() && conGame.isAtEnd()) {
+			if (conGame.isGameOver() && conGame.isAtEnd()) {				
 				notifyOnGameEnded(sender, conGame.getResult());
 			}
 
