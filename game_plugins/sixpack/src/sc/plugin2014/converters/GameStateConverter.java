@@ -30,7 +30,7 @@ public class GameStateConverter implements Converter {
                 .toLowerCase());
         writer.addAttribute("current", gameState.getCurrentPlayerColor()
                 .toString().toLowerCase());
-
+ 
         writer.startNode("nextStones");
         context.convertAnother(gameState.getNextStonesInBag());
         writer.endNode();
@@ -77,8 +77,8 @@ public class GameStateConverter implements Converter {
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
 
-        GameState gameState = new GameState();
-
+        GameState gameState = new GameState(true);
+        
         try {
 
             Field field = GameState.class.getDeclaredField("turn");
@@ -103,9 +103,9 @@ public class GameStateConverter implements Converter {
             field.set(gameState, PlayerColor.valueOf(reader.getAttribute(
                     "current").toUpperCase()));
             field.setAccessible(false);
-
+            
             while (reader.hasMoreChildren()) {
-
+            	
                 reader.moveDown();
 
                 String nodeName = reader.getNodeName();
@@ -195,7 +195,7 @@ public class GameStateConverter implements Converter {
         catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
+        
         return gameState;
 
     }
