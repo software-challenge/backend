@@ -203,6 +203,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			}
 		}
 		// quit application
+		presFac.getContextDisplay().cancelCurrentGame();
 		presFac.shutdown();
 		System.exit(0);
 	}
