@@ -41,7 +41,7 @@ public class StoneBag implements Cloneable {
 	 */
 	public StoneBag(boolean bare) {
 		if (bare) {
-			stones = null;
+			stones = new ArrayList<Stone>();
 			nextStones = new ArrayList<Stone>(12);
 		} else {
 			stones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
@@ -71,7 +71,7 @@ public class StoneBag implements Cloneable {
 	}
 	
 	public StoneBag(List<Stone> nextStones){
-		stones = null;
+		stones = new ArrayList<Stone>();
 		this.nextStones = new ArrayList<Stone>(12);
 		for(Stone stone: nextStones){
 			this.nextStones.add(stone);
@@ -155,7 +155,7 @@ public class StoneBag implements Cloneable {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		StoneBag clone = new StoneBag();
+		StoneBag clone = new StoneBag(true);
 		clone.stones.clear();
 		clone.nextStones.clear();
 		for (Stone s : stones) {
