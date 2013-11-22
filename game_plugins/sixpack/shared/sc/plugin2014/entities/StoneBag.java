@@ -23,36 +23,59 @@ public class StoneBag implements Cloneable {
 	 * Die offen liegenden Spielsteine
 	 */
 	private final List<Stone> nextStones;
-	
+
 	private SecureRandom sr;
 
 	/**
 	 * Erzeugt einen neuen Spielsteinvorrat.
-	 */	
-	public StoneBag()  {
-		stones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
-				* Constants.STONES_SHAPE_COUNT
-				* Constants.STONES_SAME_KIND_COUNT);
-		nextStones = new ArrayList<Stone>(12);
+	 */
+	public StoneBag() {
+		this(false);
+	}
 
-		for (int i = 0; i < Constants.STONES_COLOR_COUNT; i++) {
-			for (int j = 0; j < Constants.STONES_SHAPE_COUNT; j++) {
-				for (int k = 0; k < Constants.STONES_SAME_KIND_COUNT; k++) {
-					stones.add(new Stone(StoneColor.getColorFromIndex(i),
-							StoneShape.getShapeFromIndex(j)));
+	/**
+	 * Erzeugt einen neuen Spielsteinvorrat. Ist bare == true, werden nur die
+	 * Objekte initialisiert und keine Spielsteine hinzugefügt/gemischt
+	 * 
+	 * @param bare
+	 */
+	public StoneBag(boolean bare) {
+		if (bare) {
+			stones = new ArrayList<Stone>();
+			nextStones = new ArrayList<Stone>(12);
+		} else {
+			stones = new ArrayList<Stone>(Constants.STONES_COLOR_COUNT
+					* Constants.STONES_SHAPE_COUNT
+					* Constants.STONES_SAME_KIND_COUNT);
+			nextStones = new ArrayList<Stone>(12);
+
+			for (int i = 0; i < Constants.STONES_COLOR_COUNT; i++) {
+				for (int j = 0; j < Constants.STONES_SHAPE_COUNT; j++) {
+					for (int k = 0; k < Constants.STONES_SAME_KIND_COUNT; k++) {
+						stones.add(new Stone(StoneColor.getColorFromIndex(i),
+								StoneShape.getShapeFromIndex(j)));
+					}
 				}
 			}
-		}
-		try {
-			sr = SecureRandom.getInstance("SHA1PRNG");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-			sr = new SecureRandom();
-		}
-		sr.nextBytes(new byte[1]);
-		randomizeStones();
+			try {
+				sr = SecureRandom.getInstance("SHA1PRNG");
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+				sr = new SecureRandom();
+			}
+			sr.nextBytes(new byte[1]);
+			randomizeStones();
 
-		refreshNextStones();
+			refreshNextStones();
+		}
+	}
+	
+	public StoneBag(List<Stone> nextStones){
+		stones = new ArrayList<Stone>();
+		this.nextStones = new ArrayList<Stone>(12);
+		for(Stone stone: nextStones){
+			this.nextStones.add(stone);
+		}
 	}
 
 	/**
@@ -132,7 +155,7 @@ public class StoneBag implements Cloneable {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		StoneBag clone = new StoneBag();
+		StoneBag clone = new StoneBag(true);
 		clone.stones.clear();
 		clone.nextStones.clear();
 		for (Stone s : stones) {
@@ -178,7 +201,8 @@ public class StoneBag implements Cloneable {
 	 * </br> <b>Diese Methode ist nur fuer den Spielserver relevant und sollte
 	 * vom Spielclient i.A. nicht aufgerufen werden!</b>
 	 * 
-	 * @param gs der GameState
+	 * @param gs
+	 *            der GameState
 	 */
 	public void loadFromFile(GameState gs) {
 		List<Stone> blueStones = gs.getBluePlayer().getStones();
