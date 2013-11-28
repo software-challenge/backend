@@ -323,6 +323,13 @@ public class GameState implements Cloneable {
 		return new String[] { red.getDisplayName(), blue.getDisplayName() };
 
 	}
+	
+	/** Liefert den Spielsteinbeutel welcher die nächsten ziehbaren Steine enthält.
+	 * @return der Spielsteinbeutel
+	 */
+	public StoneBag getStoneBag() {
+		return stoneBag;
+	}
 
 	/**
 	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und
@@ -492,4 +499,5 @@ public class GameState implements Cloneable {
 		// Set activePlayer
 		this.currentPlayer = gs.getCurrentPlayerColor();
 	}
+	
 }
