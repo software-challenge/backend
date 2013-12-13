@@ -1,10 +1,15 @@
 package sc.plugin2014.laylogic;
 
 import static org.junit.Assert.*;
+
 import java.util.HashMap;
+
 import org.junit.Test;
+
 import sc.plugin2014.entities.*;
 import sc.plugin2014.exceptions.InvalidMoveException;
+import sc.plugin2014.moves.LayMove;
+import sc.plugin2014.util.GameUtil;
 
 public class LayLogicFacadeTest {
 
@@ -64,7 +69,41 @@ public class LayLogicFacadeTest {
         stoneToFieldMap.put(stone, field00);
         stoneToFieldMap.put(stone2, field01);
 
-        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, true);
+        LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
+    }
+    
+    @Test(expected = InvalidMoveException.class)
+    public void testCheckIfLayMoveIsValidNotFreeFieldForum()
+            throws InvalidMoveException {
+        Board board = new Board();
+        //steine wie im forum legen
+        board.layStone(new Stone(StoneColor.BLUE, StoneShape.HEART), 4, 5);
+        board.layStone(new Stone(StoneColor.BLUE, StoneShape.CLUBS), 5, 5);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.CLUBS), 5, 6);
+        board.layStone(new Stone(StoneColor.BLUE, StoneShape.CLUBS), 6, 6);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.CLUBS), 6, 7);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.BELL), 7, 7);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.HEART), 8, 7);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.SPADES), 8, 8);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.SPADES), 9, 7);
+        board.layStone(new Stone(StoneColor.GREEN, StoneShape.BELL), 9, 8);
+        
+       
+
+        Stone stone = new Stone(StoneColor.YELLOW, StoneShape.CLUBS);
+
+        //HashMap<Stone, Field> stoneToFieldMap = new HashMap<Stone, Field>();
+
+        //stoneToFieldMap.put(stone, board.getField(4, 5));
+        LayMove lmove = new LayMove();
+        lmove.layStoneOntoField(stone, board.getField(4, 5));
+        boolean valid = GameUtil.checkIfLayMoveIsValid(lmove, board);
+        System.out.println("Move is valid: " + valid);
+        if(!valid){
+        	throw new InvalidMoveException("Move not valid");
+        }
+
+        //LayLogicFacade.checkIfLayMoveIsValid(stoneToFieldMap, board, false);
     }
 
     @Test(expected = InvalidMoveException.class)
