@@ -7,227 +7,231 @@ import sc.plugin2014.exceptions.InvalidMoveException;
 
 public class LayLogicFacade {
 
-    public static final boolean VERTICAL   = false;
-    public static final boolean HORIZONTAL = true;
+	public static final boolean VERTICAL = false;
+	public static final boolean HORIZONTAL = true;
 
-    public static void checkIfLayMoveIsValid(
-            Map<Stone, Field> stoneToFieldMapping, Board board,
-            boolean firstLayTurn) throws InvalidMoveException {
-        checkIfFieldsAreFree(stoneToFieldMapping.values(), board.getFields());
+	public static void checkIfLayMoveIsValid(
+			Map<Stone, Field> stoneToFieldMapping, Board board,
+			boolean firstLayTurn) throws InvalidMoveException {
+		checkIfFieldsAreFree(stoneToFieldMapping.values(), board.getFields());
 
-        if (firstLayTurn) {
-            if (stoneToFieldMapping.size() == 1) {
-                throw new InvalidMoveException(
-                        "Nur einen Stein als Anfang gelegt");
-            }
-            checkIfValidRow(stoneToFieldMapping);
-        }
-        else {
-            checkAllPossibleRows(stoneToFieldMapping, board);
-        }
-    }
+		if (firstLayTurn) {
+			if (stoneToFieldMapping.size() == 1) {
+				throw new InvalidMoveException(
+						"Nur einen Stein als Anfang gelegt");
+			}
+			checkIfValidRow(stoneToFieldMapping);
+		} else {
+			checkAllPossibleRows(stoneToFieldMapping, board);
+		}
+	}
 
-    private static void checkIfFieldsAreFree(Collection<Field> passedFields,
-            List<Field> boardFields) throws InvalidMoveException {
-        for (Field passedField : passedFields) {
-            if (hasField(boardFields, passedField)) {
-                if (passedField.isFree()) {
-                    continue;
-                }
-                else {
-                    throw new InvalidMoveException("Feld ist belegt");
-                }
-            }
-            else {
-                throw new InvalidMoveException(
-                        "Feld ist nicht im Spielbrett vorhanden");
-            }
-        }
-    }
+	private static void checkIfFieldsAreFree(Collection<Field> passedFields,
+			List<Field> boardFields) throws InvalidMoveException {
+		for (Field passedField : passedFields) {
+			Field equalField = getEqualField(boardFields, passedField);			
+			if (equalField != null) {
+				if (equalField.isFree()) {
+					continue;
+				} else {
+					throw new InvalidMoveException("Feld ist belegt");
+				}
+			} else {
+				throw new InvalidMoveException(
+						"Feld ist nicht im Spielbrett vorhanden");
+			}
+		}
+	}
 
-    private static boolean hasField(List<Field> boardFields, Field passedField) {
-        for (Field field : boardFields) {
-            if (field.equals(passedField)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private static boolean hasField(List<Field> boardFields, Field passedField) {
+		for (Field field : boardFields) {
+			if (field.equals(passedField)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private static void checkIfValidRow(Map<Stone, Field> stoneToFieldMapping)
-            throws InvalidMoveException {
-        checkCoherentFields(stoneToFieldMapping.values());
+	private static Field getEqualField(List<Field> boardFields,
+			Field passedField) {
+		for (Field field : boardFields) {
+			if (field.equals(passedField)) {
+				return field;
+			}
+		}
+		return null;
+	}
 
-        BasicShapeAndColorChecker.checkValidColorOrShape(new ArrayList<Stone>(
-                stoneToFieldMapping.keySet()));
-    }
+	private static void checkIfValidRow(Map<Stone, Field> stoneToFieldMapping)
+			throws InvalidMoveException {
+		checkCoherentFields(stoneToFieldMapping.values());
 
-    private static void checkCoherentFields(Collection<Field> fields)
-            throws InvalidMoveException {
-        if (!checkVerticalRow(fields) && !checkHorizontalRow(fields)) {
-            throw new InvalidMoveException("Steine bilden keine Reihe");
-        }
-    }
+		BasicShapeAndColorChecker.checkValidColorOrShape(new ArrayList<Stone>(
+				stoneToFieldMapping.keySet()));
+	}
 
-    private static boolean checkVerticalRow(Collection<Field> fields) {
-        List<Integer> numbers = new ArrayList<Integer>();
-        int xDim = -1;
-        for (Field field : fields) {
-            if (xDim == -1) {
-                xDim = field.getPosX();
-            }
+	private static void checkCoherentFields(Collection<Field> fields)
+			throws InvalidMoveException {
+		if (!checkVerticalRow(fields) && !checkHorizontalRow(fields)) {
+			throw new InvalidMoveException("Steine bilden keine Reihe");
+		}
+	}
 
-            if (xDim != field.getPosX()) {
-                return false;
-            }
+	private static boolean checkVerticalRow(Collection<Field> fields) {
+		List<Integer> numbers = new ArrayList<Integer>();
+		int xDim = -1;
+		for (Field field : fields) {
+			if (xDim == -1) {
+				xDim = field.getPosX();
+			}
 
-            numbers.add(field.getPosY());
-        }
+			if (xDim != field.getPosX()) {
+				return false;
+			}
 
-        return checkCoherentNumbers(numbers);
-    }
+			numbers.add(field.getPosY());
+		}
 
-    private static boolean checkCoherentNumbers(List<Integer> numbers) {
-        if (numbers.size() == 0) {
-            return false;
-        }
+		return checkCoherentNumbers(numbers);
+	}
 
-        Collections.sort(numbers);
+	private static boolean checkCoherentNumbers(List<Integer> numbers) {
+		if (numbers.size() == 0) {
+			return false;
+		}
 
-        int lastNumber = numbers.get(0);
-        for (int i = 1; i < numbers.size(); i++) {
-            if (numbers.get(i) != (lastNumber + 1)) {
-                return false;
-            }
-            else {
-                lastNumber = numbers.get(i);
-            }
-        }
+		Collections.sort(numbers);
 
-        return true;
-    }
+		int lastNumber = numbers.get(0);
+		for (int i = 1; i < numbers.size(); i++) {
+			if (numbers.get(i) != (lastNumber + 1)) {
+				return false;
+			} else {
+				lastNumber = numbers.get(i);
+			}
+		}
 
-    private static boolean checkHorizontalRow(Collection<Field> fields) {
-        List<Integer> numbers = new ArrayList<Integer>();
-        int yDim = -1;
-        for (Field field : fields) {
-            if (yDim == -1) {
-                yDim = field.getPosY();
-            }
+		return true;
+	}
 
-            if (yDim != field.getPosY()) {
-                return false;
-            }
-            numbers.add(field.getPosX());
-        }
+	private static boolean checkHorizontalRow(Collection<Field> fields) {
+		List<Integer> numbers = new ArrayList<Integer>();
+		int yDim = -1;
+		for (Field field : fields) {
+			if (yDim == -1) {
+				yDim = field.getPosY();
+			}
 
-        return checkCoherentNumbers(numbers);
-    }
+			if (yDim != field.getPosY()) {
+				return false;
+			}
+			numbers.add(field.getPosX());
+		}
 
-    private static void checkAllPossibleRows(
-            Map<Stone, Field> stoneToFieldMapping, Board board)
-            throws InvalidMoveException {
-        boolean adjoinedFound = false;
+		return checkCoherentNumbers(numbers);
+	}
 
-        if (stoneToFieldMapping.size() >= 2) {
-            checkSameDirectionOfStones(stoneToFieldMapping);
+	private static void checkAllPossibleRows(
+			Map<Stone, Field> stoneToFieldMapping, Board board)
+			throws InvalidMoveException {
+		boolean adjoinedFound = false;
 
-            List<Field> describedRow = GetDescribedRow.getDescribedRow(
-                    stoneToFieldMapping.values(), board);
-            checkCoherentFields(describedRow);
-            List<Stone> stonesOfDescribedRow = getStonesFromFields(
-                    stoneToFieldMapping, describedRow, board);
+		if (stoneToFieldMapping.size() >= 2) {
+			checkSameDirectionOfStones(stoneToFieldMapping);
 
-            BasicShapeAndColorChecker
-                    .checkValidColorOrShape(stonesOfDescribedRow);
-        }
+			List<Field> describedRow = GetDescribedRow.getDescribedRow(
+					stoneToFieldMapping.values(), board);
+			checkCoherentFields(describedRow);
+			List<Stone> stonesOfDescribedRow = getStonesFromFields(
+					stoneToFieldMapping, describedRow, board);
 
-        for (Field field : stoneToFieldMapping.values()) {
-            List<Field> neighbors = GetNeighbours.getOccupiedNeighbors(field,
-                    board);
-            if (!neighbors.isEmpty()) {
-                adjoinedFound = true;
+			BasicShapeAndColorChecker
+					.checkValidColorOrShape(stonesOfDescribedRow);
+		}
 
-                for (Field neighbor : neighbors) {
-                    List<Field> neighborRow = GetRowFromNeighbourFields
-                            .getRowFromField(field, neighbor, board);
-                    List<Stone> stonesRow = getStonesFromFields(
-                            stoneToFieldMapping, neighborRow, board);
-                    BasicShapeAndColorChecker.checkValidColorOrShape(stonesRow);
-                }
-            }
-        }
+		for (Field field : stoneToFieldMapping.values()) {
+			List<Field> neighbors = GetNeighbours.getOccupiedNeighbors(field,
+					board);
+			if (!neighbors.isEmpty()) {
+				adjoinedFound = true;
 
-        if (!adjoinedFound) {
-            throw new InvalidMoveException(
-                    "Steine können nur an andere Reihen angelegt werden");
-        }
-    }
+				for (Field neighbor : neighbors) {
+					List<Field> neighborRow = GetRowFromNeighbourFields
+							.getRowFromField(field, neighbor, board);
+					List<Stone> stonesRow = getStonesFromFields(
+							stoneToFieldMapping, neighborRow, board);
+					BasicShapeAndColorChecker.checkValidColorOrShape(stonesRow);
+				}
+			}
+		}
 
-    private static void checkSameDirectionOfStones(
-            Map<Stone, Field> stoneToFieldMapping) throws InvalidMoveException {
-        boolean sameDirection = true;
+		if (!adjoinedFound) {
+			throw new InvalidMoveException(
+					"Steine können nur an andere Reihen angelegt werden");
+		}
+	}
 
-        Collection<Field> fields = stoneToFieldMapping.values();
+	private static void checkSameDirectionOfStones(
+			Map<Stone, Field> stoneToFieldMapping) throws InvalidMoveException {
+		boolean sameDirection = true;
 
-        int lastX = -1;
-        for (Field field : fields) {
-            if (lastX == -1) {
-                lastX = field.getPosX();
-            }
-            else {
-                if (lastX != field.getPosX()) {
-                    sameDirection = false;
-                    break;
-                }
-            }
-        }
+		Collection<Field> fields = stoneToFieldMapping.values();
 
-        if (sameDirection) {
-            return;
-        }
+		int lastX = -1;
+		for (Field field : fields) {
+			if (lastX == -1) {
+				lastX = field.getPosX();
+			} else {
+				if (lastX != field.getPosX()) {
+					sameDirection = false;
+					break;
+				}
+			}
+		}
 
-        sameDirection = true;
+		if (sameDirection) {
+			return;
+		}
 
-        int lastY = -1;
-        for (Field field : fields) {
-            if (lastY == -1) {
-                lastY = field.getPosY();
-            }
-            else {
-                if (lastY != field.getPosY()) {
-                    sameDirection = false;
-                    break;
-                }
-            }
-        }
+		sameDirection = true;
 
-        if (sameDirection) {
-            return;
-        }
+		int lastY = -1;
+		for (Field field : fields) {
+			if (lastY == -1) {
+				lastY = field.getPosY();
+			} else {
+				if (lastY != field.getPosY()) {
+					sameDirection = false;
+					break;
+				}
+			}
+		}
 
-        throw new InvalidMoveException("Steine müssen eine Reihe formen");
-    }
+		if (sameDirection) {
+			return;
+		}
 
-    private static List<Stone> getStonesFromFields(
-            Map<Stone, Field> stoneToFieldMapping, List<Field> neighborRow,
-            Board board) {
-        List<Stone> result = new ArrayList<Stone>();
-        for (Field field : neighborRow) {
-            if (stoneToFieldMapping.containsValue(field)) {
-                for (Entry<Stone, Field> entry : stoneToFieldMapping.entrySet()) {
-                    if (entry.getValue() == field) {
-                        result.add(entry.getKey());
-                        break;
-                    }
-                }
-            }
-            else {
-                result.add(field.getStone());
-            }
-        }
+		throw new InvalidMoveException("Steine müssen eine Reihe formen");
+	}
 
-        return result;
-    }
+	private static List<Stone> getStonesFromFields(
+			Map<Stone, Field> stoneToFieldMapping, List<Field> neighborRow,
+			Board board) {
+		List<Stone> result = new ArrayList<Stone>();
+		for (Field field : neighborRow) {
+			if (stoneToFieldMapping.containsValue(field)) {
+				for (Entry<Stone, Field> entry : stoneToFieldMapping.entrySet()) {
+					if (entry.getValue() == field) {
+						result.add(entry.getKey());
+						break;
+					}
+				}
+			} else {
+				result.add(field.getStone());
+			}
+		}
+
+		return result;
+	}
 
 }
