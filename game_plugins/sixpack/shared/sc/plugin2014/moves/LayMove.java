@@ -11,16 +11,32 @@ import sc.plugin2014.laylogic.PointsCalculator;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
+/**
+ * Repräsentiert einen Legezug.
+ * 
+ * @author ffi
+ * 
+ */
 @XStreamAlias(value = "laymove")
 @XStreamConverter(LayMoveConverter.class)
 public class LayMove extends Move implements Cloneable {
 
 	private final Map<Stone, Field> stoneToFieldMapping;
 
+	/**
+	 * Erzeugt ein neues LayMove Objekt. {@link #stoneToFieldMapping} wird dabei
+	 * als {@link HashMap} initialisiert.
+	 */
 	public LayMove() {
 		stoneToFieldMapping = new HashMap<Stone, Field>();
 	}
 
+	/**
+	 * Liefert eine Map mit Steinen, welche auf die dazugehörigen Felder gelegt
+	 * werden sollen.
+	 * 
+	 * @return
+	 */
 	public Map<Stone, Field> getStoneToFieldMapping() {
 		return stoneToFieldMapping;
 	}
@@ -37,6 +53,12 @@ public class LayMove extends Move implements Cloneable {
 		getStoneToFieldMapping().put(stone, field);
 	}
 
+	/**
+	 * Überprüft ob einer der übergebenen Parameter null ist.
+	 * 
+	 * @param stone
+	 * @param field
+	 */
 	private void checkFieldAndStoneNotNull(Stone stone, Field field) {
 		if (stone == null) {
 			throw new IllegalArgumentException("Stein darf nicht null sein");
@@ -47,6 +69,9 @@ public class LayMove extends Move implements Cloneable {
 		}
 	}
 
+	/**
+	 * Löscht die Map mit Zügen.
+	 */
 	public void clearStoneToFieldMapping() {
 		getStoneToFieldMapping().clear();
 	}
@@ -95,10 +120,38 @@ public class LayMove extends Move implements Cloneable {
 		state.updateStonesInBag();
 	}
 
+	public void perform(GameState state, PlayerColor color)
+			throws InvalidMoveException, StoneBagIsEmptyException {
+		super.perform(state, color);
+		Player player;
+		if (color == PlayerColor.BLUE) {
+			player = state.getBluePlayer();
+		} else {
+			player = state.getRedPlayer();
+		}
+		this.perform(state, player);
+	}
+	
+	public void perform(GameState state) throws InvalidMoveException,
+	StoneBagIsEmptyException {
+		super.perform(state);
+		this.perform(state, state.getCurrentPlayer());
+	}
+
+	/**
+	 * Liefert eine Liste mit Steinen, welche gelegt werden sollen.
+	 * 
+	 * @return Die Liste mit Steinen.
+	 */
 	private List<Stone> getStonesToLay() {
 		return new LinkedList<Stone>(getStoneToFieldMapping().keySet());
 	}
 
+	/**
+	 * Überprüft ob mindestens ein Eintrag in der Map vorhanden ist.
+	 * 
+	 * @throws InvalidMoveException
+	 */
 	private void checkAtLeastOneStone() throws InvalidMoveException {
 		if (getStoneToFieldMapping().keySet().isEmpty()) {
 			throw new InvalidMoveException(
@@ -106,6 +159,11 @@ public class LayMove extends Move implements Cloneable {
 		}
 	}
 
+	/**
+	 * Klont dieses Objekt. (deep-copy)
+	 * 
+	 * @see sc.plugin2014.moves.Move#clone()
+	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		LayMove clone = new LayMove();
@@ -122,19 +180,21 @@ public class LayMove extends Move implements Cloneable {
 	public boolean equals(Object obj) {
 		if (obj instanceof LayMove) {
 			LayMove lm = (LayMove) obj;
-			LinkedList<Stone> keys = new LinkedList<Stone>(stoneToFieldMapping.keySet());
-			LinkedList<Stone> keysCp = new LinkedList<Stone>(lm.stoneToFieldMapping.keySet());
+			LinkedList<Stone> keys = new LinkedList<Stone>(
+					stoneToFieldMapping.keySet());
+			LinkedList<Stone> keysCp = new LinkedList<Stone>(
+					lm.stoneToFieldMapping.keySet());
 			for (Stone stone : keys) {
 				if (!(keysCp.contains(stone))) {
 					return false;
-				} 
+				}
 				Stone equi = new Stone();
-				for(Stone s: keysCp){
-					if(s.equals(stone)){
+				for (Stone s : keysCp) {
+					if (s.equals(stone)) {
 						equi = s;
 					}
 				}
-				if(!stoneToFieldMapping.get(stone).equals(
+				if (!stoneToFieldMapping.get(stone).equals(
 						lm.stoneToFieldMapping.get(equi))) {
 					return false;
 				}

@@ -30,7 +30,7 @@ public class GameStateConverter implements Converter {
                 .toLowerCase());
         writer.addAttribute("current", gameState.getCurrentPlayerColor()
                 .toString().toLowerCase());
-
+ 
         writer.startNode("nextStones");
         context.convertAnother(gameState.getNextStonesInBag());
         writer.endNode();
@@ -77,8 +77,8 @@ public class GameStateConverter implements Converter {
     public Object unmarshal(HierarchicalStreamReader reader,
             UnmarshallingContext context) {
 
-        GameState gameState = new GameState();
-
+        GameState gameState = new GameState(true);
+        
         try {
 
             Field field = GameState.class.getDeclaredField("turn");
@@ -103,9 +103,9 @@ public class GameStateConverter implements Converter {
             field.set(gameState, PlayerColor.valueOf(reader.getAttribute(
                     "current").toUpperCase()));
             field.setAccessible(false);
-
+            
             while (reader.hasMoreChildren()) {
-
+            	
                 reader.moveDown();
 
                 String nodeName = reader.getNodeName();
@@ -138,11 +138,17 @@ public class GameStateConverter implements Converter {
                 else if (nodeName.equals("nextStones")) {
                     List<Stone> nextStones = (List<Stone>) context
                             .convertAnother(gameState, ArrayList.class);
+                    StoneBag stoneBag = new StoneBag(nextStones);
                     Field nextStonesField = GameState.class
                             .getDeclaredField("nextStones");
                     nextStonesField.setAccessible(true);
                     nextStonesField.set(gameState, nextStones);
                     nextStonesField.setAccessible(false);
+                    //Update the stoneBag. Otherwise no one can do a .perform on his Client
+                    Field stoneBagField = GameState.class.getDeclaredField("stoneBag");
+                    stoneBagField.setAccessible(true);
+                    stoneBagField.set(gameState, stoneBag);
+                    stoneBagField.setAccessible(false);
                 }
                 else if (nodeName.equals("move")) {
                     MoveType moveType = MoveType.valueOf(reader.getAttribute(
@@ -195,7 +201,7 @@ public class GameStateConverter implements Converter {
         catch (IllegalAccessException e) {
             e.printStackTrace();
         }
-
+        
         return gameState;
 
     }
