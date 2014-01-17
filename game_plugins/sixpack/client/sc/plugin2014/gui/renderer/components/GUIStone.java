@@ -66,9 +66,11 @@ public class GUIStone {
 
     public void draw(Graphics2D g2, PlayerColor currentPlayerColor) {
         if (image == null) {
+        	String shape = stone.getShape().toString().toLowerCase();
+        	String color = stone.getColor().toString().toLowerCase();
             image = RendererUtil.getImage("resource/stones/"
-                    + stone.getShape().toString().toLowerCase() + "_"
-                    + stone.getColor().toString().toLowerCase() + ".png");
+                    + shape + "_"
+                    + color + ".png");
         }
         if (isHighlighted()) {
             g2.drawImage(image, getX(), getY(), GUIConstants.STONE_WIDTH,
