@@ -21,7 +21,6 @@ public class Producer
 {
 	private final Connection	conn;
 	private File				toWatch;
-	private String				messageSuffix;
 	private File				toTmp;
 
 	public void setTmp(File folder)
@@ -32,11 +31,6 @@ public class Producer
 	public void setWatch(File folder)
 	{
 		this.toWatch = folder;
-	}
-
-	public void setMessageSuffix(String suffix)
-	{
-		this.messageSuffix = suffix;
 	}
 
 	public Producer(String hostname, int port) throws IOException
@@ -70,7 +64,6 @@ public class Producer
 	}
 
 	private static String	FOLDER_WATCH	= "w";
-	private static String	HOST_SUFFIX		= "s";
 	private static String	FOLDER_TMP		= "t";
 
 	public static void main(String[] args)
@@ -80,14 +73,12 @@ public class Producer
 			final Options o = new Options();
 			o.addOption(Settings.HOST_OPTION, true, "Server to connect to after launch");
 			o.addOption(FOLDER_WATCH, true, "Folder to watch");
-			o.addOption(HOST_SUFFIX, true, "Server path");
 			o.addOption(FOLDER_TMP, true, "Tmp client folder");
 
 			CommandLineParser parser = new PosixParser();
 			CommandLine cmd = parser.parse(o, args);
 			String hostAddress = cmd.getOptionValue(Settings.HOST_OPTION);
 			String folder = cmd.getOptionValue(FOLDER_WATCH);
-			String suffix = cmd.getOptionValue(HOST_SUFFIX);
 			String tmp = cmd.getOptionValue(FOLDER_TMP);
 
 			int portNumber = Settings.DEFAULT_PORT;
@@ -105,7 +96,6 @@ public class Producer
 					+ portNumber);
 
 			final Producer p = new Producer(hostAddress, portNumber);
-			p.setMessageSuffix(suffix);
 			p.setWatch(f);
 			p.setTmp(t);
 
@@ -148,8 +138,7 @@ public class Producer
 							{ "/bin/mv", oldZIP.getAbsolutePath(),
 									newZIP.getAbsolutePath() });
 
-						String message = messageSuffix
-								+ newZIP.getAbsolutePath();
+						String message = newZIP.getAbsolutePath();
 						publish(message, Settings.SWC_QUEUE);
 						publish("Start a fresh VM", Settings.VM_QUEUE);
 					}
