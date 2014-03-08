@@ -1,0 +1,57 @@
+\section{Akteure}
+ Die nachfolgenden Anwendungsfälle beziehen sich auf den folgenden Akteur:
+
+{\small
+\begin{center}
+   \begin{tabular}{|l|l|l|}
+   \hline
+		Akteur		& Beschreibung & Zugehörige Anwendungsszenarios \\
+   \hline
+		Benutzer	& \begin{minipage}{3.5cm}
+					\vspace{0.1cm}
+                       Empfängt Backup-Dateiteile, kann Dateien veröffentlichen, 
+                       verschickt eine Liste von Dateien, kann Dateien löschen und suchen und lädt Dateien hoch.
+                 \end{minipage}
+                 \vspace{0.1cm}
+               & \begin{minipage}{10cm}
+					\vspace{0.1cm}
+					\begin{itemize}
+						\item Eine eigene, lokale Datei veröffentlichen
+						\item Alle veröffentlichten \gls{daten} eines \gls{peer}s anzeigen
+						\item Eine Backup-Datei verteilen
+						\item Eine veröffentlichte Datei eines \gls{peer}s herunterladen
+						\item Speicherplatz für andere freigeben
+						\item Identifikation mit Benutzername und Passwort
+						\item Eine eigene Backup-Datei aus dem \gls{btn} löschen
+						\item Eine veröffentlichte Datei anhand von Stichwörtern suchen
+					\end{itemize}
+                    \vspace{0.1cm}
+                    \end{minipage}\\[0.1cm]
+	\hline
+		System		& \begin{minipage}{3.5cm}
+					\vspace{0.1cm}
+						Führt die Aktionen des Benutzers auf unterster Ebene aus, und verwaltet Nachrichten von anderen \gls{peer}s und verarbeitet \gls{daten}.
+                 \end{minipage}
+                 \vspace{0.1cm}
+               & \begin{minipage}{10cm}
+					\vspace{0.1cm}
+					\begin{itemize}
+						\item Verbindung herstellen
+						\item Verbindung trennen
+						\item Nachricht validieren
+						\item \gls{peerliste} aktualisieren
+						\item Verteilung überprüfen
+						\item Daten verschlüsseln
+						\item Daten entschlüsseln
+						\item Daten komprimieren
+						\item Daten dekomprimieren
+						\item Daten teilen
+						\item Daten zusammenfügen
+						\item \gls{backup}-Daten verteilen
+					\end{itemize}
+                    \vspace{0.1cm}
+                    \end{minipage}\\[0.1cm]
+	\hline
+	\end{tabular}
+
+\end{center}}

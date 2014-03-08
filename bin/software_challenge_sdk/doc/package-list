@@ -1,0 +1,16 @@
+edu.cau.plugins
+sc.api.plugins
+sc.api.plugins.exceptions
+sc.api.plugins.host
+sc.framework.plugins
+sc.framework.plugins.protocol
+sc.guiplugin.interfaces
+sc.guiplugin.interfaces.listener
+sc.helpers
+sc.networking
+sc.networking.clients
+sc.protocol
+sc.protocol.helpers
+sc.protocol.requests
+sc.protocol.responses
+sc.shared

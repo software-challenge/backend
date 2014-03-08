@@ -1,0 +1,59 @@
+<project name="manhattan-plugin" basedir="." default="main">
+	<import file="../../git-build.xml" />
+
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/bin" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="lib.dir" value="../../software_challenge_sdk/lib" />
+	<property name="sdk.dir" value="./../../software_challenge_sdk" />
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<pathelement location="${sdk.dir}/${build.dir}/bin" />
+	</path>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${src.dir}" />
+	</target>
+
+	<target name="dependencies">
+		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
+	</target>
+
+	<target name="merge-src">
+		<copy todir="${src.dir}">
+			<fileset dir="server" />
+			<fileset dir="client" />
+			<fileset dir="shared" />
+		</copy>
+	</target>
+
+	<target name="compile" depends="merge-src">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" encoding="utf8" classpathref="classpath" debug="true" debuglevel="lines,vars,source" />
+	</target>
+
+	<target name="jar" depends="scmversion,compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar">
+			<manifest>
+				<attribute name="${manifest.code.version.key}" value="${code.version}" />
+			</manifest>
+			<fileset dir="${classes.dir}" />
+			<fileset dir=".">
+				<include name="resource/**/*" />
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="javadoc">
+		<javadoc encoding="UTF-8" charset="UTF-8" access="public" author="true" classpath="${toString:classpath}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
+	</target>
+
+
+	<target name="clean-build" depends="clean,jar,javadoc" />
+
+	<target name="main" depends="dependencies,clean-build" />
+</project>

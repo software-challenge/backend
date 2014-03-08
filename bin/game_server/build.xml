@@ -1,0 +1,97 @@
+<project name="softwarechallenge-server" basedir="." default="main">
+
+	<property name="src.dir" value="src" />
+	<property name="test.dir" value="test" />
+
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/bin" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+
+	<property name="main-class" value="sc.server.Application" />
+
+	<property name="lib.dir" value="./../software_challenge_sdk/lib" />
+	<property name="plugin.dir" value="${jar.dir}/plugins" />
+	<property name="sdk.dir" value="./../software_challenge_sdk" />
+
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<fileset dir="${sdk.dir}" includes="build/jar/*.jar" />
+	</path>
+
+	<path id="classpath.base">
+		<path refid="classpath.libs" />
+		<pathelement location="${classes.dir}" />
+	</path>
+
+	<pathconvert property="jar.classpath" pathsep="">
+		<mapper>
+			<chainedmapper>
+				<!-- remove absolute path -->
+				<flattenmapper />
+				<!-- add lib/ prefix -->
+				<globmapper from="*" to="lib/* " />
+			</chainedmapper>
+		</mapper>
+
+		<path refid="classpath.libs" />
+	</pathconvert>
+
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+
+	<target name="configure.eclipse" if="eclipse.running">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+		<echo message="Configuring compiler for Eclipse..." />
+	</target>
+
+	<target name="plugins">
+		<echo message="Compiling Plugins..." />
+		<!-- TODO: compile all plugins automatically -->
+		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/schaefchen_plugin" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/tic_tac_toe" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/qwirkle_plugin" target="clean-build" inheritAll="false" />
+	</target>
+
+	<target name="dependencies">
+		<echo message="Compiling API Libraries..." />
+		<ant dir="./../software_challenge_sdk" inheritAll="false" />
+		<echo message="Dependencies have been compiled." />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<antcall target="configure.eclipse" />
+		<javac source="1.6" target="1.6" srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" />
+	</target>
+
+	<target name="export-plugins">
+		<mkdir dir="${jar.dir}" />
+		<mkdir dir="${jar.dir}/lib" />
+		<copy todir="${jar.dir}/lib" flatten="true">
+			<path refid="classpath.libs" />
+		</copy>
+
+		<mkdir dir="${plugin.dir}" />
+		<copy todir="${plugin.dir}" flatten="true">
+			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
+		</copy>
+	</target>
+
+	<target name="jar" depends="compile, export-plugins">
+		<jar destfile="${jar.dir}/${ant.project.name}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+			<fileset dir="${classes.dir}" />
+			<fileset dir="./configuration" />
+		</jar>
+	</target>
+
+	<target name="clean-build" depends="clean,jar" />
+
+	<target name="main" depends="dependencies,clean-build" />
+</project>
