@@ -1,0 +1,563 @@
+\documentclass[12pt,a4paper, ngerman, oneside]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage{lmodern}
+\usepackage{ucs}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphics}
+\usepackage{paralist}
+\usepackage[linkcolor=black]{hyperref}
+\usepackage{listings} \lstset{numbers=left, numberstyle=\tiny, numbersep=5pt} \lstset{language=Java}
+%% Grafiken
+\usepackage[pdftex]{graphicx}
+\usepackage{epsfig} 
+\hypersetup{% 
+  colorlinks=true, 
+}
+\sloppy
+\hyphenpenalty=100000
+
+\date{Software-Challenge Germany 2014\\Stand \today}
+
+
+%\author{Niklas Paulsen, npau@informatik.uni-kiel.de }
+\title{Client-Server Kommunikation Sixpack}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+\setcounter{page}{1}
+\section{Einleitung}
+\subsection*{Zum Inhalt} Wie in den letzten Jahren wird zur Client-Server
+Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch:
+\htmladdnormallink{SC Wiki: Die Schnittstelle zum
+Server}{http://sc-doku.gfxpro.eu/wiki/Die_Schnittstelle_zum_Server}}. In diesem
+Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett
+eigener Client geschrieben werden kann. Es wird hier nicht die vollständige
+Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client
+umgehen können muss, um spielfähig zu sein.
+\subsection*{An wen richtet sich dieses Dokument?} Die Kommunikation mit dem
+Spielserver ist für diejenigen unwichtig, die aufbauend auf dem Simpleclient
+programmieren. Dort steht bereits ein funktionierender Client bereit
+und es muss nur die Spiellogik entworfen werden. \\
+Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die
+Programmiersprache frei wählen zu können, benötigt die Definitionen.
+
+\subsection*{Hinweise} Falls Sie beabsichtigen sollten, diese
+Kommunikationsschnittstelle zu realisieren, sei darauf hingewiesen, dass es im
+Verlauf des Wettbewerbes möglich ist, dass weitere, hier noch nicht aufgeführte
+Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei solchen
+Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server
+kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu
+verwerfen, die hier nicht weiter definiert sind. \bigskip \\
+Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine
+Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt \footnote{siehe: \htmladdnormallink{XStream}{http://xstream.codehaus.org/}}. 
+Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
+%Dabei
+%werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können
+%vernachlässigt werden.
+
+\subsection*{Wie das Dokument zu lesen ist}
+Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die über dem Code kurz erläutert werden.\\
+Eingebettete XML-Elemente werden hier allgemein als \begin{verbatim}
+{TAGNAME}
+\end{verbatim} geschrieben, wenn an der Stelle eine beliebige Anzahl ($\geq 0$) von \textit{TAGNAME}-Tags eingebettet sein \textit{kann} und als \begin{verbatim}
+[TAGNAME]
+\end{verbatim}, wenn an der Stelle ein \textit{TAGNAME}-Tag optional stehen kann. \\
+
+\subsection{Beispiel-Definition}
+Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags zu:
+\begin{verbatim}
+- <a name="Sinnvoll">
+  <\a>
+- <a name="Sinnvoll">
+      <b anzahl="2"/>
+  <\a>
+- <a name="Hans">
+      <b anzahl="2"/>
+      <b anzahl="2"/>
+      <b anzahl="2"/>
+  </a>
+\end{verbatim}
+\subsubsection*{Definition 'b'}
+\begin{verbatim}
+<b anzahl="2">
+\end{verbatim}
+\subsubsection*{Definition 'a'}
+\begin{description}
+\item[N] Ein beliebiger Name
+\item[b] ein b-Tag wie in obiger Definition
+\end{description}
+\begin{verbatim}
+<a name="N" >
+	{b}
+<\a>
+\end{verbatim}
+
+\newpage
+\part{Client $\rightarrow$ Server}
+\section{Spiel betreten}
+\subsection{Ohne Reservierung}
+Betritt ein beliebiges, offenes Spiel:
+\begin{verbatim}
+<join gameType="swc_2014_sixpack"/>
+\end{verbatim}
+\subsection{Mit Reservierungscode}
+Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Platz betreten.
+\begin{description}
+\item[RC] Reservierungscode
+\end{description}
+\begin{verbatim}
+<joinPrepared reservationCode="RC"/>
+\end{verbatim}
+
+\section{Züge senden}
+Es gibt zwei Arten von Zügen: Anlegezüge und Tauschzüge. Beim Senden eines Zuges muss dieser, jeweils von einem ''room'' Objekt umschlossen werden.
+\begin{description}
+\item[RID] ID des Raumes
+\item[move] Anlege- oder Tauschzug. Wie in \ref{layMove} und \ref{changeMove} definiert.
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+  move
+</room>
+\end{verbatim}
+\subsection{Anlegezug}
+\label{layMove}
+\begin{description}
+\item[selection] Eins bis sechs Steinlegungen. Wie in \ref{stoneToField} definiert.
+\end{description}
+\begin{verbatim}
+<data class="laymove">
+  {stoneToField}
+</data>
+\end{verbatim}
+
+\subsubsection{Steine legen}
+\label{stoneToField}
+\begin{description}
+\item[stone] Spielstein, welcher gelegt werden soll. Wie in \ref{stone} definiert.
+\item[field] Spielfeld, auf das der Stein gelegt werden soll. Wie in \ref{sec:field} definiert.
+\end{description}
+\begin{verbatim}
+<stoneToField>
+  stone
+  field
+</stoneToField>
+\end{verbatim}
+
+\subsection{Tauschzug}
+\label{changeMove}
+\begin{description}
+\item[selection] Eins bis sechs Steinselektionen. Wie in \ref{sec:stoneSelection} definiert.
+\end{description}
+\begin{verbatim}
+<data class="exchangemove">
+  {selection}
+</data>
+\end{verbatim}
+
+\subsubsection{Steinselektion}
+\label{sec:stoneSelection}
+\begin{description}
+\item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
+\item[S] Symbol des Steins. Wie in \ref{stoneSymbols} definiert.
+\item[I] Eindeutiger Identifikator des Spielsteins. Ganzzahlig.
+\end{description}
+\begin{verbatim}
+<select color="C" shape="S" identifier="I">
+\end{verbatim}
+
+\subsection{\label{stoneColors}Steinfarben}
+Die Strings der Farbnamen sind:
+\begin{compactenum}
+\item BLUE
+\item GREEN
+\item MAGENTA
+\item ORANGE
+\item VIOLET
+\item YELLOW
+\end{compactenum}
+Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
+sein.
+
+\subsection{\label{stoneSymbols}Steinsymbole}
+Die Strings der Symbolnamen sind:
+\begin{compactenum}
+\item ACORN
+\item BELL
+\item CLUBS
+\item DIAMOND
+\item HEART
+\item SPADES
+\end{compactenum}
+Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
+sein.
+
+\subsection{Debughints}
+Zügen können Debug-Informationen beigefügt werden:
+\begin{description}
+\item[S] Informationen zum Zug als String
+\end{description}
+\begin{verbatim}
+ <hint content="S"/>
+\end{verbatim}
+Damit sieht beispielsweise ein Anlegezug, bei dem zwei Spielsteine auf das Spielbrett gelegt werden, so aus:
+\begin{verbatim}
+<move type="LAY">
+<stoneToField>
+  <stone color="BLUE" shape="DIAMOND" identifier="12"/>
+  <field posX="7" posY="7"/>
+</stoneToField>
+<stoneToField>
+  <stone color="BLUE" shape="SPADES" identifier="18"/>
+  <field posX="6" posY="7"/>
+</stoneToField>
+<hint content="Sending Start LayMove"/>
+</move>
+\end{verbatim}
+
+
+
+\newpage
+\part{Server $\rightarrow$ Client}
+\begin{description}
+\item[RID] ID des Raumes, in dem das Spiel stattfindet
+\end{description}
+
+\section{Raum beigetreten}
+ \begin{verbatim}
+ <joined roomId="RID"/>
+ \end{verbatim}
+
+\section{Willkommensnachricht}
+Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
+\begin{description}
+\item[RID] ID des Raumes, in dem das Spiel stattfindet
+\item[C] Spielerfarbe (red/blue)
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+  <data class="welcome" color="C"/>
+</room>
+\end{verbatim}
+
+\section{Spielstatus}
+Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die Clients gesendet wird. Das Spielstatus-Tag ist dabei noch in einem \textit{data}-Tag der Klasse \textit{memento} gewrappt:
+\subsection{memento}
+\begin{description}
+\item[RID] ID des Raumes, in dem das Spiel stattfindet
+\item[status] wie in \ref{state} definiert
+\end{description}
+\begin{verbatim}
+<room roomId="RID"> 
+  <data class="memento"> 
+  	status
+  </data> 
+</room>
+\end{verbatim}
+
+\subsection{\label{state}Status}
+\begin{description}
+\item[Z] aktuelle Zugzahl
+\item[numStones] Anzahl der Spielsteine, welche sich im Vorrat befinden.
+\item[SC] Spieler, welcher den ersten Zug ausführen darf ("red"/"blue").
+\item[C] Spieler, der an der Reihe ist ("red"/"blue")
+\item[STONE] Wie in \ref{stone} definiert. Der Stein, welcher als nächstes gezogen werden kann, kommt zuerst.
+\item[red, blue] wie in \ref{player} definiert
+\item[board] Das Spielbrett, wie in \ref{board} definiert
+\item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
+\ref{lastmove} definiert
+\item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
+\end{description}
+\begin{verbatim}
+<state class="state" turn="Z" stonesInBag="numStones" start="SC" currentPlayer="C">
+  <nextStones>
+    {STONE}
+  </nextStones>
+  red
+  blue
+  board
+  [lastMove]  
+  [condition]
+</state>
+
+\end{verbatim}
+
+\subsection{\label{stone}Spielstein}
+\begin{description}
+\item[C] Farbe des Steins. Wie in \ref{stoneColors} definiert.
+\item[S] Symbol der Steins. Wie in \ref{stoneSymbols} definiert.
+\item[I] Eindeutiger Identifikator des Spielsteins. Ganzzahlig.
+\end{description}
+\begin{verbatim} 
+<stone color="C" shape="S" identifier="I"/>
+\end{verbatim}
+
+\subsection{\label{player}Spieler}
+\begin{description}
+\item[C] Farbe (red/blue)
+\item[N] Anzeigename
+\item[COL] Farbe "red"/"blue"
+\item[P] Punktekonto
+\item[STONE] Spielstein, wie in \ref{stone} definiert
+\end{description}
+\begin{verbatim}
+<C displayName="N" color="COL" points="P">
+  {STONE}
+</C>
+\end{verbatim}
+
+\subsection{\label{board}Spielbrett}
+\begin{description}
+\item[FIELD] Ein Spielfeld wie in \ref{sec:field} definiert.
+\end{description}
+\begin{verbatim}
+<board>
+  {FIELD}
+</board>
+\end{verbatim}
+
+\subsection{\label{sec:field}Spielfeld}
+\begin{description}
+\item[X] X-Koordinate
+\item[Y] Y-Kooridnate
+\item[STONE] Spielstein, falls einer auf dem Spielfeld liegt. Wie in \ref{stone} beschrieben.
+\end{description}
+\begin{verbatim}
+<field posX="X" posY="Y">
+  [STONE]
+</field>
+\end{verbatim}
+
+\subsection{\label{lastmove}Letzter Zug}
+\begin{description}
+\item[T] Typ des Zugs. Entweder ''EXCHANGE'' oder "LAY".
+\item[moves] Eins bis sechs Legezüge oder Steinselektionen (siehe \ref{stoneToField} und \ref{sec:stoneSelection})
+\end{description}
+\begin{verbatim}
+<move type="T">
+  {moves}
+</move>
+\end{verbatim}
+
+\section{\label{moverequest}Zug-Anforderung}
+Eine simple Nachricht fordert zum Zug auf:
+\begin{verbatim}
+<room roomId="RID">
+  <data class="sc.framework.plugins.protocol.MoveRequest"/>
+</room>
+\end{verbatim}
+
+\section{Fehler}
+Ein \glqq spielfähiger\grqq\ Client muss nicht mit Fehlern umgehen können.
+Fehlerhafte Züge resultieren in einem vorzeitigen Ende des
+Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend}).
+\begin{description}
+\item[MSG] Fehlermeldung
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+  <error message="MSG">
+    <originalRequest>
+      Request, der den Fehler verursacht hat
+    </originalRequest>
+  </error>
+</room>
+\end{verbatim}
+
+\section{Spiel pausiert}
+Ein \glqq spielfähiger\grqq\ Client muss Pausierungsnachrichten nicht beachten,
+da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Servers handelt.
+\begin{description}
+\item[N] Spielername
+\item[P] Punktekonto
+\item[stones] wie in \ref{stone} definiert
+\end{description}
+\begin{verbatim}
+<room roomId="RID">
+  <data class="paused">
+    <nextPlayer class="player" displayName="N" color="C" points="P">
+      {stones}
+    </nextPlayer>
+  </data>
+</room>
+\end{verbatim}
+
+\section{Spiel verlassen}
+\begin{verbatim}
+<left roomId="RID"/>
+\end{verbatim}
+
+
+\section{\label{gameend}Spielergebnis}
+Zum Spielende enthält der Spielstatus eine \textit{Condition}, der das Spielergebnis entnommen werden kann:
+\begin{description}
+\item[W] Gewinner (red/blue/none)
+\item[R] Text, der den Grund für das Spielende erklärt
+\end{description}
+\begin{verbatim}
+<condition winner="W" reason="R"/>
+\end{verbatim}
+
+\newpage
+\part{Überblick}
+Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikation ablaufen kann.\bigskip\\
+
+\begin{enumerate}
+\item Ein Spielserver startet ein Spiel und wartet auf den Client (die Clients).
+\item Der Client stellt eine TCP Verbindung zum Spielserver her (er kennt dessen IP-Adresse und Port)
+\item Die Verbindung ist aufgebaut und der Client sendet \begin{verbatim}
+<protocol>
+    <join gameType="swc_2014_sixpack"/>
+\end{verbatim}
+\item Der Server sendet \begin{verbatim}
+<protocol>
+    <joined roomId="14138d11-6528-4a05-8c07-bd53610517cf"/>
+\end{verbatim}
+\item der Client merkt sich die roomId.
+\item der Server startet das Spiel und sendet \begin{verbatim}
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
+    <data class="welcome" color="BLUE"/>
+</room>
+\end{verbatim}
+\item der Client merkt sich seine Spielerfarbe.
+\item der Server sendet das Ausgangsspielfeld: 
+\begin{verbatim}
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
+  <data class="memento">
+    <state class="state" turn="0" stonesInBag="96" start="red" current="red">
+      <nextStones>
+        <stone color="BLUE" shape="DIAMOND" identifier="12"/>
+        <stone color="MAGENTA" shape="CLUBS" identifier="43"/>
+        <stone color="ORANGE" shape="ACORN" identifier="57"/>
+        <stone color="MAGENTA" shape="CLUBS" identifier="44"/>
+        <stone color="VIOLET" shape="DIAMOND" identifier="82"/>
+        <stone color="GREEN" shape="DIAMOND" identifier="29"/>
+        <stone color="GREEN" shape="SPADES" identifier="34"/>
+        <stone color="YELLOW" shape="ACORN" identifier="92"/>
+        <stone color="VIOLET" shape="DIAMOND" identifier="84"/>
+        <stone color="MAGENTA" shape="DIAMOND" identifier="46"/>
+        <stone color="YELLOW" shape="SPADES" identifier="106"/>
+        <stone color="YELLOW" shape="SPADES" identifier="107"/>
+      </nextStones>
+      <red displayName="Spieler 1" points="0">
+        <stone color="GREEN" shape="HEART" identifier="33"/>
+        <stone color="GREEN" shape="ACORN" identifier="19"/>
+        <stone color="VIOLET" shape="CLUBS" identifier="79"/>
+        <stone color="MAGENTA" shape="ACORN" identifier="37"/>
+        <stone color="VIOLET" shape="HEART" identifier="86"/>
+        <stone color="BLUE" shape="CLUBS" identifier="8"/>
+      </red>
+      <blue displayName="Spieler 2" points="0">
+        <stone color="MAGENTA" shape="ACORN" identifier="39"/>
+        <stone color="MAGENTA" shape="HEART" identifier="51"/>
+        <stone color="BLUE" shape="BELL" identifier="5"/>
+        <stone color="VIOLET" shape="ACORN" identifier="73"/>
+        <stone color="YELLOW" shape="CLUBS" identifier="99"/>
+        <stone color="MAGENTA" shape="SPADES" identifier="53"/>
+      </blue>
+      <board>
+        <field posX="0" posY="0"/>
+        <field posX="0" posY="1"/>
+        <field posX="0" posY="2"/>
+        <field posX="0" posY="3"/>
+        <field posX="0" posY="4"/>
+        <field posX="0" posY="5"/>
+        <field posX="0" posY="6"/>
+        <field posX="0" posY="7"/>
+        <field posX="0" posY="8"/>
+        <field posX="0" posY="9"/>
+        <field posX="0" posY="10"/>
+        <field posX="0" posY="11"/>
+        <field posX="0" posY="12"/>
+        <field posX="0" posY="13"/>
+        <field posX="0" posY="14"/>
+        <field posX="0" posY="15"/>
+        <field posX="1" posY="0"/>
+        <field posX="1" posY="1"/>
+        <field posX="1" posY="2"/>
+        <field posX="1" posY="3"/>
+        <field posX="1" posY="4"/>
+        <field posX="1" posY="5"/>
+        <field posX="1" posY="6"/>
+        <field posX="1" posY="7"/>
+        <field posX="1" posY="8"/>
+        <field posX="1" posY="9"/>
+        <field posX="1" posY="10"/>
+        <field posX="1" posY="11"/>
+        <field posX="1" posY="12"/>
+        <field posX="1" posY="13"/>
+        <field posX="1" posY="14"/>
+        <field posX="1" posY="15"/>
+        \end{verbatim}
+        \hspace{130px}$\vdots$
+        \begin{verbatim}
+        <field posX="14" posY="0"/>
+        <field posX="14" posY="1"/>
+        <field posX="14" posY="2"/>
+        <field posX="14" posY="3"/>
+        <field posX="14" posY="4"/>
+        <field posX="14" posY="5"/>
+        <field posX="14" posY="6"/>
+        <field posX="14" posY="7"/>
+        <field posX="14" posY="8"/>
+        <field posX="14" posY="9"/>
+        <field posX="14" posY="10"/>
+        <field posX="14" posY="11"/>
+        <field posX="14" posY="12"/>
+        <field posX="14" posY="13"/>
+        <field posX="14" posY="14"/>
+        <field posX="14" posY="15"/>
+        <field posX="15" posY="0"/>
+        <field posX="15" posY="1"/>
+        <field posX="15" posY="2"/>
+        <field posX="15" posY="3"/>
+        <field posX="15" posY="4"/>
+        <field posX="15" posY="5"/>
+        <field posX="15" posY="6"/>
+        <field posX="15" posY="7"/>
+        <field posX="15" posY="8"/>
+        <field posX="15" posY="9"/>
+        <field posX="15" posY="10"/>
+        <field posX="15" posY="11"/>
+        <field posX="15" posY="12"/>
+        <field posX="15" posY="13"/>
+        <field posX="15" posY="14"/>
+        <field posX="15" posY="15"/>
+      </board>
+    </state>
+  </data>
+</room>
+\end{verbatim}
+\item da der andere Spieler anfängt folgt noch eine \textit{memento}-Nachricht vom Server, die den Spielstatus nach dem ersten Zug von Spieler 1 beinhaltet.
+\item es folgt die erste Zug-Aufforderung vom Server: \begin{verbatim}
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
+    <data class="sc.framework.plugins.protocol.MoveRequest"/>
+</room>
+\end{verbatim}
+\item Der Client antwortet mit einem Zug: \begin{verbatim}
+<room roomId="14138d11-6528-4a05-8c07-bd53610517cf">
+  <data class="laymove">
+    <stoneToField>
+      <stone color="MAGENTA" shape="HEART" identifier="51"/>
+      <field posX="7" posY="5"/>
+    </stoneToField>
+    <hint content="Sending LayMove"/>
+  </data>
+</room>
+\end{verbatim}
+\item so geht es weiter...
+\item die letzte Nachricht enthält ein \begin{verbatim}
+</protocol>
+\end{verbatim}
+Daraufhin wird die Verbindung geschlossen
+\end{enumerate}
+
+\end{document}

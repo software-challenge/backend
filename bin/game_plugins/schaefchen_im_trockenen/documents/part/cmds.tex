@@ -1,0 +1,54 @@
+%inhaltszähler
+\newcounter{content}[chapter]
+\newcounter{subcontent}[content]
+
+%inhaltstyp
+\newcommand{\contenttype}[2]{%
+\stepcounter{content}%
+\subsection*{#2 \thechapter.\thecontent: #1}%
+\addcontentsline{toc}{subsection}{\numberline{}#2 \thechapter.\thecontent: #1}}
+
+% inhalte
+\newcommand{\definition}[1]{\contenttype{#1}{Definition}}
+\newcommand{\proposition}[1]{\contenttype{#1}{Proposition}}
+\newcommand{\lemma}[1]{\contenttype{#1}{Lemma}}
+\newcommand{\korollar}[1]{\contenttype{#1}{Korollar}}
+\newcommand{\satz}[1]{\contenttype{#1}{Satz}}
+\newcommand{\folgerung}[1]{\contenttype{#1}{Folgerung}}
+\newcommand{\beispiel}[1]{\contenttype{#1}{Beispiel}}
+
+%unterinhaltstyp
+\newcommand{\subcontenttype}[2]{%
+\stepcounter{subcontent}%
+\subsection*{#2 \thechapter.\thecontent.\alph{subcontent}: #1}%
+\addcontentsline{toc}{subsection}{\numberline{}#2 \thechapter.\thecontent.\alph{subcontent}: #1}}
+
+%subinhalte
+\newcommand{\subdefinition}[1]{\subcontenttype{#1}{Definition}}
+\newcommand{\subproposition}[1]{\subcontenttype{#1}{Proposition}}
+\newcommand{\sublemma}[1]{\subcontenttype{#1}{Lemma}}
+\newcommand{\subkorollar}[1]{\subcontenttype{#1}{Korollar}}
+\newcommand{\subsatz}[1]{\subcontenttype{#1}{Satz}}
+\newcommand{\subfolgerung}[1]{\subcontenttype{#1}{Folgerung}}
+\newcommand{\subbeispiel}[1]{\subcontenttype{#1}{Beispiel}}
+
+
+%weitere strukturen
+\newcommand{\bsp}[1]{\subsubsection*{Beispiel: #1}}
+\newcommand{\bsps}[1]{\subsubsection*{Beispiele: #1}}
+\newcommand{\beweis}{\subsubsection*{Beweis:}}
+\newcommand{\bemerkung}{\subsubsection*{Bemerkung:}}
+
+
+%für aufgabenzettel und lösungen
+\newcounter{series}
+\newcounter{task}[series]
+
+\newcommand{\series}{
+\stepcounter{series}%
+\section*{Serie \theseries}%
+\addcontentsline{toc}{section}{\numberline{}{Serie \theseries}}}
+
+\newcommand{\task}{\stepcounter{task}\subsection*{Aufgabe \thetask}\vspace{-2ex}\markright{Aufgabe \thetask}}
+\newcommand{\solution}{\subsubsection*{Beweis:}}
+

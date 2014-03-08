@@ -1,0 +1,22 @@
+\section{Testszenarien}
+Die folgenden Szenarien werden besonders ausgiebig getestet, um optimale Produktqualit\"at zu erreichen:
+\subsection{Share-Szenarien}
+\begin{itemize}
+	\item Benutzer X \underline{ver\"offentlicht} eine Datei z, anschlie\ss{}end holt sich Benutzer Y die Ver\"offentlichungsliste von Benutzer X und kontrolliert, dass die neue Datei z vorhanden ist (\textit{erfolgreiche Ver\"offentlichung}).
+	\item Benutzer X \underline{entfernt} eine veröffentlichte Datei z aus seiner Ver\"offentlichungsliste, ruft anschlie\ss{}end seine eigene Ver\"offentlichungsliste ab und kontrolliert, dass die Datei z nicht in der Liste angezeigt wird (\textit{korrekte Share-L\"oschung}).
+\end{itemize}
+
+\subsection{Backup-Szenarien}
+\begin{itemize}
+	\item Der Benutzer \underline{verteilt} eine Backup-Datei, ruft anschlie\ss{}end seine eigenen Backup-Dateien ab und kontrolliert, ob die neue Backup-Dateien (h\"aufig genug) im \gls{btn} vorhanden ist (\textit{erfolgreiche Backup-Verteilung}).
+	\item Der Benutzer \underline{l\"oscht} eine Backup-Datei, ruft anschlie\ss{}end seine eigenen Backup-Dateien ab und kontrolliert, dass die gel\"oschte Datei nicht mehr im \gls{btn} vorhanden ist (\textit{erfolgreiche Backup-L\"oschung}).
+	\item Der Benutzer ruft seine eigenen Backup-Dateien ab und schl\"agt beim Versuch, eine seiner Backup-Dateien mit einem \underline{falschen Passwort} zu l\"oschen, fehl (\textit{Backup-Sicherheit}).
+	\item Benutzer X \underline{verteilt} eine Backup-Datei z (u.a. an Benutzer Y), Benutzer Y trennt sich vom \gls{btn}, Benutzer X l\"oscht lokal die Backup-Datei z, ruft anschlie\ss{}end seine eigenen Backup-Dateien ab und kontrolliert, ob die neue Backup-Datei z weiterhin \underline{vollst\"andig} im \gls{btn} verf\"ugbar ist (\textit{Ausfallsicherheit}).
+	\item Der Benutzer verteilt \underline{zwei Backup-Dateien mit demselben Namen}, ruft anschlie\ss{}end seine eigenen Backup-Dateien ab und kontrolliert, ob die beiden neuen Backup-Dateien im \gls{btn} verf\"ugbar sind (\textit{korrekte Backup-Verteilung}).
+	\item Der Benutzer \underline{verteilt} eine Backup-Datei z. Benutzer Y ruft die ver\"offentlichten Dateien von Benutzer X ab und kontrolliert, dass die Backup-Datei z von Benutzer X nicht angezeigt wird (\textit{Backup-Sichtbarkeit}).
+\end{itemize}
+
+%\subsection{andere Szenarien}
+%\begin{itemize}
+%	\item 
+%\end{itemize}

@@ -1,0 +1,10 @@
+<project name="GitBuild" basedir=".">
+  <property name="manifest.code.version.key" value="SC-Module-Version" />
+  <target name="scmversion">
+    <exec executable="git" outputproperty="code.version" failonerror="true" failifexecutionfails="false" resolveexecutable="">
+       <arg value="rev-parse"/>
+       <arg value="HEAD"/>
+    </exec>
+    <echo message="Git Version is ${code.version}" />
+  </target>
+</project>
