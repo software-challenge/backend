@@ -138,3 +138,4 @@
 
 # /web_app/tmp/
 /web_app/tmp/*
+/game_plugins/SoCha/nbproject/private/
