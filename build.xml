@@ -18,9 +18,11 @@
 		<delete dir="game_plugins/cartagena/build" />
 		<delete dir="game_players/cartagena_player/build" />
 		<delete dir="game_players/cartagena_player2/build" />
-		<!--    currentPlugin                    !-->
 		<delete dir="game_plugins/sixpack/build" />
 		<delete dir="game_players/sixpack/build" />
+		<!--    currentPlugin                    !-->
+		<delete dir="game_plugins/packeis_am_pol/build" />
+		<delete dir="game_players/packeis_am_pol/build" />
 	</target>
 
 	<target name="dependencies">
@@ -38,10 +40,12 @@
 		<ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />
 		<ant dir="game_plugins/cartagena" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/cartagena_player/" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/cartagena_player2/" target="clean-build" inheritAll="false" /> !-->
-		<!--    currentPlugin                    !-->
+		<ant dir="game_players/cartagena_player2/" target="clean-build" inheritAll="false" />
 		<ant dir="game_plugins/sixpack" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" /> !-->
+		<!--    currentPlugin                    !-->
+		<ant dir="game_plugins/packeis_am_pol" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/packeis_am_pol" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -174,6 +178,7 @@
 		
 		!-->
 		
+		<!--
 		<mkdir dir="${out.dir}/simple_client/sixpack/jar" />
 		<copy todir="${out.dir}/simple_client/sixpack/jar">
 			<fileset dir="./game_players/sixpack/build/jar" />
@@ -194,6 +199,8 @@
 		<copy todir="${out.dir}/simple_client/sixpack/src/lib">
 			<fileset dir="${out.dir}/simple_client/sixpack/jar/lib" />
 		</copy>
+
+		!-->
 			
 		
         <!-->####    PLUGINS             !-->
@@ -237,8 +244,10 @@
 		<zip destfile="${out.dir}/zipped/simpleclient-ca-src.zip" basedir="${out.dir}/simple_client/cartagena/src" />
 		<zip destfile="${out.dir}/zipped/not-so-simpleclient-ca-jar.zip" basedir="${out.dir}/not_so_simple_client/cartagena/jar" />
 		!-->
+		<!--
 		<zip destfile="${out.dir}/zipped/simpleclient-si-jar.zip" basedir="${out.dir}/simple_client/sixpack/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-si-src.zip" basedir="${out.dir}/simple_client/sixpack/src" />
+		!-->
 		
 
 		<echo message="Gathering documentations..." />
