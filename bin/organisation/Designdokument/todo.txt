@@ -1,4 +1,0 @@
-- alle dateien als utf8 speichern (geht bei den meisten editoren erst dann, wenn auch mind. ein umlaute in der datei steht)
-- nur die editierten dateien hochladen (keine temp-dateien!!!)
-- kein englisch, sondern deutsch schreiben!
-- am ende dürfen keine "TODO" mehr im heft stehen (also fixt die)
