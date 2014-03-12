@@ -1,9 +1,0 @@
-sc
-sc.common
-sc.gui
-sc.gui.dialogs
-sc.gui.dialogs.renderer
-sc.gui.stuff
-sc.logic
-sc.logic.save
-sc.plugin
