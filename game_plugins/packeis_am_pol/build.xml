@@ -1,4 +1,4 @@
-<project name="manhattan-plugin" basedir="." default="main">
+<project name="packeis_am_pol-plugin" basedir="." default="main">
 	<import file="../../git-build.xml" />
 
 	<property name="src.dir" value="src" />
