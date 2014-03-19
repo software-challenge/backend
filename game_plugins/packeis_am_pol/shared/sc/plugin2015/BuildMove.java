@@ -1,8 +1,8 @@
-package shared.sc.plugin2015;
+package sc.plugin2015;
 
-import shared.sc.plugin2015.util.BuildMoveConverter;
-import shared.sc.plugin2015.util.Constants;
-import shared.sc.plugin2015.util.InvalideMoveException;
+import sc.plugin2015.util.BuildMoveConverter;
+import sc.plugin2015.util.Constants;
+import sc.plugin2015.util.InvalideMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;

@@ -22,7 +22,9 @@
 		<delete dir="game_players/sixpack/build" />
 		<!--    currentPlugin                    !-->
 		<delete dir="game_plugins/packeis_am_pol/build" />
+		<!--
 		<delete dir="game_players/packeis_am_pol/build" />
+		!-->
 	</target>
 
 	<target name="dependencies">
@@ -45,7 +47,9 @@
 		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" /> !-->
 		<!--    currentPlugin                    !-->
 		<ant dir="game_plugins/packeis_am_pol" target="clean-build" inheritAll="false" />
+		<!--
 		<ant dir="game_players/packeis_am_pol" target="clean-build" inheritAll="false" />
+		!-->
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />

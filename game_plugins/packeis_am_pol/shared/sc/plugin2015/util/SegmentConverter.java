@@ -1,8 +1,8 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
 import java.lang.reflect.Field;
 
-import shared.sc.plugin2015.Segment;
+import sc.plugin2015.Segment;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

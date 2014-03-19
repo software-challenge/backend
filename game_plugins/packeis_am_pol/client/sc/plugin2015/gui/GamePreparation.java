@@ -1,7 +1,7 @@
 /**
  * 
  */
-package client.sc.plugin2015.gui;
+package sc.plugin2015.gui;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +10,7 @@ import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.ISlot;
 import sc.networking.clients.IControllableGame;
-import client.sc.plugin2015.GuiClient;
+import sc.plugin2015.GuiClient;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.SlotDescriptor;

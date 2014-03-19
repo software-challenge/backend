@@ -1,13 +1,13 @@
 /**
  * 
  */
-package client.sc.plugin2015.gui.renderer;
+package sc.plugin2015.gui.renderer;
 
 import java.awt.Image;
 
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
 import sc.shared.GameResult;
 
 /**

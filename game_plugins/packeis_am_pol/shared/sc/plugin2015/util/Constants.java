@@ -1,6 +1,6 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
-import server.sc.plugin2015.GamePlugin;
+import sc.plugin2015.GamePlugin;
 
 public class Constants {
 

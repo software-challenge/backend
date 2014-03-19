@@ -1,4 +1,4 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
 @SuppressWarnings("serial")
 public class InvalideMoveException extends Exception {

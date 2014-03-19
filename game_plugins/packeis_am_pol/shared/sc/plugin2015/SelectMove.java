@@ -1,9 +1,9 @@
-package shared.sc.plugin2015;
+package sc.plugin2015;
 
-import static shared.sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
-import static shared.sc.plugin2015.util.Constants.SELECTION_SIZE;
-import shared.sc.plugin2015.util.InvalideMoveException;
-import shared.sc.plugin2015.util.SelectMoveConverter;
+import static sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
+import static sc.plugin2015.util.Constants.SELECTION_SIZE;
+import sc.plugin2015.util.InvalideMoveException;
+import sc.plugin2015.util.SelectMoveConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;

@@ -1,14 +1,14 @@
 /**
  * 
  */
-package client.sc.plugin2015.gui;
+package sc.plugin2015.gui;
 
 import java.io.IOException;
 
 import sc.guiplugin.interfaces.ISlot;
-import client.sc.plugin2015.EPlayerId;
-import client.sc.plugin2015.GuiClient;
-import client.sc.plugin2015.gui.renderer.RenderFacade;
+import sc.plugin2015.EPlayerId;
+import sc.plugin2015.GuiClient;
+import sc.plugin2015.gui.renderer.RenderFacade;
 
 /**
  * Holds a place for a potential client (that can be a remote client or a human

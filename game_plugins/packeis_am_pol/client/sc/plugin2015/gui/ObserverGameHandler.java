@@ -1,15 +1,15 @@
 /**
  * 
  */
-package client.sc.plugin2015.gui;
+package sc.plugin2015.gui;
 
-import client.sc.plugin2015.EPlayerId;
-import shared.sc.plugin2015.GameState;
-import client.sc.plugin2015.IGameHandler;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
-import client.sc.plugin2015.gui.renderer.RenderFacade;
+import sc.plugin2015.EPlayerId;
+import sc.plugin2015.GameState;
+import sc.plugin2015.IGameHandler;
+import sc.plugin2015.Move;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.gui.renderer.RenderFacade;
 import sc.shared.GameResult;
 
 /**

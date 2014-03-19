@@ -1,9 +1,9 @@
-package server.sc.plugin2015;
+package sc.plugin2015;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IGamePlugin;
 import sc.api.plugins.host.IGamePluginHost;
-import shared.sc.plugin2015.util.Configuration;
+import sc.plugin2015.util.Configuration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreAggregation;
 import sc.shared.ScoreDefinition;

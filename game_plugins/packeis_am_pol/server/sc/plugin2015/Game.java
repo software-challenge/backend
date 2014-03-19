@@ -1,4 +1,4 @@
-package server.sc.plugin2015;
+package sc.plugin2015;
 
 import java.math.BigDecimal;
 import java.util.LinkedList;
@@ -15,14 +15,14 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import shared.sc.plugin2015.util.Constants;
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
-import shared.sc.plugin2015.WelcomeMessage;
-import shared.sc.plugin2015.util.Configuration;
-import shared.sc.plugin2015.util.InvalideMoveException;
+import sc.plugin2015.util.Constants;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.WelcomeMessage;
+import sc.plugin2015.util.Configuration;
+import sc.plugin2015.util.InvalideMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 

@@ -1,4 +1,4 @@
-package shared.sc.plugin2015;
+package sc.plugin2015;
 /**
  * Beinhaltet Informationen zum Spielende:
  * Farbe des Gewinners und Gewinngrund.

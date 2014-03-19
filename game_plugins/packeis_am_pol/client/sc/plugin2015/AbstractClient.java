@@ -1,4 +1,4 @@
-package client.sc.plugin2015;
+package sc.plugin2015;
 
 import java.io.IOException;
 
@@ -7,12 +7,12 @@ import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
-import server.sc.plugin2015.GamePlugin;
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.PlayerColor;
-import shared.sc.plugin2015.WelcomeMessage;
-import shared.sc.plugin2015.util.Configuration;
+import sc.plugin2015.GamePlugin;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.WelcomeMessage;
+import sc.plugin2015.util.Configuration;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;

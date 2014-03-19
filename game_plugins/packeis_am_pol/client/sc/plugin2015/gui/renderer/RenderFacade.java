@@ -1,4 +1,4 @@
-package client.sc.plugin2015.gui.renderer;
+package sc.plugin2015.gui.renderer;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
@@ -11,12 +11,12 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import client.sc.plugin2015.EPlayerId;
-import shared.sc.plugin2015.GameState;
-import client.sc.plugin2015.IGameHandler;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
+import sc.plugin2015.EPlayerId;
+import sc.plugin2015.GameState;
+import sc.plugin2015.IGameHandler;
+import sc.plugin2015.Move;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
