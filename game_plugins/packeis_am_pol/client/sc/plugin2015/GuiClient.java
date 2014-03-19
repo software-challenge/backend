@@ -1,4 +1,4 @@
-package client.sc.plugin2015;
+package sc.plugin2015;
 
 import java.io.IOException;
 

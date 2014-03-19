@@ -1,10 +1,10 @@
-package shared.sc.plugin2015;
+package sc.plugin2015;
 
-import static shared.sc.plugin2015.util.Constants.CARDS_PER_PLAYER;
-import static shared.sc.plugin2015.util.Constants.CARDS_PER_SLOT;
-import static shared.sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
-import static shared.sc.plugin2015.util.Constants.SEGMENT_AMOUNTS;
-import static shared.sc.plugin2015.util.Constants.SLOTS;
+import static sc.plugin2015.util.Constants.CARDS_PER_PLAYER;
+import static sc.plugin2015.util.Constants.CARDS_PER_SLOT;
+import static sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
+import static sc.plugin2015.util.Constants.SEGMENT_AMOUNTS;
+import static sc.plugin2015.util.Constants.SLOTS;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Set;
 
 
-import shared.sc.plugin2015.util.Constants;
-import shared.sc.plugin2015.util.GameStateConverter;
+import sc.plugin2015.util.Constants;
+import sc.plugin2015.util.GameStateConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;

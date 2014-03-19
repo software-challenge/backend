@@ -1,7 +1,7 @@
 /**
  * 
  */
-package client.sc.plugin2015.gui;
+package sc.plugin2015.gui;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -18,13 +18,13 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
-import shared.sc.plugin2015.GameState;
-import client.sc.plugin2015.IGUIObservation;
-import client.sc.plugin2015.IGameHandler;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
-import client.sc.plugin2015.gui.renderer.RenderFacade;
-import shared.sc.plugin2015.util.Configuration;
+import sc.plugin2015.GameState;
+import sc.plugin2015.IGUIObservation;
+import sc.plugin2015.IGameHandler;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.gui.renderer.RenderFacade;
+import sc.plugin2015.util.Configuration;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;

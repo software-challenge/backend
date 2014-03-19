@@ -1,9 +1,9 @@
-package client.sc.plugin2015;
+package sc.plugin2015;
 
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
 import sc.shared.GameResult;
 
 /**

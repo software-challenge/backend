@@ -1,10 +1,10 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import shared.sc.plugin2015.DebugHint;
-import shared.sc.plugin2015.SelectMove;
+import sc.plugin2015.DebugHint;
+import sc.plugin2015.SelectMove;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

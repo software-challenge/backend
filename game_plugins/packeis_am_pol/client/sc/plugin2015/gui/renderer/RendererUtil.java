@@ -1,4 +1,4 @@
-package client.sc.plugin2015.gui.renderer;
+package sc.plugin2015.gui.renderer;
 
 import java.awt.Image;
 import java.net.URL;

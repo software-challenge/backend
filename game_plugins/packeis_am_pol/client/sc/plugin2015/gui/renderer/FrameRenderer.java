@@ -1,21 +1,21 @@
 /**
  * 
  */
-package client.sc.plugin2015.gui.renderer;
+package sc.plugin2015.gui.renderer;
 
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.ANTIALIASING;
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.BACKGROUND;
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.OPTIONS;
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.TRANSPARANCY;
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.CRANES;
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.MOVEMENT;
-import static client.sc.plugin2015.gui.renderer.RenderConfiguration.DEBUG_VIEW;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.ANTIALIASING;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.BACKGROUND;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.OPTIONS;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.TRANSPARANCY;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.CRANES;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.MOVEMENT;
+import static sc.plugin2015.gui.renderer.RenderConfiguration.DEBUG_VIEW;
 
-import static shared.sc.plugin2015.util.Constants.CARDS_PER_PLAYER;
-import static shared.sc.plugin2015.util.Constants.CITIES;
-import static shared.sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
-import static shared.sc.plugin2015.util.Constants.SELECTION_SIZE;
-import static shared.sc.plugin2015.util.Constants.SLOTS;
+import static sc.plugin2015.util.Constants.CARDS_PER_PLAYER;
+import static sc.plugin2015.util.Constants.CITIES;
+import static sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
+import static sc.plugin2015.util.Constants.SELECTION_SIZE;
+import static sc.plugin2015.util.Constants.SLOTS;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -48,18 +48,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import shared.sc.plugin2015.BuildMove;
-import shared.sc.plugin2015.Card;
-import shared.sc.plugin2015.DebugHint;
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.MoveType;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
-import shared.sc.plugin2015.Segment;
-import shared.sc.plugin2015.SelectMove;
-import shared.sc.plugin2015.Tower;
-import shared.sc.plugin2015.util.Constants;
+import sc.plugin2015.BuildMove;
+import sc.plugin2015.Card;
+import sc.plugin2015.DebugHint;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
+import sc.plugin2015.MoveType;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.Segment;
+import sc.plugin2015.SelectMove;
+import sc.plugin2015.Tower;
+import sc.plugin2015.util.Constants;
 
 /**
  * @author tkra, ffi

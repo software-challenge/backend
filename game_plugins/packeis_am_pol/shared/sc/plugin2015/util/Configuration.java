@@ -1,16 +1,16 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
 import java.util.Arrays;
 import java.util.List;
 
-import shared.sc.plugin2015.BuildMove;
-import server.sc.plugin2015.Game;
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
-import shared.sc.plugin2015.SelectMove;
-import shared.sc.plugin2015.WelcomeMessage;
+import sc.plugin2015.BuildMove;
+import sc.plugin2015.Game;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.SelectMove;
+import sc.plugin2015.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
 import com.thoughtworks.xstream.XStream;

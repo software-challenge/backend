@@ -1,4 +1,4 @@
-package client.sc.plugin2015.gui;
+package sc.plugin2015.gui;
 
 import java.awt.Dimension;
 import java.awt.Image;
@@ -15,12 +15,12 @@ import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;
 import sc.guiplugin.interfaces.IObservation;
 import sc.networking.clients.ObservingClient;
-import client.sc.plugin2015.EPlayerId;
-import server.sc.plugin2015.GamePlugin;
-import client.sc.plugin2015.GuiClient;
-import client.sc.plugin2015.gui.renderer.FrameRenderer;
-import client.sc.plugin2015.gui.renderer.RenderFacade;
-import shared.sc.plugin2015.util.Configuration;
+import sc.plugin2015.EPlayerId;
+import sc.plugin2015.GamePlugin;
+import sc.plugin2015.GuiClient;
+import sc.plugin2015.gui.renderer.FrameRenderer;
+import sc.plugin2015.gui.renderer.RenderFacade;
+import sc.plugin2015.util.Configuration;
 import sc.plugins.PluginDescriptor;
 import sc.shared.ScoreDefinition;
 import sc.shared.SlotDescriptor;

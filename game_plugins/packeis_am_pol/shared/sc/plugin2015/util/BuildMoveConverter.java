@@ -1,7 +1,7 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
-import shared.sc.plugin2015.BuildMove;
-import shared.sc.plugin2015.DebugHint;
+import sc.plugin2015.BuildMove;
+import sc.plugin2015.DebugHint;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

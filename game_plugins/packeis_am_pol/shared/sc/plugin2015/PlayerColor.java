@@ -1,4 +1,4 @@
-package shared.sc.plugin2015;
+package sc.plugin2015;
 
 /**
  * Ein Spieler spielt entweder in rot (als erster Spieler) oder blau (zweiter

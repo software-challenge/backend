@@ -1,17 +1,17 @@
-package shared.sc.plugin2015.util;
+package sc.plugin2015.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import shared.sc.plugin2015.BuildMove;
-import shared.sc.plugin2015.GameState;
-import shared.sc.plugin2015.Move;
-import shared.sc.plugin2015.MoveType;
-import shared.sc.plugin2015.Player;
-import shared.sc.plugin2015.PlayerColor;
-import shared.sc.plugin2015.SelectMove;
-import shared.sc.plugin2015.Tower;
+import sc.plugin2015.BuildMove;
+import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
+import sc.plugin2015.MoveType;
+import sc.plugin2015.Player;
+import sc.plugin2015.PlayerColor;
+import sc.plugin2015.SelectMove;
+import sc.plugin2015.Tower;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;

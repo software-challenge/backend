@@ -1,4 +1,4 @@
-package shared.sc.plugin2015;
+package sc.plugin2015;
 
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
