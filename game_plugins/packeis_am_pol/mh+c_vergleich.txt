@@ -1,6 +1,6 @@
 client/sc/plugin20XX
 
-AbstractClient.java	 kann übernohmen werden (nur Package ändern)
+AbstractClient.java	 kann ï¿½bernohmen werden (nur Package ï¿½ndern)
 EPlayerID 		s.o.
 GuiClient.java 		s.o
 IGUIObservation.java	s.o.
@@ -18,17 +18,17 @@ Slot.java			gleich
 
 /renderer
 
-manhattan zusätzlich IRenderer.java und RendererUtil.java
+manhattan zusï¿½tzlich IRenderer.java und RendererUtil.java
 
 FrameRenderer.java			Mausklick + Graphik des Spiels
-RenderConfiguration.java		MAnhattan zusätzlich baukräne eigene gui
+RenderConfiguration.java		MAnhattan zusï¿½tzlich baukrï¿½ne eigene gui
 RenderConfigurationDialog.java		gleich
 RenderFacade.java			gleich
 
 IRenderer.java				Interface
 rendererUtil.java			?
 
-/resources/game enthält spielspezifische Bilder
+/resources/game enthï¿½lt spielspezifische Bilder
 
 / server / sc / plugin20XX
 
@@ -52,7 +52,7 @@ Tower.java			nur mh
 WelcomeMessage.java		schickt farbe an spieler
 package-info.java		nur mh
 
-c hat dafür:
+c hat dafï¿½r:
 BackwardMove.java
 Board.java
 Card.java
@@ -63,7 +63,24 @@ MoveContainer.java
 Pirate.java
 SymbolType.java
 
+benÃ¶tigt fÃ¼r pap:
+
+BuildMove		eventuell anderer Name (aendern)
+Condition		erstmal Ã¼bernehmen
+GameState		
+Move			von mh Ã¼bernehmen
+Movetype		Ã¼bernehmen
+Player			
+PlayerColor		Ã¼bernehmen
+SelectMove		anderer name (aendern)
+Penguin			von pirate aus cartagena Ã¼bernehmen
+Board			aus c Ã¼bernehmen, anpassen
+Welcome Message	Ã¼bernehmen
+
+
+
 /util
+erstmal Ã¼bernehmen und anpassen 
 
 
 
