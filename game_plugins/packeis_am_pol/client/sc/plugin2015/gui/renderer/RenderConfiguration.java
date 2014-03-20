@@ -16,13 +16,13 @@ public class RenderConfiguration {
 	public static final int TRANSPARANCY = 1;
 	public static final int BACKGROUND = 2;
 	public static final int MOVEMENT = 3;
-	public static final int CRANES = 4;
+	//public static final int CRANES = 4;
 	public static final int DEBUG_VIEW = 5;
 
 	public static final String[] OPTION_NAMES = new String[] { "Kantenglättung", "Transparenz",
-			"Hintergrundbild", "Animationen", "Baukräne", "Debugansicht" };
+			"Hintergrundbild", "Animationen", "Debugansicht" };
 
-	private static final boolean[] DEFAULTS = new boolean[] { true, true, true, true, false, false };
+	private static final boolean[] DEFAULTS = new boolean[] { true, true, true, true, false };
 
 	public static final boolean[] OPTIONS = DEFAULTS.clone();
 
