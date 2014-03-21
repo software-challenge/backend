@@ -56,7 +56,7 @@ public class Field implements Cloneable {
 	 * 
 	 * @param penguin
 	 */
-	public void putPirate(Penguin penguin) {
+	public void putPenguin(Penguin penguin) {
 		this.penguin= penguin; //eventuell überprüfen ob penguin = null
 	}
 
@@ -95,9 +95,20 @@ public class Field implements Cloneable {
 	public boolean penguin() {
 		if(this.penguin==null)
 			return false;
-		else return true;
+		else 
+			return true;
 	}
-
+	/**
+	 * gibt die Anzahl der Fische auf einem Feld zurück
+	 * 
+	 * 
+	 */
+		
+	public int getFish()
+	{
+		return this.fish;
+	}
+	}
 	/**
 	 * Erzeugt eine deep copy dieses Feldes. Der Pinguin der sich auf diesem
 	 * Feld befinden, werden ebenfalls kopiert

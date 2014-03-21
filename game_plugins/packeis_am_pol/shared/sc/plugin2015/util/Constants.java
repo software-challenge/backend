@@ -4,19 +4,18 @@ import sc.plugin2015.GamePlugin;
 
 public class Constants {
 
+	 
 	public final static int ROUND_LIMIT = GamePlugin.MAX_TURN_COUNT;
 
-	public static final int CITIES = 4;
-	public static final int SLOTS = 5;
-	public static final int CARDS_PER_SLOT = 3;
-	public static final int CARDS_PER_PLAYER = 4;
+	//public static final int[] SEGMENT_AMOUNTS = new int[] { 11, 6, 4, 3 };
 
-	public static final int SELECTION_SIZE = 6;
-	public static final int MAX_SEGMENT_SIZE = 4;
-	public static final int[] SEGMENT_AMOUNTS = new int[] { 11, 6, 4, 3 };
-
-	public static final int POINTS_PER_HIGHEST_TOWER = 3;
-	public static final int POINTS_PER_OWEND_CITY = 2;
-	public static final int POINTS_PER_TOWER = 1;
+	
+	public static final int ROWS = 7;
+	public static final int COLOUMS = 8;
+	public static final int PENGUINS = 4;
+	
+	public static final int ONE_FISH = 20;
+	public static final int TWO_FISH = 20;
+	public static final int THREE_FISH = 16;
 
 }
