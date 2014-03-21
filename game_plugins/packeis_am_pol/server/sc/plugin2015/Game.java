@@ -35,7 +35,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * @author Sven Casimir
  * @since Juni, 2010
  */
-@XStreamAlias(value = "mh:game")
+@XStreamAlias(value = "pap:game")
 public class Game extends RoundBasedGameInstance<Player> {
 	private static Logger logger = LoggerFactory.getLogger(Game.class);
 
