@@ -31,12 +31,24 @@ public class Board implements Cloneable {
 	private void init() {
 		
 		fields = new Field[Constants.ROWS][Constants.COLOUMS];
+		int oneFish = Constants.ONE_FISH;
+		int twoFish = Constants.TWO_FISH;
+		int threeFish = Constants.THREE_FISH;
+		while(oneFish!=0 && twoFish!=0 && threeFish!=0)
+		{
+			for(int x=0;x<Constants.COLOUMS;x++)
+			{
+				for(int y=0; y<Constants.ROWS;y++)
+					
+			}
+		}
+		}
 		/**
 		 * Fische müssen  zufällig auf dem Spielbrett verteilt werden
 		 */
 	
 		
-	}
+	
 
 	/**
 	 * Gibt das Feld mit angegebenen Koordinaten  zurück
@@ -79,7 +91,7 @@ public class Board implements Cloneable {
 	 * @param y
 	 * @param color
 	 *            Die Spielerfarbe
-	 * @return true wenn sich ein Pirat des Spielers an der Position befindet
+	 * @return true wenn sich ein Pinguin des Spielers an der Position befindet
 	 */
 	public boolean hasPinguin(int x, int y, PlayerColor color) {
 		if(fields[x][y].getPenguin().getOwner()== color)
@@ -109,10 +121,10 @@ public class Board implements Cloneable {
 	 * 
 	 * @param field_x
 	 * @param field_y
-	 *            das Startfeld auf dem sich der Pirat befindet
+	 *            das Startfeld auf dem sich der Pinguin befindet
 	 * @param nextField_x
 	 * @param nextField_y
-	 *            das Zielfeld auf das der Pirat bewegt werden soll
+	 *            das Zielfeld auf das der Pinguin bewegt werden soll
 	 * @param color
 	 *            die Farbe des Besitzers
 	 */
@@ -129,7 +141,12 @@ public class Board implements Cloneable {
 	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		
+		Board clone = (Board) super.clone();
+		if (fields != null) {
+			clone.fields = new Field[Constants.ROWS][Constants.COLOUMS];
+			
+		}
+		return clone;
 		
 	}
 }
