@@ -34,17 +34,57 @@ public class Board implements Cloneable {
 		int oneFish = Constants.ONE_FISH;
 		int twoFish = Constants.TWO_FISH;
 		int threeFish = Constants.THREE_FISH;
+		int rnd;
 		while(oneFish!=0 && twoFish!=0 && threeFish!=0)
 		{
 			for(int x=0;x<Constants.COLOUMS;x++)
 			{
 				for(int y=0; y<Constants.ROWS;y++)
-					
+				{
+					 rnd = (int) (Math.random()*3+1);
+					 switch(rnd){
+					 case 1: 
+						 if(oneFish!=0)
+						 {
+							 fields[x][y].fish=1;
+							 oneFish--;
+						 }	
+						 else{
+							 x--;
+							 y--;
+						 }
+						 
+					 break;
+					 case 2: 
+						 if(twoFish!=0)
+						 {
+							 fields[x][y].fish=2;
+							 twoFish--;
+						 }	
+						 else{
+							 x--;
+							 y--;
+						 }
+					 break;
+					 case 3: 
+						 if(threeFish!=0)
+						 {
+							 fields[x][y].fish=3;
+							 threeFish--;
+						 }	
+						 else{
+							 x--;
+							 y--;
+						 }
+					 break;
+					 }
+					 
+				}
 			}
 		}
 		}
 		/**
-		 * Fische müssen  zufällig auf dem Spielbrett verteilt werden
+		 * Fische werden  zufällig auf dem Spielbrett verteilt werden
 		 */
 	
 		
@@ -142,10 +182,6 @@ public class Board implements Cloneable {
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
 		Board clone = (Board) super.clone();
-		if (fields != null) {
-			clone.fields = new Field[Constants.ROWS][Constants.COLOUMS];
-			
-		}
 		return clone;
 		
 	}

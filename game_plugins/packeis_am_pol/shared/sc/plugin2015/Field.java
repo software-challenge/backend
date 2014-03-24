@@ -108,7 +108,7 @@ public class Field implements Cloneable {
 	{
 		return this.fish;
 	}
-	}
+	
 	/**
 	 * Erzeugt eine deep copy dieses Feldes. Der Pinguin der sich auf diesem
 	 * Feld befinden, werden ebenfalls kopiert
