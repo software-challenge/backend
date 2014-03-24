@@ -75,6 +75,7 @@ PlayerColor		übernehmen
 SelectMove		anderer name (aendern)
 Penguin			von pirate aus cartagena übernehmen
 Board			aus c übernehmen, anpassen
+Field
 Welcome Message	übernehmen
 
 
