@@ -71,17 +71,12 @@ public class GameState implements Cloneable {
 	// momentan auszufuehrender zug-type
 	private MoveType currentMoveType;
 
-	// die teilenhmenden spieler
+	// die teilnehmenden spieler
 	private Player red, blue;
-
-	// kartenstapel
-	private List<Card> cardStack;
-	
-	// verbrauchte Karten
-	private List<Card> usedStack;
-
-	// liste der gebauten tuerem
-	private List<Tower> towers;
+		
+	 //Das Spielbrett
+	 
+	private Board board;
 
 	// letzter performte move
 	private Move lastMove;
@@ -122,18 +117,7 @@ public class GameState implements Cloneable {
 		currentPlayer = PlayerColor.RED;
 		startPlayer = PlayerColor.RED;
 		currentMoveType = MoveType.SELECT;
-		cardStack = new LinkedList<Card>();
-		usedStack = new LinkedList<Card>();
-		if (!suppressStack) {
-			createCardStack();
-		}
-		towers = new ArrayList<Tower>(Constants.CITIES * Constants.SLOTS);
-		for (int city = 0; city < Constants.CITIES; city++) {
-			for (int slot = 0; slot < Constants.SLOTS; slot++) {
-				towers.add(new Tower(city, slot));
-			}
-		}
-
+		board = new Board();
 	}
 	
          /**
@@ -150,14 +134,13 @@ public class GameState implements Cloneable {
                     clone.blue = (Player) blue.clone();
                 if (lastMove != null)
                     clone.lastMove = (Move) lastMove.clone();
+                if (board != null)
+        			clone.board = (Board) this.board.clone();
                 if (condition != null)
                     clone.condition = (Condition) condition.clone();
-                if (this.cardStack != null)
-                    clone.cardStack = new LinkedList<Card>(this.cardStack);
-                if (this.usedStack != null)
-                    clone.usedStack = new LinkedList<Card>(this.usedStack);
-                if (this.towers != null)
-                    clone.towers = new LinkedList<Tower>(this.towers);
+                if (currentPlayer != null)
+        			clone.currentPlayer = currentPlayer;
+                
 		return clone;
         }
         
@@ -179,14 +162,7 @@ public class GameState implements Cloneable {
 			blue = player;
 		}
 
-		for (int i = 0; i < CARDS_PER_PLAYER; i++) {
-			player.addCard(drawCard());
-		}
-		usedStack.clear();
-
-		for (int i = 1; i <= MAX_SEGMENT_SIZE; i++) {
-			player.addSegmet(new Segment(i, SEGMENT_AMOUNTS[i - 1]));
-		}
+		
 
 	}
 
@@ -339,7 +315,6 @@ public class GameState implements Cloneable {
 				setCurrentMoveType(MoveType.BUILD);
 			}
 		} else {
-			usedStack.add(new Card(((BuildMove)lastMove).slot));
 			if (currentPlayer == startPlayer && getCurrentPlayer().getUsableSegmentCount() == 0) {
 				setCurrentMoveType(MoveType.SELECT);
 				switchCurrentPlayer();
@@ -359,13 +334,6 @@ public class GameState implements Cloneable {
 
 		int[][] stats = getGameStats();
 
-		red.addPoints(Constants.POINTS_PER_TOWER * stats[0][0]);
-		red.addPoints(Constants.POINTS_PER_OWEND_CITY * stats[0][1]);
-		red.addPoints(Constants.POINTS_PER_HIGHEST_TOWER * stats[0][2]);
-
-		blue.addPoints(Constants.POINTS_PER_TOWER * stats[1][0]);
-		blue.addPoints(Constants.POINTS_PER_OWEND_CITY * stats[1][1]);
-		blue.addPoints(Constants.POINTS_PER_HIGHEST_TOWER * stats[1][2]);
 
 	}
 
@@ -376,169 +344,6 @@ public class GameState implements Cloneable {
 	 */
 	public int getRound() {
 		return turn / 2;
-	}
-
-	/**
-	 * liefert die naechste Karte vom Stapel. Dazu wird dieser gegebenenfalls neu
-	 * aufgefuellt durch mischen der verbauchten Karten.
-	 * 
-	 * @return naechste Karte
-	 */
-	public synchronized Card drawCard() {
-		if (cardStack.isEmpty()) {
-			mixCardStack();
-		}
-		return 	cardStack.remove(0);
-	}
-    /**
-	 * erstellt einen stapel mit ALLEN karten.
-	 */
-    private synchronized void createCardStack() {
-		for (int slot = 0; slot < Constants.SLOTS*Constants.CARDS_PER_SLOT; slot++) {
-			cardStack.add(new Card(slot % Constants.SLOTS));
-		}
-		Collections.shuffle(cardStack, new SecureRandom());
-	}
-	/**
-	 * Mischt neuen Stapel aus verbrauchten Karten
-	 */ 
-	private synchronized void mixCardStack() {
-		cardStack.clear();
-		for (Card c : usedStack) {
-			cardStack.add(c);
-		}
-		usedStack.clear();
-		Collections.shuffle(cardStack, new SecureRandom());
-	}
-
-    
-	/**
-	 * Liefert den Turm an gegebenem Feld (Stadt, Position)
-	 * 
-	 * @param city
-	 *           Stadt des Spielfeldes
-	 * @param slot
-	 *           Position des Spielfeldes
-	 * @return Turm an gegebenem Feld, kann null sein oder Hoehe 0 haben.
-	 */
-	public Tower getTower(int city, int slot) {
-		if (city < 0 || city >= Constants.CITIES) {
-			if (slot < 0 || slot >= Constants.SLOTS) {
-				throw new IllegalArgumentException("no such tower: city " + city + ", slot " + slot);
-			}
-		}
-
-		return towers.get(city * Constants.SLOTS + slot);
-
-	}
-
-	/**
-	 * Liefert eine Liste aller Tuerme
-	 * 
-	 * @return Liste aller Tuerme
-	 */
-	public List<Tower> getTowers() {
-		List<Tower> towersOfAllCities = new LinkedList<Tower>();
-
-		if (towers != null) {
-			for (Tower tower : towers) {
-				towersOfAllCities.add(tower);
-			}
-		}
-		return towersOfAllCities;
-	}
-
-	/**
-	 * Liefert eine Liste aller Tuerme in einer gegebenen Stadt
-	 * 
-	 * @param city
-	 *           Index der Stadt
-	 * @return Liste der Tuerme
-	 */
-	public List<Tower> getTowersOfCity(int city) {
-		List<Tower> towersOfCity = new LinkedList<Tower>();
-
-		if (towers != null) {
-			for (Tower tower : towers) {
-				if (tower.city == city) {
-					towersOfCity.add(tower);
-				}
-			}
-		}
-		return towersOfCity;
-	}
-
-	/**
-	 * Liefert eine Liste der Tuerme eines Spielers in einer Stadt
-	 * 
-	 * @param city
-	 *           Index der Stadt
-	 * @param color
-	 *           Farbe des besitzenden Spielers
-	 * @return Liste der Tuerme
-	 */
-	public List<Tower> getTowersOfCity(int city, PlayerColor color) {
-		List<Tower> towersOfCity = new LinkedList<Tower>();
-		for (Tower tower : towers) {
-			if (tower.city == city && tower.getOwner() == color) {
-				towersOfCity.add(tower);
-			}
-		}
-		return towersOfCity;
-	}
-
-	/**
-	 * Liefert eine Liste der Tuerme an einer Position
-	 * 
-	 * @param slot
-	 *           Index der Position
-	 * @return Liste der Tuerme
-	 */
-	public List<Tower> getTowersOnSlot(int slot) {
-		List<Tower> towersOfCity = new LinkedList<Tower>();
-		for (Tower tower : towers) {
-			if (tower.slot == slot) {
-				towersOfCity.add(tower);
-			}
-		}
-		return towersOfCity;
-	}
-
-	/**
-	 * Liefert eine Liste der Tuerme an einer Position, die einem gegebenen
-	 * Spieler gehoeren
-	 * 
-	 * @param slot
-	 *           Index der Position
-	 * @param color
-	 *           Farbe des besitzenden Spielers
-	 * @return Liste der Tuerme
-	 */
-	public List<Tower> getTowersOnSlot(int slot, PlayerColor color) {
-		List<Tower> towersOfCity = new LinkedList<Tower>();
-		for (Tower tower : towers) {
-			if (tower.slot == slot && tower.getOwner() == color) {
-				towersOfCity.add(tower);
-			}
-		}
-		return towersOfCity;
-	}
-
-	/**
-	 * Liefert eine Liste der Tuerme eines Spielers
-	 * 
-	 * @param color
-	 *           Farbe des Spielers
-	 * @return Liste der Tuerme
-	 */
-	public List<Tower> getTowersWithOwner(PlayerColor color) {
-		List<Tower> towersOfCity = new LinkedList<Tower>();
-		for (Tower tower : towers) {
-			if (tower.getOwner() == color) {
-				towersOfCity.add(tower);
-			}
-		}
-		return towersOfCity;
 	}
 
 	/**
