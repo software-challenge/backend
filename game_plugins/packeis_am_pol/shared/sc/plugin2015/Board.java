@@ -14,7 +14,7 @@ import sc.plugin2015.util.Constants;
 
 /**
  * Klasse welche eine Spielbrett darstellt. Bestehend aus einem  
- * zweidimensionalen Array aus Fields
+ * zweidimensionalen Array aus Feldern
  * 
  * @author soed
  * 
@@ -28,64 +28,35 @@ public class Board implements Cloneable {
 		this.init();
 	}
 
+	
+
+	/**
+	 * Fische werden  zufällig auf dem Spielbrett verteilt werden
+	 */
 	private void init() {
 		
-		fields = new Field[Constants.ROWS][Constants.COLOUMS];
-		int oneFish = Constants.ONE_FISH;
-		int twoFish = Constants.TWO_FISH;
-		int threeFish = Constants.THREE_FISH;
+		fields = new Field[Constants.ROWS][Constants.COLUMNS];
 		int rnd;
-		while(oneFish!=0 && twoFish!=0 && threeFish!=0)
-		{
-			for(int x=0;x<Constants.COLOUMS;x++)
-			{
-				for(int y=0; y<Constants.ROWS;y++)
-				{
-					 rnd = (int) (Math.random()*3+1);
-					 switch(rnd){
-					 case 1: 
-						 if(oneFish!=0)
-						 {
-							 fields[x][y].fish=1;
-							 oneFish--;
-						 }	
-						 else{
-							 x--;
-							 y--;
-						 }
-						 
-					 break;
-					 case 2: 
-						 if(twoFish!=0)
-						 {
-							 fields[x][y].fish=2;
-							 twoFish--;
-						 }	
-						 else{
-							 x--;
-							 y--;
-						 }
-					 break;
-					 case 3: 
-						 if(threeFish!=0)
-						 {
-							 fields[x][y].fish=3;
-							 threeFish--;
-						 }	
-						 else{
-							 x--;
-							 y--;
-						 }
-					 break;
-					 }
-					 
+		
+		List<Integer> fish = new LinkedList<Integer>();
+		
+		for(int i = 0; i<3; i++) {
+			for(int j = 0; j< Constants.FISH[i]; j++) {
+				fish.add(i+1);
+			}
+		}
+		for(int x = 0; x < Constants.COLUMNS; x++) {
+			for(int y = 0; y < Constants.ROWS; y++) {
+				if((y & 1) == 0 && x == Constants.COLUMNS - 1) {
+					fields[x][y] = new Field();
+				} else {
+					rnd = (int) Math.random()*fish.size();
+					fields[x][y] = new Field(fish.get(rnd));
+					fish.remove(rnd);
 				}
 			}
 		}
-		}
-		/**
-		 * Fische werden  zufällig auf dem Spielbrett verteilt werden
-		 */
+	}
 	
 		
 	
@@ -106,7 +77,7 @@ public class Board implements Cloneable {
 	 * @param y
 	 * @return Pinguin auf dem Feld mit den Koordinaten
 	 */
-	public Penguin getPirates(int x, int y) {
+	public Penguin getPenguin(int x, int y) {
 		return fields[x][y].getPenguin();
 	}
 
@@ -157,31 +128,38 @@ public class Board implements Cloneable {
 
 	/**
 	 * Bewegt einen Pinguin von einem Startfeld auf ein Zielfeld. Diese Methode
-	 * ist nur fÃ¼r den Server relevant.
+	 * ist nur für den Server relevant.
 	 * 
-	 * @param field_x
-	 * @param field_y
+	 * @param fromX
+	 * @param fromY
 	 *            das Startfeld auf dem sich der Pinguin befindet
-	 * @param nextField_x
-	 * @param nextField_y
+	 * @param toX
+	 * @param toY
 	 *            das Zielfeld auf das der Pinguin bewegt werden soll
 	 * @param color
 	 *            die Farbe des Besitzers
 	 */
-	public void movePenguin(int field_x, int field_y, int nextField_x, int nextField_y, PlayerColor color) {
-		Penguin penguin = fields[field_x][field_y].removePenguin(color);
-		fields[nextField_x][nextField_y].putPenguin(penguin);
+	public void movePenguin(int fromX, int fromY, int toX, int toY, PlayerColor color) {
+		Penguin penguin = fields[fromX][fromY].removePenguin(color);
+		fields[fromX][fromY].setFish(0);
+		fields[toX][toY].putPenguin(penguin);
 	}
 
 	/**
-	 * Gibt eine deep copy des Objektes zurÃ¼ck. Von allen Objekten, welche diese
+	 * Gibt eine deep copy des Objektes zurück. Von allen Objekten, welche diese
 	 * Klasse beherbergt werden auch Kopien erstellt.
 	 * 
 	 * @see java.lang.Object#clone()
 	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		Board clone = (Board) super.clone();
+		Board clone = new Board();
+		for(int x = 0; x < Constants.COLUMNS; x++) {
+			for(int y = 0; y < Constants.ROWS; y++) {
+				clone.fields[x][y].fish = this.getField(x, y).getFish();
+				clone.fields[x][y].putPenguin(new Penguin(this.getPenguin(x, y).getOwner()));
+			}
+		}
 		return clone;
 		
 	}

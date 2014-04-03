@@ -1,11 +1,5 @@
 package sc.plugin2015;
 
-import static sc.plugin2015.util.Constants.CARDS_PER_PLAYER;
-import static sc.plugin2015.util.Constants.CARDS_PER_SLOT;
-import static sc.plugin2015.util.Constants.MAX_SEGMENT_SIZE;
-import static sc.plugin2015.util.Constants.SEGMENT_AMOUNTS;
-import static sc.plugin2015.util.Constants.SLOTS;
-
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +22,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * was fuer eine Art von Zug ({@link #getCurrentMoveType() getCurrentMoveType()}
  * ) der Spielserver als Antwort von einem der beiden Spieler (
  * {@link #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren
- * die Informationen ueber die beiden Spieler und alle moeglichen Tuerme zum
+ * die Informationen ueber die beiden Spieler und das Spielfeld zum
  * Zustand. Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf.
  * ueber das Spielende informiert.<br/>
  * <br/>
@@ -45,15 +39,16 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * <br/>
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
- * Teilinformationen, zum Beispiele die Liste aller Tuerme eines Spielers,
- * abgefragt werden. Insbesondere kann mit der Methode
+ * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
  * {@link #getPossibleMoves() getPossibleMoves()} eine Liste aller fuer den
- * aktuellen Spieler legalen Bauzuege abgefragt werden. Ist momentan also eine
- * Bauzug zu taetigen, kann eine Spieleclient diese Liste aus dem {@code
- * GameState} erfragen und muss dann lediglich einen Zug aus dieser Liste
- * auswaehlen.
+ * aktuellen Spieler legalen Laufzuege und mit 
+ * {@link #getPossibleSetMoves() getPossibleSetMoves()} eine Liste aller für
+ * den aktuellen Spieler legalen Setzzüge abgefragt werden. Ist momentan also ein
+ * Laufzug oder ein Setzzug zu taetigen, kann eine Spieleclient diese Liste
+ * aus dem {@code GameState} erfragen und muss dann lediglich einen Zug aus 
+ * dieser Liste auswaehlen.
  * 
- * @author tkra
+ * @author Niklas, Sören
  */
 @XStreamAlias(value = "manhattan:state")
 @XStreamConverter(GameStateConverter.class)
@@ -96,27 +91,10 @@ public class GameState implements Cloneable {
 	 * Der Kartenstapel wird nur initialisiert und nicht mit Karten befuellt.
 	 */
 	public GameState() {
-		this(true);
-	}
-
-	/**
-	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
-	 * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
-	 * gueltig sind.<br/>
-	 * <br/>
-	 * 
-	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
-	 * 
-	 * @param suppressStack
-	 *           Gibt an ob der Kartenstapel nur initialisiert oder auch mit
-	 *           Karten gefuellt werden soll.
-	 */
-	public GameState(boolean suppressStack) {
 
 		currentPlayer = PlayerColor.RED;
 		startPlayer = PlayerColor.RED;
-		currentMoveType = MoveType.SELECT;
+		currentMoveType = MoveType.SET;
 		board = new Board();
 	}
 	
@@ -161,9 +139,10 @@ public class GameState implements Cloneable {
 		} else if (player.getPlayerColor() == PlayerColor.BLUE) {
 			blue = player;
 		}
-
-		
-
+	}
+	
+	public Board getBoard() {
+		return this.board;
 	}
 
 	/**
@@ -351,35 +330,148 @@ public class GameState implements Cloneable {
 	 * 
 	 * @return Liste erlaubter Spielzuege
 	 */
-	public List<BuildMove> getPossibleMoves() {
-		List<BuildMove> moves = new LinkedList<BuildMove>();
-		Player player = getCurrentPlayer();
-
-		// liste der verwendbaren segmente erstellen
-		List<Segment> segments = new LinkedList<Segment>();
-		for (Segment segment : player.getSegments()) {
-			if (segment.getUsable() > 0) {
-				segments.add(segment);
-			}
-		}
-
-		// menge der einzigartigen karten erstellen
-		Set<Card> cards = new HashSet<Card>(player.getCards());
-
-		if (towers != null) {
-			for (Tower tower : towers) {
-				for (Card card : cards) {
-					if (tower.slot == card.slot) {
-						for (Segment segment : segments) {
-							if (tower.canAddPart(player, segment.size)) {
-								moves.add(new BuildMove(tower.city, tower.slot, segment.size));
-							}
-						}
-					}
+	public List<RunMove> getPossibleMoves() {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		for(int x = 0; x < Constants.COLUMNS; x++) {
+			for(int y = 0; y < Constants.ROWS; y++) {
+				if(this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
+					moves.addAll(leftOfPenguin(x, y));
+					moves.addAll(rightOfPenguin(x, y));
+					moves.addAll(topLeftOfPenguin(x, y));
+					moves.addAll(bottomRightOfPenguin(x, y));
+					moves.addAll(topRightOfPenguin(x, y));
+					moves.addAll(bottomLeftOfPenguin(x, y));
+					moves.add(null);
 				}
 			}
 		}
-
+		return moves;
+	}
+	
+	private List<RunMove> leftOfPenguin(int x, int y) {
+		boolean done = false;
+		int currentX = x - 1;
+		List<RunMove> moves = new ArrayList <RunMove>();
+		while(!done) {
+			if(currentX < 0 || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+				done = true;
+			} else {
+				moves.add(new RunMove(x,y,currentX,y));
+				currentX--;
+			}
+		}
+	}
+	
+	private List<RunMove> rightOfPenguin(int x, int y) {
+		boolean done = false;
+		int currentX = x + 1;
+		List<RunMove> moves = new ArrayList <RunMove>();
+		while(!done) {
+			if(currentX >= Constants.COLUMNS || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+				done = true;
+			} else {
+				moves.add(new RunMove(x,y,currentX,y));
+				currentX++;
+			}
+		}
+	}
+	
+	private List<RunMove> topLeftOfPenguin(int x, int y) {
+		boolean done = false;
+		int currentX;
+		if((y & 1) == 0) {
+			currentX = x;
+		} else {
+			currentX = x - 1;
+		}
+		int currentY = y - 1;
+		List<RunMove> moves = new ArrayList <RunMove>();
+		while(!done) {
+			if(currentX < 0 || currentY < 0 || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+				done = true;
+			} else {
+				moves.add(new RunMove(x,y,currentX,currentY));
+				if((currentY & 1) == 1)
+					currentX--;
+				currentY--;
+			}
+		}
+	}
+	
+	private List<RunMove> topRightOfPenguin(int x, int y) {
+		boolean done = false;
+		int currentX;
+		if((y & 1) == 1) {
+			currentX = x;
+		} else {
+			currentX = x + 1;
+		}
+		int currentY = y - 1;
+		List<RunMove> moves = new ArrayList <RunMove>();
+		while(!done) {
+			if(currentX >= Constants.COLUMNS || currentY < 0 || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+				done = true;
+			} else {
+				moves.add(new RunMove(x,y,currentX,currentY));
+				if((currentY & 1) == 0)
+					currentX++;
+				currentY--;
+			}
+		}
+	}
+	
+	private List<RunMove> bottomRightOfPenguin(int x, int y) {
+		boolean done = false;
+		int currentX;
+		if((y & 1) == 1) {
+			currentX = x;
+		} else {
+			currentX = x + 1;
+		}
+		int currentY = y + 1;
+		List<RunMove> moves = new ArrayList <RunMove>();
+		while(!done) {
+			if(currentX >= Constants.COLUMNS || currentY >= Constants.ROWS || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+				done = true;
+			} else {
+				moves.add(new RunMove(x,y,currentX,currentY));
+				if((currentY & 1) == 0)
+					currentX++;
+				currentY++;
+			}
+		}
+	}
+	
+	private List<RunMove> bottomLeftOfPenguin(int x, int y) {
+		boolean done = false;
+		int currentX;
+		if((y & 1) == 0) {
+			currentX = x;
+		} else {
+			currentX = x - 1;
+		}
+		int currentY = y + 1;
+		List<RunMove> moves = new ArrayList <RunMove>();
+		while(!done) {
+			if(currentX < 0 || currentY >= Constants.ROWS || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+				done = true;
+			} else {
+				moves.add(new RunMove(x,y,currentX,currentY));
+				if((currentY & 1) == 1)
+					currentX--;
+				currentY++;
+			}
+		}
+	}
+	
+	public List<SetMove> getPossibleSetMoves() {
+		List<SetMove> moves = new ArrayList<SetMove>();
+		for(int x = 0; x < Constants.COLUMNS; x++) {
+			for(int y = 0; y < Constants.ROWS; y++) {
+				if(board.getFish(x, y) == 1 && board.getPenguin(x, y) == null)
+					moves.add(new SetMove(x,y));
+			}
+		}
 		return moves;
 	}
 
@@ -415,10 +507,8 @@ public class GameState implements Cloneable {
 	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
 	 * Einträgen
 	 * <ul>
-	 * <li>[0] - Anzahl Tuerme des Spielers
-	 * <li>[1] - Anzahl Staedte des SPielers
-	 * <li>[2] - 1: Spieler hat hoechsten Turm, 0: sonst
-	 * <li>[3] - Punktekonto des Spielers
+	 * <li>[0] - Punktekonto des Spielers
+	 * <li>[1] - Anzahl der Plättchen
 	 * </ul>
 	 * 
 	 * @param playerColor
@@ -446,48 +536,12 @@ public class GameState implements Cloneable {
 	 */
 	public int[][] getGameStats() {
 
-		int[][] stats = new int[2][4];
-
-		int highestHeigth = 0;
-		PlayerColor highestOwner = null;
-		int[] cityTowers = new int[Constants.CITIES];
-
-		int highestTowerPtr = -1;
-		for (Tower tower : getTowers()) {
-
-			if (tower.getHeight() > 0) {
-
-				int ptr = tower.getOwner() == PlayerColor.RED ? 0 : 1;
-				int dir = tower.getOwner() == PlayerColor.RED ? 1 : -1;
-				cityTowers[tower.city] += dir;
-				stats[ptr][0]++;
-
-				if (tower.getHeight() > highestHeigth) {
-					highestHeigth = tower.getHeight();
-					highestTowerPtr = ptr;
-					highestOwner = tower.getOwner();
-				} else if (tower.getHeight() == highestHeigth) {
-					if (tower.getOwner() != highestOwner) {
-						highestTowerPtr = -1;
-					}
-				}
-			}
-		}
-
-		for (int i = 0; i < cityTowers.length; i++) {
-			if (cityTowers[i] > 0) {
-				stats[0][1]++;
-			} else if (cityTowers[i] < 0) {
-				stats[1][1]++;
-			}
-		}
-
-		if (highestTowerPtr > -1) {
-			stats[highestTowerPtr][2] = 1;
-		}
-
-		stats[0][3] = red.getPoints();
-		stats[1][3] = blue.getPoints();
+		int[][] stats = new int[2][2];
+		
+		stats[0][0] = this.red.getPoints();
+		stats[0][1] = this.red.getFields();
+		stats[1][0] = this.blue.getPoints();
+		stats[1][1] = this.blue.getFields();
 
 		return stats;
 
