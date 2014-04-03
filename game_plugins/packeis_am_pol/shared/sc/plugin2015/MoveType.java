@@ -1,11 +1,11 @@
 package sc.plugin2015;
 
 /**
- * Arten von Zuegen; Es gibt nur Auswahl- und Bauzuege
+ * Arten von Zuegen; Es gibt nur Setz- und Laufzüge.
  * 
  */
 public enum MoveType {
 
-	SELECT, BUILD
+	SET, RUN
 	
 }

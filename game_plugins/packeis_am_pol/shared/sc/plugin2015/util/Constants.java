@@ -10,12 +10,13 @@ public class Constants {
 	//public static final int[] SEGMENT_AMOUNTS = new int[] { 11, 6, 4, 3 };
 
 	
-	public static final int ROWS = 7;
-	public static final int COLOUMS = 8;
+	public static final int ROWS = 8;
+	public static final int COLUMNS = 8;
 	public static final int PENGUINS = 4;
 	
-	public static final int ONE_FISH = 20;
-	public static final int TWO_FISH = 20;
-	public static final int THREE_FISH = 16;
+	/**
+	 * Anzahl der Plättchen mit einem, zwei bzw. drei Fischen
+	 */
+	public static final int[] FISH = new int[] {30, 20, 10}; 
 
 }

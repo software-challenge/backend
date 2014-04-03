@@ -90,9 +90,9 @@ public class Field implements Cloneable {
 	 * ansonsten false
 	 * 
 	 * 
-	 * @return
+	 * @return Liefert zurück, ob ein Pinguin auf dem Feld steht.
 	 */
-	public boolean penguin() {
+	public boolean hasPenguin() {
 		if(this.penguin==null)
 			return false;
 		else 
@@ -107,6 +107,10 @@ public class Field implements Cloneable {
 	public int getFish()
 	{
 		return this.fish;
+	}
+	
+	public void setFish(int count) {
+		this.fish = count;
 	}
 	
 	/**
