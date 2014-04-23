@@ -100,4 +100,13 @@ public class SetMove extends Move implements Cloneable{
 	public MoveType getMoveType() {
 		return MoveType.SET;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof SetMove 
+				&& ((SetMove) o).setX == this.setX
+				&& ((SetMove) o).setY == this.setY) 
+			return true;
+		return false;
+	}
 }

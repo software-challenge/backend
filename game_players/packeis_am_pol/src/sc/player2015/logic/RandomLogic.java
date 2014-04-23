@@ -28,7 +28,7 @@ public class RandomLogic implements IGameHandler {
 
 	/*
 	 * Klassenweit verfuegbarer Zufallsgenerator der beim Laden der klasse
-	 * einmalig erzeugt wird und dann immer zur Verfuegung steht.
+	 * einmalig erzeugt wird und darn immer zur Verfuegung steht.
 	 */
 	private static final Random rand = new SecureRandom();
 
@@ -68,7 +68,10 @@ public class RandomLogic implements IGameHandler {
 			List<RunMove> possibleMoves = gameState.getPossibleMoves();
 			System.out.println("*** sende zug: RUN ");
 			RunMove selection = possibleMoves.get(rand.nextInt(possibleMoves.size()));
-			System.out.println("*** bewege Pinguin von x=" + selection.fromX + ", y=" + selection.fromY +" auf x=" + selection.toX + ", y=" + selection.toY);
+			if(selection == null)
+				System.out.println("*** Ich setze aus.");
+			else
+				System.out.println("*** bewege Pinguin von x=" + selection.fromX + ", y=" + selection.fromY +" auf x=" + selection.toX + ", y=" + selection.toY);
 			sendAction(selection);			
 		}
 

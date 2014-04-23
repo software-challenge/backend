@@ -47,7 +47,7 @@ public class Board implements Cloneable {
 				if((y & 1) == 0 && x == Constants.COLUMNS - 1) {
 					fields[x][y] = new Field();
 				} else {
-					rnd = (int) Math.random()*fish.size();
+					rnd = (int) (Math.random()*fish.size());
 					fields[x][y] = new Field(fish.get(rnd));
 					fish.remove(rnd);
 				}
@@ -102,6 +102,8 @@ public class Board implements Cloneable {
 	 * @return true wenn sich ein Pinguin des Spielers an der Position befindet
 	 */
 	public boolean hasPinguin(int x, int y, PlayerColor color) {
+		if(fields[x][y].getPenguin() == null)
+			return false;
 		if(fields[x][y].getPenguin().getOwner()== color)
 			return true;
 		else
