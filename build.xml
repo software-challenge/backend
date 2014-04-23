@@ -22,9 +22,8 @@
 		<delete dir="game_players/sixpack/build" />
 		<!--    currentPlugin                    !-->
 		<delete dir="game_plugins/packeis_am_pol/build" />
-		<!--
 		<delete dir="game_players/packeis_am_pol/build" />
-		!-->
+		
 	</target>
 
 	<target name="dependencies">
@@ -47,9 +46,9 @@
 		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" /> !-->
 		<!--    currentPlugin                    !-->
 		<ant dir="game_plugins/packeis_am_pol" target="clean-build" inheritAll="false" />
-		<!--
+		
 		<ant dir="game_players/packeis_am_pol" target="clean-build" inheritAll="false" />
-		!-->
+
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -205,6 +204,27 @@
 		</copy>
 
 		!-->
+
+		<mkdir dir="${out.dir}/simple_client/packeis_am_pol/jar" />
+		<copy todir="${out.dir}/simple_client/packeis_am_pol/jar">
+			<fileset dir="./game_players/packeis_am_pol/build/jar" />
+		</copy>
+				
+		<mkdir dir="${out.dir}/simple_client/packeis_am_pol/src" />
+		<copy todir="${out.dir}/simple_client/packeis_am_pol/src">
+			<fileset dir="./game_players/packeis_am_pol">
+				<exclude name="build/**/*" />
+				<exclude name="bin/**/*" />
+				<exclude name=".classpath" />
+				<exclude name="build.xml" />
+			</fileset>
+		</copy>
+		<move tofile="${out.dir}/simple_client/packeis_am_pol/src/build.xml" file="${out.dir}/simple_client/packeis_am_pol/src/build-deploy.xml" />
+		
+		<mkdir dir="${out.dir}/simple_client/packeis_am_pol/src/lib" />
+		<copy todir="${out.dir}/simple_client/packeis_am_pol/src/lib">
+			<fileset dir="${out.dir}/simple_client/packeis_am_pol/jar/lib" />
+		</copy>
 			
 		
         <!-->####    PLUGINS             !-->
@@ -252,6 +272,10 @@
 		<zip destfile="${out.dir}/zipped/simpleclient-si-jar.zip" basedir="${out.dir}/simple_client/sixpack/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-si-src.zip" basedir="${out.dir}/simple_client/sixpack/src" />
 		!-->
+
+
+		<zip destfile="${out.dir}/zipped/simpleclient-pap-jar.zip" basedir="${out.dir}/simple_client/packeis_am_pol/jar" />
+		<zip destfile="${out.dir}/zipped/simpleclient-pap-src.zip" basedir="${out.dir}/simple_client/packeis_am_pol/src" />
 		
 
 		<echo message="Gathering documentations..." />
