@@ -21,26 +21,51 @@ import sc.plugin2015.GameState;
 
 public class FrameRenderer extends PApplet {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private boolean startAnimation = false;
+	private int x;
+	private int y;
+
 	public void setup() {
-		size(200, 200);
-		background(0);
+		// original setup code here ...
+		size(400, 400);
+		// prevent thread from starving everything else
+		noLoop();
+		x = getWidth() / 2;
+		y = getHeight() / 2;
 	}
 
 	public void draw() {
-		stroke(255);
-		if (mousePressed) {
-			line(mouseX, mouseY, pmouseX, pmouseY);
+		if (startAnimation) {
+			x++;
+			startAnimation = false;
 		}
+		if (x == getWidth() / 2) {
+			noLoop();
+		} else {
+			if (x > getWidth()) {
+				x = 0;
+			} else {
+				x++;
+			}
+		}
+		fill(255, 200, 0);
+		rect(x, y, 50, 50);
 	}
 
 	public void updateGameState(GameState gameState) {
-		draw();
-		
+		// TODO Auto-generated method stub
+		startAnimation = true;
+		loop();
+
 	}
 
 	public void requestMove(int maxTurn) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Image getImage() {
