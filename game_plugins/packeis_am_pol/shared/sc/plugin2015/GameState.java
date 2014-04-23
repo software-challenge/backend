@@ -49,7 +49,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * 
  * @author Niklas, Sören
  */
-@XStreamAlias(value = "manhattan:state")
+@XStreamAlias(value = "state")
 public class GameState implements Cloneable {
 
 	// momentane rundenzahl

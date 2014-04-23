@@ -11,6 +11,9 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
 import sc.plugin2015.IGameHandler;
@@ -26,6 +29,8 @@ import sc.shared.ScoreCause;
  * 
  */
 public class RenderFacade {
+	private static final Logger logger = LoggerFactory
+			.getLogger(RenderFacade.class);
 	private FrameRenderer frameRenderer;
 
 	private EPlayerId activePlayer;
@@ -106,8 +111,9 @@ public class RenderFacade {
 	private int maxTurn;
 
 	private RenderFacade() {
-
 		frameRenderer = new FrameRenderer();
+		frameRenderer.init();		// PApplet Method for initializing
+		
 		gameStateQueue = new LinkedList<GameState>();
 		startReceiverThread();
 
