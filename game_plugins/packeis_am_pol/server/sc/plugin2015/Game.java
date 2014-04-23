@@ -94,21 +94,50 @@ public class Game extends RoundBasedGameInstance<Player> {
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
 				String winnerName = "Gleichstand nach Punkten.";
-				if (stats[0][3] > stats[1][3]) {
+				if (stats[0][0] > stats[1][0]) {
 					winner = PlayerColor.RED;
 					winnerName = "Sieg nach Punkten.";
-				} else if (stats[0][3] < stats[1][3]) {
+				} else if (stats[0][0] < stats[1][0]) {
 					winner = PlayerColor.BLUE;
 					winnerName = "Sieg nach Punkten.";
+				} else {
+					if(stats[0][1] > stats[1][1]) {
+						winner = PlayerColor.RED;
+						winnerName = "Sieg nach Feldern.";
+					} else if (stats [0][1] < stats[1][1]) {
+						winner = PlayerColor.BLUE;
+						winnerName = "Sieg nach Feldern.";
+					}
 				}
 				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
 			} else {
-				if (gameState.getCurrentMoveType() == MoveType.BUILD
-						&& gameState.getPossibleMoves().size() == 0) {
-					PlayerColor looser = gameState.getCurrentPlayerColor();
-					gameState.endGame(looser.opponent(), "Das Spiel ist vorzeitig zu Ende.\\n"
-							+ (gameState.getPlayerNames()[looser == PlayerColor.RED ? 1 : 0])
-							+ " ist Zugunfähig.");
+				if (gameState.getCurrentMoveType() == MoveType.RUN
+						&& gameState.getPossibleMoves().size() == 0 
+						&& gameState.getPossibleMoves(gameState.getOtherPlayerColor()).size() == 0) {
+					
+					
+					int[][] stats = gameState.getGameStats();
+					PlayerColor winner = null;
+					String winnerName = "Gleichstand nach Punkten.";
+					if (stats[0][0] > stats[1][0]) {
+						winner = PlayerColor.RED;
+						winnerName = "Sieg nach Punkten.";
+					} else if (stats[0][0] < stats[1][0]) {
+						winner = PlayerColor.BLUE;
+						winnerName = "Sieg nach Punkten.";
+					} else {
+						if(stats[0][1] > stats[1][1]) {
+							winner = PlayerColor.RED;
+							winnerName = "Sieg nach Feldern.";
+						} else if (stats [0][1] < stats[1][1]) {
+							winner = PlayerColor.BLUE;
+							winnerName = "Sieg nach Feldern.";
+						}
+					}
+					
+					
+					gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\\n "
+							+ "Beide Spieler sind Zugunfähig." + winnerName);
 
 				}
 			}
@@ -193,10 +222,14 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 		int[] stats = gameState.getPlayerStats(p);
 		int matchPoints = 1;
-		int oppPoints = gameState.getPlayerStats(p.getPlayerColor().opponent())[3];
-		if (stats[3] > oppPoints) 
+		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor().opponent());
+		if (stats[0] > oppPoints[0]) 
 			matchPoints = 2;
-		else if (stats[3] < oppPoints)
+		else if (stats[0] < oppPoints[0])
+			matchPoints = 0;
+		else if (stats[1] > oppPoints[1])
+			matchPoints = 2;
+		else if (stats[1] < oppPoints[1])
 			matchPoints = 0;
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0, 0, stats[0], stats[1], stats[2]) : 
 			new PlayerScore(ScoreCause.REGULAR, matchPoints, stats[3], stats[0], stats[1], stats[2]);

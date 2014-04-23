@@ -281,28 +281,17 @@ public class GameState implements Cloneable {
 	 * @param lastMove
 	 *           auszufuehrender Zug
 	 */
-	/*public void prepareNextTurn(Move lastMove) { //noch falsch
-
+	public void prepareNextTurn(Move lastMove) {
+		
 		turn++;
 		this.lastMove = lastMove;
-		if (currentMoveType == MoveType.SELECT) {
-			if (currentPlayer == startPlayer) {
-				switchCurrentPlayer();
-			} else {
-				setCurrentMoveType(MoveType.BUILD);
-			}
+		
+		if(turn == Constants.PENGUINS*2+1) {
+			setCurrentMoveType(MoveType.RUN);
 		} else {
-			if (currentPlayer == startPlayer && getCurrentPlayer().getUsableSegmentCount() == 0) {
-				setCurrentMoveType(MoveType.SELECT);
-				switchCurrentPlayer();
-				switchStartPlayer();
-				performScoring();
-			} else {
-				switchCurrentPlayer();
-			}
+			switchCurrentPlayer();
 		}
-
-	}*/
+	}
 
 	/**
 	 * 
@@ -345,6 +334,24 @@ public class GameState implements Cloneable {
 		}
 		return moves;
 	}
+	protected List<RunMove> getPossibleMoves(PlayerColor playerColor) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		for(int x = 0; x < Constants.COLUMNS; x++) {
+			for(int y = 0; y < Constants.ROWS; y++) {
+				if(this.board.hasPinguin(x, y, playerColor)) {
+					moves.addAll(leftOfPenguin(x, y));
+					moves.addAll(rightOfPenguin(x, y));
+					moves.addAll(topLeftOfPenguin(x, y));
+					moves.addAll(bottomRightOfPenguin(x, y));
+					moves.addAll(topRightOfPenguin(x, y));
+					moves.addAll(bottomLeftOfPenguin(x, y));
+					moves.add(null);
+				}
+			}
+		}
+		return moves;
+	}
+	
 	
 	private List<RunMove> leftOfPenguin(int x, int y) {
 		boolean done = false;
@@ -492,10 +499,8 @@ public class GameState implements Cloneable {
 	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
 	 * Einträgen
 	 * <ul>
-	 * <li>[0] - Anzahl Tuerme des Spielers
-	 * <li>[1] - Anzahl Staedte des SPielers
-	 * <li>[2] - 1: Spieler hat hoechsten Turm, 0: sonst
-	 * <li>[3] - Punktekonto des Spielers
+	 * <li>[0] - Punktekonto des Spielers
+	 * <li>[1] - Anzahl der Plättchen
 	 * </ul>
 	 * 
 	 * @param player
