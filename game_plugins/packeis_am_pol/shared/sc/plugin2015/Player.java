@@ -16,7 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * Anzahl der Plättchen des Spielers.
  * 
  */
-@XStreamAlias(value = "manhattan:player")
+@XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
 	// spielerfarbe des spielers
@@ -28,7 +28,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	private int points;
 
 	// Anzahl der gesammelten Plättchen
-	@XStreamImplicit(itemFieldName = "segment")
+	@XStreamAsAttribute
 	private int fields;
 
          /**
