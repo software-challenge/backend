@@ -76,7 +76,13 @@ public class RunMove extends Move implements Cloneable {
 						player.addField();
 						player.addPoints(state.getBoard().getFish(this.fromX, this.fromY));
 						state.getBoard().movePenguin(this.fromX, this.fromY, this.toX, this.toY, player.getPlayerColor());
-					} else {
+					} else {/*
+						for(int i = 0; i < state.getPossibleMoves().size(); i++) {
+							System.out.print("fromX=" + state.getPossibleMoves().get(i).fromX);
+							System.out.print("fromY=" + state.getPossibleMoves().get(i).fromY);
+							System.out.print("toX=" + state.getPossibleMoves().get(i).toX);
+							System.out.println("toY=" + state.getPossibleMoves().get(i).toY);
+						}*/
 						throw new InvalideMoveException("Der Zug ist nicht möglich, es stehen Pinguine im Weg, ein Plättchen fehlt oder der Zug ist einfach nicht möglich.");
 					}
 				} else {
@@ -91,6 +97,17 @@ public class RunMove extends Move implements Cloneable {
 	@Override
 	public MoveType getMoveType() {
 		return MoveType.RUN;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if(o instanceof RunMove 
+				&&((RunMove) o).fromX == this.fromX
+				&& ((RunMove) o).fromY == this.fromY
+				&& ((RunMove) o).toX == this.toX
+				&& ((RunMove) o).toY == this.toY) 
+			return true;
+		return false;
 	}
 
 }

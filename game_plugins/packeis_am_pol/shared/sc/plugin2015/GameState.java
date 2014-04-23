@@ -288,6 +288,7 @@ public class GameState implements Cloneable {
 		
 		if(turn == Constants.PENGUINS*2+1) {
 			setCurrentMoveType(MoveType.RUN);
+			switchCurrentPlayer();
 		} else {
 			switchCurrentPlayer();
 		}
@@ -328,10 +329,10 @@ public class GameState implements Cloneable {
 					moves.addAll(bottomRightOfPenguin(x, y));
 					moves.addAll(topRightOfPenguin(x, y));
 					moves.addAll(bottomLeftOfPenguin(x, y));
-					moves.add(null);
 				}
 			}
 		}
+		moves.add(null);
 		return moves;
 	}
 	protected List<RunMove> getPossibleMoves(PlayerColor playerColor) {
@@ -345,7 +346,7 @@ public class GameState implements Cloneable {
 					moves.addAll(bottomRightOfPenguin(x, y));
 					moves.addAll(topRightOfPenguin(x, y));
 					moves.addAll(bottomLeftOfPenguin(x, y));
-					moves.add(null);
+					moves.add(new NullMove());
 				}
 			}
 		}

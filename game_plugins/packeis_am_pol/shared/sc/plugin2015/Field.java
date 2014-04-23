@@ -78,8 +78,9 @@ public class Field implements Cloneable {
 	public Penguin removePenguin(PlayerColor color) {
 		
 		if (this.penguin.getOwner() == color) {
-				this.penguin = null;
-				return penguin;
+			Penguin p = this.penguin;
+			this.penguin = null;
+			return p;
 		}
 		
 		return null;
