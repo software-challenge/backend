@@ -12,6 +12,9 @@ import static sc.plugin2015.gui.renderer.RenderConfiguration.DEBUG_VIEW;
 
 import java.awt.Image;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import processing.core.PApplet;
 import sc.plugin2015.GameState;
 
@@ -20,7 +23,7 @@ import sc.plugin2015.GameState;
  */
 
 public class FrameRenderer extends PApplet {
-	
+
 	/**
 	 * 
 	 */
@@ -28,6 +31,8 @@ public class FrameRenderer extends PApplet {
 	private boolean startAnimation = false;
 	private int x;
 	private int y;
+	private static final Logger logger = LoggerFactory
+			.getLogger(FrameRenderer.class);
 
 	public void setup() {
 		// original setup code here ...
@@ -60,7 +65,6 @@ public class FrameRenderer extends PApplet {
 		// TODO Auto-generated method stub
 		startAnimation = true;
 		loop();
-
 	}
 
 	public void requestMove(int maxTurn) {
