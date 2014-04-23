@@ -231,8 +231,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 			matchPoints = 2;
 		else if (stats[1] < oppPoints[1])
 			matchPoints = 0;
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0, 0, stats[0], stats[1], stats[2]) : 
-			new PlayerScore(ScoreCause.REGULAR, matchPoints, stats[3], stats[0], stats[1], stats[2]);
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0, stats[0], stats[1]) : 
+			new PlayerScore(ScoreCause.REGULAR, matchPoints, stats[0], stats[1]);
 
 
 	}
