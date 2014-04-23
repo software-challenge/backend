@@ -3,13 +3,14 @@ package sc.plugin2015.util;
 import java.util.Arrays;
 import java.util.List;
 
-import sc.plugin2015.BuildMove;
+import sc.plugin2015.RunMove;
 import sc.plugin2015.Game;
 import sc.plugin2015.GameState;
 import sc.plugin2015.Move;
 import sc.plugin2015.Player;
 import sc.plugin2015.PlayerColor;
-import sc.plugin2015.SelectMove;
+import sc.plugin2015.SetMove;
+import sc.plugin2015.Penguin;
 import sc.plugin2015.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
@@ -42,8 +43,8 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
-		return Arrays.asList(new Class<?>[] { BuildMove.class, Game.class, GameState.class,
-				Constants.class, Move.class, SelectMove.class, Player.class,
-				WelcomeMessage.class, PlayerColor.class });
+		return Arrays.asList(new Class<?>[] { SetMove.class, Game.class, GameState.class,
+				Constants.class, Move.class, RunMove.class, Player.class,
+				WelcomeMessage.class, PlayerColor.class, Penguin.class});
 	}
 }

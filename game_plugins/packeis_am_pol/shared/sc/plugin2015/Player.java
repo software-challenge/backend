@@ -29,7 +29,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	// Anzahl der gesammelten Plättchen
 	@XStreamImplicit(itemFieldName = "segment")
-	private final int fields;
+	private int fields;
 
          /**
          * XStream benötigt eventuell einen parameterlosen Konstruktor

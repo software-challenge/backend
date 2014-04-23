@@ -10,10 +10,10 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
  * Ein allgemeiner Spielzug. Dies kann ein Bau- oder ein Auswahlzug sein.
- * @see SelectMove
- * @see BuildMove
+ * @see RunMove
+ * @see SetMove
  */
-@XStreamAlias(value = "mh:move")
+@XStreamAlias(value = "move")
 public abstract class Move implements Cloneable {
 
 	@XStreamImplicit(itemFieldName = "hint")

@@ -19,7 +19,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 public class Field implements Cloneable {
 
 	@XStreamAsAttribute
-	public final int fish;
+	public int fish;
 
 
 	private Penguin penguin;
