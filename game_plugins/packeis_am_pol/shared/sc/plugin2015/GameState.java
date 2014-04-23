@@ -10,7 +10,6 @@ import java.util.Set;
 
 
 import sc.plugin2015.util.Constants;
-import sc.plugin2015.util.GameStateConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
@@ -51,7 +50,6 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * @author Niklas, Sören
  */
 @XStreamAlias(value = "manhattan:state")
-@XStreamConverter(GameStateConverter.class)
 public class GameState implements Cloneable {
 
 	// momentane rundenzahl
@@ -283,7 +281,7 @@ public class GameState implements Cloneable {
 	 * @param lastMove
 	 *           auszufuehrender Zug
 	 */
-	public void prepareNextTurn(Move lastMove) {
+	/*public void prepareNextTurn(Move lastMove) { //noch falsch
 
 		turn++;
 		this.lastMove = lastMove;
@@ -304,7 +302,7 @@ public class GameState implements Cloneable {
 			}
 		}
 
-	}
+	}*/
 
 	/**
 	 * 
@@ -360,6 +358,7 @@ public class GameState implements Cloneable {
 				currentX--;
 			}
 		}
+		return moves;
 	}
 	
 	private List<RunMove> rightOfPenguin(int x, int y) {
@@ -374,6 +373,7 @@ public class GameState implements Cloneable {
 				currentX++;
 			}
 		}
+		return moves;
 	}
 	
 	private List<RunMove> topLeftOfPenguin(int x, int y) {
@@ -396,6 +396,7 @@ public class GameState implements Cloneable {
 				currentY--;
 			}
 		}
+		return moves;
 	}
 	
 	private List<RunMove> topRightOfPenguin(int x, int y) {
@@ -418,6 +419,7 @@ public class GameState implements Cloneable {
 				currentY--;
 			}
 		}
+		return moves;
 	}
 	
 	private List<RunMove> bottomRightOfPenguin(int x, int y) {
@@ -440,6 +442,7 @@ public class GameState implements Cloneable {
 				currentY++;
 			}
 		}
+		return moves;
 	}
 	
 	private List<RunMove> bottomLeftOfPenguin(int x, int y) {
@@ -462,6 +465,7 @@ public class GameState implements Cloneable {
 				currentY++;
 			}
 		}
+		return moves;
 	}
 	
 	public List<SetMove> getPossibleSetMoves() {

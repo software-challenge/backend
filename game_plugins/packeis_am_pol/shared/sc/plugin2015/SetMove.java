@@ -2,12 +2,10 @@ package sc.plugin2015;
 
 import static sc.plugin2015.util.Constants.ROWS;
 import static sc.plugin2015.util.Constants.COLUMNS;
-import static sc.plugin2015.util.Constants.FISH;
-import sc.plugin2015.util.Constants;
 import sc.plugin2015.util.InvalideMoveException;
-import sc.plugin2015.util.SelectMoveConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 /**
  * 
@@ -15,11 +13,13 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * @see Move
  *
  */
-@XStreamAlias(value = "manhattan:select")
-@XStreamConverter(SelectMoveConverter.class)
+@XStreamAlias(value = "SetMove")
 public class SetMove extends Move implements Cloneable{
 
+	@XStreamAsAttribute
 	private int setX;
+	
+	@XStreamAsAttribute
 	private int setY;
 
          /**
@@ -65,7 +65,7 @@ public class SetMove extends Move implements Cloneable{
 	void perform(GameState state, Player player) throws InvalideMoveException {
 
 		if  ((setY & 1) == 0) {
-			if(setX < Constants.COLUMNS-1 && setY < Constants.ROWS){
+			if(setX < COLUMNS-1 && setY < ROWS){
 				if(state.getBoard().getFish(setX, setY) == 1) {
 					if(state.getBoard().getPenguin(setX, setY) == null) {
 						state.getBoard().getField(setX, setY).putPenguin(new Penguin (player.getPlayerColor()));
@@ -79,7 +79,7 @@ public class SetMove extends Move implements Cloneable{
 				throw new IllegalArgumentException("Setzzug konnte nicht konstruiert werden: Nicht innerhalb des Spielfeldes");
 			}
 		} else {
-			if(setX < Constants.COLUMNS && setY < Constants.ROWS){
+			if(setX < COLUMNS && setY < ROWS){
 				if(state.getBoard().getFish(setX, setY) == 1) {
 					if(state.getBoard().getPenguin(setX, setY) == null) {
 						state.getBoard().getField(setX, setY).putPenguin(new Penguin (player.getPlayerColor()));

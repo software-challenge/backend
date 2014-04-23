@@ -1,10 +1,10 @@
 package sc.plugin2015;
 
-import sc.plugin2015.util.BuildMoveConverter;
 import sc.plugin2015.util.Constants;
 import sc.plugin2015.util.InvalideMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
@@ -12,16 +12,19 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * wird.
  * 
  */
-@XStreamAlias(value = "manhattan:build")
-@XStreamConverter(BuildMoveConverter.class)
+@XStreamAlias(value = "RunMove")
 public class RunMove extends Move implements Cloneable {
-
+	
+	@XStreamAsAttribute
 	public final int fromX;
 
+	@XStreamAsAttribute
 	public final int fromY;
 
+	@XStreamAsAttribute
 	public final int toX;
 
+	@XStreamAsAttribute
 	public final int toY;
 
 	/**
