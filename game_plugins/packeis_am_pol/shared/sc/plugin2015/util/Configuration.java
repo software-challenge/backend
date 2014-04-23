@@ -2,7 +2,10 @@ package sc.plugin2015.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
+import sc.plugin2015.Board;
+import sc.plugin2015.Field;
 import sc.plugin2015.RunMove;
 import sc.plugin2015.Game;
 import sc.plugin2015.GameState;
@@ -43,8 +46,9 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
-		return Arrays.asList(new Class<?>[] { SetMove.class, Game.class, GameState.class,
-				Constants.class, Move.class, RunMove.class, Player.class,
-				WelcomeMessage.class, PlayerColor.class, Penguin.class});
+		return Arrays.asList(new Class<?>[] { SetMove.class, Game.class,
+				GameState.class, Constants.class, Move.class, RunMove.class,
+				Player.class, WelcomeMessage.class, PlayerColor.class,
+				Penguin.class, Field.class, Board.class, Condition.class });
 	}
 }
