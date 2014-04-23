@@ -16,10 +16,11 @@ import processing.core.PApplet;
 import sc.plugin2015.GameState;
 
 /**
- * @author tkra, ffi
+ * @author fdu
  */
-@SuppressWarnings("serial")
+
 public class FrameRenderer extends PApplet {
+	
 	public void setup() {
 		size(200, 200);
 		background(0);
@@ -33,7 +34,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void updateGameState(GameState gameState) {
-		// TODO Auto-generated method stub
+		draw();
 		
 	}
 
