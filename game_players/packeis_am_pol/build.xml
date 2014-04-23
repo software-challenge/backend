@@ -1,4 +1,4 @@
-<project name="manhattan_player" basedir="." default="main">
+<project name="packeis_am_pol_player" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="root.dir" value="./../.." />
