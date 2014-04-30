@@ -108,8 +108,7 @@ public class GameRoom implements IGameListener
 
 	private GameResult generateGameResult(Map<IPlayer, PlayerScore> results)
 	{
-		ScoreDefinition definition = getProvider().getPlugin()
-				.getScoreDefinition();
+		ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
 		List<PlayerScore> scores = new LinkedList<PlayerScore>();
 
 		// restore order

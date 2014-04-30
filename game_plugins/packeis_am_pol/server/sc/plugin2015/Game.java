@@ -91,6 +91,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 			gameState.prepareNextTurn(move);
 
 			if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+				//TODO Spielfeld aufräumen und letzte Punkte verteilen
+				
+				gameState.clearEndGame();
+				
+				
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
 				String winnerName = "Gleichstand nach Punkten.";
@@ -112,8 +117,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
 			} else {
 				if (gameState.getCurrentMoveType() == MoveType.RUN
-						&& gameState.getPossibleMoves().size() == 0 
-						&& gameState.getPossibleMoves(gameState.getOtherPlayerColor()).size() == 0) {
+						&& gameState.getPossibleMoves().size() == 1 
+						&& gameState.getPossibleMoves(gameState.getOtherPlayerColor()).size() == 1) {
+					
+					//TODO Spielfeld aufräumen und letzte Punkte verteilen
+					
+					gameState.clearEndGame();
 					
 					
 					int[][] stats = gameState.getGameStats();
@@ -136,7 +145,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 					}
 					
 					
-					gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\\n "
+					gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n "
 							+ "Beide Spieler sind Zugunfähig." + winnerName);
 
 				}
@@ -146,7 +155,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 		} catch (InvalideMoveException e) {
 			author.setViolated(true);
-			String err = "Ungültiger Zug von '" + author.getDisplayName() + "'.\\n" + e.getMessage() + ".";
+			String err = "Ungültiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage() + ".";
 			gameState.endGame(author.getPlayerColor().opponent(), err);
 			logger.error(err);
 			throw new GameLogicException(err);

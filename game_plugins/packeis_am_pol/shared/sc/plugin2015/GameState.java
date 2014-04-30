@@ -332,10 +332,10 @@ public class GameState implements Cloneable {
 				}
 			}
 		}
-		moves.add(null);
+		moves.add(new NullMove());
 		return moves;
 	}
-	protected List<RunMove> getPossibleMoves(PlayerColor playerColor) {
+	public List<RunMove> getPossibleMoves(PlayerColor playerColor) {
 		List<RunMove> moves = new ArrayList<RunMove>();
 		for(int x = 0; x < Constants.COLUMNS; x++) {
 			for(int y = 0; y < Constants.ROWS; y++) {
@@ -346,10 +346,10 @@ public class GameState implements Cloneable {
 					moves.addAll(bottomRightOfPenguin(x, y));
 					moves.addAll(topRightOfPenguin(x, y));
 					moves.addAll(bottomLeftOfPenguin(x, y));
-					moves.add(new NullMove());
 				}
 			}
 		}
+		moves.add(new NullMove());
 		return moves;
 	}
 	
@@ -395,7 +395,7 @@ public class GameState implements Cloneable {
 		int currentY = y - 1;
 		List<RunMove> moves = new ArrayList <RunMove>();
 		while(!done) {
-			if(currentX < 0 || currentY < 0 || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+			if(currentX < 0 || currentY < 0 || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
 				done = true;
 			} else {
 				moves.add(new RunMove(x,y,currentX,currentY));
@@ -418,7 +418,7 @@ public class GameState implements Cloneable {
 		int currentY = y - 1;
 		List<RunMove> moves = new ArrayList <RunMove>();
 		while(!done) {
-			if(currentX >= Constants.COLUMNS || currentY < 0 || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+			if(currentX >= Constants.COLUMNS || currentY < 0 || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
 				done = true;
 			} else {
 				moves.add(new RunMove(x,y,currentX,currentY));
@@ -441,7 +441,7 @@ public class GameState implements Cloneable {
 		int currentY = y + 1;
 		List<RunMove> moves = new ArrayList <RunMove>();
 		while(!done) {
-			if(currentX >= Constants.COLUMNS || currentY >= Constants.ROWS || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+			if(currentX >= Constants.COLUMNS || currentY >= Constants.ROWS || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
 				done = true;
 			} else {
 				moves.add(new RunMove(x,y,currentX,currentY));
@@ -464,7 +464,7 @@ public class GameState implements Cloneable {
 		int currentY = y + 1;
 		List<RunMove> moves = new ArrayList <RunMove>();
 		while(!done) {
-			if(currentX < 0 || currentY >= Constants.ROWS || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+			if(currentX < 0 || currentY >= Constants.ROWS || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
 				done = true;
 			} else {
 				moves.add(new RunMove(x,y,currentX,currentY));
@@ -485,6 +485,23 @@ public class GameState implements Cloneable {
 			}
 		}
 		return moves;
+	}
+	
+	/*
+	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem Spielfeld stehen.
+	 */
+	protected void clearEndGame() {
+		for(int i = 0; i < Constants.ROWS; i++) {
+			for(int j = 0; j < Constants.COLUMNS; j++) {
+				if(this.board.hasPinguin(i, j, PlayerColor.BLUE)) {
+					this.blue.addPoints(this.board.getFish(i, j));
+					this.blue.addField();
+				} else if(this.board.hasPinguin(i, j, PlayerColor.RED)) {
+					this.red.addPoints(this.board.getFish(i, j));
+					this.red.addField();
+				}
+			}
+		}
 	}
 
 	/**
