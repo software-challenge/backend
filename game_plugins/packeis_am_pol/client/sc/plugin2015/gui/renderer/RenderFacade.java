@@ -114,8 +114,6 @@ public class RenderFacade {
 	private RenderFacade() {
 		frameRenderer = new FrameRenderer();
 		
-		frameRenderer.init();		// PApplet Method for initializing
-		
 		gameStateQueue = new LinkedList<GameState>();
 		startReceiverThread();
 
@@ -174,7 +172,10 @@ public class RenderFacade {
 			panel.setDoubleBuffered(true);
 			panel.setLayout(new BorderLayout());
 			panel.add(frameRenderer, BorderLayout.CENTER);
-
+			//logger.debug("calling frameRenderer.init()");
+			frameRenderer.init();
+			frameRenderer.resize(panel.getSize());
+			frameRenderer.redraw();
 		}
 	}
 
