@@ -1,16 +1,16 @@
 package sc.plugin2015;
 
-import sc.plugin2015.util.InvalideMoveException;
+import sc.plugin2015.util.InvalidMoveException;
 
-public class NullMove extends RunMove{
-	
+public class NullMove extends RunMove {
+
 	public NullMove() {
-		
+
 	}
 
 	@Override
-	void perform(GameState state, Player player) throws InvalideMoveException {
-		//Ein NullMove macht eben nichts.
+	void perform(GameState state, Player player) throws InvalidMoveException {
+		// Ein NullMove macht eben nichts.
 	}
 
 	@Override
