@@ -40,32 +40,28 @@ public class FrameRenderer extends PApplet {
 	
 	
 	private GuiBoard guiBoard;
-	private HexField testField;
 	private Background background;
 
 	public void setup() {
-		size(1024, 800 , P3D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
+		//logger.debug("calling frameRenderer.size()");
+		size(this.width	, this.height , P3D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
+		
 		noLoop();				// prevent thread from starving everything else
 		//smooth();				// Anti Aliasing to 4
 		
 		background = new Background(this);
-		guiBoard = new GuiBoard();
-		
-		x = getWidth() / 2;
-		y = getHeight() / 2;
-		testField = new HexField(this, x, y, 50);
-		fill(255, 200, 0);
-		
+		guiBoard = new GuiBoard(this, new Dimension(this.width, this.height ));
 		
 		//initial draw
 		background.draw();
-		testField.draw();
+		guiBoard.draw();
+		
 	}
 
 	public void draw() {
 		
-		background.draw();		
-		testField.draw();
+		background.draw();	
+		guiBoard.draw();
 		
 		
 		if (startAnimation) {
@@ -84,7 +80,8 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void updateGameState(GameState gameState) {
-		// TODO Auto-generated method stub
+		guiBoard.update(gameState.getBoard());
+		
 		
 		startAnimation = true;
 		loop();
