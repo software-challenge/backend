@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import processing.core.PApplet;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
 import sc.plugin2015.IGameHandler;
@@ -112,6 +113,7 @@ public class RenderFacade {
 
 	private RenderFacade() {
 		frameRenderer = new FrameRenderer();
+		
 		frameRenderer.init();		// PApplet Method for initializing
 		
 		gameStateQueue = new LinkedList<GameState>();
