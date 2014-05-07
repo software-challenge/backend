@@ -1,20 +1,21 @@
 package sc.plugin2015;
 
 import sc.plugin2015.util.Constants;
-import sc.plugin2015.util.InvalideMoveException;
+import sc.plugin2015.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
- * Ein Bauzug. Dieser beinhaltet Informationen, welcher Baustein wohin gesetzt
- * wird.
+ * Ein Laufzug. Dieser beinhaltet Informationen, von wo ein Pinguin des Spielers
+ * wohin gezogen werden soll. Die Informationen sind als x- und y-Koordinaten
+ * gegeben.
  * 
  */
 @XStreamAlias(value = "RunMove")
 public class RunMove extends Move implements Cloneable {
-	
+
 	@XStreamAsAttribute
 	public final int fromX;
 
@@ -43,13 +44,13 @@ public class RunMove extends Move implements Cloneable {
 	 * Erzeugt einen neuen Laufzug mit Anfangs- und Endkoordinaten
 	 * 
 	 * @param fromX
-	 *           x-Koordinate des Pinguins
+	 *            x-Koordinate des Pinguins
 	 * @param fromY
-	 *           y-Koordinate des Pinguins
+	 *            y-Koordinate des Pinguins
 	 * @param toX
-	 *           x-Koordinate des Zielfeldes
+	 *            x-Koordinate des Zielfeldes
 	 * @param toY
-	 *           y-Koordinate des Zielfeldes
+	 *            y-Koordinate des Zielfeldes
 	 */
 	public RunMove(int fromX, int fromY, int toX, int toY) {
 		this.fromX = fromX;
@@ -57,39 +58,42 @@ public class RunMove extends Move implements Cloneable {
 		this.toX = toX;
 		this.toY = toY;
 	}
-         /**
-         * klont dieses Objekt
-         * @return ein neues Objekt mit gleichen Eigenschaften
-         * @throws CloneNotSupportedException 
-         */
-        @Override
-        public Object clone() throws CloneNotSupportedException {
-            return super.clone();
-        }
+
+	/**
+	 * klont dieses Objekt
+	 * 
+	 * @return ein neues Objekt mit gleichen Eigenschaften
+	 * @throws CloneNotSupportedException
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return new RunMove(this.fromX, this.fromY, this.toX, this.toY);
+	}
 
 	@Override
-	void perform(GameState state, Player player) throws InvalideMoveException {
-		if(this != null) {
-			if(this.fromX < Constants.COLUMNS && this.fromY < Constants.ROWS) {
-				if(state.getBoard().hasPinguin(this.fromX, this.fromY, player.getPlayerColor())) {
-					if(state.getPossibleMoves().contains(this)) {
+	void perform(GameState state, Player player) throws InvalidMoveException {
+		if (this != null) {
+			if (this.fromX < Constants.COLUMNS && this.fromY < Constants.ROWS
+					&& fromX >= 0 && fromY >= 0) {
+				if (state.getBoard().hasPinguin(this.fromX, this.fromY,
+						player.getPlayerColor())) {
+					if (state.getPossibleMoves().contains(this)) {
 						player.addField();
-						player.addPoints(state.getBoard().getFish(this.fromX, this.fromY));
-						state.getBoard().movePenguin(this.fromX, this.fromY, this.toX, this.toY, player.getPlayerColor());
-					} else {/*
-						for(int i = 0; i < state.getPossibleMoves().size(); i++) {
-							System.out.print("fromX=" + state.getPossibleMoves().get(i).fromX);
-							System.out.print("fromY=" + state.getPossibleMoves().get(i).fromY);
-							System.out.print("toX=" + state.getPossibleMoves().get(i).toX);
-							System.out.println("toY=" + state.getPossibleMoves().get(i).toY);
-						}*/
-						throw new InvalideMoveException("Der Zug ist nicht möglich, es stehen Pinguine im Weg, ein Plättchen fehlt oder der Zug ist einfach nicht möglich.");
+						player.addPoints(state.getBoard().getFishNumber(
+								this.fromX, this.fromY));
+						state.getBoard().movePenguin(this.fromX, this.fromY,
+								this.toX, this.toY, player.getPlayerColor());
+					} else {
+						throw new InvalidMoveException(
+								"Der Zug ist nicht möglich, denn es stehen Pinguine im Weg, ein Plättchen fehlt oder der Zug ist einfach nicht möglich.");
 					}
 				} else {
-					throw new InvalideMoveException("Kein Pinguin der eigenen Farbe auf dem Startfeld vorhanden.");
+					throw new InvalidMoveException(
+							"Kein Pinguin der eigenen Farbe auf dem Startfeld vorhanden.");
 				}
 			} else {
-				throw new InvalideMoveException("Startkoordinaten sind nicht innerhalb des Spielfeldes.");
+				throw new InvalidMoveException(
+						"Startkoordinaten sind nicht innerhalb des Spielfeldes.");
 			}
 		}
 	}
@@ -98,14 +102,13 @@ public class RunMove extends Move implements Cloneable {
 	public MoveType getMoveType() {
 		return MoveType.RUN;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof RunMove 
-				&&((RunMove) o).fromX == this.fromX
+		if (o instanceof RunMove && ((RunMove) o).fromX == this.fromX
 				&& ((RunMove) o).fromY == this.fromY
 				&& ((RunMove) o).toX == this.toX
-				&& ((RunMove) o).toY == this.toY) 
+				&& ((RunMove) o).toY == this.toY)
 			return true;
 		return false;
 	}

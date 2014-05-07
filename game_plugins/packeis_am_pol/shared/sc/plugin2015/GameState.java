@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
 import sc.plugin2015.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -21,16 +20,16 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * was fuer eine Art von Zug ({@link #getCurrentMoveType() getCurrentMoveType()}
  * ) der Spielserver als Antwort von einem der beiden Spieler (
  * {@link #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren
- * die Informationen ueber die beiden Spieler und das Spielfeld zum
- * Zustand. Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf.
- * ueber das Spielende informiert.<br/>
+ * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
+ * Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf. ueber das
+ * Spielende informiert.<br/>
  * <br/>
  * 
  * Der {@code GameState} ist damit das zentrale Objekt ueber das auf alle
  * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.<br/>
  * <br/>
  * 
- * Der Spielserver sendet an beide teilnehmende Spieler nach jedem getaetigten
+ * Der Spielserver sendet an beide teilnehmenden Spieler nach jedem getaetigten
  * Zug eine neue Kopie des {@code GameState}, in dem der dann aktuelle Zustand
  * beschrieben wird. Informationen ueber den Spielverlauf sind nur bedingt ueber
  * den {@code GameState}erfragbar und muessen von einem Spielclient daher bei
@@ -40,12 +39,11 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
  * {@link #getPossibleMoves() getPossibleMoves()} eine Liste aller fuer den
- * aktuellen Spieler legalen Laufzuege und mit 
- * {@link #getPossibleSetMoves() getPossibleSetMoves()} eine Liste aller für
- * den aktuellen Spieler legalen Setzzüge abgefragt werden. Ist momentan also ein
- * Laufzug oder ein Setzzug zu taetigen, kann eine Spieleclient diese Liste
- * aus dem {@code GameState} erfragen und muss dann lediglich einen Zug aus 
- * dieser Liste auswaehlen.
+ * aktuellen Spieler legalen Laufzuege und mit {@link #getPossibleSetMoves()
+ * getPossibleSetMoves()} eine Liste aller für den aktuellen Spieler legalen
+ * Setzzüge abgefragt werden. Ist momentan also ein Laufzug oder ein Setzzug zu
+ * taetigen, kann eine Spieleclient diese Liste aus dem {@code GameState}
+ * erfragen und muss dann lediglich einen Zug aus dieser Liste auswaehlen.
  * 
  * @author Niklas, Sören
  */
@@ -66,27 +64,27 @@ public class GameState implements Cloneable {
 
 	// die teilnehmenden spieler
 	private Player red, blue;
-		
-	 //Das Spielbrett
-	 
+
+	// Das Spielbrett
+
 	private Board board;
 
-	// letzter performte move
+	// letzter getätigter move
 	private Move lastMove;
 
 	// endbedingung
 	private Condition condition = null;
 
 	/**
-	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
-	 * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
-	 * gueltig sind.<br/>
+	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so
+	 * gesetzt sind, wie sie zu Beginn eines Spiels, bevor die Spieler
+	 * beigetreten sind, gueltig sind.<br/>
 	 * <br/>
 	 * 
-	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
+	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte
+	 * vom Spielclient i.A. nicht aufgerufen werden!</b>
 	 * 
-	 * Der Kartenstapel wird nur initialisiert und nicht mit Karten befuellt.
+	 * Das Spielfeld wird zufällig aufgebaut.
 	 */
 	public GameState() {
 
@@ -95,31 +93,32 @@ public class GameState implements Cloneable {
 		currentMoveType = MoveType.SET;
 		board = new Board();
 	}
-	
-         /**
-         * klont dieses Objekt
-         * @return ein neues Objekt mit gleichen Eigenschaften
-         * @throws CloneNotSupportedException 
-         */
+
+	/**
+	 * klont dieses Objekt
+	 * 
+	 * @return ein neues Objekt mit gleichen Eigenschaften
+	 * @throws CloneNotSupportedException
+	 */
 	@Override
-	public Object clone() throws CloneNotSupportedException{
+	public Object clone() throws CloneNotSupportedException {
 		GameState clone = (GameState) super.clone();
-                if (red != null)
-                    clone.red = (Player) red.clone();
-                if (blue != null)
-                    clone.blue = (Player) blue.clone();
-                if (lastMove != null)
-                    clone.lastMove = (Move) lastMove.clone();
-                if (board != null)
-        			clone.board = (Board) this.board.clone();
-                if (condition != null)
-                    clone.condition = (Condition) condition.clone();
-                if (currentPlayer != null)
-        			clone.currentPlayer = currentPlayer;
-                
+		if (red != null)
+			clone.red = (Player) red.clone();
+		if (blue != null)
+			clone.blue = (Player) blue.clone();
+		if (lastMove != null)
+			clone.lastMove = (Move) lastMove.clone();
+		if (board != null)
+			clone.board = (Board) this.board.clone();
+		if (condition != null)
+			clone.condition = (Condition) condition.clone();
+		if (currentPlayer != null)
+			clone.currentPlayer = currentPlayer;
+
 		return clone;
-        }
-        
+	}
+
 	/**
 	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
 	 * <br/>
@@ -128,7 +127,7 @@ public class GameState implements Cloneable {
 	 * Spielclient i.A. nicht aufgerufen werden!</b>
 	 * 
 	 * @param player
-	 *           Der hinzuzufuegende Spieler.
+	 *            Der hinzuzufuegende Spieler.
 	 */
 	public void addPlayer(Player player) {
 
@@ -138,7 +137,7 @@ public class GameState implements Cloneable {
 			blue = player;
 		}
 	}
-	
+
 	public Board getBoard() {
 		return this.board;
 	}
@@ -150,13 +149,13 @@ public class GameState implements Cloneable {
 	 * @return Der Spieler, der momentan am Zug ist.
 	 */
 	public Player getCurrentPlayer() {
-		return currentPlayer == PlayerColor.RED ? red : blue;
+		return (currentPlayer == PlayerColor.RED ? red : blue);
 	}
 
 	/**
 	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
-	 * ist. Dies ist aequivalent zum Aufruf {@code
-	 * getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * ist. Dies ist aequivalent zum Aufruf
+	 * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der momentan am Zug ist.
 	 */
@@ -165,8 +164,8 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
-	 * Zug ist.
+	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht
+	 * am Zug ist.
 	 * 
 	 * @return Der Spieler, der momentan nicht am Zug ist.
 	 */
@@ -176,9 +175,9 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
-	 * Zug ist. Dies ist aequivalent zum Aufruf @{@code
-	 * getCurrentPlayerColor.opponent()} oder {@code
-	 * getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * Zug ist. Dies ist aequivalent zum Aufruf @
+	 * {@code getCurrentPlayerColor.opponent()} oder
+	 * {@code getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
 	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
 	 */
@@ -188,8 +187,8 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe {@code
-	 * PlayerColor.RED} spielt.
+	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe
+	 * {@code PlayerColor.RED} spielt.
 	 * 
 	 * @return Der rote Spieler.
 	 */
@@ -199,8 +198,8 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe {@code
-	 * PlayerColor.BLUE} spielt.
+	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe
+	 * {@code PlayerColor.BLUE} spielt.
 	 * 
 	 * @return Der blaue Spieler.
 	 */
@@ -221,11 +220,11 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
-	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf {@code
-	 * getStartPlayer().getPlayerColor()}, aber etwas effizienter.
+	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
+	 * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
 	 * 
-	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht begonnen
-	 *         hat.
+	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht
+	 *         begonnen hat.
 	 */
 	public PlayerColor getStartPlayerColor() {
 		return startPlayer;
@@ -235,15 +234,17 @@ public class GameState implements Cloneable {
 	 * wechselt den Spieler, der aktuell an der Reihe ist.
 	 */
 	private void switchCurrentPlayer() {
-		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
+		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
+				: PlayerColor.RED;
 	}
 
 	/**
 	 * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
 	 */
-	private void switchStartPlayer() {
-		startPlayer = startPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
-	}
+	/*
+	 * private void switchStartPlayer() { startPlayer = startPlayer ==
+	 * PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED; }
+	 */
 
 	/**
 	 * liefert den momentan auszufuehrenden Zugtyp
@@ -279,16 +280,16 @@ public class GameState implements Cloneable {
 	 * </ul>
 	 * 
 	 * @param lastMove
-	 *           auszufuehrender Zug
+	 *            auszufuehrender Zug
 	 */
 	public void prepareNextTurn(Move lastMove) {
-		
+
 		turn++;
 		this.lastMove = lastMove;
-		
-		if(turn == Constants.PENGUINS*2+1) {
+
+		if (turn == Constants.PENGUINS * 2 + 1) {
 			setCurrentMoveType(MoveType.RUN);
-			switchCurrentPlayer();
+			// switchCurrentPlayer();
 		} else {
 			switchCurrentPlayer();
 		}
@@ -300,7 +301,6 @@ public class GameState implements Cloneable {
 	private void performScoring() {
 
 		int[][] stats = getGameStats();
-
 
 	}
 
@@ -314,15 +314,16 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert eine Liste aller aktuell erlaubten Zuege.
+	 * Liefert eine Liste aller aktuell erlaubten Laufzuege, der aktuell an der
+	 * Reihe ist.
 	 * 
 	 * @return Liste erlaubter Spielzuege
 	 */
 	public List<RunMove> getPossibleMoves() {
 		List<RunMove> moves = new ArrayList<RunMove>();
-		for(int x = 0; x < Constants.COLUMNS; x++) {
-			for(int y = 0; y < Constants.ROWS; y++) {
-				if(this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
+		for (int x = 0; x < Constants.COLUMNS; x++) {
+			for (int y = 0; y < Constants.ROWS; y++) {
+				if (this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
 					moves.addAll(leftOfPenguin(x, y));
 					moves.addAll(rightOfPenguin(x, y));
 					moves.addAll(topLeftOfPenguin(x, y));
@@ -335,11 +336,19 @@ public class GameState implements Cloneable {
 		moves.add(new NullMove());
 		return moves;
 	}
+
+	/**
+	 * Generiert eine Liste der moeglichen Laufzuege von uebergegebenem Spieler
+	 * 
+	 * @param playerColor
+	 *            Farbe des Spielers
+	 * @return moegliche Laufzuege
+	 */
 	public List<RunMove> getPossibleMoves(PlayerColor playerColor) {
 		List<RunMove> moves = new ArrayList<RunMove>();
-		for(int x = 0; x < Constants.COLUMNS; x++) {
-			for(int y = 0; y < Constants.ROWS; y++) {
-				if(this.board.hasPinguin(x, y, playerColor)) {
+		for (int x = 0; x < Constants.COLUMNS; x++) {
+			for (int y = 0; y < Constants.ROWS; y++) {
+				if (this.board.hasPinguin(x, y, playerColor)) {
 					moves.addAll(leftOfPenguin(x, y));
 					moves.addAll(rightOfPenguin(x, y));
 					moves.addAll(topLeftOfPenguin(x, y));
@@ -352,152 +361,170 @@ public class GameState implements Cloneable {
 		moves.add(new NullMove());
 		return moves;
 	}
-	
-	
+
 	private List<RunMove> leftOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX = x - 1;
-		List<RunMove> moves = new ArrayList <RunMove>();
-		while(!done) {
-			if(currentX < 0 || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		while (!done) {
+			if (currentX < 0 || this.board.getPenguin(currentX, y) != null
+					|| this.board.getFishNumber(currentX, y) == 0) {
 				done = true;
 			} else {
-				moves.add(new RunMove(x,y,currentX,y));
+				moves.add(new RunMove(x, y, currentX, y));
 				currentX--;
 			}
 		}
 		return moves;
 	}
-	
+
 	private List<RunMove> rightOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX = x + 1;
-		List<RunMove> moves = new ArrayList <RunMove>();
-		while(!done) {
-			if(currentX >= Constants.COLUMNS || this.board.getPenguin(currentX, y) != null || this.board.getFish(currentX, y) == 0) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		while (!done) {
+			if (currentX >= Constants.COLUMNS
+					|| this.board.getPenguin(currentX, y) != null
+					|| this.board.getFishNumber(currentX, y) == 0) {
 				done = true;
 			} else {
-				moves.add(new RunMove(x,y,currentX,y));
+				moves.add(new RunMove(x, y, currentX, y));
 				currentX++;
 			}
 		}
 		return moves;
 	}
-	
+
 	private List<RunMove> topLeftOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
-		if((y & 1) == 0) {
+		if ((y & 1) == 0) {
 			currentX = x;
 		} else {
 			currentX = x - 1;
 		}
 		int currentY = y - 1;
-		List<RunMove> moves = new ArrayList <RunMove>();
-		while(!done) {
-			if(currentX < 0 || currentY < 0 || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		while (!done) {
+			if (currentX < 0 || currentY < 0
+					|| this.board.getPenguin(currentX, currentY) != null
+					|| this.board.getFishNumber(currentX, currentY) == 0) {
 				done = true;
 			} else {
-				moves.add(new RunMove(x,y,currentX,currentY));
-				if((currentY & 1) == 1)
+				moves.add(new RunMove(x, y, currentX, currentY));
+				if ((currentY & 1) == 1)
 					currentX--;
 				currentY--;
 			}
 		}
 		return moves;
 	}
-	
+
 	private List<RunMove> topRightOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
-		if((y & 1) == 1) {
+		if ((y & 1) == 1) {
 			currentX = x;
 		} else {
 			currentX = x + 1;
 		}
 		int currentY = y - 1;
-		List<RunMove> moves = new ArrayList <RunMove>();
-		while(!done) {
-			if(currentX >= Constants.COLUMNS || currentY < 0 || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		while (!done) {
+			if (currentX >= Constants.COLUMNS || currentY < 0
+					|| this.board.getPenguin(currentX, currentY) != null
+					|| this.board.getFishNumber(currentX, currentY) == 0) {
 				done = true;
 			} else {
-				moves.add(new RunMove(x,y,currentX,currentY));
-				if((currentY & 1) == 0)
+				moves.add(new RunMove(x, y, currentX, currentY));
+				if ((currentY & 1) == 0)
 					currentX++;
 				currentY--;
 			}
 		}
 		return moves;
 	}
-	
+
 	private List<RunMove> bottomRightOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
-		if((y & 1) == 1) {
+		if ((y & 1) == 1) {
 			currentX = x;
 		} else {
 			currentX = x + 1;
 		}
 		int currentY = y + 1;
-		List<RunMove> moves = new ArrayList <RunMove>();
-		while(!done) {
-			if(currentX >= Constants.COLUMNS || currentY >= Constants.ROWS || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		while (!done) {
+			if (currentX >= Constants.COLUMNS || currentY >= Constants.ROWS
+					|| this.board.getPenguin(currentX, currentY) != null
+					|| this.board.getFishNumber(currentX, currentY) == 0) {
 				done = true;
 			} else {
-				moves.add(new RunMove(x,y,currentX,currentY));
-				if((currentY & 1) == 0)
+				moves.add(new RunMove(x, y, currentX, currentY));
+				if ((currentY & 1) == 0)
 					currentX++;
 				currentY++;
 			}
 		}
 		return moves;
 	}
-	
+
 	private List<RunMove> bottomLeftOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
-		if((y & 1) == 0) {
+		if ((y & 1) == 0) {
 			currentX = x;
 		} else {
 			currentX = x - 1;
 		}
 		int currentY = y + 1;
-		List<RunMove> moves = new ArrayList <RunMove>();
-		while(!done) {
-			if(currentX < 0 || currentY >= Constants.ROWS || this.board.getPenguin(currentX, currentY) != null || this.board.getFish(currentX, currentY) == 0) {
+		List<RunMove> moves = new ArrayList<RunMove>();
+		while (!done) {
+			if (currentX < 0 || currentY >= Constants.ROWS
+					|| this.board.getPenguin(currentX, currentY) != null
+					|| this.board.getFishNumber(currentX, currentY) == 0) {
 				done = true;
 			} else {
-				moves.add(new RunMove(x,y,currentX,currentY));
-				if((currentY & 1) == 1)
+				moves.add(new RunMove(x, y, currentX, currentY));
+				if ((currentY & 1) == 1)
 					currentX--;
 				currentY++;
 			}
 		}
 		return moves;
 	}
-	
+
+	/**
+	 * Generiert eine Liste von moeglichen Setzzuegen des Spielers, der aktuell
+	 * an der Reihe ist.
+	 * 
+	 * @return moegliche Setzzuege
+	 */
 	public List<SetMove> getPossibleSetMoves() {
 		List<SetMove> moves = new ArrayList<SetMove>();
-		for(int x = 0; x < Constants.COLUMNS; x++) {
-			for(int y = 0; y < Constants.ROWS; y++) {
-				if(board.getFish(x, y) == 1 && board.getPenguin(x, y) == null)
-					moves.add(new SetMove(x,y));
+		for (int x = 0; x < Constants.COLUMNS; x++) {
+			for (int y = 0; y < Constants.ROWS; y++) {
+				if (board.getFishNumber(x, y) == 1
+						&& board.getPenguin(x, y) == null)
+					moves.add(new SetMove(x, y));
 			}
 		}
 		return moves;
 	}
-	
+
 	/*
-	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem Spielfeld stehen.
+	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem
+	 * Spielfeld stehen.
 	 */
 	protected void clearEndGame() {
-		for(int i = 0; i < Constants.ROWS; i++) {
-			for(int j = 0; j < Constants.COLUMNS; j++) {
-				if(this.board.hasPinguin(i, j, PlayerColor.BLUE)) {
-					this.blue.addPoints(this.board.getFish(i, j));
+		for (int i = 0; i < Constants.ROWS; i++) {
+			for (int j = 0; j < Constants.COLUMNS; j++) {
+				if (this.board.hasPinguin(i, j, PlayerColor.BLUE)) {
+					this.blue.addPoints(this.board.getFishNumber(i, j));
 					this.blue.addField();
-				} else if(this.board.hasPinguin(i, j, PlayerColor.RED)) {
-					this.red.addPoints(this.board.getFish(i, j));
+				} else if (this.board.hasPinguin(i, j, PlayerColor.RED)) {
+					this.red.addPoints(this.board.getFishNumber(i, j));
 					this.red.addField();
 				}
 			}
@@ -517,12 +544,12 @@ public class GameState implements Cloneable {
 	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
 	 * Einträgen
 	 * <ul>
-	 * <li>[0] - Punktekonto des Spielers
+	 * <li>[0] - Punktekonto des Spielers (Anzahl der Fische)
 	 * <li>[1] - Anzahl der Plättchen
 	 * </ul>
 	 * 
 	 * @param player
-	 *           Spieler
+	 *            Spieler
 	 * @return Array mit Statistiken
 	 */
 	public int[] getPlayerStats(Player player) {
@@ -534,12 +561,12 @@ public class GameState implements Cloneable {
 	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
 	 * Einträgen
 	 * <ul>
-	 * <li>[0] - Punktekonto des Spielers
+	 * <li>[0] - Punktekonto des Spielers (Anzahl der Fische)
 	 * <li>[1] - Anzahl der Plättchen
 	 * </ul>
 	 * 
 	 * @param playerColor
-	 *           Farbe des Spielers
+	 *            Farbe des Spielers
 	 * @return Array mit Statistiken
 	 */
 	public int[] getPlayerStats(PlayerColor playerColor) {
@@ -564,7 +591,7 @@ public class GameState implements Cloneable {
 	public int[][] getGameStats() {
 
 		int[][] stats = new int[2][2];
-		
+
 		stats[0][0] = this.red.getPoints();
 		stats[0][1] = this.red.getFields();
 		stats[1][0] = this.blue.getPoints();
@@ -586,9 +613,9 @@ public class GameState implements Cloneable {
 	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
 	 * 
 	 * @param winner
-	 *           Farbe des Siegers
+	 *            Farbe des Siegers
 	 * @param reason
-	 *           Gewinngrund
+	 *            Gewinngrund
 	 */
 	public void endGame(PlayerColor winner, String reason) {
 		if (condition == null) {

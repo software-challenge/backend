@@ -22,7 +22,7 @@ import sc.plugin2015.Player;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.WelcomeMessage;
 import sc.plugin2015.util.Configuration;
-import sc.plugin2015.util.InvalideMoveException;
+import sc.plugin2015.util.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -67,7 +67,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * move)
 	 */
 	@Override
-	protected void onRoundBasedAction(IPlayer fromPlayer, Object data) throws GameLogicException {
+	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+			throws GameLogicException {
 
 		final Player author = (Player) fromPlayer;
 		final MoveType expectedMoveType = gameState.getCurrentMoveType();
@@ -75,27 +76,28 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 		try {
 			if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
-				throw new InvalideMoveException(author.getDisplayName() + " war nicht am Zug");
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " war nicht am Zug");
 			}
 
 			if (!(data instanceof Move)) {
-				throw new InvalideMoveException(author.getDisplayName() + " hat kein Zug-Objekt gesendet");
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " hat kein Zug-Objekt gesendet");
 			}
 
 			final Move move = (Move) data;
 			if (move.getMoveType() != expectedMoveType) {
-				throw new InvalideMoveException(author.getDisplayName() + " hat falschen Zug-Typ gesendet");
+				throw new InvalidMoveException(author.getDisplayName()
+						+ " hat falschen Zug-Typ gesendet");
 			}
 
 			move.perform(gameState, expectedPlayer);
 			gameState.prepareNextTurn(move);
 
 			if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
-				//TODO Spielfeld aufräumen und letzte Punkte verteilen
-				
+
 				gameState.clearEndGame();
-				
-				
+
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
 				String winnerName = "Gleichstand nach Punkten.";
@@ -106,25 +108,24 @@ public class Game extends RoundBasedGameInstance<Player> {
 					winner = PlayerColor.BLUE;
 					winnerName = "Sieg nach Punkten.";
 				} else {
-					if(stats[0][1] > stats[1][1]) {
+					if (stats[0][1] > stats[1][1]) {
 						winner = PlayerColor.RED;
 						winnerName = "Sieg nach Feldern.";
-					} else if (stats [0][1] < stats[1][1]) {
+					} else if (stats[0][1] < stats[1][1]) {
 						winner = PlayerColor.BLUE;
 						winnerName = "Sieg nach Feldern.";
 					}
 				}
-				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n" + winnerName);
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
+						+ winnerName);
 			} else {
 				if (gameState.getCurrentMoveType() == MoveType.RUN
-						&& gameState.getPossibleMoves().size() == 1 
-						&& gameState.getPossibleMoves(gameState.getOtherPlayerColor()).size() == 1) {
-					
-					//TODO Spielfeld aufräumen und letzte Punkte verteilen
-					
+						&& gameState.getPossibleMoves().size() == 1
+						&& gameState.getPossibleMoves(
+								gameState.getOtherPlayerColor()).size() == 1) {
+
 					gameState.clearEndGame();
-					
-					
+
 					int[][] stats = gameState.getGameStats();
 					PlayerColor winner = null;
 					String winnerName = "Gleichstand nach Punkten.";
@@ -135,27 +136,29 @@ public class Game extends RoundBasedGameInstance<Player> {
 						winner = PlayerColor.BLUE;
 						winnerName = "Sieg nach Punkten.";
 					} else {
-						if(stats[0][1] > stats[1][1]) {
+						if (stats[0][1] > stats[1][1]) {
 							winner = PlayerColor.RED;
 							winnerName = "Sieg nach Feldern.";
-						} else if (stats [0][1] < stats[1][1]) {
+						} else if (stats[0][1] < stats[1][1]) {
 							winner = PlayerColor.BLUE;
 							winnerName = "Sieg nach Feldern.";
 						}
 					}
-					
-					
-					gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n "
-							+ "Beide Spieler sind Zugunfähig." + winnerName);
+
+					gameState.endGame(winner,
+							"Das Spiel ist vorzeitig zu Ende.\n "
+									+ "Beide Spieler sind Zugunfähig."
+									+ winnerName);
 
 				}
 			}
 
 			next(gameState.getCurrentPlayer());
 
-		} catch (InvalideMoveException e) {
+		} catch (InvalidMoveException e) {
 			author.setViolated(true);
-			String err = "Ungültiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage() + ".";
+			String err = "Ungültiger Zug von '" + author.getDisplayName()
+					+ "'.\n" + e.getMessage() + ".";
 			gameState.endGame(author.getPlayerColor().opponent(), err);
 			logger.error(err);
 			throw new GameLogicException(err);
@@ -198,11 +201,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
-		
 
 		if (!gameState.gameEnded()) {
-			gameState.endGame(((Player) player).getPlayerColor().opponent(), "Der Spieler '"
-					+ player.getDisplayName() + "' hat das Spiel verlassen.");
+			gameState.endGame(((Player) player).getPlayerColor().opponent(),
+					"Der Spieler '" + player.getDisplayName()
+							+ "' hat das Spiel verlassen.");
 		}
 		notifyOnGameOver(res);
 	}
@@ -231,8 +234,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 		int[] stats = gameState.getPlayerStats(p);
 		int matchPoints = 1;
-		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor().opponent());
-		if (stats[0] > oppPoints[0]) 
+		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor()
+				.opponent());
+		if (stats[0] > oppPoints[0])
 			matchPoints = 2;
 		else if (stats[0] < oppPoints[0])
 			matchPoints = 0;
@@ -240,9 +244,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 			matchPoints = 2;
 		else if (stats[1] < oppPoints[1])
 			matchPoints = 0;
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0, stats[0], stats[1]) : 
-			new PlayerScore(ScoreCause.REGULAR, matchPoints, stats[0], stats[1]);
-
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
+				stats[0], stats[1]) : new PlayerScore(ScoreCause.REGULAR,
+				matchPoints, stats[0], stats[1]);
 
 	}
 
