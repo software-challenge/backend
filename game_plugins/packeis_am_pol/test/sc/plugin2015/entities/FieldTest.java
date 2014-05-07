@@ -5,23 +5,25 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import sc.plugin2015.Field;
+import sc.plugin2015.Penguin;
+import sc.plugin2015.PlayerColor;
 
 public class FieldTest {
 
     @Test
     public void testField() {
-        Field field = new Field(1, 2);
-        assertEquals(1, field.getPosX());
-        assertEquals(2, field.getPosY());
+        Field field = new Field(1, new Penguin(PlayerColor.BLUE));
+        assertEquals(1, field.getFish());
+        assertEquals(PlayerColor.BLUE, field.getPenguin().getOwner());
     }
 
     @Test
     public void testSetStone() {
-        Field field = new Field(1, 2);
-        Stone stone = new Stone();
-        assertNull(field.getStone());
+        Field field = new Field(1);
+        Penguin penguin = new Penguin();
+        assertNull(field.getPenguin());
 
-        field.setStone(stone);
-        assertEquals(stone, field.getStone());
+        field.putPenguin(penguin);
+        assertEquals(penguin, field.getPenguin());
     }
 }
