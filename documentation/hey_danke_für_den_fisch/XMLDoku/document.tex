@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper, ngerman, oneside]{scrartcl}
+﻿\documentclass[12pt,a4paper, ngerman, oneside]{scrartcl}
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
 %\usepackage[T1]{fontenc}
@@ -24,7 +24,7 @@
 
 
 %\author{Niklas Paulsen, npau@informatik.uni-kiel.de }
-\title{Client-Server Kommunikation Cartagena}
+\title{Client-Server Kommunikation Hey, danke für den Fisch}
 
 \begin{document}
 \maketitle
@@ -106,7 +106,7 @@ Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags zu
 \subsection{Ohne Reservierung}
 Betritt ein beliebiges offenes Spiel:
 \begin{verbatim}
-<join gameType="swc_2013_cartagena"/>
+<join gameType="swc_2015_hey_danke_fuer_den_fisch"/>
 \end{verbatim}
 \subsection{Mit Reservierungscode}
 Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Platz betreten.
@@ -119,61 +119,50 @@ Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Plat
 
 \section{Züge senden}
 
-\subsection{\label{moveContainer}Der MoveContainer}
-Der MoveContainer kann bis zu 3 Teilzüge beherbergen. Sollen weniger als 3
-Teilzüge mitgeschickt werden, können third-, second- oder auch firstMove
-weggelassen werden.
+\subsection{\label{Move}Der Move}
+Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden kann.
 \begin{description}
 \item[RID] ID des Raumes
 \item[ZUG] je nach Art des Zuges Informationen über diesen. (siehe
-Abschnitt~\ref{forwardMove} und ~\ref{backwardMove} )
+Abschnitt~\ref{setMove}, ~\ref{runMove} und ~\ref{nullMove})
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-  <data class="moveContainer">
-    <firstMove ZUG/>
-    <secondMove ZUG/>
-    <thirdMove ZUG/>
-  </data>
+  ZUG
 </room>
 
 \end{verbatim}
-\subsection{Vorwärtszug}
-\label{forwardMove}
+\subsection{Setzzug}
+\label{setMove}
 \begin{description}
-\item[ZUGNUMMER] firstMove, secondMove oder thirdMove
-\item[FID] der Index des Startfeldes
-\item[SYMBOL] das Symbol der Karte, welche abgelegt werden soll.(siehe
-Abschnitt \ref{symbols})
+\item[X] die x-Koordinate des Feldes
+\item[Y] die y-Koordinate des Feldes
 \end{description}
 \begin{verbatim}
-	<ZUGNUMMER class="forwardMove" fieldIndex="FID" symbol="SYMBOL"/>
+	<data class="SetMove" setX="X" setY="Y"/>
 \end{verbatim}
 
-\subsection{Rückwärtszug}
-\label{backwardMove}
+\end{verbatim}
+\subsection{Laufzug}
+\label{runMove}
 \begin{description}
-\item[ZUGNUMMER] firstMove, secondMove oder thirdMove
-\item[FID] der Index des Startfeldes
+\item[FX] die x-Koordinate des Startfeldes
+\item[FY] die y-Koordinate des Startfeldes
+\item[TX] die x-Koordinate des Zielfeldes
+\item[TY] die y-Koordinate des Zielfeldes
 \end{description}
 \begin{verbatim}
-	<ZUGNUMMER class="backwardMove" fieldIndex="FID"/>
+	<data class="RunMove" fromX="FX" fromY="FY" toX="TX" toY="TY"/>
+\end{verbatim}
+
+\end{verbatim}
+\subsection{Aussetzzug}
+\label{nullMove}
+\begin{verbatim}
+	<data class="NullMove"/>
 \end{verbatim}
 
 
-\subsection{\label{symbols}Symbole}
-
-Die Strings der Symbolnamen sind:
-\begin{compactenum}
-\item SKULL
-\item HAT
-\item DAGGER
-\item BOTTLE
-\item KEY
-\item PISTOL
-\end{compactenum}
-Die Erkennung der Strings ist case-sensitive, alle Buchstaben müssen groß
-sein.
 \subsection{Debughints}
 Zügen können Debug-Informationen beigefügt werden:
 \begin{description}
@@ -182,25 +171,12 @@ Zügen können Debug-Informationen beigefügt werden:
 \begin{verbatim}
  <hint content="S"/>
 \end{verbatim}
-Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
-% \begin{verbatim}
-% <room roomId="RID">
-%   <data class="manhattan:build" city="C" slot="P" size="S">
-%   	<hint content="höchstes Gebäude sichern"/>
-%   	<hint content="..."/>
-%   </data>
-% </room>
-% \end{verbatim}
+Damit sieht beispielsweise ein Laufzug so aus:
 \begin{verbatim}
 <room roomId="RID">
-  <data class="moveContainer">
-    <firstMove class="backwardMove" fieldIndex="FID">
-     	<hint content="2 Karten ziehen...."/>
-     	<hint content="Noch ein Hint"/>
-    </firstMove>
-    <secondMove class="forwardMove" fieldIndex="FID" symbol="SYMBOL">
-    	<hint content="Piraten ins Zielfeld bewegen..."/>
-    </secondMove>
+  <data class="RunMove" fromX="3" fromY="7" toX="3" toY="6">
+    <hint content="S"/>
+    <hint content="noch ein Hint"/>
   </data>
 </room>
 \end{verbatim}
@@ -221,11 +197,11 @@ Damit sieht beispielsweise ein MoveContainer mit zwei Teilzügen so aus:
 \section{Willkommensnachricht}
 Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
 \begin{description}
-\item[C] Spielerfarbe (RED/BLUE)
+\item[C] Spielerfarbe (red/blue)
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
-  <data class="welcome" color="C"/>
+  <data class="welcomeMessage" color="C"/>
 </room>
 \end{verbatim}
 
@@ -246,24 +222,21 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \subsection{\label{state}Status}
 \begin{description}
 \item[Z] aktuelle Zugzahl
+\item[S] Spieler, der das Spiel gestartet hat (RED/BLUE)
 \item[C] Spieler, der an der Reihe ist (RED/BLUE)
+\item[M] Aktueller Zugtyp (SET/RUN)
 \item[red, blue] wie in \ref{player} definiert
-\item[card] wie in \ref{card} definiert. Die Karte, welche als Nächste gezogen
-werden kann, kommt zuerst.
+\item[board] Das Spielbrett, wie in \ref{board} definiert
 \item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
 \ref{lastmove} definiert
-\item[board] Das Spielbrett, wie in \ref{board} definiert
 \item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
 \end{description}
 \begin{verbatim}
-<state class="state" turn="Z" currentPlayer="C">
+<state class="state" turn="Z" startPlayer="S" currentPlayer="C" currentMoveType="M">
   red
   blue
-  <openCards>
-    {card}
-  </openCards>
-  [lastMove]
   [board]
+  [lastMove]
   [condition]
 </state>
 
@@ -271,27 +244,15 @@ werden kann, kommt zuerst.
 
 \subsection{\label{player}Spieler}
 \begin{description}
-\item[C] Farbe (red/blue)
+\item[C] Farbe (RED/BLUE)
 \item[N] Anzeigename
-\item[COL] Farbe ``RED''/''BLUE''
 \item[P] Punktekonto
-\item[card] Spielkarte, wie in \ref{card} definiert
+\item[F] Eisschollenkonto
 \end{description}
 \begin{verbatim}
-<C displayName="N" color="COL" points="P">
-  <cards>
-    {card}
-  </cards>
-</C>
+<C displayName="N" color="C" points="P" fields="F"/>
 \end{verbatim}
 
-
-\subsection{\label{card}Karte}
-\begin{description}
-\item[S] Symbol der Karte wie in \ref{symbols} definiert.
-\end{description}
-\begin{verbatim} <card symbol="S"/>
-\end{verbatim}
 
 \subsection{\label{board}Spielbrett}
 \begin{description}
@@ -300,60 +261,46 @@ werden kann, kommt zuerst.
 \begin{verbatim}
 <board>
  <fields>
+  <field-array>
  	{FIELD}
+  </field-array>
+  <field-array>
+ 	{FIELD}
+  </field-array>
+   ... (8 Stück davon)
  </fields>
 </board>
 \end{verbatim}
 
 \subsection{\label{sec:field}Spielfeld}
-\subsubsection{\label{sec:startEndField} Start- und Zielfeld}
 \begin{description}
-\item[T] Typ des Feldes START/FINISH
-\item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
+\item[F] Anzahl der Fische auf dem Feld
+\item[Penguin] Pinguin, wie in \ref{sec:penguin} definiert.
 \end{description}
 \begin{verbatim}
-<field type="T">
-  <pirates>
-  	{PIRATE}
-  </pirates>
+<field fish="F">
+  [Penguin]
 </field>
 \end{verbatim}
 
-\subsubsection{\label{sec:symbolField} Symbolfeld}
-\begin{description}
-\item[S] Symbol, welches das Feld trägt, siehe \ref{symbols}
-\item[PIRATE] Pirat, wie in \ref{sec:pirate} definiert.
-\end{description}
-\begin{verbatim}
-<field type="SYMBOL" symbol="S">
-  <pirates>
-  	{PIRATE}
-  </pirates>
-</field>
-\end{verbatim}
-
-\subsection{\label{sec:pirate}Pirat}
+\subsection{\label{sec:penguin}Pinguin}
 \begin{description}
 \item[O] Besitzer RED/BLUE
 \end{description}
 \begin{verbatim}
-<pirate owner="O"/>
+<penguin owner="O"/>
 \end{verbatim}
 
 
 
 \subsection{\label{lastmove}Letzter Zug}
-Der letzte Zug ist ein MoveContainer (siehe hierzu \ref{moveContainer}).
+Der letzte Zug ist ein Move (siehe hierzu \ref{move}).
 \begin{description}
-\item[ZUG] Informationen über den Zug. (siehe \ref{forwardMove} und
-\ref{backwardMove})
+\item[T] Zugtyp
+\item[ZUG] Informationen über den Zug. (siehe ~\ref{setMove}, ~\ref{runMove} und ~\ref{nullMove})
 \end{description}
 \begin{verbatim}
-<lastMove>
-  <firstMove ZUG>
-  <secondMove ZUG>
-  <thirdMove ZUG>
-</lastMove>
+<lastMove class="T" ZUG/>
 \end{verbatim}
 
 \section{\label{moverequest}Zug-Anforderung}
@@ -386,17 +333,14 @@ Ein \glqq spielfähiger\grqq\ Client muss Pausierungsnachrichten nicht beachten,
 da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Servers handelt.
 \begin{description}
 \item[N] Spielername
+\item[C] Spielerfarbe
 \item[P] Punktekonto
-\item[card] wie in \ref{card} definiert
+\item[F] Eisschollenkonto
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
 	<data class="paused">
-		<nextPlayer class="player" displayName="N" color="C" points="P">
-			<cards>
-			  {card}
-			</cards>
-		</nextPlayer>
+		<nextPlayer class="player" displayName="N" color="C" points="P" fields="F"/>
 	</data>
 </room>
 \end{verbatim}
@@ -426,7 +370,7 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \item Der Client stellt eine TCP Verbindung zum Spielserver her (er kennt dessen IP-Adresse und Port)
 \item Die Verbindung ist aufgebaut und der Client sendet \begin{verbatim}
 <protocol>
-    <join gameType="swc_2013_cartagena"/>
+    <join gameType="swc_2015_hey_danke_fuer_den_fisch"/>
 \end{verbatim}
 \item Der Server sendet \begin{verbatim}
 <protocol>
@@ -435,7 +379,7 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \item der Client merkt sich die roomId.
 \item der Server startet das Spiel und sendet \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
-    <data class="welcome" color="BLUE"/>
+    <data class="welcomeMessage" color="blue"/>
 </room>
 \end{verbatim}
 \item der Client merkt sich seine Spielerfarbe.
@@ -443,152 +387,91 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
   <data class="memento">
-    <state class="state" turn="0" currentPlayer="RED">
-      <red displayName="Spieler 1" color="RED" points="0">
-        <cards>
-          <card symbol="BOTTLE"/>
-          <card symbol="DAGGER"/>
-          <card symbol="DAGGER"/>
-          <card symbol="HAT"/>
-          <card symbol="KEY"/>
-          <card symbol="PISTOL"/>
-        </cards>
-      </red>
-      <blue displayName="Spieler 2" color="BLUE" points="0">
-        <cards>
-          <card symbol="PISTOL"/>
-          <card symbol="SKULL"/>
-          <card symbol="KEY"/>
-          <card symbol="KEY"/>
-          <card symbol="KEY"/>
-          <card symbol="DAGGER"/>
-        </cards>
-      </blue>
-      <openCards>
-        <card symbol="BOTTLE"/>
-        <card symbol="BOTTLE"/>
-        <card symbol="HAT"/>
-        <card symbol="KEY"/>
-        <card symbol="PISTOL"/>
-        <card symbol="PISTOL"/>
-        <card symbol="PISTOL"/>
-        <card symbol="HAT"/>
-        <card symbol="PISTOL"/>
-        <card symbol="BOTTLE"/>
-        <card symbol="KEY"/>
-        <card symbol="BOTTLE"/>
-      </openCards>
+    <state class="state" turn="0" startPlayer="RED" currentPlayer="RED" currentMoveType="SET">
+      <red displayName="Spieler 1" color="RED" points="0" fields="0"/>
+      <blue displayName="Spieler 2" color="BLUE" points="0" fields="0"/>
       <board>
         <fields>
-          <field type="START">
-            <pirates>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-              <pirate owner="RED"/>
-              <pirate owner="BLUE"/>
-            </pirates>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="BOTTLE">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="HAT">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="PISTOL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="SKULL">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="DAGGER">
-            <pirates/>
-          </field>
-          <field type="SYMBOL" symbol="KEY">
-            <pirates/>
-          </field>
-          <field type="FINISH">
-            <pirates/>
-          </field>
+         <field-array>
+          <field fish="1"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="1"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="3"/>
+         </field-array>
+         <field-array>
+          <field fish="3"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="2"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="2"/>
+         </field-array>
+         <field-array>
+          <field fish="1"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="2"/>
+         </field-array>
+         <field-array>
+          <field fish="1"/>
+          <field fish="1"/>
+          <field fish="3"/>
+          <field fish="1"/>
+          <field fish="3"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="1"/>
+         </field-array>
+         <field-array>
+          <field fish="1"/>
+          <field fish="3"/>
+          <field fish="3"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="3"/>
+         </field-array>
+         <field-array>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="3"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="3"/>
+          <field fish="1"/>
+          <field fish="3"/>
+         </field-array>
+         <field-array>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="1"/>
+          <field fish="2"/>
+          <field fish="1"/>
+         </field-array>
+         <field-array>
+          <field fish="0"/>
+          <field fish="2"/>
+          <field fish="0"/>
+          <field fish="1"/>
+          <field fish="0"/>
+          <field fish="1"/>
+          <field fish="0"/>
+          <field fish="3"/>
+         </field-array>
         </fields>
       </board>
     </state>
@@ -603,11 +486,7 @@ Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die Kommunikati
 \end{verbatim}
 \item Der Client antwortet mit einem Zug: \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
-    <data class="moveContainer">
-      <firstMove class="forwardMove" fieldIndex="0" symbol="DAGGER"/>
-      <secondMove class="forwardMove" fieldIndex="2" symbol="KEY"/>
-      <thirdMove class="forwardMove" fieldIndex="0" symbol="HAT"/>
-  </data>
+    <data class="SetMove" setX="0" setY="2"/>
 </room>
 \end{verbatim}
 \item so geht es weiter...
@@ -618,21 +497,3 @@ Daraufhin wird die Verbindung geschlossen
 \end{enumerate}
 
 \end{document}
-
-
-<room roomId="RID">
-  <data class="result">
-    <definition>
-      <fragment name="Punkte">
-        <aggregation>AVERAGE</aggregation>
-        <relevantForRanking>true</relevantForRanking>
-      </fragment>
-    </definition>
-    <score cause="REGULAR">
-      <part>12</part>
-    </score>
-    <score cause="REGULAR">
-      <part>8</part>
-    </score>
-  </data>
-</room>

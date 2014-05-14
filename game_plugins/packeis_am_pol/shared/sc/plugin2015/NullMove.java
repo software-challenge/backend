@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 import sc.plugin2015.util.InvalidMoveException;
 
-@XStreamAlias(value = "RunMove")
+@XStreamAlias(value = "NullMove")
 public class NullMove extends Move implements Cloneable {
 
 	public NullMove() {
