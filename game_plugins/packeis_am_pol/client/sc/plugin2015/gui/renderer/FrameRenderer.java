@@ -10,6 +10,7 @@ import static sc.plugin2015.gui.renderer.RenderConfiguration.TRANSPARANCY;
 import static sc.plugin2015.gui.renderer.RenderConfiguration.MOVEMENT;
 import static sc.plugin2015.gui.renderer.RenderConfiguration.DEBUG_VIEW;
 
+import java.awt.Dimension;
 import java.awt.Image;
 
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import sc.plugin2015.GameState;
+import sc.plugin2015.gui.renderer.primitives.Background;
+import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 
 /**
  * @author fdu
@@ -28,53 +31,55 @@ public class FrameRenderer extends PApplet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private boolean startAnimation = false;
-	private int x;
-	private int y;
 	private static final Logger logger = LoggerFactory
 			.getLogger(FrameRenderer.class);
+	
+	
+	private GuiBoard guiBoard;
+	private Background background;
 
 	public void setup() {
-		// original setup code here ...
-		size(400, 400);
-		// prevent thread from starving everything else
-		noLoop();
-		x = getWidth() / 2;
-		y = getHeight() / 2;
+		//logger.debug("calling frameRenderer.size()");
+		size(this.width	, this.height , P3D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
+		
+		noLoop();				// prevent thread from starving everything else
+		//smooth();				// Anti Aliasing to 4
+		
+		background = new Background(this);
+		logger.debug("Dimension when creating board: (" + this.width + "," + this.height + ")");
+		guiBoard = new GuiBoard(this);
+		
+		//initial draw
+		background.draw();
+		guiBoard.draw();
+		
 	}
 
 	public void draw() {
-		if (startAnimation) {
-			x++;
-			startAnimation = false;
-		}
-		if (x == getWidth() / 2) {
-			noLoop();
-		} else {
-			if (x > getWidth()) {
-				x = 0;
-			} else {
-				x++;
-			}
-		}
-		fill(255, 200, 0);
-		rect(x, y, 50, 50);
+		background.draw();
+		guiBoard.draw();		
 	}
 
 	public void updateGameState(GameState gameState) {
-		// TODO Auto-generated method stub
-		startAnimation = true;
-		loop();
+		guiBoard.update(gameState.getBoard());
 	}
 
 	public void requestMove(int maxTurn) {
-		// TODO Auto-generated method stub
+		// TODO The User has to do a Move
 
 	}
 
 	public Image getImage() {
-		// TODO Auto-generated method stub
+		// TODO return an Image of the current board
 		return null;
+	}
+	
+	public void mouseClicked(){
+		this.redraw();
+	}
+	
+	public void resize(){
+		
 	}
 
 }

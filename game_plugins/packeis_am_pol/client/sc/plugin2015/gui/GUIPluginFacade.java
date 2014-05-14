@@ -56,12 +56,12 @@ public class GUIPluginFacade implements IGuiPlugin {
 
 	@Override
 	public Image getPluginIcon() {
-		return loadImage("resource/game/sheep.png");
+		return loadImage("resource/game/pluginIcon.png");
 	}
 
 	@Override
 	public Image getPluginImage() {
-		return loadImage("resource/game/manhattan.png");
+		return loadImage("resource/game/pluginImage.png");
 	}
 
 	private static Image loadImage(String filename) {
