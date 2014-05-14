@@ -112,10 +112,10 @@ public class RenderFacade {
 
 	private RenderFacade() {
 		frameRenderer = new FrameRenderer();
-		frameRenderer.init();		// PApplet Method for initializing
+		
 		
 		gameStateQueue = new LinkedList<GameState>();
-		startReceiverThread();
+		//startReceiverThread();
 
 	}
 
@@ -159,9 +159,7 @@ public class RenderFacade {
 		synchronized (gameStateQueue) {
 			gameStateQueue.clear();
 		}
-
-		startReceiverThread();
-
+		
 		maxTurn = 0;
 		first = true;
 		disabled = false;
@@ -169,11 +167,15 @@ public class RenderFacade {
 		alreadyCreatedPlayerOne = false;
 
 		if (panel != null) {
-			panel.setDoubleBuffered(true);
+			//panel.setDoubleBuffered(true);
 			panel.setLayout(new BorderLayout());
 			panel.add(frameRenderer, BorderLayout.CENTER);
-
+			frameRenderer.init();
+			
+			frameRenderer.resize(panel.getSize());
+			frameRenderer.redraw();
 		}
+		startReceiverThread();
 	}
 
 	public void setDisabled(boolean disabled) {
