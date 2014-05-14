@@ -11,7 +11,7 @@ public class Background {
 	}
 	
 	public void draw(){
-		parent.background(0);
+		parent.background(parent.color(250, 250, 255));
 	}
 
 }

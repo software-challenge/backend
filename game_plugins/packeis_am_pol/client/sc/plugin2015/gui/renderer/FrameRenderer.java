@@ -20,6 +20,7 @@ import processing.core.PApplet;
 import sc.plugin2015.GameState;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
+import sc.plugin2015.gui.renderer.primitives.ProgressBar;
 
 /**
  * @author fdu
@@ -37,27 +38,31 @@ public class FrameRenderer extends PApplet {
 	
 	private GuiBoard guiBoard;
 	private Background background;
+	private ProgressBar progressBar;
 
 	public void setup() {
 		//logger.debug("calling frameRenderer.size()");
 		size(this.width	, this.height , P3D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
 		
 		noLoop();				// prevent thread from starving everything else
-		//smooth();				// Anti Aliasing to 4
+		smooth(8);				// Anti Aliasing to 4
 		
 		background = new Background(this);
 		logger.debug("Dimension when creating board: (" + this.width + "," + this.height + ")");
 		guiBoard = new GuiBoard(this);
+		progressBar = new ProgressBar(this);
 		
 		//initial draw
 		background.draw();
 		guiBoard.draw();
+		progressBar.draw();
 		
 	}
 
 	public void draw() {
 		background.draw();
-		guiBoard.draw();		
+		guiBoard.draw();
+		progressBar.draw();
 	}
 
 	public void updateGameState(GameState gameState) {

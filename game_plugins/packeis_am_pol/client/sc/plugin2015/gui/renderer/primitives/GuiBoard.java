@@ -6,14 +6,13 @@ import processing.core.PApplet;
 import sc.plugin2015.Board;
 import sc.plugin2015.util.Constants;
 
-public class GuiBoard {
+public class GuiBoard extends PrimitiveBase{
 
-	private PApplet parent;
 	private Board currentBoard;
 	private HexField[][] hexFields;
 
 	public GuiBoard(PApplet parent) {
-		this.parent = parent;
+		super(parent);
 
 		int hexFieldSize = calcHexFieldSize(parent.getSize());
 
@@ -34,7 +33,7 @@ public class GuiBoard {
 			}
 			for (int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
-					hexFields[i][j] = new HexField(parent, (int) x, (int) y,
+					hexFields[i][j] = new HexField(this.parent, (int) x, (int) y,
 							hexFieldSize);
 					x = x + hexFieldSize + 2;
 				}
