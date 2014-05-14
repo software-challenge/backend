@@ -14,7 +14,7 @@ public enum LogicFactory {
 	// Verfügbare Taktiken (Implementierungen des IGameHandler) müssen hier
 	// eingetragen wie im Beispiel eingetragen und ihre Klasse angegeben werden
 	RANDOM(RandomLogic.class),
-	
+
 	// Die Logik die gewählt wird, wenn kein passender Eintrag zu der Eingabe
 	// gefunden wurde:
 	DEFAULT(RandomLogic.class);

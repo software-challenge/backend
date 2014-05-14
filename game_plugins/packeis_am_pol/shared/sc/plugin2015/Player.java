@@ -1,8 +1,5 @@
 package sc.plugin2015;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import sc.framework.plugins.SimplePlayer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -12,8 +9,8 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
- * Beeinhaltet auch Informationen zum Punktekonto und der 
- * Anzahl der Plättchen des Spielers.
+ * Beeinhaltet auch Informationen zum Punktekonto und der Anzahl der Plättchen
+ * des Spielers.
  * 
  */
 @XStreamAlias(value = "player")
@@ -31,18 +28,19 @@ public class Player extends SimplePlayer implements Cloneable {
 	@XStreamAsAttribute
 	private int fields;
 
-         /**
-         * XStream benötigt eventuell einen parameterlosen Konstruktor
-         * bei der Deserialisierung von Objekten aus XML-Nachrichten.
-         */
-        public Player() {
-            fields = 0;
-        }
-        /**
-	 * einen neuen Spieler erstellen und ihm eine Spielerfarbe zuweisen
+	/**
+	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
+	 * Deserialisierung von Objekten aus XML-Nachrichten.
+	 */
+	public Player() {
+		fields = 0;
+	}
+
+	/**
+	 * Erstellt einen Spieler mit gegebener Spielerfarbe.
 	 * 
 	 * @param color
-	 *            seine Spielerfarbe
+	 *            Spielerfarbe
 	 */
 	public Player(final PlayerColor color) {
 		fields = 0;
@@ -50,18 +48,19 @@ public class Player extends SimplePlayer implements Cloneable {
 		points = 0;
 	}
 
-	 /**
-         * klont dieses Objekt
-         * @return ein neues Objekt mit gleichen Eigenschaften
-         * @throws CloneNotSupportedException 
-         */
-        @Override
-        public Object clone() throws CloneNotSupportedException {
-            Player clone = new Player(this.color);
-            clone.points = this.points;
-            clone.fields = this.fields;
-            return clone;
-        }
+	/**
+	 * klont dieses Objekt
+	 * 
+	 * @return ein neues Objekt mit gleichen Eigenschaften
+	 * @throws CloneNotSupportedException
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		Player clone = new Player(this.color);
+		clone.points = this.points;
+		clone.fields = this.fields;
+		return clone;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -70,19 +69,23 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * liefert die Spielerfarbe dieses Spielers
+	 * 
+	 * @return Spielerfarbe
 	 */
 	public PlayerColor getPlayerColor() {
 		return color;
 	}
 
 	/**
-	 * fuegt ein Plättchen hinzu
+	 * Erhöht die Plättchenanzahl dieses Spielers um 1.
 	 */
 	public void addField() {
 		this.fields++;
 	}
+
 	/**
 	 * Gibt eine Anzahl der Plättchen des Spielers zurück.
+	 * 
 	 * @return Anzahl der Plättchen des Spielers
 	 */
 	public int getFields() {
@@ -91,7 +94,9 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * Fügt dem Punktekonto des Spielers Punkte hinzu
-	 * @param points Anzahl hinzuzufügender Punkte
+	 * 
+	 * @param points
+	 *            Anzahl hinzuzufügender Punkte
 	 */
 	public void addPoints(int points) {
 		this.points += points;
@@ -99,6 +104,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * Liefert den Stand des Punktekontos des Spielers
+	 * 
 	 * @return Punkte des Spielers
 	 */
 	public int getPoints() {

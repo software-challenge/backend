@@ -19,23 +19,21 @@ import sc.shared.ScoreFragment;
 public class GamePlugin implements IGamePlugin {
 	public static final String PLUGIN_AUTHOR = "Valentin Buck, Niklas Rentz, Sören Domrös";
 	public static final String PLUGIN_NAME = "Hey, Danke für den Fisch!";
-	public static final String PLUGIN_UUID = "swc_2015_packeis_am_pol";
+	public static final String PLUGIN_UUID = "swc_2015_hey_danke_fuer_den_fisch";
 	public static final int PLUGIN_YEAR = 2015;
 
 	public static final int MAX_PLAYER_COUNT = 2;
-	public static final int MAX_TURN_COUNT = 24 + 4; //noch ändern
+	public static final int MAX_TURN_COUNT = 52 + 4;
 
 	public static final ScoreDefinition SCORE_DEFINITION;
 
 	static {
 		SCORE_DEFINITION = new ScoreDefinition();
-		SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte", ScoreAggregation.SUM, false));				
-		SCORE_DEFINITION.add(new ScoreFragment("Punkte", ScoreAggregation.AVERAGE));
-		//SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte", ScoreAggregation.SUM, false));				
-		//SCORE_DEFINITION.add(new ScoreFragment("Punkte", ScoreAggregation.AVERAGE));
-		//SCORE_DEFINITION.add(new ScoreFragment("# Gebäude", ScoreAggregation.SUM, false));
-		//SCORE_DEFINITION.add(new ScoreFragment("# Städte", ScoreAggregation.SUM, false));
-		//SCORE_DEFINITION.add(new ScoreFragment("# höchste Türme", ScoreAggregation.SUM, false));
+		SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte",
+				ScoreAggregation.SUM, false));
+		SCORE_DEFINITION.add(new ScoreFragment("Fische", ScoreAggregation.SUM));
+		SCORE_DEFINITION.add(new ScoreFragment("Eisschollen",
+				ScoreAggregation.SUM));
 	}
 
 	@Override
