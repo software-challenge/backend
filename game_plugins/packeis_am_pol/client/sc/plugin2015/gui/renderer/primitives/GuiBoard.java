@@ -2,8 +2,6 @@ package sc.plugin2015.gui.renderer.primitives;
 
 import java.awt.Dimension;
 
-import javax.swing.text.html.MinimalHTMLWriter;
-
 import processing.core.PApplet;
 import sc.plugin2015.Board;
 import sc.plugin2015.util.Constants;
@@ -14,32 +12,35 @@ public class GuiBoard {
 	private Board currentBoard;
 	private HexField[][] hexFields;
 
-	public GuiBoard(PApplet parent, Dimension dim) {
+	public GuiBoard(PApplet parent) {
 		this.parent = parent;
 
-		int hexFieldSize = calcHexFieldSize(dim);
+		int hexFieldSize = calcHexFieldSize(parent.getSize());
 
 		hexFields = new HexField[Constants.ROWS][Constants.COLUMNS];
-		float x = (dim.width-(8 * hexFieldSize)) / 2  +(hexFieldSize / 2);
-		float y = (dim.height - 8* hexFieldSize) / 2;
+		float startX = (parent.width- (8 * hexFieldSize)) / 2;
+		float startY = (parent.height - 8* hexFieldSize) / 2;
+		float y = startY;
+		
 
 		for (int i = 0; i < Constants.ROWS; i++) {
+			float x;
 			if (i % 2 == 0) {
 				// even rows
-				x = hexFieldSize / 2;
+				x = startX + hexFieldSize / 2;
 			} else {
 				// odd rows
-				x = 0;
+				x = startX;
 			}
 			for (int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
 					hexFields[i][j] = new HexField(parent, (int) x, (int) y,
 							hexFieldSize);
-					x = x + hexFieldSize + 10;
+					x = x + hexFieldSize + 2;
 				}
 			}
 
-			y = y + (hexFieldSize - hexFields[0][0].getA()) + 10;
+			y = y + (hexFieldSize - hexFields[0][0].getA()) + 8;
 
 		}
 	}

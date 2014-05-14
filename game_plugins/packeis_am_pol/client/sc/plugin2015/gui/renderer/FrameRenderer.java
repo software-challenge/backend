@@ -20,7 +20,6 @@ import processing.core.PApplet;
 import sc.plugin2015.GameState;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
-import sc.plugin2015.gui.renderer.primitives.HexField;
 
 /**
  * @author fdu
@@ -32,9 +31,6 @@ public class FrameRenderer extends PApplet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private boolean startAnimation = false;
-	private int x;
-	private int y;
 	private static final Logger logger = LoggerFactory
 			.getLogger(FrameRenderer.class);
 	
@@ -50,7 +46,8 @@ public class FrameRenderer extends PApplet {
 		//smooth();				// Anti Aliasing to 4
 		
 		background = new Background(this);
-		guiBoard = new GuiBoard(this, new Dimension(this.width, this.height ));
+		logger.debug("Dimension when creating board: (" + this.width + "," + this.height + ")");
+		guiBoard = new GuiBoard(this);
 		
 		//initial draw
 		background.draw();
@@ -59,32 +56,12 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void draw() {
-		
-		background.draw();	
-		guiBoard.draw();
-		
-		
-		if (startAnimation) {
-			x++;
-			startAnimation = false;
-		}
-		if (x == getWidth() / 2) {
-			noLoop();
-		} else {
-			if (x > getWidth()) {
-				x = 0;
-			} else {
-				x++;
-			}
-		}
+		background.draw();
+		guiBoard.draw();		
 	}
 
 	public void updateGameState(GameState gameState) {
 		guiBoard.update(gameState.getBoard());
-		
-		
-		startAnimation = true;
-		loop();
 	}
 
 	public void requestMove(int maxTurn) {
@@ -95,6 +72,14 @@ public class FrameRenderer extends PApplet {
 	public Image getImage() {
 		// TODO return an Image of the current board
 		return null;
+	}
+	
+	public void mouseClicked(){
+		this.redraw();
+	}
+	
+	public void resize(){
+		
 	}
 
 }
