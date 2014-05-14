@@ -22,7 +22,6 @@ public class Field implements Cloneable {
 	@XStreamAsAttribute
 	public int fish;
 
-	@XStreamAsAttribute
 	private Penguin penguin;
 
 	/**

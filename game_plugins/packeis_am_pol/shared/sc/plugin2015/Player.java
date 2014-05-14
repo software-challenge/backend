@@ -17,7 +17,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 public class Player extends SimplePlayer implements Cloneable {
 
 	// spielerfarbe des spielers
-	@XStreamOmitField
+	@XStreamAsAttribute
 	private PlayerColor color;
 
 	// aktuelle punktzahl des spielers

@@ -6,6 +6,7 @@ import java.util.concurrent.locks.Condition;
 
 import sc.plugin2015.Board;
 import sc.plugin2015.Field;
+import sc.plugin2015.NullMove;
 import sc.plugin2015.RunMove;
 import sc.plugin2015.Game;
 import sc.plugin2015.GameState;
@@ -34,7 +35,7 @@ public class Configuration {
 
 	static {
 		xStream = new XStream();
-		xStream.setMode(XStream.ID_REFERENCES);
+		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
 		LobbyProtocol.registerMessages(xStream);
 		LobbyProtocol.registerAdditionalMessages(xStream,
@@ -49,6 +50,7 @@ public class Configuration {
 		return Arrays.asList(new Class<?>[] { SetMove.class, Game.class,
 				GameState.class, Constants.class, Move.class, RunMove.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
-				Penguin.class, Field.class, Board.class, Condition.class });
+				Penguin.class, Field.class, Board.class, Condition.class,
+				NullMove.class });
 	}
 }
