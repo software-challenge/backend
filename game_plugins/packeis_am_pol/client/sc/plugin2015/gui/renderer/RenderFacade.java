@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import processing.core.PApplet;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
 import sc.plugin2015.IGameHandler;
@@ -114,8 +113,9 @@ public class RenderFacade {
 	private RenderFacade() {
 		frameRenderer = new FrameRenderer();
 		
+		
 		gameStateQueue = new LinkedList<GameState>();
-		startReceiverThread();
+		//startReceiverThread();
 
 	}
 
@@ -159,9 +159,7 @@ public class RenderFacade {
 		synchronized (gameStateQueue) {
 			gameStateQueue.clear();
 		}
-
-		startReceiverThread();
-
+		
 		maxTurn = 0;
 		first = true;
 		disabled = false;
@@ -169,14 +167,15 @@ public class RenderFacade {
 		alreadyCreatedPlayerOne = false;
 
 		if (panel != null) {
-			panel.setDoubleBuffered(true);
+			//panel.setDoubleBuffered(true);
 			panel.setLayout(new BorderLayout());
 			panel.add(frameRenderer, BorderLayout.CENTER);
-			//logger.debug("calling frameRenderer.init()");
 			frameRenderer.init();
+			
 			frameRenderer.resize(panel.getSize());
 			frameRenderer.redraw();
 		}
+		startReceiverThread();
 	}
 
 	public void setDisabled(boolean disabled) {

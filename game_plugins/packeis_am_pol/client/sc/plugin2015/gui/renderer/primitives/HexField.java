@@ -15,26 +15,25 @@ public class HexField {
 	private PApplet parent;
 	private float x, y;
 	private float a, b, c;
-	
+
 	private int numFish = 0;
-	
-	public HexField(PApplet parent, float startX, float startY, float width){
+
+	public HexField(PApplet parent, float startX, float startY, float width) {
 		this.parent = parent;
 		setX(startX);
 		setY(startY);
-		calcSize(width);		
+		calcSize(width);
 	}
-	
-	public void update(Field field){
+
+	public void update(Field field) {
 		numFish = field.getFish();
 	}
 
 	public void draw() {
-		parent.strokeWeight(0);
-		parent.stroke(0, 0, 20);
+		parent.noStroke();
 		parent.fill(2, 6, 200);
-		parent.pushMatrix();
 
+		parent.pushMatrix();
 		parent.translate(getX(), getY());
 
 		parent.beginShape();
@@ -49,9 +48,9 @@ public class HexField {
 
 		parent.popMatrix();
 	}
-	
-	private void calcSize(float width){
-		b = width/2;
+
+	private void calcSize(float width) {
+		b = width / 2;
 		c = b / PApplet.cos(PApplet.radians(30));
 		a = b * PApplet.sin(PApplet.radians(30));
 	}
@@ -71,12 +70,12 @@ public class HexField {
 	public void setY(float y) {
 		this.y = y;
 	}
-	
-	public float getA(){
+
+	public float getA() {
 		return this.a;
 	}
-	
-	public float getB(){
+
+	public float getB() {
 		return this.b;
 	}
 
