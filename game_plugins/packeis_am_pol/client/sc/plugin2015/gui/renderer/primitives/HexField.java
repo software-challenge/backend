@@ -12,7 +12,6 @@ import sc.plugin2015.Field;
  */
 public class HexField extends PrimitiveBase{
 	// Fields
-	private PApplet parent;
 	private float x, y;
 	private float a, b, c;
 
@@ -30,6 +29,7 @@ public class HexField extends PrimitiveBase{
 	}
 
 	public void draw() {
+		parent.pushStyle();
 		parent.noStroke();
 		parent.fill(2, 6, 200);
 
@@ -47,6 +47,7 @@ public class HexField extends PrimitiveBase{
 		parent.endShape();
 
 		parent.popMatrix();
+		parent.popStyle();
 	}
 
 	private void calcSize(float width) {
