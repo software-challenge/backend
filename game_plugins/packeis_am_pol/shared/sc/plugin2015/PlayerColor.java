@@ -15,5 +15,10 @@ public enum PlayerColor {
 	public PlayerColor opponent() {
 		return this == RED ? BLUE : RED;
 	}
+	
+	/*@Override
+	public String toString() {
+		return this == RED ? "RED" : "BLUE";
+	}*/
 
 }

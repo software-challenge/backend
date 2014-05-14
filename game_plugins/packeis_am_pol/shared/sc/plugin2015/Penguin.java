@@ -5,37 +5,63 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
- * Repräsentiert einen Pinguin, besitzt Information darüber, welchem Spieler sie gehört
- * @author fdu
- *
+ * Repräsentiert einen Pinguin, besitzt Information darüber, welchem Spieler sie
+ * gehört
+ * 
+ * @author soed, nre
+ * 
  */
 @XStreamAlias(value = "penguin")
 public class Penguin implements Cloneable {
-	//Der Besitzer der Spielfigur
+
+	/**
+	 * Der Besitzer der Spielfigur
+	 */
 	@XStreamAsAttribute
 	private final PlayerColor owner;
-	
-	public Penguin(){
+
+	/**
+	 * erzeugt einen Pinguin ohne Besitzer. Das sollte nur für den Server
+	 * relevant sein.
+	 */
+	public Penguin() {
 		this.owner = null;
 	}
-	
-	public Penguin(PlayerColor color){
+
+	/**
+	 * Erzeugt einen Pinguin zu gegebener Spielerfarbe.
+	 * 
+	 * @param color
+	 *            Spielerfarbe
+	 */
+	public Penguin(PlayerColor color) {
 		this.owner = color;
 	}
-	
-	/** Gibt die Farbe des zugehörigen Spielers zurück
+
+	/**
+	 * Gibt die Farbe des zugehörigen Spielers zurück
+	 * 
 	 * @return
 	 */
-	public PlayerColor getOwner(){
+	public PlayerColor getOwner() {
 		return this.owner;
 	}
 
+	/**
+	 * Erzeugt eine deep copy dieses Pinguins.
+	 * 
+	 * @see java.lang.Object#clone()
+	 * 
+	 */
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	public Object clone() throws CloneNotSupportedException {
 		Penguin clone = new Penguin(this.owner);
 		return clone;
 	}
-	
+	public boolean equals (Object o) {
+	if(o instanceof Penguin && ((o == null && this == null) || ((Penguin) o).getOwner() == this.getOwner()))
+		return true;
+	return false;
+	}
 
 }
-
