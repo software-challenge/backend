@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 import sc.player2015.Starter;
+import sc.plugin2015.NullMove;
 import sc.plugin2015.RunMove;
 import sc.plugin2015.GameState;
 import sc.plugin2015.IGameHandler;
@@ -70,16 +71,18 @@ public class RandomLogic implements IGameHandler {
 					+ selection.getSetCoordinates()[1]);
 			sendAction(selection);
 		} else {
-			List<RunMove> possibleMoves = gameState.getPossibleMoves();
+			List<Move> possibleMoves = gameState.getPossibleMoves();
 			System.out.println("*** sende zug: RUN ");
-			RunMove selection = possibleMoves.get(rand.nextInt(possibleMoves
+			Move selection = possibleMoves.get(rand.nextInt(possibleMoves
 					.size()));
-			if (selection == null)
+			if (selection.getClass() == NullMove.class)
 				System.out.println("*** Ich setze aus.");
-			else
+			else {
+				RunMove runSelection = (RunMove) selection;
 				System.out.println("*** bewege Pinguin von x="
-						+ selection.fromX + ", y=" + selection.fromY
-						+ " auf x=" + selection.toX + ", y=" + selection.toY);
+						+ runSelection.fromX + ", y=" + runSelection.fromY
+						+ " auf x=" + runSelection.toX + ", y=" + runSelection.toY);
+			}
 			sendAction(selection);
 		}
 	}

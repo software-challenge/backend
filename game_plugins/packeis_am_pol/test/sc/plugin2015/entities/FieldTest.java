@@ -18,7 +18,7 @@ public class FieldTest {
     }
 
     @Test
-    public void testSetStone() {
+    public void testSetPenguin() {
         Field field = new Field(1);
         Penguin penguin = new Penguin();
         assertNull(field.getPenguin());

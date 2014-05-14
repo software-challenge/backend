@@ -1,5 +1,6 @@
 package sc.plugin2015;
 
+
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.Set;
 import sc.plugin2015.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
@@ -51,15 +53,19 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 public class GameState implements Cloneable {
 
 	// momentane rundenzahl
+	@XStreamAsAttribute
 	private int turn;
 
 	// farbe des startspielers
+	@XStreamAsAttribute
 	private PlayerColor startPlayer;
 
 	// farbe des aktuellen spielers
+	@XStreamAsAttribute
 	private PlayerColor currentPlayer;
 
 	// momentan auszufuehrender zug-type
+	@XStreamAsAttribute
 	private MoveType currentMoveType;
 
 	// die teilnehmenden spieler
@@ -319,8 +325,8 @@ public class GameState implements Cloneable {
 	 * 
 	 * @return Liste erlaubter Spielzuege
 	 */
-	public List<RunMove> getPossibleMoves() {
-		List<RunMove> moves = new ArrayList<RunMove>();
+	public List<Move> getPossibleMoves() {
+		List<Move> moves = new ArrayList<Move>();
 		for (int x = 0; x < Constants.COLUMNS; x++) {
 			for (int y = 0; y < Constants.ROWS; y++) {
 				if (this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
@@ -344,8 +350,8 @@ public class GameState implements Cloneable {
 	 *            Farbe des Spielers
 	 * @return moegliche Laufzuege
 	 */
-	public List<RunMove> getPossibleMoves(PlayerColor playerColor) {
-		List<RunMove> moves = new ArrayList<RunMove>();
+	public List<Move> getPossibleMoves(PlayerColor playerColor) {
+		List<Move> moves = new ArrayList<Move>();
 		for (int x = 0; x < Constants.COLUMNS; x++) {
 			for (int y = 0; y < Constants.ROWS; y++) {
 				if (this.board.hasPinguin(x, y, playerColor)) {

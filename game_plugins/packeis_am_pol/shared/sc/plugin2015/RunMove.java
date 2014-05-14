@@ -105,12 +105,10 @@ public class RunMove extends Move implements Cloneable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof RunMove && ((RunMove) o).fromX == this.fromX
+		return (o instanceof RunMove && ((RunMove) o).fromX == this.fromX
 				&& ((RunMove) o).fromY == this.fromY
 				&& ((RunMove) o).toX == this.toX
-				&& ((RunMove) o).toY == this.toY)
-			return true;
-		return false;
+				&& ((RunMove) o).toY == this.toY);
 	}
 
 }
