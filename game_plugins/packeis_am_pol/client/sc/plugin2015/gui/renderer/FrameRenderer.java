@@ -57,7 +57,7 @@ public class FrameRenderer extends PApplet {
 
 	public void draw() {
 		background.draw();
-		guiBoard.draw();		
+		guiBoard.draw();
 	}
 
 	public void updateGameState(GameState gameState) {
