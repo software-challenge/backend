@@ -42,7 +42,7 @@ public class FrameRenderer extends PApplet {
 
 	public void setup() {
 		//logger.debug("calling frameRenderer.size()");
-		size(this.width	, this.height , P3D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
+		size(this.width	, this.height , JAVA2D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
 		
 		noLoop();				// prevent thread from starving everything else
 		smooth(8);				// Anti Aliasing to 4
