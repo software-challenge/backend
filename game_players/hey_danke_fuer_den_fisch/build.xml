@@ -1,4 +1,4 @@
-<project name="packeis_am_pol_player" basedir="." default="main">
+<project name="hey_danke_fuer_den_fisch_player" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="root.dir" value="./../.." />
@@ -7,7 +7,7 @@
 	<property name="lib.dir" value="${root.dir}/software_challenge_sdk/lib" />
 	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
 	<property name="plugins.dir" value="${root.dir}/game_plugins" />
-	<property name="game.dir" value="${plugins.dir}/packeis_am_pol" />
+	<property name="game.dir" value="${plugins.dir}/hey_danke_fuer_den_fisch" />
 	<property name="main-class" value="sc.player2015.Starter" />
 
 	<path id="classpath.libs">
@@ -79,7 +79,7 @@
 		<fileset dir="src" defaultexcludes="yes">
 				<exclude name="logback.xml"/>
 			</fileset> 
-		<fileset dir="../../game_plugins/packeis_am_pol/src/sc/plugin2015" defaultexcludes="yes">
+		<fileset dir="../../game_plugins/hey_danke_fuer_den_fisch/src/sc/plugin2015" defaultexcludes="yes">
 			<include name="*"/>
 			<exclude name="Game.java"/>
 			<exclude name="AbstractClient.java"/>
