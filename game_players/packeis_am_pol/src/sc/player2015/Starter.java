@@ -91,14 +91,14 @@ public class Starter extends AbstractClient {
 		System.out.println();
 		System.out
 				.println("Bitte das Programm mit folgenden Parametern (optional) aufrufen: \n"
-						+ "java -jar manhattan_player.jar [{-h,--host} hostname]\n"
+						+ "java -jar packeis_am_pol_player.jar [{-h,--host} hostname]\n"
 						+ "                               [{-p,--port} port]\n"
 						+ "                               [{-r,--reservation} reservierung]\n"
 						+ "                               [{-s,--strategy} strategie]");
 		System.out.println();
 		System.out
 				.println("Beispiel: \n"
-						+ "java -jar manhattan_player.jar --host 127.0.0.1 --port 10500 --reservation MANHATTAN --strategy RANDOM");
+						+ "java -jar packeis_am_pol_player.jar --host 127.0.0.1 --port 10500 --reservation PAP --strategy RANDOM");
 		System.out.println();
 	}
 }
