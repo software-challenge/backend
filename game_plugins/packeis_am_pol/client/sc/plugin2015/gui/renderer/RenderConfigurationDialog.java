@@ -18,7 +18,7 @@ import processing.core.PApplet;
 @SuppressWarnings("serial")
 public class RenderConfigurationDialog extends JDialog {
 	
-	private JComboBox renderer;
+	private JComboBox rendererCombo;
 	//private final JCheckBox[] checkBoxes = new JCheckBox[RenderConfiguration.OPTIONS.length];
 
 	public RenderConfigurationDialog(PApplet parent) {
@@ -37,16 +37,20 @@ public class RenderConfigurationDialog extends JDialog {
 	}
 
 	private void createUI() {
-		renderer = new JComboBox(RenderConfiguration.RendererStrings);
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(2, 2, 2, 2);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		add(renderer, gbc);
+		
+		rendererCombo = new JComboBox(RenderConfiguration.RendererStrings);
+		rendererCombo.setSelectedItem(RenderConfiguration.optionRenderer);
+		
+		add(rendererCombo, gbc);
 		gbc.gridx = 1;
-		add(new JLabel("Renderer"), gbc);
+		add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
 		
 		/*
 		for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
@@ -79,6 +83,7 @@ public class RenderConfigurationDialog extends JDialog {
 				/*for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
 					RenderConfiguration.OPTIONS[i] = checkBoxes[i].isSelected();
 				}*/
+				RenderConfiguration.optionRenderer = (String) rendererCombo.getSelectedItem();
 				RenderConfiguration.saveSettings();
 				dispose();
 			}
