@@ -27,17 +27,17 @@ filecolor = black,
 urlcolor  = black
 }
 
-\title{Software-Challenge 2013 - Cartagena}
+\title{Software-Challenge 2015 - Hey,danke für den Fisch}
 \subtitle{Spielregeln}
 
 
 
 %% Variablen
-\newcommand{\SpielSegmenteAnzahl}{\emph{5}}
-\newcommand{\KartenAnzahl}{\emph{KartenAnzahl}}
-\newcommand{\PiratenAnzahl}{\emph{6}}
+\newcommand{\FelderAnzahl}{\emph{60}}
+%%\newcommand{\KartenAnzahl}{\emph{KartenAnzahl}}
+\newcommand{\PinguinAnzahl}{\emph{4}}
 \newcommand{\EmptyPlainPage}{\newpage\thispagestyle{plain}\ \newpage}
-\newcommand{\RundenAnzahl}{\emph{15}}
+\newcommand{\RundenAnzahl}{\emph{56}}
 
 \begin{document}
 \parindent0px
@@ -48,63 +48,36 @@ urlcolor  = black
 	\includegraphics[width=\linewidth]{bilder/Uebersicht.png}
 \end{figure}
 \vspace*{\fill}
-"Die Nutzung des Spielkonzeptes "Cartagena" (Name, Spielregeln und Grafik)
-erfolgt mit freundlicher Genehmigung der Winning Moves Deutschland GmbH."
+"Die Nutzung des Spielkonzeptes "Hey, danke für den Fisch" (Name, Spielregeln
+und Grafik) erfolgt mit freundlicher Genehmigung der 
+%% noch einzufügen
+."
 \newpage
 \tableofcontents
 \newpage
 
-\section{EinfÃ¼hrung}
-In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Cartagena}
-der Software-Challenge 2013 erlÃ¤utert.\\
+\section{Einführung}
+In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Hey,danke
+für den Fisch} der Software-Challenge 2015 erläutert.\\
 In dem Spiel versuchen zwei Spieler,
-abwechselnd ihre Spielsteine, die Piraten, auf die Schaluppe zu bewegen. Wer
-dies als Erstes schafft, gewinnt das Spiel.\\
-In der implementierten Version sind jedem Spieler die nÃ¤chsten 12 ziehbaren
-Karten, seine eigenen, sowie die Karten des Gegners bekannt. Die
-in einer Spieltaktik zu beachtenden Parameter werden dadurch um ein Vielfaches
-erhÃ¶ht.
+abwechselnd einen ihrer Pinguine zu bewegen und so Fische einzusammeln. Wer
+am Ende des Spiels mehr Fische hat gewinnt das Spiel. Bei einem Gleichstand 
+entscheidet die Anzahl der eingesammelten Eisschollen.\\
+In der implementierten Version setzt jeder Spieler zuerst abwechselnd seine 
+\PinguinAnzahl\ Pinguine auf Eisschollen mit nur einem Fisch und zieht dann
+abwechselnd, beginnend mit dem Spieler der den letzten Pinguin gesetzt hat, seine Pinguine
+über das Feld.
 
 \section{Spielmaterial}
 	\subsection{Das Spielbrett}
-Das Spielbrett setzt sich aus \SpielSegmenteAnzahl\ Segmenten zusammen,
-innerhalb derer die Symbole \emph{SÃ¤bel},  \emph{Hut}, \emph{Flasche},
-\emph{Flagge}, \emph{Pistole} und \emph{SchlÃ¼ssel} jeweils genau einmal
-vorkommen.
-Die Reihenfolge ist innerhalb jedes Segmentes und von Spiel zu Spiel zufÃ¤llig.
-Das Spielbrett wird durch ein Start- und ein Zielfeld ergÃ¤nzt.
-Auf einem einzelnen Spielfeld dÃ¼rfen, mit Ausnahme von Start- und Zielfeld,
-jeweils maximal 3 Spielfiguren stehen. Ein mÃ¶gliches Spielbrett ist in
+Das Spielbrett setzt sich aus \FelderAnzahl\ sechseckigen Eisschollen zusammen,
+mit jeweils einem, zwei oder drei Fischen.
+Die Verteilung der 30 Eisschollen mit einem Fisch, 20 mit zweien und 10 mit
+dreien ist zufällig.
+Jede gerade Reihe hat hierbei jeweils 7 Eisschollen und jede ungerade 8
+Eisschollen, wobei die erste Reihe Reihe 0 ist. Ein mögliches Spielbrett ist in
 Abbildung~\ref{fig:Spielfeld} zu sehen.
 
-
-\subsection{Die Spielsteine}
-Jeder Spieler startet mit \PiratenAnzahl\ Piraten im Startfeld, welche alle ins
-Ziel gebracht werden mÃ¼ssen. Steht auf einem Spielfeld mehr als ein Pirat eines
-Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
-\begin{figure}[h] \centering \includegraphics[scale = 0.5]{bilder/Spielfeld}
-	\caption{Ein mÃ¶gliches Spielbrett.}
-	\label{fig:Spielfeld}
-	\end{figure}
-	
-	\subsection{Die Spielkarten}
-	
-	\begin{figure}[h]
-		\centering
-		\includegraphics[scale = 0.5]{bilder/Karten}
-		\caption{Die Spielkarten mit Symbolen}
-		\label{fig:spielkarten}
-	\end{figure}
-	Zum Ziehen der Piraten werden die Spielkarten benÃ¶tigt. Die Karten
-	tragen analog zu den Spielfeldern wieder die Symbole \emph{SÃ¤bel},  \emph{Hut},
-	\emph{Flasche}, \emph{Flagge}, \emph{Pistole} und
-	\emph{SchlÃ¼ssel}.\\
-	Insgesamt gibt es 102 Karten, also 17 von jedem Symbol. Jeder Spieler startet
-	mit 6 Karten. Er darf maximal 8 Karten besitzen.\\
-	In der oberen Leiste werden die 12 Karten angezeigt, welche als
-	nÃ¤chstes gezogen werden kÃ¶nnen. Die Reihenfolge geht von links nach rechts.\\
-	Sind alle Karten verbraucht, so werden die Karten vom (unsichtbaren)
-	Ablagestapel gemischt und neu bereitgelegt.
 \section{Spielablauf}	
 	\begin{figure}[h]
 		\centering
@@ -113,30 +86,22 @@ Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
 		mÃ¶glich sind.}
 		\label{fig:PossibleMoves}
 	\end{figure}	
-	Es beginnt der rote Spieler. Jeder Spieler darf innerhalb einer Runde 3
-	TeilzÃ¼ge machen. Die Menge der TeilzÃ¼ge darf aus einer beliebigen Kombination
-	von VorwÃ¤rts- und RÃ¼ckwÃ¤rtszÃ¼gen bestehen. Ein Spieler muss jedoch nicht alle 3
-	TeilzÃ¼ge nutzen, kann also auch zwei, einen oder gar keinen Teilzug tÃ¤tigen.\\
-	Bei einem VorwÃ¤rtszug muss der Spieler eine Karte  abgelegen, bei
-	RÃ¼ckwÃ¤rtszÃ¼gen kÃ¶nnen neue Karten vom Stapel gezogen werden.\\
-	Sobald ein Spieler eine Figur ausgewÃ¤hlt hat, werden sÃ¤mtliche Felder, auf
-	welche die Figur ziehen kann, grÃ¼n markiert.
+	%% an Beispiel erklären
+	Es beginnt der rote Spieler. Jeder Spieler darf innerhalb einen
+	Zug machen. Innerhalb der ersten  4 Runden sind nur Setzzüge möglich. Ab der 5.
+	Runde sind beginnend mit dem blauen Spieler nur noch Setzzüge möglich.\\
+	Sobald ein Spieler eine Figur ausgewählt hat, werden sämtliche Felder, auf
+	welche die Figur ziehen kann, grün markiert.
 	
 	
 	
-	\subsection{VorwÃ¤rtszÃ¼ge}
-	Bei einem VorwÃ¤rtszug wÃ¤hlt ein Spieler eine seiner
-	Spiel\-figuren. Zum VorwÃ¤rtsziehen muss eine Karte
-	abgelegt werden und die Spielfigur zieht auf das nÃ¤chste unbesetzte Feld,
-	welches das gleiche Symbol wie die Karte zeigt. Alle Ã¼brigen Felder sowie
-	einfach oder mehrfach besetzte Felder werden hierbei Ã¼bersprungen.\\
-	Gibt es zwischen einem Piraten und der Schaluppe kein Feld mehr mit dem auf
-	einer Karte abgebildeten Symbol oder sind alle Felder mit diesem Symbol
-	belegt, so kann durch Ablegen dieser Karte direkt auf das Zielfeld gezogen
-	werden. In der Implementierung geschieht dies durch Ziehen einer Spielfigur auf
-	das Zielfeld. Gibt es mehrere Kartensymbole, welche abgelegt werden kÃ¶nnen, so
-	werden die betreffenden Karten grÃ¼n markiert. Durch Anklicken einer Karte wird
-	diese dann genutzt, um auf das Zielfeld zu ziehen.
+	\subsection{Setzzüge}
+	%% an Beispiel erklären
+	Bei einem Setzzug wählt ein Spieler einen seiner
+	Pinguine und setzt ihn auf eine Eisscholle ohne Pinguin, auf der sich nur ein
+	Fisch befindet.\\
+	Bei einem Setzzug kann nicht ausgesetzt werden. Durch klicken auf die
+	jeweiilige Eisscholle wird der Pinguin gesetzt.
 	
 	\begin{figure}[h]
 		\centering
@@ -146,56 +111,40 @@ Spielers, so wird dies durch die Zahl im Kopf der Spielfigur angezeigt.
 		\label{fig:Zielfeld}
 	\end{figure}
 	 
-\subsection{RÃ¼ckwÃ¤rtszÃ¼ge}
-Durch RÃ¼ckwÃ¤rtszÃ¼ge kÃ¶nnen neue Karten aus dem offen liegenden Kartenvorrat
-gezogen werden.
-Hierbei wÃ¤hlt ein Spieler eine Spielfigur aus und zieht sie auf das nÃ¤chste
-zurÃ¼ckliegende Feld, auf dem bereits mindestens eine und hÃ¶chstens zwei
-Spielfiguren stehen. Das Startfeld ist hierbei ausgeschlossen und es ist egal,
-welche Farbe die Spielsteine auf dem zurÃ¼ckliegenden Feld haben. Auch wenn eine
-Spielfigur schon auf dem Zielfeld steht, kann diese wieder zurÃ¼ck bewegt
-werden.\\
-Stehen auf dem zurÃ¼ckliegenden Feld 2 Piraten, so zieht der Spieler 2 neue
-Karten, sonst darf er nur eine Karte ziehen. Die Karten werden dabei jeweils von
-links gezogen. Hat ein Spieler schon 8 Karten, so werden keine neuen Karten
-gezogen.\\
-Stehen auf dem nÃ¤chsten zurÃ¼ckliegenden Feld bereits 3 Spielsteine, darf auf
-dieses Feld nicht gezogen werden. Beim ZurÃ¼ckziehen muss dieses Feld dann
-Ã¼bersprungen werden.\\
-Neu dazugekommene Karten werden immer
-Richtung Bildmitte positioniert. Die neuen Karten des roten Spielers befinden sich also ganz rechts in seiner
-Kartenanzeige, die des blauen Spielers ganz links.
+\subsection{Laufzüge}
+%% an Beispiel erklären
+Ab dem 9 Zug (anfang der 5. Runde) sind Laufzüge möglich. Bei einem Laufzug ist
+es möglich einen Pinguin entlang der Horizantalen oder der beiden Diagonalen zu
+bewegen. Einn Pinguin kann hierbei nicht über oder auf andere Pinguine oder
+Löcher ziehen. Dabei wird die Fischanzahl des Feldes, auf dem sich der Pinguin
+befunden hat dem Punktekonto hinzugefügt und die Anzahl der eingesammelten
+Eisschollen um 1 erhöht. Diese Eisscholle verschwindet daraufhin vom Spielfeld.
 
 
-
-\subsection{Spezialfall: Keine ZÃ¼ge mÃ¶glich}
+\subsection{Aussetzzüge}
+%% an Beispiel erklären
+Ein Aussetzzug ist an Stelle eines Laufzugs möglich. Anstatt einen Pinguin zu
+setzten wird stattdessen nichts getan. Ein Aussetzzug ist normalerweise nur dann
+sinnvoll, wenn kein anderer Zug mehr möglich ist.
 	
-	Sollte der Fall eintreten, dass ein Spieler keine Karten besitzt und keine
-	RÃ¼ckwÃ¤rtszÃ¼ge mÃ¶glich sind, so muss dieser Spieler aussetzen bzw. einen leeren
-	Zug senden (siehe Abbildung ~\ref{fig:zugunfaehig}).
-	\begin{figure}[h]
-	 \centering
-	 \includegraphics[scale = 0.3]{bilder/zugunfaehig}
-	 \caption{Der blaue Spieler ist zugunfÃ¤hig. Er muss eine Runde aussetzen.}
-	 \label{fig:zugunfaehig}
-	\end{figure}
-	
-	\subsection{Punkteverteilung}
-	Die Punkte ergeben sich aus der Anzahl der Piraten, welche sich im jeweiligen
-	Segment befinden. Hat ein Spieler beispielsweise zwei Piraten in Segment 1 und
-	einen Piraten in Segment 3, so ergibt sich eine Gesamtpunktzahl von 5.\\
-	Spielsteine auf dem Startfeld bringen keine Punkte und ein Pirat im Zielfeld
-	bringt 6 Punkte.
+\subsection{Punkteverteilung}
+Die Punkte ergeben sich aus den eingesammelten Fischen
+Die Punkte ergeben sich aus der Anzahl der Piraten, welche sich im jeweiligen
+Segment befinden. Hat ein Spieler beispielsweise zwei Piraten in Segment 1 und
+einen Piraten in Segment 3, so ergibt sich eine Gesamtpunktzahl von 5.\\
+Spielsteine auf dem Startfeld bringen keine Punkte und ein Pirat im Zielfeld
+bringt 6 Punkte.
 	
 \section{Ende des Spiels}
-
-	Hat ein Spieler alle seine Piraten im Zielfeld, so gewinnt dieser. Schafft dies
-	keiner der beiden Spieler innerhalb der \RundenAnzahl\ Runden, so
-	gewinnt der Spieler mit den meisten Punkten.
+	Können keine Spieler mehr Züge (ausgenommen Aussetzzüge) machen endet das
+	Spiel und alle Felder audf denen noch ein Pinguin steht Es gewinnt der Spieler,
+	der am meisten Fische hat oder falls die Anzahl gleich ist, wer mehr Eisschollen eingesammelt hat.
+	Geschiet dies nicht innerhalb der \RundenAnzahl\ Runden, so endet das Spiel
+	ebenfalls.
 	
-\section{Die graphische BenutzeroberflÃ¤che}
-\subsection{Ãœbersicht der graphischen BenutzeroberflÃ¤che}
-	In Abbildung~\ref{fig:GUI} ist ein Ãœberblick der graphischen BenutzeroberflÃ¤che
+\section{Die graphische Benutzeroberfläche}
+\subsection{Übersicht der graphischen Benutzeroberfläche}
+	In Abbildung~\ref{fig:GUI} ist ein Überblick der graphischen Benutzeroberfläche
 	zu sehen. Die markanten Spielelemente sind mit \emph{a-e} gekennzeichnet.
 	
 	 \begin{figure}[h!]
@@ -204,7 +153,7 @@ Kartenanzeige, die des blauen Spielers ganz links.
 		\caption{Ãœberblick der GUI}
 		\label{fig:GUI}
 	\end{figure}
-	
+	%% wie ist die Benutzeroberfläche?
 \begin{compactenum}[a)] \item Die nÃ¤chsten ziehbaren Karten. Die Erste befindet
 sich links.
 \item Das Spielbrett \item Punkteanzeige, Anzeige der verbleibenden ZÃ¼ge und
@@ -216,29 +165,29 @@ Bildmitte positioniert.
 \item Spielfortschrittsanzeige
 	\end{compactenum}
 	
-\subsection{Das EinstellungsmenÃ¼}
+\subsection{Das Einstellungsmenü}
 	 \begin{figure}[h]
 		\centering
 		\includegraphics[scale=0.5]{bilder/configuration}
-		\caption{Das EinstellungsmenÃ¼}
+		\caption{Das Einstellungsmenü}
 		\label{fig:Configuration}
 	\end{figure}
 	
-	Ein EinstellungsmenÃ¼ mit Darstellungsoptionen lÃ¤sst
-sich Ã¼ber die Leertaste anzeigen. Dazu muss das
+	Ein Einstellungsmenü mit Darstellungsoptionen lässt
+sich über die Leertaste anzeigen. Dazu muss das
 Spielfeld den Tastaturfokus haben (erforderlichenfalls
 vorher Mausklick auf das Spielfeld). Es stehen dort
-folgende Einstellungen zur VerfÃ¼gung:
+folgende Einstellungen zur Verfügung:
 
-\textbf{KantenglÃ¤ttung} und \textbf{Transparenz} verbessern die Optik des
+\textbf{Kantenglättung} und \textbf{Transparenz} verbessern die Optik des
 Spiels, sind aber rechenintensiv. Auf sehr langsamen Rechnern sollten sie daher
 deaktiviert werden. \textbf{Hintergrundbild} ist zwar weniger rechenintensiv,
-kann aber auch aus GrÃ¼nden der Ãœbersichtlichkeit deaktiviert werden.\\
+kann aber auch aus Gründen der Übersichtlichkeit deaktiviert werden.\\
 \textbf{Animationen} legt fest, ob die Bewegungen der Spielsteine in
 Wiederholungen und bei Computerspielern animiert werden sollen.\\
 Die \textbf{Debugansicht} verkleinert die Punkteanzeige in der Seitenleiste
-etwas und zeigt unterhalb Debug-Hilfestellungen zu einzelnen ZÃ¼gen an. Diese
-Hilfestellungen sind Texte, die ein Spielclient einem Zug beifÃ¼gen kann, den er
+etwas und zeigt unterhalb Debug-Hilfestellungen zu einzelnen Zügen an. Diese
+Hilfestellungen sind Texte, die ein Spielclient einem Zug beifügen kann, den er
 an den Spielserver sendet.
 	
 \end{document}
