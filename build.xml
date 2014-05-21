@@ -21,8 +21,8 @@
 		<delete dir="game_plugins/sixpack/build" />
 		<delete dir="game_players/sixpack/build" />
 		<!--    currentPlugin                    !-->
-		<delete dir="game_plugins/packeis_am_pol/build" />
-		<delete dir="game_players/packeis_am_pol/build" />
+		<delete dir="game_plugins/hey_danke_fuer_den_fisch/build" />
+		<delete dir="game_players/hey_danke_fuer_den_fisch/build" />
 		
 	</target>
 
@@ -45,9 +45,9 @@
 		<ant dir="game_plugins/sixpack" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" /> !-->
 		<!--    currentPlugin                    !-->
-		<ant dir="game_plugins/packeis_am_pol" target="clean-build" inheritAll="false" />
+		<ant dir="game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
 		
-		<ant dir="game_players/packeis_am_pol" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
 
 		
 		<echo message="Compiling Server and GUI..." />
@@ -205,25 +205,25 @@
 
 		!-->
 
-		<mkdir dir="${out.dir}/simple_client/packeis_am_pol/jar" />
-		<copy todir="${out.dir}/simple_client/packeis_am_pol/jar">
-			<fileset dir="./game_players/packeis_am_pol/build/jar" />
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
+		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar">
+			<fileset dir="./game_players/hey_danke_fuer_den_fisch/build/jar" />
 		</copy>
 				
-		<mkdir dir="${out.dir}/simple_client/packeis_am_pol/src" />
-		<copy todir="${out.dir}/simple_client/packeis_am_pol/src">
-			<fileset dir="./game_players/packeis_am_pol">
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src" />
+		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src">
+			<fileset dir="./game_players/hey_danke_fuer_den_fisch">
 				<exclude name="build/**/*" />
 				<exclude name="bin/**/*" />
 				<exclude name=".classpath" />
 				<exclude name="build.xml" />
 			</fileset>
 		</copy>
-		<move tofile="${out.dir}/simple_client/packeis_am_pol/src/build.xml" file="${out.dir}/simple_client/packeis_am_pol/src/build-deploy.xml" />
+		<move tofile="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/build.xml" file="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/build-deploy.xml" />
 		
-		<mkdir dir="${out.dir}/simple_client/packeis_am_pol/src/lib" />
-		<copy todir="${out.dir}/simple_client/packeis_am_pol/src/lib">
-			<fileset dir="${out.dir}/simple_client/packeis_am_pol/jar/lib" />
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib" />
+		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib">
+			<fileset dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/lib" />
 		</copy>
 			
 		
@@ -274,8 +274,8 @@
 		!-->
 
 
-		<zip destfile="${out.dir}/zipped/simpleclient-pap-jar.zip" basedir="${out.dir}/simple_client/packeis_am_pol/jar" />
-		<zip destfile="${out.dir}/zipped/simpleclient-pap-src.zip" basedir="${out.dir}/simple_client/packeis_am_pol/src" />
+		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
+		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-src.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src" />
 		
 
 		<echo message="Gathering documentations..." />
