@@ -49,6 +49,15 @@ public class DebugHint implements Cloneable {
 	}
 
 	/**
+	 * Gibt den Inhalt des Debughints zurück.
+	 * 
+	 * @return den Inhalt
+	 */
+	public String getContent() {
+		return this.content;
+	}
+
+	/**
 	 * ein neuen Hinweis mit beliebigem Inhalt erstellen
 	 * 
 	 * @param content

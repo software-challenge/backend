@@ -4,8 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2015.util.Constants;
 
@@ -21,13 +19,16 @@ public class Board implements Cloneable {
 
 	private Field[][] fields;
 
+	/**
+	 * Konstruktor, der ein zufällig generiertes Spielfeld erzeugt.
+	 */
 	public Board() {
 		this.init();
 	}
 
 	/**
 	 * Konstruktor, der entweder ein zufällig generiertes Spielfeld oder ein
-	 * leeres erzeugt.
+	 * leeres erzeugt. Nur für den Server relevant.
 	 * 
 	 * @param init
 	 *            Zufallsgeneration an/aus
@@ -92,8 +93,9 @@ public class Board implements Cloneable {
 	}
 
 	/**
-	 * @param x
-	 * @param y
+	 * Liefert den Pinguin auf den Koordinaten
+	 * @param x x-Koordinate
+	 * @param y y-Koordinate
 	 * @return Pinguin auf dem Feld mit den Koordinaten
 	 */
 	public Penguin getPenguin(int x, int y) {
@@ -101,7 +103,11 @@ public class Board implements Cloneable {
 	}
 
 	/**
-	 * Setzt einen Pinguin an gewählte Koordinaten.
+	 * Setzt einen Pinguin an gewählte Koordinaten. Diese Methode ist nur für
+	 * den Server relevant, da keine vollständige Überprüfung auf korrekte Züge
+	 * durchgeführt wird. Um für einen Spieler einen neuen Pinguin zu setzen,
+	 * die {@link sc.plugin2015.SetMove#perform(GameState, Player) perform}
+	 * -Methode benutzen
 	 * 
 	 * @param x
 	 *            X-Koordinate
@@ -113,7 +119,19 @@ public class Board implements Cloneable {
 	public void putPenguin(int x, int y, Penguin penguin)
 			throws IllegalArgumentException {
 		if (x < 0 || y < 0 || x >= Constants.COLUMNS || y >= Constants.ROWS
-				|| fields[x][y].getFish() == 0
+				|| fields[x][y].getFish() != 1
+				|| fields[x][y].getPenguin() != null)
+			throw new IllegalArgumentException();
+		this.fields[x][y].putPenguin(penguin);
+	}
+
+	/**
+	 * nur für den Server relevant
+	 */
+	private void putPenguinMove(int x, int y, Penguin penguin)
+			throws IllegalArgumentException {
+		if (x < 0 || y < 0 || x >= Constants.COLUMNS || y >= Constants.ROWS
+				|| fields[x][y].getFish() <= 0
 				|| fields[x][y].getPenguin() != null)
 			throw new IllegalArgumentException();
 		this.fields[x][y].putPenguin(penguin);
@@ -166,7 +184,11 @@ public class Board implements Cloneable {
 	}
 
 	/**
-	 * Bewegt einen Pinguin von einem Startfeld auf ein Zielfeld.
+	 * Bewegt einen Pinguin von einem Startfeld auf ein Zielfeld. Diese Methode
+	 * ist nur für den Server relevant, da hier keine Fehlerüberprüfung
+	 * durchgeführt wird. Zum Ausführen von Zügen die
+	 * {@link sc.plugin2015.RunMove#perform(GameState, Player) perform}-Methode
+	 * benutzen.
 	 * 
 	 * @param fromX
 	 * @param fromY
@@ -181,7 +203,7 @@ public class Board implements Cloneable {
 			PlayerColor color) {
 		Penguin penguin = fields[fromX][fromY].removePenguin(color);
 		fields[fromX][fromY].setFish(0);
-		fields[toX][toY].putPenguin(penguin);
+		putPenguinMove(toX, toY, penguin);
 	}
 
 	/**
@@ -208,15 +230,18 @@ public class Board implements Cloneable {
 	}
 
 	public boolean equals(Object o) {
-		if(!(o instanceof Board))
+		if (!(o instanceof Board))
 			return false;
 		Board board = (Board) o;
-		
-		for(int x = 0; x < Constants.COLUMNS; x++) {
-			for(int y = 0; y < Constants.ROWS; y++) {
-				if(!(this.getPenguin(x, y) == null && board.getPenguin(x, y) == null) 
-						&& (!(this.getPenguin(x, y).equals(board.getPenguin(x,y)) || !(this.getFishNumber(x, y) == board.getFishNumber(x, y)))))
-						return false;
+
+		for (int x = 0; x < Constants.COLUMNS; x++) {
+			for (int y = 0; y < Constants.ROWS; y++) {
+				if (!(this.getPenguin(x, y) == null && board.getPenguin(x, y) == null)
+						&& (!(this.getPenguin(x, y).equals(
+								board.getPenguin(x, y)) || !(this
+								.getFishNumber(x, y) == board.getFishNumber(x,
+								y)))))
+					return false;
 			}
 		}
 		return true;

@@ -1,9 +1,5 @@
 package sc.plugin2015;
 
-import java.util.LinkedList;
-
-import sc.plugin2015.util.Constants;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
@@ -16,7 +12,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * 
  */
 @XStreamAlias(value = "field")
-// @XStreamConverter(FieldConverter.class)
 public class Field implements Cloneable {
 
 	@XStreamAsAttribute

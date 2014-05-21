@@ -5,8 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ DebugHintTest.class, ExchangeMoveTest.class, LayMoveTest.class,
-        MoveTest.class })
+@SuiteClasses({ DebugHintTest.class, MoveTest.class, SetMoveTest.class,
+		RunMoveTest.class })
 public class AllTests {
 
 }

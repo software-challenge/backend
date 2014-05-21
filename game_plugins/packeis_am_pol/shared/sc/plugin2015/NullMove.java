@@ -7,6 +7,9 @@ import sc.plugin2015.util.InvalidMoveException;
 @XStreamAlias(value = "NullMove")
 public class NullMove extends Move implements Cloneable {
 
+	/**
+	 * erzeugt einen neuen Aussetzzug.
+	 */
 	public NullMove() {
 
 	}

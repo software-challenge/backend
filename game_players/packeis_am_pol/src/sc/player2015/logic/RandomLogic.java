@@ -14,7 +14,6 @@ import sc.plugin2015.MoveType;
 import sc.plugin2015.Player;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.SetMove;
-import sc.plugin2015.util.Constants;
 import sc.shared.GameResult;
 
 /**
