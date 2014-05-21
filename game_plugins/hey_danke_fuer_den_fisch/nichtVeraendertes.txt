@@ -1,0 +1,33 @@
+Plugin:
+
+Ordner "Client"
+	sc.plugin2015.*
+	sc.plugin2015.gui
+	(auﬂer sc.plugin2015.gui.renderer.*)
+
+Ordner "Server"
+	Game.java
+		-auﬂer getScoreFor(Player) und onRoundBasedAction(IPlayer, Object)
+	GamePlugin.java
+		-davon: createGame(), getMaximumPlayerCount(), initialize(IGamePluginHost),
+		unload(), getScoreDefinition()
+Ordner "Shared"
+	in sc.plugin2015:
+	Condition.java
+	DebugHint.java
+	GameState.java
+		- davon: turn, startPlayer, currentPlayer, currentMoveType, red, blue, lastMove, 
+		condition, addPlayer(Player), getCurrentPlayer(), getCurrentPlayerColor(), 
+		getOtherPlayer(), getOtherPlayerColor(), getRedPlayer(), getBluePlayer(), 
+		getStartPlayer(), getStartPlayerColor(), switchCurrentPlayer(), getCurrentMoveType(),
+		getTurn(), getRound(), getLastMove(), getPlayerStats(Player), 
+		getPlayerStats(PlayerColor), getPlayerNames(), endGame(PlayerColor, String),
+		gameEnded(), winner(), winningReason()
+	Move.java
+	Player.java
+		-davon: color, points, getPlayerColor(), addPoints(int), getPoints
+	PlayerColor.java
+	WelcomeMessage.java
+
+	in sc.plugin2015.util:
+	InvalidMoveException.java

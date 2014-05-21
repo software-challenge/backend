@@ -1,0 +1,100 @@
+<project name="hey_danke_fuer_den_fisch_player" basedir="." default="main">
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="root.dir" value="./../.." />
+	<property name="classes.dir" value="${build.dir}/bin" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="lib.dir" value="${root.dir}/software_challenge_sdk/lib" />
+	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
+	<property name="plugins.dir" value="${root.dir}/game_plugins" />
+	<property name="game.dir" value="${plugins.dir}/hey_danke_fuer_den_fisch" />
+	<property name="main-class" value="sc.player2015.Starter" />
+
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<fileset dir="${game.dir}" includes="**/*.jar" />
+		<fileset dir="${sdk.dir}" includes="**/*.jar" />
+		<pathelement location="${sdk.dir}/${build.dir}/bin" />
+		<pathelement location="${game.dir}/${build.dir}/bin" />
+	</path>
+
+	<path id="classpath.base">
+		<path refid="classpath.libs" />
+		<pathelement location="${classes.dir}" />
+	</path>
+
+	<path id="javadoc">
+		<pathelement location="src" />
+		<pathelement location="${game.dir}/src" />
+	</path>
+
+	<pathconvert property="jar.classpath" pathsep="">
+		<mapper>
+			<chainedmapper>
+				<!-- remove absolute path -->
+				<flattenmapper />
+				<!-- add lib/ prefix -->
+				<globmapper from="*" to="lib/* " />
+			</chainedmapper>
+		</mapper>
+
+		<path refid="classpath.libs" />
+	</pathconvert>
+
+	<target name="clean">
+		<delete dir="build/bin" />
+	</target>
+
+	<target name="dependencies">
+		<echo message="Compiling SC dependencies" />
+		<ant dir="${sdk.dir}" inheritAll="false" />
+		<ant dir="${game.dir}" inheritAll="false" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+		</jar>
+
+		<delete dir="${jar.dir}/lib" />
+		<mkdir dir="${jar.dir}/lib" />
+		<copy todir="${jar.dir}/lib" flatten="true">
+			<path refid="classpath.libs" />
+			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
+			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
+		</copy>
+	</target>
+
+	<target name="javadoc">
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.6"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2015 Simpleclient" windowtitle="Javadoc zum Simpleclient '15" packagenames="sc.player2015.*,sc.plugin2015" overview="overview.html" classpath="${toString:classpath.base}">
+		<fileset dir="src" defaultexcludes="yes">
+				<exclude name="logback.xml"/>
+			</fileset> 
+		<fileset dir="../../game_plugins/hey_danke_fuer_den_fisch/src/sc/plugin2015" defaultexcludes="yes">
+			<include name="*"/>
+			<exclude name="Game.java"/>
+			<exclude name="AbstractClient.java"/>
+			<exclude name="EPlayerId.java"/>
+			<exclude name="GamePlugin.java"/>
+			<exclude name="GuiClient.java"/>
+			<exclude name="IGUIObservation.java"/>
+			<exclude name="WelcomeMessage.java"/>
+		</fileset>
+			</javadoc>
+	</target>
+
+	<target name="build" depends="jar,javadoc" />
+
+	<target name="clean-build" depends="clean,build" />
+
+	<target name="main" depends="dependencies,clean-build" />
+</project>
