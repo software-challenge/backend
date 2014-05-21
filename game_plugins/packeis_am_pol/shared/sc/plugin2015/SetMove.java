@@ -6,7 +6,6 @@ import sc.plugin2015.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * 

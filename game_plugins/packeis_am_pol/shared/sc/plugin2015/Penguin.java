@@ -2,7 +2,6 @@ package sc.plugin2015;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Repräsentiert einen Pinguin, besitzt Information darüber, welchem Spieler sie

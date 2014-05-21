@@ -4,8 +4,6 @@ import sc.framework.plugins.SimplePlayer;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>

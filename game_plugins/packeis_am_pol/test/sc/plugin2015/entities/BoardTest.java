@@ -44,6 +44,7 @@ public class BoardTest {
 	@Test
 	public void testPutPenguin() {
 		Board board = new Board();
+		board.getField(0, 0).fish = 1;
 		Penguin penguin = new Penguin(PlayerColor.RED);
 		assertNull(board.getField(0, 0).getPenguin());
 
@@ -54,6 +55,7 @@ public class BoardTest {
 	@Test
 	public void testClone() {
 		Board board = new Board();
+		board.getField(0, 0).fish = 1;
 		Penguin penguin = new Penguin();
 		board.putPenguin(0, 0, penguin);
 		Board clone;

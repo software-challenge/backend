@@ -1,7 +1,10 @@
 package sc.plugin2015.moves;
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
+
+import sc.plugin2015.DebugHint;
 
 public class DebugHintTest {
 

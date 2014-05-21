@@ -5,7 +5,6 @@ import sc.plugin2015.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Ein Laufzug. Dieser beinhaltet Informationen, von wo ein Pinguin des Spielers
@@ -107,8 +106,19 @@ public class RunMove extends Move implements Cloneable {
 	public boolean equals(Object o) {
 		return (o instanceof RunMove && ((RunMove) o).fromX == this.fromX
 				&& ((RunMove) o).fromY == this.fromY
-				&& ((RunMove) o).toX == this.toX
-				&& ((RunMove) o).toY == this.toY);
+				&& ((RunMove) o).toX == this.toX && ((RunMove) o).toY == this.toY);
+	}
+
+	/**
+	 * gibt ein int-Array zurück, bei dem das erste Element für die
+	 * Start-x-Koordinate steht, das zweite für die Start-y-Koordinate, das
+	 * dritte für die Ziel-x-Koordinate und das letzte für die
+	 * Ziel-y-Koordinate.
+	 * 
+	 * @return Array von Koordinaten
+	 */
+	public int[] getRunCoordinates() {
+		return new int[] { this.fromX, this.fromY, this.toX, this.toY };
 	}
 
 }

@@ -1,19 +1,12 @@
 package sc.plugin2015;
 
-
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import sc.plugin2015.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
@@ -144,6 +137,10 @@ public class GameState implements Cloneable {
 		}
 	}
 
+	/**
+	 * Gibt das Spielfeld zurück
+	 * @return das Spielfeld
+	 */
 	public Board getBoard() {
 		return this.board;
 	}
@@ -302,15 +299,6 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * 
-	 */
-	private void performScoring() {
-
-		int[][] stats = getGameStats();
-
-	}
-
-	/**
 	 * liefert die aktuelle Rundenzahl
 	 * 
 	 * @return aktuelle Rundenzahl
@@ -368,6 +356,9 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
+	/**
+	 * nur für den Server relevant
+	 */
 	private List<RunMove> leftOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX = x - 1;
@@ -384,6 +375,9 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
+	/**
+	 * nur für den Server relevant
+	 */
 	private List<RunMove> rightOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX = x + 1;
@@ -401,6 +395,9 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
+	/**
+	 * nur für den Server relevant
+	 */
 	private List<RunMove> topLeftOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
@@ -426,6 +423,9 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
+	/**
+	 * nur für den Server relevant
+	 */
 	private List<RunMove> topRightOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
@@ -451,6 +451,9 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
+	/**
+	 * nur für den Server relevant
+	 */
 	private List<RunMove> bottomRightOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
@@ -476,6 +479,9 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
+	/**
+	 * nur für den Server relevant
+	 */
 	private List<RunMove> bottomLeftOfPenguin(int x, int y) {
 		boolean done = false;
 		int currentX;
@@ -519,7 +525,7 @@ public class GameState implements Cloneable {
 		return moves;
 	}
 
-	/*
+	/**
 	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem
 	 * Spielfeld stehen.
 	 */
