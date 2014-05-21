@@ -139,6 +139,7 @@ public class GameState implements Cloneable {
 
 	/**
 	 * Gibt das Spielfeld zurück
+	 * 
 	 * @return das Spielfeld
 	 */
 	public Board getBoard() {

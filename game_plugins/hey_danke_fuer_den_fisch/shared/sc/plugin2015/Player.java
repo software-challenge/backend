@@ -31,6 +31,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * Deserialisierung von Objekten aus XML-Nachrichten.
 	 */
 	public Player() {
+		points = 0;
 		fields = 0;
 	}
 
