@@ -25,11 +25,7 @@ public class RenderConfiguration {
 	 * The Strings of Renderers Processing can use
 	 */
 	public static final String[] RendererStrings = { "JAVA2D", "P2D", "P3D" };
-<<<<<<< HEAD
-	public static final int[] AntialiasingModes = { 0, 2, 4, 8 };
-=======
 	public static final Integer[] AntialiasingModes = { 0, 2, 4, 8 };
->>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 
 	public static final int RENDERER = 0;
 	public static final int ANTIALIASING = 1;
