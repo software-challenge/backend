@@ -95,6 +95,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize() {
+		this.redraw();
 
 	}
 
