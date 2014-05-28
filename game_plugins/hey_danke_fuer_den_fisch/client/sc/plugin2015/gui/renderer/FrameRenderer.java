@@ -14,6 +14,7 @@ import sc.plugin2015.GameState;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.ProgressBar;
+import sc.plugin2015.gui.renderer.primitives.SideBar;
 
 /**
  * @author fdu
@@ -31,6 +32,7 @@ public class FrameRenderer extends PApplet {
 	private GuiBoard guiBoard;
 	private Background background;
 	private ProgressBar progressBar;
+	private SideBar sidebar;
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
@@ -57,18 +59,30 @@ public class FrameRenderer extends PApplet {
 				+ this.height + ")");
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
+<<<<<<< HEAD
+		sidebar = new SideBar(this);
+		
+		//initial draw
+		background.draw();
+		guiBoard.draw();
+		progressBar.draw();
+		sidebar.draw();
+		
+=======
 
 		// initial draw
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
 
+>>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 	}
 
 	public void draw() {
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
+		sidebar.draw();
 	}
 
 	public void updateGameState(GameState gameState) {

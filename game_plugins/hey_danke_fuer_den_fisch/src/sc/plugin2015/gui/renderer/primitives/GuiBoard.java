@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import processing.core.PApplet;
 import sc.plugin2015.Board;
 import sc.plugin2015.util.Constants;
+import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 
 public class GuiBoard extends PrimitiveBase{
 
@@ -13,12 +14,23 @@ public class GuiBoard extends PrimitiveBase{
 
 	public GuiBoard(PApplet parent) {
 		super(parent);
-
-		int hexFieldSize = calcHexFieldSize(parent.getSize());
+		// die größe eines Hexfield wird anhand der freien Fläche innerhalb des Spielfeldes berechnet
+		System.out.println("parent breite = " + parent.width);
+		System.out.println("parent hoehe = " + parent.height);
+		System.out.println("x = "+ GuiConstants.SIDE_BAR_START_X);
+		float xDimension =parent.width*GuiConstants.SIDE_BAR_START_X;
+		System.out.println("xDimension ist =" + xDimension);
+		float yDimension = parent.height + GuiConstants.PROGRESS_BAR_START_Y;
+		System.out.println("yDimension ist =" + yDimension);
+		Dimension test = new Dimension((int)xDimension, (int)yDimension);
+		
+		int hexFieldSize = calcHexFieldSize(test);
 
 		hexFields = new HexField[Constants.ROWS][Constants.COLUMNS];
-		float startX = (parent.width- (8 * hexFieldSize)) / 2;
-		float startY = (parent.height - 8* hexFieldSize) / 2;
+		float startX = (xDimension- (8 * hexFieldSize) ) / 2;
+		System.out.println("startX ist =" + startX);
+		float startY = (yDimension - 8* hexFieldSize) / 2;
+		System.out.println("startY ist =" + startY);
 		float y = startY;
 		
 
