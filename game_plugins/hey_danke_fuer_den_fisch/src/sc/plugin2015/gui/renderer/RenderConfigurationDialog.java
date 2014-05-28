@@ -8,16 +8,20 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import processing.core.PApplet;
+
 @SuppressWarnings("serial")
 public class RenderConfigurationDialog extends JDialog {
+	
+	private JComboBox rendererCombo;
+	//private final JCheckBox[] checkBoxes = new JCheckBox[RenderConfiguration.OPTIONS.length];
 
-	private final JCheckBox[] checkBoxes = new JCheckBox[RenderConfiguration.OPTIONS.length];
-
-	public RenderConfigurationDialog(JComponent parent) {
+	public RenderConfigurationDialog(PApplet parent) {
 
 		super();
 		setTitle("Konfiguration");
@@ -33,14 +37,22 @@ public class RenderConfigurationDialog extends JDialog {
 	}
 
 	private void createUI() {
-
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(2, 2, 2, 2);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-
+		
+		rendererCombo = new JComboBox(RenderConfiguration.RendererStrings);
+		rendererCombo.setSelectedItem(RenderConfiguration.optionRenderer);
+		
+		add(rendererCombo, gbc);
+		gbc.gridx = 1;
+		add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
+		
+		/*
 		for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
 			JCheckBox checkBox = new JCheckBox();
 			checkBox.setSelected(RenderConfiguration.OPTIONS[i]);
@@ -58,7 +70,7 @@ public class RenderConfigurationDialog extends JDialog {
 			add(new JLabel(RenderConfiguration.OPTION_NAMES[i]), gbc);
 			gbc.gridy++;
 		}
-
+		*/
 		gbc.gridx = 2;
 		gbc.gridwidth = 1;
 		gbc.anchor = GridBagConstraints.LINE_END;
@@ -68,9 +80,10 @@ public class RenderConfigurationDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
+				/*for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
 					RenderConfiguration.OPTIONS[i] = checkBoxes[i].isSelected();
-				}
+				}*/
+				RenderConfiguration.optionRenderer = (String) rendererCombo.getSelectedItem();
 				RenderConfiguration.saveSettings();
 				dispose();
 			}

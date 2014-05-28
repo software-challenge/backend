@@ -10,42 +10,60 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author felix
+ * 
+ */
 public class RenderConfiguration {
 
-	public static final int ANTIALIASING = 0;
-	public static final int TRANSPARANCY = 1;
-	public static final int BACKGROUND = 2;
-	public static final int MOVEMENT = 3;
-	//public static final int CRANES = 4;
-	public static final int DEBUG_VIEW = 5;
+	/**
+	 * The path where the Config is saved
+	 */
+	public static final String savePath = "hdfdf_gui.conf";
 
-	public static final String[] OPTION_NAMES = new String[] { "Kantenglättung", "Transparenz",
-			"Hintergrundbild", "Animationen", "Debugansicht" };
+	/**
+	 * The Strings of Renderers Processing can use
+	 */
+	public static final String[] RendererStrings = { "JAVA2D", "P2D", "P3D" };
+	public static final int[] AntialiasingModes = { 0, 2, 4, 8 };
 
-	private static final boolean[] DEFAULTS = new boolean[] { true, true, true, true, false };
+	public static final int RENDERER = 0;
+	public static final int ANTIALIASING = 1;
+	public static final int ANIMATION = 2;
+	public static final int DEBUG_VIEW = 3;
 
-	public static final boolean[] OPTIONS = DEFAULTS.clone();
+	public static String optionRenderer = RendererStrings[0];
+	public static int optionAntiAliasing = AntialiasingModes[2];
+	public static boolean optionAnimation = true;
+	public static boolean optionDebug = false;
+
+	public static final String[] OPTION_NAMES = new String[] { "Renderer",
+			"Kantenglättung", "Animationen", "Debugansicht" };
 
 	public static void saveSettings() {
-
-		Map<String, Boolean> map = new HashMap<String, Boolean>();
-		for (int i = 0; i < OPTIONS.length; i++) {
-			map.put(OPTION_NAMES[i], new Boolean(OPTIONS[i]));
-		}
-
+		// collect all set options and save them to File
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(OPTION_NAMES[0], optionRenderer);
+		map.put(OPTION_NAMES[1], optionAntiAliasing);
+		map.put(OPTION_NAMES[2], optionAnimation);
+		map.put(OPTION_NAMES[3], optionDebug);
+		
 		OutputStream fileStream = null;
 		try {
-			fileStream = new FileOutputStream("manhattan_gui.conf");
-			ObjectOutputStream objectStream = new ObjectOutputStream(fileStream);
-			objectStream.writeObject(map);
-			objectStream.flush();
+			fileStream = new FileOutputStream(savePath);
+			ObjectOutputStream outStream = new ObjectOutputStream(fileStream);
+			outStream.writeObject(map);
+			fileStream.flush();
+			outStream.close();
 		} catch (IOException e) {
+			System.out.println("RenderConfiguration.saveSettings() - IOException");
 		} finally {
 			try {
 				if (fileStream != null) {
 					fileStream.close();
 				}
 			} catch (Exception e) {
+				
 			}
 		}
 	}
@@ -56,15 +74,15 @@ public class RenderConfiguration {
 		InputStream fileStream = null;
 
 		try {
-			fileStream = new FileInputStream("manhattan_gui.conf");
+			fileStream = new FileInputStream(savePath);
 			ObjectInputStream objectStream = new ObjectInputStream(fileStream);
-			HashMap<String, Boolean> map = (HashMap<String, Boolean>) objectStream.readObject();
-
-			for (int i = 0; i < OPTIONS.length; i++) {
-				Boolean option = map.get(OPTION_NAMES[i]);
-				OPTIONS[i] = option == null ? DEFAULTS[i] : option;
-			}
-
+			HashMap<String, Object> map = (HashMap<String, Object>) objectStream.readObject();
+			optionRenderer = (String) map.get(OPTION_NAMES[0]);
+			optionAntiAliasing = ((Number) map.get(OPTION_NAMES[1])).intValue();
+			optionAnimation = (Boolean) map.get(OPTION_NAMES[2]);
+			optionDebug = (Boolean) map.get(OPTION_NAMES[3]);
+			
+			objectStream.close();
 		} catch (IOException e) {
 		} catch (ClassNotFoundException e) {
 		} finally {
