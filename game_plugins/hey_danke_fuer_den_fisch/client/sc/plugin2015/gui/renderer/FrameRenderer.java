@@ -59,7 +59,6 @@ public class FrameRenderer extends PApplet {
 				+ this.height + ")");
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
-<<<<<<< HEAD
 		sidebar = new SideBar(this);
 		
 		//initial draw
@@ -68,14 +67,6 @@ public class FrameRenderer extends PApplet {
 		progressBar.draw();
 		sidebar.draw();
 		
-=======
-
-		// initial draw
-		background.draw();
-		guiBoard.draw();
-		progressBar.draw();
-
->>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 	}
 
 	public void draw() {
