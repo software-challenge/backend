@@ -17,12 +17,18 @@ import processing.core.PApplet;
 
 @SuppressWarnings("serial")
 public class RenderConfigurationDialog extends JDialog {
+	
+	private JComboBox rendererCombo;
+	//private final JCheckBox[] checkBoxes = new JCheckBox[RenderConfiguration.OPTIONS.length];
 
+<<<<<<< HEAD
+=======
 	private JComboBox rendererCombo;
 	private JComboBox antiAliasingCombo;
 	private JCheckBox animationCheckBox;
 	private JCheckBox debugCheckBox;
 
+>>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 	public RenderConfigurationDialog(PApplet parent) {
 
 		super();
@@ -39,13 +45,31 @@ public class RenderConfigurationDialog extends JDialog {
 	}
 
 	private void createUI() {
-
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.insets = new Insets(2, 2, 2, 2);
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
+<<<<<<< HEAD
+		
+		rendererCombo = new JComboBox(RenderConfiguration.RendererStrings);
+		rendererCombo.setSelectedItem(RenderConfiguration.optionRenderer);
+		
+		add(rendererCombo, gbc);
+		gbc.gridx = 1;
+		add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
+		
+		/*
+		for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
+			JCheckBox checkBox = new JCheckBox();
+			checkBox.setSelected(RenderConfiguration.OPTIONS[i]);
+			checkBoxes[i] = checkBox;
+			add(checkBox, gbc);
+			gbc.gridy++;
+		}
+=======
 
 		rendererCombo = new JComboBox(RenderConfiguration.RendererStrings);
 		rendererCombo.setSelectedItem(RenderConfiguration.optionRenderer);
@@ -60,6 +84,7 @@ public class RenderConfigurationDialog extends JDialog {
 		debugCheckBox = new JCheckBox();
 		debugCheckBox.setSelected(RenderConfiguration.optionDebug);
 		add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
+>>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 
 		gbc.gridx = 1;
 		add(rendererCombo, gbc);
@@ -78,12 +103,20 @@ public class RenderConfigurationDialog extends JDialog {
 		gbc.gridx = 1;
 		add(animationCheckBox, gbc);
 
+<<<<<<< HEAD
+		for (int i = 0; i < RenderConfiguration.OPTION_NAMES.length; i++) {
+			add(new JLabel(RenderConfiguration.OPTION_NAMES[i]), gbc);
+			gbc.gridy++;
+		}
+		*/
+=======
 		gbc.gridx = 0;
 		gbc.gridy = 3;
 		add(new JLabel(RenderConfiguration.OPTION_NAMES[3]), gbc);
 
 		gbc.gridx = 1;
 		add(debugCheckBox, gbc);
+>>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 		gbc.gridx = 2;
 		gbc.gridwidth = 1;
 		gbc.anchor = GridBagConstraints.LINE_END;
@@ -92,6 +125,13 @@ public class RenderConfigurationDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
+
+				/*for (int i = 0; i < RenderConfiguration.OPTIONS.length; i++) {
+					RenderConfiguration.OPTIONS[i] = checkBoxes[i].isSelected();
+				}*/
+				RenderConfiguration.optionRenderer = (String) rendererCombo.getSelectedItem();
+=======
 				RenderConfiguration.optionRenderer = (String) rendererCombo
 						.getSelectedItem();
 				RenderConfiguration.optionAntiAliasing = (Integer) antiAliasingCombo
@@ -99,6 +139,7 @@ public class RenderConfigurationDialog extends JDialog {
 				RenderConfiguration.optionAnimation = animationCheckBox
 						.isSelected();
 				RenderConfiguration.optionDebug = debugCheckBox.isSelected();
+>>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 				RenderConfiguration.saveSettings();
 				dispose();
 			}
