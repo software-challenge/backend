@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import processing.core.PApplet;
 import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.GameState;
+import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
+import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
 import sc.plugin2015.gui.renderer.primitives.ProgressBar;
 import sc.plugin2015.gui.renderer.primitives.SideBar;
 
@@ -33,6 +35,7 @@ public class FrameRenderer extends PApplet {
 	private Background background;
 	private ProgressBar progressBar;
 	private SideBar sidebar;
+	private GuiPenguin penguin;
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
@@ -60,12 +63,14 @@ public class FrameRenderer extends PApplet {
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
 		sidebar = new SideBar(this);
+		penguin = new GuiPenguin(this, 0, 0, 50, PlayerColor.RED);
 		
 		//initial draw
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
 		sidebar.draw();
+		penguin.draw();
 		
 	}
 
@@ -74,6 +79,7 @@ public class FrameRenderer extends PApplet {
 		guiBoard.draw();
 		progressBar.draw();
 		sidebar.draw();
+		penguin.draw();
 	}
 
 	public void updateGameState(GameState gameState) {
