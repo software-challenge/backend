@@ -35,14 +35,6 @@ public class FrameRenderer extends PApplet {
 	private SideBar sidebar;
 
 	public void setup() {
-<<<<<<< HEAD
-		//logger.debug("calling frameRenderer.size()");
-		size(this.width	, this.height , P2D);	// Size and Renderer: either P2D, P3D or nothing(Java2D)
-		
-		noLoop();				// prevent thread from starving everything else
-		smooth(2);				// Anti Aliasing
-		
-=======
 		// logger.debug("calling frameRenderer.size()");
 
 		RenderConfiguration.loadSettings();
@@ -62,13 +54,11 @@ public class FrameRenderer extends PApplet {
 		noLoop(); // prevent thread from starving everything else
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
->>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 		background = new Background(this);
 		logger.debug("Dimension when creating board: (" + this.width + ","
 				+ this.height + ")");
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
-<<<<<<< HEAD
 		sidebar = new SideBar(this);
 		
 		//initial draw
@@ -77,14 +67,6 @@ public class FrameRenderer extends PApplet {
 		progressBar.draw();
 		sidebar.draw();
 		
-=======
-
-		// initial draw
-		background.draw();
-		guiBoard.draw();
-		progressBar.draw();
-
->>>>>>> 81356a41e1bc81868cd77ae0e7c2dad510917d73
 	}
 
 	public void draw() {
@@ -113,6 +95,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize() {
+		this.redraw();
 
 	}
 
@@ -121,13 +104,6 @@ public class FrameRenderer extends PApplet {
 			new RenderConfigurationDialog(FrameRenderer.this);
 		}
 
-	}
-	
-	public void keyPressed() {
-	if (key == 'c' || key == 'C') {
-			new RenderConfigurationDialog(FrameRenderer.this);
-	    }
-	
 	}
 
 }
