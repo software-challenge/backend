@@ -50,7 +50,7 @@ public class FrameRenderer extends PApplet {
 		}
 
 		noLoop(); // prevent thread from starving everything else
-		smooth(2); // Anti Aliasing
+		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		background = new Background(this);
 		logger.debug("Dimension when creating board: (" + this.width + ","
