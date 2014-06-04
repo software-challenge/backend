@@ -39,6 +39,7 @@ public class FrameRenderer extends PApplet {
 	
 	//penguin as [OWNER][NUMBER]
 	private GuiPenguin[][] penguin;
+	private GuiPenguin testPenguin;
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
@@ -69,14 +70,15 @@ public class FrameRenderer extends PApplet {
 		
 		penguin = new GuiPenguin[2][4];
 		
-		penguin[0][0] = new GuiPenguin(this, (int) (this.getWidth() * GuiConstants.SIDE_BAR_START_X), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
-		penguin[0][1] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.05)), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
-		penguin[0][2] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.1)), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
-		penguin[0][3] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.15)), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
-		penguin[1][0] = new GuiPenguin(this, (int) (this.getWidth() * GuiConstants.SIDE_BAR_START_X), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
-		penguin[1][1] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.05)), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
-		penguin[1][2] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.1)), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
-		penguin[1][3] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.15)), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
+		penguin[0][0] = new GuiPenguin(this, -1, -1, PlayerColor.RED);
+		penguin[0][1] = new GuiPenguin(this, -2, -1, PlayerColor.RED);
+		penguin[0][2] = new GuiPenguin(this, -3, -1, PlayerColor.RED);
+		penguin[0][3] = new GuiPenguin(this, -4, -1, PlayerColor.RED);
+		penguin[1][0] = new GuiPenguin(this, -1, -1, PlayerColor.BLUE);
+		penguin[1][1] = new GuiPenguin(this, -2, -1, PlayerColor.BLUE);
+		penguin[1][2] = new GuiPenguin(this, -3, -1, PlayerColor.BLUE);
+		penguin[1][3] = new GuiPenguin(this, -4, -1, PlayerColor.BLUE);
+		testPenguin = new GuiPenguin(this, 2, 2, PlayerColor.BLUE);
 		
 		
 		//initial draw
@@ -88,7 +90,9 @@ public class FrameRenderer extends PApplet {
 			for(int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
 			}
-		}		
+		}
+		testPenguin.resize();
+		testPenguin.draw();
 	}
 
 	public void draw() {
@@ -101,7 +105,8 @@ public class FrameRenderer extends PApplet {
 			for(int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
 			}
-		}		
+		}
+		testPenguin.draw();
 	}
 
 	public void updateGameState(GameState gameState) {
@@ -124,8 +129,13 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize() {
-		System.out.println("hier resize");
 		guiBoard.resize();
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 4; j++) {
+				penguin[i][j].resize();
+			}
+		}	
+		testPenguin.resize();
 		this.redraw();
 
 	}
