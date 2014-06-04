@@ -37,11 +37,27 @@ public class FrameRenderer extends PApplet {
 	private Background background;
 	private ProgressBar progressBar;
 	private SideBar sidebar;
+<<<<<<< HEAD
+
+	// penguin as [OWNER][NUMBER]
+	private GuiPenguin[][] penguin;
+
+	 private GuiPenguin testPenguin;
+	 private GuiPenguin testPenguin2;
+	 private GuiPenguin testPenguin3;
+	 private GuiPenguin testPenguin4;
+	 private GuiPenguin testPenguin5;
+	 private GuiPenguin testPenguin6;
+	 private GuiPenguin testPenguin7;
+	 private GuiPenguin testPenguin8;
+	 
+=======
 	private BoardFrame boardFrame;
 	
 	//penguin as [OWNER][NUMBER]
 	private GuiPenguin[][] penguin;
 	//private GuiPenguin testPenguin;
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
@@ -69,9 +85,9 @@ public class FrameRenderer extends PApplet {
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
 		sidebar = new SideBar(this);
-		
+
 		penguin = new GuiPenguin[2][4];
-		
+
 		penguin[0][0] = new GuiPenguin(this, -1, -1, PlayerColor.RED);
 		penguin[0][1] = new GuiPenguin(this, -2, -1, PlayerColor.RED);
 		penguin[0][2] = new GuiPenguin(this, -3, -1, PlayerColor.RED);
@@ -80,24 +96,57 @@ public class FrameRenderer extends PApplet {
 		penguin[1][1] = new GuiPenguin(this, -2, -1, PlayerColor.BLUE);
 		penguin[1][2] = new GuiPenguin(this, -3, -1, PlayerColor.BLUE);
 		penguin[1][3] = new GuiPenguin(this, -4, -1, PlayerColor.BLUE);
+<<<<<<< HEAD
+		/*testPenguin = new GuiPenguin(this, 0, 0, PlayerColor.BLUE);
+		testPenguin2 = new GuiPenguin(this, 1, 0, PlayerColor.BLUE);
+		testPenguin3 = new GuiPenguin(this, 0, 1, PlayerColor.BLUE);
+		testPenguin4 = new GuiPenguin(this, 1, 1, PlayerColor.BLUE);
+		testPenguin5 = new GuiPenguin(this, 5, 0, PlayerColor.BLUE);
+		testPenguin6 = new GuiPenguin(this, 6, 0, PlayerColor.BLUE);
+		testPenguin7 = new GuiPenguin(this, 6, 1, PlayerColor.BLUE);
+		testPenguin8 = new GuiPenguin(this, 7, 1, PlayerColor.BLUE);*/
+
+		// initial draw
+=======
 		//testPenguin = new GuiPenguin(this, 2, 2, PlayerColor.BLUE);
 		
 		boardFrame = new BoardFrame(this);
 		
 		
 		//initial draw
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
 		sidebar.draw();
-		for(int i = 0; i < 2; i++) {
-			for(int j = 0; j < 4; j++) {
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
 			}
+<<<<<<< HEAD
+		}/*
+		 testPenguin.resize();
+		 testPenguin.draw();
+		 testPenguin2.resize();
+		 testPenguin2.draw();
+		 testPenguin3.resize();
+		 testPenguin3.draw();
+		 testPenguin4.resize();
+		 testPenguin4.draw();
+		 testPenguin5.resize();
+		 testPenguin5.draw();
+		 testPenguin6.resize();
+		 testPenguin6.draw();
+		 testPenguin7.resize();
+		 testPenguin7.draw();
+		 testPenguin8.resize();
+		 testPenguin8.draw();*/
+=======
 		}
 		boardFrame.draw();
 		//testPenguin.resize();
 		//testPenguin.draw();
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 	}
 
 	public void draw() {
@@ -106,17 +155,38 @@ public class FrameRenderer extends PApplet {
 		guiBoard.draw();
 		progressBar.draw();
 		sidebar.draw();
-		for(int i = 0; i < 2; i++) {
-			for(int j = 0; j < 4; j++) {
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
 			}
+<<<<<<< HEAD
+		}/*
+		testPenguin.draw();
+		testPenguin2.draw();
+		testPenguin3.draw();
+		testPenguin4.draw();
+		testPenguin5.draw();
+		testPenguin6.draw();
+		testPenguin7.draw();
+		testPenguin8.draw();*/
+=======
 		}
 		boardFrame.draw();
 		//testPenguin.draw();
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 	}
 
 	public void updateGameState(GameState gameState) {
+		System.out.println("Update fährt");
 		guiBoard.update(gameState.getBoard());
+		int i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
+		for (int j = 0; j < 4; j++) {
+			penguin[i][j]
+					.update(gameState.getLastMove(),
+							(gameState.getCurrentPlayerColor() == PlayerColor.RED ? PlayerColor.BLUE
+									: PlayerColor.RED), gameState.getTurn());
+		}
+		redraw();
 	}
 
 	public void requestMove(int maxTurn) {
@@ -131,17 +201,22 @@ public class FrameRenderer extends PApplet {
 
 	public void mouseClicked() {
 		this.resize();
-		//this.redraw();
+		// this.redraw();
 	}
 
 	public void resize() {
 		guiBoard.resize();
-		for(int i = 0; i < 2; i++) {
-			for(int j = 0; j < 4; j++) {
+		for (int i = 0; i < 2; i++) {
+			for (int j = 0; j < 4; j++) {
 				penguin[i][j].resize();
 			}
+<<<<<<< HEAD
+		}
+		// testPenguin.resize();
+=======
 		}	
 		//testPenguin.resize();
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 		this.redraw();
 
 	}

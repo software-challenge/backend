@@ -86,6 +86,11 @@ public class GuiConstants {
 	public static final float PROGRESS_BAR_HEIGHT= 1-SIDE_BAR_HEIGHT;
 	
 	/**
+	 * Anzahl an Pixeln in der Lücke zwischen zwei Hex-Feldern
+	 */
+	public static final float HEX_FIELD_GAP_SIZE = 8;
+	
+	/**
 	 * Sourcepath to find the default blue Penguin picture
 	 */
 	public static final String BLUE_PENGUIN_IMAGE = "resource/game/TuxBlau.png";
