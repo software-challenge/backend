@@ -91,4 +91,9 @@ public class GuiConstants {
 	 */
 	public static final String RED_PENGUIN_IMAGE = "resource/game/TuxRot.png";
 	
+	/**
+	 * Sourcepath to Background Image
+	 */
+	public static final String BACKGROUND_IMAGE = "resource/game/background.jpg";
+	
 }
