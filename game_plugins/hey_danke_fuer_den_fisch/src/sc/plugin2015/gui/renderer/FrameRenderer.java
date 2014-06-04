@@ -13,6 +13,7 @@ import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.GameState;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.primitives.Background;
+import sc.plugin2015.gui.renderer.primitives.BoardFrame;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
@@ -36,6 +37,7 @@ public class FrameRenderer extends PApplet {
 	private Background background;
 	private ProgressBar progressBar;
 	private SideBar sidebar;
+<<<<<<< HEAD
 
 	// penguin as [OWNER][NUMBER]
 	private GuiPenguin[][] penguin;
@@ -49,6 +51,13 @@ public class FrameRenderer extends PApplet {
 	 private GuiPenguin testPenguin7;
 	 private GuiPenguin testPenguin8;
 	 
+=======
+	private BoardFrame boardFrame;
+	
+	//penguin as [OWNER][NUMBER]
+	private GuiPenguin[][] penguin;
+	//private GuiPenguin testPenguin;
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
@@ -87,6 +96,7 @@ public class FrameRenderer extends PApplet {
 		penguin[1][1] = new GuiPenguin(this, -2, -1, PlayerColor.BLUE);
 		penguin[1][2] = new GuiPenguin(this, -3, -1, PlayerColor.BLUE);
 		penguin[1][3] = new GuiPenguin(this, -4, -1, PlayerColor.BLUE);
+<<<<<<< HEAD
 		/*testPenguin = new GuiPenguin(this, 0, 0, PlayerColor.BLUE);
 		testPenguin2 = new GuiPenguin(this, 1, 0, PlayerColor.BLUE);
 		testPenguin3 = new GuiPenguin(this, 0, 1, PlayerColor.BLUE);
@@ -97,6 +107,14 @@ public class FrameRenderer extends PApplet {
 		testPenguin8 = new GuiPenguin(this, 7, 1, PlayerColor.BLUE);*/
 
 		// initial draw
+=======
+		//testPenguin = new GuiPenguin(this, 2, 2, PlayerColor.BLUE);
+		
+		boardFrame = new BoardFrame(this);
+		
+		
+		//initial draw
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -105,6 +123,7 @@ public class FrameRenderer extends PApplet {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
 			}
+<<<<<<< HEAD
 		}/*
 		 testPenguin.resize();
 		 testPenguin.draw();
@@ -122,6 +141,12 @@ public class FrameRenderer extends PApplet {
 		 testPenguin7.draw();
 		 testPenguin8.resize();
 		 testPenguin8.draw();*/
+=======
+		}
+		boardFrame.draw();
+		//testPenguin.resize();
+		//testPenguin.draw();
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 	}
 
 	public void draw() {
@@ -134,6 +159,7 @@ public class FrameRenderer extends PApplet {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
 			}
+<<<<<<< HEAD
 		}/*
 		testPenguin.draw();
 		testPenguin2.draw();
@@ -143,6 +169,11 @@ public class FrameRenderer extends PApplet {
 		testPenguin6.draw();
 		testPenguin7.draw();
 		testPenguin8.draw();*/
+=======
+		}
+		boardFrame.draw();
+		//testPenguin.draw();
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 	}
 
 	public void updateGameState(GameState gameState) {
@@ -179,8 +210,13 @@ public class FrameRenderer extends PApplet {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].resize();
 			}
+<<<<<<< HEAD
 		}
 		// testPenguin.resize();
+=======
+		}	
+		//testPenguin.resize();
+>>>>>>> 3e1f76ff5fa5c00703481ce594e88ed0cecbadc5
 		this.redraw();
 
 	}

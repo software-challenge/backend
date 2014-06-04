@@ -20,9 +20,12 @@ public class GuiConstants {
 	public static final int colorBackGround = calcColor(200,200,200,200);
 	public static final int colorRed = calcColor(255,200,0,0);
 	public static final int colorGreen = calcColor(255,0,0,255);
+	public static final int colorGrey	= calcColor(255, 50, 68, 70);
+	public static final int colorDarkGrey = calcColor(255,30,30,30);
 	public static final int colorSideBarBG = calcColor(200,100,100,100);
+	public static final int colorHexFields = calcColor(240,21,160,177);
 
-	
+	public static final int frameBorderSize = 5;
 	
 	//not needed
 	/*public static final float GUI_BOARD_START_X = 1;

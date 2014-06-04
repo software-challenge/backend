@@ -13,6 +13,7 @@ import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.GameState;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.primitives.Background;
+import sc.plugin2015.gui.renderer.primitives.BoardFrame;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
@@ -36,8 +37,9 @@ public class FrameRenderer extends PApplet {
 	private Background background;
 	private ProgressBar progressBar;
 	private SideBar sidebar;
-
-	// penguin as [OWNER][NUMBER]
+	private BoardFrame boardFrame;
+	
+	//penguin as [OWNER][NUMBER]
 	private GuiPenguin[][] penguin;
 
 	 private GuiPenguin testPenguin;
@@ -97,6 +99,11 @@ public class FrameRenderer extends PApplet {
 		testPenguin8 = new GuiPenguin(this, 7, 1, PlayerColor.BLUE);*/
 
 		// initial draw
+		
+		boardFrame = new BoardFrame(this);
+		
+		
+		//initial draw
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -122,6 +129,7 @@ public class FrameRenderer extends PApplet {
 		 testPenguin7.draw();
 		 testPenguin8.resize();
 		 testPenguin8.draw();*/
+		boardFrame.draw();
 	}
 
 	public void draw() {
@@ -143,6 +151,7 @@ public class FrameRenderer extends PApplet {
 		testPenguin6.draw();
 		testPenguin7.draw();
 		testPenguin8.draw();*/
+		boardFrame.draw();
 	}
 
 	public void updateGameState(GameState gameState) {
