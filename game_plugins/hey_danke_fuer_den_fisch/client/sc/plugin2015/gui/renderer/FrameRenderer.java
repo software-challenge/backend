@@ -129,7 +129,6 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize() {
-		System.out.println("hier resize");
 		guiBoard.resize();
 		for(int i = 0; i < 2; i++) {
 			for(int j = 0; j < 4; j++) {
