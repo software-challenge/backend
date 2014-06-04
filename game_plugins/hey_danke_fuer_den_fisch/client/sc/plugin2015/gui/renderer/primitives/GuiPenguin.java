@@ -1,7 +1,5 @@
 package sc.plugin2015.gui.renderer.primitives;
 
-import processing.core.PApplet;
-import processing.core.PImage;
 import processing.core.*;
 import sc.plugin2015.PlayerColor;
 
@@ -9,15 +7,17 @@ public class GuiPenguin extends PrimitiveBase {
 
 	private float x, y;
 	private float width;
+	private float height;
 	private PlayerColor owner;
-	public PImage img;
+	public PImage penguinImg;
 	
 	public GuiPenguin(PApplet parent, float posX, float posY, float width, PlayerColor owner) {
 		super(parent);
-		img = parent.loadImage("resource/game/Tux.png");
+		penguinImg = parent.loadImage(GuiConstants.PENGUIN_IMAGE);
 		setX(posX);
 		setY(posY);
 		setWidth(width);
+		setHeight(width / 200 * 232);
 		this.owner = owner;
 	}
 	
@@ -27,7 +27,7 @@ public class GuiPenguin extends PrimitiveBase {
 		parent.pushStyle();
 		parent.pushMatrix();
 		
-		parent.image(img, 0, 0);
+		parent.image(penguinImg, getX(), getY(), getWidth(), getHeight());
 		
 		parent.popMatrix();
 		parent.popStyle();
@@ -56,7 +56,24 @@ public class GuiPenguin extends PrimitiveBase {
 
 	public void setWidth(float width) {
 		this.width = width;
+		setHeight(width / 200 * 232);
 	}
+
+	/**
+	 * @return the height
+	 */
+	private float getHeight() {
+		return height;
+	}
+
+
+	/**
+	 * @param height the height to set
+	 */
+	private void setHeight(float height) {
+		this.height = height;
+	}
+
 
 	public PlayerColor getOwner() {
 		return owner;
