@@ -39,27 +39,29 @@ public class HexField extends PrimitiveBase{
 	}
 
 	public void draw() {
-		parent.pushStyle();
-		parent.noStroke();
-		parent.fill(GuiConstants.colorHexFields);
-
-		parent.pushMatrix();
-		parent.translate(getX(), getY());
-
-		parent.beginShape();
-		parent.vertex(0, a);
-		parent.vertex(b, 0);
-		parent.vertex(2 * b, a);
-		parent.vertex(2 * b, a + c);
-		parent.vertex(b, 2 * a + c);
-		parent.vertex(0, a + c);
-		parent.vertex(0, a);
-		parent.endShape();
-		parent.fill(0);
-		parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
-		parent.text("" + numFish, 25, 50);
-		parent.popMatrix();
-		parent.popStyle();
+		if(numFish != 0) {
+			parent.pushStyle();
+			parent.noStroke();
+			parent.fill(2, 6, 200);
+	
+			parent.pushMatrix();
+			parent.translate(getX(), getY());
+	
+			parent.beginShape();
+			parent.vertex(0, a);
+			parent.vertex(b, 0);
+			parent.vertex(2 * b, a);
+			parent.vertex(2 * b, a + c);
+			parent.vertex(b, 2 * a + c);
+			parent.vertex(0, a + c);
+			parent.vertex(0, a);
+			parent.endShape();
+			parent.fill(0);
+			parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
+			parent.text("" + numFish, 25, 50);
+			parent.popMatrix();
+			parent.popStyle();
+		}
 	}
 
 	private void calcSize(float width) {
