@@ -33,7 +33,7 @@ public class ProgressBar extends PrimitiveBase {
 		parent.pushMatrix();
 		
 		parent.stroke(1.0f); // Umrandung
-		parent.fill(30, 30, 30); // Filling
+		parent.fill(GuiConstants.colorDarkGrey); // Filling
 		
 		parent.translate(50, parent.getHeight() - 30);
 		parent.rect(0, 0, parent.getWidth() - 60, 20, 7);
