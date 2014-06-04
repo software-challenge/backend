@@ -42,7 +42,7 @@ public class HexField extends PrimitiveBase{
 		if(numFish != 0) {
 			parent.pushStyle();
 			parent.noStroke();
-			parent.fill(2, 6, 200);
+			parent.fill(GuiConstants.colorHexFields);
 	
 			parent.pushMatrix();
 			parent.translate(getX(), getY());
