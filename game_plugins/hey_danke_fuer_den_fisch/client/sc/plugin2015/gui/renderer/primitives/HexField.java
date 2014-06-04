@@ -14,14 +14,24 @@ public class HexField extends PrimitiveBase{
 	// Fields
 	private float x, y;
 	private float a, b, c;
+	/**
+	 * x position des Feldes innerhalb des Spielefeld arrays
+	 */
+	private int fieldX;
+	/**
+	 * y position des Feldes innerhalb des Spielefeld arrays
+	 */
+	private int fieldY;
 
 	private int numFish = 0;
 
-	public HexField(PApplet parent, float startX, float startY, float width) {
+	public HexField(PApplet parent, float startX, float startY, float width, int fieldX, int fieldY) {
 		super(parent);
 		setX(startX);
 		setY(startY);
 		calcSize(width);
+		setFieldX(fieldX);
+		setFieldY(fieldY);
 	}
 
 	public void update(Field field) {
@@ -45,7 +55,9 @@ public class HexField extends PrimitiveBase{
 		parent.vertex(0, a + c);
 		parent.vertex(0, a);
 		parent.endShape();
-
+		parent.fill(0);
+		parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
+		parent.text("" + numFish, 25, 50);
 		parent.popMatrix();
 		parent.popStyle();
 	}
@@ -85,6 +97,22 @@ public class HexField extends PrimitiveBase{
 
 	public float getB() {
 		return this.b;
+	}
+
+	public int getFieldX() {
+		return fieldX;
+	}
+
+	public void setFieldX(int fieldX) {
+		this.fieldX = fieldX;
+	}
+
+	public int getFieldY() {
+		return fieldY;
+	}
+
+	public void setFieldY(int fieldY) {
+		this.fieldY = fieldY;
 	}
 
 }
