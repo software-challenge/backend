@@ -55,6 +55,13 @@ public class HexField extends PrimitiveBase{
 		c = b / PApplet.cos(PApplet.radians(30));
 		a = b * PApplet.sin(PApplet.radians(30));
 	}
+	
+	public void resize(float startX, float startY, float width){
+		setX(startX);
+		setY(startY);
+		calcSize(width);
+		
+	}
 
 	public float getX() {
 		return x;

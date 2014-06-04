@@ -10,11 +10,19 @@ public class GuiConstants {
 
 	
 	
-	//
-	public static final float GUI_BOARD_START_X = 1;
-	public static final float GUI_BOARD_START_Y = 1;
-	public static final float GUI_BOARD_WIDHT = 1;
-	public static final float GUI_BOARD_HEIGHT = 1;
+	//not needed
+	/*public static final float GUI_BOARD_START_X = 1;
+	public static final float GUI_BOARD_START_Y = 1;*/
+	/**
+	 * Breite des GuiBoard 
+	 * mit parent.width zu multiplizieren
+	 */
+	public static final float GUI_BOARD_WIDHT = 0.8f;
+	/**
+	 * Höhe des GuiBoard
+	 * zu parent.height zu addieren
+	 */
+	public static final float GUI_BOARD_HEIGHT = -30;
 	
 	/**
 	 * startwert der x-Koordinate der Sidebar
