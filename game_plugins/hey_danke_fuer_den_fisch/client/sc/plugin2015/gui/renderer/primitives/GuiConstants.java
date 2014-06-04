@@ -60,8 +60,13 @@ public class GuiConstants {
 	public static final float PROGRESS_BAR_HEIGHT= 20;
 	
 	/**
-	 * Sourcepath to find the default Penguin picture
+	 * Sourcepath to find the default blue Penguin picture
 	 */
-	public static final String PENGUIN_IMAGE = "resource/game/Tux.png";
+	public static final String BLUE_PENGUIN_IMAGE = "resource/game/TuxBlau.png";
+
+	/**
+	 * Sourcepath to find the default red Penguin picture
+	 */
+	public static final String RED_PENGUIN_IMAGE = "resource/game/TuxRot.png";
 	
 }
