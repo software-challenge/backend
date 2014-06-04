@@ -24,6 +24,7 @@ public class GuiConstants {
 	public static final int colorDarkGrey = calcColor(255,30,30,30);
 	public static final int colorSideBarBG = calcColor(200,100,100,100);
 	public static final int colorHexFields = calcColor(240,21,160,177);
+	public static final int colorText = calcColor(255,0,0,0);
 
 	public static final int frameBorderSize = 5;
 	
@@ -80,9 +81,9 @@ public class GuiConstants {
 	public static final float PROGRESS_BAR_WIDTH = -60;
 	/**
 	 * Höhe der Progressbar
-	 * zu 0 zu addieren
+	 *
 	 */
-	public static final float PROGRESS_BAR_HEIGHT= 20;
+	public static final float PROGRESS_BAR_HEIGHT= 1-SIDE_BAR_HEIGHT;
 	
 	/**
 	 * Sourcepath to find the default blue Penguin picture
