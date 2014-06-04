@@ -7,6 +7,20 @@ package sc.plugin2015.gui.renderer.primitives;
  */
 
 public class GuiConstants {
+	//###### Colors
+	public static int calcColor(int alpha, int r, int g, int b){
+		int col = 0;
+		col |= alpha << 24;
+		col |= r << 16;
+		col |= g << 8;
+		col |= b;		
+		return col;
+	}
+	
+	public static final int colorBackGround = calcColor(200,200,200,200);
+	public static final int colorRed = calcColor(255,200,0,0);
+	public static final int colorGreen = calcColor(255,0,0,255);
+	public static final int colorSideBarBG = calcColor(200,100,100,100);
 
 	
 	
@@ -76,5 +90,10 @@ public class GuiConstants {
 	 * Sourcepath to find the default red Penguin picture
 	 */
 	public static final String RED_PENGUIN_IMAGE = "resource/game/TuxRot.png";
+	
+	/**
+	 * Sourcepath to Background Image
+	 */
+	public static final String BACKGROUND_IMAGE = "resource/game/background.jpg";
 	
 }
