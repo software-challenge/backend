@@ -41,7 +41,7 @@ public class HexField extends PrimitiveBase{
 	public void draw() {
 		parent.pushStyle();
 		parent.noStroke();
-		parent.fill(2, 6, 200);
+		parent.fill(GuiConstants.colorHexFields);
 
 		parent.pushMatrix();
 		parent.translate(getX(), getY());

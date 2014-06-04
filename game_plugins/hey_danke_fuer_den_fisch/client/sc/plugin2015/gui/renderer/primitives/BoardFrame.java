@@ -18,8 +18,17 @@ public class BoardFrame extends PrimitiveBase {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
-
+		parent.pushStyle();
+		//TODO Farbe in abhängigkeit des aktuellen Spielers setzen.
+		parent.noStroke();
+		parent.fill(GuiConstants.colorGrey);
+		
+		parent.rect(0, 0, parent.getWidth(), GuiConstants.frameBorderSize);
+		parent.rect(0, 0, GuiConstants.frameBorderSize, parent.getHeight());
+		parent.rect(parent.getWidth() - GuiConstants.frameBorderSize, 0, GuiConstants.frameBorderSize, parent.getHeight());
+		parent.rect(0,parent.getHeight() - GuiConstants.frameBorderSize, parent.getWidth(), GuiConstants.frameBorderSize);
+		
+		parent.popStyle();
 	}
 
 }
