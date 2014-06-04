@@ -3,7 +3,11 @@ package sc.plugin2015.gui.renderer.primitives;
 import java.awt.Dimension;
 
 import processing.core.*;
+import sc.plugin2015.MoveType;
 import sc.plugin2015.PlayerColor;
+import sc.plugin2015.Move;
+import sc.plugin2015.SetMove;
+import sc.plugin2015.RunMove;
 import sc.plugin2015.util.Constants;
 
 public class GuiPenguin extends PrimitiveBase {
@@ -68,20 +72,21 @@ public class GuiPenguin extends PrimitiveBase {
 			float startY = (yDimension - 8* penguinSize) / 2;
 			
 
-			int i = getFieldX();
-			int j = getFieldY();
+			float i = getFieldX();
+			float j = getFieldY();
 			float x;
 			if (j % 2 == 0) {
 				// even rows
-				x = startX + penguinSize / 2 + penguinSize * j;
+				x = startX + penguinSize / 2 + penguinSize * i + 2 * i;
 			} else {
 				// odd rows
-				x = startX + penguinSize * j;
+				x = startX + penguinSize * i + 2 * i;
 			}
-			float y = startY + penguinSize * i;
+			float a = penguinSize / 2 * PApplet.sin(PApplet.radians(30));
+			float y = startY + (penguinSize - a) * j + GuiConstants.HEX_FIELD_GAP_SIZE * j;
 			
-			setX(x + penguinSize * 0.23f);
-			setY(y - penguinSize * 0.1f);
+			setX(x + penguinSize * 0.175f);
+			setY(y + a * 0.1f);
 			setWidth(penguinSize * 0.7f);
 			setHeight(getWidth() / 200 * 232);
 		}
@@ -91,6 +96,34 @@ public class GuiPenguin extends PrimitiveBase {
 		int PenguinWidth = dim.width / 8;
 		int PenguinHeight = dim.height / 8;
 		return Math.min(PenguinWidth, PenguinHeight);
+	}
+	
+	public void update(Move lastMove, PlayerColor lastPlayer, int turn) {
+		if(lastMove != null) {
+			if(lastMove.getMoveType() == MoveType.SET) {
+				System.out.println("SetMove update " + getFieldX());
+				SetMove move = (SetMove) lastMove;
+				if(lastPlayer == PlayerColor.RED) {
+					System.out.println("Roter Spieler war dran im Zug " + turn + ", Berechnung war " + ((- (turn/2)) - 1));
+					if(getFieldX() < 0 && (- (turn / 2)) - 1 == getFieldX()) {
+						System.out.println("dieser Pinguin soll setzen " + getFieldX());
+						setFieldX(move.getSetCoordinates()[0]);
+						setFieldY(move.getSetCoordinates()[1]);
+					}
+				} else {
+					if(getFieldX() < 0 && - (turn / 2) == getFieldX()) {
+						setFieldX(move.getSetCoordinates()[0]);
+						setFieldY(move.getSetCoordinates()[1]);
+					}
+				}
+			} else {
+				RunMove move = (RunMove) lastMove;
+				if(getFieldX() == move.fromX && getFieldY() == move.fromY) {
+					setFieldX(move.toX);
+					setFieldY(move.toY);
+				}
+			}
+		}
 	}
 
 	public float getX() {
