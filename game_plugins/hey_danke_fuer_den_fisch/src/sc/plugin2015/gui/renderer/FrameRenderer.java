@@ -14,6 +14,7 @@ import sc.plugin2015.GameState;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
+import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
 import sc.plugin2015.gui.renderer.primitives.ProgressBar;
 import sc.plugin2015.gui.renderer.primitives.SideBar;
@@ -35,7 +36,9 @@ public class FrameRenderer extends PApplet {
 	private Background background;
 	private ProgressBar progressBar;
 	private SideBar sidebar;
-	private GuiPenguin penguin;
+	
+	//penguin as [OWNER][NUMBER]
+	private GuiPenguin[][] penguin;
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
@@ -63,15 +66,29 @@ public class FrameRenderer extends PApplet {
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
 		sidebar = new SideBar(this);
-		penguin = new GuiPenguin(this, 20, 20, 50, PlayerColor.RED);
+		
+		penguin = new GuiPenguin[2][4];
+		
+		penguin[0][0] = new GuiPenguin(this, (int) (this.getWidth() * GuiConstants.SIDE_BAR_START_X), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
+		penguin[0][1] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.05)), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
+		penguin[0][2] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.1)), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
+		penguin[0][3] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.15)), 50, (int) (this.getWidth() * 0.05), PlayerColor.RED);
+		penguin[1][0] = new GuiPenguin(this, (int) (this.getWidth() * GuiConstants.SIDE_BAR_START_X), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
+		penguin[1][1] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.05)), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
+		penguin[1][2] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.1)), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
+		penguin[1][3] = new GuiPenguin(this, (int) (this.getWidth() * (GuiConstants.SIDE_BAR_START_X + 0.15)), 150, (int) (this.getWidth() * 0.05), PlayerColor.BLUE);
+		
 		
 		//initial draw
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
 		sidebar.draw();
-		penguin.draw();
-		
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 4; j++) {
+				penguin[i][j].draw();
+			}
+		}		
 	}
 
 	public void draw() {
@@ -80,7 +97,11 @@ public class FrameRenderer extends PApplet {
 		guiBoard.draw();
 		progressBar.draw();
 		sidebar.draw();
-		penguin.draw();
+		for(int i = 0; i < 2; i++) {
+			for(int j = 0; j < 4; j++) {
+				penguin[i][j].draw();
+			}
+		}		
 	}
 
 	public void updateGameState(GameState gameState) {

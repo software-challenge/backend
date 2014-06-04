@@ -9,11 +9,13 @@ public class GuiPenguin extends PrimitiveBase {
 	private float width;
 	private float height;
 	private PlayerColor owner;
-	public PImage penguinImg;
+	public PImage redPenguinImg;
+	public PImage bluePenguinImg;
 	
 	public GuiPenguin(PApplet parent, float posX, float posY, float width, PlayerColor owner) {
 		super(parent);
-		penguinImg = parent.loadImage(GuiConstants.PENGUIN_IMAGE);
+		redPenguinImg = parent.loadImage(GuiConstants.RED_PENGUIN_IMAGE);
+		bluePenguinImg = parent.loadImage(GuiConstants.BLUE_PENGUIN_IMAGE);
 		setX(posX);
 		setY(posY);
 		setWidth(width);
@@ -27,7 +29,11 @@ public class GuiPenguin extends PrimitiveBase {
 		parent.pushStyle();
 		parent.pushMatrix();
 		
-		parent.image(penguinImg, getX(), getY(), getWidth(), getHeight());
+		if(getOwner() == PlayerColor.RED) { 
+			parent.image(redPenguinImg, getX(), getY(), getWidth(), getHeight());
+		} else {
+			parent.image(bluePenguinImg, getX(), getY(), getWidth(), getHeight());
+		}
 		
 		parent.popMatrix();
 		parent.popStyle();
