@@ -14,23 +14,21 @@ public class GuiBoard extends PrimitiveBase{
 
 	public GuiBoard(PApplet parent) {
 		super(parent);
-		// die größe eines Hexfield wird anhand der freien Fläche innerhalb des Spielfeldes berechnet
-		System.out.println("parent breite = " + parent.width);
-		System.out.println("parent hoehe = " + parent.height);
-		System.out.println("x = "+ GuiConstants.SIDE_BAR_START_X);
-		float xDimension =parent.width*GuiConstants.SIDE_BAR_START_X;
-		System.out.println("xDimension ist =" + xDimension);
-		float yDimension = parent.height + GuiConstants.PROGRESS_BAR_START_Y;
-		System.out.println("yDimension ist =" + yDimension);
+		hexFields = new HexField[Constants.ROWS][Constants.COLUMNS];
+		
+		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDHT;
+		
+		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
+		
 		Dimension test = new Dimension((int)xDimension, (int)yDimension);
 		
 		int hexFieldSize = calcHexFieldSize(test);
 
-		hexFields = new HexField[Constants.ROWS][Constants.COLUMNS];
+		
 		float startX = (xDimension- (8 * hexFieldSize) ) / 2;
-		System.out.println("startX ist =" + startX);
+		
 		float startY = (yDimension - 8* hexFieldSize) / 2;
-		System.out.println("startY ist =" + startY);
+		
 		float y = startY;
 		
 
@@ -45,6 +43,7 @@ public class GuiBoard extends PrimitiveBase{
 			}
 			for (int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
+					
 					hexFields[i][j] = new HexField(this.parent, (int) x, (int) y,
 							hexFieldSize);
 					x = x + hexFieldSize + 2;
@@ -54,6 +53,55 @@ public class GuiBoard extends PrimitiveBase{
 			y = y + (hexFieldSize - hexFields[0][0].getA()) + 8;
 
 		}
+		
+		draw();
+	}
+	
+	public void calculateSize(){
+		
+		// die größe eines Hexfield wird anhand der freien Fläche innerhalb des Spielfeldes berechnet
+		
+		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDHT;
+		
+		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
+		
+		Dimension test = new Dimension((int)xDimension, (int)yDimension);
+		
+		int hexFieldSize = calcHexFieldSize(test);
+
+		
+		float startX = (xDimension- (8 * hexFieldSize) ) / 2;
+		
+		float startY = (yDimension - 8* hexFieldSize) / 2;
+		
+		float y = startY;
+		
+
+		for (int i = 0; i < Constants.ROWS; i++) {
+			float x;
+			if (i % 2 == 0) {
+				// even rows
+				x = startX + hexFieldSize / 2;
+			} else {
+				// odd rows
+				x = startX;
+			}
+			for (int j = 0; j < Constants.COLUMNS; j++) {
+				if (!(i % 2 == 0 && j == 7)) {
+					hexFields[i][j].resize((int) x, (int) y, hexFieldSize);
+					
+					x = x + hexFieldSize + 2;
+				}
+			}
+
+			y = y + (hexFieldSize - hexFields[0][0].getA()) + 8;
+
+		}
+	}
+	
+	public void resize(){
+		calculateSize();
+		//draw();
 	}
 
 	public void update(Board board) {

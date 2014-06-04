@@ -75,6 +75,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void draw() {
+		this.resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -97,10 +98,13 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseClicked() {
-		this.redraw();
+		this.resize();
+		//this.redraw();
 	}
 
 	public void resize() {
+		System.out.println("hier resize");
+		guiBoard.resize();
 		this.redraw();
 
 	}
