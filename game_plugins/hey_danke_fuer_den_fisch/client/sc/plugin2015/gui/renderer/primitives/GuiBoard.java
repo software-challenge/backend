@@ -45,11 +45,11 @@ public class GuiBoard extends PrimitiveBase{
 				if (!(i % 2 == 0 && j == 7)) {
 					
 					hexFields[i][j] = new HexField(this.parent, (int) x, (int) y,
-							hexFieldSize);
+							hexFieldSize, j, i);
 					x = x + hexFieldSize + 2;
 				}
 			}
-
+			
 			y = y + (hexFieldSize - hexFields[0][0].getA()) + 8;
 
 		}
