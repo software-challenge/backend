@@ -9,7 +9,7 @@ import processing.core.PApplet;
  * @author felix
  * 
  */
-public class SideBar extends PrimitiveBase{
+public class SideBar extends PrimitiveBase {
 
 	public SideBar(PApplet parent) {
 		super(parent);
@@ -19,16 +19,17 @@ public class SideBar extends PrimitiveBase{
 	public void draw() {
 		// TODO Auto-generated method stub
 		parent.pushStyle();
-		
-		parent.stroke(1.0f);		// Umrandung
-		parent.fill(0, 100, 0);
-		
+
+		parent.stroke(1.0f); // Umrandung
+		parent.fill(GuiConstants.colorSideBarBG);
+
 		parent.pushMatrix();
-		parent.translate(parent.getWidth()- parent.getWidth()/5, 0);
-		parent.rect(0, 0, parent.getWidth()/5, parent.getHeight() - parent.getHeight()/8);
+		parent.translate(parent.getWidth() * GuiConstants.SIDE_BAR_START_X,
+				GuiConstants.SIDE_BAR_START_Y);
+		parent.rect(0, 0, parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH,
+				parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT);
 		parent.popMatrix();
-		
-		
+
 		parent.popStyle();
 	}
 
