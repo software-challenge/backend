@@ -59,5 +59,9 @@ public class GuiConstants {
 	 */
 	public static final float PROGRESS_BAR_HEIGHT= 20;
 	
+	/**
+	 * Sourcepath to find the default Penguin picture
+	 */
+	public static final String PENGUIN_IMAGE = "resource/game/Tux.png";
 	
 }

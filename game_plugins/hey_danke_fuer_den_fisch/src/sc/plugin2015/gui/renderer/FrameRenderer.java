@@ -63,7 +63,7 @@ public class FrameRenderer extends PApplet {
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
 		sidebar = new SideBar(this);
-		penguin = new GuiPenguin(this, 0, 0, 50, PlayerColor.RED);
+		penguin = new GuiPenguin(this, 20, 20, 50, PlayerColor.RED);
 		
 		//initial draw
 		background.draw();
@@ -101,6 +101,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize() {
+		this.redraw();
 
 	}
 
