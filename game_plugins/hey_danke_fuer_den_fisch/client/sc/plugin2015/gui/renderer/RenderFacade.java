@@ -284,7 +284,7 @@ public class RenderFacade {
 
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
-			frameRenderer.requestMove(maxTurn);
+			frameRenderer.requestMove(maxTurn, id);
 		}
 	}
 

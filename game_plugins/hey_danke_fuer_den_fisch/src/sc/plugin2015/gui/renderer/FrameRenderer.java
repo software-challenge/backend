@@ -4,12 +4,14 @@
 package sc.plugin2015.gui.renderer;
 
 import java.awt.Image;
+import java.awt.event.MouseEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
+import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.primitives.Background;
@@ -32,8 +34,10 @@ public class FrameRenderer extends PApplet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory
 			.getLogger(FrameRenderer.class);
-	
+
 	public GameState currentGameState;
+	private boolean humanPlayer;
+	private EPlayerId id;
 
 	private GuiBoard guiBoard;
 	private Background background;
@@ -55,6 +59,8 @@ public class FrameRenderer extends PApplet {
 
 	public void setup() {
 		// logger.debug("calling frameRenderer.size()");
+		this.humanPlayer = false;
+		this.id = EPlayerId.OBSERVER;
 
 		RenderConfiguration.loadSettings();
 
@@ -163,7 +169,10 @@ public class FrameRenderer extends PApplet {
 		redraw();
 	}
 
-	public void requestMove(int maxTurn) {
+	public void requestMove(int maxTurn, EPlayerId id) {
+		this.id = id;
+		// this.maxTurn = maxTurn;
+		this.humanPlayer = true;
 		// TODO The User has to do a Move
 
 	}
@@ -176,6 +185,37 @@ public class FrameRenderer extends PApplet {
 	public void mouseClicked() {
 		this.resize();
 		// this.redraw();
+	}
+
+	public void mousePressed(MouseEvent e) {
+		if (humanPlayer) {
+			int x = e.getX();
+			int y = e.getY();
+			int player;
+			if (id == EPlayerId.PLAYER_ONE) {
+				player = 0;
+			} else {
+				player = 1;
+			}
+			for (int i = 0; i < 4; i++) {
+				if (isClicked(penguin[player][i], x, y)) {
+
+				}
+			}
+		}
+	}
+
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	private boolean isClicked(GuiPenguin penguin, int x, int y) {
+		if (x >= penguin.getX() && y >= penguin.getY()
+				&& x <= penguin.getX() + penguin.getWidth()
+				&& y <= penguin.getY() + penguin.getHeight()) {
+				return true;
+		}
+		return false;
 	}
 
 	public void resize() {
