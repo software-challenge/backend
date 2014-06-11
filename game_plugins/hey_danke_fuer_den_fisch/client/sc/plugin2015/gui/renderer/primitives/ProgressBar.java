@@ -1,6 +1,7 @@
 package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
 /**
  * Zeichnet den Spielverlauf. Rundenanzahl + Bar
@@ -10,7 +11,7 @@ import processing.core.PApplet;
  */
 public class ProgressBar extends PrimitiveBase {
 
-	public ProgressBar(PApplet par) {
+	public ProgressBar(FrameRenderer par) {
 		super(par);
 	}
 

@@ -1,6 +1,6 @@
 package sc.plugin2015.gui.renderer.primitives;
 
-import processing.core.PApplet;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
 /**
  * Zeichnet Spielerinformationen (Punkte, Schollen) sowie die Pinguine am Anfang
@@ -11,7 +11,7 @@ import processing.core.PApplet;
  */
 public class SideBar extends PrimitiveBase {
 
-	public SideBar(PApplet parent) {
+	public SideBar(FrameRenderer parent) {
 		super(parent);
 	}
 

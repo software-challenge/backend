@@ -1,12 +1,12 @@
 package sc.plugin2015.gui.renderer.primitives;
 
-import processing.core.PApplet;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
 public abstract class PrimitiveBase {
 	
-	PApplet parent;
+	FrameRenderer parent;
 
-	public PrimitiveBase(PApplet parent) {
+	public PrimitiveBase(FrameRenderer parent) {
 		this.parent = parent;
 	}
 	
