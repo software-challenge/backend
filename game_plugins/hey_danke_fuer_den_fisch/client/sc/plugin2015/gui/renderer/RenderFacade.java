@@ -111,7 +111,7 @@ public class RenderFacade {
 	private int maxTurn;
 
 	private RenderFacade() {
-		frameRenderer = new FrameRenderer();
+		//frameRenderer = new FrameRenderer();
 		
 		
 		gameStateQueue = new LinkedList<GameState>();
@@ -165,6 +165,7 @@ public class RenderFacade {
 		disabled = false;
 		activePlayer = null;
 		alreadyCreatedPlayerOne = false;
+		frameRenderer = new FrameRenderer(); // neuer FrameRenderer
 
 		if (panel != null) {
 			//panel.setDoubleBuffered(true);
@@ -173,7 +174,7 @@ public class RenderFacade {
 			frameRenderer.init();
 			
 			frameRenderer.resize(panel.getSize());
-			frameRenderer.redraw();
+			//frameRenderer.redraw();
 		}
 		startReceiverThread();
 	}
@@ -284,7 +285,7 @@ public class RenderFacade {
 
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
-			frameRenderer.requestMove(maxTurn);
+			frameRenderer.requestMove(maxTurn, id);
 		}
 	}
 
