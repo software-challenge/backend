@@ -291,7 +291,7 @@ public class GameState implements Cloneable {
 		turn++;
 		this.lastMove = lastMove;
 
-		if (turn == Constants.PENGUINS * 2 + 1) {
+		if (turn == Constants.PENGUINS * 2) {
 			setCurrentMoveType(MoveType.RUN);
 			// switchCurrentPlayer();
 		} else {

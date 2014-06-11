@@ -144,13 +144,16 @@ public class FrameRenderer extends PApplet {
 	public void updateGameState(GameState gameState) {
 		PlayerColor lastPlayerColor;
 		guiBoard.update(gameState.getBoard());
-		int i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
+		int i;
+		if (gameState.getTurn() == 8) {
+			lastPlayerColor = gameState.getCurrentPlayerColor();
+			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0 : 1;
+		} else {
+			lastPlayerColor = gameState.getOtherPlayerColor();
+			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
+		}
+		System.out.println("Update für Spieler mit Nummer" + i);
 		for (int j = 0; j < 4; j++) {
-			if (gameState.getTurn() == 9) {
-				lastPlayerColor = gameState.getCurrentPlayerColor();
-			} else {
-				lastPlayerColor = gameState.getOtherPlayerColor();
-			}
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
