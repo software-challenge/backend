@@ -50,7 +50,7 @@ public class GuiBoard extends PrimitiveBase{
 				}
 			}
 			
-			y = y + (hexFieldSize - hexFields[0][0].getA()) + GuiConstants.HEX_FIELD_GAP_SIZE;
+			y = y + (hexFieldSize - hexFields[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
 
 		}
 		
@@ -94,7 +94,7 @@ public class GuiBoard extends PrimitiveBase{
 				}
 			}
 
-			y = y + (hexFieldSize - hexFields[0][0].getA()) + GuiConstants.HEX_FIELD_GAP_SIZE;
+			y = y + (hexFieldSize - hexFields[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
 
 		}
 	}
