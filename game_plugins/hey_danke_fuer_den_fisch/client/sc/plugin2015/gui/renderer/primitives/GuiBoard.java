@@ -14,7 +14,7 @@ public class GuiBoard extends PrimitiveBase{
 
 	public GuiBoard(FrameRenderer parent) {
 		super(parent);
-		hexFields = new HexField[Constants.ROWS][Constants.COLUMNS];
+		setHexFields(new HexField[Constants.ROWS][Constants.COLUMNS]);
 		
 		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDHT;
 		
@@ -44,13 +44,13 @@ public class GuiBoard extends PrimitiveBase{
 			for (int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
 					
-					hexFields[i][j] = new HexField(this.parent, (int) x, (int) y,
+					getHexFields()[i][j] = new HexField(this.parent, (int) x, (int) y,
 							hexFieldSize, j, i);
 					x = x + hexFieldSize + 2;
 				}
 			}
 			
-			y = y + (hexFieldSize - hexFields[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
+			y = y + (hexFieldSize - getHexFields()[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
 
 		}
 		
@@ -88,13 +88,13 @@ public class GuiBoard extends PrimitiveBase{
 			}
 			for (int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
-					hexFields[i][j].resize((int) x, (int) y, hexFieldSize);
+					getHexFields()[i][j].resize((int) x, (int) y, hexFieldSize);
 					
 					x = x + hexFieldSize + 2;
 				}
 			}
 
-			y = y + (hexFieldSize - hexFields[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
+			y = y + (hexFieldSize - getHexFields()[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
 
 		}
 	}
@@ -109,7 +109,7 @@ public class GuiBoard extends PrimitiveBase{
 		for(int i = 0; i < Constants.ROWS; i++) {
 			for(int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
-					hexFields[i][j].update(board.getField(j, i));
+					getHexFields()[i][j].update(board.getField(j, i));
 				}
 			}	
 		}
@@ -120,7 +120,7 @@ public class GuiBoard extends PrimitiveBase{
 		for (int i = 0; i < Constants.ROWS; i++) {
 			for (int j = 0; j < Constants.COLUMNS; j++) {
 				if (!(i % 2 == 0 && j == 7)) {
-					hexFields[i][j].draw();
+					getHexFields()[i][j].draw();
 				}
 			}
 		}
@@ -130,6 +130,20 @@ public class GuiBoard extends PrimitiveBase{
 		int hexFieldWidth = dim.width / 8;
 		int hexFieldHeight = dim.height / 8;
 		return Math.min(hexFieldWidth, hexFieldHeight);
+	}
+
+	/**
+	 * @return the hexFields
+	 */
+	public HexField[][] getHexFields() {
+		return hexFields;
+	}
+
+	/**
+	 * @param hexFields the hexFields to set
+	 */
+	public void setHexFields(HexField[][] hexFields) {
+		this.hexFields = hexFields;
 	}
 
 }

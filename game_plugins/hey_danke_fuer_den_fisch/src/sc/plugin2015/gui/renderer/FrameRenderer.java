@@ -13,7 +13,10 @@ import processing.core.PApplet;
 import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
 import sc.plugin2015.PlayerColor;
+import sc.plugin2015.RunMove;
+import sc.plugin2015.SetMove;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.BoardFrame;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
@@ -58,6 +61,7 @@ public class FrameRenderer extends PApplet {
 	private GuiPenguin testPenguin8;
 
 	public void setup() {
+		this.frameRate(30);
 		// logger.debug("calling frameRenderer.size()");
 		this.humanPlayer = false;
 		this.id = EPlayerId.OBSERVER;
@@ -152,7 +156,8 @@ public class FrameRenderer extends PApplet {
 	public void updateGameState(GameState gameState) {
 		currentGameState = gameState;
 		PlayerColor lastPlayerColor;
-		guiBoard.update(gameState.getBoard());
+		if (gameState != null && gameState.getBoard() != null)
+			guiBoard.update(gameState.getBoard());
 		int i;
 		if (gameState.getTurn() == 8) {
 			lastPlayerColor = gameState.getCurrentPlayerColor();
@@ -161,7 +166,6 @@ public class FrameRenderer extends PApplet {
 			lastPlayerColor = gameState.getOtherPlayerColor();
 			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
 		}
-		System.out.println("Update für Spieler mit Nummer" + i);
 		for (int j = 0; j < 4; j++) {
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
@@ -173,7 +177,6 @@ public class FrameRenderer extends PApplet {
 		this.id = id;
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
-		// TODO The User has to do a Move
 
 	}
 
@@ -183,7 +186,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseClicked() {
-		this.resize();
+		// this.resize();
 		// this.redraw();
 	}
 
@@ -198,22 +201,89 @@ public class FrameRenderer extends PApplet {
 				player = 1;
 			}
 			for (int i = 0; i < 4; i++) {
-				if (isClicked(penguin[player][i], x, y)) {
-
+				if (isPenguinClicked(penguin[player][i], x, y)
+						&& (this.currentGameState.getTurn() > 7 || penguin[player][i]
+								.getFieldX() < 0)) {
+					loop();
+					penguin[player][i].attachToMouse();
 				}
 			}
 		}
 	}
 
 	public void mouseReleased(MouseEvent e) {
-
+		if (humanPlayer) {
+			int x = e.getX();
+			int y = e.getY();
+			int player;
+			if (id == EPlayerId.PLAYER_ONE) {
+				player = 0;
+			} else {
+				player = 1;
+			}
+			for (int i = 0; i < 4; i++) {
+				if (penguin[player][i].isAttached()) {
+					int[] fieldCoordinates = getFieldCoordinates(x, y);
+					if (fieldCoordinates != null) {
+						if (penguin[player][i].getFieldX() < 0) {
+							SetMove move = new SetMove(fieldCoordinates[0],
+									fieldCoordinates[1]);
+							if (this.currentGameState.getPossibleSetMoves()
+									.contains(move)) {
+								RenderFacade.getInstance().sendMove(move);
+							}
+						} else {
+							RunMove move = new RunMove(
+									penguin[player][i].getFieldX(),
+									penguin[player][i].getFieldY(),
+									fieldCoordinates[0], fieldCoordinates[1]);
+							if (this.currentGameState.getPossibleMoves()
+									.contains(move)) {
+								RenderFacade.getInstance().sendMove(move);
+							}
+						}
+					}
+					penguin[player][i].releaseFromMouse();
+					this.resize();
+					// noLoop(); // auskommentiert, da nichts mehr gezeichnet
+					// wird, auch wenn dies ganz hinten steht... ?
+				}
+			}
+		}
 	}
 
-	private boolean isClicked(GuiPenguin penguin, int x, int y) {
+	private int[] getFieldCoordinates(int x, int y) {
+		// TODO implement this function
+		int fieldX;
+		int fieldY;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8 && (!(i % 2 == 0 && j == 7)); j++) {
+				if (x >= guiBoard.getHexFields()[i][j].getX()
+						&& x <= guiBoard.getHexFields()[i][j].getX()
+								+ guiBoard.getHexFields()[i][j].getB() * 2
+						&& y >= guiBoard.getHexFields()[i][j].getY()
+								+ guiBoard.getHexFields()[i][j].getA()
+						&& y <= guiBoard.getHexFields()[i][j].getY()
+								+ guiBoard.getHexFields()[i][j].getA()
+								+ guiBoard.getHexFields()[i][j].getC()) {
+					System.out.println("x = "
+							+ guiBoard.getHexFields()[i][j].getFieldX()
+							+ ", y = "
+							+ guiBoard.getHexFields()[i][j].getFieldY());
+					return new int[] {
+							guiBoard.getHexFields()[i][j].getFieldX(),
+							guiBoard.getHexFields()[i][j].getFieldY() };
+				}
+			}
+		}
+		return null;
+	}
+
+	private boolean isPenguinClicked(GuiPenguin penguin, int x, int y) {
 		if (x >= penguin.getX() && y >= penguin.getY()
 				&& x <= penguin.getX() + penguin.getWidth()
 				&& y <= penguin.getY() + penguin.getHeight()) {
-				return true;
+			return true;
 		}
 		return false;
 	}
