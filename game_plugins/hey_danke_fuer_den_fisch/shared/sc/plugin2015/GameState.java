@@ -373,6 +373,7 @@ public class GameState implements Cloneable {
 			moves.addAll(bottomRightOfPenguin(x, y));
 			moves.addAll(topRightOfPenguin(x, y));
 			moves.addAll(bottomLeftOfPenguin(x, y));
+			moves.add(new NullMove());
 		}
 		return moves;
 	}
