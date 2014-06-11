@@ -1,6 +1,5 @@
 package sc.plugin2015.gui.renderer.primitives;
 
-import processing.core.PApplet;
 import sc.plugin2015.GamePlugin;
 import sc.plugin2015.gui.renderer.FrameRenderer;
 
@@ -34,8 +33,12 @@ public class ProgressBar extends PrimitiveBase {
 		parent.text("Runde:", 0, 0);
 		parent.translate(0, parent.textDescent() + parent.textAscent());
 		
-		parent.text(parent.currentGameState.getRound(), 0, 0);
-		parent.translate(parent.textWidth("1"), 0);
+		int round = 0;
+		if(parent.currentGameState != null){
+			round = parent.currentGameState.getRound();
+		}
+		parent.text(round, 0, 0);
+		parent.translate(parent.textWidth(String.valueOf(round)), 0);
 		parent.text("/", 0, 0);
 		parent.translate(parent.textWidth("/"), 0);
 		parent.text(GamePlugin.MAX_TURN_COUNT, 0, 0);
