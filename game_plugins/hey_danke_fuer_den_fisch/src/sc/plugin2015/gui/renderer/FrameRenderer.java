@@ -32,6 +32,8 @@ public class FrameRenderer extends PApplet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = LoggerFactory
 			.getLogger(FrameRenderer.class);
+	
+	public GameState currentGameState;
 
 	private GuiBoard guiBoard;
 	private Background background;
@@ -142,6 +144,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void updateGameState(GameState gameState) {
+		currentGameState = gameState;
 		PlayerColor lastPlayerColor;
 		guiBoard.update(gameState.getBoard());
 		int i;

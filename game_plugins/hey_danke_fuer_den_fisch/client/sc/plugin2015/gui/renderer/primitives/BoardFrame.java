@@ -1,6 +1,6 @@
 package sc.plugin2015.gui.renderer.primitives;
 
-import processing.core.PApplet;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
 /**
  * Zeichnet den "Rahmen" um das Spielfeld. Rot/Blau wenn der betreffende Spieler
@@ -11,7 +11,7 @@ import processing.core.PApplet;
  */
 public class BoardFrame extends PrimitiveBase {
 
-	public BoardFrame(PApplet parent) {
+	public BoardFrame(FrameRenderer parent) {
 		super(parent);
 		// TODO Auto-generated constructor stub
 	}
