@@ -1,6 +1,8 @@
 package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
+import sc.plugin2015.GamePlugin;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
 /**
  * Zeichnet den Spielverlauf. Rundenanzahl + Bar
@@ -10,7 +12,7 @@ import processing.core.PApplet;
  */
 public class ProgressBar extends PrimitiveBase {
 
-	public ProgressBar(PApplet par) {
+	public ProgressBar(FrameRenderer par) {
 		super(par);
 	}
 
@@ -26,14 +28,17 @@ public class ProgressBar extends PrimitiveBase {
 				* GuiConstants.PROGRESS_BAR_HEIGHT);
 		// Text
 		
-		parent.translate(10, parent.getHeight() * GuiConstants.PROGRESS_BAR_HEIGHT / 2);
+		parent.translate(10, 10);
 		parent.textSize(18);
 		parent.fill(GuiConstants.colorText);
 		parent.text("Runde:", 0, 0);
 		parent.translate(0, parent.textDescent() + parent.textAscent());
-		parent.text("1", 0, 0);
+		
+		parent.text(parent.currentGameState.getRound(), 0, 0);
 		parent.translate(parent.textWidth("1"), 0);
 		parent.text("/", 0, 0);
+		parent.translate(parent.textWidth("/"), 0);
+		parent.text(GamePlugin.MAX_TURN_COUNT, 0, 0);
 		parent.popMatrix();
 		
 		

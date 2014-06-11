@@ -2,6 +2,7 @@ package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
 import sc.plugin2015.Field;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
 /**
  * Hexagon Primitve for explanation see
@@ -25,7 +26,7 @@ public class HexField extends PrimitiveBase{
 
 	private int numFish = 0;
 
-	public HexField(PApplet parent, float startX, float startY, float width, int fieldX, int fieldY) {
+	public HexField(FrameRenderer parent, float startX, float startY, float width, int fieldX, int fieldY) {
 		super(parent);
 		setX(startX);
 		setY(startY);
