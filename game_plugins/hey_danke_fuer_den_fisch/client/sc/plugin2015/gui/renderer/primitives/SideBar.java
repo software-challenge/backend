@@ -47,8 +47,12 @@ public class SideBar extends PrimitiveBase {
 		// parent.
 
 		parent.fill(GuiConstants.colorBlue);
-		String blueName = parent.currentGameState.getRedPlayer()
-				.getDisplayName();
+		String blueName;
+		if(parent.currentGameState != null){
+			blueName = parent.currentGameState.getRedPlayer()
+					.getDisplayName();
+		}
+		
 
 		parent.popMatrix();
 
