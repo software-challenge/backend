@@ -8,6 +8,7 @@ import sc.plugin2015.PlayerColor;
 import sc.plugin2015.Move;
 import sc.plugin2015.SetMove;
 import sc.plugin2015.RunMove;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 import sc.plugin2015.util.Constants;
 
 public class GuiPenguin extends PrimitiveBase {
@@ -20,7 +21,7 @@ public class GuiPenguin extends PrimitiveBase {
 	private int fieldY;
 	private PImage penguinImg;
 	
-	public GuiPenguin(PApplet parent, int fieldPosX, int fieldPosY, PlayerColor owner) {
+	public GuiPenguin(FrameRenderer parent, int fieldPosX, int fieldPosY, PlayerColor owner) {
 		super(parent);
 		if(owner == PlayerColor.RED) {
 			penguinImg = parent.loadImage(GuiConstants.RED_PENGUIN_IMAGE);

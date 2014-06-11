@@ -2,9 +2,9 @@ package sc.plugin2015.gui.renderer.primitives;
 
 import java.awt.Dimension;
 
-import processing.core.PApplet;
 import sc.plugin2015.Board;
 import sc.plugin2015.util.Constants;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 
 public class GuiBoard extends PrimitiveBase{
@@ -12,7 +12,7 @@ public class GuiBoard extends PrimitiveBase{
 	private Board currentBoard;
 	private HexField[][] hexFields;
 
-	public GuiBoard(PApplet parent) {
+	public GuiBoard(FrameRenderer parent) {
 		super(parent);
 		hexFields = new HexField[Constants.ROWS][Constants.COLUMNS];
 		
