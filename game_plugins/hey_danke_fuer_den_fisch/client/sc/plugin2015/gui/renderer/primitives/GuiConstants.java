@@ -91,7 +91,7 @@ public class GuiConstants {
 	/**
 	 * Anzahl an Pixeln in der Lücke zwischen zwei Hex-Feldern
 	 */
-	public static final float HEX_FIELD_GAP_SIZE = 8;
+	public static final float HEX_FIELD_GAP_SIZE = 0.015f;
 	
 	/**
 	 * Sourcepath to find the default blue Penguin picture

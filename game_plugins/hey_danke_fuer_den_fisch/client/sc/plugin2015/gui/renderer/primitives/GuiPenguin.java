@@ -88,8 +88,8 @@ public class GuiPenguin extends PrimitiveBase {
 				x = startX + penguinSize * i + 2 * i;
 			}
 			float a = penguinSize / 2 * PApplet.sin(PApplet.radians(30));
-			float y = startY + (penguinSize - a) * j
-					+ GuiConstants.HEX_FIELD_GAP_SIZE * j;
+
+			float y = startY + (penguinSize - a) * j + (GuiConstants.HEX_FIELD_GAP_SIZE * parent.getHeight()) * j;
 
 			setX(x + penguinSize * 0.175f);
 			setY(y + a * 0.1f);
