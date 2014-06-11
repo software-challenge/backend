@@ -19,11 +19,13 @@ public class GuiPenguin extends PrimitiveBase {
 	private PlayerColor owner;
 	private int fieldX;
 	private int fieldY;
+	private boolean isAttached;
 	private PImage penguinImg;
 
 	public GuiPenguin(FrameRenderer parent, int fieldPosX, int fieldPosY,
 			PlayerColor owner) {
 		super(parent);
+		isAttached = false;
 		if (owner == PlayerColor.RED) {
 			penguinImg = parent.loadImage(GuiConstants.RED_PENGUIN_IMAGE);
 		} else {
@@ -55,46 +57,58 @@ public class GuiPenguin extends PrimitiveBase {
 	}
 
 	public void resize() {
-		if (getFieldX() < 0) {
-			setX((float) (parent.getWidth() * (GuiConstants.SIDE_BAR_START_X - (0.05 * (getFieldX() + 1)))));
-			setWidth((float) (parent.getWidth() * 0.05));
-			setHeight(width / 200 * 232);
-			setY(owner == PlayerColor.RED ? GuiConstants.SIDE_BAR_HEIGHT
-					* parent.getHeight() - 2 * getHeight()
-					: GuiConstants.SIDE_BAR_HEIGHT * parent.getHeight()
-							- getHeight());
-		} else {
-
-			float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDHT;
-
-			float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
-
-			Dimension dim = new Dimension((int) xDimension, (int) yDimension);
-
-			int penguinSize = calcPenguinSize(dim);
-
-			float startX = (xDimension - (8 * penguinSize)) / 2;
-
-			float startY = (yDimension - 8 * penguinSize) / 2;
-
-			float i = getFieldX();
-			float j = getFieldY();
-			float x;
-			if (j % 2 == 0) {
-				// even rows
-				x = startX + penguinSize / 2 + penguinSize * i + 2 * i;
+		if (!isAttached) {
+			if (getFieldX() < 0) {
+				setX((float) (parent.getWidth() * (GuiConstants.SIDE_BAR_START_X - (0.05 * (getFieldX() + 1)))));
+				setWidth((float) (parent.getWidth() * 0.05));
+				setHeight(width / 200 * 232);
+				setY(owner == PlayerColor.RED ? GuiConstants.SIDE_BAR_HEIGHT
+						* parent.getHeight() - 2 * getHeight()
+						: GuiConstants.SIDE_BAR_HEIGHT * parent.getHeight()
+								- getHeight());
 			} else {
-				// odd rows
-				x = startX + penguinSize * i + 2 * i;
+
+				float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDHT;
+
+				float yDimension = parent.height
+						+ GuiConstants.GUI_BOARD_HEIGHT;
+
+				Dimension dim = new Dimension((int) xDimension,
+						(int) yDimension);
+
+				int penguinSize = calcPenguinSize(dim);
+
+				float startX = (xDimension - (8 * penguinSize)) / 2;
+
+				float startY = (yDimension - 8 * penguinSize) / 2;
+
+				float i = getFieldX();
+				float j = getFieldY();
+				float x;
+				if (j % 2 == 0) {
+					// even rows
+					x = startX + penguinSize / 2 + penguinSize * i + 2 * i;
+				} else {
+					// odd rows
+					x = startX + penguinSize * i + 2 * i;
+				}
+				float a = penguinSize / 2 * PApplet.sin(PApplet.radians(30));
+
+				float y = startY
+						+ (penguinSize - a)
+						* j
+						+ (GuiConstants.HEX_FIELD_GAP_SIZE * parent.getHeight())
+						* j;
+
+				setX(x + penguinSize * 0.175f);
+				setY(y + a * 0.1f);
+				setWidth(penguinSize * 0.7f);
+				setHeight(getWidth() / 200 * 232);
+
 			}
-			float a = penguinSize / 2 * PApplet.sin(PApplet.radians(30));
-
-			float y = startY + (penguinSize - a) * j + (GuiConstants.HEX_FIELD_GAP_SIZE * parent.getHeight()) * j;
-
-			setX(x + penguinSize * 0.175f);
-			setY(y + a * 0.1f);
-			setWidth(penguinSize * 0.7f);
-			setHeight(getWidth() / 200 * 232);
+		} else {
+			setX(parent.mouseX - this.getWidth() / 2);
+			setY(parent.mouseY - this.getHeight() / 2);
 		}
 	}
 
@@ -119,14 +133,26 @@ public class GuiPenguin extends PrimitiveBase {
 						setFieldY(move.getSetCoordinates()[1]);
 					}
 				}
-			} else {
-				RunMove move = (RunMove) lastMove;
-				if (getFieldX() == move.fromX && getFieldY() == move.fromY) {
-					setFieldX(move.toX);
-					setFieldY(move.toY);
+			} else if (lastMove.getMoveType() == MoveType.RUN) {
+				if (lastMove instanceof RunMove) {
+					RunMove move = (RunMove) lastMove;
+					if (getFieldX() == move.fromX && getFieldY() == move.fromY) {
+						setFieldX(move.toX);
+						setFieldY(move.toY);
+					}
 				}
 			}
 		}
+		System.out.println("ein Pinguin von Spieler " + this.getOwner()
+				+ " steht auf " + this.getFieldX() + ", " + this.getFieldY());
+	}
+
+	public void attachToMouse() {
+		isAttached = true;
+	}
+
+	public void releaseFromMouse() {
+		isAttached = false;
 	}
 
 	public float getX() {
@@ -201,6 +227,10 @@ public class GuiPenguin extends PrimitiveBase {
 	 */
 	private void setFieldY(int fieldY) {
 		this.fieldY = fieldY;
+	}
+
+	public boolean isAttached() {
+		return this.isAttached;
 	}
 
 }

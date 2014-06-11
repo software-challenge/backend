@@ -52,9 +52,9 @@ public class HexField extends PrimitiveBase{
 			parent.vertex(0, a);
 			parent.vertex(b, 0);
 			parent.vertex(2 * b, a);
-			parent.vertex(2 * b, a + c);
-			parent.vertex(b, 2 * a + c);
-			parent.vertex(0, a + c);
+			parent.vertex(2 * b, a + getC());
+			parent.vertex(b, 2 * a + getC());
+			parent.vertex(0, a + getC());
 			parent.vertex(0, a);
 			parent.endShape();
 			parent.fill(0);
@@ -67,7 +67,7 @@ public class HexField extends PrimitiveBase{
 
 	private void calcSize(float width) {
 		b = width / 2;
-		c = b / PApplet.cos(PApplet.radians(30));
+		setC(b / PApplet.cos(PApplet.radians(30)));
 		a = b * PApplet.sin(PApplet.radians(30));
 	}
 	
@@ -116,6 +116,20 @@ public class HexField extends PrimitiveBase{
 
 	public void setFieldY(int fieldY) {
 		this.fieldY = fieldY;
+	}
+
+	/**
+	 * @return the c
+	 */
+	public float getC() {
+		return c;
+	}
+
+	/**
+	 * @param c the c to set
+	 */
+	private void setC(float c) {
+		this.c = c;
 	}
 
 }
