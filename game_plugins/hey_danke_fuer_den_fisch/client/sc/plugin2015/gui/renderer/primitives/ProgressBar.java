@@ -26,9 +26,9 @@ public class ProgressBar extends PrimitiveBase {
 		parent.rect(0, 0, parent.getWidth(), parent.getHeight()
 				* GuiConstants.PROGRESS_BAR_HEIGHT);
 		// Text
-		
-		parent.translate(10, 10);
 		parent.textSize(18);
+		
+		parent.translate(10, parent.textAscent());		
 		parent.fill(GuiConstants.colorText);
 		parent.text("Runde:", 0, 0);
 		parent.translate(0, parent.textDescent() + parent.textAscent());
