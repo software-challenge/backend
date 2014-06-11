@@ -7,6 +7,8 @@ package sc.plugin2015.gui.renderer.primitives;
  */
 
 public class GuiConstants {
+	
+
 	//###### Colors
 	public static int calcColor(int alpha, int r, int g, int b){
 		int col = 0;
@@ -19,6 +21,7 @@ public class GuiConstants {
 	
 	public static final int colorBackGround = calcColor(200,200,200,200);
 	public static final int colorRed = calcColor(255,200,0,0);
+	public static int colorBlue = calcColor(255,0,0,200);
 	public static final int colorGreen = calcColor(255,0,0,255);
 	public static final int colorGrey	= calcColor(255, 50, 68, 70);
 	public static final int colorDarkGrey = calcColor(255,30,30,30);
