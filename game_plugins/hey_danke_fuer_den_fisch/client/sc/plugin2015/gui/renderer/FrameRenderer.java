@@ -163,6 +163,7 @@ public class FrameRenderer extends PApplet {
 		}
 		System.out.println("Update für Spieler mit Nummer" + i);
 		for (int j = 0; j < 4; j++) {
+			System.out.println(" test "+ penguin[i][j].getFieldX());
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
