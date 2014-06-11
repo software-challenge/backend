@@ -27,14 +27,14 @@ public class ProgressBar extends PrimitiveBase {
 				* GuiConstants.PROGRESS_BAR_HEIGHT);
 		// Text
 		parent.textSize(18);
-		
-		parent.translate(10, parent.textAscent());		
+
+		parent.translate(10, parent.textAscent());
 		parent.fill(GuiConstants.colorText);
 		parent.text("Runde:", 0, 0);
-		parent.translate(0, parent.textDescent() + parent.textAscent());
-		
+		// parent.translate(0, parent.textDescent() + parent.textAscent());
+		parent.translate(parent.textWidth("Runde:"), 0);
 		int round = 0;
-		if(parent.currentGameState != null){
+		if (parent.currentGameState != null) {
 			round = parent.currentGameState.getRound();
 		}
 		parent.text(round, 0, 0);
@@ -43,16 +43,20 @@ public class ProgressBar extends PrimitiveBase {
 		parent.translate(parent.textWidth("/"), 0);
 		parent.text(GamePlugin.MAX_TURN_COUNT, 0, 0);
 		parent.popMatrix();
-		
-		
+
 		// Statusbalken
 		parent.pushMatrix();
 
 		parent.stroke(1.0f); // Umrandung
 		parent.fill(GuiConstants.colorDarkGrey); // Filling
 
-		parent.translate(50, parent.getHeight() - 30);
-		parent.rect(0, 0, parent.getWidth() - 60, 20, 7);
+		int balkenWidth = parent.getWidth() - 120;
+		parent.translate(60, parent.getHeight() - 30);
+		parent.rect(0, 0, balkenWidth, 20, 7);
+		parent.fill(GuiConstants.colorHexFields);
+		//parent.noStroke();
+		parent.rect(0, 0, round * (balkenWidth / GamePlugin.MAX_TURN_COUNT),
+				20, 7);
 
 		parent.popMatrix();
 
