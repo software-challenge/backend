@@ -104,14 +104,15 @@ public class GuiPenguin extends PrimitiveBase {
 				System.out.println("SetMove update " + getFieldX());
 				SetMove move = (SetMove) lastMove;
 				if(lastPlayer == PlayerColor.RED) {
-					System.out.println("Roter Spieler war dran im Zug " + turn + ", Berechnung war " + ((- (turn/2)) - 1));
+					System.out.println("Roter Spieler war dran im Zug " + turn + ", Berechnung war " + (- (turn/2) - 1));
 					if(getFieldX() < 0 && (- (turn / 2)) - 1 == getFieldX()) {
 						System.out.println("dieser Pinguin soll setzen " + getFieldX());
 						setFieldX(move.getSetCoordinates()[0]);
 						setFieldY(move.getSetCoordinates()[1]);
 					}
 				} else {
-					if(getFieldX() < 0 && - (turn / 2) == getFieldX()) {
+					System.out.println("Blauer Spieler war dran im Zug " + turn + ", Berechnung war " + (- turn/2));
+					if(getFieldX() < 0 && (- turn / 2) == getFieldX()) {
 						setFieldX(move.getSetCoordinates()[0]);
 						setFieldY(move.getSetCoordinates()[1]);
 					}
