@@ -6,16 +6,23 @@ import processing.core.PImage;
 public class Background {
 	
 	PApplet parent;
-	PImage image;
+	PImage rawImage;
 
 	public Background(PApplet parent) {
 		this.parent = parent;
-		image = parent.loadImage(GuiConstants.BACKGROUND_IMAGE);
+		rawImage = parent.loadImage(GuiConstants.BACKGROUND_IMAGE);
 	}
 	
 	public void draw(){
 		parent.background(GuiConstants.colorBackGround);
-		parent.image(image, 0, 0);
+		PImage img;
+		try {
+			img = (PImage) rawImage.clone();
+		} catch (CloneNotSupportedException e) {
+			img = new PImage();
+		}
+		img.resize(parent.getWidth(), parent.getHeight());
+		parent.image(img, 0, 0);
 	}
 
 }
