@@ -138,7 +138,7 @@ public class FrameRenderer extends PApplet {
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
-		resize();
+		//resize();
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
