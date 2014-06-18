@@ -58,6 +58,7 @@ public class HexField extends PrimitiveBase{
 			parent.vertex(0, a);
 			parent.endShape();
 			parent.fill(0);
+			parent.textSize(15);
 			parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
 			parent.text("" + numFish, 25, 50);
 			parent.popMatrix();

@@ -23,8 +23,10 @@ public class GuiConstants {
 	public static final int colorRed = calcColor(255,200,0,0);
 	public static int colorBlue = calcColor(255,0,0,200);
 	public static final int colorGreen = calcColor(255,0,0,255);
+	public static final int colorLightGrey	= calcColor(255, 100, 100, 100);
 	public static final int colorGrey	= calcColor(255, 50, 68, 70);
 	public static final int colorDarkGrey = calcColor(255,30,30,30);
+	public static final int colorBlack = calcColor(255,0,0,0);
 	public static final int colorSideBarBG = calcColor(200,100,100,100);
 	public static final int colorHexFields = calcColor(240,21,160,177);
 	public static final int colorText = calcColor(255,0,0,0);
@@ -38,7 +40,7 @@ public class GuiConstants {
 	 * Breite des GuiBoard 
 	 * mit parent.width zu multiplizieren
 	 */
-	public static final float GUI_BOARD_WIDHT = 0.8f;
+	public static final float GUI_BOARD_WIDTH = 0.8f;
 	/**
 	 * Höhe des GuiBoard
 	 * zu parent.height zu addieren

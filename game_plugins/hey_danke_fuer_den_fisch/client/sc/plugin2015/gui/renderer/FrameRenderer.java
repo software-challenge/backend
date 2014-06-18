@@ -16,6 +16,7 @@ import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
 import sc.plugin2015.Move;
+import sc.plugin2015.NullMove;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.RunMove;
 import sc.plugin2015.SetMove;
@@ -31,14 +32,6 @@ import sc.plugin2015.gui.renderer.primitives.SideBar;
  * @author fdu
  */
 
-/**
- * @author felix
- *
- */
-/**
- * @author felix
- * 
- */
 public class FrameRenderer extends PApplet {
 
 	/**
@@ -95,7 +88,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void setup() {
-		// this.frameRate(30);
+		//this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
 			size(this.width, this.height, JAVA2D);
@@ -108,7 +101,7 @@ public class FrameRenderer extends PApplet {
 			logger.debug("Using Java2D as Renderer");
 		}
 
-		// noLoop(); // prevent thread from starving everything else
+		//noLoop(); // prevent thread from starving everything else
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
@@ -116,7 +109,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void draw() {
-		// resize();
+		//resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -144,28 +137,27 @@ public class FrameRenderer extends PApplet {
 			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
 		}
 		for (int j = 0; j < 4; j++) {
-			// System.out.println(" test "+ penguin[i][j].getFieldX());
+			//System.out.println(" test "+ penguin[i][j].getFieldX());
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
-		// resize();
+		//resize();
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
-		while (!isUpdated) {
+		while(!isUpdated) {
 			try {
 				Thread.sleep(20);
 				System.out.println("should not appear too often");
-			} catch (InterruptedException e) {
-			}
+			} catch (InterruptedException e) { }
 		}
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
 		System.out.println("turn = " + turn);
-		if ((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
+		if((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
 			System.out.println("Blauer Spieler ist dran");
-			if (id == EPlayerId.PLAYER_ONE) {
+			if(id == EPlayerId.PLAYER_ONE) {
 				System.out.println("Spielerupdate");
 				this.id = EPlayerId.PLAYER_TWO;
 			}
@@ -180,10 +172,24 @@ public class FrameRenderer extends PApplet {
 		return null;
 	}
 
-	public void mouseClicked() {
-		// this.resize();
-		// this.redraw();
-		System.out.println("This size:" + this.width + " - " + this.height);
+	public void mouseClicked(MouseEvent e) {
+		if (humanPlayer) {
+			System.out.println("Mouse clicked");
+			int x = e.getX();
+			int y = e.getY();
+			int player;
+			if (id == EPlayerId.PLAYER_ONE) {
+				player = 0;
+			} else {
+				player = 1;
+			}
+			float buttonX = getWidth() / 2f - 50;
+			float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
+			if(this.currentGameState.getTurn() > 7 && x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
+				System.out.println("Aussetzknopf gedrückt");
+				RenderFacade.getInstance().sendMove(new NullMove());
+			}
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -240,7 +246,7 @@ public class FrameRenderer extends PApplet {
 						}
 					}
 					penguin[player][i].releaseFromMouse();
-					// this.resize();
+//					this.resize();
 					// noLoop(); // auskommentiert, da nichts mehr gezeichnet
 					// wird, auch wenn dies ganz hinten steht... ?
 				}
@@ -262,11 +268,10 @@ public class FrameRenderer extends PApplet {
 						&& y <= guiBoard.getHexFields()[i][j].getY()
 								+ guiBoard.getHexFields()[i][j].getA()
 								+ guiBoard.getHexFields()[i][j].getC()) {
-					/*
-					 * System.out.println("x = " +
-					 * guiBoard.getHexFields()[i][j].getFieldX() + ", y = " +
-					 * guiBoard.getHexFields()[i][j].getFieldY());
-					 */
+					/*System.out.println("x = "
+							+ guiBoard.getHexFields()[i][j].getFieldX()
+							+ ", y = "
+							+ guiBoard.getHexFields()[i][j].getFieldY());*/
 					return new int[] {
 							guiBoard.getHexFields()[i][j].getFieldX(),
 							guiBoard.getHexFields()[i][j].getFieldY() };

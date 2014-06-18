@@ -10,9 +10,12 @@ import sc.plugin2015.gui.renderer.FrameRenderer;
  * 
  */
 public class ProgressBar extends PrimitiveBase {
+	
+	GuiButton button;
 
 	public ProgressBar(FrameRenderer par) {
 		super(par);
+		button = new GuiButton(par);
 	}
 
 	@Override
@@ -61,5 +64,6 @@ public class ProgressBar extends PrimitiveBase {
 		parent.popMatrix();
 
 		parent.popStyle();
+		button.draw();
 	}
 }

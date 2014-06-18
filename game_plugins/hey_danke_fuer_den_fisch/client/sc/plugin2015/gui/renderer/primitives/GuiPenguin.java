@@ -69,7 +69,7 @@ public class GuiPenguin extends PrimitiveBase {
 								- getHeight());
 			} else {
 
-				float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDHT;
+				float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
 
 				float yDimension = parent.height
 						+ GuiConstants.GUI_BOARD_HEIGHT;
