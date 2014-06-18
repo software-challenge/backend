@@ -27,6 +27,7 @@ import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
 import sc.plugin2015.gui.renderer.primitives.ProgressBar;
 import sc.plugin2015.gui.renderer.primitives.SideBar;
+import sc.plugin2015.util.Constants;
 
 /**
  * @author fdu
@@ -123,32 +124,63 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void updateGameState(GameState gameState) {
+		int lastTurn = -1;
+		if(currentGameState != null) {
+			lastTurn = currentGameState.getTurn();
+		}
 		currentGameState = gameState;
 		isUpdated = true;
-		PlayerColor lastPlayerColor;
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
-		int i;
-		if (gameState.getTurn() == 8) {
-			lastPlayerColor = gameState.getCurrentPlayerColor();
-			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0 : 1;
+		if(currentGameState == null || lastTurn < currentGameState.getTurn()) {
+			PlayerColor lastPlayerColor;
+			int i;
+			if (gameState.getTurn() == 8) {
+				lastPlayerColor = gameState.getCurrentPlayerColor();
+				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0 : 1;
+			} else {
+				lastPlayerColor = gameState.getOtherPlayerColor();
+				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
+			}
+			for (int j = 0; j < 4; j++) {
+				//System.out.println(" test "+ penguin[i][j].getFieldX());
+				penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
+						gameState.getTurn());
+			}
 		} else {
-			lastPlayerColor = gameState.getOtherPlayerColor();
-			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
+			int blue = 0;
+			int red = 0;
+			for(int i = 0; i < Constants.ROWS; i++) {
+				for(int j = 0; j < Constants.COLUMNS; j++) {
+					if(gameState.getBoard().getPenguin(i, j) != null) {
+						if(gameState.getBoard().getPenguin(i, j).getOwner() == PlayerColor.BLUE) {
+							penguin[1][blue].setFieldX(i);
+							penguin[1][blue].setFieldY(j);
+							blue++;
+						} else {
+							penguin[0][red].setFieldX(i);
+							penguin[0][red].setFieldY(j);
+							red++;
+						}
+					}
+				}
+			}
+			for(int i = blue + 1; i < 5; i++) {
+				penguin[1][i - 1].setFieldX(- i);
+				penguin[1][i - 1].setFieldY(-1);
+			}
+			for(int i = red + 1; i < 5; i++) {
+				penguin[0][i - 1].setFieldX(- i);
+				penguin[0][i - 1].setFieldY(-1);
+			}
 		}
-		for (int j = 0; j < 4; j++) {
-			//System.out.println(" test "+ penguin[i][j].getFieldX());
-			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
-					gameState.getTurn());
-		}
-		//resize();
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
 		while(!isUpdated) {
 			try {
 				Thread.sleep(20);
-				System.out.println("should not appear too often");
+				//System.out.println("should not appear too often");
 			} catch (InterruptedException e) { }
 		}
 		isUpdated = false;
@@ -156,9 +188,9 @@ public class FrameRenderer extends PApplet {
 		this.id = id;
 		System.out.println("turn = " + turn);
 		if((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
-			System.out.println("Blauer Spieler ist dran");
+			//System.out.println("Blauer Spieler ist dran");
 			if(id == EPlayerId.PLAYER_ONE) {
-				System.out.println("Spielerupdate");
+				//System.out.println("Spielerupdate");
 				this.id = EPlayerId.PLAYER_TWO;
 			}
 		}
@@ -174,7 +206,7 @@ public class FrameRenderer extends PApplet {
 
 	public void mouseClicked(MouseEvent e) {
 		if (humanPlayer) {
-			System.out.println("Mouse clicked");
+			//System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -186,7 +218,7 @@ public class FrameRenderer extends PApplet {
 			float buttonX = getWidth() / 2f - 50;
 			float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
 			if(this.currentGameState.getTurn() > 7 && x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
-				System.out.println("Aussetzknopf gedrückt");
+				//System.out.println("Aussetzknopf gedrückt");
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
