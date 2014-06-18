@@ -143,8 +143,8 @@ public class GuiPenguin extends PrimitiveBase {
 				}
 			}
 		}
-		System.out.println("ein Pinguin von Spieler " + this.getOwner()
-				+ " steht auf " + this.getFieldX() + ", " + this.getFieldY());
+		//System.out.println("ein Pinguin von Spieler " + this.getOwner()
+		//		+ " steht auf " + this.getFieldX() + ", " + this.getFieldY());
 	}
 
 	public void attachToMouse() {
@@ -152,6 +152,10 @@ public class GuiPenguin extends PrimitiveBase {
 	}
 
 	public void releaseFromMouse() {
+		try {
+			Thread.sleep(20);
+			System.out.println("Slept for 20ms");
+		} catch (InterruptedException e){}
 		isAttached = false;
 	}
 
