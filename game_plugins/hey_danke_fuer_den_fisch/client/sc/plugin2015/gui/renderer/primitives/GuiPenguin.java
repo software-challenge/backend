@@ -155,7 +155,7 @@ public class GuiPenguin extends PrimitiveBase {
 	public void releaseFromMouse() {
 		try {
 			Thread.sleep(20);
-			System.out.println("Slept for 20ms");
+			//System.out.println("Slept for 20ms");
 		} catch (InterruptedException e){}
 		isAttached = false;
 	}
