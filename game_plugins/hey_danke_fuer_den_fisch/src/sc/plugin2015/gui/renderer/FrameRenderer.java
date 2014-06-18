@@ -3,7 +3,9 @@
  */
 package sc.plugin2015.gui.renderer;
 
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 import org.slf4j.Logger;
@@ -172,6 +174,7 @@ public class FrameRenderer extends PApplet {
 	public void mouseClicked() {
 		//this.resize();
 		//this.redraw();
+		System.out.println("This size:" + this.width + " - " + this.height);
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -271,8 +274,7 @@ public class FrameRenderer extends PApplet {
 		}
 		return false;
 	}
-
-	public void resize() {
+	public void resize(){
 		background.resize();
 		guiBoard.resize();
 		for (int i = 0; i < 2; i++) {
@@ -280,10 +282,12 @@ public class FrameRenderer extends PApplet {
 				penguin[i][j].resize();
 			}
 		}
-		
-		// testPenguin.resize();
-		//this.redraw();
-
+	}
+	
+	public void setBounds(int x, int y, int width, int height){
+		System.out.println("got an setBounds-rect");
+		super.setBounds(x, y, width, height);
+		this.resize();
 	}
 
 	public void keyPressed() {
