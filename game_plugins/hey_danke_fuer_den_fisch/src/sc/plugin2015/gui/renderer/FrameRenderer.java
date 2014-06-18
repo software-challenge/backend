@@ -40,7 +40,10 @@ public class FrameRenderer extends PApplet {
 
 	public GameState currentGameState;
 	private boolean humanPlayer;
+
 	private EPlayerId id;
+
+	
 
 	private GuiBoard guiBoard;
 	private Background background;
@@ -306,6 +309,14 @@ public class FrameRenderer extends PApplet {
 			new RenderConfigurationDialog(FrameRenderer.this);
 		}
 
+	}
+	
+	public boolean isHumanPlayer() {
+		return humanPlayer;
+	}
+	
+	public EPlayerId getId() {
+		return id;
 	}
 
 }
