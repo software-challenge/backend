@@ -139,7 +139,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void draw() {
-		this.resize();
+		//this.resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();

@@ -1,6 +1,7 @@
 package sc.plugin2015.gui.renderer.primitives;
 
 import sc.plugin2015.gui.renderer.FrameRenderer;
+import sc.plugin2015.gui.renderer.RenderConfiguration;
 
 /**
  * Zeichnet Spielerinformationen (Punkte, Schollen) sowie die Pinguine am Anfang
@@ -36,8 +37,7 @@ public class SideBar extends PrimitiveBase {
 		int redPoints = 0;
 		int redFields = 0;
 		if (parent.currentGameState != null) {
-			redName = parent.currentGameState.getRedPlayer()
-					.getDisplayName();
+			redName = parent.currentGameState.getRedPlayer().getDisplayName();
 			redPoints = parent.currentGameState.getRedPlayer().getPoints();
 			redFields = parent.currentGameState.getRedPlayer().getFields();
 		}
@@ -48,8 +48,7 @@ public class SideBar extends PrimitiveBase {
 		parent.textSize(25);
 		parent.text("Punkte: " + redPoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
-		parent.text("Schollen: " + redFields,0,0);
-		
+		parent.text("Schollen: " + redFields, 0, 0);
 
 		// parent.
 		parent.textSize(30);
@@ -58,21 +57,27 @@ public class SideBar extends PrimitiveBase {
 		String blueName = "";
 		int bluePoints = 0;
 		int blueFields = 0;
-		if(parent.currentGameState != null){
-			blueName = parent.currentGameState.getBluePlayer()
-					.getDisplayName();
+		if (parent.currentGameState != null) {
+			blueName = parent.currentGameState.getBluePlayer().getDisplayName();
 			bluePoints = parent.currentGameState.getBluePlayer().getPoints();
 			blueFields = parent.currentGameState.getBluePlayer().getFields();
 		}
-		
+
 		parent.text(blueName, 0, 0);
 		// Punkte + Schollen
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
 		parent.text("Punkte: " + bluePoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
-		parent.text("Schollen: " + blueFields,0,0);
-		
+		parent.text("Schollen: " + blueFields, 0, 0);
+
+		// Debug Ausgabe
+		if (RenderConfiguration.optionDebug) {
+			parent.translate(0, parent.textAscent() + parent.textDescent());
+			parent.textSize(20);
+			parent.fill(GuiConstants.colorDarkGrey);
+			parent.text(parent.frameRate, 0, 0);
+		}
 
 		parent.popMatrix();
 
