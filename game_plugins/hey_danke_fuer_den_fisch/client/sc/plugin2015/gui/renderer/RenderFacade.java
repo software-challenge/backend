@@ -171,9 +171,11 @@ public class RenderFacade {
 			//panel.setDoubleBuffered(true);
 			panel.setLayout(new BorderLayout());
 			panel.add(frameRenderer, BorderLayout.CENTER);
+			frameRenderer.setBounds(0, 0, 1022, 595);
 			frameRenderer.init();
 			
-			frameRenderer.resize(panel.getSize());
+			
+			//frameRenderer.resize(panel.getSize());
 			//frameRenderer.redraw();
 		}
 		startReceiverThread();

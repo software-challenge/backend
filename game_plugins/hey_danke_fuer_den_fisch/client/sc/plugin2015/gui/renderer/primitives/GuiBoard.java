@@ -54,16 +54,16 @@ public class GuiBoard extends PrimitiveBase{
 
 		}
 		
-		draw();
+		//draw();
 	}
 	
-	public void calculateSize(){
+	public void calculateSize(int width, int height){
 		
 		// die größe eines Hexfield wird anhand der freien Fläche innerhalb des Spielfeldes berechnet
 		
-		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDTH;
+		float xDimension =width*GuiConstants.GUI_BOARD_WIDTH;
 		
-		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
+		float yDimension = height + GuiConstants.GUI_BOARD_HEIGHT;
 		
 		Dimension test = new Dimension((int)xDimension, (int)yDimension);
 		
@@ -94,13 +94,13 @@ public class GuiBoard extends PrimitiveBase{
 				}
 			}
 
-			y = y + (hexFieldSize - getHexFields()[0][0].getA()) + parent.getHeight() * GuiConstants.HEX_FIELD_GAP_SIZE;
+			y = y + (hexFieldSize - getHexFields()[0][0].getA()) + height * GuiConstants.HEX_FIELD_GAP_SIZE;
 
 		}
 	}
 	
-	public void resize(){
-		calculateSize();
+	public void resize(int width, int height){
+		calculateSize(width, height);
 		//draw();
 	}
 
