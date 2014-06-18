@@ -39,6 +39,7 @@ public class FrameRenderer extends PApplet {
 			.getLogger(FrameRenderer.class);
 
 	public GameState currentGameState;
+	private boolean isUpdated;
 	private boolean humanPlayer;
 	private EPlayerId id;
 
@@ -64,6 +65,7 @@ public class FrameRenderer extends PApplet {
 		this.frameRate(30);
 		// logger.debug("calling frameRenderer.size()");
 		this.humanPlayer = false;
+		isUpdated = false;
 		this.id = EPlayerId.OBSERVER;
 
 		RenderConfiguration.loadSettings();
@@ -155,6 +157,7 @@ public class FrameRenderer extends PApplet {
 
 	public void updateGameState(GameState gameState) {
 		currentGameState = gameState;
+		isUpdated = true;
 		PlayerColor lastPlayerColor;
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
@@ -167,7 +170,7 @@ public class FrameRenderer extends PApplet {
 			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
 		}
 		for (int j = 0; j < 4; j++) {
-			System.out.println(" test "+ penguin[i][j].getFieldX());
+			//System.out.println(" test "+ penguin[i][j].getFieldX());
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
@@ -175,7 +178,23 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
+		while(!isUpdated) {
+			try {
+				Thread.sleep(20);
+				System.out.println("should not appear too often");
+			} catch (InterruptedException e) { }
+		}
+		isUpdated = false;
+		int turn = currentGameState.getTurn();
 		this.id = id;
+		System.out.println("turn = " + turn);
+		if((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
+			System.out.println("Blauer Spieler ist dran");
+			if(id == EPlayerId.PLAYER_ONE) {
+				System.out.println("Spielerupdate");
+				this.id = EPlayerId.PLAYER_TWO;
+			}
+		}
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
 
@@ -267,10 +286,10 @@ public class FrameRenderer extends PApplet {
 						&& y <= guiBoard.getHexFields()[i][j].getY()
 								+ guiBoard.getHexFields()[i][j].getA()
 								+ guiBoard.getHexFields()[i][j].getC()) {
-					System.out.println("x = "
+					/*System.out.println("x = "
 							+ guiBoard.getHexFields()[i][j].getFieldX()
 							+ ", y = "
-							+ guiBoard.getHexFields()[i][j].getFieldY());
+							+ guiBoard.getHexFields()[i][j].getFieldY());*/
 					return new int[] {
 							guiBoard.getHexFields()[i][j].getFieldX(),
 							guiBoard.getHexFields()[i][j].getFieldY() };
