@@ -30,7 +30,7 @@ public class SideBar extends PrimitiveBase {
 				parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT);
 		// Text
 		// erster Spieler
-		parent.textSize(30);
+	  	parent.textSize(30);
 		parent.fill(GuiConstants.colorRed);
 		String redName = "";
 		int redPoints = 0;
