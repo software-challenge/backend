@@ -134,11 +134,7 @@ public class FrameRenderer extends PApplet {
 			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
 		}
 		for (int j = 0; j < 4; j++) {
-<<<<<<< HEAD
 			//System.out.println(" test "+ penguin[i][j].getFieldX());
-=======
-			System.out.println(" test " + penguin[i][j].getFieldX());
->>>>>>> 311ff8576a864083035425b9c89f86b0e0fdb48f
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
