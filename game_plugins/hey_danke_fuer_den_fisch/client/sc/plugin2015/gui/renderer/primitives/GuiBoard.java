@@ -16,7 +16,7 @@ public class GuiBoard extends PrimitiveBase{
 		super(parent);
 		setHexFields(new HexField[Constants.ROWS][Constants.COLUMNS]);
 		
-		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDHT;
+		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDTH;
 		
 		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
 		
@@ -61,7 +61,7 @@ public class GuiBoard extends PrimitiveBase{
 		
 		// die größe eines Hexfield wird anhand der freien Fläche innerhalb des Spielfeldes berechnet
 		
-		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDHT;
+		float xDimension =parent.width*GuiConstants.GUI_BOARD_WIDTH;
 		
 		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
 		
