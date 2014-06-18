@@ -102,11 +102,11 @@ public class FrameRenderer extends PApplet {
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
-		resize();
 		redraw();
 	}
 
 	public void draw() {
+		resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -134,15 +134,11 @@ public class FrameRenderer extends PApplet {
 			i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
 		}
 		for (int j = 0; j < 4; j++) {
-<<<<<<< HEAD
 			//System.out.println(" test "+ penguin[i][j].getFieldX());
-=======
-			System.out.println(" test " + penguin[i][j].getFieldX());
->>>>>>> 311ff8576a864083035425b9c89f86b0e0fdb48f
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
-		redraw();
+		resize();
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
@@ -284,7 +280,7 @@ public class FrameRenderer extends PApplet {
 			}
 		}
 		// testPenguin.resize();
-		this.redraw();
+		//this.redraw();
 
 	}
 

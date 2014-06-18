@@ -102,11 +102,11 @@ public class FrameRenderer extends PApplet {
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
-		resize();
 		redraw();
 	}
 
 	public void draw() {
+		resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -138,7 +138,7 @@ public class FrameRenderer extends PApplet {
 			penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 					gameState.getTurn());
 		}
-		redraw();
+		resize();
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
@@ -280,7 +280,7 @@ public class FrameRenderer extends PApplet {
 			}
 		}
 		// testPenguin.resize();
-		this.redraw();
+		//this.redraw();
 
 	}
 
