@@ -45,6 +45,7 @@ public class FrameRenderer extends PApplet {
 	public GameState currentGameState;
 	private boolean isUpdated;
 	private boolean humanPlayer;
+	private int maxTurn;
 
 	private EPlayerId id;
 
@@ -89,6 +90,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void setup() {
+		maxTurn = -1;
 		//this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
@@ -132,7 +134,9 @@ public class FrameRenderer extends PApplet {
 		isUpdated = true;
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
-		if(currentGameState == null || lastTurn < currentGameState.getTurn()) {
+		if(currentGameState == null || lastTurn == currentGameState.getTurn() - 1) {
+			if(maxTurn == currentGameState.getTurn() - 1)
+				maxTurn++;
 			PlayerColor lastPlayerColor;
 			int i;
 			if (gameState.getTurn() == 8) {
@@ -174,6 +178,7 @@ public class FrameRenderer extends PApplet {
 				penguin[0][i - 1].setFieldY(-1);
 			}
 		}
+		System.out.println("maxTurn = " + maxTurn);
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
@@ -205,7 +210,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (humanPlayer) {
+		if (humanPlayer && maxTurn == currentGameState.getTurn()) {
 			//System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
@@ -225,7 +230,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (humanPlayer) {
+		if (humanPlayer && maxTurn == currentGameState.getTurn()) {
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -246,7 +251,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (humanPlayer) {
+		if (humanPlayer && maxTurn == currentGameState.getTurn()) {
 			int x = e.getX();
 			int y = e.getY();
 			int player;
