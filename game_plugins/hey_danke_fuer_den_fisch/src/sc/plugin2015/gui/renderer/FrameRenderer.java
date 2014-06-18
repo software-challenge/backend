@@ -228,7 +228,7 @@ public class FrameRenderer extends PApplet {
 						}
 					}
 					penguin[player][i].releaseFromMouse();
-					this.resize();
+//					this.resize();
 					// noLoop(); // auskommentiert, da nichts mehr gezeichnet
 					// wird, auch wenn dies ganz hinten steht... ?
 				}
