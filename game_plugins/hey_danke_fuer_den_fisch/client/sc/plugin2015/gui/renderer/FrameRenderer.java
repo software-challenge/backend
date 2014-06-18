@@ -14,6 +14,7 @@ import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
 import sc.plugin2015.Move;
+import sc.plugin2015.NullMove;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.RunMove;
 import sc.plugin2015.SetMove;
@@ -169,9 +170,22 @@ public class FrameRenderer extends PApplet {
 		return null;
 	}
 
-	public void mouseClicked() {
-		//this.resize();
-		//this.redraw();
+	public void mouseClicked(MouseEvent e) {
+		if (humanPlayer) {
+			int x = e.getX();
+			int y = e.getY();
+			int player;
+			if (id == EPlayerId.PLAYER_ONE) {
+				player = 0;
+			} else {
+				player = 1;
+			}
+			float buttonX = getWidth() / 2f - 50;
+			float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
+			if(x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
+				RenderFacade.getInstance().sendMove(new NullMove());
+			}
+		}
 	}
 
 	public void mousePressed(MouseEvent e) {
