@@ -7,6 +7,7 @@ public class Background {
 	
 	PApplet parent;
 	PImage rawImage;
+	PImage img;
 
 	public Background(PApplet parent) {
 		this.parent = parent;
@@ -15,14 +16,16 @@ public class Background {
 	
 	public void draw(){
 		parent.background(GuiConstants.colorBackGround);
-		PImage img;
+		parent.image(img, 0, 0);
+	}
+	
+	public void resize(){
 		try {
 			img = (PImage) rawImage.clone();
 		} catch (CloneNotSupportedException e) {
 			img = new PImage();
 		}
 		img.resize(parent.getWidth(), parent.getHeight());
-		parent.image(img, 0, 0);
 	}
 
 }

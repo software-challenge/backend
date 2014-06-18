@@ -85,7 +85,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void setup() {
-		this.frameRate(30);
+		//this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
 			size(this.width, this.height, JAVA2D);
@@ -102,11 +102,11 @@ public class FrameRenderer extends PApplet {
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
-		redraw();
+		resize();
 	}
 
 	public void draw() {
-		resize();
+		//resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -273,12 +273,14 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize() {
+		background.resize();
 		guiBoard.resize();
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].resize();
 			}
 		}
+		
 		// testPenguin.resize();
 		//this.redraw();
 
