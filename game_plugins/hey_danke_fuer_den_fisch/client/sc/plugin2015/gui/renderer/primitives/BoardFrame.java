@@ -1,5 +1,6 @@
 package sc.plugin2015.gui.renderer.primitives;
 
+import sc.plugin2015.EPlayerId;
 import sc.plugin2015.gui.renderer.FrameRenderer;
 
 /**
@@ -22,6 +23,13 @@ public class BoardFrame extends PrimitiveBase {
 		//TODO Farbe in abhängigkeit des aktuellen Spielers setzen.
 		parent.noStroke();
 		parent.fill(GuiConstants.colorGrey);
+		if(parent.isHumanPlayer()){
+			if(parent.getId() == EPlayerId.PLAYER_ONE){
+				parent.fill(GuiConstants.colorRed);
+			}else {
+				parent.fill(GuiConstants.colorBlue);
+			}
+		}
 		
 		parent.rect(0, 0, parent.getWidth(), GuiConstants.frameBorderSize);
 		parent.rect(0, 0, GuiConstants.frameBorderSize, parent.getHeight());
