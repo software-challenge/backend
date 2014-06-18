@@ -172,6 +172,7 @@ public class FrameRenderer extends PApplet {
 
 	public void mouseClicked(MouseEvent e) {
 		if (humanPlayer) {
+			System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -182,7 +183,8 @@ public class FrameRenderer extends PApplet {
 			}
 			float buttonX = getWidth() / 2f - 50;
 			float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
-			if(x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
+			if(this.currentGameState.getTurn() > 7 && x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
+				System.out.println("Aussetzknopf gedrückt");
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
