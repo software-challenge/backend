@@ -48,7 +48,8 @@ public class GuiPenguin extends PrimitiveBase {
 	public void draw() {
 		parent.pushStyle();
 		parent.pushMatrix();
-
+		//TODO put logic into her instead of resize
+		resize();
 		parent.image(penguinImg, getX(), getY(), getWidth(), getHeight());
 
 		parent.popMatrix();
