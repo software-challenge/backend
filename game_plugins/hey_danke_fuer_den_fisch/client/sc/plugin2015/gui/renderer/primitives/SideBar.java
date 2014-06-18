@@ -18,7 +18,6 @@ public class SideBar extends PrimitiveBase {
 
 	@Override
 	public void draw() {
-		// TODO Auto-generated method stub
 		parent.pushStyle();
 
 		parent.stroke(1.0f); // Umrandung
