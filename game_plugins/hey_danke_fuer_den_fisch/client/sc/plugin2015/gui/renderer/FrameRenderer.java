@@ -146,7 +146,7 @@ public class FrameRenderer extends PApplet {
 		while(!isUpdated) {
 			try {
 				Thread.sleep(20);
-				System.out.println("should not appear too often");
+				//System.out.println("should not appear too often");
 			} catch (InterruptedException e) { }
 		}
 		isUpdated = false;
@@ -154,9 +154,9 @@ public class FrameRenderer extends PApplet {
 		this.id = id;
 		System.out.println("turn = " + turn);
 		if((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
-			System.out.println("Blauer Spieler ist dran");
+			//System.out.println("Blauer Spieler ist dran");
 			if(id == EPlayerId.PLAYER_ONE) {
-				System.out.println("Spielerupdate");
+				//System.out.println("Spielerupdate");
 				this.id = EPlayerId.PLAYER_TWO;
 			}
 		}
@@ -172,7 +172,7 @@ public class FrameRenderer extends PApplet {
 
 	public void mouseClicked(MouseEvent e) {
 		if (humanPlayer) {
-			System.out.println("Mouse clicked");
+			//System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -184,7 +184,7 @@ public class FrameRenderer extends PApplet {
 			float buttonX = getWidth() / 2f - 50;
 			float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
 			if(this.currentGameState.getTurn() > 7 && x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
-				System.out.println("Aussetzknopf gedrückt");
+				//System.out.println("Aussetzknopf gedrückt");
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
