@@ -3,7 +3,9 @@
  */
 package sc.plugin2015.gui.renderer;
 
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 import org.slf4j.Logger;
@@ -296,10 +298,17 @@ public class FrameRenderer extends PApplet {
 				penguin[i][j].resize();
 			}
 		}
-		
-		// testPenguin.resize();
-		//this.redraw();
+	}
 
+	/*
+	 * Hack! wenn das Fenster resized wird, wird setBounds aufgerufen. hier
+	 * rufen wir resize auf um die Komponenten auf die richtige größe zu
+	 * bringen.
+	 */
+	public void setBounds(int x, int y, int width, int height) {
+		System.out.println("got an setBounds-rect");
+		super.setBounds(x, y, width, height);
+		this.resize();
 	}
 
 	public void keyPressed() {
