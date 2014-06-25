@@ -3,7 +3,6 @@
  */
 package sc.plugin2015.gui.renderer;
 
-import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -15,7 +14,6 @@ import processing.core.PApplet;
 import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
-import sc.plugin2015.Move;
 import sc.plugin2015.NullMove;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.RunMove;
@@ -87,6 +85,7 @@ public class FrameRenderer extends PApplet {
 		penguin[1][3] = new GuiPenguin(this, -4, -1, PlayerColor.BLUE);
 
 		boardFrame = new BoardFrame(this);
+		logger.debug("Constructor finished");
 	}
 
 	public void setup() {
@@ -94,21 +93,21 @@ public class FrameRenderer extends PApplet {
 		//this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
-			size(this.width, this.height, JAVA2D);
 			logger.debug("Using P2D as Renderer");
+			size(this.width, this.height, JAVA2D);			
 		} else if (RenderConfiguration.optionRenderer.equals("P3D")) {
-			size(this.width, this.height, P3D);
 			logger.debug("Using P3D as Renderer");
+			size(this.width, this.height, P3D);			
 		} else {
-			size(this.width, this.height, P2D);
 			logger.debug("Using Java2D as Renderer");
+			size(this.width, this.height, P2D);			
 		}
 
 		//noLoop(); // prevent thread from starving everything else
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
-		resize();
+		resize(this.width,this.height);
 	}
 
 	public void draw() {
@@ -328,12 +327,12 @@ public class FrameRenderer extends PApplet {
 		return false;
 	}
 
-	public void resize() {
-		background.resize();
-		guiBoard.resize();
+	public void resize(int width, int height) {
+		background.resize(width,height);
+		guiBoard.resize(width, height);
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
-				penguin[i][j].resize();
+				penguin[i][j].resize(width,height);
 			}
 		}
 	}
@@ -344,9 +343,9 @@ public class FrameRenderer extends PApplet {
 	 * bringen.
 	 */
 	public void setBounds(int x, int y, int width, int height) {
-		System.out.println("got an setBounds-rect");
+		System.out.println("got an setBounds- x:" + x + ",y: " + y + ",width: " + width + ",height: "+ height);
 		super.setBounds(x, y, width, height);
-		this.resize();
+		this.resize(width, height);
 	}
 
 	public void keyPressed() {

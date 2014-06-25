@@ -19,13 +19,13 @@ public class Background {
 		parent.image(img, 0, 0);
 	}
 	
-	public void resize(){
+	public void resize(int width, int height){
 		try {
 			img = (PImage) rawImage.clone();
 		} catch (CloneNotSupportedException e) {
 			img = new PImage();
 		}
-		img.resize(parent.getWidth(), parent.getHeight());
+		img.resize(width, height);
 	}
 
 }
