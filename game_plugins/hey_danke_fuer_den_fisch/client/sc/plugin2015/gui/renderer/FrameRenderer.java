@@ -126,6 +126,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void updateGameState(GameState gameState) {
+		humanPlayer = false;
 		int lastTurn = -1;
 		if(currentGameState != null) {
 			lastTurn = currentGameState.getTurn();
@@ -210,7 +211,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (humanPlayer && maxTurn == currentGameState.getTurn()) {
+		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
 			//System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
@@ -230,7 +231,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mousePressed(MouseEvent e) {
-		if (humanPlayer && maxTurn == currentGameState.getTurn()) {
+		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -251,7 +252,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (humanPlayer && maxTurn == currentGameState.getTurn()) {
+		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
 			int x = e.getX();
 			int y = e.getY();
 			int player;
