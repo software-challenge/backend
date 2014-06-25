@@ -126,4 +126,12 @@ public class SetMove extends Move implements Cloneable {
 			return true;
 		return false;
 	}
+
+	public int getSetX() {
+		return setX;
+	}
+
+	public int getSetY() {
+		return setY;
+	}
 }
