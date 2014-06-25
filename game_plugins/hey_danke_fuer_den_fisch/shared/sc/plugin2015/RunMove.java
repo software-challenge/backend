@@ -121,4 +121,20 @@ public class RunMove extends Move implements Cloneable {
 		return new int[] { this.fromX, this.fromY, this.toX, this.toY };
 	}
 
+	public int getFromX() {
+		return fromX;
+	}
+
+	public int getFromY() {
+		return fromY;
+	}
+
+	public int getToX() {
+		return toX;
+	}
+
+	public int getToY() {
+		return toY;
+	}
+
 }

@@ -4,8 +4,8 @@
 package sc.plugin2015.gui.renderer;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,14 @@ import processing.core.PApplet;
 import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
+import sc.plugin2015.Move;
 import sc.plugin2015.NullMove;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.RunMove;
 import sc.plugin2015.SetMove;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.BoardFrame;
+import sc.plugin2015.gui.renderer.primitives.GameEndedDialog;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
@@ -90,28 +92,28 @@ public class FrameRenderer extends PApplet {
 
 	public void setup() {
 		maxTurn = -1;
-		//this.frameRate(30);
+		// this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
 			logger.debug("Using P2D as Renderer");
-			size(this.width, this.height, JAVA2D);			
+			size(this.width, this.height, JAVA2D);
 		} else if (RenderConfiguration.optionRenderer.equals("P3D")) {
 			logger.debug("Using P3D as Renderer");
-			size(this.width, this.height, P3D);			
+			size(this.width, this.height, P3D);
 		} else {
 			logger.debug("Using Java2D as Renderer");
-			size(this.width, this.height, P2D);			
+			size(this.width, this.height, P2D);
 		}
 
-		//noLoop(); // prevent thread from starving everything else
+		// noLoop(); // prevent thread from starving everything else
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
-		resize(this.width,this.height);
+		resize(this.width, this.height);
 	}
 
 	public void draw() {
-		//resize();
+		// resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
@@ -122,41 +124,47 @@ public class FrameRenderer extends PApplet {
 			}
 		}
 		boardFrame.draw();
+		if (currentGameState != null && currentGameState.gameEnded()) {
+			GameEndedDialog.draw(this);
+		}
 	}
 
 	public void updateGameState(GameState gameState) {
 		int lastTurn = -1;
-		if(currentGameState != null) {
+		if (currentGameState != null) {
 			lastTurn = currentGameState.getTurn();
 		}
 		currentGameState = gameState;
 		isUpdated = true;
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
-		if(currentGameState == null || lastTurn == currentGameState.getTurn() - 1) {
-			if(maxTurn == currentGameState.getTurn() - 1)
+		if (currentGameState == null
+				|| lastTurn == currentGameState.getTurn() - 1) {
+			if (maxTurn == currentGameState.getTurn() - 1)
 				maxTurn++;
 			PlayerColor lastPlayerColor;
 			int i;
 			if (gameState.getTurn() == 8) {
 				lastPlayerColor = gameState.getCurrentPlayerColor();
-				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0 : 1;
+				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0
+						: 1;
 			} else {
 				lastPlayerColor = gameState.getOtherPlayerColor();
-				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1 : 0;
+				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1
+						: 0;
 			}
 			for (int j = 0; j < 4; j++) {
-				//System.out.println(" test "+ penguin[i][j].getFieldX());
+				// System.out.println(" test "+ penguin[i][j].getFieldX());
 				penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
 						gameState.getTurn(), humanPlayer);
 			}
 		} else {
 			int blue = 0;
 			int red = 0;
-			for(int i = 0; i < Constants.ROWS; i++) {
-				for(int j = 0; j < Constants.COLUMNS; j++) {
-					if(gameState.getBoard().getPenguin(i, j) != null) {
-						if(gameState.getBoard().getPenguin(i, j).getOwner() == PlayerColor.BLUE) {
+			for (int i = 0; i < Constants.ROWS; i++) {
+				for (int j = 0; j < Constants.COLUMNS; j++) {
+					if (gameState.getBoard().getPenguin(i, j) != null) {
+						if (gameState.getBoard().getPenguin(i, j).getOwner() == PlayerColor.BLUE) {
 							penguin[1][blue].setFieldX(i);
 							penguin[1][blue].setFieldY(j);
 							blue++;
@@ -168,37 +176,38 @@ public class FrameRenderer extends PApplet {
 					}
 				}
 			}
-			for(int i = blue + 1; i < 5; i++) {
-				penguin[1][i - 1].setFieldX(- i);
+			for (int i = blue + 1; i < 5; i++) {
+				penguin[1][i - 1].setFieldX(-i);
 				penguin[1][i - 1].setFieldY(-1);
 			}
-			for(int i = red + 1; i < 5; i++) {
-				penguin[0][i - 1].setFieldX(- i);
+			for (int i = red + 1; i < 5; i++) {
+				penguin[0][i - 1].setFieldX(-i);
 				penguin[0][i - 1].setFieldY(-1);
 			}
 		}
-		//System.out.println("maxTurn = " + maxTurn);
+		// System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
-		if(currentGameState != null && lastTurn == currentGameState.getTurn()) {
+		if (currentGameState != null && lastTurn == currentGameState.getTurn()) {
 			humanPlayer = true;
 		}
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
-		while(!isUpdated) {
+		while (!isUpdated) {
 			try {
 				Thread.sleep(20);
-				//System.out.println("should not appear too often");
-			} catch (InterruptedException e) { }
+				// System.out.println("should not appear too often");
+			} catch (InterruptedException e) {
+			}
 		}
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
 		System.out.println("turn = " + turn);
-		if((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
-			//System.out.println("Blauer Spieler ist dran");
-			if(id == EPlayerId.PLAYER_ONE) {
-				//System.out.println("Spielerupdate");
+		if ((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
+			// System.out.println("Blauer Spieler ist dran");
+			if (id == EPlayerId.PLAYER_ONE) {
+				// System.out.println("Spielerupdate");
 				this.id = EPlayerId.PLAYER_TWO;
 			}
 		}
@@ -214,7 +223,7 @@ public class FrameRenderer extends PApplet {
 
 	public void mouseClicked(MouseEvent e) {
 		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-			//System.out.println("Mouse clicked");
+			// System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -225,8 +234,9 @@ public class FrameRenderer extends PApplet {
 			}
 			float buttonX = getWidth() / 2f - 50;
 			float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
-			if(this.currentGameState.getTurn() > 7 && x > buttonX && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
-				//System.out.println("Aussetzknopf gedrückt");
+			if (this.currentGameState.getTurn() > 7 && x > buttonX
+					&& y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
+				// System.out.println("Aussetzknopf gedrückt");
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
@@ -246,8 +256,23 @@ public class FrameRenderer extends PApplet {
 				if (isPenguinClicked(penguin[player][i], x, y)
 						&& (this.currentGameState.getTurn() > 7 || penguin[player][i]
 								.getFieldX() < 0)) {
-					loop();
+					// loop();
 					penguin[player][i].attachToMouse();
+					List<Move> moves = currentGameState
+							.getPossibleMovesForPenguin(
+									penguin[player][i].getFieldX(),
+									penguin[player][i].getFieldY());
+					for (Move m : moves) {
+						if (m instanceof SetMove) {
+							this.guiBoard.highlightHexField(
+									((SetMove) m).getSetY(),
+									((SetMove) m).getSetX());
+						} else if (m instanceof RunMove) {
+							this.guiBoard.highlightHexField(
+									((RunMove) m).getToY(),
+									((RunMove) m).getToX());
+						}
+					}
 				}
 			}
 		}
@@ -286,11 +311,10 @@ public class FrameRenderer extends PApplet {
 						}
 					}
 					penguin[player][i].releaseFromMouse();
-//					this.resize();
-					// noLoop(); // auskommentiert, da nichts mehr gezeichnet
-					// wird, auch wenn dies ganz hinten steht... ?
+					this.guiBoard.unHighlightAll();
 				}
 			}
+			
 		}
 	}
 
@@ -308,10 +332,11 @@ public class FrameRenderer extends PApplet {
 						&& y <= guiBoard.getHexFields()[i][j].getY()
 								+ guiBoard.getHexFields()[i][j].getA()
 								+ guiBoard.getHexFields()[i][j].getC()) {
-					/*System.out.println("x = "
-							+ guiBoard.getHexFields()[i][j].getFieldX()
-							+ ", y = "
-							+ guiBoard.getHexFields()[i][j].getFieldY());*/
+					/*
+					 * System.out.println("x = " +
+					 * guiBoard.getHexFields()[i][j].getFieldX() + ", y = " +
+					 * guiBoard.getHexFields()[i][j].getFieldY());
+					 */
 					return new int[] {
 							guiBoard.getHexFields()[i][j].getFieldX(),
 							guiBoard.getHexFields()[i][j].getFieldY() };
@@ -331,11 +356,11 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize(int width, int height) {
-		background.resize(width,height);
+		background.resize(width, height);
 		guiBoard.resize(width, height);
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
-				penguin[i][j].resize(width,height);
+				penguin[i][j].resize(width, height);
 			}
 		}
 	}
@@ -346,7 +371,8 @@ public class FrameRenderer extends PApplet {
 	 * bringen.
 	 */
 	public void setBounds(int x, int y, int width, int height) {
-		System.out.println("got an setBounds- x:" + x + ",y: " + y + ",width: " + width + ",height: "+ height);
+		System.out.println("got an setBounds- x:" + x + ",y: " + y + ",width: "
+				+ width + ",height: " + height);
 		super.setBounds(x, y, width, height);
 		this.resize(width, height);
 	}
