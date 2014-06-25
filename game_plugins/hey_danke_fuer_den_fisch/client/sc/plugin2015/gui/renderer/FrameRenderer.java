@@ -4,6 +4,7 @@
 package sc.plugin2015.gui.renderer;
 
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
@@ -45,6 +46,7 @@ public class FrameRenderer extends PApplet {
 	public GameState currentGameState;
 	private boolean isUpdated;
 	private boolean humanPlayer;
+	private boolean humanPlayerMaxTurn;
 	private int maxTurn;
 
 	private EPlayerId id;
@@ -63,6 +65,7 @@ public class FrameRenderer extends PApplet {
 
 		// logger.debug("calling frameRenderer.size()");
 		this.humanPlayer = false;
+		this.humanPlayerMaxTurn = false;
 		isUpdated = false;
 		this.id = EPlayerId.OBSERVER;
 
@@ -142,6 +145,8 @@ public class FrameRenderer extends PApplet {
 				|| lastTurn == currentGameState.getTurn() - 1) {
 			if (maxTurn == currentGameState.getTurn() - 1)
 				maxTurn++;
+				humanPlayerMaxTurn = false;
+			}
 			PlayerColor lastPlayerColor;
 			int i;
 			if (gameState.getTurn() == 8) {
@@ -213,6 +218,7 @@ public class FrameRenderer extends PApplet {
 		}
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
+		humanPlayerMaxTurn = true;
 
 	}
 
@@ -314,7 +320,6 @@ public class FrameRenderer extends PApplet {
 					this.guiBoard.unHighlightAll();
 				}
 			}
-			
 		}
 	}
 
