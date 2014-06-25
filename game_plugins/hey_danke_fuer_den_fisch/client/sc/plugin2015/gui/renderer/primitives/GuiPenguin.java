@@ -20,6 +20,9 @@ public class GuiPenguin extends PrimitiveBase {
 	private PlayerColor owner;
 	private int fieldX;
 	private int fieldY;
+	private int oldFieldX;
+	private int oldFieldY;
+	private boolean isAnimated;
 	private boolean isAttached;
 	private PImage penguinImg;
 
@@ -138,8 +141,45 @@ public class GuiPenguin extends PrimitiveBase {
 		int PenguinHeight = dim.height / 8;
 		return Math.min(PenguinWidth, PenguinHeight);
 	}
+	
+	
+	public void update(Move lastMove, PlayerColor lastPlayer, int turn) { //new update function with animation
+	if (lastMove != null) {
+		setAnimated(true);
+		if (lastMove instanceof SetMove) {
+			SetMove move = (SetMove) lastMove;
+			if (lastPlayer == PlayerColor.RED) {
+				if (getFieldX() < 0 && (-(turn / 2)) - 1 == getFieldX()) {
+					setOldFieldX(getFieldX());
+					setOldFieldY(getFieldY());
+					setFieldX(move.getSetCoordinates()[0]);
+					setFieldY(move.getSetCoordinates()[1]);
+				}
+			} else {
+				if (getFieldX() < 0 && (-turn / 2) == getFieldX()) {
+					setOldFieldX(getFieldX());
+					setOldFieldY(getFieldY());
+					setFieldX(move.getSetCoordinates()[0]);
+					setFieldY(move.getSetCoordinates()[1]);
+				}
+			}
+		} else if (lastMove.getMoveType() == MoveType.RUN) {
+			if (lastMove instanceof RunMove) {
+				RunMove move = (RunMove) lastMove;
+				if (getFieldX() == move.fromX && getFieldY() == move.fromY) {
+					setOldFieldX(getFieldX());
+					setOldFieldY(getFieldY());
+					setFieldX(move.toX);
+					setFieldY(move.toY);
+				}
+			}
+		}
+	}
+	//System.out.println("ein Pinguin von Spieler " + this.getOwner()
+	//		+ " steht auf " + this.getFieldX() + ", " + this.getFieldY());
+}
 
-	public void update(Move lastMove, PlayerColor lastPlayer, int turn) {
+	/*public void update(Move lastMove, PlayerColor lastPlayer, int turn) { //old update function without animation
 		if (lastMove != null) {
 			if (lastMove.getMoveType() == MoveType.SET) {
 				SetMove move = (SetMove) lastMove;
@@ -166,7 +206,7 @@ public class GuiPenguin extends PrimitiveBase {
 		}
 		//System.out.println("ein Pinguin von Spieler " + this.getOwner()
 		//		+ " steht auf " + this.getFieldX() + ", " + this.getFieldY());
-	}
+	}*/
 	
 	public void reposition(GameState gameState) {
 		
@@ -260,6 +300,48 @@ public class GuiPenguin extends PrimitiveBase {
 
 	public boolean isAttached() {
 		return this.isAttached;
+	}
+
+	/**
+	 * @return the oldFieldX
+	 */
+	private int getOldFieldX() {
+		return oldFieldX;
+	}
+
+	/**
+	 * @param oldFieldX the oldFieldX to set
+	 */
+	private void setOldFieldX(int oldFieldX) {
+		this.oldFieldX = oldFieldX;
+	}
+
+	/**
+	 * @return the oldFieldY
+	 */
+	private int getOldFieldY() {
+		return oldFieldY;
+	}
+
+	/**
+	 * @param oldFieldY the oldFieldY to set
+	 */
+	private void setOldFieldY(int oldFieldY) {
+		this.oldFieldY = oldFieldY;
+	}
+
+	/**
+	 * @return the isAnimated
+	 */
+	private boolean isAnimated() {
+		return isAnimated;
+	}
+
+	/**
+	 * @param isAnimated the isAnimated to set
+	 */
+	private void setAnimated(boolean isAnimated) {
+		this.isAnimated = isAnimated;
 	}
 
 
