@@ -131,17 +131,17 @@ public class Game extends RoundBasedGameInstance<Player> {
 					String winnerName = "Gleichstand nach Punkten.";
 					if (stats[0][0] > stats[1][0]) {
 						winner = PlayerColor.RED;
-						winnerName = "Sieg nach Punkten.";
+						winnerName = " Sieg nach Punkten.";
 					} else if (stats[0][0] < stats[1][0]) {
 						winner = PlayerColor.BLUE;
-						winnerName = "Sieg nach Punkten.";
+						winnerName = " Sieg nach Punkten.";
 					} else {
 						if (stats[0][1] > stats[1][1]) {
 							winner = PlayerColor.RED;
-							winnerName = "Sieg nach Feldern.";
+							winnerName = " Sieg nach Feldern.";
 						} else if (stats[0][1] < stats[1][1]) {
 							winner = PlayerColor.BLUE;
-							winnerName = "Sieg nach Feldern.";
+							winnerName = " Sieg nach Feldern.";
 						}
 					}
 
