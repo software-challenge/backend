@@ -1,5 +1,6 @@
 package sc.plugin2015.gui.renderer.primitives;
 
+import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.FrameRenderer;
 import sc.plugin2015.gui.renderer.RenderConfiguration;
 
@@ -31,7 +32,11 @@ public class SideBar extends PrimitiveBase {
 		// Text
 		// erster Spieler
 	  	parent.textSize(30);
-		parent.fill(GuiConstants.colorRed);
+	  	if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.RED)
+	  		parent.fill(GuiConstants.colorRed);
+	  	else
+	  		parent.fill(GuiConstants.colorGrey);
+		//parent.fill(GuiConstants.colorRed);
 		String redName = "";
 		int redPoints = 0;
 		int redFields = 0;
@@ -41,10 +46,15 @@ public class SideBar extends PrimitiveBase {
 			redFields = parent.currentGameState.getRedPlayer().getFields();
 		}
 		parent.translate(20, parent.textAscent() + 20);
+		// passe Textgröße an
+		int preferredTextSize = (int) (30f/parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+		if(!(preferredTextSize > 30))
+			parent.textSize(preferredTextSize);
+		
 		parent.text(redName, 0, 0);
 		// Punkte + Schollen
-		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
+		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Punkte: " + redPoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + redFields, 0, 0);
@@ -52,7 +62,10 @@ public class SideBar extends PrimitiveBase {
 		// parent.
 		parent.textSize(30);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
-		parent.fill(GuiConstants.colorBlue);
+		if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.BLUE)
+	  		parent.fill(GuiConstants.colorBlue);
+	  	else
+	  		parent.fill(GuiConstants.colorGrey);
 		String blueName = "";
 		int bluePoints = 0;
 		int blueFields = 0;
@@ -61,9 +74,16 @@ public class SideBar extends PrimitiveBase {
 			bluePoints = parent.currentGameState.getBluePlayer().getPoints();
 			blueFields = parent.currentGameState.getBluePlayer().getFields();
 		}
+		
+		// passe Textgröße an
+		preferredTextSize = (int) (30f/parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+		if(!(preferredTextSize > 30))
+			parent.textSize(preferredTextSize);
+				
 
 		parent.text(blueName, 0, 0);
 		// Punkte + Schollen
+		parent.textSize(25);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
 		parent.text("Punkte: " + bluePoints, 0, 0);
