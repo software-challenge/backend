@@ -48,32 +48,19 @@ public class GuiPenguin extends PrimitiveBase {
 
 	@Override
 	public void draw() {
-		parent.pushStyle();
-		parent.pushMatrix();
-		//TODO put logic into here instead of resize
-		resize(parent.width,parent.height);
-		parent.image(penguinImg, getX(), getY(), getWidth(), getHeight());
-
-		parent.popMatrix();
-		parent.popStyle();
-
-	}
-
-	public void resize(int width, int height) {
 		if (!isAttached) {
 			if (getFieldX() < 0) {
-				setX((float) (width * (GuiConstants.SIDE_BAR_START_X - (0.05 * (getFieldX() + 1)))));
-				setWidth((float) (width * 0.05));
-				setHeight(getWidth() / 200 * 232);
+				setX((float) (parent.getWidth() * (GuiConstants.SIDE_BAR_START_X - (0.05 * (getFieldX() + 1)))));
+				
 				setY(owner == PlayerColor.RED ? GuiConstants.SIDE_BAR_HEIGHT
-						* height - 2 * getHeight()
-						: GuiConstants.SIDE_BAR_HEIGHT * height
+						* parent.getHeight() - 2 * getHeight()
+						: GuiConstants.SIDE_BAR_HEIGHT *  parent.getHeight()
 								- getHeight());
 			} else {
 
-				float xDimension = width * GuiConstants.GUI_BOARD_WIDTH;
+				float xDimension =  parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
 
-				float yDimension = height
+				float yDimension =  parent.getHeight()
 						+ GuiConstants.GUI_BOARD_HEIGHT;
 
 				Dimension dim = new Dimension((int) xDimension,
@@ -100,19 +87,50 @@ public class GuiPenguin extends PrimitiveBase {
 				float y = startY
 						+ (penguinSize - a)
 						* j
-						+ (GuiConstants.HEX_FIELD_GAP_SIZE * height)
+						+ (GuiConstants.HEX_FIELD_GAP_SIZE * parent.getHeight())
 						* j;
 
 				setX(x + penguinSize * 0.175f);
 				setY(y + a * 0.1f);
-				setWidth(penguinSize * 0.7f);
-				setHeight(getWidth() / 200 * 232);
+				
 
 			}
 		} else {
 			setX(parent.mouseX - this.getWidth() / 2);
 			setY(parent.mouseY - this.getHeight() / 2);
 		}
+		
+		parent.pushStyle();
+		parent.pushMatrix();
+		//TODO put logic into here instead of resize
+		resize(parent.width,parent.height);
+		parent.image(penguinImg, getX(), getY(), getWidth(), getHeight());
+
+		parent.popMatrix();
+		parent.popStyle();
+
+	}
+
+	public void resize(int width, int height) {
+		
+		if (getFieldX() < 0) {
+			setWidth((float) (width * 0.05));
+		} else {
+
+			float xDimension = width * GuiConstants.GUI_BOARD_WIDTH;
+
+			float yDimension = height
+					+ GuiConstants.GUI_BOARD_HEIGHT;
+
+			Dimension dim = new Dimension((int) xDimension,
+					(int) yDimension);
+
+			int penguinSize = calcPenguinSize(dim);
+			setWidth(penguinSize * 0.7f);
+			setHeight(getWidth() / 200 * 232);
+
+		}
+	
 	}
 
 	private int calcPenguinSize(Dimension dim) {
