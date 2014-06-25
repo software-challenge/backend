@@ -125,7 +125,6 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void updateGameState(GameState gameState) {
-		humanPlayer = false;
 		int lastTurn = -1;
 		if(currentGameState != null) {
 			lastTurn = currentGameState.getTurn();
@@ -178,7 +177,8 @@ public class FrameRenderer extends PApplet {
 				penguin[0][i - 1].setFieldY(-1);
 			}
 		}
-		System.out.println("maxTurn = " + maxTurn);
+		//System.out.println("maxTurn = " + maxTurn);
+		humanPlayer = false;
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
