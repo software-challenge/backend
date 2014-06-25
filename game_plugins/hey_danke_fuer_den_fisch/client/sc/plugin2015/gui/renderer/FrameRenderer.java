@@ -43,6 +43,7 @@ public class FrameRenderer extends PApplet {
 	public GameState currentGameState;
 	private boolean isUpdated;
 	private boolean humanPlayer;
+	private boolean humanPlayerMaxTurn;
 	private int maxTurn;
 
 	private EPlayerId id;
@@ -61,6 +62,7 @@ public class FrameRenderer extends PApplet {
 
 		// logger.debug("calling frameRenderer.size()");
 		this.humanPlayer = false;
+		this.humanPlayerMaxTurn = false;
 		isUpdated = false;
 		this.id = EPlayerId.OBSERVER;
 
@@ -134,8 +136,10 @@ public class FrameRenderer extends PApplet {
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
 		if(currentGameState == null || lastTurn == currentGameState.getTurn() - 1) {
-			if(maxTurn == currentGameState.getTurn() - 1)
+			if(maxTurn == currentGameState.getTurn() - 1) {
 				maxTurn++;
+				humanPlayerMaxTurn = false;
+			}
 			PlayerColor lastPlayerColor;
 			int i;
 			if (gameState.getTurn() == 8) {
@@ -179,8 +183,9 @@ public class FrameRenderer extends PApplet {
 		}
 		//System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
-		if(currentGameState != null && lastTurn == currentGameState.getTurn()) {
-			humanPlayer = true;
+		if(currentGameState != null && maxTurn == currentGameState.getTurn()) {
+			humanPlayer = humanPlayerMaxTurn;
+			System.out.println("set humanplayer true***************************************************");
 		}
 	}
 
@@ -204,6 +209,7 @@ public class FrameRenderer extends PApplet {
 		}
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
+		humanPlayerMaxTurn = true;
 
 	}
 
