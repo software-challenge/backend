@@ -20,6 +20,7 @@ import sc.plugin2015.RunMove;
 import sc.plugin2015.SetMove;
 import sc.plugin2015.gui.renderer.primitives.Background;
 import sc.plugin2015.gui.renderer.primitives.BoardFrame;
+import sc.plugin2015.gui.renderer.primitives.GameEndedDialog;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
@@ -124,6 +125,9 @@ public class FrameRenderer extends PApplet {
 			}
 		}
 		boardFrame.draw();
+		if (currentGameState != null && currentGameState.gameEnded()) {
+			GameEndedDialog.draw(this);
+		}
 	}
 
 	public void updateGameState(GameState gameState) {

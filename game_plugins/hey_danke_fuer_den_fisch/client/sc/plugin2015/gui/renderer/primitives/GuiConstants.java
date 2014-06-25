@@ -21,7 +21,7 @@ public class GuiConstants {
 	
 	public static final int colorBackGround = calcColor(200,200,200,200);
 	public static final int colorRed = calcColor(255,200,0,0);
-	public static int colorBlue = calcColor(255,0,0,200);
+	public static final int colorBlue = calcColor(255,0,0,200);
 	public static final int colorGreen = calcColor(255,0,0,255);
 	public static final int colorLightGrey	= calcColor(255, 100, 100, 100);
 	public static final int colorGrey	= calcColor(255, 50, 68, 70);
@@ -30,6 +30,7 @@ public class GuiConstants {
 	public static final int colorSideBarBG = calcColor(200,100,100,100);
 	public static final int colorHexFields = calcColor(240,21,160,177);
 	public static final int colorText = calcColor(255,0,0,0);
+	public static final int colorGreyOut = calcColor(100,30,30,30);
 
 	public static final int frameBorderSize = 5;
 	
@@ -109,5 +110,10 @@ public class GuiConstants {
 	 * Sourcepath to Background Image
 	 */
 	public static final String BACKGROUND_IMAGE = "resource/game/background.jpg";
+	
+	/**
+	 * Relative Size of the Game Ended Dialog
+	 */
+	public static final float GAME_ENDED_SIZE = 0.3f;
 	
 }
