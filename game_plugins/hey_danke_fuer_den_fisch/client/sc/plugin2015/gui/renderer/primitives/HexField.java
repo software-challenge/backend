@@ -25,6 +25,8 @@ public class HexField extends PrimitiveBase{
 	private int fieldY;
 
 	private int numFish = 0;
+	
+	private boolean highlighted = false;
 
 	public HexField(FrameRenderer parent, float startX, float startY, float width, int fieldX, int fieldY) {
 		super(parent);
@@ -44,6 +46,10 @@ public class HexField extends PrimitiveBase{
 			parent.pushStyle();
 			parent.noStroke();
 			parent.fill(GuiConstants.colorHexFields);
+			
+			if(highlighted){
+				parent.stroke(GuiConstants.colorGreen);
+			}
 	
 			parent.pushMatrix();
 			parent.translate(getX(), getY());
@@ -57,6 +63,7 @@ public class HexField extends PrimitiveBase{
 			parent.vertex(0, a + getC());
 			parent.vertex(0, a);
 			parent.endShape();
+			
 			parent.fill(0);
 			parent.textSize(15);
 			parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
@@ -131,6 +138,14 @@ public class HexField extends PrimitiveBase{
 	 */
 	private void setC(float c) {
 		this.c = c;
+	}
+
+	public boolean isHighlighted() {
+		return highlighted;
+	}
+
+	public void setHighlighted(boolean highlighted) {
+		this.highlighted = highlighted;
 	}
 
 }

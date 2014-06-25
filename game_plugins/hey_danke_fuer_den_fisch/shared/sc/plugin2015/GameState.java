@@ -356,24 +356,33 @@ public class GameState implements Cloneable {
 		moves.add(new NullMove());
 		return moves;
 	}
-	
+
 	/**
 	 * Generiert eine Liste aller möglichen Züge für einen bestimmten Pinguin
 	 * nur für den Server relevant
-	 * @param x x-Koordinate des Pinguins
-	 * @param y y-Koordinate des Pinguins
+	 * 
+	 * @param x
+	 *            x-Koordinate des Pinguins
+	 * @param y
+	 *            y-Koordinate des Pinguins
 	 * @return Liste aller möglichen Züge
 	 */
-	public List<Move>getPossibleMovesForPenguin(int x, int y){
+	public List<Move> getPossibleMovesForPenguin(int x, int y) {
 		List<Move> moves = new ArrayList<Move>();
-		if(this.board.hasPinguin(x, y, getCurrentPlayerColor())){
-			moves.addAll(leftOfPenguin(x, y));
-			moves.addAll(rightOfPenguin(x, y));
-			moves.addAll(topLeftOfPenguin(x, y));
-			moves.addAll(bottomRightOfPenguin(x, y));
-			moves.addAll(topRightOfPenguin(x, y));
-			moves.addAll(bottomLeftOfPenguin(x, y));
-			moves.add(new NullMove());
+		if (x < 0 || y < 0) {
+			List<SetMove> setMoves = getPossibleSetMoves();
+			for(SetMove m:setMoves){
+				moves.add(m);
+			}
+		} else {
+			if (this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
+				moves.addAll(leftOfPenguin(x, y));
+				moves.addAll(rightOfPenguin(x, y));
+				moves.addAll(topLeftOfPenguin(x, y));
+				moves.addAll(bottomRightOfPenguin(x, y));
+				moves.addAll(topRightOfPenguin(x, y));
+				moves.addAll(bottomLeftOfPenguin(x, y));
+			}
 		}
 		return moves;
 	}
@@ -546,9 +555,6 @@ public class GameState implements Cloneable {
 		}
 		return moves;
 	}
-	
-	
-	
 
 	/**
 	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem
