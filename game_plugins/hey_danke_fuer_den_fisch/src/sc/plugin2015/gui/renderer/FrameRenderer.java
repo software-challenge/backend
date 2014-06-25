@@ -143,7 +143,11 @@ public class FrameRenderer extends PApplet {
 			guiBoard.update(gameState.getBoard());
 		if (currentGameState == null
 				|| lastTurn == currentGameState.getTurn() - 1) {
+<<<<<<< HEAD
 			if (maxTurn == currentGameState.getTurn() - 1) {
+=======
+			if (maxTurn == currentGameState.getTurn() - 1){
+>>>>>>> 10a062f27220994a8054e6f438f0416be57223c7
 				maxTurn++;
 				humanPlayerMaxTurn = false;
 			}
