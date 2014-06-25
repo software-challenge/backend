@@ -189,7 +189,7 @@ public class FrameRenderer extends PApplet {
 		humanPlayer = false;
 		if(currentGameState != null && maxTurn == currentGameState.getTurn()) {
 			humanPlayer = humanPlayerMaxTurn;
-			System.out.println("set humanplayer true***************************************************");
+			//System.out.println("set humanplayer true***************************************************");
 		}
 	}
 

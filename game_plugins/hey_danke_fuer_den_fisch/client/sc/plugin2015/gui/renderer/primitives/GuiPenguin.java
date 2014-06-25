@@ -125,9 +125,12 @@ public class GuiPenguin extends PrimitiveBase {
 					float newY = y + a * 0.1f;
 					float xDistance = Math.abs(newX - oldX);
 					float yDistance = Math.abs(newY - oldY);
-					int steps;
+					
 					float distance = (float) Math.sqrt(xDistance * xDistance + yDistance * yDistance);
-					if(distance > parent.getWidth() * 0.8f) {
+					float parentDiagonal = (float) Math.sqrt(parent.getHeight() * parent.getHeight() + parent.getWidth() * parent.getWidth());
+					int steps = (int) ((distance/parentDiagonal) * 200f);
+					
+					/*if(distance > parent.getWidth() * 0.8f) {
 						steps = 80;
 					} else if(distance > parent.getWidth() * 0.5f) {
 						steps = 50;
@@ -139,8 +142,8 @@ public class GuiPenguin extends PrimitiveBase {
 						steps = 20;
 					} else {
 						steps = 10;
-					}
-					if(getAnimatedSteps() == steps) {
+					}*/
+					if(getAnimatedSteps() >= steps) {
 						setX(newX);
 						setY(newY);
 						setAnimated(false);
