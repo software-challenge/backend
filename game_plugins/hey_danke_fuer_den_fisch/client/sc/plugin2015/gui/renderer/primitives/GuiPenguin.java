@@ -3,6 +3,7 @@ package sc.plugin2015.gui.renderer.primitives;
 import java.awt.Dimension;
 
 import processing.core.*;
+import sc.plugin2015.GameState;
 import sc.plugin2015.MoveType;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.Move;
@@ -148,6 +149,10 @@ public class GuiPenguin extends PrimitiveBase {
 		//System.out.println("ein Pinguin von Spieler " + this.getOwner()
 		//		+ " steht auf " + this.getFieldX() + ", " + this.getFieldY());
 	}
+	
+	public void reposition(GameState gameState) {
+		
+	}
 
 	public void attachToMouse() {
 		isAttached = true;
@@ -156,7 +161,7 @@ public class GuiPenguin extends PrimitiveBase {
 	public void releaseFromMouse() {
 		try {
 			Thread.sleep(20);
-			System.out.println("Slept for 20ms");
+			//System.out.println("Slept for 20ms");
 		} catch (InterruptedException e){}
 		isAttached = false;
 	}
@@ -216,7 +221,7 @@ public class GuiPenguin extends PrimitiveBase {
 	 * @param fieldX
 	 *            the fieldX to set
 	 */
-	private void setFieldX(int fieldX) {
+	public void setFieldX(int fieldX) {
 		this.fieldX = fieldX;
 	}
 
@@ -231,12 +236,13 @@ public class GuiPenguin extends PrimitiveBase {
 	 * @param fieldY
 	 *            the fieldY to set
 	 */
-	private void setFieldY(int fieldY) {
+	public void setFieldY(int fieldY) {
 		this.fieldY = fieldY;
 	}
 
 	public boolean isAttached() {
 		return this.isAttached;
 	}
+
 
 }
