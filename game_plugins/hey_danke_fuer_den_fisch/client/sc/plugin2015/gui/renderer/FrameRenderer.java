@@ -148,7 +148,7 @@ public class FrameRenderer extends PApplet {
 			for (int j = 0; j < 4; j++) {
 				//System.out.println(" test "+ penguin[i][j].getFieldX());
 				penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
-						gameState.getTurn());
+						gameState.getTurn(), humanPlayer);
 			}
 		} else {
 			int blue = 0;
@@ -179,6 +179,9 @@ public class FrameRenderer extends PApplet {
 		}
 		//System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
+		if(currentGameState != null && lastTurn == currentGameState.getTurn()) {
+			humanPlayer = true;
+		}
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {

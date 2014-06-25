@@ -23,6 +23,7 @@ public class GuiPenguin extends PrimitiveBase {
 	private int oldFieldX;
 	private int oldFieldY;
 	private boolean isAnimated;
+	private int animatedSteps;
 	private boolean isAttached;
 	private PImage penguinImg;
 
@@ -30,6 +31,8 @@ public class GuiPenguin extends PrimitiveBase {
 			PlayerColor owner) {
 		super(parent);
 		isAttached = false;
+		isAnimated = false;
+		setAnimatedSteps(0);
 		if (owner == PlayerColor.RED) {
 			penguinImg = parent.loadImage(GuiConstants.RED_PENGUIN_IMAGE);
 		} else {
@@ -60,6 +63,8 @@ public class GuiPenguin extends PrimitiveBase {
 						: GuiConstants.SIDE_BAR_HEIGHT *  parent.getHeight()
 								- getHeight());
 			} else {
+				float x, oldX, oldY;
+				
 
 				float xDimension =  parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
 
@@ -77,7 +82,6 @@ public class GuiPenguin extends PrimitiveBase {
 
 				float i = getFieldX();
 				float j = getFieldY();
-				float x;
 				if (j % 2 == 0) {
 					// even rows
 					x = startX + penguinSize / 2 + penguinSize * i + 2 * i;
@@ -92,11 +96,51 @@ public class GuiPenguin extends PrimitiveBase {
 						* j
 						+ (GuiConstants.HEX_FIELD_GAP_SIZE * parent.getHeight())
 						* j;
-
-				setX(x + penguinSize * 0.175f);
-				setY(y + a * 0.1f);
 				
+				if(isAnimated) {
+					if(getOldFieldX() < 0) {
+						oldX = (float) (parent.getWidth() * (GuiConstants.SIDE_BAR_START_X - (0.05 * (getOldFieldX() + 1))));
+						oldY = owner == PlayerColor.RED ? GuiConstants.SIDE_BAR_HEIGHT
+								* parent.getHeight() - 2 * getHeight()
+								: GuiConstants.SIDE_BAR_HEIGHT *  parent.getHeight()
+										- getHeight();
+					} else {
+						i = getOldFieldX();
+						j = getOldFieldY();
+						if (j % 2 == 0) {
+							// even rows
+							oldX = startX + penguinSize / 2 + penguinSize * i + 2 * i;
+						} else {
+							// odd rows
+							oldX = startX + penguinSize * i + 2 * i;
+						}
+						oldY = startY
+								+ (penguinSize - a)
+								* j
+								+ (GuiConstants.HEX_FIELD_GAP_SIZE * parent.getHeight())
+								* j;
+						 
+					}
+					float newX = (x + penguinSize * 0.175f);
+					float newY = y + a * 0.1f;
+					float xDistance = Math.abs(newX - oldX);
+					float yDistance = Math.abs(newY - oldY);
+					if(getAnimatedSteps() == 80) {
+						setX(newX);
+						setY(newY);
+						setAnimated(false);
+						setAnimatedSteps(0);
+					} else {
+						setX(getX() + (newX - oldX) * 0.0125f);
+						setY(getY() + (newY - oldY) * 0.0125f);
+						setAnimatedSteps(getAnimatedSteps() + 1);
+					}
+					
+				} else {
 
+					setX(x + penguinSize * 0.175f);
+					setY(y + a * 0.1f);
+				}
 			}
 		} else {
 			setX(parent.mouseX - this.getWidth() / 2);
@@ -143,22 +187,27 @@ public class GuiPenguin extends PrimitiveBase {
 	}
 	
 	
-	public void update(Move lastMove, PlayerColor lastPlayer, int turn) { //new update function with animation
+	public void update(Move lastMove, PlayerColor lastPlayer, int turn, boolean humanPlayer) { //new update function with animation
 	if (lastMove != null) {
-		setAnimated(true);
 		if (lastMove instanceof SetMove) {
 			SetMove move = (SetMove) lastMove;
 			if (lastPlayer == PlayerColor.RED) {
 				if (getFieldX() < 0 && (-(turn / 2)) - 1 == getFieldX()) {
-					setOldFieldX(getFieldX());
-					setOldFieldY(getFieldY());
+					if(!humanPlayer) {
+						setAnimated(true);
+						setOldFieldX(getFieldX());
+						setOldFieldY(getFieldY());
+					}
 					setFieldX(move.getSetCoordinates()[0]);
 					setFieldY(move.getSetCoordinates()[1]);
 				}
 			} else {
 				if (getFieldX() < 0 && (-turn / 2) == getFieldX()) {
-					setOldFieldX(getFieldX());
-					setOldFieldY(getFieldY());
+					if(!humanPlayer) {
+						setAnimated(true);
+						setOldFieldX(getFieldX());
+						setOldFieldY(getFieldY());
+					}
 					setFieldX(move.getSetCoordinates()[0]);
 					setFieldY(move.getSetCoordinates()[1]);
 				}
@@ -167,8 +216,11 @@ public class GuiPenguin extends PrimitiveBase {
 			if (lastMove instanceof RunMove) {
 				RunMove move = (RunMove) lastMove;
 				if (getFieldX() == move.fromX && getFieldY() == move.fromY) {
-					setOldFieldX(getFieldX());
-					setOldFieldY(getFieldY());
+					if(!humanPlayer) {
+						setAnimated(true);
+						setOldFieldX(getFieldX());
+						setOldFieldY(getFieldY());
+					}
 					setFieldX(move.toX);
 					setFieldY(move.toY);
 				}
@@ -342,6 +394,20 @@ public class GuiPenguin extends PrimitiveBase {
 	 */
 	private void setAnimated(boolean isAnimated) {
 		this.isAnimated = isAnimated;
+	}
+
+	/**
+	 * @return the animatedSteps
+	 */
+	private int getAnimatedSteps() {
+		return animatedSteps;
+	}
+
+	/**
+	 * @param animatedSteps the animatedSteps to set
+	 */
+	private void setAnimatedSteps(int animatedSteps) {
+		this.animatedSteps = animatedSteps;
 	}
 
 
