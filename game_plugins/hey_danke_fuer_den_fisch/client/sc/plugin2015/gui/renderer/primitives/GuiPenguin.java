@@ -42,6 +42,7 @@ public class GuiPenguin extends PrimitiveBase {
 				: GuiConstants.SIDE_BAR_HEIGHT * parent.getHeight()
 						- getHeight());
 		this.owner = owner;
+		//System.out.println("Size of penguin is: " + getX() + " - " + getY() );
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class GuiPenguin extends PrimitiveBase {
 			if (getFieldX() < 0) {
 				setX((float) (width * (GuiConstants.SIDE_BAR_START_X - (0.05 * (getFieldX() + 1)))));
 				setWidth((float) (width * 0.05));
-				setHeight(width / 200 * 232);
+				setHeight(getWidth() / 200 * 232);
 				setY(owner == PlayerColor.RED ? GuiConstants.SIDE_BAR_HEIGHT
 						* height - 2 * getHeight()
 						: GuiConstants.SIDE_BAR_HEIGHT * height
