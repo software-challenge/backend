@@ -90,7 +90,7 @@ public class FrameRenderer extends PApplet {
 		penguin[1][3] = new GuiPenguin(this, -4, -1, PlayerColor.BLUE);
 
 		boardFrame = new BoardFrame(this);
-		logger.debug("Constructor finished");
+		//logger.debug("Constructor finished");
 	}
 
 	public void setup() {
@@ -98,13 +98,13 @@ public class FrameRenderer extends PApplet {
 		// this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
-			logger.debug("Using P2D as Renderer");
+			logger.debug("Using Java2D as Renderer");
 			size(this.width, this.height, JAVA2D);
 		} else if (RenderConfiguration.optionRenderer.equals("P3D")) {
 			logger.debug("Using P3D as Renderer");
 			size(this.width, this.height, P3D);
 		} else {
-			logger.debug("Using Java2D as Renderer");
+			logger.debug("Using P2D as Renderer");
 			size(this.width, this.height, P2D);
 		}
 
@@ -113,6 +113,7 @@ public class FrameRenderer extends PApplet {
 
 		// initial draw
 		resize(this.width, this.height);
+		GuiConstants.generateFonts(this);
 	}
 
 	public void draw() {
