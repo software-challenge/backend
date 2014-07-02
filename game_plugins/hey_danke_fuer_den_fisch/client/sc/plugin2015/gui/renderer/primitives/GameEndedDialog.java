@@ -11,7 +11,8 @@ public class GameEndedDialog {
 	public static void draw(FrameRenderer parent) {
 		parent.pushStyle();		
 		parent.pushMatrix();
-		parent.textSize(22);
+		parent.textFont(GuiConstants.fonts[1]);
+		parent.textSize(GuiConstants.fontSizes[1]);
 		//Grey out Game Area
 		parent.fill(GuiConstants.colorGreyOut);
 		parent.rect(0, 0, parent.getWidth(), parent.getHeight());
@@ -57,8 +58,8 @@ public class GameEndedDialog {
 		//# Winning Reason
 		parent.pushMatrix();
 			
-			PFont test = parent.createFont("Arial", 22);
-			parent.textFont(test);
+			parent.textFont(GuiConstants.fonts[1]);
+			parent.textSize(GuiConstants.fontSizes[1]);
 			parent.translate((x - parent.textWidth(winningReason))/2, 5 * parent.textAscent() + parent.textDescent());
 			if(winningReason.contains("Beide Spieler sind")){
 				byte[] b = winningReason.getBytes();
