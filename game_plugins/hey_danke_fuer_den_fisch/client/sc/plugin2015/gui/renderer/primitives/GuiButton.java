@@ -19,7 +19,8 @@ public class GuiButton extends PrimitiveBase {
 		parent.rect(0, 0, 100, 25, 3);
 		parent.translate(3, 20);
 		parent.fill(GuiConstants.colorBlack);
-		parent.textSize(19);
+		parent.textFont(GuiConstants.fonts[0]);
+		parent.textSize(GuiConstants.fontSizes[0]);		
 		parent.text("Aussetzen", 0, 0);
 		
 		
