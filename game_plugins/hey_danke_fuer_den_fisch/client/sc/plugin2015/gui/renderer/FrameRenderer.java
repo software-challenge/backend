@@ -141,8 +141,8 @@ public class FrameRenderer extends PApplet {
 		currentGameState = gameState;
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
-		if (currentGameState == null
-				|| lastTurn == currentGameState.getTurn() - 1) {
+		if ((currentGameState == null
+				|| lastTurn == currentGameState.getTurn() - 1) && RenderConfiguration.optionAnimation == true) {
 
 			if (maxTurn == currentGameState.getTurn() - 1) {
 

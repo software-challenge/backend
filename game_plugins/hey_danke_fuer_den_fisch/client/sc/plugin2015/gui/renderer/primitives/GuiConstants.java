@@ -104,6 +104,21 @@ public class GuiConstants {
 	 * Sourcepath to Background Image
 	 */
 	public static final String BACKGROUND_IMAGE = "resource/game/background.jpg";
+	
+	/**
+	 * Sourcepath to the image with one fish
+	 */
+	public static final String ONE_FISH_IMAGE = "resource/game/one_fish.png";
+	
+	/**
+	 * Sourcepath to the image with two fish
+	 */
+	public static final String TWO_FISH_IMAGE = "resource/game/two_fish.png";
+	
+	/**
+	 * Sourcepath to the image with three fish
+	 */
+	public static final String THREE_FISH_IMAGE = "resource/game/three_fish.png";
 
 	/**
 	 * Relative Size of the Game Ended Dialog
