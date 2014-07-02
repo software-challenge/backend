@@ -194,15 +194,9 @@ public class FrameRenderer extends PApplet {
 		}
 		// System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
-		System.out.println("set humanplayer to false");
 		if (currentGameState != null && maxTurn == currentGameState.getTurn() && humanPlayerMaxTurn) {
 			humanPlayer = true;
 		}
-		System.out.println(humanPlayer? "+++++++++++++++++++++++humanPlayer = true" : "+++++++++++++++++++++++humanPlayer = false");
-		System.out.println(humanPlayerMaxTurn? "+++++++++++++++++++++++humanPlayerMaxTurn = true" : "+++++++++++++++++++++++humanPlayerMaxTurn = false");
-		System.out.println(maxTurn);
-		if (currentGameState != null)
-			System.out.println(currentGameState.getTurn());
 		isUpdated = true;
 	}
 
@@ -210,11 +204,10 @@ public class FrameRenderer extends PApplet {
 		while (!isUpdated) {
 			try {
 				Thread.sleep(20);
-				System.out.println("should not appear too often");
+				//System.out.println("should not appear too often");
 			} catch (InterruptedException e) {
 			}
 		}
-		System.out.println("isUptaded was true at this point");
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
@@ -229,7 +222,6 @@ public class FrameRenderer extends PApplet {
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
 		humanPlayerMaxTurn = true;
-		System.out.println("set humanPlayer to true!");
 	}
 
 	public Image getImage() {
