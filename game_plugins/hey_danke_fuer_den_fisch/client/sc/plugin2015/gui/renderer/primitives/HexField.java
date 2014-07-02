@@ -1,6 +1,7 @@
 package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import sc.plugin2015.Field;
 import sc.plugin2015.gui.renderer.FrameRenderer;
 
@@ -12,6 +13,9 @@ import sc.plugin2015.gui.renderer.FrameRenderer;
  * 
  */
 public class HexField extends PrimitiveBase{
+	// Image
+	private PImage image;
+	
 	// Fields
 	private float x, y;
 	private float a, b, c;
@@ -35,10 +39,26 @@ public class HexField extends PrimitiveBase{
 		calcSize(width);
 		setFieldX(fieldX);
 		setFieldY(fieldY);
+		image = new PImage();
 	}
 
 	public void update(Field field) {
-		numFish = field.getFish();
+		if(numFish != field.getFish()) {
+			numFish = field.getFish();
+			switch(numFish) {
+			case 1:
+				image = parent.loadImage(GuiConstants.ONE_FISH_IMAGE);
+				break;
+			case 2:
+				image = parent.loadImage(GuiConstants.TWO_FISH_IMAGE);
+				break;
+			case 3:
+				image = parent.loadImage(GuiConstants.THREE_FISH_IMAGE);
+				break;
+			default:
+				image = new PImage();
+			}		
+		}
 	}
 
 	public void draw() {
@@ -68,7 +88,9 @@ public class HexField extends PrimitiveBase{
 			parent.textFont(GuiConstants.fonts[0]);
 			parent.textSize(GuiConstants.fontSizes[0]);
 			//parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
-			parent.text("" + numFish, 25, 50);
+			//parent.text("" + numFish, 25, 50);
+
+			parent.image(image, 0, 0, 2 * getB(), 2 * getB());
 			parent.popMatrix();
 			parent.popStyle();
 		}
