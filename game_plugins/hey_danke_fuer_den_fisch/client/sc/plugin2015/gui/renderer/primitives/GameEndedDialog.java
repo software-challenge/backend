@@ -63,7 +63,7 @@ public class GameEndedDialog {
 			if(winningReason.contains("Beide Spieler sind")){
 				byte[] b = winningReason.getBytes();
 				String aUml = "\u00e4";
-				b[59]= aUml.getBytes()[0];
+				b[58]= aUml.getBytes()[0];
 				winningReason = new String(b);
 			}
 			parent.text(winningReason, 0, 0);
