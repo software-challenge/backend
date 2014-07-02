@@ -112,8 +112,9 @@ public class FrameRenderer extends PApplet {
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
-		resize(this.width, this.height);
 		GuiConstants.generateFonts(this);
+		resize(this.width, this.height);
+		
 	}
 
 	public void draw() {
