@@ -11,7 +11,8 @@ public class GameEndedDialog {
 	public static void draw(FrameRenderer parent) {
 		parent.pushStyle();		
 		parent.pushMatrix();
-		parent.textSize(22);
+		parent.textFont(GuiConstants.fonts[1]);
+		parent.textSize(GuiConstants.fontSizes[1]);
 		//Grey out Game Area
 		parent.fill(GuiConstants.colorGreyOut);
 		parent.rect(0, 0, parent.getWidth(), parent.getHeight());
