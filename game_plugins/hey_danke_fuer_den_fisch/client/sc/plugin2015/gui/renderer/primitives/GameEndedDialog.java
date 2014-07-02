@@ -1,5 +1,7 @@
 package sc.plugin2015.gui.renderer.primitives;
 
+import java.nio.charset.Charset;
+
 import processing.core.PFont;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.FrameRenderer;
@@ -54,10 +56,21 @@ public class GameEndedDialog {
 		parent.popMatrix();
 		//# Winning Reason
 		parent.pushMatrix();
+			
 			PFont test = parent.createFont("Arial", 22);
 			parent.textFont(test);
 			parent.translate((x - parent.textWidth(winningReason))/2, 5 * parent.textAscent() + parent.textDescent());
+			if(winningReason.contains("Beide Spieler sind")){
+				byte[] b = winningReason.getBytes();
+				String aUml = "\u00e4";
+				b[59]= aUml.getBytes()[0];
+				winningReason = new String(b);
+			}
 			parent.text(winningReason, 0, 0);
+
+			
+			
+			
 		parent.popMatrix();
 		
 		

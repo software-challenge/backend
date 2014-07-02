@@ -143,11 +143,9 @@ public class FrameRenderer extends PApplet {
 			guiBoard.update(gameState.getBoard());
 		if (currentGameState == null
 				|| lastTurn == currentGameState.getTurn() - 1) {
-<<<<<<< HEAD
+
 			if (maxTurn == currentGameState.getTurn() - 1) {
-=======
-			if (maxTurn == currentGameState.getTurn() - 1){
->>>>>>> 10a062f27220994a8054e6f438f0416be57223c7
+
 				maxTurn++;
 				humanPlayerMaxTurn = false;
 			}
@@ -212,7 +210,7 @@ public class FrameRenderer extends PApplet {
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
-		System.out.println("turn = " + turn);
+		//System.out.println("turn = " + turn);
 		if ((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
 			// System.out.println("Blauer Spieler ist dran");
 			if (id == EPlayerId.PLAYER_ONE) {
@@ -380,8 +378,8 @@ public class FrameRenderer extends PApplet {
 	 * bringen.
 	 */
 	public void setBounds(int x, int y, int width, int height) {
-		System.out.println("got an setBounds- x:" + x + ",y: " + y + ",width: "
-				+ width + ",height: " + height);
+		//System.out.println("got an setBounds- x:" + x + ",y: " + y + ",width: "
+		//		+ width + ",height: " + height);
 		super.setBounds(x, y, width, height);
 		this.resize(width, height);
 	}
