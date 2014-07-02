@@ -287,6 +287,13 @@ public class RenderFacade {
 
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
+			while(gameStateQueue.size() > 0) {
+				try {
+					Thread.sleep(20);
+				} catch (Exception e) {
+					System.err.println(e);
+				}
+			}
 			frameRenderer.requestMove(maxTurn, id);
 		}
 	}
