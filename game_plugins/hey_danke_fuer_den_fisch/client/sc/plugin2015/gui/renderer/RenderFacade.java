@@ -320,7 +320,7 @@ public class RenderFacade {
 			if (errorMessage == null && cause != ScoreCause.REGULAR) {
 
 				String err = "'" + lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0 : 1]
-						+ "' hat keinen Zug gesendet.\\n";
+						+ "' hat keinen Zug gesendet.\n";
 
 				switch (cause) {
 
