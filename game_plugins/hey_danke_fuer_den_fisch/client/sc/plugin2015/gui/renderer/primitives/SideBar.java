@@ -31,12 +31,14 @@ public class SideBar extends PrimitiveBase {
 				parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT);
 		// Text
 		// erster Spieler
-	  	parent.textSize(30);
+		parent.textFont(GuiConstants.fonts[2]);
+	  	parent.textSize(GuiConstants.fontSizes[2]);
+	  	
 	  	if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.RED)
 	  		parent.fill(GuiConstants.colorRed);
 	  	else
 	  		parent.fill(GuiConstants.colorGrey);
-		//parent.fill(GuiConstants.colorRed);
+	  	
 		String redName = "";
 		int redPoints = 0;
 		int redFields = 0;
@@ -47,20 +49,24 @@ public class SideBar extends PrimitiveBase {
 		}
 		parent.translate(20, parent.textAscent() + 20);
 		// passe Textgröße an
-		int preferredTextSize = (int) (30f/parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+		/*int preferredTextSize = (int) (30f/parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
 		if(!(preferredTextSize > 30))
-			parent.textSize(preferredTextSize);
+			parent.textSize(preferredTextSize);*/
 		
 		parent.text(redName, 0, 0);
 		// Punkte + Schollen
-		parent.textSize(25);
+		parent.textFont(GuiConstants.fonts[1]);
+		parent.textSize(GuiConstants.fontSizes[1]);
+		
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Punkte: " + redPoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + redFields, 0, 0);
 
-		// parent.
-		parent.textSize(30);
+		// Blauer Spieler.
+		parent.textFont(GuiConstants.fonts[2]);
+	  	parent.textSize(GuiConstants.fontSizes[2]);
+	  	
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.BLUE)
 	  		parent.fill(GuiConstants.colorBlue);
@@ -76,14 +82,15 @@ public class SideBar extends PrimitiveBase {
 		}
 		
 		// passe Textgröße an
-		preferredTextSize = (int) (30f/parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+		/*preferredTextSize = (int) (30f/parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
 		if(!(preferredTextSize > 30))
-			parent.textSize(preferredTextSize);
+			parent.textSize(preferredTextSize);*/
 				
 
 		parent.text(blueName, 0, 0);
 		// Punkte + Schollen
-		parent.textSize(25);
+		parent.textSize(GuiConstants.fontSizes[1]);
+		parent.textFont(GuiConstants.fonts[1]);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
 		parent.text("Punkte: " + bluePoints, 0, 0);
@@ -93,7 +100,8 @@ public class SideBar extends PrimitiveBase {
 		// Debug Ausgabe
 		if (RenderConfiguration.optionDebug) {
 			parent.translate(0, parent.textAscent() + parent.textDescent());
-			parent.textSize(20);
+			parent.textFont(GuiConstants.fonts[1]);
+			parent.textSize(GuiConstants.fontSizes[1]);
 			parent.fill(GuiConstants.colorDarkGrey);
 			parent.text(parent.frameRate, 0, 0);
 		}
