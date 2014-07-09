@@ -1,0 +1,14 @@
+Fish CC License:
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
+Fish picture:
+http://pixabay.com/en/fish-animals-music-singing-sea-293918/
+
+Tux picture:
+http://commons.wikimedia.org/wiki/File:Tux.png
+Tux license: acknowledge lewing@isc.tamu.edu and The GIMP (http://en.wikipedia.org/wiki/GIMP) if someone asks.
+
+Background picture:
+http://pixabay.com/en/iceberg-ice-floe-antarctica-329852/
+
+Background license:
+http://creativecommons.org/publicdomain/zero/1.0/deed.en
