@@ -116,7 +116,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 						winnerName = "Sieg nach Feldern.";
 					}
 				}
-				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
 						+ winnerName);
 			} else {
 				if (gameState.getCurrentMoveType() == MoveType.RUN
