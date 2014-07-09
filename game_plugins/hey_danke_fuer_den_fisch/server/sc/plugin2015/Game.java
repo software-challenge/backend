@@ -100,7 +100,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 				int[][] stats = gameState.getGameStats();
 				PlayerColor winner = null;
-				String winnerName = "Gleichstand nach Punkten.";
+				String winnerName = "Gleichstand nach Punkten "
+						+ "und nach Schollen.";
 				if (stats[0][0] > stats[1][0]) {
 					winner = PlayerColor.RED;
 					winnerName = "Sieg nach Punkten.";
@@ -110,13 +111,13 @@ public class Game extends RoundBasedGameInstance<Player> {
 				} else {
 					if (stats[0][1] > stats[1][1]) {
 						winner = PlayerColor.RED;
-						winnerName = "Sieg nach Feldern.";
+						winnerName = "Sieg nach Schollen.";
 					} else if (stats[0][1] < stats[1][1]) {
 						winner = PlayerColor.BLUE;
-						winnerName = "Sieg nach Feldern.";
+						winnerName = "Sieg nach Schollen.";
 					}
 				}
-				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\\n"
+				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
 						+ winnerName);
 			} else {
 				if (gameState.getCurrentMoveType() == MoveType.RUN
@@ -128,7 +129,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 					int[][] stats = gameState.getGameStats();
 					PlayerColor winner = null;
-					String winnerName = "Gleichstand nach Punkten.";
+					String winnerName = "Gleichstand nach Punkten "
+							+ "und nach Schollen.";
 					if (stats[0][0] > stats[1][0]) {
 						winner = PlayerColor.RED;
 						winnerName = " Sieg nach Punkten.";
@@ -138,10 +140,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 					} else {
 						if (stats[0][1] > stats[1][1]) {
 							winner = PlayerColor.RED;
-							winnerName = " Sieg nach Feldern.";
+							winnerName = " Sieg nach Schollen.";
 						} else if (stats[0][1] < stats[1][1]) {
 							winner = PlayerColor.BLUE;
-							winnerName = " Sieg nach Feldern.";
+							winnerName = " Sieg nach Schollen.";
 						}
 					}
 

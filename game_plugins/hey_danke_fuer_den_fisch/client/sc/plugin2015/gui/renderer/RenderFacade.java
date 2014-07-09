@@ -224,16 +224,17 @@ public class RenderFacade {
 	}
 
 	private void updateGameState(final GameState gameState, boolean force) {
+		System.out.println("Updated gameState******************************************\n\n\n\n\n\n\n");
 		if (disabled) {
 			return;
 		}
 
 		synchronized (gameStateQueue) {
 			if (first || gameState.getTurn() != lastGameState.getTurn() || force) {
+				gameStateQueue.add(gameState);
 				startReceiverThread();
 				first = false;
 				maxTurn = Math.max(maxTurn, gameState.getTurn());
-				gameStateQueue.add(gameState);
 				lastGameState = gameState;
 				gameStateQueue.notifyAll();
 			}
@@ -284,6 +285,7 @@ public class RenderFacade {
 	 * @param id
 	 */
 	public synchronized void requestMove(EPlayerId id) {
+		System.out.println("requested Move*********************************\n\n\n\n\n\n");
 
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
