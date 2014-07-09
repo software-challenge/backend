@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import sc.plugin2015.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2015.EPlayerId;
 import sc.plugin2015.GameState;
@@ -93,9 +94,9 @@ public class FrameRenderer extends PApplet {
 		//logger.debug("Constructor finished");
 		
 		// load Images
-		GuiConstants.ONE_FISH_IMAGE = this.loadImage(GuiConstants.ONE_FISH_IMAGE_PATH);
-		GuiConstants.TWO_FISH_IMAGE = this.loadImage(GuiConstants.TWO_FISH_IMAGE_PATH);
-		GuiConstants.THREE_FISH_IMAGE = this.loadImage(GuiConstants.THREE_FISH_IMAGE_PATH);
+		GuiConstants.ONE_FISH_IMAGE_ORIGINAL = this.loadImage(GuiConstants.ONE_FISH_IMAGE_PATH);
+		GuiConstants.TWO_FISH_IMAGE_ORIGINAL = this.loadImage(GuiConstants.TWO_FISH_IMAGE_PATH);
+		GuiConstants.THREE_FISH_IMAGE_ORIGINAL = this.loadImage(GuiConstants.THREE_FISH_IMAGE_PATH);
 	}
 
 	public void setup() {
@@ -371,6 +372,20 @@ public class FrameRenderer extends PApplet {
 	public void resize(int width, int height) {
 		background.resize(width, height);
 		guiBoard.resize(width, height);
+		float b = guiBoard.getHexFields()[0][0].getB();
+		b = 0.90f * b;
+		try {
+			GuiConstants.ONE_FISH_IMAGE = (PImage) GuiConstants.ONE_FISH_IMAGE_ORIGINAL.clone();
+			GuiConstants.TWO_FISH_IMAGE = (PImage) GuiConstants.TWO_FISH_IMAGE_ORIGINAL.clone();
+			GuiConstants.THREE_FISH_IMAGE = (PImage) GuiConstants.THREE_FISH_IMAGE_ORIGINAL.clone();
+		} catch (CloneNotSupportedException e) {
+			GuiConstants.ONE_FISH_IMAGE = new PImage();
+			GuiConstants.TWO_FISH_IMAGE = new PImage();
+			GuiConstants.THREE_FISH_IMAGE = new PImage();
+		}
+		GuiConstants.ONE_FISH_IMAGE.resize((int)(2 * b), (int) (2 * b));
+		GuiConstants.TWO_FISH_IMAGE.resize((int)(2 * b), (int) (2 * b));
+		GuiConstants.THREE_FISH_IMAGE.resize((int)(2 * b), (int) (2 * b));
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].resize(width, height);
