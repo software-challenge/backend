@@ -148,5 +148,11 @@ public class GuiConstants {
 	
 	public static PImage THREE_FISH_IMAGE = new PImage();
 	
+	public static PImage ONE_FISH_IMAGE_ORIGINAL = new PImage();
+	
+	public static PImage TWO_FISH_IMAGE_ORIGINAL = new PImage();
+	
+	public static PImage THREE_FISH_IMAGE_ORIGINAL = new PImage();
+	
 
 }
