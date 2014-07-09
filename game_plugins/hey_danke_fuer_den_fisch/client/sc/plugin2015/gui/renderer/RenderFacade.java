@@ -224,7 +224,6 @@ public class RenderFacade {
 	}
 
 	private void updateGameState(final GameState gameState, boolean force) {
-		System.out.println("Updated gameState******************************************\n\n\n\n\n\n\n");
 		if (disabled) {
 			return;
 		}
@@ -285,7 +284,6 @@ public class RenderFacade {
 	 * @param id
 	 */
 	public synchronized void requestMove(EPlayerId id) {
-		System.out.println("requested Move*********************************\n\n\n\n\n\n");
 
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);

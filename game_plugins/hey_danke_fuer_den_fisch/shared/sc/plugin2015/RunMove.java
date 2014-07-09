@@ -70,7 +70,7 @@ public class RunMove extends Move implements Cloneable {
 	}
 
 	@Override
-	void perform(GameState state, Player player) throws InvalidMoveException {
+	public void perform(GameState state, Player player) throws InvalidMoveException {
 		if (this != null) {
 			if (this.fromX < Constants.COLUMNS && this.fromY < Constants.ROWS
 					&& fromX >= 0 && fromY >= 0) {

@@ -23,6 +23,7 @@
 		<!--    currentPlugin                    !-->
 		<delete dir="game_plugins/hey_danke_fuer_den_fisch/build" />
 		<delete dir="game_players/hey_danke_fuer_den_fisch/build" />
+		<delete dir="game_players/hey_danke_fuer_den_fisch_player2/build" />
 		
 	</target>
 
@@ -46,8 +47,8 @@
 		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" /> !-->
 		<!--    currentPlugin                    !-->
 		<ant dir="game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
-		
 		<ant dir="game_players/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" />
 
 		
 		<echo message="Compiling Server and GUI..." />
@@ -205,6 +206,12 @@
 
 		!-->
 
+
+		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar" />
+		<copy todir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar">
+			<fileset dir="./game_players/hey_danke_fuer_den_fisch_player2/build/jar" />
+		</copy>
+
 		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
 		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar">
 			<fileset dir="./game_players/hey_danke_fuer_den_fisch/build/jar" />
@@ -274,6 +281,7 @@
 		!-->
 
 
+		<zip destfile="${out.dir}/zipped/notsosimpleclient-hdfdf-jar.zip" basedir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
 		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-src.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src" />
 		
