@@ -13,8 +13,6 @@ import sc.plugin2015.gui.renderer.FrameRenderer;
  * 
  */
 public class HexField extends PrimitiveBase{
-	// Image
-	private PImage image;
 	
 	// Fields
 	private float x, y;
@@ -39,26 +37,12 @@ public class HexField extends PrimitiveBase{
 		calcSize(width);
 		setFieldX(fieldX);
 		setFieldY(fieldY);
-		image = new PImage();
 	}
 
 	public void update(Field field) {
-		if(numFish != field.getFish()) {
-			numFish = field.getFish();
-			switch(numFish) {
-			case 1:
-				image = parent.loadImage(GuiConstants.ONE_FISH_IMAGE);
-				break;
-			case 2:
-				image = parent.loadImage(GuiConstants.TWO_FISH_IMAGE);
-				break;
-			case 3:
-				image = parent.loadImage(GuiConstants.THREE_FISH_IMAGE);
-				break;
-			default:
-				image = new PImage();
-			}		
-		}
+		
+		numFish = field.getFish();
+			
 	}
 
 	public void draw() {
@@ -89,8 +73,18 @@ public class HexField extends PrimitiveBase{
 			parent.textSize(GuiConstants.fontSizes[0]);
 			//parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
 			//parent.text("" + numFish, 25, 50);
-
-			parent.image(image, 0, 0, 2 * getB(), 2 * getB());
+			switch(numFish){
+			case 1:
+				parent.image(GuiConstants.ONE_FISH_IMAGE, 0, 0, 2 * getB(), 2* getB());
+				break;
+			case 2:
+				parent.image(GuiConstants.TWO_FISH_IMAGE, 0, 0, 2 * getB(), 2* getB());
+				break;
+			case 3:
+				parent.image(GuiConstants.THREE_FISH_IMAGE, 0, 0, 2 * getB(), 2* getB());
+				break;
+			default:
+			}
 			parent.popMatrix();
 			parent.popStyle();
 		}

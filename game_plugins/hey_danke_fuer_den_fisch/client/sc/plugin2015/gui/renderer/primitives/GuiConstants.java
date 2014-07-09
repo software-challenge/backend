@@ -2,6 +2,7 @@ package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 
 /**
  * @author soeren
@@ -108,17 +109,17 @@ public class GuiConstants {
 	/**
 	 * Sourcepath to the image with one fish
 	 */
-	public static final String ONE_FISH_IMAGE = "resource/game/one_fish.png";
+	public static final String ONE_FISH_IMAGE_PATH = "resource/game/one_fish.png";
 	
 	/**
 	 * Sourcepath to the image with two fish
 	 */
-	public static final String TWO_FISH_IMAGE = "resource/game/two_fish.png";
+	public static final String TWO_FISH_IMAGE_PATH = "resource/game/two_fish.png";
 	
 	/**
 	 * Sourcepath to the image with three fish
 	 */
-	public static final String THREE_FISH_IMAGE = "resource/game/three_fish.png";
+	public static final String THREE_FISH_IMAGE_PATH = "resource/game/three_fish.png";
 
 	/**
 	 * Relative Size of the Game Ended Dialog
@@ -140,6 +141,12 @@ public class GuiConstants {
 			fonts[i] = parent.createFont("Arial", fontSizes[i]);
 		}
 	}
+	
+	public static PImage ONE_FISH_IMAGE = new PImage();
+	
+	public static PImage TWO_FISH_IMAGE = new PImage();
+	
+	public static PImage THREE_FISH_IMAGE = new PImage();
 	
 
 }

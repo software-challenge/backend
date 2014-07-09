@@ -91,6 +91,11 @@ public class FrameRenderer extends PApplet {
 
 		boardFrame = new BoardFrame(this);
 		//logger.debug("Constructor finished");
+		
+		// load Images
+		GuiConstants.ONE_FISH_IMAGE = this.loadImage(GuiConstants.ONE_FISH_IMAGE_PATH);
+		GuiConstants.TWO_FISH_IMAGE = this.loadImage(GuiConstants.TWO_FISH_IMAGE_PATH);
+		GuiConstants.THREE_FISH_IMAGE = this.loadImage(GuiConstants.THREE_FISH_IMAGE_PATH);
 	}
 
 	public void setup() {
