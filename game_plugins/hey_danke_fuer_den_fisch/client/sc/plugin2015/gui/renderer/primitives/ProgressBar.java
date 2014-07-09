@@ -54,12 +54,12 @@ public class ProgressBar extends PrimitiveBase {
 		parent.stroke(1.0f); // Umrandung
 		parent.fill(GuiConstants.colorDarkGrey); // Filling
 
-		int balkenWidth = parent.getWidth() - 120;
+		float balkenWidth = parent.getWidth() - 120f;
 		parent.translate(60, parent.getHeight() - 30);
 		parent.rect(0, 0, balkenWidth, 20, 7);
 		parent.fill(GuiConstants.colorHexFields);
 		//parent.noStroke();
-		parent.rect(0, 0, round * (balkenWidth / GamePlugin.MAX_TURN_COUNT),
+		parent.rect(0, 0, (float) round * (balkenWidth / (float) GamePlugin.MAX_TURN_COUNT),
 				20, 7);
 
 		parent.popMatrix();
