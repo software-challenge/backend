@@ -2,6 +2,7 @@ package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.core.PImage;
 
 /**
  * @author soeren
@@ -23,13 +24,14 @@ public class GuiConstants {
 	public static final int colorBackGround = calcColor(200, 200, 200, 200);
 	public static final int colorRed = calcColor(255, 200, 0, 0);
 	public static final int colorBlue = calcColor(255, 0, 0, 200);
-	public static final int colorGreen = calcColor(255, 0, 0, 255);
+	public static final int colorGreen = calcColor(255, 0, 255, 0);
 	public static final int colorLightGrey = calcColor(255, 100, 100, 100);
 	public static final int colorGrey = calcColor(255, 50, 68, 70);
 	public static final int colorDarkGrey = calcColor(255, 30, 30, 30);
 	public static final int colorBlack = calcColor(255, 0, 0, 0);
 	public static final int colorSideBarBG = calcColor(200, 100, 100, 100);
 	public static final int colorHexFields = calcColor(240, 21, 160, 177);
+	public static final int colorHexFieldsHighlight = calcColor(240, 21, 195, 177);
 	public static final int colorText = calcColor(255, 0, 0, 0);
 	public static final int colorGreyOut = calcColor(100, 30, 30, 30);
 
@@ -108,17 +110,17 @@ public class GuiConstants {
 	/**
 	 * Sourcepath to the image with one fish
 	 */
-	public static final String ONE_FISH_IMAGE = "resource/game/one_fish.png";
+	public static final String ONE_FISH_IMAGE_PATH = "resource/game/one_fish.png";
 	
 	/**
 	 * Sourcepath to the image with two fish
 	 */
-	public static final String TWO_FISH_IMAGE = "resource/game/two_fish.png";
+	public static final String TWO_FISH_IMAGE_PATH = "resource/game/two_fish.png";
 	
 	/**
 	 * Sourcepath to the image with three fish
 	 */
-	public static final String THREE_FISH_IMAGE = "resource/game/three_fish.png";
+	public static final String THREE_FISH_IMAGE_PATH = "resource/game/three_fish.png";
 
 	/**
 	 * Relative Size of the Game Ended Dialog
@@ -140,6 +142,18 @@ public class GuiConstants {
 			fonts[i] = parent.createFont("Arial", fontSizes[i]);
 		}
 	}
+	
+	public static PImage ONE_FISH_IMAGE = new PImage();
+	
+	public static PImage TWO_FISH_IMAGE = new PImage();
+	
+	public static PImage THREE_FISH_IMAGE = new PImage();
+	
+	public static PImage ONE_FISH_IMAGE_ORIGINAL = new PImage();
+	
+	public static PImage TWO_FISH_IMAGE_ORIGINAL = new PImage();
+	
+	public static PImage THREE_FISH_IMAGE_ORIGINAL = new PImage();
 	
 
 }
