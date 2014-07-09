@@ -65,9 +65,9 @@ public class NotSoSimpleLogic implements IGameHandler {
 						maxPoints = possibleMovesNextTurn - possibleMovesNextTurnOtherPlayer + 2 * gameState.getBoard().getFishNumber(((RunMove) possibleMoves.get(i)).toX, ((RunMove) possibleMoves.get(i)).toY);
 					}
 				} else {
-					if(possibleMovesNextTurn - possibleMovesNextTurnOtherPlayer > maxPoints) {
+					if(0 > maxPoints) {
 						bestMove = possibleMoves.get(i);
-						maxPoints = possibleMovesNextTurn - possibleMovesNextTurnOtherPlayer;
+						maxPoints = 0;
 					}
 				}
 			} catch (CloneNotSupportedException e) {
