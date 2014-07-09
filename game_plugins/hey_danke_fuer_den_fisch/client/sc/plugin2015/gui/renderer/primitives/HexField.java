@@ -49,10 +49,12 @@ public class HexField extends PrimitiveBase{
 		if(numFish != 0) {
 			parent.pushStyle();
 			parent.noStroke();
-			parent.fill(GuiConstants.colorHexFields);
+			
 			
 			if(highlighted){
-				parent.stroke(GuiConstants.colorGreen);
+				parent.fill(GuiConstants.colorHexFieldsHighlight);
+			} else {
+				parent.fill(GuiConstants.colorHexFields);
 			}
 	
 			parent.pushMatrix();
