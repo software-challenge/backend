@@ -43,6 +43,16 @@
 /game_players/sixpack/build
 /game_players/sixpack/doc
 
+# /game_players/hey_danke_fuer_den_fisch
+/game_players/hey_danke_fuer_den_fisch/bin
+/game_players/hey_danke_fuer_den_fisch/build
+/game_players/hey_danke_fuer_den_fisch/doc
+
+# /game_players/hey_danke_fuer_den_fisch_player2
+/game_players/hey_danke_fuer_den_fisch_player2/bin
+/game_players/hey_danke_fuer_den_fisch_player2/build
+/game_players/hey_danke_fuer_den_fisch_player2/doc
+
 # /game_plugins/hase_und_igel/
 /game_plugins/hase_und_igel/bin
 /game_plugins/hase_und_igel/build
@@ -61,6 +71,11 @@
 /game_plugins/sixpack/bin
 /game_plugins/sixpack/build
 /game_plugins/sixpack/doc
+
+# /game_plugins/hey_danke_fuer_den_fisch
+/game_plugins/hey_danke_fuer_den_fisch/bin
+/game_plugins/hey_danke_fuer_den_fisch/build
+/game_plugins/hey_danke_fuer_den_fisch/doc
 
 # /game_plugins/schaefchen_im_trockenen/
 /game_plugins/schaefchen_im_trockenen/build
