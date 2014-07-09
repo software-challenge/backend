@@ -75,13 +75,13 @@ public class HexField extends PrimitiveBase{
 			//parent.text("" + numFish, 25, 50);
 			switch(numFish){
 			case 1:
-				parent.image(GuiConstants.ONE_FISH_IMAGE, 0, 0, 2 * getB(), 2* getB());
+				parent.image(GuiConstants.ONE_FISH_IMAGE, 0.1f * getB(), 0.1f * getB());
 				break;
 			case 2:
-				parent.image(GuiConstants.TWO_FISH_IMAGE, 0, 0, 2 * getB(), 2* getB());
+				parent.image(GuiConstants.TWO_FISH_IMAGE, 0.1f * getB(), 0.15f * getB());
 				break;
 			case 3:
-				parent.image(GuiConstants.THREE_FISH_IMAGE, 0, 0, 2 * getB(), 2* getB());
+				parent.image(GuiConstants.THREE_FISH_IMAGE, 0.1f * getB(), 0.1f * getB());
 				break;
 			default:
 			}
