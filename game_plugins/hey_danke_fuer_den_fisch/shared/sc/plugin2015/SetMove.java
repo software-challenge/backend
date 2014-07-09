@@ -69,7 +69,7 @@ public class SetMove extends Move implements Cloneable {
 	}
 
 	@Override
-	void perform(GameState state, Player player) throws InvalidMoveException {
+	public void perform(GameState state, Player player) throws InvalidMoveException {
 
 		if ((setY & 1) == 0) {
 			if (setX < COLUMNS - 1 && setY < ROWS && setX >= 0 && setY >= 0) {
