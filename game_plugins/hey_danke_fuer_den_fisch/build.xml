@@ -13,6 +13,23 @@
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<pathelement location="${sdk.dir}/${build.dir}/bin" />
 	</path>
+    
+    <!--Get the git revision -->
+    <target name="git.revision" description="Store git revision in ${repository.version}">
+        <exec executable="git" outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+            <arg value="describe"/>
+            <arg value="--tags"/>
+            <arg value="--always"/>
+            <arg value="HEAD"/>
+        </exec>
+        <condition property="repository.version" value="${git.revision}" else="unknown">
+            <and>
+                <isset property="git.revision"/>
+                <length string="${git.revision}" trim="yes" length="0" when="greater"/>
+            </and>
+        </condition>
+        <echo message= "Git Repository Version: ${repository.version}"/>
+    </target>
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
@@ -36,11 +53,11 @@
 		<javac srcdir="${src.dir}" destdir="${classes.dir}" encoding="utf8" classpathref="classpath" debug="true" debuglevel="lines,vars,source" />
 	</target>
 
-	<target name="jar" depends="scmversion,compile">
+	<target name="jar" depends="scmversion,compile,git.revision">
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
-				<attribute name="${manifest.code.version.key}" value="${version.num}-${TODAY}" />
+				<attribute name="${manifest.code.version.key}" value="${version.num}- ${repository.version}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
 			<fileset dir=".">
