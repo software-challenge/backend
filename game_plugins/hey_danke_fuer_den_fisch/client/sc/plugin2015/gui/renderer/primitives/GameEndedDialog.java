@@ -52,8 +52,14 @@ public class GameEndedDialog {
 		//# Winner
 		
 		parent.pushMatrix();
+		parent.pushStyle();		
+			if (parent.currentGameState.winner() == PlayerColor.RED)
+				parent.fill(GuiConstants.colorRed);
+			else if(parent.currentGameState.winner() == PlayerColor.BLUE)
+				parent.fill(GuiConstants.colorBlue);
 			parent.translate((x - parent.textWidth(message))/2, 3 * parent.textAscent() + parent.textDescent()); //mittig positionieren
-			parent.text(message,0,0);		
+			parent.text(message,0,0);
+			parent.popStyle();
 		parent.popMatrix();
 		//# Winning Reason
 		parent.pushMatrix();
