@@ -31,8 +31,8 @@ uses SysUtils;
   begin
     xmlElement := TDomElement.Create(parent, 'penguin');
     if FPlayerId = PLAYER_RED
-      then xmlElement.SetAttribute('owner', 'red')
-      else xmlElement.SetAttribute('owner', 'blue');
+      then xmlElement.SetAttribute('owner', 'RED')
+      else xmlElement.SetAttribute('owner', 'BLUE');
 
     Result := xmlElement;
   end;
@@ -43,18 +43,17 @@ uses SysUtils;
   begin
     xmlElement := TDomElement.Create(parent, tagName);
     if FPlayerId = PLAYER_RED
-      then xmlElement.SetAttribute('owner', 'red')
-      else xmlElement.SetAttribute('owner', 'blue');
+      then xmlElement.SetAttribute('owner', 'RED')
+      else xmlElement.SetAttribute('owner', 'BLUE');
 
     Result := xmlElement;
   end;
 
   function TPenguin.toString : String;
   begin
-    Result := 'Color (';
     if FPlayerId = PLAYER_RED
-      then Result := Result + 'red)'
-      else Result := Result + 'blue)';
+      then Result := 'r'
+      else Result := 'b';
   end;
 
   constructor TPenguin.Create(Player : Integer);
@@ -64,7 +63,7 @@ uses SysUtils;
 
   constructor TPenguin.Create(xml : TDomNode);
   begin
-    if xml.Attributes.getNamedItem('color').NodeValue = 'red'
+    if xml.Attributes.getNamedItem('owner').NodeValue = 'RED'
       then FPlayerId := PLAYER_RED
       else FPlayerID := PLAYER_BLUE;
   end;

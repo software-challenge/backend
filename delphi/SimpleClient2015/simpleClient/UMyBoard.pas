@@ -75,12 +75,12 @@ implementation
 			end;
 
       Done := false;
-		  if y mod 2 = 1
+		  if y mod 2 = 0
         then CurrentX := x
         else CurrentX := x - 1;
       CurrentY := y - 1;
       while not Done do begin
-			  if (CurrentX < 0) or (CurrentY < 0) or (Self.getPenguin(CurrentX, y) <> nil) or (Self.getFishNumber(CurrentX, y) = 0) then
+			  if (CurrentX < 0) or (CurrentY < 0) or (Self.getPenguin(CurrentX, CurrentY) <> nil) or (Self.getFishNumber(CurrentX, CurrentY) = 0) then
 				  Done := true
 			  else begin
 				  Moves.Add(TRunMove.Create(x, y, CurrentX, CurrentY));
@@ -96,7 +96,7 @@ implementation
         else CurrentX := x + 1;
       CurrentY := y - 1;
       while not Done do begin
-			  if (CurrentX > 7) or (CurrentY < 0) or (Self.getPenguin(CurrentX, y) <> nil) or (Self.getFishNumber(CurrentX, y) = 0) then
+			  if (CurrentX > 7) or (CurrentY < 0) or (Self.getPenguin(CurrentX, CurrentY) <> nil) or (Self.getFishNumber(CurrentX, CurrentY) = 0) then
 				  Done := true
 			  else begin
 				  Moves.Add(TRunMove.Create(x, y, CurrentX, CurrentY));
@@ -112,7 +112,7 @@ implementation
         else CurrentX := x + 1;
       CurrentY := y + 1;
       while not Done do begin
-			  if (CurrentX > 7) or (CurrentY > 7) or (Self.getPenguin(CurrentX, y) <> nil) or (Self.getFishNumber(CurrentX, y) = 0) then
+			  if (CurrentX > 7) or (CurrentY > 7) or (Self.getPenguin(CurrentX, CurrentY) <> nil) or (Self.getFishNumber(CurrentX, CurrentY) = 0) then
 				  Done := true
 			  else begin
 				  Moves.Add(TRunMove.Create(x, y, CurrentX, CurrentY));
@@ -128,7 +128,7 @@ implementation
         else CurrentX := x - 1;
       CurrentY := y + 1;
       while not Done do begin
-			  if (CurrentX < 0) or (CurrentY > 7) or (Self.getPenguin(CurrentX, y) <> nil) or (Self.getFishNumber(CurrentX, y) = 0) then
+			  if (CurrentX < 0) or (CurrentY > 7) or (Self.getPenguin(CurrentX, CurrentY) <> nil) or (Self.getFishNumber(CurrentX, CurrentY) = 0) then
 				  Done := true
 			  else begin
 				  Moves.Add(TRunMove.Create(x, y, CurrentX, CurrentY));
@@ -150,7 +150,7 @@ implementation
 		Moves := TObjectList.Create(true);
 		for x := 0 to 7 do begin
 			for y := 0 to 7 do begin
-        if not Self.hasPenguin(x, y)
+        if (not Self.hasPenguin(x, y)) and (Self.getField(x, y).getFish = 1)
           then Moves.Add(TSetMove.create(x, y));
       end;
     end;
