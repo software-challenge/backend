@@ -8,7 +8,7 @@ unit UClient;
  *)
 
 interface
-  uses UPlayer, UBoard, UDebugHint, UMyBoard, UMove, UField, USetMove, URunMove, UUtil, SysUtils, Classes, UInteger, Contnrs;
+  uses UPlayer, UBoard, UDebugHint, UMyBoard, UMove, UField, USetMove, URunMove, UNullMove, UUtil, SysUtils, Classes, UInteger, Contnrs;
   type
     TClient = class
       protected
@@ -57,33 +57,24 @@ uses UNetwork, Math;
    *)
   function TClient.macheZufallszug : TMove;
     var
-      setMove : TSetMove;     // Der Legezug, der gemacht wird, wenn einer gefunden wird
-      runMove : TRunMove;     // Der Tauschzug, der gemacht wird, wenn kein Legezug gefunden wurde
       possibleSetMoves : TObjectList; // Liste der möglichen Setzzüge
       possibleRunMoves : TObjectList; // Liste der möglichen Laufzüge
-      n, o, x, y: Integer;
     begin
+      Result := TNullMove.Create;
       writeln('');
-      write('Punkte danach: ');
-      writeln(IntToStr(FBoard.getScoresForPlayer(Me.PlayerID)));
-
-      setMove := nil;
-      runMove := nil;
 
       if FBoard.IsRunMove then begin
         possibleRunMoves := FBoard.getPossibleRunMoves();
         if possibleRunMoves.Count > 0 then begin
           Randomize();
-          Result := (TRunMove) possibleRunMoves.Items[Random(possibleRunMoves.Count)];
-        end else
-          Result := TMove.Create;
+          Result := TRunMove(possibleRunMoves.Items[Random(possibleRunMoves.Count)]);
+        end;
       end else begin
         possibleSetMoves := FBoard.getPossibleSetMoves();
         if possibleSetMoves.Count > 0 then begin
           Randomize();
-          Result := possibleSetMoves.Items[Random(possibleSetMoves.Count)];
-        end else
-          Result := TMove.Create;
+          Result := TSetMove(possibleSetMoves.Items[Random(possibleSetMoves.Count)]);
+        end;
       end;
     end;
 
@@ -107,7 +98,7 @@ uses UNetwork, Math;
       end;
 
       write('Punkte vor dem Zug: ');
-      writeln(IntToStr(FBoard.getScoresForPlayer(Me.PlayerID)));
+      writeln(IntToStr(Me.Points));
 
       if FBoard.LastMove <> nil then begin
         LastMove := FBoard.LastMove;
@@ -130,8 +121,6 @@ uses UNetwork, Math;
           mov.addHint(TDebugHint.create('Laufzug'));
         end;
         writeln(mov.toString);
-      end else begin
-        writeln('KEIN ZUG GEFUNDEN!');
       end;
 
       Result := mov;

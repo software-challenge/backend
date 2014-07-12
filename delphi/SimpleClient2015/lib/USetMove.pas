@@ -29,18 +29,17 @@ implementation
 
   function TSetMove.toString : String;
   begin
-    Result := 'SET' + inttostr(FSetX) + ' ' + inttostr(FSetY) + sLineBreak;
+    Result := 'SET (' + inttostr(FSetX) + ', ' + inttostr(FSetY) + ')' + sLineBreak;
   end;
 
   function TSetMove.toXml(parent : TDomDocument) : TDomElement;
   var
     xmlElement : TDomElement;
-    n : Integer;
   begin
     xmlElement := inherited toXml(parent);
     xmlElement.SetAttribute('class', 'SetMove');
     xmlElement.SetAttribute('setX', inttostr(FSetX));
-    xmlElement.SetAttribute('setX', inttostr(FSetY));
+    xmlElement.SetAttribute('setY', inttostr(FSetY));
     Result := xmlElement;
   end;
 
@@ -57,10 +56,6 @@ implementation
   end;
 
   constructor TSetMove.create(xml : TDomNode);
-  var
-    n, o : Integer;
-    XmlStFNode : TDomNode;
-    field : TField;
   begin
     FSetX := StrToInt(xml.Attributes.getNamedItem('setX').NodeValue);
     FSetY := StrToInt(xml.Attributes.getNamedItem('setY').NodeValue);

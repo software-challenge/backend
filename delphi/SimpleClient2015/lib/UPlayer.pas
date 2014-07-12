@@ -20,7 +20,8 @@ interface
         property Fields : Integer read FFields write FFields;
 
         procedure fromXml(xml : TDomNode);
-        constructor Create(DisplayName : String);
+        constructor Create(DisplayName : String); overload;
+        constructor Create(xml : TDomNode); overload;
         destructor destroy; override;
     end;
 
@@ -37,7 +38,7 @@ uses SysUtils, TypInfo;
     FDisplayName := xml.Attributes.getNamedItem('displayName').NodeValue;
     FPoints := StrToInt(xml.Attributes.getNamedItem('points').NodeValue);
     FFields := StrToInt(xml.Attributes.getNamedItem('fields').NodeValue);
-    if xml.NodeName = 'red' then begin
+    if xml.NodeName = 'RED' then begin
       FPlayerID := PLAYER_RED;
     end
     else begin
@@ -52,6 +53,24 @@ uses SysUtils, TypInfo;
       FPoints := 0;
       FFields := 0;
     end;
+
+  constructor TPlayer.Create(xml : TDomNode);
+  var
+    n, o : Integer;
+    XmlSubNode : TDomNode;
+  begin
+    inherited Create;
+    // Receive player data
+    FDisplayName := xml.Attributes.getNamedItem('displayName').NodeValue;
+    FPoints := StrToInt(xml.Attributes.getNamedItem('points').NodeValue);
+    FFields := StrToInt(xml.Attributes.getNamedItem('fields').NodeValue);
+    if xml.NodeName = 'RED' then begin
+      FPlayerID := PLAYER_RED;
+    end
+    else begin
+      FPlayerID := PLAYER_BLUE;
+    end;
+  end;
 
   destructor TPlayer.destroy;
     begin

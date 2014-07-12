@@ -83,13 +83,9 @@ implementation
     for n := 0 to 7 do begin
       for o := 0 to 7 do begin
         field := FFields[n][o];
-        if field.getPenguin() <> nil then begin
-          if Result <> '' then begin
-            Result := Result + sLineBreak;
-          end;
-          Result := Result + field.toString();
-        end;
+        Result := Result + field.toString() + ' ';
       end;
+      Result := Result + sLineBreak;
     end;
   end;
 
@@ -99,13 +95,10 @@ implementation
   function TBoard.getScoresForPlayer(playerId : Integer) : Integer;
   var
     Player : TPlayer;
-    n : Integer;
-    scores : Integer;
   begin
-    Player := getPlayer(playerId);
-    scores := 0;
+    Player := Self.getPlayer(playerId);
 
-    Result := scores;
+    Result := Player.Points;
   end;
 
   (*
@@ -115,8 +108,8 @@ implementation
   var
     Scores : TScores;
   begin
-    Scores[0] := getScoresForPlayer(0);
-    Scores[1] := getScoresForPlayer(1);
+    Scores[0] := Self.getScoresForPlayer(0);
+    Scores[1] := Self.getScoresForPlayer(1);
     Result := Scores;
   end;
 
@@ -141,19 +134,28 @@ implementation
    *)
   procedure TBoard.updateBoard(xml : TDomNode);
   var
-    XmlSubNode, XmlSubSubNode : TDomNode;
-    n, m : Integer;
+    XmlSubNode, XmlSubSubNode, XmlSub : TDomNode;
+    n, m, x, y : Integer;
     Field : TField;
   begin
   //if FLayedStones <> nil then FreeAndNil(FLayedStones);
   //  FLayedStones := TObjectList.Create;
-    for n := 0 to xml.ChildNodes.Length - 1 do begin
-      XmlSubNode := xml.ChildNodes.Item(n);
-      if XmlSubNode.NodeName = 'field-array' then begin
-        for m := 0 to XmlSubNode.ChildNodes.Length - 1 do begin
-          XmlSubSubNode := XmlSubNode.ChildNodes.Item(m);
-          Field := TField.create(XmlSubSubNode);
-          FFields[n][m] := Field;
+    XmlSub := xml.ChildNodes.Item(1);
+    if XmlSub.NodeName = 'fields' then begin
+      x := 0;
+      for n := 0 to XmlSub.ChildNodes.Length - 1 do begin
+        XmlSubNode := XmlSub.ChildNodes.Item(n);
+        if XmlSubNode.NodeName = 'field-array' then begin
+          y := 0;
+          for m := 0 to XmlSubNode.ChildNodes.Length - 1 do begin
+            XmlSubSubNode := XmlSubNode.ChildNodes.Item(m);
+            if XmlSubSubNode.NodeName = 'field' then begin
+              Field := TField.create(XmlSubSubNode);
+              FFields[x][y] := Field;
+              y := y + 1;
+            end;
+          end;
+          x := x + 1;
         end;
       end;
     end;
@@ -192,8 +194,6 @@ implementation
     end;
 
   constructor TBoard.create;
-    var
-      i : Integer;
     begin
       inherited create;
       FPlayers[0] := nil;

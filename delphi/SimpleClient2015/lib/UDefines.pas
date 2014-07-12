@@ -14,10 +14,6 @@ const
   PLAYER_RED            = 0;
   PLAYER_BLUE           = 1;
 
-  // Stones every player can have in their private stash at max at
-  // any given time
-  MAX_PLAYER_STONES     = 6;
-
 type
   TIntArray = Array of Integer;
   TIntIntArray = Array of Array of Integer;

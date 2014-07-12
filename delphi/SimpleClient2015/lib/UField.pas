@@ -51,10 +51,11 @@ uses SysUtils, Math;
 
   function TField.toString : String;
   begin
-    Result := 'Field';
-    if FPenguin <> nil then begin
-      Result := Result + ' with Penguin ' + FPenguin.toString();
-    end;
+    Result := '';
+    if FPenguin <> nil
+      then Result := FPenguin.toString()
+      else Result := inttostr(FFish);
+
   end;
 
   (*
