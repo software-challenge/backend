@@ -19,7 +19,7 @@ interface
         FIsRunMove : Boolean;                  // Is the current move a RunMove?
       public
         function getScores : TScores;
-        function getScoresForPlayer(playerId : Integer) : Integer;
+        function getScoresForPlayer(playerId : Integer) : TScoreData;
         function getPlayer(PlayerID : Integer) : TPlayer;
         function getField(FieldX : Integer; FieldY : Integer) : TField;
 
@@ -48,11 +48,17 @@ interface
 implementation
   uses Math;
 
+  (*
+   * Gibt den Pinguin, der auf einem bestimmten Feld steht, aus
+   *)
   function TBoard.getPenguin(x : Integer; y : Integer) : TPenguin;
   begin
     Result := FFields[x][y].getPenguin();
   end;
 
+  (*
+   * Gibt aus, ob auf einem bestimmten Feld ein Pinguin steht
+   *)
   function TBoard.hasPenguin(x : Integer; y : Integer) : Boolean;
   begin
     if (FFields[x][y].getPenguin() = nil)
@@ -60,6 +66,9 @@ implementation
 		  else Result := true;
   end;
 
+  (*
+   * Gibt aus, ob auf einem bestimmten Feld ein Pinguin eines bestimmten Spielers steht
+   *)
   function TBoard.hasPlayerPenguin(x : Integer; y : Integer; playerId : Integer) : Boolean;
   begin
     if (FFields[x][y].getPenguin() = nil)
@@ -69,6 +78,9 @@ implementation
              else Result := false;
   end;
 
+  (*
+   * Gibt die Anzahl der Fische, die auf einem bestimmten Feld liegen, aus
+   *)
   function TBoard.getFishNumber(x : Integer; y : Integer) : Integer;
   begin
     Result := FFields[x][y].getFish();
@@ -76,13 +88,16 @@ implementation
 
   function TBoard.toString : String;
   var
-    n, o : Integer;
+    x, y : Integer;
     field : TField;
   begin
-    Result := 'Current player: ' + IntToStr(FCurrentPlayer) + sLineBreak;
-    for n := 0 to 7 do begin
-      for o := 0 to 7 do begin
-        field := FFields[n][o];
+    Result := 'Current player: ' + IntToStr(FCurrentPlayer) + sLineBreak + sLineBreak
+              + '  ' + char(186) + ' 0 1 2 3 4 5 6 7' + sLineBreak
+              + char(205) + char(205) + char(206) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + char(205) + sLineBreak;
+    for y := 0 to 7 do begin
+      Result := Result + inttostr(y) + ' ' + char(186) + ' ';
+      for x := 0 to 7 do begin
+        field := FFields[x][y];
         Result := Result + field.toString() + ' ';
       end;
       Result := Result + sLineBreak;
@@ -92,13 +107,15 @@ implementation
   (*
    * Returns the scores for the player with the given player ID
    *)
-  function TBoard.getScoresForPlayer(playerId : Integer) : Integer;
+  function TBoard.getScoresForPlayer(playerId : Integer) : TScoreData;
   var
     Player : TPlayer;
+    ScoreData : TScoreData;
   begin
     Player := Self.getPlayer(playerId);
-
-    Result := Player.Points;
+    ScoreData[POINTS_ID] := Player.Points;
+    ScoreData[FIELDS_ID] := Player.Fields;
+    Result := ScoreData;
   end;
 
   (*
@@ -126,11 +143,12 @@ implementation
    *)
   procedure TBoard.updateLastMove(xml : TDomNode);
   begin
+    FreeAndNil(FLastMove);
     FLastMove := TMove.fromXml(xml);
   end;
 
   (*
-   * Update the field and stones with the given XML data
+   * Update the field with the given XML data
    *)
   procedure TBoard.updateBoard(xml : TDomNode);
   var
@@ -138,8 +156,6 @@ implementation
     n, m, x, y : Integer;
     Field : TField;
   begin
-  //if FLayedStones <> nil then FreeAndNil(FLayedStones);
-  //  FLayedStones := TObjectList.Create;
     XmlSub := xml.ChildNodes.Item(1);
     if XmlSub.NodeName = 'fields' then begin
       x := 0;
@@ -151,6 +167,7 @@ implementation
             XmlSubSubNode := XmlSubNode.ChildNodes.Item(m);
             if XmlSubSubNode.NodeName = 'field' then begin
               Field := TField.create(XmlSubSubNode);
+              FreeAndNil(FFields[x][y]);
               FFields[x][y] := Field;
               y := y + 1;
             end;
@@ -163,8 +180,10 @@ implementation
 
   destructor TBoard.destroy;
   begin
-  //  FreeAndNil(FNextStones);
-  //  FreeAndNil(FLayedStones);
+    FreeAndNil(FPlayers[0]);
+    FreeAndNil(FPlayers[0]);
+    FreeAndNil(FFields);
+    FreeAndNil(FLastMove);
     inherited;
   end;
 
@@ -189,6 +208,8 @@ implementation
    *)
   procedure TBoard.updatePlayers(player1 : TPlayer; player2 : TPlayer);
     begin
+      FreeAndNil(FPlayers[0]);
+      FreeAndNil(FPlayers[0]);
       FPlayers[0] := player1;
       FPlayers[1] := player2;
     end;
@@ -196,7 +217,7 @@ implementation
   constructor TBoard.create;
     begin
       inherited create;
-      FPlayers[0] := nil;
-      FPlayers[1] := nil;
+      FPlayers[0] := TPlayer.Create;
+      FPlayers[1] := TPlayer.Create;
     end;
 end.

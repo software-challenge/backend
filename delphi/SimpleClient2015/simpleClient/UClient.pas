@@ -46,14 +46,13 @@ uses UNetwork, Math;
   end;
 
   (*
-   * Macht einen mehr oder weniger zufällig ausgewählten Zug.
+   * Macht einen zufällig ausgewählten Zug.
    *
    * 1. Fall: Mache einen Laufzug
    *
-   * 2. Fall:
-   * Mache einen Setzzug
+   * 2. Fall: Mache einen Setzzug
    *
-   * Falls kein Zug möglich ist, wird ein leerer Zug gesendet.
+   * Falls kein Zug möglich ist, wird ein Aussetzzug gesendet.
    *)
   function TClient.macheZufallszug : TMove;
     var
@@ -66,13 +65,11 @@ uses UNetwork, Math;
       if FBoard.IsRunMove then begin
         possibleRunMoves := FBoard.getPossibleRunMoves();
         if possibleRunMoves.Count > 0 then begin
-          Randomize();
           Result := TRunMove(possibleRunMoves.Items[Random(possibleRunMoves.Count)]);
         end;
       end else begin
         possibleSetMoves := FBoard.getPossibleSetMoves();
         if possibleSetMoves.Count > 0 then begin
-          Randomize();
           Result := TSetMove(possibleSetMoves.Items[Random(possibleSetMoves.Count)]);
         end;
       end;
@@ -88,22 +85,22 @@ uses UNetwork, Math;
       mov : TMove;
     begin
       // Die beiden Spieler zur Übersicht als Ich und Gegner ordnen
-      if(FPlayers[0].PlayerID = FMyId) then begin
-        Me := FPlayers[0];
-        Opponent := FPlayers[1];
+      if(FBoard.getPlayer(0).PlayerID = FMyId) then begin
+        Me := FBoard.getPlayer(0);
+        Opponent := FBoard.getPlayer(1);
       end
       else begin
-        me := FPlayers[1];
-        opponent := FPlayers[0];
+        me := FBoard.getPlayer(1);
+        opponent := FBoard.getPlayer(0);
       end;
 
-      write('Punkte vor dem Zug: ');
-      writeln(IntToStr(Me.Points));
+      write('(Punkte, Felder) vor dem Zug: ');
+      writeln('(' + IntToStr(Me.Points) + ', ' + IntToStr(Me.Fields) + ')' + sLineBreak);
 
       if FBoard.LastMove <> nil then begin
         LastMove := FBoard.LastMove;
         write('Letzter Zug: ');
-        writeln(FBoard.LastMove.toString());
+        writeln(FBoard.LastMove.toString() + sLineBreak);
       end;
 
       writeln(FBoard.toString());
@@ -119,6 +116,9 @@ uses UNetwork, Math;
         end else if mov is TRunMove then begin
           writeln('Laufzug');
           mov.addHint(TDebugHint.create('Laufzug'));
+        end else begin
+          writeln('Aussetzzug');
+          mov.addHint(TDebugHint.create('Aussetzzug'));
         end;
         writeln(mov.toString);
       end;

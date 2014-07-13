@@ -1,8 +1,7 @@
 unit URunMove;
 
 (*
- * Move that exchanges one or more of the owned stones for new ones from
- * the open stash.
+ * Move that moves one Penguin on the board
  *)
 
 interface
@@ -74,7 +73,6 @@ implementation
 
   destructor TRunMove.destroy;
     begin
- //     FStones.Free;
       inherited;
     end;
 

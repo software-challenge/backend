@@ -1,13 +1,13 @@
 
 --- Delphi-Client ---
 
-Version: 2014_r2
+Version: 2015_r1
 
 Einleitung
 ===========
 
-Dies ist der Delphi SimpleClient fur das Spiel "Sixpack" 
-der Software Challenge 2014.
+Dies ist der Delphi SimpleClient fur das Spiel "Hey, Danke für den Fisch!" 
+der Software Challenge 2015.
 
 Der Client ist in Delphi 7 geschrieben, sollte aber auch unter Delphi 6 und
 evtl. Delphi 5 problemlos funktionieren.
@@ -19,7 +19,7 @@ Entwicklung
 Das Projekt öffnen
 -------------------
 
-Die Projektdatei src/simpleClient/simpleClient2014.dpr kann einfach in
+Die Projektdatei src/simpleClient/simpleClient2015.dpr kann einfach in
 Borland Delphi geöffnet werden. Der Client kann dann direkt aus der
 Entwicklungsumgebung heraus gestartet werden.
 
@@ -73,4 +73,4 @@ jederzeit gerne im Forum oder per E-Mail zur Verfügung.
 Bei Fragen, sollten Fehler auftreten oder Sie Informationen/Funktionen vermissen, 
 können Sie mich auch jederzeit gerne direkt kontaktieren per E-Mail unter
 
-fewking@paniccrew.de (Sven Casimir)
+rtd@informatik.uni-kiel.de (Ralf-Tobias Diekert)

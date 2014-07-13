@@ -9,7 +9,7 @@ interface
   type
     TPenguin = class
       private
-        FPlayerId : Integer;       // Color of this penguin
+        FPlayerId : Integer;       // This penguin's color
       public
         property PlayerId : Integer read FPlayerId write FPlayerId;
 

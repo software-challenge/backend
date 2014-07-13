@@ -1,7 +1,7 @@
 unit USetMove;
 
 (*
- * Move to place Penguin on the board
+ * Move to place a penguin on the board
  *)
 
 interface
