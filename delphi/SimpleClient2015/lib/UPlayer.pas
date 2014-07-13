@@ -64,7 +64,7 @@ uses SysUtils, TypInfo;
     FDisplayName := xml.Attributes.getNamedItem('displayName').NodeValue;
     FPoints := StrToInt(xml.Attributes.getNamedItem('points').NodeValue);
     FFields := StrToInt(xml.Attributes.getNamedItem('fields').NodeValue);
-    if xml.NodeName = 'RED' then begin
+    if xml.NodeName = 'red' then begin
       FPlayerID := PLAYER_RED;
     end
     else begin

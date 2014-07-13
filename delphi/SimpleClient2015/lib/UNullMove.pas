@@ -1,7 +1,7 @@
 unit UNullMove;
 
 (*
- * Move to place Penguin on the board
+ * A move to do nothing
  *)
 
 interface

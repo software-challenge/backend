@@ -11,19 +11,25 @@ interface
      public
       function getPossibleRunMoves : TObjectList;
       function getPossibleSetMoves : TObjectList;
-      
+
       function getPossibleRunMovesForPlayer(playerId : Integer) : TObjectList;
-      function getPossibleMovesForPenguin(x : Integer; y : Integer) : TObjectList;
+      function getPossibleRunMovesForPenguin(x : Integer; y : Integer) : TObjectList;
 
     end;
 implementation
   uses Math;
 
+  (*
+   * Gibt die möglichen Laufzüge des aktuellen Spielers aus
+   *)
   function TMyBoard.getPossibleRunMoves : TObjectList;
   begin
     Result := Self.getPossibleRunMovesForPlayer(CurrentPlayer);
   end;
 
+  (*
+   * Gibt die möglichen Laufzüge eines bestimmten Spielers aus
+   *)
 	function TMyBoard.getPossibleRunMovesForPlayer(playerId : Integer) : TObjectList;
   var
     Moves : TObjectList;
@@ -34,7 +40,7 @@ implementation
 		for x := 0 to 7 do begin
 			for y := 0 to 7 do begin
         if Self.hasPlayerPenguin(x, y, playerId) then begin
-				  MovesTmp := Self.getPossibleMovesForPenguin(x, y);
+				  MovesTmp := Self.getPossibleRunMovesForPenguin(x, y);
           for i := 0 to MovesTmp.Count - 1 do
             Moves.Add(MovesTmp.Items[i]);
         end;
@@ -43,7 +49,10 @@ implementation
 		Result := Moves;
 	end;
 
-	function TMyBoard.getPossibleMovesForPenguin(x : Integer; y : Integer) : TObjectList;
+  (*
+   * Gibt die möglichen Laufzüge mit einem bestimmten Startfeld aus
+   *)
+	function TMyBoard.getPossibleRunMovesForPenguin(x : Integer; y : Integer) : TObjectList;
   var
     Moves : TObjectList;
     Done : Boolean;
@@ -51,7 +60,9 @@ implementation
     CurrentY : Integer;
   begin
     Moves := TObjectList.Create(true);
-    if Self.hasPenguin(x, y) then begin
+    if Self.hasPenguin(x, y) and Self.IsRunMove then begin
+
+      //Laufzüge nach links
       Done := false;
 		  CurrentX := x - 1;
 		  while not Done do begin
@@ -63,6 +74,7 @@ implementation
         end;
 			end;
 
+      //Laufzüge nach rechts
       Done := false;
 		  CurrentX := x + 1;
 		  while not Done do begin
@@ -74,6 +86,7 @@ implementation
         end;
 			end;
 
+      //Laufzüge nach oben-links
       Done := false;
 		  if y mod 2 = 0
         then CurrentX := x
@@ -90,6 +103,7 @@ implementation
         end;
 			end;
 
+      //Laufzüge nach oben-rechts
       Done := false;
 		  if y mod 2 = 1
         then CurrentX := x
@@ -106,6 +120,7 @@ implementation
         end;
 			end;
 
+      //Laufzüge nach unten-rechts
       Done := false;
 		  if y mod 2 = 1
         then CurrentX := x
@@ -122,6 +137,7 @@ implementation
         end;
 			end;
 
+      //Laufzüge nach unten-links
       Done := false;
 		  if y mod 2 = 0
         then CurrentX := x
@@ -142,16 +158,21 @@ implementation
 		Result := Moves;
 	end;
 
+  (*
+   * Gibt die möglichen Setzzüge aus
+   *)
   function TMyBoard.getPossibleSetMoves : TObjectList;
   var
     Moves : TObjectList;
     x, y : Integer;
   begin
 		Moves := TObjectList.Create(true);
-		for x := 0 to 7 do begin
-			for y := 0 to 7 do begin
-        if (not Self.hasPenguin(x, y)) and (Self.getField(x, y).getFish = 1)
-          then Moves.Add(TSetMove.create(x, y));
+    if not Self.IsRunMove then begin
+		  for x := 0 to 7 do begin
+		  	for y := 0 to 7 do begin
+          if (not Self.hasPenguin(x, y)) and (Self.getField(x, y).getFish = 1)
+            then Moves.Add(TSetMove.create(x, y));
+        end;
       end;
     end;
 		Result := Moves;
