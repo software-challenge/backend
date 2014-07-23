@@ -37,7 +37,7 @@ public class SideBar extends PrimitiveBase {
 	  	if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.RED)
 	  		parent.fill(GuiConstants.colorRed);
 	  	else
-	  		parent.fill(GuiConstants.colorGrey);
+	  		parent.fill(GuiConstants.colorDarkGrey);
 	  	
 		String redName = "";
 		int redPoints = 0;
@@ -71,7 +71,7 @@ public class SideBar extends PrimitiveBase {
 		if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.BLUE)
 	  		parent.fill(GuiConstants.colorBlue);
 	  	else
-	  		parent.fill(GuiConstants.colorGrey);
+	  		parent.fill(GuiConstants.colorDarkGrey);
 		String blueName = "";
 		int bluePoints = 0;
 		int blueFields = 0;
