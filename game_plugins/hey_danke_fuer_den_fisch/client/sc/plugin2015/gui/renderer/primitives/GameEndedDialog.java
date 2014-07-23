@@ -36,7 +36,7 @@ public class GameEndedDialog {
 		
 		//Box klein
 		parent.fill(GuiConstants.colorHexFields);
-		parent.rect(0, 0, x, parent.textAscent()+ 2* parent.textDescent(),7);
+		parent.rect(0, 0, x, parent.textAscent()+ 2* parent.textDescent(),7 ,7,0 ,0 );
 		
 		//##Text
 		//#Game Ended
