@@ -91,12 +91,15 @@ public class FrameRenderer extends PApplet {
 		penguin[1][3] = new GuiPenguin(this, -4, -1, PlayerColor.BLUE);
 
 		boardFrame = new BoardFrame(this);
-		//logger.debug("Constructor finished");
-		
+		// logger.debug("Constructor finished");
+
 		// load Images
-		GuiConstants.ONE_FISH_IMAGE_ORIGINAL = this.loadImage(GuiConstants.ONE_FISH_IMAGE_PATH);
-		GuiConstants.TWO_FISH_IMAGE_ORIGINAL = this.loadImage(GuiConstants.TWO_FISH_IMAGE_PATH);
-		GuiConstants.THREE_FISH_IMAGE_ORIGINAL = this.loadImage(GuiConstants.THREE_FISH_IMAGE_PATH);
+		GuiConstants.ONE_FISH_IMAGE_ORIGINAL = this
+				.loadImage(GuiConstants.ONE_FISH_IMAGE_PATH);
+		GuiConstants.TWO_FISH_IMAGE_ORIGINAL = this
+				.loadImage(GuiConstants.TWO_FISH_IMAGE_PATH);
+		GuiConstants.THREE_FISH_IMAGE_ORIGINAL = this
+				.loadImage(GuiConstants.THREE_FISH_IMAGE_PATH);
 	}
 
 	public void setup() {
@@ -120,7 +123,7 @@ public class FrameRenderer extends PApplet {
 		// initial draw
 		GuiConstants.generateFonts(this);
 		resize(this.width, this.height);
-		
+
 	}
 
 	public void draw() {
@@ -148,16 +151,14 @@ public class FrameRenderer extends PApplet {
 		currentGameState = gameState;
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
-		if ((currentGameState == null
-				|| lastTurn == currentGameState.getTurn() - 1) ) {
+		if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
 			if (maxTurn == currentGameState.getTurn() - 1) {
 
 				maxTurn++;
 				humanPlayerMaxTurn = false;
 			}
-			if(RenderConfiguration.optionAnimation == true)
-			{
+			if (RenderConfiguration.optionAnimation == true) {
 				PlayerColor lastPlayerColor;
 				int i;
 				if (gameState.getTurn() == 8) {
@@ -171,8 +172,8 @@ public class FrameRenderer extends PApplet {
 				}
 				for (int j = 0; j < 4; j++) {
 					// System.out.println(" test "+ penguin[i][j].getFieldX());
-					penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
-							gameState.getTurn(), humanPlayer);
+					penguin[i][j].update(gameState.getLastMove(),
+							lastPlayerColor, gameState.getTurn(), humanPlayer);
 				}
 			} else {
 				int blue = 0;
@@ -180,7 +181,8 @@ public class FrameRenderer extends PApplet {
 				for (int i = 0; i < Constants.ROWS; i++) {
 					for (int j = 0; j < Constants.COLUMNS; j++) {
 						if (gameState.getBoard().getPenguin(i, j) != null) {
-							if (gameState.getBoard().getPenguin(i, j).getOwner() == PlayerColor.BLUE) {
+							if (gameState.getBoard().getPenguin(i, j)
+									.getOwner() == PlayerColor.BLUE) {
 								penguin[1][blue].setFieldX(i);
 								penguin[1][blue].setFieldY(j);
 								blue++;
@@ -200,7 +202,7 @@ public class FrameRenderer extends PApplet {
 					penguin[0][i - 1].setFieldX(-i);
 					penguin[0][i - 1].setFieldY(-1);
 				}
-				
+
 			}
 		} else {
 			int blue = 0;
@@ -231,7 +233,8 @@ public class FrameRenderer extends PApplet {
 		}
 		// System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
-		if (currentGameState != null && maxTurn == currentGameState.getTurn() && humanPlayerMaxTurn) {
+		if (currentGameState != null && maxTurn == currentGameState.getTurn()
+				&& humanPlayerMaxTurn) {
 			humanPlayer = true;
 		}
 		isUpdated = true;
@@ -241,14 +244,14 @@ public class FrameRenderer extends PApplet {
 		while (!isUpdated) {
 			try {
 				Thread.sleep(20);
-				//System.out.println("should not appear too often");
+				// System.out.println("should not appear too often");
 			} catch (InterruptedException e) {
 			}
 		}
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
-		//System.out.println("turn = " + turn);
+		// System.out.println("turn = " + turn);
 		if ((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
 			// System.out.println("Blauer Spieler ist dran");
 			if (id == EPlayerId.PLAYER_ONE) {
@@ -342,12 +345,17 @@ public class FrameRenderer extends PApplet {
 									fieldCoordinates[1]);
 							if (this.currentGameState.getPossibleSetMoves()
 									.contains(move)) {
-								//set the new x,y immediatly, so the penguin doesn't jump back
-								penguin[player][i].setFieldX(fieldCoordinates[0]);
-								penguin[player][i].setFieldY(fieldCoordinates[1]);
+								// set the new x,y immediatly, so the penguin
+								// doesn't jump back
+								penguin[player][(currentGameState.getTurn()) / 2]
+										.setFieldX(fieldCoordinates[0]);
+								penguin[player][(currentGameState.getTurn()) / 2]
+										.setFieldY(fieldCoordinates[1]);
+								//vorsicht. gefährlicher hack!
+
 								RenderFacade.getInstance().sendMove(move);
 							}
-							
+
 						} else {
 							RunMove move = new RunMove(
 									penguin[player][i].getFieldX(),
@@ -355,16 +363,18 @@ public class FrameRenderer extends PApplet {
 									fieldCoordinates[0], fieldCoordinates[1]);
 							if (this.currentGameState.getPossibleMoves()
 									.contains(move)) {
-								penguin[player][i].setFieldX(fieldCoordinates[0]);
-								penguin[player][i].setFieldY(fieldCoordinates[1]);
-								RenderFacade.getInstance().sendMove(move);								
+								penguin[player][i]
+										.setFieldX(fieldCoordinates[0]);
+								penguin[player][i]
+										.setFieldY(fieldCoordinates[1]);
+								RenderFacade.getInstance().sendMove(move);
 							}
 						}
 					}
 					penguin[player][i].releaseFromMouse();
 					this.guiBoard.unHighlightAll();
 				}
-				
+
 			}
 		}
 	}
@@ -404,17 +414,20 @@ public class FrameRenderer extends PApplet {
 		float b = guiBoard.getHexFields()[0][0].getB();
 		b = 0.90f * b;
 		try {
-			GuiConstants.ONE_FISH_IMAGE = (PImage) GuiConstants.ONE_FISH_IMAGE_ORIGINAL.clone();
-			GuiConstants.TWO_FISH_IMAGE = (PImage) GuiConstants.TWO_FISH_IMAGE_ORIGINAL.clone();
-			GuiConstants.THREE_FISH_IMAGE = (PImage) GuiConstants.THREE_FISH_IMAGE_ORIGINAL.clone();
+			GuiConstants.ONE_FISH_IMAGE = (PImage) GuiConstants.ONE_FISH_IMAGE_ORIGINAL
+					.clone();
+			GuiConstants.TWO_FISH_IMAGE = (PImage) GuiConstants.TWO_FISH_IMAGE_ORIGINAL
+					.clone();
+			GuiConstants.THREE_FISH_IMAGE = (PImage) GuiConstants.THREE_FISH_IMAGE_ORIGINAL
+					.clone();
 		} catch (CloneNotSupportedException e) {
 			GuiConstants.ONE_FISH_IMAGE = new PImage();
 			GuiConstants.TWO_FISH_IMAGE = new PImage();
 			GuiConstants.THREE_FISH_IMAGE = new PImage();
 		}
-		GuiConstants.ONE_FISH_IMAGE.resize((int)(2 * b), (int) (2 * b));
-		GuiConstants.TWO_FISH_IMAGE.resize((int)(2 * b), (int) (2 * b));
-		GuiConstants.THREE_FISH_IMAGE.resize((int)(2 * b), (int) (2 * b));
+		GuiConstants.ONE_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
+		GuiConstants.TWO_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
+		GuiConstants.THREE_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].resize(width, height);
@@ -428,8 +441,9 @@ public class FrameRenderer extends PApplet {
 	 * bringen.
 	 */
 	public void setBounds(int x, int y, int width, int height) {
-		//System.out.println("got an setBounds- x:" + x + ",y: " + y + ",width: "
-		//		+ width + ",height: " + height);
+		// System.out.println("got an setBounds- x:" + x + ",y: " + y +
+		// ",width: "
+		// + width + ",height: " + height);
 		super.setBounds(x, y, width, height);
 		this.resize(width, height);
 	}
