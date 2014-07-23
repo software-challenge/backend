@@ -104,8 +104,13 @@ public class SideBar extends PrimitiveBase {
 			parent.textSize(GuiConstants.fontSizes[1]);
 			parent.fill(GuiConstants.colorDarkGrey);
 			parent.text(parent.frameRate, 0, 0);
+			if(parent.currentGameState != null && parent.currentGameState.getLastMove() != null)
+				for(int i = 0; i < parent.currentGameState.getLastMove().getHints().size(); i++){
+					parent.translate(0, parent.textAscent() + parent.textDescent());
+					parent.text(parent.currentGameState.getLastMove().getHints().get(i).getContent(), 0, 0);
+				}
 		}
-
+		
 		parent.popMatrix();
 
 		parent.popStyle();

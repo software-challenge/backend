@@ -18,7 +18,7 @@ import processing.core.PApplet;
 @SuppressWarnings("serial")
 public class RenderConfigurationDialog extends JDialog {
 
-	private JComboBox rendererCombo;
+	//private JComboBox rendererCombo;
 	private JComboBox antiAliasingCombo;
 	private JCheckBox animationCheckBox;
 	private JCheckBox debugCheckBox;
@@ -46,10 +46,10 @@ public class RenderConfigurationDialog extends JDialog {
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-
+/*
 		rendererCombo = new JComboBox(RenderConfiguration.RendererStrings);
 		rendererCombo.setSelectedItem(RenderConfiguration.optionRenderer);
-
+*/
 		antiAliasingCombo = new JComboBox(RenderConfiguration.AntialiasingModes);
 		antiAliasingCombo
 				.setSelectedItem(RenderConfiguration.optionAntiAliasing);
@@ -59,10 +59,10 @@ public class RenderConfigurationDialog extends JDialog {
 
 		debugCheckBox = new JCheckBox();
 		debugCheckBox.setSelected(RenderConfiguration.optionDebug);
-		add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
+		//add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
 
 		gbc.gridx = 1;
-		add(rendererCombo, gbc);
+		//add(rendererCombo, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -92,8 +92,10 @@ public class RenderConfigurationDialog extends JDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/*
 				RenderConfiguration.optionRenderer = (String) rendererCombo
 						.getSelectedItem();
+						*/
 				RenderConfiguration.optionAntiAliasing = (Integer) antiAliasingCombo
 						.getSelectedItem();
 				RenderConfiguration.optionAnimation = animationCheckBox
