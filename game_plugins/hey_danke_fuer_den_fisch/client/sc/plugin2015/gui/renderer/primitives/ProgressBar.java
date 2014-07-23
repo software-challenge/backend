@@ -66,6 +66,7 @@ public class ProgressBar extends PrimitiveBase {
 		parent.popMatrix();
 
 		parent.popStyle();
-		button.draw();
+		if(parent.isHumanPlayer())
+			button.draw();
 	}
 }
