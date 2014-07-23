@@ -334,6 +334,7 @@ public class FrameRenderer extends PApplet {
 					penguin[player][i].releaseFromMouse();
 					this.guiBoard.unHighlightAll();
 				}
+				
 			}
 		}
 	}
