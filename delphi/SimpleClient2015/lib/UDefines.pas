@@ -14,9 +14,10 @@ const
   PLAYER_RED            = 0;
   PLAYER_BLUE           = 1;
 
-  // Stones every player can have in their private stash at max at
-  // any given time
-  MAX_PLAYER_STONES     = 6;
+  // Score Data IDs
+
+  POINTS_ID                = 0;
+  FIELDS_ID                = 1;
 
 type
   TIntArray = Array of Integer;
@@ -25,7 +26,7 @@ type
   TScoreData = Array[0..1] of Integer;
 
   TMoveType     = (SETMOVE, RUNMOVE);                                  // Possible move types
-  TScores = array [0..1] of Integer;
+  TScores = array [0..1] of TScoreData;
 
   TStringTokenizer = class
   private

@@ -1,8 +1,7 @@
 unit URunMove;
 
 (*
- * Move that exchanges one or more of the owned stones for new ones from
- * the open stash.
+ * Move that moves one Penguin on the board
  *)
 
 interface
@@ -16,6 +15,7 @@ interface
         FToX : Integer;
         FToY : Integer;
       public
+        function toString : String; override;
         function toXml(parent : TDomDocument) : TDomElement; override;
         property FromX : Integer read FFromX write FFromX;
         property FromY : Integer read FFromY write FFromY;
@@ -28,10 +28,14 @@ interface
     end;
 implementation
 
+  function TRunMove.toString : String;
+  begin
+    Result := 'RUN (' + inttostr(FFromX) + ', ' + inttostr(FFromY) + ') TO (' + inttostr(FToX) + ', ' + inttostr(FToY) + ')' + sLineBreak;
+  end;
+
   function TRunMove.toXml(parent : TDomDocument) : TDomElement;
   var
     xmlElement : TDomElement;
-    n : Integer;
   begin
     xmlElement := inherited toXml(parent);
     xmlElement.SetAttribute('class', 'RunMove');
@@ -69,7 +73,6 @@ implementation
 
   destructor TRunMove.destroy;
     begin
- //     FStones.Free;
       inherited;
     end;
 

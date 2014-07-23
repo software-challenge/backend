@@ -51,14 +51,15 @@ uses SysUtils, Math;
 
   function TField.toString : String;
   begin
-    Result := 'Field';
-    if FPenguin <> nil then begin
-      Result := Result + ' with Penguin ' + FPenguin.toString();
-    end;
+    Result := '';
+    if FPenguin <> nil
+      then Result := FPenguin.toString()
+      else Result := inttostr(FFish);
+
   end;
 
   (*
-   * Returns true if this field is occupied (has a stone placed on it)
+   * Returns if this field is occupied by a penguin
    *)
 
   function TField.hasPenguin : Boolean;
@@ -66,11 +67,17 @@ uses SysUtils, Math;
     Result := FPenguin <> nil;
   end;
 
+  (*
+   * Returns this field's penguin
+   *)
   function TField.getPenguin : TPenguin;
   begin
     Result := FPenguin;
   end;
 
+  (*
+   * Returns this field's amount of fish
+   *)
   function TField.getFish : Integer;
   begin
     Result := FFish;
@@ -110,8 +117,8 @@ uses SysUtils, Math;
 
   destructor TField.destroy;
   begin
+    FreeAndNil(FPenguin);
     inherited;
-//    FreeAndNil(FStone);
   end;
 
 end.

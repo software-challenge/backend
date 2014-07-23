@@ -29,7 +29,8 @@ uses
   UField in '..\lib\UField.pas',
   USetMove in '..\lib\USetMove.pas',
   URunMove in '..\lib\URunMove.pas',
-  UPenguin in '..\lib\UPenguin.pas';
+  UPenguin in '..\lib\UPenguin.pas',
+  UNullMove in '..\lib\UNullMove.pas';
 
 type
   Starter = class
@@ -208,7 +209,7 @@ var
 start : Starter;
 
 begin
-  Application.Title:='My Application';
+  //Application.Title:='My Application';
   { TODO -oUser -cConsole Main : Insert code here }
   start := Starter.create;
   start.start;
