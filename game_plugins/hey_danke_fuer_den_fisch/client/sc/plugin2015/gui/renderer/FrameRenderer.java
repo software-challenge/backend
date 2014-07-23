@@ -312,8 +312,12 @@ public class FrameRenderer extends PApplet {
 									fieldCoordinates[1]);
 							if (this.currentGameState.getPossibleSetMoves()
 									.contains(move)) {
+								//set the new x,y immediatly, so the penguin doesn't jump back
+								penguin[player][i].setFieldX(fieldCoordinates[0]);
+								penguin[player][i].setFieldY(fieldCoordinates[1]);
 								RenderFacade.getInstance().sendMove(move);
 							}
+							
 						} else {
 							RunMove move = new RunMove(
 									penguin[player][i].getFieldX(),
@@ -321,7 +325,9 @@ public class FrameRenderer extends PApplet {
 									fieldCoordinates[0], fieldCoordinates[1]);
 							if (this.currentGameState.getPossibleMoves()
 									.contains(move)) {
-								RenderFacade.getInstance().sendMove(move);
+								penguin[player][i].setFieldX(fieldCoordinates[0]);
+								penguin[player][i].setFieldY(fieldCoordinates[1]);
+								RenderFacade.getInstance().sendMove(move);								
 							}
 						}
 					}
@@ -333,9 +339,6 @@ public class FrameRenderer extends PApplet {
 	}
 
 	private int[] getFieldCoordinates(int x, int y) {
-		// TODO implement this function
-		int fieldX;
-		int fieldY;
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8 && (!(i % 2 == 0 && j == 7)); j++) {
 				if (x >= guiBoard.getHexFields()[i][j].getX()
@@ -346,11 +349,6 @@ public class FrameRenderer extends PApplet {
 						&& y <= guiBoard.getHexFields()[i][j].getY()
 								+ guiBoard.getHexFields()[i][j].getA()
 								+ guiBoard.getHexFields()[i][j].getC()) {
-					/*
-					 * System.out.println("x = " +
-					 * guiBoard.getHexFields()[i][j].getFieldX() + ", y = " +
-					 * guiBoard.getHexFields()[i][j].getFieldY());
-					 */
 					return new int[] {
 							guiBoard.getHexFields()[i][j].getFieldX(),
 							guiBoard.getHexFields()[i][j].getFieldY() };
