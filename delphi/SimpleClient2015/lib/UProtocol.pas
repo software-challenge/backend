@@ -120,10 +120,10 @@ begin
               if(XmlSubNodej.NodeName = 'state') then begin
                 // Read current turn number and player color
                 FClient.CurrentTurn := StrToInt(XmlSubNodej.Attributes.getNamedItem('turn').NodeValue);
-                if(XmlSubNodej.Attributes.getNamedItem('currentPlayer').NodeValue = 'red')
+                if(XmlSubNodej.Attributes.getNamedItem('currentPlayer').NodeValue = 'RED')
                   then FBoard.CurrentPlayer := PLAYER_RED
                   else FBoard.CurrentPlayer := PLAYER_BLUE;
-                FClient.getBoard.IsRunMove := XmlSubNodej.Attributes.getNamedItem('currentMoveType').NodeValue = 'run';
+                FClient.getBoard.IsRunMove := XmlSubNodej.Attributes.getNamedItem('currentMoveType').NodeValue = 'RUN';
                 for m := 0 to XmlSubNodej.ChildNodes.Length - 1 do begin
                   XmlSubNodel := XmlSubNodej.ChildNodes.Item(m);
                   // Read player data
@@ -134,15 +134,10 @@ begin
                     else begin
                       playerId := PLAYER_BLUE;
                     end;
-                    player[playerId] := FClient.getPlayer(playerId);
-                    player[playerId].fromXml(XmlSubNodel); // Evaluate player XML
-                  end;
-                  // Read stones in shared stash
-                  if(XmlSubNodel.NodeName = 'nextStones') then begin
-                    FBoard.updateNextStones(XmlSubNodel);
+                    player[playerId] := TPlayer.Create(XmlSubNodel); // Evaluate player XML
                   end;
                   // Read latest move
-                  if(XmlSubNodel.NodeName = 'move') then begin
+                  if(XmlSubNodel.NodeName = 'lastMove') then begin
                     FBoard.updateLastMove(XmlSubNodel);
                   end;
                   // Read board

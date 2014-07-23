@@ -18,7 +18,7 @@ interface
         class function fromXml(xml : TDomNode) : TMove;
     end;
 implementation
-  uses URunMove, USetMove;
+  uses URunMove, USetMove, UNullMove;
 
   procedure TMove.addHint(hint : TDebugHint);
   begin
@@ -49,15 +49,15 @@ implementation
   end;
 
   class function TMove.fromXml(xml : TDomNode) : TMove;
-  var
-    moveType : TMoveType;
   begin
-    moveType := moveTypeFromString(xml.Attributes.getNamedItem('type').NodeValue);
-    if moveType = SETMOVE then begin
+    Result := TMove.Create;
+    if xml.Attributes.getNamedItem('class').NodeValue = 'SetMove' then begin
       Result := TSetMove.create(xml);
-    end else if moveType = RUNMOVE then begin
+    end else if xml.Attributes.getNamedItem('class').NodeValue = 'RunMove' then begin
       Result := TRunMove.create(xml);
+    end else if xml.Attributes.getNamedItem('class').NodeValue = 'RunMove' then begin
+      Result := TNullMove.create;
     end;
   end;
-    
+
 end.
