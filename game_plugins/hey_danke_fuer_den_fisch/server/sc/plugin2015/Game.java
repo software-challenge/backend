@@ -133,23 +133,23 @@ public class Game extends RoundBasedGameInstance<Player> {
 							+ "und nach Schollen.";
 					if (stats[0][0] > stats[1][0]) {
 						winner = PlayerColor.RED;
-						winnerName = " Sieg nach Punkten.";
+						winnerName = "Sieg nach Punkten.";
 					} else if (stats[0][0] < stats[1][0]) {
 						winner = PlayerColor.BLUE;
-						winnerName = " Sieg nach Punkten.";
+						winnerName = "Sieg nach Punkten.";
 					} else {
 						if (stats[0][1] > stats[1][1]) {
 							winner = PlayerColor.RED;
-							winnerName = " Sieg nach Schollen.";
+							winnerName = "Sieg nach Schollen.";
 						} else if (stats[0][1] < stats[1][1]) {
 							winner = PlayerColor.BLUE;
-							winnerName = " Sieg nach Schollen.";
+							winnerName = "Sieg nach Schollen.";
 						}
 					}
 
 					gameState.endGame(winner,
 							"Das Spiel ist vorzeitig zu Ende.\n"
-									+ "Beide Spieler sind zugunfähig."
+									+ "Beide Spieler sind zugunfähig. "
 									+ winnerName);
 
 				}
