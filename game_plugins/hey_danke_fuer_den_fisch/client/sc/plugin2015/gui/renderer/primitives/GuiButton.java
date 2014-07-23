@@ -16,6 +16,7 @@ public class GuiButton extends PrimitiveBase {
 	public void draw() {
 		if(parent != null && parent.currentGameState != null && parent.currentGameState.getTurn() >= 8){
 			parent.pushMatrix();
+			parent.pushStyle();
 			int x = (int) (parent.getWidth() / 2f - 50);
 			int y = (int)(parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5);
 			parent.translate(parent.getWidth() / 2f - 50, parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5);
@@ -42,6 +43,7 @@ public class GuiButton extends PrimitiveBase {
 			parent.textFont(GuiConstants.fonts[0]);
 			parent.textSize(GuiConstants.fontSizes[0]);		
 			parent.text("Aussetzen", 6, 0);
+			parent.popStyle();
 			parent.popMatrix();
 		}
 		
