@@ -1,8 +1,5 @@
 package sc.plugin2015.gui.renderer.primitives;
 
-import java.nio.charset.Charset;
-
-import processing.core.PFont;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.FrameRenderer;
 
@@ -29,10 +26,11 @@ public class GameEndedDialog {
 		}
 		//Box Groß
 		//float x = parent.getWidth() * GuiConstants.GAME_ENDED_SIZE;
+		float x = Math.max(parent.textWidth(winningReason), parent.textWidth(message)) + 10;
 		float y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE;
 		
-		float x = parent.getWidth();
-		parent.fill(GuiConstants.colorLightGrey);
+		//float x = parent.getWidth();
+		parent.fill(GuiConstants.colorSideBarBG);
 		parent.translate((parent.getWidth() - x)/2,y);
 		parent.rect(0, 0, x, y, 7);
 		
