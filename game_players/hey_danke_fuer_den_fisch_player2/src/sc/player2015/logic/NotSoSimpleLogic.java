@@ -44,7 +44,7 @@ public class NotSoSimpleLogic implements IGameHandler {
 	}
 
 	private Move runMoveWithMostPossibleMoves(List<Move> possibleMoves) {
-		int maxPoints = -1;
+		int maxPoints = -10000;
 		Move bestMove = new NullMove();
 		GameState nextGameState;
 		for(int i = 0; i < possibleMoves.size() - 1; i++) {
@@ -65,7 +65,7 @@ public class NotSoSimpleLogic implements IGameHandler {
 						maxPoints = possibleMovesNextTurn - possibleMovesNextTurnOtherPlayer + 2 * gameState.getBoard().getFishNumber(((RunMove) possibleMoves.get(i)).toX, ((RunMove) possibleMoves.get(i)).toY);
 					}
 				} else {
-					if(0 > maxPoints) {
+					if(-10000 >= maxPoints) {
 						bestMove = possibleMoves.get(i);
 						maxPoints = 0;
 					}
