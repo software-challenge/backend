@@ -149,28 +149,58 @@ public class FrameRenderer extends PApplet {
 		if (gameState != null && gameState.getBoard() != null)
 			guiBoard.update(gameState.getBoard());
 		if ((currentGameState == null
-				|| lastTurn == currentGameState.getTurn() - 1) && RenderConfiguration.optionAnimation == true) {
+				|| lastTurn == currentGameState.getTurn() - 1) ) {
 
 			if (maxTurn == currentGameState.getTurn() - 1) {
 
 				maxTurn++;
 				humanPlayerMaxTurn = false;
 			}
-			PlayerColor lastPlayerColor;
-			int i;
-			if (gameState.getTurn() == 8) {
-				lastPlayerColor = gameState.getCurrentPlayerColor();
-				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0
-						: 1;
+			if(RenderConfiguration.optionAnimation == true)
+			{
+				PlayerColor lastPlayerColor;
+				int i;
+				if (gameState.getTurn() == 8) {
+					lastPlayerColor = gameState.getCurrentPlayerColor();
+					i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 0
+							: 1;
+				} else {
+					lastPlayerColor = gameState.getOtherPlayerColor();
+					i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1
+							: 0;
+				}
+				for (int j = 0; j < 4; j++) {
+					// System.out.println(" test "+ penguin[i][j].getFieldX());
+					penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
+							gameState.getTurn(), humanPlayer);
+				}
 			} else {
-				lastPlayerColor = gameState.getOtherPlayerColor();
-				i = gameState.getCurrentPlayerColor() == PlayerColor.RED ? 1
-						: 0;
-			}
-			for (int j = 0; j < 4; j++) {
-				// System.out.println(" test "+ penguin[i][j].getFieldX());
-				penguin[i][j].update(gameState.getLastMove(), lastPlayerColor,
-						gameState.getTurn(), humanPlayer);
+				int blue = 0;
+				int red = 0;
+				for (int i = 0; i < Constants.ROWS; i++) {
+					for (int j = 0; j < Constants.COLUMNS; j++) {
+						if (gameState.getBoard().getPenguin(i, j) != null) {
+							if (gameState.getBoard().getPenguin(i, j).getOwner() == PlayerColor.BLUE) {
+								penguin[1][blue].setFieldX(i);
+								penguin[1][blue].setFieldY(j);
+								blue++;
+							} else {
+								penguin[0][red].setFieldX(i);
+								penguin[0][red].setFieldY(j);
+								red++;
+							}
+						}
+					}
+				}
+				for (int i = blue + 1; i < 5; i++) {
+					penguin[1][i - 1].setFieldX(-i);
+					penguin[1][i - 1].setFieldY(-1);
+				}
+				for (int i = red + 1; i < 5; i++) {
+					penguin[0][i - 1].setFieldX(-i);
+					penguin[0][i - 1].setFieldY(-1);
+				}
+				
 			}
 		} else {
 			int blue = 0;
