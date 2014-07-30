@@ -27,7 +27,7 @@ filecolor = black,
 urlcolor  = black
 }
 
-\title{Software-Challenge 2015 - Hey,danke für den Fisch}
+\title{Software-Challenge 2015 \\ Hey, danke für den Fisch}
 \subtitle{Spielregeln}
 
 
@@ -58,24 +58,18 @@ Spieleverlags."
 \section{Einführung}
 In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Hey, danke
 für den Fisch} der Software-Challenge 2015 erläutert.\\
-In dem Spiel versuchen zwei Spieler
-abwechselnd einen ihrer Pinguine zu bewegen und so Fische einzusammeln. Wer
-am Ende des Spiels mehr Fische hat gewinnt das Spiel. Bei einem Gleichstand 
-entscheidet die Anzahl der eingesammelten Eisschollen.\\
-In der implementierten Version setzt jeder Spieler zuerst abwechselnd seine 
-\PinguinAnzahl\ Pinguine auf Eisschollen mit nur einem Fisch und zieht dann
-abwechselnd, beginnend mit dem Spieler der den letzten Pinguin gesetzt hat, seine Pinguine
-über das Feld.
+Zu Beginn des Spiels setzt zunächst Rot einen Pinguin auf eine unbesetzte Scholle mit nur einem Fisch. Danach tut Blau das Gleiche. So wechseln sich die Spieler ab, bis alle Pinguine auf dem Spielfeld verteilt sind.
+Anschließend versuchen die beiden Spieler abwechselnd – Blau zuerst – einen eigenen Pinguin auf eine unbesetzte Scholle zu ziehen und dabei möglichst viele Fische einzusammeln.
 
 \section{Spielmaterial}
 	\subsection{Das Spielbrett}
-Das Spielbrett setzt sich aus \FelderAnzahl\ sechseckigen Eisschollen zusammen,
+Das Spielbrett setzt sich aus 60 sechseckigen Schollen zusammen,
 mit jeweils einem, zwei oder drei Fischen.
-Die Verteilung der 30 Eisschollen mit einem Fisch, 20 mit zweien und 10 mit
+Die Verteilung der 30 Schollen mit einem Fisch, 20 mit zweien und 10 mit
 dreien ist zufällig.
-Jede gerade Reihe hat hierbei jeweils 7 Eisschollen und jede ungerade 8
-Eisschollen, wobei die Zählung mit Null beginnt. Ein mögliches Spielbrett ist
-in Abbildung~\ref{fig:Laufzug} zu sehen.
+Jede gerade Reihe hat hierbei jeweils 7 Schollen und jede ungerade 8
+Schollen, wobei die oberste Reihe die Reihe Null ist. Ein mögliches
+Spielbrett ist in Abbildungen 1-3 zu sehen.
 \section{Spielablauf}	 
 
 	%% an Beispiel erklären
@@ -84,7 +78,7 @@ in Abbildung~\ref{fig:Laufzug} zu sehen.
 	5.
 	Runde sind beginnend mit dem blauen Spieler nur noch Laufzüge möglich.\\
 	Sobald ein Spieler eine Figur ausgewählt hat, werden sämtliche Felder, auf
-	welche die Figur ziehen kann, cyanfarbend markiert.
+	welche die Figur ziehen kann, farbig markiert.
 	 
 	
 	
@@ -98,10 +92,11 @@ in Abbildung~\ref{fig:Laufzug} zu sehen.
 	\end{figure}
 	%% an Beispiel erklären
 	Bei einem Setzzug wählt ein Spieler einen seiner
-	Pinguine und setzt ihn auf eine Eisscholle ohne Pinguin, auf der sich nur ein
+	Pinguine und zieht ihn auf eine Scholle ohne Pinguin, auf der sich nur ein
 	Fisch befindet.\\
-	Bei einem Setzzug kann nicht ausgesetzt werden. Durch klicken auf die
-	jeweilige Eisscholle wird der Pinguin gesetzt. 
+	Bei einem Setzzug kann nicht ausgesetzt werden. Durch gedrückthalten der Maus
+	wird ein Pinguin gezogen und durch loslassen auf das jeweilige Spielfeld
+	gesetzt.
 	
 	
 	 
@@ -115,37 +110,33 @@ in Abbildung~\ref{fig:Laufzug} zu sehen.
 	\end{figure}
 	
 %% an Beispiel erklären
-Ab dem 9. Zug (anfang der 5. Runde) sind Laufzüge möglich. Bei einem Laufzug
-ist es möglich, einen Pinguin entlang der Horizantalen oder der beiden
-Diagonalen zu bewegen. Ein Pinguin kann hierbei nicht über oder auf andere Pinguine oder
-Löcher ziehen. Dabei wird die Fischanzahl des Feldes, auf dem sich der Pinguin
-befunden hat, dem Punktekonto hinzugefügt und die Anzahl der eingesammelten 
-Eisschollen um 1 erhöht. Diese Eisscholle verschwindet daraufhin vom Spielfeld.
+Ab derder 5. Runde sind Laufzüge möglich. Bei einem Laufzug
+ist es möglich, einen Pinguin entweder entlang der Horizantalen oder der beiden
+Diagonalen zu bewegen. Ein Pinguin kann hierbei nicht über oder auf Löcher oder
+andere Pinguine ziehen. Die vom Pinguin verlassene Scholle wird vom Spielfeld entfernt.
+Die Fische auf dieser Scholle werden zum Fischdepot des Spielers addiert und sein 
+Schollendepot wird um 1 erhöht.
 
 
 
 \subsection{Aussetzzüge}
 %% an Beispiel erklären 
-Ein Aussetzzug ist an Stelle eines Laufzugs möglich. Anstatt einen Pinguin zu 
-setzten wird stattdessen nichts getan. Ein Aussetzzug ist normalerweise nur dann
-sinnvoll, wenn kein anderer Zug mehr möglich ist.
-	
-\subsection{Punkteverteilung}
-Die Punkte ergeben sich aus den eingesammelten Fischen. Sekundär wird auch
-noch die Anzahl der Eisschollen als eine Punktzahl mitgezählt.
+Ein Aussetzzug ist an Stelle eines Laufzugs möglich. Dieser ist normalerweise
+nur dann sinnvoll, wenn kein anderer Zug möglich ist.
 
 	
 \section{Ende des Spiels} 
-	Können keine Spieler mehr Züge (ausgenommen Aussetzzüge) machen, endet das
-	Spiel und alle Felder, auf denen noch ein Pinguin steht, werden zu den Punkten
-	hinzugefügt und die Eisschollenanzahl wird pro Pinguin um 1 erhöht. Es
-	gewinnt der Spieler, der die meisten Fische hat oder, falls die Anzahl gleich
-	ist, wer mehr Eisschollen eingesammelt hat.
-	Geschieht dies nicht innerhalb der \RundenAnzahl\ Runden, endet das Spiel
-	ebenfalls.
+	Das Spiel endet, sobald beide Spieler nur noch aussetzen können, 
+	spätestens jedoch nach 30 Runden.  Beim Spielende bekommt jeder 
+	Spieler noch die Fische, auf denen seine Pinguine dann stehen, 
+	auf seinem Fischdepot gutgeschrieben und sein Schollendepot wird 
+	je eigenem Pinguin um 1 erhöht.
+	Das Spiel gewinnt der Spieler mit den meisten Fischen. Bei Gleichstand gewinnt
+	der Spieler mit den meisten Schollen. Herrscht auch dort Gleichstand, endet das
+	Spiel unentschieden.
 	
 \section{Die graphische Benutzeroberfläche}
-\subsection{Übersicht der graphischen Benutzeroberfläche}
+\subsection{Graphischen Benutzeroberfläche}
 	In Abbildung~\ref{fig:GUI} ist ein Überblick der graphischen Benutzeroberfläche
 	zu sehen. Die markanten Spielelemente sind mit \emph{A-E} gekennzeichnet.
 	
@@ -159,9 +150,9 @@ noch die Anzahl der Eisschollen als eine Punktzahl mitgezählt.
 \begin{compactenum}[A)] 
 \item Die Pinguine befinden sich anfangs rechts.
 \item Das Spielbrett  
-\item Punkteanzeige.
- Die Punkte und Schollen des roten Spielers sind 
-oben, die des blauen Spielers unten. Die Punkte des inaktiven Spielers sind
+\item Fischdepot.
+ Die Fische und Schollen des roten Spielers sind 
+oben, die des blauen Spielers unten. Die Fische des inaktiven Spielers sind
 jeweils in grau dargestellt.
 \item Der Aussetzknopf
 \item  Die Spielfortschrittsanzeige
