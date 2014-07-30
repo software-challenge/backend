@@ -75,7 +75,10 @@ public class SideBar extends PrimitiveBase {
 		parent.textSize(GuiConstants.fontSizes[1]);
 		
 		parent.translate(0, parent.textAscent() + parent.textDescent());
-		parent.text("Fische: " + redPoints + " (+" + redPenguinPoints + ")", 0, 0);
+		if(parent.currentGameState != null && !parent.currentGameState.gameEnded())
+			parent.text("Fische: " + redPoints + " (+" + redPenguinPoints + ")", 0, 0);
+		else
+			parent.text("Fische: " + redPoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + redFields, 0, 0);
 
@@ -109,7 +112,10 @@ public class SideBar extends PrimitiveBase {
 		parent.textFont(GuiConstants.fonts[1]);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
-		parent.text("Fische: " + bluePoints + " (+" + bluePenguinPoints + ")", 0, 0);
+		if(parent.currentGameState != null && !parent.currentGameState.gameEnded())
+			parent.text("Fische: " + bluePoints + " (+" + bluePenguinPoints + ")", 0, 0);
+		else
+			parent.text("Fische: " + bluePoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + blueFields, 0, 0);
 
