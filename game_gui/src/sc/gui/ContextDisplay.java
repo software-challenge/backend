@@ -36,7 +36,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		this.lang = presFac.getLogicFacade().getLanguageData();
 		createGUI();
 	}
-	
+
 	public GameControlBar getGameControlBar() {
 		return buttonBar;
 	}
@@ -48,10 +48,12 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		this.setLayout(new BorderLayout());
 
 		buttonBar = new GameControlBar();
-		bindShortcut(buttonBar.btn_toBegin, KeyEvent.VK_LEFT, InputEvent.CTRL_DOWN_MASK);
+		bindShortcut(buttonBar.btn_toBegin, KeyEvent.VK_LEFT,
+				InputEvent.CTRL_DOWN_MASK);
 		bindShortcut(buttonBar.btn_back, KeyEvent.VK_LEFT, 0);
 		bindShortcut(buttonBar.btn_next, KeyEvent.VK_RIGHT, 0);
-		bindShortcut(buttonBar.btn_toEnd, KeyEvent.VK_RIGHT, InputEvent.CTRL_DOWN_MASK);
+		bindShortcut(buttonBar.btn_toEnd, KeyEvent.VK_RIGHT,
+				InputEvent.CTRL_DOWN_MASK);
 		disableAllButtons(); // by default
 
 		buttonBar.btn_toBegin.addActionListener(new ActionListener() {
@@ -91,7 +93,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 				}
 			}
 		};
-		
+
 		buttonBar.btn_pause.addActionListener(playPauseActionListner);
 		buttonBar.btn_play.addActionListener(playPauseActionListner);
 
@@ -106,9 +108,10 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (presFac.getLogicFacade().getObservation().isFinished()
-						|| JOptionPane.showConfirmDialog(null, lang
-								.getProperty("context_dialog_cancel_msg"), lang
-								.getProperty("context_dialog_cancel_title"),
+						|| JOptionPane.showConfirmDialog(
+								null,
+								lang.getProperty("context_dialog_cancel_msg"),
+								lang.getProperty("context_dialog_cancel_title"),
 								JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					cancelCurrentGame();
 				}
@@ -123,13 +126,15 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * buttons.
 	 */
 	public void cancelCurrentGame() {
-		presFac.getLogicFacade().getObservation().cancel(); // calls gameEnded
-
+		if (presFac.getLogicFacade().getObservation() != null) {
+			presFac.getLogicFacade().getObservation().cancel(); // calls
+																// gameEnded
+		}
 		started = false;
-		
+
 		disableAllButtons();
 		buttonBar.setPaused(false);
-		
+
 		((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
 		// update status bar
 		((StatusBar) presFac.getStatusBar()).setStatus(lang
@@ -172,7 +177,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 */
 	public JPanel recreateGameField() {
 		gameField = new JPanel();
-		//gameField.setBorder(BorderFactory.createEtchedBorder());
+		// gameField.setBorder(BorderFactory.createEtchedBorder());
 
 		this.removeAll();
 		this.add(gameField, BorderLayout.CENTER);
@@ -204,8 +209,10 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	}
 
 	private void syncButtonStates(IObservation obs) {
-		buttonBar.btn_toBegin.setEnabled(!obs.isAtStart() && !GUIConfiguration.finaleMode);
-		buttonBar.btn_toEnd.setEnabled(!obs.isAtEnd() && !GUIConfiguration.finaleMode);
+		buttonBar.btn_toBegin.setEnabled(!obs.isAtStart()
+				&& !GUIConfiguration.finaleMode);
+		buttonBar.btn_toEnd.setEnabled(!obs.isAtEnd()
+				&& !GUIConfiguration.finaleMode);
 		buttonBar.btn_back.setEnabled(obs.hasPrevious());
 		buttonBar.btn_next.setEnabled(obs.hasNext());
 		buttonBar.btn_pause.setEnabled(obs.canTogglePause());
@@ -221,7 +228,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private void syncPauseAndPlayState(boolean paused) {
 		buttonBar.setPaused(paused);
 	}
-	
+
 	public void startPlaying() {
 		buttonBar.startStepping();
 	}
