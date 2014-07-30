@@ -37,7 +37,7 @@ public class SideBar extends PrimitiveBase {
 	  	if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.RED)
 	  		parent.fill(GuiConstants.colorRed);
 	  	else
-	  		parent.fill(GuiConstants.colorDarkGrey);
+	  		parent.fill(GuiConstants.colorBlack);
 	  	
 		String redName = "";
 		int redPoints = 0;
@@ -59,7 +59,7 @@ public class SideBar extends PrimitiveBase {
 		parent.textSize(GuiConstants.fontSizes[1]);
 		
 		parent.translate(0, parent.textAscent() + parent.textDescent());
-		parent.text("Punkte: " + redPoints, 0, 0);
+		parent.text("Fische: " + redPoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + redFields, 0, 0);
 
@@ -71,7 +71,7 @@ public class SideBar extends PrimitiveBase {
 		if(parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.BLUE)
 	  		parent.fill(GuiConstants.colorBlue);
 	  	else
-	  		parent.fill(GuiConstants.colorDarkGrey);
+	  		parent.fill(GuiConstants.colorBlack);
 		String blueName = "";
 		int bluePoints = 0;
 		int blueFields = 0;
@@ -93,7 +93,7 @@ public class SideBar extends PrimitiveBase {
 		parent.textFont(GuiConstants.fonts[1]);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
-		parent.text("Punkte: " + bluePoints, 0, 0);
+		parent.text("Fische: " + bluePoints, 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + blueFields, 0, 0);
 
