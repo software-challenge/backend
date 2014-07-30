@@ -3,6 +3,7 @@ package sc.plugin2015.gui.renderer.primitives;
 import sc.plugin2015.PlayerColor;
 import sc.plugin2015.gui.renderer.FrameRenderer;
 import sc.plugin2015.gui.renderer.RenderConfiguration;
+import sc.plugin2015.util.Constants;
 
 /**
  * Zeichnet Spielerinformationen (Punkte, Schollen) sowie die Pinguine am Anfang
@@ -20,6 +21,21 @@ public class SideBar extends PrimitiveBase {
 	@Override
 	public void draw() {
 		parent.pushStyle();
+		// Fische die Pinguine sicher haben
+		int redPenguinPoints = 0;
+		int bluePenguinPoints = 0;
+		if(parent.currentGameState != null && parent.currentGameState.getBoard() != null){
+			for(int i = 0; i < Constants.COLUMNS; i++){
+				for(int j = 0; j < Constants.ROWS; j++){
+					if(parent.currentGameState.getBoard().hasPinguin(i, j, PlayerColor.RED)){
+						redPenguinPoints += parent.currentGameState.getBoard().getFishNumber(i, j);
+					}else if(parent.currentGameState.getBoard().hasPinguin(i, j, PlayerColor.BLUE)){
+						bluePenguinPoints += parent.currentGameState.getBoard().getFishNumber(i, j);
+					}
+						
+				}
+			}
+		}
 
 		parent.stroke(1.0f); // Umrandung
 		parent.fill(GuiConstants.colorSideBarBG);
@@ -59,7 +75,7 @@ public class SideBar extends PrimitiveBase {
 		parent.textSize(GuiConstants.fontSizes[1]);
 		
 		parent.translate(0, parent.textAscent() + parent.textDescent());
-		parent.text("Fische: " + redPoints, 0, 0);
+		parent.text("Fische: " + redPoints + " (+" + redPenguinPoints + ")", 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + redFields, 0, 0);
 
@@ -93,7 +109,7 @@ public class SideBar extends PrimitiveBase {
 		parent.textFont(GuiConstants.fonts[1]);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.textSize(25);
-		parent.text("Fische: " + bluePoints, 0, 0);
+		parent.text("Fische: " + bluePoints + " (+" + bluePenguinPoints + ")", 0, 0);
 		parent.translate(0, parent.textAscent() + parent.textDescent());
 		parent.text("Schollen: " + blueFields, 0, 0);
 
