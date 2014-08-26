@@ -30,11 +30,12 @@ public class GuiConstants {
 	public static final int colorGrey = calcColor(255, 50, 68, 70);
 	public static final int colorDarkGrey = calcColor(255, 30, 30, 30);
 	public static final int colorBlack = calcColor(255, 0, 0, 0);
-	public static final int colorSideBarBG = calcColor(200, 100, 100, 100);
+	public static final int colorSideBarBG = calcColor(200, 200, 200, 200);
 	public static final int colorHexFields = calcColor(240, 21, 160, 177);
 	public static final int colorHexFieldsHighlight = calcColor(240, 21, 195, 177);
 	public static final int colorText = calcColor(255, 0, 0, 0);
 	public static final int colorGreyOut = calcColor(100, 30, 30, 30);
+	
 
 	public static final int frameBorderSize = 5;
 
