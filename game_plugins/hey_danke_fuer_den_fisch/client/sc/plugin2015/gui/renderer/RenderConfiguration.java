@@ -35,7 +35,7 @@ public class RenderConfiguration {
 	public static String optionRenderer = RendererStrings[0];
 	public static int optionAntiAliasing = AntialiasingModes[2];
 	public static boolean optionAnimation = true;
-	public static boolean optionDebug = true;
+	public static boolean optionDebug = false;
 
 	public static final String[] OPTION_NAMES = new String[] { "Renderer",
 			"Kantenglättung", "Animationen", "Debugansicht" };
