@@ -14,15 +14,21 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
-	// spielerfarbe des spielers
+	/** Spielerfarbe des spielers
+	 
+	 */
 	@XStreamAsAttribute
 	private PlayerColor color;
 
-	// aktuelle punktzahl des spielers
+	/**
+	 * aktuelle Fische des Spielers
+	 */
 	@XStreamAsAttribute
 	private int points;
 
-	// Anzahl der gesammelten Plättchen
+	/**
+	 * Anzahl der gesammelten Schollen
+	 */
 	@XStreamAsAttribute
 	private int fields;
 
@@ -48,7 +54,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * klont dieses Objekt
+	 * erzeugt eine Deepcopy dieses Objekts
 	 * 
 	 * @return ein neues Objekt mit gleichen Eigenschaften
 	 * @throws CloneNotSupportedException
@@ -76,23 +82,23 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * Erhöht die Plättchenanzahl dieses Spielers um 1.
+	 * Erhöht das Schollendepot dieses Spielers um 1.
 	 */
 	public void addField() {
 		this.fields++;
 	}
 
 	/**
-	 * Gibt eine Anzahl der Plättchen des Spielers zurück.
+	 * Gibt eine Anzahl der Schollen des Spielers zurück.
 	 * 
-	 * @return Anzahl der Plättchen des Spielers
+	 * @return Anzahl der Schollen des Spielers
 	 */
 	public int getFields() {
 		return fields;
 	}
 
 	/**
-	 * Fügt dem Punktekonto des Spielers Punkte hinzu
+	 * Fügt dem Fischdepot des Spielers Punkte hinzu
 	 * 
 	 * @param points
 	 *            Anzahl hinzuzufügender Punkte
@@ -102,7 +108,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	}
 
 	/**
-	 * Liefert den Stand des Punktekontos des Spielers
+	 * Liefert den Stand des Fischdepots des Spielers
 	 * 
 	 * @return Punkte des Spielers
 	 */

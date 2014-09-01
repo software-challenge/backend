@@ -94,7 +94,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * klont dieses Objekt
+	 * erzeugt eine Deepcopy dieses Objekts
 	 * 
 	 * @return ein neues Objekt mit gleichen Eigenschaften
 	 * @throws CloneNotSupportedException
@@ -309,7 +309,7 @@ public class GameState implements Cloneable {
 	}
 
 	/**
-	 * Liefert eine Liste aller aktuell erlaubten Laufzuege, der aktuell an der
+	 * Liefert eine Liste aller aktuell erlaubten Laufzuege, des Spielers der aktuell an der
 	 * Reihe ist.
 	 * 
 	 * @return Liste erlaubter Spielzuege
@@ -604,8 +604,8 @@ public class GameState implements Cloneable {
 	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
 	 * Einträgen
 	 * <ul>
-	 * <li>[0] - Punktekonto des Spielers (Anzahl der Fische)
-	 * <li>[1] - Anzahl der Plättchen
+	 * <li>[0] - Fischdepot des Spielers (Anzahl der Fische)
+	 * <li>[1] - Anzahl der Schollen
 	 * </ul>
 	 * 
 	 * @param playerColor
