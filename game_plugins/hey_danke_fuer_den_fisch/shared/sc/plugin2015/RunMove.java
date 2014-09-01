@@ -14,7 +14,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  */
 @XStreamAlias(value = "RunMove")
 public class RunMove extends Move implements Cloneable {
-
+	
 	@XStreamAsAttribute
 	public final int fromX;
 
@@ -121,18 +121,30 @@ public class RunMove extends Move implements Cloneable {
 		return new int[] { this.fromX, this.fromY, this.toX, this.toY };
 	}
 
+	/**
+	 * x-Koordinate Startfeld
+	 */
 	public int getFromX() {
 		return fromX;
 	}
 
+	/**
+	 * y-Koordinate Startfeld
+	 */
 	public int getFromY() {
 		return fromY;
 	}
 
+	/**
+	 * x-Koordinate Zielfeld
+	 */
 	public int getToX() {
 		return toX;
 	}
 
+	/**
+	 * y-Koordinate Zielfeld
+	 */
 	public int getToY() {
 		return toY;
 	}

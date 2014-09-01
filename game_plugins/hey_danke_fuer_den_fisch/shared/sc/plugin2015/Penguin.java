@@ -40,7 +40,7 @@ public class Penguin implements Cloneable {
 	/**
 	 * Gibt die Farbe des zugehörigen Spielers zurück
 	 * 
-	 * @return
+	 * @return Farbe des Besitzers
 	 */
 	public PlayerColor getOwner() {
 		return this.owner;

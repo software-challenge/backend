@@ -127,10 +127,18 @@ public class SetMove extends Move implements Cloneable {
 		return false;
 	}
 
+
+	/**
+	 * x-Koordinate Zielfeld
+	 */
 	public int getSetX() {
 		return setX;
 	}
 
+
+	/**
+	 * y-Koordinate Zielfeld
+	 */
 	public int getSetY() {
 		return setY;
 	}

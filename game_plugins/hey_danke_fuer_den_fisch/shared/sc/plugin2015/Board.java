@@ -84,8 +84,8 @@ public class Board implements Cloneable {
 	/**
 	 * Gibt das Feld mit angegebenen Koordinaten zurück
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x x-Koordinate
+	 * @param y y-Koordinate
 	 * @return das Feld an den Koordinaten
 	 */
 	public Field getField(int x, int y) {
@@ -140,8 +140,8 @@ public class Board implements Cloneable {
 	/**
 	 * Gibt zurück, ob sich ein Pinguin auf dem Feld befindet
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x x-Koordinate
+	 * @param y y-Koordinate
 	 * @return true falls sich ein Pinguin auf dem Feld befindet
 	 */
 	public boolean penguin(int x, int y) {
@@ -154,8 +154,8 @@ public class Board implements Cloneable {
 	/**
 	 * Gibt zurück, ob ein Spieler an einer Position einen Pinguin hat.
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x x-Koordinate
+	 * @param y y-Koordinate
 	 * @param color
 	 *            Die Spielerfarbe
 	 * @return true wenn sich ein Pinguin des Spielers an der Position befindet
@@ -173,8 +173,8 @@ public class Board implements Cloneable {
 	/**
 	 * Gibt die Anzahl der Fische an bestimmten Koordinaten zurück
 	 * 
-	 * @param x
-	 * @param y
+	 * @param x x-Koordinate
+	 * @param y y-Koordinate
 	 * 
 	 * @return integer Anzahl der Fische
 	 * 
