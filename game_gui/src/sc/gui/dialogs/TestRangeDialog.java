@@ -75,7 +75,7 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
-import sun.awt.VerticalBagLayout;
+//import sun.awt.VerticalBagLayout;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
@@ -237,7 +237,7 @@ public class TestRangeDialog extends JDialog {
 
 		createSaveReplayCheckboxGroup();
 		// -------------------------------------------
-		pnlBottomTop = new JPanel(new VerticalBagLayout(10));
+		pnlBottomTop = new JPanel(new GridLayout());
 		pnlBottomTop.add(pnl_showLogLeft);
 		pnlBottomTop.add(pnl_saveReplay);
 
@@ -283,7 +283,7 @@ public class TestRangeDialog extends JDialog {
 	}
 
 	private void createSaveReplayCheckboxGroup() {
-		pnl_saveReplay = new JPanel(new VerticalBagLayout());
+		pnl_saveReplay = new JPanel(new GridLayout());
 		//setVerticalFlowLayout(pnl_saveReplay);
 		
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
