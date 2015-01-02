@@ -165,6 +165,11 @@ public class RenderFacade {
 		disabled = false;
 		activePlayer = null;
 		alreadyCreatedPlayerOne = false;
+		if(frameRenderer != null) {
+			System.out.println("*****************should destroy now!");
+			frameRenderer.stop();
+			frameRenderer.destroy();
+		}
 		frameRenderer = new FrameRenderer(); // neuer FrameRenderer
 
 		if (panel != null) {
