@@ -132,6 +132,7 @@ public class FrameRenderer extends PApplet {
 
 	public void draw() {
 		loop();
+		boolean isAnimated = false;
 		// resize();
 		background.draw();
 		guiBoard.draw();
@@ -140,13 +141,16 @@ public class FrameRenderer extends PApplet {
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
+				if(penguin[i][j].isAnimated()) {
+					isAnimated = true;
+				}
 			}
 		}
 		boardFrame.draw();
 		if (currentGameState != null && currentGameState.gameEnded()) {
 			GameEndedDialog.draw(this);
 		}
-		if(!myMousePressed) {
+		if(!myMousePressed && !isAnimated) {
 			noLoop();
 			System.out.println("**********************At Place 5");
 		}
