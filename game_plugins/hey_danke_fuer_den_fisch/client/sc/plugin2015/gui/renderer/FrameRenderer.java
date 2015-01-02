@@ -27,6 +27,7 @@ import sc.plugin2015.gui.renderer.primitives.GameEndedDialog;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
+import sc.plugin2015.gui.renderer.primitives.HexField;
 import sc.plugin2015.gui.renderer.primitives.ProgressBar;
 import sc.plugin2015.gui.renderer.primitives.SideBar;
 import sc.plugin2015.util.Constants;
@@ -57,7 +58,7 @@ public class FrameRenderer extends PApplet {
 	private GuiBoard guiBoard;
 	private Background background;
 	private ProgressBar progressBar;
-	private SideBar sidebar;
+	private SideBar sideBar;
 	private BoardFrame boardFrame;
 
 	// penguin as [OWNER][NUMBER]
@@ -80,7 +81,7 @@ public class FrameRenderer extends PApplet {
 				+ this.height + ")");
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
-		sidebar = new SideBar(this);
+		sideBar = new SideBar(this);
 
 		penguin = new GuiPenguin[2][4];
 
@@ -139,7 +140,7 @@ public class FrameRenderer extends PApplet {
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
-		sidebar.draw();
+		sideBar.draw();
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
@@ -511,18 +512,39 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void killAll() {
-		// TODO Auto-generated method stub
-		/*guiBoard;
-		background;
-		progressBar;
-		sidebar;
-		boardFrame;
-
-		// penguin as [OWNER][NUMBER]
-		penguin;*/
-		
-		
-		
+		noLoop();
+		if(background != null) {
+			background.kill();
+		}
+		if(guiBoard != null) {
+			HexField[][] hf = guiBoard.getHexFields();
+			for(int i = 0; i < 8; i++) {
+				for(int j = 0; j < 8; j++) {
+					//System.out.println("***********************************************Test");
+					if(hf[i][j] != null) {
+						hf[i][j].kill();
+					}
+				}
+			}
+			guiBoard.kill();
+		}
+		if(progressBar != null) {
+			progressBar.kill();
+		}
+		if(sideBar != null) {
+			sideBar.kill();
+		}
+		if(boardFrame != null) {
+			boardFrame.kill();
+		}
+		if(penguin != null) {
+			for(int i = 0; i < 2; i++) {
+				for(int j = 0; j < 4; j++) {
+					if(penguin[i][j] != null) {
+						penguin[i][j].kill();
+					}
+				}
+			}
+		}
 	}
-
 }

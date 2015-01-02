@@ -167,6 +167,9 @@ public class RenderFacade {
 		alreadyCreatedPlayerOne = false;
 		if(frameRenderer != null) {
 			frameRenderer.killAll();
+		}
+		if(frameRenderer != null) {
+			//System.out.println("**************************Got here too");
 			frameRenderer.stop();
 			frameRenderer.destroy();
 		}
