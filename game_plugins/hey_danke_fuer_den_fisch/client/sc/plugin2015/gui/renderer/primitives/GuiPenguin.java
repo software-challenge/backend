@@ -403,7 +403,7 @@ public class GuiPenguin extends PrimitiveBase {
 	/**
 	 * @return the isAnimated
 	 */
-	private boolean isAnimated() {
+	public boolean isAnimated() {
 		return isAnimated;
 	}
 
