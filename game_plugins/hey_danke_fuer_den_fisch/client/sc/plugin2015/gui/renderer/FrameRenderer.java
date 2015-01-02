@@ -49,6 +49,7 @@ public class FrameRenderer extends PApplet {
 	private boolean humanPlayer;
 	private boolean humanPlayerMaxTurn;
 	private int maxTurn;
+	private boolean myMousePressed;
 
 	private EPlayerId id;
 
@@ -104,6 +105,7 @@ public class FrameRenderer extends PApplet {
 
 	public void setup() {
 		maxTurn = -1;
+		myMousePressed = false;
 		// this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
@@ -123,10 +125,13 @@ public class FrameRenderer extends PApplet {
 		// initial draw
 		GuiConstants.generateFonts(this);
 		resize(this.width, this.height);
+		noLoop();
+		System.out.println("**********************At Place 4");
 
 	}
 
 	public void draw() {
+		loop();
 		// resize();
 		background.draw();
 		guiBoard.draw();
@@ -140,6 +145,10 @@ public class FrameRenderer extends PApplet {
 		boardFrame.draw();
 		if (currentGameState != null && currentGameState.gameEnded()) {
 			GameEndedDialog.draw(this);
+		}
+		if(!myMousePressed) {
+			noLoop();
+			System.out.println("**********************At Place 5");
 		}
 	}
 
@@ -238,10 +247,12 @@ public class FrameRenderer extends PApplet {
 			humanPlayer = true;
 		}
 		isUpdated = true;
+		redraw();
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
 		while (!isUpdated) {
+			loop();
 			try {
 				Thread.sleep(20);
 				// System.out.println("should not appear too often");
@@ -262,6 +273,8 @@ public class FrameRenderer extends PApplet {
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
 		humanPlayerMaxTurn = true;
+		noLoop();
+		redraw();
 	}
 
 	public Image getImage() {
@@ -270,6 +283,8 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		myMousePressed = true;
+		loop();
 		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
 			// System.out.println("Mouse clicked");
 			int x = e.getX();
@@ -288,9 +303,14 @@ public class FrameRenderer extends PApplet {
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
+		noLoop();
+		System.out.println("**********************At Place 1");
+		myMousePressed = false;
 	}
 
 	public void mousePressed(MouseEvent e) {
+		myMousePressed = true;
+		loop();
 		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
 			int x = e.getX();
 			int y = e.getY();
@@ -377,6 +397,15 @@ public class FrameRenderer extends PApplet {
 
 			}
 		}
+		noLoop();
+		System.out.println("**********************At Place 2");
+		myMousePressed = false;
+		try {
+			Thread.sleep(20);
+		} catch (Exception ex){
+			
+		}
+		redraw();
 	}
 
 	private int[] getFieldCoordinates(int x, int y) {
@@ -409,6 +438,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize(int width, int height) {
+		loop();
 		background.resize(width, height);
 		guiBoard.resize(width, height);
 		float b = guiBoard.getHexFields()[0][0].getB();
@@ -433,6 +463,8 @@ public class FrameRenderer extends PApplet {
 				penguin[i][j].resize(width, height);
 			}
 		}
+		noLoop();
+		System.out.println("**********************At Place 3");
 	}
 
 	/*
