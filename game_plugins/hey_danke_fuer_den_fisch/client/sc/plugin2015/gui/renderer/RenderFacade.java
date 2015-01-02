@@ -166,7 +166,7 @@ public class RenderFacade {
 		activePlayer = null;
 		alreadyCreatedPlayerOne = false;
 		if(frameRenderer != null) {
-			System.out.println("*****************should destroy now!");
+			frameRenderer.killAll();
 			frameRenderer.stop();
 			frameRenderer.destroy();
 		}

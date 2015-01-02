@@ -50,6 +50,7 @@ public class FrameRenderer extends PApplet {
 	private boolean humanPlayerMaxTurn;
 	private int maxTurn;
 	private boolean myMousePressed;
+	public int numberAnimatedPenguins;
 
 	private EPlayerId id;
 
@@ -64,6 +65,7 @@ public class FrameRenderer extends PApplet {
 
 	public FrameRenderer() {
 		super();
+		numberAnimatedPenguins = 0;
 
 		// logger.debug("calling frameRenderer.size()");
 		this.humanPlayer = false;
@@ -126,7 +128,7 @@ public class FrameRenderer extends PApplet {
 		GuiConstants.generateFonts(this);
 		resize(this.width, this.height);
 		noLoop();
-		System.out.println("**********************At Place 4");
+		//System.out.println("**********************At Place 4");
 
 	}
 
@@ -150,9 +152,10 @@ public class FrameRenderer extends PApplet {
 		if (currentGameState != null && currentGameState.gameEnded()) {
 			GameEndedDialog.draw(this);
 		}
-		if(!myMousePressed && !isAnimated) {
+		//System.out.println("**************************************************Number of animated Penguins is equal " + this.numberAnimatedPenguins);
+		if(!myMousePressed && this.numberAnimatedPenguins == 0) {
 			noLoop();
-			System.out.println("**********************At Place 5");
+			//System.out.println("**********************At Place 5");
 		}
 	}
 
@@ -277,7 +280,9 @@ public class FrameRenderer extends PApplet {
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
 		humanPlayerMaxTurn = true;
-		noLoop();
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
 		redraw();
 	}
 
@@ -307,8 +312,10 @@ public class FrameRenderer extends PApplet {
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
-		noLoop();
-		System.out.println("**********************At Place 1");
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
+		//System.out.println("**********************At Place 1");
 		myMousePressed = false;
 	}
 
@@ -401,8 +408,10 @@ public class FrameRenderer extends PApplet {
 
 			}
 		}
-		noLoop();
-		System.out.println("**********************At Place 2");
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
+		//System.out.println("**********************At Place 2");
 		myMousePressed = false;
 		try {
 			Thread.sleep(20);
@@ -467,8 +476,10 @@ public class FrameRenderer extends PApplet {
 				penguin[i][j].resize(width, height);
 			}
 		}
-		noLoop();
-		System.out.println("**********************At Place 3");
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
+		//System.out.println("**********************At Place 3");
 	}
 
 	/*
@@ -497,6 +508,21 @@ public class FrameRenderer extends PApplet {
 
 	public EPlayerId getId() {
 		return id;
+	}
+
+	public void killAll() {
+		// TODO Auto-generated method stub
+		/*guiBoard;
+		background;
+		progressBar;
+		sidebar;
+		boardFrame;
+
+		// penguin as [OWNER][NUMBER]
+		penguin;*/
+		
+		
+		
 	}
 
 }

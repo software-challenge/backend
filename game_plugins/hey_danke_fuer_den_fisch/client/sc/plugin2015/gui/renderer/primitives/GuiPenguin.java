@@ -146,6 +146,7 @@ public class GuiPenguin extends PrimitiveBase {
 					if(getAnimatedSteps() >= steps) {
 						setX(newX);
 						setY(newY);
+						parent.numberAnimatedPenguins--;
 						setAnimated(false);
 						setAnimatedSteps(0);
 					} else {
@@ -212,6 +213,9 @@ public class GuiPenguin extends PrimitiveBase {
 			if (lastPlayer == PlayerColor.RED) {
 				if (getFieldX() < 0 && (-(turn / 2)) - 1 == getFieldX()) {
 					if(!humanPlayer) {
+						if(!isAnimated()) {
+							parent.numberAnimatedPenguins++;
+						}
 						setAnimated(true);
 						setOldFieldX(getFieldX());
 						setOldFieldY(getFieldY());
@@ -222,6 +226,9 @@ public class GuiPenguin extends PrimitiveBase {
 			} else {
 				if (getFieldX() < 0 && (-turn / 2) == getFieldX()) {
 					if(!humanPlayer) {
+						if(!isAnimated()) {
+							parent.numberAnimatedPenguins++;
+						}
 						setAnimated(true);
 						setOldFieldX(getFieldX());
 						setOldFieldY(getFieldY());
@@ -235,6 +242,9 @@ public class GuiPenguin extends PrimitiveBase {
 				RunMove move = (RunMove) lastMove;
 				if (getFieldX() == move.fromX && getFieldY() == move.fromY) {
 					if(!humanPlayer) {
+						if(!isAnimated()) {
+							parent.numberAnimatedPenguins++;
+						}
 						setAnimated(true);
 						setOldFieldX(getFieldX());
 						setOldFieldY(getFieldY());
