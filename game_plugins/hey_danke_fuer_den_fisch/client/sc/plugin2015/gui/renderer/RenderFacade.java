@@ -169,7 +169,6 @@ public class RenderFacade {
 			frameRenderer.killAll();
 		}
 		if(frameRenderer != null) {
-			//System.out.println("**************************Got here too");
 			frameRenderer.stop();
 			frameRenderer.destroy();
 		}
