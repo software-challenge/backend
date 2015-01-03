@@ -128,7 +128,10 @@ public class GuiPenguin extends PrimitiveBase {
 					
 					float distance = (float) Math.sqrt(xDistance * xDistance + yDistance * yDistance);
 					float parentDiagonal = (float) Math.sqrt(parent.getHeight() * parent.getHeight() + parent.getWidth() * parent.getWidth());
-					int steps = (int) ((distance/parentDiagonal) * 200f);
+					int steps = (int) ((distance/parentDiagonal) * 60f);
+					if(steps < 12) {
+						steps = 12;
+					}
 					
 					/*if(distance > parent.getWidth() * 0.8f) {
 						steps = 80;

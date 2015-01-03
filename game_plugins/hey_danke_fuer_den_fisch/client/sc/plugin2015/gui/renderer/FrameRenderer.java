@@ -109,7 +109,6 @@ public class FrameRenderer extends PApplet {
 	public void setup() {
 		maxTurn = -1;
 		myMousePressed = false;
-		// this.frameRate(30);
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
 			logger.debug("Using Java2D as Renderer");
@@ -122,14 +121,12 @@ public class FrameRenderer extends PApplet {
 			size(this.width, this.height, P2D);
 		}
 
-		// noLoop(); // prevent thread from starving everything else
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
 		GuiConstants.generateFonts(this);
 		resize(this.width, this.height);
-		noLoop();
-		//System.out.println("**********************At Place 4");
+		noLoop(); // prevent thread from starving everything else
 
 	}
 
@@ -153,10 +150,8 @@ public class FrameRenderer extends PApplet {
 		if (currentGameState != null && currentGameState.gameEnded()) {
 			GameEndedDialog.draw(this);
 		}
-		//System.out.println("**************************************************Number of animated Penguins is equal " + this.numberAnimatedPenguins);
 		if(!myMousePressed && this.numberAnimatedPenguins == 0) {
 			noLoop();
-			//System.out.println("**********************At Place 5");
 		}
 	}
 
@@ -188,7 +183,6 @@ public class FrameRenderer extends PApplet {
 							: 0;
 				}
 				for (int j = 0; j < 4; j++) {
-					// System.out.println(" test "+ penguin[i][j].getFieldX());
 					penguin[i][j].update(gameState.getLastMove(),
 							lastPlayerColor, gameState.getTurn(), humanPlayer);
 				}
@@ -248,7 +242,6 @@ public class FrameRenderer extends PApplet {
 				penguin[0][i - 1].setFieldY(-1);
 			}
 		}
-		// System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
 		if (currentGameState != null && maxTurn == currentGameState.getTurn()
 				&& humanPlayerMaxTurn) {
@@ -256,6 +249,13 @@ public class FrameRenderer extends PApplet {
 		}
 		isUpdated = true;
 		redraw();
+		while(this.numberAnimatedPenguins != 0) { // wait for current Move to finish before moving on
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
@@ -263,14 +263,12 @@ public class FrameRenderer extends PApplet {
 			loop();
 			try {
 				Thread.sleep(20);
-				// System.out.println("should not appear too often");
 			} catch (InterruptedException e) {
 			}
 		}
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
-		// System.out.println("turn = " + turn);
 		if ((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
 			// System.out.println("Blauer Spieler ist dran");
 			if (id == EPlayerId.PLAYER_ONE) {
@@ -296,7 +294,6 @@ public class FrameRenderer extends PApplet {
 		myMousePressed = true;
 		loop();
 		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-			// System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -316,7 +313,6 @@ public class FrameRenderer extends PApplet {
 		if(this.numberAnimatedPenguins == 0) {
 			noLoop();
 		}
-		//System.out.println("**********************At Place 1");
 		myMousePressed = false;
 	}
 
@@ -336,7 +332,6 @@ public class FrameRenderer extends PApplet {
 				if (isPenguinClicked(penguin[player][i], x, y)
 						&& (this.currentGameState.getTurn() > 7 || penguin[player][i]
 								.getFieldX() < 0)) {
-					// loop();
 					penguin[player][i].attachToMouse();
 					List<Move> moves = currentGameState
 							.getPossibleMovesForPenguin(
@@ -412,7 +407,6 @@ public class FrameRenderer extends PApplet {
 		if(this.numberAnimatedPenguins == 0) {
 			noLoop();
 		}
-		//System.out.println("**********************At Place 2");
 		myMousePressed = false;
 		try {
 			Thread.sleep(20);
@@ -480,7 +474,6 @@ public class FrameRenderer extends PApplet {
 		if(this.numberAnimatedPenguins == 0) {
 			noLoop();
 		}
-		//System.out.println("**********************At Place 3");
 	}
 
 	/*
@@ -520,7 +513,6 @@ public class FrameRenderer extends PApplet {
 			HexField[][] hf = guiBoard.getHexFields();
 			for(int i = 0; i < 8; i++) {
 				for(int j = 0; j < 8; j++) {
-					//System.out.println("***********************************************Test");
 					if(hf[i][j] != null) {
 						hf[i][j].kill();
 					}
