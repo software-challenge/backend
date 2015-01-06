@@ -13,5 +13,13 @@ public abstract class PrimitiveBase {
 	//public abstract void update();
 	
 	public abstract void draw();
+	
+	public void kill() {
+		if(parent != null) {
+			parent.stop();
+			parent.destroy();
+		}
+	}
+
 
 }

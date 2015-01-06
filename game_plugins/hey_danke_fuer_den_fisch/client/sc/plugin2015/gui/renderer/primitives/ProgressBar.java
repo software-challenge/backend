@@ -73,4 +73,12 @@ public class ProgressBar extends PrimitiveBase {
 		if(parent.isHumanPlayer())
 			button.draw();
 	}
+	
+	@Override
+	public void kill() {
+		if(this.button != null && this.button.parent != null) {
+			this.button.kill();
+		}
+		super.kill();
+	}
 }
