@@ -2,14 +2,16 @@ package sc.plugin2015.gui.renderer.primitives;
 
 import processing.core.PApplet;
 import processing.core.PImage;
+import sc.plugin2015.gui.renderer.FrameRenderer;
 
-public class Background {
+public class Background extends PrimitiveBase {
 	
-	PApplet parent;
+	FrameRenderer parent;
 	PImage rawImage;
 	PImage img;
 
-	public Background(PApplet parent) {
+	public Background(FrameRenderer parent) {
+		super(parent);
 		this.parent = parent;
 		rawImage = parent.loadImage(GuiConstants.BACKGROUND_IMAGE);
 	}

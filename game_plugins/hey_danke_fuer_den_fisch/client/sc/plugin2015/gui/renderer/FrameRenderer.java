@@ -27,6 +27,7 @@ import sc.plugin2015.gui.renderer.primitives.GameEndedDialog;
 import sc.plugin2015.gui.renderer.primitives.GuiBoard;
 import sc.plugin2015.gui.renderer.primitives.GuiConstants;
 import sc.plugin2015.gui.renderer.primitives.GuiPenguin;
+import sc.plugin2015.gui.renderer.primitives.HexField;
 import sc.plugin2015.gui.renderer.primitives.ProgressBar;
 import sc.plugin2015.gui.renderer.primitives.SideBar;
 import sc.plugin2015.util.Constants;
@@ -49,13 +50,15 @@ public class FrameRenderer extends PApplet {
 	private boolean humanPlayer;
 	private boolean humanPlayerMaxTurn;
 	private int maxTurn;
+	private boolean myMousePressed;
+	public int numberAnimatedPenguins;
 
 	private EPlayerId id;
 
 	private GuiBoard guiBoard;
 	private Background background;
 	private ProgressBar progressBar;
-	private SideBar sidebar;
+	private SideBar sideBar;
 	private BoardFrame boardFrame;
 
 	// penguin as [OWNER][NUMBER]
@@ -63,6 +66,7 @@ public class FrameRenderer extends PApplet {
 
 	public FrameRenderer() {
 		super();
+		numberAnimatedPenguins = 0;
 
 		// logger.debug("calling frameRenderer.size()");
 		this.humanPlayer = false;
@@ -77,7 +81,7 @@ public class FrameRenderer extends PApplet {
 				+ this.height + ")");
 		guiBoard = new GuiBoard(this);
 		progressBar = new ProgressBar(this);
-		sidebar = new SideBar(this);
+		sideBar = new SideBar(this);
 
 		penguin = new GuiPenguin[2][4];
 
@@ -104,7 +108,7 @@ public class FrameRenderer extends PApplet {
 
 	public void setup() {
 		maxTurn = -1;
-		// this.frameRate(30);
+		myMousePressed = false;
 		// choosing renderer from options - using P2D as default
 		if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
 			logger.debug("Using Java2D as Renderer");
@@ -117,29 +121,37 @@ public class FrameRenderer extends PApplet {
 			size(this.width, this.height, P2D);
 		}
 
-		// noLoop(); // prevent thread from starving everything else
 		smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
 		// initial draw
 		GuiConstants.generateFonts(this);
 		resize(this.width, this.height);
+		noLoop(); // prevent thread from starving everything else
 
 	}
 
 	public void draw() {
+		loop();
+		boolean isAnimated = false;
 		// resize();
 		background.draw();
 		guiBoard.draw();
 		progressBar.draw();
-		sidebar.draw();
+		sideBar.draw();
 		for (int i = 0; i < 2; i++) {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].draw();
+				if(penguin[i][j].isAnimated()) {
+					isAnimated = true;
+				}
 			}
 		}
 		boardFrame.draw();
 		if (currentGameState != null && currentGameState.gameEnded()) {
 			GameEndedDialog.draw(this);
+		}
+		if(!myMousePressed && this.numberAnimatedPenguins == 0) {
+			noLoop();
 		}
 	}
 
@@ -171,7 +183,6 @@ public class FrameRenderer extends PApplet {
 							: 0;
 				}
 				for (int j = 0; j < 4; j++) {
-					// System.out.println(" test "+ penguin[i][j].getFieldX());
 					penguin[i][j].update(gameState.getLastMove(),
 							lastPlayerColor, gameState.getTurn(), humanPlayer);
 				}
@@ -231,27 +242,33 @@ public class FrameRenderer extends PApplet {
 				penguin[0][i - 1].setFieldY(-1);
 			}
 		}
-		// System.out.println("maxTurn = " + maxTurn);
 		humanPlayer = false;
 		if (currentGameState != null && maxTurn == currentGameState.getTurn()
 				&& humanPlayerMaxTurn) {
 			humanPlayer = true;
 		}
 		isUpdated = true;
+		redraw();
+		while(this.numberAnimatedPenguins != 0) { // wait for current Move to finish before moving on
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void requestMove(int maxTurn, EPlayerId id) {
 		while (!isUpdated) {
+			loop();
 			try {
 				Thread.sleep(20);
-				// System.out.println("should not appear too often");
 			} catch (InterruptedException e) {
 			}
 		}
 		isUpdated = false;
 		int turn = currentGameState.getTurn();
 		this.id = id;
-		// System.out.println("turn = " + turn);
 		if ((turn < 8 && turn % 2 == 1) || (turn >= 8 && turn % 2 == 0)) {
 			// System.out.println("Blauer Spieler ist dran");
 			if (id == EPlayerId.PLAYER_ONE) {
@@ -262,6 +279,10 @@ public class FrameRenderer extends PApplet {
 		// this.maxTurn = maxTurn;
 		this.humanPlayer = true;
 		humanPlayerMaxTurn = true;
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
+		redraw();
 	}
 
 	public Image getImage() {
@@ -270,8 +291,9 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void mouseClicked(MouseEvent e) {
+		myMousePressed = true;
+		loop();
 		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-			// System.out.println("Mouse clicked");
 			int x = e.getX();
 			int y = e.getY();
 			int player;
@@ -288,9 +310,15 @@ public class FrameRenderer extends PApplet {
 				RenderFacade.getInstance().sendMove(new NullMove());
 			}
 		}
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
+		myMousePressed = false;
 	}
 
 	public void mousePressed(MouseEvent e) {
+		myMousePressed = true;
+		loop();
 		if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
 			int x = e.getX();
 			int y = e.getY();
@@ -304,7 +332,6 @@ public class FrameRenderer extends PApplet {
 				if (isPenguinClicked(penguin[player][i], x, y)
 						&& (this.currentGameState.getTurn() > 7 || penguin[player][i]
 								.getFieldX() < 0)) {
-					// loop();
 					penguin[player][i].attachToMouse();
 					List<Move> moves = currentGameState
 							.getPossibleMovesForPenguin(
@@ -377,6 +404,16 @@ public class FrameRenderer extends PApplet {
 
 			}
 		}
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
+		}
+		myMousePressed = false;
+		try {
+			Thread.sleep(20);
+		} catch (Exception ex){
+			
+		}
+		redraw();
 	}
 
 	private int[] getFieldCoordinates(int x, int y) {
@@ -409,6 +446,7 @@ public class FrameRenderer extends PApplet {
 	}
 
 	public void resize(int width, int height) {
+		loop();
 		background.resize(width, height);
 		guiBoard.resize(width, height);
 		float b = guiBoard.getHexFields()[0][0].getB();
@@ -432,6 +470,9 @@ public class FrameRenderer extends PApplet {
 			for (int j = 0; j < 4; j++) {
 				penguin[i][j].resize(width, height);
 			}
+		}
+		if(this.numberAnimatedPenguins == 0) {
+			noLoop();
 		}
 	}
 
@@ -463,4 +504,39 @@ public class FrameRenderer extends PApplet {
 		return id;
 	}
 
+	public void killAll() {
+		noLoop();
+		if(background != null) {
+			background.kill();
+		}
+		if(guiBoard != null) {
+			HexField[][] hf = guiBoard.getHexFields();
+			for(int i = 0; i < 8; i++) {
+				for(int j = 0; j < 8; j++) {
+					if(hf[i][j] != null) {
+						hf[i][j].kill();
+					}
+				}
+			}
+			guiBoard.kill();
+		}
+		if(progressBar != null) {
+			progressBar.kill();
+		}
+		if(sideBar != null) {
+			sideBar.kill();
+		}
+		if(boardFrame != null) {
+			boardFrame.kill();
+		}
+		if(penguin != null) {
+			for(int i = 0; i < 2; i++) {
+				for(int j = 0; j < 4; j++) {
+					if(penguin[i][j] != null) {
+						penguin[i][j].kill();
+					}
+				}
+			}
+		}
+	}
 }

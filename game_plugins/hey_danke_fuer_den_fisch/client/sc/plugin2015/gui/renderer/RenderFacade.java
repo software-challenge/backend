@@ -165,6 +165,13 @@ public class RenderFacade {
 		disabled = false;
 		activePlayer = null;
 		alreadyCreatedPlayerOne = false;
+		if(frameRenderer != null) {
+			frameRenderer.killAll();
+		}
+		if(frameRenderer != null) {
+			frameRenderer.stop();
+			frameRenderer.destroy();
+		}
 		frameRenderer = new FrameRenderer(); // neuer FrameRenderer
 
 		if (panel != null) {

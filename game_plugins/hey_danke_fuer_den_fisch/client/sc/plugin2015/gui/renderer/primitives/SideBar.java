@@ -65,9 +65,9 @@ public class SideBar extends PrimitiveBase {
 		}
 		parent.translate(20, parent.textAscent() + 20);
 		// passe Textgröße an
-		/*int preferredTextSize = (int) (30f/parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+		int preferredTextSize = (int) (30f/parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
 		if(!(preferredTextSize > 30))
-			parent.textSize(preferredTextSize);*/
+			parent.textSize(preferredTextSize);
 		
 		parent.text(redName, 0, 0);
 		// Punkte + Schollen
@@ -101,9 +101,9 @@ public class SideBar extends PrimitiveBase {
 		}
 		
 		// passe Textgröße an
-		/*preferredTextSize = (int) (30f/parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+		preferredTextSize = (int) (30f/parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
 		if(!(preferredTextSize > 30))
-			parent.textSize(preferredTextSize);*/
+			parent.textSize(preferredTextSize);
 				
 
 		parent.text(blueName, 0, 0);

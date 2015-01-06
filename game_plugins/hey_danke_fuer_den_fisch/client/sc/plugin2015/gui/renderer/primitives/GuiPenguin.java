@@ -128,7 +128,10 @@ public class GuiPenguin extends PrimitiveBase {
 					
 					float distance = (float) Math.sqrt(xDistance * xDistance + yDistance * yDistance);
 					float parentDiagonal = (float) Math.sqrt(parent.getHeight() * parent.getHeight() + parent.getWidth() * parent.getWidth());
-					int steps = (int) ((distance/parentDiagonal) * 200f);
+					int steps = (int) ((distance/parentDiagonal) * 60f);
+					if(steps < 12) {
+						steps = 12;
+					}
 					
 					/*if(distance > parent.getWidth() * 0.8f) {
 						steps = 80;
@@ -146,6 +149,7 @@ public class GuiPenguin extends PrimitiveBase {
 					if(getAnimatedSteps() >= steps) {
 						setX(newX);
 						setY(newY);
+						parent.numberAnimatedPenguins--;
 						setAnimated(false);
 						setAnimatedSteps(0);
 					} else {
@@ -212,6 +216,9 @@ public class GuiPenguin extends PrimitiveBase {
 			if (lastPlayer == PlayerColor.RED) {
 				if (getFieldX() < 0 && (-(turn / 2)) - 1 == getFieldX()) {
 					if(!humanPlayer) {
+						if(!isAnimated()) {
+							parent.numberAnimatedPenguins++;
+						}
 						setAnimated(true);
 						setOldFieldX(getFieldX());
 						setOldFieldY(getFieldY());
@@ -222,6 +229,9 @@ public class GuiPenguin extends PrimitiveBase {
 			} else {
 				if (getFieldX() < 0 && (-turn / 2) == getFieldX()) {
 					if(!humanPlayer) {
+						if(!isAnimated()) {
+							parent.numberAnimatedPenguins++;
+						}
 						setAnimated(true);
 						setOldFieldX(getFieldX());
 						setOldFieldY(getFieldY());
@@ -235,6 +245,9 @@ public class GuiPenguin extends PrimitiveBase {
 				RunMove move = (RunMove) lastMove;
 				if (getFieldX() == move.fromX && getFieldY() == move.fromY) {
 					if(!humanPlayer) {
+						if(!isAnimated()) {
+							parent.numberAnimatedPenguins++;
+						}
 						setAnimated(true);
 						setOldFieldX(getFieldX());
 						setOldFieldY(getFieldY());
@@ -403,7 +416,7 @@ public class GuiPenguin extends PrimitiveBase {
 	/**
 	 * @return the isAnimated
 	 */
-	private boolean isAnimated() {
+	public boolean isAnimated() {
 		return isAnimated;
 	}
 
