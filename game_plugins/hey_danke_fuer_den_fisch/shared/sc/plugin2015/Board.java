@@ -91,6 +91,14 @@ public class Board implements Cloneable {
 	public Field getField(int x, int y) {
 		return fields[x][y];
 	}
+	
+	/**
+	 * Gibt alle Felder im Board als zweidimensionales Array zurück
+	 * @return alle Felder
+	 */
+	public Field[][] getBoard() {
+		return this.fields;
+	}
 
 	/**
 	 * Liefert den Pinguin auf den Koordinaten
