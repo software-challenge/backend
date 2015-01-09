@@ -53,21 +53,39 @@
 
 	<target name="compile">
 		<mkdir dir="${classes.dir}" />
-		<javac srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
+		<mkdir dir="${classes.dir}/java7" />
+		<mkdir dir="${classes.dir}/java8" />
+		<javac source="1.7" target="1.7" srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}/java7" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
+		<javac source="1.8" target="1.8" srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}/java8" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
 	</target>
 
 	<target name="jar" depends="compile">
 		<mkdir dir="${jar.dir}" />
-		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+		<mkdir dir="${jar.dir}/java7" />
+		<mkdir dir="${jar.dir}/java8" />
+		<jar destfile="${jar.dir}/java7/${ant.project.name}.jar" basedir="${classes.dir}/java7">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+		</jar>
+		<jar destfile="${jar.dir}/java8/${ant.project.name}.jar" basedir="${classes.dir}/java8">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
 				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
 		</jar>
 
-		<delete dir="${jar.dir}/lib" />
-		<mkdir dir="${jar.dir}/lib" />
-		<copy todir="${jar.dir}/lib" flatten="true">
+		<delete dir="${jar.dir}/java7/lib" />
+		<delete dir="${jar.dir}/java8/lib" />
+		<mkdir dir="${jar.dir}/java7/lib" />
+		<mkdir dir="${jar.dir}/java8/lib" />
+		<copy todir="${jar.dir}/java7/lib" flatten="true">
+			<path refid="classpath.libs" />
+			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
+			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
+		</copy>
+		<copy todir="${jar.dir}/java8/lib" flatten="true">
 			<path refid="classpath.libs" />
 			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
 			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
