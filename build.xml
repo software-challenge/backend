@@ -60,6 +60,7 @@
 		<mkdir dir="${out.dir}" />
 
 		<mkdir dir="${out.dir}/gui" />
+		
 		<copy todir="${out.dir}/gui">
 			<fileset dir="./game_gui/build/jar" />
 		</copy>
@@ -208,11 +209,15 @@
 
 
 		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar" />
+		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java7" />
+		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<copy todir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar">
 			<fileset dir="./game_players/hey_danke_fuer_den_fisch_player2/build/jar" />
-		</copy>
+		</copy><!--  hier noch an die richtigen Orte kopieren!  -->
 
 		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7" />
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar">
 			<fileset dir="./game_players/hey_danke_fuer_den_fisch/build/jar" />
 		</copy>
@@ -230,7 +235,7 @@
 		
 		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib" />
 		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib">
-			<fileset dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/lib" />
+			<fileset dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7/lib" />
 		</copy>
 			
 		
