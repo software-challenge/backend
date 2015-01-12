@@ -78,28 +78,6 @@
 		</jar>
 	</target>
 	
-	<!-- <target name="jar" depends="scmversion,compile,git.revision">
-		<mkdir dir="${jar.dir}" />
-		<mkdir dir="${jar.dir}/java7" />
-		<mkdir dir="${jar.dir}/java8" />
-		<jar destfile="${jar.dir}/java7/${ant.project.name}.jar">
-			<manifest>
-				<attribute name="${manifest.code.version.key}" value="${version.num}- ${repository.version}" />
-			</manifest>
-			<fileset dir="${classes.dir}/java7" />
-			<fileset dir=".">
-				<include name="resource/**/*" />
-			</fileset>
-		</jar><jar destfile="${jar.dir}/java8/${ant.project.name}.jar">
-			<manifest>
-				<attribute name="${manifest.code.version.key}" value="${version.num}- ${repository.version}" />
-			</manifest>
-			<fileset dir="${classes.dir}/java8" />
-			<fileset dir=".">
-				<include name="resource/**/*" />
-			</fileset>
-		</jar>
-	</target> -->
 
 	<target name="javadoc">
 		<javadoc encoding="UTF-8" charset="UTF-8" access="public" author="true" classpath="${toString:classpath}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
