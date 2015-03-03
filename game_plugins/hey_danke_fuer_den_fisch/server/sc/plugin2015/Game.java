@@ -149,7 +149,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 					gameState.endGame(winner,
 							"Das Spiel ist vorzeitig zu Ende.\n"
-									+ "Beide Spieler sind zugunfähig. "
+									+ "Beide Spieler sind zugunfaehig. "
 									+ winnerName);
 
 				}
