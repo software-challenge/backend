@@ -58,8 +58,12 @@ public class Penguin implements Cloneable {
 		return clone;
 	}
 	public boolean equals (Object o) {
-	if(o instanceof Penguin && ((o == null && this == null) || ((Penguin) o).getOwner() == this.getOwner()))
+	if (o instanceof Penguin && (o == null && this == null))
 		return true;
+	else if (o instanceof Penguin && o != null && this != null
+			&& ((Penguin) o).getOwner() == this.getOwner()) {
+			return true;
+	}
 	return false;
 	}
 
