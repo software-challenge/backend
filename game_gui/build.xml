@@ -52,6 +52,7 @@
 		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/sixpack" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/cartagena" target="clean-build" inheritAll="false" />
+		
 
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>
@@ -79,7 +80,7 @@
 		<delete dir="${plugin.dir}" />
 		<mkdir dir="${plugin.dir}" />
 		<copy todir="${plugin.dir}" flatten="true">
-			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" excludes="hase_und_igel/**" /> <!-- ohne hui wegen lizenz !-->
+			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" excludes="hase_und_igel/**" /> <!-- ohne hui wegen lizenz, für hdfdf java versionen hinzugefügt !-->
 		</copy>
 	<!-- plugins zum debuggen in plugin ordner kopieren-->
 		<delete dir ="./plugins" />
