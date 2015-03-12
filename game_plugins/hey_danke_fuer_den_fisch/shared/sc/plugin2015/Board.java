@@ -93,6 +93,14 @@ public class Board implements Cloneable {
 	}
 
 	/**
+	 * Gibt alle Felder im Board als zweidimensionales Array zurück
+	 * @return alle Felder
+	 */
+	public Field[][] getBoard() {
+		return this.fields;
+	}
+
+	/**
 	 * Liefert den Pinguin auf den Koordinaten
 	 * @param x x-Koordinate
 	 * @param y y-Koordinate
@@ -236,9 +244,11 @@ public class Board implements Cloneable {
 
 		for (int x = 0; x < Constants.COLUMNS; x++) {
 			for (int y = 0; y < Constants.ROWS; y++) {
-				if (!this.getPenguin(x, y).equals(board.getPenguin(x, y))) {
-					return false;
-				} else if (this.getFishNumber(x, y) != board.getFishNumber(x, y)) {
+				if (!(this.getPenguin(x, y) == null && board.getPenguin(x, y) == null)
+						&& (!(this.getPenguin(x, y).equals(
+								board.getPenguin(x, y)) || !(this
+								.getFishNumber(x, y) == board.getFishNumber(x,
+								y)))))
 					return false;
 				}
 			}

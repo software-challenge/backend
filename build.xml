@@ -60,8 +60,15 @@
 		<mkdir dir="${out.dir}" />
 
 		<mkdir dir="${out.dir}/gui" />
-		<copy todir="${out.dir}/gui">
-			<fileset dir="./game_gui/build/jar" />
+		<mkdir dir="${out.dir}/gui/java7" />
+		<mkdir dir="${out.dir}/gui/java8" />
+		
+		<copy todir="${out.dir}/gui/java7">
+			<fileset dir="./game_gui/build/jar" excludes="*/hey_danke_fuer_den_fisch-plugin_java8.jar" />
+		</copy>
+		
+		<copy todir="${out.dir}/gui/java8">
+			<fileset dir="./game_gui/build/jar" excludes="*/hey_danke_fuer_den_fisch-plugin_java7.jar" />
 		</copy>
 
 		<mkdir dir="${out.dir}/server" />
@@ -208,11 +215,15 @@
 
 
 		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar" />
+		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java7" />
+		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<copy todir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar">
 			<fileset dir="./game_players/hey_danke_fuer_den_fisch_player2/build/jar" />
 		</copy>
-
+			
 		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7" />
+		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar">
 			<fileset dir="./game_players/hey_danke_fuer_den_fisch/build/jar" />
 		</copy>
@@ -230,7 +241,7 @@
 		
 		<mkdir dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib" />
 		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib">
-			<fileset dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/lib" />
+			<fileset dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7/lib" />
 		</copy>
 			
 		
@@ -246,15 +257,18 @@
 
 		<echo message="Generating Starter-Batchfiles" />
 
-		<touch file="${out.dir}/gui/start.bat" />
-		<echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-gui.jar" file="${out.dir}/gui/start.bat" />
+		<touch file="${out.dir}/gui/java7/start.bat" />
+		<echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-gui.jar" file="${out.dir}/gui/java7/start.bat" />
+		<touch file="${out.dir}/gui/java8/start.bat" />
+		<echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-gui.jar" file="${out.dir}/gui/java8/start.bat" />
 		<echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-server.jar" file="${out.dir}/server/start.bat" />
 
 		<echo message="Zipping files..." />
 
 		<mkdir dir="${out.dir}/zipped" />
 
-		<zip destfile="${out.dir}/zipped/server-gui.zip" basedir="${out.dir}/gui" />
+		<zip destfile="${out.dir}/zipped/server-gui-java7.zip" basedir="${out.dir}/gui/java7" />
+		<zip destfile="${out.dir}/zipped/server-gui-java8.zip" basedir="${out.dir}/gui/java8" />
 
 		<zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
@@ -281,8 +295,10 @@
 		!-->
 
 
-		<zip destfile="${out.dir}/zipped/notsosimpleclient-hdfdf-jar.zip" basedir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar" />
-		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar" />
+		<zip destfile="${out.dir}/zipped/notsosimpleclient-hdfdf-jar-java7.zip" basedir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java7" />
+		<zip destfile="${out.dir}/zipped/notsosimpleclient-hdfdf-jar-java8.zip" basedir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java8" />
+		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar-java7.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7" />
+		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar-java8.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-src.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src" />
 		
 
