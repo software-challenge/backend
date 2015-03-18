@@ -80,15 +80,15 @@ public class SetMove extends Move implements Cloneable {
 								.putPenguin(
 										new Penguin(player.getPlayerColor()));
 					} else {
-						throw new IllegalArgumentException(
-								"Setzzug konnte nicht konstruiert werden: Feld ist schon besetzt.");
+						throw new InvalidMoveException(
+								"Setzzug konnte nicht konstruiert werden: Feld ist schon besetzt");
 					}
 				} else {
-					throw new IllegalArgumentException(
-							"Setzzug konnte nicht konstruiert werden: Feld hat mehr als einen Fisch.");
+					throw new InvalidMoveException(
+							"Setzzug konnte nicht konstruiert werden: Feld hat mehr als einen Fisch");
 				}
 			} else {
-				throw new IllegalArgumentException(
+				throw new InvalidMoveException(
 						"Setzzug konnte nicht konstruiert werden: Nicht innerhalb des Spielfeldes");
 			}
 		} else {
@@ -100,15 +100,15 @@ public class SetMove extends Move implements Cloneable {
 								.putPenguin(
 										new Penguin(player.getPlayerColor()));
 					} else {
-						throw new IllegalArgumentException(
-								"Setzzug konnte nicht konstruiert werden: Feld ist schon besetzt.");
+						throw new InvalidMoveException(
+								"Setzzug konnte nicht konstruiert werden: Feld ist schon besetzt");
 					}
 				} else {
-					throw new IllegalArgumentException(
-							"Setzzug konnte nicht konstruiert werden: Feld hat mehr als einen Fisch.");
+					throw new InvalidMoveException(
+							"Setzzug konnte nicht konstruiert werden: Feld hat mehr als einen Fisch");
 				}
 			} else {
-				throw new IllegalArgumentException(
+				throw new InvalidMoveException(
 						"Setzzug konnte nicht konstruiert werden: Nicht innerhalb des Spielfeldes");
 			}
 		}
