@@ -71,7 +71,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 			throws GameLogicException {
 
 		final Player author = (Player) fromPlayer;
-		final MoveType expectedMoveType = gameState.getCurrentMoveType();
 		final Player expectedPlayer = gameState.getCurrentPlayer();
 
 		try {
@@ -86,75 +85,32 @@ public class Game extends RoundBasedGameInstance<Player> {
 			}
 
 			final Move move = (Move) data;
-			if (move.getMoveType() != expectedMoveType) {
-				throw new InvalidMoveException(author.getDisplayName()
-						+ " hat falschen Zug-Typ gesendet");
-			}
-
 			move.perform(gameState, expectedPlayer);
 			gameState.prepareNextTurn(move);
 
-			if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+			gameState.clearEndGame();
 
-				gameState.clearEndGame();
-
-				int[][] stats = gameState.getGameStats();
-				PlayerColor winner = null;
-				String winnerName = "Gleichstand nach Anzahl der Fische "
-						+ "und nach Schollen.";
-				if (stats[0][0] > stats[1][0]) {
-					winner = PlayerColor.RED;
-					winnerName = "Sieg nach Anzahl der Fische.";
-				} else if (stats[0][0] < stats[1][0]) {
-					winner = PlayerColor.BLUE;
-					winnerName = "Sieg nach Anzahl der Fische.";
-				} else {
-					if (stats[0][1] > stats[1][1]) {
-						winner = PlayerColor.RED;
-						winnerName = "Sieg nach Schollen.";
-					} else if (stats[0][1] < stats[1][1]) {
-						winner = PlayerColor.BLUE;
-						winnerName = "Sieg nach Schollen.";
-					}
-				}
-				gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
-						+ winnerName);
+			int[][] stats = gameState.getGameStats();
+			PlayerColor winner = null;
+			String winnerName = "Gleichstand nach Anzahl der Fische "
+					+ "und nach Schollen.";
+			if (stats[0][0] > stats[1][0]) {
+				winner = PlayerColor.RED;
+				winnerName = "Sieg nach Anzahl der Fische.";
+			} else if (stats[0][0] < stats[1][0]) {
+				winner = PlayerColor.BLUE;
+				winnerName = "Sieg nach Anzahl der Fische.";
 			} else {
-				if (gameState.getCurrentMoveType() == MoveType.RUN
-						&& gameState.getPossibleMoves().size() == 1
-						&& gameState.getPossibleMoves(
-								gameState.getOtherPlayerColor()).size() == 1) {
-
-					gameState.clearEndGame();
-
-					int[][] stats = gameState.getGameStats();
-					PlayerColor winner = null;
-					String winnerName = "Gleichstand nach Anzahl der Fische "
-							+ "und nach Schollen.";
-					if (stats[0][0] > stats[1][0]) {
-						winner = PlayerColor.RED;
-						winnerName = "Sieg nach Anzahl der Fische.";
-					} else if (stats[0][0] < stats[1][0]) {
-						winner = PlayerColor.BLUE;
-						winnerName = "Sieg nach Anzahl der Fische.";
-					} else {
-						if (stats[0][1] > stats[1][1]) {
-							winner = PlayerColor.RED;
-							winnerName = "Sieg nach Schollen.";
-						} else if (stats[0][1] < stats[1][1]) {
-							winner = PlayerColor.BLUE;
-							winnerName = "Sieg nach Schollen.";
-						}
-					}
-
-					gameState.endGame(winner,
-							"Das Spiel ist vorzeitig zu Ende.\n"
-									+ "Beide Spieler sind zugunfaehig. "
-									+ winnerName);
-
+				if (stats[0][1] > stats[1][1]) {
+					winner = PlayerColor.RED;
+					winnerName = "Sieg nach Schollen.";
+				} else if (stats[0][1] < stats[1][1]) {
+					winner = PlayerColor.BLUE;
+					winnerName = "Sieg nach Schollen.";
 				}
 			}
-
+			gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
+					+ winnerName);
 			next(gameState.getCurrentPlayer());
 
 		} catch (InvalidMoveException e) {
