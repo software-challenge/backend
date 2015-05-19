@@ -6,5 +6,9 @@ public class Move {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public Object clone() {
+		return null;
+	}
 
 }
