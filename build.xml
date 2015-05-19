@@ -20,10 +20,11 @@
 		<delete dir="game_players/cartagena_player2/build" />
 		<delete dir="game_plugins/sixpack/build" />
 		<delete dir="game_players/sixpack/build" />
-		<!--    currentPlugin                    !-->
 		<delete dir="game_plugins/hey_danke_fuer_den_fisch/build" />
 		<delete dir="game_players/hey_danke_fuer_den_fisch/build" />
 		<delete dir="game_players/hey_danke_fuer_den_fisch_player2/build" />
+		<!--    currentPlugin                    !-->
+		<delete dir="game_plugins/twixt/build" />
 		
 	</target>
 
@@ -44,12 +45,12 @@
 		<ant dir="game_players/cartagena_player/" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/cartagena_player2/" target="clean-build" inheritAll="false" />
 		<ant dir="game_plugins/sixpack" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" /> !-->
-		<!--    currentPlugin                    !-->
+		<ant dir="game_players/sixpack" target="clean-build" inheritAll="false" />
 		<ant dir="game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
-		<ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" />
-
+		<ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" /> !-->
+		<!--    currentPlugin                    !-->
+		<ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -64,11 +65,11 @@
 		<mkdir dir="${out.dir}/gui/java8" />
 		
 		<copy todir="${out.dir}/gui/java7">
-			<fileset dir="./game_gui/build/jar" excludes="*/hey_danke_fuer_den_fisch-plugin_java8.jar" />
+			<fileset dir="./game_gui/build/jar" excludes="*/twixt_java8.jar" />
 		</copy>
 		
 		<copy todir="${out.dir}/gui/java8">
-			<fileset dir="./game_gui/build/jar" excludes="*/hey_danke_fuer_den_fisch-plugin_java7.jar" />
+			<fileset dir="./game_gui/build/jar" excludes="*/twixt_java7.jar" />
 		</copy>
 
 		<mkdir dir="${out.dir}/server" />
@@ -211,8 +212,7 @@
 			<fileset dir="${out.dir}/simple_client/sixpack/jar/lib" />
 		</copy>
 
-		!-->
-
+		
 
 		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar" />
 		<mkdir dir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java7" />
@@ -243,7 +243,7 @@
 		<copy todir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src/lib">
 			<fileset dir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7/lib" />
 		</copy>
-			
+		!-->
 		
         <!-->####    PLUGINS             !-->
 		<mkdir dir="game_gui/plugins" />
@@ -294,14 +294,14 @@
 		<zip destfile="${out.dir}/zipped/simpleclient-si-src.zip" basedir="${out.dir}/simple_client/sixpack/src" />
 		!-->
 
-
+		<!--
 		<zip destfile="${out.dir}/zipped/notsosimpleclient-hdfdf-jar-java7.zip" basedir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java7" />
 		<zip destfile="${out.dir}/zipped/notsosimpleclient-hdfdf-jar-java8.zip" basedir="${out.dir}/not_so_simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar-java7.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java7" />
 		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-jar-java8.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/jar/java8" />
 		<zip destfile="${out.dir}/zipped/simpleclient-hdfdf-src.zip" basedir="${out.dir}/simple_client/hey_danke_fuer_den_fisch/src" />
 		
-
+		!-->
 		<echo message="Gathering documentations..." />
 		<mkdir dir="${out.dir}/zipped/doc" />
 		<zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
