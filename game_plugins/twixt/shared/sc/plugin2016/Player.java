@@ -21,24 +21,11 @@ public class Player extends SimplePlayer implements Cloneable {
 	private PlayerColor color;
 
 	/**
-	 * aktuelle Fische des Spielers
-	 */
-	@XStreamAsAttribute
-	private int points;
-
-	/**
-	 * Anzahl der gesammelten Schollen
-	 */
-	@XStreamAsAttribute
-	private int fields;
-
-	/**
 	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
 	 * Deserialisierung von Objekten aus XML-Nachrichten.
 	 */
 	public Player() {
-		points = 0;
-		fields = 0;
+		
 	}
 
 	/**
@@ -48,9 +35,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 *            Spielerfarbe
 	 */
 	public Player(final PlayerColor color) {
-		fields = 0;
 		this.color = color;
-		points = 0;
 	}
 
 	/**
@@ -62,8 +47,6 @@ public class Player extends SimplePlayer implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Player clone = new Player(this.color);
-		clone.points = this.points;
-		clone.fields = this.fields;
 		return clone;
 	}
 

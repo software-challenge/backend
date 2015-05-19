@@ -57,10 +57,6 @@ public class GameState implements Cloneable {
 	@XStreamAsAttribute
 	private PlayerColor currentPlayer;
 
-	// momentan auszufuehrender zug-type
-	@XStreamAsAttribute
-	private MoveType currentMoveType;
-
 	// die teilnehmenden spieler
 	private Player red, blue;
 
@@ -89,7 +85,6 @@ public class GameState implements Cloneable {
 
 		currentPlayer = PlayerColor.RED;
 		startPlayer = PlayerColor.RED;
-		currentMoveType = MoveType.SET;
 		board = new Board();
 	}
 
@@ -251,20 +246,6 @@ public class GameState implements Cloneable {
 	 */
 
 	/**
-	 * liefert den momentan auszufuehrenden Zugtyp
-	 */
-	public MoveType getCurrentMoveType() {
-		return currentMoveType;
-	}
-
-	/**
-	 * setzt den momentan auszufuehrenden Zugtyp
-	 */
-	public void setCurrentMoveType(MoveType moveType) {
-		currentMoveType = moveType;
-	}
-
-	/**
 	 * liefert die aktuelle Zugzahl
 	 */
 	public int getTurn() {
@@ -290,13 +271,7 @@ public class GameState implements Cloneable {
 
 		turn++;
 		this.lastMove = lastMove;
-
-		if (turn == Constants.PENGUINS * 2) {
-			setCurrentMoveType(MoveType.RUN);
-			// switchCurrentPlayer();
-		} else {
-			switchCurrentPlayer();
-		}
+		switchCurrentPlayer();
 	}
 
 	/**
@@ -316,19 +291,7 @@ public class GameState implements Cloneable {
 	 */
 	public List<Move> getPossibleMoves() {
 		List<Move> moves = new ArrayList<Move>();
-		for (int x = 0; x < Constants.COLUMNS; x++) {
-			for (int y = 0; y < Constants.ROWS; y++) {
-				if (this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
-					moves.addAll(leftOfPenguin(x, y));
-					moves.addAll(rightOfPenguin(x, y));
-					moves.addAll(topLeftOfPenguin(x, y));
-					moves.addAll(bottomRightOfPenguin(x, y));
-					moves.addAll(topRightOfPenguin(x, y));
-					moves.addAll(bottomLeftOfPenguin(x, y));
-				}
-			}
-		}
-		moves.add(new NullMove());
+		
 		return moves;
 	}
 
@@ -341,237 +304,22 @@ public class GameState implements Cloneable {
 	 */
 	public List<Move> getPossibleMoves(PlayerColor playerColor) {
 		List<Move> moves = new ArrayList<Move>();
-		for (int x = 0; x < Constants.COLUMNS; x++) {
-			for (int y = 0; y < Constants.ROWS; y++) {
-				if (this.board.hasPinguin(x, y, playerColor)) {
-					moves.addAll(leftOfPenguin(x, y));
-					moves.addAll(rightOfPenguin(x, y));
-					moves.addAll(topLeftOfPenguin(x, y));
-					moves.addAll(bottomRightOfPenguin(x, y));
-					moves.addAll(topRightOfPenguin(x, y));
-					moves.addAll(bottomLeftOfPenguin(x, y));
-				}
-			}
-		}
-		moves.add(new NullMove());
+		
 		return moves;
 	}
 
-	/**
-	 * Generiert eine Liste aller möglichen Züge für einen bestimmten Pinguin
-	 * nur für den Server relevant
-	 * 
-	 * @param x
-	 *            x-Koordinate des Pinguins
-	 * @param y
-	 *            y-Koordinate des Pinguins
-	 * @return Liste aller möglichen Züge
-	 */
-	public List<Move> getPossibleMovesForPenguin(int x, int y) {
-		List<Move> moves = new ArrayList<Move>();
-		if (x < 0 || y < 0) {
-			List<SetMove> setMoves = getPossibleSetMoves();
-			for(SetMove m:setMoves){
-				moves.add(m);
-			}
-		} else {
-			if (this.board.hasPinguin(x, y, getCurrentPlayerColor())) {
-				moves.addAll(leftOfPenguin(x, y));
-				moves.addAll(rightOfPenguin(x, y));
-				moves.addAll(topLeftOfPenguin(x, y));
-				moves.addAll(bottomRightOfPenguin(x, y));
-				moves.addAll(topRightOfPenguin(x, y));
-				moves.addAll(bottomLeftOfPenguin(x, y));
-			}
-		}
-		return moves;
-	}
 
 	/**
 	 * nur für den Server relevant
 	 */
-	private List<RunMove> leftOfPenguin(int x, int y) {
-		boolean done = false;
-		int currentX = x - 1;
-		List<RunMove> moves = new ArrayList<RunMove>();
-		while (!done) {
-			if (currentX < 0 || this.board.getPenguin(currentX, y) != null
-					|| this.board.getFishNumber(currentX, y) == 0) {
-				done = true;
-			} else {
-				moves.add(new RunMove(x, y, currentX, y));
-				currentX--;
-			}
-		}
-		return moves;
-	}
-
-	/**
-	 * nur für den Server relevant
-	 */
-	private List<RunMove> rightOfPenguin(int x, int y) {
-		boolean done = false;
-		int currentX = x + 1;
-		List<RunMove> moves = new ArrayList<RunMove>();
-		while (!done) {
-			if (currentX >= Constants.COLUMNS
-					|| this.board.getPenguin(currentX, y) != null
-					|| this.board.getFishNumber(currentX, y) == 0) {
-				done = true;
-			} else {
-				moves.add(new RunMove(x, y, currentX, y));
-				currentX++;
-			}
-		}
-		return moves;
-	}
-
-	/**
-	 * nur für den Server relevant
-	 */
-	private List<RunMove> topLeftOfPenguin(int x, int y) {
-		boolean done = false;
-		int currentX;
-		if ((y & 1) == 0) {
-			currentX = x;
-		} else {
-			currentX = x - 1;
-		}
-		int currentY = y - 1;
-		List<RunMove> moves = new ArrayList<RunMove>();
-		while (!done) {
-			if (currentX < 0 || currentY < 0
-					|| this.board.getPenguin(currentX, currentY) != null
-					|| this.board.getFishNumber(currentX, currentY) == 0) {
-				done = true;
-			} else {
-				moves.add(new RunMove(x, y, currentX, currentY));
-				if ((currentY & 1) == 1)
-					currentX--;
-				currentY--;
-			}
-		}
-		return moves;
-	}
-
-	/**
-	 * nur für den Server relevant
-	 */
-	private List<RunMove> topRightOfPenguin(int x, int y) {
-		boolean done = false;
-		int currentX;
-		if ((y & 1) == 1) {
-			currentX = x;
-		} else {
-			currentX = x + 1;
-		}
-		int currentY = y - 1;
-		List<RunMove> moves = new ArrayList<RunMove>();
-		while (!done) {
-			if (currentX >= Constants.COLUMNS || currentY < 0
-					|| this.board.getPenguin(currentX, currentY) != null
-					|| this.board.getFishNumber(currentX, currentY) == 0) {
-				done = true;
-			} else {
-				moves.add(new RunMove(x, y, currentX, currentY));
-				if ((currentY & 1) == 0)
-					currentX++;
-				currentY--;
-			}
-		}
-		return moves;
-	}
-
-	/**
-	 * nur für den Server relevant
-	 */
-	private List<RunMove> bottomRightOfPenguin(int x, int y) {
-		boolean done = false;
-		int currentX;
-		if ((y & 1) == 1) {
-			currentX = x;
-		} else {
-			currentX = x + 1;
-		}
-		int currentY = y + 1;
-		List<RunMove> moves = new ArrayList<RunMove>();
-		while (!done) {
-			if (currentX >= Constants.COLUMNS || currentY >= Constants.ROWS
-					|| this.board.getPenguin(currentX, currentY) != null
-					|| this.board.getFishNumber(currentX, currentY) == 0) {
-				done = true;
-			} else {
-				moves.add(new RunMove(x, y, currentX, currentY));
-				if ((currentY & 1) == 0)
-					currentX++;
-				currentY++;
-			}
-		}
-		return moves;
-	}
-
-	/**
-	 * nur für den Server relevant
-	 */
-	private List<RunMove> bottomLeftOfPenguin(int x, int y) {
-		boolean done = false;
-		int currentX;
-		if ((y & 1) == 0) {
-			currentX = x;
-		} else {
-			currentX = x - 1;
-		}
-		int currentY = y + 1;
-		List<RunMove> moves = new ArrayList<RunMove>();
-		while (!done) {
-			if (currentX < 0 || currentY >= Constants.ROWS
-					|| this.board.getPenguin(currentX, currentY) != null
-					|| this.board.getFishNumber(currentX, currentY) == 0) {
-				done = true;
-			} else {
-				moves.add(new RunMove(x, y, currentX, currentY));
-				if ((currentY & 1) == 1)
-					currentX--;
-				currentY++;
-			}
-		}
-		return moves;
-	}
-
-	/**
-	 * Generiert eine Liste von moeglichen Setzzuegen des Spielers, der aktuell
-	 * an der Reihe ist.
-	 * 
-	 * @return moegliche Setzzuege
-	 */
-	public List<SetMove> getPossibleSetMoves() {
-		List<SetMove> moves = new ArrayList<SetMove>();
-		for (int x = 0; x < Constants.COLUMNS; x++) {
-			for (int y = 0; y < Constants.ROWS; y++) {
-				if (board.getFishNumber(x, y) == 1
-						&& board.getPenguin(x, y) == null)
-					moves.add(new SetMove(x, y));
-			}
-		}
-		return moves;
-	}
+	
 
 	/**
 	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem
 	 * Spielfeld stehen.
 	 */
 	protected void clearEndGame() {
-		for (int i = 0; i < Constants.ROWS; i++) {
-			for (int j = 0; j < Constants.COLUMNS; j++) {
-				if (this.board.hasPinguin(i, j, PlayerColor.BLUE)) {
-					this.blue.addPoints(this.board.getFishNumber(i, j));
-					this.blue.addField();
-				} else if (this.board.hasPinguin(i, j, PlayerColor.RED)) {
-					this.red.addPoints(this.board.getFishNumber(i, j));
-					this.red.addField();
-				}
-			}
-		}
+		
 	}
 
 	/**
@@ -633,14 +381,8 @@ public class GameState implements Cloneable {
 	 */
 	public int[][] getGameStats() {
 
-		int[][] stats = new int[2][2];
-
-		stats[0][0] = this.red.getPoints();
-		stats[0][1] = this.red.getFields();
-		stats[1][0] = this.blue.getPoints();
-		stats[1][1] = this.blue.getFields();
-
-		return stats;
+		// wird hier nicht benoetigt
+		return null;
 
 	}
 
