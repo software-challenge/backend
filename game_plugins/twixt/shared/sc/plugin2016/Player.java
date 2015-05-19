@@ -80,39 +80,4 @@ public class Player extends SimplePlayer implements Cloneable {
 	public PlayerColor getPlayerColor() {
 		return color;
 	}
-
-	/**
-	 * Erhöht das Schollendepot dieses Spielers um 1.
-	 */
-	public void addField() {
-		this.fields++;
-	}
-
-	/**
-	 * Gibt eine Anzahl der Schollen des Spielers zurück.
-	 * 
-	 * @return Anzahl der Schollen des Spielers
-	 */
-	public int getFields() {
-		return fields;
-	}
-
-	/**
-	 * Fügt dem Fischdepot des Spielers Punkte hinzu
-	 * 
-	 * @param points
-	 *            Anzahl hinzuzufügender Punkte
-	 */
-	public void addPoints(int points) {
-		this.points += points;
-	}
-
-	/**
-	 * Liefert den Stand des Fischdepots des Spielers
-	 * 
-	 * @return Punkte des Spielers
-	 */
-	public int getPoints() {
-		return points;
-	}
 }
