@@ -1,4 +1,4 @@
-<project name="hey_danke_fuer_den_fisch-plugin" basedir="." default="main">
+<project name="twixt" basedir="." default="main">
 	<import file="../../git-build.xml" />
 
 	<property name="src.dir" value="src" />
