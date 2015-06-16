@@ -11,9 +11,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
- * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}) und
- * was fuer eine Art von Zug ({@link #getCurrentMoveType() getCurrentMoveType()}
- * ) der Spielserver als Antwort von einem der beiden Spieler (
+ * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}), die
+ * der Spielserver als Antwort von einem der beiden Spieler (
  * {@link #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren
  * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
  * Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf. ueber das
@@ -27,414 +26,409 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * Der Spielserver sendet an beide teilnehmenden Spieler nach jedem getaetigten
  * Zug eine neue Kopie des {@code GameState}, in dem der dann aktuelle Zustand
  * beschrieben wird. Informationen ueber den Spielverlauf sind nur bedingt ueber
- * den {@code GameState}erfragbar und muessen von einem Spielclient daher bei
+ * den {@code GameState} erfragbar und muessen von einem Spielclient daher bei
  * Bedarf selbst mitgeschrieben werden.<br/>
  * <br/>
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
  * {@link #getPossibleMoves() getPossibleMoves()} eine Liste aller fuer den
- * aktuellen Spieler legalen Laufzuege und mit {@link #getPossibleSetMoves()
- * getPossibleSetMoves()} eine Liste aller für den aktuellen Spieler legalen
- * Setzzüge abgefragt werden. Ist momentan also ein Laufzug oder ein Setzzug zu
- * taetigen, kann eine Spieleclient diese Liste aus dem {@code GameState}
- * erfragen und muss dann lediglich einen Zug aus dieser Liste auswaehlen.
+ * aktuellen Spieler legalen Zuege abgefragt werden. So kann ein Spieleclient
+ * diese Liste aus dem {@code GameState} erfragen und muss dann lediglich einen
+ * Zug aus dieser Liste auswaehlen.
  * 
  * @author Niklas, Sören
  */
 @XStreamAlias(value = "state")
 public class GameState implements Cloneable {
 
-	// momentane rundenzahl
-	@XStreamAsAttribute
-	private int turn;
+  // momentane rundenzahl
+  @XStreamAsAttribute
+  private int turn;
 
-	// farbe des startspielers
-	@XStreamAsAttribute
-	private PlayerColor startPlayer;
+  // farbe des startspielers
+  @XStreamAsAttribute
+  private PlayerColor startPlayer;
 
-	// farbe des aktuellen spielers
-	@XStreamAsAttribute
-	private PlayerColor currentPlayer;
+  // farbe des aktuellen spielers
+  @XStreamAsAttribute
+  private PlayerColor currentPlayer;
 
-	// die teilnehmenden spieler
-	private Player red, blue;
+  // die teilnehmenden spieler
+  private Player red, blue;
 
-	// Das Spielbrett
+  // Das Spielbrett
 
-	private Board board;
+  private Board board;
 
-	// letzter getätigter move
-	private Move lastMove;
+  // letzter getätigter move
+  private Move lastMove;
 
-	// endbedingung
-	private Condition condition = null;
+  // endbedingung
+  private Condition condition = null;
 
-	/**
-	 * Erzeugt einen neuen {@code GameState} in dem alle Informationen so
-	 * gesetzt sind, wie sie zu Beginn eines Spiels, bevor die Spieler
-	 * beigetreten sind, gueltig sind.<br/>
-	 * <br/>
-	 * 
-	 * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte
-	 * vom Spielclient i.A. nicht aufgerufen werden!</b>
-	 * 
-	 * Das Spielfeld wird zufällig aufgebaut.
-	 */
-	public GameState() {
+  /**
+   * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
+   * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
+   * gueltig sind.<br/>
+   * <br/>
+   * 
+   * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
+   * Spielclient i.A. nicht aufgerufen werden!</b>
+   * 
+   * Das Spielfeld wird zufällig aufgebaut.
+   */
+  public GameState() {
 
-		currentPlayer = PlayerColor.RED;
-		startPlayer = PlayerColor.RED;
-		board = new Board();
-	}
+    currentPlayer = PlayerColor.RED;
+    startPlayer = PlayerColor.RED;
+    board = new Board();
+  }
 
-	/**
-	 * erzeugt eine Deepcopy dieses Objekts
-	 * 
-	 * @return ein neues Objekt mit gleichen Eigenschaften
-	 * @throws CloneNotSupportedException
-	 */
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		GameState clone = (GameState) super.clone();
-		if (red != null)
-			clone.red = (Player) red.clone();
-		if (blue != null)
-			clone.blue = (Player) blue.clone();
-		if (lastMove != null)
-			clone.lastMove = (Move) lastMove.clone();
-		if (board != null)
-			clone.board = (Board) this.board.clone();
-		if (condition != null)
-			clone.condition = (Condition) condition.clone();
-		if (currentPlayer != null)
-			clone.currentPlayer = currentPlayer;
+  /**
+   * erzeugt eine Deepcopy dieses Objekts
+   * 
+   * @return ein neues Objekt mit gleichen Eigenschaften
+   * @throws CloneNotSupportedException
+   */
+  @Override
+  public Object clone() throws CloneNotSupportedException {
+    GameState clone = (GameState) super.clone();
+    if (red != null)
+      clone.red = (Player) red.clone();
+    if (blue != null)
+      clone.blue = (Player) blue.clone();
+    if (lastMove != null)
+      clone.lastMove = (Move) lastMove.clone();
+    if (board != null)
+      clone.board = (Board) this.board.clone();
+    if (condition != null)
+      clone.condition = (Condition) condition.clone();
+    if (currentPlayer != null)
+      clone.currentPlayer = currentPlayer;
 
-		return clone;
-	}
+    return clone;
+  }
 
-	/**
-	 * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
-	 * <br/>
-	 * 
-	 * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
-	 * Spielclient i.A. nicht aufgerufen werden!</b>
-	 * 
-	 * @param player
-	 *            Der hinzuzufuegende Spieler.
-	 */
-	public void addPlayer(Player player) {
+  /**
+   * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
+   * <br/>
+   * 
+   * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+   * Spielclient i.A. nicht aufgerufen werden!</b>
+   * 
+   * @param player
+   *          Der hinzuzufuegende Spieler.
+   */
+  public void addPlayer(Player player) {
 
-		if (player.getPlayerColor() == PlayerColor.RED) {
-			red = player;
-		} else if (player.getPlayerColor() == PlayerColor.BLUE) {
-			blue = player;
-		}
-	}
+    if (player.getPlayerColor() == PlayerColor.RED) {
+      red = player;
+    } else if (player.getPlayerColor() == PlayerColor.BLUE) {
+      blue = player;
+    }
+  }
 
-	/**
-	 * Gibt das Spielfeld zurück
-	 * 
-	 * @return das Spielfeld
-	 */
-	public Board getBoard() {
-		return this.board;
-	}
+  /**
+   * Gibt das Spielfeld zurück
+   * 
+   * @return das Spielfeld
+   */
+  public Board getBoard() {
+    return this.board;
+  }
 
-	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
-	 * ist.
-	 * 
-	 * @return Der Spieler, der momentan am Zug ist.
-	 */
-	public Player getCurrentPlayer() {
-		return (currentPlayer == PlayerColor.RED ? red : blue);
-	}
+  /**
+   * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
+   * ist.
+   * 
+   * @return Der Spieler, der momentan am Zug ist.
+   */
+  public Player getCurrentPlayer() {
+    return (currentPlayer == PlayerColor.RED ? red : blue);
+  }
 
-	/**
-	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
-	 * ist. Dies ist aequivalent zum Aufruf
-	 * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
-	 * 
-	 * @return Die Farbe des Spielers, der momentan am Zug ist.
-	 */
-	public PlayerColor getCurrentPlayerColor() {
-		return currentPlayer;
-	}
+  /**
+   * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
+   * ist. Dies ist aequivalent zum Aufruf
+   * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
+   * 
+   * @return Die Farbe des Spielers, der momentan am Zug ist.
+   */
+  public PlayerColor getCurrentPlayerColor() {
+    return currentPlayer;
+  }
 
-	/**
-	 * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht
-	 * am Zug ist.
-	 * 
-	 * @return Der Spieler, der momentan nicht am Zug ist.
-	 */
-	public Player getOtherPlayer() {
-		return currentPlayer == PlayerColor.RED ? blue : red;
-	}
+  /**
+   * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
+   * Zug ist.
+   * 
+   * @return Der Spieler, der momentan nicht am Zug ist.
+   */
+  public Player getOtherPlayer() {
+    return currentPlayer == PlayerColor.RED ? blue : red;
+  }
 
-	/**
-	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
-	 * Zug ist. Dies ist aequivalent zum Aufruf @
-	 * {@code getCurrentPlayerColor.opponent()} oder
-	 * {@code getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
-	 * 
-	 * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
-	 */
-	public PlayerColor getOtherPlayerColor() {
-		return currentPlayer.opponent();
-	}
+  /**
+   * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan nicht am
+   * Zug ist. Dies ist aequivalent zum Aufruf @
+   * {@code getCurrentPlayerColor.opponent()} oder
+   * {@code getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
+   * 
+   * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
+   */
+  public PlayerColor getOtherPlayerColor() {
+    return currentPlayer.opponent();
+  }
 
-	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als erstes beigetreten ist und demzufolge mit der Farbe
-	 * {@code PlayerColor.RED} spielt.
-	 * 
-	 * @return Der rote Spieler.
-	 */
-	public Player getRedPlayer() {
-		return red;
-	}
+  /**
+   * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
+   * Spiel als erstes beigetreten ist und demzufolge mit der Farbe
+   * {@code PlayerColor.RED} spielt.
+   * 
+   * @return Der rote Spieler.
+   */
+  public Player getRedPlayer() {
+    return red;
+  }
 
-	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der
-	 * dem Spiel als zweites beigetreten ist und demzufolge mit der Farbe
-	 * {@code PlayerColor.BLUE} spielt.
-	 * 
-	 * @return Der blaue Spieler.
-	 */
-	public Player getBluePlayer() {
-		return blue;
-	}
+  /**
+   * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
+   * Spiel als zweites beigetreten ist und demzufolge mit der Farbe
+   * {@code PlayerColor.BLUE} spielt.
+   * 
+   * @return Der blaue Spieler.
+   */
+  public Player getBluePlayer() {
+    return blue;
+  }
 
-	/**
-	 * Liefert den Spieler, also eine {@code Player}-Objekt, der den aktuellen
-	 * Abschnitt begonnen hat. Also den Spieler, der in der letzten Auswahlphase
-	 * als erster Bauelemente waehlen musste und dann als zweiter gebaut hat.
-	 * 
-	 * @return Der Spieler, der momentan Startspieler ist.
-	 */
-	public Player getStartPlayer() {
-		return startPlayer == PlayerColor.RED ? red : blue;
-	}
+  /**
+   * Liefert den Spieler, also eine {@code Player}-Objekt, der den aktuellen
+   * Abschnitt begonnen hat. Also den Spieler, der in der letzten Auswahlphase
+   * als erster Bauelemente waehlen musste und dann als zweiter gebaut hat.
+   * 
+   * @return Der Spieler, der momentan Startspieler ist.
+   */
+  public Player getStartPlayer() {
+    return startPlayer == PlayerColor.RED ? red : blue;
+  }
 
-	/**
-	 * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
-	 * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
-	 * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
-	 * 
-	 * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht
-	 *         begonnen hat.
-	 */
-	public PlayerColor getStartPlayerColor() {
-		return startPlayer;
-	}
+  /**
+   * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
+   * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
+   * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
+   * 
+   * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht begonnen
+   *         hat.
+   */
+  public PlayerColor getStartPlayerColor() {
+    return startPlayer;
+  }
 
-	/**
-	 * wechselt den Spieler, der aktuell an der Reihe ist.
-	 */
-	private void switchCurrentPlayer() {
-		currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
-				: PlayerColor.RED;
-	}
+  /**
+   * wechselt den Spieler, der aktuell an der Reihe ist.
+   */
+  private void switchCurrentPlayer() {
+    currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
+        : PlayerColor.RED;
+  }
 
-	/**
-	 * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
-	 */
-	/*
-	 * private void switchStartPlayer() { startPlayer = startPlayer ==
-	 * PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED; }
-	 */
+  /**
+   * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
+   */
+  /*
+   * private void switchStartPlayer() { startPlayer = startPlayer ==
+   * PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED; }
+   */
 
-	/**
-	 * liefert die aktuelle Zugzahl
-	 */
-	public int getTurn() {
-		return turn;
-	}
+  /**
+   * liefert die aktuelle Zugzahl
+   */
+  public int getTurn() {
+    return turn;
+  }
 
-	/**
-	 * Simuliert einen uebergebenen Zug. Dabei werden folgende Informationen
-	 * aktualisiert:
-	 * <ul>
-	 * <li>Zugzahl
-	 * <li>Welcher Spieler an der Reihe ist
-	 * <li>Welcher Spieler erster der Spielphase ist
-	 * <li>Was der letzte Zug war
-	 * <li>Was der aktuell erwartete Zug ist
-	 * <li>die Punkte der Spieler
-	 * </ul>
-	 * 
-	 * @param lastMove
-	 *            auszufuehrender Zug
-	 */
-	public void prepareNextTurn(Move lastMove) {
+  /**
+   * Simuliert einen uebergebenen Zug. Dabei werden folgende Informationen
+   * aktualisiert:
+   * <ul>
+   * <li>Zugzahl
+   * <li>Welcher Spieler an der Reihe ist
+   * <li>Welcher Spieler erster der Spielphase ist
+   * <li>Was der letzte Zug war
+   * <li>Was der aktuell erwartete Zug ist
+   * <li>die Punkte der Spieler
+   * </ul>
+   * 
+   * @param lastMove
+   *          auszufuehrender Zug
+   */
+  public void prepareNextTurn(Move lastMove) {
 
-		turn++;
-		this.lastMove = lastMove;
-		switchCurrentPlayer();
-	}
+    turn++;
+    this.lastMove = lastMove;
+    switchCurrentPlayer();
+  }
 
-	/**
-	 * liefert die aktuelle Rundenzahl
-	 * 
-	 * @return aktuelle Rundenzahl
-	 */
-	public int getRound() {
-		return turn / 2;
-	}
+  /**
+   * liefert die aktuelle Rundenzahl
+   * 
+   * @return aktuelle Rundenzahl
+   */
+  public int getRound() {
+    return turn / 2;
+  }
 
-	/**
-	 * Liefert eine Liste aller aktuell erlaubten Laufzuege, des Spielers der aktuell an der
-	 * Reihe ist.
-	 * 
-	 * @return Liste erlaubter Spielzuege
-	 */
-	public List<Move> getPossibleMoves() {
-		List<Move> moves = new ArrayList<Move>();
-		
-		return moves;
-	}
+  /**
+   * Liefert eine Liste aller aktuell erlaubten Laufzuege, des Spielers der
+   * aktuell an der Reihe ist.
+   * 
+   * @return Liste erlaubter Spielzuege
+   */
+  public List<Move> getPossibleMoves() {
+    List<Move> moves = new ArrayList<Move>();
 
-	/**
-	 * Generiert eine Liste der moeglichen Laufzuege von uebergegebenem Spieler
-	 * 
-	 * @param playerColor
-	 *            Farbe des Spielers
-	 * @return moegliche Laufzuege
-	 */
-	public List<Move> getPossibleMoves(PlayerColor playerColor) {
-		List<Move> moves = new ArrayList<Move>();
-		
-		return moves;
-	}
+    return moves;
+  }
 
+  /**
+   * Generiert eine Liste der moeglichen Laufzuege von uebergegebenem Spieler
+   * 
+   * @param playerColor
+   *          Farbe des Spielers
+   * @return moegliche Laufzuege
+   */
+  public List<Move> getPossibleMoves(PlayerColor playerColor) {
+    List<Move> moves = new ArrayList<Move>();
 
-	/**
-	 * nur für den Server relevant
-	 */
-	
+    return moves;
+  }
 
-	/**
-	 * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem
-	 * Spielfeld stehen.
-	 */
-	protected void clearEndGame() {
-		
-	}
+  /**
+   * nur für den Server relevant
+   */
 
-	/**
-	 * Liefert den zuletzt ausgefuehrten Zug
-	 * 
-	 * @return letzter Zug
-	 */
-	public Move getLastMove() {
-		return lastMove;
-	}
+  /**
+   * Verteilt die Punkte am Ende des Spiels für die Figuren, die noch auf dem
+   * Spielfeld stehen.
+   */
+  protected void clearEndGame() {
 
-	/**
-	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
-	 * Einträgen
-	 * <ul>
-	 * <li>[0] - Punktekonto des Spielers (Anzahl der Fische)
-	 * <li>[1] - Anzahl der Plättchen
-	 * </ul>
-	 * 
-	 * @param player
-	 *            Spieler
-	 * @return Array mit Statistiken
-	 */
-	public int[] getPlayerStats(Player player) {
-		assert player != null;
-		return getPlayerStats(player.getPlayerColor());
-	}
+  }
 
-	/**
-	 * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
-	 * Einträgen
-	 * <ul>
-	 * <li>[0] - Fischdepot des Spielers (Anzahl der Fische)
-	 * <li>[1] - Anzahl der Schollen
-	 * </ul>
-	 * 
-	 * @param playerColor
-	 *            Farbe des Spielers
-	 * @return Array mit Statistiken
-	 */
-	public int[] getPlayerStats(PlayerColor playerColor) {
-		assert playerColor != null;
+  /**
+   * Liefert den zuletzt ausgefuehrten Zug
+   * 
+   * @return letzter Zug
+   */
+  public Move getLastMove() {
+    return lastMove;
+  }
 
-		if (playerColor == PlayerColor.RED) {
-			return getGameStats()[0];
-		} else {
-			return getGameStats()[1];
-		}
-	}
+  /**
+   * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
+   * Einträgen
+   * <ul>
+   * <li>[0] - Punktekonto des Spielers (Anzahl der Fische)
+   * <li>[1] - Anzahl der Plättchen
+   * </ul>
+   * 
+   * @param player
+   *          Spieler
+   * @return Array mit Statistiken
+   */
+  public int[] getPlayerStats(Player player) {
+    assert player != null;
+    return getPlayerStats(player.getPlayerColor());
+  }
 
-	/**
-	 * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
-	 * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei
-	 * getGameStats()[0], einem Aufruf von getPlayerStats(PlayerColor.RED)
-	 * entspricht.
-	 * 
-	 * @see #getPlayerStats(PlayerColor)
-	 * @return Statusinformationen beider Spieler
-	 */
-	public int[][] getGameStats() {
+  /**
+   * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
+   * Einträgen
+   * <ul>
+   * <li>[0] - Fischdepot des Spielers (Anzahl der Fische)
+   * <li>[1] - Anzahl der Schollen
+   * </ul>
+   * 
+   * @param playerColor
+   *          Farbe des Spielers
+   * @return Array mit Statistiken
+   */
+  public int[] getPlayerStats(PlayerColor playerColor) {
+    assert playerColor != null;
 
-		// wird hier nicht benoetigt
-		return null;
+    if (playerColor == PlayerColor.RED) {
+      return getGameStats()[0];
+    } else {
+      return getGameStats()[1];
+    }
+  }
 
-	}
+  /**
+   * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
+   * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei getGameStats()[0],
+   * einem Aufruf von getPlayerStats(PlayerColor.RED) entspricht.
+   * 
+   * @see #getPlayerStats(PlayerColor)
+   * @return Statusinformationen beider Spieler
+   */
+  public int[][] getGameStats() {
 
-	/**
-	 * liefert die Namen den beiden Spieler
-	 */
-	public String[] getPlayerNames() {
-		return new String[] { red.getDisplayName(), blue.getDisplayName() };
+    // wird hier nicht benoetigt
+    return null;
 
-	}
+  }
 
-	/**
-	 * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
-	 * 
-	 * @param winner
-	 *            Farbe des Siegers
-	 * @param reason
-	 *            Gewinngrund
-	 */
-	public void endGame(PlayerColor winner, String reason) {
-		if (condition == null) {
-			condition = new Condition(winner, reason);
-		}
-	}
+  /**
+   * liefert die Namen den beiden Spieler
+   */
+  public String[] getPlayerNames() {
+    return new String[] { red.getDisplayName(), blue.getDisplayName() };
 
-	/**
-	 * gibt an, ob das Spiel beendet ist
-	 * 
-	 * @return wahr, wenn beendet
-	 */
-	public boolean gameEnded() {
-		return condition != null;
-	}
+  }
 
-	/**
-	 * liefert die Farbe des Siegers, falls das Spiel beendet ist.
-	 * 
-	 * @see #gameEnded()
-	 * @return Siegerfarbe
-	 */
-	public PlayerColor winner() {
-		return condition == null ? null : condition.winner;
-	}
+  /**
+   * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
+   * 
+   * @param winner
+   *          Farbe des Siegers
+   * @param reason
+   *          Gewinngrund
+   */
+  public void endGame(PlayerColor winner, String reason) {
+    if (condition == null) {
+      condition = new Condition(winner, reason);
+    }
+  }
 
-	/**
-	 * liefert den Gewinngrund, falls das Spiel beendet ist.
-	 * 
-	 * @see #gameEnded()
-	 * @return Gewinngrund
-	 */
-	public String winningReason() {
-		return condition == null ? "" : condition.reason;
-	}
+  /**
+   * gibt an, ob das Spiel beendet ist
+   * 
+   * @return wahr, wenn beendet
+   */
+  public boolean gameEnded() {
+    return condition != null;
+  }
+
+  /**
+   * liefert die Farbe des Siegers, falls das Spiel beendet ist.
+   * 
+   * @see #gameEnded()
+   * @return Siegerfarbe
+   */
+  public PlayerColor winner() {
+    return condition == null ? null : condition.winner;
+  }
+
+  /**
+   * liefert den Gewinngrund, falls das Spiel beendet ist.
+   * 
+   * @see #gameEnded()
+   * @return Gewinngrund
+   */
+  public String winningReason() {
+    return condition == null ? "" : condition.reason;
+  }
 
 }
