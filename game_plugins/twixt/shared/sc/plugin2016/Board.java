@@ -5,10 +5,15 @@ import java.awt.geom.Line2D;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Player;
 import sc.plugin2016.util.Constants;
+import com.google.common.collect.Table;
+import com.google.common.collect.HashBasedTable;
 
 public class Board {
 
   public Field[][] fields;
+  
+  public HashBasedTable<Field, Field, PlayerColor> connections;
+//  private HashBasedTable<Field, Field, PlayerColor> possibleConnections;
 
   /**
 	 * 
@@ -51,6 +56,7 @@ public class Board {
         fields[x][y] = new Field(FieldType.NORMAL, x, y);
       }
     }
+    connections = HashBasedTable.create();
   }
 
   private void makeClearBoard() {
@@ -139,8 +145,9 @@ public class Board {
   }
 
   private void createWire(int x1, int y1, int x2, int y2) {
-    getField(x1, y1).addConnection(getField(x2, y2));
-    getField(x2, y2).addConnection(getField(x1, y1));
+    connections.put(getField(x1, y1), getField(x2, y2), getField(x1, y1).getOwner().getPlayerColor());
+//    getField(x1, y1).addConnection(getField(x2, y2));
+//    getField(x2, y2).addConnection(getField(x1, y1));
 
   }
 
@@ -179,20 +186,23 @@ public class Board {
    * checks for the wire (x1, y1) -> (x2, y2), if it is blocked by any connection going out from (x,y).
    */
   private boolean isWireBlocked(int x1, int y1, int x2, int y2, int x, int y) {
-    for(Field field : getField(x, y).getConnections()) {
-      if(areWiresBlocking(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
+//    for(Field field : getField(x, y).getConnections()) {
+//      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
+//        return true;
+//      }
+//    }
+//    return false;  
+//  }
+    for(Field field : connections.column(getField(x, y)).keySet()) {
+      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
+        return true;
+      }
+    }
+    for(Field field : connections.row(getField(x, y)).keySet()) {
+      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
         return true;
       }
     }
     return false;
-  }
-
-  /*
-   * checks, if the wires (x11, y11) -> (x12, y12) and (x21, y21) -> (x22, y22) are overlapping each other.
-   */
-  private boolean areWiresBlocking(int x11, int y11, int x12, int y12, int x21,
-      int y21, int x22, int y22) {
-    
-    return Line2D.linesIntersect(x11, y11, x12, y12, x21, y21, x22, y22);
   }
 }
