@@ -6,12 +6,10 @@ import java.util.List;
 public class Field {
 	private Player owner;
 	private FieldType type;
-	private List<Field> connections;
 	private final int x, y;
 	
 	public Field(FieldType type, int x, int y) {
 		this.setType(type);
-		this.setConnections(new LinkedList<Field>());
 		this.owner = null;
 		this.x = x;
 		this.y = y;
@@ -58,29 +56,6 @@ public class Field {
 		clone.setOwner(this.getOwner());
 		return clone;
 	}
-
-  /**
-   * Liefert die Liste der Felder, mit denen dieses Feld verbunden ist.
-   * @return the connections
-   */
-  public List<Field> getConnections() {
-    return connections;
-  }
-  
-  /**
-   * Nur fuer den Server relevante Methode zum hinzufügen einer neuen Verbindung.
-   * @param connection hinzuzufuegende Verbindung
-   */
-  public void addConnection(Field connection) {
-    this.connections.add(connection);
-  }
-
-  /**
-   * @param connections the connections to set
-   */
-  private void setConnections(List<Field> connections) {
-    this.connections = connections;
-  }
 
   /**
    * @return the x
