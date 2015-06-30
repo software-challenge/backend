@@ -3,8 +3,14 @@ package sc.plugin2016;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+@XStreamAlias(value = "field")
 public class Field {
-	private Player owner;
+  @XStreamAsAttribute
+	private PlayerColor owner;
+  @XStreamAsAttribute
 	private FieldType type;
 	private final int x, y;
 	
@@ -18,14 +24,14 @@ public class Field {
 	/**
 	 * @return the owner
 	 */
-	public Player getOwner() {
+	public PlayerColor getOwner() {
 		return owner;
 	}
 
 	/**
 	 * @param owner the owner to set
 	 */
-	public void setOwner(Player owner) {
+	public void setOwner(PlayerColor owner) {
 		this.owner = owner;
 	}
 
