@@ -12,7 +12,10 @@ public class Field {
 	private PlayerColor owner;
   @XStreamAsAttribute
 	private FieldType type;
-	private final int x, y;
+  @XStreamAsAttribute
+	private final int x;
+  @XStreamAsAttribute
+	private final int y;
 	
 	public Field(FieldType type, int x, int y) {
 		this.setType(type);

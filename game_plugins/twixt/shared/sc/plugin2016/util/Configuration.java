@@ -47,7 +47,8 @@ public class Configuration {
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
-				Condition.class, Board.class, Field.class, FieldType.class
+				Condition.class, Board.class, Field.class, FieldType.class,
+				Connection.class
 				});
 	}
 }
