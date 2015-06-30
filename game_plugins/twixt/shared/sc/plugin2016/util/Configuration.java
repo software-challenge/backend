@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
+import sc.plugin2016.Board;
+import sc.plugin2016.Field;
+import sc.plugin2016.FieldType;
 import sc.plugin2016.Player;
 import sc.plugin2016.Game;
 import sc.plugin2016.GameState;
@@ -44,7 +47,7 @@ public class Configuration {
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
-				Condition.class,
+				Condition.class, Board.class, Field.class, FieldType.class
 				});
 	}
 }
