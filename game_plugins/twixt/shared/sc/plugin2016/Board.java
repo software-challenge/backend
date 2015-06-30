@@ -1,22 +1,35 @@
 package sc.plugin2016;
 
 import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import sc.plugin2016.GameState;
 import sc.plugin2016.Player;
+import sc.plugin2016.util.Connection;
 import sc.plugin2016.util.Constants;
+import sc.plugin2016.util.BoardConverter;
 
 import com.google.common.collect.HashBasedTable;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 
 @XStreamAlias(value = "board")
 public class Board {
 
-  public Field[][] fields;
+  @XStreamConverter(BoardConverter.class)
+  private Field[][] fields;
   
   
+  /*
+   * only used for better XML / JSON communication
+   */
+  @XStreamAlias(value = "connections")
+  private List<Connection> internConnections;
   
+  @XStreamOmitField
   public HashBasedTable<Field, Field, PlayerColor> connections;
 
   /**
@@ -61,6 +74,16 @@ public class Board {
       }
     }
     connections = HashBasedTable.create();
+    internConnections = new ArrayList<Connection>();
+    /*Player redPlayer = new Player(PlayerColor.RED);
+    Player bluePlayer = new Player(PlayerColor.BLUE);
+    put(5, 5, redPlayer);
+    put(6, 7, redPlayer);
+    put(8, 9, bluePlayer);
+    put(6, 10, bluePlayer);
+    /*internConnections.add(new Connection(5, 7, 6, 9, PlayerColor.RED));
+    internConnections.add(new Connection(6, 7, 7, 9, PlayerColor.BLUE));
+    internConnections.add(new Connection(2, 0, 1, 2, PlayerColor.RED));*/
   }
 
   private void makeClearBoard() {
@@ -150,6 +173,7 @@ public class Board {
 
   private void createWire(int x1, int y1, int x2, int y2) {
     connections.put(getField(x1, y1), getField(x2, y2), getField(x1, y1).getOwner());
+    internConnections.add(new Connection(x1, y1, x2, y2, getField(x1, y1).getOwner()));
 //    getField(x1, y1).addConnection(getField(x2, y2));
 //    getField(x2, y2).addConnection(getField(x1, y1));
 
@@ -209,4 +233,13 @@ public class Board {
     }
     return false;
   }
+  
+  /**
+   * 
+   * @return the fields
+   */
+  public Field[][] getFields() {
+    return this.fields;
+  }
+  
 }

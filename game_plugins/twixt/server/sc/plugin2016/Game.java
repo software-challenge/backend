@@ -90,11 +90,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 			gameState.clearEndGame();
 
-			int[][] stats = gameState.getGameStats();
+			//int[][] stats = gameState.getGameStats();
+			
 			PlayerColor winner = null;
 			String winnerName = "Gleichstand nach Anzahl der Fische "
 					+ "und nach Schollen.";
-			if (stats[0][0] > stats[1][0]) {
+			/*if (stats[0][0] > stats[1][0]) {
 				winner = PlayerColor.RED;
 				winnerName = "Sieg nach Anzahl der Fische.";
 			} else if (stats[0][0] < stats[1][0]) {
@@ -108,7 +109,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 					winner = PlayerColor.BLUE;
 					winnerName = "Sieg nach Schollen.";
 				}
-			}
+			}*/
 			gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
 					+ winnerName);
 			next(gameState.getCurrentPlayer());

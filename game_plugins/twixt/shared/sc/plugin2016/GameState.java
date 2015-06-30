@@ -288,11 +288,13 @@ public class GameState implements Cloneable {
    */
   public List<Move> getPossibleMoves() {
     List<Move> moves = new ArrayList<Move>();
-    for(int i = 0; i < Constants.SIZE; i++) {
-      for(int j = 0; j < Constants.SIZE; j++) {
-        if(getBoard().getField(i, j).getOwner() == null) {
-          moves.add(new Move(i, j));
-        }
+    for(int x = 0; x < Constants.SIZE; x++) {
+      for(int y = 0; y < Constants.SIZE; y++) {
+        //System.out.println(x + ", " + y + ", " + getBoard().getFields().length + ", " + getBoard().getFields()[x].length);
+        //System.out.println(getBoard().getFields()[x][y].getOwner() + ", " + getBoard().getFields()[x][y].getType());
+        /*if(getBoard().getField(x, y).getOwner() == null) {
+          moves.add(new Move(x, y));
+        }*/
       }
     }
     return moves;
