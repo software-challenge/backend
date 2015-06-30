@@ -58,6 +58,7 @@ public class BoardTest {
 //    assertEquals(board.getField(6, 5).getConnections().size(), 0);  
     assertEquals(2, board.connections.size());  // Hier ist noch ein Problem irgendwo
     
+    
   }
   
   

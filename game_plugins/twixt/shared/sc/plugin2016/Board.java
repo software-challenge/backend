@@ -5,15 +5,19 @@ import java.awt.geom.Line2D;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Player;
 import sc.plugin2016.util.Constants;
-import com.google.common.collect.Table;
-import com.google.common.collect.HashBasedTable;
 
+import com.google.common.collect.HashBasedTable;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+
+@XStreamAlias(value = "board")
 public class Board {
 
   public Field[][] fields;
   
+  
+  
   public HashBasedTable<Field, Field, PlayerColor> connections;
-//  private HashBasedTable<Field, Field, PlayerColor> possibleConnections;
 
   /**
 	 * 
@@ -67,7 +71,7 @@ public class Board {
     return fields[x][y];
   }
 
-  public Player getOwner(int x, int y) {
+  public PlayerColor getOwner(int x, int y) {
     return fields[x][y].getOwner();
   }
 
@@ -112,7 +116,7 @@ public class Board {
    *          die Farbe des Besitzers
    */
   public void put(int x, int y, Player player) {
-    getField(x, y).setOwner(player);
+    getField(x, y).setOwner(player.getPlayerColor());
     createNewWires(x, y);
   }
 
@@ -145,7 +149,7 @@ public class Board {
   }
 
   private void createWire(int x1, int y1, int x2, int y2) {
-    connections.put(getField(x1, y1), getField(x2, y2), getField(x1, y1).getOwner().getPlayerColor());
+    connections.put(getField(x1, y1), getField(x2, y2), getField(x1, y1).getOwner());
 //    getField(x1, y1).addConnection(getField(x2, y2));
 //    getField(x2, y2).addConnection(getField(x1, y1));
 

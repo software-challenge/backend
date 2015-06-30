@@ -288,20 +288,13 @@ public class GameState implements Cloneable {
    */
   public List<Move> getPossibleMoves() {
     List<Move> moves = new ArrayList<Move>();
-
-    return moves;
-  }
-
-  /**
-   * Generiert eine Liste der moeglichen Laufzuege von uebergegebenem Spieler
-   * 
-   * @param playerColor
-   *          Farbe des Spielers
-   * @return moegliche Laufzuege
-   */
-  public List<Move> getPossibleMoves(PlayerColor playerColor) {
-    List<Move> moves = new ArrayList<Move>();
-
+    for(int i = 0; i < Constants.SIZE; i++) {
+      for(int j = 0; j < Constants.SIZE; j++) {
+        if(getBoard().getField(i, j).getOwner() == null) {
+          moves.add(new Move(i, j));
+        }
+      }
+    }
     return moves;
   }
 
