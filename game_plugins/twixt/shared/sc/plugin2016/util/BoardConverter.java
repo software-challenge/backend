@@ -1,4 +1,6 @@
 package sc.plugin2016.util;
+import java.util.Iterator;
+
 import sc.plugin2016.Board;
 import sc.plugin2016.Field;
 import sc.plugin2016.FieldType;
@@ -39,45 +41,36 @@ public class BoardConverter implements Converter {
   public Object unmarshal(HierarchicalStreamReader reader,
       UnmarshallingContext context) {
     Field[][] f = new Field[Constants.SIZE][Constants.SIZE];
-    System.out.println("\n\n\n\n\n\n\n******************************");
     try {
       for(int x = 0; x < Constants.SIZE; x++) {
         for(int y = 0; y < Constants.SIZE; y++) {
+          reader.moveDown();
           FieldType fieldType;
-          System.out.println("1");
-          System.out.println(FieldType.NORMAL);
-          if(reader.getAttribute("type").equals("NORMAL")) { // TODO hier entsteht noch ne nullpointerexception. (erste der 3 Ausgaben!)
+          if(reader.getAttribute("type").equals("NORMAL")) {
             fieldType = FieldType.NORMAL;
-            System.out.println("normal.");
           } else if(reader.getAttribute("type").equals("BLUE")) {
             fieldType = FieldType.BLUE;
-            System.out.println("blue.");
           } else if(reader.getAttribute("type").equals("RED")) {
             fieldType = FieldType.RED;
-            System.out.println("red.");
           } else if(reader.getAttribute("type").equals("SWAMP")) {
             fieldType = FieldType.SWAMP;
-            System.out.println("swamp.");
           } else {
-            System.out.println("error.");
             throw new IllegalArgumentException("FieldType is not known!");
           }
-          System.out.println("2");
-          f[x][y] = new Field(fieldType, x, y); // TODO hier auch x und y deserialisieren
+          int realX = Integer.parseInt(reader.getAttribute("x"));
+          int realY = Integer.parseInt(reader.getAttribute("y"));
+          f[realX][realY] = new Field(fieldType, realX, realY);
           PlayerColor playerColor;
-          if(reader.getAttribute("owner").equals("RED")) {
-            playerColor = PlayerColor.RED;
-            f[x][y].setOwner(playerColor);
-          } else if(reader.getAttribute("owner").equals("BLUE")) {
-            playerColor = PlayerColor.BLUE;
-            f[x][y].setOwner(playerColor);
+          if(reader.getAttribute("owner") != null) {
+            if(reader.getAttribute("owner").equals("RED")) {
+              playerColor = PlayerColor.RED;
+              f[realX][realY].setOwner(playerColor);
+            } else if(reader.getAttribute("owner").equals("BLUE")) {
+              playerColor = PlayerColor.BLUE;
+              f[realX][realY].setOwner(playerColor);
+            }
           }
-          System.out.println("3");
-          reader.moveDown();
-          System.out.println("4");
-          System.out.println(f[x][y]);
-          System.out.println(f[x][y].getOwner());
-          System.out.println(f[x][y].getType());
+          reader.moveUp();
         }
       }
     } catch(Exception e) {
