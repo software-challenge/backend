@@ -95,6 +95,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 
         PlayerColor winner = null;
         String winnerName = "Unendschieden";
+        System.out.println(stats[0][0]);
+        System.out.println(stats[1][0]);
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
           winnerName = "Sieg durch eine längere Leitung";
@@ -104,21 +106,6 @@ public class Game extends RoundBasedGameInstance<Player> {
         }
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
             + winnerName);
-      } else if (noOneCanWin()) {
-        gameState.clearEndGame();
-        PlayerColor winner = null;
-        String winnerName = "Unendschieden";
-        if (stats[0][0] > stats[1][0]) {
-          winner = PlayerColor.RED;
-          winnerName = "Sieg durch eine längere Leitung";
-        } else if (stats[0][0] < stats[1][0]) {
-          winner = PlayerColor.BLUE;
-          winnerName = "Sieg durch eine längere Leitung";
-        }
-
-        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n"
-            + "Beide Spieler sind zugunfaehig. " + winnerName);
-
       } else if(stats[0][0] == 24 || stats[1][0] == 24) {
         gameState.clearEndGame();
         PlayerColor winner = null;
@@ -144,11 +131,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 			throw new GameLogicException(err);
 		}
 	}
-
-	private boolean noOneCanWin() {
-    // TODO Auto-generated method stub
-    return false;
-  }
 
   @Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException {
@@ -225,13 +207,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 			matchPoints = 2;
 		else if (stats[0] < oppPoints[0])
 			matchPoints = 0;
-		else if (stats[1] > oppPoints[1])
-			matchPoints = 2;
-		else if (stats[1] < oppPoints[1])
-			matchPoints = 0;
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
-				stats[0], stats[1]) : new PlayerScore(ScoreCause.REGULAR,
-				matchPoints, stats[0], stats[1]);
+				stats[0]) : new PlayerScore(ScoreCause.REGULAR,
+				matchPoints, stats[0]);
 
 	}
 

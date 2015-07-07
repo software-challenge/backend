@@ -43,7 +43,8 @@ public class BoardConverter implements Converter {
     Field[][] f = new Field[Constants.SIZE][Constants.SIZE];
     try {
       for(int x = 0; x < Constants.SIZE; x++) {
-        for(int y = 0; y < Constants.SIZE; y++) {
+        for(int y = 0; y < Constants.SIZE; y++) { // this may not be ordered the right way, so it is only used for the 
+                                                  // right amount of iterations. realX / Y are for the right values.
           reader.moveDown();
           FieldType fieldType;
           if(reader.getAttribute("type").equals("NORMAL")) {

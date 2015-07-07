@@ -9,24 +9,15 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
  * Beeinhaltet auch Informationen zum Punktekonto und der Anzahl der Plättchen
  * des Spielers.
- * 
  */
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
-	/** Spielerfarbe des spielers
-	 
+	/** 
+	 * Spielerfarbe des spielers
 	 */
 	@XStreamAsAttribute
 	private PlayerColor color;
-
-	/**
-	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
-	 * Deserialisierung von Objekten aus XML-Nachrichten.
-	 */
-	public Player() {
-		
-	}
 	
 	 /**
    * aktuelle laenge der laengsten Leitung des Spielers
@@ -42,7 +33,16 @@ public class Player extends SimplePlayer implements Cloneable {
 	 */
 	public Player(final PlayerColor color) {
 		this.color = color;
+		points = 0;
 	}
+
+  /**
+   * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
+   * Deserialisierung von Objekten aus XML-Nachrichten.
+   */
+  public Player() {
+    points = 0;
+  }
 
 	/**
 	 * erzeugt eine Deepcopy dieses Objekts
@@ -82,7 +82,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
   
   
-  private void setPoints(int points) {
+  protected void setPoints(int points) {
     this.points = points;
   }
 }
