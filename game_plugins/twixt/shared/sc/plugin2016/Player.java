@@ -27,6 +27,12 @@ public class Player extends SimplePlayer implements Cloneable {
 	public Player() {
 		
 	}
+	
+	 /**
+   * aktuelle laenge der laengsten Leitung des Spielers
+   */
+  @XStreamAsAttribute
+  private int points;
 
 	/**
 	 * Erstellt einen Spieler mit gegebener Spielerfarbe.
@@ -63,4 +69,20 @@ public class Player extends SimplePlayer implements Cloneable {
 	public PlayerColor getPlayerColor() {
 		return color;
 	}
+
+	
+	/**
+   * Liefert den die laengste Leitung des Spielers
+   * 
+   * @return Punkte des Spielers
+   */
+  public int getPoints() {
+    return points;
+  }
+
+  
+  
+  private void setPoints(int points) {
+    this.points = points;
+  }
 }
