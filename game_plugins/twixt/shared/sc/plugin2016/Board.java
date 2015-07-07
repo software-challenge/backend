@@ -6,7 +6,6 @@ import java.util.List;
 
 import sc.plugin2016.GameState;
 import sc.plugin2016.Player;
-import sc.plugin2016.util.Connection;
 import sc.plugin2016.util.Constants;
 import sc.plugin2016.util.BoardConverter;
 
@@ -27,10 +26,8 @@ public class Board {
    * only used for better XML / JSON communication
    */
   @XStreamAlias(value = "connections")
-  private List<Connection> internConnections;
+  public List<Connection> connections;
   
-  @XStreamOmitField
-  public HashBasedTable<Field, Field, PlayerColor> connections;
 
   /**
 	 * 
@@ -73,8 +70,7 @@ public class Board {
         fields[x][y] = new Field(FieldType.NORMAL, x, y);
       }
     }
-    connections = HashBasedTable.create();
-    internConnections = new ArrayList<Connection>();
+    connections = new ArrayList<Connection>();
     /*Player redPlayer = new Player(PlayerColor.RED);
     Player bluePlayer = new Player(PlayerColor.BLUE);
     put(5, 5, redPlayer);
@@ -168,12 +164,11 @@ public class Board {
     if (checkPossibleWire(x, y, x + 1, y + 2)) {
       createWire(x, y, x + 1, y + 2);
     }
-
+    
   }
 
   private void createWire(int x1, int y1, int x2, int y2) {
-    connections.put(getField(x1, y1), getField(x2, y2), getField(x1, y1).getOwner());
-    internConnections.add(new Connection(x1, y1, x2, y2, getField(x1, y1).getOwner()));
+    connections.add(new Connection(x1, y1, x2, y2, getField(x1, y1).getOwner()));
 //    getField(x1, y1).addConnection(getField(x2, y2));
 //    getField(x2, y2).addConnection(getField(x1, y1));
 
@@ -209,6 +204,19 @@ public class Board {
     }
     return false;
   }
+  
+  List<Connection> getConnections(int x, int y) {
+    List<Connection> xyConnections = new ArrayList<Connection>();
+    for(Connection c : connections) {
+      if(c.x1 == x && c.y1 == y ) {
+        xyConnections.add(new Connection(x, y, c.x1, c.y1, c.owner));
+      }
+      if(c.x2 == x && c.y2 == y ) {
+        xyConnections.add(new Connection(x, y, c.x2, c.y2, c.owner));
+      }
+    }
+    return xyConnections; 
+  }
 
   /*
    * checks for the wire (x1, y1) -> (x2, y2), if it is blocked by any connection going out from (x,y).
@@ -221,13 +229,8 @@ public class Board {
 //    }
 //    return false;  
 //  }
-    for(Field field : connections.column(getField(x, y)).keySet()) {
-      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
-        return true;
-      }
-    }
-    for(Field field : connections.row(getField(x, y)).keySet()) {
-      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
+    for(Connection c : getConnections(x, y)) {
+      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, c.x2, c.y2)) {
         return true;
       }
     }

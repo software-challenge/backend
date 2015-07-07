@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 
 import sc.plugin2016.Board;
+import sc.plugin2016.Connection;
 import sc.plugin2016.Field;
 import sc.plugin2016.FieldType;
 import sc.plugin2016.Player;
