@@ -290,11 +290,9 @@ public class GameState implements Cloneable {
     List<Move> moves = new ArrayList<Move>();
     for(int x = 0; x < Constants.SIZE; x++) {
       for(int y = 0; y < Constants.SIZE; y++) {
-        //System.out.println(x + ", " + y + ", " + getBoard().getFields().length + ", " + getBoard().getFields()[x].length);
-        //System.out.println(getBoard().getFields()[x][y].getOwner() + ", " + getBoard().getFields()[x][y].getType());
-        /*if(getBoard().getField(x, y).getOwner() == null) {
+        if(getBoard().getField(x, y).getOwner() == null && getBoard().getField(x, y).getType() != FieldType.SWAMP) {
           moves.add(new Move(x, y));
-        }*/
+        }
       }
     }
     return moves;
@@ -375,7 +373,7 @@ public class GameState implements Cloneable {
     stats[0][0] = this.red.getPoints();
     stats[1][0] = this.blue.getPoints();
     
-    return null;
+    return stats;
 
   }
 
@@ -430,4 +428,31 @@ public class GameState implements Cloneable {
     return condition == null ? "" : condition.reason;
   }
 
+  public int getPointsForPlayer(PlayerColor playerColor) {
+    int longestPath;
+    
+    if(playerColor == PlayerColor.RED) {
+      
+    } else if(playerColor == PlayerColor.BLUE) {
+      
+    } else {
+      throw new IllegalArgumentException();
+    }
+    return 0; // return longestPath;
+  }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

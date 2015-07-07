@@ -130,6 +130,8 @@ public class Move implements Cloneable {
           && getX() >= 0) {
         if (state.getPossibleMoves().contains(this)) {
           state.getBoard().put(getX(), getY(), player);
+          player.setPoints(state.getPointsForPlayer(player.getPlayerColor()));
+          System.out.println("set points for player " + player.getPlayerColor() + " to " + state.getPointsForPlayer(player.getPlayerColor()));
         } else {
           throw new InvalidMoveException(
               "Der Zug ist nicht möglich, denn der Platz ist bereits besetzt.");
@@ -140,6 +142,16 @@ public class Move implements Cloneable {
       }
     }
 
+  }
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Move) {
+      Move move = (Move) o;
+      if(this.getX() == move.getX() && this.getY() == move.getY()) {
+        return true;
+      }
+    }
+    return false;
   }
 
 }
