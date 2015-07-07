@@ -9,7 +9,6 @@ import sc.plugin2016.Player;
 import sc.plugin2016.util.Constants;
 import sc.plugin2016.util.BoardConverter;
 
-import com.google.common.collect.HashBasedTable;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
