@@ -370,7 +370,11 @@ public class GameState implements Cloneable {
    */
   public int[][] getGameStats() {
 
-    // wird hier nicht benoetigt
+    int[][] stats = new int[2][1];
+
+    stats[0][0] = this.red.getPoints();
+    stats[1][0] = this.blue.getPoints();
+    
     return null;
 
   }
