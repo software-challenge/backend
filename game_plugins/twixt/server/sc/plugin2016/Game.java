@@ -83,37 +83,58 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new InvalidMoveException(author.getDisplayName()
 						+ " hat kein Zug-Objekt gesendet");
 			}
+			int[][] stats = gameState.getGameStats();
+      final Move move = (Move) data;
+      move.perform(gameState, expectedPlayer);
+      gameState.prepareNextTurn(move);
+      if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 
-			final Move move = (Move) data;
-			move.perform(gameState, expectedPlayer);
-			gameState.prepareNextTurn(move);
+        gameState.clearEndGame();
 
-			gameState.clearEndGame();
+        
 
-			//int[][] stats = gameState.getGameStats();
-			
-			PlayerColor winner = null;
-			String winnerName = "Gleichstand nach Anzahl der Fische "
-					+ "und nach Schollen.";
-			/*if (stats[0][0] > stats[1][0]) {
-				winner = PlayerColor.RED;
-				winnerName = "Sieg nach Anzahl der Fische.";
-			} else if (stats[0][0] < stats[1][0]) {
-				winner = PlayerColor.BLUE;
-				winnerName = "Sieg nach Anzahl der Fische.";
-			} else {
-				if (stats[0][1] > stats[1][1]) {
-					winner = PlayerColor.RED;
-					winnerName = "Sieg nach Schollen.";
-				} else if (stats[0][1] < stats[1][1]) {
-					winner = PlayerColor.BLUE;
-					winnerName = "Sieg nach Schollen.";
-				}
-			}*/
-			gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
-					+ winnerName);
+        PlayerColor winner = null;
+        String winnerName = "Unendschieden";
+        if (stats[0][0] > stats[1][0]) {
+          winner = PlayerColor.RED;
+          winnerName = "Sieg durch eine längere Leitung";
+        } else if (stats[0][0] < stats[1][0]) {
+          winner = PlayerColor.BLUE;
+          winnerName = "Sieg durch eine längere Leitung";
+        }
+        gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
+            + winnerName);
+      } else if (noOneCanWin()) {
+        gameState.clearEndGame();
+        PlayerColor winner = null;
+        String winnerName = "Unendschieden";
+        if (stats[0][0] > stats[1][0]) {
+          winner = PlayerColor.RED;
+          winnerName = "Sieg durch eine längere Leitung";
+        } else if (stats[0][0] < stats[1][0]) {
+          winner = PlayerColor.BLUE;
+          winnerName = "Sieg durch eine längere Leitung";
+        }
+
+        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n"
+            + "Beide Spieler sind zugunfaehig. " + winnerName);
+
+      } else if(stats[0][0] == 24 || stats[1][0] == 24) {
+        gameState.clearEndGame();
+        PlayerColor winner = null;
+        String winnerName = "Unendschieden";
+        if (stats[0][0] > stats[1][0]) {
+          winner = PlayerColor.RED;
+          winnerName = "Sieg durch eine längere Leitung";
+        } else if (stats[0][0] < stats[1][0]) {
+          winner = PlayerColor.BLUE;
+          winnerName = "Sieg durch eine längere Leitung";
+        }
+
+        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n"
+            + "Ein Spieler hat seine Leitung vollendet. " + winnerName);
+      }
 			next(gameState.getCurrentPlayer());
-
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);
 			String err = "Ungültiger Zug von '" + author.getDisplayName()
@@ -124,7 +145,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 		}
 	}
 
-	@Override
+	private boolean noOneCanWin() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  @Override
 	public IPlayer onPlayerJoined() throws TooManyPlayersException {
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
