@@ -42,37 +42,34 @@ public class BoardConverter implements Converter {
       UnmarshallingContext context) {
     Field[][] f = new Field[Constants.SIZE][Constants.SIZE];
     try {
-      for(int x = 0; x < Constants.SIZE; x++) {
-        for(int y = 0; y < Constants.SIZE; y++) { // this may not be ordered the right way, so it is only used for the 
-                                                  // right amount of iterations. realX / Y are for the right values.
-          reader.moveDown();
-          FieldType fieldType;
-          if(reader.getAttribute("type").equals("NORMAL")) {
-            fieldType = FieldType.NORMAL;
-          } else if(reader.getAttribute("type").equals("BLUE")) {
-            fieldType = FieldType.BLUE;
-          } else if(reader.getAttribute("type").equals("RED")) {
-            fieldType = FieldType.RED;
-          } else if(reader.getAttribute("type").equals("SWAMP")) {
-            fieldType = FieldType.SWAMP;
-          } else {
-            throw new IllegalArgumentException("FieldType is not known!");
-          }
-          int realX = Integer.parseInt(reader.getAttribute("x"));
-          int realY = Integer.parseInt(reader.getAttribute("y"));
-          f[realX][realY] = new Field(fieldType, realX, realY);
-          PlayerColor playerColor;
-          if(reader.getAttribute("owner") != null) {
-            if(reader.getAttribute("owner").equals("RED")) {
-              playerColor = PlayerColor.RED;
-              f[realX][realY].setOwner(playerColor);
-            } else if(reader.getAttribute("owner").equals("BLUE")) {
-              playerColor = PlayerColor.BLUE;
-              f[realX][realY].setOwner(playerColor);
-            }
-          }
-          reader.moveUp();
+      while(reader.hasMoreChildren()) {
+        reader.moveDown();
+        FieldType fieldType;
+        if(reader.getAttribute("type").equals("NORMAL")) {
+          fieldType = FieldType.NORMAL;
+        } else if(reader.getAttribute("type").equals("BLUE")) {
+          fieldType = FieldType.BLUE;
+        } else if(reader.getAttribute("type").equals("RED")) {
+          fieldType = FieldType.RED;
+        } else if(reader.getAttribute("type").equals("SWAMP")) {
+          fieldType = FieldType.SWAMP;
+        } else {
+          throw new IllegalArgumentException("FieldType is not known!");
         }
+        int realX = Integer.parseInt(reader.getAttribute("x"));
+        int realY = Integer.parseInt(reader.getAttribute("y"));
+        f[realX][realY] = new Field(fieldType, realX, realY);
+        PlayerColor playerColor;
+        if(reader.getAttribute("owner") != null) {
+          if(reader.getAttribute("owner").equals("RED")) {
+            playerColor = PlayerColor.RED;
+            f[realX][realY].setOwner(playerColor);
+          } else if(reader.getAttribute("owner").equals("BLUE")) {
+            playerColor = PlayerColor.BLUE;
+            f[realX][realY].setOwner(playerColor);
+          }
+        }
+        reader.moveUp();
       }
     } catch(Exception e) {
       e.printStackTrace();
