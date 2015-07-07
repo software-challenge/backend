@@ -13,6 +13,7 @@ import sc.networking.INetworkInterface;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
+import com.thoughtworks.xstream.io.json.JsonWriter;
 
 public abstract class XStreamClient
 {

@@ -48,7 +48,7 @@ public class Field {
 	/**
 	 * @param type the type to set
 	 */
-	protected void setType(FieldType type) {
+	public void setType(FieldType type) {
 		this.type = type;
 	}
 	

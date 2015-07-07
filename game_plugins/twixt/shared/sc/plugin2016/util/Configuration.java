@@ -17,6 +17,8 @@ import sc.plugin2016.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * Configuration
@@ -32,7 +34,7 @@ public class Configuration {
 	private static XStream xStream;
 
 	static {
-		xStream = new XStream();
+		xStream = new XStream(new  JsonHierarchicalStreamDriver());
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
 		LobbyProtocol.registerMessages(xStream);
@@ -45,6 +47,9 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
+	  Board board = new Board();
+	  xStream.alias("board", board.getClass() );
+	  System.out.println(xStream.toXML(board));
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
