@@ -1,6 +1,7 @@
 package sc.plugin2016;
 
 import java.awt.geom.Line2D;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +64,12 @@ public class Board {
       fields[0][y] = new Field(FieldType.BLUE, 0, y);
       fields[Constants.SIZE - 1][y] = new Field(FieldType.BLUE, Constants.SIZE - 1, y);
     }
-    // TODO füge Sümpfe ein
     for (int x = 1; x < Constants.SIZE - 1; x++) {
       for (int y = 1; y < Constants.SIZE - 1; y++) {
         fields[x][y] = new Field(FieldType.NORMAL, x, y);
       }
     }
+    placeSwamps();
     connections = new ArrayList<Connection>();
     /*Player redPlayer = new Player(PlayerColor.RED);
     Player bluePlayer = new Player(PlayerColor.BLUE);
@@ -79,6 +80,39 @@ public class Board {
     /*internConnections.add(new Connection(5, 7, 6, 9, PlayerColor.RED));
     internConnections.add(new Connection(6, 7, 7, 9, PlayerColor.BLUE));
     internConnections.add(new Connection(2, 0, 1, 2, PlayerColor.RED));*/
+  }
+
+  private void placeSwamps() {
+    SecureRandom rand = new SecureRandom();
+    int x, y;
+    // big swamp
+    x = 1 + rand.nextInt(Constants.SIZE - 4);
+    y = 1 + rand.nextInt(Constants.SIZE - 4);
+    for(int i = x; i <= x + 2; i++) {
+      for(int j = y; j <= y + 2; j++) {
+        fields[i][j].setType(FieldType.SWAMP);
+      }
+    }
+    // first medium swamp
+    x = 1 + rand.nextInt(Constants.SIZE - 3);
+    y = 1 + rand.nextInt(Constants.SIZE - 3);
+    for(int i = x; i <= x + 1; i++) {
+      for(int j = y; j <= y + 1; j++) {
+        fields[i][j].setType(FieldType.SWAMP);
+      }
+    }
+    // second medium swamp
+    x = 1 + rand.nextInt(Constants.SIZE - 3);
+    y = 1 + rand.nextInt(Constants.SIZE - 3);
+    for(int i = x; i <= x + 1; i++) {
+      for(int j = y; j <= y + 1; j++) {
+        fields[i][j].setType(FieldType.SWAMP);
+      }
+    }
+    // little swamp
+    x = 1 + rand.nextInt(Constants.SIZE - 2);
+    y = 1 + rand.nextInt(Constants.SIZE - 2);
+    fields[x][y].setType(FieldType.SWAMP);
   }
 
   private void makeClearBoard() {
