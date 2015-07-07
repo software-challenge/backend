@@ -12,7 +12,6 @@ import sc.plugin2016.util.BoardConverter;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 
 @XStreamAlias(value = "board")
@@ -225,8 +224,8 @@ public class Board {
       for (int y = smallerY; y <= biggerY; y++) { // checks all 6 Fields, from
                                                   // where there could be
                                                   // blocking connections
-        if (getField(x, y).getOwner() != null && (x != x1 && y != y1)
-            && (x != x2 && y != y2)) { // excludes the Fields with no owner and
+        if (getField(x, y).getOwner() != null && (x != x1 || y != y1)
+            && (x != x2 || y != y2)) { // excludes the Fields with no owner and
                                        // the fields (x1, y2), (x2, y2)
                                        // themselves.
           if(isWireBlocked(x1, y1, x2, y2, x, y)) {
@@ -238,14 +237,20 @@ public class Board {
     return false;
   }
   
-  List<Connection> getConnections(int x, int y) {
+  /**
+   * provides all connections on this field that are going out from the Field given by x and y.
+   * @param x the x-coordinate
+   * @param y the y-coordinate
+   * @return the List of Connections
+   */
+  public List<Connection> getConnections(int x, int y) {
     List<Connection> xyConnections = new ArrayList<Connection>();
     for(Connection c : connections) {
       if(c.x1 == x && c.y1 == y ) {
-        xyConnections.add(new Connection(x, y, c.x1, c.y1, c.owner));
+        xyConnections.add(new Connection(x, y, c.x2, c.y2, c.owner));
       }
       if(c.x2 == x && c.y2 == y ) {
-        xyConnections.add(new Connection(x, y, c.x2, c.y2, c.owner));
+        xyConnections.add(new Connection(x, y, c.x1, c.y1, c.owner));
       }
     }
     return xyConnections; 

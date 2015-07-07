@@ -1,7 +1,4 @@
 package sc.plugin2016.util;
-import java.util.Iterator;
-
-import sc.plugin2016.Board;
 import sc.plugin2016.Field;
 import sc.plugin2016.FieldType;
 import sc.plugin2016.PlayerColor;
