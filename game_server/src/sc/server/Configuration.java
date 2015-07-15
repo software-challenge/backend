@@ -43,13 +43,13 @@ public class Configuration
 
 	static
 	{
-		xStream = new XStream(new JsonHierarchicalStreamDriver());
-/*
+		/*xStream = new XStream(new JettisonMappedXmlDriver());
+
 		List<String> board = new ArrayList<String>();
 		board.add("\n\n\n\n\n\n\nTesttttttttttttttttttttttttttttt");
 		xStream.alias("board", board.getClass() );
         System.out.println(xStream.toXML(board));	*/
-		//xStream = new XStream();
+		xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStreamClassLoader = AccessController
 				.doPrivileged(new PrivilegedAction<RuntimeJarLoader>() {
