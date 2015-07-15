@@ -34,7 +34,8 @@ public class Configuration {
 	private static XStream xStream;
 
 	static {
-		xStream = new XStream(new  JsonHierarchicalStreamDriver());
+		/*xStream = new XStream(new JettisonMappedXmlDriver());*/
+	  xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
 		LobbyProtocol.registerMessages(xStream);
@@ -47,9 +48,9 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
-	  Board board = new Board();
+	  /*Board board = new Board();
 	  xStream.alias("board", board.getClass() );
-	  System.out.println(xStream.toXML(board));
+	  System.out.println(xStream.toXML(board));*/
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
