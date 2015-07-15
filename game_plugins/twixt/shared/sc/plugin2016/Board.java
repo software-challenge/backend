@@ -21,9 +21,7 @@ public class Board {
   private Field[][] fields;
   
   
-  /*
-   * only used for better XML / JSON communication
-   */
+  
   @XStreamAlias(value = "connections")
   public List<Connection> connections;
   
@@ -179,7 +177,7 @@ public class Board {
       createWire(x, y, x - 1, y - 2);
     }
     if (checkPossibleWire(x, y, x - 2, y + 1)) {
-      createWire(x, y, x - 2, +1);
+      createWire(x, y, x - 2, y + 1);
     }
     if (checkPossibleWire(x, y, x - 1, y + 2)) {
       createWire(x, y, x - 1, y + 2);

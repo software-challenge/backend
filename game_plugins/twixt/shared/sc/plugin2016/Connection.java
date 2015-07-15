@@ -22,6 +22,15 @@ public class Connection {
   @XStreamAsAttribute
   public PlayerColor owner;
   
+  
+  /**
+   * Stellt eine Verbindung zwischen zwei Punkten (x1, y1) und (x2, y2) des Spielers owner dar.
+   * @param x1
+   * @param y1
+   * @param x2
+   * @param y2
+   * @param owner
+   */
   public Connection(int x1, int y1, int x2, int y2, PlayerColor owner) {
     this.x1 = x1;
     this.x2 = x2;
