@@ -1,6 +1,7 @@
 package sc.plugin2016;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2016.util.Constants;
@@ -287,10 +288,13 @@ public class GameState implements Cloneable {
    * @return Liste erlaubter Spielzuege
    */
   public List<Move> getPossibleMoves() {
+    FieldType enemyFieldType = currentPlayer == PlayerColor.RED ? FieldType.BLUE : FieldType.RED;
     List<Move> moves = new ArrayList<Move>();
     for(int x = 0; x < Constants.SIZE; x++) {
       for(int y = 0; y < Constants.SIZE; y++) {
-        if(getBoard().getField(x, y).getOwner() == null && getBoard().getField(x, y).getType() != FieldType.SWAMP) {
+        if(getBoard().getField(x, y).getOwner() == null
+            && getBoard().getField(x, y).getType() != FieldType.SWAMP
+            && getBoard().getField(x, y).getType() != enemyFieldType) {
           moves.add(new Move(x, y));
         }
       }
@@ -428,19 +432,130 @@ public class GameState implements Cloneable {
     return condition == null ? "" : condition.reason;
   }
 
-  public int getPointsForPlayer(PlayerColor playerColor) {
-    int longestPath;
+  public int getPointsForPlayer(PlayerColor playerColor) {// TODO funktioniert hier noch nicht immer
+    int longestPath = 0;
     
     if(playerColor == PlayerColor.RED) {
-      
+      List<Field[]> bottomAndTopmostFieldsInCircuit = new LinkedList<Field[]>();
+      boolean[][] visited = new boolean[Constants.SIZE][Constants.SIZE]; // all by default initialized to false
+      for(int x = 0; x < Constants.SIZE; x++) {
+        for(int y = 0; y < Constants.SIZE; y++) {
+          if(visited[x][y] == false) {
+            if(getBoard().getField(x, y).getOwner() == PlayerColor.RED) {
+              List<Field> startOfCircuit = new LinkedList<Field>();
+              startOfCircuit.add(board.getField(x, y));
+              List<Field> circuit = getCircuit(startOfCircuit, new LinkedList<Field>());
+              for(Field f: circuit) {
+                visited[f.getX()][f.getY()] = true;
+              }
+              Field[] bottomAndTopmost = new Field[2];
+              bottomAndTopmost[0] = getBottomMostFieldInCircuit(circuit);
+              bottomAndTopmost[1] = getTopMostFieldInCircuit(circuit);
+              bottomAndTopmostFieldsInCircuit.add(bottomAndTopmost);
+            }
+            visited[x][y] = true;
+          }
+        }
+      }
+      for(Field[] fields : bottomAndTopmostFieldsInCircuit) {
+        if(fields[1].getY() - fields[0].getY() > longestPath) {
+          longestPath = fields[1].getY() - fields[0].getY();
+        }
+      }
     } else if(playerColor == PlayerColor.BLUE) {
-      
+      List<Field[]> leftAndRightmostFieldsInCircuit = new LinkedList<Field[]>();
+      boolean[][] visited = new boolean[Constants.SIZE][Constants.SIZE]; // all by default initialized to false
+      for(int x = 0; x < Constants.SIZE; x++) {
+        for(int y = 0; y < Constants.SIZE; y++) {
+          if(visited[x][y] == false) {
+            if(getBoard().getField(x, y).getOwner() == PlayerColor.BLUE) {
+              List<Field> startOfCircuit = new LinkedList<Field>();
+              startOfCircuit.add(board.getField(x, y));
+              List<Field> circuit = getCircuit(startOfCircuit, new LinkedList<Field>());
+              for(Field f: circuit) {
+                visited[f.getX()][f.getY()] = true;
+              }
+              Field[] leftAndRightmost = new Field[2];
+              leftAndRightmost[0] = getLeftMostFieldInCircuit(circuit);
+              leftAndRightmost[1] = getRightMostFieldInCircuit(circuit);
+              leftAndRightmostFieldsInCircuit.add(leftAndRightmost);
+            }
+            visited[x][y] = true;
+          }
+        }
+      }
+      for(Field[] fields : leftAndRightmostFieldsInCircuit) {
+        if(fields[1].getX() - fields[0].getX() > longestPath) {
+          longestPath = fields[1].getX() - fields[0].getX();
+        }
+      }
     } else {
       throw new IllegalArgumentException();
     }
-    return 0; // return longestPath;
+    return longestPath; // return longestPath;
   }
 
+  private Field getBottomMostFieldInCircuit(List<Field> circuit) {
+    Field bottomMostField = circuit.get(0);
+    for(Field f : circuit) {
+      if(f.getY() < bottomMostField.getY()) {
+        bottomMostField = f;
+      }
+    }
+    return bottomMostField;
+  }
+
+  private Field getTopMostFieldInCircuit(List<Field> circuit) {
+    Field topMostField = circuit.get(0);
+    for(Field f : circuit) {
+      if(f.getY() > topMostField.getY()) {
+        topMostField = f;
+      }
+    }
+    return topMostField;
+  }
+
+  private Field getLeftMostFieldInCircuit(List<Field> circuit) {
+    Field leftMostField = circuit.get(0);
+    for(Field f : circuit) {
+      if(f.getX() < leftMostField.getX()) {
+        leftMostField = f;
+      }
+    }
+    return leftMostField;
+  }
+
+  private Field getRightMostFieldInCircuit(List<Field> circuit) {
+    Field rightMostField = circuit.get(0);
+    for(Field f : circuit) {
+      if(f.getX() > rightMostField.getX()) {
+        rightMostField = f;
+      }
+    }
+    return rightMostField;
+  }
+
+  private List<Field> getCircuit(List<Field> circuit, List<Field> visited) {
+    boolean changed = false;
+    List<Field> toBeAddedFields = new LinkedList<Field>();
+    for(Field f : circuit) {
+      if(!visited.contains(f)) {
+        changed = true;
+        visited.add(f);
+        for(Connection c : getBoard().getConnections(f.getX(), f.getY())) {
+          if(!circuit.contains(getBoard().getField(c.x2, c.y2))) {
+            toBeAddedFields.add(getBoard().getField(c.x2, c.y2));
+          }
+        }
+      }
+    }
+    circuit.addAll(toBeAddedFields);
+    if(changed) {
+      return getCircuit(circuit, visited);
+    } else {
+      return circuit;
+    }
+  }
 }
 
 

@@ -2,16 +2,18 @@ package sc.plugin2016.entities;
 
 import static org.junit.Assert.*;
 
-
 import org.junit.Test;
 
 import sc.plugin2016.Board;
 import sc.plugin2016.Connection;
+import sc.plugin2016.GameState;
+import sc.plugin2016.Move;
 import sc.plugin2016.Player;
 import sc.plugin2016.PlayerColor;
+import sc.plugin2016.util.Constants;
+import sc.plugin2016.util.InvalidMoveException;
 
 public class BoardTest {
-  
   
   @Test
   public void testWires() {
@@ -38,5 +40,35 @@ public class BoardTest {
     assertEquals(0, board.getConnections(6, 5).size());
     assertEquals(2, board.connections.size());
     
+    
+
+    board.put(10, 19, redPlayer);
+    board.put(6, 19, redPlayer);
+    board.put(8, 18, redPlayer);
+    assertEquals(2, board.getConnections(8, 18).size());
+    assertEquals(1, board.getConnections(6, 19).size());
+    assertEquals(4, board.connections.size());
+  }
+  
+  @Test(expected = InvalidMoveException.class)
+  public void testPuttingPlayerOnEnemyBase() throws InvalidMoveException {
+    GameState state = new GameState();
+    state.addPlayer(new Player(PlayerColor.RED));
+    state.addPlayer(new Player(PlayerColor.BLUE));
+    Player currentPlayer = state.getCurrentPlayer();
+    Move move = new Move(0, 1);
+    assertEquals(PlayerColor.RED, currentPlayer.getPlayerColor());
+    move.perform(state, currentPlayer);
+  }
+  
+  @Test
+  public void testPuttingPlayerOnOwnBase() throws InvalidMoveException {
+    GameState state = new GameState();
+    state.addPlayer(new Player(PlayerColor.RED));
+    state.addPlayer(new Player(PlayerColor.BLUE));
+    Player currentPlayer = state.getCurrentPlayer();
+    Move move = new Move(1, 0);
+    assertEquals(PlayerColor.RED, currentPlayer.getPlayerColor());
+    move.perform(state, currentPlayer);
   }
 }
