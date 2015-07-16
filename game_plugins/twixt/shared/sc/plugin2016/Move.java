@@ -125,9 +125,9 @@ public class Move implements Cloneable {
    *           geworfen, wenn der Zug ungueltig ist, also nicht ausfuehrbar
    */
   public void perform(GameState state, Player player) throws InvalidMoveException {
-    if (this != null) {
+    if (this != null && state != null) {
       if (getX() < Constants.SIZE && getY() < Constants.SIZE && getX() >= 0
-          && getX() >= 0) {
+          && getY() >= 0) {
         if (state.getPossibleMoves().contains(this)) {
           state.getBoard().put(getX(), getY(), player);
           player.setPoints(state.getPointsForPlayer(player.getPlayerColor()));

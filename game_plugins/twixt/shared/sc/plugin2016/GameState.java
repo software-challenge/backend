@@ -435,7 +435,7 @@ public class GameState implements Cloneable {
     return condition == null ? "" : condition.reason;
   }
 
-  public int getPointsForPlayer(PlayerColor playerColor) {// TODO funktioniert hier noch nicht immer
+  public int getPointsForPlayer(PlayerColor playerColor) {
     int longestPath = 0;
     
     if(playerColor == PlayerColor.RED) {
