@@ -3,6 +3,7 @@ package sc.plugin2016;
 import java.awt.geom.Line2D;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2016.GameState;
@@ -66,8 +67,9 @@ public class Board {
         fields[x][y] = new Field(FieldType.NORMAL, x, y);
       }
     }
-    //placeSwamps();
+    placeSwamps();
     connections = new ArrayList<Connection>();
+    //connections.add(new Connection(-1, -1, -1, -1,PlayerColor.RED));
     /*Player redPlayer = new Player(PlayerColor.RED);
     Player bluePlayer = new Player(PlayerColor.BLUE);
     put(5, 5, redPlayer);
@@ -120,6 +122,7 @@ public class Board {
    */
   private void makeClearBoard() {
     fields = new Field[Constants.SIZE][Constants.SIZE];
+    connections = new ArrayList<Connection>();
   }
 
   /**
@@ -274,12 +277,14 @@ public class Board {
    */
   public List<Connection> getConnections(int x, int y) {
     List<Connection> xyConnections = new ArrayList<Connection>();
-    for(Connection c : connections) {
-      if(c.x1 == x && c.y1 == y ) {
-        xyConnections.add(new Connection(x, y, c.x2, c.y2, c.owner));
-      }
-      if(c.x2 == x && c.y2 == y ) {
-        xyConnections.add(new Connection(x, y, c.x1, c.y1, c.owner));
+    if(connections != null) {
+      for(Connection c : connections) {
+        if(c.x1 == x && c.y1 == y ) {
+          xyConnections.add(new Connection(x, y, c.x2, c.y2, c.owner));
+        }
+        if(c.x2 == x && c.y2 == y ) {
+          xyConnections.add(new Connection(x, y, c.x1, c.y1, c.owner));
+        }
       }
     }
     return xyConnections; 

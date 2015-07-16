@@ -87,7 +87,7 @@ public class Field {
   
   @Override
   public String toString() {
-    return "Field: x = " + getX() + ", y = " + getY();
+    return "Field: x = " + getX() + ", y = " + getY() + ", owner = " + this.getOwner() + ", type = " + this.getType();
   }
 
 }
