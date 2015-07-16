@@ -267,14 +267,14 @@ public class GameState implements Cloneable {
    *          auszufuehrender Zug
    */
   public void prepareNextTurn(Move lastMove) {
-    try {
+    //try {
       turn++;
       this.lastMove = lastMove;
-      lastMove.perform(this, getCurrentPlayer());
+    //  lastMove.perform(this, getCurrentPlayer());
       switchCurrentPlayer();
-    } catch (InvalidMoveException e) {
-      e.printStackTrace();
-    }
+    //} catch (InvalidMoveException e) {
+    //  e.printStackTrace();
+    //}
   }
 
   /**
@@ -448,17 +448,17 @@ public class GameState implements Cloneable {
               List<Field> startOfCircuit = new LinkedList<Field>();
               startOfCircuit.add(board.getField(x, y));
               List<Field> circuit = getCircuit(startOfCircuit, new LinkedList<Field>());
-              System.out.println("\n\nfound a new Circuit!\n");
+              //System.out.println("\n\nfound a new Circuit!\n");
               for(Field f: circuit) {
-                System.out.println("Field x = " + f.getX() + ", y = " + f.getY() + " is in,");
+                //System.out.println("Field x = " + f.getX() + ", y = " + f.getY() + " is in,");
                 visited[f.getX()][f.getY()] = true;
               }
               Field[] bottomAndTopmost = new Field[2];
               bottomAndTopmost[0] = getBottomMostFieldInCircuit(circuit);
               bottomAndTopmost[1] = getTopMostFieldInCircuit(circuit);
               bottomAndTopmostFieldsInCircuit.add(bottomAndTopmost);
-              System.out.println("bottom most field is x = " + bottomAndTopmost[0].getX() + ", y = " + bottomAndTopmost[0].getY()  + 
-                  ", top most Field is x = " + bottomAndTopmost[1].getX() + ", y = " + bottomAndTopmost[1].getY());
+              //System.out.println("bottom most field is x = " + bottomAndTopmost[0].getX() + ", y = " + bottomAndTopmost[0].getY()  + 
+              //    ", top most Field is x = " + bottomAndTopmost[1].getX() + ", y = " + bottomAndTopmost[1].getY());
               
             }
             visited[x][y] = true;
@@ -480,17 +480,17 @@ public class GameState implements Cloneable {
               List<Field> startOfCircuit = new LinkedList<Field>();
               startOfCircuit.add(board.getField(x, y));
               List<Field> circuit = getCircuit(startOfCircuit, new LinkedList<Field>());
-              System.out.println("\n\nfound a new Circuit!\n");
+              //System.out.println("\n\nfound a new Circuit!\n");
               for(Field f: circuit) {
-                System.out.println("Field x = " + f.getX() + ", y = " + f.getY() + " is in,");
+                //System.out.println("Field x = " + f.getX() + ", y = " + f.getY() + " is in,");
                 visited[f.getX()][f.getY()] = true;
               }
               Field[] leftAndRightmost = new Field[2];
               leftAndRightmost[0] = getLeftMostFieldInCircuit(circuit);
               leftAndRightmost[1] = getRightMostFieldInCircuit(circuit);
               leftAndRightmostFieldsInCircuit.add(leftAndRightmost);
-              System.out.println("left most field is x = " + leftAndRightmost[0].getX() + ", y = " + leftAndRightmost[0].getY()  + 
-                  ", right most Field is x = " + leftAndRightmost[1].getX() + ", y = " + leftAndRightmost[1].getY());
+              //System.out.println("left most field is x = " + leftAndRightmost[0].getX() + ", y = " + leftAndRightmost[0].getY()  + 
+              //    ", right most Field is x = " + leftAndRightmost[1].getX() + ", y = " + leftAndRightmost[1].getY());
             }
             visited[x][y] = true;
           }

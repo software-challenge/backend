@@ -32,26 +32,27 @@ public class Field {
 	}
 
 	/**
-	 * @param owner the owner to set
+	 * @param Owner
 	 */
 	public void setOwner(PlayerColor owner) {
 		this.owner = owner;
 	}
 
 	/**
-	 * @return the type
+	 * @return Typ des Feldes
 	 */
 	public FieldType getType() {
 		return type;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param Der zu setzende Feldtyp
 	 */
 	public void setType(FieldType type) {
 		this.type = type;
 	}
 	
+	@Override
 	public boolean equals(Object o) {
 		if(o instanceof Field) {
 			Field f = (Field) o;
@@ -61,6 +62,9 @@ public class Field {
 		return false;
 	}
 	
+	/**
+	 * Erzeugt eine Deepcopy eines Feldes
+	 */
 	public Field clone() {
 		Field clone = new Field(this.getType(), this.getX(), this.getY());
 		clone.setOwner(this.getOwner());
@@ -68,14 +72,14 @@ public class Field {
 	}
 
   /**
-   * @return the x
+   * @return x
    */
   public int getX() {
     return x;
   }
 
   /**
-   * @return the y
+   * @return y
    */
   public int getY() {
     return y;
