@@ -25,7 +25,7 @@ public class Field {
 	}
 
 	/**
-	 * @return the owner. If there is nothing on this field, returns null
+	 * @return Der Besitzer, falls es keinen gibt, wird null zurueckgegeben
 	 */
 	public PlayerColor getOwner() {
 		return owner;

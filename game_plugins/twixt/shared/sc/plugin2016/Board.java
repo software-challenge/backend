@@ -27,15 +27,15 @@ public class Board {
   
 
   /**
-	 * 
+	 * Erzeug ein neues Spielfeld
 	 */
   public Board() {
     this.init();
   }
 
   /**
-   * 
-   * @param init
+   * Erzeug ein neues Spielfeld
+   * @param init boolean der entscheidet, ob das Spielfeld initialisiert werden soll
    */
   public Board(Boolean init) {
     if (init)
@@ -45,7 +45,7 @@ public class Board {
   }
 
   /**
-	 * 
+	 * Initialisiert das Spielfeld
 	 */
   private void init() {
     fields = new Field[Constants.SIZE][Constants.SIZE];
@@ -79,6 +79,9 @@ public class Board {
     internConnections.add(new Connection(2, 0, 1, 2, PlayerColor.RED));*/
   }
 
+  /**
+   * Verteilt die Suempfe auf dem Spielfeld
+   */
   private void placeSwamps() {
     SecureRandom rand = new SecureRandom();
     int x, y;
@@ -112,18 +115,37 @@ public class Board {
     fields[x][y].setType(FieldType.SWAMP);
   }
 
+  /**
+   * erzeugt ein neues leeres Spielfeld
+   */
   private void makeClearBoard() {
     fields = new Field[Constants.SIZE][Constants.SIZE];
   }
 
+  /**
+   * Gibt ein Spielfeld zurück
+   * @param x x-Koordinate
+   * @param y y-Koordinate
+   * @return Feld an entsprechenden Koordinaten
+   */
   public Field getField(int x, int y) {
     return fields[x][y];
   }
 
+  
+  /**
+   * Gibt den Besitzer eines Spielfelds zurück
+   * @param x x-Koordinate
+   * @param y y-Koordinate
+   * @return Besitzer des Feldes an entsprechenden Koordinaten
+   */
   public PlayerColor getOwner(int x, int y) {
     return fields[x][y].getOwner();
   }
 
+ /**
+  * Equals Methode fuer ein Spielfeld
+  */
   public boolean equals(Object o) {
     if (o instanceof Board) {
       Board b = (Board) o;
@@ -134,12 +156,18 @@ public class Board {
           }
         }
       }
+      if(b.connections.size() != this.connections.size()) {
+        return false;
+      }
+      for(Connection c : b.connections) {
+        if(this.connections.contains(c));
+      }
     }
     return true;
   }
 
   /**
-	 * 
+	 * Erzeug eine Deepcopy eines Spielbretts
 	 */
   public Object clone() {
     Board clone = new Board(false);
@@ -147,6 +175,9 @@ public class Board {
       for (int y = 0; y < Constants.SIZE; y++) {
         clone.fields[x][y] = this.fields[x][y].clone();
       }
+    }
+    for(Connection c : this.connections) {
+      clone.connections.add(c.clone());
     }
     return clone;
   }
@@ -236,10 +267,10 @@ public class Board {
   }
   
   /**
-   * provides all connections on this field that are going out from the Field given by x and y.
-   * @param x the x-coordinate
-   * @param y the y-coordinate
-   * @return the List of Connections
+   * Gibt die Leitungen die von einem Feld x y ausgehen zurück, 
+   * @param x x-Koordinate
+   * @param y y-Koordinate
+   * @return die Liste der Leitungen
    */
   public List<Connection> getConnections(int x, int y) {
     List<Connection> xyConnections = new ArrayList<Connection>();
@@ -274,8 +305,8 @@ public class Board {
   }
   
   /**
-   * 
-   * @return the fields
+   * Gibt die Felder eines Spielbretts zurück
+   * @return fields
    */
   public Field[][] getFields() {
     return this.fields;

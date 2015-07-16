@@ -63,7 +63,7 @@ public class RenderFacade {
 
 		@Override
 		public void run() {
-			while (receiverThreadRunning) {
+			/*while (receiverThreadRunning) {
 
 				try {
 
@@ -98,7 +98,7 @@ public class RenderFacade {
 					}
 					e.printStackTrace();
 				}
-			}
+			}*/
 		}
 	};
 	private GameState lastGameState;
