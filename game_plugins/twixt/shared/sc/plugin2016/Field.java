@@ -55,7 +55,8 @@ public class Field {
 	public boolean equals(Object o) {
 		if(o instanceof Field) {
 			Field f = (Field) o;
-			return f.getOwner().equals(this.getOwner()) && f.getType().equals(this.getType());
+			return f.getOwner().equals(this.getOwner()) && f.getType().equals(this.getType()) 
+			    && f.getX() == getX() && f.getY() == getY();
 		}
 		return false;
 	}
@@ -78,6 +79,11 @@ public class Field {
    */
   public int getY() {
     return y;
+  }
+  
+  @Override
+  public String toString() {
+    return "Field: x = " + getX() + ", y = " + getY();
   }
 
 }
