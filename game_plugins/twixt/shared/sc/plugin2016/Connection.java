@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 /**
- * Stellt eine Verbindung dar.
+ * Stellt eine Leitung dar.
  * @author niklas
  *
  */
@@ -24,7 +24,7 @@ public class Connection {
   
   
   /**
-   * Stellt eine Verbindung zwischen zwei Punkten (x1, y1) und (x2, y2) des Spielers owner dar.
+   * Stellt eine Leitung zwischen zwei Punkten (x1, y1) und (x2, y2) des Spielers owner dar.
    * @param x1
    * @param y1
    * @param x2
@@ -49,5 +49,12 @@ public class Connection {
       }
     }
     return false;
+  }
+  
+  /**
+   * Erzeugt eine Deepcopy einer Leitung
+   */
+  public Connection clone() {
+    return new Connection(this.x1, this.y1, this.x2, this.y2, this.owner);
   }
 }
