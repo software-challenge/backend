@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import sc.plugin2016.Board;
 import sc.plugin2016.Connection;
+import sc.plugin2016.Field;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Move;
 import sc.plugin2016.Player;
@@ -33,9 +34,9 @@ public class BoardTest {
     assertTrue(board.connections.contains(new Connection(5, 6, 6, 8, PlayerColor.RED)));
     board.put(5, 7, bluePlayer);
     board.put(6, 5, bluePlayer); 
-    for (Connection c : board.connections) {
+    /*for (Connection c : board.connections) {
       System.out.println("x1 = " + c.x1 + ", y1 = " + c.y1 + ", x2 = " + c.x2 + ", y2 = " + c.y2);
-    }
+    }*/
     assertEquals(0, board.getConnections(5, 7).size());
     assertEquals(0, board.getConnections(6, 5).size());
     assertEquals(2, board.connections.size());
@@ -64,11 +65,24 @@ public class BoardTest {
   @Test
   public void testPuttingPlayerOnOwnBase() throws InvalidMoveException {
     GameState state = new GameState();
-    state.addPlayer(new Player(PlayerColor.RED));
-    state.addPlayer(new Player(PlayerColor.BLUE));
+    PlayerColor red = PlayerColor.RED;
+    PlayerColor blue = PlayerColor.BLUE;
+    state.addPlayer(new Player(red));
+    state.addPlayer(new Player(blue));
     Player currentPlayer = state.getCurrentPlayer();
     Move move = new Move(1, 0);
-    assertEquals(PlayerColor.RED, currentPlayer.getPlayerColor());
+    assertEquals(red, currentPlayer.getPlayerColor());
     move.perform(state, currentPlayer);
+  }
+  
+  @Test
+  public void testGetConnections() throws InvalidMoveException {
+    Board board = new Board();
+    Player red = new Player(PlayerColor.RED);
+    board.put(5, 5, red);
+    board.put(6, 7, red);
+    board.put(4, 8, red);
+    assertTrue(board.getConnections(6, 7).contains(new Connection(6, 7, 5, 5, red.getPlayerColor())));
+    assertTrue(board.getConnections(6, 7).contains(new Connection(6, 7, 4, 8, red.getPlayerColor())));
   }
 }
