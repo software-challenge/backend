@@ -45,7 +45,7 @@ public class Connection {
       Connection c = (Connection) o;
       if(c.x1 == x1 && c.y1 == y1 && c.x2 == x2 && c.y2 == y2 ||
          c.x1 == x2 && c.y1 == y2 && c.x2 == x1 && c.y2 == y1) {
-        return true;
+        return (owner == c.owner);
       }
     }
     return false;

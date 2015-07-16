@@ -66,7 +66,7 @@ public class Board {
         fields[x][y] = new Field(FieldType.NORMAL, x, y);
       }
     }
-    placeSwamps();
+    //placeSwamps();
     connections = new ArrayList<Connection>();
     /*Player redPlayer = new Player(PlayerColor.RED);
     Player bluePlayer = new Player(PlayerColor.BLUE);
