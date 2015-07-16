@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -16,6 +18,8 @@ import sc.server.network.PerspectiveAwareConverter;
 import sc.shared.SharedConfiguration;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * Server configuration.
@@ -39,6 +43,12 @@ public class Configuration
 
 	static
 	{
+		/*xStream = new XStream(new JettisonMappedXmlDriver());
+
+		List<String> board = new ArrayList<String>();
+		board.add("\n\n\n\n\n\n\nTesttttttttttttttttttttttttttttt");
+		xStream.alias("board", board.getClass() );
+        System.out.println(xStream.toXML(board));	*/
 		xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStreamClassLoader = AccessController
