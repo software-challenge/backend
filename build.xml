@@ -53,6 +53,7 @@
 		<!--    currentPlugin                    !-->
 		<ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
 		<ant dir="game_players/twixt_player" target="clean-build" inheritAll="false" />
+		<ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" />
 		
 		<echo message="Compiling Server and GUI..." />
 		<ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -247,12 +248,21 @@
 		</copy>
 		!-->
 		
+		<mkdir dir="${out.dir}/not_so_simple_client/twixt_player/jar" />
+		<mkdir dir="${out.dir}/not_so_simple_client/twixt_player/jar/java7" />
+		<mkdir dir="${out.dir}/not_so_simple_client/twixt_player/jar/java8" />
+		<copy todir="${out.dir}/not_so_simple_client/twixt_player/jar">
+		  <fileset dir="./game_players/twixt_player2/build/jar" />
+		</copy>
+		
 		<mkdir dir="${out.dir}/simple_client/twixt_player/jar" />
 		<mkdir dir="${out.dir}/simple_client/twixt_player/jar/java7" />
 		<mkdir dir="${out.dir}/simple_client/twixt_player/jar/java8" />
 		<copy todir="${out.dir}/simple_client/twixt_player/jar">
 			<fileset dir="./game_players/twixt_player/build/jar" />
 		</copy>
+		
+		
 				
 		<mkdir dir="${out.dir}/simple_client/twixt_player/src" />
 		<copy todir="${out.dir}/simple_client/twixt_player/src">

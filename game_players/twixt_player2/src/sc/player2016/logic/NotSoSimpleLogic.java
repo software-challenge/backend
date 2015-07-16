@@ -78,8 +78,10 @@ public class NotSoSimpleLogic implements IGameHandler {
         Move currentMove = (Move) m;
           nextGameState.getBoard().put(currentMove.getX(), currentMove.getY(), nextGameState.getCurrentPlayer());
           newMaxPoints = nextGameState.getPointsForPlayer(nextGameState.getCurrentPlayerColor());
+          System.out.println("bei " + currentMove.getX() + "  " + currentMove.getY() + "  " + newMaxPoints);
         if(newMaxPoints >= maxPoints) {
-            bestMove = m;
+          maxPoints = newMaxPoints;
+          bestMove = m;
         }
       } catch (CloneNotSupportedException e) {
         // TODO Auto-generated catch block
