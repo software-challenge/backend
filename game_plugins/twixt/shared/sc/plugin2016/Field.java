@@ -1,24 +1,40 @@
 package sc.plugin2016;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+@XStreamAlias(value = "field")
 public class Field {
-	private Player owner;
+  @XStreamAsAttribute
+	private PlayerColor owner;
+  @XStreamAsAttribute
 	private FieldType type;
+  @XStreamAsAttribute
+	private final int x;
+  @XStreamAsAttribute
+	private final int y;
 	
-	public Field(FieldType type) {
+	public Field(FieldType type, int x, int y) {
 		this.setType(type);
+		this.owner = null;
+		this.x = x;
+		this.y = y;
 	}
 
 	/**
-	 * @return the owner
+	 * @return the owner. If there is nothing on this field, returns null
 	 */
-	public Player getOwner() {
+	public PlayerColor getOwner() {
 		return owner;
 	}
 
 	/**
 	 * @param owner the owner to set
 	 */
-	public void setOwner(Player owner) {
+	public void setOwner(PlayerColor owner) {
 		this.owner = owner;
 	}
 
@@ -32,7 +48,7 @@ public class Field {
 	/**
 	 * @param type the type to set
 	 */
-	private void setType(FieldType type) {
+	public void setType(FieldType type) {
 		this.type = type;
 	}
 	
@@ -45,9 +61,23 @@ public class Field {
 	}
 	
 	public Field clone() {
-		Field clone = new Field(this.getType());
+		Field clone = new Field(this.getType(), this.getX(), this.getY());
 		clone.setOwner(this.getOwner());
 		return clone;
 	}
-	
+
+  /**
+   * @return the x
+   */
+  public int getX() {
+    return x;
+  }
+
+  /**
+   * @return the y
+   */
+  public int getY() {
+    return y;
+  }
+
 }
