@@ -100,14 +100,14 @@ public class Move implements Cloneable {
   }
 
   /**
-   * @return the x
+   * @return x
    */
   public int getX() {
     return x;
   }
 
   /**
-   * @return the y
+   * @return y
    */
   public int getY() {
     return y;
@@ -131,7 +131,7 @@ public class Move implements Cloneable {
         if (state.getPossibleMoves().contains(this)) {
           state.getBoard().put(getX(), getY(), player);
           player.setPoints(state.getPointsForPlayer(player.getPlayerColor()));
-          System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nset points for player " + player.getPlayerColor() + " to " + state.getPointsForPlayer(player.getPlayerColor()));
+          //System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nset points for player " + player.getPlayerColor() + " to " + state.getPointsForPlayer(player.getPlayerColor()));
         } else {
           throw new InvalidMoveException(
               "Der Zug ist nicht möglich, denn der Platz ist bereits besetzt oder nicht besetzbar.");
