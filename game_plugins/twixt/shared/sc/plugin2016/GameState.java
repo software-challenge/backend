@@ -18,19 +18,19 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * {@link #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren
  * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
  * Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf. ueber das
- * Spielende informiert.<br/>
- * <br/>
+ * Spielende informiert.
+ * 
  * 
  * Der {@code GameState} ist damit das zentrale Objekt ueber das auf alle
- * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.<br/>
- * <br/>
+ * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.
+ * 
  * 
  * Der Spielserver sendet an beide teilnehmenden Spieler nach jedem getaetigten
  * Zug eine neue Kopie des {@code GameState}, in dem der dann aktuelle Zustand
  * beschrieben wird. Informationen ueber den Spielverlauf sind nur bedingt ueber
  * den {@code GameState} erfragbar und muessen von einem Spielclient daher bei
- * Bedarf selbst mitgeschrieben werden.<br/>
- * <br/>
+ * Bedarf selbst mitgeschrieben werden.
+ * 
  * 
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
@@ -72,11 +72,11 @@ public class GameState implements Cloneable {
   /**
    * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
    * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
-   * gueltig sind.<br/>
-   * <br/>
+   * gueltig sind.
    * 
-   * <b>Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
-   * Spielclient i.A. nicht aufgerufen werden!</b>
+   * 
+   * Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
+   * Spielclient i.A. nicht aufgerufen werden!
    * 
    * Das Spielfeld wird zufällig aufgebaut.
    */
@@ -91,7 +91,7 @@ public class GameState implements Cloneable {
    * erzeugt eine Deepcopy dieses Objekts
    * 
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException
+   * @throws CloneNotSupportedException falls klonen fehlschlaegt
    */
   @Override
   public Object clone() throws CloneNotSupportedException {
@@ -113,11 +113,11 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Fuegt einem Spiel einen weiteren Spieler hinzu.<br/>
-   * <br/>
+   * Fuegt einem Spiel einen weiteren Spieler hinzu.
    * 
-   * <b>Diese Methode ist nur fuer den Spielserver relevant und sollte vom
-   * Spielclient i.A. nicht aufgerufen werden!</b>
+   * 
+   * Diese Methode ist nur fuer den Spielserver relevant und sollte vom
+   * Spielclient i.A. nicht aufgerufen werden!
    * 
    * @param player
    *          Der hinzuzufuegende Spieler.
@@ -246,6 +246,7 @@ public class GameState implements Cloneable {
 
   /**
    * liefert die aktuelle Zugzahl
+   * @return Nummer des aktuellen Zuges (Zaehlung beginnt mit 0)
    */
   public int getTurn() {
     return turn;
@@ -386,6 +387,7 @@ public class GameState implements Cloneable {
 
   /**
    * liefert die Namen den beiden Spieler
+   * @return Namen der Spieler
    */
   public String[] getPlayerNames() {
     return new String[] { red.getDisplayName(), blue.getDisplayName() };
@@ -504,7 +506,7 @@ public class GameState implements Cloneable {
     } else {
       throw new IllegalArgumentException();
     }
-    return longestPath; // return longestPath;
+    return longestPath; // return longestPath
   }
 
   private Field getBottomMostFieldInCircuit(List<Field> circuit) {

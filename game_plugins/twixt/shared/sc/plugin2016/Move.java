@@ -38,7 +38,7 @@ public class Move implements Cloneable {
    * klont dieses Objekt
    * 
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException
+   * @throws CloneNotSupportedException falls nicht geklont werden kann
    */
   @Override
   public Object clone() throws CloneNotSupportedException {
@@ -49,7 +49,7 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Fuegt eine Debug-Hilfestellung hinzu.<br/>
+   * Fuegt eine Debug-Hilfestellung hinzu.
    * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
    * Client einen Zug macht.
    * 
@@ -65,7 +65,7 @@ public class Move implements Cloneable {
 
   /**
    * 
-   * Fuegt eine Debug-Hilfestellung hinzu.<br/>
+   * Fuegt eine Debug-Hilfestellung hinzu.
    * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
    * Client einen Zug macht.
    * 
@@ -79,7 +79,7 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Fuegt eine Debug-Hilfestellung hinzu.<br/>
+   * Fuegt eine Debug-Hilfestellung hinzu.
    * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
    * Client einen Zug macht.
    * 

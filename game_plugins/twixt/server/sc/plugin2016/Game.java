@@ -106,7 +106,7 @@ public class Game extends RoundBasedGameInstance<Player> {
         }
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
             + winnerName);
-      } else if(stats[0][0] == 24 || stats[1][0] == 24) {
+      } else if(stats[0][0] == Constants.SIZE - 1 || stats[1][0] == Constants.SIZE - 1) {
         gameState.clearEndGame();
         PlayerColor winner = null;
         String winnerName = "Unendschieden";

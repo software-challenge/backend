@@ -192,17 +192,21 @@ public class Board {
    * {@link sc.plugin2016.Move#perform(GameState, Player) perform}-Methode
    * benutzen.
    * 
-   * @param x
-   * @param y
+   * @param x x-Koordinate
+   * @param y y-Koordinate
    *          das Feld, auf das gesetzt wird
-   * @param playerColor
-   *          die Farbe des Besitzers
+   * @param player der setzende Spieler
    */
   public void put(int x, int y, Player player) {
     getField(x, y).setOwner(player.getPlayerColor());
     createNewWires(x, y);
   }
 
+  /**
+   * checks whether new wires have to be created
+   * @param x x-coordinate
+   * @param y y-coordinate
+   */
   private void createNewWires(int x, int y) {
     if (checkPossibleWire(x, y, x - 2, y - 1)) {
       createWire(x, y, x - 2, y - 1);
@@ -231,6 +235,13 @@ public class Board {
     
   }
 
+  /**
+   * creates a wire between two points
+   * @param x1 x-coordinate of first point
+   * @param y1 y-coordinate of first point
+   * @param x2 x-coordinate of second point
+   * @param y2 y-coordinate of second point
+   */
   private void createWire(int x1, int y1, int x2, int y2) {
     connections.add(new Connection(x1, y1, x2, y2, getField(x1, y1).getOwner()));
 //    getField(x1, y1).addConnection(getField(x2, y2));
@@ -238,6 +249,14 @@ public class Board {
 
   }
 
+  /**
+   * checks whether a wire between two points is possible
+   * @param x1 x-coordinate of first point
+   * @param y1 y-coordinate of first point
+   * @param x2 x-coordinate of second point
+   * @param y2 y-coordinate of second point
+   * @return true if wire is possible
+   */
   private boolean checkPossibleWire(int x1, int y1, int x2, int y2) {
     if (x2 < Constants.SIZE && y2 < Constants.SIZE && x2 >= 0 && y2 >= 0) {
       if (getField(x2, y2).getOwner() == getField(x1, y1).getOwner()) {
@@ -247,6 +266,14 @@ public class Board {
     return false;
   }
 
+  /**
+   * checks whether a wire blocks the wire between the two points
+   * @param x1 x-coordinate of first point
+   * @param y1 y-coordinate of first point
+   * @param x2 x-coordinate of second point
+   * @param y2 y-coordinate of second point
+   * @return true if blocking wire exists
+   */
   private boolean existsBlockingWire(int x1, int y1, int x2, int y2) {
     int biggerX = Math.max(x1, x2);
     int smallerX = Math.min(x1, x2);
@@ -290,17 +317,17 @@ public class Board {
     return xyConnections; 
   }
 
-  /*
-   * checks for the wire (x1, y1) -> (x2, y2), if it is blocked by any connection going out from (x,y).
-   */
+ /**
+  * checks for the wire from (x1, y1) to (x2, y2), if it is blocked by any connection going out from (x,y).
+  * @param x1 x-coordinate of first point
+  * @param y1 y-coordinate of first point
+  * @param x2 x-coordinate of second point
+  * @param y2 y-coordinate of second point
+  * @param x x-coordinate of possible blocking point
+  * @param y y-coordinate of possible blocking point
+  * @return true if wire is blocked
+  */
   private boolean isWireBlocked(int x1, int y1, int x2, int y2, int x, int y) {
-//    for(Field field : getField(x, y).getConnections()) {
-//      if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, field.getX(), field.getY())) {
-//        return true;
-//      }
-//    }
-//    return false;  
-//  }
     for(Connection c : getConnections(x, y)) {
       if(Line2D.linesIntersect(x1, y1, x2, y2, x, y, c.x2, c.y2)) {
         return true;
