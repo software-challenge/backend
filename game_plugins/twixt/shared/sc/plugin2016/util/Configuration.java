@@ -8,17 +8,15 @@ import sc.plugin2016.Board;
 import sc.plugin2016.Connection;
 import sc.plugin2016.Field;
 import sc.plugin2016.FieldType;
-import sc.plugin2016.Player;
 import sc.plugin2016.Game;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Move;
+import sc.plugin2016.Player;
 import sc.plugin2016.PlayerColor;
 import sc.plugin2016.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * Configuration

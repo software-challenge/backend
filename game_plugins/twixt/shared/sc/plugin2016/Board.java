@@ -3,13 +3,10 @@ package sc.plugin2016;
 import java.awt.geom.Line2D;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin2016.GameState;
-import sc.plugin2016.Player;
-import sc.plugin2016.util.Constants;
 import sc.plugin2016.util.BoardConverter;
+import sc.plugin2016.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
