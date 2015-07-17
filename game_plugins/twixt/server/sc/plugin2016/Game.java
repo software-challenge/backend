@@ -89,8 +89,6 @@ public class Game extends RoundBasedGameInstance<Player> {
       gameState.prepareNextTurn(move);
       if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 
-        gameState.clearEndGame();
-
         
 
         PlayerColor winner = null;
@@ -107,7 +105,6 @@ public class Game extends RoundBasedGameInstance<Player> {
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
             + winnerName);
       } else if(stats[0][0] == Constants.SIZE - 1 || stats[1][0] == Constants.SIZE - 1) {
-        gameState.clearEndGame();
         PlayerColor winner = null;
         String winnerName = "Unendschieden";
         if (stats[0][0] > stats[1][0]) {

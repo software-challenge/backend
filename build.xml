@@ -345,6 +345,11 @@
 		<zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
 		<zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
 		<zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
+		<zip destfile="${out.dir}/zipped/notsosimpleclient-twixt-jar-java7.zip" basedir="${out.dir}/not_so_simple_client/twixt_player/jar/java7" />
+    <zip destfile="${out.dir}/zipped/notsosimpleclient-twixt-jar-java8.zip" basedir="${out.dir}/not_so_simple_client/twixt_player/jar/java8" />
+    <zip destfile="${out.dir}/zipped/simpleclient-twixt-jar-java7.zip" basedir="${out.dir}/simple_client/twixt_player/jar/java7" />
+    <zip destfile="${out.dir}/zipped/simpleclient-twixt-jar-java8.zip" basedir="${out.dir}/simple_client/twixt_player/jar/java8" />
+    <zip destfile="${out.dir}/zipped/simpleclient-twixt-src.zip" basedir="${out.dir}/simple_client/twixt_player/src" />
 
 	</target>
 
