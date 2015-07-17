@@ -7,14 +7,13 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.
- * Beeinhaltet auch Informationen zum Punktekonto und der Anzahl der Plättchen
- * des Spielers.
+ * Beeinhaltet auch Informationen zum Punktekonto
  */
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
 	/** 
-	 * Spielerfarbe des spielers
+	 * Spielerfarbe des Spielers
 	 */
 	@XStreamAsAttribute
 	private PlayerColor color;

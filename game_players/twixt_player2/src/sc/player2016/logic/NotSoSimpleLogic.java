@@ -60,6 +60,10 @@ public class NotSoSimpleLogic implements IGameHandler {
 		System.out.println("*** Es wurde ein Zug angefordert");
 			List<Move> possibleMoves = gameState.getPossibleMoves();
 			System.out.println("*** sende zug: ");
+			/*
+			 * Es wird versucht mit jedem Zug moeglichst viele Punkte zu machen.
+			 * Falls keine Punkte gewonnen werden können, wird versucht zumindest eine Leitung zu erzeugen.
+			 */
 			Move selection = moveWithMostPoints(possibleMoves);
 			System.out.println("*** setze Strommast auf x="
 					+ selection.getX() + ", y="
@@ -87,7 +91,6 @@ public class NotSoSimpleLogic implements IGameHandler {
           movesMakeConnections.add(currentMove);
         }
         newMaxPoints = nextGameState.getPointsForPlayer(player.getPlayerColor()) - currentPoints;
-        System.out.println("bei " + currentMove.getX() + "  " + currentMove.getY() + "  " + newMaxPoints);
         if(newMaxPoints >= maxPoints) {
           maxPoints = newMaxPoints;
           bestMove = m;
