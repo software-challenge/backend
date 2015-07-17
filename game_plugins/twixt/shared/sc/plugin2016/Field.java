@@ -1,8 +1,5 @@
 package sc.plugin2016;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 

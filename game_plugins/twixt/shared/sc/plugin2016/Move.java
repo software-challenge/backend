@@ -5,8 +5,6 @@ import java.util.List;
 
 import sc.plugin2016.util.Constants;
 import sc.plugin2016.util.InvalidMoveException;
-import sc.plugin2016.DebugHint;
-import sc.plugin2016.Move;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
