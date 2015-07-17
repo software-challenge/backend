@@ -26,6 +26,7 @@
 		<!--    currentPlugin                    !-->
 		<delete dir="game_plugins/twixt/build" />
 		<delete dir="game_players/twixt_player/build" />
+		<delete dir="game_players/twixt_player2/build" />
 		
 	</target>
 

@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Ein Spieler, identifiziert durch seine Spielerfarbe.<br/>
+ * Ein Spieler, identifiziert durch seine Spielerfarbe.
  * Beeinhaltet auch Informationen zum Punktekonto und der Anzahl der Plättchen
  * des Spielers.
  */
@@ -48,7 +48,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * erzeugt eine Deepcopy dieses Objekts
 	 * 
 	 * @return ein neues Objekt mit gleichen Eigenschaften
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException falls klonen fehlschlaegt
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {

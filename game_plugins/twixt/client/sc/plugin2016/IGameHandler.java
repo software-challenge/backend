@@ -7,7 +7,7 @@ import sc.plugin2016.PlayerColor;
 import sc.shared.GameResult;
 
 /**
- * Ein allgemeines Interface fuer spielfaehige Klassen. <br/>
+ * Ein allgemeines Interface fuer spielfaehige Klassen. 
  * Eine Spielstrategie / Logik muss dieses Interface implementieren,
  * damit sie in der LogicFactory verwaltet werden kann.
  * @author sven
@@ -50,6 +50,8 @@ public interface IGameHandler {
 	 * 
 	 * @param data
 	 *            mit getScores() kann man die Punkte erfragen
+	 * @param color Playercolor
+	 * @param errorMessage String mit Fehler
 	 */
 	void gameEnded(GameResult data, PlayerColor color, String errorMessage);
 }

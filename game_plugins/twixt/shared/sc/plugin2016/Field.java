@@ -32,7 +32,8 @@ public class Field {
 	}
 
 	/**
-	 * @param Owner
+	 * Setter Methode fuer den Owner
+	 * @param owner Owner
 	 */
 	public void setOwner(PlayerColor owner) {
 		this.owner = owner;
@@ -46,7 +47,7 @@ public class Field {
 	}
 
 	/**
-	 * @param Der zu setzende Feldtyp
+	 * @param type Der zu setzende Feldtyp
 	 */
 	public void setType(FieldType type) {
 		this.type = type;
@@ -72,14 +73,14 @@ public class Field {
 	}
 
   /**
-   * @return x
+   * @return x x-Koordinate des Feldes
    */
   public int getX() {
     return x;
   }
 
   /**
-   * @return y
+   * @return y y-Koordinate des Feldes
    */
   public int getY() {
     return y;

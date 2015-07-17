@@ -71,7 +71,7 @@ public class DebugHint implements Cloneable {
 	 * klont dieses Objekt
 	 * 
 	 * @return ein neues Objekt mit gleichen Eigenschaften
-	 * @throws CloneNotSupportedException
+	 * @throws CloneNotSupportedException falls Objekt nicht geklont werden kann
 	 */
 	@Override
 	protected Object clone() throws CloneNotSupportedException {

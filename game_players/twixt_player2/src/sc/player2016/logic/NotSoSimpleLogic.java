@@ -1,6 +1,7 @@
 package sc.player2016.logic;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -70,15 +71,23 @@ public class NotSoSimpleLogic implements IGameHandler {
     int maxPoints = -10000;
     int newMaxPoints = -10000;
     Move bestMove = new Move();
-    GameState nextGameState;
+    GameState nextGameState = null;
+    List<Move> movesMakeConnections = new ArrayList<Move>();
+    int size = 0;
     for(Move m : possibleMoves) {
       try {
         nextGameState = (GameState) gameState.clone();
+        int currentPoints = nextGameState.getCurrentPlayer().getPoints(); 
+        size = nextGameState.getBoard().connections.size();
+        Player player = nextGameState.getCurrentPlayer();
         //nextGameState.prepareNextTurn(possibleMoves.get(i));
         Move currentMove = (Move) m;
-          nextGameState.getBoard().put(currentMove.getX(), currentMove.getY(), nextGameState.getCurrentPlayer());
-          newMaxPoints = nextGameState.getPointsForPlayer(nextGameState.getCurrentPlayerColor());
-          System.out.println("bei " + currentMove.getX() + "  " + currentMove.getY() + "  " + newMaxPoints);
+        nextGameState.getBoard().put(currentMove.getX(), currentMove.getY(), player);
+        if(size < nextGameState.getBoard().connections.size()) {
+          movesMakeConnections.add(currentMove);
+        }
+        newMaxPoints = nextGameState.getPointsForPlayer(player.getPlayerColor()) - currentPoints;
+        System.out.println("bei " + currentMove.getX() + "  " + currentMove.getY() + "  " + newMaxPoints);
         if(newMaxPoints >= maxPoints) {
           maxPoints = newMaxPoints;
           bestMove = m;
@@ -87,6 +96,15 @@ public class NotSoSimpleLogic implements IGameHandler {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+    }
+    if(nextGameState.getRound() == 0) {
+      if(possibleMoves.contains(new Move(11, 11))) {
+        bestMove = new Move(11, 11);
+      } else if (possibleMoves.contains(new Move(14, 14))){
+        bestMove = new Move(14, 14);
+      }
+    } else if(maxPoints == 0){
+      bestMove = movesMakeConnections.get(rand.nextInt(movesMakeConnections.size()));
     }
     return bestMove;
   }
