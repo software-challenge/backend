@@ -12,107 +12,362 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
-import sc.plugin2016.GamePlugin;
+import processing.core.PImage;
+import sc.plugin2016.gui.renderer.RenderConfigurationDialog;
 import sc.plugin2016.EPlayerId;
 import sc.plugin2016.GameState;
+import sc.plugin2016.Move;
 import sc.plugin2016.PlayerColor;
-import sc.plugin2016.gui.renderer.RenderConfigurationDialog;
+import sc.plugin2016.gui.renderer.primitives.Background;
+import sc.plugin2016.gui.renderer.primitives.BoardFrame;
+import sc.plugin2016.gui.renderer.primitives.GameEndedDialog;
+import sc.plugin2016.gui.renderer.primitives.GuiBoard;
+import sc.plugin2016.gui.renderer.primitives.GuiConstants;
+import sc.plugin2016.gui.renderer.primitives.GuiField;
+import sc.plugin2016.gui.renderer.primitives.ProgressBar;
+import sc.plugin2016.gui.renderer.primitives.SideBar;
+import sc.plugin2016.util.Constants;
 
 /**
- * @author fdu
+ * @author soeren
  */
 
 public class FrameRenderer extends PApplet {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private static final Logger logger = LoggerFactory
-			.getLogger(FrameRenderer.class);
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
+  private static final Logger logger = LoggerFactory
+      .getLogger(FrameRenderer.class);
 
-	public GameState currentGameState;
+  public GameState currentGameState;
+  private boolean isUpdated;
+  private boolean humanPlayer;
+  private boolean humanPlayerMaxTurn;
+  private int maxTurn;
+  private boolean myMousePressed;
+
+  private EPlayerId id;
+
+  public GuiBoard guiBoard;
+  /*
+   * TODO add background picture
+   * picture is missing so no background for now*/
+  // private Background background;
+  
+  private ProgressBar progressBar;
+  private SideBar sideBar;
+  private BoardFrame boardFrame;
 
 
-	public FrameRenderer() {
-		
-	}
+  public FrameRenderer() {
+    super();
 
-	public void setup() {
-		
-	}
+    // logger.debug("calling frameRenderer.size()");
+    this.humanPlayer = false;
+    this.humanPlayerMaxTurn = false;
+    isUpdated = false;
+    this.id = EPlayerId.OBSERVER;
 
-	public static int calcColor(int alpha, int r, int g, int b) {
-    int col = 0;
-    col |= alpha << 24;
-    col |= r << 16;
-    col |= g << 8;
-    col |= b;
-    return col;
+    RenderConfiguration.loadSettings();
+
+    // background = new Background(this);
+    logger.debug("Dimension when creating board: (" + this.width + ","
+        + this.height + ")");
+    guiBoard = new GuiBoard(this);
+    progressBar = new ProgressBar(this);
+    sideBar = new SideBar(this);
+
+
+    boardFrame = new BoardFrame(this);
+    // logger.debug("Constructor finished");
+
+    // load Images
+    //currently no images
   }
 
-  public static final int colorBackGround = calcColor(200, 200, 200, 200);
-  public static final int colorRed = calcColor(255, 200, 0, 0);
-  public static final int colorBlue = calcColor(255, 0, 0, 200);
-  public static final int colorGreen = calcColor(255, 0, 255, 0);
-  public static final int colorLightGrey = calcColor(255, 100, 100, 100);
-  public static final int colorLightLightGrey = calcColor(255, 130, 130, 130);
-  public static final int colorGrey = calcColor(255, 50, 68, 70);
-  public static final int colorDarkGrey = calcColor(255, 30, 30, 30);
-  public static final int colorBlack = calcColor(255, 0, 0, 0);
-  public static final int colorSideBarBG = calcColor(200, 200, 200, 200);
-  public static final int colorHexFields = calcColor(240, 21, 160, 177);
-  public static final int colorHexFieldsHighlight = calcColor(240, 21, 195, 177);
-  public static final int colorText = calcColor(255, 0, 0, 0);
-  public static final int colorGreyOut = calcColor(100, 30, 30, 30);
-	
-	public void draw() {
-    this.pushMatrix();
-    this.translate(0, this.getHeight() * 50);
-    this.fill(colorBlue);
-    this.rect(0, 0, this.getWidth(), this.getHeight()
-        * 100);
+  public void setup() {
+    maxTurn = -1;
+    myMousePressed = false;
+    // choosing renderer from options - using P2D as default
+    if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
+      logger.debug("Using Java2D as Renderer");
+      size(this.width, this.height, JAVA2D);
+    } else if (RenderConfiguration.optionRenderer.equals("P3D")) {
+      logger.debug("Using P3D as Renderer");
+      size(this.width, this.height, P3D);
+    } else {
+      logger.debug("Using P2D as Renderer");
+      size(this.width, this.height, P2D);
+    }
+
+    smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
+
+    // initial draw
+    GuiConstants.generateFonts(this);
+    resize(this.width, this.height);
+    noLoop(); // prevent thread from starving everything else
+
+  }
+
+  public void draw() {
+    loop();
+    boolean isAnimated = false;
+    // resize();
+    // background.draw();
+    guiBoard.draw();
+    progressBar.draw();
+    sideBar.draw();
+    boardFrame.draw();
+    if (currentGameState != null && currentGameState.gameEnded()) {
+      GameEndedDialog.draw(this);
+    }
+  }
+
+  public void updateGameState(GameState gameState) {
+    int lastTurn = -1;
+    if (currentGameState != null) {
+      lastTurn = currentGameState.getTurn();
+    }
+    currentGameState = gameState;
+    if (gameState != null && gameState.getBoard() != null)
+      guiBoard.update(gameState.getBoard());
+    if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
+
+      if (maxTurn == currentGameState.getTurn() - 1) {
+
+        maxTurn++;
+        humanPlayerMaxTurn = false;
+      }
+    }
+    humanPlayer = false;
+    if (currentGameState != null && maxTurn == currentGameState.getTurn()
+        && humanPlayerMaxTurn) {
+      humanPlayer = true;
+    }
+    isUpdated = true;
+    redraw();
+  }
+
+  public void requestMove(int maxTurn, EPlayerId id) {
+    while (!isUpdated) {
+      loop();
+      try {
+        Thread.sleep(20);
+      } catch (InterruptedException e) {
+      }
+    }
+    isUpdated = false;
+    int turn = currentGameState.getTurn();
+    this.id = id;
+    if (turn % 2 == 1) {
+      // System.out.println("Blauer Spieler ist dran");
+      if (id == EPlayerId.PLAYER_ONE) {
+        // System.out.println("Spielerupdate");
+        this.id = EPlayerId.PLAYER_TWO;
+      }
+    }
+    // this.maxTurn = maxTurn;
+    this.humanPlayer = true;
+    humanPlayerMaxTurn = true;
+    redraw();
+  }
+
+  public Image getImage() {
+    // TODO return an Image of the current board
+    return null;
+  }
+
+  public void mouseClicked(MouseEvent e) {
+    loop();
+    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      int x = e.getX();
+      int y = e.getY();
+      int player;
+      if (id == EPlayerId.PLAYER_ONE) {
+        player = 0;
+      } else {
+        player = 1;
+      }
+      /*
+       * is button pressed?
+       */
+      /*
+      float buttonX = getWidth() / 2f - 50;
+      float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
+      if (this.currentGameState.getTurn() > 7 && x > buttonX
+          && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
+        // System.out.println("Aussetzknopf gedrückt");
+        RenderFacade.getInstance().sendMove(new NullMove());
+      }*/
+    }
+  }
+
+  public void mousePressed(MouseEvent e) {
+    loop();
+    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      int x = e.getX();
+      int y = e.getY();
+      int player;
+      if (id == EPlayerId.PLAYER_ONE) {
+        player = 0;
+      } else {
+        player = 1;
+      }
+      /*
+       * mark possible moves
+       */
+    }
+  }
+
+  public void mouseReleased(MouseEvent e) {
+    // TODO send move here
     
-    this.popMatrix();
-	}
+    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      int x = e.getX();
+      int y = e.getY();
+      int player;
+      Move move = null;
+      if (id == EPlayerId.PLAYER_ONE) {
+        player = 0;
+      } else {
+        player = 1;
+      }
+      int[] position = getFieldCoordinates(x, y);
+      if(position != null && currentGameState.getPossibleMoves().contains(new Move(position[0], position[1]))) {
+        move = new Move(position[0], position[1]);
+        RenderFacade.getInstance().sendMove(move);
+      }
+       
+    
+      myMousePressed = false;
+      try {
+        Thread.sleep(20);
+      } catch (Exception ex){
+        
+      }
+      redraw();
+    }
+    
+  }
 
-	public void updateGameState(GameState gameState) {
-		
-	}
+  private int[] getFieldCoordinates(int x, int y) {
+    for (int i = 0; i < 24; i++) {
+      for (int j = 0; j < 24; j++) {
+        GuiField guiField = guiBoard.getGuiFields()[i][j];
+        if (x >= guiField.getX() - guiField.getWidth() / 2.0f
+            && x <= guiField.getX() + guiField.getWidth() / 2.0f
+            && y >= guiField.getY() - guiField.getWidth() / 2.0f
+            && y <= guiField.getY() + guiField.getWidth() / 2.0f
+            ) {
+          return new int[] {
+              guiField.getField().getX(),
+              guiField.getField().getY() };
+        }
+      }
+    }
+    return null;
+  }
 
-	public void requestMove(int maxTurn, EPlayerId id) {
-		
-	}
+  private boolean isFieldClicked(GuiField field, int x, int y) {
+    if (x >= field.getX() - field.getWidth() / 2
+        && x <= field.getX() + field.getWidth() / 2
+        && y >= field.getY() - field.getWidth() / 2
+        && y <= field.getY() + field.getWidth() / 2
+        ) {
+      return true;
+    }
+    return false;
+  }
 
-	public Image getImage() {
-		// TODO return an Image of the current board
-		return null;
-	}
+  public void resize(int width, int height) {
+    loop();
+    // background.resize(width, height);
+    guiBoard.resize(width, height);
+    /*
+    float b = guiBoard.getGuiFields()[0][0].getB();
+    b = 0.90f * b;
+    try {
+      GuiConstants.ONE_FISH_IMAGE = (PImage) GuiConstants.ONE_FISH_IMAGE_ORIGINAL
+          .clone();
+      GuiConstants.TWO_FISH_IMAGE = (PImage) GuiConstants.TWO_FISH_IMAGE_ORIGINAL
+          .clone();
+      GuiConstants.THREE_FISH_IMAGE = (PImage) GuiConstants.THREE_FISH_IMAGE_ORIGINAL
+          .clone();
+    } catch (CloneNotSupportedException e) {
+      GuiConstants.ONE_FISH_IMAGE = new PImage();
+      GuiConstants.TWO_FISH_IMAGE = new PImage();
+      GuiConstants.THREE_FISH_IMAGE = new PImage();
+    }
+    GuiConstants.ONE_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
+    GuiConstants.TWO_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
+    GuiConstants.THREE_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
+    for (int i = 0; i < 2; i++) {
+      for (int j = 0; j < 4; j++) {
+        penguin[i][j].resize(width, height);
+      }
+    }
+    if(this.numberAnimatedPenguins == 0) {
+      noLoop();
+    }
+    */
+    // DOTO probably noLoop
+  }
 
-	public void mouseClicked(MouseEvent e) {
-		
-	}
+  /*
+   * Hack! wenn das Fenster resized wird, wird setBounds aufgerufen. hier
+   * rufen wir resize auf um die Komponenten auf die richtige größe zu
+   * bringen.
+   */
+  public void setBounds(int x, int y, int width, int height) {
+    // System.out.println("got an setBounds- x:" + x + ",y: " + y +
+    // ",width: "
+    // + width + ",height: " + height);
+    super.setBounds(x, y, width, height);
+    this.resize(width, height);
+  }
 
-	public void mousePressed(MouseEvent e) {
-		
-	}
+  public void keyPressed() {
+    if (key == 'c' || key == 'C') {
+      new RenderConfigurationDialog(FrameRenderer.this);
+    }
 
-	public void mouseReleased(MouseEvent e) {
-		
-	}
+  }
 
-	
-	public void resize(int width, int height) {
-		
-	}
-	public void keyPressed() {
-		if (key == 'c' || key == 'C') {
-			new RenderConfigurationDialog(FrameRenderer.this);
-		}
+  public boolean isHumanPlayer() {
+    return humanPlayer;
+  }
 
-	}
+  public EPlayerId getId() {
+    return id;
+  }
 
-	public EPlayerId getId() {
-		return null;
-	}
+  public void killAll() {
+    noLoop();
+    
+    /*if(background != null) {
+      background.kill();
+    }*/
+    if(guiBoard != null) {
+      GuiField[][] hf = guiBoard.getGuiFields();
+      for(int i = 0; i < 8; i++) {
+        for(int j = 0; j < 8; j++) {
+          if(hf[i][j] != null) {
+            hf[i][j].kill();
+          }
+        }
+      }
+      guiBoard.kill();
+    }
+    if(progressBar != null) {
+      progressBar.kill();
+    }
+    if(sideBar != null) {
+      sideBar.kill();
+    }
+    if(boardFrame != null) {
+      boardFrame.kill();
+    }
+  }
 }

@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.plugin2016.Move;
 import sc.plugin2016.EPlayerId;
 import sc.plugin2016.GameState;
 import sc.plugin2016.IGameHandler;
@@ -63,7 +64,7 @@ public class RenderFacade {
 
 		@Override
 		public void run() {
-			/*while (receiverThreadRunning) {
+			while (receiverThreadRunning) {
 
 				try {
 
@@ -98,7 +99,7 @@ public class RenderFacade {
 					}
 					e.printStackTrace();
 				}
-			}*/
+			}
 		}
 	};
 	private GameState lastGameState;
@@ -110,11 +111,11 @@ public class RenderFacade {
 	private int maxTurn;
 
 	private RenderFacade() {
-		//frameRenderer = new FrameRenderer();
+		frameRenderer = new FrameRenderer();
 		
 		
 		gameStateQueue = new LinkedList<GameState>();
-		//startReceiverThread();
+		startReceiverThread();
 
 	}
 
@@ -200,6 +201,12 @@ public class RenderFacade {
 		frameRenderer.repaint();
 
 	}
+	
+	public void sendMove(Move move) {
+    if (currentHandler != null) {
+      currentHandler.sendAction(move);
+    }
+  }
 
 	// TODO
 	public void updatePlayer(final Player myplayer, final Player otherPlayer, final EPlayerId target) {
