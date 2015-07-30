@@ -112,7 +112,7 @@ public class GuiConstants {
 	/**
 	 * Sourcepath to Background Image
 	 */
-	public static final String BACKGROUND_IMAGE = "resource/game/background.jpg";
+	public static final String BACKGROUND_IMAGE = "resource/game/background.png";
 	
 	/**
 	 * Sourcepath to the image with one fish
