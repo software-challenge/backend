@@ -83,10 +83,11 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new InvalidMoveException(author.getDisplayName()
 						+ " hat kein Zug-Objekt gesendet");
 			}
-			int[][] stats = gameState.getGameStats();
+			
       final Move move = (Move) data;
       move.perform(gameState, expectedPlayer);
       gameState.prepareNextTurn(move);
+      int[][] stats = gameState.getGameStats();
       if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 
         
