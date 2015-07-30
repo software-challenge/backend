@@ -94,9 +94,7 @@ public class GuiBoard extends PrimitiveBase {
 				getGuiFields()[i][j].update(board.getField(i, j));
 			}
 		}
-		if(guiConnections != null) {
-		  guiConnections.removeAll(guiConnections);
-		}
+		guiConnections = new ArrayList<GuiConnection>();
 		for(Connection c : board.connections) {
 		  guiConnections.add(new GuiConnection(parent, c));
 		}

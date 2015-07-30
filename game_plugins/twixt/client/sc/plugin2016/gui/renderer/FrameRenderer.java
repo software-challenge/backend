@@ -54,7 +54,7 @@ public class FrameRenderer extends PApplet {
   /*
    * TODO add background picture
    * picture is missing so no background for now*/
-  // private Background background;
+  private Background background;
   
   private ProgressBar progressBar;
   private SideBar sideBar;
@@ -72,7 +72,7 @@ public class FrameRenderer extends PApplet {
 
     RenderConfiguration.loadSettings();
 
-    // background = new Background(this);
+    background = new Background(this);
     logger.debug("Dimension when creating board: (" + this.width + ","
         + this.height + ")");
     guiBoard = new GuiBoard(this);
@@ -115,7 +115,7 @@ public class FrameRenderer extends PApplet {
     loop();
     boolean isAnimated = false;
     // resize();
-    // background.draw();
+    background.draw();
     guiBoard.draw();
     progressBar.draw();
     sideBar.draw();
@@ -283,7 +283,7 @@ public class FrameRenderer extends PApplet {
 
   public void resize(int width, int height) {
     loop();
-    // background.resize(width, height);
+    background.resize(width, height);
     guiBoard.resize(width, height);
     /*
     float b = guiBoard.getGuiFields()[0][0].getB();
@@ -346,9 +346,9 @@ public class FrameRenderer extends PApplet {
   public void killAll() {
     noLoop();
     
-    /*if(background != null) {
+    if(background != null) {
       background.kill();
-    }*/
+    }
     if(guiBoard != null) {
       GuiField[][] hf = guiBoard.getGuiFields();
       for(int i = 0; i < 8; i++) {
