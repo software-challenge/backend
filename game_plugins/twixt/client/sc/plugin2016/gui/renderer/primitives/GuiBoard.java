@@ -106,7 +106,9 @@ public class GuiBoard extends PrimitiveBase {
 
 		for (int i = 0; i < Constants.SIZE; i++) {
 			for (int j = 0; j < Constants.SIZE; j++) {
+				if(getGuiFields() != null) {
 					getGuiFields()[i][j].draw();
+				}
 			}
 		}
 		if(guiConnections != null) {

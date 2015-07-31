@@ -46,6 +46,7 @@ public class FrameRenderer extends PApplet {
   private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
   private int maxTurn;
+  boolean shouldResize = true;
   private boolean myMousePressed;
 
   private EPlayerId id;
@@ -112,9 +113,11 @@ public class FrameRenderer extends PApplet {
   }
 
   public void draw() {
-    loop();
-    boolean isAnimated = false;
-    // resize();
+    
+	if(shouldResize) {
+    	resize(this.displayWidth, this.displayHeight);
+    }
+    shouldResize = true;
     background.draw();
     guiBoard.draw();
     progressBar.draw();
@@ -172,6 +175,7 @@ public class FrameRenderer extends PApplet {
     this.humanPlayer = true;
     humanPlayerMaxTurn = true;
     redraw();
+    noLoop();
   }
 
   public Image getImage() {
@@ -202,6 +206,7 @@ public class FrameRenderer extends PApplet {
         RenderFacade.getInstance().sendMove(new NullMove());
       }*/
     }
+    noLoop();
   }
 
   public void mousePressed(MouseEvent e) {
@@ -219,11 +224,11 @@ public class FrameRenderer extends PApplet {
        * mark possible moves
        */
     }
+    noLoop();
   }
 
   public void mouseReleased(MouseEvent e) {
-    // TODO send move here
-    
+    loop();
     if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       int x = e.getX();
       int y = e.getY();
@@ -249,7 +254,7 @@ public class FrameRenderer extends PApplet {
       }
       redraw();
     }
-    
+    noLoop();
   }
 
   private int[] getFieldCoordinates(int x, int y) {
@@ -285,34 +290,14 @@ public class FrameRenderer extends PApplet {
     loop();
     background.resize(width, height);
     guiBoard.resize(width, height);
-    /*
-    float b = guiBoard.getGuiFields()[0][0].getB();
-    b = 0.90f * b;
+    
+    shouldResize = false;
+    noLoop();
     try {
-      GuiConstants.ONE_FISH_IMAGE = (PImage) GuiConstants.ONE_FISH_IMAGE_ORIGINAL
-          .clone();
-      GuiConstants.TWO_FISH_IMAGE = (PImage) GuiConstants.TWO_FISH_IMAGE_ORIGINAL
-          .clone();
-      GuiConstants.THREE_FISH_IMAGE = (PImage) GuiConstants.THREE_FISH_IMAGE_ORIGINAL
-          .clone();
-    } catch (CloneNotSupportedException e) {
-      GuiConstants.ONE_FISH_IMAGE = new PImage();
-      GuiConstants.TWO_FISH_IMAGE = new PImage();
-      GuiConstants.THREE_FISH_IMAGE = new PImage();
+      Thread.sleep(20);
+    } catch (InterruptedException e) {
     }
-    GuiConstants.ONE_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
-    GuiConstants.TWO_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
-    GuiConstants.THREE_FISH_IMAGE.resize((int) (2 * b), (int) (2 * b));
-    for (int i = 0; i < 2; i++) {
-      for (int j = 0; j < 4; j++) {
-        penguin[i][j].resize(width, height);
-      }
-    }
-    if(this.numberAnimatedPenguins == 0) {
-      noLoop();
-    }
-    */
-    // DOTO probably noLoop
+    redraw();
   }
 
   /*
