@@ -292,12 +292,6 @@ public class FrameRenderer extends PApplet {
     guiBoard.resize(width, height);
     
     shouldResize = false;
-    noLoop();
-    try {
-      Thread.sleep(20);
-    } catch (InterruptedException e) {
-    }
-    redraw();
   }
 
   /*

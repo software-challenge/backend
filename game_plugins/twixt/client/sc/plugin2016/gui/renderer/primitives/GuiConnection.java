@@ -85,13 +85,16 @@ public class GuiConnection extends PrimitiveBase{
     parent.popStyle();
 
   }
-  /*
-  public void resize(float startX, float startY, float width){
-    setX(startX);
-    setY(startY);
-    setWidth(width);
+  
+  public void resize(){
+	  GuiField g1 = parent.guiBoard.getField(connection.x1, connection.y1);
+    x1 = g1.getX();
+    y1 = g1.getY();
+    g1 = parent.guiBoard.getField(connection.x2, connection.y2);
+    x2 = g1.getX();
+    y2 = g1.getY();
     
-  }*/
+  }
 
   public boolean isHighlighted() {
     return highlighted;
