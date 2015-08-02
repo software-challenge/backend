@@ -29,9 +29,9 @@ public class GuiBoard extends PrimitiveBase {
 
 		int guiFieldSize = calcGuiFieldSize(test);
 
-		float startX = (xDimension - (22 * (guiFieldSize + 5))) / 2;
+		float startX = ((xDimension / (Constants.SIZE + 2)) - 5) / 2.0f + (Constants.SIZE + 2);
 
-		float startY = (yDimension - 22 * (guiFieldSize + 5)) / 2;
+		float startY = ((yDimension / (Constants.SIZE + 2)) - 5) / 2.0f + (Constants.SIZE + 2);
 
 		float y = startY;
 
@@ -84,7 +84,9 @@ public class GuiBoard extends PrimitiveBase {
 
 	public void resize(int width, int height) {
 		calculateSize(width, height);
-		// draw();
+		for(GuiConnection c : guiConnections) {
+			c.resize();
+		}
 	}
 
 	public void update(Board board) {
@@ -120,8 +122,8 @@ public class GuiBoard extends PrimitiveBase {
 	}
 
 	private int calcGuiFieldSize(Dimension dim) {
-		int guiFieldWidth = (dim.width / Constants.SIZE) - 5;
-		int guiFieldHeight = (dim.height / Constants.SIZE) - 5;
+		int guiFieldWidth = (dim.width / (Constants.SIZE + 2)) - 5;
+		int guiFieldHeight = (dim.height / (Constants.SIZE + 2)) - 5;
 		return Math.min(guiFieldWidth, guiFieldHeight);
 	}
 
