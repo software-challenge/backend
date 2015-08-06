@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import processing.core.PApplet;
 import processing.core.PImage;
 import sc.plugin2016.gui.renderer.RenderConfigurationDialog;
+import sc.plugin2016.Connection;
 import sc.plugin2016.EPlayerId;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Move;
@@ -22,6 +23,7 @@ import sc.plugin2016.gui.renderer.primitives.Background;
 import sc.plugin2016.gui.renderer.primitives.BoardFrame;
 import sc.plugin2016.gui.renderer.primitives.GameEndedDialog;
 import sc.plugin2016.gui.renderer.primitives.GuiBoard;
+import sc.plugin2016.gui.renderer.primitives.GuiConnection;
 import sc.plugin2016.gui.renderer.primitives.GuiConstants;
 import sc.plugin2016.gui.renderer.primitives.GuiField;
 import sc.plugin2016.gui.renderer.primitives.ProgressBar;
@@ -151,16 +153,18 @@ public class FrameRenderer extends PApplet {
     }
     isUpdated = true;
     redraw();
+    noLoop();
   }
 
   public void requestMove(int maxTurn, EPlayerId id) {
     while (!isUpdated) {
-      loop();
+      redraw();
       try {
         Thread.sleep(20);
       } catch (InterruptedException e) {
       }
     }
+    //loop();
     isUpdated = false;
     int turn = currentGameState.getTurn();
     this.id = id;
@@ -194,17 +198,6 @@ public class FrameRenderer extends PApplet {
       } else {
         player = 1;
       }
-      /*
-       * is button pressed?
-       */
-      /*
-      float buttonX = getWidth() / 2f - 50;
-      float buttonY = getHeight() * GuiConstants.SIDE_BAR_HEIGHT + 5;
-      if (this.currentGameState.getTurn() > 7 && x > buttonX
-          && y > buttonY && x < buttonX + 100 && y < buttonY + 25) {
-        // System.out.println("Aussetzknopf gedrückt");
-        RenderFacade.getInstance().sendMove(new NullMove());
-      }*/
     }
     noLoop();
   }
@@ -247,11 +240,11 @@ public class FrameRenderer extends PApplet {
        
     
       myMousePressed = false;
-      try {
+      /*try {
         Thread.sleep(20);
       } catch (Exception ex){
         
-      }
+      }*/
       redraw();
     }
     noLoop();
@@ -275,28 +268,22 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
-  private boolean isFieldClicked(GuiField field, int x, int y) {
-    if (x >= field.getX() - field.getWidth() / 2
-        && x <= field.getX() + field.getWidth() / 2
-        && y >= field.getY() - field.getWidth() / 2
-        && y <= field.getY() + field.getWidth() / 2
-        ) {
-      return true;
-    }
-    return false;
-  }
-
   public void resize(int width, int height) {
-    loop();
+    //loop();
     background.resize(width, height);
     guiBoard.resize(width, height);
     
     shouldResize = false;
+    synchronized(background) {
+    	synchronized(guiBoard) {
+    		redraw();
+    	}
+    }
   }
 
   /*
    * Hack! wenn das Fenster resized wird, wird setBounds aufgerufen. hier
-   * rufen wir resize auf um die Komponenten auf die richtige größe zu
+   * rufen wir resize auf, um die Komponenten auf die richtige Größe zu
    * bringen.
    */
   public void setBounds(int x, int y, int width, int height) {
@@ -330,12 +317,15 @@ public class FrameRenderer extends PApplet {
     }
     if(guiBoard != null) {
       GuiField[][] hf = guiBoard.getGuiFields();
-      for(int i = 0; i < 8; i++) {
-        for(int j = 0; j < 8; j++) {
+      for(int i = 0; i < Constants.SIZE; i++) {
+        for(int j = 0; j < Constants.SIZE; j++) {
           if(hf[i][j] != null) {
             hf[i][j].kill();
           }
         }
+      }
+      for (GuiConnection connection : guiBoard.getGuiConnections()) {
+    	  connection.kill();
       }
       guiBoard.kill();
     }

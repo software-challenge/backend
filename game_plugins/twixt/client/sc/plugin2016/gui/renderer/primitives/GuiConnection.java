@@ -65,18 +65,7 @@ public class GuiConnection extends PrimitiveBase{
   
     parent.pushMatrix();
     parent.strokeWeight(4);
-    /*
-    parent.line(x1, y1, x2, y2);*/
-    //draw a line to the other point
     parent.curve(x1, y1, x1, y1, x2, y2, x2, y2);
-    /*parent.beginShape();
-    parent.vertex(x1-1, y1-1);
-    parent.vertex(x1+1, y1+1);
-    parent.vertex(x2+1, y2+1);
-    parent.vertex(x2-1, y2-1);
-    parent.vertex(x1-1, y1-1);
-    parent.endShape();*/
-    
     parent.fill(0);
     parent.textFont(GuiConstants.fonts[0]);
     parent.textSize(GuiConstants.fontSizes[0]);

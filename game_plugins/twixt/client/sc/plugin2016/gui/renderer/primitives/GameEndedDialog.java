@@ -74,6 +74,7 @@ public class GameEndedDialog {
 				winningReason = new String(b);
 			}*/
 			parent.text(winningReason, 0, 0);
+			parent.noLoop();
 
 			
 			
