@@ -77,7 +77,7 @@ public class NotSoSimpleLogic implements IGameHandler {
     Move bestMove = new Move();
     GameState nextGameState = null;
     List<Move> movesMakeConnections = new ArrayList<Move>();
-    int size = 0;
+    int size;
     for(Move m : possibleMoves) {
       try {
         nextGameState = (GameState) gameState.clone();
@@ -105,8 +105,10 @@ public class NotSoSimpleLogic implements IGameHandler {
         bestMove = new Move(11, 11);
       } else if (possibleMoves.contains(new Move(14, 14))){
         bestMove = new Move(14, 14);
+      } else {
+    	bestMove = possibleMoves.get(rand.nextInt(possibleMoves.size()));
       }
-    } else if(maxPoints == 0){
+    } else if(maxPoints <= 0) {
       bestMove = movesMakeConnections.get(rand.nextInt(movesMakeConnections.size()));
     }
     return bestMove;
