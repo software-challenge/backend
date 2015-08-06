@@ -52,6 +52,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Player clone = new Player(this.color);
+		clone.points = points;
 		return clone;
 	}
 
