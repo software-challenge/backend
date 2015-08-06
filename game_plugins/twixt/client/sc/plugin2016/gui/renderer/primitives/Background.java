@@ -21,7 +21,7 @@ public class Background extends PrimitiveBase {
 		parent.image(img, 0, 0);
 	}
 	
-	public void resize(int width, int height){
+	public synchronized void resize(int width, int height){
 		try {
 			img = (PImage) rawImage.clone();
 		} catch (CloneNotSupportedException e) {

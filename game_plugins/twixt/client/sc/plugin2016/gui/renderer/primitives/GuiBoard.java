@@ -29,20 +29,22 @@ public class GuiBoard extends PrimitiveBase {
 
 		int guiFieldSize = calcGuiFieldSize(test);
 
-		float startX = ((xDimension / (Constants.SIZE + 2)) - 5) / 2.0f + (Constants.SIZE + 2);
+		float startX = ((xDimension / (Constants.SIZE + 2)) - 5) / 2.0f
+				+ (Constants.SIZE + 2);
 
-		float startY = ((yDimension / (Constants.SIZE + 2)) - 5) / 2.0f + (Constants.SIZE + 2);
+		float startY = ((yDimension / (Constants.SIZE + 2)) - 5) / 2.0f
+				+ (Constants.SIZE + 2);
 
 		float y = startY;
 
 		for (int i = 0; i < Constants.SIZE; i++) {
 			float x;
-				x = startX;
+			x = startX;
 			for (int j = 0; j < Constants.SIZE; j++) {
 				getGuiFields()[i][j] = new GuiField(this.parent, (int) x,
 						(int) y, guiFieldSize, i, j);
 				x = x + guiFieldSize + 5;
-				
+
 			}
 			y = y + guiFieldSize + 5;
 		}
@@ -55,36 +57,36 @@ public class GuiBoard extends PrimitiveBase {
 		// die größe eines Guifield wird anhand der freien Fläche innerhalb des
 		// Spielfeldes berechnet
 
-    float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
+		float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
 
-    float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
+		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
 
-    Dimension test = new Dimension((int) xDimension, (int) yDimension);
+		Dimension test = new Dimension((int) xDimension, (int) yDimension);
 
-    int guiFieldSize = calcGuiFieldSize(test);
+		int guiFieldSize = calcGuiFieldSize(test);
 
-    float startX = (xDimension - (22 * (guiFieldSize + 5))) / 2;
+		float startX = (xDimension - (22 * (guiFieldSize + 5))) / 2;
 
-    float startY = (yDimension - 22 * (guiFieldSize + 5)) / 2;
+		float startY = (yDimension - 22 * (guiFieldSize + 5)) / 2;
 
-    float y = startY;
+		float y = startY;
 
-    for (int i = 0; i < Constants.SIZE; i++) {
-      float x;
-        x = startX;
-      for (int j = 0; j < Constants.SIZE; j++) {
-        getGuiFields()[i][j] = new GuiField(this.parent, (int) x,
-            (int) y, guiFieldSize, i, j);
-        x = x + guiFieldSize + 5;
-        
-      }
-      y = y + guiFieldSize + 5;
+		for (int i = 0; i < Constants.SIZE; i++) {
+			float x;
+			x = startX;
+			for (int j = 0; j < Constants.SIZE; j++) {
+				getGuiFields()[i][j] = new GuiField(this.parent, (int) x,
+						(int) y, guiFieldSize, i, j);
+				x = x + guiFieldSize + 5;
+
+			}
+			y = y + guiFieldSize + 5;
 		}
 	}
 
-	public void resize(int width, int height) {
+	public synchronized void resize(int width, int height) {
 		calculateSize(width, height);
-		for(GuiConnection c : guiConnections) {
+		for (GuiConnection c : guiConnections) {
 			c.resize();
 		}
 	}
@@ -97,28 +99,27 @@ public class GuiBoard extends PrimitiveBase {
 			}
 		}
 		guiConnections = new ArrayList<GuiConnection>();
-		for(Connection c : board.connections) {
-		  guiConnections.add(new GuiConnection(parent, c));
+		for (Connection c : board.connections) {
+			guiConnections.add(new GuiConnection(parent, c));
 		}
-		
-		
+
 	}
 
 	public void draw() {
 
 		for (int i = 0; i < Constants.SIZE; i++) {
 			for (int j = 0; j < Constants.SIZE; j++) {
-				if(getGuiFields() != null) {
+				if (getGuiFields() != null) {
 					getGuiFields()[i][j].draw();
 				}
 			}
 		}
-		if(guiConnections != null) {
-      for(GuiConnection gc : guiConnections) {
-        gc.draw();
-      }
+		if (guiConnections != null) {
+			for (GuiConnection gc : guiConnections) {
+				gc.draw();
+			}
 		}
-		
+
 	}
 
 	private int calcGuiFieldSize(Dimension dim) {
@@ -127,12 +128,10 @@ public class GuiBoard extends PrimitiveBase {
 		return Math.min(guiFieldWidth, guiFieldHeight);
 	}
 
-	
 	public GuiField[][] getGuiFields() {
 		return guiFields;
 	}
 
-	
 	public void setGuiFields(GuiField[][] guiFields) {
 		this.guiFields = guiFields;
 	}
@@ -149,8 +148,12 @@ public class GuiBoard extends PrimitiveBase {
 		}
 	}
 
-  public GuiField getField(int x, int y) {
-    return this.guiFields[x][y];
-  }
+	public GuiField getField(int x, int y) {
+		return this.guiFields[x][y];
+	}
+
+	public List<GuiConnection> getGuiConnections() {
+		return guiConnections;
+	}
 
 }

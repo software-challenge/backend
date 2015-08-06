@@ -78,6 +78,7 @@ public class RenderFacade {
 							GameState gameState = gameStateQueue.remove(0);
 							frameRenderer.updateGameState(gameState);
 							gameState = null;
+							frameRenderer.redraw();
 						}
 					}
 
