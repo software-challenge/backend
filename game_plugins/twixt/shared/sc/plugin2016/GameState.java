@@ -43,29 +43,46 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 @XStreamAlias(value = "state")
 public class GameState implements Cloneable {
 
-  // momentane rundenzahl
+  /**
+   * momentane Rundenzahl
+   */
   @XStreamAsAttribute
   private int turn;
 
-  // farbe des startspielers
+  /**
+   * Farbe des Startspielers
+   */
   @XStreamAsAttribute
   private PlayerColor startPlayer;
 
-  // farbe des aktuellen spielers
+  /**
+   * Farbe des aktuellen Spielers
+   */
   @XStreamAsAttribute
   private PlayerColor currentPlayer;
 
-  // die teilnehmenden spieler
-  private Player red, blue;
+  /**
+   * der rote Spieler
+   */
+  private Player red;
+  /**
+   * der blaue Spieler
+   */
+  private Player blue;
 
-  // Das Spielbrett
-
+  /**
+   * Das Spielbrett
+   */
   private Board board;
 
-  // letzter getätigter move
+  /**
+   * letzter getaetigter Zug
+   */
   private Move lastMove;
 
-  // endbedingung
+  /**
+   * Endbedingung
+   */
   private Condition condition = null;
 
   /**
@@ -131,7 +148,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Gibt das Spielfeld zurück
+   * Gibt das Spielfeld zurueck
    * 
    * @return das Spielfeld
    */
@@ -283,7 +300,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert eine Liste aller aktuell erlaubten Laufzuege, des Spielers der
+   * Liefert eine Liste aller aktuell erlaubten Zuege, des Spielers der
    * aktuell an der Reihe ist.
    * 
    * @return Liste erlaubter Spielzuege
@@ -420,6 +437,11 @@ public class GameState implements Cloneable {
     return condition == null ? "" : condition.reason;
   }
 
+  /**
+   * Gibt die angezeigte Punktzahl des Spielers zurueck.
+   * @param playerColor Farbe des Spielers
+   * @return Punktzahl des Spielers
+   */
   public int getPointsForPlayer(PlayerColor playerColor) {
     int longestPath = 0;
     
@@ -482,7 +504,13 @@ public class GameState implements Cloneable {
     }
     return longestPath; // return longestPath
   }
-
+  
+  /**
+   * Nur fuer den Server relevant
+   * returns the bottommost field in a given circuit
+   * @param circuit given circuit
+   * @return bottommost field
+   */
   private Field getBottomMostFieldInCircuit(List<Field> circuit) {
     Field bottomMostField = circuit.get(0);
     for(Field f : circuit) {
@@ -492,7 +520,13 @@ public class GameState implements Cloneable {
     }
     return bottomMostField;
   }
-
+  
+  /**
+   * Nur fuer den Server relevant
+   * returns the topmost field in a given circuit
+   * @param circuit given circuit
+   * @return topmost field
+   */
   private Field getTopMostFieldInCircuit(List<Field> circuit) {
     Field topMostField = circuit.get(0);
     for(Field f : circuit) {
@@ -502,7 +536,13 @@ public class GameState implements Cloneable {
     }
     return topMostField;
   }
-
+  
+  /**
+   * Nur fuer den Server relevant
+   * returns the leftmost field in a given circuit
+   * @param circuit given circuit
+   * @return leftmost field
+   */
   private Field getLeftMostFieldInCircuit(List<Field> circuit) {
     Field leftMostField = circuit.get(0);
     for(Field f : circuit) {
@@ -513,6 +553,12 @@ public class GameState implements Cloneable {
     return leftMostField;
   }
 
+  /**
+   * Nur fuer den Server relevant
+   * returns the rightmost field in a given circuit
+   * @param circuit given circuit
+   * @return rightmost field
+   */
   private Field getRightMostFieldInCircuit(List<Field> circuit) {
     Field rightMostField = circuit.get(0);
     for(Field f : circuit) {
@@ -523,6 +569,13 @@ public class GameState implements Cloneable {
     return rightMostField;
   }
 
+  /**
+   * Nur fuer den Server relevant
+   * calculates a List of poles, that form a circuit
+   * @param circuit initial circuit, should contain only one initial field in the beginning
+   * @param visited initial List of already visited fields, should be empty in the beginning
+   * @return the circuit sorrounding the given initial field
+   */
   private List<Field> getCircuit(List<Field> circuit, List<Field> visited) {
     boolean changed = false;
     List<Field> toBeAddedFields = new LinkedList<Field>();

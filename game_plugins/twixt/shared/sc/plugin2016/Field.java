@@ -5,15 +5,33 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias(value = "field")
 public class Field {
+	/**
+	 * Farbe des Besitzers des Strommastes auf dem Spielfeld, null, falls kein Strommast auf diesem Feld existiert.
+	 */
   @XStreamAsAttribute
 	private PlayerColor owner;
+  /**
+   * Typ des Feldes. Siehe {@link FieldType}
+   */
   @XStreamAsAttribute
 	private FieldType type;
+  /**
+   * X-Koordinate dieses Feldes
+   */
   @XStreamAsAttribute
 	private final int x;
+  /**
+   * Y-Koordinate dieses Feldes
+   */
   @XStreamAsAttribute
 	private final int y;
 	
+  /**
+   * Erzeugt ein neues Feld
+   * @param type Typ des Feldes
+   * @param x X-Koordinate des Feldes
+   * @param y Y-Koordinate des Feldes
+   */
 	public Field(FieldType type, int x, int y) {
 		this.setType(type);
 		this.owner = null;
@@ -22,15 +40,14 @@ public class Field {
 	}
 
 	/**
-	 * @return Der Besitzer, falls es keinen gibt, wird null zurueckgegeben
+	 * @return Den Besitzer, falls es keinen gibt, wird null zurueckgegeben
 	 */
 	public PlayerColor getOwner() {
 		return owner;
 	}
 
 	/**
-	 * Setter Methode fuer den Owner
-	 * @param owner Owner
+	 * @param owner Besitzer
 	 */
 	public void setOwner(PlayerColor owner) {
 		this.owner = owner;
@@ -50,6 +67,9 @@ public class Field {
 		this.type = type;
 	}
 	
+	/**
+	 * Vergleichsmethode fuer ein Feld.
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if(o instanceof Field) {
@@ -70,14 +90,14 @@ public class Field {
 	}
 
   /**
-   * @return x x-Koordinate des Feldes
+   * @return X-Koordinate des Feldes
    */
   public int getX() {
     return x;
   }
 
   /**
-   * @return y y-Koordinate des Feldes
+   * @return Y-Koordinate des Feldes
    */
   public int getY() {
     return y;

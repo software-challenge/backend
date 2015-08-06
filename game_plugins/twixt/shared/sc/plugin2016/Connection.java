@@ -5,19 +5,31 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 /**
- * Stellt eine Leitung dar.
+ * Stellt eine Leitung dar. Hierbei ist zu beachten, dass eine Leitung immer so behandelt wird, dass die Reihenfolge der Strommasten irrelevant ist.
  * @author niklas
  *
  */
 @XStreamAlias(value = "connection")
 public class Connection {
+	/**
+	 * X-Koordinate des ersten Strommast
+	 */
   @XStreamAsAttribute
   public int x1;
+  /**
+   * Y-Koordinate des ersten Strommast
+   */
   @XStreamAsAttribute
   public int y1;
   @XStreamAsAttribute
+  /**
+   * X-Koordinate des zweiten Strommast
+   */
   public int x2;
   @XStreamAsAttribute
+  /**
+   * Y-Koordinate des zweiten Strommast
+   */
   public int y2;
   @XStreamAsAttribute
   public PlayerColor owner;
@@ -39,6 +51,9 @@ public class Connection {
     this.owner = owner;
   }
   
+  /**
+   * Vergleichsmethode für Verbindungen. Eine Verbindung mit vertauschtem ersten und zweiten Strommast ist dabei auch gleich.
+   */
   @Override  
   public boolean equals(Object o) {
     if(o instanceof Connection) {
