@@ -12,28 +12,45 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias(value = "move")
 public class Move implements Cloneable {
-
+  
+  /**
+   * X-Koordinate des Feldes, auf das gesetzt werden soll
+   */
   @XStreamAsAttribute
   private final int x;
 
+  /**
+   * Y-Koordinate des Feldes, auf das gesetzt werden soll
+   */
   @XStreamAsAttribute
   private final int y;
 
+  /**
+   * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe {@link DebugHint}
+   */
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
 
+  /**
+   * Default Konstruktor, der einen ungueltigen Zug auf Position (-1, -1) erzeugt.
+   */
   public Move() {
     this.x = -1;
     this.y = -1;
   }
 
+  /**
+   * Erzeugt einen neuen Zug auf gegebene Koordinaten
+   * @param x X-Koordinate
+   * @param y Y-Koordinate
+   */
   public Move(int x, int y) {
     this.x = x;
     this.y = y;
   }
 
   /**
-   * klont dieses Objekt
+   * erzeugt eine Deepcopy dieses Objektes
    * 
    * @return ein neues Objekt mit gleichen Eigenschaften
    * @throws CloneNotSupportedException falls nicht geklont werden kann
@@ -98,14 +115,16 @@ public class Move implements Cloneable {
   }
 
   /**
-   * @return x
+   * Liefert die X-Koordinate des Zuges
+   * @return die X-Koordinate
    */
   public int getX() {
     return x;
   }
 
   /**
-   * @return y
+   * Liefert die Y-Koordinate des Zuges
+   * @return die Y-Koordinate
    */
   public int getY() {
     return y;
@@ -140,6 +159,10 @@ public class Move implements Cloneable {
     }
 
   }
+  
+  /**
+   * Vergleichsmethode fuer einen Zuege
+   */
   @Override
   public boolean equals(Object o) {
     if(o instanceof Move) {

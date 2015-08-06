@@ -15,11 +15,16 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 @XStreamAlias(value = "board")
 public class Board {
 
+	/**
+	 * Ein zweidimensionales Array mit den Feldern des Spielfeldes.
+	 */
   @XStreamConverter(BoardConverter.class)
   private Field[][] fields;
   
   
-  
+  /**
+   * Eine Liste der bestehenden Verbindungen, siehe {@link Connection}
+   */
   @XStreamAlias(value = "connections")
   public List<Connection> connections;
   
@@ -43,8 +48,9 @@ public class Board {
   }
 
   /**
-	 * Initialisiert das Spielfeld
-	 */
+   * Nur fuer den Server relevant
+   * initializes the board
+   */
   private void init() {
     fields = new Field[Constants.SIZE][Constants.SIZE];
     fields[0][0] = new Field(FieldType.SWAMP, 0, 0);
@@ -79,7 +85,8 @@ public class Board {
   }
 
   /**
-   * Verteilt die Suempfe auf dem Spielfeld
+   * Nur fuer den Server relevant
+   * places swamps randomly around the board
    */
   private void placeSwamps() {
     SecureRandom rand = new SecureRandom();
@@ -115,7 +122,8 @@ public class Board {
   }
 
   /**
-   * erzeugt ein neues leeres Spielfeld
+   * Nur fuer den Server relevant
+   * creates a new clear board
    */
   private void makeClearBoard() {
     fields = new Field[Constants.SIZE][Constants.SIZE];
@@ -123,7 +131,7 @@ public class Board {
   }
 
   /**
-   * Gibt ein Spielfeld zurück
+   * Gibt ein Feld zurück
    * @param x x-Koordinate
    * @param y y-Koordinate
    * @return Feld an entsprechenden Koordinaten
@@ -200,7 +208,8 @@ public class Board {
   }
 
   /**
-   * checks whether new wires have to be created
+   * Nur fuer den Server relevant
+   * checks whether new wires have to be created and creates them
    * @param x x-coordinate
    * @param y y-coordinate
    */
@@ -233,6 +242,7 @@ public class Board {
   }
 
   /**
+   * Nur fuer den Server relevant
    * creates a wire between two points
    * @param x1 x-coordinate of first point
    * @param y1 y-coordinate of first point
@@ -247,6 +257,7 @@ public class Board {
   }
 
   /**
+   * Nur fuer den Server relevant
    * checks whether a wire between two points is possible
    * @param x1 x-coordinate of first point
    * @param y1 y-coordinate of first point
@@ -264,6 +275,7 @@ public class Board {
   }
 
   /**
+   * Nur fuer den Server relevant
    * checks whether a wire blocks the wire between the two points
    * @param x1 x-coordinate of first point
    * @param y1 y-coordinate of first point
@@ -294,7 +306,7 @@ public class Board {
   }
   
   /**
-   * Gibt die Leitungen die von einem Feld x y ausgehen zurück, 
+   * Gibt die Leitungen die von einem Feld (x, y) ausgehen zurück, 
    * @param x x-Koordinate
    * @param y y-Koordinate
    * @return die Liste der Leitungen
@@ -315,6 +327,7 @@ public class Board {
   }
 
  /**
+  * Nur fuer den Server relevant
   * checks for the wire from (x1, y1) to (x2, y2), if it is blocked by any connection going out from (x,y).
   * @param x1 x-coordinate of first point
   * @param y1 y-coordinate of first point

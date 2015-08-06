@@ -6,8 +6,14 @@ package sc.plugin2016;
  */
 class Condition implements Cloneable {
 
+	/**
+	 * Farbe des Gewinners
+	 */
 	public final PlayerColor winner;
 
+	/**
+	 * Sieggrund
+	 */
 	public final String reason;
 
 	/**
@@ -20,12 +26,12 @@ class Condition implements Cloneable {
 	}
 
 	/**
-	 * erzeugt eine neue Condition mit Sieger und Geiwnngrund
+	 * Erzeugt eine neue Condition mit Sieger und Geiwnngrund
 	 * 
 	 * @param winner
 	 *            Farbe des Siegers
 	 * @param reason
-	 *            TExt, der Sieg beschreibt
+	 *            Text, der Sieg beschreibt
 	 */
 	public Condition(PlayerColor winner, String reason) {
 		this.winner = winner;
