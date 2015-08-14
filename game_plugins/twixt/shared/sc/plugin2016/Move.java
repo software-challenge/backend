@@ -150,7 +150,7 @@ public class Move implements Cloneable {
           player.setPoints(state.getPointsForPlayer(player.getPlayerColor()));
         } else {
           throw new InvalidMoveException(
-              "Der Zug ist nicht möglich, denn der Platz ist bereits besetzt oder nicht besetzbar.");
+              "Der Zug ist nicht möglich,\ndenn der Platz ist bereits besetzt oder nicht besetzbar.");
         }
       } else {
         throw new InvalidMoveException(

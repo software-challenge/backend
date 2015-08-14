@@ -72,16 +72,6 @@ public class Board {
     }
     placeSwamps();
     connections = new ArrayList<Connection>();
-    //connections.add(new Connection(-1, -1, -1, -1,PlayerColor.RED));
-    /*Player redPlayer = new Player(PlayerColor.RED);
-    Player bluePlayer = new Player(PlayerColor.BLUE);
-    put(5, 5, redPlayer);
-    put(6, 7, redPlayer);
-    put(8, 9, bluePlayer);
-    put(6, 10, bluePlayer);
-    /*internConnections.add(new Connection(5, 7, 6, 9, PlayerColor.RED));
-    internConnections.add(new Connection(6, 7, 7, 9, PlayerColor.BLUE));
-    internConnections.add(new Connection(2, 0, 1, 2, PlayerColor.RED));*/
   }
 
   /**

@@ -27,7 +27,12 @@ public class GameEndedDialog {
 		//Box Groß
 		//float x = parent.getWidth() * GuiConstants.GAME_ENDED_SIZE;
 		float x = Math.max(parent.textWidth(winningReason), parent.textWidth(message)) + 10;
-		float y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE;
+		float y;
+		if(winningReason.contains("\n")) {
+		  y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE * 1.25f;
+		} else {
+		  y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE;
+		}
 		
 		//float x = parent.getWidth();
 		parent.fill(GuiConstants.colorSideBarBG);
