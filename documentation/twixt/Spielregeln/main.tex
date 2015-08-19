@@ -47,7 +47,7 @@ urlcolor  = black
 \end{figure}
 \vspace*{\fill}
 "Die Nutzung des Spielkonzeptes "twixt" (Name, Spielregeln
-und Grafik) erfolgt mit freundlicher Genehmigung [verlag noch einfügen]."
+und Grafik) erfolgt mit freundlicher Genehmigung des Kosmos Verlags."
 \newpage
 \tableofcontents
 \newpage
@@ -58,8 +58,9 @@ Software-Challenge 2016 erläutert.\\
 Zu Beginn des Spiels setzt zunächst Rot einen neuen Strommast auf ein freies
 Feld, also ein Feld, was weder ein Sumpffeld noch ein Feld der gegnerischen
 Farbe ist und auf dem sich noch kein Strommast befindet. Danach tut Blau
-dasselbe, während beide versuchen ihre beiden Farbzonen mit einer Leitung zu
-verbinden.
+dasselbe, während beide versuchen ihre beiden Farbzonen (farbig markierte
+Felder; für Rot sind diese links und rechts, für Blau  oben und unten) mit einer
+Leitung zu verbinden.
 
 \section{Spielmaterial}
 	\subsection{Das Spielbrett}
@@ -97,13 +98,14 @@ sehen.
 	
 \section{Ende des Spiels} 
 	Das Spiel endet, sobald es einer der Spieler geschafft hat seine beiden
-	Bereiche, die sich je nach Spieler oben und unten oder links und rechts
-	befinden mit einer Leitung zu verbinden, spätestens jedoch nach 30 Runden.
+	Farbzonen mit einer zusammenhängenden Leitung zu verbinden, spätestens jedoch
+	nach 30 Runden.
 	Die Punkteberechnung erfolgt wie folgt: Jedes Feld das von einem Startpunkt aus
 	durch eine Leitung in die Spielrichtung (für Rot von links nach rechts
 	beziehungsweise rechts nach links) überbrückt wird, zählt einen Punkt. Dies
 	führt zu einer maximalen Punktzahl von 23 Punkten. Das Spiel gewinnt der
-	Spieler mit der längsten Leitung in seine jeweilige Spielrichtung.
+	Spieler mit der längsten zusammenhängenden Leitung in seine jeweilige
+	Spielrichtung.
 	Ist so ermittelte Punktzahl gleich ist das Ergebnis unendschieden.
 	
 \section{Die graphische Benutzeroberfläche}
@@ -139,8 +141,9 @@ vorher Mausklick auf das Spielfeld). Es stehen dort
 folgende Einstellungen zur Verfügung: 
 
 \textbf{Kantenglättung} verbessert die Optik des
-Spiels, ist aber rechenintensiv. Auf sehr langsamen Rechnern sollten sie daher
-deaktiviert werden.
+Spiels, ist aber rechenintensiv, diese hat Einstellungen von 0 bis 8 und ist
+standardmäßig auf 4 gestellt.
+Auf sehr langsamen Rechnern sollte sie daher auf 0 gestellt werden.
 \textbf{Animationen} legt fest, ob die Bewegungen der Spielsteine in
 Wiederholungen und bei Computerspielern animiert werden sollen.\\
 Die \textbf{Debugansicht} zeigt Debug-Hilfestellungen zu einzelnen Zügen und

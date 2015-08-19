@@ -37,8 +37,8 @@
 \section{Einleitung}
 \subsection*{Zum Inhalt} Wie in den letzten Jahren wird zur Client-Server
 Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch:
-\htmladdnormallink{SC Wiki: Die Schnittstelle zum
-Server}{http://contest.software-challenge.de:8081/wiki/Die_Schnittstelle_zum_Server}}. In diesem
+\htmladdnormallink{Allgemeine Dokumentation: Die Schnittstelle zum
+Server}{https://cau-kiel-tech-inf.github.io/socha-enduser-docs/#schnittstelle}}. In diesem
 Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett
 eigener Client geschrieben werden kann. Es wird hier nicht die vollst\"andige
 Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client
@@ -240,7 +240,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
  <fields>
  	{FIELD}
   
-   ... (576 St\"uck davon)
+   ... (576 Stueck davon)
  </fields>
  <connections>
  	{CONNECTION}
@@ -250,7 +250,8 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 
 \subsection{\label{sec:field}Spielfeld}
 \begin{description}
-\item[Owner] Spielerfarbe des Besitzers (RED/BLUE). null falls kein Besitzer
+\item[Owner] Spielerfarbe des Besitzers (RED/BLUE). Taucht nicht auf, wenn kein
+Besitzer vorhanden
 \item[Type] Typ des Feldes (NORMAL/SWAMP/RED/BLUE).
 \item[X] X-Koordinate des Feldes
 \item[Y] Y-Koordinate des Feldes
@@ -300,12 +301,11 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \item[N] Spielername
 \item[C] Spielerfarbe
 \item[P] Punktekonto
-\item[F] Eisschollenkonto
 \end{description}
 \begin{verbatim}
 <room roomId="RID">
 	<data class="paused">
-		<nextPlayer class="player" displayName="N" color="C" points="P" fields="F"/>
+		<nextPlayer class="player" displayName="N" color="C" points="P"/>
 	</data>
 </room>
 \end{verbatim}
@@ -327,8 +327,9 @@ Zum Spielende enth\"alt der Spielstatus eine \textit{Condition}, der das Spieler
 \end{verbatim}
 
 \newpage
-\part{\"uberblick}
-Hier nochmal ein kurzer \"uberblick, der etwas genauer zeigt, wie die Kommunikation ablaufen kann.\bigskip\\
+\part{\"Uberblick}
+Hier nochmal ein kurzer \"Uberblick, der etwas genauer zeigt, wie die
+Kommunikation ablaufen kann.\bigskip\\
 
 \begin{enumerate}
 \item Ein Spielserver startet ein Spiel und wartet auf den Client (die Clients).
