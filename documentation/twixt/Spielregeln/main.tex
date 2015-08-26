@@ -55,38 +55,40 @@ und Grafik) erfolgt mit freundlicher Genehmigung des Kosmos Verlags."
 \section{Einführung}
 In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Twxit} der
 Software-Challenge 2016 erläutert.\\
-Zu Beginn des Spiels setzt zunächst Rot einen neuen Strommast auf ein freies
-Feld, also ein Feld, was weder ein Sumpffeld noch ein Feld der gegnerischen
-Farbe ist und auf dem sich noch kein Strommast befindet. Danach tut Blau
-dasselbe, während beide versuchen ihre beiden Farbzonen (farbig markierte
-Felder; für Rot sind diese links und rechts, für Blau  oben und unten) mit einer
-Leitung zu verbinden.
+Bei Twixt versuchen zwei Spieler durch abwechselndes setzen von Strommasten eine
+durchgehende Verbindung zwischen den beiden gegenüberliegenden Spielfeldrändern
+herzustellen und gleichzeitig den Gegenspieler daran zu hindern das gleiche zu
+tun. 
 
 \section{Spielmaterial}
 	\subsection{Das Spielbrett}
-Das Spielbrett setzt sich aus 576 Bauflächen für Strommasten zusammen,
-die entweder schon zu einer Farbe gehören, aber anfangs noch nicht bebaut sind,
-von Sumpf bedeckt sind, also nicht bebaubar sind oder keines von beiden sind.
+Das Spielbrett setzt sich aus 576 Bauflächen für Strommasten zusammen, die
+anfangs noch nicht besetzt sind.
+Diese Bauplätze gehören entweder schon zu einer Farbe, sind von Sumpf bedeckt
+(sind also nicht bebaubar) oder sind keines von beiden.
 Anfangs werden zufällig Sumpfelder generiert, wobei es sich um einen kleinen
 Sumpf (1x1), zwei mittlere Sümpfe (2x2) und einen großen Sumpf (3x3) handelt,
 die sich auch überschneiden dürfen. Spielbrett ist in den Abbildungen 1-3 zu
 sehen.
 \section{Spielablauf}	 
-
+Zu Beginn des Spiels setzt zunächst Rot einen neuen Strommast auf ein
+freies Feld, also ein Feld, was weder ein Sumpffeld noch ein Feld der gegnerischen Farbe ist
+und auf dem sich noch kein Strommast befindet. Danach tut Blau dasselbe, während beide versuchen
+ihre beiden Farbzonen (farbig markierte Felder; für Rot sind diese links und
+rechts, für Blau  oben und unten) mit einer zusammenhängenden Leitung zu
+verbinden.
 	%% an Beispiel erklären
-	Es beginnt der rote Spieler. Jeder Spieler darf abwechselnd einen
-	Zug machen. Bei einem Zug ist es möglich, dass sich dadurch eine oder mehrere
+	Bei einem Zug ist es möglich, dass sich dadurch eine oder mehrere
 	neue Leitungen bilden. Eine neue Leitung bildet sich, wenn sich ein eigener
 	Strommast in folgendem Abstand zu dem gesetztem Strommast befindet: Zwei
 	waagerecht und ein Feld senkrecht oder eins waagerecht und zwei Felder
 	senkrecht. Dies geschieht aber nur, bisher keine Leitung existiert, die die
 	entstehende Leitung kreuzen würde.
-	Ein Beispiel welche Leitungen von einem Strommast aus möglich sind finden sie
-	in Abbildung 1.
+	Ein Beispiel welche Leitungen von einem Strommast aus möglich sind, ist
+	in Abbildung 1 zu sehen.
 	 
 	
 	
-	\subsection{Züge}
 	
 	\begin{figure}[h!]
 		\centering
@@ -101,12 +103,12 @@ sehen.
 	Farbzonen mit einer zusammenhängenden Leitung zu verbinden, spätestens jedoch
 	nach 30 Runden.
 	Die Punkteberechnung erfolgt wie folgt: Jedes Feld das von einem Startpunkt aus
-	durch eine Leitung in die Spielrichtung (für Rot von links nach rechts
-	beziehungsweise rechts nach links) überbrückt wird, zählt einen Punkt. Dies
+	durch eine zusammenhängende Leitung in die Spielrichtung (für Rot von links
+	nach rechts beziehungsweise rechts nach links) überbrückt wird, zählt einen Punkt. Dies
 	führt zu einer maximalen Punktzahl von 23 Punkten. Das Spiel gewinnt der
 	Spieler mit der längsten zusammenhängenden Leitung in seine jeweilige
 	Spielrichtung.
-	Ist so ermittelte Punktzahl gleich ist das Ergebnis unendschieden.
+	Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unendschieden.
 	
 \section{Die graphische Benutzeroberfläche}
 \subsection{Graphische Benutzeroberfläche}
@@ -134,7 +136,7 @@ sehen.
 		\label{fig:Configuration}
 	\end{figure}
 	
-	Ein Einstellungsmenü mit Darstellungsoptionen wird in Abbildung 4 dargestellt
+	Ein Einstellungsmenü mit Darstellungsoptionen wird in Abbildung 3 dargestellt
 	und lässt sich über die Taste 'C' anzeigen. Dazu muss das
 Spielfeld den Tastaturfokus haben (erforderlichenfalls
 vorher Mausklick auf das Spielfeld). Es stehen dort
