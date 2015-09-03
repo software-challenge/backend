@@ -17,9 +17,9 @@
 
 
 
-\hypersetup{ 
-pdfborder = {0 0 0}, 
-urlbordercolor = {0 0 0}, 
+\hypersetup{
+pdfborder = {0 0 0},
+urlbordercolor = {0 0 0},
 colorlinks = true,
 linkcolor = black,
 citecolor = black,
@@ -27,7 +27,7 @@ filecolor = black,
 urlcolor  = black
 }
 
-\title{Software-Challenge 2016 \\ Twixt} 
+\title{Software-Challenge 2016 \\ Twixt}
 \subtitle{Spielregeln}
 
 
@@ -37,24 +37,32 @@ urlcolor  = black
 \newcommand{\EmptyPlainPage}{\newpage\thispagestyle{plain}\ \newpage}
 \newcommand{\RundenAnzahl}{\emph{30}}
 
-\begin{document} 
+\begin{document}
 \parindent0px
 \maketitle
 
 \begin{figure}[h!]
-	\centering
-	\includegraphics[width=\linewidth]{bilder/gui.png} 
+        \centering
+        \includegraphics[width=\linewidth]{bilder/gui.png}
 \end{figure}
 \vspace*{\fill}
-"Die Nutzung des Spielkonzeptes "twixt" (Name, Spielregeln
-und Grafik) erfolgt mit freundlicher Genehmigung des Kosmos Verlags."
+
+Die Nutzung des Spielkonzeptes "`twixt"' (Name, Spielregeln und Grafik)
+erfolgt mit freundlicher Genehmigung des Kosmos Verlags.
+
 \newpage
+
 \tableofcontents
+
 \newpage
 
 \section{Einführung}
-In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Twxit} der
-Software-Challenge 2016 erläutert.\\
+
+In dieser Anleitung werden die Elemente und Regeln des Spiels \emph{Twixt} der
+Software-Challenge 2016 erläutert.
+
+In diesem Satz kein Verb.
+
 Bei Twixt versuchen zwei Spieler durch abwechselndes setzen von Strommasten eine
 durchgehende Verbindung zwischen den beiden gegenüberliegenden Spielfeldrändern
 herzustellen, und gleichzeitig den Gegenspieler daran zu hindern, das Gleiche zu
@@ -80,34 +88,35 @@ sehen.
 \section{Spielablauf}	 
 Zu Beginn des Spiels setzt zunächst Rot einen neuen Strommast auf ein
 freies Feld, also ein Feld, das weder ein Sumpffeld noch ein Feld der
-gegnerischen Farbe ist und auf dem sich noch kein Strommast befindet. Danach tut Blau dasselbe, während beide versuchen
+gegnerischen Farbe ist und auf dem sich noch kein Strommast befindet. 
+Danach tut Blau dasselbe, während beide versuchen
 ihre beiden Farbzonen (farbig markierte Felder; für Rot sind diese links und
 rechts, für Blau  oben und unten) mit einer zusammenhängenden Leitung zu
 verbinden.
-	%% an Beispiel erklären
-	Bei einem Zug ist es möglich, dass sich dadurch eine oder mehrere
-	neue Leitungen bilden. Eine neue Leitung bildet sich, wenn sich ein eigener
-	Strommast in folgendem Abstand zu dem gesetztem Strommast befindet: Zwei
-	waagerecht und ein Feld senkrecht oder eins waagerecht und zwei Felder
-	senkrecht. Dies geschieht aber nur, wenn bisher keine Leitung existiert, die
-	die entstehende Leitung kreuzen würde.
-	Ein Beispiel, welche Leitungen von einem Strommast aus möglich sind, ist
-	in Abbildung 1 zu sehen.
+Bei einem Zug ist es möglich, dass sich dadurch eine oder mehrere
+neue Leitungen bilden. Eine neue Leitung bildet sich, wenn sich ein eigener
+Strommast in folgendem Abstand zu dem gesetztem Strommast befindet: Zwei
+waagerecht und ein Feld senkrecht oder eins waagerecht und zwei Felder
+senkrecht. Dies geschieht aber nur, wenn bisher keine Leitung existiert, die
+die entstehende Leitung kreuzen würde.
+Ein Beispiel, welche Leitungen von einem Strommast aus möglich sind, ist
+in Abbildung 1 zu sehen.
 	 
 	
 \section{Ende des Spiels} 
-	Das Spiel endet, sobald es einer der Spieler geschafft hat, seine beiden
-	Farbzonen mit einer zusammenhängenden Leitung zu verbinden, spätestens jedoch
-	nach 30 Runden.
-	Für die Berechnung der Punkte von Rot ist allein diejenige zusammenhängende
-	Leitung von Rot entscheidend, welche in horizontaler Richtung die längste Ausdehnung
-	hat. Die Ausdehnung dieser Leitung in horizontaler Richtung ergibt die Punktezahl
-	für Rot. Entsprechend zählt für Blau die vertikale Ausdehnung.
-	In dem in Abbildung 2 gezeigten Beispiel erhält Rot deshalb 4 Punkte
-	(die kürzere Leitung zählt nicht) und Blau 8 (es zählt ausschließlich
-	die vertikale Richtung). Das Spiel gewinnt derjenige Spieler, der am Spielende die
-	meisten Punkte hat.
-	Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unentschieden.
+Das Spiel endet, sobald es einer der Spieler geschafft hat, seine beiden
+Farbzonen mit einer zusammenhängenden Leitung zu verbinden, spätestens jedoch
+nach 30 Runden.
+Für die Berechnung der Punkte von Rot ist allein diejenige zusammenhängende
+Leitung von Rot entscheidend, welche in horizontaler Richtung die längste Ausdehnung
+hat. Die Ausdehnung dieser Leitung in horizontaler Richtung ergibt die Punktezahl
+für Rot. Entsprechend zählt für Blau die vertikale Ausdehnung.
+In dem in Abbildung 2 gezeigten Beispiel erhält Rot deshalb 4 Punkte
+(die kürzere Leitung zählt nicht) und Blau 8 (es zählt ausschließlich
+die vertikale Richtung). Das Spiel gewinnt derjenige Spieler, der am Spielende die
+meisten Punkte hat.
+Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unentschieden.
+
 \section{Die graphische Benutzeroberfläche}
 
 \subsection{Graphische Benutzeroberfläche}
