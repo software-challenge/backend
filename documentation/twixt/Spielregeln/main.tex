@@ -1,58 +1,58 @@
-%%This is a very basic article template.
-%%There is just one section and two subsections.
 \documentclass[a4paper, ngerman]{scrartcl}
 
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}
 \usepackage[ngerman]{babel}
 \usepackage{lmodern}
-\usepackage{amsmath}
-\usepackage{amsfonts}
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{paralist}
-\usepackage[none]{hyphenat}
+\usepackage{wrapfig}
+\usepackage{float} % enables usage of H parameter in figures which means "really here"
+\usepackage[font=small,skip=8pt]{caption} % reduce space between caption and figure
 
-\sloppy
-
-
-
-\hypersetup{
-pdfborder = {0 0 0},
-urlbordercolor = {0 0 0},
-colorlinks = true,
-linkcolor = black,
-citecolor = black,
-filecolor = black,
-urlcolor  = black
+% for the copyright notice
+\newcommand\blfootnote[1]{%
+  \begingroup
+  \renewcommand\thefootnote{}\footnote{#1}%
+  \addtocounter{footnote}{-1}%
+  \endgroup
 }
 
-\title{Software-Challenge 2016 \\ Twixt}
-\subtitle{Spielregeln}
+\hypersetup{
+  pdfborder = {0 0 0},
+  urlbordercolor = {0 0 0},
+  colorlinks = true,
+  linkcolor = black,
+  citecolor = black,
+  filecolor = black,
+  urlcolor  = black
+}
+
+\usepackage{fontspec}
+%\setromanfont{Merriweather}
+%\setsansfont{Lato}
 
 
-
-%% Variablen
-\newcommand{\FelderAnzahl}{\emph{576}}
-\newcommand{\EmptyPlainPage}{\newpage\thispagestyle{plain}\ \newpage}
-\newcommand{\RundenAnzahl}{\emph{30}}
+\titlehead{\centering\includegraphics[width=3.5cm]{bilder/logo.png}}
+\subject{Software-Challenge 2016}
+\title{Spielregeln}
+\subtitle{Twixt}
+\date{Stand: \today}
 
 \begin{document}
-\parindent0px
+
+
 \maketitle
 
-\begin{figure}[h!]
-        \centering
-        \includegraphics[width=\linewidth]{bilder/gui.png}
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[width=\linewidth]{bilder/gui.png}
 \end{figure}
 \vspace*{\fill}
 
-Die Nutzung des Spielkonzeptes "`twixt"' (Name, Spielregeln und Grafik)
-erfolgt mit freundlicher Genehmigung des Kosmos Verlags.
-
-\newpage
-
-\tableofcontents
+\blfootnote{Die Nutzung des Spielkonzeptes "`Twixt"' (Name, Spielregeln und Grafik)
+  erfolgt mit freundlicher Genehmigung des Kosmos Verlags.}
 
 \newpage
 
@@ -64,35 +64,35 @@ Software-Challenge 2016 erläutert.
 Bei Twixt versuchen zwei Spieler, durch abwechselndes setzen von Strommasten
 eine durchgehende Verbindung zwischen den beiden gegenüberliegenden Spielfeldrändern
 herzustellen, und gleichzeitig den Gegenspieler daran zu hindern, das Gleiche zu
-tun. 
+tun.
 
 \section{Das Spielbrett}
 Das Spielbrett ist im Titelbild zu sehen und besteht aus 576 Feldern.
-Mit Ausnahme der Sumpffelder (grün) kann auf jedes dieser Felder genau 
-ein Strommast gestellt werden. Allerdings kann Rot keine Strommasten auf 
-die oberen und unteren Randfelder (blau) stellen und Blau nicht auf die linken 
-und rechten Randfelder (rot). In den 4 Ecken befindet sich jeweils ein Sumpffeld. 
-Zusätzlich werden vor Spielbeginn 4 Sümpfe zufällig generiert. Dabei handelt sich um 
-ein einzelnes Sumpffeld, zwei mittelgroße Sümpfe mit jeweils 2x2 Sumpffeldern 
-sowie einen großen Sumpf mit 3x3 Sumpffeldern. Keines der zufällig generierten Sumpffelder 
-befindet sich auf einem Rand- oder Eckfeld. Die zufällig generierten Sümpfe dürfen 
+Mit Ausnahme der Sumpffelder (grün) kann auf jedes dieser Felder genau
+ein Strommast gestellt werden. Allerdings kann Rot keine Strommasten auf
+die oberen und unteren Randfelder (blau) stellen und Blau nicht auf die linken
+und rechten Randfelder (rot). In den 4 Ecken befindet sich jeweils ein Sumpffeld.
+Zusätzlich werden vor Spielbeginn 4 Sümpfe zufällig generiert. Dabei handelt sich um
+ein einzelnes Sumpffeld, zwei mittelgroße Sümpfe mit jeweils $2 \times 2$ Sumpffeldern
+sowie einen großen Sumpf mit $3 \times 3$ Sumpffeldern. Keines der zufällig generierten Sumpffelder
+befindet sich auf einem Rand- oder Eckfeld. Die zufällig generierten Sümpfe dürfen
 sich jedoch überschneiden.
 
-\begin{figure}[h!]
-		\centering
-		\includegraphics[scale = 0.8]{bilder/setzzug.png}
-		\caption{Alle möglichen Leitungen}
-		\label{fig:Leitungen}
-\end{figure}
-	
-\section{Spielablauf}	 
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.48\textwidth]{bilder/setzzug.png}
+  \caption{Alle möglichen Leitungen}\label{fig:Leitungen}
+\end{wrapfigure}
+
+\section{Der Spielablauf}
 Zu Beginn des Spiels setzt zunächst Rot einen neuen Strommast auf ein
 freies Feld, also ein Feld, das weder ein Sumpffeld noch ein Feld der
-gegnerischen Farbe ist und auf dem sich noch kein Strommast befindet. 
+gegnerischen Farbe ist und auf dem sich noch kein Strommast befindet.
 Danach tut Blau dasselbe, während beide versuchen,
 ihre beiden Farbzonen (farbig markierte Felder; für Rot sind diese links und
 rechts, für Blau  oben und unten) mit einer zusammenhängenden Leitung zu
 verbinden.
+
 Bei einem Zug ist es möglich, dass sich dadurch eine oder mehrere
 neue Leitungen bilden. Eine neue Leitung bildet sich, wenn sich ein eigener
 Strommast in folgendem Abstand zu dem gesetztem Strommast befindet: Zwei
@@ -101,56 +101,62 @@ senkrecht. Dies geschieht aber nur, wenn bisher keine Leitung existiert, die
 die entstehende Leitung kreuzen würde.
 Ein Beispiel, welche Leitungen von einem Strommast aus möglich sind, ist
 in Abbildung 1 zu sehen.
-	 
-	
-\section{Ende des Spiels} 
+
+
+\section{Ende des Spiels}
 Das Spiel endet, sobald es einer der Spieler geschafft hat, seine beiden
 Farbzonen mit einer zusammenhängenden Leitung zu verbinden, spätestens jedoch
 nach 30 Runden.
+
 Für die Berechnung der Punkte von Rot ist allein diejenige zusammenhängende
 Leitung von Rot entscheidend, welche in horizontaler Richtung die längste Ausdehnung
 hat. Die Ausdehnung dieser Leitung in horizontaler Richtung ergibt die Punktezahl
 für Rot. Entsprechend zählt für Blau die vertikale Ausdehnung.
 In dem in Abbildung 2 gezeigten Beispiel erhält Rot deshalb 4 Punkte
 (die kürzere Leitung zählt nicht) und Blau 8 (es zählt ausschließlich
-die vertikale Richtung). Das Spiel gewinnt derjenige Spieler, der am Spielende die
-meisten Punkte hat.
-Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unentschieden.
+die vertikale Richtung).
+
+Das Spiel gewinnt derjenige Spieler, der am Spielende die
+meisten Punkte hat. Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unentschieden.
 
 \section{Die graphische Benutzeroberfläche}
 
-\subsection{Graphische Benutzeroberfläche}
+Beim Start des graphischen Servers wird das Hauptfenster angezeigt,
+welches bis zum Start eines Spiels aber leer bleibt. Die folgenden
+Beschreibungen gehen davon aus, dass ein Twixt-Spiel gestartet wurde.
 
-	 
-	In Abbildung~\ref{fig:GUI} ist ein Überblick der graphischen Benutzeroberfläche
-	zu sehen. Die markanten Spielelemente sind mit \emph{A-C} gekennzeichnet.
-	\begin{figure}[H]
-		\centering		
-		\includegraphics[scale = 0.6]{bilder/uebersicht.png} 
-		\caption{Überblick der GUI}
-		\label{fig:GUI}
-	\end{figure}
-	 
-	%% wie ist die Benutzeroberfläche?
-\begin{compactenum}[A)] 
+\subsection{Das Hauptfenster}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{bilder/uebersicht.png}
+  \caption{Überblick der GUI}\label{fig:GUI}
+\end{figure}
+
+\begin{minipage}{\linewidth} % using minipage to prevent pagebreak in list
+In Abbildung~\ref{fig:GUI} ist ein Überblick der graphischen Benutzeroberfläche
+zu sehen. Die markanten Spielelemente sind mit \emph{A-C} gekennzeichnet.
+
+\begin{compactenum}[A)]
 \item Das Spielbrett
-\item Die Spielfortschrittsanzeige  
+\item Die Spielfortschrittsanzeige
 \item Der Punktestand der Spieler
-	\end{compactenum}
-	
-\subsection{Das Einstellungsmenü} 
-	 \begin{figure}[H]
-		\centering
-		\includegraphics[scale=0.6]{bilder/konfiguration.png}
-		\caption{Das Einstellungsmenü}
-		\label{fig:Configuration}
-	\end{figure}
-	
-	Ein Einstellungsmenü mit Darstellungsoptionen wird in Abbildung 3 dargestellt
-	und lässt sich über die Taste 'C' anzeigen. Dazu muss das
-Spielfeld den Tastaturfokus haben (erforderlichenfalls
-vorher Mausklick auf das Spielfeld). Es stehen dort
-folgende Einstellungen zur Verfügung: 
+\end{compactenum}
+\end{minipage}
+
+\subsection{Das Einstellungsmenü}
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+  \includegraphics[width=0.48\textwidth]{bilder/konfiguration.png}
+  \centering
+  \caption{Das Einstellungsmenü}\label{fig:Configuration}
+\end{wrapfigure}
+
+Ein Einstellungsmenü mit Darstellungsoptionen wird in Abbildung 3
+dargestellt und lässt sich über die Taste 'C' anzeigen. Dazu muss das
+Spielfeld den Tastaturfokus haben (erforderlichenfalls vorher
+Mausklick auf das Spielfeld). Es stehen dort folgende Einstellungen
+zur Verfügung:
 
 \textbf{Kantenglättung} verbessert die Optik des
 Spiels, ist aber rechenintensiv, diese hat Einstellungen von 0 bis 8 und ist
@@ -162,5 +168,5 @@ Die \textbf{Debugansicht} zeigt Debug-Hilfestellungen zu einzelnen Zügen und
 die Framerate an.
 Diese Hilfestellungen sind Texte, die ein Spielclient einem Zug beifügen kann, den er
 an den Spielserver sendet.
-	
+
 \end{document}
