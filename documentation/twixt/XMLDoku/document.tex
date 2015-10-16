@@ -40,32 +40,32 @@ Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch:
 \htmladdnormallink{Allgemeine Dokumentation: Die Schnittstelle zum
 Server}{https://cau-kiel-tech-inf.github.io/socha-enduser-docs/\#schnittstelle}}. In diesem
 Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett
-eigener Client geschrieben werden kann. Es wird hier nicht die vollst\"andige
+eigener Client geschrieben werden kann. Es wird hier nicht die vollständige
 Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client
-umgehen k\"onnen muss, um spielf\"ahig zu sein.
+umgehen können muss, um spielfähig zu sein.
 \subsection*{An wen richtet sich dieses Dokument?} Die Kommunikation mit dem
-Spielserver ist f\"ur diejenigen, die aufbauend auf dem Simpleclient
+Spielserver ist für diejenigen, die aufbauend auf dem Simpleclient
 programmieren, unwichtig. Dort steht bereits ein funktionierender Client bereit
 und es muss nur die Spiellogik entworfen werden. \\
 Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die
-Programmiersprache frei w\"ahlen zu k\"onnen, ben\"otigt die Definitionen.
+Programmiersprache frei wählen zu können, benötigt die Definitionen.
 
 \subsection*{Hinweise} Falls Sie beabsichtigen sollten, diese
 Kommunikationsschnittstelle zu realisieren, sei darauf hingewiesen, dass es im
-Verlauf des Wettbewerbes m\"oglich ist, dass weitere, hier noch nicht aufgef\"uhrte
-Elemente zur Kommunikationsschnittstelle hinzugef\"ugt werden. Um auch bei
-solchen \"Anderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server
+Verlauf des Wettbewerbes möglich ist, dass weitere, hier noch nicht aufgeführte
+Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei
+solchen Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server
 kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu
 verwerfen, die hier nicht weiter definiert sind. \bigskip \\
 Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine
 Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt. 
 Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
 %Dabei
-%werden den XML-Tags jeweils \textit{id}-Attribute beigef\"ugt. Auch diese k\"onnen
-%vernachl\"assigt werden.
+%werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können
+%vernachlässigt werden.
 
 \subsection*{Wie das Dokument zu lesen ist}
-Es finden sich f\"ur einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die \"uber dem Code kurz erl\"autert werden.\\
+Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die über dem Code kurz erläutert werden.\\
 Eingebettete XML-Elemente werden hier allgemein als \begin{verbatim}
 {TAGNAME}
 \end{verbatim} geschrieben, wenn an der Stelle eine beliebige Anzahl von \textit{TAGNAME}-Tags eingebettet sein \textit{kann} und als \begin{verbatim}
@@ -118,13 +118,13 @@ Ist ein Reservierungscode gegeben, so kann man den durch den Code gegebenen Plat
 <joinPrepared reservationCode="RC"/>
 \end{verbatim}
 
-\section{Z\"uge senden}
+\section{Züge senden}
 
 \subsection{\label{Move}Der Move}
 Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden kann.
 \begin{description}
 \item[RID] ID des Raumes
-\item[ZUG] Informationen \"uber den Zug
+\item[ZUG] Informationen über den Zug
 \begin{verbatim}
 <room roomId="RID">
   ZUG
@@ -143,7 +143,7 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \end{description}
 
 \subsection{Debughints}
-Z\"ugen k\"onnen Debug-Informationen beigef\"ugt werden:
+Zügen können Debug-Informationen beigefügt werden:
 \begin{description}
 \item[S] Informationen zum Zug als String
 \end{description}
@@ -174,7 +174,7 @@ Damit sieht beispielsweise ein Laufzug so aus:
  \end{verbatim}
 
 \section{Willkommensnachricht}
-Der Spieler erh\"alt zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
+Der Spieler erhält zu Spielbeginn eine Willkommensnachricht, die ihm seine Farbe mitteilt.
 \begin{description}
 \item[C] Spielerfarbe (red/blue)
 \end{description}
@@ -205,7 +205,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[C] Spieler, der an der Reihe ist (RED/BLUE)
 \item[red, blue] wie in \ref{player} definiert
 \item[board] Das Spielbrett, wie in \ref{board} definiert
-\item[lastMove] Letzter get\"atigter Zug (nicht in der ersten Runde), wie in
+\item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
 \ref{lastmove} definiert
 \item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
 \end{description}
@@ -240,7 +240,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
  <fields>
  	{FIELD}
   
-   ... (576 Stueck davon)
+   ... (576 Stück davon)
  </fields>
  <connections>
  	{CONNECTION}
@@ -263,10 +263,23 @@ Besitzer vorhanden
 \subsection{\label{lastmove}Letzter Zug}
 Der letzte Zug ist ein Move (siehe hierzu \ref{move}).
 \begin{description}
-\item[ZUG] Informationen \"uber den Zug.
+\item[ZUG] Informationen über den Zug.
 \end{description}
 \begin{verbatim}
 <lastMove class="T" ZUG/>
+\end{verbatim}
+
+\subsection{\label{connections}Verbindungen}
+Die bestehenden Verbindungen auf dem Spielfeld.
+\begin{description}
+\item[X1] x-Koordinate des Startfeldes
+\item[Y1] y-Koordinate des Startfeldes
+\item[X2] x-Koordinate des Zielfeldes
+\item[Y2] y-Koordinate des Zielfeldes
+\item[Owner] Spielerfarbe des Besitzers (RED/BLUE).
+\end{description}
+\begin{verbatim}
+<connection x1="X1" y1="Y1" x2="X2" y2="Y2" owner="Owner"/>
 \end{verbatim}
 
 \section{\label{moverequest}Zug-Anforderung}
@@ -278,9 +291,9 @@ Eine simple Nachricht fordert zum Zug auf:
 \end{verbatim}
 
 \section{Fehler}
-Ein \glqq spielf\"ahiger\grqq\ Client muss nicht mit Fehlern umgehen k\"onnen.
-Fehlerhafte Z\"uge beispielsweise resultieren in einem vorzeitigen Ende des
-Spieles, das im n\"achsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend}).
+Ein \glqq spielfähiger\grqq\ Client muss nicht mit Fehlern umgehen können.
+Fehlerhafte Züge beispielsweise resultieren in einem vorzeitigen Ende des
+Spieles, das im nächsten gesendeten Gamestate erkannt werden kann (siehe \ref{gameend}).
 \begin{description}
 \item[MSG] Fehlermeldung
 \end{description}
@@ -295,7 +308,7 @@ Spieles, das im n\"achsten gesendeten Gamestate erkannt werden kann (siehe \ref{
 \end{verbatim}
 
 \section{Spiel pausiert}
-Ein \glqq spielf\"ahiger\grqq\ Client muss Pausierungsnachrichten nicht beachten,
+Ein \glqq spielfähiger\grqq\ Client muss Pausierungsnachrichten nicht beachten,
 da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Servers handelt.
 \begin{description}
 \item[N] Spielername
@@ -317,18 +330,18 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 
 
 \section{\label{gameend}Spielergebnis}
-Zum Spielende enth\"alt der Spielstatus eine \textit{Condition}, der das Spielergebnis entnommen werden kann:
+Zum Spielende enthält der Spielstatus eine \textit{Condition}, der das Spielergebnis entnommen werden kann:
 \begin{description}
 \item[W] Gewinner (RED/BLUE), bei Unentschieden wird kein winner mitgeschickt.
-\item[R] Text, der den Grund f\"ur das Spielende erkl\"art
+\item[R] Text, der den Grund für das Spielende erklärt
 \end{description}
 \begin{verbatim}
 <condition winner="W" reason="R"/>
 \end{verbatim}
 
 \newpage
-\part{\"Uberblick}
-Hier nochmal ein kurzer \"Uberblick, der etwas genauer zeigt, wie die
+\part{Überblick}
+Hier nochmal ein kurzer Überblick, der etwas genauer zeigt, wie die
 Kommunikation ablaufen kann.\bigskip\\
 
 \begin{enumerate}
@@ -373,7 +386,7 @@ Kommunikation ablaufen kann.\bigskip\\
   </data>
 </room>
 \end{verbatim}
-\item da der andere Spieler anf\"angt folgt noch eine \textit{memento}-Nachricht vom Server, die den Spielstatus nach dem ersten Zug von Spieler 1 beinhaltet.
+\item da der andere Spieler anfängt folgt noch eine \textit{memento}-Nachricht vom Server, die den Spielstatus nach dem ersten Zug von Spieler 1 beinhaltet.
 \item es folgt die erste Zug-Aufforderung vom Server: \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
     <data class="sc.framework.plugins.protocol.MoveRequest"/>
@@ -385,7 +398,7 @@ Kommunikation ablaufen kann.\bigskip\\
 </room>
 \end{verbatim}
 \item so geht es weiter...
-\item die letzte Nachricht enth\"alt ein \begin{verbatim}
+\item die letzte Nachricht enthält ein \begin{verbatim}
 </protocol>
 \end{verbatim}
 Daraufhin wird die Verbindung geschlossen
