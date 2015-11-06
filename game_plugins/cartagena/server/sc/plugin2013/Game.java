@@ -2,7 +2,6 @@ package sc.plugin2013;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,22 +11,20 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin2013.Player;
-import sc.plugin2013.PlayerColor;
 import sc.plugin2013.util.Configuration;
 import sc.plugin2013.util.Constants;
 import sc.plugin2013.util.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.

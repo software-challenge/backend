@@ -2,6 +2,7 @@ package sc.plugin2016.gui.renderer;
 
 import java.awt.BorderLayout;
 import java.awt.Image;
+import java.awt.Panel;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -155,7 +156,7 @@ public class RenderFacade {
 		CONNECT, OBSERVER, PLAYER_ONE, PLAYER_TWO;
 	}
 
-	public void setRenderContext(final JPanel panel, final boolean threeDimensional) {
+	public void setRenderContext(final Panel panel, final boolean threeDimensional) {
 
 		synchronized (gameStateQueue) {
 			gameStateQueue.clear();
@@ -169,10 +170,15 @@ public class RenderFacade {
 		frameRenderer = new FrameRenderer(); // neuer FrameRenderer
 
 		if (panel != null) {
+		  System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++1");
 			panel.setLayout(new BorderLayout());
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++2");
 			panel.add(frameRenderer, BorderLayout.CENTER);
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++3");
 			frameRenderer.setBounds(0, 0, panel.getWidth(), panel.getHeight());
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++4");
 			frameRenderer.init();
+			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++5");
 		}
 		startReceiverThread();
 	}
