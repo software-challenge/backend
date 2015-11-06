@@ -4,21 +4,15 @@
 package sc.plugin2016.gui.renderer;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
-import processing.core.PImage;
-import sc.plugin2016.gui.renderer.RenderConfigurationDialog;
-import sc.plugin2016.Connection;
 import sc.plugin2016.EPlayerId;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Move;
-import sc.plugin2016.PlayerColor;
 import sc.plugin2016.gui.renderer.primitives.Background;
 import sc.plugin2016.gui.renderer.primitives.BoardFrame;
 import sc.plugin2016.gui.renderer.primitives.GameEndedDialog;
