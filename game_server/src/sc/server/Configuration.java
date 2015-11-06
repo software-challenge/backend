@@ -5,8 +5,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -18,8 +16,6 @@ import sc.server.network.PerspectiveAwareConverter;
 import sc.shared.SharedConfiguration;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.json.JettisonMappedXmlDriver;
-import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
 /**
  * Server configuration.
