@@ -69,9 +69,10 @@ tun.
 \section{Das Spielbrett}
 Das Spielbrett ist im Titelbild zu sehen und besteht aus 576 Feldern.
 Mit Ausnahme der Sumpffelder (grün) kann auf jedes dieser Felder genau 
-ein Strommast gestellt werden. Allerdings kann Rot keine Strommasten auf 
-die oberen und unteren Randfelder (blau) stellen und Blau nicht auf die linken 
-und rechten Randfelder (rot). In den 4 Ecken befindet sich jeweils ein Sumpffeld. 
+ein Strommast gestellt werden. Allerdings kann Blau keine Strommasten auf 
+die oberen und unteren Randfelder (rot) stellen und Rot nicht auf die linken 
+und rechten Randfelder (blau). In den 4 Ecken befindet sich jeweils ein
+Sumpffeld.
 Zusätzlich werden vor Spielbeginn 4 Sümpfe zufällig generiert. Dabei handelt sich um 
 ein einzelnes Sumpffeld, zwei mittelgroße Sümpfe mit jeweils 2x2 Sumpffeldern 
 sowie einen großen Sumpf mit 3x3 Sumpffeldern. Keines der zufällig generierten Sumpffelder 
@@ -90,8 +91,8 @@ Zu Beginn des Spiels setzt zunächst Rot einen neuen Strommast auf ein
 freies Feld, also ein Feld, das weder ein Sumpffeld noch ein Feld der
 gegnerischen Farbe ist und auf dem sich noch kein Strommast befindet. 
 Danach tut Blau dasselbe, während beide versuchen,
-ihre beiden Farbzonen (farbig markierte Felder; für Rot sind diese links und
-rechts, für Blau  oben und unten) mit einer zusammenhängenden Leitung zu
+ihre beiden Farbzonen (farbig markierte Felder; für Rot sind diese oben und
+unten, für Blau  links und rechts) mit einer zusammenhängenden Leitung zu
 verbinden.
 Bei einem Zug ist es möglich, dass sich dadurch eine oder mehrere
 neue Leitungen bilden. Eine neue Leitung bildet sich, wenn sich ein eigener
@@ -108,13 +109,13 @@ Das Spiel endet, sobald es einer der Spieler geschafft hat, seine beiden
 Farbzonen mit einer zusammenhängenden Leitung zu verbinden, spätestens jedoch
 nach 30 Runden.
 Für die Berechnung der Punkte von Rot ist allein diejenige zusammenhängende
-Leitung von Rot entscheidend, welche in horizontaler Richtung die längste Ausdehnung
-hat. Die Ausdehnung dieser Leitung in horizontaler Richtung ergibt die Punktezahl
-für Rot. Entsprechend zählt für Blau die vertikale Ausdehnung.
-In dem in Abbildung 2 gezeigten Beispiel erhält Rot deshalb 4 Punkte
-(die kürzere Leitung zählt nicht) und Blau 8 (es zählt ausschließlich
-die vertikale Richtung). Das Spiel gewinnt derjenige Spieler, der am Spielende die
-meisten Punkte hat.
+Leitung von Rot entscheidend, welche in vertikaler Richtung die längste
+Ausdehnung hat. Die Ausdehnung dieser Leitung in vertikaler Richtung ergibt
+die Punktezahl für Rot. Entsprechend zählt für Blau die horizontale Ausdehnung.
+In dem in Abbildung 2 gezeigten Beispiel erhält Rot deshalb 8 Punkte (es zählt ausschließlich
+die vertikale Richtung)
+und Blau 4 (die kürzere Leitung zählt nicht). Das Spiel gewinnt derjenige Spieler, der am Spielende
+die meisten Punkte hat.
 Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unentschieden.
 
 \section{Die graphische Benutzeroberfläche}
@@ -134,7 +135,7 @@ Ist die so ermittelte Punktzahl gleich, ist das Ergebnis unentschieden.
 	%% wie ist die Benutzeroberfläche?
 \begin{compactenum}[A)] 
 \item Das Spielbrett
-\item Die Spielfortschrittsanzeige  
+\item Die Spielfortschrittsanzeige 
 \item Der Punktestand der Spieler
 	\end{compactenum}
 	
@@ -156,8 +157,6 @@ folgende Einstellungen zur Verfügung:
 Spiels, ist aber rechenintensiv, diese hat Einstellungen von 0 bis 8 und ist
 standardmäßig auf 4 gestellt.
 Auf sehr langsamen Rechnern sollte sie daher auf 0 gestellt werden. Die Option
-\textbf{Animationen} im Einstellungsmenü ist nur für andere Spiele von
-Bedeutung und wird bei \emph{Twixt} ignoriert.\\
 Die \textbf{Debugansicht} zeigt Debug-Hilfestellungen zu einzelnen Zügen und
 die Framerate an.
 Diese Hilfestellungen sind Texte, die ein Spielclient einem Zug beifügen kann, den er
