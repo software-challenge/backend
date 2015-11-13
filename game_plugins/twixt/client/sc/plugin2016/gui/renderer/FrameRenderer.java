@@ -44,9 +44,7 @@ public class FrameRenderer extends PApplet {
   private EPlayerId id;
 
   public GuiBoard guiBoard;
-  /*
-   * TODO add background picture
-   * picture is missing so no background for now*/
+  
   private Background background;
   
   private ProgressBar progressBar;
@@ -157,36 +155,11 @@ public class FrameRenderer extends PApplet {
   }
 
   public void mouseClicked(MouseEvent e) {
-    /*loop();
-    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      int x = e.getX();
-      int y = e.getY();
-      int player;
-      if (id == EPlayerId.PLAYER_ONE) {
-        player = 0;
-      } else {
-        player = 1;
-      }
-    }
-    noLoop();*/
+    
   }
 
   public void mousePressed(MouseEvent e) {
-    /*loop();
-    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      int x = e.getX();
-      int y = e.getY();
-      int player;
-      if (id == EPlayerId.PLAYER_ONE) {
-        player = 0;
-      } else {
-        player = 1;
-      }*/
-      /*
-       * mark possible moves
-       *//*
-    }
-    noLoop();*/
+    
   }
 
   public void mouseReleased(MouseEvent e) {

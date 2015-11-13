@@ -24,18 +24,15 @@ public class GuiBoard extends PrimitiveBase {
 
 		float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
 
-		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
+		float yDimension = parent.height * GuiConstants.PROGRESS_BAR_HEIGHT;
 
 		dim = new Dimension((int) xDimension, (int) yDimension);
 
-		int guiFieldSize = calcGuiFieldSize(dim);
-
-		float startX = ((xDimension / (Constants.SIZE + 2)) - 5) / 2.0f
-				+ (Constants.SIZE + 2);
-
-		float startY = ((yDimension / (Constants.SIZE + 2)) - 5) / 2.0f
-				+ (Constants.SIZE + 2);
-
+		int guiFieldSize = (int) calcGuiFieldSize(dim);
+    float startX = (xDimension - calcBoardSize(dim)) / 2.0f + 5f;
+    
+    float startY = (yDimension - calcBoardSize(dim)) / 2.0f + 5f;
+		
 		float y = startY;
 
 		for (int i = 0; i < Constants.SIZE; i++) {
@@ -60,16 +57,16 @@ public class GuiBoard extends PrimitiveBase {
 
 		float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
 
-		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
+		float yDimension = parent.height * GuiConstants.GUI_BOARD_HEIGHT;
 
 		dim = new Dimension((int) xDimension, (int) yDimension);
 
-		int guiFieldSize = calcGuiFieldSize(dim);
-
-		float startX = (xDimension - (22 * (guiFieldSize + 5))) / 2;
-
-		float startY = (yDimension - 22 * (guiFieldSize + 5)) / 2;
-
+		int guiFieldSize = (int) calcGuiFieldSize(dim);
+		
+		float startX = (xDimension - calcBoardSize(dim)) / 2.0f + 5f;
+    
+    float startY = (yDimension - calcBoardSize(dim)) / 2.0f + 5f;
+    
 		float y = startY;
 
 		for (int i = 0; i < Constants.SIZE; i++) {
@@ -102,7 +99,6 @@ public class GuiBoard extends PrimitiveBase {
 		}
 		guiConnections = new ArrayList<GuiConnection>();
 		for (Connection c : board.connections) {
-		  System.out.println(this.calcGuiFieldSize(dim) + "+++++++++++++++++++++++++++++++++++++++++++");
 			guiConnections.add(new GuiConnection(parent, c, this.calcGuiFieldSize(dim) * 0.3f));
 		}
 
@@ -125,10 +121,14 @@ public class GuiBoard extends PrimitiveBase {
 
 	}
 
-	public int calcGuiFieldSize(Dimension dim) {
-		int guiFieldWidth = (dim.width / (Constants.SIZE + 2)) - 5;
-		int guiFieldHeight = (dim.height / (Constants.SIZE + 2)) - 5;
+	public float calcGuiFieldSize(Dimension dim) {
+		float guiFieldWidth = ((float)dim.width / (float)(Constants.SIZE + 2f)) - 5f;
+		float guiFieldHeight = ((float)dim.height / (float)(Constants.SIZE + 2f)) - 5f;
 		return Math.min(guiFieldWidth, guiFieldHeight);
+	}
+	
+	public float calcBoardSize(Dimension dim) {
+	  return (calcGuiFieldSize(dim) + 5f) * 24f;
 	}
 
 	public GuiField[][] getGuiFields() {
