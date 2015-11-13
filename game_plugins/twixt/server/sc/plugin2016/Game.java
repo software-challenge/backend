@@ -98,10 +98,14 @@ public class Game extends RoundBasedGameInstance<Player> {
         System.out.println(stats[1][0]);
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
-          winnerName = "Sieg durch eine längere Leitung.";
+          if(stats[0][0] != 23) {
+            winnerName = "Sieg durch eine längere Leitung.";
+          }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
-          winnerName = "Sieg durch eine längere Leitung.";
+          if(stats[1][0] != 23) {
+            winnerName = "Sieg durch eine längere Leitung.";
+          }
         }
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
             + winnerName);
@@ -110,10 +114,14 @@ public class Game extends RoundBasedGameInstance<Player> {
         String winnerName = "";
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
-          winnerName = "Sieg durch eine längere Leitung.";
+          if(stats[0][0] != 23) {
+            winnerName = "Sieg durch eine längere Leitung.";
+          }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
-          winnerName = "Sieg durch eine längere Leitung.";
+          if(stats[1][0] != 23) {
+            winnerName = "Sieg durch eine längere Leitung.";
+          }
         }
 
         gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n"
