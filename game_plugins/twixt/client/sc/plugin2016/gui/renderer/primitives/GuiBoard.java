@@ -75,8 +75,8 @@ public class GuiBoard extends PrimitiveBase {
 			float x;
 			x = startX;
 			for (int j = 0; j < Constants.SIZE; j++) {
-				getGuiFields()[i][j] = new GuiField(this.parent, (int) x,
-						(int) y, guiFieldSize, i, j);
+				getGuiFields()[j][i] = new GuiField(this.parent, (int) x,
+						(int) y, guiFieldSize, j, i);
 				x = x + guiFieldSize + 5;
 
 			}
