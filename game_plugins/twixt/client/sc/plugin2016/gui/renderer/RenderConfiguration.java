@@ -38,15 +38,14 @@ public class RenderConfiguration {
 	public static boolean optionDebug = false;
 
 	public static final String[] OPTION_NAMES = new String[] { "Renderer",
-			"Kantenglättung", "Animationen", "Debugansicht" };
+			"Kantenglättung", "Debugansicht" };
 
 	public static void saveSettings() {
 		// collect all set options and save them to File
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put(OPTION_NAMES[0], optionRenderer);
 		map.put(OPTION_NAMES[1], optionAntiAliasing);
-		map.put(OPTION_NAMES[2], optionAnimation);
-		map.put(OPTION_NAMES[3], optionDebug);
+		map.put(OPTION_NAMES[2], optionDebug);
 		
 		OutputStream fileStream = null;
 		try {
@@ -79,8 +78,7 @@ public class RenderConfiguration {
 			HashMap<String, Object> map = (HashMap<String, Object>) objectStream.readObject();
 			optionRenderer = (String) map.get(OPTION_NAMES[0]);
 			optionAntiAliasing = ((Number) map.get(OPTION_NAMES[1])).intValue();
-			optionAnimation = (Boolean) map.get(OPTION_NAMES[2]);
-			optionDebug = (Boolean) map.get(OPTION_NAMES[3]);
+			optionDebug = (Boolean) map.get(OPTION_NAMES[2]);
 			
 			objectStream.close();
 		} catch (IOException e) {

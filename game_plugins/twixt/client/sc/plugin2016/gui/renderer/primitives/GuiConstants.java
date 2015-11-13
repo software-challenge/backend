@@ -49,14 +49,7 @@ public class GuiConstants {
 	 * public static final float GUI_BOARD_START_X = 1; public static final
 	 * float GUI_BOARD_START_Y = 1;
 	 */
-	/**
-	 * Breite des GuiBoard mit parent.width zu multiplizieren
-	 */
-	public static final float GUI_BOARD_WIDTH = 0.8f;
-	/**
-	 * Höhe des GuiBoard zu parent.height zu addieren
-	 */
-	public static final float GUI_BOARD_HEIGHT = -100;
+
 
 	/**
 	 * startwert der x-Koordinate der Sidebar mit parent.width zu multiplizieren
@@ -103,6 +96,15 @@ public class GuiConstants {
 	 * Relative Size of the Game Ended Dialog
 	 */
 	public static final float GAME_ENDED_SIZE = 0.3f;
+	
+	 /**
+   * Breite des GuiBoard mit parent.width zu multiplizieren
+   */
+  public static final float GUI_BOARD_WIDTH = 0.8f;
+  /**
+   * Höhe des GuiBoard zu parent.height zu ultiplizieren
+   */
+  public static final float GUI_BOARD_HEIGHT = SIDE_BAR_HEIGHT;
 
 	/*
 	 * Fonts 
