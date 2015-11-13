@@ -122,6 +122,17 @@ public class FrameRenderer extends PApplet {
     if (currentGameState != null && currentGameState.gameEnded()) {
       GameEndedDialog.draw(this);
     }
+    /*WaitingThread w = new WaitingThread();
+    w.start();
+    w.run();
+    while(w.time < 50) {
+      try {
+        wait(20);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }*/
   }
 
   public void updateGameState(GameState gameState) {
