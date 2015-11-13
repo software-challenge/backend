@@ -15,6 +15,7 @@ public class GuiBoard extends PrimitiveBase {
 	private Board currentBoard;
 	private GuiField[][] guiFields;
 	private List<GuiConnection> guiConnections;
+	public Dimension dim;
 
 	public GuiBoard(FrameRenderer parent) {
 		super(parent);
@@ -25,9 +26,9 @@ public class GuiBoard extends PrimitiveBase {
 
 		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
 
-		Dimension test = new Dimension((int) xDimension, (int) yDimension);
+		dim = new Dimension((int) xDimension, (int) yDimension);
 
-		int guiFieldSize = calcGuiFieldSize(test);
+		int guiFieldSize = calcGuiFieldSize(dim);
 
 		float startX = ((xDimension / (Constants.SIZE + 2)) - 5) / 2.0f
 				+ (Constants.SIZE + 2);
@@ -61,9 +62,9 @@ public class GuiBoard extends PrimitiveBase {
 
 		float yDimension = parent.height + GuiConstants.GUI_BOARD_HEIGHT;
 
-		Dimension test = new Dimension((int) xDimension, (int) yDimension);
+		dim = new Dimension((int) xDimension, (int) yDimension);
 
-		int guiFieldSize = calcGuiFieldSize(test);
+		int guiFieldSize = calcGuiFieldSize(dim);
 
 		float startX = (xDimension - (22 * (guiFieldSize + 5))) / 2;
 
@@ -88,6 +89,7 @@ public class GuiBoard extends PrimitiveBase {
 		calculateSize(width, height);
 		for (GuiConnection c : guiConnections) {
 			c.resize();
+			c.setWidth(calcGuiFieldSize(dim) * 0.3f);
 		}
 	}
 
@@ -100,13 +102,14 @@ public class GuiBoard extends PrimitiveBase {
 		}
 		guiConnections = new ArrayList<GuiConnection>();
 		for (Connection c : board.connections) {
-			guiConnections.add(new GuiConnection(parent, c));
+		  System.out.println(this.calcGuiFieldSize(dim) + "+++++++++++++++++++++++++++++++++++++++++++");
+			guiConnections.add(new GuiConnection(parent, c, this.calcGuiFieldSize(dim) * 0.3f));
 		}
 
 	}
 
 	public void draw() {
-
+	  resize(parent.displayWidth, parent.displayHeight);
 		for (int i = 0; i < Constants.SIZE; i++) {
 			for (int j = 0; j < Constants.SIZE; j++) {
 				if (getGuiFields() != null) {
@@ -122,7 +125,7 @@ public class GuiBoard extends PrimitiveBase {
 
 	}
 
-	private int calcGuiFieldSize(Dimension dim) {
+	public int calcGuiFieldSize(Dimension dim) {
 		int guiFieldWidth = (dim.width / (Constants.SIZE + 2)) - 5;
 		int guiFieldHeight = (dim.height / (Constants.SIZE + 2)) - 5;
 		return Math.min(guiFieldWidth, guiFieldHeight);

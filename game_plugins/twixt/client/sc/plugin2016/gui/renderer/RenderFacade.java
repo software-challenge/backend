@@ -170,15 +170,10 @@ public class RenderFacade {
 		frameRenderer = new FrameRenderer(); // neuer FrameRenderer
 
 		if (panel != null) {
-		  System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++1");
 			panel.setLayout(new BorderLayout());
-			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++2");
 			panel.add(frameRenderer, BorderLayout.CENTER);
-			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++3");
 			frameRenderer.setBounds(0, 0, panel.getWidth(), panel.getHeight());
-			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++4");
 			frameRenderer.init();
-			System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++5");
 		}
 		startReceiverThread();
 	}
