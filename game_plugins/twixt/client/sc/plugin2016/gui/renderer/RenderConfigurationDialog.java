@@ -20,7 +20,6 @@ public class RenderConfigurationDialog extends JDialog {
 
 	//private JComboBox rendererCombo;
 	private JComboBox antiAliasingCombo;
-	private JCheckBox animationCheckBox;
 	private JCheckBox debugCheckBox;
 
 	public RenderConfigurationDialog(PApplet parent) {
@@ -54,9 +53,6 @@ public class RenderConfigurationDialog extends JDialog {
 		antiAliasingCombo
 				.setSelectedItem(RenderConfiguration.optionAntiAliasing);
 
-		animationCheckBox = new JCheckBox();
-		animationCheckBox.setSelected(RenderConfiguration.optionAnimation);
-
 		debugCheckBox = new JCheckBox();
 		debugCheckBox.setSelected(RenderConfiguration.optionDebug);
 		//add(new JLabel(RenderConfiguration.OPTION_NAMES[0]), gbc);
@@ -71,16 +67,10 @@ public class RenderConfigurationDialog extends JDialog {
 		gbc.gridx = 1;
 		add(antiAliasingCombo, gbc);
 
+
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		add(new JLabel(RenderConfiguration.OPTION_NAMES[2]), gbc);
-
-		gbc.gridx = 1;
-		add(animationCheckBox, gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		add(new JLabel(RenderConfiguration.OPTION_NAMES[3]), gbc);
 
 		gbc.gridx = 1;
 		add(debugCheckBox, gbc);
@@ -98,8 +88,6 @@ public class RenderConfigurationDialog extends JDialog {
 						*/
 				RenderConfiguration.optionAntiAliasing = (Integer) antiAliasingCombo
 						.getSelectedItem();
-				RenderConfiguration.optionAnimation = animationCheckBox
-						.isSelected();
 				RenderConfiguration.optionDebug = debugCheckBox.isSelected();
 				RenderConfiguration.saveSettings();
 				dispose();

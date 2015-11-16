@@ -2,12 +2,12 @@ package sc.plugin2016.gui;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Panel;
 import java.awt.Toolkit;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
-import javax.swing.JPanel;
 
 import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IGamePreparation;
@@ -39,7 +39,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 	}
 
 	@Override
-	public void setRenderContext(JPanel panel, boolean threeDimensional) {
+	public void setRenderContext(Panel panel, boolean threeDimensional) {
 		RenderFacade.getInstance().setRenderContext(panel, threeDimensional);
 	}
 

@@ -15,6 +15,7 @@ import sc.plugin2016.gui.renderer.FrameRenderer;
 public class GuiConnection extends PrimitiveBase{
   
   private float x1, y1, x2, y2;
+  private float width;
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
    */
@@ -27,9 +28,10 @@ public class GuiConnection extends PrimitiveBase{
   private boolean highlighted = false;
   Connection connection;
 
-  public GuiConnection(FrameRenderer parent, Connection c) {
+  public GuiConnection(FrameRenderer parent, Connection c, float width) {
     super(parent);
     connection = c;
+    this.setWidth(width);
     calculatePosition(c);
   }
 
@@ -64,7 +66,7 @@ public class GuiConnection extends PrimitiveBase{
     }
   
     parent.pushMatrix();
-    parent.strokeWeight(4);
+    parent.strokeWeight(this.getWidth());
     parent.curve(x1, y1, x1, y1, x2, y2, x2, y2);
     parent.fill(0);
     parent.textFont(GuiConstants.fonts[0]);
@@ -91,6 +93,14 @@ public class GuiConnection extends PrimitiveBase{
 
   public void setHighlighted(boolean highlighted) {
     this.highlighted = highlighted;
+  }
+
+  private float getWidth() {
+    return width;
+  }
+
+  public void setWidth(float width) {
+    this.width = width;
   }
 
 }

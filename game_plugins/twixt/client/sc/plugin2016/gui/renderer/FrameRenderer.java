@@ -4,21 +4,15 @@
 package sc.plugin2016.gui.renderer;
 
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
-import processing.core.PImage;
-import sc.plugin2016.gui.renderer.RenderConfigurationDialog;
-import sc.plugin2016.Connection;
 import sc.plugin2016.EPlayerId;
 import sc.plugin2016.GameState;
 import sc.plugin2016.Move;
-import sc.plugin2016.PlayerColor;
 import sc.plugin2016.gui.renderer.primitives.Background;
 import sc.plugin2016.gui.renderer.primitives.BoardFrame;
 import sc.plugin2016.gui.renderer.primitives.GameEndedDialog;
@@ -44,19 +38,13 @@ public class FrameRenderer extends PApplet {
       .getLogger(FrameRenderer.class);
 
   public GameState currentGameState;
-  private boolean isUpdated;
   private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
   private int maxTurn;
-  boolean shouldResize = true;
-  private boolean myMousePressed;
-
   private EPlayerId id;
 
   public GuiBoard guiBoard;
-  /*
-   * TODO add background picture
-   * picture is missing so no background for now*/
+  
   private Background background;
   
   private ProgressBar progressBar;
@@ -70,7 +58,6 @@ public class FrameRenderer extends PApplet {
     // logger.debug("calling frameRenderer.size()");
     this.humanPlayer = false;
     this.humanPlayerMaxTurn = false;
-    isUpdated = false;
     this.id = EPlayerId.OBSERVER;
 
     RenderConfiguration.loadSettings();
@@ -92,7 +79,6 @@ public class FrameRenderer extends PApplet {
 
   public void setup() {
     maxTurn = -1;
-    myMousePressed = false;
     // choosing renderer from options - using P2D as default
     if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
       logger.debug("Using Java2D as Renderer");
@@ -109,17 +95,12 @@ public class FrameRenderer extends PApplet {
 
     // initial draw
     GuiConstants.generateFonts(this);
-    resize(this.width, this.height);
+    redraw();
     noLoop(); // prevent thread from starving everything else
 
   }
 
   public void draw() {
-    
-	if(shouldResize) {
-    	resize(this.displayWidth, this.displayHeight);
-    }
-    shouldResize = true;
     background.draw();
     guiBoard.draw();
     progressBar.draw();
@@ -151,21 +132,9 @@ public class FrameRenderer extends PApplet {
         && humanPlayerMaxTurn) {
       humanPlayer = true;
     }
-    isUpdated = true;
-    redraw();
-    noLoop();
   }
 
   public void requestMove(int maxTurn, EPlayerId id) {
-    while (!isUpdated) {
-      redraw();
-      try {
-        Thread.sleep(20);
-      } catch (InterruptedException e) {
-      }
-    }
-    //loop();
-    isUpdated = false;
     int turn = currentGameState.getTurn();
     this.id = id;
     if (turn % 2 == 1) {
@@ -178,8 +147,6 @@ public class FrameRenderer extends PApplet {
     // this.maxTurn = maxTurn;
     this.humanPlayer = true;
     humanPlayerMaxTurn = true;
-    redraw();
-    noLoop();
   }
 
   public Image getImage() {
@@ -188,40 +155,14 @@ public class FrameRenderer extends PApplet {
   }
 
   public void mouseClicked(MouseEvent e) {
-    loop();
-    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      int x = e.getX();
-      int y = e.getY();
-      int player;
-      if (id == EPlayerId.PLAYER_ONE) {
-        player = 0;
-      } else {
-        player = 1;
-      }
-    }
-    noLoop();
+    
   }
 
   public void mousePressed(MouseEvent e) {
-    loop();
-    if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      int x = e.getX();
-      int y = e.getY();
-      int player;
-      if (id == EPlayerId.PLAYER_ONE) {
-        player = 0;
-      } else {
-        player = 1;
-      }
-      /*
-       * mark possible moves
-       */
-    }
-    noLoop();
+    
   }
 
   public void mouseReleased(MouseEvent e) {
-    loop();
     if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       int x = e.getX();
       int y = e.getY();
@@ -237,17 +178,7 @@ public class FrameRenderer extends PApplet {
         move = new Move(position[0], position[1]);
         RenderFacade.getInstance().sendMove(move);
       }
-       
-    
-      myMousePressed = false;
-      /*try {
-        Thread.sleep(20);
-      } catch (Exception ex){
-        
-      }*/
-      redraw();
     }
-    noLoop();
   }
 
   private int[] getFieldCoordinates(int x, int y) {
@@ -269,16 +200,8 @@ public class FrameRenderer extends PApplet {
   }
 
   public void resize(int width, int height) {
-    //loop();
     background.resize(width, height);
     guiBoard.resize(width, height);
-    
-    shouldResize = false;
-    synchronized(background) {
-    	synchronized(guiBoard) {
-    		redraw();
-    	}
-    }
   }
 
   /*
@@ -287,9 +210,6 @@ public class FrameRenderer extends PApplet {
    * bringen.
    */
   public void setBounds(int x, int y, int width, int height) {
-    // System.out.println("got an setBounds- x:" + x + ",y: " + y +
-    // ",width: "
-    // + width + ",height: " + height);
     super.setBounds(x, y, width, height);
     this.resize(width, height);
   }
