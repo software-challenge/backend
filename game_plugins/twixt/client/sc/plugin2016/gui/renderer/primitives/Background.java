@@ -17,6 +17,7 @@ public class Background extends PrimitiveBase {
 	}
 	
 	public void draw(){
+	  resize(parent.displayWidth, parent.displayHeight);
 		parent.background(GuiConstants.colorBackGround);
 		parent.image(img, 0, 0);
 	}

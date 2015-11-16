@@ -1,6 +1,7 @@
 package sc.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -23,7 +24,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private final PresentationFacade presFac;
 	private final Properties lang;
 
-	private JPanel gameField;
+	private Panel gameField;
 	private GameControlBar buttonBar;
 	private boolean started;
 
@@ -175,8 +176,8 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * 
 	 * @return the new game field panel
 	 */
-	public JPanel recreateGameField() {
-		gameField = new JPanel();
+	public Panel recreateGameField() {
+		gameField = new Panel();
 		// gameField.setBorder(BorderFactory.createEtchedBorder());
 
 		this.removeAll();

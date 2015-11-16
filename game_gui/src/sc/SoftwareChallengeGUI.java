@@ -157,7 +157,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 		// add GUI components
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-		this.setJMenuBar(presFac.getMenuBar());
+		this.setMenuBar(presFac.getMenuBar());
 		this.add(presFac.getContextDisplay());
 		this.add(presFac.getStatusBar());
 

@@ -2,6 +2,7 @@ package sc.guiplugin.interfaces;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Panel;
 import java.io.IOException;
 
 import javax.swing.JPanel;
@@ -21,7 +22,7 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 *            JPanel instance on which the game should display
 	 * @param threeDimensional
 	 */
-	void setRenderContext(JPanel panel, boolean threeDimensional);
+	void setRenderContext(Panel panel, boolean threeDimensional);
 
 	/**
 	 * gets an Image of the current game state. External viewers that can not

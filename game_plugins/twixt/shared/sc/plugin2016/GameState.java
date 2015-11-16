@@ -222,9 +222,8 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert den Spieler, also eine {@code Player}-Objekt, der den aktuellen
-   * Abschnitt begonnen hat. Also den Spieler, der in der letzten Auswahlphase
-   * als erster Bauelemente waehlen musste und dann als zweiter gebaut hat.
+   * Liefert den Spieler, also eine {@code Player}-Objekt, der das Spiel
+   * begonnen hat.
    * 
    * @return Der Spieler, der momentan Startspieler ist.
    */
@@ -237,7 +236,7 @@ public class GameState implements Cloneable {
    * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
    * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
    * 
-   * @return Die Farbe des Spielers, der den aktuellen Abschnitt nicht begonnen
+   * @return Die Farbe des Spielers, der den aktuellen Abschnitt begonnen
    *         hat.
    */
   public PlayerColor getStartPlayerColor() {
