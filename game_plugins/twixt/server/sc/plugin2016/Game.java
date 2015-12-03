@@ -99,12 +99,12 @@ public class Game extends RoundBasedGameInstance<Player> {
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
           if(stats[0][0] != 23) {
-            winnerName = "Sieg durch eine längere Leitung.";
+            winnerName = "Sieg durch eine laengere Leitung.";
           }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
           if(stats[1][0] != 23) {
-            winnerName = "Sieg durch eine längere Leitung.";
+            winnerName = "Sieg durch eine laengere Leitung.";
           }
         }
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
@@ -115,12 +115,12 @@ public class Game extends RoundBasedGameInstance<Player> {
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
           if(stats[0][0] != 23) {
-            winnerName = "Sieg durch eine längere Leitung.";
+            winnerName = "Sieg durch eine laengere Leitung.";
           }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
           if(stats[1][0] != 23) {
-            winnerName = "Sieg durch eine längere Leitung.";
+            winnerName = "Sieg durch eine laengere Leitung.";
           }
         }
 
@@ -130,7 +130,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			next(gameState.getCurrentPlayer());
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);
-			String err = "Ungültiger Zug von '" + author.getDisplayName()
+			String err = "Ungueltiger Zug von '" + author.getDisplayName()
 					+ "'.\n" + e.getMessage() + ".";
 			gameState.endGame(author.getPlayerColor().opponent(), err);
 			logger.error(err);
