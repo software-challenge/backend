@@ -17,158 +17,157 @@ import com.rra.configuration.Settings;
 import com.rra.Logger;
 
 public class Producer
-	implements
-		Runnable
+  implements
+    Runnable
 {
-	private final Connection	conn;
-	private File				toWatch;
-	private File				toTmp;
+  private final Connection	conn;
+  private File				toWatch;
+  private File				toTmp;
 
-	public void setTmp(File folder)
-	{
-		this.toTmp = folder;
-	}
+  public void setTmp(File folder)
+  {
+    this.toTmp = folder;
+  }
 
-	public void setWatch(File folder)
-	{
-		this.toWatch = folder;
-	}
+  public void setWatch(File folder)
+  {
+    this.toWatch = folder;
+  }
 
-	public Producer(String hostname, int port) throws IOException
-	{
-		this.conn = new ConnectionFactory().newConnection(hostname, port);
-	}
+  public Producer(String hostname, int port) throws IOException
+  {
+    this.conn = new ConnectionFactory().newConnection(hostname, port);
+  }
 
-	private void publish(String message, String toQueue) throws IOException
-	{
-		String exchange = "";
+  private void publish(String message, String toQueue) throws IOException
+  {
+    String exchange = "";
 
-		Channel ch = conn.createChannel();
+    Channel ch = conn.createChannel();
 
-		if (exchange.equals(""))
-		{
-			ch.queueDeclare(toQueue);
-		}
-		
-		Logger.log(message);
-		Logger.log("published to queue: " + toQueue);
+    if (exchange.equals(""))
+      {
+        ch.queueDeclare(toQueue);
+      }
 
-		ch.basicPublish(exchange, toQueue,
-			MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
-		
-		ch.close();
-	}
+    Logger.log(message);
+    Logger.log("published to queue: " + toQueue);
 
-	private void free() throws IOException
-	{
-		this.conn.close();
-	}
+    ch.basicPublish(exchange, toQueue,
+                    MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
 
-	private static String	FOLDER_WATCH	= "w";
-	private static String	FOLDER_TMP		= "t";
+    ch.close();
+  }
 
-	public static void main(String[] args)
-	{
-		try
-		{
-			final Options o = new Options();
-			o.addOption(Settings.HOST_OPTION, true, "Server to connect to after launch");
-			o.addOption(FOLDER_WATCH, true, "Folder to watch");
-			o.addOption(FOLDER_TMP, true, "Tmp client folder");
+  private void free() throws IOException
+  {
+    this.conn.close();
+  }
 
-			CommandLineParser parser = new PosixParser();
-			CommandLine cmd = parser.parse(o, args);
-			String hostAddress = cmd.getOptionValue(Settings.HOST_OPTION);
-			String folder = cmd.getOptionValue(FOLDER_WATCH);
-			String tmp = cmd.getOptionValue(FOLDER_TMP);
+  private static String	FOLDER_WATCH	= "w";
+  private static String	FOLDER_TMP		= "t";
 
-			int portNumber = Settings.DEFAULT_PORT;
-			if (hostAddress == null)
-				hostAddress = Settings.DEFAULT_HOST;
-			if (folder == null || tmp == null)
-			{
-				Logger.logError("Folder to watch does not exist!");
-				System.exit(2);
-			}
+  public static void main(String[] args)
+  {
+    try
+      {
+        final Options o = new Options();
+        o.addOption(Settings.HOST_OPTION, true, "Server to connect to after launch");
+        o.addOption(FOLDER_WATCH, true, "Folder to watch");
+        o.addOption(FOLDER_TMP, true, "Tmp client folder");
 
-			final File f = new File(folder);
-			final File t = new File(tmp);
-			Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
-					+ portNumber);
+        CommandLineParser parser = new PosixParser();
+        CommandLine cmd = parser.parse(o, args);
+        String hostAddress = cmd.getOptionValue(Settings.HOST_OPTION);
+        String folder = cmd.getOptionValue(FOLDER_WATCH);
+        String tmp = cmd.getOptionValue(FOLDER_TMP);
 
-			final Producer p = new Producer(hostAddress, portNumber);
-			p.setWatch(f);
-			p.setTmp(t);
+        int portNumber = Settings.DEFAULT_PORT;
+        if (hostAddress == null)
+          hostAddress = Settings.DEFAULT_HOST;
+        if (folder == null || tmp == null)
+          {
+            Logger.logError("Folder to watch does not exist!");
+            System.exit(2);
+          }
 
-			new Thread(p).start();
-		}
-		catch (Exception e)
-		{
-			Logger.logError("Main thread caught exception: " + e);
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
+        final File f = new File(folder);
+        final File t = new File(tmp);
+        Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
+                   + portNumber);
 
-	public void run()
-	{
-		try
-		{
-			boolean active = true;
-			while (active)
-			{
-				String[] files = toWatch.list();
-				if (files != null && files.length > 0)
-				{
-					for (String file : files)
-					{
-						if (file.startsWith("stop"))
-							active = false;
+        final Producer p = new Producer(hostAddress, portNumber);
+        p.setWatch(f);
+        p.setTmp(t);
 
-						if (!file.endsWith(".zip"))
-							continue;
+        new Thread(p).start();
+      }
+    catch (Exception e)
+      {
+        Logger.logError("Main thread caught exception: " + e);
+        e.printStackTrace();
+        System.exit(1);
+      }
+  }
 
-						File oldZIP = new File(toWatch.getAbsolutePath()
-								+ File.separator + file);
-						File newZIP = new File(toTmp.getAbsolutePath()
-								+ File.separator + file);
+  public void run()
+  {
+    try
+      {
+        boolean active = true;
+        while (active)
+          {
+            String[] files = toWatch.list();
+            if (files != null && files.length > 0)
+              {
+                for (String file : files)
+                  {
+                    if (file.startsWith("stop"))
+                      active = false;
 
-						// Move zip to tmp folder
-						Runtime.getRuntime().exec(
-							new String[]
-							{ "/bin/mv", oldZIP.getAbsolutePath(),
-									newZIP.getAbsolutePath() });
+                    if (!file.endsWith(".zip"))
+                      continue;
 
-						String message = newZIP.getAbsolutePath();
-						publish(message, Settings.SWC_QUEUE);
-						publish("Start a fresh VM", Settings.VM_QUEUE);
-					}
-				}
-				try
-				{
-					Thread.sleep(5000);
-				}
-				catch (InterruptedException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			try
-			{
-				free();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
+                    File oldZIP = new File(toWatch.getAbsolutePath()
+                                           + File.separator + file);
+                    File newZIP = new File(toTmp.getAbsolutePath()
+                                           + File.separator + file);
 
-	}
+                    // Move zip to tmp folder
+                    Runtime.getRuntime().exec(
+                                              new String[]
+                                              { "/bin/mv", oldZIP.getAbsolutePath(),
+                                                newZIP.getAbsolutePath() });
+
+                    String message = newZIP.getAbsolutePath();
+                    publish(message, Settings.SWC_QUEUE);
+                  }
+              }
+            try
+              {
+                Thread.sleep(5000);
+              }
+            catch (InterruptedException e)
+              {
+                e.printStackTrace();
+              }
+          }
+      }
+    catch (IOException e)
+      {
+        e.printStackTrace();
+      }
+    finally
+      {
+        try
+          {
+            free();
+          }
+        catch (IOException e)
+          {
+            e.printStackTrace();
+          }
+      }
+
+  }
 }
