@@ -56,7 +56,7 @@ then
   echo "We should use the new VM!"
   echo $CLIENT_ZIP
   echo "Creating vm clone"
-  VBoxManage clonevm vmclient14.04 --snapshot snap5 --options link --name $VMNAME --register
+  VBoxManage clonevm vmclient14.04 --snapshot snap6 --options link --name $VMNAME --register
 else
   echo "We should use the old VM!"
   echo $CLIENT_ZIP
