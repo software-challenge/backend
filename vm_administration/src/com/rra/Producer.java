@@ -14,6 +14,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 import com.rra.configuration.Settings;
+import com.rra.Logger;
 
 public class Producer
 	implements
@@ -49,8 +50,8 @@ public class Producer
 			ch.queueDeclare(toQueue);
 		}
 		
-		System.out.println(message);
-		System.out.println("published to queue: " + toQueue);
+		Logger.log(message);
+		Logger.log("published to queue: " + toQueue);
 
 		ch.basicPublish(exchange, toQueue,
 			MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
@@ -86,13 +87,13 @@ public class Producer
 				hostAddress = Settings.DEFAULT_HOST;
 			if (folder == null || tmp == null)
 			{
-				System.err.println("Folder to watch does not exist!");
+				Logger.logError("Folder to watch does not exist!");
 				System.exit(2);
 			}
 
 			final File f = new File(folder);
 			final File t = new File(tmp);
-			System.out.println("Connecting to RabbitMQ at " + hostAddress + ":"
+			Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
 					+ portNumber);
 
 			final Producer p = new Producer(hostAddress, portNumber);
@@ -103,7 +104,7 @@ public class Producer
 		}
 		catch (Exception e)
 		{
-			System.err.println("Main thread caught exception: " + e);
+			Logger.logError("Main thread caught exception: " + e);
 			e.printStackTrace();
 			System.exit(1);
 		}
