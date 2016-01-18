@@ -73,34 +73,17 @@ VBoxManage startvm $VMNAME --type headless
 #
 VMTIME=0
 VMIP=""
-if [ "$NEW_VM" = true ]
-then
-  # new vm
-  while [ -z $VMIP ]; do
-    VMIP=$(VBoxManage guestcontrol $VMNAME execute --image "/home/scadmin/getIP.sh" --username scadmin --password scadmin --wait-stdout)
-    sleep 10
-    VMTIME=$[$VMTIME+10]
-    if [ $VMTIME -gt 180 ]; then
-      echo "VM did not start correctly, no IP found after $VMTIME, starting new VM!"
-      $HOME/bin/stopVM.sh $VMNAME
-      nohup $HOME/bin/startVM.sh $CLIENT_ZIP $VMLOG &
-      exit 0
-    fi
-  done
-else
-  #old vm
-  while [ -z $VMIP ]; do
-   VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-   sleep 10
-   VMTIME=$[$VMTIME+10]
-   if [ $VMTIME -gt 180 ]; then
+while [ -z $VMIP ]; do
+  VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
+  sleep 10
+  VMTIME=$[$VMTIME+10]
+  if [ $VMTIME -gt 180 ]; then
     echo "VM did not start correctly, no IP found after $VMTIME, starting new VM!"
     $HOME/bin/stopVM.sh $VMNAME
     nohup $HOME/bin/startVM.sh $CLIENT_ZIP $VMLOG &
     exit 0
-   fi
-  done
-fi
+  fi
+done
 
 echo "VM-IP found: $VMIP"
 
@@ -117,15 +100,11 @@ PING_PID=0
 
 echo "Waiting until timeout reached or client terminated..."
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
-  if [ "$NEW_VM" = true ]
-    then
-      VMIPNEW=$(VBoxManage guestcontrol $VMNAME execute --image "/home/scadmin/getIP.sh" --username scadmin --password scadmin --wait-stdout)
-    else
-      VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-  fi
+  VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
 
   if [ "$VMIPNEW" != "$VMIP" ]; then
-    echo "VM IP changed from $VMIP to $VMIPNEW. This is NOT GOOD!"
+    echo "VM IP changed from $VMIP to $VMIPNEW. This is NOT GOOD! Using new IP"
+    VMIP=$VMIPNEW
   fi
   CLIENT_PROCS=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ps -u clientexec | wc -l`
   CLIENT_STARTED=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ls /home/clientexec/ | grep started | wc -l`
@@ -148,7 +127,7 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
   fi
   if ([ $CLIENT_STARTED == "1" ]&&[ $CLIENT_PROCS -lt 2 ]);  then
     # this is the normal case and should be reached after the client has terminated
-    echo "Client was started and no client-processes were found. Therefore shutting down!"
+    echo "Client was started and now no more client-processes were found. Therefore shutting down!"
     break
   fi
   #if ([ $CLIENT_STARTED == "0" ] && [ $VMTIME -gt 60 ]); then
@@ -172,12 +151,6 @@ sleep 5
 # Copy the execution log from the VM to VMMain
 #
 echo "Saving log file"
-if [ "$NEW_VM" = true ]
-then
-  VMIP=$(VBoxManage guestcontrol $VMNAME execute --image "/home/scadmin/getIP.sh" --username scadmin --password scadmin --wait-stdout)
-else
-  VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-fi
 
 if [ -n $VMIP ]
 then
@@ -192,12 +165,7 @@ then
                 TRIES=$(($TRIES+1))
                 echo "Error copying log, try again $TRIES/5 in 5 seconds"
                 sleep 5
-                if [ "$NEW_VM" = true ]
-                then
-                  VMIP=$(VBoxManage guestcontrol $VMNAME execute --image "/home/scadmin/getIP.sh" --username scadmin --password scadmin --wait-stdout)
-                else
-                  VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-                fi
+                VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
         done
 else
         echo "no ip found for this vm"
