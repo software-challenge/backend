@@ -103,16 +103,20 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
   VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
 
   if [ "$VMIPNEW" != "$VMIP" ]; then
-    echo "VM IP changed from $VMIP to $VMIPNEW. This is NOT GOOD! Using new IP"
+    # guestproperty may return a wrong ip when the VM is not fully booted
+    echo "VM IP changed from $VMIP to $VMIPNEW. Using new IP"
     VMIP=$VMIPNEW
   fi
   CLIENT_PROCS=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ps -u clientexec | wc -l`
   CLIENT_STARTED=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ls /home/clientexec/ | grep started | wc -l`
-  if ([ $VM_BOOTED == "0" ]); then
+  # Always compare VM_BOOTED etc. with -lt or -gt against integers, the
+  # value itself is a string which may container spaces (because of
+  # the timeout.sh script)
+  if ([ $VM_BOOTED -lt 1 ]); then
     VM_BOOTED=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ls /home/scadmin/ | grep booted | wc -l`
     echo "VM not booted yet: $VM_BOOTED"
   fi
-  if ([ $VM_BOOTED == "1" ]); then
+  if ([ $VM_BOOTED -gt 0 ]); then
     echo "VM booted, copying client file"
     echo "executing scp scadmin@192.168.56.2:$CLIENT_ZIP scadmin@$VMIP:/home/clientexec/client/client.zip..."
     ssh scadmin@192.168.56.2 scp -i /home/scadmin/.ssh/client_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $CLIENT_ZIP scadmin@$VMIP:/home/clientexec/client/client.zip
@@ -125,7 +129,7 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
     PING_PID=$!
     VM_BOOTED="2"
   fi
-  if ([ $CLIENT_STARTED == "1" ]&&[ $CLIENT_PROCS -lt 2 ]);  then
+  if ([ $CLIENT_STARTED -gt 0 ]&&[ $CLIENT_PROCS -lt 2 ]);  then
     # this is the normal case and should be reached after the client has terminated
     echo "Client was started and now no more client-processes were found. Therefore shutting down!"
     break
