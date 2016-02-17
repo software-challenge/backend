@@ -58,6 +58,7 @@ VMIP=""
 
 # wait some time before trying to get the IP because the "right" IP is
 # only present after the system booted and contacted the DHCP server (this is a hack)
+echo "Waiting a minute to ensure that VM got IP from DHCP server..."
 sleep 60
 
 while [ -z $VMIP ]; do
@@ -130,7 +131,7 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
   #  nohup $HOME/bin/startVM.sh $CLIENT_ZIP $VMLOG &
   #  exit 0
   #fi
-  echo "VM not ready yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
+  echo "VM not ready or finished yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
   sleep $CHECK_INTERVAL
   VMTIME=$(($VMTIME+$CHECK_INTERVAL))
 done
