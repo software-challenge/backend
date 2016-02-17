@@ -94,45 +94,50 @@ echo "VM-IP found: $VMIP"
 VMTIME=0
 CHECK_INTERVAL=15
 CLIENT_TIMEOUT=300
-VM_BOOTED="0"
-CONSUMER_SSH_PID=0
-PING_PID=0
 
+# 0 = initial, no vm started,
+# 1 = VM was booted and accepts ssh connections,
+# 2 = VM was booted and client was copied and started
+VM_BOOTED=0
+
+CONSUMER_SSH_PID=0
+
+SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l scadmin"
 echo "Waiting until timeout reached or client terminated..."
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
-  VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
 
+  VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
   if [ "$VMIPNEW" != "$VMIP" ]; then
     # guestproperty may return a wrong ip when the VM is not fully booted
     echo "VM IP changed from $VMIP to $VMIPNEW. Using new IP"
     VMIP=$VMIPNEW
   fi
-  CLIENT_PROCS=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ps -u clientexec | wc -l`
-  CLIENT_STARTED=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ls /home/clientexec/ | grep started | wc -l`
-  # Always compare VM_BOOTED etc. with -lt or -gt against integers, the
-  # value itself is a string which may container spaces (because of
-  # the timeout.sh script)
-  if ([ $VM_BOOTED -lt 1 ]); then
-    VM_BOOTED=`$HOME/bin/timeout.sh ssh -q -o StrictHostKeyChecking=no -l scadmin $VMIP ls /home/scadmin/ | grep booted | wc -l`
-    echo "VM not booted yet: $VM_BOOTED"
+
+  if ([ $VM_BOOTED -eq 0 ]); then
+    echo "VM not booted yet, trying to connect"
+    ssh $SSH_OPTIONS $VMIP exit
+    # the exit code of ssh is only 0 when a connection was successful
+    if [ $? -eq 0 ]; then VM_BOOTED=1; fi
   fi
-  if ([ $VM_BOOTED -gt 0 ]); then
+  if ([ $VM_BOOTED -eq 1 ]); then
     echo "VM booted, copying client file"
     echo "executing scp scadmin@192.168.56.2:$CLIENT_ZIP scadmin@$VMIP:/home/clientexec/client/client.zip..."
-    ssh scadmin@192.168.56.2 scp -i /home/scadmin/.ssh/client_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $CLIENT_ZIP scadmin@$VMIP:/home/clientexec/client/client.zip
+    ssh scadmin@192.168.56.2 scp -i /home/scadmin/.ssh/client_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$CLIENT_ZIP" scadmin@$VMIP:/home/clientexec/client/client.zip
     echo "executing ssh -l scadmin 192.168.56.2 rm $CLIENT_ZIP..."
-    ssh -o StrictHostKeyChecking=no -l scadmin 192.168.56.2 rm $CLIENT_ZIP
+    ssh $SSH_OPTIONS 192.168.56.2 rm "$CLIENT_ZIP"
     echo "Starting client..."
-    ssh -i /home/vbox/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o StrictHostKeyChecking=no scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
+    ssh -i /home/vbox/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
     CONSUMER_SSH_PID=$!
-    ping -s $VMIP > $VMLOG.ping.log &
-    PING_PID=$!
-    VM_BOOTED="2"
+    VM_BOOTED=2
   fi
-  if ([ $CLIENT_STARTED -gt 0 ]&&[ $CLIENT_PROCS -lt 2 ]);  then
-    # this is the normal case and should be reached after the client has terminated
-    echo "Client was started and now no more client-processes were found. Therefore shutting down!"
-    break
+  if ([ $VM_BOOTED -eq 2 ]); then
+    CLIENT_PROCS=`ssh $SSH_OPTIONS $VMIP ps -u clientexec -o pid --no-headers | wc -l`
+    CLIENT_STARTED=`ssh $SSH_OPTIONS $VMIP ls /home/clientexec/ | grep started | wc -l`
+    if ([ $CLIENT_STARTED -gt 0 ]&&[ $CLIENT_PROCS -eq 0 ]);  then
+      # this is the normal case and should be reached after the client has terminated
+      echo "Client was started and now no more client-processes were found. Therefore shutting down!"
+      break
+    fi
   fi
   #if ([ $CLIENT_STARTED == "0" ] && [ $VMTIME -gt 60 ]); then
   #  echo "VM did start but not consume anything after $VMTIME seconds. Starting new VM!"
@@ -182,7 +187,6 @@ fi
 if [ $CONSUMER_SSH_PID -ne 0 ]; then
   echo "Killing ssh command connected to VM (PID: $CONSUMER_SSH_PID)"
   kill $CONSUMER_SSH_PID
-  kill $PING_PID
 fi
 $HOME/bin/stopVM.sh $VMNAME
 
