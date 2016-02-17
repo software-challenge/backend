@@ -68,28 +68,24 @@ fi
 echo "Starting vm $VMNAME"
 VBoxManage startvm $VMNAME --type headless
 
-# ----------------------------------------------------------------------
-# Getting the VM-IP
-#
 VMTIME=0
 VMIP=""
+
+# wait some time before trying to get the IP because the "right" IP is
+# only present after the system booted and contacted the DHCP server (this is a hack)
+sleep 60
+
 while [ -z $VMIP ]; do
   VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
   sleep 10
   VMTIME=$[$VMTIME+10]
   if [ $VMTIME -gt 180 ]; then
-    echo "VM did not start correctly, no IP found after $VMTIME, starting new VM!"
-    $HOME/bin/stopVM.sh $VMNAME
-    nohup $HOME/bin/startVM.sh $CLIENT_ZIP $VMLOG &
-    exit 0
+    echo "VM did not start correctly, no IP found after $VMTIME, terminating!"
+    exit -1
   fi
 done
 
 echo "VM-IP found: $VMIP"
-
-#----------------------------------------------------------------------
-# Waiting until the Client is started and no Client-Process found!
-#
 
 VMTIME=0
 CHECK_INTERVAL=15
@@ -108,7 +104,11 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
   VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
   if [ "$VMIPNEW" != "$VMIP" ]; then
-    # guestproperty may return a wrong ip when the VM is not fully booted
+    # guestproperty may return a wrong ip when the VM is not fully
+    # booted this might be a problem when the already retrieved IP is
+    # now assigned to another machine and some operations of this
+    # script already used it (e.g. to test if connection via ssh is
+    # possible)
     echo "VM IP changed from $VMIP to $VMIPNEW. Using new IP"
     VMIP=$VMIPNEW
   fi
