@@ -9,27 +9,30 @@
 log="/home/scadmin/logs/exec.log"
 /bin/echo "Running on `date`" > $log
 
-scpcommand=$1
+# Setting up permissions
+sudo /bin/chmod a+rw /dev/snd/seq >> $log
+
 file=${scpcommand##*/}
 clientname=${file%%.*}
 resultarchive="/home/scadmin/${clientname}.tar"
-zipfile="/home/scadmin/client/client.zip"
-startup="/home/scadmin/client/startup.sh"
-clientdir="/home/scadmin/client"
+zipfile="/home/clientexec/client/client.zip"
+startup="/home/clientexec/client/startup.sh"
+clientdir="/home/clientexec/client"
 
-echo "$scpcommand $zipfile" >> $log
-`$scpcommand $zipfile` >> $log 2>&1
+/bin/chown clientexec:clientexec $clientdir
+/bin/chmod 777 $clientdir
 
-/bin/mkdir $clientdir
-/bin/mv $zipfile $clientdir
+echo "Unzipping client" >> $log
 cd $clientdir
 /usr/bin/unzip $zipfile >> $log 2>&1
+/bin/chown -R clientexec:clientexec .
 /bin/chmod +x $startup
-/bin/bash +x $startup >> $log 2>&1
+echo "Starting client" >> $log
+echo "-----------------------" >> $log
+echo "" >> $log
+sudo -Hu clientexec /bin/bash +x $startup >> $log 2>&1 --
+echo "-----------------------" >> $log
 
 cd /home/scadmin/
-
-/bin/tar -czf $resultarchive client logs
-/bin/scp -i /home/scadmin/id_rsa $resultarchive scadmin@192.168.56.2:/home/scadmin/out/
 
 exit 0
