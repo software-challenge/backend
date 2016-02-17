@@ -6,22 +6,7 @@
 # Erstellt einen Klon der VMClient und fuehrt diesen 5 Minuten lang aus.
 # Danach loescht es den Klon wieder.
 #
-# (c) 2009-2011 software-challenge
-#
-# HISTORY
-#
-# 12.01.2016 svk Timeout fuer SSH-Aufrufe
-# 02.03.2015 fdu Support für die neuen ClientVMs
-# 06.03.2014 svk SSH-Prozess der das consumer.sh Skript startet wird vor beenden der VM gekillt
-# 17.06.2012 sca Keine ZFS-Clones mehr benutzen, sondern VirtualBox Snapshots und differencing VDI images
-# 17.01.2012 sca Korrekte Benennung der VM-Logfiles
-# 14.01.2012 sca Neustart der VM, wenn sie nich konsumiert
-# 27.01.2011 sca Historie begonnen
-#
-
 # ----------------------------------------------------------------------
-# globals
-#
 
 # VM name will be unique as client vms get started in intervals 5 seconds
 VMNAME='vmclient-'`/bin/date +%Y-%m-%d_%H-%M-%S`
