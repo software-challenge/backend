@@ -86,6 +86,7 @@ CONSUMER_SSH_PID=0
 
 SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l scadmin"
 echo "Waiting until timeout reached or client terminated..."
+WAIT=0
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
   VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
@@ -117,11 +118,31 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
     VM_BOOTED=2
   fi
   if ([ $VM_BOOTED -eq 2 ]); then
+    echo vmtime is $VMTIME
+    echo "testing if client process is there"
     CLIENT_PROCS=`ssh $SSH_OPTIONS $VMIP ps -u clientexec -o pid --no-headers | wc -l`
-    CLIENT_STARTED=`ssh $SSH_OPTIONS $VMIP ls /home/clientexec/ | grep started | wc -l`
-    if ([ $CLIENT_STARTED -gt 0 ]&&[ $CLIENT_PROCS -eq 0 ]);  then
+    echo return code from SSH: $?
+    echo result: "$CLIENT_PROCS"
+    if ([ $CLIENT_PROCS -eq 0 ]); then echo "this is interpreted as no client procs"; else echo "this is interpreted as client procs present"; fi
+    echo "testing if client was started"
+    ls_res=`ssh $SSH_OPTIONS $VMIP ls /home/clientexec/`
+    echo return code from SSH: $?
+    echo "ls result is: $ls_res"
+    CLIENT_STARTED=`echo $ls_res | grep started | wc -l`
+    echo result: "$CLIENT_STARTED"
+    if ([ $CLIENT_STARTED -gt 0 ]); then echo "this is interpreted as client started"; else echo "this is interpreted as no client started"; fi
+    if ([ $CLIENT_STARTED -gt 0 ]&&[ $CLIENT_PROCS -gt 0 ]);  then
+      echo "client was started but is still running, resetting wait time"
+      WAIT=0
+    fi
+    if [[ ($CLIENT_STARTED -gt 0) && ($CLIENT_PROCS -eq 0) && ($WAIT -lt 3) ]];  then
+      echo "client started and no processes, increment wait time"
+      WAIT=$(($WAIT+1))
+      echo "wait time is now $WAIT"
+    fi
+    if [[ ($CLIENT_STARTED -gt 0) && ($CLIENT_PROCS -eq 0) && ($WAIT -gt 2) ]];  then
       # this is the normal case and should be reached after the client has terminated
-      echo "Client was started and now no more client-processes were found. Therefore shutting down!"
+      echo "Client was started and now no more client-processes were found (and waited for $WAIT periods). Therefore shutting down!"
       break
     fi
   fi
@@ -131,7 +152,7 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
   #  nohup $HOME/bin/startVM.sh $CLIENT_ZIP $VMLOG &
   #  exit 0
   #fi
-  echo "VM not ready or finished yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
+  echo "VM not ready yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
   sleep $CHECK_INTERVAL
   VMTIME=$(($VMTIME+$CHECK_INTERVAL))
 done
