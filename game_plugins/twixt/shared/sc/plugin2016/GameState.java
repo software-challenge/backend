@@ -273,9 +273,7 @@ public class GameState implements Cloneable {
    * <ul>
    * <li>Zugzahl
    * <li>Welcher Spieler an der Reihe ist
-   * <li>Welcher Spieler erster der Spielphase ist
    * <li>Was der letzte Zug war
-   * <li>Was der aktuell erwartete Zug ist
    * <li>die Punkte der Spieler
    * </ul>
    * 
@@ -285,6 +283,7 @@ public class GameState implements Cloneable {
   public void prepareNextTurn(Move lastMove) {
     turn++;
     this.lastMove = lastMove;
+    this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
     switchCurrentPlayer();
     
   }
