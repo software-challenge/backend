@@ -85,8 +85,7 @@ VM_BOOTED=0
 CONSUMER_SSH_PID=0
 
 SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l scadmin"
-echo "Waiting until timeout reached or client terminated..."
-WAIT=0
+echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
   VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
@@ -118,41 +117,15 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
     VM_BOOTED=2
   fi
   if ([ $VM_BOOTED -eq 2 ]); then
-    echo vmtime is $VMTIME
-    echo "testing if client process is there"
-    CLIENT_PROCS=`ssh $SSH_OPTIONS $VMIP ps -u clientexec -o pid --no-headers | wc -l`
-    echo return code from SSH: $?
-    echo result: "$CLIENT_PROCS"
-    if ([ $CLIENT_PROCS -eq 0 ]); then echo "this is interpreted as no client procs"; else echo "this is interpreted as client procs present"; fi
-    echo "testing if client was started"
-    ls_res=`ssh $SSH_OPTIONS $VMIP ls /home/clientexec/`
-    echo return code from SSH: $?
-    echo "ls result is: $ls_res"
-    CLIENT_STARTED=`echo $ls_res | grep started | wc -l`
-    echo result: "$CLIENT_STARTED"
-    if ([ $CLIENT_STARTED -gt 0 ]); then echo "this is interpreted as client started"; else echo "this is interpreted as no client started"; fi
-    if ([ $CLIENT_STARTED -gt 0 ]&&[ $CLIENT_PROCS -gt 0 ]);  then
-      echo "client was started but is still running, resetting wait time"
-      WAIT=0
-    fi
-    if [[ ($CLIENT_STARTED -gt 0) && ($CLIENT_PROCS -eq 0) && ($WAIT -lt 3) ]];  then
-      echo "client started and no processes, increment wait time"
-      WAIT=$(($WAIT+1))
-      echo "wait time is now $WAIT"
-    fi
-    if [[ ($CLIENT_STARTED -gt 0) && ($CLIENT_PROCS -eq 0) && ($WAIT -gt 2) ]];  then
-      # this is the normal case and should be reached after the client has terminated
-      echo "Client was started and now no more client-processes were found (and waited for $WAIT periods). Therefore shutting down!"
+    echo "testing if ssh with consumer script (PID $CONSUMER_SSH_PID) is running"
+    if ps -p $CONSUMER_SSH_PID > /dev/null; then
+      echo "script is running, wait for it to stop"
+    else
+      echo "script is not running, we can finish"
       break
     fi
   fi
-  #if ([ $CLIENT_STARTED == "0" ] && [ $VMTIME -gt 60 ]); then
-  #  echo "VM did start but not consume anything after $VMTIME seconds. Starting new VM!"
-  #  $HOME/bin/stopVM.sh $VMNAME
-  #  nohup $HOME/bin/startVM.sh $CLIENT_ZIP $VMLOG &
-  #  exit 0
-  #fi
-  echo "VM not ready yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
+  echo "VM not ready or finished yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
   sleep $CHECK_INTERVAL
   VMTIME=$(($VMTIME+$CHECK_INTERVAL))
 done
@@ -170,21 +143,22 @@ echo "Saving log file"
 
 if [ -n $VMIP ]
 then
-        TRIES=0
-        while [[ $TRIES -lt 5 ]]; do
-                echo "Copying from $VMIP"
-                `ssh -q -l scadmin 134.245.253.5 ./getLog.sh $VMIP $VMNAME`
-                if [ $? -eq 0 ]; then
-                        echo "Successfully copied log"
-                        break
-                fi
-                TRIES=$(($TRIES+1))
-                echo "Error copying log, try again $TRIES/5 in 5 seconds"
-                sleep 5
-                VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-        done
+    TRIES=0
+    while [[ $TRIES -lt 5 ]]; do
+        echo "Copying from $VMIP"
+        `ssh -q -l scadmin 134.245.253.5 ./getLog.sh $VMIP $VMNAME`
+        if [ $? -eq 0 ]; then
+            echo "Successfully copied log"
+            break
+        fi
+        # this did not happen for a long time, but will leave it here
+        TRIES=$(($TRIES+1))
+        echo "Error copying log, try again $TRIES/5 in 5 seconds"
+        sleep 5
+        VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
+    done
 else
-        echo "no ip found for this vm"
+    echo "no ip found for this vm"
 fi
 
 # ----------------------------------------------------------------------
@@ -201,7 +175,3 @@ echo "Finished"
 ) >> $VMLOG 2>&1
 mv $VMLOG $HOME/log/vmclient/$DATEDIR/$VMNAME.log
 exit 0
-
-# ----------------------------------------------------------------------
-# end of file
-# ----------------------------------------------------------------------
