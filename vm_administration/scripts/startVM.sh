@@ -56,15 +56,13 @@ VBoxManage startvm $VMNAME --type headless
 VMTIME=0
 VMIP=""
 
-# wait some time before trying to get the IP because the "right" IP is
-# only present after the system booted and contacted the DHCP server (this is a hack)
-echo "Waiting a minute to ensure that VM got IP from DHCP server..."
-sleep 60
-
 while [ -z $VMIP ]; do
   VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-  sleep 10
-  VMTIME=$[$VMTIME+10]
+  # only sleep if no IP could be obtained
+  if [ -z $VMIP ]; then
+    sleep 10
+    VMTIME=$[$VMTIME+10]
+  fi
   if [ $VMTIME -gt 180 ]; then
     echo "VM did not start correctly, no IP found after $VMTIME, terminating!"
     exit -1
