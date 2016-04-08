@@ -101,7 +101,7 @@ public class ActionTimeout
 			return;
 		}
 
-		this.stopTimestamp = System.currentTimeMillis();
+		this.stopTimestamp = System.nanoTime() / 1000000; // in milliseconds
 		this.status = Status.STOPPED;
 
 		if (this.timeoutThread != null)
@@ -138,7 +138,7 @@ public class ActionTimeout
 			this.timeoutThread.start();
 		}
 
-		this.startTimestamp = System.currentTimeMillis();
+		this.startTimestamp = System.nanoTime() / 1000000; // in milliseconds
 		this.status = Status.STARTED;
 	}
 }
