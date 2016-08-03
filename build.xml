@@ -7,6 +7,7 @@
     <delete dir="${out.dir}" />
     <delete dir="game_server/build" />
     <delete dir="game_gui/build" />
+    <delete dir="v8interface/build" />
     <!--    old Plugins                        !-->
     <delete dir="game_plugins/tic_tac_toe/build" />
     <delete dir="game_players/hase_und_igel/build" />
@@ -59,6 +60,7 @@
         <echo message="Compiling Server and GUI..." />
         <ant dir="game_server" target="clean-build" inheritAll="false" />
         <ant dir="game_gui" target="clean-build" inheritAll="false" />
+        <ant dir="v8interface" target="clean-build" inheritAll="false" />
   </target>
 
   <target name="build" depends="scmversion,dependencies">
