@@ -1,0 +1,107 @@
+<project name="interface" basedir="." default="main">
+	<import file="../git-build.xml" />
+	
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="classes.dir" value="${build.dir}/bin" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="plugin.dir" value="${build.dir}/jar/plugins" />
+	<property name="lib.dir" value="./../software_challenge_sdk/lib" />
+	<property name="main-class" value="sc.SoftwareChallengeGUI" />
+	<property name="sdk.dir" value="./../software_challenge_sdk" />
+	<property name="server.dir" value="./../game_server" />
+	<property name="version.num" value="1.0" />
+	<tstamp>
+	     <format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+	</tstamp>
+
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+		<fileset dir="${server.dir}" includes="build/jar/*.jar" />
+		<fileset dir="${sdk.dir}" includes="build/jar/*.jar" />
+		<fileset dir="." includes="lib/*.jar" />
+	</path>
+
+	<path id="classpath.base">
+		<path refid="classpath.libs" />
+		<pathelement location="${classes.dir}" />
+	</path>
+
+	<pathconvert property="jar.classpath" pathsep="">
+		<mapper>
+			<chainedmapper>
+				<!-- remove absolute path -->
+				<flattenmapper />
+				<!-- add lib/ prefix -->
+				<globmapper from="*" to="lib/* " />
+			</chainedmapper>
+		</mapper>
+
+		<path refid="classpath.libs" />
+	</pathconvert>
+
+	<target name="clean">
+		<delete dir="build/bin" />
+	</target>
+
+	<target name="dependencies">
+		<echo message="Compiling SC dependencies" />
+		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/sixpack" target="clean-build" inheritAll="false" />
+		<ant dir="./../game_plugins/cartagena" target="clean-build" inheritAll="false" />
+		
+
+		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
+	</target>
+
+	<target name="compile" depends="scmversion">
+		<mkdir dir="${classes.dir}" />
+		<javac source="1.6" target="1.6" srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+				<attribute name="${manifest.code.version.key}" value="${version.num}-${TODAY}" />
+			</manifest>
+			<fileset dir="${classes.dir}" />
+			<fileset dir="src">
+				<include name="resource/**/*" />
+			</fileset>
+
+		</jar>
+
+		<delete dir="${plugin.dir}" />
+		<mkdir dir="${plugin.dir}" />
+		<copy todir="${plugin.dir}" flatten="true">
+			<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" excludes="hase_und_igel/**" /> <!-- ohne hui wegen lizenz, für hdfdf java versionen hinzugefügt !-->
+		</copy>
+	<!-- plugins zum debuggen in plugin ordner kopieren-->
+		<delete dir ="./plugins" />
+		<mkdir dir = ".plugins" />
+		<copy todir="./plugins" flatten="true">
+					<fileset dir="./../game_plugins" includes="*/build/jar/*.jar" />
+		</copy>
+
+<!-- have newest plugin as standard entry !-->
+		<copy tofile="${jar.dir}/game_gui.conf" file="game_gui.conf.newest_plugin_chosen"/> 
+
+		<delete dir="${jar.dir}/lib" />
+		<mkdir dir="${jar.dir}/lib" />
+		<copy todir="${jar.dir}/lib" flatten="true">
+			<path refid="classpath.libs" />
+		</copy>
+	</target>
+
+	<target name="build" depends="jar" />
+
+	<target name="clean-build" depends="clean,build" />
+
+	<target name="main" depends="dependencies,clean-build" />
+</project>
