@@ -149,6 +149,7 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \subsection{ACTION}
 \label{action}
 \begin{description}
+\item[I] Nummer der Aktion
 \item[M] M ist entweder 1 oder -1 für schneller bzw. langsamer
 \item[N] N ist entweder 1 oder -1 für rechts bzw. links
 \item[V] Anzahl der Felder die in Bewegungsrichtung zurückgelegt werden (-1 für Rückwärts)
@@ -156,10 +157,10 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \item[Y] Y Koordinate zum Feld auf welches das Schiff geschoben wird
 \end{description}
 \begin{verbatim}
-	<acceleration acc="M"/>
-	<turn direction="N"/>
-	<step distance="V"/>  
-	<push x="X" y="Y"/>
+	<acceleration step="I" acc="M"/>
+	<turn step="I" direction="N"/>
+	<step step="I" distance="V"/>  
+	<push step="I" x="X" y="Y"/>
 \end{verbatim}
 \end{description}
 
@@ -176,10 +177,10 @@ Damit sieht beispielsweise ein Laufzug so aus:
 <room roomId="RID">
   <data class="move">
     <actions>
-      <acceleration acc="1"/>
-      <step distance="3"/>
-      <turn direction="-1"/>
-      <step distance="1"/>
+      <acceleration step="0" acc="1"/>
+      <step step="1" distance="3"/>
+      <turn step="2" direction="-1"/>
+      <step step="3" distance="1"/>
     </actions>
     <hint content="Dies ist ein Hint."/>
     <hint content="noch ein Hint"/>
