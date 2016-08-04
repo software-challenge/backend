@@ -3,28 +3,59 @@ package v8interface;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class V8Interface implements Runnable{
-  LinkedBlockingQueue<String> buffer;
+  LinkedBlockingQueue<V8Turn> currentTurn;
 
   public V8Interface(){
-    buffer = new LinkedBlockingQueue<String>(1);
+    currentTurn = new LinkedBlockingQueue<V8Turn>();
   }
 
-  public String test(){
-    return "Hello World";
+  public V8Game createGame(){
+
   }
 
-  public String testAsync() throws InterruptedException{
-    Thread t = new Thread(this);
-    t.start();
-      return buffer.take();
+  public V8Game createGameFromReplay(String replay){
+
   }
 
-  public void run(){
-    try{
-      Thread.sleep(2000);
-      buffer.put("Hello Async World!");
-    }catch(InterruptedException ie){
+  public registerClient(V8Client c){
 
-    }
   }
+
+  public getClientFromPort(int port){
+    return new V8Client...;
+  }
+
+  public getClientFromJar(String JAR){
+    return new V8Client...;
+  }
+
+  public getHumanClient(){
+
+  }
+
+  public V8Turn getNextTurn(){
+    server.requestNewTurn(r + 1);
+    return currentTurn.take();
+  }
+
+  public V8Turn getPreviousTurn(){
+
+  }
+
+  public V8Turn getFirstTurn(){
+
+  }
+
+  public V8Turn getLastTurn(){
+
+  }
+
+  public V8Client getActivePlayer(){
+
+  }
+
+  public void setMove(V8Move move){
+
+  }
+
 }
