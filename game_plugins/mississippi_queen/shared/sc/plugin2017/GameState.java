@@ -1,6 +1,7 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -156,13 +157,18 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Gibt das Spielfeld zurueck
+   * Nur für den Server relevant. Gibt das Spielfeld zurueck
    * 
    * @return das Spielfeld
    */
-  public Board getBoard() {
-    // TODO Spielsegmente, die zurzeit nicht da sin hier verbergen?
+  protected Board getBoard() {
     return this.board;
+  }
+  
+  public Board getVisibleBoard() {
+    ArrayList<Tile> tiles = this.board.getVisibleTiles();
+    Board visibleBoard = new Board(tiles);
+    return visibleBoard;
   }
 
   /**
@@ -277,7 +283,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Simuliert einen uebergebenen Zug. Dabei werden folgende Informationen
+   * Simuliert einen uebergebenen Zug. Dabei werden nur folgende Informationen
    * aktualisiert:
    * <ul>
    * <li>Zugzahl
@@ -290,8 +296,17 @@ public class GameState implements Cloneable {
    *          auszufuehrender Zug
    */
   public void prepareNextTurn(Move lastMove) {
-    turn++; // TODO check, eventuell neue tiles aufdecken
+    turn++;
     this.lastMove = lastMove;
+    int firstTile = Math.min(red.getTile(), blue.getTile());
+    int lastTile = Math.max(red.getTile(), blue.getTile());
+    for (Tile tile : board.getTiles()) {
+      if(tile.getIndex() < firstTile || tile.getIndex() > lastTile + 1) {
+        tile.setVisibility(false);
+      } else {
+        tile.setVisibility(true);
+      }
+    }
     // wenn auf einen Sandbank abgedrängt wird, gibt es keine Extradrehung
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBAR)) {
       freeTurn = true;
@@ -315,13 +330,108 @@ public class GameState implements Cloneable {
   /**
    * Liefert eine Liste aller aktuell erlaubten Teilzuege, des Spielers der
    * aktuell an der Reihe ist.
-   * 
+   * @param coal Anzahl der für die Aktion verbrauchten Kohleeinheiten.
+   * @param movement Die Anzahl der Bewegungspunkte, die verwendet werden sollen, falls sich bewegt wird
    * @return Liste erlaubter Teilzuege
    */
-  public List<Action> getPossibleActions() {
+  public List<Action> getPossibleActions(int movement, int coal, boolean acceleration) { //TODO Test schreiben
     List<Action> actions = new ArrayList<Action>();
-    
+    actions.add(getPossibleMovesInDirection(getCurrentPlayer().getDirection(), movement));
+    actions.addAll(getPossibleTurnsWithCoal(coal));
+    actions.addAll(getPossiblePushs(movement));
+    if(acceleration) {
+      actions.addAll(getPossibleAccelerations(coal));
+    }
     return actions;
+  }
+
+  /**
+   * Liefert alle Becshleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
+   * @param coal Kohle die für Beschleunigung benötigt wird.
+   * @return Liste aller Beschleunigungsaktionen
+   */
+  public List<Acceleration> getPossibleAccelerations(int coal) {
+    ArrayList<Acceleration> acc = new ArrayList<Acceleration>(); 
+    for(int i = 0; i <= coal; i++) {
+      acc.add(new Acceleration(1 + i));
+      acc.add(new Acceleration(-1 - i));
+    }
+    return acc;
+  }
+
+  /**
+   * Liefert alle möglichen Abdrängaktionen, die mit den Bewegungspunkten möglich sind.
+   * @param movement Anzahl der verfügbaren Bewegungspunkte
+   * @return Alle Abdrängaktionen
+   */
+  public List<Push> getPossiblePushs(int movement) {
+    ArrayList<Push> push = new ArrayList<Push>(); 
+    Field from = getCurrentPlayer().getField(getVisibleBoard());
+    if(from.getType() == FieldType.SANDBAR) { // niemand darf von einer Sandbank berunterpushen.
+      return push;
+    }
+    int direction = getCurrentPlayer().getDirection();
+    for(int i = 0;i < 6; i++) {
+      Field to = from.getFieldInDirection(i, getVisibleBoard());
+      if(to != null && i != GameState.getOppositeDirection(direction) && to.isPassable() && movement >= 1) {
+        if(to.getType() == FieldType.LOG && movement >= 2) {
+          push.add(new Push(i));
+        } else if(to.getType() != FieldType.LOG) {
+          push.add(new Push(i));
+        }
+      }
+    }
+    return push;
+  }
+
+  /**
+   * Liefert alle Züge, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
+   * @param coal maximal benötigte Kohleeinheiten
+   * @return Liste aller Drehaktionen
+   */
+  public List<Turn> getPossibleTurnsWithCoal(int coal) {
+    ArrayList<Turn> turns = new ArrayList<Turn>(); 
+    int start = freeTurn ? 2 : 1;
+    for(int i = 0; i <= coal; i++) {
+      turns.add(new Turn(start + i));
+      turns.add(new Turn(-start - i));
+    }
+    return turns;
+  }
+
+  /**
+   * Gibt einen Bewegungsaktion zurück, falls dieser Zug in eine bestimmte Richtung
+   * mit einer festen Anzahl von Bewegungspunkten möglich ist. Gibt null zurück, falls Zug nicht möglich
+   * @param direction
+   * @param movement
+   * @return
+   */
+  public Step getPossibleMovesInDirection(int direction, int movement) {
+    Step step = null;
+    board = getVisibleBoard();
+    Field start = getCurrentPlayer().getField(board);
+    int i = 0;
+    while(movement > 0) {
+      i++;
+      Field next = start.getFieldInDirection(direction, board);
+      if(next != null && next.isPassable()) {
+        movement--;
+        if(next.getType() == FieldType.LOG) { // das Überqueren eines Baumstammfeldes verbraucht doppelt so viele Bewegungspunkte
+          movement--;
+        } else {
+          if(next.getType() == FieldType.SANDBAR) {
+            step = new Step(i);
+            return step;
+          }
+        }
+      } else {
+        return step;
+      }
+    }
+    if(movement == 0) { // falls alle Punkte verbraucht wurden, gib den Zug zurück
+      step = new Step(i);
+    }
+    return step;
   }
 
   /**
@@ -466,9 +576,50 @@ public class GameState implements Cloneable {
     return freeTurn;
   }
 
-  public int getOppositeBoatDirection(int direction) {
+  public static int getOppositeDirection(int direction) {
     direction += 3;
     return direction % 6;
+  }
+  
+  /**
+   * Setzt ein Schiff auf das Spielfeld und entfernt das alte. Diese Methode ist nur für den
+   * Server relevant, da hier keine Fehlerüberprüfung durchgeführt wird. Zum
+   * Ausführen von Zügen die
+   * {@link sc.plugin2017.Move#perform(GameState, Player) perform}-Methode
+   * benutzen.
+   * 
+   * @param x x-Koordinate
+   * @param y y-Koordinate
+   *          des Feldes, auf das gesetzt wird
+   * @param player der setzende Spieler
+   */
+  protected void put(int x, int y, Player player) {
+    player.put(x, y);
+  }
+
+  /**
+   * Nur für den Server relevant
+   * @param x
+   * @param y
+   * @param player
+   */
+  protected void removePassenger(Player player) {
+    int x = player.getX();
+    int y = player.getY();
+    if(board.getField(x, y).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3) {
+      board.getField(x, y).getFieldInDirection(0, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x, y).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4) {
+      board.getField(x, y).getFieldInDirection(1, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x, y).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5) {
+      board.getField(x, y).getFieldInDirection(2, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x, y).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0) {
+      board.getField(x, y).getFieldInDirection(3, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x, y).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1) {
+      board.getField(x, y).getFieldInDirection(4, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x, y).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2) {
+      board.getField(x, y).getFieldInDirection(5, board).setType(FieldType.BLOCKED);
+    }
+    player.setPassenger(player.getPassenger() + 1);
   }
 }
 

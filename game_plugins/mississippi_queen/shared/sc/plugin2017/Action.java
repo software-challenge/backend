@@ -14,5 +14,4 @@ public abstract class Action {
   public int order;
   
   public abstract int perform(GameState state, Player player) throws InvalidMoveException;
-  
 }

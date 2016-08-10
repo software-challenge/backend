@@ -236,6 +236,39 @@ public class Player extends SimplePlayer implements Cloneable {
   }
   
   public Field getField(Board board) {
-    return board.getField(x, y);
+    return board.getTiles().get(tile).getField(x, y);
+  }
+  
+  /**
+   * Setzt ein Schiff auf das Spielfeld und entfernt das alte. Diese Methode ist nur für den
+   * Server relevant, da hier keine Fehlerüberprüfung durchgeführt wird. Zum
+   * Ausführen von Zügen die
+   * {@link sc.plugin2017.Move#perform(GameState, Player) perform}-Methode
+   * benutzen.
+   * 
+   * @param x x-Koordinate
+   * @param y y-Koordinate
+   *          des Feldes, auf das gesetzt wird
+   */
+  protected void put(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+
+  /**
+   * Zeigt an, ob auf dem derzeitigen Feld des Spielers ein Passagier mitgenommen werden kann.
+   * @param board Spielfeld
+   * @return wahr, falls ein Passagier auf der Position des Spielers eingesammelt werden kann.
+   */
+  public boolean canPickupPassenger(Board board) {
+    if((getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3 ||
+        getField(board).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4 ||
+        getField(board).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5 ||
+        getField(board).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0 ||
+        getField(board).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1 ||
+        getField(board).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2) && passenger < 2) {
+      return true;
+    }
+    return false;
   }
 }

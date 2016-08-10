@@ -33,18 +33,23 @@ public class Acceleration extends Action {
       throw new InvalidMoveException("Geschwindigkeit zu hoch oder zu niedrig");
     }
     int usedCoal = 0;
-    if(acc > 1) {
-      usedCoal = acc - 1;
-    } else if(acc < -1) {
-      usedCoal = -acc - 1;
-    }
-    player.setCoal(player.getCoal() - usedCoal); // geht das hier irgendwie besser? TODO oder eher über farbe des 
-    // übergebenen Spieler s machen und dann nur im state ändern
-    state.getCurrentPlayer().setCoal(player.getCoal());
+    usedCoal = Math.abs(acc) - 1;
+    
+    player.setCoal(player.getCoal() - usedCoal);
     player.setSpeed(speed);
-    state.getCurrentPlayer().setSpeed(speed);
       
     return 0;
+  }
+  
+  public Acceleration clone() {
+    return new Acceleration(this.acc);
+  }
+  
+  public boolean equals(Object o) {
+    if(o instanceof Acceleration) {
+      return (this.acc == ((Acceleration) o).acc);
+    }
+    return false;
   }
 
 }

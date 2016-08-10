@@ -29,8 +29,19 @@ public class Turn extends Action {
     }
     int currentDirection = player.getDirection();
     currentDirection += direction;
-    currentDirection = ((currentDirection % 6/*Anzahl der Richtungen*/) + 6) % 6; // echtes Modulo nicht java modulo
+    currentDirection = (currentDirection + 6/*Anzahl der Richtungen*/) % 6; // echtes Modulo nicht java modulo
     return Math.abs(direction);
+  }
+  
+  public Turn clone() {
+    return new Turn(this.direction);
+  }
+  
+  public boolean equals(Object o) {
+    if(o instanceof Turn) {
+      return (this.direction == ((Turn) o).direction);
+    }
+    return false;
   }
 
 }

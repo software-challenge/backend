@@ -1,5 +1,6 @@
 package sc.plugin2017;
 
+import java.lang.Thread.State;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,39 +94,47 @@ public class Game extends RoundBasedGameInstance<Player> {
         
 
         PlayerColor winner = null;
-        String winnerName = "";
-        System.out.println(stats[0][0]);
-        System.out.println(stats[1][0]);
+        String winningReason = "";
+        System.out.println(stats[0][0] + ", " + stats[0][1]);
+        System.out.println(stats[1][0] + ", " + stats[1][1]);
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
-          if(stats[0][0] != 23) {
-            winnerName = "Sieg durch eine laengere Leitung.";
+          if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+            winningReason = "Ein Spieler ist im Ziel";
+          } else {
+            winningReason = "Sieg durch mehr Passagiere und Strecke";
           }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
-          if(stats[1][0] != 23) {
-            winnerName = "Sieg durch eine laengere Leitung.";
+          if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+            winningReason = "Ein Spieler ist im Ziel";
+          } else {
+            winningReason = "Sieg durch mehr Passagiere und Strecke";
           }
         }
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
-            + winnerName);
-      } else if(stats[0][0] == Constants.NUMBER_OF_TILES - 1 || stats[1][0] == Constants.NUMBER_OF_TILES - 1) {
+            + winningReason);
+      } else if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
         PlayerColor winner = null;
-        String winnerName = "";
-        if (stats[0][0] > stats[1][0]) {
+        String winningReason = "";
+        if (expectedPlayer.getPlayerColor() == PlayerColor.RED) {
           winner = PlayerColor.RED;
-          if(stats[0][0] != 23) {
-            winnerName = "Sieg durch eine laengere Leitung.";
-          }
-        } else if (stats[0][0] < stats[1][0]) {
+        } else if (expectedPlayer.getPlayerColor() == PlayerColor.BLUE) {
           winner = PlayerColor.BLUE;
-          if(stats[1][0] != 23) {
-            winnerName = "Sieg durch eine laengere Leitung.";
-          }
         }
-
-        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n"
-            + "Ein Spieler hat seine Leitung vollendet. " + winnerName);
+        winningReason = "Ein Spieler ist im Ziel";
+        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n" + winningReason);
+      } else if(expectedPlayer != gameState.getStartPlayer() &&
+          Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
+        PlayerColor winner = null;
+        String winningReason = "";
+        if(gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
+          winner = PlayerColor.RED;
+        } else {
+          winner = PlayerColor.BLUE;
+        }
+        winningReason = "Ein Spieler wurde abgehängt.";
+        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n" + winningReason);
       }
 			next(gameState.getCurrentPlayer());
 		} catch (InvalidMoveException e) {
@@ -209,9 +218,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 		int matchPoints = 1;
 		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor()
 				.opponent());
-		if (stats[0] > oppPoints[0])
+		if (stats[0] > oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] > oppPoints[1]))
 			matchPoints = 2;
-		else if (stats[0] < oppPoints[0])
+		else if (stats[0] < oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] < oppPoints[1]))
 			matchPoints = 0;
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
 				stats[0]) : new PlayerScore(ScoreCause.REGULAR,
