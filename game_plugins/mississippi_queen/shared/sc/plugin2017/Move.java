@@ -42,14 +42,33 @@ public class Move implements Cloneable {
   }
 
   /**
-   * erzeugt eine Deepcopy dieses Objektes TODO
+   * erzeugt eine Deepcopy dieses Objektes
    * 
    * @return ein neues Objekt mit gleichen Eigenschaften
    * @throws CloneNotSupportedException falls nicht geklont werden kann
    */
   @Override
   public Object clone() throws CloneNotSupportedException {
-    Move clone = new Move(this.actions);
+    ArrayList<Action> clonedActions = new ArrayList<Action>();
+    for (Action action : actions) {
+      if(action.getClass() == Acceleration.class) {
+        Acceleration clonedAction = ((Acceleration) action).clone();
+        clonedActions.add(clonedAction);
+      }
+      if(action.getClass() == Push.class) {
+        Push clonedAction = ((Push) action).clone();
+        clonedActions.add(clonedAction);
+      }
+      if(action.getClass() == Step.class) {
+        Step clonedAction = ((Step) action).clone();
+        clonedActions.add(clonedAction);
+      }
+      if(action.getClass() == Turn.class) {
+        Turn clonedAction = ((Turn) action).clone();
+        clonedActions.add(clonedAction);
+      }
+    }
+    Move clone = new Move(clonedActions); 
     if (this.hints != null)
       clone.hints = new LinkedList<DebugHint>(this.hints);
     return clone;
@@ -116,11 +135,31 @@ public class Move implements Cloneable {
    *          ausfuehrender Spieler
    * @throws InvalidMoveException
    *           geworfen, wenn der Zug ungueltig ist, also nicht ausfuehrbar
+   *           oder wenn der Zug unsinnig ist (Drehung um mehr als die Hälfte, Drehung oder Laufen um 0)
+   *           oder wenn die Aktionen im Zug nicht nach der Reihenfolge sortiert sind
    */
   public void perform(GameState state, Player player) throws InvalidMoveException {
     int freeTurns = state.isFreeTurn() ? 2 : 1;
+    int beginningSpeed = player.getSpeed();
     int totalMovement = 0;
+    int order = 0;
+    boolean onEnemy;
     for(Action action : actions) {
+      onEnemy = player.getX() == state.getOtherPlayer().getX() && 
+          player.getY() == state.getOtherPlayer().getY();
+      if(onEnemy && action.getClass() != Push.class) {
+        throw new InvalidMoveException("Wenn du auf einem gegnerischen Schiff landest,"
+            + " muss darauf eine Abdrängaktion folgen.");
+      }
+      Action lastAction = actions.get(action.order - 1);
+      if(lastAction != null && lastAction.getClass() == Step.class) {
+        if(((Step) lastAction).endsTurn) {
+          throw new InvalidMoveException("Zug auf eine Sandbank muss letzte Aktion sein.");
+        }
+      }
+      if(order != action.order) {
+        throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
+      }
       if(action.getClass() == Turn.class) {
         if(player.getField(state.getBoard()).getType() == FieldType.SANDBAR) {
           throw new InvalidMoveException("Du kannst nicht auf einer Sandbank drehen");
@@ -131,18 +170,23 @@ public class Move implements Cloneable {
         if(acc.order != 0) {
           throw new InvalidMoveException("Du kannst nur in der ersten Aktion beschleunigen.");
         }
-        action.perform(state, player); // coal is decreased in perform
+        acc.perform(state, player); // coal is decreased in perform
       } else {
         totalMovement += action.perform(state, player); // count distance
       }
+      ++order;
+    }
+    if(beginningSpeed == 1 && player.canPickupPassenger(state.getBoard())) {
+      state.removePassenger(player);
     }
     if(freeTurns < 0) { // check coal
       player.setCoal(player.getCoal() + freeTurns);
-      if(player.getCoal() > 0) {
-        throw new InvalidMoveException("Nicht genug Kohle für den Zug vorhanden.");
-      }
     }
-    if(totalMovement != player.getSpeed()) { // check speed
+    if(player.getCoal() < 0) {
+      throw new InvalidMoveException("Nicht genug Kohle für den Zug vorhanden.");
+    }
+    if(totalMovement > player.getSpeed() || 
+        (totalMovement < player.getSpeed() && player.getField(state.getBoard()).getType() != FieldType.SANDBAR)) { // check speed
       throw new InvalidMoveException("Es sind noch Bewegungspunkte übrig oder es wurden zu viele verbraucht.");
     }
   }

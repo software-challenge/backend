@@ -86,7 +86,7 @@ public class Field {
 	 * Erzeugt eine Deepcopy eines Feldes
 	 */
 	public Field clone() {
-		Field clone = new Field(this.getType(), this.getX(), this.getY());
+		Field clone = new Field(this.getType(), this.getX(), this.getY(), this.points);
 		return clone;
 	}
 
@@ -113,14 +113,24 @@ public class Field {
     return this.points;
   }
 
-  public Field getFieldInDirection(int direction) {
-    // TODO Auto-generated method stub
+  public Field getFieldInDirection(int direction, Board board) {
+    switch (direction) {
+    case 0:
+      return board.getField(x+1, y);
+    case 1:
+      return board.getField((y % 2 == 0) ? x + 1 : x, y - 1);
+    case 2:
+      return board.getField((y % 2 == 0) ? x : x - 1, y - 1);
+    case 3:
+      return board.getField(x - 1, y);
+    case 4:
+      return board.getField((y % 2 == 0) ? x : x - 1, y + 1);
+    case 5:
+      return board.getField((y % 2 == 0) ? x + 1 : x, y + 1);  
+    default:
+      break;
+    }
     return null;
-  }
-
-  public boolean isNeighborOf(Field enemy) {
-    // TODO Auto-generated method stub
-    return false;
   }
 
   public boolean isPassable() {

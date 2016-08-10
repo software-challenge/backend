@@ -18,7 +18,7 @@ public class Board {
 	/**
 	 * Liste der Spielsegmente
 	 */
-  private List<Tile> tiles;
+  private ArrayList<Tile> tiles;
   
 
   /**
@@ -26,6 +26,10 @@ public class Board {
 	 */
   public Board() {
     this.init();
+  }
+  
+  public Board(ArrayList<Tile> tiles) {
+    this.tiles = tiles;
   }
 
   /**
@@ -88,9 +92,11 @@ public class Board {
    */
   public Field getField(int x, int y) {
     for(Tile tile : tiles) {
-      Field field = tile.getField(x, y);
-      if(field != null) {
-        return field;
+      if(tile.isVisible()) {
+        Field field = tile.getField(x, y);
+        if(field != null) {
+          return field;
+        }
       }
     }
     return null;
@@ -100,42 +106,52 @@ public class Board {
   * Equals Methode fuer ein Spielfeld
   */
   public boolean equals(Object o) {
-    // TODO 
-    return true;
+    if(o instanceof Board) {
+      Board board = (Board) o;
+      ArrayList<Tile> tiles1 = board.tiles;
+      ArrayList<Tile> tiles2 = this.tiles;
+      if(tiles1.size() != tiles2.size()) {
+        return false;
+      }
+      for(int i = 0; i < tiles1.size(); i++) {
+        if(!tiles1.get(i).equals(tiles2.get(i))) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
   /**
 	 * Erzeug eine Deepcopy eines Spielbretts
 	 */
   public Object clone() {
-    Board clone = new Board(false);
-    // TODO 
+    ArrayList<Tile> clonedTiles = new ArrayList<Tile>();
+    for (Tile tile : tiles) {
+      Tile clonedTile = tile.clone();
+      clonedTiles.add(clonedTile);
+    }
+    Board clone = new Board(clonedTiles); 
     return clone;
   }
-
-  /**
-   * Setzt ein Schiff auf das Spielfeld und entfernt das alte. Diese Methode ist nur für den
-   * Server relevant, da hier keine Fehlerüberprüfung durchgeführt wird. Zum
-   * Ausführen von Zügen die
-   * {@link sc.plugin2017.Move#perform(GameState, Player) perform}-Methode
-   * benutzen.
-   * 
-   * @param x x-Koordinate
-   * @param y y-Koordinate
-   *          das Feld, auf das gesetzt wird
-   * @param player der setzende Spieler
-   */
-  public void put(int x, int y, Player player) {
-    // TODO tile und x sowie y setzen, eventuell eventuell nach Gamestate auslagern, da hier keine Spielerinformationen sind
-  }
-
   
   /**
    * Gibt die Felder eines Spielbretts zurück
    * @return fields
    */
-  public List<Tile> getTiles() {
+  protected ArrayList<Tile> getTiles() {
     return this.tiles;
+  }
+
+  public ArrayList<Tile> getVisibleTiles() {
+    ArrayList<Tile> visibleTiles = new ArrayList<Tile>(this.tiles); 
+    for (Tile tile : visibleTiles) {
+      if(!tile.isVisible()) {
+        visibleTiles.remove(tile);
+      }
+    }
+    return visibleTiles;
   }
   
 }

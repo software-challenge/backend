@@ -12,7 +12,7 @@ public class Step extends Action {
    */
   public int distance;
   /**
-   * Zeigt an, um wie viel die Geschwindigkeit am Ende des Zuges verrinegert werden soll
+   * Zeigt an, um wie viele Punkte die Geschwindigkeit am Ende des Zuges verringert werden soll
    */
   protected int reduceSpeed;
   /**
@@ -32,35 +32,37 @@ public class Step extends Action {
     Field start = player.getField(state.getBoard());
     List<Field> nextFields = new ArrayList<Field>();
     int direction = player.getDirection();
-    if(distance == 0 || distance > 6) {
+    if(distance == 0 || distance > 6 || distance < -1) {
       throw new InvalidMoveException("Zurückgelegte Distanz ist ungültig.");
     }
     if(distance == -1) { // Fall rückwärts von Sandbank
       if(start.getType() != FieldType.SANDBAR) {
         throw new InvalidMoveException("Rückwärtszug ist nur von Sandbank aus möglich.");
       }
-      Field next = start.getFieldInDirection(state.getOppositeBoatDirection(direction));
+      Field next = start.getFieldInDirection(GameState.getOppositeDirection(direction), state.getBoard());
       if(next == null || next.getType() == FieldType.LOG || !next.isPassable()) {
         throw new InvalidMoveException("Der Weg ist versperrt");
       }
-      state.getBoard().put(next.getX(), next.getY(), player);
+      state.put(next.getX(), next.getY(), player);
+      return 1;
     } else {
       nextFields.add(start);
       // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
       for(int i = 0; i < distance; i++) {
-        nextFields.add(nextFields.get(0).getFieldInDirection(player.getDirection()));
+        nextFields.add(nextFields.get(i).getFieldInDirection(player.getDirection(), state.getBoard()));
         Field checkField = nextFields.get(i);
-        if(!checkField.isPassable() || state.getOtherPlayer().getField(state.getBoard()).equals(checkField)) {
+        if(!checkField.isPassable() || 
+            (state.getOtherPlayer().getField(state.getBoard()).equals(checkField) && i != distance -1)) {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
         if(checkField.getType() == FieldType.SANDBAR) {
           reduceSpeed = player.getSpeed() - 1;
           endsTurn = true;
-          if(i + 1 != distance) {
+          if(i != distance - 1) {
             // Zug endet hier, also darf nicht weitergelaufen werden
             throw new InvalidMoveException("Zug sollte bereits enden, da auf Sandbank gefahren wurde.");
           }
-          return player.getSpeed();
+          return neededSpeed + 1;
         } else if(checkField.getType() == FieldType.LOG) {
           reduceSpeed++;
           neededSpeed += 2;
@@ -71,6 +73,17 @@ public class Step extends Action {
       }
     }
     return neededSpeed;
+  }
+  
+  public Step clone() {
+    return new Step(this.distance);
+  }
+  
+  public boolean equals(Object o) {
+    if(o instanceof Step) {
+      return (this.distance == ((Step) o).distance);
+    }
+    return false;
   }
 
 }
