@@ -18,10 +18,15 @@ public class Acceleration extends Action {
   public Acceleration(int acc) {
     this.acc = acc;
   }
+  
+  public Acceleration(int acc, int order) {
+    this.acc = acc;
+    this.order = order;
+  }
   /**
    * 
    * @param state Gamestate auf dem Beschleunigung ausgeführt wird
-   * @param Spieler für den Beschleunigung ausgeführt wird
+   * @param player Spieler für den Beschleunigung ausgeführt wird
    * 
    * @return nicht relevant
    */
@@ -55,6 +60,10 @@ public class Acceleration extends Action {
       return (this.acc == ((Acceleration) o).acc);
     }
     return false;
+  }
+  
+  public String toString() {
+    return "Beschleuningung um " + acc;
   }
 
 }

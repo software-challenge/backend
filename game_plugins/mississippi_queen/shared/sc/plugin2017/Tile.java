@@ -28,14 +28,15 @@ public class Tile {
   private int direction;
   
   /**
-   * 
-   * @param index
-   * @param direction
-   * @param x
-   * @param y
-   * @param passengers
-   * @param blockedFields
-   * @param specialFields
+   * Nur fuer den Server relevant
+   * generates a new tile
+   * @param index index of tile
+   * @param direction direction of tile
+   * @param x x coordinate of middle
+   * @param y y coordinate of middle
+   * @param passengers passengers on tile
+   * @param blockedFields blocked fields in tile
+   * @param specialFields special fields (log, sandbar) on tile
    */
   protected Tile(int index, int direction, int x, int y, int passengers, int blockedFields, int specialFields) {
     this.index = index;

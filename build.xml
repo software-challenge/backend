@@ -59,8 +59,8 @@
         <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" /> !-->
         <!--    currentPlugin                    !-->
         <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
-        <!--<ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/mississippi_queen_player2" target="clean-build" inheritAll="false" /> TODO!--> 
+        <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
+         <!--<ant dir="game_players/mississippi_queen_player2" target="clean-build" inheritAll="false" /> TODO!--> 
 
         <echo message="Compiling Server and GUI..." />
         <ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -95,18 +95,18 @@
     <mkdir dir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java8" />
     <copy todir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar">
       <fileset dir="./game_players/mississippi_queen_player2/build/jar" />
-    </copy>
+    </copy> !-->
 
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar" />
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar/java7" />
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar/java8" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/jar">
       <fileset dir="./game_players/mississippi_queen_player/build/jar" />
-    </copy> !-->
+    </copy>
 
 
 
-    <!-- <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src" />
+    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/src">
       <fileset dir="./game_players/mississippi_queen_player">
         <exclude name="build/**/*" />
@@ -120,7 +120,7 @@
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src/lib" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/src/lib">
       <fileset dir="${out.dir}/simple_client/mississippi_queen_player/jar/java7/lib" />
-    </copy>!-->
+    </copy>
 
 
 
@@ -157,10 +157,10 @@
     <zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
     <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar-java7.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java7" />
-    <zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar-java8.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java8" />
+    <zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar-java8.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java8" />!-->
     <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar-java7.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar/java7" />
     <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar-java8.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar/java8" />
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-src.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/src" />!-->
+    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-src.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/src" />
 
   </target>
 

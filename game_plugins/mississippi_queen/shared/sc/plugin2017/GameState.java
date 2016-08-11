@@ -117,7 +117,7 @@ public class GameState implements Cloneable {
    * @throws CloneNotSupportedException falls klonen fehlschlaegt
    */
   @Override
-  public Object clone() throws CloneNotSupportedException {
+  public GameState clone() throws CloneNotSupportedException {
     GameState clone = (GameState) super.clone();
     if (red != null)
       clone.red = (Player) red.clone();
@@ -337,8 +337,8 @@ public class GameState implements Cloneable {
    */
   public List<Action> getPossibleActions(Player player, int movement, int coal, boolean acceleration, boolean freeTurn) { //TODO Test schreiben
     List<Action> actions = new ArrayList<Action>();
-    actions.addAll(getPossibleMovesInDirection(player, movement));
-    actions.addAll(getPossibleTurnsWithCoal(freeTurn, coal));
+    actions.addAll(getPossibleMovesInDirection(player, movement, coal));
+    actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal));
     actions.addAll(getPossiblePushs(player, movement));
     if(acceleration) {
       actions.addAll(getPossibleAccelerations(player, coal));
@@ -367,7 +367,7 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert alle möglichen Abdrängaktionen, die mit den Bewegungspunkten möglich sind.
-   * @param palyer Spieler
+   * @param player Spieler
    * @param movement Anzahl der verfügbaren Bewegungspunkte
    * @return Alle Abdrängaktionen
    */
@@ -393,12 +393,16 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert alle Züge, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
-   * @param freeTurn
+   * @param player Spieler
+   * @param freeTurn Ist eine freie Drehung verfügbar?
    * @param coal maximal benötigte Kohleeinheiten
    * @return Liste aller Drehaktionen
    */
-  public List<Turn> getPossibleTurnsWithCoal(boolean freeTurn, int coal) {
+  public List<Turn> getPossibleTurnsWithCoal(Player player, boolean freeTurn, int coal) {
     ArrayList<Turn> turns = new ArrayList<Turn>(); 
+    if(player.getField(board).getType() == FieldType.SANDBAR) {
+      return turns;
+    }
     int start = freeTurn ? 2 : 1;
     for(int i = 0; i <= coal; i++) {
       turns.add(new Turn(start + i));
@@ -412,15 +416,25 @@ public class GameState implements Cloneable {
    * mit einer festen Anzahl von Bewegungspunkten möglich sind.
    * @param player Spieler
    * @param movement Anzahl 
-   * @return
+   * @param coal Kohleeinheite die zur Verfügung stehen
+   * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
    */
-  public List<Step> getPossibleMovesInDirection(Player player, int movement) {
+  public List<Step> getPossibleMovesInDirection(Player player, int movement, int coal) {
     ArrayList<Step> step = new ArrayList<Step>();
     int direction = player.getDirection();
     board = getVisibleBoard();
     Field start = player.getField(board);
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
+    if(start.getType() == FieldType.SANDBAR && movement > 0) {
+      if(start.getFieldInDirection(getOppositeDirection(direction), this.board).isPassable()) {
+        step.add(new Step(-1));
+      }
+      if(coal > 0) {
+        step.add(new Step(1));
+      }
+      return step;
+    }
     while(movement > 0) {
       i++;
       Field next = start.getFieldInDirection(direction, board);
@@ -618,9 +632,7 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant
-   * @param x
-   * @param y
-   * @param player
+   * @param player removes passenger
    */
   protected void removePassenger(Player player) {
     int x = player.getX();

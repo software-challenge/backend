@@ -17,6 +17,12 @@ public class Push extends Action {
   public Push(int direction) {
     this.direction = direction;
   }
+  
+  public Push(int direction, int order) {
+    this.direction = direction;
+    this.order = order;
+  }
+  
   @Override
   public int perform(GameState state, Player player) throws InvalidMoveException {
     Field pushFrom = player.getField(state.getBoard());
@@ -50,6 +56,10 @@ public class Push extends Action {
       return (this.direction == ((Push) o).direction);
     }
     return false;
+  }
+  
+  public String toString()  {
+    return "abdrängen in Richtung " + direction;
   }
 
 }

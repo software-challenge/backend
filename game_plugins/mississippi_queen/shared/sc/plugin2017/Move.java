@@ -7,7 +7,6 @@ import java.util.List;
 import sc.plugin2017.util.InvalidMoveException;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias(value = "move")
@@ -32,12 +31,11 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Erzeugt einen neuen Zug auf gegebene Koordinaten
-   * @param x X-Koordinate
-   * @param y Y-Koordinate
+   * Erzeugt einen neuen Zug aus Liste von Aktionen
+   * @param selectedActions Aktionen des Zuges
    */
-  public Move(ArrayList<Action> actions) {
-    this.actions = new ArrayList<Action>(actions);
+  public Move(List<Action> selectedActions) {
+    this.actions = new ArrayList<Action>(selectedActions);
   }
 
   /**
@@ -229,6 +227,14 @@ public class Move implements Cloneable {
       }
     }
     return false;
+  }
+  
+  public String toString() {
+    String toString = "Zug: \n";
+    for (Action action : actions) {
+      toString.concat(action.toString() + "\n");
+    }
+    return toString;
   }
 
 }

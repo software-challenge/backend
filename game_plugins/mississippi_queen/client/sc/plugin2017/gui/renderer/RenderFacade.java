@@ -181,12 +181,12 @@ public class RenderFacade {
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
 	}
+	
 	/**
-	 * creates a new panel
-	 * 
-	 * @param asPlayer1
-	 *            if asPlayer1 is true than panel will be created for player 1
-	 *            else it is created for player2
+	 * Stes handler
+	 * @param handler Game handler
+	 * @param target EPlayerId
+	 *            
 	 */
 	// TODO
 	public void setHandler(IGameHandler handler, EPlayerId target) {
@@ -241,9 +241,6 @@ public class RenderFacade {
 
 	}
 
-	/**
-	 * 
-	 */
 	public void switchToPlayer(EPlayerId id) {
 
 		if (id == null) {
@@ -277,7 +274,7 @@ public class RenderFacade {
 	}
 
 	/**
-	 * @param id
+	 * @param id EPlayerId
 	 */
 	public synchronized void requestMove(EPlayerId id) {
 
@@ -299,8 +296,10 @@ public class RenderFacade {
 	}
 
 	/**
-	 * @param data
-	 * @param id
+	 * @param data result of game
+	 * @param target EPlayerId
+	 * @param color Playercolor
+	 * @param errorMessage error message
 	 */
 	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color, String errorMessage) {
 

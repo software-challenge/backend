@@ -22,6 +22,11 @@ public class Turn extends Action {
     this.direction = direction;
   }
   
+  public Turn(int direction, int order) {
+    this.direction = direction;
+    this.order = order;
+  }
+  
   /**
    * @param state Gamestate
    * @param player Spieler der die Aktion ausführt
@@ -47,6 +52,10 @@ public class Turn extends Action {
       return (this.direction == ((Turn) o).direction);
     }
     return false;
+  }
+  
+  public String toString() {
+    return "Drehung um " + direction;
   }
 
 }

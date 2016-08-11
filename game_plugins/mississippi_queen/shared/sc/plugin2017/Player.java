@@ -249,6 +249,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @param x x-Koordinate
    * @param y y-Koordinate
    *          des Feldes, auf das gesetzt wird
+   * @param tile Spielsegment auf das gesetzt wird
    */
   protected void put(int x, int y, int tile) {
     this.x = x;

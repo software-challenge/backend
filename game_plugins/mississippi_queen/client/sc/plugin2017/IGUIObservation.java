@@ -7,8 +7,8 @@ package sc.plugin2017;
 public interface IGUIObservation {
 
 	/**
-	 * @param activePlayerId
-	 * @param actionFromOther
+	 * @param activePlayerId Id of active player
+	 * @param actionFromOther action of other player
 	 */
 	void newTurn(int activePlayerId, String actionFromOther);
 
