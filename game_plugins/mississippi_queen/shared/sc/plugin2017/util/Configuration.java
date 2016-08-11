@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
+import sc.plugin2017.Acceleration;
 import sc.plugin2017.Action;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
@@ -13,6 +14,10 @@ import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
+import sc.plugin2017.Push;
+import sc.plugin2017.Step;
+import sc.plugin2017.Tile;
+import sc.plugin2017.Turn;
 import sc.plugin2017.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
 
@@ -32,7 +37,6 @@ public class Configuration {
 	private static XStream xStream;
 
 	static {
-		/*xStream = new XStream(new JettisonMappedXmlDriver());*/
 	  xStream = new XStream();
 		xStream.setMode(XStream.NO_REFERENCES);
 		xStream.setClassLoader(Configuration.class.getClassLoader());
@@ -46,14 +50,17 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
-	  /*Board board = new Board();
+	  // print board
+	  Board board = new Board();
 	  xStream.alias("board", board.getClass() );
-	  System.out.println(xStream.toXML(board));*/
+	  System.out.println(xStream.toXML(board));
+	  
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
 				Condition.class, Board.class, Field.class, FieldType.class,
-				Action.class
+				Action.class, Turn.class, Step.class, Push.class, Acceleration.class,
+				Tile.class
 				});
 	}
 }

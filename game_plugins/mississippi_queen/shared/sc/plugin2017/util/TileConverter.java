@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class BoardConverter implements Converter{
+public class TileConverter implements Converter{
 
   @Override
   public boolean canConvert(Class arg0) {

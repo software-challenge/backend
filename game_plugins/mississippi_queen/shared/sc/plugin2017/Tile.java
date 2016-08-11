@@ -1,22 +1,47 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import sc.plugin2017.util.Constants;
+
+@XStreamAlias(value = "tile")
 public class Tile {
 
   private ArrayList<Field> fields;
   
   private boolean visible;
   
+  /**
+   * Index des Spielsegments
+   */
+  @XStreamAsAttribute
   private int index;
   
+  /**
+   * Richtung in die das Spielsegment zeigt
+   */
+  @XStreamAsAttribute
   private int direction;
   
-  public Tile(int index, int direction, int x, int y, int passengers) {
+  /**
+   * 
+   * @param index
+   * @param direction
+   * @param x
+   * @param y
+   * @param passengers
+   * @param blockedFields
+   * @param specialFields
+   */
+  protected Tile(int index, int direction, int x, int y, int passengers, int blockedFields, int specialFields) {
     this.index = index;
     this.direction = direction;
-    this.visible = false;
-    fields = generateFields(x, y, passengers);
+    this.visible = index < 2; // at the beginning only the first 2 Tiles are visible
+    fields = generateFields(x, y, passengers, blockedFields, specialFields, (index == Constants.NUMBER_OF_TILES - 1));
     
   }
   
@@ -24,9 +49,247 @@ public class Tile {
     fields = new ArrayList<Field>(fields);
   }
 
-  private ArrayList<Field> generateFields(int x, int y, int passengers) {
-    // TODO Auto-generated method stub
+  private ArrayList<Field> generateFields(int x, int y, int passengers, int blocked, int special, boolean end) {
+    ArrayList<Field> generate = new ArrayList<Field>();
+    if(direction == 0) {
+      generate.add(new Field(FieldType.WATER, x-2, y+2, 0));
+      generate.add(new Field(FieldType.WATER, x-2, y-2, 0));
+      generate.add(new Field(FieldType.WATER, x-1, y+2, 1));
+      generate.add(new Field(FieldType.WATER, x-1, y+1, 1));
+      generate.add(new Field(FieldType.WATER, x-1, y  , 1));
+      generate.add(new Field(FieldType.WATER, x-1, y-1, 1));
+      generate.add(new Field(FieldType.WATER, x-1, y-2, 1));
+      generate.add(new Field(FieldType.WATER, x  , y+2, 2));
+      generate.add(new Field(FieldType.WATER, x  , y+1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y  , 2));
+      generate.add(new Field(FieldType.WATER, x  , y-1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y-2, 2));
+      generate.add(new Field(FieldType.WATER, x+1, y+1, 3));
+      generate.add(new Field(FieldType.WATER, x+1, y  , 3));
+      generate.add(new Field(FieldType.WATER, x+1, y-1, 3));
+      //last 5 fields
+      generate.add(new Field(FieldType.WATER, x+1, y-2, 3));
+      generate.add(new Field(FieldType.WATER, x+1, y+2, 3));
+      if(end) {
+        generate.add(new Field(FieldType.GOAL, x+2, y+1, 4));
+        generate.add(new Field(FieldType.GOAL, x+2, y, 4));
+        generate.add(new Field(FieldType.GOAL, x+2, y-1, 4));
+      } else {
+        generate.add(new Field(FieldType.WATER, x+2, y+1, 4));
+        generate.add(new Field(FieldType.WATER, x+2, y, 4));
+        generate.add(new Field(FieldType.WATER, x+2, y-1, 4));
+      }
+    } else if(direction == 1) {
+      generate.add(new Field(FieldType.WATER, x+1, y-3, 0));
+      generate.add(new Field(FieldType.WATER, x-2, y+1, 0));
+      generate.add(new Field(FieldType.WATER, x+1, y+2, 1));
+      generate.add(new Field(FieldType.WATER, x  , y+2, 1));
+      generate.add(new Field(FieldType.WATER, x  , y+1, 1));
+      generate.add(new Field(FieldType.WATER, x-1, y+1, 1));
+      generate.add(new Field(FieldType.WATER, x-2, y  , 1));
+      generate.add(new Field(FieldType.WATER, x+2, y+1, 2));
+      generate.add(new Field(FieldType.WATER, x+1, y+1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y  , 2));
+      generate.add(new Field(FieldType.WATER, x-1, y  , 2));
+      generate.add(new Field(FieldType.WATER, x-1, y-1, 2));
+      generate.add(new Field(FieldType.WATER, x+1, y  , 3));
+      generate.add(new Field(FieldType.WATER, x+1, y-1, 3));
+      generate.add(new Field(FieldType.WATER, x  , y-1, 3));
+      // last 5 fields
+      generate.add(new Field(FieldType.WATER, x-1, y-2, 3));
+      generate.add(new Field(FieldType.WATER, x+2, y  , 3));
+      if(end) {
+        generate.add(new Field(FieldType.GOAL, x+2, y-1, 4));
+        generate.add(new Field(FieldType.GOAL, x+1, y-2, 4));
+        generate.add(new Field(FieldType.GOAL, x  , y-2, 4));
+      } else {
+        generate.add(new Field(FieldType.WATER, x+2, y-1, 4));
+        generate.add(new Field(FieldType.WATER, x+1, y-2, 4));
+        generate.add(new Field(FieldType.WATER, x  , y-2, 4));
+      }
+    } else if(direction == 2) {
+      generate.add(new Field(FieldType.WATER, x+3, y+1, 0));
+      generate.add(new Field(FieldType.WATER, x  , y+3, 0));
+      generate.add(new Field(FieldType.WATER, x+2, y  , 1));
+      generate.add(new Field(FieldType.WATER, x+2, y+1, 1));
+      generate.add(new Field(FieldType.WATER, x+1, y+1, 1));
+      generate.add(new Field(FieldType.WATER, x  , y+2, 1));
+      generate.add(new Field(FieldType.WATER, x-1, y+2, 1));
+      generate.add(new Field(FieldType.WATER, x+2, y-1, 2));
+      generate.add(new Field(FieldType.WATER, x+1, y  , 2));
+      generate.add(new Field(FieldType.WATER, x  , y  , 2));
+      generate.add(new Field(FieldType.WATER, x  , y+1, 2));
+      generate.add(new Field(FieldType.WATER, x-1, y+1, 2));
+      generate.add(new Field(FieldType.WATER, x+1, y-1, 3));
+      generate.add(new Field(FieldType.WATER, x  , y-1, 3));
+      generate.add(new Field(FieldType.WATER, x-1, y  , 3));
+      // last 5 fields
+      generate.add(new Field(FieldType.WATER, x-2, y  , 3));
+      generate.add(new Field(FieldType.WATER, x+1, y-2, 3));
+      if(end) {
+        generate.add(new Field(FieldType.GOAL, x  , y-2, 4));
+        generate.add(new Field(FieldType.GOAL, x-1, y-2, 4));
+        generate.add(new Field(FieldType.GOAL, x-1, y-1, 4));
+      } else {
+        generate.add(new Field(FieldType.WATER, x  , y-2, 4));
+        generate.add(new Field(FieldType.WATER, x-1, y-2, 4));
+        generate.add(new Field(FieldType.WATER, x-1, y-1, 4));
+      }
+    } else if(direction == 3) {
+      generate.add(new Field(FieldType.WATER, x+2, y-2, 0));
+      generate.add(new Field(FieldType.WATER, x+2, y+2, 0));
+      generate.add(new Field(FieldType.WATER, x+1, y-2, 1));
+      generate.add(new Field(FieldType.WATER, x+2, y-1, 1));
+      generate.add(new Field(FieldType.WATER, x+1, y  , 1));
+      generate.add(new Field(FieldType.WATER, x+2, y+1, 1));
+      generate.add(new Field(FieldType.WATER, x+1, y+2, 1));
+      generate.add(new Field(FieldType.WATER, x  , y-2, 2));
+      generate.add(new Field(FieldType.WATER, x+1, y-1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y  , 2));
+      generate.add(new Field(FieldType.WATER, x+1, y+1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y+2, 2));
+      generate.add(new Field(FieldType.WATER, x  , y-1, 3));
+      generate.add(new Field(FieldType.WATER, x-1, y  , 3));
+      generate.add(new Field(FieldType.WATER, x  , y+1, 3));
+      // last 5 fields
+      generate.add(new Field(FieldType.WATER, x-1, y+2, 3));
+      generate.add(new Field(FieldType.WATER, x-1, y-2, 3));
+      if(end) {
+        generate.add(new Field(FieldType.GOAL, x-1, y-1, 4));
+        generate.add(new Field(FieldType.GOAL, x-2, y, 4));
+        generate.add(new Field(FieldType.GOAL, x-1, y+1, 4));
+      } else {
+        generate.add(new Field(FieldType.WATER, x-1, y-1, 4));
+        generate.add(new Field(FieldType.WATER, x-2, y, 4));
+        generate.add(new Field(FieldType.WATER, x-1, y+1, 4));
+      }
+    } else  if(direction == 4) {
+      generate.add(new Field(FieldType.WATER, x  , y+3, 0));
+      generate.add(new Field(FieldType.WATER, x+3, y-1, 0));
+      generate.add(new Field(FieldType.WATER, x-1, y-2, 1));
+      generate.add(new Field(FieldType.WATER, x  , y-2, 1));
+      generate.add(new Field(FieldType.WATER, x+1, y-1, 1));
+      generate.add(new Field(FieldType.WATER, x+2, y-1, 1));
+      generate.add(new Field(FieldType.WATER, x+2, y  , 1));
+      generate.add(new Field(FieldType.WATER, x-1, y-1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y-1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y  , 2));
+      generate.add(new Field(FieldType.WATER, x+1, y  , 2));
+      generate.add(new Field(FieldType.WATER, x+2, y+1, 2));
+      generate.add(new Field(FieldType.WATER, x-1, y  , 3));
+      generate.add(new Field(FieldType.WATER, x  , y+1, 3));
+      generate.add(new Field(FieldType.WATER, x+1, y+1, 3));
+      // last 5 fields
+      generate.add(new Field(FieldType.WATER, x+1, y+2, 3));
+      generate.add(new Field(FieldType.WATER, x+2, y  , 3));
+      if(end) {
+        generate.add(new Field(FieldType.GOAL, x-1, y+1, 4));
+        generate.add(new Field(FieldType.GOAL, x-1, y+2, 4));
+        generate.add(new Field(FieldType.GOAL, x  , y+2, 4));
+      } else {
+        generate.add(new Field(FieldType.WATER, x-1, y+1, 4));
+        generate.add(new Field(FieldType.WATER, x-1, y+2, 4));
+        generate.add(new Field(FieldType.WATER, x  , y+2, 4));
+      }
+    } else if(direction == 5) {
+      generate.add(new Field(FieldType.WATER, x+2, y-1, 0));
+      generate.add(new Field(FieldType.WATER, x+1, y+3, 0));
+      generate.add(new Field(FieldType.WATER, x+2, y  , 1));
+      generate.add(new Field(FieldType.WATER, x-1, y-1, 1));
+      generate.add(new Field(FieldType.WATER, x  , y-1, 1));
+      generate.add(new Field(FieldType.WATER, x  , y-2, 1));
+      generate.add(new Field(FieldType.WATER, x+1, y-2, 1));
+      generate.add(new Field(FieldType.WATER, x-1, y+1, 2));
+      generate.add(new Field(FieldType.WATER, x-1, y  , 2));
+      generate.add(new Field(FieldType.WATER, x  , y  , 2));
+      generate.add(new Field(FieldType.WATER, x+1, y-1, 2));
+      generate.add(new Field(FieldType.WATER, x+2, y-1, 2));
+      generate.add(new Field(FieldType.WATER, x  , y+1, 3));
+      generate.add(new Field(FieldType.WATER, x+1, y+1, 3));
+      generate.add(new Field(FieldType.WATER, x+1, y  , 3));
+      // last 5 fields
+      generate.add(new Field(FieldType.WATER, x+2, y  , 3));
+      generate.add(new Field(FieldType.WATER, x-1, y+2, 3));
+      if(end) {
+        generate.add(new Field(FieldType.GOAL, x  , y+2, 4));
+        generate.add(new Field(FieldType.GOAL, x+1, y+2, 4));
+        generate.add(new Field(FieldType.GOAL, x+2, y+1, 4));
+      } else {
+        generate.add(new Field(FieldType.WATER, x  , y+2, 4));
+        generate.add(new Field(FieldType.WATER, x+1, y+2, 4));
+        generate.add(new Field(FieldType.WATER, x+2, y+1, 4));
+      }
+    }
+    placeBlocked(blocked);
+    placeSpecial(special);
+    placePassengers(passengers);
     return null;
+  }
+
+  private void placeBlocked(int blocked) {
+    Random rnd = new Random();
+    while(blocked != 0) {
+      int random = rnd.nextInt(fields.size() - 5); // may not be played on the last 5 fields
+      while(fields.get(random).getType() != FieldType.WATER) {
+        random = rnd.nextInt(fields.size() - 5);
+      }
+      fields.get(random).setType(FieldType.BLOCKED);
+      --blocked;
+    }
+  }
+
+  private void placeSpecial(int special) {
+    Random rnd = new Random();
+    while(special != 0) {
+      int random = rnd.nextInt(fields.size() - 5); // may not be played on the last 5 fields
+      while(fields.get(random).getType() != FieldType.WATER) {
+        random = rnd.nextInt(fields.size() - 5);
+      }
+      int sandbar = rnd.nextInt(2);
+      fields.get(random).setType((sandbar == 1) ? FieldType.SANDBAR : FieldType.LOG);
+      --special;
+    }    
+  }
+
+  private void placePassengers(int passengers) {
+    Random rnd = new Random();
+    while(passengers != 0) {
+      int random = rnd.nextInt(fields.size() - 5); // may not be played on the last 5 fields
+      int passengerDirection = rnd.nextInt(6);
+      Field start = fields.get(random);
+      Field dock = getFieldInDirection(passengerDirection, start);
+      while(start.getType() != FieldType.WATER || 
+          dock == null ||
+          dock.getType() != FieldType.WATER) {
+        random = rnd.nextInt(fields.size() - 5);
+        passengerDirection = rnd.nextInt(6);
+      }
+      FieldType passenger;
+      switch (passengerDirection) {
+      case 0:
+        passenger = FieldType.PASSENGER0;
+        break;
+      case 1:
+        passenger = FieldType.PASSENGER1;
+        break;
+      case 2:
+        passenger = FieldType.PASSENGER2;
+        break;
+        
+      case 3:
+        passenger = FieldType.PASSENGER3;
+        break;
+      case 4:
+        passenger = FieldType.PASSENGER4;
+        break;
+
+      default: // case 5
+        passenger = FieldType.PASSENGER5;
+        break;
+      }
+      fields.get(random).setType(passenger);
+      --passengers;
+    }
   }
 
   public Field getField(int x, int y) {
@@ -80,5 +343,33 @@ public class Tile {
       return true;
     }
     return false;
+  }
+  
+  /**
+   * Gibt das Feld in eine bestimmte Richtung zurück. Gibt null zurück, falls sich das Feld nicht auf dem Tile befindet.
+   * @param direction Richtung
+   * @param field Startfeld
+   * @return Feld in Richtung
+   */
+  public Field getFieldInDirection(int direction, Field field) {
+    int x = field.getX();
+    int y = field.getY();
+    switch (direction) {
+    case 0:
+      return getField(x + 1,y);
+    case 1:
+      return getField((y % 2 == 0) ? x + 1 : x, y - 1);
+    case 2:
+      return getField((y % 2 == 0) ? x : x - 1, y - 1);
+    case 3:
+      return getField(x - 1, y);
+    case 4:
+      return getField((y % 2 == 0) ? x : x - 1, y + 1);
+    case 5:
+      return getField((y % 2 == 0) ? x + 1 : x, y + 1);  
+    default:
+      break;
+    }
+    return null;
   }
 }
