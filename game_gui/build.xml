@@ -52,6 +52,8 @@
 		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/sixpack" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/cartagena" target="clean-build" inheritAll="false" />
+                <ant dir="./../game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
+                <ant dir="./../game_plugins/twixt" target="clean-build" inheritAll="false" />
 		
 
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />

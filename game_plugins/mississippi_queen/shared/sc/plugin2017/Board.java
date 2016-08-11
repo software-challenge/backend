@@ -45,6 +45,7 @@ public class Board {
    * initializes the board
    */
   private void init() {
+    tiles = new ArrayList<Tile>();
     Random rnd = new Random(); 
     int[] direction = new int[Constants.NUMBER_OF_TILES];
     int[][] startCoordinates  = new int[Constants.NUMBER_OF_TILES][2];
