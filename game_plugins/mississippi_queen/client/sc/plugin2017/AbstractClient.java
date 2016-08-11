@@ -78,8 +78,8 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	/**
 	 * Tell this client to observe the game given by the preparation handler
 	 * 
-	 * @param handle
-	 * @return
+	 * @param handle Handle
+	 * @return controllable game
 	 */
 	public IControllableGame observeGame(PrepareGameResponse handle) {
 		return client.observe(handle);
@@ -170,7 +170,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	/**
-	 * @return
+	 * @return String gameType
 	 */
 	public String getGameType() {
 		return gameType;

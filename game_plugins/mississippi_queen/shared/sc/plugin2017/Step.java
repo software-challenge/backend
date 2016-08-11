@@ -31,6 +31,13 @@ public class Step extends Action {
     endsTurn = false;
   }
   
+  public Step(int distance, int order) {
+    this.distance = distance;
+    this.order = order;
+    reduceSpeed = 0;
+    endsTurn = false;
+  }
+  
   @Override
   public int perform(GameState state, Player player) throws InvalidMoveException {
     int neededSpeed = 0;
@@ -89,6 +96,10 @@ public class Step extends Action {
       return (this.distance == ((Step) o).distance);
     }
     return false;
+  }
+  
+  public String toString() {
+    return "Bewegung um " + distance + "Felder";
   }
 
 }
