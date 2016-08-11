@@ -79,11 +79,11 @@ Der Spieler, der zuerst im Ziel gewinnt das Spiel.
 Ein Ausschnitt des Spielbretts ist im Titelbild zu sehen. Es besteht aus \emph{\Tiles} Spielsegmenten. Mit jeweils \emph{\FieldsPerTile} Feldern. Am Anfang ist das Startsegment und ein darauffolgendes Segment aufgedeckt. Sobald ein Spieler das letzte Segment betritt, wird ein neues dahinter zufällig links, rechts oder mittig angebaut. Dies geschieht solange, bis keine Segmente mehr übrig sind. Das letzte Segment ist das Zielsegment (TODO Graphik einfügen darin Zielfelder markieren). Segmente die schon von allen Spielern betreten wurden, werden vom Spielplan entfernt, auch wenn sich darauf noch Passagiere befinden. Es sind anfangs nur die ersten beiden Spielsegmente aufgedeckt. Sobald ein Spieler das letzte sichtbare Segment betritt, wird ein neues hinzugefügt.
 Die Inselfelder sind dabei zufällig auf der Karte verteilt. Insgesamt gibt es \emph{\Passagiere} Passagierfelder. Sandbänke und Baumstämme werden ebenfalls zufällig eingefügt.
 \subsection{Das Wasserfeld (WATER)}
-Das Wasserfeld (WATER) kann ganz normal befahren werden. Zu einem Wasserfeld zu ziehen kostet einen Geschwindigkeitspunkt.
+Das Wasserfeld (WATER) kann ganz normal befahren werden. Auf ein zum Spieler benachbarten Wasserfeld ziehen kostet einen Geschwindigkeitspunkt.
 \subsection{\label{water}Das Inselfeld (BLOCKED)}
 Das Inselfeld (BLOCKED) kann nicht überquert werden.
 \subsection{Das Passagierfeld in Richtung i (PASSENGERi)}
-Das Passagierfeld mit Anleger in Richtung i enthält einen Passagier, der am entsprechenden Anleger abgeholt werden kann, wenn man das Feld mit Geschwindigkeit 1 erreicht dann der Zug beendet ist. Es verwandelt, sollte der Passagier abgeholt werden in ein normales Inselfeld (siehe \ref{water})
+Das Passagierfeld mit Anleger in Richtung i enthält einen Passagier, der am entsprechenden Anleger abgeholt werden kann, wenn man das Feld mit Geschwindigkeit 1 erreicht und dann der Zug beendet wird. Es verwandelt sich in ein normales Inselfeld, sollte der Passagier abgeholt werden (siehe \ref{water})
 \subsection{Das Zielfeld (GOAL)}
 Das Zielfeld ist ein Feld, dass erreicht werden kann, um das Spiel zu gewinnen. Dabei muss die Geschwindigkeit 1 sein und 2 Passagiere müssen eingeladen worden sein.
 \subsection{Die Sandbank (SANDBAR)}
@@ -93,7 +93,7 @@ Ein Baumstammfeld ist ein Feld, dass die doppelte Anzahl an Bewegungspunkten bra
 Außerdem wird die Geschwindigkeit eines Schiffes, welches ein Baumstammfeld durchquert nach dem Zug um 1 verringert. Sind nicht genug Bewegungspunkte vorhanden, kann es nicht überquert werden. Das Abdrängen in ein Baumstammfeld kostet einen zusätzlichen Bewegungspunkt.TODO Bilder mit Feldern einfügen
 
 \section{Spielablauf}
-Beide Spieler starten mit Geschwindigkeit 1 und 6 Kohleeinheiten und ziehen dann abwechselnd. Ein Zug besteht aus mehreren Aktionen. In allen Aktionen müssen (falls der Zug nicht auf einer Sandbank endet) insgesamt alle Bewegungspunkte (bestimmt durch die Geschwindigkeit des Schiffes) verbraucht werden. In den Folgenden Kapiteln werden diese beschrieben:
+Beide Spieler starten mit Geschwindigkeit 1 und 6 Kohleeinheiten und ziehen dann abwechselnd. Ein Zug besteht aus mehreren Aktionen. In allen Aktionen müssen (falls der Zug nicht auf einer Sandbank endet) insgesamt alle Bewegungspunkte (bestimmt durch die Geschwindigkeit des Schiffes) verbraucht werden. In den folgenden Kapiteln werden diese beschrieben:
 \subsection{\label{acceleration}Beschleunigungsaktion}
 Kann nur als erste Aktion ausgeführt werden. Die Beschleunigung um eine Geschwindigkeitseinheit ist frei, jede Beschleunigung um mehr als 1, kostet für jeden weiteren Geschwindigkeitspunkt eine Kohleeinheit. Die Höchstgeschwindigkeit ist 6, die niedrigste ist 1. Eine Beschleunigungsaktion um 0 ist ungültig.
 \subsection{\label{turn}Drehaktion}
@@ -106,7 +106,7 @@ Eine Bewegungsaktion erfolgt in die derzeitige Richtung des Schiffes des Spieler
 Das Spiel endet, sobald ein Spieler mit 2 Passagieren ein Zielfeld erreicht hat, sobald das Rundenlimit von \emph{\Rundenlimit} Runden erreicht ist oder falls nach dem Zug des Spielers der nicht Startspieler war ein Spieler vier oder mehr Spielsegmente zurückliegt. Wird das Rundenlimit erreicht gewinnt der Spieler mit den meisten Punkten. Die Punkte errechnen sich folgendermaßen:
 \begin{itemize}
 \item Jeder eingesammelte Passagier bringt 5 Punkte
-\item Jedes Überwundene Segment bringt 5 Punkte. 
+\item Jedes überwundene Segment bringt 5 Punkte. 
 \item Anhang der Position innerhalb eines Segments werden 0 bis 4 Punkte vergeben. (Ein Segment ist aufgeteilt in 5 Reihen je weiter vorne man ist, desto mehr Punkte bekommt man TODO siehe Graphik).
 \end{itemize}
 Der Spieler mit den meisten Punkten gewinnt dann das Spiel. Sollten beide Spieler gleich viele Punkte haben, gewinnt der Spieler, der mehr Passagiere eingesammelt hat. Sollte auch diese Zahl gleich sein, endet das Spiel unentschieden.
