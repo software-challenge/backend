@@ -12,7 +12,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias(value = "move")
 public class Move implements Cloneable {
-  // TODO Xstream wahrscheinlich mit eigener Converterklasse
 
   /**
    * Liste von Aktionen aus denen der Zug besteht
@@ -143,6 +142,7 @@ public class Move implements Cloneable {
     int beginningSpeed = player.getSpeed();
     int totalMovement = 0;
     int order = 0;
+    int reduceSpeed = 0;
     boolean onEnemy;
     for(Action action : actions) {
       onEnemy = player.getX() == state.getOtherPlayer().getX() && 
@@ -173,6 +173,9 @@ public class Move implements Cloneable {
         acc.perform(state, player); // coal is decreased in perform
       } else {
         totalMovement += action.perform(state, player); // count distance
+        if(action.getClass() == Step.class) {
+          reduceSpeed += ((Step) action).reduceSpeed; // add speed to reduce on end of turn
+        }
       }
       ++order;
     }
@@ -188,6 +191,11 @@ public class Move implements Cloneable {
     if(totalMovement > player.getSpeed() || 
         (totalMovement < player.getSpeed() && player.getField(state.getBoard()).getType() != FieldType.SANDBAR)) { // check speed
       throw new InvalidMoveException("Es sind noch Bewegungspunkte übrig oder es wurden zu viele verbraucht.");
+    }
+    if(player.getSpeed() - reduceSpeed > 0) {
+      player.setSpeed(player.getSpeed() - reduceSpeed);
+    } else {
+      player.setSpeed(1);
     }
   }
   

@@ -1,13 +1,18 @@
 package sc.plugin2017;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import sc.plugin2017.util.InvalidMoveException;
 
+@XStreamAlias(value = "acceleration")
 public class Acceleration extends Action {
 
   /**
    * Gibt an um wie viel beschleuningt wird, Negative Zahl bedeutet, das entsprechend gebremst wird.
    * Darf nicht 0 sein wirf sonst InvalidMoveException beim ausführen von perform
    */
+  @XStreamAsAttribute
   public int acc;
   
   public Acceleration(int acc) {

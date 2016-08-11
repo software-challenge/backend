@@ -3,13 +3,18 @@ package sc.plugin2017;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import sc.plugin2017.util.InvalidMoveException;
 
+@XStreamAlias(value = "step")
 public class Step extends Action {
 
   /**
    * Anzahl der Felder, die zurückgelegt werden.
    */
+  @XStreamAsAttribute
   public int distance;
   /**
    * Zeigt an, um wie viele Punkte die Geschwindigkeit am Ende des Zuges verringert werden soll

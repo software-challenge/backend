@@ -1,15 +1,12 @@
 package sc.plugin2017;
 
-import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import sc.plugin2017.util.BoardConverter;
 import sc.plugin2017.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamConverter;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 
 @XStreamAlias(value = "board")
@@ -50,30 +47,106 @@ public class Board {
   private void init() {
     Random rnd = new Random(); 
     int[] direction = new int[Constants.NUMBER_OF_TILES];
+    int[][] startCoordinates  = new int[Constants.NUMBER_OF_TILES][2];
     ArrayList<Integer> tilesWithPassengers = new ArrayList<Integer>(); // holds all tiles numbers with a passenger field
     for(int i = 0;i < Constants.NUMBER_OF_PASSENGERS; i++) {
-      int number = rnd.nextInt(Constants.NUMBER_OF_TILES - 2) + 1;
+      // the cannot be a passenger on the starting tile change to -2 for no passenger on last Tile
+      int number = rnd.nextInt(Constants.NUMBER_OF_TILES - 1) + 1; 
       while(tilesWithPassengers.contains(number)) {
-        number = rnd.nextInt(Constants.NUMBER_OF_TILES - 2) + 1;
+        number = rnd.nextInt(Constants.NUMBER_OF_TILES - 1) + 1;
       }
       tilesWithPassengers.add(number);
     }
-    
-    // TODO generate 
+    direction[0] = 0;
+    startCoordinates[0][0] = 0;
+    startCoordinates[0][1] = 0;
+    // generate directions of tiles
+    int directionLeft = 0;
+    int directionRight = 0;
+    for(int i = 1; i < Constants.NUMBER_OF_TILES; i++) {
+      int dir = rnd.nextInt(3) - 1; // get a number in {-1,0,1}
+      if(directionLeft + dir < -4)  {
+        // turn left not allowed
+        dir = rnd.nextInt(2);
+      } else if(directionRight + dir > 4) {
+        // turn right not allowed
+        dir = rnd.nextInt(2) - 1;
+      }
+      direction[i] = (direction[i-1] + dir + 6/*number of directions*/) % 6;
+      startCoordinates[i][0] = getXCoordinateInDirection(startCoordinates[i-1][0], direction[i]);
+      startCoordinates[i][1] = getYCoordinateInDirection(startCoordinates[i-1][1], direction[i]);
+    }
     generateStartField();
-    for(int i = 1; i < Constants.NUMBER_OF_TILES - 1; i++) {
-      generateTile(tilesWithPassengers.contains(i), direction[i]);
+    for(int i = 1; i < Constants.NUMBER_OF_TILES; i++) {
+      generateTile(i, tilesWithPassengers.contains(i), direction[i], startCoordinates[i][0], startCoordinates[i][1]);
     }
   }
 
-  private void generateTile(boolean hasPassenger, int direction) {
-    // TODO Auto-generated method stub
+  /**
+   * Nur fuer den Server relevant. Gibt Koordiante 4 Felder in Richtung zurück
+   * @param y y Koordinate
+   * @param direction Richtung
+   * @return y Koordinate des neuen Feldes
+   */
+  private int getYCoordinateInDirection(int y, int direction) {
+    switch (direction) {
+    case 0:
+    case 3:
+      return y;
+    case 1:
+    case 2:
+      return y - 4;
+    case 4:
+    case 5:
+      return y + 4;
+    }
+    return 0;
+  }
+
+  /**
+   * Nur fuer den Server relevant. Gibt Koordiante 4 Felder in Richtung zurück
+   * @param x x Koordinate
+   * @param direction Richtung
+   * @return x Koordinate des neuen Feldes
+   */
+  private int getXCoordinateInDirection(int x, int direction) {
+    switch (direction) {
+    case 0:
+      return x + 4;
+    case 3:
+      return x - 4;
+    case 1:
+    case 5:
+      return x + 2;
+    case 4:
+    case 2:
+      return x - 2;
+    }
+    return 0;
+  }
+
+  /**
+   * Nur fuer den Server relevant
+   * generates tile
+   * @param index index of Tile
+   * @param hasPassenger has the Tile a passenger?
+   * @param direction direction of tile
+   * @param x x Coordinate of middle
+   * @param y y Coordinate of middle
+   */
+  private void generateTile(int index, boolean hasPassenger, int direction, int x, int y) {
+    Random rnd = new Random();
+    int blocked = rnd.nextInt(2) + 2; // 2 to 3 blocked fields
+    int special = rnd.nextInt(2) + 1; // 1 oder 2 special fields
+    Tile newTile = new Tile(index, direction, x, y, hasPassenger ? 1 : 0, blocked, special);
+    tiles.add(newTile);
     
   }
 
   private void generateStartField() {
-    // TODO Auto-generated method stub
-    
+    Tile start = new Tile(0, 0, 0, 0, 0, 0, 0); // generate tile with middle at 0,0 in direction 0
+    // with no other fields than WATER fields
+    tiles.add(start);
   }
 
   /**

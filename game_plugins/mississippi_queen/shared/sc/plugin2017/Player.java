@@ -250,9 +250,10 @@ public class Player extends SimplePlayer implements Cloneable {
    * @param y y-Koordinate
    *          des Feldes, auf das gesetzt wird
    */
-  protected void put(int x, int y) {
+  protected void put(int x, int y, int tile) {
     this.x = x;
     this.y = y;
+    this.tile = tile;
   }
 
   /**

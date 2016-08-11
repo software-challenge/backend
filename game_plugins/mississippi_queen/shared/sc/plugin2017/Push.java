@@ -1,10 +1,17 @@
 package sc.plugin2017;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
 import sc.plugin2017.util.InvalidMoveException;
 
+@XStreamAlias(value = "push")
 public class Push extends Action {
 
-  
+  /**
+   * Richtung in die abgedrängt werden soll
+   */
+  @XStreamAsAttribute
   public int direction;
  
   public Push(int direction) {

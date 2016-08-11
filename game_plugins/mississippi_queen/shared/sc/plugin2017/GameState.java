@@ -1,8 +1,6 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import sc.plugin2017.util.Constants;
@@ -85,6 +83,7 @@ public class GameState implements Cloneable {
   /**
    * Wurde der Spieler im LastMove abgedrängt. Falls ja ist eine weitere Drehaktion möglich
    */
+  @XStreamAsAttribute
   private boolean freeTurn;
 
   /**
@@ -328,49 +327,57 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert eine Liste aller aktuell erlaubten Teilzuege, des Spielers der
-   * aktuell an der Reihe ist.
+   * Liefert eine Liste aller aktuell erlaubten Teilzuege eines Spielers.
+   * @param player Spieler für den die Aktionen sind.
+   * @param movement Die Anzahl der Bewegungspunkte, die höchstens verwendet werden sollen (sollte kleiner als player.speed sein)
    * @param coal Anzahl der für die Aktion verbrauchten Kohleeinheiten.
-   * @param movement Die Anzahl der Bewegungspunkte, die verwendet werden sollen, falls sich bewegt wird
+   * @param acceleration Gibt an, ob Beschleunigungszüge möglich sein sollen
+   * @param freeTurn ist eine freie Drehung verfügbar
    * @return Liste erlaubter Teilzuege
    */
-  public List<Action> getPossibleActions(int movement, int coal, boolean acceleration) { //TODO Test schreiben
+  public List<Action> getPossibleActions(Player player, int movement, int coal, boolean acceleration, boolean freeTurn) { //TODO Test schreiben
     List<Action> actions = new ArrayList<Action>();
-    actions.add(getPossibleMovesInDirection(getCurrentPlayer().getDirection(), movement));
-    actions.addAll(getPossibleTurnsWithCoal(coal));
-    actions.addAll(getPossiblePushs(movement));
+    actions.addAll(getPossibleMovesInDirection(player, movement));
+    actions.addAll(getPossibleTurnsWithCoal(freeTurn, coal));
+    actions.addAll(getPossiblePushs(player, movement));
     if(acceleration) {
-      actions.addAll(getPossibleAccelerations(coal));
+      actions.addAll(getPossibleAccelerations(player, coal));
     }
     return actions;
   }
 
   /**
    * Liefert alle Becshleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
+   * @param player Spieler
    * @param coal Kohle die für Beschleunigung benötigt wird.
    * @return Liste aller Beschleunigungsaktionen
    */
-  public List<Acceleration> getPossibleAccelerations(int coal) {
+  public List<Acceleration> getPossibleAccelerations(Player player, int coal) {
     ArrayList<Acceleration> acc = new ArrayList<Acceleration>(); 
     for(int i = 0; i <= coal; i++) {
-      acc.add(new Acceleration(1 + i));
-      acc.add(new Acceleration(-1 - i));
+      if(player.getSpeed() < 6 - i) {
+        acc.add(new Acceleration(1 + i)); // es wird nicht zu viel beschleunigt
+      }
+      if(player.getSpeed() > 1 + i) {
+        acc.add(new Acceleration(-1 - i)); // aber zu viel abgebremst
+      }
     }
     return acc;
   }
 
   /**
    * Liefert alle möglichen Abdrängaktionen, die mit den Bewegungspunkten möglich sind.
+   * @param palyer Spieler
    * @param movement Anzahl der verfügbaren Bewegungspunkte
    * @return Alle Abdrängaktionen
    */
-  public List<Push> getPossiblePushs(int movement) {
+  public List<Push> getPossiblePushs(Player player, int movement) {
     ArrayList<Push> push = new ArrayList<Push>(); 
-    Field from = getCurrentPlayer().getField(getVisibleBoard());
-    if(from.getType() == FieldType.SANDBAR) { // niemand darf von einer Sandbank berunterpushen.
+    Field from = player.getField(getVisibleBoard());
+    if(from.getType() == FieldType.SANDBAR) { // niemand darf von einer Sandbank herunterpushen.
       return push;
     }
-    int direction = getCurrentPlayer().getDirection();
+    int direction = player.getDirection();
     for(int i = 0;i < 6; i++) {
       Field to = from.getFieldInDirection(i, getVisibleBoard());
       if(to != null && i != GameState.getOppositeDirection(direction) && to.isPassable() && movement >= 1) {
@@ -386,10 +393,11 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert alle Züge, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
+   * @param freeTurn
    * @param coal maximal benötigte Kohleeinheiten
    * @return Liste aller Drehaktionen
    */
-  public List<Turn> getPossibleTurnsWithCoal(int coal) {
+  public List<Turn> getPossibleTurnsWithCoal(boolean freeTurn, int coal) {
     ArrayList<Turn> turns = new ArrayList<Turn>(); 
     int start = freeTurn ? 2 : 1;
     for(int i = 0; i <= coal; i++) {
@@ -400,17 +408,19 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Gibt einen Bewegungsaktion zurück, falls dieser Zug in eine bestimmte Richtung
-   * mit einer festen Anzahl von Bewegungspunkten möglich ist. Gibt null zurück, falls Zug nicht möglich
-   * @param direction
-   * @param movement
+   * Gibt alle Bewegungsaktionn zurück, die in die Richtung des Spielers
+   * mit einer festen Anzahl von Bewegungspunkten möglich sind.
+   * @param player Spieler
+   * @param movement Anzahl 
    * @return
    */
-  public Step getPossibleMovesInDirection(int direction, int movement) {
-    Step step = null;
+  public List<Step> getPossibleMovesInDirection(Player player, int movement) {
+    ArrayList<Step> step = new ArrayList<Step>();
+    int direction = player.getDirection();
     board = getVisibleBoard();
-    Field start = getCurrentPlayer().getField(board);
+    Field start = player.getField(board);
     int i = 0;
+    Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
     while(movement > 0) {
       i++;
       Field next = start.getFieldInDirection(direction, board);
@@ -418,18 +428,20 @@ public class GameState implements Cloneable {
         movement--;
         if(next.getType() == FieldType.LOG) { // das Überqueren eines Baumstammfeldes verbraucht doppelt so viele Bewegungspunkte
           movement--;
+          if(movement >= 0) {
+            step.add(new Step(i));
+          }
         } else {
-          if(next.getType() == FieldType.SANDBAR) {
-            step = new Step(i);
+          if(movement >= 0) {
+            step.add(new Step(i));
+          }
+          if(next.getType() == FieldType.SANDBAR || next.equals(enemy.getField(board))) {
             return step;
           }
         }
       } else {
         return step;
       }
-    }
-    if(movement == 0) { // falls alle Punkte verbraucht wurden, gib den Zug zurück
-      step = new Step(i);
     }
     return step;
   }
@@ -586,7 +598,7 @@ public class GameState implements Cloneable {
    * Server relevant, da hier keine Fehlerüberprüfung durchgeführt wird. Zum
    * Ausführen von Zügen die
    * {@link sc.plugin2017.Move#perform(GameState, Player) perform}-Methode
-   * benutzen.
+   * benutzen. Es wird hier ebenfalls das Spielsegment auf dem sich der Spieler befindet aktualisiert
    * 
    * @param x x-Koordinate
    * @param y y-Koordinate
@@ -594,7 +606,14 @@ public class GameState implements Cloneable {
    * @param player der setzende Spieler
    */
   protected void put(int x, int y, Player player) {
-    player.put(x, y);
+    int tileNumber = 0;
+    for (Tile tile : board.getTiles()) {
+      if(tile.getField(x, y) != null) {
+        tileNumber = tile.getIndex();
+        break;
+      }
+    }
+    player.put(x, y, tileNumber);
   }
 
   /**
