@@ -1,4 +1,4 @@
-<project name="twixt" basedir="." default="main">
+<project name="mississippi_queen" basedir="." default="main">
 	<import file="../../git-build.xml" />
 
 	<property name="src.dir" value="src" />
