@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sc.plugin2017.util.Constants;
+import sc.plugin2017.util.InvalidMoveException;
 import sc.plugin2017.PlayerColor;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -651,6 +652,88 @@ public class GameState implements Cloneable {
       board.getField(x, y).getFieldInDirection(5, board).setType(FieldType.BLOCKED);
     }
     player.setPassenger(player.getPassenger() + 1);
+  }
+
+  public GameState getVisible() {
+    GameState clone = null;
+    try {
+      clone = this.clone();
+    } catch (CloneNotSupportedException e) {
+      e.printStackTrace();
+    }
+    clone.board = new Board(false);
+    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
+      Tile newTile = board.getTiles().get(i);
+      if(newTile.isVisible()) {
+        clone.board.getTiles().add(newTile);
+      }
+    }
+    return clone;
+  }
+  
+  
+  /**
+   * Berechent wie viele Gewegungpunkte und Kohleeinheiten der Zug des benötigt
+   * Es wird hier davon ausgegangen, dass der Zug möglich ist. Gibt {-1,-1} zurück, falls
+   * Zug ungültig ist.
+   * @param player Spieler
+   * @param freeTurn freie Drehung
+   * @param move Zug 
+   * @return Gewegungspunkte und Kohle
+   */
+  public int[] getCost(Player player, boolean freeTurn, Move move) {
+    int[] cost = new int[2];
+    GameState clone = null;
+    try {
+      clone = this.clone();
+    } catch (CloneNotSupportedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    for(Action action : move.actions) {
+      if(action.getClass() == Step.class) { // case Step
+        Step o = (Step) action;
+        cost[0] += o.distance;
+        Field start = player.getField(clone.board);
+        if(start.getType() == FieldType.SANDBAR) {
+          cost[1] += 1;
+        }
+        for(int i = 1; i <= o.distance; i++) {
+          Field next = start.getFieldInDirection(player.getDirection(), clone.board);
+          if(next.getType() == FieldType.LOG) {
+            cost[0]++;
+          }
+          start = next;
+        }
+        
+      } else if(action.getClass() == Acceleration.class) { // case Acceleration
+        Acceleration o = (Acceleration) action;
+        if(o.acc > 1 || o.acc < -1) {
+          cost[1] += Math.abs(o.acc) - 1;
+        }
+      } else if(action.getClass() == Turn.class) { // case Turn
+        Turn o = (Turn) action;
+        if(Math.abs(o.direction) > 1 + (freeTurn ? 1 : 0)) {
+          cost[1] += Math.abs(o.direction) - (1 + (freeTurn ? 1 : 0));
+        }
+      } else if(action.getClass() == Push.class) { // case Push
+        Push o = (Push) action;
+        if(player.getField(clone.board).getFieldInDirection(o.direction, clone.board).getType() == FieldType.LOG) {
+          cost[0] += 2;
+        } else {
+          cost[0] += 1;
+        }
+      }
+      try {
+        action.perform(clone, player);
+      } catch (InvalidMoveException e) {
+
+        e.printStackTrace();
+        int[] array = {-1,-1};
+        return array;
+      }
+    }
+    return cost;
   }
 }
 

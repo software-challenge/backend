@@ -82,12 +82,12 @@ public class Player extends SimplePlayer implements Cloneable {
 		setSpeed(1);
 		coal = Constants.START_COAL;
 		setTile(0);
-		setX(0);
+		setX(-1);
 		setPassenger(0);
 		if(color == PlayerColor.RED) {
-		  setY(3);
-		} else {
 		  setY(1);
+		} else {
+		  setY(-1);
 		}
 	}
 

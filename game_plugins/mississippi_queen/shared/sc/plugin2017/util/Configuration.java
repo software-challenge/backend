@@ -51,9 +51,17 @@ public class Configuration {
 
 	public static List<Class<?>> getClassesToRegister() {
 	  // print board
+	  /*Move move = new Move();
+    move.actions.add(new Acceleration(1,0));
+    move.actions.add(new Step(2,1));
+    move.actions.add(new Push(1,2));
+    move.actions.add(new Turn(1,3));
+	  xStream.alias("move", move.getClass());
+	  System.out.println(xStream.toXML(move));*/
+    /*
 	  Board board = new Board();
 	  xStream.alias("board", board.getClass() );
-	  System.out.println(xStream.toXML(board));
+	  System.out.println(xStream.toXML(board));*/
 	  
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,

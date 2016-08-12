@@ -3,16 +3,20 @@ package sc.plugin2017;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import sc.plugin2017.util.Configuration;
 import sc.plugin2017.util.Constants;
+import sc.protocol.LobbyProtocol;
 
 @XStreamAlias(value = "tile")
 public class Tile {
 
   private ArrayList<Field> fields;
-  
+  @XStreamOmitField
   private boolean visible;
   
   /**
@@ -42,8 +46,8 @@ public class Tile {
     this.index = index;
     this.direction = direction;
     this.visible = index < 2; // at the beginning only the first 2 Tiles are visible
+    System.out.println("*************** Beginning to generate a new tile " + index + " with passenger " + passengers);
     generateFields(x, y, passengers, blockedFields, specialFields, (index == Constants.NUMBER_OF_TILES - 1));
-    
   }
   
   protected Tile(ArrayList<Field> fields) {
@@ -51,6 +55,7 @@ public class Tile {
   }
 
   private void generateFields(int x, int y, int passengers, int blocked, int special, boolean end) {
+    System.out.println("Begin to generate tiles for tile" + index);
     fields = new ArrayList<Field>();
     if(direction == 0) {
       fields.add(new Field(FieldType.WATER, x-2, y+2, 0));
@@ -221,9 +226,13 @@ public class Tile {
         fields.add(new Field(FieldType.WATER, x+2, y+1, 4));
       }
     }
+    System.out.println("Generated fields");
     placeBlocked(blocked);
+    System.out.println("Placed islands");
     placeSpecial(special);
+    System.out.println("Placed special fields");
     placePassengers(passengers);
+    System.out.println("PLaced passengers");
   }
 
   private void placeBlocked(int blocked) {
@@ -263,6 +272,8 @@ public class Tile {
           dock.getType() != FieldType.WATER) {
         random = rnd.nextInt(fields.size() - 5);
         passengerDirection = rnd.nextInt(6);
+        start = fields.get(random);
+        dock = getFieldInDirection(passengerDirection, start);
       }
       FieldType passenger;
       switch (passengerDirection) {
