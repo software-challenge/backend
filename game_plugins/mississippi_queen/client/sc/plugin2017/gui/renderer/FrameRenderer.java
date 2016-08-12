@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
+import sc.plugin2017.gui.renderer.primitives.GuiBoard;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.util.Constants;
@@ -35,6 +36,8 @@ public class FrameRenderer extends PApplet {
   private EPlayerId id;
 
 
+  public GuiBoard guiBoard;
+  
   public FrameRenderer() {
     super();
 
@@ -44,7 +47,7 @@ public class FrameRenderer extends PApplet {
     this.id = EPlayerId.OBSERVER;
 
     RenderConfiguration.loadSettings();
-
+    guiBoard = new GuiBoard(this);
     // logger.debug("Constructor finished");
 
     // load Images
@@ -74,11 +77,30 @@ public class FrameRenderer extends PApplet {
   }
 
   public void draw() {
-
+    // TODO
   }
 
   public void updateGameState(GameState gameState) {
-    
+    int lastTurn = -1;
+    if (currentGameState != null) {
+      lastTurn = currentGameState.getTurn();
+    }
+    currentGameState = gameState;
+    if (gameState != null && gameState.getVisibleBoard() != null)
+      guiBoard.update(gameState.getVisibleBoard());
+    if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
+
+      if (maxTurn == currentGameState.getTurn() - 1) {
+
+        maxTurn++;
+        humanPlayerMaxTurn = false;
+      }
+    }
+    humanPlayer = false;
+    if (currentGameState != null && maxTurn == currentGameState.getTurn()
+        && humanPlayerMaxTurn) {
+      humanPlayer = true;
+    }
   }
 
   public void requestMove(int maxTurn, EPlayerId id) {
@@ -119,7 +141,7 @@ public class FrameRenderer extends PApplet {
   }
 
   public void resize(int width, int height) {
-
+    // TODO 
   }
 
   /*

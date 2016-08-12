@@ -8,6 +8,12 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "push")
 public class Push extends Action {
 
+  
+  /**
+   * Zeigt an welche Nummer die Aktion hat
+   */
+  @XStreamAsAttribute
+  public int order;
   /**
    * Richtung in die abgedrängt werden soll
    */

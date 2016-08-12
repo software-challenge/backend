@@ -142,6 +142,9 @@ public class Move implements Cloneable {
     int order = 0;
     int reduceSpeed = 0;
     boolean onEnemy;
+    if(actions.isEmpty()) {
+      throw new InvalidMoveException("Der Zug enthält keine Aktionen");
+    }
     for(Action action : actions) {
       onEnemy = player.getX() == state.getOtherPlayer().getX() && 
           player.getY() == state.getOtherPlayer().getY();
@@ -230,9 +233,9 @@ public class Move implements Cloneable {
   }
   
   public String toString() {
-    String toString = "Zug: \n";
+    String toString = "Zug mit folgenden Aktionen \n";
     for (Action action : actions) {
-      toString.concat(action.toString() + "\n");
+      toString.concat(action.toString() + " ");
     }
     return toString;
   }

@@ -8,6 +8,12 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "acceleration")
 public class Acceleration extends Action {
 
+  
+  /**
+   * Zeigt an welche Nummer die Aktion hat
+   */
+  @XStreamAsAttribute
+  public int order;
   /**
    * Gibt an um wie viel beschleuningt wird, Negative Zahl bedeutet, das entsprechend gebremst wird.
    * Darf nicht 0 sein wirf sonst InvalidMoveException beim ausführen von perform

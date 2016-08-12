@@ -2,6 +2,7 @@ package sc.plugin2017;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @XStreamAlias(value = "field")
 public class Field {
@@ -26,6 +27,7 @@ public class Field {
   /**
    * Punkte die ein Feld bringt anhand seiner Position
    */
+  @XStreamOmitField
   private final int points;
   
   /**

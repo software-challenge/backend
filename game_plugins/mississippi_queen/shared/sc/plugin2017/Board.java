@@ -52,9 +52,9 @@ public class Board {
     ArrayList<Integer> tilesWithPassengers = new ArrayList<Integer>(); // holds all tiles numbers with a passenger field
     for(int i = 0;i < Constants.NUMBER_OF_PASSENGERS; i++) {
       // the cannot be a passenger on the starting tile change to -2 for no passenger on last Tile
-      int number = rnd.nextInt(Constants.NUMBER_OF_TILES - 1) + 1; 
+      int number = rnd.nextInt(Constants.NUMBER_OF_TILES - 2) + 1; 
       while(tilesWithPassengers.contains(number)) {
-        number = rnd.nextInt(Constants.NUMBER_OF_TILES - 1) + 1;
+        number = rnd.nextInt(Constants.NUMBER_OF_TILES - 2) + 1;
       }
       tilesWithPassengers.add(number);
     }
@@ -77,6 +77,10 @@ public class Board {
       startCoordinates[i][0] = getXCoordinateInDirection(startCoordinates[i-1][0], direction[i]);
       startCoordinates[i][1] = getYCoordinateInDirection(startCoordinates[i-1][1], direction[i]);
     }
+    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
+      System.out.print(direction[i] + " ");
+    }
+     System.out.println(tilesWithPassengers);
     generateStartField();
     for(int i = 1; i < Constants.NUMBER_OF_TILES; i++) {
       generateTile(i, tilesWithPassengers.contains(i), direction[i], startCoordinates[i][0], startCoordinates[i][1]);
@@ -148,6 +152,7 @@ public class Board {
     Tile start = new Tile(0, 0, 0, 0, 0, 0, 0); // generate tile with middle at 0,0 in direction 0
     // with no other fields than WATER fields
     tiles.add(start);
+    System.out.println("Generated start field");
   }
 
   /**
@@ -219,10 +224,10 @@ public class Board {
   }
 
   public ArrayList<Tile> getVisibleTiles() {
-    ArrayList<Tile> visibleTiles = new ArrayList<Tile>(this.tiles); 
+    ArrayList<Tile> visibleTiles = new ArrayList<Tile>(); 
     for (Tile tile : visibleTiles) {
-      if(!tile.isVisible()) {
-        visibleTiles.remove(tile);
+      if(tile.isVisible()) {
+        visibleTiles.add(tile);
       }
     }
     return visibleTiles;

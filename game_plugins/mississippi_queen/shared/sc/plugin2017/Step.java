@@ -5,12 +5,18 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2017.util.InvalidMoveException;
 
 @XStreamAlias(value = "step")
 public class Step extends Action {
 
+  /**
+   * Zeigt an welche Nummer die Aktion hat
+   */
+  @XStreamAsAttribute
+  public int order;
   /**
    * Anzahl der Felder, die zurückgelegt werden.
    */
@@ -19,10 +25,12 @@ public class Step extends Action {
   /**
    * Zeigt an, um wie viele Punkte die Geschwindigkeit am Ende des Zuges verringert werden soll
    */
+  @XStreamOmitField
   protected int reduceSpeed;
   /**
    * Das fahren auf eine Sandbank beendet den Zug
    */
+  @XStreamOmitField
   protected boolean endsTurn;
   
   public Step(int distance) {
@@ -99,7 +107,7 @@ public class Step extends Action {
   }
   
   public String toString() {
-    return "Bewegung um " + distance + "Felder";
+    return "Bewegung um " + distance + " Felder";
   }
 
 }

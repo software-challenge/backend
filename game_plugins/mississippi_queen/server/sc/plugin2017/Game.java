@@ -46,7 +46,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private GameState gameState = new GameState();
 
 	public GameState getGameState() {
-		return gameState;
+		return gameState.getVisible();
 	}
 
 	public Player getActivePlayer() {
@@ -60,7 +60,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	protected Object getCurrentState() {
-		return gameState;
+		return gameState.getVisible(); // return only the for the players visible board
 	}
 
 	/**
