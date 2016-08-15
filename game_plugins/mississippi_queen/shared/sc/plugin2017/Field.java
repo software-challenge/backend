@@ -135,11 +135,38 @@ public class Field {
     return null;
   }
 
+  /**
+   * Ist das Feld passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
+   * @return Wahr, falls Feld theoretisch passierbar
+   */
   public boolean isPassable() {
     if(type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBAR || type == FieldType.GOAL) {
       return true;
     }
     return false;
   }
+  
+  /**
+   * Ist das Feldtyp passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
+   * @return Wahr, falls Feld theoretisch passierbar
+   */
+  public static boolean isPassable(FieldType type) {
+    return type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBAR || type == FieldType.GOAL;
+  }
+  
+  /**
+   * Ist das Feldtyp ein Passierfeldtyp?
+   * @return Wahr, falls Feld Passagierfeld
+   */
+  public static boolean isPassengerField(FieldType type) {
+    return type == FieldType.PASSENGER0 || 
+        type == FieldType.PASSENGER1 || 
+        type == FieldType.PASSENGER2 || 
+        type == FieldType.PASSENGER3 || 
+        type == FieldType.PASSENGER4 || 
+        type == FieldType.PASSENGER5;
+  }
+  
+  
 
 }

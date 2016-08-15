@@ -183,7 +183,7 @@ public class RenderFacade {
 	}
 	
 	/**
-	 * Stes handler
+	 * Sets handler
 	 * @param handler Game handler
 	 * @param target EPlayerId
 	 *            

@@ -58,10 +58,11 @@ public class Configuration {
     move.actions.add(new Turn(1,3));
 	  xStream.alias("move", move.getClass());
 	  System.out.println(xStream.toXML(move));*/
-    /*
-	  Board board = new Board();
+
+	  GameState state = new GameState();
+	  Board board = state.getVisibleBoard();
 	  xStream.alias("board", board.getClass() );
-	  System.out.println(xStream.toXML(board));*/
+	  System.out.println("************************BOARD*********\n" + xStream.toXML(board));
 	  
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,

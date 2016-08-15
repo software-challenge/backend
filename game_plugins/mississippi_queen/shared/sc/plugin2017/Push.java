@@ -30,27 +30,34 @@ public class Push extends Action {
   }
   
   @Override
-  public int perform(GameState state, Player player) throws InvalidMoveException {
+  public void perform(GameState state, Player player) throws InvalidMoveException {
+    if(player.getMovement() == 0) {
+      throw new InvalidMoveException("Keine Bewegunspunkte mehr vorhanden");
+    }
     Field pushFrom = player.getField(state.getBoard());
     Field pushTo = pushFrom.getFieldInDirection(direction, state.getBoard());
     if(pushTo == null || !pushTo.isPassable()
         || pushFrom.getType() == FieldType.SANDBAR) {
       throw new InvalidMoveException("Ungültiges Abdrängen");
     }
-    int neededSpeed = 1;
+    // pushing costs 1 movement point
+    player.setMovement(player.getMovement() - 1);
     if(pushTo.getType() == FieldType.LOG) {
-      neededSpeed++;
+      // driving through logs reduces speed and movement by +1
+      player.setSpeed(player.getSpeed() - 1);
+      player.setMovement(player.getMovement() - 1);
     }
     if(pushFrom.getFieldInDirection(GameState.getOppositeDirection(player.getDirection()), state.getBoard()).equals(pushTo)) { // es darf nicht nach hinten abgedrängt werden
       throw new InvalidMoveException("Ungültiges Abdrängen");
     }
     if(pushTo.getType() == FieldType.SANDBAR) {
       state.getOtherPlayer().setSpeed(1);
+      state.getOtherPlayer().setMovement(1);
     }
    // change Position of opponent player
     state.put(pushTo.getX(), pushTo.getY(), state.getOtherPlayer());
     
-    return neededSpeed;
+    return;
   }
   
   public Push clone() {
