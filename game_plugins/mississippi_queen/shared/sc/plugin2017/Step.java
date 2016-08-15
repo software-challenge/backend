@@ -23,11 +23,6 @@ public class Step extends Action {
   @XStreamAsAttribute
   public int distance;
   /**
-   * Zeigt an, um wie viele Punkte die Geschwindigkeit am Ende des Zuges verringert werden soll
-   */
-  @XStreamOmitField
-  protected int reduceSpeed;
-  /**
    * Das fahren auf eine Sandbank beendet den Zug
    */
   @XStreamOmitField
@@ -35,20 +30,20 @@ public class Step extends Action {
   
   public Step(int distance) {
     this.distance = distance;
-    reduceSpeed = 0;
     endsTurn = false;
   }
   
   public Step(int distance, int order) {
     this.distance = distance;
     this.order = order;
-    reduceSpeed = 0;
     endsTurn = false;
   }
   
   @Override
-  public int perform(GameState state, Player player) throws InvalidMoveException {
-    int neededSpeed = 0;
+  public void perform(GameState state, Player player) throws InvalidMoveException {
+    if(player.getMovement() == 0) {
+      throw new InvalidMoveException("Keine Bewegunspunkte mehr vorhanden");
+    }
     Field start = player.getField(state.getBoard());
     List<Field> nextFields = new ArrayList<Field>();
     int direction = player.getDirection();
@@ -64,8 +59,22 @@ public class Step extends Action {
         throw new InvalidMoveException("Der Weg ist versperrt");
       }
       state.put(next.getX(), next.getY(), player);
-      return 1;
+      player.setMovement(0);
+      return;
     } else {
+      if(start.getType() == FieldType.SANDBAR) {
+        if(this.distance != 1) {
+          throw new InvalidMoveException("Nur eine Bewegung nach vorne auf einer Sandbank möglich");
+        }
+        player.setMovement(0);
+        Field next = start.getFieldInDirection(direction, state.getVisibleBoard());
+        if(!next.isPassable()) {
+          throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
+        }
+        state.put(next.getX(), next.getY(), player);
+        player.setCoal(player.getCoal() - 1);
+        return;
+      }
       nextFields.add(start);
       // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
       for(int i = 0; i < distance; i++) {
@@ -76,23 +85,30 @@ public class Step extends Action {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
         if(checkField.getType() == FieldType.SANDBAR) {
-          reduceSpeed = player.getSpeed() - 1;
+          // case sandbar
+          player.setSpeed(1);
+          player.setMovement(0);
           endsTurn = true;
           if(i != distance - 1) {
             // Zug endet hier, also darf nicht weitergelaufen werden
             throw new InvalidMoveException("Zug sollte bereits enden, da auf Sandbank gefahren wurde.");
           }
-          return neededSpeed + 1;
+          return;
         } else if(checkField.getType() == FieldType.LOG) {
-          reduceSpeed++;
-          neededSpeed += 2;
+          if(player.getMovement() <= 1) {
+            throw new InvalidMoveException("Nicht genug Bewegunspunkte vorhanden");
+          }
+          player.setMovement(player.getMovement() - 1);
+          player.setSpeed(player.getSpeed() - 2);
         } else {
-          neededSpeed += 1;
+          player.setSpeed(player.getSpeed() - 1);
         }
         
       }
+      Field target = nextFields.get(nextFields.size() - 1);
+      state.put(target.getX(), target.getY(), player);
     }
-    return neededSpeed;
+    return;
   }
   
   public Step clone() {

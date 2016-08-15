@@ -36,17 +36,26 @@ public class Turn extends Action {
   /**
    * @param state Gamestate
    * @param player Spieler der die Aktion ausführt
-   * @return Anzahl der Drehungen
    */
   @Override
-  public int perform(GameState state, Player player) throws InvalidMoveException {
+  public void perform(GameState state, Player player) throws InvalidMoveException {
     if(direction == 0 || direction < -3 || direction > 3) {
       throw new InvalidMoveException("Drehung ist ungültig.");
     }
     int currentDirection = player.getDirection();
     currentDirection += direction;
     currentDirection = (currentDirection + 6/*Anzahl der Richtungen*/) % 6; // echtes Modulo nicht java modulo
-    return Math.abs(direction);
+    int i;
+    for(i = Math.abs(direction); player.getFreeTurns() != 0; i--) {
+      player.setFreeTurns(player.getFreeTurns() - 1);
+    }
+    if(player.getCoal() >= i) {
+      player.setCoal(player.getCoal() - i);
+    } else {
+      throw new InvalidMoveException("Nicht gengug Kohle für Drehung");
+    }
+    player.setDirection(currentDirection);
+    return;
   }
   
   public Turn clone() {

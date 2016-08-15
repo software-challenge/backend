@@ -15,7 +15,7 @@ import sc.protocol.LobbyProtocol;
 @XStreamAlias(value = "tile")
 public class Tile {
 
-  private ArrayList<Field> fields;
+  public ArrayList<Field> fields;
   @XStreamOmitField
   private boolean visible;
   

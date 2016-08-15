@@ -227,7 +227,7 @@ public class Board {
     ArrayList<Tile> visibleTiles = new ArrayList<Tile>(); 
     for (Tile tile : visibleTiles) {
       if(tile.isVisible()) {
-        visibleTiles.add(tile);
+        visibleTiles.add(tile.clone());
       }
     }
     return visibleTiles;
