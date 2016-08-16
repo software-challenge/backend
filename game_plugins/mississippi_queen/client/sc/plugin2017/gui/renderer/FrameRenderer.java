@@ -18,6 +18,7 @@ import sc.plugin2017.gui.renderer.primitives.GuiPlayer;
 import sc.plugin2017.gui.renderer.primitives.ProgressBar;
 import sc.plugin2017.gui.renderer.primitives.SideBar;
 import sc.plugin2017.gui.renderer.primitives.GuiBoard;
+import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.util.Constants;
@@ -39,7 +40,7 @@ public class FrameRenderer extends PApplet {
   public GameState currentGameState;
   private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
-  private int maxTurn;
+  public int maxTurn;
   private EPlayerId id;
 
 
@@ -72,13 +73,7 @@ public class FrameRenderer extends PApplet {
     sideBar = new SideBar(this);
     red = new GuiPlayer(this);
     blue = new GuiPlayer(this);
-
-
     boardFrame = new BoardFrame(this);
-    // logger.debug("Constructor finished");
-
-    // load Images
-    //currently no images
   }
 
   public void setup() {
@@ -105,10 +100,11 @@ public class FrameRenderer extends PApplet {
   }
 
   public void draw() {
+    System.out.println("\n\n\n Draw was called\n\n\n");
     background.draw();
     guiBoard.draw();
     progressBar.draw();
-    // sideBar.draw(); TODO
+    sideBar.draw(); 
     boardFrame.draw();
     red.draw();
     blue.draw();
@@ -123,8 +119,9 @@ public class FrameRenderer extends PApplet {
       lastTurn = currentGameState.getTurn();
     }
     currentGameState = gameState;
-    if (gameState != null && gameState.getVisibleBoard() != null)
-      guiBoard.update(gameState.getVisibleBoard());
+    System.out.println(gameState.getBoard());
+    if (gameState != null && gameState.getBoard() != null)
+      guiBoard.update(gameState.getBoard());
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
       if (maxTurn == currentGameState.getTurn() - 1) {
@@ -161,15 +158,52 @@ public class FrameRenderer extends PApplet {
   }
 
   public void mouseClicked(MouseEvent e) {
-    
+    System.out.println("Mouse: (" + mouseX + ", " + mouseY + ")");
   }
 
   public void mousePressed(MouseEvent e) {
-    
+    draw();
+    if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      if(currentGameState.getCurrentPlayer()
+        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        progressBar.left.isClicked();
+        progressBar.right.isClicked();
+        if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
+          progressBar.speedDown.isClicked();
+        }
+        if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
+          progressBar.speedUp.isClicked();
+        }
+      }
+      progressBar.send.isClicked();
+    }
   }
 
   public void mouseReleased(MouseEvent e) {
-    // TODO implemnet human player
+    if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      if(currentGameState.getCurrentPlayer()
+        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        if(progressBar.left.isClicked()) {
+          System.out.println(progressBar.left);
+        }
+        if(progressBar.right.isClicked()) {
+          System.out.println(progressBar.right);
+        }
+        if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
+          if(progressBar.speedDown.isClicked()) {
+            System.out.println(progressBar.speedDown);
+          }
+        }
+        if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
+          if(progressBar.speedUp.isClicked()) {
+            System.out.println(progressBar.speedUp);
+          }
+        }
+      }
+      if(progressBar.send.isClicked()) {
+        System.out.println(progressBar.send);
+      }
+    }
   }
 
   private int[] getFieldCoordinates(int x, int y) {

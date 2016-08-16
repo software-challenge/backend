@@ -27,7 +27,7 @@ public class GuiConstants {
   public static final int colorLightBlue = calcColor(255, 92, 92, 205);
   public static final int colorGreen = calcColor(255, 0, 255, 0);
   public static final int colorLightGrey = calcColor(255, 100, 100, 100);
-  public static final int colorLightLightGrey = calcColor(255, 130, 130, 130);
+  public static final int colorLightLightGrey = calcColor(255, 150, 150, 150);
   public static final int colorGrey = calcColor(255, 50, 68, 70);
   public static final int colorDarkGrey = calcColor(255, 30, 30, 30);
   public static final int colorBlack = calcColor(255, 0, 0, 0);

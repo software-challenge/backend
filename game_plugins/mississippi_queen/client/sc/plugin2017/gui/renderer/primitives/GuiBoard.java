@@ -22,6 +22,8 @@ public class GuiBoard extends PrimitiveBase{
   /**
    * holds the position of 0,0 relativ to parent 
    */
+  public float startX;
+  public float startY;
   public int offsetX; 
   public int offsetY;
   public Dimension dim;
@@ -41,17 +43,22 @@ public class GuiBoard extends PrimitiveBase{
   
   public GuiBoard(FrameRenderer parent) {
     super(parent);
-    
+    if(parent == null) {
+      System.out.println(" \n\n\n THis should never happen!!!!!!!\n\n\n");
+    }
+    this.parent = parent;
     tiles = new LinkedList<GuiTile>();
     for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
       tiles.add(new GuiTile(parent, i));
     }
     
-    float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
+    float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
 
-    float yDimension = parent.height * GuiConstants.PROGRESS_BAR_HEIGHT;
+    float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
 
     dim = new Dimension((int) xDimension, (int) yDimension);
+    System.out.println("Parent: (" + parent.getWidth() + ", " + parent.getHeight() + ") dim ("
+        + xDimension + ", " + yDimension + ")");
     if(parent.currentGameState != null) {
       currentBoard = parent.currentGameState.getVisibleBoard();
     }
@@ -59,16 +66,16 @@ public class GuiBoard extends PrimitiveBase{
   }
 
   /**
-   * sets width, macFieldsInX, maxFieldsInY according to dim and currentBoard
+   * sets width, maxFieldsInX, maxFieldsInY, startX, startY, offset according to dim and currentBoard
    */
   private void calcHexFieldSize() {
-    // TODO calculate offset 
+    // TODO calculate start
     if(currentBoard != null) {
       int lowX = 500;
       int highX = -500;
       int lowY = 500;
       int highY = -500;
-      for (Tile tile : currentBoard.getVisibleTiles()) {
+      for (Tile tile : currentBoard.getTiles()) {
         for (Field field : tile.fields) {
           if(lowX > field.getX()) {
             lowX = field.getX();
@@ -79,16 +86,23 @@ public class GuiBoard extends PrimitiveBase{
           if(lowY > field.getY()) {
             lowY = field.getY();
           }
-          if(highY > field.getY()) {
+          if(highY < field.getY()) {
             highY = field.getY();
           }
         }
       }
       maxFieldsInX = highX - lowX;
       maxFieldsInY = highY - lowY;
-      float xLength = (dim.width / ((float)maxFieldsInX + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      float yLength = (dim.height / ((float)maxFieldsInY + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      float xLength = (dim.width / ((float) maxFieldsInX + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      float yLength = (dim.height / ((float) maxFieldsInY + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      System.out.println("xLength: " + xLength + " yLength " + yLength);
       width = Math.min(xLength, yLength);
+      offsetX = -lowX;
+      offsetY = -lowY;
+      float sizeX = (width + GuiConstants.BORDERSIZE);
+      float sizeY = (HexField.calcA(width) + HexField.calcC(width) + GuiConstants.BORDERSIZE);
+      startX = (dim.width - (sizeX * maxFieldsInX)) / 2f;
+      startY = (dim.height - (sizeY * maxFieldsInY)) / 2f;
     }
   }
 
@@ -97,18 +111,22 @@ public class GuiBoard extends PrimitiveBase{
    * @param board
    */
   public void update(Board board) {
+    System.out.println("\n\n\n Update board was called\n\n\n");
     currentBoard = board;
     // TODO check
-    if(!currentBoard.getVisibleTiles().isEmpty()) {
+    if(!currentBoard.getTiles().isEmpty()) {
       int toUpdate = 0;
-      int index = currentBoard.getVisibleTiles().get(0).getIndex();
+      int index = currentBoard.getTiles().get(0).getIndex();
       for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
         if(index != i) {
           tiles.get(i).visible = false;
         } else {
-          tiles.get(index).update(currentBoard.getVisibleTiles().get(toUpdate));
+          tiles.get(index).visible = true;
+          tiles.get(index).update(currentBoard.getTiles().get(toUpdate));
           ++toUpdate;
-          index = currentBoard.getVisibleTiles().get(toUpdate).getIndex();
+          if(toUpdate < currentBoard.getTiles().size()) {
+            index = currentBoard.getTiles().get(toUpdate).getIndex();
+          }
         }
       }
     }
@@ -120,10 +138,15 @@ public class GuiBoard extends PrimitiveBase{
    * @param height
    */
   private void calculateSize(int width, int height) {
-    float xDimension = parent.width * GuiConstants.GUI_BOARD_WIDTH;
+    if(parent != null) {
+      float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
+    
 
-    float yDimension = parent.height * GuiConstants.PROGRESS_BAR_HEIGHT;
-    dim = new Dimension((int) xDimension, (int) yDimension);
+      float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
+      dim = new Dimension((int) xDimension, (int) yDimension);
+      System.out.println("Parent: (" + parent.getWidth() + ", " + parent.getHeight() + ") dim ("
+          + xDimension + ", " + yDimension + ")");
+    }
 
     calcHexFieldSize();
   }
@@ -131,16 +154,21 @@ public class GuiBoard extends PrimitiveBase{
 
   @Override
   public void draw() {
-    // resize(parent.displayWidth, parent.displayHeight); // TODO nullpointer
-    for (GuiTile tile : tiles) {
-      tile.draw();
+    if(parent != null) {
+      System.out.println("\n\nBegin drawing tile\n\n");
+      resize(parent.getWidth(), parent.getHeight()); // TODO nullpointer
+      System.out.println("Width: " + width + " maxFieldsIn: (" + maxFieldsInX + ", " + maxFieldsInY + 
+          ") offset: (" + offsetX + ", " + offsetY + ") Dim " + dim + "start: (" + startX + ", " + startY + ")");
+      for (GuiTile tile : tiles) {
+        tile.draw();
+      }
     }
   }
 
   public void resize(int width, int height) {
-    // calculateSize(width, height); // TODO
+    calculateSize(width, height); // TODO
     for (GuiTile tile : tiles) {
-      tile.resize(offsetX, offsetY, width);
+      tile.resize(startX, startY, offsetX, offsetY, this.width);
     }
   }
 

@@ -161,14 +161,17 @@ public class GameState implements Cloneable {
    * 
    * @return das Spielfeld
    */
-  protected Board getBoard() {
+  public Board getBoard() {
     return this.board;
   }
   
   public Board getVisibleBoard() {
-    ArrayList<Tile> tiles = this.board.getVisibleTiles();
-    Board visibleBoard = new Board(tiles);
-    System.out.println("++++++ Board is " + visibleBoard);
+    Board visibleBoard = new Board(false);
+    for (Tile tile : board.getTiles()) {
+      if(tile.isVisible()) {
+        visibleBoard.getTiles().add(tile);
+      }
+    }
     return visibleBoard;
   }
 

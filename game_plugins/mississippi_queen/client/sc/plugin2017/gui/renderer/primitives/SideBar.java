@@ -12,6 +12,7 @@ import sc.plugin2017.util.Constants;
  * @author soeren
  * 
  */
+// TODO find out why dispalyName == null
 public class SideBar extends PrimitiveBase {
 
   public SideBar(FrameRenderer parent) {
@@ -55,19 +56,22 @@ public class SideBar extends PrimitiveBase {
     }
     parent.translate(20, parent.textAscent() + 20);
     // passe Textgröße an
-    // TODO error here
     int  preferredTextSize = 25;
-    if(parent != null && parent.currentGameState != null) {
-      preferredTextSize = (int) (30f / parent.textWidth(redName) * (parent
-        .getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+    if(parent != null && parent.currentGameState != null && redName != null) {
+      preferredTextSize = (int) (30f / parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
     }
-    if (!(preferredTextSize > 30))
+    if (!(preferredTextSize > 30)) {
       parent.textSize(preferredTextSize);
-
-    parent.text(redName, 0, 0);
+    }
+    
+    if(redName != null) {
+      parent.text(redName, 0, 0);
+    }
+    
     // Punkte + Kohle + Geschwindigkeit
     parent.textFont(GuiConstants.fonts[1]);
     parent.textSize(GuiConstants.fontSizes[1]);
+
 
     parent.translate(0, parent.textAscent() + parent.textDescent());
     if (parent.currentGameState != null && !parent.currentGameState.gameEnded())
@@ -104,12 +108,16 @@ public class SideBar extends PrimitiveBase {
     }
 
     // passe Textgröße an
-    preferredTextSize = (int) (30f / parent.textWidth(blueName) * (parent
+    if(blueName != null) {
+      preferredTextSize = (int) (30f / parent.textWidth(blueName) * (parent
         .getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+    }
     if (!(preferredTextSize > 30))
       parent.textSize(preferredTextSize);
 
-    parent.text(blueName, 0, 0);
+    if(blueName != null) {
+      parent.text(blueName, 0, 0);
+    }
     // Punkte
     parent.textSize(GuiConstants.fontSizes[1]);
     parent.textFont(GuiConstants.fonts[1]);

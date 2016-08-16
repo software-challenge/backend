@@ -39,51 +39,62 @@ public class HexField extends PrimitiveBase{
     setFieldX(fieldX);
     setFieldY(fieldY);
   }
+  
+  public HexField(FrameRenderer parent) {
+    super(parent);
+    fieldX = 0;
+    fieldY = 0;
+  }
 
   public void update(Field field) {
-    // TODO
+    fieldX = field.getX();
+    fieldY = field.getY();
     type = field.getType();
       
   }
 
   public void draw() {
-      parent.pushStyle();
-      parent.noStroke();
-      System.out.println("Got here, gameState is " + parent.currentGameState.getVisibleBoard());
-      //parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
-      //parent.text("" + numFish, 25, 50);
-      if(Field.isPassable(type)) {
-        if(highlighted){
-          parent.fill(GuiConstants.colorHexFieldsHighlight);
-        } else {
-          parent.fill(GuiConstants.colorHexFields);
-        }
+
+    System.out.println(this);
+    parent.pushStyle();
+    parent.noStroke();
+    //parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
+    //parent.text("" + numFish, 25, 50);
+    if(Field.isPassable(type)) {
+      if(highlighted){
+        parent.fill(GuiConstants.colorHexFieldsHighlight);
       } else {
-        parent.fill(GuiConstants.colorHexFieldIsland);
+        parent.fill(GuiConstants.colorHexFields);
       }
-      
-      parent.pushMatrix();
-      parent.translate(getX(), getY());
-  
-      parent.beginShape();
-      parent.vertex(0, a);
-      parent.vertex(b, 0);
-      parent.vertex(2 * b, a);
-      parent.vertex(2 * b, a + getC());
-      parent.vertex(b, 2 * a + getC());
-      parent.vertex(0, a + getC());
-      parent.vertex(0, a);
-      parent.endShape();
-      
-      if(Field.isPassengerField(type)) {
-        // TODO place image of passenger
-      }
-      
-      parent.fill(0);
-      parent.textFont(GuiConstants.fonts[0]);
-      parent.textSize(GuiConstants.fontSizes[0]);
-      parent.popMatrix();
-      parent.popStyle();
+    } else {
+      parent.fill(GuiConstants.colorHexFieldIsland);
+    }
+    
+    parent.pushMatrix();
+    parent.translate(x, y);
+
+    parent.beginShape();
+    parent.vertex(0, a);
+    parent.vertex(b, 0);
+    parent.vertex(2 * b, a);
+    parent.vertex(2 * b, a + getC());
+    parent.vertex(b, 2 * a + getC());
+    parent.vertex(0, a + getC());
+    parent.vertex(0, a);
+    parent.endShape();
+    
+    if(Field.isPassengerField(type)) {
+      // TODO place image of passenger
+    }
+    
+    parent.fill(0);
+    parent.textFont(GuiConstants.fonts[0]);
+    parent.textSize(GuiConstants.fontSizes[0]);
+    if(true) {
+      parent.text(fieldX + "," + fieldY, 0, 30);
+    }
+    parent.popMatrix();
+    parent.popStyle();
   }
 
   private void calcSize(float width) {
@@ -92,11 +103,34 @@ public class HexField extends PrimitiveBase{
     a = b * PApplet.sin(PApplet.radians(30));
   }
   
-  public void resize(float startX, float startY, float width){
-    // TODO even and odd rows
-    setX(startX + (width + GuiConstants.BORDERSIZE) * fieldX);
-    setY(startY + (width + GuiConstants.BORDERSIZE) * fieldY);
+
+  public static float calcA(float width) {
+    
+    return (width / 2f) * PApplet.sin(PApplet.radians(30));
+  }
+  
+  public static float calcB(float width) {
+      
+      return (width / 2f);
+    }
+  
+  public static float calcC(float width) {
+    
+    return (width / 2f) / PApplet.cos(PApplet.radians(30));
+  }
+    
+  public void resize(float startX, float startY, int offsetX, int offsetY, float width){
+    // TODO check
     calcSize(width);
+    float newX = startX;
+    float newY = startY;
+    if((fieldY % 2) != 0) {
+      newX = newX - width / 2f;
+    }
+    newY += (offsetY + fieldY) * (c + a + GuiConstants.BORDERSIZE);
+    newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
+    this.x = newX;
+    this.y = newY;
     
   }
 
@@ -161,5 +195,8 @@ public class HexField extends PrimitiveBase{
   public void setHighlighted(boolean highlighted) {
     this.highlighted = highlighted;
   }
-
+  
+  public String toString() {
+    return "X: " + fieldX + " Y: " + fieldY + " Type: " + type + " " + x + " " + y + " " + b;
+  }
 }
