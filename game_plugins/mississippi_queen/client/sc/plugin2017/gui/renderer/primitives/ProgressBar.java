@@ -2,24 +2,31 @@ package sc.plugin2017.gui.renderer.primitives;
 
 import java.awt.Color;
 
+import sc.plugin2017.FieldType;
 import sc.plugin2017.GamePlugin;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
 /**
  * Zeichnet den Spielverlauf. Rundenanzahl + Bar
  * 
- * @author felix
+ * @author soeren
  * 
  */
 public class ProgressBar extends PrimitiveBase {
   
-  GuiButton left;
-  GuiButton right;
+  public GuiButton left;
+  public GuiButton right;
+  public GuiButton speedUp;
+  public GuiButton speedDown;
+  public GuiButton send;
 
   public ProgressBar(FrameRenderer par) {
     super(par);
     left = new GuiButton(par, "Links");
     right = new GuiButton(par, "Rechts");
+    speedUp = new GuiButton(par, "+");
+    speedDown = new GuiButton(par, "-");
+    send = new GuiButton(par, "Fertig");
   }
 
   @Override
@@ -72,10 +79,24 @@ public class ProgressBar extends PrimitiveBase {
     parent.popMatrix();
 
     parent.popStyle();
-    // TODO only when not on sandbar
-    if(parent.isHumanPlayer())
-      left.draw();
-      right.draw();
+    
+    // draw Buttons
+    if(parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
+      if(parent.currentGameState.getCurrentPlayer()
+        .getField(parent.currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        right.draw();   
+        left.draw();
+        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 1) {
+          speedDown.draw();
+        }
+        if(parent.currentGameState.getCurrentPlayer().getSpeed()  != 6) {
+          speedUp.draw();
+        }
+      }
+      if(parent.currentGameState.getCurrentPlayer().getMovement() == 0) {
+        send.draw();
+      }
+    }
   }
   
   @Override
@@ -85,6 +106,15 @@ public class ProgressBar extends PrimitiveBase {
     }
     if(this.right != null && this.right.parent != null) {
       this.right.kill();
+    }
+    if(this.speedDown != null && this.speedDown.parent != null) {
+      this.speedDown.kill();
+    }
+    if(this.speedUp != null && this.speedUp.parent != null) {
+      this.speedUp.kill();
+    }
+    if(this.send != null && this.send.parent != null) {
+      this.send.kill();
     }
     super.kill();
   }

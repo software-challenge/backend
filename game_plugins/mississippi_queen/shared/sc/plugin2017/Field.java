@@ -57,7 +57,7 @@ public class Field {
     this.points = points;
   }
 
-	/**
+  /**
 	 * @return Typ des Feldes
 	 */
 	public FieldType getType() {
@@ -166,7 +166,6 @@ public class Field {
         type == FieldType.PASSENGER4 || 
         type == FieldType.PASSENGER5;
   }
-  
   
 
 }

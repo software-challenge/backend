@@ -115,7 +115,6 @@ public class RenderFacade {
 	private RenderFacade() {
 		frameRenderer = new FrameRenderer();
 		
-		
 		gameStateQueue = new LinkedList<GameState>();
 		startReceiverThread();
 
@@ -173,7 +172,7 @@ public class RenderFacade {
 			panel.setLayout(new BorderLayout());
 			panel.add(frameRenderer, BorderLayout.CENTER);
 			frameRenderer.setBounds(0, 0, panel.getWidth(), panel.getHeight());
-			frameRenderer.init();
+	    frameRenderer.init();
 		}
 		startReceiverThread();
 	}
