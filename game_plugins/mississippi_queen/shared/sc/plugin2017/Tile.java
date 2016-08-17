@@ -15,7 +15,7 @@ import sc.protocol.LobbyProtocol;
 @XStreamAlias(value = "tile")
 public class Tile {
 
-  private ArrayList<Field> fields;
+  public ArrayList<Field> fields;
   @XStreamOmitField
   private boolean visible;
   
@@ -86,7 +86,7 @@ public class Tile {
         fields.add(new Field(FieldType.WATER, x+2, y-1, 4));
       }
     } else if(direction == 1) {
-      fields.add(new Field(FieldType.WATER, x+1, y-3, 0));
+      fields.add(new Field(FieldType.WATER, x+1, y+3, 0));
       fields.add(new Field(FieldType.WATER, x-2, y+1, 0));
       fields.add(new Field(FieldType.WATER, x+1, y+2, 1));
       fields.add(new Field(FieldType.WATER, x  , y+2, 1));
@@ -382,5 +382,13 @@ public class Tile {
       break;
     }
     return null;
+  }
+  
+  public String toString() {
+    String toString = "Tile " + index + " Richtung " + direction + " visible " + visible;
+    for (Field field : fields) {
+      toString += "\n" + field;
+    }
+    return toString;
   }
 }

@@ -33,11 +33,9 @@ public class Acceleration extends Action {
    * 
    * @param state Gamestate auf dem Beschleunigung ausgeführt wird
    * @param player Spieler für den Beschleunigung ausgeführt wird
-   * 
-   * @return nicht relevant
    */
   @Override
-  public int perform(GameState state, Player player)
+  public void perform(GameState state, Player player)
     throws InvalidMoveException {
 
     int speed = player.getSpeed();
@@ -48,13 +46,17 @@ public class Acceleration extends Action {
     if(speed > 6 || speed < 1) {
       throw new InvalidMoveException("Geschwindigkeit zu hoch oder zu niedrig");
     }
+    if(player.getField(state.getVisibleBoard()).getType() == FieldType.SANDBAR) {
+      throw new InvalidMoveException("Auf einer Sandbank kann nicht beschleunigt werden.");
+    }
     int usedCoal = 0;
     usedCoal = Math.abs(acc) - 1;
     
     player.setCoal(player.getCoal() - usedCoal);
     player.setSpeed(speed);
+    player.setMovement(speed);
       
-    return 0;
+    return;
   }
   
   public Acceleration clone() {

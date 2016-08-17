@@ -10,7 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
+import sc.plugin2017.gui.renderer.primitives.GameEndedDialog;
+import sc.plugin2017.gui.renderer.primitives.GuiConstants;
+import sc.plugin2017.gui.renderer.primitives.Background;
+import sc.plugin2017.gui.renderer.primitives.BoardFrame;
+import sc.plugin2017.gui.renderer.primitives.GuiPlayer;
+import sc.plugin2017.gui.renderer.primitives.ProgressBar;
+import sc.plugin2017.gui.renderer.primitives.SideBar;
 import sc.plugin2017.gui.renderer.primitives.GuiBoard;
+import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.util.Constants;
@@ -32,11 +40,20 @@ public class FrameRenderer extends PApplet {
   public GameState currentGameState;
   private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
-  private int maxTurn;
+  public int maxTurn;
   private EPlayerId id;
 
 
   public GuiBoard guiBoard;
+  
+  private Background background;
+  
+  private ProgressBar progressBar;
+  private SideBar sideBar;
+  private BoardFrame boardFrame;
+  
+  public GuiPlayer red;
+  public GuiPlayer blue;
   
   public FrameRenderer() {
     super();
@@ -47,11 +64,16 @@ public class FrameRenderer extends PApplet {
     this.id = EPlayerId.OBSERVER;
 
     RenderConfiguration.loadSettings();
+    
+    background = new Background(this);
+    logger.debug("Dimension when creating board: (" + this.width + ","
+        + this.height + ")");
     guiBoard = new GuiBoard(this);
-    // logger.debug("Constructor finished");
-
-    // load Images
-    //currently no images
+    progressBar = new ProgressBar(this);
+    sideBar = new SideBar(this);
+    red = new GuiPlayer(this);
+    blue = new GuiPlayer(this);
+    boardFrame = new BoardFrame(this);
   }
 
   public void setup() {
@@ -71,13 +93,24 @@ public class FrameRenderer extends PApplet {
     smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
     // initial draw
+    GuiConstants.generateFonts(this);
     redraw();
     noLoop(); // prevent thread from starving everything else
 
   }
 
   public void draw() {
-    // TODO
+    System.out.println("\n\n\n Draw was called\n\n\n");
+    background.draw();
+    guiBoard.draw();
+    progressBar.draw();
+    sideBar.draw(); 
+    boardFrame.draw();
+    red.draw();
+    blue.draw();
+    if (currentGameState != null && currentGameState.gameEnded()) {
+      GameEndedDialog.draw(this);
+    }
   }
 
   public void updateGameState(GameState gameState) {
@@ -86,8 +119,9 @@ public class FrameRenderer extends PApplet {
       lastTurn = currentGameState.getTurn();
     }
     currentGameState = gameState;
-    if (gameState != null && gameState.getVisibleBoard() != null)
-      guiBoard.update(gameState.getVisibleBoard());
+    System.out.println(gameState.getBoard());
+    if (gameState != null && gameState.getBoard() != null)
+      guiBoard.update(gameState.getBoard());
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
       if (maxTurn == currentGameState.getTurn() - 1) {
@@ -124,24 +158,65 @@ public class FrameRenderer extends PApplet {
   }
 
   public void mouseClicked(MouseEvent e) {
-    
+    System.out.println("Mouse: (" + mouseX + ", " + mouseY + ")");
   }
 
   public void mousePressed(MouseEvent e) {
-    
+    draw();
+    if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      if(currentGameState.getCurrentPlayer()
+        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        progressBar.left.isClicked();
+        progressBar.right.isClicked();
+        if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
+          progressBar.speedDown.isClicked();
+        }
+        if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
+          progressBar.speedUp.isClicked();
+        }
+      }
+      progressBar.send.isClicked();
+    }
   }
 
   public void mouseReleased(MouseEvent e) {
-
+    if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      if(currentGameState.getCurrentPlayer()
+        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        if(progressBar.left.isClicked()) {
+          System.out.println(progressBar.left);
+        }
+        if(progressBar.right.isClicked()) {
+          System.out.println(progressBar.right);
+        }
+        if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
+          if(progressBar.speedDown.isClicked()) {
+            System.out.println(progressBar.speedDown);
+          }
+        }
+        if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
+          if(progressBar.speedUp.isClicked()) {
+            System.out.println(progressBar.speedUp);
+          }
+        }
+      }
+      if(progressBar.send.isClicked()) {
+        System.out.println(progressBar.send);
+      }
+    }
   }
 
   private int[] getFieldCoordinates(int x, int y) {
-
+    // TODO get edges and set coordinates according -> return field coordinates
+    // TODO check from coordinates x, y(position) on which field(x,y) ()coordniates you are
     return null;
   }
 
   public void resize(int width, int height) {
-    // TODO 
+    background.resize(width, height);
+    guiBoard.resize(width, height);
+    red.resize(width, height);
+    blue.resize(width, height);
   }
 
   /*
@@ -170,5 +245,29 @@ public class FrameRenderer extends PApplet {
   }
 
   public void killAll() {
+noLoop();
+    
+    if(background != null) {
+      background.kill();
+    }
+    if(guiBoard != null) {
+      // TODO kill board
+      guiBoard.kill();
+    }
+    if(progressBar != null) {
+      progressBar.kill();
+    }
+    if(sideBar != null) {
+      sideBar.kill();
+    }
+    if(boardFrame != null) {
+      boardFrame.kill();
+    }
+    if(red != null) {
+      red.kill();
+    }
+    if(blue != null) {
+      blue.kill();
+    }
   }
 }
