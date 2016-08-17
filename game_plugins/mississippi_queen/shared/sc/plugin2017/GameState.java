@@ -312,7 +312,7 @@ public class GameState implements Cloneable {
       }
     }
     // wenn auf einen Sandbank abgedrängt wird, gibt es keine Extradrehung
-    if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBAR)) {
+    if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBANK)) {
       freeTurn = true;
       this.getOtherPlayer().setFreeTurns(2);
     } else {
@@ -382,7 +382,7 @@ public class GameState implements Cloneable {
   public List<Push> getPossiblePushs(Player player, int movement) {
     ArrayList<Push> push = new ArrayList<Push>(); 
     Field from = player.getField(getVisibleBoard());
-    if(from.getType() == FieldType.SANDBAR) { // niemand darf von einer Sandbank herunterpushen.
+    if(from.getType() == FieldType.SANDBANK) { // niemand darf von einer Sandbank herunterpushen.
       return push;
     }
     int direction = player.getDirection();
@@ -408,7 +408,7 @@ public class GameState implements Cloneable {
    */
   public List<Turn> getPossibleTurnsWithCoal(Player player, boolean freeTurn, int coal) {
     ArrayList<Turn> turns = new ArrayList<Turn>(); 
-    if(player.getField(board).getType() == FieldType.SANDBAR) {
+    if(player.getField(board).getType() == FieldType.SANDBANK) {
       return turns;
     }
     int start = freeTurn ? 2 : 1;
@@ -434,7 +434,7 @@ public class GameState implements Cloneable {
     Field start = player.getField(board);
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
-    if(start.getType() == FieldType.SANDBAR && movement > 0) {
+    if(start.getType() == FieldType.SANDBANK && movement > 0) {
       if(start.getFieldInDirection(getOppositeDirection(direction), this.board).isPassable()) {
         step.add(new Step(-1));
       }
@@ -457,7 +457,7 @@ public class GameState implements Cloneable {
           if(movement >= 0) {
             step.add(new Step(i));
           }
-          if(next.getType() == FieldType.SANDBAR || next.equals(enemy.getField(board))) {
+          if(next.getType() == FieldType.SANDBANK || next.equals(enemy.getField(board))) {
             return step;
           }
         }
@@ -702,7 +702,7 @@ public class GameState implements Cloneable {
         Step o = (Step) action;
         cost[0] += o.distance;
         Field start = player.getField(clone.board);
-        if(start.getType() == FieldType.SANDBAR) {
+        if(start.getType() == FieldType.SANDBANK) {
           cost[1] += 1;
         }
         for(int i = 1; i <= o.distance; i++) {

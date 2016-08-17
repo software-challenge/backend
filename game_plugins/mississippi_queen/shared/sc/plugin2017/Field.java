@@ -140,7 +140,7 @@ public class Field {
    * @return Wahr, falls Feld theoretisch passierbar
    */
   public boolean isPassable() {
-    if(type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBAR || type == FieldType.GOAL) {
+    if(type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBANK || type == FieldType.GOAL) {
       return true;
     }
     return false;
@@ -151,7 +151,7 @@ public class Field {
    * @return Wahr, falls Feld theoretisch passierbar
    */
   public static boolean isPassable(FieldType type) {
-    return type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBAR || type == FieldType.GOAL;
+    return type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBANK || type == FieldType.GOAL;
   }
   
   /**

@@ -40,7 +40,7 @@ public enum FieldType {
 	/**
    * Ein Sandbankfeld
    */
-  SANDBAR,
+  SANDBANK,
   /**
    * Ein Feld mit einem Baumstamm, der weggerammt werden muss um es zu passieren
    */

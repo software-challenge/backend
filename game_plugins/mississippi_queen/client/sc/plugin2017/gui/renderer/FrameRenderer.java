@@ -52,9 +52,6 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
   
-  public GuiPlayer red;
-  public GuiPlayer blue;
-  
   public FrameRenderer() {
     super();
 
@@ -71,8 +68,6 @@ public class FrameRenderer extends PApplet {
     guiBoard = new GuiBoard(this);
     progressBar = new ProgressBar(this);
     sideBar = new SideBar(this);
-    red = new GuiPlayer(this);
-    blue = new GuiPlayer(this);
     boardFrame = new BoardFrame(this);
   }
 
@@ -100,14 +95,11 @@ public class FrameRenderer extends PApplet {
   }
 
   public void draw() {
-    System.out.println("\n\n\n Draw was called\n\n\n");
     background.draw();
     guiBoard.draw();
     progressBar.draw();
     sideBar.draw(); 
     boardFrame.draw();
-    red.draw();
-    blue.draw();
     if (currentGameState != null && currentGameState.gameEnded()) {
       GameEndedDialog.draw(this);
     }
@@ -119,9 +111,12 @@ public class FrameRenderer extends PApplet {
       lastTurn = currentGameState.getTurn();
     }
     currentGameState = gameState;
-    System.out.println(gameState.getBoard());
+    // needed for simulation of actions
+    currentGameState.getRedPlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
+    currentGameState.getBluePlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
+    
     if (gameState != null && gameState.getBoard() != null)
-      guiBoard.update(gameState.getBoard());
+      guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(), gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
       if (maxTurn == currentGameState.getTurn() - 1) {
@@ -165,7 +160,7 @@ public class FrameRenderer extends PApplet {
     draw();
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       if(currentGameState.getCurrentPlayer()
-        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
         progressBar.left.isClicked();
         progressBar.right.isClicked();
         if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
@@ -182,7 +177,7 @@ public class FrameRenderer extends PApplet {
   public void mouseReleased(MouseEvent e) {
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       if(currentGameState.getCurrentPlayer()
-        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
         if(progressBar.left.isClicked()) {
           System.out.println(progressBar.left);
         }
@@ -215,8 +210,6 @@ public class FrameRenderer extends PApplet {
   public void resize(int width, int height) {
     background.resize(width, height);
     guiBoard.resize(width, height);
-    red.resize(width, height);
-    blue.resize(width, height);
   }
 
   /*
@@ -262,12 +255,6 @@ noLoop();
     }
     if(boardFrame != null) {
       boardFrame.kill();
-    }
-    if(red != null) {
-      red.kill();
-    }
-    if(blue != null) {
-      blue.kill();
     }
   }
 }
