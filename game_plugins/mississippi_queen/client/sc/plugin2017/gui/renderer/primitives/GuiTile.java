@@ -84,4 +84,14 @@ public class GuiTile extends PrimitiveBase {
     }
     return null;
   }
+
+  public HexField getFieldCoordinates(int x, int y) {
+    for (HexField field : fields) {
+      HexField coordinates = field.getFieldCoordinates(x,y);
+      if(coordinates != null) {
+        return coordinates;
+      }
+    }
+    return null;
+  }
 }

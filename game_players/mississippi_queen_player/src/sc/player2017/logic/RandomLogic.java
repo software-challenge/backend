@@ -241,7 +241,7 @@ public class RandomLogic implements IGameHandler {
 		this.gameState = gameState;
 		currentPlayer = gameState.getCurrentPlayer();
 
-		System.out.print("*** Das Spiel geht vorran: Zug = "
+		System.out.print("*** Das Spiel geht voran: Zug = "
 				+ gameState.getTurn());
 		System.out.println(", Spieler = " + currentPlayer.getPlayerColor());
 	}

@@ -16,7 +16,7 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 public class HexField extends PrimitiveBase{
   
   // Fields
-  private float x, y;
+  public float x, y;
   private float a, b, c;
   
   private float width;
@@ -257,5 +257,12 @@ public class HexField extends PrimitiveBase{
   
   public String toString() {
     return "X: " + fieldX + " Y: " + fieldY + " Type: " + type + " " + x + " " + y + " " + b;
+  }
+
+  public HexField getFieldCoordinates(int x, int y) {
+    if(this.x < x && this.x + width > x && this.y + a < y && this.y + a + c > y) {
+      return this;
+    }
+    return null;
   }
 }

@@ -22,13 +22,15 @@ public class GuiBoard extends PrimitiveBase{
   
   Board currentBoard;
   
+  Board savedBoard; // TODO cancel button
+  
 
   public GuiPlayer red;
   public GuiPlayer blue;
   
-  LinkedList<GuiTile> tiles;
+  public LinkedList<GuiTile> tiles;
   /**
-   * holds the position of 0,0 relativ to parent 
+   * holds the position of 0,0 relative to parent 
    */
   public float startX;
   public float startY;
@@ -51,9 +53,6 @@ public class GuiBoard extends PrimitiveBase{
   
   public GuiBoard(FrameRenderer parent) {
     super(parent);
-    if(parent == null) {
-      System.out.println(" \n\n\n THis should never happen!!!!!!!\n\n\n");
-    }
     this.parent = parent;
 
     red = new GuiPlayer(parent);
@@ -105,7 +104,6 @@ public class GuiBoard extends PrimitiveBase{
       maxFieldsInY = highY - lowY + 1;
       float xLength = (dim.width / ((float) maxFieldsInX + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
       float yLength = (dim.height / ((float) maxFieldsInY + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      System.out.println("xLength: " + xLength + " yLength " + yLength);
       width = Math.min(xLength, yLength);
       offsetX = -lowX;
       offsetY = -lowY;
@@ -121,7 +119,6 @@ public class GuiBoard extends PrimitiveBase{
    * @param board
    */
   public void update(Board board, Player red, Player blue, PlayerColor current) {
-    System.out.println("\n\n\n Update board was called\n\n\n");
     currentBoard = board;
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
@@ -144,8 +141,13 @@ public class GuiBoard extends PrimitiveBase{
       LinkedList<HexField> toHighlight = new LinkedList<HexField>();
       Player currentPlayer = (current == PlayerColor.RED) ? red : blue;
       if(red.getField(currentBoard).equals(blue.getField(currentBoard))) {
-      }
-      if(currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
+        for(int j = 0; j < 6; j++) {
+          if(j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
+            toHighlight.addAll(getPassableGuiFieldsInDirection(
+                currentPlayer.getX(), currentPlayer.getY(), j, 1));
+          }
+        }
+      } else if(currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
         toHighlight = 
             getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 currentPlayer.getDirection(), currentPlayer.getMovement());
@@ -157,9 +159,9 @@ public class GuiBoard extends PrimitiveBase{
             GameState.getOppositeDirection(currentPlayer.getDirection()), 1));
       }
       for (HexField hexField : toHighlight) {
-        System.out.println(hexField);
         hexField.setHighlighted(true);
       }
+      parent.stepPossible = toHighlight;
 //      GuiPlayer currentGuiPlayer = (current == PlayerColor.RED) ? this.red : this.blue;
 //      parent.currentGameState.getPossibleMovesInDirection(currentPlayer, currentGuiPlayer.movement, currentGuiPlayer.coal);
 //      red.getField(board).getFieldInDirection(direction, board)
@@ -178,8 +180,6 @@ public class GuiBoard extends PrimitiveBase{
 
       float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
       dim = new Dimension((int) xDimension, (int) yDimension);
-      System.out.println("Parent: (" + parent.getWidth() + ", " + parent.getHeight() + ") dim ("
-          + xDimension + ", " + yDimension + ")");
     }
 
     calcHexFieldSize();
@@ -189,10 +189,7 @@ public class GuiBoard extends PrimitiveBase{
   @Override
   public void draw() {
     if(parent != null) {
-      System.out.println("\n\nBegin drawing tile\n\n");
       resize(parent.getWidth(), parent.getHeight());
-      System.out.println("Width: " + width + " maxFieldsIn: (" + maxFieldsInX + ", " + maxFieldsInY + 
-          ") offset: (" + offsetX + ", " + offsetY + ") Dim " + dim + "start: (" + startX + ", " + startY + ")");
       for (GuiTile tile : tiles) {
         tile.draw();
       }
