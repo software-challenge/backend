@@ -161,13 +161,17 @@ public class GameState implements Cloneable {
    * 
    * @return das Spielfeld
    */
-  protected Board getBoard() {
+  public Board getBoard() {
     return this.board;
   }
   
   public Board getVisibleBoard() {
-    ArrayList<Tile> tiles = this.board.getVisibleTiles();
-    Board visibleBoard = new Board(tiles);
+    Board visibleBoard = new Board(false);
+    for (Tile tile : board.getTiles()) {
+      if(tile.isVisible()) {
+        visibleBoard.getTiles().add(tile);
+      }
+    }
     return visibleBoard;
   }
 
@@ -310,9 +314,12 @@ public class GameState implements Cloneable {
     // wenn auf einen Sandbank abgedrängt wird, gibt es keine Extradrehung
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBAR)) {
       freeTurn = true;
+      this.getOtherPlayer().setFreeTurns(2);
     } else {
       freeTurn = false;
+      this.getOtherPlayer().setFreeTurns(1);
     }
+    this.getCurrentPlayer().setMovement(getCurrentPlayer().getSpeed());
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
     switchCurrentPlayer();
     

@@ -219,11 +219,11 @@ public class Board {
    * Gibt die Felder eines Spielbretts zurück
    * @return fields
    */
-  protected ArrayList<Tile> getTiles() {
+  public ArrayList<Tile> getTiles() {
     return this.tiles;
   }
 
-  public ArrayList<Tile> getVisibleTiles() {
+  protected ArrayList<Tile> getVisibleTiles() {
     ArrayList<Tile> visibleTiles = new ArrayList<Tile>(); 
     for (Tile tile : visibleTiles) {
       if(tile.isVisible()) {
@@ -231,6 +231,14 @@ public class Board {
       }
     }
     return visibleTiles;
+  }
+  
+  public String toString() {
+    String toString = "board:\n";
+    for (Tile tile : tiles) {
+      toString += "\n" + tile.toString();
+    }
+    return toString;
   }
   
 }

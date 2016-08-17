@@ -24,7 +24,7 @@ public class Move implements Cloneable {
   private List<DebugHint> hints;
 
   /**
-   * Default Konstruktor, der einen ungueltigen Zug auf Position (-1, -1) erzeugt.
+   * Default Konstruktor, der einen leeren Zug erzeugt.
    */
   public Move() {
     actions = new ArrayList<Action>();
@@ -136,11 +136,7 @@ public class Move implements Cloneable {
    *           oder wenn die Aktionen im Zug nicht nach der Reihenfolge sortiert sind
    */
   public void perform(GameState state, Player player) throws InvalidMoveException {
-    int freeTurns = state.isFreeTurn() ? 2 : 1;
-    int beginningSpeed = player.getSpeed();
-    int totalMovement = 0;
     int order = 0;
-    int reduceSpeed = 0;
     boolean onEnemy;
     if(actions.isEmpty()) {
       throw new InvalidMoveException("Der Zug enthält keine Aktionen");
@@ -165,7 +161,7 @@ public class Move implements Cloneable {
         if(player.getField(state.getBoard()).getType() == FieldType.SANDBAR) {
           throw new InvalidMoveException("Du kannst nicht auf einer Sandbank drehen");
         }
-        freeTurns -= action.perform(state, player); // count turns
+        ((Turn)action).perform(state, player); // count turns decreases freeTurns and reduces coal if nessessary
       } else if(action.getClass() == Acceleration.class) {
         Acceleration acc = (Acceleration) action;
         if(acc.order != 0) {
@@ -173,30 +169,23 @@ public class Move implements Cloneable {
         }
         acc.perform(state, player); // coal is decreased in perform
       } else {
-        totalMovement += action.perform(state, player); // count distance
-        if(action.getClass() == Step.class) {
-          reduceSpeed += ((Step) action).reduceSpeed; // add speed to reduce on end of turn
-        }
+        action.perform(state, player); // Speed and movement is decreased here
       }
       ++order;
     }
-    if(beginningSpeed == 1 && player.canPickupPassenger(state.getBoard())) {
+    // pick up passenger
+    if(player.getSpeed() == 1 && player.canPickupPassenger(state.getBoard())) {
       state.removePassenger(player);
     }
-    if(freeTurns < 0) { // check coal
-      player.setCoal(player.getCoal() + freeTurns);
+    // otherplayer could possible pick up Passenger in enemy turn
+    if(state.getOtherPlayer().getSpeed() == 1 && state.getOtherPlayer().canPickupPassenger(state.getBoard())) {
+      state.removePassenger(state.getOtherPlayer());
     }
     if(player.getCoal() < 0) {
       throw new InvalidMoveException("Nicht genug Kohle für den Zug vorhanden.");
     }
-    if(totalMovement > player.getSpeed() || 
-        (totalMovement < player.getSpeed() && player.getField(state.getBoard()).getType() != FieldType.SANDBAR)) { // check speed
+    if(player.getMovement() != 0) { // check whether movement points are left
       throw new InvalidMoveException("Es sind noch Bewegungspunkte übrig oder es wurden zu viele verbraucht.");
-    }
-    if(player.getSpeed() - reduceSpeed > 0) {
-      player.setSpeed(player.getSpeed() - reduceSpeed);
-    } else {
-      player.setSpeed(1);
     }
   }
   
@@ -238,6 +227,17 @@ public class Move implements Cloneable {
       toString.concat(action.toString() + " ");
     }
     return toString;
+  }
+  
+  /**
+   * Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions
+   */
+  public void orderActions() {
+    int order = 0;
+    for (Action action : actions) {
+      action.order = order;
+      ++order;
+    }
   }
 
 }

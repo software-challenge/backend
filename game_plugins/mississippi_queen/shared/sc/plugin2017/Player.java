@@ -5,6 +5,7 @@ import sc.plugin2017.util.Constants;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.
@@ -68,6 +69,18 @@ public class Player extends SimplePlayer implements Cloneable {
    */
   @XStreamAsAttribute
   private int passenger;
+  
+  /**
+   * Nur fuer den Server relevant
+   */
+  @XStreamOmitField
+  private int movement;
+  
+  /**
+   * Nur fuer den Server relevant
+   */
+  @XStreamOmitField
+  private int freeTurns;
 
 	/**
 	 * Erstellt einen Spieler mit gegebener Spielerfarbe.
@@ -89,6 +102,8 @@ public class Player extends SimplePlayer implements Cloneable {
 		} else {
 		  setY(-1);
 		}
+		movement = 1;
+		freeTurns = 1;
 	}
 
   /**
@@ -272,5 +287,21 @@ public class Player extends SimplePlayer implements Cloneable {
       return true;
     }
     return false;
+  }
+
+  public int getMovement() {
+    return movement;
+  }
+
+  protected void setMovement(int movement) {
+    this.movement = movement;
+  }
+
+  public int getFreeTurns() {
+    return freeTurns;
+  }
+
+  protected void setFreeTurns(int freeTurns) {
+    this.freeTurns = freeTurns;
   }
 }
