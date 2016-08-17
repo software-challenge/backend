@@ -5,6 +5,7 @@ package sc.plugin2017.gui.renderer;
 
 import java.awt.Image;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,8 @@ import sc.plugin2017.gui.renderer.primitives.GuiConstants;
 import sc.plugin2017.gui.renderer.primitives.Background;
 import sc.plugin2017.gui.renderer.primitives.BoardFrame;
 import sc.plugin2017.gui.renderer.primitives.GuiPlayer;
+import sc.plugin2017.gui.renderer.primitives.GuiTile;
+import sc.plugin2017.gui.renderer.primitives.HexField;
 import sc.plugin2017.gui.renderer.primitives.ProgressBar;
 import sc.plugin2017.gui.renderer.primitives.SideBar;
 import sc.plugin2017.gui.renderer.primitives.GuiBoard;
@@ -52,6 +55,8 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
   
+  public LinkedList<HexField> stepPossible; // eventuell zu lsite von pair Feld, move umwandeln
+  
   public FrameRenderer() {
     super();
 
@@ -69,6 +74,7 @@ public class FrameRenderer extends PApplet {
     progressBar = new ProgressBar(this);
     sideBar = new SideBar(this);
     boardFrame = new BoardFrame(this);
+    stepPossible = new LinkedList<HexField>();
   }
 
   public void setup() {
@@ -154,6 +160,7 @@ public class FrameRenderer extends PApplet {
 
   public void mouseClicked(MouseEvent e) {
     System.out.println("Mouse: (" + mouseX + ", " + mouseY + ")");
+    System.out.println(getFieldCoordinates(mouseX, mouseY));
   }
 
   public void mousePressed(MouseEvent e) {
@@ -201,9 +208,18 @@ public class FrameRenderer extends PApplet {
     }
   }
 
-  private int[] getFieldCoordinates(int x, int y) {
+  private HexField getFieldCoordinates(int x, int y) {
+    HexField coordinates;
+    
+    for (GuiTile tile : guiBoard.tiles) {
+      coordinates = tile.getFieldCoordinates(x,y);
+      if(coordinates != null) {
+        return coordinates;
+      }
+    }
     // TODO get edges and set coordinates according -> return field coordinates
     // TODO check from coordinates x, y(position) on which field(x,y) ()coordniates you are
+
     return null;
   }
 

@@ -90,7 +90,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 */
 	public Player(final PlayerColor color) {
 		this.color = color;
-		points = 0;
+		points = 1;
 		setDirection(0);
 		setSpeed(1);
 		coal = Constants.START_COAL;
@@ -98,7 +98,7 @@ public class Player extends SimplePlayer implements Cloneable {
 		setX(-1);
 		setPassenger(0);
 		if(color == PlayerColor.RED) {
-		  setY(1);
+		  setY(1); // TODO change back to 1
 		} else {
 		  setY(-1);
 		}
