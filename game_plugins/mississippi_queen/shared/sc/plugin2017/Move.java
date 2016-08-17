@@ -158,7 +158,7 @@ public class Move implements Cloneable {
         throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
       }
       if(action.getClass() == Turn.class) {
-        if(player.getField(state.getBoard()).getType() == FieldType.SANDBAR) {
+        if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
           throw new InvalidMoveException("Du kannst nicht auf einer Sandbank drehen");
         }
         ((Turn)action).perform(state, player); // count turns decreases freeTurns and reduces coal if nessessary

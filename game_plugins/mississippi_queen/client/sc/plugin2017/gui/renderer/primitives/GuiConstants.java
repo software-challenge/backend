@@ -32,13 +32,20 @@ public class GuiConstants {
   public static final int colorDarkGrey = calcColor(255, 30, 30, 30);
   public static final int colorBlack = calcColor(255, 0, 0, 0);
   public static final int colorSideBarBG = calcColor(200, 255, 255, 255);
-  public static final int colorHexFields = calcColor(240, 21, 160, 177);
-  public static final int colorHexFieldsHighlight = calcColor(240, 21, 195, 177);
+  public static final int colorHexFields = calcColor(255, 21, 160, 177);
+  public static final int colorHexFieldsHighlight = calcColor(255, 21, 195, 177);
   public static final int colorText = calcColor(255, 0, 0, 0);
   public static final int colorGreyOut = calcColor(100, 30, 30, 30);
-  public static final int colorSwampFields = calcColor(255, 107, 142, 35);
   public static final int colorHighLighted = calcColor(255, 40, 205, 50);
-  public static final int colorHexFieldIsland = calcColor(255, 50, 150, 50);;
+  public static final int colorHexFieldIsland = calcColor(255, 50, 150, 50);
+  public static final int colorHexFieldSANDBANK = calcColor(255, 240, 230, 140); // khaki
+  public static final int colorHexFieldSANDBANKHighlight = calcColor(255, 250, 240, 150);
+  public static final int colorHexFieldLOG = calcColor(255, 151, 125, 100);
+  public static final int colorHexFieldLOGHighlight = calcColor(255, 161, 135, 110);
+  public static final int colorPassenger = calcColor(255, 255, 255, 153);
+  public static final int colorWhite = calcColor(255, 255, 255, 255);
+  public static final int colorHexFieldGOAL = calcColor(255, 154, 50, 205);
+  
   
   
 
