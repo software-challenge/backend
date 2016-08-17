@@ -289,11 +289,20 @@ public class Player extends SimplePlayer implements Cloneable {
     return false;
   }
 
+  /**
+   * Nur fuer den Server (und die Gui) relevant.
+   * Sollte für den Client 0 sein.
+   * @return
+   */
   public int getMovement() {
     return movement;
   }
 
-  protected void setMovement(int movement) {
+  /**
+   * Nur fuer den Server (und die Gui) relevant.
+   * @param movement Bewegunspunkte
+   */
+  public void setMovement(int movement) {
     this.movement = movement;
   }
 

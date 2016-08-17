@@ -198,9 +198,9 @@ public class Tile {
         fields.add(new Field(FieldType.WATER, x  , y+2, 4));
       }
     } else if(direction == 5) {
-      fields.add(new Field(FieldType.WATER, x+2, y-1, 0));
-      fields.add(new Field(FieldType.WATER, x+1, y+3, 0));
-      fields.add(new Field(FieldType.WATER, x+2, y  , 1));
+      fields.add(new Field(FieldType.WATER, x-2, y-1, 0));
+      fields.add(new Field(FieldType.WATER, x+1, y-3, 0));
+      fields.add(new Field(FieldType.WATER, x-2, y  , 1));
       fields.add(new Field(FieldType.WATER, x-1, y-1, 1));
       fields.add(new Field(FieldType.WATER, x  , y-1, 1));
       fields.add(new Field(FieldType.WATER, x  , y-2, 1));
@@ -255,7 +255,7 @@ public class Tile {
         random = rnd.nextInt(fields.size() - 5);
       }
       int sandbar = rnd.nextInt(2);
-      fields.get(random).setType((sandbar == 1) ? FieldType.SANDBAR : FieldType.LOG);
+      fields.get(random).setType((sandbar == 1) ? FieldType.SANDBANK : FieldType.LOG);
       --special;
     }    
   }

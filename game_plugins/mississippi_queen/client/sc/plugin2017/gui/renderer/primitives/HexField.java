@@ -18,16 +18,18 @@ public class HexField extends PrimitiveBase{
   // Fields
   private float x, y;
   private float a, b, c;
+  
+  private float width;
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
    */
-  private int fieldX;
+  public int fieldX;
   /**
    * y position des Feldes innerhalb des Spielefeld arrays
    */
-  private int fieldY;
+  public int fieldY;
 
-  private FieldType type;
+  public FieldType type;
   
   private boolean highlighted = false;
 
@@ -50,26 +52,32 @@ public class HexField extends PrimitiveBase{
     fieldX = field.getX();
     fieldY = field.getY();
     type = field.getType();
+    highlighted = false;
       
   }
 
   public void draw() {
-
-    System.out.println(this);
     parent.pushStyle();
     parent.noStroke();
     //parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
     //parent.text("" + numFish, 25, 50);
-    if(Field.isPassable(type)) {
-      if(highlighted){
-        parent.fill(GuiConstants.colorHexFieldsHighlight);
-      } else {
-        parent.fill(GuiConstants.colorHexFields);
-      }
-    } else {
-      parent.fill(GuiConstants.colorHexFieldIsland);
-    }
     
+    if(type == FieldType.WATER) {
+      parent.fill(GuiConstants.colorHexFields);
+      
+    } else if(type == FieldType.SANDBANK){
+      parent.fill(GuiConstants.colorHexFieldSANDBANK);
+    } else if(type == FieldType.LOG){
+      parent.fill(GuiConstants.colorHexFieldLOG);
+    } else if(type == FieldType.BLOCKED || Field.isPassengerField(type)){
+      parent.fill(GuiConstants.colorHexFieldIsland);
+    } else if(type == FieldType.GOAL){
+      parent.fill(GuiConstants.colorHexFieldGOAL);
+    }
+    if(highlighted){
+      parent.strokeWeight(width / 16);
+      parent.stroke(GuiConstants.colorWhite);
+    }
     parent.pushMatrix();
     parent.translate(x, y);
 
@@ -82,9 +90,60 @@ public class HexField extends PrimitiveBase{
     parent.vertex(0, a + getC());
     parent.vertex(0, a);
     parent.endShape();
-    
+    parent.noStroke();
     if(Field.isPassengerField(type)) {
-      // TODO place image of passenger
+      parent.fill(GuiConstants.colorPassenger);
+      // TODO if passengerfield draw passenger and step
+      parent.ellipse(width / 2, 17 * width / 32, width / 4, width / 4);
+      parent.fill(GuiConstants.colorHexFieldLOG);
+      if(type == FieldType.PASSENGER0) {
+        parent.beginShape();
+        parent.vertex(3 * width / 4, a);
+        parent.vertex(3 * width / 4, a + c);
+        parent.vertex(width, a + c);
+        parent.vertex(width, a);
+        parent.endShape();
+      } else if(type == FieldType.PASSENGER1) {
+        parent.beginShape();
+        parent.vertex(b , 0);
+        parent.vertex(width , a);
+        parent.vertex(width - a / 2, 2 * a);
+        parent.vertex(b - a / 2, a);
+        parent.endShape();
+        
+      } else if(type == FieldType.PASSENGER2) {
+        parent.beginShape();
+        parent.vertex(0, a);
+        parent.vertex(b, 0);
+        parent.vertex(b + a / 2, a);
+        parent.vertex(a / 2, 2 * a);
+        parent.endShape();
+        
+      } else if(type == FieldType.PASSENGER3) {
+        parent.beginShape();
+        parent.vertex(0, a);
+        parent.vertex(b / 2 , a);
+        parent.vertex(b / 2, a + c);
+        parent.vertex(0, a + c);
+        parent.endShape();
+        
+      } else if(type == FieldType.PASSENGER4) {
+        parent.beginShape();
+        parent.vertex(b, c + a + a);
+        parent.vertex(0, a + c);
+        parent.vertex(a / 2, c);
+        parent.vertex(b + a / 2, c + a);
+        parent.endShape();
+        
+      } else if(type == FieldType.PASSENGER5) {
+        parent.beginShape();
+        parent.vertex(b, c + 2 * a);
+        parent.vertex(width, a + c);
+        parent.vertex(width - a / 2, c);
+        parent.vertex(b - a / 2, a + c);
+        parent.endShape();
+        
+      }
     }
     
     parent.fill(0);
@@ -120,7 +179,7 @@ public class HexField extends PrimitiveBase{
   }
     
   public void resize(float startX, float startY, int offsetX, int offsetY, float width){
-    // TODO check
+    this.width = width;
     calcSize(width);
     float newX = startX;
     float newY = startY;

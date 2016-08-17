@@ -37,7 +37,7 @@ public class Push extends Action {
     Field pushFrom = player.getField(state.getBoard());
     Field pushTo = pushFrom.getFieldInDirection(direction, state.getBoard());
     if(pushTo == null || !pushTo.isPassable()
-        || pushFrom.getType() == FieldType.SANDBAR) {
+        || pushFrom.getType() == FieldType.SANDBANK) {
       throw new InvalidMoveException("Ungültiges Abdrängen");
     }
     // pushing costs 1 movement point
@@ -50,7 +50,7 @@ public class Push extends Action {
     if(pushFrom.getFieldInDirection(GameState.getOppositeDirection(player.getDirection()), state.getBoard()).equals(pushTo)) { // es darf nicht nach hinten abgedrängt werden
       throw new InvalidMoveException("Ungültiges Abdrängen");
     }
-    if(pushTo.getType() == FieldType.SANDBAR) {
+    if(pushTo.getType() == FieldType.SANDBANK) {
       state.getOtherPlayer().setSpeed(1);
       state.getOtherPlayer().setMovement(1);
     }

@@ -44,15 +44,15 @@ public class SideBar extends PrimitiveBase {
 
     String redName = "Spieler1";
     int redPoints = 0;
-    int redSpeed = 1;
-    int redCoal = 6;
-    int redMovement = 1;
+//    int redSpeed = 1;
+//    int redCoal = 6;
+//    int redMovement = 1;
     if (parent.currentGameState != null) {
       redName = parent.currentGameState.getRedPlayer().getDisplayName();
       redPoints = parent.currentGameState.getRedPlayer().getPoints();
-      redSpeed = parent.currentGameState.getRedPlayer().getSpeed();
-      redMovement = parent.currentGameState.getRedPlayer().getMovement();
-      redCoal = parent.currentGameState.getRedPlayer().getCoal();
+//      redSpeed = parent.currentGameState.getRedPlayer().getSpeed();
+//      redMovement = parent.currentGameState.getRedPlayer().getMovement();
+//      redCoal = parent.currentGameState.getRedPlayer().getCoal();
     }
     parent.translate(20, parent.textAscent() + 20);
     // passe Textgröße an
@@ -79,10 +79,10 @@ public class SideBar extends PrimitiveBase {
     else
       parent.text("Punkte: " + redPoints, 0, 0);
     // Geschwindigkeit und Bewegungspunkte
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    parent.text("Tempo: " + redSpeed + " (" + redMovement + ")", 0, 0);
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    parent.text("Kohle: " + redCoal, 0, 0);
+//    parent.translate(0, parent.textAscent() + parent.textDescent());
+//    parent.text("Tempo: " + redSpeed + " (" + redMovement + ")", 0, 0);
+//    parent.translate(0, parent.textAscent() + parent.textDescent());
+//    parent.text("Kohle: " + redCoal, 0, 0);
     
     // Blauer Spieler.
     parent.textFont(GuiConstants.fonts[2]);
@@ -96,15 +96,15 @@ public class SideBar extends PrimitiveBase {
       parent.fill(GuiConstants.colorBlack);
     String blueName = "Spieler2";
     int bluePoints = 0;
-    int blueSpeed = 1;
-    int blueMovement = 1;
-    int blueCoal = 6;
+//    int blueSpeed = 1;
+//    int blueMovement = 1;
+//    int blueCoal = 6;
     if (parent.currentGameState != null) {
       blueName = parent.currentGameState.getBluePlayer().getDisplayName();
       bluePoints = parent.currentGameState.getBluePlayer().getPoints();
-      blueSpeed = parent.currentGameState.getRedPlayer().getSpeed();
-      blueMovement = parent.currentGameState.getRedPlayer().getMovement();
-      blueCoal = parent.currentGameState.getRedPlayer().getCoal();
+//      blueSpeed = parent.currentGameState.getRedPlayer().getSpeed();
+//      blueMovement = parent.currentGameState.getRedPlayer().getMovement();
+//      blueCoal = parent.currentGameState.getRedPlayer().getCoal();
     }
 
     // passe Textgröße an
@@ -128,10 +128,10 @@ public class SideBar extends PrimitiveBase {
     else
       parent.text("Punkte: " + bluePoints, 0, 0);
  // Geschwindigkeit und Bewegungspunkte
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    parent.text("Tempo: " + blueSpeed + " (" + blueMovement + ")", 0, 0);
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    parent.text("Kohle: " + blueCoal, 0, 0);
+//    parent.translate(0, parent.textAscent() + parent.textDescent());
+//    parent.text("Tempo: " + blueSpeed + " (" + blueMovement + ")", 0, 0);
+//    parent.translate(0, parent.textAscent() + parent.textDescent());
+//    parent.text("Kohle: " + blueCoal, 0, 0);
     
     // Debug Ausgabe
     if (RenderConfiguration.optionDebug) {
