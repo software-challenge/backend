@@ -51,7 +51,7 @@ public class Step extends Action {
       throw new InvalidMoveException("Zurückgelegte Distanz ist ungültig.");
     }
     if(distance == -1) { // Fall rückwärts von Sandbank
-      if(start.getType() != FieldType.SANDBAR) {
+      if(start.getType() != FieldType.SANDBANK) {
         throw new InvalidMoveException("Rückwärtszug ist nur von Sandbank aus möglich.");
       }
       Field next = start.getFieldInDirection(GameState.getOppositeDirection(direction), state.getBoard());
@@ -62,7 +62,7 @@ public class Step extends Action {
       player.setMovement(0);
       return;
     } else {
-      if(start.getType() == FieldType.SANDBAR) {
+      if(start.getType() == FieldType.SANDBANK) {
         if(this.distance != 1) {
           throw new InvalidMoveException("Nur eine Bewegung nach vorne auf einer Sandbank möglich");
         }
@@ -84,7 +84,7 @@ public class Step extends Action {
             (state.getOtherPlayer().getField(state.getBoard()).equals(checkField) && i != distance -1)) {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
-        if(checkField.getType() == FieldType.SANDBAR) {
+        if(checkField.getType() == FieldType.SANDBANK) {
           // case sandbar
           player.setSpeed(1);
           player.setMovement(0);

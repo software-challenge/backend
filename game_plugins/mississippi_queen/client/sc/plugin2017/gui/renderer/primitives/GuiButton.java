@@ -87,7 +87,7 @@ public class GuiButton extends PrimitiveBase {
     else
       parent.stroke(GuiConstants.colorBlack);
     // fill rect
-    parent.fill(GuiConstants.colorLightGrey);
+    parent.fill(GuiConstants.colorLightLightGrey);
     
     if(parent.getMousePosition() != null) {
       if(parent.mouseX >= x

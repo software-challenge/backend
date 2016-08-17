@@ -42,7 +42,6 @@ public class GuiTile extends PrimitiveBase {
   @Override
   public void draw() {
     if(visible) {
-      System.out.println("\n\n Found visible tile \n\n");
       for (HexField field : fields) {
         field.draw();
       }
@@ -58,7 +57,6 @@ public class GuiTile extends PrimitiveBase {
   }
 
   public void update(Tile tile) {
-    System.out.println("\n\n\nUpdated tile " + index);
     this.tile = tile;
     visible = true;
     int i = 0;
@@ -68,4 +66,22 @@ public class GuiTile extends PrimitiveBase {
     }
   }
 
+  public void kill() {
+    for (HexField field : fields) {
+      if(field != null) {
+        field.kill();
+      }
+    }
+  }
+
+  public HexField getHexField(int x, int y) {
+    if(visible) {
+      for (HexField field : fields) {
+        if(field.fieldX == x && field.fieldY == y) {
+          return field;
+        }
+      }
+    }
+    return null;
+  }
 }

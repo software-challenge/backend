@@ -83,7 +83,7 @@ public class ProgressBar extends PrimitiveBase {
     // draw Buttons
     if(parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
       if(parent.currentGameState.getCurrentPlayer()
-        .getField(parent.currentGameState.getBoard()).getType() != FieldType.SANDBAR) {
+        .getField(parent.currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
         right.draw();   
         left.draw();
         if(parent.currentGameState.getCurrentPlayer().getSpeed() != 1) {
@@ -93,9 +93,7 @@ public class ProgressBar extends PrimitiveBase {
           speedUp.draw();
         }
       }
-      if(parent.currentGameState.getCurrentPlayer().getMovement() == 0) {
-        send.draw();
-      }
+      send.draw();
     }
   }
   
