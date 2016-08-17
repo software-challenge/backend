@@ -1,3 +1,8 @@
+%%% Local Variables:
+%%% coding: utf-8
+%%% mode: latex
+%%% TeX-engine: xetex
+%%% End:
 \documentclass[12pt,a4paper, ngerman, oneside]{scrartcl}
 \usepackage[ngerman]{babel}
 \usepackage[utf8]{inputenc}
@@ -13,18 +18,26 @@
 \usepackage{listings} \lstset{numbers=left, numberstyle=\tiny, numbersep=5pt} \lstset{language=Java}
 %% Grafiken
 \usepackage[pdftex]{graphicx}
-\usepackage{epsfig} 
-\hypersetup{% 
+\usepackage{epsfig}
+\hypersetup{%
   colorlinks=true,
 }
 \sloppy
 \hyphenpenalty=100000
 
-\date{Software-Challenge Germany 2017\\Stand \today}
+\usepackage{fontspec}
+\setromanfont{Merriweather}
+\setsansfont{Lato}
+\renewcommand{\normalsize}{\fontsize{12}{18}\selectfont}
 
+
+\titlehead{\centering\includegraphics[width=3.5cm]{../Spielregeln/bilder/logo.png}}
+\subject{Software-Challenge 2017}
+\title{XML-Schnittstellendokumentation}
+\subtitle{Mississippi Queen}
+\date{Stand: \today}
 
 %\author{Sören Domrös, stu114053@mail.uni-kiel.de }
-\title{Client-Server Kommunikation Mississippi Queen}
 
 
 \begin{document}
@@ -58,7 +71,7 @@ solchen Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server
 kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu
 verwerfen, die hier nicht weiter definiert sind. \bigskip \\
 Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine
-Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt. 
+Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt.
 Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
 %Dabei
 %werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können
@@ -158,7 +171,7 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \begin{verbatim}
 	<acceleration order="I" acc="M"/>
 	<turn order="I" direction="N"/>
-	<step order="I" distance="V"/>  
+	<step order="I" distance="V"/>
 	<push order="I" direction="D"/>
 \end{verbatim}
 \end{description}
@@ -218,10 +231,10 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[status] wie in \ref{state} definiert
 \end{description}
 \begin{verbatim}
-<room roomId="RID"> 
-  <data class="memento"> 
+<room roomId="RID">
+  <data class="memento">
   	status
-  </data> 
+  </data>
 </room>
 \end{verbatim}
 
@@ -261,7 +274,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[PA] Anzahl der Passagiere
 \end{description}
 \begin{verbatim}
-<C displayName="N" color="C" points="P" x="X" y="Y" 
+<C displayName="N" color="C" points="P" x="X" y="Y"
 direction="D" speed="S" coal="K" tile="T" passenger="PA"/>
 \end{verbatim}
 
@@ -347,7 +360,7 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \begin{verbatim}
 <room roomId="RID">
 	<data class="paused">
-		<nextPlayer class="player" displayName="N" color="C" points="P" x="X" y="Y" 
+		<nextPlayer class="player" displayName="N" color="C" points="P" x="X" y="Y"
 direction="D" speed="S" coal="K" tile="T" passenger="PA"/>
 	</data>
 </room>
@@ -393,7 +406,7 @@ Kommunikation ablaufen kann.\bigskip\\
 </room>
 \end{verbatim}
 \item der Client merkt sich seine Spielerfarbe.
-\item der Server sendet das Ausgangsspielfeld: 
+\item der Server sendet das Ausgangsspielfeld:
 \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
   <data class="memento">
