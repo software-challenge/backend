@@ -1,6 +1,7 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
@@ -45,7 +46,7 @@ public class Step extends Action {
       throw new InvalidMoveException("Keine Bewegunspunkte mehr vorhanden");
     }
     Field start = player.getField(state.getBoard());
-    List<Field> nextFields = new ArrayList<Field>();
+    LinkedList<Field> nextFields = new LinkedList<Field>();
     int direction = player.getDirection();
     if(distance == 0 || distance > 6 || distance < -1) {
       throw new InvalidMoveException("Zurückgelegte Distanz ist ungültig.");
@@ -67,7 +68,7 @@ public class Step extends Action {
           throw new InvalidMoveException("Nur eine Bewegung nach vorne auf einer Sandbank möglich");
         }
         player.setMovement(0);
-        Field next = start.getFieldInDirection(direction, state.getVisibleBoard());
+        Field next = start.alwaysGetFieldInDirection(direction, state.getBoard());
         if(!next.isPassable()) {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
@@ -78,7 +79,11 @@ public class Step extends Action {
       nextFields.add(start);
       // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
       for(int i = 0; i < distance; i++) {
-        nextFields.add(nextFields.get(i).getFieldInDirection(player.getDirection(), state.getBoard()));
+        // TODO problem visible not set in gui
+        Field next = nextFields.get(i).alwaysGetFieldInDirection(player.getDirection(), state.getBoard());
+        if(next != null) {
+          nextFields.add(next);
+        }
         Field checkField = nextFields.get(i);
         if(!checkField.isPassable() || 
             (state.getOtherPlayer().getField(state.getBoard()).equals(checkField) && i != distance -1)) {
@@ -98,14 +103,14 @@ public class Step extends Action {
           if(player.getMovement() <= 1) {
             throw new InvalidMoveException("Nicht genug Bewegunspunkte vorhanden");
           }
-          player.setMovement(player.getMovement() - 1);
-          player.setSpeed(player.getSpeed() - 2);
-        } else {
+          player.setMovement(player.getMovement() - 2);
           player.setSpeed(player.getSpeed() - 1);
+        } else {
+          player.setMovement(player.getMovement() - 1);
         }
         
       }
-      Field target = nextFields.get(nextFields.size() - 1);
+      Field target = nextFields.get(distance);
       state.put(target.getX(), target.getY(), player);
     }
     return;

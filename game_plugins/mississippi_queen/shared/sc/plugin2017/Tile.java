@@ -46,7 +46,6 @@ public class Tile {
     this.index = index;
     this.direction = direction;
     this.visible = index < 2; // at the beginning only the first 2 Tiles are visible
-    System.out.println("*************** Beginning to generate a new tile " + index + " with passenger " + passengers);
     generateFields(x, y, passengers, blockedFields, specialFields, (index == Constants.NUMBER_OF_TILES - 1));
   }
   
@@ -55,7 +54,6 @@ public class Tile {
   }
 
   private void generateFields(int x, int y, int passengers, int blocked, int special, boolean end) {
-    System.out.println("Begin to generate tiles for tile" + index);
     fields = new ArrayList<Field>();
     if(direction == 0) {
       fields.add(new Field(FieldType.WATER, x-2, y+2, 0));
@@ -226,13 +224,9 @@ public class Tile {
         fields.add(new Field(FieldType.WATER, x+2, y+1, 4));
       }
     }
-    System.out.println("Generated fields");
     placeBlocked(blocked);
-    System.out.println("Placed islands");
     placeSpecial(special);
-    System.out.println("Placed special fields");
     placePassengers(passengers);
-    System.out.println("PLaced passengers");
   }
 
   private void placeBlocked(int blocked) {

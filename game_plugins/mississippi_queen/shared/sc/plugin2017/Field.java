@@ -134,6 +134,26 @@ public class Field {
     }
     return null;
   }
+  
+  protected Field alwaysGetFieldInDirection(int direction, Board board) {
+    switch (direction) {
+    case 0:
+      return board.alwaysGetField(x+1, y);
+    case 1:
+      return board.alwaysGetField((y % 2 == 0) ? x + 1 : x, y - 1);
+    case 2:
+      return board.alwaysGetField((y % 2 == 0) ? x : x - 1, y - 1);
+    case 3:
+      return board.alwaysGetField(x - 1, y);
+    case 4:
+      return board.alwaysGetField((y % 2 == 0) ? x : x - 1, y + 1);
+    case 5:
+      return board.alwaysGetField((y % 2 == 0) ? x + 1 : x, y + 1);  
+    default:
+      break;
+    }
+    return null;
+  }
 
   /**
    * Ist das Feld passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?

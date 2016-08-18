@@ -35,7 +35,7 @@ public class Push extends Action {
       throw new InvalidMoveException("Keine Bewegunspunkte mehr vorhanden");
     }
     Field pushFrom = player.getField(state.getBoard());
-    Field pushTo = pushFrom.getFieldInDirection(direction, state.getBoard());
+    Field pushTo = pushFrom.alwaysGetFieldInDirection(direction, state.getBoard());
     if(pushTo == null || !pushTo.isPassable()
         || pushFrom.getType() == FieldType.SANDBANK) {
       throw new InvalidMoveException("Ungültiges Abdrängen");
@@ -72,7 +72,7 @@ public class Push extends Action {
   }
   
   public String toString()  {
-    return "abdrängen in Richtung " + direction;
+    return "Abdrängen in Richtung " + direction;
   }
 
 }
