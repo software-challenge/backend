@@ -58,11 +58,17 @@ public class GuiTile extends PrimitiveBase {
 
   public void update(Tile tile) {
     this.tile = tile;
+    if(tile == null) {
+      visible = false;
+      return;
+    }
     visible = true;
     int i = 0;
-    for (HexField field : fields) {
-      field.update(tile.fields.get(i));
-      i++;
+    if(!fields.isEmpty() && !tile.fields.isEmpty()) {
+      for (HexField field : fields) {
+        field.update(tile.fields.get(i));
+        i++;
+      }
     }
   }
 

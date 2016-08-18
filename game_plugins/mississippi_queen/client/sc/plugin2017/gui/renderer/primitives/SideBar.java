@@ -6,7 +6,7 @@ import sc.plugin2017.gui.renderer.RenderConfiguration;
 import sc.plugin2017.util.Constants;
 
 /**
- * Zeichnet Spielerinformationen (Punkte, Schollen) sowie die Pinguine am Anfang
+ * Zeichnet Spielerinformationen (Punkte) aktueller Zug
  * des Spieles.
  * 
  * @author soeren
@@ -17,6 +17,7 @@ public class SideBar extends PrimitiveBase {
 
   public SideBar(FrameRenderer parent) {
     super(parent);
+    this.parent = parent;
   }
 
   @Override

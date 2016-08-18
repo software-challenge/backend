@@ -50,12 +50,14 @@ public class Acceleration extends Action {
       throw new InvalidMoveException("Auf einer Sandbank kann nicht beschleunigt werden.");
     }
     int usedCoal = 0;
-    usedCoal = Math.abs(acc) - 1;
+    usedCoal = Math.abs(acc) - player.getFreeAcc();
     
-    player.setCoal(player.getCoal() - usedCoal);
+    if(usedCoal > 0) {
+      player.setCoal(player.getCoal() - usedCoal);
+    }
     player.setSpeed(speed);
     player.setMovement(player.getMovement() + acc);
-      
+    player.setFreeAcc(0);  
     return;
   }
   

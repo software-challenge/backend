@@ -321,6 +321,8 @@ public class GameState implements Cloneable {
     }
     this.getCurrentPlayer().setMovement(getCurrentPlayer().getSpeed());
     this.getCurrentPlayer().setMovement(getOtherPlayer().getSpeed());
+    this.getOtherPlayer().setFreeAcc(1);
+    this.getCurrentPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
     this.getCurrentPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
     switchCurrentPlayer();

@@ -23,11 +23,13 @@ public class ProgressBar extends PrimitiveBase {
 
   public ProgressBar(FrameRenderer par) {
     super(par);
+    this.parent = par;
     left = new GuiButton(par, "Links");
     right = new GuiButton(par, "Rechts");
     speedUp = new GuiButton(par, "+");
     speedDown = new GuiButton(par, "-");
     send = new GuiButton(par, "Fertig");
+    cancel = new GuiButton(par, "Neu");
   }
 
   @Override
@@ -85,16 +87,27 @@ public class ProgressBar extends PrimitiveBase {
     if(parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
       if(parent.currentGameState.getCurrentPlayer()
         .getField(parent.currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
-        right.draw();   
-        left.draw();
-        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 1) {
+        if(parent.currentGameState.getCurrentPlayer().getCoal() + 
+            parent.currentGameState.getCurrentPlayer().getFreeTurns() != 0) {
+          right.draw();  
+          left.draw(); 
+        }
+        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 1 && 
+            parent.currentGameState.getCurrentPlayer().getMovement() != 0 && 
+            parent.currentGameState.getCurrentPlayer().getCoal() + 
+            parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
           speedDown.draw();
         }
-        if(parent.currentGameState.getCurrentPlayer().getSpeed()  != 6) {
+        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 6 && 
+            parent.currentGameState.getCurrentPlayer().getCoal() + 
+            parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
           speedUp.draw();
         }
       }
-      send.draw();
+      if(parent.currentGameState.getCurrentPlayer().getMovement() == 0) {
+        send.draw();
+      }
+      cancel.draw();
     }
   }
   
