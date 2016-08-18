@@ -77,10 +77,6 @@ public class Board {
       startCoordinates[i][0] = getXCoordinateInDirection(startCoordinates[i-1][0], direction[i]);
       startCoordinates[i][1] = getYCoordinateInDirection(startCoordinates[i-1][1], direction[i]);
     }
-    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
-      System.out.print(direction[i] + " ");
-    }
-     System.out.println(tilesWithPassengers);
     generateStartField();
     for(int i = 1; i < Constants.NUMBER_OF_TILES; i++) {
       generateTile(i, tilesWithPassengers.contains(i), direction[i], startCoordinates[i][0], startCoordinates[i][1]);
@@ -152,7 +148,6 @@ public class Board {
     Tile start = new Tile(0, 0, 0, 0, 0, 0, 0); // generate tile with middle at 0,0 in direction 0
     // with no other fields than WATER fields
     tiles.add(start);
-    System.out.println("Generated start field");
   }
 
   /**
@@ -176,6 +171,22 @@ public class Board {
         if(field != null) {
           return field;
         }
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Gibt ein Feld zurück
+   * @param x x-Koordinate
+   * @param y y-Koordinate
+   * @return Feld an entsprechenden Koordinaten, gibt null zurück, sollte das Feld nicht (mehr) existieren
+   */
+  protected Field alwaysGetField(int x, int y) {
+    for(Tile tile : tiles) {
+      Field field = tile.getField(x, y);
+      if(field != null) {
+        return field;
       }
     }
     return null;

@@ -19,6 +19,7 @@ public class ProgressBar extends PrimitiveBase {
   public GuiButton speedUp;
   public GuiButton speedDown;
   public GuiButton send;
+  public GuiButton cancel; // TODO 
 
   public ProgressBar(FrameRenderer par) {
     super(par);

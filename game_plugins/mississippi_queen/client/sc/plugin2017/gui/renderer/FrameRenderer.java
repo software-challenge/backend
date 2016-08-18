@@ -5,6 +5,7 @@ package sc.plugin2017.gui.renderer;
 
 import java.awt.Image;
 import java.awt.event.MouseEvent;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import org.slf4j.Logger;
@@ -21,10 +22,14 @@ import sc.plugin2017.gui.renderer.primitives.HexField;
 import sc.plugin2017.gui.renderer.primitives.ProgressBar;
 import sc.plugin2017.gui.renderer.primitives.SideBar;
 import sc.plugin2017.gui.renderer.primitives.GuiBoard;
+import sc.plugin2017.Acceleration;
+import sc.plugin2017.Action;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
+import sc.plugin2017.Turn;
 import sc.plugin2017.util.Constants;
+import sc.plugin2017.util.InvalidMoveException;
 import sc.plugin2017.EPlayerId;
 
 /**
@@ -41,6 +46,8 @@ public class FrameRenderer extends PApplet {
       .getLogger(FrameRenderer.class);
 
   public GameState currentGameState;
+  private GameState backUp;
+  private Move currentMove;
   private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
   public int maxTurn;
@@ -55,7 +62,7 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
   
-  public LinkedList<HexField> stepPossible; // eventuell zu lsite von pair Feld, move umwandeln
+  public LinkedHashMap<HexField, Action> stepPossible;
   
   public FrameRenderer() {
     super();
@@ -74,7 +81,7 @@ public class FrameRenderer extends PApplet {
     progressBar = new ProgressBar(this);
     sideBar = new SideBar(this);
     boardFrame = new BoardFrame(this);
-    stepPossible = new LinkedList<HexField>();
+    stepPossible = new LinkedHashMap<HexField, Action>();
   }
 
   public void setup() {
@@ -117,9 +124,19 @@ public class FrameRenderer extends PApplet {
       lastTurn = currentGameState.getTurn();
     }
     currentGameState = gameState;
+    currentMove = new Move();
     // needed for simulation of actions
     currentGameState.getRedPlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
     currentGameState.getBluePlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
+    currentGameState.getCurrentPlayer().setFreeTurns(currentGameState.isFreeTurn() ? 2 : 1);
+    // make backup of gameState
+    try {
+      backUp = currentGameState.clone();
+    } catch (CloneNotSupportedException e) {
+      // TODO Auto-generated catch block
+      System.out.println("Clone of Backup failed");
+      e.printStackTrace();
+    }
     
     if (gameState != null && gameState.getBoard() != null)
       guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(), gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
@@ -160,7 +177,16 @@ public class FrameRenderer extends PApplet {
 
   public void mouseClicked(MouseEvent e) {
     System.out.println("Mouse: (" + mouseX + ", " + mouseY + ")");
-    System.out.println(getFieldCoordinates(mouseX, mouseY));
+    
+  }
+
+  private void update(GameState gameState) {
+    if (gameState != null && gameState.getBoard() != null) {
+      guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(),
+          gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
+      // TODO add sidebar to update move there
+    }
+    redraw();
   }
 
   public void mousePressed(MouseEvent e) {
@@ -183,29 +209,82 @@ public class FrameRenderer extends PApplet {
 
   public void mouseReleased(MouseEvent e) {
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
+      HexField clicked = getFieldCoordinates(mouseX, mouseY);
+      Action action = stepPossible.get(clicked);
+      if(action != null) {
+        try {
+          action.perform(currentGameState, currentGameState.getCurrentPlayer());
+        } catch (InvalidMoveException e1) {
+          System.out.println("Failed to perform move of user, please report if this happens");
+          e1.printStackTrace();
+        }
+        currentMove.actions.add(action);
+        update(currentGameState);
+      }
       if(currentGameState.getCurrentPlayer()
         .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
         if(progressBar.left.isClicked()) {
-          System.out.println(progressBar.left);
+          Turn turn = new Turn(1);
+          currentMove.actions.add(turn);
+          try {
+            turn.perform(currentGameState, currentGameState.getCurrentPlayer());
+          } catch (InvalidMoveException e1) {
+            System.out.println("Failed to perform move of user, please report if this happens");
+            e1.printStackTrace();
+          }
         }
         if(progressBar.right.isClicked()) {
-          System.out.println(progressBar.right);
+          Turn turn = new Turn(-1);
+          currentMove.actions.add(turn);
+          try {
+            turn.perform(currentGameState, currentGameState.getCurrentPlayer());
+          } catch (InvalidMoveException e1) {
+            System.out.println("Failed to perform move of user, please report if this happens");
+            e1.printStackTrace();
+          }
         }
         if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
           if(progressBar.speedDown.isClicked()) {
-            System.out.println(progressBar.speedDown);
+            Acceleration acc = new Acceleration(-1);
+            currentMove.actions.add(acc);
+            try {
+              acc.perform(currentGameState, currentGameState.getCurrentPlayer());
+            } catch (InvalidMoveException e1) {
+              System.out.println("Failed to perform move of user, please report if this happens");
+              e1.printStackTrace();
+            }
           }
         }
         if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
           if(progressBar.speedUp.isClicked()) {
-            System.out.println(progressBar.speedUp);
+            Acceleration acc = new Acceleration(1);
+            currentMove.actions.add(acc);
+            try {
+              acc.perform(currentGameState, currentGameState.getCurrentPlayer());
+            } catch (InvalidMoveException e1) {
+              System.out.println("Failed to perform move of user, please report if this happens");
+              e1.printStackTrace();
+            }
           }
         }
       }
       if(progressBar.send.isClicked()) {
         System.out.println(progressBar.send);
+        // TODO 
       }
+//      if(progressBar.cancel.isClicked()) {
+//        
+//      }
     }
+    update(currentGameState);
+    redraw();
+    if(currentMove == null) {
+      System.out.println("Error in currentMove generation check this");
+    }
+    if(currentMove.actions.isEmpty()) {
+      System.out.println("keine Actionen vorhanden");
+    }
+    System.out.println(currentMove);
   }
 
   private HexField getFieldCoordinates(int x, int y) {

@@ -2,17 +2,21 @@ package sc.plugin2017.gui.renderer.primitives;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import sc.plugin2017.gui.renderer.primitives.GuiConstants;
 import sc.plugin2017.gui.renderer.primitives.HexField;
 import sc.plugin2017.util.Constants;
+import sc.plugin2017.Action;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
+import sc.plugin2017.Push;
+import sc.plugin2017.Step;
 import sc.plugin2017.Tile;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
@@ -139,33 +143,58 @@ public class GuiBoard extends PrimitiveBase{
         }
       }
       LinkedList<HexField> toHighlight = new LinkedList<HexField>();
+      LinkedHashMap<HexField, Action> add = new LinkedHashMap<HexField, Action>();
       Player currentPlayer = (current == PlayerColor.RED) ? red : blue;
       if(red.getField(currentBoard).equals(blue.getField(currentBoard))) {
         for(int j = 0; j < 6; j++) {
           if(j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
-            toHighlight.addAll(getPassableGuiFieldsInDirection(
-                currentPlayer.getX(), currentPlayer.getY(), j, 1));
+            HexField toAdd = getPassableGuiFieldInDirection(
+                currentPlayer.getX(), currentPlayer.getY(), j);
+            if(toAdd != null) { // add push to list of actions
+              toHighlight.add(toAdd);
+              add.put(toAdd,new Push(j));
+            }
           }
         }
       } else if(currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
         toHighlight = 
             getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 currentPlayer.getDirection(), currentPlayer.getMovement());
+        // the actions are in order (smallest Step first, so this should work:
+        int stepCounter = 1;
+        for (HexField hexField : toHighlight) {
+          add.put(hexField, new Step(stepCounter));
+          ++stepCounter;
+        }
         
       } else {
-        toHighlight = getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
-            currentPlayer.getDirection(), 1);
-        toHighlight.addAll(getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
-            GameState.getOppositeDirection(currentPlayer.getDirection()), 1));
+        // case sandbank
+        HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
+            currentPlayer.getDirection());
+        if(step != null) {
+          toHighlight.add(step);
+          add.put(step, new Step(1));
+        }
+        step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
+            GameState.getOppositeDirection(currentPlayer.getDirection()));
+        if(step != null) {
+          toHighlight.add(step);
+          add.put(step, new Step(-1));
+        }
       }
       for (HexField hexField : toHighlight) {
         hexField.setHighlighted(true);
       }
-      parent.stepPossible = toHighlight;
-//      GuiPlayer currentGuiPlayer = (current == PlayerColor.RED) ? this.red : this.blue;
-//      parent.currentGameState.getPossibleMovesInDirection(currentPlayer, currentGuiPlayer.movement, currentGuiPlayer.coal);
-//      red.getField(board).getFieldInDirection(direction, board)
+      parent.stepPossible = add;
     }
+  }
+
+  private HexField getPassableGuiFieldInDirection(int x, int y, int j) {
+    LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
+    if(passable.isEmpty()) {
+      return null;
+    }
+    return passable.getFirst();
   }
 
   /**

@@ -46,7 +46,7 @@ public class Acceleration extends Action {
     if(speed > 6 || speed < 1) {
       throw new InvalidMoveException("Geschwindigkeit zu hoch oder zu niedrig");
     }
-    if(player.getField(state.getVisibleBoard()).getType() == FieldType.SANDBANK) {
+    if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
       throw new InvalidMoveException("Auf einer Sandbank kann nicht beschleunigt werden.");
     }
     int usedCoal = 0;
@@ -54,7 +54,7 @@ public class Acceleration extends Action {
     
     player.setCoal(player.getCoal() - usedCoal);
     player.setSpeed(speed);
-    player.setMovement(speed);
+    player.setMovement(player.getMovement() + acc);
       
     return;
   }

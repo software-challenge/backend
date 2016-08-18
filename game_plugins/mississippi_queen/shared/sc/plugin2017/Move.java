@@ -224,7 +224,15 @@ public class Move implements Cloneable {
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
     for (Action action : actions) {
-      toString.concat(action.toString() + " ");
+      if(action.getClass() == Turn.class) {
+        toString.concat(((Turn) action).toString() + "\n");
+      } else if(action.getClass() == Acceleration.class){
+        toString.concat(((Acceleration) action).toString() + "\n");
+      } else if(action.getClass() == Step.class){
+        toString.concat(((Step) action).toString() + "\n");
+      } else if(action.getClass() == Push.class){
+        toString.concat(((Push) action).toString() + "\n");
+      }
     }
     return toString;
   }

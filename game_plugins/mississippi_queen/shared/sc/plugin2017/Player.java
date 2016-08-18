@@ -310,7 +310,11 @@ public class Player extends SimplePlayer implements Cloneable {
     return freeTurns;
   }
 
-  protected void setFreeTurns(int freeTurns) {
+  /**
+   * Nur fuer den Server (und die Gui) relevant.
+   * @param freeTurns
+   */
+  public void setFreeTurns(int freeTurns) {
     this.freeTurns = freeTurns;
   }
 }
