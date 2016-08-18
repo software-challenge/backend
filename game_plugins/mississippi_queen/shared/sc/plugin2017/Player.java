@@ -82,6 +82,12 @@ public class Player extends SimplePlayer implements Cloneable {
   @XStreamOmitField
   private int freeTurns;
 
+  /**
+   * Nur fuer die Gui relevant
+   */
+  @XStreamOmitField
+  private int freeAcc;
+  
 	/**
 	 * Erstellt einen Spieler mit gegebener Spielerfarbe.
 	 * 
@@ -98,12 +104,13 @@ public class Player extends SimplePlayer implements Cloneable {
 		setX(-1);
 		setPassenger(0);
 		if(color == PlayerColor.RED) {
-		  setY(1); // TODO change back to 1
+		  setY(1);
 		} else {
 		  setY(-1);
 		}
 		movement = 1;
 		freeTurns = 1;
+		freeAcc = 1;
 	}
 
   /**
@@ -316,5 +323,21 @@ public class Player extends SimplePlayer implements Cloneable {
    */
   public void setFreeTurns(int freeTurns) {
     this.freeTurns = freeTurns;
+  }
+
+  /**
+   * Nur fuer den Server (und die Gui) relevant.
+   * @param freeTurns
+   */
+  public int getFreeAcc() {
+    return freeAcc;
+  }
+
+  /**
+   * Nur fuer den Server (und die Gui) relevant.
+   * @param freeTurns
+   */
+  public void setFreeAcc(int freeAcc) {
+    this.freeAcc = freeAcc;
   }
 }

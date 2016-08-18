@@ -129,6 +129,7 @@ public class FrameRenderer extends PApplet {
     currentGameState.getRedPlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
     currentGameState.getBluePlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
     currentGameState.getCurrentPlayer().setFreeTurns(currentGameState.isFreeTurn() ? 2 : 1);
+    currentGameState.getCurrentPlayer().setFreeAcc(1);
     // make backup of gameState
     try {
       backUp = currentGameState.clone();
@@ -272,9 +273,14 @@ public class FrameRenderer extends PApplet {
         System.out.println(progressBar.send);
         // TODO 
       }
-//      if(progressBar.cancel.isClicked()) {
-//        
-//      }
+      if(progressBar.cancel.isClicked()) {
+        try {
+          currentGameState = backUp.clone();
+        } catch (CloneNotSupportedException e1) {
+          System.out.println("Clone of backup failed");
+          e1.printStackTrace();
+        }
+      }
     }
     update(currentGameState);
     redraw();
@@ -296,9 +302,6 @@ public class FrameRenderer extends PApplet {
         return coordinates;
       }
     }
-    // TODO get edges and set coordinates according -> return field coordinates
-    // TODO check from coordinates x, y(position) on which field(x,y) ()coordniates you are
-
     return null;
   }
 
