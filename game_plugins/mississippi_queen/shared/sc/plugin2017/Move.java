@@ -136,6 +136,7 @@ public class Move implements Cloneable {
    *           oder wenn die Aktionen im Zug nicht nach der Reihenfolge sortiert sind
    */
   public void perform(GameState state, Player player) throws InvalidMoveException {
+    orderActions();
     int order = 0;
     boolean onEnemy;
     if(actions.isEmpty()) {
@@ -150,36 +151,12 @@ public class Move implements Cloneable {
       }
       Action lastAction = null;
       if(order > 0) {
-        if(action instanceof Step) {
-          lastAction = actions.get(((Step)action).order - 1);
-        } else if(action instanceof Turn) {
-          lastAction = actions.get(((Turn)action).order - 1);
-        } else if(action instanceof Acceleration) {
-          lastAction = actions.get(((Acceleration)action).order - 1);
-        } else if(action instanceof Push) {
-          lastAction = actions.get(((Push)action).order - 1);
-        }
+        lastAction = actions.get(action.order - 1);
+        
       }
       if(lastAction != null && lastAction.getClass() == Step.class) {
         if(((Step) lastAction).endsTurn) {
           throw new InvalidMoveException("Zug auf eine Sandbank muss letzte Aktion sein.");
-        }
-      }
-      if(action instanceof Step) {
-        if(order != ((Step)action).order) {
-          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
-        }
-      } else if(action instanceof Turn) {
-        if(order != ((Turn)action).order) {
-          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
-        }
-      } else if(action instanceof Acceleration) {
-        if(order != ((Acceleration)action).order) {
-          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
-        }
-      } else if(action instanceof Push) {
-        if(order != ((Push)action).order) {
-          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
         }
       }
       if(action.getClass() == Turn.class) {
@@ -265,7 +242,7 @@ public class Move implements Cloneable {
   /**
    * Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions
    */
-  public void orderActions() {
+  public void setOrderInActions() {
     int order = 0;
     for (Action action : actions) {
       if(action instanceof Step) {
@@ -278,6 +255,17 @@ public class Move implements Cloneable {
         ((Push)action).order = order;
       }
       ++order;
+    }
+  }
+  
+  public void orderActions() {
+    ArrayList<Action> order = new ArrayList<Action>();
+    for(int i = 0; i < actions.size(); i++) {
+      for (Action action : actions) {
+        if(action.order == i) {
+          order.add(action);
+        }
+      }
     }
   }
 

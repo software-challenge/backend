@@ -13,11 +13,6 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "step")
 public class Step extends Action {
   /**
-   * Zeigt an welche Nummer die Aktion hat
-   */
-  @XStreamAsAttribute
-  public int order;
-  /**
    * Anzahl der Felder, die zurückgelegt werden.
    */
   @XStreamAsAttribute
