@@ -8,7 +8,6 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "push")
 public class Push extends Action {
 
-  
   /**
    * Zeigt an welche Nummer die Aktion hat
    */
@@ -20,10 +19,24 @@ public class Push extends Action {
   @XStreamAsAttribute
   public int direction;
  
+  public Push() {
+    order = 0;
+    direction = 0;
+  }
+  
+  /**
+   * Erzeugt eine Abdrängaktion in angegebene Richtug
+   * @param direction Richtung des Abdrängens
+   */
   public Push(int direction) {
     this.direction = direction;
   }
   
+  /**
+   * Erzeugt eine Abdrängaktion in angegebene Richtug
+   * @param direction Richtung des Abdrängens
+   * @param order Reihenfolge
+   */
   public Push(int direction, int order) {
     this.direction = direction;
     this.order = order;
@@ -61,7 +74,7 @@ public class Push extends Action {
   }
   
   public Push clone() {
-    return new Push(this.direction);
+    return new Push(this.direction, this.order);
   }
   
   public boolean equals(Object o) {
@@ -72,7 +85,7 @@ public class Push extends Action {
   }
   
   public String toString()  {
-    return "Abdrängen in Richtung " + direction;
+    return "Dränge nach " + direction + " ab";
   }
 
 }

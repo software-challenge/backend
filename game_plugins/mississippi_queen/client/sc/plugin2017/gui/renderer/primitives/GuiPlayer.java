@@ -324,13 +324,7 @@ public class GuiPlayer extends PrimitiveBase {
     this.coal = player.getCoal();
     this.color = player.getPlayerColor();
     this.speed = player.getSpeed();
-//    this.passenger = player.getPassenger();
-    if(color == PlayerColor.RED) {
-      passenger = 1;
-      
-    } else {
-      passenger = 2;
-    }
+    this.passenger = player.getPassenger();
     this.currentPlayer = currentPlayer;
     this.direction = player.getDirection();
   }

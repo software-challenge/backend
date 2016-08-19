@@ -120,7 +120,7 @@ public class GuiConstants {
    * dargestellt. Für jede benutzte Textgröße einen Font gengerieren löst das
    * Problem.
    */
-  public static int[] fontSizes = { 18, 25, 30 }; //The needed Font Sizes
+  public static int[] fontSizes = {18, 25, 30, 10 }; //The needed Font Sizes
   public static PFont[] fonts;
   
   public static void generateFonts(PApplet parent){

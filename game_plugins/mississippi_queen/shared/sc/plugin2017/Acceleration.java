@@ -8,7 +8,6 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "acceleration")
 public class Acceleration extends Action {
 
-  
   /**
    * Zeigt an welche Nummer die Aktion hat
    */
@@ -21,10 +20,23 @@ public class Acceleration extends Action {
   @XStreamAsAttribute
   public int acc;
   
+  public Acceleration() {
+    order = 0;
+    acc = 0;
+  }
+  /**
+   * Legt eine neue Beschleunigungaktion an
+   * @param acc Wert um den beschleunigt wird
+   */
   public Acceleration(int acc) {
     this.acc = acc;
   }
   
+  /**
+   * Legt eine neue Beschleunigungaktion an
+   * @param acc Wert um den beschleunigt wird
+   * @param order Reihenfolge
+   */
   public Acceleration(int acc, int order) {
     this.acc = acc;
     this.order = order;
@@ -62,7 +74,7 @@ public class Acceleration extends Action {
   }
   
   public Acceleration clone() {
-    return new Acceleration(this.acc);
+    return new Acceleration(this.acc, this.order);
   }
   
   public boolean equals(Object o) {
@@ -73,7 +85,7 @@ public class Acceleration extends Action {
   }
   
   public String toString() {
-    return "Beschleuningung um " + acc;
+    return "Beschleunige um " + acc;
   }
 
 }
