@@ -349,7 +349,7 @@ public class GameState implements Cloneable {
    */
   public List<Action> getPossibleActions(Player player, int movement, int coal, boolean acceleration, boolean freeTurn) { //TODO Test schreiben
     List<Action> actions = new ArrayList<Action>();
-    actions.addAll(getPossibleMovesInDirection(player, movement, coal));
+    actions.addAll(getPossibleMovesInDirection(player, movement, player.getDirection(), coal));
     actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal));
     actions.addAll(getPossiblePushs(player, movement));
     if(acceleration) {
@@ -428,13 +428,12 @@ public class GameState implements Cloneable {
    * mit einer festen Anzahl von Bewegungspunkten möglich sind.
    * @param player Spieler
    * @param movement Anzahl 
+   * @param direction Richtung
    * @param coal Kohleeinheite die zur Verfügung stehen
    * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
    */
-  public List<Step> getPossibleMovesInDirection(Player player, int movement, int coal) {
+  public List<Step> getPossibleMovesInDirection(Player player, int movement, int direction, int coal) {
     ArrayList<Step> step = new ArrayList<Step>();
-    int direction = player.getDirection();
-    board = getVisibleBoard();
     Field start = player.getField(board);
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
@@ -442,7 +441,7 @@ public class GameState implements Cloneable {
       if(start.getFieldInDirection(getOppositeDirection(direction), this.board).isPassable()) {
         step.add(new Step(-1));
       }
-      if(coal > 0) {
+      if(coal > 0 || start.getFieldInDirection(direction, this.board).isPassable()) {
         step.add(new Step(1));
       }
       return step;
@@ -704,7 +703,6 @@ public class GameState implements Cloneable {
     try {
       clone = this.clone();
     } catch (CloneNotSupportedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     for(Action action : move.actions) {
@@ -755,6 +753,22 @@ public class GameState implements Cloneable {
   
   public String toString() {
     return "GameState: freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
+  }
+  
+  /**
+   * GIbt die Anzahl der Drehungen bei einer Drehung von dir1 zu dir2 zurück
+   * @param dir1 Startrichtung
+   * @param dir2 Endrichtung
+   * @return Anzahl der Drehungen
+   */
+  public static int turnToDir(int dir1, int dir2) {
+    int direction = ((dir1 - dir2) + 6) % 6;
+    if(direction >= 3) {
+      direction = 6 - direction;
+    } else {
+      direction = - direction;
+    }
+    return direction;
   }
 }
 

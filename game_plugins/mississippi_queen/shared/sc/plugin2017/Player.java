@@ -321,7 +321,7 @@ public class Player extends SimplePlayer implements Cloneable {
   /**
    * Nur fuer den Server (und die Gui) relevant.
    * Sollte für den Client 0 sein.
-   * @return
+   * @return Bewegunspunkte
    */
   public int getMovement() {
     return movement;
@@ -329,19 +329,26 @@ public class Player extends SimplePlayer implements Cloneable {
 
   /**
    * Nur fuer den Server (und die Gui) relevant.
-   * @param movement Bewegunspunkte
+   * @param movement Bewegungspunkte
    */
   public void setMovement(int movement) {
     this.movement = movement;
   }
 
+  /**
+   * Nur fuer den Server (und die Gui) relevant.
+   * Sollte für den Client 0 sein.
+   * 
+   * @return Anzahl der freien Drehzüge
+   */
   public int getFreeTurns() {
     return freeTurns;
   }
 
   /**
    * Nur fuer den Server (und die Gui) relevant.
-   * @param freeTurns
+   * 
+   * @param freeTurns Anzahl der freien Drehzüge
    */
   public void setFreeTurns(int freeTurns) {
     this.freeTurns = freeTurns;
@@ -349,7 +356,8 @@ public class Player extends SimplePlayer implements Cloneable {
 
   /**
    * Nur fuer den Server (und die Gui) relevant.
-   * @param freeTurns
+   * Sollte für den Client 0 sein.
+   * @return Anzahl der freien Beschleunigungen
    */
   public int getFreeAcc() {
     return freeAcc;
@@ -357,7 +365,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
   /**
    * Nur fuer den Server (und die Gui) relevant.
-   * @param freeTurns
+   * @param freeAcc Anzahl der freien Beschleunigungen 
    */
   public void setFreeAcc(int freeAcc) {
     this.freeAcc = freeAcc;
