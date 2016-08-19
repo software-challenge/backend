@@ -155,25 +155,30 @@ public class GuiBoard extends PrimitiveBase{
         throw new NullPointerException("Felder sind null");
       }
       if(redField.equals(blueField)) {
-        for(int j = 0; j < 6; j++) {
-          if(j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
-            HexField toAdd = getPassableGuiFieldInDirection(
-                currentPlayer.getX(), currentPlayer.getY(), j);
-            if(toAdd != null) { // add push to list of actions
-              toHighlight.add(toAdd);
-              add.put(toAdd,new Push(j));
+        // case push
+        if(currentPlayer.getMovement() != 0) {
+          for(int j = 0; j < 6; j++) {
+            if(j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
+              HexField toAdd = getPassableGuiFieldInDirection(
+                  currentPlayer.getX(), currentPlayer.getY(), j);
+              if(toAdd != null) { // add push to list of actions
+                toHighlight.add(toAdd);
+                add.put(toAdd,new Push(j));
+              }
             }
           }
         }
       } else if(currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
-        toHighlight = 
+        if(currentPlayer.getMovement() != 0) {
+          toHighlight = 
             getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 currentPlayer.getDirection(), currentPlayer.getMovement());
-        // the actions are in order (smallest Step first, so this should work:
-        int stepCounter = 1;
-        for (HexField hexField : toHighlight) {
-          add.put(hexField, new Step(stepCounter));
-          ++stepCounter;
+          // the actions are in order (smallest Step first, so this should work:
+          int stepCounter = 1;
+          for (HexField hexField : toHighlight) {
+            add.put(hexField, new Step(stepCounter));
+            ++stepCounter;
+          }
         }
         
       } else {
@@ -269,7 +274,7 @@ public class GuiBoard extends PrimitiveBase{
    * @param startY anfangs y
    * @param direction Richtung
    * @param step Bewegunsgpunkte
-   * @return
+   * @return Begehbare Felder
    */
   public LinkedList<HexField> getPassableGuiFieldsInDirection(int startX, int startY, int direction, int step) {
     LinkedList<HexField> fields = new LinkedList<HexField>();
@@ -324,7 +329,12 @@ public class GuiBoard extends PrimitiveBase{
           return fields;
         }
         if(highlight.type == FieldType.LOG) {
-          i++;
+          if(i + 1 > step) {
+            fields.remove(fields.getLast());
+            return fields;
+          } else {
+            ++i; // moving over log costs 1 extra
+          }
         }
       } else {
         return fields;
