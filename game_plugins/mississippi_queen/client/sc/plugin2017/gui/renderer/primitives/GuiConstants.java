@@ -45,6 +45,7 @@ public class GuiConstants {
   public static final int colorPassenger = calcColor(255, 255, 255, 153);
   public static final int colorWhite = calcColor(255, 255, 255, 255);
   public static final int colorHexFieldGOAL = calcColor(255, 154, 50, 205);
+  public static final int colorOrange = calcColor(255, 255, 153, 0);
   
   
   

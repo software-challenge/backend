@@ -269,7 +269,12 @@ public class Player extends SimplePlayer implements Cloneable {
   }
   
   public Field getField(Board board) {
-    return board.getTiles().get(tile).getField(x, y);
+    for (Tile tile : board.getTiles()) {
+      if(tile.getIndex() == this.tile) {
+        return tile.getField(x, y);
+      }
+    }
+    return null;
   }
   
   /**
