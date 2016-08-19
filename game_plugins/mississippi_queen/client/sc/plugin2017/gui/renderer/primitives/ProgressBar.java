@@ -104,9 +104,7 @@ public class ProgressBar extends PrimitiveBase {
           speedUp.draw();
         }
       }
-      if(parent.currentGameState.getCurrentPlayer().getMovement() == 0) {
-        send.draw();
-      }
+      send.draw();
       cancel.draw();
     }
   }

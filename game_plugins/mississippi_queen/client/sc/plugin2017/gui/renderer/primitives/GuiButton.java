@@ -67,7 +67,11 @@ public class GuiButton extends PrimitiveBase {
     else
       parent.stroke(GuiConstants.colorBlack);
     // fill rect
-    parent.fill(GuiConstants.colorLightLightGrey);
+    if(message == "Fertig" && parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
+      parent.fill(GuiConstants.colorOrange);
+    } else {
+      parent.fill(GuiConstants.colorLightLightGrey);
+    }
     
     if(parent.getMousePosition() != null) {
       if(parent.mouseX >= x
@@ -91,9 +95,10 @@ public class GuiButton extends PrimitiveBase {
 
   public boolean isClicked() {
     if(message == "Fertig") {
-      if(parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
-        return false;
-      }
+      // would stop termoination if game
+//      if(parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
+//        return false;
+//      }
     } else if(message == "-") {
       if(parent.currentGameState.getCurrentPlayer().getSpeed() == 1 || 
           parent.currentGameState.getCurrentPlayer().getMovement() == 0 ||

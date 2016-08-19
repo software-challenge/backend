@@ -324,7 +324,7 @@ public class GameState implements Cloneable {
     this.getOtherPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
-    this.getCurrentPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
+    this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
     switchCurrentPlayer();
     
   }
@@ -649,17 +649,23 @@ public class GameState implements Cloneable {
   protected void removePassenger(Player player) {
     int x = player.getX();
     int y = player.getY();
-    if(board.getField(x, y).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3) {
+    if(board.getField(x,y).getFieldInDirection(0, board) != null &&
+        board.getField(x, y).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3) {
       board.getField(x, y).getFieldInDirection(0, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x, y).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4) {
+    } else if(board.getField(x,y).getFieldInDirection(1, board) != null &&
+        board.getField(x, y).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4) {
       board.getField(x, y).getFieldInDirection(1, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x, y).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5) {
+    } else if(board.getField(x,y).getFieldInDirection(2, board) != null &&
+        board.getField(x, y).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5) {
       board.getField(x, y).getFieldInDirection(2, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x, y).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0) {
+    } else if(board.getField(x,y).getFieldInDirection(3, board) != null &&
+        board.getField(x, y).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0) {
       board.getField(x, y).getFieldInDirection(3, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x, y).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1) {
+    } else if(board.getField(x,y).getFieldInDirection(4, board) != null &&
+        board.getField(x, y).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1) {
       board.getField(x, y).getFieldInDirection(4, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x, y).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2) {
+    } else if(board.getField(x,y).getFieldInDirection(5, board) != null &&
+        board.getField(x, y).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2) {
       board.getField(x, y).getFieldInDirection(5, board).setType(FieldType.BLOCKED);
     }
     player.setPassenger(player.getPassenger() + 1);

@@ -49,14 +49,19 @@ public class Turn extends Action {
     int currentDirection = player.getDirection();
     currentDirection += direction;
     currentDirection = (currentDirection + 6/*Anzahl der Richtungen*/) % 6; // echtes Modulo nicht java modulo
-    int i;
-    for(i = Math.abs(direction); player.getFreeTurns() != 0; i--) {
-      player.setFreeTurns(player.getFreeTurns() - 1);
-    }
-    if(player.getCoal() >= i) {
-      player.setCoal(player.getCoal() - i);
+    int usedCoal = Math.abs(direction) - player.getFreeTurns();
+    int test = player.getFreeTurns() - Math.abs(direction); 
+    if(test <= 0) {
+      player.setFreeTurns(0);
     } else {
-      throw new InvalidMoveException("Nicht gengug Kohle für Drehung");
+      player.setFreeTurns(1); // only possible, wenn freeTurn was 2 und player turns by 1
+    }
+    if(usedCoal > 0) {
+      if(player.getCoal() >= usedCoal) {
+        player.setCoal(player.getCoal() - usedCoal);
+      } else {
+        throw new InvalidMoveException("Nicht gengug Kohle für Drehung");
+      }
     }
     player.setDirection(currentDirection);
     return;
