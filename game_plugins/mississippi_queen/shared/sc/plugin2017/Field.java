@@ -27,7 +27,7 @@ public class Field {
   /**
    * Punkte die ein Feld bringt anhand seiner Position
    */
-  @XStreamOmitField
+  @XStreamAsAttribute
   private final int points;
   
   /**

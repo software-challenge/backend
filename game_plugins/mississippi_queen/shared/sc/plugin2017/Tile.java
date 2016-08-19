@@ -16,7 +16,7 @@ import sc.protocol.LobbyProtocol;
 public class Tile {
 
   public ArrayList<Field> fields = new ArrayList<Field>();
-  @XStreamOmitField
+  @XStreamAsAttribute
   private boolean visible;
   
   /**
@@ -168,7 +168,7 @@ public class Tile {
         fields.add(new Field(FieldType.WATER, x-1, y+1, 4));
       }
     } else  if(direction == 4) {
-      fields.add(new Field(FieldType.WATER, x  , y+3, 0));
+      fields.add(new Field(FieldType.WATER, x  , y-3, 0));
       fields.add(new Field(FieldType.WATER, x+3, y-1, 0));
       fields.add(new Field(FieldType.WATER, x-1, y-2, 1));
       fields.add(new Field(FieldType.WATER, x  , y-2, 1));
@@ -185,7 +185,7 @@ public class Tile {
       fields.add(new Field(FieldType.WATER, x+1, y+1, 3));
       // last 5 fields
       fields.add(new Field(FieldType.WATER, x+1, y+2, 3));
-      fields.add(new Field(FieldType.WATER, x+2, y  , 3));
+      fields.add(new Field(FieldType.WATER, x-2, y  , 3));
       if(end) {
         fields.add(new Field(FieldType.GOAL, x-1, y+1, 4));
         fields.add(new Field(FieldType.GOAL, x-1, y+2, 4));
