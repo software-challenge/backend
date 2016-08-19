@@ -25,10 +25,10 @@
 \sloppy
 \hyphenpenalty=100000
 
-\usepackage{fontspec}
-\setromanfont{Merriweather}
-\setsansfont{Lato}
-\renewcommand{\normalsize}{\fontsize{12}{18}\selectfont}
+%\usepackage{fontspec}
+%\setromanfont{Merriweather}
+%\setsansfont{Lato}
+%\renewcommand{\normalsize}{\fontsize{12}{18}\selectfont}
 
 
 \titlehead{\centering\includegraphics[width=3.5cm]{../Spielregeln/bilder/logo.png}}
@@ -286,7 +286,7 @@ direction="D" speed="S" coal="K" tile="T" passenger="PA"/>
 \begin{verbatim}
 <board>
  <tiles>
-   <tile index="0" direction="0">
+   <tile visible="true" index="0" direction="0">
  	{FIELD}
  	..
  	{FIELD}
@@ -301,9 +301,10 @@ direction="D" speed="S" coal="K" tile="T" passenger="PA"/>
 \item[Type] Typ des Feldes (WATER/BLOCKED/PASSENGER{i}/GOAL/SANDBAR/LOG). ($i \in \{0..5\}$ gibt die Richtung an)
 \item[X] X-Koordinate des Feldes
 \item[Y] Y-Koordinate des Feldes
+\item[P] Punkte des Feldes
 \end{description}
 \begin{verbatim}
-<field type="Type" x="X" y="Y"/>
+<field type="Type" x="X" y="Y" points="P"/>
 \end{verbatim}
 
 \subsection{\label{lastmove}Letzter Zug}
@@ -417,22 +418,22 @@ Kommunikation ablaufen kann.\bigskip\\
        direction="0" speed="1" coal="6" tile="0" passenger="0"/>
       <board>
         <tiles>
-          <tile index="0" direction="0">
-            <field type="WATER" x="0" y="19"/>
-            <field type="WATER" x="0" y="20"/>
-            <field type="WATER" x="0" y="21"/>
-            <field type="WATER" x="0" y="22"/>
-            <field type="WATER" x="0" y="23"/>
+          <tile visible="true" index="0" direction="0">
+            <field type="WATER" x="0" y="19" points="0"/>
+            <field type="WATER" x="0" y="20" points="0"/>
+            <field type="WATER" x="0" y="21" points="1"/>
+            <field type="WATER" x="0" y="22" points="1"/>
+            <field type="WATER" x="0" y="23" points="1"/>
             ...
            </tile>
            ..
-           <tile index="7" direction="3">
+           <tile visible="true" index="5" direction="3">
             ...
-            <field type="WATER" x="34" y="5"/>
-            <field type="TARGET" x="34" y="6"/>
-            <field type="TARGET" x="34" y="7"/>
-            <field type="TARGET" x="34" y="8"/>
-            <field type="WATER" x="34" y="9"/>
+            <field type="WATER" x="34" y="5" points="3"/>
+            <field type="GOAL" x="34" y="6" points="4"/>
+            <field type="GOAL" x="34" y="7" points="4"/>
+            <field type="GOAL" x="34" y="8" points="4"/>
+            <field type="WATER" x="34" y="9" points="3"/>
           </tile>
        <fields>
      </board>
