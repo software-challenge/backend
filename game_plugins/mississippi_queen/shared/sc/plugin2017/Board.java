@@ -216,7 +216,7 @@ public class Board {
   /**
 	 * Erzeug eine Deepcopy eines Spielbretts
 	 */
-  public Object clone() {
+  public Board clone() {
     ArrayList<Tile> clonedTiles = new ArrayList<Tile>();
     for (Tile tile : tiles) {
       Tile clonedTile = tile.clone();

@@ -123,6 +123,9 @@ public class GuiBoard extends PrimitiveBase{
    * @param board
    */
   public void update(Board board, Player red, Player blue, PlayerColor current) {
+    if(red == null || blue == null) {
+      System.out.println("\n\n\nÜbergebene Spieler sind null\n\n\n");
+    }
     currentBoard = board;
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);

@@ -50,7 +50,7 @@ public class Tile {
   }
   
   protected Tile(ArrayList<Field> fields) {
-    fields = new ArrayList<Field>(fields);
+    this.fields = fields;
   }
 
   private void generateFields(int x, int y, int passengers, int blocked, int special, boolean end) {
@@ -329,6 +329,9 @@ public class Tile {
       clonedFields.add(clonedField);
     }
     Tile clone = new Tile(clonedFields); 
+    clone.direction = this.direction;
+    clone.visible = this.visible;
+    clone.index = this.index;
     return clone;
   }
   

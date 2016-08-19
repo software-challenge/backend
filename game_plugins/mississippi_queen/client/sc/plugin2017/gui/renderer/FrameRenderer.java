@@ -161,9 +161,7 @@ public class FrameRenderer extends PApplet {
     int turn = currentGameState.getTurn();
     this.id = id;
     if (turn % 2 == 1) {
-      // System.out.println("Blauer Spieler ist dran");
       if (id == EPlayerId.PLAYER_ONE) {
-        // System.out.println("Spielerupdate");
         this.id = EPlayerId.PLAYER_TWO;
       }
     }
@@ -178,7 +176,6 @@ public class FrameRenderer extends PApplet {
   }
 
   public void mouseClicked(MouseEvent e) {
-    System.out.println("Mouse: (" + mouseX + ", " + mouseY + ")");
     
   }
 
@@ -281,16 +278,13 @@ public class FrameRenderer extends PApplet {
           System.out.println("Clone of backup failed");
           e1.printStackTrace();
         }
+        updateGameState(currentGameState);
+        redraw();
+        return;
       }
     }
     update(currentGameState);
     redraw();
-    if(currentMove == null) {
-      System.out.println("Error in currentMove generation check this");
-    }
-    if(currentMove.actions.isEmpty()) {
-      System.out.println("keine Actionen vorhanden");
-    }
   }
 
   private void sendMove() {
@@ -312,7 +306,7 @@ public class FrameRenderer extends PApplet {
       }
     } 
     // set order
-    send.orderActions();
+    send.setOrderInActions();
     RenderFacade.getInstance().sendMove(send);
   }
 

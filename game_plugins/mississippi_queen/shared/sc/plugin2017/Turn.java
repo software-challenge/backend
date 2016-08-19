@@ -8,12 +8,6 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "turn")
 public class Turn extends Action {
 
-  
-  /**
-   * Zeigt an welche Nummer die Aktion hat
-   */
-  @XStreamAsAttribute
-  public int order;
   /**
    * Richtung in der die Drehung erfolgen soll und wie viel gedreht wird.
    */

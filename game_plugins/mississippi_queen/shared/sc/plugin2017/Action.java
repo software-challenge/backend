@@ -8,7 +8,11 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "action")
 public abstract class Action {
   
-
+  /**
+   * Zeigt an welche Nummer die Aktion hat
+   */
+  @XStreamAsAttribute
+  public int order;
   
   public abstract void perform(GameState state, Player player) throws InvalidMoveException;
 }

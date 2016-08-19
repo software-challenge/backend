@@ -121,11 +121,11 @@ public class GameState implements Cloneable {
   public GameState clone() throws CloneNotSupportedException {
     GameState clone = (GameState) super.clone();
     if (red != null)
-      clone.red = (Player) red.clone();
+      clone.red = (Player) this.red.clone();
     if (blue != null)
-      clone.blue = (Player) blue.clone();
+      clone.blue = (Player) this.blue.clone();
     if (lastMove != null)
-      clone.lastMove = (Move) lastMove.clone();
+      clone.lastMove = (Move) this.lastMove.clone();
     if (board != null)
       clone.board = (Board) this.board.clone();
     if (condition != null)
@@ -745,6 +745,10 @@ public class GameState implements Cloneable {
       }
     }
     return cost;
+  }
+  
+  public String toString() {
+    return "GameState: freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
   }
 }
 

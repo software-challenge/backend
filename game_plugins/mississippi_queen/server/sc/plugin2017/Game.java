@@ -71,8 +71,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException {
 
-		final Player author = (Player) fromPlayer;
-		final Player expectedPlayer = gameState.getCurrentPlayer();
+		Player author = (Player) fromPlayer;
+		Player expectedPlayer = gameState.getCurrentPlayer();
 
 		try {
 			if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
@@ -87,6 +87,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			
       final Move move = (Move) data;
       move.perform(gameState, expectedPlayer);
+      
       gameState.prepareNextTurn(move);
       int[][] stats = gameState.getGameStats();
       if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {

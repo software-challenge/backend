@@ -104,9 +104,9 @@ public class SideBar extends PrimitiveBase {
     if (parent.currentGameState != null) {
       blueName = parent.currentGameState.getBluePlayer().getDisplayName();
       bluePoints = parent.currentGameState.getBluePlayer().getPoints();
-//      blueSpeed = parent.currentGameState.getRedPlayer().getSpeed();
-      blueMovement = parent.currentGameState.getRedPlayer().getMovement();
-//      blueCoal = parent.currentGameState.getRedPlayer().getCoal();
+//      blueSpeed = parent.currentGameState.getBluePlayer().getSpeed();
+      blueMovement = parent.currentGameState.getBluePlayer().getMovement();
+//      blueCoal = parent.currentGameState.getBluePlayer().getCoal();
     }
 
     // passe Textgröße an
