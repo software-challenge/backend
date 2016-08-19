@@ -12,7 +12,6 @@ import sc.plugin2017.util.InvalidMoveException;
 
 @XStreamAlias(value = "step")
 public class Step extends Action {
-
   /**
    * Zeigt an welche Nummer die Aktion hat
    */
@@ -29,11 +28,25 @@ public class Step extends Action {
   @XStreamOmitField
   protected boolean endsTurn;
   
+  public Step() {
+    distance = 0;
+    order = 0;
+  }
+  
+  /**
+   * Legt eine neue Laufaktion an
+   * @param distance Felder die überwunden werden
+   */
   public Step(int distance) {
     this.distance = distance;
     endsTurn = false;
   }
   
+  /**
+   * Legt eine neue Laufaktion an
+   * @param distance Felder die überwunden werden
+   * @param order Reihenfolge
+   */
   public Step(int distance, int order) {
     this.distance = distance;
     this.order = order;
@@ -117,7 +130,7 @@ public class Step extends Action {
   }
   
   public Step clone() {
-    return new Step(this.distance);
+    return new Step(this.distance, this.order);
   }
   
   public boolean equals(Object o) {
@@ -128,7 +141,7 @@ public class Step extends Action {
   }
   
   public String toString() {
-    return "Bewegung um " + distance + " Felder";
+    return "Gehe " + distance + " vor";
   }
 
 }

@@ -20,6 +20,11 @@ public class Turn extends Action {
   @XStreamAsAttribute
   public int direction;
   
+  public Turn() {
+    order = 0;
+    direction = 0;
+  }
+  
   /**
    * Legt einen neuen Drehzug an
    * @param direction Richung der Drehung
@@ -28,6 +33,11 @@ public class Turn extends Action {
     this.direction = direction;
   }
   
+  /**
+   * Legt einen neuen Drehzug an
+   * @param direction Richung der Drehung
+   * @param order Reigenfolge
+   */
   public Turn(int direction, int order) {
     this.direction = direction;
     this.order = order;
@@ -59,7 +69,7 @@ public class Turn extends Action {
   }
   
   public Turn clone() {
-    return new Turn(this.direction);
+    return new Turn(this.direction, this.order);
   }
   
   public boolean equals(Object o) {
@@ -70,7 +80,7 @@ public class Turn extends Action {
   }
   
   public String toString() {
-    return "Drehung um " + direction;
+    return "Drehe um " + direction;
   }
 
 }

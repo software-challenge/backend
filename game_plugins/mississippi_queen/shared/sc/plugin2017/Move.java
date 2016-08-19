@@ -148,14 +148,39 @@ public class Move implements Cloneable {
         throw new InvalidMoveException("Wenn du auf einem gegnerischen Schiff landest,"
             + " muss darauf eine Abdrängaktion folgen.");
       }
-      Action lastAction = actions.get(action.order - 1);
+      Action lastAction = null;
+      if(order > 0) {
+        if(action instanceof Step) {
+          lastAction = actions.get(((Step)action).order - 1);
+        } else if(action instanceof Turn) {
+          lastAction = actions.get(((Turn)action).order - 1);
+        } else if(action instanceof Acceleration) {
+          lastAction = actions.get(((Acceleration)action).order - 1);
+        } else if(action instanceof Push) {
+          lastAction = actions.get(((Push)action).order - 1);
+        }
+      }
       if(lastAction != null && lastAction.getClass() == Step.class) {
         if(((Step) lastAction).endsTurn) {
           throw new InvalidMoveException("Zug auf eine Sandbank muss letzte Aktion sein.");
         }
       }
-      if(order != action.order) {
-        throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
+      if(action instanceof Step) {
+        if(order != ((Step)action).order) {
+          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
+        }
+      } else if(action instanceof Turn) {
+        if(order != ((Turn)action).order) {
+          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
+        }
+      } else if(action instanceof Acceleration) {
+        if(order != ((Acceleration)action).order) {
+          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
+        }
+      } else if(action instanceof Push) {
+        if(order != ((Push)action).order) {
+          throw new InvalidMoveException("Aktionen sind nicht nach Reihenfolge sortiert.");
+        }
       }
       if(action.getClass() == Turn.class) {
         if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
@@ -243,7 +268,15 @@ public class Move implements Cloneable {
   public void orderActions() {
     int order = 0;
     for (Action action : actions) {
-      action.order = order;
+      if(action instanceof Step) {
+        ((Step)action).order = order;
+      } else if(action instanceof Turn) {
+        ((Turn)action).order = order;
+      } else if(action instanceof Acceleration) {
+        ((Acceleration)action).order = order;
+      } else if(action instanceof Push) {
+        ((Push)action).order = order;
+      }
       ++order;
     }
   }

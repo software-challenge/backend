@@ -27,6 +27,7 @@ import sc.plugin2017.Action;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
+import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Turn;
 import sc.plugin2017.util.Constants;
 import sc.plugin2017.util.InvalidMoveException;
@@ -47,7 +48,7 @@ public class FrameRenderer extends PApplet {
 
   public GameState currentGameState;
   private GameState backUp;
-  private Move currentMove;
+  public Move currentMove;
   private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
   public int maxTurn;
@@ -127,7 +128,7 @@ public class FrameRenderer extends PApplet {
     currentMove = new Move();
     // needed for simulation of actions
     currentGameState.getRedPlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
-    currentGameState.getBluePlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
+    currentGameState.getBluePlayer().setMovement(currentGameState.getBluePlayer().getSpeed());
     currentGameState.getCurrentPlayer().setFreeTurns(currentGameState.isFreeTurn() ? 2 : 1);
     currentGameState.getCurrentPlayer().setFreeAcc(1);
     // make backup of gameState
@@ -183,9 +184,10 @@ public class FrameRenderer extends PApplet {
 
   private void update(GameState gameState) {
     if (gameState != null && gameState.getBoard() != null) {
+      gameState.getRedPlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.RED));
+      gameState.getBluePlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.BLUE));
       guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(),
           gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
-      // TODO add sidebar to update move there
     }
     redraw();
   }
@@ -270,8 +272,7 @@ public class FrameRenderer extends PApplet {
         }
       }
       if(progressBar.send.isClicked()) {
-        System.out.println(progressBar.send);
-        // TODO 
+        sendMove();
       }
       if(progressBar.cancel.isClicked()) {
         try {
@@ -290,7 +291,29 @@ public class FrameRenderer extends PApplet {
     if(currentMove.actions.isEmpty()) {
       System.out.println("keine Actionen vorhanden");
     }
-    System.out.println(currentMove);
+  }
+
+  private void sendMove() {
+    Move send = new Move();
+    // buddle accelerations
+    int acc = 0;
+    for (Action action : currentMove.actions) {
+      if(action instanceof Acceleration) {
+        acc += ((Acceleration) action).acc;
+      }
+    }
+    if(acc != 0) {
+      send.actions.add(new Acceleration(acc));
+    }
+    // add rest to send
+    for (Action action : currentMove.actions) {
+      if(action != null && action.getClass() != Acceleration.class) {
+        send.actions.add(action);
+      }
+    } 
+    // set order
+    send.orderActions();
+    RenderFacade.getInstance().sendMove(send);
   }
 
   private HexField getFieldCoordinates(int x, int y) {
