@@ -141,7 +141,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);
 			String err = "Ungueltiger Zug von '" + author.getDisplayName()
-					+ "'.\n" + e.getMessage() + ".";
+					+ "'.\n" + e.getMessage();
 			gameState.endGame(author.getPlayerColor().opponent(), err);
 			logger.error(err);
 			throw new GameLogicException(err);

@@ -123,10 +123,10 @@ public class GuiBoard extends PrimitiveBase{
    * @param board
    */
   public void update(Board board, Player red, Player blue, PlayerColor current) {
-    if(red == null || blue == null) {
-      System.out.println("\n\n\nÜbergebene Spieler sind null\n\n\n");
-    }
     currentBoard = board;
+    if(currentBoard == null) {
+      System.out.println("\n\n\n Übergebenes Board ist null \n\n\n");
+    }
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     // TODO set highlighted fields
@@ -172,17 +172,19 @@ public class GuiBoard extends PrimitiveBase{
         
       } else {
         // case sandbank
-        HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
-            currentPlayer.getDirection());
-        if(step != null) {
-          toHighlight.add(step);
-          add.put(step, new Step(1));
-        }
-        step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
-            GameState.getOppositeDirection(currentPlayer.getDirection()));
-        if(step != null) {
-          toHighlight.add(step);
-          add.put(step, new Step(-1));
+        if(parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
+          HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
+              currentPlayer.getDirection());
+          if(step != null) {
+            toHighlight.add(step);
+            add.put(step, new Step(1));
+          }
+          step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
+              GameState.getOppositeDirection(currentPlayer.getDirection()));
+          if(step != null) {
+            toHighlight.add(step);
+            add.put(step, new Step(-1));
+          }
         }
       }
       for (HexField hexField : toHighlight) {
@@ -195,6 +197,8 @@ public class GuiBoard extends PrimitiveBase{
   private HexField getPassableGuiFieldInDirection(int x, int y, int j) {
     LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
     if(passable.isEmpty()) {
+      return null;
+    } else if(passable.getFirst() == null) {
       return null;
     }
     return passable.getFirst();
@@ -314,7 +318,7 @@ public class GuiBoard extends PrimitiveBase{
           return fields;
         }
         if(highlight.type == FieldType.LOG) {
-          ++step;
+          i++;
         }
       } else {
         return fields;

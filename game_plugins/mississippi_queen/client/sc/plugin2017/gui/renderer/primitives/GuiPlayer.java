@@ -51,7 +51,10 @@ public class GuiPlayer extends PrimitiveBase {
     parent.noStroke();
     parent.pushMatrix();
     parent.translate(x, y);
-    
+    if(parent.currentGameState != null && parent.currentGameState.getBoard() != null && parent.currentGameState.getBoard().getTiles().size() > 2) {
+      parent.textFont(GuiConstants.fonts[3]);
+      parent.textSize(GuiConstants.fontSizes[3]);
+    }
     if(color == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
     } else {
