@@ -139,6 +139,10 @@ public class Move implements Cloneable {
     orderActions();
     int order = 0;
     boolean onEnemy;
+    // make sure movement is set right:
+    player.setMovement(player.getSpeed());
+    
+    
     if(actions.isEmpty()) {
       throw new InvalidMoveException("Der Zug enthält keine Aktionen");
     }
@@ -187,7 +191,7 @@ public class Move implements Cloneable {
       throw new InvalidMoveException("Nicht genug Kohle für den Zug vorhanden.");
     }
     if(player.getMovement() != 0) { // check whether movement points are left
-      throw new InvalidMoveException("Es sind noch Bewegungspunkte übrig oder es wurden zu viele verbraucht.");
+      throw new InvalidMoveException("Es sind noch " + player.getMovement() + " Bewegungspunkte übrig.");
     }
   }
   

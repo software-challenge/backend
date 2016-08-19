@@ -87,12 +87,11 @@ public class Step extends Action {
       nextFields.add(start);
       // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
       for(int i = 0; i < distance; i++) {
-        // TODO problem visible not set in gui
         Field next = nextFields.get(i).alwaysGetFieldInDirection(player.getDirection(), state.getBoard());
         if(next != null) {
           nextFields.add(next);
         }
-        Field checkField = nextFields.get(i);
+        Field checkField = nextFields.get(i + 1); // get next field
         if(!checkField.isPassable() || 
             (state.getOtherPlayer().getField(state.getBoard()).equals(checkField) && i != distance -1)) {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
@@ -106,15 +105,18 @@ public class Step extends Action {
             // Zug endet hier, also darf nicht weitergelaufen werden
             throw new InvalidMoveException("Zug sollte bereits enden, da auf Sandbank gefahren wurde.");
           }
+
+          state.put(checkField.getX(), checkField.getY(), player);
           return;
         } else if(checkField.getType() == FieldType.LOG) {
           if(player.getMovement() <= 1) {
-            throw new InvalidMoveException("Nicht genug Bewegunspunkte vorhanden");
+            throw new InvalidMoveException("Nicht genug Bewegunspunkte vorhanden, um Baumstamm zu überqueren");
           }
           player.setMovement(player.getMovement() - 2);
           player.setSpeed(player.getSpeed() - 1);
         } else {
           player.setMovement(player.getMovement() - 1);
+          System.out.println("Verringere Movement zu " + player.getMovement());
         }
         
       }

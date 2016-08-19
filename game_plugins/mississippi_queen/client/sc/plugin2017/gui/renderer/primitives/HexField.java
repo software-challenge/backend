@@ -149,9 +149,7 @@ public class HexField extends PrimitiveBase{
     parent.fill(0);
     parent.textFont(GuiConstants.fonts[3]);
     parent.textSize(GuiConstants.fontSizes[3]);
-    if(true) {
-      parent.text(fieldX + "," + fieldY, 0, 30);
-    }
+    parent.text(fieldX + "," + fieldY, 0, c);
     parent.popMatrix();
     parent.popStyle();
   }

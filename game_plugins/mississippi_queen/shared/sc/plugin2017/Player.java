@@ -130,7 +130,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		Player clone = new Player(this.color);
-		clone.points = points;
+		clone.points = this.points;
 		clone.x = x;
 		clone.y = y;
 		clone.direction = direction;
@@ -141,6 +141,7 @@ public class Player extends SimplePlayer implements Cloneable {
     clone.movement = movement;
 		clone.freeTurns = freeTurns;
 		clone.freeAcc = freeAcc;
+		clone.setDisplayName(this.getDisplayName());
 		return clone;
 	}
 
