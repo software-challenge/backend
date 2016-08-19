@@ -168,6 +168,7 @@ public class Field {
   
   /**
    * Ist das Feldtyp passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
+   * @param type Feldtyp
    * @return Wahr, falls Feld theoretisch passierbar
    */
   public static boolean isPassable(FieldType type) {
@@ -176,6 +177,7 @@ public class Field {
   
   /**
    * Ist das Feldtyp ein Passierfeldtyp?
+   * @param type Feldtyp
    * @return Wahr, falls Feld Passagierfeld
    */
   public static boolean isPassengerField(FieldType type) {

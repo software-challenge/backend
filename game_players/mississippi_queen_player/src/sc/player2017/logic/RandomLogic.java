@@ -2,12 +2,12 @@ package sc.player2017.logic;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import sc.player2017.Starter;
-import sc.plugin2017.Acceleration;
-import sc.plugin2017.Action;
+import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGameHandler;
 import sc.plugin2017.Move;
@@ -58,169 +58,72 @@ public class RandomLogic implements IGameHandler {
 
 	/**
 	 * {@inheritDoc}
-	 * @throws CloneNotSupportedException 
 	 */
 	@Override
 	public void onRequestAction(){
 		System.out.println("*** Es wurde ein Zug angefordert");
-    Move move = null;
-    Random rnd = new Random();
+    Move move = new Move();
+    // Setze die für perform benötigen Attribute
+    currentPlayer.setMovement(currentPlayer.getSpeed());
+    currentPlayer.setFreeAcc(1);
+    currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
+    
     List<Move> possibleMoves = new ArrayList<Move>();
-    int movement = currentPlayer.getSpeed();
-    // add all moves for simple client:
-    // only Forward
-    if(currentPlayer.getSpeed() == 1) {
-      Move newMove = new Move();
-      newMove.actions.add(new Acceleration(1,0));
-      newMove.actions.add(new Step(2,1));
-      possibleMoves.add(newMove);
-      List<Action> actions = new ArrayList<Action>();
-      actions.add(new Step(2,0));
-      possibleMoves.add(new Move(actions));
-    } else {
-      Move newMove = new Move();
-      newMove.actions.add(new Acceleration(1,0));
-      newMove.actions.add(new Step(2,1));
-    }
-    List<Action> actions = new ArrayList<Action>();
-    // left forward
-    if(currentPlayer.getSpeed() == 1) {
-      // vor links vor
-      actions.add(new Acceleration(1,0));
-      actions.add(new Step(1,1));
-      actions.add(new Turn(-1,2));
-      actions.add(new Step(1,3));
-      possibleMoves.add(new Move(actions));
-      // links vor
-      actions = new ArrayList<Action>();
-      actions.add(new Turn(-1,0));
-      actions.add(new Step(1,1));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-      // links 2 vor
-      actions.add(new Acceleration(1,0));
-      actions.add(new Turn(-1,1));
-      actions.add(new Step(2,2));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-      // vor rechts vor
-      actions.add(new Acceleration(1,0));
-      actions.add(new Step(1,1));
-      actions.add(new Turn(1,2));
-      actions.add(new Step(1,3));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-      // rechts vor
-      actions.add(new Turn(1,0));
-      actions.add(new Step(1,1));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-   // rechts 2 vor
-      actions.add(new Acceleration(1,0));
-      actions.add(new Turn(1,1));
-      actions.add(new Step(2,2));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-    } else {
-   // vor links vor
-      actions.add(new Step(1,0));
-      actions.add(new Turn(-1,1));
-      actions.add(new Step(1,2));
-      possibleMoves.add(new Move(actions));
-      // links vor
-      actions = new ArrayList<Action>();
-      actions.add(new Acceleration(-1,0));
-      actions.add(new Turn(-1,1));
-      actions.add(new Step(1,2));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-      // links 2 vor
-      actions.add(new Turn(-1,0));
-      actions.add(new Step(2,1));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-      // vor rechts vor
-      actions.add(new Step(1,0));
-      actions.add(new Turn(1,1));
-      actions.add(new Step(1,2));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-      // rechts vor
-      actions.add(new Acceleration(-1,0));
-      actions.add(new Turn(1,1));
-      actions.add(new Step(1,2));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-   // rechts 2 vor
-      actions.add(new Turn(1,0));
-      actions.add(new Step(2,1));
-      possibleMoves.add(new Move(actions));
-      actions = new ArrayList<Action>();
-    }
-    checkMoves(possibleMoves);
-    // move with coal
-    if(possibleMoves.isEmpty()){
-      if(movement == 1) {
-        actions.add(new Turn(2,0));
-        actions.add(new Step(1,1));
-        possibleMoves.add(new Move(actions));
-        actions = new ArrayList<Action>();
-        actions.add(new Turn(-2,0));
-        actions.add(new Step(1,1));
-        possibleMoves.add(new Move(actions));
+    // Sanbank
+    if(currentPlayer.getField(gameState.getBoard()).getType() == FieldType.SANDBANK) {
+      if(currentPlayer.getCoal() > 0 && currentPlayer.getField(gameState.getBoard())
+          .getFieldInDirection(currentPlayer.getDirection(), gameState.getBoard()).isPassable()) {
+        move.actions.add(new Step(1,0));
       } else {
-        actions.add(new Acceleration(-1,0));
-        actions.add(new Turn(2,1));
-        actions.add(new Step(1,2));
-        possibleMoves.add(new Move(actions));
-        actions = new ArrayList<Action>();
-        actions.add(new Acceleration(-1,0));
-        actions.add(new Turn(-2,1));
-        actions.add(new Step(1,2));
-        possibleMoves.add(new Move(actions));
+        move.actions.add(new Step(-1, 0));
       }
-    } else {
-      int random = rnd.nextInt(possibleMoves.size());
-      move = possibleMoves.get(random);
+      System.out.println("*** Bin auf Sandbank, sende Zug " + move);
+      sendAction(move);
     }
-    checkMoves(possibleMoves);
-    if(possibleMoves.isEmpty()) {
-      actions = new ArrayList<Action>();
-      if(movement == 1) {
-        actions.add(new Turn(3,0));
-        actions.add(new Step(1,1));
+    // Sonst
+    for(int i = 0; i < 6;) {
+      List<Step> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, i, currentPlayer.getCoal());
+      if(!actions.isEmpty()) {
+        Move newMove = new Move();
+        newMove.actions.add(new Turn(GameState.turnToDir(currentPlayer.getDirection(), i), 0));
+        newMove.actions.add(new Step(1,1));
+        possibleMoves.add(newMove);
       } else {
-        actions.add(new Acceleration(-1,0));
-        actions.add(new Turn(3,1));
-        actions.add(new Step(1,2));
+        System.out.println("*** Keine Züge in irgendeine Richtung gefunden ****");
+        sendAction(move); // kein Zug möglich also falschen Zug senden
       }
-      move = new Move(actions);
-    } else {
-      int random = rnd.nextInt(possibleMoves.size());
-      move = possibleMoves.get(random);
     }
-    System.out.println("*** sende zug: ");
-//    System.out.println(move);
-    sendAction(move);
-	}
-
-	private void checkMoves(List<Move> possibleMoves) {
-    for (Move move : possibleMoves) {
-      GameState clone = null;
+    // Finde Zug mit meisten Punkten
+    int maxPoints = 0;
+    int sendMove = 0;
+    GameState clone = null;
+    int index = 0;
+    for (Move possibleMove : possibleMoves) {
+      // Klone gameState
       try {
         clone = gameState.clone();
       } catch (CloneNotSupportedException e) {
         e.printStackTrace();
       }
       try {
-        move.perform(clone, currentPlayer);
+        possibleMove.perform(clone, clone.getCurrentPlayer());
+
+        int points = clone.getPointsForPlayer(clone.getCurrentPlayerColor());
+        if(points > maxPoints) {
+          maxPoints = points;
+          sendMove = index;
+        }
       } catch (InvalidMoveException e) {
-        possibleMoves.remove(move);
+        
         e.printStackTrace();
       }
+      ++index;
     }
-    
-  }
+    move = possibleMoves.get(sendMove); // setze move auf den Zug mit den meisten Punkten
+    System.out.println("*** sende zug: ");
+    System.out.println(move);
+    sendAction(move);
+	}
 
   /**
 	 * {@inheritDoc}

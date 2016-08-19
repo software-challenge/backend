@@ -52,10 +52,11 @@ public class Board {
     ArrayList<Integer> tilesWithPassengers = new ArrayList<Integer>(); // holds all tiles numbers with a passenger field
     for(int i = 0;i < Constants.NUMBER_OF_PASSENGERS; i++) {
       // the cannot be a passenger on the starting tile change to -2 for no passenger on last Tile
-      int number = rnd.nextInt(Constants.NUMBER_OF_TILES - 2) + 1; 
-      while(tilesWithPassengers.contains(number)) {
-        number = rnd.nextInt(Constants.NUMBER_OF_TILES - 2) + 1;
+      int number;
+      do{
+        number = rnd.nextInt(Constants.NUMBER_OF_TILES - (Constants.PASSENGER_ON_LAST_TILE ? 1 : 2)) + 1;
       }
+      while(tilesWithPassengers.contains(number));
       tilesWithPassengers.add(number);
     }
     direction[0] = 0;
@@ -137,8 +138,8 @@ public class Board {
    */
   private void generateTile(int index, boolean hasPassenger, int direction, int x, int y) {
     Random rnd = new Random();
-    int blocked = rnd.nextInt(2) + 2; // 2 to 3 blocked fields
-    int special = rnd.nextInt(2) + 1; // 1 oder 2 special fields
+    int blocked = rnd.nextInt(Constants.MAX_ISLANDS - Constants.MIN_ISLANDS + 1) + Constants.MIN_ISLANDS; // 2 to 3 blocked fields
+    int special = rnd.nextInt(Constants.MAX_SPECIAL - Constants.MIN_SPECIAL + 1) + Constants.MIN_SPECIAL; // 1 oder 2 special fields
     Tile newTile = new Tile(index, direction, x, y, hasPassenger ? 1 : 0, blocked, special);
     tiles.add(newTile);
     

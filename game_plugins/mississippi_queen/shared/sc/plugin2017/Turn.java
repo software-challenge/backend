@@ -46,6 +46,9 @@ public class Turn extends Action {
     if(direction == 0 || direction < -3 || direction > 3) {
       throw new InvalidMoveException("Drehung ist ungültig.");
     }
+    if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
+      throw new InvalidMoveException("Drehung auf Sandbank nicht erlaubt.");
+    }
     int currentDirection = player.getDirection();
     currentDirection += direction;
     currentDirection = (currentDirection + 6/*Anzahl der Richtungen*/) % 6; // echtes Modulo nicht java modulo
@@ -60,7 +63,7 @@ public class Turn extends Action {
       if(player.getCoal() >= usedCoal) {
         player.setCoal(player.getCoal() - usedCoal);
       } else {
-        throw new InvalidMoveException("Nicht gengug Kohle für Drehung");
+        throw new InvalidMoveException("Nicht gengug Kohle für Drehung.");
       }
     }
     player.setDirection(currentDirection);

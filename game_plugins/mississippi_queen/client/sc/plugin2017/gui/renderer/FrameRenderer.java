@@ -49,7 +49,7 @@ public class FrameRenderer extends PApplet {
   public GameState currentGameState;
   private GameState backUp;
   public Move currentMove;
-  private boolean humanPlayer;
+  public boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
   public int maxTurn;
   private EPlayerId id;
