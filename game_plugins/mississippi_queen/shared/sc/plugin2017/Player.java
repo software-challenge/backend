@@ -298,16 +298,16 @@ public class Player extends SimplePlayer implements Cloneable {
   public boolean canPickupPassenger(Board board) {
     if(((getField(board).getFieldInDirection(0, board) != null &&
         getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3) ||
-        (getField(board).getFieldInDirection(0, board) != null &&
-        getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER4) ||
-        (getField(board).getFieldInDirection(0, board) != null &&
-        getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER5) ||
-        (getField(board).getFieldInDirection(0, board) != null &&
-        getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER0) ||
-        (getField(board).getFieldInDirection(0, board) != null &&
-        getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER1) ||
-        (getField(board).getFieldInDirection(0, board) != null &&
-        getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER2)) && passenger < 2) {
+        (getField(board).getFieldInDirection(1, board) != null &&
+        getField(board).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4) ||
+        (getField(board).getFieldInDirection(2, board) != null &&
+        getField(board).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5) ||
+        (getField(board).getFieldInDirection(3, board) != null &&
+        getField(board).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0) ||
+        (getField(board).getFieldInDirection(4, board) != null &&
+        getField(board).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1) ||
+        (getField(board).getFieldInDirection(5, board) != null &&
+        getField(board).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2)) && passenger < 2) {
       return true;
     }
     return false;
@@ -359,6 +359,6 @@ public class Player extends SimplePlayer implements Cloneable {
   }
   
   public String toString() {
-    return color + ", Punkte: " + points + " , Position: (" + x + ", " + y + "), speed, coal: " + speed + "," + coal;
+    return color + ", Punkte: " + points + " , Position: (" + x + ", " + y + "), speed, coal: " + speed + "," + coal + ", Tile: " + tile;
   }
 }

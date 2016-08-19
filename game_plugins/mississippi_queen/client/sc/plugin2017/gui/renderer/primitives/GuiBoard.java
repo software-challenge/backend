@@ -127,6 +127,7 @@ public class GuiBoard extends PrimitiveBase{
     if(currentBoard == null) {
       System.out.println("\n\n\n Übergebenes Board ist null \n\n\n");
     }
+//    System.out.println(board + "\n" + red + "\n" + blue);
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     // TODO set highlighted fields
@@ -148,7 +149,9 @@ public class GuiBoard extends PrimitiveBase{
       LinkedList<HexField> toHighlight = new LinkedList<HexField>();
       LinkedHashMap<HexField, Action> add = new LinkedHashMap<HexField, Action>();
       Player currentPlayer = (current == PlayerColor.RED) ? red : blue;
-      if(red.getField(currentBoard).equals(blue.getField(currentBoard))) {
+      Field redField = red.getField(currentBoard);
+      Field blueField = blue.getField(currentBoard);
+      if(redField.equals(blueField)) {
         for(int j = 0; j < 6; j++) {
           if(j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
             HexField toAdd = getPassableGuiFieldInDirection(
