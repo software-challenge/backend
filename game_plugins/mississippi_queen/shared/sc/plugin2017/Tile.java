@@ -1,21 +1,18 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import sc.plugin2017.util.Configuration;
 import sc.plugin2017.util.Constants;
-import sc.protocol.LobbyProtocol;
 
 @XStreamAlias(value = "tile")
 public class Tile {
 
-  public ArrayList<Field> fields = new ArrayList<Field>();
+  public List<Field> fields = new ArrayList<>();
   @XStreamAsAttribute
   private boolean visible;
   
@@ -49,7 +46,7 @@ public class Tile {
     generateFields(x, y, passengers, blockedFields, specialFields, (index == Constants.NUMBER_OF_TILES - 1));
   }
   
-  protected Tile(ArrayList<Field> fields) {
+  protected Tile(List<Field> fields) {
     this.fields = fields;
   }
 
@@ -338,8 +335,8 @@ public class Tile {
   public boolean equals(Object o) {
     if(o instanceof Tile) {
       Tile tile = (Tile) o;
-      ArrayList<Field> fields1 = tile.fields;
-      ArrayList<Field> fields2 = this.fields;
+      List<Field> fields1 = tile.fields;
+      List<Field> fields2 = this.fields;
       if(fields1.size() != fields2.size()) {
         return false;
       }
