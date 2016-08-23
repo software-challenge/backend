@@ -1,7 +1,5 @@
 package sc.plugin2017;
 
-import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,7 +26,7 @@ public class MoveTest {
   }
 
   @Test(expected = InvalidMoveException.class)
-  public void testPerform() throws InvalidMoveException {
+  public void moveOntoBlockedField() throws InvalidMoveException {
 
     red.getField(board).getFieldInDirection(red.getDirection(), board).setType(FieldType.BLOCKED);
 
