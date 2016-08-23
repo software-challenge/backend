@@ -2,10 +2,9 @@ package sc.plugin2017;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 @XStreamAlias(value = "field")
-public class Field {
+public class Field implements Comparable<Field>{
 
   /**
    * Typ des Feldes. Siehe {@link FieldType}
@@ -187,6 +186,34 @@ public class Field {
         type == FieldType.PASSENGER3 || 
         type == FieldType.PASSENGER4 || 
         type == FieldType.PASSENGER5;
+  }
+  
+  /**
+   * Vergleicht die Lage zweier Felder.
+   * @param other Das Feld, mit dem verglichen werden soll.
+   * @return -1, falls other weiter rechts unten liegt, 0 wenn die Felder am gleichen Ort liegen, +1 wenn other weiter links oben liegt.
+   */
+  public int compareTo(Field other) {
+    // assuming a cartesian coordinate system with lower values in the upper left corner
+    if (this.y < other.getY()) {
+      // this lies above other
+      return 1;
+    } else if (this.y > other.getY()) {
+      // this lies beneath other
+      return -1;
+    } else {
+      // this lies on same horizontal line as other
+      if (this.x < other.getX()) {
+        // this lies left to other
+        return +1;
+      } else if (this.x > other.getX()) {
+        // this lies right to other
+        return -1;
+      } else {
+        // this and other are on the same coordinates
+        return 0;
+      }
+    }
   }
   
 
