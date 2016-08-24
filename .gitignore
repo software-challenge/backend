@@ -16,6 +16,7 @@
 /game_plugins/*/build
 /game_players/*/bin
 /game_plugins/*/bin
+/game_plugins/*/src
 
 # Ignore java doc
 /game_players/*/doc
