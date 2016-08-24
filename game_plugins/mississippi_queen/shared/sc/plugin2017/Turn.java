@@ -13,12 +13,12 @@ public class Turn extends Action {
    */
   @XStreamAsAttribute
   public int direction;
-  
+
   public Turn() {
     order = 0;
     direction = 0;
   }
-  
+
   /**
    * Legt einen neuen Drehzug an
    * @param direction Richung der Drehung
@@ -26,7 +26,7 @@ public class Turn extends Action {
   public Turn(int direction) {
     this.direction = direction;
   }
-  
+
   /**
    * Legt einen neuen Drehzug an
    * @param direction Richung der Drehung
@@ -36,7 +36,7 @@ public class Turn extends Action {
     this.direction = direction;
     this.order = order;
   }
-  
+
   /**
    * @param state Gamestate
    * @param player Spieler der die Aktion ausführt
@@ -53,7 +53,7 @@ public class Turn extends Action {
     currentDirection += direction;
     currentDirection = (currentDirection + 6/*Anzahl der Richtungen*/) % 6; // echtes Modulo nicht java modulo
     int usedCoal = Math.abs(direction) - player.getFreeTurns();
-    int test = player.getFreeTurns() - Math.abs(direction); 
+    int test = player.getFreeTurns() - Math.abs(direction);
     if(test <= 0) {
       player.setFreeTurns(0);
     } else {
@@ -63,24 +63,27 @@ public class Turn extends Action {
       if(player.getCoal() >= usedCoal) {
         player.setCoal(player.getCoal() - usedCoal);
       } else {
-        throw new InvalidMoveException("Nicht gengug Kohle für Drehung.");
+        throw new InvalidMoveException("Nicht genug Kohle für Drehung.");
       }
     }
     player.setDirection(currentDirection);
     return;
   }
-  
+
+  @Override
   public Turn clone() {
     return new Turn(this.direction, this.order);
   }
-  
+
+  @Override
   public boolean equals(Object o) {
     if(o instanceof Turn) {
       return (this.direction == ((Turn) o).direction);
     }
     return false;
   }
-  
+
+  @Override
   public String toString() {
     return "Drehe um " + direction;
   }
