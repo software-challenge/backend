@@ -21,14 +21,14 @@ public class Field implements Comparable<Field>{
    */
   @XStreamAsAttribute
 	private final int y;
-	
-  
+
+
   /**
    * Punkte die ein Feld bringt anhand seiner Position
    */
   @XStreamAsAttribute
   private final int points;
-  
+
   /**
    * Erzeugt ein neues Feld
    * @param type Typ des Feldes
@@ -41,7 +41,7 @@ public class Field implements Comparable<Field>{
 		this.y = y;
 		points = 0;
 	}
-	
+
 	/**
    * Erzeugt ein neues Feld
    * @param type Typ des Feldes
@@ -69,7 +69,7 @@ public class Field implements Comparable<Field>{
 	public void setType(FieldType type) {
 		this.type = type;
 	}
-	
+
 	/**
 	 * Vergleichsmethode fuer ein Feld.
 	 */
@@ -77,16 +77,17 @@ public class Field implements Comparable<Field>{
 	public boolean equals(Object o) {
 		if(o instanceof Field) {
 			Field f = (Field) o;
-			return f.getType().equals(this.getType()) 
+			return f.getType().equals(this.getType())
 			    && f.getX() == getX() && f.getY() == getY();
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Erzeugt eine Deepcopy eines Feldes
 	 */
-	public Field clone() {
+	@Override
+  public Field clone() {
 		Field clone = new Field(this.getType(), this.getX(), this.getY(), this.points);
 		return clone;
 	}
@@ -104,7 +105,7 @@ public class Field implements Comparable<Field>{
   public int getY() {
     return y;
   }
-  
+
   @Override
   public String toString() {
     return "Field: x = " + getX() + ", y = " + getY() + ", type = " + this.getType();
@@ -115,43 +116,56 @@ public class Field implements Comparable<Field>{
   }
 
   public Field getFieldInDirection(int direction, Board board) {
-    switch (direction) {
-    case 0:
-      return board.getField(x+1, y);
-    case 1:
-      return board.getField((y % 2 == 0) ? x + 1 : x, y - 1);
-    case 2:
-      return board.getField((y % 2 == 0) ? x : x - 1, y - 1);
-    case 3:
-      return board.getField(x - 1, y);
-    case 4:
-      return board.getField((y % 2 == 0) ? x : x - 1, y + 1);
-    case 5:
-      return board.getField((y % 2 == 0) ? x + 1 : x, y + 1);  
-    default:
-      break;
-    }
-    return null;
+    return _getFieldInDirection(direction, board, true);
   }
-  
+
   protected Field alwaysGetFieldInDirection(int direction, Board board) {
+    return _getFieldInDirection(direction, board, false);
+  }
+
+  private Field _getFieldInDirection(int direction, Board board, boolean onlyVisible) {
+    Integer targetX;
+    Integer targetY;
+    boolean onEvenRow = (y % 2 == 0);
     switch (direction) {
     case 0:
-      return board.alwaysGetField(x+1, y);
-    case 1:
-      return board.alwaysGetField((y % 2 == 0) ? x + 1 : x, y - 1);
-    case 2:
-      return board.alwaysGetField((y % 2 == 0) ? x : x - 1, y - 1);
-    case 3:
-      return board.alwaysGetField(x - 1, y);
-    case 4:
-      return board.alwaysGetField((y % 2 == 0) ? x : x - 1, y + 1);
-    case 5:
-      return board.alwaysGetField((y % 2 == 0) ? x + 1 : x, y + 1);  
-    default:
+      // field to the right
+      targetX = x + 1;
+      targetY = y;
       break;
+    case 1:
+      // field to the upper right
+      targetX = onEvenRow ? x + 1 : x;
+      targetY = y - 1;
+      break;
+    case 2:
+      // field to the upper left
+      targetX = onEvenRow ? x : x - 1;
+      targetY = y - 1;
+      break;
+    case 3:
+      // field to the left
+      targetX = x - 1;
+      targetY = y;
+      break;
+    case 4:
+      // field to the lower left
+      targetX = onEvenRow ? x : x - 1;
+      targetY = y + 1;
+      break;
+    case 5:
+      // field to the lower right
+      targetX = onEvenRow ? x + 1 : x;
+      targetY = y + 1;
+      break;
+    default:
+      throw new IllegalArgumentException(String.format("invalid direction: %d", direction));
     }
-    return null;
+    if (onlyVisible) {
+      return board.getField(targetX, targetY);
+    } else {
+      return board.alwaysGetField(targetX, targetY);
+    }
   }
 
   /**
@@ -159,12 +173,13 @@ public class Field implements Comparable<Field>{
    * @return Wahr, falls Feld theoretisch passierbar
    */
   public boolean isPassable() {
-    if(type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBANK || type == FieldType.GOAL) {
-      return true;
-    }
-    return false;
+    return Field.isPassable(this.getType());
   }
-  
+
+  public boolean isBlocked() {
+    return !isPassable();
+  }
+
   /**
    * Ist das Feldtyp passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
    * @param type Feldtyp
@@ -173,48 +188,49 @@ public class Field implements Comparable<Field>{
   public static boolean isPassable(FieldType type) {
     return type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBANK || type == FieldType.GOAL;
   }
-  
+
   /**
    * Ist das Feldtyp ein Passierfeldtyp?
    * @param type Feldtyp
    * @return Wahr, falls Feld Passagierfeld
    */
   public static boolean isPassengerField(FieldType type) {
-    return type == FieldType.PASSENGER0 || 
-        type == FieldType.PASSENGER1 || 
-        type == FieldType.PASSENGER2 || 
-        type == FieldType.PASSENGER3 || 
-        type == FieldType.PASSENGER4 || 
+    return type == FieldType.PASSENGER0 ||
+        type == FieldType.PASSENGER1 ||
+        type == FieldType.PASSENGER2 ||
+        type == FieldType.PASSENGER3 ||
+        type == FieldType.PASSENGER4 ||
         type == FieldType.PASSENGER5;
   }
-  
+
   /**
    * Vergleicht die Lage zweier Felder.
    * @param other Das Feld, mit dem verglichen werden soll.
    * @return -1, falls other weiter rechts unten liegt, 0 wenn die Felder am gleichen Ort liegen, +1 wenn other weiter links oben liegt.
    */
+  @Override
   public int compareTo(Field other) {
     // assuming a cartesian coordinate system with lower values in the upper left corner
     if (this.y < other.getY()) {
       // this lies above other
-      return 1;
+      return -1;
     } else if (this.y > other.getY()) {
       // this lies beneath other
-      return -1;
+      return 1;
     } else {
       // this lies on same horizontal line as other
       if (this.x < other.getX()) {
         // this lies left to other
-        return +1;
+        return -1;
       } else if (this.x > other.getX()) {
         // this lies right to other
-        return -1;
+        return 1;
       } else {
         // this and other are on the same coordinates
         return 0;
       }
     }
   }
-  
+
 
 }

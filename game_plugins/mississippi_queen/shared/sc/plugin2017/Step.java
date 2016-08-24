@@ -1,8 +1,6 @@
 package sc.plugin2017;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
@@ -22,12 +20,12 @@ public class Step extends Action {
    */
   @XStreamOmitField
   protected boolean endsTurn;
-  
+
   public Step() {
     distance = 0;
     order = 0;
   }
-  
+
   /**
    * Legt eine neue Laufaktion an
    * @param distance Felder die überwunden werden
@@ -36,7 +34,7 @@ public class Step extends Action {
     this.distance = distance;
     endsTurn = false;
   }
-  
+
   /**
    * Legt eine neue Laufaktion an
    * @param distance Felder die überwunden werden
@@ -47,7 +45,7 @@ public class Step extends Action {
     this.order = order;
     endsTurn = false;
   }
-  
+
   @Override
   public void perform(GameState state, Player player) throws InvalidMoveException {
     if(player.getMovement() == 0) {
@@ -92,7 +90,7 @@ public class Step extends Action {
           nextFields.add(next);
         }
         Field checkField = nextFields.get(i + 1); // get next field
-        if(!checkField.isPassable() || 
+        if(!checkField.isPassable() ||
             (state.getOtherPlayer().getField(state.getBoard()).equals(checkField) && i != distance -1)) {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
@@ -118,25 +116,28 @@ public class Step extends Action {
           player.setMovement(player.getMovement() - 1);
           System.out.println("Verringere Movement zu " + player.getMovement());
         }
-        
+
       }
       Field target = nextFields.get(distance);
       state.put(target.getX(), target.getY(), player);
     }
     return;
   }
-  
+
+  @Override
   public Step clone() {
     return new Step(this.distance, this.order);
   }
-  
+
+  @Override
   public boolean equals(Object o) {
     if(o instanceof Step) {
       return (this.distance == ((Step) o).distance);
     }
     return false;
   }
-  
+
+  @Override
   public String toString() {
     return "Gehe " + distance + " vor";
   }
