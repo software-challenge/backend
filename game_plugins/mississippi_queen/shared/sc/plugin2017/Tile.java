@@ -1,6 +1,8 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -332,22 +334,25 @@ public class Tile {
     return clone;
   }
   
-  public boolean equals(Object o) {
-    if(o instanceof Tile) {
-      Tile tile = (Tile) o;
+  public boolean equals(Object other) {
+    if(other instanceof Tile) {
+      Tile tile = (Tile) other;
       List<Field> fields1 = tile.fields;
       List<Field> fields2 = this.fields;
       if(fields1.size() != fields2.size()) {
         return false;
       }
+      Collections.sort(fields1);
+      Collections.sort(fields2);
       for(int i = 0; i < fields1.size(); i++) {
         if(!fields1.get(i).equals(fields2.get(i))) {
           return false;
         }
       }
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
   
   /**

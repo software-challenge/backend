@@ -8,18 +8,18 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "push")
 public class Push extends Action {
 
-  
+
   /**
    * Richtung in die abgedrängt werden soll
    */
   @XStreamAsAttribute
   public int direction;
- 
+
   public Push() {
     order = 0;
     direction = 0;
   }
-  
+
   /**
    * Erzeugt eine Abdrängaktion in angegebene Richtug
    * @param direction Richtung des Abdrängens
@@ -27,7 +27,7 @@ public class Push extends Action {
   public Push(int direction) {
     this.direction = direction;
   }
-  
+
   /**
    * Erzeugt eine Abdrängaktion in angegebene Richtug
    * @param direction Richtung des Abdrängens
@@ -37,49 +37,65 @@ public class Push extends Action {
     this.direction = direction;
     this.order = order;
   }
-  
+
   @Override
-  public void perform(GameState state, Player player) throws InvalidMoveException {
-    if(player.getMovement() == 0) {
+  public void perform(GameState state, Player pushingPlayer) throws InvalidMoveException {
+    Player nudgedPlayer = state.getOtherPlayer(); // The player who is being pushed (using different verb to make distinction easier).
+    if(pushingPlayer.getMovement() == 0) {
       throw new InvalidMoveException("Keine Bewegunspunkte mehr vorhanden");
     }
-    Field pushFrom = player.getField(state.getBoard());
+    Field pushFrom = pushingPlayer.getField(state.getBoard());
     Field pushTo = pushFrom.alwaysGetFieldInDirection(direction, state.getBoard());
-    if(pushTo == null || !pushTo.isPassable()
-        || pushFrom.getType() == FieldType.SANDBANK) {
-      throw new InvalidMoveException("Ungültiges Abdrängen");
+    if (!pushFrom.equals(nudgedPlayer.getField(state.getBoard()))) {
+      throw new InvalidMoveException("Um einen Spieler abzudrängen muss man sich auf demselben Feld wie der Spieler befinden.");
+    }
+    if(pushTo == null) {
+      throw new InvalidMoveException("Ein Spieler darf nicht auf ein nicht vorhandenes (oder nicht sichtbares) Feld abgedrängt werden.");
+    }
+    if (pushTo.isBlocked()) {
+      throw new InvalidMoveException("Ein Spieler darf nicht auf ein blockiertes Feld abgedrängt werden.");
+    }
+    if (pushFrom.getType() == FieldType.SANDBANK) {
+      throw new InvalidMoveException("Von einer Sandbank ist abdrängen nicht möglich.");
     }
     // pushing costs 1 movement point
-    player.setMovement(player.getMovement() - 1);
+    pushingPlayer.setMovement(pushingPlayer.getMovement() - 1);
     if(pushTo.getType() == FieldType.LOG) {
       // driving through logs reduces speed and movement by +1
-      player.setSpeed(player.getSpeed() - 1);
-      player.setMovement(player.getMovement() - 1);
+      nudgedPlayer.setSpeed(nudgedPlayer.getSpeed() - 1);
+      nudgedPlayer.setMovement(nudgedPlayer.getMovement() - 1);
     }
-    if(pushFrom.getFieldInDirection(GameState.getOppositeDirection(player.getDirection()), state.getBoard()).equals(pushTo)) { // es darf nicht nach hinten abgedrängt werden
-      throw new InvalidMoveException("Ungültiges Abdrängen");
+    Field fieldBehindPushingPlayer = pushFrom.getFieldInDirection(GameState.getOppositeDirection(pushingPlayer.getDirection()), state.getBoard());
+    // If fieldBehindPushedPlayer is null, the following check is not needed
+    // because pushTo cannot be that field (and pushTo cannot be null as already
+    // checked above).
+    if(fieldBehindPushingPlayer != null && fieldBehindPushingPlayer.equals(pushTo)) {
+      throw new InvalidMoveException("Ein Spieler darf nicht hinter sich, also auf das zu ihm benachbarte Feld entgegen seiner Bewegungsrichtung, abdrängen.");
     }
     if(pushTo.getType() == FieldType.SANDBANK) {
-      state.getOtherPlayer().setSpeed(1);
-      state.getOtherPlayer().setMovement(1);
+      nudgedPlayer.setSpeed(1);
+      nudgedPlayer.setMovement(1);
     }
-   // change Position of opponent player
-    state.put(pushTo.getX(), pushTo.getY(), state.getOtherPlayer());
-    
+    // change Position of opponent player
+    state.put(pushTo.getX(), pushTo.getY(), nudgedPlayer);
+
     return;
   }
-  
+
+  @Override
   public Push clone() {
     return new Push(this.direction, this.order);
   }
-  
+
+  @Override
   public boolean equals(Object o) {
     if(o instanceof Push) {
       return (this.direction == ((Push) o).direction);
     }
     return false;
   }
-  
+
+  @Override
   public String toString()  {
     return "Dränge nach " + direction + " ab";
   }
