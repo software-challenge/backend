@@ -9,7 +9,7 @@ public class GuiPlayer extends PrimitiveBase {
 
 
   private float x, y;
-  
+
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
    */
@@ -18,28 +18,28 @@ public class GuiPlayer extends PrimitiveBase {
    * y position des Feldes innerhalb des Spielefeld arrays
    */
   private int fieldY;
-  
+
   public int coal;
-  
+
   public int speed;
-  
+
   public int movement; // TODO
-  
+
   public int passenger;
-  
+
   private float width;
-  
+
   private float c;
-  
+
   private float b;
   private float a;
-  
+
   private PlayerColor color;
-  
+
   private boolean currentPlayer;
-  
+
   private int direction;
-  
+
   public GuiPlayer(FrameRenderer parent) {
     super(parent);
   }
@@ -50,246 +50,88 @@ public class GuiPlayer extends PrimitiveBase {
     parent.pushStyle();
     parent.noStroke();
     parent.pushMatrix();
-    parent.translate(x, y);
+    // translate to the center of the field
+    parent.translate(x + b, y + a + (c/2));
+
     if(parent.currentGameState != null && parent.currentGameState.getBoard() != null && parent.currentGameState.getBoard().getTiles().size() > 2) {
       parent.textFont(GuiConstants.fonts[3]);
       parent.textSize(GuiConstants.fontSizes[3]);
     }
+
     if(color == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
     } else {
       parent.fill(GuiConstants.colorBlue);
     }
-    parent.ellipse(width / 2, 17 * width / 32, c, c);
-    switch (direction) {
-    case 0:
-      parent.beginShape();
-      parent.vertex(width / 2, a);
-      parent.vertex( 3 * width / 4, a);
-      parent.vertex(width, a + c / 2);
-      parent.vertex(3 * width / 4, a + c);
-      parent.vertex(width / 2, a + c);
-      parent.endShape();
-      // coal and speed
-      parent.strokeWeight(width / 32);
-      if(color == PlayerColor.RED) {
-        parent.stroke(GuiConstants.colorRed);
-      } else {
-        parent.stroke(GuiConstants.colorBlue);
-      }
-      parent.fill(GuiConstants.colorBlack);
-      parent.rect(width / 4, width / 8, b, a);
-      parent.fill(GuiConstants.colorWhite);
-      parent.rect(width / 4, 15 * width / 16 - a,b,a);
-      parent.noStroke();
-      // text
-      parent.rotate((float) Math.toRadians(90));
-      parent.fill(GuiConstants.colorWhite);
-      parent.text(coal,   5 * width / 32, - 3 * width / 8);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(speed, 23 * width / 32 ,- 3 * width / 8);
-      parent.rotate((float) Math.toRadians(-90));
-      // draw passengers
-      parent.fill(GuiConstants.colorPassenger);
-      if(passenger == 2) {
-        parent.ellipse(3 * width / 8, 17 * width / 32 , width / 4, width / 4);
-        parent.ellipse(5 * width / 8, 17 * width / 32,  width / 4, width / 4);
-      } else if(passenger == 1) {
-        parent.ellipse(width / 2, 17 * width / 32 , width / 4, width / 4);
-      }
-      break;
-    case 1:
-      parent.rotate((float) Math.toRadians(-60));
-      parent.translate(-  23 * width / 32, 5 * width / 32);
-      parent.beginShape();
-      parent.vertex(width / 2, a);
-      parent.vertex( 3 * width / 4, a);
-      parent.vertex(width, a + c / 2);
-      parent.vertex(3 * width / 4, a + c);
-      parent.vertex(width / 2, a + c);
-      parent.endShape();
-      // coal and speed
-      parent.strokeWeight(width / 32);
-      if(color == PlayerColor.RED) {
-        parent.stroke(GuiConstants.colorRed);
-      } else {
-        parent.stroke(GuiConstants.colorBlue);
-      }
-      parent.fill(GuiConstants.colorBlack);
-      parent.rect(width / 4, width / 8, b, a);
-      parent.fill(GuiConstants.colorWhite);
-      parent.rect(width / 4, 15 * width / 16 - a,b,a);
-      parent.noStroke();
-      // text
-      parent.rotate((float) Math.toRadians(90));
-      parent.fill(GuiConstants.colorWhite);
-      parent.text(coal,   5 * width / 32, - 3 * width / 8);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(speed, 23 * width / 32 ,- 3 * width / 8);
-      parent.rotate((float) Math.toRadians(-90));
-      // draw passengers
-      parent.fill(GuiConstants.colorPassenger);
-      if(passenger == 2) {
-        parent.ellipse(3 * width / 8, 17 * width / 32 , width / 4, width / 4);
-        parent.ellipse(5 * width / 8, 17 * width / 32,  width / 4, width / 4);
-      } else if(passenger == 1) {
-        parent.ellipse(width / 2, 17 * width / 32 , width / 4, width / 4);
-      }
-      break;
-    case 2:
-      parent.rotate((float) Math.toRadians(-120));
-      parent.translate( - 39 * width / 32, -  3 * width / 8);
-      parent.beginShape();
-      parent.vertex(width / 2, a);
-      parent.vertex( 3 * width / 4, a);
-      parent.vertex(width, a + c / 2);
-      parent.vertex(3 * width / 4, a + c);
-      parent.vertex(width / 2, a + c);
-      parent.endShape();
-      // coal and speed
-      parent.strokeWeight(width / 32);
-      if(color == PlayerColor.RED) {
-        parent.stroke(GuiConstants.colorRed);
-      } else {
-        parent.stroke(GuiConstants.colorBlue);
-      }
-      parent.fill(GuiConstants.colorBlack);
-      parent.rect(width / 4, width / 8, b, a);
-      parent.fill(GuiConstants.colorWhite);
-      parent.rect(width / 4, 15 * width / 16 - a,b,a);
-      parent.noStroke();
-      // text
-      parent.rotate((float) Math.toRadians(90));
-      parent.fill(GuiConstants.colorWhite);
-      parent.text(coal,   5 * width / 32, - 3 * width / 8);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(speed, 23 * width / 32 ,- 3 * width / 8);
-      parent.rotate((float) Math.toRadians(-90));
-      // draw passengers
-      parent.fill(GuiConstants.colorPassenger);
-      if(passenger == 2) {
-        parent.ellipse(3 * width / 8, 17 * width / 32 , width / 4, width / 4);
-        parent.ellipse(5 * width / 8, 17 * width / 32,  width / 4, width / 4);
-      } else if(passenger == 1) {
-        parent.ellipse(width / 2, 17 * width / 32 , width / 4, width / 4);
-      }
-      break;
-    case 3:
-      parent.rotate((float) Math.toRadians(180));
-      parent.translate(- width,- 17 * width / 16);
-      parent.beginShape();
-      parent.vertex(width / 2, a);
-      parent.vertex( 3 * width / 4, a);
-      parent.vertex(width, a + c / 2);
-      parent.vertex(3 * width / 4, a + c);
-      parent.vertex(width / 2, a + c);
-      parent.endShape();
-      // coal and speed
-      parent.strokeWeight(width / 32);
-      if(color == PlayerColor.RED) {
-        parent.stroke(GuiConstants.colorRed);
-      } else {
-        parent.stroke(GuiConstants.colorBlue);
-      }
-      parent.fill(GuiConstants.colorBlack);
-      parent.rect(width / 4, width / 8, b, a);
-      parent.fill(GuiConstants.colorWhite);
-      parent.rect(width / 4, 15 * width / 16 - a,b,a);
-      parent.noStroke();
-      // text
-      parent.rotate((float) Math.toRadians(90));
-      parent.fill(GuiConstants.colorWhite);
-      parent.text(coal,   5 * width / 32, - 3 * width / 8);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(speed, 23 * width / 32 ,- 3 * width / 8);
-      parent.rotate((float) Math.toRadians(-90));
-      // draw passengers
-      parent.fill(GuiConstants.colorPassenger);
-      if(passenger == 2) {
-        parent.ellipse(3 * width / 8, 17 * width / 32 , width / 4, width / 4);
-        parent.ellipse(5 * width / 8, 17 * width / 32,  width / 4, width / 4);
-      } else if(passenger == 1) {
-        parent.ellipse(width / 2, 17 * width / 32 , width / 4, width / 4);
-      }
-      break;
-    case 4:
-      parent.rotate((float) Math.toRadians(120));
-      parent.translate(- 9 * width / 32, -  79 * width / 64);
-      parent.beginShape();
-      parent.vertex(width / 2, a);
-      parent.vertex( 3 * width / 4, a);
-      parent.vertex(width, a + c / 2);
-      parent.vertex(3 * width / 4, a + c);
-      parent.vertex(width / 2, a + c);
-      parent.endShape();
-      // coal and speed
-      parent.strokeWeight(width / 32);
-      if(color == PlayerColor.RED) {
-        parent.stroke(GuiConstants.colorRed);
-      } else {
-        parent.stroke(GuiConstants.colorBlue);
-      }
-      parent.fill(GuiConstants.colorBlack);
-      parent.rect(width / 4, width / 8, b, a);
-      parent.fill(GuiConstants.colorWhite);
-      parent.rect(width / 4, 15 * width / 16 - a,b,a);
-      parent.noStroke();
-      // text
-      parent.rotate((float) Math.toRadians(90));
-      parent.fill(GuiConstants.colorWhite);
-      parent.text(coal,   5 * width / 32, - 3 * width / 8);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(speed, 23 * width / 32 ,- 3 * width / 8);
-      parent.rotate((float) Math.toRadians(-90));
-      // draw passengers
-      parent.fill(GuiConstants.colorPassenger);
-      if(passenger == 2) {
-        parent.ellipse(3 * width / 8, 17 * width / 32 , width / 4, width / 4);
-        parent.ellipse(5 * width / 8, 17 * width / 32,  width / 4, width / 4);
-      } else if(passenger == 1) {
-        parent.ellipse(width / 2, 17 * width / 32 , width / 4, width / 4);
-      }
-      break;
-    case 5:
-      parent.rotate((float) Math.toRadians(60));
-      parent.translate( 13 * width / 64, - 45 * width / 64);
-      parent.beginShape();
-      parent.vertex(width / 2, a);
-      parent.vertex( 3 * width / 4, a);
-      parent.vertex(width, a + c / 2);
-      parent.vertex(3 * width / 4, a + c);
-      parent.vertex(width / 2, a + c);
-      parent.endShape();
-      // coal and speed
-      parent.strokeWeight(width / 32);
-      if(color == PlayerColor.RED) {
-        parent.stroke(GuiConstants.colorRed);
-      } else {
-        parent.stroke(GuiConstants.colorBlue);
-      }
-      parent.fill(GuiConstants.colorBlack);
-      parent.rect(width / 4, width / 8, b, a);
-      parent.fill(GuiConstants.colorWhite);
-      parent.rect(width / 4, 15 * width / 16 - a,b,a);
-      parent.noStroke();
-      // text
-      parent.rotate((float) Math.toRadians(90));
-      parent.fill(GuiConstants.colorWhite);
-      parent.text(coal,   5 * width / 32, - 3 * width / 8);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(speed, 23 * width / 32 ,- 3 * width / 8);
-      parent.rotate((float) Math.toRadians(-90));
-      // draw passengers
-      parent.fill(GuiConstants.colorPassenger);
-      if(passenger == 2) {
-        parent.ellipse(3 * width / 8, 17 * width / 32 , width / 4, width / 4);
-        parent.ellipse(5 * width / 8, 17 * width / 32,  width / 4, width / 4);
-      } else if(passenger == 1) {
-        parent.ellipse(width / 2, 17 * width / 32 , width / 4, width / 4);
-      }
-      break;
-    default:
-      break;
+
+    parent.rotate((float) Math.toRadians(direction * -60));
+
+    parent.ellipseMode(PApplet.CENTER);
+    parent.ellipse(0, 0, c, c);
+
+    // direction arrow
+    // +---
+    // |   \
+    // |   /
+    // +---
+    parent.beginShape();
+    parent.vertex(0, -c/2);
+    parent.vertex(c/2, -c/2);
+    parent.vertex(c, 0);
+    parent.vertex(c/2, c/2);
+    parent.vertex(0, c/2);
+    parent.endShape();
+
+    // coal and speed
+    int coalX = Math.round(-c/2);
+    int coalY = Math.round(-a - (a/2));
+    float coalWidth = b;
+    float coalHeight = a;
+    int speedX = Math.round(-c/2);
+    int speedY = Math.round(a/2);
+    float speedWidth = b;
+    float speedHeight = a;
+    parent.strokeWeight(width / 32);
+    parent.fill(GuiConstants.colorBlack);
+    parent.rect(coalX, coalY, coalWidth, coalHeight);
+    parent.fill(GuiConstants.colorWhite);
+    parent.rect(speedX, speedY, speedWidth, speedHeight);
+    parent.noStroke();
+    // text
+    parent.pushMatrix();
+
+    parent.translate(coalX, coalY);
+    parent.rotate((float) Math.toRadians(90));
+    parent.fill(GuiConstants.colorWhite);
+    String coalString = String.format("%d", coal);
+    // calculate optimal text size
+    parent.textSize(12);
+    parent.textSize(12/parent.textWidth(coalString) * coalHeight);
+    parent.text(coalString, 0, -coalWidth, coalHeight, coalWidth);
+
+    parent.popMatrix();
+
+    parent.pushMatrix();
+
+    parent.translate(speedX, speedY);
+    parent.rotate((float) Math.toRadians(90));
+    parent.fill(GuiConstants.colorBlack);
+    String speedString = String.format("%d", speed);
+    // calculate optimal text size
+    parent.textSize(12);
+    parent.textSize(12/parent.textWidth(speedString) * speedHeight);
+    parent.text(speedString, 0, -speedWidth, speedHeight, speedWidth);
+
+    parent.popMatrix();
+
+    // draw passengers
+    parent.fill(GuiConstants.colorPassenger);
+    float passengerDiameter = width/4;
+    if(passenger == 2) {
+      parent.ellipse(passengerDiameter/2 , 0, passengerDiameter, passengerDiameter);
+      parent.ellipse(-passengerDiameter/2 , 0, passengerDiameter, passengerDiameter);
+    } else if(passenger == 1) {
+      parent.ellipse(0 , 0, passengerDiameter, passengerDiameter);
     }
 
     parent.fill(0);
@@ -312,7 +154,7 @@ public class GuiPlayer extends PrimitiveBase {
     newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
     this.x = newX;
     this.y = newY;
-    
+
   }
 
   private void calcSize(float width) {
@@ -330,6 +172,14 @@ public class GuiPlayer extends PrimitiveBase {
     this.passenger = player.getPassenger();
     this.currentPlayer = currentPlayer;
     this.direction = player.getDirection();
+  }
+
+  public float getX() {
+    return x;
+  }
+
+  public float getY() {
+    return y;
   }
 
 }

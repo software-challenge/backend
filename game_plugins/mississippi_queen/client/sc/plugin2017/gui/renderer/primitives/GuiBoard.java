@@ -1,13 +1,9 @@
 package sc.plugin2017.gui.renderer.primitives;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
-import sc.plugin2017.gui.renderer.primitives.GuiConstants;
-import sc.plugin2017.gui.renderer.primitives.HexField;
-import sc.plugin2017.util.Constants;
 import sc.plugin2017.Action;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
@@ -19,31 +15,38 @@ import sc.plugin2017.Push;
 import sc.plugin2017.Step;
 import sc.plugin2017.Tile;
 import sc.plugin2017.gui.renderer.FrameRenderer;
+import sc.plugin2017.util.Constants;
 
 public class GuiBoard extends PrimitiveBase{
 
   FrameRenderer parent;
-  
+
   Board currentBoard;
-  
+
+  public GuiButton left;
+  public GuiButton right;
+  public GuiButton speedUp;
+  public GuiButton speedDown;
+  public GuiButton send;
+  public GuiButton cancel;
 
   public GuiPlayer red;
   public GuiPlayer blue;
-  
+
   public LinkedList<GuiTile> tiles;
   /**
-   * holds the position of 0,0 relative to parent 
+   * holds the position of 0,0 relative to parent
    */
   public float startX;
   public float startY;
-  public int offsetX; 
+  public int offsetX;
   public int offsetY;
   public Dimension dim;
   /**
    * Width of one field
    */
   public float width;
-  
+
   /**
    * maximum fields in x direction
    */
@@ -52,7 +55,7 @@ public class GuiBoard extends PrimitiveBase{
    * maximum fields in y direction
    */
   public int maxFieldsInY;
-  
+
   public GuiBoard(FrameRenderer parent) {
     super(parent);
     this.parent = parent;
@@ -63,7 +66,7 @@ public class GuiBoard extends PrimitiveBase{
     for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
       tiles.add(new GuiTile(parent, i));
     }
-    
+
     float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
 
     float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
@@ -73,6 +76,30 @@ public class GuiBoard extends PrimitiveBase{
       currentBoard = parent.currentGameState.getVisibleBoard();
     }
     calcHexFieldSize();
+
+    left = new GuiButton(parent, "Links");
+    left.width = 100;
+    left.height = 25;
+
+    right = new GuiButton(parent, "Rechts");
+    right.width = 100;
+    right.height = 25;
+
+    speedUp = new GuiButton(parent, "+");
+    speedUp.width = 30;
+    speedUp.height = 25;
+
+    speedDown = new GuiButton(parent, "-");
+    speedDown.width = 30;
+    speedDown.height = 25;
+
+    send = new GuiButton(parent, "Fertig");
+    send.width = 100;
+    send.height = 25;
+
+    cancel = new GuiButton(parent, "Neu");
+    cancel.width = 100;
+    cancel.height = 25;
   }
 
   /**
@@ -102,8 +129,8 @@ public class GuiBoard extends PrimitiveBase{
       }
       maxFieldsInX = highX - lowX + 1;
       maxFieldsInY = highY - lowY + 1;
-      float xLength = (dim.width / ((float) maxFieldsInX + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      float yLength = (dim.height / ((float) maxFieldsInY + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      float xLength = (dim.width / (maxFieldsInX + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      float yLength = (dim.height / (maxFieldsInY + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
       width = Math.min(xLength, yLength);
       offsetX = -lowX;
       offsetY = -lowY;
@@ -125,6 +152,7 @@ public class GuiBoard extends PrimitiveBase{
     currentBoard = board;
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
+    updateButtons(board, red, blue, current);
     if(!currentBoard.getTiles().isEmpty()) {
       int toUpdate = 0;
       int index = currentBoard.getTiles().get(0).getIndex();
@@ -165,7 +193,7 @@ public class GuiBoard extends PrimitiveBase{
           }
         } else if(currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
           if(currentPlayer.getMovement() != 0) {
-            toHighlight = 
+            toHighlight =
               getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
                   currentPlayer.getDirection(), currentPlayer.getMovement());
             // the actions are in order (smallest Step first, so this should work:
@@ -175,7 +203,7 @@ public class GuiBoard extends PrimitiveBase{
               ++stepCounter;
             }
           }
-          
+
         } else {
           // case sandbank
           if(parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
@@ -201,6 +229,56 @@ public class GuiBoard extends PrimitiveBase{
     }
   }
 
+  private void updateButtons(Board board, Player redPlayer, Player bluePlayer, PlayerColor currentPlayerColor) {
+    GuiPlayer currentGuiPlayer;
+    Player currentPlayer;
+    if (currentPlayerColor == PlayerColor.RED) {
+      currentGuiPlayer = red;
+      currentPlayer = redPlayer;
+    } else {
+      currentGuiPlayer = blue;
+      currentPlayer = bluePlayer;
+    }
+
+    int curX = Math.round(currentGuiPlayer.getX());
+    int curY = Math.round(currentGuiPlayer.getY());
+    int curAngle = (currentPlayer.getDirection() * -60) + 90;
+
+    left.x = curX;
+    left.y = curY;
+    left.angle = curAngle;
+
+    curY += 40;
+
+    right.x = curX;
+    right.y = curY;
+    right.angle = curAngle;
+
+    curY += 40;
+
+    speedUp.x = curX;
+    speedUp.y = curY;
+    speedUp.angle = curAngle;
+
+    curY += 40;
+
+    speedDown.x = curX;
+    speedDown.y = curY;
+    speedDown.angle = curAngle;
+
+    curY += 40;
+
+    send.x = curX;
+    send.y = curY;
+    send.angle = curAngle;
+
+    curY += 40;
+
+    cancel.x = curX;
+    cancel.y = curY;
+    cancel.angle = curAngle;
+  }
+
   private HexField getPassableGuiFieldInDirection(int x, int y, int j) {
     LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
     if(passable.isEmpty()) {
@@ -219,7 +297,7 @@ public class GuiBoard extends PrimitiveBase{
   private void calculateSize(int width, int height) {
     if(parent != null) {
       float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
-    
+
 
       float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
       dim = new Dimension((int) xDimension, (int) yDimension);
@@ -239,6 +317,31 @@ public class GuiBoard extends PrimitiveBase{
       // draw players
       red.draw();
       blue.draw();
+
+    // draw Buttons
+    if(parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
+      if(parent.currentGameState.getCurrentPlayer()
+        .getField(parent.currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
+        if(parent.currentGameState.getCurrentPlayer().getCoal() +
+            parent.currentGameState.getCurrentPlayer().getFreeTurns() != 0) {
+          right.draw();
+          left.draw();
+        }
+        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 1 &&
+            parent.currentGameState.getCurrentPlayer().getMovement() != 0 &&
+            parent.currentGameState.getCurrentPlayer().getCoal() +
+            parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
+          speedDown.draw();
+        }
+        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 6 &&
+            parent.currentGameState.getCurrentPlayer().getCoal() +
+            parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
+          speedUp.draw();
+        }
+      }
+      send.draw();
+      cancel.draw();
+    }
     }
   }
 
@@ -250,7 +353,8 @@ public class GuiBoard extends PrimitiveBase{
     red.resize(startX, startY, offsetX, offsetY, this.width);
     blue.resize(startX, startY, offsetX, offsetY, this.width);
   }
-  
+
+  @Override
   public void kill(){
 
     if(red != null) {
@@ -262,10 +366,25 @@ public class GuiBoard extends PrimitiveBase{
     for (GuiTile tile : tiles) {
       tile.kill();
     }
+    if(this.left != null && this.left.parent != null) {
+      this.left.kill();
+    }
+    if(this.right != null && this.right.parent != null) {
+      this.right.kill();
+    }
+    if(this.speedDown != null && this.speedDown.parent != null) {
+      this.speedDown.kill();
+    }
+    if(this.speedUp != null && this.speedUp.parent != null) {
+      this.speedUp.kill();
+    }
+    if(this.send != null && this.send.parent != null) {
+      this.send.kill();
+    }
   }
-  
+
   /**
-   * 
+   *
    * @param startX anfangs x
    * @param startY anfangs y
    * @param direction Richtung
@@ -338,7 +457,7 @@ public class GuiBoard extends PrimitiveBase{
     }
     return fields;
   }
-  
+
   public HexField getHexField(int x, int y) {
     for (GuiTile tile : tiles) {
       HexField field = tile.getHexField(x, y);

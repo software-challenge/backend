@@ -1,37 +1,34 @@
 /**
- * 
+ *
  */
 package sc.plugin2017.gui.renderer;
 
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
-import sc.plugin2017.gui.renderer.primitives.GameEndedDialog;
-import sc.plugin2017.gui.renderer.primitives.GuiConstants;
-import sc.plugin2017.gui.renderer.primitives.Background;
-import sc.plugin2017.gui.renderer.primitives.BoardFrame;
-import sc.plugin2017.gui.renderer.primitives.GuiPlayer;
-import sc.plugin2017.gui.renderer.primitives.GuiTile;
-import sc.plugin2017.gui.renderer.primitives.HexField;
-import sc.plugin2017.gui.renderer.primitives.ProgressBar;
-import sc.plugin2017.gui.renderer.primitives.SideBar;
-import sc.plugin2017.gui.renderer.primitives.GuiBoard;
 import sc.plugin2017.Acceleration;
 import sc.plugin2017.Action;
+import sc.plugin2017.EPlayerId;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Turn;
-import sc.plugin2017.util.Constants;
+import sc.plugin2017.gui.renderer.primitives.Background;
+import sc.plugin2017.gui.renderer.primitives.BoardFrame;
+import sc.plugin2017.gui.renderer.primitives.GameEndedDialog;
+import sc.plugin2017.gui.renderer.primitives.GuiBoard;
+import sc.plugin2017.gui.renderer.primitives.GuiConstants;
+import sc.plugin2017.gui.renderer.primitives.GuiTile;
+import sc.plugin2017.gui.renderer.primitives.HexField;
+import sc.plugin2017.gui.renderer.primitives.ProgressBar;
+import sc.plugin2017.gui.renderer.primitives.SideBar;
 import sc.plugin2017.util.InvalidMoveException;
-import sc.plugin2017.EPlayerId;
 
 /**
  * @author soeren
@@ -40,7 +37,7 @@ import sc.plugin2017.EPlayerId;
 public class FrameRenderer extends PApplet {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
   private static final Logger logger = LoggerFactory
@@ -56,15 +53,15 @@ public class FrameRenderer extends PApplet {
 
 
   public GuiBoard guiBoard;
-  
+
   private Background background;
-  
+
   private ProgressBar progressBar;
   private SideBar sideBar;
   private BoardFrame boardFrame;
-  
+
   public LinkedHashMap<HexField, Action> stepPossible;
-  
+
   public FrameRenderer() {
     super();
 
@@ -74,7 +71,7 @@ public class FrameRenderer extends PApplet {
     this.id = EPlayerId.OBSERVER;
 
     RenderConfiguration.loadSettings();
-    
+
     background = new Background(this);
     logger.debug("Dimension when creating board: (" + this.width + ","
         + this.height + ")");
@@ -85,6 +82,7 @@ public class FrameRenderer extends PApplet {
     stepPossible = new LinkedHashMap<HexField, Action>();
   }
 
+  @Override
   public void setup() {
     maxTurn = -1;
     // choosing renderer from options - using P2D as default
@@ -108,11 +106,12 @@ public class FrameRenderer extends PApplet {
 
   }
 
+  @Override
   public void draw() {
     background.draw();
     guiBoard.draw();
     progressBar.draw();
-    sideBar.draw(); 
+    sideBar.draw();
     boardFrame.draw();
     if (currentGameState != null && currentGameState.gameEnded()) {
       GameEndedDialog.draw(this);
@@ -139,7 +138,7 @@ public class FrameRenderer extends PApplet {
       System.out.println("Clone of Backup failed");
       e.printStackTrace();
     }
-    
+
     if (gameState != null && gameState.getBoard() != null)
       guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(), gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
@@ -175,8 +174,9 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
+  @Override
   public void mouseClicked(MouseEvent e) {
-    
+
   }
 
   private void update(GameState gameState) {
@@ -189,41 +189,32 @@ public class FrameRenderer extends PApplet {
     redraw();
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
     draw();
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       if(currentGameState.getCurrentPlayer()
         .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
-        progressBar.left.isClicked();
-        progressBar.right.isClicked();
+        guiBoard.left.isClicked();
+        guiBoard.right.isClicked();
         if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
-          progressBar.speedDown.isClicked();
+          guiBoard.speedDown.isClicked();
         }
         if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
-          progressBar.speedUp.isClicked();
+          guiBoard.speedUp.isClicked();
         }
       }
-      progressBar.send.isClicked();
+      guiBoard.send.isClicked();
     }
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      HexField clicked = getFieldCoordinates(mouseX, mouseY);
-      Action action = stepPossible.get(clicked);
-      if(action != null) {
-        try {
-          action.perform(currentGameState, currentGameState.getCurrentPlayer());
-        } catch (InvalidMoveException e1) {
-          System.out.println("Failed to perform move of user, please report if this happens");
-          e1.printStackTrace();
-        }
-        currentMove.actions.add(action);
-        update(currentGameState);
-      }
+      // first the gui buttons
       if(currentGameState.getCurrentPlayer()
         .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
-        if(progressBar.left.isClicked()) {
+        if(guiBoard.left.isClicked()) {
           Turn turn = new Turn(1);
           currentMove.actions.add(turn);
           try {
@@ -233,7 +224,7 @@ public class FrameRenderer extends PApplet {
             e1.printStackTrace();
           }
         }
-        if(progressBar.right.isClicked()) {
+        if(guiBoard.right.isClicked()) {
           Turn turn = new Turn(-1);
           currentMove.actions.add(turn);
           try {
@@ -244,7 +235,7 @@ public class FrameRenderer extends PApplet {
           }
         }
         if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
-          if(progressBar.speedDown.isClicked()) {
+          if(guiBoard.speedDown.isClicked()) {
             Acceleration acc = new Acceleration(-1);
             currentMove.actions.add(acc);
             try {
@@ -256,7 +247,7 @@ public class FrameRenderer extends PApplet {
           }
         }
         if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
-          if(progressBar.speedUp.isClicked()) {
+          if(guiBoard.speedUp.isClicked()) {
             Acceleration acc = new Acceleration(1);
             currentMove.actions.add(acc);
             try {
@@ -268,10 +259,10 @@ public class FrameRenderer extends PApplet {
           }
         }
       }
-      if(progressBar.send.isClicked()) {
+      if(guiBoard.send.isClicked()) {
         sendMove();
       }
-      if(progressBar.cancel.isClicked()) {
+      if(guiBoard.cancel.isClicked()) {
         try {
           currentGameState = backUp.clone();
         } catch (CloneNotSupportedException e1) {
@@ -281,6 +272,19 @@ public class FrameRenderer extends PApplet {
         updateGameState(currentGameState);
         redraw();
         return;
+      }
+      // then field clicks
+      HexField clicked = getFieldCoordinates(mouseX, mouseY);
+      Action action = stepPossible.get(clicked);
+      if(action != null) {
+        try {
+          action.perform(currentGameState, currentGameState.getCurrentPlayer());
+        } catch (InvalidMoveException e1) {
+          System.out.println("Failed to perform move of user, please report if this happens");
+          e1.printStackTrace();
+        }
+        currentMove.actions.add(action);
+        update(currentGameState);
       }
     }
     update(currentGameState);
@@ -304,7 +308,7 @@ public class FrameRenderer extends PApplet {
       if(action != null && action.getClass() != Acceleration.class) {
         send.actions.add(action);
       }
-    } 
+    }
     // set order
     send.setOrderInActions();
     RenderFacade.getInstance().sendMove(send);
@@ -312,7 +316,7 @@ public class FrameRenderer extends PApplet {
 
   private HexField getFieldCoordinates(int x, int y) {
     HexField coordinates;
-    
+
     for (GuiTile tile : guiBoard.tiles) {
       coordinates = tile.getFieldCoordinates(x,y);
       if(coordinates != null) {
@@ -322,6 +326,7 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
+  @Override
   public void resize(int width, int height) {
     background.resize(width, height);
     guiBoard.resize(width, height);
@@ -332,11 +337,13 @@ public class FrameRenderer extends PApplet {
    * rufen wir resize auf, um die Komponenten auf die richtige Größe zu
    * bringen.
    */
+  @Override
   public void setBounds(int x, int y, int width, int height) {
     super.setBounds(x, y, width, height);
     this.resize(width, height);
   }
 
+  @Override
   public void keyPressed() {
     if (key == 'c' || key == 'C') {
       new RenderConfigurationDialog(FrameRenderer.this);
@@ -354,7 +361,7 @@ public class FrameRenderer extends PApplet {
 
   public void killAll() {
 noLoop();
-    
+
     if(background != null) {
       background.kill();
     }
