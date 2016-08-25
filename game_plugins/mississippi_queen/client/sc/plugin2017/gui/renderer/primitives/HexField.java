@@ -9,16 +9,16 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 /**
  * Hexagon Primitve for explanation see
  * http://grantmuller.com/drawing-a-hexagon-in-processing-java/
- * 
+ *
  * @author soeren
- * 
+ *
  */
 public class HexField extends PrimitiveBase{
-  
+
   // Fields
   public float x, y;
   private float a, b, c;
-  
+
   private float width;
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
@@ -30,7 +30,7 @@ public class HexField extends PrimitiveBase{
   public int fieldY;
 
   public FieldType type;
-  
+
   private boolean highlighted = false;
 
   public HexField(FrameRenderer parent, float startX, float startY, float width, int fieldX, int fieldY, FieldType type) {
@@ -41,7 +41,7 @@ public class HexField extends PrimitiveBase{
     setFieldX(fieldX);
     setFieldY(fieldY);
   }
-  
+
   public HexField(FrameRenderer parent) {
     super(parent);
     fieldX = 0;
@@ -53,18 +53,31 @@ public class HexField extends PrimitiveBase{
     fieldY = field.getY();
     type = field.getType();
     highlighted = false;
-      
+
   }
 
+  private void drawHex() {
+    parent.beginShape();
+    parent.vertex(0, a);
+    parent.vertex(b, 0);
+    parent.vertex(2 * b, a);
+    parent.vertex(2 * b, a + getC());
+    parent.vertex(b, 2 * a + getC());
+    parent.vertex(0, a + getC());
+    parent.vertex(0, a);
+    parent.endShape();
+    parent.noStroke();
+  }
+  @Override
   public void draw() {
     parent.pushStyle();
     parent.noStroke();
-    //parent.text("" + this.fieldX + " " + this.fieldY, 25, 25);
-    //parent.text("" + numFish, 25, 50);
-    
+
+    parent.pushMatrix();
+    parent.translate(x, y);
+
     if(type == FieldType.WATER) {
       parent.fill(GuiConstants.colorHexFields);
-      
     } else if(type == FieldType.SANDBANK){
       parent.fill(GuiConstants.colorHexFieldSANDBANK);
     } else if(type == FieldType.LOG){
@@ -78,22 +91,9 @@ public class HexField extends PrimitiveBase{
       parent.strokeWeight(width / 16);
       parent.stroke(GuiConstants.colorWhite);
     }
-    parent.pushMatrix();
-    parent.translate(x, y);
-
-    parent.beginShape();
-    parent.vertex(0, a);
-    parent.vertex(b, 0);
-    parent.vertex(2 * b, a);
-    parent.vertex(2 * b, a + getC());
-    parent.vertex(b, 2 * a + getC());
-    parent.vertex(0, a + getC());
-    parent.vertex(0, a);
-    parent.endShape();
-    parent.noStroke();
+    drawHex();
     if(Field.isPassengerField(type)) {
       parent.fill(GuiConstants.colorPassenger);
-      // TODO if passengerfield draw passenger and step
       parent.ellipse(width / 2, 17 * width / 32, width / 4, width / 4);
       parent.fill(GuiConstants.colorHexFieldLOG);
       if(type == FieldType.PASSENGER0) {
@@ -110,7 +110,7 @@ public class HexField extends PrimitiveBase{
         parent.vertex(width - a / 2, 2 * a);
         parent.vertex(b - a / 2, a);
         parent.endShape();
-        
+
       } else if(type == FieldType.PASSENGER2) {
         parent.beginShape();
         parent.vertex(0, a);
@@ -118,7 +118,7 @@ public class HexField extends PrimitiveBase{
         parent.vertex(b + a / 2, a);
         parent.vertex(a / 2, 2 * a);
         parent.endShape();
-        
+
       } else if(type == FieldType.PASSENGER3) {
         parent.beginShape();
         parent.vertex(0, a);
@@ -126,7 +126,7 @@ public class HexField extends PrimitiveBase{
         parent.vertex(b / 2, a + c);
         parent.vertex(0, a + c);
         parent.endShape();
-        
+
       } else if(type == FieldType.PASSENGER4) {
         parent.beginShape();
         parent.vertex(b, c + a + a);
@@ -134,7 +134,7 @@ public class HexField extends PrimitiveBase{
         parent.vertex(a / 2, c);
         parent.vertex(b + a / 2, c + a);
         parent.endShape();
-        
+
       } else if(type == FieldType.PASSENGER5) {
         parent.beginShape();
         parent.vertex(b, c + 2 * a);
@@ -142,10 +142,19 @@ public class HexField extends PrimitiveBase{
         parent.vertex(width - a / 2, c);
         parent.vertex(b - a / 2, a + c);
         parent.endShape();
-        
+
       }
     }
-    
+
+    if (type == FieldType.BLOCKED) {
+      PImage islandImage = parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH);
+      int imageWidth = Math.round(width);
+      int imageHeight = Math.round(2*a+c);
+      islandImage.resize(imageWidth, imageHeight);
+      parent.image(islandImage, 0, 0);
+    }
+
+    // print coordinates
     parent.fill(0);
     parent.textFont(GuiConstants.fonts[3]);
     parent.textSize(GuiConstants.fontSizes[3]);
@@ -159,23 +168,23 @@ public class HexField extends PrimitiveBase{
     setC(b / PApplet.cos(PApplet.radians(30)));
     a = b * PApplet.sin(PApplet.radians(30));
   }
-  
+
 
   public static float calcA(float width) {
-    
+
     return (width / 2f) * PApplet.sin(PApplet.radians(30));
   }
-  
+
   public static float calcB(float width) {
-      
+
       return (width / 2f);
     }
-  
+
   public static float calcC(float width) {
-    
+
     return (width / 2f) / PApplet.cos(PApplet.radians(30));
   }
-    
+
   public void resize(float startX, float startY, int offsetX, int offsetY, float width){
     this.width = width;
     calcSize(width);
@@ -188,7 +197,7 @@ public class HexField extends PrimitiveBase{
     newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
     this.x = newX;
     this.y = newY;
-    
+
   }
 
   public float getX() {
@@ -252,7 +261,8 @@ public class HexField extends PrimitiveBase{
   public void setHighlighted(boolean highlighted) {
     this.highlighted = highlighted;
   }
-  
+
+  @Override
   public String toString() {
     return "X: " + fieldX + " Y: " + fieldY + " Type: " + type + " " + x + " " + y + " " + b;
   }
