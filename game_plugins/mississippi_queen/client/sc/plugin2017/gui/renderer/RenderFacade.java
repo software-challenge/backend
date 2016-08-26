@@ -10,8 +10,6 @@ import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JPanel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,9 +23,9 @@ import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
 /**
- * 
+ *
  * @author tkra, ffi, sca
- * 
+ *
  */
 public class RenderFacade {
 	private static final Logger logger = LoggerFactory
@@ -79,7 +77,6 @@ public class RenderFacade {
 							GameState gameState = gameStateQueue.remove(0);
 							frameRenderer.updateGameState(gameState);
 							gameState = null;
-							frameRenderer.redraw();
 						}
 					}
 
@@ -114,7 +111,7 @@ public class RenderFacade {
 
 	private RenderFacade() {
 		frameRenderer = new FrameRenderer();
-		
+
 		gameStateQueue = new LinkedList<GameState>();
 		startReceiverThread();
 
@@ -160,7 +157,7 @@ public class RenderFacade {
 		synchronized (gameStateQueue) {
 			gameStateQueue.clear();
 		}
-		
+
 		maxTurn = 0;
 		first = true;
 		disabled = false;
@@ -180,12 +177,12 @@ public class RenderFacade {
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
 	}
-	
+
 	/**
 	 * Sets handler
 	 * @param handler Game handler
 	 * @param target EPlayerId
-	 *            
+	 *
 	 */
 	// TODO
 	public void setHandler(IGameHandler handler, EPlayerId target) {
@@ -198,11 +195,8 @@ public class RenderFacade {
 		} else if (target == EPlayerId.PLAYER_TWO) {
 			handler2 = handler;
 		}
-
-		frameRenderer.repaint();
-
 	}
-	
+
 	public void sendMove(Move move) {
     if (currentHandler != null) {
       currentHandler.sendAction(move);
@@ -258,10 +252,7 @@ public class RenderFacade {
 			currentHandler = handler2;
 			break;
 		}
-
 		activePlayer = id;
-		frameRenderer.repaint();
-
 	}
 
 	public void setAlreadyCreatedPlayerOne(boolean alreadyCreatedPlayerOne) {

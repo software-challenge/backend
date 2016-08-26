@@ -136,7 +136,7 @@ public class GuiBoard extends PrimitiveBase{
     currentBoard = board;
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
-    updateButtons(board, red, blue, current);
+    updateButtonPositions(board, red, blue, current);
     if(!currentBoard.getTiles().isEmpty()) {
       int toUpdate = 0;
       int index = currentBoard.getTiles().get(0).getIndex();
@@ -213,7 +213,7 @@ public class GuiBoard extends PrimitiveBase{
     }
   }
 
-  private void updateButtons(Board board, Player redPlayer, Player bluePlayer, PlayerColor currentPlayerColor) {
+  private void updateButtonPositions(Board board, Player redPlayer, Player bluePlayer, PlayerColor currentPlayerColor) {
     GuiPlayer currentGuiPlayer;
     Player currentPlayer;
     if (currentPlayerColor == PlayerColor.RED) {
@@ -293,8 +293,7 @@ public class GuiBoard extends PrimitiveBase{
 
   @Override
   public void draw() {
-    if(parent != null) {
-      resize(parent.getWidth(), parent.getHeight());
+    if (parent != null) {
       for (GuiTile tile : tiles) {
         tile.draw();
       }
@@ -302,30 +301,30 @@ public class GuiBoard extends PrimitiveBase{
       red.draw();
       blue.draw();
 
-    // draw Buttons
-    if(parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
-      if(parent.currentGameState.getCurrentPlayer()
-        .getField(parent.currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
-        if(parent.currentGameState.getCurrentPlayer().getCoal() +
-            parent.currentGameState.getCurrentPlayer().getFreeTurns() != 0) {
-          right.draw();
-          left.draw();
+      // draw Buttons
+      if (parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
+        if (parent.currentGameState.getCurrentPlayer().getField(parent.currentGameState.getBoard())
+            .getType() != FieldType.SANDBANK) {
+          if (parent.currentGameState.getCurrentPlayer().getCoal()
+              + parent.currentGameState.getCurrentPlayer().getFreeTurns() != 0) {
+            right.draw();
+            left.draw();
+          }
+          if (parent.currentGameState.getCurrentPlayer().getSpeed() != 1
+              && parent.currentGameState.getCurrentPlayer().getMovement() != 0
+              && parent.currentGameState.getCurrentPlayer().getCoal()
+                  + parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
+            speedDown.draw();
+          }
+          if (parent.currentGameState.getCurrentPlayer().getSpeed() != 6
+              && parent.currentGameState.getCurrentPlayer().getCoal()
+                  + parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
+            speedUp.draw();
+          }
         }
-        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 1 &&
-            parent.currentGameState.getCurrentPlayer().getMovement() != 0 &&
-            parent.currentGameState.getCurrentPlayer().getCoal() +
-            parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
-          speedDown.draw();
-        }
-        if(parent.currentGameState.getCurrentPlayer().getSpeed() != 6 &&
-            parent.currentGameState.getCurrentPlayer().getCoal() +
-            parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
-          speedUp.draw();
-        }
+        send.draw();
+        cancel.draw();
       }
-      send.draw();
-      cancel.draw();
-    }
     }
   }
 

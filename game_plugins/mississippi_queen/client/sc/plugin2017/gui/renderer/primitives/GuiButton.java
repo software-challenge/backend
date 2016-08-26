@@ -1,7 +1,6 @@
 package sc.plugin2017.gui.renderer.primitives;
 
 import processing.core.PApplet;
-import sc.plugin2017.FieldType;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
@@ -43,14 +42,10 @@ public class GuiButton extends PrimitiveBase {
       parent.fill(GuiConstants.colorLightLightGrey);
     }
 
-    if(parent.getMousePosition() != null) {
-      if(parent.mouseX >= x
-          && parent.mouseX < x + width
-          && parent.mouseY >= y
-          && parent.mouseY <y + height) {
-        parent.fill(GuiConstants.colorLightLightGrey);
-      }
+    if (mouseHover()) {
+      parent.fill(GuiConstants.colorLightLightGrey);
     }
+
     parent.rectMode(PApplet.CENTER);
     parent.ellipse(0, 0, width, height);
     // draw text
@@ -66,54 +61,18 @@ public class GuiButton extends PrimitiveBase {
   }
 
   public boolean isClicked() {
-    if(message == "Fertig") {
-      // would stop termoination if game
-//      if(parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
-//        return false;
-//      }
-    } else if(message == "-") {
-      if(parent.currentGameState.getCurrentPlayer().getSpeed() == 1 ||
-          parent.currentGameState.getCurrentPlayer().getMovement() == 0 ||
-          parent.currentGameState.getCurrentPlayer().getField(
-              parent.currentGameState.getBoard()).getType() == FieldType.SANDBANK ||
-          parent.currentGameState.getCurrentPlayer().getFreeAcc() +
-          parent.currentGameState.getCurrentPlayer().getCoal() == 0) {
-        return false;
-      }
-    } else if(message == "+") {
-      if(parent.currentGameState.getCurrentPlayer().getSpeed() == 6 ||
-          parent.currentGameState.getCurrentPlayer().getField(
-              parent.currentGameState.getBoard()).getType() == FieldType.SANDBANK ||
-          parent.currentGameState.getCurrentPlayer().getFreeAcc() +
-          parent.currentGameState.getCurrentPlayer().getCoal() == 0) {
-        return false;
-      }
-    } else if(message == "Links") {
-      if(parent.currentGameState.getCurrentPlayer().getFreeTurns() +
-          parent.currentGameState.getCurrentPlayer().getCoal() == 0 ||
-          parent.currentGameState.getCurrentPlayer().getField(
-              parent.currentGameState.getBoard()).getType() == FieldType.SANDBANK) {
-        return false;
-      }
-    } else if(message == "Rechts") {
-      if(parent.currentGameState.getCurrentPlayer().getFreeTurns() +
-          parent.currentGameState.getCurrentPlayer().getCoal() == 0 ||
-          parent.currentGameState.getCurrentPlayer().getField(
-              parent.currentGameState.getBoard()).getType() == FieldType.SANDBANK) {
-        return false;
-      }
-    }
-    // TODO Auto-generated method stub
+    return mouseHover();
+  }
+
+  public boolean mouseHover() {
     if(parent.getMousePosition() != null) {
-      if(parent.mouseX >= x
+      return (parent.mouseX >= x
           && parent.mouseX < x + width
           && parent.mouseY >= y
-          && parent.mouseY <y + height) {
-        draw();
-        return true;
-      }
+          && parent.mouseY <y + height);
+    } else {
+      return false;
     }
-    return false;
   }
 
   /**
