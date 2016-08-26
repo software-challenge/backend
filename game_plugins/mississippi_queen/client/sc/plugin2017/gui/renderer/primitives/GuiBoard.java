@@ -77,29 +77,13 @@ public class GuiBoard extends PrimitiveBase{
     }
     calcHexFieldSize();
 
-    left = new GuiButton(parent, "Links");
-    left.width = 100;
-    left.height = 25;
-
-    right = new GuiButton(parent, "Rechts");
-    right.width = 100;
-    right.height = 25;
-
-    speedUp = new GuiButton(parent, "+");
-    speedUp.width = 30;
-    speedUp.height = 25;
-
-    speedDown = new GuiButton(parent, "-");
-    speedDown.width = 30;
-    speedDown.height = 25;
-
-    send = new GuiButton(parent, "Fertig");
-    send.width = 100;
-    send.height = 25;
-
-    cancel = new GuiButton(parent, "Neu");
-    cancel.width = 100;
-    cancel.height = 25;
+    left = new CircularGuiButton(parent, "Links");
+    right = new CircularGuiButton(parent, "Rechts");
+    speedUp = new CircularGuiButton(parent, "+");
+    speedDown = new CircularGuiButton(parent, "-");
+    send = new CircularGuiButton(parent, "Fertig");
+    cancel = new CircularGuiButton(parent, "Neu");
+    resizeButtons();
   }
 
   /**
@@ -352,6 +336,17 @@ public class GuiBoard extends PrimitiveBase{
     }
     red.resize(startX, startY, offsetX, offsetY, this.width);
     blue.resize(startX, startY, offsetX, offsetY, this.width);
+    resizeButtons();
+  }
+
+  private void resizeButtons() {
+    int newButtonWidth = Math.round(width / 2);
+    left.resize(newButtonWidth);
+    right.resize(newButtonWidth);
+    speedUp.resize(newButtonWidth);
+    speedDown.resize(newButtonWidth);
+    send.resize(newButtonWidth);
+    cancel.resize(newButtonWidth);
   }
 
   @Override

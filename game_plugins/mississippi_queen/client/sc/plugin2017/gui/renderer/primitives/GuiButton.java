@@ -1,5 +1,6 @@
 package sc.plugin2017.gui.renderer.primitives;
 
+import processing.core.PApplet;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.FrameRenderer;
@@ -26,7 +27,7 @@ public class GuiButton extends PrimitiveBase {
     parent.translate(x, y);
     //parent.rotate((float)Math.toRadians(angle));
     // TODO rotation makes buttons unclickable, solve by making buttons circular
-    continue here
+    //continue here
 
     // draw stroke
     if(parent != null && parent.currentGameState != null && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.BLUE)
@@ -50,7 +51,8 @@ public class GuiButton extends PrimitiveBase {
         parent.fill(GuiConstants.colorLightLightGrey);
       }
     }
-    parent.rect(0, 0, width, height, 3);
+    parent.rectMode(PApplet.CENTER);
+    parent.ellipse(0, 0, width, height);
     // draw text
     parent.translate(3, 20);
     parent.fill(GuiConstants.colorBlack);
@@ -114,8 +116,21 @@ public class GuiButton extends PrimitiveBase {
     return false;
   }
 
+  /**
+   * Tells the primitive that a mouse click happend. It may react accordingly.
+   * @param x X coordinate of the click.
+   * @param y Y coordinate of the click.
+   */
+  public void mouseClick(int x, int y) {
+
+  }
+
   @Override
   public String toString() {
     return message + " X: " + x + " Y: " + y + " width: " + width + " height: " + height;
+  }
+
+  public void resize(int newWidth) {
+
   }
 }
