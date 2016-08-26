@@ -4,9 +4,6 @@
 package sc.plugin2017.gui.renderer;
 
 import java.awt.Image;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.util.LinkedHashMap;
 
@@ -54,6 +51,7 @@ public class FrameRenderer extends PApplet {
   public int maxTurn;
   private EPlayerId id;
 
+  private boolean initialized = false;
 
   public GuiBoard guiBoard;
 
@@ -63,11 +61,16 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
 
+  private int frameWidth;
+  private int frameHeight;
+
   public LinkedHashMap<HexField, Action> stepPossible;
 
-  public FrameRenderer() {
+  public FrameRenderer(int frameWidth, int frameHeight) {
     super();
 
+    this.frameWidth = frameWidth;
+    this.frameHeight = frameHeight;
     this.humanPlayer = false;
     this.humanPlayerMaxTurn = false;
     this.id = EPlayerId.OBSERVER;
@@ -84,24 +87,11 @@ public class FrameRenderer extends PApplet {
     // We want to change the size of the PApplet when the window is resized
     // (normally, the size of the PApplet is set once in the setup method and
     // stays the same).
-    ComponentListener listener = new ResizeListener();
-    this.addComponentListener(listener);
-  }
-
-  class ResizeListener extends ComponentAdapter {
-    @Override
-    public void componentResized(ComponentEvent e) {
-      int newWidth = e.getComponent().getWidth();
-      int newHeight = e.getComponent().getHeight();
-      resize(newWidth, newHeight);
-    }
   }
   @Override
   public void setup() {
-    this.width = getParent().getWidth();
-    this.height = getParent().getHeight();
-    logger.debug("Dimension when creating board: (" + this.width + ","
-        + this.height + ")");
+    logger.debug("Dimension when creating board: (" + frameWidth + ","
+        + frameHeight + ")");
     maxTurn = -1;
     // choosing renderer from options - using P2D as default
     //
@@ -109,24 +99,29 @@ public class FrameRenderer extends PApplet {
     // method (as stated in the processing reference).
     if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
       logger.debug("Using Java2D as Renderer");
-      size(this.width, this.height, JAVA2D);
+      size(frameWidth, frameHeight, JAVA2D);
     } else if (RenderConfiguration.optionRenderer.equals("P3D")) {
       logger.debug("Using P3D as Renderer");
-      size(this.width, this.height, P3D);
+      size(frameWidth, frameHeight, P3D);
     } else {
       logger.debug("Using P2D as Renderer");
-      size(this.width, this.height, P2D);
+      size(frameWidth, frameHeight, P2D);
     }
-
     smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
     // initial draw
     GuiConstants.generateFonts(this);
-    //noLoop(); // prevent thread from starving everything else
+    noLoop(); // prevent thread from starving everything else
+    resize(frameWidth, frameHeight);
+    initialized = true;
+    redraw();
   }
 
   @Override
   public void draw() {
+    if (!initialized) {
+      return;
+    }
     logger.debug(String.format("draw, coordinates %d,%d",mouseX, mouseY));
     background.draw();
     guiBoard.draw();
@@ -160,8 +155,12 @@ public class FrameRenderer extends PApplet {
       e.printStackTrace();
     }
 
-    if (gameState != null && gameState.getBoard() != null)
-      guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(), gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
+    if (gameState != null && gameState.getBoard() != null) {
+      logger.debug("updating gui board gamestate");
+      guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(), gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
+    } else {
+      logger.error("got gamestate without board");
+    }
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
       if (maxTurn == currentGameState.getTurn() - 1) {
@@ -175,6 +174,7 @@ public class FrameRenderer extends PApplet {
         && humanPlayerMaxTurn) {
       humanPlayer = true;
     }
+    redraw();
   }
 
   public void requestMove(int maxTurn, EPlayerId id) {
@@ -354,10 +354,10 @@ public class FrameRenderer extends PApplet {
 
   @Override
   public void resize(int width, int height) {
-    System.out.println(String.format("updating dimension: %d,%d", width, height));
-    super.resize(width, height);
+    logger.debug(String.format("updating dimension: %d,%d", width, height));
+    super.resize(width, height); // this is actually needed to propagate size, otherwise you will get exceptions that dimensions need to be >=0
     background.resize(width, height);
-    guiBoard.resize(width, height);
+    guiBoard.resize();
 
     // progressBar, sideBar and boardFrame have no own dimensions, they access
     // parents dimensions directly and don't need to be resized.

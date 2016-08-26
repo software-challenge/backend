@@ -17,8 +17,12 @@ public class Background extends PrimitiveBase {
 
   @Override
   public void draw(){
+    try {
     parent.background(GuiConstants.colorBackGround);
     parent.image(img, 0, 0);
+    } catch (ArrayIndexOutOfBoundsException e) {
+      // do nothing
+    }
   }
 
   public synchronized void resize(int width, int height){

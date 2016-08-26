@@ -3,6 +3,9 @@ package sc.plugin2017.gui.renderer;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Panel;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -59,6 +62,7 @@ public class RenderFacade {
 	private Thread thread;
 	private boolean receiverThreadRunning = false;
 	private final List<GameState> gameStateQueue;
+	private Panel panel;
 	private final Runnable gameStateReciever = new Runnable() {
 
 		@Override
@@ -74,9 +78,9 @@ public class RenderFacade {
 						}
 
 						while (gameStateQueue.size() > 0) {
+						  logger.debug("new gamestate");
 							GameState gameState = gameStateQueue.remove(0);
 							frameRenderer.updateGameState(gameState);
-							gameState = null;
 						}
 					}
 
@@ -96,7 +100,7 @@ public class RenderFacade {
 					} catch (IOException ex) {
 
 					}
-					e.printStackTrace();
+					logger.error("Exception in render thread", e);
 				}
 			}
 		}
@@ -110,11 +114,8 @@ public class RenderFacade {
 	private int maxTurn;
 
 	private RenderFacade() {
-		frameRenderer = new FrameRenderer();
-
 		gameStateQueue = new LinkedList<GameState>();
 		startReceiverThread();
-
 	}
 
 	public void startReceiverThread() {
@@ -163,15 +164,49 @@ public class RenderFacade {
 		disabled = false;
 		activePlayer = null;
 		alreadyCreatedPlayerOne = false;
-		frameRenderer = new FrameRenderer(); // neuer FrameRenderer
+		this.panel = panel;
 
-		if (panel != null) {
+		initRenderer();
+		startReceiverThread();// TODO remove? should not do any harm
+    ComponentListener listener = new ResizeListener();
+    panel.addComponentListener(listener);
+  }
+
+  class ResizeListener extends ComponentAdapter {
+    @Override
+    public void componentResized(ComponentEvent e) {
+      if (e.getComponent() == panel) {
+        int newWidth = panel.getWidth();
+        int newHeight = panel.getHeight();
+        if (newWidth > 0 && newHeight > 0) {
+          logger.debug("setting sizes");
+          panel.remove(frameRenderer);
+          initRenderer();
+        } else {
+          logger.debug("invalid window dimensions");
+        }
+      } else {
+        logger.debug("resize event of other component: "+e.getComponent().getName());
+      }
+    }
+  }
+
+	private void initRenderer() {
+	  // FIXME this is ugly
+	  continue here
+	  GameState curState = null;
+	  if (frameRenderer != null) {
+	    curState = frameRenderer.currentGameState;
+	  }
+  		frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight()); // neuer FrameRenderer
 			panel.setLayout(new BorderLayout());
 			panel.add(frameRenderer, BorderLayout.CENTER);
-			frameRenderer.setBounds(0, 0, panel.getWidth(), panel.getHeight());
 	    frameRenderer.init();
-		}
-		startReceiverThread();
+	    if (curState != null) {
+	      frameRenderer.updateGameState(curState);
+	    }
+      panel.revalidate();
+      panel.repaint();
 	}
 
 	public void setDisabled(boolean disabled) {

@@ -150,8 +150,11 @@ public class HexField extends PrimitiveBase{
       PImage islandImage = parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH);
       int imageWidth = Math.round(width);
       int imageHeight = Math.round(2*a+c);
-      islandImage.resize(imageWidth, imageHeight);
-      parent.image(islandImage, 0, 0);
+      // only draw if window size is already set
+      if (imageWidth > 0 && imageHeight > 0) {
+        islandImage.resize(imageWidth, imageHeight);
+        parent.image(islandImage, 0, 0);
+      }
     }
 
     // print coordinates

@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  * @author felix
- * 
+ *
  */
 public class RenderConfiguration {
 
@@ -46,7 +46,7 @@ public class RenderConfiguration {
 		map.put(OPTION_NAMES[0], optionRenderer);
 		map.put(OPTION_NAMES[1], optionAntiAliasing);
 		map.put(OPTION_NAMES[2], optionDebug);
-		
+
 		OutputStream fileStream = null;
 		try {
 			fileStream = new FileOutputStream(savePath);
@@ -62,7 +62,7 @@ public class RenderConfiguration {
 					fileStream.close();
 				}
 			} catch (Exception e) {
-				
+
 			}
 		}
 	}
@@ -79,7 +79,7 @@ public class RenderConfiguration {
 			optionRenderer = (String) map.get(OPTION_NAMES[0]);
 			optionAntiAliasing = ((Number) map.get(OPTION_NAMES[1])).intValue();
 			optionDebug = (Boolean) map.get(OPTION_NAMES[2]);
-			
+
 			objectStream.close();
 		} catch (IOException e) {
 		} catch (ClassNotFoundException e) {
