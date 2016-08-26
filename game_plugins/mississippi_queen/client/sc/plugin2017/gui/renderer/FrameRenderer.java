@@ -175,7 +175,12 @@ public class FrameRenderer extends PApplet {
   }
 
   @Override
-  public void mouseClicked(MouseEvent e) {
+  public void mouseMoved(MouseEvent e) {
+
+  }
+
+  @Override
+  public void mouseDragged(MouseEvent e) {
 
   }
 
@@ -209,7 +214,7 @@ public class FrameRenderer extends PApplet {
   }
 
   @Override
-  public void mouseReleased(MouseEvent e) {
+  public void mouseClicked(MouseEvent e) {
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       // first the gui buttons
       if(currentGameState.getCurrentPlayer()
