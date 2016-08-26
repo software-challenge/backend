@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.plugin2017.Action;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
@@ -18,6 +21,8 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.util.Constants;
 
 public class GuiBoard extends PrimitiveBase{
+
+  private static final Logger logger = LoggerFactory.getLogger(GuiBoard.class);
 
   FrameRenderer parent;
 
@@ -75,7 +80,6 @@ public class GuiBoard extends PrimitiveBase{
     if(parent.currentGameState != null) {
       currentBoard = parent.currentGameState.getVisibleBoard();
     }
-    calcHexFieldSize();
 
     left = new CircularGuiButton(parent, "Links");
     right = new CircularGuiButton(parent, "Rechts");
@@ -83,7 +87,8 @@ public class GuiBoard extends PrimitiveBase{
     speedDown = new CircularGuiButton(parent, "-");
     send = new CircularGuiButton(parent, "Fertig");
     cancel = new CircularGuiButton(parent, "Neu");
-    resizeButtons();
+
+    calculateSize();
   }
 
   /**
@@ -122,6 +127,8 @@ public class GuiBoard extends PrimitiveBase{
       float sizeY = (HexField.calcA(width) + HexField.calcC(width) + GuiConstants.BORDERSIZE);
       startX = (dim.width - (sizeX * maxFieldsInX)) / 2f;
       startY = (dim.height - (sizeY * maxFieldsInY)) / 2f;
+    } else {
+      logger.error("trying to calculate hex field size without currentBoard!");
     }
   }
 
@@ -133,7 +140,11 @@ public class GuiBoard extends PrimitiveBase{
    * @param current PlayerColor of currentPlayer in gameState
    */
   public void update(Board board, Player red, Player blue, PlayerColor current) {
+    if (board == null) {
+      logger.error("got no board in update");
+    }
     currentBoard = board;
+    calculateSize();
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     updateButtonPositions(board, red, blue, current);
@@ -265,12 +276,11 @@ public class GuiBoard extends PrimitiveBase{
 
   private HexField getPassableGuiFieldInDirection(int x, int y, int j) {
     LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
-    if(passable.isEmpty()) {
+    if(passable.isEmpty() || passable.getFirst() == null) {
       return null;
-    } else if(passable.getFirst() == null) {
-      return null;
+    } else {
+      return passable.getFirst();
     }
-    return passable.getFirst();
   }
 
   /**
@@ -278,14 +288,11 @@ public class GuiBoard extends PrimitiveBase{
    * @param width
    * @param height
    */
-  private void calculateSize(int width, int height) {
-    if(parent != null) {
-      float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
-
-
-      float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
-      dim = new Dimension((int) xDimension, (int) yDimension);
-    }
+  private void calculateSize() {
+    logger.debug(String.format("calculating gui board sizes, size: %d,%d", parent.getWidth(), parent.getHeight()));
+    float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
+    float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
+    dim = new Dimension((int) xDimension, (int) yDimension);
 
     calcHexFieldSize();
   }
@@ -293,43 +300,45 @@ public class GuiBoard extends PrimitiveBase{
 
   @Override
   public void draw() {
-    if (parent != null) {
-      for (GuiTile tile : tiles) {
-        tile.draw();
-      }
-      // draw players
-      red.draw();
-      blue.draw();
+    logger.debug(String.format("drawing gui board, size: %d,%d", parent.getWidth(), parent.getHeight()));
+    for (GuiTile tile : tiles) {
+      tile.draw();
+    }
+    // draw players
+    red.draw();
+    blue.draw();
 
-      // draw Buttons
-      if (parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
-        if (parent.currentGameState.getCurrentPlayer().getField(parent.currentGameState.getBoard())
-            .getType() != FieldType.SANDBANK) {
-          if (parent.currentGameState.getCurrentPlayer().getCoal()
-              + parent.currentGameState.getCurrentPlayer().getFreeTurns() != 0) {
-            right.draw();
-            left.draw();
-          }
-          if (parent.currentGameState.getCurrentPlayer().getSpeed() != 1
-              && parent.currentGameState.getCurrentPlayer().getMovement() != 0
-              && parent.currentGameState.getCurrentPlayer().getCoal()
-                  + parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
-            speedDown.draw();
-          }
-          if (parent.currentGameState.getCurrentPlayer().getSpeed() != 6
-              && parent.currentGameState.getCurrentPlayer().getCoal()
-                  + parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
-            speedUp.draw();
-          }
+    // draw Buttons
+    if (parent.isHumanPlayer() && parent.maxTurn == parent.currentGameState.getTurn()) {
+      if (parent.currentGameState.getCurrentPlayer().getField(parent.currentGameState.getBoard())
+          .getType() != FieldType.SANDBANK) {
+        if (parent.currentGameState.getCurrentPlayer().getCoal()
+            + parent.currentGameState.getCurrentPlayer().getFreeTurns() != 0) {
+          right.draw();
+          left.draw();
         }
-        send.draw();
-        cancel.draw();
+        if (parent.currentGameState.getCurrentPlayer().getSpeed() != 1
+            && parent.currentGameState.getCurrentPlayer().getMovement() != 0
+            && parent.currentGameState.getCurrentPlayer().getCoal()
+                + parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
+          speedDown.draw();
+        }
+        if (parent.currentGameState.getCurrentPlayer().getSpeed() != 6
+            && parent.currentGameState.getCurrentPlayer().getCoal()
+                + parent.currentGameState.getCurrentPlayer().getFreeAcc() != 0) {
+          speedUp.draw();
+        }
       }
+      send.draw();
+      cancel.draw();
     }
   }
 
-  public void resize(int width, int height) {
-    calculateSize(width, height);
+  /**
+   * should be called when the parents dimensions change
+   */
+  public void resize() {
+    calculateSize();
     for (GuiTile tile : tiles) {
       tile.resize(startX, startY, offsetX, offsetY, this.width);
     }
