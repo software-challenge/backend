@@ -4,7 +4,7 @@ import processing.core.PImage;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
 public class Background extends PrimitiveBase {
-  
+
   FrameRenderer parent;
   PImage rawImage;
   PImage img;
@@ -14,13 +14,13 @@ public class Background extends PrimitiveBase {
     this.parent = parent;
     rawImage = parent.loadImage(GuiConstants.BACKGROUND_IMAGE);
   }
-  
+
+  @Override
   public void draw(){
-    resize(parent.displayWidth, parent.displayHeight);
     parent.background(GuiConstants.colorBackGround);
     parent.image(img, 0, 0);
   }
-  
+
   public synchronized void resize(int width, int height){
     try {
       img = (PImage) rawImage.clone();
