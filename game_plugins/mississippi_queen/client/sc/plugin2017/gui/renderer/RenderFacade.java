@@ -173,6 +173,11 @@ public class RenderFacade {
   }
 
   class ResizeListener extends ComponentAdapter {
+    
+    continue here
+    - get mouse movement detection to work
+    - understand comple hierarchy of visual components
+    
     @Override
     public void componentResized(ComponentEvent e) {
       if (e.getComponent() == panel) {
@@ -180,8 +185,7 @@ public class RenderFacade {
         int newHeight = panel.getHeight();
         if (newWidth > 0 && newHeight > 0) {
           logger.debug("setting sizes");
-          panel.remove(frameRenderer);
-          initRenderer();
+          frameRenderer.resize(newWidth, newHeight);
         } else {
           logger.debug("invalid window dimensions");
         }
@@ -192,21 +196,12 @@ public class RenderFacade {
   }
 
 	private void initRenderer() {
-	  // FIXME this is ugly
-	  continue here
-	  GameState curState = null;
-	  if (frameRenderer != null) {
-	    curState = frameRenderer.currentGameState;
-	  }
-  		frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight()); // neuer FrameRenderer
-			panel.setLayout(new BorderLayout());
-			panel.add(frameRenderer, BorderLayout.CENTER);
-	    frameRenderer.init();
-	    if (curState != null) {
-	      frameRenderer.updateGameState(curState);
-	    }
-      panel.revalidate();
-      panel.repaint();
+    frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight()); // neuer FrameRenderer
+    panel.setLayout(new BorderLayout());
+    panel.add(frameRenderer, BorderLayout.CENTER);
+    frameRenderer.init();
+    panel.revalidate();
+    panel.repaint();
 	}
 
 	public void setDisabled(boolean disabled) {
