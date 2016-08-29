@@ -11,14 +11,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
-import sc.plugin2017.Acceleration;
 import sc.plugin2017.Action;
 import sc.plugin2017.EPlayerId;
-import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.PlayerColor;
-import sc.plugin2017.Turn;
 import sc.plugin2017.gui.renderer.primitives.Background;
 import sc.plugin2017.gui.renderer.primitives.BoardFrame;
 import sc.plugin2017.gui.renderer.primitives.GameEndedDialog;
@@ -61,16 +58,13 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
 
-  private int frameWidth;
-  private int frameHeight;
-
   public LinkedHashMap<HexField, Action> stepPossible;
 
   public FrameRenderer(int frameWidth, int frameHeight) {
     super();
 
-    this.frameWidth = frameWidth;
-    this.frameHeight = frameHeight;
+    this.width = frameWidth;
+    this.height = frameHeight;
     this.humanPlayer = false;
     this.humanPlayerMaxTurn = false;
     this.id = EPlayerId.OBSERVER;
@@ -84,37 +78,36 @@ public class FrameRenderer extends PApplet {
     boardFrame = new BoardFrame(this);
     stepPossible = new LinkedHashMap<HexField, Action>();
 
-    // We want to change the size of the PApplet when the window is resized
-    // (normally, the size of the PApplet is set once in the setup method and
-    // stays the same).
   }
+
   @Override
   public void setup() {
-    logger.debug("Dimension when creating board: (" + frameWidth + ","
-        + frameHeight + ")");
+    super.setup();
+    logger.debug("Dimension when creating board: (" + width + ","
+        + height + ")");
     maxTurn = -1;
-    // choosing renderer from options - using P2D as default
+    // choosing renderer from options - using P2D as default (currently it seems
+    // that only the java renderer works).
     //
     // NOTE that setting the size needs to be the first action of the setup
     // method (as stated in the processing reference).
     if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
       logger.debug("Using Java2D as Renderer");
-      size(frameWidth, frameHeight, JAVA2D);
+      size(width, height, JAVA2D);
     } else if (RenderConfiguration.optionRenderer.equals("P3D")) {
       logger.debug("Using P3D as Renderer");
-      size(frameWidth, frameHeight, P3D);
+      size(width, height, P3D);
     } else {
       logger.debug("Using P2D as Renderer");
-      size(frameWidth, frameHeight, P2D);
+      size(width, height, P2D);
     }
     smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
-    // initial draw
     GuiConstants.generateFonts(this);
-    noLoop(); // prevent thread from starving everything else
-    resize(frameWidth, frameHeight);
+
+    guiBoard.setup();
+
     initialized = true;
-    redraw();
   }
 
   @Override
@@ -122,7 +115,6 @@ public class FrameRenderer extends PApplet {
     if (!initialized) {
       return;
     }
-    logger.debug(String.format("draw, coordinates %d,%d",mouseX, mouseY));
     background.draw();
     guiBoard.draw();
     progressBar.draw();
@@ -157,7 +149,7 @@ public class FrameRenderer extends PApplet {
 
     if (gameState != null && gameState.getBoard() != null) {
       logger.debug("updating gui board gamestate");
-      guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(), gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
+      updateView(currentGameState);
     } else {
       logger.error("got gamestate without board");
     }
@@ -195,11 +187,11 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
-  private void update(GameState gameState) {
+  private void updateView(GameState gameState) {
     if (gameState != null && gameState.getBoard() != null) {
       gameState.getRedPlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.RED));
       gameState.getBluePlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.BLUE));
-      guiBoard.update(gameState.getBoard(), gameState.getRedPlayer(),
+      guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(),
           gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
     }
     redraw();
@@ -207,37 +199,22 @@ public class FrameRenderer extends PApplet {
 
   @Override
   public void mouseMoved(MouseEvent e) {
-    logger.debug(String.format("mouse moved, coordinates %d,%d",mouseX, mouseY));
+    super.mouseMoved(e);
     redraw();
   }
 
   @Override
   public void mouseDragged(MouseEvent e) {
+    super.mouseDragged(e);
     redraw();
   }
 
   @Override
-  public void mousePressed(MouseEvent e) {
-    if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      if(currentGameState.getCurrentPlayer()
-        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
-        guiBoard.left.isClicked();
-        guiBoard.right.isClicked();
-        if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
-          guiBoard.speedDown.isClicked();
-        }
-        if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
-          guiBoard.speedUp.isClicked();
-        }
-      }
-      guiBoard.send.isClicked();
-    }
-  }
-
-  @Override
   public void mouseClicked(MouseEvent e) {
+    super.mouseClicked(e);
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       // first the gui buttons
+      /*
       if(currentGameState.getCurrentPlayer()
         .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
         if(guiBoard.left.isClicked()) {
@@ -299,6 +276,7 @@ public class FrameRenderer extends PApplet {
         redraw();
         return;
       }
+      */
       // then field clicks
       HexField clicked = getFieldCoordinates(mouseX, mouseY);
       Action action = stepPossible.get(clicked);
@@ -310,34 +288,26 @@ public class FrameRenderer extends PApplet {
           e1.printStackTrace();
         }
         currentMove.actions.add(action);
-        update(currentGameState);
+        logger.debug(
+            String.format("current player position is now %d, %d",
+                currentGameState.getCurrentPlayer().getField(currentGameState.getBoard()).getX(),
+                currentGameState.getCurrentPlayer().getField(currentGameState.getBoard()).getY()
+            )
+        );
+        updateView(currentGameState);
       }
     }
-    update(currentGameState);
+    updateView(currentGameState);
     redraw();
   }
 
   private void sendMove() {
-    Move send = new Move();
-    // buddle accelerations
-    int acc = 0;
+    Move move = new Move();
     for (Action action : currentMove.actions) {
-      if(action instanceof Acceleration) {
-        acc += ((Acceleration) action).acc;
-      }
+      move.actions.add(action);
     }
-    if(acc != 0) {
-      send.actions.add(new Acceleration(acc));
-    }
-    // add rest to send
-    for (Action action : currentMove.actions) {
-      if(action != null && action.getClass() != Acceleration.class) {
-        send.actions.add(action);
-      }
-    }
-    // set order
-    send.setOrderInActions();
-    RenderFacade.getInstance().sendMove(send);
+    move.setOrderInActions();
+    RenderFacade.getInstance().sendMove(move);
   }
 
   private HexField getFieldCoordinates(int x, int y) {
@@ -352,19 +322,26 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
+  /**
+   * Is called automatically (by RenderFacade) when window dimensions have
+   * changed.
+   */
   @Override
   public void resize(int width, int height) {
     logger.debug(String.format("updating dimension: %d,%d", width, height));
     super.resize(width, height); // this is actually needed to propagate size, otherwise you will get exceptions that dimensions need to be >=0
+
     background.resize(width, height);
     guiBoard.resize();
 
+    logger.debug(String.format("dimension of PApplet: %d,%d", this.width, this.height));
     // progressBar, sideBar and boardFrame have no own dimensions, they access
     // parents dimensions directly and don't need to be resized.
   }
 
   @Override
   public void keyPressed() {
+    super.keyPressed();
     if (key == 'c' || key == 'C') {
       new RenderConfigurationDialog(FrameRenderer.this);
     }

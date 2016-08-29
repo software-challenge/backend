@@ -173,11 +173,7 @@ public class RenderFacade {
   }
 
   class ResizeListener extends ComponentAdapter {
-    
-    continue here
-    - get mouse movement detection to work
-    - understand comple hierarchy of visual components
-    
+
     @Override
     public void componentResized(ComponentEvent e) {
       if (e.getComponent() == panel) {

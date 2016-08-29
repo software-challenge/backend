@@ -53,7 +53,6 @@ public class HexField extends PrimitiveBase{
     fieldY = field.getY();
     type = field.getType();
     highlighted = false;
-
   }
 
   private void drawHex() {

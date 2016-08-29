@@ -166,6 +166,7 @@ public class GuiPlayer extends PrimitiveBase {
   public void update(Player player, boolean currentPlayer) {
     this.fieldX = player.getX();
     this.fieldY = player.getY();
+    continue here: need to update x and y!
     this.coal = player.getCoal();
     this.color = player.getPlayerColor();
     this.speed = player.getSpeed();
