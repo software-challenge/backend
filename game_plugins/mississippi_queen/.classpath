@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/software_challenge_sdk"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/software_challenge_sdk/lib/processing-core.jar"/>
+	<classpathentry kind="lib" path="lib/G4P.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
