@@ -8,7 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import g4p_controls.GButton;
+import g4p_controls.GImageButton;
 import sc.plugin2017.Action;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
@@ -28,12 +28,12 @@ public class GuiBoard extends PrimitiveBase {
 
   private Board currentBoard;
 
-  private GButton left;
-  private GButton right;
-  private GButton speedUp;
-  private GButton speedDown;
-  private GButton send;
-  private GButton cancel;
+  private GImageButton left;
+  private GImageButton right;
+  private GImageButton speedUp;
+  private GImageButton speedDown;
+  private GImageButton send;
+  private GImageButton cancel;
 
   private GuiPlayer red;
   private GuiPlayer blue;
@@ -61,14 +61,13 @@ public class GuiBoard extends PrimitiveBase {
    */
   private int maxFieldsInY;
 
+  private boolean buttonsInitialized = false;
+
   public GuiBoard(FrameRenderer parent) {
     super(parent);
     this.parent = parent;
 
     calculateSize();
-    if(parent.currentGameState != null) {
-      currentBoard = parent.currentGameState.getVisibleBoard();
-    }
 
     red = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
     blue = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
@@ -81,7 +80,7 @@ public class GuiBoard extends PrimitiveBase {
 
   public void setup() {
     calculateSize();
-    createButtons();
+    createButtons(calculateButtonSize());
   }
 
   /**
@@ -89,22 +88,32 @@ public class GuiBoard extends PrimitiveBase {
    * exceptions. It seems that G4P requires that the setup method was called
    * before the buttons are created.
    */
-  private void createButtons() {
-    left = new GButton(parent, 0, 0, 50, 20);
-    right = new GButton(parent, 0, 0, 50, 20);
-    speedUp = new GButton(parent, 0, 0, 50, 20);
-    speedDown = new GButton(parent, 0, 0, 50, 20);
-    send = new GButton(parent, 0, 0, 50, 20);
-    cancel = new GButton(parent, 0, 0, 50, 20);
-    /*
-    left = new GImageButton(parent, 0, 0, new String[] { GuiConstants.ROTATE_LEFT_IMAGE_PATH });
-    right = new GImageButton(parent, 0, 0, new String[] { GuiConstants.ROTATE_RIGHT_IMAGE_PATH });
-    speedUp = new GImageButton(parent, 0, 0, new String[] { GuiConstants.INCREASE_IMAGE_PATH });
-    speedDown = new GImageButton(parent, 0, 0, new String[] { GuiConstants.DECREASE_IMAGE_PATH });
-    send = new GImageButton(parent, 0, 0, new String[] { GuiConstants.OKAY_IMAGE_PATH });
-    cancel = new GImageButton(parent, 0, 0, new String[] { GuiConstants.CANCEL_IMAGE_PATH });
-    */
-
+  private void createButtons(int size) {
+    if (left != null) {
+      left.dispose();
+    }
+    if (right != null) {
+      right.dispose();
+    }
+    if (speedUp != null) {
+      speedUp.dispose();
+    }
+    if (speedDown != null) {
+      speedDown.dispose();
+    }
+    if (send != null) {
+      send.dispose();
+    }
+    if (cancel != null) {
+      cancel.dispose();
+    }
+    left = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.ROTATE_LEFT_IMAGE_PATH });
+    right = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.ROTATE_RIGHT_IMAGE_PATH });
+    speedUp = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.INCREASE_IMAGE_PATH });
+    speedDown = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.DECREASE_IMAGE_PATH });
+    send = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.OKAY_IMAGE_PATH });
+    cancel = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.CANCEL_IMAGE_PATH });
+    buttonsInitialized = true;
   }
 
   /**
@@ -166,7 +175,7 @@ public class GuiBoard extends PrimitiveBase {
     logger.debug(String.format("view player blue is on %d,%d", blue.getField(currentBoard).getX(), blue.getField(currentBoard).getY() ));
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
-    updateButtonPositions(board, red, blue, current);
+    updateButtonPositions(getCurrentGuiPlayer());
     updateButtonAvailability(currentPlayer, currentBoard);
     if(!currentBoard.getTiles().isEmpty()) {
 
@@ -188,7 +197,7 @@ public class GuiBoard extends PrimitiveBase {
         }
       }
 
-      if (parent.humanPlayer) {
+      if (parent.currentPlayerIsHuman()) {
         LinkedList<HexField> toHighlight = new LinkedList<>();
         LinkedHashMap<HexField, Action> add = new LinkedHashMap<>();
         Field redField = red.getField(currentBoard);
@@ -225,7 +234,7 @@ public class GuiBoard extends PrimitiveBase {
 
         } else {
           // case sandbank
-          if(parent.currentGameState.getCurrentPlayer().getMovement() != 0) {
+          if(parent.getCurrentPlayer().getMovement() != 0) {
             HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 currentPlayer.getDirection());
             if(step != null) {
@@ -244,58 +253,52 @@ public class GuiBoard extends PrimitiveBase {
           logger.debug(String.format("Player may move to %d,%d", hexField.getFieldX(), hexField.getFieldY()));
           hexField.setHighlighted(true);
         }
-        parent.stepPossible = add;
+        parent.setPossibleSteps(add);
+      } else {
+        logger.debug("no human player");
       }
+    } else {
+      logger.debug("no tiles");
     }
   }
 
-  private void updateButtonPositions(Board board, Player redPlayer, Player bluePlayer, PlayerColor currentPlayerColor) {
-    GuiPlayer currentGuiPlayer;
-    Player currentPlayer;
-    if (currentPlayerColor == PlayerColor.RED) {
-      currentGuiPlayer = red;
-      currentPlayer = redPlayer;
+  private GuiPlayer getCurrentGuiPlayer() {
+    Player currentPlayer = parent.getCurrentPlayer();
+    if (currentPlayer != null) {
+      if (currentPlayer.getPlayerColor() == PlayerColor.RED) {
+        return red;
+      } else {
+        return blue;
+      }
     } else {
-      currentGuiPlayer = blue;
-      currentPlayer = bluePlayer;
+      return null;
     }
+  }
+  
+  private void updateButtonPositions(GuiPlayer currentGuiPlayer) {
+    if (buttonsInitialized && currentGuiPlayer != null) {
+      int centerX = Math.round(currentGuiPlayer.getX() + (width/2));
+      int centerY = Math.round(currentGuiPlayer.getY() + (width/2));
+      int curAngle = (currentGuiPlayer.getDirection() * -60) + 90;
 
-    int curX = Math.round(currentGuiPlayer.getX());
-    int curY = Math.round(currentGuiPlayer.getY());
-    int curAngle = (currentPlayer.getDirection() * -60) + 90;
+      left.moveTo(centerX - (width/2), centerY - (width/2));
+      right.moveTo(centerX + (width/2), centerY - (width/2));
 
-    left.moveTo(curX, curY);
-    right.setRotation(curAngle);
+      speedUp.moveTo(centerX + (width/2), centerY - (width/4));
+      speedDown.moveTo(centerX + (width/2), centerY + (width/4));
 
-    curY += 40;
-
-    right.moveTo(curX, curY);
-    right.setRotation(curAngle);
-
-    curY += 40;
-
-    speedUp.moveTo(curX, curY);
-
-    curY += 40;
-
-    speedDown.moveTo(curX, curY);
-
-    curY += 40;
-
-    send.moveTo(curX, curY);
-
-    curY += 40;
-
-    cancel.moveTo(curX, curY);
+      send.moveTo(centerX + (width/2), centerY + (width/2));
+      cancel.moveTo(centerX - (width/2), centerY + (width/2));
+    }
   }
 
   private void updateButtonAvailability(Player currentPlayer, Board currentBoard) {
 
-    boolean maxSpeed = parent.currentGameState.getCurrentPlayer().getSpeed() == 6;
-    boolean minSpeed = parent.currentGameState.getCurrentPlayer().getSpeed() == 1;
-    boolean onSandbank = parent.currentGameState.getCurrentPlayer().getField(parent.currentGameState.getBoard()).getType() == FieldType.SANDBANK;
-    boolean accelerationPossible = parent.currentGameState.getCurrentPlayer().getFreeAcc() + parent.currentGameState.getCurrentPlayer().getCoal() > 0;
-    boolean rotationPossible = parent.currentGameState.getCurrentPlayer().getFreeTurns() + parent.currentGameState.getCurrentPlayer().getCoal() > 0;
+    boolean maxSpeed = parent.getCurrentPlayer().getSpeed() == 6;
+    boolean minSpeed = parent.getCurrentPlayer().getSpeed() == 1;
+    boolean onSandbank = parent.getCurrentPlayerField().getType() == FieldType.SANDBANK;
+    boolean accelerationPossible = parent.getCurrentPlayer().getFreeAcc() + parent.getCurrentPlayer().getCoal() > 0;
+    boolean rotationPossible = parent.getCurrentPlayer().getFreeTurns() + parent.getCurrentPlayer().getCoal() > 0;
 
     speedUp.setEnabled( !maxSpeed && !onSandbank && accelerationPossible);
     speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible);
@@ -350,21 +353,16 @@ public class GuiBoard extends PrimitiveBase {
     red.resize(startX, startY, offsetX, offsetY, this.width);
     blue.resize(startX, startY, offsetX, offsetY, this.width);
     resizeButtons();
-    if (parent.currentGameState != null) {
-      updateButtonPositions(parent.currentGameState.getBoard(), parent.currentGameState.getRedPlayer(), parent.currentGameState.getBluePlayer(), parent.currentGameState.getCurrentPlayerColor());
-    }
+    updateButtonPositions(getCurrentGuiPlayer());
   }
 
   private void resizeButtons() {
-    int newButtonWidth = Math.round(width / 2);
-    /*
-    left.resize(newButtonWidth, newButtonWidth);
-    right.resize(newButtonWidth, newButtonWidth);
-    speedUp.resize(newButtonWidth, newButtonWidth);
-    speedDown.resize(newButtonWidth, newButtonWidth);
-    send.resize(newButtonWidth, newButtonWidth);
-    cancel.resize(newButtonWidth, newButtonWidth);
-    */
+    // buttons cannot be resized and need to be recreated
+    createButtons(calculateButtonSize());
+  }
+
+  private int calculateButtonSize() {
+    return Math.max(1, Math.round(width / 6));
   }
 
   @Override

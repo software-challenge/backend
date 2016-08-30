@@ -8,17 +8,13 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
  */
 public class ProgressBar extends PrimitiveBase {
 
-  public ProgressBar(FrameRenderer par) {
-    super(par);
-    this.parent = par;
+  public ProgressBar(FrameRenderer parent) {
+    super(parent);
   }
 
   @Override
   public void draw() {
-    int round = 0;
-    if (parent.currentGameState != null) {
-      round = parent.currentGameState.getRound();
-    }
+    int round = parent.getCurrentRound();
     parent.pushStyle();
 
     // Umrandung
@@ -27,8 +23,9 @@ public class ProgressBar extends PrimitiveBase {
     parent.fill(GuiConstants.colorSideBarBG);
     parent.rect(0, 0, parent.getWidth(), parent.getHeight()
         * GuiConstants.PROGRESS_BAR_HEIGHT);
+
     // Text
-    if(parent.currentGameState != null && !parent.currentGameState.gameEnded()) {
+    if(parent.gameActive()) {
       parent.textFont(GuiConstants.fonts[0]);
       parent.textSize(GuiConstants.fontSizes[0]);
 

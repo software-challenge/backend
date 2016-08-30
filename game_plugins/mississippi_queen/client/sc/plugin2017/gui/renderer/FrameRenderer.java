@@ -5,16 +5,21 @@ package sc.plugin2017.gui.renderer;
 
 import java.awt.Image;
 import java.awt.event.MouseEvent;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
 import sc.plugin2017.Action;
+import sc.plugin2017.DebugHint;
 import sc.plugin2017.EPlayerId;
+import sc.plugin2017.Field;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
+import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.primitives.Background;
 import sc.plugin2017.gui.renderer.primitives.BoardFrame;
@@ -40,17 +45,17 @@ public class FrameRenderer extends PApplet {
   private static final Logger logger = LoggerFactory
       .getLogger(FrameRenderer.class);
 
-  public GameState currentGameState;
+  private GameState currentGameState;
   private GameState backUp;
-  public Move currentMove;
-  public boolean humanPlayer;
+  private Move currentMove;
+  private boolean humanPlayer;
   private boolean humanPlayerMaxTurn;
-  public int maxTurn;
+  private int maxTurn;
   private EPlayerId id;
 
   private boolean initialized = false;
 
-  public GuiBoard guiBoard;
+  private GuiBoard guiBoard;
 
   private Background background;
 
@@ -58,7 +63,7 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
 
-  public LinkedHashMap<HexField, Action> stepPossible;
+  private LinkedHashMap<HexField, Action> stepPossible;
 
   public FrameRenderer(int frameWidth, int frameHeight) {
     super();
@@ -121,7 +126,7 @@ public class FrameRenderer extends PApplet {
     sideBar.draw();
     boardFrame.draw();
     if (currentGameState != null && currentGameState.gameEnded()) {
-      GameEndedDialog.draw(this);
+      GameEndedDialog.draw(this, currentGameState);
     }
     text(String.format("Mouse position: %d,%d", mouseX, mouseY), 20, 60);
   }
@@ -142,17 +147,10 @@ public class FrameRenderer extends PApplet {
     try {
       backUp = currentGameState.clone();
     } catch (CloneNotSupportedException e) {
-      // TODO Auto-generated catch block
-      System.out.println("Clone of Backup failed");
-      e.printStackTrace();
+      logger.error("Clone of Backup failed", e);
     }
 
-    if (gameState != null && gameState.getBoard() != null) {
-      logger.debug("updating gui board gamestate");
-      updateView(currentGameState);
-    } else {
-      logger.error("got gamestate without board");
-    }
+    // TODO document what this code does
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
       if (maxTurn == currentGameState.getTurn() - 1) {
@@ -166,6 +164,14 @@ public class FrameRenderer extends PApplet {
         && humanPlayerMaxTurn) {
       humanPlayer = true;
     }
+
+    if (gameState != null && gameState.getBoard() != null) {
+      logger.debug("updating gui board gamestate");
+      updateView(currentGameState);
+    } else {
+      logger.error("got gamestate without board");
+    }
+
     redraw();
   }
 
@@ -191,8 +197,13 @@ public class FrameRenderer extends PApplet {
     if (gameState != null && gameState.getBoard() != null) {
       gameState.getRedPlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.RED));
       gameState.getBluePlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.BLUE));
+      boardFrame.update(gameState.getCurrentPlayerColor());
+      sideBar.update(gameState.getCurrentPlayerColor());
       guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(),
           gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
+    } else {
+      boardFrame.update(null);
+      sideBar.update(null);
     }
     redraw();
   }
@@ -372,6 +383,62 @@ public class FrameRenderer extends PApplet {
     }
     if(boardFrame != null) {
       boardFrame.kill();
+    }
+  }
+
+  public boolean currentPlayerIsHuman() {
+    return humanPlayer;
+  }
+
+  public Player getCurrentPlayer() {
+    if (currentGameState != null) {
+      return currentGameState.getCurrentPlayer();
+    } else {
+      return null;
+    }
+  }
+
+  public void setPossibleSteps(LinkedHashMap<HexField, Action> add) {
+    stepPossible = add;
+  }
+
+  public Field getCurrentPlayerField() {
+    if (currentGameState != null && currentGameState.getBoard() != null) {
+      return currentGameState.getCurrentPlayer().getField(currentGameState.getBoard());
+    } else {
+      return null; 
+    }
+  }
+
+  public int getCurrentRound() {
+    if (currentGameState != null) {
+      return currentGameState.getRound();
+    } else {
+      return 0;
+    }
+  }
+
+  public boolean gameActive() {
+    if (currentGameState != null) {
+      return !currentGameState.gameEnded();
+    } else {
+      return false;
+    }
+  }
+
+  public List<DebugHint> getCurrentHints() {
+    if (currentGameState != null && currentGameState.getLastMove() != null) {
+      return currentGameState.getLastMove().getHints();
+    } else {
+      return Collections.emptyList();
+    }
+  }
+
+  public List<Action> getCurrentActions() {
+    if (currentMove != null && currentMove.actions != null) {
+      return currentMove.actions;
+    } else {
+      return Collections.emptyList();
     }
   }
 }
