@@ -4,14 +4,10 @@ import sc.plugin2017.Action;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.gui.renderer.RenderConfiguration;
-import sc.plugin2017.util.Constants;
 
 /**
  * Zeichnet Spielerinformationen (Punkte) aktueller Zug
  * des Spieles.
- * 
- * @author soeren
- * 
  */
 // TODO find out why dispalyName == null
 public class SideBar extends PrimitiveBase {
