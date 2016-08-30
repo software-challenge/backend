@@ -1,6 +1,7 @@
 package sc.plugin2017.gui.renderer.primitives;
 
 import sc.plugin2017.Action;
+import sc.plugin2017.DebugHint;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.gui.renderer.RenderConfiguration;
@@ -12,11 +13,29 @@ import sc.plugin2017.gui.renderer.RenderConfiguration;
 // TODO find out why dispalyName == null
 public class SideBar extends PrimitiveBase {
 
+  private PlayerColor currentColor;
+  private String redName = GuiConstants.DEFAULT_RED_NAME;
+  private int redPoints = GuiConstants.DEFAULT_RED_POINTS;
+  private String blueName = GuiConstants.DEFAULT_BLUE_NAME;
+  private int bluePoints = GuiConstants.DEFAULT_BLUE_POINTS;
+  
   public SideBar(FrameRenderer parent) {
     super(parent);
     this.parent = parent;
   }
+  
+  public void update(PlayerColor currentColor, String redName, int redPoints, String blueName, int bluePoints) {
+    this.currentColor = currentColor;
+    this.redName = redName;
+    this.redPoints = redPoints;
+    this.blueName = blueName;
+    this.bluePoints = bluePoints;
+  }
 
+  public void update(PlayerColor currentColor) {
+    update(currentColor, GuiConstants.DEFAULT_RED_NAME, GuiConstants.DEFAULT_RED_POINTS, GuiConstants.DEFAULT_BLUE_NAME, GuiConstants.DEFAULT_BLUE_POINTS);
+  }
+  
   @Override
   public void draw() {
     parent.pushStyle();
@@ -34,118 +53,74 @@ public class SideBar extends PrimitiveBase {
     parent.textFont(GuiConstants.fonts[2]);
     parent.textSize(GuiConstants.fontSizes[2]);
 
-    if (parent.currentGameState != null
-        && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.RED)
+    if (currentColor == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
-    else
+    } else {
       parent.fill(GuiConstants.colorBlack);
-
-    String redName = "Spieler1";
-    int redPoints = 0;
-//    int redSpeed = 1;
-//    int redCoal = 6;
-    int redMovement = 1;
-    if (parent.currentGameState != null) {
-      redName = parent.currentGameState.getRedPlayer().getDisplayName();
-      redPoints = parent.currentGameState.getRedPlayer().getPoints();
-//      redSpeed = parent.currentGameState.getRedPlayer().getSpeed();
-      redMovement = parent.currentGameState.getRedPlayer().getMovement();
-//      redCoal = parent.currentGameState.getRedPlayer().getCoal();
     }
+
     parent.translate(20, parent.textAscent() + 20);
     // passe Textgröße an
     int  preferredTextSize = 25;
-    if(parent != null && parent.currentGameState != null && redName != null) {
-      preferredTextSize = (int) (30f / parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
-    }
+    preferredTextSize = (int) (30f / parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+
     if (!(preferredTextSize > 30)) {
       parent.textSize(preferredTextSize);
     }
-    
-    if(redName != null) {
-      parent.text(redName, 0, 0);
-    }
-    
+
+    parent.text(redName, 0, 0);
+
     // Punkte + Kohle + Geschwindigkeit
     parent.textFont(GuiConstants.fonts[1]);
     parent.textSize(GuiConstants.fontSizes[1]);
 
 
     parent.translate(0, parent.textAscent() + parent.textDescent());
-    if (parent.currentGameState != null && !parent.currentGameState.gameEnded())
-      parent.text("Punkte: " + redPoints, 0, 0);
-    else
-      parent.text("Punkte: " + redPoints, 0, 0);
-    // Geschwindigkeit und Bewegungspunkte
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    parent.text("Züge: " + redMovement, 0, 0);
-//    parent.translate(0, parent.textAscent() + parent.textDescent());
-//    parent.text("Kohle: " + redCoal, 0, 0);
-    
+    parent.text("Punkte: " + redPoints, 0, 0);
+
     // Blauer Spieler.
     parent.textFont(GuiConstants.fonts[2]);
     parent.textSize(GuiConstants.fontSizes[2]);
 
     parent.translate(0, parent.textAscent() + parent.textDescent());
-    if (parent.currentGameState != null
-        && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.BLUE)
+    if (currentColor == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
-    else
+    } else {
       parent.fill(GuiConstants.colorBlack);
-    String blueName = "Spieler2";
-    int bluePoints = 0;
-//    int blueSpeed = 1;
-    int blueMovement = 1;
-//    int blueCoal = 6;
-    if (parent.currentGameState != null) {
-      blueName = parent.currentGameState.getBluePlayer().getDisplayName();
-      bluePoints = parent.currentGameState.getBluePlayer().getPoints();
-//      blueSpeed = parent.currentGameState.getBluePlayer().getSpeed();
-      blueMovement = parent.currentGameState.getBluePlayer().getMovement();
-//      blueCoal = parent.currentGameState.getBluePlayer().getCoal();
     }
 
     // passe Textgröße an
-    if(blueName != null) {
-      preferredTextSize = (int) (30f / parent.textWidth(blueName) * (parent
-        .getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
-    }
-    if (!(preferredTextSize > 30))
+    preferredTextSize = (int) (30f / parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
+    if (!(preferredTextSize > 30)) {
       parent.textSize(preferredTextSize);
-
-    if(blueName != null) {
-      parent.text(blueName, 0, 0);
     }
+
+    parent.text(blueName, 0, 0);
     // Punkte
     parent.textSize(GuiConstants.fontSizes[1]);
     parent.textFont(GuiConstants.fonts[1]);
     parent.translate(0, parent.textAscent() + parent.textDescent());
-    if (parent.currentGameState != null && !parent.currentGameState.gameEnded())
-      parent.text("Punkte: " + bluePoints, 0, 0);
-    else
-      parent.text("Punkte: " + bluePoints, 0, 0);
- // Geschwindigkeit und Bewegungspunkte
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    parent.text("Züge: "  + blueMovement, 0, 0);
-//    parent.translate(0, parent.textAscent() + parent.textDescent());
-//    parent.text("Kohle: " + blueCoal, 0, 0);
+    parent.text("Punkte: " + bluePoints, 0, 0);
+
     // Aktueller Zug
     parent.translate(0, parent.textAscent() + parent.textDescent());
-    if (parent.currentGameState != null
-        && parent.currentGameState.getCurrentPlayerColor() == PlayerColor.RED)
+    if (currentColor == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
-    else
+    } else if (currentColor == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
-    
+    } else {
+      parent.fill(GuiConstants.colorBlack);
+    }
+
     parent.textSize(GuiConstants.fontSizes[3]);
     parent.textFont(GuiConstants.fonts[3]);
-    if(parent.currentMove != null && parent.currentMove.actions != null)
-    for (Action action : parent.currentMove.actions) {
-      if(action != null) {
+    for (Action action : parent.getCurrentActions()) {
+      if (action != null) {
         parent.translate(0, parent.textAscent() + parent.textDescent());
         parent.text(action.toString(), 0, 0);
       }
     }
+
     // Debug Ausgabe
     if (RenderConfiguration.optionDebug) {
       parent.translate(0, parent.textAscent() + parent.textDescent());
@@ -153,14 +128,10 @@ public class SideBar extends PrimitiveBase {
       parent.textSize(GuiConstants.fontSizes[1]);
       parent.fill(GuiConstants.colorBlack);
       parent.text(parent.frameRate, 0, 0);
-      if (parent.currentGameState != null
-          && parent.currentGameState.getLastMove() != null)
-        for (int i = 0; i < parent.currentGameState.getLastMove().getHints()
-            .size(); i++) {
+      for (DebugHint hint : parent.getCurrentHints()) {
           parent.translate(0, parent.textAscent() + parent.textDescent());
-          parent.text(parent.currentGameState.getLastMove().getHints().get(i)
-              .getContent(), 0, 0);
-        }
+          parent.text(hint.getContent(), 0, 0);
+      }
     }
 
     parent.popMatrix();

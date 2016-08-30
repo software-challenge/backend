@@ -9,22 +9,29 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
  */
 public class BoardFrame extends PrimitiveBase {
 
+  // Red, Blue or null
+  private PlayerColor currentColor;
+
   public BoardFrame(FrameRenderer parent) {
     super(parent);
+    currentColor = null;
+  }
+
+  public void update(PlayerColor currentColor) {
+    this.currentColor = currentColor;
   }
 
   @Override
   public void draw() {
     parent.pushStyle();
     parent.noStroke();
-    if (parent.currentGameState != null && parent.currentGameState.getCurrentPlayer() != null) {
-      if (parent.currentGameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED) {
-        parent.fill(GuiConstants.colorRed);
-      } else if (parent.currentGameState.getCurrentPlayer().getPlayerColor() == PlayerColor.BLUE) {
-        parent.fill(GuiConstants.colorBlue);
-      } else {
-        parent.fill(GuiConstants.colorGrey);
-      }
+
+    if (currentColor == PlayerColor.RED) {
+      parent.fill(GuiConstants.colorRed);
+    } else if (currentColor == PlayerColor.BLUE) {
+      parent.fill(GuiConstants.colorBlue);
+    } else {
+      parent.fill(GuiConstants.colorGrey);
     }
 
     parent.rect(0, 0, parent.getWidth(), GuiConstants.frameBorderSize);

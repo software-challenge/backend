@@ -123,6 +123,10 @@ public class GuiConstants {
    */
   public static final float GUI_BOARD_HEIGHT = SIDE_BAR_HEIGHT;
   public static final float BORDERSIZE = 2f;
+  public static final String DEFAULT_RED_NAME = "Spieler 1";
+  public static final String DEFAULT_BLUE_NAME = "Spieler 2";
+  public static final int DEFAULT_RED_POINTS = 0;
+  public static final int DEFAULT_BLUE_POINTS = 0;
 
   /*
    * Fonts

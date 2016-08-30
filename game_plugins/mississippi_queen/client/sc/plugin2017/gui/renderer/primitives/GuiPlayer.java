@@ -45,11 +45,6 @@ public class GuiPlayer extends HexField {
     // translate to the center of the field
     parent.translate(x + b, y + a + (c/2));
 
-    if(parent.currentGameState != null && parent.currentGameState.getBoard() != null && parent.currentGameState.getBoard().getTiles().size() > 2) {
-      parent.textFont(GuiConstants.fonts[3]);
-      parent.textSize(GuiConstants.fontSizes[3]);
-    }
-
     if(color == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
     } else {
@@ -133,6 +128,14 @@ public class GuiPlayer extends HexField {
     parent.popStyle();
 
   }
+  
+  public void resize(float startX, float startY, int offsetX, int offsetY, float width){
+    this.startX = startX;
+    this.startY = startY;
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
+    super.resize(startX, startY, offsetX, offsetY, width);
+  }
 
   public void update(Player player, boolean currentPlayer) {
     this.fieldX = player.getX();
@@ -152,6 +155,10 @@ public class GuiPlayer extends HexField {
   
   public float getY() {
     return y;
+  }
+  
+  public int getDirection() {
+    return direction;
   }
 
 }
