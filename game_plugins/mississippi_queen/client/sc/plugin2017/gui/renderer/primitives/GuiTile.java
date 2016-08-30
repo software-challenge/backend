@@ -16,13 +16,13 @@ public class GuiTile extends PrimitiveBase {
     fields = new ArrayList<HexField>();
   }
 
-  public GuiTile(FrameRenderer parent, int index) {
+  public GuiTile(FrameRenderer parent, int index, float width, float startX, float startY, int offsetX, int offsetY) {
     super(parent);
     visible = false;
     fields = new ArrayList<HexField>();
     // create GuiFields
     for(int i = 0; i < 20; i++) {
-      HexField field = new HexField(parent);
+      HexField field = new HexField(parent, width, startX, startY, offsetX, offsetY);
       fields.add(field);
     }
   }
@@ -34,7 +34,6 @@ public class GuiTile extends PrimitiveBase {
         field.draw();
       }
     }
-
   }
 
   public void resize(float startX, float startY, int offsetX, int offsetY, float width) {

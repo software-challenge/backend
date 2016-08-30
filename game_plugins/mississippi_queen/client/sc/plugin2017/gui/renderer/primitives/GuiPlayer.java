@@ -8,17 +8,6 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 public class GuiPlayer extends HexField {
 
 
-  private float x, y;
-
-  /**
-   * x position des Feldes innerhalb des Spielefeld arrays
-   */
-  private int fieldX;
-  /**
-   * y position des Feldes innerhalb des Spielefeld arrays
-   */
-  private int fieldY;
-
   private int coal;
 
   private int speed;
@@ -27,21 +16,24 @@ public class GuiPlayer extends HexField {
 
   private int passenger;
 
-  private float width;
-
-  private float c;
-
-  private float b;
-  private float a;
-
   private PlayerColor color;
 
   private boolean currentPlayer;
 
   private int direction;
+  
+  // player has to remember this to caclulate new positions
+  private float startX;
+  private float startY;
+  private int offsetX;
+  private int offsetY;
 
-  public GuiPlayer(FrameRenderer parent) {
-    super(parent);
+  public GuiPlayer(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
+    super(parent, width, startX, startY, offsetX, offsetY);
+    this.startX = startX;
+    this.startY = startY;
+    this.offsetX = offsetX;
+    this.offsetY = offsetY;
   }
 
   @Override
@@ -142,31 +134,24 @@ public class GuiPlayer extends HexField {
 
   }
 
-  public void resize(float startX, float startY, int offsetX, int offsetY, float width) {
-    this.width = width;
-    calcSize(width);
-    float newX = startX;
-    float newY = startY;
-    if((fieldY % 2) != 0) {
-      newX = newX - width / 2f;
-    }
-    newY += (offsetY + fieldY) * (c + HexField.calcA(width) + GuiConstants.BORDERSIZE);
-    newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
-    this.x = newX;
-    this.y = newY;
-
-  }
-
   public void update(Player player, boolean currentPlayer) {
     this.fieldX = player.getX();
     this.fieldY = player.getY();
-    // XXX continue here: need to update x and y!
+    resize(startX, startY, offsetX, offsetY, width);
     this.coal = player.getCoal();
     this.color = player.getPlayerColor();
     this.speed = player.getSpeed();
     this.passenger = player.getPassenger();
     this.currentPlayer = currentPlayer;
     this.direction = player.getDirection();
+  }
+  
+  public float getX() {
+    return x;
+  }
+  
+  public float getY() {
+    return y;
   }
 
 }
