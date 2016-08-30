@@ -65,20 +65,16 @@ public class GuiBoard extends PrimitiveBase {
     super(parent);
     this.parent = parent;
 
-    red = new GuiPlayer(parent);
-    blue = new GuiPlayer(parent);
-    tiles = new LinkedList<GuiTile>();
-    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
-      tiles.add(new GuiTile(parent, i));
-    }
-
-    float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
-
-    float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
-
-    dim = new Dimension((int) xDimension, (int) yDimension);
+    calculateSize();
     if(parent.currentGameState != null) {
       currentBoard = parent.currentGameState.getVisibleBoard();
+    }
+
+    red = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
+    blue = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
+    tiles = new LinkedList<GuiTile>();
+    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
+      tiles.add(new GuiTile(parent, i, width, startX, startY, offsetX, offsetY));
     }
 
   }

@@ -9,43 +9,34 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 /**
  * Hexagon Primitve for explanation see
  * http://grantmuller.com/drawing-a-hexagon-in-processing-java/
- *
- * @author soeren
- *
  */
 public class HexField extends PrimitiveBase{
 
   // Fields
-  private float x, y;
-  private float a, b, c;
+  protected float x, y;
+  protected float a, b, c;
 
-  private float width;
+  protected float width;
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
    */
-  private int fieldX;
+  protected int fieldX;
   /**
    * y position des Feldes innerhalb des Spielefeld arrays
    */
-  private int fieldY;
+  protected int fieldY;
 
   private FieldType type;
 
   private boolean highlighted = false;
 
-  public HexField(FrameRenderer parent, float startX, float startY, float width, int fieldX, int fieldY, FieldType type) {
-    super(parent);
-    setX(startX);
-    setY(startY);
-    calcSize(width);
-    setFieldX(fieldX);
-    setFieldY(fieldY);
-  }
-
-  public HexField(FrameRenderer parent) {
+  public HexField(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
     super(parent);
     fieldX = 0;
     fieldY = 0;
+    this.width = width;
+    calcSize();
+    calculatePosition(startX, startY, offsetX, offsetY);
   }
 
   public void update(Field field) {
@@ -60,13 +51,14 @@ public class HexField extends PrimitiveBase{
     parent.vertex(0, a);
     parent.vertex(b, 0);
     parent.vertex(2 * b, a);
-    parent.vertex(2 * b, a + getC());
-    parent.vertex(b, 2 * a + getC());
-    parent.vertex(0, a + getC());
+    parent.vertex(2 * b, a + c);
+    parent.vertex(b, 2 * a + c);
+    parent.vertex(0, a + c);
     parent.vertex(0, a);
     parent.endShape();
     parent.noStroke();
   }
+
   @Override
   public void draw() {
     parent.pushStyle();
@@ -165,31 +157,31 @@ public class HexField extends PrimitiveBase{
     parent.popStyle();
   }
 
-  protected void calcSize(float width) {
+  protected void calcSize() {
     b = width / 2;
-    setC(b / PApplet.cos(PApplet.radians(30)));
+    c = b / PApplet.cos(PApplet.radians(30));
     a = b * PApplet.sin(PApplet.radians(30));
   }
 
-
   public static float calcA(float width) {
-
     return (width / 2f) * PApplet.sin(PApplet.radians(30));
   }
 
   public static float calcB(float width) {
-
-      return (width / 2f);
-    }
+    return (width / 2f);
+  }
 
   public static float calcC(float width) {
-
     return (width / 2f) / PApplet.cos(PApplet.radians(30));
   }
 
   public void resize(float startX, float startY, int offsetX, int offsetY, float width){
     this.width = width;
-    calcSize(width);
+    calcSize();
+    calculatePosition(startX, startY, offsetX, offsetY);
+  }
+
+  private void calculatePosition(float startX, float startY, int offsetX, int offsetY) {
     float newX = startX;
     float newY = startY;
     if((fieldY % 2) != 0) {
@@ -199,31 +191,6 @@ public class HexField extends PrimitiveBase{
     newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
     this.x = newX;
     this.y = newY;
-
-  }
-
-  public float getX() {
-    return x;
-  }
-
-  public void setX(float x) {
-    this.x = x;
-  }
-
-  public float getY() {
-    return y;
-  }
-
-  public void setY(float y) {
-    this.y = y;
-  }
-
-  public float getA() {
-    return this.a;
-  }
-
-  public float getB() {
-    return this.b;
   }
 
   public int getFieldX() {
@@ -240,20 +207,6 @@ public class HexField extends PrimitiveBase{
 
   public void setFieldY(int fieldY) {
     this.fieldY = fieldY;
-  }
-
-  /**
-   * @return the c
-   */
-  public float getC() {
-    return c;
-  }
-
-  /**
-   * @param c the c to set
-   */
-  private void setC(float c) {
-    this.c = c;
   }
 
   public boolean isHighlighted() {
@@ -275,9 +228,9 @@ public class HexField extends PrimitiveBase{
     }
     return null;
   }
-  
+
   public FieldType getType() {
     return type;
   }
-  
+
 }
