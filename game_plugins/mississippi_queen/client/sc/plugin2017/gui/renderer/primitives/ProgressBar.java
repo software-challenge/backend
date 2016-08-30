@@ -5,9 +5,6 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 
 /**
  * Zeichnet den Spielverlauf. Rundenanzahl + Bar
- *
- * @author soeren
- *
  */
 public class ProgressBar extends PrimitiveBase {
 

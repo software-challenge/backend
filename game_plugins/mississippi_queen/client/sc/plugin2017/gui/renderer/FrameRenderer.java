@@ -313,7 +313,7 @@ public class FrameRenderer extends PApplet {
   private HexField getFieldCoordinates(int x, int y) {
     HexField coordinates;
 
-    for (GuiTile tile : guiBoard.tiles) {
+    for (GuiTile tile : guiBoard.getTiles()) {
       coordinates = tile.getFieldCoordinates(x,y);
       if(coordinates != null) {
         return coordinates;

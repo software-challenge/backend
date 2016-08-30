@@ -3,6 +3,7 @@ package sc.plugin2017.gui.renderer.primitives;
 import java.awt.Dimension;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,46 +22,44 @@ import sc.plugin2017.Tile;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.util.Constants;
 
-public class GuiBoard extends PrimitiveBase{
+public class GuiBoard extends PrimitiveBase {
 
   private static final Logger logger = LoggerFactory.getLogger(GuiBoard.class);
 
-  FrameRenderer parent;
+  private Board currentBoard;
 
-  Board currentBoard;
+  private GButton left;
+  private GButton right;
+  private GButton speedUp;
+  private GButton speedDown;
+  private GButton send;
+  private GButton cancel;
 
-  public GButton left;
-  public GButton right;
-  public GButton speedUp;
-  public GButton speedDown;
-  public GButton send;
-  public GButton cancel;
+  private GuiPlayer red;
+  private GuiPlayer blue;
 
-  public GuiPlayer red;
-  public GuiPlayer blue;
-
-  public LinkedList<GuiTile> tiles;
+  private LinkedList<GuiTile> tiles;
   /**
    * holds the position of 0,0 relative to parent
    */
-  public float startX;
-  public float startY;
-  public int offsetX;
-  public int offsetY;
-  public Dimension dim;
+  private float startX;
+  private float startY;
+  private int offsetX;
+  private int offsetY;
+  private Dimension dim;
   /**
    * Width of one field
    */
-  public float width;
+  private float width;
 
   /**
    * maximum fields in x direction
    */
-  public int maxFieldsInX;
+  private int maxFieldsInX;
   /**
    * maximum fields in y direction
    */
-  public int maxFieldsInY;
+  private int maxFieldsInY;
 
   public GuiBoard(FrameRenderer parent) {
     super(parent);
@@ -182,9 +181,9 @@ public class GuiBoard extends PrimitiveBase{
       int index = currentBoard.getTiles().get(0).getIndex();
       for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
         if(index != i) {
-          tiles.get(i).visible = false;
+          tiles.get(i).setVisible(false);
         } else {
-          tiles.get(index).visible = true;
+          tiles.get(index).setVisible(true);
           tiles.get(index).update(currentBoard.getTiles().get(toUpdate));
           ++toUpdate;
           if (toUpdate < currentBoard.getTiles().size()) {
@@ -246,7 +245,7 @@ public class GuiBoard extends PrimitiveBase{
           }
         }
         for (HexField hexField : toHighlight) {
-          logger.debug(String.format("Player may move to %d,%d", hexField.fieldX, hexField.fieldY));
+          logger.debug(String.format("Player may move to %d,%d", hexField.getFieldX(), hexField.getFieldY()));
           hexField.setHighlighted(true);
         }
         parent.stepPossible = add;
@@ -441,12 +440,12 @@ public class GuiBoard extends PrimitiveBase{
         break;
       }
       HexField highlight = getHexField(startX, startY);
-      if(highlight != null && Field.isPassable(highlight.type)) {
+      if(highlight != null && Field.isPassable(highlight.getType())) {
         fields.add(highlight);
-        if(highlight.type == FieldType.SANDBANK) {
+        if(highlight.getType() == FieldType.SANDBANK) {
           return fields;
         }
-        if(highlight.type == FieldType.LOG) {
+        if(highlight.getType() == FieldType.LOG) {
           if(i + 1 > step) {
             fields.remove(fields.getLast());
             return fields;
@@ -469,6 +468,10 @@ public class GuiBoard extends PrimitiveBase{
       }
     }
     return null;
+  }
+
+  public List<GuiTile> getTiles() {
+    return tiles;
   }
 
 }

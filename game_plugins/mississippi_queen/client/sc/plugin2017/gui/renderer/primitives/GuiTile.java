@@ -2,36 +2,24 @@ package sc.plugin2017.gui.renderer.primitives;
 
 import java.util.ArrayList;
 
-import sc.plugin2017.Field;
 import sc.plugin2017.Tile;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
 public class GuiTile extends PrimitiveBase {
 
-  public ArrayList<HexField> fields;
+  private ArrayList<HexField> fields;
   
-  public boolean visible;
-  
-  public float startX;
-  public float startY;
-  
-  public int direction;
-  
-  public int index;
-  
-  public Tile tile;
+  private boolean visible;
   
   public GuiTile(FrameRenderer parent) {
     super(parent);
     fields = new ArrayList<HexField>();
-    // TODO Auto-generated constructor stub
   }
 
   public GuiTile(FrameRenderer parent, int index) {
     super(parent);
     visible = false;
     fields = new ArrayList<HexField>();
-    this.index = index; 
     // create GuiFields
     for(int i = 0; i < 20; i++) {
       HexField field = new HexField(parent);
@@ -50,14 +38,12 @@ public class GuiTile extends PrimitiveBase {
   }
 
   public void resize(float startX, float startY, int offsetX, int offsetY, float width) {
-    
     for (HexField field : fields) {
       field.resize(startX, startY, offsetX, offsetY, width);
     }
   }
 
   public void update(Tile tile) {
-    this.tile = tile;
     if(tile == null) {
       visible = false;
       return;
@@ -83,7 +69,7 @@ public class GuiTile extends PrimitiveBase {
   public HexField getHexField(int x, int y) {
     if(visible) {
       for (HexField field : fields) {
-        if(field.fieldX == x && field.fieldY == y) {
+        if(field.getFieldX() == x && field.getFieldY() == y) {
           return field;
         }
       }
@@ -99,5 +85,9 @@ public class GuiTile extends PrimitiveBase {
       }
     }
     return null;
+  }
+
+  public void setVisible(boolean visibility) {
+    visible = visibility;
   }
 }

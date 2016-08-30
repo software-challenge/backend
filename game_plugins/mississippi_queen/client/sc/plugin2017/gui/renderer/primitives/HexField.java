@@ -16,20 +16,20 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 public class HexField extends PrimitiveBase{
 
   // Fields
-  public float x, y;
+  private float x, y;
   private float a, b, c;
 
   private float width;
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
    */
-  public int fieldX;
+  private int fieldX;
   /**
    * y position des Feldes innerhalb des Spielefeld arrays
    */
-  public int fieldY;
+  private int fieldY;
 
-  public FieldType type;
+  private FieldType type;
 
   private boolean highlighted = false;
 
@@ -165,7 +165,7 @@ public class HexField extends PrimitiveBase{
     parent.popStyle();
   }
 
-  private void calcSize(float width) {
+  protected void calcSize(float width) {
     b = width / 2;
     setC(b / PApplet.cos(PApplet.radians(30)));
     a = b * PApplet.sin(PApplet.radians(30));
@@ -275,4 +275,9 @@ public class HexField extends PrimitiveBase{
     }
     return null;
   }
+  
+  public FieldType getType() {
+    return type;
+  }
+  
 }

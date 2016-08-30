@@ -5,7 +5,7 @@ import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
-public class GuiPlayer extends PrimitiveBase {
+public class GuiPlayer extends HexField {
 
 
   private float x, y;
@@ -19,13 +19,13 @@ public class GuiPlayer extends PrimitiveBase {
    */
   private int fieldY;
 
-  public int coal;
+  private int coal;
 
-  public int speed;
+  private int speed;
 
-  public int movement; // TODO
+  private int movement; // TODO
 
-  public int passenger;
+  private int passenger;
 
   private float width;
 
@@ -157,30 +157,16 @@ public class GuiPlayer extends PrimitiveBase {
 
   }
 
-  private void calcSize(float width) {
-    b = width / 2;
-    c = b / PApplet.cos(PApplet.radians(30));
-    a = b * PApplet.sin(PApplet.radians(30));
-  }
-
   public void update(Player player, boolean currentPlayer) {
     this.fieldX = player.getX();
     this.fieldY = player.getY();
-    continue here: need to update x and y!
+    // XXX continue here: need to update x and y!
     this.coal = player.getCoal();
     this.color = player.getPlayerColor();
     this.speed = player.getSpeed();
     this.passenger = player.getPassenger();
     this.currentPlayer = currentPlayer;
     this.direction = player.getDirection();
-  }
-
-  public float getX() {
-    return x;
-  }
-
-  public float getY() {
-    return y;
   }
 
 }
