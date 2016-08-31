@@ -69,7 +69,7 @@ public class GuiBoard extends PrimitiveBase {
     red = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
     blue = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
     tiles = new LinkedList<GuiTile>();
-    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
+    for (int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
       tiles.add(new GuiTile(parent, i, width, startX, startY, offsetX, offsetY));
     }
 
@@ -82,42 +82,45 @@ public class GuiBoard extends PrimitiveBase {
 
   private void createButtons(int size) {
     left = new GuiButton(parent, GuiConstants.ROTATE_LEFT_IMAGE_PATH, 0, 0, size);
-    right = new GuiButton(parent,  GuiConstants.ROTATE_RIGHT_IMAGE_PATH, 0, 0, size);
-    speedUp = new GuiButton(parent,  GuiConstants.INCREASE_IMAGE_PATH, 0, 0, size);
+    right = new GuiButton(parent, GuiConstants.ROTATE_RIGHT_IMAGE_PATH, 0, 0, size);
+    speedUp = new GuiButton(parent, GuiConstants.INCREASE_IMAGE_PATH, 0, 0, size);
     speedDown = new GuiButton(parent, GuiConstants.DECREASE_IMAGE_PATH, 0, 0, size);
     send = new GuiButton(parent, GuiConstants.OKAY_IMAGE_PATH, 0, 0, size);
     cancel = new GuiButton(parent, GuiConstants.CANCEL_IMAGE_PATH, 0, 0, size);
   }
 
   /**
-   * sets width, maxFieldsInX, maxFieldsInY, startX, startY, offset according to dim and currentBoard
+   * sets width, maxFieldsInX, maxFieldsInY, startX, startY, offset according to
+   * dim and currentBoard
    */
   private void calcHexFieldSize() {
-    if(currentBoard != null) {
+    if (currentBoard != null) {
       int lowX = 500;
       int highX = -500;
       int lowY = 500;
       int highY = -500;
       for (Tile tile : currentBoard.getTiles()) {
         for (Field field : tile.fields) {
-          if(lowX > field.getX()) {
+          if (lowX > field.getX()) {
             lowX = field.getX();
           }
-          if(highX < field.getX()) {
+          if (highX < field.getX()) {
             highX = field.getX();
           }
-          if(lowY > field.getY()) {
+          if (lowY > field.getY()) {
             lowY = field.getY();
           }
-          if(highY < field.getY()) {
+          if (highY < field.getY()) {
             highY = field.getY();
           }
         }
       }
       maxFieldsInX = highX - lowX + 1;
       maxFieldsInY = highY - lowY + 1;
-      float xLength = (dim.width / (maxFieldsInX + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      float yLength = (dim.height / (maxFieldsInY + 1f)) /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      float xLength = (dim.width / (maxFieldsInX + 1f))
+          /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
+      float yLength = (dim.height / (maxFieldsInY + 1f))
+          /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
       width = Math.min(xLength, yLength);
       offsetX = -lowX;
       offsetY = -lowY;
@@ -132,10 +135,15 @@ public class GuiBoard extends PrimitiveBase {
 
   /**
    * updates only the fieldTypes and visibility of tiles and fields
-   * @param board Board
-   * @param red red player
-   * @param blue blue player
-   * @param current PlayerColor of currentPlayer in gameState
+   *
+   * @param board
+   *          Board
+   * @param red
+   *          red player
+   * @param blue
+   *          blue player
+   * @param current
+   *          PlayerColor of currentPlayer in gameState
    */
   public void update(Board board, Player red, Player blue, PlayerColor current) {
     if (board == null) {
@@ -144,21 +152,23 @@ public class GuiBoard extends PrimitiveBase {
     currentBoard = board;
     calculateSize();
     Player currentPlayer = (current == PlayerColor.RED) ? red : blue;
-    logger.debug(String.format("view player red is on %d,%d", red.getField(currentBoard).getX(), red.getField(currentBoard).getY() ));
-    logger.debug(String.format("view player blue is on %d,%d", blue.getField(currentBoard).getX(), blue.getField(currentBoard).getY() ));
+    logger.debug(String.format("view player red is on %d,%d", red.getField(currentBoard).getX(),
+        red.getField(currentBoard).getY()));
+    logger.debug(String.format("view player blue is on %d,%d", blue.getField(currentBoard).getX(),
+        blue.getField(currentBoard).getY()));
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     updateButtonPositions(getCurrentGuiPlayer());
     updateButtonAvailability(currentPlayer, currentBoard);
-    if(!currentBoard.getTiles().isEmpty()) {
+    if (!currentBoard.getTiles().isEmpty()) {
 
       // I think this sets old tiles invisible (because they are no longer
       // included in the currentBoard and updates visible tiles.
       // TODO hard to understand, refactor
       int toUpdate = 0;
       int index = currentBoard.getTiles().get(0).getIndex();
-      for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
-        if(index != i) {
+      for (int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
+        if (index != i) {
           tiles.get(i).setVisible(false);
         } else {
           tiles.get(index).setVisible(true);
@@ -170,34 +180,33 @@ public class GuiBoard extends PrimitiveBase {
         }
       }
 
-      if (parent.currentPlayerIsHuman()) {
+      if (parent.playerControlsEnabled()) {
         LinkedList<HexField> toHighlight = new LinkedList<>();
         LinkedHashMap<HexField, Action> add = new LinkedHashMap<>();
         Field redField = red.getField(currentBoard);
         Field blueField = blue.getField(currentBoard);
-        if(redField == null || blueField == null) {
+        if (redField == null || blueField == null) {
           throw new NullPointerException("Felder sind null");
         }
-        if(redField.equals(blueField)) {
+        if (redField.equals(blueField)) {
           // case push
-          if(currentPlayer.getMovement() != 0) {
-            for(int j = 0; j < 6; j++) {
-              if(j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
-                HexField toAdd = getPassableGuiFieldInDirection(
-                    currentPlayer.getX(), currentPlayer.getY(), j);
-                if(toAdd != null) { // add push to list of actions
+          if (currentPlayer.getMovement() != 0) {
+            for (int j = 0; j < 6; j++) {
+              if (j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
+                HexField toAdd = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(), j);
+                if (toAdd != null) { // add push to list of actions
                   toHighlight.add(toAdd);
-                  add.put(toAdd,new Push(j));
+                  add.put(toAdd, new Push(j));
                 }
               }
             }
           }
-        } else if(currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
-          if(currentPlayer.getMovement() != 0) {
-            toHighlight =
-              getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
-                  currentPlayer.getDirection(), currentPlayer.getMovement());
-            // the actions are in order (smallest Step first, so this should work:
+        } else if (currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
+          if (currentPlayer.getMovement() != 0) {
+            toHighlight = getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
+                currentPlayer.getDirection(), currentPlayer.getMovement());
+            // the actions are in order (smallest Step first, so this should
+            // work:
             int stepCounter = 1;
             for (HexField hexField : toHighlight) {
               add.put(hexField, new Step(stepCounter));
@@ -207,16 +216,16 @@ public class GuiBoard extends PrimitiveBase {
 
         } else {
           // case sandbank
-          if(parent.getCurrentPlayer().getMovement() != 0) {
+          if (parent.getCurrentPlayer().getMovement() != 0) {
             HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 currentPlayer.getDirection());
-            if(step != null) {
+            if (step != null) {
               toHighlight.add(step);
               add.put(step, new Step(1));
             }
             step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 GameState.getOppositeDirection(currentPlayer.getDirection()));
-            if(step != null) {
+            if (step != null) {
               toHighlight.add(step);
               add.put(step, new Step(-1));
             }
@@ -250,18 +259,18 @@ public class GuiBoard extends PrimitiveBase {
 
   private void updateButtonPositions(GuiPlayer currentGuiPlayer) {
     if (currentGuiPlayer != null) {
-      int centerX = Math.round(currentGuiPlayer.getX() + (width/2));
-      int centerY = Math.round(currentGuiPlayer.getY() + (width/2));
+      int centerX = Math.round(currentGuiPlayer.getX() + (width / 2));
+      int centerY = Math.round(currentGuiPlayer.getY() + (width / 2));
       int curAngle = (currentGuiPlayer.getDirection() * -60) + 90;
 
-      left.moveTo(centerX - (width/2), centerY - (width/2));
-      right.moveTo(centerX + (width/2), centerY - (width/2));
+      left.moveTo(centerX - (width / 2), centerY - (width / 2));
+      right.moveTo(centerX + (width / 2), centerY - (width / 2));
 
-      speedUp.moveTo(centerX + (width/2), centerY - (width/6));
-      speedDown.moveTo(centerX + (width/2), centerY + (width/6));
+      speedUp.moveTo(centerX + (width / 2), centerY - (width / 6));
+      speedDown.moveTo(centerX + (width / 2), centerY + (width / 6));
 
-      send.moveTo(centerX + (width/5), centerY + (width/2));
-      cancel.moveTo(centerX - (width/5), centerY + (width/2));
+      send.moveTo(centerX + (width / 5), centerY + (width / 2));
+      cancel.moveTo(centerX - (width / 5), centerY + (width / 2));
     }
   }
 
@@ -273,7 +282,7 @@ public class GuiBoard extends PrimitiveBase {
     boolean accelerationPossible = parent.getCurrentPlayer().getFreeAcc() + parent.getCurrentPlayer().getCoal() > 0;
     boolean rotationPossible = parent.getCurrentPlayer().getFreeTurns() + parent.getCurrentPlayer().getCoal() > 0;
 
-    speedUp.setEnabled( !maxSpeed && !onSandbank && accelerationPossible);
+    speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible);
     speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible);
     left.setEnabled(rotationPossible && !onSandbank);
     right.setEnabled(rotationPossible && !onSandbank);
@@ -281,7 +290,7 @@ public class GuiBoard extends PrimitiveBase {
 
   private HexField getPassableGuiFieldInDirection(int x, int y, int j) {
     LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
-    if(passable.isEmpty() || passable.getFirst() == null) {
+    if (passable.isEmpty() || passable.getFirst() == null) {
       return null;
     } else {
       return passable.getFirst();
@@ -290,6 +299,7 @@ public class GuiBoard extends PrimitiveBase {
 
   /**
    * Sets size of HexFields, calculates offset
+   *
    * @param width
    * @param height
    */
@@ -302,7 +312,6 @@ public class GuiBoard extends PrimitiveBase {
     calcHexFieldSize();
   }
 
-
   @Override
   public void draw() {
     for (GuiTile tile : tiles) {
@@ -313,12 +322,14 @@ public class GuiBoard extends PrimitiveBase {
     blue.draw();
 
     // buttons
-    left.draw();
-    right.draw();
-    speedUp.draw();
-    speedDown.draw();
-    send.draw();
-    cancel.draw();
+    if (parent.playerControlsEnabled()) {
+      left.draw();
+      right.draw();
+      speedUp.draw();
+      speedDown.draw();
+      send.draw();
+      cancel.draw();
+    }
   }
 
   /**
@@ -345,12 +356,12 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   @Override
-  public void kill(){
+  public void kill() {
 
-    if(red != null) {
+    if (red != null) {
       red.kill();
     }
-    if(blue != null) {
+    if (blue != null) {
       blue.kill();
     }
     for (GuiTile tile : tiles) {
@@ -360,21 +371,29 @@ public class GuiBoard extends PrimitiveBase {
 
   /**
    *
-   * @param startX anfangs x
-   * @param startY anfangs y
-   * @param direction Richtung
-   * @param step Bewegunsgpunkte
+   * @param startX
+   *          anfangs x
+   * @param startY
+   *          anfangs y
+   * @param direction
+   *          Richtung
+   * @param step
+   *          Bewegunsgpunkte
    * @return Begehbare Felder
    */
   public LinkedList<HexField> getPassableGuiFieldsInDirection(int startX, int startY, int direction, int step) {
+    Player opponent = parent.getCurrentOpponent();
+    int opponentX = opponent.getX();
+    int opponentY = opponent.getY();
     LinkedList<HexField> fields = new LinkedList<HexField>();
-    for(int i = 1; i <= step; i++) {
+    // TODO document/refactor
+    for (int i = 1; i <= step; i++) {
       switch (direction) {
       case 0:
         startX++;
         break;
       case 1:
-        if(startY % 2 == 0) {
+        if (startY % 2 == 0) {
           --startY;
           ++startX;
         } else {
@@ -382,7 +401,7 @@ public class GuiBoard extends PrimitiveBase {
         }
         break;
       case 2:
-        if(startY % 2 == 0) {
+        if (startY % 2 == 0) {
           --startY;
         } else {
           --startY;
@@ -393,7 +412,7 @@ public class GuiBoard extends PrimitiveBase {
         --startX;
         break;
       case 4:
-        if(startY % 2 == 0) {
+        if (startY % 2 == 0) {
           ++startY;
         } else {
           ++startY;
@@ -401,7 +420,7 @@ public class GuiBoard extends PrimitiveBase {
         }
         break;
       case 5:
-        if(startY % 2 == 0) {
+        if (startY % 2 == 0) {
           ++startY;
           ++startX;
         } else {
@@ -413,13 +432,21 @@ public class GuiBoard extends PrimitiveBase {
         break;
       }
       HexField highlight = getHexField(startX, startY);
-      if(highlight != null && Field.isPassable(highlight.getType())) {
+      if (highlight != null && Field.isPassable(highlight.getType())) {
         fields.add(highlight);
-        if(highlight.getType() == FieldType.SANDBANK) {
+        if (highlight.getType() == FieldType.SANDBANK) {
           return fields;
         }
-        if(highlight.getType() == FieldType.LOG) {
-          if(i + 1 > step) {
+        if (startX == opponentX && startY == opponentY) {
+          // moving onto opponent only assuming we want to push, and this costs
+          // one more step
+          if (i + 1 > step) {
+            fields.remove(fields.getLast());
+          }
+          return fields;
+        }
+        if (highlight.getType() == FieldType.LOG) {
+          if (i + 1 > step) {
             fields.remove(fields.getLast());
             return fields;
           } else {
@@ -436,7 +463,7 @@ public class GuiBoard extends PrimitiveBase {
   public HexField getHexField(int x, int y) {
     for (GuiTile tile : tiles) {
       HexField field = tile.getHexField(x, y);
-      if(field != null) {
+      if (field != null) {
         return field;
       }
     }
@@ -466,12 +493,8 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public boolean hoversButton(int mouseX, int mouseY) {
-    return left.hover(mouseX, mouseY) ||
-        right.hover(mouseX, mouseY) ||
-        speedUp.hover(mouseX, mouseY) ||
-        speedDown.hover(mouseX, mouseY) ||
-        send.hover(mouseX, mouseY) ||
-        cancel.hover(mouseX, mouseY);
+    return left.hover(mouseX, mouseY) || right.hover(mouseX, mouseY) || speedUp.hover(mouseX, mouseY)
+        || speedDown.hover(mouseX, mouseY) || send.hover(mouseX, mouseY) || cancel.hover(mouseX, mouseY);
   }
 
 }

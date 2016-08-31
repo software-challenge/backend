@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import sc.plugin2017.util.InvalidMoveException;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
+import sc.plugin2017.util.InvalidMoveException;
 
 @XStreamAlias(value = "move")
 public class Move implements Cloneable {
@@ -16,7 +16,7 @@ public class Move implements Cloneable {
    * Liste von Aktionen aus denen der Zug besteht
    */
   public ArrayList<Action> actions;
-  
+
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe {@link DebugHint}
    */
@@ -40,7 +40,7 @@ public class Move implements Cloneable {
 
   /**
    * erzeugt eine Deepcopy dieses Objektes
-   * 
+   *
    * @return ein neues Objekt mit gleichen Eigenschaften
    * @throws CloneNotSupportedException falls nicht geklont werden kann
    */
@@ -65,7 +65,7 @@ public class Move implements Cloneable {
         clonedActions.add(clonedAction);
       }
     }
-    Move clone = new Move(clonedActions); 
+    Move clone = new Move(clonedActions);
     if (this.hints != null)
       clone.hints = new LinkedList<DebugHint>(this.hints);
     return clone;
@@ -75,7 +75,7 @@ public class Move implements Cloneable {
    * Fuegt eine Debug-Hilfestellung hinzu.
    * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
    * Client einen Zug macht.
-   * 
+   *
    * @param hint
    *          hinzuzufuegende Debug-Hilfestellung
    */
@@ -87,11 +87,11 @@ public class Move implements Cloneable {
   }
 
   /**
-   * 
+   *
    * Fuegt eine Debug-Hilfestellung hinzu.
    * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
    * Client einen Zug macht.
-   * 
+   *
    * @param key
    *          Schluessel
    * @param value
@@ -105,7 +105,7 @@ public class Move implements Cloneable {
    * Fuegt eine Debug-Hilfestellung hinzu.
    * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
    * Client einen Zug macht.
-   * 
+   *
    * @param string
    *          Debug-Hilfestellung
    */
@@ -115,7 +115,7 @@ public class Move implements Cloneable {
 
   /**
    * Gibt die Liste der hinzugefuegten Debug-Hilfestellungen zurueck
-   * 
+   *
    * @return Liste der hinzugefuegten Debug-Hilfestellungen
    */
   public List<DebugHint> getHints() {
@@ -125,7 +125,7 @@ public class Move implements Cloneable {
   /**
    * Fuehrt diesen Zug auf den uebergebenen Spielstatus aus, mit uebergebenem
    * Spieler.
-   * 
+   *
    * @param state
    *          Spielstatus
    * @param player
@@ -141,13 +141,13 @@ public class Move implements Cloneable {
     boolean onEnemy;
     // make sure movement is set right:
     player.setMovement(player.getSpeed());
-    
-    
+
+
     if(actions.isEmpty()) {
       throw new InvalidMoveException("Der Zug enthält keine Aktionen");
     }
     for(Action action : actions) {
-      onEnemy = player.getX() == state.getOtherPlayer().getX() && 
+      onEnemy = player.getX() == state.getOtherPlayer().getX() &&
           player.getY() == state.getOtherPlayer().getY();
       if(onEnemy && action.getClass() != Push.class) {
         throw new InvalidMoveException("Wenn du auf einem gegnerischen Schiff landest,"
@@ -156,7 +156,7 @@ public class Move implements Cloneable {
       Action lastAction = null;
       if(order > 0) {
         lastAction = actions.get(action.order - 1);
-        
+
       }
       if(lastAction != null && lastAction.getClass() == Step.class) {
         if(((Step) lastAction).endsTurn) {
@@ -179,6 +179,10 @@ public class Move implements Cloneable {
       }
       ++order;
     }
+    // when stepping onto the opponents field, the opponent has to be pushed away
+    if (player.getX() == state.getOtherPlayer().getX() && player.getY() == state.getOtherPlayer().getY()) {
+      throw new InvalidMoveException("Der Zug darf nicht auf dem Gegner enden.");
+    }
     // pick up passenger
     if(player.getSpeed() == 1 && player.canPickupPassenger(state.getBoard())) {
       state.removePassenger(player);
@@ -194,7 +198,7 @@ public class Move implements Cloneable {
       throw new InvalidMoveException("Es sind noch " + player.getMovement() + " Bewegungspunkte übrig.");
     }
   }
-  
+
   /**
    * Vergleichsmethode fuer einen Zuege
    * Zwei Züge sind gleich, wenn sie die gleichen Teilaktionen beinhalten
@@ -226,7 +230,8 @@ public class Move implements Cloneable {
     }
     return false;
   }
-  
+
+  @Override
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
     for (Action action : actions) {
@@ -242,7 +247,7 @@ public class Move implements Cloneable {
     }
     return toString;
   }
-  
+
   /**
    * Setzt das order Attribut der Züge anhand ihrer Reihenfolge in actions
    */
@@ -261,7 +266,7 @@ public class Move implements Cloneable {
       ++order;
     }
   }
-  
+
   public void orderActions() {
     ArrayList<Action> order = new ArrayList<Action>();
     for(int i = 0; i < actions.size(); i++) {

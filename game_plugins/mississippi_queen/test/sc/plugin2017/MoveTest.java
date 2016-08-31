@@ -39,6 +39,8 @@ public class MoveTest {
         "..r.B.W.W..\n" +
         ".W.W.W.W...\n";
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
 
     Move move = new Move();
     Action action = new Step(1);
@@ -58,11 +60,9 @@ public class MoveTest {
         "..W.W.W.W..\n" +
         ".W.W.W.W...\n";
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
-    blue.setX(0);
-    blue.setY(-1);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(1);
-    red.setX(-1);
-    red.setY(-1);
     red.setDirection(5);
     red.setMovement(1);
 
@@ -84,11 +84,9 @@ public class MoveTest {
         "..W.W.W.W..\n" +
         ".W.W.W.W...\n";
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
-    blue.setX(0);
-    blue.setY(-1);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(1);
-    red.setX(-1);
-    red.setY(-1);
     red.setDirection(0);
     red.setSpeed(1);
 
@@ -104,6 +102,51 @@ public class MoveTest {
     assertEquals(board.getField(-1, 0), blue.getField(board));
   }
 
+  @Test(expected = InvalidMoveException.class)
+  public void invalidMoveOntoOpponent() throws InvalidMoveException {
+    // Red player should not be able to move onto blue player field (without pushing)
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..r.W.b.W..\n" +
+        "...W.W.W.W.\n" +
+        "..W.W.W.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    blue.setDirection(1);
+    red.setDirection(0);
+    red.setSpeed(2);
+
+    Move move = new Move();
+    move.actions.add(new Step(2, 1));
+
+    move.perform(state, red);
+  }
+
+  @Test(expected = InvalidMoveException.class)
+  public void invalidPushNotEnoughMovement() throws InvalidMoveException {
+    // Red player should not be able to push blue player because he only has speed 1.
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..r.W.b.W..\n" +
+        "...W.W.W.W.\n" +
+        "..W.W.W.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    blue.setDirection(1);
+    red.setDirection(0);
+    red.setSpeed(2);
+
+    Move move = new Move();
+    move.actions.add(new Step(2, 1));
+    move.actions.add(new Push(4, 2));
+
+    move.perform(state, red);
+  }
+
   @Test
   public void pushIntoLog() throws InvalidMoveException {
     // Red player pushes blue player into log field, blue player should lose one speed.
@@ -114,12 +157,10 @@ public class MoveTest {
         "..W.W.W.W..\n" +
         ".W.W.W.W...\n";
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
-    blue.setX(0);
-    blue.setY(-1);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(1);
     blue.setMovement(3);
-    red.setX(-1);
-    red.setY(-1);
     red.setDirection(0);
     red.setMovement(1);
 
@@ -144,12 +185,10 @@ public class MoveTest {
         "..W.W.W.W..\n" +
         ".W.W.W.W...\n";
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
-    blue.setX(0);
-    blue.setY(-1);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(1);
     blue.setMovement(3);
-    red.setX(-1);
-    red.setY(-1);
     red.setDirection(0);
     red.setMovement(1);
 
@@ -174,10 +213,8 @@ public class MoveTest {
         "..b.W.W.W..\n" +
         ".W.W.W.W...\n";
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
-    blue.setX(-1);
-    blue.setY(1);
-    red.setX(-1);
-    red.setY(-1);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     red.setDirection(0);
     red.setSpeed(2);
     red.setCoal(6);
