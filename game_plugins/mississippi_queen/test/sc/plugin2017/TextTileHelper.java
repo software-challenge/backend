@@ -5,6 +5,14 @@ import java.util.List;
 
 public class TextTileHelper {
 
+  private static final class ParseResult {
+    Tile tile;
+    Integer blueX;
+    Integer blueY;
+    Integer redX;
+    Integer redY;
+  }
+
   public static boolean isEven(int i) {
     return ((Math.abs(i) % 2) == 0);
   }
@@ -62,6 +70,31 @@ public class TextTileHelper {
    * @return Tile for given definition.
    */
   public static Tile parseTile(String tileString, int startX, int startY) {
+    return internalParseTile(tileString, startX, startY).tile;
+  }
+
+  public static void updatePlayerPosition(String tileString, int startX, int startY, Player player) {
+    ParseResult result = internalParseTile(tileString, startX, startY);
+    Integer x = null;
+    Integer y = null;
+    if (player.getPlayerColor() == PlayerColor.BLUE) {
+      x = result.blueX;
+      y = result.blueY;
+    }
+    if (player.getPlayerColor() == PlayerColor.RED) {
+      x = result.redX;
+      y = result.redY;
+    }
+    if (x == null || y == null) {
+      throw new IllegalArgumentException(String.format("no %s player found in given tileString", player.getPlayerColor().toString()));
+    }
+    player.setX(x);
+    player.setY(y);
+  }
+
+
+  private static ParseResult internalParseTile(String tileString, int startX, int startY) {
+    ParseResult result = new ParseResult();
 
     List<Field> fields = new ArrayList<Field>();
     int x = startX;
@@ -96,10 +129,18 @@ public class TextTileHelper {
         FieldType type = null;
         switch (c) {
         case 'W':
+          // 'r' and 'b' may be used to mark players positions
         case 'r':
         case 'b':
-          // 'r' and 'b' may be used to mark players positions
           type = FieldType.WATER;
+          if (c == 'r') {
+            result.redX = x;
+            result.redY = y;
+          }
+          if (c == 'b') {
+            result.blueX = x;
+            result.blueY = y;
+          }
           break;
         case 'B': type = FieldType.BLOCKED; break;
         case 'S': type = FieldType.SANDBANK; break;
@@ -121,9 +162,10 @@ public class TextTileHelper {
       }
     }
 
-    Tile tile = new Tile(fields);
-    tile.setVisibility(true);
-    return tile;
+    result.tile = new Tile(fields);
+    result.tile.setVisibility(true);
+    return result;
   }
+
 
 }

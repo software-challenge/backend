@@ -27,6 +27,7 @@ public class HexField extends PrimitiveBase{
   protected int fieldY;
 
   private FieldType type;
+  private long variant;
 
   private boolean highlighted = false;
 
@@ -37,6 +38,7 @@ public class HexField extends PrimitiveBase{
     this.width = width;
     calcSize();
     calculatePosition(startX, startY, offsetX, offsetY);
+    variant = Math.round(Math.random() * 5f);
   }
 
   public void update(Field field) {
@@ -68,7 +70,9 @@ public class HexField extends PrimitiveBase{
     parent.translate(x, y);
 
     if(type == FieldType.WATER) {
-      parent.fill(GuiConstants.colorHexFields);
+      int base = GuiConstants.colorHexFields;
+      int result = parent.color(parent.red(base), parent.green(base), parent.blue(base) + (30 - (variant * 10)));
+      parent.fill(result);
     } else if(type == FieldType.SANDBANK){
       parent.fill(GuiConstants.colorHexFieldSANDBANK);
     } else if(type == FieldType.LOG){

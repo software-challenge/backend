@@ -167,7 +167,6 @@ public class RenderFacade {
 		this.panel = panel;
 
 		initRenderer();
-		startReceiverThread();// TODO remove? should not do any harm
     ComponentListener listener = new ResizeListener();
     panel.addComponentListener(listener);
   }
@@ -180,7 +179,7 @@ public class RenderFacade {
         int newWidth = panel.getWidth();
         int newHeight = panel.getHeight();
         if (newWidth > 0 && newHeight > 0) {
-          logger.debug("setting sizes");
+          logger.debug(String.format("setting sizes: %d, %d", newWidth, newHeight));
           frameRenderer.resize(newWidth, newHeight);
         } else {
           logger.debug("invalid window dimensions");
@@ -192,10 +191,12 @@ public class RenderFacade {
   }
 
 	private void initRenderer() {
-    frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight()); // neuer FrameRenderer
     panel.setLayout(new BorderLayout());
-    panel.add(frameRenderer, BorderLayout.CENTER);
+		panel.setVisible(true);
+		panel.doLayout();
+    frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight()); // neuer FrameRenderer
     frameRenderer.init();
+    panel.add(frameRenderer, BorderLayout.CENTER);
     panel.revalidate();
     panel.repaint();
 	}

@@ -131,7 +131,11 @@ public class FrameRenderer extends PApplet {
     if (currentGameState != null && currentGameState.gameEnded()) {
       GameEndedDialog.draw(this, currentGameState);
     }
-    text(String.format("Mouse position: %d,%d", mouseX, mouseY), 20, 60);
+    if (currentGameState != null) {
+      text(String.format("Red Player Position: %d,%d", currentGameState.getRedPlayer().getX(), currentGameState.getRedPlayer().getY()), 20, 60);
+      float textHeight = textAscent() + textDescent();
+      text(String.format("Blue Player Position: %d,%d", currentGameState.getBluePlayer().getX(), currentGameState.getBluePlayer().getY()), 20, (float)(60 + textHeight * 1.25));
+    }
   }
 
   public void updateGameState(GameState gameState) {
@@ -189,6 +193,7 @@ public class FrameRenderer extends PApplet {
     // this.maxTurn = maxTurn;
     this.humanPlayer = true;
     humanPlayerMaxTurn = true;
+    updateView(currentGameState);
   }
 
   public Image getImage() {
@@ -202,6 +207,7 @@ public class FrameRenderer extends PApplet {
       gameState.getBluePlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.BLUE));
       boardFrame.update(gameState.getCurrentPlayerColor());
       sideBar.update(gameState.getCurrentPlayerColor());
+      guiBoard.resize(); // gameState update may require resizing of board (because new tiles are visible).
       guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(),
           gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
     } else {
@@ -222,20 +228,21 @@ public class FrameRenderer extends PApplet {
     redraw();
   }
 
-  @Override
-  public void mouseDragged(MouseEvent e) {
-    super.mouseDragged(e);
-    redraw();
+  public boolean playerControlsEnabled() {
+    // current player needs to be human and the current turn needs to be the
+    // last one already played (because we can jump forward and backward)
+    return isHumanPlayer() && maxTurn == currentGameState.getTurn();
   }
 
   @Override
   public void mouseClicked(MouseEvent e) {
     super.mouseClicked(e);
-    if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
-      // first the gui buttons
+    if(playerControlsEnabled()) {
 
+      // first the gui buttons
       Action action = null;
-      boolean onSandbank = (currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK);
+      boolean onSandbank = currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK;
+      int currentSpeed = currentGameState.getCurrentPlayer().getSpeed();
       switch (guiBoard.getClickedButton(mouseX, mouseY)) {
       case LEFT:
         if (!onSandbank) action = new Turn(1);
@@ -244,18 +251,19 @@ public class FrameRenderer extends PApplet {
         if (!onSandbank) action = new Turn(-1);
         break;
       case SPEED_UP:
-        if (!onSandbank) action = new Acceleration(1);
+        if (!onSandbank && currentSpeed < 6) action = new Acceleration(1);
+        break;
       case SPEED_DOWN:
-        if (!onSandbank) action = new Acceleration(-1);
+        if (!onSandbank && currentSpeed > 1) action = new Acceleration(-1);
+        break;
       case SEND:
         sendMove();
         break;
       case CANCEL:
         try {
           currentGameState = backUp.clone();
-        } catch (CloneNotSupportedException e1) {
-          System.out.println("Clone of backup failed");
-          e1.printStackTrace();
+        } catch (CloneNotSupportedException ex) {
+          logger.error("Clone of backup failed", ex);
         }
         updateGameState(currentGameState);
         break;
@@ -285,8 +293,22 @@ public class FrameRenderer extends PApplet {
 
   private void sendMove() {
     Move move = new Move();
+    Acceleration acceleration = null;
     for (Action action : currentMove.actions) {
-      move.actions.add(action);
+      // bundle accelerations which are at the beginning of the move
+      if (action.getClass() == Acceleration.class) {
+        if (acceleration == null) {
+          acceleration = (Acceleration)action;
+        } else {
+          acceleration.acc += ((Acceleration)action).acc;
+        }
+      } else {
+        if (acceleration != null) {
+          move.actions.add(acceleration);
+          acceleration = null;
+        }
+        move.actions.add(action);
+      }
     }
     move.setOrderInActions();
     RenderFacade.getInstance().sendMove(move);
@@ -410,6 +432,14 @@ public class FrameRenderer extends PApplet {
       return currentMove.actions;
     } else {
       return Collections.emptyList();
+    }
+  }
+
+  public Player getCurrentOpponent() {
+    if (currentGameState != null) {
+      return currentGameState.getOtherPlayer();
+    } else {
+      return null;
     }
   }
 }
