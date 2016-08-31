@@ -103,12 +103,12 @@ public class GuiConstants {
   public static final String ISLAND_IMAGE_PATH = "resource/game/island.png";
 
 
-  public static final String ROTATE_LEFT_IMAGE_PATH = "resource/game/rotate-left.png";
-  public static final String ROTATE_RIGHT_IMAGE_PATH = "resource/game/rotate-right.png";
-  public static final String OKAY_IMAGE_PATH = "resource/game/okay.png";
-  public static final String CANCEL_IMAGE_PATH = "resource/game/cancel.png";
-  public static final String INCREASE_IMAGE_PATH = "resource/game/plus-square.png";
-  public static final String DECREASE_IMAGE_PATH = "resource/game/minus-square.png";
+  public static final String ROTATE_LEFT_IMAGE_PATH = "resource/game/rotate-left.svg";
+  public static final String ROTATE_RIGHT_IMAGE_PATH = "resource/game/rotate-right.svg";
+  public static final String OKAY_IMAGE_PATH = "resource/game/okay.svg";
+  public static final String CANCEL_IMAGE_PATH = "resource/game/cancel.svg";
+  public static final String INCREASE_IMAGE_PATH = "resource/game/plus-square.svg";
+  public static final String DECREASE_IMAGE_PATH = "resource/game/minus-square.svg";
   /**
    * Relative Size of the Game Ended Dialog
    */
