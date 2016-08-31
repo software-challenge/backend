@@ -8,7 +8,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import g4p_controls.GImageButton;
 import sc.plugin2017.Action;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
@@ -28,12 +27,12 @@ public class GuiBoard extends PrimitiveBase {
 
   private Board currentBoard;
 
-  private GImageButton left;
-  private GImageButton right;
-  private GImageButton speedUp;
-  private GImageButton speedDown;
-  private GImageButton send;
-  private GImageButton cancel;
+  private GuiButton left;
+  private GuiButton right;
+  private GuiButton speedUp;
+  private GuiButton speedDown;
+  private GuiButton send;
+  private GuiButton cancel;
 
   private GuiPlayer red;
   private GuiPlayer blue;
@@ -61,8 +60,6 @@ public class GuiBoard extends PrimitiveBase {
    */
   private int maxFieldsInY;
 
-  private boolean buttonsInitialized = false;
-
   public GuiBoard(FrameRenderer parent) {
     super(parent);
     this.parent = parent;
@@ -83,37 +80,13 @@ public class GuiBoard extends PrimitiveBase {
     createButtons(calculateButtonSize());
   }
 
-  /**
-   * creating the buttons in the class constructor leads to NullPointer
-   * exceptions. It seems that G4P requires that the setup method was called
-   * before the buttons are created.
-   */
   private void createButtons(int size) {
-    if (left != null) {
-      left.dispose();
-    }
-    if (right != null) {
-      right.dispose();
-    }
-    if (speedUp != null) {
-      speedUp.dispose();
-    }
-    if (speedDown != null) {
-      speedDown.dispose();
-    }
-    if (send != null) {
-      send.dispose();
-    }
-    if (cancel != null) {
-      cancel.dispose();
-    }
-    left = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.ROTATE_LEFT_IMAGE_PATH });
-    right = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.ROTATE_RIGHT_IMAGE_PATH });
-    speedUp = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.INCREASE_IMAGE_PATH });
-    speedDown = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.DECREASE_IMAGE_PATH });
-    send = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.OKAY_IMAGE_PATH });
-    cancel = new GImageButton(parent, 0, 0, size, size, new String[] { GuiConstants.CANCEL_IMAGE_PATH });
-    buttonsInitialized = true;
+    left = new GuiButton(parent, GuiConstants.ROTATE_LEFT_IMAGE_PATH, 0, 0, size);
+    right = new GuiButton(parent,  GuiConstants.ROTATE_RIGHT_IMAGE_PATH, 0, 0, size);
+    speedUp = new GuiButton(parent,  GuiConstants.INCREASE_IMAGE_PATH, 0, 0, size);
+    speedDown = new GuiButton(parent, GuiConstants.DECREASE_IMAGE_PATH, 0, 0, size);
+    send = new GuiButton(parent, GuiConstants.OKAY_IMAGE_PATH, 0, 0, size);
+    cancel = new GuiButton(parent, GuiConstants.CANCEL_IMAGE_PATH, 0, 0, size);
   }
 
   /**
@@ -274,9 +247,9 @@ public class GuiBoard extends PrimitiveBase {
       return null;
     }
   }
-  
+
   private void updateButtonPositions(GuiPlayer currentGuiPlayer) {
-    if (buttonsInitialized && currentGuiPlayer != null) {
+    if (currentGuiPlayer != null) {
       int centerX = Math.round(currentGuiPlayer.getX() + (width/2));
       int centerY = Math.round(currentGuiPlayer.getY() + (width/2));
       int curAngle = (currentGuiPlayer.getDirection() * -60) + 90;
@@ -284,11 +257,11 @@ public class GuiBoard extends PrimitiveBase {
       left.moveTo(centerX - (width/2), centerY - (width/2));
       right.moveTo(centerX + (width/2), centerY - (width/2));
 
-      speedUp.moveTo(centerX + (width/2), centerY - (width/4));
-      speedDown.moveTo(centerX + (width/2), centerY + (width/4));
+      speedUp.moveTo(centerX + (width/2), centerY - (width/6));
+      speedDown.moveTo(centerX + (width/2), centerY + (width/6));
 
-      send.moveTo(centerX + (width/2), centerY + (width/2));
-      cancel.moveTo(centerX - (width/2), centerY + (width/2));
+      send.moveTo(centerX + (width/5), centerY + (width/2));
+      cancel.moveTo(centerX - (width/5), centerY + (width/2));
     }
   }
 
@@ -339,7 +312,13 @@ public class GuiBoard extends PrimitiveBase {
     red.draw();
     blue.draw();
 
-    // buttons are drawn automatically
+    // buttons
+    left.draw();
+    right.draw();
+    speedUp.draw();
+    speedDown.draw();
+    send.draw();
+    cancel.draw();
   }
 
   /**
@@ -362,7 +341,7 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   private int calculateButtonSize() {
-    return Math.max(1, Math.round(width / 6));
+    return Math.max(1, Math.round(width / 3));
   }
 
   @Override
@@ -466,6 +445,33 @@ public class GuiBoard extends PrimitiveBase {
 
   public List<GuiTile> getTiles() {
     return tiles;
+  }
+
+  public ClickedButton getClickedButton(int mouseX, int mouseY) {
+    if (left.hover(mouseX, mouseY)) {
+      return ClickedButton.LEFT;
+    } else if (right.hover(mouseX, mouseY)) {
+      return ClickedButton.RIGHT;
+    } else if (speedUp.hover(mouseX, mouseY)) {
+      return ClickedButton.SPEED_UP;
+    } else if (speedDown.hover(mouseX, mouseY)) {
+      return ClickedButton.SPEED_DOWN;
+    } else if (send.hover(mouseX, mouseY)) {
+      return ClickedButton.SEND;
+    } else if (cancel.hover(mouseX, mouseY)) {
+      return ClickedButton.CANCEL;
+    } else {
+      return ClickedButton.NONE;
+    }
+  }
+
+  public boolean hoversButton(int mouseX, int mouseY) {
+    return left.hover(mouseX, mouseY) ||
+        right.hover(mouseX, mouseY) ||
+        speedUp.hover(mouseX, mouseY) ||
+        speedDown.hover(mouseX, mouseY) ||
+        send.hover(mouseX, mouseY) ||
+        cancel.hover(mouseX, mouseY);
   }
 
 }

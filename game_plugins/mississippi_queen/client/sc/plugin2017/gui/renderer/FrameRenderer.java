@@ -13,14 +13,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import processing.core.PApplet;
+import sc.plugin2017.Acceleration;
 import sc.plugin2017.Action;
 import sc.plugin2017.DebugHint;
 import sc.plugin2017.EPlayerId;
 import sc.plugin2017.Field;
+import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
+import sc.plugin2017.Turn;
 import sc.plugin2017.gui.renderer.primitives.Background;
 import sc.plugin2017.gui.renderer.primitives.BoardFrame;
 import sc.plugin2017.gui.renderer.primitives.GameEndedDialog;
@@ -211,6 +214,11 @@ public class FrameRenderer extends PApplet {
   @Override
   public void mouseMoved(MouseEvent e) {
     super.mouseMoved(e);
+    if (guiBoard.hoversButton(mouseX, mouseY)) {
+      cursor(HAND);
+    } else {
+      cursor(ARROW);
+    }
     redraw();
   }
 
@@ -225,58 +233,24 @@ public class FrameRenderer extends PApplet {
     super.mouseClicked(e);
     if(isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       // first the gui buttons
-      /*
-      if(currentGameState.getCurrentPlayer()
-        .getField( currentGameState.getBoard()).getType() != FieldType.SANDBANK) {
-        if(guiBoard.left.isClicked()) {
-          Turn turn = new Turn(1);
-          currentMove.actions.add(turn);
-          try {
-            turn.perform(currentGameState, currentGameState.getCurrentPlayer());
-          } catch (InvalidMoveException e1) {
-            System.out.println("Failed to perform move of user, please report if this happens");
-            e1.printStackTrace();
-          }
-        }
-        if(guiBoard.right.isClicked()) {
-          Turn turn = new Turn(-1);
-          currentMove.actions.add(turn);
-          try {
-            turn.perform(currentGameState, currentGameState.getCurrentPlayer());
-          } catch (InvalidMoveException e1) {
-            System.out.println("Failed to perform move of user, please report if this happens");
-            e1.printStackTrace();
-          }
-        }
-        if(currentGameState.getCurrentPlayer().getSpeed() != 1) {
-          if(guiBoard.speedDown.isClicked()) {
-            Acceleration acc = new Acceleration(-1);
-            currentMove.actions.add(acc);
-            try {
-              acc.perform(currentGameState, currentGameState.getCurrentPlayer());
-            } catch (InvalidMoveException e1) {
-              System.out.println("Failed to perform move of user, please report if this happens");
-              e1.printStackTrace();
-            }
-          }
-        }
-        if(currentGameState.getCurrentPlayer().getSpeed()  != 6) {
-          if(guiBoard.speedUp.isClicked()) {
-            Acceleration acc = new Acceleration(1);
-            currentMove.actions.add(acc);
-            try {
-              acc.perform(currentGameState, currentGameState.getCurrentPlayer());
-            } catch (InvalidMoveException e1) {
-              System.out.println("Failed to perform move of user, please report if this happens");
-              e1.printStackTrace();
-            }
-          }
-        }
-      }
-      if(guiBoard.send.isClicked()) {
+
+      Action action = null;
+      boolean onSandbank = (currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK);
+      switch (guiBoard.getClickedButton(mouseX, mouseY)) {
+      case LEFT:
+        if (!onSandbank) action = new Turn(1);
+        break;
+      case RIGHT:
+        if (!onSandbank) action = new Turn(-1);
+        break;
+      case SPEED_UP:
+        if (!onSandbank) action = new Acceleration(1);
+      case SPEED_DOWN:
+        if (!onSandbank) action = new Acceleration(-1);
+      case SEND:
         sendMove();
-      }
-      if(guiBoard.cancel.isClicked()) {
+        break;
+      case CANCEL:
         try {
           currentGameState = backUp.clone();
         } catch (CloneNotSupportedException e1) {
@@ -284,32 +258,29 @@ public class FrameRenderer extends PApplet {
           e1.printStackTrace();
         }
         updateGameState(currentGameState);
-        redraw();
-        return;
+        break;
+      case NONE:
+        // do nothing
+        break;
       }
-      */
+
       // then field clicks
-      HexField clicked = getFieldCoordinates(mouseX, mouseY);
-      Action action = stepPossible.get(clicked);
-      if(action != null) {
-        try {
-          action.perform(currentGameState, currentGameState.getCurrentPlayer());
-        } catch (InvalidMoveException e1) {
-          System.out.println("Failed to perform move of user, please report if this happens");
-          e1.printStackTrace();
-        }
-        currentMove.actions.add(action);
-        logger.debug(
-            String.format("current player position is now %d, %d",
-                currentGameState.getCurrentPlayer().getField(currentGameState.getBoard()).getX(),
-                currentGameState.getCurrentPlayer().getField(currentGameState.getBoard()).getY()
-            )
-        );
-        updateView(currentGameState);
+      if (action == null) {
+        HexField clicked = getFieldCoordinates(mouseX, mouseY);
+        action = stepPossible.get(clicked);
       }
+
+      if (action != null) {
+          currentMove.actions.add(action);
+          try {
+            action.perform(currentGameState, currentGameState.getCurrentPlayer());
+          } catch (InvalidMoveException invalMove) {
+            logger.error("Failed to perform move of user, please report if this happens", invalMove);
+          }
+      }
+      updateView(currentGameState);
+      redraw();
     }
-    updateView(currentGameState);
-    redraw();
   }
 
   private void sendMove() {
@@ -406,7 +377,7 @@ public class FrameRenderer extends PApplet {
     if (currentGameState != null && currentGameState.getBoard() != null) {
       return currentGameState.getCurrentPlayer().getField(currentGameState.getBoard());
     } else {
-      return null; 
+      return null;
     }
   }
 
