@@ -172,8 +172,8 @@ public class HexField extends PrimitiveBase{
 
     // print coordinates
     parent.fill(0);
-    parent.textSize(a);
-    parent.text(fieldX + "," + fieldY, 0, c);
+    parent.textSize(a * 0.6f);
+    parent.text(fieldX + "," + fieldY, width * 0.08f, a + parent.textAscent() + parent.textDescent());
     parent.popMatrix();
     parent.popStyle();
   }
@@ -208,7 +208,7 @@ public class HexField extends PrimitiveBase{
     if((fieldY % 2) != 0) {
       newX = newX - width / 2f;
     }
-    newY += (offsetY + fieldY) * (c + a + GuiConstants.BORDERSIZE);
+    newY += (offsetY + fieldY) * (c + a + GuiConstants.BORDERSIZE * 0.5f);
     newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
     this.x = newX;
     this.y = newY;

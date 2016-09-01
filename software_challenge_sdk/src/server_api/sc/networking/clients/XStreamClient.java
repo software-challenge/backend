@@ -9,11 +9,10 @@ import java.net.SocketException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.networking.INetworkInterface;
-
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
-import com.thoughtworks.xstream.io.json.JsonWriter;
+
+import sc.networking.INetworkInterface;
 
 public abstract class XStreamClient
 {

@@ -1,21 +1,15 @@
 package sc.player2017.logic;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 import sc.player2017.Starter;
-import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGameHandler;
 import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Step;
-import sc.plugin2017.Turn;
-import sc.plugin2017.util.InvalidMoveException;
 import sc.shared.GameResult;
 
 /**
@@ -37,7 +31,7 @@ public class RandomLogic implements IGameHandler {
 
 	/**
 	 * Erzeugt ein neues Strategieobjekt, das zufaellige Zuege taetigt.
-	 * 
+	 *
 	 * @param client
 	 *            Der Zugrundeliegende Client der mit dem Spielserver
 	 *            kommunizieren kann.
@@ -67,7 +61,8 @@ public class RandomLogic implements IGameHandler {
     currentPlayer.setMovement(currentPlayer.getSpeed());
     currentPlayer.setFreeAcc(1);
     currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
-    
+
+    /*
     List<Move> possibleMoves = new ArrayList<Move>();
     // Sanbank
     if(currentPlayer.getField(gameState.getBoard()).getType() == FieldType.SANDBANK) {
@@ -114,12 +109,15 @@ public class RandomLogic implements IGameHandler {
           sendMove = index;
         }
       } catch (InvalidMoveException e) {
-        
+
         e.printStackTrace();
       }
       ++index;
     }
     move = possibleMoves.get(sendMove); // setze move auf den Zug mit den meisten Punkten
+    */
+    move.actions.add(new Step(1));
+    move.orderActions();
     System.out.println("*** sende zug: ");
     System.out.println(move);
     sendAction(move);

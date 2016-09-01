@@ -1,7 +1,6 @@
 package sc.server;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ import sc.server.network.PacketCallback;
 /**
  * The lobby will help clients find a open game or create new games to play with
  * another client.
- * 
+ *
  * @author mja
  * @author rra
  */
@@ -176,10 +175,11 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onError(Client source, Object errorPacket)
 	{
-		for (Iterator<IClientRole> iterator = source.getRoles().iterator(); iterator.hasNext();)
+		for (IClientRole role : source.getRoles())
 		{
-			PlayerRole role = (PlayerRole) iterator.next();
-			role.getPlayerSlot().getRoom().onClientError(source, errorPacket);
+			if (role.getClass() == PlayerRole.class) {
+				((PlayerRole)role).getPlayerSlot().getRoom().onClientError(source, errorPacket);
+			}
 		}
 	}
 }
