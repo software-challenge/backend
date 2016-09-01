@@ -43,7 +43,7 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
 
     Move move = new Move();
-    Action action = new Step(1);
+    Action action = new Advance(1);
     move.actions.add(action);
 
     move.perform(state, red);
@@ -68,7 +68,7 @@ public class MoveTest {
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
-    move.actions.add(new Step(1, 1));
+    move.actions.add(new Advance(1, 1));
     move.actions.add(new Push(4, 2));
 
     move.perform(state, red);
@@ -92,7 +92,7 @@ public class MoveTest {
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
-    move.actions.add(new Step(1, 1));
+    move.actions.add(new Advance(1, 1));
     move.actions.add(new Push(4, 2));
     move.actions.add(new Turn(1, 3));
 
@@ -119,7 +119,7 @@ public class MoveTest {
     red.setSpeed(2);
 
     Move move = new Move();
-    move.actions.add(new Step(2, 1));
+    move.actions.add(new Advance(2, 1));
 
     move.perform(state, red);
   }
@@ -141,7 +141,7 @@ public class MoveTest {
     red.setSpeed(2);
 
     Move move = new Move();
-    move.actions.add(new Step(2, 1));
+    move.actions.add(new Advance(2, 1));
     move.actions.add(new Push(4, 2));
 
     move.perform(state, red);
@@ -166,7 +166,7 @@ public class MoveTest {
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
-    move.actions.add(new Step(1, 1));
+    move.actions.add(new Advance(1, 1));
     move.actions.add(new Push(0, 2));
 
     move.perform(state, red);
@@ -194,7 +194,7 @@ public class MoveTest {
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
-    move.actions.add(new Step(1, 1));
+    move.actions.add(new Advance(1, 1));
     move.actions.add(new Push(0, 2));
 
     move.perform(state, red);
@@ -220,10 +220,10 @@ public class MoveTest {
     red.setCoal(6);
 
     Move move = new Move();
-    move.actions.add(new Step(1, 0));
+    move.actions.add(new Advance(1, 0));
     move.actions.add(new Turn(-1, 1));
     move.actions.add(new Turn(-1, 2));
-    move.actions.add(new Step(1, 3));
+    move.actions.add(new Advance(1, 3));
     move.actions.add(new Turn(1, 4));
 
     move.perform(state, red);

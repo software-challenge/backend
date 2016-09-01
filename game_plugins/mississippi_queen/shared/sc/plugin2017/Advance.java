@@ -8,8 +8,8 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2017.util.InvalidMoveException;
 
-@XStreamAlias(value = "step")
-public class Step extends Action {
+@XStreamAlias(value = "advance")
+public class Advance extends Action {
   /**
    * Anzahl der Felder, die zurückgelegt werden.
    */
@@ -21,7 +21,7 @@ public class Step extends Action {
   @XStreamOmitField
   protected boolean endsTurn;
 
-  public Step() {
+  public Advance() {
     distance = 0;
     order = 0;
   }
@@ -30,7 +30,7 @@ public class Step extends Action {
    * Legt eine neue Laufaktion an
    * @param distance Felder die überwunden werden
    */
-  public Step(int distance) {
+  public Advance(int distance) {
     this.distance = distance;
     endsTurn = false;
   }
@@ -40,7 +40,7 @@ public class Step extends Action {
    * @param distance Felder die überwunden werden
    * @param order Reihenfolge
    */
-  public Step(int distance, int order) {
+  public Advance(int distance, int order) {
     this.distance = distance;
     this.order = order;
     endsTurn = false;
@@ -125,14 +125,14 @@ public class Step extends Action {
   }
 
   @Override
-  public Step clone() {
-    return new Step(this.distance, this.order);
+  public Advance clone() {
+    return new Advance(this.distance, this.order);
   }
 
   @Override
   public boolean equals(Object o) {
-    if(o instanceof Step) {
-      return (this.distance == ((Step) o).distance);
+    if(o instanceof Advance) {
+      return (this.distance == ((Advance) o).distance);
     }
     return false;
   }

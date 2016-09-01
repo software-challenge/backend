@@ -1,15 +1,20 @@
 package sc.player2017.logic;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import sc.player2017.Starter;
+import sc.plugin2017.Advance;
+import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGameHandler;
 import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
-import sc.plugin2017.Step;
+import sc.plugin2017.Turn;
+import sc.plugin2017.util.InvalidMoveException;
 import sc.shared.GameResult;
 
 /**
@@ -62,26 +67,25 @@ public class RandomLogic implements IGameHandler {
     currentPlayer.setFreeAcc(1);
     currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
 
-    /*
     List<Move> possibleMoves = new ArrayList<Move>();
     // Sanbank
     if(currentPlayer.getField(gameState.getBoard()).getType() == FieldType.SANDBANK) {
       if(currentPlayer.getCoal() > 0 && currentPlayer.getField(gameState.getBoard())
           .getFieldInDirection(currentPlayer.getDirection(), gameState.getBoard()).isPassable()) {
-        move.actions.add(new Step(1,0));
+        move.actions.add(new Advance(1,0));
       } else {
-        move.actions.add(new Step(-1, 0));
+        move.actions.add(new Advance(-1, 0));
       }
       System.out.println("*** Bin auf Sandbank, sende Zug " + move);
       sendAction(move);
     }
     // Sonst
     for(int i = 0; i < 6;) {
-      List<Step> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, i, currentPlayer.getCoal());
+      List<Advance> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, i, currentPlayer.getCoal());
       if(!actions.isEmpty()) {
         Move newMove = new Move();
         newMove.actions.add(new Turn(GameState.turnToDir(currentPlayer.getDirection(), i), 0));
-        newMove.actions.add(new Step(1,1));
+        newMove.actions.add(new Advance(1,1));
         possibleMoves.add(newMove);
       } else {
         System.out.println("*** Keine Züge in irgendeine Richtung gefunden ****");
@@ -115,8 +119,6 @@ public class RandomLogic implements IGameHandler {
       ++index;
     }
     move = possibleMoves.get(sendMove); // setze move auf den Zug mit den meisten Punkten
-    */
-    move.actions.add(new Step(1));
     move.orderActions();
     System.out.println("*** sende zug: ");
     System.out.println(move);
