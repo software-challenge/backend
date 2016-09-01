@@ -46,6 +46,7 @@ public class GuiConstants {
   public static final int colorWhite = calcColor(255, 255, 255, 255);
   public static final int colorHexFieldGOAL = calcColor(255, 154, 50, 205);
   public static final int colorOrange = calcColor(255, 255, 153, 0);
+  public static final int colorProgressBar = calcColor(255, 255, 153, 0);
 
 
 
@@ -100,6 +101,7 @@ public class GuiConstants {
    */
   public static final String BACKGROUND_IMAGE = "resource/game/background.png";
 
+  public static final String WATER_IMAGE_PATH = "resource/game/water.png";
   public static final String ISLAND_IMAGE_PATH = "resource/game/island.png";
 
 
@@ -134,13 +136,9 @@ public class GuiConstants {
    * dargestellt. Für jede benutzte Textgröße einen Font gengerieren löst das
    * Problem.
    */
-  public static int[] fontSizes = {18, 25, 30, 10 }; //The needed Font Sizes
-  public static PFont[] fonts;
+  public static PFont font;
 
   public static void generateFonts(PApplet parent){
-    fonts = new PFont[fontSizes.length];
-    for(int i=0; i< fontSizes.length;i++){
-      fonts[i] = parent.createFont("Arial", fontSizes[i]);
-    }
+    font = parent.createFont("Arial", 48);
   }
 }

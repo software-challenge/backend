@@ -1,5 +1,7 @@
 package sc.plugin2017.gui.renderer.primitives;
 
+import java.util.EnumMap;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 import sc.plugin2017.Field;
@@ -27,9 +29,13 @@ public class HexField extends PrimitiveBase{
   protected int fieldY;
 
   private FieldType type;
+
+  // graphical variant, depends also on field type
   private long variant;
 
   private boolean highlighted = false;
+
+  private static EnumMap<FieldType, PImage> images;
 
   public HexField(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
     super(parent);
@@ -39,6 +45,13 @@ public class HexField extends PrimitiveBase{
     calcSize();
     calculatePosition(startX, startY, offsetX, offsetY);
     variant = Math.round(Math.random() * 5f);
+  }
+
+  // needs to be called in setup method of frame renderer (before any draw methods are called)
+  public static void initImages(FrameRenderer parent) {
+    images = new EnumMap<>(FieldType.class);
+    images.put(FieldType.BLOCKED, parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH));
+    images.put(FieldType.WATER, parent.loadImage(GuiConstants.WATER_IMAGE_PATH));
   }
 
   public void update(Field field) {
@@ -58,7 +71,21 @@ public class HexField extends PrimitiveBase{
     parent.vertex(0, a + c);
     parent.vertex(0, a);
     parent.endShape();
-    parent.noStroke();
+  }
+
+  // draws only highlight for field because highlights need to be drawn above (e.g. after) all other fields
+  public void drawHighlight() {
+    if (highlighted){
+      parent.pushStyle();
+      parent.pushMatrix();
+      parent.translate(x, y);
+      parent.noFill();
+      parent.strokeWeight(width / 16);
+      parent.stroke(GuiConstants.colorWhite);
+      drawHex();
+      parent.popMatrix();
+      parent.popStyle();
+    }
   }
 
   @Override
@@ -69,22 +96,24 @@ public class HexField extends PrimitiveBase{
     parent.pushMatrix();
     parent.translate(x, y);
 
-    if(type == FieldType.WATER) {
-      int base = GuiConstants.colorHexFields;
-      int result = parent.color(parent.red(base), parent.green(base), parent.blue(base) + (30 - (variant * 10)));
-      parent.fill(result);
-    } else if(type == FieldType.SANDBANK){
+    if (type == FieldType.WATER) {
+      parent.image(images.get(FieldType.WATER), 0, 0, width, 2*a+c);
+    }
+
+    if (type == FieldType.BLOCKED) {
+      parent.image(images.get(FieldType.BLOCKED), 0, 0, width, 2*a+c);
+    }
+
+    if(type == FieldType.SANDBANK){
       parent.fill(GuiConstants.colorHexFieldSANDBANK);
     } else if(type == FieldType.LOG){
       parent.fill(GuiConstants.colorHexFieldLOG);
-    } else if(type == FieldType.BLOCKED || Field.isPassengerField(type)){
+    } else if(Field.isPassengerField(type)){
       parent.fill(GuiConstants.colorHexFieldIsland);
     } else if(type == FieldType.GOAL){
       parent.fill(GuiConstants.colorHexFieldGOAL);
-    }
-    if(highlighted){
-      parent.strokeWeight(width / 16);
-      parent.stroke(GuiConstants.colorWhite);
+    } else {
+      parent.noFill();
     }
     drawHex();
     if(Field.isPassengerField(type)) {
@@ -141,21 +170,9 @@ public class HexField extends PrimitiveBase{
       }
     }
 
-    if (type == FieldType.BLOCKED) {
-      PImage islandImage = parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH);
-      int imageWidth = Math.round(width);
-      int imageHeight = Math.round(2*a+c);
-      // only draw if window size is already set
-      if (imageWidth > 0 && imageHeight > 0) {
-        islandImage.resize(imageWidth, imageHeight);
-        parent.image(islandImage, 0, 0);
-      }
-    }
-
     // print coordinates
     parent.fill(0);
-    parent.textFont(GuiConstants.fonts[3]);
-    parent.textSize(GuiConstants.fontSizes[3]);
+    parent.textSize(a);
     parent.text(fieldX + "," + fieldY, 0, c);
     parent.popMatrix();
     parent.popStyle();

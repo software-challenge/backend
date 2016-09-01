@@ -21,7 +21,7 @@ public class GuiPlayer extends HexField {
   private boolean currentPlayer;
 
   private int direction;
-  
+
   // player has to remember this to caclulate new positions
   private float startX;
   private float startY;
@@ -120,15 +120,11 @@ public class GuiPlayer extends HexField {
     } else if(passenger == 1) {
       parent.ellipse(0 , 0, passengerDiameter, passengerDiameter);
     }
-
-    parent.fill(0);
-    parent.textFont(GuiConstants.fonts[0]);
-    parent.textSize(GuiConstants.fontSizes[0]);
     parent.popMatrix();
     parent.popStyle();
-
   }
-  
+
+  @Override
   public void resize(float startX, float startY, int offsetX, int offsetY, float width){
     this.startX = startX;
     this.startY = startY;
@@ -148,15 +144,15 @@ public class GuiPlayer extends HexField {
     this.currentPlayer = currentPlayer;
     this.direction = player.getDirection();
   }
-  
+
   public float getX() {
     return x;
   }
-  
+
   public float getY() {
     return y;
   }
-  
+
   public int getDirection() {
     return direction;
   }

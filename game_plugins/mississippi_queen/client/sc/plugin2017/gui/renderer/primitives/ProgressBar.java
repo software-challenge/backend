@@ -14,53 +14,43 @@ public class ProgressBar extends PrimitiveBase {
 
   @Override
   public void draw() {
-    int round = parent.getCurrentRound();
     parent.pushStyle();
+    parent.pushMatrix();
+
+    int round = parent.getCurrentRound();
+
+    int width = parent.getWidth();
+    int height = Math.round(parent.getHeight() * GuiConstants.PROGRESS_BAR_HEIGHT);
 
     // Umrandung
-    parent.pushMatrix();
     parent.translate(0, parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT);
     parent.fill(GuiConstants.colorSideBarBG);
-    parent.rect(0, 0, parent.getWidth(), parent.getHeight()
-        * GuiConstants.PROGRESS_BAR_HEIGHT);
+    parent.rect(0, 0, width, height);
 
     // Text
     if(parent.gameActive()) {
-      parent.textFont(GuiConstants.fonts[0]);
-      parent.textSize(GuiConstants.fontSizes[0]);
-
+      parent.pushMatrix();
+      parent.textSize(Math.round(height * 0.4));
       parent.translate(10, parent.textAscent());
       parent.fill(GuiConstants.colorBlack);
-      parent.text("Runde:", 0, 0);
-      // parent.translate(0, parent.textDescent() + parent.textAscent());
-      parent.translate(parent.textWidth("Runde:"), 0);
-      parent.text(round + 1, 0, 0);
-      parent.translate(parent.textWidth(String.valueOf(round + 1)), 0);
-      parent.text("/", 0, 0);
-      parent.translate(parent.textWidth("/"), 0);
-      parent.text(GamePlugin.MAX_TURN_COUNT, 0, 0);
+      parent.text(String.format("Runde: %d / %d", round + 1, GamePlugin.MAX_TURN_COUNT), 0, 0);
+      parent.popMatrix();
     }
-    parent.popMatrix();
 
     // Statusbalken
-    parent.pushMatrix();
-
-    parent.stroke(1.0f); // Umrandung
-    parent.fill(GuiConstants.colorDarkGrey); // Filling
-
-    float balkenWidth = parent.getWidth() - 120f;
-    parent.translate(60, parent.getHeight() - 30);
-    parent.rect(0, 0, balkenWidth, 20, 7);
-    parent.fill(GuiConstants.colorHexFields);
-    //parent.noStroke();
-    if (round != 0)
-      parent.rect(0, 0, round * (balkenWidth / GamePlugin.MAX_TURN_COUNT),
-          20, 7);
+    parent.stroke(1.0f);
+    parent.fill(GuiConstants.colorDarkGrey);
+    float barWidth = width * 0.9f;
+    float barHeight = height * 0.4f;
+    parent.translate(Math.round(width * 0.05), height - barHeight - (height * 0.1f));
+    parent.rect(0, 0, barWidth, barHeight, barWidth * 0.2f);
+    parent.fill(GuiConstants.colorProgressBar);
+    if (round != 0) {
+      parent.rect(0, 0, round * (barWidth / GamePlugin.MAX_TURN_COUNT), barHeight, barWidth * 0.2f);
+    }
 
     parent.popMatrix();
-
     parent.popStyle();
-
   }
 
   @Override

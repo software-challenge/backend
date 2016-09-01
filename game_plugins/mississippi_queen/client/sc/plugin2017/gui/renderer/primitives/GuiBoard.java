@@ -317,6 +317,10 @@ public class GuiBoard extends PrimitiveBase {
     for (GuiTile tile : tiles) {
       tile.draw();
     }
+    // highlights need to be drawn above fields
+    for (GuiTile tile : tiles) {
+      tile.drawHighlights();
+    }
     // draw players
     red.draw();
     blue.draw();
