@@ -56,8 +56,8 @@ public class Move implements Cloneable {
         Push clonedAction = ((Push) action).clone();
         clonedActions.add(clonedAction);
       }
-      if(action.getClass() == Step.class) {
-        Step clonedAction = ((Step) action).clone();
+      if(action.getClass() == Advance.class) {
+        Advance clonedAction = ((Advance) action).clone();
         clonedActions.add(clonedAction);
       }
       if(action.getClass() == Turn.class) {
@@ -158,8 +158,8 @@ public class Move implements Cloneable {
         lastAction = actions.get(action.order - 1);
 
       }
-      if(lastAction != null && lastAction.getClass() == Step.class) {
-        if(((Step) lastAction).endsTurn) {
+      if(lastAction != null && lastAction.getClass() == Advance.class) {
+        if(((Advance) lastAction).endsTurn) {
           throw new InvalidMoveException("Zug auf eine Sandbank muss letzte Aktion sein.");
         }
       }
@@ -239,8 +239,8 @@ public class Move implements Cloneable {
         toString.concat(((Turn) action).toString() + "\n");
       } else if(action.getClass() == Acceleration.class){
         toString.concat(((Acceleration) action).toString() + "\n");
-      } else if(action.getClass() == Step.class){
-        toString.concat(((Step) action).toString() + "\n");
+      } else if(action.getClass() == Advance.class){
+        toString.concat(((Advance) action).toString() + "\n");
       } else if(action.getClass() == Push.class){
         toString.concat(((Push) action).toString() + "\n");
       }
@@ -254,8 +254,8 @@ public class Move implements Cloneable {
   public void setOrderInActions() {
     int order = 0;
     for (Action action : actions) {
-      if(action instanceof Step) {
-        ((Step)action).order = order;
+      if(action instanceof Advance) {
+        ((Advance)action).order = order;
       } else if(action instanceof Turn) {
         ((Turn)action).order = order;
       } else if(action instanceof Acceleration) {

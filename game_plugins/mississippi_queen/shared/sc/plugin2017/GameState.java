@@ -432,17 +432,17 @@ public class GameState implements Cloneable {
    * @param coal Kohleeinheite die zur Verfügung stehen
    * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
    */
-  public List<Step> getPossibleMovesInDirection(Player player, int movement, int direction, int coal) {
-    ArrayList<Step> step = new ArrayList<Step>();
+  public List<Advance> getPossibleMovesInDirection(Player player, int movement, int direction, int coal) {
+    ArrayList<Advance> step = new ArrayList<Advance>();
     Field start = player.getField(board);
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
     if(start.getType() == FieldType.SANDBANK && movement > 0) {
       if(start.getFieldInDirection(getOppositeDirection(direction), this.board).isPassable()) {
-        step.add(new Step(-1));
+        step.add(new Advance(-1));
       }
       if(coal > 0 || start.getFieldInDirection(direction, this.board).isPassable()) {
-        step.add(new Step(1));
+        step.add(new Advance(1));
       }
       return step;
     }
@@ -454,11 +454,11 @@ public class GameState implements Cloneable {
         if(next.getType() == FieldType.LOG) { // das Überqueren eines Baumstammfeldes verbraucht doppelt so viele Bewegungspunkte
           movement--;
           if(movement >= 0) {
-            step.add(new Step(i));
+            step.add(new Advance(i));
           }
         } else {
           if(movement >= 0) {
-            step.add(new Step(i));
+            step.add(new Advance(i));
           }
           if(next.getType() == FieldType.SANDBANK || next.equals(enemy.getField(board))) {
             return step;
@@ -706,8 +706,8 @@ public class GameState implements Cloneable {
       e.printStackTrace();
     }
     for(Action action : move.actions) {
-      if(action.getClass() == Step.class) { // case Step
-        Step o = (Step) action;
+      if(action.getClass() == Advance.class) { // case Step
+        Advance o = (Advance) action;
         cost[0] += o.distance;
         Field start = player.getField(clone.board);
         if(start.getType() == FieldType.SANDBANK) {

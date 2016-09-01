@@ -16,7 +16,7 @@ import sc.plugin2017.GameState;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Push;
-import sc.plugin2017.Step;
+import sc.plugin2017.Advance;
 import sc.plugin2017.Tile;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.util.Constants;
@@ -209,7 +209,7 @@ public class GuiBoard extends PrimitiveBase {
             // work:
             int stepCounter = 1;
             for (HexField hexField : toHighlight) {
-              add.put(hexField, new Step(stepCounter));
+              add.put(hexField, new Advance(stepCounter));
               ++stepCounter;
             }
           }
@@ -221,13 +221,13 @@ public class GuiBoard extends PrimitiveBase {
                 currentPlayer.getDirection());
             if (step != null) {
               toHighlight.add(step);
-              add.put(step, new Step(1));
+              add.put(step, new Advance(1));
             }
             step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 GameState.getOppositeDirection(currentPlayer.getDirection()));
             if (step != null) {
               toHighlight.add(step);
-              add.put(step, new Step(-1));
+              add.put(step, new Advance(-1));
             }
           }
         }

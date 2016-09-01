@@ -15,7 +15,7 @@ import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Push;
-import sc.plugin2017.Step;
+import sc.plugin2017.Advance;
 import sc.plugin2017.Tile;
 import sc.plugin2017.Turn;
 import sc.plugin2017.WelcomeMessage;
@@ -63,7 +63,7 @@ public class Configuration {
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
 				Condition.class, Board.class, Field.class, FieldType.class,
-				Action.class, Turn.class, Step.class, Push.class, Acceleration.class,
+				Action.class, Turn.class, Advance.class, Push.class, Acceleration.class,
 				Tile.class
 				});
 	}

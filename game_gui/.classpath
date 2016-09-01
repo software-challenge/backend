@@ -7,5 +7,6 @@
 	<classpathentry kind="lib" path="lib/forms-1.2.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/software_challenge_sdk"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/mississippi_queen"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/mississippi_queen_player"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
