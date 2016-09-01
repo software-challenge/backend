@@ -30,7 +30,7 @@ public class ProgressBar extends PrimitiveBase {
     // Text
     if(parent.gameActive()) {
       parent.pushMatrix();
-      parent.textSize(Math.round(height * 0.4));
+      parent.textSize(Math.round(height * 0.3));
       parent.translate(10, parent.textAscent());
       parent.fill(GuiConstants.colorBlack);
       parent.text(String.format("Runde: %d / %d", round + 1, GamePlugin.MAX_TURN_COUNT), 0, 0);

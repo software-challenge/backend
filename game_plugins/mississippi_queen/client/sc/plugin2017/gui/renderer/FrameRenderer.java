@@ -120,6 +120,17 @@ public class FrameRenderer extends PApplet {
     HexField.initImages(this);
     guiBoard.setup();
 
+    // TODO Hack! Sometimes, the GUI gets dimensions of 100,100 and stays there until resizing the window.
+    new java.util.Timer().schedule(
+        new java.util.TimerTask() {
+            @Override
+            public void run() {
+              resize(width, height);
+            }
+        },
+        500
+    );
+
     initialized = true;
   }
 
@@ -311,12 +322,25 @@ public class FrameRenderer extends PApplet {
       }
     }
     move.setOrderInActions();
-    if ()
-    if (JOptionPane.showConfirmDialog(null, "Zug wirklich senden?", "Senden", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-      // do not send move
-      return;
+    if (!currentMoveValid(move)) {
+      if (JOptionPane.showConfirmDialog(null, "Der Zug ist ungültig. Durch senden des aktuellen Zuges werden Sie disqualifiziert. Zug wirklich senden?", "Senden", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+        // do not send move
+        return;
+      }
     }
     RenderFacade.getInstance().sendMove(move);
+  }
+
+  private boolean currentMoveValid(Move move) {
+    boolean allMovementPointsUsed = currentGameState.getCurrentPlayer().getMovement() == 0;
+    boolean accelerationFirst = true;
+    // test if any action after the first one is an acceleration action
+    for (int i = 1; i < move.actions.size(); i++) {
+      if (move.actions.get(i).getClass() == Acceleration.class) {
+        accelerationFirst = false;
+      }
+    }
+    return allMovementPointsUsed && accelerationFirst;
   }
 
   private HexField getFieldCoordinates(int x, int y) {
