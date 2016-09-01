@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +114,10 @@ public class FrameRenderer extends PApplet {
     smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
     GuiConstants.generateFonts(this);
+    // same font is used everywhere
+    textFont(GuiConstants.font);
 
+    HexField.initImages(this);
     guiBoard.setup();
 
     initialized = true;
@@ -130,11 +135,6 @@ public class FrameRenderer extends PApplet {
     boardFrame.draw();
     if (currentGameState != null && currentGameState.gameEnded()) {
       GameEndedDialog.draw(this, currentGameState);
-    }
-    if (currentGameState != null) {
-      text(String.format("Red Player Position: %d,%d", currentGameState.getRedPlayer().getX(), currentGameState.getRedPlayer().getY()), 20, 60);
-      float textHeight = textAscent() + textDescent();
-      text(String.format("Blue Player Position: %d,%d", currentGameState.getBluePlayer().getX(), currentGameState.getBluePlayer().getY()), 20, (float)(60 + textHeight * 1.25));
     }
   }
 
@@ -311,6 +311,11 @@ public class FrameRenderer extends PApplet {
       }
     }
     move.setOrderInActions();
+    if ()
+    if (JOptionPane.showConfirmDialog(null, "Zug wirklich senden?", "Senden", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+      // do not send move
+      return;
+    }
     RenderFacade.getInstance().sendMove(move);
   }
 

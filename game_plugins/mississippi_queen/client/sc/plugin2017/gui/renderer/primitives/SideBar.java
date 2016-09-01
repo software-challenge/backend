@@ -18,12 +18,12 @@ public class SideBar extends PrimitiveBase {
   private int redPoints = GuiConstants.DEFAULT_RED_POINTS;
   private String blueName = GuiConstants.DEFAULT_BLUE_NAME;
   private int bluePoints = GuiConstants.DEFAULT_BLUE_POINTS;
-  
+
   public SideBar(FrameRenderer parent) {
     super(parent);
     this.parent = parent;
   }
-  
+
   public void update(PlayerColor currentColor, String redName, int redPoints, String blueName, int bluePoints) {
     this.currentColor = currentColor;
     this.redName = redName;
@@ -35,23 +35,40 @@ public class SideBar extends PrimitiveBase {
   public void update(PlayerColor currentColor) {
     update(currentColor, GuiConstants.DEFAULT_RED_NAME, GuiConstants.DEFAULT_RED_POINTS, GuiConstants.DEFAULT_BLUE_NAME, GuiConstants.DEFAULT_BLUE_POINTS);
   }
-  
+
   @Override
   public void draw() {
     parent.pushStyle();
-    
+
     parent.stroke(1.0f); // Umrandung
     parent.fill(GuiConstants.colorSideBarBG);
 
     parent.pushMatrix();
+    float width = parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH;
+    float height = parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT;
     parent.translate(parent.getWidth() * GuiConstants.SIDE_BAR_START_X,
         GuiConstants.SIDE_BAR_START_Y);
-    parent.rect(0, 0, parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH,
-        parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT);
+    parent.rect(0, 0, width, height);
+
+    float maxTextWidth = width * 0.9f;
+    // calculate maximum font size to fit longest player name, or, if that is
+    // shorter than the reference string, fit the reference string into sidebar
+    String longestPlayerName;
+    if (redName.length() > blueName.length()) {
+      longestPlayerName = redName;
+    } else {
+      longestPlayerName = blueName;
+    }
+    String referenceString = "Dieser Text sollte passen.";
+    if (longestPlayerName.length() > referenceString.length()) {
+      referenceString = longestPlayerName;
+    }
+    parent.textSize(10);
+    float baseFontSize = maxTextWidth / parent.textWidth(referenceString) * 10;
+    parent.textSize(baseFontSize);
+
     // Text
     // erster Spieler
-    parent.textFont(GuiConstants.fonts[2]);
-    parent.textSize(GuiConstants.fontSizes[2]);
 
     if (currentColor == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
@@ -60,60 +77,39 @@ public class SideBar extends PrimitiveBase {
     }
 
     parent.translate(20, parent.textAscent() + 20);
-    // passe Textgröße an
-    int  preferredTextSize = 25;
-    preferredTextSize = (int) (30f / parent.textWidth(redName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
-
-    if (!(preferredTextSize > 30)) {
-      parent.textSize(preferredTextSize);
-    }
-
     parent.text(redName, 0, 0);
 
-    // Punkte + Kohle + Geschwindigkeit
-    parent.textFont(GuiConstants.fonts[1]);
-    parent.textSize(GuiConstants.fontSizes[1]);
-
-
+    // Punkte
+    parent.textSize(baseFontSize * 0.8f);
     parent.translate(0, parent.textAscent() + parent.textDescent());
     parent.text("Punkte: " + redPoints, 0, 0);
 
     // Blauer Spieler.
-    parent.textFont(GuiConstants.fonts[2]);
-    parent.textSize(GuiConstants.fontSizes[2]);
-
+    parent.textSize(baseFontSize);
     parent.translate(0, parent.textAscent() + parent.textDescent());
     if (currentColor == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
     } else {
       parent.fill(GuiConstants.colorBlack);
     }
-
-    // passe Textgröße an
-    preferredTextSize = (int) (30f / parent.textWidth(blueName) * (parent.getWidth() * GuiConstants.SIDE_BAR_WIDTH - 25));
-    if (!(preferredTextSize > 30)) {
-      parent.textSize(preferredTextSize);
-    }
-
     parent.text(blueName, 0, 0);
     // Punkte
-    parent.textSize(GuiConstants.fontSizes[1]);
-    parent.textFont(GuiConstants.fonts[1]);
+    parent.textSize(baseFontSize * 0.8f);
     parent.translate(0, parent.textAscent() + parent.textDescent());
     parent.text("Punkte: " + bluePoints, 0, 0);
 
     // Aktueller Zug
-    parent.translate(0, parent.textAscent() + parent.textDescent());
-    if (currentColor == PlayerColor.RED) {
-      parent.fill(GuiConstants.colorRed);
-    } else if (currentColor == PlayerColor.BLUE) {
+    if (currentColor == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
+    } else if (currentColor == PlayerColor.RED) {
+      parent.fill(GuiConstants.colorRed);
     } else {
       parent.fill(GuiConstants.colorBlack);
     }
+    parent.textSize(baseFontSize * 0.7f);
+    parent.translate(0, 2 * (parent.textAscent() + parent.textDescent()));
+    parent.text("Aktionen des aktuellen Zuges:", 0, 0);
 
-    parent.textSize(GuiConstants.fontSizes[3]);
-    parent.textFont(GuiConstants.fonts[3]);
     for (Action action : parent.getCurrentActions()) {
       if (action != null) {
         parent.translate(0, parent.textAscent() + parent.textDescent());
@@ -122,12 +118,10 @@ public class SideBar extends PrimitiveBase {
     }
 
     // Debug Ausgabe
+    parent.textSize(baseFontSize * 0.5f);
+    parent.fill(GuiConstants.colorBlack);
     if (RenderConfiguration.optionDebug) {
       parent.translate(0, parent.textAscent() + parent.textDescent());
-      parent.textFont(GuiConstants.fonts[1]);
-      parent.textSize(GuiConstants.fontSizes[1]);
-      parent.fill(GuiConstants.colorBlack);
-      parent.text(parent.frameRate, 0, 0);
       for (DebugHint hint : parent.getCurrentHints()) {
           parent.translate(0, parent.textAscent() + parent.textDescent());
           parent.text(hint.getContent(), 0, 0);
@@ -135,7 +129,6 @@ public class SideBar extends PrimitiveBase {
     }
 
     parent.popMatrix();
-
     parent.popStyle();
   }
 

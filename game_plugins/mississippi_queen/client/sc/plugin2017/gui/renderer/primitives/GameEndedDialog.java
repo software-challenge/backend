@@ -10,8 +10,7 @@ public class GameEndedDialog {
   public static void draw(FrameRenderer parent, GameState currentGameState) {
     parent.pushStyle();
     parent.pushMatrix();
-    parent.textFont(GuiConstants.fonts[1]);
-    parent.textSize(GuiConstants.fontSizes[1]);
+    parent.textSize(32);
     // Grey out Game Area
     parent.fill(GuiConstants.colorGreyOut);
     parent.rect(0, 0, parent.getWidth(), parent.getHeight());
@@ -70,8 +69,7 @@ public class GameEndedDialog {
     // # Winning Reason
     parent.pushMatrix();
 
-    parent.textFont(GuiConstants.fonts[1]);
-    parent.textSize(GuiConstants.fontSizes[1]);
+    parent.textSize(32);
     parent.translate((x - parent.textWidth(winningReason)) / 2, 5 * parent.textAscent() + parent.textDescent());
 
     parent.text(winningReason, 0, 0);

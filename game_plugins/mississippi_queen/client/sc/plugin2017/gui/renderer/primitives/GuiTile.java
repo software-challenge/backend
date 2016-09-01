@@ -8,9 +8,9 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 public class GuiTile extends PrimitiveBase {
 
   private ArrayList<HexField> fields;
-  
+
   private boolean visible;
-  
+
   public GuiTile(FrameRenderer parent) {
     super(parent);
     fields = new ArrayList<HexField>();
@@ -36,6 +36,15 @@ public class GuiTile extends PrimitiveBase {
     }
   }
 
+  // draws only highlight for field because highlights need to be drawn above (e.g. after) all other fields
+  public void drawHighlights() {
+    if(visible) {
+      for (HexField field : fields) {
+        field.drawHighlight();
+      }
+    }
+  }
+
   public void resize(float startX, float startY, int offsetX, int offsetY, float width) {
     for (HexField field : fields) {
       field.resize(startX, startY, offsetX, offsetY, width);
@@ -57,6 +66,7 @@ public class GuiTile extends PrimitiveBase {
     }
   }
 
+  @Override
   public void kill() {
     for (HexField field : fields) {
       if(field != null) {
