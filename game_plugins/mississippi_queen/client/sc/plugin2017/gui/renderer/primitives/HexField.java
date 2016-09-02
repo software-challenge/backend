@@ -34,6 +34,8 @@ public class HexField extends PrimitiveBase{
 
   private FieldType type;
 
+  private int tileIndex;
+
   // graphical variant, depends also on field type
   private long variant;
 
@@ -41,11 +43,12 @@ public class HexField extends PrimitiveBase{
 
   private static EnumMap<FieldType, PImage[]> images;
 
-  public HexField(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
+  public HexField(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY, int tileIndex) {
     super(parent);
     fieldX = 0;
     fieldY = 0;
     this.width = width;
+    this.tileIndex = tileIndex;
     calcSize();
     calculatePosition(startX, startY, offsetX, offsetY);
     variant = 0;
@@ -155,7 +158,11 @@ public class HexField extends PrimitiveBase{
     }
 
     // print coordinates
-    parent.fill(0);
+    if (tileIndex % 2 == 0) {
+      parent.fill(parent.color(0, 0, 0));
+    } else {
+      parent.fill(parent.color(255, 255, 255));
+    }
     parent.textSize(a * 0.6f);
     parent.text(fieldX + "," + fieldY, width * 0.08f, a + parent.textAscent() + parent.textDescent());
     parent.popMatrix();

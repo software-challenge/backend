@@ -30,7 +30,7 @@ public class GuiPlayer extends HexField {
   private int offsetY;
 
   public GuiPlayer(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
-    super(parent, width, startX, startY, offsetX, offsetY);
+    super(parent, width, startX, startY, offsetX, offsetY, 0);
     this.startX = startX;
     this.startY = startY;
     this.offsetX = offsetX;
