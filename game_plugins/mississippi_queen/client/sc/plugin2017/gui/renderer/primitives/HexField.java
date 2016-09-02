@@ -2,6 +2,9 @@ package sc.plugin2017.gui.renderer.primitives;
 
 import java.util.EnumMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import processing.core.PApplet;
 import processing.core.PImage;
 import sc.plugin2017.Field;
@@ -14,6 +17,7 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
  */
 public class HexField extends PrimitiveBase{
 
+	private static Logger logger = LoggerFactory.getLogger(HexField.class);
   // Fields
   protected float x, y;
   protected float a, b, c;
@@ -35,7 +39,7 @@ public class HexField extends PrimitiveBase{
 
   private boolean highlighted = false;
 
-  private static EnumMap<FieldType, PImage> images;
+  private static EnumMap<FieldType, PImage[]> images;
 
   public HexField(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
     super(parent);
@@ -44,20 +48,64 @@ public class HexField extends PrimitiveBase{
     this.width = width;
     calcSize();
     calculatePosition(startX, startY, offsetX, offsetY);
-    variant = Math.round(Math.random() * 5f);
+    variant = 0;
   }
 
   // needs to be called in setup method of frame renderer (before any draw methods are called)
   public static void initImages(FrameRenderer parent) {
     images = new EnumMap<>(FieldType.class);
-    images.put(FieldType.BLOCKED, parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH));
-    images.put(FieldType.WATER, parent.loadImage(GuiConstants.WATER_IMAGE_PATH));
+    images.put(FieldType.BLOCKED, new PImage[] { parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH),
+        parent.loadImage(GuiConstants.PASSENGER0_INACTIVE_PATH),
+        parent.loadImage(GuiConstants.PASSENGER1_INACTIVE_PATH),
+        parent.loadImage(GuiConstants.PASSENGER2_INACTIVE_PATH),
+        parent.loadImage(GuiConstants.PASSENGER3_INACTIVE_PATH),
+        parent.loadImage(GuiConstants.PASSENGER4_INACTIVE_PATH),
+        parent.loadImage(GuiConstants.PASSENGER5_INACTIVE_PATH)
+        });
+    images.put(FieldType.WATER, new PImage[] { parent.loadImage(GuiConstants.WATER_IMAGE_PATH) });
+    images.put(FieldType.PASSENGER0, new PImage[] { parent.loadImage(GuiConstants.PASSENGER0_PATH) });
+    images.put(FieldType.PASSENGER1, new PImage[] { parent.loadImage(GuiConstants.PASSENGER1_PATH) });
+    images.put(FieldType.PASSENGER2, new PImage[] { parent.loadImage(GuiConstants.PASSENGER2_PATH) });
+    images.put(FieldType.PASSENGER3, new PImage[] { parent.loadImage(GuiConstants.PASSENGER3_PATH) });
+    images.put(FieldType.PASSENGER4, new PImage[] { parent.loadImage(GuiConstants.PASSENGER4_PATH) });
+    images.put(FieldType.PASSENGER5, new PImage[] { parent.loadImage(GuiConstants.PASSENGER5_PATH) });
+    images.put(FieldType.SANDBANK, new PImage[] { parent.loadImage(GuiConstants.SANDBANK_IMAGE_PATH) });
+    images.put(FieldType.LOG, new PImage[] { parent.loadImage(GuiConstants.LOG_IMAGE_PATH) });
+    images.put(FieldType.GOAL, new PImage[] { parent.loadImage(GuiConstants.GOAL_IMAGE_PATH) });
   }
 
   public void update(Field field) {
     fieldX = field.getX();
     fieldY = field.getY();
     type = field.getType();
+    switch (type) {
+    case PASSENGER0:
+      variant = 1;
+      break;
+    case PASSENGER1:
+      variant = 2;
+      break;
+    case PASSENGER2:
+      variant = 3;
+      break;
+    case PASSENGER3:
+      variant = 4;
+      break;
+    case PASSENGER4:
+      variant = 5;
+      break;
+    case PASSENGER5:
+      variant = 6;
+      break;
+    case BLOCKED:
+      // do not change variant to not overwrite for islands which where passenger fields!
+      if (variant < 1 || variant > 6) {
+        variant = 0;
+      }
+      break;
+    default:
+      variant = 0;
+    }
     highlighted = false;
   }
 
@@ -96,78 +144,14 @@ public class HexField extends PrimitiveBase{
     parent.pushMatrix();
     parent.translate(x, y);
 
-    if (type == FieldType.WATER) {
-      parent.image(images.get(FieldType.WATER), 0, 0, width, 2*a+c);
-    }
-
-    if (type == FieldType.BLOCKED) {
-      parent.image(images.get(FieldType.BLOCKED), 0, 0, width, 2*a+c);
-    }
-
-    if(type == FieldType.SANDBANK){
-      parent.fill(GuiConstants.colorHexFieldSANDBANK);
-    } else if(type == FieldType.LOG){
-      parent.fill(GuiConstants.colorHexFieldLOG);
-    } else if(Field.isPassengerField(type)){
-      parent.fill(GuiConstants.colorHexFieldIsland);
-    } else if(type == FieldType.GOAL){
-      parent.fill(GuiConstants.colorHexFieldGOAL);
-    } else {
-      parent.noFill();
-    }
-    drawHex();
-    if(Field.isPassengerField(type)) {
-      parent.fill(GuiConstants.colorPassenger);
-      parent.ellipse(width / 2, 17 * width / 32, width / 4, width / 4);
-      parent.fill(GuiConstants.colorHexFieldLOG);
-      if(type == FieldType.PASSENGER0) {
-        parent.beginShape();
-        parent.vertex(3 * width / 4, a);
-        parent.vertex(3 * width / 4, a + c);
-        parent.vertex(width, a + c);
-        parent.vertex(width, a);
-        parent.endShape();
-      } else if(type == FieldType.PASSENGER1) {
-        parent.beginShape();
-        parent.vertex(b , 0);
-        parent.vertex(width , a);
-        parent.vertex(width - a / 2, 2 * a);
-        parent.vertex(b - a / 2, a);
-        parent.endShape();
-
-      } else if(type == FieldType.PASSENGER2) {
-        parent.beginShape();
-        parent.vertex(0, a);
-        parent.vertex(b, 0);
-        parent.vertex(b + a / 2, a);
-        parent.vertex(a / 2, 2 * a);
-        parent.endShape();
-
-      } else if(type == FieldType.PASSENGER3) {
-        parent.beginShape();
-        parent.vertex(0, a);
-        parent.vertex(b / 2 , a);
-        parent.vertex(b / 2, a + c);
-        parent.vertex(0, a + c);
-        parent.endShape();
-
-      } else if(type == FieldType.PASSENGER4) {
-        parent.beginShape();
-        parent.vertex(b, c + a + a);
-        parent.vertex(0, a + c);
-        parent.vertex(a / 2, c);
-        parent.vertex(b + a / 2, c + a);
-        parent.endShape();
-
-      } else if(type == FieldType.PASSENGER5) {
-        parent.beginShape();
-        parent.vertex(b, c + 2 * a);
-        parent.vertex(width, a + c);
-        parent.vertex(width - a / 2, c);
-        parent.vertex(b - a / 2, a + c);
-        parent.endShape();
-
+    try {
+      if (type.isPassenger()) {
+        parent.image(images.get(type)[0], 0, 0, width, 2*a+c);
+      } else {
+        parent.image(images.get(type)[(int)variant], 0, 0, width, 2*a+c);
       }
+    } catch (ArrayIndexOutOfBoundsException e) {
+      logger.error("could not get {} with variant {}", type, variant);
     }
 
     // print coordinates
