@@ -72,6 +72,7 @@ public class RandomLogic implements IGameHandler {
     currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
 
     List<Move> possibleMoves = new ArrayList<Move>();
+
     // Sanbank
     if(currentPlayer.getField(gameState.getBoard()).getType() == FieldType.SANDBANK) {
       if(currentPlayer.getCoal() > 0 && currentPlayer.getField(gameState.getBoard())
@@ -84,7 +85,7 @@ public class RandomLogic implements IGameHandler {
       sendAction(move);
       return;
     }
-    // Sonst
+    // Zuege in alle Richtungen durchprobieren
     for(Direction direction : Direction.values()) {
       List<Advance> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, direction, currentPlayer.getCoal());
       if(!actions.isEmpty()) {
@@ -92,10 +93,6 @@ public class RandomLogic implements IGameHandler {
         newMove.actions.add(new Turn(currentPlayer.getDirection().turnToDir(direction), 0));
         newMove.actions.add(new Advance(1,1));
         possibleMoves.add(newMove);
-      } else {
-        log.warn("Keine Züge in irgendeine Richtung gefunden!");
-        sendAction(move); // kein Zug möglich also falschen Zug senden
-        return;
       }
     }
     // Finde Zug mit meisten Punkten
