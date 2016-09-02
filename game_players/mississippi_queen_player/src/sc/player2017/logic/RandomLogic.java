@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.player2017.Starter;
+import sc.plugin2017.Acceleration;
 import sc.plugin2017.Advance;
 import sc.plugin2017.Direction;
 import sc.plugin2017.FieldType;
@@ -57,6 +58,7 @@ public class RandomLogic implements IGameHandler {
 	public void gameEnded(GameResult data, PlayerColor color,
 			String errorMessage) {
 		log.info("Das Spiel ist beendet.");
+		((ch.qos.logback.classic.Logger)log).setLevel(ch.qos.logback.classic.Level.DEBUG);
 	}
 
 	/**
@@ -86,20 +88,33 @@ public class RandomLogic implements IGameHandler {
       return;
     }
     // Zuege in alle Richtungen durchprobieren
-    for(Direction direction : Direction.values()) {
-      List<Advance> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, direction, currentPlayer.getCoal());
-      if(!actions.isEmpty()) {
+    for (Direction direction : Direction.values()) {
+      // try moves for current speed
+      for (Advance action : gameState.getPossibleMovesInDirection(currentPlayer, currentPlayer.getSpeed(), direction, currentPlayer.getCoal())) {
         Move newMove = new Move();
-        newMove.actions.add(new Turn(currentPlayer.getDirection().turnToDir(direction), 0));
-        newMove.actions.add(new Advance(1,1));
+        int index = 0;
+        if (currentPlayer.getDirection() != direction) {
+          newMove.actions.add(new Turn(currentPlayer.getDirection().turnToDir(direction), index++));
+        }
+        newMove.actions.add(new Advance(action.distance, index++));
+        possibleMoves.add(newMove);
+      }
+      // try moves when accelerating or decelerating (depending if we are currently at speed 1 or 2)
+      int otherSpeed = currentPlayer.getSpeed() == 1 ? 2 : 1;
+      for (Advance action : gameState.getPossibleMovesInDirection(currentPlayer, otherSpeed, direction, currentPlayer.getCoal())) {
+        Move newMove = new Move();
+        int index = 0;
+        newMove.actions.add(new Acceleration(otherSpeed - currentPlayer.getSpeed(), index++));
+        if (currentPlayer.getDirection() != direction) {
+          newMove.actions.add(new Turn(currentPlayer.getDirection().turnToDir(direction), index++));
+        }
+        newMove.actions.add(new Advance(action.distance, index++));
         possibleMoves.add(newMove);
       }
     }
     // Finde Zug mit meisten Punkten
     int maxPoints = 0;
-    int sendMove = 0;
     GameState clone = null;
-    int index = 0;
     for (Move possibleMove : possibleMoves) {
       // Klone gameState
       try {
@@ -111,16 +126,15 @@ public class RandomLogic implements IGameHandler {
         possibleMove.perform(clone, clone.getCurrentPlayer());
 
         int points = clone.getPointsForPlayer(clone.getCurrentPlayerColor());
+        log.debug("move {} would give {} points", clone, points);
         if(points > maxPoints) {
           maxPoints = points;
-          sendMove = index;
+          move = possibleMove;
         }
       } catch (InvalidMoveException e) {
         log.info("Gefundener Zug ist ungültig:", e);
       }
-      ++index;
     }
-    move = possibleMoves.get(sendMove); // setze move auf den Zug mit den meisten Punkten
     move.orderActions();
     log.info("Sende zug {}", move);
     sendAction(move);

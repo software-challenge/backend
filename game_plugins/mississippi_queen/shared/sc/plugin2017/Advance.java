@@ -72,6 +72,7 @@ public class Advance extends Action {
       }
       state.put(next.getX(), next.getY(), player);
       player.setMovement(0);
+      player.setCoal(player.getCoal() - 1);
       return;
     } else {
       if(start.getType() == FieldType.SANDBANK) {
@@ -84,7 +85,6 @@ public class Advance extends Action {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
         state.put(next.getX(), next.getY(), player);
-        player.setCoal(player.getCoal() - 1);
         return;
       }
       nextFields.add(start);
@@ -93,6 +93,8 @@ public class Advance extends Action {
         Field next = nextFields.get(i).alwaysGetFieldInDirection(player.getDirection(), state.getBoard());
         if(next != null) {
           nextFields.add(next);
+        } else {
+          throw new InvalidMoveException("Feld ist nicht vorhanden. Ungültiger Zug.");
         }
         Field checkField = nextFields.get(i + 1); // get next field
         if(!checkField.isPassable() ||

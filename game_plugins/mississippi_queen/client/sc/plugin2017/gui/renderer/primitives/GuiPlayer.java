@@ -97,7 +97,7 @@ public class GuiPlayer extends HexField {
     // calculate optimal text size
     parent.textSize(12);
     parent.textSize(12/parent.textWidth(coalString) * coalHeight);
-    parent.text(coalString, 0, -coalWidth, coalHeight, coalWidth);
+    parent.text(coalString, 0, -parent.textDescent());
 
     parent.popMatrix();
 
@@ -110,7 +110,7 @@ public class GuiPlayer extends HexField {
     // calculate optimal text size
     parent.textSize(12);
     parent.textSize(12/parent.textWidth(speedString) * speedHeight);
-    parent.text(speedString, 0, -speedWidth, speedHeight, speedWidth);
+    parent.text(speedString, 0, -parent.textDescent());
 
     parent.popMatrix();
 

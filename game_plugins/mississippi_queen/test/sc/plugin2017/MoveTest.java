@@ -50,6 +50,30 @@ public class MoveTest {
   }
 
   @Test(expected = InvalidMoveException.class)
+  public void moveOntoNotExistingField() throws InvalidMoveException {
+
+    // Moving the red player one step in its direction will move him into a
+    // blocked field.
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..b.r.W.W..\n" +
+        "...W.W.W.W.\n" +
+        "..W.W.W.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    red.setDirection(Direction.UP_RIGHT);
+    red.setSpeed(2);
+
+    Move move = new Move();
+    Action action = new Advance(2);
+    move.actions.add(action);
+
+    move.perform(state, red);
+  }
+
+  @Test(expected = InvalidMoveException.class)
   public void pushWhenNotOnOpponent() throws InvalidMoveException {
     // Red player moves to right upper field and should not be able to push blue
     // player.
@@ -232,4 +256,6 @@ public class MoveTest {
     assertEquals(Direction.DOWN_RIGHT, red.getDirection());
     assertEquals(4, red.getCoal());
   }
+
+
 }

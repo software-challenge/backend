@@ -99,10 +99,25 @@ public class GuiConstants {
   /**
    * Sourcepath to Background Image
    */
-  public static final String BACKGROUND_IMAGE = "resource/game/background.png";
-
-  public static final String WATER_IMAGE_PATH = "resource/game/water.png";
-  public static final String ISLAND_IMAGE_PATH = "resource/game/island.png";
+  public static final String RES_DIR = "resource/game/";
+  public static final String BACKGROUND_IMAGE = RES_DIR + "background.png";
+  public static final String WATER_IMAGE_PATH = RES_DIR + "water.png";
+  public static final String ISLAND_IMAGE_PATH = RES_DIR + "island.png";
+  public static final String PASSENGER0_INACTIVE_PATH = RES_DIR + "passenger1.png";
+  public static final String PASSENGER1_INACTIVE_PATH = RES_DIR + "passenger2.png";
+  public static final String PASSENGER2_INACTIVE_PATH = RES_DIR + "passenger3.png";
+  public static final String PASSENGER3_INACTIVE_PATH = RES_DIR + "passenger4.png";
+  public static final String PASSENGER4_INACTIVE_PATH = RES_DIR + "passenger5.png";
+  public static final String PASSENGER5_INACTIVE_PATH = RES_DIR + "passenger6.png";
+  public static final String PASSENGER0_PATH = RES_DIR + "passenger1a.png";
+  public static final String PASSENGER1_PATH = RES_DIR + "passenger2a.png";
+  public static final String PASSENGER2_PATH = RES_DIR + "passenger3a.png";
+  public static final String PASSENGER3_PATH = RES_DIR + "passenger4a.png";
+  public static final String PASSENGER4_PATH = RES_DIR + "passenger5a.png";
+  public static final String PASSENGER5_PATH = RES_DIR + "passenger6a.png";
+  public static final String SANDBANK_IMAGE_PATH = RES_DIR + "sandbank.png";
+  public static final String LOG_IMAGE_PATH = RES_DIR + "logs.png";
+  public static final String GOAL_IMAGE_PATH = RES_DIR + "goal.png";
 
 
   public static final String ROTATE_LEFT_IMAGE_PATH = "resource/game/rotate-left.svg";
