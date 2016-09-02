@@ -22,7 +22,7 @@ public class GuiTile extends PrimitiveBase {
     fields = new ArrayList<HexField>();
     // create GuiFields
     for(int i = 0; i < 20; i++) {
-      HexField field = new HexField(parent, width, startX, startY, offsetX, offsetY);
+      HexField field = new HexField(parent, width, startX, startY, offsetX, offsetY, index);
       fields.add(field);
     }
   }

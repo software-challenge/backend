@@ -32,7 +32,7 @@ public class GuiButton extends PrimitiveBase {
 
   @Override
   public void draw() {
-    if (image != null) {
+    if (image != null && enabled) {
       parent.shapeMode(PApplet.CENTER);
       parent.pushStyle();
       parent.fill(100);
