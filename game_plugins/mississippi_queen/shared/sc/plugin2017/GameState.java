@@ -3,12 +3,11 @@ package sc.plugin2017;
 import java.util.ArrayList;
 import java.util.List;
 
-import sc.plugin2017.util.Constants;
-import sc.plugin2017.util.InvalidMoveException;
-import sc.plugin2017.PlayerColor;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import sc.plugin2017.util.Constants;
+import sc.plugin2017.util.InvalidMoveException;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
@@ -19,26 +18,26 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
  * Zuseatzlich wird ueber den zuletzt getaetigeten Spielzung und ggf. ueber das
  * Spielende informiert.
- * 
- * 
+ *
+ *
  * Der {@code GameState} ist damit das zentrale Objekt ueber das auf alle
  * wesentlichen Informationen des aktuellen Spiels zugegriffen werden kann.
- * 
- * 
+ *
+ *
  * Der Spielserver sendet an beide teilnehmenden Spieler nach jedem getaetigten
  * Zug eine neue Kopie des {@code GameState}, in dem der dann aktuelle Zustand
  * beschrieben wird. Informationen ueber den Spielverlauf sind nur bedingt ueber
  * den {@code GameState} erfragbar und muessen von einem Spielclient daher bei
  * Bedarf selbst mitgeschrieben werden.
- * 
- * 
+ *
+ *
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
  * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
  * {@link #getPossibleActions() getPossibleActions()} eine Liste aller fuer den
  * aktuellen Spieler legalen Teilzuege abgefragt werden. So kann ein Spieleclient
  * diese Liste aus dem {@code GameState} erfragen und muss dann lediglich einen
  * Zug aus dieser Liste auswaehlen.
- * 
+ *
  * @author Niklas, Sören
  */
 @XStreamAlias(value = "state")
@@ -80,7 +79,7 @@ public class GameState implements Cloneable {
    * letzter getaetigter Zug
    */
   private Move lastMove;
-  
+
   /**
    * Wurde der Spieler im LastMove abgedrängt. Falls ja ist eine weitere Drehaktion möglich
    */
@@ -96,11 +95,11 @@ public class GameState implements Cloneable {
    * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
    * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
    * gueltig sind.
-   * 
-   * 
+   *
+   *
    * Dieser Konstruktor ist nur fuer den Spielserver relevant und sollte vom
    * Spielclient i.A. nicht aufgerufen werden!
-   * 
+   *
    * Das Spielfeld wird zufällig aufgebaut.
    */
   public GameState() {
@@ -113,7 +112,7 @@ public class GameState implements Cloneable {
 
   /**
    * erzeugt eine Deepcopy dieses Objekts
-   * 
+   *
    * @return ein neues Objekt mit gleichen Eigenschaften
    * @throws CloneNotSupportedException falls klonen fehlschlaegt
    */
@@ -127,7 +126,7 @@ public class GameState implements Cloneable {
     if (lastMove != null)
       clone.lastMove = (Move) this.lastMove.clone();
     if (board != null)
-      clone.board = (Board) this.board.clone();
+      clone.board = this.board.clone();
     if (condition != null)
       clone.condition = (Condition) condition.clone();
     if (currentPlayer != null)
@@ -139,11 +138,11 @@ public class GameState implements Cloneable {
 
   /**
    * Fuegt einem Spiel einen weiteren Spieler hinzu.
-   * 
-   * 
+   *
+   *
    * Diese Methode ist nur fuer den Spielserver relevant und sollte vom
    * Spielclient i.A. nicht aufgerufen werden!
-   * 
+   *
    * @param player
    *          Der hinzuzufuegende Spieler.
    */
@@ -158,13 +157,13 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant. Gibt das Spielfeld zurueck
-   * 
+   *
    * @return das Spielfeld
    */
   public Board getBoard() {
     return this.board;
   }
-  
+
   public Board getVisibleBoard() {
     Board visibleBoard = new Board(false);
     for (Tile tile : board.getTiles()) {
@@ -178,7 +177,7 @@ public class GameState implements Cloneable {
   /**
    * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan am Zug
    * ist.
-   * 
+   *
    * @return Der Spieler, der momentan am Zug ist.
    */
   public Player getCurrentPlayer() {
@@ -189,7 +188,7 @@ public class GameState implements Cloneable {
    * Liefert die {@code PlayerColor}-Farbe des Spielers, der momentan am Zug
    * ist. Dies ist aequivalent zum Aufruf
    * {@code getCurrentPlayer().getPlayerColor()}, aber etwas effizienter.
-   * 
+   *
    * @return Die Farbe des Spielers, der momentan am Zug ist.
    */
   public PlayerColor getCurrentPlayerColor() {
@@ -199,7 +198,7 @@ public class GameState implements Cloneable {
   /**
    * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
    * Zug ist.
-   * 
+   *
    * @return Der Spieler, der momentan nicht am Zug ist.
    */
   public Player getOtherPlayer() {
@@ -211,7 +210,7 @@ public class GameState implements Cloneable {
    * Zug ist. Dies ist aequivalent zum Aufruf @
    * {@code getCurrentPlayerColor.opponent()} oder
    * {@code getOtherPlayer().getPlayerColor()}, aber etwas effizienter.
-   * 
+   *
    * @return Die Farbe des Spielers, der momentan nicht am Zug ist.
    */
   public PlayerColor getOtherPlayerColor() {
@@ -222,7 +221,7 @@ public class GameState implements Cloneable {
    * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
    * Spiel als erstes beigetreten ist und demzufolge mit der Farbe
    * {@code PlayerColor.RED} spielt.
-   * 
+   *
    * @return Der rote Spieler.
    */
   public Player getRedPlayer() {
@@ -233,7 +232,7 @@ public class GameState implements Cloneable {
    * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
    * Spiel als zweites beigetreten ist und demzufolge mit der Farbe
    * {@code PlayerColor.BLUE} spielt.
-   * 
+   *
    * @return Der blaue Spieler.
    */
   public Player getBluePlayer() {
@@ -243,7 +242,7 @@ public class GameState implements Cloneable {
   /**
    * Liefert den Spieler, also eine {@code Player}-Objekt, der das Spiel
    * begonnen hat.
-   * 
+   *
    * @return Der Spieler, der momentan Startspieler ist.
    */
   public Player getStartPlayer() {
@@ -254,7 +253,7 @@ public class GameState implements Cloneable {
    * Liefert die {@code PlayerColor}-Farbe des Spielers, der den aktuellen
    * Abschnitt begonnen hat. Dies ist aequivalent zum Aufruf
    * {@code getStartPlayer().getPlayerColor()}, aber etwas effizienter.
-   * 
+   *
    * @return Die Farbe des Spielers, der den aktuellen Abschnitt begonnen
    *         hat.
    */
@@ -295,7 +294,7 @@ public class GameState implements Cloneable {
    * <li>Was der letzte Zug war
    * <li>die Punkte der Spieler
    * </ul>
-   * 
+   *
    * @param lastMove
    *          auszufuehrender Zug
    */
@@ -326,12 +325,12 @@ public class GameState implements Cloneable {
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
     this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
     switchCurrentPlayer();
-    
+
   }
 
   /**
    * liefert die aktuelle Rundenzahl
-   * 
+   *
    * @return aktuelle Rundenzahl
    */
   public int getRound() {
@@ -365,7 +364,7 @@ public class GameState implements Cloneable {
    * @return Liste aller Beschleunigungsaktionen
    */
   public List<Acceleration> getPossibleAccelerations(Player player, int coal) {
-    ArrayList<Acceleration> acc = new ArrayList<Acceleration>(); 
+    ArrayList<Acceleration> acc = new ArrayList<Acceleration>();
     for(int i = 0; i <= coal; i++) {
       if(player.getSpeed() < 6 - i) {
         acc.add(new Acceleration(1 + i)); // es wird nicht zu viel beschleunigt
@@ -384,15 +383,15 @@ public class GameState implements Cloneable {
    * @return Alle Abdrängaktionen
    */
   public List<Push> getPossiblePushs(Player player, int movement) {
-    ArrayList<Push> push = new ArrayList<Push>(); 
+    ArrayList<Push> push = new ArrayList<Push>();
     Field from = player.getField(getVisibleBoard());
     if(from.getType() == FieldType.SANDBANK) { // niemand darf von einer Sandbank herunterpushen.
       return push;
     }
-    int direction = player.getDirection();
-    for(int i = 0;i < 6; i++) {
+    Direction direction = player.getDirection();
+    for(Direction i: Direction.values()) {
       Field to = from.getFieldInDirection(i, getVisibleBoard());
-      if(to != null && i != GameState.getOppositeDirection(direction) && to.isPassable() && movement >= 1) {
+      if(to != null && i != direction.getOpposite() && to.isPassable() && movement >= 1) {
         if(to.getType() == FieldType.LOG && movement >= 2) {
           push.add(new Push(i));
         } else if(to.getType() != FieldType.LOG) {
@@ -411,7 +410,7 @@ public class GameState implements Cloneable {
    * @return Liste aller Drehaktionen
    */
   public List<Turn> getPossibleTurnsWithCoal(Player player, boolean freeTurn, int coal) {
-    ArrayList<Turn> turns = new ArrayList<Turn>(); 
+    ArrayList<Turn> turns = new ArrayList<Turn>();
     if(player.getField(board).getType() == FieldType.SANDBANK) {
       return turns;
     }
@@ -427,18 +426,18 @@ public class GameState implements Cloneable {
    * Gibt alle Bewegungsaktionn zurück, die in die Richtung des Spielers
    * mit einer festen Anzahl von Bewegungspunkten möglich sind.
    * @param player Spieler
-   * @param movement Anzahl 
+   * @param movement Anzahl
    * @param direction Richtung
    * @param coal Kohleeinheite die zur Verfügung stehen
    * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
    */
-  public List<Advance> getPossibleMovesInDirection(Player player, int movement, int direction, int coal) {
+  public List<Advance> getPossibleMovesInDirection(Player player, int movement, Direction direction, int coal) {
     ArrayList<Advance> step = new ArrayList<Advance>();
     Field start = player.getField(board);
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
     if(start.getType() == FieldType.SANDBANK && movement > 0) {
-      if(start.getFieldInDirection(getOppositeDirection(direction), this.board).isPassable()) {
+      if(start.getFieldInDirection(direction.getOpposite(), this.board).isPassable()) {
         step.add(new Advance(-1));
       }
       if(coal > 0 || start.getFieldInDirection(direction, this.board).isPassable()) {
@@ -473,7 +472,7 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert den zuletzt ausgefuehrten Zug
-   * 
+   *
    * @return letzter Zug
    */
   public Move getLastMove() {
@@ -486,7 +485,7 @@ public class GameState implements Cloneable {
    * <ul>
    * <li>[0] - Punktekonto des Spielers (Längste leitung in Spielrichtung)
    * </ul>
-   * 
+   *
    * @param player
    *          Spieler
    * @return Array mit Statistiken
@@ -502,7 +501,7 @@ public class GameState implements Cloneable {
    * <ul>
    * <li>[0] - Punktekonto des Spielers (Längste Verbindung in Spielrichtung)
    * </ul>
-   * 
+   *
    * @param playerColor
    *          Farbe des Spielers
    * @return Array mit Statistiken
@@ -521,7 +520,7 @@ public class GameState implements Cloneable {
    * Liefert Statusinformationen zum Spiel. Diese sind ein Array der
    * {@link #getPlayerStats(PlayerColor) Spielerstats}, wobei getGameStats()[0],
    * einem Aufruf von getPlayerStats(PlayerColor.RED) entspricht.
-   * 
+   *
    * @see #getPlayerStats(PlayerColor)
    * @return Statusinformationen beider Spieler
    */
@@ -533,7 +532,7 @@ public class GameState implements Cloneable {
     stats[0][1] = this.red.getPassenger();
     stats[1][0] = this.blue.getPoints();
     stats[1][0] = this.blue.getPassenger();
-    
+
     return stats;
 
   }
@@ -549,7 +548,7 @@ public class GameState implements Cloneable {
 
   /**
    * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
-   * 
+   *
    * @param winner
    *          Farbe des Siegers
    * @param reason
@@ -563,7 +562,7 @@ public class GameState implements Cloneable {
 
   /**
    * gibt an, ob das Spiel beendet ist
-   * 
+   *
    * @return wahr, wenn beendet
    */
   public boolean gameEnded() {
@@ -572,7 +571,7 @@ public class GameState implements Cloneable {
 
   /**
    * liefert die Farbe des Siegers, falls das Spiel beendet ist.
-   * 
+   *
    * @see #gameEnded()
    * @return Siegerfarbe
    */
@@ -582,7 +581,7 @@ public class GameState implements Cloneable {
 
   /**
    * liefert den Gewinngrund, falls das Spiel beendet ist.
-   * 
+   *
    * @see #gameEnded()
    * @return Gewinngrund
    */
@@ -613,18 +612,13 @@ public class GameState implements Cloneable {
     return freeTurn;
   }
 
-  public static int getOppositeDirection(int direction) {
-    direction += 3;
-    return direction % 6;
-  }
-  
   /**
    * Setzt ein Schiff auf das Spielfeld und entfernt das alte. Diese Methode ist nur für den
    * Server relevant, da hier keine Fehlerüberprüfung durchgeführt wird. Zum
    * Ausführen von Zügen die
    * {@link sc.plugin2017.Move#perform(GameState, Player) perform}-Methode
    * benutzen. Es wird hier ebenfalls das Spielsegment auf dem sich der Spieler befindet aktualisiert
-   * 
+   *
    * @param x x-Koordinate
    * @param y y-Koordinate
    *          des Feldes, auf das gesetzt wird
@@ -648,24 +642,24 @@ public class GameState implements Cloneable {
   protected void removePassenger(Player player) {
     int x = player.getX();
     int y = player.getY();
-    if(board.getField(x,y).getFieldInDirection(0, board) != null &&
-        board.getField(x, y).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3) {
-      board.getField(x, y).getFieldInDirection(0, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x,y).getFieldInDirection(1, board) != null &&
-        board.getField(x, y).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4) {
-      board.getField(x, y).getFieldInDirection(1, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x,y).getFieldInDirection(2, board) != null &&
-        board.getField(x, y).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5) {
-      board.getField(x, y).getFieldInDirection(2, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x,y).getFieldInDirection(3, board) != null &&
-        board.getField(x, y).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0) {
-      board.getField(x, y).getFieldInDirection(3, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x,y).getFieldInDirection(4, board) != null &&
-        board.getField(x, y).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1) {
-      board.getField(x, y).getFieldInDirection(4, board).setType(FieldType.BLOCKED);
-    } else if(board.getField(x,y).getFieldInDirection(5, board) != null &&
-        board.getField(x, y).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2) {
-      board.getField(x, y).getFieldInDirection(5, board).setType(FieldType.BLOCKED);
+    if(board.getField(x,y).getFieldInDirection(Direction.RIGHT, board) != null &&
+        board.getField(x, y).getFieldInDirection(Direction.RIGHT, board).getType() == FieldType.PASSENGER3) {
+      board.getField(x, y).getFieldInDirection(Direction.RIGHT, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x,y).getFieldInDirection(Direction.UP_RIGHT, board) != null &&
+        board.getField(x, y).getFieldInDirection(Direction.UP_RIGHT, board).getType() == FieldType.PASSENGER4) {
+      board.getField(x, y).getFieldInDirection(Direction.UP_RIGHT, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x,y).getFieldInDirection(Direction.UP_LEFT, board) != null &&
+        board.getField(x, y).getFieldInDirection(Direction.UP_LEFT, board).getType() == FieldType.PASSENGER5) {
+      board.getField(x, y).getFieldInDirection(Direction.UP_LEFT, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x,y).getFieldInDirection(Direction.LEFT, board) != null &&
+        board.getField(x, y).getFieldInDirection(Direction.LEFT, board).getType() == FieldType.PASSENGER0) {
+      board.getField(x, y).getFieldInDirection(Direction.LEFT, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x,y).getFieldInDirection(Direction.DOWN_LEFT, board) != null &&
+        board.getField(x, y).getFieldInDirection(Direction.DOWN_LEFT, board).getType() == FieldType.PASSENGER1) {
+      board.getField(x, y).getFieldInDirection(Direction.DOWN_LEFT, board).setType(FieldType.BLOCKED);
+    } else if(board.getField(x,y).getFieldInDirection(Direction.DOWN_RIGHT, board) != null &&
+        board.getField(x, y).getFieldInDirection(Direction.DOWN_RIGHT, board).getType() == FieldType.PASSENGER2) {
+      board.getField(x, y).getFieldInDirection(Direction.DOWN_RIGHT, board).setType(FieldType.BLOCKED);
     }
     player.setPassenger(player.getPassenger() + 1);
   }
@@ -686,15 +680,15 @@ public class GameState implements Cloneable {
     }
     return clone;
   }
-  
-  
+
+
   /**
    * Berechent wie viele Gewegungpunkte und Kohleeinheiten der Zug des benötigt
    * Es wird hier davon ausgegangen, dass der Zug möglich ist. Gibt {-1,-1} zurück, falls
    * Zug ungültig ist.
    * @param player Spieler
    * @param freeTurn freie Drehung
-   * @param move Zug 
+   * @param move Zug
    * @return Gewegungspunkte und Kohle
    */
   public int[] getCost(Player player, boolean freeTurn, Move move) {
@@ -720,7 +714,7 @@ public class GameState implements Cloneable {
           }
           start = next;
         }
-        
+
       } else if(action.getClass() == Acceleration.class) { // case Acceleration
         Acceleration o = (Acceleration) action;
         if(o.acc > 1 || o.acc < -1) {
@@ -750,26 +744,12 @@ public class GameState implements Cloneable {
     }
     return cost;
   }
-  
+
+  @Override
   public String toString() {
     return "GameState: freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
   }
-  
-  /**
-   * GIbt die Anzahl der Drehungen bei einer Drehung von dir1 zu dir2 zurück
-   * @param dir1 Startrichtung
-   * @param dir2 Endrichtung
-   * @return Anzahl der Drehungen
-   */
-  public static int turnToDir(int dir1, int dir2) {
-    int direction = ((dir1 - dir2) + 6) % 6;
-    if(direction >= 3) {
-      direction = 6 - direction;
-    } else {
-      direction = - direction;
-    }
-    return direction;
-  }
+
 }
 
 

@@ -62,14 +62,14 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    blue.setDirection(1);
-    red.setDirection(5);
+    blue.setDirection(Direction.UP_RIGHT);
+    red.setDirection(Direction.DOWN_RIGHT);
     red.setMovement(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
     move.actions.add(new Advance(1, 1));
-    move.actions.add(new Push(4, 2));
+    move.actions.add(new Push(Direction.DOWN_LEFT, 2));
 
     move.perform(state, red);
   }
@@ -86,17 +86,17 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    blue.setDirection(1);
-    red.setDirection(0);
+    blue.setDirection(Direction.UP_RIGHT);
+    red.setDirection(Direction.RIGHT);
     red.setSpeed(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
     move.actions.add(new Advance(1, 1));
-    move.actions.add(new Push(4, 2));
+    move.actions.add(new Push(Direction.DOWN_LEFT, 2));
     move.actions.add(new Turn(1, 3));
 
-    assertEquals(1, blue.getDirection());
+    assertEquals(Direction.UP_RIGHT, blue.getDirection());
     move.perform(state, red);
     // blue player should be pushed to 0,0
     assertEquals(board.getField(-1, 0), blue.getField(board));
@@ -114,8 +114,8 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    blue.setDirection(1);
-    red.setDirection(0);
+    blue.setDirection(Direction.UP_RIGHT);
+    red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
 
     Move move = new Move();
@@ -136,13 +136,13 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    blue.setDirection(1);
-    red.setDirection(0);
+    blue.setDirection(Direction.UP_RIGHT);
+    red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
 
     Move move = new Move();
     move.actions.add(new Advance(2, 1));
-    move.actions.add(new Push(4, 2));
+    move.actions.add(new Push(Direction.DOWN_LEFT, 2));
 
     move.perform(state, red);
   }
@@ -159,15 +159,15 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    blue.setDirection(1);
+    blue.setDirection(Direction.UP_RIGHT);
     blue.setMovement(3);
-    red.setDirection(0);
+    red.setDirection(Direction.RIGHT);
     red.setMovement(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
     move.actions.add(new Advance(1, 1));
-    move.actions.add(new Push(0, 2));
+    move.actions.add(new Push(Direction.RIGHT, 2));
 
     move.perform(state, red);
     // blue player should be pushed to 1,-1
@@ -187,15 +187,15 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    blue.setDirection(1);
+    blue.setDirection(Direction.UP_RIGHT);
     blue.setMovement(3);
-    red.setDirection(0);
+    red.setDirection(Direction.RIGHT);
     red.setMovement(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
     move.actions.add(new Advance(1, 1));
-    move.actions.add(new Push(0, 2));
+    move.actions.add(new Push(Direction.RIGHT, 2));
 
     move.perform(state, red);
     // blue player should be pushed to 1,-1
@@ -215,7 +215,7 @@ public class MoveTest {
     board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
-    red.setDirection(0);
+    red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
     red.setCoal(6);
 
@@ -229,7 +229,7 @@ public class MoveTest {
     move.perform(state, red);
     // red player should arrive at -1,0
     assertEquals(board.getField(-1, 0), red.getField(board));
-    assertEquals(5, red.getDirection());
+    assertEquals(Direction.DOWN_RIGHT, red.getDirection());
     assertEquals(4, red.getCoal());
   }
 }
