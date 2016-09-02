@@ -120,6 +120,7 @@ public abstract class XStreamClient
 			{
 				Object o = XStreamClient.this.in.readObject();
 				logger.debug("Received {} via {}", o, this.networkInterface);
+				logger.debug("DataDump:\n{}", this.xStream.toXML(o));
 				onObject(o);
 			}
 

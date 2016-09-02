@@ -1,9 +1,5 @@
 package sc;
 
-import jargs.gnu.CmdLineParser;
-import jargs.gnu.CmdLineParser.IllegalOptionValueException;
-import jargs.gnu.CmdLineParser.UnknownOptionException;
-
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
@@ -21,6 +17,11 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import jargs.gnu.CmdLineParser;
+import jargs.gnu.CmdLineParser.IllegalOptionValueException;
+import jargs.gnu.CmdLineParser.UnknownOptionException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.GameControlBar;
@@ -42,7 +43,7 @@ import sc.shared.GameResult;
 
 /**
  * The executable application of the Software Challenge GUI.
- * 
+ *
  * @author chw
  * @since SC'09
  */
@@ -59,6 +60,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 */
 	public SoftwareChallengeGUI() {
 		super();
+		Logger rootLogger = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		rootLogger.setLevel(Level.WARN);
 		loadCodeVersionFromManifest();
 		// get logic facade
 		LogicFacade logicFac = LogicFacade.getInstance();
@@ -210,7 +213,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 	/**
 	 * Starts this application.
-	 * 
+	 *
 	 * @param args
 	 *            nothing expected
 	 */
@@ -221,7 +224,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		parseArguments(args);
 		setSystemLookAndFeel();
 		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+			@Override
+      public void run() {
 				SoftwareChallengeGUI gui = new SoftwareChallengeGUI();
 				gui.setVisible(true);
 				if (GUIConfiguration.startMaximized) {

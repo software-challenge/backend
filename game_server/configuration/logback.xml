@@ -13,7 +13,7 @@
 	<logger name="edu.cau.sc.server.clients" level="DEBUG" />
 	<logger name="edu.cau.sc.server.protocol" level="DEBUG" />
 
-	<root level="debug">
+	<root level="WARN">
 		<appender-ref ref="STDOUT" />
 	</root>
 	
