@@ -164,9 +164,9 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \begin{description}
 \item[I] Nummer der Aktion
 \item[M] Beschleunigung M $\in \{-5,-4..5\}$
-\item[N] Anzahl der Drehungen N $\in \{-3..3\}$ negativ für gegen, positiv für mit dem Uhrzeigersinn
+\item[N] Anzahl der Drehungen N $\in \{-3..3\}$ positiv für gegen, negativ für mit dem Uhrzeigersinn
 \item[V] Anzahl der Felder die in Bewegungsrichtung zurückgelegt werden (-1 für Rückwärts)
-\item[D] Richtung in die abgedrängt wird. D $\in \{0..5\}$
+\item[D] Richtung in die abgedrängt wird. D $\in \{RIGHT, UP\_RIUGHT, UP\_LEFT, LEFT, DOWN\_LEFT, DOWN\_RIGHT\}$
 \end{description}
 \begin{verbatim}
 	<acceleration order="I" acc="M"/>
@@ -193,6 +193,7 @@ Damit sieht beispielsweise ein Laufzug so aus:
       <step order="1" distance="3"/>
       <turn order="2" direction="-1"/>
       <step order="3" distance="1"/>
+      <push order="4" direction="LEFT"/>
     </actions>
     <hint content="Dies ist ein Hint."/>
     <hint content="noch ein Hint"/>
@@ -267,7 +268,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[P] Punktekonto
 \item[X] X Koordinate des Spielers
 \item[Y] Y Koordinate des Spielers
-\item[D] Ausrichtung des Spielers, 0 rechts, Rest mit dem Uhrzeigersinn
+\item[D] Ausrichtung des Spielers, D $\in \{RIGHT, UP\_RIUGHT, UP\_LEFT, LEFT, DOWN\_LEFT, DOWN\_RIGHT\}$
 \item[S] Geschwindigkeit des Spielers
 \item[K] Kohleeinheiten des Spielers
 \item[T] Teilabschnitt, auf dem sich der Spieler befindet
@@ -352,7 +353,7 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \item[P] Punktekonto
 \item[X] X Koordinate des Spielers
 \item[Y] Y Koordinate des Spielers
-\item[D] Ausrichtung des Spielers 0 rechts Rest mit dem Uhrzeigersinn
+\item[D] Ausrichtung des Spielers  D $\in \{RIGHT, UP\_RIUGHT, UP\_LEFT, LEFT, DOWN\_LEFT, DOWN\_RIGHT\}$
 \item[S] Geschwindigkeit des Spielers
 \item[K] Kohleeinheiten des Spielers
 \item[T] Spielabschnitt auf dem sich der Spieler befindet
@@ -413,9 +414,9 @@ Kommunikation ablaufen kann.\bigskip\\
   <data class="memento">
     <state class="state" turn="0" startPlayer="RED" currentPlayer="RED">
       <red displayName="Spieler 1" color="RED" points="0" x="-1" y="1"
-       direction="0" speed="1" coal="6" tile="0" passenger="0"/>
+       direction="RIGHT" speed="1" coal="6" tile="0" passenger="0"/>
       <blue displayName="Spieler 2" color="BLUE" points="0" x="-1" y="-1"
-       direction="0" speed="1" coal="6" tile="0" passenger="0"/>
+       direction="RIGHT" speed="1" coal="6" tile="0" passenger="0"/>
       <board>
         <tiles>
           <tile visible="true" index="0" direction="0">
