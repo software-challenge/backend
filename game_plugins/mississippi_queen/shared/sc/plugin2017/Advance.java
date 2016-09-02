@@ -2,6 +2,9 @@ package sc.plugin2017;
 
 import java.util.LinkedList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
@@ -10,6 +13,8 @@ import sc.plugin2017.util.InvalidMoveException;
 
 @XStreamAlias(value = "advance")
 public class Advance extends Action {
+
+  private static final Logger logger = LoggerFactory.getLogger(Advance.class);
   /**
    * Anzahl der Felder, die zurückgelegt werden.
    */
@@ -114,7 +119,7 @@ public class Advance extends Action {
           player.setSpeed(player.getSpeed() - 1);
         } else {
           player.setMovement(player.getMovement() - 1);
-          System.out.println("Verringere Movement zu " + player.getMovement());
+          logger.debug("Verringere Movement zu {}", player.getMovement());
         }
 
       }

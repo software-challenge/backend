@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.player2017.Starter;
 import sc.plugin2017.Advance;
 import sc.plugin2017.FieldType;
@@ -28,6 +31,7 @@ public class RandomLogic implements IGameHandler {
 	private GameState gameState;
 	private Player currentPlayer;
 
+  private static final Logger log = LoggerFactory.getLogger(RandomLogic.class);
 	/*
 	 * Klassenweit verfuegbarer Zufallsgenerator der beim Laden der klasse
 	 * einmalig erzeugt wird und darn immer zur Verfuegung steht.
@@ -51,8 +55,7 @@ public class RandomLogic implements IGameHandler {
 	@Override
 	public void gameEnded(GameResult data, PlayerColor color,
 			String errorMessage) {
-
-		System.out.println("*** Das Spiel ist beendet");
+		log.info("Das Spiel ist beendet.");
 	}
 
 	/**
@@ -60,7 +63,7 @@ public class RandomLogic implements IGameHandler {
 	 */
 	@Override
 	public void onRequestAction(){
-		System.out.println("*** Es wurde ein Zug angefordert");
+		log.info("Es wurde ein Zug angefordert.");
     Move move = new Move();
     // Setze die für perform benötigen Attribute
     currentPlayer.setMovement(currentPlayer.getSpeed());
@@ -76,8 +79,9 @@ public class RandomLogic implements IGameHandler {
       } else {
         move.actions.add(new Advance(-1, 0));
       }
-      System.out.println("*** Bin auf Sandbank, sende Zug " + move);
+      log.info("Bin auf Sandbank, sende Zug {}", move);
       sendAction(move);
+      return;
     }
     // Sonst
     for(int i = 0; i < 6;) {
@@ -88,8 +92,9 @@ public class RandomLogic implements IGameHandler {
         newMove.actions.add(new Advance(1,1));
         possibleMoves.add(newMove);
       } else {
-        System.out.println("*** Keine Züge in irgendeine Richtung gefunden ****");
+        log.warn("Keine Züge in irgendeine Richtung gefunden!");
         sendAction(move); // kein Zug möglich also falschen Zug senden
+        return;
       }
     }
     // Finde Zug mit meisten Punkten
@@ -102,7 +107,7 @@ public class RandomLogic implements IGameHandler {
       try {
         clone = gameState.clone();
       } catch (CloneNotSupportedException e) {
-        e.printStackTrace();
+        log.error("Problem mit dem Klonen des GameState.", e);
       }
       try {
         possibleMove.perform(clone, clone.getCurrentPlayer());
@@ -113,15 +118,13 @@ public class RandomLogic implements IGameHandler {
           sendMove = index;
         }
       } catch (InvalidMoveException e) {
-
-        e.printStackTrace();
+        log.info("Gefundener Zug ist ungültig:", e);
       }
       ++index;
     }
     move = possibleMoves.get(sendMove); // setze move auf den Zug mit den meisten Punkten
     move.orderActions();
-    System.out.println("*** sende zug: ");
-    System.out.println(move);
+    log.info("Sende zug {}", move);
     sendAction(move);
 	}
 
@@ -131,9 +134,7 @@ public class RandomLogic implements IGameHandler {
 	@Override
 	public void onUpdate(Player player, Player otherPlayer) {
 		currentPlayer = player;
-
-		System.out.println("*** Spielerwechsel: " + player.getPlayerColor());
-
+		log.info("Spielerwechsel: " + player.getPlayerColor());
 	}
 
 	/**
@@ -143,10 +144,8 @@ public class RandomLogic implements IGameHandler {
 	public void onUpdate(GameState gameState) {
 		this.gameState = gameState;
 		currentPlayer = gameState.getCurrentPlayer();
-
-		System.out.print("*** Das Spiel geht voran: Zug = "
-				+ gameState.getTurn());
-		System.out.println(", Spieler = " + currentPlayer.getPlayerColor());
+		log.info("Das Spiel geht voran: Zug: {}", gameState.getTurn());
+		log.info("Spieler: {}", currentPlayer.getPlayerColor());
 	}
 
 	/**

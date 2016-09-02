@@ -10,24 +10,24 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
 import sc.server.Configuration;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
  * A generic client.
  */
 public class Client extends XStreamClient implements IClient
 {
-	private final LinkedList<IClientListener>		clientListeners			= new LinkedList<IClientListener>();
-	private final Collection<IClientRole>			roles					= new LinkedList<IClientRole>();
-	private boolean									notifiedOnDisconnect	= false;
-	private static final Logger						logger					= LoggerFactory
-																			.getLogger(Client.class);
+	private final LinkedList<IClientListener>	clientListeners			= new LinkedList<IClientListener>();
+	private final Collection<IClientRole>		roles					= new LinkedList<IClientRole>();
+	private boolean								notifiedOnDisconnect	= false;
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(Client.class);
 
 	public Client(INetworkInterface networkInterface, XStream configuredXStream)
 			throws IOException
@@ -40,6 +40,7 @@ public class Client extends XStreamClient implements IClient
 		return Collections.unmodifiableCollection(this.roles);
 	}
 
+	@Override
 	public void addRole(IClientRole role)
 	{
 		this.roles.add(role);
@@ -102,18 +103,19 @@ public class Client extends XStreamClient implements IClient
 		for (RescueableClientException error : errors)
 		{
 			logger.warn("An error occured: ", error);
-			
-			
-			//if(error.getClass().equals(GameLogicException.class) && (error.getMessage()=="Move was invalid" || error.getMessage()=="Unknown ObjectType received.")){
-			if(error.getMessage() != "It's not your turn yet.") {
+
+			if (error.getMessage() != "It's not your turn yet.")
+			{
 				Object resp = new ErrorResponse(packet, error.getMessage());
 				notifyOnError(resp);
 				super.close();
-				logger.warn("Game closed because of GameLogicException! The message is: " + error.getMessage());
+				logger.warn(
+						"Game closed because of GameLogicException! The message is: "
+								+ error.getMessage());
 			}
 		}
 	}
-	
+
 	private synchronized void notifyOnError(Object packet)
 	{
 		for (IClientListener listener : this.clientListeners)
@@ -124,10 +126,7 @@ public class Client extends XStreamClient implements IClient
 			}
 			catch (Exception e)
 			{
-				logger
-						.error(
-								"OnError Notification caused an exception.",
-								e);
+				logger.error("OnError Notification caused an exception.", e);
 			}
 		}
 	}
@@ -146,10 +145,9 @@ public class Client extends XStreamClient implements IClient
 				}
 				catch (Exception e)
 				{
-					logger
-							.error(
-									"OnDisconnect Notification caused an exception.",
-									e);
+					logger.error(
+							"OnDisconnect Notification caused an exception.",
+							e);
 				}
 			}
 		}
@@ -166,7 +164,7 @@ public class Client extends XStreamClient implements IClient
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true, if this client has an AdministratorRole
 	 */
 	public boolean isAdministrator()
@@ -184,7 +182,7 @@ public class Client extends XStreamClient implements IClient
 
 	/**
 	 * Authenticates a Client as Administrator
-	 * 
+	 *
 	 * @param password
 	 *            The secret which is required to gain administrative rights.
 	 * @throws AuthenticationFailedException
@@ -203,8 +201,8 @@ public class Client extends XStreamClient implements IClient
 			}
 			else
 			{
-				logger
-						.warn("Client tried to authenticate as administrator twice.");
+				logger.warn(
+						"Client tried to authenticate as administrator twice.");
 			}
 		}
 		else
@@ -239,6 +237,7 @@ public class Client extends XStreamClient implements IClient
 		this.notifyOnPacket(o);
 	}
 
+	@Override
 	public void sendAsynchronous(Object packet)
 	{
 		// TODO make it async
