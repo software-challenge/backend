@@ -13,18 +13,18 @@ public class Push extends Action {
    * Richtung in die abgedrängt werden soll
    */
   @XStreamAsAttribute
-  public int direction;
+  public Direction direction;
 
   public Push() {
     order = 0;
-    direction = 0;
+    direction = Direction.RIGHT;
   }
 
   /**
    * Erzeugt eine Abdrängaktion in angegebene Richtug
    * @param direction Richtung des Abdrängens
    */
-  public Push(int direction) {
+  public Push(Direction direction) {
     this.direction = direction;
   }
 
@@ -33,7 +33,7 @@ public class Push extends Action {
    * @param direction Richtung des Abdrängens
    * @param order Reihenfolge
    */
-  public Push(int direction, int order) {
+  public Push(Direction direction, int order) {
     this.direction = direction;
     this.order = order;
   }
@@ -65,7 +65,7 @@ public class Push extends Action {
       nudgedPlayer.setSpeed(nudgedPlayer.getSpeed() - 1);
       nudgedPlayer.setMovement(nudgedPlayer.getMovement() - 1);
     }
-    Field fieldBehindPushingPlayer = pushFrom.getFieldInDirection(GameState.getOppositeDirection(pushingPlayer.getDirection()), state.getBoard());
+    Field fieldBehindPushingPlayer = pushFrom.getFieldInDirection(pushingPlayer.getDirection().getOpposite(), state.getBoard());
     // If fieldBehindPushedPlayer is null, the following check is not needed
     // because pushTo cannot be that field (and pushTo cannot be null as already
     // checked above).

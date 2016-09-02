@@ -1,6 +1,7 @@
 package sc.plugin2017.gui.renderer.primitives;
 
 import processing.core.PApplet;
+import sc.plugin2017.Direction;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.FrameRenderer;
@@ -20,7 +21,7 @@ public class GuiPlayer extends HexField {
 
   private boolean currentPlayer;
 
-  private int direction;
+  private Direction direction;
 
   // player has to remember this to caclulate new positions
   private float startX;
@@ -51,7 +52,9 @@ public class GuiPlayer extends HexField {
       parent.fill(GuiConstants.colorBlue);
     }
 
-    parent.rotate((float) Math.toRadians(direction * -60));
+    if (direction != null) {
+      parent.rotate((float) Math.toRadians(direction.getValue() * -60));
+    }
 
     parent.ellipseMode(PApplet.CENTER);
     parent.ellipse(0, 0, c, c);
@@ -153,7 +156,7 @@ public class GuiPlayer extends HexField {
     return y;
   }
 
-  public int getDirection() {
+  public Direction getDirection() {
     return direction;
   }
 

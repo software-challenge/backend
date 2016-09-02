@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.player2017.Starter;
 import sc.plugin2017.Advance;
+import sc.plugin2017.Direction;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGameHandler;
@@ -84,11 +85,11 @@ public class RandomLogic implements IGameHandler {
       return;
     }
     // Sonst
-    for(int i = 0; i < 6;) {
-      List<Advance> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, i, currentPlayer.getCoal());
+    for(Direction direction : Direction.values()) {
+      List<Advance> actions = gameState.getPossibleMovesInDirection(currentPlayer, 1, direction, currentPlayer.getCoal());
       if(!actions.isEmpty()) {
         Move newMove = new Move();
-        newMove.actions.add(new Turn(GameState.turnToDir(currentPlayer.getDirection(), i), 0));
+        newMove.actions.add(new Turn(currentPlayer.getDirection().turnToDir(direction), 0));
         newMove.actions.add(new Advance(1,1));
         possibleMoves.add(newMove);
       } else {

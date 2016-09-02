@@ -49,9 +49,7 @@ public class Turn extends Action {
     if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
       throw new InvalidMoveException("Drehung auf Sandbank nicht erlaubt.");
     }
-    int currentDirection = player.getDirection();
-    currentDirection += direction;
-    currentDirection = (currentDirection + 6/*Anzahl der Richtungen*/) % 6; // echtes Modulo nicht java modulo
+    Direction newDirection = player.getDirection().getTurnedDirection(direction);
     int usedCoal = Math.abs(direction) - player.getFreeTurns();
     int test = player.getFreeTurns() - Math.abs(direction);
     if(test <= 0) {
@@ -66,7 +64,7 @@ public class Turn extends Action {
         throw new InvalidMoveException("Nicht genug Kohle für Drehung.");
       }
     }
-    player.setDirection(currentDirection);
+    player.setDirection(newDirection);
     return;
   }
 

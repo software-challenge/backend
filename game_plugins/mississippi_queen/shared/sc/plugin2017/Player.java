@@ -1,81 +1,80 @@
 package sc.plugin2017;
 
-import sc.framework.plugins.SimplePlayer;
-import sc.plugin2017.util.Constants;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import sc.framework.plugins.SimplePlayer;
+import sc.plugin2017.util.Constants;
+
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.
- * Beeinhaltet auch Informationen zum Punktekonto, 
+ * Beeinhaltet auch Informationen zum Punktekonto,
  * Position des Schiffes, sowie Attribute des Schiffes
  */
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
-	/** 
+	/**
 	 * Spielerfarbe des Spielers
 	 */
 	@XStreamAsAttribute
 	private PlayerColor color;
-	
+
 	 /**
    * aktuelle laenge der laengsten Leitung des Spielers
    */
   @XStreamAsAttribute
   private int points;
-  
+
   /**
    * aktuelle x-Koordinate des Schiffes
    */
   @XStreamAsAttribute
   private int x;
-  
+
   /**
    * aktuelle y-Koordinate des Schiffes
    */
   @XStreamAsAttribute
   private int y;
-  
+
   /**
-   * Richtung in die das Schiff ausgerichtet ist. 0 entspricht der Ausrichtung bei der Startposition.
-   * Andere Richtungen ergeben sich aufsteigend nach dem Uhrzeigersinn
+   * Richtung in die das Schiff ausgerichtet ist.
    */
   @XStreamAsAttribute
-  private int direction;
-  
+  private Direction direction;
+
   /**
    * aktuelle Geschwindigkeit des Schiffes des Spielers
    */
   @XStreamAsAttribute
   private int speed;
-  
+
   /**
    * aktuelle Anzahl der Kohleeinheiten des Schiffes des Spielers
    */
   @XStreamAsAttribute
   private int coal;
-  
+
   /**
    * Spielsegment auf dem sich das Schiff des Spielers befindet
    */
   @XStreamAsAttribute
   private int tile;
-  
+
   /**
    * Anzahl der vom Spieler eingesammelten Passagiere
    */
   @XStreamAsAttribute
   private int passenger;
-  
+
   /**
    * Nur fuer den Server relevant
    */
   @XStreamOmitField
   private int movement;
-  
+
   /**
    * Nur fuer den Server relevant
    */
@@ -87,17 +86,17 @@ public class Player extends SimplePlayer implements Cloneable {
    */
   @XStreamOmitField
   private int freeAcc;
-  
+
 	/**
 	 * Erstellt einen Spieler mit gegebener Spielerfarbe.
-	 * 
+	 *
 	 * @param color
 	 *            Spielerfarbe
 	 */
 	public Player(final PlayerColor color) {
 		this.color = color;
 		points = 1;
-		setDirection(0);
+		setDirection(Direction.RIGHT);
 		setSpeed(1);
 		coal = Constants.START_COAL;
 		setTile(0);
@@ -123,7 +122,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * erzeugt eine Deepcopy dieses Objekts
-	 * 
+	 *
 	 * @return ein neues Objekt mit gleichen Eigenschaften
 	 * @throws CloneNotSupportedException falls klonen fehlschlaegt
 	 */
@@ -155,25 +154,25 @@ public class Player extends SimplePlayer implements Cloneable {
 
 	/**
 	 * liefert die Spielerfarbe dieses Spielers
-	 * 
+	 *
 	 * @return Spielerfarbe
 	 */
 	public PlayerColor getPlayerColor() {
 		return color;
 	}
 
-	
+
 	/**
    * Liefert den die Punkte anhand der Position und der Passagieranzahl des Spielers
-   * 
+   *
    * @return Punkte des Spielers
    */
   public int getPoints() {
     return points;
   }
 
-  
-  
+
+
   public void setPoints(int points) {
     this.points = points;
   }
@@ -203,16 +202,15 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Richtung in die das Schiff ausgerichtet ist. 0 entspricht der Ausrichtung bei der Startposition.
-   * Andere Richtungen ergeben sich aufsteigend nach dem Uhrzeigersinn
+   * Richtung in die das Schiff ausgerichtet ist.
    *
-   * @return Zahl die die Richtung angibt
+   * @return Die Richtung
    */
-  public int getDirection() {
+  public Direction getDirection() {
     return direction;
   }
 
-  protected void setDirection(int direction) {
+  protected void setDirection(Direction direction) {
     this.direction = direction;
   }
 
@@ -267,7 +265,7 @@ public class Player extends SimplePlayer implements Cloneable {
   protected void setPassenger(int passenger) {
     this.passenger = passenger;
   }
-  
+
   public Field getField(Board board) {
     for (Tile tile : board.getTiles()) {
       if(tile.getIndex() == this.tile) {
@@ -276,14 +274,14 @@ public class Player extends SimplePlayer implements Cloneable {
     }
     return null;
   }
-  
+
   /**
    * Setzt ein Schiff auf das Spielfeld und entfernt das alte. Diese Methode ist nur für den
    * Server relevant, da hier keine Fehlerüberprüfung durchgeführt wird. Zum
    * Ausführen von Zügen die
    * {@link sc.plugin2017.Move#perform(GameState, Player) perform}-Methode
    * benutzen.
-   * 
+   *
    * @param x x-Koordinate
    * @param y y-Koordinate
    *          des Feldes, auf das gesetzt wird
@@ -301,18 +299,18 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return wahr, falls ein Passagier auf der Position des Spielers eingesammelt werden kann.
    */
   public boolean canPickupPassenger(Board board) {
-    if(((getField(board).getFieldInDirection(0, board) != null &&
-        getField(board).getFieldInDirection(0, board).getType() == FieldType.PASSENGER3) ||
-        (getField(board).getFieldInDirection(1, board) != null &&
-        getField(board).getFieldInDirection(1, board).getType() == FieldType.PASSENGER4) ||
-        (getField(board).getFieldInDirection(2, board) != null &&
-        getField(board).getFieldInDirection(2, board).getType() == FieldType.PASSENGER5) ||
-        (getField(board).getFieldInDirection(3, board) != null &&
-        getField(board).getFieldInDirection(3, board).getType() == FieldType.PASSENGER0) ||
-        (getField(board).getFieldInDirection(4, board) != null &&
-        getField(board).getFieldInDirection(4, board).getType() == FieldType.PASSENGER1) ||
-        (getField(board).getFieldInDirection(5, board) != null &&
-        getField(board).getFieldInDirection(5, board).getType() == FieldType.PASSENGER2)) && passenger < 2) {
+    if(((getField(board).getFieldInDirection(Direction.RIGHT, board) != null &&
+        getField(board).getFieldInDirection(Direction.RIGHT, board).getType() == FieldType.PASSENGER3) ||
+        (getField(board).getFieldInDirection(Direction.UP_RIGHT, board) != null &&
+        getField(board).getFieldInDirection(Direction.UP_RIGHT, board).getType() == FieldType.PASSENGER4) ||
+        (getField(board).getFieldInDirection(Direction.UP_LEFT, board) != null &&
+        getField(board).getFieldInDirection(Direction.UP_LEFT, board).getType() == FieldType.PASSENGER5) ||
+        (getField(board).getFieldInDirection(Direction.LEFT, board) != null &&
+        getField(board).getFieldInDirection(Direction.LEFT, board).getType() == FieldType.PASSENGER0) ||
+        (getField(board).getFieldInDirection(Direction.DOWN_LEFT, board) != null &&
+        getField(board).getFieldInDirection(Direction.DOWN_LEFT, board).getType() == FieldType.PASSENGER1) ||
+        (getField(board).getFieldInDirection(Direction.DOWN_RIGHT, board) != null &&
+        getField(board).getFieldInDirection(Direction.DOWN_RIGHT, board).getType() == FieldType.PASSENGER2)) && passenger < 2) {
       return true;
     }
     return false;
@@ -338,7 +336,7 @@ public class Player extends SimplePlayer implements Cloneable {
   /**
    * Nur fuer den Server (und die Gui) relevant.
    * Sollte für den Client 0 sein.
-   * 
+   *
    * @return Anzahl der freien Drehzüge
    */
   public int getFreeTurns() {
@@ -347,7 +345,7 @@ public class Player extends SimplePlayer implements Cloneable {
 
   /**
    * Nur fuer den Server (und die Gui) relevant.
-   * 
+   *
    * @param freeTurns Anzahl der freien Drehzüge
    */
   public void setFreeTurns(int freeTurns) {
@@ -365,12 +363,13 @@ public class Player extends SimplePlayer implements Cloneable {
 
   /**
    * Nur fuer den Server (und die Gui) relevant.
-   * @param freeAcc Anzahl der freien Beschleunigungen 
+   * @param freeAcc Anzahl der freien Beschleunigungen
    */
   public void setFreeAcc(int freeAcc) {
     this.freeAcc = freeAcc;
   }
-  
+
+  @Override
   public String toString() {
     return color + ", Punkte: " + points + " , Position: (" + x + ", " + y + "), speed, coal: " + speed + "," + coal + ", Tile: " + tile;
   }

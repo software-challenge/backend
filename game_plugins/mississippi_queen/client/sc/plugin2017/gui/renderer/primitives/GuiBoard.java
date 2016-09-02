@@ -9,14 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.plugin2017.Action;
+import sc.plugin2017.Advance;
 import sc.plugin2017.Board;
+import sc.plugin2017.Direction;
 import sc.plugin2017.Field;
 import sc.plugin2017.FieldType;
-import sc.plugin2017.GameState;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Push;
-import sc.plugin2017.Advance;
 import sc.plugin2017.Tile;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.util.Constants;
@@ -191,8 +191,8 @@ public class GuiBoard extends PrimitiveBase {
         if (redField.equals(blueField)) {
           // case push
           if (currentPlayer.getMovement() != 0) {
-            for (int j = 0; j < 6; j++) {
-              if (j != GameState.getOppositeDirection(currentPlayer.getDirection())) {
+            for (Direction j : Direction.values()) {
+              if (j != currentPlayer.getDirection().getOpposite()) {
                 HexField toAdd = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(), j);
                 if (toAdd != null) { // add push to list of actions
                   toHighlight.add(toAdd);
@@ -224,7 +224,7 @@ public class GuiBoard extends PrimitiveBase {
               add.put(step, new Advance(1));
             }
             step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
-                GameState.getOppositeDirection(currentPlayer.getDirection()));
+                currentPlayer.getDirection().getOpposite());
             if (step != null) {
               toHighlight.add(step);
               add.put(step, new Advance(-1));
@@ -261,7 +261,6 @@ public class GuiBoard extends PrimitiveBase {
     if (currentGuiPlayer != null) {
       int centerX = Math.round(currentGuiPlayer.getX() + (width / 2));
       int centerY = Math.round(currentGuiPlayer.getY() + (width / 2));
-      int curAngle = (currentGuiPlayer.getDirection() * -60) + 90;
 
       left.moveTo(centerX - (width / 2), centerY - (width / 2));
       right.moveTo(centerX + (width / 2), centerY - (width / 2));
@@ -288,7 +287,7 @@ public class GuiBoard extends PrimitiveBase {
     right.setEnabled(rotationPossible && !onSandbank);
   }
 
-  private HexField getPassableGuiFieldInDirection(int x, int y, int j) {
+  private HexField getPassableGuiFieldInDirection(int x, int y, Direction j) {
     LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
     if (passable.isEmpty() || passable.getFirst() == null) {
       return null;
@@ -385,7 +384,7 @@ public class GuiBoard extends PrimitiveBase {
    *          Bewegunsgpunkte
    * @return Begehbare Felder
    */
-  public LinkedList<HexField> getPassableGuiFieldsInDirection(int startX, int startY, int direction, int step) {
+  public LinkedList<HexField> getPassableGuiFieldsInDirection(int startX, int startY, Direction direction, int step) {
     Player opponent = parent.getCurrentOpponent();
     int opponentX = opponent.getX();
     int opponentY = opponent.getY();
@@ -393,10 +392,10 @@ public class GuiBoard extends PrimitiveBase {
     // TODO document/refactor
     for (int i = 1; i <= step; i++) {
       switch (direction) {
-      case 0:
+      case RIGHT:
         startX++;
         break;
-      case 1:
+      case UP_RIGHT:
         if (startY % 2 == 0) {
           --startY;
           ++startX;
@@ -404,7 +403,7 @@ public class GuiBoard extends PrimitiveBase {
           --startY;
         }
         break;
-      case 2:
+      case UP_LEFT:
         if (startY % 2 == 0) {
           --startY;
         } else {
@@ -412,10 +411,10 @@ public class GuiBoard extends PrimitiveBase {
           --startX;
         }
         break;
-      case 3:
+      case LEFT:
         --startX;
         break;
-      case 4:
+      case DOWN_LEFT:
         if (startY % 2 == 0) {
           ++startY;
         } else {
@@ -423,7 +422,7 @@ public class GuiBoard extends PrimitiveBase {
           --startX;
         }
         break;
-      case 5:
+      case DOWN_RIGHT:
         if (startY % 2 == 0) {
           ++startY;
           ++startX;

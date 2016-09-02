@@ -58,7 +58,7 @@ public class Advance extends Action {
     }
     Field start = player.getField(state.getBoard());
     LinkedList<Field> nextFields = new LinkedList<Field>();
-    int direction = player.getDirection();
+    Direction direction = player.getDirection();
     if(distance == 0 || distance > 6 || distance < -1) {
       throw new InvalidMoveException("Zurückgelegte Distanz ist ungültig.");
     }
@@ -66,7 +66,7 @@ public class Advance extends Action {
       if(start.getType() != FieldType.SANDBANK) {
         throw new InvalidMoveException("Rückwärtszug ist nur von Sandbank aus möglich.");
       }
-      Field next = start.getFieldInDirection(GameState.getOppositeDirection(direction), state.getBoard());
+      Field next = start.getFieldInDirection(direction.getOpposite(), state.getBoard());
       if(next == null || next.getType() == FieldType.LOG || !next.isPassable()) {
         throw new InvalidMoveException("Der Weg ist versperrt");
       }

@@ -115,46 +115,40 @@ public class Field implements Comparable<Field>{
     return this.points;
   }
 
-  public Field getFieldInDirection(int direction, Board board) {
+  public Field getFieldInDirection(Direction direction, Board board) {
     return _getFieldInDirection(direction, board, true);
   }
 
-  protected Field alwaysGetFieldInDirection(int direction, Board board) {
+  protected Field alwaysGetFieldInDirection(Direction direction, Board board) {
     return _getFieldInDirection(direction, board, false);
   }
 
-  private Field _getFieldInDirection(int direction, Board board, boolean onlyVisible) {
+  private Field _getFieldInDirection(Direction direction, Board board, boolean onlyVisible) {
     Integer targetX;
     Integer targetY;
     boolean onEvenRow = (y % 2 == 0);
     switch (direction) {
-    case 0:
-      // field to the right
+    case RIGHT:
       targetX = x + 1;
       targetY = y;
       break;
-    case 1:
-      // field to the upper right
+    case UP_RIGHT:
       targetX = onEvenRow ? x + 1 : x;
       targetY = y - 1;
       break;
-    case 2:
-      // field to the upper left
+    case UP_LEFT:
       targetX = onEvenRow ? x : x - 1;
       targetY = y - 1;
       break;
-    case 3:
-      // field to the left
+    case LEFT:
       targetX = x - 1;
       targetY = y;
       break;
-    case 4:
-      // field to the lower left
+    case DOWN_LEFT:
       targetX = onEvenRow ? x : x - 1;
       targetY = y + 1;
       break;
-    case 5:
-      // field to the lower right
+    case DOWN_RIGHT:
       targetX = onEvenRow ? x + 1 : x;
       targetY = y + 1;
       break;
