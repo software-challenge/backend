@@ -275,11 +275,11 @@ public class GuiBoard extends PrimitiveBase {
 
   private void updateButtonAvailability(Player currentPlayer, Board currentBoard) {
 
-    boolean maxSpeed = parent.getCurrentPlayer().getSpeed() == 6;
-    boolean minSpeed = parent.getCurrentPlayer().getSpeed() == 1;
-    boolean onSandbank = parent.getCurrentPlayerField().getType() == FieldType.SANDBANK;
-    boolean accelerationPossible = parent.getCurrentPlayer().getFreeAcc() + parent.getCurrentPlayer().getCoal() > 0;
-    boolean rotationPossible = parent.getCurrentPlayer().getFreeTurns() + parent.getCurrentPlayer().getCoal() > 0;
+    boolean maxSpeed = currentPlayer.getSpeed() == 6;
+    boolean minSpeed = currentPlayer.getSpeed() == 1;
+    boolean onSandbank = currentPlayer.getField(currentBoard).getType() == FieldType.SANDBANK;
+    boolean accelerationPossible = currentPlayer.getFreeAcc() + currentPlayer.getCoal() > 0;
+    boolean rotationPossible = currentPlayer.getFreeTurns() + currentPlayer.getCoal() > 0;
 
     speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible);
     speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible);
