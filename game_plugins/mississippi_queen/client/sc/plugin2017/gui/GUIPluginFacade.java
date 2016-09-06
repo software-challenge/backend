@@ -5,9 +5,11 @@ import java.awt.Image;
 import java.awt.Panel;
 import java.awt.Toolkit;
 import java.io.IOException;
-import java.net.URL;
 
 import javax.swing.ImageIcon;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IGamePreparation;
@@ -18,7 +20,6 @@ import sc.networking.clients.ObservingClient;
 import sc.plugin2017.EPlayerId;
 import sc.plugin2017.GamePlugin;
 import sc.plugin2017.GuiClient;
-import sc.plugin2017.gui.renderer.FrameRenderer;
 import sc.plugin2017.gui.renderer.RenderFacade;
 import sc.plugin2017.util.Configuration;
 import sc.plugins.PluginDescriptor;
@@ -34,6 +35,9 @@ import sc.shared.SlotDescriptor;
  */
 @PluginDescriptor(name = GamePlugin.PLUGIN_NAME, uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GUIPluginFacade implements IGuiPlugin {
+
+  private static final Logger logger = LoggerFactory
+      .getLogger(GUIPluginFacade.class);
 
 	public GUIPluginFacade() {
 	}
@@ -64,13 +68,10 @@ public class GUIPluginFacade implements IGuiPlugin {
 		return loadImage("resource/game/pluginImage.png");
 	}
 
-	private static Image loadImage(String filename) {
-		URL url = FrameRenderer.class.getClassLoader().getResource(filename);
-
-		if (url == null) {
-			return new ImageIcon().getImage();
-		}
-		return (new ImageIcon(url)).getImage();
+	private Image loadImage(String filename) {
+	  logger.debug("loading image {}", filename);
+	  ImageIcon icon = new ImageIcon(filename);
+	  return icon.getImage();
 	}
 
 	/**
