@@ -8,12 +8,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.plugin2017.Acceleration;
 import sc.plugin2017.Action;
 import sc.plugin2017.Advance;
 import sc.plugin2017.Board;
 import sc.plugin2017.Direction;
 import sc.plugin2017.Field;
 import sc.plugin2017.FieldType;
+import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Push;
@@ -145,7 +147,7 @@ public class GuiBoard extends PrimitiveBase {
    * @param current
    *          PlayerColor of currentPlayer in gameState
    */
-  public void update(Board board, Player red, Player blue, PlayerColor current) {
+  public void update(Board board, Player red, Player blue, PlayerColor current, Move currentMove) {
     if (board == null) {
       logger.error("got no board in update");
     }
@@ -159,7 +161,7 @@ public class GuiBoard extends PrimitiveBase {
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     updateButtonPositions(getCurrentGuiPlayer());
-    updateButtonAvailability(currentPlayer, currentBoard);
+    updateButtonAvailability(currentPlayer, currentBoard, currentMove);
     if (!currentBoard.getTiles().isEmpty()) {
 
       // I think this sets old tiles invisible (because they are no longer
@@ -273,16 +275,22 @@ public class GuiBoard extends PrimitiveBase {
     }
   }
 
-  private void updateButtonAvailability(Player currentPlayer, Board currentBoard) {
+  private void updateButtonAvailability(Player currentPlayer, Board currentBoard, Move currentMove) {
 
     boolean maxSpeed = currentPlayer.getSpeed() == 6;
     boolean minSpeed = currentPlayer.getSpeed() == 1;
     boolean onSandbank = currentPlayer.getField(currentBoard).getType() == FieldType.SANDBANK;
     boolean accelerationPossible = currentPlayer.getFreeAcc() + currentPlayer.getCoal() > 0;
     boolean rotationPossible = currentPlayer.getFreeTurns() + currentPlayer.getCoal() > 0;
+    boolean firstAction = true;
+    for (Action action : currentMove.actions) {
+      if (action.getClass() != Acceleration.class) {
+        firstAction = false;
+      }
+    }
 
-    speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible);
-    speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible);
+    speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible && firstAction);
+    speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible && firstAction);
     left.setEnabled(rotationPossible && !onSandbank);
     right.setEnabled(rotationPossible && !onSandbank);
   }

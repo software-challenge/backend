@@ -220,7 +220,7 @@ public class FrameRenderer extends PApplet {
       sideBar.update(gameState.getCurrentPlayerColor(), gameState.getRedPlayer().getDisplayName(), gameState.getPointsForPlayer(PlayerColor.RED), gameState.getBluePlayer().getDisplayName(), gameState.getPointsForPlayer(PlayerColor.BLUE));
       guiBoard.resize(); // gameState update may require resizing of board (because new tiles are visible).
       guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(),
-          gameState.getBluePlayer(), gameState.getCurrentPlayerColor());
+          gameState.getBluePlayer(), gameState.getCurrentPlayerColor(), currentMove);
     } else {
       boardFrame.update(null);
       sideBar.update(null);
