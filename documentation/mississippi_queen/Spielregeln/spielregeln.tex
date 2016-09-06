@@ -250,7 +250,9 @@ reduziert.
 Eine Bewegungsaktion erfolgt in die derzeitige Bewegungsrichtung des Schiffes.
 Sie kann nur über und auf passierbare (siehe \ref{passierbar}) Felder erfolgen.
 Sie darf niemals durch ein vom Gegner besetztes Feld oder eine Sandbank gehen,
-darf auf dem Feld des Gegners oder einer Sandbank enden.
+darf auf dem Feld des Gegners oder einer Sandbank enden. Es ist weiterhin nicht
+erlaubt, durch das gesamte letzte aufgedeckte Segment in ein noch nicht
+aufgedecktes Feld zu ziehen.
 
 \subsection{Kombination von Aktionen}
 
@@ -300,7 +302,33 @@ erklärt.
 
 \subsection{Neues Spiel starten}
 
-TODO
+Nach dem Start der grafischen Oberfläche ist das Menü oben sowie die Statusleiste unten sichtbar. Der Rest des Fensters ist grau.
+
+Um ein neues Spiel zu starten, wählt man im Menü unter ``Spiel'' ``Neues Spiel
+erstellen'' aus.
+
+{%
+\centering%
+\includegraphics[width=0.4\textwidth]{bilder/neues-spiel-menu.jpg}
+}
+
+Nun erscheint ein Dialogfenster, in dem man die Einstellungen für das neue Spiel
+bearbeiten kann. Zuerst kann man den Namen des ersten und zweiten Spielers festlegen, indem man in das jeweilige Namensfeld klickt. Daneben befindet sich die Auswahl, ob der jeweilige Spieler ein Mensch, ein Computerspieler oder ein manuell gestarteter Computerspieler sein soll. Wählt man hier ``Computerspieler'' erscheint ein Dateiauswahldialog, in dem man das JAR-Archiv mit dem Computerspieler auswählen kann. In das letzte Feld können noch Parameter eingegeben werden, die dem Computerspieler beim Start übergeben werden sollen (dies ist nur bei Spielertyp ``Computerspieler'' relevant).
+
+\begin{centering}
+  \includegraphics[width=\textwidth]{bilder/neues-spiel-dialog.jpg}
+\end{centering}
+
+Unter den Spielereinstellungen befinden sich noch weitere Einstellungen:
+
+\begin{description}
+\item [Zeitlimit deaktivieren] Wenn der Haken gesetzt wird, gilt für die Computerspieler nicht das Zeitlimit von 2 Sekunden pro Zug. Für menschliche Spieler gilt niemals ein Zeitlimit und diese Einstellung ist ohne Wirkung.
+\item [Port] Die Portnummer, unter der der Server erreichbar ist. Für manuell gestartete Computerspieler wichtig, da diese sich über den hier angegebenen Port mit dem Server verbinden müssen, um am Spiel teilzunehmen.
+\item [Spiel aus Datei laden] Ist diese Aktion aktiviert und eine Replay-Datei angegeben, wird statt eines zufällig generierten Spielbrettes das Spielbrett aus dem Replay für das neue Spiel verwendet.
+\item [Auswahl des Spiels] Hier ist das aktuelle Spiel voreingestellt. Dies sollte nicht verändert werden.
+\item [Spiel starten Knopf] Startet das Spiel mit den aktuellen Einstellungen.
+\item [Schließen Knopf] Schließt den Dialog, ohne ein Spiel zu starten.
+\end{description}
 
 \subsection{Hauptbildschirm}
 
@@ -319,13 +347,15 @@ Info-Bereichs befindet sich der Rundenzähler, auf dem man die aktuelle Runde
 ablesen kann. Darunter findet man die Bedienelemente zum kontrollieren des
 Spielablaufes, die Spielbedienung.
 
-\subsection{Spielsteuerung}
+\emph{Nach dem Starten eines neuen Spiels muss immer zuerst der ``Pause''-Knopf unten links angeklickt werden, sonst geht das Spiel nicht voran.}
+
+\subsection{Spielersteuerung}
 
 Wenn ein menschlicher Spieler am Zug ist, kann er die Aktionen, die er in seinem
-Zug durchführen will, über die Spielsteuerung eingeben. Die Spielsteuerung
+Zug durchführen will, über die Spielersteuerung eingeben. Die Spielersteuerung
 besteht aus bis zu sechs Icons, die neben dem Dampfer des Spielers dargestellt
 werden, sowie eventuell ein oder mehreren weiß umrandeten Hexagonal-Feldern.
-Durch Klicken auf ein Spielsteuerungselement wird die damit verbundene Aktion
+Durch Klicken auf ein Spielersteuerungselement wird die damit verbundene Aktion
 ausgelöst. Die Aktionen sind im einzelnen:
 
 \begin{table}[h!]
@@ -358,12 +388,6 @@ ausgelöst. Die Aktionen sind im einzelnen:
     Drehung um eine Einheit nach rechts.
     \\
     \begin{minipage}{1cm}
-      \includegraphics[width=\linewidth]{bilder/rotate-right}
-    \end{minipage}
-    &
-    Drehung um eine Einheit nach rechts.
-    \\
-    \begin{minipage}{1cm}
       \includegraphics[width=\linewidth]{bilder/okay}
     \end{minipage}
     &
@@ -375,7 +399,7 @@ ausgelöst. Die Aktionen sind im einzelnen:
       \includegraphics[width=\linewidth]{bilder/cancel}
     \end{minipage}
     &
-    Bisher eingegebene Aktionen löschen und von vorn mit der Eingabe beginnen.
+    Bisher eingegebene Aktionen löschen und mit der Eingabe von vorn beginnen.
     \\
     \begin{minipage}{1cm}
       \includegraphics[width=\linewidth]{bilder/water-marked}
@@ -391,14 +415,30 @@ ausgelöst. Die Aktionen sind im einzelnen:
   \includegraphics[width=\textwidth]{bilder/spielfeld-abdraengen.jpg}
 \end{centering}
 
-TODO
+Sobald man durch eine Aktion auf das Feld des gegnerischen Dampfers kommt,
+werden die Felder, auf die man den Gegner abdrängen kann, weiß umrandet. Durch
+Klicken auf eines der weiß umrandeten Felder kann man den Gegner auf dieses Feld
+abdrängen und die Abdräng-Aktion ist abgeschlossen.
 
 \subsection{Passagiere aufnehmen}
 
-TODO
+Um Passagiere aufzunehmen, muss man wie unter \ref{passenger} beschrieben an
+einen Anleger fahren. Beendet man dort seinen Zug, wird der Passagier automatisch
+aufgenommen.
 
 \subsection{Spielbedienung}
 
-TODO
+Die Spielbedienung am unteren Rand des Fensters steuert das Abspielverhalten des aktuellen Spiels. Diese können verwendet werden, um sich bereits getätigte Züge noch einmal anzusehen. Die einzelnen Elemente sind von links nach rechts:
+
+\begin{description}
+\item [Pause / Abspielen Knopf] Steht beim Start des Spiels auf ``Pause''. Damit das Spiel ablaufen kann, muss er auf ``Abspielen'' stehen.
+\item [Geschwindigkeit-Schieberegler] Bestimmt die Zeit, die ein Zug beim Abspielen angezeigt wird.
+\item [Zurück an den Anfang Knopf] Setzt das Spiel an den Anfang zurück.
+\item [Schritt zurück Knopf] Geht eine Runde zurück.
+\item [Schritt vor Knopf] Geht eine Runde vor.
+\item [Vorspulen Knopf] Geht ans Ende des bisher gespielten Spieles.
+\item [Spiel abbrechen Knopf] Beendet das Spiel.
+\end{description}
+
 
 \end{document}
