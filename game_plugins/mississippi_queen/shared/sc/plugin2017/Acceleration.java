@@ -48,17 +48,18 @@ public class Acceleration extends Action {
     int speed = player.getSpeed();
     speed += acc;
     if(this.acc == 0) {
-      throw new InvalidMoveException("Es kann nicht um den Wert 0 beschleuning werden");
+      throw new InvalidMoveException("Es kann nicht um den Wert 0 beschleunigt werden.");
     }
-    if(speed > 6 || speed < 1) {
-      throw new InvalidMoveException("Geschwindigkeit zu hoch oder zu niedrig");
+    if (speed > 6) {
+      throw new InvalidMoveException("Die maximale Geschwindigkeit von 6 darf nicht überschritten werden.");
     }
-    if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
+    if (speed < 1) {
+      throw new InvalidMoveException("Die minimale Geschwindigkeit von 1 darf nicht unterschritten werden.");
+    }
+    if (player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
       throw new InvalidMoveException("Auf einer Sandbank kann nicht beschleunigt werden.");
     }
-    int usedCoal = 0;
-    usedCoal = Math.abs(acc) - player.getFreeAcc();
-    
+    int usedCoal = Math.abs(acc) - player.getFreeAcc();
     if(usedCoal > 0) {
       player.setCoal(player.getCoal() - usedCoal);
     }
