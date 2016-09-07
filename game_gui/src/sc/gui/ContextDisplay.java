@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.logic.save.GUIConfiguration;
@@ -21,6 +24,8 @@ import sc.logic.save.GUIConfiguration;
 @SuppressWarnings("serial")
 public class ContextDisplay extends JPanel implements INewTurnListener {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(ContextDisplay.class);
 	private final PresentationFacade presFac;
 	private final Properties lang;
 
@@ -136,7 +141,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 		disableAllButtons();
 		buttonBar.setPaused(false);
 
-		((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
+		presFac.getContextDisplay().recreateGameField();
 		// update status bar
 		((StatusBar) presFac.getStatusBar()).setStatus(lang
 				.getProperty("statusbar_status_nogame"));
@@ -145,7 +150,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	/**
 	 * Binds the standard action of the given <code>button</code> to the given
 	 * <code>key</code>.
-	 * 
+	 *
 	 * @param component
 	 * @param key
 	 * @param modifiers
@@ -173,17 +178,18 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * Recreates an empty game field panel and replaces it with the current game
 	 * field. It also resets all other components on this panel in the old
 	 * order.
-	 * 
+	 *
 	 * @return the new game field panel
 	 */
 	public Panel recreateGameField() {
 		gameField = new Panel();
-		// gameField.setBorder(BorderFactory.createEtchedBorder());
 
 		this.removeAll();
 		this.add(gameField, BorderLayout.CENTER);
 		this.add(buttonBar, BorderLayout.PAGE_END);
-		this.validate();
+		this.revalidate();
+		this.repaint();
+		logger.debug("dimensions of game field: {},{}", gameField.getWidth(), gameField.getHeight());
 
 		return gameField;
 	}
@@ -223,7 +229,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 
 	/**
 	 * Updates the tool tip and the icon.
-	 * 
+	 *
 	 * @param paused
 	 */
 	private void syncPauseAndPlayState(boolean paused) {

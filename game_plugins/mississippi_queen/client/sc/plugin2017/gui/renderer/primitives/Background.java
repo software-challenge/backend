@@ -5,31 +5,27 @@ import sc.plugin2017.gui.renderer.FrameRenderer;
 
 public class Background extends PrimitiveBase {
 
-  private PImage rawImage;
   private PImage img;
+  private int width;
+  private int height;
 
   public Background(FrameRenderer parent) {
     super(parent);
-    rawImage = parent.loadImage(GuiConstants.BACKGROUND_IMAGE);
+    img = parent.loadImage(GuiConstants.BACKGROUND_IMAGE);
+    resize(parent.width, parent.height);
   }
 
   @Override
   public void draw(){
-    try {
     parent.background(GuiConstants.colorBackGround);
-    parent.image(img, 0, 0);
-    } catch (ArrayIndexOutOfBoundsException e) {
-      // do nothing
+    if (width > 0 && height > 0) {
+      parent.image(img, 0, 0, width, height);
     }
   }
 
   public void resize(int width, int height){
-    try {
-      img = (PImage) rawImage.clone();
-    } catch (CloneNotSupportedException e) {
-      img = new PImage();
-    }
-    img.resize(width, height);
+    this.width = width;
+    this.height = height;
   }
 
 }

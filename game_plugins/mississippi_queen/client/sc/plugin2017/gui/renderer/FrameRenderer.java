@@ -128,7 +128,7 @@ public class FrameRenderer extends PApplet {
               resize(width, height);
             }
         },
-        500
+        1000
     );
 
     initialized = true;
@@ -367,7 +367,7 @@ public class FrameRenderer extends PApplet {
     background.resize(width, height);
     guiBoard.resize();
 
-    logger.debug(String.format("dimension of PApplet: %d,%d", this.width, this.height));
+    logger.debug(String.format("dimension of PApplet after reszie: %d,%d", this.width, this.height));
     // progressBar, sideBar and boardFrame have no own dimensions, they access
     // parents dimensions directly and don't need to be resized.
   }

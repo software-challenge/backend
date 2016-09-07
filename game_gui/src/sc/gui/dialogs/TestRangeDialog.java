@@ -17,7 +17,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -116,7 +115,7 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlBottomTop;
 	private int freePort;
 	private boolean testStarted;
-	
+
 	private List<List<BigDecimal>> absoluteValues;
 
 	public TestRangeDialog() {
@@ -285,7 +284,7 @@ public class TestRangeDialog extends JDialog {
 	private void createSaveReplayCheckboxGroup() {
 		pnl_saveReplay = new JPanel(new GridLayout());
 		//setVerticalFlowLayout(pnl_saveReplay);
-		
+
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel lbl_saveReplay = new JLabel(lang
 				.getProperty("dialog_test_lbl_saveReplay"));
@@ -370,7 +369,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Returns true if a test is running, otherwise false.
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean isTesting() {
@@ -379,7 +378,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Updates the start/stop button and the text area.
-	 * 
+	 *
 	 * @param endOfTest
 	 *            true if it should reset the gui, otherwise false.
 	 */
@@ -412,7 +411,7 @@ public class TestRangeDialog extends JDialog {
 	/**
 	 * According to the Checkbox's index, which selects a specific plugin, this
 	 * dialog is painted.
-	 * 
+	 *
 	 * @param selPlugin
 	 */
 	protected void drawSelectedPluginView(GUIPluginInstance selPlugin) {
@@ -427,7 +426,7 @@ public class TestRangeDialog extends JDialog {
 		model.setColumnCount(0);
 
 		int prefSize = 0;
-		
+
 		// add columns
 		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
 		model.addColumn(lang.getProperty("dialog_test_stats_name"));
@@ -483,7 +482,7 @@ public class TestRangeDialog extends JDialog {
 		// -------------------------------------------------------------
 
 		setPlayerRows(selPlugin);
-		
+
 		// show table without extra space
 		//statTable.setPreferredScrollableViewportSize(statTable
 		//		.getPreferredSize());
@@ -513,7 +512,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Adds the necessary input components for each player.
-	 * 
+	 *
 	 * @param selPlugin
 	 */
 	private void setPlayerRows(GUIPluginInstance selPlugin) {
@@ -559,7 +558,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Sets the specific table header renderer.
-	 * 
+	 *
 	 * @param table
 	 */
 	private void setTableHeaderRenderer(JTable table) {
@@ -591,7 +590,7 @@ public class TestRangeDialog extends JDialog {
 	 * Prepares the test range.
 	 */
 	private boolean prepareTest() {
-		
+
 		testStarted = true;
 		if (presFac.getLogicFacade().isGameActive()) {
 			presFac.getContextDisplay().cancelCurrentGame();
@@ -604,7 +603,7 @@ public class TestRangeDialog extends JDialog {
 
 		progressBar.setMaximum(numTest);
 		progressBar.setValue(0);
-		
+
 		absoluteValues = new LinkedList<List<BigDecimal>>();
 
 		for (JTextField element : txfclient) {
@@ -667,18 +666,18 @@ public class TestRangeDialog extends JDialog {
 		} while (portInUse);
 
 		// disable rendering
-		selPlugin.setRenderContext(null, false);
+		selPlugin.setRenderContext(null);
 
 		return true;
 	}
 
 	/**
 	 * Starts a prepared test range.
-	 * 
+	 *
 	 * @param ascending
 	 */
 	protected void startNewTest() {
-		 
+
 		final ConnectingDialog connectionDialog = new ConnectingDialog(this);
 
 		curTest++;
@@ -810,7 +809,7 @@ public class TestRangeDialog extends JDialog {
 			final List<SlotDescriptor> slotDescriptors,
 			final IGamePreparation prep, final ConnectingDialog connectionDialog) {
 		// get observer
-		
+
 		final GUIPluginInstance plugin = getSelectedPlugin();
 		final List<SlotDescriptor> descriptors = slotDescriptors;
 		obs = prep.getObserver();
@@ -933,7 +932,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Prepares a new game with the given parameters.
-	 * 
+	 *
 	 * @param selPlugin
 	 * @param descriptors
 	 * @return
@@ -961,7 +960,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Updates the statistics table
-	 * 
+	 *
 	 * @param rotation
 	 * @param result
 	 */
@@ -1070,7 +1069,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Loads a client, i.e. opens a file choose dialog
-	 * 
+	 *
 	 * @param txf
 	 */
 	private void loadClient(JTextField txf) {
@@ -1097,9 +1096,9 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Non-editable table model.
-	 * 
+	 *
 	 * @author chw
-	 * 
+	 *
 	 */
 	private class MyTableModel extends DefaultTableModel {
 
@@ -1107,12 +1106,12 @@ public class TestRangeDialog extends JDialog {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
-		
+
 	}
 
 	/**
 	 * Adds the given <code>msg</code> to the log text area.
-	 * 
+	 *
 	 * @param msg
 	 */
 	private void addLogMessage(final String msg) {

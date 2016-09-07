@@ -38,11 +38,6 @@ public class RenderFacade {
 	private EPlayerId activePlayer;
 
 	/*
-	 * GUI modes are used to determine what the gui is showing at the moment Can
-	 * be connection dialogue, player1, ...
-	 */
-
-	/*
 	 * Used here to determine what panel (IRenderer) should be used when a new
 	 * panel is created. This solution only works with two players
 	 */
@@ -153,7 +148,7 @@ public class RenderFacade {
 		CONNECT, OBSERVER, PLAYER_ONE, PLAYER_TWO;
 	}
 
-	public void setRenderContext(final Panel panel, final boolean threeDimensional) {
+	public void setRenderContext(final Panel panel) {
 
 		synchronized (gameStateQueue) {
 			gameStateQueue.clear();
@@ -173,28 +168,44 @@ public class RenderFacade {
 
   class ResizeListener extends ComponentAdapter {
 
+    private void updateSize() {
+      int newWidth = panel.getWidth();
+      int newHeight = panel.getHeight();
+      if (newWidth > 0 && newHeight > 0) {
+        logger.debug(String.format("setting sizes: %d, %d", newWidth, newHeight));
+        frameRenderer.resize(newWidth, newHeight);
+      } else {
+        logger.debug("invalid window dimensions");
+      }
+    }
+
+    private void updateSizeForOwnPanel(ComponentEvent e) {
+      if (e.getComponent() == panel) {
+        updateSize();
+      } else {
+        logger.debug("event of other component: "+e.getComponent().getName());
+      }
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+      updateSizeForOwnPanel(e);
+    }
+
     @Override
     public void componentResized(ComponentEvent e) {
-      if (e.getComponent() == panel) {
-        int newWidth = panel.getWidth();
-        int newHeight = panel.getHeight();
-        if (newWidth > 0 && newHeight > 0) {
-          logger.debug(String.format("setting sizes: %d, %d", newWidth, newHeight));
-          frameRenderer.resize(newWidth, newHeight);
-        } else {
-          logger.debug("invalid window dimensions");
-        }
-      } else {
-        logger.debug("resize event of other component: "+e.getComponent().getName());
-      }
+      updateSizeForOwnPanel(e);
     }
   }
 
 	private void initRenderer() {
+	  logger.debug("initializing rendere for game");
     panel.setLayout(new BorderLayout());
 		panel.setVisible(true);
-		panel.doLayout();
-    frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight()); // neuer FrameRenderer
+		// revalidate here is needed to get correct dimensions on creating the FrameRenderer
+    panel.revalidate();
+    panel.repaint();
+    frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight());
     frameRenderer.init();
     panel.add(frameRenderer, BorderLayout.CENTER);
     panel.revalidate();
