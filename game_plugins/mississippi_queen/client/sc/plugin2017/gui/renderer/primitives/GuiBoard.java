@@ -97,6 +97,7 @@ public class GuiBoard extends PrimitiveBase {
    */
   private void calcHexFieldSize() {
     if (currentBoard != null) {
+      logger.debug("can calculate size");
       int lowX = 500;
       int highX = -500;
       int lowY = 500;
@@ -358,8 +359,15 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   private void resizeButtons() {
-    // buttons cannot be resized and need to be recreated
-    createButtons(calculateButtonSize());
+    if (left != null && right != null && speedUp != null && speedDown != null && send != null && cancel != null) {
+      int newSize = calculateButtonSize();
+      left.resize(newSize);
+      right.resize(newSize);
+      speedUp.resize(newSize);
+      speedDown.resize(newSize);
+      send.resize(newSize);
+      cancel.resize(newSize);
+    }
   }
 
   private int calculateButtonSize() {

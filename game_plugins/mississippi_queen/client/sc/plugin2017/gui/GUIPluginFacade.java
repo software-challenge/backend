@@ -29,9 +29,9 @@ import sc.shared.SlotDescriptor;
 /**
  * This is the GUIPlugin interface that is loaded by the server when it loads
  * the plugins
- * 
+ *
  * @author sca
- * 
+ *
  */
 @PluginDescriptor(name = GamePlugin.PLUGIN_NAME, uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GUIPluginFacade implements IGuiPlugin {
@@ -43,8 +43,8 @@ public class GUIPluginFacade implements IGuiPlugin {
 	}
 
 	@Override
-	public void setRenderContext(Panel panel, boolean threeDimensional) {
-		RenderFacade.getInstance().setRenderContext(panel, threeDimensional);
+	public void setRenderContext(Panel panel) {
+		RenderFacade.getInstance().setRenderContext(panel);
 	}
 
 	@Override
@@ -89,8 +89,8 @@ public class GUIPluginFacade implements IGuiPlugin {
 		RenderFacade.getInstance().setDisabled(true);
 		return result;
 	}
-	
-	
+
+
 	/**
 	 * Server wants us to prepare a game Then create a GuiClient that opens a
 	 * new room and create the GUI

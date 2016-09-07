@@ -60,8 +60,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 */
 	public SoftwareChallengeGUI() {
 		super();
+    /*
 		Logger rootLogger = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-		rootLogger.setLevel(Level.WARN);
+		rootLogger.setLevel(Level.INFO);
+    */
 		loadCodeVersionFromManifest();
 		// get logic facade
 		LogicFacade logicFac = LogicFacade.getInstance();
@@ -93,23 +95,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			conBar.setStepSpeed(stepSpeed);
 		}
 
-		if (GUIConfiguration.finaleMode) {
-			LoggerFactory.getLogger(this.getClass()).info(
-					"Starting server in finale mode");
-			presFac.getContextDisplay().getGameControlBar().btn_toBegin
-					.setVisible(false);
-			presFac.getContextDisplay().getGameControlBar().btn_toEnd
-					.setVisible(false);
-			presFac.getContextDisplay().getGameControlBar().stepSpeed
-					.setVisible(false);
-			presFac.getStatusBar().setVisible(false);
-		}
-
 		if (GUIConfiguration.replayFileToLoad != null) {
 			ReplayDialog replay = new ReplayDialog(this);
 			replay.startReplay(GUIConfiguration.replayFileToLoad);
 			if (GUIConfiguration.autoStart) {
-				System.out.println("Start playing now");
 				presFac.getContextDisplay().startPlaying();
 			}
 			if (GUIConfiguration.repeat) {
