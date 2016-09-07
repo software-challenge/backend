@@ -17,8 +17,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.slf4j.LoggerFactory;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
@@ -62,7 +60,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		super();
     /*
 		Logger rootLogger = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-		rootLogger.setLevel(Level.INFO);
+		rootLogger.setLevel(Level.DEBUG);
     */
 		loadCodeVersionFromManifest();
 		// get logic facade
