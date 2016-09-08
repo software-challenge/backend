@@ -2,12 +2,14 @@ package sc.plugin2017;
 
 public enum Direction {
 
-  RIGHT(0), UP_RIGHT(1), UP_LEFT(2), LEFT(3), DOWN_LEFT(4), DOWN_RIGHT(5);
+  RIGHT(0, "rechts"), UP_RIGHT(1, "oben rechts"), UP_LEFT(2, "oben links"), LEFT(3, "links"), DOWN_LEFT(4, "unten links"), DOWN_RIGHT(5, "unten rechts");
 
   private final int value;
+  private final String translation;
 
-  Direction(final int value) {
+  Direction(final int value, final String translation) {
     this.value = value;
+    this.translation = translation;
   }
 
   public int getValue() { return value; }
@@ -50,5 +52,10 @@ public enum Direction {
       direction = - direction;
     }
     return direction;
+  }
+  
+  @Override
+  public String toString() {
+    return this.translation;
   }
 }
