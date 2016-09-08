@@ -494,17 +494,17 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public ClickedButton getClickedButton(int mouseX, int mouseY) {
-    if (left.hover(mouseX, mouseY)) {
+    if (left.wouldBeClicked(mouseX, mouseY)) {
       return ClickedButton.LEFT;
-    } else if (right.hover(mouseX, mouseY)) {
+    } else if (right.wouldBeClicked(mouseX, mouseY)) {
       return ClickedButton.RIGHT;
-    } else if (speedUp.hover(mouseX, mouseY)) {
+    } else if (speedUp.wouldBeClicked(mouseX, mouseY)) {
       return ClickedButton.SPEED_UP;
-    } else if (speedDown.hover(mouseX, mouseY)) {
+    } else if (speedDown.wouldBeClicked(mouseX, mouseY)) {
       return ClickedButton.SPEED_DOWN;
-    } else if (send.hover(mouseX, mouseY)) {
+    } else if (send.wouldBeClicked(mouseX, mouseY)) {
       return ClickedButton.SEND;
-    } else if (cancel.hover(mouseX, mouseY)) {
+    } else if (cancel.wouldBeClicked(mouseX, mouseY)) {
       return ClickedButton.CANCEL;
     } else {
       return ClickedButton.NONE;
@@ -512,8 +512,8 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public boolean hoversButton(int mouseX, int mouseY) {
-    return left.hover(mouseX, mouseY) || right.hover(mouseX, mouseY) || speedUp.hover(mouseX, mouseY)
-        || speedDown.hover(mouseX, mouseY) || send.hover(mouseX, mouseY) || cancel.hover(mouseX, mouseY);
+    return left.wouldBeClicked(mouseX, mouseY) || right.wouldBeClicked(mouseX, mouseY) || speedUp.wouldBeClicked(mouseX, mouseY)
+        || speedDown.wouldBeClicked(mouseX, mouseY) || send.wouldBeClicked(mouseX, mouseY) || cancel.wouldBeClicked(mouseX, mouseY);
   }
 
 }

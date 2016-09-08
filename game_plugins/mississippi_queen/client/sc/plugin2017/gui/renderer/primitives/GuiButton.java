@@ -62,6 +62,16 @@ public class GuiButton extends PrimitiveBase {
   public void resize(int newSize) {
     size = newSize;
   }
+  
+  /**
+   * Tests if a click at given coordinated would activate the button.
+   * @param mouseX
+   * @param mouseY
+   * @return
+   */
+  public boolean wouldBeClicked(int mouseX, int mouseY) {
+    return hover(mouseX, mouseY) && enabled;
+  }
 
   public void moveTo(float newX, float newY) {
     x = Math.round(newX);
