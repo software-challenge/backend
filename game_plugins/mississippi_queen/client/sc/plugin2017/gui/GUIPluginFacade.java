@@ -84,7 +84,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 		GuiClient client = new GuiClient(ip, port, EPlayerId.OBSERVER);
 		AdministrativeGameHandler handler = new AdministrativeGameHandler();
 		client.setHandler(handler);
-		//RenderFacade.getInstance().setHandler(handler, EPlayerId.OBSERVER);
+		RenderFacade.getInstance().setHandler(handler, EPlayerId.OBSERVER);
 		GamePreparation result = new GamePreparation(client, descriptors);
 		RenderFacade.getInstance().setDisabled(true);
 		return result;
@@ -117,7 +117,7 @@ public class GUIPluginFacade implements IGuiPlugin {
 		ObserverGameHandler handler = new ObserverGameHandler();
 		RenderFacade.getInstance().setHandler(null, EPlayerId.OBSERVER);
 		IObservation obs = new Observation(rep, handler);
-		//RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		return obs;
 	}
 

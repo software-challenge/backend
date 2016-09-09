@@ -140,7 +140,11 @@ public class FrameRenderer extends PApplet {
     if (currentGameState != null) {
       lastTurn = currentGameState.getTurn();
     }
-    currentGameState = gameState;
+    try {
+    currentGameState = gameState.clone();
+    } catch (CloneNotSupportedException e) {
+      logger.error("Problem cloning gamestate", e);
+    }
     currentMove = new Move();
     // needed for simulation of actions
     currentGameState.getRedPlayer().setMovement(currentGameState.getRedPlayer().getSpeed());

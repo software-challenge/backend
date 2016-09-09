@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package sc.plugin2017.gui;
 
@@ -13,9 +13,9 @@ import sc.plugin2017.gui.renderer.RenderFacade;
 import sc.shared.GameResult;
 
 /**
- * 
+ *
  * @author ffi
- * 
+ *
  */
 public class ObserverGameHandler implements IGameHandler {
 
@@ -39,7 +39,7 @@ public class ObserverGameHandler implements IGameHandler {
 
 	@Override
 	public void onRequestAction() {
-		//RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+		RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 		RenderFacade.getInstance().requestMove(EPlayerId.OBSERVER);
 	}
 

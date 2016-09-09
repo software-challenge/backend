@@ -108,7 +108,7 @@ public class RenderFacade {
 	private int maxTurn;
 
 	private RenderFacade() {
-		gameStateQueue = new LinkedList<GameState>();
+		gameStateQueue = new LinkedList<>();
 		startReceiverThread();
 	}
 

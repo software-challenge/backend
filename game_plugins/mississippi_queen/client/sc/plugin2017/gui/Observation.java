@@ -18,6 +18,7 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
+import sc.plugin2017.EPlayerId;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGUIObservation;
 import sc.plugin2017.IGameHandler;
@@ -116,16 +117,16 @@ public class Observation implements IObservation, IUpdateListener,
 	@Override
 	public void start() {
 		conGame.unpause();
-//		if (RenderFacade.getInstance().getActivePlayer() != null) {
-//			RenderFacade.getInstance().switchToPlayer(
-//					RenderFacade.getInstance().getActivePlayer());
-//		}
+		if (RenderFacade.getInstance().getActivePlayer() != null) {
+			RenderFacade.getInstance().switchToPlayer(
+					RenderFacade.getInstance().getActivePlayer());
+		}
 	}
 
 	@Override
 	public void unpause() {
-//		RenderFacade.getInstance().switchToPlayer(
-//				RenderFacade.getInstance().getActivePlayer());
+		RenderFacade.getInstance().switchToPlayer(
+				RenderFacade.getInstance().getActivePlayer());
 		conGame.unpause();
 	}
 
@@ -296,7 +297,7 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 
 		if (gameState != null) {
-			// ready();
+			ready();
 			handler.onUpdate(gameState);
 
 			handler.onUpdate(gameState.getCurrentPlayer(), gameState
@@ -307,7 +308,7 @@ public class Observation implements IObservation, IUpdateListener,
 			}
 
 			if (conGame.hasNext()) {
-				//RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
 			}
 		}
 

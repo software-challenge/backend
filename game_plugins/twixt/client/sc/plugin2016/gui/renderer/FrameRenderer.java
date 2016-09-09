@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package sc.plugin2016.gui.renderer;
 
@@ -31,7 +31,7 @@ import sc.plugin2016.util.Constants;
 public class FrameRenderer extends PApplet {
 
   /**
-   * 
+   *
    */
   private static final long serialVersionUID = 1L;
   private static final Logger logger = LoggerFactory
@@ -44,9 +44,9 @@ public class FrameRenderer extends PApplet {
   private EPlayerId id;
 
   public GuiBoard guiBoard;
-  
+
   private Background background;
-  
+
   private ProgressBar progressBar;
   private SideBar sideBar;
   private BoardFrame boardFrame;
@@ -77,6 +77,7 @@ public class FrameRenderer extends PApplet {
     //currently no images
   }
 
+  @Override
   public void setup() {
     maxTurn = -1;
     // choosing renderer from options - using P2D as default
@@ -100,6 +101,7 @@ public class FrameRenderer extends PApplet {
 
   }
 
+  @Override
   public void draw() {
     background.draw();
     guiBoard.draw();
@@ -154,14 +156,17 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
+  @Override
   public void mouseClicked(MouseEvent e) {
-    
+
   }
 
+  @Override
   public void mousePressed(MouseEvent e) {
-    
+
   }
 
+  @Override
   public void mouseReleased(MouseEvent e) {
     if (isHumanPlayer() && maxTurn == currentGameState.getTurn()) {
       int x = e.getX();
@@ -199,6 +204,7 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
+  @Override
   public void resize(int width, int height) {
     background.resize(width, height);
     guiBoard.resize(width, height);
@@ -209,11 +215,13 @@ public class FrameRenderer extends PApplet {
    * rufen wir resize auf, um die Komponenten auf die richtige Größe zu
    * bringen.
    */
+  @Override
   public void setBounds(int x, int y, int width, int height) {
     super.setBounds(x, y, width, height);
     this.resize(width, height);
   }
 
+  @Override
   public void keyPressed() {
     if (key == 'c' || key == 'C') {
       new RenderConfigurationDialog(FrameRenderer.this);
@@ -231,7 +239,7 @@ public class FrameRenderer extends PApplet {
 
   public void killAll() {
     noLoop();
-    
+
     if(background != null) {
       background.kill();
     }
