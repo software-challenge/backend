@@ -80,7 +80,10 @@ public class Advance extends Action {
           throw new InvalidMoveException("Nur eine Bewegung nach vorne auf einer Sandbank möglich");
         }
         player.setMovement(0);
-        Field next = start.alwaysGetFieldInDirection(direction, state.getBoard());
+        Field next = start.getFieldInDirection(direction, state.getBoard());
+        if (next == null) {
+          throw new InvalidMoveException("Feld ist nicht vorhanden. Ungültiger Zug.");
+        }
         if(!next.isPassable()) {
           throw new InvalidMoveException("Feld ist blockiert. Ungültiger Zug.");
         }
@@ -90,7 +93,7 @@ public class Advance extends Action {
       nextFields.add(start);
       // Kontrolliere für die Zurückgelegte Distanz, wie viele Bewegunsgpunkte verbraucht werden und ob es möglich ist, soweit zu ziehen
       for(int i = 0; i < distance; i++) {
-        Field next = nextFields.get(i).alwaysGetFieldInDirection(player.getDirection(), state.getBoard());
+        Field next = nextFields.get(i).getFieldInDirection(player.getDirection(), state.getBoard());
         if(next != null) {
           nextFields.add(next);
         } else {
@@ -118,7 +121,7 @@ public class Advance extends Action {
             throw new InvalidMoveException("Nicht genug Bewegunspunkte vorhanden, um Baumstamm zu überqueren");
           }
           player.setMovement(player.getMovement() - 2);
-          player.setSpeed(player.getSpeed() - 1);
+          player.setSpeed(Math.max(1, player.getSpeed() - 1));
         } else {
           player.setMovement(player.getMovement() - 1);
           logger.debug("Verringere Movement zu {}", player.getMovement());

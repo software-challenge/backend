@@ -73,7 +73,6 @@ public class GameEndedDialog {
     parent.translate((x - parent.textWidth(winningReason)) / 2, 5 * parent.textAscent() + parent.textDescent());
 
     parent.text(winningReason, 0, 0);
-    parent.noLoop();
 
     parent.popMatrix();
 

@@ -1,6 +1,7 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class Move implements Cloneable {
   /**
    * Liste von Aktionen aus denen der Zug besteht
    */
-  public ArrayList<Action> actions;
+  public List<Action> actions;
 
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe {@link DebugHint}
@@ -119,7 +120,7 @@ public class Move implements Cloneable {
    * @return Liste der hinzugefuegten Debug-Hilfestellungen
    */
   public List<DebugHint> getHints() {
-    return hints == null ? new LinkedList<DebugHint>() : hints;
+    return hints == null ? Collections.<DebugHint>emptyList() : hints;
   }
 
   /**
@@ -194,8 +195,11 @@ public class Move implements Cloneable {
     if(player.getCoal() < 0) {
       throw new InvalidMoveException("Nicht genug Kohle für den Zug vorhanden.");
     }
-    if(player.getMovement() != 0) { // check whether movement points are left
+    if(player.getMovement() > 0) { // check whether movement points are left
       throw new InvalidMoveException("Es sind noch " + player.getMovement() + " Bewegungspunkte übrig.");
+    }
+    if(player.getMovement() < 0) { // check whether movement points are left
+      throw new InvalidMoveException("Es sind " + Math.abs(player.getMovement()) + " Bewegungspunkte zuviel verbraucht worden.");
     }
   }
 

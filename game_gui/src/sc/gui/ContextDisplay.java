@@ -29,7 +29,6 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	private final PresentationFacade presFac;
 	private final Properties lang;
 
-	private Panel gameField;
 	private GameControlBar buttonBar;
 	private boolean started;
 
@@ -182,7 +181,7 @@ public class ContextDisplay extends JPanel implements INewTurnListener {
 	 * @return the new game field panel
 	 */
 	public Panel recreateGameField() {
-		gameField = new Panel();
+		Panel gameField = new Panel();
 
 		this.removeAll();
 		this.add(gameField, BorderLayout.CENTER);

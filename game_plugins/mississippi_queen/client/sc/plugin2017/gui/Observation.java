@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package sc.plugin2017.gui;
 
@@ -32,9 +32,9 @@ import sc.shared.ScoreCause;
 /**
  * The observation watches the game and is informed by the GUI client when
  * something happens
- * 
+ *
  * @author ffi
- * 
+ *
  */
 public class Observation implements IObservation, IUpdateListener,
 		IGUIObservation {
@@ -86,17 +86,7 @@ public class Observation implements IObservation, IUpdateListener,
 	@Override
 	public void next() {
 		conGame.next();
-		//showActivePlayerIfNecessary();
 	}
-
-//	private void showActivePlayerIfNecessary() {
-//		if (!conGame.hasNext()) {
-//			if (RenderFacade.getInstance().getActivePlayer() != null) {
-//				RenderFacade.getInstance().switchToPlayer(
-//						RenderFacade.getInstance().getActivePlayer());
-//			}
-//		}
-//	}
 
 	@Override
 	public void pause() {
@@ -140,9 +130,10 @@ public class Observation implements IObservation, IUpdateListener,
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	public void ready() {
+	@Override
+  public void ready() {
 		for (IReadyListener list : readyListeners) {
 			list.ready();
 		}
@@ -213,17 +204,17 @@ public class Observation implements IObservation, IUpdateListener,
 
 		String[] results1 = data.getScores().get(0).toStrings();
 		String[] results2 = data.getScores().get(1).toStrings();
-		
+
 		String res1 = name1 + ":\n	Punkte: " + results1[0] + "\n";
 		String res2 = name2 + ":\n	Punkte: " + results2[0] + "\n";
 //		for(int i = 1; i < 6; i += 1) {
 //			res1 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results1[i] + "\n";
 //			res2 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results2[i] + "\n";
 //		}
-//		
+//
 		result += res1 + "\n";
 		result += res2;
-		
+
 		List<IPlayer> winners = data.getWinners();
 		if (winners.size() > 0) {
 			PlayerColor winner = ((Player)data.getWinners().get(0)).getPlayerColor();
@@ -235,13 +226,13 @@ public class Observation implements IObservation, IUpdateListener,
 		} else {
 			result += "Unentschieden\n";
 		}
-		
+
 		return result;
 	}
 
 	/**
 	 * @param data
-	 * 
+	 *
 	 */
 	private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
 		if (!notifiedOnGameEnded) {
@@ -287,9 +278,10 @@ public class Observation implements IObservation, IUpdateListener,
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	public void newTurn(int id, String info) {
+	@Override
+  public void newTurn(int id, String info) {
 		notifyOnNewTurn(id, info);
 	}
 
@@ -373,7 +365,8 @@ public class Observation implements IObservation, IUpdateListener,
 		RenderFacade.getInstance().gameError(errorMessage);
 	}
 
-	public void reset() {
+	@Override
+  public void reset() {
 		goToFirst();
 		notifiedOnGameEnded = false;
 	}
