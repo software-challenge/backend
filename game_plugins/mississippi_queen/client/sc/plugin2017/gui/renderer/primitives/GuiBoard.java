@@ -73,12 +73,16 @@ public class GuiBoard extends PrimitiveBase {
     for (int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
       tiles.add(new GuiTile(parent, i, width, startX, startY, offsetX, offsetY));
     }
-
+    createButtons(calculateButtonSize());
   }
 
   public void setup() {
-    calculateSize();
-    createButtons(calculateButtonSize());
+    left.setup();
+    right.setup();
+    speedUp.setup();
+    speedDown.setup();
+    send.setup();
+    cancel.setup();
   }
 
   private void createButtons(int size) {

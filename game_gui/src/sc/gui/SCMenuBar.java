@@ -11,6 +11,9 @@ import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.IGUIApplication;
 import sc.gui.dialogs.CreateGameDialog;
 import sc.gui.dialogs.GameInfoDialog;
@@ -21,14 +24,16 @@ import sc.logic.save.GUIConfiguration;
 
 /**
  * The menu bar.
- * 
+ *
  * @author chw
  * @since SC'09
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class SCMenuBar extends MenuBar {
 
+  private static final Logger logger = LoggerFactory
+      .getLogger(SCMenuBar.class);
 	/**
 	 * The root frame, i.e. the GUI application
 	 */
@@ -68,7 +73,7 @@ public class SCMenuBar extends MenuBar {
 			@Override
       public void actionPerformed(ActionEvent e) {
         root.closeGUI();
-        
+
       }
 		});
 
@@ -87,7 +92,7 @@ public class SCMenuBar extends MenuBar {
         }
         // show create-game dialog
         new CreateGameDialog(root).setVisible(true);
-        
+
       }
 		});
 
@@ -106,7 +111,7 @@ public class SCMenuBar extends MenuBar {
         }
         // show replay dialog
         new ReplayDialog(root).setVisible(true);
-        
+
       }
 		});
 
@@ -123,7 +128,7 @@ public class SCMenuBar extends MenuBar {
             return;
           }
         }
-        new TestRangeDialog().setVisible(true);        
+        new TestRangeDialog().setVisible(true);
       }
 		});
 
@@ -134,7 +139,7 @@ public class SCMenuBar extends MenuBar {
       @Override
       public void actionPerformed(ActionEvent e) {
         GUIConfiguration.instance().setSuppressWarnMsg(noMsg.getState());
-        
+
       }
 		});
 
@@ -143,7 +148,20 @@ public class SCMenuBar extends MenuBar {
       @Override
       public void actionPerformed(ActionEvent e) {
         new InfoDialog().setVisible(true);
-        
+
+      }
+		});
+
+		MenuItem reportProblem = new MenuItem(lang.getProperty("menu_items_report_problem"));
+		info.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        try {
+          java.awt.Desktop.getDesktop().browse(java.net.URI.create("http://www.software-challenge.de"));
+        }
+        catch (Exception ex) {
+          logger.error("problem opening website", e);
+        }
       }
 		});
 
@@ -157,6 +175,7 @@ public class SCMenuBar extends MenuBar {
 		options.add(noMsg);
 
 		help.add(info);
+		help.add(reportProblem);
 
 		// add menus
 		this.add(data);
@@ -181,7 +200,7 @@ public class SCMenuBar extends MenuBar {
       public void actionPerformed(ActionEvent e) {
         new GameInfoDialog(gameTypeName, version, image, icon, infoText, author,
             infoYear).setVisible(true);
-        
+
       }
 		});
 		help.add(specificInfo);

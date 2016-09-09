@@ -24,10 +24,13 @@ public class GuiButton extends PrimitiveBase {
   public GuiButton(FrameRenderer parent, String imagePath, int x, int y, int size) {
     super(parent);
     this.imagePath = imagePath;
-    this.image = parent.loadShape(imagePath);
     this.x = x;
     this.y = y;
     this.size = size;
+  }
+
+  public void setup() {
+    this.image = parent.loadShape(this.imagePath);
   }
 
   @Override
@@ -62,7 +65,7 @@ public class GuiButton extends PrimitiveBase {
   public void resize(int newSize) {
     size = newSize;
   }
-  
+
   /**
    * Tests if a click at given coordinated would activate the button.
    * @param mouseX
