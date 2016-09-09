@@ -3,9 +3,6 @@ package sc.plugin2017.gui.renderer;
 import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.Panel;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -162,50 +159,13 @@ public class RenderFacade {
 		this.panel = panel;
 
 		initRenderer();
-    ComponentListener listener = new ResizeListener();
-    panel.addComponentListener(listener);
-  }
-
-  class ResizeListener extends ComponentAdapter {
-
-    private void updateSize() {
-      int newWidth = panel.getWidth();
-      int newHeight = panel.getHeight();
-      if (newWidth > 0 && newHeight > 0) {
-        logger.debug(String.format("setting sizes: %d, %d", newWidth, newHeight));
-        frameRenderer.resize(newWidth, newHeight);
-      } else {
-        logger.debug("invalid window dimensions");
-      }
-    }
-
-    private void updateSizeForOwnPanel(ComponentEvent e) {
-      if (e.getComponent() == panel) {
-        updateSize();
-      } else {
-        logger.debug("event of other component: "+e.getComponent().getName());
-      }
-    }
-
-    @Override
-    public void componentShown(ComponentEvent e) {
-      updateSizeForOwnPanel(e);
-    }
-
-    @Override
-    public void componentResized(ComponentEvent e) {
-      updateSizeForOwnPanel(e);
-    }
   }
 
 	private void initRenderer() {
 	  logger.debug("initializing rendere for game");
     panel.setLayout(new BorderLayout());
 		panel.setVisible(true);
-		// revalidate here is needed to get correct dimensions on creating the FrameRenderer
-    panel.revalidate();
-    panel.repaint();
-    frameRenderer = new FrameRenderer(panel.getWidth(), panel.getHeight());
+    frameRenderer = new FrameRenderer();
     frameRenderer.init();
     panel.add(frameRenderer, BorderLayout.CENTER);
     panel.revalidate();
@@ -222,7 +182,6 @@ public class RenderFacade {
 	 * @param target EPlayerId
 	 *
 	 */
-	// TODO
 	public void setHandler(IGameHandler handler, EPlayerId target) {
 
 		if (target == EPlayerId.OBSERVER) {

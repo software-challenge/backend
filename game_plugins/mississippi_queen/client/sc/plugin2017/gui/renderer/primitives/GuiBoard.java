@@ -47,7 +47,6 @@ public class GuiBoard extends PrimitiveBase {
   private float startY;
   private int offsetX;
   private int offsetY;
-  private Dimension dim;
   /**
    * Width of one field
    */
@@ -95,7 +94,8 @@ public class GuiBoard extends PrimitiveBase {
    * sets width, maxFieldsInX, maxFieldsInY, startX, startY, offset according to
    * dim and currentBoard
    */
-  private void calcHexFieldSize() {
+  private void calcHexFieldSize(Dimension viewPortSize) {
+    // before getting the initial board we can't (and don't have to) calculate sizes
     if (currentBoard != null) {
       logger.debug("can calculate size");
       int lowX = 500;
@@ -120,19 +120,17 @@ public class GuiBoard extends PrimitiveBase {
       }
       maxFieldsInX = highX - lowX + 1;
       maxFieldsInY = highY - lowY + 1;
-      float xLength = (dim.width / (maxFieldsInX + 1f))
+      float xLength = (viewPortSize.width / (maxFieldsInX + 1f))
           /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      float yLength = (dim.height / (maxFieldsInY + 1f))
+      float yLength = (viewPortSize.height / (maxFieldsInY + 1f))
           /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
       width = Math.min(xLength, yLength);
       offsetX = -lowX;
       offsetY = -lowY;
       float sizeX = (width + GuiConstants.BORDERSIZE);
       float sizeY = (HexField.calcA(width) + HexField.calcC(width) + GuiConstants.BORDERSIZE);
-      startX = (dim.width - (sizeX * maxFieldsInX)) / 2f;
-      startY = (dim.height - (sizeY * maxFieldsInY)) / 2f;
-    } else {
-      logger.error("trying to calculate hex field size without currentBoard!");
+      startX = (viewPortSize.width - (sizeX * maxFieldsInX)) / 2f;
+      startY = (viewPortSize.height - (sizeY * maxFieldsInY)) / 2f;
     }
   }
 
@@ -315,13 +313,13 @@ public class GuiBoard extends PrimitiveBase {
     logger.debug(String.format("calculating gui board sizes, size: %d,%d", parent.getWidth(), parent.getHeight()));
     float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
     float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
-    dim = new Dimension((int) xDimension, (int) yDimension);
-
-    calcHexFieldSize();
+    Dimension viewPortSize = new Dimension((int) xDimension, (int) yDimension);
+    calcHexFieldSize(viewPortSize);
   }
 
   @Override
   public void draw() {
+    resize();
     for (GuiTile tile : tiles) {
       tile.draw();
     }
