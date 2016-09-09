@@ -82,6 +82,7 @@
 %\end{figure}
 \vspace*{\fill}
 
+% TODO seitenzahl auf titelseite ausblenden
 \newpage
 \tableofcontents
 \thispagestyle{empty}
@@ -94,7 +95,7 @@ In dieser Anleitung werden die Elemente und Regeln des Spiels Mississippi Queen
 der Software-Challenge 2017 erläutert. Bei Mississippi Queen versuchen zwei
 Spieler, durch abwechselndes Setzen von Raddampfern schnellstmöglich einen Fluss
 bis zum Ziel entlangzufahren und dabei unterwegs zwei Passagiere mitzunehmen.
-Der Spieler dessen Dampfer das Ziel mit zwei Passagieren an Bord zuerst
+Der Spieler, dessen Dampfer das Ziel mit zwei Passagieren an Bord zuerst
 erreicht, gewinnt das Spiel.
 
 
@@ -105,16 +106,16 @@ erreicht, gewinnt das Spiel.
 Ein mögliches Spielbrett zu Beginn des Spiels sieht man oben. Ein Spielbrett
 nachdem das Spiel schon etwas weiter fortgeschritten ist, sieht man auf der
 Titelseite dieser Anleitung. Das gesamte Spielbrett besteht aus \Tiles/
-Spielsegmenten, mit jeweils \FieldsPerTile/ Feldern. Die Segmente kann durch die
-Farbe der Koordinaten auf den Feldern erkennen: Die Segmente haben abwechselnd
-schwarze und weiße Koordinaten auf den Feldern. Am Anfang ist nur das
-Startsegment und ein darauf folgendes Segment aufgedeckt. Sobald ein Dampfer auf
-das zuletzt aufgedeckte Segment fährt, wird ein neues dahinter zufällig links,
-rechts oder mittig aufgedeckt. Dies geschieht solange, bis alle \Tiles/ Segmente
-aufgedeckt sind. Das letzte Segment ist das Zielsegment (TODO Graphik einfügen
-darin Zielfelder markieren). Segmente die schon von allen Spielern betreten und
-wieder verlassen wurden, werden vom Spielplan entfernt, auch wenn sich darauf
-noch Passagiere befinden.
+Spielsegmenten mit jeweils \FieldsPerTile/ Feldern. Die Segmente kann man durch
+die Farbe der Koordinaten auf den Feldern erkennen: Die Segmente haben
+abwechselnd schwarze und weiße Koordinaten auf den Feldern. Am Anfang ist nur
+das Startsegment und ein darauf folgendes Segment aufgedeckt. Sobald ein Dampfer
+auf das zuletzt aufgedeckte Segment fährt, wird ein neues dahinter aufgedeckt
+und zwar zufällig links, rechts oder mittig. Dies geschieht solange, bis alle
+\Tiles/ Segmente aufgedeckt sind. Das letzte Segment ist das Zielsegment (siehe
+Abbildung unter Spielende \ref{sec:spielende}). Segmente die schon von allen
+Spielern betreten und wieder verlassen wurden, werden vom Spielplan entfernt,
+auch wenn sich darauf noch Inseln mit Passagieren befinden.
 
 Die Spielsegmente bestehen aus verschiedene Arten von Hexagon-Feldern, die
 zufällig verteilt sind. Neben Wasserfeldern, Inseln, Sandbänken und Baumstämmen
@@ -133,7 +134,7 @@ gerade fährt.
 \fieldGraphic{r}{wasser}
 
 Das Wasserfeld kann ganz normal befahren werden. Auf ein zum Spieler in der
-aktuellen Bewegungsrichtung benachbartes Wasserfeld ziehen kostet einen
+aktuellen Bewegungsrichtung benachbartes Wasserfeld ziehen, kostet einen
 Bewegungspunkt.
 
 \paragraph{}
@@ -143,31 +144,31 @@ Bewegungspunkt.
 \fieldGraphic{r}{insel}
 
 Die Insel kann nicht überquert werden. Fährt ein Dampfer auf eine Insel (z.B.
-weil er nicht rechtzeitig bremsen kann) hat er das Spiel verloren.
+weil er nicht rechtzeitig bremsen kann), hat er das Spiel verloren.
 
 \paragraph{}
 
-\subsection{\label{passenger}Das Passagierfeld mit Anleger in Richtung $i$}
+\subsection{\label{passenger}Das Passagierfeld mit Anleger in verschiedene Richtungen}
 
 \includegraphics[width=\textwidth]{bilder/passagier}
 
-Auf dem Passagierfeld mit Anleger in Richtung $i$ wartet eine Passagier, der am
-Anleger abgeholt werden kann. Um den Passagier abzuholen, muss
-der Dampfer mit Geschwindigkeit 1 am Anleger ankommen. Es verwandelt sich in ein normales
-Inselfeld, sobald der Passagier abgeholt wurde (siehe Insel, \ref{island}).
+Auf dem Passagierfeld mit Anleger wartet ein Passagier, der am Anleger abgeholt
+werden kann. Um den Passagier abzuholen, muss der Dampfer mit Geschwindigkeit 1
+am Anleger ankommen. Es verwandelt sich in ein normales Inselfeld, sobald der
+Passagier abgeholt wurde (siehe Insel, \ref{island}).
 
 
 \subsection{\label{sandbank}Die Sandbank}
 
 \fieldGraphic{r}{sandbank}
 
-Eine Sandbank stoppt einen Dampfer, sollte er darauf fahren. Das heißt wenn ein
+Eine Sandbank stoppt einen Dampfer, sollte er darauf fahren. Das heißt, wenn ein
 Spieler auf eine Sandbank fährt, beendet dies seinen Zug und setzt seine
-Geschwindigkeit auf 1. Es kann im nächsten Zug nur rückwärts oder vorwärts mit
-der Bewegungsrichtung, mit der die Sandbank befahren wurde, wieder verlassen werden.
-Verlässt man es Rückwärts, kostet dies zusätzlich eine Kohleeinheit. Auf einer
-Sandbank kann nicht gedreht werden und ein Dampfer, der sich darauf befindet,
-kann nicht abgedrängt werden.
+Geschwindigkeit auf 1. Die Sandbank kann im nächsten Zug nur rückwärts oder
+vorwärts in der Bewegungsrichtung, mit der sie befahren wurde, wieder verlassen
+werden. Verlässt man es rückwärts, kostet dies zusätzlich eine Kohleeinheit. Auf
+einer Sandbank kann nicht gedreht werden und ein Dampfer, der sich darauf
+befindet, kann nicht abgedrängt werden.
 
 \paragraph{}
 
@@ -175,7 +176,7 @@ kann nicht abgedrängt werden.
 
 \fieldGraphic{r}{baumstaemme}
 
-Das ziehen in ein Baumstammfeld kostet zwei Bewegungspunkte statt einem.
+Das Ziehen in ein Baumstammfeld kostet zwei Bewegungspunkte statt einem.
 Außerdem wird die Geschwindigkeit eines Schiffes, welches ein Baumstammfeld
 durchquert nach dem Zug um 1 verringert. Sind nicht genug Bewegungspunkte
 vorhanden, kann es nicht überquert werden. Das Abdrängen in ein Baumstammfeld
@@ -205,16 +206,14 @@ verbraucht werden. Die verschiedenen Aktionen sind:
 
 \subsection{\label{acceleration}Beschleunigungsaktion}
 
-Eine Beschleunigung Kann nur als erste Aktion eines Zuges ausgeführt werden. Die
+Eine Beschleunigung kann nur als erste Aktion eines Zuges ausgeführt werden. Die
 Beschleunigung um eine Geschwindigkeitseinheit pro Zug ist frei, jede
 Beschleunigung um mehr als 1 kostet für jeden weiteren Geschwindigkeitspunkt
 eine Kohleeinheit. Möchte ein Spieler beispielsweise mit einer aktuellen
 Geschwindigkeit von 2 auf Geschwindigkeit 4 beschleunigen, kostet dies eine
-Kohleeinheit. Die maximale Geschwindigkeit ist 6, die niedrigste 1. Eine
-Beschleunigungsaktion um 0 ist ungültig. Es ist aber zulässig, keine
-Beschleunigungsaktion durchzuführen und so die Geschwindigkeit beizubehalten.
+Kohleeinheit. Die maximale Geschwindigkeit ist 6, die niedrigste 1.
 
-Auf gleiche weise kann auch abgebremst, also die Geschwindigkeit verringert
+Auf gleiche Weise kann auch abgebremst, also die Geschwindigkeit verringert
 werden. Dies wird der Einfachheit halber als Beschleunigungsaktion mit negativer
 Beschleunigung behandelt.
 
@@ -227,9 +226,9 @@ des Zuges dürfen also keine Bewegungspunkte mehr vorhanden sein.
 
 \subsection{\label{turn}Drehaktion}
 
-Eine Drehaktion je Zug des Spielers um eine Einheit (also um 60\degree) ist frei
-(Ausnahme Abdrängen, siehe \ref{push}). Jede weitere Drehung erfordert eine
-Kohleeinheit. Es kann sich nicht auf Sandbänken gedreht werden.
+Eine Drehaktion je Zug des Spielers um eine Einheit (also um 60\degree) ist
+frei. Jede weitere Drehung erfordert eine Kohleeinheit (Ausnahme Abdrängen,
+siehe \ref{push}). Auf Sandbänken kann nicht gedreht werden.
 
 
 \subsection{\label{push}Abdrängaktion}
@@ -250,8 +249,8 @@ reduziert.
 Eine Bewegungsaktion erfolgt in die derzeitige Bewegungsrichtung des Schiffes.
 Sie kann nur über und auf passierbare (siehe \ref{passierbar}) Felder erfolgen.
 Sie darf niemals durch ein vom Gegner besetztes Feld oder eine Sandbank gehen,
-darf auf dem Feld des Gegners oder einer Sandbank enden. Es ist weiterhin nicht
-erlaubt, durch das gesamte letzte aufgedeckte Segment in ein noch nicht
+darf jedoch auf dem Feld des Gegners oder einer Sandbank enden. Es ist weiterhin
+nicht erlaubt, durch das gesamte, zuletzt aufgedeckte Segment in ein noch nicht
 aufgedecktes Feld zu ziehen.
 
 \subsection{Kombination von Aktionen}
@@ -259,7 +258,7 @@ aufgedecktes Feld zu ziehen.
 Solange die Regeln der einzelnen Aktionsarten eingehalten werden, können mehrere
 Aktionen innerhalb eines Zuges beliebig kombiniert werden.
 
-\section{Spielende}
+\section{Spielende}\ref{sec:spielende}
 
 \begin{centering}
   \includegraphics[width=\textwidth]{bilder/spielfeld-ziel.jpg}
@@ -270,7 +269,7 @@ Das Spiel ist beendet, sobald
 \begin{itemize}
 \item ein Dampfer mit 2 Passagieren ein Zielfeld mit Geschwindigkeit 1 erreicht hat.
 \item ein Spieler einen unültigen Zug macht.
-\item am Ende einer Runder ein Dampfer mehr als 3 Spielsegmente zurückliegt.
+\item am Ende einer Runde ein Dampfer mehr als 3 Spielsegmente zurückliegt.
   \item das Rundenlimit von 30 Runden erreicht ist.
 \end{itemize}
 
@@ -279,11 +278,11 @@ Punkte. In allen anderen Fällen berechnet sich der Punktestand eines jeden
 Spielers folgendermaßen:
 
 \begin{itemize}
-  \item Jeder eingesammelte Passagier bringt 5 Punkte
+  \item Jeder eingesammelte Passagier bringt 5 Punkte.
   \item Jedes überwundene Segment bringt 5 Punkte.
   \item Anhand der Position innerhalb eines Segments werden 0 bis 4 Punkte
-    vergeben. (Ein Segment ist aufgeteilt in 5 Reihen. Je weiter vorne man ist,
-    desto mehr Punkte bekommt man TODO siehe Graphik).
+    vergeben. Ein Segment ist aufgeteilt in 5 Reihen. Je weiter vorne man ist,
+    desto mehr Punkte bekommt man.
 \end{itemize}
 
 Bei Spielende gewinnt der Spieler mit den meisten Punkten. Sollten beide Spieler
@@ -313,7 +312,16 @@ erstellen'' aus.
 }
 
 Nun erscheint ein Dialogfenster, in dem man die Einstellungen für das neue Spiel
-bearbeiten kann. Zuerst kann man den Namen des ersten und zweiten Spielers festlegen, indem man in das jeweilige Namensfeld klickt. Daneben befindet sich die Auswahl, ob der jeweilige Spieler ein Mensch, ein Computerspieler oder ein manuell gestarteter Computerspieler sein soll. Wählt man hier ``Computerspieler'' erscheint ein Dateiauswahldialog, in dem man das JAR-Archiv mit dem Computerspieler auswählen kann. In das letzte Feld können noch Parameter eingegeben werden, die dem Computerspieler beim Start übergeben werden sollen (dies ist nur bei Spielertyp ``Computerspieler'' relevant).
+bearbeiten kann. Zuerst kann man den Namen des ersten und zweiten Spielers
+festlegen, indem man in das jeweilige Namensfeld klickt. Daneben befindet sich
+die Auswahl, ob der jeweilige Spieler ein Mensch, ein Computerspieler oder ein
+manuell gestarteter\footnote{Alle Computerspieler die nicht mit dem
+  Software-Challenge Java SDK entwickelt wurden, müssen manuell gestartet
+  werden.} Computerspieler sein soll. Wählt man hier ``Computerspieler''
+erscheint ein Dateiauswahldialog, in dem man das JAR-Archiv mit dem
+Computerspieler auswählen kann. In das letzte Feld können noch Parameter
+eingegeben werden, die dem Computerspieler beim Start übergeben werden sollen
+(dies ist nur bei Spielertyp ``Computerspieler'' relevant).
 
 \begin{centering}
   \includegraphics[width=\textwidth]{bilder/neues-spiel-dialog.jpg}
@@ -338,7 +346,7 @@ Unter den Spielereinstellungen befinden sich noch weitere Einstellungen:
 
 In der obigen Abbildung sind die Grundelemente der grafischen Oberfläche des
 Spiels dargestellt und beschriftet. Der Hauptbereich besteht aus der Darstellung
-des Spielfeldes in das Spielfeld eingebettet sind ist die Spielsteuerung, falls
+des Spielfeldes. In das Spielfeld eingebettet ist die Spielsteuerung, falls
 gerade ein menschlicher Spieler am Zug ist. Rechts vom Hauptbereich befindet
 sich ein Info-Bereich, in dem die Spielernamen, die bisher erreichten Punkte der
 Spieler sowie die bisher gemachten Aktionen eines menschlichen Spielers im
@@ -347,15 +355,17 @@ Info-Bereichs befindet sich der Rundenzähler, auf dem man die aktuelle Runde
 ablesen kann. Darunter findet man die Bedienelemente zum kontrollieren des
 Spielablaufes, die Spielbedienung.
 
-\emph{Nach dem Starten eines neuen Spiels muss immer zuerst der ``Pause''-Knopf unten links angeklickt werden, sonst geht das Spiel nicht voran.}
+\emph{Nach dem Starten eines neuen Spiels mit mindestens einem Computerspieler
+  muss immer zuerst der ``Pause''-Knopf unten links angeklickt werden, sonst
+  geht das Spiel nicht voran.}
 
-\subsection{Spielersteuerung}
+\subsection{Dampfersteuerung}
 
 Wenn ein menschlicher Spieler am Zug ist, kann er die Aktionen, die er in seinem
-Zug durchführen will, über die Spielersteuerung eingeben. Die Spielersteuerung
+Zug durchführen will, über die Dampfersteuerung eingeben. Die Dampfersteuerung
 besteht aus bis zu sechs Icons, die neben dem Dampfer des Spielers dargestellt
 werden, sowie eventuell ein oder mehreren weiß umrandeten Hexagonal-Feldern.
-Durch Klicken auf ein Spielersteuerungselement wird die damit verbundene Aktion
+Durch Klicken auf ein Dampfersteuerungselement wird die damit verbundene Aktion
 ausgelöst. Die Aktionen sind im einzelnen:
 
 \begin{table}[h!]
@@ -379,13 +389,13 @@ ausgelöst. Die Aktionen sind im einzelnen:
       \includegraphics[width=\linewidth]{bilder/rotate-left}
     \end{minipage}
     &
-    Drehung um eine Einheit nach links.
+    Drehung um 60\degree nach links.
     \\
     \begin{minipage}{1cm}
       \includegraphics[width=\linewidth]{bilder/rotate-right}
     \end{minipage}
     &
-    Drehung um eine Einheit nach rechts.
+    Drehung um 60\degree nach rechts.
     \\
     \begin{minipage}{1cm}
       \includegraphics[width=\linewidth]{bilder/okay}
@@ -423,21 +433,23 @@ abdrängen und die Abdräng-Aktion ist abgeschlossen.
 \subsection{Passagiere aufnehmen}
 
 Um Passagiere aufzunehmen, muss man wie unter \ref{passenger} beschrieben an
-einen Anleger fahren. Beendet man dort seinen Zug, wird der Passagier automatisch
-aufgenommen.
+einen Anleger fahren. Beendet man dort seinen Zug mit Geschwindigkeit 1, wird
+der Passagier automatisch aufgenommen.
 
 \subsection{Spielbedienung}
 
-Die Spielbedienung am unteren Rand des Fensters steuert das Abspielverhalten des aktuellen Spiels. Diese können verwendet werden, um sich bereits getätigte Züge noch einmal anzusehen. Die einzelnen Elemente sind von links nach rechts:
+Die Spielbedienung am unteren Rand des Fensters steuert das Abspielverhalten des
+aktuellen Spiels. Diese kann verwendet werden, um bereits getätigte Züge
+noch einmal anzusehen. Die einzelnen Elemente sind von links nach rechts:
 
 \begin{description}
-\item [Pause / Abspielen Knopf] Steht beim Start des Spiels auf ``Pause''. Damit das Spiel ablaufen kann, muss er auf ``Abspielen'' stehen.
+\item [Pause / Abspielen] Steht beim Start des Spiels auf ``Pause''. Damit das Spiel ablaufen kann, muss es auf ``Abspielen'' stehen.
 \item [Geschwindigkeit-Schieberegler] Bestimmt die Zeit, die ein Zug beim Abspielen angezeigt wird.
-\item [Zurück an den Anfang Knopf] Setzt das Spiel an den Anfang zurück.
-\item [Schritt zurück Knopf] Geht eine Runde zurück.
-\item [Schritt vor Knopf] Geht eine Runde vor.
-\item [Vorspulen Knopf] Geht ans Ende des bisher gespielten Spieles.
-\item [Spiel abbrechen Knopf] Beendet das Spiel.
+\item [Zurück an den Anfang] Setzt das Spiel an den Anfang zurück.
+\item [Schritt zurück] Geht eine Runde zurück.
+\item [Schritt vor] Geht eine Runde vor.
+\item [Vorspulen] Geht ans Ende des bisher gespielten Spieles.
+\item [Spiel abbrechen] Beendet das Spiel.
 \end{description}
 
 
