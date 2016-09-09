@@ -58,8 +58,6 @@ public class FrameRenderer extends PApplet {
   private int maxTurn;
   private EPlayerId id;
 
-  private boolean initialized = false;
-
   private GuiBoard guiBoard;
 
   private Background background;
@@ -70,11 +68,9 @@ public class FrameRenderer extends PApplet {
 
   private LinkedHashMap<HexField, Action> stepPossible;
 
-  public FrameRenderer(int frameWidth, int frameHeight) {
+  public FrameRenderer() {
     super();
 
-    this.width = frameWidth;
-    this.height = frameHeight;
     this.humanPlayer = false;
     this.humanPlayerMaxTurn = false;
     this.id = EPlayerId.OBSERVER;
@@ -87,7 +83,6 @@ public class FrameRenderer extends PApplet {
     sideBar = new SideBar(this);
     boardFrame = new BoardFrame(this);
     stepPossible = new LinkedHashMap<HexField, Action>();
-
   }
 
   @Override
@@ -119,26 +114,10 @@ public class FrameRenderer extends PApplet {
 
     HexField.initImages(this);
     guiBoard.setup();
-
-    // TODO Hack! Sometimes, the GUI gets dimensions of 100,100 and stays there until resizing the window.
-    new java.util.Timer().schedule(
-        new java.util.TimerTask() {
-            @Override
-            public void run() {
-              resize(width, height);
-            }
-        },
-        1000
-    );
-
-    initialized = true;
   }
 
   @Override
   public void draw() {
-    if (!initialized) {
-      return;
-    }
     background.draw();
     guiBoard.draw();
     progressBar.draw();
@@ -355,30 +334,12 @@ public class FrameRenderer extends PApplet {
     return null;
   }
 
-  /**
-   * Is called automatically (by RenderFacade) when window dimensions have
-   * changed.
-   */
-  @Override
-  public void resize(int width, int height) {
-    logger.debug(String.format("updating dimension: %d,%d", width, height));
-    super.resize(width, height); // this is actually needed to propagate size, otherwise you will get exceptions that dimensions need to be >=0
-
-    background.resize(width, height);
-    guiBoard.resize();
-
-    logger.debug(String.format("dimension of PApplet after reszie: %d,%d", this.width, this.height));
-    // progressBar, sideBar and boardFrame have no own dimensions, they access
-    // parents dimensions directly and don't need to be resized.
-  }
-
   @Override
   public void keyPressed() {
     super.keyPressed();
     if (key == 'c' || key == 'C') {
       new RenderConfigurationDialog(FrameRenderer.this);
     }
-
   }
 
   public boolean isHumanPlayer() {
