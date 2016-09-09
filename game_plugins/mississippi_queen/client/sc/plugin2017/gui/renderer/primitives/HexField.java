@@ -56,25 +56,29 @@ public class HexField extends PrimitiveBase{
 
   // needs to be called in setup method of frame renderer (before any draw methods are called)
   public static void initImages(FrameRenderer parent) {
-    images = new EnumMap<>(FieldType.class);
-    images.put(FieldType.BLOCKED, new PImage[] { parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH),
-        parent.loadImage(GuiConstants.PASSENGER0_INACTIVE_PATH),
-        parent.loadImage(GuiConstants.PASSENGER1_INACTIVE_PATH),
-        parent.loadImage(GuiConstants.PASSENGER2_INACTIVE_PATH),
-        parent.loadImage(GuiConstants.PASSENGER3_INACTIVE_PATH),
-        parent.loadImage(GuiConstants.PASSENGER4_INACTIVE_PATH),
-        parent.loadImage(GuiConstants.PASSENGER5_INACTIVE_PATH)
-        });
-    images.put(FieldType.WATER, new PImage[] { parent.loadImage(GuiConstants.WATER_IMAGE_PATH) });
-    images.put(FieldType.PASSENGER0, new PImage[] { parent.loadImage(GuiConstants.PASSENGER0_PATH) });
-    images.put(FieldType.PASSENGER1, new PImage[] { parent.loadImage(GuiConstants.PASSENGER1_PATH) });
-    images.put(FieldType.PASSENGER2, new PImage[] { parent.loadImage(GuiConstants.PASSENGER2_PATH) });
-    images.put(FieldType.PASSENGER3, new PImage[] { parent.loadImage(GuiConstants.PASSENGER3_PATH) });
-    images.put(FieldType.PASSENGER4, new PImage[] { parent.loadImage(GuiConstants.PASSENGER4_PATH) });
-    images.put(FieldType.PASSENGER5, new PImage[] { parent.loadImage(GuiConstants.PASSENGER5_PATH) });
-    images.put(FieldType.SANDBANK, new PImage[] { parent.loadImage(GuiConstants.SANDBANK_IMAGE_PATH) });
-    images.put(FieldType.LOG, new PImage[] { parent.loadImage(GuiConstants.LOG_IMAGE_PATH) });
-    images.put(FieldType.GOAL, new PImage[] { parent.loadImage(GuiConstants.GOAL_IMAGE_PATH) });
+    // do not reinit images when a new game is started (reinit leads to problems
+    // when the draw method accesses the empty map which is just reinitialized)
+    if (images == null) {
+      images = new EnumMap<>(FieldType.class);
+      images.put(FieldType.BLOCKED, new PImage[] { parent.loadImage(GuiConstants.ISLAND_IMAGE_PATH),
+          parent.loadImage(GuiConstants.PASSENGER0_INACTIVE_PATH),
+          parent.loadImage(GuiConstants.PASSENGER1_INACTIVE_PATH),
+          parent.loadImage(GuiConstants.PASSENGER2_INACTIVE_PATH),
+          parent.loadImage(GuiConstants.PASSENGER3_INACTIVE_PATH),
+          parent.loadImage(GuiConstants.PASSENGER4_INACTIVE_PATH),
+          parent.loadImage(GuiConstants.PASSENGER5_INACTIVE_PATH)
+          });
+      images.put(FieldType.WATER, new PImage[] { parent.loadImage(GuiConstants.WATER_IMAGE_PATH) });
+      images.put(FieldType.PASSENGER0, new PImage[] { parent.loadImage(GuiConstants.PASSENGER0_PATH) });
+      images.put(FieldType.PASSENGER1, new PImage[] { parent.loadImage(GuiConstants.PASSENGER1_PATH) });
+      images.put(FieldType.PASSENGER2, new PImage[] { parent.loadImage(GuiConstants.PASSENGER2_PATH) });
+      images.put(FieldType.PASSENGER3, new PImage[] { parent.loadImage(GuiConstants.PASSENGER3_PATH) });
+      images.put(FieldType.PASSENGER4, new PImage[] { parent.loadImage(GuiConstants.PASSENGER4_PATH) });
+      images.put(FieldType.PASSENGER5, new PImage[] { parent.loadImage(GuiConstants.PASSENGER5_PATH) });
+      images.put(FieldType.SANDBANK, new PImage[] { parent.loadImage(GuiConstants.SANDBANK_IMAGE_PATH) });
+      images.put(FieldType.LOG, new PImage[] { parent.loadImage(GuiConstants.LOG_IMAGE_PATH) });
+      images.put(FieldType.GOAL, new PImage[] { parent.loadImage(GuiConstants.GOAL_IMAGE_PATH) });
+    }
   }
 
   public void update(Field field) {
@@ -154,7 +158,11 @@ public class HexField extends PrimitiveBase{
         parent.image(images.get(type)[(int)variant], 0, 0, width, 2*a+c);
       }
     } catch (ArrayIndexOutOfBoundsException e) {
-      logger.error("could not get {} with variant {}", type, variant);
+      logger.error("OutOfBounds: could not get {} with variant {}", type, variant);
+      logger.error("Exception was", e);
+    } catch (NullPointerException e) {
+      logger.error("NullPointer: could not get {} with variant {}", type, variant);
+      logger.error("Exception was", e);
     }
 
     // print coordinates

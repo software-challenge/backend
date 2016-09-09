@@ -66,6 +66,8 @@ public class FrameRenderer extends PApplet {
   private SideBar sideBar;
   private BoardFrame boardFrame;
 
+  private boolean initialized = false;
+
   private LinkedHashMap<HexField, Action> stepPossible;
 
   public FrameRenderer() {
@@ -114,10 +116,15 @@ public class FrameRenderer extends PApplet {
 
     HexField.initImages(this);
     guiBoard.setup();
+    initialized = true;
   }
 
   @Override
   public void draw() {
+    if (!initialized) {
+      // do not try to draw before setup method was not called
+      return;
+    }
     background.draw();
     guiBoard.draw();
     progressBar.draw();

@@ -1,5 +1,7 @@
 package sc.plugin2017.gui.renderer.primitives;
 
+import java.util.Iterator;
+
 import sc.plugin2017.Action;
 import sc.plugin2017.DebugHint;
 import sc.plugin2017.PlayerColor;
@@ -110,11 +112,10 @@ public class SideBar extends PrimitiveBase {
     parent.translate(0, 2 * (parent.textAscent() + parent.textDescent()));
     parent.text("Aktionen des aktuellen Zuges:", 0, 0);
 
-    for (Action action : parent.getCurrentActions()) {
-      if (action != null) {
-        parent.translate(0, parent.textAscent() + parent.textDescent());
-        parent.text(action.toString(), 0, 0);
-      }
+    // using an iterator to avoid ConcurrentModificationException
+    for (final Iterator<Action> iterator = parent.getCurrentActions().iterator(); iterator.hasNext(); ) {
+      parent.translate(0, parent.textAscent() + parent.textDescent());
+      parent.text(iterator.next().toString(), 0, 0);
     }
 
     // Debug Ausgabe
@@ -122,9 +123,10 @@ public class SideBar extends PrimitiveBase {
     parent.fill(GuiConstants.colorBlack);
     if (RenderConfiguration.optionDebug) {
       parent.translate(0, parent.textAscent() + parent.textDescent());
-      for (DebugHint hint : parent.getCurrentHints()) {
+      // using an iterator to avoid ConcurrentModificationException
+      for (final Iterator<DebugHint> iterator = parent.getCurrentHints().iterator(); iterator.hasNext(); ) {
           parent.translate(0, parent.textAscent() + parent.textDescent());
-          parent.text(hint.getContent(), 0, 0);
+          parent.text(iterator.next().getContent(), 0, 0);
       }
     }
 

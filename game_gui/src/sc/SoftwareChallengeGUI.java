@@ -33,13 +33,6 @@ import sc.server.Configuration;
 import sc.shared.GameResult;
 
 /**
- * TODO
- * button icons
- * test range gameEnded(), newTurn()
- * button enabled/disabled
- */
-
-/**
  * The executable application of the Software Challenge GUI.
  *
  * @author chw
@@ -58,10 +51,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 */
 	public SoftwareChallengeGUI() {
 		super();
-    /*
-		Logger rootLogger = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-		rootLogger.setLevel(Level.DEBUG);
-    */
+		/*
+		Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		((ch.qos.logback.classic.Logger)rootLogger).setLevel(Level.DEBUG);
+		*/
 		loadCodeVersionFromManifest();
 		// get logic facade
 		LogicFacade logicFac = LogicFacade.getInstance();

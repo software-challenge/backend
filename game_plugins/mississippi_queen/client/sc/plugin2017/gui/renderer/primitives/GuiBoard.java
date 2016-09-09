@@ -198,7 +198,7 @@ public class GuiBoard extends PrimitiveBase {
           if (currentPlayer.getMovement() != 0) {
             for (Direction j : Direction.values()) {
               if (j != currentPlayer.getDirection().getOpposite()) {
-                HexField toAdd = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(), j);
+                HexField toAdd = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(), j, currentPlayer.getMovement());
                 if (toAdd != null) { // add push to list of actions
                   toHighlight.add(toAdd);
                   add.put(toAdd, new Push(j));
@@ -223,13 +223,13 @@ public class GuiBoard extends PrimitiveBase {
           // case sandbank
           if (parent.getCurrentPlayer().getMovement() != 0) {
             HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
-                currentPlayer.getDirection());
+                currentPlayer.getDirection(), parent.getCurrentPlayer().getMovement());
             if (step != null) {
               toHighlight.add(step);
               add.put(step, new Advance(1));
             }
             step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
-                currentPlayer.getDirection().getOpposite());
+                currentPlayer.getDirection().getOpposite(), currentPlayer.getMovement());
             if (step != null) {
               toHighlight.add(step);
               add.put(step, new Advance(-1));
@@ -298,8 +298,8 @@ public class GuiBoard extends PrimitiveBase {
     right.setEnabled(rotationPossible && !onSandbank);
   }
 
-  private HexField getPassableGuiFieldInDirection(int x, int y, Direction j) {
-    LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, 1);
+  private HexField getPassableGuiFieldInDirection(int x, int y, Direction j, int movement) {
+    LinkedList<HexField> passable = getPassableGuiFieldsInDirection(x, y, j, movement);
     if (passable.isEmpty() || passable.getFirst() == null) {
       return null;
     } else {

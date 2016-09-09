@@ -62,8 +62,10 @@ public class Push extends Action {
     pushingPlayer.setMovement(pushingPlayer.getMovement() - 1);
     if(pushTo.getType() == FieldType.LOG) {
       // driving through logs reduces speed and movement by +1
-      nudgedPlayer.setSpeed(nudgedPlayer.getSpeed() - 1);
+      nudgedPlayer.setSpeed(Math.max(1, nudgedPlayer.getSpeed() - 1));
       nudgedPlayer.setMovement(nudgedPlayer.getMovement() - 1);
+      // pushing onto logs costs one more movement
+      pushingPlayer.setMovement(pushingPlayer.getMovement() - 1);
     }
     Field fieldBehindPushingPlayer = pushFrom.getFieldInDirection(pushingPlayer.getDirection().getOpposite(), state.getBoard());
     // If fieldBehindPushedPlayer is null, the following check is not needed

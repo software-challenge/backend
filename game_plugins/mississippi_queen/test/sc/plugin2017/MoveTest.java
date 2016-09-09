@@ -184,19 +184,47 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(Direction.UP_RIGHT);
-    blue.setMovement(3);
+    blue.setSpeed(3);
     red.setDirection(Direction.RIGHT);
-    red.setMovement(1);
+    red.setSpeed(1);
 
     Move move = new Move();
-    move.actions.add(new Acceleration(1, 0));
+    move.actions.add(new Acceleration(2, 0));
     move.actions.add(new Advance(1, 1));
     move.actions.add(new Push(Direction.RIGHT, 2));
 
     move.perform(state, red);
     // blue player should be pushed to 1,-1
     assertEquals(board.getField(1, -1), blue.getField(board));
-    assertEquals(2, blue.getMovement());
+    assertEquals(2, blue.getSpeed());
+  }
+
+  @Test
+  public void pushIntoLogWithSpeedOne() throws InvalidMoveException {
+    // Red player pushes blue player into log field, blue player should stay on speed one
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..r.b.L.W..\n" +
+        "...W.W.W.W.\n" +
+        "..W.W.W.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    blue.setDirection(Direction.UP_RIGHT);
+    blue.setSpeed(1);
+    red.setDirection(Direction.RIGHT);
+    red.setSpeed(1);
+
+    Move move = new Move();
+    move.actions.add(new Acceleration(2, 0));
+    move.actions.add(new Advance(1, 1));
+    move.actions.add(new Push(Direction.RIGHT, 2));
+
+    move.perform(state, red);
+    // blue player should be pushed to 1,-1
+    assertEquals(board.getField(1, -1), blue.getField(board));
+    assertEquals(1, blue.getSpeed());
   }
 
   @Test
@@ -256,6 +284,5 @@ public class MoveTest {
     assertEquals(Direction.DOWN_RIGHT, red.getDirection());
     assertEquals(4, red.getCoal());
   }
-
 
 }

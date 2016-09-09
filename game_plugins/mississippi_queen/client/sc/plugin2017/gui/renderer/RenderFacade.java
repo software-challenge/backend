@@ -64,12 +64,14 @@ public class RenderFacade {
 				try {
 
 					synchronized (gameStateQueue) {
+					  /*
 						// Make sure we don't end up in a deadlock
-						if (gameStateQueue.size() == 0) {
+						if (gameStateQueue.isEmpty()) {
 							gameStateQueue.wait();
 						}
+						*/
 
-						while (gameStateQueue.size() > 0) {
+						while (!gameStateQueue.isEmpty()) {
 						  logger.debug("new gamestate");
 							GameState gameState = gameStateQueue.remove(0);
 							frameRenderer.updateGameState(gameState);
@@ -165,6 +167,7 @@ public class RenderFacade {
 	  logger.debug("initializing rendere for game");
     panel.setLayout(new BorderLayout());
 		panel.setVisible(true);
+		panel.removeAll(); //
     frameRenderer = new FrameRenderer();
     frameRenderer.init();
     panel.add(frameRenderer, BorderLayout.CENTER);

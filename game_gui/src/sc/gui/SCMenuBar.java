@@ -7,6 +7,7 @@ import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -153,11 +154,11 @@ public class SCMenuBar extends MenuBar {
 		});
 
 		MenuItem reportProblem = new MenuItem(lang.getProperty("menu_items_report_problem"));
-		info.addActionListener(new ActionListener() {
+		reportProblem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
         try {
-          java.awt.Desktop.getDesktop().browse(java.net.URI.create("http://www.software-challenge.de"));
+          java.awt.Desktop.getDesktop().browse(new URI("http://www.software-challenge.de/feedback"));
         }
         catch (Exception ex) {
           logger.error("problem opening website", e);
