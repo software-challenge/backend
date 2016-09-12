@@ -108,7 +108,6 @@ public class GuiBoard extends PrimitiveBase {
   private void calcHexFieldSize(Dimension viewPortSize) {
     // before getting the initial board we can't (and don't have to) calculate sizes
     if (currentBoard != null) {
-      logger.debug("can calculate size");
       int lowX = 500;
       int highX = -500;
       int lowY = 500;
@@ -321,7 +320,6 @@ public class GuiBoard extends PrimitiveBase {
    * @param height
    */
   private void calculateSize() {
-    logger.debug(String.format("calculating gui board sizes, size: %d,%d", parent.getWidth(), parent.getHeight()));
     float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
     float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
     Dimension viewPortSize = new Dimension((int) xDimension, (int) yDimension);
