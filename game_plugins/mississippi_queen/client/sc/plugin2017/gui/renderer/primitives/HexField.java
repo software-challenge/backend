@@ -242,11 +242,22 @@ public class HexField extends PrimitiveBase{
     return "X: " + fieldX + " Y: " + fieldY + " Type: " + type + " " + x + " " + y + " " + b;
   }
 
-  public HexField getFieldCoordinates(int x, int y) {
-    if(this.x < x && this.x + width > x && this.y + a < y && this.y + a + c > y) {
+  private boolean rightOf(float px, float py, float planeFirstX, float planeFirstY, float planeSecondX, float planeSecondY) {
+    return (px - planeSecondX) * (planeFirstY - planeSecondY) - (planeFirstX - planeSecondX) * (py - planeSecondY) > 0.0f;
+  }
+  public HexField getFieldCoordinates(float x, float y) {
+    // testing if the point lies on the right side of all six half-planes of the hexagon
+    // clockwise, starting with the upper left side
+    if (rightOf(x, y, this.x, this.y + a, this.x + b, this.y) &&
+        rightOf(x, y, this.x + b, this.y, this.x + 2 * b, this.y + a) &&
+        rightOf(x, y, this.x + 2 * b, this.y + a, this.x + 2 * b, this.y + a + c) &&
+        rightOf(x, y, this.x + 2 * b, this.y + a + c, this.x + b, this.y + 2 * a + c) &&
+        rightOf(x, y, this.x + b, this.y + 2 * a + c, this.x, this.y + a + c) &&
+        rightOf(x, y, this.x, this.y + a + c, this.x, this.y + a)) {
       return this;
+    } else {
+      return null;
     }
-    return null;
   }
 
   public FieldType getType() {

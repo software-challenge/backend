@@ -254,7 +254,12 @@ public class FrameRenderer extends PApplet {
         if (!onSandbank && currentSpeed < 6) {
           if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, increase value
-            ((Acceleration)currentMove.actions.get(currentMove.actions.size() - 1)).acc += 1;
+            Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
+            if (a.acc == -1) {
+              currentMove.actions.remove(a);
+            } else {
+              a.acc += 1;
+            }
           } else {
             currentMove.actions.add(new Acceleration(1));
           }
@@ -263,10 +268,15 @@ public class FrameRenderer extends PApplet {
       case SPEED_DOWN:
         if (!onSandbank && currentSpeed > 1) {
           if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
-            // if last action was acceleration, increase value
-            ((Acceleration)currentMove.actions.get(currentMove.actions.size() - 1)).acc -= 1;
+            // if last action was acceleration, decrease value
+            Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
+            if (a.acc == 1) {
+              currentMove.actions.remove(a);
+            } else {
+              a.acc -= 1;
+            }
           } else {
-            currentMove.actions.add(new Acceleration(1));
+            currentMove.actions.add(new Acceleration(-1));
           }
         }
         break;
