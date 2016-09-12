@@ -298,8 +298,8 @@ public class GuiBoard extends PrimitiveBase {
       }
     }
 
-    speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible && firstAction);
-    speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible && firstAction);
+    speedUp.setEnabled(!maxSpeed && accelerationPossible && firstAction);
+    speedDown.setEnabled(!minSpeed && accelerationPossible && firstAction);
     left.setEnabled(rotationPossible && !onSandbank);
     right.setEnabled(rotationPossible && !onSandbank);
   }
