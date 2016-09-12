@@ -6,6 +6,7 @@ package sc.plugin2017.gui.renderer;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -236,21 +237,38 @@ public class FrameRenderer extends PApplet {
     if(playerControlsEnabled()) {
 
       // first the gui buttons
-      Action action = null;
       boolean onSandbank = currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK;
       int currentSpeed = currentGameState.getCurrentPlayer().getSpeed();
       switch (guiBoard.getClickedButton(mouseX, mouseY)) {
       case LEFT:
-        if (!onSandbank) action = new Turn(1);
+        if (!onSandbank) {
+          currentMove.actions.add(new Turn(1));
+        }
         break;
       case RIGHT:
-        if (!onSandbank) action = new Turn(-1);
+        if (!onSandbank) {
+          currentMove.actions.add(new Turn(-1));
+        }
         break;
       case SPEED_UP:
-        if (!onSandbank && currentSpeed < 6) action = new Acceleration(1);
+        if (!onSandbank && currentSpeed < 6) {
+          if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
+            // if last action was acceleration, increase value
+            ((Acceleration)currentMove.actions.get(currentMove.actions.size() - 1)).acc += 1;
+          } else {
+            currentMove.actions.add(new Acceleration(1));
+          }
+        }
         break;
       case SPEED_DOWN:
-        if (!onSandbank && currentSpeed > 1) action = new Acceleration(-1);
+        if (!onSandbank && currentSpeed > 1) {
+          if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
+            // if last action was acceleration, increase value
+            ((Acceleration)currentMove.actions.get(currentMove.actions.size() - 1)).acc -= 1;
+          } else {
+            currentMove.actions.add(new Acceleration(1));
+          }
+        }
         break;
       case SEND:
         sendMove();
@@ -258,29 +276,35 @@ public class FrameRenderer extends PApplet {
       case CANCEL:
         try {
           currentGameState = backUp.clone();
+          currentMove = new Move();
         } catch (CloneNotSupportedException ex) {
           logger.error("Clone of backup failed", ex);
         }
         updateGameState(currentGameState);
         break;
       case NONE:
-        // do nothing
+        // if no button was clicked, check if a hex field was clicked
+        HexField clicked = getFieldCoordinates(mouseX, mouseY);
+        if (stepPossible.containsKey(clicked)) {
+          currentMove.actions.add(stepPossible.get(clicked));
+        }
         break;
       }
 
-      // then field clicks
-      if (action == null) {
-        HexField clicked = getFieldCoordinates(mouseX, mouseY);
-        action = stepPossible.get(clicked);
-      }
-
-      if (action != null) {
-          currentMove.actions.add(action);
-          try {
-            action.perform(currentGameState, currentGameState.getCurrentPlayer());
-          } catch (InvalidMoveException invalMove) {
-            logger.error("Failed to perform move of user, please report if this happens", invalMove);
+      if (!currentMove.actions.isEmpty()) {
+        try {
+          currentGameState = backUp.clone();
+        } catch (CloneNotSupportedException ex) {
+          logger.error("Clone of backup failed", ex);
+        }
+        try {
+          // perform actions individually because it is a partial move and should not be checked for validity
+          for (final Iterator<Action> iterator = currentMove.actions.iterator(); iterator.hasNext(); ) {
+            iterator.next().perform(currentGameState, currentGameState.getCurrentPlayer());
           }
+        } catch (InvalidMoveException invalMove) {
+          logger.error("Failed to perform move of user, please report if this happens", invalMove);
+        }
       }
       updateView(currentGameState);
       redraw();
@@ -288,34 +312,17 @@ public class FrameRenderer extends PApplet {
   }
 
   private void sendMove() {
-    Move move = new Move();
-    Acceleration acceleration = null;
-    for (Action action : currentMove.actions) {
-      // bundle accelerations which are at the beginning of the move
-      if (action.getClass() == Acceleration.class) {
-        if (acceleration == null) {
-          acceleration = (Acceleration)action;
-        } else {
-          acceleration.acc += ((Acceleration)action).acc;
-        }
-      } else {
-        if (acceleration != null) {
-          move.actions.add(acceleration);
-          acceleration = null;
-        }
-        move.actions.add(action);
-      }
-    }
-    move.setOrderInActions();
-    if (!currentMoveValid(move)) {
+    currentMove.setOrderInActions();
+    if (!currentMoveValid(currentMove)) {
       if (JOptionPane.showConfirmDialog(null, "Der Zug ist ungültig. Durch senden des aktuellen Zuges werden Sie disqualifiziert. Zug wirklich senden?", "Senden", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
         // do not send move
         return;
       }
     }
-    RenderFacade.getInstance().sendMove(move);
+    RenderFacade.getInstance().sendMove(currentMove);
   }
 
+  // NOTE that this method assumes the given move was already performed on the currentGameState!
   private boolean currentMoveValid(Move move) {
     boolean allMovementPointsUsed = currentGameState.getCurrentPlayer().getMovement() == 0;
     boolean accelerationFirst = true;
