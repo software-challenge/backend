@@ -253,7 +253,7 @@ public class FrameRenderer extends PApplet {
         }
         break;
       case SPEED_UP:
-        if (currentSpeed < 6) {
+        if (!onSandbank && currentSpeed < 6) {
           if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, increase value
             Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
@@ -268,7 +268,7 @@ public class FrameRenderer extends PApplet {
         }
         break;
       case SPEED_DOWN:
-        if (currentSpeed > 1) {
+        if (!onSandbank && currentSpeed > 1) {
           if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, decrease value
             Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
