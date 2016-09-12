@@ -56,6 +56,9 @@ public class Acceleration extends Action {
     if (speed < 1) {
       throw new InvalidMoveException("Die minimale Geschwindigkeit von 1 darf nicht unterschritten werden.");
     }
+    if (player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
+      throw new InvalidMoveException("Auf einer Sandbank kann nicht beschleunigt werden.");
+    }
     int usedCoal = Math.abs(acc) - player.getFreeAcc();
     if(usedCoal > 0) {
       player.setCoal(player.getCoal() - usedCoal);
