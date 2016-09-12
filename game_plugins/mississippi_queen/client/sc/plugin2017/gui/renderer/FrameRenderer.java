@@ -117,6 +117,8 @@ public class FrameRenderer extends PApplet {
 
     HexField.initImages(this);
     guiBoard.setup();
+    // only draw when needed (application calls redraw() if needed). Letting the loop run results in 100% CPU activity
+    noLoop();
     initialized = true;
   }
 
@@ -251,7 +253,7 @@ public class FrameRenderer extends PApplet {
         }
         break;
       case SPEED_UP:
-        if (!onSandbank && currentSpeed < 6) {
+        if (currentSpeed < 6) {
           if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, increase value
             Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
@@ -266,7 +268,7 @@ public class FrameRenderer extends PApplet {
         }
         break;
       case SPEED_DOWN:
-        if (!onSandbank && currentSpeed > 1) {
+        if (currentSpeed > 1) {
           if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, decrease value
             Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);

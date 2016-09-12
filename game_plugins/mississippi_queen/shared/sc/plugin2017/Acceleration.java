@@ -14,7 +14,7 @@ public class Acceleration extends Action {
    */
   @XStreamAsAttribute
   public int acc;
-  
+
   public Acceleration() {
     order = 0;
     acc = 0;
@@ -26,7 +26,7 @@ public class Acceleration extends Action {
   public Acceleration(int acc) {
     this.acc = acc;
   }
-  
+
   /**
    * Legt eine neue Beschleunigungaktion an
    * @param acc Wert um den beschleunigt wird
@@ -37,7 +37,7 @@ public class Acceleration extends Action {
     this.order = order;
   }
   /**
-   * 
+   *
    * @param state Gamestate auf dem Beschleunigung ausgeführt wird
    * @param player Spieler für den Beschleunigung ausgeführt wird
    */
@@ -56,30 +56,30 @@ public class Acceleration extends Action {
     if (speed < 1) {
       throw new InvalidMoveException("Die minimale Geschwindigkeit von 1 darf nicht unterschritten werden.");
     }
-    if (player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
-      throw new InvalidMoveException("Auf einer Sandbank kann nicht beschleunigt werden.");
-    }
     int usedCoal = Math.abs(acc) - player.getFreeAcc();
     if(usedCoal > 0) {
       player.setCoal(player.getCoal() - usedCoal);
     }
     player.setSpeed(speed);
     player.setMovement(player.getMovement() + acc);
-    player.setFreeAcc(0);  
+    player.setFreeAcc(0);
     return;
   }
-  
+
+  @Override
   public Acceleration clone() {
     return new Acceleration(this.acc, this.order);
   }
-  
+
+  @Override
   public boolean equals(Object o) {
     if(o instanceof Acceleration) {
       return (this.acc == ((Acceleration) o).acc);
     }
     return false;
   }
-  
+
+  @Override
   public String toString() {
     return "Beschleunige um " + acc;
   }
