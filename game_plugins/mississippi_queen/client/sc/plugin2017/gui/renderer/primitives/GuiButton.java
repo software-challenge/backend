@@ -5,11 +5,11 @@ import processing.core.PShape;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
 /**
- * circular button
+ * quadratic image button
  */
 public class GuiButton extends PrimitiveBase {
 
-  // diameter of button
+  // side length of button
   private int size;
 
   // center coordinates of button
@@ -17,16 +17,20 @@ public class GuiButton extends PrimitiveBase {
   private int y;
 
   private boolean enabled = true;
+  private boolean hovered = false;
 
   private String imagePath;
   private PShape image;
 
-  public GuiButton(FrameRenderer parent, String imagePath, int x, int y, int size) {
+  private String toolTip;
+
+  public GuiButton(FrameRenderer parent, String imagePath, String toolTip, int x, int y, int size) {
     super(parent);
     this.imagePath = imagePath;
     this.x = x;
     this.y = y;
     this.size = size;
+    this.toolTip = toolTip;
   }
 
   public void setup() {
@@ -38,8 +42,6 @@ public class GuiButton extends PrimitiveBase {
     if (image != null && enabled) {
       parent.shapeMode(PApplet.CENTER);
       parent.pushStyle();
-      parent.fill(100);
-      parent.stroke(100);
       /*
        * changing the style of a loaded shape can only be done when using P2D as
        * renderer (not with the Java renderer), see
@@ -47,7 +49,13 @@ public class GuiButton extends PrimitiveBase {
       image.disableStyle();
       image.setStroke(parent.color(100));
       */
-      parent.shape(image, x, y, size, size);
+      int buttonSize;
+      if (hovered && enabled) {
+        buttonSize = Math.round(size * 1.3f);
+      } else {
+        buttonSize = size;
+      }
+      parent.shape(image, x, y, buttonSize, buttonSize);
       parent.popStyle();
     }
   }
@@ -59,7 +67,7 @@ public class GuiButton extends PrimitiveBase {
    * @return true if mouseX and mouseY are inside the bounds of the button.
    */
   public boolean hover(int mouseX, int mouseY) {
-    return PApplet.dist(x, y, mouseX, mouseY) <= (size / 2);
+    return (Math.abs(x - mouseX) < size / 2) && (Math.abs(y - mouseY) < size / 2);
   }
 
   public void resize(int newSize) {
@@ -83,6 +91,10 @@ public class GuiButton extends PrimitiveBase {
 
   public void setEnabled(boolean e) {
     enabled = e;
+  }
+
+  public void mouseMoved(int mouseX, int mouseY) {
+    hovered = hover(mouseX, mouseY);
   }
 
 }
