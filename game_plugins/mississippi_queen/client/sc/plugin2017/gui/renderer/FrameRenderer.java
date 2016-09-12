@@ -220,11 +220,7 @@ public class FrameRenderer extends PApplet {
   @Override
   public void mouseMoved(MouseEvent e) {
     super.mouseMoved(e);
-    if (guiBoard.hoversButton(mouseX, mouseY)) {
-      cursor(HAND);
-    } else {
-      cursor(ARROW);
-    }
+    guiBoard.mouseMoved(mouseX, mouseY);
     redraw();
   }
 

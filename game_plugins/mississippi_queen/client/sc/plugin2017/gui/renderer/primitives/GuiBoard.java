@@ -1,9 +1,11 @@
 package sc.plugin2017.gui.renderer.primitives;
 
 import java.awt.Dimension;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ public class GuiBoard extends PrimitiveBase {
   private GuiButton speedDown;
   private GuiButton send;
   private GuiButton cancel;
+  private EnumMap<ClickedButton, GuiButton> allButtons;
 
   private GuiPlayer red;
   private GuiPlayer blue;
@@ -77,21 +80,25 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public void setup() {
-    left.setup();
-    right.setup();
-    speedUp.setup();
-    speedDown.setup();
-    send.setup();
-    cancel.setup();
+    for (GuiButton button : allButtons.values()) {
+      button.setup();
+    }
   }
 
   private void createButtons(int size) {
-    left = new GuiButton(parent, GuiConstants.ROTATE_LEFT_IMAGE_PATH, 0, 0, size);
-    right = new GuiButton(parent, GuiConstants.ROTATE_RIGHT_IMAGE_PATH, 0, 0, size);
-    speedUp = new GuiButton(parent, GuiConstants.INCREASE_IMAGE_PATH, 0, 0, size);
-    speedDown = new GuiButton(parent, GuiConstants.DECREASE_IMAGE_PATH, 0, 0, size);
-    send = new GuiButton(parent, GuiConstants.OKAY_IMAGE_PATH, 0, 0, size);
-    cancel = new GuiButton(parent, GuiConstants.CANCEL_IMAGE_PATH, 0, 0, size);
+    allButtons = new EnumMap<>(ClickedButton.class);
+    left = new GuiButton(parent, GuiConstants.ROTATE_LEFT_IMAGE_PATH, "Drehung nach links", 0, 0, size);
+    allButtons.put(ClickedButton.LEFT, left);
+    right = new GuiButton(parent, GuiConstants.ROTATE_RIGHT_IMAGE_PATH, "Drehung nach rechts", 0, 0, size);
+    allButtons.put(ClickedButton.RIGHT, right);
+    speedUp = new GuiButton(parent, GuiConstants.INCREASE_IMAGE_PATH, "Beschleunigen", 0, 0, size);
+    allButtons.put(ClickedButton.SPEED_UP, speedUp);
+    speedDown = new GuiButton(parent, GuiConstants.DECREASE_IMAGE_PATH, "Abbremsen", 0, 0, size);
+    allButtons.put(ClickedButton.SPEED_DOWN, speedDown);
+    send = new GuiButton(parent, GuiConstants.OKAY_IMAGE_PATH, "Zug beenden", 0, 0, size);
+    allButtons.put(ClickedButton.SEND, send);
+    cancel = new GuiButton(parent, GuiConstants.CANCEL_IMAGE_PATH, "Zug erneut eingeben", 0, 0, size);
+    allButtons.put(ClickedButton.CANCEL, cancel);
   }
 
   /**
@@ -496,26 +503,18 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public ClickedButton getClickedButton(int mouseX, int mouseY) {
-    if (left.wouldBeClicked(mouseX, mouseY)) {
-      return ClickedButton.LEFT;
-    } else if (right.wouldBeClicked(mouseX, mouseY)) {
-      return ClickedButton.RIGHT;
-    } else if (speedUp.wouldBeClicked(mouseX, mouseY)) {
-      return ClickedButton.SPEED_UP;
-    } else if (speedDown.wouldBeClicked(mouseX, mouseY)) {
-      return ClickedButton.SPEED_DOWN;
-    } else if (send.wouldBeClicked(mouseX, mouseY)) {
-      return ClickedButton.SEND;
-    } else if (cancel.wouldBeClicked(mouseX, mouseY)) {
-      return ClickedButton.CANCEL;
-    } else {
-      return ClickedButton.NONE;
+    for (Map.Entry<ClickedButton, GuiButton> typeWithButton : allButtons.entrySet()) {
+      if (typeWithButton.getValue().wouldBeClicked(mouseX, mouseY)) {
+        return typeWithButton.getKey();
+      }
     }
+    return ClickedButton.NONE;
   }
 
-  public boolean hoversButton(int mouseX, int mouseY) {
-    return left.wouldBeClicked(mouseX, mouseY) || right.wouldBeClicked(mouseX, mouseY) || speedUp.wouldBeClicked(mouseX, mouseY)
-        || speedDown.wouldBeClicked(mouseX, mouseY) || send.wouldBeClicked(mouseX, mouseY) || cancel.wouldBeClicked(mouseX, mouseY);
+  public void mouseMoved(int mouseX, int mouseY) {
+    for (GuiButton button: allButtons.values()) {
+      button.mouseMoved(mouseX, mouseY);
+    }
   }
 
 }
