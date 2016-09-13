@@ -117,7 +117,7 @@ public class FrameRenderer extends PApplet {
 
     HexField.initImages(this);
     guiBoard.setup();
-    // only draw when needed (application calls redraw() if needed). Letting the loop run results in 100% CPU activity
+    // only draw when needed (application calls redraw() if needed). Letting the loop run results in 100% (or high) CPU activity
     noLoop();
     initialized = true;
   }
