@@ -166,6 +166,7 @@ public class HexField extends PrimitiveBase{
     }
 
     // print coordinates
+    // profiler indicates that drawing the text here is quite costly
     if (tileIndex % 2 == 0) {
       parent.fill(parent.color(0, 0, 0));
     } else {
@@ -173,6 +174,7 @@ public class HexField extends PrimitiveBase{
     }
     parent.textSize(a * 0.6f);
     parent.text(fieldX + "," + fieldY, width * 0.08f, a + parent.textAscent() + parent.textDescent());
+
     parent.popMatrix();
     parent.popStyle();
   }
