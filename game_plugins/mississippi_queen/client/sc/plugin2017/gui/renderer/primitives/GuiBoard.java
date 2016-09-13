@@ -458,14 +458,20 @@ public class GuiBoard extends PrimitiveBase {
         break;
       }
       HexField highlight = getHexField(startX, startY);
-      if (highlight != null && Field.isPassable(highlight.getType())) {
+      boolean isSandbank = highlight != null && highlight.getType() == FieldType.SANDBANK;
+      boolean isOpponent = (startX == opponentX && startY == opponentY);
+      // To move onto a field it needs to be passable and it has to be not a
+      // sanbank with the opponent on it, because pushing the opponent on a
+      // sandbank is forbidden.
+      if (highlight != null && Field.isPassable(highlight.getType()) && !(isSandbank && isOpponent)) {
         fields.add(highlight);
-        if (highlight.getType() == FieldType.SANDBANK) {
+        if (isSandbank) {
+          // A sandbank is always the last field onto which can be moved.
           return fields;
         }
-        if (startX == opponentX && startY == opponentY) {
-          // moving onto opponent only assuming we want to push, and this costs
-          // one more step
+        if (isOpponent) {
+          // Moving onto opponent only assuming we want to push, and this costs
+          // one more step.
           if (i + 1 > step) {
             fields.remove(fields.getLast());
           }
