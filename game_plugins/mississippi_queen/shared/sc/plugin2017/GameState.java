@@ -81,6 +81,11 @@ public class GameState implements Cloneable {
   private Move lastMove;
 
   /**
+   * Der Index des Segmentes am weitesten vom Start entfernt welches bisher aufgedeckt wurde. Wird nur intern verwendet.
+   */
+  private int latestTileIndex = 0;
+
+  /**
    * Wurde der Spieler im LastMove abgedrängt. Falls ja ist eine weitere Drehaktion möglich
    */
   @XStreamAsAttribute
@@ -302,9 +307,9 @@ public class GameState implements Cloneable {
     turn++;
     this.lastMove = lastMove;
     int firstTile = Math.min(red.getTile(), blue.getTile());
-    int lastTile = Math.max(red.getTile(), blue.getTile());
+    latestTileIndex = Math.max(latestTileIndex, Math.max(red.getTile(), blue.getTile()));
     for (Tile tile : board.getTiles()) {
-      if(tile.getIndex() < firstTile || tile.getIndex() > lastTile + 1) {
+      if(tile.getIndex() < firstTile || tile.getIndex() > latestTileIndex + 1) {
         tile.setVisibility(false);
       } else {
         tile.setVisibility(true);
