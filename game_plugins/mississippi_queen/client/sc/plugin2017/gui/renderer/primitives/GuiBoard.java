@@ -471,8 +471,9 @@ public class GuiBoard extends PrimitiveBase {
         }
         if (isOpponent) {
           // Moving onto opponent only assuming we want to push, and this costs
-          // one more step.
-          if (i + 1 > step) {
+          // one more step (two steps if it is also a log field).
+          int requiredMovement = (highlight.getType() == FieldType.LOG) ? 2 : 1;
+          if (i + requiredMovement > step) {
             fields.remove(fields.getLast());
           }
           return fields;

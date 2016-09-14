@@ -301,12 +301,15 @@ public class FrameRenderer extends PApplet {
         break;
       }
 
+      // Gamestate needs always be reset, even when action list is empty because
+      // the emptyness may be the result of a removed acceleration in which case
+      // the velocity needs to be reset.
+      try {
+        currentGameState = backUp.clone();
+      } catch (CloneNotSupportedException ex) {
+        logger.error("Clone of backup failed", ex);
+      }
       if (!currentMove.actions.isEmpty()) {
-        try {
-          currentGameState = backUp.clone();
-        } catch (CloneNotSupportedException ex) {
-          logger.error("Clone of backup failed", ex);
-        }
         try {
           // perform actions individually because it is a partial move and should not be checked for validity
           for (Action action : currentMove.actions) {
