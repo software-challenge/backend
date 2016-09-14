@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -28,7 +29,10 @@ public class Move implements Cloneable {
    * Default Konstruktor, der einen leeren Zug erzeugt.
    */
   public Move() {
-    actions = new ArrayList<Action>();
+    // This list needs to be thread safe because the side bar may be iterating
+    // over it while a new turn is started, resulting in a
+    // ConcurrentModificationException.
+    actions = new CopyOnWriteArrayList<>();
   }
 
   /**
@@ -36,7 +40,7 @@ public class Move implements Cloneable {
    * @param selectedActions Aktionen des Zuges
    */
   public Move(List<Action> selectedActions) {
-    this.actions = new ArrayList<Action>(selectedActions);
+    actions = new CopyOnWriteArrayList<>(selectedActions);
   }
 
   /**

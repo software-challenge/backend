@@ -1,7 +1,5 @@
 package sc.plugin2017.gui.renderer.primitives;
 
-import java.util.Iterator;
-
 import sc.plugin2017.Action;
 import sc.plugin2017.DebugHint;
 import sc.plugin2017.PlayerColor;
@@ -118,9 +116,9 @@ public class SideBar extends PrimitiveBase {
     parent.text("Aktionen des aktuellen Zuges:", 0, 0);
 
     // using an iterator to avoid ConcurrentModificationException
-    for (final Iterator<Action> iterator = parent.getCurrentActions().iterator(); iterator.hasNext(); ) {
+    for (Action action : parent.getCurrentActions()) {
       parent.translate(0, parent.textAscent() + parent.textDescent());
-      parent.text(iterator.next().toString(), 0, 0);
+      parent.text(action.toString(), 0, 0);
     }
 
     // Debug Ausgabe
@@ -129,9 +127,9 @@ public class SideBar extends PrimitiveBase {
     if (RenderConfiguration.optionDebug) {
       parent.translate(0, parent.textAscent() + parent.textDescent());
       // using an iterator to avoid ConcurrentModificationException
-      for (final Iterator<DebugHint> iterator = parent.getCurrentHints().iterator(); iterator.hasNext(); ) {
+      for (DebugHint hint : parent.getCurrentHints()) {
           parent.translate(0, parent.textAscent() + parent.textDescent());
-          parent.text(iterator.next().getContent(), 0, 0);
+          parent.text(hint.getContent(), 0, 0);
       }
     }
 

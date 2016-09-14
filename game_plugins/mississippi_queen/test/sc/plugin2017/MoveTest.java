@@ -285,4 +285,22 @@ public class MoveTest {
     assertEquals(4, red.getCoal());
   }
 
+  @Test
+  public void threadSafeActionList() {
+    // This list needs to be thread safe because the side bar may be iterating
+    // over it while a new turn is started, resulting in a
+    // ConcurrentModificationException.
+    Move move = new Move();
+    move.actions.add(new Advance(1, 0));
+    move.actions.add(new Turn(-1, 1));
+    move.actions.add(new Turn(-1, 2));
+    move.actions.add(new Advance(1, 3));
+    move.actions.add(new Turn(1, 4));
+    for (Action action: move.actions) {
+      if (action.getClass() == Turn.class) {
+        move.actions.remove(0);
+      }
+    }
+  }
+
 }
