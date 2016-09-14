@@ -15,8 +15,10 @@ public class Background extends PrimitiveBase {
   @Override
   public void draw(){
     parent.background(GuiConstants.colorBackGround);
-    if (parent.getWidth() > 0 && parent.getHeight() > 0) {
-      parent.image(img, 0, 0, parent.getWidth(), parent.getHeight());
+    for (int y = 0; y < parent.getHeight(); y += img.height) {
+      for (int x = 0; x < parent.getWidth(); x += img.width) {
+        parent.image(img, x, y);
+      }
     }
   }
 
