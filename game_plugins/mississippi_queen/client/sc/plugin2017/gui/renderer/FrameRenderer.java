@@ -6,7 +6,6 @@ package sc.plugin2017.gui.renderer;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -311,8 +310,8 @@ public class FrameRenderer extends PApplet {
         }
         try {
           // perform actions individually because it is a partial move and should not be checked for validity
-          for (final Iterator<Action> iterator = currentMove.actions.iterator(); iterator.hasNext(); ) {
-            iterator.next().perform(currentGameState, currentGameState.getCurrentPlayer());
+          for (Action action : currentMove.actions) {
+            action.perform(currentGameState, currentGameState.getCurrentPlayer());
           }
         } catch (InvalidMoveException invalMove) {
           logger.error("Failed to perform move of user, please report if this happens", invalMove);
