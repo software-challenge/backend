@@ -165,6 +165,11 @@ public class HexField extends PrimitiveBase{
       logger.error("Exception was", e);
     }
 
+    parent.noFill();
+    parent.strokeWeight(width / 32);
+    parent.stroke(GuiConstants.colorHexFieldBorder);
+    drawHex();
+
     // print coordinates
     // profiler indicates that drawing the text here is quite costly
     if (tileIndex % 2 == 0) {

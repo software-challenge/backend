@@ -235,9 +235,8 @@ public class FrameRenderer extends PApplet {
   @Override
   public void mouseClicked(MouseEvent e) {
     super.mouseClicked(e);
-    if(playerControlsEnabled()) {
+    if (playerControlsEnabled()) {
 
-      // first the gui buttons
       boolean onSandbank = currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK;
       int currentSpeed = currentGameState.getCurrentPlayer().getSpeed();
       switch (guiBoard.getClickedButton(mouseX, mouseY)) {
@@ -318,7 +317,6 @@ public class FrameRenderer extends PApplet {
         }
       }
       updateView(currentGameState);
-      redraw();
     }
   }
 
@@ -363,6 +361,7 @@ public class FrameRenderer extends PApplet {
     super.keyPressed();
     if (key == 'c' || key == 'C') {
       new RenderConfigurationDialog(FrameRenderer.this);
+      redraw();
     }
   }
 

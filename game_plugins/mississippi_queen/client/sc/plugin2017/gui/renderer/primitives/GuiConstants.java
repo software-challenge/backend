@@ -42,6 +42,7 @@ public class GuiConstants {
   public static final int colorHexFieldSANDBANKHighlight = calcColor(255, 250, 240, 150);
   public static final int colorHexFieldLOG = calcColor(255, 151, 125, 100);
   public static final int colorHexFieldLOGHighlight = calcColor(255, 161, 135, 110);
+  public static final int colorHexFieldBorder = calcColor(255, 200, 200, 200);
   public static final int colorPassenger = calcColor(255, 255, 255, 153);
   public static final int colorWhite = calcColor(255, 255, 255, 255);
   public static final int colorHexFieldGOAL = calcColor(255, 154, 50, 205);
@@ -100,7 +101,7 @@ public class GuiConstants {
    * Sourcepath to Background Image
    */
   public static final String RES_DIR = "resource/game/";
-  public static final String BACKGROUND_IMAGE = RES_DIR + "background.png";
+  public static final String BACKGROUND_IMAGE = RES_DIR + "background.jpg";
   public static final String WATER_IMAGE_PATH = RES_DIR + "water.png";
   public static final String ISLAND_IMAGE_PATH = RES_DIR + "island.png";
   public static final String PASSENGER0_INACTIVE_PATH = RES_DIR + "passenger1.png";
@@ -139,7 +140,7 @@ public class GuiConstants {
    * Höhe des GuiBoard zu parent.height zu ultiplizieren
    */
   public static final float GUI_BOARD_HEIGHT = SIDE_BAR_HEIGHT;
-  public static final float BORDERSIZE = 2f;
+  public static final float BORDERSIZE = 0;
   public static final String DEFAULT_RED_NAME = "Spieler 1";
   public static final String DEFAULT_BLUE_NAME = "Spieler 2";
   public static final int DEFAULT_RED_POINTS = 0;
