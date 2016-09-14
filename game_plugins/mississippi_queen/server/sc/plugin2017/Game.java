@@ -1,6 +1,5 @@
 package sc.plugin2017;
 
-import java.lang.Thread.State;
 import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,29 +9,24 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin2017.GameState;
-import sc.plugin2017.Move;
-import sc.plugin2017.Player;
-import sc.plugin2017.PlayerColor;
-import sc.plugin2017.WelcomeMessage;
 import sc.plugin2017.util.Configuration;
 import sc.plugin2017.util.Constants;
 import sc.plugin2017.util.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
- * 
+ *
  * @author Sven Casimir
  * @since Juni, 2010
  */
@@ -84,30 +78,30 @@ public class Game extends RoundBasedGameInstance<Player> {
 				throw new InvalidMoveException(author.getDisplayName()
 						+ " hat kein Zug-Objekt gesendet");
 			}
-			
+
       final Move move = (Move) data;
       move.perform(gameState, expectedPlayer);
-      
+
       gameState.prepareNextTurn(move);
       int[][] stats = gameState.getGameStats();
       if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
 
-        
+
 
         PlayerColor winner = null;
+        logger.debug(stats[0][0] + ", " + stats[0][1]);
+        logger.debug(stats[1][0] + ", " + stats[1][1]);
         String winningReason = "";
-        System.out.println(stats[0][0] + ", " + stats[0][1]);
-        System.out.println(stats[1][0] + ", " + stats[1][1]);
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
-          if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+          if (expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
             winningReason = "Ein Spieler ist im Ziel";
           } else {
             winningReason = "Sieg durch mehr Passagiere und Strecke";
           }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
-          if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+          if (expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
             winningReason = "Ein Spieler ist im Ziel";
           } else {
             winningReason = "Sieg durch mehr Passagiere und Strecke";
@@ -117,25 +111,21 @@ public class Game extends RoundBasedGameInstance<Player> {
             + winningReason);
       } else if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
         PlayerColor winner = null;
-        String winningReason = "";
         if (expectedPlayer.getPlayerColor() == PlayerColor.RED) {
           winner = PlayerColor.RED;
         } else if (expectedPlayer.getPlayerColor() == PlayerColor.BLUE) {
           winner = PlayerColor.BLUE;
         }
-        winningReason = "Ein Spieler ist im Ziel";
-        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n" + winningReason);
+        gameState.endGame(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
       } else if(expectedPlayer != gameState.getStartPlayer() &&
           Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
         PlayerColor winner = null;
-        String winningReason = "";
         if(gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
           winner = PlayerColor.RED;
         } else {
           winner = PlayerColor.BLUE;
         }
-        winningReason = "Ein Spieler wurde abgehängt.";
-        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\n" + winningReason);
+        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
       }
 			next(gameState.getCurrentPlayer());
 		} catch (InvalidMoveException e) {
@@ -143,7 +133,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			String err = "Ungueltiger Zug von '" + author.getDisplayName()
 					+ "'.\n" + e.getMessage();
 			gameState.endGame(author.getPlayerColor().opponent(), err);
-			logger.error(err);
+			logger.error(err, e);
 			throw new GameLogicException(err);
 		}
 	}
