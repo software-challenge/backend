@@ -3,10 +3,9 @@ package sc.plugin2017;
 import java.util.ArrayList;
 import java.util.Random;
 
-import sc.plugin2017.util.Constants;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+
+import sc.plugin2017.util.Constants;
 
 
 @XStreamAlias(value = "board")
@@ -16,7 +15,7 @@ public class Board {
 	 * Liste der Spielsegmente
 	 */
   private ArrayList<Tile> tiles;
-  
+
 
   /**
 	 * Erzeug ein neues Spielfeld
@@ -24,7 +23,7 @@ public class Board {
   public Board() {
     this.init();
   }
-  
+
   public Board(ArrayList<Tile> tiles) {
     this.tiles = tiles;
   }
@@ -46,7 +45,7 @@ public class Board {
    */
   private void init() {
     tiles = new ArrayList<Tile>();
-    Random rnd = new Random(); 
+    Random rnd = new Random();
     int[] direction = new int[Constants.NUMBER_OF_TILES];
     int[][] startCoordinates  = new int[Constants.NUMBER_OF_TILES][2];
     ArrayList<Integer> tilesWithPassengers = new ArrayList<Integer>(); // holds all tiles numbers with a passenger field
@@ -63,16 +62,22 @@ public class Board {
     startCoordinates[0][0] = 0;
     startCoordinates[0][1] = 0;
     // generate directions of tiles
-    int directionLeft = 0;
-    int directionRight = 0;
     for(int i = 1; i < Constants.NUMBER_OF_TILES; i++) {
-      int dir = rnd.nextInt(3) - 1; // get a number in {-1,0,1}
-      if(directionLeft + dir < -4)  {
-        // turn left not allowed
-        dir = rnd.nextInt(2);
-      } else if(directionRight + dir > 4) {
-        // turn right not allowed
-        dir = rnd.nextInt(2) - 1;
+      int dir;
+      if (i == 1) {
+        // The tile after the starting tile should always point in the same
+        // direction. Otherwise one player would have a disadvantage.
+        dir = 0;
+      } else {
+        if (direction[i-1] == -2) {
+          // last direction was up left, don't allow more turning to the left (to avoid circles)
+          dir = rnd.nextInt(2); // 0 or 1
+        } else if (direction[i-1] == 2) {
+          // last direction was down right, don't allow more turning to the right (to avoid circles)
+          dir = rnd.nextInt(2) - 1; // -1 or 0
+        } else {
+          dir = rnd.nextInt(3) - 1; // -1, 0 or 1
+        }
       }
       direction[i] = (direction[i-1] + dir + 6/*number of directions*/) % 6;
       startCoordinates[i][0] = getXCoordinateInDirection(startCoordinates[i-1][0], direction[i]);
@@ -142,7 +147,7 @@ public class Board {
     int special = rnd.nextInt(Constants.MAX_SPECIAL - Constants.MIN_SPECIAL + 1) + Constants.MIN_SPECIAL; // 1 oder 2 special fields
     Tile newTile = new Tile(index, direction, x, y, hasPassenger ? 1 : 0, blocked, special);
     tiles.add(newTile);
-    
+
   }
 
   private void generateStartField() {
@@ -176,7 +181,7 @@ public class Board {
     }
     return null;
   }
-  
+
   /**
    * Gibt ein Feld zurück
    * @param x x-Koordinate
@@ -196,6 +201,7 @@ public class Board {
  /**
   * Equals Methode fuer ein Spielfeld
   */
+  @Override
   public boolean equals(Object o) {
     if(o instanceof Board) {
       Board board = (Board) o;
@@ -217,16 +223,17 @@ public class Board {
   /**
 	 * Erzeug eine Deepcopy eines Spielbretts
 	 */
+  @Override
   public Board clone() {
     ArrayList<Tile> clonedTiles = new ArrayList<Tile>();
     for (Tile tile : tiles) {
       Tile clonedTile = tile.clone();
       clonedTiles.add(clonedTile);
     }
-    Board clone = new Board(clonedTiles); 
+    Board clone = new Board(clonedTiles);
     return clone;
   }
-  
+
   /**
    * Gibt die Felder eines Spielbretts zurück
    * @return fields
@@ -236,7 +243,7 @@ public class Board {
   }
 
   protected ArrayList<Tile> getVisibleTiles() {
-    ArrayList<Tile> visibleTiles = new ArrayList<Tile>(); 
+    ArrayList<Tile> visibleTiles = new ArrayList<Tile>();
     for (Tile tile : visibleTiles) {
       if(tile.isVisible()) {
         visibleTiles.add(tile);
@@ -244,7 +251,8 @@ public class Board {
     }
     return visibleTiles;
   }
-  
+
+  @Override
   public String toString() {
     String toString = "board:\n";
     for (Tile tile : tiles) {
@@ -252,5 +260,5 @@ public class Board {
     }
     return toString;
   }
-  
+
 }
