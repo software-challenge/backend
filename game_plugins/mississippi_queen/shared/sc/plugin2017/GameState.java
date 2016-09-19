@@ -270,8 +270,58 @@ public class GameState implements Cloneable {
    * wechselt den Spieler, der aktuell an der Reihe ist.
    */
   private void switchCurrentPlayer() {
-    currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE
-        : PlayerColor.RED;
+    // when a new turn starts, the leading player should move first
+    if (turn % 2 == 0) {
+      currentPlayer = getLeadingPlayer().getPlayerColor();
+    } else {
+      currentPlayer = currentPlayer == PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED;
+    }
+  }
+
+  private Player getLeadingPlayer() {
+    int redPoints = 0;
+    int bluePoints = 0;
+    redPoints += red.getTile() * Constants.POINTS_PER_TILE;
+    redPoints += board.getField(red.getX(), red.getY()).getPoints();
+
+    bluePoints += blue.getTile() * Constants.POINTS_PER_TILE;
+    bluePoints += board.getField(blue.getX(), blue.getY()).getPoints();
+
+    // points are equal to the distance to the goal. Who is nearer to the goal is considered leading
+    if (redPoints > bluePoints) {
+      return red;
+    } else if (bluePoints > redPoints) {
+      return blue;
+    } else {
+      // if both have the same distance to the goal, the one with more speed is leading
+      if (red.getSpeed() > blue.getSpeed()) {
+        return red;
+      } else if (blue.getSpeed() > red.getSpeed()) {
+        return blue;
+      } else {
+        // if both have same speed, the one with more coal is leading
+        if (red.getCoal() > blue.getCoal()) {
+          return red;
+        } else if (blue.getCoal() > red.getCoal()) {
+          return blue;
+        } else {
+          // if both have same coal, choose player which is farer right or farer down
+          // this should be unambiguous considering the distance to the goal is equal for both players
+          if (red.getX() > blue.getX()) {
+            return red;
+          } else if (blue.getX() > red.getX()) {
+            return blue;
+          } else {
+            if (red.getY() > blue.getY()) {
+              return red;
+            } else {
+              return blue;
+            }
+          }
+        }
+      }
+    }
+
   }
 
   /**
