@@ -142,7 +142,10 @@ public class RenderFacade {
 		alreadyCreatedPlayerOne = false;
 		this.panel = panel;
 
-		initRenderer();
+		if (panel != null) {
+		  // panel == null means that no display should be done (testrange)
+      initRenderer();
+		}
   }
 
 	private void initRenderer() {
