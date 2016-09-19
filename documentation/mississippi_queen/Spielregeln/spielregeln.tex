@@ -109,13 +109,15 @@ Titelseite dieser Anleitung. Das gesamte Spielbrett besteht aus \Tiles/
 Spielsegmenten mit jeweils \FieldsPerTile/ Feldern. Die Segmente kann man durch
 die Farbe der Koordinaten auf den Feldern erkennen: Die Segmente haben
 abwechselnd schwarze und weiße Koordinaten auf den Feldern. Am Anfang ist nur
-das Startsegment und ein darauf folgendes Segment aufgedeckt. Sobald ein Dampfer
-auf das zuletzt aufgedeckte Segment fährt, wird ein neues dahinter aufgedeckt
-und zwar zufällig links, rechts oder mittig. Dies geschieht solange, bis alle
-\Tiles/ Segmente aufgedeckt sind. Das letzte Segment ist das Zielsegment (siehe
-Abbildung unter Spielende, Abschnitt \ref{sec:spielende}). Segmente die schon von allen
-Spielern betreten und wieder verlassen wurden, werden vom Spielplan entfernt,
-auch wenn sich darauf noch Inseln mit Passagieren befinden.
+das Startsegment und ein darauf folgendes Segment aufgedeckt. Diese beiden
+Segmente sind immer gerade ausgerichtet, bilden also keinen Knick in eine
+Richtung. Sobald ein Dampfer auf das zuletzt aufgedeckte Segment fährt, wird ein
+neues dahinter aufgedeckt und zwar zufällig nach links, nach rechts oder mittig.
+Dies geschieht solange, bis alle \Tiles/ Segmente aufgedeckt sind. Das letzte
+Segment ist das Zielsegment (siehe Abbildung unter Spielende, Abschnitt
+\ref{sec:spielende}). Segmente die schon von allen Spielern betreten und wieder
+verlassen wurden, werden vom Spielplan entfernt, auch wenn sich darauf noch
+Inseln mit Passagieren befinden.
 
 Die Spielsegmente bestehen aus verschiedene Arten von Hexagon-Feldern, die
 zufällig verteilt sind. Neben Wasserfeldern, Inseln, Sandbänken und Baumstämmen
@@ -205,7 +207,22 @@ hat und Geschwindigkeit 1 besitzt.
 \section{Spielablauf}
 
 Beide Spieler starten mit Geschwindigkeit 1 und 6 Kohleeinheiten und ziehen dann
-abwechselnd. Ein Zug besteht aus einer oder mehreren Aktionen. In einem Zug
+jeweils einmal pro Runde. In der ersten Runde beginnt der rote Spieler. In allen
+weiteren Runden wird der beginnende Spieler wie folgt ermittelt:
+
+Es beginnt der Spieler
+
+\begin{itemize}
+\item dessen Dampfer sich am dichtesten am Ziel befindet (höchstes Segment oder bei gleichem Segment höchste Reihe, siehe Abbildung unter Abschnitt \ref{sec:spielende}).
+\item Sollten beide Dampfer gleich dicht am Ziel sein, beginnt der Dampfer mit der höheren Geschwindigkeit.
+\item Sollten beide Dampfer gleich schnell sein, beginnt der Dampfer mit dem höheren Kohlevorrat.
+\item Sollten beide Dampfer gleich viel Kohle besitzen, beginnt der Dampfer, der am weitesten rechts steht (höchste X-Koordinate).
+\item Sollten beide Dampfer gleich weit rechts stehen, beginnt der Dampfer, der am weitesten unten steht (höchste Y-Koordinate).
+\end{itemize}
+
+\section{Der Zug}
+
+Ein Zug besteht aus einer oder mehreren Aktionen. In einem Zug
 müssen (falls der Zug nicht auf einer Sandbank endet) durch die Aktionen
 insgesamt alle Bewegungspunkte (bestimmt durch die Geschwindigkeit des Schiffes)
 verbraucht werden. Die verschiedenen Aktionen sind:
@@ -289,8 +306,12 @@ Spielers folgendermaßen:
   \item Jedes überwundene Segment bringt 5 Punkte.
   \item Anhand der Position innerhalb eines Segments werden 0 bis 4 Punkte
     vergeben. Ein Segment ist aufgeteilt in 5 Reihen. Je weiter vorne man ist,
-    desto mehr Punkte bekommt man.
+    desto mehr Punkte bekommt man (siehe Abbildung unten).
 \end{itemize}
+
+\begin{centering}
+  \includegraphics[width=0.6\textwidth]{bilder/segment-punkte.pdf}
+\end{centering}
 
 Bei Spielende gewinnt der Spieler mit den meisten Punkten. Sollten beide Spieler
 gleich viele Punkte haben, gewinnt der Spieler, der mehr Passagiere eingesammelt
