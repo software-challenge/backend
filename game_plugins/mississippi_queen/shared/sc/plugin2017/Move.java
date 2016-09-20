@@ -11,14 +11,15 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import sc.plugin2017.util.InvalidMoveException;
 
-@XStreamAlias(value = "move")
+@XStreamAlias("move")
 public class Move implements Cloneable {
 
   /**
    * Liste von Aktionen aus denen der Zug besteht
    */
+  @XStreamImplicit
   public List<Action> actions;
-
+  
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe {@link DebugHint}
    */
