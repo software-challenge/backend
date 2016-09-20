@@ -157,11 +157,9 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \end{description}
 \begin{verbatim}
 	<data class="move">
-	  <actions>
-	    ACTION
-	    ..
-	    ACTION
-	  </actions>
+    ACTION
+    ..
+    ACTION
 	</move>
 \end{verbatim}
 
@@ -194,13 +192,11 @@ Damit sieht beispielsweise ein Laufzug so aus:
 \begin{verbatim}
 <room roomId="RID">
   <data class="move">
-    <actions>
-      <acceleration order="0" acc="1"/>
-      <step order="1" distance="3"/>
-      <turn order="2" direction="-1"/>
-      <step order="3" distance="1"/>
-      <push order="4" direction="LEFT"/>
-    </actions>
+    <acceleration order="0" acc="1"/>
+    <step order="1" distance="3"/>
+    <turn order="2" direction="-1"/>
+    <step order="3" distance="1"/>
+    <push order="4" direction="LEFT"/>
     <hint content="Dies ist ein Hint."/>
     <hint content="noch ein Hint"/>
   </data>
@@ -458,10 +454,8 @@ Kommunikation ablaufen kann.\bigskip\\
 \item Der Client antwortet mit einem Zug: \begin{verbatim}
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
   <data class="move">
-      <actions>
-    	  <acceleration order="0" acc="2"/>
-    	  <step order="1" distance="3"/>
-      </actions>
+    <acceleration order="0" acc="2"/>
+    <step order="1" distance="3"/>
   </data>
 </room>
 \end{verbatim}
