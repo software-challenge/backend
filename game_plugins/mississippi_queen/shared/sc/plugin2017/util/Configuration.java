@@ -4,8 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.plugin2017.Acceleration;
 import sc.plugin2017.Action;
+import sc.plugin2017.Advance;
 import sc.plugin2017.Board;
 import sc.plugin2017.Field;
 import sc.plugin2017.FieldType;
@@ -15,13 +18,10 @@ import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Push;
-import sc.plugin2017.Advance;
 import sc.plugin2017.Tile;
 import sc.plugin2017.Turn;
 import sc.plugin2017.WelcomeMessage;
 import sc.protocol.LobbyProtocol;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Configuration
@@ -50,15 +50,6 @@ public class Configuration {
 	}
 
 	public static List<Class<?>> getClassesToRegister() {
-	  // print board
-	  /*Move move = new Move();
-    move.actions.add(new Acceleration(1,0));
-    move.actions.add(new Step(2,1));
-    move.actions.add(new Push(1,2));
-    move.actions.add(new Turn(1,3));
-	  xStream.alias("move", move.getClass());
-	  System.out.println(xStream.toXML(move));*/
-	  
 		return Arrays.asList(new Class<?>[] { Game.class,
 				GameState.class, Constants.class, Move.class,
 				Player.class, WelcomeMessage.class, PlayerColor.class,
