@@ -57,6 +57,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 		return gameState.getVisible(); // return only the for the players visible board
 	}
 
+	private boolean qualifiesForGoalReach(Player player) {
+	  return player.getField(gameState.getBoard()).getType() == FieldType.GOAL && player.getPassenger() >= 2 && player.getSpeed() == 1;
+	}
 	/**
 	 * Someone did something, check out what it was (move maybe? Then check the
 	 * move)
@@ -85,23 +88,21 @@ public class Game extends RoundBasedGameInstance<Player> {
       gameState.prepareNextTurn(move);
       int[][] stats = gameState.getGameStats();
       if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
-
-
-
+        // round limit reached, game will be ended
         PlayerColor winner = null;
         logger.debug(stats[0][0] + ", " + stats[0][1]);
         logger.debug(stats[1][0] + ", " + stats[1][1]);
         String winningReason = "";
         if (stats[0][0] > stats[1][0]) {
           winner = PlayerColor.RED;
-          if (expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+          if (qualifiesForGoalReach(expectedPlayer)) {
             winningReason = "Ein Spieler ist im Ziel";
           } else {
             winningReason = "Sieg durch mehr Passagiere und Strecke";
           }
         } else if (stats[0][0] < stats[1][0]) {
           winner = PlayerColor.BLUE;
-          if (expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+          if (qualifiesForGoalReach(expectedPlayer)) {
             winningReason = "Ein Spieler ist im Ziel";
           } else {
             winningReason = "Sieg durch mehr Passagiere und Strecke";
@@ -109,7 +110,8 @@ public class Game extends RoundBasedGameInstance<Player> {
         }
         gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
             + winningReason);
-      } else if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
+      } else if (qualifiesForGoalReach(expectedPlayer)) {
+        // player reached goal
         PlayerColor winner = null;
         if (expectedPlayer.getPlayerColor() == PlayerColor.RED) {
           winner = PlayerColor.RED;
@@ -119,6 +121,7 @@ public class Game extends RoundBasedGameInstance<Player> {
         gameState.endGame(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
       } else if(expectedPlayer != gameState.getStartPlayer() &&
           Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
+        // player is at least 3 tiles ahead of other player
         PlayerColor winner = null;
         if(gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
           winner = PlayerColor.RED;
