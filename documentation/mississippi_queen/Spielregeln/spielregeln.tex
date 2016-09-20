@@ -157,10 +157,11 @@ weil er nicht rechtzeitig bremsen kann), hat er das Spiel verloren.
 Auf dem Passagierfeld mit Anleger wartet ein Passagier, der am Anleger abgeholt
 werden kann. Um den Passagier abzuholen, muss der Dampfer mit Geschwindigkeit 1
 am Anleger ankommen. Es verwandelt sich in ein normales Inselfeld, sobald der
-Passagier abgeholt wurde (siehe Insel, \ref{island}).
+Passagier abgeholt wurde (siehe Insel, \ref{island}). Ein Dampfer kann höchstens
+2 Passagiere aufnehmen.
 
-Ein Dampfer, der so abgedrängt wird, dass er auf einem Feld mit Anleger landet,
-kann einen Passagier aufnehmen, sofern er Geschwindigkeit 1 besitzt.
+Ein Dampfer, der so abgedrängt wird, dass er an einem Anleger landet, kann einen
+Passagier aufnehmen, sofern der Dampfer die Geschwindigkeit 1 hat.
 
 
 \subsection{\label{sandbank}Die Sandbank}
@@ -171,8 +172,8 @@ Eine Sandbank stoppt einen Dampfer, sollte er darauf fahren. Das heißt, wenn ei
 Spieler auf eine Sandbank fährt, beendet dies seinen Zug und setzt seine
 Geschwindigkeit auf 1. Die Sandbank kann im nächsten Zug nur rückwärts oder
 vorwärts in der Bewegungsrichtung, mit der sie befahren wurde, wieder verlassen
-werden. Verlässt man es rückwärts, kostet dies zusätzlich eine Kohleeinheit. Auf
-einer Sandbank kann nicht gedreht oder Beschleunigt werden und ein Dampfer, der
+werden. Verlässt man sie rückwärts, kostet dies zusätzlich eine Kohleeinheit. Auf
+einer Sandbank kann nicht gedreht oder beschleunigt werden und ein Dampfer, der
 sich darauf befindet, kann nicht abgedrängt werden.
 
 \paragraph{}
@@ -194,9 +195,10 @@ kostet einen zusätzlichen Bewegungspunkt.
 \fieldGraphic{r}{ziel}
 
 Ein Zielfeld ist ein Feld, das erreicht werden kann, um das Spiel zu gewinnen.
-Ein Zielfeld muss mit Geschwindigkeit 1 befahren werden und es müssen sich zwei
-Passagiere an Bord befinden, damit der Dampfer das Spiel gewinnt. Sind diese
-Bedingungen nicht erfüllt, kann ein Zielfeld wie ein Wasserfeld befahren werden.
+Ein Zielfeld muss mit Geschwindigkeit 1 angelaufen werden und es müssen sich
+zwei Passagiere an Bord befinden, damit der Dampfer das Spiel gewinnt. Sind
+diese Bedingungen nicht erfüllt, kann ein Zielfeld wie ein Wasserfeld befahren
+werden.
 
 Landet ein Dampfer durch abdrängen auf einem Zielfeld, reicht dies nicht zum
 Gewinnen des Spiels, selbst wenn der abgedrängte Dampfer zwei Passagiere an Bord
@@ -262,11 +264,12 @@ Abdrängaktion folgen. Ein Spieler kann den Gegner auf ein beliebig angrenzendes
 jedoch nicht direkt hinter dem Spieler liegendes, begehbares Feld abdrängen
 (\label{passierbar}Wasserfelder, Sändbänke und Baumstammfelder gelten als
 begehbar). Eine Abdrängaktion kostet einen Bewegungspunkt, zwei, falls auf ein
-Baumstammfeld abgedrängt wird. Es darf nicht von einer Sandbank aus abgedrängt
-werden. Der abgedrängte Spieler bekommt eine zusätzliche freie Drehung für
-seinen nächsten Zug. Wurde der Spieler auf eine Sandbank abgedrängt, entfällt
-diese freie Drehung und die Geschwindigkeit des abgedrängten Spielers wird auf 1
-reduziert.
+Baumstammfeld abgedrängt wird. Ist die Geschwindigkeit des auf ein Baumsammfeld
+abgedrängten Bootes größer als 1, wird dessen Geschwindigkeit um 1 reduziert. Es
+darf nicht von einer Sandbank aus abgedrängt werden. Der abgedrängte Spieler
+bekommt eine zusätzliche freie Drehung für seinen nächsten Zug. Wurde der
+Spieler auf eine Sandbank abgedrängt, entfällt diese freie Drehung und die
+Geschwindigkeit des abgedrängten Spielers wird auf 1 reduziert.
 
 \subsection{\label{step}Bewegungsaktion}
 
@@ -380,7 +383,7 @@ sich ein Info-Bereich, in dem die Spielernamen, die bisher erreichten Punkte der
 Spieler sowie die bisher gemachten Aktionen eines menschlichen Spielers im
 aktuellen Zug textuell dargestellt werden. Unterhalb des Hauptbereichs und des
 Info-Bereichs befindet sich der Rundenzähler, auf dem man die aktuelle Runde
-ablesen kann. Darunter findet man die Bedienelemente zum kontrollieren des
+ablesen kann. Darunter findet man die Bedienelemente zum Kontrollieren des
 Spielablaufes, die Spielbedienung.
 
 \emph{Nach dem Starten eines neuen Spiels mit mindestens einem Computerspieler
@@ -460,9 +463,8 @@ abdrängen und die Abdräng-Aktion ist abgeschlossen.
 
 \subsection{Passagiere aufnehmen}
 
-Um Passagiere aufzunehmen, muss man wie unter \ref{passenger} beschrieben an
-einen Anleger fahren. Beendet man dort seinen Zug mit Geschwindigkeit 1, wird
-der Passagier automatisch aufgenommen.
+Um Passagiere aufzunehmen, muss man wie unter \ref{passenger} beschrieben einen
+Anleger erreichen.
 
 \subsection{Spielbedienung}
 
