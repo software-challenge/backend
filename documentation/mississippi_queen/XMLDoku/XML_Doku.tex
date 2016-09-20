@@ -25,10 +25,10 @@
 \sloppy
 \hyphenpenalty=100000
 
-%\usepackage{fontspec}
-%\setromanfont{Merriweather}
-%\setsansfont{Lato}
-%\renewcommand{\normalsize}{\fontsize{12}{18}\selectfont}
+\usepackage{fontspec}
+\setromanfont{Merriweather}
+\setsansfont{Lato}
+\renewcommand{\normalsize}{\fontsize{12}{18}\selectfont}
 
 
 \titlehead{\centering\includegraphics[width=3.5cm]{../Spielregeln/bilder/logo.png}}
@@ -48,45 +48,51 @@
 \newpage
 \setcounter{page}{1}
 \section{Einleitung}
-\subsection*{Zum Inhalt} Wie in den letzten Jahren wird zur Client-Server
-Kommunikation ein XML-Protokoll genutzt\footnote{siehe auch:
-\htmladdnormallink{Allgemeine Dokumentation: Die Schnittstelle zum
-Server}{https://cau-kiel-tech-inf.github.io/socha-enduser-docs/\#schnittstelle}}. In diesem
-Dokument wird die Kommunikationsschnittstelle definiert, sodass ein komplett
-eigener Client geschrieben werden kann. Es wird hier nicht die vollständige
-Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein Client
-umgehen können muss, um spielfähig zu sein.
-\subsection*{An wen richtet sich dieses Dokument?} Die Kommunikation mit dem
-Spielserver ist für diejenigen, die aufbauend auf dem Simpleclient
-programmieren, unwichtig. Dort steht bereits ein funktionierender Client bereit
-und es muss nur die Spiellogik entworfen werden. \\
-Nur wer einen komplett eigenen Client entwerfen will, beispielsweise um die
-Programmiersprache frei wählen zu können, benötigt die Definitionen.
+\subsection*{Zum Inhalt}
 
-\subsection*{Hinweise} Falls Sie beabsichtigen sollten, diese
-Kommunikationsschnittstelle zu realisieren, sei darauf hingewiesen, dass es im
-Verlauf des Wettbewerbes möglich ist, dass weitere, hier noch nicht aufgeführte
-Elemente zur Kommunikationsschnittstelle hinzugefügt werden. Um auch bei
-solchen Änderungen sicher zu sein, dass ihr Client fehlerfrei mit dem Server
-kommunizieren kann, empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu
-verwerfen, die hier nicht weiter definiert sind. \bigskip \\
-Die vom Institut bereitgestellten Programme (Server, Simpleclient) nutzen eine
-Bibliothek um Java-Objekte direkt in XML zu konvertieren und umgekehrt.
-Dabei werden XML-Nachrichten nicht mit einem newline abgeschlossen.
-%Dabei
-%werden den XML-Tags jeweils \textit{id}-Attribute beigefügt. Auch diese können
-%vernachlässigt werden.
+Wie in den letzten Jahren wird zur Client-Server Kommunikation ein XML-Protokoll
+genutzt\footnote{siehe auch: \htmladdnormallink{Allgemeine Dokumentation: Die
+    Schnittstelle zum
+    Server}{https://cau-kiel-tech-inf.github.io/socha-enduser-docs/\#schnittstelle}}.
+In diesem Dokument wird die Kommunikationsschnittstelle definiert, sodass ein
+komplett eigener Client geschrieben werden kann. Es wird hier nicht die
+vollständige Kommunikation dokumentiert bzw. definiert, dennoch alles, womit ein
+Client umgehen können muss, um spielfähig zu sein.
+
+\subsection*{An wen richtet sich dieses Dokument?}
+
+Die Kommunikation mit dem Spielserver ist für diejenigen, die aufbauend auf dem
+Simpleclient programmieren, unwichtig. Dort steht bereits ein funktionierender
+Client bereit und es muss nur die Spiellogik entworfen werden. \\ Nur wer einen
+komplett eigenen Client entwerfen will, beispielsweise um die Programmiersprache
+frei wählen zu können, benötigt die Definitionen.
+
+\subsection*{Hinweise}
+
+Falls Sie beabsichtigen sollten, diese Kommunikationsschnittstelle zu
+realisieren, sei darauf hingewiesen, dass es im Verlauf des Wettbewerbes möglich
+ist, dass weitere, hier noch nicht aufgeführte Elemente zur
+Kommunikationsschnittstelle hinzugefügt werden. Um auch bei solchen Änderungen
+sicher zu sein, dass ihr Client fehlerfrei mit dem Server kommunizieren kann,
+empfehlen wir Ihnen, beim Auslesen des XML jegliche Daten zu verwerfen, die hier
+nicht weiter definiert sind. \bigskip \\ Die vom Institut bereitgestellten
+Programme (Server, Simpleclient) nutzen eine Bibliothek um Java-Objekte direkt
+in XML zu konvertieren und umgekehrt. Dabei werden XML-Nachrichten nicht mit
+einem newline abgeschlossen.
 
 \subsection*{Wie das Dokument zu lesen ist}
-Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt sind, die über dem Code kurz erläutert werden.\\
-Eingebettete XML-Elemente werden hier allgemein als \begin{verbatim}
-{TAGNAME}
-\end{verbatim} geschrieben, wenn an der Stelle eine beliebige Anzahl von \textit{TAGNAME}-Tags eingebettet sein \textit{kann} und als \begin{verbatim}
-[TAGNAME]
-\end{verbatim}, wenn an der Stelle ein \textit{TAGNAME}-Tag optional stehen kann. \\
+
+Es finden sich für einzelne Arten von Nachrichten kurze Definitionen. Dabei ist
+ein allgemeiner XML-Code gegeben, bei dem Attributwerte durch Variablen ersetzt
+sind, die über dem Code kurz erläutert werden.\\ Eingebettete XML-Elemente
+werden hier allgemein als \verb|{TAGNAME}| geschrieben, wenn an der Stelle eine
+beliebige Anzahl von \textit{TAGNAME}-Tags eingebettet sein \emph{kann} und
+als \verb|[TAGNAME]|, wenn an der Stelle ein \textit{TAGNAME}-Tag optional stehen kann.
 
 \subsection{Beispiel-Definition}
-Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags zu:
+
+Die Definitionen von a- und b-Tags unten lassen unter anderem folgende a-Tags
+zu:
 \begin{verbatim}
 - <a name="Sinnvoll">
   </a>
@@ -244,6 +250,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[Z] aktuelle Zugzahl
 \item[S] Spieler, der das Spiel gestartet hat (RED/BLUE)
 \item[C] Spieler, der an der Reihe ist (RED/BLUE)
+\item[F] true, falls der aktuelle Spieler vorherigen im Zug des Gegners abgedrängt wurde und jetzt eine zusätzliche kostenlose Drehung machen darf, sonst false.
 \item[red, blue] wie in \ref{player} definiert
 \item[board] Das Spielbrett, wie in \ref{board} definiert
 \item[lastMove] Letzter getätigter Zug (nicht in der ersten Runde), wie in
@@ -251,7 +258,7 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[condition] Spielergebnis, wie in \ref{gameend} definiert; nur zum Spielende
 \end{description}
 \begin{verbatim}
-<state class="state" turn="Z" startPlayer="S" currentPlayer="C">
+<state class="state" turn="Z" startPlayer="S" currentPlayer="C" freeTurn="F">
   red
   blue
   [board]
