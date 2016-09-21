@@ -59,22 +59,6 @@ public class Client extends XStreamClient implements IClient
 		}
 	}
 
-	@Override
-	public void close()
-	{
-		if (!isClosed())
-		{
-			logger.info("Closing Client {}", this);
-			super.close();
-			onDisconnect(DisconnectCause.REGULAR);
-			logger.info("Closing Client {}", this);
-		}
-		else
-		{
-			logger.warn("Reclosing an already closed stream");
-		}
-	}
-
 	private void notifyOnPacket(Object packet)
 	{
 		Set<RescueableClientException> errors = new HashSet<RescueableClientException>();
@@ -216,6 +200,7 @@ public class Client extends XStreamClient implements IClient
 	@Override
 	protected void onDisconnect(DisconnectCause cause)
 	{
+		super.onDisconnect(cause);
 		for (IClientRole role : this.roles)
 		{
 			try

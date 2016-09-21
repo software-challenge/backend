@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package sc.plugin2017.gui;
 
@@ -18,9 +18,9 @@ import sc.shared.SlotDescriptor;
 /**
  * A game preparation lets the client connect to the server and open a new game.
  * It then opens slots for actual clients
- * 
+ *
  * @author sca
- * 
+ *
  */
 public class GamePreparation implements IGamePreparation {
 	private List<ISlot> slots = new LinkedList<ISlot>();

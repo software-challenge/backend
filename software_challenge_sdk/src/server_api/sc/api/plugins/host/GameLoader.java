@@ -25,24 +25,24 @@ public class GameLoader implements IHistoryListener
 	private Object obj = null;
 	private List<Class<?>> clazzes;
 	private GameLoaderClient client;
-	
+
 	public GameLoader(List<Class<?>> clazzes) {
 		this.finished = false;
 		this.clazzes = clazzes;
 	}
-	
+
 	public GameLoader(Class<?> clazz) {
 		this(new LinkedList<Class<?>>());
 		this.clazzes.add(clazz);
 	}
-	
+
 	public GameLoader(Class<?>[] clazzes) {
 		this(new LinkedList<Class<?>>());
 		for (Class<?> clazz : clazzes) {
 			this.clazzes.add(clazz);
 		}
 	}
-	
+
 	public Object loadGame(XStream xstream, String filename) {
 		try {
 			return loadGame(xstream, new File(filename));
@@ -51,11 +51,11 @@ public class GameLoader implements IHistoryListener
 			return null;
 		}
 	}
-	
+
 	public Object loadGame(XStream xstream, File file) throws IOException {
 		return loadGame(xstream, new FileInputStream(file), file.getName().endsWith(".gz"));
 	}
-	
+
 	public Object loadGame(XStream xstream, FileInputStream stream, boolean gzip) throws IOException {
 		if (gzip) {
 			return loadGame(xstream, new GZIPInputStream(stream));
@@ -63,7 +63,7 @@ public class GameLoader implements IHistoryListener
 			return loadGame(xstream, stream);
 		}
 	}
-	
+
 	public Object loadGame(XStream xstream, InputStream file) throws IOException {
 		this.client = new GameLoaderClient(xstream, file);
 		this.client.addListener(this);
@@ -73,7 +73,7 @@ public class GameLoader implements IHistoryListener
 	}
 
 	@Override
-	public void onGameError(String roomId, ErrorResponse error) 
+	public void onGameError(String roomId, ErrorResponse error)
 	{
 	}
 
@@ -93,7 +93,7 @@ public class GameLoader implements IHistoryListener
 					logger.debug("Received game info of type {}", clazz.getName());
 					this.obj = clazz.cast(o);
 					this.finished = true;
-					this.client.close();
+					this.client.stop();
 				}
 			}
 		}

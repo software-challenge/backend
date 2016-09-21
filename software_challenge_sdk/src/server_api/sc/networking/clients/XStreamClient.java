@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 
 import sc.networking.INetworkInterface;
+import sc.protocol.responses.CloseConnection;
 
 public abstract class XStreamClient
 {
@@ -20,7 +21,7 @@ public abstract class XStreamClient
 																.getLogger(XStreamClient.class);
 	private final INetworkInterface		networkInterface;
 	private final ObjectOutputStream	out;
-	ObjectInputStream					in;
+	private ObjectInputStream					in;
 	private final Thread				thread;
 	private DisconnectCause				disconnectCause	= DisconnectCause.NOT_DISCONNECTED;
 	protected final XStream				xStream;
@@ -30,13 +31,15 @@ public abstract class XStreamClient
 
 	public enum DisconnectCause
 	{
-		REGULAR, PROTOCOL_ERROR, LOST_CONNECTION, TIMEOUT, UNKNOWN,
-
+		// default state:
 		NOT_DISCONNECTED,
-		/**
-		 * Connection was closed from this side.
-		 */
-		DISCONNECTED
+		// disconnected because CloseConnection was received:
+		RECEIVED_DISCONNECT,
+		// disconnected from this side:
+		DISCONNECTED,
+		// error conditions:
+		PROTOCOL_ERROR, LOST_CONNECTION, TIMEOUT, UNKNOWN
+
 	}
 
 	public boolean isReady()
@@ -110,7 +113,7 @@ public abstract class XStreamClient
 
 			synchronized (this.readyLock)
 			{
-				if (!isReady())
+				while (!isReady())
 				{
 					this.readyLock.wait();
 				}
@@ -119,16 +122,23 @@ public abstract class XStreamClient
 			while (!Thread.interrupted())
 			{
 				Object o = XStreamClient.this.in.readObject();
-				logger.debug("Received {} via {}", o, this.networkInterface);
+				logger.debug("Client " + XStreamClient.this +": Received " + o + " via " + this.networkInterface);
 				logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-				onObject(o);
+				if (o instanceof CloseConnection) {
+					handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
+					break; // stop receiver thread
+				} else {
+					onObject(o);
+				}
 			}
-
-			handleDisconnect(DisconnectCause.DISCONNECTED);
 		}
 		catch (EOFException e)
 		{
-			handleDisconnect(DisconnectCause.REGULAR, e);
+			// The server closed the connection. This should not happen while
+			// the client is still reading. The server should send a
+			// CloseConnection message before, giving the client the chance to
+			// close the connection regularly.
+			handleDisconnect(DisconnectCause.LOST_CONNECTION, e);
 		}
 		catch (IOException e)
 		{
@@ -202,7 +212,7 @@ public abstract class XStreamClient
 			throw new IllegalStateException("Writing on a closed xStream.");
 		}
 
-		logger.debug("Sending {} via {}", o, this.networkInterface);
+		logger.debug("Client "+ this + ": Sending " + o + " via " + this.networkInterface);
 
 		try
 		{
@@ -230,19 +240,19 @@ public abstract class XStreamClient
 	{
 		if (exception != null)
 		{
-			logger.warn("Client disconnected (Cause: " + cause
+			logger.warn("Client "+ this + " disconnected (Cause: " + cause
 					+ ", Exception: " + exception + ")");
 		}
 		else
 		{
-			logger.info("Client disconnected (Cause: {})", cause);
+			logger.info("Client "+ this + " disconnected (Cause: {})", cause);
 		}
 
 		this.disconnectCause = cause;
 
 		try
 		{
-			this.close();
+			close();
 		}
 		catch (Exception e)
 		{
@@ -254,7 +264,6 @@ public abstract class XStreamClient
 
 	protected void onDisconnect(DisconnectCause cause)
 	{
-		// callback
 	}
 
 	public DisconnectCause getDisconnectCause()
@@ -262,22 +271,35 @@ public abstract class XStreamClient
 		return this.disconnectCause;
 	}
 
-	public synchronized void close()
+	public void stop() {
+		stopReceiver();
+		this.disconnectCause = DisconnectCause.DISCONNECTED;
+		// this side caused disconnect, notify other side
+		send(new CloseConnection());
+		close();
+	}
+
+	protected synchronized void stopReceiver() {
+		assert this.thread != Thread.currentThread();
+		// unlock waiting threads
+		synchronized (this.readyLock)
+		{
+		  this.readyLock.notifyAll();
+		}
+
+		if (this.thread != null)
+		{
+			this.thread.interrupt();
+		}
+	}
+
+	protected synchronized void close()
 	{
 		if (!isClosed())
 		{
 			this.closed = true;
 
-			// unlock waiting threads
-			synchronized (this.readyLock)
-			{
-				this.readyLock.notifyAll();
-			}
-
-			if (this.thread != null)
-			{
-				this.thread.interrupt();
-			}
+			stopReceiver();
 
 			try
 			{
@@ -311,6 +333,9 @@ public abstract class XStreamClient
 			{
 				logger.warn("Failed to close NetworkInterface", e);
 			}
+		} else
+		{
+			logger.warn("Reclosing an already closed stream");
 		}
 	}
 

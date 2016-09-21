@@ -24,4 +24,5 @@ public interface ILobbyClientListener
 
 	void onGamePaused(String roomId, IPlayer nextPlayer);
 
+	void onGameObserved(String roomId);
 }
