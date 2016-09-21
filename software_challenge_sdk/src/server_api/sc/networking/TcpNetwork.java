@@ -16,7 +16,7 @@ public class TcpNetwork implements INetworkInterface
 	/**
 	 * Constructs an implementation of <code>INetworkInterface</code> which
 	 * operates on Java's <code>Socket</code>.
-	 * 
+	 *
 	 * @param socket
 	 * @throws IOException
 	 */
@@ -28,10 +28,11 @@ public class TcpNetwork implements INetworkInterface
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.cau.sc.server.network.interfaces.INetworkInterface#getInputStream()
 	 */
+	@Override
 	public InputStream getInputStream() throws IOException
 	{
 		return this.socket.getInputStream();
@@ -39,10 +40,11 @@ public class TcpNetwork implements INetworkInterface
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.cau.sc.server.network.interfaces.INetworkInterface#getOutputStream()
 	 */
+	@Override
 	public OutputStream getOutputStream() throws IOException
 	{
 		return this.socket.getOutputStream();
@@ -50,12 +52,13 @@ public class TcpNetwork implements INetworkInterface
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see edu.cau.sc.server.network.interfaces.INetworkInterface#close()
 	 */
+	@Override
 	public void close() throws IOException
 	{
-		logger.debug("Closed TcpNetwork Interface.");
+		logger.debug("Closing TcpNetwork Interface.");
 		this.socket.close();
 	}
 }

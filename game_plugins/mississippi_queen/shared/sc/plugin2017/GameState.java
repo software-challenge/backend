@@ -365,7 +365,7 @@ public class GameState implements Cloneable {
         tile.setVisibility(true);
       }
     }
-    // wenn auf einen Sandbank abgedrängt wird, gibt es keine Extradrehung
+    // wenn auf einen Sandbank abgedrängt wird, gibt es keine zusaetzliche Drehung
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBANK)) {
       freeTurn = true;
       this.getOtherPlayer().setFreeTurns(2);

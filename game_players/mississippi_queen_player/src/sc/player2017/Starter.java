@@ -2,17 +2,17 @@ package sc.player2017;
 
 import java.io.IOException;
 
-import sc.plugin2017.AbstractClient;
-import sc.plugin2017.IGameHandler;
-import sc.shared.SharedConfiguration;
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
+import sc.plugin2017.AbstractClient;
+import sc.plugin2017.IGameHandler;
+import sc.shared.SharedConfiguration;
 
 /**
  * Hauptklasse des Clients, die ueber Konsolenargumente gesteuert werden kann.
  * Sie veranlasst eine Verbindung zum Spielserver und waehlt eine Strategie.
- * 
+ *
  */
 public class Starter extends AbstractClient {
 
@@ -101,4 +101,10 @@ public class Starter extends AbstractClient {
 						+ "java -jar mississippi_queen_player.jar --host 127.0.0.1 --port 10500 --reservation MQ --strategy RANDOM");
 		System.out.println();
 	}
+
+  @Override
+  public void onGameObserved(String roomId) {
+    // is called when a observation request is acknowledged by the server
+    // this is a newly added method, I am not sure if it fits into the architecture
+  }
 }

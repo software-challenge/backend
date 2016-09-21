@@ -50,4 +50,10 @@ public class GuiClient extends AbstractClient {
 		}
 	}
 
+  @Override
+  public void onGameObserved(String roomId) {
+    // is called when a observation request is acknowledged by the server
+    // this is a newly added method, I am not sure if it fits into the architecture
+  }
+
 }

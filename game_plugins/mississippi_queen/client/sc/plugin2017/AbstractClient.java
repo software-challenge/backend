@@ -7,11 +7,6 @@ import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
-import sc.plugin2017.GamePlugin;
-import sc.plugin2017.GameState;
-import sc.plugin2017.Move;
-import sc.plugin2017.PlayerColor;
-import sc.plugin2017.WelcomeMessage;
 import sc.plugin2017.util.Configuration;
 import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.ErrorResponse;
@@ -22,7 +17,7 @@ import sc.shared.SlotDescriptor;
 /**
  * Abstrakter Client nach Vorschrift des SDKs. Beinhaltet einen LobbyClient, der
  * den tatsächlichen Client darstellt.
- * 
+ *
  * @author sven, tkra
  */
 public abstract class AbstractClient implements ILobbyClientListener {
@@ -77,7 +72,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	/**
 	 * Tell this client to observe the game given by the preparation handler
-	 * 
+	 *
 	 * @param handle Handle
 	 * @return controllable game
 	 */
@@ -87,7 +82,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	/**
 	 * start observation with control over the game (pause etc)
-	 * 
+	 *
 	 * @param handle
 	 *            comes from prepareGame()
 	 * @return controllinstance to do pause, unpause etc
@@ -112,7 +107,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	/**
 	 * sends the <code>move</code> to the server
-	 * 
+	 *
 	 * @param move
 	 *            the move you want to do
 	 */
@@ -204,7 +199,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	@Override
 	public void onGameOver(String roomId, GameResult data) {
-		client.close();
+		client.stop();
 
 		if (handler != null) {
 			handler.gameEnded(data, myColor, this.error);
