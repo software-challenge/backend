@@ -35,7 +35,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private static Logger logger = LoggerFactory.getLogger(Game.class);
 
 	@XStreamOmitField
-	private List<PlayerColor> availableColors = new LinkedList<PlayerColor>();
+	private List<PlayerColor> availableColors = new LinkedList<>();
+
+	@XStreamOmitField
+	private int halfturns = 0;
 
 	private GameState gameState = new GameState();
 
@@ -66,76 +69,39 @@ public class Game extends RoundBasedGameInstance<Player> {
 			throws GameLogicException {
 
 		Player author = (Player) fromPlayer;
-		Player expectedPlayer = gameState.getCurrentPlayer();
 
+		/**
+		 *  NOTE: Checking if right player sent move was already done by
+		 *  {@link sc.framework.plugins.RoundBasedGameInstance#onAction(IPlayer, Object)}.
+		 *  There is no need to do it here again.
+		 */
 		try {
-			if (author.getPlayerColor() != expectedPlayer.getPlayerColor()) {
-				throw new InvalidMoveException(author.getDisplayName()
-						+ " war nicht am Zug");
-			}
-
 			if (!(data instanceof Move)) {
 				throw new InvalidMoveException(author.getDisplayName()
-						+ " hat kein Zug-Objekt gesendet");
+						+ " hat kein Zug-Objekt gesendet.");
 			}
 
       final Move move = (Move) data;
-      move.perform(gameState, expectedPlayer);
-
+      move.perform(gameState, author);
       gameState.prepareNextTurn(move);
-      int[][] stats = gameState.getGameStats();
-      if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
-
-
-
-        PlayerColor winner = null;
-        logger.debug(stats[0][0] + ", " + stats[0][1]);
-        logger.debug(stats[1][0] + ", " + stats[1][1]);
-        String winningReason = "";
-        if (stats[0][0] > stats[1][0]) {
-          winner = PlayerColor.RED;
-          if (expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
-            winningReason = "Ein Spieler ist im Ziel";
-          } else {
-            winningReason = "Sieg durch mehr Passagiere und Strecke";
-          }
-        } else if (stats[0][0] < stats[1][0]) {
-          winner = PlayerColor.BLUE;
-          if (expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
-            winningReason = "Ein Spieler ist im Ziel";
-          } else {
-            winningReason = "Sieg durch mehr Passagiere und Strecke";
-          }
-        }
-        gameState.endGame(winner, "Das Rundenlimit wurde erreicht.\n"
-            + winningReason);
-      } else if(expectedPlayer.getField(gameState.getBoard()).getType() == FieldType.GOAL && expectedPlayer.getPassenger() >= 2) {
-        PlayerColor winner = null;
-        if (expectedPlayer.getPlayerColor() == PlayerColor.RED) {
-          winner = PlayerColor.RED;
-        } else if (expectedPlayer.getPlayerColor() == PlayerColor.BLUE) {
-          winner = PlayerColor.BLUE;
-        }
-        gameState.endGame(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
-      } else if(expectedPlayer != gameState.getStartPlayer() &&
-          Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
-        PlayerColor winner = null;
-        if(gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
-          winner = PlayerColor.RED;
-        } else {
-          winner = PlayerColor.BLUE;
-        }
-        gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
-      }
+      halfturns++;
 			next(gameState.getCurrentPlayer());
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);
 			String err = "Ungueltiger Zug von '" + author.getDisplayName()
 					+ "'.\n" + e.getMessage();
-			gameState.endGame(author.getPlayerColor().opponent(), err);
 			logger.error(err, e);
 			throw new GameLogicException(err);
 		}
+	}
+
+	/**
+	 * In this game, a new turn begins when both players made one move. The order
+	 * in which the players make their move may change.
+	 */
+	@Override
+	protected boolean increaseTurnIfNecessary(Player nextPlayer) {
+	  return getGameState().getTurn() % 2 == 0;
 	}
 
   @Override
@@ -224,9 +190,55 @@ public class Game extends RoundBasedGameInstance<Player> {
 		return new ActionTimeout(true, 10000l, 2000l);
 	}
 
+	/**
+	 * checks if one player reached the goal with enough passengers
+	 * @return the player who reached the goal or null if no player reached the goal
+	 */
+	private Player checkGoalReached() {
+	  Player reached = null;
+	  for (final Player player : players) {
+      if (player.getField(gameState.getBoard()).getType() == FieldType.GOAL && player.getPassenger() >= 2) {
+        reached = player;
+      }
+	  }
+	  return reached;
+	}
+
 	@Override
 	protected boolean checkGameOverCondition() {
-		return gameState.gameEnded();
+	  if (gameState.gameEnded()) {
+	    // game was ended by invalid move
+	    return true;
+	  }
+    int[][] stats = gameState.getGameStats();
+    if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+      // round limit reached
+      PlayerColor winner = null;
+      if (stats[0][0] > stats[1][0]) {
+        winner = PlayerColor.RED;
+      } else if (stats[0][0] < stats[1][0]) {
+        winner = PlayerColor.BLUE;
+      }
+      gameState.endGame(winner, "Das Rundenlimit wurde erreicht.");
+      return true;
+    } else if (checkGoalReached() != null) {
+      // one player reached the goal
+      PlayerColor winner = checkGoalReached().getPlayerColor();
+      gameState.endGame(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
+      return true;
+    } else if (getActivePlayer() != gameState.getStartPlayer() &&
+        Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
+      // a player is more than three tiles before the other player
+      PlayerColor winner;
+      if(gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
+        winner = PlayerColor.RED;
+      } else {
+        winner = PlayerColor.BLUE;
+      }
+      gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
+      return true;
+    }
+    return false;
 	}
 
 	@Override

@@ -2,6 +2,9 @@ package sc.plugin2017;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.IPlayer;
 import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.IControllableGame;
@@ -21,6 +24,8 @@ import sc.shared.SlotDescriptor;
  * @author sven, tkra
  */
 public abstract class AbstractClient implements ILobbyClientListener {
+  private static final Logger logger = LoggerFactory
+      .getLogger(AbstractClient.class);
 	// The handler reacts to messages from the server received by the lobby
 	// client
 	protected IGameHandler handler;
@@ -120,7 +125,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 */
 	@Override
 	public void onError(String roomId, ErrorResponse response) {
-		System.err.println(response.getMessage());
+	  logger.debug("onError: Client {} received error {}", this, response.getMessage());
 		this.error = response.getMessage();
 	}
 
@@ -199,8 +204,6 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	@Override
 	public void onGameOver(String roomId, GameResult data) {
-		client.stop();
-
 		if (handler != null) {
 			handler.gameEnded(data, myColor, this.error);
 		}

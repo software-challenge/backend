@@ -8,18 +8,18 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.networking.FileSystemInterface;
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
  * A client that emulates a network connection but instead uses a file to read
  * it's replay from.
- * 
+ *
  * @author Marcel
- * 
+ *
  */
 public final class ReplayClient extends XStreamClient implements IPollsHistory
 {
@@ -45,7 +45,6 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 			}
 			else if (o instanceof ErrorResponse)
 			{
-				//logger.debug("Game Error: " + ((ErrorResponse)o).getMessage());
 				listener.onGameError(null, (ErrorResponse)o);
 			}
 			else

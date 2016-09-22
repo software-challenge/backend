@@ -2,7 +2,7 @@ package sc.plugin2017;
 
 /**
  * Beinhaltet Informationen zum Spielende: Farbe des Gewinners und Gewinngrund.
- * 
+ *
  */
 class Condition implements Cloneable {
 
@@ -26,8 +26,8 @@ class Condition implements Cloneable {
 	}
 
 	/**
-	 * Erzeugt eine neue Condition mit Sieger und Geiwnngrund
-	 * 
+	 * Erzeugt eine neue Condition mit Sieger und Gewinngrund
+	 *
 	 * @param winner
 	 *            Farbe des Siegers
 	 * @param reason
@@ -40,7 +40,7 @@ class Condition implements Cloneable {
 
 	/**
 	 * klont dieses Objekt
-	 * 
+	 *
 	 * @return ein neues Objekt mit gleichen Eigenschaften
 	 * @throws CloneNotSupportedException falls Objekt nicht geklont werden kann
 	 */

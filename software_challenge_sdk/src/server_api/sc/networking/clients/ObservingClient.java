@@ -9,10 +9,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.XStream;
+
 import sc.protocol.responses.ErrorResponse;
 import sc.shared.GameResult;
-
-import com.thoughtworks.xstream.XStream;
 
 public class ObservingClient implements IControllableGame, IHistoryListener
 {
@@ -56,6 +56,8 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	private GameResult					result		= null;
 
+	private ErrorResponse error = null;
+
 	enum PlayMode
 	{
 		PLAYING, PAUSED
@@ -66,6 +68,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		boolean firstObservation = this.history.isEmpty();
 
 		this.history.add(observation);
+		logger.debug("saved observation {}", observation);
 
 		if (canAutoStep() || firstObservation)
 		{
@@ -100,7 +103,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 			listener.onUpdate(this);
 		}
 	}
-	
+
 	protected void notifyOnError(String errorMessage)
 	{
 		for (IUpdateListener listener : this.listeners)
@@ -178,26 +181,28 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		notifyOnUpdate();
 	}
 
+	@Override
 	public Object getCurrentState()
 	{
 		if (this.history.size() == 0)
 		{
 			return null;
 		}
-		
+
 		int pos = this.position;
 		while (this.history.get(pos) instanceof ErrorResponse) {
 			pos--;
 		}
 		return this.history.get(pos);
 	}
-	
+
+	@Override
 	public Object getCurrentError() {
 		if (this.history.size() == 0)
 		{
 			return null;
 		}
-		
+
 		Object state = this.history.get(this.position);
 		return (state instanceof ErrorResponse ? state : null);
 	}
@@ -237,6 +242,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		return this.mode == PlayMode.PAUSED;
 	}
 
+	@Override
 	public boolean isGameOver()
 	{
 		return this.replay || this.gameOver;
@@ -251,15 +257,15 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	public void onGameOver(String roomId, GameResult result)
 	{
 		logger.info("Saving GameResult");
-		
+
 		if (this.result != null)
 		{
 			logger.warn("Received two GameResults");
 		}
-		
+
 		this.gameOver = true;
 		this.result = result;
-		
+
 		notifyOnUpdate();
 	}
 
@@ -287,6 +293,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		return false;
 	}
 
+	@Override
 	public GameResult getResult()
 	{
 		return this.result;
@@ -301,10 +308,11 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void onGameError(String roomId, ErrorResponse error)
 	{
-		LoggerFactory.getLogger(this.getClass()).info("Client error detected");
+		logger.debug("got error {}", error.getMessage());
 		if (isAffected(roomId))
 		{
 			addObservation(error);
+			notifyOnError(error.getMessage());
 		}
 	}
 }

@@ -3,8 +3,12 @@ package sc.plugin2017;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2017.util.Constants;
 import sc.plugin2017.util.InvalidMoveException;
@@ -43,6 +47,9 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias(value = "state")
 public class GameState implements Cloneable {
 
+  @XStreamOmitField
+  private static final Logger logger = LoggerFactory
+      .getLogger(GameState.class);
   /**
    * momentane Rundenzahl
    */
@@ -611,8 +618,9 @@ public class GameState implements Cloneable {
    */
   public void endGame(PlayerColor winner, String reason) {
     if (condition == null) {
-      condition = new Condition(winner, reason);
+      logger.warn("overwriting condition {} with {}", condition, reason);
     }
+    condition = new Condition(winner, reason);
   }
 
   /**
