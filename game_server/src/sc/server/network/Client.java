@@ -14,12 +14,15 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
+import sc.networking.clients.LobbyClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
 import sc.server.Configuration;
 
 /**
- * A generic client.
+ * A generic client. This represents a client in the server. Clients which
+ * connect to the server (as separate programs or running as threads started by
+ * the server) are represented by {@link LobbyClient}.
  */
 public class Client extends XStreamClient implements IClient
 {
@@ -92,11 +95,15 @@ public class Client extends XStreamClient implements IClient
 			{
 				Object resp = new ErrorResponse(packet, error.getMessage());
 				notifyOnError(resp);
-				super.close();
 				logger.warn(
 						"Game closed because of GameLogicException! The message is: "
 								+ error.getMessage());
 			}
+		}
+		if (!errors.isEmpty()) {
+			continue here: why does this not cause the game to end?
+			// by leaving the game, the server should end the game (see onPlayerLeft)
+			this.stop();
 		}
 	}
 

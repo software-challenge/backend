@@ -267,7 +267,9 @@ public class RenderFacade {
 	}
 
 	public void gameError(String errorMessage) {
-
+	  // gamestate should be set to an game end state
+	  // TODO better make this explicit
+	  logger.debug("gameError called: {}", errorMessage);
 	}
 
 	/**
@@ -278,9 +280,9 @@ public class RenderFacade {
 	 */
 	public void gameEnded(GameResult data, EPlayerId target, PlayerColor color, String errorMessage) {
 
+	  logger.debug("gameEnded called: {}", errorMessage);
 		stopReceiverThread();
 
-		System.out.println();
 		if (disabled) {
 			return;
 		}
@@ -308,6 +310,7 @@ public class RenderFacade {
 					break;
 				}
 
+				// FIXME: this only affects the view, should be handled over regular callbacks
 				lastGameState.endGame(color.opponent(), err);
 				updateGameState(lastGameState, true);
 			}
