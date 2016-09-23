@@ -90,6 +90,7 @@ public class GameState implements Cloneable {
   /**
    * Der Index des Segmentes am weitesten vom Start entfernt welches bisher aufgedeckt wurde. Wird nur intern verwendet.
    */
+  @XStreamOmitField
   private int latestTileIndex = 0;
 
   /**

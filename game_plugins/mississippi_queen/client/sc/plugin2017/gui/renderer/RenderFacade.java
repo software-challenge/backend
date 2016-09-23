@@ -321,8 +321,10 @@ public class RenderFacade {
 			  assert data.getWinners().size() == 1;
 			  winner = ((Player)data.getWinners().get(0)).getPlayerColor();
 			}
+			logger.debug("gameEnded with result data. winner {}", winner);
 			frameRenderer.endGame(new WinCondition(winner, err));
 		} else if (errorMessage != null) {
+			logger.debug("gameEnded no result. winner, message is {}", errorMessage);
 			frameRenderer.endGame(new WinCondition(null, errorMessage));
 		}
 
