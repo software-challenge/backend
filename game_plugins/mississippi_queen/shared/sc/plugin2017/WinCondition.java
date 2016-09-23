@@ -4,7 +4,7 @@ package sc.plugin2017;
  * Beinhaltet Informationen zum Spielende: Farbe des Gewinners und Gewinngrund.
  *
  */
-class Condition implements Cloneable {
+public class WinCondition implements Cloneable {
 
 	/**
 	 * Farbe des Gewinners
@@ -17,15 +17,6 @@ class Condition implements Cloneable {
 	public final String reason;
 
 	/**
-	 * XStream benötigt eventuell einen parameterlosen Konstruktor bei der
-	 * Deserialisierung von Objekten aus XML-Nachrichten.
-	 */
-	public Condition() {
-		winner = null;
-		reason = null;
-	}
-
-	/**
 	 * Erzeugt eine neue Condition mit Sieger und Gewinngrund
 	 *
 	 * @param winner
@@ -33,7 +24,7 @@ class Condition implements Cloneable {
 	 * @param reason
 	 *            Text, der Sieg beschreibt
 	 */
-	public Condition(PlayerColor winner, String reason) {
+	public WinCondition(PlayerColor winner, String reason) {
 		this.winner = winner;
 		this.reason = reason;
 	}
@@ -46,7 +37,7 @@ class Condition implements Cloneable {
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		return new Condition(winner, reason);
+		return new WinCondition(winner, reason);
 	}
 
 }

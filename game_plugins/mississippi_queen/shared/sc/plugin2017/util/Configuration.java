@@ -21,6 +21,7 @@ import sc.plugin2017.Push;
 import sc.plugin2017.Tile;
 import sc.plugin2017.Turn;
 import sc.plugin2017.WelcomeMessage;
+import sc.plugin2017.WinCondition;
 import sc.protocol.LobbyProtocol;
 
 /**
@@ -55,7 +56,7 @@ public class Configuration {
 				Player.class, WelcomeMessage.class, PlayerColor.class,
 				Condition.class, Board.class, Field.class, FieldType.class,
 				Action.class, Turn.class, Advance.class, Push.class, Acceleration.class,
-				Tile.class
+				Tile.class, WinCondition.class
 				});
 	}
 }

@@ -101,9 +101,11 @@ public class Client extends XStreamClient implements IClient
 			}
 		}
 		if (!errors.isEmpty()) {
-			continue here: why does this not cause the game to end?
-			// by leaving the game, the server should end the game (see onPlayerLeft)
-			this.stop();
+			logger.error("an error occured, stopping client {}", this);
+			// By leaving the game, the server should end the game (see
+			// onPlayerLeft). This has the disadvantage that the client who made
+			// the error won't get the game result.
+			this.handleDisconnect(DisconnectCause.DISCONNECTED);
 		}
 	}
 

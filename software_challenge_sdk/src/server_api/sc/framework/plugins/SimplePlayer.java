@@ -6,11 +6,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.protocol.MoveRequest;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class SimplePlayer implements IPlayer
 {
@@ -31,6 +32,20 @@ public abstract class SimplePlayer implements IPlayer
 	
 	@XStreamOmitField
 	protected boolean					violated = false;
+	
+	@XStreamOmitField
+	protected String					violationReason = null;
+	
+
+	public String getViolationReason()
+	{
+		return violationReason;
+	}
+
+	public void setViolationReason(String violationReason)
+	{
+		this.violationReason = violationReason;
+	}
 
 	@Override
 	public void addPlayerListener(IPlayerListener listener)

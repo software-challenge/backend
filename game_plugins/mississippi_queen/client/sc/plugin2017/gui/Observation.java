@@ -236,6 +236,7 @@ public class Observation implements IObservation, IUpdateListener,
 	 *
 	 */
 	private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
+	  logger.info("Observation notified about game end");
 		if (!notifiedOnGameEnded) {
 			notifiedOnGameEnded = true;
 

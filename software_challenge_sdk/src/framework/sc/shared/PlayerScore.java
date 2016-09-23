@@ -1,12 +1,16 @@
 package sc.shared;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import sc.helpers.CollectionHelper;
 import sc.helpers.Function;
-
-import com.thoughtworks.xstream.annotations.*;
 
 @XStreamAlias(value = "score")
 public final class PlayerScore
@@ -17,6 +21,9 @@ public final class PlayerScore
 	@XStreamAsAttribute
 	private ScoreCause				cause;
 
+	@XStreamAsAttribute
+	private String				reason;
+
 	/**
 	 * might be needed by XStream
 	 */
@@ -25,19 +32,19 @@ public final class PlayerScore
 		parts = null;
 	}
 
-	public PlayerScore(boolean winner)
+	public PlayerScore(boolean winner, String reason)
 	{
-		this(ScoreCause.REGULAR, 1);
+		this(ScoreCause.REGULAR, reason, 1);
 	}
 
-	public PlayerScore(ScoreCause cause, Integer... scores)
+	public PlayerScore(ScoreCause cause, String reason, Integer... scores)
 	{
-		this(cause, CollectionHelper.iterableToColleciton(
+		this(cause, reason, CollectionHelper.iterableToColleciton(
 				CollectionHelper.intArrayToBigDecimalArray(scores)).toArray(
 				new BigDecimal[scores.length]));
 	}
 
-	public PlayerScore(ScoreCause cause, BigDecimal... parts)
+	public PlayerScore(ScoreCause cause, String reason, BigDecimal... parts)
 	{
 		if (parts == null)
 		{
@@ -46,16 +53,22 @@ public final class PlayerScore
 
 		this.parts = Arrays.asList(parts);
 		this.cause = cause;
+		this.reason = reason;
 	}
 
 	public int size()
 	{
-		return parts.size();
+		return this.parts.size();
 	}
 
 	public ScoreCause getCause()
 	{
-		return cause;
+		return this.cause;
+	}
+	
+	public String getReason()
+	{
+		return this.reason;
 	}
 
 	public String[] toStrings()
@@ -73,6 +86,10 @@ public final class PlayerScore
 	public void setCause(ScoreCause cause)
 	{
 		this.cause = cause;
+	}
+	
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	public List<BigDecimal> getValues()
