@@ -99,11 +99,6 @@ public class GameState implements Cloneable {
   private boolean freeTurn;
 
   /**
-   * Endbedingung
-   */
-  private Condition condition = null;
-
-  /**
    * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
    * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
    * gueltig sind.
@@ -139,8 +134,6 @@ public class GameState implements Cloneable {
       clone.lastMove = (Move) this.lastMove.clone();
     if (board != null)
       clone.board = this.board.clone();
-    if (condition != null)
-      clone.condition = (Condition) condition.clone();
     if (currentPlayer != null)
       clone.currentPlayer = currentPlayer;
     clone.freeTurn = freeTurn;
@@ -606,50 +599,6 @@ public class GameState implements Cloneable {
   public String[] getPlayerNames() {
     return new String[] { red.getDisplayName(), blue.getDisplayName() };
 
-  }
-
-  /**
-   * Legt das Spiel als beendet fest, setzt dabei einen Sieger und Gewinngrund
-   *
-   * @param winner
-   *          Farbe des Siegers
-   * @param reason
-   *          Gewinngrund
-   */
-  public void endGame(PlayerColor winner, String reason) {
-    if (condition == null) {
-      logger.warn("overwriting condition {} with {}", condition, reason);
-    }
-    condition = new Condition(winner, reason);
-  }
-
-  /**
-   * gibt an, ob das Spiel beendet ist
-   *
-   * @return wahr, wenn beendet
-   */
-  public boolean gameEnded() {
-    return condition != null;
-  }
-
-  /**
-   * liefert die Farbe des Siegers, falls das Spiel beendet ist.
-   *
-   * @see #gameEnded()
-   * @return Siegerfarbe
-   */
-  public PlayerColor winner() {
-    return condition == null ? null : condition.winner;
-  }
-
-  /**
-   * liefert den Gewinngrund, falls das Spiel beendet ist.
-   *
-   * @see #gameEnded()
-   * @return Gewinngrund
-   */
-  public String winningReason() {
-    return condition == null ? "" : condition.reason;
   }
 
   /**

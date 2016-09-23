@@ -26,6 +26,7 @@ import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.Turn;
+import sc.plugin2017.WinCondition;
 import sc.plugin2017.gui.renderer.primitives.Background;
 import sc.plugin2017.gui.renderer.primitives.BoardFrame;
 import sc.plugin2017.gui.renderer.primitives.GameEndedDialog;
@@ -69,6 +70,8 @@ public class FrameRenderer extends PApplet {
   private boolean initialized = false;
 
   private LinkedHashMap<HexField, Action> stepPossible;
+  private boolean active = false;
+  private WinCondition winCondition;
 
   public FrameRenderer() {
     super();
@@ -132,9 +135,23 @@ public class FrameRenderer extends PApplet {
     progressBar.draw();
     sideBar.draw();
     boardFrame.draw();
-    if (currentGameState != null && currentGameState.gameEnded()) {
-      GameEndedDialog.draw(this, currentGameState);
+    if (!gameActive()) {
+      drawEndGameScreen(winCondition);
     }
+  }
+  
+  public void endGame(WinCondition condition) {
+    winCondition = condition;
+  }
+  
+  private void drawEndGameScreen(WinCondition condition) {
+    String winnerName = null;
+    if (condition.winner == PlayerColor.RED) {
+      winnerName = currentGameState.getRedPlayer().getDisplayName();
+    } else if (condition.winner == PlayerColor.BLUE) {
+      winnerName = currentGameState.getBluePlayer().getDisplayName();
+    }
+    GameEndedDialog.draw(this, condition, winnerName);
   }
 
   public void updateGameState(GameState gameState) {
@@ -428,11 +445,7 @@ public class FrameRenderer extends PApplet {
   }
 
   public boolean gameActive() {
-    if (currentGameState != null) {
-      return !currentGameState.gameEnded();
-    } else {
-      return false;
-    }
+    return winCondition == null;
   }
 
   public List<DebugHint> getCurrentHints() {

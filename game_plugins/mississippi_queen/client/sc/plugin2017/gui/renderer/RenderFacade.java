@@ -15,7 +15,9 @@ import sc.plugin2017.IGameHandler;
 import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
+import sc.plugin2017.WinCondition;
 import sc.shared.GameResult;
+import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
 /**
@@ -287,11 +289,13 @@ public class RenderFacade {
 			return;
 		}
 		if (data != null) {
-			ScoreCause cause = data.getScores().get(color == PlayerColor.RED ? 0 : 1).getCause();
+		  PlayerScore score = data.getScores().get(color == PlayerColor.RED ? 0 : 1);
+			ScoreCause cause = score.getCause();
+			String err = score.getReason();
 
 			if (errorMessage == null && cause != ScoreCause.REGULAR) {
 
-				String err = "'" + lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0 : 1]
+				err = "'" + lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0 : 1]
 						+ "' hat keinen Zug gesendet.\n";
 
 				switch (cause) {
@@ -310,15 +314,16 @@ public class RenderFacade {
 					break;
 				}
 
-				// FIXME: this only affects the view, should be handled over regular callbacks
-				lastGameState.endGame(color.opponent(), err);
-				updateGameState(lastGameState, true);
 			}
-		}
 
-		if (errorMessage != null) {
-			lastGameState.endGame(color.opponent(), errorMessage);
-			updateGameState(lastGameState, true);
+			PlayerColor winner = null;
+			if (!data.getWinners().isEmpty()) {
+			  assert data.getWinners().size() == 1;
+			  winner = ((Player)data.getWinners().get(0)).getPlayerColor();
+			}
+			frameRenderer.endGame(new WinCondition(winner, err));
+		} else if (errorMessage != null) {
+			frameRenderer.endGame(new WinCondition(null, errorMessage));
 		}
 
 	}

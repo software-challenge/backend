@@ -123,7 +123,7 @@ public abstract class XStreamClient
 			{
 				Object o = XStreamClient.this.in.readObject();
 				logger.debug("Client " + XStreamClient.this +": Received " + o + " via " + this.networkInterface);
-				logger.debug("DataDump:\n{}", this.xStream.toXML(o));
+				//logger.debug("DataDump:\n{}", this.xStream.toXML(o));
 				if (o instanceof CloseConnection) {
 					handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
 					break; // stop receiver thread
@@ -216,7 +216,7 @@ public abstract class XStreamClient
 
 		try
 		{
-			logger.debug("DataDump:\n{}", this.xStream.toXML(o));
+			//logger.debug("DataDump:\n{}", this.xStream.toXML(o));
 			this.out.writeObject(o);
 			this.out.flush();
 		}

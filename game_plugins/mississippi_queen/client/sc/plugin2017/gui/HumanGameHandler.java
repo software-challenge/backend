@@ -52,10 +52,14 @@ public class HumanGameHandler implements IGameHandler {
 	@Override
 	public void gameEnded(GameResult data, PlayerColor color,
 			String errorMessage) {
+    // human players can't end the game, it is ended by the observer who received a result
+	  // human players also receive the end result, but when the observer and both human players call the render facade, it would get the game end event three times.
+	  /*
 		RenderFacade.getInstance().gameEnded(
 				data,
 				client.getID(),
 				(color == PlayerColor.RED ? PlayerColor.BLUE
 						: PlayerColor.RED), errorMessage);
+		*/
 	}
 }

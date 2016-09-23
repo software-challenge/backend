@@ -1,13 +1,13 @@
 package sc.plugin2017.gui.renderer.primitives;
 
-import sc.plugin2017.GameState;
 import sc.plugin2017.PlayerColor;
+import sc.plugin2017.WinCondition;
 import sc.plugin2017.gui.renderer.FrameRenderer;
 
 public class GameEndedDialog {
 
   // TODO don't give draw access to while gamestate, only pass what is needed and put it into an update function
-  public static void draw(FrameRenderer parent, GameState currentGameState) {
+  public static void draw(FrameRenderer parent, WinCondition condition, String winningPlayerName) {
     parent.pushStyle();
     parent.pushMatrix();
     parent.textSize(32);
@@ -15,16 +15,14 @@ public class GameEndedDialog {
     parent.fill(GuiConstants.colorGreyOut);
     parent.rect(0, 0, parent.getWidth(), parent.getHeight());
     // message für winningreason
-    String winningReason = currentGameState.winningReason();
+    String winningReason = "";
+    if (condition.reason != null) {
+      winningReason = condition.reason;
+    }
     // message für endefenster
     String msg = "Das Spiel ist zu Ende!";
     String message = "Das Spiel ging unendschieden aus!";
-    PlayerColor winner =currentGameState.winner();
-    if (winner == PlayerColor.RED) {
-      message = currentGameState.getPlayerNames()[0] + " hat gewonnen!";
-    } else if (winner == PlayerColor.BLUE) {
-      message = currentGameState.getPlayerNames()[1] + " hat gewonnen!";
-    }
+    message = winningPlayerName + " hat gewonnen!";
     // Box Groß
     float x = Math.max(parent.textWidth(winningReason), parent.textWidth(message)) + 10;
     float y;
@@ -56,9 +54,9 @@ public class GameEndedDialog {
 
     parent.pushMatrix();
     parent.pushStyle();
-    if (currentGameState.winner() == PlayerColor.RED) {
+    if (condition.winner == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
-    } else if (currentGameState.winner() == PlayerColor.BLUE) {
+    } else if (condition.winner == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
     }
     parent.translate((x - parent.textWidth(message)) / 2, 3 * parent.textAscent() + parent.textDescent()); // mittig

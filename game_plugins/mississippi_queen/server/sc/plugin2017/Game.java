@@ -141,11 +141,14 @@ public class Game extends RoundBasedGameInstance<Player> {
 			}
 		}
 
+		/*
+		 * FIXME: i think we can remove this
 		if (!gameState.gameEnded()) {
 			gameState.endGame(((Player) player).getPlayerColor().opponent(),
 					"Der Spieler '" + player.getDisplayName()
 							+ "' hat das Spiel verlassen.");
 		}
+		*/
 		notifyOnGameOver(res);
 	}
 
@@ -175,12 +178,17 @@ public class Game extends RoundBasedGameInstance<Player> {
 		int matchPoints = 1;
 		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor()
 				.opponent());
+		WinCondition winCondition = checkWinCondition();
+		String winningReason = null;
+		if (winCondition != null) {
+		  winningReason = winCondition.reason;
+		}
 		if (stats[0] > oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] > oppPoints[1]))
 			matchPoints = 2;
 		else if (stats[0] < oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] < oppPoints[1]))
 			matchPoints = 0;
-		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, 0,
-				stats[0]) : new PlayerScore(ScoreCause.REGULAR,
+		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
+				stats[0]) : new PlayerScore(ScoreCause.REGULAR, winningReason,
 				matchPoints, stats[0]);
 
 	}
@@ -203,12 +211,15 @@ public class Game extends RoundBasedGameInstance<Player> {
 	  }
 	  return reached;
 	}
-
-	@Override
-	protected boolean checkGameOverCondition() {
-	  if (gameState.gameEnded()) {
-	    // game was ended by invalid move
-	    return true;
+	
+	/**
+	 * Checks if a win condition in the current game state is met.
+	 * @return WinCondition with winner and reason or null, if no win condition is yet met.
+	 */
+	public WinCondition checkWinCondition() {
+	  if (gameState.getTurn() > 1) {
+	    // XXX only for test
+      return new WinCondition(PlayerColor.RED, "Das Rundenlimit von 2 wurde erreicht.");
 	  }
     int[][] stats = gameState.getGameStats();
     if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
@@ -219,13 +230,11 @@ public class Game extends RoundBasedGameInstance<Player> {
       } else if (stats[0][0] < stats[1][0]) {
         winner = PlayerColor.BLUE;
       }
-      gameState.endGame(winner, "Das Rundenlimit wurde erreicht.");
-      return true;
+      return new WinCondition(winner, "Das Rundenlimit wurde erreicht.");
     } else if (checkGoalReached() != null) {
       // one player reached the goal
       PlayerColor winner = checkGoalReached().getPlayerColor();
-      gameState.endGame(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
-      return true;
+      return new WinCondition(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
     } else if (getActivePlayer() != gameState.getStartPlayer() &&
         Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
       // a player is more than three tiles before the other player
@@ -235,10 +244,14 @@ public class Game extends RoundBasedGameInstance<Player> {
       } else {
         winner = PlayerColor.BLUE;
       }
-      gameState.endGame(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
-      return true;
+      return new WinCondition(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
     }
-    return false;
+    return null;
+	}
+
+	@Override
+	protected boolean checkGameOverCondition() {
+	  return checkWinCondition() != null;
 	}
 
 	@Override
@@ -259,20 +272,19 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public List<IPlayer> getWinners() {
-		if (gameState.gameEnded()) {
+	  WinCondition win = checkWinCondition();
+	  if (win != null) {
 			List<IPlayer> winners = new LinkedList<IPlayer>();
-			if (gameState.winner() != null) {
-				for (Player player : players) {
-					if (player.getPlayerColor() == gameState.winner()) {
-						winners.add(player);
-						break;
-					}
-				}
-			}
-			return winners;
-		} else {
-			return null;
-		}
+      for (Player player : players) {
+        if (player.getPlayerColor() == win.winner) {
+          winners.add(player);
+          break;
+        }
+      }
+      return winners;
+	  } else {
+	    return null;
+	  }
 	}
 
 }
