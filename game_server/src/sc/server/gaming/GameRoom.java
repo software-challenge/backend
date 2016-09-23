@@ -25,9 +25,6 @@ import sc.protocol.responses.RoomPacket;
 import sc.server.network.Client;
 import sc.server.network.DummyClient;
 import sc.server.network.IClient;
-import sc.server.network.IClientListener;
-import sc.server.network.IClientRole;
-import sc.server.network.PacketCallback;
 import sc.server.plugins.GamePluginInstance;
 import sc.shared.GameResult;
 import sc.shared.PlayerScore;
@@ -472,6 +469,7 @@ public class GameRoom implements IGameListener
 		});*/
 		ObserverRole role = new ObserverRole(source, this);
 		source.addRole(role);
+		source.enableXMLLogging(); // XXX debugging
 		this.observers.add(role);
 		source.send(new ObservationResponse(getId()));
 	}

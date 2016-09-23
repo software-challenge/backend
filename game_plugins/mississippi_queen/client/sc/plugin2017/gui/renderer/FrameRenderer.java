@@ -155,6 +155,8 @@ public class FrameRenderer extends PApplet {
   }
 
   public void updateGameState(GameState gameState) {
+    // FIXME: winCondition determines if the game end screen is drawn, when going back in the replay/game, it has to be cleared
+    winCondition = null;
     int lastTurn = -1;
     if (currentGameState != null) {
       lastTurn = currentGameState.getTurn();

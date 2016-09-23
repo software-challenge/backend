@@ -90,6 +90,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			author.setViolated(true);
 			String err = "Ungueltiger Zug von '" + author.getDisplayName()
 					+ "'.\n" + e.getMessage();
+			author.setViolationReason(e.getMessage());
 			logger.error(err, e);
 			throw new GameLogicException(err);
 		}
@@ -273,8 +274,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	public List<IPlayer> getWinners() {
 	  WinCondition win = checkWinCondition();
-	  if (win != null) {
 			List<IPlayer> winners = new LinkedList<IPlayer>();
+	  if (win != null) {
       for (Player player : players) {
         if (player.getPlayerColor() == win.winner) {
           winners.add(player);
@@ -283,8 +284,14 @@ public class Game extends RoundBasedGameInstance<Player> {
       }
       return winners;
 	  } else {
-	    return null;
+	    // no win condition met, consider all player without rule voilations as winner
+      for (Player player : players) {
+        if (!player.hasViolated()) {
+          winners.add(player);
+        }
+      }
 	  }
+		return winners;
 	}
 
 }
