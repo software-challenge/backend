@@ -54,7 +54,6 @@ public class FrameRenderer extends PApplet {
   private GameState currentGameState;
   private GameState backUp;
   private Move currentMove;
-  private int maxTurn;
 
   private GuiBoard guiBoard;
 
@@ -87,7 +86,6 @@ public class FrameRenderer extends PApplet {
     super.setup();
     logger.debug("Dimension when creating board: (" + width + ","
         + height + ")");
-    maxTurn = -1;
     // choosing renderer from options - using P2D as default (currently it seems
     // that only the java renderer works).
     //
@@ -151,12 +149,8 @@ public class FrameRenderer extends PApplet {
     // going back in the replay/game, it has to be cleared. Setting it to null
     // here works, but there has to be a better way.
     winCondition = null;
-    int lastTurn = -1;
-    if (currentGameState != null) {
-      lastTurn = currentGameState.getTurn();
-    }
     try {
-    currentGameState = gameState.clone();
+      currentGameState = gameState.clone();
     } catch (CloneNotSupportedException e) {
       logger.error("Problem cloning gamestate", e);
     }
@@ -173,13 +167,6 @@ public class FrameRenderer extends PApplet {
       logger.error("Clone of Backup failed", e);
     }
 
-    // TODO document what this code does
-    if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
-
-      if (maxTurn == currentGameState.getTurn() - 1) {
-        maxTurn++;
-      }
-    }
     if (gameState != null && gameState.getBoard() != null) {
       logger.debug("updating gui board gamestate");
       updateView(currentGameState);
@@ -192,7 +179,6 @@ public class FrameRenderer extends PApplet {
 
   public void requestMove(int maxTurn, EPlayerId id) {
     logger.debug("request move with {} for player {}", maxTurn, id);
-    this.maxTurn = maxTurn;
     updateView(currentGameState);
   }
 
