@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,20 +138,13 @@ public class Game extends RoundBasedGameInstance<Player> {
 			if (entry.getKey() == player) {
 				logger.debug("setting 0 score");
 				score.setCause(cause);
+				// FIXME: consider score definition: Semantically, this should set points relevant for winning to zero, not just points at score position 0.
 				score.setValueAt(0, new BigDecimal(0));
 			} else {
 				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
 
-		/*
-		 * FIXME: i think we can remove this
-		if (!gameState.gameEnded()) {
-			gameState.endGame(((Player) player).getPlayerColor().opponent(),
-					"Der Spieler '" + player.getDisplayName()
-							+ "' hat das Spiel verlassen.");
-		}
-		*/
 		notifyOnGameOver(res);
 	}
 
@@ -219,7 +214,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public WinCondition checkWinCondition() {
 	  if (gameState.getTurn() > 1) {
 	    // XXX only for test
-      //return new WinCondition(PlayerColor.RED, "Das Rundenlimit von 2 wurde erreicht.");
+      //return new WinCondition(PlayerColor.BLUE, "Das Rundenlimit von 2 wurde erreicht.");
 	  }
     int[][] stats = gameState.getGameStats();
     if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
@@ -281,13 +276,19 @@ public class Game extends RoundBasedGameInstance<Player> {
           break;
         }
       }
-      return winners;
 	  } else {
-	    // no win condition met, consider all player without rule voilations as winner
+	    // No win condition met, player with highest score wins. If multiple
+	    // players have highest score, no one wins.
+	    SortedMap<BigDecimal, Player> scores = new TreeMap<>();
       for (Player player : players) {
-        if (!player.hasViolated()) {
-          winners.add(player);
-        }
+        // FIXME: consider score difinition to compare scores
+        BigDecimal relevantScore = getScoreFor(player).getValues().get(0);
+        logger.debug("FOCUS player {} has {} points", player.getPlayerColor(), relevantScore);
+        scores.put(relevantScore, player);
+      }
+      if (scores.lastKey() != scores.firstKey()) {
+        logger.debug("FOCUS winner is player {} with {} points", scores.get(scores.lastKey()), scores.lastKey());
+        winners.add(scores.get(scores.lastKey()));
       }
 	  }
 		return winners;

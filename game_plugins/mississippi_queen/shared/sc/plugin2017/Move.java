@@ -1,10 +1,12 @@
 package sc.plugin2017;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
@@ -14,12 +16,21 @@ import sc.plugin2017.util.InvalidMoveException;
 @XStreamAlias("move")
 public class Move implements Cloneable {
 
+  private static final Logger logger = LoggerFactory.getLogger(Move.class);
   /**
    * Liste von Aktionen aus denen der Zug besteht
    */
   @XStreamImplicit
   public List<Action> actions;
-  
+
+  public List<Action> getActions() {
+    if (actions == null) {
+      return Collections.emptyList();
+    } else {
+      return actions;
+    }
+  }
+
   /**
    * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe {@link DebugHint}
    */
@@ -41,6 +52,7 @@ public class Move implements Cloneable {
    * @param selectedActions Aktionen des Zuges
    */
   public Move(List<Action> selectedActions) {
+    assert selectedActions != null;
     actions = new CopyOnWriteArrayList<>(selectedActions);
   }
 
@@ -52,8 +64,8 @@ public class Move implements Cloneable {
    */
   @Override
   public Object clone() throws CloneNotSupportedException {
-    ArrayList<Action> clonedActions = new ArrayList<Action>();
-    for (Action action : actions) {
+    List<Action> clonedActions = new CopyOnWriteArrayList<>();
+    for (Action action : getActions()) {
       if(action.getClass() == Acceleration.class) {
         Acceleration clonedAction = ((Acceleration) action).clone();
         clonedActions.add(clonedAction);
@@ -149,7 +161,7 @@ public class Move implements Cloneable {
     player.setMovement(player.getSpeed());
 
 
-    if(actions.isEmpty()) {
+    if(getActions().isEmpty()) {
       throw new InvalidMoveException("Der Zug enthält keine Aktionen");
     }
     for(Action action : actions) {
@@ -216,7 +228,7 @@ public class Move implements Cloneable {
   public boolean equals(Object o) {
     if(o instanceof Move) {
       Move move = (Move) o;
-      for(Action action : move.actions) {
+      for(Action action : move.getActions()) {
         if(!this.actions.contains(action)) {
           return false;
         }
@@ -232,7 +244,7 @@ public class Move implements Cloneable {
   }
 
   public boolean containsPushAction() {
-    for (Action action : actions) {
+    for (Action action : getActions()) {
       if(action.getClass() == Push.class) {
         return true;
       }
@@ -243,7 +255,7 @@ public class Move implements Cloneable {
   @Override
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
-    for (Action action : actions) {
+    for (Action action : getActions()) {
       if(action.getClass() == Turn.class) {
         toString.concat(((Turn) action).toString() + "\n");
       } else if(action.getClass() == Acceleration.class){
@@ -262,28 +274,14 @@ public class Move implements Cloneable {
    */
   public void setOrderInActions() {
     int order = 0;
-    for (Action action : actions) {
-      if(action instanceof Advance) {
-        ((Advance)action).order = order;
-      } else if(action instanceof Turn) {
-        ((Turn)action).order = order;
-      } else if(action instanceof Acceleration) {
-        ((Acceleration)action).order = order;
-      } else if(action instanceof Push) {
-        ((Push)action).order = order;
-      }
-      ++order;
+    for (Action action : getActions()) {
+      action.order = order++;
     }
   }
 
   public void orderActions() {
-    ArrayList<Action> order = new ArrayList<Action>();
-    for(int i = 0; i < actions.size(); i++) {
-      for (Action action : actions) {
-        if(action.order == i) {
-          order.add(action);
-        }
-      }
+    if (actions != null) {
+      Collections.sort(actions);
     }
   }
 
