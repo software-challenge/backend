@@ -68,7 +68,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		boolean firstObservation = this.history.isEmpty();
 
 		this.history.add(observation);
-		logger.debug("saved observation {}", observation);
+		logger.debug("saved observation {}", observation.getClass());
 
 		if (canAutoStep() || firstObservation)
 		{

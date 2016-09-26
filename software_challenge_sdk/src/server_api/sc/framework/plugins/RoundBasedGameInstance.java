@@ -140,6 +140,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			this.activePlayer = nextPlayer;
 			onNewTurn();
 		}
+		logger.debug("next turn ({}) for player {}", this.turn, nextPlayer);
 
 		this.activePlayer = nextPlayer;
 		notifyOnNewState(getCurrentState());
