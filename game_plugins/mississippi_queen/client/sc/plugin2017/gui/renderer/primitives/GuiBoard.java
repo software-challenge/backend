@@ -163,10 +163,6 @@ public class GuiBoard extends PrimitiveBase {
     currentBoard = board;
     calculateSize();
     Player currentPlayer = (current == PlayerColor.RED) ? red : blue;
-    logger.debug(String.format("view player red is on %d,%d", red.getField(currentBoard).getX(),
-        red.getField(currentBoard).getY()));
-    logger.debug(String.format("view player blue is on %d,%d", blue.getField(currentBoard).getX(),
-        blue.getField(currentBoard).getY()));
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     updateButtonPositions(getCurrentGuiPlayer());
@@ -243,7 +239,6 @@ public class GuiBoard extends PrimitiveBase {
           }
         }
         for (HexField hexField : toHighlight) {
-          logger.debug(String.format("Player may move to %d,%d", hexField.getFieldX(), hexField.getFieldY()));
           hexField.setHighlighted(true);
         }
         parent.setPossibleSteps(add);

@@ -139,11 +139,11 @@ public class FrameRenderer extends PApplet {
       drawEndGameScreen(winCondition);
     }
   }
-  
+
   public void endGame(WinCondition condition) {
     winCondition = condition;
   }
-  
+
   private void drawEndGameScreen(WinCondition condition) {
     String winnerName = null;
     if (condition.winner == PlayerColor.RED) {
@@ -155,7 +155,9 @@ public class FrameRenderer extends PApplet {
   }
 
   public void updateGameState(GameState gameState) {
-    // FIXME: winCondition determines if the game end screen is drawn, when going back in the replay/game, it has to be cleared
+    // FIXME: winCondition determines if the game end screen is drawn, when
+    // going back in the replay/game, it has to be cleared. Setting it to null
+    // here works, but there has to be a better way.
     winCondition = null;
     int lastTurn = -1;
     if (currentGameState != null) {
@@ -205,14 +207,9 @@ public class FrameRenderer extends PApplet {
   }
 
   public void requestMove(int maxTurn, EPlayerId id) {
-    int turn = currentGameState.getTurn();
+    logger.debug("request move with {} for player {}", maxTurn, id);
     this.id = id;
-    if (turn % 2 == 1) {
-      if (id == EPlayerId.PLAYER_ONE) {
-        this.id = EPlayerId.PLAYER_TWO;
-      }
-    }
-    // this.maxTurn = maxTurn;
+    this.maxTurn = maxTurn;
     this.humanPlayer = true;
     humanPlayerMaxTurn = true;
     updateView(currentGameState);

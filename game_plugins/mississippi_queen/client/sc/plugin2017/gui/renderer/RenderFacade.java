@@ -254,9 +254,10 @@ public class RenderFacade {
 	 * @param id EPlayerId
 	 */
 	public synchronized void requestMove(EPlayerId id) {
-
+    logger.debug("request move with {} for player {}", this.maxTurn, id);
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
+			// FIXME: remove this:
 			while(gameStateQueue.size() > 0) {
 				try {
 					Thread.sleep(20);

@@ -212,7 +212,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	  }
 	  return reached;
 	}
-	
+
 	/**
 	 * Checks if a win condition in the current game state is met.
 	 * @return WinCondition with winner and reason or null, if no win condition is yet met.
@@ -220,7 +220,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public WinCondition checkWinCondition() {
 	  if (gameState.getTurn() > 1) {
 	    // XXX only for test
-      return new WinCondition(PlayerColor.RED, "Das Rundenlimit von 2 wurde erreicht.");
+      //return new WinCondition(PlayerColor.RED, "Das Rundenlimit von 2 wurde erreicht.");
 	  }
     int[][] stats = gameState.getGameStats();
     if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
@@ -235,7 +235,7 @@ public class Game extends RoundBasedGameInstance<Player> {
     } else if (checkGoalReached() != null) {
       // one player reached the goal
       PlayerColor winner = checkGoalReached().getPlayerColor();
-      return new WinCondition(winner, "Das Spiel beendet.\nEin Spieler ist im Ziel");
+      return new WinCondition(winner, "Das Spiel ist beendet.\nEin Spieler ist im Ziel");
     } else if (getActivePlayer() != gameState.getStartPlayer() &&
         Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
       // a player is more than three tiles before the other player
