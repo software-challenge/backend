@@ -204,13 +204,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * @return the player who reached the goal or null if no player reached the goal
 	 */
 	private Player checkGoalReached() {
-	  Player reached = null;
 	  for (final Player player : players) {
-      if (player.getField(gameState.getBoard()).getType() == FieldType.GOAL && player.getPassenger() >= 2) {
-        reached = player;
+      if (player.getField(gameState.getBoard()).getType() == FieldType.GOAL && player.getPassenger() >= 2 && player.getSpeed() == 1) {
+        return player;
       }
 	  }
-	  return reached;
+	  return null;
 	}
 
 	/**
