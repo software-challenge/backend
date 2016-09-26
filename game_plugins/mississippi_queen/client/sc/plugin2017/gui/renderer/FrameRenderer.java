@@ -54,10 +54,7 @@ public class FrameRenderer extends PApplet {
   private GameState currentGameState;
   private GameState backUp;
   private Move currentMove;
-  private boolean humanPlayer;
-  private boolean humanPlayerMaxTurn;
   private int maxTurn;
-  private EPlayerId id;
 
   private GuiBoard guiBoard;
 
@@ -70,15 +67,10 @@ public class FrameRenderer extends PApplet {
   private boolean initialized = false;
 
   private LinkedHashMap<HexField, Action> stepPossible;
-  private boolean active = false;
   private WinCondition winCondition;
 
   public FrameRenderer() {
     super();
-
-    this.humanPlayer = false;
-    this.humanPlayerMaxTurn = false;
-    this.id = EPlayerId.OBSERVER;
 
     RenderConfiguration.loadSettings();
 
@@ -185,17 +177,9 @@ public class FrameRenderer extends PApplet {
     if ((currentGameState == null || lastTurn == currentGameState.getTurn() - 1)) {
 
       if (maxTurn == currentGameState.getTurn() - 1) {
-
         maxTurn++;
-        humanPlayerMaxTurn = false;
       }
     }
-    humanPlayer = false;
-    if (currentGameState != null && maxTurn == currentGameState.getTurn()
-        && humanPlayerMaxTurn) {
-      humanPlayer = true;
-    }
-
     if (gameState != null && gameState.getBoard() != null) {
       logger.debug("updating gui board gamestate");
       updateView(currentGameState);
@@ -208,10 +192,7 @@ public class FrameRenderer extends PApplet {
 
   public void requestMove(int maxTurn, EPlayerId id) {
     logger.debug("request move with {} for player {}", maxTurn, id);
-    this.id = id;
     this.maxTurn = maxTurn;
-    this.humanPlayer = true;
-    humanPlayerMaxTurn = true;
     updateView(currentGameState);
   }
 
@@ -242,16 +223,10 @@ public class FrameRenderer extends PApplet {
     redraw();
   }
 
-  public boolean playerControlsEnabled() {
-    // current player needs to be human and the current turn needs to be the
-    // last one already played (because we can jump forward and backward)
-    return isHumanPlayer() && maxTurn == currentGameState.getTurn();
-  }
-
   @Override
   public void mouseClicked(MouseEvent e) {
     super.mouseClicked(e);
-    if (playerControlsEnabled()) {
+    if (currentPlayerIsHuman()) {
 
       boolean onSandbank = currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK;
       int currentSpeed = currentGameState.getCurrentPlayer().getSpeed();
@@ -384,12 +359,8 @@ public class FrameRenderer extends PApplet {
     }
   }
 
-  public boolean isHumanPlayer() {
-    return humanPlayer;
-  }
-
   public EPlayerId getId() {
-    return id;
+    return RenderFacade.getInstance().getActivePlayer();
   }
 
   public void killAll() {
@@ -412,7 +383,7 @@ public class FrameRenderer extends PApplet {
   }
 
   public boolean currentPlayerIsHuman() {
-    return humanPlayer;
+    return getId() != EPlayerId.OBSERVER;
   }
 
   public Player getCurrentPlayer() {
@@ -469,5 +440,9 @@ public class FrameRenderer extends PApplet {
     } else {
       return null;
     }
+  }
+
+  public boolean playerControlsEnabled() {
+    return currentPlayerIsHuman();
   }
 }

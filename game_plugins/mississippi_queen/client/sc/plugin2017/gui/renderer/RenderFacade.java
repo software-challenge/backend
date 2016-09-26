@@ -187,6 +187,8 @@ public class RenderFacade {
 	public void sendMove(Move move) {
     if (currentHandler != null) {
       currentHandler.sendAction(move);
+    } else {
+      logger.error("No handler for sending move!");
     }
   }
 
@@ -223,6 +225,7 @@ public class RenderFacade {
 
 	public void switchToPlayer(EPlayerId id) {
 
+	  logger.debug("FOCUS switching to player {}", id);
 		if (id == null) {
 			currentHandler = null;
 			return;
@@ -257,14 +260,6 @@ public class RenderFacade {
     logger.debug("request move with {} for player {}", this.maxTurn, id);
 		if (id == EPlayerId.PLAYER_ONE || id == EPlayerId.PLAYER_TWO) {
 			switchToPlayer(id);
-			// FIXME: remove this:
-			while(gameStateQueue.size() > 0) {
-				try {
-					Thread.sleep(20);
-				} catch (Exception e) {
-					System.err.println(e);
-				}
-			}
 			frameRenderer.requestMove(maxTurn, id);
 		}
 	}

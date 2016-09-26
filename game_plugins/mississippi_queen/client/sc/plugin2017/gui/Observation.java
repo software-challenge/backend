@@ -310,6 +310,14 @@ public class Observation implements IObservation, IUpdateListener,
 
 			if (conGame.hasNext()) {
 				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+			} else {
+			  if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED) {
+          RenderFacade.getInstance().switchToPlayer(EPlayerId.PLAYER_ONE);
+			  } else if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.BLUE) {
+          RenderFacade.getInstance().switchToPlayer(EPlayerId.PLAYER_TWO);
+			  } else {
+			    throw new IllegalStateException("current player has unexpected color: "+gameState.getCurrentPlayer().getPlayerColor());
+			  }
 			}
 		}
 
