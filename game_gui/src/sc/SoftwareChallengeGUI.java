@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jargs.gnu.CmdLineParser;
@@ -52,8 +51,11 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 */
 	public SoftwareChallengeGUI() {
 		super();
+		// you may use this code to enable debug output:
+		/*
 		Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 		((ch.qos.logback.classic.Logger)rootLogger).setLevel(ch.qos.logback.classic.Level.DEBUG);
+		*/
 		loadCodeVersionFromManifest();
 		// get logic facade
 		LogicFacade logicFac = LogicFacade.getInstance();

@@ -555,7 +555,8 @@ public class GameState implements Cloneable {
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
    * Einträgen
    * <ul>
-   * <li>[0] - Punktekonto des Spielers (Längste Verbindung in Spielrichtung)
+   * <li>[0] - Punktekonto des Spielers (Flussfortschritt und Passagiere)
+   * <li>[1] - Anzahl eingesammelter Passagiere
    * </ul>
    *
    * @param playerColor

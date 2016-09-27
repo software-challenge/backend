@@ -67,7 +67,6 @@ public class FrameRenderer extends PApplet {
 
   private LinkedHashMap<HexField, Action> stepPossible;
   private WinCondition winCondition;
-
   public FrameRenderer() {
     super();
 

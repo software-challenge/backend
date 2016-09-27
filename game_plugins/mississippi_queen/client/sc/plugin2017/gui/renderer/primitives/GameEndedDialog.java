@@ -22,7 +22,9 @@ public class GameEndedDialog {
     // message für endefenster
     String msg = "Das Spiel ist zu Ende!";
     String message = "Das Spiel ging unendschieden aus!";
-    message = winningPlayerName + " hat gewonnen!";
+    if (condition.winner != null) {
+      message = winningPlayerName + " hat gewonnen!";
+    }
     // Box Groß
     float x = Math.max(parent.textWidth(winningReason), parent.textWidth(message)) + 10;
     float y;
