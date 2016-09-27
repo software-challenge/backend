@@ -174,6 +174,7 @@ public class RenderFacade {
 	 */
 	public void setHandler(IGameHandler handler, EPlayerId target) {
 
+	  logger.debug("FOCUS adding handler {} for {}", handler.getClass(), target);
 		if (target == EPlayerId.OBSERVER) {
 
 		} else if (target == EPlayerId.PLAYER_ONE) {
@@ -225,7 +226,6 @@ public class RenderFacade {
 
 	public void switchToPlayer(EPlayerId id) {
 
-	  logger.debug("FOCUS switching to player {}", id);
 		if (id == null) {
 			currentHandler = null;
 			return;
@@ -287,7 +287,13 @@ public class RenderFacade {
 		if (data != null) {
 		  PlayerScore score = data.getScores().get(color == PlayerColor.RED ? 0 : 1);
 			ScoreCause cause = score.getCause();
-			String err = score.getReason();
+			String err = "";
+			
+			logger.debug("FOCUS gameEnded cause: {}", cause);
+			if (cause == ScoreCause.RULE_VIOLATION) {
+			err += "Regelverletzung durch anderen Spieler:\n";
+			}
+			err += score.getReason();
 
 			if (errorMessage == null && cause != ScoreCause.REGULAR) {
 

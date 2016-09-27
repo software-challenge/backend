@@ -29,9 +29,9 @@ public class GamePlugin implements IGamePlugin {
 
 	static {
 		SCORE_DEFINITION = new ScoreDefinition();
-		SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte",
-				ScoreAggregation.SUM, false));
+		SCORE_DEFINITION.add(new ScoreFragment("Siegpunkte", ScoreAggregation.SUM, false));
 		SCORE_DEFINITION.add(new ScoreFragment("Punkte", ScoreAggregation.SUM));
+		SCORE_DEFINITION.add(new ScoreFragment("Passagiere", ScoreAggregation.SUM));
 	}
 
 	@Override

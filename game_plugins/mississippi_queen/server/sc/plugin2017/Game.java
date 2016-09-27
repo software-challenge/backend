@@ -1,12 +1,9 @@
 package sc.plugin2017;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,12 +133,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			PlayerScore score = entry.getValue();
 
 			if (entry.getKey() == player) {
-				logger.debug("setting 0 score");
 				score.setCause(cause);
-				// FIXME: consider score definition: Semantically, this should set points relevant for winning to zero, not just points at score position 0.
-				score.setValueAt(0, new BigDecimal(0));
-			} else {
-				score.setValueAt(0, new BigDecimal(2));
 			}
 		}
 
@@ -170,6 +162,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	@Override
 	protected PlayerScore getScoreFor(Player p) {
 
+	  logger.debug("get score for player {}", p.getPlayerColor());
+	  logger.debug("FOCUS violated: {}", p.hasViolated());
 		int[] stats = gameState.getPlayerStats(p);
 		int matchPoints = 1;
 		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor()
@@ -183,9 +177,15 @@ public class Game extends RoundBasedGameInstance<Player> {
 			matchPoints = 2;
 		else if (stats[0] < oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] < oppPoints[1]))
 			matchPoints = 0;
+		// FIXME score calculation is done at too many places and does not respect score definition but assumes a fixed schema (points and matchpoints).
+		Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? gameState.getBluePlayer() : gameState.getRedPlayer();
+		if (opponent.hasViolated() && !p.hasViolated()) {
+		  logger.debug("FOCUS other player violated");
+		  matchPoints = 2;
+		}
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
-				stats[0]) : new PlayerScore(ScoreCause.REGULAR, winningReason,
-				matchPoints, stats[0]);
+				stats[0], stats[1]) : new PlayerScore(ScoreCause.REGULAR, winningReason,
+				matchPoints, stats[0], stats[1]);
 
 	}
 
@@ -277,18 +277,14 @@ public class Game extends RoundBasedGameInstance<Player> {
         }
       }
 	  } else {
-	    // No win condition met, player with highest score wins. If multiple
-	    // players have highest score, no one wins.
-	    SortedMap<BigDecimal, Player> scores = new TreeMap<>();
+	    // No win condition met, player with highest score wins. Winning score is
+	    // determined by matchpoints ("Siegpunkte"). The winning player has 2
+	    // matchpoints. Find this player. If no player has 2 matchpoints, it is a draw.
       for (Player player : players) {
-        // FIXME: consider score difinition to compare scores
-        BigDecimal relevantScore = getScoreFor(player).getValues().get(0);
-        logger.debug("FOCUS player {} has {} points", player.getPlayerColor(), relevantScore);
-        scores.put(relevantScore, player);
-      }
-      if (scores.lastKey() != scores.firstKey()) {
-        logger.debug("FOCUS winner is player {} with {} points", scores.get(scores.lastKey()), scores.lastKey());
-        winners.add(scores.get(scores.lastKey()));
+        if (getScoreFor(player).getValues().get(0).intValueExact() == 2) {
+          winners.add(player);
+          break;
+        }
       }
 	  }
 		return winners;

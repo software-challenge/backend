@@ -82,6 +82,16 @@ public final class PlayerScore
 					}
 				})).toArray(new String[parts.size()]);
 	}
+	
+	public String toString() {
+		String result = "";
+		String[] strings = this.toStrings();
+		for (int i = 0; i < strings.length; i++) {
+			if (i > 0) result += "; ";
+			result += strings[i];
+		}
+		return result;
+	}
 
 	public void setCause(ScoreCause cause)
 	{

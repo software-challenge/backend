@@ -328,8 +328,10 @@ public class GuiBoard extends PrimitiveBase {
       tile.draw();
     }
     // highlights need to be drawn above fields
-    for (GuiTile tile : tiles) {
-      tile.drawHighlights();
+    if (parent.playerControlsEnabled()) {
+      for (GuiTile tile : tiles) {
+        tile.drawHighlights();
+      }
     }
     // draw players
     red.draw();
