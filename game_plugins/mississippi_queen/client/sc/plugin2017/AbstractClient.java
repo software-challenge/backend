@@ -162,6 +162,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	@Override
 	public void onGameLeft(String roomId) {
+	  logger.debug("{} got game left {}", this, roomId);
 
 	}
 
@@ -204,6 +205,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 
 	@Override
 	public void onGameOver(String roomId, GameResult data) {
+		logger.debug("{} onGameOver got game result {}", this, data);
 		if (handler != null) {
 			handler.gameEnded(data, myColor, this.error);
 		}

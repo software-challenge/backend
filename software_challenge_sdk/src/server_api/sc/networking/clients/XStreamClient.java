@@ -49,11 +49,11 @@ public abstract class XStreamClient
 	}
 
 	public void enableXMLLogging() {
-		logXML = true;
+		this.logXML = true;
 	}
 
 	public void disableXMLLogging() {
-		logXML = false;
+		this.logXML = false;
 	}
 
 	public void start()
@@ -132,9 +132,7 @@ public abstract class XStreamClient
 			{
 				Object o = XStreamClient.this.in.readObject();
 				logger.debug("Client " + XStreamClient.this +": Received " + o + " via " + this.networkInterface);
-				if (XStreamClient.this.logXML) {
-				  logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-				}
+				logXml(o, "Receive");
 				if (o instanceof CloseConnection) {
 					handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
 					break; // stop receiver thread
@@ -197,6 +195,21 @@ public abstract class XStreamClient
 		return;
 	}
 
+	private void logXml(Object o, String origin)
+	{
+		if (this.logXML) {
+		  String[] xml = this.xStream.toXML(o).split("\n");
+		  String display = "";
+		  for (int i = 0; i < xml.length && i < 5; i++) {
+			  if (i > 0) {
+				  display += "\n";
+			  }
+			  display += xml[i];
+		  }
+		  logger.debug("DataDump ({}):\n{}", origin, display);
+		}
+	}
+
 	public void sendCustomData(String data) throws IOException
 	{
 		sendCustomData(data.getBytes("utf-8"));
@@ -227,9 +240,7 @@ public abstract class XStreamClient
 
 		try
 		{
-			if (logXML) {
-				logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-			}
+			logXml(o, "Send");
 			this.out.writeObject(o);
 			this.out.flush();
 		}
