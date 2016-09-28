@@ -163,7 +163,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	protected PlayerScore getScoreFor(Player p) {
 
 	  logger.debug("get score for player {}", p.getPlayerColor());
-	  logger.debug("FOCUS violated: {}", p.hasViolated());
+	  logger.debug("player violated: {}", p.hasViolated());
 		int[] stats = gameState.getPlayerStats(p);
 		int matchPoints = 1;
 		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor()
@@ -180,7 +180,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 		// FIXME score calculation is done at too many places and does not respect score definition but assumes a fixed schema (points and matchpoints).
 		Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? gameState.getBluePlayer() : gameState.getRedPlayer();
 		if (opponent.hasViolated() && !p.hasViolated()) {
-		  logger.debug("FOCUS other player violated");
 		  matchPoints = 2;
 		}
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,

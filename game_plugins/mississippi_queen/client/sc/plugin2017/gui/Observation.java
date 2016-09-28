@@ -43,11 +43,9 @@ public class Observation implements IObservation, IUpdateListener,
 
 	private IGameHandler handler;
 
-	private List<IGameEndedListener> gameEndedListeners = new LinkedList<IGameEndedListener>();
-	private List<INewTurnListener> newTurnListeners = new LinkedList<INewTurnListener>();
-	private List<IReadyListener> readyListeners = new LinkedList<IReadyListener>();
-
-	private boolean notifiedOnGameEnded = false;
+	private List<IGameEndedListener> gameEndedListeners = new LinkedList<>();
+	private List<INewTurnListener> newTurnListeners = new LinkedList<>();
+	private List<IReadyListener> readyListeners = new LinkedList<>();
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(Observation.class);
@@ -237,19 +235,15 @@ public class Observation implements IObservation, IUpdateListener,
 	 */
 	private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
 	  logger.info("Observation notified about game end");
-		if (!notifiedOnGameEnded) {
-			notifiedOnGameEnded = true;
-
-			for (IGameEndedListener listener : gameEndedListeners) {
-				try {
-					listener.onGameEnded(data, createGameEndedString(data));
-					logger.info("Create Game Ended String");
-				} catch (Exception e) {
-					logger.error("GameEnded Notification caused an exception.",
-							e);
-				}
-			}
-		}
+    for (IGameEndedListener listener : gameEndedListeners) {
+      try {
+        listener.onGameEnded(data, createGameEndedString(data));
+        logger.info("Create Game Ended String");
+      } catch (Exception e) {
+        logger.error("GameEnded Notification caused an exception.",
+            e);
+      }
+    }
 
 		Object errorObject = conGame.getCurrentError();
 		String errorMessage = null;
@@ -290,6 +284,7 @@ public class Observation implements IObservation, IUpdateListener,
 	@Override
 	public void onUpdate(Object sender) {
 		assert sender == conGame;
+		logger.debug("FOCUS got update");
 		GameState gameState = (GameState) conGame.getCurrentState();
 		Object errorObject = conGame.getCurrentError();
 		if (errorObject != null) {
@@ -298,7 +293,7 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 
 		if (gameState != null) {
-			ready();
+			//ready(); FIXME I think this is wrong here
 			handler.onUpdate(gameState);
 
 			handler.onUpdate(gameState.getCurrentPlayer(), gameState
@@ -362,7 +357,6 @@ public class Observation implements IObservation, IUpdateListener,
 	@Override
 	public void goToLast() {
 		conGame.goToLast();
-		//showActivePlayerIfNecessary();
 	}
 
 	@Override
@@ -378,6 +372,5 @@ public class Observation implements IObservation, IUpdateListener,
 	@Override
   public void reset() {
 		goToFirst();
-		notifiedOnGameEnded = false;
 	}
 }

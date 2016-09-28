@@ -24,6 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -52,6 +56,9 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.IPlayer;
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -78,6 +85,8 @@ import sc.shared.SlotDescriptor;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
+
+  private static final Logger logger = LoggerFactory.getLogger(TestRangeDialog.class);
 
 	private static final String DEFAULT_HOST = "localhost";
 	private JPanel pnlTop;
@@ -115,6 +124,7 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlBottomTop;
 	private int freePort;
 	private boolean testStarted;
+	private final CyclicBarrier gameEndReached = new CyclicBarrier(2);
 
 	private List<List<BigDecimal>> absoluteValues;
 
@@ -206,7 +216,7 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
-		progressBar.setStringPainted(true); // draw procent
+		progressBar.setStringPainted(true); // draw percent
 
 		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"),
 				JLabel.CENTER);
@@ -343,15 +353,24 @@ public class TestRangeDialog extends JDialog {
 		testStart = new JButton(lang.getProperty("dialog_test_btn_start"));
 		testStart.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent _event) {
 				if (isTesting()) { // testing
 					cancelTest(lang.getProperty("dialog_test_msg_cancel"));
 				} else {
-					if (prepareTest()) {
-						updateGUI(false);
-						// first game with first player at the first position
-						startNewTest();
-					}
+          if (prepareTest()) {
+            while (curTest < numTest) {
+              updateGUI(false);
+              startNewTest();
+              try {
+                logger.debug("FOCUS testloop await game end reached {}", this);
+                gameEndReached.await(3, TimeUnit.MINUTES);
+                gameEndReached.reset();
+              } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
+                cancelTest("Cancel due to internal error");
+              }
+            }
+            finishTest();
+				  }
 				}
 			}
 		});
@@ -678,20 +697,24 @@ public class TestRangeDialog extends JDialog {
 	 */
 	protected void startNewTest() {
 
+	  logger.debug("FOCUS starting new test...");
 		final ConnectingDialog connectionDialog = new ConnectingDialog(this);
 
 		curTest++;
 
 		final int rotation = getRotation(txfclient.length);
 
+		logger.debug("Preparing slots");
 		final List<SlotDescriptor> slotDescriptors = prepareSlots(
 				preparePlayerNames(), rotation);
 		List<KIInformation> KIs = null;
 
 		try {
+      logger.debug("Preparing game");
 			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
 					slotDescriptors);
 
+      logger.debug("Preparing observer");
 			addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
 
 			// only display message after the first round
@@ -699,12 +722,19 @@ public class TestRangeDialog extends JDialog {
 				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
 			}
 
+			Thread.sleep(500); // FIXME wait for server to create room
+      logger.debug("Preparing clients");
 			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
 		} catch (IOException e) {
 			e.printStackTrace();
 			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
 			return;
-		}
+		} catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+			cancelTest("Interrupted");
+			return;
+    }
 
 		try {
 			runClientProcesses(KIs);
@@ -714,12 +744,16 @@ public class TestRangeDialog extends JDialog {
 			return;
 		}
 
+		logger.debug("FOCUS unpausing game");
+		obs.unpause();
+
 		// show connecting dialog
 		if (this.isActive()) {
 			if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
 				cancelTest(lang.getProperty("dialog_test_msg_cancel"));
 			}
 		}
+		logger.debug("FOCUS finished startNewTest");
 	}
 
 	private int getRotation(int playerCount) {
@@ -813,9 +847,11 @@ public class TestRangeDialog extends JDialog {
 		final GUIPluginInstance plugin = getSelectedPlugin();
 		final List<SlotDescriptor> descriptors = slotDescriptors;
 		obs = prep.getObserver();
+		logger.debug("FOCUS got observer {}", obs);
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
+			  logger.debug("FOCUS game ended, result: {}", result);
 				if (null == result) // happens after a game has been canceled
 					return;
 
@@ -865,20 +901,16 @@ public class TestRangeDialog extends JDialog {
 					}
 				}
 
-				// start new test if number of tests is not still reached
-				if (curTest < numTest) {
-					// FIXME: Perhaps "Recursive" Execution of Tests might be
-					// REALLY bad
-					// for big N
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							startNewTest();
-						}
-					}).start();
-				} else {
-					finishTest();
-				}
+				try {
+				  logger.debug("FOCUS Observer await game end reached {}", gameEndReached);
+          gameEndReached.await();
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
 			}
 		});
 		obs.addNewTurnListener(new INewTurnListener() {
@@ -896,6 +928,7 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void ready() {
 				connectionDialog.close();
+				logger.debug("FOCUS got ready event");
 				obs.start();
 			}
 		});
@@ -903,7 +936,7 @@ public class TestRangeDialog extends JDialog {
 
 	private List<SlotDescriptor> prepareSlots(final List<String> playerNames,
 			int rotation) {
-		final List<SlotDescriptor> descriptors = new LinkedList<SlotDescriptor>();
+		final List<SlotDescriptor> descriptors = new LinkedList<>();
 
 		for (String playerName : playerNames) {
 			descriptors.add(new SlotDescriptor(playerName, !ckbDebug

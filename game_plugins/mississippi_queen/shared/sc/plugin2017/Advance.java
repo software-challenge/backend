@@ -124,7 +124,6 @@ public class Advance extends Action {
           player.setSpeed(Math.max(1, player.getSpeed() - 1));
         } else {
           player.setMovement(player.getMovement() - 1);
-          logger.debug("Verringere Movement zu {}", player.getMovement());
         }
 
       }
