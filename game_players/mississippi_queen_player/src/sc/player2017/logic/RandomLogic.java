@@ -49,6 +49,7 @@ public class RandomLogic implements IGameHandler {
 	 */
 	public RandomLogic(Starter client) {
 		this.client = client;
+		((ch.qos.logback.classic.Logger)log).setLevel(ch.qos.logback.classic.Level.INFO);
 	}
 
 	/**
@@ -126,13 +127,13 @@ public class RandomLogic implements IGameHandler {
         possibleMove.perform(clone, clone.getCurrentPlayer());
 
         int points = clone.getPointsForPlayer(clone.getCurrentPlayerColor());
-        log.debug("move {} would give {} points", clone, points);
+        log.debug("move {} would give {} points", possibleMove, points);
         if(points > maxPoints) {
           maxPoints = points;
           move = possibleMove;
         }
       } catch (InvalidMoveException e) {
-        log.info("Gefundener Zug ist ungültig:", e);
+        log.debug("Gefundener Zug ist ungültig:", e.getMessage());
       }
     }
     move.orderActions();

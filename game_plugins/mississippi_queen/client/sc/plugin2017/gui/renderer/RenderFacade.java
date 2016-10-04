@@ -16,6 +16,7 @@ import sc.plugin2017.Move;
 import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.WinCondition;
+import sc.plugin2017.gui.HumanGameHandler;
 import sc.shared.GameResult;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
@@ -31,12 +32,6 @@ public class RenderFacade {
 	private FrameRenderer frameRenderer;
 
 	private EPlayerId activePlayer;
-
-	/*
-	 * Used here to determine what panel (IRenderer) should be used when a new
-	 * panel is created. This solution only works with two players
-	 */
-	private boolean alreadyCreatedPlayerOne = false;
 
 	private IGameHandler handler1;
 
@@ -141,7 +136,6 @@ public class RenderFacade {
 		first = true;
 		disabled = false;
 		activePlayer = null;
-		alreadyCreatedPlayerOne = false;
 		this.panel = panel;
 
 		if (panel != null) {
@@ -173,15 +167,13 @@ public class RenderFacade {
 	 *
 	 */
 	public void setHandler(IGameHandler handler, EPlayerId target) {
-
-	  logger.debug("FOCUS adding handler {} for {}", handler.getClass(), target);
-		if (target == EPlayerId.OBSERVER) {
-
-		} else if (target == EPlayerId.PLAYER_ONE) {
+		if (target == EPlayerId.PLAYER_ONE) {
 			handler1 = handler;
-			setAlreadyCreatedPlayerOne(true);
 		} else if (target == EPlayerId.PLAYER_TWO) {
 			handler2 = handler;
+		}
+		if (handler instanceof HumanGameHandler) {
+		  frameRenderer.setHuman(target);
 		}
 	}
 
@@ -245,14 +237,6 @@ public class RenderFacade {
 		activePlayer = id;
 	}
 
-	public void setAlreadyCreatedPlayerOne(boolean alreadyCreatedPlayerOne) {
-		this.alreadyCreatedPlayerOne = alreadyCreatedPlayerOne;
-	}
-
-	public boolean getAlreadyCreatedPlayerOne() {
-		return alreadyCreatedPlayerOne;
-	}
-
 	/**
 	 * @param id EPlayerId
 	 */
@@ -288,8 +272,7 @@ public class RenderFacade {
 		  PlayerScore score = data.getScores().get(color == PlayerColor.RED ? 0 : 1);
 			ScoreCause cause = score.getCause();
 			String err = "";
-			
-			logger.debug("FOCUS gameEnded cause: {}", cause);
+
 			if (cause == ScoreCause.RULE_VIOLATION) {
 			err += "Regelverletzung durch anderen Spieler:\n";
 			}

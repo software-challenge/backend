@@ -93,7 +93,7 @@
 	</target>
 
 	<target name="javadoc">
-		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.6"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2017 Simpleclient" windowtitle="Javadoc zum Simpleclient '17" packagenames="sc.player2017.*,sc.plugin2017" overview="overview.html" classpath="${toString:classpath.base}">
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.8"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2017 Simpleclient" windowtitle="Javadoc zum Simpleclient '17" packagenames="sc.player2017.*,sc.plugin2017" overview="overview.html" classpath="${toString:classpath.base}">
 		<fileset dir="src" defaultexcludes="yes">
 				<exclude name="logback.xml"/>
 			</fileset> 

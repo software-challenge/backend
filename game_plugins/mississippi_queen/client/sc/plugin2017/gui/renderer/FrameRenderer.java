@@ -6,6 +6,7 @@ package sc.plugin2017.gui.renderer;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -67,10 +68,18 @@ public class FrameRenderer extends PApplet {
 
   private LinkedHashMap<HexField, Action> stepPossible;
   private WinCondition winCondition;
+  private EnumMap<EPlayerId, Boolean> humanPlayers;
   public FrameRenderer() {
     super();
 
     RenderConfiguration.loadSettings();
+
+    // RenderFacade will tell us when a human player joins so that we can save
+    // it.
+    humanPlayers = new EnumMap<>(EPlayerId.class);
+    for (EPlayerId val : EPlayerId.values()) {
+      humanPlayers.put(val, Boolean.FALSE);
+    }
 
     background = new Background(this);
     guiBoard = new GuiBoard(this);
@@ -131,6 +140,7 @@ public class FrameRenderer extends PApplet {
 
   public void endGame(WinCondition condition) {
     winCondition = condition;
+    redraw();
   }
 
   private void drawEndGameScreen(WinCondition condition) {
@@ -176,6 +186,11 @@ public class FrameRenderer extends PApplet {
     redraw();
   }
 
+  /**
+   * Is called when a human player should input a move.
+   * @param maxTurn TODO
+   * @param id The player who needs to move.
+   */
   public void requestMove(int maxTurn, EPlayerId id) {
     logger.debug("request move with {} for player {}", maxTurn, id);
     updateView(currentGameState);
@@ -368,7 +383,7 @@ public class FrameRenderer extends PApplet {
   }
 
   public boolean currentPlayerIsHuman() {
-    return getId() != EPlayerId.OBSERVER;
+    return humanPlayers.get(getId());
   }
 
   public Player getCurrentPlayer() {
@@ -429,5 +444,9 @@ public class FrameRenderer extends PApplet {
 
   public boolean playerControlsEnabled() {
     return currentPlayerIsHuman();
+  }
+
+  public void setHuman(EPlayerId target) {
+    humanPlayers.put(target, Boolean.TRUE);
   }
 }
