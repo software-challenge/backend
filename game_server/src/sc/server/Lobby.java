@@ -131,8 +131,12 @@ public class Lobby implements IClientManagerListener, IClientListener
 			else if (packet instanceof PauseGameRequest)
 			{
 				PauseGameRequest pause = (PauseGameRequest) packet;
-				GameRoom room = this.gameManager.findRoom(pause.roomId);
-				room.pause(pause.pause);
+				try {
+					GameRoom room = this.gameManager.findRoom(pause.roomId);
+					room.pause(pause.pause);
+				} catch (RescueableClientException e) {
+					this.logger.error("Got exception on pause: {}", e);
+				}
 			}
 			else if (packet instanceof StepRequest)
 			{

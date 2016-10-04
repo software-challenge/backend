@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package sc.plugin2017.gui;
 
@@ -13,9 +13,9 @@ import sc.plugin2017.gui.renderer.RenderFacade;
 /**
  * Holds a place for a potential client (that can be a remote client or a human
  * client i.e.)
- * 
+ *
  * @author ffi
- * 
+ *
  */
 public class Slot implements ISlot {
 	private String reservation;
@@ -43,23 +43,11 @@ public class Slot implements ISlot {
 	@Override
 	public void asHuman() throws IOException {
 		GuiClient humanClient;
-		if (!RenderFacade.getInstance().getAlreadyCreatedPlayerOne()) {
-			humanClient = new GuiClient(adminclient.getHost(), adminclient
-					.getPort(), EPlayerId.PLAYER_ONE);
-		} else {
-			humanClient = new GuiClient(adminclient.getHost(), adminclient
-					.getPort(), EPlayerId.PLAYER_TWO);
-		}
-
+		EPlayerId nextPlayerId = adminclient.claimNextHumanPlayerId();
+		humanClient = new GuiClient(adminclient.getHost(), adminclient.getPort(), nextPlayerId);
 		HumanGameHandler handler = new HumanGameHandler(humanClient);
 		humanClient.setHandler(handler);
-		if (humanClient.getID() == EPlayerId.PLAYER_ONE) {
-			RenderFacade.getInstance()
-					.setHandler(handler, humanClient.getID());
-		} else {
-			RenderFacade.getInstance()
-					.setHandler(handler, humanClient.getID());
-		}
+		RenderFacade.getInstance().setHandler(handler, humanClient.getID());
 		humanClient.joinPreparedGame(reservation);
 	}
 

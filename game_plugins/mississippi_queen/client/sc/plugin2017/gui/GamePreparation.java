@@ -26,6 +26,7 @@ public class GamePreparation implements IGamePreparation {
 	private List<ISlot> slots = new LinkedList<ISlot>();
 	private Observation observation;
 
+
 	public GamePreparation(GuiClient client, SlotDescriptor... descriptors) {
 		RequestResult<PrepareGameResponse> results = null;
 		try {

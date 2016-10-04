@@ -37,6 +37,7 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 	@Override
 	protected void onObject(Object o)
 	{
+		logger.debug("{} got object of type {}", this, o.getClass());
 		for (IHistoryListener listener : this.listeners)
 		{
 			if (o instanceof GameResult)

@@ -25,7 +25,7 @@ import sc.shared.SlotDescriptor;
  * The GameManager is responsible to keep all games alive and kill them once
  * they are done. Additionally the GameManger has to detect and kill games,
  * which seem to be dead-locked or have caused a timeout.
- * 
+ *
  * @author mja
  * @author rra
  */
@@ -46,7 +46,7 @@ public class GameRoomManager implements Runnable
 
 	/**
 	 * Adds an active game to the <code>GameManager</code>
-	 * 
+	 *
 	 * @param room
 	 */
 	private void add(GameRoom room)
@@ -77,7 +77,7 @@ public class GameRoomManager implements Runnable
 		String roomId = generateRoomId();
 		GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(),
 				prepared);
-		
+
 		String gameFile = Configuration.get("loadGameFile");
 		if (gameFile != null && gameFile != "") {
 			logger.info("Request plugin to load game from file: " + gameFile);
@@ -169,17 +169,17 @@ public class GameRoomManager implements Runnable
 	{
 		return this.pluginApi;
 	}
-	
+
 	public synchronized PrepareGameResponse prepareGame(String gameType,
 			int playerCount, List<SlotDescriptor> descriptors, Object loadGameInfo)
 			throws RescueableClientException {
 		GameRoom room = createGame(gameType, true);
 		room.openSlots(descriptors);
-		
+
 		if (loadGameInfo != null) {
 			room.getGame().loadGameInfo(loadGameInfo);
 		}
-		
+
 		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 
@@ -189,7 +189,7 @@ public class GameRoomManager implements Runnable
 	{
 		return prepareGame(gameType, playerCount, descriptors, null);
 	}
-	
+
 	public synchronized PrepareGameResponse prepareGame(PrepareGameRequest prepared) throws RescueableClientException {
 		return prepareGame(
 				prepared.getGameType(), prepared.getPlayerCount(),
@@ -203,8 +203,7 @@ public class GameRoomManager implements Runnable
 
 		if (room == null)
 		{
-			throw new RescueableClientException("Couldn't find a room with id "
-					+ roomId);
+			throw new RescueableClientException("Couldn't find a room with id " + roomId);
 		}
 
 		return room;

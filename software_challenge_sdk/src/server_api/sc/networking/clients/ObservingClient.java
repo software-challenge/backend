@@ -68,7 +68,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		boolean firstObservation = this.history.isEmpty();
 
 		this.history.add(observation);
-		logger.debug("saved observation {}", observation.getClass());
+		logger.debug("{} saved observation {}", this, observation.getClass());
 
 		if (canAutoStep() || firstObservation)
 		{
@@ -176,9 +176,12 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	protected void setPosition(int i)
 	{
-		logger.debug("Setting Position to {}", i);
-		this.position = Math.max(0, Math.min(this.history.size() - 1, i));
-		notifyOnUpdate();
+		int newPosition = Math.max(0, Math.min(this.history.size() - 1, i));
+		logger.debug("Setting Position to {} (requested {})", newPosition, i);
+		if (newPosition != this.position) {
+			this.position = newPosition;
+			notifyOnUpdate();
+		}
 	}
 
 	@Override
