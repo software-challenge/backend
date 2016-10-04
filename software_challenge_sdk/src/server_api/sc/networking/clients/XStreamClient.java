@@ -28,7 +28,6 @@ public abstract class XStreamClient
 	private boolean						closed			= false;
 	private boolean						ready			= false;
 	private final Object				readyLock		= new Object();
-	private boolean logXML = false;
 
 	public enum DisconnectCause
 	{
@@ -46,14 +45,6 @@ public abstract class XStreamClient
 	public boolean isReady()
 	{
 		return this.ready;
-	}
-
-	public void enableXMLLogging() {
-		logXML = true;
-	}
-
-	public void disableXMLLogging() {
-		logXML = false;
 	}
 
 	public void start()
@@ -131,10 +122,7 @@ public abstract class XStreamClient
 			while (!Thread.interrupted())
 			{
 				Object o = XStreamClient.this.in.readObject();
-				logger.debug("Client " + XStreamClient.this +": Received " + o + " via " + this.networkInterface);
-				if (XStreamClient.this.logXML) {
-				  logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-				}
+				logger.debug("Client " + XStreamClient.this +": Received " + o + " via " + this.networkInterface + "\nDataDump:\n{}", this.xStream.toXML(o));
 				if (o instanceof CloseConnection) {
 					handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
 					break; // stop receiver thread
@@ -223,13 +211,10 @@ public abstract class XStreamClient
 			throw new IllegalStateException("Writing on a closed xStream.");
 		}
 
-		logger.debug("Client "+ this + ": Sending " + o + " via " + this.networkInterface);
+		logger.debug("Client "+ this + ": Sending " + o + " via " + this.networkInterface + "\nDataDump:\n{}", this.xStream.toXML(o));
 
 		try
 		{
-			if (logXML) {
-				logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-			}
 			this.out.writeObject(o);
 			this.out.flush();
 		}

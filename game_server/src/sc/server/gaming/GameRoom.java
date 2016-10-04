@@ -469,7 +469,6 @@ public class GameRoom implements IGameListener
 		});*/
 		ObserverRole role = new ObserverRole(source, this);
 		source.addRole(role);
-		source.enableXMLLogging(); // XXX debugging
 		this.observers.add(role);
 		source.send(new ObservationResponse(getId()));
 	}
