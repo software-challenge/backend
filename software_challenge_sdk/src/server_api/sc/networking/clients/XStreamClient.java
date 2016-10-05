@@ -27,7 +27,7 @@ public abstract class XStreamClient
 	protected final XStream				xStream;
 	private boolean						closed			= false;
 	private boolean						ready			= false;
-	private final Object				readyLock		= new Object();)
+	private final Object				readyLock		= new Object();
 
 	public enum DisconnectCause
 	{
@@ -45,14 +45,6 @@ public abstract class XStreamClient
 	public boolean isReady()
 	{
 		return this.ready;
-	}
-
-	public void enableXMLLogging() {
-		logXML = true;
-	}
-
-	public void disableXMLLogging() {
-		logXML = false;
 	}
 
 	public void start()
@@ -223,9 +215,6 @@ public abstract class XStreamClient
 
 		try
 		{
-			if (logXML) {
-				logger.debug("DataDump:\n{}", this.xStream.toXML(o));
-			}
 			this.out.writeObject(o);
 			this.out.flush();
 		}
