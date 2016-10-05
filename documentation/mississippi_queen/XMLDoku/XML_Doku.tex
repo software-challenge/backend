@@ -170,12 +170,20 @@ Der Move ist der allgemeine Zug, der in verschiedenen Varianten gesendet werden 
 \item[M] Beschleunigung M $\in \{-5,-4..5\}$
 \item[N] Anzahl der Drehungen N $\in \{-3..3\}$ positiv für gegen, negativ für mit dem Uhrzeigersinn
 \item[V] Anzahl der Felder die in Bewegungsrichtung zurückgelegt werden (-1 für Rückwärts)
-\item[D] Richtung in die abgedrängt wird. D $\in \{RIGHT, UP\_RIUGHT, UP\_LEFT, LEFT, DOWN\_LEFT, DOWN\_RIGHT\}$
+\item[D] Richtung in die abgedrängt wird. Mögliche Werte sind:
+\begin{itemize}
+\item \verb|RIGHT|
+\item \verb|UP_RIGHT|
+\item \verb|UP_LEFT|
+\item \verb|LEFT|
+\item \verb|DOWN_LEFT|
+\item \verb|DOWN_RIGHT|
+\end{itemize}
 \end{description}
 \begin{verbatim}
 	<acceleration order="I" acc="M"/>
 	<turn order="I" direction="N"/>
-	<step order="I" distance="V"/>
+	<advance order="I" distance="V"/>
 	<push order="I" direction="D"/>
 \end{verbatim}
 \end{description}
@@ -193,9 +201,9 @@ Damit sieht beispielsweise ein Laufzug so aus:
 <room roomId="RID">
   <data class="move">
     <acceleration order="0" acc="1"/>
-    <step order="1" distance="3"/>
+    <advance order="1" distance="3"/>
     <turn order="2" direction="-1"/>
-    <step order="3" distance="1"/>
+    <advance order="3" distance="1"/>
     <push order="4" direction="LEFT"/>
     <hint content="Dies ist ein Hint."/>
     <hint content="noch ein Hint"/>
@@ -271,7 +279,15 @@ Es folgt die Beschreibung des Spielstatus, der vor jeder Zugaufforderung an die 
 \item[P] Punktekonto
 \item[X] X Koordinate des Spielers
 \item[Y] Y Koordinate des Spielers
-\item[D] Ausrichtung des Spielers, D $\in \{RIGHT, UP\_RIUGHT, UP\_LEFT, LEFT, DOWN\_LEFT, DOWN\_RIGHT\}$
+\item[D] Ausrichtung des Spielers, mögliche Werte:
+\begin{itemize}
+\item \verb|RIGHT|
+\item \verb|UP_RIGHT|
+\item \verb|UP_LEFT|
+\item \verb|LEFT|
+\item \verb|DOWN_LEFT|
+\item \verb|DOWN_RIGHT|
+\end{itemize}
 \item[S] Geschwindigkeit des Spielers
 \item[K] Kohleeinheiten des Spielers
 \item[T] Teilabschnitt, auf dem sich der Spieler befindet
@@ -302,7 +318,7 @@ direction="D" speed="S" coal="K" tile="T" passenger="PA"/>
 
 \subsection{\label{sec:field}Spielfeld}
 \begin{description}
-\item[Type] Typ des Feldes (WATER/BLOCKED/PASSENGER{i}/GOAL/SANDBAR/LOG). ($i \in \{0..5\}$ gibt die Richtung an)
+\item[Type] Typ des Feldes (WATER/BLOCKED/PASSENGER{i}/GOAL/SANDBANK/LOG). ($i \in \{0..5\}$ gibt die Richtung an)
 \item[X] X-Koordinate des Feldes
 \item[Y] Y-Koordinate des Feldes
 \item[P] Punkte des Feldes
@@ -356,7 +372,15 @@ da er nur auf Aufforderungen (Zug-Aufforderung siehe \ref{moverequest}) des Serv
 \item[P] Punktekonto
 \item[X] X Koordinate des Spielers
 \item[Y] Y Koordinate des Spielers
-\item[D] Ausrichtung des Spielers  D $\in \{RIGHT, UP\_RIUGHT, UP\_LEFT, LEFT, DOWN\_LEFT, DOWN\_RIGHT\}$
+\item[D] Ausrichtung des Spielers, mögliche Werte:
+\begin{itemize}
+\item \verb|RIGHT|
+\item \verb|UP_RIGHT|
+\item \verb|UP_LEFT|
+\item \verb|LEFT|
+\item \verb|DOWN_LEFT|
+\item \verb|DOWN_RIGHT|
+\end{itemize}
 \item[S] Geschwindigkeit des Spielers
 \item[K] Kohleeinheiten des Spielers
 \item[T] Spielabschnitt auf dem sich der Spieler befindet
@@ -455,7 +479,7 @@ Kommunikation ablaufen kann.\bigskip\\
 <room roomId="65d3d704-87d9-42eb-8995-51c3e6324513">
   <data class="move">
     <acceleration order="0" acc="2"/>
-    <step order="1" distance="3"/>
+    <advance order="1" distance="3"/>
   </data>
 </room>
 \end{verbatim}
