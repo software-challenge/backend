@@ -145,9 +145,9 @@ public class FrameRenderer extends PApplet {
 
   private void drawEndGameScreen(WinCondition condition) {
     String winnerName = null;
-    if (condition.winner == PlayerColor.RED) {
+    if (condition.getWinner() == PlayerColor.RED) {
       winnerName = currentGameState.getRedPlayer().getDisplayName();
-    } else if (condition.winner == PlayerColor.BLUE) {
+    } else if (condition.getWinner() == PlayerColor.BLUE) {
       winnerName = currentGameState.getBluePlayer().getDisplayName();
     }
     GameEndedDialog.draw(this, condition, winnerName);
