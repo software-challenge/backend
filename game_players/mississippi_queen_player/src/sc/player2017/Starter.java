@@ -2,9 +2,13 @@ package sc.player2017;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
+import sc.player2017.logic.RandomLogic;
 import sc.plugin2017.AbstractClient;
 import sc.plugin2017.IGameHandler;
 import sc.shared.SharedConfiguration;
@@ -47,6 +51,13 @@ public class Starter extends AbstractClient {
 	public static void main(String[] args) throws IllegalOptionValueException,
 			UnknownOptionException, IOException {
 		System.setProperty("file.encoding", "UTF-8");
+
+		// XXX only for testing
+    // you may use this code to enable debug output:
+    Logger rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    ((ch.qos.logback.classic.Logger)rootLogger).setLevel(ch.qos.logback.classic.Level.WARN);
+    Logger randomlogiclogger = LoggerFactory.getLogger(RandomLogic.class);
+    ((ch.qos.logback.classic.Logger)randomlogiclogger).setLevel(ch.qos.logback.classic.Level.WARN);
 
 		// parameter definieren
 		CmdLineParser parser = new CmdLineParser();

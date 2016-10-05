@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.BindException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -364,6 +365,7 @@ public class TestRangeDialog extends JDialog {
               try {
                 logger.debug("FOCUS testloop await game end reached {}", this);
                 gameEndReached.await(3, TimeUnit.MINUTES);
+                logger.debug("FOCUS testloop await continue {}", this);
                 gameEndReached.reset();
               } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
                 cancelTest("Cancel due to internal error");
@@ -722,17 +724,11 @@ public class TestRangeDialog extends JDialog {
 				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
 			}
 
-			Thread.sleep(500); // FIXME wait for server to create room
       logger.debug("Preparing clients");
 			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
 		} catch (IOException e) {
 			e.printStackTrace();
 			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
-			return;
-		} catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-			cancelTest("Interrupted");
 			return;
     }
 
@@ -743,9 +739,17 @@ public class TestRangeDialog extends JDialog {
 			cancelTest(lang.getProperty("dialog_test_msg_run"));
 			return;
 		}
-
+/*
+		// FIXME it seems that the unpause happends sometimes before the clients have connected and this causes the game to not start
+		try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 		logger.debug("FOCUS unpausing game");
 		obs.unpause();
+		*/
 
 		// show connecting dialog
 		if (this.isActive()) {
@@ -851,7 +855,7 @@ public class TestRangeDialog extends JDialog {
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
-			  logger.debug("FOCUS game ended, result: {}", result);
+			  logger.debug("FOCUS game ended, result:\n{}", result);
 				if (null == result) // happens after a game has been canceled
 					return;
 
@@ -904,6 +908,7 @@ public class TestRangeDialog extends JDialog {
 				try {
 				  logger.debug("FOCUS Observer await game end reached {}", gameEndReached);
           gameEndReached.await();
+				  logger.debug("FOCUS Observer await game end continue {}", gameEndReached);
         } catch (InterruptedException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -929,6 +934,7 @@ public class TestRangeDialog extends JDialog {
 			public void ready() {
 				connectionDialog.close();
 				logger.debug("FOCUS got ready event");
+				logger.debug("ready trace:\n {}", Arrays.asList(Thread.currentThread().getStackTrace()).toString());
 				obs.start();
 			}
 		});

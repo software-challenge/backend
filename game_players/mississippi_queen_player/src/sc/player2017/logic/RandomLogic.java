@@ -49,7 +49,6 @@ public class RandomLogic implements IGameHandler {
 	 */
 	public RandomLogic(Starter client) {
 		this.client = client;
-		((ch.qos.logback.classic.Logger)log).setLevel(ch.qos.logback.classic.Level.INFO);
 	}
 
 	/**
@@ -59,7 +58,6 @@ public class RandomLogic implements IGameHandler {
 	public void gameEnded(GameResult data, PlayerColor color,
 			String errorMessage) {
 		log.info("Das Spiel ist beendet.");
-		((ch.qos.logback.classic.Logger)log).setLevel(ch.qos.logback.classic.Level.DEBUG);
 	}
 
 	/**

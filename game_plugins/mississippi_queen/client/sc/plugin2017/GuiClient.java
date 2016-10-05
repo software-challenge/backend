@@ -36,7 +36,7 @@ public class GuiClient extends AbstractClient {
 		super.onNewState(roomId, state);
 
 		if (obs != null) {
-
+		  // FIXME: "ready" should signal that the game may be started but a new game state will be received only AFTER a game is ready
 			if (!alreadyReady) {
 				alreadyReady = true;
 				obs.ready();
