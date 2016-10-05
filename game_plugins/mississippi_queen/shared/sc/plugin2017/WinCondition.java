@@ -9,14 +9,22 @@ public class WinCondition implements Cloneable {
 	/**
 	 * Farbe des Gewinners
 	 */
-	public final PlayerColor winner;
+	private final PlayerColor winner;
 
 	/**
 	 * Sieggrund
 	 */
-	public final String reason;
+	private final String reason;
 
-	/**
+	public PlayerColor getWinner() {
+    return winner;
+  }
+
+  public String getReason() {
+    return reason;
+  }
+
+  /**
 	 * Erzeugt eine neue Condition mit Sieger und Gewinngrund
 	 *
 	 * @param winner

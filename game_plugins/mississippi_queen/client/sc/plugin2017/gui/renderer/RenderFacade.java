@@ -268,51 +268,63 @@ public class RenderFacade {
 		if (disabled) {
 			return;
 		}
-		if (data != null) {
-		  PlayerScore score = data.getScores().get(color == PlayerColor.RED ? 0 : 1);
-			ScoreCause cause = score.getCause();
-			String err = "";
 
-			if (cause == ScoreCause.RULE_VIOLATION) {
-			err += "Regelverletzung durch anderen Spieler:\n";
-			}
-			err += score.getReason();
+		if (data == null) {
+		  // no result data, can't do much useful other than setting the win condition to signal that the game ended
+			logger.debug("gameEnded no result. winner, message is {}", errorMessage);
+			frameRenderer.endGame(new WinCondition(null, errorMessage));
+		} else {
+		  // analyze result data to display a sensible reason for the game end
+		  StringBuilder reason = new StringBuilder(50);
 
-			if (errorMessage == null && cause != ScoreCause.REGULAR) {
+		  // if one player has a non-regular cause, this is likely the cause for the game end
+		  int i = 0;
+		  for (PlayerScore score : data.getScores()) {
+		    if (score.getCause() != ScoreCause.REGULAR) {
 
-				err = "'" + lastGameState.getPlayerNames()[color == PlayerColor.RED ? 0 : 1]
-						+ "' hat keinen Zug gesendet.\n";
+		      reason.append(lastGameState.getPlayerNames()[i]);
+          switch (score.getCause()) {
+          case SOFT_TIMEOUT:
+          case HARD_TIMEOUT:
+            reason.append(" hat die maximale Zugzeit von 2 Sekunden überschritten.");
+            break;
 
-				switch (cause) {
+          case LEFT:
+            reason.append(" hat das Spiel verlassen.");
+            break;
 
-				case SOFT_TIMEOUT:
-				case HARD_TIMEOUT:
-					err += "Die maximale Zugzeit von 2 Sekunden wurde überschritten.";
-					break;
+          case UNKNOWN:
+            reason.append(" hat einen unbekannten Fehler verursacht.");
+            break;
+          case RULE_VIOLATION:
+            reason.append(" hat einen Regelwidrigen Zug gemacht:\n");
+            reason.append(score.getReason());
+            break;
+          }
+        }
+		    i++;
+		  }
 
-				case LEFT:
-					err += "Der Spieler hat das Spiel verlassen.";
-					break;
+      // if no player caused a problem,
+		  if (reason.length() == 0) {
+		    if (errorMessage != null) {
+		      // there might be an error message
+          reason.append(errorMessage);
+		    } else {
+		      // looks like a regular end, display score reason (both players should have same reason)
+          reason.append(data.getScores().get(0).getReason());
+		    }
+		  }
 
-				case UNKNOWN:
-					err += "Es ist ein unbekannter Fehler aufgetreten.";
-					break;
-				}
-
-			}
-
+		  // the winner (if any) will be in the winners list
 			PlayerColor winner = null;
 			if (!data.getWinners().isEmpty()) {
 			  assert data.getWinners().size() == 1;
 			  winner = ((Player)data.getWinners().get(0)).getPlayerColor();
 			}
-			logger.debug("gameEnded with result data. winner {}", winner);
-			frameRenderer.endGame(new WinCondition(winner, err));
-		} else if (errorMessage != null) {
-			logger.debug("gameEnded no result. winner, message is {}", errorMessage);
-			frameRenderer.endGame(new WinCondition(null, errorMessage));
-		}
 
+		  frameRenderer.endGame(new WinCondition(winner, reason.toString()));
+		}
 	}
 
 	public EPlayerId getActivePlayer() {

@@ -8,8 +8,9 @@
 		</layout>
 	</appender>
 
-	<!-- all loggers in DEBUG for now...  -->
-	<logger name="sc" level="DEBUG" />
+    <!-- set loggers in which you are interested in to a lower level here -->
+	<logger name="sc.plugin2017.gui.renderer" level="DEBUG" />
+	<logger name="sc.plugin2017.Game" level="DEBUG" />
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />

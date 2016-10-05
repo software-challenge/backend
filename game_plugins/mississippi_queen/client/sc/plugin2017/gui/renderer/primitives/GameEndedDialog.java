@@ -16,13 +16,13 @@ public class GameEndedDialog {
     parent.rect(0, 0, parent.getWidth(), parent.getHeight());
     // message für winningreason
     String winningReason = "";
-    if (condition.reason != null) {
-      winningReason = condition.reason;
+    if (condition.getReason() != null) {
+      winningReason = condition.getReason();
     }
     // message für endefenster
     String msg = "Das Spiel ist zu Ende!";
     String message = "Das Spiel ging unendschieden aus!";
-    if (condition.winner != null) {
+    if (condition.getWinner() != null) {
       message = winningPlayerName + " hat gewonnen!";
     }
     // Box Groß
@@ -56,9 +56,9 @@ public class GameEndedDialog {
 
     parent.pushMatrix();
     parent.pushStyle();
-    if (condition.winner == PlayerColor.RED) {
+    if (condition.getWinner() == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
-    } else if (condition.winner == PlayerColor.BLUE) {
+    } else if (condition.getWinner() == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
     }
     parent.translate((x - parent.textWidth(message)) / 2, 3 * parent.textAscent() + parent.textDescent()); // mittig

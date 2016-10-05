@@ -171,7 +171,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		WinCondition winCondition = checkWinCondition();
 		String winningReason = null;
 		if (winCondition != null) {
-		  winningReason = winCondition.reason;
+		  winningReason = winCondition.getReason();
 		}
 		if (stats[0] > oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] > oppPoints[1]))
 			matchPoints = 2;
@@ -270,7 +270,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			List<IPlayer> winners = new LinkedList<IPlayer>();
 	  if (win != null) {
       for (Player player : players) {
-        if (player.getPlayerColor() == win.winner) {
+        if (player.getPlayerColor() == win.getWinner()) {
           winners.add(player);
           break;
         }
