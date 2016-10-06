@@ -7,7 +7,6 @@
     <delete dir="${out.dir}" />
     <delete dir="game_server/build" />
     <delete dir="game_gui/build" />
-    <delete dir="v8interface/build" />
     <!--    old Plugins                        !-->
     <delete dir="game_plugins/tic_tac_toe/build" />
     <delete dir="game_players/hase_und_igel/build" />
@@ -27,10 +26,10 @@
     <delete dir="game_plugins/twixt/build" />
     <delete dir="game_players/twixt_player/build" />
     <delete dir="game_players/twixt_player2/build" />
-    <!--    currentPlugin                    !--> 
+    <!--    currentPlugin                    !-->
     <delete dir="game_plugins/mississippi_queen/build" />
-    <!--<delete dir="game_players/mississippi_queen_player/build" />
-    <delete dir="game_players/mississippi_queen_player2/build" /> !-->
+    <delete dir="game_players/mississippi_queen_player/build" />
+    <!--<delete dir="game_players/mississippi_queen_player2/build" /> !-->
   </target>
 
   <target name="dependencies">
@@ -60,27 +59,20 @@
         <!--    currentPlugin                    !-->
         <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
         <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
-         <!--<ant dir="game_players/mississippi_queen_player2" target="clean-build" inheritAll="false" /> TODO!--> 
+         <!--<ant dir="game_players/mississippi_queen_player2" target="clean-build" inheritAll="false" /> TODO!-->
 
         <echo message="Compiling Server and GUI..." />
         <ant dir="game_server" target="clean-build" inheritAll="false" />
         <ant dir="game_gui" target="clean-build" inheritAll="false" />
-        <ant dir="v8interface" target="clean-build" inheritAll="false" />
   </target>
 
   <target name="build" depends="scmversion,dependencies">
     <mkdir dir="${out.dir}" />
 
     <mkdir dir="${out.dir}/gui" />
-    <mkdir dir="${out.dir}/gui/java7" />
-    <mkdir dir="${out.dir}/gui/java8" />
 
-    <copy todir="${out.dir}/gui/java7">
-      <fileset dir="./game_gui/build/jar" excludes="*/mississippi_queen_java8.jar" />
-    </copy>
-
-    <copy todir="${out.dir}/gui/java8">
-      <fileset dir="./game_gui/build/jar" excludes="*/mississippi_queen_java7.jar" />
+    <copy todir="${out.dir}/gui">
+      <fileset dir="./game_gui/build/jar" />
     </copy>
 
     <mkdir dir="${out.dir}/server" />
@@ -88,23 +80,10 @@
       <fileset dir="./game_server/build/jar" />
     </copy>
 
-    <!-- #####     Clients   #####    TODO !-->
-
-    <!-- <mkdir dir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />
-    <mkdir dir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java7" />
-    <mkdir dir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java8" />
-    <copy todir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar">
-      <fileset dir="./game_players/mississippi_queen_player2/build/jar" />
-    </copy> !-->
-
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar" />
-    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar/java7" />
-    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar/java8" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/jar">
       <fileset dir="./game_players/mississippi_queen_player/build/jar" />
     </copy>
-
-
 
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/src">
@@ -116,12 +95,10 @@
       </fileset>
     </copy>
     <move tofile="${out.dir}/simple_client/mississippi_queen_player/src/build.xml" file="${out.dir}/simple_client/mississippi_queen_player/src/build-deploy.xml" />
-
     <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src/lib" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/src/lib">
-      <fileset dir="${out.dir}/simple_client/mississippi_queen_player/jar/java7/lib" />
+      <fileset dir="${out.dir}/simple_client/mississippi_queen_player/jar/lib" />
     </copy>
-
 
 
     <!-->####    PLUGINS             !-->
@@ -134,20 +111,24 @@
       <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
     </copy>
 
+    <echo message="Copy log configs" />
+
+    <copy tofile="${out.dir}/gui/logback.xml" file="./game_server/bin/logback-release.xml" />
+    <copy tofile="${out.dir}/server/logback.xml" file="./game_server/bin/logback-release.xml" />
+
     <echo message="Generating Starter-Batchfiles" />
 
-    <touch file="${out.dir}/gui/java7/start.bat" />
-    <echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-gui.jar" file="${out.dir}/gui/java7/start.bat" />
-    <touch file="${out.dir}/gui/java8/start.bat" />
-    <echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-gui.jar" file="${out.dir}/gui/java8/start.bat" />
-    <echo message="java -Dfile.encoding=UTF-8 -jar softwarechallenge-server.jar" file="${out.dir}/server/start.bat" />
+    <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
+    <echo file="${out.dir}/gui/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-gui.jar --max_client_heapsize=256&#xD;&#xA;</echo>
+    <echo file="${out.dir}/gui/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-gui.jar --max_client_heapsize=256&#xA;</echo>
+    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
+    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
 
     <echo message="Zipping files..." />
 
     <mkdir dir="${out.dir}/zipped" />
 
-    <zip destfile="${out.dir}/zipped/server-gui-java7.zip" basedir="${out.dir}/gui/java7" />
-    <zip destfile="${out.dir}/zipped/server-gui-java8.zip" basedir="${out.dir}/gui/java8" />
+    <zip destfile="${out.dir}/zipped/server-gui.zip" basedir="${out.dir}/gui" />
 
     <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
@@ -156,10 +137,8 @@
     <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
     <zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
     <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
-    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar-java7.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java7" />
-    <zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar-java8.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar/java8" />!-->
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar-java7.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar/java7" />
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar-java8.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar/java8" />
+    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
+    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar" />
     <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-src.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/src" />
 
   </target>

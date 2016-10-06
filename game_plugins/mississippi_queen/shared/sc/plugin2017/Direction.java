@@ -32,7 +32,8 @@ public enum Direction {
   }
 
   /**
-   * Calculates the direction when turning turn steps (positive values counterclockwise, negative values clockwise).
+   * Calculates the direction when turning turn steps.
+   * @param turn number of steps to turn (positive values counterclockwise, negative values clockwise).
    * @return turned direction
    */
   public Direction getTurnedDirection(int turn) {
@@ -53,7 +54,7 @@ public enum Direction {
     }
     return direction;
   }
-  
+
   @Override
   public String toString() {
     return this.translation;

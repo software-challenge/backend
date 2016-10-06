@@ -62,9 +62,9 @@ public class GuiButton extends PrimitiveBase {
 
   /**
    * Method to determine if given mouse coordinates are inside the bounds of the button.
-   * @param mouseX
-   * @param mouseY
-   * @return true if mouseX and mouseY are inside the bounds of the button.
+   * @param mouseX X-coordinate of mouse pointer.
+   * @param mouseY X-coordinate of mouse pointer.
+   * @return true if coordinates are inside the bounds of the button.
    */
   public boolean hover(int mouseX, int mouseY) {
     return (Math.abs(x - mouseX) < size / 2) && (Math.abs(y - mouseY) < size / 2);
@@ -76,9 +76,9 @@ public class GuiButton extends PrimitiveBase {
 
   /**
    * Tests if a click at given coordinated would activate the button.
-   * @param mouseX
-   * @param mouseY
-   * @return
+   * @param mouseX X-coordinate of mouse pointer.
+   * @param mouseY X-coordinate of mouse pointer.
+   * @return true if a button on current mouse coordinated would be clicked.
    */
   public boolean wouldBeClicked(int mouseX, int mouseY) {
     return hover(mouseX, mouseY) && enabled;
