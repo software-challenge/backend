@@ -1,6 +1,6 @@
 <project name="softwarechallenge-gui" basedir="." default="main">
 	<import file="../git-build.xml" />
-	
+
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
@@ -47,15 +47,17 @@
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
 		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
+    <!--
 		<ant dir="./../game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/manhattan" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/sixpack" target="clean-build" inheritAll="false" />
 		<ant dir="./../game_plugins/cartagena" target="clean-build" inheritAll="false" />
-                <ant dir="./../game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
-                <ant dir="./../game_plugins/twixt" target="clean-build" inheritAll="false" />
-                <ant dir="./../game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
-		
+    <ant dir="./../game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
+    <ant dir="./../game_plugins/twixt" target="clean-build" inheritAll="false" />
+    -->
+    <ant dir="./../game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
+
 
 		<ant dir="${server.dir}" target="clean-build" inheritAll="false" />
 	</target>
@@ -93,7 +95,7 @@
 		</copy>
 
 <!-- have newest plugin as standard entry !-->
-		<copy tofile="${jar.dir}/game_gui.conf" file="game_gui.conf.newest_plugin_chosen"/> 
+		<copy tofile="${jar.dir}/game_gui.conf" file="game_gui.conf.newest_plugin_chosen"/>
 
 		<delete dir="${jar.dir}/lib" />
 		<mkdir dir="${jar.dir}/lib" />

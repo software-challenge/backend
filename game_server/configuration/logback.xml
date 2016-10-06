@@ -18,6 +18,11 @@
 	-->
 	<logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
 	<logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
+	<logger name="sc.server.gaming.GameRoom" level="DEBUG" />
+	<logger name="sc.framework.plugins" level="DEBUG" />
+	<logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
+	<logger name="sc.plugin2017.AbstractClient" level="DEBUG" />
+	<logger name="sc.plugin2017.GuiClient" level="DEBUG" />
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />

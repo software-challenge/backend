@@ -155,6 +155,8 @@ public class GuiBoard extends PrimitiveBase {
    *          blue player
    * @param current
    *          PlayerColor of currentPlayer in gameState
+   * @param currentMove
+   *          the currently entered (maybe incomplete) move
    */
   public void update(Board board, Player red, Player blue, PlayerColor current, Move currentMove) {
     if (board == null) {
@@ -310,9 +312,6 @@ public class GuiBoard extends PrimitiveBase {
 
   /**
    * Sets size of HexFields, calculates offset
-   *
-   * @param width
-   * @param height
    */
   private void calculateSize() {
     float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;

@@ -36,11 +36,7 @@ import sc.plugin2017.util.InvalidMoveException;
  *
  *
  * Zusaetzlich zu den eigentlichen Informationen koennen bestimmte
- * Teilinformationen abgefragt werden. Insbesondere kann mit der Methode
- * {@link #getPossibleActions() getPossibleActions()} eine Liste aller fuer den
- * aktuellen Spieler legalen Teilzuege abgefragt werden. So kann ein Spieleclient
- * diese Liste aus dem {@code GameState} erfragen und muss dann lediglich einen
- * Zug aus dieser Liste auswaehlen.
+ * Teilinformationen abgefragt werden.
  *
  * @author Niklas, Sören
  */
@@ -765,17 +761,3 @@ public class GameState implements Cloneable {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
