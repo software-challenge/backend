@@ -1,11 +1,17 @@
 package sc.plugin2017;
 
+
 import java.io.IOException;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class GuiClient extends AbstractClient {
+  private static final Logger logger = LoggerFactory
+      .getLogger(GuiClient.class);
 	public GuiClient(String host, int port, EPlayerId id) throws IOException {
 		super(host, port, id);
 		// NOTE that the set is ordered by declaration order of the enums, not order
@@ -35,6 +41,8 @@ public class GuiClient extends AbstractClient {
 	public void onNewState(String roomId, Object state) {
 		super.onNewState(roomId, state);
 
+		logger.debug("{} got new state, alreadyReady is {}", this, alreadyReady);
+		logger.debug("observer: {}", obs);
 		if (obs != null) {
 		  // FIXME: "ready" should signal that the game may be started but a new game state will be received only AFTER a game is ready
 			if (!alreadyReady) {

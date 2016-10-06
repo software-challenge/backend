@@ -84,6 +84,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	@Override
 	public void onNewState(String roomId, Object state)
 	{
+		logger.debug("{} got new state", this);
 		if (isAffected(roomId))
 		{
 			addObservation(state);
@@ -100,6 +101,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	{
 		for (IUpdateListener listener : this.listeners)
 		{
+			logger.debug("calling onUpdate on {}", listener);
 			listener.onUpdate(this);
 		}
 	}

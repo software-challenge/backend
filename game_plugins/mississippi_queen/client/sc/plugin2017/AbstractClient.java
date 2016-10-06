@@ -137,6 +137,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	public void onNewState(String roomId, Object state) {
 
 		GameState gameState = (GameState) state;
+	  logger.debug("{} got new state {}", this, gameState);
 
 		if (id != EPlayerId.OBSERVER) {
 			handler.onUpdate(gameState);

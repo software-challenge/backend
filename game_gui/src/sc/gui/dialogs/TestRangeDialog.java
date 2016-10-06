@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.BindException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -366,7 +365,6 @@ public class TestRangeDialog extends JDialog {
                 logger.debug("FOCUS testloop await game end reached {}", this);
                 gameEndReached.await(3, TimeUnit.MINUTES);
                 logger.debug("FOCUS testloop await continue {}", this);
-                gameEndReached.reset();
               } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
                 cancelTest("Cancel due to internal error");
               }
@@ -739,17 +737,13 @@ public class TestRangeDialog extends JDialog {
 			cancelTest(lang.getProperty("dialog_test_msg_run"));
 			return;
 		}
-/*
-		// FIXME it seems that the unpause happends sometimes before the clients have connected and this causes the game to not start
+		// FIXME it seems that a new game is not startet sometimes (especially the second game) when not waiting here for a bit
 		try {
       Thread.sleep(500);
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-		logger.debug("FOCUS unpausing game");
-		obs.unpause();
-		*/
 
 		// show connecting dialog
 		if (this.isActive()) {
@@ -856,54 +850,50 @@ public class TestRangeDialog extends JDialog {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
 			  logger.debug("FOCUS game ended, result:\n{}", result);
-				if (null == result) // happens after a game has been canceled
-					return;
+        if (null != result) {
 
-				addLogMessage(lang.getProperty("dialog_test_end") + " "
-						+ curTest + "/" + numTest);
-				addLogMessage(gameResultString); // game over information
-				// purpose
-				updateStatistics(rotation, result);
-				// update progress bar
-				progressBar.setValue(progressBar.getValue() + 1);
+          addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + "/" + numTest);
+          addLogMessage(gameResultString); // game over information
+          // purpose
+          updateStatistics(rotation, result);
+          // update progress bar
+          progressBar.setValue(progressBar.getValue() + 1);
 
-				// create replay file name
-				String replayFilename = null;
-				Collections.rotate(descriptors, -rotation); // Undo rotation
-				boolean winner = false;
-				for (IPlayer player : result.getWinners()) {
-					if (player.getDisplayName().equals(descriptors.get(0).getDisplayName())) {
-						winner = true;
-					}
-				}
-				// Draw counts as win
-				if (result.getWinners().size() == 0) {
-					winner = true;
-				}
-				boolean saveReplay = false;
-				if (!result.isRegular()
-						&& GUIConfiguration.instance().saveErrorGames()) {
-					saveReplay = true;
-				} else if (result.isRegular()) {
-					if (GUIConfiguration.instance().saveWonGames() && winner) {
-						saveReplay = true;
-					}
-					if (GUIConfiguration.instance().saveLostGames() && !winner) {
-						saveReplay = true;
-					}
-				}
-				if (saveReplay) {
-					replayFilename = HelperMethods.generateReplayFilename(plugin, slotDescriptors);
-					try {
-						obs.saveReplayToFile(replayFilename);
-						addLogMessage(lang
-								.getProperty("dialog_test_log_replay"));
-					} catch (IOException e) {
-						e.printStackTrace();
-						addLogMessage(lang
-								.getProperty("dialog_test_log_replay_error"));
-					}
-				}
+          // create replay file name
+          String replayFilename = null;
+          Collections.rotate(descriptors, -rotation); // Undo rotation
+          boolean winner = false;
+          for (IPlayer player : result.getWinners()) {
+            if (player.getDisplayName().equals(descriptors.get(0).getDisplayName())) {
+              winner = true;
+            }
+          }
+          // Draw counts as win
+          if (result.getWinners().size() == 0) {
+            winner = true;
+          }
+          boolean saveReplay = false;
+          if (!result.isRegular() && GUIConfiguration.instance().saveErrorGames()) {
+            saveReplay = true;
+          } else if (result.isRegular()) {
+            if (GUIConfiguration.instance().saveWonGames() && winner) {
+              saveReplay = true;
+            }
+            if (GUIConfiguration.instance().saveLostGames() && !winner) {
+              saveReplay = true;
+            }
+          }
+          if (saveReplay) {
+            replayFilename = HelperMethods.generateReplayFilename(plugin, slotDescriptors);
+            try {
+              obs.saveReplayToFile(replayFilename);
+              addLogMessage(lang.getProperty("dialog_test_log_replay"));
+            } catch (IOException e) {
+              e.printStackTrace();
+              addLogMessage(lang.getProperty("dialog_test_log_replay_error"));
+            }
+          }
+        }
 
 				try {
 				  logger.debug("FOCUS Observer await game end reached {}", gameEndReached);
@@ -929,13 +919,13 @@ public class TestRangeDialog extends JDialog {
 				}
 			}
 		});
+		logger.debug("adding ready listener to {}", obs);
 		obs.addReadyListener(new IReadyListener() {
 			@Override
 			public void ready() {
-				connectionDialog.close();
 				logger.debug("FOCUS got ready event");
-				logger.debug("ready trace:\n {}", Arrays.asList(Thread.currentThread().getStackTrace()).toString());
 				obs.start();
+				connectionDialog.close();
 			}
 		});
 	}
