@@ -116,7 +116,7 @@ public class GameRoom implements IGameListener
 			if (score == null)
 			{
 				throw new RuntimeException("GameScore was not complete!");
-				
+
 				// FIXME: hack to avoid server hangups
 				// Gewinner, Feldnummer, Karotten, Zeit (ms)
 				//score = new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0);
@@ -130,7 +130,7 @@ public class GameRoom implements IGameListener
 
 			scores.add(score);
 		}
-		
+
 		// FIXME: if there where not enough players, add scores
 		/*while (scores.size() < 2)
 		{
@@ -181,7 +181,7 @@ public class GameRoom implements IGameListener
 		sendStateToObservers(data);
 		sendStateToPlayers(data);
 	}
-	
+
 	public void onClientError(Client source, Object errorPacket) {
 		// packet = createRoomPacket(errorPacket);
 		broadcast(errorPacket, true);
@@ -203,6 +203,7 @@ public class GameRoom implements IGameListener
 
 		for (ObserverRole observer : this.observers)
 		{
+			logger.debug("sending state to observer {}", observer.getClient());
 			observer.getClient().sendAsynchronous(packet);
 		}
 	}
@@ -299,6 +300,7 @@ public class GameRoom implements IGameListener
 
 	private void startIfReady() throws RescueableClientException
 	{
+		logger.debug("startIfReady called");
 		if (isOver())
 		{
 			logger.warn("Game is already over.");
@@ -338,7 +340,7 @@ public class GameRoom implements IGameListener
 
 	/**
 	 * Returns the list of slots (correct ordering).
-	 * 
+	 *
 	 * @return
 	 */
 	public List<PlayerSlot> getSlots()
@@ -450,12 +452,12 @@ public class GameRoom implements IGameListener
 					throws RescueableClientException
 			{
 			}
-			
+
 			@Override
 			public void onError(Client source, Object packet)
 			{
 			}
-			
+
 			@Override
 			public void onClientDisconnected(Client source)
 			{
@@ -512,7 +514,7 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * 
+	 *
 	 * @param forced
 	 *            If true, game will be started even if there are not enoug
 	 *            players to complete the game. This should result in a

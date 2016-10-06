@@ -133,8 +133,10 @@ public class Observation implements IObservation, IUpdateListener,
 	 */
 	@Override
   public void ready() {
-		for (IReadyListener list : readyListeners) {
-			list.ready();
+	  logger.debug("got ready event");
+		for (IReadyListener listener : readyListeners) {
+      logger.debug("sending ready event to {}", listener);
+			listener.ready();
 		}
 	}
 
@@ -285,6 +287,8 @@ public class Observation implements IObservation, IUpdateListener,
 	public void onUpdate(Object sender) {
 		assert sender == conGame;
 		logger.debug("FOCUS got update");
+		/*
+		*/
 		GameState gameState = (GameState) conGame.getCurrentState();
 		Object errorObject = conGame.getCurrentError();
 		if (errorObject != null) {
@@ -293,7 +297,7 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 
 		if (gameState != null) {
-			//ready(); FIXME I think this is wrong here
+			//ready(); // FIXME I think this is wrong here
 			handler.onUpdate(gameState);
 
 			handler.onUpdate(gameState.getCurrentPlayer(), gameState

@@ -8,13 +8,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
-
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 		IGameInstance
@@ -59,6 +59,7 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 	{
 		for (IGameListener listener : this.listeners)
 		{
+			logger.debug("notifying {} about new game state", listener);
 			try
 			{
 				listener.onStateChanged(mementoState);
@@ -69,6 +70,6 @@ public abstract class SimpleGameInstance<P extends SimplePlayer> implements
 			}
 		}
 	}
-	
-	
+
+
 }
