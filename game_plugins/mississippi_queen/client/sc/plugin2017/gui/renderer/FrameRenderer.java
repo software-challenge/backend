@@ -76,24 +76,24 @@ public class FrameRenderer extends PApplet {
 
     // RenderFacade will tell us when a human player joins so that we can save
     // it.
-    humanPlayers = new EnumMap<>(EPlayerId.class);
+    this.humanPlayers = new EnumMap<>(EPlayerId.class);
     for (EPlayerId val : EPlayerId.values()) {
-      humanPlayers.put(val, Boolean.FALSE);
+      this.humanPlayers.put(val, Boolean.FALSE);
     }
 
-    background = new Background(this);
-    guiBoard = new GuiBoard(this);
-    progressBar = new ProgressBar(this);
-    sideBar = new SideBar(this);
-    boardFrame = new BoardFrame(this);
-    stepPossible = new LinkedHashMap<HexField, Action>();
+    this.background = new Background(this);
+    this.guiBoard = new GuiBoard(this);
+    this.progressBar = new ProgressBar(this);
+    this.sideBar = new SideBar(this);
+    this.boardFrame = new BoardFrame(this);
+    this.stepPossible = new LinkedHashMap<HexField, Action>();
   }
 
   @Override
   public void setup() {
     super.setup();
-    logger.debug("Dimension when creating board: (" + width + ","
-        + height + ")");
+    logger.debug("Dimension when creating board: (" + this.width + ","
+        + this.height + ")");
     // choosing renderer from options - using P2D as default (currently it seems
     // that only the java renderer works).
     //
@@ -101,13 +101,13 @@ public class FrameRenderer extends PApplet {
     // method (as stated in the processing reference).
     if (RenderConfiguration.optionRenderer.equals("JAVA2D")) {
       logger.debug("Using Java2D as Renderer");
-      size(width, height, JAVA2D);
+      size(this.width, this.height, JAVA2D);
     } else if (RenderConfiguration.optionRenderer.equals("P3D")) {
       logger.debug("Using P3D as Renderer");
-      size(width, height, P3D);
+      size(this.width, this.height, P3D);
     } else {
       logger.debug("Using P2D as Renderer");
-      size(width, height, P2D);
+      size(this.width, this.height, P2D);
     }
     smooth(RenderConfiguration.optionAntiAliasing); // Anti Aliasing
 
@@ -116,39 +116,39 @@ public class FrameRenderer extends PApplet {
     textFont(GuiConstants.font);
 
     HexField.initImages(this);
-    guiBoard.setup();
+    this.guiBoard.setup();
     // only draw when needed (application calls redraw() if needed). Letting the loop run results in 100% (or high) CPU activity
     noLoop();
-    initialized = true;
+    this.initialized = true;
   }
 
   @Override
   public void draw() {
-    if (!initialized) {
+    if (!this.initialized) {
       // do not try to draw before setup method was not called
       return;
     }
-    background.draw();
-    guiBoard.draw();
-    progressBar.draw();
-    sideBar.draw();
-    boardFrame.draw();
+    this.background.draw();
+    this.guiBoard.draw();
+    this.progressBar.draw();
+    this.sideBar.draw();
+    this.boardFrame.draw();
     if (!gameActive()) {
-      drawEndGameScreen(winCondition);
+      drawEndGameScreen(this.winCondition);
     }
   }
 
   public void endGame(WinCondition condition) {
-    winCondition = condition;
+    this.winCondition = condition;
     redraw();
   }
 
   private void drawEndGameScreen(WinCondition condition) {
     String winnerName = null;
     if (condition.getWinner() == PlayerColor.RED) {
-      winnerName = currentGameState.getRedPlayer().getDisplayName();
+      winnerName = this.currentGameState.getRedPlayer().getDisplayName();
     } else if (condition.getWinner() == PlayerColor.BLUE) {
-      winnerName = currentGameState.getBluePlayer().getDisplayName();
+      winnerName = this.currentGameState.getBluePlayer().getDisplayName();
     }
     GameEndedDialog.draw(this, condition, winnerName);
   }
@@ -157,28 +157,28 @@ public class FrameRenderer extends PApplet {
     // FIXME: winCondition determines if the game end screen is drawn, when
     // going back in the replay/game, it has to be cleared. Setting it to null
     // here works, but there has to be a better way.
-    winCondition = null;
+    this.winCondition = null;
     try {
-      currentGameState = gameState.clone();
+      this.currentGameState = gameState.clone();
     } catch (CloneNotSupportedException e) {
       logger.error("Problem cloning gamestate", e);
     }
-    currentMove = new Move();
+    this.currentMove = new Move();
     // needed for simulation of actions
-    currentGameState.getRedPlayer().setMovement(currentGameState.getRedPlayer().getSpeed());
-    currentGameState.getBluePlayer().setMovement(currentGameState.getBluePlayer().getSpeed());
-    currentGameState.getCurrentPlayer().setFreeTurns(currentGameState.isFreeTurn() ? 2 : 1);
-    currentGameState.getCurrentPlayer().setFreeAcc(1);
+    this.currentGameState.getRedPlayer().setMovement(this.currentGameState.getRedPlayer().getSpeed());
+    this.currentGameState.getBluePlayer().setMovement(this.currentGameState.getBluePlayer().getSpeed());
+    this.currentGameState.getCurrentPlayer().setFreeTurns(this.currentGameState.isFreeTurn() ? 2 : 1);
+    this.currentGameState.getCurrentPlayer().setFreeAcc(1);
     // make backup of gameState
     try {
-      backUp = currentGameState.clone();
+      this.backUp = this.currentGameState.clone();
     } catch (CloneNotSupportedException e) {
       logger.error("Clone of Backup failed", e);
     }
 
     if (gameState != null && gameState.getBoard() != null) {
       logger.debug("updating gui board gamestate");
-      updateView(currentGameState);
+      updateView(this.currentGameState);
     } else {
       logger.error("got gamestate without board");
     }
@@ -193,7 +193,7 @@ public class FrameRenderer extends PApplet {
    */
   public void requestMove(int maxTurn, EPlayerId id) {
     logger.debug("request move with {} for player {}", maxTurn, id);
-    updateView(currentGameState);
+    updateView(this.currentGameState);
   }
 
   public Image getImage() {
@@ -205,13 +205,13 @@ public class FrameRenderer extends PApplet {
     if (gameState != null && gameState.getBoard() != null) {
       gameState.getRedPlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.RED));
       gameState.getBluePlayer().setPoints(gameState.getPointsForPlayer(PlayerColor.BLUE));
-      boardFrame.update(gameState.getCurrentPlayerColor());
-      sideBar.update(gameState.getCurrentPlayerColor(), gameState.getRedPlayer().getDisplayName(), gameState.getPointsForPlayer(PlayerColor.RED), gameState.getBluePlayer().getDisplayName(), gameState.getPointsForPlayer(PlayerColor.BLUE));
-      guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(),
-          gameState.getBluePlayer(), gameState.getCurrentPlayerColor(), currentMove);
+      this.boardFrame.update(gameState.getCurrentPlayerColor());
+      this.sideBar.update(gameState.getCurrentPlayerColor(), gameState.getRedPlayer().getDisplayName(), gameState.getPointsForPlayer(PlayerColor.RED), gameState.getBluePlayer().getDisplayName(), gameState.getPointsForPlayer(PlayerColor.BLUE));
+      this.guiBoard.update(gameState.getVisibleBoard(), gameState.getRedPlayer(),
+          gameState.getBluePlayer(), gameState.getCurrentPlayerColor(), this.currentMove);
     } else {
-      boardFrame.update(null);
-      sideBar.update(null);
+      this.boardFrame.update(null);
+      this.sideBar.update(null);
     }
     redraw();
   }
@@ -219,7 +219,7 @@ public class FrameRenderer extends PApplet {
   @Override
   public void mouseMoved(MouseEvent e) {
     super.mouseMoved(e);
-    guiBoard.mouseMoved(mouseX, mouseY);
+    this.guiBoard.mouseMoved(this.mouseX, this.mouseY);
     redraw();
   }
 
@@ -228,46 +228,46 @@ public class FrameRenderer extends PApplet {
     super.mouseClicked(e);
     if (currentPlayerIsHuman()) {
 
-      boolean onSandbank = currentGameState.getCurrentPlayer().getField( currentGameState.getBoard()).getType() == FieldType.SANDBANK;
-      int currentSpeed = currentGameState.getCurrentPlayer().getSpeed();
-      switch (guiBoard.getClickedButton(mouseX, mouseY)) {
+      boolean onSandbank = this.currentGameState.getCurrentPlayer().getField( this.currentGameState.getBoard()).getType() == FieldType.SANDBANK;
+      int currentSpeed = this.currentGameState.getCurrentPlayer().getSpeed();
+      switch (this.guiBoard.getClickedButton(this.mouseX, this.mouseY)) {
       case LEFT:
         if (!onSandbank) {
-          currentMove.actions.add(new Turn(1));
+          this.currentMove.actions.add(new Turn(1));
         }
         break;
       case RIGHT:
         if (!onSandbank) {
-          currentMove.actions.add(new Turn(-1));
+          this.currentMove.actions.add(new Turn(-1));
         }
         break;
       case SPEED_UP:
         if (!onSandbank && currentSpeed < 6) {
-          if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
+          if (!this.currentMove.actions.isEmpty() && this.currentMove.actions.get(this.currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, increase value
-            Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
+            Acceleration a = (Acceleration)this.currentMove.actions.get(this.currentMove.actions.size() - 1);
             if (a.acc == -1) {
-              currentMove.actions.remove(a);
+              this.currentMove.actions.remove(a);
             } else {
               a.acc += 1;
             }
           } else {
-            currentMove.actions.add(new Acceleration(1));
+            this.currentMove.actions.add(new Acceleration(1));
           }
         }
         break;
       case SPEED_DOWN:
         if (!onSandbank && currentSpeed > 1) {
-          if (!currentMove.actions.isEmpty() && currentMove.actions.get(currentMove.actions.size() - 1).getClass() == Acceleration.class) {
+          if (!this.currentMove.actions.isEmpty() && this.currentMove.actions.get(this.currentMove.actions.size() - 1).getClass() == Acceleration.class) {
             // if last action was acceleration, decrease value
-            Acceleration a = (Acceleration)currentMove.actions.get(currentMove.actions.size() - 1);
+            Acceleration a = (Acceleration)this.currentMove.actions.get(this.currentMove.actions.size() - 1);
             if (a.acc == 1) {
-              currentMove.actions.remove(a);
+              this.currentMove.actions.remove(a);
             } else {
               a.acc -= 1;
             }
           } else {
-            currentMove.actions.add(new Acceleration(-1));
+            this.currentMove.actions.add(new Acceleration(-1));
           }
         }
         break;
@@ -276,18 +276,18 @@ public class FrameRenderer extends PApplet {
         break;
       case CANCEL:
         try {
-          currentGameState = backUp.clone();
-          currentMove = new Move();
+          this.currentGameState = this.backUp.clone();
+          this.currentMove = new Move();
         } catch (CloneNotSupportedException ex) {
           logger.error("Clone of backup failed", ex);
         }
-        updateGameState(currentGameState);
+        updateGameState(this.currentGameState);
         break;
       case NONE:
         // if no button was clicked, check if a hex field was clicked
-        HexField clicked = getFieldCoordinates(mouseX, mouseY);
-        if (stepPossible.containsKey(clicked)) {
-          currentMove.actions.add(stepPossible.get(clicked));
+        HexField clicked = getFieldCoordinates(this.mouseX, this.mouseY);
+        if (this.stepPossible.containsKey(clicked)) {
+          this.currentMove.actions.add(this.stepPossible.get(clicked));
         }
         break;
       }
@@ -296,38 +296,38 @@ public class FrameRenderer extends PApplet {
       // the emptyness may be the result of a removed acceleration in which case
       // the velocity needs to be reset.
       try {
-        currentGameState = backUp.clone();
+        this.currentGameState = this.backUp.clone();
       } catch (CloneNotSupportedException ex) {
         logger.error("Clone of backup failed", ex);
       }
-      if (!currentMove.actions.isEmpty()) {
+      if (!this.currentMove.actions.isEmpty()) {
         try {
           // perform actions individually because it is a partial move and should not be checked for validity
-          for (Action action : currentMove.actions) {
-            action.perform(currentGameState, currentGameState.getCurrentPlayer());
+          for (Action action : this.currentMove.actions) {
+            action.perform(this.currentGameState, this.currentGameState.getCurrentPlayer());
           }
         } catch (InvalidMoveException invalMove) {
           logger.error("Failed to perform move of user, please report if this happens", invalMove);
         }
       }
-      updateView(currentGameState);
+      updateView(this.currentGameState);
     }
   }
 
   private void sendMove() {
-    currentMove.setOrderInActions();
-    if (!currentMoveValid(currentMove)) {
+    this.currentMove.setOrderInActions();
+    if (!currentMoveValid(this.currentMove)) {
       if (JOptionPane.showConfirmDialog(null, "Der Zug ist ungültig. Durch senden des aktuellen Zuges werden Sie disqualifiziert. Zug wirklich senden?", "Senden", JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
         // do not send move
         return;
       }
     }
-    RenderFacade.getInstance().sendMove(currentMove);
+    RenderFacade.getInstance().sendMove(this.currentMove);
   }
 
   // NOTE that this method assumes the given move was already performed on the currentGameState!
   private boolean currentMoveValid(Move move) {
-    boolean allMovementPointsUsed = currentGameState.getCurrentPlayer().getMovement() == 0;
+    boolean allMovementPointsUsed = this.currentGameState.getCurrentPlayer().getMovement() == 0;
     boolean accelerationFirst = true;
     // test if any action after the first one is an acceleration action
     for (int i = 1; i < move.actions.size(); i++) {
@@ -341,7 +341,7 @@ public class FrameRenderer extends PApplet {
   private HexField getFieldCoordinates(int x, int y) {
     HexField coordinates;
 
-    for (GuiTile tile : guiBoard.getTiles()) {
+    for (GuiTile tile : this.guiBoard.getTiles()) {
       coordinates = tile.getFieldCoordinates(x,y);
       if(coordinates != null) {
         return coordinates;
@@ -353,7 +353,7 @@ public class FrameRenderer extends PApplet {
   @Override
   public void keyPressed() {
     super.keyPressed();
-    if (key == 'c' || key == 'C') {
+    if (this.key == 'c' || this.key == 'C') {
       new RenderConfigurationDialog(FrameRenderer.this);
       redraw();
     }
@@ -365,78 +365,78 @@ public class FrameRenderer extends PApplet {
 
   public void killAll() {
     noLoop();
-    if(background != null) {
-      background.kill();
+    if(this.background != null) {
+      this.background.kill();
     }
-    if(guiBoard != null) {
-      guiBoard.kill();
+    if(this.guiBoard != null) {
+      this.guiBoard.kill();
     }
-    if(progressBar != null) {
-      progressBar.kill();
+    if(this.progressBar != null) {
+      this.progressBar.kill();
     }
-    if(sideBar != null) {
-      sideBar.kill();
+    if(this.sideBar != null) {
+      this.sideBar.kill();
     }
-    if(boardFrame != null) {
-      boardFrame.kill();
+    if(this.boardFrame != null) {
+      this.boardFrame.kill();
     }
   }
 
   public boolean currentPlayerIsHuman() {
-    return humanPlayers.get(getId());
+    return this.humanPlayers.get(getId());
   }
 
   public Player getCurrentPlayer() {
-    if (currentGameState != null) {
-      return currentGameState.getCurrentPlayer();
+    if (this.currentGameState != null) {
+      return this.currentGameState.getCurrentPlayer();
     } else {
       return null;
     }
   }
 
   public void setPossibleSteps(LinkedHashMap<HexField, Action> add) {
-    stepPossible = add;
+    this.stepPossible = add;
   }
 
   public Field getCurrentPlayerField() {
-    if (currentGameState != null && currentGameState.getBoard() != null) {
-      return currentGameState.getCurrentPlayer().getField(currentGameState.getBoard());
+    if (this.currentGameState != null && this.currentGameState.getBoard() != null) {
+      return this.currentGameState.getCurrentPlayer().getField(this.currentGameState.getBoard());
     } else {
       return null;
     }
   }
 
   public int getCurrentRound() {
-    if (currentGameState != null) {
-      return currentGameState.getRound();
+    if (this.currentGameState != null) {
+      return this.currentGameState.getRound();
     } else {
       return 0;
     }
   }
 
   public boolean gameActive() {
-    return winCondition == null;
+    return this.winCondition == null;
   }
 
   public List<DebugHint> getCurrentHints() {
-    if (currentGameState != null && currentGameState.getLastMove() != null) {
-      return currentGameState.getLastMove().getHints();
+    if (this.currentGameState != null && this.currentGameState.getLastMove() != null) {
+      return this.currentGameState.getLastMove().getHints();
     } else {
       return Collections.emptyList();
     }
   }
 
   public List<Action> getCurrentActions() {
-    if (currentMove != null && currentMove.actions != null) {
-      return currentMove.actions;
+    if (this.currentMove != null && this.currentMove.actions != null) {
+      return this.currentMove.actions;
     } else {
       return Collections.emptyList();
     }
   }
 
   public Player getCurrentOpponent() {
-    if (currentGameState != null) {
-      return currentGameState.getOtherPlayer();
+    if (this.currentGameState != null) {
+      return this.currentGameState.getOtherPlayer();
     } else {
       return null;
     }
@@ -447,6 +447,6 @@ public class FrameRenderer extends PApplet {
   }
 
   public void setHuman(EPlayerId target) {
-    humanPlayers.put(target, Boolean.TRUE);
+    this.humanPlayers.put(target, Boolean.TRUE);
   }
 }

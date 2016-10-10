@@ -21,6 +21,11 @@
 			<Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
 		</layout>
 	</appender>
+	
+	<!-- Uncomment the following to enable debug logs: -->
+	<!--
+	<logger name="sc" level="DEBUG" />
+	-->
 
 	<root level="INFO">
 		<appender-ref ref="FILE" />

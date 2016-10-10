@@ -70,35 +70,35 @@ public class GuiBoard extends PrimitiveBase {
 
     calculateSize();
 
-    red = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
-    blue = new GuiPlayer(parent, width, startX, startY, offsetX, offsetY);
-    tiles = new LinkedList<GuiTile>();
+    this.red = new GuiPlayer(parent, this.width, this.startX, this.startY, this.offsetX, this.offsetY);
+    this.blue = new GuiPlayer(parent, this.width, this.startX, this.startY, this.offsetX, this.offsetY);
+    this.tiles = new LinkedList<GuiTile>();
     for (int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
-      tiles.add(new GuiTile(parent, i, width, startX, startY, offsetX, offsetY));
+      this.tiles.add(new GuiTile(parent, i, this.width, this.startX, this.startY, this.offsetX, this.offsetY));
     }
     createButtons(calculateButtonSize());
   }
 
   public void setup() {
-    for (GuiButton button : allButtons.values()) {
+    for (GuiButton button : this.allButtons.values()) {
       button.setup();
     }
   }
 
   private void createButtons(int size) {
-    allButtons = new EnumMap<>(ClickedButton.class);
-    left = new GuiButton(parent, GuiConstants.ROTATE_LEFT_IMAGE_PATH, "Drehung nach links", 0, 0, size);
-    allButtons.put(ClickedButton.LEFT, left);
-    right = new GuiButton(parent, GuiConstants.ROTATE_RIGHT_IMAGE_PATH, "Drehung nach rechts", 0, 0, size);
-    allButtons.put(ClickedButton.RIGHT, right);
-    speedUp = new GuiButton(parent, GuiConstants.INCREASE_IMAGE_PATH, "Beschleunigen", 0, 0, size);
-    allButtons.put(ClickedButton.SPEED_UP, speedUp);
-    speedDown = new GuiButton(parent, GuiConstants.DECREASE_IMAGE_PATH, "Abbremsen", 0, 0, size);
-    allButtons.put(ClickedButton.SPEED_DOWN, speedDown);
-    send = new GuiButton(parent, GuiConstants.OKAY_IMAGE_PATH, "Zug beenden", 0, 0, size);
-    allButtons.put(ClickedButton.SEND, send);
-    cancel = new GuiButton(parent, GuiConstants.CANCEL_IMAGE_PATH, "Zug erneut eingeben", 0, 0, size);
-    allButtons.put(ClickedButton.CANCEL, cancel);
+    this.allButtons = new EnumMap<>(ClickedButton.class);
+    this.left = new GuiButton(this.parent, GuiConstants.ROTATE_LEFT_IMAGE_PATH, "Drehung nach links", 0, 0, size);
+    this.allButtons.put(ClickedButton.LEFT, this.left);
+    this.right = new GuiButton(this.parent, GuiConstants.ROTATE_RIGHT_IMAGE_PATH, "Drehung nach rechts", 0, 0, size);
+    this.allButtons.put(ClickedButton.RIGHT, this.right);
+    this.speedUp = new GuiButton(this.parent, GuiConstants.INCREASE_IMAGE_PATH, "Beschleunigen", 0, 0, size);
+    this.allButtons.put(ClickedButton.SPEED_UP, this.speedUp);
+    this.speedDown = new GuiButton(this.parent, GuiConstants.DECREASE_IMAGE_PATH, "Abbremsen", 0, 0, size);
+    this.allButtons.put(ClickedButton.SPEED_DOWN, this.speedDown);
+    this.send = new GuiButton(this.parent, GuiConstants.OKAY_IMAGE_PATH, "Zug beenden", 0, 0, size);
+    this.allButtons.put(ClickedButton.SEND, this.send);
+    this.cancel = new GuiButton(this.parent, GuiConstants.CANCEL_IMAGE_PATH, "Zug erneut eingeben", 0, 0, size);
+    this.allButtons.put(ClickedButton.CANCEL, this.cancel);
   }
 
   /**
@@ -107,12 +107,12 @@ public class GuiBoard extends PrimitiveBase {
    */
   private void calcHexFieldSize(Dimension viewPortSize) {
     // before getting the initial board we can't (and don't have to) calculate sizes
-    if (currentBoard != null) {
+    if (this.currentBoard != null) {
       int lowX = 500;
       int highX = -500;
       int lowY = 500;
       int highY = -500;
-      for (Tile tile : currentBoard.getTiles()) {
+      for (Tile tile : this.currentBoard.getTiles()) {
         for (Field field : tile.fields) {
           if (lowX > field.getX()) {
             lowX = field.getX();
@@ -128,19 +128,19 @@ public class GuiBoard extends PrimitiveBase {
           }
         }
       }
-      maxFieldsInX = highX - lowX + 1;
-      maxFieldsInY = highY - lowY + 1;
-      float xLength = (viewPortSize.width / (maxFieldsInX + 1f))
+      this.maxFieldsInX = highX - lowX + 1;
+      this.maxFieldsInY = highY - lowY + 1;
+      float xLength = (viewPortSize.width / (this.maxFieldsInX + 1f))
           /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      float yLength = (viewPortSize.height / (maxFieldsInY + 1f))
+      float yLength = (viewPortSize.height / (this.maxFieldsInY + 1f))
           /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      width = Math.min(xLength, yLength);
-      offsetX = -lowX;
-      offsetY = -lowY;
-      float sizeX = (width + GuiConstants.BORDERSIZE);
-      float sizeY = (HexField.calcA(width) + HexField.calcC(width) + GuiConstants.BORDERSIZE);
-      startX = (viewPortSize.width - (sizeX * maxFieldsInX)) / 2f;
-      startY = (viewPortSize.height - (sizeY * maxFieldsInY)) / 2f;
+      this.width = Math.min(xLength, yLength);
+      this.offsetX = -lowX;
+      this.offsetY = -lowY;
+      float sizeX = (this.width + GuiConstants.BORDERSIZE);
+      float sizeY = (HexField.calcA(this.width) + HexField.calcC(this.width) + GuiConstants.BORDERSIZE);
+      this.startX = (viewPortSize.width - (sizeX * this.maxFieldsInX)) / 2f;
+      this.startY = (viewPortSize.height - (sizeY * this.maxFieldsInY)) / 2f;
     }
   }
 
@@ -162,38 +162,38 @@ public class GuiBoard extends PrimitiveBase {
     if (board == null) {
       logger.error("got no board in update");
     }
-    currentBoard = board;
+    this.currentBoard = board;
     calculateSize();
     Player currentPlayer = (current == PlayerColor.RED) ? red : blue;
     this.red.update(red, current == PlayerColor.RED);
     this.blue.update(blue, current == PlayerColor.BLUE);
     updateButtonPositions(getCurrentGuiPlayer());
-    updateButtonAvailability(currentPlayer, currentBoard, currentMove);
-    if (!currentBoard.getTiles().isEmpty()) {
+    updateButtonAvailability(currentPlayer, this.currentBoard, currentMove);
+    if (!this.currentBoard.getTiles().isEmpty()) {
 
       // I think this sets old tiles invisible (because they are no longer
       // included in the currentBoard and updates visible tiles.
       // TODO hard to understand, refactor
       int toUpdate = 0;
-      int index = currentBoard.getTiles().get(0).getIndex();
+      int index = this.currentBoard.getTiles().get(0).getIndex();
       for (int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
         if (index != i) {
-          tiles.get(i).setVisible(false);
+          this.tiles.get(i).setVisible(false);
         } else {
-          tiles.get(index).setVisible(true);
-          tiles.get(index).update(currentBoard.getTiles().get(toUpdate));
+          this.tiles.get(index).setVisible(true);
+          this.tiles.get(index).update(this.currentBoard.getTiles().get(toUpdate));
           ++toUpdate;
-          if (toUpdate < currentBoard.getTiles().size()) {
-            index = currentBoard.getTiles().get(toUpdate).getIndex();
+          if (toUpdate < this.currentBoard.getTiles().size()) {
+            index = this.currentBoard.getTiles().get(toUpdate).getIndex();
           }
         }
       }
 
-      if (parent.playerControlsEnabled()) {
+      if (this.parent.playerControlsEnabled()) {
         LinkedList<HexField> toHighlight = new LinkedList<>();
         LinkedHashMap<HexField, Action> add = new LinkedHashMap<>();
-        Field redField = red.getField(currentBoard);
-        Field blueField = blue.getField(currentBoard);
+        Field redField = red.getField(this.currentBoard);
+        Field blueField = blue.getField(this.currentBoard);
         if (redField == null || blueField == null) {
           throw new NullPointerException("Felder sind null");
         }
@@ -210,7 +210,7 @@ public class GuiBoard extends PrimitiveBase {
               }
             }
           }
-        } else if (currentPlayer.getField(currentBoard).getType() != FieldType.SANDBANK) {
+        } else if (currentPlayer.getField(this.currentBoard).getType() != FieldType.SANDBANK) {
           if (currentPlayer.getMovement() != 0) {
             toHighlight = getPassableGuiFieldsInDirection(currentPlayer.getX(), currentPlayer.getY(),
                 currentPlayer.getDirection(), currentPlayer.getMovement());
@@ -225,9 +225,9 @@ public class GuiBoard extends PrimitiveBase {
 
         } else {
           // case sandbank
-          if (parent.getCurrentPlayer().getMovement() != 0) {
+          if (this.parent.getCurrentPlayer().getMovement() != 0) {
             HexField step = getPassableGuiFieldInDirection(currentPlayer.getX(), currentPlayer.getY(),
-                currentPlayer.getDirection(), parent.getCurrentPlayer().getMovement());
+                currentPlayer.getDirection(), this.parent.getCurrentPlayer().getMovement());
             if (step != null) {
               toHighlight.add(step);
               add.put(step, new Advance(1));
@@ -243,7 +243,7 @@ public class GuiBoard extends PrimitiveBase {
         for (HexField hexField : toHighlight) {
           hexField.setHighlighted(true);
         }
-        parent.setPossibleSteps(add);
+        this.parent.setPossibleSteps(add);
       } else {
         logger.debug("no human player");
       }
@@ -253,12 +253,12 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   private GuiPlayer getCurrentGuiPlayer() {
-    Player currentPlayer = parent.getCurrentPlayer();
+    Player currentPlayer = this.parent.getCurrentPlayer();
     if (currentPlayer != null) {
       if (currentPlayer.getPlayerColor() == PlayerColor.RED) {
-        return red;
+        return this.red;
       } else {
-        return blue;
+        return this.blue;
       }
     } else {
       return null;
@@ -267,17 +267,17 @@ public class GuiBoard extends PrimitiveBase {
 
   private void updateButtonPositions(GuiPlayer currentGuiPlayer) {
     if (currentGuiPlayer != null) {
-      int centerX = Math.round(currentGuiPlayer.getX() + (width / 2));
-      int centerY = Math.round(currentGuiPlayer.getY() + (width / 2));
+      int centerX = Math.round(currentGuiPlayer.getX() + (this.width / 2));
+      int centerY = Math.round(currentGuiPlayer.getY() + (this.width / 2));
 
-      left.moveTo(centerX - (width / 2), centerY - (width / 2));
-      right.moveTo(centerX + (width / 2), centerY - (width / 2));
+      this.left.moveTo(centerX - (this.width / 2), centerY - (this.width / 2));
+      this.right.moveTo(centerX + (this.width / 2), centerY - (this.width / 2));
 
-      speedUp.moveTo(centerX + (width / 2), centerY - (width / 6));
-      speedDown.moveTo(centerX + (width / 2), centerY + (width / 6));
+      this.speedUp.moveTo(centerX + (this.width / 2), centerY - (this.width / 6));
+      this.speedDown.moveTo(centerX + (this.width / 2), centerY + (this.width / 6));
 
-      send.moveTo(centerX + (width / 5), centerY + (width / 2));
-      cancel.moveTo(centerX - (width / 5), centerY + (width / 2));
+      this.send.moveTo(centerX + (this.width / 5), centerY + (this.width / 2));
+      this.cancel.moveTo(centerX - (this.width / 5), centerY + (this.width / 2));
     }
   }
 
@@ -295,10 +295,10 @@ public class GuiBoard extends PrimitiveBase {
       }
     }
 
-    speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible && firstAction);
-    speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible && firstAction);
-    left.setEnabled(rotationPossible && !onSandbank);
-    right.setEnabled(rotationPossible && !onSandbank);
+    this.speedUp.setEnabled(!maxSpeed && !onSandbank && accelerationPossible && firstAction);
+    this.speedDown.setEnabled(!minSpeed && !onSandbank && accelerationPossible && firstAction);
+    this.left.setEnabled(rotationPossible && !onSandbank);
+    this.right.setEnabled(rotationPossible && !onSandbank);
   }
 
   private HexField getPassableGuiFieldInDirection(int x, int y, Direction j, int movement) {
@@ -314,8 +314,8 @@ public class GuiBoard extends PrimitiveBase {
    * Sets size of HexFields, calculates offset
    */
   private void calculateSize() {
-    float xDimension = parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
-    float yDimension = parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
+    float xDimension = this.parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
+    float yDimension = this.parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
     Dimension viewPortSize = new Dimension((int) xDimension, (int) yDimension);
     calcHexFieldSize(viewPortSize);
   }
@@ -323,27 +323,27 @@ public class GuiBoard extends PrimitiveBase {
   @Override
   public void draw() {
     resize();
-    for (GuiTile tile : tiles) {
+    for (GuiTile tile : this.tiles) {
       tile.draw();
     }
     // highlights need to be drawn above fields
-    if (parent.playerControlsEnabled()) {
-      for (GuiTile tile : tiles) {
+    if (this.parent.playerControlsEnabled()) {
+      for (GuiTile tile : this.tiles) {
         tile.drawHighlights();
       }
     }
     // draw players
-    red.draw();
-    blue.draw();
+    this.red.draw();
+    this.blue.draw();
 
     // buttons
-    if (parent.playerControlsEnabled()) {
-      left.draw();
-      right.draw();
-      speedUp.draw();
-      speedDown.draw();
-      send.draw();
-      cancel.draw();
+    if (this.parent.playerControlsEnabled()) {
+      this.left.draw();
+      this.right.draw();
+      this.speedUp.draw();
+      this.speedDown.draw();
+      this.send.draw();
+      this.cancel.draw();
     }
   }
 
@@ -352,41 +352,41 @@ public class GuiBoard extends PrimitiveBase {
    */
   public void resize() {
     calculateSize();
-    for (GuiTile tile : tiles) {
-      tile.resize(startX, startY, offsetX, offsetY, this.width);
+    for (GuiTile tile : this.tiles) {
+      tile.resize(this.startX, this.startY, this.offsetX, this.offsetY, this.width);
     }
-    red.resize(startX, startY, offsetX, offsetY, this.width);
-    blue.resize(startX, startY, offsetX, offsetY, this.width);
+    this.red.resize(this.startX, this.startY, this.offsetX, this.offsetY, this.width);
+    this.blue.resize(this.startX, this.startY, this.offsetX, this.offsetY, this.width);
     resizeButtons();
     updateButtonPositions(getCurrentGuiPlayer());
   }
 
   private void resizeButtons() {
-    if (left != null && right != null && speedUp != null && speedDown != null && send != null && cancel != null) {
+    if (this.left != null && this.right != null && this.speedUp != null && this.speedDown != null && this.send != null && this.cancel != null) {
       int newSize = calculateButtonSize();
-      left.resize(newSize);
-      right.resize(newSize);
-      speedUp.resize(newSize);
-      speedDown.resize(newSize);
-      send.resize(newSize);
-      cancel.resize(newSize);
+      this.left.resize(newSize);
+      this.right.resize(newSize);
+      this.speedUp.resize(newSize);
+      this.speedDown.resize(newSize);
+      this.send.resize(newSize);
+      this.cancel.resize(newSize);
     }
   }
 
   private int calculateButtonSize() {
-    return Math.max(1, Math.round(width / 3));
+    return Math.max(1, Math.round(this.width / 3));
   }
 
   @Override
   public void kill() {
 
-    if (red != null) {
-      red.kill();
+    if (this.red != null) {
+      this.red.kill();
     }
-    if (blue != null) {
-      blue.kill();
+    if (this.blue != null) {
+      this.blue.kill();
     }
-    for (GuiTile tile : tiles) {
+    for (GuiTile tile : this.tiles) {
       tile.kill();
     }
   }
@@ -404,7 +404,7 @@ public class GuiBoard extends PrimitiveBase {
    * @return Begehbare Felder
    */
   public LinkedList<HexField> getPassableGuiFieldsInDirection(int startX, int startY, Direction direction, int step) {
-    Player opponent = parent.getCurrentOpponent();
+    Player opponent = this.parent.getCurrentOpponent();
     int opponentX = opponent.getX();
     int opponentY = opponent.getY();
     LinkedList<HexField> fields = new LinkedList<HexField>();
@@ -490,7 +490,7 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public HexField getHexField(int x, int y) {
-    for (GuiTile tile : tiles) {
+    for (GuiTile tile : this.tiles) {
       HexField field = tile.getHexField(x, y);
       if (field != null) {
         return field;
@@ -500,11 +500,11 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public List<GuiTile> getTiles() {
-    return tiles;
+    return this.tiles;
   }
 
   public ClickedButton getClickedButton(int mouseX, int mouseY) {
-    for (Map.Entry<ClickedButton, GuiButton> typeWithButton : allButtons.entrySet()) {
+    for (Map.Entry<ClickedButton, GuiButton> typeWithButton : this.allButtons.entrySet()) {
       if (typeWithButton.getValue().wouldBeClicked(mouseX, mouseY)) {
         return typeWithButton.getKey();
       }
@@ -513,7 +513,7 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   public void mouseMoved(int mouseX, int mouseY) {
-    for (GuiButton button: allButtons.values()) {
+    for (GuiButton button: this.allButtons.values()) {
       button.mouseMoved(mouseX, mouseY);
     }
   }
