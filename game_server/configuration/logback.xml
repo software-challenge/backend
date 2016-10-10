@@ -8,6 +8,18 @@
 		</layout>
 	</appender>
 
+<!-- seems not to work: -->
+  <appender name="SOCKET" class="ch.qos.logback.classic.net.SocketAppender">
+    <remoteHost>localhost</remoteHost>
+    <port>55200</port>
+    <reconnectionDelay>10000</reconnectionDelay>
+    <includeCallerData>true</includeCallerData> 
+      <layout class="ch.qos.logback.classic.log4j.XMLLayout">
+        <locationInfo>true</locationInfo>
+      </layout>
+  </appender>
+
+
     <!-- set loggers in which you are interested in to a lower level here -->
 	<logger name="sc.plugin2017.gui.renderer" level="DEBUG" />
 	<logger name="sc.plugin2017.Game" level="DEBUG" />

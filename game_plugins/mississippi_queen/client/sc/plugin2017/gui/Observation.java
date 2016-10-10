@@ -37,344 +37,348 @@ import sc.shared.ScoreCause;
  * @author ffi
  *
  */
-public class Observation implements IObservation, IUpdateListener,
-		IGUIObservation {
-	private IControllableGame conGame;
+public class Observation implements IObservation, IUpdateListener, IGUIObservation {
+  private IControllableGame conGame;
 
-	private IGameHandler handler;
+  private IGameHandler handler;
 
-	private List<IGameEndedListener> gameEndedListeners = new LinkedList<>();
-	private List<INewTurnListener> newTurnListeners = new LinkedList<>();
-	private List<IReadyListener> readyListeners = new LinkedList<>();
+  private List<IGameEndedListener> gameEndedListeners = new LinkedList<>();
+  private List<INewTurnListener> newTurnListeners = new LinkedList<>();
+  private List<IReadyListener> readyListeners = new LinkedList<>();
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(Observation.class);
+  /**
+   * stores which player was active before switching to observer mode (when
+   * stepping through a game)
+   */
+  private EPlayerId lastActivePlayer = null;
 
-	public Observation(IControllableGame conGame, IGameHandler handler) {
-		this.conGame = conGame;
-		this.handler = handler;
-		conGame.addListener(this);
-	}
+  private static final Logger logger = LoggerFactory.getLogger(Observation.class);
 
-	@Override
-	public void addGameEndedListener(IGameEndedListener listener) {
-		gameEndedListeners.add(listener);
-	}
+  public Observation(IControllableGame conGame, IGameHandler handler) {
+    this.conGame = conGame;
+    this.handler = handler;
+    conGame.addListener(this);
+  }
 
-	@Override
-	public void addNewTurnListener(INewTurnListener listener) {
-		newTurnListeners.add(listener);
-	}
+  @Override
+  public void addGameEndedListener(IGameEndedListener listener) {
+    this.gameEndedListeners.add(listener);
+  }
 
-	@Override
-	public void addReadyListener(IReadyListener listener) {
-		readyListeners.add(listener);
-	}
+  @Override
+  public void addNewTurnListener(INewTurnListener listener) {
+    this.newTurnListeners.add(listener);
+  }
 
-	@Override
-	public void back() {
-		conGame.previous();
-	}
+  @Override
+  public void addReadyListener(IReadyListener listener) {
+    this.readyListeners.add(listener);
+  }
 
-	@Override
-	public void cancel() {
-		conGame.cancel();
-		notifyOnGameEnded(this, conGame.getResult());
-	}
+  @Override
+  public void back() {
+    this.conGame.previous();
+  }
 
-	@Override
-	public void next() {
-		conGame.next();
-	}
+  @Override
+  public void cancel() {
+    this.conGame.cancel();
+    notifyOnGameEnded(this, this.conGame.getResult());
+  }
 
-	@Override
-	public void pause() {
-		conGame.pause();
-	}
+  @Override
+  public void next() {
+    this.conGame.next();
+  }
 
-	@Override
-	public void removeGameEndedListener(IGameEndedListener listener) {
-		gameEndedListeners.remove(listener);
-	}
+  @Override
+  public void pause() {
+    this.conGame.pause();
+  }
 
-	@Override
-	public void removeNewTurnListener(INewTurnListener listener) {
-		newTurnListeners.remove(listener);
-	}
+  @Override
+  public void removeGameEndedListener(IGameEndedListener listener) {
+    this.gameEndedListeners.remove(listener);
+  }
 
-	@Override
-	public void removeReadyListener(IReadyListener listener) {
-		readyListeners.remove(listener);
-	}
+  @Override
+  public void removeNewTurnListener(INewTurnListener listener) {
+    this.newTurnListeners.remove(listener);
+  }
 
-	@Override
-	public void saveReplayToFile(String filename) throws IOException {
-		ReplayBuilder.saveReplay(Configuration.getXStream(), conGame, filename);
-	}
+  @Override
+  public void removeReadyListener(IReadyListener listener) {
+    this.readyListeners.remove(listener);
+  }
 
-	@Override
-	public void start() {
-		conGame.unpause();
-		if (RenderFacade.getInstance().getActivePlayer() != null) {
-			RenderFacade.getInstance().switchToPlayer(
-					RenderFacade.getInstance().getActivePlayer());
-		}
-	}
+  @Override
+  public void saveReplayToFile(String filename) throws IOException {
+    ReplayBuilder.saveReplay(Configuration.getXStream(), this.conGame, filename);
+  }
 
-	@Override
-	public void unpause() {
-		RenderFacade.getInstance().switchToPlayer(
-				RenderFacade.getInstance().getActivePlayer());
-		conGame.unpause();
-	}
+  @Override
+  public void start() {
+    this.conGame.unpause();
+    if (RenderFacade.getInstance().getActivePlayer() != null) {
+      RenderFacade.getInstance().switchToPlayer(RenderFacade.getInstance().getActivePlayer());
+    }
+  }
 
-	/**
-	 *
-	 */
-	@Override
+  @Override
+  public void unpause() {
+    RenderFacade.getInstance().switchToPlayer(RenderFacade.getInstance().getActivePlayer());
+    this.conGame.unpause();
+  }
+
+  /**
+   *
+   */
+  @Override
   public void ready() {
-	  logger.debug("got ready event");
-		for (IReadyListener listener : readyListeners) {
+    logger.debug("got ready event");
+    for (IReadyListener listener : this.readyListeners) {
       logger.debug("sending ready event to {}", listener);
-			listener.ready();
-		}
-	}
+      listener.ready();
+    }
+  }
 
-	private String createGameEndedString(GameResult data) {
-		String result = "\n";
+  private String createGameEndedString(GameResult data) {
+    String result = "\n";
 
-		if (data == null) {
-			result += "Leeres Spielresultat!";
-			return result;
-		}
+    if (data == null) {
+      result += "Leeres Spielresultat!";
+      return result;
+    }
 
-		GameState gameState = (GameState) conGame.getCurrentState();
+    GameState gameState = (GameState) this.conGame.getCurrentState();
 
-		String name1 = gameState.getPlayerNames()[0];
-		String name2 = gameState.getPlayerNames()[1];
+    String name1 = gameState.getPlayerNames()[0];
+    String name2 = gameState.getPlayerNames()[1];
 
-		if (conGame.getCurrentError() != null) {
-			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
-			result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED ? name1
-					: name2);
-			result += " hat einen Fehler gemacht: \n" + error.getMessage()
-					+ "\n";
-		}
+    if (this.conGame.getCurrentError() != null) {
+      ErrorResponse error = (ErrorResponse) this.conGame.getCurrentError();
+      result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED ? name1 : name2);
+      result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
+    }
 
-		result += "Spielresultat:\n";
+    result += "Spielresultat:\n";
 
-		if (data.getScores().get(0).getCause() == ScoreCause.LEFT) {
-			result += name1;
-			result += " hat das Spiel verlassen!\n";
-		}
+    if (data.getScores().get(0).getCause() == ScoreCause.LEFT) {
+      result += name1;
+      result += " hat das Spiel verlassen!\n";
+    }
 
-		if (data.getScores().get(1).getCause() == ScoreCause.LEFT) {
-			result += name2;
-			result += " hat das Spiel verlassen!\n";
-		}
+    if (data.getScores().get(1).getCause() == ScoreCause.LEFT) {
+      result += name2;
+      result += " hat das Spiel verlassen!\n";
+    }
 
-		if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION) {
-			result += name1;
-			result += " hat einen falschen Zug gesetzt!\n";
-		}
+    if (data.getScores().get(0).getCause() == ScoreCause.RULE_VIOLATION) {
+      result += name1;
+      result += " hat einen falschen Zug gesetzt!\n";
+    }
 
-		if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION) {
-			result += name2;
-			result += " hat einen falschen Zug gesetzt!\n";
-		}
+    if (data.getScores().get(1).getCause() == ScoreCause.RULE_VIOLATION) {
+      result += name2;
+      result += " hat einen falschen Zug gesetzt!\n";
+    }
 
-		if (data.getScores().get(0).getCause() == ScoreCause.HARD_TIMEOUT) {
-			result += name1;
-			result += " hat das HardTimeout überschritten!\n";
-		}
+    if (data.getScores().get(0).getCause() == ScoreCause.HARD_TIMEOUT) {
+      result += name1;
+      result += " hat das HardTimeout überschritten!\n";
+    }
 
-		if (data.getScores().get(1).getCause() == ScoreCause.HARD_TIMEOUT) {
-			result += name2;
-			result += " hat das HardTimeout überschritten!\n";
-		}
+    if (data.getScores().get(1).getCause() == ScoreCause.HARD_TIMEOUT) {
+      result += name2;
+      result += " hat das HardTimeout überschritten!\n";
+    }
 
-		if (data.getScores().get(0).getCause() == ScoreCause.SOFT_TIMEOUT) {
-			result += name1;
-			result += " hat das SoftTimeout überschritten!\n";
-		}
+    if (data.getScores().get(0).getCause() == ScoreCause.SOFT_TIMEOUT) {
+      result += name1;
+      result += " hat das SoftTimeout überschritten!\n";
+    }
 
-		if (data.getScores().get(1).getCause() == ScoreCause.SOFT_TIMEOUT) {
-			result += name2;
-			result += " hat das SoftTimeout überschritten!\n";
-		}
+    if (data.getScores().get(1).getCause() == ScoreCause.SOFT_TIMEOUT) {
+      result += name2;
+      result += " hat das SoftTimeout überschritten!\n";
+    }
 
-		String[] results1 = data.getScores().get(0).toStrings();
-		String[] results2 = data.getScores().get(1).toStrings();
+    String[] results1 = data.getScores().get(0).toStrings();
+    String[] results2 = data.getScores().get(1).toStrings();
 
-		String res1 = name1 + ":\n	Punkte: " + results1[0] + "\n";
-		String res2 = name2 + ":\n	Punkte: " + results2[0] + "\n";
-//		for(int i = 1; i < 6; i += 1) {
-//			res1 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results1[i] + "\n";
-//			res2 += "	" + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " + results2[i] + "\n";
-//		}
-//
-		result += res1 + "\n";
-		result += res2;
+    String res1 = name1 + ":\n	Punkte: " + results1[0] + "\n";
+    String res2 = name2 + ":\n	Punkte: " + results2[0] + "\n";
+    // for(int i = 1; i < 6; i += 1) {
+    // res1 += " " + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " +
+    // results1[i] + "\n";
+    // res2 += " " + GamePlugin.SCORE_DEFINITION.get(i).getName() + ": " +
+    // results2[i] + "\n";
+    // }
+    //
+    result += res1 + "\n";
+    result += res2;
 
-		List<IPlayer> winners = data.getWinners();
-		if (winners.size() > 0) {
-			PlayerColor winner = ((Player)data.getWinners().get(0)).getPlayerColor();
-			if (winner == PlayerColor.RED) {
-				result += "Gewinner: " + name1 + "\n";
-			} else if (winner == PlayerColor.BLUE) {
-				result += "Gewinner: " + name2 + "\n";
-			}
-		} else {
-			result += "Unentschieden\n";
-		}
+    List<IPlayer> winners = data.getWinners();
+    if (winners.size() > 0) {
+      PlayerColor winner = ((Player) data.getWinners().get(0)).getPlayerColor();
+      if (winner == PlayerColor.RED) {
+        result += "Gewinner: " + name1 + "\n";
+      } else if (winner == PlayerColor.BLUE) {
+        result += "Gewinner: " + name2 + "\n";
+      }
+    } else {
+      result += "Unentschieden\n";
+    }
 
-		return result;
-	}
+    return result;
+  }
 
-	/**
-	 * @param data
-	 *
-	 */
-	private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
-	  logger.info("Observation notified about game end");
-    for (IGameEndedListener listener : gameEndedListeners) {
+  /**
+   * @param data
+   *
+   */
+  private synchronized void notifyOnGameEnded(Object sender, GameResult data) {
+    logger.info("Observation notified about game end");
+    for (IGameEndedListener listener : this.gameEndedListeners) {
       try {
         listener.onGameEnded(data, createGameEndedString(data));
         logger.info("Create Game Ended String");
       } catch (Exception e) {
-        logger.error("GameEnded Notification caused an exception.",
-            e);
+        logger.error("GameEnded Notification caused an exception.", e);
       }
     }
 
-		Object errorObject = conGame.getCurrentError();
-		String errorMessage = null;
-		if (errorObject != null) {
-			errorMessage = ((ErrorResponse) errorObject).getMessage();
-		}
-		Object curStateObject = conGame.getCurrentState();
-		PlayerColor color = null;
-		if (curStateObject != null) {
-			GameState gameState = (GameState) curStateObject;
-			color = gameState.getCurrentPlayer().getPlayerColor();
-		}
-		handler.gameEnded(data, color, errorMessage);
-	}
+    Object errorObject = this.conGame.getCurrentError();
+    String errorMessage = null;
+    if (errorObject != null) {
+      errorMessage = ((ErrorResponse) errorObject).getMessage();
+    }
+    Object curStateObject = this.conGame.getCurrentState();
+    PlayerColor color = null;
+    if (curStateObject != null) {
+      GameState gameState = (GameState) curStateObject;
+      color = gameState.getCurrentPlayer().getPlayerColor();
+    }
+    this.handler.gameEnded(data, color, errorMessage);
+  }
 
-	private void notifyOnNewTurn() {
-		notifyOnNewTurn(0, "");
-	}
+  private void notifyOnNewTurn() {
+    notifyOnNewTurn(0, "");
+  }
 
-	private void notifyOnNewTurn(int id, String info) {
-		for (INewTurnListener listener : newTurnListeners) {
-			try {
-				listener.newTurn(id, info);
-			} catch (Exception e) {
-				logger.error("NewTurn Notification caused an exception.", e);
-			}
-		}
-	}
+  private void notifyOnNewTurn(int id, String info) {
+    for (INewTurnListener listener : this.newTurnListeners) {
+      try {
+        listener.newTurn(id, info);
+      } catch (Exception e) {
+        logger.error("NewTurn Notification caused an exception.", e);
+      }
+    }
+  }
 
-	/**
-	 *
-	 */
-	@Override
+  /**
+   *
+   */
+  @Override
   public void newTurn(int id, String info) {
-		notifyOnNewTurn(id, info);
-	}
+    notifyOnNewTurn(id, info);
+  }
 
-	@Override
-	public void onUpdate(Object sender) {
-		assert sender == conGame;
-		logger.debug("FOCUS got update");
-		/*
-		*/
-		GameState gameState = (GameState) conGame.getCurrentState();
-		Object errorObject = conGame.getCurrentError();
-		if (errorObject != null) {
-			ErrorResponse error = (ErrorResponse) errorObject;
-			logger.info("Received error response:" + error);
-		}
+  @Override
+  public void onUpdate(Object sender) {
+    assert sender == this.conGame;
+    logger.debug("FOCUS got update");
+    /*
+    */
+    GameState gameState = (GameState) this.conGame.getCurrentState();
+    Object errorObject = this.conGame.getCurrentError();
+    if (errorObject != null) {
+      ErrorResponse error = (ErrorResponse) errorObject;
+      logger.info("Received error response:" + error);
+    }
 
-		if (gameState != null) {
-			//ready(); // FIXME I think this is wrong here
-			handler.onUpdate(gameState);
+    if (gameState != null) {
+      // ready(); // FIXME I think this is wrong here
+      this.handler.onUpdate(gameState);
 
-			handler.onUpdate(gameState.getCurrentPlayer(), gameState
-					.getOtherPlayer());
+      this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
 
-			if (conGame.isGameOver() && conGame.isAtEnd()) {
-				notifyOnGameEnded(sender, conGame.getResult());
-			}
+      if (this.conGame.isGameOver() && this.conGame.isAtEnd()) {
+        notifyOnGameEnded(sender, this.conGame.getResult());
+      }
 
-			if (conGame.hasNext()) {
-				RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
-			} else {
-			  if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED) {
-          RenderFacade.getInstance().switchToPlayer(EPlayerId.PLAYER_ONE);
-			  } else if (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.BLUE) {
-          RenderFacade.getInstance().switchToPlayer(EPlayerId.PLAYER_TWO);
-			  } else {
-			    throw new IllegalStateException("current player has unexpected color: "+gameState.getCurrentPlayer().getPlayerColor());
-			  }
-			}
-		}
+      // if we are stepping back, set player to observer in order to hide player
+      // controls. NOTE that it can NOT be assumed that EPlayerId.PLAYER_ONE ==
+      // RED and EPlayerId.PLAYER_TWO == BLUE.
+      if (this.conGame.hasNext()) {
+        if (RenderFacade.getInstance().getActivePlayer() != EPlayerId.OBSERVER) {
+          this.lastActivePlayer = RenderFacade.getInstance().getActivePlayer();
+        }
+        RenderFacade.getInstance().switchToPlayer(EPlayerId.OBSERVER);
+      } else {
+        // if we are at the end of available turns, switch control back to
+        // player
+        if (this.lastActivePlayer != null) {
+          RenderFacade.getInstance().switchToPlayer(this.lastActivePlayer);
+        }
+      }
+    }
 
-		notifyOnNewTurn();
-	}
+    notifyOnNewTurn();
+  }
 
-	@Override
-	public boolean hasNext() {
-		return conGame.hasNext();
-	}
+  @Override
+  public boolean hasNext() {
+    return this.conGame.hasNext();
+  }
 
-	@Override
-	public boolean hasPrevious() {
-		return conGame.hasPrevious();
-	}
+  @Override
+  public boolean hasPrevious() {
+    return this.conGame.hasPrevious();
+  }
 
-	@Override
-	public boolean isPaused() {
-		return conGame.isPaused();
-	}
+  @Override
+  public boolean isPaused() {
+    return this.conGame.isPaused();
+  }
 
-	@Override
-	public boolean isFinished() {
-		return conGame.isGameOver();
-	}
+  @Override
+  public boolean isFinished() {
+    return this.conGame.isGameOver();
+  }
 
-	@Override
-	public boolean isAtEnd() {
-		return conGame.isAtEnd();
-	}
+  @Override
+  public boolean isAtEnd() {
+    return this.conGame.isAtEnd();
+  }
 
-	@Override
-	public boolean isAtStart() {
-		return conGame.isAtStart();
-	}
+  @Override
+  public boolean isAtStart() {
+    return this.conGame.isAtStart();
+  }
 
-	@Override
-	public void goToFirst() {
-		conGame.goToFirst();
-	}
+  @Override
+  public void goToFirst() {
+    this.conGame.goToFirst();
+  }
 
-	@Override
-	public void goToLast() {
-		conGame.goToLast();
-	}
+  @Override
+  public void goToLast() {
+    this.conGame.goToLast();
+  }
 
-	@Override
-	public boolean canTogglePause() {
-		return conGame.canTogglePause();
-	}
+  @Override
+  public boolean canTogglePause() {
+    return this.conGame.canTogglePause();
+  }
 
-	@Override
-	public void onError(String errorMessage) {
-		RenderFacade.getInstance().gameError(errorMessage);
-	}
+  @Override
+  public void onError(String errorMessage) {
+    RenderFacade.getInstance().gameError(errorMessage);
+  }
 
-	@Override
+  @Override
   public void reset() {
-		goToFirst();
-	}
+    goToFirst();
+  }
 }

@@ -172,6 +172,7 @@ public class RenderFacade {
 		} else if (target == EPlayerId.PLAYER_TWO) {
 			handler2 = handler;
 		}
+		logger.debug("registering handler {} {}", handler, target);
 		if (handler instanceof HumanGameHandler) {
 		  frameRenderer.setHuman(target);
 		}
