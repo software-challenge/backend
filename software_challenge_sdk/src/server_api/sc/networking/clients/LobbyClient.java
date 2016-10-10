@@ -7,8 +7,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.thoughtworks.xstream.XStream;
 
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IRequestResult;
@@ -29,19 +32,18 @@ import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.MementoPacket;
+import sc.protocol.responses.ObservationResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.protocol.responses.RoomPacket;
-import sc.shared.SharedConfiguration;
 import sc.shared.GameResult;
+import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
-
-import com.thoughtworks.xstream.XStream;
 
 /**
  * Sample client to be used in the SimpleClient library.
- * 
+ *
  * @author Marcel
- * 
+ *
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory
 {
@@ -144,12 +146,18 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			this.rooms.remove(roomId);
 			onGameLeft(roomId);
 		}
-		/*else if (o instanceof ErrorResponse)
+		else if (o instanceof ErrorResponse)
 		{
 			ErrorResponse response = (ErrorResponse) o;
-			
-			onError(response);
-		}*/
+
+			onError(response.getMessage(), response);
+		}
+		else if (o instanceof ObservationResponse)
+		{
+			String roomId =  ((ObservationResponse) o).getRoomId();
+
+			onGameObserved(roomId);
+		}
 		else
 		{
 			onCustomObject(o);
@@ -195,6 +203,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		for (ILobbyClientListener listener : this.listeners)
 		{
 			listener.onGameJoined(roomId);
+		}
+	}
+
+	private void onGameObserved(String roomId)
+	{
+		for (ILobbyClientListener listener : this.listeners)
+		{
+			listener.onGameObserved(roomId);
 		}
 	}
 
@@ -325,7 +341,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	{
 		this.send(new JoinRoomRequest(gameType));
 	}
-	
+
 	public void joinRoom(String gameType, String roomId) {
 		this.send(new JoinRoomRequest(gameType, roomId));
 	}
@@ -353,6 +369,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 					notifySemaphore();
 				}
 
+				@Override
 				public void operate(T result)
 				{
 					requestResult.setResult(result);
@@ -389,6 +406,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		IControllableGame result = new ControllingClient(this, handle
 				.getRoomId());
 		this.start();
+		logger.debug("sending observation request");
 		this.send(new ObservationRequest(handle.getRoomId(), ""));
 		result.pause();
 		return result;
@@ -398,7 +416,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	{
 		return observe(handle.getRoomId());
 	}
-	
+
 	public IControllableGame observe(String roomId) {
 		IControllableGame result = new ObservingClient(this, roomId);
 		this.start();

@@ -1,19 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
 
+<!-- This config is used when game_server/configuration is added to the classpath -->
+<configuration>
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
 		</layout>
 	</appender>
 
-	<!-- all loggers in DEBUG for now...  -->
-	<logger name="edu.cau.sc.server" level="DEBUG" />
-	<logger name="edu.cau.sc.server.plugins" level="DEBUG" />
-	<logger name="edu.cau.sc.server.clients" level="DEBUG" />
-	<logger name="edu.cau.sc.server.protocol" level="DEBUG" />
+<!-- seems not to work: -->
+  <appender name="SOCKET" class="ch.qos.logback.classic.net.SocketAppender">
+    <remoteHost>localhost</remoteHost>
+    <port>55200</port>
+    <reconnectionDelay>10000</reconnectionDelay>
+    <includeCallerData>true</includeCallerData> 
+      <layout class="ch.qos.logback.classic.log4j.XMLLayout">
+        <locationInfo>true</locationInfo>
+      </layout>
+  </appender>
 
-	<root level="debug">
+
+    <!-- set loggers in which you are interested in to a lower level here -->
+	<logger name="sc.plugin2017.gui.renderer" level="DEBUG" />
+	<logger name="sc.plugin2017.Game" level="DEBUG" />
+	<!--
+	<logger name="sc.plugin2017.network.Client" level="DEBUG" />
+	<logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
+	<logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
+	-->
+	<logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
+	<logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
+	<logger name="sc.server.gaming.GameRoom" level="DEBUG" />
+	<logger name="sc.framework.plugins" level="DEBUG" />
+	<logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
+	<logger name="sc.plugin2017.AbstractClient" level="DEBUG" />
+	<logger name="sc.plugin2017.GuiClient" level="DEBUG" />
+
+	<root level="WARN">
 		<appender-ref ref="STDOUT" />
 	</root>
 	

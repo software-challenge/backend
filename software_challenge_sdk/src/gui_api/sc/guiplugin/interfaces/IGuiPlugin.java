@@ -2,9 +2,8 @@ package sc.guiplugin.interfaces;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Panel;
 import java.io.IOException;
-
-import javax.swing.JPanel;
 
 import sc.plugins.IPlugin;
 import sc.shared.ScoreDefinition;
@@ -13,20 +12,19 @@ import sc.shared.SlotDescriptor;
 public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 
 	/**
-	 * 
+	 *
 	 * sets the rendercontext. So that the game can be displayed on
 	 * <code>panel</code>.
-	 * 
+	 *
 	 * @param panel
 	 *            JPanel instance on which the game should display
-	 * @param threeDimensional
 	 */
-	void setRenderContext(JPanel panel, boolean threeDimensional);
+	void setRenderContext(Panel panel);
 
 	/**
 	 * gets an Image of the current game state. External viewers that can not
 	 * display jpanels need this.
-	 * 
+	 *
 	 * @return Image of the current game state.
 	 */
 	Image getCurrentStateImage();
@@ -34,13 +32,13 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	/**
 	 * Returns the statistics information descriptions, e.g. "Eisschollen" or
 	 * "Brücken"
-	 * 
+	 *
 	 * @return the statistics information descriptions
 	 */
 	ScoreDefinition getScoreDefinition();
 
 	/**
-	 * 
+	 *
 	 * @param ip
 	 * @param port
 	 * @return
@@ -48,11 +46,11 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 */
 	public IGamePreparation prepareGame(final String ip, final int port,
 			SlotDescriptor... descriptors) throws IOException;
-	
-	
+
+
 
 	/**
-	 * 
+	 *
 	 * @param ip
 	 * @param port
 	 * @return
@@ -60,11 +58,11 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	 */
 	public IGamePreparation prepareBackgroundGame(final String ip, final int port,
 			SlotDescriptor... descriptors) throws IOException;
-	
+
 
 	/**
 	 * Loads the replay given by <code>filename</code>.
-	 * 
+	 *
 	 * @param filename
 	 * @return an IGamePreparation instance with an empty list of slots.
 	 */
@@ -72,14 +70,14 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 
 	/**
 	 * displays info text of the plugin. like "created by..."
-	 * 
+	 *
 	 * @return
 	 */
 	String getPluginInfoText();
 
 	/**
 	 * Returns the minimal necessary number of players to play the game.
-	 * 
+	 *
 	 * @return
 	 */
 	int getMinimalPlayerCount();
@@ -87,14 +85,14 @@ public interface IGuiPlugin extends IPlugin<IGuiPluginHost> {
 	/**
 	 * Returns the year when the plugin has been played. SC2010 without SC for
 	 * example
-	 * 
+	 *
 	 * @return
 	 */
 	int getPluginYear();
 
 	/**
 	 * Returns the maximal number of players to play the game.
-	 * 
+	 *
 	 * @return
 	 */
 	int getMaximalPlayerCount();

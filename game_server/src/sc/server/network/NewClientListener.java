@@ -23,13 +23,13 @@ public class NewClientListener implements Runnable, Closeable
 	private ServerSocket				serverSocket	= null;
 
 	public static int					lastUsedPort	= 0;
-	
+
 	private Thread						thread			= null;
 
 	/**
 	 * Returns a new connected client, if a new one is available. Otherwise this
 	 * method blocks until a new client connects.
-	 * 
+	 *
 	 * @return
 	 * @throws InterruptedException
 	 *             If interrupted while waiting for a new client.
@@ -53,7 +53,7 @@ public class NewClientListener implements Runnable, Closeable
 			try
 			{
 				this.queue.put(newClient);
-				logger.info("Added Client to ReadyQueue.");
+				logger.info("Added Client " + newClient + " to ReadyQueue.");
 			}
 			catch (InterruptedException e)
 			{
@@ -112,6 +112,7 @@ public class NewClientListener implements Runnable, Closeable
 		}
 	}
 
+	@Override
 	public void close()
 	{
 		try

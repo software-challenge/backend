@@ -1,7 +1,6 @@
 package sc.server;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ import sc.server.network.PacketCallback;
 /**
  * The lobby will help clients find a open game or create new games to play with
  * another client.
- * 
+ *
  * @author mja
  * @author rra
  */
@@ -132,8 +131,12 @@ public class Lobby implements IClientManagerListener, IClientListener
 			else if (packet instanceof PauseGameRequest)
 			{
 				PauseGameRequest pause = (PauseGameRequest) packet;
-				GameRoom room = this.gameManager.findRoom(pause.roomId);
-				room.pause(pause.pause);
+				try {
+					GameRoom room = this.gameManager.findRoom(pause.roomId);
+					room.pause(pause.pause);
+				} catch (RescueableClientException e) {
+					this.logger.error("Got exception on pause: {}", e);
+				}
 			}
 			else if (packet instanceof StepRequest)
 			{
@@ -176,10 +179,11 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onError(Client source, Object errorPacket)
 	{
-		for (Iterator<IClientRole> iterator = source.getRoles().iterator(); iterator.hasNext();)
+		for (IClientRole role : source.getRoles())
 		{
-			PlayerRole role = (PlayerRole) iterator.next();
-			role.getPlayerSlot().getRoom().onClientError(source, errorPacket);
+			if (role.getClass() == PlayerRole.class) {
+				((PlayerRole)role).getPlayerSlot().getRoom().onClientError(source, errorPacket);
+			}
 		}
 	}
 }

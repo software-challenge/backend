@@ -17,7 +17,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +24,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -53,6 +56,9 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.api.plugins.IPlayer;
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -79,6 +85,8 @@ import sc.shared.SlotDescriptor;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
+
+  private static final Logger logger = LoggerFactory.getLogger(TestRangeDialog.class);
 
 	private static final String DEFAULT_HOST = "localhost";
 	private JPanel pnlTop;
@@ -116,7 +124,8 @@ public class TestRangeDialog extends JDialog {
 	private JPanel pnlBottomTop;
 	private int freePort;
 	private boolean testStarted;
-	
+	private final CyclicBarrier gameEndReached = new CyclicBarrier(2);
+
 	private List<List<BigDecimal>> absoluteValues;
 
 	public TestRangeDialog() {
@@ -207,7 +216,7 @@ public class TestRangeDialog extends JDialog {
 		// -----------------------------------------------------------
 
 		progressBar = new JProgressBar(SwingConstants.HORIZONTAL);
-		progressBar.setStringPainted(true); // draw procent
+		progressBar.setStringPainted(true); // draw percent
 
 		lblCenter = new JLabel(lang.getProperty("dialog_test_tbl_log"),
 				JLabel.CENTER);
@@ -285,7 +294,7 @@ public class TestRangeDialog extends JDialog {
 	private void createSaveReplayCheckboxGroup() {
 		pnl_saveReplay = new JPanel(new GridLayout());
 		//setVerticalFlowLayout(pnl_saveReplay);
-		
+
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel lbl_saveReplay = new JLabel(lang
 				.getProperty("dialog_test_lbl_saveReplay"));
@@ -344,15 +353,24 @@ public class TestRangeDialog extends JDialog {
 		testStart = new JButton(lang.getProperty("dialog_test_btn_start"));
 		testStart.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent _event) {
 				if (isTesting()) { // testing
 					cancelTest(lang.getProperty("dialog_test_msg_cancel"));
 				} else {
-					if (prepareTest()) {
-						updateGUI(false);
-						// first game with first player at the first position
-						startNewTest();
-					}
+          if (prepareTest()) {
+            while (curTest < numTest) {
+              updateGUI(false);
+              startNewTest();
+              try {
+                logger.debug("FOCUS testloop await game end reached {}", this);
+                gameEndReached.await(3, TimeUnit.MINUTES);
+                logger.debug("FOCUS testloop await continue {}", this);
+              } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
+                cancelTest("Cancel due to internal error");
+              }
+            }
+            finishTest();
+				  }
 				}
 			}
 		});
@@ -370,7 +388,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Returns true if a test is running, otherwise false.
-	 * 
+	 *
 	 * @return
 	 */
 	private boolean isTesting() {
@@ -379,7 +397,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Updates the start/stop button and the text area.
-	 * 
+	 *
 	 * @param endOfTest
 	 *            true if it should reset the gui, otherwise false.
 	 */
@@ -412,7 +430,7 @@ public class TestRangeDialog extends JDialog {
 	/**
 	 * According to the Checkbox's index, which selects a specific plugin, this
 	 * dialog is painted.
-	 * 
+	 *
 	 * @param selPlugin
 	 */
 	protected void drawSelectedPluginView(GUIPluginInstance selPlugin) {
@@ -427,7 +445,7 @@ public class TestRangeDialog extends JDialog {
 		model.setColumnCount(0);
 
 		int prefSize = 0;
-		
+
 		// add columns
 		model.addColumn(lang.getProperty("dialog_test_stats_pos"));
 		model.addColumn(lang.getProperty("dialog_test_stats_name"));
@@ -483,7 +501,7 @@ public class TestRangeDialog extends JDialog {
 		// -------------------------------------------------------------
 
 		setPlayerRows(selPlugin);
-		
+
 		// show table without extra space
 		//statTable.setPreferredScrollableViewportSize(statTable
 		//		.getPreferredSize());
@@ -513,7 +531,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Adds the necessary input components for each player.
-	 * 
+	 *
 	 * @param selPlugin
 	 */
 	private void setPlayerRows(GUIPluginInstance selPlugin) {
@@ -559,7 +577,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Sets the specific table header renderer.
-	 * 
+	 *
 	 * @param table
 	 */
 	private void setTableHeaderRenderer(JTable table) {
@@ -591,7 +609,7 @@ public class TestRangeDialog extends JDialog {
 	 * Prepares the test range.
 	 */
 	private boolean prepareTest() {
-		
+
 		testStarted = true;
 		if (presFac.getLogicFacade().isGameActive()) {
 			presFac.getContextDisplay().cancelCurrentGame();
@@ -604,7 +622,7 @@ public class TestRangeDialog extends JDialog {
 
 		progressBar.setMaximum(numTest);
 		progressBar.setValue(0);
-		
+
 		absoluteValues = new LinkedList<List<BigDecimal>>();
 
 		for (JTextField element : txfclient) {
@@ -667,32 +685,36 @@ public class TestRangeDialog extends JDialog {
 		} while (portInUse);
 
 		// disable rendering
-		selPlugin.setRenderContext(null, false);
+		selPlugin.setRenderContext(null);
 
 		return true;
 	}
 
 	/**
 	 * Starts a prepared test range.
-	 * 
+	 *
 	 * @param ascending
 	 */
 	protected void startNewTest() {
-		 
+
+	  logger.debug("FOCUS starting new test...");
 		final ConnectingDialog connectionDialog = new ConnectingDialog(this);
 
 		curTest++;
 
 		final int rotation = getRotation(txfclient.length);
 
+		logger.debug("Preparing slots");
 		final List<SlotDescriptor> slotDescriptors = prepareSlots(
 				preparePlayerNames(), rotation);
 		List<KIInformation> KIs = null;
 
 		try {
+      logger.debug("Preparing game");
 			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
 					slotDescriptors);
 
+      logger.debug("Preparing observer");
 			addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
 
 			// only display message after the first round
@@ -700,12 +722,13 @@ public class TestRangeDialog extends JDialog {
 				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
 			}
 
+      logger.debug("Preparing clients");
 			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
 		} catch (IOException e) {
 			e.printStackTrace();
 			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
 			return;
-		}
+    }
 
 		try {
 			runClientProcesses(KIs);
@@ -714,6 +737,13 @@ public class TestRangeDialog extends JDialog {
 			cancelTest(lang.getProperty("dialog_test_msg_run"));
 			return;
 		}
+		// FIXME it seems that a new game is not startet sometimes (especially the second game) when not waiting here for a bit
+		try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
 		// show connecting dialog
 		if (this.isActive()) {
@@ -721,6 +751,7 @@ public class TestRangeDialog extends JDialog {
 				cancelTest(lang.getProperty("dialog_test_msg_cancel"));
 			}
 		}
+		logger.debug("FOCUS finished startNewTest");
 	}
 
 	private int getRotation(int playerCount) {
@@ -810,76 +841,71 @@ public class TestRangeDialog extends JDialog {
 			final List<SlotDescriptor> slotDescriptors,
 			final IGamePreparation prep, final ConnectingDialog connectionDialog) {
 		// get observer
-		
+
 		final GUIPluginInstance plugin = getSelectedPlugin();
 		final List<SlotDescriptor> descriptors = slotDescriptors;
 		obs = prep.getObserver();
+		logger.debug("FOCUS got observer {}", obs);
 		obs.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
-				if (null == result) // happens after a game has been canceled
-					return;
+			  logger.debug("FOCUS game ended, result:\n{}", result);
+        if (null != result) {
 
-				addLogMessage(lang.getProperty("dialog_test_end") + " "
-						+ curTest + "/" + numTest);
-				addLogMessage(gameResultString); // game over information
-				// purpose
-				updateStatistics(rotation, result);
-				// update progress bar
-				progressBar.setValue(progressBar.getValue() + 1);
+          addLogMessage(lang.getProperty("dialog_test_end") + " " + curTest + "/" + numTest);
+          addLogMessage(gameResultString); // game over information
+          // purpose
+          updateStatistics(rotation, result);
+          // update progress bar
+          progressBar.setValue(progressBar.getValue() + 1);
 
-				// create replay file name
-				String replayFilename = null;
-				Collections.rotate(descriptors, -rotation); // Undo rotation
-				boolean winner = false;
-				for (IPlayer player : result.getWinners()) {
-					if (player.getDisplayName().equals(descriptors.get(0).getDisplayName())) {
-						winner = true;
-					}
-				}
-				// Draw counts as win
-				if (result.getWinners().size() == 0) {
-					winner = true;
-				}
-				boolean saveReplay = false;
-				if (!result.isRegular()
-						&& GUIConfiguration.instance().saveErrorGames()) {
-					saveReplay = true;
-				} else if (result.isRegular()) {
-					if (GUIConfiguration.instance().saveWonGames() && winner) {
-						saveReplay = true;
-					}
-					if (GUIConfiguration.instance().saveLostGames() && !winner) {
-						saveReplay = true;
-					}
-				}
-				if (saveReplay) {
-					replayFilename = HelperMethods.generateReplayFilename(plugin, slotDescriptors);
-					try {
-						obs.saveReplayToFile(replayFilename);
-						addLogMessage(lang
-								.getProperty("dialog_test_log_replay"));
-					} catch (IOException e) {
-						e.printStackTrace();
-						addLogMessage(lang
-								.getProperty("dialog_test_log_replay_error"));
-					}
-				}
+          // create replay file name
+          String replayFilename = null;
+          Collections.rotate(descriptors, -rotation); // Undo rotation
+          boolean winner = false;
+          for (IPlayer player : result.getWinners()) {
+            if (player.getDisplayName().equals(descriptors.get(0).getDisplayName())) {
+              winner = true;
+            }
+          }
+          // Draw counts as win
+          if (result.getWinners().size() == 0) {
+            winner = true;
+          }
+          boolean saveReplay = false;
+          if (!result.isRegular() && GUIConfiguration.instance().saveErrorGames()) {
+            saveReplay = true;
+          } else if (result.isRegular()) {
+            if (GUIConfiguration.instance().saveWonGames() && winner) {
+              saveReplay = true;
+            }
+            if (GUIConfiguration.instance().saveLostGames() && !winner) {
+              saveReplay = true;
+            }
+          }
+          if (saveReplay) {
+            replayFilename = HelperMethods.generateReplayFilename(plugin, slotDescriptors);
+            try {
+              obs.saveReplayToFile(replayFilename);
+              addLogMessage(lang.getProperty("dialog_test_log_replay"));
+            } catch (IOException e) {
+              e.printStackTrace();
+              addLogMessage(lang.getProperty("dialog_test_log_replay_error"));
+            }
+          }
+        }
 
-				// start new test if number of tests is not still reached
-				if (curTest < numTest) {
-					// FIXME: Perhaps "Recursive" Execution of Tests might be
-					// REALLY bad
-					// for big N
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							startNewTest();
-						}
-					}).start();
-				} else {
-					finishTest();
-				}
+				try {
+				  logger.debug("FOCUS Observer await game end reached {}", gameEndReached);
+          gameEndReached.await();
+				  logger.debug("FOCUS Observer await game end continue {}", gameEndReached);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
 			}
 		});
 		obs.addNewTurnListener(new INewTurnListener() {
@@ -893,18 +919,20 @@ public class TestRangeDialog extends JDialog {
 				}
 			}
 		});
+		logger.debug("adding ready listener to {}", obs);
 		obs.addReadyListener(new IReadyListener() {
 			@Override
 			public void ready() {
-				connectionDialog.close();
+				logger.debug("FOCUS got ready event");
 				obs.start();
+				connectionDialog.close();
 			}
 		});
 	}
 
 	private List<SlotDescriptor> prepareSlots(final List<String> playerNames,
 			int rotation) {
-		final List<SlotDescriptor> descriptors = new LinkedList<SlotDescriptor>();
+		final List<SlotDescriptor> descriptors = new LinkedList<>();
 
 		for (String playerName : playerNames) {
 			descriptors.add(new SlotDescriptor(playerName, !ckbDebug
@@ -933,7 +961,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Prepares a new game with the given parameters.
-	 * 
+	 *
 	 * @param selPlugin
 	 * @param descriptors
 	 * @return
@@ -961,7 +989,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Updates the statistics table
-	 * 
+	 *
 	 * @param rotation
 	 * @param result
 	 */
@@ -1070,7 +1098,7 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Loads a client, i.e. opens a file choose dialog
-	 * 
+	 *
 	 * @param txf
 	 */
 	private void loadClient(JTextField txf) {
@@ -1097,9 +1125,9 @@ public class TestRangeDialog extends JDialog {
 
 	/**
 	 * Non-editable table model.
-	 * 
+	 *
 	 * @author chw
-	 * 
+	 *
 	 */
 	private class MyTableModel extends DefaultTableModel {
 
@@ -1107,12 +1135,12 @@ public class TestRangeDialog extends JDialog {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
-		
+
 	}
 
 	/**
 	 * Adds the given <code>msg</code> to the log text area.
-	 * 
+	 *
 	 * @param msg
 	 */
 	private void addLogMessage(final String msg) {

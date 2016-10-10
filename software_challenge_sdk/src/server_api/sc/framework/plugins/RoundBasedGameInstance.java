@@ -6,13 +6,13 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
-
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		SimpleGameInstance<P> implements IPauseable
@@ -86,7 +86,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	public void destroy()
 	{
 		logger.info("Destroying Game");
-		
+
 		if(this.requestTimeout != null)
 		{
 			this.requestTimeout.stop();
@@ -132,19 +132,17 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	protected final void next(P nextPlayer)
 	{
-		boolean newTurn = false;
 		if (increaseTurnIfNecessary(nextPlayer))
 		{
 			this.turn++;
-			newTurn = true;
-			// onNewTurn();
-		}
 
-		this.activePlayer = nextPlayer;
-		if (newTurn)
-		{
+			// change player before calling new turn callback
+			this.activePlayer = nextPlayer;
 			onNewTurn();
 		}
+		logger.debug("next turn ({}) for player {}", this.turn, nextPlayer);
+
+		this.activePlayer = nextPlayer;
 		notifyOnNewState(getCurrentState());
 
 		if (checkGameOverCondition())
@@ -169,7 +167,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	/**
 	 * Gets the current state representation.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Object getCurrentState();
@@ -211,7 +209,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 	/**
 	 * Sends a MoveRequest directly to the player (does not take PAUSE into
 	 * account)
-	 * 
+	 *
 	 * @param player
 	 */
 	protected synchronized final void requestMove(P player)
@@ -235,7 +233,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 		player.requestMove();
 	}
-	
+
 	protected ActionTimeout getTimeoutFor(P player)
 	{
 		return new ActionTimeout(true);

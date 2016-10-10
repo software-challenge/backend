@@ -1,8 +1,6 @@
 package sc.server.network;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,13 +33,13 @@ public class ClientManager implements Runnable, IClientListener
 	 * Adds the given <code>newClient</code> and notifies all listeners by
 	 * invoking <code>onClientConnected</code>.<br>
 	 * <i>(only used by tests and addAll())</i>
-	 * 
+	 *
 	 * @param newClient
 	 */
 	public void add(Client newClient)
 	{
 		this.clients.add(newClient);
-		
+
 		newClient.addClientListener(this);
 
 		for (IClientManagerListener listener : this.listeners)
@@ -78,7 +76,7 @@ public class ClientManager implements Runnable, IClientListener
 			}
 
 		}
-		
+
 		this.running = false;
 		logger.info("ClientManager closed.");
 	}
@@ -103,17 +101,17 @@ public class ClientManager implements Runnable, IClientListener
 	public void close()
 	{
 		this.running = false;
-		
+
 		if(this.thread != null) {
 			this.thread.interrupt();
 		}
 
 		this.clientListener.close();
-		
+
 		for (int i = 0; i < this.clients.size(); i++)
 		{
 			Client client = this.clients.get(i);
-			client.close();
+			client.stop();
 		}
 	}
 
@@ -151,7 +149,7 @@ public class ClientManager implements Runnable, IClientListener
 	public void onError(Client source, Object packet)
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -159,6 +157,6 @@ public class ClientManager implements Runnable, IClientListener
 			throws RescueableClientException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 }
