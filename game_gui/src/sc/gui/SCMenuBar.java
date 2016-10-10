@@ -1,15 +1,19 @@
 package sc.gui;
 
+import java.awt.CheckboxMenuItem;
 import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.net.URI;
 import java.util.Properties;
 
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import sc.IGUIApplication;
 import sc.gui.dialogs.CreateGameDialog;
@@ -21,24 +25,26 @@ import sc.logic.save.GUIConfiguration;
 
 /**
  * The menu bar.
- * 
+ *
  * @author chw
  * @since SC'09
- * 
+ *
  */
 @SuppressWarnings("serial")
-public class SCMenuBar extends JMenuBar {
+public class SCMenuBar extends MenuBar {
 
+  private static final Logger logger = LoggerFactory
+      .getLogger(SCMenuBar.class);
 	/**
 	 * The root frame, i.e. the GUI application
 	 */
 	private final IGUIApplication root;
 	private final PresentationFacade presFac = PresentationFacade.getInstance();
-	private JMenu help;
+	private Menu help;
 	/**
 	 * Specific game info menu item
 	 */
-	private JMenuItem specificInfo;
+	private MenuItem specificInfo;
 	private Properties lang;
 
 	/**
@@ -57,89 +63,107 @@ public class SCMenuBar extends JMenuBar {
 	private void createMenuBar() {
 
 		// create menus
-		JMenu data = new JMenu(lang.getProperty("menu_program"));
-		JMenu game = new JMenu(lang.getProperty("menu_game"));
-		JMenu options = new JMenu(lang.getProperty("menu_options"));
-		help = new JMenu(lang.getProperty("menu_help"));
+		Menu data = new Menu(lang.getProperty("menu_program"));
+		Menu game = new Menu(lang.getProperty("menu_game"));
+		Menu options = new Menu(lang.getProperty("menu_options"));
+		help = new Menu(lang.getProperty("menu_help"));
 
 		// create menu items
-		JMenuItem close = new JMenuItem(lang.getProperty("menu_items_close"));
-		close.addMouseListener(new MouseAdapter() {
+		MenuItem close = new MenuItem(lang.getProperty("menu_items_close"));
+		close.addActionListener(new ActionListener() {
 			@Override
-			public void mousePressed(MouseEvent e) {
-				root.closeGUI();
-			}
+      public void actionPerformed(ActionEvent e) {
+        root.closeGUI();
+
+      }
 		});
 
-		JMenuItem createGame = new JMenuItem(lang.getProperty("menu_items_create"));
-		createGame.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (presFac.getLogicFacade().isGameActive()
-						&& !presFac.getLogicFacade().getObservation().isFinished()) {
-					if (JOptionPane.showConfirmDialog(null, lang
-							.getProperty("dialog_create_gameactive_msg"), lang
-							.getProperty("dialog_create_gameactive_title"),
-							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-						return;
-					}
-				}
-				// show create-game dialog
-				new CreateGameDialog(root).setVisible(true);
-			}
+		MenuItem createGame = new MenuItem(lang.getProperty("menu_items_create"));
+		createGame.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (presFac.getLogicFacade().isGameActive()
+            && !presFac.getLogicFacade().getObservation().isFinished()) {
+          if (JOptionPane.showConfirmDialog(null, lang
+              .getProperty("dialog_create_gameactive_msg"), lang
+              .getProperty("dialog_create_gameactive_title"),
+              JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
+          }
+        }
+        // show create-game dialog
+        new CreateGameDialog(root).setVisible(true);
+
+      }
 		});
 
-		JMenuItem loadReplay = new JMenuItem(lang.getProperty("menu_items_replay"));
-		loadReplay.addMouseListener(new MouseAdapter() {
+		MenuItem loadReplay = new MenuItem(lang.getProperty("menu_items_replay"));
+		loadReplay.addActionListener(new ActionListener() {
 			@Override
-			public void mousePressed(MouseEvent e) {
-				if (presFac.getLogicFacade().isGameActive()
-						&& !presFac.getLogicFacade().getObservation().isFinished()) {
-					if (JOptionPane.showConfirmDialog(null, lang
-							.getProperty("dialog_replay_gameactive_msg"), lang
-							.getProperty("dialog_replay_gameactive_title"),
-							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-						return;
-					}
-				}
-				// show replay dialog
-				new ReplayDialog(root).setVisible(true);
-			}
+      public void actionPerformed(ActionEvent e) {
+        if (presFac.getLogicFacade().isGameActive()
+            && !presFac.getLogicFacade().getObservation().isFinished()) {
+          if (JOptionPane.showConfirmDialog(null, lang
+              .getProperty("dialog_replay_gameactive_msg"), lang
+              .getProperty("dialog_replay_gameactive_title"),
+              JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
+          }
+        }
+        // show replay dialog
+        new ReplayDialog(root).setVisible(true);
+
+      }
 		});
 
-		JMenuItem testRange = new JMenuItem(lang.getProperty("menu_items_test"));
-		testRange.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (presFac.getLogicFacade().isGameActive()
-						&& !presFac.getLogicFacade().getObservation().isFinished()) {
-					if (JOptionPane.showConfirmDialog(null, lang
-							.getProperty("dialog_test_gameactive_msg"), lang
-							.getProperty("dialog_test_gameactive_title"),
-							JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
-						return;
-					}
-				}
-				new TestRangeDialog().setVisible(true);
-			}
+		MenuItem testRange = new MenuItem(lang.getProperty("menu_items_test"));
+		testRange.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if (presFac.getLogicFacade().isGameActive()
+            && !presFac.getLogicFacade().getObservation().isFinished()) {
+          if (JOptionPane.showConfirmDialog(null, lang
+              .getProperty("dialog_test_gameactive_msg"), lang
+              .getProperty("dialog_test_gameactive_title"),
+              JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
+            return;
+          }
+        }
+        new TestRangeDialog().setVisible(true);
+      }
 		});
 
-		final JCheckBoxMenuItem noMsg = new JCheckBoxMenuItem(lang
+		final CheckboxMenuItem noMsg = new CheckboxMenuItem(lang
 				.getProperty("menu_items_nomsg"));
-		noMsg.setSelected(GUIConfiguration.instance().suppressWarnMsg());
-		noMsg.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				GUIConfiguration.instance().setSuppressWarnMsg(noMsg.isSelected());
-			}
+		noMsg.setState(GUIConfiguration.instance().suppressWarnMsg());
+		noMsg.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        GUIConfiguration.instance().setSuppressWarnMsg(noMsg.getState());
+
+      }
 		});
 
-		JMenuItem info = new JMenuItem(lang.getProperty("menu_items_info"));
-		info.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				new InfoDialog().setVisible(true);
-			}
+		MenuItem info = new MenuItem(lang.getProperty("menu_items_info"));
+		info.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        new InfoDialog().setVisible(true);
+
+      }
+		});
+
+		MenuItem reportProblem = new MenuItem(lang.getProperty("menu_items_report_problem"));
+		reportProblem.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        try {
+          java.awt.Desktop.getDesktop().browse(new URI("http://www.software-challenge.de/feedback"));
+        }
+        catch (Exception ex) {
+          logger.error("problem opening website", e);
+        }
+      }
 		});
 
 		// add menu items
@@ -152,6 +176,7 @@ public class SCMenuBar extends JMenuBar {
 		options.add(noMsg);
 
 		help.add(info);
+		help.add(reportProblem);
 
 		// add menus
 		this.add(data);
@@ -170,17 +195,18 @@ public class SCMenuBar extends JMenuBar {
 		}
 
 		// add new info item
-		specificInfo = new JMenuItem(gameTypeName);
-		specificInfo.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				new GameInfoDialog(gameTypeName, version, image, icon, infoText, author,
-						infoYear).setVisible(true);
-			}
+		specificInfo = new MenuItem(gameTypeName);
+		specificInfo.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        new GameInfoDialog(gameTypeName, version, image, icon, infoText, author,
+            infoYear).setVisible(true);
+
+      }
 		});
 		help.add(specificInfo);
 
 		// redraw
-		this.validate();
+		//this.validate();
 	}
 }

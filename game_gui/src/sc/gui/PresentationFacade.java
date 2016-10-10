@@ -1,5 +1,7 @@
 package sc.gui;
 
+import java.awt.MenuBar;
+
 import javax.swing.JComponent;
 import javax.swing.JMenuBar;
 
@@ -76,7 +78,7 @@ public class PresentationFacade {
 		return contextDisplay;
 	}
 
-	public JMenuBar getMenuBar() {
+	public MenuBar getMenuBar() {
 		return menuBar;
 	}
 

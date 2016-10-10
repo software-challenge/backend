@@ -39,7 +39,7 @@ public class ReplayDialog extends JDialog {
 	private final Properties lang;
 	private final PresentationFacade presFac;
 	private final IGUIApplication root;
-	
+
 	private List<GUIPluginInstance> plugins;
 	private JComboBox cmbGameType;
 	private JTextField txfReplay;
@@ -127,7 +127,7 @@ public class ReplayDialog extends JDialog {
 		this.pack();
 		this.setLocationRelativeTo(null);
 	}
-	
+
 	public void startReplay(String replayFile) {
 		txfReplay.setText(replayFile);
 		startReplay();
@@ -149,15 +149,12 @@ public class ReplayDialog extends JDialog {
 			return;
 		}
 
-		final ContextDisplay contextPanel = ((ContextDisplay) presFac.getContextDisplay());
+		final ContextDisplay contextPanel = (presFac.getContextDisplay());
 
 		if (presFac.getLogicFacade().isGameActive())
 			contextPanel.cancelCurrentGame();
 
-		// set render context
-		boolean threeDimensional = false; // TODO for future
-		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField(),
-				threeDimensional);
+		selPlugin.getPlugin().setRenderContext(contextPanel.recreateGameField());
 
 		// load replay and set observation
 		try {

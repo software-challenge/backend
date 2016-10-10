@@ -1,9 +1,5 @@
 package sc;
 
-import jargs.gnu.CmdLineParser;
-import jargs.gnu.CmdLineParser.IllegalOptionValueException;
-import jargs.gnu.CmdLineParser.UnknownOptionException;
-
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
@@ -21,6 +17,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.slf4j.LoggerFactory;
 
+import jargs.gnu.CmdLineParser;
+import jargs.gnu.CmdLineParser.IllegalOptionValueException;
+import jargs.gnu.CmdLineParser.UnknownOptionException;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.GameControlBar;
@@ -34,15 +33,8 @@ import sc.server.Configuration;
 import sc.shared.GameResult;
 
 /**
- * TODO
- * button icons
- * test range gameEnded(), newTurn()
- * button enabled/disabled
- */
-
-/**
  * The executable application of the Software Challenge GUI.
- * 
+ *
  * @author chw
  * @since SC'09
  */
@@ -90,23 +82,10 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 			conBar.setStepSpeed(stepSpeed);
 		}
 
-		if (GUIConfiguration.finaleMode) {
-			LoggerFactory.getLogger(this.getClass()).info(
-					"Starting server in finale mode");
-			presFac.getContextDisplay().getGameControlBar().btn_toBegin
-					.setVisible(false);
-			presFac.getContextDisplay().getGameControlBar().btn_toEnd
-					.setVisible(false);
-			presFac.getContextDisplay().getGameControlBar().stepSpeed
-					.setVisible(false);
-			presFac.getStatusBar().setVisible(false);
-		}
-
 		if (GUIConfiguration.replayFileToLoad != null) {
 			ReplayDialog replay = new ReplayDialog(this);
 			replay.startReplay(GUIConfiguration.replayFileToLoad);
 			if (GUIConfiguration.autoStart) {
-				System.out.println("Start playing now");
 				presFac.getContextDisplay().startPlaying();
 			}
 			if (GUIConfiguration.repeat) {
@@ -157,7 +136,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 		// add GUI components
 		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
-		this.setJMenuBar(presFac.getMenuBar());
+		this.setMenuBar(presFac.getMenuBar());
 		this.add(presFac.getContextDisplay());
 		this.add(presFac.getStatusBar());
 
@@ -210,7 +189,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 
 	/**
 	 * Starts this application.
-	 * 
+	 *
 	 * @param args
 	 *            nothing expected
 	 */
@@ -221,7 +200,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 		parseArguments(args);
 		setSystemLookAndFeel();
 		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+			@Override
+      public void run() {
 				SoftwareChallengeGUI gui = new SoftwareChallengeGUI();
 				gui.setVisible(true);
 				if (GUIConfiguration.startMaximized) {

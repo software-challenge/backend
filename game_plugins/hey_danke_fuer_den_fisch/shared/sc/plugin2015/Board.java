@@ -251,7 +251,6 @@ public class Board implements Cloneable {
 								y)))))
 					return false;
 				}
-			}
 		}
 		return true;
 	}

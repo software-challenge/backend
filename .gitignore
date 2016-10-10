@@ -6,151 +6,41 @@
 # Ignore temporary VIM files
 .*.sw*
 
-# /
-/.metadata
-/game_simpleclient_test
+# Ignore deploy and build dirs
 /deploy
-/web_app/final.xml
-/web_app/clientlogs
-/web_app/serverlogs
-
-# /game_gui/
-/game_gui/bin
-/game_gui/game_gui.conf
-/game_gui/replays
 /game_gui/build
-/game_gui/plugins
-/game_gui/schaefchen_gui.conf
-
-# /game_players/hase_und_igel/
-/game_players/hase_und_igel/bin
-/game_players/hase_und_igel/build
-
-# /game_players/manhattan/
-/game_players/manhattan/build
-/game_players/manhattan/doc
-
-# /game_players/schaefchen_im_trockenen/
-/game_players/schaefchen_im_trockenen/build
-/game_players/schaefchen_im_trockenen/doc
-
-# /game_players/schaefchen_im_trockenen2/
-/game_players/schaefchen_im_trockenen2/build
-/game_players/schaefchen_im_trockenen2/doc
-
-# /game_players/sixpack/
-/game_players/sixpack/bin
-/game_players/sixpack/build
-/game_players/sixpack/doc
-
-# /game_players/hey_danke_fuer_den_fisch
-/game_players/hey_danke_fuer_den_fisch/bin
-/game_players/hey_danke_fuer_den_fisch/build
-/game_players/hey_danke_fuer_den_fisch/doc
-
-# /game_players/hey_danke_fuer_den_fisch_player2
-/game_players/hey_danke_fuer_den_fisch_player2/bin
-/game_players/hey_danke_fuer_den_fisch_player2/build
-/game_players/hey_danke_fuer_den_fisch_player2/doc
-
-# /game_plugins/hase_und_igel/
-/game_plugins/hase_und_igel/bin
-/game_plugins/hase_und_igel/build
-/game_plugins/hase_und_igel/src
-
-# /game_plugins/hase_und_igel/lib/
-/game_plugins/hase_und_igel/lib/GamePluginInterface.jar
-
-# /game_plugins/manhattan/
-/game_plugins/manhattan/bin
-/game_plugins/manhattan/build
-/game_plugins/manhattan/doc
-/game_plugins/manhattan/src
-
-# /game_plugins/sixpack/
-/game_plugins/sixpack/bin
-/game_plugins/sixpack/build
-/game_plugins/sixpack/doc
-
-# /game_plugins/hey_danke_fuer_den_fisch
-/game_plugins/hey_danke_fuer_den_fisch/bin
-/game_plugins/hey_danke_fuer_den_fisch/build
-/game_plugins/hey_danke_fuer_den_fisch/doc
-
-# /game_plugins/schaefchen_im_trockenen/
-/game_plugins/schaefchen_im_trockenen/build
-/game_plugins/schaefchen_im_trockenen/src
-/game_plugins/schaefchen_im_trockenen/doc
-/game_plugins/schaefchen_im_trockenen/*.dvi
-/game_plugins/schaefchen_im_trockenen/*.aux
-/game_plugins/schaefchen_im_trockenen/*.idx
-/game_plugins/schaefchen_im_trockenen/*.ps
-/game_plugins/schaefchen_im_trockenen/*.toc
-/game_plugins/schaefchen_im_trockenen/*.pdf
-
-# /game_plugins/schaefchen_im_trockenen/documents/
-/game_plugins/schaefchen_im_trockenen/documents/*.aux
-/game_plugins/schaefchen_im_trockenen/documents/*.idx
-/game_plugins/schaefchen_im_trockenen/documents/*.ps
-/game_plugins/schaefchen_im_trockenen/documents/*.toc
-/game_plugins/schaefchen_im_trockenen/documents/*.dvi
-/game_plugins/schaefchen_im_trockenen/documents/*.pdf
-
-# /game_plugins/schaefchen_im_trockenen/documents/part/
-/game_plugins/schaefchen_im_trockenen/documents/part/*.aux
-
-# /game_plugins/tic_tac_toe/
-/game_plugins/tic_tac_toe/bin
-/game_plugins/tic_tac_toe/build
-/game_plugins/tic_tac_toe/replay.xml
-
-# /game_server/
-/game_server/TEST-*
-/game_server/bin
 /game_server/build
+/software_challenge_sdk/build
+/software_challenge_sdk/bin
+/game_players/*/build
+/game_plugins/*/build
+/game_players/*/bin
+/game_plugins/*/bin
+/game_plugins/*/src
+
+# Ignore java doc
+/game_players/*/doc
+/game_plugins/*/doc
+
+# game server
 /game_server/log
 /game_server/plugins
+/game_server/bin
 
-# /game_server/lib/
-/game_server/lib/GamePluginInterface.jar
-
-# /organisation/
-/organisation/*.bak~1
-
-# /software_challenge_sdk/
-/software_challenge_sdk/bin
-/software_challenge_sdk/build
+# game gui
+/game_gui/build
+/game_gui/bin
+/game_gui/plugins
 
 # /vm_administration/
 /vm_administration/build
 /vm_administration/bin
 /vm_administration/jars
 
-# /web_app/
-/web_app/final.xml
-/web_app/serverlogs
-/web_app/clientlogs
-/web_app/database.yml
-#/web_app/Gemfile.lock
-/web_app/vendor/cache/*
-/web_app/bin
-
-# /web_app/config/
-/web_app/config/database.yml
-
-# /web_app/db/
-/web_app/db/*.sqlite3
-/web_app/db/schema.rb
-
-# /web_app/log/
-/web_app/log/*.log
-
-# /web_app/nbproject/private/
-/web_app/nbproject/private/rake-d.txt
-
-# /web_app/public/
-/web_app/public/system
-
-# /web_app/tmp/
-/web_app/tmp/*
-/game_plugins/SoCha/nbproject/private/
+# latex artifacts
+*.dvi
+*.aux
+*.idx
+*.toc
+*.out
+*.log

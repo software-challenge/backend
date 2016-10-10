@@ -84,7 +84,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		LoggerFactory.getLogger(this.getClass())
 				.debug("Player left {}", player);
 		Map<IPlayer, PlayerScore> result = generateScoreMap();
-		result.put(player, new PlayerScore(false));
+		result.put(player, new PlayerScore(false, "Spieler hat das Spiel verlassen."));
 		result.get(player).setCause(cause);
 		notifyOnGameOver(result);
 	}
@@ -111,7 +111,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	@Override
 	protected PlayerScore getScoreFor(TestPlayer p)
 	{
-		return new PlayerScore(true);
+		return new PlayerScore(true, "Spieler hat gewonnen.");
 	}
 
 	@Override

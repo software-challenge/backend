@@ -66,9 +66,9 @@ import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
 /**
- * 
+ *
  * @author chw
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class CreateGameDialog extends JDialog {
@@ -107,9 +107,9 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param root
-	 * 
+	 *
 	 * @param frame
 	 */
 	public CreateGameDialog(final IGUIApplication root) {
@@ -390,7 +390,7 @@ public class CreateGameDialog extends JDialog {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param table
 	 */
 	private void setTableCellEditing(final JTable table) {
@@ -404,7 +404,7 @@ public class CreateGameDialog extends JDialog {
 	/**
 	 * Sets the cell font size of the given <code>table</code> to
 	 * <code>fontSize</code>.
-	 * 
+	 *
 	 * @param table
 	 * @param font
 	 * @param items
@@ -426,7 +426,7 @@ public class CreateGameDialog extends JDialog {
 	/**
 	 * Sets the header font size of the given <code>table</code> to
 	 * <code>fontSize</code>.
-	 * 
+	 *
 	 * @param table
 	 * @param fontSize
 	 */
@@ -437,7 +437,8 @@ public class CreateGameDialog extends JDialog {
 		final TableCellRenderer headerRenderer = header.getDefaultRenderer();
 
 		header.setDefaultRenderer(new TableCellRenderer() {
-			public Component getTableCellRendererComponent(JTable table,
+			@Override
+      public Component getTableCellRendererComponent(JTable table,
 					Object value, boolean isSelected, boolean hasFocus,
 					int row, int column) {
 
@@ -452,7 +453,7 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Creates a game with the selected options and players.
-	 * 
+	 *
 	 * @param model
 	 */
 	protected void createGame(final DefaultTableModel model) {
@@ -472,11 +473,11 @@ public class CreateGameDialog extends JDialog {
 			return;
 		}
 
-		final ContextDisplay contextPanel = (ContextDisplay) presFac
+		final ContextDisplay contextPanel = presFac
 				.getContextDisplay();
 
-		if (presFac.getLogicFacade().isGameActive())
-			contextPanel.cancelCurrentGame();
+		// if a game was created before, it needs to be canceled
+		contextPanel.cancelCurrentGame();
 
 		// start server
 		try {
@@ -496,9 +497,8 @@ public class CreateGameDialog extends JDialog {
 		}
 
 		// set render context
-		boolean threeDimensional = false; // TODO for future
 		selPlugin.getPlugin().setRenderContext(
-				contextPanel.recreateGameField(), threeDimensional);
+				contextPanel.recreateGameField());
 
 		final List<SlotDescriptor> descriptors = new ArrayList<SlotDescriptor>(
 				model.getRowCount());
@@ -568,7 +568,7 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Executes the given <code>KIs</code>
-	 * 
+	 *
 	 * @param is
 	 */
 	private void executeClients(final List<KIInformation> KIs,
@@ -601,7 +601,7 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Prepares the slots.
-	 * 
+	 *
 	 * @param is
 	 * @param prep
 	 * @param model
@@ -664,7 +664,7 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Prepares the given <code>observer</code>.
-	 * 
+	 *
 	 * @param observer
 	 */
 	private void prepareObserver(final IObservation observer,
@@ -678,7 +678,7 @@ public class CreateGameDialog extends JDialog {
 				presFac.getLogicFacade().setGameActive(true);
 			}
 		});
-		
+
 		final GUIPluginInstance plugin = getSelectedPlugin();
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
@@ -716,7 +716,7 @@ public class CreateGameDialog extends JDialog {
 	/**
 	 * Returns an identifier for the player type: human, internal KI or external
 	 * KI.
-	 * 
+	 *
 	 * @param plyType
 	 * @return
 	 */
@@ -747,7 +747,7 @@ public class CreateGameDialog extends JDialog {
 		 * ((ContextDisplay) presFac.getContextDisplay()).getGameField()
 		 * .removeAll();
 		 */// TODO does it work?
-		((ContextDisplay) presFac.getContextDisplay()).recreateGameField();
+		presFac.getContextDisplay().recreateGameField();
 	}
 
 	private GUIPluginInstance getSelectedPlugin() {
@@ -756,7 +756,7 @@ public class CreateGameDialog extends JDialog {
 
 	/**
 	 * Adds standard rows after selecting a game type.
-	 * 
+	 *
 	 * @param table
 	 */
 	private void addRows(final JTable table) {
@@ -796,7 +796,7 @@ public class CreateGameDialog extends JDialog {
 	/**
 	 * Updates the player table at the given <code>row</code> according to the
 	 * selected index of the given combobox.
-	 * 
+	 *
 	 * @param cbox
 	 * @param row
 	 */
