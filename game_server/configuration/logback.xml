@@ -18,25 +18,12 @@
         <locationInfo>true</locationInfo>
       </layout>
   </appender>
+	<!-- all loggers in DEBUG for now...  -->
+  <logger name="sc" level="WARN" />
+  <logger name="sc.plugin2017.gui.renderer.primitives.GuiBoard" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
 
-
-    <!-- set loggers in which you are interested in to a lower level here -->
-	<logger name="sc.plugin2017.gui.renderer" level="DEBUG" />
-	<logger name="sc.plugin2017.Game" level="DEBUG" />
-	<!--
-	<logger name="sc.plugin2017.network.Client" level="DEBUG" />
-	<logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
-	<logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
-	-->
-	<logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
-	<logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
-	<logger name="sc.server.gaming.GameRoom" level="DEBUG" />
-	<logger name="sc.framework.plugins" level="DEBUG" />
-	<logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
-	<logger name="sc.plugin2017.AbstractClient" level="DEBUG" />
-	<logger name="sc.plugin2017.GuiClient" level="DEBUG" />
-
-	<root level="WARN">
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 	
