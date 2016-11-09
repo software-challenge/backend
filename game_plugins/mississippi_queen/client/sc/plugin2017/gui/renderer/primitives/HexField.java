@@ -19,6 +19,7 @@ public class HexField extends PrimitiveBase{
 
 	private static Logger logger = LoggerFactory.getLogger(HexField.class);
   // Fields
+	TODO double here for better precision
   protected float x, y;
   protected float a, b, c;
 

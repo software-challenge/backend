@@ -227,7 +227,6 @@ public class FrameRenderer extends PApplet {
   public void mouseClicked(MouseEvent e) {
     super.mouseClicked(e);
     if (currentPlayerIsHuman()) {
-
       boolean onSandbank = this.currentGameState.getCurrentPlayer().getField( this.currentGameState.getBoard()).getType() == FieldType.SANDBANK;
       int currentSpeed = this.currentGameState.getCurrentPlayer().getSpeed();
       switch (this.guiBoard.getClickedButton(this.mouseX, this.mouseY)) {
@@ -414,6 +413,13 @@ public class FrameRenderer extends PApplet {
     }
   }
 
+  public boolean endOfRound() {
+    if (this.currentGameState != null) {
+      return this.currentGameState.getTurn() % 2 == 1;
+    }
+    return false;
+  }
+
   public boolean gameActive() {
     return this.winCondition == null;
   }
@@ -448,5 +454,9 @@ public class FrameRenderer extends PApplet {
 
   public void setHuman(EPlayerId target) {
     this.humanPlayers.put(target, Boolean.TRUE);
+  }
+
+  public GameState getCurrentGameState() {
+    return currentGameState;
   }
 }

@@ -276,18 +276,12 @@ public class GameState implements Cloneable {
   }
 
   private Player getLeadingPlayer() {
-    int redPoints = 0;
-    int bluePoints = 0;
-    redPoints += red.getTile() * Constants.POINTS_PER_TILE;
-    redPoints += board.getField(red.getX(), red.getY()).getPoints();
-
-    bluePoints += blue.getTile() * Constants.POINTS_PER_TILE;
-    bluePoints += board.getField(blue.getX(), blue.getY()).getPoints();
-
     // points are equal to the distance to the goal. Who is nearer to the goal is considered leading
-    if (redPoints > bluePoints) {
+    int redDistanceFromBlue = distanceRedFromBlue();
+    logger.debug("DistanceRedFromBlue = " + redDistanceFromBlue);
+    if (redDistanceFromBlue > 0) {
       return red;
-    } else if (bluePoints > redPoints) {
+    } else if (redDistanceFromBlue < 0) {
       return blue;
     } else {
       // if both have the same distance to the goal, the one with more speed is leading
@@ -322,12 +316,38 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
+   * returns how far in front the red player is compared to the blue player. negative number means blue is in front
    */
-  /*
-   * private void switchStartPlayer() { startPlayer = startPlayer ==
-   * PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED; }
-   */
+  private int distanceRedFromBlue() {
+    ArrayList<Tile> tiles = board.getVisibleTiles();
+    int redCol = red.getX();
+    int redRow = red.getY();
+    int blueCol = blue.getX();
+    int blueRow = blue.getY();
+
+    //convert to cube coordinates, easier to use here
+    int redX = redCol - (redRow + (redRow&1)) / 2;
+    int redZ = redRow;
+    int redY = -redX - redZ;
+
+    int blueX = blueCol - (blueRow + (blueRow&1)) / 2;
+    int blueZ = blueRow;
+    int blueY = -blueX - blueZ;
+    switch(tiles.get(tiles.size()-1).getDirection()) {
+    case 0:
+      return (redX - blueX) - (redY - blueY); //dX - dY is the distance
+    case 1:
+      return (redX - blueX) - (redZ - blueZ);
+    case 2:
+      return (redY - blueY) - (redZ - blueZ);
+    case 3:
+      return (redY - blueY) - (redX - blueX);
+    case 4:
+      return (redZ - blueZ) - (redX - blueX);
+    default: // case 5
+      return (redZ - blueZ) - (redY - blueY);
+    }
+  }
 
   /**
    * liefert die aktuelle Zugzahl

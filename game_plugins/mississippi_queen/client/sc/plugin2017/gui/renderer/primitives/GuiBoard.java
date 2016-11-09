@@ -252,8 +252,117 @@ public class GuiBoard extends PrimitiveBase {
     }
   }
 
+
+  private void drawOvertakeLine(Player currentPlayer, Player opponentPlayer) {
+  // TODO Auto-generated method stub
+
+    logger.debug("drawing overtake line");
+    // drawing the overtakeline on the left and right (in respect to front most tile direction)
+    // of the enemy player with either
+    // left zig-zag (straight line, then first turn is to the left)
+    // right zig-zag (first turn is to the right)
+    // if player is slower, then right version on left and left version on right
+    // if player is faster, then left                      right
+    // same speed, but more / less coal (see above)
+    // same speed, same coal -> right / down direction are new cases
+
+
+    Field opponentField = opponentPlayer.getField(currentBoard);
+    int fieldX = opponentField.getX();
+    int fieldY = opponentField.getY();
+    // these are the pixel coordinates of the center
+    float pixelX = calculateXPosition(fieldX, fieldY);
+    float pixelY = calculateYPosition(fieldX, fieldY);
+    pixelX += width / 2f;
+    pixelY += (HexField.calcC(width) + 2f * HexField.calcA(width)) / 2f;
+    logger.debug("opponent field pixel coordinates: " + pixelX + ", " + pixelY);
+    // the direction in degrees
+    int direction = currentBoard.getTiles().get(currentBoard.getTiles().size() - 1).getDirection() * -60;
+    int speedDif = currentPlayer.getSpeed() - opponentPlayer.getSpeed();
+    int coalDif = currentPlayer.getCoal() - opponentPlayer.getCoal();
+    if (speedDif > 0) {
+      drawLeftZigZag(pixelX, pixelY, direction - 90);
+      drawRightZigZag(pixelX, pixelY, direction + 90);
+    } else if (speedDif < 0) {
+      drawRightZigZag(pixelX, pixelY, direction - 90);
+      drawLeftZigZag(pixelX, pixelY, direction + 90);
+
+    } else {
+
+    }
+  }
+
+  private void drawRightZigZag(float pixelX, float pixelY, int direction) {
+    // TODO Auto-generated method stub
+    parent.pushStyle();
+
+    parent.pushMatrix();
+    parent.translate(pixelX, pixelY);
+    float c = HexField.calcC(width);
+    float rightTurn = (float) Math.toRadians(60);
+    float leftTurn = (float) Math.toRadians(-60);
+
+    parent.rotate((float) Math.toRadians(direction));
+    logger.debug("direction in degrees: {}", direction);
+    parent.translate(HexField.calcA(width) + c / 2f, 0);
+    parent.stroke(GuiConstants.colorBlack);
+    parent.strokeWeight(width / 32);
+    parent.line(0, 0, c, 0);
+    parent.translate(c, 0);
+    parent.rotate(rightTurn);
+    parent.line(0, 0, c, 0);
+    parent.translate(c, 0);
+    parent.rotate(leftTurn);
+    parent.line(0, 0, c, 0);
+    parent.translate(c, 0);
+    parent.rotate(leftTurn);
+    parent.line(0, 0, c, 0);
+    parent.translate(c, 0);
+    parent.rotate(rightTurn);
+    parent.line(0, 0, c, 0);
+    parent.translate(c, 0);
+
+    parent.popMatrix();
+    parent.popStyle();
+  }
+
+  private void drawLeftZigZag(float pixelX, float pixelY, int direction) {
+    // TODO Auto-generated method stub
+    parent.pushStyle();
+
+    parent.pushMatrix();
+    parent.translate(pixelX, pixelY);
+
+
+
+
+    parent.popMatrix();
+    parent.popStyle();
+  }
+
+  /**
+   * Calculates the pixel x coordinate for given 2d hex field coordinates
+   */
+  private float calculateXPosition(int fieldX, int fieldY) {
+    float newX = startX;
+    if((fieldY % 2) != 0) {
+      newX = newX - width / 2f;
+    }
+    newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
+    return newX;
+  }
+
+  /**
+   * Calculates the pixel y coordinate for given 2d hex field coordinates
+   */
+  private float calculateYPosition(int fieldX, int fieldY) {
+    float newY = startY;
+    newY += (offsetY + fieldY) * (HexField.calcC(width) + HexField.calcA(width) + GuiConstants.BORDERSIZE * 0.5f);
+    return newY;
+  }
+
   private GuiPlayer getCurrentGuiPlayer() {
-    Player currentPlayer = this.parent.getCurrentPlayer();
+    Player currentPlayer = parent.getCurrentPlayer();
     if (currentPlayer != null) {
       if (currentPlayer.getPlayerColor() == PlayerColor.RED) {
         return this.red;
@@ -335,6 +444,11 @@ public class GuiBoard extends PrimitiveBase {
     // draw players
     this.red.draw();
     this.blue.draw();
+
+    // draw overtake line
+    if(parent.endOfRound()) { // only draw this if overtaking would change player (new round starts)
+      drawOvertakeLine(parent.getCurrentPlayer(), parent.getCurrentOpponent());
+    }
 
     // buttons
     if (this.parent.playerControlsEnabled()) {
