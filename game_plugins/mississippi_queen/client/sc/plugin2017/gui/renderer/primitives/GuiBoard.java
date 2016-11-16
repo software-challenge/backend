@@ -46,14 +46,14 @@ public class GuiBoard extends PrimitiveBase {
   /**
    * holds the position of 0,0 relative to parent
    */
-  private float startX;
-  private float startY;
+  private double startX;
+  private double startY;
   private int offsetX;
   private int offsetY;
   /**
    * Width of one field
    */
-  private float width;
+  private double width;
 
   /**
    * maximum fields in x direction
@@ -130,17 +130,17 @@ public class GuiBoard extends PrimitiveBase {
       }
       this.maxFieldsInX = highX - lowX + 1;
       this.maxFieldsInY = highY - lowY + 1;
-      float xLength = (viewPortSize.width / (this.maxFieldsInX + 1f))
+      double xLength = viewPortSize.width / (this.maxFieldsInX + 1.0)
           /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
-      float yLength = (viewPortSize.height / (this.maxFieldsInY + 1f))
+      double yLength = viewPortSize.height / (this.maxFieldsInY + 1.0)
           /* 1+ für eventuelle Verschiebung */ - GuiConstants.BORDERSIZE;
       this.width = Math.min(xLength, yLength);
       this.offsetX = -lowX;
       this.offsetY = -lowY;
-      float sizeX = (this.width + GuiConstants.BORDERSIZE);
-      float sizeY = (HexField.calcA(this.width) + HexField.calcC(this.width) + GuiConstants.BORDERSIZE);
-      this.startX = (viewPortSize.width - (sizeX * this.maxFieldsInX)) / 2f;
-      this.startY = (viewPortSize.height - (sizeY * this.maxFieldsInY)) / 2f;
+      double sizeX = this.width + GuiConstants.BORDERSIZE;
+      double sizeY = HexField.calcA(this.width) + HexField.calcC(this.width) + GuiConstants.BORDERSIZE;
+      this.startX = (viewPortSize.width - (sizeX * this.maxFieldsInX)) / 2.0;
+      this.startY = (viewPortSize.height - (sizeY * this.maxFieldsInY)) / 2.0;
     }
   }
 
@@ -252,8 +252,200 @@ public class GuiBoard extends PrimitiveBase {
     }
   }
 
+
+  /**
+   * drawing the overtake-line on the left and right (in respect to front most tile direction)
+   * of the enemy player with either
+   * left zig-zag (straight line, then first turn is to the left)
+   * right zig-zag (first turn is to the right)
+   * if player is slower, then right version on left and left version on right
+   * if player is faster, then left                      right
+   * same speed, but more / less coal (see above)
+   * same speed, same coal -> right / down direction are new cases
+   *
+   * this method does NOT work with these following special cases:
+   * - When a new Tile would be added, the overtake-line may not represent the "real" overtake-line,
+   *   since the direction of the last tile could change
+   * - a field that is represented as "in front" of the other player may not lead to overtaking, if
+   *   the field that is stepped on is a log- or sandbank-field, since the speed is changed in that case.
+   */
+  private void drawOvertakeLine(Player currentPlayer, Player opponentPlayer) {
+    logger.debug("drawing overtake line");
+    Field opponentField = opponentPlayer.getField(currentBoard);
+    int fieldX = opponentField.getX();
+    int fieldY = opponentField.getY();
+    // these are the pixel coordinates of the center
+    double pixelX = calculateXPosition(fieldX, fieldY);
+    double pixelY = calculateYPosition(fieldY);
+    pixelX += width / 2f;
+    pixelY += (HexField.calcC(width) + 2f * HexField.calcA(width)) / 2f;
+    // the direction in degrees
+    int direction = currentBoard.getTiles().get(currentBoard.getTiles().size() - 1).getDirection();
+    direction = ((direction  * -60) + 360) % 360; // direction in degrees between +0 and +360 degrees
+    int speedDiff = currentPlayer.getSpeed() - opponentPlayer.getSpeed();
+    int coalDiff = currentPlayer.getCoal() - opponentPlayer.getCoal();
+    int leftLine = (direction + 270) % 360;
+    int rightLine = (direction + 90) % 360;
+    if (speedDiff > 0) {
+      drawLeftZigZag(pixelX, pixelY, leftLine);
+      drawRightZigZag(pixelX, pixelY, rightLine);
+    } else if (speedDiff < 0) {
+      drawRightZigZag(pixelX, pixelY, leftLine);
+      drawLeftZigZag(pixelX, pixelY, rightLine);
+    } else if (coalDiff > 0) {
+      drawLeftZigZag(pixelX, pixelY, leftLine);
+      drawRightZigZag(pixelX, pixelY, rightLine);
+    } else if (coalDiff < 0) {
+      drawRightZigZag(pixelX, pixelY, leftLine);
+      drawLeftZigZag(pixelX, pixelY, rightLine);
+    } else if (direction == 60 || direction == 120 || direction == 180) { // all these three cases have the same behavior
+      drawLeftZigZag(pixelX, pixelY, leftLine);
+      drawLeftZigZag(pixelX, pixelY, rightLine);
+    } else { // direction in {0, 240, 300}
+      drawRightZigZag(pixelX, pixelY, leftLine);
+      drawRightZigZag(pixelX, pixelY, rightLine);
+    }
+  }
+
+  /**
+   * This draws a zig zag line between the corners of fields beginning with a right turn
+   */
+  private void drawRightZigZag(double pixelX, double pixelY, int direction) {
+    drawZigZag(pixelX, pixelY, direction, false);
+  }
+
+  /**
+   * This draws a zig zag line between the corners of fields beginning with a left turn
+   */
+  private void drawLeftZigZag(double pixelX, double pixelY, int direction) {
+    drawZigZag(pixelX, pixelY, direction, true);
+  }
+
+  private void drawZigZag(double pixelX, double pixelY, int direction, boolean left) {
+    parent.pushStyle();
+
+    parent.pushMatrix();
+    parent.translate((float) pixelX, (float) pixelY);
+    int rightTurn = 60;
+    int leftTurn = 300; // 300 degrees to the right is 60 to the left in java
+    moveToCorner(direction);
+    parent.stroke(GuiConstants.colorOvertakeLine);
+    parent.strokeWeight((float) (width / 32));
+    for (int i = 0; i < 10; ++i) {
+      if (left) {
+        drawLine(direction);
+        drawLine((direction + leftTurn) % 360);
+        drawLine(direction);
+        drawLine((direction + rightTurn) % 360);
+      } else {
+        drawLine(direction);
+        drawLine((direction + rightTurn) % 360);
+        drawLine(direction);
+        drawLine((direction + leftTurn) % 360);
+      }
+    }
+
+    parent.popMatrix();
+    parent.popStyle();
+  }
+
+  /**
+   * draws a single line matching the field grid in specified direction (in degrees between 0 and 360)
+   */
+  private void drawLine(int direction) {
+    double a = HexField.calcA(width);
+    double b = HexField.calcB(width);
+    double c = HexField.calcC(width);
+
+    // we don't use rotation here because the drawn hex fields are not equilateral hexagons.
+    // this would cause angles in the grid to be not exactly 60 degrees
+    switch(direction) {
+    case 30:
+      parent.line(0, 0, (float) b, (float) a);
+      parent.translate((float) b, (float) a);
+      break;
+    case 90:
+      parent.line(0, 0, 0, (float) c);
+      parent.translate(0, (float) c);
+      break;
+    case 150:
+      parent.line(0, 0, (float) (-b), (float) a);
+      parent.translate((float) (-b), (float) a);
+      break;
+    case 210:
+      parent.line(0, 0, (float) (-b), (float) (-a));
+      parent.translate((float) (-b), (float) (-a));
+      break;
+    case 270:
+      parent.line(0, 0, 0, (float) (-c));
+      parent.translate(0, (float) (-c));
+      break;
+    case 330:
+      parent.line(0, 0, (float) b, (float) (-a));
+      parent.translate((float) b, (float) (-a));
+      break;
+    default:
+      logger.error("Drawing overtakeline has occured an error");
+    }
+  }
+
+  /**
+   * Moves the parent from the center of a field to the corner specified by the direction (in degrees between 0 and 360)
+   */
+  private void moveToCorner(int direction) {
+    double a = HexField.calcA(width);
+    double b = HexField.calcB(width);
+    double c = HexField.calcC(width);
+
+    // we don't use rotation here because the drawn hex fields are not equilateral hexagons.
+    // this would cause angles in the grid to be not exactly 60 degrees
+    switch(direction) {
+    case 30:
+      parent.translate((float) b, (float) (c / 2));
+      break;
+    case 90:
+      parent.translate(0, (float) (c / 2 + a));
+      break;
+    case 150:
+      parent.translate((float) (-b), (float) (c / 2));
+      break;
+    case 210:
+      parent.translate((float) (-b), (float) (-c / 2));
+      break;
+    case 270:
+      parent.translate(0, (float) (-c / 2 - a));
+      break;
+    case 330:
+      parent.translate((float) b, (float) (-c / 2));
+      break;
+    default:
+      logger.error("Drawing overtakeline has occured an error");
+    }
+  }
+
+  /**
+   * Calculates the pixel x coordinate for given 2d hex field coordinates
+   */
+  private double calculateXPosition(int fieldX, int fieldY) {
+    double newX = startX;
+    if((fieldY % 2) != 0) {
+      newX = newX - width / 2f;
+    }
+    newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
+    return newX;
+  }
+
+  /**
+   * Calculates the pixel y coordinate for given 2d hex field coordinates
+   */
+  private double calculateYPosition(int fieldY) {
+    double newY = startY;
+    newY += (offsetY + fieldY) * (HexField.calcC(width) + HexField.calcA(width) + GuiConstants.BORDERSIZE * 0.5f);
+    return newY;
+  }
+
   private GuiPlayer getCurrentGuiPlayer() {
-    Player currentPlayer = this.parent.getCurrentPlayer();
+    Player currentPlayer = parent.getCurrentPlayer();
     if (currentPlayer != null) {
       if (currentPlayer.getPlayerColor() == PlayerColor.RED) {
         return this.red;
@@ -267,8 +459,8 @@ public class GuiBoard extends PrimitiveBase {
 
   private void updateButtonPositions(GuiPlayer currentGuiPlayer) {
     if (currentGuiPlayer != null) {
-      int centerX = Math.round(currentGuiPlayer.getX() + (this.width / 2));
-      int centerY = Math.round(currentGuiPlayer.getY() + (this.width / 2));
+      int centerX = (int) Math.round(currentGuiPlayer.getX() + (this.width / 2));
+      int centerY = (int) Math.round(currentGuiPlayer.getY() + (this.width / 2));
 
       this.left.moveTo(centerX - (this.width / 2), centerY - (this.width / 2));
       this.right.moveTo(centerX + (this.width / 2), centerY - (this.width / 2));
@@ -314,8 +506,8 @@ public class GuiBoard extends PrimitiveBase {
    * Sets size of HexFields, calculates offset
    */
   private void calculateSize() {
-    float xDimension = this.parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
-    float yDimension = this.parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
+    double xDimension = this.parent.getWidth() * GuiConstants.GUI_BOARD_WIDTH;
+    double yDimension = this.parent.getHeight() * GuiConstants.GUI_BOARD_HEIGHT;
     Dimension viewPortSize = new Dimension((int) xDimension, (int) yDimension);
     calcHexFieldSize(viewPortSize);
   }
@@ -335,6 +527,11 @@ public class GuiBoard extends PrimitiveBase {
     // draw players
     this.red.draw();
     this.blue.draw();
+
+    // draw overtake line
+    if(parent.endOfRound() && parent.currentPlayerIsHuman()) { // only draw this if overtaking would change player (new round starts)
+      drawOvertakeLine(parent.getCurrentPlayer(), parent.getCurrentOpponent());
+    }
 
     // buttons
     if (this.parent.playerControlsEnabled()) {
@@ -374,7 +571,7 @@ public class GuiBoard extends PrimitiveBase {
   }
 
   private int calculateButtonSize() {
-    return Math.max(1, Math.round(this.width / 3));
+    return Math.max(1, (int) Math.round(this.width / 3));
   }
 
   @Override

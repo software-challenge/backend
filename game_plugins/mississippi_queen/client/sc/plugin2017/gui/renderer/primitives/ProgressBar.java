@@ -20,10 +20,10 @@ public class ProgressBar extends PrimitiveBase {
     int round = parent.getCurrentRound();
 
     int width = parent.getWidth();
-    int height = Math.round(parent.getHeight() * GuiConstants.PROGRESS_BAR_HEIGHT);
+    int height = (int) Math.round(parent.getHeight() * GuiConstants.PROGRESS_BAR_HEIGHT);
 
     // Umrandung
-    parent.translate(0, parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT);
+    parent.translate(0, (float) (parent.getHeight() * GuiConstants.SIDE_BAR_HEIGHT));
     parent.fill(GuiConstants.colorSideBarBG);
     parent.rect(0, 0, width, height);
 
@@ -40,13 +40,13 @@ public class ProgressBar extends PrimitiveBase {
     // Statusbalken
     parent.stroke(1.0f);
     parent.fill(GuiConstants.colorDarkGrey);
-    float barWidth = width * 0.9f;
-    float barHeight = height * 0.4f;
-    parent.translate(Math.round(width * 0.05), height - barHeight - (height * 0.1f));
-    parent.rect(0, 0, barWidth, barHeight, barWidth * 0.2f);
+    double barWidth = width * 0.9;
+    double barHeight = height * 0.4;
+    parent.translate((Math.round(width * 0.05)), (float) (height - barHeight - (height * 0.1)));
+    parent.rect(0, 0, (float) barWidth, (float) barHeight, (float) (barWidth * 0.2));
     parent.fill(GuiConstants.colorProgressBar);
     if (round != 0) {
-      parent.rect(0, 0, round * (barWidth / GamePlugin.MAX_TURN_COUNT), barHeight, barWidth * 0.2f);
+      parent.rect(0, 0, (float) (round * (barWidth / GamePlugin.MAX_TURN_COUNT)), (float) barHeight, (float) (barWidth * 0.2));
     }
 
     parent.popMatrix();
