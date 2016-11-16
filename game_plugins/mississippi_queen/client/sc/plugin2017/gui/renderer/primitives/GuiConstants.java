@@ -48,7 +48,7 @@ public class GuiConstants {
   public static final int colorHexFieldGOAL = calcColor(255, 154, 50, 205);
   public static final int colorOrange = calcColor(255, 255, 153, 0);
   public static final int colorProgressBar = calcColor(255, 255, 153, 0);
-  public static final int colorOvertakeLine = calcColor(255, 250, 20, 20);
+  public static final int colorOvertakeLine = calcColor(255, 255, 140, 0);
 
 
 

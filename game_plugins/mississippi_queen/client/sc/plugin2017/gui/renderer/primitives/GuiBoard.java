@@ -541,7 +541,7 @@ public class GuiBoard extends PrimitiveBase {
     this.blue.draw();
 
     // draw overtake line
-    if(parent.endOfRound()) { // only draw this if overtaking would change player (new round starts)
+    if(parent.endOfRound() && parent.currentPlayerIsHuman()) { // only draw this if overtaking would change player (new round starts)
       drawOvertakeLine(parent.getCurrentPlayer(), parent.getCurrentOpponent());
     }
 
