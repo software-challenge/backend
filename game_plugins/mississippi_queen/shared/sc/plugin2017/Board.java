@@ -244,7 +244,7 @@ public class Board {
 
   protected ArrayList<Tile> getVisibleTiles() {
     ArrayList<Tile> visibleTiles = new ArrayList<Tile>();
-    for (Tile tile : visibleTiles) {
+    for (Tile tile : this.tiles) {
       if(tile.isVisible()) {
         visibleTiles.add(tile);
       }

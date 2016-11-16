@@ -276,18 +276,12 @@ public class GameState implements Cloneable {
   }
 
   private Player getLeadingPlayer() {
-    int redPoints = 0;
-    int bluePoints = 0;
-    redPoints += red.getTile() * Constants.POINTS_PER_TILE;
-    redPoints += board.getField(red.getX(), red.getY()).getPoints();
-
-    bluePoints += blue.getTile() * Constants.POINTS_PER_TILE;
-    bluePoints += board.getField(blue.getX(), blue.getY()).getPoints();
-
     // points are equal to the distance to the goal. Who is nearer to the goal is considered leading
-    if (redPoints > bluePoints) {
+    int redDistanceFromBlue = distanceRedFromBlue();
+    logger.debug("DistanceRedFromBlue = " + redDistanceFromBlue);
+    if (redDistanceFromBlue > 0) {
       return red;
-    } else if (bluePoints > redPoints) {
+    } else if (redDistanceFromBlue < 0) {
       return blue;
     } else {
       // if both have the same distance to the goal, the one with more speed is leading
@@ -302,7 +296,7 @@ public class GameState implements Cloneable {
         } else if (blue.getCoal() > red.getCoal()) {
           return blue;
         } else {
-          // if both have same coal, choose player which is farer right or farer down
+          // if both have same coal, choose player which is farer right or farer down (highest x / highest y coordinate)
           // this should be unambiguous considering the distance to the goal is equal for both players
           if (red.getX() > blue.getX()) {
             return red;
@@ -322,12 +316,47 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * wechselt den Spieler, der den aktuellen Abschnitt begonnen hat.
+   * returns how far in front the red player is compared to the blue player. negative number means blue is in front
    */
-  /*
-   * private void switchStartPlayer() { startPlayer = startPlayer ==
-   * PlayerColor.RED ? PlayerColor.BLUE : PlayerColor.RED; }
+  private int distanceRedFromBlue() {
+    ArrayList<Tile> tiles = board.getVisibleTiles();
+    int direction = tiles.get(tiles.size()-1).getDirection();
+    return distanceBetweenPoints(direction, red.getX(), red.getY(), blue.getX(), blue.getY());
+  }
+
+  /**
+   * Gibt die Distanz zwischen zwei gegebenen Punkten auf dem Feld zurück, gemessen an der angegebenen Richtung
+   * @param direction die Richtung (0 - 5)
+   * @param column1 x-Koordinate des ersten Feldes
+   * @param row1 y-Koordinate des ersten Feldes
+   * @param column2 x-Koordinate des zweiten Feldes
+   * @param row2 y-Koordinate des zweiten Feldes
+   * @return die Distanz
    */
+  public static int distanceBetweenPoints(int direction, int column1, int row1, int column2, int row2) {
+  //convert to cube coordinates, easier to use here
+    int x1 = column1 - (row1 + (row1&1)) / 2;
+    int z1 = row1;
+    int y1 = -x1 - z1;
+
+    int x2 = column2 - (row2 + (row2&1)) / 2;
+    int z2 = row2;
+    int y2 = -x2 - z2;
+    switch(direction) {
+    case 0:
+      return (x1 - x2) - (y1 - y2); //dX - dY is the distance
+    case 1:
+      return (x1 - x2) - (z1 - z2);
+    case 2:
+      return (y1 - y2) - (z1 - z2);
+    case 3:
+      return (y1 - y2) - (x1 - x2);
+    case 4:
+      return (z1 - z2) - (x1 - x2);
+    default: // case 5
+      return (z1 - z2) - (y1 - y2);
+    }
+  }
 
   /**
    * liefert die aktuelle Zugzahl

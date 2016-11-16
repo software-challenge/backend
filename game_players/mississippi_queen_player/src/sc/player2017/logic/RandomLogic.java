@@ -125,7 +125,6 @@ public class RandomLogic implements IGameHandler {
         possibleMove.perform(clone, clone.getCurrentPlayer());
 
         int points = clone.getPointsForPlayer(clone.getCurrentPlayerColor());
-        log.debug("move {} would give {} points", possibleMove, points);
         if(points > maxPoints) {
           maxPoints = points;
           move = possibleMove;
