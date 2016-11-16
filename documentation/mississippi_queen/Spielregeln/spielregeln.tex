@@ -210,17 +210,20 @@ hat und Geschwindigkeit 1 besitzt.
 
 Beide Spieler starten mit Geschwindigkeit 1 und 6 Kohleeinheiten und ziehen dann
 jeweils einmal pro Runde. In der ersten Runde beginnt der rote Spieler. In allen
-weiteren Runden wird der beginnende Spieler wie folgt ermittelt:
-
-Es beginnt der Spieler
+weiteren Runden wird der beginnende Spieler wie folgt ermittelt (siehe auch Abbildung unten):
 
 \begin{itemize}
-\item dessen Dampfer sich am dichtesten am Ziel befindet (höchstes Segment oder bei gleichem Segment höchste Reihe, siehe Abbildung unter Abschnitt \ref{sec:spielende}).
+\item Es beginnt der Spieler, dessen Dampfer sich am dichtesten am Ziel befindet, also am weitesten vorne hinsichtlich des vordersten sichtbaren Segments.
 \item Sollten beide Dampfer gleich dicht am Ziel sein, beginnt der Dampfer mit der höheren Geschwindigkeit.
 \item Sollten beide Dampfer gleich schnell sein, beginnt der Dampfer mit dem höheren Kohlevorrat.
 \item Sollten beide Dampfer gleich viel Kohle besitzen, beginnt der Dampfer, der am weitesten rechts steht (höchste X-Koordinate).
 \item Sollten beide Dampfer gleich weit rechts stehen, beginnt der Dampfer, der am weitesten unten steht (höchste Y-Koordinate).
 \end{itemize}
+
+{
+\centering
+\includegraphics[width=1.0\textwidth]{bilder/overtakeline.png}
+}
 
 \section{Der Zug}
 
