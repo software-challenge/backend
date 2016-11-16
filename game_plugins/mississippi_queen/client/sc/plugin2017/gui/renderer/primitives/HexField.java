@@ -19,11 +19,10 @@ public class HexField extends PrimitiveBase{
 
 	private static Logger logger = LoggerFactory.getLogger(HexField.class);
   // Fields
-	TODO double here for better precision
-  protected float x, y;
-  protected float a, b, c;
+  protected double x, y;
+  protected double a, b, c;
 
-  protected float width;
+  protected double width;
   /**
    * x position des Feldes innerhalb des Spielefeld arrays
    */
@@ -44,7 +43,7 @@ public class HexField extends PrimitiveBase{
 
   private static EnumMap<FieldType, PImage[]> images;
 
-  public HexField(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY, int tileIndex) {
+  public HexField(FrameRenderer parent, double width, double startX, double startY, int offsetX, int offsetY, int tileIndex) {
     super(parent);
     fieldX = 0;
     fieldY = 0;
@@ -119,13 +118,13 @@ public class HexField extends PrimitiveBase{
 
   private void drawHex() {
     parent.beginShape();
-    parent.vertex(0, a);
-    parent.vertex(b, 0);
-    parent.vertex(2 * b, a);
-    parent.vertex(2 * b, a + c);
-    parent.vertex(b, 2 * a + c);
-    parent.vertex(0, a + c);
-    parent.vertex(0, a);
+    parent.vertex(0, (float) a);
+    parent.vertex((float) b, 0);
+    parent.vertex((float) (2 * b), (float) a);
+    parent.vertex((float) (2 * b),(float)  (a + c));
+    parent.vertex((float) b,(float)  (2 * a + c));
+    parent.vertex(0,(float)  (a + c));
+    parent.vertex(0,(float)  a);
     parent.endShape();
   }
 
@@ -134,9 +133,9 @@ public class HexField extends PrimitiveBase{
     if (highlighted){
       parent.pushStyle();
       parent.pushMatrix();
-      parent.translate(x, y);
+      parent.translate((float) x,(float)  y);
       parent.noFill();
-      parent.strokeWeight(width / 16);
+      parent.strokeWeight((float) (width / 16));
       parent.stroke(GuiConstants.colorWhite);
       drawHex();
       parent.popMatrix();
@@ -150,13 +149,13 @@ public class HexField extends PrimitiveBase{
     parent.noStroke();
 
     parent.pushMatrix();
-    parent.translate(x, y);
+    parent.translate((float) x,(float)  y);
 
     try {
       if (type.isPassenger()) {
-        parent.image(images.get(type)[0], 0, 0, width, 2*a+c);
+        parent.image(images.get(type)[0], 0, 0, (float) width,(float) (2*a+c));
       } else {
-        parent.image(images.get(type)[(int)variant], 0, 0, width, 2*a+c);
+        parent.image(images.get(type)[(int)variant], 0, 0, (float) width, (float) (2*a+c));
       }
     } catch (ArrayIndexOutOfBoundsException e) {
       logger.error("OutOfBounds: could not get {} with variant {}", type, variant);
@@ -167,7 +166,7 @@ public class HexField extends PrimitiveBase{
     }
 
     parent.noFill();
-    parent.strokeWeight(width / 32);
+    parent.strokeWeight((float) (width / 32));
     parent.stroke(GuiConstants.colorHexFieldBorder);
     drawHex();
 
@@ -178,8 +177,8 @@ public class HexField extends PrimitiveBase{
     } else {
       parent.fill(parent.color(255, 255, 255));
     }
-    parent.textSize(a * 0.6f);
-    parent.text(fieldX + "," + fieldY, width * 0.08f, a + parent.textAscent() + parent.textDescent());
+    parent.textSize((float) (a * 0.6));
+    parent.text(fieldX + "," + fieldY, (float) (width * 0.08), (float) (a + parent.textAscent() + parent.textDescent()));
 
     parent.popMatrix();
     parent.popStyle();
@@ -191,29 +190,29 @@ public class HexField extends PrimitiveBase{
     a = b * PApplet.sin(PApplet.radians(30));
   }
 
-  public static float calcA(float width) {
-    return (width / 2f) * PApplet.sin(PApplet.radians(30));
+  public static double calcA(double width) {
+    return (width / 2) * PApplet.sin(PApplet.radians(30));
   }
 
-  public static float calcB(float width) {
-    return (width / 2f);
+  public static double calcB(double width) {
+    return (width / 2);
   }
 
-  public static float calcC(float width) {
-    return (width / 2f) / PApplet.cos(PApplet.radians(30));
+  public static double calcC(double width) {
+    return (width / 2) / PApplet.cos(PApplet.radians(30));
   }
 
-  public void resize(float startX, float startY, int offsetX, int offsetY, float width){
+  public void resize(double startX, double startY, int offsetX, int offsetY, double width){
     this.width = width;
     calcSize();
     calculatePosition(startX, startY, offsetX, offsetY);
   }
 
-  private void calculatePosition(float startX, float startY, int offsetX, int offsetY) {
-    float newX = startX;
-    float newY = startY;
+  private void calculatePosition(double startX, double startY, int offsetX, int offsetY) {
+    double newX = startX;
+    double newY = startY;
     if((fieldY % 2) != 0) {
-      newX = newX - width / 2f;
+      newX = newX - width / 2;
     }
     newY += (offsetY + fieldY) * (c + a + GuiConstants.BORDERSIZE * 0.5f);
     newX += (offsetX + fieldX) * (GuiConstants.BORDERSIZE + width);
@@ -250,10 +249,10 @@ public class HexField extends PrimitiveBase{
     return "X: " + fieldX + " Y: " + fieldY + " Type: " + type + " " + x + " " + y + " " + b;
   }
 
-  private boolean rightOf(float px, float py, float planeFirstX, float planeFirstY, float planeSecondX, float planeSecondY) {
+  private boolean rightOf(double px, double py, double planeFirstX, double planeFirstY, double planeSecondX, double planeSecondY) {
     return (px - planeSecondX) * (planeFirstY - planeSecondY) - (planeFirstX - planeSecondX) * (py - planeSecondY) > 0.0f;
   }
-  public HexField getFieldCoordinates(float x, float y) {
+  public HexField getFieldCoordinates(double x, double y) {
     // testing if the point lies on the right side of all six half-planes of the hexagon
     // clockwise, starting with the upper left side
     if (rightOf(x, y, this.x, this.y + a, this.x + b, this.y) &&

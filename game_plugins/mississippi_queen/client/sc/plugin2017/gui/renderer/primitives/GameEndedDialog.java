@@ -26,29 +26,29 @@ public class GameEndedDialog {
       message = winningPlayerName + " hat gewonnen!";
     }
     // Box Groß
-    float x = Math.max(parent.textWidth(winningReason), parent.textWidth(message)) + 10;
-    float y;
+    double x = Math.max(parent.textWidth(winningReason), parent.textWidth(message)) + 10;
+    double y;
     if (winningReason.contains("\n")) {
-      y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE * 1.25f;
+      y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE * 1.25;
     } else {
       y = parent.getHeight() * GuiConstants.GAME_ENDED_SIZE;
     }
 
     parent.fill(GuiConstants.colorSideBarBG);
-    parent.translate((parent.getWidth() - x) / 2, y);
-    parent.rect(0, 0, x, y, 7);
+    parent.translate((float) ((parent.getWidth() - x) / 2), (float) y);
+    parent.rect(0, 0, (float) x, (float) y, 7);
 
     // Box klein
     parent.fill(GuiConstants.colorHexFields);
-    parent.rect(0, 0, x, parent.textAscent() + 2 * parent.textDescent(), 7, 7, 0, 0);
+    parent.rect(0, 0, (float) x, parent.textAscent() + 2 * parent.textDescent(), 7, 7, 0, 0);
 
     // ##Text
     // #Game Ended
     parent.pushMatrix();
     parent.fill(GuiConstants.colorText);
 
-    parent.translate((x - parent.textWidth(msg)) / 2, parent.textAscent() + parent.textDescent()); // mittig
-                                                                                                   // positionieren
+    parent.translate((float) ((x - parent.textWidth(msg)) / 2), parent.textAscent() + parent.textDescent()); // mittig
+                                                                                                             // positionieren
     parent.text(msg, 0, 0);
     parent.popMatrix();
 
@@ -61,8 +61,8 @@ public class GameEndedDialog {
     } else if (condition.getWinner() == PlayerColor.BLUE) {
       parent.fill(GuiConstants.colorBlue);
     }
-    parent.translate((x - parent.textWidth(message)) / 2, 3 * parent.textAscent() + parent.textDescent()); // mittig
-                                                                                                           // positionieren
+    parent.translate((float) ((x - parent.textWidth(message)) / 2), 3 * parent.textAscent() + parent.textDescent()); // mittig
+                                                                                                                     // positionieren
     parent.text(message, 0, 0);
     parent.popStyle();
     parent.popMatrix();
@@ -70,7 +70,7 @@ public class GameEndedDialog {
     parent.pushMatrix();
 
     parent.textSize(32);
-    parent.translate((x - parent.textWidth(winningReason)) / 2, 5 * parent.textAscent() + parent.textDescent());
+    parent.translate((float) ((x - parent.textWidth(winningReason)) / 2), 5 * parent.textAscent() + parent.textDescent());
 
     parent.text(winningReason, 0, 0);
 

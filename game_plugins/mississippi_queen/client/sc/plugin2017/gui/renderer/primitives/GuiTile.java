@@ -16,7 +16,7 @@ public class GuiTile extends PrimitiveBase {
     fields = new ArrayList<HexField>();
   }
 
-  public GuiTile(FrameRenderer parent, int index, float width, float startX, float startY, int offsetX, int offsetY) {
+  public GuiTile(FrameRenderer parent, int index, double width, double startX, double startY, int offsetX, int offsetY) {
     super(parent);
     visible = false;
     fields = new ArrayList<HexField>();
@@ -45,7 +45,7 @@ public class GuiTile extends PrimitiveBase {
     }
   }
 
-  public void resize(float startX, float startY, int offsetX, int offsetY, float width) {
+  public void resize(double startX, double startY, int offsetX, int offsetY, double width) {
     for (HexField field : fields) {
       field.resize(startX, startY, offsetX, offsetY, width);
     }
