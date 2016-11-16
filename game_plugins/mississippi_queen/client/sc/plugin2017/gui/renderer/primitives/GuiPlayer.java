@@ -24,12 +24,12 @@ public class GuiPlayer extends HexField {
   private Direction direction;
 
   // player has to remember this to caclulate new positions
-  private float startX;
-  private float startY;
+  private double startX;
+  private double startY;
   private int offsetX;
   private int offsetY;
 
-  public GuiPlayer(FrameRenderer parent, float width, float startX, float startY, int offsetX, int offsetY) {
+  public GuiPlayer(FrameRenderer parent, double width, double startX, double startY, int offsetX, int offsetY) {
     super(parent, width, startX, startY, offsetX, offsetY, 0);
     this.startX = startX;
     this.startY = startY;
@@ -44,7 +44,7 @@ public class GuiPlayer extends HexField {
     parent.noStroke();
     parent.pushMatrix();
     // translate to the center of the field
-    parent.translate(x + b, y + a + (c/2));
+    parent.translate((float) (x + b), (float) (y + a + (c/2)));
 
     if(color == PlayerColor.RED) {
       parent.fill(GuiConstants.colorRed);
@@ -57,7 +57,7 @@ public class GuiPlayer extends HexField {
     }
 
     parent.ellipseMode(PApplet.CENTER);
-    parent.ellipse(0, 0, c, c);
+    parent.ellipse(0, 0, (float) c, (float) c);
 
     // direction arrow
     // +---
@@ -65,27 +65,27 @@ public class GuiPlayer extends HexField {
     // |   /
     // +---
     parent.beginShape();
-    parent.vertex(0, -c/2);
-    parent.vertex(c/2, -c/2);
-    parent.vertex(c, 0);
-    parent.vertex(c/2, c/2);
-    parent.vertex(0, c/2);
+    parent.vertex(0, (float) (-c/2));
+    parent.vertex((float) (c/2), (float) (-c/2));
+    parent.vertex((float) c, 0);
+    parent.vertex((float) (c/2), (float) (c/2));
+    parent.vertex(0, (float) (c/2));
     parent.endShape();
 
     // coal and speed
-    int coalX = Math.round(-c/2);
-    int coalY = Math.round(-a - (a/2));
-    float coalWidth = b;
-    float coalHeight = a;
-    int speedX = Math.round(-c/2);
-    int speedY = Math.round(a/2);
-    float speedWidth = b;
-    float speedHeight = a;
-    parent.strokeWeight(width / 32);
+    int coalX = Math.round((float) (-c/2));
+    int coalY = Math.round((float) (-a - (a/2)));
+    double coalWidth = b;
+    double coalHeight = a;
+    int speedX = Math.round((float) (-c/2));
+    int speedY = Math.round((float) (a/2));
+    double speedWidth = b;
+    double speedHeight = a;
+    parent.strokeWeight((float) (width / 32));
     parent.fill(GuiConstants.colorBlack);
-    parent.rect(coalX, coalY, coalWidth, coalHeight);
+    parent.rect(coalX, coalY, (float) coalWidth, (float) coalHeight);
     parent.fill(GuiConstants.colorWhite);
-    parent.rect(speedX, speedY, speedWidth, speedHeight);
+    parent.rect(speedX, speedY, (float) speedWidth, (float) speedHeight);
     parent.noStroke();
     // text
     parent.pushMatrix();
@@ -96,7 +96,7 @@ public class GuiPlayer extends HexField {
     String coalString = String.format("%d", coal);
     // calculate optimal text size
     parent.textSize(12);
-    parent.textSize(12/parent.textWidth(coalString) * coalHeight);
+    parent.textSize((float) (12/parent.textWidth(coalString) * coalHeight));
     parent.text(coalString, 0, -parent.textDescent());
 
     parent.popMatrix();
@@ -109,26 +109,26 @@ public class GuiPlayer extends HexField {
     String speedString = String.format("%d", speed);
     // calculate optimal text size
     parent.textSize(12);
-    parent.textSize(12/parent.textWidth(speedString) * speedHeight);
+    parent.textSize((float) (12/parent.textWidth(speedString) * speedHeight));
     parent.text(speedString, 0, -parent.textDescent());
 
     parent.popMatrix();
 
     // draw passengers
     parent.fill(GuiConstants.colorPassenger);
-    float passengerDiameter = width/4;
+    double passengerDiameter = width/4;
     if(passenger == 2) {
-      parent.ellipse(passengerDiameter/2 , 0, passengerDiameter, passengerDiameter);
-      parent.ellipse(-passengerDiameter/2 , 0, passengerDiameter, passengerDiameter);
+      parent.ellipse((float) (passengerDiameter/2) , 0, (float) passengerDiameter, (float) passengerDiameter);
+      parent.ellipse((float) (-passengerDiameter/2) , 0, (float) passengerDiameter, (float) passengerDiameter);
     } else if(passenger == 1) {
-      parent.ellipse(0 , 0, passengerDiameter, passengerDiameter);
+      parent.ellipse(0 , 0, (float) passengerDiameter, (float) passengerDiameter);
     }
     parent.popMatrix();
     parent.popStyle();
   }
 
   @Override
-  public void resize(float startX, float startY, int offsetX, int offsetY, float width){
+  public void resize(double startX, double startY, int offsetX, int offsetY, double width){
     this.startX = startX;
     this.startY = startY;
     this.offsetX = offsetX;
@@ -148,11 +148,11 @@ public class GuiPlayer extends HexField {
     this.direction = player.getDirection();
   }
 
-  public float getX() {
+  public double getX() {
     return x;
   }
 
-  public float getY() {
+  public double getY() {
     return y;
   }
 

@@ -296,7 +296,7 @@ public class GameState implements Cloneable {
         } else if (blue.getCoal() > red.getCoal()) {
           return blue;
         } else {
-          // if both have same coal, choose player which is farer right or farer down
+          // if both have same coal, choose player which is farer right or farer down (highest x / highest y coordinate)
           // this should be unambiguous considering the distance to the goal is equal for both players
           if (red.getX() > blue.getX()) {
             return red;
@@ -320,32 +320,41 @@ public class GameState implements Cloneable {
    */
   private int distanceRedFromBlue() {
     ArrayList<Tile> tiles = board.getVisibleTiles();
-    int redCol = red.getX();
-    int redRow = red.getY();
-    int blueCol = blue.getX();
-    int blueRow = blue.getY();
+    int direction = tiles.get(tiles.size()-1).getDirection();
+    return distanceBetweenPoints(direction, red.getX(), red.getY(), blue.getX(), blue.getY());
+  }
 
-    //convert to cube coordinates, easier to use here
-    int redX = redCol - (redRow + (redRow&1)) / 2;
-    int redZ = redRow;
-    int redY = -redX - redZ;
+  /**
+   * Gibt die Distanz zwischen zwei gegebenen Punkten auf dem Feld zurück, gemessen an der angegebenen Richtung
+   * @param direction die Richtung (0 - 5)
+   * @param column1 x-Koordinate des ersten Feldes
+   * @param row1 y-Koordinate des ersten Feldes
+   * @param column2 x-Koordinate des zweiten Feldes
+   * @param row2 y-Koordinate des zweiten Feldes
+   * @return die Distanz
+   */
+  public static int distanceBetweenPoints(int direction, int column1, int row1, int column2, int row2) {
+  //convert to cube coordinates, easier to use here
+    int x1 = column1 - (row1 + (row1&1)) / 2;
+    int z1 = row1;
+    int y1 = -x1 - z1;
 
-    int blueX = blueCol - (blueRow + (blueRow&1)) / 2;
-    int blueZ = blueRow;
-    int blueY = -blueX - blueZ;
-    switch(tiles.get(tiles.size()-1).getDirection()) {
+    int x2 = column2 - (row2 + (row2&1)) / 2;
+    int z2 = row2;
+    int y2 = -x2 - z2;
+    switch(direction) {
     case 0:
-      return (redX - blueX) - (redY - blueY); //dX - dY is the distance
+      return (x1 - x2) - (y1 - y2); //dX - dY is the distance
     case 1:
-      return (redX - blueX) - (redZ - blueZ);
+      return (x1 - x2) - (z1 - z2);
     case 2:
-      return (redY - blueY) - (redZ - blueZ);
+      return (y1 - y2) - (z1 - z2);
     case 3:
-      return (redY - blueY) - (redX - blueX);
+      return (y1 - y2) - (x1 - x2);
     case 4:
-      return (redZ - blueZ) - (redX - blueX);
+      return (z1 - z2) - (x1 - x2);
     default: // case 5
-      return (redZ - blueZ) - (redY - blueY);
+      return (z1 - z2) - (y1 - y2);
     }
   }
 

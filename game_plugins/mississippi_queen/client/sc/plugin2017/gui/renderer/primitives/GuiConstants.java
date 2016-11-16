@@ -48,54 +48,49 @@ public class GuiConstants {
   public static final int colorHexFieldGOAL = calcColor(255, 154, 50, 205);
   public static final int colorOrange = calcColor(255, 255, 153, 0);
   public static final int colorProgressBar = calcColor(255, 255, 153, 0);
+  public static final int colorOvertakeLine = calcColor(255, 250, 20, 20);
 
 
 
 
   public static final int frameBorderSize = 5;
 
-  // not needed
-  /*
-   * public static final float GUI_BOARD_START_X = 1; public static final
-   * float GUI_BOARD_START_Y = 1;
-   */
-
 
   /**
    * startwert der x-Koordinate der Sidebar mit parent.width zu multiplizieren
    */
-  public static final float SIDE_BAR_START_X = 0.8f;
+  public static final double SIDE_BAR_START_X = 0.8;
   /**
    * startwert der y-Koordinate der Sidebar zu 0 zu addieren, ist 0
    *
    */
-  public static final float SIDE_BAR_START_Y = 0;
+  public static final double SIDE_BAR_START_Y = 0;
   /**
    * Breite der Sidebar mit parent.width zu multiplizieren
    */
-  public static final float SIDE_BAR_WIDTH = 0.2f;
+  public static final double SIDE_BAR_WIDTH = 0.2;
   /**
    * Höhe der Sidebar mit parent.heigth zu multiplizieren
    */
-  public static final float SIDE_BAR_HEIGHT = 0.875f;
+  public static final double SIDE_BAR_HEIGHT = 0.875;
 
   /**
    * startwert der x-Koordinate der Progressbar zu 0 zu addieren
    */
-  public static final float PROGRESS_BAR_START_X = 50;
+  public static final double PROGRESS_BAR_START_X = 50;
   /**
    * startwert der y-Koordinate der Progressbar zu parent.height zu addieren
    */
-  public static final float PROGRESS_BAR_START_Y = -30;
+  public static final double PROGRESS_BAR_START_Y = -30;
   /**
    * Breite der Progressbar zu parent.width zu addieren
    */
-  public static final float PROGRESS_BAR_WIDTH = -60;
+  public static final double PROGRESS_BAR_WIDTH = -60;
   /**
    * Höhe der Progressbar
    *
    */
-  public static final float PROGRESS_BAR_HEIGHT = 1 - SIDE_BAR_HEIGHT;
+  public static final double PROGRESS_BAR_HEIGHT = 1 - SIDE_BAR_HEIGHT;
 
   /**
    * Sourcepath to Background Image
@@ -130,17 +125,17 @@ public class GuiConstants {
   /**
    * Relative Size of the Game Ended Dialog
    */
-  public static final float GAME_ENDED_SIZE = 0.3f;
+  public static final double GAME_ENDED_SIZE = 0.3;
 
    /**
    * Breite des GuiBoard mit parent.width zu multiplizieren
    */
-  public static final float GUI_BOARD_WIDTH = 0.8f;
+  public static final double GUI_BOARD_WIDTH = 0.8;
   /**
    * Höhe des GuiBoard zu parent.height zu ultiplizieren
    */
-  public static final float GUI_BOARD_HEIGHT = SIDE_BAR_HEIGHT;
-  public static final float BORDERSIZE = 0;
+  public static final double GUI_BOARD_HEIGHT = SIDE_BAR_HEIGHT;
+  public static final double BORDERSIZE = 0;
   public static final String DEFAULT_RED_NAME = "Spieler 1";
   public static final String DEFAULT_BLUE_NAME = "Spieler 2";
   public static final int DEFAULT_RED_POINTS = 0;

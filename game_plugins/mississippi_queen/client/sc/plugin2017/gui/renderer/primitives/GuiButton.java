@@ -84,9 +84,9 @@ public class GuiButton extends PrimitiveBase {
     return hover(mouseX, mouseY) && enabled;
   }
 
-  public void moveTo(float newX, float newY) {
-    x = Math.round(newX);
-    y = Math.round(newY);
+  public void moveTo(double newX, double newY) {
+    x = (int) Math.round(newX);
+    y = (int) Math.round(newY);
   }
 
   public void setEnabled(boolean e) {
