@@ -257,7 +257,7 @@ public class GuiBoard extends PrimitiveBase {
    * drawing the overtake-line on the left and right (in respect to front most tile direction)
    * of the enemy player with either
    * left zig-zag (straight line, then first turn is to the left)
-   * ight zig-zag (first turn is to the right)
+   * right zig-zag (first turn is to the right)
    * if player is slower, then right version on left and left version on right
    * if player is faster, then left                      right
    * same speed, but more / less coal (see above)
@@ -265,15 +265,12 @@ public class GuiBoard extends PrimitiveBase {
    *
    * this method does NOT work with these following special cases:
    * - When a new Tile would be added, the overtake-line may not represent the "real" overtake-line,
-   * since the direction of the last tile could change
-   * a field that is represented as "in front" of the other player may not lead to overtaking, if
-   * the field that is stepped on is a log- or sandbank-field, since the speed is changed in that case.
+   *   since the direction of the last tile could change
+   * - a field that is represented as "in front" of the other player may not lead to overtaking, if
+   *   the field that is stepped on is a log- or sandbank-field, since the speed is changed in that case.
    */
   private void drawOvertakeLine(Player currentPlayer, Player opponentPlayer) {
-
     logger.debug("drawing overtake line");
-
-
     Field opponentField = opponentPlayer.getField(currentBoard);
     int fieldX = opponentField.getX();
     int fieldY = opponentField.getY();
@@ -282,7 +279,6 @@ public class GuiBoard extends PrimitiveBase {
     double pixelY = calculateYPosition(fieldY);
     pixelX += width / 2f;
     pixelY += (HexField.calcC(width) + 2f * HexField.calcA(width)) / 2f;
-    logger.debug("opponent field pixel coordinates: " + pixelX + ", " + pixelY);
     // the direction in degrees
     int direction = currentBoard.getTiles().get(currentBoard.getTiles().size() - 1).getDirection();
     direction = ((direction  * -60) + 360) % 360; // direction in degrees between +0 and +360 degrees
@@ -302,10 +298,10 @@ public class GuiBoard extends PrimitiveBase {
     } else if (coalDiff < 0) {
       drawRightZigZag(pixelX, pixelY, leftLine);
       drawLeftZigZag(pixelX, pixelY, rightLine);
-    } else if(direction >= 60 && direction <= 180) { // all these three cases hidden here (60, 120 and 180) have the same behavior
+    } else if (direction == 60 || direction == 120 || direction == 180) { // all these three cases have the same behavior
       drawLeftZigZag(pixelX, pixelY, leftLine);
       drawLeftZigZag(pixelX, pixelY, rightLine);
-    } else {
+    } else { // direction in {0, 240, 300}
       drawRightZigZag(pixelX, pixelY, leftLine);
       drawRightZigZag(pixelX, pixelY, rightLine);
     }
@@ -315,50 +311,38 @@ public class GuiBoard extends PrimitiveBase {
    * This draws a zig zag line between the corners of fields beginning with a right turn
    */
   private void drawRightZigZag(double pixelX, double pixelY, int direction) {
-    parent.pushStyle();
-
-    parent.pushMatrix();
-    parent.translate((float) pixelX, (float) pixelY);
-    int rightTurn = 60;
-    int leftTurn = 300; // 300 degrees to the right is 60 to the left in java
-
-    logger.debug("direction in degrees: {}", direction);
-    moveToCorner(direction);
-
-    parent.stroke(GuiConstants.colorOvertakeLine);
-    parent.strokeWeight((float) (width / 32));
-    for(int i = 0; i < 10; ++i) {
-      drawLine(direction);
-      drawLine((direction + rightTurn) % 360);
-      drawLine(direction);
-      drawLine((direction + leftTurn) % 360);
-    }
-
-    parent.popMatrix();
-    parent.popStyle();
+    drawZigZag(pixelX, pixelY, direction, false);
   }
 
   /**
    * This draws a zig zag line between the corners of fields beginning with a left turn
    */
   private void drawLeftZigZag(double pixelX, double pixelY, int direction) {
+    drawZigZag(pixelX, pixelY, direction, true);
+  }
+
+  private void drawZigZag(double pixelX, double pixelY, int direction, boolean left) {
     parent.pushStyle();
 
     parent.pushMatrix();
     parent.translate((float) pixelX, (float) pixelY);
     int rightTurn = 60;
     int leftTurn = 300; // 300 degrees to the right is 60 to the left in java
-
-    logger.debug("direction in degrees: {}", direction);
     moveToCorner(direction);
-
     parent.stroke(GuiConstants.colorOvertakeLine);
     parent.strokeWeight((float) (width / 32));
-    for(int i = 0; i < 10; ++i) {
-      drawLine(direction);
-      drawLine((direction + leftTurn) % 360);
-      drawLine(direction);
-      drawLine((direction + rightTurn) % 360);
+    for (int i = 0; i < 10; ++i) {
+      if (left) {
+        drawLine(direction);
+        drawLine((direction + leftTurn) % 360);
+        drawLine(direction);
+        drawLine((direction + rightTurn) % 360);
+      } else {
+        drawLine(direction);
+        drawLine((direction + rightTurn) % 360);
+        drawLine(direction);
+        drawLine((direction + leftTurn) % 360);
+      }
     }
 
     parent.popMatrix();
@@ -373,6 +357,8 @@ public class GuiBoard extends PrimitiveBase {
     double b = HexField.calcB(width);
     double c = HexField.calcC(width);
 
+    // we don't use rotation here because the drawn hex fields are not equilateral hexagons.
+    // this would cause angles in the grid to be not exactly 60 degrees
     switch(direction) {
     case 30:
       parent.line(0, 0, (float) b, (float) a);
@@ -411,6 +397,8 @@ public class GuiBoard extends PrimitiveBase {
     double b = HexField.calcB(width);
     double c = HexField.calcC(width);
 
+    // we don't use rotation here because the drawn hex fields are not equilateral hexagons.
+    // this would cause angles in the grid to be not exactly 60 degrees
     switch(direction) {
     case 30:
       parent.translate((float) b, (float) (c / 2));
