@@ -50,7 +50,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
    * stores which player was active before switching to observer mode (when
    * stepping through a game)
    */
-  private EPlayerId lastActivePlayer = null;
+  private EPlayerId lastActivePlayer = EPlayerId.NONE;
 
   private static final Logger logger = LoggerFactory.getLogger(Observation.class);
 
@@ -119,9 +119,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
   @Override
   public void start() {
     this.conGame.unpause();
-    if (RenderFacade.getInstance().getActivePlayer() != null) {
-      RenderFacade.getInstance().switchToPlayer(RenderFacade.getInstance().getActivePlayer());
-    }
+    RenderFacade.getInstance().switchToPlayer(RenderFacade.getInstance().getActivePlayer());
   }
 
   @Override
@@ -318,7 +316,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
       } else {
         // if we are at the end of available turns, switch control back to
         // player
-        if (this.lastActivePlayer != null) {
+        if (this.lastActivePlayer != EPlayerId.NONE) {
           RenderFacade.getInstance().switchToPlayer(this.lastActivePlayer);
         }
       }

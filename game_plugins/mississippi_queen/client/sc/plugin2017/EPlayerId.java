@@ -9,5 +9,5 @@ package sc.plugin2017;
 public enum EPlayerId {
   // NOTE: Order is important, see {@link GamePreparation#nextHumanPlayerId()}.
   // Player one needs to be declared before player two.
-	OBSERVER, PLAYER_ONE, PLAYER_TWO
+	NONE, OBSERVER, PLAYER_ONE, PLAYER_TWO
 }

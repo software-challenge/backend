@@ -31,7 +31,7 @@ public class RenderFacade {
 			.getLogger(RenderFacade.class);
 	private FrameRenderer frameRenderer;
 
-	private EPlayerId activePlayer;
+	private EPlayerId activePlayer = EPlayerId.NONE;
 
 	private IGameHandler handler1;
 
@@ -135,7 +135,8 @@ public class RenderFacade {
 		maxTurn = 0;
 		first = true;
 		disabled = false;
-		activePlayer = null;
+		// null value for the active player indicates that there is no current active player.
+		activePlayer = EPlayerId.NONE;
 		this.panel = panel;
 
 		if (panel != null) {
@@ -145,7 +146,7 @@ public class RenderFacade {
   }
 
 	private void initRenderer() {
-	  logger.debug("initializing rendere for game");
+	  logger.debug("initializing renderer for game");
     panel.setLayout(new BorderLayout());
 		panel.setVisible(true);
 		panel.removeAll(); //
@@ -218,13 +219,8 @@ public class RenderFacade {
 	}
 
 	public void switchToPlayer(EPlayerId id) {
-
-		if (id == null) {
-			currentHandler = null;
-			return;
-		}
-
 		switch (id) {
+		case NONE:
 		case OBSERVER:
 			currentHandler = null;
 			break;
