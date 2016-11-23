@@ -31,7 +31,7 @@ public class RenderFacade {
 			.getLogger(RenderFacade.class);
 	private FrameRenderer frameRenderer;
 
-	private EPlayerId activePlayer;
+	private EPlayerId activePlayer = EPlayerId.NONE;
 
 	private IGameHandler handler1;
 
@@ -135,8 +135,8 @@ public class RenderFacade {
 		maxTurn = 0;
 		first = true;
 		disabled = false;
-		// this only gets called for initializing a new game and therefore player one is the first active player
-		activePlayer = EPlayerId.PLAYER_ONE;
+		// null value for the active player indicates that there is no current active player.
+		activePlayer = EPlayerId.NONE;
 		this.panel = panel;
 
 		if (panel != null) {
@@ -219,13 +219,8 @@ public class RenderFacade {
 	}
 
 	public void switchToPlayer(EPlayerId id) {
-
-		if (id == null) {
-			currentHandler = null;
-			return;
-		}
-
 		switch (id) {
+		case NONE:
 		case OBSERVER:
 			currentHandler = null;
 			break;
