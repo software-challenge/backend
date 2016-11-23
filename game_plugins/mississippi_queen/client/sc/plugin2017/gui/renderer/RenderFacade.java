@@ -135,7 +135,8 @@ public class RenderFacade {
 		maxTurn = 0;
 		first = true;
 		disabled = false;
-		activePlayer = null;
+		// this only gets called for initializing a new game and therefore player one is the first active player
+		activePlayer = EPlayerId.PLAYER_ONE;
 		this.panel = panel;
 
 		if (panel != null) {
@@ -145,7 +146,7 @@ public class RenderFacade {
   }
 
 	private void initRenderer() {
-	  logger.debug("initializing rendere for game");
+	  logger.debug("initializing renderer for game");
     panel.setLayout(new BorderLayout());
 		panel.setVisible(true);
 		panel.removeAll(); //
