@@ -305,7 +305,7 @@ public class MoveTest {
   }
   
   @Test
-  public void freeTurnsAfterOvertake() throws InvalidMoveException {
+  public void freeTurnsAfterOvertakeWithPush() throws InvalidMoveException {
     // When executing a push action while overtaking, the freeTurn for the opponent player
     // shall not be overwritten by our next turn
     String tileString =
@@ -333,14 +333,16 @@ public class MoveTest {
     move.actions.add(new Push(Direction.UP_LEFT, 1));
     move.perform(state, blue);
     state.prepareNextTurn(move);
+    assertEquals(false, state.isFreeTurn());
     move = new Move();
     move.actions.add(new Turn(-1, 0));
     move.actions.add(new Turn(1, 1));
     move.actions.add(new Advance(2, 2));
     move.perform(state, blue);
-    state.prepareNextTurn(move);
-    // blue should not have extra turns
     assertEquals(5, blue.getCoal());
+    state.prepareNextTurn(move);
+    assertEquals(true, state.isFreeTurn());
+    // blue should not have extra turns
     move = new Move();
     move.actions.add(new Turn(-1, 0));
     move.actions.add(new Turn(-1, 1));
@@ -348,6 +350,42 @@ public class MoveTest {
     move.perform(state, red);
     // red got pushed and should have 2 free turns
     assertEquals(6, red.getCoal());
+  }
+  
+  @Test
+  public void freeTurnsAfterOvertake() throws InvalidMoveException {
+    // When  overtaking, the freeTurns of player should be set back to 1
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..b.W.W.W..\n" +
+        "...W.W.W.W.\n" +
+        "..r.W.W.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    red.setDirection(Direction.RIGHT);
+    red.setSpeed(1);
+    red.setCoal(6);
+    blue.setDirection(Direction.RIGHT);
+    blue.setSpeed(2);
+    blue.setCoal(6);
+    Move move = new Move();
+    move.actions.add(new Advance(1, 0));
+    move.perform(state, red);
+    state.prepareNextTurn(move);
+    move = new Move();
+    move.actions.add(new Advance(2, 0));
+    move.actions.add(new Turn(-1, 1));
+    move.perform(state, blue);
+    state.prepareNextTurn(move);
+    assertEquals(1, blue.getFreeTurns());
+    assertEquals(false, state.isFreeTurn());
+    move = new Move();
+    move.actions.add(new Advance(2, 0));
+    move.actions.add(new Turn(1, 1));
+    move.perform(state, blue);
+    assertEquals(6, blue.getCoal());
   }
 
 }
