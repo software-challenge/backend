@@ -12,6 +12,7 @@ import sc.player2017.Starter;
 import sc.plugin2017.Acceleration;
 import sc.plugin2017.Advance;
 import sc.plugin2017.Direction;
+import sc.plugin2017.Field;
 import sc.plugin2017.FieldType;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGameHandler;
@@ -74,13 +75,18 @@ public class RandomLogic implements IGameHandler {
 
     List<Move> possibleMoves = new ArrayList<Move>();
 
-    // Sanbank
+    // Sandbank
     if(currentPlayer.getField(gameState.getBoard()).getType() == FieldType.SANDBANK) {
-      if(currentPlayer.getCoal() > 0 && currentPlayer.getField(gameState.getBoard())
-          .getFieldInDirection(currentPlayer.getDirection(), gameState.getBoard()).isPassable()) {
+      Field fieldInFront = currentPlayer.getField(gameState.getBoard())
+          .getFieldInDirection(currentPlayer.getDirection(), gameState.getBoard());
+      Field fieldBehind = currentPlayer.getField(gameState.getBoard())
+          .getFieldInDirection(currentPlayer.getDirection().getOpposite(), gameState.getBoard());
+      if(fieldInFront != null && fieldInFront.isPassable()) {
         move.actions.add(new Advance(1,0));
-      } else {
+      } else if (fieldBehind != null && fieldBehind.isPassable()){
         move.actions.add(new Advance(-1, 0));
+      } else {
+        // Wir sind auf dieser Sandbank gefangen und können keinen gültigen Zug mehr ausführen.
       }
       log.info("Bin auf Sandbank, sende Zug {}", move);
       sendAction(move);
