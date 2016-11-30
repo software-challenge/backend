@@ -615,8 +615,7 @@ public class GameState implements Cloneable {
     stats[0][0] = this.red.getPoints();
     stats[0][1] = this.red.getPassenger();
     stats[1][0] = this.blue.getPoints();
-    stats[1][0] = this.blue.getPassenger();
-
+    stats[1][1] = this.blue.getPassenger();
     return stats;
 
   }
