@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sc.plugin2017.util.InvalidMoveException;
+import sc.plugin2017.GameState;
 
 public class MoveTest {
 
@@ -301,6 +302,53 @@ public class MoveTest {
         move.actions.remove(0);
       }
     }
+  }
+  
+  @Test
+  public void freeTurnsAfterOvertake() throws InvalidMoveException {
+    // When executing a push action while overtaking, the freeTurn for the opponent player
+    // shall not be overwritten by our next turn
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..b.W.W.W..\n" +
+        "...W.W.W.W.\n" +
+        "..r.W.W.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    red.setDirection(Direction.RIGHT);
+    red.setSpeed(2);
+    red.setCoal(6);
+    blue.setDirection(Direction.RIGHT);
+    blue.setSpeed(2);
+    blue.setCoal(6);
+    Move move = new Move();
+    move.actions.add(new Turn(1, 0));
+    move.actions.add(new Advance(2, 1));
+    move.perform(state, red);
+    state.prepareNextTurn(move);
+    System.out.println(state);
+    move = new Move();
+    move.actions.add(new Advance(1, 0));
+    move.actions.add(new Push(Direction.UP_LEFT, 1));
+    move.perform(state, blue);
+    state.prepareNextTurn(move);
+    move = new Move();
+    move.actions.add(new Turn(-1, 0));
+    move.actions.add(new Turn(1, 1));
+    move.actions.add(new Advance(2, 2));
+    move.perform(state, blue);
+    state.prepareNextTurn(move);
+    // blue should not have extra turns
+    assertEquals(5, blue.getCoal());
+    move = new Move();
+    move.actions.add(new Turn(-1, 0));
+    move.actions.add(new Turn(-1, 1));
+    move.actions.add(new Advance(2, 2));
+    move.perform(state, red);
+    // red got pushed and should have 2 free turns
+    assertEquals(6, red.getCoal());
   }
 
 }
