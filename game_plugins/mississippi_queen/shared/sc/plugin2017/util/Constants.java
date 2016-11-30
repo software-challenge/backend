@@ -15,5 +15,10 @@ public class Constants {
   public static final int MAX_ISLANDS = 3;
   public static final int MIN_ISLANDS = 2;
   public static final boolean PASSENGER_ON_LAST_TILE = false;
+  // for gamestats array
+  public static final int GAME_STATS_POINTS_INDEX = 0;
+  public static final int GAME_STATS_PASSENGER_INDEX = 1;
+  public static final int GAME_STATS_RED_INDEX = 0;
+  public static final int GAME_STATS_BLUE_INDEX = 1;
 
 }
