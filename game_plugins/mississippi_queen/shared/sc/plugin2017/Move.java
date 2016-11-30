@@ -185,7 +185,7 @@ public class Move implements Cloneable {
         if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
           throw new InvalidMoveException("Du kannst nicht auf einer Sandbank drehen");
         }
-        ((Turn)action).perform(state, player); // count turns decreases freeTurns and reduces coal if nessessary
+        ((Turn)action).perform(state, player); // count turns decreases freeTurns and reduces coal if necessary
       } else if(action.getClass() == Acceleration.class) {
         Acceleration acc = (Acceleration) action;
         if(acc.order != 0) {
