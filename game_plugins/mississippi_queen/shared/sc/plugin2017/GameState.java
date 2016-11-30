@@ -393,7 +393,6 @@ public class GameState implements Cloneable {
     }
     // wenn auf einen Sandbank abgedrängt wird, gibt es keine zusaetzliche Drehung
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBANK)) {
-      freeTurn = true;
       this.getOtherPlayer().setFreeTurns(2);
     }
     this.getCurrentPlayer().setFreeTurns(1);
@@ -404,7 +403,12 @@ public class GameState implements Cloneable {
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
     this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
     switchCurrentPlayer();
-
+    // free turns has to be set for the current player, because the next player might not be the opponent (overtake)
+    if(getCurrentPlayer().getFreeTurns() == 2) {
+      freeTurn = true;
+    } else {
+      freeTurn = false;
+    }
   }
 
   /**
