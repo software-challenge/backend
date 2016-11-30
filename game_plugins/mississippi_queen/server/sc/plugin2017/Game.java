@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
@@ -173,9 +174,13 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (winCondition != null) {
 		  winningReason = winCondition.getReason();
 		}
-		if (stats[0] > oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] > oppPoints[1]))
+		if (stats[Constants.GAME_STATS_POINTS_INDEX] > oppPoints[Constants.GAME_STATS_POINTS_INDEX] 
+		    || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX] 
+		        && stats[Constants.GAME_STATS_PASSENGER_INDEX] > oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
 			matchPoints = 2;
-		else if (stats[0] < oppPoints[0] || (stats[0] == oppPoints[0] && stats[1] < oppPoints[1]))
+		else if (stats[Constants.GAME_STATS_POINTS_INDEX] < oppPoints[Constants.GAME_STATS_POINTS_INDEX] 
+		    || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX] 
+		        && stats[Constants.GAME_STATS_PASSENGER_INDEX] < oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
 			matchPoints = 0;
 		// FIXME score calculation is done at too many places and does not respect score definition but assumes a fixed schema (points and matchpoints).
 		Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? gameState.getBluePlayer() : gameState.getRedPlayer();
@@ -183,8 +188,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 		  matchPoints = 2;
 		}
 		return p.hasViolated() ? new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
-				stats[0], stats[1]) : new PlayerScore(ScoreCause.REGULAR, winningReason,
-				matchPoints, stats[0], stats[1]);
+				stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]) : new PlayerScore(ScoreCause.REGULAR, winningReason,
+				matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
 
 	}
 
@@ -219,9 +224,11 @@ public class Game extends RoundBasedGameInstance<Player> {
     if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached
       PlayerColor winner = null;
-      if (stats[0][0] > stats[1][0]) {
+      if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] 
+          > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX]) {
         winner = PlayerColor.RED;
-      } else if (stats[0][0] < stats[1][0]) {
+      } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] 
+          < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX]) {
         winner = PlayerColor.BLUE;
       }
       return new WinCondition(winner, "Das Rundenlimit wurde erreicht.");

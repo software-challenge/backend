@@ -594,9 +594,9 @@ public class GameState implements Cloneable {
     assert playerColor != null;
 
     if (playerColor == PlayerColor.RED) {
-      return getGameStats()[0];
+      return getGameStats()[Constants.GAME_STATS_RED_INDEX];
     } else {
-      return getGameStats()[1];
+      return getGameStats()[Constants.GAME_STATS_BLUE_INDEX];
     }
   }
 
@@ -612,11 +612,10 @@ public class GameState implements Cloneable {
 
     int[][] stats = new int[2][2];
 
-    stats[0][0] = this.red.getPoints();
-    stats[0][1] = this.red.getPassenger();
-    stats[1][0] = this.blue.getPoints();
-    stats[1][0] = this.blue.getPassenger();
-
+    stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] = this.red.getPoints();
+    stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_PASSENGER_INDEX] = this.red.getPassenger();
+    stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX] = this.blue.getPoints();
+    stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_PASSENGER_INDEX] = this.blue.getPassenger();
     return stats;
 
   }
