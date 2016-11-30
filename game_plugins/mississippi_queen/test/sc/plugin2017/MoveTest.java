@@ -328,7 +328,6 @@ public class MoveTest {
     move.actions.add(new Advance(2, 1));
     move.perform(state, red);
     state.prepareNextTurn(move);
-    System.out.println(state);
     move = new Move();
     move.actions.add(new Advance(1, 0));
     move.actions.add(new Push(Direction.UP_LEFT, 1));
