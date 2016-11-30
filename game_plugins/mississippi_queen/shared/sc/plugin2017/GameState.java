@@ -395,10 +395,8 @@ public class GameState implements Cloneable {
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBANK)) {
       freeTurn = true;
       this.getOtherPlayer().setFreeTurns(2);
-    } else {
-      freeTurn = false;
-      this.getOtherPlayer().setFreeTurns(1);
     }
+    this.getCurrentPlayer().setFreeTurns(1);
     this.getCurrentPlayer().setMovement(getCurrentPlayer().getSpeed());
     this.getCurrentPlayer().setMovement(getOtherPlayer().getSpeed());
     this.getOtherPlayer().setFreeAcc(1);
