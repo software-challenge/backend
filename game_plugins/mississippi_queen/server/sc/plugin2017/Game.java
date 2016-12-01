@@ -1,6 +1,5 @@
 package sc.plugin2017;
 
-import java.math.BigDecimal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
@@ -44,21 +42,21 @@ public class Game extends RoundBasedGameInstance<Player> {
 	private GameState gameState = new GameState();
 
 	public GameState getGameState() {
-		return gameState.getVisible();
+		return this.gameState.getVisible();
 	}
 
 	public Player getActivePlayer() {
-		return activePlayer;
+		return this.activePlayer;
 	}
 
 	public Game() {
-		availableColors.add(PlayerColor.RED);
-		availableColors.add(PlayerColor.BLUE);
+		this.availableColors.add(PlayerColor.RED);
+		this.availableColors.add(PlayerColor.BLUE);
 	}
 
 	@Override
 	protected Object getCurrentState() {
-		return gameState.getVisible(); // return only the for the players visible board
+		return this.gameState.getVisible(); // return only the for the players visible board
 	}
 
 	/**
@@ -83,10 +81,10 @@ public class Game extends RoundBasedGameInstance<Player> {
 			}
 
       final Move move = (Move) data;
-      move.perform(gameState, author);
-      gameState.prepareNextTurn(move);
-      halfturns++;
-			next(gameState.getCurrentPlayer());
+      move.perform(this.gameState, author);
+      this.gameState.prepareNextTurn(move);
+      this.halfturns++;
+			next(this.gameState.getCurrentPlayer());
 		} catch (InvalidMoveException e) {
 			author.setViolated(true);
 			String err = "Ungueltiger Zug von '" + author.getDisplayName()
@@ -157,7 +155,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	@Override
 	public void start() {
-		for (final Player p : players) {
+		for (final Player p : this.players) {
 			p.notifyListeners(new WelcomeMessage(p.getPlayerColor()));
 		}
 
@@ -174,9 +172,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 
 	  logger.debug("get score for player {}", p.getPlayerColor());
 	  logger.debug("player violated: {}", p.hasViolated());
-		int[] stats = gameState.getPlayerStats(p);
+		int[] stats = this.gameState.getPlayerStats(p);
 		int matchPoints = 1;
-		int[] oppPoints = gameState.getPlayerStats(p.getPlayerColor()
+		int[] oppPoints = this.gameState.getPlayerStats(p.getPlayerColor()
 				.opponent());
 		WinCondition winCondition = checkWinCondition();
 		String winningReason = null;
@@ -192,7 +190,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		        && stats[Constants.GAME_STATS_PASSENGER_INDEX] < oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
 			matchPoints = 0;
 		// FIXME score calculation is done at too many places and does not respect score definition but assumes a fixed schema (points and matchpoints).
-		Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? gameState.getBluePlayer() : gameState.getRedPlayer();
+		Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer() : this.gameState.getRedPlayer();
 		if (opponent.hasViolated() && !p.hasViolated()) {
 		  matchPoints = 2;
 		}
@@ -212,8 +210,8 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * @return the player who reached the goal or null if no player reached the goal
 	 */
 	private Player checkGoalReached() {
-	  for (final Player player : players) {
-      if (player.getField(gameState.getBoard()).getType() == FieldType.GOAL && player.getPassenger() >= 2 && player.getSpeed() == 1) {
+	  for (final Player player : this.players) {
+      if (player.getField(this.gameState.getBoard()).getType() == FieldType.GOAL && player.getPassenger() >= 2 && player.getSpeed() == 1) {
         return player;
       }
 	  }
@@ -225,12 +223,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 	 * @return WinCondition with winner and reason or null, if no win condition is yet met.
 	 */
 	public WinCondition checkWinCondition() {
-	  if (gameState.getTurn() > 1) {
+	  if (this.gameState.getTurn() > 1) {
 	    // XXX only for test
       //return new WinCondition(PlayerColor.BLUE, "Das Rundenlimit von 2 wurde erreicht.");
 	  }
-    int[][] stats = gameState.getGameStats();
-    if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+    int[][] stats = this.gameState.getGameStats();
+    if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached
       PlayerColor winner = null;
       if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] 
@@ -245,11 +243,11 @@ public class Game extends RoundBasedGameInstance<Player> {
       // one player reached the goal
       PlayerColor winner = checkGoalReached().getPlayerColor();
       return new WinCondition(winner, "Das Spiel ist beendet.\nEin Spieler ist im Ziel");
-    } else if (getActivePlayer() != gameState.getStartPlayer() &&
-        Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
+    } else if (getActivePlayer() != this.gameState.getStartPlayer() &&
+        Math.abs(this.gameState.getRedPlayer().getTile() - this.gameState.getBluePlayer().getTile()) > 3) {
       // a player is more than three tiles before the other player
       PlayerColor winner;
-      if(gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
+      if(this.gameState.getRedPlayer().getTile() > this.gameState.getBluePlayer().getTile()) {
         winner = PlayerColor.RED;
       } else {
         winner = PlayerColor.BLUE;
@@ -285,7 +283,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	  WinCondition win = checkWinCondition();
 			List<IPlayer> winners = new LinkedList<IPlayer>();
 	  if (win != null) {
-      for (Player player : players) {
+      for (Player player : this.players) {
         if (player.getPlayerColor() == win.getWinner()) {
           winners.add(player);
           break;
@@ -295,7 +293,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	    // No win condition met, player with highest score wins. Winning score is
 	    // determined by matchpoints ("Siegpunkte"). The winning player has 2
 	    // matchpoints. Find this player. If no player has 2 matchpoints, it is a draw.
-      for (Player player : players) {
+      for (Player player : this.players) {
         if (getScoreFor(player).getValues().get(0).intValueExact() == 2) {
           winners.add(player);
           break;
