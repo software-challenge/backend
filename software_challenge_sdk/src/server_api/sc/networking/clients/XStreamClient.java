@@ -92,9 +92,10 @@ public abstract class XStreamClient
 				{
 					this.threadLogger.error("ReceiveThread caused an exception.", e);
 				}
+				logger.debug("Termionated thread with id {} and name {}", thread.getId(), thread.getName());
 			}
 		});
-		this.thread.setName("XStreamClient Reader");
+		this.thread.setName("XStreamClient Reader " + thread.getId() + " " + this.getClass().getSimpleName());
 		this.thread.start();
 	}
 
@@ -288,6 +289,8 @@ public abstract class XStreamClient
 		if (this.thread != null)
 		{
 			this.thread.interrupt();
+		} else {
+			logger.debug("Tried to interrupt null thread with name {}", this.thread.getName());
 		}
 	}
 

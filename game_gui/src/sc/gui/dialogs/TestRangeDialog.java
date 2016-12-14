@@ -103,11 +103,7 @@ public class TestRangeDialog extends JDialog {
 	private JLabel[] lblclient;
 	private JButton[] btnclient;
 	private JPanel[] pnlclient;
-	/**
-	 * 0 indicates "no testing"<br>
-	 * 1..* indicates the current running test, i.e. "testing"
-	 */
-	private int curTest;
+	private volatile int curTest = 0;
 	private int numTest;
 	private JPanel pnlPref;
 	private JCheckBox ckbDebug;
@@ -132,7 +128,6 @@ public class TestRangeDialog extends JDialog {
 		super();
 		presFac = PresentationFacade.getInstance();
 		lang = presFac.getLogicFacade().getLanguageData();
-		initCurTest(); // not testing
 		testStarted = false;
 		createGUI();
 	}
@@ -354,16 +349,16 @@ public class TestRangeDialog extends JDialog {
 		testStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent _event) {
-				if (isTesting()) { // testing
+				if (testStarted) { // testing
 					cancelTest(lang.getProperty("dialog_test_msg_cancel"));
 				} else {
           if (prepareTest()) {
-            while (curTest < numTest) {
+            while (testStarted && curTest < numTest) {
               updateGUI(false);
               startNewTest();
               try {
                 logger.debug("FOCUS testloop await game end reached {}", this);
-                gameEndReached.await(3, TimeUnit.MINUTES);
+                gameEndReached.await(30, TimeUnit.SECONDS);
                 logger.debug("FOCUS testloop await continue {}", this);
               } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
                 cancelTest("Cancel due to internal error");
@@ -384,15 +379,6 @@ public class TestRangeDialog extends JDialog {
 				TestRangeDialog.this.dispose();
 			}
 		});
-	}
-
-	/**
-	 * Returns true if a test is running, otherwise false.
-	 *
-	 * @return
-	 */
-	private boolean isTesting() {
-		return curTest > 0;
 	}
 
 	/**
@@ -697,61 +683,71 @@ public class TestRangeDialog extends JDialog {
 	 */
 	protected void startNewTest() {
 
-	  logger.debug("FOCUS starting new test...");
-		final ConnectingDialog connectionDialog = new ConnectingDialog(this);
+    logger.debug("FOCUS starting new test...");
+    final ConnectingDialog connectionDialog = new ConnectingDialog(this);
+	  Thread testGameThread = new Thread(new Runnable() {
+	    @Override
+	    public void run()  {
+    
+    		curTest++;
+    
+    		final int rotation = getRotation(txfclient.length);
+    
+    		logger.debug("Preparing slots");
+    		final List<SlotDescriptor> slotDescriptors = prepareSlots(
+    				preparePlayerNames(), rotation);
+    		List<KIInformation> KIs = null;
+    
+    		try {
+          logger.debug("Preparing game");
+    			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
+    					slotDescriptors);
+    
+          logger.debug("Preparing observer");
+    			addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
 
-		curTest++;
 
-		final int rotation = getRotation(txfclient.length);
-
-		logger.debug("Preparing slots");
-		final List<SlotDescriptor> slotDescriptors = prepareSlots(
-				preparePlayerNames(), rotation);
-		List<KIInformation> KIs = null;
-
-		try {
-      logger.debug("Preparing game");
-			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
-					slotDescriptors);
-
-      logger.debug("Preparing observer");
-			addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
-
-			// only display message after the first round
-			if (curTest > 1) {
-				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
-			}
-
-      logger.debug("Preparing clients");
-			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
-		} catch (IOException e) {
-			e.printStackTrace();
-			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
-			return;
+          // FIXME it seems that a new game is not startet sometimes (especially the second game) when not waiting here for a bit
+          try {
+            Thread.sleep(500);
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          
+    			// only display message after the first round
+    			if (curTest > 1) {
+    				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
+    			}
+    
+          logger.debug("Preparing clients");
+    			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
+    			return;
+        }
+        
+    		try {
+    			runClientProcesses(KIs);
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    			cancelTest(lang.getProperty("dialog_test_msg_run"));
+    			return;
+    		}
+    
+    		
+    		logger.debug("FOCUS finished startNewTest");
+	    }
+	  });
+	  testGameThread.setName("Test Game Thread " + curTest + " id: " + testGameThread.getId());
+	  testGameThread.start();
+    // show connecting dialog
+    if (this.isActive()) {
+      if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
+        cancelTest(lang.getProperty("dialog_test_msg_cancel"));
+      }
     }
-
-		try {
-			runClientProcesses(KIs);
-		} catch (IOException e) {
-			e.printStackTrace();
-			cancelTest(lang.getProperty("dialog_test_msg_run"));
-			return;
-		}
-		// FIXME it seems that a new game is not startet sometimes (especially the second game) when not waiting here for a bit
-		try {
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-		// show connecting dialog
-		if (this.isActive()) {
-			if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
-				cancelTest(lang.getProperty("dialog_test_msg_cancel"));
-			}
-		}
-		logger.debug("FOCUS finished startNewTest");
 	}
 
 	private int getRotation(int playerCount) {
@@ -977,6 +973,7 @@ public class TestRangeDialog extends JDialog {
 							freePort,
 							descriptors.toArray(new SlotDescriptor[descriptors
 									.size()]));
+			logger.debug("prepareGame for replays was called focus: {}", this.isFocused());
 			return prep;
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, lang
@@ -1086,14 +1083,7 @@ public class TestRangeDialog extends JDialog {
 			stopServer();
 		}
 		updateGUI(true);
-		initCurTest();
-	}
-
-	/**
-	 * Initializes curTest to 0.
-	 */
-	private void initCurTest() {
-		curTest = 0;
+		testStarted = false;
 	}
 
 	/**
@@ -1144,6 +1134,7 @@ public class TestRangeDialog extends JDialog {
 	 * @param msg
 	 */
 	private void addLogMessage(final String msg) {
+	  logger.debug("Textarea log message: {}", msg);
 		if (cb_showLog.isSelected()) {
 			txtarea.append(msg + "\n");
 			txtarea.setCaretPosition(txtarea.getText().length());

@@ -22,6 +22,11 @@
   <logger name="sc" level="WARN" />
   <logger name="sc.plugin2017.gui.renderer.primitives.GuiBoard" level="DEBUG" />
   <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
+  <logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
+  <logger name="sc.common.HelperMethods" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
+  <logger name="sc.server.gaming.GameRoomManager" level="DEBUG" />
+  <logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
