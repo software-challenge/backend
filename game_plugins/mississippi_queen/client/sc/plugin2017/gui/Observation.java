@@ -18,6 +18,7 @@ import sc.guiplugin.interfaces.listener.INewTurnListener;
 import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
+import sc.networking.clients.ObservingClient;
 import sc.plugin2017.EPlayerId;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGUIObservation;
@@ -58,6 +59,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     this.conGame = conGame;
     this.handler = handler;
     conGame.addListener(this);
+    logger.debug("Creating new observation for rommId: ", ((ObservingClient)conGame).roomId);
   }
 
   @Override
