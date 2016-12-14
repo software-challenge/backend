@@ -69,7 +69,7 @@ public class Board {
         // direction. Otherwise one player would have a disadvantage.
         dir = 0;
       } else {
-        if (direction[i-1] == -2) {
+        if (direction[i-1] == 4) {
           // last direction was up left, don't allow more turning to the left (to avoid circles)
           dir = rnd.nextInt(2); // 0 or 1
         } else if (direction[i-1] == 2) {
