@@ -406,7 +406,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		IControllableGame result = new ControllingClient(this, handle
 				.getRoomId());
 		this.start();
-		logger.debug("sending observation request");
+		logger.debug("sending observation request with handle.roomId {}", handle.getRoomId());
 		this.send(new ObservationRequest(handle.getRoomId(), ""));
 		result.pause();
 		return result;

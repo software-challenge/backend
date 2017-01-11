@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -693,7 +694,7 @@ public class TestRangeDialog extends JDialog {
     
     		final int rotation = getRotation(txfclient.length);
     
-    		logger.debug("Preparing slots");
+    		logger.debug("Preparing slots for test {}",curTest);
     		final List<SlotDescriptor> slotDescriptors = prepareSlots(
     				preparePlayerNames(), rotation);
     		List<KIInformation> KIs = null;
