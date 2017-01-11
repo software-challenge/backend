@@ -27,6 +27,9 @@
   <logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
   <logger name="sc.server.gaming.GameRoomManager" level="DEBUG" />
   <logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
+  <logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.GamePreparation" level="DEBUG" />
+  
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

@@ -37,7 +37,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	protected final IPollsHistory		poller;
 
-	protected final String				roomId;
+	public final String				roomId;
 
 	private static final Logger			logger		= LoggerFactory
 															.getLogger(ObservingClient.class);
