@@ -46,7 +46,7 @@ public class Board {
   private void init() {
     tiles = new ArrayList<Tile>();
     Random rnd = new Random();
-    int[] direction = new int[Constants.NUMBER_OF_TILES];
+    Direction[] direction = new Direction[Constants.NUMBER_OF_TILES];
     int[][] startCoordinates  = new int[Constants.NUMBER_OF_TILES][2];
     ArrayList<Integer> tilesWithPassengers = new ArrayList<Integer>(); // holds all tiles numbers with a passenger field
     for(int i = 0;i < Constants.NUMBER_OF_PASSENGERS; i++) {
@@ -58,7 +58,7 @@ public class Board {
       while(tilesWithPassengers.contains(number));
       tilesWithPassengers.add(number);
     }
-    direction[0] = 0;
+    direction[0] = Direction.RIGHT;
     startCoordinates[0][0] = 0;
     startCoordinates[0][1] = 0;
     // generate directions of tiles
@@ -69,17 +69,17 @@ public class Board {
         // direction. Otherwise one player would have a disadvantage.
         dir = 0;
       } else {
-        if (direction[i-1] == -2) {
+        if (direction[i-1] == Direction.DOWN_LEFT) {
+          // last direction was down left, don't allow more turning to the right (to avoid circles)
+          dir = rnd.nextInt(2); // 0 or 1 only straight or turning left
+        } else if (direction[i-1] == Direction.UP_LEFT) {
           // last direction was up left, don't allow more turning to the left (to avoid circles)
-          dir = rnd.nextInt(2); // 0 or 1
-        } else if (direction[i-1] == 2) {
-          // last direction was down right, don't allow more turning to the right (to avoid circles)
-          dir = rnd.nextInt(2) - 1; // -1 or 0
+          dir = rnd.nextInt(2) - 1; // 0 or -1 only straight or turning right
         } else {
           dir = rnd.nextInt(3) - 1; // -1, 0 or 1
         }
       }
-      direction[i] = (direction[i-1] + dir + 6/*number of directions*/) % 6;
+      direction[i] = (direction[i-1].getTurnedDirection(dir));
       startCoordinates[i][0] = getXCoordinateInDirection(startCoordinates[i-1][0], direction[i]);
       startCoordinates[i][1] = getYCoordinateInDirection(startCoordinates[i-1][1], direction[i]);
     }
@@ -95,16 +95,16 @@ public class Board {
    * @param direction Richtung
    * @return y Koordinate des neuen Feldes
    */
-  private int getYCoordinateInDirection(int y, int direction) {
+  private int getYCoordinateInDirection(int y, Direction direction) {
     switch (direction) {
-    case 0:
-    case 3:
+    case RIGHT:
+    case LEFT:
       return y;
-    case 1:
-    case 2:
+    case UP_RIGHT:
+    case UP_LEFT:
       return y - 4;
-    case 4:
-    case 5:
+    case DOWN_LEFT:
+    case DOWN_RIGHT:
       return y + 4;
     }
     return 0;
@@ -116,17 +116,17 @@ public class Board {
    * @param direction Richtung
    * @return x Koordinate des neuen Feldes
    */
-  private int getXCoordinateInDirection(int x, int direction) {
+  private int getXCoordinateInDirection(int x, Direction direction) {
     switch (direction) {
-    case 0:
+    case RIGHT:
       return x + 4;
-    case 3:
+    case LEFT:
       return x - 4;
-    case 1:
-    case 5:
+    case UP_RIGHT:
+    case DOWN_RIGHT:
       return x + 2;
-    case 4:
-    case 2:
+    case DOWN_LEFT:
+    case UP_LEFT:
       return x - 2;
     }
     return 0;
@@ -141,11 +141,11 @@ public class Board {
    * @param x x Coordinate of middle
    * @param y y Coordinate of middle
    */
-  private void generateTile(int index, boolean hasPassenger, int direction, int x, int y) {
+  private void generateTile(int index, boolean hasPassenger, Direction direction, int x, int y) {
     Random rnd = new Random();
     int blocked = rnd.nextInt(Constants.MAX_ISLANDS - Constants.MIN_ISLANDS + 1) + Constants.MIN_ISLANDS; // 2 to 3 blocked fields
     int special = rnd.nextInt(Constants.MAX_SPECIAL - Constants.MIN_SPECIAL + 1) + Constants.MIN_SPECIAL; // 1 oder 2 special fields
-    Tile newTile = new Tile(index, direction, x, y, hasPassenger ? 1 : 0, blocked, special);
+    Tile newTile = new Tile(index, direction.getValue(), x, y, hasPassenger ? 1 : 0, blocked, special);
     tiles.add(newTile);
 
   }
