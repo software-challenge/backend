@@ -17,6 +17,7 @@ import sc.networking.INetworkInterface;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.LeftGameEvent;
 import sc.server.Configuration;
 
 /**
@@ -105,6 +106,11 @@ public class Client extends XStreamClient implements IClient
 			// By leaving the game, the server should end the game (see
 			// onPlayerLeft). This has the disadvantage that the client who made
 			// the error won't get the game result.
+			this.handleDisconnect(DisconnectCause.DISCONNECTED);
+		}
+		
+		// XXX just to test something
+		if (packet instanceof LeftGameEvent) {
 			this.handleDisconnect(DisconnectCause.DISCONNECTED);
 		}
 	}
