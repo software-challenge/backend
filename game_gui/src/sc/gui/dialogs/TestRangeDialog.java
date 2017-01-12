@@ -685,63 +685,53 @@ public class TestRangeDialog extends JDialog {
 
     logger.debug("FOCUS starting new test...");
     final ConnectingDialog connectionDialog = new ConnectingDialog(this);
-	  Thread testGameThread = new Thread(new Runnable() {
-	    @Override
-	    public void run()  {
-    
-    		curTest++;
-    
-    		final int rotation = getRotation(txfclient.length);
-    
-    		logger.debug("Preparing slots for test {}",curTest);
-    		final List<SlotDescriptor> slotDescriptors = prepareSlots(
-    				preparePlayerNames(), rotation);
-    		List<KIInformation> KIs = null;
-    
-    		try {
-          logger.debug("Preparing game");
-    			final IGamePreparation prep = prepareGame(getSelectedPlugin(),
-    					slotDescriptors);
-    
-          logger.debug("Preparing observer");
-    			addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
 
+    TestRangeDialog.this.curTest++;
 
-          // FIXME it seems that a new game is not startet sometimes (especially the second game) when not waiting here for a bit
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-          
-    			// only display message after the first round
-    			if (curTest > 1) {
-    				addLogMessage(">>> " + lang.getProperty("dialog_test_switch"));
-    			}
-    
-          logger.debug("Preparing clients");
-    			KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    			cancelTest(lang.getProperty("dialog_test_msg_prepare"));
-    			return;
-        }
-        
-    		try {
-    			runClientProcesses(KIs);
-    		} catch (IOException e) {
-    			e.printStackTrace();
-    			cancelTest(lang.getProperty("dialog_test_msg_run"));
-    			return;
-    		}
-    
-    		
-    		logger.debug("FOCUS finished startNewTest");
-	    }
-	  });
-	  testGameThread.setName("Test Game Thread " + curTest + " id: " + testGameThread.getId());
-	  testGameThread.start();
+    final int rotation = getRotation(TestRangeDialog.this.txfclient.length);
+
+    logger.debug("Preparing slots for test {}", TestRangeDialog.this.curTest);
+    final List<SlotDescriptor> slotDescriptors = prepareSlots(preparePlayerNames(), rotation);
+    List<KIInformation> KIs = null;
+
+    try {
+      logger.debug("Preparing game");
+      final IGamePreparation prep = prepareGame(getSelectedPlugin(), slotDescriptors);
+
+      logger.debug("Preparing observer");
+      addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
+
+      // FIXME it seems that a new game is not startet sometimes (especially the
+      // second game) when not waiting here for a bit
+      try {
+        Thread.sleep(500);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
+      // only display message after the first round
+      if (TestRangeDialog.this.curTest > 1) {
+        addLogMessage(">>> " + TestRangeDialog.this.lang.getProperty("dialog_test_switch"));
+      }
+
+      logger.debug("Preparing clients");
+      KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
+    } catch (IOException e) {
+      e.printStackTrace();
+      cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_prepare"));
+      return;
+    }
+
+    try {
+      runClientProcesses(KIs);
+    } catch (IOException e) {
+      e.printStackTrace();
+      cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_run"));
+      return;
+    }
+
+    logger.debug("FOCUS finished startNewTest");
     // show connecting dialog
     if (isActive()) {
       if (connectionDialog.showDialog() == JOptionPane.CANCEL_OPTION) {
