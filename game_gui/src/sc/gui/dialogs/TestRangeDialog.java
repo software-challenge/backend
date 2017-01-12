@@ -349,24 +349,41 @@ public class TestRangeDialog extends JDialog {
 		this.testStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent _event) {
-				if (testStarted) { // testing
-					cancelTest(lang.getProperty("dialog_test_msg_cancel"));
+        logger.warn("ACTION PERFORMED");
+        // TODO refactor (this was just to test if it makes a difference when
+        // this runs in own thread
+        (new Thread(new Runnable() {
+          @Override
+          public
+          void run() {
+
+        // FIXME it is not good to put the test range main loop inside an action
+        // listener thread. this might cause the problem that the test stops
+        // when the window loses focus.
+				if (TestRangeDialog.this.testStarted) { // testing
+					cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
 				} else {
           if (prepareTest()) {
-            while (testStarted && curTest < numTest) {
+            while (TestRangeDialog.this.testStarted && TestRangeDialog.this.curTest < TestRangeDialog.this.numTest) {
               updateGUI(false);
               startNewTest();
               try {
-                logger.debug("FOCUS testloop await game end reached {}", this);
-                gameEndReached.await(30, TimeUnit.SECONDS);
+                logger.debug("FOCUS testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
+                    Thread.currentThread().getId());
+                TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
                 logger.debug("FOCUS testloop await continue {}", this);
               } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
-                cancelTest("Cancel due to internal error");
+                logger.error("Exception while waiting for game end", e);
+                logger.debug("==========================================");
+                cancelTest("Waiting for game end was interrupted");
               }
+              TestRangeDialog.this.gameEndReached.reset();
             }
             finishTest();
 				  }
 				}
+          }
+        })).start();
 			}
 		});
 
