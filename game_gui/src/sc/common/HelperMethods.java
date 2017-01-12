@@ -30,7 +30,7 @@ public class HelperMethods {
 	/**
 	 * Executes a file indicated by <code>filename</code> with the given
 	 * <code>parameters</code>.
-	 * 
+	 *
 	 * @param filename
 	 * @param parameters
 	 * @throws IOException
@@ -53,11 +53,11 @@ public class HelperMethods {
 			commandFragments.add("-Xmx" + GUIConfiguration.maxHeapSize + "m");
 		} else if (ext.equals(".exe")) {
 			// do nothing
-		} 
+		}
 		/*else {
 			throw new UnsupportedFileExtensionException();// TODO remove?
 		}*/
-		
+
 		commandFragments.add(filename);
 		commandFragments.addAll(Arrays.asList(parameters));
 
@@ -67,7 +67,7 @@ public class HelperMethods {
 		builder.redirectErrorStream();
 		final Process proc = builder.start();
 
-		new Thread(new Runnable() {
+    final Thread clientThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				BufferedReader input = new BufferedReader(
@@ -91,13 +91,16 @@ public class HelperMethods {
 					//e.printStackTrace();
 				}
 			}
-		}).start();
+    });
+
+    clientThread.setName("Client runner thread " + filename + " thread id " + clientThread.getId());
+    clientThread.start();
 	}
 
 	/**
 	 * Returns the file extension of the given <code>file</code>. Otherwise, it
 	 * returns the filename of the given <code>file</code>.
-	 * 
+	 *
 	 * @param file
 	 * @return
 	 */
@@ -115,7 +118,7 @@ public class HelperMethods {
 	/**
 	 * Returns the filename without the file extension if present, i.e. it
 	 * simply removes the file extension at the end.
-	 * 
+	 *
 	 * @param filename
 	 * @return
 	 */
@@ -131,7 +134,7 @@ public class HelperMethods {
 	/**
 	 * Returns the current date and time as string formatted as yyyy.MM.dd
 	 * HH_mm_ss.
-	 * 
+	 *
 	 * @return current date and time
 	 */
 	public static String getCurrentDateTime() {
@@ -140,7 +143,7 @@ public class HelperMethods {
 
 	/**
 	 * Returns a new generated filename for a replay file.
-	 * 
+	 *
 	 * @param descriptors
 	 * @return
 	 */
