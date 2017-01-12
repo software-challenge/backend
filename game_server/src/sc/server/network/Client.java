@@ -65,6 +65,12 @@ public class Client extends XStreamClient implements IClient
 
 	private void notifyOnPacket(Object packet)
 	{
+		/*
+		 * NOTE that method is called in the receiver thread. Messages should
+		 * only be passed to listeners. No callbacks should be invoked directly
+		 * in the receiver thread.
+		 */
+
 		Set<RescueableClientException> errors = new HashSet<RescueableClientException>();
 
 		PacketCallback callback = new PacketCallback(packet);
@@ -101,17 +107,16 @@ public class Client extends XStreamClient implements IClient
 								+ error.getMessage());
 			}
 		}
-		if (!errors.isEmpty()) {
-			logger.error("an error occured, stopping client {}", this);
-			// By leaving the game, the server should end the game (see
-			// onPlayerLeft). This has the disadvantage that the client who made
-			// the error won't get the game result.
-			this.handleDisconnect(DisconnectCause.DISCONNECTED);
+		if (!errors.isEmpty())
+		{
+			logger.debug("FOCUS stopping client because of error");
+			stop();
 		}
-		
-		// XXX just to test something
-		if (packet instanceof LeftGameEvent) {
-			this.handleDisconnect(DisconnectCause.DISCONNECTED);
+		if (false && packet instanceof LeftGameEvent)
+		{
+			logger.debug(
+					"FOCUS stopping client because of LeftGameEvent received");
+			stop();
 		}
 	}
 
@@ -135,9 +140,8 @@ public class Client extends XStreamClient implements IClient
 		if (!this.notifiedOnDisconnect)
 		{
 			this.notifiedOnDisconnect = true;
-			for (int i = 0; i < this.clientListeners.size(); i++)
+			for (IClientListener listener : this.clientListeners)
 			{
-				IClientListener listener = this.clientListeners.get(i);
 				try
 				{
 					listener.onClientDisconnected(this);
@@ -195,7 +199,7 @@ public class Client extends XStreamClient implements IClient
 		{
 			if (!isAdministrator())
 			{
-				this.addRole(new AdministratorRole(this));
+				addRole(new AdministratorRole(this));
 				logger.info("Client authenticated as administrator");
 			}
 			else
@@ -234,13 +238,18 @@ public class Client extends XStreamClient implements IClient
 	@Override
 	protected void onObject(Object o)
 	{
-		this.notifyOnPacket(o);
+		/*
+		 * NOTE that this method is called in the receiver thread. Messages
+		 * should only be passed to listeners. No callbacks should be invoked
+		 * directly in the receiver thread.
+		 */
+		notifyOnPacket(o);
 	}
 
 	@Override
 	public void sendAsynchronous(Object packet)
 	{
 		// TODO make it async
-		this.send(packet);
+		send(packet);
 	}
 }

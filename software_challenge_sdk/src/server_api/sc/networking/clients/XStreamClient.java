@@ -33,7 +33,7 @@ public abstract class XStreamClient
 	{
 		// default state:
 		NOT_DISCONNECTED,
-		// disconnected because CloseConnection was received:
+		// disconnected because CloseConnection was received (disconnected by other side):
 		RECEIVED_DISCONNECT,
 		// disconnected from this side:
 		DISCONNECTED,
@@ -92,17 +92,18 @@ public abstract class XStreamClient
 				{
 					this.threadLogger.error("ReceiveThread caused an exception.", e);
 				}
-				logger.debug("Termionated thread with id {} and name {}", thread.getId(), thread.getName());
+				logger.debug("Termionated thread with id {} and name {}", XStreamClient.this.thread.getId(), XStreamClient.this.thread.getName());
 			}
 		});
-		this.thread.setName("XStreamClient Reader " + thread.getId() + " " + this.getClass().getSimpleName());
+		this.thread.setName("XStreamClient Receive Thread "
+				+ this.thread.getId() + " " + this.getClass().getSimpleName());
 		this.thread.start();
 	}
 
 	protected abstract void onObject(Object o);
 
 	/**
-	 * used internally by a ReceiveThread - all Exceptions should be handled.
+	 * used by the receiving thread. All exceptions should be handled.
 	 */
 	public void receiveThread() throws Exception
 	{
@@ -126,7 +127,7 @@ public abstract class XStreamClient
 				logger.debug("Client " + XStreamClient.this +": Received " + o + " via " + this.networkInterface + "\nDataDump:\n{}", this.xStream.toXML(o));
 				if (o instanceof CloseConnection) {
 					handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
-					break; // stop receiver thread
+					// handleDisconnect takes care of stopping the thread
 				} else {
 					onObject(o);
 				}
@@ -270,16 +271,26 @@ public abstract class XStreamClient
 		return this.disconnectCause;
 	}
 
+	/**
+	 * should be called when the client needs to be stopped and the disconnect
+	 * is initiated on this side. There are two situations where this should be
+	 * done:
+	 *
+	 * * A game has ended * An internal error happened (this situation might be
+	 * redundant)
+	 */
 	public void stop() {
-		stopReceiver();
-		this.disconnectCause = DisconnectCause.DISCONNECTED;
 		// this side caused disconnect, notify other side
-		send(new CloseConnection());
-		close();
+		logger.debug("FOCUS stop client called");
+		// send(new CloseConnection());
+		handleDisconnect(DisconnectCause.DISCONNECTED);
 	}
 
 	protected synchronized void stopReceiver() {
-		assert this.thread != Thread.currentThread();
+		if (this.thread.getId() == Thread.currentThread().getId())
+		{
+			logger.warn("receiver thread is stopping itself");
+		}
 		// unlock waiting threads
 		synchronized (this.readyLock)
 		{
@@ -290,7 +301,8 @@ public abstract class XStreamClient
 		{
 			this.thread.interrupt();
 		} else {
-			logger.debug("Tried to interrupt null thread with name {}", this.thread.getName());
+			logger.warn(
+					"Thread reference was null. Could not stop receiver thread.");
 		}
 	}
 

@@ -165,6 +165,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	public void onGameLeft(String roomId) {
 	  logger.debug("{} got game left {}", this, roomId);
 
+    this.client.stop();
 	}
 
 	public void joinPreparedGame(String reservation) {

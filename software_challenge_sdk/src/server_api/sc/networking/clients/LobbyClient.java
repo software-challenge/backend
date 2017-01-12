@@ -188,8 +188,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		{
 			listener.onGameOver(roomId, data);
 		}
-		// the client is expected to end itself
-		this.stop();
 	}
 
 	private void onGameLeft(String roomId)
@@ -198,8 +196,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		{
 			listener.onGameLeft(roomId);
 		}
-		// a LeftGameEvent is sent by the GameRoom when the game has ended. The client is expected to close itself (causing its thread to end)
-		this.stop();
 	}
 
 	private void onGameJoined(String roomId)
