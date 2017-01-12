@@ -325,7 +325,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public void sendMessageToRoom(String roomId, Object o)
 	{
-		this.send(new RoomPacket(roomId, o));
+		send(new RoomPacket(roomId, o));
 	}
 
 	protected void onRoomMessage(String roomId, Object data)
@@ -338,16 +338,16 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public void joinPreparedGame(String reservation)
 	{
-		this.send(new JoinPreparedRoomRequest(reservation));
+		send(new JoinPreparedRoomRequest(reservation));
 	}
 
 	public void joinAnyGame(String gameType)
 	{
-		this.send(new JoinRoomRequest(gameType));
+		send(new JoinRoomRequest(gameType));
 	}
 
 	public void joinRoom(String gameType, String roomId) {
-		this.send(new JoinRoomRequest(gameType, roomId));
+		send(new JoinRoomRequest(gameType, roomId));
 	}
 
 	protected <T> void request(IRequest<T> request, Class<T> response,
@@ -409,9 +409,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	{
 		IControllableGame result = new ControllingClient(this, handle
 				.getRoomId());
-		this.start();
+		start();
 		logger.debug("sending observation request with handle.roomId {}", handle.getRoomId());
-		this.send(new ObservationRequest(handle.getRoomId(), ""));
+		send(new ObservationRequest(handle.getRoomId(), ""));
 		result.pause();
 		return result;
 	}
@@ -423,8 +423,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public IControllableGame observe(String roomId) {
 		IControllableGame result = new ObservingClient(this, roomId);
-		this.start();
-		this.send(new ObservationRequest(roomId, ""));
+		start();
+		send(new ObservationRequest(roomId, ""));
 		return result;
 	}
 
@@ -452,6 +452,6 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public void freeReservation(String reservation)
 	{
-		this.send(new FreeReservationRequest(reservation));
+		send(new FreeReservationRequest(reservation));
 	}
 }
