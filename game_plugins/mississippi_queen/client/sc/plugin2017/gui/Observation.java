@@ -19,7 +19,6 @@ import sc.guiplugin.interfaces.listener.IReadyListener;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.IUpdateListener;
 import sc.networking.clients.ObservingClient;
-import sc.networking.clients.ControllingClient;
 import sc.plugin2017.EPlayerId;
 import sc.plugin2017.GameState;
 import sc.plugin2017.IGUIObservation;
@@ -60,7 +59,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     this.conGame = conGame;
     this.handler = handler;
     conGame.addListener(this);
-    logger.debug("Creating new observation for rommId: ", ((ControllingClient)conGame).roomId);
+    logger.debug("Creating new observation for rommId: ", ((ObservingClient) conGame).roomId);
   }
 
   @Override
@@ -288,7 +287,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
   @Override
   public void onUpdate(Object sender) {
     assert sender == this.conGame;
-    logger.debug("FOCUS got update");
+    logger.debug("got update");
     /*
     */
     GameState gameState = (GameState) this.conGame.getCurrentState();
@@ -305,7 +304,10 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
       this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
 
       if (this.conGame.isGameOver() && this.conGame.isAtEnd()) {
+        logger.debug("game is over, notifying listeners");
         notifyOnGameEnded(sender, this.conGame.getResult());
+      } else {
+        logger.debug("game is not yet over");
       }
 
       // if we are stepping back, set player to observer in order to hide player
