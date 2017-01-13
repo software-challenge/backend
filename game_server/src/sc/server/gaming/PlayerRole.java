@@ -20,6 +20,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
 		this.playerSlot = slot;
 	}
 
+	@Override
 	public IClient getClient()
 	{
 		return this.client;
@@ -39,7 +40,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	public void onPlayerEvent(Object o)
 	{
 		this.client.send(new RoomPacket(
-				this.getPlayerSlot().getRoom().getId(), o));
+				getPlayerSlot().getRoom().getId(), o));
 	}
 
 	public void setPlayer(IPlayer player)
@@ -51,6 +52,6 @@ public class PlayerRole implements IClientRole, IPlayerListener
 	@Override
 	public void close()
 	{
-		this.getPlayerSlot().close();
+		getPlayerSlot().close();
 	}
 }
