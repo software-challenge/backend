@@ -14,7 +14,6 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
-import sc.networking.clients.LobbyClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.LeftGameEvent;
@@ -23,7 +22,7 @@ import sc.server.Configuration;
 /**
  * A generic client. This represents a client in the server. Clients which
  * connect to the server (as separate programs or running as threads started by
- * the server) are represented by {@link LobbyClient}.
+ * the server) are represented by {@link sc.networking.clients.LobbyClient}.
  */
 public class Client extends XStreamClient implements IClient
 {
@@ -59,7 +58,11 @@ public class Client extends XStreamClient implements IClient
 		}
 		else
 		{
-			logger.warn("Writing on a closed Stream -> dropped the packet.");
+			logger.warn(
+					"Writing on a closed Stream -> dropped the packet. (tried to send package of type {}) Thread: {}",
+					packet.getClass().getSimpleName(),
+					Thread.currentThread().getName());
+		}
 		}
 	}
 
@@ -109,13 +112,15 @@ public class Client extends XStreamClient implements IClient
 		}
 		if (!errors.isEmpty())
 		{
-			logger.debug("FOCUS stopping client because of error");
+			logger.debug("FOCUS stopping client because of error. Thread: {}",
+					Thread.currentThread().getName());
 			stop();
 		}
-		if (false && packet instanceof LeftGameEvent)
+		if (packet instanceof LeftGameEvent)
 		{
 			logger.debug(
-					"FOCUS stopping client because of LeftGameEvent received");
+					"FOCUS stopping client because of LeftGameEvent received. Thread: {}",
+					Thread.currentThread().getName());
 			stop();
 		}
 	}

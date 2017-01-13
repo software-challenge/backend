@@ -40,15 +40,16 @@ import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
 
 /**
- * Sample client to be used in the SimpleClient library.
- *
- * @author Marcel
- *
+ * This class is used to handle all communication with a server. It is used in a
+ * client (e.g. the java simple client). It is also used to represent
+ * observer-threads started by the server which connect to the server. The
+ * server always has a {@link sc.server.network.Client} object for every
+ * LobbyClient representing the client on the server-side.
  */
 public final class LobbyClient extends XStreamClient implements IPollsHistory
 {
 	private static final Logger					logger					= LoggerFactory
-																				.getLogger(LobbyClient.class);
+			.getLogger(LobbyClient.class);
 	private final List<String>					rooms					= new LinkedList<String>();
 	private final AsyncResultManager			asyncManager			= new AsyncResultManager();
 	private final List<ILobbyClientListener>	listeners				= new LinkedList<ILobbyClientListener>();
@@ -116,8 +117,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			}
 			else if (packet.getData() instanceof GamePausedEvent)
 			{
-				onGamePaused(roomId, ((GamePausedEvent) packet.getData())
-						.getNextPlayer());
+				onGamePaused(roomId,
+						((GamePausedEvent) packet.getData()).getNextPlayer());
 			}
 			else if (packet.getData() instanceof ErrorResponse)
 			{
@@ -154,7 +155,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		}
 		else if (o instanceof ObservationResponse)
 		{
-			String roomId =  ((ObservationResponse) o).getRoomId();
+			String roomId = ((ObservationResponse) o).getRoomId();
 
 			onGameObserved(roomId);
 		}
@@ -232,8 +233,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 			}
 			else
 			{
-				logger
-						.warn("Couldn't invoke Handlers because OriginalRequest was null.");
+				logger.warn(
+						"Couldn't invoke Handlers because OriginalRequest was null.");
 			}
 		}
 		else
@@ -270,7 +271,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 				PrepareGameResponse.class);
 	}
 
-	public RequestResult<PrepareGameResponse> prepareGameAndWait(PrepareGameRequest request) throws InterruptedException {
+	public RequestResult<PrepareGameResponse> prepareGameAndWait(
+			PrepareGameRequest request) throws InterruptedException
+	{
 		return blockingRequest(request, PrepareGameResponse.class);
 	}
 
@@ -302,8 +305,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		if (error.getOriginalRequest() != null)
 		{
 			logger.warn("The request {} caused the following error: {}",
-					error.getOriginalRequest().getClass(), error
-							.getMessage());
+					error.getOriginalRequest().getClass(), error.getMessage());
 		}
 		else
 		{
@@ -342,7 +344,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		send(new JoinRoomRequest(gameType));
 	}
 
-	public void joinRoom(String gameType, String roomId) {
+	public void joinRoom(String gameType, String roomId)
+	{
 		send(new JoinRoomRequest(gameType, roomId));
 	}
 
@@ -403,10 +406,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 
 	public IControllableGame observeAndControl(PrepareGameResponse handle)
 	{
-		IControllableGame result = new ControllingClient(this, handle
-				.getRoomId());
+		IControllableGame result = new ControllingClient(this,
+				handle.getRoomId());
 		start();
-		logger.debug("sending observation request with handle.roomId {}", handle.getRoomId());
+		logger.debug("sending observation request with handle.roomId {}",
+				handle.getRoomId());
 		send(new ObservationRequest(handle.getRoomId(), ""));
 		result.pause();
 		return result;
@@ -417,7 +421,8 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		return observe(handle.getRoomId());
 	}
 
-	public IControllableGame observe(String roomId) {
+	public IControllableGame observe(String roomId)
+	{
 		IControllableGame result = new ObservingClient(this, roomId);
 		start();
 		send(new ObservationRequest(roomId, ""));
