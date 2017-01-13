@@ -3,10 +3,9 @@ package sc.server.network;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
+import junit.framework.Assert;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.helpers.Generator;
 import sc.networking.clients.LobbyClient;
@@ -55,13 +54,14 @@ public class LobbyTest extends RealServerTest
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 		Assert.assertEquals(player1.getRooms().get(0), player2.getRooms()
 				.get(0));
-		Assert.assertEquals(false, this.gameMgr.getGames().iterator().next()
-				.isOver());
-
-		player1.sendCustomData("<yarr>");
 
 		final GameRoom theRoom = LobbyTest.this.gameMgr.getGames().iterator()
 				.next();
+
+		Assert.assertEquals(false, theRoom.isOver());
+
+		player1.sendCustomData("<yarr>");
+
 
 		TestHelper.assertEqualsWithTimeout(true, new Generator<Boolean>() {
 			@Override

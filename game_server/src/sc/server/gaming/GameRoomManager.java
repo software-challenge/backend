@@ -51,6 +51,7 @@ public class GameRoomManager implements Runnable
 	 */
 	private void add(GameRoom room)
 	{
+		logger.debug("Adding room with id {}", room.getId());
 		this.rooms.put(room.getId(), room);
 	}
 

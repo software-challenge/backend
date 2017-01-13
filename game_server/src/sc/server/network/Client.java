@@ -14,15 +14,15 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.networking.INetworkInterface;
-import sc.networking.clients.LobbyClient;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.LeftGameEvent;
 import sc.server.Configuration;
 
 /**
  * A generic client. This represents a client in the server. Clients which
  * connect to the server (as separate programs or running as threads started by
- * the server) are represented by {@link LobbyClient}.
+ * the server) are represented by {@link sc.networking.clients.LobbyClient}.
  */
 public class Client extends XStreamClient implements IClient
 {
@@ -58,12 +58,30 @@ public class Client extends XStreamClient implements IClient
 		}
 		else
 		{
-			logger.warn("Writing on a closed Stream -> dropped the packet.");
+			logger.warn(
+					"Writing on a closed Stream -> dropped the packet. (tried to send package of type {}) Thread: {}",
+					packet.getClass().getSimpleName(),
+					Thread.currentThread().getName());
+		}
+		// FIXME this solves the problem of Clients not terminated when the
+		// other client makes an invalid move, but this is not the right way to
+		// do it!
+		if (packet instanceof LeftGameEvent)
+		{
+			logger.debug("Stopping {} because of sending of LeftGameEvent",
+					Thread.currentThread().getName());
+			stop();
 		}
 	}
 
 	private void notifyOnPacket(Object packet)
 	{
+		/*
+		 * NOTE that method is called in the receiver thread. Messages should
+		 * only be passed to listeners. No callbacks should be invoked directly
+		 * in the receiver thread.
+		 */
+
 		Set<RescueableClientException> errors = new HashSet<RescueableClientException>();
 
 		PacketCallback callback = new PacketCallback(packet);
@@ -100,12 +118,18 @@ public class Client extends XStreamClient implements IClient
 								+ error.getMessage());
 			}
 		}
-		if (!errors.isEmpty()) {
-			logger.error("an error occured, stopping client {}", this);
-			// By leaving the game, the server should end the game (see
-			// onPlayerLeft). This has the disadvantage that the client who made
-			// the error won't get the game result.
-			this.handleDisconnect(DisconnectCause.DISCONNECTED);
+		if (!errors.isEmpty())
+		{
+			logger.debug("FOCUS stopping client because of error. Thread: {}",
+					Thread.currentThread().getName());
+			stop();
+		}
+		if (packet instanceof LeftGameEvent)
+		{
+			logger.debug(
+					"FOCUS stopping client because of LeftGameEvent received. Thread: {}",
+					Thread.currentThread().getName());
+			stop();
 		}
 	}
 
@@ -129,9 +153,8 @@ public class Client extends XStreamClient implements IClient
 		if (!this.notifiedOnDisconnect)
 		{
 			this.notifiedOnDisconnect = true;
-			for (int i = 0; i < this.clientListeners.size(); i++)
+			for (IClientListener listener : this.clientListeners)
 			{
-				IClientListener listener = this.clientListeners.get(i);
 				try
 				{
 					listener.onClientDisconnected(this);
@@ -189,7 +212,7 @@ public class Client extends XStreamClient implements IClient
 		{
 			if (!isAdministrator())
 			{
-				this.addRole(new AdministratorRole(this));
+				addRole(new AdministratorRole(this));
 				logger.info("Client authenticated as administrator");
 			}
 			else
@@ -228,13 +251,18 @@ public class Client extends XStreamClient implements IClient
 	@Override
 	protected void onObject(Object o)
 	{
-		this.notifyOnPacket(o);
+		/*
+		 * NOTE that this method is called in the receiver thread. Messages
+		 * should only be passed to listeners. No callbacks should be invoked
+		 * directly in the receiver thread.
+		 */
+		notifyOnPacket(o);
 	}
 
 	@Override
 	public void sendAsynchronous(Object packet)
 	{
 		// TODO make it async
-		this.send(packet);
+		send(packet);
 	}
 }
