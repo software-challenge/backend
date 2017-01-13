@@ -81,7 +81,6 @@ import sc.shared.ScoreDefinition;
 import sc.shared.ScoreFragment;
 import sc.shared.SharedConfiguration;
 import sc.shared.SlotDescriptor;
-//import sun.awt.VerticalBagLayout;
 
 @SuppressWarnings("serial")
 public class TestRangeDialog extends JDialog {
@@ -348,55 +347,55 @@ public class TestRangeDialog extends JDialog {
 		this.testStart = new JButton(this.lang.getProperty("dialog_test_btn_start"));
 		this.testStart.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent _event) {
-        logger.warn("ACTION PERFORMED");
-        // TODO refactor (this was just to test if it makes a difference when
-        // this runs in own thread
-        (new Thread(new Runnable() {
-          @Override
-          public
-          void run() {
+      public void actionPerformed(ActionEvent event) {
+        startTestLoop();
+      }
+    });
 
-        // FIXME it is not good to put the test range main loop inside an action
-        // listener thread. this might cause the problem that the test stops
-        // when the window loses focus.
-				if (TestRangeDialog.this.testStarted) { // testing
-					cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
-				} else {
+    this.testCancel = new JButton(this.lang.getProperty("dialog_test_btn_cancel"));
+    this.testCancel.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        cancelTestAndSave();
+        TestRangeDialog.this.setVisible(false);
+        TestRangeDialog.this.dispose();
+      }
+    });
+  }
+
+  /**
+   * Initializes and starts a test range. Runs in its own thread.
+   */
+  private void startTestLoop() {
+    Thread testLoop = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        if (TestRangeDialog.this.testStarted) { // testing
+          cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
+        } else {
           if (prepareTest()) {
             while (TestRangeDialog.this.testStarted && TestRangeDialog.this.curTest < TestRangeDialog.this.numTest) {
               updateGUI(false);
               startNewTest();
               try {
-                logger.debug("FOCUS testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
+                logger.debug("testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
                     Thread.currentThread().getId());
                 TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
-                logger.debug("FOCUS testloop await continue {}", this);
+                logger.debug("testloop await continue {}", this);
               } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
                 logger.error("Exception while waiting for game end", e);
-                logger.debug("==========================================");
                 cancelTest("Waiting for game end was interrupted");
               }
               TestRangeDialog.this.gameEndReached.reset();
             }
             finishTest();
-				  }
-				}
           }
-        })).start();
-			}
-		});
-
-		this.testCancel = new JButton(this.lang.getProperty("dialog_test_btn_cancel"));
-		this.testCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelTestAndSave();
-				TestRangeDialog.this.setVisible(false);
-				TestRangeDialog.this.dispose();
-			}
-		});
-	}
+        }
+      }
+    });
+    testLoop.setName("testrange runner");
+    testLoop.start();
+  }
 
 	/**
 	 * Updates the start/stop button and the text area.
@@ -717,15 +716,6 @@ public class TestRangeDialog extends JDialog {
 
       logger.debug("Preparing observer");
       addObsListeners(rotation, slotDescriptors, prep, connectionDialog);
-
-      // FIXME it seems that a new game is not startet sometimes (especially the
-      // second game) when not waiting here for a bit
-      try {
-        Thread.sleep(500);
-      } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
 
       // only display message after the first round
       if (TestRangeDialog.this.curTest > 1) {
