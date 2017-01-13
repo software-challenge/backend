@@ -156,6 +156,8 @@ public class GameRoom implements IGameListener
 
 		for (PlayerRole player : getPlayers())
 		{
+			logger.debug("sending {} to {}", o.getClass().getSimpleName(),
+					player.getClient().getClass().getSimpleName());
 			player.getClient().send(toSend);
 		}
 
@@ -166,12 +168,16 @@ public class GameRoom implements IGameListener
 	{
 		for (ObserverRole observer : Collections.unmodifiableCollection(this.observers))
 		{
+			logger.debug("sending {} to observer {}",
+					toSend.getClass().getSimpleName(),
+					observer.getClient().getClass().getSimpleName());
 			observer.getClient().send(toSend);
 		}
 	}
 
 	private void kickAllClients()
 	{
+		logger.debug("Kicking clients (and observer)");
 		broadcast(new LeftGameEvent(getId()), false);
 	}
 
@@ -210,7 +216,7 @@ public class GameRoom implements IGameListener
 
 	public RoomPacket createRoomPacket(Object data)
 	{
-		return new RoomPacket(this.getId(), data);
+		return new RoomPacket(getId(), data);
 	}
 
 	public String getId()
@@ -574,7 +580,7 @@ public class GameRoom implements IGameListener
 	public void openSlots(List<SlotDescriptor> descriptors)
 			throws TooManyPlayersException
 	{
-		this.setSize(descriptors.size());
+		setSize(descriptors.size());
 
 		for (int i = 0; i < descriptors.size(); i++)
 		{
