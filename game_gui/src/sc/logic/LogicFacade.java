@@ -139,7 +139,8 @@ public class LogicFacade {
 			this.stopServer();
 		}
 		server = Application.startServer(port);
-		System.out.println("Server started on " + port);
+		logger.debug("Server started on {}",port);
+		//System.out.println("Server started on " + port);
 	}
 
 	/**
@@ -182,6 +183,7 @@ public class LogicFacade {
 		for (int i = 0; i < plugins.size(); i++) {
 			GUIPluginInstance pluginInstance = plugins.get(i);
 			if (pluginInstance.getPlugin().getPluginYear() > last) {
+				logger.debug("Show plugin: {}",pluginInstance.getDescription().name());
 				System.out.println("Show plugin: " + pluginInstance.getDescription().name());
 				result.add(pluginInstance.getDescription().name());
 			}
