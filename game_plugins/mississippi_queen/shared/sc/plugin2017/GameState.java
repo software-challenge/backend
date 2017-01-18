@@ -196,6 +196,14 @@ public class GameState implements Cloneable {
   public PlayerColor getCurrentPlayerColor() {
     return currentPlayer;
   }
+  
+  /**
+   * Nur für den Server relevant
+   * @param playerColor PlayerColor of new currentPlayer
+   */
+  protected void setCurrentPlayer(PlayerColor playerColor) {
+    this.currentPlayer = playerColor;
+  }
 
   /**
    * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
