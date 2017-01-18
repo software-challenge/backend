@@ -114,7 +114,8 @@ public class GUIConfiguration implements Serializable {
 		try {
 			in = new ObjectInputStream(new FileInputStream(CONFIG_FILENAME));
 			result = (GUIConfiguration) in.readObject();
-			System.out.println("Loaded GUI Configuration");
+			logger.debug("Loaded GUI Configuration");
+			//System.out.println("Loaded GUI Configuration");
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 			e.printStackTrace();

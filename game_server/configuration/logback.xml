@@ -18,10 +18,20 @@
         <locationInfo>true</locationInfo>
       </layout>
   </appender>-->
+  
 	<!-- all loggers in DEBUG for now...  -->
-  <!--<logger name="sc" level="WARN" />-->
+	
+  <logger name="sc" level="ERROR" />
   <!--
+  
   <logger name="sc.SoftwareChallengeGUI" level="DEBUG" />
+  
+  <logger name="sc.helpers.ManifestHelper" level="DEBUG" />
+  
+  <logger name="sc.server.plugins.PluginManager" level="DEBUG" />
+  <logger name="sc.server.plugins.GamePluginInstance" level="DEBUG" />
+  
+  <logger name="sc.framework.plugins.ActionTimeout" level="DEBUG" />
   
   <logger name="sc.plugin2017.AbstractClient" level="INFO" />
   <logger name="sc.plugin2017.gui.renderer.primitives.GuiBoard" level="DEBUG" />
@@ -35,8 +45,8 @@
   <logger name="sc.common.HelperMethods" level="DEBUG" />
   
   <logger name="sc.server.gaming.GameRoomManager" level="DEBUG" />
-  <logger name="sc.server.gaming.GameRoom" level="DEBUG" /> -->
-  <logger name="sc.server.network.Client" level="DEBUG" /> <!--
+  <logger name="sc.server.gaming.GameRoom" level="DEBUG" /> 
+  <logger name="sc.server.network.Client" level="DEBUG" /> 
   
   <logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
   <logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
