@@ -108,8 +108,17 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public IPlayer onPlayerJoined() throws TooManyPlayersException {
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
-
-		final Player player = new Player(this.availableColors.remove(0));
+		logger.debug("GameState on player joined" + gameState);
+		final Player player;
+		PlayerColor playerColor =  this.availableColors.remove(0);
+	  if(PlayerColor.RED == playerColor && gameState.getRedPlayer() != null) {
+	    player = gameState.getRedPlayer();
+	  } else if(PlayerColor.BLUE == playerColor && gameState.getBluePlayer() != null) {
+	    player = gameState.getBluePlayer();
+	  } else {
+	    player = new Player(playerColor);
+	  }
+		
 		this.players.add(player);
 		this.gameState.addPlayer(player);
 
@@ -266,6 +275,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public void loadFromFile(String file) {
 		GameLoader gl = new GameLoader(new Class<?>[] { GameState.class });
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
+		logger.debug("Hier kommt das board \n {}", (GameState) gameInfo);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
 		}
@@ -275,6 +285,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
 			this.gameState = (GameState) gameInfo;
+			logger.debug(this.gameState.toString());
 		}
 	}
 
