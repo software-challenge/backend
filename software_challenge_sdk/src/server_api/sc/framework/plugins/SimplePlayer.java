@@ -125,7 +125,7 @@ public abstract class SimplePlayer implements IPlayer
 	
 	/**
 	 * Initializes listeners, when they don't already exist. 
-	 * Only used for playing on a imported state
+	 * Only used for playing on an imported state
 	 */
 	public void initListeners() {
 		if(this.listeners == null) {

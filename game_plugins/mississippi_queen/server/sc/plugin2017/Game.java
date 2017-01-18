@@ -109,6 +109,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 		if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
 			throw new TooManyPlayersException();
 		final Player player;
+		// When starting a game from a imported state the players should not be overwritten
 		PlayerColor playerColor =  this.availableColors.remove(0);
 	  if(PlayerColor.RED == playerColor && gameState.getRedPlayer() != null) {
 	    player = gameState.getRedPlayer();
@@ -283,9 +284,25 @@ public class Game extends RoundBasedGameInstance<Player> {
 	public void loadGameInfo(Object gameInfo) {
 		if (gameInfo instanceof GameState) {
 			this.gameState = (GameState) gameInfo;
+			// when loading from a state the listeners are not initialized
 			this.gameState.getRedPlayer().initListeners();
       this.gameState.getBluePlayer().initListeners();
-      this.gameState.setCurrentPlayer(PlayerColor.RED);
+      // the currentPlayer has to be RED (else the Move request is send to the wrong player)
+      // if it isn't red, the players have to be switched and red is made currentPlayer
+      if(this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
+        this.gameState.setCurrentPlayer(PlayerColor.RED);
+        try {
+          Player newRed = (Player) this.gameState.getBluePlayer().clone();
+          newRed.setPlayerColor(PlayerColor.RED);
+          Player newBlue = (Player) this.gameState.getRedPlayer().clone();
+          newBlue.setPlayerColor(PlayerColor.BLUE);
+          this.gameState.setRedPlayer(newRed);
+          this.gameState.setBluePlayer(newBlue);
+        } catch (CloneNotSupportedException e) {
+          logger.error(e.getMessage());
+          e.printStackTrace();
+        }
+      }
 		}
 	}
 

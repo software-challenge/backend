@@ -161,6 +161,13 @@ public class Player extends SimplePlayer implements Cloneable {
 		return color;
 	}
 
+	/**
+	 * Nur für den Server relevant
+	 * @param color
+	 */
+	protected void setPlayerColor(PlayerColor color) {
+	  this.color = color;
+	}
 
 	/**
    * Liefert den die Punkte anhand der Position und der Passagieranzahl des Spielers

@@ -237,6 +237,14 @@ public class GameState implements Cloneable {
   public Player getRedPlayer() {
     return red;
   }
+  
+  /**
+   * Nur für den Server relevant
+   * @param red
+   */
+  protected void setRedPlayer(Player red) {
+    this.red = red;
+  }
 
   /**
    * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
@@ -247,6 +255,14 @@ public class GameState implements Cloneable {
    */
   public Player getBluePlayer() {
     return blue;
+  }
+  
+  /**
+   * Nur für den Server relevant
+   * @param blue
+   */
+  protected void setBluePlayer(Player blue) {
+    this.blue = blue;
   }
 
   /**
