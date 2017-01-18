@@ -50,9 +50,6 @@ public abstract class SimplePlayer implements IPlayer
 	@Override
 	public void addPlayerListener(IPlayerListener listener)
 	{
-		if(this.listeners == null) {
-			this.listeners = new LinkedList<>();
-		}
 		this.listeners.add(listener);
 	}
 
@@ -124,5 +121,15 @@ public abstract class SimplePlayer implements IPlayer
 	@Override
 	public boolean hasViolated() {
 		return this.violated;
+	}
+	
+	/**
+	 * Initializes listeners, when they don't already exist. 
+	 * Only used for playing on a imported state
+	 */
+	public void initListeners() {
+		if(this.listeners == null) {
+			this.listeners = new LinkedList<>();
+		}
 	}
 }
