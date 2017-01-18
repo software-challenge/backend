@@ -94,6 +94,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 *            Spielerfarbe
 	 */
 	public Player(final PlayerColor color) {
+	  super();
 		this.color = color;
 		points = 1;
 		setDirection(Direction.RIGHT);
