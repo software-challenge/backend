@@ -285,6 +285,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 			this.gameState = (GameState) gameInfo;
 			this.gameState.getRedPlayer().initListeners();
       this.gameState.getBluePlayer().initListeners();
+      this.gameState.setCurrentPlayer(PlayerColor.RED);
 		}
 	}
 
