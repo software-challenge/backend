@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jargs.gnu.CmdLineParser;
@@ -30,6 +31,7 @@ import sc.helpers.ManifestHelper;
 import sc.logic.LogicFacade;
 import sc.logic.save.GUIConfiguration;
 import sc.server.Configuration;
+import sc.server.network.Client;
 import sc.shared.GameResult;
 
 /**
@@ -45,6 +47,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 * The presentation facade to be used
 	 */
 	private final PresentationFacade presFac;
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(SoftwareChallengeGUI.class);
 
 	/**
 	 * Constructs a new Software Challenge GUI
@@ -205,7 +209,8 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 				SoftwareChallengeGUI gui = new SoftwareChallengeGUI();
 				gui.setVisible(true);
 				if (GUIConfiguration.startMaximized) {
-					System.out.println("Start maximized");
+					logger.debug("Start maximized");
+					//System.out.println("Start maximized");
 					gui.setExtendedState(Frame.MAXIMIZED_BOTH);
 				}
 			}

@@ -40,6 +40,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.IGUIApplication;
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
@@ -62,6 +65,7 @@ import sc.logic.save.GUIConfiguration;
 import sc.logic.save.Player;
 import sc.plugin.GUIPluginInstance;
 import sc.server.Configuration;
+import sc.server.network.Client;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
@@ -83,6 +87,9 @@ public class CreateGameDialog extends JDialog {
 	private final PresentationFacade presFac;
 	private final Properties lang;
 	private final IGUIApplication root;
+	
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(CreateGameDialog.class);
 
 	private JPanel pnlTable;
 	private JPanel pnlButtons;
@@ -384,7 +391,8 @@ public class CreateGameDialog extends JDialog {
 			players.add(player);
 		}
 
-		System.out.println("Dialog settings saved.");
+		logger.info("Dialog settings saved");
+		// System.out.println("Dialog settings saved.");
 		// dispose dialog
 		dispose();
 	}
@@ -683,7 +691,8 @@ public class CreateGameDialog extends JDialog {
 		observer.addGameEndedListener(new IGameEndedListener() {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
-				System.out.println("Game ended.");
+				logger.debug("Game ended.");
+				//System.out.println("Game ended.");
 
 				presFac.getLogicFacade().stopServer();
 				presFac.getLogicFacade().setGameActive(false);

@@ -528,7 +528,8 @@ public class TestRangeDialog extends JDialog {
 		this.pnlTop.validate();
 		// pnlTop.invalidate();// TODO order?
 
-		System.out.println("UPDATE: test range dialog");
+		logger.debug("UPDATE: test range dialog");
+		//System.out.println("UPDATE: test range dialog");
 	}
 
 	/**
