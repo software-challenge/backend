@@ -169,7 +169,7 @@ public class Move implements Cloneable {
           player.getY() == state.getOtherPlayer().getY();
       if(onEnemy && action.getClass() != Push.class) {
         throw new InvalidMoveException("Wenn du auf einem gegnerischen Schiff landest,"
-            + " muss darauf eine Abdrängaktion folgen. AUsgeführte Aktionen: " + actions + ", Fehler bei Aktion: " + action);
+            + " muss darauf eine Abdrängaktion folgen.");
       }
       Action lastAction = null;
       if(order > 0) {

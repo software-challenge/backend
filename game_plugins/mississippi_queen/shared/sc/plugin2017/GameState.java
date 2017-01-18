@@ -636,7 +636,6 @@ public class GameState implements Cloneable {
    */
   public int getPointsForPlayer(PlayerColor playerColor) {
     int points = 0;
-    logger.debug("GameState bei Punkten" + this);
     if(playerColor.equals(PlayerColor.RED)) {
       points += red.getTile() * Constants.POINTS_PER_TILE;
       points += board.getField(red.getX(), red.getY()).getPoints();
@@ -790,5 +789,4 @@ public class GameState implements Cloneable {
   public String toString() {
     return "GameState: \n Spieler1: " + red + " \n" + "Spieler2: " + blue + "\n" + "freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
   }
-
 }
