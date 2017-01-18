@@ -9,8 +9,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.SoftwareChallengeGUI;
+
 public class GUIConfiguration implements Serializable {
 
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(GUIConfiguration.class);
+	
 	private static final long serialVersionUID = -4635852675167221186L;
 
 	private static final String CONFIG_FILENAME = "game_gui.conf";
@@ -123,7 +131,8 @@ public class GUIConfiguration implements Serializable {
 		}
 
 		if (result == null) {
-			System.err.println("Couldn't load GUI Configuration");
+			logger.error("Couldn't load GUI Configuration");
+			//System.err.println("Couldn't load GUI Configuration");
 			return new GUIConfiguration();
 		}
 
@@ -138,13 +147,16 @@ public class GUIConfiguration implements Serializable {
 		try {
 			out = new ObjectOutputStream(new FileOutputStream(CONFIG_FILENAME));
 			out.writeObject(this);
-			System.out.println("Saved Configuration");
+			logger.debug("Saved Configuration");
+			//System.out.println("Saved Configuration");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			System.out.println("Could not save configuration");
+			logger.warn("Could not save configuration");
+			//System.out.println("Could not save configuration");
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Could not save configuration");
+			logger.warn("Could not save configuration");
+			//System.out.println("Could not save configuration");
 		} finally {
 			if (null != out) {
 				try {
