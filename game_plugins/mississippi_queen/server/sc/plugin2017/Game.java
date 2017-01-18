@@ -111,9 +111,9 @@ public class Game extends RoundBasedGameInstance<Player> {
 		final Player player;
 		// When starting a game from a imported state the players should not be overwritten
 		PlayerColor playerColor =  this.availableColors.remove(0);
-	  if(PlayerColor.RED == playerColor && gameState.getRedPlayer() != null) {
+	  if (PlayerColor.RED == playerColor && gameState.getRedPlayer() != null) {
 	    player = gameState.getRedPlayer();
-	  } else if(PlayerColor.BLUE == playerColor && gameState.getBluePlayer() != null) {
+	  } else if (PlayerColor.BLUE == playerColor && gameState.getBluePlayer() != null) {
 	    player = gameState.getBluePlayer();
 	  } else {
 	    player = new Player(playerColor);

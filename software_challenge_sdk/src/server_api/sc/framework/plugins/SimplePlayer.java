@@ -19,7 +19,7 @@ public abstract class SimplePlayer implements IPlayer
 														.getLogger(SimplePlayer.class);
 
 	@XStreamOmitField
-	private List<IPlayerListener>	listeners	= new LinkedList<>();
+	private List<IPlayerListener>	listeners;
 
 	@XStreamOmitField
 	private boolean					canTimeout;
@@ -37,6 +37,10 @@ public abstract class SimplePlayer implements IPlayer
 	protected String					violationReason = null;
 	
 
+	public SimplePlayer() {
+		initListeners();
+	}
+	
 	public String getViolationReason()
 	{
 		return violationReason;
