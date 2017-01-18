@@ -10,6 +10,10 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.SoftwareChallengeGUI;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.stuff.YearComparator;
@@ -24,6 +28,8 @@ import sc.server.Lobby;
 
 public class LogicFacade {
 
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(SoftwareChallengeGUI.class);
 	/**
 	 * Folder of all language files
 	 */
@@ -85,7 +91,8 @@ public class LogicFacade {
 		try {
 			this.languageData.load(getClass().getResourceAsStream(fileName));
 		} catch (Exception e) {
-			System.err.println("Failed to read " + fileName);
+			logger.error("Failed to read {}", fileName);
+			//System.err.println("Failed to read " + fileName);
 			e.printStackTrace();
 			throw new CouldNotFindAnyLanguageFileException();
 		}
