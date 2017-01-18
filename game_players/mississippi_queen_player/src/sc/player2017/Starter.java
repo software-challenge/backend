@@ -20,6 +20,9 @@ import sc.shared.SharedConfiguration;
  */
 public class Starter extends AbstractClient {
 
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(Starter.class);
+	
 	public Starter(String host, int port, String reservation, String strategy)
 			throws Exception {
 		// client starten
@@ -89,8 +92,9 @@ public class Starter extends AbstractClient {
 		try {
 			new Starter(host, port, reservation, strategy);
 		} catch (Exception e) {
-			System.err
-					.println("Beim Starten den Clients ist ein Fehler aufgetreten:");
+			logger.error("Beim Starten den Clients ist ein Fehler aufgetreten:");
+			//System.err
+			//		.println("Beim Starten den Clients ist ein Fehler aufgetreten:");
 			e.printStackTrace();
 		}
 

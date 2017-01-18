@@ -1,5 +1,8 @@
 package sc.player2017;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import sc.player2017.logic.RandomLogic;
 import sc.plugin2017.AbstractClient;
 import sc.plugin2017.IGameHandler;
@@ -20,6 +23,8 @@ public enum LogicFactory {
 	DEFAULT(RandomLogic.class);
 
 	private Class<? extends IGameHandler> logic;
+	private static final Logger					logger					= LoggerFactory
+			.getLogger(LogicFactory.class);
 
 	private LogicFactory(Class<? extends IGameHandler> chosenLogic) {
 		logic = chosenLogic;
@@ -36,6 +41,7 @@ public enum LogicFactory {
 	 *             werden konnte, wird eine Exception geworfen!
 	 */
 	public IGameHandler getInstance(AbstractClient client) throws Exception {
+		logger.debug("Erzeuge Instanz von: {}", name());
 		System.out.println("Erzeuge Instanz von: " + name());
 		return (IGameHandler) logic.getConstructor(client.getClass())
 				.newInstance(client);

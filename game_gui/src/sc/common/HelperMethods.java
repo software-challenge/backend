@@ -75,7 +75,8 @@ public class HelperMethods {
 				String line = "";
 				try {
 					while ((line = input.readLine()) != null) {
-						System.out.println(line);
+						logger.debug(line);
+						//System.out.println(line);
 					}
 				} catch (IOException e) {
 					System.err.println("Failed to redirect STDOUT.");
@@ -83,11 +84,14 @@ public class HelperMethods {
 
 				try {
 					int waitFor = proc.waitFor();
-					System.out.println("Process exited with ExitCode="+waitFor);
+					logger.debug("Process exited with ExitCode={}", waitFor);
+					//System.out.println("Process exited with ExitCode="+waitFor);
 				} catch (InterruptedException e) {
-					System.err.println("Waiting interrupted. No exit code available. Killing process...");
+					logger.error("Waiting interrupted. No exit code available. Killing process...");
+					//System.err.println("Waiting interrupted. No exit code available. Killing process...");
 					proc.destroy();
-					System.out.println("Process killed.");
+					logger.debug("Process killed");
+					//System.out.println("Process killed.");
 					//e.printStackTrace();
 				}
 			}
