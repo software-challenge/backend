@@ -127,7 +127,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public void onPlayerLeft(IPlayer player) {
     if (!player.hasViolated()) {
-      player.setLeft(true);    
+      player.setLeft(true);
       onPlayerLeft(player, ScoreCause.LEFT);
     } else {
       onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
@@ -144,14 +144,6 @@ public class Game extends RoundBasedGameInstance<Player> {
       if (entry.getKey() == player) {
         score.setCause(cause);
       }
-
-      // TODO
-      // if (entry.getKey() == player) {
-      // score.setCause(cause);
-      // score.setValueAt(0, new BigDecimal(0));
-      // } else {
-      // score.setValueAt(0, new BigDecimal(2));
-      // }
     }
 
     notifyOnGameOver(res);
@@ -224,7 +216,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /**
    * checks if one player reached the goal with enough passengers
-   * 
+   *
    * @return the player who reached the goal or null if no player reached the
    *         goal
    */
@@ -240,7 +232,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /**
    * Checks if a win condition in the current game state is met.
-   * 
+   *
    * @return WinCondition with winner and reason or null, if no win condition is
    *         yet met.
    */
