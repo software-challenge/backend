@@ -260,6 +260,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
       color = gameState.getCurrentPlayer().getPlayerColor();
     }
     this.handler.gameEnded(data, color, errorMessage);
+
   }
 
   private void notifyOnNewTurn() {
@@ -303,7 +304,8 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
 
       this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
 
-      if (this.conGame.isGameOver() && this.conGame.isAtEnd()) {
+      // the game has not ended, if the gameResult is empty, even if isAtEnd and isGameOver are set
+      if (this.conGame.isGameOver() && this.conGame.isAtEnd() && this.conGame.getResult() != null) {
         logger.debug("game is over, notifying listeners");
         notifyOnGameEnded(sender, this.conGame.getResult());
       } else {
