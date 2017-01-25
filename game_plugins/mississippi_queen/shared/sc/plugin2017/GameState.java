@@ -196,7 +196,7 @@ public class GameState implements Cloneable {
   public PlayerColor getCurrentPlayerColor() {
     return currentPlayer;
   }
-  
+
   /**
    * Nur für den Server relevant
    * @param playerColor PlayerColor of new currentPlayer
@@ -237,7 +237,7 @@ public class GameState implements Cloneable {
   public Player getRedPlayer() {
     return red;
   }
-  
+
   /**
    * Nur für den Server relevant
    * @param red
@@ -256,7 +256,7 @@ public class GameState implements Cloneable {
   public Player getBluePlayer() {
     return blue;
   }
-  
+
   /**
    * Nur für den Server relevant
    * @param blue
@@ -415,17 +415,18 @@ public class GameState implements Cloneable {
         tile.setVisibility(true);
       }
     }
-    // wenn auf einen Sandbank abgedrängt wird, gibt es keine zusaetzliche Drehung
+    // get an extra free turn after getting pushed (except if pushed on a sandbank)
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBANK)) {
       this.getOtherPlayer().setFreeTurns(2);
     }
+    this.getOtherPlayer().setMovement(getOtherPlayer().getSpeed());
+    this.getOtherPlayer().setFreeAcc(1);
+    this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
+
     this.getCurrentPlayer().setFreeTurns(1);
     this.getCurrentPlayer().setMovement(getCurrentPlayer().getSpeed());
-    this.getCurrentPlayer().setMovement(getOtherPlayer().getSpeed());
-    this.getOtherPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
-    this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
     switchCurrentPlayer();
     // free turns has to be set for the current player, because the next player might not be the opponent (overtake)
     if(getCurrentPlayer().getFreeTurns() == 2) {
