@@ -36,8 +36,8 @@ public class BoardFrame extends PrimitiveBase {
 
     parent.rect(0, 0, parent.getWidth(), GuiConstants.frameBorderSize);
     parent.rect(0, 0, GuiConstants.frameBorderSize, parent.getHeight());
-    parent.rect(parent.getWidth() - GuiConstants.frameBorderSize, 0, GuiConstants.frameBorderSize, parent.getHeight());
-    parent.rect(0, parent.getHeight() - GuiConstants.frameBorderSize, parent.getWidth(), GuiConstants.frameBorderSize);
+    parent.rect((float) (parent.getWidth() - GuiConstants.frameBorderSize), 0, GuiConstants.frameBorderSize, parent.getHeight());
+    parent.rect(0, (float) (parent.getHeight() - GuiConstants.frameBorderSize), parent.getWidth(), GuiConstants.frameBorderSize);
 
     parent.popStyle();
   }

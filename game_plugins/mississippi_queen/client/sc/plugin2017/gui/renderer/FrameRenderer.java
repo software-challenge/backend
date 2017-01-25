@@ -92,8 +92,8 @@ public class FrameRenderer extends PApplet {
   @Override
   public void setup() {
     super.setup();
-    logger.debug("Dimension when creating board: (" + this.width + ","
-        + this.height + ")");
+    logger.debug("Dimension when creating board: (" + this.getWidth() + ","
+        + this.getHeight() + ")");
     // choosing renderer from options - using P2D as default (currently it seems
     // that only the java renderer works).
     //
