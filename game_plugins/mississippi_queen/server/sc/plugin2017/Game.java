@@ -311,6 +311,10 @@ public class Game extends RoundBasedGameInstance<Player> {
           e.printStackTrace();
         }
       }
+      // freeTurns, freeAcc and Movement have to be set (at least for currentPlayer) it is not necessary to do this for the otherPlayer
+      this.gameState.getCurrentPlayer().setFreeAcc(1);
+      this.gameState.getCurrentPlayer().setFreeTurns(this.gameState.isFreeTurn() ? 2 : 1);
+      this.gameState.getCurrentPlayer().setMovement(this.gameState.getCurrentPlayer().getSpeed());
     }
   }
 
