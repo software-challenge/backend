@@ -68,6 +68,7 @@ public class RandomLogic implements IGameHandler {
 	public void onRequestAction(){
 		log.info("Es wurde ein Zug angefordert.");
     Move move = new Move();
+    sendAction(move);
     // Setze die für perform benötigen Attribute
     currentPlayer.setMovement(currentPlayer.getSpeed());
     currentPlayer.setFreeAcc(1);
