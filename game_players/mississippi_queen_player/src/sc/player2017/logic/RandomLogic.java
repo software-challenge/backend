@@ -66,9 +66,10 @@ public class RandomLogic implements IGameHandler {
 	 */
 	@Override
 	public void onRequestAction(){
+	  throw new NullPointerException();
+	  /*
 		log.info("Es wurde ein Zug angefordert.");
     Move move = new Move();
-    sendAction(move);
     // Setze die für perform benötigen Attribute
     currentPlayer.setMovement(currentPlayer.getSpeed());
     currentPlayer.setFreeAcc(1);
@@ -143,6 +144,7 @@ public class RandomLogic implements IGameHandler {
     move.orderActions();
     log.info("Sende zug {}", move);
     sendAction(move);
+    */
 	}
 
   /**
