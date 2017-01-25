@@ -150,8 +150,18 @@ public class RenderFacade {
     panel.setLayout(new BorderLayout());
 		panel.setVisible(true);
 		panel.removeAll(); //
+    panel.revalidate();
     frameRenderer = new FrameRenderer();
+    
     frameRenderer.init();
+    // FIXME wait till init is ready
+    try {
+      Thread.sleep(200);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    frameRenderer.size(panel.getWidth(), panel.getHeight());
     panel.add(frameRenderer, BorderLayout.CENTER);
     panel.revalidate();
     panel.repaint();
