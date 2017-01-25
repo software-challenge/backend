@@ -157,9 +157,6 @@ public class Move implements Cloneable {
     orderActions();
     int order = 0;
     boolean onEnemy;
-    // make sure movement is set right:
-    player.setMovement(player.getSpeed());
-
 
     if(getActions().isEmpty()) {
       throw new InvalidMoveException("Der Zug enthält keine Aktionen");
