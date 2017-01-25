@@ -32,6 +32,9 @@ public abstract class SimplePlayer implements IPlayer
 
 	@XStreamOmitField
 	protected boolean				violated		= false;
+	
+	@XStreamOmitField
+	protected boolean				left		    = false;
 
 	@XStreamOmitField
 	protected String				violationReason	= null;
@@ -129,6 +132,18 @@ public abstract class SimplePlayer implements IPlayer
 		return this.violated;
 	}
 
+	@Override
+	public void setLeft(boolean left)
+	{
+		this.left = left;
+	}
+
+	@Override
+	public boolean hasLeft()
+	{
+		return this.left;
+	}
+	
 	/**
 	 * Initializes listeners, when they don't already exist. Only used for
 	 * playing on an imported state

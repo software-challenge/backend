@@ -127,6 +127,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public void onPlayerLeft(IPlayer player) {
     if (!player.hasViolated()) {
+      player.setLeft(true);    
       onPlayerLeft(player, ScoreCause.LEFT);
     } else {
       onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
@@ -200,14 +201,19 @@ public class Game extends RoundBasedGameInstance<Player> {
     // score definition but assumes a fixed schema (points and matchpoints).
     Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
         : this.gameState.getRedPlayer();
-    if (opponent.hasViolated() && !p.hasViolated()) {
+    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft()) {
       matchPoints = 2;
     }
-    return p.hasViolated()
-        ? new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
-            stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX])
-        : new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
+    if (p.hasViolated()) {
+      return new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
+              stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    } else if (p.hasLeft()) {
+      return new PlayerScore(ScoreCause.LEFT, winningReason, 0,
+                stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    } else {
+      return new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
             stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    }
 
   }
 
