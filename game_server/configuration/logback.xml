@@ -18,10 +18,9 @@
         <locationInfo>true</locationInfo>
       </layout>
   </appender>-->
-  
 	<!-- all loggers in DEBUG for now...  -->
-	
-  <logger name="sc" level="ERROR" />
+  <logger name="sc" level="WARN" />
+  
   <!--
   
   <logger name="sc.SoftwareChallengeGUI" level="DEBUG" />
@@ -46,11 +45,10 @@
   
   <logger name="sc.server.gaming.GameRoomManager" level="DEBUG" />
   <logger name="sc.server.gaming.GameRoom" level="DEBUG" /> 
-  <logger name="sc.server.network.Client" level="DEBUG" /> 
   
   <logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
   <logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
-  <logger name="sc.networking.clients.XStreamClient" level="INFO" />
+  <logger name="sc.networking.clients.XStreamClient" level="ERROR" />
   
   <logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
   <logger name="sc.gui.dialogs.CreateGameDialog" level="DEBUG" />
@@ -58,6 +56,8 @@
   
   <logger name="sc.player2017.LogicFactory" level="DEBUG" />
   -->
+  <logger name="sc.server.network.Client" level="DEBUG" /> 
+  <logger name="sc.networking.clients.XStreamClient" level="ERROR" />
   
 
 	<root level="INFO">

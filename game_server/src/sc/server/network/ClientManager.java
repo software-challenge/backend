@@ -125,6 +125,7 @@ public class ClientManager implements Runnable, IClientListener
 			{
 				synchronized(client) {
 					logger.info("Removing client {} from client manager", client);
+					//client.stop();
 					ClientManager.this.clients.remove(client);
 				}
 			}
