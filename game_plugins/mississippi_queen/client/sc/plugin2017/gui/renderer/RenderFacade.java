@@ -280,7 +280,7 @@ public class RenderFacade {
       // no result data, can't do much useful other than setting the win
       // condition to signal that the game ended
       logger.debug("gameEnded no result. winner, message is {}", errorMessage);
-      synchronized (gameStateQueue) {
+      synchronized (gameStateQueue) { // synchronize to prevent that wincondition is overwritten
         frameRenderer.endGame(new WinCondition(null, errorMessage));
       }
     } else {
@@ -335,7 +335,7 @@ public class RenderFacade {
         winner = ((Player) data.getWinners().get(0)).getPlayerColor();
       }
       logger.debug("endGame called with {} and {}", winner, reason.toString());
-      synchronized (gameStateQueue) {
+      synchronized (gameStateQueue) { // synchronize to prevent that wincondition is overwritten
         frameRenderer.endGame(new WinCondition(winner, reason.toString()));
       }
     }
