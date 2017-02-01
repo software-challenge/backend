@@ -365,7 +365,7 @@ public class TestRangeDialog extends JDialog {
           startTestLoop();
 			  } else if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_stop"))) {
 			    // Stop test
-			    cancelTest("");
+			    cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
 			  }
 
       }
@@ -389,27 +389,24 @@ public class TestRangeDialog extends JDialog {
     Thread testLoop = new Thread(new Runnable() {
       @Override
       public void run() {
-        if (TestRangeDialog.this.testStarted) { // testing
-          cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
-        } else {
-          if (prepareTest()) {
-            while (TestRangeDialog.this.testStarted && TestRangeDialog.this.curTest < TestRangeDialog.this.numTest) {
-              updateGUI(false);
-              startNewTest();
-              try {
-                logger.debug("testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
-                    Thread.currentThread().getId());
-                TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
-                logger.debug("testloop await continue {}", this);
-              } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
-                logger.error("Exception while waiting for game end", e);
-                cancelTest("Waiting for game end was interrupted");
-              }
-              TestRangeDialog.this.gameEndReached.reset();
+        if (prepareTest()) {
+          while (TestRangeDialog.this.testStarted && TestRangeDialog.this.curTest < TestRangeDialog.this.numTest) {
+            updateGUI(false);
+            startNewTest();
+            try {
+              logger.debug("testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
+                  Thread.currentThread().getId());
+              TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
+              logger.debug("testloop await continue {}", this);
+            } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
+              logger.error("Exception while waiting for game end", e);
+              cancelTest("Waiting for game end was interrupted");
             }
-            cancelTest("");
+            TestRangeDialog.this.gameEndReached.reset();
           }
+          cancelTest("");
         }
+        System.out.println("testrange runner finishes execution");
       }
     });
     testLoop.setName("testrange runner");
@@ -681,6 +678,7 @@ public class TestRangeDialog extends JDialog {
 			portInUse = false;
 			this.freePort++;
 			try {
+			  System.out.println("\n\n\n\n\n\n\n\n+++++++++++++++++++++++++++++++++++++++++++++++\nstaring Server");
 				this.presFac.getLogicFacade().startServer(this.freePort);
 			} catch (BindException e) { // port in use
 				if (this.freePort > START_PORT + 10) {
@@ -1095,11 +1093,11 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest(final String err_msg) {
-		if (null != this.obs && !this.obs.isFinished()) {
-			this.obs.cancel();
-		}
-		finishTest();
-		addLogMessage(err_msg);
+  		if (null != this.obs && !this.obs.isFinished()) {
+  			this.obs.cancel(); //hängt hier
+  		}
+  		finishTest();
+  		addLogMessage(err_msg);
 	}
 
 	/**
