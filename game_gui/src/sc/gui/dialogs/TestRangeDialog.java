@@ -48,7 +48,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -239,6 +238,15 @@ public class TestRangeDialog extends JDialog {
 		createButtonsAtBottom();
 
 		createSaveReplayCheckboxGroup();
+
+//		this.addWindowListener(new WindowAdapter() {
+//		  @Override
+//	    public void windowClosing(WindowEvent e) {
+//		    cancelTestAndSave();
+//        TestRangeDialog.this.setVisible(false);
+//        TestRangeDialog.this.dispose();
+//	    }
+//		});
 		// -------------------------------------------
 		this.pnlBottomTop = new JPanel(new GridLayout());
 		this.pnlBottomTop.add(pnl_showLogLeft);
@@ -271,7 +279,7 @@ public class TestRangeDialog extends JDialog {
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		setModal(true);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		//setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setPreferredSize(new Dimension(650, 500));
 		setMinimumSize(getPreferredSize());
 		pack();
@@ -348,7 +356,18 @@ public class TestRangeDialog extends JDialog {
 		this.testStart.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent event) {
-        startTestLoop();
+			  if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_start"))) {
+	        // Start new test
+	        startTestLoop();
+			  } else if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_restart"))) {
+			    // Restart test
+			    TestRangeDialog.this.curTest = 0;
+          startTestLoop();
+			  } else if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_stop"))) {
+			    // Stop test
+			    cancelTest("");
+			  }
+
       }
     });
 
@@ -388,7 +407,7 @@ public class TestRangeDialog extends JDialog {
               }
               TestRangeDialog.this.gameEndReached.reset();
             }
-            finishTest();
+            cancelTest("");
           }
         }
       }
@@ -725,6 +744,9 @@ public class TestRangeDialog extends JDialog {
       logger.debug("Preparing clients");
       KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
     } catch (IOException e) {
+      if (!this.testStarted) { // if test is started where no test should be started, return
+        return;
+      }
       e.printStackTrace();
       cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_prepare"));
       return;
@@ -964,6 +986,7 @@ public class TestRangeDialog extends JDialog {
 	private IGamePreparation prepareGame(GUIPluginInstance selPlugin,
 			final List<SlotDescriptor> descriptors) throws IOException {
 		try {
+		  if(this.testStarted) { // TODO maybe synchronize this access
 			IGamePreparation prep = selPlugin.getPlugin()
 					.prepareBackgroundGame(
 							DEFAULT_HOST,
@@ -972,12 +995,19 @@ public class TestRangeDialog extends JDialog {
 									.size()]));
 			logger.debug("prepareGame for replays was called focus: {}", isFocused());
 			return prep;
+		  } else {
+		    // FIXME just cancel here and don't try to start a new test
+		    System.out.println("++++++++++++++++++++++++++++++++++++++Hack at work");
+		    throw new Exception();
+		  }
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, this.lang
 					.getProperty("dialog_test_error_network_msg"), this.lang
 					.getProperty("dialog_test_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
 			throw e;
+		} catch (Exception e) { // totally hacked here to avoid dialog message
+		  throw new IOException();
 		}
 	}
 
@@ -1077,10 +1107,10 @@ public class TestRangeDialog extends JDialog {
 	 */
 	private void finishTest() {
 		if (this.testStarted) {
+	    this.testStarted = false;
 			stopServer();
 		}
 		updateGUI(true);
-		this.testStarted = false;
 	}
 
 	/**
