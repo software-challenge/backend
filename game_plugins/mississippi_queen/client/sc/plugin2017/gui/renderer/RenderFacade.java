@@ -269,7 +269,6 @@ public class RenderFacade {
    *          error message
    */
   public void gameEnded(GameResult data, EPlayerId target, PlayerColor color, String errorMessage) {
-
     logger.debug("gameEnded called: {}", errorMessage);
     stopReceiverThread();
 
@@ -281,7 +280,9 @@ public class RenderFacade {
       // no result data, can't do much useful other than setting the win
       // condition to signal that the game ended
       logger.debug("gameEnded no result. winner, message is {}", errorMessage);
-      frameRenderer.endGame(new WinCondition(null, errorMessage));
+      synchronized (gameStateQueue) {
+        frameRenderer.endGame(new WinCondition(null, errorMessage));
+      }
     } else {
       // analyze result data to display a sensible reason for the game end
       StringBuilder reason = new StringBuilder(50);
@@ -333,8 +334,10 @@ public class RenderFacade {
         assert data.getWinners().size() == 1;
         winner = ((Player) data.getWinners().get(0)).getPlayerColor();
       }
-
-      frameRenderer.endGame(new WinCondition(winner, reason.toString()));
+      logger.debug("endGame called with {} and {}", winner, reason.toString());
+      synchronized (gameStateQueue) {
+        frameRenderer.endGame(new WinCondition(winner, reason.toString()));
+      }
     }
   }
 
