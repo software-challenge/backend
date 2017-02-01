@@ -69,6 +69,7 @@ public class FrameRenderer extends PApplet {
   private LinkedHashMap<HexField, Action> stepPossible;
   private WinCondition winCondition;
   private EnumMap<EPlayerId, Boolean> humanPlayers;
+  
   public FrameRenderer() {
     super();
 
@@ -80,7 +81,6 @@ public class FrameRenderer extends PApplet {
     for (EPlayerId val : EPlayerId.values()) {
       this.humanPlayers.put(val, Boolean.FALSE);
     }
-
     this.background = new Background(this);
     this.guiBoard = new GuiBoard(this);
     this.progressBar = new ProgressBar(this);
@@ -119,8 +119,15 @@ public class FrameRenderer extends PApplet {
     this.guiBoard.setup();
     // only draw when needed (application calls redraw() if needed). Letting the loop run results in 100% (or high) CPU activity
     noLoop();
+    this.revalidate();
     this.initialized = true;
   }
+  
+//  @Override
+//  public void size(int width, int height) {
+//    super.size(width, height);
+//    this.revalidate();
+//  }
 
   @Override
   public void draw() {
