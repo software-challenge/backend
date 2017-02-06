@@ -1,0 +1,24 @@
+version: '2'
+services:
+  producer:
+    image: swc_producer
+    working_dir: /app
+    volumes:
+      - swc_client_watch:/app/watch-folder
+      - swc_client_temp:/app/temp-folder
+    depends_on:
+      - rabbitmq
+  rabbitmq:
+    image: rabbitmq:3.6
+    hostname: rabbitmq
+  file_server:
+    image: swc_fileserver
+    volumes:
+      - swc_client_temp:/client
+    ports:
+      - "2222:22"
+volumes:
+  swc_client_watch:
+    driver: local
+  swc_client_temp:
+    driver: local

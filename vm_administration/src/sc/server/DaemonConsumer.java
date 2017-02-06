@@ -1,4 +1,4 @@
-package com.rra;
+package sc.server;
 
 import java.io.IOException;
 
@@ -7,8 +7,8 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
-import com.rra.configuration.Settings;
-import com.rra.Logger;
+import sc.server.Logger;
+import sc.server.configuration.Settings;
 
 public class DaemonConsumer
   implements

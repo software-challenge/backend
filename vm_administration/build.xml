@@ -26,13 +26,13 @@
 		</unzip>
 		<jar destfile="${out.dir}/daemonconsumer.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.rra.DaemonConsumer" />
+				<attribute name="Main-Class" value="sc.server.DaemonConsumer" />
 			</manifest>
 			<fileset dir="${out.dir}/tmp" />
 		</jar>
 		<jar destfile="${out.dir}/producer.jar">
 			<manifest>
-				<attribute name="Main-Class" value="com.rra.Producer" />
+				<attribute name="Main-Class" value="sc.server.Producer" />
 			</manifest>
 			<fileset dir="${out.dir}/tmp" />
 		</jar>

@@ -1,4 +1,4 @@
-package com.rra.configuration;
+package sc.server.configuration;
 
 import com.rabbitmq.client.AMQP;
 

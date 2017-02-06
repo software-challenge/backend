@@ -1,4 +1,4 @@
-package com.rra;
+package sc.server;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -13,8 +13,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
-import com.rra.configuration.Settings;
-import com.rra.Logger;
+
+import sc.server.Logger;
+import sc.server.configuration.Settings;
 
 public class Consumer
 {

@@ -1,4 +1,4 @@
-package com.rra;
+package sc.server;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,13 +8,12 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
-import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
-import com.rra.configuration.Settings;
-import com.rra.Logger;
+
+import sc.server.configuration.Settings;
 
 public class Producer
   implements
@@ -43,7 +42,7 @@ public class Producer
   {
     String exchange = "";
 
-    Channel ch = conn.createChannel();
+    Channel ch = this.conn.createChannel();
 
     if (exchange.equals(""))
       {
@@ -93,6 +92,9 @@ public class Producer
 
         final File f = new File(folder);
         final File t = new File(tmp);
+
+      Logger.log("Giving RabbitMQ time to start...");
+      Thread.sleep(2000);
         Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
                    + portNumber);
 
@@ -117,7 +119,7 @@ public class Producer
         boolean active = true;
         while (active)
           {
-            String[] files = toWatch.list();
+            String[] files = this.toWatch.list();
             if (files != null && files.length > 0)
               {
                 for (String file : files)
@@ -128,9 +130,9 @@ public class Producer
                     if (!file.endsWith(".zip"))
                       continue;
 
-                    File oldZIP = new File(toWatch.getAbsolutePath()
+                    File oldZIP = new File(this.toWatch.getAbsolutePath()
                                            + File.separator + file);
-                    File newZIP = new File(toTmp.getAbsolutePath()
+                    File newZIP = new File(this.toTmp.getAbsolutePath()
                                            + File.separator + file);
 
                     // Move zip to tmp folder

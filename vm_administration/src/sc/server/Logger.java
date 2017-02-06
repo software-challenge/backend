@@ -1,4 +1,4 @@
-package com.rra;
+package sc.server;
 import java.io.PrintStream;
 import java.util.Date;
 import java.text.SimpleDateFormat;
