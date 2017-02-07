@@ -2,3 +2,4 @@ version: '2'
 services:
   swc_game-server:
     image: swc_game-server
+    hostname: gameserver
