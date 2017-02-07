@@ -8,8 +8,13 @@ FROM phusion/baseimage:0.9.19
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
 
+RUN apt-get update
+
 # Install Java 8 JRE
-RUN apt-get update && apt-get install -yq openjdk-8-jre-headless
+RUN apt-get install -yq openjdk-8-jre-headless
+
+# Install Unzip to unzip client zips
+RUN apt-get install -yq unzip
 
 # Enable SSH login
 RUN rm -f /etc/service/sshd/down

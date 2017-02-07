@@ -3,19 +3,12 @@ package sc.server;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.PosixParser;
+import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.GetResponse;
-
-import sc.server.Logger;
-import sc.server.configuration.Settings;
 
 public class Consumer
 {
@@ -25,29 +18,33 @@ public class Consumer
   protected String			queue;
   protected List<IConsumerListener> listeners = new LinkedList<IConsumerListener>();
 
-  public Consumer(String hostname, int port) throws IOException
+  public Consumer(String hostname, int port) throws IOException, TimeoutException
   {
-    this.conn = new ConnectionFactory().newConnection(hostname, port);
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setHost(hostname);
+    factory.setPort(port);
+    factory.setAutomaticRecoveryEnabled(true);
+    this.conn = factory.newConnection();
   }
 
   public void addConsumerListener(IConsumerListener listener) {
-    listeners.add(listener);
+    this.listeners.add(listener);
   }
 
   public void removeConsumerListener(IConsumerListener listener) {
-    listeners.remove(listener);
+    this.listeners.remove(listener);
   }
 
   protected void notifyOnStartConsuming() {
-    for (IConsumerListener listener : listeners) {
+    for (IConsumerListener listener : this.listeners) {
       listener.onStartConsuming();
     }
   }
 
-  protected void consume(String queue) throws IOException
+  protected void consume(String queue) throws IOException, TimeoutException
   {
-    final Channel ch = conn.createChannel();
-    ch.queueDeclare(queue);
+    final Channel ch = this.conn.createChannel();
+    ch.queueDeclare(queue, false, false, false, null);
 
     boolean noAck = true;
     GetResponse response = ch.basicGet(queue, noAck);

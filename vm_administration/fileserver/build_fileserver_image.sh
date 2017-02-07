@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t swc_fileserver:latest .
+docker build --no-cache -t swc_fileserver:latest .

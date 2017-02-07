@@ -1,13 +1,13 @@
 package sc.server;
 
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.PosixParser;
 
-import sc.server.Logger;
 import sc.server.configuration.Settings;
 
 public class DaemonConsumer
@@ -15,6 +15,7 @@ public class DaemonConsumer
     Runnable, IConsumerListener
 {
 
+  @Override
   public void run()
   {
     boolean active = true;
@@ -23,6 +24,7 @@ public class DaemonConsumer
       {
         new Thread(new Runnable()
           {
+            @Override
             public void run()
             {
               if (Settings.DEBUG_MODE) {
@@ -36,15 +38,15 @@ public class DaemonConsumer
                 DaemonConsumer.this.currentProcs += 1;
                 try
                   {
-                    c = new Consumer(hostName,
+                    c = new Consumer(DaemonConsumer.this.hostName,
                                      Settings.DEFAULT_PORT);
                     c.addConsumerListener(DaemonConsumer.this);
-                    c.bash = bashPath;
-                    c.command = command;
-                    c.consume(queue);
+                    c.bash = DaemonConsumer.this.bashPath;
+                    c.command = DaemonConsumer.this.command;
+                    c.consume(DaemonConsumer.this.queue);
                     c.free();
                   }
-                catch (IOException e)
+            catch (IOException | TimeoutException e)
                   {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -58,7 +60,7 @@ public class DaemonConsumer
           }).start();
         try
           {
-            Thread.sleep(interval * 1000);
+            Thread.sleep(this.interval * 1000);
           }
         catch (InterruptedException e)
           {
@@ -119,7 +121,8 @@ public class DaemonConsumer
       }
   }
 
+  @Override
   public void onStartConsuming() {
-    Logger.log("Starting process " + currentProcs + "/" + maxProcs);
+    Logger.log("Starting process " + this.currentProcs + "/" + this.maxProcs);
   }
 }

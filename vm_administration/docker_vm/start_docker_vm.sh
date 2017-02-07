@@ -1,13 +1,17 @@
 #!/bin/bash
+set -x # echo commands as they are executed
 
-# Should get the name of the client zip file as first argument and optionally a
+# Should get the path of the client zip file on the file host as first argument and optionally a
 # path to a log file as second argument.
 
-CLIENT_ZIP_SFTP_HOST=localhost
-CLIENT_ZIP_SFTP_PORT=2222
-CLIENT_ZIP_SFTP_USER=swc
-CLIENT_ZIP_SFTP_PASS=secret
+# The host we should the client zip get from:
+CLIENT_ZIP_SSH_HOST=localhost
+CLIENT_ZIP_SSH_PORT=2222
+# The SSH key to authenticate to the host to get the client zip and the host where the client will run:
 SSH_KEY=/home/svk/.ssh/socha_docker_vm
+# the docker network the client container should run in to be able to connect to the game server
+CLIENT_NETWORK=webapp_default
+GAMESERVER_HOSTNAME=webapp_swc_game-server_1
 
 # VM name will be unique as client vms get started in intervals 5 seconds
 VMNAME='vmclient-'`/bin/date +%Y-%m-%d_%H-%M-%S`
@@ -17,7 +21,8 @@ if [ -n "$2" ]; then
 else
   VMLOG="$HOME/log/vmclient/$DATEDIR/$VMNAME.log"
 fi
-CLIENT_ZIP="$1"
+# The whole path to the client zip is passed by the consumer to this script as first argument:
+CLIENT_ZIP_PATH="$1"
 
 # ----------------------------------------------------------------------
 # main
@@ -32,7 +37,7 @@ mkdir -p $HOME/log/vmclient/$DATEDIR
 # Check if we should use the new VMs
 #
 NEW_VM=false
-if [[ $CLIENT_ZIP =~ .*_new.* ]]
+if [[ $CLIENT_ZIP_PATH =~ .*_new.* ]]
 then
   NEW_VM=true
 fi
@@ -44,11 +49,11 @@ else
   echo "We should use the old VM!"
 fi
 
-echo $CLIENT_ZIP
+echo $CLIENT_ZIP_PATH
 
 # Create and start new VM
 echo "Starting vm $VMNAME"
-CID=$(docker run -d --name $VMNAME docker_vm)
+CID=$(docker run -d --network $CLIENT_NETWORK --name $VMNAME docker_vm)
 
 VMTIME=0
 VMIP=""
@@ -80,26 +85,30 @@ VM_BOOTED=0
 
 CONSUMER_SSH_PID=0
 
-#SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY -l root"
-SSH_OPTIONS="-v -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY -l root"
+#SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY"
+SSH_OPTIONS="-o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY"
 echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
   if ([ $VM_BOOTED -eq 0 ]); then
     echo "VM not booted yet, trying to connect"
-    ssh $SSH_OPTIONS $VMIP exit
+    ssh $SSH_OPTIONS root@$VMIP exit
     # the exit code of ssh is only 0 when a connection was successful
     if [ $? -eq 0 ]; then VM_BOOTED=1; fi
   fi
   if ([ $VM_BOOTED -eq 1 ]); then
     echo "VM booted, copying client file"
-    echo "executing scp -p $CLIENT_ZIP_SFTP_PORT $CLIENT_ZIP_SFTP_USER@$CLIENT_ZIP_SFTP_HOST:$CLIENT_ZIP root@$VMIP:/app/client.zip..."
-    scp -i $SSH_KEY -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -p $CLIENT_ZIP_SFTP_PORT $CLIENT_ZIP_SFTP_USER@$CLIENT_ZIP_SFTP_HOST:"$CLIENT_ZIP" root@$VMIP:/client/client.zip
-    echo "executing ssh -l scadmin 192.168.56.2 rm $CLIENT_ZIP..."
-    # TODO ssh $SSH_OPTIONS 192.168.56.2 rm "$CLIENT_ZIP"
+    scp $SSH_OPTIONS -P $CLIENT_ZIP_SSH_PORT root@$CLIENT_ZIP_SSH_HOST:"$CLIENT_ZIP_PATH" ./client.zip
+    scp $SSH_OPTIONS ./client.zip root@$VMIP:/client/client.zip
+    echo "Removing client zip from fileserver"
+    #ssh $SSH_OPTIONS root@$CLIENT_ZIP_SSH_HOST:$CLIENT_ZIP_SSH_PORT rm "$CLIENT_ZIP_PATH"
 
     echo "Starting client..."
-    ssh -i $SSH_KEY -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@$VMIP /bin/bash -c "cd /client && unzip client.zip && java -jar mississippi_queen_player.jar" &
+    ssh $SSH_OPTIONS root@$VMIP <<EOF
+      cd /client
+      unzip client.zip
+      java -jar mississippi_queen_player.jar -h $GAMESERVER_HOSTNAME
+EOF
     CONSUMER_SSH_PID=$!
     VM_BOOTED=2
   fi
@@ -123,41 +132,21 @@ fi
 
 sleep 5
 
-exit -1
 # ----------------------------------------------------------------------
 # Copy the execution log from the VM to VMMain
 #
 echo "Saving log file"
-
-if [ -n $VMIP ]
-then
-    TRIES=0
-    while [[ $TRIES -lt 5 ]]; do
-        echo "Copying from $VMIP"
-        `ssh -q -l scadmin 134.245.253.5 ./getLog.sh $VMIP $VMNAME`
-        if [ $? -eq 0 ]; then
-            echo "Successfully copied log"
-            break
-        fi
-        # this did not happen for a long time, but will leave it here
-        TRIES=$(($TRIES+1))
-        echo "Error copying log, try again $TRIES/5 in 5 seconds"
-        sleep 5
-        VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
-    done
-else
-    echo "no ip found for this vm"
-fi
+docker logs $VMNAME
 
 # ----------------------------------------------------------------------
 # Kill the VM
 #
-
 if [ $CONSUMER_SSH_PID -ne 0 ]; then
   echo "Killing ssh command connected to VM (PID: $CONSUMER_SSH_PID)"
   kill $CONSUMER_SSH_PID
 fi
-$HOME/bin/stopVM.sh $VMNAME
+docker stop $VMNAME
+docker rm $VMNAME
 
 echo "Finished"
 )

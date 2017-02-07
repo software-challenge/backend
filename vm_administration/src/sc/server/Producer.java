@@ -2,6 +2,7 @@ package sc.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -33,21 +34,25 @@ public class Producer
     this.toWatch = folder;
   }
 
-  public Producer(String hostname, int port) throws IOException
+  public Producer(String hostname, int port) throws IOException, TimeoutException
   {
-    this.conn = new ConnectionFactory().newConnection(hostname, port);
+    ConnectionFactory factory = new ConnectionFactory();
+    factory.setHost(hostname);
+    factory.setPort(port);
+    factory.setAutomaticRecoveryEnabled(true);
+    this.conn = factory.newConnection();
   }
 
-  private void publish(String message, String toQueue) throws IOException
+  private void publish(String message, String toQueue) throws IOException, TimeoutException
   {
     String exchange = "";
 
     Channel ch = this.conn.createChannel();
 
     if (exchange.equals(""))
-      {
-        ch.queueDeclare(toQueue);
-      }
+    {
+      ch.queueDeclare(toQueue, false, false, false, null);
+    }
 
     Logger.log(message);
     Logger.log("published to queue: " + toQueue);
@@ -93,8 +98,12 @@ public class Producer
         final File f = new File(folder);
         final File t = new File(tmp);
 
-      Logger.log("Giving RabbitMQ time to start...");
-      Thread.sleep(2000);
+      // FIXME: this should be handled by rabbitmq client library automatic
+      // retry. But it seems not to work (app crashes with connection refused
+      // exception).
+      Logger.log("Waiting for rabbitmq to start");
+      Thread.sleep(5000);
+
         Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
                    + portNumber);
 
@@ -112,6 +121,7 @@ public class Producer
       }
   }
 
+  @Override
   public void run()
   {
     try
@@ -155,7 +165,7 @@ public class Producer
               }
           }
       }
-    catch (IOException e)
+    catch (IOException | TimeoutException e)
       {
         e.printStackTrace();
       }
