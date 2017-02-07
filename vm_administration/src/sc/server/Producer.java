@@ -2,6 +2,7 @@ package sc.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.cli.CommandLine;
@@ -102,16 +103,28 @@ public class Producer
       // retry. But it seems not to work (app crashes with connection refused
       // exception).
       Logger.log("Waiting for rabbitmq to start");
-      Thread.sleep(5000);
+      // Thread.sleep(5000);
 
         Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
                    + portNumber);
 
-        final Producer p = new Producer(hostAddress, portNumber);
+      int tries = 0;
+      Producer p = null;
+      while (tries < 5) {
+        try {
+          p = new Producer(hostAddress, portNumber);
+        } catch (ConnectException e) {
+          Logger.log("Could not connect to rabbitmq, retrying...");
+          tries += 1;
+        }
+      }
+      if (p == null) {
+        Logger.logError("Could not connect to rabbitmq");
+      } else {
         p.setWatch(f);
         p.setTmp(t);
-
         new Thread(p).start();
+      }
       }
     catch (Exception e)
       {
