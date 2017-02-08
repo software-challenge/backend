@@ -99,30 +99,31 @@ public class Producer
         final File f = new File(folder);
         final File t = new File(tmp);
 
-      // FIXME: this should be handled by rabbitmq client library automatic
-      // retry. But it seems not to work (app crashes with connection refused
-      // exception).
-      Logger.log("Waiting for rabbitmq to start");
-      // Thread.sleep(5000);
 
         Logger.log("Connecting to RabbitMQ at " + hostAddress + ":"
                    + portNumber);
 
       int tries = 0;
       Producer p = null;
-      while (tries < 5) {
+      // FIXME: this should be handled by rabbitmq client library automatic
+      // retry. But it seems not to work (app crashes with connection refused
+      // exception).
+      while (tries < 5 && p == null) {
         try {
           p = new Producer(hostAddress, portNumber);
         } catch (ConnectException e) {
           Logger.log("Could not connect to rabbitmq, retrying...");
+          Thread.sleep(2000);
           tries += 1;
         }
       }
       if (p == null) {
         Logger.logError("Could not connect to rabbitmq");
+        System.exit(1);
       } else {
         p.setWatch(f);
         p.setTmp(t);
+        Logger.log("Connection established. Starting watch thread.");
         new Thread(p).start();
       }
       }
