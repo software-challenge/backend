@@ -122,12 +122,6 @@ public class FrameRenderer extends PApplet {
     this.revalidate();
     this.initialized = true;
   }
-  
-//  @Override
-//  public void size(int width, int height) {
-//    super.size(width, height);
-//    this.revalidate();
-//  }
 
   @Override
   public void draw() {
