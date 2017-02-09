@@ -134,7 +134,6 @@ public class RenderFacade {
     maxTurn = 0;
     first = true;
     disabled = false;
-    // null value for the active player indicates that there is no current
     // active player.
     activePlayer = EPlayerId.NONE;
     this.panel = panel;
@@ -193,11 +192,6 @@ public class RenderFacade {
     }
   }
 
-  // TODO
-  public void updatePlayer(final Player myplayer, final Player otherPlayer, final EPlayerId target) {
-
-  }
-
   public void updateGameState(final GameState gameState) {
     updateGameState(gameState, false);
   }
@@ -217,11 +211,6 @@ public class RenderFacade {
         gameStateQueue.notifyAll();
       }
     }
-  }
-
-  // TODO
-  public void updateChat(final String chatMsg, final EPlayerId target) {
-
   }
 
   public void switchToPlayer(EPlayerId id) {

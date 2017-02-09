@@ -306,6 +306,8 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
 
       // the game has not ended, if the gameResult is empty, even if isAtEnd and isGameOver are set
       // gameResult is only empty if an error occurred, errors are not handled here
+      // isGameOver is always true for replays, isAtEnd might be true at the beginning if
+      // the currentGameState is the last gameState in queue in this case result is null
       if (this.conGame.isGameOver() && this.conGame.isAtEnd() && this.conGame.getResult() != null) {
         logger.debug("game is over, notifying listeners");
         notifyOnGameEnded(sender, this.conGame.getResult());
