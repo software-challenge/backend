@@ -134,7 +134,6 @@ public class RenderFacade {
     maxTurn = 0;
     first = true;
     disabled = false;
-    // active player.
     activePlayer = EPlayerId.NONE;
     this.panel = panel;
 
