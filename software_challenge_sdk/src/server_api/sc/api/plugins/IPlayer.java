@@ -13,4 +13,6 @@ public interface IPlayer
 	public void setCanTimeout(boolean canTimeout);
 	public void setViolated(boolean violated);
 	public boolean hasViolated();
+	public void setLeft(boolean left);
+	public boolean hasLeft();
 }
