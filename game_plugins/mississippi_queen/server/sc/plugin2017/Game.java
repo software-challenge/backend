@@ -127,6 +127,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   @Override
   public void onPlayerLeft(IPlayer player) {
     if (!player.hasViolated()) {
+      player.setLeft(true);
       onPlayerLeft(player, ScoreCause.LEFT);
     } else {
       onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
@@ -143,14 +144,6 @@ public class Game extends RoundBasedGameInstance<Player> {
       if (entry.getKey() == player) {
         score.setCause(cause);
       }
-
-      // TODO
-      // if (entry.getKey() == player) {
-      // score.setCause(cause);
-      // score.setValueAt(0, new BigDecimal(0));
-      // } else {
-      // score.setValueAt(0, new BigDecimal(2));
-      // }
     }
 
     notifyOnGameOver(res);
@@ -200,14 +193,19 @@ public class Game extends RoundBasedGameInstance<Player> {
     // score definition but assumes a fixed schema (points and matchpoints).
     Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
         : this.gameState.getRedPlayer();
-    if (opponent.hasViolated() && !p.hasViolated()) {
+    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft()) {
       matchPoints = 2;
     }
-    return p.hasViolated()
-        ? new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
-            stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX])
-        : new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
+    if (p.hasViolated()) {
+      return new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
+              stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    } else if (p.hasLeft()) {
+      return new PlayerScore(ScoreCause.LEFT, winningReason, 0,
+                stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    } else {
+      return new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
             stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    }
 
   }
 
@@ -218,7 +216,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /**
    * checks if one player reached the goal with enough passengers
-   * 
+   *
    * @return the player who reached the goal or null if no player reached the
    *         goal
    */
@@ -234,7 +232,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   /**
    * Checks if a win condition in the current game state is met.
-   * 
+   *
    * @return WinCondition with winner and reason or null, if no win condition is
    *         yet met.
    */
@@ -311,6 +309,10 @@ public class Game extends RoundBasedGameInstance<Player> {
           e.printStackTrace();
         }
       }
+      // freeTurns, freeAcc and Movement have to be set (at least for currentPlayer) it is not necessary to do this for the otherPlayer
+      this.gameState.getCurrentPlayer().setFreeAcc(1);
+      this.gameState.getCurrentPlayer().setFreeTurns(this.gameState.isFreeTurn() ? 2 : 1);
+      this.gameState.getCurrentPlayer().setMovement(this.gameState.getCurrentPlayer().getSpeed());
     }
   }
 
