@@ -38,6 +38,9 @@
   <logger name="sc.plugin2017.GameState" level="DEBUG" />
   <logger name="sc.plugin2017.Game" level="DEBUG" />
   <logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
+  <logger name="sc.networking.clients.XStreamClient" level="INFO" />
+  <logger name="sc.plugin2017.gui.renderer.RenderFacade" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
   
   
   
