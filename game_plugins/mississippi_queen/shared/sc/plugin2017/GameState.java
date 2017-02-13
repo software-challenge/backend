@@ -107,11 +107,24 @@ public class GameState implements Cloneable {
    * Das Spielfeld wird zufällig aufgebaut.
    */
   public GameState() {
-
     currentPlayer = PlayerColor.RED;
     startPlayer = PlayerColor.RED;
     board = new Board();
     freeTurn = false;
+  }
+
+  /**
+   * Erzeugt einen neuen {@code GameState} mit denselben Eigenschaften von
+   * stateToClone. Fuer eigene Implementierungen.
+   */
+  protected GameState(GameState stateToClone) throws CloneNotSupportedException {
+    GameState clone = stateToClone.clone();
+    setRedPlayer(clone.getRedPlayer());
+    setBluePlayer(clone.getBluePlayer());
+    setLastMove(clone.getLastMove());
+    setBoard(clone.getBoard());
+    setCurrentPlayer(clone.getCurrentPlayerColor());
+    setFreeTurn(clone.getFreeTurn());
   }
 
   /**
@@ -813,5 +826,36 @@ public class GameState implements Cloneable {
   @Override
   public String toString() {
     return "GameState: \n Spieler1: " + red + " \n" + "Spieler2: " + blue + "\n" + "freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
+  }
+
+  /**
+   * Ueberschreibt den letzten Zug. Fuer eigene Implementierungen.
+   */
+  protected void setLastMove(Move move) {
+    lastMove = move;
+  }
+
+  /**
+   * Fuer eigene Implementierungen.
+   *
+   * @return true, falls der aktuelle Spieler eine freie Drehung machen darf,
+   *         sonst false.
+   */
+  public boolean getFreeTurn() {
+    return freeTurn;
+  }
+
+  /**
+   * Ueberschreibt den Wert fuer freeTurn. Fuer eigene Implementierungen.
+   */
+  protected void setFreeTurn(boolean newValue) {
+    freeTurn = newValue;
+  }
+
+  /**
+   * Ueberschreibt das aktuelle Spielbrett. Fuer eigene Implementierungen.
+   */
+  protected void setBoard(Board newValue) {
+    board = newValue;
   }
 }

@@ -121,6 +121,25 @@ public class Player extends SimplePlayer implements Cloneable {
     points = 0;
   }
 
+  /**
+   * Erstellt einen neuen Player mit denselben Eigenschaften wie der uebergebene
+   * Player. Fuer eigene Implementierungen.
+   */
+  public Player(Player playerToClone) {
+    setPoints(playerToClone.getPoints());
+    setX(playerToClone.getX());
+    setY(playerToClone.getY());
+    setDirection(playerToClone.getDirection());
+    setSpeed(playerToClone.getSpeed());
+    setCoal(playerToClone.getCoal());
+    setTile(playerToClone.getTile());
+    setPassenger(playerToClone.getPassenger());
+    setMovement(playerToClone.getMovement());
+    setFreeTurns(playerToClone.getFreeTurns());
+    setFreeAcc(playerToClone.getFreeAcc());
+		setDisplayName(playerToClone.getDisplayName());
+  }
+
 	/**
 	 * erzeugt eine Deepcopy dieses Objekts
 	 *
