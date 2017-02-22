@@ -364,8 +364,8 @@ public class TestRangeDialog extends JDialog {
 			    TestRangeDialog.this.curTest = 0;
           startTestLoop();
 			  } else if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_stop"))) {
-			    // Stop test
-			    cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
+			    // set curTest to numTest to stop tests, so the server doesn't run into problems trying to end the tests by force
+			    TestRangeDialog.this.curTest = TestRangeDialog.this.numTest;
 			  }
 
       }
@@ -1093,11 +1093,12 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest(final String err_msg) {
-  		if (null != this.obs && !this.obs.isFinished()) {
-  			this.obs.cancel(); //hängt hier
-  		}
-  		finishTest();
-  		addLogMessage(err_msg);
+	  // this is only called when using the close-button (or the close-button of the window) not then stopping tests
+		if (null != this.obs && !this.obs.isFinished()) {
+			this.obs.cancel();
+		}
+		finishTest();
+		addLogMessage(err_msg);
 	}
 
 	/**
