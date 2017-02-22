@@ -239,14 +239,6 @@ public class TestRangeDialog extends JDialog {
 
 		createSaveReplayCheckboxGroup();
 
-//		this.addWindowListener(new WindowAdapter() {
-//		  @Override
-//	    public void windowClosing(WindowEvent e) {
-//		    cancelTestAndSave();
-//        TestRangeDialog.this.setVisible(false);
-//        TestRangeDialog.this.dispose();
-//	    }
-//		});
 		// -------------------------------------------
 		this.pnlBottomTop = new JPanel(new GridLayout());
 		this.pnlBottomTop.add(pnl_showLogLeft);
@@ -279,7 +271,6 @@ public class TestRangeDialog extends JDialog {
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		setModal(true);
-		//setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setPreferredSize(new Dimension(650, 500));
 		setMinimumSize(getPreferredSize());
 		pack();
@@ -295,7 +286,6 @@ public class TestRangeDialog extends JDialog {
 
 	private void createSaveReplayCheckboxGroup() {
 		this.pnl_saveReplay = new JPanel(new GridLayout());
-		//setVerticalFlowLayout(pnl_saveReplay);
 
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel lbl_saveReplay = new JLabel(this.lang
@@ -406,7 +396,6 @@ public class TestRangeDialog extends JDialog {
           }
           cancelTest("");
         }
-        System.out.println("testrange runner finishes execution");
       }
     });
     testLoop.setName("testrange runner");
@@ -498,7 +487,6 @@ public class TestRangeDialog extends JDialog {
 		for (int i = 0; i < this.statTable.getColumnCount() - 2; i++) {
 			int index = i + 2;
 			this.statTable.getColumnModel().getColumn(index).setMinWidth(10);
-			//statTable.getColumnModel().getColumn(index).setMaxWidth(100);
 		}
 
 		// set width of columns
@@ -521,8 +509,6 @@ public class TestRangeDialog extends JDialog {
 		setPlayerRows(selPlugin);
 
 		// show table without extra space
-		//statTable.setPreferredScrollableViewportSize(statTable
-		//		.getPreferredSize());
 		Dimension prefDim = this.statTable.getPreferredSize();
 		prefDim.width = prefSize;
 		this.statTable.setPreferredSize(prefDim);
@@ -542,9 +528,6 @@ public class TestRangeDialog extends JDialog {
 		statScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.pnlTop.add(statScrollPane);
 		this.pnlTop.validate();
-		// pnlTop.invalidate();// TODO order?
-
-		System.out.println("UPDATE: test range dialog");
 	}
 
 	/**
@@ -678,7 +661,6 @@ public class TestRangeDialog extends JDialog {
 			portInUse = false;
 			this.freePort++;
 			try {
-			  System.out.println("\n\n\n\n\n\n\n\n+++++++++++++++++++++++++++++++++++++++++++++++\nstaring Server");
 				this.presFac.getLogicFacade().startServer(this.freePort);
 			} catch (BindException e) { // port in use
 				if (this.freePort > START_PORT + 10) {
@@ -984,7 +966,6 @@ public class TestRangeDialog extends JDialog {
 	private IGamePreparation prepareGame(GUIPluginInstance selPlugin,
 			final List<SlotDescriptor> descriptors) throws IOException {
 		try {
-		  if(this.testStarted) { // TODO maybe synchronize this access
 			IGamePreparation prep = selPlugin.getPlugin()
 					.prepareBackgroundGame(
 							DEFAULT_HOST,
@@ -993,19 +974,12 @@ public class TestRangeDialog extends JDialog {
 									.size()]));
 			logger.debug("prepareGame for replays was called focus: {}", isFocused());
 			return prep;
-		  } else {
-		    // FIXME just cancel here and don't try to start a new test
-		    System.out.println("++++++++++++++++++++++++++++++++++++++Hack at work");
-		    throw new Exception();
-		  }
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, this.lang
 					.getProperty("dialog_test_error_network_msg"), this.lang
 					.getProperty("dialog_test_error_network_title"),
 					JOptionPane.ERROR_MESSAGE);
 			throw e;
-		} catch (Exception e) { // totally hacked here to avoid dialog message
-		  throw new IOException();
 		}
 	}
 
@@ -1030,7 +1004,6 @@ public class TestRangeDialog extends JDialog {
 				if (absVals.size() <= j) {
 					absVals.add(new BigDecimal(0));
 				}
-				//BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
 				BigDecimal abs = absVals.get(j);
 
 				ScoreAggregation action = result.getDefinition().get(j)
@@ -1041,8 +1014,6 @@ public class TestRangeDialog extends JDialog {
 					absVals.set(j, newStat);
 					break;
 				case AVERAGE:
-					// restore old absolute value
-					//old = old.multiply(BigDecimal.valueOf(curTest - 1));
 					// add newStat to absolute value
 					newStat = abs.add(newStat);
 					absVals.set(j, newStat);
