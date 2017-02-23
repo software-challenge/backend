@@ -24,7 +24,7 @@ public enum Direction {
   }
 
   /**
-   * Calculates the opposite direction (i.e. turning by 180 degrees).
+   * Berechnet die gegenüberliegende Richtung, die durch Drehen um 180 Grad ensteht
    * @return opposite direction
    */
   public Direction getOpposite() {
@@ -32,9 +32,9 @@ public enum Direction {
   }
 
   /**
-   * Calculates the direction when turning turn steps.
-   * @param turn number of steps to turn (positive values counterclockwise, negative values clockwise).
-   * @return turned direction
+   * Berechnet die Richtung nach drehen von turn Schritten
+   * @param turn Anzahl der zu drehenden Schritte (positive Werte gegen den Uhrzeigersinn, negative Werte im Uhrzeigersinn).
+   * @return Richtung, zu der gedreht wird
    */
   public Direction getTurnedDirection(int turn) {
     return getForValue((value + turn + 6) % 6);

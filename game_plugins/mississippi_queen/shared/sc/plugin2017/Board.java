@@ -18,18 +18,22 @@ public class Board {
 
 
   /**
-	 * Erzeug ein neues Spielfeld
+	 * Erzeugt ein neues, initialisiertes Spielfeld
 	 */
   public Board() {
     this.init();
   }
 
+  /**
+   * Erzeugt ein neues Spielfeld anhand der gegebenen Segmente
+   * @param tiles Spielsegmente des neuen Spielfelds
+   */
   public Board(ArrayList<Tile> tiles) {
     this.tiles = tiles;
   }
 
   /**
-   * Erzeug ein neues Spielfeld
+   * Erzeugt ein neues Spielfeld
    * @param init boolean der entscheidet, ob das Spielfeld initialisiert werden soll
    */
   public Board(Boolean init) {
@@ -199,7 +203,7 @@ public class Board {
   }
 
  /**
-  * Equals Methode fuer ein Spielfeld
+  * Equals Methode fuer ein Spielbrett
   */
   @Override
   public boolean equals(Object o) {
@@ -221,7 +225,7 @@ public class Board {
   }
 
   /**
-	 * Erzeug eine Deepcopy eines Spielbretts
+	 * Erzeugt eine Deepcopy des Spielbretts
 	 */
   @Override
   public Board clone() {
@@ -235,7 +239,8 @@ public class Board {
   }
 
   /**
-   * Gibt die Felder eines Spielbretts zurück
+   * Gibt eine Liste der sichtbaren Segmente des Spielbretts zurück.
+   * Dabei entsprechen die Indizes der Liste NICHT den Nummern der Segmente.
    * @return fields
    */
   public ArrayList<Tile> getTiles() {

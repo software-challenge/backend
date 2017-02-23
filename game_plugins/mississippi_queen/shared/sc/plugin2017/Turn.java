@@ -9,7 +9,7 @@ import sc.plugin2017.util.InvalidMoveException;
 public class Turn extends Action {
 
   /**
-   * Richtung in der die Drehung erfolgen soll und wie viel gedreht wird.
+   * Wie viel gedreht wird.
    */
   @XStreamAsAttribute
   public int direction;
@@ -21,7 +21,7 @@ public class Turn extends Action {
 
   /**
    * Legt einen neuen Drehzug an
-   * @param direction Richung der Drehung
+   * @param direction Wert, um wie viel gedreht wird
    */
   public Turn(int direction) {
     this.direction = direction;
@@ -29,8 +29,8 @@ public class Turn extends Action {
 
   /**
    * Legt einen neuen Drehzug an
-   * @param direction Richung der Drehung
-   * @param order Reigenfolge
+   * @param direction Wert, um wie viel gedreht wird
+   * @param order Nummer der Aktion
    */
   public Turn(int direction, int order) {
     this.direction = direction;

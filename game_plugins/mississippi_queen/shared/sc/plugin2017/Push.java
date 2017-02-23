@@ -31,7 +31,7 @@ public class Push extends Action {
   /**
    * Erzeugt eine Abdrängaktion in angegebene Richtug
    * @param direction Richtung des Abdrängens
-   * @param order Reihenfolge
+   * @param order Nummer der Aktion
    */
   public Push(Direction direction, int order) {
     this.direction = direction;

@@ -14,7 +14,7 @@ import sc.plugin2017.util.Constants;
 import sc.plugin2017.util.InvalidMoveException;
 
 /**
- * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
+ * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
  * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}), die
  * der Spielserver als Antwort von einem der beiden Spieler (
@@ -84,7 +84,7 @@ public class GameState implements Cloneable {
   private Move lastMove;
 
   /**
-   * Der Index des Segmentes am weitesten vom Start entfernt welches bisher aufgedeckt wurde. Wird nur intern verwendet.
+   * Der Index des am weitesten vom Start entfernten Segmentes, welches bisher aufgedeckt wurde. Wird nur intern verwendet.
    */
   @XStreamOmitField
   private int latestTileIndex = 0;
@@ -96,7 +96,7 @@ public class GameState implements Cloneable {
   private boolean freeTurn;
 
   /**
-   * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
+   * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
    * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
    * gueltig sind.
    *
@@ -171,7 +171,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Nur für den Server relevant. Gibt das Spielfeld zurueck
+   * Gibt das Spielfeld zurueck
    *
    * @return das Spielfeld
    */
@@ -479,9 +479,9 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert alle Becshleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
+   * Liefert alle Beschleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
    * @param player Spieler
-   * @param coal Kohle die für Beschleunigung benötigt wird.
+   * @param coal Kohle, die für die Beschleunigung benötigt werden darf.
    * @return Liste aller Beschleunigungsaktionen
    */
   public List<Acceleration> getPossibleAccelerations(Player player, int coal) {
@@ -549,7 +549,7 @@ public class GameState implements Cloneable {
    * @param player Spieler
    * @param movement Anzahl
    * @param direction Richtung
-   * @param coal Kohleeinheite die zur Verfügung stehen
+   * @param coal Kohleeinheiten, die zur Verfügung stehen
    * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
    */
   public List<Advance> getPossibleMovesInDirection(Player player, int movement, Direction direction, int coal) {
@@ -602,9 +602,10 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
-   * Einträgen
+   * Einträgen:
    * <ul>
-   * <li>[0] - Punktekonto des Spielers (Längste leitung in Spielrichtung)
+   * <li>[0] - Punktekonto des Spielers (Flussfortschritt und Passagiere)
+   * <li>[1] - Anzahl eingesammelter Passagiere
    * </ul>
    *
    * @param player
@@ -618,7 +619,7 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
-   * Einträgen
+   * Einträgen:
    * <ul>
    * <li>[0] - Punktekonto des Spielers (Flussfortschritt und Passagiere)
    * <li>[1] - Anzahl eingesammelter Passagiere
@@ -761,13 +762,13 @@ public class GameState implements Cloneable {
 
 
   /**
-   * Berechent wie viele Gewegungpunkte und Kohleeinheiten der Zug des benötigt
-   * Es wird hier davon ausgegangen, dass der Zug möglich ist. Gibt {-1,-1} zurück, falls
+   * Berechent, wie viele Bewegungpunkte und Kohleeinheiten der Zug benötigt.
+   * Es wird hier davon ausgegangen, dass der Zug möglich ist. Gibt {-1,-1} zurück, falls der
    * Zug ungültig ist.
    * @param player Spieler
    * @param freeTurn freie Drehung
    * @param move Zug
-   * @return Gewegungspunkte und Kohle
+   * @return Array, welches benötigte Bewegungspunkte (Index 0) und Kohle (Index 1) enthält
    */
   public int[] getCost(Player player, boolean freeTurn, Move move) {
     int[] cost = new int[2];

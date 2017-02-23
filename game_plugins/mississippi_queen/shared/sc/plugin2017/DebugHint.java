@@ -3,16 +3,16 @@ package sc.plugin2017;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 /**
- * Ein Debughinweis ist ein Container für einen String der einem Zug beigefuegt
+ * Ein Debughinweis ist ein Container für einen String, der einem Zug beigefuegt
  * werden kann. Beigefuegte Debughints werden direkt in der grafischen
  * Oberflaeche des Plugins angezeigt, wenn die Debugansicht gewaehlt wurde. <br>
  * <br>
  * Dies ermoeglich das schnellere Debuggen von Clients und besseres
  * Konfigurieren von Strategien, denn es muessen keine Konsolenausgaben gesucht
  * werden und die Hinweise werden immer zum passenden Zug angezeigt.
- * 
+ *
  * @author tkra
- * 
+ *
  */
 public class DebugHint implements Cloneable {
 
@@ -29,7 +29,7 @@ public class DebugHint implements Cloneable {
 
 	/**
 	 * einen neuen Hinweis der form key = value erstellen
-	 * 
+	 *
 	 * @param key
 	 *            string vor dem Gleichheitszeichen
 	 * @param value
@@ -50,7 +50,7 @@ public class DebugHint implements Cloneable {
 
 	/**
 	 * Gibt den Inhalt des Debughints zurück.
-	 * 
+	 *
 	 * @return den Inhalt
 	 */
 	public String getContent() {
@@ -59,7 +59,7 @@ public class DebugHint implements Cloneable {
 
 	/**
 	 * ein neuen Hinweis mit beliebigem Inhalt erstellen
-	 * 
+	 *
 	 * @param content
 	 *            der Inhalt, der angezeigt werden soll
 	 */
@@ -69,7 +69,7 @@ public class DebugHint implements Cloneable {
 
 	/**
 	 * klont dieses Objekt
-	 * 
+	 *
 	 * @return ein neues Objekt mit gleichen Eigenschaften
 	 * @throws CloneNotSupportedException falls Objekt nicht geklont werden kann
 	 */
