@@ -461,7 +461,7 @@ public class GameState implements Cloneable {
   /**
    * Liefert eine Liste aller aktuell erlaubten Teilzuege eines Spielers.
    * @param player Spieler für den die Aktionen sind.
-   * @param movement Die Anzahl der Bewegungspunkte, die höchstens verwendet werden sollen (sollte kleiner als player.speed sein)
+   * @param movement Die Anzahl der Bewegungspunkte, die höchstens verwendet werden sollen (sollte kleiner oder gleich player.speed sein)
    * @param coal Anzahl der für die Aktion verbrauchten Kohleeinheiten.
    * @param acceleration Gibt an, ob Beschleunigungszüge möglich sein sollen
    * @param freeTurn ist eine freie Drehung verfügbar
@@ -469,17 +469,21 @@ public class GameState implements Cloneable {
    */
   public List<Action> getPossibleActions(Player player, int movement, int coal, boolean acceleration, boolean freeTurn) { //TODO Test schreiben
     List<Action> actions = new ArrayList<Action>();
-    actions.addAll(getPossibleMovesInDirection(player, movement, player.getDirection(), coal));
-    actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal));
-    actions.addAll(getPossiblePushs(player, movement));
-    if(acceleration) {
-      actions.addAll(getPossibleAccelerations(player, coal));
+    Player otherPlayer = player.getPlayerColor().opponent() == PlayerColor.RED ? red : blue;
+    if(player.getX() == otherPlayer.getX() && player.getY() == otherPlayer.getY()) {
+      actions.addAll(getPossiblePushs(player, movement));
+    } else {
+      actions.addAll(getPossibleMovesInDirection(player, movement, player.getDirection(), coal));
+      actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal));
+      if(acceleration) {
+        actions.addAll(getPossibleAccelerations(player, coal));
+      }
     }
     return actions;
   }
 
   /**
-   * Liefert alle Becshleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
+   * Liefert alle Beschleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
    * @param player Spieler
    * @param coal Kohle die für Beschleunigung benötigt wird.
    * @return Liste aller Beschleunigungsaktionen
@@ -524,7 +528,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert alle Züge, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
+   * Liefert alle sinnvollen Drehaktionen, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
    * @param player Spieler
    * @param freeTurn Ist eine freie Drehung verfügbar?
    * @param coal maximal benötigte Kohleeinheiten
@@ -535,19 +539,20 @@ public class GameState implements Cloneable {
     if(player.getField(board).getType() == FieldType.SANDBANK) {
       return turns;
     }
-    int start = freeTurn ? 2 : 1;
-    for(int i = 0; i <= coal; i++) {
-      turns.add(new Turn(start + i));
-      turns.add(new Turn(-start - i));
+    int freeTurns = freeTurn ? 2 : 1;
+    int maxTurn = Math.min(3, coal + freeTurns);
+    for(int i = 1; i <= maxTurn; i++) {
+      turns.add(new Turn(i));
+      turns.add(new Turn(-i));
     }
     return turns;
   }
 
   /**
-   * Gibt alle Bewegungsaktionn zurück, die in die Richtung des Spielers
+   * Gibt alle Bewegungsaktionen des Spielers zurück, die in die gegebene Richtung
    * mit einer festen Anzahl von Bewegungspunkten möglich sind.
    * @param player Spieler
-   * @param movement Anzahl
+   * @param movement Geschwindigkeit
    * @param direction Richtung
    * @param coal Kohleeinheite die zur Verfügung stehen
    * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
@@ -558,10 +563,13 @@ public class GameState implements Cloneable {
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
     if(start.getType() == FieldType.SANDBANK && movement > 0) {
-      if(start.getFieldInDirection(direction.getOpposite(), this.board).isPassable()) {
+
+      Field fieldBehind = start.getFieldInDirection(direction.getOpposite(), this.board);
+      if(fieldBehind != null && fieldBehind.isPassable()) {
         step.add(new Advance(-1));
       }
-      if(coal > 0 || start.getFieldInDirection(direction, this.board).isPassable()) {
+      Field fieldInFront = start.getFieldInDirection(direction, this.board);
+      if(fieldInFront != null && fieldInFront.isPassable()) {
         step.add(new Advance(1));
       }
       return step;
