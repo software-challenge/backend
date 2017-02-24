@@ -10,27 +10,27 @@ public enum FieldType {
 	 */
 	BLOCKED,
 	/**
-	 * Passagierfeld mit Anleger in Richtung 0
+	 * Passagierfeld mit Anleger in Richtung 0 (rechts)
 	 */
 	PASSENGER0,
 	/**
-   * Passagierfeld mit Anleger in Richtung 1
+   * Passagierfeld mit Anleger in Richtung 1 (oben rechts)
    */
   PASSENGER1,
   /**
-   * Passagierfeld mit Anleger in Richtung 2
+   * Passagierfeld mit Anleger in Richtung 2 (oben links)
    */
   PASSENGER2,
   /**
-   * Passagierfeld mit Anleger in Richtung 3
+   * Passagierfeld mit Anleger in Richtung 3 (links)
    */
   PASSENGER3,
   /**
-   * Passagierfeld mit Anleger in Richtung 4
+   * Passagierfeld mit Anleger in Richtung 4 (unten links)
    */
   PASSENGER4,
   /**
-   * Passagierfeld mit Anleger in Richtung 5
+   * Passagierfeld mit Anleger in Richtung 5 (unten rechts)
    */
   PASSENGER5,
 	/**
@@ -42,7 +42,7 @@ public enum FieldType {
    */
   SANDBANK,
   /**
-   * Ein Feld mit einem Baumstamm, der weggerammt werden muss um es zu passieren
+   * Ein Feld mit einem Baumstamm, der weggerammt werden muss, um es zu passieren
    */
   LOG;
 

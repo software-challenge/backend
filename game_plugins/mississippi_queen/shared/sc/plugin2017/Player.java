@@ -9,20 +9,21 @@ import sc.plugin2017.util.Constants;
 
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.
- * Beeinhaltet auch Informationen zum Punktekonto,
+ * Beinhaltet auch Informationen zum Punktekonto,
  * Position des Schiffes, sowie Attribute des Schiffes
  */
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
 	/**
-	 * Spielerfarbe des Spielers
+	 * Farbe des Spielers
 	 */
 	@XStreamAsAttribute
 	private PlayerColor color;
 
 	 /**
-   * aktuelle laenge der laengsten Leitung des Spielers
+   * aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
+   * und der Anzahl der eingesammelten Passagiere
    */
   @XStreamAsAttribute
   private int points;
@@ -40,7 +41,7 @@ public class Player extends SimplePlayer implements Cloneable {
   private int y;
 
   /**
-   * Richtung in die das Schiff ausgerichtet ist.
+   * Richtung, in die das Schiff ausgerichtet ist.
    */
   @XStreamAsAttribute
   private Direction direction;
@@ -58,7 +59,7 @@ public class Player extends SimplePlayer implements Cloneable {
   private int coal;
 
   /**
-   * Spielsegment auf dem sich das Schiff des Spielers befindet
+   * Spielsegment, auf dem sich das Schiff des Spielers befindet
    */
   @XStreamAsAttribute
   private int tile;
@@ -119,6 +120,25 @@ public class Player extends SimplePlayer implements Cloneable {
    */
   public Player() {
     points = 0;
+  }
+
+  /**
+   * Erstellt einen neuen Spieler mit denselben Eigenschaften wie der uebergebene
+   * Spieler. Fuer eigene Implementierungen.
+   */
+  public Player(Player playerToClone) {
+    setPoints(playerToClone.getPoints());
+    setX(playerToClone.getX());
+    setY(playerToClone.getY());
+    setDirection(playerToClone.getDirection());
+    setSpeed(playerToClone.getSpeed());
+    setCoal(playerToClone.getCoal());
+    setTile(playerToClone.getTile());
+    setPassenger(playerToClone.getPassenger());
+    setMovement(playerToClone.getMovement());
+    setFreeTurns(playerToClone.getFreeTurns());
+    setFreeAcc(playerToClone.getFreeAcc());
+		setDisplayName(playerToClone.getDisplayName());
   }
 
 	/**
@@ -210,7 +230,7 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Richtung in die das Schiff ausgerichtet ist.
+   * Richtung, in die das Schiff ausgerichtet ist.
    *
    * @return Die Richtung
    */
@@ -251,7 +271,7 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Liefert das Spielsegment auf dem sich das Schiff des Spielers gerade befindet.
+   * Liefert das Spielsegment, auf dem sich das Schiff des Spielers gerade befindet.
    * @return Segmentnummer
    */
   public int getTile() {
@@ -263,7 +283,7 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Liefert die Anzahl der Passagiere, die der Spierl bisher eingesammelt hat
+   * Liefert die Anzahl der Passagiere, die der Spieler bisher eingesammelt hat
    * @return Anzahl der Passagiere
    */
   public int getPassenger() {
