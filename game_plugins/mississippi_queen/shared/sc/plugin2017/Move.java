@@ -154,6 +154,15 @@ public class Move implements Cloneable {
    * <li>freeAccs muss auf 1 gesetzt werden
    * <li>movement (die Bewegungspunkte) müssen auf speed (die Geschwindigkeit des Spielers) gesetzt werden
    * </ul>
+   * Also zum Beispiel:
+   * <pre>
+   * {@code
+   * // Setze die für perform benötigen Attribute
+   * currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
+   * currentPlayer.setFreeAcc(1);
+   * currentPlayer.setMovement(currentPlayer.getSpeed());
+   * }
+   * </pre>
    * Serverseitig ist dies nicht nötig, da entsprechende Werte von prepareNextTurn gesetzt werden.
    *
    * @param state
