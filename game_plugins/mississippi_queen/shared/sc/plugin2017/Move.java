@@ -147,7 +147,14 @@ public class Move implements Cloneable {
 
   /**
    * Fuehrt diesen Zug auf den uebergebenen Spielstatus aus, mit uebergebenem
-   * Spieler.
+   * Spieler. Wird diese Methode vom Client genutzt ist folgendes nötig, damit
+   * sie wie auf dem Selver arbeiten kann:
+   * <ul>
+   * <li>freeTurns (des Spielers) muss anhand von dem aktuellen freeTurns im GameState gesetzt werden
+   * <li>freeAccs muss auf 1 gesetzt werden
+   * <li>movement (die Bewegungspunkte) müssen auf speed (die Geschwindigkeit des Spielers) gesetzt werden
+   * </ul>
+   * Serverseitig ist dies nicht nötig, da entsprechende Werte von prepareNextTurn gesetzt werden.
    *
    * @param state
    *          Spielstatus
