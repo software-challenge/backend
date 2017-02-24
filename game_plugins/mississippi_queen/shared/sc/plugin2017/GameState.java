@@ -408,9 +408,12 @@ public class GameState implements Cloneable {
    * aktualisiert:
    * <ul>
    * <li>Zugzahl
-   * <li>Welcher Spieler an der Reihe ist
-   * <li>Was der letzte Zug war
-   * <li>die Punkte der Spieler
+   * <li>Welcher Spieler an der Reihe ist (currentPlayer)
+   * <li>Was der letzte Zug war (lastMove)
+   * <li>die Punkte der Spieler (points)
+   * <li>die Bewegungspunkte der Spieler (movement)
+   * <li>die freien Drehungen (freeTurns) sowohl im GameState als auch von den Spielern
+   * <li>die freien Beschleunigungen (freeAccs)
    * </ul>
    *
    * @param lastMove
