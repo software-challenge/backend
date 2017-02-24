@@ -24,7 +24,7 @@ public class Field implements Comparable<Field>{
 
 
   /**
-   * Punkte die ein Feld bringt anhand seiner Position
+   * Punkte, die ein Feld anhand seiner Position bringt
    */
   @XStreamAsAttribute
   private final int points;
@@ -115,6 +115,12 @@ public class Field implements Comparable<Field>{
     return this.points;
   }
 
+  /**
+   * Gibt das Feld zurück, welches auf dem Spielbrett in der gegebenen Richtung liegt
+   * @param direction die gegebene Richtung
+   * @param board das Spielbrett
+   * @return das Feld in der Richtung
+   */
   public Field getFieldInDirection(Direction direction, Board board) {
     return _getFieldInDirection(direction, board, true);
   }
@@ -163,7 +169,7 @@ public class Field implements Comparable<Field>{
   }
 
   /**
-   * Ist das Feld passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
+   * Ist dieses Feld passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
    * @return Wahr, falls Feld theoretisch passierbar
    */
   public boolean isPassable() {
@@ -175,18 +181,18 @@ public class Field implements Comparable<Field>{
   }
 
   /**
-   * Ist das Feldtyp passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
+   * Ist der Feldtyp passierbar (also entweder Wasser, Sandbank oder Baumstammfeld)?
    * @param type Feldtyp
-   * @return Wahr, falls Feld theoretisch passierbar
+   * @return Wahr, falls Feldtyp theoretisch passierbar
    */
   public static boolean isPassable(FieldType type) {
     return type == FieldType.WATER || type == FieldType.LOG || type == FieldType.SANDBANK || type == FieldType.GOAL;
   }
 
   /**
-   * Ist das Feldtyp ein Passierfeldtyp?
+   * Ist der Feldtyp ein Passierfeldtyp?
    * @param type Feldtyp
-   * @return Wahr, falls Feld Passagierfeld
+   * @return Wahr, falls Feldtyp Passagierfeldtyp
    */
   public static boolean isPassengerField(FieldType type) {
     return type == FieldType.PASSENGER0 ||
