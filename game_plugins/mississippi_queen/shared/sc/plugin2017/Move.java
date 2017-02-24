@@ -54,7 +54,7 @@ public class Move implements Cloneable {
 
   /**
    * Erzeugt einen neuen Zug aus Liste von Aktionen
-   * 
+   *
    * @param selectedActions
    *          Aktionen des Zuges
    */
@@ -243,7 +243,7 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Vergleichsmethode fuer einen Zuege Zwei Züge sind gleich, wenn sie die
+   * Vergleichsmethode fuer einen Zug. Zwei Züge sind gleich, wenn sie die
    * gleichen Teilaktionen beinhalten
    */
   @Override

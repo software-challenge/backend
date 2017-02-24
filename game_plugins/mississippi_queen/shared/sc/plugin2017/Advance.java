@@ -21,7 +21,7 @@ public class Advance extends Action {
   @XStreamAsAttribute
   public int distance;
   /**
-   * Das fahren auf eine Sandbank beendet den Zug
+   * Das Fahren auf eine Sandbank beendet den Zug
    */
   @XStreamOmitField
   protected boolean endsTurn;
@@ -33,7 +33,7 @@ public class Advance extends Action {
 
   /**
    * Legt eine neue Laufaktion an
-   * @param distance Felder die überwunden werden
+   * @param distance Felder, die überwunden werden
    */
   public Advance(int distance) {
     this.distance = distance;
@@ -42,8 +42,9 @@ public class Advance extends Action {
 
   /**
    * Legt eine neue Laufaktion an
-   * @param distance Felder die überwunden werden
-   * @param order Reihenfolge
+   * @param distance Felder, die überwunden werden
+   * @param order Nummer der Aktion. Aktionen werden aufsteigend sortiert nach
+   *              ihrer Nummer ausgeführt.
    */
   public Advance(int distance, int order) {
     this.distance = distance;
