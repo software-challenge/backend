@@ -10,9 +10,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
  * Dies ermoeglich das schnellere Debuggen von Clients und besseres
  * Konfigurieren von Strategien, denn es muessen keine Konsolenausgaben gesucht
  * werden und die Hinweise werden immer zum passenden Zug angezeigt.
- *
- * @author tkra
- *
  */
 public class DebugHint implements Cloneable {
 

@@ -239,8 +239,10 @@ public class Board {
   }
 
   /**
-   * Gibt eine Liste der sichtbaren Segmente des Spielbretts zurück.
-   * Dabei entsprechen die Indizes der Liste NICHT den Nummern der Segmente.
+   * Gibt eine Liste der sichtbaren Segmente des Spielbretts zurück. Dabei
+   * entsprechen die Indizes der Liste NICHT den Nummern der Segmente. Die
+   * Nummer des Segmentes kann über die Methode {@link Tile#getIndex()} des
+   * Tile-Objektes abgefragt werden.
    * @return fields
    */
   public ArrayList<Tile> getTiles() {

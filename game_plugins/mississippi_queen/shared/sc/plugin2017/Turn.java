@@ -30,7 +30,8 @@ public class Turn extends Action {
   /**
    * Legt einen neuen Drehzug an
    * @param direction Wert, um wie viel gedreht wird
-   * @param order Nummer der Aktion
+   * @param order Nummer der Aktion. Aktionen werden aufsteigend sortiert nach
+   *              ihrer Nummer ausgeführt.
    */
   public Turn(int direction, int order) {
     this.direction = direction;

@@ -43,7 +43,8 @@ public class Advance extends Action {
   /**
    * Legt eine neue Laufaktion an
    * @param distance Felder, die überwunden werden
-   * @param order Nummer der Aktion
+   * @param order Nummer der Aktion. Aktionen werden aufsteigend sortiert nach
+   *              ihrer Nummer ausgeführt.
    */
   public Advance(int distance, int order) {
     this.distance = distance;
