@@ -9,8 +9,8 @@ import sc.plugin2017.util.InvalidMoveException;
 public abstract class Action implements Comparable<Action> {
 
   /**
-   * Zeigt an welche Nummer die Aktion hat. Die Aktion eines Zuges mit der
-   * niedrigsten Nummer wird als erstes ausgeführt.
+   * Nummer der Aktion. Aktionen werden aufsteigend sortiert nach ihrer Nummer
+   * ausgeführt.
    */
   @XStreamAsAttribute
   public int order;

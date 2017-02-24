@@ -54,7 +54,7 @@ public class Move implements Cloneable {
 
   /**
    * Erzeugt einen neuen Zug aus Liste von Aktionen
-   * 
+   *
    * @param selectedActions
    *          Aktionen des Zuges
    */
@@ -147,7 +147,23 @@ public class Move implements Cloneable {
 
   /**
    * Fuehrt diesen Zug auf den uebergebenen Spielstatus aus, mit uebergebenem
-   * Spieler.
+   * Spieler. Wird diese Methode vom Client genutzt ist folgendes nötig, damit
+   * sie wie auf dem Selver arbeiten kann:
+   * <ul>
+   * <li>freeTurns (des Spielers) muss anhand von dem aktuellen freeTurns im GameState gesetzt werden
+   * <li>freeAccs muss auf 1 gesetzt werden
+   * <li>movement (die Bewegungspunkte) müssen auf speed (die Geschwindigkeit des Spielers) gesetzt werden
+   * </ul>
+   * Also zum Beispiel:
+   * <pre>
+   * {@code
+   * // Setze die für perform benötigen Attribute
+   * currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
+   * currentPlayer.setFreeAcc(1);
+   * currentPlayer.setMovement(currentPlayer.getSpeed());
+   * }
+   * </pre>
+   * Serverseitig ist dies nicht nötig, da entsprechende Werte von prepareNextTurn gesetzt werden.
    *
    * @param state
    *          Spielstatus
@@ -227,7 +243,7 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Vergleichsmethode fuer einen Zuege Zwei Züge sind gleich, wenn sie die
+   * Vergleichsmethode fuer einen Zug. Zwei Züge sind gleich, wenn sie die
    * gleichen Teilaktionen beinhalten
    */
   @Override
