@@ -30,7 +30,7 @@ public class Acceleration extends Action {
   /**
    * Legt eine neue Beschleunigungaktion an
    * @param acc Wert, um den beschleunigt wird
-   * @param order Nummer der Aktion
+   * @param order Nummer der Aktion. Aktionen werden aufsteigend sortiert nach ihrer Nummer ausgeführt.
    */
   public Acceleration(int acc, int order) {
     this.acc = acc;
