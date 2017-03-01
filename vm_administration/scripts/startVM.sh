@@ -18,6 +18,8 @@ else
 fi
 CLIENT_ZIP="$1"
 
+VMMAIN=192.168.56.2
+
 # ----------------------------------------------------------------------
 # main
 #
@@ -83,7 +85,8 @@ VM_BOOTED=0
 CONSUMER_SSH_PID=0
 
 SSH_KEY=/home/vbox/.ssh/id_rsa
-SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l scadmin -i $SSH_KEY"
+# NOTE that -l is illegal for scp, don't specify it here. All options have to be valid for scp and ssh!
+SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY"
 echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
@@ -100,7 +103,7 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
   if ([ $VM_BOOTED -eq 0 ]); then
     echo "VM not booted yet, trying to connect"
-    ssh $SSH_OPTIONS $VMIP exit
+    ssh $SSH_OPTIONS scadmin@$VMIP exit
     # the exit code of ssh is only 0 when a connection was successful
     if [ $? -eq 0 ]; then VM_BOOTED=1; fi
   fi
@@ -108,11 +111,11 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
     echo "VM booted, copying client file"
     set -x # echo commands as they are executed
     TEMP_ZIP_NAME=client-for-$VMIP.zip
-    scp $SSH_OPTIONS 192.168.56.2:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
-    scp $SSH_OPTIONS ./$TEMP_ZIP_NAME $VMIP:/home/clientexec/client/client.zip
-    ssh $SSH_OPTIONS 192.168.56.2 rm "$CLIENT_ZIP"
+    scp $SSH_OPTIONS scadmin@$VMMAIN:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
+    scp $SSH_OPTIONS ./$TEMP_ZIP_NAME scadmin@$VMIP:/home/clientexec/client/client.zip
+    ssh $SSH_OPTIONS scadmin@$VMMAIN rm "$CLIENT_ZIP"
     echo "Starting client..."
-    ssh $SSH_OPTIONS $VMIP sudo /bin/bash /home/scadmin/consume.sh &
+    ssh $SSH_OPTIONS scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
     set +x # no more echo commands as they are executed
     CONSUMER_SSH_PID=$!
     VM_BOOTED=2
@@ -147,7 +150,7 @@ then
     TRIES=0
     while [[ $TRIES -lt 5 ]]; do
         echo "Copying from $VMIP"
-        `ssh -q -l scadmin 134.245.253.5 ./getLog.sh $VMIP $VMNAME`
+        ssh $SSH_OPTIONS scadmin@$VMMAIN ./getLog.sh $VMIP $VMNAME
         if [ $? -eq 0 ]; then
             echo "Successfully copied log"
             break
