@@ -41,7 +41,7 @@ then
   echo "We should use the new VM!"
   echo $CLIENT_ZIP
   echo "Creating vm clone"
-  VBoxManage clonevm vmclient14.04 --snapshot snap6 --options link --name $VMNAME --register
+  VBoxManage clonevm vmclient14.04 --snapshot snap7 --options link --name $VMNAME --register
 else
   echo "We should use the old VM!"
   echo $CLIENT_ZIP
@@ -82,7 +82,8 @@ VM_BOOTED=0
 
 CONSUMER_SSH_PID=0
 
-SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l scadmin"
+SSH_KEY=/home/vbox/.ssh/id_rsa
+SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -l scadmin -i $SSH_KEY"
 echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
 while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
@@ -105,12 +106,14 @@ while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
   fi
   if ([ $VM_BOOTED -eq 1 ]); then
     echo "VM booted, copying client file"
-    echo "executing scp scadmin@192.168.56.2:$CLIENT_ZIP scadmin@$VMIP:/home/clientexec/client/client.zip..."
-    ssh scadmin@192.168.56.2 scp -i /home/scadmin/.ssh/client_key -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$CLIENT_ZIP" scadmin@$VMIP:/home/clientexec/client/client.zip
-    echo "executing ssh -l scadmin 192.168.56.2 rm $CLIENT_ZIP..."
+    set -x # echo commands as they are executed
+    TEMP_ZIP_NAME=client-for-$VMIP.zip
+    scp $SSH_OPTIONS 192.168.56.2:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
+    scp $SSH_OPTIONS ./$TEMP_ZIP_NAME $VMIP:/home/clientexec/client/client.zip
     ssh $SSH_OPTIONS 192.168.56.2 rm "$CLIENT_ZIP"
     echo "Starting client..."
-    ssh -i /home/vbox/.ssh/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
+    ssh $SSH_OPTIONS $VMIP sudo /bin/bash /home/scadmin/consume.sh &
+    set +x # no more echo commands as they are executed
     CONSUMER_SSH_PID=$!
     VM_BOOTED=2
   fi
