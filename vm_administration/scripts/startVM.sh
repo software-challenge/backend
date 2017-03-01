@@ -136,6 +136,7 @@ done
 
 if [ $VMTIME -ge $CLIENT_TIMEOUT ]; then
   echo "Timeout reached! Shutting down! (This indicates that something went wrong!)"
+  echo "$HOME/log/vmclient/$DATEDIR/$VMNAME.log" >> $HOME/log/vmclient/vm_startup_failures.log
 fi
 
 sleep 5
