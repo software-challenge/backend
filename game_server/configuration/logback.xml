@@ -55,6 +55,7 @@
  
   
   <logger name="sc.player2017.LogicFactory" level="DEBUG" />
+  
   -->
   <logger name="sc.server.network.Client" level="DEBUG" /> 
   <logger name="sc.networking.clients.XStreamClient" level="ERROR" />

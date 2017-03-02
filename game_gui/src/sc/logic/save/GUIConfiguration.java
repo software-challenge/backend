@@ -16,7 +16,7 @@ import sc.SoftwareChallengeGUI;
 
 public class GUIConfiguration implements Serializable {
 
-	private static final Logger					logger					= LoggerFactory
+	private static final Logger	logger = LoggerFactory
 			.getLogger(GUIConfiguration.class);
 	
 	private static final long serialVersionUID = -4635852675167221186L;
@@ -115,7 +115,6 @@ public class GUIConfiguration implements Serializable {
 			in = new ObjectInputStream(new FileInputStream(CONFIG_FILENAME));
 			result = (GUIConfiguration) in.readObject();
 			logger.debug("Loaded GUI Configuration");
-			//System.out.println("Loaded GUI Configuration");
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -149,15 +148,12 @@ public class GUIConfiguration implements Serializable {
 			out = new ObjectOutputStream(new FileOutputStream(CONFIG_FILENAME));
 			out.writeObject(this);
 			logger.debug("Saved Configuration");
-			//System.out.println("Saved Configuration");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			logger.warn("Could not save configuration");
-			//System.out.println("Could not save configuration");
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.warn("Could not save configuration");
-			//System.out.println("Could not save configuration");
 		} finally {
 			if (null != out) {
 				try {

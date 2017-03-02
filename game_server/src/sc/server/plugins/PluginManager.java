@@ -48,7 +48,6 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 			for (Class<?> definition : findEntryPointsInJar(jarURI))
 			{
 				logger.debug("Loading: {}", definition.getAnnotation(PluginDescriptor.class).name());
-				//System.out.println("Loading: " + definition.getAnnotation(PluginDescriptor.class).name());
 				this.availablePlugins.add(createPluginInstance(definition, jarURI));
 			}
 		}
