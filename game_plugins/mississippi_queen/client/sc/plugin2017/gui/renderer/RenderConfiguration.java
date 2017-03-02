@@ -10,12 +10,18 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author felix
  *
  */
 public class RenderConfiguration {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(RenderConfiguration.class);
+	
 	/**
 	 * The path where the Config is saved
 	 */
@@ -55,7 +61,7 @@ public class RenderConfiguration {
 			fileStream.flush();
 			outStream.close();
 		} catch (IOException e) {
-			System.out.println("RenderConfiguration.saveSettings() - IOException");
+			logger.warn("RenderConfiguration.saveSettings() - IOException");
 		} finally {
 			try {
 				if (fileStream != null) {
