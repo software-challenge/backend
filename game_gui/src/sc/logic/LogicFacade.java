@@ -28,7 +28,7 @@ import sc.server.Lobby;
 
 public class LogicFacade {
 
-	private static final Logger					logger					= LoggerFactory
+	private static final Logger	logger = LoggerFactory
 			.getLogger(SoftwareChallengeGUI.class);
 	/**
 	 * Folder of all language files
@@ -140,7 +140,6 @@ public class LogicFacade {
 		}
 		server = Application.startServer(port);
 		logger.debug("Server started on {}",port);
-		//System.out.println("Server started on " + port);
 	}
 
 	/**
@@ -151,7 +150,7 @@ public class LogicFacade {
 			server.close();
 			server = null;
 		}
-		System.out.println("Server stopped.");
+		logger.debug("Server stopped.");
 	}
 
 	public void unloadPlugins() {
@@ -184,7 +183,6 @@ public class LogicFacade {
 			GUIPluginInstance pluginInstance = plugins.get(i);
 			if (pluginInstance.getPlugin().getPluginYear() > last) {
 				logger.debug("Show plugin: {}",pluginInstance.getDescription().name());
-				System.out.println("Show plugin: " + pluginInstance.getDescription().name());
 				result.add(pluginInstance.getDescription().name());
 			}
 		}

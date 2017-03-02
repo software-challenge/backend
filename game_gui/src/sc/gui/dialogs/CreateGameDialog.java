@@ -88,7 +88,7 @@ public class CreateGameDialog extends JDialog {
 	private final Properties lang;
 	private final IGUIApplication root;
 	
-	private static final Logger					logger					= LoggerFactory
+	private static final Logger	logger = LoggerFactory
 			.getLogger(CreateGameDialog.class);
 
 	private JPanel pnlTable;
@@ -392,7 +392,6 @@ public class CreateGameDialog extends JDialog {
 		}
 
 		logger.info("Dialog settings saved");
-		// System.out.println("Dialog settings saved.");
 		// dispose dialog
 		dispose();
 	}
@@ -692,7 +691,6 @@ public class CreateGameDialog extends JDialog {
 			@Override
 			public void onGameEnded(GameResult result, String gameResultString) {
 				logger.debug("Game ended.");
-				//System.out.println("Game ended.");
 
 				presFac.getLogicFacade().stopServer();
 				presFac.getLogicFacade().setGameActive(false);

@@ -47,7 +47,7 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 	 * The presentation facade to be used
 	 */
 	private final PresentationFacade presFac;
-	private static final Logger					logger					= LoggerFactory
+	private static final Logger	logger = LoggerFactory
 			.getLogger(SoftwareChallengeGUI.class);
 
 	/**
@@ -210,7 +210,6 @@ public class SoftwareChallengeGUI extends JFrame implements IGUIApplication {
 				gui.setVisible(true);
 				if (GUIConfiguration.startMaximized) {
 					logger.debug("Start maximized");
-					//System.out.println("Start maximized");
 					gui.setExtendedState(Frame.MAXIMIZED_BOTH);
 				}
 			}

@@ -23,7 +23,7 @@ public enum LogicFactory {
 	DEFAULT(RandomLogic.class);
 
 	private Class<? extends IGameHandler> logic;
-	private static final Logger					logger					= LoggerFactory
+	private static final Logger	logger = LoggerFactory
 			.getLogger(LogicFactory.class);
 
 	private LogicFactory(Class<? extends IGameHandler> chosenLogic) {
@@ -42,7 +42,6 @@ public enum LogicFactory {
 	 */
 	public IGameHandler getInstance(AbstractClient client) throws Exception {
 		logger.debug("Erzeuge Instanz von: {}", name());
-		System.out.println("Erzeuge Instanz von: " + name());
 		return (IGameHandler) logic.getConstructor(client.getClass())
 				.newInstance(client);
 	}

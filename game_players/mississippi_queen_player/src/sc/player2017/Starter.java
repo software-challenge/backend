@@ -20,7 +20,7 @@ import sc.shared.SharedConfiguration;
  */
 public class Starter extends AbstractClient {
 
-	private static final Logger					logger					= LoggerFactory
+	private static final Logger	logger = LoggerFactory
 			.getLogger(Starter.class);
 	
 	public Starter(String host, int port, String reservation, String strategy)
