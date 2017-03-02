@@ -260,6 +260,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
       color = gameState.getCurrentPlayer().getPlayerColor();
     }
     this.handler.gameEnded(data, color, errorMessage);
+
   }
 
   private void notifyOnNewTurn() {
@@ -303,7 +304,13 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
 
       this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
 
-      if (this.conGame.isGameOver() && this.conGame.isAtEnd()) {
+      // If the following conditional is checked, some problem might occurre for replays:
+      // isGameOver is always true for replays.
+      // isAtEnd might be set at the beginning of a game, because the currentGameState is the last 
+      // GameState in the gameStateQueue. If this happens the result is always null (the result should 
+      // only be null in an error case, these are handled separatly), so the result has to be checked,
+      // whether the game has truly ended.
+      if (this.conGame.isGameOver() && this.conGame.isAtEnd() && this.conGame.getResult() != null) {
         logger.debug("game is over, notifying listeners");
         notifyOnGameEnded(sender, this.conGame.getResult());
       } else {

@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sc.plugin2017.util.InvalidMoveException;
-import sc.plugin2017.GameState;
 
 public class MoveTest {
 
@@ -66,6 +65,7 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     red.setDirection(Direction.UP_RIGHT);
     red.setSpeed(2);
+    red.setMovement(2);
 
     Move move = new Move();
     Action action = new Advance(2);
@@ -89,6 +89,7 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(Direction.UP_RIGHT);
     red.setDirection(Direction.DOWN_RIGHT);
+    red.setSpeed(1);
     red.setMovement(1);
 
     Move move = new Move();
@@ -114,6 +115,7 @@ public class MoveTest {
     blue.setDirection(Direction.UP_RIGHT);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(1);
+    red.setMovement(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(1, 0));
@@ -142,6 +144,7 @@ public class MoveTest {
     blue.setDirection(Direction.UP_RIGHT);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
+    red.setMovement(2);
 
     Move move = new Move();
     move.actions.add(new Advance(2, 1));
@@ -164,6 +167,7 @@ public class MoveTest {
     blue.setDirection(Direction.UP_RIGHT);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
+    red.setMovement(2);
 
     Move move = new Move();
     move.actions.add(new Advance(2, 1));
@@ -186,8 +190,10 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(Direction.UP_RIGHT);
     blue.setSpeed(3);
+    blue.setMovement(3);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(1);
+    red.setMovement(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(2, 0));
@@ -214,8 +220,10 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(Direction.UP_RIGHT);
     blue.setSpeed(1);
+    blue.setMovement(1);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(1);
+    red.setMovement(1);
 
     Move move = new Move();
     move.actions.add(new Acceleration(2, 0));
@@ -241,8 +249,10 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     blue.setDirection(Direction.UP_RIGHT);
+    blue.setSpeed(3);
     blue.setMovement(3);
     red.setDirection(Direction.RIGHT);
+    red.setSpeed(1);
     red.setMovement(1);
 
     Move move = new Move();
@@ -270,6 +280,7 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
+    red.setMovement(2);
     red.setCoal(6);
 
     Move move = new Move();
@@ -303,7 +314,7 @@ public class MoveTest {
       }
     }
   }
-  
+
   @Test
   public void freeTurnsAfterOvertakeWithPush() throws InvalidMoveException {
     // When executing a push action while overtaking, the freeTurn for the opponent player
@@ -319,9 +330,11 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(2);
+    red.setMovement(2);
     red.setCoal(6);
     blue.setDirection(Direction.RIGHT);
     blue.setSpeed(2);
+    blue.setMovement(2);
     blue.setCoal(6);
     Move move = new Move();
     move.actions.add(new Turn(1, 0));
@@ -351,7 +364,7 @@ public class MoveTest {
     // red got pushed and should have 2 free turns
     assertEquals(6, red.getCoal());
   }
-  
+
   @Test
   public void freeTurnsAfterOvertake() throws InvalidMoveException {
     // When  overtaking, the freeTurns of player should be set back to 1
@@ -366,9 +379,11 @@ public class MoveTest {
     TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
     red.setDirection(Direction.RIGHT);
     red.setSpeed(1);
+    red.setMovement(1);
     red.setCoal(6);
     blue.setDirection(Direction.RIGHT);
     blue.setSpeed(2);
+    blue.setMovement(2);
     blue.setCoal(6);
     Move move = new Move();
     move.actions.add(new Advance(1, 0));

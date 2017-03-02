@@ -18,7 +18,11 @@ public class Move implements Cloneable {
 
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
   /**
-   * Liste von Aktionen aus denen der Zug besteht
+   * Liste von Aktionen aus denen der Zug besteht. Die Reihenfolge, in der die
+   * Aktionen ausgeführt werden, wird NICHT durch die Reihenfolge in der Liste
+   * bestimmt, sondern durch die Werte im order-Attribut jedes Action objektes:
+   * Die Aktionen werden nach dem order-Attribut aufsteigend sortiert
+   * ausgeführt.
    */
   @XStreamImplicit
   public List<Action> actions;
@@ -32,7 +36,8 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe {@link DebugHint}
+   * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe
+   * {@link DebugHint}
    */
   @XStreamImplicit(itemFieldName = "hint")
   private List<DebugHint> hints;
@@ -49,7 +54,9 @@ public class Move implements Cloneable {
 
   /**
    * Erzeugt einen neuen Zug aus Liste von Aktionen
-   * @param selectedActions Aktionen des Zuges
+   *
+   * @param selectedActions
+   *          Aktionen des Zuges
    */
   public Move(List<Action> selectedActions) {
     assert selectedActions != null;
@@ -60,25 +67,26 @@ public class Move implements Cloneable {
    * erzeugt eine Deepcopy dieses Objektes
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
-   * @throws CloneNotSupportedException falls nicht geklont werden kann
+   * @throws CloneNotSupportedException
+   *           falls nicht geklont werden kann
    */
   @Override
   public Object clone() throws CloneNotSupportedException {
     List<Action> clonedActions = new CopyOnWriteArrayList<>();
     for (Action action : getActions()) {
-      if(action.getClass() == Acceleration.class) {
+      if (action.getClass() == Acceleration.class) {
         Acceleration clonedAction = ((Acceleration) action).clone();
         clonedActions.add(clonedAction);
       }
-      if(action.getClass() == Push.class) {
+      if (action.getClass() == Push.class) {
         Push clonedAction = ((Push) action).clone();
         clonedActions.add(clonedAction);
       }
-      if(action.getClass() == Advance.class) {
+      if (action.getClass() == Advance.class) {
         Advance clonedAction = ((Advance) action).clone();
         clonedActions.add(clonedAction);
       }
-      if(action.getClass() == Turn.class) {
+      if (action.getClass() == Turn.class) {
         Turn clonedAction = ((Turn) action).clone();
         clonedActions.add(clonedAction);
       }
@@ -90,9 +98,8 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Fuegt eine Debug-Hilfestellung hinzu.
-   * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
-   * Client einen Zug macht.
+   * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
+   * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
    * @param hint
    *          hinzuzufuegende Debug-Hilfestellung
@@ -106,9 +113,8 @@ public class Move implements Cloneable {
 
   /**
    *
-   * Fuegt eine Debug-Hilfestellung hinzu.
-   * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
-   * Client einen Zug macht.
+   * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
+   * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
    * @param key
    *          Schluessel
@@ -120,9 +126,8 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Fuegt eine Debug-Hilfestellung hinzu.
-   * Diese kann waehrend des Spieles vom Programmierer gelesen werden, wenn der
-   * Client einen Zug macht.
+   * Fuegt eine Debug-Hilfestellung hinzu. Diese kann waehrend des Spieles vom
+   * Programmierer gelesen werden, wenn der Client einen Zug macht.
    *
    * @param string
    *          Debug-Hilfestellung
@@ -142,53 +147,68 @@ public class Move implements Cloneable {
 
   /**
    * Fuehrt diesen Zug auf den uebergebenen Spielstatus aus, mit uebergebenem
-   * Spieler.
+   * Spieler. Wird diese Methode vom Client genutzt ist folgendes nötig, damit
+   * sie wie auf dem Selver arbeiten kann:
+   * <ul>
+   * <li>freeTurns (des Spielers) muss anhand von dem aktuellen freeTurns im GameState gesetzt werden
+   * <li>freeAccs muss auf 1 gesetzt werden
+   * <li>movement (die Bewegungspunkte) müssen auf speed (die Geschwindigkeit des Spielers) gesetzt werden
+   * </ul>
+   * Also zum Beispiel:
+   * <pre>
+   * {@code
+   * // Setze die für perform benötigen Attribute
+   * currentPlayer.setFreeTurns(gameState.isFreeTurn() ? 2 : 1);
+   * currentPlayer.setFreeAcc(1);
+   * currentPlayer.setMovement(currentPlayer.getSpeed());
+   * }
+   * </pre>
+   * Serverseitig ist dies nicht nötig, da entsprechende Werte von prepareNextTurn gesetzt werden.
    *
    * @param state
    *          Spielstatus
    * @param player
    *          ausfuehrender Spieler
    * @throws InvalidMoveException
-   *           geworfen, wenn der Zug ungueltig ist, also nicht ausfuehrbar
-   *           oder wenn der Zug unsinnig ist (Drehung um mehr als die Hälfte, Drehung oder Laufen um 0)
-   *           oder wenn die Aktionen im Zug nicht nach der Reihenfolge sortiert sind
+   *           geworfen, wenn der Zug ungueltig ist, also nicht ausfuehrbar oder
+   *           wenn der Zug unsinnig ist (Drehung um mehr als die Hälfte,
+   *           Drehung oder Laufen um 0) oder wenn die Aktionen im Zug nicht
+   *           nach der Reihenfolge sortiert sind
    */
   public void perform(GameState state, Player player) throws InvalidMoveException {
     orderActions();
     int order = 0;
     boolean onEnemy;
-    // make sure movement is set right:
-    player.setMovement(player.getSpeed());
 
-
-    if(getActions().isEmpty()) {
+    if (getActions().isEmpty()) {
       throw new InvalidMoveException("Der Zug enthält keine Aktionen");
     }
-    for(Action action : actions) {
-      onEnemy = player.getX() == state.getOtherPlayer().getX() &&
-          player.getY() == state.getOtherPlayer().getY();
-      if(onEnemy && action.getClass() != Push.class) {
-        throw new InvalidMoveException("Wenn du auf einem gegnerischen Schiff landest,"
-            + " muss darauf eine Abdrängaktion folgen.");
+    for (Action action : actions) {
+      onEnemy = player.getX() == state.getOtherPlayer().getX() && player.getY() == state.getOtherPlayer().getY();
+      if (onEnemy && action.getClass() != Push.class) {
+        throw new InvalidMoveException(
+            "Wenn du auf einem gegnerischen Schiff landest," + " muss darauf eine Abdrängaktion folgen.");
       }
       Action lastAction = null;
-      if(order > 0) {
+      if (order > 0) {
         lastAction = actions.get(action.order - 1);
 
       }
-      if(lastAction != null && lastAction.getClass() == Advance.class) {
-        if(((Advance) lastAction).endsTurn) {
+      if (lastAction != null && lastAction.getClass() == Advance.class) {
+        if (((Advance) lastAction).endsTurn) {
           throw new InvalidMoveException("Zug auf eine Sandbank muss letzte Aktion sein.");
         }
       }
-      if(action.getClass() == Turn.class) {
-        if(player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
+      if (action.getClass() == Turn.class) {
+        if (player.getField(state.getBoard()).getType() == FieldType.SANDBANK) {
           throw new InvalidMoveException("Du kannst nicht auf einer Sandbank drehen");
         }
-        ((Turn)action).perform(state, player); // count turns decreases freeTurns and reduces coal if necessary
-      } else if(action.getClass() == Acceleration.class) {
+        ((Turn) action).perform(state, player); // count turns decreases
+                                                // freeTurns and reduces coal if
+                                                // necessary
+      } else if (action.getClass() == Acceleration.class) {
         Acceleration acc = (Acceleration) action;
-        if(acc.order != 0) {
+        if (acc.order != 0) {
           throw new InvalidMoveException("Du kannst nur in der ersten Aktion beschleunigen.");
         }
         acc.perform(state, player); // coal is decreased in perform
@@ -197,44 +217,46 @@ public class Move implements Cloneable {
       }
       ++order;
     }
-    // when stepping onto the opponents field, the opponent has to be pushed away
+    // when stepping onto the opponents field, the opponent has to be pushed
+    // away
     if (player.getX() == state.getOtherPlayer().getX() && player.getY() == state.getOtherPlayer().getY()) {
       throw new InvalidMoveException("Der Zug darf nicht auf dem Gegner enden.");
     }
     // pick up passenger
-    if(player.getSpeed() == 1 && player.canPickupPassenger(state.getBoard())) {
+    if (player.getSpeed() == 1 && player.canPickupPassenger(state.getBoard())) {
       state.removePassenger(player);
     }
     // otherplayer could possible pick up Passenger in enemy turn
-    if(state.getOtherPlayer().getSpeed() == 1 && state.getOtherPlayer().canPickupPassenger(state.getBoard())) {
+    if (state.getOtherPlayer().getSpeed() == 1 && state.getOtherPlayer().canPickupPassenger(state.getBoard())) {
       state.removePassenger(state.getOtherPlayer());
     }
-    if(player.getCoal() < 0) {
+    if (player.getCoal() < 0) {
       throw new InvalidMoveException("Nicht genug Kohle für den Zug vorhanden.");
     }
-    if(player.getMovement() > 0) { // check whether movement points are left
+    if (player.getMovement() > 0) { // check whether movement points are left
       throw new InvalidMoveException("Es sind noch " + player.getMovement() + " Bewegungspunkte übrig.");
     }
-    if(player.getMovement() < 0) { // check whether movement points are left
-      throw new InvalidMoveException("Es sind " + Math.abs(player.getMovement()) + " Bewegungspunkte zuviel verbraucht worden.");
+    if (player.getMovement() < 0) { // check whether movement points are left
+      throw new InvalidMoveException(
+          "Es sind " + Math.abs(player.getMovement()) + " Bewegungspunkte zuviel verbraucht worden.");
     }
   }
 
   /**
-   * Vergleichsmethode fuer einen Zuege
-   * Zwei Züge sind gleich, wenn sie die gleichen Teilaktionen beinhalten
+   * Vergleichsmethode fuer einen Zug. Zwei Züge sind gleich, wenn sie die
+   * gleichen Teilaktionen beinhalten
    */
   @Override
   public boolean equals(Object o) {
-    if(o instanceof Move) {
+    if (o instanceof Move) {
       Move move = (Move) o;
-      for(Action action : move.getActions()) {
-        if(!this.actions.contains(action)) {
+      for (Action action : move.getActions()) {
+        if (!this.actions.contains(action)) {
           return false;
         }
       }
-      for(Action action : this.actions) {
-        if(!move.actions.contains(action)) {
+      for (Action action : this.actions) {
+        if (!move.actions.contains(action)) {
           return false;
         }
       }
@@ -245,7 +267,7 @@ public class Move implements Cloneable {
 
   public boolean containsPushAction() {
     for (Action action : getActions()) {
-      if(action.getClass() == Push.class) {
+      if (action.getClass() == Push.class) {
         return true;
       }
     }
@@ -256,13 +278,13 @@ public class Move implements Cloneable {
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
     for (Action action : getActions()) {
-      if(action.getClass() == Turn.class) {
+      if (action.getClass() == Turn.class) {
         toString += ((Turn) action).toString() + "\n";
-      } else if(action.getClass() == Acceleration.class){
+      } else if (action.getClass() == Acceleration.class) {
         toString += ((Acceleration) action).toString() + "\n";
-      } else if(action.getClass() == Advance.class){
+      } else if (action.getClass() == Advance.class) {
         toString += ((Advance) action).toString() + "\n";
-      } else if(action.getClass() == Push.class){
+      } else if (action.getClass() == Push.class) {
         toString += ((Push) action).toString() + "\n";
       }
     }

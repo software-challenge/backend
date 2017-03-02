@@ -15,11 +15,11 @@ import sc.framework.plugins.protocol.MoveRequest;
 
 public abstract class SimplePlayer implements IPlayer
 {
-	public static final Logger		logger		= LoggerFactory
-														.getLogger(SimplePlayer.class);
+	public static final Logger		logger			= LoggerFactory
+			.getLogger(SimplePlayer.class);
 
 	@XStreamOmitField
-	private List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
+	private List<IPlayerListener>	listeners;
 
 	@XStreamOmitField
 	private boolean					canTimeout;
@@ -29,13 +29,20 @@ public abstract class SimplePlayer implements IPlayer
 
 	@XStreamAsAttribute
 	private String					displayName;
+
+	@XStreamOmitField
+	protected boolean				violated		= false;
 	
 	@XStreamOmitField
-	protected boolean					violated = false;
-	
+	protected boolean				left		    = false;
+
 	@XStreamOmitField
-	protected String					violationReason = null;
-	
+	protected String				violationReason	= null;
+
+	public SimplePlayer()
+	{
+		initListeners();
+	}
 
 	public String getViolationReason()
 	{
@@ -112,12 +119,40 @@ public abstract class SimplePlayer implements IPlayer
 	{
 		return this.shouldBePaused;
 	}
-	
-	public void setViolated(boolean violated) {
+
+	@Override
+	public void setViolated(boolean violated)
+	{
 		this.violated = violated;
 	}
-	
-	public boolean hasViolated() {
+
+	@Override
+	public boolean hasViolated()
+	{
 		return this.violated;
+	}
+
+	@Override
+	public void setLeft(boolean left)
+	{
+		this.left = left;
+	}
+
+	@Override
+	public boolean hasLeft()
+	{
+		return this.left;
+	}
+	
+	/**
+	 * Initializes listeners, when they don't already exist. Only used for
+	 * playing on an imported state
+	 */
+	public void initListeners()
+	{
+		if (this.listeners == null)
+		{
+			this.listeners = new LinkedList<>();
+		}
 	}
 }

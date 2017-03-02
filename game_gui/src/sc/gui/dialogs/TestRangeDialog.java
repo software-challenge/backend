@@ -48,7 +48,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -239,6 +238,7 @@ public class TestRangeDialog extends JDialog {
 		createButtonsAtBottom();
 
 		createSaveReplayCheckboxGroup();
+
 		// -------------------------------------------
 		this.pnlBottomTop = new JPanel(new GridLayout());
 		this.pnlBottomTop.add(pnl_showLogLeft);
@@ -271,7 +271,6 @@ public class TestRangeDialog extends JDialog {
 		setIconImage(new ImageIcon(getClass().getResource(
 				PresentationFacade.getInstance().getClientIcon())).getImage());
 		setModal(true);
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		setPreferredSize(new Dimension(650, 500));
 		setMinimumSize(getPreferredSize());
 		pack();
@@ -287,7 +286,6 @@ public class TestRangeDialog extends JDialog {
 
 	private void createSaveReplayCheckboxGroup() {
 		this.pnl_saveReplay = new JPanel(new GridLayout());
-		//setVerticalFlowLayout(pnl_saveReplay);
 
 		JPanel pnl_saveReplayLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		JLabel lbl_saveReplay = new JLabel(this.lang
@@ -348,7 +346,18 @@ public class TestRangeDialog extends JDialog {
 		this.testStart.addActionListener(new ActionListener() {
 			@Override
       public void actionPerformed(ActionEvent event) {
-        startTestLoop();
+			  if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_start"))) {
+	        // Start new test
+	        startTestLoop();
+			  } else if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_restart"))) {
+			    // Restart test
+			    TestRangeDialog.this.curTest = 0;
+          startTestLoop();
+			  } else if (TestRangeDialog.this.testStart.getText().equals(TestRangeDialog.this.lang.getProperty("dialog_test_btn_stop"))) {
+			    // set curTest to numTest to stop tests, so the server doesn't run into problems trying to end the tests by force
+			    TestRangeDialog.this.curTest = TestRangeDialog.this.numTest;
+			  }
+
       }
     });
 
@@ -370,26 +379,22 @@ public class TestRangeDialog extends JDialog {
     Thread testLoop = new Thread(new Runnable() {
       @Override
       public void run() {
-        if (TestRangeDialog.this.testStarted) { // testing
-          cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_cancel"));
-        } else {
-          if (prepareTest()) {
-            while (TestRangeDialog.this.testStarted && TestRangeDialog.this.curTest < TestRangeDialog.this.numTest) {
-              updateGUI(false);
-              startNewTest();
-              try {
-                logger.debug("testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
-                    Thread.currentThread().getId());
-                TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
-                logger.debug("testloop await continue {}", this);
-              } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
-                logger.error("Exception while waiting for game end", e);
-                cancelTest("Waiting for game end was interrupted");
-              }
-              TestRangeDialog.this.gameEndReached.reset();
+        if (prepareTest()) {
+          while (TestRangeDialog.this.testStarted && TestRangeDialog.this.curTest < TestRangeDialog.this.numTest) {
+            updateGUI(false);
+            startNewTest();
+            try {
+              logger.debug("testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
+                  Thread.currentThread().getId());
+              TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
+              logger.debug("testloop await continue {}", this);
+            } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
+              logger.error("Exception while waiting for game end", e);
+              cancelTest("Waiting for game end was interrupted");
             }
-            finishTest();
+            TestRangeDialog.this.gameEndReached.reset();
           }
+          cancelTest("");
         }
       }
     });
@@ -482,7 +487,6 @@ public class TestRangeDialog extends JDialog {
 		for (int i = 0; i < this.statTable.getColumnCount() - 2; i++) {
 			int index = i + 2;
 			this.statTable.getColumnModel().getColumn(index).setMinWidth(10);
-			//statTable.getColumnModel().getColumn(index).setMaxWidth(100);
 		}
 
 		// set width of columns
@@ -505,8 +509,6 @@ public class TestRangeDialog extends JDialog {
 		setPlayerRows(selPlugin);
 
 		// show table without extra space
-		//statTable.setPreferredScrollableViewportSize(statTable
-		//		.getPreferredSize());
 		Dimension prefDim = this.statTable.getPreferredSize();
 		prefDim.width = prefSize;
 		this.statTable.setPreferredSize(prefDim);
@@ -526,9 +528,6 @@ public class TestRangeDialog extends JDialog {
 		statScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.pnlTop.add(statScrollPane);
 		this.pnlTop.validate();
-		// pnlTop.invalidate();// TODO order?
-
-		logger.debug("UPDATE: test range dialog");
 	}
 
 	/**
@@ -725,6 +724,9 @@ public class TestRangeDialog extends JDialog {
       logger.debug("Preparing clients");
       KIs = prepareClientProcesses(slotDescriptors, prep, rotation);
     } catch (IOException e) {
+      if (!this.testStarted) { // if test is started where no test should be started, return
+        return;
+      }
       e.printStackTrace();
       cancelTest(TestRangeDialog.this.lang.getProperty("dialog_test_msg_prepare"));
       return;
@@ -1002,7 +1004,6 @@ public class TestRangeDialog extends JDialog {
 				if (absVals.size() <= j) {
 					absVals.add(new BigDecimal(0));
 				}
-				//BigDecimal old = (BigDecimal) model.getValueAt(statRow, j + 2);
 				BigDecimal abs = absVals.get(j);
 
 				ScoreAggregation action = result.getDefinition().get(j)
@@ -1013,8 +1014,6 @@ public class TestRangeDialog extends JDialog {
 					absVals.set(j, newStat);
 					break;
 				case AVERAGE:
-					// restore old absolute value
-					//old = old.multiply(BigDecimal.valueOf(curTest - 1));
 					// add newStat to absolute value
 					newStat = abs.add(newStat);
 					absVals.set(j, newStat);
@@ -1065,6 +1064,7 @@ public class TestRangeDialog extends JDialog {
 	 * Cancels the active test range.
 	 */
 	private void cancelTest(final String err_msg) {
+	  // this is only called when using the close-button (or the close-button of the window) not then stopping tests
 		if (null != this.obs && !this.obs.isFinished()) {
 			this.obs.cancel();
 		}
@@ -1077,10 +1077,10 @@ public class TestRangeDialog extends JDialog {
 	 */
 	private void finishTest() {
 		if (this.testStarted) {
+	    this.testStarted = false;
 			stopServer();
 		}
 		updateGUI(true);
-		this.testStarted = false;
 	}
 
 	/**
