@@ -47,19 +47,22 @@
   <logger name="sc.server.gaming.GameRoom" level="DEBUG" /> 
   
   <logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.GamePreparation" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
+  <logger name="sc.server.gaming.GameRoom" level="DEBUG" />
+  <logger name="sc.server.network.Client" level="DEBUG" />
   <logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
-  <logger name="sc.networking.clients.XStreamClient" level="ERROR" />
-  
-  <logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
-  <logger name="sc.gui.dialogs.CreateGameDialog" level="DEBUG" />
- 
-  
-  <logger name="sc.player2017.LogicFactory" level="DEBUG" />
-  
+  <logger name="sc.networking.clients.XStreamClient" level="INFO" />
+  <logger name="sc.plugin2017.AbstractClient" level="INFO" />
+  <logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
+  <logger name="sc.plugin2017.GameState" level="DEBUG" />
+  <logger name="sc.plugin2017.Game" level="DEBUG" />
   -->
-  <logger name="sc.server.network.Client" level="DEBUG" /> 
-  <logger name="sc.networking.clients.XStreamClient" level="ERROR" />
-  
+  <logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
+  <logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
+  <logger name="sc.networking.clients.XStreamClient" level="INFO" />
+  <logger name="sc.plugin2017.gui.renderer.RenderFacade" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

@@ -1,7 +1,6 @@
 package sc.plugin2017;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -17,19 +16,19 @@ public class Tile {
   public List<Field> fields = new ArrayList<>();
   @XStreamAsAttribute
   private boolean visible;
-  
+
   /**
    * Index des Spielsegments
    */
   @XStreamAsAttribute
   private int index;
-  
+
   /**
-   * Richtung in die das Spielsegment zeigt
+   * Richtung, in die das Spielsegment zeigt
    */
   @XStreamAsAttribute
   private int direction;
-  
+
   /**
    * Nur fuer den Server relevant
    * generates a new tile
@@ -47,7 +46,7 @@ public class Tile {
     this.visible = index < 2; // at the beginning only the first 2 Tiles are visible
     generateFields(x, y, passengers, blockedFields, specialFields, (index == Constants.NUMBER_OF_TILES - 1));
   }
-  
+
   protected Tile(List<Field> fields) {
     this.fields = fields;
   }
@@ -250,7 +249,7 @@ public class Tile {
       int sandbar = rnd.nextInt(2);
       fields.get(random).setType((sandbar == 1) ? FieldType.SANDBANK : FieldType.LOG);
       --special;
-    }    
+    }
   }
 
   private void placePassengers(int passengers) {
@@ -260,7 +259,7 @@ public class Tile {
       int passengerDirection = rnd.nextInt(6);
       Field start = fields.get(random);
       Field dock = getFieldInDirection(passengerDirection, start);
-      while(start.getType() != FieldType.WATER || 
+      while(start.getType() != FieldType.WATER ||
           dock == null ||
           dock.getType() != FieldType.WATER) {
         random = rnd.nextInt(fields.size() - 5);
@@ -279,7 +278,7 @@ public class Tile {
       case 2:
         passenger = FieldType.PASSENGER2;
         break;
-        
+
       case 3:
         passenger = FieldType.PASSENGER3;
         break;
@@ -304,11 +303,11 @@ public class Tile {
     }
     return null;
   }
-  
+
   public boolean isVisible() {
     return visible;
   }
-  
+
   protected void setVisibility(boolean visible) {
     this.visible = visible;
   }
@@ -320,20 +319,22 @@ public class Tile {
   public int getDirection() {
     return direction;
   }
-  
+
+  @Override
   public Tile clone() {
     ArrayList<Field> clonedFields = new ArrayList<Field>();
     for (Field field : fields) {
       Field clonedField = field.clone();
       clonedFields.add(clonedField);
     }
-    Tile clone = new Tile(clonedFields); 
+    Tile clone = new Tile(clonedFields);
     clone.direction = this.direction;
     clone.visible = this.visible;
     clone.index = this.index;
     return clone;
   }
-  
+
+  @Override
   public boolean equals(Object other) {
     if(other instanceof Tile) {
       Tile tile = (Tile) other;
@@ -354,9 +355,9 @@ public class Tile {
       return false;
     }
   }
-  
+
   /**
-   * Gibt das Feld in eine bestimmte Richtung zurück. Gibt null zurück, falls sich das Feld nicht auf dem Tile befindet.
+   * Gibt das Feld in eine bestimmte Richtung zurück. Gibt null zurück, falls sich das Feld nicht auf diesem Tile befindet.
    * @param direction Richtung
    * @param field Startfeld
    * @return Feld in Richtung
@@ -376,13 +377,14 @@ public class Tile {
     case 4:
       return getField((y % 2 == 0) ? x : x - 1, y + 1);
     case 5:
-      return getField((y % 2 == 0) ? x + 1 : x, y + 1);  
+      return getField((y % 2 == 0) ? x + 1 : x, y + 1);
     default:
       break;
     }
     return null;
   }
-  
+
+  @Override
   public String toString() {
     String toString = "Tile " + index + " Richtung " + direction + " visible " + visible;
     for (Field field : fields) {

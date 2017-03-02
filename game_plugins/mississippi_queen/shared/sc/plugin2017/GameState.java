@@ -14,7 +14,7 @@ import sc.plugin2017.util.Constants;
 import sc.plugin2017.util.InvalidMoveException;
 
 /**
- * Ein {@code GameState} beinhaltet alle Informationen die den Spielstand zu
+ * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
  * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}), die
  * der Spielserver als Antwort von einem der beiden Spieler (
@@ -84,7 +84,7 @@ public class GameState implements Cloneable {
   private Move lastMove;
 
   /**
-   * Der Index des Segmentes am weitesten vom Start entfernt welches bisher aufgedeckt wurde. Wird nur intern verwendet.
+   * Der Index des am weitesten vom Start entfernten Segmentes, welches bisher aufgedeckt wurde. Wird nur intern verwendet.
    */
   @XStreamOmitField
   private int latestTileIndex = 0;
@@ -96,7 +96,7 @@ public class GameState implements Cloneable {
   private boolean freeTurn;
 
   /**
-   * Erzeugt einen neuen {@code GameState} in dem alle Informationen so gesetzt
+   * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
    * sind, wie sie zu Beginn eines Spiels, bevor die Spieler beigetreten sind,
    * gueltig sind.
    *
@@ -107,11 +107,24 @@ public class GameState implements Cloneable {
    * Das Spielfeld wird zufällig aufgebaut.
    */
   public GameState() {
-
     currentPlayer = PlayerColor.RED;
     startPlayer = PlayerColor.RED;
     board = new Board();
     freeTurn = false;
+  }
+
+  /**
+   * Erzeugt einen neuen {@code GameState} mit denselben Eigenschaften von
+   * stateToClone. Fuer eigene Implementierungen.
+   */
+  protected GameState(GameState stateToClone) throws CloneNotSupportedException {
+    GameState clone = stateToClone.clone();
+    setRedPlayer(clone.getRedPlayer());
+    setBluePlayer(clone.getBluePlayer());
+    setLastMove(clone.getLastMove());
+    setBoard(clone.getBoard());
+    setCurrentPlayer(clone.getCurrentPlayerColor());
+    setFreeTurn(clone.getFreeTurn());
   }
 
   /**
@@ -158,7 +171,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Nur für den Server relevant. Gibt das Spielfeld zurueck
+   * Gibt das Spielfeld zurueck
    *
    * @return das Spielfeld
    */
@@ -198,6 +211,14 @@ public class GameState implements Cloneable {
   }
 
   /**
+   * Nur für den Server relevant
+   * @param playerColor PlayerColor of new currentPlayer
+   */
+  protected void setCurrentPlayer(PlayerColor playerColor) {
+    this.currentPlayer = playerColor;
+  }
+
+  /**
    * Liefert den Spieler, also ein {@code Player}-Objekt, der momentan nicht am
    * Zug ist.
    *
@@ -231,6 +252,14 @@ public class GameState implements Cloneable {
   }
 
   /**
+   * Nur für den Server relevant
+   * @param red
+   */
+  protected void setRedPlayer(Player red) {
+    this.red = red;
+  }
+
+  /**
    * Liefert den Spieler, also eine {@code Player}-Objekt, des Spielers, der dem
    * Spiel als zweites beigetreten ist und demzufolge mit der Farbe
    * {@code PlayerColor.BLUE} spielt.
@@ -239,6 +268,14 @@ public class GameState implements Cloneable {
    */
   public Player getBluePlayer() {
     return blue;
+  }
+
+  /**
+   * Nur für den Server relevant
+   * @param blue
+   */
+  protected void setBluePlayer(Player blue) {
+    this.blue = blue;
   }
 
   /**
@@ -371,9 +408,12 @@ public class GameState implements Cloneable {
    * aktualisiert:
    * <ul>
    * <li>Zugzahl
-   * <li>Welcher Spieler an der Reihe ist
-   * <li>Was der letzte Zug war
-   * <li>die Punkte der Spieler
+   * <li>Welcher Spieler an der Reihe ist (currentPlayer)
+   * <li>Was der letzte Zug war (lastMove)
+   * <li>die Punkte der Spieler (points)
+   * <li>die Bewegungspunkte der Spieler (movement)
+   * <li>die freien Drehungen (freeTurns) sowohl im GameState als auch von den Spielern
+   * <li>die freien Beschleunigungen (freeAccs)
    * </ul>
    *
    * @param lastMove
@@ -391,17 +431,18 @@ public class GameState implements Cloneable {
         tile.setVisibility(true);
       }
     }
-    // wenn auf einen Sandbank abgedrängt wird, gibt es keine zusaetzliche Drehung
+    // get an extra free turn after getting pushed (except if pushed on a sandbank)
     if(lastMove.containsPushAction() && !(getOtherPlayer().getField(board).getType() == FieldType.SANDBANK)) {
       this.getOtherPlayer().setFreeTurns(2);
     }
+    this.getOtherPlayer().setMovement(getOtherPlayer().getSpeed());
+    this.getOtherPlayer().setFreeAcc(1);
+    this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
+
     this.getCurrentPlayer().setFreeTurns(1);
     this.getCurrentPlayer().setMovement(getCurrentPlayer().getSpeed());
-    this.getCurrentPlayer().setMovement(getOtherPlayer().getSpeed());
-    this.getOtherPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setFreeAcc(1);
     this.getCurrentPlayer().setPoints(getPointsForPlayer(currentPlayer));
-    this.getOtherPlayer().setPoints(getPointsForPlayer(getOtherPlayerColor()));
     switchCurrentPlayer();
     // free turns has to be set for the current player, because the next player might not be the opponent (overtake)
     if(getCurrentPlayer().getFreeTurns() == 2) {
@@ -423,7 +464,7 @@ public class GameState implements Cloneable {
   /**
    * Liefert eine Liste aller aktuell erlaubten Teilzuege eines Spielers.
    * @param player Spieler für den die Aktionen sind.
-   * @param movement Die Anzahl der Bewegungspunkte, die höchstens verwendet werden sollen (sollte kleiner als player.speed sein)
+   * @param movement Die Anzahl der Bewegungspunkte, die höchstens verwendet werden sollen (sollte kleiner oder gleich player.speed sein)
    * @param coal Anzahl der für die Aktion verbrauchten Kohleeinheiten.
    * @param acceleration Gibt an, ob Beschleunigungszüge möglich sein sollen
    * @param freeTurn ist eine freie Drehung verfügbar
@@ -431,19 +472,23 @@ public class GameState implements Cloneable {
    */
   public List<Action> getPossibleActions(Player player, int movement, int coal, boolean acceleration, boolean freeTurn) { //TODO Test schreiben
     List<Action> actions = new ArrayList<Action>();
-    actions.addAll(getPossibleMovesInDirection(player, movement, player.getDirection(), coal));
-    actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal));
-    actions.addAll(getPossiblePushs(player, movement));
-    if(acceleration) {
-      actions.addAll(getPossibleAccelerations(player, coal));
+    Player otherPlayer = player.getPlayerColor().opponent() == PlayerColor.RED ? red : blue;
+    if(player.getX() == otherPlayer.getX() && player.getY() == otherPlayer.getY()) {
+      actions.addAll(getPossiblePushs(player, movement));
+    } else {
+      actions.addAll(getPossibleMovesInDirection(player, movement, player.getDirection(), coal));
+      actions.addAll(getPossibleTurnsWithCoal(player, freeTurn, coal));
+      if(acceleration) {
+        actions.addAll(getPossibleAccelerations(player, coal));
+      }
     }
     return actions;
   }
 
   /**
-   * Liefert alle Becshleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
+   * Liefert alle Beschleunigungsaktionen, die höchstens die übergebene Kohlezahl benötigen.
    * @param player Spieler
-   * @param coal Kohle die für Beschleunigung benötigt wird.
+   * @param coal Kohle, die für die Beschleunigung benötigt werden darf.
    * @return Liste aller Beschleunigungsaktionen
    */
   public List<Acceleration> getPossibleAccelerations(Player player, int coal) {
@@ -486,7 +531,7 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Liefert alle Züge, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
+   * Liefert alle sinnvollen Drehaktionen, die höchstens die angegebene Menge an Kohleeinheiten verbrauchen
    * @param player Spieler
    * @param freeTurn Ist eine freie Drehung verfügbar?
    * @param coal maximal benötigte Kohleeinheiten
@@ -497,21 +542,22 @@ public class GameState implements Cloneable {
     if(player.getField(board).getType() == FieldType.SANDBANK) {
       return turns;
     }
-    int start = freeTurn ? 2 : 1;
-    for(int i = 0; i <= coal; i++) {
-      turns.add(new Turn(start + i));
-      turns.add(new Turn(-start - i));
+    int freeTurns = freeTurn ? 2 : 1;
+    int maxTurn = Math.min(3, coal + freeTurns);
+    for(int i = 1; i <= maxTurn; i++) {
+      turns.add(new Turn(i));
+      turns.add(new Turn(-i));
     }
     return turns;
   }
 
   /**
-   * Gibt alle Bewegungsaktionn zurück, die in die Richtung des Spielers
+   * Gibt alle Bewegungsaktionen des Spielers zurück, die in die gegebene Richtung
    * mit einer festen Anzahl von Bewegungspunkten möglich sind.
    * @param player Spieler
-   * @param movement Anzahl
+   * @param movement Geschwindigkeit
    * @param direction Richtung
-   * @param coal Kohleeinheite die zur Verfügung stehen
+   * @param coal Kohleeinheiten, die zur Verfügung stehen
    * @return Liste aller möglichen Züge des Spielers in entsprechende Richtung
    */
   public List<Advance> getPossibleMovesInDirection(Player player, int movement, Direction direction, int coal) {
@@ -520,10 +566,13 @@ public class GameState implements Cloneable {
     int i = 0;
     Player enemy = player.getPlayerColor() == PlayerColor.RED ? blue : red;
     if(start.getType() == FieldType.SANDBANK && movement > 0) {
-      if(start.getFieldInDirection(direction.getOpposite(), this.board).isPassable()) {
+
+      Field fieldBehind = start.getFieldInDirection(direction.getOpposite(), this.board);
+      if(fieldBehind != null && fieldBehind.isPassable()) {
         step.add(new Advance(-1));
       }
-      if(coal > 0 || start.getFieldInDirection(direction, this.board).isPassable()) {
+      Field fieldInFront = start.getFieldInDirection(direction, this.board);
+      if(fieldInFront != null && fieldInFront.isPassable()) {
         step.add(new Advance(1));
       }
       return step;
@@ -564,9 +613,10 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
-   * Einträgen
+   * Einträgen:
    * <ul>
-   * <li>[0] - Punktekonto des Spielers (Längste leitung in Spielrichtung)
+   * <li>[0] - Punktekonto des Spielers (Flussfortschritt und Passagiere)
+   * <li>[1] - Anzahl eingesammelter Passagiere
    * </ul>
    *
    * @param player
@@ -580,7 +630,7 @@ public class GameState implements Cloneable {
 
   /**
    * Liefert Statusinformationen zu einem Spieler als Array mit folgenden
-   * Einträgen
+   * Einträgen:
    * <ul>
    * <li>[0] - Punktekonto des Spielers (Flussfortschritt und Passagiere)
    * <li>[1] - Anzahl eingesammelter Passagiere
@@ -712,7 +762,7 @@ public class GameState implements Cloneable {
       e.printStackTrace();
     }
     clone.board = new Board(false);
-    for(int i = 0; i < Constants.NUMBER_OF_TILES; i++) {
+    for(int i = 0; i < board.getTiles().size(); i++) {
       Tile newTile = board.getTiles().get(i);
       if(newTile.isVisible()) {
         clone.board.getTiles().add(newTile);
@@ -723,13 +773,13 @@ public class GameState implements Cloneable {
 
 
   /**
-   * Berechent wie viele Gewegungpunkte und Kohleeinheiten der Zug des benötigt
-   * Es wird hier davon ausgegangen, dass der Zug möglich ist. Gibt {-1,-1} zurück, falls
+   * Berechent, wie viele Bewegungpunkte und Kohleeinheiten der Zug benötigt.
+   * Es wird hier davon ausgegangen, dass der Zug möglich ist. Gibt {-1,-1} zurück, falls der
    * Zug ungültig ist.
    * @param player Spieler
    * @param freeTurn freie Drehung
    * @param move Zug
-   * @return Gewegungspunkte und Kohle
+   * @return Array, welches benötigte Bewegungspunkte (Index 0) und Kohle (Index 1) enthält
    */
   public int[] getCost(Player player, boolean freeTurn, Move move) {
     int[] cost = new int[2];
@@ -787,7 +837,37 @@ public class GameState implements Cloneable {
 
   @Override
   public String toString() {
-    return "GameState: freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
+    return "GameState: \n Spieler1: " + red + " \n" + "Spieler2: " + blue + "\n" + "freeTurn = " + freeTurn + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
   }
 
+  /**
+   * Ueberschreibt den letzten Zug. Fuer eigene Implementierungen.
+   */
+  protected void setLastMove(Move move) {
+    lastMove = move;
+  }
+
+  /**
+   * Fuer eigene Implementierungen.
+   *
+   * @return true, falls der aktuelle Spieler eine freie Drehung machen darf,
+   *         sonst false.
+   */
+  public boolean getFreeTurn() {
+    return freeTurn;
+  }
+
+  /**
+   * Ueberschreibt den Wert fuer freeTurn. Fuer eigene Implementierungen.
+   */
+  protected void setFreeTurn(boolean newValue) {
+    freeTurn = newValue;
+  }
+
+  /**
+   * Ueberschreibt das aktuelle Spielbrett. Fuer eigene Implementierungen.
+   */
+  protected void setBoard(Board newValue) {
+    board = newValue;
+  }
 }
