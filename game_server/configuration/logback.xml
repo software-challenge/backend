@@ -20,11 +20,32 @@
   </appender>-->
 	<!-- all loggers in DEBUG for now...  -->
   <logger name="sc" level="WARN" />
+  
   <!--
+  
+  <logger name="sc.SoftwareChallengeGUI" level="DEBUG" />
+  
+  <logger name="sc.helpers.ManifestHelper" level="DEBUG" />
+  
+  <logger name="sc.server.plugins.PluginManager" level="DEBUG" />
+  <logger name="sc.server.plugins.GamePluginInstance" level="DEBUG" />
+  
+  <logger name="sc.framework.plugins.ActionTimeout" level="DEBUG" />
+  
+  <logger name="sc.plugin2017.AbstractClient" level="INFO" />
   <logger name="sc.plugin2017.gui.renderer.primitives.GuiBoard" level="DEBUG" />
   <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.renderer.RenderConfiguration" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.GamePreparation" level="DEBUG" />
+  <logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
+  
+  <logger name="sc.logic.LogicFacade" level="DEBUG" />
+  
   <logger name="sc.common.HelperMethods" level="DEBUG" />
+  
   <logger name="sc.server.gaming.GameRoomManager" level="DEBUG" />
+  <logger name="sc.server.gaming.GameRoom" level="DEBUG" /> 
+  
   <logger name="sc.networking.clients.ObservingClient" level="DEBUG" />
   <logger name="sc.plugin2017.gui.GamePreparation" level="DEBUG" />
   <logger name="sc.plugin2017.gui.Observation" level="DEBUG" />
@@ -42,9 +63,6 @@
   <logger name="sc.networking.clients.XStreamClient" level="INFO" />
   <logger name="sc.plugin2017.gui.renderer.RenderFacade" level="DEBUG" />
   <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
-  
-  
-  
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

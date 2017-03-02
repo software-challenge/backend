@@ -66,12 +66,12 @@ public class Client extends XStreamClient implements IClient
 		// FIXME this solves the problem of Clients not terminated when the
 		// other client makes an invalid move, but this is not the right way to
 		// do it!
-		if (packet instanceof LeftGameEvent)
+		/*if (packet instanceof LeftGameEvent)
 		{
 			logger.debug("Stopping {} because of sending of LeftGameEvent",
 					Thread.currentThread().getName());
 			stop();
-		}
+		}*/
 	}
 
 	private void notifyOnPacket(Object packet)
