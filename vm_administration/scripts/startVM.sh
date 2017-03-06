@@ -149,9 +149,9 @@ while (( VMSTARTTRIES <= 3 && VM_BOOTED == 0 )); do
             if ([ $VM_BOOTED -eq 2 ]); then
                 echo "testing if ssh with consumer script (PID $CONSUMER_SSH_PID) is running"
                 if ps -p $CONSUMER_SSH_PID > /dev/null; then
-                    echo "script is running, wait for it to stop"
+                    echo "script is running $(/bin/date), wait for it to stop"
                 else
-                    echo "script is not running, we can finish"
+                    echo "script is not running $(/bin/date), we can finish"
                     break
                 fi
             fi
