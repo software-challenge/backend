@@ -86,8 +86,15 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
 
     echo "VM-IP found: $VMIP"
 
+    VM_BOOT_TIME=0
     VMTIME=0
-    CHECK_INTERVAL=15
+    CHECK_INTERVAL=5
+    SSH_TIMEOUT=20 # how long to wait for successful ssh connection before recreating the vm
+
+    # max time until the client is forcibly killed. Consider that a started
+    # client have to wait for the other client, which VM could have had
+    # problems. CLIENT_TIMEOUT should be > max. match time + SSH_TIMEOUT*3.
+    # Max. match time is 120 seconds (Game MQ 2017)
     CLIENT_TIMEOUT=300
 
     CONSUMER_SSH_PID=0
@@ -95,9 +102,9 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
     SSH_KEY=/home/vbox/.ssh/id_rsa
     # NOTE that -l is illegal for scp, don't specify it here. All options have to be valid for scp and ssh!
     SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY"
-    echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
-    while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
 
+    echo "Waiting until boot timeout ($SSH_TIMEOUT seconds) reached or VM SSH connection succeeds."
+    while [[ $VM_BOOT_TIME -lt $SSH_TIMEOUT && $VM_BOOTED -eq 0]]; do
         VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
         if [ "$VMIPNEW" != "$VMIP" ]; then
             # guestproperty may return a wrong ip when the VM is not fully
@@ -109,42 +116,63 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
             VMIP=$VMIPNEW
         fi
 
+        echo "Trying to connect to VM via SSH"
+        ssh $SSH_OPTIONS scadmin@$VMIP exit
+        # the exit code of ssh is only 0 when a connection was successful
+        if [ $? -eq 0 ]; then VM_BOOTED=1; fi
+
         if ([ $VM_BOOTED -eq 0 ]); then
-            echo "VM not booted yet, trying to connect"
-            ssh $SSH_OPTIONS scadmin@$VMIP exit
-            # the exit code of ssh is only 0 when a connection was successful
-            if [ $? -eq 0 ]; then VM_BOOTED=1; fi
+            echo "VM not ready yet, waited $VM_BOOT_TIME seconds, sleeping for $CHECK_INTERVAL seconds."
+            sleep $CHECK_INTERVAL
+            VM_BOOT_TIME=$(($VM_BOOT_TIME+$CHECK_INTERVAL))
         fi
-        if ([ $VM_BOOTED -eq 1 ]); then
-            echo "VM booted, copying client file"
-            set -x # echo commands as they are executed
-            TEMP_ZIP_NAME=client-for-$VMIP.zip
-            scp $SSH_OPTIONS scadmin@$VMMAIN:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
-            scp $SSH_OPTIONS ./$TEMP_ZIP_NAME scadmin@$VMIP:/home/clientexec/client/client.zip
-            ssh $SSH_OPTIONS scadmin@$VMMAIN rm "$CLIENT_ZIP"
-            rm ./$TEMP_ZIP_NAME
-            echo "Starting client..."
-            ssh $SSH_OPTIONS scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
-            set +x # no more echo commands as they are executed
-            CONSUMER_SSH_PID=$!
-            VM_BOOTED=2
-        fi
-        if ([ $VM_BOOTED -eq 2 ]); then
-            echo "testing if ssh with consumer script (PID $CONSUMER_SSH_PID) is running"
-            if ps -p $CONSUMER_SSH_PID > /dev/null; then
-                echo "script is running, wait for it to stop"
-            else
-                echo "script is not running, we can finish"
-                break
-            fi
-        fi
-        echo "VM not ready or finished yet, waited $VMTIME, sleeping for $CHECK_INTERVAL"
-        sleep $CHECK_INTERVAL
-        VMTIME=$(($VMTIME+$CHECK_INTERVAL))
     done
 
-    if [ $VMTIME -ge $CLIENT_TIMEOUT ]; then
+    if ([ $VM_BOOTED -eq 1 ]); then
+        echo "SSH Connection succeeded."
+        echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
+        while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
+
+            if ([ $VM_BOOTED -eq 1 ]); then
+                echo "VM booted, copying client file"
+                set -x # echo commands as they are executed
+                TEMP_ZIP_NAME=client-for-$VMIP.zip
+                scp $SSH_OPTIONS scadmin@$VMMAIN:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
+                scp $SSH_OPTIONS ./$TEMP_ZIP_NAME scadmin@$VMIP:/home/clientexec/client/client.zip
+                ssh $SSH_OPTIONS scadmin@$VMMAIN rm "$CLIENT_ZIP"
+                rm ./$TEMP_ZIP_NAME
+                echo "Starting client..."
+                ssh $SSH_OPTIONS scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
+                set +x # no more echo commands as they are executed
+                CONSUMER_SSH_PID=$!
+                VM_BOOTED=2
+            fi
+            if ([ $VM_BOOTED -eq 2 ]); then
+                echo "testing if ssh with consumer script (PID $CONSUMER_SSH_PID) is running"
+                if ps -p $CONSUMER_SSH_PID > /dev/null; then
+                    echo "script is running, wait for it to stop"
+                else
+                    echo "script is not running, we can finish"
+                    break
+                fi
+            fi
+            echo "VM not ready or finished yet, waited $VMTIME seconds, sleeping for $CHECK_INTERVAL seconds."
+            sleep $CHECK_INTERVAL
+            VMTIME=$(($VMTIME+$CHECK_INTERVAL))
+        done
+    fi
+
+    if [ $VM_BOOT_TIME -ge $SSH_TIMEOUT || $VMTIME -ge $CLIENT_TIMEOUT ]; then
         echo "Timeout reached! Shutting down! (This indicates that something went wrong!)"
+        if ([ $VM_BOOTED -eq 0 ]); then
+            echo "No SSH Connection to VM"
+        fi
+        if ([ $VM_BOOTED -eq 1 ]); then
+            echo "Error while copying client files"
+        fi
+        if ([ $VM_BOOTED -eq 2 ]); then
+            echo "Timeout while waiting for client to finish."
+        fi
         echo "$HOME/log/vmclient/$DATEDIR/$VMNAME.log" >> $HOME/log/vmclient/vm_startup_failures.log
         $HOME/bin/stopVM.sh $VMNAME
         VMSTARTTRIES=$(($VMSTARTTRIES+1))
