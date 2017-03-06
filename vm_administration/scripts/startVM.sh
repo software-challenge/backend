@@ -9,8 +9,8 @@
 # ----------------------------------------------------------------------
 
 # VM name will be unique as client vms get started in intervals 5 seconds
-VMNAME='vmclient-'`/bin/date +%Y-%m-%d_%H-%M-%S`
-DATEDIR=`/bin/date +%Y/%m/%d`
+VMNAME='vmclient-'$(/bin/date +%Y-%m-%d_%H-%M-%S)
+DATEDIR=$(/bin/date +%Y/%m/%d)
 if [ -n "$2" ]; then
   VMLOG="$2"
 else
@@ -24,9 +24,9 @@ VMMAIN=192.168.56.2
 # main
 #
 
-mkdir -p $HOME/log/vmclient/$DATEDIR
+mkdir -p "$HOME/log/vmclient/$DATEDIR"
 (
-/bin/echo "Starting a new VM at `/bin/date`"
+/bin/echo "Starting a new VM at $(/bin/date)"
 /bin/echo "VM name: $VMNAME"
 
 # ----------------------------------------------------------------------
@@ -44,7 +44,7 @@ fi
 VM_BOOTED=0
 
 VMSTARTTRIES=1
-while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
+while (( VMSTARTTRIES <= 3 && VM_BOOTED == 0 )); do
 
     if [[ $VMSTARTTRIES -gt 1 ]]
     then
@@ -54,29 +54,29 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
     if [ "$NEW_VM" = true ]
     then
         echo "We should use the new VM!"
-        echo $CLIENT_ZIP
+        echo "$CLIENT_ZIP"
         echo "Creating vm clone"
-        VBoxManage clonevm vmclient14.04 --snapshot snap7 --options link --name $VMNAME --register
+        VBoxManage clonevm vmclient14.04 --snapshot snap7 --options link --name "$VMNAME" --register
     else
         echo "We should use the old VM!"
-        echo $CLIENT_ZIP
+        echo "$CLIENT_ZIP"
         echo "Creating vm clone"
-        VBoxManage clonevm vmclient --snapshot snap8 --options link --name $VMNAME --register
+        VBoxManage clonevm vmclient --snapshot snap8 --options link --name "$VMNAME" --register
     fi
 
     # Create and start new VM
     echo "Starting vm $VMNAME. Try $VMSTARTTRIES / 3"
-    VBoxManage startvm $VMNAME --type headless
+    VBoxManage startvm "$VMNAME" --type headless
 
     VMTIME=0
     VMIP=""
 
-    while [ -z $VMIP ]; do
-        VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
+    while [ -z "$VMIP" ]; do
+        VMIP=$(VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q')
         # only sleep if no IP could be obtained
-        if [ -z $VMIP ]; then
+        if [ -z "$VMIP" ]; then
             sleep 10
-            VMTIME=$[$VMTIME+10]
+            VMTIME=$((VMTIME+10))
         fi
         if [ $VMTIME -gt 180 ]; then
             echo "VM did not start correctly, no IP found after $VMTIME, terminating!"
@@ -104,8 +104,8 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
     SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o BatchMode=true -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -i $SSH_KEY"
 
     echo "Waiting until boot timeout ($SSH_TIMEOUT seconds) reached or VM SSH connection succeeds."
-    while [[ $VM_BOOT_TIME -lt $SSH_TIMEOUT && $VM_BOOTED -eq 0]]; do
-        VMIPNEW=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
+    while (( VM_BOOT_TIME < SSH_TIMEOUT && VM_BOOTED == 0 )); do
+        VMIPNEW=$(VBoxManage guestproperty get "$VMNAME" /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q')
         if [ "$VMIPNEW" != "$VMIP" ]; then
             # guestproperty may return a wrong ip when the VM is not fully
             # booted this might be a problem when the already retrieved IP is
@@ -117,18 +117,17 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
         fi
 
         echo "Trying to connect to VM via SSH"
-        ssh $SSH_OPTIONS scadmin@$VMIP exit
         # the exit code of ssh is only 0 when a connection was successful
-        if [ $? -eq 0 ]; then VM_BOOTED=1; fi
+        if ssh $SSH_OPTIONS scadmin@$VMIP exit; then VM_BOOTED=1; fi
 
         if ([ $VM_BOOTED -eq 0 ]); then
             echo "VM not ready yet, waited $VM_BOOT_TIME seconds, sleeping for $CHECK_INTERVAL seconds."
             sleep $CHECK_INTERVAL
-            VM_BOOT_TIME=$(($VM_BOOT_TIME+$CHECK_INTERVAL))
+            VM_BOOT_TIME=$((VM_BOOT_TIME+CHECK_INTERVAL))
         fi
     done
 
-    if ([ $VM_BOOTED -eq 1 ]); then
+    if (( VM_BOOTED == 1 )); then
         echo "SSH Connection succeeded."
         echo "Waiting until timeout ($CLIENT_TIMEOUT seconds) reached or client terminated..."
         while [[ $VMTIME -lt $CLIENT_TIMEOUT ]]; do
@@ -139,7 +138,7 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
                 TEMP_ZIP_NAME=client-for-$VMIP.zip
                 scp $SSH_OPTIONS scadmin@$VMMAIN:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
                 scp $SSH_OPTIONS ./$TEMP_ZIP_NAME scadmin@$VMIP:/home/clientexec/client/client.zip
-                ssh $SSH_OPTIONS scadmin@$VMMAIN rm "$CLIENT_ZIP"
+                ssh $SSH_OPTIONS scadmin@$VMMAIN rm \"$CLIENT_ZIP\"
                 rm ./$TEMP_ZIP_NAME
                 echo "Starting client..."
                 ssh $SSH_OPTIONS scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
@@ -158,11 +157,11 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
             fi
             echo "VM not ready or finished yet, waited $VMTIME seconds, sleeping for $CHECK_INTERVAL seconds."
             sleep $CHECK_INTERVAL
-            VMTIME=$(($VMTIME+$CHECK_INTERVAL))
+            VMTIME=$((VMTIME+CHECK_INTERVAL))
         done
     fi
 
-    if [ $VM_BOOT_TIME -ge $SSH_TIMEOUT || $VMTIME -ge $CLIENT_TIMEOUT ]; then
+    if ((VM_BOOT_TIME >= SSH_TIMEOUT || VMTIME >= CLIENT_TIMEOUT )); then
         echo "Timeout reached! Shutting down! (This indicates that something went wrong!)"
         if ([ $VM_BOOTED -eq 0 ]); then
             echo "No SSH Connection to VM"
@@ -175,7 +174,7 @@ while [[ $VMSTARTTRIES -lt 4 && $VM_BOOTED -eq 0 ]]; do
         fi
         echo "$HOME/log/vmclient/$DATEDIR/$VMNAME.log" >> $HOME/log/vmclient/vm_startup_failures.log
         $HOME/bin/stopVM.sh $VMNAME
-        VMSTARTTRIES=$(($VMSTARTTRIES+1))
+        VMSTARTTRIES=$((VMSTARTTRIES+1))
     fi
 
     sleep 5
@@ -187,21 +186,20 @@ done
 #
 echo "Saving log file"
 
-if [ -n $VMIP ]
+if [ -n "$VMIP" ]
 then
     TRIES=0
     while [[ $TRIES -lt 5 ]]; do
         echo "Copying from $VMIP"
-        ssh $SSH_OPTIONS scadmin@$VMMAIN ./getLog.sh $VMIP $VMNAME
-        if [ $? -eq 0 ]; then
+        if ssh $SSH_OPTIONS scadmin@$VMMAIN ./getLog.sh $VMIP $VMNAME; then
             echo "Successfully copied log"
             break
         fi
         # this did not happen for a long time, but will leave it here
-        TRIES=$(($TRIES+1))
+        TRIES=$((TRIES+1))
         echo "Error copying log, try again $TRIES/5 in 5 seconds"
         sleep 5
-        VMIP=`VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q'`
+        VMIP=$(VBoxManage guestproperty get $VMNAME /VirtualBox/GuestInfo/Net/0/V4/IP | grep 'Value:' | sed 's/Value: \([0-9.]*\).*/\1/;q')
     done
 else
     echo "no ip found for this vm"
