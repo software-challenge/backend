@@ -110,10 +110,10 @@ public class Game extends RoundBasedGameInstance<Player> {
     // When starting a game from a imported state the players should not be
     // overwritten
     PlayerColor playerColor = this.availableColors.remove(0);
-    if (PlayerColor.RED == playerColor && gameState.getRedPlayer() != null) {
-      player = gameState.getRedPlayer();
-    } else if (PlayerColor.BLUE == playerColor && gameState.getBluePlayer() != null) {
-      player = gameState.getBluePlayer();
+    if (PlayerColor.RED == playerColor && this.gameState.getRedPlayer() != null) {
+      player = this.gameState.getRedPlayer();
+    } else if (PlayerColor.BLUE == playerColor && this.gameState.getBluePlayer() != null) {
+      player = this.gameState.getBluePlayer();
     } else {
       player = new Player(playerColor);
     }
@@ -136,6 +136,12 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public void onPlayerLeft(IPlayer player, ScoreCause cause) {
+
+    // FIXME: this is a quickfix to correct scoring in case of timeouts
+    if (cause == ScoreCause.HARD_TIMEOUT || cause == ScoreCause.SOFT_TIMEOUT) {
+      player.setLeft(true);
+    }
+
     Map<IPlayer, PlayerScore> res = generateScoreMap();
 
     for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
