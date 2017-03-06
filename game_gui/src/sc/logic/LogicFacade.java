@@ -10,6 +10,10 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import sc.SoftwareChallengeGUI;
 import sc.common.CouldNotFindAnyLanguageFileException;
 import sc.common.CouldNotFindAnyPluginException;
 import sc.gui.stuff.YearComparator;
@@ -24,6 +28,8 @@ import sc.server.Lobby;
 
 public class LogicFacade {
 
+	private static final Logger	logger = LoggerFactory
+			.getLogger(SoftwareChallengeGUI.class);
 	/**
 	 * Folder of all language files
 	 */
@@ -85,7 +91,8 @@ public class LogicFacade {
 		try {
 			this.languageData.load(getClass().getResourceAsStream(fileName));
 		} catch (Exception e) {
-			System.err.println("Failed to read " + fileName);
+			logger.error("Failed to read {}", fileName);
+			//System.err.println("Failed to read " + fileName);
 			e.printStackTrace();
 			throw new CouldNotFindAnyLanguageFileException();
 		}
@@ -132,7 +139,7 @@ public class LogicFacade {
 			this.stopServer();
 		}
 		server = Application.startServer(port);
-		System.out.println("Server started on " + port);
+		logger.debug("Server started on {}",port);
 	}
 
 	/**
@@ -143,7 +150,7 @@ public class LogicFacade {
 			server.close();
 			server = null;
 		}
-		System.out.println("Server stopped.");
+		logger.debug("Server stopped.");
 	}
 
 	public void unloadPlugins() {
@@ -175,7 +182,7 @@ public class LogicFacade {
 		for (int i = 0; i < plugins.size(); i++) {
 			GUIPluginInstance pluginInstance = plugins.get(i);
 			if (pluginInstance.getPlugin().getPluginYear() > last) {
-				System.out.println("Show plugin: " + pluginInstance.getDescription().name());
+				logger.debug("Show plugin: {}",pluginInstance.getDescription().name());
 				result.add(pluginInstance.getDescription().name());
 			}
 		}
