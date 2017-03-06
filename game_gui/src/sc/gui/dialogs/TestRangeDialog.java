@@ -386,7 +386,10 @@ public class TestRangeDialog extends JDialog {
             try {
               logger.debug("testloop await game end reached {}, id: {}", Thread.currentThread().getName(),
                   Thread.currentThread().getId());
-              TestRangeDialog.this.gameEndReached.await(30, TimeUnit.SECONDS);
+              // NOTE that we have to wait at least as long as one match might
+              // take (No. of Players * No. of Rounds * Max. turn time) which is
+              // currently (Game MQ, 2017) 2 * 30 * 2 = 120 seconds.
+              TestRangeDialog.this.gameEndReached.await(150, TimeUnit.SECONDS);
               logger.debug("testloop await continue {}", this);
             } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
               logger.error("Exception while waiting for game end", e);
