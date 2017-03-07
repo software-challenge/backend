@@ -56,7 +56,7 @@ while (( VMSTARTTRIES <= 3 && VM_BOOTED == 0 )); do
         echo "We should use the new VM!"
         echo "$CLIENT_ZIP"
         echo "Creating vm clone"
-        VBoxManage clonevm vmclient14.04 --snapshot snap7 --options link --name "$VMNAME" --register
+        VBoxManage clonevm vmclient14.04 --snapshot snap8 --options link --name "$VMNAME" --register
     else
         echo "We should use the old VM!"
         echo "$CLIENT_ZIP"
@@ -135,11 +135,14 @@ while (( VMSTARTTRIES <= 3 && VM_BOOTED == 0 )); do
             if ([ $VM_BOOTED -eq 1 ]); then
                 echo "VM booted, copying client file"
                 set -x # echo commands as they are executed
-                TEMP_ZIP_NAME=client-for-$VMIP.zip
+                TEMP_ZIP_NAME="client-for-$VMIP.zip"
+                rm -f "./$TEMP_ZIP_NAME"
                 scp $SSH_OPTIONS scadmin@$VMMAIN:"$CLIENT_ZIP" ./$TEMP_ZIP_NAME
+                unzip -t ./$TEMP_ZIP_NAME # test zip integrity
                 scp $SSH_OPTIONS ./$TEMP_ZIP_NAME scadmin@$VMIP:/home/clientexec/client/client.zip
                 ssh $SSH_OPTIONS scadmin@$VMMAIN rm \"$CLIENT_ZIP\"
-                rm ./$TEMP_ZIP_NAME
+                rm "./$TEMP_ZIP_NAME"
+                sleep 1 # give some time to avoid corrupted zip (not sure if that helps)
                 echo "Starting client..."
                 ssh $SSH_OPTIONS scadmin@$VMIP sudo /bin/bash /home/scadmin/consume.sh &
                 set +x # no more echo commands as they are executed
