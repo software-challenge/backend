@@ -95,7 +95,7 @@ while (( VMSTARTTRIES <= 3 && VM_BOOTED == 0 )); do
     # client have to wait for the other client, which VM could have had
     # problems. CLIENT_TIMEOUT should be > max. match time + SSH_TIMEOUT*3.
     # Max. match time is 120 seconds (Game MQ 2017)
-    CLIENT_TIMEOUT=300
+    CLIENT_TIMEOUT=220
 
     CONSUMER_SSH_PID=0
 
@@ -175,8 +175,18 @@ while (( VMSTARTTRIES <= 3 && VM_BOOTED == 0 )); do
         if ([ $VM_BOOTED -eq 2 ]); then
             echo "Timeout while waiting for client to finish."
         fi
-        echo "$HOME/log/vmclient/$DATEDIR/$VMNAME.log" >> $HOME/log/vmclient/vm_startup_failures.log
-        $HOME/bin/stopVM.sh $VMNAME
+        if ((VM_BOOTED < 2)); then
+            # Client timeouts are no startup failures
+            echo "$HOME/log/vmclient/$DATEDIR/$VMNAME.log" >> $HOME/log/vmclient/vm_startup_failures.log
+        fi
+
+        # We will only retry if the VM didn't boot (see outer most while loop
+        # condition) Therefor we only need to shutdown the VM here if the VM
+        # didn't boot. Otherwise, it has to be done below because we want to
+        # copy the log file before.
+        if ([ $VM_BOOTED -eq 0 ]); then
+            $HOME/bin/stopVM.sh $VMNAME
+        fi
         VMSTARTTRIES=$((VMSTARTTRIES+1))
     fi
 
