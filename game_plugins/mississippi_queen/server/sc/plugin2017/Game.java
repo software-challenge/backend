@@ -215,7 +215,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     }
     return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
         stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-
   }
 
   @Override
