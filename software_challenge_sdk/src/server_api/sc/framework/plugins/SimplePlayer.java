@@ -31,10 +31,16 @@ public abstract class SimplePlayer implements IPlayer
 	private String					displayName;
 
 	@XStreamOmitField
-	protected boolean				violated		= false;
+	protected boolean				violated        = false;
 	
 	@XStreamOmitField
-	protected boolean				left		    = false;
+	protected boolean				left            = false;
+
+	@XStreamOmitField
+	protected boolean				softTimeout     = false;
+
+	@XStreamOmitField
+	protected boolean				hardTimeout     = false;
 
 	@XStreamOmitField
 	protected String				violationReason	= null;
@@ -142,6 +148,30 @@ public abstract class SimplePlayer implements IPlayer
 	public boolean hasLeft()
 	{
 		return this.left;
+	}
+
+	@Override
+	public void setSoftTimeout(boolean timeout)
+	{
+		this.softTimeout = timeout;
+	}
+
+	@Override
+	public boolean hasSoftTimeout()
+	{
+		return this.softTimeout;
+	}
+
+	@Override
+	public void setHardTimeout(boolean timeout)
+	{
+		this.hardTimeout = timeout;
+	}
+
+	@Override
+	public boolean hasHardTimeout()
+	{
+		return this.hardTimeout;
 	}
 	
 	/**
