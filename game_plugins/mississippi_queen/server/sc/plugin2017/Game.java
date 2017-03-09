@@ -136,12 +136,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-
-    // FIXME: this is a quickfix to correct scoring in case of timeouts
-    if (cause == ScoreCause.HARD_TIMEOUT || cause == ScoreCause.SOFT_TIMEOUT) {
-      player.setLeft(true);
-    }
-
     Map<IPlayer, PlayerScore> res = generateScoreMap();
 
     for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
@@ -199,16 +193,23 @@ public class Game extends RoundBasedGameInstance<Player> {
     // score definition but assumes a fixed schema (points and matchpoints).
     Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
         : this.gameState.getRedPlayer();
-    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft()) {
+    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft() 
+        || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
       matchPoints = 2;
     }
-    if (p.hasViolated()) {
+    if (p.hasSoftTimeout()) { // Soft-Timeout
+      return new PlayerScore(ScoreCause.SOFT_TIMEOUT, p.getViolationReason(), 0,
+          stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    } else if (p.hasHardTimeout()) { // Hard-Timeout
+      return new PlayerScore(ScoreCause.HARD_TIMEOUT, p.getViolationReason(), 0,
+          stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    } else if (p.hasViolated()) { // rule violation
       return new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
               stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-    } else if (p.hasLeft()) {
+    } else if (p.hasLeft()) { // player left
       return new PlayerScore(ScoreCause.LEFT, winningReason, 0,
                 stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-    } else {
+    } else { // regular score, opponent violated
       return new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
             stats[Constants.GAME_STATS_PASSENGER_INDEX]);
     }
