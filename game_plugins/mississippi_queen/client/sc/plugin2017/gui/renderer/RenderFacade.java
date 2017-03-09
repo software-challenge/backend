@@ -296,7 +296,7 @@ public class RenderFacade {
             reason.append(" hat einen unbekannten Fehler verursacht.");
             break;
           case RULE_VIOLATION:
-            reason.append(" hat einen Regelwidrigen Zug gemacht:\n");
+            reason.append(" hat einen regelwidrigen Zug gemacht:\n");
             reason.append(score.getReason());
             break;
           }
