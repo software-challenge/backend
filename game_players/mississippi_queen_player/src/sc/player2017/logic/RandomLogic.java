@@ -141,7 +141,7 @@ public class RandomLogic implements IGameHandler {
     }
     move.orderActions();
     log.info("Sende zug {}", move);
-    
+    sendAction(move);
 	}
 
   /**
