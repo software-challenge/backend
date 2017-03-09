@@ -53,6 +53,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 				if (this.requestTimeout.didTimeout())
 				{
 					logger.warn("Client hit soft-timeout.");
+					fromPlayer.setSoftTimeout(true);
 					onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
 				}
 				else
@@ -227,6 +228,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			{
 				logger.warn("Player {} reached the timeout of {}ms",
 						playerToTimeout, timeout.getHardTimeout());
+				playerToTimeout.setHardTimeout(true);
 				onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
 			}
 		});

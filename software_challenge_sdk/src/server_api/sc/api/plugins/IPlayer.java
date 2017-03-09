@@ -15,4 +15,8 @@ public interface IPlayer
 	public boolean hasViolated();
 	public void setLeft(boolean left);
 	public boolean hasLeft();
+	public void setSoftTimeout(boolean timeout);
+	public boolean hasSoftTimeout();
+	public void setHardTimeout(boolean timeout);
+	public boolean hasHardTimeout();
 }
