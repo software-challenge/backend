@@ -136,12 +136,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-
-    // FIXME: this is a quickfix to correct scoring in case of timeouts
-    if (cause == ScoreCause.HARD_TIMEOUT || cause == ScoreCause.SOFT_TIMEOUT) {
-      player.setLeft(true);
-    }
-
     Map<IPlayer, PlayerScore> res = generateScoreMap();
 
     for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
@@ -183,9 +177,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     int matchPoints = 1;
     int[] oppPoints = this.gameState.getPlayerStats(p.getPlayerColor().opponent());
     WinCondition winCondition = checkWinCondition();
-    String winningReason = null;
+    String reason = null;
     if (winCondition != null) {
-      winningReason = winCondition.getReason();
+      reason = winCondition.getReason();
     }
     if (stats[Constants.GAME_STATS_POINTS_INDEX] > oppPoints[Constants.GAME_STATS_POINTS_INDEX]
         || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX]
@@ -195,24 +189,32 @@ public class Game extends RoundBasedGameInstance<Player> {
         || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX]
             && stats[Constants.GAME_STATS_PASSENGER_INDEX] < oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
       matchPoints = 0;
-    // FIXME score calculation is done at too many places and does not respect
-    // score definition but assumes a fixed schema (points and matchpoints).
     Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
         : this.gameState.getRedPlayer();
-    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft()) {
+    // opponent has done something wrong
+    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft() 
+        || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
       matchPoints = 2;
     }
-    if (p.hasViolated()) {
-      return new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
-              stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-    } else if (p.hasLeft()) {
-      return new PlayerScore(ScoreCause.LEFT, winningReason, 0,
-                stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-    } else {
-      return new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
-            stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    ScoreCause cause;
+    if (p.hasSoftTimeout()) { // Soft-Timeout
+      cause = ScoreCause.SOFT_TIMEOUT;
+      matchPoints = 0;
+    } else if (p.hasHardTimeout()) { // Hard-Timeout
+      cause = ScoreCause.HARD_TIMEOUT;
+      matchPoints = 0;
+    } else if (p.hasViolated()) { // rule violation
+      cause = ScoreCause.RULE_VIOLATION;
+      reason = p.getViolationReason(); // message from InvalidMoveException
+      matchPoints = 0;
+    } else if (p.hasLeft()) { // player left
+      cause = ScoreCause.LEFT;
+      matchPoints = 0;
+    } else { // regular score or opponent violated
+      cause = ScoreCause.REGULAR;
     }
-
+    return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
+        stats[Constants.GAME_STATS_PASSENGER_INDEX]);
   }
 
   @Override
