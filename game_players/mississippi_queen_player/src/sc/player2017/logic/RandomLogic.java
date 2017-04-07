@@ -66,6 +66,7 @@ public class RandomLogic implements IGameHandler {
 	 */
 	@Override
 	public void onRequestAction(){
+    long startTime = System.nanoTime();
     log.info("Es wurde ein Zug angefordert.");
     Move move = new Move();
     // Setze die für perform benötigen Attribute
@@ -141,7 +142,12 @@ public class RandomLogic implements IGameHandler {
     }
     move.orderActions();
     log.info("Sende zug {}", move);
+    long nowTime = System.nanoTime();
+    while(nowTime / 1000000 - startTime / 1000000 < 1980) {
+      nowTime = System.nanoTime();
+    }
     sendAction(move);
+    log.warn("Time needed for turn: {}", (nowTime - startTime) / 1000000);
 	}
 
   /**
