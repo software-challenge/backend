@@ -143,7 +143,7 @@ public class RandomLogic implements IGameHandler {
     move.orderActions();
     log.info("Sende zug {}", move);
     long nowTime = System.nanoTime();
-    while(nowTime / 1000000 - startTime / 1000000 < 1980) {
+    while(nowTime / 1000000 - startTime / 1000000 < 1980 - ((gameState.getTurn() == 0)? 80 : 0)) {
       nowTime = System.nanoTime();
     }
     sendAction(move);

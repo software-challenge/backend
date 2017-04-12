@@ -36,8 +36,6 @@ public class GamePlugin implements IGamePlugin {
 
 	@Override
 	public IGameInstance createGame() {
-	  // before starting game run GC to avoid running GC, when checking for timeout
-	  System.gc();
 		return new Game();
 	}
 
