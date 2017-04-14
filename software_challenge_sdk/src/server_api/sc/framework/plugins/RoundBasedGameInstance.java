@@ -103,6 +103,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 			logger.warn("Couldn't find any listeners. Is this intended?");
 		}
 
+		// XXX: Testing if waiting before start helps with timeout issue
+		try {
+		    logger.info("Waiting 75ms before starting game...");
+			Thread.sleep(75);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		this.activePlayer = this.players.get(0);
 		onActivePlayerChanged(this.activePlayer);
 		notifyOnNewState(getCurrentState());
