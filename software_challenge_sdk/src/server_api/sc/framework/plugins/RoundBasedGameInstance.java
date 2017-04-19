@@ -105,8 +105,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 		// XXX: Testing if waiting before start helps with timeout issue
 		try {
-		    logger.info("Waiting 75ms before starting game...");
-			Thread.sleep(75);
+		    logger.info("Waiting 200ms before starting game...");
+			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
