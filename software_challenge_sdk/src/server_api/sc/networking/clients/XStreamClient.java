@@ -51,6 +51,9 @@ public abstract class XStreamClient
 		return this.ready;
 	}
 
+	/**
+	 * Signals that client can receive and send
+	 */
 	public void start()
 	{
 		synchronized (this.readyLock)
