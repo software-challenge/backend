@@ -34,7 +34,7 @@ import sc.server.network.PacketCallback;
  * @author mja
  * @author rra
  */
-public class Lobby implements IClientManagerListener, IClientListener
+public class Lobby implements IClientListener
 {
 	private final Logger			logger			= LoggerFactory
 															.getLogger(Lobby.class);
@@ -52,7 +52,6 @@ public class Lobby implements IClientManagerListener, IClientListener
 		this.clientManager.start();
 	}
 
-	@Override
 	public void onClientConnected(Client client)
 	{
 		client.addClientListener(this);

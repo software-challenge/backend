@@ -63,6 +63,7 @@
   <logger name="sc.networking.clients.XStreamClient" level="INFO" />
   <logger name="sc.plugin2017.gui.renderer.RenderFacade" level="DEBUG" />
   <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
+  <logger name="sc.server.Application" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

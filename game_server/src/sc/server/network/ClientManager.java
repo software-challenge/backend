@@ -2,13 +2,12 @@ package sc.server.network;
 
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescueableClientException;
-import sc.server.IClientManagerListener;
+import sc.server.Lobby;
 import sc.server.ServiceManager;
 
 /**
@@ -20,7 +19,7 @@ public class ClientManager implements Runnable, IClientListener
 																	.getLogger(ClientManager.class);
 	protected final LinkedList<Client>			clients		= new LinkedList<Client>();
 	private final NewClientListener				clientListener;
-	private final List<IClientManagerListener>	listeners	= new LinkedList<IClientManagerListener>();
+	private Lobby	listener	= null;
 	private boolean								running		= false;
 	private Thread								thread 		= null;
 
@@ -42,10 +41,9 @@ public class ClientManager implements Runnable, IClientListener
 
 		newClient.addClientListener(this);
 
-		for (IClientManagerListener listener : this.listeners)
-		{
-			listener.onClientConnected(newClient);
-		}
+		
+		this.listener.onClientConnected(newClient);
+		
 	}
 
 	@Override
@@ -93,9 +91,9 @@ public class ClientManager implements Runnable, IClientListener
 		}
 	}
 
-	public void addListener(IClientManagerListener listener)
+	public void addListener(Lobby listener)
 	{
-		this.listeners.add(listener);
+		this.listener = listener;
 	}
 
 	public void close()
