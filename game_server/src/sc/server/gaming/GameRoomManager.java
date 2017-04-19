@@ -29,14 +29,13 @@ import sc.shared.SlotDescriptor;
  * @author mja
  * @author rra
  */
-public class GameRoomManager implements Runnable
+public class GameRoomManager
 {
 	private static Logger			logger				= LoggerFactory
 																.getLogger(GameRoomManager.class);
 	private Map<String, GameRoom>	rooms				= new HashMap<String, GameRoom>();
 	private final GamePluginManager	gamePluginManager	= new GamePluginManager();
 	private GamePluginApi			pluginApi			= new GamePluginApi();
-	private Thread					serviceThread		= null;
 
 	public GameRoomManager()
 	{
@@ -128,32 +127,6 @@ public class GameRoomManager implements Runnable
 		}
 
 		return false;
-	}
-
-	public void start()
-	{
-		if (this.serviceThread == null)
-		{
-			this.serviceThread = ServiceManager.createService(this.getClass()
-					.getSimpleName(), this);
-			this.serviceThread.start();
-		}
-	}
-
-	@Override
-	public void run()
-	{
-		logger.info("GameRoomManager running.");
-
-		// Nothing to do yet.
-	}
-
-	public void close()
-	{
-		if (this.serviceThread != null)
-		{
-			this.serviceThread.interrupt();
-		}
 	}
 
 	public synchronized Collection<GameRoom> getGames()

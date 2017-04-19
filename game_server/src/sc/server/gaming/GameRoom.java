@@ -452,29 +452,6 @@ public class GameRoom implements IGameListener
 
 	public void addObserver(Client source)
 	{
-		/*source.addClientListener(new IClientListener() {
-			@Override
-			public void onRequest(Client source, PacketCallback packet)
-					throws RescueableClientException
-			{
-			}
-
-			@Override
-			public void onError(Client source, Object packet)
-			{
-			}
-
-			@Override
-			public void onClientDisconnected(Client source)
-			{
-				for (IClientRole role : source.getRoles()) {
-					if (GameRoom.this.observers.contains(role)) {
-						logger.info("Observer {} disconnected from room {}", source, this);
-						GameRoom.this.observers.remove(role);
-					}
-				}
-			}
-		});*/
 		ObserverRole role = new ObserverRole(source, this);
 		source.addRole(role);
 		this.observers.add(role);

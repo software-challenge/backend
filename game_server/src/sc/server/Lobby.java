@@ -38,20 +38,30 @@ public class Lobby implements IClientListener
 {
 	private final Logger			logger			= LoggerFactory
 															.getLogger(Lobby.class);
-	private final GameRoomManager	gameManager		= new GameRoomManager();
-	private final ClientManager		clientManager	= new ClientManager();
+	private final GameRoomManager	gameManager;		
+	private final ClientManager		clientManager;
 
 	public Lobby()
 	{
-		this.clientManager.addListener(this);
+		this.gameManager = new GameRoomManager();
+		this.clientManager = new ClientManager(this);
 	}
 
+	/**
+	 * Starts the ClientManager in it's own daemon thread. This method should be used only once.
+	 * ClientManager starts clientListener.
+	 * clientListener starts SocketListener on defined port to watch for new connecting clients.
+	 */
 	public void start() throws IOException
 	{
-		this.gameManager.start();
 		this.clientManager.start();
 	}
 
+	/**
+	 * Add lobby as listener to client. 
+	 * Prepare client for send and receive.
+	 * @param client connected XStreamClient
+	 */
 	public void onClientConnected(Client client)
 	{
 		client.addClientListener(this);
@@ -61,20 +71,13 @@ public class Lobby implements IClientListener
 	@Override
 	public void onClientDisconnected(Client source)
 	{
-		/*final Client client = source;
-		new Thread(new Runnable() {
-			@Override
-			public void run()
-			{
-				synchronized(client) {
-					client.removeClientListener(Lobby.this);
-				}
-			}
-		}).start();*/
 		this.logger.info("{} disconnected.", source);
 		source.removeClientListener(this);
 	}
 
+	/**
+	 * handle requests or moves of clients
+	 */
 	@Override
 	public void onRequest(Client source, PacketCallback callback)
 			throws RescueableClientException
@@ -105,9 +108,6 @@ public class Lobby implements IClientListener
 			{
 				PrepareGameRequest prepared = (PrepareGameRequest) packet;
 				source.send(this.gameManager.prepareGame(prepared));
-				/*source.send(this.gameManager.prepareGame(
-						prepared.getGameType(), prepared.getPlayerCount(),
-						prepared.getSlotDescriptors()));*/
 			}
 			else if (packet instanceof FreeReservationRequest)
 			{
@@ -162,7 +162,6 @@ public class Lobby implements IClientListener
 	public void close()
 	{
 		this.clientManager.close();
-		this.gameManager.close();
 	}
 
 	public GameRoomManager getGameManager()

@@ -20,12 +20,15 @@ public final class Application
 			InterruptedException, IllegalOptionValueException,
 			UnknownOptionException
 	{
+		
+		// Setup Server
 		System.setProperty( "file.encoding", "UTF-8" );
 		
 		parseArguments(params);
 
 		logger.info("Server is starting up...");
 
+		// register crtl + c
 		addShutdownHook();
 		long start = System.currentTimeMillis();
 
@@ -49,14 +52,15 @@ public final class Application
 	 * @param port
 	 * @return the lobby
 	 */
-	public static Lobby startServer(final Integer port) throws IOException
-	{
-		logger.info("Starting the Server on port {}", port);
-		Configuration.set(Configuration.PORT_KEY, port.toString());
-		final Lobby server = new Lobby();
-		server.start();
-		return server;
-	}
+//	FIXME 
+//	public static Lobby startServer(final Integer port) throws IOException
+//	{
+//		logger.info("Starting the Server on port {}", port);
+//		Configuration.set(Configuration.PORT_KEY, port.toString());
+//		final Lobby server = new Lobby();
+//		server.start();
+//		return server;
+//	}
 
 	public static void parseArguments(String[] params)
 			throws IllegalOptionValueException, UnknownOptionException

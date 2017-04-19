@@ -17,15 +17,22 @@ public class ClientManager implements Runnable, IClientListener
 {
 	private static final Logger					logger		= LoggerFactory
 																	.getLogger(ClientManager.class);
+	
+	// List of all XStreamClients
 	protected final LinkedList<Client>			clients		= new LinkedList<Client>();
+	
+	// Listener waits for new clients to connect
 	private final NewClientListener				clientListener;
-	private Lobby	listener	= null;
+	
+	// Lobby which we are connected to
+	private Lobby	lobby	= null;
 	private boolean								running		= false;
 	private Thread								thread 		= null;
 
-	public ClientManager()
+	public ClientManager(Lobby lobby)
 	{
 		this.clientListener = new NewClientListener();
+		this.lobby = lobby;
 	}
 
 	/**
@@ -42,7 +49,7 @@ public class ClientManager implements Runnable, IClientListener
 		newClient.addClientListener(this);
 
 		
-		this.listener.onClientConnected(newClient);
+		this.lobby.onClientConnected(newClient);
 		
 	}
 
@@ -57,6 +64,7 @@ public class ClientManager implements Runnable, IClientListener
 		{
 			try
 			{
+				// Waits blocking for new Client 
 				Client client = this.clientListener.fetchNewSingleClient();
 
 				logger.info("Delegating new client to ClientManager...");
@@ -80,7 +88,8 @@ public class ClientManager implements Runnable, IClientListener
 	}
 
 	/**
-	 * Starts the ClientManager in it's own daemon thread.
+	 * Starts the ClientManager in it's own daemon thread. This method should be used only once.
+	 * clientListener starts SocketListener on defined port to watch for new connecting clients
 	 */
 	public void start() throws IOException
 	{
@@ -93,7 +102,7 @@ public class ClientManager implements Runnable, IClientListener
 
 	public void addListener(Lobby listener)
 	{
-		this.listener = listener;
+		this.lobby = listener;
 	}
 
 	public void close()
