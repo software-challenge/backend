@@ -33,7 +33,7 @@ public class GameRoomManager
 {
 	private static Logger			logger				= LoggerFactory
 																.getLogger(GameRoomManager.class);
-	private Map<String, GameRoom>	rooms				= new HashMap<String, GameRoom>();
+	private Map<String, GameRoom>	rooms				= new HashMap<>();
 	private final GamePluginManager	gamePluginManager	= new GamePluginManager();
 	private GamePluginApi			pluginApi			= new GamePluginApi();
 
@@ -54,12 +54,25 @@ public class GameRoomManager
 		this.rooms.put(room.getId(), room);
 	}
 
+	/**
+	 * Create a not prepared GameRoom of given type
+	 * @param gameType
+	 * @return
+	 * @throws RescueableClientException
+	 */
 	public synchronized GameRoom createGame(String gameType)
 			throws RescueableClientException
 	{
 		return createGame(gameType, false);
 	}
 
+	/**
+	 * XXX
+	 * @param gameType
+	 * @param prepared
+	 * @return
+	 * @throws RescueableClientException
+	 */
 	public synchronized GameRoom createGame(String gameType, boolean prepared)
 			throws RescueableClientException
 	{
@@ -89,11 +102,18 @@ public class GameRoomManager
 		return room;
 	}
 
-	private synchronized static String generateRoomId()
+	private static synchronized  String generateRoomId()
 	{
 		return UUID.randomUUID().toString();
 	}
 
+	/**
+	 * Open new GameRoom and join Client
+	 * @param client
+	 * @param gameType
+	 * @return
+	 * @throws RescueableClientException
+	 */
 	public synchronized boolean createAndJoinGame(Client client, String gameType)
 			throws RescueableClientException
 	{
@@ -101,6 +121,13 @@ public class GameRoomManager
 		return room.join(client);
 	}
 
+	/**
+	 * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
+	 * @param client
+	 * @param gameType
+	 * @return
+	 * @throws RescueableClientException
+	 */
 	public synchronized boolean joinOrCreateGame(Client client, String gameType)
 			throws RescueableClientException
 	{
@@ -115,11 +142,19 @@ public class GameRoomManager
 		return createAndJoinGame(client, gameType);
 	}
 
+	/**
+	 * Let a client join the first GameRoom with the right id
+	 * @param client
+	 * @param id id of GameRoom e.g. 7dc299b1-dcd5-4854-8a02-90510754b943
+	 * @return true if join was successful
+	 * @throws RescueableClientException
+	 */
 	public synchronized boolean joinGame(Client client, String id)
 			throws RescueableClientException
 	{
 		for (GameRoom game : getGames())
 		{
+			logger.debug("GameRoom has id: {}", game.getId());
 			if (game.getId().equals(id))
 			{
 				return game.join(client);

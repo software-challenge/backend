@@ -100,7 +100,7 @@ public class NewClientListener implements Runnable, Closeable
 		{
 			this.serverSocket = new ServerSocket(port);
 			int usedPort = this.serverSocket.getLocalPort();
-			lastUsedPort = usedPort;
+			NewClientListener.lastUsedPort = usedPort;
 			logger.info("Listening on port {} for incoming connections.",
 					usedPort);
 		}

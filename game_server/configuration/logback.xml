@@ -62,7 +62,7 @@
   <logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
   <logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
   <logger name="sc.networking.clients.XStreamClient" level="INFO" />
-  <logger name="sc.server.Application" level="DEBUG" />
+  <logger name="sc.server" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />
