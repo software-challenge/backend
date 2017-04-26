@@ -138,7 +138,7 @@ public class LogicFacade {
 		if (null != server) {
 			this.stopServer();
 		}
-//		server = Application.startServer(port);
+		server = Application.startServer(port);
 		logger.debug("Server started on {}",port);
 	}
 

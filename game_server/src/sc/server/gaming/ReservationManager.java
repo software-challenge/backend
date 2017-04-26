@@ -22,6 +22,13 @@ public final class ReservationManager
 		// singleton
 	}
 
+	/**
+	 * If reservationcode is valid register client to playerslot and start game if all clients connected
+	 * @param client
+	 * @param reservation
+	 * @return newly filled PlayerSlot
+	 * @throws RescueableClientException
+	 */
 	public static synchronized PlayerSlot redeemReservationCode(Client client,
 			String reservation) throws RescueableClientException
 	{
@@ -34,7 +41,7 @@ public final class ReservationManager
 		else
 		{
 			logger.info("Reservation {} was redeemed.", reservation);
-			result.getRoom().onReservationClaimed(client, result);
+			result.getRoom().fillSlot(result, client);
 			return result;
 		}
 	}

@@ -52,15 +52,15 @@ public final class Application
 	 * @param port
 	 * @return the lobby
 	 */
-//	FIXME 
-//	public static Lobby startServer(final Integer port) throws IOException
-//	{
-//		logger.info("Starting the Server on port {}", port);
-//		Configuration.set(Configuration.PORT_KEY, port.toString());
-//		final Lobby server = new Lobby();
-//		server.start();
-//		return server;
-//	}
+//	FIXME delete this, only needed by current gui
+	public static Lobby startServer(final Integer port) throws IOException
+	{
+		logger.info("Starting the Server on port {}", port);
+		Configuration.set(Configuration.PORT_KEY, port.toString());
+		final Lobby server = new Lobby();
+		server.start();
+		return server;
+	}
 
 	public static void parseArguments(String[] params)
 			throws IllegalOptionValueException, UnknownOptionException
