@@ -92,7 +92,6 @@ public class Lobby implements IClientListener
 						.redeemReservationCode(source,
 								((JoinPreparedRoomRequest) packet)
 										.getReservationCode());
-
 			}
 			else if (packet instanceof JoinRoomRequest)
 			{

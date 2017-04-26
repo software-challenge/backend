@@ -67,10 +67,10 @@ public class GameRoomManager
 	}
 
 	/**
-	 * XXX
+	 * make new PLuginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
 	 * @param gameType
-	 * @param prepared
-	 * @return
+	 * @param prepared signals whether the game was prepared by gui or ..., false if player has to send JoinRoomRequest
+	 * @return newly created GameRoom
 	 * @throws RescueableClientException
 	 */
 	public synchronized GameRoom createGame(String gameType, boolean prepared)
@@ -179,6 +179,16 @@ public class GameRoomManager
 		return this.pluginApi;
 	}
 
+	/**
+	 * Creates a new GameRoom {@link #createGame(String) createGame}, set descriptors of PlayerSlots, 
+	 * if exists load state of game from file
+	 * @param gameType
+	 * @param playerCount
+	 * @param descriptors dispalyName, canTimout and shouldBePaused
+	 * @param loadGameInfo
+	 * @return new PrepareGameResponse with roomId and slots
+	 * @throws RescueableClientException
+	 */
 	public synchronized PrepareGameResponse prepareGame(String gameType,
 			int playerCount, List<SlotDescriptor> descriptors, Object loadGameInfo)
 			throws RescueableClientException {
@@ -199,12 +209,24 @@ public class GameRoomManager
 		return prepareGame(gameType, playerCount, descriptors, null);
 	}
 
+	/**
+	 *  Calls {@link #prepareGame(String, int, List, Object) prepareGame}
+	 * @param prepared
+	 * @return
+	 * @throws RescueableClientException
+	 */
 	public synchronized PrepareGameResponse prepareGame(PrepareGameRequest prepared) throws RescueableClientException {
 		return prepareGame(
 				prepared.getGameType(), prepared.getPlayerCount(),
 				prepared.getSlotDescriptors(), prepared.getLoadGameInfo());
 	}
 
+	/**
+	 * Getter for GameRoom
+	 * @param roomId
+	 * @return returns GameRoom specified by rooId
+	 * @throws RescueableClientException
+	 */
 	public synchronized GameRoom findRoom(String roomId)
 			throws RescueableClientException
 	{

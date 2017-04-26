@@ -263,12 +263,12 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * If game is not prepared
+	 * If game is not prepared set attributes of PlayerSlot and start game if game is {@link #isReady() ready}
 	 * @param openSlot
 	 * @param client
 	 * @throws RescueableClientException
 	 */
-	private synchronized void fillSlot(PlayerSlot openSlot, Client client)
+	synchronized void fillSlot(PlayerSlot openSlot, Client client)
 			throws RescueableClientException
 	{
 		openSlot.setClient(client); // set role of Slot as PlayerRole
@@ -293,7 +293,7 @@ public class GameRoom implements IGameListener
 	private void syncSlot(PlayerSlot slot) throws RescueableClientException
 	{
 		IPlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
-		// set attributes for player
+		// set attributes for player XXX check whether this is needed for prepared games
 		player.setDisplayName(slot.getDescriptor().getDisplayName());
 		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
 		player.setCanTimeout(slot.getDescriptor().isCanTimeout());
@@ -419,6 +419,12 @@ public class GameRoom implements IGameListener
 		return result;
 	}
 
+	/**
+	 * Received new move from player and execute move in game
+	 * @param source
+	 * @param data
+	 * @throws RescueableClientException
+	 */
 	public synchronized void onEvent(Client source, Object data)
 			throws RescueableClientException
 	{
@@ -431,6 +437,12 @@ public class GameRoom implements IGameListener
 		this.game.onAction(resolvePlayer(source), data);
 	}
 
+	/**
+	 * Getter for player out of all playerRoles
+	 * @param source
+	 * @return IPlayer instance
+	 * @throws RescueableClientException
+	 */
 	private IPlayer resolvePlayer(Client source)
 			throws RescueableClientException
 	{
@@ -497,19 +509,14 @@ public class GameRoom implements IGameListener
 		source.send(new ObservationResponse(getId()));
 	}
 
-	public synchronized void onReservationClaimed(Client source,
-			PlayerSlot result) throws RescueableClientException
-	{
-		fillSlot(result, source);
-	}
-
 	public synchronized void pause(boolean pause)
 	{
 		if (isOver())
 		{
 			logger.warn("Game is already over and can't be paused.");
 		}
-
+		
+		// XXX is this needed?
 		if (!(this.game instanceof IPauseable))
 		{
 			logger.warn("Game isn't pausable.");
@@ -593,6 +600,11 @@ public class GameRoom implements IGameListener
 				nextPlayer)));
 	}
 
+	/**
+	 * Set descriptors of PlayerSlots
+	 * @param descriptors
+	 * @throws TooManyPlayersException
+	 */
 	public void openSlots(List<SlotDescriptor> descriptors)
 			throws TooManyPlayersException
 	{
