@@ -334,21 +334,40 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		}
 	}
 
+	/**
+	 * used in server
+	 * @param reservation
+	 */
 	public void joinPreparedGame(String reservation)
 	{
 		send(new JoinPreparedRoomRequest(reservation));
 	}
 
+	/**
+	 * currently not used in server
+	 */
 	public void joinAnyGame(String gameType)
 	{
 		send(new JoinRoomRequest(gameType));
 	}
+	
+	/**
+	 * currently not used in server
+	 * @param gameType
+	 * @param roomId
+	 */
 
 	public void joinRoom(String gameType, String roomId)
 	{
 		send(new JoinRoomRequest(gameType, roomId));
 	}
 
+	/**
+	 * used in server
+	 * @param request
+	 * @param response
+	 * @param handler
+	 */
 	protected <T> void request(IRequest<T> request, Class<T> response,
 			IRequestResult<T> handler)
 	{

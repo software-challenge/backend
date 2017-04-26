@@ -224,6 +224,12 @@ public class GameRoom implements IGameListener
 		return this.id;
 	}
 
+	/**
+	 * Let a client join a GameRoom. Starts a game, if all players joined.
+	 * @param client
+	 * @return
+	 * @throws RescueableClientException
+	 */
 	public synchronized boolean join(Client client)
 			throws RescueableClientException
 	{
@@ -231,6 +237,7 @@ public class GameRoom implements IGameListener
 
 		for (PlayerSlot slot : this.playerSlots)
 		{
+			// find PlayerSlot that it not in use for the new Client
 			if (slot.isEmpty() && !slot.isReserved())
 			{
 				openSlot = slot;
@@ -238,6 +245,7 @@ public class GameRoom implements IGameListener
 			}
 		}
 
+		// set GameRoom of new Slot, if at least one slot is open
 		if (this.playerSlots.size() < getMaximumPlayerCount())
 		{
 			openSlot = new PlayerSlot(this);
@@ -254,36 +262,57 @@ public class GameRoom implements IGameListener
 		return true;
 	}
 
+	/**
+	 * If game is not prepared
+	 * @param openSlot
+	 * @param client
+	 * @throws RescueableClientException
+	 */
 	private synchronized void fillSlot(PlayerSlot openSlot, Client client)
 			throws RescueableClientException
 	{
-		openSlot.setClient(client);
+		openSlot.setClient(client); // set role of Slot as PlayerRole
 
-		if (!isPrepared())
+		if (!isPrepared()) // is set when game is game is created or prepared
 		{
+			logger.debug("GameRoom was not prepared, syncSlots");
+			// seems to happen every time a client manually connects to server (JoinRoomRequest)
 			syncSlot(openSlot);
 		}
 
 		startIfReady();
 	}
 
+	/**
+	 * sets player in GameState and sets player specific values (displayName, shoudbePaused, canTimeout).
+	 * Registers player to role in given slot
+	 * sends JoinGameResponse when successful
+	 * @param slot
+	 * @throws RescueableClientException
+	 */
 	private void syncSlot(PlayerSlot slot) throws RescueableClientException
 	{
-		IPlayer player = getGame().onPlayerJoined();
+		IPlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
+		// set attributes for player
 		player.setDisplayName(slot.getDescriptor().getDisplayName());
 		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
 		player.setCanTimeout(slot.getDescriptor().isCanTimeout());
 
-		if (slot.isEmpty())
+		if (slot.isEmpty()) // XXX why?
 		{
 			logger.warn("PlayerSlot is empty! Was this  Caused by a forced STEP?");
 			slot.setClient(new DummyClient());
 		}
 
-		slot.setPlayer(player);
+		slot.setPlayer(player); // set player in role of slot
 		slot.getClient().send(new JoinGameResponse(getId()));
 	}
 
+	/**
+	 * Returns true, if game was prepared and all slots are in use or maxplayercount of game 
+	 * (or any new attribute for readiness) is reached
+	 * @return
+	 */
 	private boolean isReady()
 	{
 		if (isPrepared())
@@ -304,6 +333,10 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+	/**
+	 * Starts game, if gameStatus isn't over or
+	 * @throws RescueableClientException
+	 */
 	private void startIfReady() throws RescueableClientException
 	{
 		logger.debug("startIfReady called");
@@ -315,6 +348,7 @@ public class GameRoom implements IGameListener
 
 		if (!isReady())
 		{
+			// normally called, when only the first player has connected
 			logger.info("Game isn't ready yet.");
 			return;
 		}
@@ -322,12 +356,17 @@ public class GameRoom implements IGameListener
 		start();
 	}
 
+	/**
+	 * 
+	 * @throws RescueableClientException
+	 */
 	private void start() throws RescueableClientException
 	{
-		if (isPrepared())
+		if (isPrepared()) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
 		{
 			for (PlayerSlot slot : this.playerSlots)
 			{
+				// creates players in gameState and sets their attributes
 				syncSlot(slot);
 			}
 		}

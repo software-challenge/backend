@@ -104,8 +104,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public IPlayer onPlayerJoined() throws TooManyPlayersException {
-    if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
-      throw new TooManyPlayersException();
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -154,6 +152,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
   }
 
+  /**
+   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
+   */
   @Override
   public void start() {
     for (final Player p : this.players) {
@@ -245,11 +246,6 @@ public class Game extends RoundBasedGameInstance<Player> {
    *         yet met.
    */
   public WinCondition checkWinCondition() {
-    if (this.gameState.getTurn() > 1) {
-      // XXX only for test
-      // return new WinCondition(PlayerColor.BLUE, "Das Rundenlimit von 2 wurde
-      // erreicht.");
-    }
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached
