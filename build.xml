@@ -26,10 +26,11 @@
     <delete dir="game_plugins/twixt/build" />
     <delete dir="game_players/twixt_player/build" />
     <delete dir="game_players/twixt_player2/build" />
-    <!--    currentPlugin                    !-->
     <delete dir="game_plugins/mississippi_queen/build" />
     <delete dir="game_players/mississippi_queen_player/build" />
-    <!--<delete dir="game_players/mississippi_queen_player2/build" /> !-->
+    <!--    currentPlugin                    !-->
+    <delete dir="game_plugins/hase_und_igel_new/build" />
+    <!-- <delete dir="game_players/mississippi_queen_player/build" /> TODO!-->
   </target>
 
   <target name="dependencies">
@@ -56,10 +57,11 @@
         <ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
         <ant dir="game_players/twixt_player" target="clean-build" inheritAll="false" />
         <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" /> !-->
+	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
+	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
         <!--    currentPlugin                    !-->
-        <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
-         <!--<ant dir="game_players/mississippi_queen_player2" target="clean-build" inheritAll="false" /> TODO!-->
+	    <ant dir="game_plugins/hase_und_igel_new" target="clean-build" inheritAll="false" />
+	    <!-- <ant dir="game_players/hase_und_igel_player" target="clean-build" inheritAll="false" /> TODO!-->
 
         <echo message="Compiling Server and GUI..." />
         <ant dir="game_server" target="clean-build" inheritAll="false" />
@@ -79,8 +81,9 @@
     <copy todir="${out.dir}/server">
       <fileset dir="./game_server/build/jar" />
     </copy>
-
-    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar" />
+	<!-- TODO make player !-->
+    <!--
+  	<mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/jar">
       <fileset dir="./game_players/mississippi_queen_player/build/jar" />
     </copy>
@@ -99,6 +102,7 @@
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/src/lib">
       <fileset dir="${out.dir}/simple_client/mississippi_queen_player/jar/lib" />
     </copy>
+    !-->
 
 
     <!-->####    PLUGINS             !-->
@@ -138,8 +142,8 @@
     <zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
     <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar" />
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-src.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/src" />
+    <!-- TODO <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar" />
+    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-src.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/src" /> !-->
 
   </target>
 
