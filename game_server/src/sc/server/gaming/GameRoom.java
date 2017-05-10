@@ -298,7 +298,7 @@ public class GameRoom implements IGameListener
 		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
 		player.setCanTimeout(slot.getDescriptor().isCanTimeout());
 
-		if (slot.isEmpty()) // XXX why?
+		if (slot.isEmpty()) // needed for forced step, if client crashes before joining room
 		{
 			logger.warn("PlayerSlot is empty! Was this  Caused by a forced STEP?");
 			slot.setClient(new DummyClient());
