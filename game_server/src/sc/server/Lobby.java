@@ -113,7 +113,7 @@ public class Lobby implements IClientListener
 				FreeReservationRequest request = (FreeReservationRequest) packet;
 				ReservationManager.freeReservation(request.getReservation());
 			}
-			else if (packet instanceof RoomPacket)	// e.g. new move
+			else if (packet instanceof RoomPacket)	// i.e. new move
 			{
 				RoomPacket casted = (RoomPacket) packet;
 				GameRoom room = this.gameManager.findRoom(casted.getRoomId());
