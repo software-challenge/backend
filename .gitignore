@@ -3,6 +3,9 @@
 # Ignore RVM Project Config
 .rvmrc
 
+# Ignore .project files from eclipse
+*.project
+
 # Ignore temporary VIM files
 .*.sw*
 
