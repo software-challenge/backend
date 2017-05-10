@@ -79,7 +79,7 @@ public class GameState implements Cloneable {
    */
   private Board board;
 
-  /**
+  /** XXX add red/blue + nonskip red/blue in player instead of lastMove
    * letzter getaetigter Zug
    */
   private Move lastMove;

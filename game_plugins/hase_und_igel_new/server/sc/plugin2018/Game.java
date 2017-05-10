@@ -101,6 +101,7 @@ public class Game extends RoundBasedGameInstance<Player>
       }
 
       final Move move = (Move) data;
+      // XXX this.gameState = move.perform(this.gameState, author);
       move.perform(this.gameState, author);
       this.gameState.prepareNextTurn(move);
       this.halfturns++;
