@@ -14,6 +14,10 @@ import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
+/**
+ * XXX 
+ * @param <P>
+ */
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		SimpleGameInstance<P> implements IPauseable
 {
