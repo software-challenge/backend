@@ -373,6 +373,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       this.gameState.getCurrentPlayer().setFreeAcc(1);
       this.gameState.getCurrentPlayer().setFreeTurns(this.gameState.isFreeTurn() ? 2 : 1);
       this.gameState.getCurrentPlayer().setMovement(this.gameState.getCurrentPlayer().getSpeed());
+      // only freeTurns is needed for the otherplayer the other attributes are set in prepareNextTurn
+      this.gameState.getOtherPlayer().setFreeTurns(1); // a previous freeTurn of 2 cannot be recognized by a gameState alone
     }
   }
 
