@@ -68,7 +68,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
   @Override
   protected Object getCurrentState() {
-    return this.gameState.getVisible(); // return only the for the players
+    return this.gameState; // return only the for the players
                                         // visible board
   }
 
@@ -179,11 +179,11 @@ public class Game extends RoundBasedGameInstance<Player>
 		switch (this.gameState.getBoard().getTypeAt(player.getFieldIndex()))
 		{
 			case POSITION_1:
-				if (this.gameState.getBoard().isFirst(player))
+				if (this.gameState.isFirst(player))
 					player.changeCarrotsAvailableBy(10);
 				break;
 			case POSITION_2:
-				if (!this.gameState.getBoard().isFirst(player))
+				if (!this.gameState.isFirst(player))
 					player.changeCarrotsAvailableBy(30);
 				break;
 			default:

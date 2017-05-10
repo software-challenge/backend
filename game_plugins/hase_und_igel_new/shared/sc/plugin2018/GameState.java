@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2018.util.Constants;
+import sc.plugin2018.util.GameUtil;
 import sc.plugin2018.util.InvalidMoveException;
 
 /**
@@ -316,6 +317,123 @@ public class GameState implements Cloneable {
       isFirst = isFirst
           && p.getCarrotsAvailable() < o.getCarrotsAvailable();
     return isFirst;
+  }
+  
+  /**
+   * Gibt den Feldtypen an einer bestimmten Position zurück. Liegt die
+   * gewählte Position vor dem Startpunkt oder hinter dem Ziel, so wird
+   * <code>INVALID</code> zurückgegeben.
+   * 
+   * @param pos
+   *            die Position auf der Rennstrecke
+   * @return
+   */
+  public final FieldType getTypeAt(final int pos)
+  {
+    return board.getTypeAt(pos);
+  }
+  
+  /**
+   * Ist ein Zug auf diesem Spielbrett möglich? Validiert einen Zug unter der
+   * Annahme, das der angegebene Spieler am Zug ist.
+   * 
+   * @param move
+   * @param player
+   * @return
+   */
+  public final boolean isValid(Move move, Player player)
+  {
+    boolean valid = true;
+    switch (move.getType())
+    {
+      case MOVE:
+        valid = GameUtil.isValidToMove(this, player, move.getN());
+        valid = valid && !player.mustPlayCard();
+        break;
+      case EAT:
+        valid = GameUtil.isValidToEat(this, player);
+        valid = valid && !player.mustPlayCard();
+        break;
+      case TAKE_OR_DROP_CARROTS:
+        valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player,
+            move.getN());
+        valid = valid && !player.mustPlayCard();
+        break;
+      case FALL_BACK:
+        valid = GameUtil.isValidToFallBack(this, player);
+        valid = valid && !player.mustPlayCard();
+        break;
+      case PLAY_CARD:
+        valid = GameUtil.isValidToPlayCard(this, player,
+            move.getCard(), move.getN());
+        break;
+      case SKIP:
+        //valid = !GameUtil.isValidToFallBack(this, player) && 
+          //!GameUtil.canPlayCard(this, player) &&
+           //!GameUtil.canMove(this, player);
+        valid = GameUtil.isValidToSkip(this, player);
+        break;
+      default:
+        valid = false;
+        break;
+    }
+    return valid;
+  }
+  
+  /**
+   * TODO
+   * @param player
+   * @param off
+   * @return
+   */
+  public final int nextFreeFieldFor(Player player, int off)
+  {
+    int offset = off;
+    Move m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
+    while(isValid(m, player)) {
+      offset++;
+      m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
+    }
+    return offset;
+  }
+
+  /**
+   * TODO
+   * @param player
+   * @return
+   */
+  public final int nextFreeFieldFor(Player player)
+  {
+    return nextFreeFieldFor(player, 1);
+  }
+  
+  /**
+   * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
+   * Position <code>pos</code> auf diesem Spielbrett.
+   * 
+   * @param type
+   * @param pos
+   * @return
+   */
+  public final int getNextFieldByType(FieldType type, int pos)
+  {
+    return this.board.getNextFieldByType(type, pos);
+  }
+
+  /**
+   * @param type
+   * @param pos
+   * @return
+   */
+  public final int getPreviousFieldByType(FieldType type, int pos)
+  {
+    return this.board.getPreviousFieldByType(type, pos);
+  }
+
+  public final boolean canEnterGoal(final Player player)
+  {
+    return player.getCarrotsAvailable() <= 10
+        && player.getSalads() == 0;
   }
 
   /**

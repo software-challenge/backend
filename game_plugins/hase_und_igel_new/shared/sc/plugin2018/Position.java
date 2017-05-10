@@ -2,7 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-@XStreamAlias(value="hui:position")
+@XStreamAlias(value="position")
 public enum Position
 {
 	SECOND, FIRST,

@@ -30,7 +30,7 @@
     <delete dir="game_players/mississippi_queen_player/build" />
     <!--    currentPlugin                    !-->
     <delete dir="game_plugins/hase_und_igel_new/build" />
-    <!-- <delete dir="game_players/mississippi_queen_player/build" /> TODO!-->
+    <!-- <delete dir="game_players/mississippi_queen_player/build" /> TODO-->
   </target>
 
   <target name="dependencies">
@@ -56,26 +56,26 @@
         <ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" />
         <ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
         <ant dir="game_players/twixt_player" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" /> !-->
+        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" /> 
 	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
-	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
+	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />-->
         <!--    currentPlugin                    !-->
 	    <ant dir="game_plugins/hase_und_igel_new" target="clean-build" inheritAll="false" />
-	    <!-- <ant dir="game_players/hase_und_igel_player" target="clean-build" inheritAll="false" /> TODO!-->
+	    <!-- <ant dir="game_players/hase_und_igel_player" target="clean-build" inheritAll="false" /> TODO-->
 
         <echo message="Compiling Server and GUI..." />
         <ant dir="game_server" target="clean-build" inheritAll="false" />
-        <ant dir="game_gui" target="clean-build" inheritAll="false" />
+        <!--  TODO new gui here <ant dir="game_gui" target="clean-build" inheritAll="false" /> -->
   </target>
 
   <target name="build" depends="scmversion,dependencies">
     <mkdir dir="${out.dir}" />
 
-    <mkdir dir="${out.dir}/gui" />
+   <!-- TODO add gui <mkdir dir="${out.dir}/gui" />
 
     <copy todir="${out.dir}/gui">
       <fileset dir="./game_gui/build/jar" />
-    </copy>
+    </copy> -->
 
     <mkdir dir="${out.dir}/server" />
     <copy todir="${out.dir}/server">

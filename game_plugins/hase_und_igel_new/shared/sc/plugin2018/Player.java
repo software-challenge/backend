@@ -11,37 +11,39 @@ import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Ein Spieler aus Hase- und Igel.
  * 
- * @author rra
- * @since Jul 4, 2009
- * 
  */
 // FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
-@XStreamAlias(value = "hui:player")
+@XStreamAlias(value = "player")
 public final class Player extends SimplePlayer implements Cloneable
 {
 	// Farbe der Spielfigure
+  @XStreamAsAttribute
 	private PlayerColor		color;
 
 	// Position auf dem Spielbrett
+  @XStreamAsAttribute
 	private int				index;
 
 	// Anzahl der Karotten des Spielers
+  @XStreamAsAttribute
 	private int				carrots;
 
 	// Anzahl der bisher verspeisten Salate
-	private int				saladsToEat;
+  @XStreamAsAttribute
+	private int				salads;
 
 	// verfügbare Hasenkarten
-	@XStreamImplicit(itemFieldName = "action")
-	private List<Action>	actions;
+	@XStreamImplicit(itemFieldName = "cards")
+	private List<CardAction>	cards;
 
-	@XStreamImplicit(itemFieldName = "move")
+	@XStreamImplicit(itemFieldName = "move") // XXX is the history needed?
 	private List<Move>		history;
 
 	private Position		position;
@@ -93,7 +95,7 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	protected Player()
 	{
-		actions = new LinkedList<Action>();
+		cards = new LinkedList<CardAction>();
 		history = new LinkedList<Move>();
 		// only for XStream
 	}
@@ -115,19 +117,19 @@ public final class Player extends SimplePlayer implements Cloneable
 		index = p;
 		color = c;
 		carrots = Constants.INITIAL_CARROTS;
-		saladsToEat = Constants.SALADS_TO_EAT;
+		salads = Constants.SALADS_TO_EAT;
 
-		actions.add(Action.TAKE_OR_DROP_CARROTS);
-		actions.add(Action.EAT_SALAD);
-		actions.add(Action.HURRY_AHEAD);
-		actions.add(Action.FALL_BACK);
+		cards.add(CardAction.TAKE_OR_DROP_CARROTS);
+		cards.add(CardAction.EAT_SALAD);
+		cards.add(CardAction.HURRY_AHEAD);
+		cards.add(CardAction.FALL_BACK);
 	}
 
 	/**
 	 * @param typ
 	 * @return
 	 */
-	public boolean ownsCardOfTyp(Action typ)
+	public boolean ownsCardOfTyp(CardAction typ)
 	{
 		return getActions().contains(typ);
 	}
@@ -157,19 +159,19 @@ public final class Player extends SimplePlayer implements Cloneable
 	 * 
 	 * @return
 	 */
-	public final int getSaladsToEat()
+	public final int getSalads()
 	{
-		return saladsToEat;
+		return salads;
 	}
 
-	protected final void setSaladsToEat(int saladsToEat)
+	protected final void setSalads(int salads)
 	{
-		this.saladsToEat = saladsToEat;
+		this.salads = salads;
 	}
 
 	protected final void eatSalad()
 	{
-		this.saladsToEat = Math.max(0, this.saladsToEat - 1);
+		this.salads = Math.max(0, this.salads - 1);
 	}
 
 	/**
@@ -177,20 +179,20 @@ public final class Player extends SimplePlayer implements Cloneable
 	 * 
 	 * @return
 	 */
-	public List<Action> getActions()
+	public List<CardAction> getActions()
 	{
-		if (this.actions == null)
+		if (this.cards == null)
 		{
-			this.actions = new LinkedList<Action>();
+			this.cards = new LinkedList<CardAction>();
 		}
 
-		return actions;
+		return cards;
 	}
 
-	public List<Action> getActionsWithout(Action a)
+	public List<CardAction> getActionsWithout(CardAction a)
 	{
-		List<Action> res = new ArrayList<Action>(4);
-		for (Action b : actions)
+		List<CardAction> res = new ArrayList<CardAction>(4);
+		for (CardAction b : cards)
 		{
 			if (!b.equals(a))
 				res.add(b);
@@ -198,9 +200,9 @@ public final class Player extends SimplePlayer implements Cloneable
 		return res;
 	}
 
-	public void setActions(List<Action> actions)
+	public void setActions(List<CardAction> actions)
 	{
-		this.actions = actions;
+		this.cards = actions;
 	}
 
 	/**
@@ -237,8 +239,8 @@ public final class Player extends SimplePlayer implements Cloneable
 			ret = (Player) super.clone();
 			ret.history = new LinkedList<Move>();
 			ret.history.addAll(this.getHistory());
-			ret.actions = new LinkedList<Action>();
-			ret.actions.addAll(this.getActions());
+			ret.cards = new LinkedList<CardAction>();
+			ret.cards.addAll(this.getActions());
 		}
 		catch (CloneNotSupportedException e)
 		{

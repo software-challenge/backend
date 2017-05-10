@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Die aus Hase- und Igel bekannten Aktionen, sowie die Erweiterungen der
  * CAU-Kiel
  */
-@XStreamAlias(value="hui:moveType")
+@XStreamAlias(value="moveType")
 public enum MoveTyp
 {
 	/**

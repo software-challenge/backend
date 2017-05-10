@@ -6,7 +6,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 /**
  * 
  */
-@XStreamAlias(value = "hui:move")
+@XStreamAlias(value = "move")
 public final class Move implements Cloneable
 {
 	@XStreamAsAttribute
@@ -16,7 +16,7 @@ public final class Move implements Cloneable
 	private MoveTyp	typ;
 
 	@XStreamAsAttribute
-	private Action	card;
+	private CardAction	card;
 
 	public Move(final MoveTyp t)
 	{
@@ -32,14 +32,14 @@ public final class Move implements Cloneable
 		n = val;
 	}
 
-	public Move(final MoveTyp t, final Action a)
+	public Move(final MoveTyp t, final CardAction a)
 	{
 		typ = t;
 		card = a;
 		n = 0;
 	}
 
-	public Move(final MoveTyp t, final Action a, final int val)
+	public Move(final MoveTyp t, final CardAction a, final int val)
 	{
 		typ = t;
 		card = a;
@@ -56,7 +56,7 @@ public final class Move implements Cloneable
 		return typ;
 	}
 
-	public Action getCard()
+	public CardAction getCard()
 	{
 		return card;
 	}

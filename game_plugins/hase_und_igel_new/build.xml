@@ -1,4 +1,4 @@
-<project name="haseundigel-plugin" basedir="." default="main">
+<project name="hui-plugin" basedir="." default="main">
 	<import file="../../git-build.xml" />
 
 	<property name="src.dir" value="src" />
@@ -25,7 +25,7 @@
 	<target name="merge-src">
 		<copy todir="${src.dir}">
 			<fileset dir="server" />
-			<fileset dir="client" />
+			<!--  <fileset dir="client" /> -->
 			<fileset dir="shared" />
 		</copy>
 	</target>

@@ -2,7 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-@XStreamAlias(value="hui:welcome")
+@XStreamAlias(value="welcomeMessage")
 public class WelcomeMessage
 {
 	private PlayerColor myColor;

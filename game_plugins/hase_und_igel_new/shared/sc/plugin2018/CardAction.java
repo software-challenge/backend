@@ -6,8 +6,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * Mögliche Aktionen, die durch das Ausspielen eines Hasenjokers ausgelöst
  * werden können.
  */
-@XStreamAlias(value = "hui:action")
-public enum Action
+@XStreamAlias(value = "action")
+public enum CardAction
 {
 	/**
 	 * Nehme Karotten auf, oder leg sie ab
