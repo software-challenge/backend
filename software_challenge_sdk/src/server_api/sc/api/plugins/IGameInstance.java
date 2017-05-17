@@ -10,7 +10,7 @@ import sc.shared.ScoreCause;
 public interface IGameInstance
 {
 	/**
-	 * 
+	 * XXX can be unique for GamePlugin, adds player to game has to work for imported gameState too
 	 * @return
 	 * @throws TooManyPlayersException
 	 */
