@@ -9,11 +9,10 @@ import org.slf4j.LoggerFactory;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.protocol.MoveRequest;
 
-public abstract class SimplePlayer implements IPlayer
+public abstract class SimplePlayer 
 {
 	public static final Logger		logger			= LoggerFactory
 			.getLogger(SimplePlayer.class);
@@ -50,9 +49,13 @@ public abstract class SimplePlayer implements IPlayer
 		initListeners();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getViolationReason()
 	{
-		return violationReason;
+		return this.violationReason;
 	}
 
 	public void setViolationReason(String violationReason)
@@ -60,13 +63,11 @@ public abstract class SimplePlayer implements IPlayer
 		this.violationReason = violationReason;
 	}
 
-	@Override
 	public void addPlayerListener(IPlayerListener listener)
 	{
 		this.listeners.add(listener);
 	}
 
-	@Override
 	public void removePlayerListener(IPlayerListener listener)
 	{
 		this.listeners.remove(listener);
@@ -92,25 +93,21 @@ public abstract class SimplePlayer implements IPlayer
 		logger.debug("Move requested.");
 	}
 
-	@Override
 	public final void setDisplayName(String displayName)
 	{
 		this.displayName = displayName;
 	}
 
-	@Override
 	public final String getDisplayName()
 	{
 		return this.displayName;
 	}
 
-	@Override
 	public final void setCanTimeout(boolean canTimeout)
 	{
 		this.canTimeout = canTimeout;
 	}
 
-	@Override
 	public final void setShouldBePaused(boolean shouldBePaused)
 	{
 		this.shouldBePaused = shouldBePaused;
@@ -126,49 +123,41 @@ public abstract class SimplePlayer implements IPlayer
 		return this.shouldBePaused;
 	}
 
-	@Override
 	public void setViolated(boolean violated)
 	{
 		this.violated = violated;
 	}
 
-	@Override
 	public boolean hasViolated()
 	{
 		return this.violated;
 	}
 
-	@Override
 	public void setLeft(boolean left)
 	{
 		this.left = left;
 	}
 
-	@Override
 	public boolean hasLeft()
 	{
 		return this.left;
 	}
 
-	@Override
 	public void setSoftTimeout(boolean timeout)
 	{
 		this.softTimeout = timeout;
 	}
 
-	@Override
 	public boolean hasSoftTimeout()
 	{
 		return this.softTimeout;
 	}
 
-	@Override
 	public void setHardTimeout(boolean timeout)
 	{
 		this.hardTimeout = timeout;
 	}
-
-	@Override
+	
 	public boolean hasHardTimeout()
 	{
 		return this.hardTimeout;

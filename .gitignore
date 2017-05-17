@@ -5,6 +5,8 @@
 
 # Ignore .project files from eclipse
 *.project
+*.metadata
+*.recommenders
 
 # Ignore temporary VIM files
 .*.sw*

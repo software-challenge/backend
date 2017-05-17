@@ -1,8 +1,5 @@
 package sc.plugin2018;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,30 +8,20 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IPlayer;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
+
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
-import sc.plugin2018.util.InvalidMoveException;
-import sc.plugin2018.GamePlugin;
-import sc.plugin2018.WinCondition;
-import sc.plugin2018.util.Constants;
-import sc.plugin2018.util.GameUtil;
-import sc.plugin2018.Board;
-import sc.plugin2018.PlayerColor;
-import sc.plugin2018.GameState;
-import sc.plugin2018.Move;
-import sc.plugin2018.Player;
-import sc.plugin2018.Position;
-import sc.plugin2018.WelcomeMessage;
+import sc.framework.plugins.SimplePlayer;
 import sc.plugin2018.util.Configuration;
+import sc.plugin2018.util.Constants;
+import sc.plugin2018.util.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
-
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
@@ -86,13 +73,13 @@ public class Game extends RoundBasedGameInstance<Player>
    * move)
    */
   @Override
-  protected void onRoundBasedAction(IPlayer fromPlayer, Object data) throws GameLogicException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, Object data) throws GameLogicException {
 
     Player author = (Player) fromPlayer;
 
     /**
      * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(IPlayer, Object)}.
+     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, Object)}.
      * There is no need to do it here again.
      */
     try {
@@ -126,7 +113,7 @@ public class Game extends RoundBasedGameInstance<Player>
   }
 
   @Override
-  public IPlayer onPlayerJoined() throws TooManyPlayersException {
+  public SimplePlayer onPlayerJoined() throws TooManyPlayersException {
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -146,7 +133,7 @@ public class Game extends RoundBasedGameInstance<Player>
   }
   
   @Override
-  public void onPlayerLeft(IPlayer player) {
+  public void onPlayerLeft(SimplePlayer player) {
     if (!player.hasViolated()) {
       player.setLeft(true);
       onPlayerLeft(player, ScoreCause.LEFT);
@@ -156,10 +143,10 @@ public class Game extends RoundBasedGameInstance<Player>
   }
 
   @Override
-  public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-    Map<IPlayer, PlayerScore> res = generateScoreMap();
+  public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
+    Map<SimplePlayer, PlayerScore> res = generateScoreMap();
 
-    for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
+    for (Entry<SimplePlayer, PlayerScore> entry : res.entrySet()) {
       PlayerScore score = entry.getValue();
 
       if (entry.getKey() == player) {
@@ -347,9 +334,9 @@ public class Game extends RoundBasedGameInstance<Player>
 	}
 
 	 @Override
-	  public List<IPlayer> getWinners() {
+	  public List<SimplePlayer> getWinners() {
 	    WinCondition win = checkWinCondition();
-	    List<IPlayer> winners = new LinkedList<IPlayer>();
+	    List<SimplePlayer> winners = new LinkedList<SimplePlayer>();
 	    if (win != null) {
 	      for (Player player : this.players) {
 	        if (player.getPlayerColor() == win.getWinner()) {

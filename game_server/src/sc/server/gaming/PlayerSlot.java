@@ -1,6 +1,6 @@
 package sc.server.gaming;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.SimplePlayer;
 import sc.server.network.IClient;
 import sc.shared.SlotDescriptor;
 
@@ -70,7 +70,7 @@ public class PlayerSlot
 		client.addRole(this.role);
 	}
 
-	public void setPlayer(IPlayer player)
+	public void setPlayer(SimplePlayer player)
 	{
 		if (this.role == null)
 		{

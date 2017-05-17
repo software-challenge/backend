@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.RoundBasedGameInstance;
+import sc.framework.plugins.SimplePlayer;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
@@ -22,7 +22,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 
 	@Override
-	protected void onRoundBasedAction(IPlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(SimplePlayer fromPlayer, Object data)
 			throws GameLogicException
 	{
 		if (data instanceof TestMove)
@@ -47,7 +47,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 
 	@Override
-	public IPlayer onPlayerJoined() throws TooManyPlayersException
+	public SimplePlayer onPlayerJoined() throws TooManyPlayersException
 	{
 		if (this.players.size() < 2)
 		{
@@ -79,18 +79,18 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 	
 	@Override
-	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
+	public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
 		// this.players.remove(player);
 		LoggerFactory.getLogger(this.getClass())
 				.debug("Player left {}", player);
-		Map<IPlayer, PlayerScore> result = generateScoreMap();
+		Map<SimplePlayer, PlayerScore> result = generateScoreMap();
 		result.put(player, new PlayerScore(false, "Spieler hat das Spiel verlassen."));
 		result.get(player).setCause(cause);
 		notifyOnGameOver(result);
 	}
 
 	@Override
-	public void onPlayerLeft(IPlayer player)
+	public void onPlayerLeft(SimplePlayer player)
 	{
 		onPlayerLeft(player, ScoreCause.LEFT);
 	}
@@ -129,7 +129,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 
 	@Override
-	public List<IPlayer> getWinners()
+	public List<SimplePlayer> getWinners()
 	{
 		// TODO Auto-generated method stub
 		return null;

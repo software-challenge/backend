@@ -14,17 +14,11 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.IGameInstance;
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
-/**
- * XXX 
- * @param <P>
- */
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance
 {
 	private static Logger	logger				= LoggerFactory
@@ -65,7 +59,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	 *            The plugin-secific data.
 	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
-	public final void onAction(IPlayer fromPlayer, Object data)
+	public final void onAction(SimplePlayer fromPlayer, Object data)
 			throws GameLogicException
 	{
 		if (fromPlayer.equals(this.activePlayer))
@@ -102,7 +96,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 		return this.requestTimeout != null;
 	}
 
-	protected abstract void onRoundBasedAction(IPlayer fromPlayer, Object data)
+	protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, Object data)
 			throws GameLogicException;
 
 	protected abstract boolean checkGameOverCondition();
@@ -152,7 +146,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	 * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
 	 * @param player
 	 */
-	public void onPlayerLeft(IPlayer player) {
+	public void onPlayerLeft(SimplePlayer player) {
 	  if (!player.hasViolated()) {
 	    player.setLeft(true);
 	    onPlayerLeft(player, ScoreCause.LEFT);
@@ -165,10 +159,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	 * XXX
 	 * Handle leave of player
 	 */
-	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-    Map<IPlayer, PlayerScore> res = generateScoreMap();
+	public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
+    Map<SimplePlayer, PlayerScore> res = generateScoreMap();
 
-    for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
+    for (Entry<SimplePlayer, PlayerScore> entry : res.entrySet()) {
       PlayerScore score = entry.getValue();
 
       if (entry.getKey() == player) {
@@ -346,9 +340,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 		this.paused = pause;
 	}
 
-	protected Map<IPlayer, PlayerScore> generateScoreMap()
+	protected Map<SimplePlayer, PlayerScore> generateScoreMap()
 	{
-		Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
+		Map<SimplePlayer, PlayerScore> map = new HashMap<SimplePlayer, PlayerScore>();
 
 		for (final P p : this.players)
 		{
@@ -380,7 +374,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 		this.listeners.remove(listener);
 	}
 
-	protected void notifyOnGameOver(Map<IPlayer, PlayerScore> map)
+	protected void notifyOnGameOver(Map<SimplePlayer, PlayerScore> map)
 	{
 		for (IGameListener listener : this.listeners)
 		{
