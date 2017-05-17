@@ -137,9 +137,7 @@ public class GameRoom implements IGameListener
 		{
 			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
 		}*/
-
-		GameResult result = new GameResult(definition, scores, this.game.getWinners());
-		return result;
+		return new GameResult(definition, scores, this.game.getWinners());
 	}
 
 	private void broadcast(Object o)
@@ -410,7 +408,7 @@ public class GameRoom implements IGameListener
 
 	public synchronized List<String> reserveAllSlots()
 	{
-		List<String> result = new ArrayList<String>(this.playerSlots.size());
+		List<String> result = new ArrayList<>(this.playerSlots.size());
 
 		for (PlayerSlot playerSlot : this.playerSlots)
 		{
@@ -469,7 +467,7 @@ public class GameRoom implements IGameListener
 
 	private Collection<PlayerSlot> getOccupiedPlayerSlots()
 	{
-		LinkedList<PlayerSlot> occupiedSlots = new LinkedList<PlayerSlot>();
+		LinkedList<PlayerSlot> occupiedSlots = new LinkedList<>();
 
 		for (PlayerSlot slot : this.playerSlots)
 		{
