@@ -67,7 +67,7 @@ public class GameRoomManager
 	}
 
 	/**
-	 * make new PLuginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
+	 * make new PluginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
 	 * @param gameType
 	 * @param prepared signals whether the game was prepared by gui or ..., false if player has to send JoinRoomRequest
 	 * @return newly created GameRoom

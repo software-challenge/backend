@@ -15,7 +15,8 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.framework.plugins.IPauseable;
+import sc.framework.plugins.RoundBasedGameInstance;
+import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
@@ -136,9 +137,7 @@ public class GameRoom implements IGameListener
 		{
 			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
 		}*/
-
-		GameResult result = new GameResult(definition, scores, this.game.getWinners());
-		return result;
+		return new GameResult(definition, scores, this.game.getWinners());
 	}
 
 	private void broadcast(Object o)
@@ -298,7 +297,7 @@ public class GameRoom implements IGameListener
 		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
 		player.setCanTimeout(slot.getDescriptor().isCanTimeout());
 
-		if (slot.isEmpty()) // XXX why?
+		if (slot.isEmpty()) // needed for forced step, if client crashes before joining room
 		{
 			logger.warn("PlayerSlot is empty! Was this  Caused by a forced STEP?");
 			slot.setClient(new DummyClient());
@@ -409,7 +408,7 @@ public class GameRoom implements IGameListener
 
 	public synchronized List<String> reserveAllSlots()
 	{
-		List<String> result = new ArrayList<String>(this.playerSlots.size());
+		List<String> result = new ArrayList<>(this.playerSlots.size());
 
 		for (PlayerSlot playerSlot : this.playerSlots)
 		{
@@ -468,7 +467,7 @@ public class GameRoom implements IGameListener
 
 	private Collection<PlayerSlot> getOccupiedPlayerSlots()
 	{
-		LinkedList<PlayerSlot> occupiedSlots = new LinkedList<PlayerSlot>();
+		LinkedList<PlayerSlot> occupiedSlots = new LinkedList<>();
 
 		for (PlayerSlot slot : this.playerSlots)
 		{
@@ -517,7 +516,7 @@ public class GameRoom implements IGameListener
 		}
 		
 		// XXX is this needed?
-		if (!(this.game instanceof IPauseable))
+		if (!(this.game instanceof RoundBasedGameInstance<?>)) // XXX was pausable maybe remove checking?
 		{
 			logger.warn("Game isn't pausable.");
 			return;
@@ -532,7 +531,7 @@ public class GameRoom implements IGameListener
 
 		logger.info("Switching PAUSE from {} to {}.", isPaused(), pause);
 		this.paused = pause;
-		IPauseable pausableGame = (IPauseable) this.game;
+		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game; // XXX
 		pausableGame.setPauseMode(isPaused());
 
 		// continue execution
@@ -567,22 +566,14 @@ public class GameRoom implements IGameListener
 
 			return;
 		}
-
-		if (this.game instanceof IPauseable)
+		if (isPaused())
 		{
-			if (isPaused())
-			{
-				logger.info("Stepping.");
-				((IPauseable) this.game).afterPause();
-			}
-			else
-			{
-				logger.warn("Can't step if the game is not paused.");
-			}
+			logger.info("Stepping.");
+			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause(); // XXX
 		}
 		else
 		{
-			logger.warn("Game isn't pausable.");
+			logger.warn("Can't step if the game is not paused.");
 		}
 	}
 

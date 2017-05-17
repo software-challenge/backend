@@ -2,7 +2,7 @@ package sc.api.plugins;
 
 import sc.api.plugins.host.IPlayerListener;
 
-
+// XXX delete this
 public interface IPlayer
 {
 	public void addPlayerListener(IPlayerListener listener);
