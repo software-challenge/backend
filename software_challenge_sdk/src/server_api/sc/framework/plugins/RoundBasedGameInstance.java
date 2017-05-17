@@ -1,15 +1,22 @@
 package sc.framework.plugins;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
+import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
@@ -18,8 +25,7 @@ import sc.shared.ScoreCause;
  * XXX 
  * @param <P>
  */
-public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
-		SimpleGameInstance<P> implements IPauseable
+public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance
 {
 	private static Logger	logger				= LoggerFactory
 														.getLogger(RoundBasedGameInstance.class);
@@ -38,13 +44,27 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	@XStreamOmitField
 	private ActionTimeout	requestTimeout		= null;
+	
+	@XStreamOmitField
+	protected final List<IGameListener>	listeners	= new LinkedList<>();
+
+	@XStreamImplicit(itemFieldName = "player")
+	protected final List<P>				players		= new ArrayList<>();
 
 	public int getTurn()
 	{
 		return this.turn;
 	}
 
-	@Override
+	/**
+	 * Called by the Server once an action was received.
+	 * 
+	 * @param fromPlayer
+	 *            The player who invoked this action.
+	 * @param data
+	 *            The plugin-secific data.
+	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
+	 */
 	public final void onAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException
 	{
@@ -87,7 +107,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 
 	protected abstract boolean checkGameOverCondition();
 
-	@Override
+	/**
+	 * At any time this method might be invoked by the server. Any open handles
+	 * should be removed. No events should be sent out (GameOver etc) after this
+	 * method has been called.
+	 */
 	public void destroy()
 	{
 		logger.info("Destroying Game");
@@ -99,19 +123,77 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 	}
 
-	@Override
+	/**
+	 * Server or an administrator requests the game to start now.
+	 */
 	public void start()
 	{
 		if (this.listeners.size() == 0)
 		{
 			logger.warn("Couldn't find any listeners. Is this intended?");
 		}
-
+	
 		this.activePlayer = this.players.get(0);
 		onActivePlayerChanged(this.activePlayer);
 		notifyOnNewState(getCurrentState());
 		notifyActivePlayer();
 	}
+	
+	/**
+	 * start() will only be called once this method returns true.
+	 * 
+	 * @return
+	 */
+	public abstract boolean ready();
+	
+	 /**
+   * XXX can be unique for Game, adds player to game has to work for imported gameState too
+   * @return
+   * @throws TooManyPlayersException
+   */
+  public abstract IPlayer onPlayerJoined() throws TooManyPlayersException;
+	
+	/**
+	 * XXX
+	 * @param player
+	 */
+	public void onPlayerLeft(IPlayer player) {
+	  if (!player.hasViolated()) {
+	    player.setLeft(true);
+	    onPlayerLeft(player, ScoreCause.LEFT);
+	  } else {
+	    onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
+	  }
+	}
+	
+	/**
+	 * XXX
+	 */
+	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
+    Map<IPlayer, PlayerScore> res = generateScoreMap();
+
+    for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
+      PlayerScore score = entry.getValue();
+
+      if (entry.getKey() == player) {
+        score.setCause(cause);
+      }
+    }
+
+    notifyOnGameOver(res);
+  }
+	
+	 
+  /**
+   * The game is requested to load itself from a file (the board i.e.). This is
+   * like a replay but with actual clients.
+   */
+  public abstract void loadFromFile(String file);
+  
+  /**
+   * The game is requested to load itself from a given game information object (could be a board instance for example)
+   */
+  public abstract void loadGameInfo(Object gameInfo);
 
 	protected void onActivePlayerChanged(P newActivePlayer)
 	{
@@ -167,6 +249,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		return (this.activePlayer != nextPlayer && this.players
 				.indexOf(nextPlayer) == 0);
 	}
+	
+	 /**
+   * Returns the players that have won the game, empty if the game has no winners,
+   * or null if the game has not finished.
+   * @return
+   */
+  public abstract List<IPlayer> getWinners();
 
 	protected abstract void onNewTurn();
 
@@ -250,7 +339,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		return this.paused;
 	}
 
-	@Override
+	/**
+	 * XXX
+	 */
 	public void afterPause()
 	{
 		synchronized (this.afterPauseLock)
@@ -269,7 +360,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 	}
 
-	@Override
+	/**
+	 * XXX
+	 * @param pause
+	 */
 	public void setPauseMode(boolean pause)
 	{
 		this.paused = pause;
@@ -285,5 +379,58 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
 		}
 
 		return map;
+	}
+	
+	// XXX methods from former SimpleGameInstance
+	
+	/**
+	 * Extends the set of listeners.
+	 * 
+	 * @param listener
+	 */
+	public void addGameListener(IGameListener listener)
+	{
+		this.listeners.add(listener);
+	}
+
+	/**
+	 * Removes listener XXX is this right/complete?
+	 *
+	 * @param listener
+	 */
+	public void removeGameListener(IGameListener listener)
+	{
+		this.listeners.remove(listener);
+	}
+
+	protected void notifyOnGameOver(Map<IPlayer, PlayerScore> map)
+	{
+		for (IGameListener listener : this.listeners)
+		{
+			try
+			{
+				listener.onGameOver(map);
+			}
+			catch (Exception e)
+			{
+				logger.error("GameOver Notification caused an exception.", e);
+			}
+		}
+	}
+
+	protected void notifyOnNewState(Object mementoState)
+	{
+		for (IGameListener listener : this.listeners)
+		{
+			logger.debug("notifying {} about new game state", listener);
+			try
+			{
+				listener.onStateChanged(mementoState);
+			}
+			catch (Exception e)
+			{
+				logger.error("NewState Notification caused an exception.", e);
+			}
+		}
 	}
 }
