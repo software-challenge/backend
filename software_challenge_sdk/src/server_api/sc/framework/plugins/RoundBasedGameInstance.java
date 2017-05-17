@@ -128,7 +128,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	 */
 	public void start()
 	{
-		if (this.listeners.size() == 0)
+		if (this.listeners.isEmpty())
 		{
 			logger.warn("Couldn't find any listeners. Is this intended?");
 		}
@@ -144,17 +144,12 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	 * 
 	 * @return
 	 */
-	public abstract boolean ready();
-	
-	 /**
-   * XXX can be unique for Game, adds player to game has to work for imported gameState too
-   * @return
-   * @throws TooManyPlayersException
-   */
-  public abstract IPlayer onPlayerJoined() throws TooManyPlayersException;
+	public boolean ready() {
+	  return this.players.size() == 2; // only 2 players may play a game
+	}
 	
 	/**
-	 * XXX
+	 * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
 	 * @param player
 	 */
 	public void onPlayerLeft(IPlayer player) {
@@ -168,6 +163,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	
 	/**
 	 * XXX
+	 * Handle leave of player
 	 */
 	public void onPlayerLeft(IPlayer player, ScoreCause cause) {
     Map<IPlayer, PlayerScore> res = generateScoreMap();
@@ -182,18 +178,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
     notifyOnGameOver(res);
   }
-	
-	 
-  /**
-   * The game is requested to load itself from a file (the board i.e.). This is
-   * like a replay but with actual clients.
-   */
-  public abstract void loadFromFile(String file);
-  
-  /**
-   * The game is requested to load itself from a given game information object (could be a board instance for example)
-   */
-  public abstract void loadGameInfo(Object gameInfo);
 
 	protected void onActivePlayerChanged(P newActivePlayer)
 	{
@@ -249,13 +233,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 		return (this.activePlayer != nextPlayer && this.players
 				.indexOf(nextPlayer) == 0);
 	}
-	
-	 /**
-   * Returns the players that have won the game, empty if the game has no winners,
-   * or null if the game has not finished.
-   * @return
-   */
-  public abstract List<IPlayer> getWinners();
 
 	protected abstract void onNewTurn();
 
@@ -361,7 +338,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	}
 
 	/**
-	 * XXX
+	 * XXX Pauses game
 	 * @param pause
 	 */
 	public void setPauseMode(boolean pause)
