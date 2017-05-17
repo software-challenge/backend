@@ -15,7 +15,8 @@ import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescueableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
-import sc.framework.plugins.IPauseable;
+import sc.framework.plugins.RoundBasedGameInstance;
+import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.GamePausedEvent;
 import sc.protocol.responses.JoinGameResponse;
 import sc.protocol.responses.LeftGameEvent;
@@ -517,7 +518,7 @@ public class GameRoom implements IGameListener
 		}
 		
 		// XXX is this needed?
-		if (!(this.game instanceof IPauseable))
+		if (!(this.game instanceof RoundBasedGameInstance<?>)) // XXX was pausable maybe remove checking?
 		{
 			logger.warn("Game isn't pausable.");
 			return;
@@ -532,7 +533,7 @@ public class GameRoom implements IGameListener
 
 		logger.info("Switching PAUSE from {} to {}.", isPaused(), pause);
 		this.paused = pause;
-		IPauseable pausableGame = (IPauseable) this.game;
+		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game; // XXX
 		pausableGame.setPauseMode(isPaused());
 
 		// continue execution
@@ -568,12 +569,12 @@ public class GameRoom implements IGameListener
 			return;
 		}
 
-		if (this.game instanceof IPauseable)
+		if (this.game instanceof RoundBasedGameInstance<?>) // XXX was pausable maybe remove checking?
 		{
 			if (isPaused())
 			{
 				logger.info("Stepping.");
-				((IPauseable) this.game).afterPause();
+				((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause(); // XXX
 			}
 			else
 			{
