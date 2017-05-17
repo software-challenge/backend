@@ -8,6 +8,10 @@
 *.metadata
 *.recommenders
 
+# Ignore files from IntelliJ
+.idea
+*.iml
+
 # Ignore temporary VIM files
 .*.sw*
 

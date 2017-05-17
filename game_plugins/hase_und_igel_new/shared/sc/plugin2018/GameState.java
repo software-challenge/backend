@@ -1,8 +1,5 @@
 package sc.plugin2018;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2018.util.Constants;
 import sc.plugin2018.util.GameUtil;
-import sc.plugin2018.util.InvalidMoveException;
+
 import sc.shared.PlayerColor;
 
 /**
@@ -307,7 +304,7 @@ public class GameState implements Cloneable {
    * Spieler im Ziel befinden wird zusätzlich überprüft, ob <code>p</code>
    * weniger Karotten besitzt als der Gegenspieler.
    * 
-   * @param player
+   * @param p
    * @return
    */
   public final boolean isFirst(final Player p)

@@ -1,20 +1,18 @@
 package sc.plugin2018;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.framework.plugins.SimplePlayer;
-import sc.plugin2018.Game;
 import sc.plugin2018.util.Constants;
 import sc.shared.PlayerColor;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
-import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import com.thoughtworks.xstream.annotations.XStreamOmitField;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Ein Spieler aus Hase- und Igel.
