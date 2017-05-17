@@ -568,22 +568,14 @@ public class GameRoom implements IGameListener
 
 			return;
 		}
-
-		if (this.game instanceof RoundBasedGameInstance<?>) // XXX was pausable maybe remove checking?
+		if (isPaused())
 		{
-			if (isPaused())
-			{
-				logger.info("Stepping.");
-				((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause(); // XXX
-			}
-			else
-			{
-				logger.warn("Can't step if the game is not paused.");
-			}
+			logger.info("Stepping.");
+			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause(); // XXX
 		}
 		else
 		{
-			logger.warn("Game isn't pausable.");
+			logger.warn("Can't step if the game is not paused.");
 		}
 	}
 
