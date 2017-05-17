@@ -4,7 +4,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 import sc.plugin2018.CardAction;
-import sc.plugin2018.PlayerColor;
+import sc.shared.PlayerColor;
 import sc.plugin2018.Player;
 
 import org.junit.Test;

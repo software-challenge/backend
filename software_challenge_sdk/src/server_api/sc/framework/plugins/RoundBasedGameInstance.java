@@ -20,6 +20,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+import sc.shared.WinCondition;
 
 /**
  * XXX 
@@ -104,6 +105,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
 	protected abstract void onRoundBasedAction(IPlayer fromPlayer, Object data)
 			throws GameLogicException;
+	
+	protected abstract WinCondition checkWinCondition();
 
 	protected abstract boolean checkGameOverCondition();
 
