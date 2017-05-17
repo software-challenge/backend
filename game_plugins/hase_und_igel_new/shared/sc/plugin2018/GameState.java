@@ -13,6 +13,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.plugin2018.util.Constants;
 import sc.plugin2018.util.GameUtil;
 import sc.plugin2018.util.InvalidMoveException;
+import sc.shared.PlayerColor;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu

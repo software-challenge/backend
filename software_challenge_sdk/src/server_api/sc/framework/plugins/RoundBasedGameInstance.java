@@ -18,6 +18,7 @@ import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+import sc.shared.WinCondition;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance
 {
@@ -98,6 +99,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
 	protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, Object data)
 			throws GameLogicException;
+	
+	protected abstract WinCondition checkWinCondition();
 
 	protected abstract boolean checkGameOverCondition();
 

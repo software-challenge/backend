@@ -122,36 +122,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     return player;
   }
 
-  @Override
-  public void onPlayerLeft(IPlayer player) {
-    if (!player.hasViolated()) {
-      player.setLeft(true);
-      onPlayerLeft(player, ScoreCause.LEFT);
-    } else {
-      onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
-    }
-  }
-
-  @Override
-  public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-    Map<IPlayer, PlayerScore> res = generateScoreMap();
-
-    for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
-      PlayerScore score = entry.getValue();
-
-      if (entry.getKey() == player) {
-        score.setCause(cause);
-      }
-    }
-
-    notifyOnGameOver(res);
-  }
-
-  @Override
-  public boolean ready() {
-    return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
-  }
-
   /**
    * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
    */
@@ -164,6 +134,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     super.start();
   }
 
+  /**
+   * Currently not implemented, why is this needed? Is this needed?
+   */
   @Override
   protected void onNewTurn() {
 
@@ -245,7 +218,8 @@ public class Game extends RoundBasedGameInstance<Player> {
    * @return WinCondition with winner and reason or null, if no win condition is
    *         yet met.
    */
-  public WinCondition checkWinCondition() {
+  @Override
+  public sc.shared.WinCondition checkWinCondition() {
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached

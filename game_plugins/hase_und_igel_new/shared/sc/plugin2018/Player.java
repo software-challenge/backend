@@ -7,6 +7,7 @@ import java.util.List;
 import sc.framework.plugins.SimplePlayer;
 import sc.plugin2018.Game;
 import sc.plugin2018.util.Constants;
+import sc.shared.PlayerColor;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
