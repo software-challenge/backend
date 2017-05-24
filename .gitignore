@@ -3,6 +3,15 @@
 # Ignore RVM Project Config
 .rvmrc
 
+# Ignore .project files from eclipse
+*.project
+*.metadata
+*.recommenders
+
+# Ignore files from IntelliJ
+.idea
+*.iml
+
 # Ignore temporary VIM files
 .*.sw*
 

@@ -110,6 +110,9 @@
     <copy todir="game_server/plugins" flatten="true">
       <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
     </copy>
+    <copy todir="game_server/bin" flatten="true">
+      <fileset dir="game_server" includes="configuration/*.xml"/>
+    </copy>
 
     <echo message="Copy log configs" />
 
