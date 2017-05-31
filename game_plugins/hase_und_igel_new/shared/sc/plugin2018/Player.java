@@ -40,10 +40,7 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	// verfügbare Hasenkarten
 	@XStreamImplicit(itemFieldName = "cards")
-	private List<CardAction>	cards;
-
-	@XStreamImplicit(itemFieldName = "move") // XXX is the history needed?
-	private List<Move>		history;
+	private List<CardType>	cards;
 
 	private Position		position;
 
@@ -72,30 +69,9 @@ public final class Player extends SimplePlayer implements Cloneable
 		this.position = position;
 	}
 
-	public void addToHistory(final Move m)
-	{
-		getHistory().add(m);
-	}
-
-	public List<Move> getHistory()
-	{
-		if (this.history == null)
-		{
-			this.history = new LinkedList<Move>();
-		}
-
-		return history;
-	}
-
-	public Move getLastMove()
-	{
-		return getLastMove(-1);
-	}
-
 	protected Player()
 	{
-		cards = new LinkedList<CardAction>();
-		history = new LinkedList<Move>();
+		cards = new LinkedList<CardType>();
 		// only for XStream
 	}
 
@@ -118,19 +94,19 @@ public final class Player extends SimplePlayer implements Cloneable
 		carrots = Constants.INITIAL_CARROTS;
 		salads = Constants.SALADS_TO_EAT;
 
-		cards.add(CardAction.TAKE_OR_DROP_CARROTS);
-		cards.add(CardAction.EAT_SALAD);
-		cards.add(CardAction.HURRY_AHEAD);
-		cards.add(CardAction.FALL_BACK);
+		cards.add(CardType.TAKE_OR_DROP_CARROTS);
+		cards.add(CardType.EAT_SALAD);
+		cards.add(CardType.HURRY_AHEAD);
+		cards.add(CardType.FALL_BACK);
 	}
 
 	/**
-	 * @param typ
+	 * @param type
 	 * @return
 	 */
-	public boolean ownsCardOfTyp(CardAction typ)
+	public boolean ownsCardOfTyp(CardType type)
 	{
-		return getActions().contains(typ);
+		return getCards().contains(type);
 	}
 
 	/**
@@ -150,7 +126,7 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	public final void changeCarrotsAvailableBy(int amount)
 	{
-		this.carrots = Math.max(0, this.carrots + amount);
+		this.carrots = Math.max(0, this.carrots + amount); // TODO check why max is used
 	}
 
 	/**
@@ -178,20 +154,20 @@ public final class Player extends SimplePlayer implements Cloneable
 	 * 
 	 * @return
 	 */
-	public List<CardAction> getActions()
+	public List<CardType> getCards()
 	{
 		if (this.cards == null)
 		{
-			this.cards = new LinkedList<CardAction>();
+			this.cards = new LinkedList<CardType>();
 		}
 
 		return cards;
 	}
 
-	public List<CardAction> getActionsWithout(CardAction a)
+	public List<CardType> getCardsWithout(CardType a)
 	{
-		List<CardAction> res = new ArrayList<CardAction>(4);
-		for (CardAction b : cards)
+		List<CardType> res = new ArrayList<CardType>(4);
+		for (CardType b : cards)
 		{
 			if (!b.equals(a))
 				res.add(b);
@@ -199,9 +175,12 @@ public final class Player extends SimplePlayer implements Cloneable
 		return res;
 	}
 
-	public void setActions(List<CardAction> actions)
+	/**
+	 * @param cards Setzt verfügbare Karten es Spielers. Wird vom Server beim ausführen eines Zuges verwendet.
+	 */
+	public void setCards(List<CardType> cards)
 	{
-		this.cards = actions;
+		this.cards = cards;
 	}
 
 	/**
@@ -236,10 +215,8 @@ public final class Player extends SimplePlayer implements Cloneable
 		try
 		{
 			ret = (Player) super.clone();
-			ret.history = new LinkedList<Move>();
-			ret.history.addAll(this.getHistory());
-			ret.cards = new LinkedList<CardAction>();
-			ret.cards.addAll(this.getActions());
+			ret.cards = new LinkedList<CardType>();
+			ret.cards.addAll(this.getCards());
 		}
 		catch (CloneNotSupportedException e)
 		{
@@ -262,41 +239,5 @@ public final class Player extends SimplePlayer implements Cloneable
 	public boolean inGoal()
 	{
 		return index == 64;
-	}
-
-	public Move getLastNonSkipMove()
-	{
-		for (int i = getHistory().size() - 1; i >= 0; i--)
-		{
-			Move lastMove = getHistory().get(i);
-
-			if (lastMove.getType() != MoveTyp.SKIP)
-			{
-				return lastMove;
-			}
-		}
-
-		return null;
-	}
-
-	/**
-	 * 
-	 * @param i
-	 *            Use -2 to get the move before the last move.
-	 * @return
-	 */
-	public Move getLastMove(int i)
-	{
-		if (i >= 0)
-		{
-			throw new IllegalArgumentException("getLastMove requires i < 0");
-		}
-
-		if (getHistory() != null && getHistory().size() >= -i)
-		{
-			return getHistory().get(getHistory().size() + i);
-		}
-
-		return null;
 	}
 }

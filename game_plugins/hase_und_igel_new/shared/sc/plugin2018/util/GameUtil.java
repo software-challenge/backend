@@ -1,13 +1,6 @@
 package sc.plugin2018.util;
 
-import sc.plugin2018.CardAction;
-import sc.plugin2018.Board;
-import sc.plugin2018.FieldType;
-import sc.plugin2018.GameState;
-import sc.plugin2018.Move;
-import sc.plugin2018.MoveTyp;
-import sc.plugin2018.Player;
-import sc.plugin2018.Position;
+import sc.plugin2018.*;
 
 public class GameUtil
 {
@@ -65,23 +58,23 @@ public class GameUtil
 	 * betreten werden, wenn man noch Salate essen muss - Hasenfelder dürfen nur
 	 * betreten werden, wenn man noch Hasenkarten ausspielen kann
 	 * 
-	 * @param b
+	 * @param state
 	 * @param p		
-	 * @param l		relativer Abstand zur aktuellen Position des Spielers
+	 * @param distance		relativer Abstand zur aktuellen Position des Spielers
 	 * @return
 	 */
-	public static boolean isValidToMove(GameState state, Player p, int l)
+	public static boolean isValidToMove(GameState state, Player p, int distance)
 	{
-		if (l <= 0)
+		if (distance <= 0)
 		{
 			return false;
 		}
 
 		boolean valid = true;
-		int requiredCarrots = GameUtil.calculateCarrots(l);
+		int requiredCarrots = GameUtil.calculateCarrots(distance);
 		valid = valid && (requiredCarrots <= p.getCarrotsAvailable());
 
-		int newPosition = p.getFieldIndex() + l;
+		int newPosition = p.getFieldIndex() + distance;
 		valid = valid && !state.isOccupied(newPosition);
 		FieldType type = state.getBoard().getTypeAt(newPosition);
 		switch (type)
@@ -94,10 +87,16 @@ public class GameUtil
 				break;
 			case RABBIT:
 				Player p2 = p.clone();
-				p2.addToHistory(new Move(MoveTyp.MOVE, l));
-				p2.setFieldNumber(newPosition);
+				GameState state2 = null;
+        try {
+          state2 = state.clone();
+        } catch (CloneNotSupportedException e) {
+          e.printStackTrace();
+        }
+        state2.setLastAction(p, new Advance(distance));
+        p2.setFieldNumber(newPosition);
 				p2.changeCarrotsAvailableBy(-requiredCarrots);
-				valid = valid && canPlayAnyCard(state, p2);
+				valid = valid && canPlayAnyCard(state2, p2);
 				break;
 			case GOAL:
 				int carrotsLeft = p.getCarrotsAvailable() - requiredCarrots;
@@ -178,21 +177,22 @@ public class GameUtil
 			return true;
 		}
 
-		Move lastMove = p.getLastNonSkipMove();
+		Action lastAction = state.getLastNonSkipAction(p);
 
-		if (lastMove != null)
+		if (lastAction != null)
 		{
-			if (lastMove.getType() == MoveTyp.EAT)
+			if (lastAction instanceof EatSalad)
 			{
 				return true;
 			}
-			else if (lastMove.getType() == MoveTyp.PLAY_CARD)
+			else if (lastAction instanceof Card)
 			{
-				if (lastMove.getCard() == CardAction.EAT_SALAD)
+				// the player has to leave a rabbit field in next turn
+				if (((Card)lastAction).getType() == CardType.EAT_SALAD)
 				{
 					return true;
 				}
-				else if (lastMove.getCard() == CardAction.TAKE_OR_DROP_CARROTS)
+				else if (((Card)lastAction).getType() == CardType.TAKE_OR_DROP_CARROTS) // the player has to leave the rabbit field
 				{
 					return true;
 				}
@@ -245,7 +245,7 @@ public class GameUtil
 		boolean valid = !playerMustMove(state, p) && isOnRabbitField(state, p)
 				&& state.isFirst(p);
 
-		valid = valid && p.ownsCardOfTyp(CardAction.FALL_BACK);
+		valid = valid && p.ownsCardOfTyp(CardType.FALL_BACK);
 
 		final Player o = state.getOpponent(p);
 		int nextPos = o.getFieldIndex() - 1;
@@ -265,9 +265,15 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = (Player) p.clone();
 				p2.setFieldNumber(nextPos);
-				p2.addToHistory(new Move(MoveTyp.PLAY_CARD, CardAction.FALL_BACK));
-				p2.setActions(p.getActionsWithout(CardAction.FALL_BACK));
-				valid = valid && canPlayAnyCard(state, p2);
+        GameState state2 = null;
+        try {
+          state2 = state.clone();
+        } catch (CloneNotSupportedException e) {
+          e.printStackTrace();
+        }
+        state2.setLastAction(p, new Card(CardType.HURRY_AHEAD));
+				p2.setCards(p.getCardsWithout(CardType.FALL_BACK));
+				valid = valid && canPlayAnyCard(state2, p2);
 				break;
 			case CARROT:
 			case POSITION_1:
@@ -284,7 +290,7 @@ public class GameUtil
 	{
 		boolean valid = !playerMustMove(state, p) && isOnRabbitField(state, p)
 				&& !state.isFirst(p);
-		valid = valid && p.ownsCardOfTyp(CardAction.HURRY_AHEAD);
+		valid = valid && p.ownsCardOfTyp(CardType.HURRY_AHEAD);
 
 		final Player o = state.getOpponent(p);
 		int nextPos = o.getFieldIndex() + 1;
@@ -302,11 +308,15 @@ public class GameUtil
 			case RABBIT:
 				Player p2 = p.clone();
 				p2.setFieldNumber(nextPos);
-				p2
-						.addToHistory(new Move(MoveTyp.PLAY_CARD,
-								CardAction.HURRY_AHEAD));
-				p2.setActions(p.getActionsWithout(CardAction.HURRY_AHEAD));
-				valid = valid && canPlayAnyCard(state, p2);
+        GameState state2 = null;
+        try {
+          state2 = state.clone();
+        } catch (CloneNotSupportedException e) {
+          e.printStackTrace();
+        }
+        state2.setLastAction(p, new Card(CardType.HURRY_AHEAD));
+				p2.setCards(p.getCardsWithout(CardType.HURRY_AHEAD));
+				valid = valid && canPlayAnyCard(state2, p2);
 				break;
 			case GOAL:
 				valid = valid && state.canEnterGoal(p);
@@ -327,7 +337,7 @@ public class GameUtil
 			int n)
 	{
 		boolean valid = !playerMustMove(state, p) && isOnRabbitField(state, p)
-				&& p.ownsCardOfTyp(CardAction.TAKE_OR_DROP_CARROTS);
+				&& p.ownsCardOfTyp(CardType.TAKE_OR_DROP_CARROTS);
 
 		valid = valid && (n == 20 || n == -20 || n == 0);
 
@@ -343,7 +353,7 @@ public class GameUtil
 	public static boolean isValidToPlayEatSalad(GameState state, Player p)
 	{
 		return !playerMustMove(state, p) && isOnRabbitField(state, p)
-				&& p.ownsCardOfTyp(CardAction.EAT_SALAD) && p.getSalads() > 0;
+				&& p.ownsCardOfTyp(CardType.EAT_SALAD) && p.getSalads() > 0;
 	}
 
 	private static boolean isOnRabbitField(GameState state, Player p)
@@ -387,7 +397,7 @@ public class GameUtil
 	{
 		boolean valid = false;
 
-		for (final CardAction a : p.getActions())
+		for (final CardType a : p.getCards())
 		{
 			switch (a)
 			{
@@ -411,7 +421,7 @@ public class GameUtil
 		return valid;
 	}
 
-	public static boolean isValidToPlayCard(GameState state, Player p, CardAction c, int n)
+	public static boolean isValidToPlayCard(GameState state, Player p, CardType c, int n)
 	{
 		boolean valid = false;
 		switch (c)
@@ -434,67 +444,67 @@ public class GameUtil
 		return valid;
 	}
 
-	public static String displayMoveAction(Move mov)
-	{
-		if (mov != null)
-		{
-			switch (mov.getType())
-			{
-				case EAT:
-					return "frisst einen Salat";
-				case MOVE:
-					String str = String.valueOf(mov.getN())
-							+ " Felder vorwärts";
-
-					if (mov.getN() == 1)
-					{
-						str = String.valueOf(mov.getN())
-								+ " Feld vorwärts";
-					}
-
-					return "setzt " + str;
-				case TAKE_OR_DROP_CARROTS:
-					String res = "";
-					if (mov.getN() == 10)
-					{
-						res = "nimmt 10 Karotten";
-					}
-					else if (mov.getN() == -10)
-					{
-						res = "gibt 10 Karotten ab";
-					}
-					return res;
-				case FALL_BACK:
-					return "lässt sich auf Igel zurückfallen";
-				case SKIP:
-					return "muss aussetzen";
-				case PLAY_CARD:
-					switch (mov.getCard())
-					{
-						case TAKE_OR_DROP_CARROTS:
-							return "spielt 'Nimm oder gib 20 Karotten'";
-						case EAT_SALAD:
-							return "spielt 'Friss sofort einen Salat'";
-						case FALL_BACK:
-							return "spielt 'Falle eine Position zurück'";
-						case HURRY_AHEAD:
-							return "spielt 'Rücke eine Position vor'";
-						default:
-							break;
-					}
-					break;
-				default:
-					break;
-			}
-		}
-		return "";
-	}
+//	public static String displayMoveAction(Move move) TODO do this
+//	{
+//		if (move != null)
+//		{
+//			switch (move.getType())
+//			{
+//				case EAT:
+//					return "frisst einen Salat";
+//				case MOVE:
+//					String str = String.valueOf(move.getN())
+//							+ " Felder vorwärts";
+//
+//					if (move.getN() == 1)
+//					{
+//						str = String.valueOf(move.getN())
+//								+ " Feld vorwärts";
+//					}
+//
+//					return "setzt " + str;
+//				case TAKE_OR_DROP_CARROTS:
+//					String res = "";
+//					if (move.getN() == 10)
+//					{
+//						res = "nimmt 10 Karotten";
+//					}
+//					else if (move.getN() == -10)
+//					{
+//						res = "gibt 10 Karotten ab";
+//					}
+//					return res;
+//				case FALL_BACK:
+//					return "lässt sich auf Igel zurückfallen";
+//				case SKIP:
+//					return "muss aussetzen";
+//				case PLAY_CARD:
+//					switch (move.getCard())
+//					{
+//						case TAKE_OR_DROP_CARROTS:
+//							return "spielt 'Nimm oder gib 20 Karotten'";
+//						case EAT_SALAD:
+//							return "spielt 'Friss sofort einen Salat'";
+//						case FALL_BACK:
+//							return "spielt 'Falle eine Position zurück'";
+//						case HURRY_AHEAD:
+//							return "spielt 'Rücke eine Position vor'";
+//						default:
+//							break;
+//					}
+//					break;
+//				default:
+//					break;
+//			}
+//		}
+//		return "";
+//	}
 
 	public static boolean canPlayCard(GameState state, Player player)
 	{
 		boolean canPlayCard = state.getTypeAt(player.getFieldIndex()).equals(
 				FieldType.RABBIT);
-		for (CardAction a : player.getActions())
+		for (CardType a : player.getCards())
 		{
 			canPlayCard = canPlayCard || isValidToPlayCard(state, player, a, 0);
 		}

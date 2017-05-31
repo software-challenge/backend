@@ -3,7 +3,7 @@ package sc.plugin2018.util;
 import java.util.Arrays;
 import java.util.List;
 
-import sc.plugin2018.CardAction;
+import sc.plugin2018.CardType;
 import sc.plugin2018.Board;
 import sc.plugin2018.FieldType;
 import sc.plugin2018.PlayerColor;
@@ -41,7 +41,7 @@ public class Configuration
 	{
 		return Arrays.asList(new Class<?>[] { Game.class, Board.class,
 				GameState.class, Move.class, Player.class,
-				WelcomeMessage.class, CardAction.class, FieldType.class,
+				WelcomeMessage.class, CardType.class, FieldType.class,
 				PlayerColor.class, MoveTyp.class, Position.class });
 	}
 }

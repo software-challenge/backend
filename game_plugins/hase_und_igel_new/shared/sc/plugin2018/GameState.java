@@ -8,7 +8,6 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2018.util.Constants;
-import sc.plugin2018.util.GameUtil;
 
 import sc.shared.PlayerColor;
 
@@ -77,10 +76,25 @@ public class GameState implements Cloneable {
    */
   private Board board;
 
-  /** XXX add red/blue + nonskip red/blue in player instead of lastMove
-   * letzter getaetigter Zug
+  /**
+   * letzter getaetigter Zug des roten Spielers
    */
-  private Move lastMove;
+  private Move lastMoveRed;
+
+  /**
+   * letzter getaetigter Zug des blauen Spielers
+   */
+  private Move lastMoveBlue;
+
+  /**
+   * letzte Aktion des roten Spielers, die keine Ausetzaktion ist
+   */
+  private Action NonSkipLastActionRed;
+
+  /**
+   * letzte Aktion des blauen Spielers, die keine Ausetzaktion ist
+   */
+  private Action NonSkipLastActionBlue;
 
   /**
    * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
@@ -107,7 +121,7 @@ public class GameState implements Cloneable {
     GameState clone = stateToClone.clone();
     setRedPlayer(clone.getRedPlayer());
     setBluePlayer(clone.getBluePlayer());
-    setLastMove(clone.getLastMove());
+//    setLastMove(clone.getLastMove());
     setBoard(clone.getBoard());
     setCurrentPlayer(clone.getCurrentPlayerColor());
   }
@@ -125,8 +139,8 @@ public class GameState implements Cloneable {
       clone.red = (Player) this.red.clone();
     if (blue != null)
       clone.blue = (Player) this.blue.clone();
-    if (lastMove != null)
-      clone.lastMove = (Move) this.lastMove.clone();
+//    if (lastMove != null)
+//      clone.lastMove = (Move) this.lastMove.clone();
     if (board != null)
       clone.board = (Board) this.board.clone();
     if (currentPlayer != null)
@@ -342,39 +356,39 @@ public class GameState implements Cloneable {
   public final boolean isValid(Move move, Player player)
   {
     boolean valid = true;
-    switch (move.getType())
-    {
-      case MOVE:
-        valid = GameUtil.isValidToMove(this, player, move.getN());
-        valid = valid && !player.mustPlayCard();
-        break;
-      case EAT:
-        valid = GameUtil.isValidToEat(this, player);
-        valid = valid && !player.mustPlayCard();
-        break;
-      case TAKE_OR_DROP_CARROTS:
-        valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player,
-            move.getN());
-        valid = valid && !player.mustPlayCard();
-        break;
-      case FALL_BACK:
-        valid = GameUtil.isValidToFallBack(this, player);
-        valid = valid && !player.mustPlayCard();
-        break;
-      case PLAY_CARD:
-        valid = GameUtil.isValidToPlayCard(this, player,
-            move.getCard(), move.getN());
-        break;
-      case SKIP:
-        //valid = !GameUtil.isValidToFallBack(this, player) && 
-          //!GameUtil.canPlayCard(this, player) &&
-           //!GameUtil.canMove(this, player);
-        valid = GameUtil.isValidToSkip(this, player);
-        break;
-      default:
-        valid = false;
-        break;
-    }
+//    switch (move.getType()) TODO
+//    {
+//      case MOVE:
+//        valid = GameUtil.isValidToMove(this, player, move.getN());
+//        valid = valid && !player.mustPlayCard();
+//        break;
+//      case EAT:
+//        valid = GameUtil.isValidToEat(this, player);
+//        valid = valid && !player.mustPlayCard();
+//        break;
+//      case TAKE_OR_DROP_CARROTS:
+//        valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player,
+//            move.getN());
+//        valid = valid && !player.mustPlayCard();
+//        break;
+//      case FALL_BACK:
+//        valid = GameUtil.isValidToFallBack(this, player);
+//        valid = valid && !player.mustPlayCard();
+//        break;
+//      case PLAY_CARD:
+//        valid = GameUtil.isValidToPlayCard(this, player,
+//            move.getCard(), move.getN());
+//        break;
+//      case SKIP:
+//        //valid = !GameUtil.isValidToFallBack(this, player) &&
+//          //!GameUtil.canPlayCard(this, player) &&
+//           //!GameUtil.canMove(this, player);
+//        valid = GameUtil.isValidToSkip(this, player);
+//        break;
+//      default:
+//        valid = false;
+//        break;
+//    }
     return valid;
   }
   
@@ -387,11 +401,11 @@ public class GameState implements Cloneable {
   public final int nextFreeFieldFor(Player player, int off)
   {
     int offset = off;
-    Move m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
-    while(isValid(m, player)) {
-      offset++;
-      m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
-    }
+//    Move m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
+//    while(isValid(m, player)) { TODO
+//      offset++;
+//      m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
+//    }
     return offset;
   }
 
@@ -443,42 +457,12 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Simuliert einen uebergebenen Zug. Dabei werden nur folgende Informationen
-   * aktualisiert:
-   * <ul>
-   * <li>Zugzahl
-   * <li>Welcher Spieler an der Reihe ist (currentPlayer)
-   * <li>Was der letzte Zug war (lastMove)
-   * </ul>
-   *
-   * @param lastMove
-   *          auszufuehrender Zug
-   */
-  public void prepareNextTurn(Move lastMove) {
-    turn++;
-    this.lastMove = lastMove;
-   
-    // TODO get carrots from one or two field
-    switchCurrentPlayer();
-
-  }
-
-  /**
    * liefert die aktuelle Rundenzahl
    *
    * @return aktuelle Rundenzahl
    */
   public int getRound() {
     return turn / 2;
-  }
-
-  /**
-   * Liefert den zuletzt ausgefuehrten Zug
-   *
-   * @return letzter Zug
-   */
-  public Move getLastMove() {
-    return lastMove;
   }
 
   /**
@@ -565,16 +549,8 @@ public class GameState implements Cloneable {
 
   @Override
   public String toString() {
-    return "GameState: \n Spieler1: " + red + " \n" + "Spieler2: " + blue + "\n" + " currentColor: " + currentPlayer + "\n" + board + "\n" + lastMove;
+    return "GameState: \n Spieler1: " + red + " \n" + "Spieler2: " + blue + "\n" + " currentColor: " + currentPlayer + "\n" + board + "\n";
   }
-
-  /**
-   * Ueberschreibt den letzten Zug. Fuer eigene Implementierungen.
-   */
-  protected void setLastMove(Move move) {
-    lastMove = move;
-  }
-
 
   /**
    * Ueberschreibt das aktuelle Spielbrett. Fuer eigene Implementierungen.
@@ -588,6 +564,124 @@ public class GameState implements Cloneable {
       return this.getBluePlayer();
     } else {
       return this.getRedPlayer();
+    }
+  }
+
+  /**
+   * Changes current Player if necessary
+   */
+  public void updateCurrentPlayer() {
+    // TODO check whether this is the right approach
+    if(this.currentPlayer == PlayerColor.RED) {
+      this.currentPlayer = PlayerColor.BLUE;
+    } else {
+      this.currentPlayer = PlayerColor.RED;
+    }
+  }
+
+
+  public Move getLastMoveRed() {
+    return lastMoveRed;
+  }
+
+  public Move getLastMoveBlue() {
+    return lastMoveBlue;
+  }
+
+  public Action getNonSkipLastActionRed() {
+    return NonSkipLastActionRed;
+  }
+
+  public Action getNonSkipLastActionBlue() {
+    return NonSkipLastActionBlue;
+  }
+
+  protected void setLastMoveRed(Move lastMoveRed) {
+    this.lastMoveRed = lastMoveRed;
+  }
+
+  protected void setLastMoveBlue(Move lastMoveBlue) {
+    this.lastMoveBlue = lastMoveBlue;
+  }
+
+  protected void setNonSkipLastActionRed(Action nonSkipLastActionRed) {
+    NonSkipLastActionRed = nonSkipLastActionRed;
+  }
+
+  protected void setNonSkipLastActionBlue(Action nonSkipLastActionBlue) {
+    NonSkipLastActionBlue = nonSkipLastActionBlue;
+  }
+
+  /**
+   * sets the lastMoves for player
+   * @param player
+   * @param move
+   */
+  public void setLastMove(Player player, Move move) {
+    if (player.getPlayerColor() == PlayerColor.RED) {
+      setLastMoveRed(move);
+    } else {
+      setLastMoveBlue(move);
+    }
+  }
+
+  /**
+   * sets the last action for player, if action is skip it is not set
+   * @param player
+   * @param action
+   */
+  public void setLastAction(Player player, Action action) {
+    if (action instanceof Skip) {
+      return;
+    }
+    if (player.getPlayerColor() == PlayerColor.RED) {
+      setNonSkipLastActionRed(action);
+    } else {
+      setNonSkipLastActionBlue(action);
+    }
+  }
+
+  /**
+   * Gibt den letzten Zug des entsprechenden Spielers zurück
+   * @param player
+   * @return
+   */
+  public Move getLastMove(Player player) {
+    return getLastMove(player.getPlayerColor());
+  }
+
+  /**
+   * Gibt den letzten Zug des Spielers der entsprechenden Spielerfarbe zurück
+   * @param playerColor
+   * @return
+   */
+  public Move getLastMove(PlayerColor playerColor) {
+    if (playerColor == PlayerColor.RED) {
+      return this.lastMoveRed;
+    } else {
+      return this.lastMoveBlue;
+    }
+  }
+
+  /**
+   * Gibt die letzte Aktion des Spielers zurück. Nötig für das erkennen von ungültigen Zügen.
+   * @param player
+   * @return
+   */
+  public Action getLastNonSkipAction(Player player) {
+    return getLastNonSkipAction(player.getPlayerColor());
+  }
+
+  /**
+   * Gibt die letzte Aktion des Spielers der entsprechenden Farbe zurück. Nötig für das erkennen von ungültigen Zügen.
+   * @param playerColor
+   * @return
+   */
+  public Action getLastNonSkipAction(PlayerColor playerColor) {
+    if (playerColor == PlayerColor.RED) {
+      return this.getNonSkipLastActionRed();
+    } else {
+      return this.getNonSkipLastActionBlue();
     }
   }
 }

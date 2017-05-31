@@ -19,11 +19,9 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
-import sc.plugin2018.util.InvalidMoveException;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
-import sc.shared.WinCondition;
+import sc.shared.*;
 import sc.shared.PlayerColor;
+import sc.shared.WinCondition;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.

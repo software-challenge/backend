@@ -3,9 +3,7 @@ package sc.plugin2018;
 import java.util.List;
 
 import junit.framework.Assert;
-import sc.plugin2018.CardAction;
 import sc.shared.PlayerColor;
-import sc.plugin2018.Player;
 
 import org.junit.Test;
 
@@ -29,10 +27,10 @@ public class PlayerTest
 		Assert.assertEquals(5, p.getSalads());
 		Assert.assertEquals(68, p.getCarrotsAvailable());
 		
-		List<CardAction> actions = p.getActions();
-		Assert.assertTrue(actions.contains(CardAction.EAT_SALAD));
-		Assert.assertTrue(actions.contains(CardAction.HURRY_AHEAD));
-		Assert.assertTrue(actions.contains(CardAction.FALL_BACK));
-		Assert.assertTrue(actions.contains(CardAction.TAKE_OR_DROP_CARROTS));
+		List<CardType> actions = p.getActions();
+		Assert.assertTrue(actions.contains(CardType.EAT_SALAD));
+		Assert.assertTrue(actions.contains(CardType.HURRY_AHEAD));
+		Assert.assertTrue(actions.contains(CardType.FALL_BACK));
+		Assert.assertTrue(actions.contains(CardType.TAKE_OR_DROP_CARROTS));
 	}
 }

@@ -29,7 +29,7 @@ public enum FieldType
 	/**
 	 * Hasenfeld
 	 */
-	RABBIT,
+	RABBIT, // TODO change rabbit (Kaninchen) to bunny/hare?
 	/**
 	 * Außerhalb des Spielfeldes
 	 */
