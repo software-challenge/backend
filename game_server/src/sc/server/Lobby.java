@@ -179,7 +179,7 @@ public class Lobby implements IClientListener
 		for (IClientRole role : source.getRoles())
 		{
 			if (role.getClass() == PlayerRole.class) {
-				((PlayerRole)role).getPlayerSlot().getRoom().onClientError(source, errorPacket);
+				((PlayerRole)role).getPlayerSlot().getRoom().onClientError(errorPacket);
 			}
 		}
 	}

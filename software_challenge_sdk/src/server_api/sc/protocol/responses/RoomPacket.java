@@ -5,6 +5,9 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 import sc.protocol.requests.ILobbyRequest;
 
+/**
+ * Wrapper Class containing Room ID and data
+ */
 @XStreamAlias("room")
 public final class RoomPacket implements ILobbyRequest
 {

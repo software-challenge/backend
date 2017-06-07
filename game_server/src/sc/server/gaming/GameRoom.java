@@ -39,19 +39,19 @@ import sc.shared.SlotDescriptor;
  */
 public class GameRoom implements IGameListener
 {
-	private static final Logger			logger		= LoggerFactory
-															.getLogger(GameRoom.class);
-	private final String				id;
-	private final GameRoomManager		gameRoomManager;
+	private static final Logger			  logger		= LoggerFactory
+															        .getLogger(GameRoom.class);
+	private final String				      id;
+	private final GameRoomManager		  gameRoomManager;
 	private final GamePluginInstance	provider;
-	private final IGameInstance			game;
-	private List<ObserverRole>			observers	= new LinkedList<ObserverRole>();
-	private List<PlayerSlot>			playerSlots	= new ArrayList<PlayerSlot>(
-															2);
-	private final boolean				prepared;
-	private GameStatus					status		= GameStatus.CREATED;
-	private GameResult					result		= null;
-	private boolean						paused		= false;
+	private final IGameInstance			  game;
+	private List<ObserverRole>			  observers	= new LinkedList<ObserverRole>();
+	private List<PlayerSlot>			    playerSlots	= new ArrayList<PlayerSlot>(2);
+	private final boolean				      prepared;
+	private GameStatus					      status		= GameStatus.CREATED;
+	private GameResult					      result		= null;
+	private boolean						        paused		= false;
+	private final short               maxPlayerCount = 2;
 
 	public enum GameStatus
 	{
@@ -110,7 +110,7 @@ public class GameRoom implements IGameListener
 
 
 	/**
-	 * Set ScoreDefinition
+	 * Set ScoreDefinition and create GameResult Object from results parameter
 	 * @param results map of Player and PlayerScore
 	 * @return GameResult, containing all PlayerScores and
 	 */
@@ -140,19 +140,31 @@ public class GameRoom implements IGameListener
 		return new GameResult(definition, scores, this.game.getWinners());
 	}
 
+	/**
+	 * Send Object o to all Player in this room
+	 * @param o Object containing the message
+	 */
 	private void broadcast(Object o)
 	{
 		broadcast(o, true);
 	}
 
+	/**
+	 * Send Object o to all Players or all Players in this room
+	 * @param o
+	 * @param roomSpecific
+	 */
 	private void broadcast(Object o, boolean roomSpecific)
 	{
 		Object toSend = o;
+
+		// If message is specific to room, wrap the message in a RoomPacket
 		if (roomSpecific)
 		{
 			toSend = new RoomPacket(getId(), o);
 		}
 
+		// Send to all Players
 		for (PlayerRole player : getPlayers())
 		{
 			logger.debug("sending {} to {}", o.getClass().getSimpleName(),
@@ -160,9 +172,14 @@ public class GameRoom implements IGameListener
 			player.getClient().send(toSend);
 		}
 
+		// Send to all Observer
 		observerBroadcast(toSend);
 	}
 
+	/**
+	 * Send Message to all registered Observers
+	 * @param toSend Message to send
+	 */
 	private void observerBroadcast(Object toSend)
 	{
 		for (ObserverRole observer : Collections.unmodifiableCollection(this.observers))
@@ -174,12 +191,19 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+	/**
+	 * Send {@link GameRoom#broadcast(Object,boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent}
+	 */
 	private void kickAllClients()
 	{
 		logger.debug("Kicking clients (and observer)");
 		broadcast(new LeftGameEvent(getId()), false);
 	}
 
+	/**
+	 * send StateObject to all players and observers
+	 * @param data State Object that derives Object
+	 */
 	@Override
 	public void onStateChanged(Object data)
 	{
@@ -187,11 +211,20 @@ public class GameRoom implements IGameListener
 		sendStateToPlayers(data);
 	}
 
-	public void onClientError(Client source, Object errorPacket) {
+
+  /**
+   * {@link GameRoom#broadcast(Object,boolean) Broadcast} the error package to this room
+   * @param errorPacket
+   */
+	public void onClientError(Object errorPacket) {
 		// packet = createRoomPacket(errorPacket);
 		broadcast(errorPacket, true);
 	}
 
+  /**
+   *
+   * @param data
+   */
 	private void sendStateToPlayers(Object data)
 	{
 		for (PlayerRole player : getPlayers())
@@ -328,7 +361,7 @@ public class GameRoom implements IGameListener
 		}
 		else
 		{
-			return this.game.ready();
+			return this.playerSlots.size() == 2;
 		}
 	}
 
@@ -377,9 +410,14 @@ public class GameRoom implements IGameListener
 		logger.info("Started the game.");
 	}
 
+  /**
+   *
+   * @return
+   */
 	private int getMaximumPlayerCount()
 	{
-		return this.provider.getPlugin().getMaximumPlayerCount();
+	  return maxPlayerCount;
+		//XXX return this.provider.getPlugin().getMaximumPlayerCount();
 	}
 
 	/**

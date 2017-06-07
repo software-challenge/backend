@@ -5,6 +5,10 @@ import sc.framework.plugins.IPerspectiveProvider;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+
+/**
+ * Wrapper for two objects: state and perspective
+ */
 @XStreamAlias("memento")
 public final class MementoPacket implements IPerspectiveProvider
 {

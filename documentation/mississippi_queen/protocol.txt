@@ -1,0 +1,11 @@
+telnet localhost 13050
+
+<protocol><join gameType="swc_2017_mississippi_queen"/>
+
+<room roomId="9e1b1fba-e70c-4caf-8d25-767dce82b705"><data class="move"><advance order="0" distance="1"/>
+
+</data></room><data class="move" x="-20" y="0"/></room><move><advance order="0" distance="1"/></move>
+
+<protocol>
+
+<observe roomId="a9af3153-459d-405b-93e9-7f63aba05547" passphrase="passwort"/>

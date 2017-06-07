@@ -52,13 +52,6 @@ public interface IGameInstance
 	 * method has been called.
 	 */
 	public void destroy();
-
-	/**
-	 * start() will only be called once this method returns true.
-	 * 
-	 * @return
-	 */
-	public boolean ready();
 	
 	/**
 	 * The game is requested to load itself from a file (the board i.e.). This is

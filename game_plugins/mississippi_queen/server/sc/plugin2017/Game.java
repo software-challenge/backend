@@ -147,11 +147,6 @@ public class Game extends RoundBasedGameInstance<Player> {
     notifyOnGameOver(res);
   }
 
-  @Override
-  public boolean ready() {
-    return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
-  }
-
   /**
    * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
    */
