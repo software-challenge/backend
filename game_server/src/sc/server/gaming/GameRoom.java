@@ -84,6 +84,10 @@ public class GameRoom implements IGameListener
 		return this.game;
 	}
 
+	/**
+	 * Generate Game Result, set status to OVER and remove from gameRoomManager
+	 * @param results
+	 */
 	@Override
 	public synchronized void onGameOver(Map<IPlayer, PlayerScore> results)
 	{
@@ -104,10 +108,16 @@ public class GameRoom implements IGameListener
 		this.gameRoomManager.remove(this);
 	}
 
+
+	/**
+	 * Set ScoreDefinition
+	 * @param results map of Player and PlayerScore
+	 * @return GameResult, containing all PlayerScores and
+	 */
 	private GameResult generateGameResult(Map<IPlayer, PlayerScore> results)
 	{
 		ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
-		List<PlayerScore> scores = new LinkedList<PlayerScore>();
+		List<PlayerScore> scores = new LinkedList<>();
 
 		// restore order
 		for (PlayerRole player : getPlayers())
@@ -117,10 +127,6 @@ public class GameRoom implements IGameListener
 			if (score == null)
 			{
 				throw new RuntimeException("GameScore was not complete!");
-
-				// FIXME: hack to avoid server hangups
-				// Gewinner, Feldnummer, Karotten, Zeit (ms)
-				//score = new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0);
 			}
 
 			// FIXME: remove cause != unknown
@@ -131,12 +137,6 @@ public class GameRoom implements IGameListener
 
 			scores.add(score);
 		}
-
-		// FIXME: if there where not enough players, add scores
-		/*while (scores.size() < 2)
-		{
-			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
-		}*/
 		return new GameResult(definition, scores, this.game.getWinners());
 	}
 
