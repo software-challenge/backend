@@ -95,11 +95,6 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		onPlayerLeft(player, ScoreCause.LEFT);
 	}
 
-	@Override
-	public boolean ready()
-	{
-		return this.players.size() == TestPlugin.MAXIMUM_PLAYER_SIZE;
-	}
 
 	@Override
 	protected void onNewTurn()

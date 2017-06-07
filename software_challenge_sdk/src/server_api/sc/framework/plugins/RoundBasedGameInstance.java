@@ -140,15 +140,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	}
 	
 	/**
-	 * start() will only be called once this method returns true.
-	 * 
-	 * @return
-	 */
-	public boolean ready() {
-	  return this.players.size() == 2; // only 2 players may play a game
-	}
-	
-	/**
 	 * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
 	 * @param player
 	 */
