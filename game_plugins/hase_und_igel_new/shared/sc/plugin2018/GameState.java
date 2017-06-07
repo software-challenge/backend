@@ -77,24 +77,9 @@ public class GameState implements Cloneable {
   private Board board;
 
   /**
-   * letzter getaetigter Zug des roten Spielers
+   * letzter getaetigter Zug
    */
-  private Move lastMoveRed;
-
-  /**
-   * letzter getaetigter Zug des blauen Spielers
-   */
-  private Move lastMoveBlue;
-
-  /**
-   * letzte Aktion des roten Spielers, die keine Ausetzaktion ist
-   */
-  private Action NonSkipLastActionRed;
-
-  /**
-   * letzte Aktion des blauen Spielers, die keine Ausetzaktion ist
-   */
-  private Action NonSkipLastActionBlue;
+  private Move lastMove;
 
   /**
    * Erzeugt einen neuen {@code GameState}, in dem alle Informationen so gesetzt
@@ -579,54 +564,16 @@ public class GameState implements Cloneable {
     }
   }
 
-
-  public Move getLastMoveRed() {
-    return lastMoveRed;
-  }
-
-  public Move getLastMoveBlue() {
-    return lastMoveBlue;
-  }
-
-  public Action getNonSkipLastActionRed() {
-    return NonSkipLastActionRed;
-  }
-
-  public Action getNonSkipLastActionBlue() {
-    return NonSkipLastActionBlue;
-  }
-
-  protected void setLastMoveRed(Move lastMoveRed) {
-    this.lastMoveRed = lastMoveRed;
-  }
-
-  protected void setLastMoveBlue(Move lastMoveBlue) {
-    this.lastMoveBlue = lastMoveBlue;
-  }
-
-  protected void setNonSkipLastActionRed(Action nonSkipLastActionRed) {
-    NonSkipLastActionRed = nonSkipLastActionRed;
-  }
-
-  protected void setNonSkipLastActionBlue(Action nonSkipLastActionBlue) {
-    NonSkipLastActionBlue = nonSkipLastActionBlue;
-  }
-
   /**
-   * sets the lastMoves for player
-   * @param player
-   * @param move
+   * Setzt letzten Zug. Nur für den Server relevant.
+   * @param lastMove
    */
-  public void setLastMove(Player player, Move move) {
-    if (player.getPlayerColor() == PlayerColor.RED) {
-      setLastMoveRed(move);
-    } else {
-      setLastMoveBlue(move);
-    }
+  protected void setLastMove(Move lastMove) {
+    this.lastMove = lastMove;
   }
 
   /**
-   * sets the last action for player, if action is skip it is not set
+   * Setzt letzte Aktion eines Spielers. Für den Server in der Zugvalidierung relevant.
    * @param player
    * @param action
    */
@@ -635,38 +582,25 @@ public class GameState implements Cloneable {
       return;
     }
     if (player.getPlayerColor() == PlayerColor.RED) {
-      setNonSkipLastActionRed(action);
+      this.getRedPlayer().setLastNonSkipAction(action);
     } else {
-      setNonSkipLastActionBlue(action);
+      this.getBluePlayer().setLastNonSkipAction(action);
     }
   }
 
   /**
-   * Gibt den letzten Zug des entsprechenden Spielers zurück
-   * @param player
-   * @return
+   * Gibt den letzten Zugzurück
+   * @return letzter Zug
    */
-  public Move getLastMove(Player player) {
-    return getLastMove(player.getPlayerColor());
+  public Move getLastMove() {
+    return this.lastMove;
   }
 
-  /**
-   * Gibt den letzten Zug des Spielers der entsprechenden Spielerfarbe zurück
-   * @param playerColor
-   * @return
-   */
-  public Move getLastMove(PlayerColor playerColor) {
-    if (playerColor == PlayerColor.RED) {
-      return this.lastMoveRed;
-    } else {
-      return this.lastMoveBlue;
-    }
-  }
 
   /**
    * Gibt die letzte Aktion des Spielers zurück. Nötig für das erkennen von ungültigen Zügen.
-   * @param player
-   * @return
+   * @param player Spieler
+   * @return letzte Aktion die nicht Skip war
    */
   public Action getLastNonSkipAction(Player player) {
     return getLastNonSkipAction(player.getPlayerColor());
@@ -674,14 +608,14 @@ public class GameState implements Cloneable {
 
   /**
    * Gibt die letzte Aktion des Spielers der entsprechenden Farbe zurück. Nötig für das erkennen von ungültigen Zügen.
-   * @param playerColor
-   * @return
+   * @param playerColor Spielerfarbe
+   * @return letzte Aktion die nicht Skip war
    */
   public Action getLastNonSkipAction(PlayerColor playerColor) {
     if (playerColor == PlayerColor.RED) {
-      return this.getNonSkipLastActionRed();
+      return this.getRedPlayer().getLastNonSkipAction();
     } else {
-      return this.getNonSkipLastActionBlue();
+      return this.getBluePlayer().getLastNonSkipAction();
     }
   }
 }

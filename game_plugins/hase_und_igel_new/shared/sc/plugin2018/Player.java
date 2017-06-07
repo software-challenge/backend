@@ -47,6 +47,9 @@ public final class Player extends SimplePlayer implements Cloneable
 	@XStreamOmitField
 	private boolean			mustPlayCard;
 
+	@XStreamAsAttribute
+	private Action lastNonSkipAction;
+
 	// FIXME: shouldn't be a property of a DAO that
 	// is sent over the network/replay
 	public void setMustPlayCard(boolean mustPlayCard)
@@ -87,12 +90,13 @@ public final class Player extends SimplePlayer implements Cloneable
 		initialize(color, position);
 	}
 
-	private void initialize(PlayerColor c, int p)
+	private void initialize(PlayerColor c, int index)
 	{
-		index = p;
-		color = c;
-		carrots = Constants.INITIAL_CARROTS;
-		salads = Constants.SALADS_TO_EAT;
+		this.index = index;
+		this.color = color;
+		this.carrots = Constants.INITIAL_CARROTS;
+		this.salads = Constants.SALADS_TO_EAT;
+		this.lastNonSkipAction = null;
 
 		cards.add(CardType.TAKE_OR_DROP_CARROTS);
 		cards.add(CardType.EAT_SALAD);
@@ -132,18 +136,25 @@ public final class Player extends SimplePlayer implements Cloneable
 	/**
 	 * Die Anzahl der Salate, die dieser Spieler noch verspeisen muss.
 	 * 
-	 * @return
+	 * @return Anzahl der übrigen Salate
 	 */
 	public final int getSalads()
 	{
 		return salads;
 	}
 
+  /**
+   * Setzt Salate, nur für den Server relevant.
+   * @param salads Salate
+   */
 	protected final void setSalads(int salads)
 	{
 		this.salads = salads;
 	}
 
+  /**
+   * Verringert Salate um eins, sollte die Anzahl größer 0 sein. TODO throw exception?
+   */
 	protected final void eatSalad()
 	{
 		this.salads = Math.max(0, this.salads - 1);
@@ -152,7 +163,7 @@ public final class Player extends SimplePlayer implements Cloneable
 	/**
 	 * Gibt die für diesen Spieler verfügbaren Hasenkarten zurück.
 	 * 
-	 * @return
+	 * @return übrige Karten
 	 */
 	public List<CardType> getCards()
 	{
@@ -239,5 +250,13 @@ public final class Player extends SimplePlayer implements Cloneable
 	public boolean inGoal()
 	{
 		return index == 64;
+	}
+
+	public Action getLastNonSkipAction() {
+		return lastNonSkipAction;
+	}
+
+	public void setLastNonSkipAction(Action lastNonSkipAction) {
+		this.lastNonSkipAction = lastNonSkipAction;
 	}
 }
