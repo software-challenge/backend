@@ -89,7 +89,7 @@ public class GameUtil
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        state2.setLastAction(player, new Advance(distance));
+        state2.setLastAction(new Advance(distance));
         state2.getCurrentPlayer().setFieldNumber(newPosition);
         state2.getCurrentPlayer().changeCarrotsAvailableBy(-requiredCarrots);
 				valid = valid && canPlayAnyCard(state2);
@@ -301,7 +301,7 @@ public class GameUtil
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        state2.setLastAction(player, new Card(CardType.HURRY_AHEAD));
+        state2.setLastAction(new Card(CardType.HURRY_AHEAD));
 				p2.setCards(player.getCardsWithout(CardType.FALL_BACK));
 				valid = valid && canPlayAnyCard(state2);
 				break;
@@ -350,7 +350,7 @@ public class GameUtil
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        state2.setLastAction(player, new Card(CardType.HURRY_AHEAD));
+        state2.setLastAction(new Card(CardType.HURRY_AHEAD));
 				p2.setCards(player.getCardsWithout(CardType.HURRY_AHEAD));
 				valid = valid && canPlayAnyCard(state2);
 				break;

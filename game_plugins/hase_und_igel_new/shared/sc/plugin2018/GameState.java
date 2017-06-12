@@ -577,11 +577,11 @@ public class GameState implements Cloneable {
    * @param player
    * @param action
    */
-  public void setLastAction(Player player, Action action) {
+  public void setLastAction(Action action) {
     if (action instanceof Skip) {
       return;
     }
-    if (player.getPlayerColor() == PlayerColor.RED) {
+    if (this.getCurrentPlayerColor() == PlayerColor.RED) {
       this.getRedPlayer().setLastNonSkipAction(action);
     } else {
       this.getBluePlayer().setLastNonSkipAction(action);

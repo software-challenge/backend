@@ -21,7 +21,7 @@ public class Skip extends Action {
     if(this.order > 0) {
       throw new InvalidMoveException("Nur das ausspielen von Karten ist nach der ersten Aktion erlaubt.");
     }
-    if (!GameUtil.isValidToSkip(state, player)) {
+    if (!GameUtil.isValidToSkip(state)) {
       throw new InvalidMoveException("Spieler kann noch einen anderen Zug ausführen, aussetzen ist nicht erlaubt.");
     }
   }

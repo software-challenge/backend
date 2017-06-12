@@ -167,11 +167,11 @@ public final class Move implements Cloneable
         throw new InvalidMoveException("Das order Attribut wurde nicht richtig gesetzt.");
       }
 //   TODO   action.perform(state, player);
-      state.setLastAction(player, action);
+      state.setLastAction(action);
       index++;
     }
     // prepare next turn
-    state.setLastMove(player, this);
+    state.setLastMove(this);
 		state.updateCurrentPlayer();
 		// check whether player in next turn gets carrots from Position_X fields
 		FieldType fieldType = state.getBoard().getTypeAt(state.getCurrentPlayer().getFieldIndex());
