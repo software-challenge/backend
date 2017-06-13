@@ -11,6 +11,10 @@ import sc.plugin2018.util.Constants;
 
 import sc.shared.PlayerColor;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
@@ -96,6 +100,15 @@ public class GameState implements Cloneable {
     currentPlayer = PlayerColor.RED;
     startPlayer = PlayerColor.RED;
     board = new Board();
+    red = new Player(PlayerColor.RED);
+    blue = new Player(PlayerColor.BLUE);
+    List<Action> actions = new LinkedList<>();
+    actions.add(new Advance(3, 0));
+    actions.add(new Skip());
+    actions.add(new EatSalad());
+    actions.add(new ExchangeCarrots(20, 2));
+    actions.add(new Card(CardType.HURRY_AHEAD, 2));
+    lastMovegit  = new Move(actions);
   }
 
   /**
@@ -574,7 +587,6 @@ public class GameState implements Cloneable {
 
   /**
    * Setzt letzte Aktion eines Spielers. Für den Server in der Zugvalidierung relevant.
-   * @param player
    * @param action
    */
   public void setLastAction(Action action) {

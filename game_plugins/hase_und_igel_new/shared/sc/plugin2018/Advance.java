@@ -1,5 +1,7 @@
 package sc.plugin2018;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.plugin2018.util.GameUtil;
 import sc.shared.InvalidMoveException;
 
@@ -7,9 +9,10 @@ import sc.shared.InvalidMoveException;
  * Ein Vorwärtszug, um spezifizierte Distanz. Verbrauchte Karroten werden mit k = (distance * (distance + 1)) / 2
  * berechnet (Gaußsche Summe)
  */
+@XStreamAlias(value = "advance")
 public class Advance extends Action{
 
-
+  @XStreamAsAttribute
   private int distance;
 
   public Advance(int distance) {

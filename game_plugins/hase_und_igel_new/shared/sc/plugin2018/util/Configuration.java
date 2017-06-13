@@ -3,17 +3,7 @@ package sc.plugin2018.util;
 import java.util.Arrays;
 import java.util.List;
 
-import sc.plugin2018.CardType;
-import sc.plugin2018.Board;
-import sc.plugin2018.FieldType;
-import sc.plugin2018.PlayerColor;
-import sc.plugin2018.Game;
-import sc.plugin2018.GameState;
-import sc.plugin2018.Move;
-import sc.plugin2018.MoveTyp;
-import sc.plugin2018.Player;
-import sc.plugin2018.Position;
-import sc.plugin2018.WelcomeMessage;
+import sc.plugin2018.*;
 import sc.protocol.LobbyProtocol;
 
 import com.thoughtworks.xstream.XStream;
@@ -42,6 +32,7 @@ public class Configuration
 		return Arrays.asList(new Class<?>[] { Game.class, Board.class,
 				GameState.class, Move.class, Player.class,
 				WelcomeMessage.class, CardType.class, FieldType.class,
-				PlayerColor.class, MoveTyp.class, Position.class });
+				PlayerColor.class, Position.class, Advance.class, Action.class, Skip.class,
+				Card.class, EatSalad.class, ExchangeCarrots.class, FallBack.class});
 	}
 }

@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 /**
  * Die unterschiedlichen Spielfelder aus dem Hase und Igel Original
  */
-@XStreamAlias(value = "hui:field")
+@XStreamAlias(value = "field")
 public enum FieldType
 {
 	/**

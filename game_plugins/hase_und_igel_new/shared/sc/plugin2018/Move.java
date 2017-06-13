@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import sc.shared.DebugHint;
 import sc.shared.InvalidMoveException;
 
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Collections;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -38,6 +35,10 @@ public final class Move implements Cloneable
 		}
 	}
 
+	public void setActions(List<Action> actions) {
+		this.actions = actions;
+	}
+
 	/**
 	 * Liste von Debughints, die dem Zug beigefügt werden koennen. Siehe
 	 * {@link DebugHint}
@@ -52,7 +53,7 @@ public final class Move implements Cloneable
 		// This list needs to be thread safe because the side bar may be iterating
 		// over it while a new turn is started, resulting in a
 		// ConcurrentModificationException.
-		actions = new CopyOnWriteArrayList<>();
+		actions = new ArrayList<>();
 	}
 
 	/**
@@ -63,7 +64,7 @@ public final class Move implements Cloneable
 	 */
 	public Move(List<Action> selectedActions) {
 		assert selectedActions != null;
-		actions = new CopyOnWriteArrayList<>(selectedActions);
+		actions = selectedActions;
 	}
 
 	/**
@@ -75,7 +76,7 @@ public final class Move implements Cloneable
 	 */
 	@Override
 	public Object clone() throws CloneNotSupportedException {
-		List<Action> clonedActions = new CopyOnWriteArrayList<>();
+		List<Action> clonedActions = new ArrayList<>();
 		for (Action action : getActions()) {
 			// TODO clone different Actions
 		}

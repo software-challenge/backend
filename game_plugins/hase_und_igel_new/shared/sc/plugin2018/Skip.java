@@ -1,11 +1,13 @@
 package sc.plugin2018;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import sc.plugin2018.util.GameUtil;
 import sc.shared.InvalidMoveException;
 
 /**
  * Ein Aussetzzug. Ist nur erlaubt, sollten keine anderen Züge möglich sein.
  */
+@XStreamAlias(value = "Skip")
 public class Skip extends Action {
 
   /**

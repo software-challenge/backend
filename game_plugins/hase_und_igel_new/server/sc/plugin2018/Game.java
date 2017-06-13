@@ -38,7 +38,7 @@ public class Game extends RoundBasedGameInstance<Player>
   @XStreamOmitField
   private int halfturns = 0;
 
-  private GameState gameState = new GameState();
+  private GameState gameState;
 
   public GameState getGameState() {
     return this.gameState;
@@ -51,6 +51,7 @@ public class Game extends RoundBasedGameInstance<Player>
   public Game() {
     this.availableColors.add(PlayerColor.RED);
     this.availableColors.add(PlayerColor.BLUE);
+    this.gameState = new GameState();
   }
 
   @Override

@@ -1,17 +1,22 @@
 package sc.plugin2018;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.shared.InvalidMoveException;
 
 /**
  * A card that is played.
  */
+@XStreamAlias(value = "card")
 public class Card extends Action {
 
+  @XStreamAsAttribute
   private CardType type;
 
   /**
    * Nur für TAKE_OR_DROP_CARROTS genutzt. Muss 20, 0 oder -20 sein.
    */
+  @XStreamAsAttribute
   private int value;
 
   /**

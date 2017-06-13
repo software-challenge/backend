@@ -39,8 +39,8 @@ public final class Player extends SimplePlayer implements Cloneable
 	private int				salads;
 
 	// verfügbare Hasenkarten
-	@XStreamImplicit(itemFieldName = "cards")
-	private List<CardType>	cards;
+	// @XStreamImplicit(itemFieldName = "cards")
+	private ArrayList<CardType>	cards;
 
 	private Position		position;
 
@@ -74,7 +74,7 @@ public final class Player extends SimplePlayer implements Cloneable
 
 	protected Player()
 	{
-		cards = new LinkedList<CardType>();
+		cards = new ArrayList<CardType>();
 		// only for XStream
 	}
 
@@ -96,7 +96,7 @@ public final class Player extends SimplePlayer implements Cloneable
 		this.color = color;
 		this.carrots = Constants.INITIAL_CARROTS;
 		this.salads = Constants.SALADS_TO_EAT;
-		this.lastNonSkipAction = null;
+		this.lastNonSkipAction = new Advance(1);
 
 		cards.add(CardType.TAKE_OR_DROP_CARROTS);
 		cards.add(CardType.EAT_SALAD);
@@ -169,7 +169,7 @@ public final class Player extends SimplePlayer implements Cloneable
 	{
 		if (this.cards == null)
 		{
-			this.cards = new LinkedList<CardType>();
+			this.cards = new ArrayList<CardType>();
 		}
 
 		return cards;
@@ -191,7 +191,7 @@ public final class Player extends SimplePlayer implements Cloneable
 	 */
 	public void setCards(List<CardType> cards)
 	{
-		this.cards = cards;
+		this.cards = new ArrayList<>(cards);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public final class Player extends SimplePlayer implements Cloneable
 		try
 		{
 			ret = (Player) super.clone();
-			ret.cards = new LinkedList<CardType>();
+			ret.cards = new ArrayList<CardType>();
 			ret.cards.addAll(this.getCards());
 		}
 		catch (CloneNotSupportedException e)
