@@ -112,6 +112,7 @@
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
     <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
     <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
+    <chmod file="${out.dir}/server/start.sh" perm="ugo+x" />
 
     <echo message="Zipping files..." />
 
