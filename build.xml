@@ -6,7 +6,6 @@
   <target name="clean">
     <delete dir="${out.dir}" />
     <delete dir="game_server/build" />
-    <delete dir="game_gui/build" />
     <!--    old Plugins                        !-->
     <delete dir="game_plugins/tic_tac_toe/build" />
     <delete dir="game_players/hase_und_igel/build" />
@@ -56,26 +55,19 @@
         <ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" />
         <ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
         <ant dir="game_players/twixt_player" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" /> 
+        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" />
 	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
 	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />-->
         <!--    currentPlugin                    !-->
 	    <ant dir="game_plugins/hase_und_igel_new" target="clean-build" inheritAll="false" />
 	    <!-- <ant dir="game_players/hase_und_igel_player" target="clean-build" inheritAll="false" /> TODO-->
 
-        <echo message="Compiling Server and GUI..." />
+        <echo message="Compiling Server..." />
         <ant dir="game_server" target="clean-build" inheritAll="false" />
-        <!--  TODO new gui here <ant dir="game_gui" target="clean-build" inheritAll="false" /> -->
   </target>
 
   <target name="build" depends="scmversion,dependencies">
     <mkdir dir="${out.dir}" />
-
-   <!-- TODO add gui <mkdir dir="${out.dir}/gui" />
-
-    <copy todir="${out.dir}/gui">
-      <fileset dir="./game_gui/build/jar" />
-    </copy> -->
 
     <mkdir dir="${out.dir}/server" />
     <copy todir="${out.dir}/server">
@@ -106,10 +98,6 @@
 
 
     <!-->####    PLUGINS             !-->
-    <mkdir dir="game_gui/plugins" />
-    <copy todir="game_gui/plugins" flatten="true">
-      <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
-    </copy>
     <mkdir dir="game_server/plugins" />
     <copy todir="game_server/plugins" flatten="true">
       <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
@@ -117,14 +105,11 @@
 
     <echo message="Copy log configs" />
 
-    <copy tofile="${out.dir}/gui/logback.xml" file="./game_server/bin/logback-release.xml" />
     <copy tofile="${out.dir}/server/logback.xml" file="./game_server/bin/logback-release.xml" />
 
     <echo message="Generating Starter-Batchfiles" />
 
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${out.dir}/gui/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-gui.jar --max_client_heapsize=256&#xD;&#xA;</echo>
-    <echo file="${out.dir}/gui/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-gui.jar --max_client_heapsize=256&#xA;</echo>
     <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
     <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
 
@@ -132,14 +117,11 @@
 
     <mkdir dir="${out.dir}/zipped" />
 
-    <zip destfile="${out.dir}/zipped/server-gui.zip" basedir="${out.dir}/gui" />
-
     <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
     <echo message="Gathering documentations..." />
     <mkdir dir="${out.dir}/zipped/doc" />
     <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
-    <zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
     <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
     <!-- TODO <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar" />
