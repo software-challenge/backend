@@ -108,7 +108,7 @@ public class GameState implements Cloneable {
     actions.add(new EatSalad());
     actions.add(new ExchangeCarrots(20, 2));
     actions.add(new Card(CardType.HURRY_AHEAD, 2));
-    lastMovegit  = new Move(actions);
+    lastMove  = new Move(actions);
   }
 
   /**
