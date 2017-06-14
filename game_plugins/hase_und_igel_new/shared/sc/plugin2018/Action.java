@@ -19,7 +19,7 @@ public abstract class Action implements Comparable<Action> {
   @XStreamAsAttribute
   public int order;
 
-  public abstract void perform(GameState state, Player player) throws InvalidMoveException;
+  public abstract void perform(GameState state) throws InvalidMoveException;
 
   @Override
   public int compareTo(Action o) {

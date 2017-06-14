@@ -1,11 +1,10 @@
 package sc.plugin2018;
 
-import java.util.List;
-
 import junit.framework.Assert;
+import org.junit.Test;
 import sc.shared.PlayerColor;
 
-import org.junit.Test;
+import java.util.List;
 
 /**
  * @author rra
@@ -20,17 +19,6 @@ public class PlayerTest
 	@Test
 	public void testPlayer()
 	{
-		Player p = new Player(PlayerColor.RED);
-
-		Assert.assertEquals(PlayerColor.RED, p.getPlayerColor());
-		Assert.assertEquals(0, p.getFieldIndex());
-		Assert.assertEquals(5, p.getSalads());
-		Assert.assertEquals(68, p.getCarrotsAvailable());
-		
-		List<CardType> actions = p.getActions();
-		Assert.assertTrue(actions.contains(CardType.EAT_SALAD));
-		Assert.assertTrue(actions.contains(CardType.HURRY_AHEAD));
-		Assert.assertTrue(actions.contains(CardType.FALL_BACK));
-		Assert.assertTrue(actions.contains(CardType.TAKE_OR_DROP_CARROTS));
+	  // TODO 
 	}
 }

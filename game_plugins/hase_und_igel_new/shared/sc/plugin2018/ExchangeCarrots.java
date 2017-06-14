@@ -2,12 +2,13 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.plugin2018.util.GameUtil;
 import sc.shared.InvalidMoveException;
 
 /**
  * TODO
  */
-@XStreamAlias(value = "ExchangeCarrots")
+@XStreamAlias(value = "exchangeCarrots")
 public class ExchangeCarrots extends Action {
 
   @XStreamAsAttribute
@@ -21,7 +22,25 @@ public class ExchangeCarrots extends Action {
 
 
   @Override
-  public void perform(GameState state, Player player) throws InvalidMoveException {
-
+  public void perform(GameState state) throws InvalidMoveException {
+    if (GameUtil.isValidToPlayTakeOrDropCarrots(state, this.value)) {
+      state.getCurrentPlayer().changeCarrotsAvailableBy(this.value);
+    } else {
+      throw new InvalidMoveException("Es können nicht " + this.value + " Karotten aufgenommen werden.");
+    }
   }
+
+  @Override
+  public ExchangeCarrots clone() {
+    return new ExchangeCarrots(this.value, this.order);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof ExchangeCarrots) {
+      return (this.value == ((ExchangeCarrots) o).value);
+    }
+    return false;
+  }
+
 }

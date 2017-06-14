@@ -2,16 +2,14 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.framework.plugins.SimplePlayer;
-import sc.plugin2018.util.Constants;
 import sc.shared.PlayerColor;
+import sc.plugin2018.util.Constants;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -20,11 +18,11 @@ import java.util.List;
  */
 // FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
 @XStreamAlias(value = "player")
-public final class Player extends SimplePlayer implements Cloneable
+public class Player extends SimplePlayer implements Cloneable
 {
 	// Farbe der Spielfigure
   @XStreamAsAttribute
-	private PlayerColor		color;
+	private PlayerColor color;
 
 	// Position auf dem Spielbrett
   @XStreamAsAttribute
@@ -39,16 +37,15 @@ public final class Player extends SimplePlayer implements Cloneable
 	private int				salads;
 
 	// verfügbare Hasenkarten
-	// @XStreamImplicit(itemFieldName = "cards")
 	private ArrayList<CardType>	cards;
 
+  private Action lastNonSkipAction;
+
+  @XStreamOmitField
 	private Position		position;
 
 	@XStreamOmitField
 	private boolean			mustPlayCard;
-
-	@XStreamAsAttribute
-	private Action lastNonSkipAction;
 
 	// FIXME: shouldn't be a property of a DAO that
 	// is sent over the network/replay
@@ -90,7 +87,7 @@ public final class Player extends SimplePlayer implements Cloneable
 		initialize(color, position);
 	}
 
-	private void initialize(PlayerColor c, int index)
+	private void initialize(PlayerColor color, int index)
 	{
 		this.index = index;
 		this.color = color;

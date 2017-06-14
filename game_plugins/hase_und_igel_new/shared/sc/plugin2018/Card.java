@@ -2,6 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.plugin2018.util.GameUtil;
 import sc.shared.InvalidMoveException;
 
 /**
@@ -55,36 +56,43 @@ public class Card extends Action {
 
 
   @Override
-  public void perform(GameState state, Player player) throws InvalidMoveException {
-    // check if current field is a rabbit field
-    if (state.getBoard().getTypeAt(player.getFieldIndex()) != FieldType.RABBIT) {
-      throw new InvalidMoveException("Das Spielen einer Karte ist nur auf einem Hasenfeld erlaubt.");
-    }
-    switch (type) {
+  public void perform(GameState state) throws InvalidMoveException {
+    switch (type) { // TODO exception in else cases
       case EAT_SALAD:
-        player.eatSalad();
-        if (state.isFirst(player)) {
-          player.changeCarrotsAvailableBy(10);
+        if (GameUtil.isValidToPlayEatSalad(state)) {
+          state.getCurrentPlayer().eatSalad();
+          if (state.isFirst(state.getCurrentPlayer())) {
+            state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+          } else {
+            state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+          }
         } else {
-          player.changeCarrotsAvailableBy(30);
+          throw new InvalidMoveException("Das Ausspielen der EAT_SALAD Karte ist nicht möglich.");
         }
         break;
       case FALL_BACK:
-        // TODO check whether this is possible
-        if (state.isFirst(player)) {
-          player.setFieldNumber(state.getOpponent(player).getFieldIndex() - 1);
+        if (GameUtil.isValidToPlayFallBack(state)) {
+          state.getCurrentPlayer().setFieldNumber(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() - 1);
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
         break;
       case HURRY_AHEAD:
-        // TODO check whether this is possible
-        if (!state.isFirst(player)) {
-          player.setFieldNumber(state.getOpponent(player).getFieldIndex() + 1);
+        if (GameUtil.isValidToPlayHurryAhead(state)) {
+          state.getCurrentPlayer().setFieldNumber(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() + 1);
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
         break;
       case TAKE_OR_DROP_CARROTS:
-        player.changeCarrotsAvailableBy(this.getValue());
+        if (GameUtil.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
+          state.getCurrentPlayer().changeCarrotsAvailableBy(this.getValue());
+        } else {
+          throw new InvalidMoveException("Das Ausspielen der TAKE_OR_DROP_CARROTS Karte ist nicht möglich.");
+        }
         break;
     }
+    // remove playes card
     state.getCurrentPlayer().setCards(state.getCurrentPlayer().getCardsWithout(this.type));
   }
 
@@ -108,5 +116,18 @@ public class Card extends Action {
     if (value == 0 || value == -20 || value == 20) {
       this.value = value;
     }
+  }
+
+  @Override
+  public Card clone() {
+    return new Card(this.type, this.value, this.order);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Card) {
+      return (this.value == ((Card) o).value) && (this.type == ((Card) o).type);
+    }
+    return false;
   }
 }

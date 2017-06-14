@@ -7,12 +7,10 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import sc.shared.PlayerColor;
 import sc.plugin2018.util.Constants;
 
-import sc.shared.PlayerColor;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -97,18 +95,18 @@ public class GameState implements Cloneable {
    * Das Spielfeld wird zufällig aufgebaut.
    */
   public GameState() {
-    currentPlayer = PlayerColor.RED;
-    startPlayer = PlayerColor.RED;
-    board = new Board();
-    red = new Player(PlayerColor.RED);
-    blue = new Player(PlayerColor.BLUE);
-    List<Action> actions = new LinkedList<>();
+    this.currentPlayer = PlayerColor.RED;
+    this.startPlayer = PlayerColor.RED;
+    this.board = new Board();
+    this.red = new Player(PlayerColor.RED);
+    this.blue = new Player(PlayerColor.BLUE);
+    List<Action> actions = new ArrayList<>();
     actions.add(new Advance(3, 0));
     actions.add(new Skip());
     actions.add(new EatSalad());
     actions.add(new ExchangeCarrots(20, 2));
     actions.add(new Card(CardType.HURRY_AHEAD, 2));
-    lastMove  = new Move(actions);
+    this.lastMove  = new sc.plugin2018.Move(actions);
   }
 
   /**
@@ -119,7 +117,7 @@ public class GameState implements Cloneable {
     GameState clone = stateToClone.clone();
     setRedPlayer(clone.getRedPlayer());
     setBluePlayer(clone.getBluePlayer());
-//    setLastMove(clone.getLastMove());
+    setLastMove(clone.getLastMove());
     setBoard(clone.getBoard());
     setCurrentPlayer(clone.getCurrentPlayerColor());
   }

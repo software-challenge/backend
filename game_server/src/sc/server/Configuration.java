@@ -50,8 +50,8 @@ public class Configuration
 					}
 				});
 		xStream.setClassLoader(xStreamClassLoader);
-		xStream.registerConverter(new PerspectiveAwareConverter(xStream
-				.getMapper(), xStream.getReflectionProvider()));
+//		xStream.registerConverter(new PerspectiveAwareConverter(xStream
+//				.getMapper(), xStream.getReflectionProvider()));
 		LobbyProtocol.registerMessages(xStream);
 	}
 

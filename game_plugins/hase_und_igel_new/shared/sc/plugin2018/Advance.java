@@ -27,13 +27,12 @@ public class Advance extends Action{
 
 
   @Override
-  public void perform(GameState state, Player player) throws InvalidMoveException {
-    // check whether field can be
-    int neededCarrots = GameUtil.calculateCarrots(this.distance);
-    if (neededCarrots > player.getCarrotsAvailable()) {
-      throw new InvalidMoveException("Nicht genug Karotten für Vorwärtszug.");
+  public void perform(GameState state) throws InvalidMoveException {
+    if (GameUtil.isValidToMove(state, this.distance)) {
+      state.getCurrentPlayer().changeCarrotsAvailableBy(GameUtil.calculateCarrots(this.distance));
+      state.getCurrentPlayer().setFieldNumber(state.getCurrentPlayer().getFieldIndex() + distance);
     } else {
-      player.changeCarrotsAvailableBy(neededCarrots);
+      throw new InvalidMoveException("Vorwärtszug um " + this.distance + " Felder ist nicht möglich");
     }
   }
 
@@ -46,5 +45,18 @@ public class Advance extends Action{
       throw new IllegalArgumentException("distance has to be greater than 0");
     }
     this.distance = distance;
+  }
+
+  @Override
+  public Advance clone() {
+    return new Advance(this.distance, this.order);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Advance) {
+      return (this.distance == ((Advance) o).distance);
+    }
+    return false;
   }
 }

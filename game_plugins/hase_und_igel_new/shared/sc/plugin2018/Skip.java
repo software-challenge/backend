@@ -7,7 +7,7 @@ import sc.shared.InvalidMoveException;
 /**
  * Ein Aussetzzug. Ist nur erlaubt, sollten keine anderen Züge möglich sein.
  */
-@XStreamAlias(value = "Skip")
+@XStreamAlias(value = "skip")
 public class Skip extends Action {
 
   /**
@@ -18,7 +18,11 @@ public class Skip extends Action {
     this.order = 0;
   }
 
-  public void perform(GameState state, Player player) throws InvalidMoveException {
+  public Skip(int order) {
+    this.order = 0;
+  }
+
+  public void perform(GameState state) throws InvalidMoveException {
     // this methods does literally nothing
     if(this.order > 0) {
       throw new InvalidMoveException("Nur das ausspielen von Karten ist nach der ersten Aktion erlaubt.");
@@ -28,5 +32,17 @@ public class Skip extends Action {
     }
   }
 
+  @Override
+  public Skip clone() {
+    return new Skip(this.order);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if(o instanceof Skip) {
+      return true;
+    }
+    return false;
+  }
 
 }

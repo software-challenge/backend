@@ -17,10 +17,12 @@ import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
+import sc.shared.PlayerColor;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
-import sc.shared.*;
-import sc.shared.PlayerColor;
+import sc.shared.InvalidMoveException;
+import sc.shared.PlayerScore;
+import sc.shared.ScoreCause;
 import sc.shared.WinCondition;
 
 /**
@@ -38,7 +40,7 @@ public class Game extends RoundBasedGameInstance<Player>
   @XStreamOmitField
   private int halfturns = 0;
 
-  private GameState gameState;
+  private GameState gameState = new GameState();
 
   public GameState getGameState() {
     return this.gameState;
@@ -51,7 +53,6 @@ public class Game extends RoundBasedGameInstance<Player>
   public Game() {
     this.availableColors.add(PlayerColor.RED);
     this.availableColors.add(PlayerColor.BLUE);
-    this.gameState = new GameState();
   }
 
   @Override
@@ -90,8 +91,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
       final Move move = (Move) data;
       // XXX this.gameState = move.perform(this.gameState, author);
-      move.perform(this.gameState, author);
-      // this.gameState.prepareNextTurn(move);
+      move.perform(this.gameState);
       this.halfturns++;
       next(this.gameState.getCurrentPlayer());
       onPlayerChange(this.getGameState().getOtherPlayer()); // check this
@@ -259,7 +259,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player)
 	{
-		return new ActionTimeout(true, 10000l, 2000l);
+		return new ActionTimeout(true, 10000000l, 2000000l);
 	}
 
   /**

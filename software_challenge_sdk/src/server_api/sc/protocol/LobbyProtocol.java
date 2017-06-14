@@ -20,13 +20,7 @@ import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.ObservationResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.protocol.responses.RoomPacket;
-import sc.shared.GameResult;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreAggregation;
-import sc.shared.ScoreCause;
-import sc.shared.ScoreDefinition;
-import sc.shared.ScoreFragment;
-import sc.shared.SlotDescriptor;
+import sc.shared.*;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -48,8 +42,8 @@ public abstract class LobbyProtocol
 				StepRequest.class }));
 		
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
-				GameResult.class, PlayerScore.class, ScoreAggregation.class,
-				ScoreCause.class, ScoreDefinition.class, ScoreFragment.class,
+				GameResult.class, PlayerScore.class, ScoreAggregation.class, PlayerColor.class,
+				ScoreCause.class, ScoreDefinition.class, ScoreFragment.class, WinCondition.class,
 				SlotDescriptor.class }));
 
 		return xStream;
