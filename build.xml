@@ -116,8 +116,8 @@
 
     <echo message="Copy log configs" />
 
-    <copy tofile="${out.dir}/gui/logback.xml" file="./game_server/bin/logback-release.xml" />
-    <copy tofile="${out.dir}/server/logback.xml" file="./game_server/bin/logback-release.xml" />
+    <copy tofile="${out.dir}/gui/logback.xml" file="./game_server/configuration/logback-release.xml" />
+    <copy tofile="${out.dir}/server/logback.xml" file="./game_server/configuration/logback-release.xml" />
 
     <echo message="Generating Starter-Batchfiles" />
 

@@ -174,10 +174,16 @@ public class Game extends RoundBasedGameInstance<Player> {
     int[] oppPoints = this.gameState.getPlayerStats(p.getPlayerColor().opponent());
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    if (winCondition != null) {
+    Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
+        : this.gameState.getRedPlayer();
+    if (winCondition != null) { // winCondition is met by a player
       reason = winCondition.getReason();
-    }
-    if (stats[Constants.GAME_STATS_POINTS_INDEX] > oppPoints[Constants.GAME_STATS_POINTS_INDEX]
+      if (winCondition.getWinner() == p.getPlayerColor()) {
+        matchPoints = 2;
+      } else if (winCondition.getWinner() == opponent.getPlayerColor()){
+        matchPoints = 0;
+      }
+    } else if (stats[Constants.GAME_STATS_POINTS_INDEX] > oppPoints[Constants.GAME_STATS_POINTS_INDEX]
         || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX]
             && stats[Constants.GAME_STATS_PASSENGER_INDEX] > oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
       matchPoints = 2;
@@ -185,8 +191,7 @@ public class Game extends RoundBasedGameInstance<Player> {
         || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX]
             && stats[Constants.GAME_STATS_PASSENGER_INDEX] < oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
       matchPoints = 0;
-    Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
-        : this.gameState.getRedPlayer();
+    
     // opponent has done something wrong
     if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft() 
         || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
@@ -235,6 +240,23 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   /**
+   * checks if one player reached the goal with enough passengers. Only used for testing
+   *
+   * @return the player who reached the goal or null if no player reached the
+   *         goal
+   */
+  private static Player checkGoalReached(GameState gameState) {
+    if (gameState.getRedPlayer().getField(gameState.getBoard()).getType() == FieldType.GOAL && gameState.getRedPlayer().getPassenger() >= 2
+        && gameState.getRedPlayer().getSpeed() == 1) {
+      return gameState.getRedPlayer();
+    } else if (gameState.getBluePlayer().getField(gameState.getBoard()).getType() == FieldType.GOAL && gameState.getBluePlayer().getPassenger() >= 2
+        && gameState.getBluePlayer().getSpeed() == 1) {
+      return gameState.getBluePlayer();
+    }
+    return null;
+  }
+  
+  /**
    * Checks if a win condition in the current game state is met.
    *
    * @return WinCondition with winner and reason or null, if no win condition is
@@ -260,6 +282,41 @@ public class Game extends RoundBasedGameInstance<Player> {
       // a player is more than three tiles before the other player
       PlayerColor winner;
       if (this.gameState.getRedPlayer().getTile() > this.gameState.getBluePlayer().getTile()) {
+        winner = PlayerColor.RED;
+      } else {
+        winner = PlayerColor.BLUE;
+      }
+      return new WinCondition(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
+    }
+    return null;
+  }
+  
+  /**
+   * Checks if a win condition in the current game state is met. Only for testing
+   *
+   * @return WinCondition with winner and reason or null, if no win condition is
+   *         yet met.
+   */
+  public static WinCondition checkWinCondition(GameState gameState) {
+    int[][] stats = gameState.getGameStats();
+    if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+      // round limit reached
+      PlayerColor winner = null;
+      if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX]) {
+        winner = PlayerColor.RED;
+      } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX]) {
+        winner = PlayerColor.BLUE;
+      }
+      return new WinCondition(winner, "Das Rundenlimit wurde erreicht.");
+    } else if (checkGoalReached(gameState) != null) {
+      // one player reached the goal
+      PlayerColor winner = checkGoalReached(gameState).getPlayerColor();
+      return new WinCondition(winner, "Das Spiel ist beendet.\nEin Spieler ist im Ziel");
+    } else if (gameState.getCurrentPlayer() != gameState.getStartPlayer()
+        && Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
+      // a player is more than three tiles before the other player
+      PlayerColor winner;
+      if (gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
         winner = PlayerColor.RED;
       } else {
         winner = PlayerColor.BLUE;
@@ -312,6 +369,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       this.gameState.getCurrentPlayer().setFreeAcc(1);
       this.gameState.getCurrentPlayer().setFreeTurns(this.gameState.isFreeTurn() ? 2 : 1);
       this.gameState.getCurrentPlayer().setMovement(this.gameState.getCurrentPlayer().getSpeed());
+      // only freeTurns is needed for the otherplayer the other attributes are set in prepareNextTurn
+      this.gameState.getOtherPlayer().setFreeTurns(1); // a previous freeTurn of 2 cannot be recognized by a gameState alone
     }
   }
 

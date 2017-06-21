@@ -282,6 +282,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 		final Logger logger = RoundBasedGameInstance.logger;
 		final P playerToTimeout = player;
 
+    // Signal the JVM to do a GC run now and lower the propability that the GC
+    // runs when the player sends back its move, resulting in disqualification
+    // because of soft timeout.
+    System.gc();
+
 		this.requestTimeout = timeout;
 		timeout.start(new Runnable() {
 			@Override

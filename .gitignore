@@ -53,3 +53,7 @@
 *.toc
 *.out
 *.log
+
+\.idea/
+
+*.iml
