@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.PlayerColor;
 
@@ -19,7 +19,7 @@ public class GamePlayTest
 	private Player	blue;
 
 	@Before
-	public void beforeEveryTest() throws RescueableClientException
+	public void beforeEveryTest() throws RescuableClientException
 	{
 		game = new Game();
 		state = game.getGameState();
@@ -47,10 +47,10 @@ public class GamePlayTest
 	/**
 	 * Überprüft den allgemeinen, abwechselnden Spielablauf
 	 *
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void basicGameCycle() throws RescueableClientException
+	public void basicGameCycle() throws RescuableClientException
 	{
 //		game.start();
 //
