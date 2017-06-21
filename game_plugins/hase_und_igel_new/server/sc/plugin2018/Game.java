@@ -158,11 +158,6 @@ public class Game extends RoundBasedGameInstance<Player>
     notifyOnGameOver(res);
   }
 
-  @Override
-  public boolean ready() {
-    return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
-  }
-
 	private void onPlayerChange(Player player)
 	{
 		switch (this.gameState.getBoard().getTypeAt(player.getFieldIndex()))

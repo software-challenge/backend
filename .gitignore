@@ -61,3 +61,5 @@
 game_server/doc/
 
 software_challenge_sdk/doc/
+
+*.class
