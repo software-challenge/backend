@@ -1,7 +1,7 @@
 package sc.server.gaming;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IPlayerListener;
+import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.RoomPacket;
 import sc.server.network.IClient;
 import sc.server.network.IClientRole;
@@ -10,7 +10,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
 {
 	private IClient		client;
 
-	private IPlayer		player;
+	private SimplePlayer		player;
 
 	private PlayerSlot	playerSlot;
 
@@ -26,7 +26,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
 		return this.client;
 	}
 
-	public IPlayer getPlayer()
+	public SimplePlayer getPlayer()
 	{
 		return this.player;
 	}
@@ -43,7 +43,7 @@ public class PlayerRole implements IClientRole, IPlayerListener
 				getPlayerSlot().getRoom().getId(), o));
 	}
 
-	public void setPlayer(IPlayer player)
+	public void setPlayer(SimplePlayer player)
 	{
 		this.player = player;
 		this.player.addPlayerListener(this);

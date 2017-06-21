@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
@@ -89,7 +88,7 @@ public class GameRoom implements IGameListener
 	 * @param results
 	 */
 	@Override
-	public synchronized void onGameOver(Map<IPlayer, PlayerScore> results)
+	public synchronized void onGameOver(Map<SimplePlayer, PlayerScore> results)
 	{
 		if (isOver())
 		{
@@ -114,7 +113,7 @@ public class GameRoom implements IGameListener
 	 * @param results map of Player and PlayerScore
 	 * @return GameResult, containing all PlayerScores and
 	 */
-	private GameResult generateGameResult(Map<IPlayer, PlayerScore> results)
+	private GameResult generateGameResult(Map<SimplePlayer, PlayerScore> results)
 	{
 		ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
 		List<PlayerScore> scores = new LinkedList<>();
@@ -329,7 +328,7 @@ public class GameRoom implements IGameListener
 	 */
 	private void syncSlot(PlayerSlot slot) throws RescuableClientException
 	{
-		IPlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
+		SimplePlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
 		// set attributes for player XXX check whether this is needed for prepared games
 		player.setDisplayName(slot.getDescriptor().getDisplayName());
 		player.setShouldBePaused(slot.getDescriptor().isShouldBePaused());
@@ -489,17 +488,17 @@ public class GameRoom implements IGameListener
 	/**
 	 * Getter for player out of all playerRoles
 	 * @param source
-	 * @return IPlayer instance
+	 * @return SimplePlayer instance
 	 * @throws RescuableClientException
 	 */
-	private IPlayer resolvePlayer(Client source)
+	private SimplePlayer resolvePlayer(Client source)
 			throws RescuableClientException
 	{
 		for (PlayerRole role : getPlayers())
 		{
 			if (role.getClient().equals(source))
 			{
-				IPlayer resolvedPlayer = role.getPlayer();
+				SimplePlayer resolvedPlayer = role.getPlayer();
 
 				if (resolvedPlayer == null)
 				{
@@ -635,7 +634,7 @@ public class GameRoom implements IGameListener
 	}
 
 	@Override
-	public void onPaused(IPlayer nextPlayer)
+	public void onPaused(SimplePlayer nextPlayer)
 	{
 		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(
 				nextPlayer)));
@@ -684,7 +683,7 @@ public class GameRoom implements IGameListener
 		this.status = status;
 	}
 
-	public void removePlayer(IPlayer player)
+	public void removePlayer(SimplePlayer player)
 	{
 		logger.info("Removing {} from {}", player, this);
 		this.game.onPlayerLeft(player);

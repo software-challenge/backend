@@ -5,20 +5,21 @@ import java.util.List;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
+import sc.framework.plugins.SimplePlayer;
 import sc.shared.ScoreCause;
 
 public interface IGameInstance
 {
 	/**
-	 * XXX can be unique for GamePlugin, adds player to game has to work for imported gameState too
+	 * XXX can be unique for GamePlugin, adds-player-to-game has to work for imported gameState too
 	 * @return
 	 * @throws TooManyPlayersException
 	 */
-	public IPlayer onPlayerJoined() throws TooManyPlayersException;
+	public SimplePlayer onPlayerJoined() throws TooManyPlayersException;
 
-	public void onPlayerLeft(IPlayer player);
+	public void onPlayerLeft(SimplePlayer player);
 	
-	public void onPlayerLeft(IPlayer player, ScoreCause cause);
+	public void onPlayerLeft(SimplePlayer player, ScoreCause cause);
 
 	/**
 	 * Called by the Server once an action was received.
@@ -29,7 +30,7 @@ public interface IGameInstance
 	 *            The plugin-secific data.
 	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
-	public void onAction(IPlayer fromPlayer, Object data)
+	public void onAction(SimplePlayer fromPlayer, Object data)
 			throws GameLogicException;
 
 	/**
@@ -69,6 +70,6 @@ public interface IGameInstance
 	 * or null if the game has not finished.
 	 * @return
 	 */
-	public List<IPlayer> getWinners();
+	public List<SimplePlayer> getWinners();
 	
 }

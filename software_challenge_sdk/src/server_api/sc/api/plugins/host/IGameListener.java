@@ -2,14 +2,14 @@ package sc.api.plugins.host;
 
 import java.util.Map;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.SimplePlayer;
 import sc.shared.PlayerScore;
 
 public interface IGameListener
 {
-	public void onGameOver(Map<IPlayer, PlayerScore> results);
+	public void onGameOver(Map<SimplePlayer, PlayerScore> results);
 
 	public void onStateChanged(Object data);
 
-	public void onPaused(IPlayer nextPlayer);
+	public void onPaused(SimplePlayer nextPlayer);
 }

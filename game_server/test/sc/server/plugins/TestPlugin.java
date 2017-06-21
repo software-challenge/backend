@@ -29,7 +29,7 @@ public class TestPlugin implements IGamePlugin
 	@Override
 	public IGameInstance createGame()
 	{
-		return new TestGame();
+		return null; // new TestGame(); XXX
 	}
 
 	@Override

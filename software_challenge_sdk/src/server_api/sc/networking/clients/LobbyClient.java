@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.host.IRequestResult;
+import sc.framework.plugins.SimplePlayer;
 import sc.networking.INetworkInterface;
 import sc.networking.TcpNetwork;
 import sc.protocol.LobbyProtocol;
@@ -165,7 +165,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		}
 	}
 
-	private void onGamePaused(String roomId, IPlayer nextPlayer)
+	private void onGamePaused(String roomId, SimplePlayer nextPlayer)
 	{
 		for (IAdministrativeListener listener : this.administrativeListeners)
 		{
