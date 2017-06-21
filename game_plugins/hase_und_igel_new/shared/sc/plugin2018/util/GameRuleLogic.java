@@ -272,7 +272,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayFallBack(GameState state)
 	{
 	  Player player = state.getCurrentPlayer();
-		boolean valid = !playerMustAdvance(state) && isOnRabbitField(state)
+		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
 				&& state.isFirst(player);
 
 		valid = valid && player.ownsCardOfTyp(CardType.FALL_BACK);
@@ -324,7 +324,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayHurryAhead(final GameState state)
 	{
 	  Player player = state.getCurrentPlayer();
-		boolean valid = !playerMustAdvance(state) && isOnRabbitField(state)
+		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
 				&& !state.isFirst(player);
 		valid = valid && player.ownsCardOfTyp(CardType.HURRY_AHEAD);
 
@@ -378,7 +378,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayTakeOrDropCarrots(GameState state, int n)
 	{
 	  Player player = state.getCurrentPlayer();
-		boolean valid = !playerMustAdvance(state) && isOnRabbitField(state)
+		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
 				&& player.ownsCardOfTyp(CardType.TAKE_OR_DROP_CARROTS);
 
 		valid = valid && (n == 20 || n == -20 || n == 0);
@@ -397,58 +397,8 @@ public class GameRuleLogic
 	public static boolean isValidToPlayEatSalad(GameState state)
 	{
 	  Player player = state.getCurrentPlayer();
-		return !playerMustAdvance(state) && isOnRabbitField(state)
+		return !playerMustAdvance(state) && state.isOnRabbitField()
 				&& player.ownsCardOfTyp(CardType.EAT_SALAD) && player.getSalads() > 0;
-	}
-
-  /**
-   * XXX field of currentPlayer in gameState
-   * Überprüft ob sich der derzeitige Spieler auf einem Hasenfeld befindet.
-   * @param state GameState
-   * @return true, falls auf Hasenfeld
-   */
-	private static boolean isOnRabbitField(GameState state)
-	{
-		return state.getTypeAt(state.getCurrentPlayer().getFieldIndex()).equals(FieldType.RABBIT);
-	}
-
-  /**
-	 * XXX move to GameState
-   * GIbt FIRST, SECOND oder TIE zurück je nachdem, wie die Spieler zueinadner stehen
-   * @param relevant Spieler
-   * @param o anderer Spieler
-   * @return Position
-   */
-	public static Position getGameResult(Player relevant, Player o)
-	{
-		Position ret;
-		if (o.getFieldIndex() < relevant.getFieldIndex())
-		{
-			ret = Position.FIRST;
-		}
-		else if (o.getFieldIndex() > relevant.getFieldIndex())
-		{
-			ret = Position.SECOND;
-		}
-		else
-		// Beide Spieler auf dem gleichen Spielfeld (Ziel)
-		{
-			// nachrangiges Kriterium: Anzahl der Karotten, je weniger desto
-			// besser
-			if (o.getCarrotsAvailable() > relevant.getCarrotsAvailable())
-			{
-				ret = Position.FIRST;
-			}
-			else if (o.getCarrotsAvailable() < relevant.getCarrotsAvailable())
-			{
-				ret = Position.SECOND;
-			}
-			else
-			{
-				ret = Position.TIE;
-			}
-		}
-		return ret;
 	}
 
   /**

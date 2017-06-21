@@ -547,4 +547,53 @@ public class GameState implements Cloneable {
       return this.getBluePlayer().getLastNonSkipAction();
     }
   }
+
+  public FieldType fieldOfCurrentPlayer() {
+    return this.getTypeAt(this.getCurrentPlayer().getFieldIndex());
+  }
+
+  /**
+   * Überprüft ob sich der derzeitige Spieler auf einem Hasenfeld befindet.
+   * @return true, falls auf Hasenfeld
+   */
+  public boolean isOnRabbitField()
+  {
+    return fieldOfCurrentPlayer().equals(FieldType.RABBIT);
+  }
+
+  /**
+   * GIbt FIRST, SECOND oder TIE zurück je nachdem, wie die Spieler zueinadner stehen
+   * @return Position
+   */
+  public Position getGameResult()
+  {
+    Position ret;
+    if (this.getOtherPlayer().getFieldIndex() < this.getCurrentPlayer().getFieldIndex())
+    {
+      ret = Position.FIRST;
+    }
+    else if (this.getOtherPlayer().getFieldIndex() > this.getCurrentPlayer().getFieldIndex())
+    {
+      ret = Position.SECOND;
+    }
+    else
+    // Beide Spieler auf dem gleichen Spielfeld (Ziel)
+    {
+      // nachrangiges Kriterium: Anzahl der Karotten, je weniger desto
+      // besser
+      if (this.getOtherPlayer().getCarrotsAvailable() > this.getCurrentPlayer().getCarrotsAvailable())
+      {
+        ret = Position.FIRST;
+      }
+      else if (this.getOtherPlayer().getCarrotsAvailable() < this.getCurrentPlayer().getCarrotsAvailable())
+      {
+        ret = Position.SECOND;
+      }
+      else
+      {
+        ret = Position.TIE;
+      }
+    }
+    return ret;
+  }
 }

@@ -43,33 +43,33 @@ public class GamePlayTest
 		game.start();
 		Assert.assertEquals(red, game.getActivePlayer());
 	}
+
+	/**
+	 * Überprüft den allgemeinen, abwechselnden Spielablauf
+	 *
+	 * @throws RescueableClientException
+	 */
+	@Test
+	public void basicGameCycle() throws RescueableClientException
+	{
+//		game.start();
 //
-//	/**
-//	 * Überprüft den allgemeinen, abwechselnden Spielablauf
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void basicGameCycle() throws RescueableClientException
-//	{
-////		game.start();
-////
-////		Move r1 = new Move(MoveTyp.MOVE, b
-////				.getNextFieldByTyp(FieldTyp.CARROT, 0));
-////		game.onAction(red, r1);
-////
-////		Assert.assertEquals(Position.FIRST, red.getPosition());
-////		Assert.assertTrue(b.isFirst(red));
-////
-////		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
-////				red.getFieldNumber()));
-////		game.onAction(blue, b1);
-////
-////		Assert.assertEquals(Position.FIRST, blue.getPosition());
-////		Assert.assertEquals(Position.SECOND, red.getPosition());
-////		Assert.assertTrue(b.isFirst(blue));
-//	}
+//		Move r1 = new Move(MoveTyp.MOVE, b
+//				.getNextFieldByTyp(FieldTyp.CARROT, 0));
+//		game.onAction(red, r1);
 //
+//		Assert.assertEquals(Position.FIRST, red.getPosition());
+//		Assert.assertTrue(b.isFirst(red));
+//
+//		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
+//				red.getFieldNumber()));
+//		game.onAction(blue, b1);
+//
+//		Assert.assertEquals(Position.FIRST, blue.getPosition());
+//		Assert.assertEquals(Position.SECOND, red.getPosition());
+//		Assert.assertTrue(b.isFirst(blue));
+	}
+
 //	/**
 //	 * Wenn beide Spieler am Start stehen ist nur ein Zug möglich
 //	 */
