@@ -195,6 +195,8 @@ public class Move implements Cloneable {
     } else if (state.isFirst(state.getOtherPlayer()) && fieldType == FieldType.POSITION_2) {
       state.getCurrentPlayer().changeCarrotsAvailableBy(30);
     }
+    // increase turn
+    state.setTurn(state.getTurn() + 1);
   }
 
   /**

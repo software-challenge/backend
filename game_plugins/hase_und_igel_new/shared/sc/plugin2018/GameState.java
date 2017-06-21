@@ -95,18 +95,12 @@ public class GameState implements Cloneable {
    * Das Spielfeld wird zufällig aufgebaut.
    */
   public GameState() {
+    this.turn = 0;
     this.currentPlayer = PlayerColor.RED;
     this.startPlayer = PlayerColor.RED;
     this.board = new Board();
     this.red = new Player(PlayerColor.RED);
     this.blue = new Player(PlayerColor.BLUE);
-    List<Action> actions = new ArrayList<>();
-    actions.add(new Advance(3, 0));
-    actions.add(new Skip());
-    actions.add(new EatSalad());
-    actions.add(new ExchangeCarrots(20, 2));
-    actions.add(new Card(CardType.HURRY_AHEAD, 2));
-    this.lastMove  = new sc.plugin2018.Move(actions);
   }
 
   /**
@@ -132,16 +126,16 @@ public class GameState implements Cloneable {
   public GameState clone() throws CloneNotSupportedException {
     GameState clone = (GameState) super.clone();
     if (red != null)
-      clone.red = (Player) this.red.clone();
+      clone.red = this.red.clone();
     if (blue != null)
-      clone.blue = (Player) this.blue.clone();
-//    if (lastMove != null)
-//      clone.lastMove = (Move) this.lastMove.clone();
+      clone.blue = this.blue.clone();
+    if (lastMove != null)
+      clone.lastMove = (Move) this.lastMove.clone();
     if (board != null)
-      clone.board = (Board) this.board.clone();
+      clone.board = this.board.clone();
     if (currentPlayer != null)
       clone.currentPlayer = currentPlayer;
-
+    clone.turn = this.turn;
     return clone;
   }
 
@@ -376,6 +370,14 @@ public class GameState implements Cloneable {
    */
   public int getTurn() {
     return turn;
+  }
+
+  /**
+   * Setzt die aktuelle Zugzahl. Nur für den Server relevant
+   * @param turn neue Zugzahl
+   */
+  public void setTurn(int turn) {
+    this.turn = turn;
   }
 
   /**

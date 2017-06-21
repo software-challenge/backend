@@ -93,7 +93,6 @@ public class Player extends SimplePlayer implements Cloneable
 		this.color = color;
 		this.carrots = Constants.INITIAL_CARROTS;
 		this.salads = Constants.SALADS_TO_EAT;
-		this.lastNonSkipAction = new Advance(1);
 
 		cards.add(CardType.TAKE_OR_DROP_CARROTS);
 		cards.add(CardType.EAT_SALAD);
