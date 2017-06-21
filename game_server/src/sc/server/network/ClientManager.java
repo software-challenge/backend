@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.server.Lobby;
 import sc.server.ServiceManager;
 
@@ -161,7 +161,7 @@ public class ClientManager implements Runnable, IClientListener
 
 	@Override
 	public void onRequest(Client source, PacketCallback packet)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		// TODO Auto-generated method stub
 

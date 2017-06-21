@@ -184,7 +184,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	public void prepareGame(int playerCount) {
-		this.client.prepareGame(this.gameType, playerCount);
+		this.client.prepareGame(this.gameType);
 	}
 
 	@Override

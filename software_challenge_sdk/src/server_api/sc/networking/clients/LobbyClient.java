@@ -50,11 +50,11 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 {
 	private static final Logger					logger					= LoggerFactory
 			.getLogger(LobbyClient.class);
-	private final List<String>					rooms					= new LinkedList<String>();
+	private final List<String>					rooms					= new LinkedList<>();
 	private final AsyncResultManager			asyncManager			= new AsyncResultManager();
-	private final List<ILobbyClientListener>	listeners				= new LinkedList<ILobbyClientListener>();
-	private final List<IHistoryListener>		historyListeners		= new LinkedList<IHistoryListener>();
-	private final List<IAdministrativeListener>	administrativeListeners	= new LinkedList<IAdministrativeListener>();
+	private final List<ILobbyClientListener>	listeners				= new LinkedList<>();
+	private final List<IHistoryListener>		historyListeners		= new LinkedList<>();
+	private final List<IAdministrativeListener>	administrativeListeners	= new LinkedList<>();
 
 	public static final String					DEFAULT_HOST			= "localhost";
 
@@ -79,7 +79,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	}
 
 	private static INetworkInterface createTcpNetwork(String host, int port)
-			throws UnknownHostException, IOException
+			throws IOException
 	{
 		logger.info("Creating TCP Network for {}:{}", host, port);
 		return new TcpNetwork(new Socket(host, port));
@@ -257,9 +257,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			String gameType, int playerClount) throws InterruptedException
+			String gameType, int playerCount) throws InterruptedException
 	{
-		return blockingRequest(new PrepareGameRequest(gameType, playerClount),
+		return blockingRequest(new PrepareGameRequest(gameType),
 				PrepareGameResponse.class);
 	}
 
@@ -277,9 +277,9 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		return blockingRequest(request, PrepareGameResponse.class);
 	}
 
-	public void prepareGame(String gameType, int playerCount)
+	public void prepareGame(String gameType)
 	{
-		send(new PrepareGameRequest(gameType, playerCount));
+		send(new PrepareGameRequest(gameType));
 	}
 
 	protected void onCustomObject(Object o)

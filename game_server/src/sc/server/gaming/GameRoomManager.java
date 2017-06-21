@@ -10,11 +10,10 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.server.Configuration;
-import sc.server.ServiceManager;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.GamePluginManager;
@@ -46,7 +45,7 @@ public class GameRoomManager
 	/**
 	 * Adds an active game to the <code>GameManager</code>
 	 *
-	 * @param room
+	 * @param room Room to be added
 	 */
 	private void add(GameRoom room)
 	{
@@ -55,26 +54,26 @@ public class GameRoomManager
 	}
 
 	/**
-	 * Create a not prepared GameRoom of given type
-	 * @param gameType
-	 * @return
-	 * @throws RescueableClientException
+	 * Create a not prepared {@link GameRoom GameRoom} of given type
+	 * @param gameType String of current Game
+	 * @return Newly created GameRoom
+	 * @throws RescuableClientException if creation of game failed
 	 */
 	public synchronized GameRoom createGame(String gameType)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		return createGame(gameType, false);
 	}
 
 	/**
 	 * make new PluginManager, generate roomId, create Game and GameRoom. If gameFile is set, load gameState from file
-	 * @param gameType
+	 * @param gameType String of current Game
 	 * @param prepared signals whether the game was prepared by gui or ..., false if player has to send JoinRoomRequest
 	 * @return newly created GameRoom
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException if Plugin could not be loaded
 	 */
 	public synchronized GameRoom createGame(String gameType, boolean prepared)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		GamePluginInstance plugin = this.gamePluginManager.getPlugin(gameType);
 
@@ -92,7 +91,7 @@ public class GameRoomManager
 				prepared);
 
 		String gameFile = Configuration.get("loadGameFile");
-		if (gameFile != null && gameFile != "") {
+		if (gameFile != null && !gameFile.equals("")) {
 			logger.info("Request plugin to load game from file: " + gameFile);
 			room.getGame().loadFromFile(gameFile);
 		}
@@ -109,13 +108,13 @@ public class GameRoomManager
 
 	/**
 	 * Open new GameRoom and join Client
-	 * @param client
-	 * @param gameType
-	 * @return
-	 * @throws RescueableClientException
+	 * @param client Client to join the game
+	 * @param gameType String of current game
+	 * @return true on success
+	 * @throws RescuableClientException if game could not be created
 	 */
 	public synchronized boolean createAndJoinGame(Client client, String gameType)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		GameRoom room = createGame(gameType);
 		return room.join(client);
@@ -123,17 +122,17 @@ public class GameRoomManager
 
 	/**
 	 * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
-	 * @param client
-	 * @param gameType
-	 * @return
-	 * @throws RescueableClientException
+	 * @param client to join the game
+	 * @param gameType String of current game
+	 * @return true on success
+	 * @throws RescuableClientException if client could not join room
 	 */
 	public synchronized boolean joinOrCreateGame(Client client, String gameType)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
-		for (GameRoom game : getGames())
+		for (GameRoom gameRoom : getGames())
 		{
-			if (game.join(client))
+			if (gameRoom.join(client))
 			{
 				return true;
 			}
@@ -142,38 +141,28 @@ public class GameRoomManager
 		return createAndJoinGame(client, gameType);
 	}
 
-	/**
-	 * Let a client join the first GameRoom with the right id
-	 * @param client
-	 * @param id id of GameRoom e.g. 7dc299b1-dcd5-4854-8a02-90510754b943
-	 * @return true if join was successful
-	 * @throws RescueableClientException
-	 */
-	public synchronized boolean joinGame(Client client, String id)
-			throws RescueableClientException
-	{
-		for (GameRoom game : getGames())
-		{
-			logger.debug("GameRoom has id: {}", game.getId());
-			if (game.getId().equals(id))
-			{
-				return game.join(client);
-			}
-		}
-
-		return false;
-	}
-
+  /**
+   * Create Collection of {@link GameRoom GameRooms}, which can not be modified
+   * @return Collection<GameRoom>
+   */
 	public synchronized Collection<GameRoom> getGames()
 	{
 		return Collections.unmodifiableCollection(this.rooms.values());
 	}
 
+  /**
+   * Getter for {@link sc.server.plugins.PluginManager PluginManager}
+   * @return PluginManager
+   */
 	public GamePluginManager getPluginManager()
 	{
 		return this.gamePluginManager;
 	}
 
+  /**
+   * Getter for {@link GamePluginApi GamePluginApi}
+   * @return GamePluginApi
+   */
 	public GamePluginApi getPluginApi()
 	{
 		return this.pluginApi;
@@ -182,16 +171,14 @@ public class GameRoomManager
 	/**
 	 * Creates a new GameRoom {@link #createGame(String) createGame}, set descriptors of PlayerSlots, 
 	 * if exists load state of game from file
-	 * @param gameType
-	 * @param playerCount
-	 * @param descriptors dispalyName, canTimout and shouldBePaused
-	 * @param loadGameInfo
+	 * @param gameType String of current game
+	 * @param descriptors which are displayName, canTimeout and shouldBePaused
+	 * @param loadGameInfo Object for game information
 	 * @return new PrepareGameResponse with roomId and slots
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException if game could not be created
 	 */
-	public synchronized PrepareGameResponse prepareGame(String gameType,
-			int playerCount, List<SlotDescriptor> descriptors, Object loadGameInfo)
-			throws RescueableClientException {
+	public synchronized PrepareGameResponse prepareGame(String gameType, List<SlotDescriptor> descriptors, Object loadGameInfo)
+			throws RescuableClientException {
 		GameRoom room = createGame(gameType, true);
 		room.openSlots(descriptors);
 
@@ -202,44 +189,41 @@ public class GameRoomManager
 		return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
 	}
 
-	public synchronized PrepareGameResponse prepareGame(String gameType,
-			int playerCount, List<SlotDescriptor> descriptors)
-			throws RescueableClientException
-	{
-		return prepareGame(gameType, playerCount, descriptors, null);
-	}
-
 	/**
-	 *  Calls {@link #prepareGame(String, int, List, Object) prepareGame}
+	 *  Calls {@link #prepareGame(String, List, Object) prepareGame}
 	 * @param prepared
-	 * @return
-	 * @throws RescueableClientException
+	 * @return Response from server
+	 * @throws RescuableClientException if room could not be created
 	 */
-	public synchronized PrepareGameResponse prepareGame(PrepareGameRequest prepared) throws RescueableClientException {
+	public synchronized PrepareGameResponse prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
 		return prepareGame(
-				prepared.getGameType(), prepared.getPlayerCount(),
+				prepared.getGameType(),
 				prepared.getSlotDescriptors(), prepared.getLoadGameInfo());
 	}
 
 	/**
 	 * Getter for GameRoom
-	 * @param roomId
+	 * @param roomId String Id of room to be found
 	 * @return returns GameRoom specified by rooId
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized GameRoom findRoom(String roomId)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		GameRoom room = this.rooms.get(roomId);
 
 		if (room == null)
 		{
-			throw new RescueableClientException("Couldn't find a room with id " + roomId);
+			throw new RescuableClientException("Couldn't find a room with id " + roomId);
 		}
 
 		return room;
 	}
 
+  /**
+   * Remove specified room from game
+   * @param gameRoom to be removed
+   */
 	public void remove(GameRoom gameRoom)
 	{
 		this.rooms.remove(gameRoom.getId());

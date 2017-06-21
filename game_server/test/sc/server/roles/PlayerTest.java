@@ -4,7 +4,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.JoinRoomRequest;
 import sc.protocol.requests.ObservationRequest;
@@ -32,7 +32,7 @@ public class PlayerTest extends AbstractRoleTest
 
 	@Test
 	public void shouldBeAbleToJoinNonExistingGame() throws IOException,
-			RescueableClientException, PluginLoaderException
+					RescuableClientException, PluginLoaderException
 	{
 		Client client = connectClient();
 
@@ -44,7 +44,7 @@ public class PlayerTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldGetRoomIdAfterJoin() throws RescueableClientException
+	public void shouldGetRoomIdAfterJoin() throws RescuableClientException
 	{
 		MockClient player1 = connectClient();
 		MockClient player2 = connectClient();
@@ -64,14 +64,14 @@ public class PlayerTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldSupportGamePausing() throws RescueableClientException
+	public void shouldSupportGamePausing() throws RescuableClientException
 	{
 		MockClient admin = connectClient();
 		MockClient player1 = connectClient();
 		MockClient player2 = connectClient();
 
 		this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2)));
+				TestPlugin.TEST_PLUGIN_UUID)));
 		PrepareGameResponse prepared = admin
 				.seekMessage(PrepareGameResponse.class);
 
@@ -137,7 +137,7 @@ public class PlayerTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldBeAbleToPlayTheGame() throws RescueableClientException
+	public void shouldBeAbleToPlayTheGame() throws RescuableClientException
 	{
 		MockClient admin = connectClient();
 		MockClient player1 = connectClient();
@@ -145,7 +145,7 @@ public class PlayerTest extends AbstractRoleTest
 		MockClient observer = connectClient();
 
 		this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2)));
+				TestPlugin.TEST_PLUGIN_UUID)));
 		PrepareGameResponse prepared = admin
 				.seekMessage(PrepareGameResponse.class);
 
@@ -200,7 +200,7 @@ public class PlayerTest extends AbstractRoleTest
 
 	private void shouldProtectFirstPlayersSecrets(String roomId,
 			MockClient player1, MockClient player2, MockClient observer)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		// Do the move
 		player1.seekRoomMessage(roomId, TestTurnRequest.class);
@@ -229,7 +229,7 @@ public class PlayerTest extends AbstractRoleTest
 	}
 
 	private void makeMoveAfterRequest(String roomId, MockClient player)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		player.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player, new PacketCallback(new RoomPacket(roomId,
@@ -238,7 +238,7 @@ public class PlayerTest extends AbstractRoleTest
 
 	private void shouldProtectSecondPlayersSecrets(String roomId,
 			MockClient player1, MockClient player2, MockClient observer)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		// Do the move
 		player2.seekRoomMessage(roomId, TestTurnRequest.class);

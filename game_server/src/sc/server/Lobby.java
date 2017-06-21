@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.FreeReservationRequest;
@@ -80,7 +80,7 @@ public class Lobby implements IClientListener
 	 */
 	@Override
 	public void onRequest(Client source, PacketCallback callback)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		Object packet = callback.getPacket();
 
@@ -132,7 +132,7 @@ public class Lobby implements IClientListener
 				try {
 					GameRoom room = this.gameManager.findRoom(pause.roomId);
 					room.pause(pause.pause);
-				} catch (RescueableClientException e) {
+				} catch (RescuableClientException e) {
 					this.logger.error("Got exception on pause: {}", e);
 				}
 			}
@@ -150,7 +150,7 @@ public class Lobby implements IClientListener
 			}
 			else
 			{
-				throw new RescueableClientException(
+				throw new RescuableClientException(
 						"Unhandled Packet of type: " + packet.getClass());
 			}
 

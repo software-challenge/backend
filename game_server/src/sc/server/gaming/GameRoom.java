@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
@@ -222,7 +222,7 @@ public class GameRoom implements IGameListener
 	}
 
   /**
-   *
+   * Sends the given Object to all Players
    * @param data
    */
 	private void sendStateToPlayers(Object data)
@@ -235,6 +235,11 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+
+	/**
+	 * Sends the given Object to all Observers
+	 * @param data
+	 */
 	private void sendStateToObservers(Object data)
 	{
 		RoomPacket packet = createRoomPacket(new MementoPacket(data, null));
@@ -260,10 +265,10 @@ public class GameRoom implements IGameListener
 	 * Let a client join a GameRoom. Starts a game, if all players joined.
 	 * @param client
 	 * @return
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized boolean join(Client client)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		PlayerSlot openSlot = null;
 
@@ -298,10 +303,10 @@ public class GameRoom implements IGameListener
 	 * If game is not prepared set attributes of PlayerSlot and start game if game is {@link #isReady() ready}
 	 * @param openSlot
 	 * @param client
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	synchronized void fillSlot(PlayerSlot openSlot, Client client)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		openSlot.setClient(client); // set role of Slot as PlayerRole
 
@@ -320,9 +325,9 @@ public class GameRoom implements IGameListener
 	 * Registers player to role in given slot
 	 * sends JoinGameResponse when successful
 	 * @param slot
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
-	private void syncSlot(PlayerSlot slot) throws RescueableClientException
+	private void syncSlot(PlayerSlot slot) throws RescuableClientException
 	{
 		IPlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
 		// set attributes for player XXX check whether this is needed for prepared games
@@ -367,9 +372,9 @@ public class GameRoom implements IGameListener
 
 	/**
 	 * Starts game, if gameStatus isn't over or
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
-	private void startIfReady() throws RescueableClientException
+	private void startIfReady() throws RescuableClientException
 	{
 		logger.debug("startIfReady called");
 		if (isOver())
@@ -389,10 +394,10 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * 
-	 * @throws RescueableClientException
+	 * If the Game is prepared, sync all slots
+	 * @throws RescuableClientException
 	 */
-	private void start() throws RescueableClientException
+	private void start() throws RescuableClientException
 	{
 		if (isPrepared()) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
 		{
@@ -411,13 +416,12 @@ public class GameRoom implements IGameListener
 	}
 
   /**
-   *
-   * @return
+   * Get the number of players allowed in the game
+   * @return number of allowed players
    */
 	private int getMaximumPlayerCount()
 	{
 	  return maxPlayerCount;
-		//XXX return this.provider.getPlugin().getMaximumPlayerCount();
 	}
 
 	/**
@@ -430,6 +434,12 @@ public class GameRoom implements IGameListener
 		return Collections.unmodifiableList(this.playerSlots);
 	}
 
+
+  /**
+   * Create playerCount {@link PlayerSlot PlayerSlots} and add to list
+   * @param playerCount number of slots to be created
+   * @throws TooManyPlayersException if requested more players, than allowed
+   */
 	public synchronized void setSize(int playerCount)
 			throws TooManyPlayersException
 	{
@@ -438,6 +448,8 @@ public class GameRoom implements IGameListener
 			throw new TooManyPlayersException();
 		}
 
+		// If called twice for some reason, there might be players in the slots
+		playerSlots.clear();
 		while (this.playerSlots.size() < playerCount)
 		{
 			this.playerSlots.add(new PlayerSlot(this));
@@ -460,14 +472,14 @@ public class GameRoom implements IGameListener
 	 * Received new move from player and execute move in game
 	 * @param source
 	 * @param data
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized void onEvent(Client source, Object data)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		if (isOver())
 		{
-			throw new RescueableClientException(
+			throw new RescuableClientException(
 					"Game is already over, but got data: " + data.getClass());
 		}
 
@@ -478,10 +490,10 @@ public class GameRoom implements IGameListener
 	 * Getter for player out of all playerRoles
 	 * @param source
 	 * @return IPlayer instance
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	private IPlayer resolvePlayer(Client source)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		for (PlayerRole role : getPlayers())
 		{
@@ -491,7 +503,7 @@ public class GameRoom implements IGameListener
 
 				if (resolvedPlayer == null)
 				{
-					throw new RescueableClientException(
+					throw new RescuableClientException(
 							"Game isn't ready. Please wait before sending messages.");
 				}
 
@@ -499,7 +511,7 @@ public class GameRoom implements IGameListener
 			}
 		}
 
-		throw new RescueableClientException("Client is not a member of game "
+		throw new RescuableClientException("Client is not a member of game "
 				+ this.id);
 	}
 
@@ -585,10 +597,10 @@ public class GameRoom implements IGameListener
 	 *            If true, game will be started even if there are not enoug
 	 *            players to complete the game. This should result in a
 	 *            GameOver.
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized void step(boolean forced)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		if (this.status == GameStatus.CREATED)
 		{
@@ -638,6 +650,7 @@ public class GameRoom implements IGameListener
 			throws TooManyPlayersException
 	{
 		setSize(descriptors.size());
+
 
 		for (int i = 0; i < descriptors.size(); i++)
 		{
