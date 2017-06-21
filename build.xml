@@ -34,7 +34,7 @@
 
   <target name="dependencies">
     <echo message="Compiling SDK..." />
-    <ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
+    <ant dir="software_challenge_sdk" target="main" inheritAll="false" />
 
     <echo message="Compiling Plugins and Players..." />
     <!--<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />

@@ -6,6 +6,11 @@
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="lib.dir" value="lib" />
 
+	<!-- packages for server_api-->
+	<property name="server_api.javadoc.packages" value="sc.*" />
+	<!-- packages for framework -->
+	<property name="framework.javadoc.packages" value="sc.*" />
+
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 	</path>
@@ -20,8 +25,18 @@
 	</target>
 
 	<target name="doc" description="generate documentation">
+		<mkdir dir="${doc.dir}/server_api" />
+		<mkdir dir="${doc.dir}/framework" />
+		<mkdir dir="${doc.dir}/shared" />
+		<javadoc sourcepath="${src.dir}/server_api"
+						 classpathref="classpath"
+						 destdir="${doc.dir}/server_api"
+						 packagenames="${server_api.javadoc.packages}"/>
+		<javadoc sourcepath="${src.dir}/framework"
+						 classpathref="classpath"
+						 destdir="${doc.dir}/framework"
+						 packagenames="${framework.javadoc.packages}"/>
 		<mkdir dir="${doc.dir}" />
-		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
 	</target>
 
 	<target name="jar" depends="compile">
