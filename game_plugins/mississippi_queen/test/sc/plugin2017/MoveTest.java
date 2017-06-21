@@ -402,5 +402,38 @@ public class MoveTest {
     move.perform(state, blue);
     assertEquals(6, blue.getCoal());
   }
+  
+  @Test
+  public void winOnGoalWithSamePoints() throws InvalidMoveException {
+    // When  overtaking, the freeTurns of player should be set back to 1
+    String tileString =
+        ".W.W.W.W...\n" +
+        "..b.G.W.W..\n" +
+        "...W.W.W.W.\n" +
+        "..r.W.G.W..\n" +
+        ".W.W.W.W...\n";
+    board.getTiles().set(0, TextTileHelper.parseTile(tileString, -2, -2));
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, blue);
+    TextTileHelper.updatePlayerPosition(tileString, -2, -2, red);
+    red.setDirection(Direction.RIGHT);
+    red.setSpeed(2);
+    red.setMovement(2);
+    red.setCoal(6);
+    red.setPassenger(2);
+    blue.setDirection(Direction.RIGHT);
+    blue.setSpeed(1);
+    blue.setMovement(1);
+    blue.setCoal(6);
+    blue.setPassenger(2);
+    Move move = new Move();
+    move.actions.add(new Advance(2, 0));
+    move.perform(state, red);
+    state.prepareNextTurn(move);
+    move = new Move();
+    move.actions.add(new Advance(1, 0));
+    move.perform(state, blue);
+    WinCondition cond = Game.checkWinCondition(state);
+    assertEquals(cond.getWinner(), blue.getPlayerColor());
+  }
 
 }

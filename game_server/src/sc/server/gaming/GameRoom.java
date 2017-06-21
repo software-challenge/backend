@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IGameInstance;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
@@ -38,19 +38,19 @@ import sc.shared.SlotDescriptor;
  */
 public class GameRoom implements IGameListener
 {
-	private static final Logger			logger		= LoggerFactory
-															.getLogger(GameRoom.class);
-	private final String				id;
-	private final GameRoomManager		gameRoomManager;
+	private static final Logger			  logger		= LoggerFactory
+															        .getLogger(GameRoom.class);
+	private final String				      id;
+	private final GameRoomManager		  gameRoomManager;
 	private final GamePluginInstance	provider;
-	private final IGameInstance			game;
-	private List<ObserverRole>			observers	= new LinkedList<ObserverRole>();
-	private List<PlayerSlot>			playerSlots	= new ArrayList<PlayerSlot>(
-															2);
-	private final boolean				prepared;
-	private GameStatus					status		= GameStatus.CREATED;
-	private GameResult					result		= null;
-	private boolean						paused		= false;
+	private final IGameInstance			  game;
+	private List<ObserverRole>			  observers	= new LinkedList<ObserverRole>();
+	private List<PlayerSlot>			    playerSlots	= new ArrayList<PlayerSlot>(2);
+	private final boolean				      prepared;
+	private GameStatus					      status		= GameStatus.CREATED;
+	private GameResult					      result		= null;
+	private boolean						        paused		= false;
+	private final short               maxPlayerCount = 2;
 
 	public enum GameStatus
 	{
@@ -83,6 +83,10 @@ public class GameRoom implements IGameListener
 		return this.game;
 	}
 
+	/**
+	 * Generate Game Result, set status to OVER and remove from gameRoomManager
+	 * @param results
+	 */
 	@Override
 	public synchronized void onGameOver(Map<SimplePlayer, PlayerScore> results)
 	{
@@ -103,10 +107,16 @@ public class GameRoom implements IGameListener
 		this.gameRoomManager.remove(this);
 	}
 
+
+	/**
+	 * Set ScoreDefinition and create GameResult Object from results parameter
+	 * @param results map of Player and PlayerScore
+	 * @return GameResult, containing all PlayerScores and
+	 */
 	private GameResult generateGameResult(Map<SimplePlayer, PlayerScore> results)
 	{
 		ScoreDefinition definition = getProvider().getPlugin().getScoreDefinition();
-		List<PlayerScore> scores = new LinkedList<PlayerScore>();
+		List<PlayerScore> scores = new LinkedList<>();
 
 		// restore order
 		for (PlayerRole player : getPlayers())
@@ -116,10 +126,6 @@ public class GameRoom implements IGameListener
 			if (score == null)
 			{
 				throw new RuntimeException("GameScore was not complete!");
-
-				// FIXME: hack to avoid server hangups
-				// Gewinner, Feldnummer, Karotten, Zeit (ms)
-				//score = new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0);
 			}
 
 			// FIXME: remove cause != unknown
@@ -130,28 +136,34 @@ public class GameRoom implements IGameListener
 
 			scores.add(score);
 		}
-
-		// FIXME: if there where not enough players, add scores
-		/*while (scores.size() < 2)
-		{
-			scores.add(new PlayerScore(ScoreCause.UNKNOWN, 0, 0, 0, 0));
-		}*/
 		return new GameResult(definition, scores, this.game.getWinners());
 	}
 
+	/**
+	 * Send Object o to all Player in this room
+	 * @param o Object containing the message
+	 */
 	private void broadcast(Object o)
 	{
 		broadcast(o, true);
 	}
 
+	/**
+	 * Send Object o to all Players or all Players in this room
+	 * @param o
+	 * @param roomSpecific
+	 */
 	private void broadcast(Object o, boolean roomSpecific)
 	{
 		Object toSend = o;
+
+		// If message is specific to room, wrap the message in a RoomPacket
 		if (roomSpecific)
 		{
 			toSend = new RoomPacket(getId(), o);
 		}
 
+		// Send to all Players
 		for (PlayerRole player : getPlayers())
 		{
 			logger.debug("sending {} to {}", o.getClass().getSimpleName(),
@@ -159,9 +171,14 @@ public class GameRoom implements IGameListener
 			player.getClient().send(toSend);
 		}
 
+		// Send to all Observer
 		observerBroadcast(toSend);
 	}
 
+	/**
+	 * Send Message to all registered Observers
+	 * @param toSend Message to send
+	 */
 	private void observerBroadcast(Object toSend)
 	{
 		for (ObserverRole observer : Collections.unmodifiableCollection(this.observers))
@@ -173,12 +190,19 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+	/**
+	 * Send {@link GameRoom#broadcast(Object,boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent}
+	 */
 	private void kickAllClients()
 	{
 		logger.debug("Kicking clients (and observer)");
 		broadcast(new LeftGameEvent(getId()), false);
 	}
 
+	/**
+	 * send StateObject to all players and observers
+	 * @param data State Object that derives Object
+	 */
 	@Override
 	public void onStateChanged(Object data)
 	{
@@ -186,11 +210,20 @@ public class GameRoom implements IGameListener
 		sendStateToPlayers(data);
 	}
 
-	public void onClientError(Client source, Object errorPacket) {
+
+  /**
+   * {@link GameRoom#broadcast(Object,boolean) Broadcast} the error package to this room
+   * @param errorPacket
+   */
+	public void onClientError(Object errorPacket) {
 		// packet = createRoomPacket(errorPacket);
 		broadcast(errorPacket, true);
 	}
 
+  /**
+   * Sends the given Object to all Players
+   * @param data
+   */
 	private void sendStateToPlayers(Object data)
 	{
 		for (PlayerRole player : getPlayers())
@@ -201,6 +234,11 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+
+	/**
+	 * Sends the given Object to all Observers
+	 * @param data
+	 */
 	private void sendStateToObservers(Object data)
 	{
 		RoomPacket packet = createRoomPacket(new MementoPacket(data, null));
@@ -226,10 +264,10 @@ public class GameRoom implements IGameListener
 	 * Let a client join a GameRoom. Starts a game, if all players joined.
 	 * @param client
 	 * @return
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized boolean join(Client client)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		PlayerSlot openSlot = null;
 
@@ -264,10 +302,10 @@ public class GameRoom implements IGameListener
 	 * If game is not prepared set attributes of PlayerSlot and start game if game is {@link #isReady() ready}
 	 * @param openSlot
 	 * @param client
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	synchronized void fillSlot(PlayerSlot openSlot, Client client)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		openSlot.setClient(client); // set role of Slot as PlayerRole
 
@@ -286,9 +324,9 @@ public class GameRoom implements IGameListener
 	 * Registers player to role in given slot
 	 * sends JoinGameResponse when successful
 	 * @param slot
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
-	private void syncSlot(PlayerSlot slot) throws RescueableClientException
+	private void syncSlot(PlayerSlot slot) throws RescuableClientException
 	{
 		SimplePlayer player = getGame().onPlayerJoined(); // make new player in gameState of game
 		// set attributes for player XXX check whether this is needed for prepared games
@@ -327,15 +365,15 @@ public class GameRoom implements IGameListener
 		}
 		else
 		{
-			return this.game.ready();
+			return this.playerSlots.size() == 2;
 		}
 	}
 
 	/**
 	 * Starts game, if gameStatus isn't over or
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
-	private void startIfReady() throws RescueableClientException
+	private void startIfReady() throws RescuableClientException
 	{
 		logger.debug("startIfReady called");
 		if (isOver())
@@ -355,10 +393,10 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * 
-	 * @throws RescueableClientException
+	 * If the Game is prepared, sync all slots
+	 * @throws RescuableClientException
 	 */
-	private void start() throws RescueableClientException
+	private void start() throws RescuableClientException
 	{
 		if (isPrepared()) // sync slots for prepared game. This was already called for PlayerSlots in a game created by a join
 		{
@@ -376,9 +414,13 @@ public class GameRoom implements IGameListener
 		logger.info("Started the game.");
 	}
 
+  /**
+   * Get the number of players allowed in the game
+   * @return number of allowed players
+   */
 	private int getMaximumPlayerCount()
 	{
-		return this.provider.getPlugin().getMaximumPlayerCount();
+	  return maxPlayerCount;
 	}
 
 	/**
@@ -391,6 +433,12 @@ public class GameRoom implements IGameListener
 		return Collections.unmodifiableList(this.playerSlots);
 	}
 
+
+  /**
+   * Create playerCount {@link PlayerSlot PlayerSlots} and add to list
+   * @param playerCount number of slots to be created
+   * @throws TooManyPlayersException if requested more players, than allowed
+   */
 	public synchronized void setSize(int playerCount)
 			throws TooManyPlayersException
 	{
@@ -399,6 +447,8 @@ public class GameRoom implements IGameListener
 			throw new TooManyPlayersException();
 		}
 
+		// If called twice for some reason, there might be players in the slots
+		playerSlots.clear();
 		while (this.playerSlots.size() < playerCount)
 		{
 			this.playerSlots.add(new PlayerSlot(this));
@@ -421,14 +471,14 @@ public class GameRoom implements IGameListener
 	 * Received new move from player and execute move in game
 	 * @param source
 	 * @param data
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized void onEvent(Client source, Object data)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		if (isOver())
 		{
-			throw new RescueableClientException(
+			throw new RescuableClientException(
 					"Game is already over, but got data: " + data.getClass());
 		}
 
@@ -439,10 +489,10 @@ public class GameRoom implements IGameListener
 	 * Getter for player out of all playerRoles
 	 * @param source
 	 * @return SimplePlayer instance
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	private SimplePlayer resolvePlayer(Client source)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		for (PlayerRole role : getPlayers())
 		{
@@ -452,7 +502,7 @@ public class GameRoom implements IGameListener
 
 				if (resolvedPlayer == null)
 				{
-					throw new RescueableClientException(
+					throw new RescuableClientException(
 							"Game isn't ready. Please wait before sending messages.");
 				}
 
@@ -460,7 +510,7 @@ public class GameRoom implements IGameListener
 			}
 		}
 
-		throw new RescueableClientException("Client is not a member of game "
+		throw new RescuableClientException("Client is not a member of game "
 				+ this.id);
 	}
 
@@ -546,10 +596,10 @@ public class GameRoom implements IGameListener
 	 *            If true, game will be started even if there are not enoug
 	 *            players to complete the game. This should result in a
 	 *            GameOver.
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public synchronized void step(boolean forced)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		if (this.status == GameStatus.CREATED)
 		{
@@ -599,6 +649,7 @@ public class GameRoom implements IGameListener
 			throws TooManyPlayersException
 	{
 		setSize(descriptors.size());
+
 
 		for (int i = 0; i < descriptors.size(); i++)
 		{

@@ -1,6 +1,6 @@
 package sc.server.network;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 
 public interface IClientListener
 {
@@ -11,10 +11,10 @@ public interface IClientListener
 	 * 
 	 * @param source
 	 * @param packet
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	void onRequest(Client source, PacketCallback packet)
-			throws RescueableClientException;
+			throws RescuableClientException;
 	
 	void onError(Client source, Object packet);
 }

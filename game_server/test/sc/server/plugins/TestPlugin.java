@@ -47,12 +47,6 @@ public class TestPlugin implements IGamePlugin
 		// TODO Auto-generated method stub
 		
 	}
-
-	@Override
-	public int getMaximumPlayerCount()
-	{
-		return MAXIMUM_PLAYER_SIZE;
-	}
 	
 	@Override
 	public ScoreDefinition getScoreDefinition()

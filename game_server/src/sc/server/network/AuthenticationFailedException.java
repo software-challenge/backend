@@ -1,8 +1,8 @@
 package sc.server.network;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 
-public class AuthenticationFailedException extends RescueableClientException
+public class AuthenticationFailedException extends RescuableClientException
 {
 	/**
 	 * 

@@ -41,12 +41,7 @@ public class GamePlugin implements IGamePlugin
 	{
 		return new Game();
 	}
-
-	@Override
-	public int getMaximumPlayerCount() {
-		return MAX_PLAYER_COUNT;
-	}
-
+	
 	@Override
 	public void initialize(IGamePluginHost host) {
 		host.registerProtocolClasses(Configuration.getClassesToRegister());

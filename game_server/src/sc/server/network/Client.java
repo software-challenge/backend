@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
 import sc.networking.clients.XStreamClient;
 import sc.protocol.responses.ErrorResponse;
@@ -82,7 +82,7 @@ public class Client extends XStreamClient implements IClient
 		 * in the receiver thread.
 		 */
 
-		Set<RescueableClientException> errors = new HashSet<RescueableClientException>();
+		Set<RescuableClientException> errors = new HashSet<RescuableClientException>();
 
 		PacketCallback callback = new PacketCallback(packet);
 
@@ -92,7 +92,7 @@ public class Client extends XStreamClient implements IClient
 			{
 				listener.onRequest(this, callback);
 			}
-			catch (RescueableClientException e)
+			catch (RescuableClientException e)
 			{
 				errors.add(e);
 			}
@@ -101,11 +101,11 @@ public class Client extends XStreamClient implements IClient
 		if (errors.isEmpty() && !callback.isProcessed())
 		{
 			logger.warn("Packet {} wasn't processed.", packet);
-			errors.add(new RescueableClientException(
+			errors.add(new RescuableClientException(
 					"The packet wasn't processed/recognized."));
 		}
 
-		for (RescueableClientException error : errors)
+		for (RescuableClientException error : errors)
 		{
 			logger.warn("An error occured: ", error);
 

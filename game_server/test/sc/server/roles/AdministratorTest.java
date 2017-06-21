@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.AuthenticateRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.server.Configuration;
@@ -21,7 +21,7 @@ public class AdministratorTest extends AbstractRoleTest
 
 	@Test
 	public void shouldBecomeAdminWithCorrectPassword() throws IOException,
-			RescueableClientException
+					RescuableClientException
 	{
 		Client client = connectAsAdmin();
 
@@ -42,7 +42,7 @@ public class AdministratorTest extends AbstractRoleTest
 					WRONG_PASSWORD)));
 			Assert.fail("No exception was thrown");
 		}
-		catch (RescueableClientException e)
+		catch (RescuableClientException e)
 		{
 			// expected
 		}
@@ -63,7 +63,7 @@ public class AdministratorTest extends AbstractRoleTest
 			this.lobby.onRequest(client, new PacketCallback(new AuthenticateRequest(
 					CORRECT_PASSWORD)));
 		}
-		catch (RescueableClientException e)
+		catch (RescuableClientException e)
 		{
 			Assert.fail("Could not authenticate as admin.");
 		}
@@ -72,12 +72,12 @@ public class AdministratorTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldBeAbleToPrepareGame() throws RescueableClientException
+	public void shouldBeAbleToPrepareGame() throws RescuableClientException
 	{
 		Client client = connectAsAdmin();
 
 		this.lobby.onRequest(client, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2)));
+				TestPlugin.TEST_PLUGIN_UUID)));
 
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 	}

@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.server.network.Client;
 
 public final class ReservationManager
@@ -27,10 +27,10 @@ public final class ReservationManager
 	 * @param client
 	 * @param reservation
 	 * @return newly filled PlayerSlot
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	public static synchronized PlayerSlot redeemReservationCode(Client client,
-			String reservation) throws RescueableClientException
+			String reservation) throws RescuableClientException
 	{
 		PlayerSlot result = reservations.remove(reservation);
 

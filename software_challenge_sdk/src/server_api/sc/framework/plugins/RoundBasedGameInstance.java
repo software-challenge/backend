@@ -137,15 +137,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 	}
 	
 	/**
-	 * start() will only be called once this method returns true.
-	 * 
-	 * @return
-	 */
-	public boolean ready() {
-	  return this.players.size() == 2; // only 2 players may play a game
-	}
-	
-	/**
 	 * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
 	 * @param player
 	 */
@@ -287,6 +278,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
 		final Logger logger = RoundBasedGameInstance.logger;
 		final P playerToTimeout = player;
+
+    // Signal the JVM to do a GC run now and lower the propability that the GC
+    // runs when the player sends back its move, resulting in disqualification
+    // because of soft timeout.
+    System.gc();
 
 		this.requestTimeout = timeout;
 		timeout.start(new Runnable() {

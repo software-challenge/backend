@@ -29,29 +29,38 @@ public class PrepareGameRequest implements ILobbyRequest,
 		this.slotDescriptors = null;
 	}
 
-	public PrepareGameRequest(String gameType, int playerCount)
+	/**
+	 * Create a Prepared Game
+	 * @param gameType
+	 */
+	public PrepareGameRequest(String gameType)
 	{
 		this.gameType = gameType;
 		this.slotDescriptors = new LinkedList<SlotDescriptor>();
 
-		for (int i = 0; i < playerCount; i++)
-		{
-			this.slotDescriptors.add(new SlotDescriptor("Player "
-					+ String.valueOf(i + 1)));
-		}
+		// Add two players, named Player1 and Player2
+		this.slotDescriptors.add(new SlotDescriptor("Player "
+					+ String.valueOf(1)));
+		this.slotDescriptors.add(new SlotDescriptor("Player "
+						+ String.valueOf(2)));
 
-		if (getPlayerCount() == 0)
+		if (this.getSlotDescriptors().size() == 0)
 		{
 			throw new IllegalArgumentException("PlayerCount must be positive");
 		}
 	}
 
+  /**
+   *
+   * @param gameType
+   * @param descriptors
+   */
 	public PrepareGameRequest(String gameType, SlotDescriptor... descriptors)
 	{
 		this.gameType = gameType;
 		this.slotDescriptors = Arrays.asList(descriptors);
 
-		if (getPlayerCount() == 0)
+		if (this.getSlotDescriptors().size() == 0)
 		{
 			throw new IllegalArgumentException("PlayerCount must be positive");
 		}
@@ -68,11 +77,6 @@ public class PrepareGameRequest implements ILobbyRequest,
 	public String getGameType()
 	{
 		return this.gameType;
-	}
-
-	public int getPlayerCount()
-	{
-		return this.getSlotDescriptors().size();
 	}
 
 	public List<SlotDescriptor> getSlotDescriptors()

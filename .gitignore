@@ -53,3 +53,13 @@
 *.toc
 *.out
 *.log
+
+\.idea/
+
+*.iml
+
+game_server/doc/
+
+software_challenge_sdk/doc/
+
+*.class

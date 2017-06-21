@@ -1,8 +1,8 @@
 package sc.server.gaming;
 
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 
-public class UnknownReservationException extends RescueableClientException
+public class UnknownReservationException extends RescuableClientException
 {
 	/**
 	 * 

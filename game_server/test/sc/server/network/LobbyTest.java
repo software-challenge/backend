@@ -6,7 +6,7 @@ import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 
 import junit.framework.Assert;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.helpers.Generator;
 import sc.networking.clients.LobbyClient;
 import sc.server.gaming.GameRoom;
@@ -18,7 +18,7 @@ public class LobbyTest extends RealServerTest
 {
 	@Test
 	public void shouldEndGameOnIllegalMessage()
-			throws RescueableClientException, UnsupportedEncodingException,
+			throws RescuableClientException, UnsupportedEncodingException,
 			IOException, InterruptedException
 	{
 		final LobbyClient player1 = connectClient("localhost", getServerPort());
