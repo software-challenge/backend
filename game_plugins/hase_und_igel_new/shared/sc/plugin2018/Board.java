@@ -8,8 +8,6 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-import sc.plugin2018.util.GameUtil;
-
 /**
  * @author rra
  * @since Jul 1, 2009

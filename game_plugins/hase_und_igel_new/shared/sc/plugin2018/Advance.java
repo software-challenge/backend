@@ -2,7 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import sc.plugin2018.util.GameUtil;
+import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /** TODO comment everything
@@ -28,8 +28,8 @@ public class Advance extends Action{
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
-    if (GameUtil.isValidToMove(state, this.distance)) {
-      state.getCurrentPlayer().changeCarrotsAvailableBy(GameUtil.calculateCarrots(this.distance));
+    if (GameRuleLogic.isValidToAdvance(state, this.distance)) {
+      state.getCurrentPlayer().changeCarrotsAvailableBy(GameRuleLogic.calculateCarrots(this.distance));
       state.getCurrentPlayer().setFieldNumber(state.getCurrentPlayer().getFieldIndex() + distance);
     } else {
       throw new InvalidMoveException("Vorwärtszug um " + this.distance + " Felder ist nicht möglich");

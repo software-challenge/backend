@@ -2,7 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import sc.plugin2018.util.GameUtil;
+import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
@@ -59,7 +59,7 @@ public class Card extends Action {
   public void perform(GameState state) throws InvalidMoveException {
     switch (type) { // TODO exception in else cases
       case EAT_SALAD:
-        if (GameUtil.isValidToPlayEatSalad(state)) {
+        if (GameRuleLogic.isValidToPlayEatSalad(state)) {
           state.getCurrentPlayer().eatSalad();
           if (state.isFirst(state.getCurrentPlayer())) {
             state.getCurrentPlayer().changeCarrotsAvailableBy(10);
@@ -71,21 +71,21 @@ public class Card extends Action {
         }
         break;
       case FALL_BACK:
-        if (GameUtil.isValidToPlayFallBack(state)) {
+        if (GameRuleLogic.isValidToPlayFallBack(state)) {
           state.getCurrentPlayer().setFieldNumber(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() - 1);
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
         break;
       case HURRY_AHEAD:
-        if (GameUtil.isValidToPlayHurryAhead(state)) {
+        if (GameRuleLogic.isValidToPlayHurryAhead(state)) {
           state.getCurrentPlayer().setFieldNumber(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() + 1);
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
         break;
       case TAKE_OR_DROP_CARROTS:
-        if (GameUtil.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
+        if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
           state.getCurrentPlayer().changeCarrotsAvailableBy(this.getValue());
         } else {
           throw new InvalidMoveException("Das Ausspielen der TAKE_OR_DROP_CARROTS Karte ist nicht möglich.");

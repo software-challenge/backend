@@ -1,7 +1,7 @@
 package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import sc.plugin2018.util.GameUtil;
+import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
@@ -20,7 +20,7 @@ public class FallBack extends Action {
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
-    if (GameUtil.isValidToFallBack(state)) {
+    if (GameRuleLogic.isValidToFallBack(state)) {
       state.getCurrentPlayer().setFieldNumber(state.getPreviousFieldByType(FieldType.HEDGEHOG, state.getCurrentPlayer()
               .getFieldIndex()));
     } else {

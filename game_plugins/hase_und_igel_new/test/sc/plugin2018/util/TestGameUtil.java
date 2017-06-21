@@ -17,8 +17,8 @@ public class TestGameUtil
 	@Test
 	public void testCalculateCarrots()
 	{
-		Assert.assertEquals(1, GameUtil.calculateCarrots(1));
-		Assert.assertEquals(55, GameUtil.calculateCarrots(10));
+		Assert.assertEquals(1, GameRuleLogic.calculateCarrots(1));
+		Assert.assertEquals(55, GameRuleLogic.calculateCarrots(10));
 	}
 	
 	/**
@@ -26,10 +26,10 @@ public class TestGameUtil
 	 */
 	@Test
 	public void testCalculateMoveableFields() {
-		Assert.assertEquals(0, GameUtil.calculateMoveableFields(0));
-		Assert.assertEquals(1, GameUtil.calculateMoveableFields(1));
-		Assert.assertEquals(2, GameUtil.calculateMoveableFields(5));
-		Assert.assertEquals(3, GameUtil.calculateMoveableFields(6));
-		Assert.assertEquals(3, GameUtil.calculateMoveableFields(7));
+		Assert.assertEquals(0, GameRuleLogic.calculateMoveableFields(0));
+		Assert.assertEquals(1, GameRuleLogic.calculateMoveableFields(1));
+		Assert.assertEquals(2, GameRuleLogic.calculateMoveableFields(5));
+		Assert.assertEquals(3, GameRuleLogic.calculateMoveableFields(6));
+		Assert.assertEquals(3, GameRuleLogic.calculateMoveableFields(7));
 	}
 }

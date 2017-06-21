@@ -2,7 +2,7 @@ package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import sc.plugin2018.util.GameUtil;
+import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
@@ -23,7 +23,7 @@ public class ExchangeCarrots extends Action {
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
-    if (GameUtil.isValidToPlayTakeOrDropCarrots(state, this.value)) {
+    if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.value)) {
       state.getCurrentPlayer().changeCarrotsAvailableBy(this.value);
     } else {
       throw new InvalidMoveException("Es können nicht " + this.value + " Karotten aufgenommen werden.");

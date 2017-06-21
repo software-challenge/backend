@@ -342,80 +342,6 @@ public class GameState implements Cloneable {
   }
   
   /**
-   * Ist ein Zug auf diesem Spielbrett möglich? Validiert einen Zug unter der
-   * Annahme, das der angegebene Spieler am Zug ist.
-   * 
-   * @param move
-   * @param player
-   * @return
-   */
-  public final boolean isValid(Move move, Player player)
-  {
-    boolean valid = true;
-//    switch (move.getType()) TODO
-//    {
-//      case MOVE:
-//        valid = GameUtil.isValidToMove(this, player, move.getN());
-//        valid = valid && !player.mustPlayCard();
-//        break;
-//      case EAT:
-//        valid = GameUtil.isValidToEat(this, player);
-//        valid = valid && !player.mustPlayCard();
-//        break;
-//      case TAKE_OR_DROP_CARROTS:
-//        valid = GameUtil.isValidToTakeOrDrop10Carrots(this, player,
-//            move.getN());
-//        valid = valid && !player.mustPlayCard();
-//        break;
-//      case FALL_BACK:
-//        valid = GameUtil.isValidToFallBack(this, player);
-//        valid = valid && !player.mustPlayCard();
-//        break;
-//      case PLAY_CARD:
-//        valid = GameUtil.isValidToPlayCard(this, player,
-//            move.getCard(), move.getN());
-//        break;
-//      case SKIP:
-//        //valid = !GameUtil.isValidToFallBack(this, player) &&
-//          //!GameUtil.canPlayCard(this, player) &&
-//           //!GameUtil.canMove(this, player);
-//        valid = GameUtil.isValidToSkip(this, player);
-//        break;
-//      default:
-//        valid = false;
-//        break;
-//    }
-    return valid;
-  }
-  
-  /**
-   * TODO
-   * @param player
-   * @param off
-   * @return
-   */
-  public final int nextFreeFieldFor(Player player, int off)
-  {
-    int offset = off;
-//    Move m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
-//    while(isValid(m, player)) { TODO
-//      offset++;
-//      m = new Move(MoveTyp.MOVE, player.getFieldIndex() + offset);
-//    }
-    return offset;
-  }
-
-  /**
-   * TODO
-   * @param player
-   * @return
-   */
-  public final int nextFreeFieldFor(Player player)
-  {
-    return nextFreeFieldFor(player, 1);
-  }
-  
-  /**
    * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
    * Position <code>pos</code> auf diesem Spielbrett.
    * 
@@ -542,12 +468,6 @@ public class GameState implements Cloneable {
     }
   }
 
-
-  @Override
-  public String toString() {
-    return "GameState: \n Spieler1: " + red + " \n" + "Spieler2: " + blue + "\n" + " currentColor: " + currentPlayer + "\n" + board + "\n";
-  }
-
   /**
    * Ueberschreibt das aktuelle Spielbrett. Fuer eigene Implementierungen.
    */
@@ -567,7 +487,6 @@ public class GameState implements Cloneable {
    * Changes current Player if necessary
    */
   public void updateCurrentPlayer() {
-    // TODO check whether this is the right approach
     if(this.currentPlayer == PlayerColor.RED) {
       this.currentPlayer = PlayerColor.BLUE;
     } else {
@@ -577,7 +496,7 @@ public class GameState implements Cloneable {
 
   /**
    * Setzt letzten Zug. Nur für den Server relevant.
-   * @param lastMove
+   * @param lastMove letzter Zug
    */
   protected void setLastMove(Move lastMove) {
     this.lastMove = lastMove;
@@ -585,7 +504,7 @@ public class GameState implements Cloneable {
 
   /**
    * Setzt letzte Aktion eines Spielers. Für den Server in der Zugvalidierung relevant.
-   * @param action
+   * @param action letzte Aktion
    */
   public void setLastAction(Action action) {
     if (action instanceof Skip) {

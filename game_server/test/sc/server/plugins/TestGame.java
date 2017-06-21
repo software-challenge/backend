@@ -11,6 +11,9 @@ import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+import sc.shared.WinCondition;
+
+/*XXX should not be abstract*/
 
 public class TestGame extends RoundBasedGameInstance<TestPlayer>
 {
@@ -46,7 +49,13 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		next();
 	}
 
-	@Override
+  @Override
+  protected WinCondition checkWinCondition() {
+	  // TODO implement test for it
+    return null;
+  }
+
+  @Override
 	public SimplePlayer onPlayerJoined() throws TooManyPlayersException
 	{
 		if (this.players.size() < 2)

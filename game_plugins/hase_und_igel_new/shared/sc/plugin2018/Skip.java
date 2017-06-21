@@ -1,7 +1,7 @@
 package sc.plugin2018;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import sc.plugin2018.util.GameUtil;
+import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
@@ -27,7 +27,7 @@ public class Skip extends Action {
     if(this.order > 0) {
       throw new InvalidMoveException("Nur das ausspielen von Karten ist nach der ersten Aktion erlaubt.");
     }
-    if (!GameUtil.isValidToSkip(state)) {
+    if (!GameRuleLogic.isValidToSkip(state)) {
       throw new InvalidMoveException("Spieler kann noch einen anderen Zug ausführen, aussetzen ist nicht erlaubt.");
     }
   }
