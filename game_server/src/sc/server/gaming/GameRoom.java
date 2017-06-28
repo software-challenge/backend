@@ -70,6 +70,7 @@ public class GameRoom implements IGameListener
 		this.game = game;
 		this.prepared = prepared;
 		this.gameRoomManager = gameRoomManager;
+		this.playerSlots = new ArrayList<>(2);
 		game.addGameListener(this);
 	}
 
@@ -250,11 +251,20 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+	/**
+	 * Create {@link RoomPacket RoomPacket} from id and data Object.
+	 * @param data to be send
+	 * @return prepared RoomPacket
+	 */
 	public RoomPacket createRoomPacket(Object data)
 	{
 		return new RoomPacket(getId(), data);
 	}
 
+	/**
+	 * Getter for Room ID
+	 * @return id of Room as String
+	 */
 	public String getId()
 	{
 		return this.id;
@@ -433,28 +443,10 @@ public class GameRoom implements IGameListener
 		return Collections.unmodifiableList(this.playerSlots);
 	}
 
-
-  /**
-   * Create playerCount {@link PlayerSlot PlayerSlots} and add to list
-   * @param playerCount number of slots to be created
-   * @throws TooManyPlayersException if requested more players, than allowed
-   */
-	public synchronized void setSize(int playerCount)
-			throws TooManyPlayersException
-	{
-		if (playerCount > getMaximumPlayerCount())
-		{
-			throw new TooManyPlayersException();
-		}
-
-		// If called twice for some reason, there might be players in the slots
-		playerSlots.clear();
-		while (this.playerSlots.size() < playerCount)
-		{
-			this.playerSlots.add(new PlayerSlot(this));
-		}
-	}
-
+	/**
+	 * Threadsafe method to Reserve Slots for the player
+	 * @return a List of unique IDs
+	 */
 	public synchronized List<String> reserveAllSlots()
 	{
 		List<String> result = new ArrayList<>(this.playerSlots.size());
@@ -492,53 +484,44 @@ public class GameRoom implements IGameListener
 	 * @throws RescuableClientException
 	 */
 	private SimplePlayer resolvePlayer(Client source)
-			throws RescuableClientException
-	{
-		for (PlayerRole role : getPlayers())
-		{
-			if (role.getClient().equals(source))
-			{
-				SimplePlayer resolvedPlayer = role.getPlayer();
+			throws RescuableClientException {
+    for (PlayerRole role : getPlayers()) {
+      if (role.getClient().equals(source)) {
+        SimplePlayer resolvedPlayer = role.getPlayer();
 
-				if (resolvedPlayer == null)
-				{
-					throw new RescuableClientException(
-							"Game isn't ready. Please wait before sending messages.");
-				}
+        if (resolvedPlayer == null) {
+          throw new RescuableClientException(
+                  "Game isn't ready. Please wait before sending messages.");
+        }
 
-				return resolvedPlayer;
-			}
-		}
+        return resolvedPlayer;
+      }
+    }
 
-		throw new RescuableClientException("Client is not a member of game "
-				+ this.id);
-	}
+    throw new RescuableClientException("Client is not a member of game "
+            + this.id);
+  }
 
-	private Collection<PlayerSlot> getOccupiedPlayerSlots()
-	{
-		LinkedList<PlayerSlot> occupiedSlots = new LinkedList<>();
-
-		for (PlayerSlot slot : this.playerSlots)
-		{
-			if (!slot.isEmpty())
-			{
-				occupiedSlots.add(slot);
-			}
-		}
-
-		return occupiedSlots;
-	}
-
+  /**
+   * Get {@link PlayerRole Players} that occupy a slot
+   * @return List of PlayerRole Objects
+   */
 	private Collection<PlayerRole> getPlayers()
 	{
 		LinkedList<PlayerRole> clients = new LinkedList<PlayerRole>();
-		for (PlayerSlot slot : getOccupiedPlayerSlots())
+		for (PlayerSlot slot : this.playerSlots)
 		{
-			clients.add(slot.getRole());
+		  if (!slot.isEmpty()){
+			  clients.add(slot.getRole());
+		  }
 		}
 		return clients;
 	}
 
+  /**
+   * Get Server {@link IClient Clients} of all {@link PlayerRole Players}
+   * @return
+   */
 	public Collection<IClient> getClients()
 	{
 		LinkedList<IClient> clients = new LinkedList<IClient>();
@@ -549,6 +532,10 @@ public class GameRoom implements IGameListener
 		return clients;
 	}
 
+  /**
+   * Add a Server {@link Client Client} in the role of an Observer
+   * @param source Client to be added
+   */
 	public void addObserver(Client source)
 	{
 		ObserverRole role = new ObserverRole(source, this);
@@ -557,20 +544,18 @@ public class GameRoom implements IGameListener
 		source.send(new ObservationResponse(getId()));
 	}
 
+  /**
+   * Pause or un-pause a game
+   * @param pause true if game is to be paused
+   */
 	public synchronized void pause(boolean pause)
 	{
 		if (isOver())
 		{
 			logger.warn("Game is already over and can't be paused.");
 		}
-		
-		// XXX is this needed?
-		if (!(this.game instanceof RoundBasedGameInstance<?>)) // XXX was pausable maybe remove checking?
-		{
-			logger.warn("Game isn't pausable.");
-			return;
-		}
 
+		// Unnecessary Pause event
 		if (pause == isPaused())
 		{
 			logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
@@ -593,7 +578,7 @@ public class GameRoom implements IGameListener
 	/**
 	 *
 	 * @param forced
-	 *            If true, game will be started even if there are not enoug
+	 *            If true, game will be started even if there are not enough
 	 *            players to complete the game. This should result in a
 	 *            GameOver.
 	 * @throws RescuableClientException
@@ -626,52 +611,78 @@ public class GameRoom implements IGameListener
 		}
 	}
 
+  /**
+   * Kick all Player and destroy game afterwards
+   */
 	public void cancel()
 	{
-		logger.warn("Game couldn't be canceled.");
-		// TODO:
-		// this.game.destroy();
+    if (!isOver())
+    {
+      kickAllClients();
+      this.game.destroy();
+    }
 	}
 
+  /**
+   * Broadcast to all observers, that the game is paused
+   * @param nextPlayer Player to do the next move
+   */
 	@Override
 	public void onPaused(SimplePlayer nextPlayer)
 	{
-		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(
-				nextPlayer)));
+		observerBroadcast(new RoomPacket(getId(), new GamePausedEvent(nextPlayer)));
 	}
 
 	/**
 	 * Set descriptors of PlayerSlots
-	 * @param descriptors
+	 * @param descriptors to be set
 	 * @throws TooManyPlayersException
 	 */
 	public void openSlots(List<SlotDescriptor> descriptors)
 			throws TooManyPlayersException
 	{
-		setSize(descriptors.size());
+		if (descriptors.size() > 2){
+		  throw new TooManyPlayersException();
+    }
 
-
+    // Can be 0 or 1
 		for (int i = 0; i < descriptors.size(); i++)
 		{
 			this.playerSlots.get(i).setDescriptor(descriptors.get(i));
 		}
 	}
 
+	/**
+	 * If game is prepared return true
+	 * @return true if Game is prepared
+	 */
 	public boolean isPrepared()
 	{
 		return this.prepared;
 	}
 
+	/**
+	 * Return true if GameStatus is OVER
+	 * @return true if Game is over
+	 */
 	public boolean isOver()
 	{
 		return getStatus() == GameStatus.OVER;
 	}
 
+	/**
+	 * Return true if game is paused
+	 * @return true, if game is paused
+	 */
 	public boolean isPaused()
 	{
 		return this.paused;
 	}
 
+	/**
+	 * Get the current status of the Game
+	 * @return
+	 */
 	public GameStatus getStatus()
 	{
 		return this.status;
@@ -692,14 +703,5 @@ public class GameRoom implements IGameListener
 	public GameResult getResult()
 	{
 		return this.result;
-	}
-
-	protected void close()
-	{
-		if (!isOver())
-		{
-			kickAllClients();
-			this.game.destroy();
-		}
 	}
 }

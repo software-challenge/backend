@@ -20,29 +20,22 @@ public class PrepareGameRequest implements ILobbyRequest,
 
 	@XStreamImplicit(itemFieldName = "slot")
 	private final List<SlotDescriptor>	slotDescriptors;
-	
-	private Object loadGameInfo = null;
 
-	/* trying to fix "no-args constructor" problem of XStream */	
-	public PrepareGameRequest(){
-		this.gameType = null;
-		this.slotDescriptors = null;
-	}
+
+	private Object loadGameInfo = null;
 
 	/**
 	 * Create a Prepared Game
-	 * @param gameType
+   * @param gameType name of the game as String
 	 */
 	public PrepareGameRequest(String gameType)
 	{
 		this.gameType = gameType;
-		this.slotDescriptors = new LinkedList<SlotDescriptor>();
+		this.slotDescriptors = new LinkedList<>();
 
 		// Add two players, named Player1 and Player2
-		this.slotDescriptors.add(new SlotDescriptor("Player "
-					+ String.valueOf(1)));
-		this.slotDescriptors.add(new SlotDescriptor("Player "
-						+ String.valueOf(2)));
+		this.slotDescriptors.add(new SlotDescriptor("Player1"));
+		this.slotDescriptors.add(new SlotDescriptor("Player2"));
 
 		if (this.getSlotDescriptors().size() == 0)
 		{
@@ -50,26 +43,26 @@ public class PrepareGameRequest implements ILobbyRequest,
 		}
 	}
 
-  /**
-   *
-   * @param gameType
-   * @param descriptors
-   */
-	public PrepareGameRequest(String gameType, SlotDescriptor... descriptors)
+	/**
+	 * Create PrePareGameRequest with name and Descriptors for each player
+	 * @param gameType name of the Game as String
+	 * @param descriptor1 descriptor for Player 1
+	 * @param descriptor2 descriptor for Player 2
+	 */
+	public PrepareGameRequest(String gameType, SlotDescriptor descriptor1, SlotDescriptor descriptor2)
 	{
 		this.gameType = gameType;
-		this.slotDescriptors = Arrays.asList(descriptors);
+		this.slotDescriptors = new LinkedList<>();
 
-		if (this.getSlotDescriptors().size() == 0)
-		{
-			throw new IllegalArgumentException("PlayerCount must be positive");
-		}
+		// Add two players, named Player1 and Player2
+		this.slotDescriptors.add(descriptor1);
+		this.slotDescriptors.add(descriptor2);
 	}
-	
+
 	public void setLoadGameInfo(Object info) {
 		this.loadGameInfo = info;
 	}
-	
+
 	public Object getLoadGameInfo() {
 		return this.loadGameInfo;
 	}

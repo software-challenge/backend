@@ -28,8 +28,9 @@
 /game_plugins/*/src
 
 # Ignore java doc
-/game_players/*/doc
-/game_plugins/*/doc
+game_players/*/doc
+game_plugins/*/doc
+software_challenge_sdk/*/doc
 
 # game server
 /game_server/log

@@ -2,7 +2,10 @@ telnet localhost 13050
 
 <protocol><join gameType="swc_2018_hase_und_igel"/>
 
-<room roomId="cec84859-7aab-4c82-8bed-86992f4086dd"><data class="move"><advance order="0" distance="1"/></data></room>
+<room roomId="6dc64e5f-23c6-467a-ad19-63824836af9b"><data class="move"><advance order="0" distance="1"/></data></room>
+
+<pause roomId="6dc64e5f-23c6-467a-ad19-63824836af9b" pause="true" />
+<step roomId="6dc64e5f-23c6-467a-ad19-63824836af9b" forced="false" />
 
 <data class="move" x="-20" y="0"/></room><move><advance order="0" distance="1"/></move>
 
