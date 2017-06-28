@@ -57,7 +57,8 @@ public class Card extends Action {
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
-    switch (type) { // TODO exception in else cases
+    state.getCurrentPlayer().setMustPlayCard(false); // player played a card
+    switch (type) { // when entering a RABBIT field with fall_back or hurry ahead, player has to play another card
       case EAT_SALAD:
         if (GameRuleLogic.isValidToPlayEatSalad(state)) {
           state.getCurrentPlayer().eatSalad();
@@ -72,14 +73,20 @@ public class Card extends Action {
         break;
       case FALL_BACK:
         if (GameRuleLogic.isValidToPlayFallBack(state)) {
-          state.getCurrentPlayer().setFieldNumber(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() - 1);
+          state.getCurrentPlayer().setFieldIndex(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() - 1);
+          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+            state.getCurrentPlayer().setMustPlayCard(true);
+          }
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
         break;
       case HURRY_AHEAD:
         if (GameRuleLogic.isValidToPlayHurryAhead(state)) {
-          state.getCurrentPlayer().setFieldNumber(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() + 1);
+          state.getCurrentPlayer().setFieldIndex(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() + 1);
+          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+            state.getCurrentPlayer().setMustPlayCard(true);
+          }
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }

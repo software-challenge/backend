@@ -14,6 +14,11 @@ public class ExchangeCarrots extends Action {
   @XStreamAsAttribute
   private int value;
 
+  public ExchangeCarrots(int value) {
+    this.order = 0;
+    this.value = value;
+  }
+
   public ExchangeCarrots(int value, int order) {
     this.order = order;
     this.value = value;
@@ -23,7 +28,7 @@ public class ExchangeCarrots extends Action {
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
-    if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.value)) {
+    if (GameRuleLogic.isValidToTakeOrDrop10Carrots(state, this.value)) {
       state.getCurrentPlayer().changeCarrotsAvailableBy(this.value);
     } else {
       throw new InvalidMoveException("Es können nicht " + this.value + " Karotten aufgenommen werden.");

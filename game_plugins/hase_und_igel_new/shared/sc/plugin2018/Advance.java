@@ -29,8 +29,11 @@ public class Advance extends Action{
   @Override
   public void perform(GameState state) throws InvalidMoveException {
     if (GameRuleLogic.isValidToAdvance(state, this.distance)) {
-      state.getCurrentPlayer().changeCarrotsAvailableBy(GameRuleLogic.calculateCarrots(this.distance));
-      state.getCurrentPlayer().setFieldNumber(state.getCurrentPlayer().getFieldIndex() + distance);
+      state.getCurrentPlayer().changeCarrotsAvailableBy(- GameRuleLogic.calculateCarrots(this.distance));
+      state.getCurrentPlayer().setFieldIndex(state.getCurrentPlayer().getFieldIndex() + distance);
+      if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+        state.getCurrentPlayer().setMustPlayCard(true);
+      }
     } else {
       throw new InvalidMoveException("Vorwärtszug um " + this.distance + " Felder ist nicht möglich");
     }

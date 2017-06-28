@@ -185,6 +185,9 @@ public class Move implements Cloneable {
       state.setLastAction(action);
       index++;
     }
+    if (state.getCurrentPlayer().mustPlayCard()) {
+      throw new InvalidMoveException("Es muss eine Karte ausgespielt werden.");
+    }
     // prepare next turn
     state.setLastMove(this);
     state.updateCurrentPlayer();
@@ -195,6 +198,8 @@ public class Move implements Cloneable {
     } else if (state.isFirst(state.getOtherPlayer()) && fieldType == FieldType.POSITION_2) {
       state.getCurrentPlayer().changeCarrotsAvailableBy(30);
     }
+    // increase turn
+    state.setTurn(state.getTurn() + 1);
   }
 
   /**

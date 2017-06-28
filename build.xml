@@ -58,12 +58,12 @@
         <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" />
 	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
 	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />-->
-        <!--    currentPlugin                    !-->
-	    <ant dir="game_plugins/hase_und_igel_new" target="clean-build" inheritAll="false" />
-	    <!-- <ant dir="game_players/hase_und_igel_player" target="clean-build" inheritAll="false" /> TODO-->
+    <!--    currentPlugin                    !-->
+    <ant dir="game_plugins/hase_und_igel_new" target="clean-build" inheritAll="false" />
+    <!-- <ant dir="game_players/hase_und_igel_player" target="clean-build" inheritAll="false" /> TODO-->
 
-        <echo message="Compiling Server..." />
-        <ant dir="game_server" target="clean-build" inheritAll="false" />
+    <echo message="Compiling Server..." />
+    <ant dir="game_server" target="clean-build" inheritAll="false" />
   </target>
 
   <target name="build" depends="scmversion,dependencies">
@@ -73,7 +73,7 @@
     <copy todir="${out.dir}/server">
       <fileset dir="./game_server/build/jar" />
     </copy>
-	<!-- TODO make player !-->
+    <!-- TODO make player !-->
     <!--
   	<mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar" />
     <copy todir="${out.dir}/simple_client/mississippi_queen_player/jar">

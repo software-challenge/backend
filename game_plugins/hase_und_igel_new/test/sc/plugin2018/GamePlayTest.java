@@ -3,13 +3,14 @@ package sc.plugin2018;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 import sc.plugin2018.util.GameRuleLogic;
+import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 
-import java.math.BigInteger;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class GamePlayTest
 {
@@ -18,8 +19,11 @@ public class GamePlayTest
 	private Player	red;
 	private Player	blue;
 
+	// TODO test multiply cards (etc: fall_back->hurry_ahead->EatSalad) may need to construct board to test this
+  // TODO check the mustMove criteria?
+
 	@Before
-	public void beforeEveryTest() throws RescueableClientException
+	public void beforeEveryTest() throws RescuableClientException
 	{
 		game = new Game();
 		state = game.getGameState();
@@ -28,678 +32,588 @@ public class GamePlayTest
 	}
 
 	/**
-	 * In der ersten Runde stehen beide Spieler am Start, und rot ist an der
-	 * Reihe
+   * Both palyers start on the start field (index 0), red has to make the first move
 	 */
 	@Test
 	public void firstRound()
 	{
 		Assert.assertEquals(red.getPlayerColor(), PlayerColor.RED);
-		Assert.assertEquals(blue.getPlayerColor(), PlayerColor.RED);
+		Assert.assertEquals(blue.getPlayerColor(), PlayerColor.BLUE);
 
 		Assert.assertEquals(0, red.getFieldIndex());
 		Assert.assertEquals(0, blue.getFieldIndex());
+		Assert.assertEquals(red, state.getStartPlayer());
+	}
 
-		game.start();
-		Assert.assertEquals(red, game.getActivePlayer());
+	/**
+	 * There is only one possible move at the start of a game
+	 */
+	@Test
+	public void justStarted()
+	{
+	  // player cannot fall_back from start field
+		Assert.assertEquals(false, GameRuleLogic.isValidToFallBack(state));
+		// player cannot take carrots at start field
+		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		// player cannot eat salad at start field
+    Assert.assertEquals(false, GameRuleLogic.isValidToPlayEatSalad(state));
+
+    // the play must be able to get to a carrot field
+    Assert.assertEquals(true, GameRuleLogic.isValidToAdvance(state, state.getNextFieldByType(FieldType.CARROT, 0)));
+	}
+
+	/**
+	 * Tests the cases in which takeOrDrop10Carrots is invalid
+	 */
+	@Test
+	public void takeOrDropCarrots()
+	{
+		red.setFieldIndex(0);
+		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+
+		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, 0);
+		red.setFieldIndex(rabbitAt);
+		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+
+		int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
+		red.setFieldIndex(saladAt);
+		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+
+		int pos1 = state.getNextFieldByType(FieldType.POSITION_1, 0);
+		red.setFieldIndex(pos1);
+		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+
+		int pos2 = state.getNextFieldByType(FieldType.POSITION_2, 0);
+		red.setFieldIndex(pos2);
+		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
 	}
 //
-//	/**
-//	 * Überprüft den allgemeinen, abwechselnden Spielablauf
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void basicGameCycle() throws RescueableClientException
-//	{
-////		game.start();
-////
-////		Move r1 = new Move(MoveTyp.MOVE, b
-////				.getNextFieldByTyp(FieldTyp.CARROT, 0));
-////		game.onAction(red, r1);
-////
-////		Assert.assertEquals(Position.FIRST, red.getPosition());
-////		Assert.assertTrue(b.isFirst(red));
-////
-////		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
-////				red.getFieldNumber()));
-////		game.onAction(blue, b1);
-////
-////		Assert.assertEquals(Position.FIRST, blue.getPosition());
-////		Assert.assertEquals(Position.SECOND, red.getPosition());
-////		Assert.assertTrue(b.isFirst(blue));
-//	}
-//
-//	/**
-//	 * Wenn beide Spieler am Start stehen ist nur ein Zug möglich
-//	 */
-//	@Test
-//	public void justStarted()
-//	{
-//		Assert.assertEquals(false, GameRuleLogic.isValidToFallBack(state));
-//
-//		Move m2 = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10);
-//		Assert.assertEquals(false, b.isValid(m2, red));
-//
-//		Move m3 = new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD);
-//		Assert.assertEquals(false, b.isValid(m3, red));
-//
-//		Move m4 = new Move(MoveTyp.MOVE, b
-//				.getNextFieldByTyp(FieldTyp.CARROT, 0));
-//		Assert.assertEquals(true, b.isValid(m4, red));
-//	}
-//
-//	/**
-//	 * Überprüft, dass Karotten nur auf einem Karottenfeld aufgenommen
-//	 * oder abgelegt werden dürfen
-//	 */
-//	@Test
-//	public void takeOrDropCarrots()
-//	{
-//		red.setFieldNumber(0);
-//		Move m = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//
-//		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-//		red.setFieldNumber(rabbitAt);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//
-//		int saladAt = b.getNextFieldByTyp(FieldTyp.SALAD, 0);
-//		red.setFieldNumber(saladAt);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//
-//		int pos1 = b.getNextFieldByTyp(FieldTyp.POSITION_1, 0);
-//		red.setFieldNumber(pos1);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//
-//		int pos2 = b.getNextFieldByTyp(FieldTyp.POSITION_2, 0);
-//		red.setFieldNumber(pos2);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//	}
-//
-//	/**
-//	 * Überprüft, dass der Rundenzähler korrekt gesetzt wird.
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void turnCounting() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		red.setCarrotsAvailable(100);
-//		blue.setCarrotsAvailable(100);
-//		Assert.assertEquals(0, game.getTurn());
-//		int firstCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red
-//				.getFieldNumber());
-//		Move r1 = new Move(MoveTyp.MOVE, firstCarrot);
-//		game.onAction(red, r1);
-//
-//		Assert.assertEquals(0, game.getTurn());
-//		int nextCarrot = b.getNextFieldByTyp(FieldTyp.CARROT, red
-//				.getFieldNumber());
-//		Move b1 = new Move(MoveTyp.MOVE, nextCarrot - blue.getFieldNumber());
-//		game.onAction(blue, b1);
-//
-//		Assert.assertEquals(1, game.getTurn());
-//		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, red
-//				.getFieldNumber());
-//		Move r2 = new Move(MoveTyp.MOVE, rabbitAt - red.getFieldNumber());
-//
-//		game.onAction(red, r2);
-//		Assert.assertEquals(1, game.getTurn());
-//		Move r3 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
-//		game.onAction(red, r3);
-//
-//		Assert.assertEquals(1, game.getTurn());
-//		nextCarrot = b
-//				.getNextFieldByTyp(FieldTyp.CARROT, blue.getFieldNumber());
-//		Move b2 = new Move(MoveTyp.MOVE, nextCarrot - blue.getFieldNumber());
-//		game.onAction(blue, b2);
-//
-//		Assert.assertEquals(red, game.getActivePlayer());
-//
-//		Assert.assertEquals(2, game.getTurn());
-//	}
-//
-//	/**
-//	 * Überprüft den Ablauf, das Ziel zu erreichen
-//	 *
-//	 * @throws RescueableClientException
-//	 * @throws InterruptedException
-//	 */
-//	@Test
-//	public void enterGoalCycle() throws RescueableClientException, InterruptedException
-//	{
-//		game.start();
-//
-//		int lastCarrot = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
-//		int preLastCarrot = b
-//				.getPreviousFieldByTyp(FieldTyp.CARROT, lastCarrot);
-//		red.setFieldNumber(lastCarrot);
-//		blue.setFieldNumber(preLastCarrot);
-//
-//		red.setCarrotsAvailable(GameRuleLogic.calculateCarrots(64 - lastCarrot));
-//		blue
-//				.setCarrotsAvailable(GameRuleLogic
-//						.calculateCarrots(64 - preLastCarrot) + 1);
-//		red.setSaladsToEat(0);
-//		blue.setSaladsToEat(0);
-//
-//		Move r1 = new Move(MoveTyp.MOVE, 64 - red.getFieldNumber());
-//		Move b1 = new Move(MoveTyp.MOVE, 64 - blue.getFieldNumber());
-//
-//		Thread.sleep(14);
-//
-//		Assert.assertTrue(b.isValid(r1, red));
-//		game.onAction(red, r1);
-//		Assert.assertTrue(red.inGoal());
-//
-//		Thread.sleep(14);
-//
-//		Assert.assertTrue(b.isValid(b1, blue));
-//		game.onAction(blue, b1);
-//		Assert.assertTrue(blue.inGoal());
-//
-//		Assert.assertTrue(b.isFirst(red));
-//		Assert.assertTrue(game.checkGameOverCondition());
-//
-//		Assert.assertTrue(game.sum_blue.compareTo(BigInteger.ZERO) == 1);
-//		Assert.assertTrue(game.sum_red.compareTo(BigInteger.ZERO) == 1);
-//	}
-//
-//	/**
-//	 * Wenn ein Spieler ein Hasenfeld neu betritt _MUSS_ eine Hasenkarte
-//	 * gespielt werden
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void mustPlayCard() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		Move r1 = new Move(MoveTyp.MOVE, b
-//				.getNextFieldByTyp(FieldTyp.RABBIT, 0));
-//		game.onAction(red, r1);
-//
-//		Assert.assertTrue(red.mustPlayCard());
-//
-//		Move r2 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
-//		game.onAction(red, r2);
-//
-//		Assert.assertFalse(red.mustPlayCard());
-//
-//		Move b1 = new Move(MoveTyp.MOVE, b
-//				.getNextFieldByTyp(FieldTyp.CARROT, 0));
-//		game.onAction(blue, b1);
-//
-//		Assert.assertFalse(red.mustPlayCard());
-//	}
-//
-//	/**
-//	 * Überprüft, ob ein Spieler eine Runde aussetzen kann.
-//	 * Getestet wird:
-//	 * - 0 Karotten und das Igelfeld hinter dem Spieler ist belegt
-//	 * @throws GameLogicException
-//	 */
-//	@Test
-//	public void canSkip() throws GameLogicException
-//	{
-//		game.start();
-//
-//		int redPos = b.getNextFieldByTyp(FieldTyp.POSITION_2, red
-//				.getFieldNumber());
-//		red.setFieldNumber(redPos);
-//		red.setCarrotsAvailable(0);
-//
-//		int bluePos = b.getPreviousFieldByTyp(FieldTyp.HEDGEHOG, red
-//				.getFieldNumber());
-//		blue.setFieldNumber(bluePos);
-//
-//		Move r1 = new Move(MoveTyp.SKIP);
-//		Assert.assertTrue(b.isValid(r1, red));
-//
-//		game.onAction(red, r1);
-//
-//		Move b1 = new Move(MoveTyp.SKIP);
-//		Assert.assertFalse(b.isValid(b1, blue));
-//	}
-//
-//	/**
-//	 * Überprüft die Bedingungen, unter denen ein Spieler auf den
-//	 * Positionsfeldern
-//	 * Karotten bekommt.
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void onPositionField() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		red.setCarrotsAvailable(5000);
-//		blue.setCarrotsAvailable(5000);
-//		int redCarrotsBefore = red.getCarrotsAvailable();
-//		int pos1At = b.getPreviousFieldByTyp(FieldTyp.POSITION_1, b
-//				.getPreviousFieldByTyp(FieldTyp.POSITION_1, 64));
-//		Move r1 = new Move(MoveTyp.MOVE, pos1At);
-//		int redMoveCosts = GameRuleLogic.calculateCarrots(r1.getN());
-//		game.onAction(red, r1);
-//
-//		Assert.assertEquals(redCarrotsBefore - redMoveCosts, red
-//				.getCarrotsAvailable());
-//
-//		int blueCarrotsBefore = blue.getCarrotsAvailable();
-//		int pos2At = b.getPreviousFieldByTyp(FieldTyp.POSITION_2, pos1At);
-//		Move b1 = new Move(MoveTyp.MOVE, pos2At);
-//		int blueMoveCosts = GameRuleLogic.calculateCarrots(b1.getN());
-//		game.onAction(blue, b1);
-//
-//		// Rot hat den Bonus auf Position 1 bekommen
-//		Assert.assertEquals(game.getActivePlayer(), red);
-//		Assert.assertEquals(redCarrotsBefore - redMoveCosts + 10, red
-//				.getCarrotsAvailable());
-//
-//		Move r2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
-//				red.getFieldNumber())
-//				- red.getFieldNumber());
-//		game.onAction(red, r2);
-//
-//		// Blau hat den Bonus auf Position 2 bekommen
-//		Assert.assertEquals(game.getActivePlayer(), blue);
-//		Assert.assertEquals(blueCarrotsBefore - blueMoveCosts + 30, blue
-//				.getCarrotsAvailable());
-//	}
-//
-//	/**
-//	 * Überprüft, dass Karotten nur abgegeben werden dürfen, wenn man mehr als
-//	 * 20
-//	 * Karotten besitzt.
-//	 */
-//	@Test
-//	public void playDropCarrotsCard()
-//	{
-//		game.start();
-//
-//		red.setFieldNumber(b.getNextFieldByTyp(FieldTyp.RABBIT, 0));
-//		Move r = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, -20);
-//		Assert.assertTrue(red.getCarrotsAvailable() > 20);
-//		Assert.assertTrue(b.isValid(r, red));
-//
-//		red.setCarrotsAvailable(19);
-//		Assert.assertFalse(b.isValid(r, red));
-//	}
-//
-//	/**
-//	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void enterGoal() throws RescueableClientException
-//	{
-//		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
-//		red.setFieldNumber(carrotAt);
-//		int toGoal = 64 - red.getFieldNumber();
-//		Move m = new Move(MoveTyp.MOVE, toGoal);
-//		Assert.assertFalse(b.isValid(m, red));
-//
-//		red.setCarrotsAvailable(10);
-//		Assert.assertFalse(b.isValid(m, red));
-//
-//		red.setSaladsToEat(0);
-//		Assert.assertTrue(red.getSaladsToEat() == 0);
-//		Assert.assertTrue(red.getCarrotsAvailable() <= 10);
-//		Assert.assertTrue(b.isValid(m, red));
-//	}
-//
-//	/**
-//	 * Überprüft, dass blau einen letzen Zug bekommt, wenn rot vor Ihr das Ziel
-//	 * erreicht.
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void blueHasLastMove() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
-//		red.setFieldNumber(carrotAt);
-//		int toGoal = 64 - red.getFieldNumber();
-//		Move m = new Move(MoveTyp.MOVE, toGoal);
-//		red.setCarrotsAvailable(10);
-//		red.setSaladsToEat(0);
-//
-//		game.onAction(red, m);
-//		Assert.assertTrue(game.hasLastMove());
-//	}
-//
-//	/**
-//	 * Überprüft, dass rot keinen letzen Zug bekommt, wenn blau vor Ihr das Ziel
-//	 * erreicht.
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void redHasNoLastMove() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		Move r = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT, 0));
-//		game.onAction(red, r);
-//
-//		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
-//		blue.setFieldNumber(carrotAt);
-//		int toGoal = 64 - blue.getFieldNumber();
-//		Move b = new Move(MoveTyp.MOVE, toGoal);
-//		blue.setCarrotsAvailable(10);
-//		blue.setSaladsToEat(0);
-//
-//		game.onAction(blue, b);
-//		Assert.assertFalse(game.hasLastMove());
-//	}
-//
-//	/**
-//	 * Überprüft, dass Salate nur auf Salatfeldern gefressen werden dürfen
-//	 */
-//	@Test
-//	public void eatSalad()
-//	{
-//		int saladAt = b.getNextFieldByTyp(FieldTyp.SALAD, 0);
-//		red.setFieldNumber(saladAt);
-//
-//		Move m = new Move(MoveTyp.EAT);
-//		Assert.assertTrue(b.isValid(m, red));
-//
-//		red.setSaladsToEat(0);
-//		Assert.assertFalse(b.isValid(m, red));
-//	}
-//
-//	/**
-//	 * Simuliert den Ablauf von Salat-Fressen
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void eatSaladCycle() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		red.setCarrotsAvailable(100);
-//		int saladAt = b.getNextFieldByTyp(FieldTyp.SALAD, 0);
-//		Move r1 = new Move(MoveTyp.MOVE, saladAt);
-//		game.onAction(red, r1);
-//
-//		Move b1 = new Move(MoveTyp.MOVE, b
-//				.getNextFieldByTyp(FieldTyp.CARROT, 0));
-//		game.onAction(blue, b1);
-//
-//		int before = red.getSaladsToEat();
-//		Move r2 = new Move(MoveTyp.EAT);
-//		game.onAction(red, r2);
-//		Assert.assertEquals(before - 1, red.getSaladsToEat());
-//	}
-//
-//	/**
-//	 * Simuliert den Ablauf einen Hasenjoker auszuspielen
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void playCardCycle() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		int rabbitAt = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-//		Move r1 = new Move(MoveTyp.MOVE, rabbitAt);
-//		game.onAction(red, r1);
-//		Assert.assertTrue(red.mustPlayCard());
-//
-//		Move rFail = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(
-//				FieldTyp.CARROT, red.getFieldNumber())
-//				- red.getFieldNumber());
-//		Assert.assertFalse(b.isValid(rFail, red));
-//
-//		Assert.assertTrue(red.getActions()
-//				.contains(Action.TAKE_OR_DROP_CARROTS));
-//		Move r2 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS, 20);
-//		Assert.assertEquals(red, game.getActivePlayer());
-//		game.onAction(red, r2);
-//		Assert.assertFalse(red.getActions().contains(
-//				Action.TAKE_OR_DROP_CARROTS));
-//	}
-//
-//	/**
-//	 * Simuliert das Fressen von Karotten auf einem Karottenfeld
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void takeCarrotsCycle() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		int carrotsAt = b.getNextFieldByTyp(FieldTyp.CARROT, 0);
-//		Move m1 = new Move(MoveTyp.MOVE, carrotsAt);
-//		game.onAction(red, m1);
-//
-//		Move m2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
-//				red.getFieldNumber()));
-//		game.onAction(blue, m2);
-//
-//		Move m3 = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, 10);
-//		Assert.assertEquals(true, b.isValid(m3, red));
-//		int carrotsBefore = red.getCarrotsAvailable();
-//
-//		game.onAction(red, m3);
-//		Assert.assertEquals(carrotsBefore + 10, red.getCarrotsAvailable());
-//	}
-//
-//	/**
-//	 * Simuliert das Ablegen von Karotten auf einem Karottenfeld
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void dropCarrotsCycle() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		int carrotsAt = b.getNextFieldByTyp(FieldTyp.CARROT, 0);
-//		Move m1 = new Move(MoveTyp.MOVE, carrotsAt);
-//		game.onAction(red, m1);
-//
-//		Move m2 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(FieldTyp.CARROT,
-//				red.getFieldNumber()));
-//		game.onAction(blue, m2);
-//
-//		Move m3 = new Move(MoveTyp.TAKE_OR_DROP_CARROTS, -10);
-//		Assert.assertEquals(true, b.isValid(m3, red));
-//		int carrotsBefore = red.getCarrotsAvailable();
-//
-//		game.onAction(red, m3);
-//		Assert.assertEquals(carrotsBefore - 10, red.getCarrotsAvailable());
-//	}
-//
-//	/**
-//	 * Auf einem Karottenfeld darf kein Hasenjoker gespielt werden
-//	 */
-//	@Test
-//	public void actioncardOnFieldTypCarrot()
-//	{
-//		int field = b.getNextFieldByTyp(FieldTyp.CARROT, 0);
-//		red.setFieldNumber(field);
-//
-//		Move m1 = new Move(MoveTyp.PLAY_CARD, Action.EAT_SALAD);
-//		Assert.assertEquals(false, b.isValid(m1, red));
-//
-//		Move m2 = new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK);
-//		Assert.assertEquals(false, b.isValid(m2, red));
-//
-//		Move m3 = new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD);
-//		Assert.assertEquals(false, b.isValid(m3, red));
-//
-//		Move m4 = new Move(MoveTyp.PLAY_CARD, Action.TAKE_OR_DROP_CARROTS);
-//		Assert.assertEquals(false, b.isValid(m4, red));
-//	}
-//
-//	/**
-//	 * Ein Spieler darf nicht direkt auf ein Igelfeld ziehen;
-//	 */
-//	@Test
-//	public void directMoveOntoHedgehog()
-//	{
-//		int hedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0);
-//
-//		// direkter zug
-//		Move m1 = new Move(MoveTyp.MOVE, hedgehog);
-//		Assert.assertEquals(false, b.isValid(m1, red));
-//
-//		blue.setFieldNumber(hedgehog + 1);
-//		int rabbit = b
-//				.getNextFieldByTyp(FieldTyp.RABBIT, blue.getFieldNumber());
-//		red.setFieldNumber(rabbit);
-//
-//		// mit fallback
-//		Move m2 = new Move(MoveTyp.PLAY_CARD, Action.FALL_BACK);
-//		Assert.assertEquals(false, b.isValid(m2, red));
-//
-//		blue.setFieldNumber(hedgehog - 1);
-//		rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-//		red.setFieldNumber(rabbit);
-//
-//		// mit hurry ahead
-//		Move m3 = new Move(MoveTyp.PLAY_CARD, Action.HURRY_AHEAD);
-//		Assert.assertEquals(false, b.isValid(m3, red));
-//	}
-//
-//	/**
-//	 * Ohne Hasenjoker darf man kein Hasenfeld betreten!
-//	 */
-//	@Test
-//	public void moveOntoRabbitWithoutCard()
-//	{
-//		int rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-//		red.setActions(Arrays.asList(new Action[] {}));
-//		Move m = new Move(MoveTyp.MOVE, rabbit);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//	}
-//
-//	/**
-//	 * Indirekte Züge auf einen Igel sind nicht erlaubt
-//	 */
-//	@Test
-//	public void indirectHurryAheadOntoHedgehog()
-//	{
-//		int hedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0);
-//		blue.setFieldNumber(hedgehog - 1);
-//
-//		int rabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-//		red.setActions(Arrays.asList(Action.HURRY_AHEAD));
-//
-//		Move m = new Move(MoveTyp.MOVE, rabbit);
-//		Assert.assertEquals(false, b.isValid(m, red));
-//	}
-//
-//	/**
-//	 * Indirekte Züge auf einen Hasen sind nur erlaubt, wenn man danach noch
-//	 * einen Hasenjoker anwenden kann.
-//	 */
-//	@Test
-//	public void indirectHurryAheadOntoRabbit()
-//	{
-//		int firstRabbit = b.getNextFieldByTyp(FieldTyp.RABBIT, 0);
-//		int secondRabbit = b
-//				.getNextFieldByTyp(FieldTyp.RABBIT, firstRabbit + 1);
-//
-//		blue.setFieldNumber(secondRabbit - 1);
-//		red.setActions(Arrays.asList(Action.HURRY_AHEAD));
-//
-//		Move m1 = new Move(MoveTyp.MOVE, firstRabbit);
-//		Assert.assertEquals(false, b.isValid(m1, red));
-//
-//		red.setActions(Arrays.asList(new Action[] { Action.HURRY_AHEAD,
-//				Action.EAT_SALAD }));
-//		Assert.assertEquals(true, b.isValid(m1, red));
-//	}
-//
-//	/**
-//	 * Ein Spieler darf sich auf ein Igelfeld zurückfallen lassen.
-//	 */
-//	@Test
-//	public void fallback()
-//	{
-//		int firstHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0);
-//
-//		int carrotAfter = b.getNextFieldByTyp(FieldTyp.CARROT,
-//				firstHedgehog + 1);
-//		red.setFieldNumber(carrotAfter);
-//
-//		Move m = new Move(MoveTyp.FALL_BACK);
-//		Assert.assertTrue(b.isValid(m, red));
-//	}
-//
-//	/**
-//	 * Simuliert den Verlauf einer Zurückfallen-Aktion
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void fallbackCycle() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		int firstHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, 0);
-//		int carrotAfter = b.getNextFieldByTyp(FieldTyp.CARROT,
-//				firstHedgehog + 1);
-//
-//		Move r1 = new Move(MoveTyp.MOVE, carrotAfter);
-//		red.setCarrotsAvailable(200);
-//		game.onAction(red, r1);
-//
-//		Move b1 = new Move(MoveTyp.MOVE, b
-//				.getNextFieldByTyp(FieldTyp.CARROT, 0));
-//		game.onAction(blue, b1);
-//
-//		Move r2 = new Move(MoveTyp.FALL_BACK);
-//		int carrotsBefore = red.getCarrotsAvailable();
-//		int diff = red.getFieldNumber() - firstHedgehog;
-//		game.onAction(red, r2);
-//
-//		Assert.assertEquals(carrotsBefore + diff * 10, red
-//				.getCarrotsAvailable());
-//	}
-//
-//	/**
-//	 * Ein Spieler kann sich zweimal hintereinander zurückfallen lassen
-//	 *
-//	 * @throws RescueableClientException
-//	 */
-//	@Test
-//	public void fallbackTwice() throws RescueableClientException
-//	{
-//		game.start();
-//
-//		int firstHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, red
-//				.getFieldNumber());
-//		int carrotAt = b.getNextFieldByTyp(FieldTyp.CARROT, firstHedgehog);
-//		int secondHedgehog = b.getNextFieldByTyp(FieldTyp.HEDGEHOG, carrotAt);
-//		carrotAt = b.getNextFieldByTyp(FieldTyp.CARROT, secondHedgehog);
-//
-//		red.setFieldNumber(carrotAt);
-//		Move r1 = new Move(MoveTyp.FALL_BACK);
-//		game.onAction(red, r1);
-//		Assert.assertEquals(red.getFieldNumber(), secondHedgehog);
-//
-//		Move b1 = new Move(MoveTyp.MOVE, b.getNextFieldByTyp(
-//				FieldTyp.POSITION_2, 0));
-//		game.onAction(blue, b1);
-//
-//		Move r2 = new Move(MoveTyp.FALL_BACK);
-//		Assert.assertTrue(b.isValid(r2, red));
-//		game.onAction(red, r2);
-//		Assert.assertEquals(red.getFieldNumber(), firstHedgehog);
-//	}
+	/**
+	 * Checks if round is set correctly and currentPlayer is updated
+	 *
+	 */
+	@Test
+	public void turnCounting() throws RescuableClientException, InvalidMoveException
+	{
+    List<Action> actions = new ArrayList<>();
+		Assert.assertEquals(0, state.getRound());
+		int firstCarrot = state.getNextFieldByType(FieldType.CARROT, red
+				.getFieldIndex());
+		actions.add(new Advance(firstCarrot));
+		Move move = new Move(actions);
+		move.perform(state);
+
+		Assert.assertEquals(0, state.getRound());
+		int nextCarrot = state.getNextFieldByType(FieldType.CARROT, red
+				.getFieldIndex());
+		actions.clear();
+		actions.add(new Advance(nextCarrot - blue.getFieldIndex()));
+		move = new Move(actions);
+		move.perform(state);
+
+		Assert.assertEquals(1, state.getRound());
+		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, red
+				.getFieldIndex());
+		actions.clear();
+		actions.add(new Advance(rabbitAt - red.getFieldIndex()));
+		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, 1));
+    move = new Move(actions);
+    move.perform(state);
+
+		Assert.assertEquals(1, state.getRound());
+		nextCarrot = state
+				.getNextFieldByType(FieldType.CARROT, blue.getFieldIndex());
+		actions.clear();
+		actions.add(new Advance(nextCarrot - blue.getFieldIndex()));
+    move = new Move(actions);
+		move.perform(state);
+
+		Assert.assertEquals(red, state.getCurrentPlayer());
+
+		Assert.assertEquals(2, state.getRound());
+	}
+
+	/**
+	 * Checks reaching of goal
+	 *
+	 */
+	@Test
+	public void enterGoalCycle() throws RescuableClientException, InterruptedException, InvalidMoveException
+	{
+		int lastCarrot = state.getPreviousFieldByType(FieldType.CARROT, 64);
+		int preLastCarrot = state
+				.getPreviousFieldByType(FieldType.CARROT, lastCarrot);
+		red.setFieldIndex(lastCarrot);
+		blue.setFieldIndex(preLastCarrot);
+
+		red.setCarrotsAvailable(GameRuleLogic.calculateCarrots(64 - lastCarrot));
+		blue
+				.setCarrotsAvailable(GameRuleLogic
+						.calculateCarrots(64 - preLastCarrot) + 1);
+		red.setSalads(0);
+		blue.setSalads(0);
+		List<Action> actions = new ArrayList<>();
+		actions.add(new Advance(64 - red.getFieldIndex()));
+		Move move = new Move(actions);
+
+		move.perform(state);
+		Assert.assertTrue(red.inGoal());
+
+		actions.clear();
+		actions.add(new Advance(64 - blue.getFieldIndex()));
+		move = new Move(actions);
+		move.perform(state);
+		Assert.assertTrue(blue.inGoal());
+		Assert.assertTrue(state.isFirst(red));
+		Assert.assertTrue(game.checkGameOverCondition());
+		Assert.assertEquals(PlayerColor.RED, game.checkGoalReached().getPlayerColor());
+	}
+
+	/**
+	 * Only when newly entering a rabbit field a card has to be played
+	 *
+	 */
+	@Test
+	public void mustPlayCard() throws InvalidMoveException
+	{
+	  List<Action> actions = new ArrayList<>();
+	  actions.add(new Advance(state.getNextFieldByType(FieldType.RABBIT,0)));
+	  actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 1));
+    Move move = new Move(actions);
+		move.perform(state);
+
+    actions.clear();
+    actions.add(new Advance(state.getNextFieldByType(FieldType.CARROT,0)));
+    move = new Move(actions);
+		move.perform(state);
+
+		Assert.assertFalse(red.mustPlayCard());
+	}
+
+	/**
+	 * Checks whether a player is allowed to Skip
+	 * Testing with:
+	 * - 0 carrots and opponent is on previous hedgehog field
+	 */
+	@Test
+	public void canSkip() throws InvalidMoveException
+	{
+    List<Action> actions = new ArrayList<>();
+		int redPos = state.getNextFieldByType(FieldType.POSITION_2, red.getFieldIndex());
+		red.setFieldIndex(redPos);
+		red.setCarrotsAvailable(0);
+
+		int bluePos = state.getPreviousFieldByType(FieldType.HEDGEHOG, red.getFieldIndex());
+		blue.setFieldIndex(bluePos);
+    actions.add(new Skip());
+
+		Move move = new Move(actions);
+		move.perform(state); // test whether red can Skip
+    try {
+      move.perform(state); // test whether blue can Skip
+      Assert.fail("Blue is not allowed to Skip");
+    } catch(InvalidMoveException e) {
+      // everything is fine
+    }
+	}
+
+	/**
+	 * Checks all possibilities of a player to get carrots from position fields
+   * (as first or as second)
+	 */
+	@Test
+	public void onPositionField() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		red.setCarrotsAvailable(5000);
+		blue.setCarrotsAvailable(5000);
+		int redCarrotsBefore = red.getCarrotsAvailable();
+		int pos1At = state.getPreviousFieldByType(FieldType.POSITION_1,
+            state.getPreviousFieldByType(FieldType.POSITION_1, 64));
+		actions.add(new Advance(pos1At));
+		int redMoveCosts = GameRuleLogic.calculateCarrots(pos1At);
+		Move move = new Move(actions);
+		move.perform(state);
+
+		Assert.assertEquals(redCarrotsBefore - redMoveCosts, red
+				.getCarrotsAvailable());
+    actions.clear();
+
+		int blueCarrotsBefore = blue.getCarrotsAvailable();
+		int pos2At = state.getPreviousFieldByType(FieldType.POSITION_2, pos1At);
+		actions.add(new Advance(pos2At));
+		move = new Move(actions);
+		int blueMoveCosts = GameRuleLogic.calculateCarrots(pos2At);
+		move.perform(state);
+		actions.clear();
+
+		Assert.assertEquals(state.getCurrentPlayer(), red);
+		Assert.assertEquals(redCarrotsBefore - redMoveCosts + 10, red
+				.getCarrotsAvailable()); // assert that red got 10 carrots for being first
+
+    actions.add(new Advance(state.getNextFieldByType(FieldType.CARROT,
+            red.getFieldIndex()) - red.getFieldIndex())); // random valid move from red
+    move = new Move(actions);
+    move.perform(state);
+
+		Assert.assertEquals(state.getCurrentPlayer(), blue);
+		Assert.assertEquals(blueCarrotsBefore - blueMoveCosts + 30, blue
+				.getCarrotsAvailable()); // assert that red got 30 carrots for being second
+	}
+
+	/**
+	 * Checks whether it is only allowed to drop 20 carrots iff player has at least 20
+	 */
+	@Test
+	public void playDropCarrotsCard() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		red.setFieldIndex(state.getNextFieldByType(FieldType.RABBIT, 0));
+		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, -20 ,0));
+
+		Assert.assertTrue(red.getCarrotsAvailable() > 20);
+		Move move = new Move(actions);
+		move.perform(state);
+
+		blue.setCarrotsAvailable(19);
+		try {
+      move.perform(state);
+      Assert.fail("Not enough carrots");
+    } catch (InvalidMoveException e) {
+      // everything is fine
+    }
+	}
+
+	/**
+	 * Checks the conditions for advancing to the goal field
+	 */
+	@Test
+	public void enterGoal()
+	{
+		int carrotAt = state.getPreviousFieldByType(FieldType.CARROT, 64);
+		red.setFieldIndex(carrotAt);
+		int toGoal = 64 - red.getFieldIndex();
+		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, toGoal));
+
+		red.setCarrotsAvailable(10);
+    Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, toGoal));
+
+		red.setSalads(0);
+		Assert.assertTrue(red.getSalads() == 0);
+		Assert.assertTrue(red.getCarrotsAvailable() <= 10);
+    Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, toGoal));
+	}
+
+	/**
+	 * Checks whether game ends only after a round (blue has last move)
+	 */
+	@Test
+	public void blueHasLastMove() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		int carrotAt = state.getPreviousFieldByType(FieldType.CARROT, 64);
+		red.setFieldIndex(carrotAt);
+		int toGoal = 64 - red.getFieldIndex();
+		actions.add(new Advance(toGoal));
+		red.setCarrotsAvailable(10);
+		red.setSalads(0);
+    Move move = new Move(actions);
+		move.perform(state);
+		Assert.assertFalse(game.checkGameOverCondition());
+	}
+
+	/**
+	 * Checks whether game ends only after a round (red has no last move)
+	 */
+	@Test
+	public void redHasNoLastMove() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+    int firstCarrot = state.getNextFieldByType(FieldType.CARROT, 0);
+    actions.add(new Advance(firstCarrot));
+		Move move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+		int carrotAt = state.getPreviousFieldByType(FieldType.CARROT, 64);
+		blue.setFieldIndex(carrotAt);
+		int toGoal = 64 - blue.getFieldIndex();
+		actions.add(new Advance(toGoal));
+		blue.setCarrotsAvailable(10);
+		blue.setSalads(0);
+    move = new Move(actions);
+		move.perform(state);
+    Assert.assertTrue(game.checkGameOverCondition());
+	}
+
+	/**
+	 * Checks the conditions for eating a salad on a salad field
+	 */
+	@Test
+	public void eatSalad()
+	{
+		int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
+		red.setFieldIndex(saladAt);
+		Assert.assertTrue(GameRuleLogic.isValidToEat(state));
+		red.setSalads(0);
+		Assert.assertFalse(GameRuleLogic.isValidToEat(state));
+	}
+
+	/**
+	 * Checks the perform method for eating salad
+	 *
+	 */
+	@Test
+	public void eatSaladCycle() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		red.setCarrotsAvailable(100);
+		int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
+    int carrotAt = state.getNextFieldByType(FieldType.CARROT, 0);
+    actions.add(new Advance(saladAt));
+		Move move = new Move(actions);
+		move.perform(state);
+    actions.clear();
+
+		actions.add(new Advance(carrotAt));
+		move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		int before = red.getSalads();
+		actions.add(new EatSalad());
+		move = new Move(actions);
+		move.perform(state);
+		Assert.assertEquals(before - 1, red.getSalads());
+	}
+
+	/**
+	 * Checks the perform method when using a rabbit joker
+	 */
+	@Test
+	public void playCardCycle() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, 0);
+		actions.add(new Advance(rabbitAt));
+		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, 1));
+		Move move = new Move(actions);
+    Assert.assertTrue(red.getCards().contains(CardType.TAKE_OR_DROP_CARROTS));
+		move.perform(state);
+		actions.clear();
+		Assert.assertFalse(red.getCards().contains(CardType.TAKE_OR_DROP_CARROTS));
+	}
+
+	/**
+	 * Checks the perform method when taking carrots
+	 *
+	 */
+	@Test
+	public void takeCarrotsCycle() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		int carrotsAt = state.getNextFieldByType(FieldType.CARROT, 0);
+		actions.add(new Advance(carrotsAt));
+		Move move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+    carrotsAt = state.getNextFieldByType(FieldType.CARROT, red.getFieldIndex());
+    actions.add(new Advance(carrotsAt));
+    move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		actions.add(new ExchangeCarrots(10));
+		Assert.assertTrue(GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		int carrotsBefore = red.getCarrotsAvailable();
+    move = new Move(actions);
+		move.perform(state);
+		Assert.assertEquals(carrotsBefore + 10, red.getCarrotsAvailable());
+	}
+
+	/**
+	 * Checks the perform method when dropping carrots
+	 *
+	 */
+	@Test
+	public void dropCarrotsCycle() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		int carrotsAt = state.getNextFieldByType(FieldType.CARROT, 0);
+		actions.add(new Advance(carrotsAt));
+		Move move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		carrotsAt = state.getNextFieldByType(FieldType.CARROT, red.getFieldIndex());
+		actions.add(new Advance(carrotsAt));
+		move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		actions.add(new ExchangeCarrots(-10));
+		move = new Move(actions);
+		Assert.assertTrue(GameRuleLogic.isValidToTakeOrDrop10Carrots(state,-10));
+		int carrotsBefore = red.getCarrotsAvailable();
+
+		move.perform(state);
+		Assert.assertEquals(carrotsBefore - 10, red.getCarrotsAvailable());
+	}
+
+	/**
+	 * Checks that a rabbit joker can only be played on a rabbit field
+	 */
+	@Test
+	public void actioncardOnField()
+	{
+    Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+		int carrotAt = state.getNextFieldByType(FieldType.CARROT, 0);
+    int pos1At = state.getNextFieldByType(FieldType.POSITION_1, 0);
+    int pos2At = state.getNextFieldByType(FieldType.POSITION_2, 0);
+    int hedgehogAt = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
+    int goalAt = state.getNextFieldByType(FieldType.GOAL, 0);
+    int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
+
+		red.setFieldIndex(carrotAt);
+		Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+
+    red.setFieldIndex(pos1At);
+    Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+
+    red.setFieldIndex(pos2At);
+    Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+
+    red.setFieldIndex(hedgehogAt);
+    Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+
+    red.setFieldIndex(goalAt);
+    Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+
+    red.setFieldIndex(saladAt);
+    Assert.assertFalse(GameRuleLogic.canPlayCard(state));
+
+	}
+
+	/**
+	 * It is not allowed to advance to a hedgehog field or to use a card to move to it
+	 */
+	@Test
+	public void directMoveOntoHedgehog() {
+		int hedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
+
+		// advance
+		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, hedgehog));
+
+		// fall back
+		blue.setFieldIndex(hedgehog + 1);
+		int rabbit = state.getNextFieldByType(FieldType.RABBIT, blue.getFieldIndex());
+    red.setFieldIndex(rabbit);
+
+    Assert.assertFalse(GameRuleLogic.isValidToPlayFallBack(state));
+
+
+		// hurry ahead
+    blue.setFieldIndex(hedgehog - 1);
+    rabbit = state.getNextFieldByType(FieldType.RABBIT, 0);
+    red.setFieldIndex(rabbit);
+		Assert.assertFalse(GameRuleLogic.isValidToPlayHurryAhead(state));
+	}
+
+	/**
+	 * It is not allowed to enter a rabbit field without a card
+	 */
+	@Test
+	public void moveOntoRabbitWithoutCard()
+	{
+		int rabbit = state.getNextFieldByType(FieldType.RABBIT, 0);
+		red.setCards(Collections.emptyList());
+		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, rabbit));
+	}
+
+	/**
+	 * It is not allowed a use a rabbit koker to enter a rabbit field, if no other rabbit card is available
+	 */
+	@Test
+	public void indirectHurryAheadOntoRabbit()
+	{
+		int firstRabbit = state.getNextFieldByType(FieldType.RABBIT, 0);
+		int secondRabbit = state.getNextFieldByType(FieldType.RABBIT, firstRabbit + 1);
+
+		blue.setFieldIndex(secondRabbit - 1);
+		red.setCards(Collections.singletonList(CardType.HURRY_AHEAD));
+
+		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, firstRabbit));
+    ArrayList<CardType> cards = new ArrayList<>();
+    cards.add(CardType.HURRY_AHEAD);
+    cards.add(CardType.EAT_SALAD);
+		red.setCards(cards);
+		Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, firstRabbit));
+	}
+
+	/**
+	 * Checks if a player is allowed to fall back to a hedgehog field
+	 */
+	@Test
+	public void fallback()
+	{
+		int firstHedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
+
+		int carrotAfter = state.getNextFieldByType(FieldType.CARROT,firstHedgehog + 1);
+		red.setFieldIndex(carrotAfter);
+
+		Assert.assertTrue(GameRuleLogic.isValidToFallBack(state));
+	}
+
+	/**
+	 * Checks to perform method when falling back
+	 */
+	@Test
+	public void fallbackCycle() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		int firstHedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
+		int carrotAfter = state.getNextFieldByType(FieldType.CARROT,
+				firstHedgehog + 1);
+    actions.add(new Advance(carrotAfter));
+		red.setCarrotsAvailable(200);
+		Move move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		actions.add(new Advance(state.getNextFieldByType(FieldType.CARROT, 0)));
+
+		move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		actions.add(new FallBack());
+		int carrotsBefore = red.getCarrotsAvailable();
+		int diff = red.getFieldIndex() - firstHedgehog;
+		move = new Move(actions);
+		move.perform(state);
+		Assert.assertEquals(carrotsBefore + diff * 10, red.getCarrotsAvailable());
+	}
+
+	/**
+	 * A player is allowed to fall back, even if he did the same last turn
+	 */
+	@Test
+	public void fallbackTwice() throws InvalidMoveException {
+    List<Action> actions = new ArrayList<>();
+		int firstHedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, red
+				.getFieldIndex());
+		int carrotAt = state.getNextFieldByType(FieldType.CARROT, firstHedgehog);
+		int secondHedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, carrotAt);
+		carrotAt = state.getNextFieldByType(FieldType.CARROT, secondHedgehog);
+
+		red.setFieldIndex(carrotAt);
+		actions.add(new FallBack());
+		Move move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		Assert.assertEquals(red.getFieldIndex(), secondHedgehog);
+
+		actions.add(new Advance(state.getNextFieldByType(FieldType.POSITION_2, 0)));
+		move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		actions.add(new FallBack());
+		Assert.assertTrue(GameRuleLogic.isValidToFallBack(state));
+		move = new Move(actions);
+		move.perform(state);
+		Assert.assertEquals(red.getFieldIndex(), firstHedgehog);
+	}
 }
