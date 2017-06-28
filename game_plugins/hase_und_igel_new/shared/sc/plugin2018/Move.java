@@ -185,6 +185,9 @@ public class Move implements Cloneable {
       state.setLastAction(action);
       index++;
     }
+    if (state.getCurrentPlayer().mustPlayCard()) {
+      throw new InvalidMoveException("Es muss eine Karte ausgespielt werden.");
+    }
     // prepare next turn
     state.setLastMove(this);
     state.updateCurrentPlayer();

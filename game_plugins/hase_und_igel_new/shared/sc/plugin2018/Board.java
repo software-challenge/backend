@@ -178,6 +178,7 @@ public class Board
   @Override
   public Board clone() throws CloneNotSupportedException {
     Board clone = new Board();
+    clone.track.clear();
     for (Field field : this.track) {
       clone.track.add((Field) field.clone());
     }

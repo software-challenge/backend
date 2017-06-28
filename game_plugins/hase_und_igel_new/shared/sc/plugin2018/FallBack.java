@@ -21,8 +21,10 @@ public class FallBack extends Action {
   @Override
   public void perform(GameState state) throws InvalidMoveException {
     if (GameRuleLogic.isValidToFallBack(state)) {
-      state.getCurrentPlayer().setFieldNumber(state.getPreviousFieldByType(FieldType.HEDGEHOG, state.getCurrentPlayer()
+      int previousFieldIndex = state.getCurrentPlayer().getFieldIndex();
+      state.getCurrentPlayer().setFieldIndex(state.getPreviousFieldByType(FieldType.HEDGEHOG, state.getCurrentPlayer()
               .getFieldIndex()));
+      state.getCurrentPlayer().changeCarrotsAvailableBy(10 * (previousFieldIndex - state.getCurrentPlayer().getFieldIndex()));
     } else {
       throw new InvalidMoveException("Es kann gerade kein Rückzug gemacht werden.");
     }

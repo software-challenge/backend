@@ -37,9 +37,6 @@ public class Game extends RoundBasedGameInstance<Player>
 	@XStreamOmitField
 	private List<PlayerColor>		availableColors	= new LinkedList<PlayerColor>();
 
-  @XStreamOmitField
-  private int halfturns = 0;
-
   private GameState gameState = new GameState();
 
   public GameState getGameState() {
@@ -64,9 +61,15 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected boolean checkGameOverCondition()
 	{
-	  // you can only win at the end of a round
-	  // check if salads are used
-	  // check if less than 10 carrots
+	  if (gameState.getTurn() % 2 == 1) {
+	    return false; // you can only win at the end of a round
+    }
+    // check if salads are used
+    // check if less or equal than 10 carrots
+    if((gameState.getRedPlayer().getSalads() == 0 && gameState.getRedPlayer().getCarrotsAvailable() <= 10) ||
+            (gameState.getBluePlayer().getSalads() == 0 && gameState.getBluePlayer().getCarrotsAvailable() <= 10)) {
+	    return true;
+    }
 		return false;
 	}
 
@@ -90,11 +93,8 @@ public class Game extends RoundBasedGameInstance<Player>
       }
 
       final Move move = (Move) data;
-      // XXX this.gameState = move.perform(this.gameState, author);
       move.perform(this.gameState);
-      this.halfturns++;
       next(this.gameState.getCurrentPlayer());
-      onPlayerChange(this.getGameState().getOtherPlayer()); // check this
     } catch (InvalidMoveException e) {
       author.setViolated(true);
       String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
@@ -157,23 +157,6 @@ public class Game extends RoundBasedGameInstance<Player>
 
     notifyOnGameOver(res);
   }
-
-	private void onPlayerChange(Player player)
-	{
-		switch (this.gameState.getBoard().getTypeAt(player.getFieldIndex()))
-		{
-			case POSITION_1:
-				if (this.gameState.isFirst(player))
-					player.changeCarrotsAvailableBy(10);
-				break;
-			case POSITION_2:
-				if (!this.gameState.isFirst(player))
-					player.changeCarrotsAvailableBy(30);
-				break;
-			default:
-				break;
-		}
-	}
 
   /**
    * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
@@ -264,6 +247,9 @@ public class Game extends RoundBasedGameInstance<Player>
    *         yet met.
    */
   public WinCondition checkWinCondition() {
+    if (!checkGameOverCondition()) {
+      return null;
+    }
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached
@@ -273,7 +259,7 @@ public class Game extends RoundBasedGameInstance<Player>
       } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
         winner = PlayerColor.BLUE;
       } else {
-        if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS]) {
+        if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS]) {
           winner = PlayerColor.BLUE;  
         } else {
           // red wins on draw, because red first entered the goal
@@ -295,12 +281,12 @@ public class Game extends RoundBasedGameInstance<Player>
    * @return the player who reached the goal or null if no player reached the
    *         goal, only returns a player on the end of a round else always null
    */
-  private Player checkGoalReached() {
-    if (this.halfturns % 2 == 1) {
+  public Player checkGoalReached() {
+    if (this.gameState.getTurn() % 2 == 0) {
       Player red = this.gameState.getRedPlayer();
       Player blue = this.gameState.getBluePlayer();
       if (red.inGoal()) {
-        if (blue.inGoal() && red.getCarrotsAvailable() < blue.getCarrotsAvailable()) {
+        if (blue.inGoal() && blue.getCarrotsAvailable() < red.getCarrotsAvailable()) {
           return blue;
         }
         return red;

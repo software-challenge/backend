@@ -201,7 +201,7 @@ public class Player extends SimplePlayer implements Cloneable
 		return index;
 	}
 
-	public final void setFieldNumber(final int pos)
+	public final void setFieldIndex(final int pos)
 	{
 		index = pos;
 	}

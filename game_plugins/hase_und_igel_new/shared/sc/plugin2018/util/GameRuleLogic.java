@@ -90,7 +90,7 @@ public class GameRuleLogic
           e.printStackTrace();
         }
         state2.setLastAction(new Advance(distance));
-        state2.getCurrentPlayer().setFieldNumber(newPosition);
+        state2.getCurrentPlayer().setFieldIndex(newPosition);
         state2.getCurrentPlayer().changeCarrotsAvailableBy(-requiredCarrots);
 				valid = valid && canPlayAnyCard(state2);
 				break;
@@ -293,8 +293,6 @@ public class GameRuleLogic
 				valid = valid && player.getSalads() > 0;
 				break;
 			case RABBIT:
-				Player p2 = player.clone();
-				p2.setFieldNumber(nextPos);
         GameState state2 = null;
         try {
           state2 = state.clone();
@@ -302,7 +300,7 @@ public class GameRuleLogic
           e.printStackTrace();
         }
         state2.setLastAction(new Card(CardType.HURRY_AHEAD));
-				p2.setCards(player.getCardsWithout(CardType.FALL_BACK));
+				state2.getCurrentPlayer().setCards(player.getCardsWithout(CardType.FALL_BACK));
 				valid = valid && canPlayAnyCard(state2);
 				break;
 			case CARROT:
@@ -342,8 +340,6 @@ public class GameRuleLogic
 				valid = valid && player.getSalads() > 0;
 				break;
 			case RABBIT:
-				Player p2 = player.clone();
-				p2.setFieldNumber(nextPos);
         GameState state2 = null;
         try {
           state2 = state.clone();
@@ -351,7 +347,7 @@ public class GameRuleLogic
           e.printStackTrace();
         }
         state2.setLastAction(new Card(CardType.HURRY_AHEAD));
-				p2.setCards(player.getCardsWithout(CardType.HURRY_AHEAD));
+				state2.getCurrentPlayer().setCards(player.getCardsWithout(CardType.HURRY_AHEAD));
 				valid = valid && canPlayAnyCard(state2);
 				break;
 			case GOAL:
@@ -497,5 +493,14 @@ public class GameRuleLogic
 			canMove = canMove || isValidToAdvance(state, i);
 		}
 		return canMove;
+	}
+
+	/**
+	 * Überprüft ob eine Karte gespielt werden muss. Sollte nach einem
+	 * Zug eines Spielers immer false sein, ansonsten ist Zug ungültig.
+	 * @param state derzeitiger GameState
+	 */
+	public static boolean mustPlayerCard(GameState state) {
+		return state.getCurrentPlayer().mustPlayCard();
 	}
 }
