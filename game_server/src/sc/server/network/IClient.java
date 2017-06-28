@@ -1,11 +1,25 @@
 package sc.server.network;
 
-
+/**
+ * Client interface, which is used to send packages to the server
+ */
 public interface IClient
 {
-	void addRole(IClientRole role);
+  /**
+   * Add role to the client.
+   * @param role to be added
+   */
+  void addRole(IClientRole role);
 
-	void send(Object toSend);
+  /**
+   * Send a package.
+   * @param packet to be send
+   */
+  void send(Object packet);
 
-	void sendAsynchronous(Object packet);
+  /**
+   * Send a package asynchronous.
+   * @param packet to be send
+   */
+  void sendAsynchronous(Object packet);
 }

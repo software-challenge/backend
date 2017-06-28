@@ -1,15 +1,13 @@
 package sc.protocol.requests;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import sc.protocol.responses.PrepareGameResponse;
-import sc.shared.SlotDescriptor;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import sc.protocol.responses.PrepareGameResponse;
+import sc.shared.SlotDescriptor;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @XStreamAlias("prepare")
 public class PrepareGameRequest implements ILobbyRequest,
@@ -21,7 +19,7 @@ public class PrepareGameRequest implements ILobbyRequest,
 	@XStreamImplicit(itemFieldName = "slot")
 	private final List<SlotDescriptor>	slotDescriptors;
 
-
+  // i.e. GameState
 	private Object loadGameInfo = null;
 
 	/**
@@ -57,10 +55,6 @@ public class PrepareGameRequest implements ILobbyRequest,
 		// Add two players, named Player1 and Player2
 		this.slotDescriptors.add(descriptor1);
 		this.slotDescriptors.add(descriptor2);
-	}
-
-	public void setLoadGameInfo(Object info) {
-		this.loadGameInfo = info;
 	}
 
 	public Object getLoadGameInfo() {

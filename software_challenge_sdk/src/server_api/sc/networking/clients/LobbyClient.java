@@ -264,10 +264,10 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	}
 
 	public RequestResult<PrepareGameResponse> prepareGameAndWait(
-			String gameType, SlotDescriptor... descriptors)
+			String gameType, SlotDescriptor descriptor1, SlotDescriptor descriptor2)
 			throws InterruptedException
 	{
-		return blockingRequest(new PrepareGameRequest(gameType, descriptors),
+		return blockingRequest(new PrepareGameRequest(gameType, descriptor1, descriptor2),
 				PrepareGameResponse.class);
 	}
 

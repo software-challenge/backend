@@ -688,18 +688,30 @@ public class GameRoom implements IGameListener
 		return this.status;
 	}
 
+  /**
+   * Update the {@link GameStatus status} of current Game
+   * @param status status to be set
+   */
 	protected void setStatus(GameStatus status)
 	{
 		logger.info("Updating Status to {} (was: {})", status, getStatus());
 		this.status = status;
 	}
 
+  /**
+   * Remove specific player by calling {@link IGameInstance#onPlayerLeft(SimplePlayer) onPlayerLeft(player)}
+   * @param player to be removed
+   */
 	public void removePlayer(SimplePlayer player)
 	{
 		logger.info("Removing {} from {}", player, this);
 		this.game.onPlayerLeft(player);
 	}
 
+  /**
+   * Get the saved {@link GameResult result}
+   * @return GameResult Object
+   */
 	public GameResult getResult()
 	{
 		return this.result;

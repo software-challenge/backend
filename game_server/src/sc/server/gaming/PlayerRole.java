@@ -6,52 +6,84 @@ import sc.protocol.responses.RoomPacket;
 import sc.server.network.IClient;
 import sc.server.network.IClientRole;
 
+/**
+ * PlayerRole is a {@link IClientRole role}, which can send moves and receive data.
+ * It does not have administrative rights.
+ */
 public class PlayerRole implements IClientRole, IPlayerListener
 {
-	private IClient		client;
+  /* private fields */
+  private IClient		client;		//Actual Server-client, to send Packages
 
-	private SimplePlayer		player;
+  private SimplePlayer		player;  //XStream player Object, basically a wrapper
 
-	private PlayerSlot	playerSlot;
+  private PlayerSlot	playerSlot; //The slot in GameRoom, which it occupies
 
-	public PlayerRole(IClient owner, PlayerSlot slot)
-	{
-		this.client = owner;
-		this.playerSlot = slot;
-	}
+  /* constructor */
+  public PlayerRole(IClient owner, PlayerSlot slot)
+  {
+    this.client = owner;
+    this.playerSlot = slot;
+  }
 
-	@Override
-	public IClient getClient()
-	{
-		return this.client;
-	}
+  /* methods */
 
-	public SimplePlayer getPlayer()
-	{
-		return this.player;
-	}
+  /**
+   * Getter for {@link IClient client}
+   * @return the client
+   */
+  @Override
+  public IClient getClient()
+  {
+    return this.client;
+  }
 
-	public PlayerSlot getPlayerSlot()
-	{
-		return this.playerSlot;
-	}
+  /**
+   * Getter for {@link SimplePlayer player}.
+   * @return the player
+   */
+  public SimplePlayer getPlayer()
+  {
+    return this.player;
+  }
 
-	@Override
-	public void onPlayerEvent(Object o)
-	{
-		this.client.send(new RoomPacket(
-				getPlayerSlot().getRoom().getId(), o));
-	}
+  /**
+   * Getter for {@link PlayerSlot playerslot}.
+   * @return the playerslot
+   */
+  public PlayerSlot getPlayerSlot()
+  {
+    return this.playerSlot;
+  }
 
-	public void setPlayer(SimplePlayer player)
-	{
-		this.player = player;
-		this.player.addPlayerListener(this);
-	}
+  /**
+   * Called when a move is requested. It will send a {@link RoomPacket roompacket} to the server
+   * @param o message Object
+   */
+  @Override
+  public void onPlayerEvent(Object o)
+  {
+    this.client.send(new RoomPacket(
+            getPlayerSlot().getRoom().getId(), o));
+  }
 
-	@Override
-	public void close()
-	{
-		getPlayerSlot().close();
-	}
+  /**
+   * Setter for the player.
+   * @param player
+   */
+  public void setPlayer(SimplePlayer player)
+  {
+    this.player = player;
+    this.player.addPlayerListener(this);
+  }
+
+  /**
+   * Called when client disconnects. It will close the {@link PlayerSlot playerslot}, which this Object
+   * occupies
+   */
+  @Override
+  public void close()
+  {
+    getPlayerSlot().close();
+  }
 }
