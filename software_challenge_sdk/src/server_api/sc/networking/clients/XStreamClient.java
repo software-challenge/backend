@@ -212,7 +212,6 @@ public abstract class XStreamClient
 	public void sendCustomData(byte[] data) throws IOException
 	{
 		logger.warn("Sending Custom data (size={})", data.length);
-
 		this.networkInterface.getOutputStream().write(data);
 		this.networkInterface.getOutputStream().flush();
 	}

@@ -2,6 +2,7 @@ package sc.server.network;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -71,6 +72,7 @@ public class LobbyTest extends RealServerTest
 			}
 		});
 
+
 		TestHelper.assertEqualsWithTimeout(true, new Generator<Boolean>() {
 			@Override
 			public Boolean operate()
@@ -79,15 +81,20 @@ public class LobbyTest extends RealServerTest
 			}
 		});
 
-		System.out.println(theRoom.getResult().getScores());
-
+    System.out.println(theRoom.getResult().getScores());
+		System.out.println("=============================");
+    System.out.println(theRoom.getResult().getScores().get(0).getCause());
+    System.out.println("=============================");
+    Thread.sleep(1000);
 		TestHelper.assertEqualsWithTimeout(ScoreCause.LEFT,
 				new Generator<ScoreCause>() {
 					@Override
 					public ScoreCause operate()
 					{
-						return theRoom.getResult().getScores().get(0)
-								.getCause();
+            ScoreCause cause = theRoom.getResult().getScores().get(0)
+                    .getCause();
+
+					  return cause;
 					}
 				});
 

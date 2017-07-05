@@ -38,12 +38,7 @@ public class ConverterTest
 		@Override
 		public boolean isVisibleFor(Object viewer, String field)
 		{
-			if (field.equals("secret") && hacker.equals(viewer))
-			{
-				return false;
-			}
-
-			return true;
+			return !(field.equals("secret") && hacker.equals(viewer));
 		}
 	}
 
