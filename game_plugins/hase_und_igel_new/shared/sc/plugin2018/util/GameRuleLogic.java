@@ -67,6 +67,20 @@ public class GameRuleLogic
 			return false;
 		}
     Player player = state.getCurrentPlayer();
+    // check whether player just moved to salad field and must eat salad
+    FieldType field = state.getBoard().getTypeAt(player.getFieldIndex());
+    if (field == FieldType.SALAD) {
+      if (player.getLastNonSkipAction() instanceof Advance) {
+        return false;
+      } else if (player.getLastNonSkipAction() instanceof Card) {
+        if (((Card) player.getLastNonSkipAction()).getType() == CardType.FALL_BACK ||
+            ((Card) player.getLastNonSkipAction()).getType() == CardType.HURRY_AHEAD) {
+          return false;
+        }
+      }
+
+    }
+
 		boolean valid = true;
 		int requiredCarrots = GameRuleLogic.calculateCarrots(distance);
 		valid = valid && (requiredCarrots <= player.getCarrotsAvailable());
