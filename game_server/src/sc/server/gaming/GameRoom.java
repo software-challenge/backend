@@ -71,6 +71,8 @@ public class GameRoom implements IGameListener
 		this.prepared = prepared;
 		this.gameRoomManager = gameRoomManager;
 		this.playerSlots = new ArrayList<>(2);
+		this.playerSlots.add(new PlayerSlot(this));
+		this.playerSlots.add(new PlayerSlot(this));
 		game.addGameListener(this);
 	}
 
