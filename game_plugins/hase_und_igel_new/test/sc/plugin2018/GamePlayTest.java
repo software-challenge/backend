@@ -32,7 +32,7 @@ public class GamePlayTest
 	}
 
 	/**
-   * Both palyers start on the start field (index 0), red has to make the first move
+   * Both players start on the start field (index 0), red has to make the first move
 	 */
 	@Test
 	public void firstRound()
@@ -52,14 +52,14 @@ public class GamePlayTest
 	public void justStarted()
 	{
 	  // player cannot fall_back from start field
-		Assert.assertEquals(false, GameRuleLogic.isValidToFallBack(state));
+		Assert.assertFalse(GameRuleLogic.isValidToFallBack(state));
 		// player cannot take carrots at start field
-		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 		// player cannot eat salad at start field
-    Assert.assertEquals(false, GameRuleLogic.isValidToPlayEatSalad(state));
+    Assert.assertFalse(GameRuleLogic.isValidToPlayEatSalad(state));
 
     // the play must be able to get to a carrot field
-    Assert.assertEquals(true, GameRuleLogic.isValidToAdvance(state, state.getNextFieldByType(FieldType.CARROT, 0)));
+    Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, state.getNextFieldByType(FieldType.CARROT, 0)));
 	}
 
 	/**
@@ -69,23 +69,24 @@ public class GamePlayTest
 	public void takeOrDropCarrots()
 	{
 		red.setFieldIndex(0);
-		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 
 		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, 0);
 		red.setFieldIndex(rabbitAt);
-		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
+    Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 9));
 
 		int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
 		red.setFieldIndex(saladAt);
-		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 
 		int pos1 = state.getNextFieldByType(FieldType.POSITION_1, 0);
 		red.setFieldIndex(pos1);
-		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 
 		int pos2 = state.getNextFieldByType(FieldType.POSITION_2, 0);
 		red.setFieldIndex(pos2);
-		Assert.assertEquals(false, GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 	}
 //
 	/**
@@ -354,6 +355,36 @@ public class GamePlayTest
 		Assert.assertFalse(GameRuleLogic.isValidToEat(state));
 	}
 
+  /**
+   * Checks the conditions for eating a salad on a salad field
+   */
+  @Test
+  public void mustEatSalad()
+  {
+    int hedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
+    int saladAt = state.getNextFieldByType(FieldType.SALAD, hedgehog);
+    int carrot = state.getNextFieldByType(FieldType.CARROT, saladAt);
+    red.setFieldIndex(saladAt);
+    red.setLastNonSkipAction(new Advance(1));
+    Assert.assertTrue(GameRuleLogic.isValidToEat(state));
+    Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, carrot - saladAt));
+    Assert.assertFalse(GameRuleLogic.isValidToFallBack(state));
+    Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
+    Assert.assertFalse(GameRuleLogic.isValidToSkip(state));
+    red.setLastNonSkipAction(new Card(CardType.HURRY_AHEAD));
+    Assert.assertTrue(GameRuleLogic.isValidToEat(state));
+    Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, carrot - saladAt));
+    Assert.assertFalse(GameRuleLogic.isValidToFallBack(state));
+    Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
+    Assert.assertFalse(GameRuleLogic.isValidToSkip(state));
+    red.setLastNonSkipAction(new Card(CardType.FALL_BACK));
+    Assert.assertTrue(GameRuleLogic.isValidToEat(state));
+    Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, carrot - saladAt));
+    Assert.assertFalse(GameRuleLogic.isValidToFallBack(state));
+    Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
+    Assert.assertFalse(GameRuleLogic.isValidToSkip(state));
+  }
+
 	/**
 	 * Checks the perform method for eating salad
 	 *
@@ -374,11 +405,13 @@ public class GamePlayTest
 		move.perform(state);
 		actions.clear();
 
-		int before = red.getSalads();
+		int saladsBefore = red.getSalads();
+		int carrotsBefore = red.getCarrotsAvailable();
 		actions.add(new EatSalad());
 		move = new Move(actions);
 		move.perform(state);
-		Assert.assertEquals(before - 1, red.getSalads());
+		Assert.assertEquals(saladsBefore - 1, red.getSalads());
+    Assert.assertEquals(carrotsBefore + 10, red.getCarrotsAvailable());
 	}
 
 	/**
@@ -417,7 +450,7 @@ public class GamePlayTest
 		actions.clear();
 
 		actions.add(new ExchangeCarrots(10));
-		Assert.assertTrue(GameRuleLogic.isValidToTakeOrDrop10Carrots(state, 10));
+		Assert.assertTrue(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 		int carrotsBefore = red.getCarrotsAvailable();
     move = new Move(actions);
 		move.perform(state);
@@ -445,7 +478,7 @@ public class GamePlayTest
 
 		actions.add(new ExchangeCarrots(-10));
 		move = new Move(actions);
-		Assert.assertTrue(GameRuleLogic.isValidToTakeOrDrop10Carrots(state,-10));
+		Assert.assertTrue(GameRuleLogic.isValidToExchangeCarrots(state,-10));
 		int carrotsBefore = red.getCarrotsAvailable();
 
 		move.perform(state);
