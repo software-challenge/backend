@@ -71,8 +71,6 @@ public class GameRoom implements IGameListener
 		this.prepared = prepared;
 		this.gameRoomManager = gameRoomManager;
 		this.playerSlots = new ArrayList<>(2);
-		this.playerSlots.add(new PlayerSlot(this));
-		this.playerSlots.add(new PlayerSlot(this));
 		game.addGameListener(this);
 	}
 
@@ -646,7 +644,8 @@ public class GameRoom implements IGameListener
 		if (descriptors.size() > 2){
 		  throw new TooManyPlayersException();
     }
-
+    this.playerSlots.add(new PlayerSlot(this));
+    this.playerSlots.add(new PlayerSlot(this));
     // Can be 0 or 1
 		for (int i = 0; i < descriptors.size(); i++)
 		{
