@@ -22,6 +22,12 @@ public class EatSalad extends Action {
   public void perform(GameState state) throws InvalidMoveException {
     if (GameRuleLogic.isValidToEat(state)) {
       state.getCurrentPlayer().eatSalad();
+      // when eating salad the carrots are increased
+      if (state.getCurrentPlayer().getFieldIndex() < state.getOtherPlayer().getFieldIndex()) {
+        state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+      } else {
+        state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+      }
     } else {
       throw new InvalidMoveException("Es kann gerade kein Salat (mehr) gegessen werden.");
     }
