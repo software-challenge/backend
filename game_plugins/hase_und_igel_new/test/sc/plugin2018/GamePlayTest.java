@@ -71,7 +71,7 @@ public class GamePlayTest
 		red.setFieldIndex(0);
 		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 
-		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, 0);
+		int rabbitAt = state.getNextFieldByType(FieldType.HARE, 0);
 		red.setFieldIndex(rabbitAt);
 		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
     Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 9));
@@ -113,7 +113,7 @@ public class GamePlayTest
 		move.perform(state);
 
 		Assert.assertEquals(1, state.getRound());
-		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, red
+		int rabbitAt = state.getNextFieldByType(FieldType.HARE, red
 				.getFieldIndex());
 		actions.clear();
 		actions.add(new Advance(rabbitAt - red.getFieldIndex()));
@@ -178,7 +178,7 @@ public class GamePlayTest
 	public void mustPlayCard() throws InvalidMoveException
 	{
 	  List<Action> actions = new ArrayList<>();
-	  actions.add(new Advance(state.getNextFieldByType(FieldType.RABBIT,0)));
+	  actions.add(new Advance(state.getNextFieldByType(FieldType.HARE,0)));
 	  actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 1));
     Move move = new Move(actions);
 		move.perform(state);
@@ -267,7 +267,7 @@ public class GamePlayTest
 	@Test
 	public void playDropCarrotsCard() throws InvalidMoveException {
     List<Action> actions = new ArrayList<>();
-		red.setFieldIndex(state.getNextFieldByType(FieldType.RABBIT, 0));
+		red.setFieldIndex(state.getNextFieldByType(FieldType.HARE, 0));
 		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, -20 ,0));
 
 		Assert.assertTrue(red.getCarrotsAvailable() > 20);
@@ -420,7 +420,7 @@ public class GamePlayTest
 	@Test
 	public void playCardCycle() throws InvalidMoveException {
     List<Action> actions = new ArrayList<>();
-		int rabbitAt = state.getNextFieldByType(FieldType.RABBIT, 0);
+		int rabbitAt = state.getNextFieldByType(FieldType.HARE, 0);
 		actions.add(new Advance(rabbitAt));
 		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, 1));
 		Move move = new Move(actions);
@@ -531,7 +531,7 @@ public class GamePlayTest
 
 		// fall back
 		blue.setFieldIndex(hedgehog + 1);
-		int rabbit = state.getNextFieldByType(FieldType.RABBIT, blue.getFieldIndex());
+		int rabbit = state.getNextFieldByType(FieldType.HARE, blue.getFieldIndex());
     red.setFieldIndex(rabbit);
 
     Assert.assertFalse(GameRuleLogic.isValidToPlayFallBack(state));
@@ -539,7 +539,7 @@ public class GamePlayTest
 
 		// hurry ahead
     blue.setFieldIndex(hedgehog - 1);
-    rabbit = state.getNextFieldByType(FieldType.RABBIT, 0);
+    rabbit = state.getNextFieldByType(FieldType.HARE, 0);
     red.setFieldIndex(rabbit);
 		Assert.assertFalse(GameRuleLogic.isValidToPlayHurryAhead(state));
 	}
@@ -550,7 +550,7 @@ public class GamePlayTest
 	@Test
 	public void moveOntoRabbitWithoutCard()
 	{
-		int rabbit = state.getNextFieldByType(FieldType.RABBIT, 0);
+		int rabbit = state.getNextFieldByType(FieldType.HARE, 0);
 		red.setCards(Collections.emptyList());
 		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, rabbit));
 	}
@@ -561,8 +561,8 @@ public class GamePlayTest
 	@Test
 	public void indirectHurryAheadOntoRabbit()
 	{
-		int firstRabbit = state.getNextFieldByType(FieldType.RABBIT, 0);
-		int secondRabbit = state.getNextFieldByType(FieldType.RABBIT, firstRabbit + 1);
+		int firstRabbit = state.getNextFieldByType(FieldType.HARE, 0);
+		int secondRabbit = state.getNextFieldByType(FieldType.HARE, firstRabbit + 1);
 
 		blue.setFieldIndex(secondRabbit - 1);
 		red.setCards(Collections.singletonList(CardType.HURRY_AHEAD));

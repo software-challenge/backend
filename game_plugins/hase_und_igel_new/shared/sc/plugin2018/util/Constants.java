@@ -4,7 +4,7 @@ import sc.plugin2018.GamePlugin;
 
 public class Constants {
 
-	public static final int ROUND_LIMIT = GamePlugin.MAX_TURN_COUNT;
+	public static final int ROUND_LIMIT = 30;
   public static final int SALADS_TO_EAT = 5;
   public static final int INITIAL_CARROTS = 68;
   // for gamestats array

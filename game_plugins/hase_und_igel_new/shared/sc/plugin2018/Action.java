@@ -25,4 +25,6 @@ public abstract class Action implements Comparable<Action> {
   public int compareTo(Action o) {
     return Integer.compare(this.order, o.order);
   }
+
+  public abstract Action clone();
 }

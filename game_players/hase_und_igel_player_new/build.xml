@@ -92,8 +92,6 @@
 			<exclude name="AbstractClient.java"/>
 			<exclude name="EPlayerId.java"/>
 			<exclude name="GamePlugin.java"/>
-			<exclude name="GuiClient.java"/>
-			<exclude name="IGUIObservation.java"/>
 			<exclude name="WelcomeMessage.java"/>
 		</fileset>
 			</javadoc>

@@ -100,7 +100,7 @@ public abstract class XStreamClient
 					this.threadLogger
 							.error("ReceiveThread caused an exception.", e);
 				}
-				logger.debug("Termionated thread with id {} and name {}",
+				logger.debug("Terminated thread with id {} and name {}",
 						XStreamClient.this.thread.getId(),
 						XStreamClient.this.thread.getName());
 			}
@@ -133,7 +133,7 @@ public abstract class XStreamClient
 			while (!Thread.interrupted())
 			{
 				Object o = XStreamClient.this.in.readObject();
-				logger.debug("Client " + XStreamClient.this + ": Received " + o
+				logger.warn("Client " + XStreamClient.this + ": Received " + o
 						+ " via " + this.networkInterface + "\nDataDump:\n{}",
 						this.xStream.toXML(o));
 				if (o instanceof CloseConnection)

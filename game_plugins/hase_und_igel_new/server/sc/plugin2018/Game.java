@@ -64,6 +64,9 @@ public class Game extends RoundBasedGameInstance<Player>
 	  if (gameState.getTurn() % 2 == 1) {
 	    return false; // you can only win at the end of a round
     }
+    if (gameState.getTurn() / 2 >= Constants.ROUND_LIMIT) {
+	    return true;
+    }
     // check if salads are used
     // check if less or equal than 10 carrots
     if((gameState.getRedPlayer().getSalads() == 0 && gameState.getRedPlayer().getCarrotsAvailable() <= 10) ||

@@ -25,6 +25,7 @@ public class FallBack extends Action {
       state.getCurrentPlayer().setFieldIndex(state.getPreviousFieldByType(FieldType.HEDGEHOG, state.getCurrentPlayer()
               .getFieldIndex()));
       state.getCurrentPlayer().changeCarrotsAvailableBy(10 * (previousFieldIndex - state.getCurrentPlayer().getFieldIndex()));
+      state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Es kann gerade kein Rückzug gemacht werden.");
     }
@@ -41,5 +42,10 @@ public class FallBack extends Action {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "FallBack order " + this.order;
   }
 }

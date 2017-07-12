@@ -58,6 +58,7 @@ public class RandomLogic implements IGameHandler {
 	public void onRequestAction(){
     long startTime = System.nanoTime();
     log.info("Es wurde ein Zug angefordert.");
+    log.warn("GameState ist folgender: " + gameState);
     ArrayList<Move> possibleMove = new ArrayList<>();
     ArrayList<Action> actions = new ArrayList<>();
     if (GameRuleLogic.isValidToEat(gameState)) {
@@ -65,51 +66,54 @@ public class RandomLogic implements IGameHandler {
       actions.add(new EatSalad());
       sendAction(new Move(actions));
       return;
-    } else if (GameRuleLogic.isValidToExchangeCarrots(gameState, 10)) {
+    }
+    if (GameRuleLogic.isValidToExchangeCarrots(gameState, 10)) {
       actions.add(new ExchangeCarrots(10));
       possibleMove.add(new Move(actions));
       actions.clear();
-    } else if (GameRuleLogic.isValidToExchangeCarrots(gameState, -10)) {
+    }
+    if (GameRuleLogic.isValidToExchangeCarrots(gameState, -10)) {
       actions.add(new ExchangeCarrots(-10));
       possibleMove.add(new Move(actions));
       actions.clear();
-    } else if (GameRuleLogic.isValidToFallBack(gameState)) {
+    }
+    if (GameRuleLogic.isValidToFallBack(gameState)) {
       actions.add(new FallBack());
       possibleMove.add(new Move(actions));
       actions.clear();
-    } else {
-      // Generiere mögliche Vorwärtszüge
-      for (int i = 1; i < GameRuleLogic.calculateMoveableFields(currentPlayer.getCarrotsAvailable()); i++) {
-        GameState clone = null;
-        try {
-          clone = gameState.clone();
-        } catch (CloneNotSupportedException e) {
-          e.printStackTrace();
-        }
-        // Überrüfe ob Vorwärtszug möglich ist
-        if (GameRuleLogic.isValidToAdvance(clone, i)) {
-          Advance tryAdvance = new Advance(i);
-          try {
-            tryAdvance.perform(clone);
-          } catch (InvalidMoveException e) {
-            // Sollte nicht passieren, da Zug valide ist
-            e.printStackTrace();
-            break;
-          }
-          actions.add(tryAdvance);
-          // überprüfe, ob eine Karte gespielt werden muss/kann
-          if (clone.getCurrentPlayer().mustPlayCard()) {
-            possibleMove.addAll(checkForPlayableCards(gameState, actions));
-          } else {
-            // Füge möglichen Vorwärtszug hinzu
-            possibleMove.add(new Move(actions));
-          }
-        }
-        actions.clear();
+    }
+    // Generiere mögliche Vorwärtszüge
+    for (int i = 1; i < GameRuleLogic.calculateMoveableFields(currentPlayer.getCarrotsAvailable()); i++) {
+      GameState clone = null;
+      try {
+        clone = gameState.clone();
+      } catch (CloneNotSupportedException e) {
+        e.printStackTrace();
       }
+      // Überrüfe ob Vorwärtszug möglich ist
+      if (GameRuleLogic.isValidToAdvance(clone, i)) {
+        Advance tryAdvance = new Advance(i);
+        try {
+          tryAdvance.perform(clone);
+        } catch (InvalidMoveException e) {
+          // Sollte nicht passieren, da Zug valide ist
+          e.printStackTrace();
+          break;
+        }
+        actions.add(tryAdvance);
+        // überprüfe, ob eine Karte gespielt werden muss/kann
+        if (clone.getCurrentPlayer().mustPlayCard()) {
+          possibleMove.addAll(checkForPlayableCards(clone, actions));
+        } else {
+          // Füge möglichen Vorwärtszug hinzu
+          possibleMove.add(new Move(actions));
+        }
+      }
+      actions.clear();
     }
     Move move;
     if (possibleMove.isEmpty()) {
+      log.warn("Muss aussetzen");
       actions.add(new Skip());
       move = new Move(actions);
     } else {
@@ -156,8 +160,9 @@ public class RandomLogic implements IGameHandler {
 
         actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, 0,  actions.size()));
       }
-      if (GameRuleLogic.isValidToPlayHurryAhead(state)) {
-        actions.add(new Card(CardType.HURRY_AHEAD,  actions.size()));
+      if (GameRuleLogic.isValidToPlayHurryAhead(state)) { // XXX duplicate code
+        Card card = new Card(CardType.HURRY_AHEAD,  actions.size());
+        actions.add(card);
         // Überprüfe ob wieder auf Hasenfeld gelandet:
         GameState clone = null;
         try {
@@ -165,15 +170,26 @@ public class RandomLogic implements IGameHandler {
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        ArrayList<Move> moves = checkForPlayableCards(clone, actions);
-        if (!moves.isEmpty()) {
-          possibleMove.addAll(moves);
+        try {
+          card.perform(clone);
+        } catch (InvalidMoveException e) {
+          // Sollte nie passieren
+          e.printStackTrace();
+        }
+        if (clone.getCurrentPlayer().mustPlayCard()) {
+          ArrayList<Move> moves = checkForPlayableCards(clone, actions);
+          if (!moves.isEmpty()) {
+            possibleMove.addAll(moves);
+          }
+        } else {
+          possibleMove.add(new Move(actions));
         }
 
         actions.remove(new Card(CardType.HURRY_AHEAD,  actions.size()));
       }
       if (GameRuleLogic.isValidToPlayFallBack(state)) {
-        actions.add(new Card(CardType.FALL_BACK,  actions.size()));
+        Card card = new Card(CardType.FALL_BACK,  actions.size());
+        actions.add(card);
         // Überprüfe ob wieder auf Hasenfeld gelandet:
         GameState clone = null;
         try {
@@ -181,14 +197,22 @@ public class RandomLogic implements IGameHandler {
         } catch (CloneNotSupportedException e) {
           e.printStackTrace();
         }
-        ArrayList<Move> moves = checkForPlayableCards(clone, actions);
-        if (!moves.isEmpty()) {
-          possibleMove.addAll(moves);
+        try {
+          card.perform(clone);
+        } catch (InvalidMoveException e) {
+          // Sollte nie passieren
+          e.printStackTrace();
         }
-
+        if (clone.getCurrentPlayer().mustPlayCard()) {
+          ArrayList<Move> moves = checkForPlayableCards(clone, actions);
+          if (!moves.isEmpty()) {
+            possibleMove.addAll(moves);
+          }
+        } else {
+          possibleMove.add(new Move(actions));
+        }
         actions.remove(new Card(CardType.FALL_BACK,  actions.size()));
       }
-
     }
     return possibleMove;
   }

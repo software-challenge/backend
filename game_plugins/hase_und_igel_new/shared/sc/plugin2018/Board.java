@@ -36,9 +36,9 @@ public class Board
 		List<Field> segment = new LinkedList<Field>();
 
 		track.add(new Field(FieldType.START));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT), new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT), new Field(FieldType.POSITION_1),
+		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.POSITION_1),
 				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
@@ -46,7 +46,7 @@ public class Board
 		track.add(new Field(FieldType.SALAD));
 		track.add(new Field(FieldType.HEDGEHOG));
 		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT) }));
+				new Field(FieldType.CARROT), new Field(FieldType.HARE) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
@@ -65,35 +65,35 @@ public class Board
 		track.add(new Field(FieldType.SALAD));
 		track.add(segment.remove(0));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.CARROT), new Field(FieldType.CARROT),
 				new Field(FieldType.POSITION_2) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
-				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT), new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT), new Field(FieldType.HARE),
 				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
 		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.RABBIT), new Field(FieldType.CARROT), new Field(FieldType.POSITION_2) }));
+				new Field(FieldType.HARE), new Field(FieldType.CARROT), new Field(FieldType.POSITION_2) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.SALAD));
 		track.add(new Field(FieldType.HEDGEHOG));
 		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT), new Field(FieldType.POSITION_2),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.POSITION_2),
 				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2), new Field(FieldType.CARROT),
 				new Field(FieldType.CARROT) }));
 		Collections.shuffle(segment);
@@ -101,9 +101,9 @@ public class Board
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
 		track.add(new Field(FieldType.SALAD));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.POSITION_1), new Field(FieldType.CARROT),
-				new Field(FieldType.RABBIT), new Field(FieldType.CARROT) }));
+				new Field(FieldType.HARE), new Field(FieldType.CARROT) }));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
@@ -180,10 +180,18 @@ public class Board
     Board clone = new Board();
     clone.track.clear();
     for (Field field : this.track) {
-      clone.track.add((Field) field.clone());
+      clone.track.add(field.clone());
     }
     return clone;
   }
 
+	@Override
+	public String toString() {
+  	String toString = "Board:\n";
+		for (Field field : track) {
+			toString += field.getType() + " index " + field.getIndex() + "\n";
+		}
+		return toString;
+	}
 }
 

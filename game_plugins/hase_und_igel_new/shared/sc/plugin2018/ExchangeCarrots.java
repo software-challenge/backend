@@ -30,6 +30,7 @@ public class ExchangeCarrots extends Action {
   public void perform(GameState state) throws InvalidMoveException {
     if (GameRuleLogic.isValidToExchangeCarrots(state, this.value)) {
       state.getCurrentPlayer().changeCarrotsAvailableBy(this.value);
+      state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Es können nicht " + this.value + " Karotten aufgenommen werden.");
     }
@@ -48,4 +49,8 @@ public class ExchangeCarrots extends Action {
     return false;
   }
 
+  @Override
+  public String toString() {
+    return "ExchangeCarrots value " + this.value + " order " + this.order;
+  }
 }

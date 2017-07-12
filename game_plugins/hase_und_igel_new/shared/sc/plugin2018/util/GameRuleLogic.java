@@ -85,7 +85,7 @@ public class GameRuleLogic
 			case SALAD:
 				valid = valid && player.getSalads() > 0;
 				break;
-			case RABBIT:
+			case HARE:
 				GameState state2 = null;
         try {
           state2 = state.clone();
@@ -298,7 +298,7 @@ public class GameRuleLogic
 			case SALAD:
 				valid = valid && player.getSalads() > 0;
 				break;
-			case RABBIT:
+			case HARE:
         GameState state2 = null;
         try {
           state2 = state.clone();
@@ -345,7 +345,7 @@ public class GameRuleLogic
 			case SALAD:
 				valid = valid && player.getSalads() > 0;
 				break;
-			case RABBIT:
+			case HARE:
         GameState state2 = null;
         try {
           state2 = state.clone();
@@ -495,7 +495,7 @@ public class GameRuleLogic
 	{
 	  Player player = state.getCurrentPlayer();
 		boolean canPlayCard = state.getTypeAt(player.getFieldIndex()).equals(
-				FieldType.RABBIT);
+				FieldType.HARE);
 		for (CardType a : player.getCards())
 		{
 			canPlayCard = canPlayCard || isValidToPlayCard(state, a, 0);

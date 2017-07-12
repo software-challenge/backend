@@ -10,9 +10,6 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.shared.PlayerColor;
 import sc.plugin2018.util.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
@@ -134,7 +131,8 @@ public class GameState implements Cloneable {
     if (board != null)
       clone.board = this.board.clone();
     if (currentPlayer != null)
-      clone.currentPlayer = currentPlayer;
+      clone.currentPlayer = this.currentPlayer;
+    clone.startPlayer = this.startPlayer;
     clone.turn = this.turn;
     return clone;
   }
@@ -560,7 +558,7 @@ public class GameState implements Cloneable {
    */
   public boolean isOnRabbitField()
   {
-    return fieldOfCurrentPlayer().equals(FieldType.RABBIT);
+    return fieldOfCurrentPlayer().equals(FieldType.HARE);
   }
 
   /**
@@ -597,5 +595,15 @@ public class GameState implements Cloneable {
       }
     }
     return ret;
+  }
+
+  @Override
+  public String toString() {
+    return "GameState:\n"
+            + "turn=" + this.getTurn() + this.getCurrentPlayer()
+            + this.red + this.blue
+            + this.board
+            + this.getLastMove();
+
   }
 }

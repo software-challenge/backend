@@ -218,18 +218,27 @@ public class Player extends SimplePlayer implements Cloneable
 
 	public Player clone()
 	{
-		Player ret = null;
+		Player clone = null;
 		try
 		{
-			ret = (Player) super.clone();
-			ret.cards = new ArrayList<CardType>();
-			ret.cards.addAll(this.getCards());
+			clone = (Player) super.clone();
+			clone.cards = new ArrayList<CardType>();
+      for (CardType type : this.cards) {
+        clone.cards.add(type);
+      }
+      clone.mustPlayCard = this.mustPlayCard;
+			clone.salads = this.salads;
+			clone.carrots = this.carrots;
+			clone.index = this.index;
+			if (this.lastNonSkipAction != null) {
+        clone.lastNonSkipAction = this.lastNonSkipAction.clone();
+      }
 		}
 		catch (CloneNotSupportedException e)
 		{
 			e.printStackTrace();
 		}
-		return ret;
+		return clone;
 	}
 
 	public PlayerScore getScore()
@@ -255,4 +264,18 @@ public class Player extends SimplePlayer implements Cloneable
 	public void setLastNonSkipAction(Action lastNonSkipAction) {
 		this.lastNonSkipAction = lastNonSkipAction;
 	}
+
+	@Override
+	public String toString() {
+		String toString =  "Player " + this.getDisplayName() + " (color,index,carrots,salads) " + "("
+            + this.color + ","
+            + this.index + ","
+            + this.carrots + ","
+            + this.salads + ")\n";
+    for (CardType type: this.cards) {
+      toString += type + "\n";
+    }
+    toString += "LastAction " + this.lastNonSkipAction;
+    return toString;
+  }
 }

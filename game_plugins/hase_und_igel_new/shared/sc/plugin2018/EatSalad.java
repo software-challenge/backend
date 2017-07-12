@@ -28,6 +28,7 @@ public class EatSalad extends Action {
       } else {
         state.getCurrentPlayer().changeCarrotsAvailableBy(30);
       }
+      state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Es kann gerade kein Salat (mehr) gegessen werden.");
     }
@@ -44,5 +45,10 @@ public class EatSalad extends Action {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "EatSalad order " + this.order;
   }
 }

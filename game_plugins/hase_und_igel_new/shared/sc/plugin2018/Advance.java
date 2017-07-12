@@ -31,9 +31,11 @@ public class Advance extends Action{
     if (GameRuleLogic.isValidToAdvance(state, this.distance)) {
       state.getCurrentPlayer().changeCarrotsAvailableBy(- GameRuleLogic.calculateCarrots(this.distance));
       state.getCurrentPlayer().setFieldIndex(state.getCurrentPlayer().getFieldIndex() + distance);
-      if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+      if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
         state.getCurrentPlayer().setMustPlayCard(true);
       }
+      // Setze letzte Aktion
+      state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Vorwärtszug um " + this.distance + " Felder ist nicht möglich");
     }
@@ -43,7 +45,7 @@ public class Advance extends Action{
     return distance;
   }
 
-  public void setDistance(int distance) {
+  private void setDistance(int distance) {
     if (distance <= 0) {
       throw new IllegalArgumentException("distance has to be greater than 0");
     }
@@ -61,5 +63,10 @@ public class Advance extends Action{
       return (this.distance == ((Advance) o).distance);
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "Advance: distance " + this.distance + " order " + this.order;
   }
 }

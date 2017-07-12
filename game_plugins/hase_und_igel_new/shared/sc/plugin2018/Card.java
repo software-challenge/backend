@@ -58,7 +58,7 @@ public class Card extends Action {
   @Override
   public void perform(GameState state) throws InvalidMoveException {
     state.getCurrentPlayer().setMustPlayCard(false); // player played a card
-    switch (type) { // when entering a RABBIT field with fall_back or hurry ahead, player has to play another card
+    switch (type) { // when entering a HARE field with fall_back or hurry ahead, player has to play another card
       case EAT_SALAD:
         if (GameRuleLogic.isValidToPlayEatSalad(state)) {
           state.getCurrentPlayer().eatSalad();
@@ -74,7 +74,7 @@ public class Card extends Action {
       case FALL_BACK:
         if (GameRuleLogic.isValidToPlayFallBack(state)) {
           state.getCurrentPlayer().setFieldIndex(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() - 1);
-          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
             state.getCurrentPlayer().setMustPlayCard(true);
           }
         } else {
@@ -84,9 +84,10 @@ public class Card extends Action {
       case HURRY_AHEAD:
         if (GameRuleLogic.isValidToPlayHurryAhead(state)) {
           state.getCurrentPlayer().setFieldIndex(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() + 1);
-          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
             state.getCurrentPlayer().setMustPlayCard(true);
           }
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
@@ -136,5 +137,13 @@ public class Card extends Action {
       return (this.value == ((Card) o).value) && (this.type == ((Card) o).type);
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "Card "
+            + this.getType()
+            + ((this.getType() == CardType.TAKE_OR_DROP_CARROTS)?(" " + this.value):"")
+            + " order " + this.order;
   }
 }

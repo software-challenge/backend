@@ -52,7 +52,8 @@ public class Move implements Cloneable {
   }
 
   /**
-   * Erzeugt einen neuen Zug aus Liste von Aktionen
+   * Erzeugt einen neuen Zug aus Liste von Aktionen. Die Liste der Aktionen wird kopiert
+   * (d.h. eine Änderung der Liste nach Erstellung des Zuges ändert den Zug nicht mehr).
    *
    * @param selectedActions
    *          Aktionen des Zuges
@@ -73,27 +74,27 @@ public class Move implements Cloneable {
   public Object clone() throws CloneNotSupportedException {
     List<Action> clonedActions = new CopyOnWriteArrayList<>();
     for (Action action : getActions()) {
-      if (action.getClass() == Advance.class) {
+      if (action instanceof Advance) {
         Advance clonedAction = ((Advance) action).clone();
         clonedActions.add(clonedAction);
       }
-      if (action.getClass() == Skip.class) {
+      if (action instanceof Skip) {
         Skip clonedAction = ((Skip) action).clone();
         clonedActions.add(clonedAction);
       }
-      if (action.getClass() == EatSalad.class) {
+      if (action instanceof EatSalad) {
         EatSalad clonedAction = ((EatSalad) action).clone();
         clonedActions.add(clonedAction);
       }
-      if (action.getClass() == ExchangeCarrots.class) {
+      if (action instanceof ExchangeCarrots) {
         ExchangeCarrots clonedAction = ((ExchangeCarrots) action).clone();
         clonedActions.add(clonedAction);
       }
-      if (action.getClass() == FallBack.class) {
+      if (action instanceof FallBack) {
         FallBack clonedAction = ((FallBack) action).clone();
         clonedActions.add(clonedAction);
       }
-      if (action.getClass() == Card.class) {
+      if (action instanceof Card) {
         Card clonedAction = ((Card) action).clone();
         clonedActions.add(clonedAction);
       }
@@ -182,7 +183,6 @@ public class Move implements Cloneable {
 
       }
       action.perform(state);
-      state.setLastAction(action);
       index++;
     }
     if (state.getCurrentPlayer().mustPlayCard()) {
@@ -237,17 +237,21 @@ public class Move implements Cloneable {
   @Override
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
-//    for (Action action : getActions()) {
-//      if (action.getClass() == Turn.class) {
-//        toString += ((Turn) action).toString() + "\n";
-//      } else if (action.getClass() == Acceleration.class) {
-//        toString += ((Acceleration) action).toString() + "\n";
-//      } else if (action.getClass() == Advance.class) {
-//        toString += ((Advance) action).toString() + "\n";
-//      } else if (action.getClass() == Push.class) {
-//        toString += ((Push) action).toString() + "\n";
-//      }
-//    }
+    for (Action action : getActions()) {
+      if (action instanceof Advance) {
+        toString += action.toString() + "\n";
+      } else if (action instanceof EatSalad) {
+        toString += action.toString() + "\n";
+      } else if (action instanceof Card) {
+        toString += action.toString() + "\n";
+      } else if (action instanceof ExchangeCarrots) {
+        toString += action.toString() + "\n";
+      } else if (action instanceof FallBack) {
+        toString += action.toString() + "\n";
+      } else if (action instanceof Skip) {
+        toString += action.toString() + "\n";
+      }
+    }
     return toString;
   }
 
