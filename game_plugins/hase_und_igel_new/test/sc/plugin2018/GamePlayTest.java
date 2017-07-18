@@ -4,9 +4,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
+import sc.plugin2018.util.Constants;
 import sc.plugin2018.util.GameRuleLogic;
-import sc.shared.InvalidMoveException;
-import sc.shared.PlayerColor;
+import sc.shared.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +43,9 @@ public class GamePlayTest
 		Assert.assertEquals(0, red.getFieldIndex());
 		Assert.assertEquals(0, blue.getFieldIndex());
 		Assert.assertEquals(red, state.getStartPlayer());
+		Assert.assertEquals(null, game.checkGoalReached());
+		Assert.assertEquals(null, game.checkWinCondition());
+		Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, 0, 68), game.getScoreFor(red));
 	}
 
 	/**
@@ -87,6 +90,10 @@ public class GamePlayTest
 		int pos2 = state.getNextFieldByType(FieldType.POSITION_2, 0);
 		red.setFieldIndex(pos2);
 		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
+
+    Assert.assertEquals(null, game.checkGoalReached());
+    Assert.assertEquals(null, game.checkWinCondition());
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, pos2, red.getCarrots()), game.getScoreFor(red));
 	}
 //
 	/**
@@ -96,6 +103,7 @@ public class GamePlayTest
 	@Test
 	public void turnCounting() throws RescuableClientException, InvalidMoveException
 	{
+	  // red moves
     List<Action> actions = new ArrayList<>();
 		Assert.assertEquals(0, state.getRound());
 		int firstCarrot = state.getNextFieldByType(FieldType.CARROT, red
@@ -104,6 +112,7 @@ public class GamePlayTest
 		Move move = new Move(actions);
 		move.perform(state);
 
+		// blue moves
 		Assert.assertEquals(0, state.getRound());
 		int nextCarrot = state.getNextFieldByType(FieldType.CARROT, red
 				.getFieldIndex());
@@ -112,6 +121,7 @@ public class GamePlayTest
 		move = new Move(actions);
 		move.perform(state);
 
+		// red moves
 		Assert.assertEquals(1, state.getRound());
 		int rabbitAt = state.getNextFieldByType(FieldType.HARE, red
 				.getFieldIndex());
@@ -121,6 +131,7 @@ public class GamePlayTest
     move = new Move(actions);
     move.perform(state);
 
+    // blue moves
 		Assert.assertEquals(1, state.getRound());
 		nextCarrot = state
 				.getNextFieldByType(FieldType.CARROT, blue.getFieldIndex());
@@ -129,9 +140,12 @@ public class GamePlayTest
     move = new Move(actions);
 		move.perform(state);
 
-		Assert.assertEquals(red, state.getCurrentPlayer());
+		Assert.assertEquals(state.getCurrentPlayer(), red);
 
 		Assert.assertEquals(2, state.getRound());
+    Assert.assertEquals(null, game.checkGoalReached());
+    Assert.assertEquals(null, game.checkWinCondition());
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, rabbitAt, red.getCarrots()), game.getScoreFor(red));
 	}
 
 	/**
@@ -147,9 +161,9 @@ public class GamePlayTest
 		red.setFieldIndex(lastCarrot);
 		blue.setFieldIndex(preLastCarrot);
 
-		red.setCarrotsAvailable(GameRuleLogic.calculateCarrots(64 - lastCarrot));
+		red.setCarrots(GameRuleLogic.calculateCarrots(64 - lastCarrot));
 		blue
-				.setCarrotsAvailable(GameRuleLogic
+				.setCarrots(GameRuleLogic
 						.calculateCarrots(64 - preLastCarrot) + 1);
 		red.setSalads(0);
 		blue.setSalads(0);
@@ -159,6 +173,9 @@ public class GamePlayTest
 
 		move.perform(state);
 		Assert.assertTrue(red.inGoal());
+    Assert.assertEquals(null, game.checkGoalReached());
+    Assert.assertEquals(null, game.checkWinCondition());
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, 64, 0), game.getScoreFor(red));
 
 		actions.clear();
 		actions.add(new Advance(64 - blue.getFieldIndex()));
@@ -166,9 +183,44 @@ public class GamePlayTest
 		move.perform(state);
 		Assert.assertTrue(blue.inGoal());
 		Assert.assertTrue(state.isFirst(red));
-		Assert.assertTrue(game.checkGameOverCondition());
 		Assert.assertEquals(PlayerColor.RED, game.checkGoalReached().getPlayerColor());
+    Assert.assertEquals(new WinCondition(PlayerColor.RED, Constants.IN_GOAL_MESSAGE), game.checkWinCondition());
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, Constants.IN_GOAL_MESSAGE, 2, 64, 0), game.getScoreFor(red));
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, Constants.IN_GOAL_MESSAGE, 0, 64, 1), game.getScoreFor(blue));
 	}
+
+	@Test
+  public void enterGoalOnRoundLimit() throws InvalidMoveException
+  {
+    List<Action> actions = new ArrayList<>();
+    state.setTurn((Constants.ROUND_LIMIT-1)*2);
+    int lastCarrot = state.getPreviousFieldByType(FieldType.CARROT, 64);
+    int firstCarrot = state.getNextFieldByType(FieldType.CARROT, 0);
+    red.setFieldIndex(lastCarrot);
+    red.setSalads(0);
+    red.setCarrots(GameRuleLogic.calculateCarrots(64-lastCarrot));
+    actions.add(new Advance(64-lastCarrot));
+    Move move = new Move(actions);
+    // red advances to goal
+    move.perform(state);
+    actions.clear();
+    // red hasn't won yet
+    Assert.assertTrue(red.inGoal());
+    Assert.assertEquals(null, game.checkGoalReached());
+    Assert.assertEquals(null, game.checkWinCondition());
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, 64, 0), game.getScoreFor(red));
+    // blues turn
+    actions.add(new Advance(firstCarrot));
+    move = new Move(actions);
+    move.perform(state);
+
+    // red should have won now by entering goal (not round limit)
+    Assert.assertTrue(state.isFirst(red));
+    Assert.assertEquals(PlayerColor.RED, game.checkGoalReached().getPlayerColor());
+    Assert.assertEquals(new WinCondition(PlayerColor.RED, Constants.IN_GOAL_MESSAGE), game.checkWinCondition());
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, Constants.IN_GOAL_MESSAGE, 2, 64, 0), game.getScoreFor(red));
+
+  }
 
 	/**
 	 * Only when newly entering a rabbit field a card has to be played
@@ -202,7 +254,7 @@ public class GamePlayTest
     List<Action> actions = new ArrayList<>();
 		int redPos = state.getNextFieldByType(FieldType.POSITION_2, red.getFieldIndex());
 		red.setFieldIndex(redPos);
-		red.setCarrotsAvailable(0);
+		red.setCarrots(0);
 
 		int bluePos = state.getPreviousFieldByType(FieldType.HEDGEHOG, red.getFieldIndex());
 		blue.setFieldIndex(bluePos);
@@ -225,9 +277,9 @@ public class GamePlayTest
 	@Test
 	public void onPositionField() throws InvalidMoveException {
     List<Action> actions = new ArrayList<>();
-		red.setCarrotsAvailable(5000);
-		blue.setCarrotsAvailable(5000);
-		int redCarrotsBefore = red.getCarrotsAvailable();
+		red.setCarrots(5000);
+		blue.setCarrots(5000);
+		int redCarrotsBefore = red.getCarrots();
 		int pos1At = state.getPreviousFieldByType(FieldType.POSITION_1,
             state.getPreviousFieldByType(FieldType.POSITION_1, 64));
 		actions.add(new Advance(pos1At));
@@ -236,10 +288,10 @@ public class GamePlayTest
 		move.perform(state);
 
 		Assert.assertEquals(redCarrotsBefore - redMoveCosts, red
-				.getCarrotsAvailable());
+				.getCarrots());
     actions.clear();
 
-		int blueCarrotsBefore = blue.getCarrotsAvailable();
+		int blueCarrotsBefore = blue.getCarrots();
 		int pos2At = state.getPreviousFieldByType(FieldType.POSITION_2, pos1At);
 		actions.add(new Advance(pos2At));
 		move = new Move(actions);
@@ -249,7 +301,7 @@ public class GamePlayTest
 
 		Assert.assertEquals(state.getCurrentPlayer(), red);
 		Assert.assertEquals(redCarrotsBefore - redMoveCosts + 10, red
-				.getCarrotsAvailable()); // assert that red got 10 carrots for being first
+				.getCarrots()); // assert that red got 10 carrots for being first
 
     actions.add(new Advance(state.getNextFieldByType(FieldType.CARROT,
             red.getFieldIndex()) - red.getFieldIndex())); // random valid move from red
@@ -258,7 +310,7 @@ public class GamePlayTest
 
 		Assert.assertEquals(state.getCurrentPlayer(), blue);
 		Assert.assertEquals(blueCarrotsBefore - blueMoveCosts + 30, blue
-				.getCarrotsAvailable()); // assert that red got 30 carrots for being second
+				.getCarrots()); // assert that red got 30 carrots for being second
 	}
 
 	/**
@@ -270,11 +322,11 @@ public class GamePlayTest
 		red.setFieldIndex(state.getNextFieldByType(FieldType.HARE, 0));
 		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, -20 ,0));
 
-		Assert.assertTrue(red.getCarrotsAvailable() > 20);
+		Assert.assertTrue(red.getCarrots() > 20);
 		Move move = new Move(actions);
 		move.perform(state);
 
-		blue.setCarrotsAvailable(19);
+		blue.setCarrots(19);
 		try {
       move.perform(state);
       Assert.fail("Not enough carrots");
@@ -294,12 +346,12 @@ public class GamePlayTest
 		int toGoal = 64 - red.getFieldIndex();
 		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, toGoal));
 
-		red.setCarrotsAvailable(10);
+		red.setCarrots(10);
     Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, toGoal));
 
 		red.setSalads(0);
 		Assert.assertTrue(red.getSalads() == 0);
-		Assert.assertTrue(red.getCarrotsAvailable() <= 10);
+		Assert.assertTrue(red.getCarrots() <= 10);
     Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, toGoal));
 	}
 
@@ -313,11 +365,11 @@ public class GamePlayTest
 		red.setFieldIndex(carrotAt);
 		int toGoal = 64 - red.getFieldIndex();
 		actions.add(new Advance(toGoal));
-		red.setCarrotsAvailable(10);
+		red.setCarrots(10);
 		red.setSalads(0);
     Move move = new Move(actions);
 		move.perform(state);
-		Assert.assertFalse(game.checkGameOverCondition());
+    Assert.assertEquals(null, game.checkWinCondition());
 	}
 
 	/**
@@ -335,11 +387,11 @@ public class GamePlayTest
 		blue.setFieldIndex(carrotAt);
 		int toGoal = 64 - blue.getFieldIndex();
 		actions.add(new Advance(toGoal));
-		blue.setCarrotsAvailable(10);
+		blue.setCarrots(10);
 		blue.setSalads(0);
     move = new Move(actions);
 		move.perform(state);
-    Assert.assertTrue(game.checkGameOverCondition());
+    Assert.assertEquals(blue.getPlayerColor(), game.checkWinCondition().getWinner());
 	}
 
 	/**
@@ -392,7 +444,7 @@ public class GamePlayTest
 	@Test
 	public void eatSaladCycle() throws InvalidMoveException {
     List<Action> actions = new ArrayList<>();
-		red.setCarrotsAvailable(100);
+		red.setCarrots(100);
 		int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
     int carrotAt = state.getNextFieldByType(FieldType.CARROT, 0);
     actions.add(new Advance(saladAt));
@@ -406,12 +458,12 @@ public class GamePlayTest
 		actions.clear();
 
 		int saladsBefore = red.getSalads();
-		int carrotsBefore = red.getCarrotsAvailable();
+		int carrotsBefore = red.getCarrots();
 		actions.add(new EatSalad());
 		move = new Move(actions);
 		move.perform(state);
 		Assert.assertEquals(saladsBefore - 1, red.getSalads());
-    Assert.assertEquals(carrotsBefore + 10, red.getCarrotsAvailable());
+    Assert.assertEquals(carrotsBefore + 10, red.getCarrots());
 	}
 
 	/**
@@ -451,10 +503,10 @@ public class GamePlayTest
 
 		actions.add(new ExchangeCarrots(10));
 		Assert.assertTrue(GameRuleLogic.isValidToExchangeCarrots(state, 10));
-		int carrotsBefore = red.getCarrotsAvailable();
+		int carrotsBefore = red.getCarrots();
     move = new Move(actions);
 		move.perform(state);
-		Assert.assertEquals(carrotsBefore + 10, red.getCarrotsAvailable());
+		Assert.assertEquals(carrotsBefore + 10, red.getCarrots());
 	}
 
 	/**
@@ -479,10 +531,10 @@ public class GamePlayTest
 		actions.add(new ExchangeCarrots(-10));
 		move = new Move(actions);
 		Assert.assertTrue(GameRuleLogic.isValidToExchangeCarrots(state,-10));
-		int carrotsBefore = red.getCarrotsAvailable();
+		int carrotsBefore = red.getCarrots();
 
 		move.perform(state);
-		Assert.assertEquals(carrotsBefore - 10, red.getCarrotsAvailable());
+		Assert.assertEquals(carrotsBefore - 10, red.getCarrots());
 	}
 
 	/**
@@ -599,7 +651,7 @@ public class GamePlayTest
 		int carrotAfter = state.getNextFieldByType(FieldType.CARROT,
 				firstHedgehog + 1);
     actions.add(new Advance(carrotAfter));
-		red.setCarrotsAvailable(200);
+		red.setCarrots(200);
 		Move move = new Move(actions);
 		move.perform(state);
 		actions.clear();
@@ -611,11 +663,11 @@ public class GamePlayTest
 		actions.clear();
 
 		actions.add(new FallBack());
-		int carrotsBefore = red.getCarrotsAvailable();
+		int carrotsBefore = red.getCarrots();
 		int diff = red.getFieldIndex() - firstHedgehog;
 		move = new Move(actions);
 		move.perform(state);
-		Assert.assertEquals(carrotsBefore + diff * 10, red.getCarrotsAvailable());
+		Assert.assertEquals(carrotsBefore + diff * 10, red.getCarrots());
 	}
 
 	/**

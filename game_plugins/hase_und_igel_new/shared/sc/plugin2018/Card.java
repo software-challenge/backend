@@ -44,13 +44,13 @@ public class Card extends Action {
   /**
    *
    * @param type Art der Karte
-   * @param value Wert einer Karte nur für TAKE_OR_DROP_CARROTS genutzt
+   * @param value Wert einer Karte nur für TAKE_OR_DROP_CARROTS genutzt (-20,0,20)
    * @param order Index in der Aktionsliste des Zuges
    */
   public Card(CardType type, int value, int order) {
     this.order = order;
     this.value = 0; // default value
-    setValue(value);
+    this.value = value;
     this.type = type;
   }
 
@@ -63,9 +63,9 @@ public class Card extends Action {
         if (GameRuleLogic.isValidToPlayEatSalad(state)) {
           state.getCurrentPlayer().eatSalad();
           if (state.isFirst(state.getCurrentPlayer())) {
-            state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+            state.getCurrentPlayer().changeCarrotsBy(10);
           } else {
-            state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+            state.getCurrentPlayer().changeCarrotsBy(30);
           }
         } else {
           throw new InvalidMoveException("Das Ausspielen der EAT_SALAD Karte ist nicht möglich.");
@@ -94,7 +94,7 @@ public class Card extends Action {
         break;
       case TAKE_OR_DROP_CARROTS:
         if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
-          state.getCurrentPlayer().changeCarrotsAvailableBy(this.getValue());
+          state.getCurrentPlayer().changeCarrotsBy(this.getValue());
         } else {
           throw new InvalidMoveException("Das Ausspielen der TAKE_OR_DROP_CARROTS Karte ist nicht möglich.");
         }
@@ -108,22 +108,8 @@ public class Card extends Action {
     return type;
   }
 
-  public void setType(CardType type) {
-    this.type = type;
-  }
-
   public int getValue() {
     return value;
-  }
-
-  /**
-   * Setzt den Wert nur auf 20, 0 oder -20 andere Werte werden nicht akzeptiert
-   * @param value Wert
-   */
-  public void setValue(int value) {
-    if (value == 0 || value == -20 || value == 20) {
-      this.value = value;
-    }
   }
 
   @Override

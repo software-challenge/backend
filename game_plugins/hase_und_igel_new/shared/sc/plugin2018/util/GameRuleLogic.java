@@ -6,11 +6,6 @@ import sc.plugin2018.*;
 
 public class GameRuleLogic
 {
-	public static final int	HEDGEHOG_CARROT_MULTIPLIER			= 10;
-	public static final int	CARROT_BONUS_ON_POSITION_1_FIELD	= 10;
-	public static final int	CARROT_BONUS_ON_POSITION_2_FIELD	= 30;
-	public static final int	CARROT_BONUS_ON_POSITION_1_SALAD	= 10;
-	public static final int	CARROT_BONUS_ON_POSITION_2_SALAD	= 30;
 
 	private GameRuleLogic()
 	{
@@ -72,7 +67,7 @@ public class GameRuleLogic
     }
 		boolean valid = true;
 		int requiredCarrots = GameRuleLogic.calculateCarrots(distance);
-		valid = valid && (requiredCarrots <= player.getCarrotsAvailable());
+		valid = valid && (requiredCarrots <= player.getCarrots());
 
 		int newPosition = player.getFieldIndex() + distance;
 		valid = valid && !state.isOccupied(newPosition);
@@ -94,11 +89,11 @@ public class GameRuleLogic
         }
         state2.setLastAction(new Advance(distance));
         state2.getCurrentPlayer().setFieldIndex(newPosition);
-        state2.getCurrentPlayer().changeCarrotsAvailableBy(-requiredCarrots);
+        state2.getCurrentPlayer().changeCarrotsBy(-requiredCarrots);
 				valid = valid && canPlayAnyCard(state2);
 				break;
 			case GOAL:
-				int carrotsLeft = player.getCarrotsAvailable() - requiredCarrots;
+				int carrotsLeft = player.getCarrots() - requiredCarrots;
 				valid = valid && carrotsLeft <= 10;
 				valid = valid && player.getSalads() == 0;
 				break;
@@ -147,7 +142,7 @@ public class GameRuleLogic
    */
 	private static boolean canAdvanceToAnyField(GameState state)
 	{
-		int fields = calculateMoveableFields(state.getCurrentPlayer().getCarrotsAvailable());
+		int fields = calculateMoveableFields(state.getCurrentPlayer().getCarrots());
 		for (int i = 0; i <= fields; i++)
 		{
 			if (isValidToAdvance(state, i))
@@ -239,7 +234,7 @@ public class GameRuleLogic
 		}
 		if (n == -10)
 		{
-			if (player.getCarrotsAvailable() >= 10)
+			if (player.getCarrots() >= 10)
 			{
 				return valid;
 			}
@@ -357,7 +352,7 @@ public class GameRuleLogic
 				valid = valid && canPlayAnyCard(state2);
 				break;
 			case GOAL:
-				valid = valid && state.canEnterGoal(player);
+				valid = valid && canEnterGoal(state);
 				break;
 			case CARROT:
 			case POSITION_1:
@@ -386,7 +381,7 @@ public class GameRuleLogic
 		valid = valid && (n == 20 || n == -20 || n == 0);
 		if (n < 0)
 		{
-			valid = valid && ((player.getCarrotsAvailable() + n) >= 0);
+			valid = valid && ((player.getCarrots() + n) >= 0);
 		}
 		return valid;
 	}
@@ -511,7 +506,7 @@ public class GameRuleLogic
 	public static boolean canMove(GameState state)
 	{
 		boolean canMove = false;
-		int maxDistance = GameRuleLogic.calculateMoveableFields(state.getCurrentPlayer().getCarrotsAvailable());
+		int maxDistance = GameRuleLogic.calculateMoveableFields(state.getCurrentPlayer().getCarrots());
 		for (int i = 1; i <= maxDistance; i++)
 		{
 			canMove = canMove || isValidToAdvance(state, i);
@@ -524,7 +519,20 @@ public class GameRuleLogic
 	 * Zug eines Spielers immer false sein, ansonsten ist Zug ungültig.
 	 * @param state derzeitiger GameState
 	 */
-	public static boolean mustPlayerCard(GameState state) {
+	public static boolean mustPlayCard(GameState state) {
 		return state.getCurrentPlayer().mustPlayCard();
+	}
+
+
+	/**
+	 * Überprüft ob ein der derzeitige Spieler das Ziel betreten darf
+	 * @param state GameState
+	 * @return
+	 */
+	public static boolean canEnterGoal(GameState state)
+	{
+		Player player = state.getCurrentPlayer();
+		return player.getCarrots() <= 10
+						&& player.getSalads() == 0;
 	}
 }

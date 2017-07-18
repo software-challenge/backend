@@ -13,8 +13,6 @@ import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 import sc.shared.WinCondition;
 
-/*XXX should not be abstract*/
-
 public class TestGame extends RoundBasedGameInstance<TestPlayer>
 {
 	private TestGameState	state	= new TestGameState();
@@ -70,12 +68,6 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		}
 	}
 
-	@Override
-	protected boolean checkGameOverCondition()
-	{
-		return (this.state.round == 4);
-	}
-
 	public List<TestPlayer> getPlayers()
 	{
 		return this.players;
@@ -102,14 +94,6 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	public void onPlayerLeft(SimplePlayer player)
 	{
 		onPlayerLeft(player, ScoreCause.LEFT);
-	}
-
-
-	@Override
-	protected void onNewTurn()
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

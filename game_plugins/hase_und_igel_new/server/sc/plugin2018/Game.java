@@ -2,8 +2,6 @@ package sc.plugin2018;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +33,12 @@ public class Game extends RoundBasedGameInstance<Player>
 															.getLogger(Game.class);
 
 	@XStreamOmitField
-	private List<PlayerColor>		availableColors	= new LinkedList<PlayerColor>();
+	private List<PlayerColor>		availableColors	= new LinkedList<>();
 
   private GameState gameState = new GameState();
 
   public GameState getGameState() {
     return this.gameState;
-  }
-
-  public Player getActivePlayer() {
-    return this.activePlayer;
   }
 
   public Game() {
@@ -54,27 +48,8 @@ public class Game extends RoundBasedGameInstance<Player>
 
   @Override
   protected Object getCurrentState() {
-    return this.gameState; // return only the for the players
-                                        // visible board
+    return this.gameState; // return visible board for the players
   }
-
-	@Override
-	protected boolean checkGameOverCondition()
-	{
-	  if (gameState.getTurn() % 2 == 1) {
-	    return false; // you can only win at the end of a round
-    }
-    if (gameState.getTurn() / 2 >= Constants.ROUND_LIMIT) {
-	    return true;
-    }
-    // check if salads are used
-    // check if less or equal than 10 carrots
-    if((gameState.getRedPlayer().getSalads() == 0 && gameState.getRedPlayer().getCarrotsAvailable() <= 10) ||
-            (gameState.getBluePlayer().getSalads() == 0 && gameState.getBluePlayer().getCarrotsAvailable() <= 10)) {
-	    return true;
-    }
-		return false;
-	}
 
   /**
    * Someone did something, check out what it was (move maybe? Then check the
@@ -99,16 +74,12 @@ public class Game extends RoundBasedGameInstance<Player>
       move.perform(this.gameState);
       next(this.gameState.getCurrentPlayer());
     } catch (InvalidMoveException e) {
-      author.setViolated(true);
-      String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
-      author.setViolationReason(e.getMessage());
-      logger.error(err, e);
-      throw new GameLogicException(err);
+      super.catchInvalidMove(e, author);
     }
   }
   
   /**
-   * In this game, a new turn begins when both players made one move. The order
+   * In this game, a new round begins when both players made one move. The order
    * in which the players make their move may change.
    */
   @Override
@@ -135,31 +106,6 @@ public class Game extends RoundBasedGameInstance<Player>
 
     return player;
   }
-  
-  @Override
-  public void onPlayerLeft(SimplePlayer player) {
-    if (!player.hasViolated()) {
-      player.setLeft(true);
-      onPlayerLeft(player, ScoreCause.LEFT);
-    } else {
-      onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
-    }
-  }
-
-  @Override
-  public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
-    Map<SimplePlayer, PlayerScore> res = generateScoreMap();
-
-    for (Entry<SimplePlayer, PlayerScore> entry : res.entrySet()) {
-      PlayerScore score = entry.getValue();
-
-      if (entry.getKey() == player) {
-        score.setCause(cause);
-      }
-    }
-
-    notifyOnGameOver(res);
-  }
 
   /**
    * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
@@ -174,60 +120,43 @@ public class Game extends RoundBasedGameInstance<Player>
   }
 
 	@Override
-	protected void onNewTurn()
-	{
-	}
+  protected PlayerScore getScoreFor(Player player) {
 
-	// TODO add right calculation
-	@Override
-  protected PlayerScore getScoreFor(Player p) {
-
-    logger.debug("get score for player {}", p.getPlayerColor());
-    logger.debug("player violated: {}", p.hasViolated());
-    int[] stats = this.gameState.getPlayerStats(p);
-    int matchPoints = 1;
-    int[] oppPoints = this.gameState.getPlayerStats(p.getPlayerColor().opponent());
+    logger.debug("get score for player {}", player.getPlayerColor());
+    logger.debug("player violated: {}", player.hasViolated());
+    int[] stats = this.gameState.getPlayerStats(player);
+    int matchPoints = Constants.DRAW_SCORE;
     WinCondition winCondition = checkWinCondition();
     String reason = null;
-    Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
+    Player opponent = player.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
         : this.gameState.getRedPlayer();
     if (winCondition != null) {
       reason = winCondition.getReason();
-      if(p.equals(winCondition.getWinner())) {
+      if(player.getPlayerColor().equals(winCondition.getWinner())) {
         matchPoints = 2;
-      } else if (opponent.equals(winCondition.getWinner())) {
+      } else if (opponent.getPlayerColor().equals(winCondition.getWinner())) {
         matchPoints = 0;
       } else {
         // this should not happen
       }
-      // TODO check winner set matchpoints etc
-    } else if (stats[Constants.GAME_STATS_FIELD_INDEX] > oppPoints[Constants.GAME_STATS_FIELD_INDEX]
-        || (stats[Constants.GAME_STATS_FIELD_INDEX] == oppPoints[Constants.GAME_STATS_FIELD_INDEX]
-            && stats[Constants.GAME_STATS_CARROTS] > oppPoints[Constants.GAME_STATS_CARROTS])) {
-      matchPoints = 2;
-    }
-    else if (stats[Constants.GAME_STATS_FIELD_INDEX] < oppPoints[Constants.GAME_STATS_FIELD_INDEX]
-        || (stats[Constants.GAME_STATS_FIELD_INDEX] == oppPoints[Constants.GAME_STATS_FIELD_INDEX]
-            && stats[Constants.GAME_STATS_CARROTS] < oppPoints[Constants.GAME_STATS_CARROTS])) {
-      matchPoints = 0; 
     }
     // opponent has done something wrong
-    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft() 
+    if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft()
         || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
       matchPoints = 2;
     }
     ScoreCause cause;
-    if (p.hasSoftTimeout()) { // Soft-Timeout
+    if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
       matchPoints = 0;
-    } else if (p.hasHardTimeout()) { // Hard-Timeout
+    } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
       matchPoints = 0;
-    } else if (p.hasViolated()) { // rule violation
+    } else if (player.hasViolated()) { // rule violation
       cause = ScoreCause.RULE_VIOLATION;
-      reason = p.getViolationReason(); // message from InvalidMoveException
+      reason = player.getViolationReason(); // message from InvalidMoveException
       matchPoints = 0;
-    } else if (p.hasLeft()) { // player left
+    } else if (player.hasLeft()) { // player left
       cause = ScoreCause.LEFT;
       matchPoints = 0;
     } else { // regular score or opponent violated
@@ -236,7 +165,8 @@ public class Game extends RoundBasedGameInstance<Player>
     return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_FIELD_INDEX],
         stats[Constants.GAME_STATS_CARROTS]);
   }
-	
+
+  // XXX set to right value
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player)
 	{
@@ -245,51 +175,56 @@ public class Game extends RoundBasedGameInstance<Player>
 
   /**
    * Checks if a win condition in the current game state is met.
+   * Checks round limit and end of round (and playerStats).
+   * Checks if goal is reached
    *
    * @return WinCondition with winner and reason or null, if no win condition is
    *         yet met.
    */
   public WinCondition checkWinCondition() {
-    if (!checkGameOverCondition()) {
-      return null;
-    }
     int[][] stats = this.gameState.getGameStats();
-    if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+    if (this.gameState.getTurn() <= 2 * Constants.ROUND_LIMIT) {
+      // round limit not reached
+      Player winningPlayer = checkGoalReached();
+      if (winningPlayer != null){
+        return new WinCondition(winningPlayer.getPlayerColor(), Constants.IN_GOAL_MESSAGE);
+      } else {
+        return null;
+      }
+
+    } else { // this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT
       // round limit reached
-      PlayerColor winner = null;
+      PlayerColor winner;
       if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
         winner = PlayerColor.RED;
       } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
         winner = PlayerColor.BLUE;
       } else {
         if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS]) {
-          winner = PlayerColor.BLUE;  
+          winner = PlayerColor.BLUE;
         } else {
           // red wins on draw, because red first entered the goal
           winner = PlayerColor.RED;
         }
       }
-      return new WinCondition(winner, "Das Rundenlimit wurde erreicht.");
-    } else if (checkGoalReached() != null) {
-      // one player reached the goal
-      PlayerColor winner = checkGoalReached().getPlayerColor();
-      return new WinCondition(winner, "Das Spiel ist beendet.\nEin Spieler ist im Ziel");
+      return new WinCondition(winner, Constants.ROUND_LIMIT_MESSAGE);
     }
-    return null;
   }
 	
   /**
-   * checks if one player reached the goal
+   * Checks if one player reached the goal (at the end of a round). If both player are in goal, the one with lesser carrots
+   * wins, if they both have the same amount, red wins for first entering goal.
    *
    * @return the player who reached the goal or null if no player reached the
    *         goal, only returns a player on the end of a round else always null
    */
   public Player checkGoalReached() {
-    if (this.gameState.getTurn() % 2 == 0) {
+    if (this.gameState.getTurn() % 2 == 0) { // even turn is right here, because method is called after perform
+      // Checking field index is enough, if other conditions don't apply goal is not reachable
       Player red = this.gameState.getRedPlayer();
       Player blue = this.gameState.getBluePlayer();
       if (red.inGoal()) {
-        if (blue.inGoal() && blue.getCarrotsAvailable() < red.getCarrotsAvailable()) {
+        if (blue.inGoal() && blue.getCarrots() < red.getCarrots()) {
           return blue;
         }
         return red;
@@ -304,18 +239,37 @@ public class Game extends RoundBasedGameInstance<Player>
 	public void loadFromFile(String file)
 	{
 		logger.info("Loading game from: " + file);
-		GameLoader gl = new GameLoader(new Class<?>[] {GameState.class, Board.class});
+		GameLoader gl = new GameLoader(new Class<?>[] {GameState.class});
 		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
 		if (gameInfo != null) {
 			loadGameInfo(gameInfo);
 		}
 	}
 
+	// TODO test this
 	@Override
 	public void loadGameInfo(Object gameInfo)
 	{
 		logger.info("Processing game information");
-		// TODO
+    if (gameInfo instanceof GameState) {
+      this.gameState = (GameState) gameInfo;
+      // when loading from a state the listeners are not initialized
+      this.gameState.getRedPlayer().initListeners();
+      this.gameState.getBluePlayer().initListeners();
+      // the currentPlayer has to be RED (else the Move request is send to the
+      // wrong player)
+      // if it isn't red, the players have to be switched and red is made
+      // currentPlayer
+      if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
+        this.gameState.setCurrentPlayer(PlayerColor.RED);
+        Player newRed = (Player) this.gameState.getBluePlayer().clone();
+        newRed.setPlayerColor(PlayerColor.RED);
+        Player newBlue = (Player) this.gameState.getRedPlayer().clone();
+        newBlue.setPlayerColor(PlayerColor.BLUE);
+        this.gameState.setRedPlayer(newRed);
+        this.gameState.setBluePlayer(newBlue);
+      }
+    }
 	}
 
 	 @Override

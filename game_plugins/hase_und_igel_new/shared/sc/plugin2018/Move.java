@@ -12,6 +12,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * Ein Spielzug. Ein Spielzug wird von dem derzeitgen Spieler eines GameStates ausgeführt. Er hat folgende Form:
+ * - er besteht nur aus einer Skip, FallBack, EatSalad oder ExchangeCarrots Aktion
+ * - er besteht aus einer Advance Aktion und eventuell darauf folgende Kartenaktionen
+ */
 @XStreamAlias(value = "move")
 public class Move implements Cloneable {
 
@@ -19,7 +24,7 @@ public class Move implements Cloneable {
   /**
    * Liste von Aktionen aus denen der Zug besteht. Die Reihenfolge, in der die
    * Aktionen ausgeführt werden, wird NICHT durch die Reihenfolge in der Liste
-   * bestimmt, sondern durch die Werte im order-Attribut jedes Action objektes:
+   * bestimmt, sondern durch die Werte im order-Attribut jedes Action Objektes:
    * Die Aktionen werden nach dem order-Attribut aufsteigend sortiert
    * ausgeführt.
    */
@@ -101,7 +106,7 @@ public class Move implements Cloneable {
     }
     Move clone = new Move(clonedActions);
     if (this.hints != null)
-      clone.hints = new LinkedList<DebugHint>(this.hints);
+      clone.hints = new LinkedList<>(this.hints);
     return clone;
   }
 
@@ -114,7 +119,7 @@ public class Move implements Cloneable {
    */
   public void addHint(DebugHint hint) {
     if (hints == null) {
-      hints = new LinkedList<DebugHint>();
+      hints = new LinkedList<>();
     }
     hints.add(hint);
   }
@@ -154,8 +159,11 @@ public class Move implements Cloneable {
   }
 
   /**
-   TODO comment
-   *
+   * Führt einen Zug aus, indem alle Aktionen aufsteigend anand des order Attributes ausgeführt werden.
+   * Dabei werden zusätzlich folgende Informationen geupdated:
+   * lastMove wird gesetzt, lastNonSkipAktion wird gesetzt, turn wird um eins erhöht.
+   * der currentPlayer wird getauscht, falls sich der nächste Spieler auf entsprechendem
+   * Positionsfeld befindet werden seine Karotten erhöht.
    * @param state
    *          Spielstatus
    * @throws InvalidMoveException
@@ -163,11 +171,9 @@ public class Move implements Cloneable {
    */
   public void perform(GameState state) throws InvalidMoveException {
     // sort actions according to order
-    Collections.sort(this.actions, Action::compareTo); // this may do the right stuff
-    // TODO check actions for something wrong (may do this in perform of actions if possible)
+    orderActions();
     if (actions.isEmpty()) {
       throw new InvalidMoveException("Keine Aktionen vorhanden.");
-      // TODO may use this as a giving up move to avoid unnecessary Exceptions
     }
     // perform actions
     int index = 0;
@@ -190,16 +196,17 @@ public class Move implements Cloneable {
     }
     // prepare next turn
     state.setLastMove(this);
-    state.updateCurrentPlayer();
+    // increase turn
+    state.setTurn(state.getTurn() + 1);
+    // switch player (depends on current turn)
+    state.switchCurrentPlayer();
     // check whether player in next turn gets carrots from Position_X fields
     FieldType fieldType = state.getBoard().getTypeAt(state.getCurrentPlayer().getFieldIndex());
     if (state.isFirst(state.getCurrentPlayer()) && fieldType == FieldType.POSITION_1) {
-      state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+      state.getCurrentPlayer().changeCarrotsBy(10);
     } else if (state.isFirst(state.getOtherPlayer()) && fieldType == FieldType.POSITION_2) {
-      state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+      state.getCurrentPlayer().changeCarrotsBy(30);
     }
-    // increase turn
-    state.setTurn(state.getTurn() + 1);
   }
 
   /**
@@ -225,34 +232,32 @@ public class Move implements Cloneable {
     return false;
   }
 
-//  public boolean containsPushAction() {
-//    for (Action action : getActions()) {
-//      if (action.getClass() == Push.class) {
-//        return true;
-//      }
-//    }
-//    return false;
-//  }
-
   @Override
   public String toString() {
     String toString = "Zug mit folgenden Aktionen \n";
+    StringBuilder b = new StringBuilder(toString);
     for (Action action : getActions()) {
       if (action instanceof Advance) {
-        toString += action.toString() + "\n";
+        b.append(action.toString());
+        b.append("\n");
       } else if (action instanceof EatSalad) {
-        toString += action.toString() + "\n";
+        b.append(action.toString());
+        b.append("\n");
       } else if (action instanceof Card) {
-        toString += action.toString() + "\n";
+        b.append(action.toString());
+        b.append("\n");
       } else if (action instanceof ExchangeCarrots) {
-        toString += action.toString() + "\n";
+        b.append(action.toString());
+        b.append("\n");
       } else if (action instanceof FallBack) {
-        toString += action.toString() + "\n";
+        b.append(action.toString());
+        b.append("\n");
       } else if (action instanceof Skip) {
-        toString += action.toString() + "\n";
+        b.append(action.toString());
+        b.append("\n");
       }
     }
-    return toString;
+    return b.toString();
   }
 
   /**
@@ -265,9 +270,12 @@ public class Move implements Cloneable {
     }
   }
 
+  /**
+   * Sortiert die Aktionen aufsteigend anhand des order Attributs
+   */
   public void orderActions() {
     if (actions != null) {
-      Collections.sort(actions);
+      actions.sort(Action::compareTo);
     }
   }
 

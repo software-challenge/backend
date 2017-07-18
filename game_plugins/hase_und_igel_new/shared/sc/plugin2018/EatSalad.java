@@ -24,9 +24,9 @@ public class EatSalad extends Action {
       state.getCurrentPlayer().eatSalad();
       // when eating salad the carrots are increased
       if (state.getCurrentPlayer().getFieldIndex() > state.getOtherPlayer().getFieldIndex()) {
-        state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+        state.getCurrentPlayer().changeCarrotsBy(10);
       } else {
-        state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+        state.getCurrentPlayer().changeCarrotsBy(30);
       }
       state.setLastAction(this);
     } else {

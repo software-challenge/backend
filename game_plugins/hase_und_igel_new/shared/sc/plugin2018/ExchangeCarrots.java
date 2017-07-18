@@ -6,7 +6,7 @@ import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
- * TODO
+ * Karottentauschaktion. Es können auf einem Karottenfeld 10 Karotten abgegeben oder aufgenommen werden.
  */
 @XStreamAlias(value = "exchangeCarrots")
 public class ExchangeCarrots extends Action {
@@ -24,33 +24,36 @@ public class ExchangeCarrots extends Action {
     this.value = value;
   }
 
-
+  public int getValue() {
+    return value;
+  }
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
-    if (GameRuleLogic.isValidToExchangeCarrots(state, this.value)) {
-      state.getCurrentPlayer().changeCarrotsAvailableBy(this.value);
+    if (GameRuleLogic.isValidToExchangeCarrots(state, this.getValue())) {
+      state.getCurrentPlayer().changeCarrotsBy(this.getValue());
       state.setLastAction(this);
     } else {
-      throw new InvalidMoveException("Es können nicht " + this.value + " Karotten aufgenommen werden.");
+      throw new InvalidMoveException("Es können nicht " + this.getValue() + " Karotten aufgenommen werden.");
     }
   }
 
   @Override
   public ExchangeCarrots clone() {
-    return new ExchangeCarrots(this.value, this.order);
+    return new ExchangeCarrots(this.getValue(), this.order);
   }
 
   @Override
   public boolean equals(Object o) {
     if(o instanceof ExchangeCarrots) {
-      return (this.value == ((ExchangeCarrots) o).value);
+      return (this.getValue() == ((ExchangeCarrots) o).getValue());
     }
     return false;
   }
 
   @Override
   public String toString() {
-    return "ExchangeCarrots value " + this.value + " order " + this.order;
+    return "ExchangeCarrots value " + this.getValue() + " order " + this.order;
   }
+
 }

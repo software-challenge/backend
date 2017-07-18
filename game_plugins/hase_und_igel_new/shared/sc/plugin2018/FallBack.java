@@ -5,7 +5,8 @@ import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
- * TODO
+ * Rückzugaktion. Sollte das nächste Igelfeld hinter einem Spieler nicht belegt sein, darf anstatt nach
+ * vorne zu ziehen ein Rückzug gemacht werden. Dabei werden die zurückgezogene Distanz * 10 Karotten aufgenommen.
  */
 @XStreamAlias(value = "fallBack")
 public class FallBack extends Action {
@@ -24,7 +25,7 @@ public class FallBack extends Action {
       int previousFieldIndex = state.getCurrentPlayer().getFieldIndex();
       state.getCurrentPlayer().setFieldIndex(state.getPreviousFieldByType(FieldType.HEDGEHOG, state.getCurrentPlayer()
               .getFieldIndex()));
-      state.getCurrentPlayer().changeCarrotsAvailableBy(10 * (previousFieldIndex - state.getCurrentPlayer().getFieldIndex()));
+      state.getCurrentPlayer().changeCarrotsBy(10 * (previousFieldIndex - state.getCurrentPlayer().getFieldIndex()));
       state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Es kann gerade kein Rückzug gemacht werden.");

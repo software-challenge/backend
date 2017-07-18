@@ -3,6 +3,10 @@ package sc.plugin2018;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
+/**
+ * Ein Feld des Spielfelds. Ein Spielfeld ist durch den index eindeutig identifiziert.
+ * Das type Attribut gibt an, um welchen Feldtyp es sich handelt.
+ */
 @XStreamAlias(value = "field")
 public class Field {
 
@@ -25,6 +29,10 @@ public class Field {
     return index;
   }
 
+  /**
+   * Nur für den Server (für Test) relevant.
+   * @param index Index des Feldes
+   */
   public void setIndex(int index) {
     this.index = index;
   }
@@ -33,6 +41,10 @@ public class Field {
     return type;
   }
 
+  /**
+   * Nur für den Server (für Test) relevant.
+   * @param type Feldtyp
+   */
   public void setType(FieldType type) {
     this.type = type;
   }

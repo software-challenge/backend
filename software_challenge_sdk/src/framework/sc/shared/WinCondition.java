@@ -44,4 +44,23 @@ public class WinCondition implements Cloneable {
     return new WinCondition(winner, reason);
   }
 
+  public boolean equals(Object eq) {
+    if (eq instanceof WinCondition) {
+      WinCondition wq = (WinCondition) eq;
+      if (this.getWinner() != wq.getWinner()) {
+        return false;
+      }
+      if (this.getReason() != wq.getReason()) {
+        return false;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "winner: " + this.getWinner() +" reason: " + this.getReason();
+  }
 }

@@ -7,13 +7,17 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
+import sc.plugin2018.util.GameRuleLogic;
+import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 import sc.plugin2018.util.Constants;
+
+import java.util.ArrayList;
 
 /**
  * Ein {@code GameState} beinhaltet alle Informationen, die den Spielstand zu
  * einem gegebenen Zeitpunkt, das heisst zwischen zwei Spielzuegen, beschreiben.
- * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getTurn()}), die
+ * Dies umfasst eine fortlaufende Zugnummer ({@link #getTurn() getRound()}), die
  * der Spielserver als Antwort von einem der beiden Spieler (
  * {@link #getCurrentPlayer() getCurrentPlayer()}) erwartet. Weiterhin gehoeren
  * die Informationen ueber die beiden Spieler und das Spielfeld zum Zustand.
@@ -229,7 +233,7 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant
-   * @param red
+   * @param red roter Spieler
    */
   protected void setRedPlayer(Player red) {
     this.red = red;
@@ -248,7 +252,7 @@ public class GameState implements Cloneable {
 
   /**
    * Nur für den Server relevant
-   * @param blue
+   * @param blue blauer Spieler
    */
   protected void setBluePlayer(Player blue) {
     this.blue = blue;
@@ -277,10 +281,9 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * wechselt den Spieler, der aktuell an der Reihe ist.
+   * wechselt den Spieler, der aktuell an der Reihe ist anhand der Anzahl der Züge <code>turn</code>
    */
-  private void switchCurrentPlayer() {
-    // when a new turn starts, the leading player should move first
+  public void switchCurrentPlayer() {
     if (turn % 2 == 0) {
       currentPlayer = PlayerColor.RED;
     } else {
@@ -289,33 +292,34 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * Überprüft ob ein Feld durch einen anderen Spieler belegt ist.
+   * Überprüft ob ein Feld durch einen Spieler belegt ist, sodass niemand darauf ziehen kann.
+   * (da Zielfeld von mehreren betretbar, bei Zielfeld immer false)
    * 
    * @param pos
    *            die Position auf der Rennstrecke
-   * @return
+   * @return Gibt true zurück, falls sich ein Spieler auf dem Feld befindet und es nicht das Zielfeld ist
    */
   public final boolean isOccupied(final int pos)
   {
     return (red.getFieldIndex() == pos || blue.getFieldIndex() == pos)
-        && (pos != 64 || pos == 0);
+        && (pos != Constants.NUM_FIELDS - 1);
   }
 
   /**
    * Überprüft ob der angegebene Spieler an erster Stelle ist. Wenn sich beide
-   * Spieler im Ziel befinden wird zusätzlich überprüft, ob <code>p</code>
+   * Spieler im Ziel befinden wird zusätzlich überprüft, ob <code>player</code>
    * weniger Karotten besitzt als der Gegenspieler.
    * 
-   * @param p
-   * @return
+   * @param player überprüfter Spieler
+   * @return true, falls Spieler an erster Stelle
    */
-  public final boolean isFirst(final Player p)
+  public final boolean isFirst(final Player player)
   {
-    Player o = this.getOpponent(p);
-    boolean isFirst = o.getFieldIndex() <= p.getFieldIndex();
-    if (p.inGoal() && o.getFieldIndex() == p.getFieldIndex())
+    Player o = this.getOpponent(player);
+    boolean isFirst = o.getFieldIndex() <= player.getFieldIndex();
+    if (player.inGoal() && o.getFieldIndex() == player.getFieldIndex())
       isFirst = isFirst
-          && p.getCarrotsAvailable() < o.getCarrotsAvailable();
+          && player.getCarrots() < o.getCarrots();
     return isFirst;
   }
   
@@ -324,9 +328,8 @@ public class GameState implements Cloneable {
    * gewählte Position vor dem Startpunkt oder hinter dem Ziel, so wird
    * <code>INVALID</code> zurückgegeben.
    * 
-   * @param pos
-   *            die Position auf der Rennstrecke
-   * @return
+   * @param pos die Position auf der Rennstrecke
+   * @return Feldtyp an Position
    */
   public final FieldType getTypeAt(final int pos)
   {
@@ -337,9 +340,9 @@ public class GameState implements Cloneable {
    * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
    * Position <code>pos</code> auf diesem Spielbrett.
    * 
-   * @param type
-   * @param pos
-   * @return
+   * @param type gefragter FeldTyp
+   * @param pos Startposition
+   * @return Position des nächsten Feldes gefragten Typs
    */
   public final int getNextFieldByType(FieldType type, int pos)
   {
@@ -347,19 +350,13 @@ public class GameState implements Cloneable {
   }
 
   /**
-   * @param type
-   * @param pos
-   * @return
+   * @param type gefragter Feldtyp
+   * @param pos Startposition
+   * @return Position des nächsten vorherigen Feldes gefragten Typs
    */
   public final int getPreviousFieldByType(FieldType type, int pos)
   {
     return this.board.getPreviousFieldByType(type, pos);
-  }
-
-  public final boolean canEnterGoal(final Player player)
-  {
-    return player.getCarrotsAvailable() <= 10
-        && player.getSalads() == 0;
   }
 
   /**
@@ -439,9 +436,9 @@ public class GameState implements Cloneable {
     int[][] stats = new int[2][2];
 
     stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] = this.red.getFieldIndex();
-    stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] = this.red.getCarrotsAvailable();
+    stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] = this.red.getCarrots();
     stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX] = this.blue.getFieldIndex();
-    stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS] = this.blue.getCarrotsAvailable();
+    stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS] = this.blue.getCarrots();
     return stats;
 
   }
@@ -480,17 +477,6 @@ public class GameState implements Cloneable {
       return this.getBluePlayer();
     } else {
       return this.getRedPlayer();
-    }
-  }
-
-  /**
-   * Changes current Player if necessary
-   */
-  public void updateCurrentPlayer() {
-    if(this.currentPlayer == PlayerColor.RED) {
-      this.currentPlayer = PlayerColor.BLUE;
-    } else {
-      this.currentPlayer = PlayerColor.RED;
     }
   }
 
@@ -548,6 +534,10 @@ public class GameState implements Cloneable {
     }
   }
 
+  /**
+   * Git das Feld des derzeitigen Spielers zurück
+   * @return Feldtyp
+   */
   public FieldType fieldOfCurrentPlayer() {
     return this.getTypeAt(this.getCurrentPlayer().getFieldIndex());
   }
@@ -561,40 +551,158 @@ public class GameState implements Cloneable {
     return fieldOfCurrentPlayer().equals(FieldType.HARE);
   }
 
+  public ArrayList<Move> getPossibleMoves() {
+    ArrayList<Move> possibleMove = new ArrayList<>();
+    ArrayList<Action> actions = new ArrayList<>();
+    if (GameRuleLogic.isValidToEat(this)) {
+      // Wenn ein Salat gegessen werden kann, muss auch ein Salat gegessen werden
+      actions.add(new EatSalad());
+      Move move = new Move(actions);
+      possibleMove.add(move);
+      return possibleMove;
+    }
+    if (GameRuleLogic.isValidToExchangeCarrots(this, 10)) {
+      actions.add(new ExchangeCarrots(10));
+      possibleMove.add(new Move(actions));
+      actions.clear();
+    }
+    if (GameRuleLogic.isValidToExchangeCarrots(this, -10)) {
+      actions.add(new ExchangeCarrots(-10));
+      possibleMove.add(new Move(actions));
+      actions.clear();
+    }
+    if (GameRuleLogic.isValidToFallBack(this)) {
+      actions.add(new FallBack());
+      possibleMove.add(new Move(actions));
+      actions.clear();
+    }
+    // Generiere mögliche Vorwärtszüge
+    for (int i = 1; i < GameRuleLogic.calculateMoveableFields(this.getCurrentPlayer().getCarrots()); i++) {
+      GameState clone = null;
+      try {
+        clone = this.clone();
+      } catch (CloneNotSupportedException e) {
+        e.printStackTrace();
+      }
+      // Überrüfe ob Vorwärtszug möglich ist
+      if (GameRuleLogic.isValidToAdvance(clone, i)) {
+        Advance tryAdvance = new Advance(i);
+        try {
+          tryAdvance.perform(clone);
+        } catch (InvalidMoveException e) {
+          // Sollte nicht passieren, da Zug valide ist
+          e.printStackTrace();
+          break;
+        }
+        actions.add(tryAdvance);
+        // überprüfe, ob eine Karte gespielt werden muss/kann
+        if (clone.getCurrentPlayer().mustPlayCard()) {
+          possibleMove.addAll(clone.checkForPlayableCards(actions));
+        } else {
+          // Füge möglichen Vorwärtszug hinzu
+          possibleMove.add(new Move(actions));
+        }
+      }
+      actions.clear();
+    }
+    if (possibleMove.isEmpty()) {
+      Move move;
+      logger.warn("Muss aussetzen");
+      actions.add(new Skip());
+      move = new Move(actions);
+      possibleMove.add(move);
+    }
+    return possibleMove;
+  }
+
   /**
-   * GIbt FIRST, SECOND oder TIE zurück je nachdem, wie die Spieler zueinadner stehen
-   * @return Position
+   * Überprüft für übergebenen GameState und bisher getätigte Züge,
+   * ob das Ausspielen einer Karte nötig/möglich ist
+   * @param actions bisherige Aktionenliste
+   * @return mögliche Züge
    */
-  public Position getGameResult()
-  {
-    Position ret;
-    if (this.getOtherPlayer().getFieldIndex() < this.getCurrentPlayer().getFieldIndex())
-    {
-      ret = Position.FIRST;
-    }
-    else if (this.getOtherPlayer().getFieldIndex() > this.getCurrentPlayer().getFieldIndex())
-    {
-      ret = Position.SECOND;
-    }
-    else
-    // Beide Spieler auf dem gleichen Spielfeld (Ziel)
-    {
-      // nachrangiges Kriterium: Anzahl der Karotten, je weniger desto
-      // besser
-      if (this.getOtherPlayer().getCarrotsAvailable() > this.getCurrentPlayer().getCarrotsAvailable())
-      {
-        ret = Position.FIRST;
+  private ArrayList<Move> checkForPlayableCards(ArrayList<Action> actions) {
+    ArrayList<Move> possibleMove = new ArrayList<>();
+    if (this.getCurrentPlayer().mustPlayCard()) { // überprüfe, ob eine Karte gespielt werden muss
+      if (GameRuleLogic.isValidToPlayEatSalad(this)) {
+        actions.add(new Card(CardType.EAT_SALAD, actions.size()));
+        possibleMove.add(new Move(actions));
+
+        actions.remove(new Card(CardType.EAT_SALAD, 1));
       }
-      else if (this.getOtherPlayer().getCarrotsAvailable() < this.getCurrentPlayer().getCarrotsAvailable())
-      {
-        ret = Position.SECOND;
+      if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, 20)) {
+        actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20,  actions.size()));
+        possibleMove.add(new Move(actions));
+
+        actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, actions.size()));
       }
-      else
-      {
-        ret = Position.TIE;
+      if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, -20)) {
+        actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, -20,  actions.size()));
+        possibleMove.add(new Move(actions));
+
+        actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, -20, actions.size()));
+      }
+      if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(this, 0)) {
+        actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 0,  actions.size()));
+        possibleMove.add(new Move(actions));
+
+        actions.remove(new Card(CardType.TAKE_OR_DROP_CARROTS, 0,  actions.size()));
+      }
+      if (GameRuleLogic.isValidToPlayHurryAhead(this)) {
+        Card card = new Card(CardType.HURRY_AHEAD,  actions.size());
+        actions.add(card);
+        // Überprüfe ob wieder auf Hasenfeld gelandet:
+        GameState clone = null;
+        try {
+          clone = this.clone();
+        } catch (CloneNotSupportedException e) {
+          e.printStackTrace();
+        }
+        try {
+          card.perform(clone);
+        } catch (InvalidMoveException e) {
+          // Sollte nie passieren
+          e.printStackTrace();
+        }
+        if (clone.getCurrentPlayer().mustPlayCard()) {
+          ArrayList<Move> moves = clone.checkForPlayableCards(actions);
+          if (!moves.isEmpty()) {
+            possibleMove.addAll(moves);
+          }
+        } else {
+          possibleMove.add(new Move(actions));
+        }
+
+        actions.remove(new Card(CardType.HURRY_AHEAD,  actions.size()));
+      }
+      if (GameRuleLogic.isValidToPlayFallBack(this)) {
+        Card card = new Card(CardType.FALL_BACK,  actions.size());
+        actions.add(card);
+        // Überprüfe ob wieder auf Hasenfeld gelandet:
+        GameState clone = null;
+        try {
+          clone = this.clone();
+        } catch (CloneNotSupportedException e) {
+          e.printStackTrace();
+        }
+        try {
+          card.perform(clone);
+        } catch (InvalidMoveException e) {
+          // Sollte nie passieren
+          e.printStackTrace();
+        }
+        if (clone.getCurrentPlayer().mustPlayCard()) {
+          ArrayList<Move> moves = clone.checkForPlayableCards(actions);
+          if (!moves.isEmpty()) {
+            possibleMove.addAll(moves);
+          }
+        } else {
+          possibleMove.add(new Move(actions));
+        }
+        actions.remove(new Card(CardType.FALL_BACK,  actions.size()));
       }
     }
-    return ret;
+    return possibleMove;
   }
 
   @Override

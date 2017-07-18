@@ -16,7 +16,6 @@ import java.util.List;
  * Ein Spieler aus Hase- und Igel.
  * 
  */
-// FIXME: make Player a DAO to remove dependencies from ServerGameInterfaces lib
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable
 {
@@ -39,39 +38,35 @@ public class Player extends SimplePlayer implements Cloneable
 	// verfügbare Hasenkarten
 	private ArrayList<CardType>	cards;
 
+	// letzte Aktion, die kein <code>Skip</code> war
   private Action lastNonSkipAction;
-
-  @XStreamOmitField
-	private Position		position;
 
 	@XStreamOmitField
 	private boolean			mustPlayCard;
 
-	// FIXME: shouldn't be a property of a DAO that
-	// is sent over the network/replay
+  /**
+   * Nur für den Server relevant. Wird innerhalb eines Zuges genutzt, um zu überpüfen, ob eine
+   * Karte gespielt werden muss. Muss am nach einem Zug immer false sein, sonst war Zug ungültig.
+   * @param mustPlayCard zu setzender Wert
+   */
 	public void setMustPlayCard(boolean mustPlayCard)
 	{
 		this.mustPlayCard = mustPlayCard;
 	}
 
+  /**
+   * Nur für den Server relevant. Wird innerhalb eines Zuges genutzt, um zu überpüfen, ob eine
+   * Karte gespielt werden muss. Muss am nach einem Zug immer false sein, sonst war Zug ungültig.
+   * @return true, falls eine Karte gespielt werden muss
+   */
 	public boolean mustPlayCard()
 	{
 		return mustPlayCard;
 	}
 
-	public Position getPosition()
-	{
-		return position;
-	}
-
-	public void setPosition(Position position)
-	{
-		this.position = position;
-	}
-
 	protected Player()
 	{
-		cards = new ArrayList<CardType>();
+		cards = new ArrayList<>();
 		// only for XStream
 	}
 
@@ -101,8 +96,9 @@ public class Player extends SimplePlayer implements Cloneable
 	}
 
 	/**
-	 * @param type
-	 * @return
+	 * Überprüft ob Spieler bestimmte Karte noch besitzt
+	 * @param type Karte
+	 * @return true, falls Karte noch vorhanden
 	 */
 	public boolean ownsCardOfTyp(CardType type)
 	{
@@ -112,21 +108,29 @@ public class Player extends SimplePlayer implements Cloneable
 	/**
 	 * Die Anzahl an Karotten die der Spieler zur Zeit auf der Hand hat.
 	 * 
-	 * @return
+	 * @return Anzahl der Karroten
 	 */
-	public final int getCarrotsAvailable()
+	public final int getCarrots()
 	{
 		return carrots;
 	}
 
-	protected final void setCarrotsAvailable(int carrots)
+  /**
+   * Setzt die Karotten initial
+   * @param carrots Anzahl der Karotten
+   */
+	protected final void setCarrots(int carrots)
 	{
 		this.carrots = carrots;
 	}
 
-	public final void changeCarrotsAvailableBy(int amount)
+  /**
+   * Ändert Karottenanzahl um angegebenen Wert
+   * @param amount Wert um den geändert wird
+   */
+	public final void changeCarrotsBy(int amount)
 	{
-		this.carrots = Math.max(0, this.carrots + amount); // TODO check why max is used
+		this.carrots = this.carrots + amount;
 	}
 
 	/**
@@ -140,7 +144,7 @@ public class Player extends SimplePlayer implements Cloneable
 	}
 
   /**
-   * Setzt Salate, nur für den Server relevant.
+   * Setzt Salate, nur für den Server relevant. Nur für Tests genutzt.
    * @param salads Salate
    */
 	protected final void setSalads(int salads)
@@ -149,11 +153,11 @@ public class Player extends SimplePlayer implements Cloneable
 	}
 
   /**
-   * Verringert Salate um eins, sollte die Anzahl größer 0 sein. TODO throw exception?
+   * Verringert Salate um eins. Das essen eines Salats ist nicht erlaubt, sollte keiner mehr vorhanden sein.
    */
 	protected final void eatSalad()
 	{
-		this.salads = Math.max(0, this.salads - 1);
+		this.salads = this.salads - 1;
 	}
 
 	/**
@@ -165,25 +169,31 @@ public class Player extends SimplePlayer implements Cloneable
 	{
 		if (this.cards == null)
 		{
-			this.cards = new ArrayList<CardType>();
+			this.cards = new ArrayList<>();
 		}
 
 		return cards;
 	}
 
-	public List<CardType> getCardsWithout(CardType a)
+  /**
+   * Gibt Karten ohne bestimmten Typ zurück.
+   * @param type Typ der zu entfernenden Karte
+   * @return Liste der übrigen Karten
+   */
+	public List<CardType> getCardsWithout(CardType type)
 	{
-		List<CardType> res = new ArrayList<CardType>(4);
+		List<CardType> res = new ArrayList<>(4);
 		for (CardType b : cards)
 		{
-			if (!b.equals(a))
+			if (!b.equals(type))
 				res.add(b);
 		}
 		return res;
 	}
 
 	/**
-	 * @param cards Setzt verfügbare Karten es Spielers. Wird vom Server beim ausführen eines Zuges verwendet.
+   * Setzt verfügbare Karten es Spielers. Wird vom Server beim ausführen eines Zuges verwendet.
+	 * @param cards verfügbare Karten
 	 */
 	public void setCards(List<CardType> cards)
 	{
@@ -194,13 +204,17 @@ public class Player extends SimplePlayer implements Cloneable
 	 * Die aktuelle Position der Figure auf dem Spielfeld. Vor dem ersten Zug
 	 * steht eine Figure immer auf Spielfeld 0
 	 * 
-	 * @return
+	 * @return Spielfeldpositionsindex
 	 */
 	public final int getFieldIndex()
 	{
 		return index;
 	}
 
+  /**
+   * Setzt die Spielfeldposition eines Spielers. Nur für den Server relevant.
+   * @param pos neuer Positionsindex eines Spielers
+   */
 	public final void setFieldIndex(final int pos)
 	{
 		index = pos;
@@ -209,23 +223,51 @@ public class Player extends SimplePlayer implements Cloneable
 	/**
 	 * Die Farbe dieses Spielers auf dem Spielbrett
 	 * 
-	 * @return
+	 * @return Spielerfarbe
 	 */
 	public final PlayerColor getPlayerColor()
 	{
 		return color;
 	}
 
+  /**
+   * Nur für den Server relevant. Setzt Spielerfarbe des Spielers.
+   * @param playerColor Spielerfarbe
+   */
+	public void setPlayerColor(PlayerColor playerColor) {
+		this.color = playerColor;
+	}
+
+  /**
+   * Gibt letzte Aktion des Spielers zurück. Wird vom Server zum validieren von Zügen genutzt.
+   * @return letzte Aktion
+   */
+	public Action getLastNonSkipAction() {
+		return lastNonSkipAction;
+	}
+
+  /**
+   * Setzt letzte Aktion des Spielers. Nur für den Server relevant beim ausführen von <code>perform</code>
+   * Es wird hier nicht überprüft, ob die Aktion Skip ist.
+   * @param lastNonSkipAction letzte Aktion
+   */
+	public void setLastNonSkipAction(Action lastNonSkipAction) {
+		this.lastNonSkipAction = lastNonSkipAction;
+	}
+
+
+  /**
+   * Erzeugt eine deep copy eines Spielers
+   * @return Spieler
+   */
 	public Player clone()
 	{
 		Player clone = null;
 		try
 		{
 			clone = (Player) super.clone();
-			clone.cards = new ArrayList<CardType>();
-      for (CardType type : this.cards) {
-        clone.cards.add(type);
-      }
+			clone.cards = new ArrayList<>();
+      clone.cards.addAll(this.cards);
       clone.mustPlayCard = this.mustPlayCard;
 			clone.salads = this.salads;
 			clone.carrots = this.carrots;
@@ -241,28 +283,13 @@ public class Player extends SimplePlayer implements Cloneable
 		return clone;
 	}
 
-	public PlayerScore getScore()
-	{
-		return new PlayerScore((violated ? ScoreCause.RULE_VIOLATION : ScoreCause.REGULAR), "test" /*TODO add reason*/,  getPosition().equals(
-				Position.FIRST) ? Constants.WIN_SCORE : getPosition().equals(
-				Position.SECOND) ? Constants.LOSE_SCORE : Constants.DRAW_SCORE, // Spielergebnis
-																		// (WIN/LOSS/TIE)
-				getFieldIndex(), // Position auf dem Spielfeld
-				getCarrotsAvailable() // Anzahl verbliebene Karotten
-				);
-	}
-
+  /**
+   * Überprüft, ob Spieler im Ziel. Für den Server für das Überprüfen der WinCondition relevant
+   * @return true, falls Spieler auf Zielfeld steht, Sekundärkriterien werden nicht geprüft.
+   */
 	public boolean inGoal()
 	{
-		return index == 64;
-	}
-
-	public Action getLastNonSkipAction() {
-		return lastNonSkipAction;
-	}
-
-	public void setLastNonSkipAction(Action lastNonSkipAction) {
-		this.lastNonSkipAction = lastNonSkipAction;
+		return index == Constants.NUM_FIELDS - 1;
 	}
 
 	@Override
