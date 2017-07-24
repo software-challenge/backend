@@ -98,7 +98,6 @@ public class RandomLogic implements IGameHandler {
             selectedMoves.add(move);
           }
         } else if (action instanceof FallBack) {
-          FallBack fallBack = (FallBack) action;
           if (index > 56 /*letztes Salatfeld*/ && currentPlayer.getSalads() > 0) {
             // Falle nur am Ende (index > 56) zurück, außer du musst noch einen Salat loswerden
             selectedMoves.add(move);

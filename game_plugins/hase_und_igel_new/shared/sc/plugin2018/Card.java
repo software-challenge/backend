@@ -6,7 +6,7 @@ import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
- * A card that is played.
+ * Eine Karte die auf einem Hasenfeld gespielt werden kann.
  */
 @XStreamAlias(value = "card")
 public class Card extends Action {
@@ -31,7 +31,7 @@ public class Card extends Action {
   }
 
   /**
-   * KOnstruktor für eine Karte
+   * Konstruktor für eine Karte
    * @param type Art der Karte
    * @param order Index in der Aktionsliste des Zuges
    */
@@ -122,10 +122,7 @@ public class Card extends Action {
 
   @Override
   public boolean equals(Object o) {
-    if(o instanceof Card) {
-      return (this.value == ((Card) o).value) && (this.type == ((Card) o).type);
-    }
-    return false;
+      return o instanceof Card && (this.value == ((Card) o).value) && (this.type == ((Card) o).type);
   }
 
   @Override

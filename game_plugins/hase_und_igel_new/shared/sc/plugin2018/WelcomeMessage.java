@@ -6,15 +6,15 @@ import sc.shared.PlayerColor;
 @XStreamAlias(value="welcomeMessage")
 public class WelcomeMessage
 {
-	private PlayerColor myColor;
+	private PlayerColor color;
 	
-	public WelcomeMessage(PlayerColor c)
+	public WelcomeMessage(PlayerColor color)
 	{
-		myColor = c;
+		this.color = color;
 	}
 	
-	public PlayerColor getYourColor()
+	public PlayerColor getPlayerColor()
 	{
-		return myColor;
+		return color;
 	}
 }

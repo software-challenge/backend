@@ -11,7 +11,7 @@ import sc.shared.ScoreFragment;
 
 /**
  * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge
- * 2010.
+ * 2018.
  * 
  */
 @PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)

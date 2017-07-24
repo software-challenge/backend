@@ -60,7 +60,7 @@ public class Game extends RoundBasedGameInstance<Player>
 
     Player author = (Player) fromPlayer;
 
-    /**
+    /*
      * NOTE: Checking if right player sent move was already done by
      * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, Object)}.
      * There is no need to do it here again.
@@ -138,6 +138,7 @@ public class Game extends RoundBasedGameInstance<Player>
         matchPoints = 0;
       } else {
         // this should not happen
+        logger.warn("winner has no known PlayerColor");
       }
     }
     // opponent has done something wrong
@@ -170,7 +171,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player)
 	{
-		return new ActionTimeout(true, 10000000l, 2000000l);
+		return new ActionTimeout(true, 10000000L, 2000000L);
 	}
 
   /**
@@ -246,7 +247,7 @@ public class Game extends RoundBasedGameInstance<Player>
 		}
 	}
 
-	// TODO test this
+	// XXX test this
 	@Override
 	public void loadGameInfo(Object gameInfo)
 	{
@@ -262,9 +263,9 @@ public class Game extends RoundBasedGameInstance<Player>
       // currentPlayer
       if (this.gameState.getCurrentPlayerColor() != PlayerColor.RED) {
         this.gameState.setCurrentPlayer(PlayerColor.RED);
-        Player newRed = (Player) this.gameState.getBluePlayer().clone();
+        Player newRed = this.gameState.getBluePlayer().clone();
         newRed.setPlayerColor(PlayerColor.RED);
-        Player newBlue = (Player) this.gameState.getRedPlayer().clone();
+        Player newBlue = this.gameState.getRedPlayer().clone();
         newBlue.setPlayerColor(PlayerColor.BLUE);
         this.gameState.setRedPlayer(newRed);
         this.gameState.setBluePlayer(newBlue);
@@ -275,7 +276,7 @@ public class Game extends RoundBasedGameInstance<Player>
 	 @Override
 	  public List<SimplePlayer> getWinners() {
 	    WinCondition win = checkWinCondition();
-	    List<SimplePlayer> winners = new LinkedList<SimplePlayer>();
+	    List<SimplePlayer> winners = new LinkedList<>();
 	    if (win != null) {
 	      for (Player player : this.players) {
 	        if (player.getPlayerColor() == win.getWinner()) {

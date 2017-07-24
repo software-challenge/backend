@@ -34,74 +34,74 @@ public class Board
 		List<Field> segment = new LinkedList<>();
 
 		track.add(new Field(FieldType.START));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.CARROT),
 				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.POSITION_1),
-				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
+				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.SALAD));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.HARE) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.POSITION_1),
-				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.POSITION_1),
+				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2)));
 		Collections.shuffle(segment);
 		track.add(segment.remove(0));
 		track.add(segment.remove(0));
 		track.add(new Field(FieldType.SALAD));
 		track.add(segment.remove(0));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.CARROT), new Field(FieldType.CARROT),
-				new Field(FieldType.POSITION_2) }));
+				new Field(FieldType.POSITION_2)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT), new Field(FieldType.HARE),
-				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
+				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.HARE), new Field(FieldType.CARROT), new Field(FieldType.POSITION_2) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.HARE), new Field(FieldType.CARROT), new Field(FieldType.POSITION_2)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.SALAD));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
 				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.POSITION_2),
-				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT) }));
+				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2), new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT) }));
+				new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
 		track.add(new Field(FieldType.SALAD));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.HARE),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.POSITION_1), new Field(FieldType.CARROT),
-				new Field(FieldType.HARE), new Field(FieldType.CARROT) }));
+				new Field(FieldType.HARE), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();

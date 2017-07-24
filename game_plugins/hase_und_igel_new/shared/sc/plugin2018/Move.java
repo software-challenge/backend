@@ -170,12 +170,12 @@ public class Move implements Cloneable {
    *           wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
   public void perform(GameState state) throws InvalidMoveException {
-    // sort actions according to order
+    // Sortiere Aktionen
     orderActions();
     if (actions.isEmpty()) {
       throw new InvalidMoveException("Keine Aktionen vorhanden.");
     }
-    // perform actions
+    // führe Aktionen aus
     int index = 0;
     for (Action action : this.actions) {
       if (index != action.order) {
@@ -194,13 +194,11 @@ public class Move implements Cloneable {
     if (state.getCurrentPlayer().mustPlayCard()) {
       throw new InvalidMoveException("Es muss eine Karte ausgespielt werden.");
     }
-    // prepare next turn
+    // Bereite nächsten Zug vor:
     state.setLastMove(this);
-    // increase turn
     state.setTurn(state.getTurn() + 1);
-    // switch player (depends on current turn)
-    state.switchCurrentPlayer();
-    // check whether player in next turn gets carrots from Position_X fields
+    state.switchCurrentPlayer(); // depends on turn
+    // Überprüfe ob nächster Spieler Karotten durch POSITION_X Felder bekommt
     FieldType fieldType = state.getBoard().getTypeAt(state.getCurrentPlayer().getFieldIndex());
     if (state.isFirst(state.getCurrentPlayer()) && fieldType == FieldType.POSITION_1) {
       state.getCurrentPlayer().changeCarrotsBy(10);

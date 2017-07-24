@@ -3,7 +3,7 @@ package sc.plugin2018;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 /**
- * Mögliche Aktionen, die durch das Ausspielen eines Hasenjokers ausgelöst
+ * Mögliche Aktionen, die durch das Ausspielen einer Karte ausgelöst
  * werden können.
  */
 @XStreamAlias(value = "type")

@@ -11,11 +11,9 @@ import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.plugin2018.util.Configuration;
-import sc.protocol.helpers.RequestResult;
 import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.shared.GameResult;
-import sc.shared.SlotDescriptor;
 import sc.shared.PlayerColor;
 
 /**
@@ -47,9 +45,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	// the current port
 	private int port;
 	// current figurecolor to identify which client belongs to which player
-	private PlayerColor myColor;
-	// set to true when ready was sent to ReadyListeners
-	protected boolean alreadyReady = false;
+	private PlayerColor color;
 
 	public AbstractClient(String host, int port, EPlayerId id) throws IOException {
 		this.gameType = GamePlugin.PLUGIN_UUID;
@@ -71,10 +67,6 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		this.handler = handler;
 	}
 
-	public IGameHandler getHandler() {
-		return this.handler;
-	}
-
 	/**
 	 * Tell this client to observe the game given by the preparation handler
 	 *
@@ -86,17 +78,6 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	/**
-	 * start observation with control over the game (pause etc)
-	 *
-	 * @param handle
-	 *            comes from prepareGame()
-	 * @return controllinstance to do pause, unpause etc
-	 */
-	public IControllableGame observeAndControl(PrepareGameResponse handle) {
-		return this.client.observeAndControl(handle);
-	}
-
-	/**
 	 * Called when a new message is sent to the room, e.g. move requests
 	 */
 	@Override
@@ -105,7 +86,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 			this.handler.onRequestAction();
 		} else if (data instanceof WelcomeMessage) {
 			WelcomeMessage welc = (WelcomeMessage) data;
-			this.myColor = welc.getYourColor();
+			this.color = welc.getPlayerColor();
 		}
 		this.roomId = roomId;
 	}
@@ -142,7 +123,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		if (this.id != EPlayerId.OBSERVER) {
 			this.handler.onUpdate(gameState);
 
-			if (gameState.getCurrentPlayer().getPlayerColor() == this.myColor) {
+			if (gameState.getCurrentPlayer().getPlayerColor() == this.color) {
 				// active player is own
 				this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
 			} else {
@@ -172,30 +153,9 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		this.client.joinPreparedGame(reservation);
 	}
 
-	/**
-	 * @return String gameType
-	 */
-	public String getGameType() {
-		return this.gameType;
-	}
-
-	public EPlayerId getID() {
-		return this.id;
-	}
-
-	public void prepareGame(int playerCount) {
-		this.client.prepareGame(this.gameType);
-	}
-
 	@Override
 	public void onGamePrepared(PrepareGameResponse response) {
 		// not needed
-	}
-
-	// TODO remove hack
-	public RequestResult<PrepareGameResponse> prepareGameAndWait(SlotDescriptor... descriptors)
-			throws InterruptedException {
-		return this.client.prepareGameAndWait(this.gameType, descriptors[0], descriptors[1]);
 	}
 
 	public String getHost() {
@@ -210,12 +170,8 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	public void onGameOver(String roomId, GameResult data) {
 		logger.debug("{} onGameOver got game result {}", this, data);
 		if (this.handler != null) {
-			this.handler.gameEnded(data, this.myColor, this.error);
+			this.handler.gameEnded(data, this.color, this.error);
 		}
-	}
-
-	public void freeReservation(String reservation) {
-		this.client.freeReservation(reservation);
 	}
 
 	@Override
@@ -227,8 +183,8 @@ public abstract class AbstractClient implements ILobbyClientListener {
 		return this.error;
 	}
 
-	public PlayerColor getMyColor() {
-		return this.myColor;
+	public PlayerColor getColor() {
+		return this.color;
 	}
 
 }

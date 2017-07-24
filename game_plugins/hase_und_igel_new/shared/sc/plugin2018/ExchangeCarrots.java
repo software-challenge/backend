@@ -7,6 +7,7 @@ import sc.shared.InvalidMoveException;
 
 /**
  * Karottentauschaktion. Es können auf einem Karottenfeld 10 Karotten abgegeben oder aufgenommen werden.
+ * Dies kann beliebig oft hintereinander ausgeführt werden.
  */
 @XStreamAlias(value = "exchangeCarrots")
 public class ExchangeCarrots extends Action {
