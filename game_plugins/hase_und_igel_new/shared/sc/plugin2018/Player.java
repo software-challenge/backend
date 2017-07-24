@@ -108,7 +108,7 @@ public class Player extends SimplePlayer implements Cloneable
 	/**
 	 * Die Anzahl an Karotten die der Spieler zur Zeit auf der Hand hat.
 	 * 
-	 * @return Anzahl der Karroten
+	 * @return Anzahl der Karotten
 	 */
 	public final int getCarrots()
 	{

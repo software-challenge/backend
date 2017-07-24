@@ -67,6 +67,7 @@ public class Card extends Action {
           } else {
             state.getCurrentPlayer().changeCarrotsBy(30);
           }
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der EAT_SALAD Karte ist nicht möglich.");
         }
@@ -77,6 +78,7 @@ public class Card extends Action {
           if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
             state.getCurrentPlayer().setMustPlayCard(true);
           }
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
@@ -95,6 +97,7 @@ public class Card extends Action {
       case TAKE_OR_DROP_CARROTS:
         if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
           state.getCurrentPlayer().changeCarrotsBy(this.getValue());
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der TAKE_OR_DROP_CARROTS Karte ist nicht möglich.");
         }

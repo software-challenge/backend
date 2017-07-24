@@ -6,7 +6,7 @@ import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
- * Ein Vorwärtszug, um spezifizierte Distanz. Verbrauchte Karroten werden mit k = (distance * (distance + 1)) / 2
+ * Ein Vorwärtszug, um spezifizierte Distanz. Verbrauchte Karotten werden mit k = (distance * (distance + 1)) / 2
  * berechnet (Gaußsche Summe)
  */
 @XStreamAlias(value = "advance")
