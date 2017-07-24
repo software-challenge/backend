@@ -105,14 +105,17 @@ public class Lobby implements IClientListener
 			}
 			else if (packet instanceof PrepareGameRequest)
 			{
-				PrepareGameRequest prepared = (PrepareGameRequest) packet;
-				source.send(this.gameManager.prepareGame(prepared));
+				if (source.isAdministrator()) {
+					PrepareGameRequest prepared = (PrepareGameRequest) packet;
+					source.send(this.gameManager.prepareGame(prepared));
+				}
 			}
-			else if (packet instanceof FreeReservationRequest)
-			{
-				FreeReservationRequest request = (FreeReservationRequest) packet;
-				ReservationManager.freeReservation(request.getReservation());
-			}
+			else if (packet instanceof FreeReservationRequest) {
+        if (source.isAdministrator()) {
+          FreeReservationRequest request = (FreeReservationRequest) packet;
+          ReservationManager.freeReservation(request.getReservation());
+        }
+      }
 			else if (packet instanceof RoomPacket)	// i.e. new move
 			{
 				RoomPacket casted = (RoomPacket) packet;
@@ -121,32 +124,39 @@ public class Lobby implements IClientListener
 			}
 			else if (packet instanceof ObservationRequest)
 			{
-				// TODO: check permissions
-				ObservationRequest observe = (ObservationRequest) packet;
-				GameRoom room = this.gameManager.findRoom(observe.getRoomId());
-				room.addObserver(source);
+				if (source.isAdministrator()) {
+          ObservationRequest observe = (ObservationRequest) packet;
+          GameRoom room = this.gameManager.findRoom(observe.getRoomId());
+          room.addObserver(source);
+        }
 			}
 			else if (packet instanceof PauseGameRequest)
 			{
-				PauseGameRequest pause = (PauseGameRequest) packet;
-				try {
-					GameRoom room = this.gameManager.findRoom(pause.roomId);
-					room.pause(pause.pause);
-				} catch (RescuableClientException e) {
-					this.logger.error("Got exception on pause: {}", e);
-				}
+			  if (source.isAdministrator()) {
+          PauseGameRequest pause = (PauseGameRequest) packet;
+          try {
+            GameRoom room = this.gameManager.findRoom(pause.roomId);
+            room.pause(pause.pause);
+          } catch (RescuableClientException e) {
+            this.logger.error("Got exception on pause: {}", e);
+          }
+        }
 			}
 			else if (packet instanceof StepRequest)
 			{
-				StepRequest pause = (StepRequest) packet;
-				GameRoom room = this.gameManager.findRoom(pause.roomId);
-				room.step(pause.forced);
+			  if (source.isAdministrator()) {
+          StepRequest pause = (StepRequest) packet;
+          GameRoom room = this.gameManager.findRoom(pause.roomId);
+          room.step(pause.forced);
+        }
 			}
 			else if (packet instanceof CancelRequest)
 			{
-				CancelRequest cancel = (CancelRequest) packet;
-				GameRoom room = this.gameManager.findRoom(cancel.roomId);
-				room.cancel();
+			  if (source.isAdministrator()) {
+          CancelRequest cancel = (CancelRequest) packet;
+          GameRoom room = this.gameManager.findRoom(cancel.roomId);
+          room.cancel();
+        }
 			}
 			else
 			{

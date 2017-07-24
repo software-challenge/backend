@@ -5,6 +5,7 @@ import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ public final class Application
 		addShutdownHook();
 		long start = System.currentTimeMillis();
 
+		Configuration.load(new FileReader("server.properties"));
 		final Lobby server = new Lobby();
 		server.start();
 
@@ -42,24 +44,6 @@ public final class Application
 		{
 			waitObj.wait();
 		}
-	}
-
-	/**
-	 * Starts a new Server. This is meant to be used by the GUI Application,
-	 * which comes with an internal server for offline-play. TODO: use this in
-	 * GUI app
-	 * 
-	 * @param port
-	 * @return the lobby
-	 */
-//	FIXME delete this, only needed by current gui
-	public static Lobby startServer(final Integer port) throws IOException
-	{
-		logger.info("Starting the Server on port {}", port);
-		Configuration.set(Configuration.PORT_KEY, port.toString());
-		final Lobby server = new Lobby();
-		server.start();
-		return server;
 	}
 
 	public static void parseArguments(String[] params)
