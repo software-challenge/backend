@@ -203,12 +203,12 @@ public class GameRuleLogic
 			}
 			else if (lastAction instanceof Card)
 			{
-				// the player has to leave a rabbit field in next turn
+				// the player has to leave a hare field in next turn
 				if (((Card)lastAction).getType() == CardType.EAT_SALAD)
 				{
 					return true;
 				}
-				else if (((Card)lastAction).getType() == CardType.TAKE_OR_DROP_CARROTS) // the player has to leave the rabbit field
+				else if (((Card)lastAction).getType() == CardType.TAKE_OR_DROP_CARROTS) // the player has to leave the hare field
 				{
 					return true;
 				}
@@ -273,7 +273,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayFallBack(GameState state)
 	{
 	  Player player = state.getCurrentPlayer();
-		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
+		boolean valid = !playerMustAdvance(state) && state.isOnHareField()
 				&& state.isFirst(player);
 
 		valid = valid && player.ownsCardOfType(CardType.FALL_BACK);
@@ -323,7 +323,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayHurryAhead(final GameState state)
 	{
 	  Player player = state.getCurrentPlayer();
-		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
+		boolean valid = !playerMustAdvance(state) && state.isOnHareField()
 				&& !state.isFirst(player);
 		valid = valid && player.ownsCardOfType(CardType.HURRY_AHEAD);
 
@@ -375,7 +375,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayTakeOrDropCarrots(GameState state, int n)
 	{
 	  Player player = state.getCurrentPlayer();
-		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
+		boolean valid = !playerMustAdvance(state) && state.isOnHareField()
 				&& player.ownsCardOfType(CardType.TAKE_OR_DROP_CARROTS);
 
 		valid = valid && (n == 20 || n == -20 || n == 0);
@@ -394,7 +394,7 @@ public class GameRuleLogic
 	public static boolean isValidToPlayEatSalad(GameState state)
 	{
 	  Player player = state.getCurrentPlayer();
-		return !playerMustAdvance(state) && state.isOnRabbitField()
+		return !playerMustAdvance(state) && state.isOnHareField()
 				&& player.ownsCardOfType(CardType.EAT_SALAD) && player.getSalads() > 0;
 	}
 
