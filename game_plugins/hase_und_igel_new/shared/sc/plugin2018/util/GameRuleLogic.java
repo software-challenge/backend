@@ -276,7 +276,7 @@ public class GameRuleLogic
 		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
 				&& state.isFirst(player);
 
-		valid = valid && player.ownsCardOfTyp(CardType.FALL_BACK);
+		valid = valid && player.ownsCardOfType(CardType.FALL_BACK);
 
 		final Player o = state.getOpponent(player);
 		int nextPos = o.getFieldIndex() - 1;
@@ -325,7 +325,7 @@ public class GameRuleLogic
 	  Player player = state.getCurrentPlayer();
 		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
 				&& !state.isFirst(player);
-		valid = valid && player.ownsCardOfTyp(CardType.HURRY_AHEAD);
+		valid = valid && player.ownsCardOfType(CardType.HURRY_AHEAD);
 
 		final Player o = state.getOpponent(player);
 		int nextPos = o.getFieldIndex() + 1;
@@ -376,7 +376,7 @@ public class GameRuleLogic
 	{
 	  Player player = state.getCurrentPlayer();
 		boolean valid = !playerMustAdvance(state) && state.isOnRabbitField()
-				&& player.ownsCardOfTyp(CardType.TAKE_OR_DROP_CARROTS);
+				&& player.ownsCardOfType(CardType.TAKE_OR_DROP_CARROTS);
 
 		valid = valid && (n == 20 || n == -20 || n == 0);
 		if (n < 0)
@@ -395,7 +395,7 @@ public class GameRuleLogic
 	{
 	  Player player = state.getCurrentPlayer();
 		return !playerMustAdvance(state) && state.isOnRabbitField()
-				&& player.ownsCardOfTyp(CardType.EAT_SALAD) && player.getSalads() > 0;
+				&& player.ownsCardOfType(CardType.EAT_SALAD) && player.getSalads() > 0;
 	}
 
   /**

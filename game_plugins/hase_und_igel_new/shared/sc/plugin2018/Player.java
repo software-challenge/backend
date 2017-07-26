@@ -100,7 +100,7 @@ public class Player extends SimplePlayer implements Cloneable
 	 * @param type Karte
 	 * @return true, falls Karte noch vorhanden
 	 */
-	public boolean ownsCardOfTyp(CardType type)
+	public boolean ownsCardOfType(CardType type)
 	{
 		return getCards().contains(type);
 	}
