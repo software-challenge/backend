@@ -2,7 +2,6 @@ package sc.server.network;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
@@ -25,8 +24,8 @@ public class LobbyTest extends RealServerTest
 		final LobbyClient player1 = connectClient("localhost", getServerPort());
 		final LobbyClient player2 = connectClient("localhost", getServerPort());
 
-		player1.joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
-		player2.joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
+		player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+		player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 
 		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override

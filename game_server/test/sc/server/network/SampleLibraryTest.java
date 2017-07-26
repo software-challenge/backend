@@ -19,7 +19,7 @@ public class SampleLibraryTest extends RealServerTest
 	{
 		final LobbyClient client = connectClient("localhost", getServerPort());
 
-		client.joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
+		client.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 
 		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
@@ -35,7 +35,7 @@ public class SampleLibraryTest extends RealServerTest
 	{
 		final LobbyClient client = connectClient("localhost", getServerPort());
 
-		client.joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
+		client.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 
 		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override

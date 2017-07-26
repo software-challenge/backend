@@ -206,6 +206,7 @@ public abstract class XStreamClient
 
 	public void sendCustomData(String data) throws IOException
 	{
+		logger.info(data);
 		sendCustomData(data.getBytes("utf-8"));
 	}
 

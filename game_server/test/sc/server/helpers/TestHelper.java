@@ -60,4 +60,25 @@ public class TestHelper
 			return o1.equals(o2);
 		}
 	}
+
+	public static void waitMills(long mills){
+		try{
+			Thread.sleep(mills);
+		} catch (Exception e){
+
+		}
+	}
+
+	public static void waitForObject(Object o){
+		try{
+		  synchronized (o){
+			  o.wait();
+		  }
+		} catch (Exception e){}
+	}
+	public static void waitForObject(Object o, long mills){
+		try{
+			o.wait(mills);
+		} catch (Exception e){}
+	}
 }

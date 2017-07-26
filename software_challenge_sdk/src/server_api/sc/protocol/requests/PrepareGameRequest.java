@@ -34,11 +34,6 @@ public class PrepareGameRequest implements ILobbyRequest,
 		// Add two players, named Player1 and Player2
 		this.slotDescriptors.add(new SlotDescriptor("Player1"));
 		this.slotDescriptors.add(new SlotDescriptor("Player2"));
-
-		if (this.getSlotDescriptors().size() == 0)
-		{
-			throw new IllegalArgumentException("PlayerCount must be positive");
-		}
 	}
 
 	/**

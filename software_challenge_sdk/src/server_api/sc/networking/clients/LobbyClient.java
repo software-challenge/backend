@@ -346,7 +346,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	/**
 	 * currently not used in server
 	 */
-	public void joinAnyGame(String gameType)
+	public void joinRoomRequest(String gameType)
 	{
 		send(new JoinRoomRequest(gameType));
 	}
