@@ -6,7 +6,7 @@ import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
- * A card that is played.
+ * Eine Karte die auf einem Hasenfeld gespielt werden kann.
  */
 @XStreamAlias(value = "card")
 public class Card extends Action {
@@ -31,7 +31,7 @@ public class Card extends Action {
   }
 
   /**
-   * KOnstruktor für eine Karte
+   * Konstruktor für eine Karte
    * @param type Art der Karte
    * @param order Index in der Aktionsliste des Zuges
    */
@@ -44,13 +44,13 @@ public class Card extends Action {
   /**
    *
    * @param type Art der Karte
-   * @param value Wert einer Karte nur für TAKE_OR_DROP_CARROTS genutzt
+   * @param value Wert einer Karte nur für TAKE_OR_DROP_CARROTS genutzt (-20,0,20)
    * @param order Index in der Aktionsliste des Zuges
    */
   public Card(CardType type, int value, int order) {
     this.order = order;
     this.value = 0; // default value
-    setValue(value);
+    this.value = value;
     this.type = type;
   }
 
@@ -58,15 +58,16 @@ public class Card extends Action {
   @Override
   public void perform(GameState state) throws InvalidMoveException {
     state.getCurrentPlayer().setMustPlayCard(false); // player played a card
-    switch (type) { // when entering a RABBIT field with fall_back or hurry ahead, player has to play another card
+    switch (type) { // when entering a HARE field with fall_back or hurry ahead, player has to play another card
       case EAT_SALAD:
         if (GameRuleLogic.isValidToPlayEatSalad(state)) {
           state.getCurrentPlayer().eatSalad();
           if (state.isFirst(state.getCurrentPlayer())) {
-            state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+            state.getCurrentPlayer().changeCarrotsBy(10);
           } else {
-            state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+            state.getCurrentPlayer().changeCarrotsBy(30);
           }
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der EAT_SALAD Karte ist nicht möglich.");
         }
@@ -74,9 +75,10 @@ public class Card extends Action {
       case FALL_BACK:
         if (GameRuleLogic.isValidToPlayFallBack(state)) {
           state.getCurrentPlayer().setFieldIndex(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() - 1);
-          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
             state.getCurrentPlayer().setMustPlayCard(true);
           }
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
@@ -84,16 +86,18 @@ public class Card extends Action {
       case HURRY_AHEAD:
         if (GameRuleLogic.isValidToPlayHurryAhead(state)) {
           state.getCurrentPlayer().setFieldIndex(state.getOpponent(state.getCurrentPlayer()).getFieldIndex() + 1);
-          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+          if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
             state.getCurrentPlayer().setMustPlayCard(true);
           }
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der FALL_BACK Karte ist nicht möglich.");
         }
         break;
       case TAKE_OR_DROP_CARROTS:
         if (GameRuleLogic.isValidToPlayTakeOrDropCarrots(state, this.getValue())) {
-          state.getCurrentPlayer().changeCarrotsAvailableBy(this.getValue());
+          state.getCurrentPlayer().changeCarrotsBy(this.getValue());
+          state.setLastAction(this);
         } else {
           throw new InvalidMoveException("Das Ausspielen der TAKE_OR_DROP_CARROTS Karte ist nicht möglich.");
         }
@@ -107,22 +111,8 @@ public class Card extends Action {
     return type;
   }
 
-  public void setType(CardType type) {
-    this.type = type;
-  }
-
   public int getValue() {
     return value;
-  }
-
-  /**
-   * Setzt den Wert nur auf 20, 0 oder -20 andere Werte werden nicht akzeptiert
-   * @param value Wert
-   */
-  public void setValue(int value) {
-    if (value == 0 || value == -20 || value == 20) {
-      this.value = value;
-    }
   }
 
   @Override
@@ -132,9 +122,14 @@ public class Card extends Action {
 
   @Override
   public boolean equals(Object o) {
-    if(o instanceof Card) {
-      return (this.value == ((Card) o).value) && (this.type == ((Card) o).type);
-    }
-    return false;
+      return o instanceof Card && (this.value == ((Card) o).value) && (this.type == ((Card) o).type);
+  }
+
+  @Override
+  public String toString() {
+    return "Card "
+            + this.getType()
+            + ((this.getType() == CardType.TAKE_OR_DROP_CARROTS)?(" " + this.value):"")
+            + " order " + this.order;
   }
 }

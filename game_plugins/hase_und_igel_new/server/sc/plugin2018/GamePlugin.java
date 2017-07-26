@@ -11,7 +11,7 @@ import sc.shared.ScoreFragment;
 
 /**
  * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge
- * 2010.
+ * 2018.
  * 
  */
 @PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
@@ -20,19 +20,15 @@ public class GamePlugin implements IGamePlugin
 	public static final String			PLUGIN_AUTHOR		= "";
 	public static final String			PLUGIN_UUID			= "swc_2018_hase_und_igel";
 
-	public static final int				MAX_PLAYER_COUNT	= 2;
-
-	public static final int				MAX_TURN_COUNT		= 30;
-
 	public static final ScoreDefinition	SCORE_DEFINITION;
 
 	static
 	{
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("Gewinner");
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Feldnummer",
+		SCORE_DEFINITION.add(new ScoreFragment("Ø Feldnummer",
 				ScoreAggregation.AVERAGE));
-		SCORE_DEFINITION.add(new ScoreFragment("\u00D8 Karotten",
+		SCORE_DEFINITION.add(new ScoreFragment("Ø Karotten",
 				ScoreAggregation.AVERAGE));
 	}
 

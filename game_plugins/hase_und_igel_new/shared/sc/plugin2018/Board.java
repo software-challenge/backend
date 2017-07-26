@@ -9,9 +9,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 /**
- * @author rra
- * @since Jul 1, 2009
- * 
+ * Ein Spielbrett bestehend aus 65 Feldern.
  */
 @XStreamAlias(value = "board")
 public class Board
@@ -21,7 +19,7 @@ public class Board
 
 	public Board()
 	{
-		track = new LinkedList<Field>();
+		track = new LinkedList<>();
 		initialize();
 	}
 
@@ -31,79 +29,79 @@ public class Board
 	 * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
 	 * und Ziel und dem ersten bzw. letzten Igelfeld permutiert.
 	 */
-	private final void initialize()
+	private void initialize()
 	{
-		List<Field> segment = new LinkedList<Field>();
+		List<Field> segment = new LinkedList<>();
 
 		track.add(new Field(FieldType.START));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT), new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT), new Field(FieldType.POSITION_1),
-				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.POSITION_1),
+				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.SALAD));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.POSITION_1),
-				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.POSITION_1),
+				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2)));
 		Collections.shuffle(segment);
 		track.add(segment.remove(0));
 		track.add(segment.remove(0));
 		track.add(new Field(FieldType.SALAD));
 		track.add(segment.remove(0));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.CARROT), new Field(FieldType.CARROT),
-				new Field(FieldType.POSITION_2) }));
+				new Field(FieldType.POSITION_2)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
-				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT), new Field(FieldType.RABBIT),
-				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
+				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT), new Field(FieldType.HARE),
+				new Field(FieldType.POSITION_2), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.RABBIT), new Field(FieldType.CARROT), new Field(FieldType.POSITION_2) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.HARE), new Field(FieldType.CARROT), new Field(FieldType.POSITION_2)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.SALAD));
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT), new Field(FieldType.RABBIT), new Field(FieldType.POSITION_2),
-				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT) }));
+		segment.addAll(Arrays.asList(new Field(FieldType.CARROT),
+				new Field(FieldType.CARROT), new Field(FieldType.HARE), new Field(FieldType.POSITION_2),
+				new Field(FieldType.POSITION_1), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.POSITION_2), new Field(FieldType.CARROT),
-				new Field(FieldType.CARROT) }));
+				new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
 		track.add(new Field(FieldType.HEDGEHOG));
 		track.add(new Field(FieldType.SALAD));
-		segment.addAll(Arrays.asList(new Field[] { new Field(FieldType.RABBIT),
+		segment.addAll(Arrays.asList(new Field(FieldType.HARE),
 				new Field(FieldType.CARROT), new Field(FieldType.POSITION_1), new Field(FieldType.CARROT),
-				new Field(FieldType.RABBIT), new Field(FieldType.CARROT) }));
+				new Field(FieldType.HARE), new Field(FieldType.CARROT)));
 		Collections.shuffle(segment);
 		track.addAll(segment);
 		segment.clear();
@@ -120,9 +118,8 @@ public class Board
 	 * gewählte Position vor dem Startpunkt oder hinter dem Ziel, so wird
 	 * <code>INVALID</code> zurückgegeben.
 	 * 
-	 * @param pos
-	 *            die Position auf der Rennstrecke
-	 * @return
+	 * @param pos die Position auf der Rennstrecke
+	 * @return Feldtyp an Position
 	 */
 	public final FieldType getTypeAt(final int pos)
 	{
@@ -136,9 +133,9 @@ public class Board
   * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
   * Position <code>pos</code> auf diesem Spielbrett.
   * 
-  * @param type
-  * @param pos
-  * @return
+  * @param type Feldtyp
+  * @param pos Position
+  * @return Position des nächsten Feldes genannten Typs
   */
  public final int getNextFieldByType(FieldType type, int pos)
  {
@@ -153,9 +150,11 @@ public class Board
  }
 
  /**
-  * @param type
-  * @param pos
-  * @return
+  * Findet das vorherige Spielfeld vom Typ <code>type</code> beginnend an Position
+  * <code>pos</code> auf diesem Spielbrett.
+  * @param type Feldtyp
+  * @param pos Position
+  * @return Position des vorherigen Feldes genannten Typs
   */
  public final int getPreviousFieldByType(FieldType type, int pos)
  {
@@ -180,10 +179,22 @@ public class Board
     Board clone = new Board();
     clone.track.clear();
     for (Field field : this.track) {
-      clone.track.add((Field) field.clone());
+      clone.track.add(field.clone());
     }
     return clone;
   }
 
+	@Override
+	public String toString() {
+  	String toString = "Board:\n";
+		StringBuilder b = new StringBuilder(toString);
+		for (Field field : track) {
+			b.append(field.getType());
+			b.append(" index ");
+			b.append(field.getIndex());
+			b.append("\n");
+		}
+		return b.toString();
+	}
 }
 

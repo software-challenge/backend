@@ -16,6 +16,7 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
+import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 import sc.shared.WinCondition;
@@ -25,7 +26,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           .getLogger(RoundBasedGameInstance.class);
   protected P activePlayer = null;
 
-  private int turn = 0;
+  private int round = 0;
 
   @XStreamOmitField
   private boolean paused = false;
@@ -45,8 +46,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   @XStreamImplicit(itemFieldName = "player")
   protected final List<P> players = new ArrayList<>();
 
-  public int getTurn() {
-    return this.turn;
+  public int getRound() {
+    return this.round;
   }
 
   /**
@@ -75,7 +76,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
                 "We didn't request a move from you yet.");
       }
     } else {
-      throw new GameLogicException("It's not your turn yet.");
+      throw new GameLogicException("It's not your round yet.");
     }
   }
 
@@ -87,8 +88,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           throws GameLogicException;
 
   protected abstract WinCondition checkWinCondition();
-
-  protected abstract boolean checkGameOverCondition();
 
   /**
    * At any time this method might be invoked by the server. Any open handles
@@ -113,7 +112,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     }
 
     this.activePlayer = this.players.get(0);
-    onActivePlayerChanged(this.activePlayer);
+    // TODO currently no implementation
+    // onActivePlayerChanged(this.activePlayer);
     notifyOnNewState(getCurrentState());
     notifyActivePlayer();
   }
@@ -121,7 +121,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   /**
    * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
    *
-   * @param player
+   * @param player left player
    */
   public void onPlayerLeft(SimplePlayer player) {
     if (!player.hasViolated()) {
@@ -133,7 +133,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   /**
-   * XXX
    * Handle leave of player
    */
   public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
@@ -170,18 +169,17 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
   protected final void next(P nextPlayer) {
     if (increaseTurnIfNecessary(nextPlayer)) {
-      this.turn++;
+      this.round++;
 
-      // change player before calling new turn callback
+      // change player before calling new round callback
       this.activePlayer = nextPlayer;
-      onNewTurn();
     }
-    logger.debug("next turn ({}) for player {}", this.turn, nextPlayer);
+    logger.debug("next round ({}) for player {}", this.round, nextPlayer);
 
     this.activePlayer = nextPlayer;
     notifyOnNewState(getCurrentState());
 
-    if (checkGameOverCondition()) {
+    if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
     } else {
       notifyActivePlayer();
@@ -195,12 +193,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
             .indexOf(nextPlayer) == 0);
   }
 
-  protected abstract void onNewTurn();
-
   /**
    * Gets the current state representation.
    *
-   * @return
+   * @return current state
    */
   protected abstract Object getCurrentState();
 
@@ -230,7 +226,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Sends a MoveRequest directly to the player (does not take PAUSE into
    * account)
    *
-   * @param player
+   * @param player player to make a move
    */
   protected synchronized final void requestMove(P player) {
     final ActionTimeout timeout = player.isCanTimeout() ? getTimeoutFor(player)
@@ -245,14 +241,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     System.gc();
 
     this.requestTimeout = timeout;
-    timeout.start(new Runnable() {
-      @Override
-      public void run() {
-        logger.warn("Player {} reached the timeout of {}ms",
-                playerToTimeout, timeout.getHardTimeout());
-        playerToTimeout.setHardTimeout(true);
-        onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
-      }
+    timeout.start(() -> {
+      logger.warn("Player {} reached the timeout of {}ms",
+              playerToTimeout, timeout.getHardTimeout());
+      playerToTimeout.setHardTimeout(true);
+      onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
     });
 
     player.requestMove();
@@ -283,7 +276,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   /**
    * XXX Pauses game
    *
-   * @param pause
+   * @param pause true if game should be paused
    */
   public void setPauseMode(boolean pause) {
     this.paused = pause;
@@ -338,5 +331,19 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
         logger.error("NewState Notification caused an exception.", e);
       }
     }
+  }
+
+  /**
+   * Catch block, after an invalid move was performed
+   * @param e catched Exception
+   * @param author player, that caused the exception
+   * @throws GameLogicException
+   */
+  public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws GameLogicException {
+    author.setViolated(true);
+    String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
+    author.setViolationReason(e.getMessage());
+    logger.error(err, e);
+    throw new GameLogicException(err);
   }
 }

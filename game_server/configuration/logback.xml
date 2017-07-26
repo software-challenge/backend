@@ -19,7 +19,7 @@
       </layout>
   </appender>-->
 	<!-- all loggers in DEBUG for now...  -->
-  <logger name="sc" level="WARN" />
+  <logger name="sc" level="INFO" />
   
   <!--
   

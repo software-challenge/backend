@@ -93,7 +93,6 @@
 				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
-			<fileset dir="./configuration" />
 		</jar>
 	</target>
 

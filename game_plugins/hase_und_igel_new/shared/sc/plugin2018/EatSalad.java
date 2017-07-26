@@ -5,7 +5,11 @@ import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
 /**
- * TODO
+ * Eine Salatessen-Aktion. Kann nur auf einem Salatfeld ausgeführt werden. Muss ausgeführt werden,
+ * ein Salatfeld betreten wird. Nachdem die Aktion ausgefürht wurde, muss das Salatfeld verlassen
+ * werden, oder es muss ausgesetzt werden.
+ * Duch eine Salatessen-Aktion wird ein Salat verbraucht und es werden je nachdem ob der Spieler führt
+ * oder nicht 10 oder 30 Karotten aufgenommen.
  */
 @XStreamAlias(value = "eatSalad")
 public class EatSalad extends Action {
@@ -23,11 +27,12 @@ public class EatSalad extends Action {
     if (GameRuleLogic.isValidToEat(state)) {
       state.getCurrentPlayer().eatSalad();
       // when eating salad the carrots are increased
-      if (state.getCurrentPlayer().getFieldIndex() < state.getOtherPlayer().getFieldIndex()) {
-        state.getCurrentPlayer().changeCarrotsAvailableBy(10);
+      if (state.getCurrentPlayer().getFieldIndex() > state.getOtherPlayer().getFieldIndex()) {
+        state.getCurrentPlayer().changeCarrotsBy(10);
       } else {
-        state.getCurrentPlayer().changeCarrotsAvailableBy(30);
+        state.getCurrentPlayer().changeCarrotsBy(30);
       }
+      state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Es kann gerade kein Salat (mehr) gegessen werden.");
     }
@@ -44,5 +49,10 @@ public class EatSalad extends Action {
       return true;
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    return "EatSalad order " + this.order;
   }
 }

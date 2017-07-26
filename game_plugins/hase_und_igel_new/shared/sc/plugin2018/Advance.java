@@ -5,8 +5,8 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.InvalidMoveException;
 
-/** TODO comment everything
- * Ein Vorwärtszug, um spezifizierte Distanz. Verbrauchte Karroten werden mit k = (distance * (distance + 1)) / 2
+/**
+ * Ein Vorwärtszug, um spezifizierte Distanz. Verbrauchte Karotten werden mit k = (distance * (distance + 1)) / 2
  * berechnet (Gaußsche Summe)
  */
 @XStreamAlias(value = "advance")
@@ -17,37 +17,35 @@ public class Advance extends Action{
 
   public Advance(int distance) {
     super();
-    setDistance(distance);
+    this.distance = distance;
   }
 
   public Advance(int distance, int order) {
     this.order = order;
-    setDistance(distance);
+    this.distance = distance;
   }
-
 
   @Override
   public void perform(GameState state) throws InvalidMoveException {
     if (GameRuleLogic.isValidToAdvance(state, this.distance)) {
-      state.getCurrentPlayer().changeCarrotsAvailableBy(- GameRuleLogic.calculateCarrots(this.distance));
+      state.getCurrentPlayer().changeCarrotsBy(- GameRuleLogic.calculateCarrots(this.distance));
       state.getCurrentPlayer().setFieldIndex(state.getCurrentPlayer().getFieldIndex() + distance);
-      if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.RABBIT) {
+      if (state.getTypeAt(state.getCurrentPlayer().getFieldIndex()) == FieldType.HARE) {
         state.getCurrentPlayer().setMustPlayCard(true);
       }
+      // Setze letzte Aktion
+      state.setLastAction(this);
     } else {
       throw new InvalidMoveException("Vorwärtszug um " + this.distance + " Felder ist nicht möglich");
     }
   }
 
+  /**
+   * Gibt das Dinstanzattribut zurück
+   * @return Distanz
+   */
   public int getDistance() {
     return distance;
-  }
-
-  public void setDistance(int distance) {
-    if (distance <= 0) {
-      throw new IllegalArgumentException("distance has to be greater than 0");
-    }
-    this.distance = distance;
   }
 
   @Override
@@ -61,5 +59,14 @@ public class Advance extends Action{
       return (this.distance == ((Advance) o).distance);
     }
     return false;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder b = new StringBuilder("Advance: distance ");
+    b.append(this.distance);
+    b.append(" order ");
+    b.append(this.order);
+    return b.toString();
   }
 }

@@ -45,4 +45,8 @@ public class Skip extends Action {
     return false;
   }
 
+  @Override
+  public String toString() {
+    return "Skip order " + this.order;
+  }
 }
