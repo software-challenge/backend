@@ -15,6 +15,7 @@ public class PreparedGameResponseListener implements ILobbyClientListener{
   @Override
   public void onGamePrepared(PrepareGameResponse gameResponse) {
     this.response = gameResponse;
+    System.out.println("------------------got here");
   }
 
   @Override

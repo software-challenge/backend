@@ -36,6 +36,7 @@ public abstract class RealServerTest
 	@Before
 	public void setup() throws IOException, PluginLoaderException
 	{
+		System.out.println("====>Setup Server");
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");
 
@@ -57,6 +58,8 @@ public abstract class RealServerTest
 	@After
 	public void tearDown()
 	{
+
+		System.out.println("====>Stop Server");
 		this.lobby.close();
 	}
 
