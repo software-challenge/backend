@@ -546,7 +546,7 @@ public class GameState implements Cloneable {
    * Überprüft ob sich der derzeitige Spieler auf einem Hasenfeld befindet.
    * @return true, falls auf Hasenfeld
    */
-  public boolean isOnRabbitField()
+  public boolean isOnHareField()
   {
     return fieldOfCurrentPlayer().equals(FieldType.HARE);
   }
