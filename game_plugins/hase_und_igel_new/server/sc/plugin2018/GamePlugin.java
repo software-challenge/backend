@@ -26,9 +26,11 @@ public class GamePlugin implements IGamePlugin
 	{
 		SCORE_DEFINITION = new ScoreDefinition();
 		SCORE_DEFINITION.add("Gewinner");
-		SCORE_DEFINITION.add(new ScoreFragment("Ø Feldnummer",
+		// NOTE: Always write the XML representation of unicode characters, not the character directly, as it confuses the
+		// parsers which consume the server messages!
+		SCORE_DEFINITION.add(new ScoreFragment("\u2205 Feldnummer",
 				ScoreAggregation.AVERAGE));
-		SCORE_DEFINITION.add(new ScoreFragment("Ø Karotten",
+		SCORE_DEFINITION.add(new ScoreFragment("\u2205 Karotten",
 				ScoreAggregation.AVERAGE));
 	}
 
