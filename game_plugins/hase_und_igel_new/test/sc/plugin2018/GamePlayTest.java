@@ -701,4 +701,26 @@ public class GamePlayTest
 		move.perform(state);
 		Assert.assertEquals(red.getFieldIndex(), firstHedgehog);
 	}
+
+	@Test
+	public void reedWinsDrawTest() throws InvalidMoveException {
+		List<Action> actions = new ArrayList<>();
+		red.setSalads(0);
+		blue.setSalads(0);
+		int redIndex = state.getPreviousFieldByType(FieldType.CARROT, 64);
+		int blueIndex = state.getPreviousFieldByType(FieldType.CARROT, red.getFieldIndex());
+		red.setCarrots(GameRuleLogic.calculateCarrots(64 - redIndex));
+		blue.setCarrots(GameRuleLogic.calculateCarrots(64 - blueIndex));
+		red.setFieldIndex(redIndex);
+		blue.setFieldIndex(blueIndex);
+		actions.add(new Advance(1));
+		Move move = new Move(actions);
+		move.perform(state);
+		actions.clear();
+
+		actions.add(new Advance(2));
+		move.perform(state);
+		Assert.assertEquals(new WinCondition(PlayerColor.RED, Constants.IN_GOAL_MESSAGE), game.checkWinCondition());
+
+	}
 }
