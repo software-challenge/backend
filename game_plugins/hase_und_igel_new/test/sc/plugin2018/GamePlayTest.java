@@ -74,8 +74,8 @@ public class GamePlayTest
 		red.setFieldIndex(0);
 		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
 
-		int rabbitAt = state.getNextFieldByType(FieldType.HARE, 0);
-		red.setFieldIndex(rabbitAt);
+		int hareAt = state.getNextFieldByType(FieldType.HARE, 0);
+		red.setFieldIndex(hareAt);
 		Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 10));
     Assert.assertFalse(GameRuleLogic.isValidToExchangeCarrots(state, 9));
 
@@ -123,10 +123,10 @@ public class GamePlayTest
 
 		// red moves
 		Assert.assertEquals(1, state.getRound());
-		int rabbitAt = state.getNextFieldByType(FieldType.HARE, red
+		int hareAt = state.getNextFieldByType(FieldType.HARE, red
 				.getFieldIndex());
 		actions.clear();
-		actions.add(new Advance(rabbitAt - red.getFieldIndex()));
+		actions.add(new Advance(hareAt - red.getFieldIndex()));
 		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, 1));
     move = new Move(actions);
     move.perform(state);
@@ -145,7 +145,7 @@ public class GamePlayTest
 		Assert.assertEquals(2, state.getRound());
     Assert.assertEquals(null, game.checkGoalReached());
     Assert.assertEquals(null, game.checkWinCondition());
-    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, rabbitAt, red.getCarrots()), game.getScoreFor(red));
+    Assert.assertEquals(new PlayerScore(ScoreCause.REGULAR, null, 1, hareAt, red.getCarrots()), game.getScoreFor(red));
 	}
 
 	/**
@@ -223,7 +223,7 @@ public class GamePlayTest
   }
 
 	/**
-	 * Only when newly entering a rabbit field a card has to be played
+	 * Only when newly entering a hare field a card has to be played
 	 *
 	 */
 	@Test
@@ -467,13 +467,13 @@ public class GamePlayTest
 	}
 
 	/**
-	 * Checks the perform method when using a rabbit joker
+	 * Checks the perform method when using a hare joker
 	 */
 	@Test
 	public void playCardCycle() throws InvalidMoveException {
     List<Action> actions = new ArrayList<>();
-		int rabbitAt = state.getNextFieldByType(FieldType.HARE, 0);
-		actions.add(new Advance(rabbitAt));
+		int hareAt = state.getNextFieldByType(FieldType.HARE, 0);
+		actions.add(new Advance(hareAt));
 		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 20, 1));
 		Move move = new Move(actions);
     Assert.assertTrue(red.getCards().contains(CardType.TAKE_OR_DROP_CARROTS));
@@ -538,7 +538,7 @@ public class GamePlayTest
 	}
 
 	/**
-	 * Checks that a rabbit joker can only be played on a rabbit field
+	 * Checks that a hare joker can only be played on a hare field
 	 */
 	@Test
 	public void actioncardOnField()
@@ -583,48 +583,48 @@ public class GamePlayTest
 
 		// fall back
 		blue.setFieldIndex(hedgehog + 1);
-		int rabbit = state.getNextFieldByType(FieldType.HARE, blue.getFieldIndex());
-    red.setFieldIndex(rabbit);
+		int hare = state.getNextFieldByType(FieldType.HARE, blue.getFieldIndex());
+    red.setFieldIndex(hare);
 
     Assert.assertFalse(GameRuleLogic.isValidToPlayFallBack(state));
 
 
 		// hurry ahead
     blue.setFieldIndex(hedgehog - 1);
-    rabbit = state.getNextFieldByType(FieldType.HARE, 0);
-    red.setFieldIndex(rabbit);
+    hare = state.getNextFieldByType(FieldType.HARE, 0);
+    red.setFieldIndex(hare);
 		Assert.assertFalse(GameRuleLogic.isValidToPlayHurryAhead(state));
 	}
 
 	/**
-	 * It is not allowed to enter a rabbit field without a card
+	 * It is not allowed to enter a hare field without a card
 	 */
 	@Test
-	public void moveOntoRabbitWithoutCard()
+	public void moveOntoHareWithoutCard()
 	{
-		int rabbit = state.getNextFieldByType(FieldType.HARE, 0);
+		int hare = state.getNextFieldByType(FieldType.HARE, 0);
 		red.setCards(Collections.emptyList());
-		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, rabbit));
+		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, hare));
 	}
 
 	/**
-	 * It is not allowed a use a rabbit koker to enter a rabbit field, if no other rabbit card is available
+	 * It is not allowed a use a hare koker to enter a hare field, if no other hare card is available
 	 */
 	@Test
-	public void indirectHurryAheadOntoRabbit()
+	public void indirectHurryAheadOntoHare()
 	{
-		int firstRabbit = state.getNextFieldByType(FieldType.HARE, 0);
-		int secondRabbit = state.getNextFieldByType(FieldType.HARE, firstRabbit + 1);
+		int firstHare = state.getNextFieldByType(FieldType.HARE, 0);
+		int secondHare = state.getNextFieldByType(FieldType.HARE, firstHare + 1);
 
-		blue.setFieldIndex(secondRabbit - 1);
+		blue.setFieldIndex(secondHare - 1);
 		red.setCards(Collections.singletonList(CardType.HURRY_AHEAD));
 
-		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, firstRabbit));
+		Assert.assertFalse(GameRuleLogic.isValidToAdvance(state, firstHare));
     ArrayList<CardType> cards = new ArrayList<>();
     cards.add(CardType.HURRY_AHEAD);
     cards.add(CardType.EAT_SALAD);
 		red.setCards(cards);
-		Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, firstRabbit));
+		Assert.assertTrue(GameRuleLogic.isValidToAdvance(state, firstHare));
 	}
 
 	/**
