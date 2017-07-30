@@ -282,6 +282,14 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		send(new PrepareGameRequest(gameType));
 	}
 
+	public void prepareGame(String gameType, boolean startPaused){
+		send(new PrepareGameRequest(
+						gameType,
+						new SlotDescriptor("player1", false, startPaused),
+						new SlotDescriptor("player2", false, startPaused))
+		);
+	}
+
 	protected void onCustomObject(Object o)
 	{
 		logger.warn("Couldn't process message {}.", o);

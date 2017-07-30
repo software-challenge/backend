@@ -8,12 +8,12 @@ public class AuthenticateRequest implements ILobbyRequest
 {
 	@XStreamAsAttribute
 	private String	passphrase;
-        
-        /**
-         * might be needed by XStream
-         */
-        public AuthenticateRequest() {
-        }
+
+	/**
+	 * might be needed by XStream
+	 */
+	public AuthenticateRequest() {
+	}
 
 	public AuthenticateRequest(String passphrase)
 	{
