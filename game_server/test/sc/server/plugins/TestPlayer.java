@@ -8,7 +8,7 @@ import sc.framework.plugins.SimplePlayer;
 
 public class TestPlayer extends SimplePlayer
 {
-	List<IPlayerListener>	listeners	= new LinkedList<IPlayerListener>();
+	List<IPlayerListener>	listeners	= new LinkedList<>();
 
 	@Override
 	public void addPlayerListener(IPlayerListener listener)

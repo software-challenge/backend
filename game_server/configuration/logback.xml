@@ -53,14 +53,13 @@
   <logger name="sc.server.network.Client" level="DEBUG" />
   <logger name="sc.networking.clients.LobbyClient" level="DEBUG" />
   <logger name="sc.plugin2017.AbstractClient" level="INFO" />
-  <logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
   <logger name="sc.plugin2017.GameState" level="DEBUG" />
   <logger name="sc.plugin2017.Game" level="DEBUG" />
   <logger name="sc.plugin2017.gui.renderer.RenderFacade" level="DEBUG" />
   <logger name="sc.plugin2017.gui.renderer.FrameRenderer" level="DEBUG" />
   -->
+	<logger name="sc.server.Application" level="DEBUG" />
   <logger name="sc.gui.dialogs.TestRangeDialog" level="DEBUG" />
-  <logger name="sc.networking.clients.XStreamClient" level="DEBUG" />
   <logger name="sc.networking.clients.XStreamClient" level="INFO" />
   <logger name="sc.server" level="DEBUG" />
 

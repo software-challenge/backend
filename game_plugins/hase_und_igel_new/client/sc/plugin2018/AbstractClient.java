@@ -134,7 +134,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	public void joinAnyGame() {
-		this.client.joinAnyGame(this.gameType);
+		this.client.joinRoomRequest(this.gameType);
 	}
 
 	@Override
