@@ -64,3 +64,6 @@ game_server/doc/
 software_challenge_sdk/doc/
 
 *.class
+
+# ignore server.properties
+/game_server/configuration/server.properties
