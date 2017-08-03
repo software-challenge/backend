@@ -2,8 +2,6 @@ package sc.plugin2018.util;
 
 import sc.plugin2018.*;
 
-// TODO only state not player as parameter
-
 public class GameRuleLogic
 {
 
@@ -435,7 +433,7 @@ public class GameRuleLogic
 
   /**
    * Überprüft ob der derzeitige Spieler die Karte spielen kann.
-   * @param state
+   * @param state derzeitger GameState
    * @param c Karte die gespielt werden soll
    * @param n Parameter mit dem TAKE_OR_DROP_CARROTS überprüft wird
    * @return true, falls das Spielen der entsprechenden karte möglich ist
@@ -482,9 +480,9 @@ public class GameRuleLogic
   }
 
   /**
-   * TODO difference isValidToPlayCard
-   * @param state
-   * @return
+   * Gibt zurück, ob ein Spieler eine Karte spielen kann.
+   * @param state derzeitiger GameState
+   * @return true, falls eine karte gespielt werden kann
    */
 	public static boolean canPlayCard(GameState state)
 	{
@@ -496,22 +494,6 @@ public class GameRuleLogic
 			canPlayCard = canPlayCard || isValidToPlayCard(state, a, 0);
 		}
 		return canPlayCard;
-	}
-
-  /**
-   * TODO difference isVAlidTOMove
-   * @param state
-   * @return
-   */
-	public static boolean canMove(GameState state)
-	{
-		boolean canMove = false;
-		int maxDistance = GameRuleLogic.calculateMoveableFields(state.getCurrentPlayer().getCarrots());
-		for (int i = 1; i <= maxDistance; i++)
-		{
-			canMove = canMove || isValidToAdvance(state, i);
-		}
-		return canMove;
 	}
 
 	/**
@@ -527,7 +509,7 @@ public class GameRuleLogic
 	/**
 	 * Überprüft ob ein der derzeitige Spieler das Ziel betreten darf
 	 * @param state GameState
-	 * @return
+	 * @return Gibt zurück, ob ein Spieler das Ziel betreten darf
 	 */
 	public static boolean canEnterGoal(GameState state)
 	{

@@ -295,14 +295,14 @@ public class GameState implements Cloneable {
    * Überprüft ob ein Feld durch einen Spieler belegt ist, sodass niemand darauf ziehen kann.
    * (da Zielfeld von mehreren betretbar, bei Zielfeld immer false)
    * 
-   * @param pos
-   *            die Position auf der Rennstrecke
+   * @param index
+   *            der Index auf der Rennstrecke
    * @return Gibt true zurück, falls sich ein Spieler auf dem Feld befindet und es nicht das Zielfeld ist
    */
-  public final boolean isOccupied(final int pos)
+  public final boolean isOccupied(final int index)
   {
-    return (red.getFieldIndex() == pos || blue.getFieldIndex() == pos)
-        && (pos != Constants.NUM_FIELDS - 1);
+    return (red.getFieldIndex() == index || blue.getFieldIndex() == index)
+        && (index != Constants.NUM_FIELDS - 1);
   }
 
   /**
@@ -322,41 +322,43 @@ public class GameState implements Cloneable {
           && player.getCarrots() < o.getCarrots();
     return isFirst;
   }
-  
+
   /**
-   * Gibt den Feldtypen an einer bestimmten Position zurück. Liegt die
-   * gewählte Position vor dem Startpunkt oder hinter dem Ziel, so wird
+   * Gibt den Feldtypen an einem bestimmten Index zurück. Liegt der
+   * gewählte Index vor dem Startpunkt oder hinter dem Ziel, so wird
    * <code>INVALID</code> zurückgegeben.
-   * 
-   * @param pos die Position auf der Rennstrecke
-   * @return Feldtyp an Position
+   *
+   * @param index die Index auf der Rennstrecke
+   * @return Feldtyp an Index
    */
-  public final FieldType getTypeAt(final int pos)
+  public final FieldType getTypeAt(final int index)
   {
-    return board.getTypeAt(pos);
-  }
-  
-  /**
-   * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
-   * Position <code>pos</code> auf diesem Spielbrett.
-   * 
-   * @param type gefragter FeldTyp
-   * @param pos Startposition
-   * @return Position des nächsten Feldes gefragten Typs
-   */
-  public final int getNextFieldByType(FieldType type, int pos)
-  {
-    return this.board.getNextFieldByType(type, pos);
+    return board.getTypeAt(index);
   }
 
   /**
-   * @param type gefragter Feldtyp
-   * @param pos Startposition
-   * @return Position des nächsten vorherigen Feldes gefragten Typs
+   * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
+   * Index <code>index</code> auf diesem Spielbrett.
+   *
+   * @param type Feldtyp
+   * @param index Index
+   * @return Index des nächsten Feldes genannten Typs
    */
-  public final int getPreviousFieldByType(FieldType type, int pos)
+  public final int getNextFieldByType(FieldType type, int index)
   {
-    return this.board.getPreviousFieldByType(type, pos);
+    return this.board.getNextFieldByType(type, index);
+  }
+
+  /**
+   * Findet das vorherige Spielfeld vom Typ <code>type</code> beginnend an Index
+   * <code>index</code> auf diesem Spielbrett.
+   * @param type Feldtyp
+   * @param index Index
+   * @return Index des vorherigen Feldes genannten Typs
+   */
+  public final int getPreviousFieldByType(FieldType type, int index)
+  {
+    return this.board.getPreviousFieldByType(type, index);
   }
 
   /**

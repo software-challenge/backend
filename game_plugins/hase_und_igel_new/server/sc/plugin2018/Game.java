@@ -166,7 +166,7 @@ public class Game extends RoundBasedGameInstance<Player>
     return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_FIELD_INDEX],
         stats[Constants.GAME_STATS_CARROTS]);
   }
-  
+
 	@Override
 	protected ActionTimeout getTimeoutFor(Player player)
 	{

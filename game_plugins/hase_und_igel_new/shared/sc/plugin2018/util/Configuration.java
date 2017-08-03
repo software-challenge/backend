@@ -1,6 +1,5 @@
 package sc.plugin2018.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.locks.Condition;
@@ -38,5 +37,5 @@ public class Configuration
 				WelcomeMessage.class, CardType.class, FieldType.class,
 				Advance.class, Action.class, Skip.class, PlayerColor.class,
 				Card.class, EatSalad.class, ExchangeCarrots.class, FallBack.class, Condition.class});
-	} // TODO why Condition (seen in previous plugin)
+	}
 }

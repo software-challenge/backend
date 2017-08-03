@@ -83,18 +83,21 @@
 
 	<target name="javadoc">
 		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="false" destdir="doc" nodeprecated="true" nodeprecatedlist="true" noindex="false" nonavbar="false" notree="false" source="1.8"  splitindex="true" use="true" version="true" doctitle="Javadoc zum Software-Challenge 2018 Simpleclient" windowtitle="Javadoc zum Simpleclient '18" packagenames="sc.player2018.*,sc.plugin2018" overview="overview.html" classpath="${toString:classpath.base}">
-		<fileset dir="src" defaultexcludes="yes">
-				<exclude name="logback.xml"/>
-			</fileset>
-		<fileset dir="../../game_plugins/hase_und_igel_new/src/sc/plugin2018" defaultexcludes="yes">
-			<include name="*"/>
-			<exclude name="Game.java"/>
-			<exclude name="AbstractClient.java"/>
-			<exclude name="EPlayerId.java"/>
-			<exclude name="GamePlugin.java"/>
-			<exclude name="WelcomeMessage.java"/>
-		</fileset>
-			</javadoc>
+      <fileset dir="src" defaultexcludes="yes">
+        <exclude name="logback.xml"/>
+      </fileset>
+      <fileset dir="../../game_plugins/hase_und_igel_new/src/sc/plugin2018" defaultexcludes="yes">
+        <include name="*"/>
+        <exclude name="Game.java"/>
+        <exclude name="AbstractClient.java"/>
+        <exclude name="EPlayerId.java"/>
+        <exclude name="GamePlugin.java"/>
+        <exclude name="WelcomeMessage.java"/>
+      </fileset>
+      <fileset dir="../../game_plugins/hase_und_igel_new/src/sc/plugin2018/util" defaultexcludes="yes">
+        <include name="GameRuleLogic.java"/>
+      </fileset>
+    </javadoc>
 	</target>
 
 	<target name="build" depends="jar,javadoc" />

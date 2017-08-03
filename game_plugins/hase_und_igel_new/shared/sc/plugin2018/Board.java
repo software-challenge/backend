@@ -24,7 +24,7 @@ public class Board
 	}
 
 	/**
-	 * Erstellt eine zufällige Rennstrecke. Die Positionen der Salat- und
+	 * Erstellt eine zufällige Rennstrecke. Die Indizes der Salat- und
 	 * Igelfelder bleiben unverändert - nur die Felder zwischen zwei Igelfeldern
 	 * werden permutiert. Außerdem werden auch die Abschnitte zwischen Start-
 	 * und Ziel und dem ersten bzw. letzten Igelfeld permutiert.
@@ -114,33 +114,33 @@ public class Board
 	}
 
 	/**
-	 * Gibt den Feldtypen an einer bestimmten Position zurück. Liegt die
-	 * gewählte Position vor dem Startpunkt oder hinter dem Ziel, so wird
+	 * Gibt den Feldtypen an einem bestimmten Index zurück. Liegt der
+	 * gewählte Index vor dem Startpunkt oder hinter dem Ziel, so wird
 	 * <code>INVALID</code> zurückgegeben.
 	 * 
-	 * @param pos die Position auf der Rennstrecke
-	 * @return Feldtyp an Position
+	 * @param index die Index auf der Rennstrecke
+	 * @return Feldtyp an Index
 	 */
-	public final FieldType getTypeAt(final int pos)
+	public final FieldType getTypeAt(final int index)
 	{
 		FieldType field = FieldType.INVALID;
-		if (pos >= 0 && pos < this.track.size())
-			field = this.track.get(pos).getType();
+		if (index >= 0 && index < this.track.size())
+			field = this.track.get(index).getType();
 		return field;
 	}
 	
  /**
   * Findet das nächste Spielfeld vom Typ <code>type</code> beginnend an
-  * Position <code>pos</code> auf diesem Spielbrett.
+  * Index <code>index</code> auf diesem Spielbrett.
   * 
   * @param type Feldtyp
-  * @param pos Position
-  * @return Position des nächsten Feldes genannten Typs
+  * @param index Index
+  * @return Index des nächsten Feldes genannten Typs
   */
- public final int getNextFieldByType(FieldType type, int pos)
+ public final int getNextFieldByType(FieldType type, int index)
  {
    int ret = -1;
-   for (int i = pos + 1; i < this.track.size(); i++)
+   for (int i = index + 1; i < this.track.size(); i++)
      if (this.track.get(i).getType().equals(type))
      {
        ret = i;
@@ -150,16 +150,16 @@ public class Board
  }
 
  /**
-  * Findet das vorherige Spielfeld vom Typ <code>type</code> beginnend an Position
-  * <code>pos</code> auf diesem Spielbrett.
+  * Findet das vorherige Spielfeld vom Typ <code>type</code> beginnend an Index
+  * <code>index</code> auf diesem Spielbrett.
   * @param type Feldtyp
-  * @param pos Position
-  * @return Position des vorherigen Feldes genannten Typs
+  * @param index Index
+  * @return Index des vorherigen Feldes genannten Typs
   */
- public final int getPreviousFieldByType(FieldType type, int pos)
+ public final int getPreviousFieldByType(FieldType type, int index)
  {
    int ret = -1;
-   for (int i = pos - 1; i >= 0; i--)
+   for (int i = index - 1; i >= 0; i--)
      if (track.get(i).getType().equals(type))
      {
        ret = i;
