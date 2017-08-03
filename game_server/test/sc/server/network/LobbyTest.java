@@ -24,8 +24,8 @@ public class LobbyTest extends RealServerTest
 		final LobbyClient player1 = connectClient("localhost", getServerPort());
 		final LobbyClient player2 = connectClient("localhost", getServerPort());
 
-		player1.joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
-		player2.joinAnyGame(TestPlugin.TEST_PLUGIN_UUID);
+		player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+		player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 
 		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
 			@Override
@@ -71,6 +71,7 @@ public class LobbyTest extends RealServerTest
 			}
 		});
 
+
 		TestHelper.assertEqualsWithTimeout(true, new Generator<Boolean>() {
 			@Override
 			public Boolean operate()
@@ -79,15 +80,20 @@ public class LobbyTest extends RealServerTest
 			}
 		});
 
-		System.out.println(theRoom.getResult().getScores());
-
+    System.out.println(theRoom.getResult().getScores());
+		System.out.println("=============================");
+    System.out.println(theRoom.getResult().getScores().get(0).getCause());
+    System.out.println("=============================");
+    Thread.sleep(1000);
 		TestHelper.assertEqualsWithTimeout(ScoreCause.LEFT,
 				new Generator<ScoreCause>() {
 					@Override
 					public ScoreCause operate()
 					{
-						return theRoom.getResult().getScores().get(0)
-								.getCause();
+            ScoreCause cause = theRoom.getResult().getScores().get(0)
+                    .getCause();
+
+					  return cause;
 					}
 				});
 

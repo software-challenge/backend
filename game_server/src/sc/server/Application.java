@@ -17,33 +17,55 @@ public final class Application
 												.getLogger(Application.class);
 	private static final Object	waitObj	= new Object();
 
-	public static void main(String[] params) throws IOException,
-			InterruptedException, IllegalOptionValueException,
-			UnknownOptionException
+	public static void main(String[] params)
 	{
 		
 		// Setup Server
 		System.setProperty( "file.encoding", "UTF-8" );
-		
-		parseArguments(params);
-
+		try {
+			parseArguments(params);
+		} catch (IllegalOptionValueException e){
+			logger.error("Options could not be parsed");
+			e.printStackTrace();
+			return;
+		} catch (UnknownOptionException e){
+      logger.error("Unknown option");
+      e.printStackTrace();
+      return;
+		}
 		logger.info("Server is starting up...");
 
 		// register crtl + c
 		addShutdownHook();
 		long start = System.currentTimeMillis();
 
-		Configuration.load(new FileReader("server.properties"));
-		final Lobby server = new Lobby();
-		server.start();
+    try {
+      logger.error("loading server.properties");
+      Configuration.load(new FileReader("server.properties"));
+    } catch (IOException e) {
+      logger.error("Could not find server.properties");
+      e.printStackTrace();
+      return;
+    }
+    final Lobby server = new Lobby();
+    try {
+      server.start();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return;
+    }
 
-		long end = System.currentTimeMillis();
+    long end = System.currentTimeMillis();
 		logger.info("Server has been initialized in {} ms.", end - start);
 
 		synchronized (waitObj)
 		{
-			waitObj.wait();
-		}
+      try {
+        waitObj.wait();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
 	}
 
 	public static void parseArguments(String[] params)

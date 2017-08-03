@@ -646,10 +646,13 @@ public class GameRoom implements IGameListener
     }
     this.playerSlots.add(new PlayerSlot(this));
     this.playerSlots.add(new PlayerSlot(this));
-    // Can be 0 or 1
+
 		for (int i = 0; i < descriptors.size(); i++)
 		{
 			this.playerSlots.get(i).setDescriptor(descriptors.get(i));
+			if (descriptors.get(i).isShouldBePaused()){
+			  pause(true);
+      }
 		}
 	}
 
@@ -672,7 +675,7 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * Return true if game is paused
+	 * Return whether or not the game is paused
 	 * @return true, if game is paused
 	 */
 	public boolean isPaused()
@@ -717,4 +720,5 @@ public class GameRoom implements IGameListener
 	{
 		return this.result;
 	}
+
 }

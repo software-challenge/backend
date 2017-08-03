@@ -66,6 +66,15 @@ public class ClientManager implements Runnable, IClientListener
   }
 
   /**
+   * Get clients as Linkedlist
+   * @return clients as LinkedLsit
+   */
+  //Used for testing
+  public LinkedList<Client> getClients(){
+    return this.clients;
+  }
+
+  /**
    * Fetch new clients
    */
   @Override

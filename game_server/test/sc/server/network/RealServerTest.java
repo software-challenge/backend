@@ -38,7 +38,7 @@ public abstract class RealServerTest
 	{
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");
-
+		Configuration.set(Configuration.PASSWORD_KEY, "TEST_PASSWORD");
 		this.lobby = new Lobby();
 		this.clientMgr = this.lobby.getClientManager();
 		this.gameMgr = this.lobby.getGameManager();

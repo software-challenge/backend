@@ -74,7 +74,7 @@
       <fileset dir="./game_server/build/jar" />
     </copy>
     <!-- build player -->
-  	<mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
+    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
     <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/jar">
       <fileset dir="./game_players/hase_und_igel_player_new/build/jar" />
     </copy>

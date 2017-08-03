@@ -210,7 +210,7 @@ public class Game extends RoundBasedGameInstance<Player>
       return new WinCondition(winner, Constants.ROUND_LIMIT_MESSAGE);
     }
   }
-	
+
   /**
    * Checks if one player reached the goal (at the end of a round). If both player are in goal, the one with lesser carrots
    * wins, if they both have the same amount, red wins for first entering goal.
@@ -270,31 +270,31 @@ public class Game extends RoundBasedGameInstance<Player>
         this.gameState.setBluePlayer(newBlue);
       }
     }
-	}
+  }
 
-	 @Override
-	  public List<SimplePlayer> getWinners() {
-	    WinCondition win = checkWinCondition();
-	    List<SimplePlayer> winners = new LinkedList<>();
-	    if (win != null) {
-	      for (Player player : this.players) {
-	        if (player.getPlayerColor() == win.getWinner()) {
-	          winners.add(player);
-	          break;
-	        }
-	      }
-	    } else {
-	      // No win condition met, player with highest score wins. Winning score is
-	      // determined by matchpoints ("Siegpunkte"). The winning player has 2
-	      // matchpoints. Find this player. If no player has 2 matchpoints, it is a
-	      // draw.
-	      for (Player player : this.players) {
-	        if (getScoreFor(player).getValues().get(0).intValueExact() == 2) {
-	          winners.add(player);
-	          break;
-	        }
-	      }
-	    }
-	    return winners;
-	  }
+  @Override
+  public List<SimplePlayer> getWinners() {
+    WinCondition win = checkWinCondition();
+    List<SimplePlayer> winners = new LinkedList<>();
+    if (win != null) {
+      for (Player player : this.players) {
+        if (player.getPlayerColor() == win.getWinner()) {
+          winners.add(player);
+          break;
+        }
+      }
+    } else {
+      // No win condition met, player with highest score wins. Winning score is
+      // determined by matchpoints ("Siegpunkte"). The winning player has 2
+      // matchpoints. Find this player. If no player has 2 matchpoints, it is a
+      // draw.
+      for (Player player : this.players) {
+        if (getScoreFor(player).getValues().get(0).intValueExact() == 2) {
+          winners.add(player);
+          break;
+        }
+      }
+    }
+    return winners;
+  }
 }
