@@ -30,13 +30,13 @@ public class GameRuleLogic
 	 */
 	public static int calculateMoveableFields(int carrots)
 	{
-		if (n >=990) {
+		if (carrots >=990) {
       return 44;
     }
-    if (n < 1) {
+    if (carrots < 1) {
       return 0;
     }
-    return (int)(Math.sqrt(((double) 2* n) + 0.25) - 0.48); //-0.48 anstelle von -0.5 um Rundungsfehler zu vermeiden
+    return (int)(Math.sqrt(((double) 2* carrots) + 0.25) - 0.48); //-0.48 anstelle von -0.5 um Rundungsfehler zu vermeiden
 	}
 
 	/**
