@@ -11,9 +11,8 @@ public class GameRuleLogic
 	}
 
 	/**
-	 * Berechnet wie viele Karotten für einen Zug der länge
-	 * <code>moveCount</code> benötigt werden. Entspricht den Veränderungen des
-	 * Spieleabends der CAU.
+	 * Berechnet wie viele Karotten für einen Zug der Länge
+	 * <code>moveCount</code> benötigt werden.
 	 * 
 	 * @param moveCount Anzahl der Felder, um die bewegt wird
 	 * @return Anzahl der benötigten Karotten
@@ -24,19 +23,20 @@ public class GameRuleLogic
 	}
 
 	/**
-	 * Berechnet, wieviele Züge mit <code>carrots</code> Karotten möglich sind.
+	 * Berechnet, wie viele Züge mit <code>carrots</code> Karotten möglich sind.
 	 * 
 	 * @param carrots maximal ausgegebene Karotten
 	 * @return Felder um die maximal bewegt werden kann
 	 */
 	public static int calculateMoveableFields(int carrots)
 	{
-		int moves = 0;
-		while (calculateCarrots(moves) <= carrots)
-		{
-			moves++;
-		}
-		return moves - 1;
+		if (n >=990) {
+      return 44;
+    }
+    if (n < 1) {
+      return 0;
+    }
+    return (int)(Math.sqrt(((double) 2* n) + 0.25) - 0.48); //-0.48 anstelle von -0.5 um Rundungsfehler zu vermeiden
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class GameRuleLogic
    * - Wenn das Ziel erreicht wird, darf der Spieler nach dem Zug maximal 10 Karotten übrig haben
    * - Man darf nicht auf Igelfelder ziehen
    * - Salatfelder dürfen nur betreten werden, wenn man noch Salate essen muss
-   * - Hasenfelder dürfen nur betreten werden, wenn man noch Hasenkarten ausspielen kann
+   * - Hasenfelder dürfen nur betreten werden, wenn man noch Karte ausspielen kann
 	 * 
 	 * @param state GameState
 	 * @param distance relativer Abstand zur aktuellen Position des Spielers
@@ -121,7 +121,7 @@ public class GameRuleLogic
 	}
 
   /**
-   * Überpürft, ob ein Spieler einen Zug (keinen Aussetzug)
+   * Überprüft, ob ein Spieler einen Zug (keinen Aussetzug)
    * @param state GameState
    * @return true, falls ein Zug möglich ist.
    */
@@ -161,7 +161,7 @@ public class GameRuleLogic
    * - vorher kein Salat auf diesem Feld verzehrt wurde
 	 * 
 	 * @param state GameState
-	 * @return true, falls ein Salad gegessen werden darf
+	 * @return true, falls ein Salat gegessen werden darf
 	 */
 	public static boolean isValidToEat(GameState state)
 	{
@@ -177,7 +177,7 @@ public class GameRuleLogic
 	}
 
   /**
-   * Überpürft ab der derzeitige Spieler im nächsten Zug einen Vorwärtszug machen muss.
+   * Überprüft ab der derzeitige Spieler im nächsten Zug einen Vorwärtszug machen muss.
    * @param state GameState
    * @return true, falls der derzeitige Spieler einen Vorwärtszug gemacht werden muss
    */
@@ -433,10 +433,10 @@ public class GameRuleLogic
 
   /**
    * Überprüft ob der derzeitige Spieler die Karte spielen kann.
-   * @param state derzeitger GameState
+   * @param state derzeitiger GameState
    * @param c Karte die gespielt werden soll
    * @param n Parameter mit dem TAKE_OR_DROP_CARROTS überprüft wird
-   * @return true, falls das Spielen der entsprechenden karte möglich ist
+   * @return true, falls das Spielen der entsprechenden Karte möglich ist
    */
 	public static boolean isValidToPlayCard(GameState state, CardType c, int n)
 	{
@@ -480,9 +480,9 @@ public class GameRuleLogic
   }
 
   /**
-   * Gibt zurück, ob ein Spieler eine Karte spielen kann.
+   * Gibt zurück, ob der derzeitige Spieler eine Karte spielen kann.
    * @param state derzeitiger GameState
-   * @return true, falls eine karte gespielt werden kann
+   * @return true, falls eine Karte gespielt werden kann
    */
 	public static boolean canPlayCard(GameState state)
 	{
