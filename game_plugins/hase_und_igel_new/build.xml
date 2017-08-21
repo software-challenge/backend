@@ -48,7 +48,12 @@
 		</jar>
 	</target>
 
+  <target name="doc" depends="clean">
+    <mkdir dir="doc" />
+  </target>
+
 	<target name="clean-build" depends="clean,jar" />
+	<target name="build-doc" depends="doc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>

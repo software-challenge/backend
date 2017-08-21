@@ -2,6 +2,7 @@
   <import file="git-build.xml" />
 
   <property name="out.dir" value="deploy" />
+  <property name="game_plugin" value="hase_und_igel_new" />
 
   <target name="clean">
     <delete dir="${out.dir}" />
@@ -28,7 +29,7 @@
     <delete dir="game_plugins/mississippi_queen/build" />
     <delete dir="game_players/mississippi_queen_player/build" />
     <!--    currentPlugin                    !-->
-    <delete dir="game_plugins/hase_und_igel_new/build" />
+    <delete dir="game_plugins/${game_plugin}/build" />
     <delete dir="game_players/hase_und_igel_player_new/build" />
   </target>
 
@@ -59,7 +60,7 @@
 	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
 	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />-->
     <!--    currentPlugin                    !-->
-    <ant dir="game_plugins/hase_und_igel_new" target="clean-build" inheritAll="false" />
+    <ant dir="game_plugins/${game_plugin}" target="clean-build" inheritAll="false" />
     <ant dir="game_players/hase_und_igel_player_new" target="clean-build" inheritAll="false" />
 
     <echo message="Compiling Server..." />
@@ -124,12 +125,32 @@
     <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
     <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-    <zip destfile="${out.dir}/zipped/simpleclient-hase_und_igel_new-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
-    <zip destfile="${out.dir}/zipped/simpleclient-hase_und_igel_new--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
 
   </target>
 
+  <target name="doc" depends="build">
+    <ant dir="game_server" target="build-doc" inheritAll="false" />
+    <ant dir="software_challenge_sdk" target="build-doc" inheritAll="false" />
+    <ant dir="./game_plugins/${game_plugin}" target="build-doc" inheritAll="false" />
+    <mkdir dir="${out.dir}/docs" />
+    <mkdir dir="${out.dir}/docs/game_server" />
+    <mkdir dir="${out.dir}/docs/software_challenge_sdk" />
+    <mkdir dir="${out.dir}/docs/${game_plugin}" />
+    <copy todir="${out.dir}/docs/game_server">
+      <fileset dir="./game_server/doc"/>
+    </copy>
+    <copy todir="${out.dir}/docs/software_challenge_sdk">
+      <fileset dir="./software_challenge_sdk/doc"/>
+    </copy>
+    <copy todir="${out.dir}/docs/${game_plugin}">
+      <fileset dir="./game_plugins/${game_plugin}/doc"/>
+    </copy>
+  </target>
+
   <target name="clean-build" depends="clean,build" />
+  <target name="build-all" depends="clean, doc" />
 
   <target name="main" depends="clean-build" />
 </project>

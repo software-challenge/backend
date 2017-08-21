@@ -3,6 +3,7 @@ package sc.server.plugins;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.framework.plugins.IPerspectiveAware;
+import sc.shared.PlayerColor;
 
 public class TestGameState implements IPerspectiveAware
 {
@@ -12,10 +13,28 @@ public class TestGameState implements IPerspectiveAware
 	public Integer		round	= 0;
 	public int			secret0	= 0;
 	public int			secret1	= 0;
+	public int lastPlayerIndex = 0;
+	public int turn;
+	public PlayerColor currentPlayer;
+
+	public PlayerColor startPlayer;
+
+
+	public TestPlayer red;
+	public TestPlayer blue;
 
 	public void setController(TestGame controller)
 	{
 		this.controller = controller;
+	}
+
+
+	public TestGameState(){
+		this.turn = 0;
+		this.currentPlayer = PlayerColor.RED;
+		this.startPlayer = PlayerColor.RED;
+		this.red = new TestPlayer(PlayerColor.RED);
+		this.blue = new TestPlayer(PlayerColor.BLUE);
 	}
 
 	@Override

@@ -96,7 +96,9 @@
 		</jar>
 	</target>
 
-	<target name="clean-build" depends="clean,doc,jar" />
+	<target name="clean-build" depends="clean,jar" />
+	<target name="build-all" depends="clean, doc, jar" />
+	<target name="build-doc" depends="clean, doc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>

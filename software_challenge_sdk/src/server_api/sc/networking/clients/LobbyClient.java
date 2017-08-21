@@ -427,7 +427,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 		start();
 		logger.debug("sending observation request with handle.roomId {}",
 				handle.getRoomId());
-		send(new ObservationRequest(handle.getRoomId(), ""));
+		send(new ObservationRequest(handle.getRoomId()));
 		result.pause();
 		return result;
 	}
@@ -441,7 +441,7 @@ public final class LobbyClient extends XStreamClient implements IPollsHistory
 	{
 		IControllableGame result = new ObservingClient(this, roomId);
 		start();
-		send(new ObservationRequest(roomId, ""));
+		send(new ObservationRequest(roomId));
 		return result;
 	}
 
