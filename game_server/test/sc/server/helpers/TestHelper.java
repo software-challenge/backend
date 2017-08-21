@@ -35,6 +35,22 @@ public class TestHelper
 		return isEqual(expected, action.operate());
 	}
 
+  public static <T> boolean waitUntilEqual(T expected, Generator<T> action,
+                                          long maxDuration)
+  {
+    return waitUntilEqual(expected, action, maxDuration, TimeUnit.MILLISECONDS);
+  }
+
+  public static <T> boolean waitUntilTrue(Generator<Boolean> action,
+                                           long maxDuration, TimeUnit unit)
+  {
+    return waitUntilEqual(true, action, maxDuration, unit);
+  }
+  public static <T> boolean waitUntilTrue(Generator<Boolean> action, long maxDuration)
+  {
+    return waitUntilEqual(true, action, maxDuration, TimeUnit.MILLISECONDS);
+  }
+
 	public static <T> void assertEqualsWithTimeout(T expected,
 			Generator<T> action)
 	{

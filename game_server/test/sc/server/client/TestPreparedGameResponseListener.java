@@ -9,7 +9,7 @@ import sc.shared.GameResult;
 /**
  * Created by nils on 26.07.17.
  */
-public class PreparedGameResponseListener implements ILobbyClientListener{
+public class TestPreparedGameResponseListener implements ILobbyClientListener{
   public PrepareGameResponse response;
 
   @Override

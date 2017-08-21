@@ -44,7 +44,8 @@
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
 	</target>
 
-	<target name="clean-build" depends="clean,doc,jar" />
+	<target name="clean-build" depends="clean,jar" />
+	<target name="build-doc" depends="clean, doc" />
 
 	<target name="main" depends="clean-build" />
 </project>

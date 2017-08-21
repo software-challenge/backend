@@ -150,7 +150,7 @@ public class PlayerTest extends AbstractRoleTest
 				.seekMessage(PrepareGameResponse.class);
 
 		this.lobby.onRequest(observer, new PacketCallback(
-				new ObservationRequest(prepared.getRoomId(), "hello")));
+				new ObservationRequest(prepared.getRoomId())));
 		this.lobby
 				.onRequest(player1, new PacketCallback(
 						new JoinPreparedRoomRequest(prepared.getReservations()

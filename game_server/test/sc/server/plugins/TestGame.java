@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
+import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
+import sc.shared.PlayerColor;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 import sc.shared.WinCondition;
@@ -28,23 +30,18 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		if (data instanceof TestMove)
 		{
-			int newSecret = ((TestMove) data).value;
 
-			if (fromPlayer == this.players.get(0))
-			{
-				this.state.secret0 = newSecret;
-			}
-			else if (fromPlayer == this.players.get(1))
-			{
-				this.state.secret1 = newSecret;
-			}
-			else
-			{
-				throw new RuntimeException("Unknown Player");
-			}
+    /*
+     * NOTE: Checking if right player sent move was already done by
+     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, Object)}.
+     * There is no need to do it here again.
+     */
+
+
+        final TestMove move = (TestMove) data;
+        move.perform(this.state);
+        next(this.state.currentPlayer == PlayerColor.RED ? state.red : state.blue);
 		}
-		this.state.round++;
-		next();
 	}
 
   @Override
@@ -58,14 +55,19 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		if (this.players.size() < 2)
 		{
-			TestPlayer player = new TestPlayer();
-			this.players.add(player);
-			return player;
+			if (players.size() == 0){
+			  state.red = new TestPlayer(PlayerColor.RED);
+			  players.add(state.red);
+			  return state.red;
+      } else if (players.size() == 1){
+			  state.blue = new TestPlayer(PlayerColor.BLUE);
+			  players.add(state.blue);
+			  return state.blue;
+      }
 		}
-		else
-		{
-			throw new TooManyPlayersException();
-		}
+
+		throw new TooManyPlayersException();
+
 	}
 
 	public List<TestPlayer> getPlayers()
@@ -121,5 +123,12 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	// XXX set to right value
+	@Override
+	protected ActionTimeout getTimeoutFor(TestPlayer player)
+	{
+		return new ActionTimeout(false, 100000000L, 20000000L);
 	}
 }

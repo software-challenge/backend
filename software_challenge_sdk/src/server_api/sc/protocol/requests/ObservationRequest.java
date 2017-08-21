@@ -8,9 +8,6 @@ public class ObservationRequest implements ILobbyRequest
 {
 	@XStreamAsAttribute
 	private String	roomId;
-	
-	@XStreamAsAttribute
-	private String	passphrase;
         /**
          * might be needed by XStream
          */
@@ -19,20 +16,15 @@ public class ObservationRequest implements ILobbyRequest
 
 
 
-	public ObservationRequest(String roomId, String passphrase)
+	public ObservationRequest(String roomId)
 	{
 		this.roomId = roomId;
-		this.passphrase = passphrase;
 	}
 	
 	public String getRoomId()
 	{
 		return this.roomId;
 	}
-	
-	public String getPassphrase()
-	{
-		return this.passphrase;
-	}
+
 
 }
