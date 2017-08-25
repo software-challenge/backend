@@ -60,13 +60,13 @@ public class RequestTest extends RealServerTest{
   @Test
   public void authenticationRequest(){
     player1.authenticate(PASSWORD);
-    TestHelper.waitMills(1000);
+    TestHelper.waitMills(200);
     LinkedList<Client> clients = lobby.getClientManager().getClients();
     Assert.assertEquals(true, clients.get(0).isAdministrator());
     Assert.assertEquals(3,lobby.getClientManager().getClients().size());
 
     player2.authenticate("PASSWORD_FAIL_TEST");
-    TestHelper.waitMills(1000);
+    TestHelper.waitMills(200);
 
     //Player2 got kicked
     Assert.assertEquals(2,lobby.getClientManager().getClients().size());
@@ -82,7 +82,7 @@ public class RequestTest extends RealServerTest{
     TestPreparedGameResponseListener listener = new TestPreparedGameResponseListener();
     player1.addListener(listener);
 
-    TestHelper.waitMills(500);
+    TestHelper.waitMills(200);
     Assert.assertNotNull(listener.response);
 
     Assert.assertEquals(1,  lobby.getGameManager().getGames().size());
@@ -98,20 +98,20 @@ public class RequestTest extends RealServerTest{
     player1.addListener(listener);
 
     player1.prepareGame(TestPlugin.TEST_PLUGIN_UUID);
-    TestHelper.waitMills(400);
+    TestHelper.waitMills(200);
     PrepareGameResponse response = listener.response;
 
     String reservation = response.getReservations().get(0);
     player1.joinPreparedGame(reservation);
-    TestHelper.waitMills(500);
+    TestHelper.waitMills(200);
     Assert.assertEquals(1, lobby.getGameManager().getGames().iterator().next().getClients().size());
 
     player2.joinPreparedGame(response.getReservations().get(1));
-    TestHelper.waitMills(500);
+    TestHelper.waitMills(200);
     Assert.assertEquals(2, lobby.getGameManager().getGames().iterator().next().getClients().size());
 
     player3.joinPreparedGame(response.getReservations().get(1));
-    TestHelper.waitMills(500);
+    TestHelper.waitMills(200);
     Assert.assertEquals(2, lobby.getClientManager().getClients().size());
   }
 
@@ -120,17 +120,16 @@ public class RequestTest extends RealServerTest{
 
     player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
     player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
-    lobby.getGameManager().getGames().iterator().next().getSlots().get(0).getRole().getPlayer();
 
 
-    TestHelper.waitMills(1000);
+    TestHelper.waitMills(200);
 
     GameRoom gameRoom = lobby.getGameManager().getGames().iterator().next();
     player3.addListener(new TestObserverListener());
     player3.authenticate(PASSWORD);
     player3.observe(gameRoom.getId());
 
-    TestHelper.waitMills(1000);
+    TestHelper.waitMills(200);
 
     Iterator<IClientRole> roles = lobby.getClientManager().getClients().get(2).getRoles().iterator();
     boolean hasRole = false;
@@ -140,15 +139,10 @@ public class RequestTest extends RealServerTest{
       }
     }
     Assert.assertEquals(true, hasRole);
-    gameRoom = lobby.getGameManager().getGames().iterator().next();
   }
 
   @Test
   public void stepRequest(){
-    System.out.println("=====> Observer: "+player1);
-    System.out.println("=====> Player1: "+player2);
-    System.out.println("=====> Player2: "+player3);
-
 
     // Make player1 Admin and prepare a game in paused mode
     player1.authenticate(PASSWORD);

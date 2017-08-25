@@ -27,29 +27,11 @@ public class LobbyTest extends RealServerTest
 		player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 		player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 
-		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
-			@Override
-			public Integer operate()
-			{
-				return player1.getRooms().size();
-			}
-		});
+		TestHelper.assertEqualsWithTimeout(1, ()->player1.getRooms().size());
 
-		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
-			@Override
-			public Integer operate()
-			{
-				return player2.getRooms().size();
-			}
-		});
+		TestHelper.assertEqualsWithTimeout(1, ()->player2.getRooms().size());
 
-		TestHelper.assertEqualsWithTimeout(1, new Generator<Integer>() {
-			@Override
-			public Integer operate()
-			{
-				return LobbyTest.this.gameMgr.getGames().size();
-			}
-		});
+		TestHelper.assertEqualsWithTimeout(1, ()->LobbyTest.this.gameMgr.getGames().size());
 
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 		Assert.assertEquals(player1.getRooms().get(0), player2.getRooms()
@@ -63,47 +45,16 @@ public class LobbyTest extends RealServerTest
 		player1.sendCustomData("<yarr>");
 
 
-		TestHelper.assertEqualsWithTimeout(true, new Generator<Boolean>() {
-			@Override
-			public Boolean operate()
-			{
-				return theRoom.isOver();
-			}
-		});
+		TestHelper.assertEqualsWithTimeout(true, ()->theRoom.isOver());
 
 
-		TestHelper.assertEqualsWithTimeout(true, new Generator<Boolean>() {
-			@Override
-			public Boolean operate()
-			{
-				return theRoom.getResult().getScores() != null;
-			}
-		});
+		TestHelper.assertEqualsWithTimeout(true, () -> theRoom.getResult().getScores() != null);
 
-    System.out.println(theRoom.getResult().getScores());
-		System.out.println("=============================");
-    System.out.println(theRoom.getResult().getScores().get(0).getCause());
-    System.out.println("=============================");
+
     Thread.sleep(1000);
-		TestHelper.assertEqualsWithTimeout(ScoreCause.LEFT,
-				new Generator<ScoreCause>() {
-					@Override
-					public ScoreCause operate()
-					{
-            ScoreCause cause = theRoom.getResult().getScores().get(0)
-                    .getCause();
-
-					  return cause;
-					}
-				});
+		TestHelper.assertEqualsWithTimeout(ScoreCause.LEFT,() -> theRoom.getResult().getScores().get(0).getCause());
 
 		// should cleanup gamelist
-		TestHelper.assertEqualsWithTimeout(0, new Generator<Integer>() {
-			@Override
-			public Integer operate()
-			{
-				return LobbyTest.this.gameMgr.getGames().size();
-			}
-		});
+		TestHelper.assertEqualsWithTimeout(0, ()->LobbyTest.this.gameMgr.getGames().size());
 	}
 }

@@ -46,16 +46,4 @@ public class SampleLibraryTest extends RealServerTest
 		});
 	}
 
-	@Test
-	public void shouldSupportBlockingHandlers() throws IOException,
-			InterruptedException
-	{
-		final LobbyClient client = connectClient("localhost", getServerPort());
-
-		RequestResult<PrepareGameResponse> result = client.prepareGameAndWait(
-				TestPlugin.TEST_PLUGIN_UUID, 2);
-
-		Assert.assertTrue(result.hasValidContents());
-		Assert.assertTrue(result.isSuccessful());
-	}
 }
