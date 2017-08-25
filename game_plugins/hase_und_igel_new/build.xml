@@ -52,15 +52,17 @@
 
   <target name="doc" depends="clean">
     <mkdir dir="${doc.dir}" />
-    <mkdir dir="${doc.dir}/client" />
-    <mkdir dir="${doc.dir}/server" />
-    <mkdir dir="${doc.dir}/shared" />
-		<javadoc sourcepath="client"
-						 destdir="${doc.dir}/client"/>
-    <javadoc sourcepath="client"
-             destdir="${doc.dir}/server"/>
-    <javadoc sourcepath="client"
-             destdir="${doc.dir}/shared"/>
+    <mkdir dir="tmp" />
+
+    <copy todir="tmp">
+      <fileset dir="client/"/>
+      <fileset dir="server/"/>
+      <fileset dir="shared/"/>
+    </copy>
+
+		<javadoc sourcepath="tmp"
+						 destdir="${doc.dir}"/>
+    <delete dir="tmp" />
 
   </target>
 
