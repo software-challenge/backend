@@ -150,7 +150,7 @@
   </target>
 
   <target name="clean-build" depends="clean,build" />
-  <target name="build-all" depends="clean, doc" />
+  <target name="build-all" depends="clean-build, doc" />
 
   <target name="main" depends="clean-build" />
 </project>

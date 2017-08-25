@@ -3,6 +3,7 @@
 
 	<property name="src.dir" value="src" />
 	<property name="build.dir" value="build" />
+	<property name="doc.dir" value="doc" />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="lib.dir" value="../../software_challenge_sdk/lib" />
@@ -15,7 +16,8 @@
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
-		<delete dir="${src.dir}" />
+    <delete dir="${src.dir}" />
+    <delete dir="${doc.dir}" />
 	</target>
 
 	<target name="dependencies">
@@ -49,11 +51,22 @@
 	</target>
 
   <target name="doc" depends="clean">
-    <mkdir dir="doc" />
+    <mkdir dir="${doc.dir}" />
+    <mkdir dir="${doc.dir}/client" />
+    <mkdir dir="${doc.dir}/server" />
+    <mkdir dir="${doc.dir}/shared" />
+		<javadoc sourcepath="client"
+						 destdir="${doc.dir}/client"/>
+    <javadoc sourcepath="client"
+             destdir="${doc.dir}/server"/>
+    <javadoc sourcepath="client"
+             destdir="${doc.dir}/shared"/>
+
   </target>
 
 	<target name="clean-build" depends="clean,jar" />
-	<target name="build-doc" depends="doc" />
+	<target name="build-doc" depends="clean,doc" />
+  <target name="build-all" depends="dependencies,clean-build,build-doc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>
