@@ -2,16 +2,10 @@ package sc.server.roles;
 
 import java.io.IOException;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.protocol.requests.JoinPreparedRoomRequest;
-import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.requests.ObservationRequest;
-import sc.protocol.requests.PauseGameRequest;
-import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.StepRequest;
+import sc.protocol.requests.*;
 import sc.protocol.responses.MementoPacket;
 import sc.protocol.responses.PrepareGameResponse;
 import sc.protocol.responses.JoinGameResponse;
@@ -25,11 +19,12 @@ import sc.server.plugins.TestGameState;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
 import sc.server.plugins.TestTurnRequest;
+import sc.shared.SlotDescriptor;
 
 public class PlayerTest extends AbstractRoleTest
 {
-	int	mySecret1	= 13;
-	int	mySecret2	= 37;
+	int firstState = 13;
+	int secondState = 37;
 
 	@Test
 	public void shouldBeAbleToJoinNonExistingGame() throws IOException,
@@ -66,16 +61,24 @@ public class PlayerTest extends AbstractRoleTest
 		Assert.assertNotNull(msg.getRoomId());
 	}
 
-	@Ignore //TODO fix this test
+  /**
+   * Checks basic sending of Moves and end of game
+   * @throws RescuableClientException
+   */
+	@Test
   public void shouldBeAbleToPlayTheGame() throws RescuableClientException
 	{
-		MockClient admin = connectClient();
+		MockClient admin = connectClient(true);
 		MockClient player1 = connectClient();
 		MockClient player2 = connectClient();
-		MockClient observer = connectClient();
+		MockClient observer = connectClient(true);
 
-		this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID)));
+    SlotDescriptor slot1 = new SlotDescriptor("player1", true, false);
+    SlotDescriptor slot2 = new SlotDescriptor("player2", true, false);
+
+
+    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
+				TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
 		PrepareGameResponse prepared = admin
 				.seekMessage(PrepareGameResponse.class);
 
@@ -96,8 +99,8 @@ public class PlayerTest extends AbstractRoleTest
 		Assert.assertEquals(roomId, roomId2);
 
 		shouldInitializeCorrectly(roomId, player1, player2, observer);
-		shouldProtectFirstPlayersSecrets(roomId, player1, player2, observer);
-		shouldProtectSecondPlayersSecrets(roomId, player1, player2, observer);
+		shouldPropagadeFirstPlayersMove(roomId, player1, player2, observer);
+		shouldPropagadeSecondPlayersMove(roomId, player1, player2, observer);
 		makeMoveAfterRequest(roomId, player1);
 		makeMoveAfterRequest(roomId, player2);
 		player1.seekMessage(LeftGameEvent.class);
@@ -115,47 +118,47 @@ public class PlayerTest extends AbstractRoleTest
 				MementoPacket.class);
 
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento1.getState()).secret0);
+				(int) ((TestGameState) memento1.getState()).state);
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento1.getState()).secret1);
+				(int) ((TestGameState) memento1.getState()).state);
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento2.getState()).secret0);
+				(int) ((TestGameState) memento2.getState()).state);
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento2.getState()).secret1);
+				(int) ((TestGameState) memento2.getState()).state);
 		Assert.assertEquals(0, (int) ((TestGameState) mementoObserver
-				.getState()).secret0);
+				.getState()).state);
 		Assert.assertEquals(0, (int) ((TestGameState) mementoObserver
-				.getState()).secret1);
+				.getState()).state);
 	}
 
-	private void shouldProtectFirstPlayersSecrets(String roomId,
-			MockClient player1, MockClient player2, MockClient observer)
+	private void shouldPropagadeFirstPlayersMove(String roomId,
+                                               MockClient player1, MockClient player2, MockClient observer)
 			throws RescuableClientException
 	{
 		// Do the move
 		player1.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret1))));
+				new TestMove(this.firstState))));
 
 		// Check Player 1
 		MementoPacket memento1 = player1.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret1, (int) ((TestGameState) memento1
-				.getState()).secret0);
+		Assert.assertEquals(this.firstState, (int) ((TestGameState) memento1
+				.getState()).state);
 
 		// Check Player 2
 		MementoPacket memento2 = player2.seekRoomMessage(roomId,
 				MementoPacket.class);
 		Assert
-				.assertFalse(
-						"Secret of other Player was revealed",
-						this.mySecret1 == ((TestGameState) memento2.getState()).secret0);
+				.assertEquals(
+						this.firstState,
+                ((TestGameState) memento2.getState()).state);
 
 		// Check Observer
 		MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret1,
-				(int) ((TestGameState) mementoObserver.getState()).secret0);
+		Assert.assertEquals(this.firstState,
+				(int) ((TestGameState) mementoObserver.getState()).state);
 	}
 
 	private void makeMoveAfterRequest(String roomId, MockClient player)
@@ -166,33 +169,31 @@ public class PlayerTest extends AbstractRoleTest
 				new TestMove(123456))));
 	}
 
-	private void shouldProtectSecondPlayersSecrets(String roomId,
-			MockClient player1, MockClient player2, MockClient observer)
+	private void shouldPropagadeSecondPlayersMove(String roomId,
+                                                MockClient player1, MockClient player2, MockClient observer)
 			throws RescuableClientException
 	{
 		// Do the move
 		player2.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret2))));
+				new TestMove(this.secondState))));
 
 		// Player 1
 		MementoPacket memento1 = player1.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert
-				.assertFalse("Secret of other Player was revealed",
-						this.mySecret2 == (int) ((TestGameState) memento1
-								.getState()).secret1);
+		Assert.assertEquals(this.secondState,
+						(int) ((TestGameState) memento1.getState()).state);
 
 		// Player 2
 		MementoPacket memento2 = player2.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret2, (int) ((TestGameState) memento2
-				.getState()).secret1);
+		Assert.assertEquals(this.secondState, (int) ((TestGameState) memento2
+				.getState()).state);
 
 		// Observer
 		MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret2,
-				(int) ((TestGameState) mementoObserver.getState()).secret1);
+		Assert.assertEquals(this.secondState,
+				(int) ((TestGameState) mementoObserver.getState()).state);
 	}
 }

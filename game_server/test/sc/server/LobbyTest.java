@@ -15,7 +15,7 @@ import sc.server.plugins.TestPlugin;
  */
 public class LobbyTest extends RealServerTest{
 
-  @Ignore // TODO update to new System
+  @Test // TODO works, not sure what to update to new system
   public void shouldConnectAndDisconnect(){
     try {
       final LobbyClient player1 = connectClient("localhost", getServerPort());

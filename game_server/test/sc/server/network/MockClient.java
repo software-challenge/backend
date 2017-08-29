@@ -64,7 +64,7 @@ public class MockClient extends Client
 		if (current == null)
 		{
 			throw new RuntimeException(
-					"Could not find a message of the specified type");
+					"Could not find a message of type " + type + ", searched " + i + " messages");
 		}
 		else
 		{

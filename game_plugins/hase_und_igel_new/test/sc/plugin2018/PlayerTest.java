@@ -19,6 +19,16 @@ public class PlayerTest
 	@Test
 	public void testPlayer()
 	{
-	  // TODO 
+		Player red = new Player(PlayerColor.RED);
+		Assert.assertEquals(PlayerColor.RED, red.getPlayerColor());
+		Assert.assertEquals(68, red.getCarrots());
+		Assert.assertEquals(5, red.getSalads());
+		Assert.assertEquals(false, red.inGoal());
+		Assert.assertEquals(false, red.mustPlayCard());
+		Assert.assertEquals(0, red.getFieldIndex());
+		Assert.assertEquals(true, red.ownsCardOfType(CardType.EAT_SALAD));
+    Assert.assertEquals(true, red.ownsCardOfType(CardType.HURRY_AHEAD));
+    Assert.assertEquals(true, red.ownsCardOfType(CardType.FALL_BACK));
+    Assert.assertEquals(true, red.ownsCardOfType(CardType.TAKE_OR_DROP_CARROTS));
 	}
 }

@@ -18,7 +18,7 @@ public abstract class SimplePlayer
 			.getLogger(SimplePlayer.class);
 
 	@XStreamOmitField
-	private List<IPlayerListener>	listeners;
+	protected List<IPlayerListener>	listeners;
 
 	@XStreamOmitField
 	private boolean					canTimeout;

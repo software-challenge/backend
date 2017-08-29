@@ -10,18 +10,14 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
-import sc.shared.PlayerColor;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
-import sc.shared.WinCondition;
+import sc.shared.*;
 
 public class TestGame extends RoundBasedGameInstance<TestPlayer>
 {
 	private TestGameState	state	= new TestGameState();
 
 	public TestGame()
-	{
-		this.state.setController(this);
+  {
 	}
 
 	@Override
@@ -46,7 +42,11 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 
   @Override
   protected WinCondition checkWinCondition() {
-	  // TODO implement test for it
+	  if (this.getRound() > 1) {
+	    System.out.println("Someone won");
+	    return new WinCondition(
+	            ((TestGameState)this.getCurrentState()).state % 2 == 0 ? PlayerColor.RED : PlayerColor.BLUE, "Round limit reached");
+    }
     return null;
   }
 
@@ -123,6 +123,18 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
+	 */
+	@Override
+	public void start() {
+		for (final TestPlayer p : this.players) {
+			p.notifyListeners(new WelcomeMessage(p.color));
+		}
+
+		super.start();
 	}
 
 	// XXX set to right value

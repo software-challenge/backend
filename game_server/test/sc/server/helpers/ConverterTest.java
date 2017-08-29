@@ -43,19 +43,6 @@ public class ConverterTest
 		}
 	}
 
-	@Ignore //TODO Not sure what this is testing
-	public void shouldNotSerializeSensitiveData()
-	{
-		HasSecrets data = new HasSecrets();
-		data.setPerspective(HasSecrets.hacker);
-
-		XStream xStream = Configuration.getXStream();
-		String msg = xStream.toXML(data);
-
-		Assert.assertSame(-1, msg.indexOf(data.secret));
-		Assert.assertNotSame(-1, msg.indexOf(data.unimportant));
-	}
-
 	@Test
 	public void shouldSerializeSensitiveDataForAuthorizedPeople()
 	{

@@ -11,9 +11,6 @@ import sc.shared.PlayerColor;
 
 public class TestPlayer extends SimplePlayer
 {
-  @XStreamOmitField
-	List<IPlayerListener>	listeners	= new LinkedList<>();
-
   @XStreamAsAttribute
 	PlayerColor color;
 

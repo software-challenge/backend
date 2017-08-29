@@ -70,14 +70,8 @@ public abstract class RealServerTest
 
 	protected void waitForConnect(int count)
 	{
-		TestHelper.assertEqualsWithTimeout(count, new Generator<Integer>() {
-			@Override
-			public Integer operate()
-			{
-				return RealServerTest.this.lobby.getClientManager().clients
-						.size();
-			}
-		}, 1, TimeUnit.SECONDS);
+		TestHelper.assertEqualsWithTimeout(count, () -> RealServerTest.this.lobby.getClientManager().clients
+						.size(), 1, TimeUnit.SECONDS);
 	}
 
 	protected int getServerPort()
