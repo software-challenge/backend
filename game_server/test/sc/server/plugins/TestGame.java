@@ -111,6 +111,13 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 		
 	}
 
+  @Override
+  public void loadFromFile(String file, int turn)
+  {
+    // TODO Auto-generated method stub
+
+  }
+
 	@Override
 	public void loadGameInfo(Object gameInfo)
 	{
