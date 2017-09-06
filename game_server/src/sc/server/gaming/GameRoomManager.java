@@ -104,7 +104,20 @@ public class GameRoomManager
     String gameFile = Configuration.get("loadGameFile");
     if (gameFile != null && !gameFile.equals("")) {
       logger.info("Request plugin to load game from file: " + gameFile);
-      room.getGame().loadFromFile(gameFile);
+      int turn;
+      if (Configuration.get("turnOfLoad") != null) {
+        turn = Integer.parseInt(Configuration.get("turnOfLoad"));
+      } else {
+        turn = 0;
+      }
+      logger.debug("Turns is to load is: " + turn);
+      if (turn > 0) {
+        logger.debug("Loading from non default turn");
+        room.getGame().loadFromFile(gameFile, turn);
+      } else {
+        logger.debug("Loading first gameState found");
+        room.getGame().loadFromFile(gameFile);
+      }
     }
 
     this.add(room);

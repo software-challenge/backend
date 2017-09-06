@@ -1,5 +1,10 @@
 package sc.plugin2018;
 
+import java.io.*;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -245,6 +250,49 @@ public class Game extends RoundBasedGameInstance<Player>
 			loadGameInfo(gameInfo);
 		}
 	}
+
+  @Override
+  public void loadFromFile(String file, int turn)
+  {
+    logger.info("Loading game from: " + file + " at turn: " + turn);
+    // only copy right gameState specified by turn
+    try {
+      FileReader fileReader = new FileReader(file);
+      BufferedReader bufferedReader = new BufferedReader(fileReader);
+      FileWriter fileWriter = new FileWriter("./tmp_replay.xml");
+      BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+      String line;
+      bufferedWriter.write("<object-stream>");
+      bufferedWriter.newLine();
+      while((line = bufferedReader.readLine()) != null) {
+        if (line.contains("turn=\"" + turn +  "\"")) {
+          bufferedWriter.write(line);
+          bufferedWriter.newLine();
+          // case a gameState with specified turn was found
+          while((line = bufferedReader.readLine()) != null
+                  &&!line.contains("turn=\"" + (turn + 1) +  "\"")) {
+            bufferedWriter.write(line);
+            bufferedWriter.newLine();
+          }
+        }
+
+      }
+      bufferedWriter.write("</object-stream>");
+      bufferedWriter.flush();
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    GameLoader gl = new GameLoader(new Class<?>[] {GameState.class});
+    Object gameInfo = gl.loadGame(Configuration.getXStream(), "./tmp_replay.xml");
+    if (gameInfo != null) {
+      loadGameInfo(gameInfo);
+    }
+    // delete copied
+    File tmp_replay = new File("./tmp_replay.xml");
+    tmp_replay.delete();
+  }
 
 	// XXX test this
 	@Override

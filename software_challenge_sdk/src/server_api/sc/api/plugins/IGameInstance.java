@@ -59,6 +59,13 @@ public interface IGameInstance
 	 * like a replay but with actual clients.
 	 */
 	public void loadFromFile(String file);
+
+	/**
+	 * The game is requested to load itself from a file (the board i.e.). This is
+	 * like a replay but with actual clients. Turn is used to specify the turn to
+	 * load from replay (e.g. if more than one gameState in replay)
+	 */
+	public void loadFromFile(String file, int turn);
 	
 	/**
 	 * The game is requested to load itself from a given game information object (could be a board instance for example)

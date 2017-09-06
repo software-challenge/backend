@@ -76,14 +76,18 @@ public final class Application
 		CmdLineParser.Option pluginDirectory = parser
 				.addStringOption("plugins");
 		CmdLineParser.Option loadGameFileOption = parser.addStringOption("loadGameFile");
+    CmdLineParser.Option turnOfLoadOption = parser.addIntegerOption("turn");
 		parser.parse(params);
 
 		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
 		String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
-		
+		Integer turnOfLoad = (Integer) parser.getOptionValue(turnOfLoadOption, 0);
 		if (loadGameFile != null) {
 			Configuration.set("loadGameFile", loadGameFile);
+			if (turnOfLoad != 0) {
+			  Configuration.set("turnOfLoad", turnOfLoad.toString());
+      }
 		}
 
 		if (debugMode)
