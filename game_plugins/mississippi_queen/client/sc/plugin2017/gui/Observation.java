@@ -27,7 +27,7 @@ import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.RenderFacade;
 import sc.plugin2017.util.Configuration;
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
@@ -156,7 +156,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     String name2 = gameState.getPlayerNames()[1];
 
     if (this.conGame.getCurrentError() != null) {
-      ErrorResponse error = (ErrorResponse) this.conGame.getCurrentError();
+      ProtocolErrorMessage error = (ProtocolErrorMessage) this.conGame.getCurrentError();
       result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED ? name1 : name2);
       result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
     }
@@ -251,7 +251,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     Object errorObject = this.conGame.getCurrentError();
     String errorMessage = null;
     if (errorObject != null) {
-      errorMessage = ((ErrorResponse) errorObject).getMessage();
+      errorMessage = ((ProtocolErrorMessage) errorObject).getMessage();
     }
     Object curStateObject = this.conGame.getCurrentState();
     PlayerColor color = null;
@@ -294,7 +294,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     GameState gameState = (GameState) this.conGame.getCurrentState();
     Object errorObject = this.conGame.getCurrentError();
     if (errorObject != null) {
-      ErrorResponse error = (ErrorResponse) errorObject;
+      ProtocolErrorMessage error = (ProtocolErrorMessage) errorObject;
       logger.info("Received error response:" + error);
     }
 

@@ -7,7 +7,7 @@ import org.junit.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.JoinPreparedRoomRequest;
 import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.PlayerSlot;
 import sc.server.network.Client;
@@ -30,8 +30,8 @@ public class ContestTest extends AdministratorTest
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 		GameRoom room = this.gameMgr.getGames().iterator().next();
 
-		PrepareGameResponse response = admin
-				.seekMessage(PrepareGameResponse.class);
+		PrepareGameProtocolMessage response = admin
+				.seekMessage(PrepareGameProtocolMessage.class);
 
 		Assert.assertEquals(2, room.getSlots().size());
 

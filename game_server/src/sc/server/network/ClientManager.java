@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescuableClientException;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.server.Lobby;
 import sc.server.ServiceManager;
 
@@ -167,10 +169,9 @@ public class ClientManager implements Runnable, IClientListener
    * @param packet, which contains the error
    */
   @Override
-  public void onError(Client source, Object packet)
+  public void onError(Client source, ProtocolErrorMessage packet)
   {
     // TODO Error handling needs to happen
-
   }
 
   /**

@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 @XStreamAlias(value = "prepared")
-public class PrepareGameResponse
+public class PrepareGameProtocolMessage extends ProtocolMessage
 {
 	@XStreamImplicit(itemFieldName = "reservation")
 	private List<String>	reservations;
@@ -18,10 +18,10 @@ public class PrepareGameResponse
         /**
          * might be needed by XStream
          */
-        public PrepareGameResponse() {
+        public PrepareGameProtocolMessage() {
         }
 
-	public PrepareGameResponse(String roomId, List<String> reservations)
+	public PrepareGameProtocolMessage(String roomId, List<String> reservations)
 	{
 		this.roomId = roomId;
 		this.reservations = reservations;

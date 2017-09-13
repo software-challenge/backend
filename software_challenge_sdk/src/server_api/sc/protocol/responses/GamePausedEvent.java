@@ -5,7 +5,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import sc.framework.plugins.SimplePlayer;
 
 @XStreamAlias(value="paused")
-public class GamePausedEvent
+public class GamePausedEvent extends ProtocolMessage
 {
 	private final SimplePlayer	nextPlayer;
 

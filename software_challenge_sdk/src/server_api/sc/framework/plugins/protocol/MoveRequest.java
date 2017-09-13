@@ -1,6 +1,8 @@
 package sc.framework.plugins.protocol;
 
-public class MoveRequest
+import sc.protocol.responses.ProtocolMessage;
+
+public class MoveRequest extends ProtocolMessage
 {
 
 }

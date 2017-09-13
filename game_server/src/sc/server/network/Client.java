@@ -14,9 +14,11 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.INetworkInterface;
+import sc.networking.UnprocessedPacketException;
 import sc.networking.clients.XStreamClient;
-import sc.protocol.responses.ErrorResponse;
 import sc.protocol.responses.LeftGameEvent;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.server.Configuration;
 
 /**
@@ -77,7 +79,7 @@ public class Client extends XStreamClient implements IClient
    * @param packet message to be send
    */
   @Override
-  public synchronized void send(Object packet)
+  public synchronized void send(ProtocolMessage packet)
   {
     if (!isClosed())
     {
@@ -96,15 +98,14 @@ public class Client extends XStreamClient implements IClient
    * Call listener that handle new Packages
    * @param packet which just arrived
    */
-  private void notifyOnPacket(Object packet)
-  {
+  private void notifyOnPacket(Object packet) throws UnprocessedPacketException {
 		/*
 		 * NOTE that method is called in the receiver thread. Messages should
 		 * only be passed to listeners. No callbacks should be invoked directly
 		 * in the receiver thread.
 		 */
 
-    Set<RescuableClientException> errors = new HashSet<RescuableClientException>();
+    Set<RescuableClientException> errors = new HashSet<>();
 
     PacketCallback callback = new PacketCallback(packet);
 
@@ -122,19 +123,16 @@ public class Client extends XStreamClient implements IClient
 
     if (errors.isEmpty() && !callback.isProcessed())
     {
-      logger.warn("Packet {} wasn't processed.", packet);
-      errors.add(new RescuableClientException(
-              "The packet wasn't processed/recognized."));
+      String msg = String.format("Packet %s wasn't processed.", packet);
+      logger.warn(msg);
+      throw new UnprocessedPacketException(msg);
     }
 
     for (RescuableClientException error : errors)
     {
       logger.warn("An error occured: ", error);
-
       if (error.getMessage() != "It's not your turn yet.")
       {
-        Object resp = new ErrorResponse(packet, error.getMessage());
-        notifyOnError(resp);
         logger.warn(
                 "Game closed because of GameLogicException! The message is: "
                         + error.getMessage());
@@ -142,14 +140,14 @@ public class Client extends XStreamClient implements IClient
     }
     if (!errors.isEmpty())
     {
-      logger.debug("FOCUS stopping client because of error. Thread: {}",
+      logger.debug("stopping client because of error. Thread: {}",
               Thread.currentThread().getName());
       stop();
     }
     if (packet instanceof LeftGameEvent)
     {
       logger.debug(
-              "FOCUS stopping client because of LeftGameEvent received. Thread: {}",
+              "stopping client because of LeftGameEvent received. Thread: {}",
               Thread.currentThread().getName());
       stop();
     }
@@ -159,7 +157,7 @@ public class Client extends XStreamClient implements IClient
    * Call listener, if an error has occurred
    * @param packet which rose the error
    */
-  private synchronized void notifyOnError(Object packet)
+  private synchronized void notifyOnError(ProtocolErrorMessage packet)
   {
     for (IClientListener listener : this.clientListeners)
     {
@@ -290,24 +288,12 @@ public class Client extends XStreamClient implements IClient
    * @param o received package
    */
   @Override
-  protected void onObject(Object o)
-  {
+  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
 		/*
 		 * NOTE that this method is called in the receiver thread. Messages
 		 * should only be passed to listeners. No callbacks should be invoked
 		 * directly in the receiver thread.
 		 */
     notifyOnPacket(o);
-  }
-
-  /**
-   * Send packages asynchronous
-   * @param packet to be send
-   */
-  @Override
-  public void sendAsynchronous(Object packet)
-  {
-    // TODO make it async
-    send(packet);
   }
 }

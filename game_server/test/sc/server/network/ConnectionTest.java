@@ -10,12 +10,13 @@ import org.junit.Test;
 import sc.helpers.Generator;
 import sc.networking.clients.XStreamClient.DisconnectCause;
 import sc.protocol.requests.JoinRoomRequest;
+import sc.protocol.responses.ProtocolMessage;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
 
 public class ConnectionTest extends RealServerTest
 {
-	private static class DontYouKnowJack
+	private static class DontYouKnowJack extends ProtocolMessage
 	{
 		public int test = 25;
 	}

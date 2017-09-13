@@ -2,9 +2,10 @@ package sc.protocol.requests;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.protocol.responses.ProtocolMessage;
 
 @XStreamAlias("authenticate")
-public class AuthenticateRequest implements ILobbyRequest
+public class AuthenticateRequest extends ProtocolMessage implements ILobbyRequest
 {
 	@XStreamAsAttribute
 	private String	passphrase;

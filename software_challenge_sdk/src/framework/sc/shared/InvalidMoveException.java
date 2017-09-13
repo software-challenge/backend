@@ -1,10 +1,21 @@
 package sc.shared;
 
-@SuppressWarnings("serial")
+import sc.protocol.responses.ProtocolMove;
+
 public class InvalidMoveException extends Exception {
 
-	public InvalidMoveException(String reason) {
-		super(reason);
-	}
+	private ProtocolMove move;
 
+  public InvalidMoveException(String reason) {
+    super(reason);
+  }
+
+  public InvalidMoveException(String reason, ProtocolMove move) {
+    super(reason);
+    this.move = move;
+  }
+
+  public ProtocolMove getMove() {
+    return move;
+  }
 }

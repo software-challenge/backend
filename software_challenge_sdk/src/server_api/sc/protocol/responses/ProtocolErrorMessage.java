@@ -4,9 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("error")
-public class ErrorResponse
+public class ProtocolErrorMessage extends ProtocolMessage
 {
-	private Object	originalRequest;
+	private ProtocolMessage	originalRequest;
 
 	@XStreamAsAttribute
 	private String	message;
@@ -14,16 +14,16 @@ public class ErrorResponse
         /**
          * might be needed by XStream
          */
-        public ErrorResponse() {
+        public ProtocolErrorMessage() {
         }
 
-	public ErrorResponse(Object request, String message)
+	public ProtocolErrorMessage(ProtocolMessage request, String message)
 	{
 		this.originalRequest = request;
 		this.message = message;
 	}
 
-	public Object getOriginalRequest()
+	public ProtocolMessage getOriginalRequest()
 	{
 		return this.originalRequest;
 	}

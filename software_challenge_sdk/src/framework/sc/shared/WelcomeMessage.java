@@ -2,6 +2,7 @@ package sc.shared;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.PlayerColor;
 
 /**
@@ -10,7 +11,7 @@ import sc.shared.PlayerColor;
  *
  */
 @XStreamAlias(value = "welcomeMessage")
-public class WelcomeMessage {
+public class WelcomeMessage extends ProtocolMessage {
 
 	@XStreamAsAttribute
 	private String color;

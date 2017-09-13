@@ -16,12 +16,8 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
-import sc.protocol.responses.GamePausedEvent;
-import sc.protocol.responses.JoinGameResponse;
-import sc.protocol.responses.LeftGameEvent;
-import sc.protocol.responses.MementoPacket;
-import sc.protocol.responses.ObservationResponse;
-import sc.protocol.responses.RoomPacket;
+import sc.protocol.responses.*;
+import sc.protocol.responses.JoinGameProtocolMessage;
 import sc.server.network.Client;
 import sc.server.network.DummyClient;
 import sc.server.network.IClient;
@@ -50,7 +46,6 @@ public class GameRoom implements IGameListener
 	private GameStatus					      status		= GameStatus.CREATED;
 	private GameResult					      result		= null;
 	private boolean						        paused		= false;
-	private final short               maxPlayerCount = 2;
 
 	public enum GameStatus
 	{
@@ -144,7 +139,7 @@ public class GameRoom implements IGameListener
 	 * Send Object o to all Player in this room
 	 * @param o Object containing the message
 	 */
-	private void broadcast(Object o)
+	private void broadcast(ProtocolMessage o)
 	{
 		broadcast(o, true);
 	}
@@ -154,9 +149,9 @@ public class GameRoom implements IGameListener
 	 * @param o
 	 * @param roomSpecific
 	 */
-	private void broadcast(Object o, boolean roomSpecific)
+	private void broadcast(ProtocolMessage o, boolean roomSpecific)
 	{
-		Object toSend = o;
+		ProtocolMessage toSend = o;
 
 		// If message is specific to room, wrap the message in a RoomPacket
 		if (roomSpecific)
@@ -180,7 +175,7 @@ public class GameRoom implements IGameListener
 	 * Send Message to all registered Observers
 	 * @param toSend Message to send
 	 */
-	private void observerBroadcast(Object toSend)
+	private void observerBroadcast(ProtocolMessage toSend)
 	{
 		for (ObserverRole observer : Collections.unmodifiableCollection(this.observers))
 		{
@@ -192,7 +187,7 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * Send {@link GameRoom#broadcast(Object,boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent}
+	 * Send {@link GameRoom#broadcast(ProtocolMessage,boolean) broadcast} message with {@link LeftGameEvent LeftGameEvent}
 	 */
 	private void kickAllClients()
 	{
@@ -213,10 +208,10 @@ public class GameRoom implements IGameListener
 
 
   /**
-   * {@link GameRoom#broadcast(Object,boolean) Broadcast} the error package to this room
+   * {@link GameRoom#broadcast(ProtocolMessage,boolean) Broadcast} the error package to this room
    * @param errorPacket
    */
-	public void onClientError(Object errorPacket) {
+	public void onClientError(ProtocolErrorMessage errorPacket) {
 		// packet = createRoomPacket(errorPacket);
 		broadcast(errorPacket, true);
 	}
@@ -231,7 +226,7 @@ public class GameRoom implements IGameListener
 		{
 			RoomPacket packet = createRoomPacket(new MementoPacket(data, player
 					.getPlayer()));
-			player.getClient().sendAsynchronous(packet);
+			player.getClient().send(packet);
 		}
 	}
 
@@ -247,7 +242,7 @@ public class GameRoom implements IGameListener
 		for (ObserverRole observer : this.observers)
 		{
 			logger.debug("sending state to observer {}", observer.getClient());
-			observer.getClient().sendAsynchronous(packet);
+			observer.getClient().send(packet);
 		}
 	}
 
@@ -256,7 +251,7 @@ public class GameRoom implements IGameListener
 	 * @param data to be send
 	 * @return prepared RoomPacket
 	 */
-	public RoomPacket createRoomPacket(Object data)
+	public RoomPacket createRoomPacket(ProtocolMessage data)
 	{
 		return new RoomPacket(getId(), data);
 	}
@@ -332,7 +327,7 @@ public class GameRoom implements IGameListener
 	/**
 	 * sets player in GameState and sets player specific values (displayName, shoudbePaused, canTimeout).
 	 * Registers player to role in given slot
-	 * sends JoinGameResponse when successful
+	 * sends JoinGameProtocolMessage when successful
 	 * @param slot
 	 * @throws RescuableClientException
 	 */
@@ -351,7 +346,7 @@ public class GameRoom implements IGameListener
 		}
 
 		slot.setPlayer(player); // set player in role of slot
-		slot.getClient().send(new JoinGameResponse(getId()));
+		slot.getClient().send(new JoinGameProtocolMessage(getId()));
 	}
 
 	/**
@@ -430,7 +425,8 @@ public class GameRoom implements IGameListener
    */
 	private int getMaximumPlayerCount()
 	{
-	  return maxPlayerCount;
+		short maxPlayerCount = 2;
+		return maxPlayerCount;
 	}
 
 	/**
@@ -460,12 +456,12 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * Received new move from player and execute move in game
+	 * Received new data from player and execute data in game
 	 * @param source
 	 * @param data
 	 * @throws RescuableClientException
 	 */
-	public synchronized void onEvent(Client source, Object data)
+	public synchronized void onEvent(Client source, ProtocolMessage data)
 			throws RescuableClientException
 	{
 		if (isOver())
@@ -541,7 +537,7 @@ public class GameRoom implements IGameListener
 		ObserverRole role = new ObserverRole(source, this);
 		source.addRole(role);
 		this.observers.add(role);
-		source.send(new ObservationResponse(getId()));
+		source.send(new ObservationProtocolMessage(getId()));
 	}
 
   /**

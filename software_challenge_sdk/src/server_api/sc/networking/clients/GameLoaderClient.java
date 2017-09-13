@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import sc.networking.FileSystemInterface;
 
 import com.thoughtworks.xstream.XStream;
+import sc.protocol.responses.ProtocolMessage;
 
 
 /**
@@ -34,7 +35,7 @@ public final class GameLoaderClient extends XStreamClient implements IPollsHisto
 	}
 	
 	@Override
-	protected void onObject(Object o)
+	protected void onObject(ProtocolMessage o)
 	{
 		for (IHistoryListener listener : this.listeners) {
 			listener.onNewState(null, o);

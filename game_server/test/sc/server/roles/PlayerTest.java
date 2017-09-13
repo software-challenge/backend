@@ -6,11 +6,8 @@ import org.junit.Test;
 
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.*;
-import sc.protocol.responses.MementoPacket;
-import sc.protocol.responses.PrepareGameResponse;
-import sc.protocol.responses.JoinGameResponse;
-import sc.protocol.responses.LeftGameEvent;
-import sc.protocol.responses.RoomPacket;
+import sc.protocol.responses.*;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.network.Client;
 import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
@@ -52,11 +49,11 @@ public class PlayerTest extends AbstractRoleTest
 
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 
-		JoinGameResponse msg;
-		msg = player1.seekMessage(JoinGameResponse.class); // did we receive it?
+		JoinGameProtocolMessage msg;
+		msg = player1.seekMessage(JoinGameProtocolMessage.class); // did we receive it?
 		Assert.assertNotNull(msg.getRoomId());
 
-		msg = player2.seekMessage(JoinGameResponse.class); // did we receive it?
+		msg = player2.seekMessage(JoinGameProtocolMessage.class); // did we receive it?
 
 		Assert.assertNotNull(msg.getRoomId());
 	}
@@ -79,8 +76,8 @@ public class PlayerTest extends AbstractRoleTest
 
     this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
 				TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
-		PrepareGameResponse prepared = admin
-				.seekMessage(PrepareGameResponse.class);
+		PrepareGameProtocolMessage prepared = admin
+				.seekMessage(PrepareGameProtocolMessage.class);
 
 		this.lobby.onRequest(observer, new PacketCallback(
 				new ObservationRequest(prepared.getRoomId())));
@@ -93,8 +90,8 @@ public class PlayerTest extends AbstractRoleTest
 						new JoinPreparedRoomRequest(prepared.getReservations()
 								.get(1))));
 
-		String roomId = player1.seekMessage(JoinGameResponse.class).getRoomId();
-		String roomId2 = player2.seekMessage(JoinGameResponse.class)
+		String roomId = player1.seekMessage(JoinGameProtocolMessage.class).getRoomId();
+		String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class)
 				.getRoomId();
 		Assert.assertEquals(roomId, roomId2);
 

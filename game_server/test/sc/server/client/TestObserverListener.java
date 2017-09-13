@@ -1,10 +1,9 @@
 package sc.server.client;
 
 import sc.framework.plugins.SimplePlayer;
-import sc.networking.clients.IHistoryListener;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 
 /**
@@ -19,7 +18,7 @@ public class TestObserverListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onError(String roomId, ErrorResponse error) {
+  public void onError(String roomId, ProtocolErrorMessage error) {
 
   }
 
@@ -29,7 +28,7 @@ public class TestObserverListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePrepared(PrepareGameResponse response) {
+  public void onGamePrepared(PrepareGameProtocolMessage response) {
 
   }
 

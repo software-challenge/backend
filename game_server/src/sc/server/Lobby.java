@@ -16,6 +16,7 @@ import sc.protocol.requests.ObservationRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.requests.StepRequest;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.RoomPacket;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
@@ -184,7 +185,7 @@ public class Lobby implements IClientListener
 	}
 
 	@Override
-	public void onError(Client source, Object errorPacket)
+	public void onError(Client source, ProtocolErrorMessage errorPacket)
 	{
 		for (IClientRole role : source.getRoles())
 		{

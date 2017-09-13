@@ -1,11 +1,12 @@
 package sc.protocol.helpers;
 
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 
-public final class RequestResult<T>
+public final class RequestResult<T extends ProtocolMessage>
 {
-	T				result	= null;
-	ErrorResponse	error	= null;
+	T	result	= null;
+	ProtocolErrorMessage error	= null;
 
 	/**
 	 * Checks wether this object was set-up correctly.
@@ -27,7 +28,7 @@ public final class RequestResult<T>
 		return this.error == null;
 	}
 
-	public void setError(ErrorResponse error)
+	public void setError(ProtocolErrorMessage error)
 	{
 		this.error = error;
 	}
@@ -36,7 +37,7 @@ public final class RequestResult<T>
 	 * Get's the error (if the request failed);
 	 * @return
 	 */
-	public ErrorResponse getError()
+	public ProtocolErrorMessage getError()
 	{
 		return this.error;
 	}

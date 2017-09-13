@@ -9,12 +9,12 @@ import sc.protocol.requests.ILobbyRequest;
  * Wrapper Class containing Room ID and data
  */
 @XStreamAlias("room")
-public final class RoomPacket implements ILobbyRequest
+public final class RoomPacket extends ProtocolMessage implements ILobbyRequest
 {
 	@XStreamAsAttribute
 	private String	roomId;
 	
-	private Object	data;
+	private ProtocolMessage data;
 
         /**
          * might be needed by XStream
@@ -22,7 +22,7 @@ public final class RoomPacket implements ILobbyRequest
         public RoomPacket() {
         }
 
-	public RoomPacket(String roomId, Object o)
+	public RoomPacket(String roomId, ProtocolMessage o)
 	{
 		this.roomId = roomId;
 		this.data = o;
@@ -33,7 +33,7 @@ public final class RoomPacket implements ILobbyRequest
 		return this.roomId;
 	}
 
-	public Object getData()
+	public ProtocolMessage getData()
 	{
 		return this.data;
 	}

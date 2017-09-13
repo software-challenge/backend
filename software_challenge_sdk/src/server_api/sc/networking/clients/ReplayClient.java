@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import com.thoughtworks.xstream.XStream;
 
 import sc.networking.FileSystemInterface;
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.GameResult;
 
 /**
@@ -35,7 +36,7 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 	}
 
 	@Override
-	protected void onObject(Object o)
+	protected void onObject(ProtocolMessage o)
 	{
 		logger.debug("{} got object of type {}", this, o.getClass());
 		for (IHistoryListener listener : this.listeners)
@@ -44,9 +45,9 @@ public final class ReplayClient extends XStreamClient implements IPollsHistory
 			{
 				listener.onGameOver(null, (GameResult) o);
 			}
-			else if (o instanceof ErrorResponse)
+			else if (o instanceof ProtocolErrorMessage)
 			{
-				listener.onGameError(null, (ErrorResponse)o);
+				listener.onGameError(null, (ProtocolErrorMessage)o);
 			}
 			else
 			{

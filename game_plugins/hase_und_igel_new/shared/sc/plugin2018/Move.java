@@ -4,6 +4,8 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.responses.ProtocolMove;
 import sc.shared.DebugHint;
 import sc.shared.InvalidMoveException;
 
@@ -18,7 +20,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * - er besteht aus einer Advance Aktion und eventuell darauf folgende Kartenaktionen
  */
 @XStreamAlias(value = "move")
-public class Move implements Cloneable {
+public class Move extends ProtocolMove implements Cloneable {
 
   private static final Logger logger = LoggerFactory.getLogger(Move.class);
   /**
@@ -173,26 +175,30 @@ public class Move implements Cloneable {
     // Sortiere Aktionen
     orderActions();
     if (actions.isEmpty()) {
-      throw new InvalidMoveException("Keine Aktionen vorhanden.");
+      throw new InvalidMoveException("Keine Aktionen vorhanden.", this);
     }
     // führe Aktionen aus
     int index = 0;
     for (Action action : this.actions) {
       if (index != action.order) {
-        throw new InvalidMoveException("Das order Attribut wurde nicht richtig gesetzt.");
+        throw new InvalidMoveException("Das order Attribut wurde nicht richtig gesetzt.", this);
       }
       if (action instanceof Advance || action instanceof Skip || action instanceof FallBack||
           action instanceof EatSalad || action instanceof ExchangeCarrots) {
         if (action.order != 0) {
-          throw new InvalidMoveException("Nach der ersten Aktion können nur noch Karten folgen.");
+          throw new InvalidMoveException("Nach der ersten Aktion können nur noch Karten folgen.", this);
         }
 
       }
-      action.perform(state);
-      index++;
+      try {
+        action.perform(state);
+        index++;
+      } catch (InvalidMoveException e) {
+        throw new InvalidMoveException(e.getMessage(), this);
+      }
     }
     if (state.getCurrentPlayer().mustPlayCard()) {
-      throw new InvalidMoveException("Es muss eine Karte ausgespielt werden.");
+      throw new InvalidMoveException("Es muss eine Karte ausgespielt werden.", this);
     }
     // Bereite nächsten Zug vor:
     state.setLastMove(this);

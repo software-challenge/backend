@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.server.Configuration;
 import sc.server.helpers.ExamplePacket;
 import sc.server.helpers.StringNetworkInterface;
@@ -31,7 +32,7 @@ public class ClientXmlReadTest
 		}
 
 		@Override
-		public void onError(Client source, Object packet)
+		public void onError(Client source, ProtocolErrorMessage packet)
 		{
 			// TODO Auto-generated method stub
 			

@@ -2,8 +2,8 @@ package sc.server.client;
 
 import sc.framework.plugins.SimplePlayer;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 
 public class TestLobbyClientListener implements ILobbyClientListener {
@@ -21,9 +21,9 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   public String roomid;
   public SimplePlayer player;
   public GameResult result;
-  public PrepareGameResponse prepareGameResponse;
+  public PrepareGameProtocolMessage prepareGameResponse;
   public Object roomMessage;
-  public ErrorResponse errorResponse;
+  public ProtocolErrorMessage errorResponse;
   public Object newState;
 
   @Override
@@ -52,7 +52,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onError(String roomId, ErrorResponse error) {
+  public void onError(String roomId, ProtocolErrorMessage error) {
     onError = true;
     this.roomid = roomId;
     this.errorResponse = error;
@@ -66,7 +66,7 @@ public class TestLobbyClientListener implements ILobbyClientListener {
   }
 
   @Override
-  public void onGamePrepared(PrepareGameResponse response) {
+  public void onGamePrepared(PrepareGameProtocolMessage response) {
     onGamePrepared = true;
     this.prepareGameResponse = response;
   }

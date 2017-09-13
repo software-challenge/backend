@@ -1,6 +1,8 @@
 package sc.server.plugins;
 
-public class TestTurnRequest
+import sc.protocol.responses.ProtocolMessage;
+
+public class TestTurnRequest extends ProtocolMessage
 {
 
 }

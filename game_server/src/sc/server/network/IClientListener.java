@@ -1,6 +1,7 @@
 package sc.server.network;
 
 import sc.api.plugins.exceptions.RescuableClientException;
+import sc.protocol.responses.ProtocolErrorMessage;
 
 public interface IClientListener
 {
@@ -26,5 +27,5 @@ public interface IClientListener
    * @param source client
    * @param packet, which rose the problem
    */
-  void onError(Client source, Object packet);
+  void onError(Client source, ProtocolErrorMessage packet);
 }

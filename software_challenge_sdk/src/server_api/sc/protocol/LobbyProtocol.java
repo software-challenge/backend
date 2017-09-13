@@ -12,14 +12,8 @@ import sc.protocol.requests.ObservationRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.requests.StepRequest;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.GamePausedEvent;
-import sc.protocol.responses.JoinGameResponse;
-import sc.protocol.responses.LeftGameEvent;
-import sc.protocol.responses.MementoPacket;
-import sc.protocol.responses.ObservationResponse;
-import sc.protocol.responses.PrepareGameResponse;
-import sc.protocol.responses.RoomPacket;
+import sc.protocol.responses.*;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.*;
 
 import com.thoughtworks.xstream.XStream;
@@ -29,10 +23,10 @@ public abstract class LobbyProtocol
 	public static XStream registerMessages(XStream xStream)
 	{
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
-				ErrorResponse.class, GamePausedEvent.class,
-				JoinGameResponse.class, LeftGameEvent.class,
-				MementoPacket.class, PrepareGameResponse.class,
-				ObservationResponse.class, RoomPacket.class }));
+				ProtocolErrorMessage.class, GamePausedEvent.class,
+				JoinGameProtocolMessage.class, LeftGameEvent.class,
+				MementoPacket.class, PrepareGameProtocolMessage.class,
+				ObservationProtocolMessage.class, RoomPacket.class }));
 
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
 				AuthenticateRequest.class, CancelRequest.class,

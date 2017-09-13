@@ -1,8 +1,8 @@
 package sc.networking.clients;
 
 import sc.framework.plugins.SimplePlayer;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 
 public interface ILobbyClientListener
@@ -10,11 +10,11 @@ public interface ILobbyClientListener
 
 	void onNewState(String roomId, Object state);
 
-	void onError(String roomId, ErrorResponse error);
+	void onError(String roomId, ProtocolErrorMessage error);
 
 	void onRoomMessage(String roomId, Object data);
 
-	void onGamePrepared(PrepareGameResponse response);
+	void onGamePrepared(PrepareGameProtocolMessage response);
 
 	void onGameLeft(String roomId);
 

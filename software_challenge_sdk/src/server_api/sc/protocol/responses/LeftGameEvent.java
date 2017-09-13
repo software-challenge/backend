@@ -4,7 +4,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias(value="left")
-public class LeftGameEvent
+public class LeftGameEvent extends ProtocolMessage
 {
 	@XStreamAsAttribute
 	private String	roomId;

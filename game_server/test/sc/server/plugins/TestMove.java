@@ -1,8 +1,9 @@
 package sc.server.plugins;
 
+import sc.protocol.responses.ProtocolMove;
 import sc.shared.PlayerColor;
 
-public class TestMove
+public class TestMove extends ProtocolMove
 {
 	public int value;
 	

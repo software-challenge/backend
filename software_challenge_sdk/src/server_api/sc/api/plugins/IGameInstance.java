@@ -6,6 +6,8 @@ import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.SimplePlayer;
+import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.responses.ProtocolMove;
 import sc.shared.ScoreCause;
 
 public interface IGameInstance
@@ -30,7 +32,7 @@ public interface IGameInstance
 	 *            The plugin-secific data.
 	 * @throws GameLogicException	if any invalid action is done, i.e. game rule violation
 	 */
-	public void onAction(SimplePlayer fromPlayer, Object data)
+	public void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
 			throws GameLogicException;
 
 	/**

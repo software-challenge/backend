@@ -8,9 +8,10 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 import sc.framework.plugins.SimplePlayer;
 import sc.helpers.StringHelper;
+import sc.protocol.responses.ProtocolMessage;
 
 @XStreamAlias(value = "result")
-public class GameResult {
+public class GameResult extends ProtocolMessage {
 	private final ScoreDefinition definition;
 
 	@XStreamImplicit(itemFieldName = "score")

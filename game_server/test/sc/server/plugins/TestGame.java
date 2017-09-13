@@ -10,6 +10,7 @@ import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.*;
 
 public class TestGame extends RoundBasedGameInstance<TestPlayer>
@@ -21,7 +22,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 
 	@Override
-	protected void onRoundBasedAction(SimplePlayer fromPlayer, Object data)
+	protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
 			throws GameLogicException
 	{
 		if (data instanceof TestMove)

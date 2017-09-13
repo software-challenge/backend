@@ -1,10 +1,6 @@
 package sc.plugin2018;
 
 import java.io.*;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +16,8 @@ import sc.api.plugins.host.GameLoader;
 import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
+import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.responses.ProtocolMove;
 import sc.shared.PlayerColor;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
@@ -27,6 +25,7 @@ import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 import sc.shared.WinCondition;
+import sc.shared.WelcomeMessage;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
@@ -61,13 +60,13 @@ public class Game extends RoundBasedGameInstance<Player>
    * move)
    */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, Object data) throws GameLogicException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException {
 
     Player author = (Player) fromPlayer;
 
     /*
      * NOTE: Checking if right player sent move was already done by
-     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, Object)}.
+     * {@link sc.framework.plugins.RoundBasedGameInstance#onAction(SimplePlayer, ProtocolMove)}.
      * There is no need to do it here again.
      */
     try {
@@ -279,8 +278,6 @@ public class Game extends RoundBasedGameInstance<Player>
       }
       bufferedWriter.write("</object-stream>");
       bufferedWriter.flush();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }

@@ -2,9 +2,10 @@ package sc.protocol.requests;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.protocol.responses.ProtocolMessage;
 
 @XStreamAlias("pause")
-public class PauseGameRequest implements ILobbyRequest
+public class PauseGameRequest extends ProtocolMessage implements ILobbyRequest
 {
 	@XStreamAsAttribute
 	public String	roomId;

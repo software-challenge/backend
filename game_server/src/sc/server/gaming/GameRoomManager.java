@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.Configuration;
 import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
@@ -198,10 +198,10 @@ public class GameRoomManager
    * @param gameType String of current game
    * @param descriptors which are displayName, canTimeout and shouldBePaused
    * @param loadGameInfo Object for game information
-   * @return new PrepareGameResponse with roomId and slots
+   * @return new PrepareGameProtocolMessage with roomId and slots
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized PrepareGameResponse prepareGame(String gameType, List<SlotDescriptor> descriptors, Object loadGameInfo)
+  public synchronized PrepareGameProtocolMessage prepareGame(String gameType, List<SlotDescriptor> descriptors, Object loadGameInfo)
           throws RescuableClientException {
     GameRoom room = createGame(gameType, true);
     room.openSlots(descriptors);
@@ -210,16 +210,16 @@ public class GameRoomManager
       room.getGame().loadGameInfo(loadGameInfo);
     }
 
-    return new PrepareGameResponse(room.getId(), room.reserveAllSlots());
+    return new PrepareGameProtocolMessage(room.getId(), room.reserveAllSlots());
   }
 
   /**
    *  Calls {@link #prepareGame(String, List, Object) prepareGame}
    * @param prepared
-   * @return Response from server
+   * @return ProtocolMessage from server
    * @throws RescuableClientException if room could not be created
    */
-  public synchronized PrepareGameResponse prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
+  public synchronized PrepareGameProtocolMessage prepareGame(PrepareGameRequest prepared) throws RescuableClientException {
     return prepareGame(
             prepared.getGameType(),
             prepared.getSlotDescriptors(), prepared.getLoadGameInfo());

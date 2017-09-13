@@ -11,10 +11,11 @@ import sc.networking.clients.IControllableGame;
 import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.plugin2018.util.Configuration;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 import sc.shared.PlayerColor;
+import sc.shared.WelcomeMessage;
 
 /**
  * Abstrakter Client nach Vorschrift des SDKs. Beinhaltet einen LobbyClient, der
@@ -73,7 +74,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 * @param handle Handle
 	 * @return controllable game
 	 */
-	public IControllableGame observeGame(PrepareGameResponse handle) {
+	public IControllableGame observeGame(PrepareGameProtocolMessage handle) {
 		return this.client.observe(handle);
 	}
 
@@ -105,7 +106,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 * Called, when an error is sent to the room
 	 */
 	@Override
-	public void onError(String roomId, ErrorResponse response) {
+	public void onError(String roomId, ProtocolErrorMessage response) {
 	  logger.debug("onError: Client {} received error {}", this, response.getMessage());
 		this.error = response.getMessage();
 	}
@@ -154,7 +155,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	@Override
-	public void onGamePrepared(PrepareGameResponse response) {
+	public void onGamePrepared(PrepareGameProtocolMessage response) {
 		// not needed
 	}
 

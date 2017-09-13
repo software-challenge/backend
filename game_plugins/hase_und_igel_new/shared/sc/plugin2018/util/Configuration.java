@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 
 import sc.shared.PlayerColor;
+import sc.shared.WelcomeMessage;
 
 import sc.plugin2018.*;
 import sc.protocol.LobbyProtocol;

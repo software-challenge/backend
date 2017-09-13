@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import com.thoughtworks.xstream.XStream;
 
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
 public class ObservingClient implements IControllableGame, IHistoryListener
@@ -56,7 +56,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 
 	private GameResult					result		= null;
 
-	private ErrorResponse error = null;
+	private ProtocolErrorMessage error = null;
 
 	enum PlayMode
 	{
@@ -195,7 +195,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		}
 
 		int pos = this.position;
-		while (this.history.get(pos) instanceof ErrorResponse) {
+		while (this.history.get(pos) instanceof ProtocolErrorMessage) {
 			pos--;
 		}
 		return this.history.get(pos);
@@ -209,7 +209,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		}
 
 		Object state = this.history.get(this.position);
-		return (state instanceof ErrorResponse ? state : null);
+		return (state instanceof ProtocolErrorMessage ? state : null);
 	}
 
 	@Override
@@ -311,7 +311,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 	}
 
 	@Override
-	public void onGameError(String roomId, ErrorResponse error)
+	public void onGameError(String roomId, ProtocolErrorMessage error)
 	{
 		logger.debug("got error {}", error.getMessage());
 		if (isAffected(roomId))

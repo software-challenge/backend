@@ -1,10 +1,6 @@
 package sc.framework.plugins;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -16,6 +12,9 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 import sc.api.plugins.IGameInstance;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.responses.ProtocolMove;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
@@ -54,12 +53,13 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Called by the Server once an action was received.
    *
    * @param fromPlayer The player who invoked this action.
-   * @param data       The plugin-secific data.
+   * @param data       The plugin-specific data.
    *
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
-  public final void onAction(SimplePlayer fromPlayer, Object data)
+  public final void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
           throws GameLogicException {
+    Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
       if (wasMoveRequested()) {
         this.requestTimeout.stop();
@@ -72,11 +72,14 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           onRoundBasedAction(fromPlayer, data);
         }
       } else {
-        throw new GameLogicException(
-                "We didn't request a move from you yet.");
+        errorMsg = Optional.of("We didn't request a data from you yet.");
       }
     } else {
-      throw new GameLogicException("It's not your round yet.");
+      errorMsg = Optional.of("It's not your turn yet.");
+    }
+    if (errorMsg.isPresent()) {
+      fromPlayer.notifyListeners(new ProtocolErrorMessage(data, errorMsg.get()));
+      throw new GameLogicException(errorMsg.get());
     }
   }
 
@@ -84,7 +87,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     return this.requestTimeout != null;
   }
 
-  protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, Object data)
+  protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
           throws GameLogicException;
 
   protected abstract WinCondition checkWinCondition();
@@ -344,6 +347,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
     author.setViolationReason(e.getMessage());
     logger.error(err, e);
+    author.notifyListeners(new ProtocolErrorMessage(e.getMove(), err));
     throw new GameLogicException(err);
   }
 }

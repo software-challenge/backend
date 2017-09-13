@@ -13,7 +13,9 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 
 import sc.networking.INetworkInterface;
+import sc.networking.UnprocessedPacketException;
 import sc.protocol.responses.CloseConnection;
+import sc.protocol.responses.ProtocolMessage;
 
 public abstract class XStreamClient
 {
@@ -110,7 +112,7 @@ public abstract class XStreamClient
 		this.thread.start();
 	}
 
-	protected abstract void onObject(Object o);
+	protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException;
 
 	/**
 	 * used by the receiving thread. All exceptions should be handled.
@@ -132,19 +134,22 @@ public abstract class XStreamClient
 
 			while (!Thread.interrupted())
 			{
-				Object o = XStreamClient.this.in.readObject();
-				logger.warn("Client " + XStreamClient.this + ": Received " + o
-						+ " via " + this.networkInterface + "\nDataDump:\n{}",
-						this.xStream.toXML(o));
-				if (o instanceof CloseConnection)
-				{
-					handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
-					// handleDisconnect takes care of stopping the thread
-				}
-				else
-				{
-					onObject(o);
-				}
+			  Object object = XStreamClient.this.in.readObject();
+			  if (object instanceof ProtocolMessage) {
+          ProtocolMessage response = (ProtocolMessage) object;
+
+          logger.warn("Client " + XStreamClient.this + ": Received " + response
+                          + " via " + this.networkInterface + "\nDataDump:\n{}",
+                  this.xStream.toXML(response));
+          if (response instanceof CloseConnection) {
+            handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
+            // handleDisconnect takes care of stopping the thread
+          } else {
+            onObject(response);
+          }
+        } else {
+			    throw new ClassNotFoundException("Unknown class " + object.getClass().getName());
+        }
 			}
 		}
 		catch (EOFException e)
@@ -217,7 +222,7 @@ public abstract class XStreamClient
 		this.networkInterface.getOutputStream().flush();
 	}
 
-	public void send(Object o)
+	public void send(ProtocolMessage o)
 	{
 		if (!isReady())
 		{

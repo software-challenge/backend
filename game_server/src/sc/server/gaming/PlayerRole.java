@@ -2,6 +2,7 @@ package sc.server.gaming;
 
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.SimplePlayer;
+import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.RoomPacket;
 import sc.server.network.IClient;
 import sc.server.network.IClientRole;
@@ -61,10 +62,9 @@ public class PlayerRole implements IClientRole, IPlayerListener
    * @param o message Object
    */
   @Override
-  public void onPlayerEvent(Object o)
+  public void onPlayerEvent(ProtocolMessage o)
   {
-    this.client.send(new RoomPacket(
-            getPlayerSlot().getRoom().getId(), o));
+    this.client.send(new RoomPacket(getPlayerSlot().getRoom().getId(), o));
   }
 
   /**

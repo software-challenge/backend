@@ -3,15 +3,16 @@ package sc.protocol.requests;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.shared.SlotDescriptor;
 
 import java.util.LinkedList;
 import java.util.List;
 
 @XStreamAlias("prepare")
-public class PrepareGameRequest implements ILobbyRequest,
-        IRequest<PrepareGameResponse>
+public class PrepareGameRequest extends ProtocolMessage implements ILobbyRequest,
+        IRequest<PrepareGameProtocolMessage>
 {
   @XStreamAsAttribute
   private final String				gameType;

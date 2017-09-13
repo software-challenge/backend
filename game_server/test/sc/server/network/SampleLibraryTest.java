@@ -1,14 +1,11 @@
 package sc.server.network;
 
 import java.io.IOException;
-import junit.framework.Assert;
 
 import org.junit.Test;
 
 import sc.helpers.Generator;
 import sc.networking.clients.LobbyClient;
-import sc.protocol.helpers.RequestResult;
-import sc.protocol.responses.PrepareGameResponse;
 import sc.server.helpers.TestHelper;
 import sc.server.plugins.TestPlugin;
 

@@ -11,8 +11,9 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.api.plugins.host.IPlayerListener;
 import sc.framework.plugins.protocol.MoveRequest;
+import sc.protocol.responses.ProtocolMessage;
 
-public abstract class SimplePlayer 
+public abstract class SimplePlayer
 {
 	public static final Logger		logger			= LoggerFactory
 			.getLogger(SimplePlayer.class);
@@ -31,7 +32,7 @@ public abstract class SimplePlayer
 
 	@XStreamOmitField
 	protected boolean				violated        = false;
-	
+
 	@XStreamOmitField
 	protected boolean				left            = false;
 
@@ -50,7 +51,7 @@ public abstract class SimplePlayer
 	}
 
 	/**
-	 * 
+	 *
 	 * @return
 	 */
 	public String getViolationReason()
@@ -73,7 +74,7 @@ public abstract class SimplePlayer
 		this.listeners.remove(listener);
 	}
 
-	public void notifyListeners(Object o)
+	public void notifyListeners(ProtocolMessage o)
 	{
 		for (IPlayerListener listener : this.listeners)
 		{
@@ -157,12 +158,12 @@ public abstract class SimplePlayer
 	{
 		this.hardTimeout = timeout;
 	}
-	
+
 	public boolean hasHardTimeout()
 	{
 		return this.hardTimeout;
 	}
-	
+
 	/**
 	 * Initializes listeners, when they don't already exist. Only used for
 	 * playing on an imported state

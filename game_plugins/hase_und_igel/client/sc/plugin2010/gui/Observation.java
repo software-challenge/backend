@@ -25,7 +25,7 @@ import sc.plugin2010.IGUIObservation;
 import sc.plugin2010.IGameHandler;
 import sc.plugin2010.renderer.RenderFacade;
 import sc.plugin2010.util.Configuration;
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
@@ -197,7 +197,7 @@ public class Observation implements IObservation, IUpdateListener,
 		}
 		
 		if (conGame.getCurrentError() != null) {
-			ErrorResponse error = (ErrorResponse) conGame.getCurrentError();
+			ProtocolErrorMessage error = (ProtocolErrorMessage) conGame.getCurrentError();
 			result += (game.getActivePlayer().getColor() == FigureColor.RED ? name1 : name2);
 			result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
 		}
@@ -314,7 +314,7 @@ public class Observation implements IObservation, IUpdateListener,
 		Object errorObject = conGame.getCurrentError();
 		String errorMessage = null;
 		if (errorObject != null) {
-			errorMessage = ((ErrorResponse) errorObject).getMessage();
+			errorMessage = ((ProtocolErrorMessage) errorObject).getMessage();
 		}
 		Object curStateObject = conGame.getCurrentState();
 		FigureColor color = null;
@@ -360,7 +360,7 @@ public class Observation implements IObservation, IUpdateListener,
 		GameState gameState = (GameState) conGame.getCurrentState();
 		Object errorObject = conGame.getCurrentError();
 		if (errorObject != null) {
-			ErrorResponse error = (ErrorResponse) errorObject;
+			ProtocolErrorMessage error = (ProtocolErrorMessage) errorObject;
 			logger.info("Received error response: " + error);
 			//RenderFacade.getInstance().gameError(error.getMessage());
 			//RenderFacade.getInstance().getObserver().

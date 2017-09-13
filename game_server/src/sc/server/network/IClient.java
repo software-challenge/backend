@@ -1,5 +1,7 @@
 package sc.server.network;
 
+import sc.protocol.responses.ProtocolMessage;
+
 /**
  * Client interface, which is used to send packages to the server
  */
@@ -15,11 +17,5 @@ public interface IClient
    * Send a package.
    * @param packet to be send
    */
-  void send(Object packet);
-
-  /**
-   * Send a package asynchronous.
-   * @param packet to be send
-   */
-  void sendAsynchronous(Object packet);
+  void send(ProtocolMessage packet);
 }

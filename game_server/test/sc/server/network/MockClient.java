@@ -9,6 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.networking.UnprocessedPacketException;
+import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.RoomPacket;
 import sc.server.Configuration;
 import sc.server.helpers.StringNetworkInterface;
@@ -37,7 +39,7 @@ public class MockClient extends Client
 	}
 
 	@Override
-	public synchronized void send(Object packet)
+	public synchronized void send(ProtocolMessage packet)
 	{
 		super.send(packet);
 
@@ -107,8 +109,7 @@ public class MockClient extends Client
 	}
 
 	@Override
-	protected void onObject(Object o)
-	{
+	protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
 		super.onObject(o);
 		this.objects.add(o);
 	}

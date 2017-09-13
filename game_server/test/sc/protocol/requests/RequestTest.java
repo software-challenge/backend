@@ -3,12 +3,8 @@ package sc.protocol.requests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import sc.api.plugins.host.IPlayerListener;
-import sc.framework.plugins.protocol.MoveRequest;
-import sc.helpers.Generator;
-import sc.networking.clients.IHistoryListener;
 import sc.networking.clients.LobbyClient;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.client.PlayerListener;
 import sc.server.client.TestLobbyClientListener;
 import sc.server.client.TestObserverListener;
@@ -21,12 +17,10 @@ import sc.server.network.Client;
 import sc.server.network.IClientRole;
 import sc.server.network.RealServerTest;
 import sc.server.plugins.TestMove;
-import sc.server.plugins.TestPlayer;
 import sc.server.plugins.TestPlugin;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
 
 
 public class RequestTest extends RealServerTest{
@@ -99,7 +93,7 @@ public class RequestTest extends RealServerTest{
 
     player1.prepareGame(TestPlugin.TEST_PLUGIN_UUID);
     TestHelper.waitMills(200);
-    PrepareGameResponse response = listener.response;
+    PrepareGameProtocolMessage response = listener.response;
 
     String reservation = response.getReservations().get(0);
     player1.joinPreparedGame(reservation);

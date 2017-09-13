@@ -2,18 +2,18 @@ package sc.server.client;
 
 import sc.framework.plugins.SimplePlayer;
 import sc.networking.clients.ILobbyClientListener;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 
 /**
  * Created by nils on 26.07.17.
  */
 public class TestPreparedGameResponseListener implements ILobbyClientListener{
-  public PrepareGameResponse response;
+  public PrepareGameProtocolMessage response;
 
   @Override
-  public void onGamePrepared(PrepareGameResponse gameResponse) {
+  public void onGamePrepared(PrepareGameProtocolMessage gameResponse) {
     this.response = gameResponse;
     System.out.println("------------------got here");
   }
@@ -24,7 +24,7 @@ public class TestPreparedGameResponseListener implements ILobbyClientListener{
   }
 
   @Override
-  public void onError(String roomId, ErrorResponse error) {
+  public void onError(String roomId, ProtocolErrorMessage error) {
 
   }
 

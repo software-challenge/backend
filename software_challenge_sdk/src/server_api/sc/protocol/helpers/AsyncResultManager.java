@@ -6,45 +6,23 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import sc.api.plugins.host.IRequestResult;
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
 
 public class AsyncResultManager
 {
-	private Map<Class<?>, Collection<IRequestResult<?>>>	handlers		= new HashMap<Class<?>, Collection<IRequestResult<?>>>();
-	
-	@SuppressWarnings("unchecked")
-	private <T> Collection<IRequestResult<T>> getHandlers(Class<T> response)
+	private Map<Class<? extends ProtocolMessage>, Collection<IRequestResult>>	handlers		= new HashMap<>();
+
+	public void invokeHandlers(ProtocolMessage response)
 	{
-		Collection<IRequestResult<?>> current = this.handlers.get(response);
-		Collection<IRequestResult<T>> result = new LinkedList<IRequestResult<T>>();
+		Collection<IRequestResult> responseHandlers = getHandlers(response.getClass());
+		this.handlers.remove(response.getClass());
 
-		if (current != null)
+		for (IRequestResult handler : responseHandlers)
 		{
-			for (IRequestResult<?> handler : current)
+			if (response instanceof ProtocolErrorMessage)
 			{
-				result.add((IRequestResult<T>) handler);
-			}
-		}
-
-		return result;
-	}
-
-	public <T extends Object> void invokeHandlers(Class<T> responseType,
-			T response, ErrorResponse error)
-	{
-		if (!(error == null ^ response == null)) // XOR
-		{
-			throw new RuntimeException("Either error or response must be null.");
-		}
-
-		Collection<IRequestResult<T>> responseHandlers = getHandlers(responseType);
-		this.handlers.remove(responseType);
-
-		for (IRequestResult<T> handler : responseHandlers)
-		{
-			if (error != null)
-			{
-				handler.handleError(error);
+				handler.handleError((ProtocolErrorMessage) response);
 			}
 			else if (response != null)
 			{
@@ -53,13 +31,29 @@ public class AsyncResultManager
 		}
 	}
 
-	public <T> void addHandler(Class<T> response, IRequestResult<T> handler)
+	private Collection<IRequestResult> getHandlers(Class<? extends ProtocolMessage> responseClass)
 	{
-		Collection<IRequestResult<?>> current = this.handlers.get(response);
+		Collection<IRequestResult> current = this.handlers.get(responseClass);
+		Collection<IRequestResult> result = new LinkedList<>();
+
+		if (current != null)
+		{
+			for (IRequestResult handler : current)
+			{
+				result.add(handler);
+			}
+		}
+
+		return result;
+	}
+
+	public void addHandler(Class<? extends ProtocolMessage> response, IRequestResult handler)
+	{
+		Collection<IRequestResult> current = this.handlers.get(response);
 
 		if (current == null)
 		{
-			current = new LinkedList<IRequestResult<?>>();
+			current = new LinkedList<>();
 			this.handlers.put(response, current);
 		}
 
