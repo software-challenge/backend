@@ -37,7 +37,7 @@ public class GamePlugin implements IGamePlugin
 	@Override
 	public IGameInstance createGame()
 	{
-		return new Game();
+		return new Game(PLUGIN_UUID);
 	}
 	
 	@Override

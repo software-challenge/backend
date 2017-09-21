@@ -76,15 +76,17 @@ public final class Application
 		CmdLineParser.Option pluginDirectory = parser
 				.addStringOption(Configuration.PLUGINS_OPTION);
 		CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
-    CmdLineParser.Option turnOfLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
+    CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
+    CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY_OPTION);
 		parser.parse(params);
 
 		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
 		String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
-		Integer turnToLoad = (Integer) parser.getOptionValue(turnOfLoadOption, 0);
+		Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
+		Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
 		if (loadGameFile != null) {
-			Configuration.set(Configuration.GAMELOADFILE_OPTION, loadGameFile);
+			Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
 			if (turnToLoad != 0) {
 			  Configuration.set(Configuration.TURN_TO_LOAD, turnToLoad.toString());
       }
@@ -94,6 +96,10 @@ public final class Application
 		{
 			logger.info("Running in DebugMode now.");
 		}
+
+		if (saveReplay) {
+		  Configuration.set(Configuration.SAVE_REPLAY, saveReplay.toString());
+    }
 
 		if (path != null)
 		{

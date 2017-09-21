@@ -50,6 +50,12 @@ public class Game extends RoundBasedGameInstance<Player>
     this.availableColors.add(PlayerColor.BLUE);
   }
 
+  public Game(String pluginUUID) {
+    this.availableColors.add(PlayerColor.RED);
+    this.availableColors.add(PlayerColor.BLUE);
+    this.pluginUUID = pluginUUID;
+  }
+
   @Override
   protected Object getCurrentState() {
     return this.gameState; // return visible board for the players
@@ -153,9 +159,11 @@ public class Game extends RoundBasedGameInstance<Player>
     ScoreCause cause;
     if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
+      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout()/1000) + "Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = 0;
     } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
+      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout()/1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = 0;
     } else if (player.hasViolated()) { // rule violation
       cause = ScoreCause.RULE_VIOLATION;
@@ -163,6 +171,7 @@ public class Game extends RoundBasedGameInstance<Player>
       matchPoints = 0;
     } else if (player.hasLeft()) { // player left
       cause = ScoreCause.LEFT;
+      reason = "Der Spieler hat das Spiel verlassen";
       matchPoints = 0;
     } else { // regular score or opponent violated
       cause = ScoreCause.REGULAR;

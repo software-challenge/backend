@@ -80,5 +80,10 @@ public interface IGameInstance
 	 * @return
 	 */
 	public List<SimplePlayer> getWinners();
-	
+
+	/**
+	 * Returns pluginUUID. Only used for generating replay name.
+	 * @return uuid of plugin
+	 */
+	public String getPluginUUID();
 }

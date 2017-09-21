@@ -92,7 +92,7 @@ public class ObservingClient implements IControllableGame, IHistoryListener
 		}
 	}
 
-	private boolean isAffected(String roomId)
+	protected boolean isAffected(String roomId)
 	{
 		return this.replay || this.roomId.equals(roomId);
 	}

@@ -34,6 +34,9 @@ public class Configuration
   public static final String TURN_OPTION = "turn";
   public static final String TURN_TO_LOAD = "turnToLoad";
   public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
+  public static final String SAVE_REPLAY_OPTION = "saveReplay";
+  public static final String SAVE_REPLAY = "saveReplay";
+
 
   private static final Logger				logger			= LoggerFactory
           .getLogger(Configuration.class);

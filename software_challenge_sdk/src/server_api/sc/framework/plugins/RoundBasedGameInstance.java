@@ -45,6 +45,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   @XStreamImplicit(itemFieldName = "player")
   protected final List<P> players = new ArrayList<>();
 
+  @XStreamOmitField
+  protected String pluginUUID;
+
   public int getRound() {
     return this.round;
   }
@@ -349,5 +352,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     logger.error(err, e);
     author.notifyListeners(new ProtocolErrorMessage(e.getMove(), err));
     throw new GameLogicException(err);
+  }
+
+  public String getPluginUUID() {
+    return pluginUUID;
   }
 }
