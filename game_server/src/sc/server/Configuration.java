@@ -19,17 +19,21 @@ import com.thoughtworks.xstream.XStream;
 
 /**
  * Server configuration.
- *
- * @author mja
- * @author rra
- *
  *         TODO load values at startup from a properties file
  */
 public class Configuration
 {
-  public static final String				PASSWORD_KEY	= "password";
-  public static final String				PORT_KEY		= "port";
-  public static final String				PLUGIN_PATH_KEY	= "plugins";
+  public static final String PASSWORD_KEY	= "password";
+  public static final String PORT_KEY		= "port";
+  public static final String PLUGIN_PATH_KEY	= "plugins";
+  public static final char DEBUG_SHORT_OPTION = 'd';
+  public static final String DEBUG_OPTION = "debug";
+  public static final String PLUGINS_OPTION = "plugins";
+  public static final String GAMELOADFILE_OPTION = "loadGameFile";
+  public static final String GAMELOADFILE = "loadGameFile";
+  public static final String TURN_OPTION = "turn";
+  public static final String TURN_TO_LOAD = "turnToLoad";
+  public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
 
   private static final Logger				logger			= LoggerFactory
           .getLogger(Configuration.class);
@@ -77,7 +81,7 @@ public class Configuration
 
   public static String getPluginPath()
   {
-    return get(PLUGIN_PATH_KEY, String.class, "./plugins");
+    return get(PLUGIN_PATH_KEY, String.class, PLUGIN_PATH_DEFAULT_KEY);
   }
 
   public static String getAdministrativePassword()

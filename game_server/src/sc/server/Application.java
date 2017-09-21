@@ -72,21 +72,21 @@ public final class Application
 			throws IllegalOptionValueException, UnknownOptionException
 	{
 		CmdLineParser parser = new CmdLineParser();
-		CmdLineParser.Option debug = parser.addBooleanOption('d', "debug");
+		CmdLineParser.Option debug = parser.addBooleanOption(Configuration.DEBUG_SHORT_OPTION, Configuration.DEBUG_OPTION);
 		CmdLineParser.Option pluginDirectory = parser
-				.addStringOption("plugins");
-		CmdLineParser.Option loadGameFileOption = parser.addStringOption("loadGameFile");
-    CmdLineParser.Option turnOfLoadOption = parser.addIntegerOption("turn");
+				.addStringOption(Configuration.PLUGINS_OPTION);
+		CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
+    CmdLineParser.Option turnOfLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
 		parser.parse(params);
 
 		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
 		String path = (String) parser.getOptionValue(pluginDirectory, null);
 		String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
-		Integer turnOfLoad = (Integer) parser.getOptionValue(turnOfLoadOption, 0);
+		Integer turnToLoad = (Integer) parser.getOptionValue(turnOfLoadOption, 0);
 		if (loadGameFile != null) {
-			Configuration.set("loadGameFile", loadGameFile);
-			if (turnOfLoad != 0) {
-			  Configuration.set("turnOfLoad", turnOfLoad.toString());
+			Configuration.set(Configuration.GAMELOADFILE_OPTION, loadGameFile);
+			if (turnToLoad != 0) {
+			  Configuration.set(Configuration.TURN_TO_LOAD, turnToLoad.toString());
       }
 		}
 

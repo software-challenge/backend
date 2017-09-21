@@ -101,12 +101,12 @@ public class GameRoomManager
     GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(),
             prepared);
 
-    String gameFile = Configuration.get("loadGameFile");
+    String gameFile = Configuration.get(Configuration.GAMELOADFILE);
     if (gameFile != null && !gameFile.equals("")) {
       logger.info("Request plugin to load game from file: " + gameFile);
       int turn;
-      if (Configuration.get("turnOfLoad") != null) {
-        turn = Integer.parseInt(Configuration.get("turnOfLoad"));
+      if (Configuration.get(Configuration.TURN_TO_LOAD) != null) {
+        turn = Integer.parseInt(Configuration.get(Configuration.TURN_TO_LOAD));
       } else {
         turn = 0;
       }

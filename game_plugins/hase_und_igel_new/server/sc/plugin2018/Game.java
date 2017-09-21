@@ -261,7 +261,7 @@ public class Game extends RoundBasedGameInstance<Player>
       FileWriter fileWriter = new FileWriter("./tmp_replay.xml");
       BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
       String line;
-      bufferedWriter.write("<object-stream>");
+      bufferedWriter.write("<protocol>"); // XXX since hui18 replays start with protocol instead of object-stream
       bufferedWriter.newLine();
       while((line = bufferedReader.readLine()) != null) {
         if (line.contains("turn=\"" + turn +  "\"")) {
@@ -276,7 +276,7 @@ public class Game extends RoundBasedGameInstance<Player>
         }
 
       }
-      bufferedWriter.write("</object-stream>");
+      bufferedWriter.write("</protocol>");
       bufferedWriter.flush();
     } catch (IOException e) {
       e.printStackTrace();
