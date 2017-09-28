@@ -17,7 +17,6 @@ import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
-import sc.protocol.responses.ProtocolMove;
 import sc.shared.PlayerColor;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;

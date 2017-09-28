@@ -19,7 +19,6 @@ public final class Application
 
 	public static void main(String[] params)
 	{
-		
 		// Setup Server
 		System.setProperty( "file.encoding", "UTF-8" );
 		try {

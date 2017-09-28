@@ -12,11 +12,12 @@ import sc.shared.ScoreFragment;
 /**
  * Die Beschreibung des Hase- und Igel Core-Plugins für die Software-Challenge
  * 2018.
- * 
+ *
  */
 @PluginDescriptor(name = "Hase und Igel", uuid = GamePlugin.PLUGIN_UUID, author = GamePlugin.PLUGIN_AUTHOR)
 public class GamePlugin implements IGamePlugin
 {
+
 	public static final String			PLUGIN_AUTHOR		= "";
 	public static final String			PLUGIN_UUID			= "swc_2018_hase_und_igel";
 
@@ -37,9 +38,9 @@ public class GamePlugin implements IGamePlugin
 	@Override
 	public IGameInstance createGame()
 	{
-		return new Game(PLUGIN_UUID);
+	  return new Game(PLUGIN_UUID);
 	}
-	
+
 	@Override
 	public void initialize(IGamePluginHost host) {
 		host.registerProtocolClasses(Configuration.getClassesToRegister());

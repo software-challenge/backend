@@ -22,6 +22,7 @@
 	<path id="classpath.base">
 		<path refid="classpath.libs" />
 		<pathelement location="${classes.dir}" />
+    <pathelement path="./" />
 	</path>
 
 	<pathconvert property="jar.classpath" pathsep="">
