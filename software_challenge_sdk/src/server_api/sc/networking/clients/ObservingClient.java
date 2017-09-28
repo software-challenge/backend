@@ -1,7 +1,5 @@
 package sc.networking.clients;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,23 +7,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.xstream.XStream;
-
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
 public class ObservingClient implements IControllableGame, IHistoryListener
 {
-	public ObservingClient(XStream xStream, InputStream inputStream)
-			throws IOException
-	{
-		this.poller = new ReplayClient(xStream, inputStream);
-		this.roomId = null;
-		this.poller.addListener(this);
-		this.mode = PlayMode.PAUSED;
-		this.replay = true;
-		this.poller.start();
-	}
 
 	public ObservingClient(IPollsHistory client, String roomId)
 	{

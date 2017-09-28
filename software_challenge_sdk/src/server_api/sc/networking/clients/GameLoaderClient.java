@@ -24,7 +24,6 @@ import sc.protocol.responses.ProtocolMessage;
 public final class GameLoaderClient extends XStreamClient implements IPollsHistory
 {
 
-	@SuppressWarnings("unused")
 	private static Logger	logger = LoggerFactory.getLogger(GameLoaderClient.class);
 	
 	private List<IHistoryListener> listeners = new LinkedList<IHistoryListener>();

@@ -10,7 +10,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
