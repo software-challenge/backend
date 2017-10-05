@@ -1,23 +1,17 @@
 package sc.server;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.protocol.requests.AuthenticateRequest;
-import sc.protocol.requests.CancelRequest;
-import sc.protocol.requests.FreeReservationRequest;
-import sc.protocol.requests.ILobbyRequest;
-import sc.protocol.requests.JoinPreparedRoomRequest;
-import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.requests.ObservationRequest;
-import sc.protocol.requests.PauseGameRequest;
-import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.StepRequest;
+import sc.protocol.requests.*;
+import sc.protocol.responses.PlayerScorePacket;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.RoomPacket;
+import sc.protocol.responses.TestModeMessage;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
 import sc.server.gaming.PlayerRole;
@@ -27,6 +21,7 @@ import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
 import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;
+import sc.shared.Score;
 
 /**
  * The lobby will help clients find a open game or create new games to play with
@@ -159,6 +154,23 @@ public class Lobby implements IClientListener
           room.cancel();
         }
 			}
+			else if (packet instanceof ToggleTestModeRequest) {
+			  if (source.isAdministrator()) {
+          logger.info("Toggle test mode");
+          boolean testMode = Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE));
+          testMode = !testMode;
+          logger.info("Test mode is set to {}", testMode);
+          Configuration.set(Configuration.TEST_MODE, new Boolean(testMode).toString());
+          source.send(new TestModeMessage(testMode));
+        }
+      }
+      else if (packet instanceof GetScoreForPlayerRequest) {
+			  if (source.isAdministrator()) {
+          String displayName = ((GetScoreForPlayerRequest) packet).getDisplayName();
+          logger.info("Trying to return score of player {}", displayName);
+          source.send(new PlayerScorePacket(getScoreOfPlayer(displayName)));
+        }
+      }
 			else
 			{
 				throw new RescuableClientException(
@@ -169,7 +181,16 @@ public class Lobby implements IClientListener
 		}
 	}
 
-	public void close()
+  private Score getScoreOfPlayer(String displayName) {
+    for (Score score : this.gameManager.getPlayerScores()) {
+      if (score.getDisplayName().equals(displayName)) {
+        return score;
+      }
+    }
+    return null;
+  }
+
+  public void close()
 	{
 		this.clientManager.close();
 	}

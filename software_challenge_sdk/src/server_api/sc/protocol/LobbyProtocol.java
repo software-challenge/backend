@@ -3,15 +3,7 @@ package sc.protocol;
 import java.util.Arrays;
 import java.util.Collection;
 
-import sc.protocol.requests.AuthenticateRequest;
-import sc.protocol.requests.CancelRequest;
-import sc.protocol.requests.FreeReservationRequest;
-import sc.protocol.requests.JoinPreparedRoomRequest;
-import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.requests.ObservationRequest;
-import sc.protocol.requests.PauseGameRequest;
-import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.StepRequest;
+import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.*;
@@ -33,12 +25,14 @@ public abstract class LobbyProtocol
 				FreeReservationRequest.class, JoinPreparedRoomRequest.class,
 				JoinRoomRequest.class, ObservationRequest.class,
 				PauseGameRequest.class, PrepareGameRequest.class,
-				StepRequest.class }));
+				StepRequest.class, GetScoreForPlayerRequest.class, ToggleTestModeRequest.class,
+				PlayerScorePacket.class, TestModeMessage.class
+		}));
 		
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
 				GameResult.class, PlayerScore.class, ScoreAggregation.class, PlayerColor.class,
 				ScoreCause.class, ScoreDefinition.class, ScoreFragment.class, WinCondition.class,
-				SlotDescriptor.class }));
+				SlotDescriptor.class, Score.class, ScoreValue.class}));
 
 		return xStream;
 	}

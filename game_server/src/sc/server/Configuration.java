@@ -36,6 +36,7 @@ public class Configuration
   public static final String PLUGIN_PATH_DEFAULT_KEY = "./plugins";
   public static final String SAVE_REPLAY_OPTION = "saveReplay";
   public static final String SAVE_REPLAY = "saveReplay";
+  public static final String TEST_MODE = "testMode";
 
 
   private static final Logger				logger			= LoggerFactory

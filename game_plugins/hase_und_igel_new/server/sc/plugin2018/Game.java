@@ -129,7 +129,7 @@ public class Game extends RoundBasedGameInstance<Player>
   }
 
 	@Override
-  protected PlayerScore getScoreFor(Player player) {
+  public PlayerScore getScoreFor(Player player) {
 
     logger.debug("get score for player {}", player.getPlayerColor());
     logger.debug("player violated: {}", player.hasViolated());
@@ -349,5 +349,31 @@ public class Game extends RoundBasedGameInstance<Player>
       }
     }
     return winners;
+  }
+
+  /**
+   * Returns all players. This should always be 2 the startplayer should be first in the List.
+   *
+   * @return List of all players
+   */
+  @Override
+  public List<SimplePlayer> getPlayers() {
+    List<SimplePlayer> players = new LinkedList<>();
+    players.add(this.gameState.getRedPlayer());
+    players.add(this.gameState.getBluePlayer());
+    return players;
+  }
+
+  /**
+   * Returns the PlayerScore for both players
+   *
+   * @return List of PlayerScores
+   */
+  @Override
+  public List<PlayerScore> getPlayerScores() {
+    LinkedList<PlayerScore> playerScores = new LinkedList<>();
+    playerScores.add(getScoreFor(this.gameState.getRedPlayer()));
+    playerScores.add(getScoreFor(this.gameState.getBluePlayer()));
+    return playerScores;
   }
 }

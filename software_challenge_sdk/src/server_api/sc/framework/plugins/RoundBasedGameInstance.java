@@ -192,7 +192,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     }
   }
 
-  protected abstract PlayerScore getScoreFor(P p);
+  public abstract PlayerScore getScoreFor(P p);
 
   protected boolean increaseTurnIfNecessary(P nextPlayer) {
     return (this.activePlayer != nextPlayer && this.players
@@ -288,7 +288,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     this.paused = pause;
   }
 
-  protected Map<SimplePlayer, PlayerScore> generateScoreMap() {
+  public Map<SimplePlayer, PlayerScore> generateScoreMap() {
     Map<SimplePlayer, PlayerScore> map = new HashMap<SimplePlayer, PlayerScore>();
 
     for (final P p : this.players) {

@@ -1,16 +1,14 @@
 package sc.server.gaming;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.math.BigDecimal;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescuableClientException;
+import sc.framework.plugins.SimplePlayer;
+import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.Configuration;
@@ -18,7 +16,7 @@ import sc.server.network.Client;
 import sc.server.plugins.GamePluginInstance;
 import sc.server.plugins.GamePluginManager;
 import sc.server.plugins.UnknownGameTypeException;
-import sc.shared.SlotDescriptor;
+import sc.shared.*;
 
 /**
  * The GameManager is responsible to keep all games alive and kill them once
@@ -41,6 +39,7 @@ public class GameRoomManager
   private static Logger			logger				= LoggerFactory
           .getLogger(GameRoomManager.class);
 
+  private LinkedList<Score> playerScores = new LinkedList<>(); // TODO make type for that
 
   /**
    *
@@ -251,5 +250,59 @@ public class GameRoomManager
   public void remove(GameRoom gameRoom)
   {
     this.rooms.remove(gameRoom.getId());
+  }
+
+  public LinkedList<Score> getPlayerScores() {
+    return playerScores;
+  }
+
+  /**
+   * Called by gameRoom after game ended and test mode enabled to save results in score of players
+   * @param result
+   */
+  public void addResultToScore(GameResult result, List<PlayerScore> players, String name1, String name2) throws InvalidScoreDefinitionException {
+    // TODO there seems to be a problem with the calculation, test this
+    if (name1.equals(name2)) {
+      logger.warn("Both player players have the same displayName. Won#t save test relevant data");
+      return;
+    }
+    ScoreDefinition scoreDefinition = result.getDefinition();
+    Score firstScore = null;
+    Score secondScore = null;
+    for (Score score: this.playerScores) {
+      if (score.getDisplayName().equals(name1)) {
+        firstScore = score;
+      } else if (score.getDisplayName().equals(name2)) {
+        secondScore = score;
+      }
+    }
+    if (firstScore == null) {
+      firstScore = new Score(scoreDefinition, name1);
+      this.playerScores.add(firstScore);
+    }
+    if (secondScore == null) {
+      secondScore = new Score(scoreDefinition, name2);
+      this.playerScores.add(secondScore);
+    }
+
+    firstScore.setNumberOfTests(firstScore.getNumberOfTests() + 1);
+    secondScore.setNumberOfTests(secondScore.getNumberOfTests() + 1);
+    for (int i = 0; i < scoreDefinition.size(); i++) {
+      ScoreFragment fragment = scoreDefinition.get(i);
+      ScoreValue firstValue = firstScore.getScoreValues().get(i);
+      ScoreValue secondValue = secondScore.getScoreValues().get(i);
+      if (!fragment.equals(firstValue.getFragment()) || !fragment.equals(secondValue.getFragment())) {
+        logger.error("Could not add current game result to score. Score definition of player and result do not match.");
+        throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
+      }
+      if (fragment.getAggregation().equals(ScoreAggregation.AVERAGE)) {
+        firstValue.setValue((firstValue.getValue().add(
+                players.get(0).getValues().get(i))).divide(new BigDecimal(firstScore.getNumberOfTests()), BigDecimal.ROUND_UNNECESSARY));
+        secondValue.setValue((secondValue.getValue().add(
+                players.get(1).getValues().get(i))).divide(new BigDecimal(firstScore.getNumberOfTests()), BigDecimal.ROUND_UNNECESSARY));
+      } else if (fragment.getAggregation().equals(ScoreAggregation.SUM)) {
+        firstValue.setValue(firstValue.getValue().add(players.get(0).getValues().get(i)));
+      }
+    }
   }
 }

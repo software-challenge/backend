@@ -90,7 +90,6 @@ public final class Application
 			  Configuration.set(Configuration.TURN_TO_LOAD, turnToLoad.toString());
       }
 		}
-
 		if (debugMode)
 		{
 			logger.info("Running in DebugMode now.");

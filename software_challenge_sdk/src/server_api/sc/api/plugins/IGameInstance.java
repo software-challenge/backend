@@ -8,6 +8,7 @@ import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.ProtocolMove;
+import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
 public interface IGameInstance
@@ -86,4 +87,16 @@ public interface IGameInstance
 	 * @return uuid of plugin
 	 */
 	public String getPluginUUID();
+
+  /**
+   * Returns all players. This should always be 2 and the startplayer should be first in the List.
+   * @return List of all players
+   */
+	public List<SimplePlayer> getPlayers();
+
+  /**
+   * Returns the PlayerScore for both players
+   * @return List of PlayerScores
+   */
+	public List<PlayerScore> getPlayerScores();
 }

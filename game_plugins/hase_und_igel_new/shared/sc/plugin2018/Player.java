@@ -9,6 +9,7 @@ import sc.plugin2018.util.Constants;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 

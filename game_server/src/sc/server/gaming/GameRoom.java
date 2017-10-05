@@ -18,6 +18,7 @@ import sc.api.plugins.host.IGameListener;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.helpers.HelperMethods;
+import sc.networking.InvalidScoreDefinitionException;
 import sc.networking.clients.IControllableGame;
 import sc.networking.clients.LobbyClient;
 import sc.networking.clients.ObservingClient;
@@ -107,8 +108,7 @@ public class GameRoom implements IGameListener
 	 * @param results result of game
 	 */
 	@Override
-	public synchronized void onGameOver(Map<SimplePlayer, PlayerScore> results)
-	{
+	public synchronized void onGameOver(Map<SimplePlayer, PlayerScore> results) throws InvalidScoreDefinitionException {
 		if (isOver())
 		{
 			logger
@@ -152,6 +152,12 @@ public class GameRoom implements IGameListener
       } catch (IOException e) {
         e.printStackTrace();
       }
+    }
+    // save playerScore if test mode enabled
+    if (Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE))) {
+		  List<SimplePlayer> players = game.getPlayers();
+		  gameRoomManager.addResultToScore(this.getResult(), game.getPlayerScores(), players.get(0).getDisplayName()
+              , players.get(1).getDisplayName());
     }
 		kickAllClients();
 		this.game.destroy();

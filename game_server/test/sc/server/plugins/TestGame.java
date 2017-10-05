@@ -71,9 +71,19 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 
 	}
 
-	public List<TestPlayer> getPlayers()
+	public List<TestPlayer> getTestPlayers()
 	{
 		return this.players;
+	}
+
+	/**
+	 * Returns the PlayerScore for both players
+	 *
+	 * @return List of PlayerScores
+	 */
+	@Override
+	public List<PlayerScore> getPlayerScores() {
+		return null;
 	}
 
 	@Override
@@ -100,7 +110,7 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	}
 
 	@Override
-	protected PlayerScore getScoreFor(TestPlayer p)
+	public PlayerScore getScoreFor(TestPlayer p)
 	{
 		return new PlayerScore(true, "Spieler hat gewonnen.");
 	}
@@ -130,6 +140,16 @@ public class TestGame extends RoundBasedGameInstance<TestPlayer>
 	public List<SimplePlayer> getWinners()
 	{
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Returns all players. This should always be 2 and the startplayer should be first in the List.
+	 *
+	 * @return List of all players
+	 */
+	@Override
+	public List<SimplePlayer> getPlayers() {
 		return null;
 	}
 
