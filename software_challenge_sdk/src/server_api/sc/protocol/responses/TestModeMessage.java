@@ -8,7 +8,7 @@ import sc.protocol.requests.ILobbyRequest;
 public class TestModeMessage extends ProtocolMessage implements ILobbyRequest {
 
   @XStreamAsAttribute
-  private boolean testMode;
+  public boolean testMode;
 
   public TestModeMessage(boolean testMode) {
     this.testMode = testMode;

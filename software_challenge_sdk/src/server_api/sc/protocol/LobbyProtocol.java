@@ -25,7 +25,7 @@ public abstract class LobbyProtocol
 				FreeReservationRequest.class, JoinPreparedRoomRequest.class,
 				JoinRoomRequest.class, ObservationRequest.class,
 				PauseGameRequest.class, PrepareGameRequest.class,
-				StepRequest.class, GetScoreForPlayerRequest.class, ToggleTestModeRequest.class,
+				StepRequest.class, GetScoreForPlayerRequest.class, TestModeRequest.class,
 				PlayerScorePacket.class, TestModeMessage.class
 		}));
 		

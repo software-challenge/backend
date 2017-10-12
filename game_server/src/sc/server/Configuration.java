@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import sc.helpers.RuntimeJarLoader;
 import sc.protocol.LobbyProtocol;
-import sc.server.network.PerspectiveAwareConverter;
 import sc.shared.SharedConfiguration;
 
 import com.thoughtworks.xstream.XStream;
@@ -37,6 +36,7 @@ public class Configuration
   public static final String SAVE_REPLAY_OPTION = "saveReplay";
   public static final String SAVE_REPLAY = "saveReplay";
   public static final String TEST_MODE = "testMode";
+  public static final int BIG_DECIMAL_SCALE = 6;
 
 
   private static final Logger				logger			= LoggerFactory

@@ -1,7 +1,6 @@
 package sc.server;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,11 +153,9 @@ public class Lobby implements IClientListener
           room.cancel();
         }
 			}
-			else if (packet instanceof ToggleTestModeRequest) {
+			else if (packet instanceof TestModeRequest) {
 			  if (source.isAdministrator()) {
-          logger.info("Toggle test mode");
-          boolean testMode = Boolean.parseBoolean(Configuration.get(Configuration.TEST_MODE));
-          testMode = !testMode;
+          boolean testMode = ((TestModeRequest) packet).testMode;
           logger.info("Test mode is set to {}", testMode);
           Configuration.set(Configuration.TEST_MODE, new Boolean(testMode).toString());
           source.send(new TestModeMessage(testMode));
@@ -182,7 +179,7 @@ public class Lobby implements IClientListener
 	}
 
   private Score getScoreOfPlayer(String displayName) {
-    for (Score score : this.gameManager.getPlayerScores()) {
+    for (Score score : this.gameManager.getScores()) {
       if (score.getDisplayName().equals(displayName)) {
         return score;
       }

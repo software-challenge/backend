@@ -138,7 +138,7 @@ public abstract class XStreamClient
 			  if (object instanceof ProtocolMessage) {
           ProtocolMessage response = (ProtocolMessage) object;
 
-          logger.warn("Client " + XStreamClient.this + ": Received " + response
+          logger.info("Client " + XStreamClient.this + ": Received " + response
                           + " via " + this.networkInterface + "\nDataDump:\n{}",
                   this.xStream.toXML(response));
           if (response instanceof CloseConnection) {

@@ -26,10 +26,12 @@
 /game_players/*/bin
 /game_plugins/*/bin
 /game_plugins/*/src
+/game_helper_clients/test_client/build
 
 # Ignore java doc
 game_players/*/doc
 game_plugins/*/doc
+game_helper_clients/*/doc
 software_challenge_sdk/*/doc
 
 # game server

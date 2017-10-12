@@ -12,4 +12,8 @@ public class PlayerScorePacket extends ProtocolMessage implements ILobbyRequest 
   public PlayerScorePacket(Score score) {
     this.score = score;
   }
+
+  public Score getScore() {
+    return score;
+  }
 }

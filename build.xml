@@ -65,6 +65,7 @@
 
     <echo message="Compiling Server..." />
     <ant dir="game_server" target="clean-build" inheritAll="false" />
+    <ant dir="game_helper_clients/test_client" target="clean-build" inheritall="false" />
   </target>
 
   <target name="build" depends="scmversion,dependencies">
@@ -73,6 +74,7 @@
     <mkdir dir="${out.dir}/server" />
     <copy todir="${out.dir}/server">
       <fileset dir="./game_server/build/jar" />
+      <fileset dir="./game_helper_clients/test_client/build/jar" />
     </copy>
     <!-- build player -->
     <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
@@ -106,6 +108,7 @@
 
     <copy tofile="${out.dir}/server/logback.xml" file="./game_server/configuration/logback-release.xml" />
     <copy tofile="${out.dir}/server/server.properties" file="./game_server/configuration/server.properties" />
+    <copy tofile="${out.dir}/server/logback-tests.xml" file="./game_helper_clients/test_client/src/logback-tests.xml" />
 
     <echo message="Generating Starter-Batchfiles" />
 

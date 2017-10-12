@@ -1,13 +1,13 @@
 package sc.server.gaming;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescuableClientException;
-import sc.framework.plugins.SimplePlayer;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
 import sc.protocol.responses.PrepareGameProtocolMessage;
@@ -39,7 +39,7 @@ public class GameRoomManager
   private static Logger			logger				= LoggerFactory
           .getLogger(GameRoomManager.class);
 
-  private LinkedList<Score> playerScores = new LinkedList<>(); // TODO make type for that
+  private LinkedList<Score> scores = new LinkedList<>();
 
   /**
    *
@@ -252,24 +252,27 @@ public class GameRoomManager
     this.rooms.remove(gameRoom.getId());
   }
 
-  public LinkedList<Score> getPlayerScores() {
-    return playerScores;
+  public LinkedList<Score> getScores() {
+    return scores;
   }
 
   /**
-   * Called by gameRoom after game ended and test mode enabled to save results in score of players
-   * @param result
+   * Called by gameRoom after game ended and test mode enabled to save results in playerScores
+   * @param result GameResult
+   * @param playerScores List of playerScores
+   * @param name1 displayName of player1
+   * @param name2 displayName of player2
+   * @throws InvalidScoreDefinitionException
    */
-  public void addResultToScore(GameResult result, List<PlayerScore> players, String name1, String name2) throws InvalidScoreDefinitionException {
-    // TODO there seems to be a problem with the calculation, test this
+  public void addResultToScore(GameResult result, List<PlayerScore> playerScores, String name1, String name2) throws InvalidScoreDefinitionException {
     if (name1.equals(name2)) {
-      logger.warn("Both player players have the same displayName. Won#t save test relevant data");
+      logger.warn("Both player playerScores have the same displayName. Won#t save test relevant data");
       return;
     }
     ScoreDefinition scoreDefinition = result.getDefinition();
     Score firstScore = null;
     Score secondScore = null;
-    for (Score score: this.playerScores) {
+    for (Score score: this.scores) {
       if (score.getDisplayName().equals(name1)) {
         firstScore = score;
       } else if (score.getDisplayName().equals(name2)) {
@@ -278,11 +281,11 @@ public class GameRoomManager
     }
     if (firstScore == null) {
       firstScore = new Score(scoreDefinition, name1);
-      this.playerScores.add(firstScore);
+      this.scores.add(firstScore);
     }
     if (secondScore == null) {
       secondScore = new Score(scoreDefinition, name2);
-      this.playerScores.add(secondScore);
+      this.scores.add(secondScore);
     }
 
     firstScore.setNumberOfTests(firstScore.getNumberOfTests() + 1);
@@ -295,13 +298,25 @@ public class GameRoomManager
         logger.error("Could not add current game result to score. Score definition of player and result do not match.");
         throw new InvalidScoreDefinitionException("ScoreDefinition of player does not match expected score definition");
       }
+      // average = oldaverage * ((#tests - 1)/ #tests) + newValue / #tests
       if (fragment.getAggregation().equals(ScoreAggregation.AVERAGE)) {
-        firstValue.setValue((firstValue.getValue().add(
-                players.get(0).getValues().get(i))).divide(new BigDecimal(firstScore.getNumberOfTests()), BigDecimal.ROUND_UNNECESSARY));
-        secondValue.setValue((secondValue.getValue().add(
-                players.get(1).getValues().get(i))).divide(new BigDecimal(firstScore.getNumberOfTests()), BigDecimal.ROUND_UNNECESSARY));
+        firstValue.setValue((firstValue.getValue().
+                multiply(
+                        (new BigDecimal(firstScore.getNumberOfTests() - 1)
+                                .divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+                )).add(
+                playerScores.get(0).getValues().get(i).divide(new BigDecimal(firstScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE,BigDecimal.ROUND_HALF_UP)));
+        secondValue.setValue((secondValue.getValue().
+                multiply(
+                        (new BigDecimal(secondScore.getNumberOfTests() - 1)
+                                .divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP))
+                )).add(
+                playerScores.get(1).getValues().get(i).divide(new BigDecimal(secondScore.getNumberOfTests()), Configuration.BIG_DECIMAL_SCALE, BigDecimal.ROUND_HALF_UP)));
+        firstValue.setValue(firstValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
+        secondValue.setValue(secondValue.getValue().round(new MathContext(Configuration.BIG_DECIMAL_SCALE + 2)));
       } else if (fragment.getAggregation().equals(ScoreAggregation.SUM)) {
-        firstValue.setValue(firstValue.getValue().add(players.get(0).getValues().get(i)));
+        firstValue.setValue(firstValue.getValue().add(playerScores.get(0).getValues().get(i)));
+        secondValue.setValue(secondValue.getValue().add(playerScores.get(1).getValues().get(i)));
       }
     }
   }
