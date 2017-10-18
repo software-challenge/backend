@@ -4,20 +4,22 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import sc.protocol.responses.ProtocolMessage;
 
+/**
+ * Used to cancel game and deleting GameRoom. Used by administrative client.
+ */
+
 @XStreamAlias("cancel")
-public class CancelRequest extends ProtocolMessage implements ILobbyRequest
-{
-	@XStreamAsAttribute
-	public String	roomId;
+public class CancelRequest extends ProtocolMessage implements ILobbyRequest {
+  @XStreamAsAttribute
+  public String roomId;
 
-        /**
-         * might be needed by XStream
-         */
-        public CancelRequest() {
-        }
+  /**
+   * might be needed by XStream
+   */
+  public CancelRequest() {
+  }
 
-	public CancelRequest(String roomId)
-	{
-		this.roomId = roomId;
-	}
+  public CancelRequest(String roomId) {
+    this.roomId = roomId;
+  }
 }

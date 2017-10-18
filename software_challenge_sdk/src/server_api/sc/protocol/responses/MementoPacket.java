@@ -10,35 +10,30 @@ import com.thoughtworks.xstream.annotations.XStreamOmitField;
  * Wrapper for two objects: state and perspective
  */
 @XStreamAlias("memento")
-public final class MementoPacket extends ProtocolMessage implements IPerspectiveProvider
-{
-	private Object	state;
+public final class MementoPacket extends ProtocolMessage implements IPerspectiveProvider {
+  private Object state;
 
-	@XStreamOmitField
-	private Object	perspective;
+  @XStreamOmitField
+  private Object perspective;
 
-	public MementoPacket(Object state, Object perspective)
-	{
-		this.state = state;
-		this.perspective = perspective;
-	}
+  public MementoPacket(Object state, Object perspective) {
+    this.state = state;
+    this.perspective = perspective;
+  }
 
-        /**
-         * might be needed by XStream
-         */
-	public MementoPacket()
-	{
-		// TODO Auto-generated constructor stub
-	}
+  /**
+   * might be needed by XStream
+   */
+  public MementoPacket() {
+    // TODO Auto-generated constructor stub
+  }
 
-	public Object getState()
-	{
-		return this.state;
-	}
+  public Object getState() {
+    return this.state;
+  }
 
-	@Override
-	public Object getPerspective()
-	{
-		return this.perspective;
-	}
+  @Override
+  public Object getPerspective() {
+    return this.perspective;
+  }
 }

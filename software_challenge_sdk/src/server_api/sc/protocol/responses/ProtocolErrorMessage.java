@@ -4,32 +4,28 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 
 @XStreamAlias("error")
-public class ProtocolErrorMessage extends ProtocolMessage
-{
-	private ProtocolMessage	originalRequest;
+public class ProtocolErrorMessage extends ProtocolMessage {
+  private ProtocolMessage originalRequest;
 
-	@XStreamAsAttribute
-	private String	message;
-        
-        /**
-         * might be needed by XStream
-         */
-        public ProtocolErrorMessage() {
-        }
+  @XStreamAsAttribute
+  private String message;
 
-	public ProtocolErrorMessage(ProtocolMessage request, String message)
-	{
-		this.originalRequest = request;
-		this.message = message;
-	}
+  /**
+   * might be needed by XStream
+   */
+  public ProtocolErrorMessage() {
+  }
 
-	public ProtocolMessage getOriginalRequest()
-	{
-		return this.originalRequest;
-	}
+  public ProtocolErrorMessage(ProtocolMessage request, String message) {
+    this.originalRequest = request;
+    this.message = message;
+  }
 
-	public String getMessage()
-	{
-		return this.message;
-	}
+  public ProtocolMessage getOriginalRequest() {
+    return this.originalRequest;
+  }
+
+  public String getMessage() {
+    return this.message;
+  }
 }
