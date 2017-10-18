@@ -100,6 +100,12 @@ public class GameRoomManager
     String roomId = generateRoomId();
     GameRoom room = new GameRoom(roomId, this, plugin, plugin.createGame(),
             prepared);
+    // pause room if specified in server.properties on joinRoomRequest
+    if (!prepared) {
+      boolean paused = Boolean.parseBoolean(Configuration.get(Configuration.PAUSED));
+      room.pause(paused);
+      logger.info("Pause is set to {}", paused);
+    }
 
     String gameFile = Configuration.get(Configuration.GAMELOADFILE);
     if (gameFile != null && !gameFile.equals("")) {
