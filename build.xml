@@ -107,7 +107,7 @@
     <echo message="Copy log configs" />
 
     <copy tofile="${out.dir}/server/logback.xml" file="./game_server/configuration/logback-release.xml" />
-    <copy tofile="${out.dir}/server/server.properties" file="./game_server/configuration/server.properties" />
+    <copy tofile="${out.dir}/server/server.properties" file="./game_server/configuration/server.properties.example" />
     <copy tofile="${out.dir}/server/logback-tests.xml" file="./game_helper_clients/test_client/src/logback-tests.xml" />
 
     <echo message="Generating Starter-Batchfiles" />
