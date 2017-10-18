@@ -26,7 +26,7 @@ public abstract class LobbyProtocol
 				JoinRoomRequest.class, ObservationRequest.class,
 				PauseGameRequest.class, PrepareGameRequest.class,
 				StepRequest.class, GetScoreForPlayerRequest.class, TestModeRequest.class,
-				PlayerScorePacket.class, TestModeMessage.class
+				PlayerScorePacket.class, TestModeMessage.class, GameRoomMessage.class
 		}));
 		
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {

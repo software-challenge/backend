@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.networking.InvalidScoreDefinitionException;
 import sc.protocol.requests.PrepareGameRequest;
+import sc.protocol.responses.GameRoomMessage;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.Configuration;
 import sc.server.network.Client;
@@ -133,31 +134,34 @@ public class GameRoomManager
    * Open new GameRoom and join Client
    * @param client Client to join the game
    * @param gameType String of current game
-   * @return true on success
+   * @return GameRoomMessage for new GameRoom, null im unsuccessful
    * @throws RescuableClientException if game could not be created
    */
-  public synchronized boolean createAndJoinGame(Client client, String gameType)
+  public synchronized GameRoomMessage createAndJoinGame(Client client, String gameType)
           throws RescuableClientException
   {
     GameRoom room = createGame(gameType);
-    return room.join(client);
+    if (room.join(client)) {
+      return new GameRoomMessage(room.getId(), false);
+    }
+    return null;
   }
 
   /**
    * Called after JoinRoomRequest. Client joins already existing GameRoom or opens new one
    * @param client to join the game
    * @param gameType String of current game
-   * @return true on success
+   * @return GameRoomMessage with roomId an success null if unsuccessful
    * @throws RescuableClientException if client could not join room
    */
-  public synchronized boolean joinOrCreateGame(Client client, String gameType)
+  public synchronized GameRoomMessage joinOrCreateGame(Client client, String gameType)
           throws RescuableClientException
   {
     for (GameRoom gameRoom : getGames())
     {
       if (gameRoom.join(client))
       {
-        return true;
+        return new GameRoomMessage(gameRoom.getId(), true);
       }
     }
 
@@ -214,7 +218,7 @@ public class GameRoomManager
 
   /**
    *  Calls {@link #prepareGame(String, List, Object) prepareGame}
-   * @param prepared
+   * @param prepared PrepareGameRequest with gameType and slotsDescriptors
    * @return ProtocolMessage from server
    * @throws RescuableClientException if room could not be created
    */
@@ -228,7 +232,7 @@ public class GameRoomManager
    * Getter for GameRoom
    * @param roomId String Id of room to be found
    * @return returns GameRoom specified by rooId
-   * @throws RescuableClientException
+   * @throws RescuableClientException if no room could be found
    */
   public synchronized GameRoom findRoom(String roomId)
           throws RescuableClientException
@@ -262,7 +266,7 @@ public class GameRoomManager
    * @param playerScores List of playerScores
    * @param name1 displayName of player1
    * @param name2 displayName of player2
-   * @throws InvalidScoreDefinitionException
+   * @throws InvalidScoreDefinitionException if scoreDefinitions do not match
    */
   public void addResultToScore(GameResult result, List<PlayerScore> playerScores, String name1, String name2) throws InvalidScoreDefinitionException {
     if (name1.equals(name2)) {

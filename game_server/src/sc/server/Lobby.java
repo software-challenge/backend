@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.*;
-import sc.protocol.responses.PlayerScorePacket;
-import sc.protocol.responses.ProtocolErrorMessage;
-import sc.protocol.responses.RoomPacket;
-import sc.protocol.responses.TestModeMessage;
+import sc.protocol.responses.*;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
 import sc.server.gaming.PlayerRole;
@@ -90,8 +87,17 @@ public class Lobby implements IClientListener
 			}
 			else if (packet instanceof JoinRoomRequest)
 			{
-				this.gameManager.joinOrCreateGame(source,
+				GameRoomMessage gameRoomMessage = this.gameManager.joinOrCreateGame(source,
 						((JoinRoomRequest) packet).getGameType());
+				// null is returned if join was unsuccessful
+				if (gameRoomMessage != null) {
+          for (Client admin :
+                  clientManager.getClients()) {
+            if (admin.isAdministrator()) {
+              admin.send(gameRoomMessage);
+            }
+          }
+        }
 			}
 			else if (packet instanceof AuthenticateRequest)
 			{
