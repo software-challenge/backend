@@ -29,13 +29,13 @@
 		<mkdir dir="${doc.dir}/framework" />
 		<mkdir dir="${doc.dir}/shared" />
 		<javadoc sourcepath="${src.dir}/server_api"
-						 classpathref="classpath"
-						 destdir="${doc.dir}/server_api"
-						 packagenames="${server_api.javadoc.packages}"/>
+				 classpathref="classpath"
+				 destdir="${doc.dir}/server_api"
+				 packagenames="${server_api.javadoc.packages}"/>
 		<javadoc sourcepath="${src.dir}/framework"
-						 classpathref="classpath"
-						 destdir="${doc.dir}/framework"
-						 packagenames="${framework.javadoc.packages}"/>
+				 classpathref="classpath"
+				 destdir="${doc.dir}/framework"
+				 packagenames="${framework.javadoc.packages}"/>
 		<mkdir dir="${doc.dir}" />
 	</target>
 
@@ -44,8 +44,9 @@
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
 	</target>
 
-	<target name="clean-build" depends="clean, doc, jar" />
+	<target name="clean-build" depends="clean,jar" />
 	<target name="build-doc" depends="clean, doc" />
+	<target name="build-all" depends="clean,jar,doc" />
 
 	<target name="main" depends="clean-build" />
 </project>

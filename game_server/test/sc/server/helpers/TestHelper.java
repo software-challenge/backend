@@ -9,7 +9,7 @@ import sc.helpers.Generator;
 public class TestHelper
 {
 	private static final long		DEFAULT_DURATION	= 1;
-	private static final TimeUnit	DEFAULT_TIME_UNIT	= TimeUnit.SECONDS;
+	private static final TimeUnit	DEFAULT_TIME_UNIT	= TimeUnit.MILLISECONDS;
 
 	public static <T> boolean waitUntilEqual(T expected, Generator<T> action)
 	{
@@ -56,6 +56,15 @@ public class TestHelper
 	{
 		assertEqualsWithTimeout(expected, action, DEFAULT_DURATION,
 				DEFAULT_TIME_UNIT);
+	}
+
+
+	public static <T> void assertEqualsWithTimeout(T expected,
+																								 Generator<T> action,
+																								 long maxMills)
+	{
+		assertEqualsWithTimeout(expected, action, maxMills,
+						DEFAULT_TIME_UNIT);
 	}
 
 	public static <T> void assertEqualsWithTimeout(T expected,

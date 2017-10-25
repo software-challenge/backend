@@ -3,8 +3,15 @@ package sc.protocol.requests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import sc.api.plugins.exceptions.RescuableClientException;
+import sc.framework.plugins.SimplePlayer;
+import sc.networking.clients.IAdministrativeListener;
+import sc.networking.clients.IHistoryListener;
+import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.server.Configuration;
 import sc.server.client.PlayerListener;
 import sc.server.client.TestLobbyClientListener;
 import sc.server.client.TestObserverListener;
@@ -13,11 +20,10 @@ import sc.server.gaming.GameRoom;
 import sc.server.gaming.ObserverRole;
 import sc.server.gaming.PlayerRole;
 import sc.server.helpers.TestHelper;
-import sc.server.network.Client;
-import sc.server.network.IClientRole;
-import sc.server.network.RealServerTest;
+import sc.server.network.*;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
+import sc.shared.GameResult;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -228,5 +234,45 @@ public class RequestTest extends RealServerTest{
 
   }
 
+
+  @Test
+  public void cancelRequest(){
+
+    player1.authenticate(PASSWORD);
+    player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    TestLobbyClientListener listener = new TestLobbyClientListener();
+    player1.addListener(listener);
+
+    // Wait for messages to get to server
+    Assert.assertTrue(TestHelper.waitUntilTrue(() -> lobby.getGameManager().getGames().size() > 0, 1000));
+
+    player1.send(new CancelRequest(listener.roomid));
+    Assert.assertTrue(TestHelper.waitUntilTrue(() -> lobby.getGameManager().getGames().size() == 0, 1000));
+    Assert.assertEquals(0,lobby.getGameManager().getGames().size());
+  }
+
+  @Test
+  public void testModeRequest(){
+
+    player1.authenticate(PASSWORD);
+    player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    TestLobbyClientListener listener = new TestLobbyClientListener();
+    player1.addListener(listener);
+
+    player1.send(new TestModeRequest(true));
+    TestHelper.assertEqualsWithTimeout("true",()->Configuration.get(Configuration.TEST_MODE), 1000);
+
+    player1.send(new TestModeRequest(false));
+    TestHelper.assertEqualsWithTimeout("false",()->Configuration.get(Configuration.TEST_MODE), 1000);
+
+
+  }
+
+  @Test
+  public void getScoreForPlayerRequest(){
+    //TODO implement
+  }
 
 }

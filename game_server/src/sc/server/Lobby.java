@@ -163,7 +163,7 @@ public class Lobby implements IClientListener
 			  if (source.isAdministrator()) {
           boolean testMode = ((TestModeRequest) packet).testMode;
           logger.info("Test mode is set to {}", testMode);
-          Configuration.set(Configuration.TEST_MODE, new Boolean(testMode).toString());
+          Configuration.set(Configuration.TEST_MODE, Boolean.toString(testMode));
           source.send(new TestModeMessage(testMode));
         }
       }
