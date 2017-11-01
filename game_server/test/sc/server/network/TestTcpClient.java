@@ -7,6 +7,7 @@ import sc.networking.TcpNetwork;
 import sc.networking.clients.XStreamClient;
 
 import com.thoughtworks.xstream.XStream;
+import sc.protocol.responses.ProtocolMessage;
 
 public class TestTcpClient extends XStreamClient
 {
@@ -16,7 +17,7 @@ public class TestTcpClient extends XStreamClient
 	}
 
 	@Override
-	protected void onObject(Object o)
+	protected void onObject(ProtocolMessage o)
 	{
 		// ignore it
 		// LoggerFactory.getLogger(this.getClass()).debug("Received: {}", o);

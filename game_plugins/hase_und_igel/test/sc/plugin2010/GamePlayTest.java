@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import sc.api.plugins.exceptions.GameLogicException;
-import sc.api.plugins.exceptions.RescueableClientException;
+import sc.api.plugins.exceptions.RescuableClientException;
 
 public class GamePlayTest
 {
@@ -19,7 +19,7 @@ public class GamePlayTest
 	private Player	blue;
 
 	@Before
-	public void beforeEveryTest() throws RescueableClientException
+	public void beforeEveryTest() throws RescuableClientException
 	{
 		g = new Game();
 		b = g.getBoard();
@@ -47,10 +47,10 @@ public class GamePlayTest
 	/**
 	 * Überprüft den allgemeinen, abwechselnden Spielablauf
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void basicGameCycle() throws RescueableClientException
+	public void basicGameCycle() throws RescuableClientException
 	{
 		g.start();
 
@@ -121,10 +121,10 @@ public class GamePlayTest
 	/**
 	 * Überprüft, dass der Rundenzähler korrekt gesetzt wird.
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void turnCounting() throws RescueableClientException
+	public void turnCounting() throws RescuableClientException
 	{
 		g.start();
 
@@ -166,11 +166,11 @@ public class GamePlayTest
 	/**
 	 * Überprüft den Ablauf, das Ziel zu erreichen
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 * @throws InterruptedException 
 	 */
 	@Test
-	public void enterGoalCycle() throws RescueableClientException, InterruptedException
+	public void enterGoalCycle() throws RescuableClientException, InterruptedException
 	{
 		g.start();
 
@@ -213,10 +213,10 @@ public class GamePlayTest
 	 * Wenn ein Spieler ein Hasenfeld neu betritt _MUSS_ eine Hasenkarte
 	 * gespielt werden
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void mustPlayCard() throws RescueableClientException
+	public void mustPlayCard() throws RescuableClientException
 	{
 		g.start();
 
@@ -272,10 +272,10 @@ public class GamePlayTest
 	 * Positionsfeldern
 	 * Karotten bekommt.
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void onPositionField() throws RescueableClientException
+	public void onPositionField() throws RescuableClientException
 	{
 		g.start();
 
@@ -335,10 +335,10 @@ public class GamePlayTest
 	/**
 	 * Überprüft die Bedingungen, unter denen das Ziel betreten werden kann
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void enterGoal() throws RescueableClientException
+	public void enterGoal() throws RescuableClientException
 	{
 		int carrotAt = b.getPreviousFieldByTyp(FieldTyp.CARROT, 64);
 		red.setFieldNumber(carrotAt);
@@ -359,10 +359,10 @@ public class GamePlayTest
 	 * Überprüft, dass blau einen letzen Zug bekommt, wenn rot vor Ihr das Ziel
 	 * erreicht.
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void blueHasLastMove() throws RescueableClientException
+	public void blueHasLastMove() throws RescuableClientException
 	{
 		g.start();
 
@@ -381,10 +381,10 @@ public class GamePlayTest
 	 * Überprüft, dass rot keinen letzen Zug bekommt, wenn blau vor Ihr das Ziel
 	 * erreicht.
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void redHasNoLastMove() throws RescueableClientException
+	public void redHasNoLastMove() throws RescuableClientException
 	{
 		g.start();
 
@@ -421,10 +421,10 @@ public class GamePlayTest
 	/**
 	 * Simuliert den Ablauf von Salat-Fressen
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void eatSaladCycle() throws RescueableClientException
+	public void eatSaladCycle() throws RescuableClientException
 	{
 		g.start();
 
@@ -446,10 +446,10 @@ public class GamePlayTest
 	/**
 	 * Simuliert den Ablauf einen Hasenjoker auszuspielen
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void playCardCycle() throws RescueableClientException
+	public void playCardCycle() throws RescuableClientException
 	{
 		g.start();
 
@@ -475,10 +475,10 @@ public class GamePlayTest
 	/**
 	 * Simuliert das Fressen von Karotten auf einem Karottenfeld
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void takeCarrotsCycle() throws RescueableClientException
+	public void takeCarrotsCycle() throws RescuableClientException
 	{
 		g.start();
 
@@ -501,10 +501,10 @@ public class GamePlayTest
 	/**
 	 * Simuliert das Ablegen von Karotten auf einem Karottenfeld
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void dropCarrotsCycle() throws RescueableClientException
+	public void dropCarrotsCycle() throws RescuableClientException
 	{
 		g.start();
 
@@ -645,10 +645,10 @@ public class GamePlayTest
 	/**
 	 * Simuliert den Verlauf einer Zurückfallen-Aktion
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void fallbackCycle() throws RescueableClientException
+	public void fallbackCycle() throws RescuableClientException
 	{
 		g.start();
 
@@ -676,10 +676,10 @@ public class GamePlayTest
 	/**
 	 * Ein Spieler kann sich zweimal hintereinander zurückfallen lassen
 	 * 
-	 * @throws RescueableClientException
+	 * @throws RescuableClientException
 	 */
 	@Test
-	public void fallbackTwice() throws RescueableClientException
+	public void fallbackTwice() throws RescuableClientException
 	{
 		g.start();
 

@@ -5,18 +5,9 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.exceptions.RescueableClientException;
-import sc.protocol.requests.AuthenticateRequest;
-import sc.protocol.requests.CancelRequest;
-import sc.protocol.requests.FreeReservationRequest;
-import sc.protocol.requests.ILobbyRequest;
-import sc.protocol.requests.JoinPreparedRoomRequest;
-import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.requests.ObservationRequest;
-import sc.protocol.requests.PauseGameRequest;
-import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.StepRequest;
-import sc.protocol.responses.RoomPacket;
+import sc.api.plugins.exceptions.RescuableClientException;
+import sc.protocol.requests.*;
+import sc.protocol.responses.*;
 import sc.server.gaming.GameRoom;
 import sc.server.gaming.GameRoomManager;
 import sc.server.gaming.PlayerRole;
@@ -26,6 +17,7 @@ import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
 import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;
+import sc.shared.Score;
 
 /**
  * The lobby will help clients find a open game or create new games to play with
@@ -34,25 +26,34 @@ import sc.server.network.PacketCallback;
  * @author mja
  * @author rra
  */
-public class Lobby implements IClientManagerListener, IClientListener
+public class Lobby implements IClientListener
 {
 	private final Logger			logger			= LoggerFactory
 															.getLogger(Lobby.class);
-	private final GameRoomManager	gameManager		= new GameRoomManager();
-	private final ClientManager		clientManager	= new ClientManager();
+	private final GameRoomManager	gameManager;		
+	private final ClientManager		clientManager;
 
 	public Lobby()
 	{
-		this.clientManager.addListener(this);
+		this.gameManager = new GameRoomManager();
+		this.clientManager = new ClientManager(this);
 	}
 
+	/**
+	 * Starts the ClientManager in it's own daemon thread. This method should be used only once.
+	 * ClientManager starts clientListener.
+	 * clientListener starts SocketListener on defined port to watch for new connecting clients.
+	 */
 	public void start() throws IOException
 	{
-		this.gameManager.start();
 		this.clientManager.start();
 	}
 
-	@Override
+	/**
+	 * Add lobby as listener to client. 
+	 * Prepare client for send and receive.
+	 * @param client connected XStreamClient
+	 */
 	public void onClientConnected(Client client)
 	{
 		client.addClientListener(this);
@@ -62,23 +63,16 @@ public class Lobby implements IClientManagerListener, IClientListener
 	@Override
 	public void onClientDisconnected(Client source)
 	{
-		/*final Client client = source;
-		new Thread(new Runnable() {
-			@Override
-			public void run()
-			{
-				synchronized(client) {
-					client.removeClientListener(Lobby.this);
-				}
-			}
-		}).start();*/
 		this.logger.info("{} disconnected.", source);
 		source.removeClientListener(this);
 	}
 
+	/**
+	 * handle requests or moves of clients
+	 */
 	@Override
 	public void onRequest(Client source, PacketCallback callback)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		Object packet = callback.getPacket();
 
@@ -90,12 +84,20 @@ public class Lobby implements IClientManagerListener, IClientListener
 						.redeemReservationCode(source,
 								((JoinPreparedRoomRequest) packet)
 										.getReservationCode());
-
 			}
 			else if (packet instanceof JoinRoomRequest)
 			{
-				this.gameManager.joinOrCreateGame(source,
+				GameRoomMessage gameRoomMessage = this.gameManager.joinOrCreateGame(source,
 						((JoinRoomRequest) packet).getGameType());
+				// null is returned if join was unsuccessful
+				if (gameRoomMessage != null) {
+          for (Client admin :
+                  clientManager.getClients()) {
+            if (admin.isAdministrator()) {
+              admin.send(gameRoomMessage);
+            }
+          }
+        }
 			}
 			else if (packet instanceof AuthenticateRequest)
 			{
@@ -104,18 +106,18 @@ public class Lobby implements IClientManagerListener, IClientListener
 			}
 			else if (packet instanceof PrepareGameRequest)
 			{
-				PrepareGameRequest prepared = (PrepareGameRequest) packet;
-				source.send(this.gameManager.prepareGame(prepared));
-				/*source.send(this.gameManager.prepareGame(
-						prepared.getGameType(), prepared.getPlayerCount(),
-						prepared.getSlotDescriptors()));*/
+				if (source.isAdministrator()) {
+					PrepareGameRequest prepared = (PrepareGameRequest) packet;
+					source.send(this.gameManager.prepareGame(prepared));
+				}
 			}
-			else if (packet instanceof FreeReservationRequest)
-			{
-				FreeReservationRequest request = (FreeReservationRequest) packet;
-				ReservationManager.freeReservation(request.getReservation());
-			}
-			else if (packet instanceof RoomPacket)	// e.g. new move
+			else if (packet instanceof FreeReservationRequest) {
+        if (source.isAdministrator()) {
+          FreeReservationRequest request = (FreeReservationRequest) packet;
+          ReservationManager.freeReservation(request.getReservation());
+        }
+      }
+			else if (packet instanceof RoomPacket)	// i.e. new move
 			{
 				RoomPacket casted = (RoomPacket) packet;
 				GameRoom room = this.gameManager.findRoom(casted.getRoomId());
@@ -123,36 +125,58 @@ public class Lobby implements IClientManagerListener, IClientListener
 			}
 			else if (packet instanceof ObservationRequest)
 			{
-				// TODO: check permissions
-				ObservationRequest observe = (ObservationRequest) packet;
-				GameRoom room = this.gameManager.findRoom(observe.getRoomId());
-				room.addObserver(source);
+				if (source.isAdministrator()) {
+          ObservationRequest observe = (ObservationRequest) packet;
+          GameRoom room = this.gameManager.findRoom(observe.getRoomId());
+          room.addObserver(source);
+        }
 			}
 			else if (packet instanceof PauseGameRequest)
 			{
-				PauseGameRequest pause = (PauseGameRequest) packet;
-				try {
-					GameRoom room = this.gameManager.findRoom(pause.roomId);
-					room.pause(pause.pause);
-				} catch (RescueableClientException e) {
-					this.logger.error("Got exception on pause: {}", e);
-				}
+			  if (source.isAdministrator()) {
+          PauseGameRequest pause = (PauseGameRequest) packet;
+          try {
+            GameRoom room = this.gameManager.findRoom(pause.roomId);
+            room.pause(pause.pause);
+          } catch (RescuableClientException e) {
+            this.logger.error("Got exception on pause: {}", e);
+          }
+        }
 			}
 			else if (packet instanceof StepRequest)
 			{
-				StepRequest pause = (StepRequest) packet;
-				GameRoom room = this.gameManager.findRoom(pause.roomId);
-				room.step(pause.forced);
+			  if (source.isAdministrator()) {
+          StepRequest pause = (StepRequest) packet;
+          GameRoom room = this.gameManager.findRoom(pause.roomId);
+          room.step(pause.forced);
+        }
 			}
 			else if (packet instanceof CancelRequest)
 			{
-				CancelRequest cancel = (CancelRequest) packet;
-				GameRoom room = this.gameManager.findRoom(cancel.roomId);
-				room.cancel();
+			  if (source.isAdministrator()) {
+          CancelRequest cancel = (CancelRequest) packet;
+          GameRoom room = this.gameManager.findRoom(cancel.roomId);
+          room.cancel();
+        }
 			}
+			else if (packet instanceof TestModeRequest) {
+			  if (source.isAdministrator()) {
+          boolean testMode = ((TestModeRequest) packet).testMode;
+          logger.info("Test mode is set to {}", testMode);
+          Configuration.set(Configuration.TEST_MODE, Boolean.toString(testMode));
+          source.send(new TestModeMessage(testMode));
+        }
+      }
+      else if (packet instanceof GetScoreForPlayerRequest) {
+			  if (source.isAdministrator()) {
+          String displayName = ((GetScoreForPlayerRequest) packet).getDisplayName();
+          logger.info("Trying to return score of player {}", displayName);
+          source.send(new PlayerScorePacket(getScoreOfPlayer(displayName)));
+        }
+      }
 			else
 			{
-				throw new RescueableClientException(
+				throw new RescuableClientException(
 						"Unhandled Packet of type: " + packet.getClass());
 			}
 
@@ -160,10 +184,18 @@ public class Lobby implements IClientManagerListener, IClientListener
 		}
 	}
 
-	public void close()
+  private Score getScoreOfPlayer(String displayName) {
+    for (Score score : this.gameManager.getScores()) {
+      if (score.getDisplayName().equals(displayName)) {
+        return score;
+      }
+    }
+    return null;
+  }
+
+  public void close()
 	{
 		this.clientManager.close();
-		this.gameManager.close();
 	}
 
 	public GameRoomManager getGameManager()
@@ -177,12 +209,12 @@ public class Lobby implements IClientManagerListener, IClientListener
 	}
 
 	@Override
-	public void onError(Client source, Object errorPacket)
+	public void onError(Client source, ProtocolErrorMessage errorPacket)
 	{
 		for (IClientRole role : source.getRoles())
 		{
 			if (role.getClass() == PlayerRole.class) {
-				((PlayerRole)role).getPlayerSlot().getRoom().onClientError(source, errorPacket);
+				((PlayerRole)role).getPlayerSlot().getRoom().onClientError(errorPacket);
 			}
 		}
 	}

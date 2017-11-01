@@ -12,8 +12,8 @@ import sc.networking.clients.ILobbyClientListener;
 import sc.networking.clients.LobbyClient;
 import sc.plugin2017.util.Configuration;
 import sc.protocol.helpers.RequestResult;
-import sc.protocol.responses.ErrorResponse;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.GameResult;
 import sc.shared.SlotDescriptor;
 
@@ -81,7 +81,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 * @param handle Handle
 	 * @return controllable game
 	 */
-	public IControllableGame observeGame(PrepareGameResponse handle) {
+	public IControllableGame observeGame(PrepareGameProtocolMessage handle) {
 		return this.client.observe(handle);
 	}
 
@@ -92,7 +92,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 *            comes from prepareGame()
 	 * @return controllinstance to do pause, unpause etc
 	 */
-	public IControllableGame observeAndControl(PrepareGameResponse handle) {
+	public IControllableGame observeAndControl(PrepareGameProtocolMessage handle) {
 		return this.client.observeAndControl(handle);
 	}
 
@@ -124,7 +124,7 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	 * Called, when an error is sent to the room
 	 */
 	@Override
-	public void onError(String roomId, ErrorResponse response) {
+	public void onError(String roomId, ProtocolErrorMessage response) {
 	  logger.debug("onError: Client {} received error {}", this, response.getMessage());
 		this.error = response.getMessage();
 	}
@@ -184,15 +184,15 @@ public abstract class AbstractClient implements ILobbyClientListener {
 	}
 
 	public void prepareGame(int playerCount) {
-		this.client.prepareGame(this.gameType, playerCount);
+		this.client.prepareGame(this.gameType);
 	}
 
 	@Override
-	public void onGamePrepared(PrepareGameResponse response) {
+	public void onGamePrepared(PrepareGameProtocolMessage response) {
 		// not needed
 	}
 
-	public RequestResult<PrepareGameResponse> prepareGameAndWait(SlotDescriptor... descriptors)
+	public RequestResult<PrepareGameProtocolMessage> prepareGameAndWait(SlotDescriptor... descriptors)
 			throws InterruptedException {
 		return this.client.prepareGameAndWait(this.gameType, descriptors);
 	}

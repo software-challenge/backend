@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
@@ -104,8 +103,6 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public IPlayer onPlayerJoined() throws TooManyPlayersException {
-    if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
-      throw new TooManyPlayersException();
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -124,36 +121,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     return player;
   }
 
-  @Override
-  public void onPlayerLeft(IPlayer player) {
-    if (!player.hasViolated()) {
-      player.setLeft(true);
-      onPlayerLeft(player, ScoreCause.LEFT);
-    } else {
-      onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
-    }
-  }
-
-  @Override
-  public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-    Map<IPlayer, PlayerScore> res = generateScoreMap();
-
-    for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
-      PlayerScore score = entry.getValue();
-
-      if (entry.getKey() == player) {
-        score.setCause(cause);
-      }
-    }
-
-    notifyOnGameOver(res);
-  }
-
-  @Override
-  public boolean ready() {
-    return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
-  }
-
+  /**
+   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
+   */
   @Override
   public void start() {
     for (final Player p : this.players) {
@@ -163,6 +133,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     super.start();
   }
 
+  /**
+   * Currently not implemented, why is this needed? Is this needed?
+   */
   @Override
   protected void onNewTurn() {
 
@@ -224,7 +197,7 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   protected ActionTimeout getTimeoutFor(Player player) {
-    return new ActionTimeout(true, 10000l, 2000l);
+    return new ActionTimeout(true, 1000000l, 200000l);
   }
 
   /**
@@ -266,7 +239,8 @@ public class Game extends RoundBasedGameInstance<Player> {
    * @return WinCondition with winner and reason or null, if no win condition is
    *         yet met.
    */
-  public WinCondition checkWinCondition() {
+  @Override
+  public sc.shared.WinCondition checkWinCondition() {
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached

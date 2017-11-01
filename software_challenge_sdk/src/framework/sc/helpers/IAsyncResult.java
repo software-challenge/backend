@@ -1,6 +1,8 @@
 package sc.helpers;
 
-public interface IAsyncResult<T>
+import sc.protocol.responses.ProtocolMessage;
+
+public interface IAsyncResult
 {
-	public void operate(T result);
+	public void operate(ProtocolMessage result);
 }

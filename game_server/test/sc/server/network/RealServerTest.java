@@ -38,7 +38,7 @@ public abstract class RealServerTest
 	{
 		// Random PortAllocation
 		Configuration.set(Configuration.PORT_KEY, "0");
-
+		Configuration.set(Configuration.PASSWORD_KEY, "TEST_PASSWORD");
 		this.lobby = new Lobby();
 		this.clientMgr = this.lobby.getClientManager();
 		this.gameMgr = this.lobby.getGameManager();
@@ -70,14 +70,8 @@ public abstract class RealServerTest
 
 	protected void waitForConnect(int count)
 	{
-		TestHelper.assertEqualsWithTimeout(count, new Generator<Integer>() {
-			@Override
-			public Integer operate()
-			{
-				return RealServerTest.this.lobby.getClientManager().clients
-						.size();
-			}
-		}, 1, TimeUnit.SECONDS);
+		TestHelper.assertEqualsWithTimeout(count, () -> RealServerTest.this.lobby.getClientManager().clients
+						.size(), 1, TimeUnit.SECONDS);
 	}
 
 	protected int getServerPort()

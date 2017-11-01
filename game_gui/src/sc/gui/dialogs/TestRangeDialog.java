@@ -58,9 +58,9 @@ import javax.swing.text.PlainDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IPlayer;
 import sc.common.HelperMethods;
 import sc.common.UnsupportedFileExtensionException;
+import sc.framework.plugins.SimplePlayer;
 import sc.gui.PresentationFacade;
 import sc.gui.dialogs.renderer.CenteredTableCellRenderer;
 import sc.gui.stuff.KIInformation;
@@ -863,7 +863,7 @@ public class TestRangeDialog extends JDialog {
           String replayFilename = null;
           Collections.rotate(descriptors, -rotation); // Undo rotation
           boolean winner = false;
-          for (IPlayer player : result.getWinners()) {
+          for (SimplePlayer player : result.getWinners()) {
             if (player.getDisplayName().equals(descriptors.get(0).getDisplayName())) {
               winner = true;
             }

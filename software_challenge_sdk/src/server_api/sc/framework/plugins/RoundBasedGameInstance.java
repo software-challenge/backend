@@ -1,297 +1,360 @@
 package sc.framework.plugins;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import sc.api.plugins.IPlayer;
+import sc.api.plugins.IGameInstance;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.host.IGameListener;
+import sc.protocol.responses.ProtocolErrorMessage;
+import sc.protocol.responses.ProtocolMessage;
+import sc.protocol.responses.ProtocolMove;
+import sc.shared.InvalidMoveException;
 import sc.shared.PlayerScore;
 import sc.shared.ScoreCause;
+import sc.shared.WinCondition;
 
-public abstract class RoundBasedGameInstance<P extends SimplePlayer> extends
-		SimpleGameInstance<P> implements IPauseable
-{
-	private static Logger	logger				= LoggerFactory
-														.getLogger(RoundBasedGameInstance.class);
-	protected P				activePlayer		= null;
+public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance {
+  private static Logger logger = LoggerFactory
+          .getLogger(RoundBasedGameInstance.class);
+  protected P activePlayer = null;
 
-	private int				turn				= 0;
+  private int round = 0;
 
-	@XStreamOmitField
-	private boolean			paused				= false;
+  @XStreamOmitField
+  private boolean paused = false;
 
-	@XStreamOmitField
-	private Runnable		afterPauseAction	= null;
+  @XStreamOmitField
+  private Runnable afterPauseAction = null;
 
-	@XStreamOmitField
-	private Object			afterPauseLock		= new Object();
+  @XStreamOmitField
+  private Object afterPauseLock = new Object();
 
-	@XStreamOmitField
-	private ActionTimeout	requestTimeout		= null;
+  @XStreamOmitField
+  private ActionTimeout requestTimeout = null;
 
-	public int getTurn()
-	{
-		return this.turn;
-	}
+  @XStreamOmitField
+  protected final List<IGameListener> listeners = new LinkedList<>();
 
-	@Override
-	public final void onAction(IPlayer fromPlayer, Object data)
-			throws GameLogicException
-	{
-		if (fromPlayer.equals(this.activePlayer))
-		{
-			if (wasMoveRequested())
-			{
-				this.requestTimeout.stop();
+  @XStreamImplicit(itemFieldName = "player")
+  protected final List<P> players = new ArrayList<>();
 
-				if (this.requestTimeout.didTimeout())
-				{
-					logger.warn("Client hit soft-timeout.");
-					fromPlayer.setSoftTimeout(true);
-					onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
-				}
-				else
-				{
-					onRoundBasedAction(fromPlayer, data);
-				}
-			}
-			else
-			{
-				throw new GameLogicException(
-						"We didn't request a move from you yet.");
-			}
-		}
-		else
-		{
-			throw new GameLogicException("It's not your turn yet.");
-		}
-	}
+  @XStreamOmitField
+  protected String pluginUUID;
 
-	private boolean wasMoveRequested()
-	{
-		return this.requestTimeout != null;
-	}
+  public int getRound() {
+    return this.round;
+  }
 
-	protected abstract void onRoundBasedAction(IPlayer fromPlayer, Object data)
-			throws GameLogicException;
+  /**
+   * Called by the Server once an action was received.
+   *
+   * @param fromPlayer The player who invoked this action.
+   * @param data       The plugin-specific data.
+   *
+   * @throws GameLogicException if any invalid action is done, i.e. game rule violation
+   */
+  public final void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
+          throws GameLogicException {
+    Optional<String> errorMsg = Optional.empty();
+    if (fromPlayer.equals(this.activePlayer)) {
+      if (wasMoveRequested()) {
+        this.requestTimeout.stop();
 
-	protected abstract boolean checkGameOverCondition();
+        if (this.requestTimeout.didTimeout()) {
+          logger.warn("Client hit soft-timeout.");
+          fromPlayer.setSoftTimeout(true);
+          onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
+        } else {
+          onRoundBasedAction(fromPlayer, data);
+        }
+      } else {
+        errorMsg = Optional.of("We didn't request a data from you yet.");
+      }
+    } else {
+      errorMsg = Optional.of("It's not your turn yet.");
+    }
+    if (errorMsg.isPresent()) {
+      fromPlayer.notifyListeners(new ProtocolErrorMessage(data, errorMsg.get()));
+      throw new GameLogicException(errorMsg.get());
+    }
+  }
 
-	@Override
-	public void destroy()
-	{
-		logger.info("Destroying Game");
+  private boolean wasMoveRequested() {
+    return this.requestTimeout != null;
+  }
 
-		if(this.requestTimeout != null)
-		{
-			this.requestTimeout.stop();
-			this.requestTimeout = null;
-		}
-	}
+  protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
+          throws GameLogicException;
 
-	@Override
-	public void start()
-	{
-		if (this.listeners.size() == 0)
-		{
-			logger.warn("Couldn't find any listeners. Is this intended?");
-		}
+  protected abstract WinCondition checkWinCondition();
 
-		// XXX: Testing if waiting before start helps with timeout issue
-		try {
-		    logger.info("Waiting 200ms before starting game...");
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		this.activePlayer = this.players.get(0);
-		onActivePlayerChanged(this.activePlayer);
-		notifyOnNewState(getCurrentState());
-		notifyActivePlayer();
-	}
+  /**
+   * At any time this method might be invoked by the server. Any open handles
+   * should be removed. No events should be sent out (GameOver etc) after this
+   * method has been called.
+   */
+  public void destroy() {
+    logger.info("Destroying Game");
 
-	protected void onActivePlayerChanged(P newActivePlayer)
-	{
-		// optional callback
-	}
+    if (this.requestTimeout != null) {
+      this.requestTimeout.stop();
+      this.requestTimeout = null;
+    }
+  }
 
-	protected void next()
-	{
-		next(getPlayerAfter(this.activePlayer));
-	}
+  /**
+   * Server or an administrator requests the game to start now.
+   */
+  public void start() {
+    if (this.listeners.isEmpty()) {
+      logger.warn("Couldn't find any listeners. Is this intended?");
+    }
 
-	protected final P getPlayerAfter(P player)
-	{
-		return getPlayerAfter(player, 1);
-	}
+    this.activePlayer = this.players.get(0);
+    // TODO currently no implementation
+    // onActivePlayerChanged(this.activePlayer);
+    notifyOnNewState(getCurrentState());
+    notifyActivePlayer();
+  }
 
-	protected final P getPlayerAfter(P player, int step)
-	{
-		int playerPos = this.players.indexOf(player);
-		playerPos = (playerPos + step) % this.players.size();
-		return this.players.get(playerPos);
-	}
+  /**
+   * On violation player is removed forcefully, if player has not violated, he has left by himself (i.e. Exception)
+   *
+   * @param player left player
+   */
+  public void onPlayerLeft(SimplePlayer player) {
+    if (!player.hasViolated()) {
+      player.setLeft(true);
+      onPlayerLeft(player, ScoreCause.LEFT);
+    } else {
+      onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
+    }
+  }
 
-	protected final void next(P nextPlayer)
-	{
-		if (increaseTurnIfNecessary(nextPlayer))
-		{
-			this.turn++;
+  /**
+   * Handle leave of player
+   */
+  public void onPlayerLeft(SimplePlayer player, ScoreCause cause) {
+    Map<SimplePlayer, PlayerScore> res = generateScoreMap();
 
-			// change player before calling new turn callback
-			this.activePlayer = nextPlayer;
-			onNewTurn();
-		}
-		logger.debug("next turn ({}) for player {}", this.turn, nextPlayer);
+    for (Entry<SimplePlayer, PlayerScore> entry : res.entrySet()) {
+      PlayerScore score = entry.getValue();
 
-		this.activePlayer = nextPlayer;
-		notifyOnNewState(getCurrentState());
+      if (entry.getKey() == player) {
+        score.setCause(cause);
+      }
+    }
 
-		if (checkGameOverCondition())
-		{
-			notifyOnGameOver(generateScoreMap());
-		}
-		else
-		{
-			notifyActivePlayer();
-		}
-	}
+    notifyOnGameOver(res);
+  }
 
-	protected abstract PlayerScore getScoreFor(P p);
+  protected void onActivePlayerChanged(P newActivePlayer) {
+    // optional callback
+  }
 
-	protected boolean increaseTurnIfNecessary(P nextPlayer)
-	{
-		return (this.activePlayer != nextPlayer && this.players
-				.indexOf(nextPlayer) == 0);
-	}
+  protected void next() {
+    next(getPlayerAfter(this.activePlayer));
+  }
 
-	protected abstract void onNewTurn();
+  protected final P getPlayerAfter(P player) {
+    return getPlayerAfter(player, 1);
+  }
 
-	/**
-	 * Gets the current state representation.
-	 *
-	 * @return
-	 */
-	protected abstract Object getCurrentState();
+  protected final P getPlayerAfter(P player, int step) {
+    int playerPos = this.players.indexOf(player);
+    playerPos = (playerPos + step) % this.players.size();
+    return this.players.get(playerPos);
+  }
 
-	/**
-	 * Notifies the active player that it's his/her time to make a move. If the
-	 * game is paused, the request will be hold back.
-	 */
-	protected final void notifyActivePlayer()
-	{
-		final P currentActivePlayer = this.activePlayer;
+  protected final void next(P nextPlayer) {
+    if (increaseTurnIfNecessary(nextPlayer)) {
+      this.round++;
 
-		if (this.paused && currentActivePlayer.isShouldBePaused())
-		{
-			synchronized (this.afterPauseLock)
-			{
-				logger.debug("Setting AfterPauseAction");
+      // change player before calling new round callback
+      this.activePlayer = nextPlayer;
+    }
+    logger.debug("next round ({}) for player {}", this.round, nextPlayer);
 
-				this.afterPauseAction = new Runnable() {
-					@Override
-					public void run()
-					{
-						requestMove(currentActivePlayer);
-					}
-				};
+    this.activePlayer = nextPlayer;
+    notifyOnNewState(getCurrentState());
 
-				for (IGameListener listener : this.listeners)
-				{
-					listener.onPaused(currentActivePlayer);
-				}
-			}
-		}
-		else
-		{
-			requestMove(currentActivePlayer);
-		}
-	}
+    if (checkWinCondition() != null) {
+      notifyOnGameOver(generateScoreMap());
+    } else {
+      notifyActivePlayer();
+    }
+  }
 
-	/**
-	 * Sends a MoveRequest directly to the player (does not take PAUSE into
-	 * account)
-	 *
-	 * @param player
-	 */
-	protected synchronized final void requestMove(P player)
-	{
-		final ActionTimeout timeout = player.isCanTimeout() ? getTimeoutFor(player)
-				: new ActionTimeout(false);
+  public abstract PlayerScore getScoreFor(P p);
 
-		final Logger logger = RoundBasedGameInstance.logger;
-		final P playerToTimeout = player;
+  protected boolean increaseTurnIfNecessary(P nextPlayer) {
+    return (this.activePlayer != nextPlayer && this.players
+            .indexOf(nextPlayer) == 0);
+  }
+
+  /**
+   * Gets the current state representation.
+   *
+   * @return current state
+   */
+  protected abstract Object getCurrentState();
+
+  /**
+   * Notifies the active player that it's his/her time to make a move. If the
+   * game is paused, the request will be hold back.
+   */
+  protected final void notifyActivePlayer() {
+    final P currentActivePlayer = this.activePlayer;
+
+    if (this.paused && currentActivePlayer.isShouldBePaused()) {
+      synchronized (this.afterPauseLock) {
+        logger.debug("Setting AfterPauseAction");
+
+        this.afterPauseAction = () -> requestMove(currentActivePlayer);
+
+        for (IGameListener listener : this.listeners) {
+          listener.onPaused(currentActivePlayer);
+        }
+      }
+    } else {
+      requestMove(currentActivePlayer);
+    }
+  }
+
+  /**
+   * Sends a MoveRequest directly to the player (does not take PAUSE into
+   * account)
+   *
+   * @param player player to make a move
+   */
+  protected synchronized final void requestMove(P player) {
+    final ActionTimeout timeout = player.isCanTimeout() ? getTimeoutFor(player)
+            : new ActionTimeout(false);
+
+    final Logger logger = RoundBasedGameInstance.logger;
+    final P playerToTimeout = player;
 
     // Signal the JVM to do a GC run now and lower the propability that the GC
     // runs when the player sends back its move, resulting in disqualification
     // because of soft timeout.
     System.gc();
 
-		this.requestTimeout = timeout;
-		timeout.start(new Runnable() {
-			@Override
-			public void run()
-			{
-				logger.warn("Player {} reached the timeout of {}ms",
-						playerToTimeout, timeout.getHardTimeout());
-				playerToTimeout.setHardTimeout(true);
-				onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
-			}
-		});
+    this.requestTimeout = timeout;
+    timeout.start(() -> {
+      logger.warn("Player {} reached the timeout of {}ms",
+              playerToTimeout, timeout.getHardTimeout());
+      playerToTimeout.setHardTimeout(true);
+      onPlayerLeft(playerToTimeout, ScoreCause.HARD_TIMEOUT);
+    });
 
-		player.requestMove();
-	}
+    player.requestMove();
+  }
 
-	protected ActionTimeout getTimeoutFor(P player)
-	{
-		return new ActionTimeout(true);
-	}
+  protected ActionTimeout getTimeoutFor(P player) {
+    return new ActionTimeout(true);
+  }
 
-	protected final boolean isPaused()
-	{
-		return this.paused;
-	}
+  protected final boolean isPaused() {
+    return this.paused;
+  }
 
-	@Override
-	public void afterPause()
-	{
-		synchronized (this.afterPauseLock)
-		{
-			if (this.afterPauseAction == null)
-			{
-				logger
-						.error("AfterPauseAction was null. Might cause a deadlock.");
-			}
-			else
-			{
-				Runnable action = this.afterPauseAction;
-				this.afterPauseAction = null;
-				action.run();
-			}
-		}
-	}
 
-	@Override
-	public void setPauseMode(boolean pause)
-	{
-		this.paused = pause;
-	}
+  public void afterPause() {
+    synchronized (this.afterPauseLock) {
+      if (this.afterPauseAction == null) {
+        logger
+                .error("AfterPauseAction was null. Might cause a deadlock.");
+      } else {
+        Runnable action = this.afterPauseAction;
+        this.afterPauseAction = null;
+        action.run();
+      }
+    }
+  }
 
-	protected Map<IPlayer, PlayerScore> generateScoreMap()
-	{
-		Map<IPlayer, PlayerScore> map = new HashMap<IPlayer, PlayerScore>();
+  /**
+   * XXX Pauses game
+   *
+   * @param pause true if game should be paused
+   */
+  public void setPauseMode(boolean pause) {
+    this.paused = pause;
+  }
 
-		for (final P p : this.players)
-		{
-			map.put(p, getScoreFor(p));
-		}
+  public Map<SimplePlayer, PlayerScore> generateScoreMap() {
+    Map<SimplePlayer, PlayerScore> map = new HashMap<SimplePlayer, PlayerScore>();
 
-		return map;
-	}
+    for (final P p : this.players) {
+      map.put(p, getScoreFor(p));
+    }
+
+    return map;
+  }
+
+  // XXX methods from former SimpleGameInstance
+
+  /**
+   * Extends the set of listeners.
+   *
+   * @param listener
+   */
+  public void addGameListener(IGameListener listener) {
+    this.listeners.add(listener);
+  }
+
+  /**
+   * Removes listener XXX is this right/complete?
+   *
+   * @param listener
+   */
+  public void removeGameListener(IGameListener listener) {
+    this.listeners.remove(listener);
+  }
+
+  protected void notifyOnGameOver(Map<SimplePlayer, PlayerScore> map) {
+    for (IGameListener listener : this.listeners) {
+      try {
+        listener.onGameOver(map);
+      } catch (Exception e) {
+        logger.error("GameOver Notification caused an exception.", e);
+      }
+    }
+  }
+
+  protected void notifyOnNewState(Object mementoState) {
+    for (IGameListener listener : this.listeners) {
+      logger.debug("notifying {} about new game state", listener);
+      try {
+        listener.onStateChanged(mementoState);
+      } catch (Exception e) {
+        logger.error("NewState Notification caused an exception.", e);
+      }
+    }
+  }
+
+  /**
+   * Catch block, after an invalid move was performed
+   * @param e catched Exception
+   * @param author player, that caused the exception
+   * @throws GameLogicException
+   */
+  public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws GameLogicException {
+    author.setViolated(true);
+    String err = "Ungueltiger Zug von '" + author.getDisplayName() + "'.\n" + e.getMessage();
+    author.setViolationReason(e.getMessage());
+    logger.error(err, e);
+    author.notifyListeners(new ProtocolErrorMessage(e.getMove(), err));
+    throw new GameLogicException(err);
+  }
+
+  public String getPluginUUID() {
+    return pluginUUID;
+  }
 }
