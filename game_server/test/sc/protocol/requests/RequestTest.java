@@ -3,14 +3,9 @@ package sc.protocol.requests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import sc.api.plugins.exceptions.RescuableClientException;
-import sc.framework.plugins.SimplePlayer;
-import sc.networking.clients.IAdministrativeListener;
-import sc.networking.clients.IHistoryListener;
-import sc.networking.clients.ILobbyClientListener;
+import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.LobbyClient;
 import sc.protocol.responses.PrepareGameProtocolMessage;
-import sc.protocol.responses.ProtocolErrorMessage;
 import sc.server.Configuration;
 import sc.server.client.PlayerListener;
 import sc.server.client.TestLobbyClientListener;
@@ -23,7 +18,8 @@ import sc.server.helpers.TestHelper;
 import sc.server.network.*;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
-import sc.shared.GameResult;
+import sc.server.plugins.TestTurnRequest;
+import sc.shared.WelcomeMessage;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -151,8 +147,8 @@ public class RequestTest extends RealServerTest{
     player1.addListener(listener);
 
     // Wait for messages to get to server
-    Assert.assertTrue(TestHelper.waitUntilTrue(() -> listener.onGamePrepared, 1000));
-    Assert.assertTrue(listener.onGamePrepared);
+    Assert.assertTrue(TestHelper.waitUntilTrue(() -> listener.gamePreparedReceived, 1000));
+    Assert.assertTrue(listener.gamePreparedReceived);
     Assert.assertNotNull(listener.prepareGameResponse);
     // Let Player 2 and Player 3 join the prepared game
     player2.joinPreparedGame(listener.prepareGameResponse.getReservations().get(0));
@@ -172,9 +168,9 @@ public class RequestTest extends RealServerTest{
     player1.observe(room.getId());
 
     // Wait for the server to register that
-    Assert.assertTrue(TestHelper.waitUntilTrue(()->listener.onObserved, 2000));
+    Assert.assertTrue(TestHelper.waitUntilTrue(()->listener.observedReceived, 2000));
     Assert.assertNotNull(listener.roomid);
-    Assert.assertFalse(listener.onGamePaused);
+    Assert.assertFalse(listener.gamePausedReceived);
     Assert.assertEquals(2, room.getClients().size());
     Assert.assertEquals(true, room.isPaused());
     PlayerRole pr1 = room.getSlots().get(0).getRole();
@@ -185,49 +181,49 @@ public class RequestTest extends RealServerTest{
     player1.send(new StepRequest(room.getId()));
 
     // Wait for it to register
-    Assert.assertTrue(TestHelper.waitUntilTrue(()->p1Listener.onPlayerEvent, 2000));
-    listener.onNewState = false;
+    Assert.assertTrue(TestHelper.waitUntilTrue(()->p1Listener.playerEventReceived, 2000));
+    listener.newStateReceived = false;
 
     // First player sends Move with value 42
     player2.sendMessageToRoom(room.getId(), new TestMove(42));
 
     // Should register as a new state
-    Assert.assertTrue(TestHelper.waitUntilTrue(()->listener.onNewState, 2000));
-    p1Listener.onPlayerEvent = false;
+    Assert.assertTrue(TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000));
+    p1Listener.playerEventReceived = false;
 
     // Request a move from the second player
     player1.send(new StepRequest(room.getId()));
 
 
     // Wait for it to register
-    Assert.assertTrue(TestHelper.waitUntilTrue(()->p2Listener.onPlayerEvent, 2000));
+    Assert.assertTrue(TestHelper.waitUntilTrue(()->p2Listener.playerEventReceived, 2000));
 
     // Second player sends Move with value 73
     player3.sendMessageToRoom(room.getId(), new TestMove(73));
-    listener.onNewState = false;
+    listener.newStateReceived = false;
 
     // Should register as a new state
-    Assert.assertTrue(TestHelper.waitUntilTrue(()->listener.onNewState, 2000));
-    p1Listener.onPlayerEvent = false;
-    p2Listener.onPlayerEvent = false;
+    Assert.assertTrue(TestHelper.waitUntilTrue(()->listener.newStateReceived, 2000));
+    p1Listener.playerEventReceived = false;
+    p2Listener.playerEventReceived = false;
 
     // There should not come another request
-    Assert.assertFalse(TestHelper.waitUntilTrue(()->p1Listener.onPlayerEvent, 500));
-    Assert.assertFalse(TestHelper.waitUntilTrue(()->p2Listener.onPlayerEvent, 500));
+    Assert.assertFalse(TestHelper.waitUntilTrue(()->p1Listener.playerEventReceived, 500));
+    Assert.assertFalse(TestHelper.waitUntilTrue(()->p2Listener.playerEventReceived, 500));
 
     // Try to send a message, without beeing requested
     player3.sendMessageToRoom(room.getId(), new TestMove(21));
-    listener.onNewState = false;
+    listener.newStateReceived = false;
 
     // Should not result in a new game state
-    Assert.assertFalse(TestHelper.waitUntilTrue(()->listener.onNewState, 500));
-    p1Listener.onPlayerEvent = false;
-    p2Listener.onPlayerEvent = false;
-    listener.onNewState = false;
+    Assert.assertFalse(TestHelper.waitUntilTrue(()->listener.newStateReceived, 500));
+    p1Listener.playerEventReceived = false;
+    p2Listener.playerEventReceived = false;
+    listener.newStateReceived = false;
 
     // Should not result in a new player Event
-    Assert.assertFalse(TestHelper.waitUntilTrue(()->p1Listener.onPlayerEvent, 500));
-    Assert.assertFalse(TestHelper.waitUntilTrue(()->p2Listener.onPlayerEvent, 500));
+    Assert.assertFalse(TestHelper.waitUntilTrue(()->p1Listener.playerEventReceived, 500));
+    Assert.assertFalse(TestHelper.waitUntilTrue(()->p2Listener.playerEventReceived, 500));
 
     // Game should be deleted, because player3 send invalid move
     Assert.assertEquals(0, lobby.getGameManager().getGames().size());
@@ -273,6 +269,51 @@ public class RequestTest extends RealServerTest{
   @Test
   public void getScoreForPlayerRequest(){
     //TODO implement
+  }
+
+  @Test
+  public void pauseRequest() {
+    player1.authenticate(PASSWORD);
+    TestLobbyClientListener listener = new TestLobbyClientListener();
+    PlayerListener p1Listener = new PlayerListener();
+    PlayerListener p2Listener = new PlayerListener();
+
+    player1.addListener(listener);
+    player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    TestHelper.waitUntilEqual(1,()->lobby.getGameManager().getGames().size(), 2000);
+    GameRoom room = gameMgr.getGames().iterator().next();
+    room.getSlots().get(0).getRole().getPlayer().addPlayerListener(p1Listener);
+    player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    TestHelper.waitUntilEqual(2, ()->room.getSlots().size(), 2000);
+    room.getSlots().get(1).getRole().getPlayer().addPlayerListener(p2Listener);
+
+    Assert.assertFalse(room.isPaused());
+    TestHelper.waitUntilEqual(2, ()->p1Listener.requests.size(), 2000);
+    Assert.assertEquals(p1Listener.requests.get(0).getClass(), WelcomeMessage.class);
+    Assert.assertEquals(p1Listener.requests.get(1).getClass(), TestTurnRequest.class);
+    listener.newStateReceived = false;
+    player1.send(new PauseGameRequest(room.getId(), true));
+    TestHelper.waitUntilEqual(true,()->room.isPaused(), 2000);
+
+    player1.sendMessageToRoom(room.getId(), new TestMove(0));
+    TestHelper.waitMills(500);
+    Assert.assertFalse(listener.newStateReceived);
+    player1.send(new PauseGameRequest(room.getId(), false));
+    TestHelper.waitUntilEqual(false,()->room.isPaused(), 2000);
+
+    p1Listener.playerEventReceived = false;
+    p2Listener.playerEventReceived = false;
+    player1.send(new PauseGameRequest(room.getId(), true));
+    TestHelper.waitUntilEqual(true,()->room.isPaused(), 2000);
+
+    Assert.assertTrue(p1Listener.playerEventReceived);
+    Assert.assertEquals(p2Listener.requests.get(p2Listener.requests.size()-1).getClass(),
+            TestTurnRequest.class);
+
+
+
+
+
   }
 
 }

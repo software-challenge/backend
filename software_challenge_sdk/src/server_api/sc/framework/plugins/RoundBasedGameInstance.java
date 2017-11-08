@@ -72,7 +72,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           fromPlayer.setSoftTimeout(true);
           onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
         } else {
-          onRoundBasedAction(fromPlayer, data);
+          if (!isPaused()) onRoundBasedAction(fromPlayer, data);
         }
       } else {
         errorMsg = Optional.of("We didn't request a data from you yet.");
@@ -213,7 +213,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   protected final void notifyActivePlayer() {
     final P currentActivePlayer = this.activePlayer;
 
-    if (this.paused && currentActivePlayer.isShouldBePaused()) {
+    if (isPaused() && currentActivePlayer.isShouldBePaused()) {
       synchronized (this.afterPauseLock) {
         logger.debug("Setting AfterPauseAction");
 
