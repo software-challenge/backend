@@ -158,5 +158,5 @@
   <target name="clean-build" depends="clean,build" />
   <target name="build-all" depends="clean-build, doc" />
 
-  <target name="main" depends="clean-build" />
+  <target name="main" depends="build-all" />
 </project>
