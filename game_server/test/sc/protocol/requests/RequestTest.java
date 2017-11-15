@@ -4,7 +4,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import sc.framework.plugins.SimplePlayer;
-import sc.framework.plugins.protocol.MoveRequest;
 import sc.networking.clients.LobbyClient;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.Configuration;
@@ -27,12 +26,12 @@ import java.util.LinkedList;
 
 
 public class RequestTest extends RealServerTest{
-  LobbyClient player1;
-  LobbyClient player2;
-  LobbyClient player3;
+  private LobbyClient player1;
+  private LobbyClient player2;
+  private LobbyClient player3;
 
 
-  static final String PASSWORD = "TEST_PASSWORD";
+  private static final String PASSWORD = "TEST_PASSWORD";
 
   @Before
   public void prepare() {
@@ -43,7 +42,10 @@ public class RequestTest extends RealServerTest{
       TestHelper.waitMills(200);
       player3  = connectClient("localhost", getServerPort());
       TestHelper.waitMills(200);
-    } catch(Exception e){}
+    } catch(Exception e){
+      // happens if port is already in use
+      e.printStackTrace();
+    }
   }
 
   @Test
