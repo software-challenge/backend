@@ -30,17 +30,21 @@ public class HelperMethods {
   /**
    * Returns a new generated filename for a replay file.
    *
-   * @param descriptors
-   * @return
+   * @param descriptors descriptor of player slot
+   * @return name of replay
    */
   public static String generateReplayFilename(String pluginUuid, List<SlotDescriptor> descriptors) {
-    StringBuilder replayFilename = new StringBuilder("./replays/replay");
-    replayFilename.append("_" + pluginUuid); // something like hui_2018
-    for (int i = 0; i < descriptors.size(); i++) {
-      replayFilename.append("_" + descriptors.get(i).getDisplayName().replace(' ', '_'));
+    StringBuilder replayFileName = new StringBuilder("./replays/replay");
+    replayFileName.append("_");
+    replayFileName.append(pluginUuid); // something like hui_2018
+    for (SlotDescriptor descriptor : descriptors) {
+      replayFileName.append("_");
+      replayFileName.append(descriptor.getDisplayName().replace(' ', '_'));
     }
-    replayFilename.append("_" + HelperMethods.getCurrentDateTime().replace(' ', '_') + ".xml");
-    logger.debug("Generated file name {}", replayFilename.toString());
-    return replayFilename.toString();
+    replayFileName.append("_");
+    replayFileName.append(HelperMethods.getCurrentDateTime().replace(' ', '_'));
+    replayFileName.append(".xml");
+    logger.debug("Generated file name {}", replayFileName.toString());
+    return replayFileName.toString();
   }
 }
