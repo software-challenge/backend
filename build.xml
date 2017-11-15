@@ -35,7 +35,7 @@
 
   <target name="dependencies">
     <echo message="Compiling SDK..." />
-    <ant dir="software_challenge_sdk" target="main" inheritAll="false" />
+    <ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
 
     <echo message="Compiling Plugins and Players..." />
     <!--<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
@@ -123,13 +123,10 @@
 
     <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
-    <echo message="Gathering documentations..." />
-    <mkdir dir="${out.dir}/zipped/doc" />
-    <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
-    <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
     <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
     <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+
 
   </target>
 
@@ -150,6 +147,12 @@
     <copy todir="${out.dir}/docs/${game_plugin}">
       <fileset dir="./game_plugins/${game_plugin}/doc"/>
     </copy>
+
+    <echo message="Gathering documentations..." />
+    <mkdir dir="${out.dir}/zipped/doc" />
+    <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
+    <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
+
   </target>
 
   <target name="clean-build" depends="clean,build" />

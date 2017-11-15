@@ -50,8 +50,8 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
-		<ant dir="${sdk.dir}" inheritAll="false" />
-		<ant dir="${game.dir}" inheritAll="false" />
+		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
+		<ant dir="${game.dir}" target="clean-build" inheritAll="false" />
 	</target>
 
 	<target name="compile">
@@ -92,7 +92,7 @@
     </javadoc>
 	</target>
 
-	<target name="build" depends="jar,javadoc" />
+	<target name="build" depends="jar" />
 
 	<target name="clean-build" depends="clean,build" />
 
