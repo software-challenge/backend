@@ -79,6 +79,7 @@
 			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
 			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
 		</copy>
+		<copy tofile="${jar.dir}/logback.xml" file="${root.dir}/game_players/hase_und_igel_player_new/src/logback.xml" />
 	</target>
 
 	<target name="javadoc">
