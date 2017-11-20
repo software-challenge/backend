@@ -13,12 +13,6 @@ public class AuthenticateRequest extends ProtocolMessage implements ILobbyReques
   @XStreamAsAttribute
   private String passphrase;
 
-  /**
-   * might be needed by XStream
-   */
-  public AuthenticateRequest() {
-  }
-
   public AuthenticateRequest(String passphrase) {
     this.passphrase = passphrase;
   }
