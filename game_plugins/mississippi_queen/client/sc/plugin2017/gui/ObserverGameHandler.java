@@ -29,12 +29,7 @@ public class ObserverGameHandler implements IGameHandler {
 
 	@Override
 	public void onUpdate(Player player, Player otherPlayer) {
-		RenderFacade.getInstance().updatePlayer(player, otherPlayer,
-				EPlayerId.OBSERVER);
-	}
-
-	public void onUpdate(String chat) {
-		RenderFacade.getInstance().updateChat(chat, EPlayerId.OBSERVER);
+    // updates are handled in gameState update only
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 <project name="softwarechallenge-server" basedir="." default="main">
 
 	<property name="src.dir" value="src" />
+	<property name="doc.dir" value="doc" />
 	<property name="test.dir" value="test" />
 
 	<property name="build.dir" value="build" />
@@ -21,6 +22,7 @@
 	<path id="classpath.base">
 		<path refid="classpath.libs" />
 		<pathelement location="${classes.dir}" />
+    <pathelement path="./" />
 	</path>
 
 	<pathconvert property="jar.classpath" pathsep="">
@@ -67,6 +69,11 @@
 		<javac source="1.8" target="1.8" srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" />
 	</target>
 
+	<target name="doc" description="generate documentation">
+		<mkdir dir="${doc.dir}" />
+		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
+	</target>
+
 	<target name="export-plugins">
 		<mkdir dir="${jar.dir}" />
 		<mkdir dir="${jar.dir}/lib" />
@@ -87,11 +94,12 @@
 				<attribute name="Class-Path" value="${jar.classpath}" />
 			</manifest>
 			<fileset dir="${classes.dir}" />
-			<fileset dir="./configuration" />
 		</jar>
 	</target>
 
-	<target name="clean-build" depends="clean,jar" />
+	<target name="clean-build" depends="clean, doc, jar" />
+	<target name="build-all" depends="clean, doc, jar" />
+	<target name="build-doc" depends="clean, doc" />
 
 	<target name="main" depends="dependencies,clean-build" />
 </project>

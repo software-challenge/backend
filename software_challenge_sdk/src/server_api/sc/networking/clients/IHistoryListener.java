@@ -1,6 +1,6 @@
 package sc.networking.clients;
 
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
 public interface IHistoryListener
@@ -9,5 +9,5 @@ public interface IHistoryListener
 
 	public void onGameOver(String roomId, GameResult o);
 	
-	public void onGameError(String roomId, ErrorResponse error);
+	public void onGameError(String roomId, ProtocolErrorMessage error);
 }

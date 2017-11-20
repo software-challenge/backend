@@ -3,7 +3,7 @@ package sc.networking.clients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.SimplePlayer;
 import sc.protocol.requests.CancelRequest;
 import sc.protocol.requests.PauseGameRequest;
 import sc.protocol.requests.StepRequest;
@@ -115,7 +115,7 @@ public class ControllingClient extends ObservingClient implements
 	}
 
 	@Override
-	public void onGamePaused(String roomId, IPlayer nextPlayer)
+	public void onGamePaused(String roomId, SimplePlayer nextPlayer)
 	{
 		logger.info("A PAUSE HIT was detected.");
 		this.pauseHitReceived = true;

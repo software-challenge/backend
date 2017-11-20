@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
-import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IGamePreparation;
 import sc.guiplugin.interfaces.IGuiPlugin;
 import sc.guiplugin.interfaces.IGuiPluginHost;

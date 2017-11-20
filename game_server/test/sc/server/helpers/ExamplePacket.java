@@ -1,6 +1,8 @@
 package sc.server.helpers;
 
-public class ExamplePacket
+import sc.protocol.responses.ProtocolMessage;
+
+public class ExamplePacket extends ProtocolMessage
 {
 	public String message = "hello";
 }

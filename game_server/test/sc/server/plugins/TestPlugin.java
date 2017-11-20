@@ -11,7 +11,6 @@ import sc.shared.ScoreDefinition;
 public class TestPlugin implements IGamePlugin
 {
 	public static final String TEST_PLUGIN_UUID = "012345-norris";
-	public static final int MAXIMUM_PLAYER_SIZE = 2;
 	
 	public static final ScoreDefinition	SCORE_DEFINITION;
 
@@ -46,12 +45,6 @@ public class TestPlugin implements IGamePlugin
 	{
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public int getMaximumPlayerCount()
-	{
-		return MAXIMUM_PLAYER_SIZE;
 	}
 	
 	@Override

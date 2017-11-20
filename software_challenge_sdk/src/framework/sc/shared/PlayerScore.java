@@ -116,4 +116,26 @@ public final class PlayerScore
 	{
 		return size() == definition.size();
 	}
+
+	@Override
+	public boolean equals(Object eq) {
+	  if (eq instanceof PlayerScore) {
+	    PlayerScore score = (PlayerScore) eq;
+      if (!this.getCause().equals(score.getCause()) ||
+              !(this.getValues().size() == score.getValues().size())) {
+        return false;
+      }
+      if (!(this.getReason() == score.getReason())) { // may be null
+        return false;
+      }
+      for (int i = 0; i < this.parts.size(); i++) {
+        if (!this.getValues().get(i).equals(score.getValues().get(i))) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+	    return false;
+    }
+	}
 }

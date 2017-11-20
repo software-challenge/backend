@@ -34,7 +34,7 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 
 	public void load(HostType host) throws PluginLoaderException
 	{
-		this.instanciate();
+		this.instantiate();
 		this.instance.initialize(host);
 	}
 
@@ -43,7 +43,7 @@ public class PluginInstance<HostType, PluginType extends IPlugin<HostType>>
 		this.instance.unload();
 	}
 
-	private void instanciate() throws PluginLoaderException
+	private void instantiate() throws PluginLoaderException
 	{
 		try
 		{

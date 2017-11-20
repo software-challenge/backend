@@ -1,0 +1,72 @@
+<project name="hui_player" basedir="." default="main">
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="build" />
+	<property name="lib.dir" value="lib" />
+	<property name="classes.dir" value="${build.dir}/bin" />
+	<property name="jar.dir" value="${build.dir}/jar" />
+	<property name="zip.dir" value="${build.dir}/zipped" />
+	<property name="main-class" value="sc.player2018.Starter" />
+
+	<path id="classpath.libs">
+		<fileset dir="${lib.dir}" includes="**/*.jar" />
+	</path>
+
+	<path id="classpath.base">
+		<path refid="classpath.libs" />
+		<pathelement location="${classes.dir}" />
+	</path>
+
+	<pathconvert property="jar.classpath" pathsep="">
+		<mapper>
+			<chainedmapper>
+				<!-- remove absolute path -->
+				<flattenmapper />
+				<!-- add lib/ prefix -->
+				<globmapper from="*" to="lib/* " />
+			</chainedmapper>
+		</mapper>
+
+		<path refid="classpath.libs" />
+	</pathconvert>
+
+	<target name="clean">
+		<delete dir="build" />
+	</target>
+
+	<target name="compile">
+		<mkdir dir="${classes.dir}" />
+		<javac srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath.base" debug="true" debuglevel="lines,vars,source" />
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}" />
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
+			<manifest>
+				<attribute name="Main-Class" value="${main-class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+		</jar>
+
+		<delete dir="${jar.dir}/lib" />
+		<mkdir dir="${jar.dir}/lib" />
+		<copy todir="${jar.dir}/lib" flatten="true">
+			<path refid="classpath.libs" />
+			<fileset dir="${lib.dir}" includes="*/build/jar/*.jar" />
+		</copy>
+	</target>
+
+	<target name="zip" depends="jar">
+		<mkdir dir="${zip.dir}" />
+		<zip destfile="${zip.dir}/${ant.project.name}.zip" basedir="${jar.dir}" />
+	</target>
+
+	<target name="javadoc">
+		<javadoc encoding="UTF-8" charset="UTF-8" access="private" author="true" classpath="${toString:classpath.base}" destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="sc.*" source="1.6" sourcepath="src" splitindex="true" use="true" version="true" />
+	</target>
+
+	<target name="build" depends="zip,jar,javadoc" />
+
+	<target name="clean-build" depends="clean,build" />
+
+	<target name="main" depends="clean-build" />
+</project>

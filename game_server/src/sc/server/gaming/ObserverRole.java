@@ -3,31 +3,50 @@ package sc.server.gaming;
 import sc.server.network.Client;
 import sc.server.network.IClientRole;
 
+/**
+ * Client Role, which can watch, but not send any moves
+ */
 public class ObserverRole implements IClientRole
 {
-	private Client		client;
-	private GameRoom	gameRoom;
+  /* private fields */
+  private Client		client; //Actual server Client
+  private GameRoom	gameRoom; //Room, which this object belongs to
 
-	public ObserverRole(Client owner, GameRoom gameRoom)
-	{
-		this.client = owner;
-		this.gameRoom = gameRoom;
-	}
+  /* methods */
 
-	@Override
-	public Client getClient()
-	{
-		return this.client;
-	}
+  /**
+   * Create Observer Role from {@link Client client} and {@link GameRoom gameroom}
+   * @param owner Server-client that sends packages
+   * @param gameRoom The room, from which this observer is listening
+   */
+  public ObserverRole(Client owner, GameRoom gameRoom)
+  {
+    this.client = owner;
+    this.gameRoom = gameRoom;
+  }
 
-	public GameRoom getGameRoom()
-	{
-		return this.gameRoom;
-	}
+  /**
+   * Getter for {@link Client client}.
+   * @return the client
+   */
+  @Override
+  public Client getClient()
+  {
+    return this.client;
+  }
 
-	@Override
-	public void close()
-	{
-		// TODO Auto-generated method stub
-	}
+  /**
+   * Getter for the {@link GameRoom gameroom}
+   * @return the Gameroom
+   */
+  public GameRoom getGameRoom()
+  {
+    return this.gameRoom;
+  }
+
+  @Override
+  public void close()
+  {
+    //TODO close Observer if necessary
+  }
 }

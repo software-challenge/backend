@@ -1,82 +1,69 @@
 package sc.protocol.requests;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import sc.protocol.responses.PrepareGameResponse;
-import sc.shared.SlotDescriptor;
-
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolMessage;
+import sc.shared.SlotDescriptor;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @XStreamAlias("prepare")
-public class PrepareGameRequest implements ILobbyRequest,
-		IRequest<PrepareGameResponse>
+public class PrepareGameRequest extends ProtocolMessage implements ILobbyRequest,
+        IRequest<PrepareGameProtocolMessage>
 {
-	@XStreamAsAttribute
-	private final String				gameType;
+  @XStreamAsAttribute
+  private final String				gameType;
 
-	@XStreamImplicit(itemFieldName = "slot")
-	private final List<SlotDescriptor>	slotDescriptors;
-	
-	private Object loadGameInfo = null;
+  @XStreamImplicit(itemFieldName = "slot")
+  private final List<SlotDescriptor>	slotDescriptors;
 
-	/* trying to fix "no-args constructor" problem of XStream */	
-	public PrepareGameRequest(){
-		this.gameType = null;
-		this.slotDescriptors = null;
-	}
+  // i.e. GameState
+  private Object loadGameInfo = null;
 
-	public PrepareGameRequest(String gameType, int playerCount)
-	{
-		this.gameType = gameType;
-		this.slotDescriptors = new LinkedList<SlotDescriptor>();
+  /**
+   * Create a Prepared Game
+   * @param gameType name of the game as String
+   */
+  public PrepareGameRequest(String gameType)
+  {
+    this.gameType = gameType;
+    this.slotDescriptors = new LinkedList<>();
 
-		for (int i = 0; i < playerCount; i++)
-		{
-			this.slotDescriptors.add(new SlotDescriptor("Player "
-					+ String.valueOf(i + 1)));
-		}
+    // Add two players, named Player1 and Player2
+    this.slotDescriptors.add(new SlotDescriptor("Player1"));
+    this.slotDescriptors.add(new SlotDescriptor("Player2"));
+  }
 
-		if (getPlayerCount() == 0)
-		{
-			throw new IllegalArgumentException("PlayerCount must be positive");
-		}
-	}
+  /**
+   * Create PrePareGameRequest with name and Descriptors for each player
+   * @param gameType name of the Game as String
+   * @param descriptor1 descriptor for Player 1
+   * @param descriptor2 descriptor for Player 2
+   */
+  public PrepareGameRequest(String gameType, SlotDescriptor descriptor1, SlotDescriptor descriptor2)
+  {
+    this.gameType = gameType;
+    this.slotDescriptors = new LinkedList<>();
 
-	public PrepareGameRequest(String gameType, SlotDescriptor... descriptors)
-	{
-		this.gameType = gameType;
-		this.slotDescriptors = Arrays.asList(descriptors);
+    // Add two players, named Player1 and Player2
+    this.slotDescriptors.add(descriptor1);
+    this.slotDescriptors.add(descriptor2);
+  }
 
-		if (getPlayerCount() == 0)
-		{
-			throw new IllegalArgumentException("PlayerCount must be positive");
-		}
-	}
-	
-	public void setLoadGameInfo(Object info) {
-		this.loadGameInfo = info;
-	}
-	
-	public Object getLoadGameInfo() {
-		return this.loadGameInfo;
-	}
+  public Object getLoadGameInfo() {
+    return this.loadGameInfo;
+  }
 
-	public String getGameType()
-	{
-		return this.gameType;
-	}
+  public String getGameType()
+  {
+    return this.gameType;
+  }
 
-	public int getPlayerCount()
-	{
-		return this.getSlotDescriptors().size();
-	}
-
-	public List<SlotDescriptor> getSlotDescriptors()
-	{
-		return this.slotDescriptors;
-	}
+  public List<SlotDescriptor> getSlotDescriptors()
+  {
+    return this.slotDescriptors;
+  }
 }

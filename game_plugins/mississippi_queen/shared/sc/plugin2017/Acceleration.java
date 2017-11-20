@@ -9,8 +9,8 @@ import sc.plugin2017.util.InvalidMoveException;
 public class Acceleration extends Action {
 
   /**
-   * Gibt an um wie viel beschleuningt wird, Negative Zahl bedeutet, das entsprechend gebremst wird.
-   * Darf nicht 0 sein wirf sonst InvalidMoveException beim ausführen von perform
+   * Gibt an, um wie viel beschleuningt wird. Negative Zahl bedeutet, dass entsprechend gebremst wird.
+   * Darf nicht 0 sein, wirft sonst InvalidMoveException beim Ausführen von perform
    */
   @XStreamAsAttribute
   public int acc;
@@ -21,7 +21,7 @@ public class Acceleration extends Action {
   }
   /**
    * Legt eine neue Beschleunigungaktion an
-   * @param acc Wert um den beschleunigt wird
+   * @param acc Wert, um den beschleunigt wird
    */
   public Acceleration(int acc) {
     this.acc = acc;
@@ -29,8 +29,8 @@ public class Acceleration extends Action {
 
   /**
    * Legt eine neue Beschleunigungaktion an
-   * @param acc Wert um den beschleunigt wird
-   * @param order Reihenfolge
+   * @param acc Wert, um den beschleunigt wird
+   * @param order Nummer der Aktion. Aktionen werden aufsteigend sortiert nach ihrer Nummer ausgeführt.
    */
   public Acceleration(int acc, int order) {
     this.acc = acc;
@@ -38,8 +38,8 @@ public class Acceleration extends Action {
   }
   /**
    *
-   * @param state Gamestate auf dem Beschleunigung ausgeführt wird
-   * @param player Spieler für den Beschleunigung ausgeführt wird
+   * @param state Gamestate, auf dem die Beschleunigung ausgeführt wird
+   * @param player Spieler, für den die Beschleunigung ausgeführt wird
    */
   @Override
   public void perform(GameState state, Player player)
