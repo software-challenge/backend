@@ -1,11 +1,14 @@
 package sc.protocol.requests;
 
+import com.thoughtworks.xstream.XStream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import sc.framework.plugins.SimplePlayer;
 import sc.networking.clients.LobbyClient;
+import sc.protocol.LobbyProtocol;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.protocol.responses.ProtocolMessage;
 import sc.server.Configuration;
 import sc.server.client.PlayerListener;
 import sc.server.client.TestLobbyClientListener;
@@ -21,6 +24,7 @@ import sc.server.plugins.TestPlugin;
 import sc.server.plugins.TestTurnRequest;
 import sc.shared.WelcomeMessage;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -88,6 +92,23 @@ public class RequestTest extends RealServerTest{
     Assert.assertEquals(0, lobby.getGameManager().getGames().iterator().next().getClients().size());
     Assert.assertEquals(true, lobby.getGameManager().getGames().iterator().next().isPaused());
 
+  }
+
+  @Test
+  public void prepareXmlTest() {
+    XStream xStream = new XStream();
+    xStream.setMode(XStream.NO_REFERENCES);
+    xStream.setClassLoader(Configuration.class.getClassLoader());
+    LobbyProtocol.registerMessages(xStream);
+    LobbyProtocol.registerAdditionalMessages(xStream,
+            Arrays.asList(new Class<?>[] {ProtocolMessage.class}));
+    Object request = (xStream.fromXML("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+            "<prepare gameType=\"swc_2018_hase_und_igel\">\n" +
+            "  <slot displayName=\"HÃ¤schenschule\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
+            "  <slot displayName=\"Testhase\" canTimeout=\"true\" shouldBePaused=\"true\"/>\n" +
+            "</prepare>"));
+    Assert.assertEquals(PrepareGameRequest.class, request.getClass());
+    Assert.assertEquals("HÃ¤schenschule", ((PrepareGameRequest)request).getSlotDescriptors().get(0).getDisplayName());
   }
 
   @Test

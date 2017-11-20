@@ -1,12 +1,16 @@
 package sc.server;
 
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Properties;
 
+import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.binary.BinaryStreamDriver;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +52,7 @@ public class Configuration
 
   static
   {
-    xStream = new XStream();
+    xStream = new XStream(new KXml2Driver());
     xStream.setMode(XStream.NO_REFERENCES);
     xStreamClassLoader = AccessController
             .doPrivileged(new PrivilegedAction<RuntimeJarLoader>() {
