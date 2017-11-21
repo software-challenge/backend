@@ -8,7 +8,7 @@ import sc.helpers.Generator;
 
 public class TestHelper
 {
-	private static final long		DEFAULT_DURATION	= 1;
+	private static final long		DEFAULT_DURATION	= 100;
 	private static final TimeUnit	DEFAULT_TIME_UNIT	= TimeUnit.MILLISECONDS;
 
 	public static <T> boolean waitUntilEqual(T expected, Generator<T> action)
@@ -32,6 +32,7 @@ public class TestHelper
 			Thread.yield();
 		}
 
+		Assert.assertTrue(isEqual(expected,action.operate()));
 		return isEqual(expected, action.operate());
 	}
 
@@ -50,6 +51,16 @@ public class TestHelper
   {
     return waitUntilEqual(true, action, maxDuration, TimeUnit.MILLISECONDS);
   }
+
+	public static <T> boolean waitUntilFalse(Generator<Boolean> action,
+																					long maxDuration, TimeUnit unit)
+	{
+		return waitUntilEqual(false, action, maxDuration, unit);
+	}
+	public static <T> boolean waitUntilFalse(Generator<Boolean> action, long maxDuration)
+	{
+		return waitUntilEqual(false, action, maxDuration, TimeUnit.MILLISECONDS);
+	}
 
 	public static <T> void assertEqualsWithTimeout(T expected,
 			Generator<T> action)

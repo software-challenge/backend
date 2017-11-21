@@ -22,9 +22,6 @@ import sc.shared.Score;
 /**
  * The lobby will help clients find a open game or create new games to play with
  * another client.
- *
- * @author mja
- * @author rra
  */
 public class Lobby implements IClientListener
 {

@@ -26,7 +26,7 @@ public class LobbyTest extends RealServerTest{
       player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
 
       /* Was game created? */
-      TestHelper.assertEqualsWithTimeout(1,()->lobby.getGameManager().getGames().size());
+      TestHelper.assertEqualsWithTimeout(1,()->lobby.getGameManager().getGames().size(), 2000);
       Assert.assertNotNull(lobby.getGameManager().getGames());
       Assert.assertNotEquals(0,lobby.getGameManager().getGames().size());
       GameRoom gameRoom = lobby.getGameManager().getGames().iterator().next();
@@ -36,8 +36,7 @@ public class LobbyTest extends RealServerTest{
 
       player1.stop();
       Thread.sleep(1000);
-      Assert.assertEquals(0, lobby.getGameManager().getGames().size());
-
+      TestHelper.assertEqualsWithTimeout(0,()->lobby.getGameManager().getGames().size(), 2000);
     } catch (Exception e){
       e.printStackTrace();
       Assert.fail();

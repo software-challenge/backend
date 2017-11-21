@@ -1,4 +1,4 @@
-<project name="softwarechallenge-server" basedir="." default="main">
+ <project name="softwarechallenge-server" basedir="." default="main">
 
 	<property name="src.dir" value="src" />
 	<property name="doc.dir" value="doc" />
@@ -97,9 +97,9 @@
 		</jar>
 	</target>
 
-	<target name="clean-build" depends="clean, doc, jar" />
-	<target name="build-all" depends="clean, doc, jar" />
-	<target name="build-doc" depends="clean, doc" />
+	<target name="clean-build" depends="clean, dependencies, jar" />
+	<target name="build-all" depends="clean, dependencies, doc, jar" />
+	<target name="build-doc" depends="clean, dependencies, doc" />
 
-	<target name="main" depends="dependencies,clean-build" />
+	<target name="main" depends="clean-build" />
 </project>

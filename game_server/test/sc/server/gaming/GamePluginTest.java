@@ -3,9 +3,7 @@ package sc.server.gaming;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-/**
- * Created by nils on 05.07.17.
- */
+
 public class GamePluginTest {
   int i = 0;
   @Before

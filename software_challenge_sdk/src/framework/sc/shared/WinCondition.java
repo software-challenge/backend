@@ -50,10 +50,7 @@ public class WinCondition implements Cloneable {
       if (this.getWinner() != wq.getWinner()) {
         return false;
       }
-      if (this.getReason() != wq.getReason()) {
-        return false;
-      }
-      return true;
+      return this.getReason() == wq.getReason();
     } else {
       return false;
     }

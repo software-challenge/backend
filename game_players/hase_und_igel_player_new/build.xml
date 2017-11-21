@@ -47,8 +47,8 @@
 
 	<target name="dependencies">
 		<echo message="Compiling SC dependencies" />
-		<ant dir="${sdk.dir}" inheritAll="false" />
-		<ant dir="${game.dir}" inheritAll="false" />
+		<ant dir="${sdk.dir}" target="clean-build" inheritAll="false" />
+		<ant dir="${game.dir}" target="clean-build" inheritAll="false" />
 	</target>
 
 	<target name="compile">
@@ -79,6 +79,7 @@
 			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
 			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
 		</copy>
+		<copy tofile="${jar.dir}/logback.xml" file="${root.dir}/game_players/hase_und_igel_player_new/src/logback.xml" />
 	</target>
 
 	<target name="javadoc">
@@ -100,9 +101,11 @@
     </javadoc>
 	</target>
 
-	<target name="build" depends="jar,javadoc" />
+	<target name="build" depends="jar" />
 
-	<target name="clean-build" depends="clean,build" />
+	<target name="clean-build" depends="clean, dependencies, build" />
 
-	<target name="main" depends="dependencies,clean-build" />
+	<target name="build-all" depends="clean, dependencies, build, javadoc" />
+
+	<target name="main" depends="clean-build" />
 </project>
