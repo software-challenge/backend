@@ -73,8 +73,7 @@ public abstract class XStreamClient {
 
     this.xStream = xstream;
     this.networkInterface = networkInterface;
-    OutputStreamWriter outputStreamWriter = new OutputStreamWriter(networkInterface.getOutputStream(), "UTF-8");
-    this.out = xstream.createObjectOutputStream(outputStreamWriter, "protocol");
+    this.out = xstream.createObjectOutputStream(networkInterface.getOutputStream(), "protocol");
     this.thread = new Thread(new Runnable() {
       private Logger threadLogger = LoggerFactory
               .getLogger(XStreamClient.class);
@@ -104,10 +103,7 @@ public abstract class XStreamClient {
    */
   public void receiveThread() throws Exception {
     try {
-      InputStreamReader inputStreamReader = new InputStreamReader(
-              this.networkInterface.getInputStream(), "UTF-8");
-      PrintWriter printWriter = new PrintWriter(new BufferedWriter(new FileWriter("socketdata.txt", false)));
-      XStreamClient.this.in = this.xStream.createObjectInputStream(inputStreamReader);
+      XStreamClient.this.in = this.xStream.createObjectInputStream(this.networkInterface.getInputStream());
 
       synchronized (this.readyLock) {
         while (!isReady()) {

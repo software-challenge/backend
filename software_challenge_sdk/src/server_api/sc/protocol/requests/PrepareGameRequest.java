@@ -20,7 +20,6 @@ public class PrepareGameRequest extends ProtocolMessage implements ILobbyRequest
   private final String				gameType;
 
   @XStreamImplicit(itemFieldName = "slot")
-  @XStreamConverter(DisplayNameConverter.class)
   private final List<SlotDescriptor>	slotDescriptors;
 
   // i.e. GameState
