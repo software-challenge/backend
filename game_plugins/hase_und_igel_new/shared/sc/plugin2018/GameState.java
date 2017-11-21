@@ -598,7 +598,7 @@ public class GameState implements Cloneable {
         }
         actions.add(tryAdvance);
         // überprüfe, ob eine Karte gespielt werden muss/kann
-        if (clone.getCurrentPlayer().mustPlayCard()) {
+        if (clone != null && clone.getCurrentPlayer().mustPlayCard()) {
           possibleMove.addAll(clone.checkForPlayableCards(actions));
         } else {
           // Füge möglichen Vorwärtszug hinzu
@@ -666,7 +666,7 @@ public class GameState implements Cloneable {
           // Sollte nie passieren
           e.printStackTrace();
         }
-        if (clone.getCurrentPlayer().mustPlayCard()) {
+        if (clone != null && clone.getCurrentPlayer().mustPlayCard()) {
           ArrayList<Move> moves = clone.checkForPlayableCards(actions);
           if (!moves.isEmpty()) {
             possibleMove.addAll(moves);
@@ -693,7 +693,7 @@ public class GameState implements Cloneable {
           // Sollte nie passieren
           e.printStackTrace();
         }
-        if (clone.getCurrentPlayer().mustPlayCard()) {
+        if (clone != null && clone.getCurrentPlayer().mustPlayCard()) {
           ArrayList<Move> moves = clone.checkForPlayableCards(actions);
           if (!moves.isEmpty()) {
             possibleMove.addAll(moves);

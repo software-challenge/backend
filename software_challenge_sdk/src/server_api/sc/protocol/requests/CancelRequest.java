@@ -13,12 +13,6 @@ public class CancelRequest extends ProtocolMessage implements ILobbyRequest {
   @XStreamAsAttribute
   public String roomId;
 
-  /**
-   * might be needed by XStream
-   */
-  public CancelRequest() {
-  }
-
   public CancelRequest(String roomId) {
     this.roomId = roomId;
   }

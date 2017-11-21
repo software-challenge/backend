@@ -72,7 +72,24 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           fromPlayer.setSoftTimeout(true);
           onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
         } else {
-          onRoundBasedAction(fromPlayer, data);
+          if (!isPaused()){
+            onRoundBasedAction(fromPlayer, data);
+          } else {
+            logger.info("Game is paused. Save this action.");
+            final P currentActivePlayer = this.activePlayer;
+            synchronized (this.afterPauseLock) {
+              logger.debug("Setting AfterPauseAction");
+
+              this.afterPauseAction = () -> {
+                requestMove(currentActivePlayer);
+                next();
+              };
+
+              for (IGameListener listener : this.listeners) {
+                listener.onPaused(currentActivePlayer);
+              }
+            }
+          }
         }
       } else {
         errorMsg = Optional.of("We didn't request a data from you yet.");
@@ -93,6 +110,14 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
           throws GameLogicException;
 
+  /**
+   * Checks if a win condition in the current game state is met.
+   * Checks round limit and end of round (and playerStats).
+   * Checks if goal is reached
+   *
+   * @return WinCondition with winner and reason or null, if no win condition is
+   *         yet met.
+   */
   protected abstract WinCondition checkWinCondition();
 
   /**
@@ -207,25 +232,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   protected abstract Object getCurrentState();
 
   /**
-   * Notifies the active player that it's his/her time to make a move. If the
-   * game is paused, the request will be hold back.
+   * Notifies the active player that it's his/her time to make a move.
    */
   protected final void notifyActivePlayer() {
-    final P currentActivePlayer = this.activePlayer;
+    requestMove(activePlayer);
 
-    if (this.paused && currentActivePlayer.isShouldBePaused()) {
-      synchronized (this.afterPauseLock) {
-        logger.debug("Setting AfterPauseAction");
-
-        this.afterPauseAction = () -> requestMove(currentActivePlayer);
-
-        for (IGameListener listener : this.listeners) {
-          listener.onPaused(currentActivePlayer);
-        }
-      }
-    } else {
-      requestMove(currentActivePlayer);
-    }
   }
 
   /**
@@ -272,6 +283,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
         logger
                 .error("AfterPauseAction was null. Might cause a deadlock.");
       } else {
+        logger.info("Run AfterPauseAction.");
         Runnable action = this.afterPauseAction;
         this.afterPauseAction = null;
         action.run();

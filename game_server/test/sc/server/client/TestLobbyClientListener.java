@@ -8,15 +8,15 @@ import sc.shared.GameResult;
 
 public class TestLobbyClientListener implements ILobbyClientListener {
 
-  public boolean onObserved = false;
-  public boolean onGamePaused = false;
-  public boolean onGameOver = false;
-  public boolean onGameJoined = false;
-  public boolean onGameLeft = false;
-  public boolean onGamePrepared = false;
-  public boolean onRoomMessage = false;
-  public boolean onError = false;
-  public boolean onNewState = false;
+  public boolean observedReceived = false;
+  public boolean gamePausedReceived = false;
+  public boolean gameOverReceived = false;
+  public boolean gameJoinedReceived = false;
+  public boolean gameLeftReceived = false;
+  public boolean gamePreparedReceived = false;
+  public boolean roomMessageReceived = false;
+  public boolean errorReceived = false;
+  public boolean newStateReceived = false;
 
   public String roomid;
   public SimplePlayer player;
@@ -31,75 +31,75 @@ public class TestLobbyClientListener implements ILobbyClientListener {
     if (! (obj instanceof TestLobbyClientListener)) return false;
 
     TestLobbyClientListener o = (TestLobbyClientListener)obj;
-    return onObserved == o.onObserved &&
-            onGamePaused == o.onGamePaused &&
-            onGameOver == o.onGameOver &&
-            onGameJoined == o.onGameJoined &&
-            onGameLeft == o.onGameLeft &&
-            onGamePrepared == o.onGamePrepared &&
-            onRoomMessage == o.onRoomMessage &&
-            onError == o.onError &&
-            onNewState == o.onNewState &&
+    return observedReceived == o.observedReceived &&
+            gamePausedReceived == o.gamePausedReceived &&
+            gameOverReceived == o.gameOverReceived &&
+            gameJoinedReceived == o.gameJoinedReceived &&
+            gameLeftReceived == o.gameLeftReceived &&
+            gamePreparedReceived == o.gamePreparedReceived &&
+            roomMessageReceived == o.roomMessageReceived &&
+            errorReceived == o.errorReceived &&
+            newStateReceived == o.newStateReceived &&
             roomMessage != null &&
             roomMessage.equals(o.roomid);
   }
 
   @Override
   public void onNewState(String roomId, Object state) {
-    onNewState = true;
+    newStateReceived = true;
     this.roomid = roomId;
     this.newState = state;
   }
 
   @Override
   public void onError(String roomId, ProtocolErrorMessage error) {
-    onError = true;
+    errorReceived = true;
     this.roomid = roomId;
     this.errorResponse = error;
   }
 
   @Override
   public void onRoomMessage(String roomId, Object data) {
-    onRoomMessage = true;
+    roomMessageReceived = true;
     this.roomid = roomId;
     this.roomMessage = data;
   }
 
   @Override
   public void onGamePrepared(PrepareGameProtocolMessage response) {
-    onGamePrepared = true;
+    gamePreparedReceived = true;
     this.prepareGameResponse = response;
   }
 
   @Override
   public void onGameLeft(String roomId) {
-    onGameLeft = true;
+    gameLeftReceived = true;
     this.roomid = roomId;
   }
 
   @Override
   public void onGameJoined(String roomId) {
-    onGameJoined = true;
+    gameJoinedReceived = true;
     this.roomid = roomId;
   }
 
   @Override
   public void onGameOver(String roomId, GameResult data) {
-    onGameOver = true;
+    gameOverReceived = true;
     this.roomid = roomId;
     this.result = data;
   }
 
   @Override
   public void onGamePaused(String roomId, SimplePlayer nextPlayer) {
-    onGamePaused = true;
+    gamePausedReceived = true;
     this.roomid = roomId;
     this.player = nextPlayer;
   }
 
   @Override
   public void onGameObserved(String roomId) {
-    onObserved = true;
+    observedReceived = true;
     this.roomid = roomId;
 
   }

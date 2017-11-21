@@ -35,7 +35,7 @@
 
   <target name="dependencies">
     <echo message="Compiling SDK..." />
-    <ant dir="software_challenge_sdk" target="main" inheritAll="false" />
+    <ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
 
     <echo message="Compiling Plugins and Players..." />
     <!--<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
@@ -113,8 +113,8 @@
     <echo message="Generating Starter-Batchfiles" />
 
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
-    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
+    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
+    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
     <chmod file="${out.dir}/server/start.sh" perm="ugo+x" />
 
     <echo message="Zipping files..." />
@@ -123,13 +123,10 @@
 
     <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
-    <echo message="Gathering documentations..." />
-    <mkdir dir="${out.dir}/zipped/doc" />
-    <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
-    <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
     <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
     <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+
 
   </target>
 
@@ -150,10 +147,17 @@
     <copy todir="${out.dir}/docs/${game_plugin}">
       <fileset dir="./game_plugins/${game_plugin}/doc"/>
     </copy>
+
+    <echo message="Gathering documentations..." />
+    <mkdir dir="${out.dir}/zipped/doc" />
+    <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
+    <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+
   </target>
 
   <target name="clean-build" depends="clean,build" />
   <target name="build-all" depends="clean-build, doc" />
 
-  <target name="main" depends="clean-build" />
+  <target name="main" depends="build-all" />
 </project>

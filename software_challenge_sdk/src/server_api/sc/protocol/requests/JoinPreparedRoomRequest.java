@@ -13,12 +13,6 @@ public class JoinPreparedRoomRequest extends JoinRoomRequest {
   @XStreamAsAttribute
   private String reservationCode;
 
-  /**
-   * might be needed by XStream
-   */
-  public JoinPreparedRoomRequest() {
-  }
-
   public JoinPreparedRoomRequest(String reservationCode) {
     this.reservationCode = reservationCode;
   }

@@ -11,9 +11,14 @@
 			<Pattern>%d{HH:mm:ss} %-5level %logger{36} - %msg%n</Pattern>
 		</layout>
 	</appender>
-	
-	<logger name="sc" level="ERROR" />
-	<logger name="sc.player2017.logic.RandomLogic" level="DEBUG" />
+
+	<logger name="sc" level="INFO" />
+	<!-- für mehr Debug Ausgaben folgende Zeile einkommentieren -->
+	<!-- <logger name="sc" level="DEBUG" /> -->
+
+
+	<!-- für weniger Debug Ausgaben folgende Zeile einkommentieren -->
+	<!-- <logger name="sc" level="WARN" /> -->
 	<root level="DEBUG">
 		<appender-ref ref="STDOUT" />
 	</root>

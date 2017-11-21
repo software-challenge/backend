@@ -13,13 +13,6 @@ public class ObservationRequest extends ProtocolMessage implements ILobbyRequest
   @XStreamAsAttribute
   private String roomId;
 
-  /**
-   * might be needed by XStream
-   */
-  public ObservationRequest() {
-  }
-
-
   public ObservationRequest(String roomId) {
     this.roomId = roomId;
   }
