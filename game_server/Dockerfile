@@ -6,6 +6,6 @@ ARG game_server_dir
 ADD $game_server_dir /app
 WORKDIR /app
 ADD game_server_start_production.sh /app/start.sh
-ADD logback-production.xml /app/logback-production.xml
+ADD configuration/logback-release.xml /app/logback-production.xml
 RUN chmod +x /app/start.sh
 CMD ./start.sh

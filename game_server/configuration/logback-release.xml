@@ -28,9 +28,7 @@
   </appender>
 
   <!-- Uncomment the following to enable debug logs: -->
-  <!--
   <logger name="sc" level="DEBUG" />
-  -->
 
   <root level="INFO">
     <appender-ref ref="FILE"/>
