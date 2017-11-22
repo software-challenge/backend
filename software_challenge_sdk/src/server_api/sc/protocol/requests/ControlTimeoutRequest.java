@@ -2,9 +2,10 @@ package sc.protocol.requests;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import sc.protocol.responses.ProtocolMessage;
 
 @XStreamAlias("timeout")
-public class ControlTimeoutRequest {
+public class ControlTimeoutRequest  extends ProtocolMessage implements ILobbyRequest{
   @XStreamAsAttribute
   public String roomId;
 
@@ -14,5 +15,9 @@ public class ControlTimeoutRequest {
   @XStreamAsAttribute
   public int slot;
 
-
+  public ControlTimeoutRequest(String roomId, boolean activate, int slot) {
+    this.roomId = roomId;
+    this.activate = activate;
+    this.slot = slot;
+  }
 }

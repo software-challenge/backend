@@ -143,10 +143,9 @@ public class Lobby implements IClientListener
           ControlTimeoutRequest timeout = (ControlTimeoutRequest) packet;
 
             GameRoom room = this.gameManager.findRoom(timeout.roomId);
+
             PlayerSlot slot = room.getSlots().get(timeout.slot);
-            SlotDescriptor desc = slot.getDescriptor();
-            slot.setDescriptor(new SlotDescriptor(desc.getDisplayName(), timeout.activate,
-                    desc.isShouldBePaused()));
+            slot.getRole().getPlayer().setCanTimeout(timeout.activate);
 
         }
 			}

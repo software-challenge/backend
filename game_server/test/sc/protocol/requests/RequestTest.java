@@ -283,6 +283,29 @@ public class RequestTest extends RealServerTest{
   }
 
   @Test
+  public void timeoutRequest(){
+
+    player1.authenticate(PASSWORD);
+    TestLobbyClientListener listener = new TestLobbyClientListener();
+    PlayerListener p1Listener = new PlayerListener();
+    PlayerListener p2Listener = new PlayerListener();
+
+    player1.addListener(listener);
+    player1.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+    player2.joinRoomRequest(TestPlugin.TEST_PLUGIN_UUID);
+
+    TestHelper.waitUntilEqual(1,()->lobby.getGameManager().getGames().size(), 2000);
+    GameRoom room = gameMgr.getGames().iterator().next();
+    ControlTimeoutRequest req = new ControlTimeoutRequest(room.getId(), false, 0);
+    player1.sendMessageToRoom(room.getId(), req);
+    TestHelper.waitMills(2000);
+    room = gameMgr.getGames().iterator().next();
+    Assert.assertFalse(room.getSlots().get(0).getDescriptor().isCanTimeout());
+
+
+  }
+
+  @Test
   public void pauseRequest() {
     player1.authenticate(PASSWORD);
     TestLobbyClientListener listener = new TestLobbyClientListener();
