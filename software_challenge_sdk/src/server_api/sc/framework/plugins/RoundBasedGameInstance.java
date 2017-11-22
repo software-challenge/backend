@@ -110,6 +110,14 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
           throws GameLogicException;
 
+  /**
+   * Checks if a win condition in the current game state is met.
+   * Checks round limit and end of round (and playerStats).
+   * Checks if goal is reached
+   *
+   * @return WinCondition with winner and reason or null, if no win condition is
+   *         yet met.
+   */
   protected abstract WinCondition checkWinCondition();
 
   /**

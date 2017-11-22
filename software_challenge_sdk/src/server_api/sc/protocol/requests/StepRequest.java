@@ -16,12 +16,6 @@ public class StepRequest extends ProtocolMessage implements ILobbyRequest {
   @XStreamAsAttribute
   public boolean forced;
 
-  /**
-   * might be needed by XStream
-   */
-  public StepRequest() {
-  }
-
   public StepRequest(String roomId) {
     this(roomId, false);
   }

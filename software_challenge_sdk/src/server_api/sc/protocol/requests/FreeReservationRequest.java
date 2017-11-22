@@ -13,12 +13,6 @@ public class FreeReservationRequest extends ProtocolMessage implements ILobbyReq
   @XStreamAsAttribute
   private String reservation;
 
-  /**
-   * might be needed by XStream
-   */
-  public FreeReservationRequest() {
-  }
-
   public FreeReservationRequest(String reservation) {
     this.reservation = reservation;
   }

@@ -23,9 +23,6 @@ import sc.shared.*;
  * The GameManager is responsible to keep all games alive and kill them once
  * they are done. Additionally the GameManger has to detect and kill games,
  * which seem to be dead-locked or have caused a timeout.
- *
- * @author mja
- * @author rra
  */
 public class GameRoomManager
 {
@@ -37,13 +34,13 @@ public class GameRoomManager
   private final GamePluginManager	gamePluginManager	= new GamePluginManager();
 
   /* static fields */
-  private static Logger			logger				= LoggerFactory
+  private static Logger logger = LoggerFactory
           .getLogger(GameRoomManager.class);
 
   private LinkedList<Score> scores = new LinkedList<>();
 
   /**
-   *
+   * Default constructor, initializes rooms, loads available plugins
    */
   public GameRoomManager()
   {
