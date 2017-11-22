@@ -296,6 +296,7 @@ public class RequestTest extends RealServerTest{
 
     TestHelper.waitUntilEqual(1,()->lobby.getGameManager().getGames().size(), 2000);
     GameRoom room = gameMgr.getGames().iterator().next();
+    Assert.assertTrue(room.getSlots().get(0).getRole().getPlayer().isCanTimeout());
     ControlTimeoutRequest req = new ControlTimeoutRequest(room.getId(), false, 0);
     player1.send(req);
     TestHelper.waitMills(2000);
