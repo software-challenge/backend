@@ -8,16 +8,14 @@ import org.slf4j.LoggerFactory;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
-import sc.server.gaming.GameRoom;
-import sc.server.gaming.GameRoomManager;
-import sc.server.gaming.PlayerRole;
-import sc.server.gaming.ReservationManager;
+import sc.server.gaming.*;
 import sc.server.network.Client;
 import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
 import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;
 import sc.shared.Score;
+import sc.shared.SlotDescriptor;
 
 /**
  * The lobby will help clients find a open game or create new games to play with
@@ -138,6 +136,18 @@ public class Lobby implements IClientListener
           } catch (RescuableClientException e) {
             this.logger.error("Got exception on pause: {}", e);
           }
+        }
+			}
+			else if (packet instanceof ControlTimeoutRequest){
+        if (source.isAdministrator()){
+          ControlTimeoutRequest timeout = (ControlTimeoutRequest) packet;
+
+            GameRoom room = this.gameManager.findRoom(timeout.roomId);
+            PlayerSlot slot = room.getSlots().get(timeout.slot);
+            SlotDescriptor desc = slot.getDescriptor();
+            slot.setDescriptor(new SlotDescriptor(desc.getDisplayName(), timeout.activate,
+                    desc.isShouldBePaused()));
+
         }
 			}
 			else if (packet instanceof StepRequest)

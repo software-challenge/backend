@@ -307,7 +307,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   /**
    * Extends the set of listeners.
    *
-   * @param listener
+   * @param listener GameListener to be added
    */
   public void addGameListener(IGameListener listener) {
     this.listeners.add(listener);
@@ -316,7 +316,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   /**
    * Removes listener XXX is this right/complete?
    *
-   * @param listener
+   * @param listener GameListener to be removed
    */
   public void removeGameListener(IGameListener listener) {
     this.listeners.remove(listener);
@@ -347,7 +347,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Catch block, after an invalid move was performed
    * @param e catched Exception
    * @param author player, that caused the exception
-   * @throws GameLogicException
+   * @throws GameLogicException Always thrown
    */
   public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws GameLogicException {
     author.setViolated(true);
