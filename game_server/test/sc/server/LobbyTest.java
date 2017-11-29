@@ -10,9 +10,6 @@ import sc.server.network.ClientManager;
 import sc.server.network.RealServerTest;
 import sc.server.plugins.TestPlugin;
 
-/**
- * Created by nils on 05.07.17.
- */
 public class LobbyTest extends RealServerTest{
 
   @Test // TODO works, not sure what to update to new system
