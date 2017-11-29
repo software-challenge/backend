@@ -1,71 +1,35 @@
 <project name="Complete" basedir="." default="main">
   <import file="git-build.xml" />
 
+    <property name="game_name" value="hase_und_igel_new" />
   <property name="out.dir" value="deploy" />
-  <property name="game_plugin" value="hase_und_igel_new" />
+  <property name="build.dir" value="build" />
+    <!-- Plugin to compile (i.e. "hase_und_igel", "missippi_queen") -->
+  <property name="game_plugin" value="${game_name}_plugin" />
+    <property name="game_player" value="${game_name}_player" />
+  <property name="lib.dir" value="software_challenge_sdk/lib" />
 
   <target name="clean">
-    <delete dir="${out.dir}" />
-    <delete dir="game_server/build" />
-    <!--    old Plugins                        !-->
-    <delete dir="game_plugins/tic_tac_toe/build" />
-    <delete dir="game_players/hase_und_igel/build" />
-    <delete dir="game_plugins/schaefchen_im_trockenen/build" />
-    <delete dir="game_players/schaefchen_im_trockenen/build" />
-    <delete dir="game_plugins/manhattan/build" />
-    <delete dir="game_players/manhattan/build" />
-    <delete dir="game_players/manhattan_player2/build" />
-    <delete dir="game_plugins/cartagena/build" />
-    <delete dir="game_players/cartagena_player/build" />
-    <delete dir="game_players/cartagena_player2/build" />
-    <delete dir="game_plugins/sixpack/build" />
-    <delete dir="game_players/sixpack/build" />
-    <delete dir="game_plugins/hey_danke_fuer_den_fisch/build" />
-    <delete dir="game_players/hey_danke_fuer_den_fisch/build" />
-    <delete dir="game_players/hey_danke_fuer_den_fisch_player2/build" />
-    <delete dir="game_plugins/twixt/build" />
-    <delete dir="game_players/twixt_player/build" />
-    <delete dir="game_players/twixt_player2/build" />
-    <delete dir="game_plugins/mississippi_queen/build" />
-    <delete dir="game_players/mississippi_queen_player/build" />
-    <!--    currentPlugin                    !-->
-    <delete dir="game_plugins/${game_plugin}/build" />
-    <delete dir="game_players/hase_und_igel_player_new/build" />
+      <delete dir="${build.dir}" />
   </target>
 
   <target name="dependencies">
     <echo message="Compiling SDK..." />
-    <ant dir="software_challenge_sdk" target="clean-build" inheritAll="false" />
+    <ant dir="software_challenge_sdk" target="main" inheritAll="false" />
+    <!-- Copy libs to all projects -->
+      <copy todir="${lib.dir}" file="${build.dir}/software_challenge_sdk/jar/software_challenge_sdk.jar"/>
+      <copy todir="game_players/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
+      <copy todir="game_plugins/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
+      <copy todir="game_server/lib"><fileset dir="${lib.dir}" /></copy>
+      <copy todir="game_helper_clients/test_client/lib"><fileset dir="${lib.dir}" /></copy>
 
     <echo message="Compiling Plugins and Players..." />
-    <!--<ant dir="game_plugins/hase_und_igel" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/hase_und_igel" target="clean-build" inheritAll="false" />
-        <ant dir="game_plugins/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/schaefchen_im_trockenen" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/schaefchen_im_trockenen2" target="clean-build" inheritAll="false" />
-        <ant dir="game_plugins/manhattan" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/manhattan" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/manhattan_player2" target="clean-build" inheritAll="false" />
-        <ant dir="game_plugins/cartagena" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/cartagena_player/" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/cartagena_player2/" target="clean-build" inheritAll="false" />
-        <ant dir="game_plugins/sixpack" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/sixpack" target="clean-build" inheritAll="false" />
-        <ant dir="game_plugins/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/hey_danke_fuer_den_fisch" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" />
-        <ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/twixt_player" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" />
-	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
-	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />-->
-    <!--    currentPlugin                    !-->
-    <ant dir="game_plugins/${game_plugin}" target="clean-build" inheritAll="false" />
-    <ant dir="game_players/hase_und_igel_player_new" target="clean-build" inheritAll="false" />
+    <ant dir="game_plugins/${game_name}" target="main" inheritAll="false" />
+    <ant dir="game_players/${game_name}" target="main" inheritall="false"/>
 
     <echo message="Compiling Server..." />
-    <ant dir="game_server" target="clean-build" inheritAll="false" />
-    <ant dir="game_helper_clients/test_client" target="clean-build" inheritall="false" />
+    <ant dir="game_server" target="main" inheritAll="false" />
+    <ant dir="game_helper_clients/test_client" target="main" inheritall="false" />
   </target>
 
   <target name="build" depends="scmversion,dependencies">
@@ -73,28 +37,29 @@
 
     <mkdir dir="${out.dir}/server" />
     <copy todir="${out.dir}/server">
-      <fileset dir="./game_server/build/jar" />
-      <fileset dir="./game_helper_clients/test_client/build/jar" />
+      <fileset dir="${build.dir}/game_server/jar" />
+      <fileset dir="${build.dir}/test_client/jar" />
     </copy>
     <!-- build player -->
-    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
-    <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/jar">
-      <fileset dir="./game_players/hase_und_igel_player_new/build/jar" />
+    <mkdir dir="${out.dir}/simple_client/${game_name}/jar" />
+    <copy todir="${out.dir}/simple_client/${game_name}/jar">
+      <fileset dir="${build.dir}/${game_plugin}/jar" />
     </copy>
 
-    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
-    <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/src">
-      <fileset dir="./game_players/hase_und_igel_player_new">
+    <mkdir dir="${out.dir}/simple_client/${game_name}/src" />
+    <copy todir="${out.dir}/simple_client/${game_name}/src">
+      <fileset dir="./game_players/${game_name}">
         <exclude name="build/**/*" />
         <exclude name="bin/**/*" />
         <exclude name=".classpath" />
         <exclude name="build.xml" />
       </fileset>
     </copy>
-    <move tofile="${out.dir}/simple_client/hase_und_igel_player_new/src/build.xml" file="${out.dir}/simple_client/hase_und_igel_player_new/src/build-deploy.xml" />
-    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/src/lib" />
-    <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/src/lib">
-      <fileset dir="${out.dir}/simple_client/hase_und_igel_player_new/jar/lib" />
+    <move tofile="${out.dir}/simple_client/${game_name}/src/build.xml"
+          file="${out.dir}/simple_client/${game_name}/src/build-deploy.xml" />
+    <mkdir dir="${out.dir}/simple_client/${game_name}/src/lib" />
+    <copy todir="${out.dir}/simple_client/${game_name}/src/lib">
+      <fileset dir="${build.dir}/${game_player}/jar/lib" />
     </copy>
 
 
@@ -124,8 +89,8 @@
     <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
 
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
-    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_name}-jar.zip" basedir="${out.dir}/simple_client/${game_name}/jar" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_name}--src.zip" basedir="${out.dir}/simple_client/${game_name}/src" />
 
 
   </target>
@@ -133,7 +98,7 @@
   <target name="doc" depends="build">
     <ant dir="game_server" target="build-doc" inheritAll="false" />
     <ant dir="software_challenge_sdk" target="build-doc" inheritAll="false" />
-    <ant dir="./game_plugins/${game_plugin}" target="build-doc" inheritAll="false" />
+    <ant dir="./game_plugins/${game_name}" target="build-doc" inheritAll="false" />
     <mkdir dir="${out.dir}/docs" />
     <mkdir dir="${out.dir}/docs/game_server" />
     <mkdir dir="${out.dir}/docs/software_challenge_sdk" />

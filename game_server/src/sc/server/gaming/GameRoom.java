@@ -82,7 +82,7 @@ public class GameRoom implements IGameListener
       try {
         logger.debug("Save replay is active and try to save it to file");
         LobbyClient lobbyClient = new LobbyClient(Configuration.getXStream(), null,
-                "localhost", Configuration.getPort());
+                "127.0.0.1", Configuration.getPort());
         lobbyClient.start();
         replayObserver = new ObservingClient(lobbyClient, this.getId());
         lobbyClient.authenticate(Configuration.getAdministrativePassword());
