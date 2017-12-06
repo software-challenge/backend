@@ -69,3 +69,21 @@ software_challenge_sdk/doc/
 
 # ignore server.properties
 /game_server/configuration/server.properties
+
+build/
+
+game_helper_clients/lib/
+
+game_helper_clients/test_client/lib/
+
+game_players/hase_und_igel_new/lib/
+
+game_plugins/hase_und_igel_new/lib/
+
+game_server/lib/
+
+build_all/
+
+game_server/\.externalToolBuilders/
+
+software_challenge_sdk/lib/software_challenge_sdk\.jar

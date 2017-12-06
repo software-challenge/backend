@@ -1,5 +1,4 @@
- <project name="game_server" basedir="." default="main">
-
+ <project name="software-challenge-server" basedir="." default="main">
 	<property name="src.dir" value="src" />
 	<property name="doc.dir" value="doc" />
 	<property name="test.dir" value="test" />

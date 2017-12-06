@@ -1,7 +1,7 @@
-<project name="hase_und_igel_player_new" basedir="." default="main">
-    <property name="game_name" value="hase_und_igel_new" />
-    <property name="game_player" value="${game_name}_player" />
-    <property name="game_plugin" value="${game_name}_plugin" />
+<project name="hase_und_igel_2018_player" basedir="." default="main">
+	<property name="game_name" value="hase_und_igel_2018" />
+  <property name="game_player" value="${game_name}_player" />
+  <property name="game_plugin" value="${game_name}_plugin" />
 	<property name="src.dir" value="src" />
 	<property name="root.dir" value="./../.." />
 

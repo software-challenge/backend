@@ -1,4 +1,4 @@
-<project name="hase_und_igel_new_plugin" basedir="." default="main">
+<project name="hase_und_igel_2018_plugin" basedir="." default="main">
 	<import file="../../git-build.xml" />
 
 	<property name="src.dir" value="src" />

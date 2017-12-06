@@ -1,7 +1,7 @@
 <project name="Complete" basedir="." default="main">
   <import file="git-build.xml" />
 
-    <property name="game_name" value="hase_und_igel_new" />
+    <property name="game_name" value="hase_und_igel_2018" />
   <property name="out.dir" value="deploy" />
   <property name="build.dir" value="build" />
     <!-- Plugin to compile (i.e. "hase_und_igel", "missippi_queen") -->
@@ -10,18 +10,27 @@
   <property name="lib.dir" value="software_challenge_sdk/lib" />
 
   <target name="clean">
-      <delete dir="${build.dir}" />
+    <delete dir="${build.dir}" />
+    <ant dir="game_players/${game_name}" target="clean" />
+    <ant dir="game_plugins/${game_name}" target="clean" />
+    <ant dir="game_server" target="clean"/>
+    <ant dir="software_challenge_sdk" target="clean"/>
   </target>
 
   <target name="dependencies">
     <echo message="Compiling SDK..." />
     <ant dir="software_challenge_sdk" target="main" inheritAll="false" />
-    <!-- Copy libs to all projects -->
-      <copy todir="${lib.dir}" file="${build.dir}/software_challenge_sdk/jar/software_challenge_sdk.jar"/>
-      <copy todir="game_players/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
-      <copy todir="game_plugins/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
-      <copy todir="game_server/lib"><fileset dir="${lib.dir}" /></copy>
-      <copy todir="game_helper_clients/test_client/lib"><fileset dir="${lib.dir}" /></copy>
+
+    <echo message="Copy libraries..."/>
+    <!-- Copy libs to all sub-projects -->
+    <copy todir="${lib.dir}" file="${build.dir}/software_challenge_sdk/jar/software_challenge_sdk.jar"/>
+    <copy todir="game_players/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="game_plugins/${game_name}/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="game_server/lib"><fileset dir="${lib.dir}" /></copy>
+    <copy todir="game_helper_clients/test_client/lib"><fileset dir="${lib.dir}" /></copy>
+  </target>
+
+  <target name="build" depends="scmversion,dependencies">
 
     <echo message="Compiling Plugins and Players..." />
     <ant dir="game_plugins/${game_name}" target="main" inheritAll="false" />
@@ -29,44 +38,36 @@
 
     <echo message="Compiling Server..." />
     <ant dir="game_server" target="main" inheritAll="false" />
-    <ant dir="game_helper_clients/test_client" target="main" inheritall="false" />
+    <ant dir="game_helper_clients/test_client" target="main"/>
+    <!--<ant dir="game_helper_clients/test_client" target="main" inheritall="false" />-->
   </target>
 
-  <target name="build" depends="scmversion,dependencies">
-    <mkdir dir="${out.dir}" />
-
-    <mkdir dir="${out.dir}/server" />
+  <target name="deploy" depends="dependencies, build, doc">
+    <!-- copy and zip server -->
     <copy todir="${out.dir}/server">
-      <fileset dir="${build.dir}/game_server/jar" />
+      <fileset dir="${build.dir}/software-challenge-server/jar" />
       <fileset dir="${build.dir}/test_client/jar" />
     </copy>
-    <!-- build player -->
-    <mkdir dir="${out.dir}/simple_client/${game_name}/jar" />
-    <copy todir="${out.dir}/simple_client/${game_name}/jar">
-      <fileset dir="${build.dir}/${game_plugin}/jar" />
-    </copy>
 
-    <mkdir dir="${out.dir}/simple_client/${game_name}/src" />
-    <copy todir="${out.dir}/simple_client/${game_name}/src">
-      <fileset dir="./game_players/${game_name}">
-        <exclude name="build/**/*" />
-        <exclude name="bin/**/*" />
-        <exclude name=".classpath" />
-        <exclude name="build.xml" />
-      </fileset>
-    </copy>
-    <move tofile="${out.dir}/simple_client/${game_name}/src/build.xml"
-          file="${out.dir}/simple_client/${game_name}/src/build-deploy.xml" />
+    <!-- deploy zip from simple client (src and jar) -->
+    <echo file="${out.dir}/simple_client/${game_name}/jar/start.bat"
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xA;" />
+    <echo file="${out.dir}/simple_client/${game_name}/jar/start.sh"
+          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xD;&#xA;" />
+    <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip"
+         basedir="${out.dir}/simple_client/${game_name}/jar" />
+    <zip destfile="${out.dir}/zipped/simple_client_${game_name}_src.zip">
+      <fileset dir="game_players/${game_name}/src" includes="**/*.java"/>
+      <mappedresources>
+        <fileset file="game_players/${game_name}/build-deploy.xml"/>
+        <globmapper from="build-deploy.xml" to="build.xml"/>
+      </mappedresources>
+      <fileset dir="game_players/${game_name}/lib"/>
+    </zip>
+
     <mkdir dir="${out.dir}/simple_client/${game_name}/src/lib" />
     <copy todir="${out.dir}/simple_client/${game_name}/src/lib">
       <fileset dir="${build.dir}/${game_player}/jar/lib" />
-    </copy>
-
-
-    <!-->####    PLUGINS             !-->
-    <mkdir dir="game_server/plugins" />
-    <copy todir="game_server/plugins" flatten="true">
-      <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
     </copy>
 
     <echo message="Copy log configs" />
@@ -76,48 +77,39 @@
     <copy tofile="${out.dir}/server/logback-tests.xml" file="./game_helper_clients/test_client/src/logback-tests.xml" />
 
     <echo message="Generating Starter-Batchfiles" />
-
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
-    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
+    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xD;&#xA;</echo>
+    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar game_server.jar&#xA;</echo>
     <chmod file="${out.dir}/server/start.sh" perm="ugo+x" />
 
     <echo message="Zipping files..." />
 
     <mkdir dir="${out.dir}/zipped" />
 
-    <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
-
     <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-    <zip destfile="${out.dir}/zipped/simpleclient-${game_name}-jar.zip" basedir="${out.dir}/simple_client/${game_name}/jar" />
-    <zip destfile="${out.dir}/zipped/simpleclient-${game_name}--src.zip" basedir="${out.dir}/simple_client/${game_name}/src" />
-
 
   </target>
 
   <target name="doc" depends="build">
-    <ant dir="game_server" target="build-doc" inheritAll="false" />
-    <ant dir="software_challenge_sdk" target="build-doc" inheritAll="false" />
-    <ant dir="./game_plugins/${game_name}" target="build-doc" inheritAll="false" />
-    <mkdir dir="${out.dir}/docs" />
-    <mkdir dir="${out.dir}/docs/game_server" />
-    <mkdir dir="${out.dir}/docs/software_challenge_sdk" />
-    <mkdir dir="${out.dir}/docs/${game_plugin}" />
-    <copy todir="${out.dir}/docs/game_server">
-      <fileset dir="./game_server/doc"/>
-    </copy>
-    <copy todir="${out.dir}/docs/software_challenge_sdk">
-      <fileset dir="./software_challenge_sdk/doc"/>
-    </copy>
-    <copy todir="${out.dir}/docs/${game_plugin}">
-      <fileset dir="./game_plugins/${game_plugin}/doc"/>
-    </copy>
+    <!--<ant dir="game_server" target="build-doc" inheritAll="false" />-->
+    <!--<ant dir="software_challenge_sdk" target="build-doc" inheritAll="false" />-->
+    <!--<ant dir="./game_plugins/${game_name}" target="build-doc" inheritAll="false" />-->
 
-    <echo message="Gathering documentations..." />
-    <mkdir dir="${out.dir}/zipped/doc" />
-    <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
-    <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
-    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+    <!--<copy todir="${out.dir}/docs/game_server">-->
+      <!--<fileset dir="./game_server/doc"/>-->
+    <!--</copy>-->
+    <!--<copy todir="${out.dir}/docs/software_challenge_sdk">-->
+      <!--<fileset dir="./software_challenge_sdk/doc"/>-->
+    <!--</copy>-->
+    <!--&lt;!&ndash;<copy todir="${out.dir}/docs/${game_plugin}">&ndash;&gt;-->
+      <!--&lt;!&ndash;<fileset dir="./game_plugins/${game_plugin}/doc"/>&ndash;&gt;-->
+    <!--&lt;!&ndash;</copy>&ndash;&gt;-->
+
+    <!--<echo message="Gathering documentations..." />-->
+    <!--<mkdir dir="${out.dir}/zipped/doc" />-->
+    <!--<zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />-->
+    <!--<zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />-->
+    <!--<zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-src.zip" basedir="${out.dir}/simple_client/${game_player}/src" />-->
 
   </target>
 

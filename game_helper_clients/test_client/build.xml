@@ -1,5 +1,5 @@
 <project name="test_client" basedir="." default="main">
-    <property name="game_name" value="hase_und_igel_new" />
+  <property name="game_name" value="hase_und_igel_2018" />
 	<property name="src.dir" value="src" />
 	<property name="root.dir" value="./../.." />
 	<property name="build.dir" value="${root.dir}/build" />
@@ -8,7 +8,7 @@
 	<property name="lib.dir" value="lib" />
 	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
 	<property name="plugins.dir" value="${root.dir}/game_plugins" />
-	<property name="game.dir" value="${plugins.dir}/hase_und_igel_new" />
+	<property name="game.dir" value="${plugins.dir}/${game_name}" />
 	<property name="server.dir" value="${root.dir}/game_server" />
 	<property name="main-class" value="sc.TestClient" />
 	<property name="game_plugin" value="${game_name}_plugin" />
@@ -16,10 +16,10 @@
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="*.jar" />
 		<fileset dir="${build.dir}/${game_plugin}" includes="**/*.jar" />
-    	<fileset dir="${build.dir}/game_server" includes="**/*.jar" />
+    <fileset dir="${build.dir}/software-challenge-server" includes="**/*.jar" />
 		<pathelement location="${build.dir}/software_challenge_sdk/bin" />
-		<pathelement location="${build.dir}/game_server/bin" />
-    	<pathelement location="${build.dir}/${game_plugin}/bin" />
+		<pathelement location="${build.dir}/software-challenge-server/bin" />
+    <pathelement location="${build.dir}/${game_plugin}/bin" />
 	</path>
 
 	<path id="classpath.base">
@@ -33,16 +33,16 @@
 				<!-- remove absolute path -->
 				<flattenmapper />
 				<!-- add lib/ prefix -->
-				<globmapper from="*" to="lib/* " />
+				<globmapper from="*" to="lib/*" />
 			</chainedmapper>
 		</mapper>
 
 		<path refid="classpath.libs" />
 	</pathconvert>
 
-    <pathconvert property="base.classpath" pathsep=":">
-        <path refid="classpath.base" />
-    </pathconvert>
+	<pathconvert property="base.classpath" pathsep="">
+			<path refid="classpath.base" />
+	</pathconvert>
 
 	<target name="clean">
 		<delete dir="${build.dir}" />
