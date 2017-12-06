@@ -1,6 +1,5 @@
 package sc.player2018.logic;
 
-import java.lang.reflect.Array;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
@@ -11,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import sc.player2018.Starter;
 import sc.plugin2018.*;
 import sc.plugin2018.util.Constants;
-import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.PlayerColor;
-import sc.shared.InvalidMoveException;
 import sc.shared.GameResult;
 
 /**
@@ -45,7 +42,7 @@ public class RandomLogic implements IGameHandler {
 		this.client = client;
 	}
 
-	/**
+  /**
 	 * {@inheritDoc}
 	 */
 	public void gameEnded(GameResult data, PlayerColor color,
