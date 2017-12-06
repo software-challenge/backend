@@ -25,10 +25,14 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           .getLogger(RoundBasedGameInstance.class);
   protected P activePlayer = null;
 
+  /*
+   * round equals the turn in the GameState, not the round the game is currently in
+   * TODO rename round to turn
+   */
   private int round = 0;
 
   @XStreamOmitField
-  private boolean paused = false;
+  private Optional<Integer> paused = Optional.empty();
 
   @XStreamOmitField
   private Runnable afterPauseAction = null;
@@ -138,15 +142,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Server or an administrator requests the game to start now.
    */
   public void start() {
-    if (this.listeners.isEmpty()) {
-      logger.warn("Couldn't find any listeners. Is this intended?");
-    }
-
-    this.activePlayer = this.players.get(0);
-    // TODO currently no implementation
-    // onActivePlayerChanged(this.activePlayer);
-    notifyOnNewState(getCurrentState());
-    notifyActivePlayer();
+    next(this.players.get(0));
   }
 
   /**
@@ -213,7 +209,9 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
     } else {
-      notifyActivePlayer();
+      if (!this.isPaused()) {
+        notifyActivePlayer();
+      }
     }
   }
 
@@ -236,7 +234,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    */
   protected final void notifyActivePlayer() {
     requestMove(activePlayer);
-
   }
 
   /**
@@ -273,7 +270,8 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   protected final boolean isPaused() {
-    return this.paused;
+
+    return this.paused.isPresent() || this.paused.get() > this.round;
   }
 
 
@@ -292,11 +290,11 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   /**
-   * XXX Pauses game
+   * Pauses game
    *
    * @param pause true if game should be paused
    */
-  public void setPauseMode(boolean pause) {
+  public void setPauseMode(Optional<Integer> pause) {
     this.paused = pause;
   }
 

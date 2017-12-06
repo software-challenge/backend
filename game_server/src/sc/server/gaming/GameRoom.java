@@ -1,12 +1,7 @@
 package sc.server.gaming;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -600,6 +595,7 @@ public class GameRoom implements IGameListener
 	}
 
   /**
+	 * TODO use Optional here
    * Pause or un-pause a game
    * @param pause true if game is to be paused
    */
@@ -620,8 +616,9 @@ public class GameRoom implements IGameListener
 
 		logger.info("Switching PAUSE from {} to {}.", isPaused(), pause);
 		this.paused = pause;
-		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game; // XXX
-		pausableGame.setPauseMode(isPaused());
+		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game;
+		// pause game after current turn has finished
+		pausableGame.setPauseMode(Optional.of(((RoundBasedGameInstance<SimplePlayer>) this.game).getRound() + 1));
 
 		// continue execution
 		if (!isPaused())
