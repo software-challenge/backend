@@ -223,8 +223,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   public final boolean isPaused() {
-
-    return (this.paused.isPresent() && this.paused.get() <= this.turn);
+    return this.paused.map(inTurn -> this.turn >= inTurn).orElse(false);
   }
 
 
