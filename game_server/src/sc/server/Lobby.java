@@ -152,9 +152,9 @@ public class Lobby implements IClientListener
 			else if (packet instanceof StepRequest)
 			{
 			  if (source.isAdministrator()) {
-          StepRequest pause = (StepRequest) packet;
-          GameRoom room = this.gameManager.findRoom(pause.roomId);
-          room.step(pause.forced);
+          StepRequest stepRequest = (StepRequest) packet;
+          GameRoom room = this.gameManager.findRoom(stepRequest.roomId);
+          room.step(stepRequest.forced);
         }
 			}
 			else if (packet instanceof CancelRequest)

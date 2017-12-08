@@ -93,7 +93,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Checks if goal is reached
    *
    * @return WinCondition with winner and reason or null, if no win condition is
-   *         yet met.
+   * yet met.
    */
   protected abstract WinCondition checkWinCondition();
 
@@ -224,7 +224,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
   public final boolean isPaused() {
 
-    return (this.paused.isPresent() && this.paused.get() >= this.turn);
+    return (this.paused.isPresent() && this.paused.get() <= this.turn);
   }
 
 
@@ -306,8 +306,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
   /**
    * Catch block, after an invalid move was performed
-   * @param e catched Exception
+   *
+   * @param e      catched Exception
    * @param author player, that caused the exception
+   *
    * @throws GameLogicException Always thrown
    */
   public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws GameLogicException {
