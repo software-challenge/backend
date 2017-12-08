@@ -25,20 +25,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           .getLogger(RoundBasedGameInstance.class);
   protected P activePlayer = null;
 
-  /*
-   * round equals the turn in the GameState, not the round the game is currently in
-   * TODO rename round to turn
-   */
-  private int round = 0;
+  private int turn = 0;
 
   @XStreamOmitField
   private Optional<Integer> paused = Optional.empty();
-
-  @XStreamOmitField
-  private Runnable afterPauseAction = null;
-
-  @XStreamOmitField
-  private Object afterPauseLock = new Object();
 
   @XStreamOmitField
   private ActionTimeout requestTimeout = null;
@@ -53,7 +43,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   protected String pluginUUID;
 
   public int getRound() {
-    return this.round;
+    return this.turn / 2;
   }
 
   /**
@@ -76,24 +66,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           fromPlayer.setSoftTimeout(true);
           onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
         } else {
-          if (!isPaused()){
-            onRoundBasedAction(fromPlayer, data);
-          } else {
-            logger.info("Game is paused. Save this action.");
-            final P currentActivePlayer = this.activePlayer;
-            synchronized (this.afterPauseLock) {
-              logger.debug("Setting AfterPauseAction");
-
-              this.afterPauseAction = () -> {
-                requestMove(currentActivePlayer);
-                next();
-              };
-
-              for (IGameListener listener : this.listeners) {
-                listener.onPaused(currentActivePlayer);
-              }
-            }
-          }
+          onRoundBasedAction(fromPlayer, data);
         }
       } else {
         errorMsg = Optional.of("We didn't request a data from you yet.");
@@ -142,7 +115,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Server or an administrator requests the game to start now.
    */
   public void start() {
-    next(this.players.get(0));
+    next(this.players.get(0), true);
   }
 
   /**
@@ -176,35 +149,20 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     notifyOnGameOver(res);
   }
 
-  protected void onActivePlayerChanged(P newActivePlayer) {
-    // optional callback
-  }
-
-  protected void next() {
-    next(getPlayerAfter(this.activePlayer));
-  }
-
-  protected final P getPlayerAfter(P player) {
-    return getPlayerAfter(player, 1);
-  }
-
-  protected final P getPlayerAfter(P player, int step) {
-    int playerPos = this.players.indexOf(player);
-    playerPos = (playerPos + step) % this.players.size();
-    return this.players.get(playerPos);
-  }
-
   protected final void next(P nextPlayer) {
-    if (increaseTurnIfNecessary(nextPlayer)) {
-      this.round++;
+    next(nextPlayer, false);
+  }
 
-      // change player before calling new round callback
-      this.activePlayer = nextPlayer;
+  protected final void next(P nextPlayer, boolean firstTurn) {
+    logger.debug("next round ({}) for player {}", getRound(), nextPlayer);
+    if (!firstTurn) {
+      turn++;
     }
-    logger.debug("next round ({}) for player {}", this.round, nextPlayer);
-
     this.activePlayer = nextPlayer;
-    notifyOnNewState(getCurrentState());
+    // don't notify on new state if game is paused or client may begin to calculate something
+    if (!this.isPaused()) {
+      notifyOnNewState(getCurrentState());
+    }
 
     if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
@@ -216,11 +174,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   public abstract PlayerScore getScoreFor(P p);
-
-  protected boolean increaseTurnIfNecessary(P nextPlayer) {
-    return (this.activePlayer != nextPlayer && this.players
-            .indexOf(nextPlayer) == 0);
-  }
 
   /**
    * Gets the current state representation.
@@ -269,24 +222,19 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     return new ActionTimeout(true);
   }
 
-  protected final boolean isPaused() {
+  public final boolean isPaused() {
 
-    return this.paused.isPresent() || this.paused.get() > this.round;
+    return (this.paused.isPresent() && this.paused.get() >= this.turn);
   }
 
 
+  /**
+   * Notifies players about the new state, sends a MoveRequest to active player
+   */
   public void afterPause() {
-    synchronized (this.afterPauseLock) {
-      if (this.afterPauseAction == null) {
-        logger
-                .error("AfterPauseAction was null. Might cause a deadlock.");
-      } else {
-        logger.info("Run AfterPauseAction.");
-        Runnable action = this.afterPauseAction;
-        this.afterPauseAction = null;
-        action.run();
-      }
-    }
+    logger.info("Sending MoveRequest to player {}.", this.activePlayer);
+    notifyOnNewState(getCurrentState());
+    notifyActivePlayer();
   }
 
   /**
@@ -294,8 +242,17 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    *
    * @param pause true if game should be paused
    */
-  public void setPauseMode(Optional<Integer> pause) {
-    this.paused = pause;
+  public void setPauseMode(Boolean pause) {
+    if (pause) {
+      if (wasMoveRequested()) {
+        // pause in next turn, if client has a pending MoveRequest
+        this.paused = Optional.of(this.turn + 1);
+      } else {
+        this.paused = Optional.of(this.turn);
+      }
+    } else {
+      this.paused = Optional.empty();
+    }
   }
 
   public Map<SimplePlayer, PlayerScore> generateScoreMap() {
@@ -308,8 +265,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     return map;
   }
 
-  // XXX methods from former SimpleGameInstance
-
   /**
    * Extends the set of listeners.
    *
@@ -320,7 +275,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   /**
-   * Removes listener XXX is this right/complete?
+   * Removes listener TODO check whether this is right/complete?
    *
    * @param listener GameListener to be removed
    */

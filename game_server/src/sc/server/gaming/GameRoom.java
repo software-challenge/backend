@@ -595,7 +595,6 @@ public class GameRoom implements IGameListener
 	}
 
   /**
-	 * TODO use Optional here
    * Pause or un-pause a game
    * @param pause true if game is to be paused
    */
@@ -618,7 +617,7 @@ public class GameRoom implements IGameListener
 		this.paused = pause;
 		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game;
 		// pause game after current turn has finished
-		pausableGame.setPauseMode(Optional.of(((RoundBasedGameInstance<SimplePlayer>) this.game).getRound() + 1));
+		pausableGame.setPauseMode(pause);
 
 		// continue execution
 		if (!isPaused())
@@ -655,7 +654,7 @@ public class GameRoom implements IGameListener
 		if (isPaused())
 		{
 			logger.info("Stepping.");
-			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause(); // XXX
+			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause();
 		}
 		else
 		{
@@ -727,7 +726,8 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * Return whether or not the game is paused
+	 * Return whether or not the game is paused or will be paused in the next turn.
+	 * Refer to {@link RoundBasedGameInstance#isPaused()} for the current value
 	 * @return true, if game is paused
 	 */
 	public boolean isPaused()

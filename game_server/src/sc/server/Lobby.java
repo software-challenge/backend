@@ -163,6 +163,8 @@ public class Lobby implements IClientListener
           CancelRequest cancel = (CancelRequest) packet;
           GameRoom room = this.gameManager.findRoom(cancel.roomId);
           room.cancel();
+          // TODO check whether all client receive game over message
+          this.gameManager.getGames().remove(room);
         }
 			}
 			else if (packet instanceof TestModeRequest) {
