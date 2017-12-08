@@ -1,6 +1,5 @@
-package sc.player2018.logic;
+package sc.player2018;
 
-import java.lang.reflect.Array;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
@@ -8,12 +7,9 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sc.player2018.Starter;
 import sc.plugin2018.*;
 import sc.plugin2018.util.Constants;
-import sc.plugin2018.util.GameRuleLogic;
 import sc.shared.PlayerColor;
-import sc.shared.InvalidMoveException;
 import sc.shared.GameResult;
 
 /**
@@ -21,13 +17,13 @@ import sc.shared.GameResult;
  * waehlt, aber gueltige Zuege macht. Ausserdem werden zum Spielverlauf
  * Konsolenausgaben gemacht.
  */
-public class RandomLogic implements IGameHandler {
+public class Logic implements IGameHandler {
 
 	private Starter client;
 	private GameState gameState;
 	private Player currentPlayer;
 
-  private static final Logger log = LoggerFactory.getLogger(RandomLogic.class);
+  private static final Logger log = LoggerFactory.getLogger(Logic.class);
 	/*
 	 * Klassenweit verfuegbarer Zufallsgenerator der beim Laden der klasse
 	 * einmalig erzeugt wird und darn immer zur Verfuegung steht.
@@ -41,7 +37,7 @@ public class RandomLogic implements IGameHandler {
 	 *            Der Zugrundeliegende Client der mit dem Spielserver
 	 *            kommunizieren kann.
 	 */
-	public RandomLogic(Starter client) {
+	public Logic(Starter client) {
 		this.client = client;
 	}
 
