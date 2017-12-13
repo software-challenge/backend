@@ -1,20 +1,24 @@
 <project name="Complete" basedir="." default="main">
   <import file="git-build.xml" />
 
-    <property name="game_name" value="hase_und_igel_2018" />
-  <property name="out.dir" value="deploy" />
-  <property name="build.dir" value="build" />
+  <property name="game_name" value="hase_und_igel_2018" />
+  <property name="out.dir" value="${basedir}/deploy" />
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="sdk.dir" value="${basedir}/software_challenge_sdk" />
+  <property name="plugins.dir" value="${basedir}/game_plugins" />
+  <property name="lib.dir" value="${basedir}/software_challenge_sdk/lib" />
+
     <!-- Plugin to compile (i.e. "hase_und_igel", "missippi_queen") -->
   <property name="game_plugin" value="${game_name}_plugin" />
-    <property name="game_player" value="${game_name}_player" />
-  <property name="lib.dir" value="software_challenge_sdk/lib" />
+  <property name="game_player" value="${game_name}_player" />
 
   <target name="clean">
+    <!--<ant dir="game_players/${game_name}" target="build-clean" />-->
+    <!--<ant dir="game_plugins/${game_name}" target="build-clean" />-->
+    <!--<ant dir="game_server" target="build-clean"/>-->
+    <!--<ant dir="software_challenge_sdk" target="build-clean"/>-->
+    <!--<ant dir="game_helper_clients/test_client" target="build-clean"/>-->
     <delete dir="${build.dir}" />
-    <ant dir="game_players/${game_name}" target="clean" />
-    <ant dir="game_plugins/${game_name}" target="clean" />
-    <ant dir="game_server" target="clean"/>
-    <ant dir="software_challenge_sdk" target="clean"/>
   </target>
 
   <target name="dependencies">
@@ -32,14 +36,15 @@
 
   <target name="build" depends="scmversion,dependencies">
 
-    <echo message="Compiling Plugins and Players..." />
-    <ant dir="game_plugins/${game_name}" target="main" inheritAll="false" />
-    <ant dir="game_players/${game_name}" target="main" inheritall="false"/>
+    <echo message="Compiling Plugins..." />
+    <ant dir="game_plugins/${game_name}" target="main" />
+
+    <echo message="Compiling Player..." />
+    <ant dir="game_players/${game_name}" target="main"/>
 
     <echo message="Compiling Server..." />
     <ant dir="game_server" target="main" inheritAll="false" />
     <ant dir="game_helper_clients/test_client" target="main"/>
-    <!--<ant dir="game_helper_clients/test_client" target="main" inheritall="false" />-->
   </target>
 
   <target name="deploy" depends="dependencies, build, doc">
@@ -51,7 +56,7 @@
 
     <!-- deploy zip from simple client (src and jar) -->
     <echo file="${out.dir}/simple_client/${game_name}/jar/start.bat"
-          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xA;" />
+          message="#!/bin/sh/java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xA;" />
     <echo file="${out.dir}/simple_client/${game_name}/jar/start.sh"
           message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xD;&#xA;" />
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip"
@@ -90,11 +95,13 @@
 
   </target>
 
-  <target name="doc" depends="build">
-    <!--<ant dir="game_server" target="build-doc" inheritAll="false" />-->
-    <!--<ant dir="software_challenge_sdk" target="build-doc" inheritAll="false" />-->
-    <!--<ant dir="./game_plugins/${game_name}" target="build-doc" inheritAll="false" />-->
-
+  <target name="doc">
+    <ant dir="game_server" target="build-doc"/>
+    <ant dir="game_helper_clients/test_client" target="build-doc"/>
+    <ant dir="software_challenge_sdk" target="build-doc"/>
+    <ant dir="./game_plugins/${game_name}" target="build-doc"/>
+    <ant dir="./game_players/${game_name}" target="build-doc"/>
+    <!--TODO Add to zip -->
     <!--<copy todir="${out.dir}/docs/game_server">-->
       <!--<fileset dir="./game_server/doc"/>-->
     <!--</copy>-->
@@ -113,8 +120,8 @@
 
   </target>
 
-  <target name="clean-build" depends="clean,build" />
-  <target name="build-all" depends="clean-build, doc" />
+  <target name="build-clean" depends="clean,build" />
+  <target name="build-all" depends="build-clean, doc" />
 
   <target name="main" depends="build-all" />
 </project>

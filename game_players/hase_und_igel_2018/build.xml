@@ -1,24 +1,27 @@
 <project name="hase_und_igel_2018_player" basedir="." default="main">
-	<property name="game_name" value="hase_und_igel_2018" />
+  <!-- Defaults to value from build.xml in root directory (cannot override properties) -->
+  <property name="game_name" value="hase_und_igel_2018" />
+  <property name="root.dir" value="${basedir}/../.." />
+  <property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
+  <property name="build.dir" value="${root.dir}/build" />
+  <property name="plugins.dir" value="${root.dir}/game_plugins" />
+  <property name="lib.dir" value="lib" />
+
+  <!-- Local properties -->
   <property name="game_player" value="${game_name}_player" />
   <property name="game_plugin" value="${game_name}_plugin" />
+  <property name="doc.dir" value="${build.dir}/${game_player}/doc" />
 	<property name="src.dir" value="src" />
-	<property name="root.dir" value="./../.." />
-
-	<property name="build.dir" value="${root.dir}/build" />
+	<property name="game.dir" value="${plugins.dir}/${game_name}" />
 	<property name="classes.dir" value="${build.dir}/${game_player}/bin" />
 	<property name="jar.dir" value="${build.dir}/${game_player}/jar" />
-	<property name="lib.dir" value="lib" />
-	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
-	<property name="plugins.dir" value="${root.dir}/game_plugins" />
-	<property name="game.dir" value="${plugins.dir}/${game_name}" />
 	<property name="main-class" value="sc.player2018.Starter" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
 		<fileset dir="${build.dir}/${game_plugin}" includes="**/*.jar" />
-		<pathelement location="${build.dir}/software_challenge_sdk/bin" />
-		<pathelement location="${build.dir}/${game_plugin}/bin" />
+		<!--<pathelement location="${build.dir}/software_challenge_sdk/bin" />-->
+		<!--<pathelement location="${build.dir}/${game_plugin}/bin" />-->
 	</path>
 
 	<path id="classpath.base">
@@ -49,7 +52,8 @@
     </pathconvert>
 
 	<target name="clean">
-		<delete dir="build/bin" />
+		<delete dir="${build.dir}/${game_player}" />
+    <delete dir="${doc.dir}" />
 	</target>
 
 	<target name="compile">
@@ -62,11 +66,10 @@
 					 classpathref="classpath.base"
 					 debug="true"
 					 debuglevel="lines,vars,source"
-                     includeantruntime="false"/>
+           includeantruntime="false"/>
 	</target>
 
 	<target name="jar" depends="compile">
-		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar"
 			 basedir="${classes.dir}">
 			<manifest>
@@ -75,11 +78,8 @@
 			</manifest>
 		</jar>
 
-		<delete dir="${jar.dir}/lib" />
-		<mkdir dir="${jar.dir}/lib" />
 		<copy todir="${jar.dir}/lib" flatten="true">
 			<path refid="classpath.libs" />
-			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
 			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
 		</copy>
 		<copy tofile="${jar.dir}/logback.xml"
@@ -87,14 +87,20 @@
 	</target>
 
 	<target name="javadoc">
-        <!-- TODO javadoc generation -->
+    <javadoc destdir="${doc.dir}/"
+             classpathref="classpath.base"
+             packagenames="sc.*"
+             linksource="true"
+             sourcepath="${src.dir}" />
 	</target>
 
 	<target name="build" depends="jar" />
 
 	<target name="build-clean" depends="clean, build" />
 
-	<target name="build-all" depends="clean, build, javadoc" />
+  <target name="build-doc" depends="javadoc"/>
 
-	<target name="main" depends="jar" />
+	<target name="build-all" depends="build-clean, build-doc" />
+
+	<target name="main" depends="build" />
 </project>

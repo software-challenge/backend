@@ -1,24 +1,25 @@
 <project name="test_client" basedir="." default="main">
+	<!-- Defaults to value from build.xml in root directory (cannot override properties) -->
   <property name="game_name" value="hase_und_igel_2018" />
-	<property name="src.dir" value="src" />
-	<property name="root.dir" value="./../.." />
+	<property name="root.dir" value="${basedir}/../.." />
 	<property name="build.dir" value="${root.dir}/build" />
+  <property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
+  <property name="lib.dir" value="lib" />
+  <property name="plugins.dir" value="${root.dir}/game_plugins" />
+
+  <!-- Local properties -->
+  <property name="doc.dir" value="${build.dir}/${ant.project.name}/doc"/>
+  <property name="src.dir" value="src" />
 	<property name="classes.dir" value="${build.dir}/${ant.project.name}/bin" />
 	<property name="jar.dir" value="${build.dir}/${ant.project.name}/jar" />
-	<property name="lib.dir" value="lib" />
-	<property name="sdk.dir" value="${root.dir}/software_challenge_sdk" />
-	<property name="plugins.dir" value="${root.dir}/game_plugins" />
 	<property name="game.dir" value="${plugins.dir}/${game_name}" />
 	<property name="server.dir" value="${root.dir}/game_server" />
 	<property name="main-class" value="sc.TestClient" />
 	<property name="game_plugin" value="${game_name}_plugin" />
 
 	<path id="classpath.libs">
-		<fileset dir="${lib.dir}" includes="*.jar" />
-		<fileset dir="${build.dir}/${game_plugin}" includes="**/*.jar" />
+    <fileset dir="${lib.dir}" includes="**/*.jar"/>
     <fileset dir="${build.dir}/software-challenge-server" includes="**/*.jar" />
-		<pathelement location="${build.dir}/software_challenge_sdk/bin" />
-		<pathelement location="${build.dir}/software-challenge-server/bin" />
     <pathelement location="${build.dir}/${game_plugin}/bin" />
 	</path>
 
@@ -40,12 +41,9 @@
 		<path refid="classpath.libs" />
 	</pathconvert>
 
-	<pathconvert property="base.classpath" pathsep="">
-			<path refid="classpath.base" />
-	</pathconvert>
-
 	<target name="clean">
-		<delete dir="${build.dir}" />
+		<delete dir="${build.dir}/test_client" />
+    <delete dir="${doc.dir}"/>
 	</target>
 
 	<target name="compile">
@@ -58,10 +56,11 @@
 					 classpathref="classpath.base"
 					 debug="true"
 					 debuglevel="lines,vars,source"
-                     includeantruntime="false"/>
+           includeantruntime="false"/>
 	</target>
 
 	<target name="jar" depends="compile">
+
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
 			<manifest>
@@ -70,21 +69,18 @@
 			</manifest>
 		</jar>
 
-		<delete dir="${jar.dir}/lib" />
-		<mkdir dir="${jar.dir}/lib" />
 		<copy todir="${jar.dir}/lib" flatten="true">
 			<path refid="classpath.libs" />
-			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />!-->
+			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />-->
 			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
 		</copy>
 	</target>
 
-	<target name="javadoc">
+  <target name="javadoc">
 		<javadoc encoding="UTF-8"
                  charset="UTF-8"
-                 access="private"
                  author="false"
-                 destdir="doc"
+                 destdir="${doc.dir}"
                  nodeprecated="true"
                  nodeprecatedlist="true"
                  noindex="false"
@@ -97,18 +93,20 @@
                  doctitle="Javadoc zum Software-Challenge 2018 Simpleclient"
                  windowtitle="Javadoc zum Simpleclient '18"
                  packagenames="sc.player2018.*,sc.plugin2018"
-                 overview="overview.html"
-                 classpath="${base.classpath}">
+                 classpathref="classpath.base">
 
         <fileset dir="src" defaultexcludes="yes">
-        <exclude name="logback.xml"/>
       </fileset>
     </javadoc>
 	</target>
 
 	<target name="build" depends="jar" />
 
+  <target name="build-doc" depends="javadoc" />
+
 	<target name="build-clean" depends="clean,build" />
+
+  <target name="build-all" depends="build-clean, build-doc"/>
 
 	<target name="main" depends="jar" />
 </project>

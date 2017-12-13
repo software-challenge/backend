@@ -1,16 +1,17 @@
- <project name="software-challenge-server" basedir="." default="main">
-	<property name="src.dir" value="src" />
-	<property name="doc.dir" value="doc" />
-	<property name="test.dir" value="test" />
+<project name="software-challenge-server" basedir="." default="main">
 
-	<property name="build.dir" value="../build/${ant.project.name}" />
-	<property name="classes.dir" value="${build.dir}/bin" />
-	<property name="jar.dir" value="${build.dir}/jar" />
+	 <!-- Defaults to value from build.xml in root directory (cannot override properties) -->
+	<property name="build.dir" value="../build" />
+	<property name="classes.dir" value="${build.dir}/${ant.project.name}/bin" />
+  <property name="jar.dir" value="${build.dir}/${ant.project.name}/jar" />
+  <property name="lib.dir" value="lib" />
 
+  <!-- Local properties -->
+  <property name="src.dir" value="src" />
+  <property name="doc.dir" value="${build.dir}/${ant.project.name}/doc" />
+  <property name="test.dir" value="test" />
 	<property name="main-class" value="sc.server.Application" />
 
-	<property name="lib.dir" value="lib" />
-	<property name="plugin.dir" value="${jar.dir}/plugins" />
 
 	<path id="classpath.libs">
 		<fileset dir="${lib.dir}" includes="*.jar" />
@@ -33,7 +34,8 @@
 	 </pathconvert>
 
 	<target name="clean">
-		<delete dir="${build.dir}" />
+		<delete dir="${build.dir}/software-challenge-server" />
+    <delete dir="${doc.dir}" />
 	</target>
 
 	<target name="compile">
@@ -50,18 +52,10 @@
 	</target>
 
 	<target name="doc" description="generate documentation">
-		<mkdir dir="${doc.dir}" />
 		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
 	</target>
 
-	<target name="export-libs">
-        <!-- Copy libraries and sdk to jar path -->
-		<copy todir="${jar.dir}/lib" flatten="true">
-			<path refid="classpath.libs" />
-		</copy>
-	</target>
-
-	<target name="jar" depends="compile, export-libs">
+	<target name="jar" depends="compile">
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
@@ -71,9 +65,10 @@
 		</jar>
 	</target>
 
+  <target name="build" depends="jar" />
 	<target name="build-clean" depends="clean, jar" />
-    <target name="build-all" depends="clean, doc, jar" />
-	<target name="build-doc" depends="clean, doc" />
+  <target name="build-all" depends="build-clean, doc" />
+	<target name="build-doc" depends="doc" />
 
 	<target name="main" depends="jar" />
 </project>

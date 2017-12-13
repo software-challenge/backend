@@ -87,3 +87,9 @@ build_all/
 game_server/\.externalToolBuilders/
 
 software_challenge_sdk/lib/software_challenge_sdk\.jar
+
+game_players/hase_und_igel_2018/lib/
+
+game_plugins/hase_und_igel_2018/lib/
+
+game_plugins/lib

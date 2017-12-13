@@ -1,9 +1,11 @@
 <project name="software_challenge_sdk" basedir="." default="main">
 	<property name="src.dir" value="src" />
-	<property name="doc.dir" value="doc" />
-	<property name="build.dir" value="../build/${ant.project.name}" />
-	<property name="classes.dir" value="${build.dir}/bin" />
-	<property name="jar.dir" value="${build.dir}/jar" />
+	<!-- Copy libs to all sub-projects -->
+	<property name="build.dir" value="../build"/>
+	<property name="build.sdk.dir" value="${build.dir}/${ant.project.name}" />
+  <property name="doc.dir" value="${build.sdk.dir}/doc" />
+	<property name="classes.dir" value="${build.sdk.dir}/bin" />
+	<property name="jar.dir" value="${build.sdk.dir}/jar" />
 	<property name="lib.dir" value="lib" />
 
 
@@ -12,8 +14,8 @@
 	</path>
 
 	<target name="clean">
-		<delete dir="${build.dir}" />
-        <delete dir="${doc.dir}" />
+		<delete dir="${build.sdk.dir}" />
+		<delete dir="${doc.dir}" />
 	</target>
 
 	<target name="compile">
@@ -28,16 +30,9 @@
 	</target>
 
 	<target name="doc" description="generate documentation">
-        <javadoc destdir="${doc.dir}/framework"
+        <javadoc destdir="${doc.dir}"
                  classpathref="classpath"
-                 packagenames="sc.helpers.*, sc.plugins.*, sc.shared.*"
-                 linksource="true">
-            <fileset dir="${src.dir}/framework" />
-            <fileset dir="${src.dir}/server_api" />
-        </javadoc>
-        <javadoc destdir="${doc.dir}/framework"
-                 classpathref="classpath"
-                 packagenames="sc.api.*, sc.framework.*, sc.networking.*, sc.protocol.*"
+                 packagenames="sc.*"
                  linksource="true">
             <fileset dir="${src.dir}/framework" />
             <fileset dir="${src.dir}/server_api" />
@@ -50,11 +45,11 @@
 	</target>
 
 
+	<target name="build" depends="jar" />
 	<target name="build-doc" depends="doc" />
 
-    <target name="build-clean" depends="clean,jar" />
-	<target name="build-all" depends="clean,jar,doc" />
+	<target name="build-clean" depends="clean,build" />
+	<target name="build-all" depends="build-clean,doc" />
 
-    <target name="build" depends="jar" />
 	<target name="main" depends="build" />
 </project>
