@@ -151,6 +151,9 @@ public class Lobby implements IClientListener
 			}
 			else if (packet instanceof StepRequest)
 			{
+				/*
+				It is not checked whether there is a prior pending StepRequest
+				 */
 			  if (source.isAdministrator()) {
           StepRequest stepRequest = (StepRequest) packet;
           GameRoom room = this.gameManager.findRoom(stepRequest.roomId);
