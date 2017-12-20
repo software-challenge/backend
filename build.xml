@@ -8,16 +8,11 @@
   <property name="plugins.dir" value="${basedir}/game_plugins" />
   <property name="lib.dir" value="${basedir}/software_challenge_sdk/lib" />
 
-    <!-- Plugin to compile (i.e. "hase_und_igel", "missippi_queen") -->
+  <!-- Plugin to compile (i.e. "hase_und_igel", "missippi_queen") -->
   <property name="game_plugin" value="${game_name}_plugin" />
   <property name="game_player" value="${game_name}_player" />
 
   <target name="clean">
-    <!--<ant dir="game_players/${game_name}" target="build-clean" />-->
-    <!--<ant dir="game_plugins/${game_name}" target="build-clean" />-->
-    <!--<ant dir="game_server" target="build-clean"/>-->
-    <!--<ant dir="software_challenge_sdk" target="build-clean"/>-->
-    <!--<ant dir="game_helper_clients/test_client" target="build-clean"/>-->
     <delete dir="${build.dir}" />
   </target>
 
@@ -47,55 +42,59 @@
     <ant dir="game_helper_clients/test_client" target="main"/>
   </target>
 
-  <target name="deploy" depends="dependencies, build, doc">
-    <!-- copy and zip server -->
-    <copy todir="${out.dir}/server">
-      <fileset dir="${build.dir}/software-challenge-server/jar" />
-      <fileset dir="${build.dir}/test_client/jar" />
+  <target name="build-jar" depends="dependencies">
+    <ant dir="game_plugins/${game_name}" target="build-jar" />
+    <ant dir="game_players/${game_name}" target="build-jar" />
+    <ant dir="game_server" target="build-jar"/>
+    <ant dir="game_helper_clients/test_client" target="build-jar" />
+  </target>
+
+  <target name="deploy" depends="build-jar">
+    <mkdir dir="${out.dir}/simple_client/${game_name}/src/lib" />
+    <copy todir="${out.dir}/simple_client/${game_name}/src/lib">
+      <fileset dir="${build.dir}/${game_player}/jar/lib" />
     </copy>
 
-    <!-- deploy zip from simple client (src and jar) -->
-    <echo file="${out.dir}/simple_client/${game_name}/jar/start.bat"
+    <echo message="Generating Starter-Batchfiles" />
+    <!-- Server -->
+    <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
+    <echo file="${build.dir}/software-challenge-server/jar/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xD;&#xA;</echo>
+    <echo file="${build.dir}/software-challenge-server/jar/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xA;</echo>
+    <chmod file="${build.dir}/software-challenge-server/jar/start.sh" perm="ugo+x" />
+
+    <!-- test client -->
+    <echo file="${build.dir}/test_client/jar/start-tests.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar&#xD;&#xA;</echo>
+    <echo file="${build.dir}/test_client/jar/start-tests.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar&#xA;</echo>
+    <chmod file="${build.dir}/test_client/jar/start.sh" perm="ugo+x" />
+
+    <!-- Simple Client -->
+    <echo file="${build.dir}/${game_player}/jar/start.bat"
           message="#!/bin/sh/java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xA;" />
-    <echo file="${out.dir}/simple_client/${game_name}/jar/start.sh"
+    <echo file="${build.dir}/${game_player}/jar/start.sh"
           message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xD;&#xA;" />
+    <chmod file="${build.dir}/${game_player}/jar/start.sh" perm="ugo+x" />
+
+
+
+    <echo message="Zipping files..." />
+    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip"
-         basedir="${out.dir}/simple_client/${game_name}/jar" />
+         basedir="${build.dir}/${game_player}/jar" />
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_src.zip">
       <fileset dir="game_players/${game_name}/src" includes="**/*.java"/>
       <mappedresources>
         <fileset file="game_players/${game_name}/build-deploy.xml"/>
         <globmapper from="build-deploy.xml" to="build.xml"/>
       </mappedresources>
-      <fileset dir="game_players/${game_name}/lib"/>
+      <fileset dir="game_players/${game_name}" includes="**/*.jar"/>
     </zip>
-
-    <mkdir dir="${out.dir}/simple_client/${game_name}/src/lib" />
-    <copy todir="${out.dir}/simple_client/${game_name}/src/lib">
-      <fileset dir="${build.dir}/${game_player}/jar/lib" />
-    </copy>
-
-    <echo message="Copy log configs" />
-
-    <copy tofile="${out.dir}/server/logback.xml" file="./game_server/configuration/logback-release.xml" />
-    <copy tofile="${out.dir}/server/server.properties" file="./game_server/configuration/server.properties.example" />
-    <copy tofile="${out.dir}/server/logback-tests.xml" file="./game_helper_clients/test_client/src/logback-tests.xml" />
-
-    <echo message="Generating Starter-Batchfiles" />
-    <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xD;&#xA;</echo>
-    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar game_server.jar&#xA;</echo>
-    <chmod file="${out.dir}/server/start.sh" perm="ugo+x" />
-
-    <echo message="Zipping files..." />
-
-    <mkdir dir="${out.dir}/zipped" />
-
-    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-
+    <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
+      <fileset dir="${build.dir}/software-challenge-server/jar/"/>
+      <fileset dir="${build.dir}/test_client/jar/"/>
+    </zip>
   </target>
 
-  <target name="doc">
+  <target name="build-doc">
     <ant dir="game_server" target="build-doc"/>
     <ant dir="game_helper_clients/test_client" target="build-doc"/>
     <ant dir="software_challenge_sdk" target="build-doc"/>
@@ -121,7 +120,7 @@
   </target>
 
   <target name="build-clean" depends="clean,build" />
-  <target name="build-all" depends="build-clean, doc" />
+  <target name="build-all" depends="build-clean, build-doc" />
 
   <target name="main" depends="build-all" />
 </project>

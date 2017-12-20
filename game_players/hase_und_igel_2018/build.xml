@@ -69,7 +69,7 @@
            includeantruntime="false"/>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="build-jar" depends="compile">
 		<jar destfile="${jar.dir}/${ant.project.name}.jar"
 			 basedir="${classes.dir}">
 			<manifest>
@@ -94,7 +94,7 @@
              sourcepath="${src.dir}" />
 	</target>
 
-	<target name="build" depends="jar" />
+	<target name="build" depends="build-jar" />
 
 	<target name="build-clean" depends="clean, build" />
 

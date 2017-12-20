@@ -28,7 +28,7 @@
 		<pathelement location="${classes.dir}" />
 	</path>
 
-	<pathconvert property="jar.classpath" pathsep="">
+	<pathconvert property="jar.classpath" pathsep=" ">
 		<mapper>
 			<chainedmapper>
 				<!-- remove absolute path -->
@@ -59,7 +59,7 @@
            includeantruntime="false"/>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="build-jar" depends="compile">
 
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}">
@@ -74,9 +74,10 @@
 			<!--<fileset dir="${plugins.dir}" includes="*/build/jar/*.jar" />-->
 			<fileset dir="${game.dir}" includes="*/build/jar/*.jar" />
 		</copy>
+		<copy tofile="${jar.dir}/logback-tests.xml" file="src/logback-tests.xml"/>
 	</target>
 
-  <target name="javadoc">
+  <target name="build-javadoc">
 		<javadoc encoding="UTF-8"
                  charset="UTF-8"
                  author="false"
@@ -100,13 +101,13 @@
     </javadoc>
 	</target>
 
-	<target name="build" depends="jar" />
+	<target name="build" depends="build-jar" />
 
-  <target name="build-doc" depends="javadoc" />
+  <target name="build-doc" depends="build-javadoc" />
 
 	<target name="build-clean" depends="clean,build" />
 
   <target name="build-all" depends="build-clean, build-doc"/>
 
-	<target name="main" depends="jar" />
+	<target name="main" depends="build-jar" />
 </project>

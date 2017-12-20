@@ -35,7 +35,7 @@
                includeantruntime="false"/>
 	</target>
 
-	<target name="jar" depends="scmversion,compile">
+	<target name="build-jar" depends="scmversion,compile">
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${game_name}.jar">
 			<manifest>
@@ -62,7 +62,7 @@
     </javadoc>
   </target>
 
-	<target name="build" depends="jar" />
+	<target name="build" depends="build-jar" />
 	<target name="build-clean" depends="clean, build" />
 	<target name="build-doc" depends="doc" />
   <target name="build-all" depends="build-clean,build-doc" />

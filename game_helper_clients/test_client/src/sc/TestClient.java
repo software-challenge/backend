@@ -115,8 +115,8 @@ public class TestClient extends XStreamClient {
     canTimeout2 = (Boolean) parser.getOptionValue(p2CanTimeoutOption, true);
     displayName1 = (String) parser.getOptionValue(name1Option, "player1");
     displayName2 = (String) parser.getOptionValue(name2Option, "player2");
-    p1 = (String) parser.getOptionValue(p1Option, "./../simple_client/hase_und_igel_player_new/jar/hase_und_igel_player_new.jar");
-    p2 = (String) parser.getOptionValue(p2Option, "./../simple_client/hase_und_igel_player_new/jar/hase_und_igel_player_new.jar");
+    p1 = (String) parser.getOptionValue(p1Option, "./../simple_client/hase_und_igel_player_new/jar/hase_und_igel_player_2018.jar");
+    p2 = (String) parser.getOptionValue(p2Option, "./../simple_client/hase_und_igel_player_new/jar/hase_und_igel_player_2018.jar");
     // einen neuen client erzeugen
     try {
       new TestClient(Configuration.getXStream(), sc.plugin2018.util.Configuration.getClassesToRegister(), host, port, numberOfTests);

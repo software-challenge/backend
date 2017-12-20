@@ -55,7 +55,7 @@
 		<javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
 	</target>
 
-	<target name="jar" depends="compile">
+	<target name="build-jar" depends="compile">
 		<jar destfile="${jar.dir}/${ant.project.name}.jar">
 			<manifest>
 				<attribute name="Main-Class" value="${main-class}" />
@@ -63,12 +63,14 @@
 			</manifest>
 			<fileset dir="${classes.dir}" />
 		</jar>
+		<copy tofile="${jar.dir}/logback.xml" file="configuration/logback-release.xml" />
+		<copy tofile="${jar.dir}/server.properties" file="configuration/server.properties.example" />
 	</target>
 
-  <target name="build" depends="jar" />
-	<target name="build-clean" depends="clean, jar" />
+  <target name="build" depends="build-jar" />
+	<target name="build-clean" depends="clean, build-jar" />
   <target name="build-all" depends="build-clean, doc" />
 	<target name="build-doc" depends="doc" />
 
-	<target name="main" depends="jar" />
+	<target name="main" depends="build-jar" />
 </project>
