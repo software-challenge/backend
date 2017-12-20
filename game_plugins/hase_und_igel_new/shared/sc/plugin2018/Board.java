@@ -165,15 +165,6 @@ public class Board {
   }
 
   /**
-   * Gibt das Feld an einem bestimmten Index zurück
-   * @param index index des Feldes
-   * @return Feld
-   */
-  public Field getField(int index) {
-    return this.track.get(index);
-  }
-
-  /**
    * erzeugt eine Deepcopy dieses Objekts
    *
    * @return ein neues Objekt mit gleichen Eigenschaften
