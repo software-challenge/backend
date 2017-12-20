@@ -19,6 +19,7 @@
 
 	<path id="classpath.libs">
     <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    <fileset dir="${build.dir}/${game_plugin}" includes="**/*.jar"/>
     <fileset dir="${build.dir}/software-challenge-server" includes="**/*.jar" />
     <pathelement location="${build.dir}/${game_plugin}/bin" />
 	</path>

@@ -81,16 +81,18 @@
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip"
          basedir="${build.dir}/${game_player}/jar" />
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_src.zip">
-      <fileset dir="game_players/${game_name}/src" includes="**/*.java"/>
+      <fileset file="game_players/${game_name}/src" includes="**/*.java, **/*.xml"/>
       <mappedresources>
         <fileset file="game_players/${game_name}/build-deploy.xml"/>
         <globmapper from="build-deploy.xml" to="build.xml"/>
       </mappedresources>
+      <zipfileset dir="${build.dir}/${game_plugin}/jar" includes="**/*.jar" prefix="lib"/>
       <fileset dir="game_players/${game_name}" includes="**/*.jar"/>
     </zip>
     <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
       <fileset dir="${build.dir}/software-challenge-server/jar/"/>
       <fileset dir="${build.dir}/test_client/jar/"/>
+      <zipfileset file="${build.dir}/${game_plugin}/jar/${game_name}.jar" prefix="plugins" />
     </zip>
   </target>
 
