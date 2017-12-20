@@ -1,12 +1,7 @@
 package sc.server.gaming;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -620,8 +615,9 @@ public class GameRoom implements IGameListener
 
 		logger.info("Switching PAUSE from {} to {}.", isPaused(), pause);
 		this.paused = pause;
-		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game; // XXX
-		pausableGame.setPauseMode(isPaused());
+		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game;
+		// pause game after current turn has finished
+		pausableGame.setPauseMode(pause);
 
 		// continue execution
 		if (!isPaused())
@@ -658,7 +654,7 @@ public class GameRoom implements IGameListener
 		if (isPaused())
 		{
 			logger.info("Stepping.");
-			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause(); // XXX
+			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause();
 		}
 		else
 		{
@@ -730,7 +726,8 @@ public class GameRoom implements IGameListener
 	}
 
 	/**
-	 * Return whether or not the game is paused
+	 * Return whether or not the game is paused or will be paused in the next turn.
+	 * Refer to {@link RoundBasedGameInstance#isPaused()} for the current value
 	 * @return true, if game is paused
 	 */
 	public boolean isPaused()

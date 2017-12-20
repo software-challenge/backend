@@ -91,7 +91,6 @@ public class Game extends RoundBasedGameInstance<Player>
    * In this game, a new round begins when both players made one move. The order
    * in which the players make their move may change.
    */
-  @Override
   protected boolean increaseTurnIfNecessary(Player nextPlayer) {
     return getGameState().getTurn() % 2 == 0;
   }

@@ -25,16 +25,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           .getLogger(RoundBasedGameInstance.class);
   protected P activePlayer = null;
 
-  private int round = 0;
+  private int turn = 0;
 
   @XStreamOmitField
-  private boolean paused = false;
-
-  @XStreamOmitField
-  private Runnable afterPauseAction = null;
-
-  @XStreamOmitField
-  private Object afterPauseLock = new Object();
+  private Optional<Integer> paused = Optional.empty();
 
   @XStreamOmitField
   private ActionTimeout requestTimeout = null;
@@ -49,7 +43,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   protected String pluginUUID;
 
   public int getRound() {
-    return this.round;
+    return this.turn / 2;
   }
 
   /**
@@ -72,24 +66,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
           fromPlayer.setSoftTimeout(true);
           onPlayerLeft(fromPlayer, ScoreCause.SOFT_TIMEOUT);
         } else {
-          if (!isPaused()){
-            onRoundBasedAction(fromPlayer, data);
-          } else {
-            logger.info("Game is paused. Save this action.");
-            final P currentActivePlayer = this.activePlayer;
-            synchronized (this.afterPauseLock) {
-              logger.debug("Setting AfterPauseAction");
-
-              this.afterPauseAction = () -> {
-                requestMove(currentActivePlayer);
-                next();
-              };
-
-              for (IGameListener listener : this.listeners) {
-                listener.onPaused(currentActivePlayer);
-              }
-            }
-          }
+          onRoundBasedAction(fromPlayer, data);
         }
       } else {
         errorMsg = Optional.of("We didn't request a data from you yet.");
@@ -116,7 +93,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Checks if goal is reached
    *
    * @return WinCondition with winner and reason or null, if no win condition is
-   *         yet met.
+   * yet met.
    */
   protected abstract WinCondition checkWinCondition();
 
@@ -138,15 +115,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * Server or an administrator requests the game to start now.
    */
   public void start() {
-    if (this.listeners.isEmpty()) {
-      logger.warn("Couldn't find any listeners. Is this intended?");
-    }
-
-    this.activePlayer = this.players.get(0);
-    // TODO currently no implementation
-    // onActivePlayerChanged(this.activePlayer);
-    notifyOnNewState(getCurrentState());
-    notifyActivePlayer();
+    next(this.players.get(0), true);
   }
 
   /**
@@ -180,49 +149,31 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     notifyOnGameOver(res);
   }
 
-  protected void onActivePlayerChanged(P newActivePlayer) {
-    // optional callback
-  }
-
-  protected void next() {
-    next(getPlayerAfter(this.activePlayer));
-  }
-
-  protected final P getPlayerAfter(P player) {
-    return getPlayerAfter(player, 1);
-  }
-
-  protected final P getPlayerAfter(P player, int step) {
-    int playerPos = this.players.indexOf(player);
-    playerPos = (playerPos + step) % this.players.size();
-    return this.players.get(playerPos);
-  }
-
   protected final void next(P nextPlayer) {
-    if (increaseTurnIfNecessary(nextPlayer)) {
-      this.round++;
+    next(nextPlayer, false);
+  }
 
-      // change player before calling new round callback
-      this.activePlayer = nextPlayer;
+  protected final void next(P nextPlayer, boolean firstTurn) {
+    logger.debug("next round ({}) for player {}", getRound(), nextPlayer);
+    if (!firstTurn) {
+      turn++;
     }
-    logger.debug("next round ({}) for player {}", this.round, nextPlayer);
-
     this.activePlayer = nextPlayer;
-    notifyOnNewState(getCurrentState());
+    // don't notify on new state if game is paused or client may begin to calculate something
+    if (!this.isPaused()) {
+      notifyOnNewState(getCurrentState());
+    }
 
     if (checkWinCondition() != null) {
       notifyOnGameOver(generateScoreMap());
     } else {
-      notifyActivePlayer();
+      if (!this.isPaused()) {
+        notifyActivePlayer();
+      }
     }
   }
 
   public abstract PlayerScore getScoreFor(P p);
-
-  protected boolean increaseTurnIfNecessary(P nextPlayer) {
-    return (this.activePlayer != nextPlayer && this.players
-            .indexOf(nextPlayer) == 0);
-  }
 
   /**
    * Gets the current state representation.
@@ -236,7 +187,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    */
   protected final void notifyActivePlayer() {
     requestMove(activePlayer);
-
   }
 
   /**
@@ -272,32 +222,36 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     return new ActionTimeout(true);
   }
 
-  protected final boolean isPaused() {
-    return this.paused;
+  public final boolean isPaused() {
+    return this.paused.map(inTurn -> this.turn >= inTurn).orElse(false);
   }
 
 
+  /**
+   * Notifies players about the new state, sends a MoveRequest to active player
+   */
   public void afterPause() {
-    synchronized (this.afterPauseLock) {
-      if (this.afterPauseAction == null) {
-        logger
-                .error("AfterPauseAction was null. Might cause a deadlock.");
-      } else {
-        logger.info("Run AfterPauseAction.");
-        Runnable action = this.afterPauseAction;
-        this.afterPauseAction = null;
-        action.run();
-      }
-    }
+    logger.info("Sending MoveRequest to player {}.", this.activePlayer);
+    notifyOnNewState(getCurrentState());
+    notifyActivePlayer();
   }
 
   /**
-   * XXX Pauses game
+   * Pauses game
    *
    * @param pause true if game should be paused
    */
-  public void setPauseMode(boolean pause) {
-    this.paused = pause;
+  public void setPauseMode(Boolean pause) {
+    if (pause) {
+      if (wasMoveRequested()) {
+        // pause in next turn, if client has a pending MoveRequest
+        this.paused = Optional.of(this.turn + 1);
+      } else {
+        this.paused = Optional.of(this.turn);
+      }
+    } else {
+      this.paused = Optional.empty();
+    }
   }
 
   public Map<SimplePlayer, PlayerScore> generateScoreMap() {
@@ -310,8 +264,6 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
     return map;
   }
 
-  // XXX methods from former SimpleGameInstance
-
   /**
    * Extends the set of listeners.
    *
@@ -322,7 +274,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   /**
-   * Removes listener XXX is this right/complete?
+   * Removes listener TODO check whether this is right/complete?
    *
    * @param listener GameListener to be removed
    */
@@ -353,8 +305,10 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
 
   /**
    * Catch block, after an invalid move was performed
-   * @param e catched Exception
+   *
+   * @param e      catched Exception
    * @param author player, that caused the exception
+   *
    * @throws GameLogicException Always thrown
    */
   public void catchInvalidMove(InvalidMoveException e, SimplePlayer author) throws GameLogicException {
