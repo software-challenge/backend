@@ -30,13 +30,12 @@ import sc.shared.WelcomeMessage;
  * Minimal game. Basis for new plugins. This class holds the game logic.
  */
 @XStreamAlias(value = "game")
-public class Game extends RoundBasedGameInstance<Player>
-{
-	private static Logger			logger			= LoggerFactory
-															.getLogger(Game.class);
+public class Game extends RoundBasedGameInstance<Player> {
+  private static Logger logger = LoggerFactory
+          .getLogger(Game.class);
 
-	@XStreamOmitField
-	private List<PlayerColor>		availableColors	= new LinkedList<>();
+  @XStreamOmitField
+  private List<PlayerColor> availableColors = new LinkedList<>();
 
   private GameState gameState = new GameState();
 
@@ -86,7 +85,7 @@ public class Game extends RoundBasedGameInstance<Player>
       super.catchInvalidMove(e, author);
     }
   }
-  
+
   /**
    * In this game, a new round begins when both players made one move. The order
    * in which the players make their move may change.
@@ -127,7 +126,7 @@ public class Game extends RoundBasedGameInstance<Player>
     super.start();
   }
 
-	@Override
+  @Override
   public PlayerScore getScoreFor(Player player) {
 
     logger.debug("get score for player {}", player.getPlayerColor());
@@ -137,10 +136,10 @@ public class Game extends RoundBasedGameInstance<Player>
     WinCondition winCondition = checkWinCondition();
     String reason = null;
     Player opponent = player.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
-        : this.gameState.getRedPlayer();
+            : this.gameState.getRedPlayer();
     if (winCondition != null) {
       reason = winCondition.getReason();
-      if(player.getPlayerColor().equals(winCondition.getWinner())) {
+      if (player.getPlayerColor().equals(winCondition.getWinner())) {
         matchPoints = 2;
       } else if (opponent.getPlayerColor().equals(winCondition.getWinner())) {
         matchPoints = 0;
@@ -151,17 +150,17 @@ public class Game extends RoundBasedGameInstance<Player>
     }
     // opponent has done something wrong
     if (opponent.hasViolated() && !player.hasViolated() || opponent.hasLeft() && !player.hasLeft()
-        || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
+            || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
       matchPoints = 2;
     }
     ScoreCause cause;
     if (player.hasSoftTimeout()) { // Soft-Timeout
       cause = ScoreCause.SOFT_TIMEOUT;
-      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout()/1000) + "Sekunden nach Aufforderung keinen Zug gesendet";
+      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getSoftTimeout() / 1000) + "Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = 0;
     } else if (player.hasHardTimeout()) { // Hard-Timeout
       cause = ScoreCause.HARD_TIMEOUT;
-      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout()/1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
+      reason = "Der Spieler hat innerhalb von " + (this.getTimeoutFor(null).getHardTimeout() / 1000) + " Sekunden nach Aufforderung keinen Zug gesendet";
       matchPoints = 0;
     } else if (player.hasViolated()) { // rule violation
       cause = ScoreCause.RULE_VIOLATION;
@@ -175,14 +174,13 @@ public class Game extends RoundBasedGameInstance<Player>
       cause = ScoreCause.REGULAR;
     }
     return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_FIELD_INDEX],
-        stats[Constants.GAME_STATS_CARROTS]);
+            stats[Constants.GAME_STATS_CARROTS]);
   }
 
-	@Override
-	protected ActionTimeout getTimeoutFor(Player player)
-	{
-		return new ActionTimeout(true, 10000L, 2000L);
-	}
+  @Override
+  protected ActionTimeout getTimeoutFor(Player player) {
+    return new ActionTimeout(true, 10000L, 2000L);
+  }
 
   /**
    * Checks if a win condition in the current game state is met.
@@ -190,14 +188,14 @@ public class Game extends RoundBasedGameInstance<Player>
    * Checks if goal is reached
    *
    * @return WinCondition with winner and reason or null, if no win condition is
-   *         yet met.
+   * yet met.
    */
   public WinCondition checkWinCondition() {
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() < 2 * Constants.ROUND_LIMIT) {
       // round limit not reached
       Player winningPlayer = checkGoalReached();
-      if (winningPlayer != null){
+      if (winningPlayer != null) {
         return new WinCondition(winningPlayer.getPlayerColor(), Constants.IN_GOAL_MESSAGE);
       } else {
         return null;
@@ -227,7 +225,7 @@ public class Game extends RoundBasedGameInstance<Player>
    * wins, if they both have the same amount, red wins for first entering goal.
    *
    * @return the player who reached the goal or null if no player reached the
-   *         goal, only returns a player on the end of a round else always null
+   * goal, only returns a player on the end of a round else always null
    */
   public Player checkGoalReached() {
     if (this.gameState.getTurn() % 2 == 0) { // even turn is right here, because method is called after perform
@@ -241,25 +239,23 @@ public class Game extends RoundBasedGameInstance<Player>
         return red;
       } else if (blue.inGoal()) {
         return blue;
-      }     
+      }
     }
     return null;
   }
-  
-	@Override
-	public void loadFromFile(String file)
-	{
-		logger.info("Loading game from: " + file);
-		GameLoader gl = new GameLoader(new Class<?>[] {GameState.class});
-		Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
-		if (gameInfo != null) {
-			loadGameInfo(gameInfo);
-		}
-	}
 
   @Override
-  public void loadFromFile(String file, int turn)
-  {
+  public void loadFromFile(String file) {
+    logger.info("Loading game from: " + file);
+    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
+    Object gameInfo = gl.loadGame(Configuration.getXStream(), file);
+    if (gameInfo != null) {
+      loadGameInfo(gameInfo);
+    }
+  }
+
+  @Override
+  public void loadFromFile(String file, int turn) {
     logger.info("Loading game from: " + file + " at turn: " + turn);
     // only copy right gameState specified by turn
     try {
@@ -270,13 +266,13 @@ public class Game extends RoundBasedGameInstance<Player>
       String line;
       bufferedWriter.write("<protocol>"); // XXX since hui18 replays start with protocol instead of object-stream
       bufferedWriter.newLine();
-      while((line = bufferedReader.readLine()) != null) {
-        if (line.contains("turn=\"" + turn +  "\"")) {
+      while ((line = bufferedReader.readLine()) != null) {
+        if (line.contains("turn=\"" + turn + "\"")) {
           bufferedWriter.write(line);
           bufferedWriter.newLine();
           // case a gameState with specified turn was found
-          while((line = bufferedReader.readLine()) != null
-                  &&!line.contains("turn=\"" + (turn + 1) +  "\"")) {
+          while ((line = bufferedReader.readLine()) != null
+                  && !line.contains("turn=\"" + (turn + 1) + "\"")) {
             bufferedWriter.write(line);
             bufferedWriter.newLine();
           }
@@ -288,7 +284,7 @@ public class Game extends RoundBasedGameInstance<Player>
     } catch (IOException e) {
       e.printStackTrace();
     }
-    GameLoader gl = new GameLoader(new Class<?>[] {GameState.class});
+    GameLoader gl = new GameLoader(new Class<?>[]{GameState.class});
     Object gameInfo = gl.loadGame(Configuration.getXStream(), "./tmp_replay.xml");
     if (gameInfo != null) {
       loadGameInfo(gameInfo);
@@ -298,11 +294,10 @@ public class Game extends RoundBasedGameInstance<Player>
     tmp_replay.delete();
   }
 
-	// XXX test this
-	@Override
-	public void loadGameInfo(Object gameInfo)
-	{
-		logger.info("Processing game information");
+  // XXX test this
+  @Override
+  public void loadGameInfo(Object gameInfo) {
+    logger.info("Processing game information");
     if (gameInfo instanceof GameState) {
       this.gameState = (GameState) gameInfo;
       // when loading from a state the listeners are not initialized
