@@ -4,7 +4,6 @@ import com.thoughtworks.xstream.XStream;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import sc.api.plugins.exceptions.GameLogicException;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.networking.clients.LobbyClient;
@@ -21,11 +20,13 @@ import sc.server.gaming.ObserverRole;
 import sc.server.gaming.PlayerRole;
 import sc.server.helpers.TestHelper;
 import sc.server.network.*;
+import sc.server.plugins.PluginLoaderException;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
 import sc.server.plugins.TestTurnRequest;
 import sc.shared.WelcomeMessage;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -92,7 +93,7 @@ public class RequestTest extends RealServerTest{
 
     Assert.assertEquals(1,  lobby.getGameManager().getGames().size());
     Assert.assertEquals(0, lobby.getGameManager().getGames().iterator().next().getClients().size());
-    Assert.assertEquals(true, lobby.getGameManager().getGames().iterator().next().isPaused());
+    Assert.assertEquals(true, lobby.getGameManager().getGames().iterator().next().isPauseRequested());
 
   }
 
@@ -195,9 +196,9 @@ public class RequestTest extends RealServerTest{
     room.getSlots().get(1).getRole().getPlayer().addPlayerListener(p2Listener);
 
     // Wait for the server to register that
-    TestHelper.waitUntilTrue(()->room.isPaused(), 2000);
+    TestHelper.waitUntilTrue(()->room.isPauseRequested(), 2000);
 
-    Assert.assertEquals(true, room.isPaused());
+    Assert.assertEquals(true, room.isPauseRequested());
     PlayerRole pr1 = room.getSlots().get(0).getRole();
     PlayerRole pr2 = room.getSlots().get(1).getRole();
     Assert.assertEquals(true, pr1.getPlayer().isShouldBePaused());
@@ -219,8 +220,7 @@ public class RequestTest extends RealServerTest{
   }
 
   @Test
-  public void stepRequest(){
-
+  public void stepRequest() throws IOException, PluginLoaderException {
     LobbyClient admin = player1;
     LobbyClient player1 = this.player2;
     LobbyClient player2 = this.player3;
@@ -251,9 +251,8 @@ public class RequestTest extends RealServerTest{
     room.getSlots().get(1).getRole().getPlayer().addPlayerListener(p2Listener);
 
     // Wait for the server to register that
-    TestHelper.waitUntilTrue(()->room.isPaused(), 2000);
+    TestHelper.waitUntilTrue(()->room.isPauseRequested(), 2000);
 
-    Assert.assertEquals(true, room.isPaused());
     PlayerRole pr1 = room.getSlots().get(0).getRole();
     PlayerRole pr2 = room.getSlots().get(1).getRole();
     Assert.assertEquals(true, pr1.getPlayer().isShouldBePaused());
@@ -282,7 +281,7 @@ public class RequestTest extends RealServerTest{
 
     admin.send(new StepRequest(room.getId()));
     // Wait for second players turn
-    TestHelper.waitUntilTrue(()->p2Listener.playerEventReceived, 2000);
+    TestHelper.waitUntilTrue(()->p2Listener.playerEventReceived, 4000);
     p2Listener.playerEventReceived = false;
 
     // Second player sends Move with value 42
@@ -406,7 +405,7 @@ public class RequestTest extends RealServerTest{
     splayer2.addPlayerListener(p2Listener);
     splayer2.setDisplayName("player2...");
 
-    Assert.assertFalse(room.isPaused());
+    Assert.assertFalse(room.isPauseRequested());
     TestHelper.waitUntilEqual(2, ()->p1Listener.requests.size(), 2000);
     Assert.assertEquals(p1Listener.requests.get(0).getClass(), WelcomeMessage.class);
     TestHelper.waitMills(500);
@@ -414,7 +413,7 @@ public class RequestTest extends RealServerTest{
     listener.newStateReceived = false;
 
     player1.send(new PauseGameRequest(room.getId(), true));
-    TestHelper.waitUntilEqual(true,()->room.isPaused(), 2000);
+    TestHelper.waitUntilEqual(true,()->room.isPauseRequested(), 2000);
 
     player1.sendMessageToRoom(room.getId(), new TestMove(42));
     TestHelper.waitMills(1000);

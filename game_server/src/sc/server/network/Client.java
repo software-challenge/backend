@@ -20,6 +20,7 @@ import sc.protocol.responses.LeftGameEvent;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
 import sc.server.Configuration;
+import sc.shared.InvalidGameStateException;
 
 /**
  * A generic client. This represents a client in the server. Clients which
@@ -98,7 +99,7 @@ public class Client extends XStreamClient implements IClient
    * Call listener that handle new Packages
    * @param packet which just arrived
    */
-  private void notifyOnPacket(Object packet) throws UnprocessedPacketException {
+  private void notifyOnPacket(Object packet) throws UnprocessedPacketException, InvalidGameStateException {
 		/*
 		 * NOTE that method is called in the receiver thread. Messages should
 		 * only be passed to listeners. No callbacks should be invoked directly
@@ -288,7 +289,7 @@ public class Client extends XStreamClient implements IClient
    * @param o received package
    */
   @Override
-  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
+  protected void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException {
 		/*
 		 * NOTE that this method is called in the receiver thread. Messages
 		 * should only be passed to listeners. No callbacks should be invoked

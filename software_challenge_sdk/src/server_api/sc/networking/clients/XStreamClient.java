@@ -14,6 +14,7 @@ import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.responses.CloseConnection;
 import sc.protocol.responses.ProtocolMessage;
+import sc.shared.InvalidGameStateException;
 
 public abstract class XStreamClient {
   private static Logger logger = LoggerFactory
@@ -96,7 +97,7 @@ public abstract class XStreamClient {
     this.thread.start();
   }
 
-  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException;
+  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException;
 
   /**
    * used by the receiving thread. All exceptions should be handled.

@@ -15,10 +15,7 @@ import sc.api.plugins.host.IGameListener;
 import sc.protocol.responses.ProtocolErrorMessage;
 import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.ProtocolMove;
-import sc.shared.InvalidMoveException;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
-import sc.shared.WinCondition;
+import sc.shared.*;
 
 public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements IGameInstance {
   private static Logger logger = LoggerFactory
@@ -55,7 +52,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
    * @throws GameLogicException if any invalid action is done, i.e. game rule violation
    */
   public final void onAction(SimplePlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException {
+          throws GameLogicException, InvalidGameStateException {
     Optional<String> errorMsg = Optional.empty();
     if (fromPlayer.equals(this.activePlayer)) {
       if (wasMoveRequested()) {
@@ -85,7 +82,7 @@ public abstract class RoundBasedGameInstance<P extends SimplePlayer> implements 
   }
 
   protected abstract void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data)
-          throws GameLogicException;
+          throws GameLogicException, InvalidGameStateException;
 
   /**
    * Checks if a win condition in the current game state is met.

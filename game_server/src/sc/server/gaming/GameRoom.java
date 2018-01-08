@@ -24,11 +24,7 @@ import sc.server.network.Client;
 import sc.server.network.DummyClient;
 import sc.server.network.IClient;
 import sc.server.plugins.GamePluginInstance;
-import sc.shared.GameResult;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
-import sc.shared.ScoreDefinition;
-import sc.shared.SlotDescriptor;
+import sc.shared.*;
 
 /**
  * A wrapper for an actual <code>GameInstance</code>. GameInstances are provided
@@ -47,7 +43,7 @@ public class GameRoom implements IGameListener
 	private final boolean				      prepared;
 	private GameStatus					      status		= GameStatus.CREATED;
 	private GameResult					      result		= null;
-	private boolean						        paused		= false;
+	private boolean pauseRequested = false;
 	private ObservingClient replayObserver;
 	// currently no use
 	private IControllableGame replay;
@@ -516,8 +512,7 @@ public class GameRoom implements IGameListener
 	 * @throws RescuableClientException
 	 */
 	public synchronized void onEvent(Client source, ProtocolMessage data)
-			throws RescuableClientException
-	{
+					throws RescuableClientException, InvalidGameStateException {
 		if (isOver())
 		{
 			throw new RescuableClientException(
@@ -606,21 +601,21 @@ public class GameRoom implements IGameListener
 		}
 
 		// Unnecessary Pause event
-		if (pause == isPaused())
+		if (pause == isPauseRequested())
 		{
 			logger.warn("Dropped unnecessary PAUSE toggle from {} to {}.",
-					isPaused(), pause);
+					isPauseRequested(), pause);
 			return;
 		}
 
-		logger.info("Switching PAUSE from {} to {}.", isPaused(), pause);
-		this.paused = pause;
+		logger.info("Switching PAUSE from {} to {}.", isPauseRequested(), pause);
+		this.pauseRequested = pause;
 		RoundBasedGameInstance<SimplePlayer> pausableGame = (RoundBasedGameInstance<SimplePlayer>) this.game;
 		// pause game after current turn has finished
 		pausableGame.setPauseMode(pause);
 
 		// continue execution
-		if (!isPaused())
+		if (!isPauseRequested())
 		{
 			pausableGame.afterPause();
 		}
@@ -651,7 +646,7 @@ public class GameRoom implements IGameListener
 
 			return;
 		}
-		if (isPaused())
+		if (isPauseRequested())
 		{
 			logger.info("Stepping.");
 			((RoundBasedGameInstance<SimplePlayer>) this.game).afterPause();
@@ -730,9 +725,9 @@ public class GameRoom implements IGameListener
 	 * Refer to {@link RoundBasedGameInstance#isPaused()} for the current value
 	 * @return true, if game is paused
 	 */
-	public boolean isPaused()
+	public boolean isPauseRequested()
 	{
-		return this.paused;
+		return this.pauseRequested;
 	}
 
 	/**

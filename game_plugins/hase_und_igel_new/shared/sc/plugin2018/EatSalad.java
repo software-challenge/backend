@@ -45,10 +45,7 @@ public class EatSalad extends Action {
 
   @Override
   public boolean equals(Object o) {
-    if(o instanceof EatSalad) {
-      return true;
-    }
-    return false;
+    return o instanceof EatSalad;
   }
 
   @Override

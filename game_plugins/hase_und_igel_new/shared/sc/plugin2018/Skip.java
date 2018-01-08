@@ -39,10 +39,7 @@ public class Skip extends Action {
 
   @Override
   public boolean equals(Object o) {
-    if(o instanceof Skip) {
-      return true;
-    }
-    return false;
+    return o instanceof Skip;
   }
 
   @Override

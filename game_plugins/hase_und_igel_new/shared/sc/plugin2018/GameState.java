@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
 import sc.plugin2018.util.GameRuleLogic;
+import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 import sc.shared.PlayerColor;
 import sc.plugin2018.util.Constants;
@@ -373,7 +374,11 @@ public class GameState implements Cloneable {
    * Setzt die aktuelle Zugzahl. Nur für den Server relevant
    * @param turn neue Zugzahl
    */
-  public void setTurn(int turn) {
+  public void setTurn(int turn) throws InvalidGameStateException {
+    int turnLimit = Constants.ROUND_LIMIT * 2;
+    if (turn > turnLimit) {
+      throw new InvalidGameStateException("Turn " + turn + " exceeded maxTurn " + turnLimit);
+    }
     this.turn = turn;
   }
 

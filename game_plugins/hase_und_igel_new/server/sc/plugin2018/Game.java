@@ -17,14 +17,9 @@ import sc.framework.plugins.ActionTimeout;
 import sc.framework.plugins.RoundBasedGameInstance;
 import sc.framework.plugins.SimplePlayer;
 import sc.protocol.responses.ProtocolMessage;
-import sc.shared.PlayerColor;
+import sc.shared.*;
 import sc.plugin2018.util.Configuration;
 import sc.plugin2018.util.Constants;
-import sc.shared.InvalidMoveException;
-import sc.shared.PlayerScore;
-import sc.shared.ScoreCause;
-import sc.shared.WinCondition;
-import sc.shared.WelcomeMessage;
 
 /**
  * Minimal game. Basis for new plugins. This class holds the game logic.
@@ -64,7 +59,7 @@ public class Game extends RoundBasedGameInstance<Player> {
    * move)
    */
   @Override
-  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException {
+  protected void onRoundBasedAction(SimplePlayer fromPlayer, ProtocolMessage data) throws GameLogicException, InvalidGameStateException {
 
     Player author = (Player) fromPlayer;
 
@@ -95,7 +90,7 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   @Override
-  public SimplePlayer onPlayerJoined() throws TooManyPlayersException {
+  public SimplePlayer onPlayerJoined() {
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
@@ -200,23 +195,27 @@ public class Game extends RoundBasedGameInstance<Player> {
       } else {
         return null;
       }
-
-    } else { // this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT
+    } else {
       // round limit reached
-      PlayerColor winner;
-      if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
-        winner = PlayerColor.RED;
-      } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
-        winner = PlayerColor.BLUE;
+      Player winningPlayer = checkGoalReached();
+      if (winningPlayer != null) {
+        return new WinCondition(winningPlayer.getPlayerColor(), Constants.IN_GOAL_MESSAGE);
       } else {
-        if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS]) {
+        PlayerColor winner;
+        if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
+          winner = PlayerColor.RED;
+        } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_FIELD_INDEX] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_FIELD_INDEX]) {
           winner = PlayerColor.BLUE;
         } else {
-          // red wins on draw, because red first entered the goal
-          winner = PlayerColor.RED;
+          if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_CARROTS] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_CARROTS]) {
+            winner = PlayerColor.BLUE;
+          } else {
+            // red wins on draw, because red first entered the goal
+            winner = PlayerColor.RED;
+          }
         }
+        return new WinCondition(winner, Constants.ROUND_LIMIT_MESSAGE);
       }
-      return new WinCondition(winner, Constants.ROUND_LIMIT_MESSAGE);
     }
   }
 

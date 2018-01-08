@@ -14,6 +14,7 @@ import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
 import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;
+import sc.shared.InvalidGameStateException;
 import sc.shared.Score;
 import sc.shared.SlotDescriptor;
 
@@ -67,8 +68,7 @@ public class Lobby implements IClientListener
 	 */
 	@Override
 	public void onRequest(Client source, PacketCallback callback)
-			throws RescuableClientException
-	{
+					throws RescuableClientException, InvalidGameStateException {
 		Object packet = callback.getPacket();
 
 		if (packet instanceof ILobbyRequest)

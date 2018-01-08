@@ -27,7 +27,7 @@ import sc.server.Configuration;
  */
 public abstract class PluginManager<PluginInstanceType extends PluginInstance<?, ?>>
 {
-	private static final String							PLUGIN_DIRECTORY			= "./plugins";
+	private static final String							PLUGIN_DIRECTORY			= "plugins";
 	private static final String							JAR_FILE_IDENTIFIER			= ".jar";
 	private static final String							COMPILED_CLASS_IDENTIFIER	= ".class";
 
