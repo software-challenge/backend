@@ -120,7 +120,8 @@ public abstract class XStreamClient {
           ProtocolMessage response = (ProtocolMessage) object;
 
           logger.info("Client " + XStreamClient.this + ": Received " + response
-                          + " via " + this.networkInterface + "\nDataDump:\n{}",
+                          + " via " + this.networkInterface);
+          logger.debug("DataDump:\n{}",
                   this.xStream.toXML(response));
           if (response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
@@ -187,9 +188,10 @@ public abstract class XStreamClient {
       throw new IllegalStateException("Writing on a closed xStream.");
     }
 
-    logger.debug(
+    logger.info(
             "Client " + this + ": Sending " + o + " via "
-                    + this.networkInterface + "\nDataDump:\n{}",
+                    + this.networkInterface);
+    logger.debug("DataDump:\n{}",
             this.xStream.toXML(o));
 
     try {

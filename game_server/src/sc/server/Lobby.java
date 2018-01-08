@@ -31,7 +31,7 @@ public class Lobby implements IClientListener
 
 	public Lobby()
 	{
-		this.gameManager = new GameRoomManager();
+	  this.gameManager = new GameRoomManager();
 		this.clientManager = new ClientManager(this);
 	}
 
