@@ -38,6 +38,7 @@ public class Configuration
   public static final String TEST_MODE = "testMode";
   public static final int BIG_DECIMAL_SCALE = 6;
   public static final String PAUSED = "paused";
+  public static final String TIMEOUT = "timeout";
 
 
   private static final Logger				logger			= LoggerFactory

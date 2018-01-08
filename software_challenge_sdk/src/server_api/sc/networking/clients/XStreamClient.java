@@ -100,6 +100,8 @@ public abstract class XStreamClient {
 
   /**
    * used by the receiving thread. All exceptions should be handled.
+   *
+   * @throws Exception thrown if there was a problem creating the input stream
    */
   public void receiveThread() throws Exception {
     try {

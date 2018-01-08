@@ -174,6 +174,9 @@ public class Move extends ProtocolMove implements Cloneable {
   public void perform(GameState state) throws InvalidMoveException {
     // Sortiere Aktionen
     orderActions();
+    if (actions == null) {
+      throw new InvalidMoveException("Aktionen sind null", this);
+    }
     if (actions.isEmpty()) {
       throw new InvalidMoveException("Keine Aktionen vorhanden.", this);
     }

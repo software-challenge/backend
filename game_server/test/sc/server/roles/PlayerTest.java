@@ -8,6 +8,7 @@ import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.requests.*;
 import sc.protocol.responses.*;
 import sc.protocol.responses.PrepareGameProtocolMessage;
+import sc.server.gaming.GameRoom;
 import sc.server.network.Client;
 import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
