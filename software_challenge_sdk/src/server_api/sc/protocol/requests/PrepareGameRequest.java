@@ -2,9 +2,11 @@ package sc.protocol.requests;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
+import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.protocol.responses.ProtocolMessage;
+import sc.shared.DisplayNameConverter;
 import sc.shared.SlotDescriptor;
 
 import java.util.LinkedList;

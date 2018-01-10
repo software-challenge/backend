@@ -1,10 +1,8 @@
 package sc.networking.clients;
 
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.SocketException;
+import java.nio.CharBuffer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,8 +73,7 @@ public abstract class XStreamClient {
 
     this.xStream = xstream;
     this.networkInterface = networkInterface;
-    this.out = xstream.createObjectOutputStream(
-            networkInterface.getOutputStream(), "protocol");
+    this.out = xstream.createObjectOutputStream(networkInterface.getOutputStream(), "protocol");
     this.thread = new Thread(new Runnable() {
       private Logger threadLogger = LoggerFactory
               .getLogger(XStreamClient.class);
@@ -108,8 +105,7 @@ public abstract class XStreamClient {
    */
   public void receiveThread() throws Exception {
     try {
-      XStreamClient.this.in = this.xStream.createObjectInputStream(
-              this.networkInterface.getInputStream());
+      XStreamClient.this.in = this.xStream.createObjectInputStream(this.networkInterface.getInputStream());
 
       synchronized (this.readyLock) {
         while (!isReady()) {
