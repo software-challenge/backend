@@ -81,13 +81,13 @@
 						 sourcepath="${src.dir}" />
 	</target>
 
-	<target name="build" depends="build-jar" />
+	<target name="build" depends="build-jar" description="Build only"/>
 
-	<target name="build-clean" depends="clean, build" />
+	<target name="build-clean" depends="clean, build" description="Clean and build"/>
 
-	<target name="build-doc" depends="javadoc"/>
+	<target name="build-doc" depends="javadoc" description="Only generate javadoc"/>
 
-	<target name="build-all" depends="build-clean, build-doc" />
+	<target name="build-all" depends="build-clean, build-doc" description="Clean, build and generate javadoc"/>
 
-	<target name="main" depends="build" />
+	<target name="main" depends="build-all" description="Clean, build and generate javadoc"/>
 </project>

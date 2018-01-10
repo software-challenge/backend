@@ -62,10 +62,10 @@
     </javadoc>
   </target>
 
-	<target name="build" depends="build-jar" />
-	<target name="build-clean" depends="clean, build" />
-	<target name="build-doc" depends="doc" />
-  <target name="build-all" depends="build-clean,build-doc" />
+	<target name="build" depends="build-jar" description="Build only" />
+	<target name="build-clean" depends="clean, build" description="Clean and build" />
+	<target name="build-doc" depends="doc" description="Generate Javadoc only" />
+  <target name="build-all" depends="build-clean,build-doc" description="Clean, build and generate Javadoc" />
 
-	<target name="main" depends="build" />
+	<target name="main" depends="build" description="Clean, build and generate Javadoc"/>
 </project>

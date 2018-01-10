@@ -67,10 +67,10 @@
 		<copy tofile="${jar.dir}/server.properties" file="configuration/server.properties.example" />
 	</target>
 
-  <target name="build" depends="build-jar" />
-	<target name="build-clean" depends="clean, build-jar" />
-  <target name="build-all" depends="build-clean, doc" />
-	<target name="build-doc" depends="doc" />
+  <target name="build" depends="build-jar" description="Build only" />
+	<target name="build-clean" depends="clean, build-jar" description="Clean and build"/>
+  <target name="build-all" depends="build-clean, doc" description="Clean, build and generate Javadoc"/>
+	<target name="build-doc" depends="doc" description="Generate Javadoc only"/>
 
-	<target name="main" depends="build-jar" />
+	<target name="main" depends="build-jar" description="Clean, build and generate Javadoc" />
 </project>

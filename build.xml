@@ -29,7 +29,7 @@
     <copy todir="game_helper_clients/test_client/lib"><fileset dir="${lib.dir}" /></copy>
   </target>
 
-  <target name="build" depends="scmversion,dependencies">
+  <target name="build" depends="scmversion,dependencies" description="Build and only build for all projects">
 
     <echo message="Compiling Plugins..." />
     <ant dir="game_plugins/${game_name}" target="main" />
@@ -42,14 +42,14 @@
     <ant dir="game_helper_clients/test_client" target="main"/>
   </target>
 
-  <target name="build-jar" depends="dependencies">
+  <target name="build-jar" depends="dependencies" description="Build and create jars for all projects">
     <ant dir="game_plugins/${game_name}" target="build-jar" />
     <ant dir="game_players/${game_name}" target="build-jar" />
     <ant dir="game_server" target="build-jar"/>
     <ant dir="game_helper_clients/test_client" target="build-jar" />
   </target>
 
-  <target name="deploy" depends="build-jar">
+  <target name="deploy" depends="clean, build-jar, build-doc">
     <mkdir dir="${out.dir}/simple_client/${game_name}/src/lib" />
     <copy todir="${out.dir}/simple_client/${game_name}/src/lib">
       <fileset dir="${build.dir}/${game_player}/jar/lib" />
@@ -58,71 +58,63 @@
     <echo message="Generating Starter-Batchfiles" />
     <!-- Server -->
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${build.dir}/software-challenge-server/jar/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xD;&#xA;</echo>
-    <echo file="${build.dir}/software-challenge-server/jar/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar software-challenge-server.jar&#xA;</echo>
+    <echo file="${build.dir}/software-challenge-server/jar/start.bat" message="java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xD;&#xA;" />
+    <echo file="${build.dir}/software-challenge-server/jar/start.sh" message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar software-challenge-server.jar&#xA;" />
     <chmod file="${build.dir}/software-challenge-server/jar/start.sh" perm="ugo+x" />
 
     <!-- test client -->
-    <echo file="${build.dir}/test_client/jar/start-tests.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar&#xD;&#xA;</echo>
-    <echo file="${build.dir}/test_client/jar/start-tests.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback-tests.xml -jar test_client.jar&#xA;</echo>
+    <echo file="${build.dir}/test_client/jar/start-tests.bat" message="java -Dfile.encoding=UTF-8 -jar test_client.jar&#xD;&#xA;" />
+    <echo file="${build.dir}/test_client/jar/start-tests.sh"
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar test_client.jar&#xA;"/>
     <chmod file="${build.dir}/test_client/jar/start.sh" perm="ugo+x" />
 
     <!-- Simple Client -->
-    <echo file="${build.dir}/${game_player}/jar/start.bat"
-          message="#!/bin/sh/java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xA;" />
     <echo file="${build.dir}/${game_player}/jar/start.sh"
-          message="java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar simple_client_${game_name}.jar&#xD;&#xA;" />
+          message="#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xA;" />
+    <echo file="${build.dir}/${game_player}/jar/start.bat"
+          message="java -Dfile.encoding=UTF-8 -jar ${game_player}.jar&#xD;&#xA;" />
     <chmod file="${build.dir}/${game_player}/jar/start.sh" perm="ugo+x" />
 
 
 
     <echo message="Zipping files..." />
-    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-    <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip"
-         basedir="${build.dir}/${game_player}/jar" />
+    <!-- Simple Client -->
+    <zip destfile="${out.dir}/zipped/simple_client_${game_name}_jar.zip">
+      <zipfileset dir="${build.dir}/${game_player}/jar"/>
+    </zip>
+
+    <!-- Simple Client Source -->
     <zip destfile="${out.dir}/zipped/simple_client_${game_name}_src.zip">
-      <fileset file="game_players/${game_name}/src" includes="**/*.java, **/*.xml"/>
+      <zipfileset file="game_players/${game_name}/src" includes="**/*.java, **/logback.xml"/>
       <mappedresources>
         <fileset file="game_players/${game_name}/build-deploy.xml"/>
         <globmapper from="build-deploy.xml" to="build.xml"/>
       </mappedresources>
       <zipfileset dir="${build.dir}/${game_plugin}/jar" includes="**/*.jar" prefix="lib"/>
-      <fileset dir="game_players/${game_name}" includes="**/*.jar"/>
+      <zipfileset dir="game_players/${game_name}" includes="**/*.jar"/>
+      <zipfileset dir="${build.dir}/${game_plugin}/doc" prefix="doc/simple_client"/>
+      <zipfileset dir="${build.dir}/software-challenge-server/doc/" prefix="doc/sdk"/>
     </zip>
+
+    <!-- Software Challenge Server -->
     <zip destfile="${out.dir}/zipped/software-challenge-server.zip">
-      <fileset dir="${build.dir}/software-challenge-server/jar/"/>
-      <fileset dir="${build.dir}/test_client/jar/"/>
+      <zipfileset dir="${build.dir}/software-challenge-server/jar/"/>
+      <zipfileset dir="${build.dir}/test_client/jar/"/>
       <zipfileset file="${build.dir}/${game_plugin}/jar/${game_name}.jar" prefix="plugins" />
+      <zipfileset file="${build.dir}/version"/>
     </zip>
   </target>
 
-  <target name="build-doc">
+  <target name="build-doc" description="Generate Javadoc for all projects">
     <ant dir="game_server" target="build-doc"/>
     <ant dir="game_helper_clients/test_client" target="build-doc"/>
     <ant dir="software_challenge_sdk" target="build-doc"/>
     <ant dir="./game_plugins/${game_name}" target="build-doc"/>
     <ant dir="./game_players/${game_name}" target="build-doc"/>
-    <!--TODO Add to zip -->
-    <!--<copy todir="${out.dir}/docs/game_server">-->
-      <!--<fileset dir="./game_server/doc"/>-->
-    <!--</copy>-->
-    <!--<copy todir="${out.dir}/docs/software_challenge_sdk">-->
-      <!--<fileset dir="./software_challenge_sdk/doc"/>-->
-    <!--</copy>-->
-    <!--&lt;!&ndash;<copy todir="${out.dir}/docs/${game_plugin}">&ndash;&gt;-->
-      <!--&lt;!&ndash;<fileset dir="./game_plugins/${game_plugin}/doc"/>&ndash;&gt;-->
-    <!--&lt;!&ndash;</copy>&ndash;&gt;-->
-
-    <!--<echo message="Gathering documentations..." />-->
-    <!--<mkdir dir="${out.dir}/zipped/doc" />-->
-    <!--<zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />-->
-    <!--<zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />-->
-    <!--<zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-src.zip" basedir="${out.dir}/simple_client/${game_player}/src" />-->
-
   </target>
 
-  <target name="build-clean" depends="clean,build" />
-  <target name="build-all" depends="build-clean, build-doc" />
+  <target name="build-clean" depends="clean,build" description="Build and clean all projects"/>
+  <target name="build-deploy" depends="deploy" description="Build, clean, generate Javadoc and Zip files for all projects" />
 
-  <target name="main" depends="build-all" />
+  <target name="main" depends="build-deploy" description="Build, clean, generate Javadoc and Zip files for all projects" />
 </project>
