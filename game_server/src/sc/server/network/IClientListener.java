@@ -2,6 +2,7 @@ package sc.server.network;
 
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.protocol.responses.ProtocolErrorMessage;
+import sc.shared.InvalidGameStateException;
 
 public interface IClientListener
 {
@@ -20,7 +21,7 @@ public interface IClientListener
    * @throws RescuableClientException
    */
   void onRequest(Client source, PacketCallback packet)
-          throws RescuableClientException;
+          throws RescuableClientException, InvalidGameStateException;
 
   /**
    * Invoked when a client encountered a problem.

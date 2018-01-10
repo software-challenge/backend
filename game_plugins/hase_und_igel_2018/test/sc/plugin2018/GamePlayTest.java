@@ -6,6 +6,7 @@ import org.junit.Test;
 import sc.api.plugins.exceptions.RescuableClientException;
 import sc.plugin2018.util.Constants;
 import sc.plugin2018.util.GameRuleLogic;
+import sc.shared.InvalidGameStateException;
 import sc.shared.*;
 
 import java.util.ArrayList;
@@ -23,8 +24,7 @@ public class GamePlayTest
   // TODO check the mustMove criteria?
 
 	@Before
-	public void beforeEveryTest() throws RescuableClientException
-	{
+	public void beforeEveryTest() {
 		game = new Game();
 		state = game.getGameState();
 		red = state.getRedPlayer();
@@ -101,8 +101,7 @@ public class GamePlayTest
 	 *
 	 */
 	@Test
-	public void turnCounting() throws RescuableClientException, InvalidMoveException
-	{
+	public void turnCounting() throws InvalidMoveException, InvalidGameStateException {
 	  // red moves
     List<Action> actions = new ArrayList<>();
 		Assert.assertEquals(0, state.getRound());
@@ -153,8 +152,7 @@ public class GamePlayTest
 	 *
 	 */
 	@Test
-	public void enterGoalCycle() throws RescuableClientException, InterruptedException, InvalidMoveException
-	{
+	public void enterGoalCycle() throws InvalidMoveException, InvalidGameStateException {
 		int lastCarrot = state.getPreviousFieldByType(FieldType.CARROT, 64);
 		int preLastCarrot = state
 				.getPreviousFieldByType(FieldType.CARROT, lastCarrot);
@@ -190,8 +188,7 @@ public class GamePlayTest
 	}
 
 	@Test
-  public void enterGoalOnRoundLimit() throws InvalidMoveException
-  {
+  public void enterGoalOnRoundLimit() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
     state.setTurn((Constants.ROUND_LIMIT-1)*2);
     int lastCarrot = state.getPreviousFieldByType(FieldType.CARROT, 64);
@@ -227,8 +224,7 @@ public class GamePlayTest
 	 *
 	 */
 	@Test
-	public void mustPlayCard() throws InvalidMoveException
-	{
+	public void mustPlayCard() throws InvalidMoveException, InvalidGameStateException {
 	  List<Action> actions = new ArrayList<>();
 	  actions.add(new Advance(state.getNextFieldByType(FieldType.HARE,0)));
 	  actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, 1));
@@ -249,8 +245,7 @@ public class GamePlayTest
 	 * - 0 carrots and opponent is on previous hedgehog field
 	 */
 	@Test
-	public void canSkip() throws InvalidMoveException
-	{
+	public void canSkip() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int redPos = state.getNextFieldByType(FieldType.POSITION_2, red.getFieldIndex());
 		red.setFieldIndex(redPos);
@@ -275,7 +270,7 @@ public class GamePlayTest
    * (as first or as second)
 	 */
 	@Test
-	public void onPositionField() throws InvalidMoveException {
+	public void onPositionField() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		red.setCarrots(5000);
 		blue.setCarrots(5000);
@@ -317,7 +312,7 @@ public class GamePlayTest
 	 * Checks whether it is only allowed to drop 20 carrots iff player has at least 20
 	 */
 	@Test
-	public void playDropCarrotsCard() throws InvalidMoveException {
+	public void playDropCarrotsCard() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		red.setFieldIndex(state.getNextFieldByType(FieldType.HARE, 0));
 		actions.add(new Card(CardType.TAKE_OR_DROP_CARROTS, -20 ,0));
@@ -359,7 +354,7 @@ public class GamePlayTest
 	 * Checks whether game ends only after a round (blue has last move)
 	 */
 	@Test
-	public void blueHasLastMove() throws InvalidMoveException {
+	public void blueHasLastMove() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int carrotAt = state.getPreviousFieldByType(FieldType.CARROT, 64);
 		red.setFieldIndex(carrotAt);
@@ -376,7 +371,7 @@ public class GamePlayTest
 	 * Checks whether game ends only after a round (red has no last move)
 	 */
 	@Test
-	public void redHasNoLastMove() throws InvalidMoveException {
+	public void redHasNoLastMove() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
     int firstCarrot = state.getNextFieldByType(FieldType.CARROT, 0);
     actions.add(new Advance(firstCarrot));
@@ -442,7 +437,7 @@ public class GamePlayTest
 	 *
 	 */
 	@Test
-	public void eatSaladCycle() throws InvalidMoveException {
+	public void eatSaladCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		red.setCarrots(100);
 		int saladAt = state.getNextFieldByType(FieldType.SALAD, 0);
@@ -470,7 +465,7 @@ public class GamePlayTest
 	 * Checks the perform method when using a hare joker
 	 */
 	@Test
-	public void playCardCycle() throws InvalidMoveException {
+	public void playCardCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int hareAt = state.getNextFieldByType(FieldType.HARE, 0);
 		actions.add(new Advance(hareAt));
@@ -487,7 +482,7 @@ public class GamePlayTest
 	 *
 	 */
 	@Test
-	public void takeCarrotsCycle() throws InvalidMoveException {
+	public void takeCarrotsCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int carrotsAt = state.getNextFieldByType(FieldType.CARROT, 0);
 		actions.add(new Advance(carrotsAt));
@@ -514,7 +509,7 @@ public class GamePlayTest
 	 *
 	 */
 	@Test
-	public void dropCarrotsCycle() throws InvalidMoveException {
+	public void dropCarrotsCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int carrotsAt = state.getNextFieldByType(FieldType.CARROT, 0);
 		actions.add(new Advance(carrotsAt));
@@ -645,7 +640,7 @@ public class GamePlayTest
 	 * Checks to perform method when falling back
 	 */
 	@Test
-	public void fallbackCycle() throws InvalidMoveException {
+	public void fallbackCycle() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int firstHedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, 0);
 		int carrotAfter = state.getNextFieldByType(FieldType.CARROT,
@@ -674,7 +669,7 @@ public class GamePlayTest
 	 * A player is allowed to fall back, even if he did the same last turn
 	 */
 	@Test
-	public void fallbackTwice() throws InvalidMoveException {
+	public void fallbackTwice() throws InvalidMoveException, InvalidGameStateException {
     List<Action> actions = new ArrayList<>();
 		int firstHedgehog = state.getNextFieldByType(FieldType.HEDGEHOG, red
 				.getFieldIndex());
@@ -703,23 +698,28 @@ public class GamePlayTest
 	}
 
 	@Test
-	public void reedWinsDrawTest() throws InvalidMoveException {
-		List<Action> actions = new ArrayList<>();
+	public void redWinsDrawTest() throws InvalidMoveException, InvalidGameStateException {
 		red.setSalads(0);
 		blue.setSalads(0);
 		int redIndex = state.getPreviousFieldByType(FieldType.CARROT, 64);
-		int blueIndex = state.getPreviousFieldByType(FieldType.CARROT, red.getFieldIndex());
-		red.setCarrots(GameRuleLogic.calculateCarrots(64 - redIndex));
-		blue.setCarrots(GameRuleLogic.calculateCarrots(64 - blueIndex));
 		red.setFieldIndex(redIndex);
+		red.setCarrots(GameRuleLogic.calculateCarrots(64 - redIndex));
+		int blueIndex = state.getPreviousFieldByType(FieldType.CARROT, redIndex);
 		blue.setFieldIndex(blueIndex);
-		actions.add(new Advance(1));
-		Move move = new Move(actions);
-		move.perform(state);
-		actions.clear();
+		blue.setCarrots(GameRuleLogic.calculateCarrots(64 - blueIndex));
+    { // red Move
+      List<Action> actions = new ArrayList<>();
+      actions.add(new Advance(64 - redIndex));
+      Move move = new Move(actions);
+      move.perform(state);
+    }
 
-		actions.add(new Advance(2));
-		move.perform(state);
+    { // blue Move
+      List<Action> actions = new ArrayList<>();
+      actions.add(new Advance(64 - blueIndex));
+      Move move = new Move(actions);
+      move.perform(state);
+    }
 		Assert.assertEquals(new WinCondition(PlayerColor.RED, Constants.IN_GOAL_MESSAGE), game.checkWinCondition());
 
 	}

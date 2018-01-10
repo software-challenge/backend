@@ -4,9 +4,9 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sc.protocol.responses.ProtocolMessage;
 import sc.protocol.responses.ProtocolMove;
 import sc.shared.DebugHint;
+import sc.shared.InvalidGameStateException;
 import sc.shared.InvalidMoveException;
 
 import java.util.Collections;
@@ -78,7 +78,7 @@ public class Move extends ProtocolMove implements Cloneable {
    *           falls nicht geklont werden kann
    */
   @Override
-  public Object clone() throws CloneNotSupportedException {
+  public Object clone() {
     List<Action> clonedActions = new CopyOnWriteArrayList<>();
     for (Action action : getActions()) {
       if (action instanceof Advance) {
@@ -157,7 +157,7 @@ public class Move extends ProtocolMove implements Cloneable {
    * @return Liste der hinzugefuegten Debug-Hilfestellungen
    */
   public List<DebugHint> getHints() {
-    return hints == null ? Collections.<DebugHint>emptyList() : hints;
+    return hints == null ? Collections.emptyList() : hints;
   }
 
   /**
@@ -171,7 +171,7 @@ public class Move extends ProtocolMove implements Cloneable {
    * @throws InvalidMoveException
    *           wird geworfen, wenn der Zug nicht den Regeln entspricht
    */
-  public void perform(GameState state) throws InvalidMoveException {
+  public void perform(GameState state) throws InvalidMoveException, InvalidGameStateException {
     // Sortiere Aktionen
     orderActions();
     if (actions == null) {

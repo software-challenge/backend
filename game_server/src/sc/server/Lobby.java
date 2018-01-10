@@ -14,6 +14,7 @@ import sc.server.network.ClientManager;
 import sc.server.network.IClientListener;
 import sc.server.network.IClientRole;
 import sc.server.network.PacketCallback;
+import sc.shared.InvalidGameStateException;
 import sc.shared.Score;
 import sc.shared.SlotDescriptor;
 
@@ -30,7 +31,7 @@ public class Lobby implements IClientListener
 
 	public Lobby()
 	{
-		this.gameManager = new GameRoomManager();
+	  this.gameManager = new GameRoomManager();
 		this.clientManager = new ClientManager(this);
 	}
 
@@ -67,8 +68,7 @@ public class Lobby implements IClientListener
 	 */
 	@Override
 	public void onRequest(Client source, PacketCallback callback)
-			throws RescuableClientException
-	{
+					throws RescuableClientException, InvalidGameStateException {
 		Object packet = callback.getPacket();
 
 		if (packet instanceof ILobbyRequest)
@@ -151,10 +151,13 @@ public class Lobby implements IClientListener
 			}
 			else if (packet instanceof StepRequest)
 			{
+				/*
+				It is not checked whether there is a prior pending StepRequest
+				 */
 			  if (source.isAdministrator()) {
-          StepRequest pause = (StepRequest) packet;
-          GameRoom room = this.gameManager.findRoom(pause.roomId);
-          room.step(pause.forced);
+          StepRequest stepRequest = (StepRequest) packet;
+          GameRoom room = this.gameManager.findRoom(stepRequest.roomId);
+          room.step(stepRequest.forced);
         }
 			}
 			else if (packet instanceof CancelRequest)
@@ -163,6 +166,8 @@ public class Lobby implements IClientListener
           CancelRequest cancel = (CancelRequest) packet;
           GameRoom room = this.gameManager.findRoom(cancel.roomId);
           room.cancel();
+          // TODO check whether all client receive game over message
+          this.gameManager.getGames().remove(room);
         }
 			}
 			else if (packet instanceof TestModeRequest) {

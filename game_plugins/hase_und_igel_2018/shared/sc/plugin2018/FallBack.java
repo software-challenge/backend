@@ -39,10 +39,7 @@ public class FallBack extends Action {
 
   @Override
   public boolean equals(Object o) {
-    if(o instanceof FallBack) {
-      return true;
-    }
-    return false;
+    return o instanceof FallBack;
   }
 
   @Override

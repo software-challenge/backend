@@ -50,7 +50,7 @@ public class Field {
   }
   
   @Override
-  public Field clone() throws CloneNotSupportedException {
+  public Field clone() {
     return new Field(this.type, this.index);
   }
   

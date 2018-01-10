@@ -33,10 +33,10 @@ public class Configuration
 
 	public static List<Class<?>> getClassesToRegister()
 	{
-		return Arrays.asList(new Class<?>[] { Game.class, Board.class,
-				GameState.class, Move.class, Player.class,
-				WelcomeMessage.class, CardType.class, FieldType.class,
-				Advance.class, Action.class, Skip.class, PlayerColor.class,
-				Card.class, EatSalad.class, ExchangeCarrots.class, FallBack.class, Condition.class});
+		return Arrays.asList(Game.class, Board.class,
+            GameState.class, Move.class, Player.class,
+            WelcomeMessage.class, CardType.class, FieldType.class,
+            Advance.class, Action.class, Skip.class, PlayerColor.class,
+            Card.class, EatSalad.class, ExchangeCarrots.class, FallBack.class, Condition.class);
 	}
 }
