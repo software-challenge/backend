@@ -212,7 +212,7 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;sc.networking.clients.IControllableGame</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#observeAndControl(sc.protocol.responses.PrepareGameResponse)">observeAndControl</A></B>(sc.protocol.responses.PrepareGameResponse&nbsp;handle)</CODE>
+<TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#observeAndControl(sc.protocol.responses.PrepareGameResponse)">observeAndControl</A></B>(sc.protocol.responses.PrepareGameProtocolMessage&nbsp;handle)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;start observation with control over the game (pause etc)</TD>
@@ -220,7 +220,7 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;sc.networking.clients.IControllableGame</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#observeGame(sc.protocol.responses.PrepareGameResponse)">observeGame</A></B>(sc.protocol.responses.PrepareGameResponse&nbsp;handle)</CODE>
+<TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#observeGame(sc.protocol.responses.PrepareGameResponse)">observeGame</A></B>(sc.protocol.responses.PrepareGameProtocolMessage&nbsp;handle)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -229,7 +229,7 @@ java.lang.Object
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
 <TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#onError(java.lang.String, sc.protocol.responses.ErrorResponse)">onError</A></B>(java.lang.String&nbsp;roomId,
-        sc.protocol.responses.ErrorResponse&nbsp;response)</CODE>
+        sc.protocol.responses.ProtocolErrorMessage&nbsp;response)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -255,7 +255,7 @@ java.lang.Object
 <TR BGCOLOR="white" CLASS="TableRowColor">
 <TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
 <CODE>&nbsp;void</CODE></FONT></TD>
-<TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#onGamePrepared(sc.protocol.responses.PrepareGameResponse)">onGamePrepared</A></B>(sc.protocol.responses.PrepareGameResponse&nbsp;response)</CODE>
+<TD><CODE><B><A HREF="../../sc/plugin2010/AbstractClient.html#onGamePrepared(sc.protocol.responses.PrepareGameResponse)">onGamePrepared</A></B>(sc.protocol.responses.PrepareGameProtocolMessage&nbsp;response)</CODE>
 
 <BR>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
@@ -397,7 +397,7 @@ public <A HREF="../../sc/plugin2010/IGameHandler.html" title="interface in sc.pl
 <A NAME="observeGame(sc.protocol.responses.PrepareGameResponse)"><!-- --></A><H3>
 observeGame</H3>
 <PRE>
-public sc.networking.clients.IControllableGame <B>observeGame</B>(sc.protocol.responses.PrepareGameResponse&nbsp;handle)</PRE>
+public sc.networking.clients.IControllableGame <B>observeGame</B>(sc.protocol.responses.PrepareGameProtocolMessage&nbsp;handle)</PRE>
 <DL>
 <DD><DL>
 </DL>
@@ -411,7 +411,7 @@ public sc.networking.clients.IControllableGame <B>observeGame</B>(sc.protocol.re
 <A NAME="observeAndControl(sc.protocol.responses.PrepareGameResponse)"><!-- --></A><H3>
 observeAndControl</H3>
 <PRE>
-public sc.networking.clients.IControllableGame <B>observeAndControl</B>(sc.protocol.responses.PrepareGameResponse&nbsp;handle)</PRE>
+public sc.networking.clients.IControllableGame <B>observeAndControl</B>(sc.protocol.responses.PrepareGameProtocolMessage&nbsp;handle)</PRE>
 <DL>
 <DD>start observation with control over the game (pause etc)
 <P>
@@ -460,7 +460,7 @@ public void <B>sendMove</B>(<A HREF="../../sc/plugin2010/Move.html" title="class
 onError</H3>
 <PRE>
 public void <B>onError</B>(java.lang.String&nbsp;roomId,
-                    sc.protocol.responses.ErrorResponse&nbsp;response)</PRE>
+                    sc.protocol.responses.ProtocolErrorMessage&nbsp;response)</PRE>
 <DL>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE>onError</CODE> in interface <CODE>sc.networking.clients.ILobbyClientListener</CODE></DL>
@@ -560,7 +560,7 @@ public void <B>prepareGame</B>(int&nbsp;playerCount)</PRE>
 <A NAME="onGamePrepared(sc.protocol.responses.PrepareGameResponse)"><!-- --></A><H3>
 onGamePrepared</H3>
 <PRE>
-public void <B>onGamePrepared</B>(sc.protocol.responses.PrepareGameResponse&nbsp;response)</PRE>
+public void <B>onGamePrepared</B>(sc.protocol.responses.PrepareGameProtocolMessage&nbsp;response)</PRE>
 <DL>
 <DD><DL>
 <DT><B>Specified by:</B><DD><CODE>onGamePrepared</CODE> in interface <CODE>sc.networking.clients.ILobbyClientListener</CODE></DL>
@@ -574,7 +574,7 @@ public void <B>onGamePrepared</B>(sc.protocol.responses.PrepareGameResponse&nbsp
 <A NAME="prepareGameAndWait(sc.shared.SlotDescriptor...)"><!-- --></A><H3>
 prepareGameAndWait</H3>
 <PRE>
-public sc.protocol.helpers.RequestResult&lt;sc.protocol.responses.PrepareGameResponse&gt; <B>prepareGameAndWait</B>(sc.shared.SlotDescriptor...&nbsp;descriptors)
+public sc.protocol.helpers.RequestResult&lt;sc.protocol.responses.PrepareGameProtocolMessage&gt; <B>prepareGameAndWait</B>(sc.shared.SlotDescriptor...&nbsp;descriptors)
                                                                                                 throws java.lang.InterruptedException</PRE>
 <DL>
 <DD><DL>

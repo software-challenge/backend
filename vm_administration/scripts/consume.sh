@@ -24,7 +24,10 @@ clientdir="/home/clientexec/client"
 
 echo "Unzipping client" >> $log
 cd $clientdir
-/usr/bin/unzip $zipfile >> $log 2>&1
+# Verify archive integrity
+/usr/bin/unzip -t $zipfile >> $log 2>&1
+# Overwrite existing files
+/usr/bin/unzip -o $zipfile >> $log 2>&1
 /bin/chown -R clientexec:clientexec .
 /bin/chmod +x $startup
 echo "Starting client" >> $log

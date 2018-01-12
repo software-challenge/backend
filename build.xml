@@ -2,11 +2,11 @@
   <import file="git-build.xml" />
 
   <property name="out.dir" value="deploy" />
+  <property name="game_plugin" value="hase_und_igel_new" />
 
   <target name="clean">
     <delete dir="${out.dir}" />
     <delete dir="game_server/build" />
-    <delete dir="game_gui/build" />
     <!--    old Plugins                        !-->
     <delete dir="game_plugins/tic_tac_toe/build" />
     <delete dir="game_players/hase_und_igel/build" />
@@ -26,10 +26,11 @@
     <delete dir="game_plugins/twixt/build" />
     <delete dir="game_players/twixt_player/build" />
     <delete dir="game_players/twixt_player2/build" />
-    <!--    currentPlugin                    !-->
     <delete dir="game_plugins/mississippi_queen/build" />
     <delete dir="game_players/mississippi_queen_player/build" />
-    <!--<delete dir="game_players/mississippi_queen_player2/build" /> !-->
+    <!--    currentPlugin                    !-->
+    <delete dir="game_plugins/${game_plugin}/build" />
+    <delete dir="game_players/hase_und_igel_player_new/build" />
   </target>
 
   <target name="dependencies">
@@ -55,57 +56,49 @@
         <ant dir="game_players/hey_danke_fuer_den_fisch_player2" target="clean-build" inheritAll="false" />
         <ant dir="game_plugins/twixt" target="clean-build" inheritAll="false" />
         <ant dir="game_players/twixt_player" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" /> !-->
-        <!--    currentPlugin                    !-->
-        <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
-        <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />
-         <!--<ant dir="game_players/mississippi_queen_player2" target="clean-build" inheritAll="false" /> TODO!-->
+        <ant dir="game_players/twixt_player2" target="clean-build" inheritAll="false" />
+	    <ant dir="game_plugins/mississippi_queen" target="clean-build" inheritAll="false" />
+	    <ant dir="game_players/mississippi_queen_player" target="clean-build" inheritAll="false" />-->
+    <!--    currentPlugin                    !-->
+    <ant dir="game_plugins/${game_plugin}" target="clean-build" inheritAll="false" />
+    <ant dir="game_players/hase_und_igel_player_new" target="clean-build" inheritAll="false" />
 
-        <echo message="Compiling Server and GUI..." />
-        <ant dir="game_server" target="clean-build" inheritAll="false" />
-        <ant dir="game_gui" target="clean-build" inheritAll="false" />
+    <echo message="Compiling Server..." />
+    <ant dir="game_server" target="clean-build" inheritAll="false" />
+    <ant dir="game_helper_clients/test_client" target="clean-build" inheritall="false" />
   </target>
 
   <target name="build" depends="scmversion,dependencies">
     <mkdir dir="${out.dir}" />
 
-    <mkdir dir="${out.dir}/gui" />
-
-    <copy todir="${out.dir}/gui">
-      <fileset dir="./game_gui/build/jar" />
-    </copy>
-
     <mkdir dir="${out.dir}/server" />
     <copy todir="${out.dir}/server">
       <fileset dir="./game_server/build/jar" />
+      <fileset dir="./game_helper_clients/test_client/build/jar" />
+    </copy>
+    <!-- build player -->
+    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
+    <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/jar">
+      <fileset dir="./game_players/hase_und_igel_player_new/build/jar" />
     </copy>
 
-    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/jar" />
-    <copy todir="${out.dir}/simple_client/mississippi_queen_player/jar">
-      <fileset dir="./game_players/mississippi_queen_player/build/jar" />
-    </copy>
-
-    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src" />
-    <copy todir="${out.dir}/simple_client/mississippi_queen_player/src">
-      <fileset dir="./game_players/mississippi_queen_player">
+    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+    <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/src">
+      <fileset dir="./game_players/hase_und_igel_player_new">
         <exclude name="build/**/*" />
         <exclude name="bin/**/*" />
         <exclude name=".classpath" />
         <exclude name="build.xml" />
       </fileset>
     </copy>
-    <move tofile="${out.dir}/simple_client/mississippi_queen_player/src/build.xml" file="${out.dir}/simple_client/mississippi_queen_player/src/build-deploy.xml" />
-    <mkdir dir="${out.dir}/simple_client/mississippi_queen_player/src/lib" />
-    <copy todir="${out.dir}/simple_client/mississippi_queen_player/src/lib">
-      <fileset dir="${out.dir}/simple_client/mississippi_queen_player/jar/lib" />
+    <move tofile="${out.dir}/simple_client/hase_und_igel_player_new/src/build.xml" file="${out.dir}/simple_client/hase_und_igel_player_new/src/build-deploy.xml" />
+    <mkdir dir="${out.dir}/simple_client/hase_und_igel_player_new/src/lib" />
+    <copy todir="${out.dir}/simple_client/hase_und_igel_player_new/src/lib">
+      <fileset dir="${out.dir}/simple_client/hase_und_igel_player_new/jar/lib" />
     </copy>
 
 
     <!-->####    PLUGINS             !-->
-    <mkdir dir="game_gui/plugins" />
-    <copy todir="game_gui/plugins" flatten="true">
-      <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
-    </copy>
     <mkdir dir="game_server/plugins" />
     <copy todir="game_server/plugins" flatten="true">
       <fileset dir="game_plugins" includes="*/build/jar/*.jar"/>
@@ -113,37 +106,58 @@
 
     <echo message="Copy log configs" />
 
-    <copy tofile="${out.dir}/gui/logback.xml" file="./game_server/bin/logback-release.xml" />
-    <copy tofile="${out.dir}/server/logback.xml" file="./game_server/bin/logback-release.xml" />
+    <copy tofile="${out.dir}/server/logback.xml" file="./game_server/configuration/logback-release.xml" />
+    <copy tofile="${out.dir}/server/server.properties" file="./game_server/configuration/server.properties.example" />
+    <copy tofile="${out.dir}/server/logback-tests.xml" file="./game_helper_clients/test_client/src/logback-tests.xml" />
 
     <echo message="Generating Starter-Batchfiles" />
 
     <!-- &#xD; is CR, &#xA; is LF. Windows needs CRLF, Unix needs LF -->
-    <echo file="${out.dir}/gui/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-gui.jar --max_client_heapsize=256&#xD;&#xA;</echo>
-    <echo file="${out.dir}/gui/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-gui.jar --max_client_heapsize=256&#xA;</echo>
-    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
-    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=./logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
+    <echo file="${out.dir}/server/start.bat">java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar softwarechallenge-server.jar&#xD;&#xA;</echo>
+    <echo file="${out.dir}/server/start.sh">#!/bin/sh&#xA;java -Dfile.encoding=UTF-8 -Dlogback.configurationFile=logback.xml -jar softwarechallenge-server.jar&#xA;</echo>
+    <chmod file="${out.dir}/server/start.sh" perm="ugo+x" />
 
     <echo message="Zipping files..." />
 
     <mkdir dir="${out.dir}/zipped" />
 
-    <zip destfile="${out.dir}/zipped/server-gui.zip" basedir="${out.dir}/gui" />
-
     <zip destfile="${out.dir}/zipped/server.zip" basedir="${out.dir}/server" />
+
+    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}-jar.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/jar" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
+
+
+  </target>
+
+  <target name="doc" depends="build">
+    <ant dir="game_server" target="build-doc" inheritAll="false" />
+    <ant dir="software_challenge_sdk" target="build-doc" inheritAll="false" />
+    <ant dir="./game_plugins/${game_plugin}" target="build-doc" inheritAll="false" />
+    <mkdir dir="${out.dir}/docs" />
+    <mkdir dir="${out.dir}/docs/game_server" />
+    <mkdir dir="${out.dir}/docs/software_challenge_sdk" />
+    <mkdir dir="${out.dir}/docs/${game_plugin}" />
+    <copy todir="${out.dir}/docs/game_server">
+      <fileset dir="./game_server/doc"/>
+    </copy>
+    <copy todir="${out.dir}/docs/software_challenge_sdk">
+      <fileset dir="./software_challenge_sdk/doc"/>
+    </copy>
+    <copy todir="${out.dir}/docs/${game_plugin}">
+      <fileset dir="./game_plugins/${game_plugin}/doc"/>
+    </copy>
 
     <echo message="Gathering documentations..." />
     <mkdir dir="${out.dir}/zipped/doc" />
     <zip destfile="${out.dir}/zipped/doc/software_challenge_sdk-doc.zip" basedir="software_challenge_sdk/doc" />
-    <zip destfile="${out.dir}/zipped/doc/gui-doc.zip" basedir="game_gui/doc" />
     <zip destfile="${out.dir}/zipped/doc/server-doc.zip" basedir="game_server/doc" />
-    <!-- TODO<zip destfile="${out.dir}/zipped/notsosimpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/not_so_simple_client/mississippi_queen_player/jar" />-->
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-jar.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/jar" />
-    <zip destfile="${out.dir}/zipped/simpleclient-mississippi_queen-src.zip" basedir="${out.dir}/simple_client/mississippi_queen_player/src" />
+    <zip destfile="${out.dir}/zipped/simpleclient-${game_plugin}--src.zip" basedir="${out.dir}/simple_client/hase_und_igel_player_new/src" />
 
   </target>
 
   <target name="clean-build" depends="clean,build" />
+  <target name="build-all" depends="clean-build, doc" />
 
-  <target name="main" depends="clean-build" />
+  <target name="main" depends="build-all" />
 </project>

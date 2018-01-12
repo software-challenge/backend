@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import sc.api.plugins.IPlayer;
-import sc.api.plugins.host.ReplayBuilder;
 import sc.guiplugin.interfaces.IObservation;
 import sc.guiplugin.interfaces.listener.IGameEndedListener;
 import sc.guiplugin.interfaces.listener.INewTurnListener;
@@ -27,7 +26,7 @@ import sc.plugin2017.Player;
 import sc.plugin2017.PlayerColor;
 import sc.plugin2017.gui.renderer.RenderFacade;
 import sc.plugin2017.util.Configuration;
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 import sc.shared.ScoreCause;
 
@@ -156,7 +155,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     String name2 = gameState.getPlayerNames()[1];
 
     if (this.conGame.getCurrentError() != null) {
-      ErrorResponse error = (ErrorResponse) this.conGame.getCurrentError();
+      ProtocolErrorMessage error = (ProtocolErrorMessage) this.conGame.getCurrentError();
       result += (gameState.getCurrentPlayer().getPlayerColor() == PlayerColor.RED ? name1 : name2);
       result += " hat einen Fehler gemacht: \n" + error.getMessage() + "\n";
     }
@@ -251,7 +250,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     Object errorObject = this.conGame.getCurrentError();
     String errorMessage = null;
     if (errorObject != null) {
-      errorMessage = ((ErrorResponse) errorObject).getMessage();
+      errorMessage = ((ProtocolErrorMessage) errorObject).getMessage();
     }
     Object curStateObject = this.conGame.getCurrentState();
     PlayerColor color = null;
@@ -260,6 +259,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
       color = gameState.getCurrentPlayer().getPlayerColor();
     }
     this.handler.gameEnded(data, color, errorMessage);
+
   }
 
   private void notifyOnNewTurn() {
@@ -293,7 +293,7 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
     GameState gameState = (GameState) this.conGame.getCurrentState();
     Object errorObject = this.conGame.getCurrentError();
     if (errorObject != null) {
-      ErrorResponse error = (ErrorResponse) errorObject;
+      ProtocolErrorMessage error = (ProtocolErrorMessage) errorObject;
       logger.info("Received error response:" + error);
     }
 
@@ -303,7 +303,13 @@ public class Observation implements IObservation, IUpdateListener, IGUIObservati
 
       this.handler.onUpdate(gameState.getCurrentPlayer(), gameState.getOtherPlayer());
 
-      if (this.conGame.isGameOver() && this.conGame.isAtEnd()) {
+      // If the following conditional is checked, some problem might occurre for replays:
+      // isGameOver is always true for replays.
+      // isAtEnd might be set at the beginning of a game, because the currentGameState is the last 
+      // GameState in the gameStateQueue. If this happens the result is always null (the result should 
+      // only be null in an error case, these are handled separatly), so the result has to be checked,
+      // whether the game has truly ended.
+      if (this.conGame.isGameOver() && this.conGame.isAtEnd() && this.conGame.getResult() != null) {
         logger.debug("game is over, notifying listeners");
         notifyOnGameEnded(sender, this.conGame.getResult());
       } else {

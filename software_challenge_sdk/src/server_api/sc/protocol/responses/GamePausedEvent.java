@@ -2,12 +2,12 @@ package sc.protocol.responses;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.SimplePlayer;
 
 @XStreamAlias(value="paused")
-public class GamePausedEvent
+public class GamePausedEvent extends ProtocolMessage
 {
-	private final IPlayer	nextPlayer;
+	private final SimplePlayer	nextPlayer;
 
         /**
          * might be needed by XStream
@@ -16,12 +16,12 @@ public class GamePausedEvent
             nextPlayer = null;
         }
 
-	public GamePausedEvent(IPlayer nextPlayer)
+	public GamePausedEvent(SimplePlayer nextPlayer)
 	{
 		this.nextPlayer = nextPlayer;
 	}
 
-	public IPlayer getNextPlayer()
+	public SimplePlayer getNextPlayer()
 	{
 		return this.nextPlayer;
 	}

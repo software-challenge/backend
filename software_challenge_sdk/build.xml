@@ -1,9 +1,15 @@
-<project name="softwarechallenge-sdk" basedir="." default="main">
+<project name="software_challenge-sdk" basedir="." default="main">
 	<property name="src.dir" value="src" />
+	<property name="doc.dir" value="doc" />
 	<property name="build.dir" value="build" />
 	<property name="classes.dir" value="${build.dir}/bin" />
 	<property name="jar.dir" value="${build.dir}/jar" />
 	<property name="lib.dir" value="lib" />
+
+	<!-- packages for server_api-->
+	<property name="server_api.javadoc.packages" value="sc.*" />
+	<!-- packages for framework -->
+	<property name="framework.javadoc.packages" value="sc.*" />
 
 	<path id="classpath">
 		<fileset dir="${lib.dir}" includes="**/*.jar" />
@@ -18,12 +24,29 @@
 		<javac source="1.8" target="1.8" srcdir="${src.dir}" encoding="utf8" destdir="${classes.dir}" classpathref="classpath" debug="true" debuglevel="lines,vars,source" />
 	</target>
 
+	<target name="doc" description="generate documentation">
+		<mkdir dir="${doc.dir}/server_api" />
+		<mkdir dir="${doc.dir}/framework" />
+		<mkdir dir="${doc.dir}/shared" />
+		<javadoc sourcepath="${src.dir}/server_api"
+				 classpathref="classpath"
+				 destdir="${doc.dir}/server_api"
+				 packagenames="${server_api.javadoc.packages}"/>
+		<javadoc sourcepath="${src.dir}/framework"
+				 classpathref="classpath"
+				 destdir="${doc.dir}/framework"
+				 packagenames="${framework.javadoc.packages}"/>
+		<mkdir dir="${doc.dir}" />
+	</target>
+
 	<target name="jar" depends="compile">
 		<mkdir dir="${jar.dir}" />
 		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}" />
 	</target>
 
 	<target name="clean-build" depends="clean,jar" />
+	<target name="build-doc" depends="clean, doc" />
+	<target name="build-all" depends="clean,jar,doc" />
 
 	<target name="main" depends="clean-build" />
 </project>

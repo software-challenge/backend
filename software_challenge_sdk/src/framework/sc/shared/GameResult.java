@@ -6,18 +6,19 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
-import sc.api.plugins.IPlayer;
+import sc.framework.plugins.SimplePlayer;
 import sc.helpers.StringHelper;
+import sc.protocol.responses.ProtocolMessage;
 
 @XStreamAlias(value = "result")
-public class GameResult {
+public class GameResult extends ProtocolMessage {
 	private final ScoreDefinition definition;
 
 	@XStreamImplicit(itemFieldName = "score")
 	private final List<PlayerScore> scores;
 	
 	@XStreamImplicit(itemFieldName = "winner")
-	private List<IPlayer> winners;
+	private List<SimplePlayer> winners;
 
         /**
          * might be needed by XStream
@@ -28,7 +29,7 @@ public class GameResult {
             winners = null;
         }
 
-	public GameResult(ScoreDefinition definition, List<PlayerScore> scores, List<IPlayer> winners) {
+	public GameResult(ScoreDefinition definition, List<PlayerScore> scores, List<SimplePlayer> winners) {
 		this.definition = definition;
 		this.scores = scores;
 		this.winners = winners;
@@ -42,9 +43,9 @@ public class GameResult {
 		return this.scores;
 	}
 	
-	public List<IPlayer> getWinners() {
+	public List<SimplePlayer> getWinners() {
 		if(this.winners == null) {
-			this.winners = new LinkedList<IPlayer>();
+			this.winners = new LinkedList<SimplePlayer>();
 		} 
 		return this.winners;
 	}

@@ -3,6 +3,15 @@
 # Ignore RVM Project Config
 .rvmrc
 
+# Ignore .project files from eclipse
+*.project
+*.metadata
+*.recommenders
+
+# Ignore files from IntelliJ
+.idea
+*.iml
+
 # Ignore temporary VIM files
 .*.sw*
 
@@ -17,10 +26,13 @@
 /game_players/*/bin
 /game_plugins/*/bin
 /game_plugins/*/src
+/game_helper_clients/test_client/build
 
 # Ignore java doc
-/game_players/*/doc
-/game_plugins/*/doc
+game_players/*/doc
+game_plugins/*/doc
+game_helper_clients/*/doc
+software_challenge_sdk/*/doc
 
 # game server
 /game_server/log
@@ -44,3 +56,16 @@
 *.toc
 *.out
 *.log
+
+\.idea/
+
+*.iml
+
+game_server/doc/
+
+software_challenge_sdk/doc/
+
+*.class
+
+# ignore server.properties
+/game_server/configuration/server.properties

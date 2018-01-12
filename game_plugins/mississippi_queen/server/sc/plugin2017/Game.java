@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
 
-import sc.api.plugins.IPlayer;
 import sc.api.plugins.exceptions.GameLogicException;
 import sc.api.plugins.exceptions.TooManyPlayersException;
 import sc.api.plugins.host.GameLoader;
@@ -104,16 +103,14 @@ public class Game extends RoundBasedGameInstance<Player> {
 
   @Override
   public IPlayer onPlayerJoined() throws TooManyPlayersException {
-    if (this.players.size() >= GamePlugin.MAX_PLAYER_COUNT)
-      throw new TooManyPlayersException();
     final Player player;
     // When starting a game from a imported state the players should not be
     // overwritten
     PlayerColor playerColor = this.availableColors.remove(0);
-    if (PlayerColor.RED == playerColor && gameState.getRedPlayer() != null) {
-      player = gameState.getRedPlayer();
-    } else if (PlayerColor.BLUE == playerColor && gameState.getBluePlayer() != null) {
-      player = gameState.getBluePlayer();
+    if (PlayerColor.RED == playerColor && this.gameState.getRedPlayer() != null) {
+      player = this.gameState.getRedPlayer();
+    } else if (PlayerColor.BLUE == playerColor && this.gameState.getBluePlayer() != null) {
+      player = this.gameState.getBluePlayer();
     } else {
       player = new Player(playerColor);
     }
@@ -124,36 +121,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     return player;
   }
 
-  @Override
-  public void onPlayerLeft(IPlayer player) {
-    if (!player.hasViolated()) {
-      player.setLeft(true);
-      onPlayerLeft(player, ScoreCause.LEFT);
-    } else {
-      onPlayerLeft(player, ScoreCause.RULE_VIOLATION);
-    }
-  }
-
-  @Override
-  public void onPlayerLeft(IPlayer player, ScoreCause cause) {
-    Map<IPlayer, PlayerScore> res = generateScoreMap();
-
-    for (Entry<IPlayer, PlayerScore> entry : res.entrySet()) {
-      PlayerScore score = entry.getValue();
-
-      if (entry.getKey() == player) {
-        score.setCause(cause);
-      }
-    }
-
-    notifyOnGameOver(res);
-  }
-
-  @Override
-  public boolean ready() {
-    return this.players.size() == GamePlugin.MAX_PLAYER_COUNT;
-  }
-
+  /**
+   * Sends welcomeMessage to all listeners and notify player on new gameStates or MoveRequests
+   */
   @Override
   public void start() {
     for (final Player p : this.players) {
@@ -163,6 +133,9 @@ public class Game extends RoundBasedGameInstance<Player> {
     super.start();
   }
 
+  /**
+   * Currently not implemented, why is this needed? Is this needed?
+   */
   @Override
   protected void onNewTurn() {
 
@@ -177,11 +150,17 @@ public class Game extends RoundBasedGameInstance<Player> {
     int matchPoints = 1;
     int[] oppPoints = this.gameState.getPlayerStats(p.getPlayerColor().opponent());
     WinCondition winCondition = checkWinCondition();
-    String winningReason = null;
-    if (winCondition != null) {
-      winningReason = winCondition.getReason();
-    }
-    if (stats[Constants.GAME_STATS_POINTS_INDEX] > oppPoints[Constants.GAME_STATS_POINTS_INDEX]
+    String reason = null;
+    Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
+        : this.gameState.getRedPlayer();
+    if (winCondition != null) { // winCondition is met by a player
+      reason = winCondition.getReason();
+      if (winCondition.getWinner() == p.getPlayerColor()) {
+        matchPoints = 2;
+      } else if (winCondition.getWinner() == opponent.getPlayerColor()){
+        matchPoints = 0;
+      }
+    } else if (stats[Constants.GAME_STATS_POINTS_INDEX] > oppPoints[Constants.GAME_STATS_POINTS_INDEX]
         || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX]
             && stats[Constants.GAME_STATS_PASSENGER_INDEX] > oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
       matchPoints = 2;
@@ -189,29 +168,36 @@ public class Game extends RoundBasedGameInstance<Player> {
         || (stats[Constants.GAME_STATS_POINTS_INDEX] == oppPoints[Constants.GAME_STATS_POINTS_INDEX]
             && stats[Constants.GAME_STATS_PASSENGER_INDEX] < oppPoints[Constants.GAME_STATS_PASSENGER_INDEX]))
       matchPoints = 0;
-    // FIXME score calculation is done at too many places and does not respect
-    // score definition but assumes a fixed schema (points and matchpoints).
-    Player opponent = p.getPlayerColor().opponent() == PlayerColor.BLUE ? this.gameState.getBluePlayer()
-        : this.gameState.getRedPlayer();
-    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft()) {
+    
+    // opponent has done something wrong
+    if (opponent.hasViolated() && !p.hasViolated() || opponent.hasLeft() && !p.hasLeft() 
+        || opponent.hasSoftTimeout() || opponent.hasHardTimeout()) {
       matchPoints = 2;
     }
-    if (p.hasViolated()) {
-      return new PlayerScore(ScoreCause.RULE_VIOLATION, p.getViolationReason(), 0,
-              stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-    } else if (p.hasLeft()) {
-      return new PlayerScore(ScoreCause.LEFT, winningReason, 0,
-                stats[Constants.GAME_STATS_POINTS_INDEX], stats[Constants.GAME_STATS_PASSENGER_INDEX]);
-    } else {
-      return new PlayerScore(ScoreCause.REGULAR, winningReason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
-            stats[Constants.GAME_STATS_PASSENGER_INDEX]);
+    ScoreCause cause;
+    if (p.hasSoftTimeout()) { // Soft-Timeout
+      cause = ScoreCause.SOFT_TIMEOUT;
+      matchPoints = 0;
+    } else if (p.hasHardTimeout()) { // Hard-Timeout
+      cause = ScoreCause.HARD_TIMEOUT;
+      matchPoints = 0;
+    } else if (p.hasViolated()) { // rule violation
+      cause = ScoreCause.RULE_VIOLATION;
+      reason = p.getViolationReason(); // message from InvalidMoveException
+      matchPoints = 0;
+    } else if (p.hasLeft()) { // player left
+      cause = ScoreCause.LEFT;
+      matchPoints = 0;
+    } else { // regular score or opponent violated
+      cause = ScoreCause.REGULAR;
     }
-
+    return new PlayerScore(cause, reason, matchPoints, stats[Constants.GAME_STATS_POINTS_INDEX],
+        stats[Constants.GAME_STATS_PASSENGER_INDEX]);
   }
 
   @Override
   protected ActionTimeout getTimeoutFor(Player player) {
-    return new ActionTimeout(true, 10000l, 2000l);
+    return new ActionTimeout(true, 1000000l, 200000l);
   }
 
   /**
@@ -231,17 +217,30 @@ public class Game extends RoundBasedGameInstance<Player> {
   }
 
   /**
+   * checks if one player reached the goal with enough passengers. Only used for testing
+   *
+   * @return the player who reached the goal or null if no player reached the
+   *         goal
+   */
+  private static Player checkGoalReached(GameState gameState) {
+    if (gameState.getRedPlayer().getField(gameState.getBoard()).getType() == FieldType.GOAL && gameState.getRedPlayer().getPassenger() >= 2
+        && gameState.getRedPlayer().getSpeed() == 1) {
+      return gameState.getRedPlayer();
+    } else if (gameState.getBluePlayer().getField(gameState.getBoard()).getType() == FieldType.GOAL && gameState.getBluePlayer().getPassenger() >= 2
+        && gameState.getBluePlayer().getSpeed() == 1) {
+      return gameState.getBluePlayer();
+    }
+    return null;
+  }
+  
+  /**
    * Checks if a win condition in the current game state is met.
    *
    * @return WinCondition with winner and reason or null, if no win condition is
    *         yet met.
    */
-  public WinCondition checkWinCondition() {
-    if (this.gameState.getTurn() > 1) {
-      // XXX only for test
-      // return new WinCondition(PlayerColor.BLUE, "Das Rundenlimit von 2 wurde
-      // erreicht.");
-    }
+  @Override
+  public sc.shared.WinCondition checkWinCondition() {
     int[][] stats = this.gameState.getGameStats();
     if (this.gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
       // round limit reached
@@ -261,6 +260,41 @@ public class Game extends RoundBasedGameInstance<Player> {
       // a player is more than three tiles before the other player
       PlayerColor winner;
       if (this.gameState.getRedPlayer().getTile() > this.gameState.getBluePlayer().getTile()) {
+        winner = PlayerColor.RED;
+      } else {
+        winner = PlayerColor.BLUE;
+      }
+      return new WinCondition(winner, "Das Spiel ist vorzeitig zu Ende.\nEin Spieler wurde abgehängt.");
+    }
+    return null;
+  }
+  
+  /**
+   * Checks if a win condition in the current game state is met. Only for testing
+   *
+   * @return WinCondition with winner and reason or null, if no win condition is
+   *         yet met.
+   */
+  public static WinCondition checkWinCondition(GameState gameState) {
+    int[][] stats = gameState.getGameStats();
+    if (gameState.getTurn() >= 2 * Constants.ROUND_LIMIT) {
+      // round limit reached
+      PlayerColor winner = null;
+      if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] > stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX]) {
+        winner = PlayerColor.RED;
+      } else if (stats[Constants.GAME_STATS_RED_INDEX][Constants.GAME_STATS_POINTS_INDEX] < stats[Constants.GAME_STATS_BLUE_INDEX][Constants.GAME_STATS_POINTS_INDEX]) {
+        winner = PlayerColor.BLUE;
+      }
+      return new WinCondition(winner, "Das Rundenlimit wurde erreicht.");
+    } else if (checkGoalReached(gameState) != null) {
+      // one player reached the goal
+      PlayerColor winner = checkGoalReached(gameState).getPlayerColor();
+      return new WinCondition(winner, "Das Spiel ist beendet.\nEin Spieler ist im Ziel");
+    } else if (gameState.getCurrentPlayer() != gameState.getStartPlayer()
+        && Math.abs(gameState.getRedPlayer().getTile() - gameState.getBluePlayer().getTile()) > 3) {
+      // a player is more than three tiles before the other player
+      PlayerColor winner;
+      if (gameState.getRedPlayer().getTile() > gameState.getBluePlayer().getTile()) {
         winner = PlayerColor.RED;
       } else {
         winner = PlayerColor.BLUE;
@@ -313,6 +347,8 @@ public class Game extends RoundBasedGameInstance<Player> {
       this.gameState.getCurrentPlayer().setFreeAcc(1);
       this.gameState.getCurrentPlayer().setFreeTurns(this.gameState.isFreeTurn() ? 2 : 1);
       this.gameState.getCurrentPlayer().setMovement(this.gameState.getCurrentPlayer().getSpeed());
+      // only freeTurns is needed for the otherplayer the other attributes are set in prepareNextTurn
+      this.gameState.getOtherPlayer().setFreeTurns(1); // a previous freeTurn of 2 cannot be recognized by a gameState alone
     }
   }
 

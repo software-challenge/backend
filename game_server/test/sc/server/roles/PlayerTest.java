@@ -4,18 +4,10 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sc.api.plugins.exceptions.RescueableClientException;
-import sc.protocol.requests.JoinPreparedRoomRequest;
-import sc.protocol.requests.JoinRoomRequest;
-import sc.protocol.requests.ObservationRequest;
-import sc.protocol.requests.PauseGameRequest;
-import sc.protocol.requests.PrepareGameRequest;
-import sc.protocol.requests.StepRequest;
-import sc.protocol.responses.MementoPacket;
-import sc.protocol.responses.PrepareGameResponse;
-import sc.protocol.responses.JoinGameResponse;
-import sc.protocol.responses.LeftGameEvent;
-import sc.protocol.responses.RoomPacket;
+import sc.api.plugins.exceptions.RescuableClientException;
+import sc.protocol.requests.*;
+import sc.protocol.responses.*;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.server.network.Client;
 import sc.server.network.MockClient;
 import sc.server.network.PacketCallback;
@@ -24,15 +16,16 @@ import sc.server.plugins.TestGameState;
 import sc.server.plugins.TestMove;
 import sc.server.plugins.TestPlugin;
 import sc.server.plugins.TestTurnRequest;
+import sc.shared.SlotDescriptor;
 
 public class PlayerTest extends AbstractRoleTest
 {
-	int	mySecret1	= 13;
-	int	mySecret2	= 37;
+	int firstState = 13;
+	int secondState = 37;
 
 	@Test
 	public void shouldBeAbleToJoinNonExistingGame() throws IOException,
-			RescueableClientException, PluginLoaderException
+					RescuableClientException, PluginLoaderException
 	{
 		Client client = connectClient();
 
@@ -44,7 +37,7 @@ public class PlayerTest extends AbstractRoleTest
 	}
 
 	@Test
-	public void shouldGetRoomIdAfterJoin() throws RescueableClientException
+	public void shouldGetRoomIdAfterJoin() throws RescuableClientException
 	{
 		MockClient player1 = connectClient();
 		MockClient player2 = connectClient();
@@ -56,101 +49,38 @@ public class PlayerTest extends AbstractRoleTest
 
 		Assert.assertEquals(1, this.gameMgr.getGames().size());
 
-		JoinGameResponse msg;
-		msg = player1.seekMessage(JoinGameResponse.class); // did we receive it?
-		msg = player2.seekMessage(JoinGameResponse.class); // did we receive it?
+		JoinGameProtocolMessage msg;
+		msg = player1.seekMessage(JoinGameProtocolMessage.class); // did we receive it?
+		Assert.assertNotNull(msg.getRoomId());
+
+		msg = player2.seekMessage(JoinGameProtocolMessage.class); // did we receive it?
 
 		Assert.assertNotNull(msg.getRoomId());
 	}
 
+  /**
+   * Checks basic sending of Moves and end of game
+   * @throws RescuableClientException
+   */
 	@Test
-	public void shouldSupportGamePausing() throws RescueableClientException
+  public void shouldBeAbleToPlayTheGame() throws RescuableClientException
 	{
-		MockClient admin = connectClient();
+		MockClient admin = connectClient(true);
 		MockClient player1 = connectClient();
 		MockClient player2 = connectClient();
+		MockClient observer = connectClient(true);
 
-		this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2)));
-		PrepareGameResponse prepared = admin
-				.seekMessage(PrepareGameResponse.class);
+    SlotDescriptor slot1 = new SlotDescriptor("player1", true, false);
+    SlotDescriptor slot2 = new SlotDescriptor("player2", true, false);
 
-		// PAUSE
-		this.lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(
-				prepared.getRoomId(), true)));
 
-		this.lobby
-				.onRequest(player1, new PacketCallback(
-						new JoinPreparedRoomRequest(prepared.getReservations()
-								.get(0))));
-		this.lobby
-				.onRequest(player2, new PacketCallback(
-						new JoinPreparedRoomRequest(prepared.getReservations()
-								.get(1))));
-
-		player1.seekMessage(JoinGameResponse.class);
-		player2.seekMessage(JoinGameResponse.class);
-
-		String roomId = prepared.getRoomId();
-
-		try
-		{
-			player1.seekRoomMessage(roomId, TestTurnRequest.class);
-			Assert.fail();
-		}
-		catch (Exception e)
-		{
-			// ok
-		}
-
-		// STEP
-		this.lobby
-				.onRequest(admin, new PacketCallback(new StepRequest(roomId)));
-		player1.seekRoomMessage(prepared.getRoomId(), TestTurnRequest.class);
-		this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret1))));
-
-		try
-		{
-			player2.seekRoomMessage(roomId, TestTurnRequest.class);
-			Assert.fail();
-		}
-		catch (Exception e)
-		{
-			// ok
-		}
-
-		// UNPAUSE
-		this.lobby.onRequest(admin, new PacketCallback(new PauseGameRequest(
-				roomId, false)));
-
-		player2.seekRoomMessage(roomId, TestTurnRequest.class);
-		this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret1))));
-
-		player1.seekRoomMessage(roomId, TestTurnRequest.class);
-
-		this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret1))));
-
-		player2.seekRoomMessage(roomId, TestTurnRequest.class);
-	}
-
-	@Test
-	public void shouldBeAbleToPlayTheGame() throws RescueableClientException
-	{
-		MockClient admin = connectClient();
-		MockClient player1 = connectClient();
-		MockClient player2 = connectClient();
-		MockClient observer = connectClient();
-
-		this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
-				TestPlugin.TEST_PLUGIN_UUID, 2)));
-		PrepareGameResponse prepared = admin
-				.seekMessage(PrepareGameResponse.class);
+    this.lobby.onRequest(admin, new PacketCallback(new PrepareGameRequest(
+				TestPlugin.TEST_PLUGIN_UUID, slot1, slot2)));
+		PrepareGameProtocolMessage prepared = admin
+				.seekMessage(PrepareGameProtocolMessage.class);
 
 		this.lobby.onRequest(observer, new PacketCallback(
-				new ObservationRequest(prepared.getRoomId(), "hello")));
+				new ObservationRequest(prepared.getRoomId())));
 		this.lobby
 				.onRequest(player1, new PacketCallback(
 						new JoinPreparedRoomRequest(prepared.getReservations()
@@ -160,14 +90,14 @@ public class PlayerTest extends AbstractRoleTest
 						new JoinPreparedRoomRequest(prepared.getReservations()
 								.get(1))));
 
-		String roomId = player1.seekMessage(JoinGameResponse.class).getRoomId();
-		String roomId2 = player2.seekMessage(JoinGameResponse.class)
+		String roomId = player1.seekMessage(JoinGameProtocolMessage.class).getRoomId();
+		String roomId2 = player2.seekMessage(JoinGameProtocolMessage.class)
 				.getRoomId();
 		Assert.assertEquals(roomId, roomId2);
 
 		shouldInitializeCorrectly(roomId, player1, player2, observer);
-		shouldProtectFirstPlayersSecrets(roomId, player1, player2, observer);
-		shouldProtectSecondPlayersSecrets(roomId, player1, player2, observer);
+		shouldPropagadeFirstPlayersMove(roomId, player1, player2, observer);
+		shouldPropagadeSecondPlayersMove(roomId, player1, player2, observer);
 		makeMoveAfterRequest(roomId, player1);
 		makeMoveAfterRequest(roomId, player2);
 		player1.seekMessage(LeftGameEvent.class);
@@ -185,84 +115,82 @@ public class PlayerTest extends AbstractRoleTest
 				MementoPacket.class);
 
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento1.getState()).secret0);
+				(int) ((TestGameState) memento1.getState()).state);
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento1.getState()).secret1);
+				(int) ((TestGameState) memento1.getState()).state);
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento2.getState()).secret0);
+				(int) ((TestGameState) memento2.getState()).state);
 		Assert.assertEquals(0,
-				(int) ((TestGameState) memento2.getState()).secret1);
+				(int) ((TestGameState) memento2.getState()).state);
 		Assert.assertEquals(0, (int) ((TestGameState) mementoObserver
-				.getState()).secret0);
+				.getState()).state);
 		Assert.assertEquals(0, (int) ((TestGameState) mementoObserver
-				.getState()).secret1);
+				.getState()).state);
 	}
 
-	private void shouldProtectFirstPlayersSecrets(String roomId,
-			MockClient player1, MockClient player2, MockClient observer)
-			throws RescueableClientException
+	private void shouldPropagadeFirstPlayersMove(String roomId,
+                                               MockClient player1, MockClient player2, MockClient observer)
+			throws RescuableClientException
 	{
 		// Do the move
 		player1.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player1, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret1))));
+				new TestMove(this.firstState))));
 
 		// Check Player 1
 		MementoPacket memento1 = player1.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret1, (int) ((TestGameState) memento1
-				.getState()).secret0);
+		Assert.assertEquals(this.firstState, (int) ((TestGameState) memento1
+				.getState()).state);
 
 		// Check Player 2
 		MementoPacket memento2 = player2.seekRoomMessage(roomId,
 				MementoPacket.class);
 		Assert
-				.assertFalse(
-						"Secret of other Player was revealed",
-						this.mySecret1 == ((TestGameState) memento2.getState()).secret0);
+				.assertEquals(
+						this.firstState,
+                ((TestGameState) memento2.getState()).state);
 
 		// Check Observer
 		MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret1,
-				(int) ((TestGameState) mementoObserver.getState()).secret0);
+		Assert.assertEquals(this.firstState,
+				(int) ((TestGameState) mementoObserver.getState()).state);
 	}
 
 	private void makeMoveAfterRequest(String roomId, MockClient player)
-			throws RescueableClientException
+			throws RescuableClientException
 	{
 		player.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player, new PacketCallback(new RoomPacket(roomId,
 				new TestMove(123456))));
 	}
 
-	private void shouldProtectSecondPlayersSecrets(String roomId,
-			MockClient player1, MockClient player2, MockClient observer)
-			throws RescueableClientException
+	private void shouldPropagadeSecondPlayersMove(String roomId,
+                                                MockClient player1, MockClient player2, MockClient observer)
+			throws RescuableClientException
 	{
 		// Do the move
 		player2.seekRoomMessage(roomId, TestTurnRequest.class);
 		this.lobby.onRequest(player2, new PacketCallback(new RoomPacket(roomId,
-				new TestMove(this.mySecret2))));
+				new TestMove(this.secondState))));
 
 		// Player 1
 		MementoPacket memento1 = player1.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert
-				.assertFalse("Secret of other Player was revealed",
-						this.mySecret2 == (int) ((TestGameState) memento1
-								.getState()).secret1);
+		Assert.assertEquals(this.secondState,
+						(int) ((TestGameState) memento1.getState()).state);
 
 		// Player 2
 		MementoPacket memento2 = player2.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret2, (int) ((TestGameState) memento2
-				.getState()).secret1);
+		Assert.assertEquals(this.secondState, (int) ((TestGameState) memento2
+				.getState()).state);
 
 		// Observer
 		MementoPacket mementoObserver = observer.seekRoomMessage(roomId,
 				MementoPacket.class);
-		Assert.assertEquals(this.mySecret2,
-				(int) ((TestGameState) mementoObserver.getState()).secret1);
+		Assert.assertEquals(this.secondState,
+				(int) ((TestGameState) mementoObserver.getState()).state);
 	}
 }

@@ -9,20 +9,21 @@ import sc.plugin2017.util.Constants;
 
 /**
  * Ein Spieler, identifiziert durch seine Spielerfarbe.
- * Beeinhaltet auch Informationen zum Punktekonto,
+ * Beinhaltet auch Informationen zum Punktekonto,
  * Position des Schiffes, sowie Attribute des Schiffes
  */
 @XStreamAlias(value = "player")
 public class Player extends SimplePlayer implements Cloneable {
 
 	/**
-	 * Spielerfarbe des Spielers
+	 * Farbe des Spielers
 	 */
 	@XStreamAsAttribute
 	private PlayerColor color;
 
 	 /**
-   * aktuelle laenge der laengsten Leitung des Spielers
+   * aktuelle Punktzahl des Spielers abhängig vom Fortschritt auf dem Spielfeld
+   * und der Anzahl der eingesammelten Passagiere
    */
   @XStreamAsAttribute
   private int points;
@@ -40,7 +41,7 @@ public class Player extends SimplePlayer implements Cloneable {
   private int y;
 
   /**
-   * Richtung in die das Schiff ausgerichtet ist.
+   * Richtung, in die das Schiff ausgerichtet ist.
    */
   @XStreamAsAttribute
   private Direction direction;
@@ -58,7 +59,7 @@ public class Player extends SimplePlayer implements Cloneable {
   private int coal;
 
   /**
-   * Spielsegment auf dem sich das Schiff des Spielers befindet
+   * Spielsegment, auf dem sich das Schiff des Spielers befindet
    */
   @XStreamAsAttribute
   private int tile;
@@ -96,10 +97,10 @@ public class Player extends SimplePlayer implements Cloneable {
 	public Player(final PlayerColor color) {
 	  super();
 		this.color = color;
-		points = 1;
+		this.points = 1;
 		setDirection(Direction.RIGHT);
 		setSpeed(1);
-		coal = Constants.START_COAL;
+		this.coal = Constants.START_COAL;
 		setTile(0);
 		setX(-1);
 		setPassenger(0);
@@ -108,9 +109,9 @@ public class Player extends SimplePlayer implements Cloneable {
 		} else {
 		  setY(-1);
 		}
-		movement = 1;
-		freeTurns = 1;
-		freeAcc = 1;
+		this.movement = 1;
+		this.freeTurns = 1;
+		this.freeAcc = 1;
 	}
 
   /**
@@ -118,7 +119,27 @@ public class Player extends SimplePlayer implements Cloneable {
    * Deserialisierung von Objekten aus XML-Nachrichten.
    */
   public Player() {
-    points = 0;
+    this.points = 0;
+  }
+
+  /**
+   * Erstellt einen neuen Spieler mit denselben Eigenschaften wie der uebergebene
+   * Spieler. Fuer eigene Implementierungen.
+   */
+  public Player(Player playerToClone) {
+    setPlayerColor(playerToClone.getPlayerColor());
+    setPoints(playerToClone.getPoints());
+    setX(playerToClone.getX());
+    setY(playerToClone.getY());
+    setDirection(playerToClone.getDirection());
+    setSpeed(playerToClone.getSpeed());
+    setCoal(playerToClone.getCoal());
+    setTile(playerToClone.getTile());
+    setPassenger(playerToClone.getPassenger());
+    setMovement(playerToClone.getMovement());
+    setFreeTurns(playerToClone.getFreeTurns());
+    setFreeAcc(playerToClone.getFreeAcc());
+		setDisplayName(playerToClone.getDisplayName());
   }
 
 	/**
@@ -131,17 +152,17 @@ public class Player extends SimplePlayer implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		Player clone = new Player(this.color);
 		clone.points = this.points;
-		clone.x = x;
-		clone.y = y;
-		clone.direction = direction;
-		clone.speed = speed;
-		clone.coal = coal;
-		clone.tile = tile;
-		clone.passenger = passenger;
-    clone.movement = movement;
-		clone.freeTurns = freeTurns;
-		clone.freeAcc = freeAcc;
-		clone.setDisplayName(this.getDisplayName());
+		clone.x = this.x;
+		clone.y = this.y;
+		clone.direction = this.direction;
+		clone.speed = this.speed;
+		clone.coal = this.coal;
+		clone.tile = this.tile;
+		clone.passenger = this.passenger;
+    clone.movement = this.movement;
+		clone.freeTurns = this.freeTurns;
+		clone.freeAcc = this.freeAcc;
+		clone.setDisplayName(getDisplayName());
 		return clone;
 	}
 
@@ -159,7 +180,7 @@ public class Player extends SimplePlayer implements Cloneable {
 	 * @return Spielerfarbe
 	 */
 	public PlayerColor getPlayerColor() {
-		return color;
+		return this.color;
 	}
 
 	/**
@@ -176,7 +197,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return Punkte des Spielers
    */
   public int getPoints() {
-    return points;
+    return this.points;
   }
 
 
@@ -190,7 +211,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return x-Koordiante
    */
   public int getX() {
-    return x;
+    return this.x;
   }
 
   protected void setX(int x) {
@@ -202,7 +223,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return y-Koordiante
    */
   public int getY() {
-    return y;
+    return this.y;
   }
 
   protected void setY(int y) {
@@ -210,12 +231,12 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Richtung in die das Schiff ausgerichtet ist.
+   * Richtung, in die das Schiff ausgerichtet ist.
    *
    * @return Die Richtung
    */
   public Direction getDirection() {
-    return direction;
+    return this.direction;
   }
 
   protected void setDirection(Direction direction) {
@@ -227,7 +248,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return Geschwindigkeit
    */
   public int getSpeed() {
-    return speed;
+    return this.speed;
   }
 
   protected void setSpeed(int speed) {
@@ -239,7 +260,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return Anzahl der Kohleeinheiten
    */
   public int getCoal() {
-    return coal;
+    return this.coal;
   }
 
   /**
@@ -251,11 +272,11 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Liefert das Spielsegment auf dem sich das Schiff des Spielers gerade befindet.
+   * Liefert das Spielsegment, auf dem sich das Schiff des Spielers gerade befindet.
    * @return Segmentnummer
    */
   public int getTile() {
-    return tile;
+    return this.tile;
   }
 
   protected void setTile(int tile) {
@@ -263,11 +284,11 @@ public class Player extends SimplePlayer implements Cloneable {
   }
 
   /**
-   * Liefert die Anzahl der Passagiere, die der Spierl bisher eingesammelt hat
+   * Liefert die Anzahl der Passagiere, die der Spieler bisher eingesammelt hat
    * @return Anzahl der Passagiere
    */
   public int getPassenger() {
-    return passenger;
+    return this.passenger;
   }
 
   protected void setPassenger(int passenger) {
@@ -277,7 +298,7 @@ public class Player extends SimplePlayer implements Cloneable {
   public Field getField(Board board) {
     for (Tile tile : board.getTiles()) {
       if(tile.getIndex() == this.tile) {
-        return tile.getField(x, y);
+        return tile.getField(this.x, this.y);
       }
     }
     return null;
@@ -318,7 +339,7 @@ public class Player extends SimplePlayer implements Cloneable {
         (getField(board).getFieldInDirection(Direction.DOWN_LEFT, board) != null &&
         getField(board).getFieldInDirection(Direction.DOWN_LEFT, board).getType() == FieldType.PASSENGER1) ||
         (getField(board).getFieldInDirection(Direction.DOWN_RIGHT, board) != null &&
-        getField(board).getFieldInDirection(Direction.DOWN_RIGHT, board).getType() == FieldType.PASSENGER2)) && passenger < 2) {
+        getField(board).getFieldInDirection(Direction.DOWN_RIGHT, board).getType() == FieldType.PASSENGER2)) && this.passenger < 2) {
       return true;
     }
     return false;
@@ -330,7 +351,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return Bewegunspunkte
    */
   public int getMovement() {
-    return movement;
+    return this.movement;
   }
 
   /**
@@ -348,7 +369,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return Anzahl der freien Drehzüge
    */
   public int getFreeTurns() {
-    return freeTurns;
+    return this.freeTurns;
   }
 
   /**
@@ -366,7 +387,7 @@ public class Player extends SimplePlayer implements Cloneable {
    * @return Anzahl der freien Beschleunigungen
    */
   public int getFreeAcc() {
-    return freeAcc;
+    return this.freeAcc;
   }
 
   /**
@@ -379,6 +400,6 @@ public class Player extends SimplePlayer implements Cloneable {
 
   @Override
   public String toString() {
-    return color + ", Punkte: " + points + " , Position: (" + x + ", " + y + "), speed, coal: " + speed + "," + coal + ", Tile: " + tile;
+    return this.color + ", Punkte: " + this.points + " , Position: (" + this.x + ", " + this.y + "), speed, coal: " + this.speed + "," + this.coal + ", Tile: " + this.tile;
   }
 }

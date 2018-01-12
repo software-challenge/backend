@@ -36,8 +36,8 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 	private static final Class<? extends Annotation>	PLUGIN_ANNOTATION			= PluginDescriptor.class;
 
-	private final Collection<PluginInstanceType>		availablePlugins			= new LinkedList<PluginInstanceType>();
-	private final Collection<PluginInstanceType>		activePlugins				= new LinkedList<PluginInstanceType>();
+	private final Collection<PluginInstanceType>		availablePlugins			= new LinkedList<>();
+	private final Collection<PluginInstanceType>		activePlugins				= new LinkedList<>();
 
 	public synchronized void reload()
 	{
@@ -47,7 +47,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 		{
 			for (Class<?> definition : findEntryPointsInJar(jarURI))
 			{
-				System.out.println("Loading: " + definition.getAnnotation(PluginDescriptor.class).name());
+				logger.debug("Loading: {}", definition.getAnnotation(PluginDescriptor.class).name());
 				this.availablePlugins.add(createPluginInstance(definition, jarURI));
 			}
 		}
@@ -77,7 +77,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 	private static Collection<URI> findPluginArchives(String path)
 	{
-		Collection<URI> pluginArchives = new LinkedList<URI>();
+		Collection<URI> pluginArchives = new LinkedList<>();
 		File moduleDirectory = new File(path);
 
 		if (moduleDirectory.exists() && moduleDirectory.isDirectory())
@@ -112,7 +112,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 
 	private Collection<Class<?>> findEntryPointsInJar(URI jarURI)
 	{
-		Collection<Class<?>> entryPoints = new LinkedList<Class<?>>();
+		Collection<Class<?>> entryPoints = new LinkedList<>();
 
 		try
 		{
@@ -140,14 +140,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 							entryPoints.add(clazz);
 						}
 					}
-					catch (ClassNotFoundException e)
-					{
-						logger
-								.error(
-										"Failed to load class {} from Jar (missing dependencies?): {}",
-										className, e.getMessage());
-					}
-					catch (NoClassDefFoundError e)
+					catch (ClassNotFoundException | NoClassDefFoundError e)
 					{
 						logger
 								.error(
@@ -156,12 +149,7 @@ public abstract class PluginManager<PluginInstanceType extends PluginInstance<?,
 					}
 				}
 			}
-		}
-		catch (MalformedURLException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}

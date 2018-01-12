@@ -15,7 +15,7 @@ import sc.guiplugin.interfaces.ISlot;
 import sc.networking.clients.IControllableGame;
 import sc.plugin2017.GuiClient;
 import sc.protocol.helpers.RequestResult;
-import sc.protocol.responses.PrepareGameResponse;
+import sc.protocol.responses.PrepareGameProtocolMessage;
 import sc.shared.SlotDescriptor;
 import sc.networking.clients.ControllingClient;
 
@@ -33,14 +33,14 @@ public class GamePreparation implements IGamePreparation {
   private static final Logger logger = LoggerFactory.getLogger(GamePreparation.class);
   
 	public GamePreparation(GuiClient client, SlotDescriptor... descriptors) {
-		RequestResult<PrepareGameResponse> results = null;
+		RequestResult<PrepareGameProtocolMessage> results = null;
 		try {
 			results = client.prepareGameAndWait(descriptors);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 
-		PrepareGameResponse response = results.getResult();
+		PrepareGameProtocolMessage response = results.getResult();
 
 		for (String singleResp : response.getReservations()) {
 			slots.add(new Slot(singleResp, client));

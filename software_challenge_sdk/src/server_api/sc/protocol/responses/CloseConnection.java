@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.annotations.XStreamAlias;
  * connection and should make the receiving party also close the connection.
  */
 @XStreamAlias(value="close")
-public class CloseConnection
+public class CloseConnection extends ProtocolMessage
 {
 
 }

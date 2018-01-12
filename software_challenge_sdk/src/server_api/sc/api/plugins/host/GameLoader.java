@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.XStream;
 
 import sc.networking.clients.GameLoaderClient;
 import sc.networking.clients.IHistoryListener;
-import sc.protocol.responses.ErrorResponse;
+import sc.protocol.responses.ProtocolErrorMessage;
 import sc.shared.GameResult;
 
 public class GameLoader implements IHistoryListener
@@ -73,7 +73,7 @@ public class GameLoader implements IHistoryListener
 	}
 
 	@Override
-	public void onGameError(String roomId, ErrorResponse error)
+	public void onGameError(String roomId, ProtocolErrorMessage error)
 	{
 	}
 

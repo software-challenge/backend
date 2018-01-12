@@ -1,5 +1,5 @@
-version: '2'
+version: '3.2'
 services:
-  swc_game-server:
+  gameserver:
     image: swc_game-server
     hostname: gameserver

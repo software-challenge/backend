@@ -20,28 +20,20 @@ public class CollectionHelperTest
 		List<Integer> list = Arrays.asList(ints);
 
 		Iterable<String> converted = CollectionHelper.map(list,
-				new Function<Integer, String>() {
+						val -> {
+              if (val > 0)
+              {
+                return "+" + val.toString();
+              }
+              else
+              {
+                return val.toString();
+              }
+            });
 
-					@Override
-					public String operate(Integer val)
-					{
-						if (val > 0)
-						{
-							return "+" + val.toString();
-						}
-						else
-						{
-							return val.toString();
-						}
-					}
-
-				});
-
-		List<String> convertedList = new ArrayList<String>();
-		Iterator<String> iterator = converted.iterator();
-		while (iterator.hasNext())
-		{
-			convertedList.add(iterator.next());
+		List<String> convertedList = new ArrayList<>();
+		for (String aConverted : converted) {
+			convertedList.add(aConverted);
 		}
 
 		String[] result = new String[] { "0", "+1", "+2", "+3" };

@@ -5,125 +5,125 @@ import jargs.gnu.CmdLineParser.IllegalOptionValueException;
 import jargs.gnu.CmdLineParser.UnknownOptionException;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Application
-{
-	private static final Logger	logger	= LoggerFactory
-												.getLogger(Application.class);
-	private static final Object	waitObj	= new Object();
+public final class Application {
+  private static final Logger logger = LoggerFactory
+          .getLogger(Application.class);
+  private static final Object waitObj = new Object();
 
-	public static void main(String[] params) throws IOException,
-			InterruptedException, IllegalOptionValueException,
-			UnknownOptionException
-	{
-		System.setProperty( "file.encoding", "UTF-8" );
-		
-		parseArguments(params);
+  public static void main(String[] params) {
+    // Setup Server
+    System.setProperty("file.encoding", "UTF-8");
+    try {
+      parseArguments(params);
+    } catch (IllegalOptionValueException e) {
+      logger.error("Options could not be parsed");
+      e.printStackTrace();
+      return;
+    } catch (UnknownOptionException e) {
+      logger.error("Unknown option");
+      e.printStackTrace();
+      return;
+    }
+    logger.info("Server is starting up...");
 
-		logger.info("Server is starting up...");
+    // register crtl + c
+    addShutdownHook();
+    long start = System.currentTimeMillis();
 
-		addShutdownHook();
-		long start = System.currentTimeMillis();
+    try {
+      logger.error("loading server.properties");
+      Configuration.load(new FileReader("server.properties"));
+    } catch (IOException e) {
+      logger.error("Could not find server.properties");
+      e.printStackTrace();
+      return;
+    }
+    final Lobby server = new Lobby();
+    try {
+      server.start();
+    } catch (IOException e) {
+      e.printStackTrace();
+      return;
+    }
 
-		final Lobby server = new Lobby();
-		server.start();
+    long end = System.currentTimeMillis();
+    logger.info("Server has been initialized in {} ms.", end - start);
 
-		long end = System.currentTimeMillis();
-		logger.info("Server has been initialized in {} ms.", end - start);
+    synchronized (waitObj) {
+      try {
+        waitObj.wait();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+  }
 
-		synchronized (waitObj)
-		{
-			waitObj.wait();
-		}
-	}
+  public static void parseArguments(String[] params)
+          throws IllegalOptionValueException, UnknownOptionException {
+    CmdLineParser parser = new CmdLineParser();
+    CmdLineParser.Option debug = parser.addBooleanOption(Configuration.DEBUG_SHORT_OPTION, Configuration.DEBUG_OPTION);
+    CmdLineParser.Option pluginDirectory = parser
+            .addStringOption(Configuration.PLUGINS_OPTION);
+    CmdLineParser.Option loadGameFileOption = parser.addStringOption(Configuration.GAMELOADFILE_OPTION);
+    CmdLineParser.Option turnToLoadOption = parser.addIntegerOption(Configuration.TURN_OPTION);
+    CmdLineParser.Option saveReplayOption = parser.addBooleanOption(Configuration.SAVE_REPLAY_OPTION);
+    parser.parse(params);
 
-	/**
-	 * Starts a new Server. This is meant to be used by the GUI Application,
-	 * which comes with an internal server for offline-play. TODO: use this in
-	 * GUI app
-	 * 
-	 * @param port
-	 * @return the lobby
-	 */
-	public static Lobby startServer(final Integer port) throws IOException
-	{
-		logger.info("Starting the Server on port {}", port);
-		Configuration.set(Configuration.PORT_KEY, port.toString());
-		final Lobby server = new Lobby();
-		server.start();
-		return server;
-	}
+    Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
+    String path = (String) parser.getOptionValue(pluginDirectory, null);
+    String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
+    Integer turnToLoad = (Integer) parser.getOptionValue(turnToLoadOption, 0);
+    Boolean saveReplay = (Boolean) parser.getOptionValue(saveReplayOption, false);
+    if (loadGameFile != null) {
+      Configuration.set(Configuration.GAMELOADFILE, loadGameFile);
+      if (turnToLoad != 0) {
+        Configuration.set(Configuration.TURN_TO_LOAD, turnToLoad.toString());
+      }
+    }
+    if (debugMode) {
+      logger.info("Running in DebugMode now.");
+    }
 
-	public static void parseArguments(String[] params)
-			throws IllegalOptionValueException, UnknownOptionException
-	{
-		CmdLineParser parser = new CmdLineParser();
-		CmdLineParser.Option debug = parser.addBooleanOption('d', "debug");
-		CmdLineParser.Option pluginDirectory = parser
-				.addStringOption("plugins");
-		CmdLineParser.Option loadGameFileOption = parser.addStringOption("loadGameFile");
-		parser.parse(params);
+    if (saveReplay) {
+      Configuration.set(Configuration.SAVE_REPLAY, saveReplay.toString());
+    }
 
-		Boolean debugMode = (Boolean) parser.getOptionValue(debug, false);
-		String path = (String) parser.getOptionValue(pluginDirectory, null);
-		String loadGameFile = (String) parser.getOptionValue(loadGameFileOption, null);
-		
-		if (loadGameFile != null) {
-			Configuration.set("loadGameFile", loadGameFile);
-		}
+    if (path != null) {
+      File f = new File(path);
 
-		if (debugMode)
-		{
-			logger.info("Running in DebugMode now.");
-		}
+      if (f.exists() && f.isDirectory()) {
+        Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
+        logger.info("Loading plugins from {}", f.getAbsoluteFile());
+      } else {
+        logger.warn("Could not find {} to load plugins from", f
+                .getAbsoluteFile());
+      }
+    }
+  }
 
-		if (path != null)
-		{
-			File f = new File(path);
+  public static void addShutdownHook() {
+    logger.info("Registering ShutdownHook (Ctrl+C)...");
 
-			if (f.exists() && f.isDirectory())
-			{
-				Configuration.set(Configuration.PLUGIN_PATH_KEY, path);
-				logger.info("Loading plugins from {}", f.getAbsoluteFile());
-			}
-			else
-			{
-				logger.warn("Could not find {} to load plugins from", f
-						.getAbsoluteFile());
-			}
-		}
-	}
+    try {
+      Thread shutdown = new Thread(() -> {
+        ServiceManager.killAll();
+        // continues the main-method of this class
+        synchronized (waitObj) {
+          waitObj.notifyAll();
+          logger.info("Exiting application...");
+        }
+      });
 
-	public static void addShutdownHook()
-	{
-		logger.info("Registering ShutdownHook (Ctrl+C)...");
-
-		try
-		{
-			Thread shutdown = new Thread(new Runnable() {
-				@Override
-				public void run()
-				{
-					ServiceManager.killAll();
-					// continues the main-method of this class
-					synchronized (waitObj)
-					{
-						waitObj.notify();
-						logger.info("Exiting application...");
-					}
-				}
-			});
-
-			shutdown.setName("ShutdownHook");
-			Runtime.getRuntime().addShutdownHook(shutdown);
-		}
-		catch (Exception e)
-		{
-			logger.warn("Could not install ShutdownHook", e);
-		}
-	}
+      shutdown.setName("ShutdownHook");
+      Runtime.getRuntime().addShutdownHook(shutdown);
+    } catch (Exception e) {
+      logger.warn("Could not install ShutdownHook", e);
+    }
+  }
 }
