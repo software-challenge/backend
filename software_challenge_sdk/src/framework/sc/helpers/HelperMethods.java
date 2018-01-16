@@ -30,6 +30,7 @@ public class HelperMethods {
   /**
    * Returns a new generated filename for a replay file.
    *
+   * @param pluginUuid UUID of the plugin
    * @param descriptors descriptor of player slot
    * @return name of replay
    */

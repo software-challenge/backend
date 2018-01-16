@@ -16,6 +16,7 @@ import sc.server.Configuration;
 import sc.server.helpers.StringNetworkInterface;
 
 import com.thoughtworks.xstream.XStream;
+import sc.shared.InvalidGameStateException;
 
 public class MockClient extends Client
 {
@@ -109,7 +110,7 @@ public class MockClient extends Client
 	}
 
 	@Override
-	protected void onObject(ProtocolMessage o) throws UnprocessedPacketException {
+	protected void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException {
 		super.onObject(o);
 		this.objects.add(o);
 	}

@@ -9,7 +9,7 @@ public interface IGamePlugin extends IPlugin<IGamePluginHost>
 	/**
 	 * Creates a new game of this type.
 	 * 
-	 * @return
+	 * @return new IGameInstance
 	 */
 	public IGameInstance createGame();
 

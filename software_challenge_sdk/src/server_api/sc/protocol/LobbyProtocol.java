@@ -24,11 +24,10 @@ public abstract class LobbyProtocol
 				AuthenticateRequest.class, CancelRequest.class,
 				FreeReservationRequest.class, JoinPreparedRoomRequest.class,
 				JoinRoomRequest.class, ObservationRequest.class,
-				PauseGameRequest.class, PrepareGameRequest.class,
+				PauseGameRequest.class, ControlTimeoutRequest.class, PrepareGameRequest.class,
 				StepRequest.class, GetScoreForPlayerRequest.class, TestModeRequest.class,
 				PlayerScorePacket.class, TestModeMessage.class, GameRoomMessage.class
 		}));
-		
 		registerAdditionalMessages(xStream, Arrays.asList(new Class<?>[] {
 				GameResult.class, PlayerScore.class, ScoreAggregation.class, PlayerColor.class,
 				ScoreCause.class, ScoreDefinition.class, ScoreFragment.class, WinCondition.class,

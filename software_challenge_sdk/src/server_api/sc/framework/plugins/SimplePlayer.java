@@ -53,7 +53,7 @@ public abstract class SimplePlayer
 
 	/**
 	 *
-	 * @return
+	 * @return Reason for violation
 	 */
 	public String getViolationReason()
 	{

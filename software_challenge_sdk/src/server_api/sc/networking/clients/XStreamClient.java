@@ -14,6 +14,7 @@ import sc.networking.INetworkInterface;
 import sc.networking.UnprocessedPacketException;
 import sc.protocol.responses.CloseConnection;
 import sc.protocol.responses.ProtocolMessage;
+import sc.shared.InvalidGameStateException;
 
 public abstract class XStreamClient {
   private static Logger logger = LoggerFactory
@@ -96,10 +97,12 @@ public abstract class XStreamClient {
     this.thread.start();
   }
 
-  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException;
+  protected abstract void onObject(ProtocolMessage o) throws UnprocessedPacketException, InvalidGameStateException;
 
   /**
    * used by the receiving thread. All exceptions should be handled.
+   *
+   * @throws Exception thrown if there was a problem creating the input stream
    */
   public void receiveThread() throws Exception {
     try {
@@ -117,7 +120,8 @@ public abstract class XStreamClient {
           ProtocolMessage response = (ProtocolMessage) object;
 
           logger.info("Client " + XStreamClient.this + ": Received " + response
-                          + " via " + this.networkInterface + "\nDataDump:\n{}",
+                          + " via " + this.networkInterface);
+          logger.debug("DataDump:\n{}",
                   this.xStream.toXML(response));
           if (response instanceof CloseConnection) {
             handleDisconnect(DisconnectCause.RECEIVED_DISCONNECT);
@@ -184,9 +188,10 @@ public abstract class XStreamClient {
       throw new IllegalStateException("Writing on a closed xStream.");
     }
 
-    logger.debug(
+    logger.info(
             "Client " + this + ": Sending " + o + " via "
-                    + this.networkInterface + "\nDataDump:\n{}",
+                    + this.networkInterface);
+    logger.debug("DataDump:\n{}",
             this.xStream.toXML(o));
 
     try {
