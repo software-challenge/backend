@@ -1,4 +1,4 @@
-package sc.player2018;
+package sc.player2018.logic;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sc.player2018.Starter;
 import sc.plugin2018.*;
 import sc.plugin2018.util.Constants;
 import sc.shared.PlayerColor;
@@ -115,8 +116,10 @@ public class Logic implements IGameHandler {
       log.info("Sende Zug zum Salatessen");
       move = saladMoves.get(rand.nextInt(saladMoves.size()));
     } else if (!selectedMoves.isEmpty()) {
+      log.info("Sende ausgewählten Zug");
       move = selectedMoves.get(rand.nextInt(selectedMoves.size()));
     } else {
+      log.info("Sende irgendeinen Zug");
       move = possibleMove.get(rand.nextInt(possibleMove.size()));
     }
     move.orderActions();
